@@ -72,12 +72,15 @@ func (c *Config) WallpaperUri() string {
 	// Complete URI as needed if file path is valid.
 	if fileName := clean.Path(wallpaperUri); fileName == "" {
 		return ""
-	} else if fs.FileExists(path.Join(c.StaticPath(), wallpaperPath, fileName)) {
-		wallpaperUri = c.StaticAssetUri(path.Join(wallpaperPath, fileName))
-	} else if fs.FileExists(c.CustomStaticFile(path.Join(wallpaperPath, fileName))) {
-		wallpaperUri = c.CustomStaticAssetUri(path.Join(wallpaperPath, fileName))
 	} else {
-		return ""
+		switch {
+		case fs.FileExists(path.Join(c.StaticPath(), wallpaperPath, fileName)):
+			wallpaperUri = c.StaticAssetUri(path.Join(wallpaperPath, fileName))
+		case fs.FileExists(c.CustomStaticFile(path.Join(wallpaperPath, fileName))):
+			wallpaperUri = c.CustomStaticAssetUri(path.Join(wallpaperPath, fileName))
+		default:
+			return ""
+		}
 	}
 
 	// Cache wallpaper URI if not empty.

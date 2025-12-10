@@ -212,8 +212,3 @@ func withVisionConfig(t *testing.T, cfg *vision.ConfigValues) {
 		vision.Config = prev
 	})
 }
-
-func cloneVisionModel(m *vision.Model) *vision.Model {
-	copy := *m
-	return &copy
-}

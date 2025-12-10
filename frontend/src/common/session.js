@@ -89,10 +89,7 @@ export default class Session {
     }
 
     // Restore authentication from session storage.
-    if (
-      this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) &&
-      this.applyId(this.storage.getItem(this.storageKey + ".id"))
-    ) {
+    if (this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) && this.applyId(this.storage.getItem(this.storageKey + ".id"))) {
       const dataJson = this.storage.getItem(this.storageKey + ".data");
       if (dataJson && dataJson !== "undefined") {
         this.data = JSON.parse(dataJson);

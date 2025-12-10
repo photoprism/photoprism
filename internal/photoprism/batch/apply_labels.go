@@ -110,8 +110,10 @@ func ApplyLabels(photo *entity.Photo, labels Items) (errs []error) {
 					continue
 				}
 				labelIndex[labelEntity.ID] = pl
-			} else if entity.SrcPriority[pl.LabelSrc] > entity.SrcPriority[entity.SrcBatch] {
-				// Keep existing label with higher priority.
+			}
+
+			// Keep existing label with higher priority than batch updates, even if it wasn't preloaded.
+			if entity.SrcPriority[pl.LabelSrc] > entity.SrcPriority[entity.SrcBatch] {
 				continue
 			}
 

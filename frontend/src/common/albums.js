@@ -12,9 +12,7 @@ export function processAlbumSelection(selectedAlbums, availableAlbums) {
   selectedAlbums.forEach((item) => {
     // If it's a string, try to match it with existing albums
     if (typeof item === "string" && item.trim().length > 0) {
-      const matchedAlbum = availableAlbums.find(
-        (album) => album.Title && album.Title.toLowerCase() === item.trim().toLowerCase()
-      );
+      const matchedAlbum = availableAlbums.find((album) => album.Title && album.Title.toLowerCase() === item.trim().toLowerCase());
 
       if (matchedAlbum && !seenUids.has(matchedAlbum.UID)) {
         // Replace string with actual album object

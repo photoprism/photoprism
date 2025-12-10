@@ -7,12 +7,17 @@ import (
 	"sync"
 )
 
+// EngineName identifies a face detection engine implementation.
 type EngineName = string
 
 const (
+	// EngineAuto selects the default engine based on availability.
 	EngineAuto EngineName = "auto"
+	// EnginePigo enables the built-in Pigo cascade detector.
 	EnginePigo EngineName = "pigo"
+	// EngineONNX enables the ONNX runtime-powered SCRFD detector.
 	EngineONNX EngineName = "onnx"
+	// EngineNone disables face detection.
 	EngineNone EngineName = "none"
 )
 

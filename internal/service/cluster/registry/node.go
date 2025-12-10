@@ -13,8 +13,9 @@ type Node struct {
 
 // ensureDatabase returns a writable NodeDatabase, creating one if missing.
 func (n *Node) ensureDatabase() *cluster.NodeDatabase {
-	if n.Node.Database == nil {
-		n.Node.Database = &cluster.NodeDatabase{}
+	if n.Database == nil {
+		n.Database = &cluster.NodeDatabase{}
 	}
-	return n.Node.Database
+
+	return n.Database
 }

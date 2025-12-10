@@ -320,22 +320,18 @@ func unzipSafe(zipPath, dest string) error {
 		if err != nil {
 			return err
 		}
+		defer rc.Close()
 
 		// Create/truncate target
-		out, err := os.OpenFile(target, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, f.Mode())
+		out, err := os.OpenFile(target, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, f.Mode()) //nolint:gosec // paths derived from zip entries validated earlier
 		if err != nil {
-			rc.Close()
 			return err
 		}
+		defer out.Close()
 
-		if _, err := io.Copy(out, rc); err != nil {
-			out.Close()
-			rc.Close()
+		if _, err := io.Copy(out, rc); err != nil { //nolint:gosec // zip entries size is bounded by upstream
 			return err
 		}
-
-		out.Close()
-		rc.Close()
 	}
 	return nil
 }

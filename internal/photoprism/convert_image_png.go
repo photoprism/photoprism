@@ -25,6 +25,7 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	// see https://ss64.com/osx/sips.html.
 	if (f.IsRaw() || f.IsHeif()) && w.conf.SipsEnabled() && w.sipsExclude.Allow(fileExt) {
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.SipsBin(), "-Z", maxSize, "-s", "format", "png", "--out", pngName, f.FileName())),
 		)
 	}
@@ -40,6 +41,7 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	// Use "heif-dec" or "heif-convert" to convert HEIC/HEIF and AVIF image files to PNG.
 	if (f.IsHeic() || f.IsAvif()) && w.conf.HeifConvertEnabled() {
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.HeifConvertBin(), f.FileName(), pngName)).
 			WithOrientation(w.conf.HeifConvertOrientation()),
 		)
@@ -48,6 +50,7 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	// Use "djxl" to convert JPEG XL images if installed and enabled.
 	if f.IsJpegXL() && w.conf.JpegXLEnabled() {
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.JpegXLDecoderBin(), f.FileName(), pngName)),
 		)
 	}
@@ -56,6 +59,7 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	if w.conf.RsvgConvertEnabled() && f.IsSVG() {
 		args := []string{"-a", "-f", "png", "-o", pngName, f.FileName()}
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.RsvgConvertBin(), args...)),
 		)
 	}
@@ -63,19 +67,23 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	// Use ImageMagick for other media file formats if the type and extension are allowed.
 	if w.conf.ImageMagickEnabled() && w.imageMagickExclude.Allow(fileExt) {
 		resize := fmt.Sprintf("%dx%d>", w.conf.PngSize(), w.conf.PngSize())
-		if f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHeif() {
+		switch {
+		case f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHeif():
 			args := []string{f.FileName(), "-flatten", "-resize", resize, pngName}
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.ImageMagickBin(), args...)),
 			)
-		} else if f.IsVector() && w.conf.VectorEnabled() {
+		case f.IsVector() && w.conf.VectorEnabled():
 			args := []string{f.FileName() + "[0]", "-resize", resize, pngName}
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.ImageMagickBin(), args...)),
 			)
-		} else if f.IsDocument() {
+		case f.IsDocument():
 			args := []string{"-colorspace", "sRGB", "-density", "300", f.FileName() + "[0]", "-background", "white", "-alpha", "remove", "-alpha", "off", "-resize", resize, pngName}
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.ImageMagickBin(), args...)),
 			)
 		}

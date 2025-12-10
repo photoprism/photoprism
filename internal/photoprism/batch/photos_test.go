@@ -25,7 +25,7 @@ func runNewPhotosFormFromJSON(t *testing.T) {
 	var photos search.PhotoResults
 
 	dataFile := fs.Abs("./testdata/photos.json")
-	data, err := os.ReadFile(dataFile)
+	data, err := os.ReadFile(dataFile) // #nosec G304 test fixture path is static
 	if err != nil {
 		t.Fatal(err)
 	}

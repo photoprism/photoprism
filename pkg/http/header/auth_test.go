@@ -64,6 +64,25 @@ func TestAuth(t *testing.T) {
 	})
 }
 
+func TestOpenAIHeaders(t *testing.T) {
+	t.Run("SetOrg", func(t *testing.T) {
+		r := httptest.NewRequest(http.MethodGet, "/", nil)
+		SetOpenAIOrg(r, "  org-123  ")
+		assert.Equal(t, "org-123", r.Header.Get(OpenAIOrg))
+
+		SetOpenAIOrg(r, "")
+		assert.Equal(t, "org-123", r.Header.Get(OpenAIOrg))
+	})
+	t.Run("SetProject", func(t *testing.T) {
+		r := httptest.NewRequest(http.MethodGet, "/", nil)
+		SetOpenAIProject(r, "proj-abc")
+		assert.Equal(t, "proj-abc", r.Header.Get(OpenAIProject))
+
+		SetOpenAIProject(r, "   ")
+		assert.Equal(t, "proj-abc", r.Header.Get(OpenAIProject))
+	})
+}
+
 func TestAuthToken(t *testing.T) {
 	t.Run("None", func(t *testing.T) {
 		gin.SetMode(gin.TestMode)
@@ -219,7 +238,7 @@ func TestAuthorization(t *testing.T) {
 			Header: make(http.Header),
 		}
 
-		token := "eyJhbGciOiJFZERTQSIsImtpZCI6IjEyMyJ9.eyJpc3MiOiJwb3J0YWw6dGVzdCIsImF1ZCI6Im5vZGU6YWJjIiwiZXhwIjoxNzAwMDAwMDB9.dGVzdC1zaWduYXR1cmUtYnl0ZXM"
+		token := "eyJhbGciOiJFZERTQSIsImtpZCI6IjEyMyJ9.eyJpc3MiOiJwb3J0YWw6dGVzdCIsImF1ZCI6Im5vZGU6YWJjIiwiZXhwIjoxNzAwMDAwMDB9.dGVzdC1zaWduYXR1cmUtYnl0ZXM" //nolint:gosec // static test token
 		c.Request.Header.Add(Auth, "Bearer "+token)
 
 		authType, authToken := Authorization(c)

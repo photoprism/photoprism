@@ -38,7 +38,7 @@ func NewClientAssets(buildPath, baseUri string) *ClientAssets {
 
 // Load loads the frontend assets from a webpack manifest file.
 func (a *ClientAssets) Load(fileName string) error {
-	jsonFile, err := os.ReadFile(filepath.Join(a.BuildPath, fileName))
+	jsonFile, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)) //nolint:gosec // path derived from configured assets directory
 
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func (a *ClientAssets) SplashCssFile() string {
 
 // SplashCssFileContents returns the splash screen CSS file contents for embedding in HTML.
 func (a *ClientAssets) SplashCssFileContents() template.CSS {
-	return template.CSS(a.readFile(a.SplashCssFile()))
+	return template.CSS(a.readFile(a.SplashCssFile())) //nolint:gosec // assets are loaded from trusted local build output
 }
 
 // SplashJsUri returns the splash screen JS URI.
@@ -121,14 +121,14 @@ func (a *ClientAssets) SplashJsFileContents() template.JS {
 	if a.SplashJs == "" {
 		return ""
 	}
-	return template.JS(a.readFile(a.SplashJs))
+	return template.JS(a.readFile(a.SplashJs)) //nolint:gosec // assets are loaded from trusted local build output
 }
 
 // readFile reads the file contents and returns them as string.
 func (a *ClientAssets) readFile(fileName string) string {
 	if fileName == "" {
 		return ""
-	} else if css, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)); err != nil {
+	} else if css, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)); err != nil { //nolint:gosec // path derived from configured assets directory
 		return ""
 	} else {
 		return string(bytes.TrimSpace(css))

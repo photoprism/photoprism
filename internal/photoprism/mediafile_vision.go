@@ -84,14 +84,15 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 	size := vision.Thumb(vision.ModelTypeLabels)
 
 	// The thumbnail size may need to be adjusted to use other models.
-	if size.Name != "" && size.Name != thumb.Tile224 {
+	switch {
+	case size.Name != "" && size.Name != thumb.Tile224:
 		sizes = []thumb.Name{size.Name}
 		thumbnails = make([]string, 0, 1)
-	} else if m.Square() {
+	case m.Square():
 		// Only one thumbnail is required for square images.
 		sizes = []thumb.Name{thumb.Tile224}
 		thumbnails = make([]string, 0, 1)
-	} else {
+	default:
 		// Use three thumbnails otherwise (center, left, right).
 		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}
 		thumbnails = make([]string, 0, 3)

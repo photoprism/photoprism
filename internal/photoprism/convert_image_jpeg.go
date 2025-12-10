@@ -26,6 +26,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	// see https://ss64.com/osx/sips.html.
 	if (f.IsRaw() || f.IsHeif()) && w.conf.SipsEnabled() && w.sipsExclude.Allow(fileExt) {
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName())),
 		)
 	}
@@ -40,6 +41,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	// Use "heif-dec" or "heif-convert" to convert HEIC/HEIF and AVIF image files to JPEG.
 	if (f.IsHeic() || f.IsAvif()) && w.conf.HeifConvertEnabled() {
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.HeifConvertBin(), "-q", w.conf.JpegQuality().String(), f.FileName(), jpegName)).
 			WithOrientation(w.conf.HeifConvertOrientation()),
 		)
@@ -78,6 +80,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 			}
 
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.DarktableBin(), args...)),
 			)
 		}
@@ -89,6 +92,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 			args := []string{"-o", jpegName, "-p", profile, "-s", "-d", jpegQuality, "-js3", "-b8", "-c", f.FileName()}
 
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.RawTherapeeBin(), args...)),
 			)
 		}
@@ -98,6 +102,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	if f.IsDng() && w.conf.ExifToolEnabled() {
 		// Example: exiftool -b -PreviewImage -w IMG_4691.DNG.jpg IMG_4691.DNG
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName())),
 		)
 	}
@@ -105,6 +110,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	// Use "djxl" to convert JPEG XL images if installed and enabled.
 	if f.IsJpegXL() && w.conf.JpegXLEnabled() {
 		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.JpegXLDecoderBin(), f.FileName(), jpegName)),
 		)
 	}
@@ -114,19 +120,23 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		resize := fmt.Sprintf("%dx%d>", w.conf.JpegSize(), w.conf.JpegSize())
 		quality := fmt.Sprintf("%d", w.conf.JpegQuality())
 
-		if f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHeif() {
+		switch {
+		case f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHeif():
 			args := []string{f.FileName() + "[0]", "-background", "white", "-alpha", "remove", "-alpha", "off", "-resize", resize, "-quality", quality, jpegName}
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.ImageMagickBin(), args...)),
 			)
-		} else if f.IsVector() && w.conf.VectorEnabled() {
+		case f.IsVector() && w.conf.VectorEnabled():
 			args := []string{f.FileName() + "[0]", "-background", "black", "-alpha", "remove", "-alpha", "off", "-resize", resize, "-quality", quality, jpegName}
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.ImageMagickBin(), args...)),
 			)
-		} else if f.IsDocument() {
+		case f.IsDocument():
 			args := []string{"-colorspace", "sRGB", "-density", "300", f.FileName() + "[0]", "-background", "white", "-alpha", "remove", "-alpha", "off", "-resize", resize, "-quality", quality, jpegName}
 			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
 				exec.Command(w.conf.ImageMagickBin(), args...)),
 			)
 		}

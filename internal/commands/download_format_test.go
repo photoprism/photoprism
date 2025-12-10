@@ -25,7 +25,7 @@ func createArgsLoggingYtDlp(t *testing.T) string {
 		b.WriteString("  if \"%%~A\"==\"--version\" ( echo 2025.09.23 & goto :eof )\r\n")
 		b.WriteString("  if \"%%~A\"==\"--dump-single-json\" ( echo {\"id\":\"abc\",\"title\":\"Test\",\"url\":\"http://example.com\",\"_type\":\"video\"} & goto :eof )\r\n")
 		b.WriteString(")\r\n")
-		if err := os.WriteFile(path, []byte(b.String()), 0o755); err != nil {
+		if err := os.WriteFile(path, []byte(b.String()), 0o600); err != nil {
 			t.Fatalf("failed to write fake yt-dlp: %v", err)
 		}
 		return path
@@ -44,7 +44,7 @@ func createArgsLoggingYtDlp(t *testing.T) string {
 	b.WriteString("echo '[download]' 1>&2\n")
 	b.WriteString("echo 'DATA'\n")
 
-	if err := os.WriteFile(path, []byte(b.String()), 0o755); err != nil {
+	if err := os.WriteFile(path, []byte(b.String()), 0o600); err != nil {
 		t.Fatalf("failed to write fake yt-dlp: %v", err)
 	}
 	return path
@@ -98,7 +98,7 @@ func TestRunDownload_FileMethod_OmitsFormatSort(t *testing.T) {
 	// Give the logging script a moment to flush in slower environments.
 	time.Sleep(20 * time.Millisecond)
 
-	data, err := os.ReadFile(argsLog)
+	data, err := os.ReadFile(argsLog) //nolint:gosec // test temp file
 	if err != nil {
 		t.Fatalf("reading args log failed: %v", err)
 	}
@@ -157,7 +157,7 @@ func TestRunDownload_FileMethod_WithFormatSort(t *testing.T) {
 
 	time.Sleep(20 * time.Millisecond)
 
-	data, err := os.ReadFile(argsLog)
+	data, err := os.ReadFile(argsLog) //nolint:gosec // test temp file
 	if err != nil {
 		t.Fatalf("reading args log failed: %v", err)
 	}

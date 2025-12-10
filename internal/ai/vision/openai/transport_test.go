@@ -12,7 +12,7 @@ func loadTestResponse(t *testing.T, name string) *Response {
 
 	filePath := filepath.Join("testdata", name)
 
-	data, err := os.ReadFile(filePath)
+	data, err := os.ReadFile(filePath) // #nosec G304 test fixture path
 	if err != nil {
 		t.Fatalf("failed to read %s: %v", filePath, err)
 	}

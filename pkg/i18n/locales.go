@@ -6,30 +6,45 @@ import (
 	"github.com/leonelquinteros/gotext"
 )
 
+// Locale represents a language/region tag (e.g., "en", "pt_BR").
 type Locale string
 
 const (
-	German              Locale = "de"
-	English             Locale = "en"
-	Spanish             Locale = "es"
-	French              Locale = "fr"
-	Dutch               Locale = "nl"
-	Polish              Locale = "pl"
-	Portuguese          Locale = "pt"
+	// German locale.
+	German Locale = "de"
+	// English locale.
+	English Locale = "en"
+	// Spanish locale.
+	Spanish Locale = "es"
+	// French locale.
+	French Locale = "fr"
+	// Dutch locale.
+	Dutch Locale = "nl"
+	// Polish locale.
+	Polish Locale = "pl"
+	// Portuguese locale.
+	Portuguese Locale = "pt"
+	// BrazilianPortuguese locale.
 	BrazilianPortuguese Locale = "pt_BR"
-	Russian             Locale = "ru"
-	ChineseSimplified   Locale = "zh"
-	ChineseTraditional  Locale = "zh_TW"
-	Default                    = English
+	// Russian locale.
+	Russian Locale = "ru"
+	// ChineseSimplified locale.
+	ChineseSimplified Locale = "zh"
+	// ChineseTraditional locale.
+	ChineseTraditional Locale = "zh_TW"
+	// Default locale used when none is supplied.
+	Default = English
 )
 
 var localeDir = "../../assets/locales"
 var locale = Default
 
+// SetDir sets the path to the locales directory.
 func SetDir(dir string) {
 	localeDir = dir
 }
 
+// SetLocale sets the current locale.
 func SetLocale(loc string) {
 	switch len(loc) {
 	case 2:
@@ -45,6 +60,7 @@ func SetLocale(loc string) {
 	gotext.Configure(localeDir, string(locale), "default")
 }
 
+// Locale returns the string value of the locale.
 func (l Locale) Locale() string {
 	return string(l)
 }

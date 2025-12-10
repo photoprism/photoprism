@@ -76,6 +76,7 @@ func Serialize(f interface{}, all bool) string {
 	return strings.Join(q, " ")
 }
 
+// Unserialize parses a query string into the provided SearchForm implementation.
 func Unserialize(f SearchForm, q string) (result error) {
 	var key, value []rune
 	var escaped, isKeyValue bool
@@ -110,7 +111,8 @@ func Unserialize(f SearchForm, q string) (result error) {
 	var queryStrings []string
 
 	for _, char := range q {
-		if unicode.IsSpace(char) && !escaped {
+		switch {
+		case unicode.IsSpace(char) && !escaped:
 			if isKeyValue {
 				formName := strings.ToLower(string(key))
 				fieldName := fieldNames[formName]
@@ -145,7 +147,11 @@ func Unserialize(f SearchForm, q string) (result error) {
 						if intValue, err := strconv.Atoi(stringValue); err != nil {
 							result = err
 						} else {
-							field.SetUint(uint64(intValue))
+							if intValue < 0 {
+								result = fmt.Errorf("unsupported negative value for %s", formName)
+							} else {
+								field.SetUint(uint64(intValue))
+							}
 						}
 					case string:
 						field.SetString(clean.SearchString(stringValue))
@@ -165,13 +171,13 @@ func Unserialize(f SearchForm, q string) (result error) {
 			isKeyValue = false
 			key = key[:0]
 			value = value[:0]
-		} else if char == ':' && !escaped {
+		case char == ':' && !escaped:
 			isKeyValue = true
-		} else if char == '"' {
+		case char == '"':
 			escaped = !escaped
-		} else if isKeyValue {
+		case isKeyValue:
 			value = append(value, char)
-		} else {
+		default:
 			key = append(key, unicode.ToLower(char))
 		}
 	}

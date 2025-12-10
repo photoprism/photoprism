@@ -12,7 +12,7 @@ import (
 func loadLabelsFromPath(path string) (labels []string, err error) {
 	log.Infof("vision: loading TensorFlow model labels from %s", path)
 
-	f, err := os.Open(path)
+	f, err := os.Open(path) //nolint:gosec // path originates from known model directory; reading labels is expected
 	if err != nil {
 		return nil, err
 	}

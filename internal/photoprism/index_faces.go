@@ -78,7 +78,9 @@ func ApplyDetectedFaces(file *entity.File, faces face.Faces) (saved bool, count 
 		return false, 0, nil
 	}
 
-	count, err = file.UpdatePhotoFaceCount()
+	if count, err = file.UpdatePhotoFaceCount(); err != nil {
+		return true, count, err
+	}
 
 	return true, count, nil
 }

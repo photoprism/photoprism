@@ -58,10 +58,6 @@ func (r *CloseableResponseRecorder) CloseNotify() <-chan bool {
 	return r.closeCh
 }
 
-func (r *CloseableResponseRecorder) closeClient() {
-	r.closeCh <- true
-}
-
 // NewApiTest returns new API test helper.
 func NewApiTest() (app *gin.Engine, router *gin.RouterGroup, conf *config.Config) {
 	gin.SetMode(gin.TestMode)

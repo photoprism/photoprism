@@ -21,7 +21,7 @@ func TestClientsResetCommand(t *testing.T) {
 		output, err := RunWithTestContext(ClientsResetCommand, []string{"reset"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 

@@ -156,7 +156,6 @@ export default {
     color: "on-surface",
     bgColor: "secondary",
     baseColor: "secondary",
-    sliderColor: "surface-variant",
   },
   VTable: {
     density: "comfortable",

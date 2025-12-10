@@ -1,7 +1,7 @@
 package photoprism
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // SHA1 is kept for backward-compatible audit hashing.
 	"encoding/base32"
 	"fmt"
 	"math"
@@ -111,14 +111,16 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 
 	if len(stubborn) > 0 {
 		counts, countErr := query.MarkerCountsByFaceIDs(stubbornIDs)
-		if countErr != nil {
+
+		switch {
+		case countErr != nil:
 			logErr("faces", "marker counts", countErr)
-		} else if subjUID != "" {
+		case subjUID != "":
 			log.Warnf("faces: %s awaiting merge for subject %s", english.Plural(len(stubborn), "manual cluster", "manual clusters"), entity.SubjNames.Log(subjUID))
 			for _, entry := range stubborn {
 				log.Warnf("faces: cluster %s retry=%d markers=%d notes=%s", entry.ID, entry.MergeRetry, counts[entry.ID], clean.Log(entry.MergeNotes))
 			}
-		} else {
+		default:
 			log.Warnf("faces: %s pending manual cluster merge – use 'photoprism faces audit --subject=<uid>' for details", english.Plural(len(stubborn), "manual cluster", "manual clusters"))
 		}
 	}
@@ -204,11 +206,12 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	}
 
 	// Show conflict resolution results.
-	if conflicts == 0 {
+	switch {
+	case conflicts == 0:
 		log.Infof("faces: found no ambiguous subjects")
-	} else if !fix {
+	case !fix:
 		log.Infof("faces: found %s", english.Plural(conflicts, "ambiguous subject", "ambiguous subjects"))
-	} else {
+	default:
 		log.Infof("faces: found %s, %d resolved", english.Plural(conflicts, "ambiguous subject", "ambiguous subjects"), resolved)
 	}
 
@@ -262,7 +265,8 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 				continue
 			}
 
-			if m.SubjUID != faceEntry.SubjUID {
+			switch {
+			case m.SubjUID != faceEntry.SubjUID:
 				dist := -1.0
 				if emb := m.Embeddings(); !emb.Empty() {
 					dist = minEmbeddingDistance(faceEntry.Embedding(), emb)
@@ -272,12 +276,11 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 					m.MarkerUID, entity.SrcString(m.SubjSrc), markerSubject, m.SubjUID,
 					m.FaceID, entity.SrcString(faceEntry.FaceSrc), faceSubject, faceEntry.SubjUID)
 
-				if !fix {
+				switch {
+				case !fix:
 					log.Warnf("%s", msg)
 					continue
-				}
-
-				if m.SubjSrc == entity.SrcManual {
+				case m.SubjSrc == entity.SrcManual:
 					updates := entity.Values{"face_id": "", "face_dist": -1.0, "matched_at": nil, "marker_review": true}
 
 					if err := entity.Db().Model(&entity.Marker{}).
@@ -288,28 +291,28 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 						log.Warnf("%s – kept manual subject and cleared conflicting face id", msg)
 					}
 					continue
-				}
+				default:
+					updates := entity.Values{
+						"subj_uid":      faceEntry.SubjUID,
+						"subj_src":      entity.SrcAuto,
+						"marker_review": false,
+					}
 
-				updates := entity.Values{
-					"subj_uid":      faceEntry.SubjUID,
-					"subj_src":      entity.SrcAuto,
-					"marker_review": false,
-				}
+					if dist >= 0 {
+						updates["face_dist"] = dist
+					}
 
-				if dist >= 0 {
-					updates["face_dist"] = dist
+					if err := entity.Db().Model(&entity.Marker{}).
+						Where("marker_uid = ?", m.MarkerUID).
+						UpdateColumns(updates).Error; err != nil {
+						log.Errorf("faces: failed aligning marker %s with face %s (%s)", m.MarkerUID, m.FaceID, err)
+					} else {
+						log.Infof("faces: updated marker %s to match face %s subject %s (%s)", m.MarkerUID, m.FaceID, faceSubject, faceEntry.SubjUID)
+					}
 				}
-
-				if err := entity.Db().Model(&entity.Marker{}).
-					Where("marker_uid = ?", m.MarkerUID).
-					UpdateColumns(updates).Error; err != nil {
-					log.Errorf("faces: failed aligning marker %s with face %s (%s)", m.MarkerUID, m.FaceID, err)
-				} else {
-					log.Infof("faces: updated marker %s to match face %s subject %s (%s)", m.MarkerUID, m.FaceID, faceSubject, faceEntry.SubjUID)
-				}
-			} else if m.MarkerName != "" {
+			case m.MarkerName != "":
 				log.Infof("faces: marker %s with %s subject name %s conflicts with face %s (%s) of subject %s (%s)", m.MarkerUID, entity.SrcString(m.SubjSrc), clean.Log(m.MarkerName), m.FaceID, entity.SrcString(faceEntry.FaceSrc), faceSubject, faceEntry.SubjUID)
-			} else {
+			default:
 				log.Infof("faces: marker %s with unknown subject (%s) conflicts with face %s (%s) of subject %s (%s)", m.MarkerUID, entity.SrcString(m.SubjSrc), m.FaceID, entity.SrcString(faceEntry.FaceSrc), faceSubject, faceEntry.SubjUID)
 			}
 
@@ -434,6 +437,7 @@ func (w *Faces) normalizeStoredEmbeddings(fix bool) (normalized, rekeyed, distan
 			continue
 		}
 
+		//nolint:gosec // SHA1 is sufficient for non-security audit hashing.
 		sumBytes := sha1.Sum(normalizedJSON)
 		newID := base32.StdEncoding.EncodeToString(sumBytes[:])
 

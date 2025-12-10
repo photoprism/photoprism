@@ -6,8 +6,11 @@ import (
 )
 
 const (
-	RefID       = "ref_id"
-	SessionID   = "session_id"
+	// RefID indicates a reference token identifier.
+	RefID = "ref_id"
+	// SessionID indicates a session token identifier.
+	SessionID = "session_id"
+	// AccessToken indicates a bearer access token identifier.
 	AccessToken = "access_token"
 )
 
@@ -43,13 +46,14 @@ func (f *OAuthRevokeToken) Validate() error {
 
 	switch f.TokenTypeHint {
 	case "":
-		if !isRefID && !isSessionID && !isAuthAny {
+		switch {
+		case !isRefID && !isSessionID && !isAuthAny:
 			return authn.ErrInvalidToken
-		} else if isRefID {
+		case isRefID:
 			f.TokenTypeHint = RefID
-		} else if isSessionID {
+		case isSessionID:
 			f.TokenTypeHint = SessionID
-		} else {
+		default:
 			f.TokenTypeHint = AccessToken
 		}
 	case RefID:

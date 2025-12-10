@@ -2,7 +2,8 @@ package colors
 
 import (
 	"image"
-	_ "image/jpeg"
+	_ "image/jpeg" // register JPEG
+	_ "image/png"  // register PNG (may appear in decoded sources)
 	"runtime"
 
 	"github.com/mandykoh/prism"

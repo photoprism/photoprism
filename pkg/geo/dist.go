@@ -5,9 +5,12 @@ import (
 )
 
 const (
-	DistLimit      float64 = 5000
+	// DistLimit is the maximum distance in km considered realistic.
+	DistLimit float64 = 5000
+	// ScopeDistLimit is the maximum distance in km for scope queries.
 	ScopeDistLimit float64 = 50
-	DefaultDist    float64 = 2
+	// DefaultDist is the default distance in km used when none is provided.
+	DefaultDist float64 = 2
 )
 
 // Deg returns the distance in decimal degrees based on the specified distance in meters and the latitude,
@@ -22,11 +25,12 @@ func Deg(lat, meter float64) (dLat, dLng float64) {
 
 	// Do not calculate the exact longitude distance in
 	// degrees if the latitude is zero or out of range.
-	if lat == 0.0 {
+	switch {
+	case lat == 0.0:
 		return dLat, dLat
-	} else if lat < -89.9 {
+	case lat < -89.9:
 		lat = -89.9
-	} else if lat > 89.9 {
+	case lat > 89.9:
 		lat = 89.9
 	}
 

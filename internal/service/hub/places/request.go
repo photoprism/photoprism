@@ -1,7 +1,7 @@
 package places
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // required for upstream signature scheme
 	"fmt"
 	"net/http"
 	"time"
@@ -40,7 +40,7 @@ func GetRequest(reqUrl string, locale string) (r *http.Response, err error) {
 	// Add API key?
 	if Key != "" {
 		req.Header.Set("X-Key", Key)
-		req.Header.Set("X-Signature", fmt.Sprintf("%x", sha1.Sum([]byte(Key+reqUrl+Secret))))
+		req.Header.Set("X-Signature", fmt.Sprintf("%x", sha1.Sum([]byte(Key+reqUrl+Secret)))) //nolint:gosec // upstream expects SHA1
 	}
 
 	// Create new http.Client.

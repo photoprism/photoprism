@@ -136,7 +136,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// Find existing photo if a photo uid was provided or file has not been indexed yet...
-	if !fileExists && photoUID != "" {
+	switch {
+	case !fileExists && photoUID != "":
 		// Find existing photo by UID.
 		photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", photoUID)
 
@@ -149,7 +150,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			result.Err = fmt.Errorf("index: failed indexing %s, unknown photo uid %s (%s)", logName, photoUID, photoQuery.Error)
 			return result
 		}
-	} else if !fileExists {
+	case !fileExists:
 		// Find existing photo by matching path and name.
 		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || !o.Stack {
 			// Skip next query.
@@ -184,19 +185,20 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				}
 			}
 		}
-	} else if fileExists {
+	case fileExists:
 		// Find photo by the id or uid assigned to the file.
-		if file.PhotoID > 0 {
+		switch {
+		case file.PhotoID > 0:
 			photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
-		} else if rnd.IsUID(file.PhotoUID, entity.PhotoUID) {
+		case rnd.IsUID(file.PhotoUID, entity.PhotoUID):
 			photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", file.PhotoUID)
-		} else {
+		default:
 			// Should never happen.
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: file %s has no photo id or uid assigned - you may have found a bug, please report", logName)
 			return result
 		}
-	} else {
+	default:
 		// Should never happen.
 		result.Status = IndexFailed
 		result.Err = fmt.Errorf("index: unexpectedly failed indexing %s - you may have found a bug, please report", logName)
@@ -215,13 +217,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 
 		// Detect and report file changes.
-		if fileRenamed {
+		switch {
+		case fileRenamed:
 			fileChanged = true
 			log.Debugf("index: %s was renamed", clean.Log(m.BaseName()))
-		} else if file.Changed(fileSize, modTime) {
+		case file.Changed(fileSize, modTime):
 			fileChanged = true
 			log.Debugf("index: %s was modified (new size %d, old size %d, new timestamp %d, old timestamp %d)", clean.Log(m.BaseName()), fileSize, file.FileSize, modTime.Unix(), file.ModTime)
-		} else if file.Missing() {
+		case file.Missing():
 			fileChanged = true
 			log.Debugf("index: %s was missing", clean.Log(m.BaseName()))
 		}
@@ -583,13 +586,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// If the media type is still set to "image" and has not been
 		// manually modified, then check and update it as needed.
 		if photo.HasMediaType(media.Image) {
-			if m.IsAnimatedImage() {
+			switch {
+			case m.IsAnimatedImage():
 				photo.SetMediaType(media.Animated, entity.SrcAuto)
-			} else if m.IsRaw() {
+			case m.IsRaw():
 				photo.SetMediaType(media.Raw, entity.SrcAuto)
-			} else if m.IsLive(photo.PhotoDuration) {
+			case m.IsLive(photo.PhotoDuration):
 				photo.SetMediaType(media.Live, entity.SrcAuto)
-			} else if m.IsVector() {
+			case m.IsVector():
 				photo.SetMediaType(media.Vector, entity.SrcAuto)
 			}
 		}
@@ -973,11 +977,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			w = append(w, txt.FilenameKeywords(fileBase)...)
 		}
 
-		if photo.OriginalName == "" {
+		switch {
+		case photo.OriginalName == "":
 			// Do nothing.
-		} else if fs.IsGenerated(photo.OriginalName) {
+		case fs.IsGenerated(photo.OriginalName):
 			w = append(w, txt.FilenameKeywords(filepath.Dir(photo.OriginalName))...)
-		} else {
+		default:
 			w = append(w, txt.FilenameKeywords(photo.OriginalName)...)
 		}
 
@@ -1072,14 +1077,17 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Do nothing.
 	} else if original, merged, err := photo.Merge(Config().Settings().StackMeta(), Config().Settings().StackUUID()); err != nil {
 		log.Errorf("index: %s in %s (merge)", err.Error(), logName)
-	} else if len(merged) == 1 && original.ID == photo.ID {
-		log.Infof("index: merged one existing photo with %s", logName)
-	} else if len(merged) > 1 && original.ID == photo.ID {
-		log.Infof("index: merged %d existing photos with %s", len(merged), logName)
-	} else if len(merged) > 0 && original.ID != photo.ID {
-		log.Infof("index: merged %s with existing photo id %d", logName, original.ID)
-		result.Status = IndexStacked
-		return result
+	} else {
+		switch {
+		case len(merged) == 1 && original.ID == photo.ID:
+			log.Infof("index: merged one existing photo with %s", logName)
+		case len(merged) > 1 && original.ID == photo.ID:
+			log.Infof("index: merged %d existing photos with %s", len(merged), logName)
+		case len(merged) > 0 && original.ID != photo.ID:
+			log.Infof("index: merged %s with existing photo id %d", logName, original.ID)
+			result.Status = IndexStacked
+			return result
+		}
 	}
 
 	// Create backup of picture metadata in sidecar YAML file.

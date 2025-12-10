@@ -20,5 +20,5 @@ func RandomAngle(max float64) float64 {
 
 	r := 2 * max
 
-	return (rand.Float64() - 0.5) * r
+	return (rand.Float64() - 0.5) * r //nolint:gosec // visual randomness only
 }

@@ -24,6 +24,7 @@ func writeFile(t *testing.T, p string, data []byte) {
 
 func readFile(t *testing.T, p string) []byte {
 	t.Helper()
+	// #nosec G304 -- test reads from controlled temp directory.
 	b, err := os.ReadFile(p)
 	if err != nil {
 		t.Fatal(err)

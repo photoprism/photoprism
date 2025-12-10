@@ -17,7 +17,7 @@ import (
 // defined for input images as "what decodeImage returns".
 const ExpectedChannels = 3
 
-// Interval of allowed values
+// Interval of allowed values.
 type Interval struct {
 	Start  float32  `yaml:"Start,omitempty" json:"start,omitempty"`
 	End    float32  `yaml:"End,omitempty" json:"end,omitempty"`
@@ -53,9 +53,13 @@ func StandardInterval() *Interval {
 type ResizeOperation int
 
 const (
+	// UndefinedResizeOperation indicates that no resize strategy was specified.
 	UndefinedResizeOperation ResizeOperation = iota
+	// ResizeBreakAspectRatio resizes without preserving aspect ratio.
 	ResizeBreakAspectRatio
+	// CenterCrop crops the center region after resizing to fill the target size.
 	CenterCrop
+	// Padding resizes while preserving aspect ratio and pads the rest.
 	Padding
 )
 
@@ -74,6 +78,7 @@ func (o ResizeOperation) String() string {
 	}
 }
 
+// NewResizeOperation parses a string into a ResizeOperation.
 func NewResizeOperation(s string) (ResizeOperation, error) {
 	switch s {
 	case "Undefined":
@@ -85,14 +90,16 @@ func NewResizeOperation(s string) (ResizeOperation, error) {
 	case "Padding":
 		return Padding, nil
 	default:
-		return UndefinedResizeOperation, fmt.Errorf("Invalid operation %s", s)
+		return UndefinedResizeOperation, fmt.Errorf("invalid operation %s", s)
 	}
 }
 
+// MarshalJSON encodes the resize operation as its string name.
 func (o ResizeOperation) MarshalJSON() ([]byte, error) {
 	return json.Marshal(o.String())
 }
 
+// UnmarshalJSON decodes a resize operation from its string representation.
 func (o *ResizeOperation) UnmarshalJSON(data []byte) error {
 	var s string
 	if err := json.Unmarshal(data, &s); err != nil {
@@ -108,10 +115,12 @@ func (o *ResizeOperation) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MarshalYAML encodes the resize operation for YAML output.
 func (o ResizeOperation) MarshalYAML() (any, error) {
 	return o.String(), nil
 }
 
+// UnmarshalYAML decodes the resize operation from YAML input.
 func (o *ResizeOperation) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var s string
 	if err := unmarshal(&s); err != nil {
@@ -131,15 +140,23 @@ func (o *ResizeOperation) UnmarshalYAML(unmarshal func(interface{}) error) error
 type ColorChannelOrder int
 
 const (
+	// UndefinedOrder leaves channel order unspecified, defaulting to RGB.
 	UndefinedOrder ColorChannelOrder = 0
-	RGB                              = 123
-	RBG                              = 132
-	GRB                              = 213
-	GBR                              = 231
-	BRG                              = 312
-	BGR                              = 321
+	// RGB represents Red-Green-Blue channel order.
+	RGB = 123
+	// RBG represents Red-Blue-Green channel order.
+	RBG = 132
+	// GRB represents Green-Red-Blue channel order.
+	GRB = 213
+	// GBR represents Green-Blue-Red channel order.
+	GBR = 231
+	// BRG represents Blue-Red-Green channel order.
+	BRG = 312
+	// BGR represents Blue-Green-Red channel order.
+	BGR = 321
 )
 
+// Indices returns the zero-based indices of the R, G, and B channels.
 func (o ColorChannelOrder) Indices() (r, g, b int) {
 	i := int(o)
 
@@ -147,7 +164,7 @@ func (o ColorChannelOrder) Indices() (r, g, b int) {
 		i = 123
 	}
 
-	for idx := 0; i > 0 && idx < 3; idx += 1 {
+	for idx := 0; i > 0 && idx < 3; idx++ {
 		remainder := i % 10
 		i /= 10
 
@@ -195,9 +212,10 @@ func (o ColorChannelOrder) String() string {
 	return result
 }
 
+// NewColorChannelOrder parses a string (e.g., "RGB") into a ColorChannelOrder.
 func NewColorChannelOrder(val string) (ColorChannelOrder, error) {
 	if len(val) != 3 {
-		return UndefinedOrder, fmt.Errorf("Invalid length, expected 3")
+		return UndefinedOrder, fmt.Errorf("invalid length, expected 3")
 	}
 
 	convert := func(c rune) int {
@@ -217,17 +235,19 @@ func NewColorChannelOrder(val string) (ColorChannelOrder, error) {
 	for _, c := range val {
 		index := convert(c)
 		if index == 0 {
-			return UndefinedOrder, fmt.Errorf("Invalid val %c", c)
+			return UndefinedOrder, fmt.Errorf("invalid val %c", c)
 		}
 		result = result*10 + index
 	}
 	return ColorChannelOrder(result), nil
 }
 
+// MarshalJSON encodes the channel order as its string name.
 func (o ColorChannelOrder) MarshalJSON() ([]byte, error) {
 	return json.Marshal(o.String())
 }
 
+// UnmarshalJSON decodes a channel order from its string representation.
 func (o *ColorChannelOrder) UnmarshalJSON(data []byte) error {
 	var s string
 	if err := json.Unmarshal(data, &s); err != nil {
@@ -243,10 +263,12 @@ func (o *ColorChannelOrder) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MarshalYAML encodes the channel order for YAML output.
 func (o ColorChannelOrder) MarshalYAML() (any, error) {
 	return o.String(), nil
 }
 
+// UnmarshalYAML decodes the channel order from YAML input.
 func (o *ColorChannelOrder) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var s string
 	if err := unmarshal(&s); err != nil {
@@ -261,17 +283,22 @@ func (o *ColorChannelOrder) UnmarshalYAML(unmarshal func(interface{}) error) err
 	return nil
 }
 
-// The expected shape for the input layer of a mode. Usually this shape is
-// (batch, resolution, resolution, channels) but sometimes it is not.
+// ShapeComponent describes a single dimension of a model input shape.
+// Usually this shape is (batch, resolution, resolution, channels) but sometimes it is not.
 type ShapeComponent string
 
 const (
-	ShapeBatch  ShapeComponent = "Batch"
-	ShapeWidth                 = "Width"
-	ShapeHeight                = "Height"
-	ShapeColor                 = "Color"
+	// ShapeBatch represents the batch dimension.
+	ShapeBatch ShapeComponent = "Batch"
+	// ShapeWidth represents the width dimension.
+	ShapeWidth = "Width"
+	// ShapeHeight represents the height dimension.
+	ShapeHeight = "Height"
+	// ShapeColor represents the color/channel dimension.
+	ShapeColor = "Color"
 )
 
+// DefaultPhotoInputShape returns the standard BHWC input shape.
 func DefaultPhotoInputShape() []ShapeComponent {
 	return []ShapeComponent{
 		ShapeBatch,
@@ -285,7 +312,7 @@ func DefaultPhotoInputShape() []ShapeComponent {
 type PhotoInput struct {
 	Name              string            `yaml:"Name,omitempty" json:"name,omitempty"`
 	Intervals         []Interval        `yaml:"Intervals,omitempty" json:"intervals,omitempty"`
-	ResizeOperation   ResizeOperation   `yaml:"ResizeOperation,omitempty" json:"resizeOperation,omitemty"`
+	ResizeOperation   ResizeOperation   `yaml:"ResizeOperation,omitempty" json:"resizeOperation,omitempty"`
 	ColorChannelOrder ColorChannelOrder `yaml:"ColorChannelOrder,omitempty" json:"inputOrder,omitempty"`
 	OutputIndex       int               `yaml:"Index,omitempty" json:"index,omitempty"`
 	Height            int64             `yaml:"Height,omitempty" json:"height,omitempty"`
@@ -427,10 +454,11 @@ func (m ModelInfo) IsComplete() bool {
 	return m.Input != nil && m.Output != nil && m.Input.Shape != nil
 }
 
+// GetModelTagsInfo reads a SavedModel and returns its available meta graph tags.
 func GetModelTagsInfo(savedModelPath string) ([]ModelInfo, error) {
 	savedModel := filepath.Join(savedModelPath, "saved_model.pb")
 
-	data, err := os.ReadFile(savedModel)
+	data, err := os.ReadFile(savedModel) //nolint:gosec // savedModel path derived from trusted model directory
 
 	if err != nil {
 		return nil, fmt.Errorf("vision: failed to read %s (%s)", clean.Path(savedModel), clean.Error(err))

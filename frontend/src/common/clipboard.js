@@ -125,13 +125,12 @@ export class Clipboard {
 
     const id = model.getId();
 
-    this.addId(id);
+    return this.addId(id);
   }
 
   addId(id) {
-    this.updateDom(id, true);
-
     if (this.hasId(id)) {
+      this.lastId = id;
       return true;
     }
 
@@ -145,6 +144,7 @@ export class Clipboard {
     this.lastId = id;
 
     this.saveToStorage();
+    this.updateDom(id, true);
 
     return true;
   }
@@ -170,12 +170,19 @@ export class Clipboard {
       rangeEnd = newEnd;
     }
 
+    let added = 0;
+
     for (let i = rangeStart; i <= rangeEnd; i++) {
-      this.add(models[i], false);
-      this.updateDom(models[i].getId(), true);
+      const result = this.add(models[i]);
+
+      if (!result) {
+        break;
+      }
+
+      added++;
     }
 
-    return rangeEnd - rangeStart + 1;
+    return added;
   }
 
   has(model) {

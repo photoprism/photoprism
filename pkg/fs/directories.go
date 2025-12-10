@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
+// OriginalPaths lists default Originals search paths.
 var OriginalPaths = []string{
 	"/photoprism/storage/media/originals",
 	"/photoprism/media/originals",
@@ -76,6 +77,7 @@ var OriginalPaths = []string{
 	"/var/lib/photoprism/originals",
 }
 
+// ImportPaths lists default Import search paths.
 var ImportPaths = []string{
 	"/photoprism/storage/media/import",
 	"/photoprism/media/import",
@@ -110,6 +112,7 @@ var ImportPaths = []string{
 	"/var/lib/photoprism/import",
 }
 
+// AssetPaths lists default asset paths.
 var AssetPaths = []string{
 	"/opt/photoprism/assets",
 	"/photoprism/assets",
@@ -120,6 +123,7 @@ var AssetPaths = []string{
 	"/var/lib/photoprism/assets",
 }
 
+// ModelsPaths lists default model lookup paths.
 var ModelsPaths = []string{
 	"/opt/photoprism/assets/models",
 	"/photoprism/assets/models",

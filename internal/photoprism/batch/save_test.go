@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/mutex"
 )
 
 // TestSavePhotos covers SavePhotos scenarios.
@@ -53,7 +54,6 @@ func TestSavePhotos(t *testing.T) {
 			"edited_at":      originalEdited,
 		})
 	})
-
 	t.Run("UpdatesDateFields", func(t *testing.T) {
 		fixture := entity.PhotoFixtures.Get("Photo02")
 		photo := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
@@ -103,7 +103,6 @@ func TestSavePhotos(t *testing.T) {
 			"edited_at":      originalEdited,
 		})
 	})
-
 	t.Run("RemovesStrings", func(t *testing.T) {
 		fixture := entity.PhotoFixtures.Get("Photo03")
 		photo := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
@@ -182,7 +181,6 @@ func TestNewPhotoSaveRequest(t *testing.T) {
 		assert.Nil(t, req)
 		assert.Error(t, err)
 	})
-
 	t.Run("BuildsRequest", func(t *testing.T) {
 		fixture := entity.PhotoFixtures.Get("Photo02")
 		photo := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
@@ -211,7 +209,6 @@ func TestPreparePhotoSaveRequests(t *testing.T) {
 		assert.Equal(t, preloaded, updated)
 		assert.Equal(t, MutationStats{}, stats)
 	})
-
 	t.Run("LoadsMissingPhoto", func(t *testing.T) {
 		fixture := entity.PhotoFixtures.Get("Photo01")
 		values := &PhotosForm{PhotoTitle: String{Value: "Prepared", Action: ActionUpdate}}
@@ -224,7 +221,6 @@ func TestPreparePhotoSaveRequests(t *testing.T) {
 		assert.Contains(t, updated, fixture.PhotoUID)
 		assert.Equal(t, MutationStats{}, stats)
 	})
-
 	t.Run("SkipsMissing", func(t *testing.T) {
 		values := &PhotosForm{PhotoTitle: String{Value: "Prepared", Action: ActionUpdate}}
 		photos := search.PhotoResults{{PhotoUID: "pt_does_not_exist"}}
@@ -246,7 +242,6 @@ func TestPrepareAndSavePhotos(t *testing.T) {
 		assert.Len(t, result.Requests, 0)
 		assert.Len(t, result.Results, 0)
 	})
-
 	t.Run("PersistsChanges", func(t *testing.T) {
 		fixture := entity.PhotoFixtures.Get("Photo02")
 		photo := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
@@ -276,6 +271,46 @@ func TestPrepareAndSavePhotos(t *testing.T) {
 		restorePhoto(t, fixture.PhotoUID, entity.Values{
 			"photo_favorite": originalFavorite,
 		})
+	})
+	t.Run("RejectsConcurrentBatchEdit", func(t *testing.T) {
+		require.NoError(t, mutex.BatchEdit.Start())
+		defer mutex.BatchEdit.Stop()
+
+		result, err := PrepareAndSavePhotos(search.PhotoResults{}, nil, &PhotosForm{})
+		assert.Nil(t, result)
+		assert.ErrorIs(t, err, ErrBatchEditBusy)
+	})
+	t.Run("CancelsMetaWorkerWhenRunning", func(t *testing.T) {
+		require.NoError(t, mutex.MetaWorker.Start())
+		t.Cleanup(func() { mutex.MetaWorker.Stop() })
+
+		result, err := PrepareAndSavePhotos(search.PhotoResults{}, nil, &PhotosForm{})
+		require.NoError(t, err)
+		require.NotNil(t, result)
+
+		assert.True(t, mutex.MetaWorker.Canceled())
+	})
+	t.Run("AbortsOnCancellation", func(t *testing.T) {
+		fixture := entity.PhotoFixtures.Get("Photo02")
+		photo := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
+		require.NotNil(t, photo)
+
+		values := &PhotosForm{
+			PhotoFavorite: Bool{Value: !photo.PhotoFavorite, Action: ActionUpdate},
+		}
+
+		req, err := NewPhotoSaveRequest(photo, values)
+		require.NoError(t, err)
+
+		require.NoError(t, mutex.BatchEdit.Start())
+		t.Cleanup(func() { mutex.BatchEdit.Stop() })
+
+		mutex.BatchEdit.Cancel()
+
+		results, err := SavePhotos([]*PhotoSaveRequest{req})
+		assert.ErrorIs(t, err, ErrBatchEditCanceled)
+		assert.Len(t, results, 1)
+		assert.False(t, results[0])
 	})
 }
 

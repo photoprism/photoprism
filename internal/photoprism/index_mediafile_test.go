@@ -38,8 +38,9 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		t.Logf("size in megapixel: %d", mediaFile.Megapixels())
 
-		limitErr, _ := mediaFile.ExceedsResolution(cfg.ResolutionLimit())
-		t.Logf("index: %s", limitErr)
+		if _, limitErr := mediaFile.ExceedsResolution(cfg.ResolutionLimit()); limitErr != nil {
+			t.Logf("index: %s", limitErr)
+		}
 
 		assert.Contains(t, words, "marienkäfer")
 		assert.Contains(t, words, "burst")

@@ -32,7 +32,7 @@ func (v Vector) Sum() float64 {
 // calculating the weighted mean.
 func (v Vector) weightedSum(w Vector) (float64, error) {
 	if len(v) != len(w) {
-		return Epsilon, fmt.Errorf("Length of weights unequal to vector length")
+		return Epsilon, fmt.Errorf("length of weights unequal to vector length")
 	}
 
 	ws := 0.0
@@ -188,8 +188,8 @@ func CosineDist(a, b Vector) float64 {
 
 	for i := 0; i < len(a); i++ {
 		sum += a[i] * b[i]
-		s1 += math.Pow(a[i], 2)
-		s2 += math.Pow(b[i], 2)
+		s1 += a[i] * a[i]
+		s2 += b[i] * b[i]
 	}
 
 	if s1 == 0 || s2 == 0 {

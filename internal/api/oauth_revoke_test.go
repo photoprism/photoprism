@@ -18,7 +18,7 @@ import (
 )
 
 func TestOAuthRevoke(t *testing.T) {
-	const tokenPath = "/api/v1/oauth/token"
+	const tokenPath = "/api/v1/oauth/token" // #nosec G101 test constant, not a credential
 	const revokePath = "/api/v1/oauth/revoke"
 
 	t.Run("ClientSuccessToken", func(t *testing.T) {

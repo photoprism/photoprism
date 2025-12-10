@@ -104,7 +104,7 @@ func (c *Config) VisionKey() string {
 	} else if fileName := FlagFilePath("VISION_KEY"); fileName == "" {
 		// No access token set, this is not an error.
 		return ""
-	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from config directory
 		log.Warnf("config: failed to read vision key from %s (%s)", fileName, err)
 		return ""
 	} else {

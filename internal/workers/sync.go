@@ -97,11 +97,12 @@ func (w *Sync) Start() (err error) {
 				accErrors = 0
 				accError = ""
 
-				if a.SyncDownload {
+				switch {
+				case a.SyncDownload:
 					syncStatus = entity.SyncStatusDownload
-				} else if a.SyncUpload {
+				case a.SyncUpload:
 					syncStatus = entity.SyncStatusUpload
-				} else {
+				default:
 					syncStatus = entity.SyncStatusSynced
 					syncDate.Time = time.Now()
 					syncDate.Valid = true

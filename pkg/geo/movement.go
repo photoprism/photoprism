@@ -140,32 +140,34 @@ func (m *Movement) Realistic() bool {
 
 // AverageAltitude returns the average altitude.
 func (m *Movement) AverageAltitude() float64 {
-	if m.Start.Altitude != 0 && m.End.Altitude == 0 {
+	switch {
+	case m.Start.Altitude != 0 && m.End.Altitude == 0:
 		return m.Start.Altitude
-	} else if m.Start.Altitude == 0 && m.End.Altitude != 0 {
+	case m.Start.Altitude == 0 && m.End.Altitude != 0:
 		return m.End.Altitude
-	} else if m.Start.Altitude != 0 && m.End.Altitude != 0 {
+	case m.Start.Altitude != 0 && m.End.Altitude != 0:
 		return (m.Start.Altitude + m.End.Altitude) / 2
+	default:
+		return 0
 	}
-
-	return 0
 }
 
 // EstimateAccuracy returns the position estimate accuracy in meter.
 func (m *Movement) EstimateAccuracy(t time.Time) int {
 	var a float64
 
-	if !m.Realistic() {
+	switch {
+	case !m.Realistic():
 		a = m.Meter() / 2
-	} else if t.Before(m.Start.Time) {
+	case t.Before(m.Start.Time):
 		d := m.Start.Time.Sub(t).Hours() * 1000
 		d = math.Copysign(math.Sqrt(math.Abs(d)), d)
 		a = m.Speed() * d
-	} else if t.After(m.End.Time) {
+	case t.After(m.End.Time):
 		d := t.Sub(m.End.Time).Hours() * 1000
 		d = math.Copysign(math.Sqrt(math.Abs(d)), d)
 		a = m.Speed() * d
-	} else {
+	default:
 		a = m.Meter() / 20
 	}
 

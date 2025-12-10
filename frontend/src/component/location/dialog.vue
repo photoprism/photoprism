@@ -83,9 +83,7 @@
                   </v-list-item>
                 </template>
                 <template #no-data>
-                  <v-list-item
-                    v-if="searchQuery && searchQuery.length >= 2 && !searchLoading && searchResults.length === 0"
-                  >
+                  <v-list-item v-if="searchQuery && searchQuery.length >= 2 && !searchLoading && searchResults.length === 0">
                     <v-list-item-title>{{ $gettext("No results") }}</v-list-item-title>
                   </v-list-item>
                 </template>

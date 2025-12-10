@@ -17,7 +17,7 @@ func TestCopy_NewDestination_Succeeds(t *testing.T) {
 
 	err := Copy(src, dst, false)
 	assert.NoError(t, err)
-	b, _ := os.ReadFile(dst)
+	b, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "hello", string(b))
 }
 
@@ -31,7 +31,7 @@ func TestCopy_ExistingNonEmpty_NoForce_Error(t *testing.T) {
 
 	err := Copy(src, dst, false)
 	assert.Error(t, err)
-	b, _ := os.ReadFile(dst)
+	b, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "existing", string(b))
 }
 
@@ -46,7 +46,7 @@ func TestCopy_ExistingNonEmpty_Force_TruncatesAndOverwrites(t *testing.T) {
 
 	err := Copy(src, dst, true)
 	assert.NoError(t, err)
-	b, _ := os.ReadFile(dst)
+	b, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "short", string(b))
 }
 
@@ -60,7 +60,7 @@ func TestCopy_ExistingEmpty_NoForce_AllowsReplace(t *testing.T) {
 
 	err := Copy(src, dst, false)
 	assert.NoError(t, err)
-	b, _ := os.ReadFile(dst)
+	b, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "data", string(b))
 }
 
@@ -93,7 +93,7 @@ func TestMove_NewDestination_Succeeds(t *testing.T) {
 	// Source is removed; dest contains data
 	_, serr := os.Stat(src)
 	assert.True(t, os.IsNotExist(serr))
-	b, _ := os.ReadFile(dst)
+	b, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "hello", string(b))
 }
 
@@ -108,8 +108,8 @@ func TestMove_ExistingNonEmpty_NoForce_Error(t *testing.T) {
 	err := Move(src, dst, false)
 	assert.Error(t, err)
 	// Verify both files unchanged
-	bsrc, _ := os.ReadFile(src)
-	bdst, _ := os.ReadFile(dst)
+	bsrc, _ := os.ReadFile(src) //nolint:gosec // test helper reads temp file
+	bdst, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "src", string(bsrc))
 	assert.Equal(t, "dst", string(bdst))
 }
@@ -126,7 +126,7 @@ func TestMove_ExistingEmpty_NoForce_AllowsReplace(t *testing.T) {
 	assert.NoError(t, err)
 	_, serr := os.Stat(src)
 	assert.True(t, os.IsNotExist(serr))
-	bdst, _ := os.ReadFile(dst)
+	bdst, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "src", string(bdst))
 }
 
@@ -142,7 +142,7 @@ func TestMove_ExistingNonEmpty_Force_Succeeds(t *testing.T) {
 	assert.NoError(t, err)
 	_, serr := os.Stat(src)
 	assert.True(t, os.IsNotExist(serr))
-	bdst, _ := os.ReadFile(dst)
+	bdst, _ := os.ReadFile(dst) //nolint:gosec // test helper reads temp file
 	assert.Equal(t, "AAA", string(bdst))
 }
 

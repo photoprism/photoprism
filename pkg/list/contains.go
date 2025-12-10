@@ -30,12 +30,8 @@ func ContainsAny(l, s []string) bool {
 		return false
 	}
 
-	// If second list contains All, it's a wildcard match.
-	if s[0] == Any {
-		return true
-	}
-	for j := 1; j < len(s); j++ {
-		if s[j] == Any {
+	for _, v := range s {
+		if v == Any {
 			return true
 		}
 	}

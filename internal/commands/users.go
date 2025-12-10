@@ -23,6 +23,7 @@ const (
 )
 
 var (
+	// UserRoleUsage describes allowed user roles for CLI help.
 	UserRoleUsage = fmt.Sprintf("user account `ROLE`, e.g. %s", acl.UserRoles.CliUsageString())
 )
 

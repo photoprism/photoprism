@@ -19,18 +19,22 @@ type SearchSubjects struct {
 	Reverse  bool   `form:"reverse" serialize:"-"`
 }
 
+// GetQuery returns the current search query string.
 func (f *SearchSubjects) GetQuery() string {
 	return f.Query
 }
 
+// SetQuery stores the raw query string.
 func (f *SearchSubjects) SetQuery(q string) {
 	f.Query = q
 }
 
+// ParseQueryString deserializes the query string into form fields.
 func (f *SearchSubjects) ParseQueryString() error {
 	return ParseQueryString(f)
 }
 
+// NewSubjectSearch creates a SearchSubjects form with the provided query.
 func NewSubjectSearch(query string) SearchSubjects {
 	return SearchSubjects{Query: query}
 }

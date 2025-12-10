@@ -1,17 +1,7 @@
 <template>
   <div ref="page" tabindex="-1" class="p-page p-page-albums not-selectable" :class="$config.aclClasses('albums')">
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="p-albums-search p-page__navigation"
-      @submit.prevent="updateQuery()"
-    >
-      <v-toolbar
-        flat
-        :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-        color="secondary"
-        class="page-toolbar"
-      >
+    <v-form ref="form" validate-on="invalid-input" class="p-albums-search p-page__navigation" @submit.prevent="updateQuery()">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" color="secondary" class="page-toolbar">
         <v-text-field
           :model-value="filter.q"
           :density="density"
@@ -53,11 +43,7 @@
           @click.prevent="create()"
         ></v-btn>
 
-        <p-action-menu
-          v-if="$vuetify.display.mdAndUp"
-          :items="menuActions"
-          button-class="ms-1"
-        ></p-action-menu>
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
       </v-toolbar>
 
       <div class="toolbar-expansion-panel">
@@ -69,7 +55,7 @@
                   <v-select
                     :model-value="filter.year"
                     :label="$gettext('Year')"
-                    :disabled="context === 'state'"
+                    :disabled="context === contexts.State"
                     :menu-props="{ maxHeight: 346 }"
                     single-line
                     hide-details
@@ -115,9 +101,7 @@
                     hide-details
                     variant="solo-filled"
                     :density="density"
-                    :items="
-                      context === 'album' ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')
-                    "
+                    :items="context === contexts.Album ? options.sorting : options.sorting.filter((item) => item.value !== 'edited')"
                     item-title="text"
                     item-value="value"
                     @update:model-value="
@@ -139,13 +123,7 @@
       <p-loading></p-loading>
     </div>
     <div v-else class="p-page__content">
-      <p-scroll
-        :hide-panel="hideExpansionPanel"
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      >
+      <p-scroll :hide-panel="hideExpansionPanel" :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading">
       </p-scroll>
 
       <p-album-clipboard
@@ -165,42 +143,22 @@
           <div class="mt-2">
             {{ $gettext(`Try again using other filters or keywords.`) }}
             <template v-if="staticFilter.type === 'album'">
-              {{
-                $gettext(
-                  `After selecting pictures from search results, you can add them to an album using the context menu.`
-                )
-              }}
+              {{ $gettext(`After selecting pictures from search results, you can add them to an album using the context menu.`) }}
             </template>
             <template v-else>
-              {{
-                $gettext(
-                  `Your library is continuously analyzed to automatically create albums of special moments, trips, and places.`
-                )
-              }}
+              {{ $gettext(`Your library is continuously analyzed to automatically create albums of special moments, trips, and places.`) }}
             </template>
           </div>
         </v-alert>
 
-        <div
-          v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0"
-          class="d-flex justify-center mt-8 mb-4"
-        >
+        <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="d-flex justify-center mt-8 mb-4">
           <v-btn color="button" rounded variant="flat" class="action-add" @click.prevent="create">
             {{ $gettext(`Add Album`) }}
           </v-btn>
         </div>
       </div>
-      <div
-        v-else
-        class="v-row search-results album-results cards-view"
-        :class="{ 'select-results': selection.length > 0 }"
-      >
-        <div
-          v-for="(album, index) in results"
-          :key="album.UID"
-          ref="items"
-          class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2"
-        >
+      <div v-else class="v-row search-results album-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+        <div v-for="(album, index) in results" :key="album.UID" ref="items" class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2">
           <div
             :data-uid="album.UID"
             class="result not-selectable"
@@ -270,29 +228,14 @@
               >
                 {{ album.getDateString() }}
               </button>
-              <button
-                v-else-if="album.Title"
-                :title="album.Title"
-                class="action-title-edit meta-title"
-                :data-uid="album.UID"
-                @click.stop.prevent="edit(album)"
-              >
+              <button v-else-if="album.Title" :title="album.Title" class="action-title-edit meta-title" :data-uid="album.UID" @click.stop.prevent="edit(album)">
                 {{ album.Title }}
               </button>
 
-              <button
-                v-if="album.Description"
-                :title="$gettext('Description')"
-                class="meta-description"
-                @click.exact="edit(album)"
-              >
+              <button v-if="album.Description" :title="$gettext('Description')" class="meta-description" @click.exact="edit(album)">
                 {{ album.Description }}
               </button>
-              <button
-                v-else-if="album.Type === 'album' && !album.PhotoCount"
-                class="meta-description"
-                @click.stop.prevent="$router.push({ name: 'browse' })"
-              >
+              <button v-else-if="album.Type === 'album' && !album.PhotoCount" class="meta-description" @click.stop.prevent="$router.push({ name: 'browse' })">
                 {{ $gettext(`Add pictures from search results by selecting them.`) }}
               </button>
 
@@ -304,29 +247,15 @@
               </div>
 
               <div class="meta-details">
-                <button
-                  v-if="album.Type === 'folder'"
-                  :title="'/' + album.Path"
-                  class="meta-path"
-                  @click.exact="edit(album)"
-                >
+                <button v-if="album.Type === 'folder'" :title="'/' + album.Path" class="meta-path" @click.exact="edit(album)">
                   <i class="mdi mdi-folder" />
                   /{{ album.Path }}
                 </button>
-                <button
-                  v-if="album.Category !== ''"
-                  :title="album.Category"
-                  class="meta-category"
-                  @click.exact="edit(album)"
-                >
+                <button v-if="album.Category !== ''" :title="album.Category" class="meta-category" @click.exact="edit(album)">
                   <i class="mdi mdi-tag" />
                   {{ album.Category }}
                 </button>
-                <button
-                  v-if="album.getLocation() !== ''"
-                  class="meta-location text-truncate"
-                  @click.exact="edit(album)"
-                >
+                <button v-if="album.getLocation() !== ''" class="meta-location text-truncate" @click.exact="edit(album)">
                   <i class="mdi mdi-map-marker" />
                   {{ album.getLocation() }}
                 </button>
@@ -336,12 +265,7 @@
         </div>
       </div>
     </div>
-    <p-share-dialog
-      :visible="dialog.share"
-      :model="model"
-      @upload="webdavUpload"
-      @close="dialog.share = false"
-    ></p-share-dialog>
+    <p-share-dialog :visible="dialog.share" :model="model" @upload="webdavUpload" @close="dialog.share = false"></p-share-dialog>
     <p-service-upload
       :visible="dialog.upload"
       :items="{ albums: selection }"
@@ -361,6 +285,7 @@ import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 import * as options from "options/options";
+import * as contexts from "options/contexts";
 
 import PLoading from "component/loading.vue";
 import PActionMenu from "component/action/menu.vue";
@@ -409,6 +334,7 @@ export default {
     }
 
     return {
+      contexts,
       expanded: false,
       experimental: this.$config.get("experimental") && !this.$config.ce(),
       canUpload: this.$config.allow("files", "upload") && features.upload,
@@ -473,14 +399,14 @@ export default {
     },
     context: function () {
       if (!this.staticFilter) {
-        return "album";
+        return contexts.Album;
       }
 
       if (this.staticFilter.type) {
         return this.staticFilter.type;
       }
 
-      return "";
+      return contexts.Default;
     },
     canExpand: function () {
       return this.canManage && !this.staticFilter["order"];
@@ -813,7 +739,7 @@ export default {
       }
 
       // Pre-select manually managed album in upload dialog.
-      if (this.context === "album" && this.selection && this.selection.length === 1) {
+      if (this.context === contexts.Album && this.selection && this.selection.length === 1) {
         return this.model
           .find(this.selection[0])
           .then((m) => this.$event.publish("dialog.upload", { albums: [m] }))
@@ -996,9 +922,7 @@ export default {
 
           if (this.scrollDisabled) {
             if (this.results.length > 1) {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} albums loaded"), { n: this.results.length }));
             }
           } else {
             this.page++;
@@ -1173,9 +1097,7 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One album found"));
             } else {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("%{n} albums found"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} albums found"), { n: this.results.length }));
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 albums found'));

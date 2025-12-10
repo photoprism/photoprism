@@ -634,8 +634,8 @@ func TestExif(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "2022-04-24 10:35:53 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, "2022-04-24 02:35:53 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, "2022-04-24 10:35:53.358 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2022-04-24 02:35:53.358 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Asia/Shanghai", data.TimeZone) // Local Time
 		assert.Equal(t, 1, data.Orientation)
 		assert.InEpsilon(t, 33.640007, data.Lat, 0.00001)

@@ -35,7 +35,7 @@ func BenchmarkSelectBestFace(b *testing.B) {
 	}
 }
 
-// BenchmarkSelectBestFaceLegacy captures the legacy behaviour that scans every face.
+// BenchmarkSelectBestFaceLegacy captures the legacy behavior that scans every face.
 func BenchmarkSelectBestFaceLegacy(b *testing.B) {
 	const candidateCount = 1024
 

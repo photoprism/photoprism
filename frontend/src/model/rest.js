@@ -29,9 +29,7 @@ export class Rest extends Model {
   }
 
   find(id, params) {
-    return $api
-      .get(this.getEntityResource(id), params)
-      .then((resp) => Promise.resolve(new this.constructor(resp.data)));
+    return $api.get(this.getEntityResource(id), params).then((resp) => Promise.resolve(new this.constructor(resp.data)));
   }
 
   load() {
@@ -47,9 +45,7 @@ export class Rest extends Model {
       return this.update();
     }
 
-    return $api
-      .post(this.constructor.getCollectionResource(), this.getValues())
-      .then((resp) => Promise.resolve(this.setValues(resp.data)));
+    return $api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   update() {
@@ -112,15 +108,11 @@ export class Rest extends Model {
       values["Password"] = link.Password;
     }
 
-    return $api
-      .put(this.getEntityResource() + "/links/" + link.getId(), values)
-      .then((resp) => Promise.resolve(link.setValues(resp.data)));
+    return $api.put(this.getEntityResource() + "/links/" + link.getId(), values).then((resp) => Promise.resolve(link.setValues(resp.data)));
   }
 
   removeLink(link) {
-    return $api
-      .delete(this.getEntityResource() + "/links/" + link.getId())
-      .then((resp) => Promise.resolve(link.setValues(resp.data)));
+    return $api.delete(this.getEntityResource() + "/links/" + link.getId()).then((resp) => Promise.resolve(link.setValues(resp.data)));
   }
 
   links() {

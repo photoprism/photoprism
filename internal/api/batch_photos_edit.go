@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/dustin/go-humanize/english"
@@ -10,10 +11,12 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/batch"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // BatchPhotosEdit returns and updates the metadata of multiple photos.
@@ -73,10 +76,10 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 			return
 		}
 
-		preloadedPhotos := map[string]*entity.Photo{}
+		var preloadedPhotos map[string]*entity.Photo
 
-		if hydrated, err := query.PhotoPreloadByUIDs(photos.UIDs()); err != nil {
-			log.Errorf("batch: failed to preload photo selection: %s", err)
+		if hydrated, preloadErr := query.PhotoPreloadByUIDs(photos.UIDs()); preloadErr != nil {
+			log.Errorf("batch: %s (preload selection)", preloadErr)
 			AbortUnexpectedError(c)
 			return
 		} else {
@@ -92,8 +95,14 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 		if frm.Values != nil {
 			outcome, saveErr := batch.PrepareAndSavePhotos(photos, preloadedPhotos, frm.Values)
 
-			if saveErr != nil {
-				log.Errorf("batch: failed to persist photo updates: %s", saveErr)
+			switch {
+			case errors.Is(saveErr, batch.ErrBatchEditBusy), errors.Is(saveErr, batch.ErrBatchEditCanceled):
+				log.Warnf("batch: %s (save)", saveErr)
+				AbortBusy(c)
+				return
+			case saveErr != nil:
+				log.Errorf("batch: %s (save)", saveErr)
+				event.AuditErr([]string{ClientIP(c), "session %s", "batch edit", status.Error(saveErr)}, s.RefID)
 				AbortUnexpectedError(c)
 				return
 			}
@@ -102,13 +111,18 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 			saveResults = outcome.Results
 			preloadedPhotos = outcome.Preloaded
 			savedAny = outcome.SavedAny
+
+			if n := len(saveRequests); n > 0 && (savedAny || outcome.Stats.AlbumMutations > 0 || outcome.Stats.LabelMutations > 0) {
+				event.AuditInfo([]string{ClientIP(c), "session %s", "batch edit", "update %s", status.Succeeded},
+					s.RefID, english.Plural(n, "picture", "pictures"))
+			}
 		}
 
-		// Refresh selected photos from database?
-		if !savedAny {
-			// Don't refresh.
-		} else if photos, count, err = search.BatchPhotos(frm.Photos, s); err != nil {
-			log.Errorf("batch: %s (refresh selection)", clean.Error(err))
+		// Refresh selection if core metadata changed; albums and labels are automatically refreshed.
+		if savedAny {
+			if photos, _, err = search.BatchPhotos(frm.Photos, s); err != nil {
+				log.Errorf("batch: %s (refresh selection)", clean.Error(err))
+			}
 		}
 
 		// Create batch edit form values form from photo metadata using the refreshed entities so

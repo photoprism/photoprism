@@ -117,7 +117,6 @@ var Rules = ACL{
 	},
 	ResourceMetrics: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleApp:     GrantNone,
 		RoleService: GrantViewAll,
 		RolePortal:  GrantViewAll,
 		RoleClient:  GrantViewAll,

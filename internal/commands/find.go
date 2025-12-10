@@ -74,7 +74,11 @@ func findAction(ctx *cli.Context) error {
 	rows := make([][]string, 0, len(results))
 
 	for _, found := range results {
-		v := []string{found.FileName, found.FileMime, humanize.Bytes(uint64(found.FileSize)), found.FileHash}
+		size := found.FileSize
+		if size < 0 {
+			size = 0
+		}
+		v := []string{found.FileName, found.FileMime, humanize.Bytes(uint64(size)), found.FileHash} //nolint:gosec // size non-negative after check
 		rows = append(rows, v)
 	}
 

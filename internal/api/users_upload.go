@@ -117,13 +117,14 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			fileType := fs.FileType(baseName)
 
 			// Reject unsupported files and files with extensions that aren't allowed.
-			if fileType == fs.TypeUnknown {
+			switch {
+			case fileType == fs.TypeUnknown:
 				log.Errorf("upload: rejected %s because it has an unsupported file extension", clean.Log(baseName))
 				continue
-			} else if allowedExt.Excludes(fileType.DefaultExt()) {
+			case allowedExt.Excludes(fileType.DefaultExt()):
 				log.Errorf("upload: rejected %s because its extension is not allowed", clean.Log(baseName))
 				continue
-			} else if fileSizeLimit > 0 && file.Size > fileSizeLimit {
+			case fileSizeLimit > 0 && file.Size > fileSizeLimit:
 				log.Errorf("upload: rejected %s because its size exceeds the file size limit", clean.Log(baseName))
 				continue
 			}
@@ -203,13 +204,14 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			for _, filename := range uploads {
 				labels, nsfwErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
 
-				if nsfwErr != nil {
+				switch {
+				case nsfwErr != nil:
 					log.Debug(nsfwErr)
 					continue
-				} else if len(labels) < 1 {
+				case len(labels) < 1:
 					log.Errorf("nsfw: model returned no result")
 					continue
-				} else if labels[0].IsSafe() {
+				case labels[0].IsSafe():
 					continue
 				}
 

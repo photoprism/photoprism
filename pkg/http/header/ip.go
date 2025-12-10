@@ -10,6 +10,7 @@ import (
 var IpRegExp = regexp.MustCompile(`[^a-zA-Z0-9:.]`)
 
 const (
+	// IPv6Length represents the maximum length of an IPv6 address string.
 	IPv6Length = 39
 )
 
@@ -29,7 +30,8 @@ func IP(s, defaultIp string) string {
 	fastOK := true
 	for i := 0; i < len(s); i++ {
 		b := s[i]
-		if !((b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || b == ':' || b == '.') {
+		isAlphaNum := (b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
+		if !isAlphaNum && b != ':' && b != '.' {
 			fastOK = false
 			break
 		}

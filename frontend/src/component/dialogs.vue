@@ -8,17 +8,8 @@
       :tab="edit.tab"
       @close="closeEditDialog"
     ></p-photo-edit-dialog>
-    <p-photo-batch-edit
-      :visible="batchEdit.visible"
-      :selection="batchEdit.selection"
-      @close="closeBatchEdit"
-    ></p-photo-batch-edit>
-    <p-upload-dialog
-      :visible="upload.visible"
-      :data="upload.data"
-      @close="closeUploadDialog"
-      @confirm="closeUploadDialog"
-    ></p-upload-dialog>
+    <p-photo-batch-edit :visible="batchEdit.visible" :selection="batchEdit.selection" @close="closeBatchEdit"></p-photo-batch-edit>
+    <p-upload-dialog :visible="upload.visible" :data="upload.data" @close="closeUploadDialog" @confirm="closeUploadDialog"></p-upload-dialog>
     <p-update :visible="update.visible" @close="closeUpdateDialog"></p-update>
     <p-lightbox @enter="onLightboxEnter" @leave="onLightboxLeave"></p-lightbox>
   </div>

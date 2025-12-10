@@ -3,7 +3,6 @@
 // license that can be found in the LICENSE file.
 
 //go:build freebsd || openbsd || netbsd
-// +build freebsd openbsd netbsd
 
 package fastwalk
 

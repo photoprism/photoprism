@@ -82,7 +82,7 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 	// Fetch the file data from the specified URL, depending on its scheme.
 	switch u.Scheme {
 	case scheme.Https, scheme.Http, scheme.Unix, scheme.HttpUnix:
-		resp, httpErr := http.Get(fileUrl)
+		resp, httpErr := http.Get(fileUrl) //nolint:gosec // URL already validated by caller; https/http only
 
 		if httpErr != nil {
 			return data, fmt.Errorf("invalid %s url (%s)", u.Scheme, httpErr)
@@ -100,7 +100,14 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 			return DecodeBase64String(binaryData)
 		}
 	case scheme.File:
-		if data, err = os.ReadFile(fileUrl); err != nil {
+		path := u.Path
+		if path == "" {
+			path = u.Opaque
+		}
+		if path == "" {
+			return data, fmt.Errorf("invalid %s url (empty path)", u.Scheme)
+		}
+		if data, err = os.ReadFile(path); err != nil { //nolint:gosec // file path validated earlier
 			return data, fmt.Errorf("invalid %s url (%s)", u.Scheme, err)
 		}
 	default:

@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"go/build"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -43,14 +44,14 @@ func testFastWalk(t *testing.T, files map[string]string, callback func(path stri
 	for path, contents := range files {
 		file := filepath.Join(tempdir, "/src", path)
 
-		if err = os.MkdirAll(filepath.Dir(file), 0755); err != nil {
+		if err = os.MkdirAll(filepath.Dir(file), 0o750); err != nil {
 			t.Fatal(err)
 		}
 
 		if strings.HasPrefix(contents, "LINK:") {
 			err = os.Symlink(strings.TrimPrefix(contents, "LINK:"), file)
 		} else {
-			err = os.WriteFile(file, []byte(contents), 0644)
+			err = os.WriteFile(file, []byte(contents), 0o600)
 		}
 
 		if err != nil {
@@ -229,7 +230,8 @@ func TestFastWalk_TraverseSymlink(t *testing.T) {
 		})
 }
 
-var benchDir = flag.String("benchdir", runtime.GOROOT(), "The directory to scan for BenchmarkFastWalk")
+// Default to build.Default.GOROOT to avoid runtime.GOROOT deprecation.
+var benchDir = flag.String("benchdir", build.Default.GOROOT, "The directory to scan for BenchmarkFastWalk")
 
 func BenchmarkFastWalk(b *testing.B) {
 	b.ReportAllocs()

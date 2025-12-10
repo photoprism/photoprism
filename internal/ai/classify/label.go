@@ -53,11 +53,12 @@ func (l *Label) Title() string {
 
 // Confidence returns a matching confidence in percent.
 func (l *Label) Confidence() float32 {
-	if l.Uncertainty > 100 {
+	switch {
+	case l.Uncertainty > 100:
 		return 0
-	} else if l.Uncertainty < 0 {
+	case l.Uncertainty < 0:
 		return 1
-	} else {
+	default:
 		return 1 - float32(l.Uncertainty)/100
 	}
 }

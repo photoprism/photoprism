@@ -30,28 +30,48 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Color represents a indexed color value.
 type Color int16
+
+// Colors is a slice of Color values.
 type Colors []Color
 
 const (
+	// Black color.
 	Black Color = iota
+	// Grey color.
 	Grey
+	// Brown color.
 	Brown
+	// Gold color.
 	Gold
+	// White color.
 	White
+	// Purple color.
 	Purple
+	// Blue color.
 	Blue
+	// Cyan color.
 	Cyan
+	// Teal color.
 	Teal
+	// Green color.
 	Green
+	// Lime color.
 	Lime
+	// Yellow color.
 	Yellow
+	// Magenta color.
 	Magenta
+	// Orange color.
 	Orange
+	// Red color.
 	Red
+	// Pink color.
 	Pink
 )
 
+// All lists all defined colors in display order.
 var All = Colors{
 	Purple,
 	Magenta,
@@ -71,6 +91,7 @@ var All = Colors{
 	Black,
 }
 
+// Names maps Color to their lowercase names.
 var Names = map[Color]string{
 	Black:   "black",   // 0
 	Grey:    "grey",    // 1
@@ -90,6 +111,7 @@ var Names = map[Color]string{
 	Pink:    "pink",    // F
 }
 
+// Weights assigns relative importance to colors.
 var Weights = map[Color]uint16{
 	Grey:    1,
 	Black:   2,
@@ -109,14 +131,17 @@ var Weights = map[Color]uint16{
 	Magenta: 5,
 }
 
+// Name returns the lowercase name for the color.
 func (c Color) Name() string {
 	return Names[c]
 }
 
+// ID returns the numeric identifier for the color.
 func (c Color) ID() int16 {
 	return int16(c)
 }
 
+// Hex returns the hex nibble for the color or "0" if out of range.
 func (c Color) Hex() string {
 	if c < 0 || c > 15 {
 		return "0"
@@ -125,6 +150,7 @@ func (c Color) Hex() string {
 	return fmt.Sprintf("%X", c)
 }
 
+// Hex returns the concatenated hex values for the slice.
 func (c Colors) Hex() (result string) {
 	for _, indexedColor := range c {
 		result += indexedColor.Hex()
@@ -133,6 +159,7 @@ func (c Colors) Hex() (result string) {
 	return result
 }
 
+// List returns a slice of maps with slug, display name, and example color.
 func (c Colors) List() []map[string]string {
 	result := make([]map[string]string, 0, len(c))
 

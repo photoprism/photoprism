@@ -58,6 +58,7 @@ func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
 	assert.InDelta(t, 201, w.Code, 1)
 	// file exists
 	path := filepath.Join(conf.OriginalsPath(), "wdvdir", "hello.txt")
+	// #nosec G304 -- test reads file created under controlled temp directory.
 	b, err := os.ReadFile(path)
 	assert.NoError(t, err)
 	assert.Equal(t, "hello", string(b))
@@ -147,7 +148,7 @@ func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	// Success (201/204 acceptable)
-	if !(w.Code == 201 || w.Code == 204) {
+	if w.Code != http.StatusCreated && w.Code != http.StatusNoContent {
 		t.Fatalf("expected success for Overwrite=T, got %d", w.Code)
 	}
 	b, _ = os.ReadFile(filepath.Join(conf.OriginalsPath(), "dst", "f.txt"))
@@ -172,7 +173,7 @@ func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
 	req.Header.Set("Overwrite", "T")
 	authBasic(req)
 	r.ServeHTTP(w, req)
-	if !(w.Code == 201 || w.Code == 204) {
+	if w.Code != http.StatusCreated && w.Code != http.StatusNoContent {
 		t.Fatalf("expected success for MOVE Overwrite=T, got %d", w.Code)
 	}
 	assert.NoFileExists(t, filepath.Join(conf.OriginalsPath(), "src", "g.txt"))
@@ -196,7 +197,7 @@ func TestWebDAVWrite_MoveMissingDestination(t *testing.T) {
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	// Expect failure (not 201/204)
-	if w.Code == 201 || w.Code == 204 {
+	if w.Code == http.StatusCreated || w.Code == http.StatusNoContent {
 		t.Fatalf("expected failure when Destination header missing, got %d", w.Code)
 	}
 	// Source remains
@@ -220,7 +221,7 @@ func TestWebDAVWrite_CopyInvalidDestinationPrefix(t *testing.T) {
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	// Expect failure
-	if w.Code == 201 || w.Code == 204 {
+	if w.Code == http.StatusCreated || w.Code == http.StatusNoContent {
 		t.Fatalf("expected failure for invalid Destination prefix, got %d", w.Code)
 	}
 	// Destination not created
@@ -242,7 +243,7 @@ func TestWebDAVWrite_MoveNonExistentSource(t *testing.T) {
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	// Expect failure (e.g., 404)
-	if w.Code == 201 || w.Code == 204 {
+	if w.Code == http.StatusCreated || w.Code == http.StatusNoContent {
 		t.Fatalf("expected failure moving non-existent source, got %d", w.Code)
 	}
 	assert.NoFileExists(t, filepath.Join(conf.OriginalsPath(), "dst2", "file.txt"))
@@ -270,7 +271,7 @@ func TestWebDAVWrite_CopyTraversalDestination(t *testing.T) {
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	// Expect success with sanitized destination inside base
-	if !(w.Code == 201 || w.Code == 204) {
+	if w.Code != http.StatusCreated && w.Code != http.StatusNoContent {
 		t.Fatalf("expected success (sanitized), got %d", w.Code)
 	}
 	// Not created above originals; created as /originals/evil.txt
@@ -300,7 +301,7 @@ func TestWebDAVWrite_MoveTraversalDestination(t *testing.T) {
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/../evil2.txt")
 	authBasic(req)
 	r.ServeHTTP(w, req)
-	if !(w.Code == 201 || w.Code == 204) {
+	if w.Code != http.StatusCreated && w.Code != http.StatusNoContent {
 		t.Fatalf("expected success (sanitized) for MOVE, got %d", w.Code)
 	}
 	// Source removed; destination created inside base, not outside

@@ -29,7 +29,7 @@ func VersionWarning() (string, bool) {
 			return
 		}
 
-		cmd := exec.Command(bin, "--version")
+		cmd := exec.Command(bin, "--version") // #nosec G204 yt-dlp path validated via FindYtDlpBin
 		cmd.Env = os.Environ()
 		var out bytes.Buffer
 		cmd.Stdout = &out

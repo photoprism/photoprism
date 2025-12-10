@@ -71,7 +71,6 @@ test.meta("testID", "moments-001").meta({ mode: "public" })("Common: Update mome
 
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit");
-  await t.click(albumdialog.category).wait(3000);
 
   await t
     .expect(albumdialog.description.value)

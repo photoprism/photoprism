@@ -9,14 +9,7 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="form-password"
-      accept-charset="UTF-8"
-      tabindex="-1"
-      @submit.prevent
-    >
+    <v-form ref="form" validate-on="invalid-input" class="form-password" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>
@@ -56,13 +49,7 @@
             <v-btn variant="flat" color="secondary-light" class="action-back" @click.stop="onBack">
               {{ $gettext(`Back`) }}
             </v-btn>
-            <v-btn
-              variant="flat"
-              color="highlight"
-              :disabled="!password || password.length < 4"
-              class="action-confirm"
-              @click.stop="onConfirm"
-            >
+            <v-btn variant="flat" color="highlight" :disabled="!password || password.length < 4" class="action-confirm" @click.stop="onConfirm">
               {{ $gettext(`Continue`) }}
             </v-btn>
           </v-card-actions>
@@ -73,9 +60,7 @@
             <v-row align="start" dense>
               <v-col cols="12" class="text-body-2">
                 {{
-                  $gettext(
-                    `Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:`
-                  )
+                  $gettext(`Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:`)
                 }}
               </v-col>
               <v-col cols="12">
@@ -99,14 +84,7 @@
             <v-btn variant="flat" color="button" class="action-close" @click.stop="close">
               {{ $gettext(`Close`) }}
             </v-btn>
-            <v-btn
-              v-if="appPasswordCopied"
-              variant="flat"
-              color="highlight"
-              :disabled="busy"
-              class="action-done"
-              @click.stop="onDone"
-            >
+            <v-btn v-if="appPasswordCopied" variant="flat" color="highlight" :disabled="busy" class="action-done" @click.stop="onDone">
               {{ $gettext(`Done`) }}
             </v-btn>
             <v-btn v-else variant="flat" color="highlight" class="action-copy" @click.stop="onCopyAppPassword">
@@ -172,13 +150,7 @@
             <v-btn variant="flat" color="button" class="action-cancel" @click.stop="onCancel">
               {{ $gettext(`Cancel`) }}
             </v-btn>
-            <v-btn
-              variant="flat"
-              color="highlight"
-              :disabled="app.client_name === '' || app.scope === ''"
-              class="action-generate"
-              @click.stop="onGenerate"
-            >
+            <v-btn variant="flat" color="highlight" :disabled="app.client_name === '' || app.scope === ''" class="action-generate" @click.stop="onGenerate">
               {{ $gettext(`Generate`) }}
             </v-btn>
           </v-card-actions>
@@ -243,12 +215,7 @@
         </template>
       </v-card>
     </v-form>
-    <p-confirm-dialog
-      :visible="revoke.dialog"
-      icon="mdi-delete-outline"
-      @close="revoke.dialog = false"
-      @confirm="onRevoked"
-    ></p-confirm-dialog>
+    <p-confirm-dialog :visible="revoke.dialog" icon="mdi-delete-outline" @close="revoke.dialog = false" @confirm="onRevoked"></p-confirm-dialog>
   </v-dialog>
 </template>
 <script>

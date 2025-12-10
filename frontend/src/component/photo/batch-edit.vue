@@ -40,21 +40,11 @@
               class="bg-transparent v-table--batch-edit"
             >
               <template #header.select>
-                <v-checkbox
-                  :model-value="isAllSelected"
-                  hide-details
-                  density="compact"
-                  @update:model-value="toggleAll"
-                />
+                <v-checkbox :model-value="isAllSelected" hide-details density="compact" class="toggle-all" @update:model-value="toggleAll" />
               </template>
 
               <template #item.select="{ item }">
-                <v-checkbox
-                  :model-value="isSelected(item)"
-                  hide-details
-                  density="compact"
-                  @update:model-value="toggle(item)"
-                />
+                <v-checkbox :model-value="isSelected(item)" hide-details density="compact" class="toggle-select" @update:model-value="toggle(item)" />
               </template>
 
               <template #item.preview="{ item, index }">
@@ -76,11 +66,7 @@
                       <i v-if="item.Type === 'live'" class="action-live" :title="$gettext('Live')">
                         <icon-live-photo />
                       </i>
-                      <i
-                        v-else-if="item.Type === 'animated'"
-                        class="mdi mdi-file-gif-box"
-                        :title="$gettext('Animated')"
-                      />
+                      <i v-else-if="item.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
                       <i v-else-if="item.Type === 'video'" class="mdi mdi-play" :title="$gettext('Video')" />
                     </button>
                   </div>
@@ -88,11 +74,7 @@
               </template>
 
               <template #item.name="{ item, index }">
-                <span
-                  class="meta-data meta-title col-auto break-word text-start clickable"
-                  :title="item.FileName"
-                  @click.exact="openPhoto(index)"
-                >
+                <span class="meta-data meta-title col-auto break-word text-start clickable" :title="item.FileName" @click.exact="openPhoto(index)">
                   {{ item.getOriginalName() }}
                 </span>
               </template>
@@ -103,12 +85,7 @@
         <!-- Mobile view -->
         <v-col v-else cols="12" class="px-0">
           <div v-if="model.models" class="edit-batch photo-results list-view">
-            <v-expansion-panels
-              v-model="expanded"
-              variant="accordion"
-              density="compact"
-              class="elevation-0 ra-4 bg-transparent"
-            >
+            <v-expansion-panels v-model="expanded" variant="accordion" density="compact" class="elevation-0 ra-4 bg-transparent">
               <v-expansion-panel class="pa-0 ra-4 elevation-0">
                 <v-expansion-panel-title class="px-4">{{ $gettext("Selection") }}</v-expansion-panel-title>
                 <v-expansion-panel-text class="px-2">
@@ -122,21 +99,11 @@
                     class="elevation-0 ra-4 v-table--batch-edit"
                   >
                     <template #header.select>
-                      <v-checkbox
-                        :model-value="isAllSelected"
-                        hide-details
-                        density="compact"
-                        @update:model-value="toggleAll"
-                      />
+                      <v-checkbox :model-value="isAllSelected" hide-details density="compact" class="toggle-all" @update:model-value="toggleAll" />
                     </template>
 
                     <template #item.select="{ item }">
-                      <v-checkbox
-                        :model-value="isSelected(item)"
-                        hide-details
-                        density="compact"
-                        @update:model-value="toggle(item)"
-                      />
+                      <v-checkbox :model-value="isSelected(item)" hide-details density="compact" class="toggle-select" @update:model-value="toggle(item)" />
                     </template>
 
                     <template #item.preview="{ item, index }">
@@ -158,11 +125,7 @@
                             <i v-if="item.Type === 'live'" class="action-live" :title="$gettext('Live')">
                               <icon-live-photo />
                             </i>
-                            <i
-                              v-else-if="item.Type === 'animated'"
-                              class="mdi mdi-file-gif-box"
-                              :title="$gettext('Animated')"
-                            />
+                            <i v-else-if="item.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
                             <i v-else-if="item.Type === 'video'" class="mdi mdi-play" :title="$gettext('Video')" />
                           </button>
                         </div>
@@ -186,13 +149,7 @@
         </v-col>
 
         <v-col v-if="model.values" cols="12" lg="8" class="scroll-col">
-          <v-form
-            ref="form"
-            validate-on="invalid-input"
-            class="p-form p-form-photo-details-meta pa-0"
-            accept-charset="UTF-8"
-            @submit.prevent="save"
-          >
+          <v-form ref="form" validate-on="invalid-input" class="p-form p-form-photo-details-meta pa-0" accept-charset="UTF-8" @submit.prevent="save">
             <div class="form-body">
               <div class="form-controls">
                 <v-row dense>
@@ -466,6 +423,7 @@
                       :empty-text="$gettext('No labels assigned')"
                       :loading="loading"
                       :disabled="false"
+                      class="input-labels"
                       @update:items="onLabelsUpdate"
                     />
                   </v-col>
@@ -480,6 +438,7 @@
                       :empty-text="$gettext('No albums assigned')"
                       :loading="loading"
                       :disabled="false"
+                      class="input-albums"
                       @update:items="onAlbumsUpdate"
                     />
                   </v-col>
@@ -528,16 +487,12 @@
         </v-col>
       </v-row>
     </v-card>
-    <p-location-dialog
-      :visible="locationDialog"
-      :latlng="currentCoordinates"
-      @close="locationDialog = false"
-      @confirm="confirmLocation"
-    ></p-location-dialog>
+    <p-location-dialog :visible="locationDialog" :latlng="currentCoordinates" @close="locationDialog = false" @confirm="confirmLocation"></p-location-dialog>
   </v-dialog>
 </template>
 <script>
 import * as options from "options/options";
+import * as contexts from "options/contexts";
 import IconLivePhoto from "../icon/live-photo.vue";
 import { Batch } from "model/batch";
 import Album from "model/album";
@@ -626,7 +581,7 @@ export default {
         },
         {
           key: "preview",
-          title: this.$gettext(`Preview`),
+          title: this.$gettext(`Picture`),
           sortable: false,
           headerProps: { class: "col-preview" },
         },
@@ -646,7 +601,7 @@ export default {
         },
         {
           key: "preview",
-          title: this.$gettext(`Preview`),
+          title: this.$gettext(`Picture`),
           sortable: false,
           headerProps: { class: "col-preview" },
         },
@@ -856,9 +811,7 @@ export default {
       if (fieldType === "input-field") {
         if (fieldName === "Lat" || fieldName === "Lng") {
           processedValue = parseFloat(newValue) || 0;
-        } else if (
-          ["Altitude", "Day", "Month", "Year", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)
-        ) {
+        } else if (["Altitude", "Day", "Month", "Year", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)) {
           processedValue = parseInt(newValue) || 0;
         } else if (fieldName === "FNumber") {
           processedValue = parseFloat(newValue) || 0;
@@ -883,11 +836,7 @@ export default {
         // If the incoming value is an object (i.e., a selection was made from the list), use the .value property.
         // If the user manually entered a number, it will be a string or number, so parseInt it.
         let processedValue;
-        if (
-          typeof newValue === "object" &&
-          newValue !== null &&
-          Object.prototype.hasOwnProperty.call(newValue, "value")
-        ) {
+        if (typeof newValue === "object" && newValue !== null && Object.prototype.hasOwnProperty.call(newValue, "value")) {
           processedValue = newValue.value;
         } else {
           processedValue = parseInt(newValue, 10) || 0;
@@ -1143,12 +1092,7 @@ export default {
         return iconClear;
       } else if (fieldType === "text-field" && fieldData.value !== null && fieldData.value !== "") {
         return iconClear;
-      } else if (
-        fieldType === "input-field" &&
-        fieldData.value !== 0 &&
-        fieldData.value !== null &&
-        fieldData.value !== ""
-      ) {
+      } else if (fieldType === "input-field" && fieldData.value !== 0 && fieldData.value !== null && fieldData.value !== "") {
         return iconClear;
       }
     },
@@ -1162,9 +1106,7 @@ export default {
       const formatNumericValue = (value) => {
         if (["Lat", "Lng", "FNumber"].includes(fieldName)) {
           return parseFloat(value) || 0;
-        } else if (
-          ["Altitude", "Day", "Month", "Year", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)
-        ) {
+        } else if (["Altitude", "Day", "Month", "Year", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)) {
           return parseInt(value) || 0;
         }
         return value;
@@ -1289,7 +1231,7 @@ export default {
       return {
         models: thumbs,
         index: targetIndex,
-        context: "batch-edit",
+        context: contexts.BatchEdit,
         allowEdit: false,
         allowSelect: false,
       };

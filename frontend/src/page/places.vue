@@ -1,19 +1,8 @@
 <template>
-  <div
-    ref="page"
-    tabindex="-1"
-    class="p-page p-page-places fill-height"
-    :class="$config.aclClasses('places')"
-    @keydown="onKeyDown"
-  >
+  <div ref="page" tabindex="-1" class="p-page p-page-places fill-height" :class="$config.aclClasses('places')" @keydown="onKeyDown">
     <div class="places" :class="'places--' + projection">
       <div v-if="mapError">
-        <v-toolbar
-          flat
-          :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-          class="page-toolbar"
-          color="secondary"
-        >
+        <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
           <v-toolbar-title>
             {{ $gettext("Places") }}
           </v-toolbar-title>
@@ -304,12 +293,7 @@ export default {
       }
     },
     onKeyDown(ev) {
-      if (
-        !ev ||
-        !(ev instanceof KeyboardEvent) ||
-        !this.$view.isActive(this) ||
-        document.activeElement instanceof HTMLInputElement
-      ) {
+      if (!ev || !(ev instanceof KeyboardEvent) || !this.$view.isActive(this) || document.activeElement instanceof HTMLInputElement) {
         return;
       }
 
@@ -995,10 +979,7 @@ export default {
 
       // Add fullscreen toggle control, except on mobile devices.
       if (!this.$isMobile) {
-        this.map.addControl(
-          new maplibregl.FullscreenControl({ container: document.querySelector("body") }),
-          controlPos
-        );
+        this.map.addControl(new maplibregl.FullscreenControl({ container: document.querySelector("body") }), controlPos);
       }
 
       // Add locate position control.

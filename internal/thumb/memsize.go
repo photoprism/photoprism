@@ -57,5 +57,5 @@ func MemSize(img image.Image) Bytes {
 		bytesPerPixel = 8
 	}
 
-	return Bytes(pixels * bytesPerPixel)
+	return Bytes(uint64(pixels) * uint64(bytesPerPixel)) //nolint:gosec // pixels and bytesPerPixel are non-negative and bounded by image dimensions
 }

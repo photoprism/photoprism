@@ -31,7 +31,7 @@ func ProbeFile(fileName string) (info Info, err error) {
 	}
 
 	// Open the file for reading.
-	if file, err = os.Open(fileName); err != nil {
+	if file, err = os.Open(fileName); err != nil { //nolint:gosec // fileName validated by caller
 		return info, err
 	}
 
@@ -113,8 +113,7 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 	}
 
 	// Check major brand.
-	switch video.MajorBrand {
-	case ChunkQT.Get():
+	if video.MajorBrand == ChunkQT.Get() {
 		info.VideoType = Mov
 		info.VideoMimeType = header.ContentTypeMov
 		if info.MediaType == media.Video {
@@ -132,8 +131,7 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 			info.Encrypted = track.Encrypted
 		}
 
-		switch track.Codec {
-		case mp4.CodecAVC1:
+		if track.Codec == mp4.CodecAVC1 {
 			info.VideoCodec = CodecAvc1
 		}
 

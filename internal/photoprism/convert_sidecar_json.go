@@ -42,6 +42,7 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	}
 
 	// Create ExifTool command with arguments.
+	// #nosec G204 -- arguments are built from validated config and file paths.
 	cmd := exec.Command(w.conf.ExifToolBin(), args...)
 
 	// Command environment, output and errors.
@@ -66,13 +67,13 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	}
 
 	// Write output to file (make parent dir robustly in case a parallel test cleaned the cache).
-	if err = os.WriteFile(jsonName, []byte(out.String()), fs.ModeFile); err != nil {
+	if err = os.WriteFile(jsonName, out.Bytes(), fs.ModeFile); err != nil {
 		// If the parent directory vanished due to concurrent cleanup, recreate and retry once.
 		if !os.IsNotExist(err) {
 			return "", err
 		} else if err = fs.MkdirAll(filepath.Dir(jsonName)); err != nil {
 			return "", err
-		} else if err = os.WriteFile(jsonName, []byte(out.String()), fs.ModeFile); err != nil {
+		} else if err = os.WriteFile(jsonName, out.Bytes(), fs.ModeFile); err != nil {
 			return "", err
 		}
 	}

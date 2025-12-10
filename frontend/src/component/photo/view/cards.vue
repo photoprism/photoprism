@@ -1,12 +1,7 @@
 <template>
   <div class="p-photos p-photo-view-cards">
     <div v-if="photos.length === 0" class="pa-3">
-      <v-alert
-        color="surface-variant"
-        :icon="isSharedView ? 'mdi-image-off' : 'mdi-lightbulb-outline'"
-        class="no-results"
-        variant="outlined"
-      >
+      <v-alert color="surface-variant" :icon="isSharedView ? 'mdi-image-off' : 'mdi-lightbulb-outline'" class="no-results" variant="outlined">
         <div v-if="filter.order === 'edited'" class="font-weight-bold">
           {{ $gettext(`No recently edited pictures`) }}
         </div>
@@ -16,38 +11,19 @@
         <div class="mt-2">
           {{ $gettext(`Try again using other filters or keywords.`) }}
           <template v-if="!isSharedView">
-            {{
-              $gettext(
-                `In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`
-              )
-            }}
+            {{ $gettext(`In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`) }}
             <template v-if="$config.feature('review')">
-              {{
-                $gettext(
-                  `Non-photographic and low-quality images require a review before they appear in search results.`
-                )
-              }}
+              {{ $gettext(`Non-photographic and low-quality images require a review before they appear in search results.`) }}
             </template>
           </template>
         </div>
       </v-alert>
     </div>
     <div v-else class="v-row search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
-      <div
-        v-for="(m, index) in photos"
-        :key="m.ID"
-        ref="items"
-        :data-index="index"
-        class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2"
-      >
-        <div
-          v-if="index < firstVisibleElementIndex || index > lastVisibleElementIndex"
-          :data-id="m.ID"
-          :data-uid="m.UID"
-          class="media result placeholder"
-        >
+      <div v-for="(m, index) in photos" :key="m.ID" ref="items" :data-index="index" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2">
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibleElementIndex" :data-id="m.ID" :data-uid="m.UID" class="media result placeholder">
           <div class="preview" />
-          <div v-if="!isSharedView && m.Quality < 3 && context === 'review'" class="review" />
+          <div v-if="!isSharedView && m.Quality < 3 && context === contexts.Review" class="review" />
           <div class="meta">
             <button v-if="!showTitles || m.Title" class="action-title-edit meta-title text-truncate">
               {{ showTitles ? m.Title : m.getOriginalName() }}
@@ -101,14 +77,7 @@
             </div>
           </div>
         </div>
-        <div
-          v-else
-          :data-id="m.ID"
-          :data-uid="m.UID"
-          class="media result"
-          :class="m.classes()"
-          @contextmenu.stop="onContextMenu($event, index)"
-        >
+        <div v-else :data-id="m.ID" :data-uid="m.UID" class="media result" :class="m.classes()" @contextmenu.stop="onContextMenu($event, index)">
           <div
             :title="m.Title"
             :style="`background-image: url(${m.thumbnailUrl('tile_500')})`"
@@ -138,21 +107,9 @@
               <i v-if="m.Type === 'raw'" class="action-raw mdi mdi-raw" :title="$gettext('RAW')" />
               <i v-else-if="m.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo /></i>
               <i v-else-if="m.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
-              <i
-                v-else-if="m.Type === 'vector'"
-                class="action-vector mdi mdi-vector-polyline"
-                :title="$gettext('Vector')"
-              ></i>
-              <i
-                v-else-if="m.Type === 'document'"
-                class="action-document mdi mdi-file-pdf-box"
-                :title="$gettext('Document')"
-              />
-              <i
-                v-else-if="m.Type === 'image' && !selectMode"
-                class="mdi mdi-camera-burst"
-                :title="$gettext('Stack')"
-              />
+              <i v-else-if="m.Type === 'vector'" class="action-vector mdi mdi-vector-polyline" :title="$gettext('Vector')"></i>
+              <i v-else-if="m.Type === 'document'" class="action-document mdi mdi-file-pdf-box" :title="$gettext('Document')" />
+              <i v-else-if="m.Type === 'image' && !selectMode" class="mdi mdi-camera-burst" :title="$gettext('Stack')" />
               <i v-else class="mdi mdi-magnify-plus-outline" :title="$gettext('View')" />
             </button>
 
@@ -197,7 +154,7 @@
             </button>
           </div>
 
-          <div v-if="!isSharedView && m.Quality < 3 && context === 'review'" class="review">
+          <div v-if="!isSharedView && m.Quality < 3 && context === contexts.Review" class="review">
             <button
               type="button"
               class="v-btn v-btn--flat bg-button v-btn--variant-tonal action-archive text-center"
@@ -207,10 +164,7 @@
               <span class="v-btn__overlay"></span>
               <span class="v-btn__underlay"></span>
               <span class="v-btn__content" data-no-activator=""
-                ><i
-                  class="mdi-close mdi v-icon notranslate v-theme--default v-icon--size-default"
-                  aria-hidden="true"
-                ></i
+                ><i class="mdi-close mdi v-icon notranslate v-theme--default v-icon--size-default" aria-hidden="true"></i
               ></span>
             </button>
             <button
@@ -221,9 +175,7 @@
             >
               <span class="v-btn__overlay"></span>
               <span class="v-btn__underlay"></span>
-              <span class="v-btn__content" data-no-activator=""
-                ><i class="mdi-check mdi v-icon notranslate v-icon--size-default" aria-hidden="true"></i
-              ></span>
+              <span class="v-btn__content" data-no-activator=""><i class="mdi-check mdi v-icon notranslate v-icon--size-default" aria-hidden="true"></i></span>
             </button>
           </div>
           <div class="meta">
@@ -235,12 +187,7 @@
             >
               {{ showTitles ? m.Title : m.getOriginalName() }}
             </button>
-            <button
-              v-if="showCaptions && m.Caption"
-              :title="$gettext('Caption')"
-              class="meta-caption"
-              @click.exact="editPhoto(index)"
-            >
+            <button v-if="showCaptions && m.Caption" :title="$gettext('Caption')" class="meta-caption" @click.exact="editPhoto(index)">
               {{ m.Caption }}
             </button>
             <div class="meta-details">
@@ -266,21 +213,11 @@
                 <i class="mdi mdi-camera-iris" />
                 {{ m.getLensInfo() }}
               </button>
-              <button
-                v-if="m.Type === 'video'"
-                :title="$gettext('Video')"
-                class="meta-video text-truncate"
-                @click.exact="editPhoto(index, 'details')"
-              >
+              <button v-if="m.Type === 'video'" :title="$gettext('Video')" class="meta-video text-truncate" @click.exact="editPhoto(index, 'details')">
                 <i class="mdi mdi-movie" />
                 {{ m.getVideoInfo() }}
               </button>
-              <button
-                v-else-if="m.Type === 'live'"
-                :title="$gettext('Live')"
-                class="meta-live text-truncate"
-                @click.exact="editPhoto(index, 'details')"
-              >
+              <button v-else-if="m.Type === 'live'" :title="$gettext('Live')" class="meta-live text-truncate" @click.exact="editPhoto(index, 'details')">
                 <i class="mdi mdi-play-circle-outline" />
                 {{ m.getVideoInfo() }}
               </button>
@@ -302,30 +239,16 @@
                 <i class="mdi" :class="m.Type === 'document' ? 'mdi-text-box' : 'mdi-vector-polyline'" />
                 {{ m.getVectorInfo() }}
               </button>
-              <button
-                v-else
-                :title="$gettext('Image')"
-                class="meta-image text-truncate"
-                @click.exact="editPhoto(index)"
-              >
+              <button v-else :title="$gettext('Image')" class="meta-image text-truncate" @click.exact="editPhoto(index)">
                 <i class="mdi mdi-image" />
                 {{ m.getImageInfo() }}
               </button>
-              <button
-                v-if="showTitles"
-                :title="m.getOriginalName()"
-                class="meta-filename text-truncate"
-                @click.exact="editPhoto(index, 'files')"
-              >
+              <button v-if="showTitles" :title="m.getOriginalName()" class="meta-filename text-truncate" @click.exact="editPhoto(index, 'files')">
                 <i class="mdi" :class="m.Type === 'video' || m.Type === 'live' ? 'mdi-filmstrip' : 'mdi-film'" />
                 {{ m.getOriginalName() }}
               </button>
               <template v-if="featPlaces && m.Country !== 'zz'">
-                <button
-                  :title="$gettext('Location')"
-                  class="meta-location action-location"
-                  @click.exact="openLocation(index)"
-                >
+                <button :title="$gettext('Location')" class="meta-location action-location" @click.exact="openLocation(index)">
                   <i class="mdi mdi-map-marker" />
                   {{ m.locationInfo() }}
                 </button>
@@ -342,6 +265,7 @@ import download from "common/download";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 import { virtualizationTools } from "common/virtualization-tools";
+import * as contexts from "options/contexts";
 import IconLivePhoto from "component/icon/live-photo.vue";
 
 export default {
@@ -408,6 +332,7 @@ export default {
       input,
       debug,
       trace,
+      contexts,
       firstVisibleElementIndex: 0,
       lastVisibleElementIndex: 0,
       visibleElementIndices: new Set(),

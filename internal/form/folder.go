@@ -20,6 +20,7 @@ type Folder struct {
 	FolderWatch       bool   `json:"Watch"`
 }
 
+// NewFolder copies values from an arbitrary model into a Folder form.
 func NewFolder(m interface{}) (f Folder, err error) {
 	err = deepcopier.Copy(m).To(&f)
 

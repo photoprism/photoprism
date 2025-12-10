@@ -17,6 +17,7 @@ type Subject struct {
 	ThumbSrc     string `json:"ThumbSrc"`
 }
 
+// NewSubject copies values from an arbitrary model into a Subject form.
 func NewSubject(m interface{}) (*Subject, error) {
 	frm := &Subject{}
 	err := deepcopier.Copy(m).To(frm)

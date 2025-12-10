@@ -59,13 +59,7 @@
           <v-btn variant="flat" color="button" class="action-cancel action-close" @click.stop="close">
             {{ $gettext(`Cancel`) }}
           </v-btn>
-          <v-btn
-            :disabled="selectedAlbums.length === 0"
-            variant="flat"
-            color="highlight"
-            class="action-confirm text-white"
-            @click.stop="confirm"
-          >
+          <v-btn :disabled="selectedAlbums.length === 0" variant="flat" color="highlight" class="action-confirm text-white" @click.stop="confirm">
             {{ $gettext(`Confirm`) }}
           </v-btn>
         </v-card-actions>

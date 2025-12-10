@@ -203,7 +203,7 @@ type XmpDocument struct {
 
 // Load parses an XMP file and populates document values with its contents.
 func (doc *XmpDocument) Load(filename string) error {
-	data, err := os.ReadFile(filename)
+	data, err := os.ReadFile(filename) //nolint:gosec // filename is provided by caller; reading sidecar files is expected
 
 	if err != nil {
 		return err
@@ -288,8 +288,5 @@ func (doc *XmpDocument) Keywords() string {
 // Favorite returns a favorite status in the XMP document.
 func (doc *XmpDocument) Favorite() bool {
 	fstop := doc.RDF.Description.FStopFavorite
-	if fstop == "1" {
-		return true
-	}
-	return false
+	return fstop == "1"
 }

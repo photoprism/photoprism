@@ -3,7 +3,6 @@
 // license that can be found in the LICENSE file.
 
 //go:build linux && !appengine
-// +build linux,!appengine
 
 package fastwalk
 
@@ -15,7 +14,7 @@ import (
 
 func direntNamlen(dirent *syscall.Dirent) uint64 {
 	const fixedHdr = uint16(unsafe.Offsetof(syscall.Dirent{}.Name))
-	nameBuf := (*[unsafe.Sizeof(dirent.Name)]byte)(unsafe.Pointer(&dirent.Name[0]))
+	nameBuf := (*[unsafe.Sizeof(dirent.Name)]byte)(unsafe.Pointer(&dirent.Name[0])) //nolint:gosec // bounded by Dirent name buffer size
 	const nameBufLen = uint16(len(nameBuf))
 	limit := dirent.Reclen - fixedHdr
 	if limit > nameBufLen {
