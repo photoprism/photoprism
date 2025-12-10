@@ -34,6 +34,10 @@
     opacity: 0.75;
 }
 
+.v-tab__slider {
+    color: rgb(var(--v-theme-surface-variant)) !important;
+}
+
 /* Themes */
 
 body.dark-theme {
@@ -258,6 +262,17 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     padding-top: 6px;
     padding-bottom: 6px;
     padding-inline: 10px;
+}
+
+.v-list-group--open .activator-parent {
+    color: rgb(var(--v-theme-primary));
+}
+
+.v-list--nav .v-list-group:not(:first-child) > .v-list-item,
+.v-list--nav .v-list-group__items > .v-list-group,
+.v-list--nav .v-list-group__items > .v-list-item,
+.v-list--nav .v-list-item:not(:first-child) {
+    margin-top: 0;
 }
 
 /* Progress */
@@ -555,9 +570,14 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     box-shadow: none;
 }
 
+.v-table > .v-table__wrapper > table {
+    border-spacing: 2px;
+}
+
 .v-table.v-table--batch-edit tr,
 .v-table.v-table--batch-edit tr th,
 .v-table.v-table--batch-edit tr td {
+    border-top: none !important;
     border-bottom: none !important;
     text-align: start;
 }
@@ -565,6 +585,9 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 .v-table.v-table--batch-edit tr th {
     overflow: visible;
     white-space: nowrap;
+    font-size: 0.875rem;
+    line-height: 1;
+    height: 32px !important;
 }
 
 .v-table.v-table--batch-edit tr th,

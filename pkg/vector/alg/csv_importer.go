@@ -8,9 +8,9 @@ import (
 	"strconv"
 )
 
-type csvImporter struct {
-}
+type csvImporter struct{}
 
+// CsvImporter returns an Importer that reads vectors from CSV files.
 func CsvImporter() Importer {
 	return &csvImporter{}
 }
@@ -20,7 +20,7 @@ func (i *csvImporter) Import(file string, start, end int) ([][]float64, error) {
 		return [][]float64{}, errInvalidRange
 	}
 
-	f, err := os.Open(file)
+	f, err := os.Open(file) //nolint:gosec // caller controls path
 	if err != nil {
 		return [][]float64{}, err
 	}

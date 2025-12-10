@@ -2,6 +2,7 @@ package classify
 
 // Generated code, do not edit.
 
+// Rules contains the generated label classification rules from rules.yml.
 var Rules = LabelRules{
 	"abacus": {
 		Label:      "",

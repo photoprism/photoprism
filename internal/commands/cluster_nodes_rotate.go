@@ -216,11 +216,12 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 
 		if (resp.Secrets != nil && resp.Secrets.ClientSecret != "") || resp.Database.Password != "" {
 			fmt.Println("PLEASE WRITE DOWN THE FOLLOWING CREDENTIALS; THEY WILL NOT BE SHOWN AGAIN:")
-			if resp.Secrets != nil && resp.Secrets.ClientSecret != "" && resp.Database.Password != "" {
+			switch {
+			case resp.Secrets != nil && resp.Secrets.ClientSecret != "" && resp.Database.Password != "":
 				fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "DB Password", resp.Database.Password))
-			} else if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
+			case resp.Secrets != nil && resp.Secrets.ClientSecret != "":
 				fmt.Printf("\n%s\n", report.Credentials("Node Client Secret", resp.Secrets.ClientSecret, "", ""))
-			} else if resp.Database.Password != "" {
+			case resp.Database.Password != "":
 				fmt.Printf("\n%s\n", report.Credentials("DB User", resp.Database.User, "DB Password", resp.Database.Password))
 			}
 			if resp.Database.DSN != "" {

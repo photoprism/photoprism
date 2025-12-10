@@ -8,8 +8,10 @@ import (
 )
 
 const (
+	// DefaultBackupSchedule defines the default cron schedule for backups.
 	DefaultBackupSchedule = "daily"
-	DefaultBackupRetain   = 3
+	// DefaultBackupRetain sets how many backup sets are kept by default.
+	DefaultBackupRetain = 3
 )
 
 // DisableBackups checks if database and album backups as well as YAML sidecar files should not be created.

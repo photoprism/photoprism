@@ -40,7 +40,7 @@ func TestOpenAIBuilderBuildCaptionDisablesForceJSON(t *testing.T) {
 		Type:    ModelTypeCaption,
 		Name:    openai.DefaultModel,
 		Engine:  openai.EngineName,
-		Options: &ApiRequestOptions{ForceJson: true},
+		Options: &ModelOptions{ForceJson: true},
 	}
 	model.ApplyEngineDefaults()
 
@@ -59,7 +59,7 @@ func TestApiRequestJSONForOpenAI(t *testing.T) {
 		Prompt:         "describe the scene",
 		Images:         []string{"data:image/jpeg;base64,AA=="},
 		ResponseFormat: ApiFormatOpenAI,
-		Options: &ApiRequestOptions{
+		Options: &ModelOptions{
 			Detail:          openai.DefaultDetail,
 			MaxOutputTokens: 128,
 			Temperature:     0.2,
@@ -111,7 +111,7 @@ func TestApiRequestJSONForOpenAIDefaultSchemaName(t *testing.T) {
 		Model:          "gpt-5-mini",
 		Images:         []string{"data:image/jpeg;base64,AA=="},
 		ResponseFormat: ApiFormatOpenAI,
-		Options: &ApiRequestOptions{
+		Options: &ModelOptions{
 			Detail:          openai.DefaultDetail,
 			MaxOutputTokens: 64,
 			ForceJson:       true,
@@ -254,7 +254,7 @@ func TestPerformApiRequestOpenAISuccess(t *testing.T) {
 		Model:          "gpt-5-mini",
 		Images:         []string{"data:image/jpeg;base64,AA=="},
 		ResponseFormat: ApiFormatOpenAI,
-		Options: &ApiRequestOptions{
+		Options: &ModelOptions{
 			Detail: openai.DefaultDetail,
 		},
 		Schema: json.RawMessage(`{"type":"object"}`),
@@ -299,7 +299,7 @@ func TestPerformApiRequestOpenAITextFallback(t *testing.T) {
 		Model:          "gpt-5-mini",
 		Images:         []string{"data:image/jpeg;base64,AA=="},
 		ResponseFormat: ApiFormatOpenAI,
-		Options: &ApiRequestOptions{
+		Options: &ModelOptions{
 			Detail: openai.DefaultDetail,
 		},
 		Schema: nil,

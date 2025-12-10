@@ -1,5 +1,7 @@
 package ordered_test
 
+//revive:disable:var-naming // benchmark helpers follow Go benchmark naming with underscores
+
 import (
 	"slices"
 	"strconv"
@@ -493,7 +495,7 @@ func benchmarkOrderedMap_Len(multiplier int) func(b *testing.B) {
 			temp = m.Len()
 		}
 
-		// prevent compiler from optimising Len away.
+		// prevent compiler from optimizing Len away.
 		tempInt = temp
 	}
 }
@@ -800,7 +802,7 @@ func BenchmarkOrderedMapString_Has(b *testing.B) {
 }
 
 func nothing(v interface{}) {
-	v = false
+	_ = v
 }
 
 func benchmarkBigMap_Set() func(b *testing.B) {

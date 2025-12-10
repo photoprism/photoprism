@@ -53,7 +53,7 @@ var (
 var ClusterRegisterCommand = &cli.Command{
 	Name:  "register",
 	Usage: "Registers a node or updates its credentials within a cluster",
-	Flags: append(append([]cli.Flag{
+	Flags: append([]cli.Flag{
 		regDryRun,
 		regNameFlag,
 		regRoleFlag,
@@ -68,7 +68,7 @@ var ClusterRegisterCommand = &cli.Command{
 		regRotateSec,
 		regWriteConf,
 		regForceFlag,
-	}, report.CliFlags...)),
+	}, report.CliFlags...),
 	Action: clusterRegisterAction,
 }
 

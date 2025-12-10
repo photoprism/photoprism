@@ -12,7 +12,7 @@ func TestUsersLegacyCommand(t *testing.T) {
 		output, err := RunWithTestContext(UsersLegacyCommand, []string{""})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "│ ID │ UID │ Name │ User │ Email │ Admin │ Created At │")
 	})

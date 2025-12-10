@@ -1,24 +1,12 @@
 <template>
   <div class="p-tab p-tab-photo-details">
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="p-form p-form-photo-details-meta"
-      accept-charset="UTF-8"
-      tabindex="-1"
-      @submit.prevent="save"
-    >
+    <v-form ref="form" validate-on="invalid-input" class="p-form p-form-photo-details-meta" accept-charset="UTF-8" tabindex="-1" @submit.prevent="save">
       <div class="form-body">
         <div class="form-controls">
           <v-row dense align="start">
             <v-col cols="3" sm="2" class="form-thumb">
               <div>
-                <img
-                  :alt="view.model.Title"
-                  :src="view.model.thumbnailUrl('tile_500')"
-                  class="clickable"
-                  @click.stop.prevent.exact="openPhoto()"
-                />
+                <img :alt="view.model.Title" :src="view.model.thumbnailUrl('tile_500')" class="clickable" @click.stop.prevent.exact="openPhoto()" />
               </div>
             </v-col>
             <v-col cols="9" sm="10" class="d-flex align-self-stretch flex-column ga-4">
@@ -545,17 +533,13 @@ export default {
     // Returns the effective year used for validation: explicit year or from TakenAtLocal if unknown
     effectiveYear() {
       if (this.view?.model?.Year && this.view.model.Year > 0) return this.view.model.Year;
-      const y = this.view?.model?.TakenAtLocal
-        ? parseInt(this.view.model.TakenAtLocal.substring(0, 4))
-        : new Date().getUTCFullYear();
+      const y = this.view?.model?.TakenAtLocal ? parseInt(this.view.model.TakenAtLocal.substring(0, 4)) : new Date().getUTCFullYear();
       return isNaN(y) ? new Date().getUTCFullYear() : y;
     },
     // Returns the effective month used for validation: explicit month or from TakenAtLocal if unknown
     effectiveMonth() {
       if (this.view?.model?.Month && this.view.model.Month > 0) return this.view.model.Month;
-      const m = this.view?.model?.TakenAtLocal
-        ? parseInt(this.view.model.TakenAtLocal.substring(5, 7))
-        : new Date().getUTCMonth() + 1;
+      const m = this.view?.model?.TakenAtLocal ? parseInt(this.view.model.TakenAtLocal.substring(5, 7)) : new Date().getUTCMonth() + 1;
       return isNaN(m) ? new Date().getUTCMonth() + 1 : m;
     },
     // Clamp day to the maximum valid day of the current effective month/year
@@ -580,12 +564,7 @@ export default {
       this.syncTime();
     },
     syncLocation() {
-      if (
-        this.view?.model?.hasId() &&
-        this.view?.model?.Place?.PlaceID &&
-        this.view?.model?.Place?.PlaceID !== "zz" &&
-        this.view?.model?.Place?.Label
-      ) {
+      if (this.view?.model?.hasId() && this.view?.model?.Place?.PlaceID && this.view?.model?.Place?.PlaceID !== "zz" && this.view?.model?.Place?.Label) {
         this.locationLabel = this.view.model.Place.Label;
       } else {
         this.locationLabel = this.$gettext("Location");

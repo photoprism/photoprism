@@ -297,7 +297,7 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.True(t, rnd.IsJoinToken(token, false))
 		assert.FileExists(t, tokenFile)
 
-		data, readErr := os.ReadFile(tokenFile)
+		data, readErr := os.ReadFile(tokenFile) //nolint:gosec // test reads file from temp directory
 		assert.NoError(t, readErr)
 		assert.Equal(t, token, strings.TrimSpace(string(data)))
 	})
@@ -311,7 +311,7 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.NoError(t, err)
 		assert.FileExists(t, fileName)
 
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // test reads file from temp directory
 		assert.NoError(t, readErr)
 		assert.Equal(t, cluster.ExampleClientSecret, strings.TrimSpace(string(data)))
 	})
@@ -349,7 +349,7 @@ func TestConfig_Cluster(t *testing.T) {
 
 		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
 		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
-		assert.NoError(t, os.Chmod(secretDir, 0o500))
+		assert.NoError(t, os.Chmod(secretDir, 0o500)) //nolint:gosec // making directory intentionally non-writable for fallback test
 
 		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
 		assert.Error(t, err)
@@ -385,7 +385,7 @@ func TestConfig_Cluster(t *testing.T) {
 
 		secretDir := filepath.Join(c.NodeConfigPath(), fs.SecretsDir)
 		assert.NoError(t, os.MkdirAll(secretDir, fs.ModeDir))
-		assert.NoError(t, os.Chmod(secretDir, 0o500))
+		assert.NoError(t, os.Chmod(secretDir, 0o500)) //nolint:gosec // making directory intentionally non-writable for fallback test
 
 		_, _, err := c.SaveJoinToken("")
 		assert.Error(t, err)
@@ -606,7 +606,7 @@ func TestConfig_ClusterUUID_GenerateAndPersist(t *testing.T) {
 	}
 
 	// Verify content persisted to options.yml.
-	b, err := os.ReadFile(optionsYaml)
+	b, err := os.ReadFile(optionsYaml) //nolint:gosec // test reads generated options file
 	assert.NoError(t, err)
 	var m map[string]any
 	assert.NoError(t, yaml.Unmarshal(b, &m))

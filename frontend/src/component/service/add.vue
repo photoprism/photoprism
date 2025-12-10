@@ -57,11 +57,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="text-start text-caption">
-              {{
-                $gettext(
-                  `Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload.`
-                )
-              }}
+              {{ $gettext(`Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload.`) }}
               {{ $gettext(`Support for additional services, like Google Drive, will be added over time.`) }}
             </v-col>
           </v-row>

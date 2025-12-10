@@ -229,7 +229,7 @@ func TestDeactivateUserPasscode(t *testing.T) {
 }
 
 func TestUserPasscode(t *testing.T) {
-	//create
+	// create
 	app, router, conf := NewApiTest()
 	conf.SetAuthMode(config.AuthModePasswd)
 	defer conf.SetAuthMode(config.AuthModePublic)
@@ -260,7 +260,7 @@ func TestUserPasscode(t *testing.T) {
 
 	code, err := totp.GenerateCode(secret, time.Now())
 
-	//confirm
+	// confirm
 	ConfirmUserPasscode(router)
 
 	if err != nil {
@@ -288,7 +288,7 @@ func TestUserPasscode(t *testing.T) {
 	assert.Empty(t, activatedAt)
 	assert.NotEmpty(t, verifiedAt)
 
-	//activate
+	// activate
 	ActivateUserPasscode(router)
 
 	r = AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/activate", string(pcStr), sessId)
@@ -300,7 +300,7 @@ func TestUserPasscode(t *testing.T) {
 	assert.NotEmpty(t, activatedAt)
 	assert.NotEmpty(t, verifiedAt)
 
-	//deactivate
+	// deactivate
 	DeactivateUserPasscode(router)
 
 	r = AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/deactivate", string(pcStr), sessId)

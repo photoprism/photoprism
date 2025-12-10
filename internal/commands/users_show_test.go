@@ -12,7 +12,7 @@ func TestUsersShowCommand(t *testing.T) {
 		output, err := RunWithTestContext(UsersShowCommand, []string{"show", "alice"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Alice")
 		assert.Contains(t, output, "admin")

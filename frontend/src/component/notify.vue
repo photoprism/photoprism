@@ -2,13 +2,7 @@
   <teleport to="body">
     <div id="notify">
       <transition name="fade-transition">
-        <div
-          v-if="visible"
-          :class="'p-notify--' + message.color"
-          class="p-notify v-snackbar"
-          role="alert"
-          @click.stop.prevent="showNext"
-        >
+        <div v-if="visible" :class="'p-notify--' + message.color" class="p-notify v-snackbar" role="alert" @click.stop.prevent="showNext">
           <div class="v-snackbar__wrapper">
             <span class="v-snackbar__underlay"></span>
             <div class="v-snackbar__content">
@@ -21,11 +15,7 @@
               <div class="p-notify__text">
                 {{ message.text }}
               </div>
-              <i
-                :class="'text-on-' + message.color"
-                class="mdi-close mdi v-icon notranslate p-notify__close"
-                aria-hidden="true"
-              ></i>
+              <i :class="'text-on-' + message.color" class="mdi-close mdi v-icon notranslate p-notify__close" aria-hidden="true"></i>
             </div>
           </div>
         </div>

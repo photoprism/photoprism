@@ -28,6 +28,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+// Thresholds for classifying NSFW scores.
 const (
 	ThresholdSafe   = 0.75
 	ThresholdMedium = 0.85
@@ -36,6 +37,7 @@ const (
 
 var log = event.Log
 
+// Result represents the classification scores returned by the NSFW model.
 type Result struct {
 	Drawing float32
 	Hentai  float32

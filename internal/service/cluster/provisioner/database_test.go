@@ -110,7 +110,7 @@ func TestExecTimeout_DeadlineExceeded(t *testing.T) {
 // execTimeout forwards the statement correctly.
 type fastDriver struct{ last *string }
 
-func (f fastDriver) Open(name string) (driver.Conn, error) { return fastConn{last: f.last}, nil }
+func (f fastDriver) Open(name string) (driver.Conn, error) { return fastConn(f), nil }
 
 type fastConn struct{ last *string }
 
@@ -147,7 +147,7 @@ func TestExecTimeout_ForwardsStatement(t *testing.T) {
 // variant waits for cancellation, the other returns quickly.
 type pingyDriver struct{ wait bool }
 
-func (p pingyDriver) Open(name string) (driver.Conn, error) { return pingyConn{wait: p.wait}, nil }
+func (p pingyDriver) Open(name string) (driver.Conn, error) { return pingyConn(p), nil }
 
 type pingyConn struct{ wait bool }
 

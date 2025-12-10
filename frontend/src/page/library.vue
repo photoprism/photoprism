@@ -1,14 +1,6 @@
 <template>
   <div ref="page" tabindex="-1" :class="$config.aclClasses('library')" class="p-page p-page-library">
-    <v-tabs
-      v-model="active"
-      elevation="0"
-      grow
-      bg-color="secondary"
-      slider-color="surface-variant"
-      :height="$vuetify.display.smAndDown ? 48 : 64"
-      class="bg-transparent p-page__navigation"
-    >
+    <v-tabs v-model="active" elevation="0" grow bg-color="secondary" :height="$vuetify.display.smAndDown ? 48 : 64" class="bg-transparent p-page__navigation">
       <v-tab v-for="t in tabs" :id="'tab-' + t.name" :key="t.name" :class="t.class" ripple @click="changePath(t.path)">
         <v-icon v-if="$vuetify.display.smAndDown" :title="t.label">{{ t.icon }}</v-icon>
         <template v-else>

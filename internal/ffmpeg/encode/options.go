@@ -41,17 +41,19 @@ func NewVideoOptions(ffmpegBin string, encoder Encoder, sizeLimit, quality int, 
 		encoder = DefaultAvcEncoder()
 	}
 
-	if sizeLimit < 1 {
+	switch {
+	case sizeLimit < 1:
 		sizeLimit = 1920
-	} else if sizeLimit > 15360 {
+	case sizeLimit > 15360:
 		sizeLimit = 15360
 	}
 
-	if quality <= 0 {
+	switch {
+	case quality <= 0:
 		quality = DefaultQuality
-	} else if quality < WorstQuality {
+	case quality < WorstQuality:
 		quality = WorstQuality
-	} else if quality >= BestQuality {
+	case quality >= BestQuality:
 		quality = BestQuality
 	}
 
@@ -118,13 +120,14 @@ func NewPreviewImageOptions(ffmpegBin string, videoDuration time.Duration) *Opti
 // VideoFilter returns the FFmpeg video filter string based on the size limit in pixels and the pixel format.
 func (o *Options) VideoFilter(format PixelFormat) string {
 	// scale specifies the FFmpeg downscale filter, see http://trac.ffmpeg.org/wiki/Scaling.
-	if format == "" {
+	switch format {
+	case "":
 		return fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))'", o.SizeLimit, o.SizeLimit)
-	} else if format == FormatQSV {
+	case FormatQSV:
 		return fmt.Sprintf("scale_qsv=w='if(gte(iw,ih), min(%d, iw), -1)':h='if(gte(iw,ih), -1, min(%d, ih))':format=nv12", o.SizeLimit, o.SizeLimit)
-	} else {
-		return fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s", o.SizeLimit, o.SizeLimit, format)
 	}
+
+	return fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s", o.SizeLimit, o.SizeLimit, format)
 }
 
 // QvQuality  returns the video encoding quality as "-q:v" parameter string.

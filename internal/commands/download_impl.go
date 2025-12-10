@@ -184,7 +184,7 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 				}
 				func() {
 					defer downloadResult.Close()
-					f, ferr := os.Create(downloadFilePath)
+					f, ferr := os.Create(downloadFilePath) //nolint:gosec // download target path chosen by user
 					if ferr != nil {
 						log.Errorf("create file failed: %v", ferr)
 						failures++

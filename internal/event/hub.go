@@ -6,19 +6,27 @@ import (
 	"github.com/leandro-lugaresi/hub"
 )
 
+// Hub is an alias for the shared event hub implementation.
 type Hub = hub.Hub
+
+// Data represents event payload fields.
 type Data = hub.Fields
+
+// Message represents an emitted event message.
 type Message = hub.Message
 
+// TopicSep separates topic hierarchy segments.
 const TopicSep = "."
 
 var channelCap = 100
 var sharedHub = NewHub()
 
+// NewHub creates a new event hub instance.
 func NewHub() *Hub {
 	return hub.New()
 }
 
+// SharedHub returns the process-wide shared event hub.
 func SharedHub() *Hub {
 	return sharedHub
 }

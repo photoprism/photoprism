@@ -4,25 +4,10 @@
       <v-toolbar density="compact" class="page-toolbar" color="secondary-light">
         <v-spacer></v-spacer>
 
-        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" class="action-reload" @click.stop="refresh">
-        </v-btn>
+        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" class="action-reload" @click.stop="refresh"> </v-btn>
 
-        <v-btn
-          v-if="!filter.hidden"
-          :title="$gettext('Show hidden')"
-          icon="mdi-eye"
-          class="action-show-hidden"
-          @click.stop="onShowHidden"
-        >
-        </v-btn>
-        <v-btn
-          v-else
-          :title="$gettext('Exclude hidden')"
-          icon="mdi-eye-off"
-          class="action-exclude-hidden"
-          @click.stop="onExcludeHidden"
-        >
-        </v-btn>
+        <v-btn v-if="!filter.hidden" :title="$gettext('Show hidden')" icon="mdi-eye" class="action-show-hidden" @click.stop="onShowHidden"> </v-btn>
+        <v-btn v-else :title="$gettext('Exclude hidden')" icon="mdi-eye-off" class="action-exclude-hidden" @click.stop="onExcludeHidden"> </v-btn>
       </v-toolbar>
     </v-form>
 
@@ -30,12 +15,7 @@
       <p-loading></p-loading>
     </div>
     <div v-else class="p-page__content">
-      <p-scroll
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      ></p-scroll>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <div v-if="results.length === 0" class="pa-3">
         <v-alert color="primary" icon="mdi-check-circle-outline" class="no-results" variant="outlined">
@@ -58,15 +38,7 @@
           <div v-for="m in results" :key="m.ID" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2">
             <div :data-id="m.ID" :class="m.classes()" class="result flex-grow-1 not-selectable">
               <v-img :src="m.thumbnailUrl('tile_320')" aspect-ratio="1" class="preview" @click.stop.prevent="onView(m)">
-                <v-btn
-                  :ripple="false"
-                  class="input-hidden"
-                  icon
-                  variant="text"
-                  density="comfortable"
-                  position="absolute"
-                  @click.stop.prevent="toggleHidden(m)"
-                >
+                <v-btn :ripple="false" class="input-hidden" icon variant="text" density="comfortable" position="absolute" @click.stop.prevent="toggleHidden(m)">
                   <v-icon color="white" class="select-on" :title="$gettext('Show')">mdi-eye-off</v-icon>
                   <v-icon color="white" class="select-off" :title="$gettext('Hide')">mdi-close</v-icon>
                 </v-btn>

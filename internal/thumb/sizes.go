@@ -33,11 +33,12 @@ func (m SizeMap) All() SizeList {
 	}
 
 	slices.SortStableFunc(result, func(a, b Size) int {
-		if a.Width < b.Width {
+		switch {
+		case a.Width < b.Width:
 			return -1
-		} else if a.Width > b.Width {
+		case a.Width > b.Width:
 			return 1
-		} else {
+		default:
 			return 0
 		}
 	})
@@ -45,6 +46,7 @@ func (m SizeMap) All() SizeList {
 	return result
 }
 
+// Size presets used throughout the application.
 var (
 	SizeColors   = Size{Colors, Fit720, "Color Detection", 3, 3, false, false, false, true, Options{ResampleResize, ResampleNearestNeighbor, ResamplePng}}
 	SizeTile50   = Size{Tile50, Fit720, "List View", 50, 50, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
@@ -103,6 +105,7 @@ var Sizes = SizeMap{
 // All contains all thumbnail sizes sorted by width.
 var All = Sizes.All()
 
+// ParseSize returns a Size by name or the zero value if unknown.
 func ParseSize(s string) Size {
 	return Sizes[Name(s)]
 }

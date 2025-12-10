@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-11-19 10:56+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-11-27 11:38+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -125,7 +125,7 @@ msgstr "Token πρόσβασης"
 #: src/component/navigation.vue:1068 src/component/navigation.vue:868
 #: src/component/service/upload.vue:25 src/locales.js:331
 #: src/model/service.js:72 src/model/user.js:151 src/page/settings.vue:112
-#: src/page/settings/general.vue:342
+#: src/page/settings/general.vue:334
 msgid "Account"
 msgstr "Λογαριασμός"
 
@@ -210,10 +210,6 @@ msgstr "Προσθήκη Λογαριασμού"
 msgid "Add Album"
 msgstr "Προσθήκη Άλμπουμ"
 
-#: src/page/settings/general.vue:164
-msgid "Add files to your library via Web Upload."
-msgstr "Προσθήκη αρχείων στην βιβλιοθήκη μέσω Web Upload."
-
 #: src/component/share/dialog.vue:19
 msgid "Add Link"
 msgstr "Προσθήκη Συνδέσμου"
@@ -237,11 +233,11 @@ msgstr "Προσθέστε εικόνες από τα αποτελέσματα �
 msgid "Add to album"
 msgstr "Προσθήκη στο άλμπουμ"
 
-#: src/component/input/chip-selector.vue:181
+#: src/component/input/chip-selector.vue:182
 msgid "Add to all"
 msgstr "Προσθήκη σε όλα"
 
-#: src/component/input/chip-selector.vue:181
+#: src/component/input/chip-selector.vue:182
 msgid "Add to all selected photos"
 msgstr "Προσθήκη σε όλες τις επιλεγμένες φωτογραφίες"
 
@@ -305,7 +301,7 @@ msgstr "Μετά από δύο εβδομάδες"
 msgid "Album"
 msgstr "Άλμπουμ"
 
-#: src/page/settings/advanced.vue:193
+#: src/page/settings/advanced.vue:189
 msgid "Album Backups"
 msgstr "Αντίγραφα Ασφαλείας Άλμπουμ"
 
@@ -385,6 +381,38 @@ msgstr "Όλα τα πρωτότυπα"
 msgid "All Years"
 msgstr "Όλα τα Χρόνια"
 
+#: src/page/settings/general.vue:246
+msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
+msgstr "Επιτρέπει τη διαμόρφωση και χρήση συνδεδεμένων εφαρμογών και υπηρεσιών για απομακρυσμένες μεταφορτώσεις και συγχρονισμό."
+
+#: src/page/settings/general.vue:201
+msgid "Allow editing of metadata such as title, description, date, and location."
+msgstr "Επιτρέπει την επεξεργασία μεταδεδομένων όπως τίτλος, περιγραφή, ημερομηνία και τοποθεσία."
+
+#: src/page/settings/general.vue:216
+msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
+msgstr "Επιτρέπει την επεξεργασία των μεταδεδομένων, των ετικετών και των άλμπουμ πολλών εικόνων ταυτόχρονα."
+
+#: src/page/settings/general.vue:186
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr "Ενεργοποιήστε το εργαλείο Εισαγωγή για να αντιγράψετε ή να μετακινήσετε αρχεία από το φάκελο Εισαγωγή στα Πρωτότυπα."
+
+#: src/page/settings/general.vue:276
+msgid "Allow files to be permanently deleted to free up storage space."
+msgstr "Επιτρέψτε τη μόνιμη διαγραφή αρχείων για να ελευθερώσετε χώρο αποθήκευσης."
+
+#: src/page/settings/general.vue:261
+msgid "Allow users to archive photos and videos so they are hidden without being deleted."
+msgstr "Επιτρέψτε στους χρήστες να αρχειοθετούν φωτογραφίες και βίντεο, ώστε να είναι κρυμμένα χωρίς να διαγράφονται."
+
+#: src/page/settings/general.vue:231
+msgid "Allow users to create and share links, and enable sharing with connected services."
+msgstr "Επιτρέψτε στους χρήστες να δημιουργούν και να μοιράζονται συνδέσμους και ενεργοποιήστε την κοινή χρήση με συνδεδεμένες υπηρεσίες."
+
+#: src/page/settings/general.vue:156
+msgid "Allow users to upload new photos and videos through the web interface."
+msgstr "Επιτρέψτε στους χρήστες να ανεβάζουν νέες φωτογραφίες και βίντεο μέσω της διεπαφής web."
+
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Εναλλακτικά, μπορείτε να ανεβάσετε αρχεία απευθείας σε διακομιστές WebDAV όπως το Nextcloud."
@@ -412,7 +440,7 @@ msgstr "ΠΜ"
 msgid "Animated"
 msgstr "Κινούμενη εικόνα"
 
-#: src/page/settings/general.vue:399
+#: src/page/settings/general.vue:391
 msgid "Animation"
 msgstr "Κίνηση"
 
@@ -537,7 +565,7 @@ msgstr "Πίσω"
 msgid "Back to top"
 msgstr "Επιστροφή στην κορυφή"
 
-#: src/page/settings/advanced.vue:165
+#: src/page/settings/advanced.vue:161
 msgid "Backup"
 msgstr "Δημιουργία αντιγράφων ασφαλείας"
 
@@ -554,7 +582,7 @@ msgstr "Διαδρομή βάσης"
 msgid "Batch"
 msgstr "Παρτίδα"
 
-#: src/page/settings/general.vue:238
+#: src/page/settings/general.vue:215
 msgid "Batch Edit"
 msgstr "Επεξεργασία παρτίδας"
 
@@ -594,26 +622,14 @@ msgstr "Καφέ"
 
 #: src/component/photo/edit/files.vue:107 src/component/photo/edit/files.vue:67
 #: src/component/photo/edit/files.vue:75 src/component/photo/toolbar.vue:94
-#: src/component/upload/dialog.vue:123 src/component/upload/dialog.vue:75
-#: src/component/upload/dialog.vue:76 src/component/upload/dialog.vue:87
+#: src/component/upload/dialog.vue:112 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 msgid "Browse"
 msgstr "Περιήγηση"
-
-#: src/page/settings/general.vue:133
-msgid "Browse and edit image classification labels."
-msgstr "Αναζήτηση και επεξεργασία ετικετών ταξινόμησης εικόνων."
-
-#: src/page/settings/general.vue:103
-msgid "Browse and share your pictures organized into monthly albums."
-msgstr "Περιηγηθείτε και μοιραστείτε τις φωτογραφίες σας οργανωμένες σε μηνιαία άλμπουμ."
 
 #: src/locales.js:278
 msgid "Browse Files"
 msgstr "Περιήγηση Αρχείων"
-
-#: src/page/settings/general.vue:313
-msgid "Browse indexed files and folders in Library."
-msgstr "Περιήγηση σε αρχεία και φακέλους στη Βιβλιοθήκη."
 
 #: src/component/photo/edit/people.vue:232
 msgid "Browse Pictures"
@@ -632,7 +648,7 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "Χρησιμοποιώντας το λογισμικό και τις υπηρεσίες που παρέχουμε, συμφωνείτε με τους όρους χρήσης, την πολιτική απορρήτου και τον κώδικα δεοντολογίας."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
-#: src/options/options.js:263 src/page/settings/general.vue:102
+#: src/options/options.js:263 src/page/settings/general.vue:96
 msgid "Calendar"
 msgstr "Ημερολόγιο"
 
@@ -716,14 +732,6 @@ msgstr "Αλλαγή Άβαταρ"
 msgid "Change Password"
 msgstr "Αλλαγή Κωδικού Πρόσβασης"
 
-#: src/page/settings/general.vue:343
-msgid "Change personal profile and security settings."
-msgstr "Αλλαγή του προσωπικού προφίλ και των ρυθμίσεων ασφαλείας."
-
-#: src/page/settings/general.vue:224
-msgid "Change photo titles, locations, and other metadata."
-msgstr "Αλλάξτε τίτλους φωτογραφιών, τοποθεσίες και άλλα μεταδεδομένα."
-
 #: src/component/photo/clipboard.vue:80
 msgid "Change private flag"
 msgstr "Αλλαγή ιδιωτικής κατάστασης"
@@ -744,8 +752,8 @@ msgstr "Οι αλλαγές δεν ήταν δυνατό να αποθηκευτ
 #: src/component/photo/edit/files.vue:570 src/component/service/edit.vue:343
 #: src/component/share/dialog.vue:240 src/component/share/dialog.vue:259
 #: src/page/albums.vue:1268 src/page/people/recognized.vue:320
-#: src/page/settings/advanced.vue:539 src/page/settings/content.vue:300
-#: src/page/settings/general.vue:525
+#: src/page/settings/advanced.vue:535 src/page/settings/content.vue:300
+#: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Οι αλλαγές αποθηκεύτηκαν επιτυχώς"
 
@@ -801,7 +809,7 @@ msgstr "Διαπιστευτήρια πελάτη"
 #: src/component/share/dialog.vue:142 src/component/share/dialog.vue:72
 #: src/component/share/dialog.vue:73 src/component/share/dialog.vue:82
 #: src/component/sidebar/info.vue:6 src/component/update.vue:25
-#: src/component/upload/dialog.vue:120 src/locales.js:206
+#: src/component/upload/dialog.vue:109 src/locales.js:206
 #: src/page/library/errors.vue:139
 msgid "Close"
 msgstr "Κλείσιμο"
@@ -826,7 +834,7 @@ msgstr "Χρώμα"
 msgid "Color Profile"
 msgstr "Προφίλ χρώματος"
 
-#: src/page/discover.vue:13 src/page/discover.vue:5
+#: src/page/discover.vue:12 src/page/discover.vue:5
 msgid "Colors"
 msgstr "Χρώματα"
 
@@ -962,15 +970,15 @@ msgstr "Δημιουργία λογαριασμού"
 msgid "Create album"
 msgstr "Δημιουργία άλμπουμ"
 
-#: src/page/settings/advanced.vue:178
+#: src/page/settings/advanced.vue:174
 msgid "Create regular backups based on the configured schedule."
 msgstr "Δημιουργία αντιγράφων ασφαλείας ευρετηρίου με βάση το ρυθμισμένο χρονοδιάγραμμα."
 
-#: src/page/settings/advanced.vue:194
+#: src/page/settings/advanced.vue:190
 msgid "Create YAML files to back up album metadata."
 msgstr "Δημιουργία αρχείων YAML για την εξασφάλιση των μεταδεδομένων των άλμπουμ."
 
-#: src/page/settings/advanced.vue:210
+#: src/page/settings/advanced.vue:206
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Δημιουργία αρχείων YAML sidecar για την εξασφάλιση των μεταδεδομένων των εικόνων."
 
@@ -1007,7 +1015,7 @@ msgstr "Καθημερινά"
 msgid "Database"
 msgstr "Βάση δεδομένων"
 
-#: src/page/settings/advanced.vue:177
+#: src/page/settings/advanced.vue:173
 msgid "Database Backups"
 msgstr "Αντίγραφα Ασφαλείας Βάσης Δεδομένων"
 
@@ -1053,7 +1061,7 @@ msgstr "Προεπιλεγμένος φάκελος"
 #: src/component/photo/clipboard.vue:140 src/component/photo/edit/files.vue:62
 #: src/component/photo/edit/files.vue:70 src/component/photo/edit/files.vue:94
 #: src/component/service/remove.vue:22 src/component/share/dialog.vue:112
-#: src/locales.js:317 src/page/settings/general.vue:268
+#: src/locales.js:317 src/page/settings/general.vue:275
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -1075,7 +1083,7 @@ msgstr "ΔΙαγραφή ορφανών καταχωρήσεων ευρετηρ�
 
 #: src/options/options.js:13 src/options/options.js:16
 msgid "deleted"
-msgstr "deleted"
+msgstr "διαγράφηκε"
 
 #: src/component/album/edit/dialog.vue:57
 #: src/component/photo/batch-edit.vue:199 src/page/albums.vue:285
@@ -1095,47 +1103,51 @@ msgstr "Λεπτομέρειες"
 msgid "Dimensions"
 msgstr "Διαστάσεις"
 
+#: src/page/settings/advanced.vue:117
+msgid "Disable all face detection and recognition features."
+msgstr "Απενεργοποιήστε όλες τις λειτουργίες ανίχνευσης και αναγνώρισης προσώπου."
+
 #: src/page/settings/advanced.vue:84
 msgid "Disable Backups"
 msgstr "Απενεργοποίηση Αντιγράφων Ασφαλείας"
 
-#: src/page/settings/advanced.vue:366
+#: src/page/settings/advanced.vue:362
 msgid "Disable Darktable"
 msgstr "Απενεργοποίηση Darktable"
 
-#: src/page/settings/advanced.vue:132
+#: src/page/settings/advanced.vue:148
 msgid "Disable ExifTool"
 msgstr "Απενεργοποίηση ExifTool"
+
+#: src/page/settings/advanced.vue:116
+msgid "Disable Faces"
+msgstr "Απενεργοποίηση προσώπων"
 
 #: src/page/settings/advanced.vue:69
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Απενεργοποίηση των λειτουργιών που απαιτούν δικαίωμα εγγραφής στο φάκελο πρωτοτύπων."
 
-#: src/page/settings/advanced.vue:430
+#: src/page/settings/advanced.vue:426
 msgid "Disable FFmpeg"
 msgstr "Απενεργοποίηση FFmpeg"
 
-#: src/page/settings/advanced.vue:414
+#: src/page/settings/advanced.vue:410
 msgid "Disable ImageMagick"
 msgstr "Απενεργοποίηση του ImageMagick"
 
-#: src/page/settings/advanced.vue:117
+#: src/page/settings/advanced.vue:133
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Απενεργοποίηση των διαδραστικών παγκόσμιων χαρτών και της αντίστροφης γεωκωδικοποίησης."
 
-#: src/page/settings/advanced.vue:116
+#: src/page/settings/advanced.vue:132
 msgid "Disable Places"
 msgstr "Απενεργοποίηση Τοποθεσιών"
 
-#: src/page/settings/advanced.vue:382
+#: src/page/settings/advanced.vue:378
 msgid "Disable RawTherapee"
 msgstr "Απενεργοποίηση RawTherapee"
 
-#: src/page/settings/advanced.vue:148
-msgid "Disable TensorFlow"
-msgstr "Απενεργοποίηση TensorFlow"
-
-#: src/page/settings/advanced.vue:446
+#: src/page/settings/advanced.vue:442
 msgid "Disable Vectors"
 msgstr "Απενεργοποίηση Διανυσμάτων"
 
@@ -1147,11 +1159,11 @@ msgstr "Απενεργοποίηση WebDAV"
 msgid "Disabled"
 msgstr "Απενεργοποιημένο"
 
-#: src/page/settings/advanced.vue:447
+#: src/page/settings/advanced.vue:443
 msgid "Disables vector graphics support."
 msgstr "Απενεργοποιεί την υποστήριξη διανυσματικών γραφικών."
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:427
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Απενεργοποιεί τη μετακωδικοποίηση βίντεο και την εξαγωγή μικρογραφιών."
 
@@ -1202,15 +1214,15 @@ msgstr "Έγγραφο"
 msgid "Documents"
 msgstr "Έγγραφα"
 
-#: src/page/settings/advanced.vue:367
+#: src/page/settings/advanced.vue:363
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Μη χρήση του Darktable για τη μετατροπή εικόνων RAW."
 
-#: src/page/settings/advanced.vue:415
+#: src/page/settings/advanced.vue:411
 msgid "Don't use ImageMagick to convert images."
 msgstr "Μη χρήση του ImageMagick για τη μετατροπή εικόνων."
 
-#: src/page/settings/advanced.vue:383
+#: src/page/settings/advanced.vue:379
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Μη χρήση του RawTherapee για τη μετατροπή εικόνων RAW."
 
@@ -1221,7 +1233,7 @@ msgstr "Μη χρήση του RawTherapee για τη μετατροπή εικ
 msgid "Done"
 msgstr "Έγινε"
 
-#: src/component/upload/dialog.vue:43 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Έγινε."
@@ -1230,7 +1242,7 @@ msgstr "Έγινε."
 #: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1479
 #: src/component/people/clipboard.vue:31 src/component/photo/clipboard.vue:92
 #: src/component/photo/edit/files.vue:51 src/page/settings/content.vue:183
-#: src/page/settings/general.vue:178
+#: src/page/settings/general.vue:170
 msgid "Download"
 msgstr "Λήψη"
 
@@ -1242,10 +1254,6 @@ msgstr "Λήψη μόνο πρωτότυπων αρχείων πολυμέσων
 msgid "Download remote files"
 msgstr "Λήψη απομακρυσμένων αρχείων"
 
-#: src/page/settings/general.vue:179
-msgid "Download single files and zip archives."
-msgstr "Λήψη μεμονωμένων αρχείων και αρχείων συμπίεσης."
-
 #: src/component/album/clipboard.vue:227 src/component/album/toolbar.vue:252
 #: src/component/file/clipboard.vue:150 src/component/label/clipboard.vue:172
 #: src/component/lightbox.vue:2426 src/component/people/clipboard.vue:144
@@ -1255,7 +1263,7 @@ msgstr "Λήψη μεμονωμένων αρχείων και αρχείων σ�
 msgid "Downloading…"
 msgstr "Λήψη…"
 
-#: src/page/settings/advanced.vue:232
+#: src/page/settings/advanced.vue:228
 msgid "Downscaling Filter"
 msgstr "Φίλτρο υποβιβασμού κλίμακας"
 
@@ -1281,11 +1289,11 @@ msgstr "Τα διπλότυπα θα παραλείπονται και θα εμ
 msgid "Duration"
 msgstr "Διάρκεια"
 
-#: src/page/settings/advanced.vue:285
+#: src/page/settings/advanced.vue:281
 msgid "Dynamic Previews"
 msgstr "Δυναμικές Προεπισκοπήσεις"
 
-#: src/page/settings/advanced.vue:261
+#: src/page/settings/advanced.vue:257
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Όριο Δυναμικού Μεγέθους: %{n}px"
 
@@ -1295,7 +1303,7 @@ msgstr "E-Mail"
 
 #: src/component/album/clipboard.vue:43 src/component/album/toolbar.vue:174
 #: src/component/lightbox.vue:1378 src/component/lightbox.vue:1379
-#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:223
+#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:200
 msgid "Edit"
 msgstr "Επεξεργασία"
 
@@ -1313,13 +1321,9 @@ msgstr "Επεξεργασία Λογαριασμού"
 msgid "Edit Photo"
 msgstr "Επεξεργασία Φωτογραφίας"
 
-#: src/component/photo/batch-edit.vue:665
+#: src/component/photo/batch-edit.vue:664
 msgid "Edit Photos (%{n})"
 msgstr "Επεξεργασία φωτογραφιών (%{n})"
-
-#: src/page/settings/general.vue:239
-msgid "Edit the metadata, labels, and albums of multiple pictures at once."
-msgstr "Επεξεργαστείτε τα μεταδεδομένα, τις ετικέτες και τα άλμπουμ πολλών εικόνων ταυτόχρονα."
 
 #: src/component/photo/edit/info.vue:222 src/component/photo/edit/info.vue:223
 msgid "Edited"
@@ -1334,11 +1338,23 @@ msgstr "Ηλεκτρονικό ταχυδρομείο"
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
 msgstr "Ενεργοποίηση της λειτουργίας εντοπισμού σφαλμάτων για την εμφάνιση πρόσθετων αρχείων καταγραφής και την υποβοήθηση στην αντιμετώπιση προβλημάτων."
 
+#: src/page/settings/general.vue:171
+msgid "Enable downloading of original and sidecar files from the web interface."
+msgstr "Ενεργοποιήστε τη λήψη αρχικών και παράπλευρων αρχείων από τη διεπαφή web."
+
+#: src/page/settings/general.vue:82
+msgid "Enable face recognition and the People view to easily find people you know."
+msgstr "Ενεργοποιήστε την αναγνώριση προσώπου και την προβολή \"Άτομα\" για να βρίσκετε εύκολα άτομα που γνωρίζετε."
+
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
 msgstr "Ενεργοποίηση νέων λειτουργιών που μπορεί να είναι ελλιπείς ή ασταθείς."
 
-#: src/page/settings/advanced.vue:399
+#: src/page/settings/general.vue:305
+msgid "Enable the file browser to navigate the Originals folder structure."
+msgstr "Ενεργοποιήστε το πρόγραμμα περιήγησης αρχείων για την πλοήγηση στη δομή φακέλων Originals."
+
+#: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ενεργοποιεί τις προεπιλογές μετατροπέα RAW. Μπορεί να μειώσει την απόδοση."
 
@@ -1358,7 +1374,7 @@ msgstr "Εισάγετε ημερομηνία"
 msgid "Enter dates"
 msgstr "Εισάγετε ημερομηνίες"
 
-#: src/component/input/chip-selector.vue:128
+#: src/component/input/chip-selector.vue:129
 msgid "Enter item name..."
 msgstr "Εισάγετε το όνομα του στοιχείου..."
 
@@ -1403,15 +1419,11 @@ msgstr "Εκτίμηση κατά προσέγγιση της τοποθεσία
 msgid "Every two days"
 msgstr "Κάθε δύο ημέρες"
 
-#: src/page/settings/general.vue:148
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Εξαίρεση του περιεχομένου που έχει χαρακτηριστεί ως ιδιωτικό από τα αποτελέσματα αναζήτησης, τα κοινόχρηστα άλμπουμ, τις ετικέτες και τις τοποθεσίες."
-
 #: src/page/people/new.vue:20 src/page/people/recognized.vue:53
 msgid "Exclude hidden"
 msgstr "Εξαίρεση κρυφών"
 
-#: src/page/settings/advanced.vue:133
+#: src/page/settings/advanced.vue:149
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Η εξαγωγή μεταδεδομένων με το ExifTool απαιτείται για πλήρη υποστήριξη βίντεο, ζωντανής φωτογραφίας και XMP."
 
@@ -1508,13 +1520,13 @@ msgstr "Αρχείο"
 msgid "File Browser"
 msgstr "Πρόγραμμα περιήγησης αρχείων"
 
-#: src/page/settings/advanced.vue:354
+#: src/page/settings/advanced.vue:350
 msgid "File Conversion"
 msgstr "Μετατροπή Αρχείων"
 
 #: src/component/album/edit/dialog.vue:147
-#: src/component/photo/batch-edit.vue:636
-#: src/component/photo/batch-edit.vue:656 src/component/photo/toolbar.vue:415
+#: src/component/photo/batch-edit.vue:635
+#: src/component/photo/batch-edit.vue:655 src/component/photo/toolbar.vue:415
 #: src/component/photo/toolbar.vue:426 src/component/photo/toolbar.vue:437
 #: src/component/photo/view/list.vue:47
 msgid "File Name"
@@ -1604,10 +1616,6 @@ msgstr "Γενικά"
 msgid "Generate"
 msgstr "Παραγωγή"
 
-#: src/page/settings/general.vue:118
-msgid "Generate albums of special moments, journeys, and places."
-msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
-
 #: src/page/settings/content.vue:58
 msgid "Generate Previews"
 msgstr "Δημιουργία προεπισκοπήσεων"
@@ -1677,9 +1685,9 @@ msgstr "Κρυμμένα αρχεία"
 msgid "Hide"
 msgstr "Απόκρυψη"
 
-#: src/page/settings/general.vue:254
-msgid "Hide photos that have been moved to archive."
-msgstr "Απόκρυψη φωτογραφιών που έχουν αρχειοθετηθεί."
+#: src/page/settings/general.vue:141
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr "Απόκρυψη ιδιωτικών στοιχείων από τις γενικές προβολές, διατηρώντας τα όμως προσβάσιμα στην ενότητα Ιδιωτικά."
 
 #: src/options/options.js:381
 msgid "High"
@@ -1708,23 +1716,19 @@ msgstr "Εάν χάσετε την πρόσβαση στην εφαρμογή ή
 msgid "Image"
 msgstr "Εικόνα"
 
-#: src/page/settings/advanced.vue:301
+#: src/page/settings/advanced.vue:297
 msgid "Image Quality"
 msgstr "Ποιότητα Εικόνας"
 
-#: src/page/library.vue:74 src/page/library/import.vue:44
+#: src/page/library.vue:73 src/page/library/import.vue:44
 #: src/page/library/import.vue:45 src/page/library/import.vue:73
-#: src/page/library/import.vue:86 src/page/settings/general.vue:193
+#: src/page/library/import.vue:86 src/page/settings/general.vue:185
 msgid "Import"
 msgstr "Εισαγωγή"
 
 #: src/page/library/import.vue:57
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Τα εισαγόμενα αρχεία θα ταξινομούνται ανά ημερομηνία και θα λαμβάνουν ένα μοναδικό όνομα για να αποφεύγονται οι διπλές εγγραφές."
-
-#: src/page/settings/general.vue:194
-msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Τα εισαγόμενα αρχεία θα ταξινομηθούν κατά ημερομηνία και θα τους δοθεί ένα μοναδικό όνομα."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1757,18 +1761,14 @@ msgstr "Συμπερίληψη αρχείων εικόνας RAW κατά τη �
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Συμπερίληψη αρχείων sidecar κατά τη λήψη στοίβων και αρχείων."
 
-#: src/component/upload/dialog.vue:45 src/page/library/import.vue:9
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:9
 msgid "Increase storage size or delete files to continue."
 msgstr "Αυξήστε τον αποθηκευτικό χώρο ή διαγράψτε αρχεία για να συνεχίσετε."
 
-#: src/component/navigation.vue:942 src/page/library.vue:64
+#: src/component/navigation.vue:942 src/page/library.vue:63
 #: src/page/settings/content.vue:12
 msgid "Index"
 msgstr "Ευρετήριο"
-
-#: src/page/settings/general.vue:298
-msgid "Index and import files through the user interface."
-msgstr "Ευρετηρίαση και εισαγωγή αρχείων μέσω της διεπαφής χρήστη."
 
 #: src/page/library/index.vue:245 src/page/library/index.vue:251
 msgid "Indexing"
@@ -1795,7 +1795,7 @@ msgstr "Αναγνωριστικό instance"
 msgid "Instances"
 msgstr "Instances"
 
-#: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Ανεπαρκής αποθήκευση."
 
@@ -1858,11 +1858,11 @@ msgstr "Στοιχείο"
 msgid "Items per page:"
 msgstr "Στοιχεία ανά σελίδα:"
 
-#: src/page/settings/advanced.vue:308
+#: src/page/settings/advanced.vue:304
 msgid "JPEG Quality: %{n}"
 msgstr "Ποιότητα JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:319
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Όριο Μεγέθους JPEG: %{n}px"
 
@@ -1890,7 +1890,7 @@ msgstr "Ετικέτα"
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:325
-#: src/options/options.js:265 src/page/settings/general.vue:132
+#: src/options/options.js:265 src/page/settings/general.vue:126
 msgid "Labels"
 msgstr "Ετικέτες"
 
@@ -1902,7 +1902,7 @@ msgstr "Οι ετικέτες διαγράφηκαν"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Διατήρηση λεπτομερειών, ελάχιστα τεχνουργήματα"
 
-#: src/page/settings/general.vue:38
+#: src/page/settings/general.vue:32
 msgid "Language"
 msgstr "Γλώσσα"
 
@@ -1955,7 +1955,7 @@ msgid "Lens"
 msgstr "Φακός"
 
 #: src/app/routes.js:475 src/app/routes.js:491 src/app/routes.js:507
-#: src/component/navigation.vue:613 src/page/settings/general.vue:297
+#: src/component/navigation.vue:613 src/page/settings/general.vue:289
 msgid "Library"
 msgstr "Βιβλιοθήκη"
 
@@ -2025,7 +2025,7 @@ msgstr "Φόρτωση..."
 
 #: src/options/admin.js:39 src/locales.js:341 src/options/auth.js:23
 #: src/options/auth.js:28 src/options/options.js:93
-#: src/page/settings/general.vue:52
+#: src/page/settings/general.vue:46
 msgid "Local"
 msgstr "Τοπικό"
 
@@ -2036,7 +2036,7 @@ msgstr "Τοπική Ώρα"
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
 #: src/common/util.js:792 src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:307
-#: src/component/photo/batch-edit.vue:616
+#: src/component/photo/batch-edit.vue:615
 #: src/component/photo/edit/details.vue:471
 #: src/component/photo/edit/details.vue:591
 #: src/component/photo/edit/details.vue:685
@@ -2059,7 +2059,7 @@ msgid "Logout"
 msgstr "Αποσύνδεση"
 
 #: src/component/navigation.vue:948 src/component/navigation.vue:951
-#: src/page/library.vue:87 src/page/settings/general.vue:327
+#: src/page/library.vue:86 src/page/settings/general.vue:319
 msgid "Logs"
 msgstr "Αρχεία καταγραφής"
 
@@ -2107,7 +2107,7 @@ msgstr "Χειροκίνητο"
 msgid "Manual Upload"
 msgstr "Χειροκίνητη φόρτωση"
 
-#: src/page/settings/general.vue:383
+#: src/page/settings/general.vue:375
 msgid "Maps"
 msgstr "Χάρτες"
 
@@ -2172,7 +2172,7 @@ msgid "mixed"
 msgstr "μικτή"
 
 #: src/app/routes.js:192 src/component/navigation.vue:533
-#: src/options/options.js:264 src/page/settings/general.vue:117
+#: src/options/options.js:264 src/page/settings/general.vue:111
 msgid "Moments"
 msgstr "Στιγμές"
 
@@ -2240,7 +2240,7 @@ msgstr "Το όνομα είναι πολύ μεγάλο"
 msgid "Never"
 msgstr "Ποτέ"
 
-#: src/page/people.vue:74
+#: src/page/people.vue:73
 msgid "New"
 msgstr "Νέο"
 
@@ -2351,7 +2351,7 @@ msgstr "Κόμβοι"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:101
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Οι μη φωτογραφικές εικόνες και οι εικόνες χαμηλής ποιότητας απαιτούν επανεξέταση προτού εμφανιστούν στα αποτελέσματα αναζήτησης."
 
@@ -2425,7 +2425,7 @@ msgstr "Πρώτα τα πιο Παλιά"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Στα Windows, εισάγετε τον ακόλουθο πόρο στο παράθυρο διαλόγου σύνδεσης:"
 
-#: src/page/settings/advanced.vue:287
+#: src/page/settings/advanced.vue:283
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Η κατά παραγγελία δημιουργία μικρογραφιών μπορεί να προκαλέσει υψηλή χρήση της CPU και της μνήμης. Δεν συνιστάται για διακομιστές με περιορισμένους πόρους και συσκευές NAS."
 
@@ -2509,7 +2509,7 @@ msgstr "Πρωτότυπο όνομα"
 #: src/component/navigation.vue:627 src/component/navigation.vue:633
 #: src/model/file.js:172 src/options/options.js:474
 #: src/page/library/browse.vue:12 src/page/settings/content.vue:193
-#: src/page/settings/general.vue:312
+#: src/page/settings/general.vue:304
 msgid "Originals"
 msgstr "Πρωτότυπα"
 
@@ -2552,11 +2552,11 @@ msgstr "Πανόραμα"
 msgid "Panoramas"
 msgstr "Πανοράματα"
 
-#: src/component/input/chip-selector.vue:187
+#: src/component/input/chip-selector.vue:188
 msgid "Part of all selected photos"
 msgstr "Μέρος όλων των επιλεγμένων φωτογραφιών"
 
-#: src/component/input/chip-selector.vue:185
+#: src/component/input/chip-selector.vue:186
 msgid "Part of some selected photos"
 msgstr "Μέρος ορισμένων επιλεγμένων φωτογραφιών"
 
@@ -2578,7 +2578,7 @@ msgstr "Ο κωδικός πρόσβασης άλλαξε"
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:260
-#: src/page/settings/general.vue:87
+#: src/page/settings/general.vue:81
 msgid "People"
 msgstr "Άτομα"
 
@@ -2589,10 +2589,6 @@ msgstr "Τα άτομα με τα οποία μοιράζεστε έναν σύ�
 #: src/component/photo/clipboard.vue:315 src/component/photo/toolbar.vue:558
 msgid "Permanently deleted"
 msgstr "Διαγράφηκε μόνιμα"
-
-#: src/page/settings/general.vue:269
-msgid "Permanently remove files to free up storage."
-msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερώσετε χώρο αποθήκευσης."
 
 #: src/model/subject.js:134
 msgid "Person"
@@ -2627,6 +2623,11 @@ msgstr "PhotoPrism+ Μέλος"
 msgid "Photos"
 msgstr "Φωτογραφίες"
 
+#: src/component/photo/batch-edit.vue:629
+#: src/component/photo/batch-edit.vue:649
+msgid "Picture"
+msgstr "Εικόνα"
+
 #: src/component/album/edit/dialog.vue:146 src/component/photo/toolbar.vue:414
 #: src/component/photo/toolbar.vue:425 src/component/photo/toolbar.vue:436
 msgid "Picture Title"
@@ -2647,8 +2648,8 @@ msgstr "Τόποθεσία & Ώρα"
 #: src/app/routes.js:335 src/app/routes.js:341 src/app/routes.js:347
 #: src/app/routes.js:362 src/component/navigation.vue:462
 #: src/component/navigation.vue:927 src/options/options.js:262
-#: src/page/places.vue:18 src/page/settings/general.vue:357
-#: src/page/settings/general.vue:371
+#: src/page/places.vue:18 src/page/settings/general.vue:349
+#: src/page/settings/general.vue:363
 msgid "Places"
 msgstr "Τοποθεσίες"
 
@@ -2660,11 +2661,11 @@ msgstr "Επιβεβαιώστε τον νέο σας κωδικό πρόσβα�
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Αντιγράψτε τον ακόλουθο τυχαία δημιουργημένο κωδικό πρόσβασης εφαρμογής και διατηρήστε τον σε ασφαλές μέρος, καθώς δεν θα μπορείτε να τον δείτε ξανά:"
 
-#: src/component/upload/dialog.vue:101
-msgid "Please do not upload any private, unlawful or offensive pictures. "
+#: src/component/upload/dialog.vue:94
+msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Μην ανεβάζετε προσωπικές, παράνομες ή προσβλητικές φωτογραφίες. "
 
-#: src/component/upload/dialog.vue:104
+#: src/component/upload/dialog.vue:97
 msgid "Please don't upload photos containing offensive content."
 msgstr "Παρακαλούμε μην ανεβάζετε φωτογραφίες που περιέχουν προσβλητικό περιεχόμενο."
 
@@ -2688,7 +2689,7 @@ msgstr "Περιμένετε…"
 msgid "PM"
 msgstr "ΜΜ"
 
-#: src/page/settings/advanced.vue:338
+#: src/page/settings/advanced.vue:334
 msgid "PNG Size Limit: %{n}px"
 msgstr "Όριο Μεγέθους PNG: %{n}px"
 
@@ -2706,11 +2707,11 @@ msgstr "Πορτρέτο"
 msgid "Preserve filenames"
 msgstr "Διατήρηση ονομάτων αρχείων"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:72
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
 msgid "Press enter to create a new album."
 msgstr "Πιέστε enter για να δημιουργήσετε ένα νέο άλμπουμ."
 
-#: src/component/input/chip-selector.vue:60
+#: src/component/input/chip-selector.vue:61
 msgid "Press enter to create new item"
 msgstr "Πατήστε enter για να δημιουργήσετε νέο στοιχείο"
 
@@ -2722,12 +2723,11 @@ msgstr "Αποτροπή της δημιουργίας αντιγράφων ασ
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "Αποτροπή της πρόσβασης άλλων εφαρμογών στο PhotoPrism ως κοινόχρηστη μονάδα δίσκου δικτύου."
 
-#: src/component/photo/batch-edit.vue:630
-#: src/component/photo/batch-edit.vue:650 src/component/photo/edit/files.vue:30
+#: src/component/photo/edit/files.vue:30
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
-#: src/page/settings/advanced.vue:222
+#: src/page/settings/advanced.vue:218
 msgid "Preview Images"
 msgstr "Εικόνες Προεπισκόπισης"
 
@@ -2758,7 +2758,7 @@ msgstr "Κύριο"
 #: src/component/navigation.vue:226 src/component/navigation.vue:233
 #: src/component/photo/batch-edit.vue:1491
 #: src/component/photo/edit/info.vue:139 src/component/photo/edit/info.vue:140
-#: src/page/settings/general.vue:146
+#: src/page/settings/general.vue:140
 msgid "Private"
 msgstr "Ιδιωτικό"
 
@@ -2784,7 +2784,7 @@ msgstr "Φίλτρο Ποιότητας"
 msgid "Quality Score"
 msgstr "Σκορ Ποιότητας"
 
-#: src/page/discover.vue:16 src/page/discover.vue:17 src/page/discover.vue:25
+#: src/page/discover.vue:16 src/page/discover.vue:17 src/page/discover.vue:24
 msgid "Random"
 msgstr "Τυχαίο"
 
@@ -2828,11 +2828,7 @@ msgstr "Πρόσφατη επεξεργασία"
 msgid "Recognition starts after indexing has been completed."
 msgstr "Η αναγνώριση ξεκινά μετά την ολοκλήρωση της δημιουργίας ευρετηρίου."
 
-#: src/page/settings/general.vue:88
-msgid "Recognize faces so people can be assigned and found."
-msgstr "Αναγνώριση προσώπων ώστε να μπορούν να ορίζονται και να εντοπίζονται συγκεκριμένα άτομα."
-
-#: src/page/people.vue:61
+#: src/page/people.vue:60
 msgid "Recognized"
 msgstr "Αναγνωρισμένα"
 
@@ -2873,7 +2869,7 @@ msgid "Reload"
 msgstr "Επαναφόρτωση"
 
 #: src/component/navigation.vue:1089 src/component/update.vue:62
-#: src/page/settings/general.vue:521
+#: src/page/settings/general.vue:511
 msgid "Reloading…"
 msgstr "Επαφόρτωση…"
 
@@ -2893,11 +2889,11 @@ msgstr "αποτυχία αφαίρεσης: άγνωστο άλμπουμ"
 msgid "Remove from Album"
 msgstr "Αφαιρέση από το άλμπουμ"
 
-#: src/component/input/chip-selector.vue:183
+#: src/component/input/chip-selector.vue:184
 msgid "Remove from all"
 msgstr "Αφαιρέστε από όλα τα"
 
-#: src/component/input/chip-selector.vue:183
+#: src/component/input/chip-selector.vue:184
 msgid "Remove from all selected photos"
 msgstr "Αφαίρεση από όλες τις επιλεγμένες φωτογραφίες"
 
@@ -2934,7 +2930,7 @@ msgid "Resolution"
 msgstr "Ανάλυση"
 
 #: src/page/connect.vue:74 src/page/connect.vue:83 src/page/connect.vue:76
-#: src/page/connect.vue:85 src/page/settings/advanced.vue:460
+#: src/page/connect.vue:85 src/page/settings/advanced.vue:456
 msgid "Restart"
 msgstr "Επανεκκίνηση"
 
@@ -3061,11 +3057,7 @@ msgstr "Πεδία"
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: src/page/settings/general.vue:358
-msgid "Search and display photos on a map."
-msgstr "Αναζήτηση και εμφάνιση φωτογραφιών σε χάρτη."
-
-#: src/page/discover.vue:12 src/page/discover.vue:13 src/page/discover.vue:21
+#: src/page/discover.vue:12 src/page/discover.vue:13 src/page/discover.vue:20
 msgid "Season"
 msgstr "Περίοδος"
 
@@ -3094,7 +3086,7 @@ msgid "Select dates"
 msgstr "Επιλογή ημερομηνιών"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:65
+#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:58
 msgid "Select or create albums"
 msgstr "Επιλογή ή δημιουργία άλμπουμ"
 
@@ -3102,7 +3094,7 @@ msgstr "Επιλογή ή δημιουργία άλμπουμ"
 msgid "Select or create labels"
 msgstr "Επιλογή ή δημιουργία ετικετών"
 
-#: src/component/upload/dialog.vue:48
+#: src/component/upload/dialog.vue:41
 msgid "Select the files to upload…"
 msgstr "Επιλογή αρχείων για ανέβασμα…"
 
@@ -3144,7 +3136,7 @@ msgid "Service URL"
 msgstr "URL υπηρεσίας"
 
 #: src/locales.js:359 src/page/settings.vue:99
-#: src/page/settings/general.vue:282
+#: src/page/settings/general.vue:245
 msgid "Services"
 msgstr "Υπηρεσίες"
 
@@ -3195,17 +3187,13 @@ msgid "Severity"
 msgstr "Σοβαρότητα"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
-#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:208
+#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:230
 msgid "Share"
 msgstr "Διαμοιρασμός"
 
 #: src/component/share/dialog.vue:14
 msgid "Share %{s}"
 msgstr "Μοιραστείτε το %{s}"
-
-#: src/page/settings/general.vue:283
-msgid "Share your pictures with other apps and services."
-msgstr "Μοιραστείτε τις φωτογραφίες σας με άλλες εφαρμογές και υπηρεσίες."
 
 #: src/page/people/new.vue:70 src/page/people/recognized.vue:127
 msgid "Show"
@@ -3231,9 +3219,33 @@ msgstr "Εμφάνιση κρυφών"
 msgid "Show Important Only"
 msgstr "Εμφάνιση μόνο σημαντικών"
 
-#: src/page/settings/general.vue:328
-msgid "Show server logs in Library."
-msgstr "Εμφάνιση των αρχείων καταγραφής του διακομιστή στη Βιβλιοθήκη."
+#: src/page/settings/general.vue:320
+msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
+msgstr "Εμφάνιση αρχείων καταγραφής στο περιβάλλον εργασίας web για την παρακολούθηση της δραστηριότητας και την αντιμετώπιση προβλημάτων."
+
+#: src/page/settings/general.vue:112
+msgid "Show smart albums that group pictures by occasion, trip, or location."
+msgstr "Προβολή έξυπνων άλμπουμ που ομαδοποιούν φωτογραφίες ανά περίσταση, ταξίδι ή τοποθεσία."
+
+#: src/page/settings/general.vue:335
+msgid "Show the Account page so users can manage their profile and security settings."
+msgstr "Εμφάνιση της σελίδας Λογαριασμός, ώστε οι χρήστες να μπορούν να διαχειρίζονται το προφίλ και τις ρυθμίσεις ασφαλείας τους."
+
+#: src/page/settings/general.vue:97
+msgid "Show the Calendar view to browse the library by year and month."
+msgstr "Εμφανίστε την προβολή Ημερολόγιο για να περιηγηθείτε στη βιβλιοθήκη ανά έτος και μήνα."
+
+#: src/page/settings/general.vue:127
+msgid "Show the Labels section to view and manage AI-generated labels."
+msgstr "Εμφανίστε την ενότητα Ετικέτες για να προβάλετε και να διαχειριστείτε τις ετικέτες που δημιουργούνται με τεχνητή νοημοσύνη."
+
+#: src/page/settings/general.vue:290
+msgid "Show the Library section to index, manage, and monitor the media library."
+msgstr "Εμφάνιση της ενότητας Βιβλιοθήκη για την ευρετηρίαση, διαχείριση και παρακολούθηση της βιβλιοθήκης πολυμέσων."
+
+#: src/page/settings/general.vue:350
+msgid "Show the Places view with interactive maps so you can browse photos by location."
+msgstr "Εμφάνιση της προβολής Τοποθεσίες με διαδραστικούς χάρτες, ώστε να μπορείτε να περιηγηθείτε στις φωτογραφίες ανά τοποθεσία."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"
@@ -3243,7 +3255,7 @@ msgstr "Εμφάνιση Τίτλων"
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:209
+#: src/page/settings/advanced.vue:205
 msgid "Sidecar Files"
 msgstr "Αρχεία Sidecar"
 
@@ -3253,7 +3265,7 @@ msgstr "Αρχεία Sidecar"
 msgid "Sign in"
 msgstr "Σύνδεση"
 
-#: src/page/discover.vue:17 src/page/discover.vue:8 src/page/discover.vue:9
+#: src/page/discover.vue:16 src/page/discover.vue:8 src/page/discover.vue:9
 msgid "Similar"
 msgstr "Παρόμοια"
 
@@ -3367,11 +3379,11 @@ msgstr "Στοίβες"
 msgid "Start"
 msgstr "Έναρξη"
 
-#: src/page/settings/general.vue:67
+#: src/page/settings/general.vue:61
 msgid "Start Page"
 msgstr "Σελίδα έναρξης"
 
-#: src/page/settings/advanced.vue:244
+#: src/page/settings/advanced.vue:240
 msgid "Static Size Limit: %{n}px"
 msgstr "Όριο Στατικού Μεγέθους: %{n}px"
 
@@ -3445,10 +3457,6 @@ msgstr "Λήψη"
 msgid "Teal"
 msgstr "Γαλαζοπράσινο"
 
-#: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "Το TensorFlow απαιτείται για την ταξινόμηση εικόνων, την αναγνώριση προσώπων και την ανίχνευση μη ασφαλούς περιεχομένου."
-
 #: src/options/options.js:322
 msgid "Terrain"
 msgstr "Ανάγλυφο"
@@ -3477,7 +3485,7 @@ msgstr "Το ευρετήριο περιέχει επί του παρόντος 
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "Μπορεί να μην υποστηρίζεται η μορφή τους, να μην έχουν μετατραπεί ακόμη σε JPEG ή να υπάρχουν αντίγραφα."
 
-#: src/locales.js:324 src/page/settings/general.vue:24
+#: src/locales.js:324 src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Θέμα"
 
@@ -3505,7 +3513,7 @@ msgid "Time UTC"
 msgstr "Ώρα UTC"
 
 #: src/component/photo/batch-edit.vue:295
-#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:53
+#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "Ζώνη Ώρας"
 
@@ -3557,7 +3565,7 @@ msgstr "Εναλλαγή Προβολής"
 msgid "Token"
 msgstr "Token"
 
-#: src/component/upload/dialog.vue:359
+#: src/component/upload/dialog.vue:342
 msgid "Too many files selected"
 msgstr "Έχουν επιλεγεί πάρα πολλά αρχεία"
 
@@ -3689,18 +3697,18 @@ msgstr "Αναβάθμιση τώρα"
 #: src/component/photo/toolbar.vue:475 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/service/upload.vue:70
-#: src/component/upload/dialog.vue:190 src/page/albums.vue:556
+#: src/component/upload/dialog.vue:173 src/page/albums.vue:556
 #: src/page/labels.vue:351 src/page/library/import.vue:69
-#: src/page/library/import.vue:75 src/page/settings/general.vue:163
+#: src/page/library/import.vue:75 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:184
 msgid "Upload"
 msgstr "Ανέβασμα"
 
-#: src/component/upload/dialog.vue:42
+#: src/component/upload/dialog.vue:36
 msgid "Upload complete. Indexing…"
 msgstr "Το ανέβασμα ολοκληρώθηκε. Δημιουργία ευρετηρίου…"
 
-#: src/component/upload/dialog.vue:38 src/component/upload/dialog.vue:443
+#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
 msgid "Upload failed"
 msgstr "Αποτυχία ανεβάσματος"
 
@@ -3713,16 +3721,12 @@ msgstr "Ανέβασμα τοπικών αρχείων"
 msgid "Upload Path"
 msgstr "Διαδρομή φόρτωσης"
 
-#: src/page/settings/general.vue:209
-msgid "Upload to WebDAV and share links with friends."
-msgstr "Ανεβάστε στο WebDAV και μοιραστείτε συνδέσμους με φίλους."
-
-#: src/component/upload/dialog.vue:40
+#: src/component/upload/dialog.vue:34
 msgid "Uploading %{n} of %{t}…"
 msgstr "Ανέβασμα %{n} από %{t}…"
 
-#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:395
+#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
+#: src/component/upload/dialog.vue:378
 msgid "Uploading photos…"
 msgstr "Ανέβασμα φωτογραφιών…"
 
@@ -3730,11 +3734,11 @@ msgstr "Ανέβασμα φωτογραφιών…"
 msgid "Uploading…"
 msgstr "Επαναγέμισμα…"
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:98
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Ανεβάσματα που ενδέχεται να περιέχουν τέτοιες εικόνες θα απορρίπτονται αυτόματα."
 
-#: src/page/settings/advanced.vue:398
+#: src/page/settings/advanced.vue:394
 msgid "Use Presets"
 msgstr "Χρήση Προεπιλογών"
 
@@ -3758,7 +3762,7 @@ msgstr "Χρήστης"
 msgid "User Guide"
 msgstr "Οδηγός χρήσης"
 
-#: src/page/settings/general.vue:12
+#: src/page/settings/general.vue:6
 msgid "User Interface"
 msgstr "Διεπαφή χρήστη"
 
@@ -3947,7 +3951,7 @@ msgstr "Μπορείτε να κατεβάσετε μόνο μία ετικέτ�
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Μπορείτε να αναζητήσετε μια τοποθεσία ή να μετακινήσετε το δείκτη στο χάρτη για να αλλάξετε τη θέση:"
 
-#: src/component/upload/dialog.vue:100
+#: src/component/upload/dialog.vue:93
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Μπορείτε να ανεβάσετε έως και %{n} αρχεία για δοκιμαστικούς σκοπούς."
 
@@ -3996,7 +4000,7 @@ msgstr "Περιεχόμενο"
 #: src/component/navigation.vue:128 src/component/navigation.vue:152
 #: src/component/navigation.vue:158 src/component/navigation.vue:173
 #: src/component/navigation.vue:188 src/component/navigation.vue:240
-#: src/component/navigation.vue:246 src/page/settings/general.vue:253
+#: src/component/navigation.vue:246 src/page/settings/general.vue:260
 msgctxt "Noun"
 msgid "Archive"
 msgstr "Αρχείο"
@@ -4013,6 +4017,69 @@ msgstr "Τίτλος"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Αρχείο"
+
+#~ msgid "Add files to your library via Web Upload."
+#~ msgstr "Προσθήκη αρχείων στην βιβλιοθήκη μέσω Web Upload."
+
+#~ msgid "Browse and edit image classification labels."
+#~ msgstr "Αναζήτηση και επεξεργασία ετικετών ταξινόμησης εικόνων."
+
+#~ msgid "Browse and share your pictures organized into monthly albums."
+#~ msgstr "Περιηγηθείτε και μοιραστείτε τις φωτογραφίες σας οργανωμένες σε μηνιαία άλμπουμ."
+
+#~ msgid "Browse indexed files and folders in Library."
+#~ msgstr "Περιήγηση σε αρχεία και φακέλους στη Βιβλιοθήκη."
+
+#~ msgid "Change personal profile and security settings."
+#~ msgstr "Αλλαγή του προσωπικού προφίλ και των ρυθμίσεων ασφαλείας."
+
+#~ msgid "Change photo titles, locations, and other metadata."
+#~ msgstr "Αλλάξτε τίτλους φωτογραφιών, τοποθεσίες και άλλα μεταδεδομένα."
+
+#~ msgid "Download single files and zip archives."
+#~ msgstr "Λήψη μεμονωμένων αρχείων και αρχείων συμπίεσης."
+
+#~ msgid "Edit the metadata, labels, and albums of multiple pictures at once."
+#~ msgstr "Επεξεργαστείτε τα μεταδεδομένα, τις ετικέτες και τα άλμπουμ πολλών εικόνων ταυτόχρονα."
+
+#~ msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+#~ msgstr "Εξαίρεση του περιεχομένου που έχει χαρακτηριστεί ως ιδιωτικό από τα αποτελέσματα αναζήτησης, τα κοινόχρηστα άλμπουμ, τις ετικέτες και τις τοποθεσίες."
+
+#~ msgid "Generate albums of special moments, journeys, and places."
+#~ msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
+
+#~ msgid "Hide photos that have been moved to archive."
+#~ msgstr "Απόκρυψη φωτογραφιών που έχουν αρχειοθετηθεί."
+
+#~ msgid "Imported files will be sorted by date and given a unique name."
+#~ msgstr "Τα εισαγόμενα αρχεία θα ταξινομηθούν κατά ημερομηνία και θα τους δοθεί ένα μοναδικό όνομα."
+
+#~ msgid "Index and import files through the user interface."
+#~ msgstr "Ευρετηρίαση και εισαγωγή αρχείων μέσω της διεπαφής χρήστη."
+
+#~ msgid "Permanently remove files to free up storage."
+#~ msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερώσετε χώρο αποθήκευσης."
+
+#~ msgid "Recognize faces so people can be assigned and found."
+#~ msgstr "Αναγνώριση προσώπων ώστε να μπορούν να ορίζονται και να εντοπίζονται συγκεκριμένα άτομα."
+
+#~ msgid "Search and display photos on a map."
+#~ msgstr "Αναζήτηση και εμφάνιση φωτογραφιών σε χάρτη."
+
+#~ msgid "Share your pictures with other apps and services."
+#~ msgstr "Μοιραστείτε τις φωτογραφίες σας με άλλες εφαρμογές και υπηρεσίες."
+
+#~ msgid "Show server logs in Library."
+#~ msgstr "Εμφάνιση των αρχείων καταγραφής του διακομιστή στη Βιβλιοθήκη."
+
+#~ msgid "Upload to WebDAV and share links with friends."
+#~ msgstr "Ανεβάστε στο WebDAV και μοιραστείτε συνδέσμους με φίλους."
+
+#~ msgid "Disable TensorFlow"
+#~ msgstr "Απενεργοποίηση TensorFlow"
+
+#~ msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+#~ msgstr "Το TensorFlow απαιτείται για την ταξινόμηση εικόνων, την αναγνώριση προσώπων και την ανίχνευση μη ασφαλούς περιεχομένου."
 
 #~ msgid "No server connection"
 #~ msgstr "Δεν υπάρχει σύνδεση διακομιστή"

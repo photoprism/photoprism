@@ -60,12 +60,7 @@
                                   <v-icon icon="mdi-download" size="18" end></v-icon>
                                 </v-btn>
                                 <v-btn
-                                  v-if="
-                                    features.edit &&
-                                    (file.FileType === 'jpg' || file.FileType === 'png') &&
-                                    !file.Error &&
-                                    !file.Primary
-                                  "
+                                  v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -77,9 +72,7 @@
                                   <v-icon icon="mdi-image" size="18" end></v-icon>
                                 </v-btn>
                                 <v-btn
-                                  v-if="
-                                    features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'
-                                  "
+                                  v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -119,9 +112,7 @@
                           <tr>
                             <td title="Unique ID">UID</td>
                             <td class="text-break">
-                              <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(file.UID)">{{
-                                file.UID
-                              }}</span>
+                              <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(file.UID)">{{ file.UID }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.InstanceID" title="XMP">
@@ -129,11 +120,7 @@
                               {{ $gettext(`Instance ID`) }}
                             </td>
                             <td class="text-break">
-                              <span
-                                class="clickable text-uppercase"
-                                @click.stop.prevent="$util.copyText(file.InstanceID)"
-                                >{{ file.InstanceID }}</span
-                              >
+                              <span class="clickable text-uppercase" @click.stop.prevent="$util.copyText(file.InstanceID)">{{ file.InstanceID }}</span>
                             </td>
                           </tr>
                           <tr>
@@ -141,9 +128,7 @@
                               {{ $gettext(`Hash`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy text-break" @click.stop.prevent="$util.copyText(file.Hash)">{{
-                                file.Hash
-                              }}</span>
+                              <span class="cursor-copy text-break" @click.stop.prevent="$util.copyText(file.Hash)">{{ file.Hash }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.Name">
@@ -151,9 +136,7 @@
                               {{ $gettext(`Filename`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.Name)">{{
-                                file.Name
-                              }}</span>
+                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.Name)">{{ file.Name }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.Root">
@@ -167,9 +150,7 @@
                               {{ $gettext(`Original Name`) }}
                             </td>
                             <td class="text-break">
-                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.OriginalName)">{{
-                                file.OriginalName
-                              }}</span>
+                              <span class="cursor-copy" @click.stop.prevent="$util.copyText(file.OriginalName)">{{ file.OriginalName }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.FileType">
@@ -185,9 +166,7 @@
                               {{ $gettext(`Size`) }}
                             </td>
                             <td>
-                              <span v-tooltip="Math.ceil(file?.Size / 1024).toLocaleString() + ' KB'">{{
-                                file.sizeInfo()
-                              }}</span>
+                              <span v-tooltip="Math.ceil(file?.Size / 1024).toLocaleString() + ' KB'">{{ file.sizeInfo() }}</span>
                             </td>
                           </tr>
                           <tr v-if="file.Pages">
@@ -381,11 +360,7 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <p-file-delete-dialog
-      :visible="deleteFile.dialog"
-      @close="closeDeleteDialog"
-      @confirm="confirmDeleteFile"
-    ></p-file-delete-dialog>
+    <p-file-delete-dialog :visible="deleteFile.dialog" @close="closeDeleteDialog" @confirm="confirmDeleteFile"></p-file-delete-dialog>
   </div>
 </template>
 
@@ -418,8 +393,7 @@ export default {
       timeZone: this.$config.getTimeZone(),
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
-      canAccessPrivate:
-        this.$config.allow("photos", "access_library") && this.$config.allow("photos", "access_private"),
+      canAccessPrivate: this.$config.allow("photos", "access_library") && this.$config.allow("photos", "access_private"),
       options: options,
       busy: false,
       rtl: this.$isRtl,

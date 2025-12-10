@@ -10,6 +10,7 @@ import (
 // Embedding represents a face embedding.
 type Embedding []float64
 
+// NullEmbedding is a zero-value placeholder embedding used when no data is available.
 var NullEmbedding = make(Embedding, 512)
 
 // NewEmbedding creates a new embedding from an inference result.

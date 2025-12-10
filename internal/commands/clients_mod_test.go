@@ -19,7 +19,7 @@ func TestClientsModCommand(t *testing.T) {
 		output0, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output0)
+		// t.Logf(output0)
 		assert.NoError(t, err)
 		assert.Contains(t, output0, "AuthEnabled  │ true")
 		assert.Contains(t, output0, "oauth2")
@@ -28,7 +28,7 @@ func TestClientsModCommand(t *testing.T) {
 		output, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--disable", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
@@ -36,7 +36,7 @@ func TestClientsModCommand(t *testing.T) {
 		output1, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output1)
+		// t.Logf(output1)
 		assert.NoError(t, err)
 		assert.Contains(t, output1, "AuthEnabled  │ false")
 
@@ -51,7 +51,7 @@ func TestClientsModCommand(t *testing.T) {
 		output3, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output3)
+		// t.Logf(output3)
 		assert.NoError(t, err)
 		assert.Contains(t, output3, "│ AuthEnabled  │ true ")
 	})
@@ -60,7 +60,7 @@ func TestClientsModCommand(t *testing.T) {
 		output, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--regenerate", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Client Secret")
 	})

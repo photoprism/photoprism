@@ -241,12 +241,7 @@ export default class Config {
             .filter((m) => m.UID === values.UID)
             .forEach((m) => {
               for (let key in values) {
-                if (
-                  key !== "UID" &&
-                  values.hasOwnProperty(key) &&
-                  values[key] != null &&
-                  typeof values[key] !== "object"
-                ) {
+                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
                   m[key] = values[key];
                 }
               }

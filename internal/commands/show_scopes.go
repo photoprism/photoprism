@@ -13,7 +13,7 @@ import (
 var ShowScopesCommand = &cli.Command{
 	Name:   "scopes",
 	Usage:  "Displays supported authorization scopes",
-	Flags:  append(report.CliFlags),
+	Flags:  report.CliFlags,
 	Action: showScopesAction,
 }
 

@@ -128,7 +128,7 @@ func authJWTInspectAction(ctx *cli.Context) error {
 // readTokenInput loads the token from CLI args, file, or STDIN.
 func readTokenInput(ctx *cli.Context) (string, error) {
 	if file := strings.TrimSpace(ctx.String("file")); file != "" {
-		data, err := os.ReadFile(file)
+		data, err := os.ReadFile(file) //nolint:gosec // user-supplied path is intended
 		if err != nil {
 			return "", cli.Exit(err, 1)
 		}

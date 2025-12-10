@@ -43,7 +43,7 @@ type Flag struct {
 	Env      []string `json:"env,omitempty"`
 	Category string   `json:"category,omitempty"`
 	Usage    string   `json:"usage,omitempty"`
-	Hidden   bool     `json:"hidden"`
+	Hidden   bool     `json:"hidden,omitempty"`
 }
 
 // Command describes a CLI command (flat form).
@@ -57,7 +57,7 @@ type Command struct {
 	Category    string   `json:"category,omitempty"`
 	Aliases     []string `json:"aliases,omitempty"`
 	ArgsUsage   string   `json:"args_usage,omitempty"`
-	Hidden      bool     `json:"hidden"`
+	Hidden      bool     `json:"hidden,omitempty"`
 	Flags       []Flag   `json:"flags,omitempty"`
 }
 

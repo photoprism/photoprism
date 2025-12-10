@@ -16,14 +16,14 @@ func RandomPoint(xMin, yMin, xMax, yMax int) image.Point {
 	}
 
 	xDiff := float64(xMax - xMin)
-	x := xMin + int(rand.Float64()*xDiff)
+	x := xMin + int(rand.Float64()*xDiff) //nolint:gosec // visual randomness only
 
 	if yMin > yMax {
 		yMin = yMax
 	}
 
 	yDiff := float64(yMax - yMin)
-	y := yMin + int(rand.Float64()*yDiff)
+	y := yMin + int(rand.Float64()*yDiff) //nolint:gosec // visual randomness only
 
 	return image.Pt(x, y)
 }

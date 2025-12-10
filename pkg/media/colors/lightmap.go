@@ -1,5 +1,6 @@
 package colors
 
+// LightMap stores luminance values for a palette.
 type LightMap []Luminance
 
 // Hex returns all luminance value as a hex encoded string.
@@ -69,7 +70,7 @@ func (m LightMap) Diff() (result int) {
 	result = 1
 
 	for _, val := range diffValues {
-		result = result << 1
+		result <<= 1
 
 		a := 0
 		b := 0
@@ -83,7 +84,7 @@ func (m LightMap) Diff() (result int) {
 		}
 
 		if a+4 > b {
-			result += 1
+			result++
 		}
 	}
 

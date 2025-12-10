@@ -565,13 +565,11 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		// Find album by UID.
 		album, err := query.AlbumByUID(uid)
 
-		if err != nil {
+		switch {
+		case err != nil, !album.HasID():
 			AbortAlbumNotFound(c)
 			return
-		} else if !album.HasID() {
-			AbortAlbumNotFound(c)
-			return
-		} else if frm.Empty() {
+		case frm.Empty():
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}

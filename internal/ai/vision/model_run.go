@@ -8,14 +8,22 @@ import (
 type RunType = string
 
 const (
-	RunAuto         RunType = ""              // Automatically decide when to run based on model type and configuration.
-	RunNever        RunType = "never"         // Never run the model.
-	RunManual       RunType = "manual"        // Only run manually e.g. with the "vision run" command.
-	RunAlways       RunType = "always"        // Run manually, on-schedule, on-demand, and on-index.
-	RunNewlyIndexed RunType = "newly-indexed" // Run manually amd for newly-indexed pictures.
-	RunOnDemand     RunType = "on-demand"     // Run manually, for newly-indexed pictures, and on configured schedule.
-	RunOnSchedule   RunType = "on-schedule"   // Run manually and on-schedule.
-	RunOnIndex      RunType = "on-index"      // Run manually and on-index.
+	// RunAuto automatically decides when to run based on model type and configuration.
+	RunAuto RunType = ""
+	// RunNever disables the model entirely.
+	RunNever RunType = "never"
+	// RunManual runs only when explicitly invoked (e.g., via the "vision run" command).
+	RunManual RunType = "manual"
+	// RunAlways runs manually, on-schedule, on-demand, and on-index.
+	RunAlways RunType = "always"
+	// RunNewlyIndexed runs manually and for newly indexed pictures.
+	RunNewlyIndexed RunType = "newly-indexed"
+	// RunOnDemand runs manually, for newly indexed pictures, and on configured schedule.
+	RunOnDemand RunType = "on-demand"
+	// RunOnSchedule runs manually and on-schedule.
+	RunOnSchedule RunType = "on-schedule"
+	// RunOnIndex runs manually and after indexing.
+	RunOnIndex RunType = "on-index"
 )
 
 // ReportRunType returns a human-readable string for the run type, preserving the

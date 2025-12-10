@@ -21,12 +21,13 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	done := make(map[string]bool)
 	result = IndexMain(&related, ind, o)
 
-	if result.Failed() {
+	switch {
+	case result.Failed():
 		return result
-	} else if !result.Success() {
+	case !result.Success():
 		// Skip related files if indexing was not completely successful.
 		return result
-	} else if result.Stacked() && related.Len() > 1 {
+	case result.Stacked() && related.Len() > 1:
 		// Show info if main file was stacked and has additional related files.
 		log.Infof("index: %s has %s", related.MainLogName(), english.Plural(related.Count(), "related file", "related files"))
 	}
@@ -58,9 +59,9 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		}
 
 		// Show warning if sidecar file exceeds size or resolution limit.
-		if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+		if _, limitErr := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
 			log.Warnf("index: %s", limitErr)
-		} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+		} else if _, limitErr = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 			log.Warnf("index: %s", limitErr)
 		}
 

@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"image"
-	_ "image/jpeg"
-	_ "image/png"
+	_ "image/jpeg" // register JPEG decoder
+	_ "image/png"  // register PNG decoder
+	"math"
 	"os"
 	"runtime/debug"
 
@@ -16,10 +17,13 @@ import (
 )
 
 const (
-	Mean  = float32(117)
+	// Mean is the default mean pixel value used during normalization.
+	Mean = float32(117)
+	// Scale is the default scale applied during normalization.
 	Scale = float32(1)
 )
 
+// ImageFromFile decodes an image from disk and converts it to a tensor for inference.
 func ImageFromFile(fileName string, input *PhotoInput) (*tf.Tensor, error) {
 	if img, err := OpenImage(fileName); err != nil {
 		return nil, err
@@ -28,8 +32,9 @@ func ImageFromFile(fileName string, input *PhotoInput) (*tf.Tensor, error) {
 	}
 }
 
+// OpenImage opens an image file and decodes it using the registered decoders.
 func OpenImage(fileName string) (image.Image, error) {
-	f, err := os.Open(fileName)
+	f, err := os.Open(fileName) //nolint:gosec // fileName supplied by trusted caller; reading local images is expected
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +44,7 @@ func OpenImage(fileName string) (image.Image, error) {
 	return img, err
 }
 
+// ImageFromBytes converts raw image bytes into a tensor using the provided input definition.
 func ImageFromBytes(b []byte, input *PhotoInput, builder *ImageTensorBuilder) (*tf.Tensor, error) {
 	img, _, imgErr := image.Decode(bytes.NewReader(b))
 
@@ -49,6 +55,7 @@ func ImageFromBytes(b []byte, input *PhotoInput, builder *ImageTensorBuilder) (*
 	return Image(img, input, builder)
 }
 
+// Image converts a decoded image into a tensor matching the provided input description.
 func Image(img image.Image, input *PhotoInput, builder *ImageTensorBuilder) (tfTensor *tf.Tensor, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -70,8 +77,8 @@ func Image(img image.Image, input *PhotoInput, builder *ImageTensorBuilder) (tfT
 	for i := 0; i < input.Resolution(); i++ {
 		for j := 0; j < input.Resolution(); j++ {
 			r, g, b, _ := img.At(i, j).RGBA()
-			//Although RGB can be disordered, we assume the input intervals are
-			//given in RGB order.
+			// Although RGB can be disordered, we assume the input intervals are
+			// given in RGB order.
 			builder.Set(i, j,
 				convertValue(r, input.GetInterval(0)),
 				convertValue(g, input.GetInterval(1)),
@@ -116,6 +123,10 @@ func transformImageGraph(imageFormat fs.Type, resolution int) (graph *tf.Graph, 
 	s := op.NewScope()
 	input = op.Placeholder(s, tf.String)
 
+	if resolution <= 0 || resolution > math.MaxInt32 {
+		return nil, input, output, fmt.Errorf("tensorflow: resolution %d is out of bounds", resolution)
+	}
+
 	// Assume the image is a JPEG, or a PNG if explicitly specified.
 	var decodedImage tf.Output
 	switch imageFormat {
@@ -125,13 +136,15 @@ func transformImageGraph(imageFormat fs.Type, resolution int) (graph *tf.Graph, 
 		decodedImage = op.DecodeJpeg(s, input, op.DecodeJpegChannels(3))
 	}
 
+	size := int32(resolution) //nolint:gosec // resolution is validated to be within int32 range above
+
 	output = op.Div(s,
 		op.Sub(s,
 			op.ResizeBilinear(s,
 				op.ExpandDims(s,
 					op.Cast(s, decodedImage, tf.Float),
 					op.Const(s.SubScope("make_batch"), int32(0))),
-				op.Const(s.SubScope("size"), []int32{int32(resolution), int32(resolution)})),
+				op.Const(s.SubScope("size"), []int32{size, size})),
 			op.Const(s.SubScope("mean"), Mean)),
 		op.Const(s.SubScope("scale"), Scale))
 

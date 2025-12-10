@@ -18,13 +18,13 @@ const (
 	// (0) (1) (2)   (3)   (4)      (5)      (6)   (7) (8)    (9)           (10)
 	//
 	// (0) mount ID: unique identifier of the mount (may be reused after umount).
-	//mountinfoMountID = 0
+	// mountinfoMountID = 0
 	// (1) parent ID: ID of parent (or of self for the top of the mount tree).
-	//mountinfoParentID = 1
+	// mountinfoParentID = 1
 	// (2) major:minor: value of st_dev for files on filesystem.
-	//mountinfoMajorMinor = 2
+	// mountinfoMajorMinor = 2
 	// (3) root: root of the mount within the filesystem.
-	//mountinfoRoot = 3
+	// mountinfoRoot = 3
 	// (4) mount point: mount point relative to the process's root.
 	mountinfoMountPoint = 4
 	// (5) mount options: per mount options.
@@ -32,13 +32,13 @@ const (
 	// (6) optional fields: zero or more fields terminated by "-".
 	mountinfoOptionalFields = 6
 	// (7) separator between optional fields.
-	//mountinfoSeparator = 7
+	// mountinfoSeparator = 7
 	// (8) filesystem type: name of filesystem of the form.
 	mountinfoFsType = 8
 	// (9) mount source: filesystem specific information or "none".
 	mountinfoMountSource = 9
 	// (10) super options: per super block options.
-	//mountinfoSuperOptions = 10
+	// mountinfoSuperOptions = 10
 )
 
 // Stat returns the mountpoint's stat information.
@@ -70,6 +70,11 @@ func mounts() ([]Mount, []string, error) {
 		}
 
 		// blockDeviceID := fields[mountinfoMountID]
+		if len(fields) <= mountinfoMountSource {
+			warnings = append(warnings, fmt.Sprintf("incomplete mountinfo line: %s", line))
+			continue
+		}
+
 		mountPoint := fields[mountinfoMountPoint]
 		mountOpts := fields[mountinfoMountOpts]
 		fstype := fields[mountinfoFsType]
@@ -93,14 +98,14 @@ func mounts() ([]Mount, []string, error) {
 			Type:       fsTypeMap[int64(stat.Type)], //nolint:unconvert
 			Opts:       mountOpts,
 			Metadata:   stat,
-			Total:      (uint64(stat.Blocks) * uint64(stat.Bsize)),                      //nolint:unconvert
-			Free:       (uint64(stat.Bavail) * uint64(stat.Bsize)),                      //nolint:unconvert
-			Used:       (uint64(stat.Blocks) - uint64(stat.Bfree)) * uint64(stat.Bsize), //nolint:unconvert
+			Total:      (uint64(stat.Blocks) * uint64(stat.Bsize)),                      //nolint:unconvert,gosec // stat values are kernel-provided
+			Free:       (uint64(stat.Bavail) * uint64(stat.Bsize)),                      //nolint:unconvert,gosec
+			Used:       (uint64(stat.Blocks) - uint64(stat.Bfree)) * uint64(stat.Bsize), //nolint:unconvert,gosec
 			Inodes:     stat.Files,
 			InodesFree: stat.Ffree,
 			InodesUsed: stat.Files - stat.Ffree,
 			Blocks:     uint64(stat.Blocks), //nolint:unconvert
-			BlockSize:  uint64(stat.Bsize),
+			BlockSize:  uint64(stat.Bsize),  //nolint:gosec // kernel-provided value fits uint64
 		}
 		d.DeviceType = deviceType(d)
 

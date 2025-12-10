@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/meta"
@@ -120,6 +121,10 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 
 		jsonName, err := mediaFile.ExifToolJsonName()
 
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		if fs.FileExists(jsonName) {
 			if err = os.Remove(jsonName); err != nil {
 				t.Error(err)
@@ -173,10 +178,11 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 		assert.Equal(t, fs.VideoMp4, mediaFile.FileType())
 
 		jsonName, err := mediaFile.ExifToolJsonName()
+		require.NoError(t, err)
 
 		if fs.FileExists(jsonName) {
-			if err = os.Remove(jsonName); err != nil {
-				t.Error(err)
+			if rmErr := os.Remove(jsonName); rmErr != nil {
+				t.Error(rmErr)
 			}
 		}
 
@@ -221,9 +227,13 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 
 		jsonName, err := mediaFile.ExifToolJsonName()
 
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		if fs.FileExists(jsonName) {
-			if err = os.Remove(jsonName); err != nil {
-				t.Error(err)
+			if rmErr := os.Remove(jsonName); rmErr != nil {
+				t.Error(rmErr)
 			}
 		}
 

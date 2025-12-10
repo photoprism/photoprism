@@ -13,15 +13,7 @@
         offset="12"
       >
         <template #activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon
-            size="52"
-            color="highlight"
-            variant="elevated"
-            density="comfortable"
-            class="action-menu opacity-95 ma-5"
-          >
+          <v-btn v-bind="props" icon size="52" color="highlight" variant="elevated" density="comfortable" class="action-menu opacity-95 ma-5">
             <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
@@ -81,26 +73,11 @@
           class="action-delete"
           @click.stop="dialog.delete = true"
         ></v-btn>
-        <v-btn
-          key="action-close"
-          icon="mdi-close"
-          color="grey-darken-2"
-          density="comfortable"
-          class="action-clear"
-          @click.stop="clearClipboard()"
-        ></v-btn>
+        <v-btn key="action-close" icon="mdi-close" color="grey-darken-2" density="comfortable" class="action-clear" @click.stop="clearClipboard()"></v-btn>
       </v-speed-dial>
     </div>
-    <p-photo-album-dialog
-      :visible="dialog.album"
-      @close="dialog.album = false"
-      @confirm="cloneAlbums"
-    ></p-photo-album-dialog>
-    <p-album-delete-dialog
-      :visible="dialog.delete"
-      @close="dialog.delete = false"
-      @confirm="batchDelete"
-    ></p-album-delete-dialog>
+    <p-photo-album-dialog :visible="dialog.album" @close="dialog.album = false" @confirm="cloneAlbums"></p-photo-album-dialog>
+    <p-album-delete-dialog :visible="dialog.delete" @close="dialog.delete = false" @confirm="batchDelete"></p-album-delete-dialog>
   </div>
 </template>
 <script>
@@ -143,8 +120,7 @@ export default {
 
     return {
       canDelete: this.$config.allow("albums", "delete"),
-      canDownload:
-        this.$config.allow("albums", "download") && features.download && !settings?.albums?.download?.disabled,
+      canDownload: this.$config.allow("albums", "download") && features.download && !settings?.albums?.download?.disabled,
       canShare: this.$config.allow("albums", "share") && features.share,
       canManage: this.$config.allow("albums", "manage"),
       deletable: ["album", "moment", "state"],

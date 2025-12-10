@@ -1,20 +1,8 @@
 <template>
   <div class="p-tab p-settings-account">
     <div class="width-lg pa-3">
-      <v-form
-        ref="form"
-        v-model="valid"
-        class="p-form-account ma-0 pa-0"
-        accept-charset="UTF-8"
-        @submit.prevent="onChange"
-      >
-        <input
-          ref="upload"
-          type="file"
-          class="d-none input-upload"
-          accept="image/png, image/jpeg"
-          @change.stop="onUploadAvatar()"
-        />
+      <v-form ref="form" v-model="valid" class="p-form-account ma-0 pa-0" accept-charset="UTF-8" @submit.prevent="onChange">
+        <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()" />
         <v-card flat tile class="bg-background ma-0 pa-0">
           <v-card-actions class="ma-0 pa-0">
             <v-row align="start" dense>
@@ -97,11 +85,7 @@
                 </v-row>
               </v-col>
               <v-col class="text-center" cols="4" sm="3" md="2" align-self="center">
-                <v-avatar
-                  :size="$vuetify.display.md ? 100 : 112"
-                  :class="{ clickable: !busy }"
-                  @click.stop.prevent="onChangeAvatar()"
-                >
+                <v-avatar :size="$vuetify.display.md ? 100 : 112" :class="{ clickable: !busy }" @click.stop.prevent="onChangeAvatar()">
                   <v-img
                     :alt="accountInfo"
                     :title="$gettext('Change Avatar')"
@@ -333,17 +317,8 @@
       </v-form>
     </div>
     <p-settings-apps :visible="dialog.apps" :model="user" @close="dialog.apps = false"></p-settings-apps>
-    <p-settings-passcode
-      :visible="dialog.passcode"
-      :model="user"
-      @close="dialog.passcode = false"
-      @update-user="updateUser()"
-    ></p-settings-passcode>
-    <p-settings-password
-      :visible="dialog.password"
-      :model="user"
-      @close="dialog.password = false"
-    ></p-settings-password>
+    <p-settings-passcode :visible="dialog.passcode" :model="user" @close="dialog.passcode = false" @update-user="updateUser()"></p-settings-passcode>
+    <p-settings-password :visible="dialog.password" :model="user" @close="dialog.password = false"></p-settings-password>
     <p-settings-webdav :visible="dialog.webdav" @close="dialog.webdav = false"></p-settings-webdav>
   </div>
 </template>

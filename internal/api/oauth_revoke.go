@@ -133,26 +133,27 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		}
 
 		// Check revocation request and abort if invalid.
-		if err != nil {
+		switch {
+		case err != nil:
 			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Error(err)}, clean.Log(sess.RefID), role.String())
 			AbortInvalidCredentials(c)
 			return
-		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
+		case sess == nil:
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, "", role.String())
 			AbortInvalidCredentials(c)
 			return
-		} else if sess.Abort(c) {
+		case sess.Abort(c):
 			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
 			return
-		} else if !sess.IsClient() {
+		case !sess.IsClient():
 			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Denied}, clean.Log(sess.RefID), role.String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 			return
-		} else if sUserUID != "" && sess.UserUID != sUserUID {
+		case sUserUID != "" && sess.UserUID != sUserUID:
 			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.ErrUnauthorized.Error()}, clean.Log(sess.RefID), role.String())
 			AbortInvalidCredentials(c)
 			return
-		} else {
+		default:
 			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", status.Granted}, clean.Log(sess.RefID), role.String())
 		}
 

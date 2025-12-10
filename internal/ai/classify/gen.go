@@ -1,5 +1,4 @@
 //go:build ignore
-// +build ignore
 
 // This generates stopwords.go by running "go generate"
 package main
@@ -88,6 +87,7 @@ package classify
 
 // Generated code, do not edit.
 
+// Rules contains the generated label classification rules from rules.yml.
 var Rules = LabelRules{
 {{- range $key, $value := .Rules }}
 	{{ printf "%q" $key }}:  {

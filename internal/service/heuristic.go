@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// Headers holds request header key/value pairs.
 type Headers = map[string]string
 
 // Heuristic represents a heuristic for detecting a remote service type, e.g. WebDAV.
@@ -36,6 +37,7 @@ var Heuristics = []Heuristic{
 	},
 }
 
+// MatchDomain returns true if the heuristic allows the provided domain.
 func (h Heuristic) MatchDomain(match string) bool {
 	if len(h.Domains) == 0 {
 		return true
@@ -44,6 +46,7 @@ func (h Heuristic) MatchDomain(match string) bool {
 	return slices.Contains(h.Domains, match)
 }
 
+// Discover returns the first matching endpoint URL for the heuristic.
 func (h Heuristic) Discover(rawUrl, user string) *url.URL {
 	u, err := url.Parse(rawUrl)
 
@@ -56,7 +59,7 @@ func (h Heuristic) Discover(rawUrl, user string) *url.URL {
 	}
 
 	for _, p := range h.Paths {
-		u.Path = strings.Replace(p, "{user}", user, -1)
+		u.Path = strings.ReplaceAll(p, "{user}", user)
 
 		if h.TestRequest(h.Method, u.String()) {
 			return u

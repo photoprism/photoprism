@@ -63,7 +63,7 @@ func TestSafeDownload_Succeeds(t *testing.T) {
 	if err := SafeDownload(dest, ts.URL, &safe.Options{Timeout: 5 * time.Second, MaxSizeBytes: 1 << 20, AllowPrivate: true}); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	b, err := os.ReadFile(dest)
+	b, err := os.ReadFile(dest) //nolint:gosec // test reads temp file
 	if err != nil {
 		t.Fatalf("read: %v", err)
 	}

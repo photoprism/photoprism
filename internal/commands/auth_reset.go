@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// AuthResetDescription explains the effect of the auth reset command.
 const AuthResetDescription = "This command recreates the auth_sessions database table so that it is compatible with the current version. As a result, all users and clients must re-authenticate. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
 
 // AuthResetCommand configures the command name, flags, and action.

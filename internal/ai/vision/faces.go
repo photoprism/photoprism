@@ -53,7 +53,8 @@ func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (re
 				return result, err
 			}
 
-			_, apiRequest.Model, apiRequest.Version = model.Model()
+			_, apiRequest.Model, apiRequest.Version = model.GetModel()
+			model.ApplyService(apiRequest)
 
 			if model.System != "" {
 				apiRequest.System = model.System

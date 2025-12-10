@@ -1,3 +1,4 @@
+//nolint:gocritic // explicit branching retained for clarity
 package places
 
 import (

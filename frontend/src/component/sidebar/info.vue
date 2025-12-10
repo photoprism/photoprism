@@ -1,11 +1,7 @@
 <template>
   <div class="p-sidebar-info metadata">
     <v-toolbar density="comfortable" color="navigation">
-      <v-btn
-        :icon="$isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right'"
-        :title="$gettext('Close')"
-        @click.stop="close()"
-      ></v-btn>
+      <v-btn :icon="$isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" :title="$gettext('Close')" @click.stop="close()"></v-btn>
       <v-toolbar-title>{{ $gettext(`Information`) }}</v-toolbar-title>
     </v-toolbar>
     <div v-if="model.UID">
@@ -36,24 +32,13 @@
       ></v-textarea -->
         </v-list-item>
         <v-divider v-if="model.Title || model.Caption" class="my-4"></v-divider>
-        <v-list-item
-          v-tooltip="$gettext(`Taken`)"
-          :title="formatTime(model)"
-          prepend-icon="mdi-calendar"
-          class="metadata__item"
-        >
+        <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
           <!-- template #append>
             <v-icon icon="mdi-pencil" size="20"></v-icon>
           </template -->
         </v-list-item>
 
-        <v-list-item
-          v-tooltip="$gettext(`Size`)"
-          :title="model.getTypeInfo()"
-          :prepend-icon="model.getTypeIcon()"
-          class="metadata__item"
-        >
-        </v-list-item>
+        <v-list-item v-tooltip="$gettext(`Size`)" :title="model.getTypeInfo()" :prepend-icon="model.getTypeIcon()" class="metadata__item"> </v-list-item>
 
         <template v-if="model.Lat && model.Lng">
           <v-divider class="my-4"></v-divider>

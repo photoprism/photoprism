@@ -51,7 +51,7 @@ func (l *list[K, V]) Back() *Element[K, V] {
 	return l.root.prev
 }
 
-// Remove detaches e from the list while keeping the remaining neighbours
+// Remove detaches e from the list while keeping the remaining neighbors
 // correctly linked. After removal the element's next/prev references are
 // zeroed so the node can be safely re-used or left for GC without retaining
 // other elements.

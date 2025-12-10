@@ -1,21 +1,36 @@
 package react
 
 var (
-	Love      Emoji = "❤️"
-	Like      Emoji = "👍"
-	CatLove   Emoji = "😻"
-	LoveIt    Emoji = "😍"
-	InLove    Emoji = "🥰"
-	Heart     Emoji = Love
-	Cheers    Emoji = "🥂"
-	Hot       Emoji = "🔥"
-	Party     Emoji = "🎉"
-	Birthday  Emoji = "🎂️"
-	Sparkles  Emoji = "✨"
-	Rainbow   Emoji = "🌈"
-	Pride     Emoji = "🏳️‍🌈"
+	// Love reaction emoji.
+	Love Emoji = "❤️"
+	// Like reaction emoji.
+	Like Emoji = "👍"
+	// CatLove reaction emoji.
+	CatLove Emoji = "😻"
+	// LoveIt reaction emoji.
+	LoveIt Emoji = "😍"
+	// InLove reaction emoji.
+	InLove Emoji = "🥰"
+	// Heart reaction emoji (alias of Love).
+	Heart = Love
+	// Cheers reaction emoji.
+	Cheers Emoji = "🥂"
+	// Hot reaction emoji.
+	Hot Emoji = "🔥"
+	// Party reaction emoji.
+	Party Emoji = "🎉"
+	// Birthday reaction emoji.
+	Birthday Emoji = "🎂️"
+	// Sparkles reaction emoji.
+	Sparkles Emoji = "✨"
+	// Rainbow reaction emoji.
+	Rainbow Emoji = "🌈"
+	// Pride reaction emoji.
+	Pride Emoji = "🏳️‍🌈"
+	// SeeNoEvil reaction emoji.
 	SeeNoEvil Emoji = "🙈"
-	Unknown   Emoji = ""
+	// Unknown reaction fallback.
+	Unknown Emoji
 )
 
 // Reactions specifies reaction emojis by name.

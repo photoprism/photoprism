@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"regexp"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -47,8 +48,6 @@ func TestGetMetrics(t *testing.T) {
 			"people",
 			"labels",
 			"label_max_photos",
-			"users",
-			"guests",
 		}
 
 		for _, stat := range stats {
@@ -87,10 +86,34 @@ func TestGetMetrics(t *testing.T) {
 		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_files_bytes{state="used"} `+floatPattern), body)
 		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_files_bytes{state="free"} `+floatPattern), body)
 		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_files_bytes{state="total"} `+floatPattern), body)
-		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_files_percent{state="used"} `+floatPattern), body)
-		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_files_percent{state="free"} `+floatPattern), body)
-		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_accounts_percent{state="used"} `+floatPattern), body)
-		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_accounts_percent{state="free"} `+floatPattern), body)
+		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_files_ratio{state="used"} `+floatPattern), body)
+		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_files_ratio{state="free"} `+floatPattern), body)
+		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_accounts_active{state="users"} `+floatPattern), body)
+		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_accounts_active{state="guests"} `+floatPattern), body)
+		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_accounts_ratio{state="used"} `+floatPattern), body)
+		assert.Regexp(t, regexp.MustCompile(`photoprism_usage_accounts_ratio{state="free"} `+floatPattern), body)
+
+		t.Run("RatiosSumToOne", func(t *testing.T) {
+			parseValue := func(pattern string) float64 {
+				m := regexp.MustCompile(pattern).FindStringSubmatch(body)
+				if len(m) != 2 {
+					t.Fatalf("metric not found: %s", pattern)
+				}
+				v, err := strconv.ParseFloat(m[1], 64)
+				if err != nil {
+					t.Fatalf("parse metric: %v", err)
+				}
+				return v
+			}
+
+			filesUsed := parseValue(`photoprism_usage_files_ratio{state="used"} (` + floatPattern + `)`)
+			filesFree := parseValue(`photoprism_usage_files_ratio{state="free"} (` + floatPattern + `)`)
+			assert.InEpsilon(t, 1.0, filesUsed+filesFree, 0.01)
+
+			accountsUsed := parseValue(`photoprism_usage_accounts_ratio{state="used"} (` + floatPattern + `)`)
+			accountsFree := parseValue(`photoprism_usage_accounts_ratio{state="free"} (` + floatPattern + `)`)
+			assert.InEpsilon(t, 1.0, accountsUsed+accountsFree, 0.01)
+		})
 	})
 	t.Run("ExposeClusterMetricsForPortal", func(t *testing.T) {
 		app, router, conf := NewApiTest()
