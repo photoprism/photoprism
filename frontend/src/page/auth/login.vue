@@ -1,12 +1,5 @@
 <template>
-  <v-container
-    id="auth-login"
-    theme="login"
-    fluid
-    fill-height
-    class="auth-login wallpaper background-welcome pa-6"
-    :style="wallpaper()"
-  >
+  <v-container id="auth-login" theme="login" fluid fill-height class="auth-login wallpaper background-welcome pa-6" :style="wallpaper()">
     <v-theme-provider theme="login">
       <div class="auth-language">
         <v-select
@@ -174,14 +167,7 @@
                     <v-col cols="12" class="oidc-actions">
                       <v-divider />
                       <div class="text-center oidc-buttons mt-6">
-                        <v-btn
-                          :disabled="loading"
-                          color="highlight"
-                          variant="flat"
-                          block
-                          class="action-oidc-login"
-                          @click.stop.prevent="onOidcLogin"
-                        >
+                        <v-btn :disabled="loading" color="highlight" variant="flat" block class="action-oidc-login" @click.stop.prevent="onOidcLogin">
                           <img alt="" class="oidc-icon v-icon--start mx-1" :src="config.ext.oidc.icon" />
                           {{ $gettext(`Continue with %{provider}`, { provider: config.ext.oidc.provider }) }}
                         </v-btn>

@@ -28,9 +28,10 @@ func NewIcons(c Config) Icons {
 	staticUri := c.StaticUri
 	appIcon := c.Icon
 
-	if appIcon == "" {
+	switch {
+	case appIcon == "":
 		appIcon = "logo"
-	} else if c.ThemePath != "" && strings.HasPrefix(appIcon, c.ThemeUri) {
+	case c.ThemePath != "" && strings.HasPrefix(appIcon, c.ThemeUri):
 		var appIconSize string
 		var appIconType string
 
@@ -52,7 +53,7 @@ func NewIcons(c Config) Icons {
 			Sizes: appIconSize,
 			Type:  appIconType,
 		}}
-	} else if strings.Contains(appIcon, "/") {
+	case strings.Contains(appIcon, "/"):
 		var appIconType string
 
 		switch fs.FileType(filepath.Base(appIcon)) {

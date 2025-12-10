@@ -14,7 +14,7 @@ func TestShareToken(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/xxx")
 		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
 	})
-	//TODO Why does it panic?
+	// TODO Why does it panic?
 	/*t.Run("ValidToken", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		ShareToken(router)
@@ -30,7 +30,7 @@ func TestShareTokenShared(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/1jxf3jfn2k/ss6sg6bxpogaaba7")
 		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
 	})
-	//TODO Why does it panic?
+	// TODO Why does it panic?
 	/*t.Run("ValidTokenAndShare", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		ShareTokenShared(router)

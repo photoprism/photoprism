@@ -1,7 +1,7 @@
 package photoprism
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // SHA1 retained for legacy audit IDs.
 	"encoding/base32"
 	"math"
 	"testing"
@@ -58,6 +58,7 @@ func TestFaces_AuditNormalizesEmbeddings(t *testing.T) {
 
 	rawJSON := raw.JSON()
 
+	//nolint:gosec // legacy ID compatibility relies on SHA1.
 	original := sha1.Sum(rawJSON)
 	oldID := base32.StdEncoding.EncodeToString(original[:])
 
@@ -87,6 +88,7 @@ func TestFaces_AuditNormalizesEmbeddings(t *testing.T) {
 
 	require.NoError(t, entity.Db().Create(marker).Error)
 
+	//nolint:gosec // legacy ID compatibility relies on SHA1.
 	hashNorm := sha1.Sum(normalizeEmbeddingCopy(raw).JSON())
 	expectedID := base32.StdEncoding.EncodeToString(hashNorm[:])
 

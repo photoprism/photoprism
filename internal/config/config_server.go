@@ -14,7 +14,9 @@ import (
 )
 
 const (
-	HttpModeProd  = "release"
+	// HttpModeProd selects Gin's release mode.
+	HttpModeProd = "release"
+	// HttpModeDebug selects Gin's debug mode.
 	HttpModeDebug = "debug"
 )
 
@@ -237,9 +239,7 @@ func (c *Config) TemplateFiles() []string {
 			continue
 		}
 
-		for _, tmplName := range matches {
-			results = append(results, tmplName)
-		}
+		results = append(results, matches...)
 	}
 
 	return results

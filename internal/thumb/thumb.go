@@ -26,14 +26,14 @@ package thumb
 
 import (
 	"fmt"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
+	_ "image/gif"  // register GIF decoder for thumbnail generation
+	_ "image/jpeg" // register JPEG decoder for thumbnail generation
+	_ "image/png"  // register PNG decoder for thumbnail generation
 	"math"
 
-	_ "golang.org/x/image/bmp"
-	_ "golang.org/x/image/tiff"
-	_ "golang.org/x/image/webp"
+	_ "golang.org/x/image/bmp"  // register BMP decoder for thumbnail generation
+	_ "golang.org/x/image/tiff" // register TIFF decoder for thumbnail generation
+	_ "golang.org/x/image/webp" // register WEBP decoder for thumbnail generation
 
 	"github.com/photoprism/photoprism/internal/event"
 )

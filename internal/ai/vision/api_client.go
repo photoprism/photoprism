@@ -35,13 +35,19 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	// Add "application/json" content type header.
 	header.SetContentType(req, header.ContentTypeJson)
 
-	// Add an authentication header if an access token is configured.
+	if reqErr != nil {
+		return apiResponse, reqErr
+	}
+
+	// Add an authentication header if an access token is provided.
 	if key != "" {
 		header.SetAuthorization(req, key)
 	}
 
-	if reqErr != nil {
-		return apiResponse, reqErr
+	// Add custom OpenAI organization and project headers.
+	if apiRequest.GetResponseFormat() == ApiFormatOpenAI {
+		header.SetOpenAIOrg(req, apiRequest.Org)
+		header.SetOpenAIProject(req, apiRequest.Project)
 	}
 
 	// Perform API request.

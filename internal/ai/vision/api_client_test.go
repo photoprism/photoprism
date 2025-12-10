@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
@@ -118,4 +119,45 @@ func TestPerformApiRequestOllama(t *testing.T) {
 			assert.Equal(t, "plain text", resp.Result.Caption.Text)
 		}
 	})
+}
+
+func TestPerformApiRequestOpenAIHeaders(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "org-123", r.Header.Get(header.OpenAIOrg))
+		assert.Equal(t, "proj-abc", r.Header.Get(header.OpenAIProject))
+
+		response := map[string]any{
+			"id":    "resp_123",
+			"model": "gpt-5-mini",
+			"output": []any{
+				map[string]any{
+					"role": "assistant",
+					"content": []any{
+						map[string]any{
+							"type": "output_text",
+							"text": "A scenic mountain view.",
+						},
+					},
+				},
+			},
+		}
+
+		assert.NoError(t, json.NewEncoder(w).Encode(response))
+	}))
+	defer server.Close()
+
+	req := &ApiRequest{
+		Id:             "headers",
+		Model:          "gpt-5-mini",
+		Images:         []string{"data:image/jpeg;base64,AA=="},
+		ResponseFormat: ApiFormatOpenAI,
+		Org:            "org-123",
+		Project:        "proj-abc",
+	}
+
+	resp, err := PerformApiRequest(req, server.URL, http.MethodPost, "")
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.NotNil(t, resp.Result.Caption)
+	assert.Equal(t, "A scenic mountain view.", resp.Result.Caption.Text)
 }

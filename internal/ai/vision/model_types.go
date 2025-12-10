@@ -5,14 +5,22 @@ import (
 	"strings"
 )
 
+// ModelType defines the classifier type used by a vision model (labels, caption, face, etc.).
 type ModelType = string
+
+// ModelTypes is a list of model type identifiers.
 type ModelTypes = []ModelType
 
 const (
-	ModelTypeLabels   ModelType = "labels"
-	ModelTypeNsfw     ModelType = "nsfw"
-	ModelTypeFace     ModelType = "face"
-	ModelTypeCaption  ModelType = "caption"
+	// ModelTypeLabels runs label detection.
+	ModelTypeLabels ModelType = "labels"
+	// ModelTypeNsfw runs NSFW detection.
+	ModelTypeNsfw ModelType = "nsfw"
+	// ModelTypeFace performs face detection or recognition.
+	ModelTypeFace ModelType = "face"
+	// ModelTypeCaption generates captions.
+	ModelTypeCaption ModelType = "caption"
+	// ModelTypeGenerate produces new content (e.g., text-to-image), when supported.
 	ModelTypeGenerate ModelType = "generate"
 )
 

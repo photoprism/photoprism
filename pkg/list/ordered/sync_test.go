@@ -2,7 +2,7 @@ package ordered
 
 import (
 	"fmt"
-	"math/rand"
+	"math/rand" //nolint:gosec // pseudo-random is sufficient for concurrency tests
 	"sync"
 	"testing"
 )
@@ -10,11 +10,15 @@ import (
 func TestRaceCondition(t *testing.T) {
 	m := NewSyncMap[int, int]()
 	wg := &sync.WaitGroup{}
+	//nolint:gosec // pseudo-random is sufficient for race testing
+	randInt := func() int {
+		return rand.Intn(100)
+	}
 
 	var asyncGet = func() {
 		wg.Add(1)
 		go func() {
-			key := rand.Intn(100)
+			key := randInt()
 			m.Get(key)
 			wg.Done()
 		}()
@@ -23,8 +27,8 @@ func TestRaceCondition(t *testing.T) {
 	var asyncSet = func() {
 		wg.Add(1)
 		go func() {
-			key := rand.Intn(100)
-			value := rand.Intn(100)
+			key := randInt()
+			value := randInt()
 			m.Set(key, value)
 			wg.Done()
 		}()
@@ -33,7 +37,7 @@ func TestRaceCondition(t *testing.T) {
 	var asyncDelete = func() {
 		wg.Add(1)
 		go func() {
-			key := rand.Intn(100)
+			key := randInt()
 			m.Delete(key)
 			wg.Done()
 		}()
@@ -42,7 +46,7 @@ func TestRaceCondition(t *testing.T) {
 	var asyncHas = func() {
 		wg.Add(1)
 		go func() {
-			key := rand.Intn(100)
+			key := randInt()
 			m.Has(key)
 			wg.Done()
 		}()
@@ -51,8 +55,8 @@ func TestRaceCondition(t *testing.T) {
 	var asyncReplaceKEy = func() {
 		wg.Add(1)
 		go func() {
-			key := rand.Intn(100)
-			newKey := rand.Intn(100)
+			key := randInt()
+			newKey := randInt()
 			m.ReplaceKey(key, newKey)
 			wg.Done()
 		}()
@@ -61,8 +65,8 @@ func TestRaceCondition(t *testing.T) {
 	var asyncGetOrDefault = func() {
 		wg.Add(1)
 		go func() {
-			key := rand.Intn(100)
-			def := rand.Intn(100)
+			key := randInt()
+			def := randInt()
 			m.GetOrDefault(key, def)
 			wg.Done()
 		}()

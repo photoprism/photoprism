@@ -1,7 +1,10 @@
 package i18n
 
+// Message and Error identifiers.
 const (
+	// ErrUnexpected is returned for unexpected errors.
 	ErrUnexpected Message = iota + 1
+	// ErrBadRequest indicates malformed input.
 	ErrBadRequest
 	ErrSaveFailed
 	ErrDeleteFailed
@@ -99,6 +102,7 @@ const (
 	MsgActivated
 )
 
+// Messages holds default English message strings.
 var Messages = MessageMap{
 	// Error messages:
 	ErrUnexpected:          gettext("Something went wrong, try again"),

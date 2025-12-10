@@ -130,7 +130,7 @@ func TestDirIsEmpty(t *testing.T) {
 		assert.Equal(t, false, DirIsEmpty("./xxx"))
 	})
 	t.Run("EmptyDir", func(t *testing.T) {
-		if err := os.Mkdir("./testdata/emptyDir", 0777); err != nil {
+		if err := os.Mkdir("./testdata/emptyDir", 0o750); err != nil {
 			t.Fatal(err)
 		}
 		defer os.RemoveAll("./testdata/emptyDir")
@@ -168,12 +168,12 @@ func TestDownload_SuccessAndErrors(t *testing.T) {
 
 	dir := t.TempDir()
 	goodPath := filepath.Join(dir, "sub", "file.txt")
-	badPath := filepath.Join("file.txt") // invalid path according to Download
+	badPath := "file.txt" // invalid path according to Download
 
 	// Success
 	err := Download(goodPath, tsOK.URL)
 	assert.NoError(t, err)
-	b, rerr := os.ReadFile(goodPath)
+	b, rerr := os.ReadFile(goodPath) //nolint:gosec // test helper reads temp file
 	assert.NoError(t, rerr)
 	assert.Equal(t, "hello world", string(b))
 

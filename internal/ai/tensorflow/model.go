@@ -23,7 +23,7 @@ func SavedModel(modelPath string, tags []string) (model *tf.SavedModel, err erro
 }
 
 // GuessInputAndOutput tries to inspect a loaded saved model to build the
-// ModelInfo struct
+// ModelInfo struct.
 func GuessInputAndOutput(model *tf.SavedModel) (input *PhotoInput, output *ModelOutput, err error) {
 	if model == nil {
 		return nil, nil, fmt.Errorf("tensorflow: GuessInputAndOutput received a nil input")
@@ -39,9 +39,10 @@ func GuessInputAndOutput(model *tf.SavedModel) (input *PhotoInput, output *Model
 			shape := modelOps[i].Output(0).Shape()
 
 			var comps []ShapeComponent
-			if shape.Size(3) == ExpectedChannels {
+			switch {
+			case shape.Size(3) == ExpectedChannels:
 				comps = []ShapeComponent{ShapeBatch, ShapeHeight, ShapeWidth, ShapeColor}
-			} else if shape.Size(1) == ExpectedChannels { // check the channels are 3
+			case shape.Size(1) == ExpectedChannels: // check the channels are 3
 				comps = []ShapeComponent{ShapeBatch, ShapeColor, ShapeHeight, ShapeWidth, ShapeColor}
 			}
 
@@ -69,6 +70,7 @@ func GuessInputAndOutput(model *tf.SavedModel) (input *PhotoInput, output *Model
 	return nil, nil, fmt.Errorf("could not guess the inputs and outputs")
 }
 
+// GetInputAndOutputFromSavedModel reads signature definitions to derive input/output info.
 func GetInputAndOutputFromSavedModel(model *tf.SavedModel) (*PhotoInput, *ModelOutput, error) {
 	if model == nil {
 		return nil, nil, fmt.Errorf("GetInputAndOutputFromSavedModel: nil input")
@@ -86,18 +88,20 @@ func GetInputAndOutputFromSavedModel(model *tf.SavedModel) (*PhotoInput, *ModelO
 			for _, inputTensor := range inputs {
 				if inputTensor.Shape.NumDimensions() == 4 {
 					var comps []ShapeComponent
-					if inputTensor.Shape.Size(3) == ExpectedChannels {
+
+					switch {
+					case inputTensor.Shape.Size(3) == ExpectedChannels:
 						comps = []ShapeComponent{ShapeBatch, ShapeHeight, ShapeWidth, ShapeColor}
-					} else if inputTensor.Shape.Size(1) == ExpectedChannels { // check the channels are 3
+					case inputTensor.Shape.Size(1) == ExpectedChannels: // check the channels are 3
 						comps = []ShapeComponent{ShapeBatch, ShapeColor, ShapeHeight, ShapeWidth}
-					} else {
+					default:
 						log.Debugf("tensorflow: shape %d", inputTensor.Shape.Size(1))
 					}
 
 					if comps == nil {
 						log.Warnf("tensorflow: skipping signature %v because we could not find the color component", k)
 					} else {
-						var inputIdx = 0
+						inputIdx := 0
 						var err error
 
 						inputName, inputIndex, found := strings.Cut(inputTensor.Name, ":")

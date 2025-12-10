@@ -181,7 +181,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("ChameleonLimeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(examplesPath + "/chameleon_lime.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "chameleon_lime.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -206,7 +206,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("DogOrangeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -231,7 +231,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("RandomDocx", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(examplesPath + "/Random.docx"); err != nil {
+		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "Random.docx")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -242,7 +242,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("Num6720PxWhiteJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(examplesPath + "/6720px_white.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "6720px_white.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -257,7 +257,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("Disabled", func(t *testing.T) {
 		tensorFlow := NewNasnet(modelsPath, true)
 
-		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -328,7 +328,7 @@ func BenchmarkModel_BestLabelWithOptimization(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg")
+	imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")) //nolint:gosec // reading bundled test fixture
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -349,7 +349,7 @@ func BenchmarkModel_BestLabelsNoOptimization(b *testing.B) {
 	}
 	model.builder = nil
 
-	imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg")
+	imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")) //nolint:gosec // reading bundled test fixture
 	if err != nil {
 		b.Fatal(err)
 	}

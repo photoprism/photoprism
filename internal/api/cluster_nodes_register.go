@@ -111,7 +111,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		}
 		for i := 0; i < len(name); i++ {
 			b := name[i]
-			if !(b == '-' || (b >= 'a' && b <= 'z') || (b >= '0' && b <= '9')) {
+			if b != '-' && (b < 'a' || b > 'z') && (b < '0' || b > '9') {
 				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid name chars", status.Failed})
 				AbortBadRequest(c)
 				return

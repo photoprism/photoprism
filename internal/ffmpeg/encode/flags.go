@@ -1,6 +1,6 @@
 package encode
 
-// The MovFlags default forces fragmented MP4 output suitable for streaming:
+// MovFlags defines default fragmented MP4 flags suitable for streaming:
 // - https://developer.mozilla.org/en-US/docs/Web/API/Media_Source_Extensions_API/Transcoding_assets_for_MSE#fragmenting
 // - https://nschlia.github.io/ffmpegfs/html/ffmpeg__profiles_8cc.html
 // - https://cloudinary.com/glossary/fragmented-mp4

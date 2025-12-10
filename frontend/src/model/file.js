@@ -176,11 +176,7 @@ export class File extends RestModel {
   }
 
   isAnimated() {
-    return (
-      this.MediaType &&
-      this.MediaType === media.Image &&
-      ((this.Frames && this.Frames > 1) || (this.Duration && this.Duration > 1))
-    );
+    return this.MediaType && this.MediaType === media.Image && ((this.Frames && this.Frames > 1) || (this.Duration && this.Duration > 1));
   }
 
   typeInfo() {

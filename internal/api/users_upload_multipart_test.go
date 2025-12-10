@@ -74,18 +74,6 @@ func buildZipWithDirsAndFiles(dirs []string, files map[string][]byte) []byte {
 	return zbuf.Bytes()
 }
 
-func findUploadedFiles(t *testing.T, base string) []string {
-	t.Helper()
-	var out []string
-	_ = filepath.Walk(base, func(path string, info os.FileInfo, err error) error {
-		if err == nil && !info.IsDir() {
-			out = append(out, path)
-		}
-		return nil
-	})
-	return out
-}
-
 // findUploadedFilesForToken lists files only under upload subfolders whose name ends with token suffix.
 func findUploadedFilesForToken(t *testing.T, base string, tokenSuffix string) []string {
 	t.Helper()

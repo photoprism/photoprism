@@ -1,6 +1,6 @@
 ## PhotoPrism — Batch Edit Package
 
-**Last Updated:** November 21, 2025
+**Last Updated:** November 23, 2025
 
 ### Overview
 
@@ -13,6 +13,7 @@ The `internal/photoprism/batch` package implements the form schema (`PhotosForm`
 - Community requests such as [Issue #271](https://github.com/photoprism/photoprism/issues/271) emphasized the need to bulk-edit core metadata (location, time zone, titles) instead of repeating the same change photo by photo.
 - [PR #5324](https://github.com/photoprism/photoprism/pull/5324) introduced the modern batch dialog, chip controls, and validation rules that this package still serves.
 - Batch edits run inside regular API workers; there is no dedicated job queue. We therefore optimize for O(n) database work across selected photos, avoid global locks, and offload heavy recomputation to existing workers (meta, labels, search index).
+- Batch edit requests run under a dedicated `mutex.BatchEdit` activity to serialize concurrent edits and cancel the background meta worker while changes are applied.
 - Frontend components expect round-trip metadata even for fields that are not yet editable (ISO, focal length, copyright, etc.), so the form structs intentionally contain more data than the dialog renders.
 
 #### Goals
@@ -21,6 +22,7 @@ The `internal/photoprism/batch` package implements the form schema (`PhotosForm`
 - Guarantee that album/label updates obey ACLs and deduplicate creations, even when multiple requests fire concurrently.
 - Minimize writes by only persisting changed columns and deferring derived work (labels, keyword re-indexing) to background workers.
 - Return refreshed photo models so the UI can immediately render the persisted state without extra queries.
+- Serialize batch edits with `mutex.BatchEdit` so only one batch edit runs at a time and shutdown can cancel ongoing requests; the meta worker is canceled while edits are applied.
 
 #### Non-Goals
 

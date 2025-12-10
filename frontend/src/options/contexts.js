@@ -1,0 +1,9 @@
+export const Default = "";
+export const Photos = "photos";
+export const Review = "review";
+export const Archive = "archive";
+export const Favorites = "favorites";
+export const Hidden = "hidden";
+export const Album = "album";
+export const State = "state";
+export const BatchEdit = "batch-edit";

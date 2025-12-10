@@ -6,16 +6,17 @@ import (
 	"github.com/disintegration/imaging"
 )
 
+// EXIF orientation values.
 const (
 	OrientationUnspecified int = 0
-	OrientationNormal          = 1
-	OrientationFlipH           = 2
-	OrientationRotate180       = 3
-	OrientationFlipV           = 4
-	OrientationTranspose       = 5
-	OrientationRotate270       = 6
-	OrientationTransverse      = 7
-	OrientationRotate90        = 8
+	OrientationNormal      int = 1
+	OrientationFlipH       int = 2
+	OrientationRotate180   int = 3
+	OrientationFlipV       int = 4
+	OrientationTranspose   int = 5
+	OrientationRotate270   int = 6
+	OrientationTransverse  int = 7
+	OrientationRotate90    int = 8
 )
 
 // Rotate rotates an image based on the Exif orientation.

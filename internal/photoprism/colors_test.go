@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -198,15 +199,22 @@ func TestMediaFile_Colors(t *testing.T) {
 		}
 	})
 	t.Run("RandomDocx", func(t *testing.T) {
-		file, fileErr := NewMediaFile(c.ExamplesPath() + "/Random.docx")
-		p, fileErr := file.Colors(c.ThumbCachePath())
-		assert.Error(t, fileErr, "no color information: not a JPEG file")
+		file, err := NewMediaFile(c.ExamplesPath() + "/Random.docx")
+		require.NoError(t, err)
+
+		p, colorErr := file.Colors(c.ThumbCachePath())
+		assert.Error(t, colorErr, "no color information: not a JPEG file")
 		t.Log(p)
 	})
 	t.Run("AnimatedEarthThm", func(t *testing.T) {
-		file, fileErr := NewMediaFile(c.ExamplesPath() + "/animated-earth.thm")
-		p, fileErr := file.Colors(c.ThumbCachePath())
-		assert.Error(t, fileErr, "no color information: not a JPEG file")
+		file, err := NewMediaFile(c.ExamplesPath() + "/animated-earth.thm")
+		if err != nil {
+			assert.Error(t, err)
+			return
+		}
+
+		p, colorErr := file.Colors(c.ThumbCachePath())
+		assert.Error(t, colorErr, "no color information: not a JPEG file")
 		t.Log(p)
 	})
 }

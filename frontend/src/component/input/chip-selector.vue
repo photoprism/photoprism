@@ -49,6 +49,7 @@
         hide-no-data
         return-object
         class="chip-selector__input"
+        @click:control="focusInput"
         @keydown.enter.prevent="onEnter"
         @blur="addNewItem"
         @update:model-value="onComboboxChange"
@@ -220,17 +221,13 @@ export default {
     updateItemAction(itemToUpdate, action) {
       // Special case: remove new items completely
       if (itemToUpdate.isNew && action === "remove") {
-        const updatedItems = this.items.filter(
-          (item) => (item.value || item.title) !== (itemToUpdate.value || itemToUpdate.title)
-        );
+        const updatedItems = this.items.filter((item) => (item.value || item.title) !== (itemToUpdate.value || itemToUpdate.title));
         this.$emit("update:items", updatedItems);
         return;
       }
 
       // Update action for existing item
-      const updatedItems = this.items.map((item) =>
-        (item.value || item.title) === (itemToUpdate.value || itemToUpdate.title) ? { ...item, action } : item
-      );
+      const updatedItems = this.items.map((item) => ((item.value || item.title) === (itemToUpdate.value || itemToUpdate.title) ? { ...item, action } : item));
 
       this.$emit("update:items", updatedItems);
     },
@@ -238,19 +235,8 @@ export default {
     onComboboxChange(value) {
       if (value && typeof value === "object" && value.title) {
         this.newItemTitle = value;
+        this.temporarilyCloseMenu();
         this.addNewItem();
-        this.menuOpen = false;
-        // Immediately clear the input, remove focus and restore placeholder
-        this.$nextTick(() => {
-          this.newItemTitle = "";
-          if (this.$refs.inputField) {
-            this.$refs.inputField.blur();
-            // Force the combobox to reset completely
-            setTimeout(() => {
-              this.newItemTitle = null;
-            }, 10);
-          }
-        });
       } else {
         this.newItemTitle = value;
       }
@@ -283,15 +269,12 @@ export default {
       }
 
       const normalizedTitle = this.normalizeTitle(title);
-      const existingItem = this.items.find(
-        (item) => (item.value && value && item.value === value) || this.normalizeTitle(item.title) === normalizedTitle
-      );
+      const existingItem = this.items.find((item) => (item.value && value && item.value === value) || this.normalizeTitle(item.title) === normalizedTitle);
 
       if (existingItem) {
         let changed = false;
         const updatedItems = this.items.map((item) => {
-          const isSame =
-            (item.value && value && item.value === value) || this.normalizeTitle(item.title) === normalizedTitle;
+          const isSame = (item.value && value && item.value === value) || this.normalizeTitle(item.title) === normalizedTitle;
           if (!isSame) {
             return item;
           }
@@ -341,24 +324,13 @@ export default {
       };
 
       this.$emit("update:items", [...this.items, newItem]);
-      this.newItemTitle = null;
-      this.menuOpen = false;
-
-      // Refocus input field
-      this.$nextTick(() => {
-        if (this.$refs.inputField) {
-          this.$refs.inputField.focus();
-        }
-      });
+      this.temporarilyCloseMenu();
+      this.clearAndOptionallyRefocus(true);
     },
 
     onEnter() {
-      this.suppressMenuOpen = true;
-      this.menuOpen = false;
+      this.temporarilyCloseMenu();
       this.addNewItem();
-      window.setTimeout(() => {
-        this.suppressMenuOpen = false;
-      }, 250);
     },
 
     onMenuUpdate(val) {
@@ -368,19 +340,41 @@ export default {
       }
       this.menuOpen = val;
     },
-    resetInputField() {
+
+    focusInput() {
+      if (this.$refs.inputField && typeof this.$refs.inputField.focus === "function") {
+        this.$refs.inputField.focus();
+      }
+    },
+
+    temporarilyCloseMenu() {
       this.menuOpen = false;
+      this.suppressMenuOpen = true;
+      window.setTimeout(() => {
+        this.suppressMenuOpen = false;
+      }, 200);
+    },
+
+    clearAndOptionallyRefocus(shouldRefocus = false) {
       this.$nextTick(() => {
         this.newItemTitle = "";
         if (this.$refs.inputField) {
           this.$refs.inputField.blur();
           setTimeout(() => {
             this.newItemTitle = null;
+            if (shouldRefocus) {
+              this.focusInput();
+            }
           }, 10);
         } else {
           this.newItemTitle = null;
         }
       });
+    },
+
+    resetInputField() {
+      this.temporarilyCloseMenu();
+      this.clearAndOptionallyRefocus(false);
     },
   },
 };

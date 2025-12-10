@@ -192,4 +192,21 @@ describe("common/clipboard", () => {
     clipboard.addRange(3, Photos);
     expect(clipboard.selection.length).toBe(4);
   });
+
+  it("should respect maxItems when adding a range", () => {
+    const storage = new StorageShim();
+    const clipboard = new Clipboard(storage, "clipboard");
+    clipboard.maxItems = 2;
+
+    const models = [new Photo({ UID: "P1" }), new Photo({ UID: "P2" }), new Photo({ UID: "P3" })];
+
+    clipboard.add(models[0]);
+    expect(clipboard.selection.length).toBe(1);
+
+    const added = clipboard.addRange(2, models);
+
+    expect(added).toBe(2);
+    expect(clipboard.selection.length).toBe(2);
+    expect(clipboard.selection).toEqual(["P1", "P2"]);
+  });
 });

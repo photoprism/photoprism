@@ -130,7 +130,7 @@ func (m *Map[K, V]) AllFromBack() iter.Seq2[K, V] {
 }
 
 // Keys returns an iterator that yields all keys in insertion order. Use
-// slices.Collect(m.Keys()) if a materialised slice is required.
+// slices.Collect(m.Keys()) if a materialized slice is required.
 func (m *Map[K, V]) Keys() iter.Seq[K] {
 	return func(yield func(key K) bool) {
 		for el := m.Front(); el != nil; el = el.Next() {

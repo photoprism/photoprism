@@ -18,8 +18,10 @@ func TestWebDAVSetFavoriteFlag_CreatesYamlOnce(t *testing.T) {
 	yml := filepath.Join(filepath.Dir(file), "img.yml")
 	assert.FileExists(t, yml)
 	// Write a marker and ensure second call doesn't overwrite content
+	// #nosec G304 -- test reads file created in a temp directory.
 	orig, _ := os.ReadFile(yml)
 	WebDAVSetFavoriteFlag(file)
+	// #nosec G304 -- test reads file created in a temp directory.
 	now, _ := os.ReadFile(yml)
 	assert.Equal(t, string(orig), string(now))
 }

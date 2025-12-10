@@ -50,6 +50,7 @@ func writeVersionScript(t *testing.T, version string) string {
 	if runtime.GOOS == "windows" {
 		content := "@echo off\r\n" +
 			"echo " + version + "\r\n"
+		// #nosec G306 executable test helper script
 		if err := os.WriteFile(path, []byte(content), 0o755); err != nil {
 			t.Fatalf("failed to write fake yt-dlp: %v", err)
 		}
@@ -59,6 +60,7 @@ func writeVersionScript(t *testing.T, version string) string {
 	content := "#!/usr/bin/env bash\n" +
 		"set -euo pipefail\n" +
 		"echo '" + version + "'\n"
+	// #nosec G306 executable test helper script
 	if err := os.WriteFile(path, []byte(content), 0o755); err != nil {
 		t.Fatalf("failed to write fake yt-dlp: %v", err)
 	}

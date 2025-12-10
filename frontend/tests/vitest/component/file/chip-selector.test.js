@@ -105,9 +105,7 @@ describe("component/file/chip-selector", () => {
 
       const emitted = wrapper.emitted("update:items");
       expect(emitted).toBeTruthy();
-      expect(emitted[0][0]).toEqual(
-        expect.arrayContaining([expect.objectContaining({ value: "album1", action: "remove" })])
-      );
+      expect(emitted[0][0]).toEqual(expect.arrayContaining([expect.objectContaining({ value: "album1", action: "remove" })]));
     });
 
     it.each(["keydown.enter", "keydown.space"])("should handle keyboard interactions (%s)", async (evt) => {

@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 //go:build (linux || darwin || freebsd || openbsd || netbsd) && !appengine
-// +build linux darwin freebsd openbsd netbsd
-// +build !appengine
 
 package fastwalk
 
@@ -79,7 +77,7 @@ func readDir(dirName string, fn func(dirName, entName string, typ os.FileMode) e
 func parseDirEnt(buf []byte) (consumed int, name string, typ os.FileMode) {
 	// golang.org/issue/37269
 	dirent := &syscall.Dirent{}
-	copy((*[unsafe.Sizeof(syscall.Dirent{})]byte)(unsafe.Pointer(dirent))[:], buf)
+	copy((*[unsafe.Sizeof(syscall.Dirent{})]byte)(unsafe.Pointer(dirent))[:], buf) //nolint:gosec // unsafe needed for fast directory walk
 	if v := unsafe.Offsetof(dirent.Reclen) + unsafe.Sizeof(dirent.Reclen); uintptr(len(buf)) < v {
 		panic(fmt.Sprintf("buf size of %d smaller than dirent header size %d", len(buf), v))
 	}
@@ -114,15 +112,16 @@ func parseDirEnt(buf []byte) (consumed int, name string, typ os.FileMode) {
 		return
 	}
 
-	nameBuf := (*[unsafe.Sizeof(dirent.Name)]byte)(unsafe.Pointer(&dirent.Name[0]))
+	nameBuf := (*[unsafe.Sizeof(dirent.Name)]byte)(unsafe.Pointer(&dirent.Name[0])) //nolint:gosec // bounded by dirent name buffer
 	nameLen := direntNamlen(dirent)
 
 	// Special cases for common things:
-	if nameLen == 1 && nameBuf[0] == '.' {
+	switch {
+	case nameLen == 1 && nameBuf[0] == '.':
 		name = "."
-	} else if nameLen == 2 && nameBuf[0] == '.' && nameBuf[1] == '.' {
+	case nameLen == 2 && nameBuf[0] == '.' && nameBuf[1] == '.':
 		name = ".."
-	} else {
+	default:
 		name = string(nameBuf[:nameLen])
 	}
 	return

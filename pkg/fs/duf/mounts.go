@@ -26,7 +26,7 @@ type Mount struct {
 }
 
 func readLines(filename string) ([]string, error) {
-	file, err := os.Open(filename)
+	file, err := os.Open(filename) //nolint:gosec // filename comes from platform mountinfo source
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func unescapeFstab(path string) string {
 	return escaped
 }
 
-//nolint:deadcode,unused // used on BSD
+//nolint:unused // used on BSD
 func byteToString(orig []byte) string {
 	n := -1
 	l := -1
@@ -73,7 +73,7 @@ func byteToString(orig []byte) string {
 	return string(orig[l:n])
 }
 
-//nolint:deadcode,unused // used on OpenBSD
+//nolint:unused // used on OpenBSD
 func intToString(orig []int8) string {
 	ret := make([]byte, len(orig))
 	size := -1

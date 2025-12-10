@@ -35,9 +35,7 @@ func clientsModAction(ctx *cli.Context) error {
 		}
 
 		// Find client record.
-		var client *entity.Client
-
-		client = entity.FindClientByUID(frm.ID())
+		client := entity.FindClientByUID(frm.ID())
 
 		if client == nil {
 			return fmt.Errorf("client %s not found", clean.Log(frm.ID()))

@@ -1,17 +1,7 @@
 <template>
   <div ref="page" tabindex="-1" class="p-page p-page-errors">
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="p-errors-search p-page__navigation"
-      @submit.prevent="updateQuery()"
-    >
-      <v-toolbar
-        flat
-        :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-        class="page-toolbar"
-        color="secondary"
-      >
+    <v-form ref="form" validate-on="invalid-input" class="p-errors-search p-page__navigation" @submit.prevent="updateQuery()">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
         <v-text-field
           :model-value="filter.q"
           hide-details
@@ -42,31 +32,16 @@
           "
         ></v-text-field>
 
-        <v-btn
-          v-if="!isPublic"
-          :title="$gettext('Delete All')"
-          icon="mdi-delete-sweep"
-          class="action-delete action-delete-all ms-1"
-          @click.stop="onDelete"
-        >
+        <v-btn v-if="!isPublic" :title="$gettext('Delete All')" icon="mdi-delete-sweep" class="action-delete action-delete-all ms-1" @click.stop="onDelete">
         </v-btn>
-        <p-action-menu
-          v-if="$vuetify.display.mdAndUp"
-          :items="menuActions"
-          button-class="ms-1"
-        ></p-action-menu>
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
       </v-toolbar>
     </v-form>
     <div v-if="loading" class="p-page__loading">
       <p-loading></p-loading>
     </div>
     <div v-else-if="errors.length > 0" fluid class="pa-0">
-      <p-scroll
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      ></p-scroll>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <v-list lines="one" bg-color="table" density="compact" class="py-0">
         <v-list-item
@@ -96,11 +71,7 @@
           {{ $gettext(`No warnings or error containing this keyword. Note that search is case-sensitive.`) }}
         </div>
         <div v-else>
-          {{
-            $gettext(
-              `Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues.`
-            )
-          }}
+          {{ $gettext(`Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues.`) }}
         </div>
       </v-alert>
     </div>
@@ -111,12 +82,7 @@
       @close="dialog.delete = false"
       @confirm="onConfirmDelete"
     ></p-confirm-dialog>
-    <v-dialog
-      :model-value="details.visible"
-      max-width="550"
-      class="p-dialog"
-      @keydown.esc.exact="details.visible = false"
-    >
+    <v-dialog :model-value="details.visible" max-width="550" class="p-dialog" @keydown.esc.exact="details.visible = false">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="details.err.Level === 'error'" icon="mdi-alert-circle-outline" color="error"></v-icon>

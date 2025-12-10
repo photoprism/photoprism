@@ -153,12 +153,12 @@ func Download(destPath, rawURL string, opt *Options) error {
 	}
 
 	tmp := destPath + ".part"
-	f, err := os.OpenFile(tmp, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+	f, err := os.OpenFile(tmp, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600) //nolint:gosec // destPath validated by caller; temp file
 	if err != nil {
 		return err
 	}
 	defer func() {
-		f.Close()
+		_ = f.Close()
 		if err != nil {
 			_ = os.Remove(tmp)
 		}
@@ -180,10 +180,8 @@ func Download(destPath, rawURL string, opt *Options) error {
 	if err = f.Close(); err != nil {
 		return err
 	}
-	if err = os.Rename(tmp, destPath); err != nil {
-		return err
-	}
-	return nil
+
+	return os.Rename(tmp, destPath)
 }
 
 func isPrivateOrDisallowedIP(ip net.IP) bool {

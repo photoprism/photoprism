@@ -418,8 +418,9 @@ func embeddingSignHash(values []float64) uint32 {
 	}
 
 	for i := 0; i < limit; i++ {
-		if values[i] >= 0 {
-			hash |= 1 << uint(i)
+		if values[i] >= 0 && i < 32 {
+			//nolint:gosec // shift count bounded by 32 bits.
+			hash |= 1 << uint32(i)
 		}
 	}
 

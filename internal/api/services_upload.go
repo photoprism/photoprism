@@ -74,7 +74,7 @@ func UploadToService(router *gin.RouterGroup) {
 				alias = file.ShareBase(seq)
 			}
 
-			aliases[key] += 1
+			aliases[key]++
 
 			entity.FirstOrCreateFileShare(entity.NewFileShare(file.ID, m.ID, alias))
 		}

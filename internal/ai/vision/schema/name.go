@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	// NamePrefix prefixes generated schema identifiers for vision requests.
 	NamePrefix = "photoprism_vision"
 )
 
@@ -19,7 +20,7 @@ func JsonSchemaName(schema json.RawMessage, version string) string {
 	switch {
 	case bytes.Contains(schema, []byte("labels")):
 		schemaName = "labels"
-	case bytes.Contains(schema, []byte("labels")):
+	case bytes.Contains(schema, []byte("caption")):
 		schemaName = "caption"
 	default:
 		schemaName = "schema"

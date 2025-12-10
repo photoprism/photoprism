@@ -78,7 +78,7 @@ func NewNasnet(modelsPath string, disabled bool) *Model {
 	}, disabled)
 }
 
-// Init initialises tensorflow models if not disabled
+// Init initializes tensorflow models if not disabled.
 func (m *Model) Init() (err error) {
 	if m.disabled {
 		return nil
@@ -95,7 +95,7 @@ func (m *Model) File(fileName string, confidenceThreshold int) (result Labels, e
 
 	var data []byte
 
-	if data, err = os.ReadFile(fileName); err != nil {
+	if data, err = os.ReadFile(fileName); err != nil { //nolint:gosec // fileName is provided by trusted callers; reading arbitrary local files is expected behavior
 		return nil, err
 	}
 
@@ -203,13 +203,17 @@ func (m *Model) loadModel() (err error) {
 
 	if len(m.meta.Tags) == 0 {
 		infos, modelErr := tensorflow.GetModelTagsInfo(modelPath)
-		if modelErr != nil {
+
+		switch {
+		case modelErr != nil:
 			log.Errorf("classify: could not get info from model in %s (%s)", clean.Log(modelPath), clean.Error(modelErr))
-		} else if len(infos) == 1 {
+		case len(infos) == 1:
 			log.Debugf("classify: model info: %+v", infos[0])
 			m.meta.Merge(&infos[0])
-		} else {
+		case len(infos) > 1:
 			log.Warnf("classify: found %d metagraphs, which is too many", len(infos))
+		default:
+			log.Warnf("classify: no metagraphs found in %s", clean.Log(modelPath))
 		}
 	}
 

@@ -35,7 +35,7 @@ func ApplyCliContext(c interface{}, ctx *cli.Context) error {
 				if s == "" {
 					// Omit.
 				} else if sec := txt.UInt(s); sec > 0 {
-					fieldValue.Set(reflect.ValueOf(time.Duration(sec) * time.Second))
+					fieldValue.Set(reflect.ValueOf(time.Duration(sec) * time.Second)) //nolint:gosec // txt.UInt is bounded; duration uses int64 on supported platforms
 				} else if d, err := time.ParseDuration(s); err == nil {
 					fieldValue.Set(reflect.ValueOf(d))
 				}

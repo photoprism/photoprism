@@ -16,6 +16,7 @@ func (f *File) Orientation() int {
 	return clean.Orientation(f.FileOrientation)
 }
 
+// NewFile copies values from an arbitrary model into a File form.
 func NewFile(m interface{}) (f File, err error) {
 	err = deepcopier.Copy(m).To(&f)
 

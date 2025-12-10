@@ -393,7 +393,7 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		CreatedAt: time.Date(2025, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2025, 4, 28, 14, 6, 0, 0, time.UTC),
 		Photo:     PhotoFixtures.Pointer("Photo58"),
-		Album:     AlbumFixtures.Pointer("christmas-2030"),
+		Album:     AlbumFixtures.Pointer("christmas2030"),
 	},
 }
 

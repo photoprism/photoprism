@@ -2031,7 +2031,7 @@ func TestMediaFile_ExceedsBytes(t *testing.T) {
 		if f, err := NewMediaFile("testdata/norway-kjetil-moe.webp"); err != nil {
 			t.Fatal(err)
 		} else {
-			err, actual := f.ExceedsBytes(3145728)
+			actual, err := f.ExceedsBytes(3145728)
 			assert.NoError(t, err)
 			assert.Equal(t, int64(30320), actual)
 			assert.True(t, f.Ok())
@@ -2042,7 +2042,7 @@ func TestMediaFile_ExceedsBytes(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg"); err != nil {
 			t.Fatal(err)
 		} else {
-			err, actual := f.ExceedsBytes(-1)
+			actual, err := f.ExceedsBytes(-1)
 			assert.NoError(t, err)
 			assert.Equal(t, int64(128471), actual)
 			assert.True(t, f.Ok())
@@ -2053,7 +2053,7 @@ func TestMediaFile_ExceedsBytes(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/6720px_white.jpg"); err != nil {
 			t.Fatal(err)
 		} else {
-			err, actual := f.ExceedsBytes(0)
+			actual, err := f.ExceedsBytes(0)
 			assert.NoError(t, err)
 			assert.Equal(t, int64(162877), actual)
 			assert.True(t, f.Ok())
@@ -2064,7 +2064,7 @@ func TestMediaFile_ExceedsBytes(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng"); err != nil {
 			t.Fatal(err)
 		} else {
-			err, actual := f.ExceedsBytes(10485760)
+			actual, err := f.ExceedsBytes(10485760)
 			assert.NoError(t, err)
 			assert.Equal(t, int64(411944), actual)
 			assert.True(t, f.Ok())
@@ -2075,7 +2075,7 @@ func TestMediaFile_ExceedsBytes(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/example.bmp"); err != nil {
 			t.Fatal(err)
 		} else {
-			err, actual := f.ExceedsBytes(10485760)
+			actual, err := f.ExceedsBytes(10485760)
 			assert.NoError(t, err)
 			assert.Equal(t, int64(20156), actual)
 			assert.True(t, f.Ok())
@@ -2119,8 +2119,8 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 		if f, err := NewMediaFile("testdata/norway-kjetil-moe.webp"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsResolution(3)
-			assert.NoError(t, result)
+			actual, err := f.ExceedsResolution(3)
+			assert.NoError(t, err)
 			assert.Equal(t, 0, actual)
 		}
 	})
@@ -2128,8 +2128,8 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/telegram_2020-01-30_09-57-18.jpg"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsResolution(3)
-			assert.NoError(t, result)
+			actual, err := f.ExceedsResolution(3)
+			assert.NoError(t, err)
 			assert.Equal(t, 1, actual)
 		}
 	})
@@ -2140,17 +2140,17 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err3, actual3 := f.ExceedsResolution(3)
+		actual3, err3 := f.ExceedsResolution(3)
 
 		assert.Error(t, err3)
 		assert.Equal(t, 30, actual3)
 
-		err30, actual30 := f.ExceedsResolution(30)
+		actual30, err30 := f.ExceedsResolution(30)
 
 		assert.NoError(t, err30)
 		assert.Equal(t, 30, actual30)
 
-		err33, actual33 := f.ExceedsResolution(33)
+		actual33, err33 := f.ExceedsResolution(33)
 
 		assert.NoError(t, err33)
 		assert.Equal(t, 30, actual33)
@@ -2159,8 +2159,8 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsResolution(3)
-			assert.NoError(t, result)
+			actual, err := f.ExceedsResolution(3)
+			assert.NoError(t, err)
 			assert.Equal(t, 0, actual)
 		}
 	})
@@ -2168,8 +2168,8 @@ func TestMediaFile_ExceedsResolution(t *testing.T) {
 		if f, err := NewMediaFile(conf.ExamplesPath() + "/example.bmp"); err != nil {
 			t.Fatal(err)
 		} else {
-			result, actual := f.ExceedsResolution(3)
-			assert.NoError(t, result)
+			actual, err := f.ExceedsResolution(3)
+			assert.NoError(t, err)
 			assert.Equal(t, 0, actual)
 		}
 	})
@@ -2576,7 +2576,7 @@ func TestMediaFile_RenameSidecarFiles(t *testing.T) {
 		srcName := filepath.Join(c.SidecarPath(), "foo/bar.jpg.json")
 		dstName := filepath.Join(c.SidecarPath(), "2020/12/foobar.jpg.json")
 
-		if err = os.WriteFile(srcName, []byte("{}"), 0666); err != nil {
+		if err = os.WriteFile(srcName, []byte("{}"), 0o600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -2621,7 +2621,7 @@ func TestMediaFile_RemoveSidecarFiles(t *testing.T) {
 
 		sidecarName := filepath.Join(c.SidecarPath(), "2020/12/foobar.jpg.json")
 
-		if writeErr := os.WriteFile(sidecarName, []byte("{}"), 0666); writeErr != nil {
+		if writeErr := os.WriteFile(sidecarName, []byte("{}"), 0o600); writeErr != nil {
 			t.Fatal(writeErr)
 		}
 

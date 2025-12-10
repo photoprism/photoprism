@@ -1,6 +1,7 @@
 package batch
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -37,6 +39,12 @@ type MutationStats struct {
 	AlbumErrors    int
 	LabelErrors    int
 }
+
+// ErrBatchEditBusy is returned when another batch edit is already running.
+var ErrBatchEditBusy = errors.New("edit already running")
+
+// ErrBatchEditCanceled is returned when a batch edit was canceled (e.g. during shutdown).
+var ErrBatchEditCanceled = errors.New("edit canceled")
 
 // NewPhotoSaveRequest converts the batch values into a form.Photo and bundles it with the
 // target entity so callers outside this package do not have to depend on ConvertToPhotoForm.
@@ -141,6 +149,15 @@ func PrepareAndSavePhotos(photos search.PhotoResults, preloaded map[string]*enti
 		return result, nil
 	}
 
+	if err := mutex.BatchEdit.Start(); err != nil {
+		return nil, ErrBatchEditBusy
+	}
+
+	defer mutex.BatchEdit.Stop()
+
+	// Prevent concurrent metadata worker runs while batch updates are being applied.
+	mutex.MetaWorker.Cancel()
+
 	requests, preloaded, mutationStats := PreparePhotoSaveRequests(photos, result.Preloaded, values)
 
 	result.Requests = requests
@@ -212,6 +229,10 @@ func SavePhotos(requests []*PhotoSaveRequest) ([]bool, error) {
 	anySaved := false
 
 	for i, req := range requests {
+		if mutex.BatchEdit.Canceled() {
+			return results, ErrBatchEditCanceled
+		}
+
 		saved, err := savePhoto(req)
 
 		if err != nil {

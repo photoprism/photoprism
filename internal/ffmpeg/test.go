@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// RunCommandTest executes ffmpeg command tests and cleans up created files.
 func RunCommandTest(t *testing.T, encoder encode.Encoder, srcName, destName string, cmd *exec.Cmd, deleteAfterTest bool) {
 	var out bytes.Buffer
 	var stderr bytes.Buffer

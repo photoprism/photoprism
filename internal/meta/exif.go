@@ -306,8 +306,8 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	// Add nanoseconds to the calculated UTC and local time.
 	if data.TakenAt.Nanosecond() == 0 {
 		if ns := time.Duration(data.TakenNs); ns > 0 && ns <= time.Second {
-			data.TakenAt.Truncate(time.Second).UTC().Add(ns)
-			data.TakenAtLocal.Truncate(time.Second).Add(ns)
+			data.TakenAt = data.TakenAt.Truncate(time.Second).UTC().Add(ns)
+			data.TakenAtLocal = data.TakenAtLocal.Truncate(time.Second).Add(ns)
 		}
 	}
 

@@ -52,7 +52,7 @@ func (c Chunk) FileOffset(fileName string) (int, error) {
 		return -1, errors.New("file not found")
 	}
 
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // fileName validated by caller
 
 	if err != nil {
 		return -1, err

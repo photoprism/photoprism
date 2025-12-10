@@ -1,5 +1,6 @@
 import { mount, config as VTUConfig } from "@vue/test-utils";
 import { describe, it, expect, beforeEach } from "vitest";
+import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
 
@@ -48,22 +49,14 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
   it("getPadding returns expected structure for large and small screens", async () => {
     const wrapper = mountLightbox();
     // Large viewport
-    const large = wrapper.vm.$options.methods.getPadding.call(
-      wrapper.vm,
-      { x: 1200, y: 800 },
-      { width: 4000, height: 3000 }
-    );
+    const large = wrapper.vm.$options.methods.getPadding.call(wrapper.vm, { x: 1200, y: 800 }, { width: 4000, height: 3000 });
     expect(large).toHaveProperty("top");
     expect(large).toHaveProperty("bottom");
     expect(large).toHaveProperty("left");
     expect(large).toHaveProperty("right");
 
     // Small viewport (<= mobileBreakpoint) should yield zeros
-    const small = wrapper.vm.$options.methods.getPadding.call(
-      wrapper.vm,
-      { x: 360, y: 640 },
-      { width: 1200, height: 800 }
-    );
+    const small = wrapper.vm.$options.methods.getPadding.call(wrapper.vm, { x: 360, y: 640 }, { width: 1200, height: 800 });
     expect(small).toEqual({ top: 0, bottom: 0, left: 0, right: 0 });
   });
 
@@ -91,7 +84,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       canArchive: false,
       canDownload: true,
       collection: null,
-      context: "",
+      context: contexts.Default,
       model: {},
     };
     const actions = wrapper.vm.$options.methods.menuActions.call(ctx);

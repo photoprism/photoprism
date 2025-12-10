@@ -100,13 +100,14 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Check authentication credentials.
 		if err = sess.LogIn(frm, c); err != nil {
-			if sess.GetMethod().IsNot(authn.Method2FA) {
+			switch {
+			case sess.GetMethod().IsNot(authn.Method2FA):
 				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
-			} else if errors.Is(err, authn.ErrPasscodeRequired) {
+			case errors.Is(err, authn.ErrPasscodeRequired):
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": 32, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
 				// Return the reserved request rate limit tokens if password is correct, even if the verification code is missing.
 				r.Success()
-			} else {
+			default:
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": http.StatusUnauthorized, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
 			}
 			return
@@ -119,17 +120,20 @@ func CreateSession(router *gin.RouterGroup) {
 		}
 
 		// Save session after successful authentication.
-		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, status.Error(err)})
+		switch saved, saveErr := get.Session().Save(sess); {
+		case saveErr != nil:
+			event.AuditErr([]string{clientIp, status.Error(saveErr)})
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
-		} else if sess == nil {
+		case saved == nil:
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrUnexpected)})
 			return
-		} else if isNew {
-			event.AuditInfo([]string{clientIp, "session %s", "created"}, sess.RefID)
-		} else {
-			event.AuditInfo([]string{clientIp, "session %s", "updated"}, sess.RefID)
+		case isNew:
+			event.AuditInfo([]string{clientIp, "session %s", "created"}, saved.RefID)
+			sess = saved
+		default:
+			event.AuditInfo([]string{clientIp, "session %s", "updated"}, saved.RefID)
+			sess = saved
 		}
 
 		// Return the reserved request rate limit tokens after successful authentication.

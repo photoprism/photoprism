@@ -72,7 +72,7 @@ func TestCreateSession(t *testing.T) {
 		CreateSession(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
-		//t.Logf("Response Body: %s", r.Body.String())
+		// t.Logf("Response Body: %s", r.Body.String())
 		userName := gjson.Get(r.Body.String(), "user.Name").String()
 		assert.Equal(t, "admin", userName)
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -373,7 +373,7 @@ func TestDeleteSession(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		DeleteSession(router)
-		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"
+		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1" // #nosec G101 test token
 
 		r := PerformRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(bobToken))
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
@@ -399,7 +399,7 @@ func TestDeleteSession(t *testing.T) {
 
 		DeleteSession(router)
 		bobToken := AuthenticateUser(app, router, "bob", "Bobbob123!")
-		aliceToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
+		aliceToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0" // #nosec G101 test token
 
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(aliceToken), bobToken)
 		assert.Equal(t, http.StatusForbidden, r.Code)
@@ -411,7 +411,7 @@ func TestDeleteSession(t *testing.T) {
 
 		DeleteSession(router)
 		aliceToken := AuthenticateUser(app, router, "alice", "Alice123!")
-		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"
+		bobToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1" // #nosec G101 test token
 
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(bobToken), aliceToken)
 		assert.Equal(t, http.StatusForbidden, r.Code)
@@ -423,7 +423,7 @@ func TestDeleteSession(t *testing.T) {
 
 		DeleteSession(router)
 		authToken := AuthenticateUser(app, router, "alice", "Alice123!")
-		deleteToken := "638bffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0"
+		deleteToken := "638bffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0" // #nosec G101 test token
 
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(deleteToken), authToken)
 		assert.Equal(t, http.StatusForbidden, r.Code)

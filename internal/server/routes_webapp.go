@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
+// MethodsGetHead enumerates the safe GET/HEAD methods used by web app routes.
 var MethodsGetHead = []string{http.MethodGet, http.MethodHead}
 
 // registerWebAppRoutes adds routes for the web user interface.

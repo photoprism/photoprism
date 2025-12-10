@@ -56,8 +56,8 @@ func TestLabelCover(t *testing.T) {
 	t.Run("CouldNotFindOriginal", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		LabelCover(router)
-		//r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c3/t/"+conf.PreviewToken()+"/tile_500")
-		//ls6sg6b1wowuy3c2
+		// r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c3/t/"+conf.PreviewToken()+"/tile_500")
+		// ls6sg6b1wowuy3c2
 		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

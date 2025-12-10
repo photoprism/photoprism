@@ -130,7 +130,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 				alias = file.DownloadName(dlName, seq)
 			}
 
-			aliases[key] += 1
+			aliases[key]++
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {

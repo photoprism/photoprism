@@ -26,6 +26,7 @@ func (result Metadata) DownloadToFileWithOptions(
 		out := outTpl
 		out = strings.ReplaceAll(out, "%(id)s", "abc")
 		out = strings.ReplaceAll(out, "%(ext)s", "mp4")
+		// #nosec G301 media download directory should be accessible to user
 		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
 			return nil, err
 		}
@@ -33,6 +34,7 @@ func (result Metadata) DownloadToFileWithOptions(
 		if content == "" {
 			content = "dummy"
 		}
+		// #nosec G306 downloaded media files are intended to be user-readable
 		if err := os.WriteFile(out, []byte(content), 0o644); err != nil {
 			return nil, err
 		}
@@ -59,7 +61,7 @@ func (result Metadata) DownloadToFileWithOptions(
 	if !result.Options.noInfoDownload {
 		jsonTempPath = filepath.Join(tempPath, "info.json")
 		if err := os.WriteFile(jsonTempPath, result.RawJSON, 0600); err != nil {
-			os.RemoveAll(tempPath)
+			_ = os.RemoveAll(tempPath)
 			return nil, err
 		}
 	}
@@ -94,12 +96,12 @@ func (result Metadata) DownloadToFileWithOptions(
 
 			if result.Options.PlaylistStart > 0 {
 				cmd.Args = append(cmd.Args,
-					"--playlist-start", strconv.Itoa(int(result.Options.PlaylistStart)),
+					"--playlist-start", strconv.FormatUint(uint64(result.Options.PlaylistStart), 10),
 				)
 			}
 			if result.Options.PlaylistEnd > 0 {
 				cmd.Args = append(cmd.Args,
-					"--playlist-end", strconv.Itoa(int(result.Options.PlaylistEnd)),
+					"--playlist-end", strconv.FormatUint(uint64(result.Options.PlaylistEnd), 10),
 				)
 			}
 			if result.Options.FlatPlaylist {

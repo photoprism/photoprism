@@ -2,6 +2,7 @@ package colors
 
 import "image/color"
 
+// ColorMap maps RGBA values to Color enums.
 var ColorMap = map[color.RGBA]Color{
 	{0x00, 0x00, 0x00, 0xff}: Black,
 	{0xe0, 0xe0, 0xe0, 0xff}: Grey,
