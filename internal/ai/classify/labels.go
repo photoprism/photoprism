@@ -20,13 +20,14 @@ func (l Labels) Swap(i, j int) { l[i], l[j] = l[j], l[i] }
 // for equal priority the lower-uncertainty label wins. Labels with an
 // uncertainty >= 100 are considered unusable and are ordered last.
 func (l Labels) Less(i, j int) bool {
-	if l[i].Uncertainty >= 100 {
+	switch {
+	case l[i].Uncertainty >= 100:
 		return false
-	} else if l[j].Uncertainty >= 100 {
+	case l[j].Uncertainty >= 100:
 		return true
-	} else if l[i].Priority == l[j].Priority {
+	case l[i].Priority == l[j].Priority:
 		return l[i].Uncertainty < l[j].Uncertainty
-	} else {
+	default:
 		return l[i].Priority > l[j].Priority
 	}
 }
@@ -139,15 +140,16 @@ func (l Labels) Title(fallback string) string {
 		label = l[1]
 	}
 
-	if fallback != "" && label.Priority < 0 {
+	switch {
+	case fallback != "" && label.Priority < 0:
 		return fallback
-	} else if fallback != "" && label.Priority == 0 && label.Uncertainty > 50 {
+	case fallback != "" && label.Priority == 0 && label.Uncertainty > 50:
 		return fallback
-	} else if label.Priority >= -1 && label.Uncertainty <= 60 {
+	case label.Priority >= -1 && label.Uncertainty <= 60:
 		return label.Name
+	default:
+		return fallback
 	}
-
-	return fallback
 }
 
 // IsNSFW reports whether any label marks the asset as "not safe for work"

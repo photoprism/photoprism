@@ -39,6 +39,7 @@ func createFakeYtDlp(t *testing.T) string {
 		script.WriteString("echo '[download]' 1>&2\n")
 		script.WriteString("echo 'DATA'\n")
 	}
+	// #nosec G306 executable test helper script needs exec permissions
 	if err := os.WriteFile(path, script.Bytes(), 0o755); err != nil {
 		t.Fatalf("failed to write fake yt-dlp: %v", err)
 	}
@@ -64,7 +65,7 @@ func TestInfoFromURL_IncludesHeadersAndCookies(t *testing.T) {
 		t.Fatalf("infoFromURL error: %v", err)
 	}
 
-	data, err := os.ReadFile(argsLog)
+	data, err := os.ReadFile(filepath.Clean(argsLog))
 	if err != nil {
 		t.Fatalf("reading args log failed: %v", err)
 	}
@@ -102,7 +103,7 @@ func TestDownloadWithOptions_IncludesHeadersAndCookies_Pipe(t *testing.T) {
 	_, _ = dr.Read(buf)
 	_ = dr.Close()
 
-	data, err := os.ReadFile(argsLog)
+	data, err := os.ReadFile(filepath.Clean(argsLog))
 	if err != nil {
 		t.Fatalf("reading args log failed: %v", err)
 	}
@@ -132,7 +133,7 @@ func TestDownloadWithOptions_OmitsFilterWhenDirect(t *testing.T) {
 	if err != nil {
 		t.Fatalf("DownloadWithOptions error: %v", err)
 	}
-	data, err := os.ReadFile(argsLog)
+	data, err := os.ReadFile(filepath.Clean(argsLog))
 	if err != nil {
 		t.Fatalf("reading args log failed: %v", err)
 	}
@@ -196,7 +197,7 @@ func TestDownloadToFileWithOptions_IncludesPostprocessorArgs(t *testing.T) {
 		t.Fatalf("DownloadToFileWithOptions error: %v", err)
 	}
 
-	data, err := os.ReadFile(argsLog)
+	data, err := os.ReadFile(filepath.Clean(argsLog))
 	if err != nil {
 		t.Fatalf("reading args log failed: %v", err)
 	}
@@ -231,7 +232,7 @@ func TestDownloadWithOptions_IncludesPostprocessorArgs_Pipe(t *testing.T) {
 	_, _ = dr.Read(buf)
 	_ = dr.Close()
 
-	data, err := os.ReadFile(argsLog)
+	data, err := os.ReadFile(filepath.Clean(argsLog))
 	if err != nil {
 		t.Fatalf("reading args log failed: %v", err)
 	}

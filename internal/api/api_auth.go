@@ -35,13 +35,10 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
 	// Allow requests based on an access token for specific resources.
-	switch resource {
-	case acl.ResourceVision:
-		if perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && vision.ServiceKey == authToken {
-			s = entity.NewSessionFromToken(c, authToken, acl.ResourceVision.String(), "service-key")
-			event.AuditInfo([]string{clientIp, "%s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
-			return s
-		}
+	if resource == acl.ResourceVision && perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && vision.ServiceKey == authToken {
+		s = entity.NewSessionFromToken(c, authToken, acl.ResourceVision.String(), "service-key")
+		event.AuditInfo([]string{clientIp, "%s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
+		return s
 	}
 
 	// Find active session to perform authorization check or deny if no session was found.

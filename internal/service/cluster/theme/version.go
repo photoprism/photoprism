@@ -29,7 +29,7 @@ func DetectVersion(themePath string) (string, error) {
 
 	versionFile := filepath.Join(themePath, fs.VersionTxtFile)
 
-	if data, readErr := os.ReadFile(versionFile); readErr == nil {
+	if data, readErr := os.ReadFile(versionFile); readErr == nil { //nolint:gosec // version file path is internal, provided by caller
 		if v := clean.TypeUnicode(string(data)); v != "" {
 			return v, nil
 		}

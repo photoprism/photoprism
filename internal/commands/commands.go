@@ -38,6 +38,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// NONINTERACTIVE is the CLI environment flag to disable prompts.
 const NONINTERACTIVE = "noninteractive"
 
 var log = event.Log

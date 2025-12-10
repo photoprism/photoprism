@@ -9,7 +9,7 @@ import (
 
 // ReadLines returns all lines in a text file as string slice.
 func ReadLines(fileName string) (lines []string, err error) {
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // caller-controlled path; intended file read
 
 	if err != nil {
 		return lines, err

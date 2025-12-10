@@ -4,6 +4,7 @@ import (
 	tf "github.com/wamuir/graft/tensorflow"
 )
 
+// AddSoftmax appends a Softmax operation to the graph for the configured model output.
 func AddSoftmax(graph *tf.Graph, info *ModelInfo) (*tf.Operation, error) {
 
 	randomName := randomString(10)

@@ -96,9 +96,7 @@ export class Marker extends RestModel {
   }
 
   clearSubject() {
-    return $api
-      .delete(this.getEntityResource(this.getId()) + "/subject")
-      .then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.delete(this.getEntityResource(this.getId()) + "/subject").then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   static batchSize() {

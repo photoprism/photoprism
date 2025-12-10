@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-19 10:56+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-11-27 11:38+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
@@ -128,7 +128,7 @@ msgstr "Token de acces"
 #: src/component/navigation.vue:1068 src/component/navigation.vue:868
 #: src/component/service/upload.vue:25 src/locales.js:331
 #: src/model/service.js:72 src/model/user.js:151 src/page/settings.vue:112
-#: src/page/settings/general.vue:342
+#: src/page/settings/general.vue:334
 msgid "Account"
 msgstr "Cont"
 
@@ -213,10 +213,6 @@ msgstr "Adăugați un cont"
 msgid "Add Album"
 msgstr "Adaugă album"
 
-#: src/page/settings/general.vue:164
-msgid "Add files to your library via Web Upload."
-msgstr "Adăugați fișiere la biblioteca dvs. prin încărcare web."
-
 #: src/component/share/dialog.vue:19
 msgid "Add Link"
 msgstr "Adăugați un link"
@@ -240,11 +236,11 @@ msgstr "Adăugați imagini din rezultatele căutării prin selectarea lor."
 msgid "Add to album"
 msgstr "Adaugă la album"
 
-#: src/component/input/chip-selector.vue:181
+#: src/component/input/chip-selector.vue:182
 msgid "Add to all"
 msgstr "Adaugă la toate"
 
-#: src/component/input/chip-selector.vue:181
+#: src/component/input/chip-selector.vue:182
 msgid "Add to all selected photos"
 msgstr "Adăugați la toate fotografiile selectate"
 
@@ -308,7 +304,7 @@ msgstr "După două săptămâni"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/settings/advanced.vue:193
+#: src/page/settings/advanced.vue:189
 msgid "Album Backups"
 msgstr "Copii de rezervă ale albumelor"
 
@@ -388,6 +384,38 @@ msgstr "Toate originalele"
 msgid "All Years"
 msgstr "Toți anii"
 
+#: src/page/settings/general.vue:246
+msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
+msgstr "Permiteți configurarea și utilizarea aplicațiilor și serviciilor conectate pentru încărcarea și sincronizarea de la distanță."
+
+#: src/page/settings/general.vue:201
+msgid "Allow editing of metadata such as title, description, date, and location."
+msgstr "Permiteți editarea metadatelor, cum ar fi titlul, descrierea, data și locația."
+
+#: src/page/settings/general.vue:216
+msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
+msgstr "Permite editarea metadatelor, etichetelor și albumelor mai multor imagini simultan."
+
+#: src/page/settings/general.vue:186
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr "Activați instrumentul Import pentru a copia sau muta fișiere din folderul Import în Originale."
+
+#: src/page/settings/general.vue:276
+msgid "Allow files to be permanently deleted to free up storage space."
+msgstr "Permiteți ștergerea permanentă a fișierelor pentru a elibera spațiu de stocare."
+
+#: src/page/settings/general.vue:261
+msgid "Allow users to archive photos and videos so they are hidden without being deleted."
+msgstr "Permiteți utilizatorilor să arhiveze fotografii și videoclipuri, astfel încât acestea să fie ascunse fără a fi șterse."
+
+#: src/page/settings/general.vue:231
+msgid "Allow users to create and share links, and enable sharing with connected services."
+msgstr "Permiteți utilizatorilor să creeze și să partajeze linkuri și permiteți partajarea cu serviciile conectate."
+
+#: src/page/settings/general.vue:156
+msgid "Allow users to upload new photos and videos through the web interface."
+msgstr "Permiteți utilizatorilor să încarce noi fotografii și videoclipuri prin interfața web."
+
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Alternativ, puteți încărca fișiere direct pe servere WebDAV, cum ar fi Nextcloud."
@@ -415,7 +443,7 @@ msgstr "AM"
 msgid "Animated"
 msgstr "Animat"
 
-#: src/page/settings/general.vue:399
+#: src/page/settings/general.vue:391
 msgid "Animation"
 msgstr "Animație"
 
@@ -540,7 +568,7 @@ msgstr "Înapoi"
 msgid "Back to top"
 msgstr "Înapoi la începutul paginii"
 
-#: src/page/settings/advanced.vue:165
+#: src/page/settings/advanced.vue:161
 msgid "Backup"
 msgstr "Backup"
 
@@ -557,7 +585,7 @@ msgstr "Calea de bază"
 msgid "Batch"
 msgstr "Lot"
 
-#: src/page/settings/general.vue:238
+#: src/page/settings/general.vue:215
 msgid "Batch Edit"
 msgstr "Editare lot"
 
@@ -597,26 +625,14 @@ msgstr "Maro"
 
 #: src/component/photo/edit/files.vue:107 src/component/photo/edit/files.vue:67
 #: src/component/photo/edit/files.vue:75 src/component/photo/toolbar.vue:94
-#: src/component/upload/dialog.vue:123 src/component/upload/dialog.vue:75
-#: src/component/upload/dialog.vue:76 src/component/upload/dialog.vue:87
+#: src/component/upload/dialog.vue:112 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 msgid "Browse"
 msgstr "Răsfoiți"
-
-#: src/page/settings/general.vue:133
-msgid "Browse and edit image classification labels."
-msgstr "Răsfoiți și editați etichetele de clasificare a imaginilor."
-
-#: src/page/settings/general.vue:103
-msgid "Browse and share your pictures organized into monthly albums."
-msgstr "Răsfoiți și partajați imaginile dvs. organizate în albume lunare."
 
 #: src/locales.js:278
 msgid "Browse Files"
 msgstr "Răsfoiți fișierele"
-
-#: src/page/settings/general.vue:313
-msgid "Browse indexed files and folders in Library."
-msgstr "Răsfoiți fișierele și folderele indexate din Bibliotecă."
 
 #: src/component/photo/edit/people.vue:232
 msgid "Browse Pictures"
@@ -635,7 +651,7 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "Prin utilizarea software-ului și a serviciilor pe care le furnizăm, sunteți de acord cu termenii și condițiile noastre de utilizare, cu politica de confidențialitate și cu codul de conduită."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
-#: src/options/options.js:263 src/page/settings/general.vue:102
+#: src/options/options.js:263 src/page/settings/general.vue:96
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -719,14 +735,6 @@ msgstr "Schimbă Avatar"
 msgid "Change Password"
 msgstr "Schimbă parola"
 
-#: src/page/settings/general.vue:343
-msgid "Change personal profile and security settings."
-msgstr "Modificați profilul personal și setările de securitate."
-
-#: src/page/settings/general.vue:224
-msgid "Change photo titles, locations, and other metadata."
-msgstr "Modificați titlurile fotografiilor, locațiile și alte metadate."
-
 #: src/component/photo/clipboard.vue:80
 msgid "Change private flag"
 msgstr "Schimbarea steagului privat"
@@ -747,8 +755,8 @@ msgstr "Modificările nu au putut fi salvate"
 #: src/component/photo/edit/files.vue:570 src/component/service/edit.vue:343
 #: src/component/share/dialog.vue:240 src/component/share/dialog.vue:259
 #: src/page/albums.vue:1268 src/page/people/recognized.vue:320
-#: src/page/settings/advanced.vue:539 src/page/settings/content.vue:300
-#: src/page/settings/general.vue:525
+#: src/page/settings/advanced.vue:535 src/page/settings/content.vue:300
+#: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Modificări salvate cu succes"
 
@@ -804,7 +812,7 @@ msgstr "Acreditarea clienților"
 #: src/component/share/dialog.vue:142 src/component/share/dialog.vue:72
 #: src/component/share/dialog.vue:73 src/component/share/dialog.vue:82
 #: src/component/sidebar/info.vue:6 src/component/update.vue:25
-#: src/component/upload/dialog.vue:120 src/locales.js:206
+#: src/component/upload/dialog.vue:109 src/locales.js:206
 #: src/page/library/errors.vue:139
 msgid "Close"
 msgstr "Închideți"
@@ -829,7 +837,7 @@ msgstr "Culoare"
 msgid "Color Profile"
 msgstr "Profil de culoare"
 
-#: src/page/discover.vue:13 src/page/discover.vue:5
+#: src/page/discover.vue:12 src/page/discover.vue:5
 msgid "Colors"
 msgstr "Culori"
 
@@ -965,15 +973,15 @@ msgstr "Creați un cont"
 msgid "Create album"
 msgstr "Creați un album"
 
-#: src/page/settings/advanced.vue:178
+#: src/page/settings/advanced.vue:174
 msgid "Create regular backups based on the configured schedule."
 msgstr "Creați copii de rezervă ale indexurilor pe baza programului configurat."
 
-#: src/page/settings/advanced.vue:194
+#: src/page/settings/advanced.vue:190
 msgid "Create YAML files to back up album metadata."
 msgstr "Creați fișiere YAML pentru a salva metadatele albumelor."
 
-#: src/page/settings/advanced.vue:210
+#: src/page/settings/advanced.vue:206
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Creați fișiere YAML sidecar pentru a salva metadatele imaginilor."
 
@@ -1010,7 +1018,7 @@ msgstr "Zilnic"
 msgid "Database"
 msgstr "Baza de date"
 
-#: src/page/settings/advanced.vue:177
+#: src/page/settings/advanced.vue:173
 msgid "Database Backups"
 msgstr "Copii de rezervă ale bazei de date"
 
@@ -1056,7 +1064,7 @@ msgstr "Dosar implicit"
 #: src/component/photo/clipboard.vue:140 src/component/photo/edit/files.vue:62
 #: src/component/photo/edit/files.vue:70 src/component/photo/edit/files.vue:94
 #: src/component/service/remove.vue:22 src/component/share/dialog.vue:112
-#: src/locales.js:317 src/page/settings/general.vue:268
+#: src/locales.js:317 src/page/settings/general.vue:275
 msgid "Delete"
 msgstr "Ștergeți"
 
@@ -1098,47 +1106,51 @@ msgstr "Detalii"
 msgid "Dimensions"
 msgstr "Dimensiuni"
 
+#: src/page/settings/advanced.vue:117
+msgid "Disable all face detection and recognition features."
+msgstr "Dezactivați toate funcțiile de detectare și recunoaștere a feței."
+
 #: src/page/settings/advanced.vue:84
 msgid "Disable Backups"
 msgstr "Dezactivați copiile de rezervă"
 
-#: src/page/settings/advanced.vue:366
+#: src/page/settings/advanced.vue:362
 msgid "Disable Darktable"
 msgstr "Dezactivați Darktable"
 
-#: src/page/settings/advanced.vue:132
+#: src/page/settings/advanced.vue:148
 msgid "Disable ExifTool"
 msgstr "Dezactivați ExifTool"
+
+#: src/page/settings/advanced.vue:116
+msgid "Disable Faces"
+msgstr "Dezactivați fețele"
 
 #: src/page/settings/advanced.vue:69
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Dezactivați funcțiile care necesită permisiunea de scriere pentru dosarul de originale."
 
-#: src/page/settings/advanced.vue:430
+#: src/page/settings/advanced.vue:426
 msgid "Disable FFmpeg"
 msgstr "Dezactivați FFmpeg"
 
-#: src/page/settings/advanced.vue:414
+#: src/page/settings/advanced.vue:410
 msgid "Disable ImageMagick"
 msgstr "Dezactivați ImageMagick"
 
-#: src/page/settings/advanced.vue:117
+#: src/page/settings/advanced.vue:133
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Dezactivați hărțile lumii interactive și geocodarea inversă."
 
-#: src/page/settings/advanced.vue:116
+#: src/page/settings/advanced.vue:132
 msgid "Disable Places"
 msgstr "Dezactivați locurile"
 
-#: src/page/settings/advanced.vue:382
+#: src/page/settings/advanced.vue:378
 msgid "Disable RawTherapee"
 msgstr "Dezactivați RawTherapee"
 
-#: src/page/settings/advanced.vue:148
-msgid "Disable TensorFlow"
-msgstr "Dezactivați TensorFlow"
-
-#: src/page/settings/advanced.vue:446
+#: src/page/settings/advanced.vue:442
 msgid "Disable Vectors"
 msgstr "Dezactivarea vectorilor"
 
@@ -1150,11 +1162,11 @@ msgstr "Dezactivați WebDAV"
 msgid "Disabled"
 msgstr "Persoane cu handicap"
 
-#: src/page/settings/advanced.vue:447
+#: src/page/settings/advanced.vue:443
 msgid "Disables vector graphics support."
 msgstr "Dezactivează suportul pentru grafica vectorială."
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:427
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Dezactivează transcodarea video și extragerea miniaturilor."
 
@@ -1205,15 +1217,15 @@ msgstr "Document"
 msgid "Documents"
 msgstr "Documente"
 
-#: src/page/settings/advanced.vue:367
+#: src/page/settings/advanced.vue:363
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Nu utilizați Darktable pentru a converti fișiere RAW."
 
-#: src/page/settings/advanced.vue:415
+#: src/page/settings/advanced.vue:411
 msgid "Don't use ImageMagick to convert images."
 msgstr "Nu folosiți ImageMagick pentru a converti imaginile."
 
-#: src/page/settings/advanced.vue:383
+#: src/page/settings/advanced.vue:379
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
 
@@ -1224,7 +1236,7 @@ msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
 msgid "Done"
 msgstr "Realizat"
 
-#: src/component/upload/dialog.vue:43 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "S-a făcut."
@@ -1233,7 +1245,7 @@ msgstr "S-a făcut."
 #: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1479
 #: src/component/people/clipboard.vue:31 src/component/photo/clipboard.vue:92
 #: src/component/photo/edit/files.vue:51 src/page/settings/content.vue:183
-#: src/page/settings/general.vue:178
+#: src/page/settings/general.vue:170
 msgid "Download"
 msgstr "Descărcați"
 
@@ -1245,10 +1257,6 @@ msgstr "Descărcați numai fișiere media originale, fără fișiere generate au
 msgid "Download remote files"
 msgstr "Descărcarea fișierelor de la distanță"
 
-#: src/page/settings/general.vue:179
-msgid "Download single files and zip archives."
-msgstr "Descărcați fișiere individuale și arhive zip."
-
 #: src/component/album/clipboard.vue:227 src/component/album/toolbar.vue:252
 #: src/component/file/clipboard.vue:150 src/component/label/clipboard.vue:172
 #: src/component/lightbox.vue:2426 src/component/people/clipboard.vue:144
@@ -1258,7 +1266,7 @@ msgstr "Descărcați fișiere individuale și arhive zip."
 msgid "Downloading…"
 msgstr "Descărcarea…"
 
-#: src/page/settings/advanced.vue:232
+#: src/page/settings/advanced.vue:228
 msgid "Downscaling Filter"
 msgstr "Filtru de reducere a scării"
 
@@ -1284,11 +1292,11 @@ msgstr "Dublurile vor fi omise și vor apărea doar o singură dată."
 msgid "Duration"
 msgstr "Durata"
 
-#: src/page/settings/advanced.vue:285
+#: src/page/settings/advanced.vue:281
 msgid "Dynamic Previews"
 msgstr "Previziuni dinamice"
 
-#: src/page/settings/advanced.vue:261
+#: src/page/settings/advanced.vue:257
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limita dimensiunii dinamice: %{n}px"
 
@@ -1298,7 +1306,7 @@ msgstr "E-mail"
 
 #: src/component/album/clipboard.vue:43 src/component/album/toolbar.vue:174
 #: src/component/lightbox.vue:1378 src/component/lightbox.vue:1379
-#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:223
+#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:200
 msgid "Edit"
 msgstr "Editați"
 
@@ -1316,13 +1324,9 @@ msgstr "Editare cont"
 msgid "Edit Photo"
 msgstr "Editare fotografie"
 
-#: src/component/photo/batch-edit.vue:665
+#: src/component/photo/batch-edit.vue:664
 msgid "Edit Photos (%{n})"
 msgstr "Editarea fotografiilor (%{n})"
-
-#: src/page/settings/general.vue:239
-msgid "Edit the metadata, labels, and albums of multiple pictures at once."
-msgstr "Editați simultan metadatele, etichetele și albumele mai multor imagini."
 
 #: src/component/photo/edit/info.vue:222 src/component/photo/edit/info.vue:223
 msgid "Edited"
@@ -1337,11 +1341,23 @@ msgstr "Email"
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
 msgstr "Activați modul de depanare pentru a afișa jurnale suplimentare și pentru a ajuta la depanare."
 
+#: src/page/settings/general.vue:171
+msgid "Enable downloading of original and sidecar files from the web interface."
+msgstr "Activați descărcarea fișierelor originale și sidecar din interfața web."
+
+#: src/page/settings/general.vue:82
+msgid "Enable face recognition and the People view to easily find people you know."
+msgstr "Activați recunoașterea facială și vizualizarea Persoane pentru a găsi cu ușurință persoanele pe care le cunoașteți."
+
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
 msgstr "Activați caracteristici noi care pot fi incomplete sau instabile."
 
-#: src/page/settings/advanced.vue:399
+#: src/page/settings/general.vue:305
+msgid "Enable the file browser to navigate the Originals folder structure."
+msgstr "Activați browserul de fișiere pentru a naviga în structura de foldere Originals."
+
+#: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Activează presetările convertorului RAW. Poate reduce performanța."
 
@@ -1361,7 +1377,7 @@ msgstr "Introduceți data"
 msgid "Enter dates"
 msgstr "Introduceți datele"
 
-#: src/component/input/chip-selector.vue:128
+#: src/component/input/chip-selector.vue:129
 msgid "Enter item name..."
 msgstr "Introduceți numele articolului..."
 
@@ -1406,15 +1422,11 @@ msgstr "Estimarea locației aproximative a imaginilor fără coordonate GPS."
 msgid "Every two days"
 msgstr "La fiecare două zile"
 
-#: src/page/settings/general.vue:148
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Excludeți conținutul marcat ca fiind privat din rezultatele căutării, albumele partajate, etichetele și locații."
-
 #: src/page/people/new.vue:20 src/page/people/recognized.vue:53
 msgid "Exclude hidden"
 msgstr "Excludeți ascunse"
 
-#: src/page/settings/advanced.vue:133
+#: src/page/settings/advanced.vue:149
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Extragerea metadatelor cu ExifTool este necesară pentru suportul complet pentru Video, Live Photo și XMP."
 
@@ -1511,13 +1523,13 @@ msgstr "Fișier"
 msgid "File Browser"
 msgstr "Browser de fișiere"
 
-#: src/page/settings/advanced.vue:354
+#: src/page/settings/advanced.vue:350
 msgid "File Conversion"
 msgstr "Conversia fișierelor"
 
 #: src/component/album/edit/dialog.vue:147
-#: src/component/photo/batch-edit.vue:636
-#: src/component/photo/batch-edit.vue:656 src/component/photo/toolbar.vue:415
+#: src/component/photo/batch-edit.vue:635
+#: src/component/photo/batch-edit.vue:655 src/component/photo/toolbar.vue:415
 #: src/component/photo/toolbar.vue:426 src/component/photo/toolbar.vue:437
 #: src/component/photo/view/list.vue:47
 msgid "File Name"
@@ -1607,10 +1619,6 @@ msgstr "General"
 msgid "Generate"
 msgstr "Genera"
 
-#: src/page/settings/general.vue:118
-msgid "Generate albums of special moments, journeys, and places."
-msgstr "Creează automat albume cu momente, călătorii și locuri speciale."
-
 #: src/page/settings/content.vue:58
 msgid "Generate Previews"
 msgstr "Generați previzualizări"
@@ -1680,9 +1688,9 @@ msgstr "Fișiere ascunse"
 msgid "Hide"
 msgstr "Ascundeți"
 
-#: src/page/settings/general.vue:254
-msgid "Hide photos that have been moved to archive."
-msgstr "Ascundeți fotografiile care au fost mutate în arhivă."
+#: src/page/settings/general.vue:141
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr "Ascundeți elementele private din vizualizările globale, menținându-le în același timp accesibile în secțiunea Privat."
 
 #: src/options/options.js:381
 msgid "High"
@@ -1711,23 +1719,19 @@ msgstr "Dacă pierdeți accesul la aplicația sau dispozitivul dvs. de autentifi
 msgid "Image"
 msgstr "Imagine"
 
-#: src/page/settings/advanced.vue:301
+#: src/page/settings/advanced.vue:297
 msgid "Image Quality"
 msgstr "Calitatea imaginii"
 
-#: src/page/library.vue:74 src/page/library/import.vue:44
+#: src/page/library.vue:73 src/page/library/import.vue:44
 #: src/page/library/import.vue:45 src/page/library/import.vue:73
-#: src/page/library/import.vue:86 src/page/settings/general.vue:193
+#: src/page/library/import.vue:86 src/page/settings/general.vue:185
 msgid "Import"
 msgstr "Import"
 
 #: src/page/library/import.vue:57
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Fișierele importate vor fi sortate în funcție de dată și vor primi un nume unic pentru a se evita dublurile."
-
-#: src/page/settings/general.vue:194
-msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Fișierele importate vor fi sortate în funcție de dată și vor primi un nume unic."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1760,18 +1764,14 @@ msgstr "Includeți fișiere de imagine RAW atunci când descărcați stive și a
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Includeți fișiere sidecar atunci când descărcați stive și arhive."
 
-#: src/component/upload/dialog.vue:45 src/page/library/import.vue:9
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:9
 msgid "Increase storage size or delete files to continue."
 msgstr "Creșteți dimensiunea de stocare sau ștergeți fișierele pentru a continua."
 
-#: src/component/navigation.vue:942 src/page/library.vue:64
+#: src/component/navigation.vue:942 src/page/library.vue:63
 #: src/page/settings/content.vue:12
 msgid "Index"
 msgstr "Index"
-
-#: src/page/settings/general.vue:298
-msgid "Index and import files through the user interface."
-msgstr "Indexați și importați fișiere prin intermediul interfeței cu utilizatorul."
 
 #: src/page/library/index.vue:245 src/page/library/index.vue:251
 msgid "Indexing"
@@ -1798,7 +1798,7 @@ msgstr "ID-ul instanței"
 msgid "Instances"
 msgstr "Instanțe"
 
-#: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Depozitare insuficientă."
 
@@ -1861,11 +1861,11 @@ msgstr "Articolul"
 msgid "Items per page:"
 msgstr "Articole pe pagină:"
 
-#: src/page/settings/advanced.vue:308
+#: src/page/settings/advanced.vue:304
 msgid "JPEG Quality: %{n}"
 msgstr "Calitate JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:319
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limita dimensiunii JPEG: %{n}px"
 
@@ -1893,7 +1893,7 @@ msgstr "Etichetă"
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:325
-#: src/options/options.js:265 src/page/settings/general.vue:132
+#: src/options/options.js:265 src/page/settings/general.vue:126
 msgid "Labels"
 msgstr "Etichete"
 
@@ -1905,7 +1905,7 @@ msgstr "Etichete șterse"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Conservarea detaliilor, artefacte minime"
 
-#: src/page/settings/general.vue:38
+#: src/page/settings/general.vue:32
 msgid "Language"
 msgstr "Limba"
 
@@ -1958,7 +1958,7 @@ msgid "Lens"
 msgstr "Obiectiv"
 
 #: src/app/routes.js:475 src/app/routes.js:491 src/app/routes.js:507
-#: src/component/navigation.vue:613 src/page/settings/general.vue:297
+#: src/component/navigation.vue:613 src/page/settings/general.vue:289
 msgid "Library"
 msgstr "Bibliotecă"
 
@@ -2028,7 +2028,7 @@ msgstr "Încărcare..."
 
 #: src/options/admin.js:39 src/locales.js:341 src/options/auth.js:23
 #: src/options/auth.js:28 src/options/options.js:93
-#: src/page/settings/general.vue:52
+#: src/page/settings/general.vue:46
 msgid "Local"
 msgstr "Local"
 
@@ -2039,7 +2039,7 @@ msgstr "Ora locală"
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
 #: src/common/util.js:792 src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:307
-#: src/component/photo/batch-edit.vue:616
+#: src/component/photo/batch-edit.vue:615
 #: src/component/photo/edit/details.vue:471
 #: src/component/photo/edit/details.vue:591
 #: src/component/photo/edit/details.vue:685
@@ -2062,7 +2062,7 @@ msgid "Logout"
 msgstr "Logout"
 
 #: src/component/navigation.vue:948 src/component/navigation.vue:951
-#: src/page/library.vue:87 src/page/settings/general.vue:327
+#: src/page/library.vue:86 src/page/settings/general.vue:319
 msgid "Logs"
 msgstr "Jurnale"
 
@@ -2110,7 +2110,7 @@ msgstr "Manual"
 msgid "Manual Upload"
 msgstr "Încărcare manuală"
 
-#: src/page/settings/general.vue:383
+#: src/page/settings/general.vue:375
 msgid "Maps"
 msgstr "Hărți"
 
@@ -2175,7 +2175,7 @@ msgid "mixed"
 msgstr "amestecate"
 
 #: src/app/routes.js:192 src/component/navigation.vue:533
-#: src/options/options.js:264 src/page/settings/general.vue:117
+#: src/options/options.js:264 src/page/settings/general.vue:111
 msgid "Moments"
 msgstr "Momente"
 
@@ -2243,7 +2243,7 @@ msgstr "Nume prea lung"
 msgid "Never"
 msgstr "Niciodată"
 
-#: src/page/people.vue:74
+#: src/page/people.vue:73
 msgid "New"
 msgstr "Nou"
 
@@ -2354,7 +2354,7 @@ msgstr "Noduri"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:101
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Imaginile nefotografice și de slabă calitate necesită o revizuire înainte de a apărea în rezultatele căutării."
 
@@ -2428,7 +2428,7 @@ msgstr "Cel mai vechi Mai întâi"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pe Windows, introduceți următoarea resursă în fereastra de dialog de conectare:"
 
-#: src/page/settings/advanced.vue:287
+#: src/page/settings/advanced.vue:283
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generarea la cerere a miniaturilor poate cauza o utilizare ridicată a procesorului și a memoriei. Nu este recomandată pentru serverele și dispozitivele NAS cu resurse limitate."
 
@@ -2512,7 +2512,7 @@ msgstr "Denumire originală"
 #: src/component/navigation.vue:627 src/component/navigation.vue:633
 #: src/model/file.js:172 src/options/options.js:474
 #: src/page/library/browse.vue:12 src/page/settings/content.vue:193
-#: src/page/settings/general.vue:312
+#: src/page/settings/general.vue:304
 msgid "Originals"
 msgstr "Originale"
 
@@ -2555,11 +2555,11 @@ msgstr "Panoramă"
 msgid "Panoramas"
 msgstr "Panorame"
 
-#: src/component/input/chip-selector.vue:187
+#: src/component/input/chip-selector.vue:188
 msgid "Part of all selected photos"
 msgstr "Parte din toate fotografiile selectate"
 
-#: src/component/input/chip-selector.vue:185
+#: src/component/input/chip-selector.vue:186
 msgid "Part of some selected photos"
 msgstr "O parte din unele fotografii selectate"
 
@@ -2581,7 +2581,7 @@ msgstr "Parola a fost schimbată"
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:260
-#: src/page/settings/general.vue:87
+#: src/page/settings/general.vue:81
 msgid "People"
 msgstr "Oameni"
 
@@ -2592,10 +2592,6 @@ msgstr "Persoanele cu care partajați un link vor putea vizualiza conținutul pu
 #: src/component/photo/clipboard.vue:315 src/component/photo/toolbar.vue:558
 msgid "Permanently deleted"
 msgstr "Șterse definitiv"
-
-#: src/page/settings/general.vue:269
-msgid "Permanently remove files to free up storage."
-msgstr "Eliminați permanent fișierele pentru a elibera spațiu de stocare."
 
 #: src/model/subject.js:134
 msgid "Person"
@@ -2630,6 +2626,11 @@ msgstr "Abonament PhotoPrism+"
 msgid "Photos"
 msgstr "Fotografii"
 
+#: src/component/photo/batch-edit.vue:629
+#: src/component/photo/batch-edit.vue:649
+msgid "Picture"
+msgstr "Imagine"
+
 #: src/component/album/edit/dialog.vue:146 src/component/photo/toolbar.vue:414
 #: src/component/photo/toolbar.vue:425 src/component/photo/toolbar.vue:436
 msgid "Picture Title"
@@ -2650,8 +2651,8 @@ msgstr "Locul și Ora"
 #: src/app/routes.js:335 src/app/routes.js:341 src/app/routes.js:347
 #: src/app/routes.js:362 src/component/navigation.vue:462
 #: src/component/navigation.vue:927 src/options/options.js:262
-#: src/page/places.vue:18 src/page/settings/general.vue:357
-#: src/page/settings/general.vue:371
+#: src/page/places.vue:18 src/page/settings/general.vue:349
+#: src/page/settings/general.vue:363
 msgid "Places"
 msgstr "Locuri"
 
@@ -2663,11 +2664,11 @@ msgstr "Vă rugăm să confirmați noua parolă."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Vă rugăm să copiați următoarea parolă a aplicației generată aleatoriu și să o păstrați într-un loc sigur, deoarece nu o veți putea vedea din nou:"
 
-#: src/component/upload/dialog.vue:101
-msgid "Please do not upload any private, unlawful or offensive pictures. "
+#: src/component/upload/dialog.vue:94
+msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Vă rugăm să nu încărcați imagini private, ilegale sau ofensatoare."
 
-#: src/component/upload/dialog.vue:104
+#: src/component/upload/dialog.vue:97
 msgid "Please don't upload photos containing offensive content."
 msgstr "Vă rugăm să nu încărcați fotografii cu conținut ofensator."
 
@@ -2691,7 +2692,7 @@ msgstr "Vă rugăm să așteptați…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:338
+#: src/page/settings/advanced.vue:334
 msgid "PNG Size Limit: %{n}px"
 msgstr "Limita de dimensiune PNG: %{n}px"
 
@@ -2709,11 +2710,11 @@ msgstr "Portret"
 msgid "Preserve filenames"
 msgstr "Păstrați numele fișierelor"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:72
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
 msgid "Press enter to create a new album."
 msgstr "Apăsați enter pentru a crea un album nou."
 
-#: src/component/input/chip-selector.vue:60
+#: src/component/input/chip-selector.vue:61
 msgid "Press enter to create new item"
 msgstr "Apăsați Enter pentru a crea un element nou"
 
@@ -2725,12 +2726,11 @@ msgstr "Împiedicați crearea de copii de rezervă ale bazei de date și ale alb
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "Împiedicați alte aplicații să acceseze PhotoPrism ca unitate de rețea partajată."
 
-#: src/component/photo/batch-edit.vue:630
-#: src/component/photo/batch-edit.vue:650 src/component/photo/edit/files.vue:30
+#: src/component/photo/edit/files.vue:30
 msgid "Preview"
 msgstr "Previzualizare"
 
-#: src/page/settings/advanced.vue:222
+#: src/page/settings/advanced.vue:218
 msgid "Preview Images"
 msgstr "Imagini de previzualizare"
 
@@ -2761,7 +2761,7 @@ msgstr "Primare"
 #: src/component/navigation.vue:226 src/component/navigation.vue:233
 #: src/component/photo/batch-edit.vue:1491
 #: src/component/photo/edit/info.vue:139 src/component/photo/edit/info.vue:140
-#: src/page/settings/general.vue:146
+#: src/page/settings/general.vue:140
 msgid "Private"
 msgstr "Privat"
 
@@ -2787,7 +2787,7 @@ msgstr "Filtru de calitate"
 msgid "Quality Score"
 msgstr "Scorul de calitate"
 
-#: src/page/discover.vue:16 src/page/discover.vue:17 src/page/discover.vue:25
+#: src/page/discover.vue:16 src/page/discover.vue:17 src/page/discover.vue:24
 msgid "Random"
 msgstr "Aleatoriu"
 
@@ -2831,11 +2831,7 @@ msgstr "Editate recent"
 msgid "Recognition starts after indexing has been completed."
 msgstr "Recunoașterea începe după ce indexarea a fost finalizată."
 
-#: src/page/settings/general.vue:88
-msgid "Recognize faces so people can be assigned and found."
-msgstr "Recunoaște fețele, astfel încât să poată fi găsite anumite persoane."
-
-#: src/page/people.vue:61
+#: src/page/people.vue:60
 msgid "Recognized"
 msgstr "Recunoscută"
 
@@ -2876,7 +2872,7 @@ msgid "Reload"
 msgstr "Reîncărcare"
 
 #: src/component/navigation.vue:1089 src/component/update.vue:62
-#: src/page/settings/general.vue:521
+#: src/page/settings/general.vue:511
 msgid "Reloading…"
 msgstr "Se reîncarcă…"
 
@@ -2896,11 +2892,11 @@ msgstr "eliminarea eșuată: album necunoscut"
 msgid "Remove from Album"
 msgstr "Eliminați din album"
 
-#: src/component/input/chip-selector.vue:183
+#: src/component/input/chip-selector.vue:184
 msgid "Remove from all"
 msgstr "Eliminați din toate"
 
-#: src/component/input/chip-selector.vue:183
+#: src/component/input/chip-selector.vue:184
 msgid "Remove from all selected photos"
 msgstr "Eliminați din toate fotografiile selectate"
 
@@ -2937,7 +2933,7 @@ msgid "Resolution"
 msgstr "Rezoluție"
 
 #: src/page/connect.vue:74 src/page/connect.vue:83 src/page/connect.vue:76
-#: src/page/connect.vue:85 src/page/settings/advanced.vue:460
+#: src/page/connect.vue:85 src/page/settings/advanced.vue:456
 msgid "Restart"
 msgstr "Reporniți"
 
@@ -3064,11 +3060,7 @@ msgstr "Scopuri"
 msgid "Search"
 msgstr "Căutare"
 
-#: src/page/settings/general.vue:358
-msgid "Search and display photos on a map."
-msgstr "Căutați și afișați fotografiile pe hartă."
-
-#: src/page/discover.vue:12 src/page/discover.vue:13 src/page/discover.vue:21
+#: src/page/discover.vue:12 src/page/discover.vue:13 src/page/discover.vue:20
 msgid "Season"
 msgstr "Sezon"
 
@@ -3097,7 +3089,7 @@ msgid "Select dates"
 msgstr "Selectați datele"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:65
+#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:58
 msgid "Select or create albums"
 msgstr "Selectați sau creați albume"
 
@@ -3105,7 +3097,7 @@ msgstr "Selectați sau creați albume"
 msgid "Select or create labels"
 msgstr "Selectați sau creați etichete"
 
-#: src/component/upload/dialog.vue:48
+#: src/component/upload/dialog.vue:41
 msgid "Select the files to upload…"
 msgstr "Selectați fișierele pentru încărcare…"
 
@@ -3147,7 +3139,7 @@ msgid "Service URL"
 msgstr "URL de serviciu"
 
 #: src/locales.js:359 src/page/settings.vue:99
-#: src/page/settings/general.vue:282
+#: src/page/settings/general.vue:245
 msgid "Services"
 msgstr "Servicii"
 
@@ -3198,17 +3190,13 @@ msgid "Severity"
 msgstr "Severitate"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
-#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:208
+#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:230
 msgid "Share"
 msgstr "Distribuie"
 
 #: src/component/share/dialog.vue:14
 msgid "Share %{s}"
 msgstr "Distribuie %{nume}"
-
-#: src/page/settings/general.vue:283
-msgid "Share your pictures with other apps and services."
-msgstr "Partajați-vă fotografiile cu alte aplicații și servicii."
 
 #: src/page/people/new.vue:70 src/page/people/recognized.vue:127
 msgid "Show"
@@ -3234,9 +3222,33 @@ msgstr "Arată ascuns"
 msgid "Show Important Only"
 msgstr "Afișați doar important"
 
-#: src/page/settings/general.vue:328
-msgid "Show server logs in Library."
-msgstr "Afișați jurnalele serverului în Bibliotecă."
+#: src/page/settings/general.vue:320
+msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
+msgstr "Afișați jurnalele în interfața web pentru a monitoriza activitatea și a depana problemele."
+
+#: src/page/settings/general.vue:112
+msgid "Show smart albums that group pictures by occasion, trip, or location."
+msgstr "Afișați albume inteligente care grupează fotografiile în funcție de ocazie, călătorie sau locație."
+
+#: src/page/settings/general.vue:335
+msgid "Show the Account page so users can manage their profile and security settings."
+msgstr "Afișați pagina Cont, astfel încât utilizatorii să își poată gestiona profilul și setările de securitate."
+
+#: src/page/settings/general.vue:97
+msgid "Show the Calendar view to browse the library by year and month."
+msgstr "Afișați vizualizarea Calendar pentru a răsfoi biblioteca în funcție de an și lună."
+
+#: src/page/settings/general.vue:127
+msgid "Show the Labels section to view and manage AI-generated labels."
+msgstr "Afișați secțiunea Etichete pentru a vizualiza și gestiona etichetele generate de AI."
+
+#: src/page/settings/general.vue:290
+msgid "Show the Library section to index, manage, and monitor the media library."
+msgstr "Afișați secțiunea Bibliotecă pentru a indexa, gestiona și monitoriza biblioteca media."
+
+#: src/page/settings/general.vue:350
+msgid "Show the Places view with interactive maps so you can browse photos by location."
+msgstr "Afișați vizualizarea Locuri cu hărți interactive, astfel încât să puteți răsfoi fotografiile în funcție de locație."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"
@@ -3246,7 +3258,7 @@ msgstr "Afișați titlurile"
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:209
+#: src/page/settings/advanced.vue:205
 msgid "Sidecar Files"
 msgstr "Fișiere Sidecar"
 
@@ -3256,7 +3268,7 @@ msgstr "Fișiere Sidecar"
 msgid "Sign in"
 msgstr "Conectați-vă"
 
-#: src/page/discover.vue:17 src/page/discover.vue:8 src/page/discover.vue:9
+#: src/page/discover.vue:16 src/page/discover.vue:8 src/page/discover.vue:9
 msgid "Similar"
 msgstr "Similar"
 
@@ -3370,11 +3382,11 @@ msgstr "Stive"
 msgid "Start"
 msgstr "Start"
 
-#: src/page/settings/general.vue:67
+#: src/page/settings/general.vue:61
 msgid "Start Page"
 msgstr "Pagina de start"
 
-#: src/page/settings/advanced.vue:244
+#: src/page/settings/advanced.vue:240
 msgid "Static Size Limit: %{n}px"
 msgstr "Limita dimensiunii statice: %{n}px"
 
@@ -3448,10 +3460,6 @@ msgstr "Luat"
 msgid "Teal"
 msgstr "Turcoaz"
 
-#: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow este necesar pentru clasificarea imaginilor, recunoașterea facială și detectarea conținutului nesigur."
-
 #: src/options/options.js:322
 msgid "Terrain"
 msgstr "Teren"
@@ -3480,7 +3488,7 @@ msgstr "În prezent, indexul conține %{n} fișiere ascunse."
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "Este posibil ca formatul lor să nu fie acceptat, să nu fi fost încă convertite în JPEG sau să existe duplicate."
 
-#: src/locales.js:324 src/page/settings/general.vue:24
+#: src/locales.js:324 src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Temă"
 
@@ -3508,7 +3516,7 @@ msgid "Time UTC"
 msgstr "Ora UTC"
 
 #: src/component/photo/batch-edit.vue:295
-#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:53
+#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "Fusul orar"
 
@@ -3560,7 +3568,7 @@ msgstr "Schimbă vizualizarea"
 msgid "Token"
 msgstr "Jeton"
 
-#: src/component/upload/dialog.vue:359
+#: src/component/upload/dialog.vue:342
 msgid "Too many files selected"
 msgstr "Prea multe fișiere selectate"
 
@@ -3692,18 +3700,18 @@ msgstr "Actualizați acum"
 #: src/component/photo/toolbar.vue:475 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/service/upload.vue:70
-#: src/component/upload/dialog.vue:190 src/page/albums.vue:556
+#: src/component/upload/dialog.vue:173 src/page/albums.vue:556
 #: src/page/labels.vue:351 src/page/library/import.vue:69
-#: src/page/library/import.vue:75 src/page/settings/general.vue:163
+#: src/page/library/import.vue:75 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:184
 msgid "Upload"
 msgstr "Încărcați"
 
-#: src/component/upload/dialog.vue:42
+#: src/component/upload/dialog.vue:36
 msgid "Upload complete. Indexing…"
 msgstr "Încărcare completă. Se indexează…"
 
-#: src/component/upload/dialog.vue:38 src/component/upload/dialog.vue:443
+#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
 msgid "Upload failed"
 msgstr "Încărcarea a eșuat"
 
@@ -3716,16 +3724,12 @@ msgstr "Încărcați fișiere locale"
 msgid "Upload Path"
 msgstr "Cale de încărcare"
 
-#: src/page/settings/general.vue:209
-msgid "Upload to WebDAV and share links with friends."
-msgstr "Încărcați pe WebDAV și partajați linkuri cu prietenii."
-
-#: src/component/upload/dialog.vue:40
+#: src/component/upload/dialog.vue:34
 msgid "Uploading %{n} of %{t}…"
 msgstr "Se încarcă %{n} din %{t}…"
 
-#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:395
+#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
+#: src/component/upload/dialog.vue:378
 msgid "Uploading photos…"
 msgstr "Se încarcă fotografii…"
 
@@ -3733,11 +3737,11 @@ msgstr "Se încarcă fotografii…"
 msgid "Uploading…"
 msgstr "Se încarcă…"
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:98
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Încărcările care pot conține astfel de imagini vor fi respinse automat."
 
-#: src/page/settings/advanced.vue:398
+#: src/page/settings/advanced.vue:394
 msgid "Use Presets"
 msgstr "Utilizați presetări"
 
@@ -3761,7 +3765,7 @@ msgstr "Utilizator"
 msgid "User Guide"
 msgstr "Ghidul utilizatorului"
 
-#: src/page/settings/general.vue:12
+#: src/page/settings/general.vue:6
 msgid "User Interface"
 msgstr "Interfața utilizatorului"
 
@@ -3950,7 +3954,7 @@ msgstr "Puteți descărca doar o singură etichetă"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Puteți căuta o locație sau puteți muta markerul pe hartă pentru a schimba poziția:"
 
-#: src/component/upload/dialog.vue:100
+#: src/component/upload/dialog.vue:93
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Puteți încărca până la %{n} fișiere în scopuri de testare."
 
@@ -3999,7 +4003,7 @@ msgstr "Conținut"
 #: src/component/navigation.vue:128 src/component/navigation.vue:152
 #: src/component/navigation.vue:158 src/component/navigation.vue:173
 #: src/component/navigation.vue:188 src/component/navigation.vue:240
-#: src/component/navigation.vue:246 src/page/settings/general.vue:253
+#: src/component/navigation.vue:246 src/page/settings/general.vue:260
 msgctxt "Noun"
 msgid "Archive"
 msgstr "Arhiva"
@@ -4016,6 +4020,69 @@ msgstr "Titlu"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiva"
+
+#~ msgid "Add files to your library via Web Upload."
+#~ msgstr "Adăugați fișiere la biblioteca dvs. prin încărcare web."
+
+#~ msgid "Browse and edit image classification labels."
+#~ msgstr "Răsfoiți și editați etichetele de clasificare a imaginilor."
+
+#~ msgid "Browse and share your pictures organized into monthly albums."
+#~ msgstr "Răsfoiți și partajați imaginile dvs. organizate în albume lunare."
+
+#~ msgid "Browse indexed files and folders in Library."
+#~ msgstr "Răsfoiți fișierele și folderele indexate din Bibliotecă."
+
+#~ msgid "Change personal profile and security settings."
+#~ msgstr "Modificați profilul personal și setările de securitate."
+
+#~ msgid "Change photo titles, locations, and other metadata."
+#~ msgstr "Modificați titlurile fotografiilor, locațiile și alte metadate."
+
+#~ msgid "Download single files and zip archives."
+#~ msgstr "Descărcați fișiere individuale și arhive zip."
+
+#~ msgid "Edit the metadata, labels, and albums of multiple pictures at once."
+#~ msgstr "Editați simultan metadatele, etichetele și albumele mai multor imagini."
+
+#~ msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+#~ msgstr "Excludeți conținutul marcat ca fiind privat din rezultatele căutării, albumele partajate, etichetele și locații."
+
+#~ msgid "Generate albums of special moments, journeys, and places."
+#~ msgstr "Creează automat albume cu momente, călătorii și locuri speciale."
+
+#~ msgid "Hide photos that have been moved to archive."
+#~ msgstr "Ascundeți fotografiile care au fost mutate în arhivă."
+
+#~ msgid "Imported files will be sorted by date and given a unique name."
+#~ msgstr "Fișierele importate vor fi sortate în funcție de dată și vor primi un nume unic."
+
+#~ msgid "Index and import files through the user interface."
+#~ msgstr "Indexați și importați fișiere prin intermediul interfeței cu utilizatorul."
+
+#~ msgid "Permanently remove files to free up storage."
+#~ msgstr "Eliminați permanent fișierele pentru a elibera spațiu de stocare."
+
+#~ msgid "Recognize faces so people can be assigned and found."
+#~ msgstr "Recunoaște fețele, astfel încât să poată fi găsite anumite persoane."
+
+#~ msgid "Search and display photos on a map."
+#~ msgstr "Căutați și afișați fotografiile pe hartă."
+
+#~ msgid "Share your pictures with other apps and services."
+#~ msgstr "Partajați-vă fotografiile cu alte aplicații și servicii."
+
+#~ msgid "Show server logs in Library."
+#~ msgstr "Afișați jurnalele serverului în Bibliotecă."
+
+#~ msgid "Upload to WebDAV and share links with friends."
+#~ msgstr "Încărcați pe WebDAV și partajați linkuri cu prietenii."
+
+#~ msgid "Disable TensorFlow"
+#~ msgstr "Dezactivați TensorFlow"
+
+#~ msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+#~ msgstr "TensorFlow este necesar pentru clasificarea imaginilor, recunoașterea facială și detectarea conținutului nesigur."
 
 #~ msgid "No server connection"
 #~ msgstr "Nu există conexiune la server"

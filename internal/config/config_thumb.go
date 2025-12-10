@@ -52,12 +52,13 @@ func (c *Config) ThumbLibrary() string {
 	default:
 		c.options.ThumbLibrary = clean.TypeLowerUnderscore(c.options.ThumbLibrary)
 
-		if c.options.ThumbLibrary == "imagine" || c.options.ThumbLibrary == "" {
+		switch c.options.ThumbLibrary {
+		case "imagine", "":
 			c.options.ThumbLibrary = thumb.LibImaging
 			return thumb.LibImaging
-		} else if c.options.ThumbLibrary == "vips" || c.options.ThumbLibrary == "libvips" {
+		case "vips", "libvips":
 			c.options.ThumbLibrary = thumb.LibVips
-		} else {
+		default:
 			c.options.ThumbLibrary = thumb.LibAuto
 		}
 

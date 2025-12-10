@@ -1,23 +1,11 @@
 <template>
   <div class="p-page p-page-help" tabindex="-1">
-    <v-toolbar
-      flat
-      color="secondary"
-      :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-      class="p-page__navigation"
-    >
+    <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="p-page__navigation">
       <v-toolbar-title class="flex-grow-1">
         {{ $gettext(`Help`) }}
       </v-toolbar-title>
 
-      <v-btn
-        icon
-        :href="links.troubleshooting"
-        target="_blank"
-        rel="noopener"
-        class="action-info mx-2"
-        :title="$gettext('Learn more')"
-      >
+      <v-btn icon :href="links.troubleshooting" target="_blank" rel="noopener" class="action-info mx-2" :title="$gettext('Learn more')">
         <v-icon icon="mdi-book-open-page-variant" size="26" color="surface-variant"></v-icon>
       </v-btn>
     </v-toolbar>

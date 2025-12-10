@@ -166,6 +166,7 @@ func (f *SearchPhotosGeo) FindUidOnly() bool {
 	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
 }
 
+// NewSearchPhotosGeo creates a SearchPhotosGeo form with the provided query.
 func NewSearchPhotosGeo(query string) SearchPhotosGeo {
 	return SearchPhotosGeo{Query: query}
 }

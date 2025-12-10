@@ -68,7 +68,7 @@ type MediaFile struct {
 	imageConfig      *image.Config
 }
 
-// NewMediaFile resolves fileName (following symlinks) and initialises a MediaFile
+// NewMediaFile resolves fileName (following symlinks) and initializes a MediaFile
 // instance. The returned instance is never nil; callers must check the error to
 // learn whether the path existed or was readable.
 func NewMediaFile(fileName string) (*MediaFile, error) {
@@ -399,7 +399,7 @@ func (m *MediaFile) RootRelName() string {
 	return m.RelName(m.RootPath())
 }
 
-// RelName returns the file name relative to directory, sanitising the result for logging.
+// RelName returns the file name relative to directory, sanitizing the result for logging.
 func (m *MediaFile) RelName(directory string) string {
 	return fs.RelName(m.fileName, directory)
 }
@@ -619,6 +619,7 @@ func (m *MediaFile) openFile() (handle *os.File, err error) {
 		return nil, fmt.Errorf("%s %s", err, clean.Log(m.RootRelName()))
 	}
 
+	// #nosec G304 -- fileName is resolved from trusted MediaFile path.
 	handle, err = os.Open(fileName)
 
 	if err != nil {
@@ -681,11 +682,12 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 
 	// Error if destination exists (and is not empty) without the force flag being used.
 	if fs.Exists(filePath) {
-		if fs.FileExistsIsEmpty(filePath) {
+		switch {
+		case fs.FileExistsIsEmpty(filePath):
 			log.Infof("move: replacing empty destination file %s", logName)
-		} else if force {
+		case force:
 			log.Warnf("move: overwriting destination file %s", logName)
-		} else {
+		default:
 			return fmt.Errorf("move: destination name %s already exists", logName)
 		}
 	}
@@ -755,11 +757,12 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	// Error if destination exists (and is not empty) without the force flag being used.
 	if fs.Exists(filePath) {
-		if fs.FileExistsIsEmpty(filePath) {
+		switch {
+		case fs.FileExistsIsEmpty(filePath):
 			log.Infof("copy: replacing empty destination file %s", logName)
-		} else if force {
+		case force:
 			log.Warnf("copy: overwriting destination file %s", logName)
-		} else {
+		default:
 			return fmt.Errorf("copy: destination name %s already exists", logName)
 		}
 	}
@@ -781,6 +784,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	defer thisFile.Close()
 
 	// Open the target file path for writing, discarding any trailing bytes.
+	// #nosec G304 -- destination path is validated and absolute.
 	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fs.ModeFile)
 
 	if err != nil {
@@ -1184,13 +1188,14 @@ func (m *MediaFile) IsImageNative() bool {
 
 // IsLive checks if the file is a live photo.
 func (m *MediaFile) IsLive(videoDuration time.Duration) bool {
-	if !m.InOriginals() {
+	switch {
+	case !m.InOriginals():
 		// Live Photos must be located in the Originals folder.
 		return false
-	} else if !m.HasMediaType(media.Video, media.Image, media.Live) {
+	case !m.HasMediaType(media.Video, media.Image, media.Live):
 		// Live Photos may only consist of video, image, or live files.
 		return false
-	} else if videoDuration > media.LiveMaxDuration {
+	case videoDuration > media.LiveMaxDuration:
 		// Live Photos can include a maximum of 3.1 seconds of video.
 		return false
 	}
@@ -1409,26 +1414,34 @@ func (m *MediaFile) Megapixels() (resolution int) {
 }
 
 // ExceedsBytes checks if the file exceeds the specified size limit in bytes.
-func (m *MediaFile) ExceedsBytes(limit int64) (err error, fileSize int64) {
-	if fileSize = m.FileSize(); limit <= 0 {
-		return nil, fileSize
-	} else if fileSize <= 0 || fileSize <= limit {
-		return nil, fileSize
-	} else {
-		return fmt.Errorf("%s exceeds file size limit (%s / %s)", clean.Log(m.RootRelName()), humanize.Bytes(uint64(fileSize)), humanize.Bytes(uint64(limit))), fileSize
+func (m *MediaFile) ExceedsBytes(limit int64) (fileSize int64, err error) {
+	fileSize = m.FileSize()
+
+	switch {
+	case limit <= 0:
+		return fileSize, nil
+	case fileSize <= 0 || fileSize <= limit:
+		return fileSize, nil
+	default:
+		return fileSize, fmt.Errorf("%s exceeds file size limit (%s / %s)", clean.Log(m.RootRelName()), humanize.Bytes(uint64(fileSize)), humanize.Bytes(uint64(limit)))
 	}
 }
 
 // ExceedsResolution checks if an image in a natively supported format exceeds the configured resolution limit in megapixels.
-func (m *MediaFile) ExceedsResolution(limit int) (err error, resolution int) {
-	if limit <= 0 {
-		return nil, resolution
-	} else if !m.IsImage() {
-		return nil, resolution
-	} else if resolution = m.Megapixels(); resolution <= 0 || resolution <= limit {
-		return nil, resolution
-	} else {
-		return fmt.Errorf("%s exceeds resolution limit (%d / %d MP)", clean.Log(m.RootRelName()), resolution, limit), resolution
+func (m *MediaFile) ExceedsResolution(limit int) (resolution int, err error) {
+	switch {
+	case limit <= 0:
+		return resolution, nil
+	case !m.IsImage():
+		return resolution, nil
+	default:
+		resolution = m.Megapixels()
+
+		if resolution <= 0 || resolution <= limit {
+			return resolution, nil
+		}
+
+		return resolution, fmt.Errorf("%s exceeds resolution limit (%d / %d MP)", clean.Log(m.RootRelName()), resolution, limit)
 	}
 }
 
@@ -1568,6 +1581,7 @@ func (m *MediaFile) ColorProfile() string {
 	}
 
 	// Open file.
+	// #nosec G304 -- fileName is resolved from trusted MediaFile path.
 	fileReader, err := os.Open(fileName)
 
 	if err != nil {

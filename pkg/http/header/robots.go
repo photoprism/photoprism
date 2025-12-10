@@ -1,5 +1,6 @@
 package header
 
+// RobotsRule represents a robots.txt directive rule.
 type RobotsRule = string
 
 // RobotsTag controls how pages are indexed and crawled by search engines:

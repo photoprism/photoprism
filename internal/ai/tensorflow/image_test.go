@@ -32,7 +32,7 @@ func TestConvertStdMean(t *testing.T) {
 
 func TestImageFromBytes(t *testing.T) {
 	t.Run("CatJpeg", func(t *testing.T) {
-		imageBuffer, err := os.ReadFile(examplesPath + "/cat_brown.jpg")
+		imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "cat_brown.jpg")) //nolint:gosec // reading bundled test fixture
 
 		if err != nil {
 			t.Fatal(err)
@@ -48,7 +48,7 @@ func TestImageFromBytes(t *testing.T) {
 		assert.Equal(t, int64(224), result.Shape()[2])
 	})
 	t.Run("Document", func(t *testing.T) {
-		imageBuffer, err := os.ReadFile(examplesPath + "/Random.docx")
+		imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "Random.docx")) //nolint:gosec // reading bundled test fixture
 		assert.Nil(t, err)
 		result, err := ImageFromBytes(imageBuffer, defaultImageInput, nil)
 

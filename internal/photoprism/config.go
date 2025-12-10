@@ -6,7 +6,7 @@ import (
 
 var conf *config.Config
 
-// SetConfig initialises package-level access to the shared Config.
+// SetConfig initializes package-level access to the shared Config.
 func SetConfig(c *config.Config) {
 	if c == nil {
 		panic("config is missing")

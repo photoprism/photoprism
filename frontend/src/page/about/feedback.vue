@@ -1,11 +1,6 @@
 <template>
   <div class="p-page p-page-support" tabindex="-1">
-    <v-toolbar
-      flat
-      :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-      color="secondary"
-      class="page-toolbar p-page__navigation"
-    >
+    <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" color="secondary" class="page-toolbar p-page__navigation">
       <v-toolbar-title>
         {{ $gettext(`Contact Us`) }}
       </v-toolbar-title>
@@ -19,11 +14,7 @@
         {{ $gettext(`We appreciate your feedback!`) }}
       </h3>
       <p class="text-body-2 py-6 text-center">
-        {{
-          $gettext(
-            `Due to the high volume of emails we receive, our team may be unable to get back to you immediately.`
-          )
-        }}
+        {{ $gettext(`Due to the high volume of emails we receive, our team may be unable to get back to you immediately.`) }}
         {{ $gettext(`We do our best to respond within five business days or less.`) }}
       </p>
     </div>

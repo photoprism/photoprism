@@ -38,9 +38,12 @@ import (
 var ignoreCase bool
 
 const (
+	// PathSeparator is the filesystem path separator for the current OS.
 	PathSeparator = string(filepath.Separator)
-	Home          = "~"
-	HomePath      = Home + PathSeparator
+	// Home represents the tilde shorthand for the user's home directory.
+	Home = "~"
+	// HomePath expands Home with a trailing separator.
+	HomePath = Home + PathSeparator
 )
 
 // Stat returns the os.FileInfo for the given file path, or an error if it does not exist.
@@ -214,7 +217,7 @@ func Download(fileName string, url string) error {
 
 // DirIsEmpty returns true if a directory is empty.
 func DirIsEmpty(path string) bool {
-	f, err := os.Open(path)
+	f, err := os.Open(path) //nolint:gosec // path provided by caller; intended to access filesystem
 
 	if err != nil {
 		return false
@@ -223,10 +226,5 @@ func DirIsEmpty(path string) bool {
 	defer f.Close()
 
 	_, err = f.Readdirnames(1)
-
-	if err == io.EOF {
-		return true
-	}
-
-	return false
+	return err == io.EOF
 }

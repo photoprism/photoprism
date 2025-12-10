@@ -3,9 +3,11 @@ package crop
 import "github.com/photoprism/photoprism/internal/thumb"
 
 var (
+	// DefaultOptions are the resample options applied to most crop sizes.
 	DefaultOptions = []thumb.ResampleOption{thumb.ResampleFillCenter, thumb.ResampleDefault}
 )
 
+// Size defines a thumbnail size and resample options.
 type Size struct {
 	Name    Name                   `json:"name"`
 	Source  Name                   `json:"-"`
@@ -15,6 +17,7 @@ type Size struct {
 	Options []thumb.ResampleOption `json:"-"`
 }
 
+// SizeMap maps size names to size definitions.
 type SizeMap map[Name]Size
 
 // Sizes contains the properties of all thumbnail sizes.

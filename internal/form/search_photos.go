@@ -103,14 +103,17 @@ type SearchPhotos struct {
 	Details     bool      `form:"-" serialize:"-"`                                                                                                                                       // Include additional information from details table
 }
 
+// GetQuery returns the current search query string.
 func (f *SearchPhotos) GetQuery() string {
 	return f.Query
 }
 
+// SetQuery stores the raw query string.
 func (f *SearchPhotos) SetQuery(q string) {
 	f.Query = q
 }
 
+// ParseQueryString deserializes the query string into form fields and applies aliases.
 func (f *SearchPhotos) ParseQueryString() error {
 	if err := ParseQueryString(f); err != nil {
 		return err
@@ -180,6 +183,7 @@ func (f *SearchPhotos) FindUidOnly() bool {
 	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
 }
 
+// NewSearchPhotos creates a SearchPhotos form with the provided query.
 func NewSearchPhotos(query string) SearchPhotos {
 	return SearchPhotos{Query: query}
 }

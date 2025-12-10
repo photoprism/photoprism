@@ -20,14 +20,51 @@ func FlushUsageCache() {
 }
 
 // Usage represents storage usage information.
+// Percent fields remain for UI/backward compatibility, but metrics should
+// derive their values from the ratio helpers to align with Prometheus
+// conventions and avoid rounding artifacts.
 type Usage struct {
+	// File storage usage and quota (total).
 	FilesUsed    uint64 `json:"filesUsed"`
 	FilesUsedPct int    `json:"filesUsedPct"`
 	FilesFree    uint64 `json:"filesFree"`
 	FilesFreePct int    `json:"filesFreePct"`
 	FilesTotal   uint64 `json:"filesTotal"`
-	UsersUsedPct int    `json:"usersUsedPct"`
-	UsersFreePct int    `json:"usersFreePct"`
+
+	// UsersQuota is the configured account quota; kept internal because the
+	// public client config should not expose capacity limits directly.
+	UsersQuota int `json:"-"`
+	// UsersActive and GuestsActive report how many registered accounts are
+	// currently enabled; kept internal so metrics can use them without leaking
+	// into client-visible JSON.
+	UsersActive  int `json:"-"`
+	GuestsActive int `json:"-"`
+	UsersUsedPct int `json:"usersUsedPct"`
+	UsersFreePct int `json:"usersFreePct"`
+}
+
+// FilesUsedRatio calculates the file storage usage ratio.
+func (info *Usage) FilesUsedRatio() float64 {
+	if info.FilesUsed == 0 {
+		return 0
+	}
+
+	if info.FilesTotal == 0 {
+		// Return a tiny non-zero value to avoid emitting NaN in metrics when
+		// totals are unknown (e.g. quota disabled or filesystem probe failed).
+		return 0.01
+	}
+
+	return float64(info.FilesUsed) / float64(info.FilesTotal)
+}
+
+// UsersUsedRatio calculates the user account usage ratio.
+func (info *Usage) UsersUsedRatio() float64 {
+	if info.UsersActive == 0 || info.UsersQuota == 0 {
+		return 0
+	}
+
+	return float64(info.UsersActive) / float64(info.UsersQuota)
 }
 
 // Usage returns the used, free and total storage size in bytes and caches the result.
@@ -67,7 +104,7 @@ func (c *Config) Usage() Usage {
 	}
 
 	if info.FilesTotal > 0 {
-		info.FilesUsedPct = int(math.RoundToEven(float64(info.FilesUsed) / float64(info.FilesTotal) * 100))
+		info.FilesUsedPct = int(math.RoundToEven(info.FilesUsedRatio() * 100))
 	}
 
 	if info.FilesUsed > 0 && info.FilesUsedPct <= 0 {
@@ -80,14 +117,19 @@ func (c *Config) Usage() Usage {
 		info.FilesFreePct = 0
 	}
 
-	if usersTotal := c.UsersQuota(); usersTotal > 0 {
-		usersUsed := query.CountUsers(true, true, nil, []string{"guest"})
-		info.UsersUsedPct = int(math.Floor(float64(usersUsed) / float64(usersTotal) * 100))
+	info.UsersActive = query.CountUsers(true, true, nil, []string{"guest"})
+	info.GuestsActive = query.CountUsers(true, true, []string{"guest"}, nil)
+
+	if info.UsersQuota = c.UsersQuota(); info.UsersQuota > 0 {
+		info.UsersUsedPct = int(math.Floor(info.UsersUsedRatio() * 100))
 		info.UsersFreePct = 100 - info.UsersUsedPct
 
 		if info.UsersFreePct < 0 {
 			info.UsersFreePct = 0
 		}
+	} else {
+		info.UsersUsedPct = 0
+		info.UsersFreePct = 0
 	}
 
 	usageCache.SetDefault(originalsPath, info)

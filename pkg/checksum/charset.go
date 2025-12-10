@@ -1,8 +1,11 @@
 package checksum
 
 const (
+	// CharsetBase10 contains digits for base10 encoding.
 	CharsetBase10 = "0123456789"
+	// CharsetBase36 contains lowercase alphanumerics for base36.
 	CharsetBase36 = "abcdefghijklmnopqrstuvwxyz0123456789"
+	// CharsetBase62 contains mixed-case alphanumerics for base62.
 	CharsetBase62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 

@@ -1,13 +1,7 @@
 <template>
   <div class="p-tab p-tab-photo-people">
     <div class="pa-2 p-faces">
-      <v-alert
-        v-if="markers.length === 0"
-        color="surface-variant"
-        icon="mdi-lightbulb-outline"
-        class="no-results ma-2 opacity-70"
-        variant="outlined"
-      >
+      <v-alert v-if="markers.length === 0" color="surface-variant" icon="mdi-lightbulb-outline" class="no-results ma-2 opacity-70" variant="outlined">
         <div class="font-weight-bold">
           {{ $gettext(`No people found`) }}
         </div>
@@ -34,11 +28,7 @@
                 <v-icon class="action-reject">mdi-close</v-icon>
               </v-btn>
               <div v-else-if="hasFaceMenu(m)" class="face-actions" data-testid="face-actions">
-                <p-action-menu
-                  :items="() => getFaceActions(m)"
-                  button-class="input-menu"
-                  list-class="opacity-85"
-                ></p-action-menu>
+                <p-action-menu :items="() => getFaceActions(m)" button-class="input-menu" list-class="opacity-85"></p-action-menu>
               </div>
             </v-img>
             <v-card-actions class="meta pa-0">

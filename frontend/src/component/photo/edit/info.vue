@@ -7,17 +7,13 @@
             <tr>
               <td>UID</td>
               <td class="text-break">
-                <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(view.model.UID)">{{
-                  view.model.UID
-                }}</span>
+                <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(view.model.UID)">{{ view.model.UID }}</span>
               </td>
             </tr>
             <tr v-if="view.model.DocumentID">
               <td>Document ID</td>
               <td class="text-break">
-                <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(view.model.DocumentID)">{{
-                  view.model.DocumentID
-                }}</span>
+                <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(view.model.DocumentID)">{{ view.model.DocumentID }}</span>
               </td>
             </tr>
             <tr>
@@ -48,9 +44,7 @@
                 {{ $gettext(`Folder`) }}
               </td>
               <td class="text-break">
-                <span class="cursor-copy" @click.stop.prevent="$util.copyText(view.model.Path)">{{
-                  view.model.Path
-                }}</span>
+                <span class="cursor-copy" @click.stop.prevent="$util.copyText(view.model.Path)">{{ view.model.Path }}</span>
               </td>
             </tr>
             <tr>
@@ -58,9 +52,7 @@
                 {{ $gettext(`Name`) }}
               </td>
               <td class="text-break">
-                <span class="cursor-copy" @click.stop.prevent="$util.copyText(view.model.Name)">{{
-                  view.model.Name
-                }}</span>
+                <span class="cursor-copy" @click.stop.prevent="$util.copyText(view.model.Name)">{{ view.model.Name }}</span>
               </td>
             </tr>
             <tr v-if="view.model.OriginalName">
@@ -88,9 +80,7 @@
               </td>
               <td>
                 <div v-tooltip="sourceName(view.model?.TitleSrc, $gettext('Generated'))" class="text-flex text-break">
-                  <span class="cursor-copy text-break" @click.stop.prevent="$util.copyText(view.model.Title)">{{
-                    view.model.Title
-                  }}</span>
+                  <span class="cursor-copy text-break" @click.stop.prevent="$util.copyText(view.model.Title)">{{ view.model.Title }}</span>
                   <v-icon v-if="view.model.TitleSrc === 'name'" icon="mdi-file" class="src"></v-icon>
                   <v-icon v-else-if="view.model.TitleSrc === 'manual'" icon="mdi-check" class="src"></v-icon>
                 </div>
@@ -116,13 +106,7 @@
                 {{ $gettext(`Albums`) }}
               </td>
               <td class="text-break">
-                <a
-                  v-for="(a, i) in albums"
-                  :key="i"
-                  :href="a.url"
-                  class="text-primary text-link"
-                  target="_blank"
-                  rel="noopener"
+                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="text-primary text-link" target="_blank" rel="noopener"
                   ><span v-if="i > 0">, </span>{{ a.title }}</a
                 >
               </td>

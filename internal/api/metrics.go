@@ -14,10 +14,43 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/http/header"
+)
+
+const (
+	metricsNamespace           = "photoprism"
+	metricsUsageSubsystem      = "usage"
+	metricsStatisticsSubsystem = "statistics"
+	metricsClusterSubsystem    = "cluster"
+
+	metricsLabelState   = "state"
+	metricsLabelStat    = "stat"
+	metricsLabelRole    = "role"
+	metricsLabelUUID    = "uuid"
+	metricsLabelCIDR    = "cidr"
+	metricsLabelEdition = "edition"
+	metricsLabelGoVer   = "goversion"
+	metricsLabelVersion = "version"
+
+	metricFilesBytes     = "files_bytes"
+	metricFilesRatio     = "files_ratio"
+	metricAccountsRatio  = "accounts_ratio"
+	metricAccountsActive = "accounts_active"
+	metricMediaCount     = "media_count"
+	metricBuildInfo      = "build_info"
+	metricClusterNodes   = "nodes"
+	metricClusterInfo    = "info"
+
+	metricsAccountsHelp      = "active user and guest accounts on this PhotoPrism instance"
+	metricsFilesBytesHelp    = "filesystem usage in bytes for files indexed by this PhotoPrism instance"
+	metricsFilesRatioHelp    = "filesystem usage for files indexed by this PhotoPrism instance"
+	metricsAccountsRatioHelp = "account quota usage for this PhotoPrism instance"
+	metricsMediaCountHelp    = "media statistics for this PhotoPrism instance"
+	metricsBuildInfoHelp     = "information about the photoprism instance"
+	metricsClusterNodesHelp  = "registered cluster nodes grouped by role"
+	metricsClusterInfoHelp   = "cluster metadata for this PhotoPrism portal"
 )
 
 // GetMetrics provides a Prometheus-compatible metrics endpoint for monitoring the instance, including usage details and portal cluster metrics.
@@ -45,10 +78,10 @@ func GetMetrics(router *gin.RouterGroup) {
 		c.Header(header.ContentType, header.ContentTypePrometheus)
 
 		c.Stream(func(w io.Writer) bool {
-			reg := prometheus.NewRegistry()
-			reg.MustRegister(collectors.NewGoCollector())
+			registry := prometheus.NewRegistry()
+			registry.MustRegister(collectors.NewGoCollector())
 
-			factory := promauto.With(reg)
+			factory := promauto.With(registry)
 
 			registerCountMetrics(factory, counts)
 			registerBuildInfoMetric(factory, conf.ClientPublic())
@@ -58,7 +91,7 @@ func GetMetrics(router *gin.RouterGroup) {
 			var metrics []*dto.MetricFamily
 			var err error
 
-			metrics, err = reg.Gather()
+			metrics, err = registry.Gather()
 
 			if err != nil {
 				logErr("metrics", err)
@@ -81,11 +114,11 @@ func GetMetrics(router *gin.RouterGroup) {
 func registerCountMetrics(factory promauto.Factory, counts config.ClientCounts) {
 	metric := factory.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "photoprism",
-			Subsystem: "statistics",
-			Name:      "media_count",
-			Help:      "media statistics for this PhotoPrism instance",
-		}, []string{"stat"},
+			Namespace: metricsNamespace,
+			Subsystem: metricsStatisticsSubsystem,
+			Name:      metricMediaCount,
+			Help:      metricsMediaCountHelp,
+		}, []string{metricsLabelStat},
 	)
 
 	stats := []struct {
@@ -124,12 +157,10 @@ func registerCountMetrics(factory promauto.Factory, counts config.ClientCounts) 
 		{"places", counts.Places},
 		{"labels", counts.Labels},
 		{"label_max_photos", counts.LabelMaxPhotos},
-		{"users", query.CountUsers(true, true, nil, []string{"guest"})},
-		{"guests", query.CountUsers(true, true, []string{"guest"}, nil)},
 	}
 
 	for _, stat := range stats {
-		metric.With(prometheus.Labels{"stat": stat.label}).Set(float64(stat.value))
+		metric.With(prometheus.Labels{metricsLabelStat: stat.label}).Set(float64(stat.value))
 	}
 }
 
@@ -137,55 +168,70 @@ func registerCountMetrics(factory promauto.Factory, counts config.ClientCounts) 
 func registerBuildInfoMetric(factory promauto.Factory, conf *config.ClientConfig) {
 	factory.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "photoprism",
-			Name:      "build_info",
-			Help:      "information about the photoprism instance",
-		}, []string{"edition", "goversion", "version"},
+			Namespace: metricsNamespace,
+			Name:      metricBuildInfo,
+			Help:      metricsBuildInfoHelp,
+		}, []string{metricsLabelEdition, metricsLabelGoVer, metricsLabelVersion},
 	).With(prometheus.Labels{
-		"edition":   conf.Edition,
-		"goversion": runtime.Version(),
-		"version":   conf.Version,
+		metricsLabelEdition: conf.Edition,
+		metricsLabelGoVer:   runtime.Version(),
+		metricsLabelVersion: conf.Version,
 	}).Set(1.0)
 }
 
 // registerUsageMetrics registers filesystem and account usage metrics derived from the active configuration.
+// Ratios follow Prometheus best practices (0..1) instead of percentages.
 func registerUsageMetrics(factory promauto.Factory, usage config.Usage) {
 	filesBytes := factory.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "photoprism",
-			Subsystem: "usage",
-			Name:      "files_bytes",
-			Help:      "filesystem usage in bytes for files indexed by this PhotoPrism instance",
-		}, []string{"state"},
+			Namespace: metricsNamespace,
+			Subsystem: metricsUsageSubsystem,
+			Name:      metricFilesBytes,
+			Help:      metricsFilesBytesHelp,
+		}, []string{metricsLabelState},
 	)
 
-	filesBytes.With(prometheus.Labels{"state": "used"}).Set(float64(usage.FilesUsed))
-	filesBytes.With(prometheus.Labels{"state": "free"}).Set(float64(usage.FilesFree))
-	filesBytes.With(prometheus.Labels{"state": "total"}).Set(float64(usage.FilesTotal))
+	filesBytes.With(prometheus.Labels{metricsLabelState: "used"}).Set(float64(usage.FilesUsed))
+	filesBytes.With(prometheus.Labels{metricsLabelState: "free"}).Set(float64(usage.FilesFree))
+	filesBytes.With(prometheus.Labels{metricsLabelState: "total"}).Set(float64(usage.FilesTotal))
 
-	filesPercent := factory.NewGaugeVec(
+	filesRatio := factory.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "photoprism",
-			Subsystem: "usage",
-			Name:      "files_percent",
-			Help:      "filesystem usage in percent for files indexed by this PhotoPrism instance",
-		}, []string{"state"},
+			Namespace: metricsNamespace,
+			Subsystem: metricsUsageSubsystem,
+			Name:      metricFilesRatio,
+			Help:      metricsFilesRatioHelp,
+		}, []string{metricsLabelState},
 	)
 
-	filesPercent.With(prometheus.Labels{"state": "used"}).Set(float64(usage.FilesUsedPct))
-	filesPercent.With(prometheus.Labels{"state": "free"}).Set(float64(usage.FilesFreePct))
+	filesUsed := usage.FilesUsedRatio()
+	filesRatio.With(prometheus.Labels{metricsLabelState: "used"}).Set(filesUsed)
+	filesRatio.With(prometheus.Labels{metricsLabelState: "free"}).Set(1 - filesUsed)
 
-	accountsPercent := factory.NewGaugeVec(
+	accountsActive := factory.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "photoprism",
-			Subsystem: "usage",
-			Name:      "accounts_percent",
-			Help:      "account quota usage in percent for this PhotoPrism instance",
-		}, []string{"state"},
+			Namespace: metricsNamespace,
+			Subsystem: metricsUsageSubsystem,
+			Name:      metricAccountsActive,
+			Help:      metricsAccountsHelp,
+		}, []string{metricsLabelState},
 	)
 
-	accountsPercent.With(prometheus.Labels{"state": "used"}).Set(float64(usage.UsersUsedPct))
-	accountsPercent.With(prometheus.Labels{"state": "free"}).Set(float64(usage.UsersFreePct))
+	accountsActive.With(prometheus.Labels{metricsLabelState: "users"}).Set(float64(usage.UsersActive))
+	accountsActive.With(prometheus.Labels{metricsLabelState: "guests"}).Set(float64(usage.GuestsActive))
+
+	accountsRatio := factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsUsageSubsystem,
+			Name:      metricAccountsRatio,
+			Help:      metricsAccountsRatioHelp,
+		}, []string{metricsLabelState},
+	)
+
+	accountsUsed := usage.UsersUsedRatio()
+	accountsRatio.With(prometheus.Labels{metricsLabelState: "used"}).Set(accountsUsed)
+	accountsRatio.With(prometheus.Labels{metricsLabelState: "free"}).Set(1 - accountsUsed)
 }
 
 // registerClusterMetrics exports cluster-specific metrics when running as a portal instance.
@@ -202,29 +248,29 @@ func registerClusterMetrics(factory promauto.Factory, conf *config.Config) {
 
 	nodeMetric := factory.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "photoprism",
-			Subsystem: "cluster",
-			Name:      "nodes",
-			Help:      "registered cluster nodes grouped by role",
-		}, []string{"role"},
+			Namespace: metricsNamespace,
+			Subsystem: metricsClusterSubsystem,
+			Name:      metricClusterNodes,
+			Help:      metricsClusterNodesHelp,
+		}, []string{metricsLabelRole},
 	)
 
 	for role, value := range counts {
-		nodeMetric.With(prometheus.Labels{"role": role}).Set(float64(value))
+		nodeMetric.With(prometheus.Labels{metricsLabelRole: role}).Set(float64(value))
 	}
 
 	infoMetric := factory.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: "photoprism",
-			Subsystem: "cluster",
-			Name:      "info",
-			Help:      "cluster metadata for this PhotoPrism portal",
-		}, []string{"uuid", "cidr"},
+			Namespace: metricsNamespace,
+			Subsystem: metricsClusterSubsystem,
+			Name:      metricClusterInfo,
+			Help:      metricsClusterInfoHelp,
+		}, []string{metricsLabelUUID, metricsLabelCIDR},
 	)
 
 	infoMetric.With(prometheus.Labels{
-		"uuid": conf.ClusterUUID(),
-		"cidr": conf.ClusterCIDR(),
+		metricsLabelUUID: conf.ClusterUUID(),
+		metricsLabelCIDR: conf.ClusterCIDR(),
 	}).Set(1.0)
 }
 

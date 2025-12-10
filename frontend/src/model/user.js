@@ -156,9 +156,7 @@ export class User extends RestModel {
   }
 
   getRegisterForm() {
-    return $api
-      .options(this.getEntityResource() + "/register")
-      .then((response) => Promise.resolve(new Form(response.data)));
+    return $api.options(this.getEntityResource() + "/register").then((response) => Promise.resolve(new Form(response.data)));
   }
 
   getAvatarURL(size, config) {
@@ -190,15 +188,11 @@ export class User extends RestModel {
 
     formData.append("files", file);
 
-    return $api
-      .post(this.getEntityResource() + `/avatar`, formData, formConf)
-      .then((response) => Promise.resolve(this.setValues(response.data)));
+    return $api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) => Promise.resolve(this.setValues(response.data)));
   }
 
   getProfileForm() {
-    return $api
-      .options(this.getEntityResource() + "/profile")
-      .then((response) => Promise.resolve(new Form(response.data)));
+    return $api.options(this.getEntityResource() + "/profile").then((response) => Promise.resolve(new Form(response.data)));
   }
 
   hasScope() {

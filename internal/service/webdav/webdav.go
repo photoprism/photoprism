@@ -33,6 +33,7 @@ import (
 // Global log instance.
 var log = event.Log
 
+// Timeout specifies a timeout mode for WebDAV operations.
 type Timeout string
 
 // Request Timeout options.
@@ -45,6 +46,8 @@ const (
 )
 
 // Second represents a second on which other timeouts are based.
+//
+//revive:disable-next-line:time-naming // keep exported constant name for API compatibility
 const Second = time.Second
 
 // MaxRequestDuration is the maximum request duration e.g. for recursive retrieval of large remote directory structures.

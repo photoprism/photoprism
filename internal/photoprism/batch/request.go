@@ -11,12 +11,7 @@ type PhotosRequest struct {
 
 // Empty checks if any specific items were selected.
 func (f PhotosRequest) Empty() bool {
-	switch {
-	case len(f.Photos) > 0:
-		return false
-	}
-
-	return true
+	return len(f.Photos) == 0
 }
 
 // Get returns a string slice with the selected item UIDs.

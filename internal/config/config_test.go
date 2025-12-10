@@ -335,7 +335,7 @@ func TestConfig_WakeupInterval(t *testing.T) {
 
 	c.options.WakeupInterval = 45
 
-	assert.Equal(t, "1m0s", c.WakeupInterval().String())
+	assert.Equal(t, "45s", c.WakeupInterval().String())
 
 	c.options.WakeupInterval = 0
 

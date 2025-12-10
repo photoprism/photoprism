@@ -1640,9 +1640,7 @@ describe("model/photo", () => {
     const photoJpeg = new Photo({ UID: "jpegPhoto", Type: media.Image, Files: jpegFiles });
     expect(photoJpeg.originalFile().UID).toBe("jpeg_2");
 
-    const singleFile = [
-      { UID: "single_jpg", Name: "single.jpg", FileType: media.FormatJpeg, Root: "/", Primary: true },
-    ];
+    const singleFile = [{ UID: "single_jpg", Name: "single.jpg", FileType: media.FormatJpeg, Root: "/", Primary: true }];
     const photoSingle = new Photo({ UID: "singlePhoto", Type: media.Image, Files: singleFile });
     expect(photoSingle.originalFile().UID).toBe("single_jpg");
 

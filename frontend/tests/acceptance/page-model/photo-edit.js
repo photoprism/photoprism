@@ -22,6 +22,15 @@ export default class Page {
     this.locationCancel = Selector("div.p-location-dialog button.action-cancel", { timeout: 15000 });
     this.locationMarker = Selector("div.maplibregl-marker", { timeout: 15000 });
 
+    this.batchDialog = Selector("div.v-dialog--batch-edit");
+    this.batchDialogTitle = Selector("div.v-dialog--batch-edit div.v-toolbar-title");
+    this.batchDialogPreview = Selector("div.v-dialog--batch-edit div.preview");
+    this.batchDialogCloseAction = Selector("div.v-dialog--batch-edit div.action-buttons button.action-close");
+    this.batchDialogApplyAction = Selector("div.v-dialog--batch-edit div.action-buttons button.action-approve");
+    this.batchDialogToolbarCloseAction = Selector("div.v-dialog--batch-edit header.v-toolbar button.action-close");
+    this.batchToggleAllCheckbox = Selector("div.v-dialog--batch-edit .toggle-all div.v-selection-control__input");
+    this.batchToggleSelectCheckbox = Selector("div.v-dialog--batch-edit .toggle-select div.v-selection-control__input");
+
     this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", {
       timeout: 15000,
     });

@@ -1,17 +1,7 @@
 <template>
   <div ref="page" tabindex="-1" class="p-page p-page-labels not-selectable" :class="$config.aclClasses('labels')">
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="p-labels-search p-page__navigation"
-      @submit.stop.prevent="updateQuery()"
-    >
-      <v-toolbar
-        flat
-        :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-        color="secondary"
-        class="page-toolbar"
-      >
+    <v-form ref="form" validate-on="invalid-input" class="p-labels-search p-page__navigation" @submit.stop.prevent="updateQuery()">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" color="secondary" class="page-toolbar">
         <v-text-field
           :model-value="filter.q"
           hide-details
@@ -50,19 +40,9 @@
       <p-loading></p-loading>
     </div>
     <div v-else class="p-page__content">
-      <p-label-clipboard
-        v-if="canSelect"
-        :refresh="refresh"
-        :selection="selection"
-        :clear-selection="clearSelection"
-      ></p-label-clipboard>
+      <p-label-clipboard v-if="canSelect" :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-label-clipboard>
 
-      <p-scroll
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      ></p-scroll>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <div v-if="results.length === 0" class="pa-3">
         <v-alert color="surface-variant" icon="mdi-lightbulb-outline" class="no-results" variant="outlined">
@@ -71,25 +51,12 @@
           </div>
           <div class="mt-2">
             {{ $gettext(`Try again using other filters or keywords.`) }}
-            {{
-              $gettext(
-                `In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`
-              )
-            }}
+            {{ $gettext(`In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`) }}
           </div>
         </v-alert>
       </div>
-      <div
-        v-else
-        class="v-row search-results label-results cards-view"
-        :class="{ 'select-results': selection.length > 0 }"
-      >
-        <div
-          v-for="(label, index) in results"
-          :key="label.UID"
-          ref="items"
-          class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2"
-        >
+      <div v-else class="v-row search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+        <div v-for="(label, index) in results" :key="label.UID" ref="items" class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2">
           <div
             :data-uid="label.UID"
             class="result not-selectable"
@@ -768,9 +735,7 @@ export default {
 
           if (this.scrollDisabled) {
             if (this.results.length > 1) {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), { n: this.results.length }));
             }
           } else {
             this.page++;
@@ -966,9 +931,7 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One label found"));
             } else {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("%{n} labels found"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), { n: this.results.length }));
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 labels found'));

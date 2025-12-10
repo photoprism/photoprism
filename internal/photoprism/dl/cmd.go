@@ -21,15 +21,15 @@ func ytDlpCommand(ctx context.Context, args []string) *exec.Cmd {
 		if sh == "" {
 			sh = "bash"
 		}
-		return exec.CommandContext(ctx, sh, append([]string{bin}, args...)...)
+		return exec.CommandContext(ctx, sh, append([]string{bin}, args...)...) // #nosec G204 command constructed from validated yt-dlp path and args
 	}
 
-	return exec.CommandContext(ctx, bin, args...)
+	return exec.CommandContext(ctx, bin, args...) // #nosec G204 command constructed from validated yt-dlp path and args
 }
 
 // isShellScript tries to detect if a file starts with a shebang (#!).
 func isShellScript(path string) bool {
-	f, err := os.Open(path)
+	f, err := os.Open(path) // #nosec G304 path provided by FindYtDlpBin
 	if err != nil {
 		return false
 	}

@@ -63,13 +63,7 @@
 
       <v-card-text class="pt-3 text-body-2">
         <v-alert color="surface-variant" icon="mdi-information" class="pa-2" variant="outlined">
-          <a
-            class="text-link"
-            style="color: inherit"
-            href="https://docs.photoprism.app/user-guide/sync/webdav/"
-            target="_blank"
-            rel="noopener"
-          >
+          <a class="text-link" style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank" rel="noopener">
             {{ $gettext(`Detailed instructions can be found in our User Guide.`) }}
           </a>
         </v-alert>

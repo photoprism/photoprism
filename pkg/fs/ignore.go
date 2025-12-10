@@ -8,6 +8,7 @@ import (
 	"sync"
 )
 
+// IgnoreLogFunc logs ignored file names.
 type IgnoreLogFunc func(fileName string)
 
 // IgnorePattern represents a name pattern to be ignored.
@@ -171,7 +172,7 @@ func (l *IgnoreList) Ignore(name string) bool {
 	baseName := filepath.Base(name)
 
 	// Change name to lowercase for case-insensitive comparison.
-	if l.caseSensitive == false {
+	if !l.caseSensitive {
 		dir = strings.ToLower(dir)
 		baseName = strings.ToLower(baseName)
 	}

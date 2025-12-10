@@ -1,0 +1,122 @@
+================================================================================
+================================================================================
+
+                      Third-Party ICC Profiles for PhotoPrism
+
+--------------------------------------------------------------------------------
+
+The following 3rd-party ICC profiles may be used by or distributed with
+PhotoPrism. Any information relevant to third-party vendors listed below are
+collected using common, reasonable means.
+
+Date generated: 2025-11-23
+
+--------------------------------------------------------------------------------
+
+Files: a98.icc (compatibleWithAdobeRGB1998.icc)
+Source: OpenICC "compatibleWithAdobeRGB1998.icc" via Debian icc-profiles-free
+URL: https://salsa.debian.org/debian/icc-profiles-free/-/blob/a7a3c11b8a6d3bc2937447183b87dc89de9d2388/icc-profiles-openicc/default_profiles/base/compatibleWithAdobeRGB1998.icc
+License: zlib/libpng
+Checksum (md5): 826a1e13374e3dc34f9872f31ec028c8
+
+The zlib/libpng License
+
+Copyright (c) Graeme Gill <graeme@argyllcms.com>
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+    claim that you wrote the original software. If you use this software
+    in a product, an acknowledgment in the product documentation would be
+    appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+    misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source
+    distribution.
+
+The provided ICC Profiles in the package are called DATA in the following
+statement:
+
+                NO WARRANTY
+
+  BECAUSE THE DATA IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE DATA, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE DATA "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
+TO THE QUALITY AND PERFORMANCE OF THE DATA IS WITH YOU.  SHOULD THE
+DATA PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+REPAIR OR CORRECTION.
+
+  12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE DATA AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
+OUT OF THE USE OR INABILITY TO USE THE DATA (INCLUDING BUT NOT LIMITED
+TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
+YOU OR THIRD PARTIES OR A FAILURE OF THE DATA TO OPERATE WITH ANY OTHER
+PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+--------------------------------------------------------------------------------
+
+Files: adobecompat-v2.icc, adobecompat-v4.icc, applecompat-v2.icc, applecompat-v4.icc, cgats001compat-v2-micro.icc, colormatchcompat-v2.icc, colormatchcompat-v4.icc, dci-p3-v4.icc, displayp3-v2-magic.icc, displayp3-v2-micro.icc, displayp3-v4.icc, displayp3compat-v2-magic.icc, displayp3compat-v2-micro.icc, displayp3compat-v4.icc, prophoto-v2-magic.icc, prophoto-v2-micro.icc, prophoto-v4.icc, rec2020-g24-v4.icc, rec2020-v2-magic.icc, rec2020-v2-micro.icc, rec2020-v4.icc, rec2020compat-v2-magic.icc, rec2020compat-v2-micro.icc, rec2020compat-v4.icc, rec601ntsc-v2-magic.icc, rec601ntsc-v2-micro.icc, rec601ntsc-v4.icc, rec601pal-v2-magic.icc, rec601pal-v2-micro.icc, rec601pal-v4.icc, rec709-v2-magic.icc, rec709-v2-micro.icc, rec709-v4.icc, scrgb-v2.icc, sgrey-v2-magic.icc, sgrey-v2-micro.icc, sgrey-v2-nano.icc, sgrey-v4.icc, srgb-v2-magic.icc, srgb-v2-micro.icc, srgb-v2-nano.icc, srgb-v4.icc, widegamutcompat-v2.icc, widegamutcompat-v4.icc
+Source: Compact-ICC-Profiles via Debian icc-profiles-free
+URL: https://salsa.debian.org/debian/icc-profiles-free/-/tree/a7a3c11b8a6d3bc2937447183b87dc89de9d2388/Compact-ICC-Profiles/profiles
+License: CC0-1.0 (Public Domain Dedication)
+Checksums (md5):
+  adobecompat-v2.icc              08220aa4b4e4259ec3c446a35197d89b
+  adobecompat-v4.icc              fbf912760a8d14e496ff389c29c3132d
+  applecompat-v2.icc              21453c734d9364abceacc7ab837019ec
+  applecompat-v4.icc              fc399558e27a0d53748820cff2a98a2b
+  cgats001compat-v2-micro.icc     56a85233ee08fa7527875be36cf426d6
+  colormatchcompat-v2.icc         9f2a755b4b3069f46f4eaef11e24926d
+  colormatchcompat-v4.icc         9e119efb0abaa31e955f8a30eeabc58c
+  dci-p3-v4.icc                   bdedf9e7ad0b93ed8f85f8c3ebdc4223
+  displayp3-v2-magic.icc          6748fcfd56d38770a02c023bbd6d0529
+  displayp3-v2-micro.icc          2615293123ddc4366af3da39455c3d7a
+  displayp3-v4.icc                32dc35d6a113b86cbc31bd1281e3baed
+  displayp3compat-v2-magic.icc    05fb82a702e27438ecec47a2f120cdcd
+  displayp3compat-v2-micro.icc    2ef6c295ac5d05760c1a4cf1668951a3
+  displayp3compat-v4.icc          c34c90451326b183916f05b3ae41d920
+  prophoto-v2-magic.icc           15a31d407cf35662fbe4513f6204bfdf
+  prophoto-v2-micro.icc           445c1a3f3f1a20aab68e76838d3ed334
+  prophoto-v4.icc                 8f4523255234753cd2d3111d8f09b184
+  rec2020-g24-v4.icc              3c7afbfff612d10a10775c167d36b51e
+  rec2020-v2-magic.icc            3b5846fb69faa53ebdfd29061f17b0e3
+  rec2020-v2-micro.icc            13d1e96875c35f7d5ebaf0f6a3d16357
+  rec2020-v4.icc                  297c644758a979abe62349ca1ff416d5
+  rec2020compat-v2-magic.icc      9aa85534e81c275bc0627badf157580a
+  rec2020compat-v2-micro.icc      fa39fc95daece7dcaff18e7265082368
+  rec2020compat-v4.icc            66839229639bb55bc443b490fe302364
+  rec601ntsc-v2-magic.icc         53ee12707ac87a8e3b3452af4a325e29
+  rec601ntsc-v2-micro.icc         af05afec2146917a67445ac6cb5ca61d
+  rec601ntsc-v4.icc               cc57dd6fa3d6f08e43e0f70b5376c00a
+  rec601pal-v2-magic.icc          f706fd528cedcd1c88dac50073112f94
+  rec601pal-v2-micro.icc          d193e01949eb5347b0d16d2b3ccdabcf
+  rec601pal-v4.icc                dd7cd61d6ee14a521c9fb5afa2803e8e
+  rec709-v2-magic.icc             47f09046656a2f0d66117a9c1b15e137
+  rec709-v2-micro.icc             f91edc9f3ff1390c842bd9e8759688b0
+  rec709-v4.icc                   0339e2a70940aefd9237311889d065e6
+  scrgb-v2.icc                    a841263101bdf48fb9b81486f5451f2d
+  sgrey-v2-magic.icc              ef6221686b517e4665480639202dacd5
+  sgrey-v2-micro.icc              ca08451dba57ca1e910330cda37515ad
+  sgrey-v2-nano.icc               57d72e3f6437d65c618ebcdb1f6fa1bd
+  sgrey-v4.icc                    b93b1e31e75243ea08fbdab9e82f7cbe
+  srgb-v2-magic.icc               5967f401f9a54913a283942710cef93c
+  srgb-v2-micro.icc               e8de3a5b44d70610306b0a20225701d1
+  srgb-v2-nano.icc                e060a57b7a057f7f0bdb859b68db60e9
+  srgb-v4.icc                     3c6a277ddee033ad090ba22b8323dcaf
+  widegamutcompat-v2.icc          63c0165987ee94c8c7f2c68749e0418d
+  widegamutcompat-v4.icc          4ccb168ae2f7daa51d3cef7df6fa6f16
+
+--------------------------------------------------------------------------------

@@ -11,7 +11,9 @@ import (
 )
 
 const (
-	ScheduleDaily  = "daily"
+	// ScheduleDaily represents the keyword for daily schedules.
+	ScheduleDaily = "daily"
+	// ScheduleWeekly represents the keyword for weekly schedules.
 	ScheduleWeekly = "weekly"
 )
 
@@ -26,9 +28,9 @@ func Schedule(s string) string {
 
 	switch s {
 	case ScheduleDaily:
-		return fmt.Sprintf("%d %d * * *", rand.IntN(60), rand.IntN(24))
+		return fmt.Sprintf("%d %d * * *", rand.IntN(60), rand.IntN(24)) //nolint:gosec // non-cryptographic randomness for scheduling
 	case ScheduleWeekly:
-		return fmt.Sprintf("%d %d * * 0", rand.IntN(60), rand.IntN(24))
+		return fmt.Sprintf("%d %d * * 0", rand.IntN(60), rand.IntN(24)) //nolint:gosec // non-cryptographic randomness for scheduling
 	}
 
 	// Example: "0 12 * * *" stands for daily at noon.

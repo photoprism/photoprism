@@ -352,17 +352,17 @@ func NewPhotosFormWithEntities(photos search.PhotoResults, preloaded map[string]
 		}
 
 		if i == 0 {
-			frm.CameraID.Value = int(photo.CameraID)
+			frm.CameraID.Value = int(photo.CameraID) //nolint:gosec // IDs bounded; ARMv7 deprecated
 			frm.CameraID.Action = ActionNone
-		} else if photo.CameraID != uint(frm.CameraID.Value) {
+		} else if photo.CameraID != intToSafeUint(frm.CameraID.Value, entity.UnknownCamera.ID) {
 			frm.CameraID.Mixed = true
 			frm.CameraID.Value = -2
 		}
 
 		if i == 0 {
-			frm.LensID.Value = int(photo.LensID)
+			frm.LensID.Value = int(photo.LensID) //nolint:gosec // IDs bounded; ARMv7 deprecated
 			frm.LensID.Action = ActionNone
-		} else if photo.LensID != uint(frm.LensID.Value) {
+		} else if photo.LensID != intToSafeUint(frm.LensID.Value, entity.UnknownLens.ID) {
 			frm.LensID.Mixed = true
 			frm.LensID.Value = -2
 		}

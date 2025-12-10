@@ -71,7 +71,6 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
 
   await album.openAlbumWithUid(AlbumUid);
   await toolbar.triggerToolbarAction("edit");
-  await t.click(albumdialog.category).wait(3000);
 
   await t
     .expect(albumdialog.description.value)
@@ -103,70 +102,61 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
     .notContains("Earth");
 });
 
-test.meta("testID", "states-002").meta({ mode: "public" })(
-  "Common: Create, Edit, delete sharing link for state",
-  async (t) => {
-    await page.testCreateEditDeleteSharingLink("states");
-  }
-);
+test.meta("testID", "states-002").meta({ mode: "public" })("Common: Create, Edit, delete sharing link for state", async (t) => {
+  await page.testCreateEditDeleteSharingLink("states");
+});
 
-test.meta("testID", "states-003").meta({ mode: "public" })(
-  "Common: Create/delete album-clone from state",
-  async (t) => {
-    await menu.openPage("albums");
-    const AlbumCount = await album.getAlbumCount("all");
-    await toolbar.search("Holiday");
-    const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
-    await album.openAlbumWithUid(HolidayAlbumUid);
-    const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
-    await menu.openPage("states");
-    await toolbar.search("Canada");
-    const FirstStateUid = await album.getNthAlbumUid("all", 0);
-    await album.openAlbumWithUid(FirstStateUid);
-    const PhotoCountInState = await photo.getPhotoCount("all");
-    const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
-    const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
-    await menu.openPage("states");
-    await album.selectAlbumFromUID(FirstStateUid);
-    await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForState", "Holiday"]);
-    await menu.openPage("albums");
-    const AlbumCountAfterCreation = await album.getAlbumCount("all");
+test.meta("testID", "states-003").meta({ mode: "public" })("Common: Create/delete album-clone from state", async (t) => {
+  await menu.openPage("albums");
+  const AlbumCount = await album.getAlbumCount("all");
+  await toolbar.search("Holiday");
+  const HolidayAlbumUid = await album.getNthAlbumUid("all", 0);
+  await album.openAlbumWithUid(HolidayAlbumUid);
+  const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
+  await menu.openPage("states");
+  await toolbar.search("Canada");
+  const FirstStateUid = await album.getNthAlbumUid("all", 0);
+  await album.openAlbumWithUid(FirstStateUid);
+  const PhotoCountInState = await photo.getPhotoCount("all");
+  const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
+  const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+  await menu.openPage("states");
+  await album.selectAlbumFromUID(FirstStateUid);
+  await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForState", "Holiday"]);
+  await menu.openPage("albums");
+  const AlbumCountAfterCreation = await album.getAlbumCount("all");
 
-    await t.expect(AlbumCountAfterCreation).eql(AlbumCount + 1);
+  await t.expect(AlbumCountAfterCreation).eql(AlbumCount + 1);
 
-    await toolbar.search("NotYetExistingAlbumForState");
-    const AlbumUid = await album.getNthAlbumUid("all", 0);
-    await album.openAlbumWithUid(AlbumUid);
-    const PhotoCountInAlbum = await photo.getPhotoCount("all");
+  await toolbar.search("NotYetExistingAlbumForState");
+  const AlbumUid = await album.getNthAlbumUid("all", 0);
+  await album.openAlbumWithUid(AlbumUid);
+  const PhotoCountInAlbum = await photo.getPhotoCount("all");
 
-    await t.expect(PhotoCountInAlbum).eql(PhotoCountInState);
+  await t.expect(PhotoCountInAlbum).eql(PhotoCountInState);
 
-    await photo.checkPhotoVisibility(FirstPhotoUid, true);
-    await photo.checkPhotoVisibility(SecondPhotoUid, true);
-    await menu.openPage("albums");
-    await album.selectAlbumFromUID(AlbumUid);
-    await contextmenu.triggerContextMenuAction("delete", "");
-    const AlbumCountAfterDelete = await album.getAlbumCount("all");
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(SecondPhotoUid, true);
+  await menu.openPage("albums");
+  await album.selectAlbumFromUID(AlbumUid);
+  await contextmenu.triggerContextMenuAction("delete", "");
+  const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
-    await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
-    await album.openAlbumWithUid(HolidayAlbumUid);
-    await photo.selectPhotoFromUID(FirstPhotoUid);
-    await photo.selectPhotoFromUID(SecondPhotoUid);
-    await contextmenu.triggerContextMenuAction("remove", "");
-    const PhotoCountHolidayAfterDelete = await photo.getPhotoCount("all");
+  await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
+  await album.openAlbumWithUid(HolidayAlbumUid);
+  await photo.selectPhotoFromUID(FirstPhotoUid);
+  await photo.selectPhotoFromUID(SecondPhotoUid);
+  await contextmenu.triggerContextMenuAction("remove", "");
+  const PhotoCountHolidayAfterDelete = await photo.getPhotoCount("all");
 
-    await t.expect(PhotoCountHolidayAfterDelete).eql(InitialPhotoCountHoliday);
+  await t.expect(PhotoCountHolidayAfterDelete).eql(InitialPhotoCountHoliday);
 
-    await menu.openPage("states");
-    await album.openAlbumWithUid(FirstStateUid);
-    await photo.checkPhotoVisibility(FirstPhotoUid, true);
-    await photo.checkPhotoVisibility(SecondPhotoUid, true);
-  }
-);
+  await menu.openPage("states");
+  await album.openAlbumWithUid(FirstStateUid);
+  await photo.checkPhotoVisibility(FirstPhotoUid, true);
+  await photo.checkPhotoVisibility(SecondPhotoUid, true);
+});
 
-test.meta("testID", "states-004").meta({ type: "short", mode: "public" })(
-  "Common: Set album cover from States Page",
-  async (t) => {
-    await page.testSetAlbumCover("states");
-  }
-);
+test.meta("testID", "states-004").meta({ type: "short", mode: "public" })("Common: Set album cover from States Page", async (t) => {
+  await page.testSetAlbumCover("states");
+});

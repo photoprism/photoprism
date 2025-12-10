@@ -25,11 +25,12 @@ func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: ImageMagick must be enabled to re-encode %s", logName)
 	}
 
-	if !f.Exists() {
+	switch {
+	case !f.Exists():
 		return nil, fmt.Errorf("convert: %s not found", logName)
-	} else if f.Empty() {
+	case f.Empty():
 		return nil, fmt.Errorf("convert: %s is empty", logName)
-	} else if !f.IsJpeg() {
+	case !f.IsJpeg():
 		return nil, fmt.Errorf("convert: %s is not a jpeg", logName)
 	}
 
@@ -75,6 +76,7 @@ func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	quality := fmt.Sprintf("%d", w.conf.JpegQuality())
 	resize := fmt.Sprintf("%dx%d>", w.conf.JpegSize(), w.conf.JpegSize())
 	args := []string{f.FileName(), "-flatten", "-resize", resize, "-quality", quality, cacheName}
+	// #nosec G204 -- command is constructed from validated config and media file paths.
 	cmd := exec.Command(w.conf.ImageMagickBin(), args...)
 
 	if fs.FileExists(cacheName) {

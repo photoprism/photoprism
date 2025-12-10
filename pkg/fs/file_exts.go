@@ -197,20 +197,12 @@ func (m FileExtensions) Types(noUppercase bool) TypesExt {
 
 	if noUppercase {
 		for ext, t := range m {
-			if _, ok := result[t]; ok {
-				result[t] = append(result[t], ext)
-			} else {
-				result[t] = []string{ext}
-			}
+			result[t] = append(result[t], ext)
 		}
 	} else {
 		for ext, t := range m {
 			extUpper := strings.ToUpper(ext)
-			if _, ok := result[t]; ok {
-				result[t] = append(result[t], ext, extUpper)
-			} else {
-				result[t] = []string{ext, extUpper}
-			}
+			result[t] = append(result[t], ext, extUpper)
 		}
 	}
 

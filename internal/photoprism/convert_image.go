@@ -25,11 +25,12 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		return nil, fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
 	}
 
-	if !f.Exists() {
+	switch {
+	case !f.Exists():
 		return nil, fmt.Errorf("convert: %s not found", clean.Log(f.RootRelName()))
-	} else if f.Empty() {
+	case f.Empty():
 		return nil, fmt.Errorf("convert: %s is empty", clean.Log(f.RootRelName()))
-	} else if f.IsThumb() {
+	case f.IsThumb():
 		return nil, fmt.Errorf("convert: %s is a thumbnail image", clean.Log(f.RootRelName()))
 	}
 
@@ -50,19 +51,22 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		if force && mediaFile.InSidecar() {
 			if removeErr := mediaFile.Remove(); removeErr != nil {
 				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(mediaFile.RootRelName()), removeErr)
-			} else {
-				log.Infof("convert: replacing %s", clean.Log(mediaFile.RootRelName()))
 			}
+
+			log.Infof("convert: replacing %s", clean.Log(mediaFile.RootRelName()))
 		} else {
 			return mediaFile, nil
 		}
-	} else if f.IsVector() {
-		if !w.conf.VectorEnabled() {
-			return nil, fmt.Errorf("convert: vector graphics support disabled (%s)", clean.Log(f.RootRelName()))
-		}
-		imageName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtPng)
 	} else {
-		imageName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtJpeg)
+		switch {
+		case f.IsVector():
+			if !w.conf.VectorEnabled() {
+				return nil, fmt.Errorf("convert: vector graphics support disabled (%s)", clean.Log(f.RootRelName()))
+			}
+			imageName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtPng)
+		default:
+			imageName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtJpeg)
+		}
 	}
 
 	if !w.conf.SidecarWritable() {
@@ -195,8 +199,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	}
 
 	// Change the Exif orientation of the generated file if required.
-	switch fileOrientation {
-	case media.ResetOrientation:
+	if fileOrientation == media.ResetOrientation {
 		if err = result.ChangeOrientation(1); err != nil {
 			log.Warnf("convert: %s in %s (change orientation)", err, clean.Log(result.RootRelName()))
 		}

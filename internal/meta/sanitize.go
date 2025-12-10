@@ -62,7 +62,7 @@ var UnwantedStrings = map[string]bool{
 }
 
 // LowerCaseRegexp matches lower-case tokens in generated filenames.
-var LowerCaseRegexp = regexp.MustCompile("[a-z\\d_\\-]+")
+var LowerCaseRegexp = regexp.MustCompile(`[a-z\d_\-]+`)
 
 // SanitizeUnicode returns the string as valid Unicode with whitespace trimmed.
 func SanitizeUnicode(s string) string {
@@ -85,7 +85,7 @@ func SanitizeString(s string) string {
 		return ""
 	}
 
-	return SanitizeUnicode(strings.Replace(s, "\"", "", -1))
+	return SanitizeUnicode(strings.ReplaceAll(s, "\"", ""))
 }
 
 // SanitizeUID normalizes unique IDs found in XMP or Exif metadata.

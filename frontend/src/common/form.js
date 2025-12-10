@@ -102,11 +102,7 @@ export class Form {
 
   // getOptions resolves the options array for select-style fields.
   getOptions(fieldName) {
-    if (
-      this.definition &&
-      this.definition.hasOwnProperty(fieldName) &&
-      this.definition[fieldName].hasOwnProperty("options")
-    ) {
+    if (this.definition && this.definition.hasOwnProperty(fieldName) && this.definition[fieldName].hasOwnProperty("options")) {
       return this.definition[fieldName].options;
     }
 
@@ -209,9 +205,7 @@ export class rules {
       return false;
     }
 
-    return /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/.test(
-      v
-    );
+    return /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/.test(v);
   }
 
   // isUrl validates strings by length and URL parsing.
@@ -260,10 +254,7 @@ export class rules {
   // email returns Vuetify rule callbacks for email validation.
   static email(required) {
     if (required) {
-      return [
-        (v) => !!v || $gettext("This field is required"),
-        (v) => !v || this.isEmail(v) || $gettext("Invalid address"),
-      ];
+      return [(v) => !!v || $gettext("This field is required"), (v) => !v || this.isEmail(v) || $gettext("Invalid address")];
     } else {
       return [(v) => !v || this.isEmail(v) || $gettext("Invalid address")];
     }
@@ -352,20 +343,14 @@ export class rules {
         (v) => this.maxLen(v, 2) || $gettext("Invalid country"),
       ];
     } else {
-      return [
-        (v) => this.minLen(v, 2) || $gettext("Invalid country"),
-        (v) => this.maxLen(v, 2) || $gettext("Invalid country"),
-      ];
+      return [(v) => this.minLen(v, 2) || $gettext("Invalid country"), (v) => this.maxLen(v, 2) || $gettext("Invalid country")];
     }
   }
 
   // day validates day-of-month values between 1 and 31.
   static day(required) {
     if (required) {
-      return [
-        (v) => !!v || Number(v) < -1 || $gettext("This field is required"),
-        (v) => this.isNumberRange(v, 1, 31) || $gettext("Invalid"),
-      ];
+      return [(v) => !!v || Number(v) < -1 || $gettext("This field is required"), (v) => this.isNumberRange(v, 1, 31) || $gettext("Invalid")];
     } else {
       return [(v) => this.isNumberRange(v, 1, 31) || $gettext("Invalid")];
     }
@@ -374,10 +359,7 @@ export class rules {
   // month validates month values between 1 and 12.
   static month(required) {
     if (required) {
-      return [
-        (v) => !!v || Number(v) < -1 || $gettext("This field is required"),
-        (v) => this.isNumberRange(v, 1, 12) || $gettext("Invalid"),
-      ];
+      return [(v) => !!v || Number(v) < -1 || $gettext("This field is required"), (v) => this.isNumberRange(v, 1, 12) || $gettext("Invalid")];
     } else {
       return [(v) => this.isNumberRange(v, 1, 12) || $gettext("Invalid")];
     }
@@ -394,10 +376,7 @@ export class rules {
     }
 
     if (required) {
-      return [
-        (v) => !!v || Number(v) < -1 || $gettext("This field is required"),
-        (v) => this.isNumberRange(v, min, max) || $gettext("Invalid"),
-      ];
+      return [(v) => !!v || Number(v) < -1 || $gettext("This field is required"), (v) => this.isNumberRange(v, min, max) || $gettext("Invalid")];
     } else {
       return [(v) => this.isNumberRange(v, min, max) || $gettext("Invalid")];
     }

@@ -4,6 +4,7 @@ import "os/exec"
 
 // TranscodeToAvcCmd returns the default FFmpeg command for transcoding video files to MPEG-4 AVC.
 func TranscodeToAvcCmd(srcName, destName string, opt Options) *exec.Cmd {
+	// #nosec G204 -- command arguments are built from validated options and paths.
 	return exec.Command(
 		opt.Bin,
 		"-hide_banner",

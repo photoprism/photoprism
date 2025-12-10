@@ -9,6 +9,7 @@ import (
 // TranscodeToAvcCmd returns the FFmpeg command for hardware-accelerated transcoding to MPEG-4 AVC.
 func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 	// ffmpeg -hide_banner -h encoder=h264_v4l2m2m
+	// #nosec G204 -- command arguments are built from validated options and paths.
 	return exec.Command(
 		opt.Bin,
 		"-hide_banner",

@@ -20,9 +20,6 @@ const (
 	//   username: cluster_u<hmac11>
 	dbSuffix   = 11
 	userSuffix = 11
-	// Budgets: keep user conservative for MySQL compatibility; MariaDB allows more.
-	userMax = 32
-	dbMax   = 64
 	// prefixMax ensures usernames remain within the MySQL identifier limit.
 	prefixMax = cluster.DatabaseProvisionPrefixMaxLen
 )

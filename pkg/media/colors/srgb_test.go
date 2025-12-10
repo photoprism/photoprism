@@ -11,7 +11,7 @@ import (
 )
 
 func writeImage(path string, img image.Image) error {
-	imgFile, err := os.Create(path)
+	imgFile, err := os.Create(path) //nolint:gosec // test temp file
 
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func TestToSRGB(t *testing.T) {
 
 		t.Logf("testfile: %s", testFile)
 
-		imgFile, err := os.Open(testFile)
+		imgFile, err := os.Open(testFile) //nolint:gosec // test temp file
 
 		if err != nil {
 			t.Fatal(err)

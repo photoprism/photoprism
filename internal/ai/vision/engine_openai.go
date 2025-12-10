@@ -28,6 +28,16 @@ func init() {
 		Parser:   openaiParser{},
 		Defaults: openaiDefaults{},
 	})
+
+	RegisterEngineAlias(openai.EngineName, EngineInfo{
+		Uri:               "https://api.openai.com/v1/responses",
+		RequestFormat:     ApiFormatOpenAI,
+		ResponseFormat:    ApiFormatOpenAI,
+		FileScheme:        scheme.Data,
+		DefaultModel:      openai.DefaultModel,
+		DefaultResolution: openai.DefaultResolution,
+		DefaultKey:        openai.APIKeyPlaceholder,
+	})
 }
 
 // SystemPrompt returns the default OpenAI system prompt for the specified model type.
@@ -80,42 +90,21 @@ func (openaiDefaults) SchemaTemplate(model *Model) string {
 }
 
 // Options returns default OpenAI request options for the model.
-func (openaiDefaults) Options(model *Model) *ApiRequestOptions {
+func (openaiDefaults) Options(model *Model) *ModelOptions {
 	if model == nil {
 		return nil
 	}
 
 	switch model.Type {
 	case ModelTypeCaption:
-		/*
-		  Options:
-		    Detail: low
-		    MaxOutputTokens: 512
-		    Temperature: 0.1
-		    TopP: 0.9
-		  (Sampling values are zeroed for GPT-5 models in openaiBuilder.Build.)
-		*/
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Detail:          openai.DefaultDetail,
 			MaxOutputTokens: openai.CaptionMaxTokens,
-			Temperature:     openai.DefaultTemperature,
-			TopP:            openai.DefaultTopP,
 		}
 	case ModelTypeLabels:
-		/*
-		  Options:
-		    Detail: low
-		    MaxOutputTokens: 1024
-		    Temperature: 0.1
-		    ForceJson: true
-		    SchemaVersion: "photoprism_vision_labels_v1"
-		  (Sampling values are zeroed for GPT-5 models in openaiBuilder.Build.)
-		*/
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Detail:          openai.DefaultDetail,
 			MaxOutputTokens: openai.LabelsMaxTokens,
-			Temperature:     openai.DefaultTemperature,
-			TopP:            openai.DefaultTopP,
 			ForceJson:       true,
 		}
 	default:
@@ -142,13 +131,15 @@ func (openaiBuilder) Build(ctx context.Context, model *Model, files Files) (*Api
 
 	if opts := model.GetOptions(); opts != nil {
 		req.Options = cloneOptions(opts)
-		if model.Type == ModelTypeCaption {
+
+		switch model.Type {
+		case ModelTypeCaption:
 			// Captions default to plain text responses; structured JSON is optional.
 			req.Options.ForceJson = false
 			if req.Options.MaxOutputTokens < openai.CaptionMaxTokens {
 				req.Options.MaxOutputTokens = openai.CaptionMaxTokens
 			}
-		} else if model.Type == ModelTypeLabels {
+		case ModelTypeLabels:
 			if req.Options.MaxOutputTokens < openai.LabelsMaxTokens {
 				req.Options.MaxOutputTokens = openai.LabelsMaxTokens
 			}

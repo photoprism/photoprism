@@ -105,7 +105,6 @@ func (u *OptionsUpdate) SetDatabasePassword(value string) {
 	u.DatabasePassword = stringPtr(value)
 }
 
-// forEach enumerates all set fields and invokes fn with the corresponding key/value pair.
 // Visit enumerates all set fields and invokes fn with the corresponding key/value pair.
 func (u OptionsUpdate) Visit(fn func(string, any)) {
 	if u.ClusterUUID != nil {

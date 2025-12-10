@@ -25,6 +25,28 @@ func TestVips(t *testing.T) {
 		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
 	})
+	t.Run("InteropIndexColors", func(t *testing.T) {
+		thumb := Sizes[Tile500]
+		src := "testdata/interop_index.jpg"
+		dst := "testdata/vips/1/3/3/133456789098765432_500x500_center.jpg"
+
+		assert.FileExists(t, src)
+
+		fileName, _, err := Vips(src, nil, "133456789098765432", "testdata/vips", thumb.Width, thumb.Height, thumb.Options...)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, strings.HasSuffix(fileName, dst))
+		assert.Equal(t, fileName, dst)
+		assert.FileExists(t, dst)
+
+		dstimg, err := vips.LoadImageFromFile(dst, vips.NewImportParams())
+		assert.NoError(t, err)
+		assert.True(t, dstimg.HasICCProfile())
+		assert.True(t, dstimg.IsColorSpaceSupported())
+	})
 	t.Run("Left224", func(t *testing.T) {
 		thumb := SizeLeft224
 		src := "testdata/fixed.jpg"

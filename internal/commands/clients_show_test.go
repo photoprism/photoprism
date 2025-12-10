@@ -12,7 +12,7 @@ func TestClientsShowCommand(t *testing.T) {
 		output, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs5gfen1bgxz7s9i"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Alice")
 		assert.Contains(t, output, "oauth2")

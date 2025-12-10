@@ -31,6 +31,7 @@ func TranscodeCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, 
 
 	// Always use software encoder for transcoding animated pictures into videos.
 	if fs.TypeAnimated[fs.FileType(srcName)] != "" {
+		// #nosec G204 -- command arguments are built from validated options and paths.
 		cmd = exec.Command(
 			opt.Bin,
 			"-hide_banner",

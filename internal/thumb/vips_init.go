@@ -29,7 +29,7 @@ func VipsShutdown() {
 
 // vipsInit calls vips.Startup() to initialize libvips.
 func vipsInit() {
-	if vipsStarted == true {
+	if vipsStarted {
 		log.Warnf("vips: already initialized - you may have found a bug")
 		return
 	}

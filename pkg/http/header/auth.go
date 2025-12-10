@@ -1,7 +1,7 @@
 package header
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // SHA1 retained for legacy cache key hashing
 	"encoding/base64"
 	"fmt"
 	"net/http"
@@ -12,9 +12,11 @@ import (
 
 // Authentication header names.
 const (
-	Auth       = "Authorization" // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
-	XAuthToken = "X-Auth-Token"
-	XSessionID = "X-Session-ID"
+	Auth          = "Authorization" // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
+	XAuthToken    = "X-Auth-Token"  //nolint:gosec // header name, not a secret
+	XSessionID    = "X-Session-ID"
+	OpenAIOrg     = "OpenAI-Organization"
+	OpenAIProject = "OpenAI-Project"
 )
 
 // Authentication header values.
@@ -58,10 +60,10 @@ func Authorization(c *gin.Context) (authType, authToken string) {
 		return "", ""
 	} else if s := c.GetHeader(Auth); s == "" {
 		// Ignore.
-	} else if t := strings.Split(s, " "); len(t) != 2 {
+	} else if typ, token, ok := strings.Cut(s, " "); !ok {
 		// Ignore.
 	} else {
-		return ID(t[0]), ID(t[1])
+		return ID(typ), ID(token)
 	}
 
 	return "", ""
@@ -71,6 +73,22 @@ func Authorization(c *gin.Context) (authType, authToken string) {
 func SetAuthorization(r *http.Request, authToken string) {
 	if authToken != "" {
 		r.Header.Add(Auth, fmt.Sprintf("%s %s", AuthBearer, authToken))
+	}
+}
+
+// SetOpenAIOrg adds the organization header expected by the OpenAI API if a
+// non-empty value is provided.
+func SetOpenAIOrg(r *http.Request, org string) {
+	if org = strings.TrimSpace(org); org != "" {
+		r.Header.Add(OpenAIOrg, org)
+	}
+}
+
+// SetOpenAIProject adds the project header expected by the OpenAI API if a
+// non-empty value is provided.
+func SetOpenAIProject(r *http.Request, project string) {
+	if project = strings.TrimSpace(project); project != "" {
+		r.Header.Add(OpenAIProject, project)
 	}
 }
 
@@ -98,7 +116,7 @@ func BasicAuth(c *gin.Context) (username, password, cacheKey string) {
 		return "", "", ""
 	}
 
-	cacheKey = fmt.Sprintf("%x", sha1.Sum([]byte(authToken)))
+	cacheKey = fmt.Sprintf("%x", sha1.Sum([]byte(authToken))) //nolint:gosec // cache key only
 
 	return credentials[0], credentials[1], cacheKey
 }

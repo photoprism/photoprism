@@ -131,12 +131,12 @@ func termEcho(on bool) {
 		Sys:   nil}
 	var ws syscall.WaitStatus
 	cmd := "echo"
-	if on == false {
+	if !on {
 		cmd = "-echo"
 	}
 
 	// Enable/disable echoing.
-	pid, err := syscall.ForkExec(
+	pid, err := syscall.ForkExec( //nolint:gosec // uses fixed binary and arguments
 		"/bin/stty",
 		[]string{"stty", cmd},
 		&attrs)

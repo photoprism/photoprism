@@ -49,15 +49,16 @@ func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception,
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
 			r, g, b, a := img.At(x, y).RGBA()
-			rgb, _ := colorful.MakeColor(color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(a)})
+			rgb, _ := colorful.MakeColor(color.RGBA{
+				R: uint8(r >> 8), //nolint:gosec // value is within 0-255 after shift
+				G: uint8(g >> 8), //nolint:gosec // value is within 0-255 after shift
+				B: uint8(b >> 8), //nolint:gosec // value is within 0-255 after shift
+				A: uint8(a >> 8), //nolint:gosec // value is within 0-255 after shift
+			})
 			i := colors.Colorful(rgb)
 			perception.Colors = append(perception.Colors, i)
 
-			if _, ok := colorCount[i]; ok == true {
-				colorCount[i] += colors.Weights[i]
-			} else {
-				colorCount[i] = colors.Weights[i]
-			}
+			colorCount[i] += colors.Weights[i]
 
 			if colorCount[i] > mainColorCount {
 				mainColorCount = colorCount[i]

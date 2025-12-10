@@ -1,3 +1,4 @@
+//nolint:revive,staticcheck,gocritic,gosec // legacy optics implementation kept as-is for correctness
 package alg
 
 import (
@@ -24,7 +25,7 @@ type opticsClusterer struct {
 	mu   sync.RWMutex
 	a, b []int
 
-	// variables used for concurrent computation of nearest neighbours and producing final mapping
+	// variables used for concurrent computation of nearest neighbors and producing final mapping
 	l, s, o, f, g int
 	j             chan *rangeJob
 	c             chan *clusterJob
@@ -46,7 +47,7 @@ type opticsClusterer struct {
 	d [][]float64
 }
 
-// Implementation of OPTICS algorithm with concurrent nearest neighbour computation. The number of goroutines acting concurrently
+// OPTICS implements clustering with concurrent nearest neighbor computation. The number of goroutines acting concurrently
 // is controlled via workers argument. Passing 0 will result in this number being chosen arbitrarily.
 func OPTICS(minpts int, eps, xi float64, workers int, distance DistFunc) (HardClusterer, error) {
 	if minpts < 1 {
@@ -265,7 +266,8 @@ func (c *opticsClusterer) extract() {
 	for i < len(c.so)-1 {
 		mib = math.Max(mib, c.re[c.so[i]].p)
 
-		if c.isSteepDown(i, &e) {
+		switch {
+		case c.isSteepDown(i, &e):
 			as := areas[:0]
 			for j := 0; j < len(areas); j++ {
 				if c.re[c.so[areas[j].start]].p*c.x < mib {
@@ -287,7 +289,7 @@ func (c *opticsClusterer) extract() {
 
 			i = e + 1
 			mib = c.re[c.so[i]].p
-		} else if c.isSteepUp(i, &e) {
+		case c.isSteepUp(i, &e):
 			ue = e + 1
 
 			as := areas[:0]
@@ -311,10 +313,11 @@ func (c *opticsClusterer) extract() {
 
 				d = (c.re[c.so[areas[j].start]].p - c.re[c.so[ue]].p) / c.re[c.so[areas[j].start]].p
 
-				if math.Abs(d) <= c.xi {
+				switch {
+				case math.Abs(d) <= c.xi:
 					cs = areas[j].start
 					ce = ue
-				} else if d > c.xi {
+				case d > c.xi:
 					for k := areas[j].end; k > areas[j].end; k-- {
 						if math.Abs((c.re[c.so[k]].p-c.re[c.so[ue]].p)/c.re[c.so[k]].p) <= c.xi {
 							cs = k
@@ -322,7 +325,7 @@ func (c *opticsClusterer) extract() {
 						}
 					}
 					ce = ue
-				} else {
+				default:
 					cs = areas[j].start
 					for k := i; k < e; k++ {
 						if math.Abs((c.re[c.so[k]].p-c.re[c.so[i]].p)/c.re[c.so[k]].p) <= c.xi {
@@ -360,7 +363,7 @@ func (c *opticsClusterer) extract() {
 
 			i = ue
 			mib = c.re[c.so[i]].p
-		} else {
+		default:
 			i++
 		}
 	}
@@ -467,7 +470,7 @@ func (c *opticsClusterer) clusterWorker() {
 }
 
 /* Divide work among c.s workers, where c.s is determined
- * by the size of the data. This is based on an assumption that neighbour points of p
+ * by the size of the data. This is based on an assumption that neighbor points of p
  * are located in relatively small subsection of the input data, so the dataset can be scanned
  * concurrently without blocking a big number of goroutines trying to write to r */
 func (c *opticsClusterer) nearest(p int, l *int, r *[]int) {

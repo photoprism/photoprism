@@ -14,13 +14,7 @@
     <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="-1" @submit.prevent="onSubmit">
       <input ref="upload" type="file" multiple :accept="accept" class="d-none input-upload" @change.stop="onUpload()" />
       <v-card :tile="$vuetify.display.mdAndDown">
-        <v-toolbar
-          v-if="$vuetify.display.mdAndDown"
-          flat
-          color="navigation"
-          class="mb-4"
-          :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-        >
+        <v-toolbar v-if="$vuetify.display.mdAndDown" flat color="navigation" class="mb-4" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
           <v-btn icon @click.stop="onClose">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -42,8 +36,7 @@
               <span v-else-if="indexing">{{ $gettext(`Upload complete. Indexing…`) }}</span>
               <span v-else-if="completedTotal === 100">{{ $gettext(`Done.`) }}</span>
               <span v-else-if="filesQuotaReached"
-                >{{ $gettext(`Insufficient storage.`) }}
-                {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
+                >{{ $gettext(`Insufficient storage.`) }} {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
               >
               <span v-else>{{ $gettext(`Select the files to upload…`) }}</span>
             </div>
@@ -98,18 +91,14 @@
               <div class="form-text">
                 <p v-if="isDemo">
                   {{ $gettext(`You can upload up to %{n} files for test purposes.`, { n: fileLimit }) }}
-                  {{ $gettext(`Please do not upload any private, unlawful or offensive pictures. `) }}
+                  {{ $gettext(`Please do not upload any private, unlawful or offensive pictures.`) }}
                 </p>
                 <p v-else-if="rejectNSFW">
                   {{ $gettext(`Please don't upload photos containing offensive content.`) }}
                   {{ $gettext(`Uploads that may contain such images will be rejected automatically.`) }}
                 </p>
                 <p v-if="featReview">
-                  {{
-                    $gettext(
-                      `Non-photographic and low-quality images require a review before they appear in search results.`
-                    )
-                  }}
+                  {{ $gettext(`Non-photographic and low-quality images require a review before they appear in search results.`) }}
                 </p>
               </div>
             </div>
@@ -119,13 +108,7 @@
           <v-btn :disabled="busy" variant="flat" color="button" class="action-close" @click.stop="onClose">
             {{ $gettext(`Close`) }}
           </v-btn>
-          <v-btn
-            :disabled="busy || filesQuotaReached"
-            variant="flat"
-            color="highlight"
-            class="action-select action-upload"
-            @click.stop="onUploadDialog()"
-          >
+          <v-btn :disabled="busy || filesQuotaReached" variant="flat" color="highlight" class="action-select action-upload" @click.stop="onUploadDialog()">
             {{ $gettext(`Browse`) }}
           </v-btn>
         </v-card-actions>

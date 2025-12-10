@@ -1,5 +1,7 @@
 package dummy
 
+//revive:disable:exported
+
 import (
 	"context"
 	"io"

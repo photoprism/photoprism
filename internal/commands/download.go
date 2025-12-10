@@ -160,9 +160,10 @@ func downloadAction(ctx *cli.Context) error {
 
 	impersonate := strings.ToLower(strings.TrimSpace(ctx.String("impersonate")))
 
-	if impersonate == "" {
+	switch impersonate {
+	case "":
 		impersonate = "firefox"
-	} else if impersonate == "none" {
+	case "none":
 		impersonate = ""
 	}
 
@@ -282,14 +283,14 @@ func downloadAction(ctx *cli.Context) error {
 				}
 				func() {
 					defer downloadResult.Close()
-					f, ferr := os.Create(downloadFilePath)
+					f, ferr := os.Create(downloadFilePath) //nolint:gosec // download target path chosen by user
 					if ferr != nil {
 						log.Errorf("create file failed: %v", ferr)
 						failures++
 						return
 					}
+					defer f.Close()
 					if _, cerr := io.Copy(f, downloadResult); cerr != nil {
-						_ = f.Close()
 						log.Errorf("write file failed: %v", cerr)
 						failures++
 						return

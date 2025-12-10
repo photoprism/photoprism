@@ -23,9 +23,6 @@ func resetExtensionsForTest(t *testing.T) func() {
 	bootExtensions.Store(Extensions{})
 	bootMutex.Unlock()
 
-	originalExtOnce := extInit
-	originalBootOnce := bootInit
-
 	extInit = sync.Once{}
 	bootInit = sync.Once{}
 
@@ -38,8 +35,8 @@ func resetExtensionsForTest(t *testing.T) func() {
 		bootExtensions.Store(savedBoot)
 		bootMutex.Unlock()
 
-		extInit = originalExtOnce
-		bootInit = originalBootOnce
+		extInit = sync.Once{}
+		bootInit = sync.Once{}
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Common file extensions used throughout PhotoPrism.
 const (
 	ExtNone     = ""
 	ExtLocal    = ".local"

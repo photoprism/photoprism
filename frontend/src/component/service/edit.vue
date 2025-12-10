@@ -152,21 +152,10 @@
           </v-row>
           <v-row v-else dense>
             <v-col cols="12">
-              <v-text-field
-                v-model="model.AccName"
-                autofocus
-                autocomplete="off"
-                :label="$gettext('Name')"
-                placeholder=""
-              ></v-text-field>
+              <v-text-field v-model="model.AccName" autofocus autocomplete="off" :label="$gettext('Name')" placeholder=""></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                v-model="model.AccURL"
-                autocomplete="off"
-                :label="$gettext('Service URL')"
-                placeholder="https://www.example.com/"
-              ></v-text-field>
+              <v-text-field v-model="model.AccURL" autocomplete="off" :label="$gettext('Service URL')" placeholder="https://www.example.com/"></v-text-field>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field v-model="model.AccUser" autocomplete="off" :label="$gettext('Username')"></v-text-field>

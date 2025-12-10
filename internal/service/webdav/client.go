@@ -221,7 +221,7 @@ func (c *Client) Upload(src, dest string) (err error) {
 		return fmt.Errorf("file %s not found", clean.Log(path.Base(src)))
 	}
 
-	f, err := os.OpenFile(src, os.O_RDONLY, 0)
+	f, err := os.OpenFile(src, os.O_RDONLY, 0) //nolint:gosec // path provided by caller; read-only
 
 	if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
@@ -290,7 +290,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 
 	defer reader.Close()
 
-	f, err := os.OpenFile(dest, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeFile)
+	f, err := os.OpenFile(dest, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeFile) //nolint:gosec // dest provided by caller
 
 	if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
