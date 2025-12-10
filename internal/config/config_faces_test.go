@@ -37,9 +37,9 @@ func TestConfig_FaceEngine(t *testing.T) {
 		c.options.ModelsPath = tempModels
 
 		modelDir := filepath.Join(tempModels, "scrfd")
-		require.NoError(t, os.MkdirAll(modelDir, 0o755))
+		require.NoError(t, os.MkdirAll(modelDir, 0o750))
 		modelFile := filepath.Join(modelDir, face.DefaultONNXModelFilename)
-		require.NoError(t, os.WriteFile(modelFile, []byte("onnx"), 0o644))
+		require.NoError(t, os.WriteFile(modelFile, []byte("onnx"), 0o600))
 
 		c.options.FaceEngine = face.EngineAuto
 		assert.Equal(t, face.EngineONNX, c.FaceEngine())

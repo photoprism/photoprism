@@ -1,5 +1,6 @@
 package places
 
+// SearchResult represents a place returned by the hub places API.
 type SearchResult struct {
 	Id          string    `json:"id"`
 	Name        string    `json:"name,omitempty"`
@@ -12,4 +13,5 @@ type SearchResult struct {
 	Licence     string    `json:"licence,omitempty"`
 }
 
+// SearchResults is a slice of SearchResult.
 type SearchResults = []SearchResult

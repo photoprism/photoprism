@@ -12,10 +12,12 @@ type Feedback struct {
 	UserLocales string `json:"UserLocales"`
 }
 
+// Empty reports whether the feedback form lacks required content.
 func (f Feedback) Empty() bool {
 	return len(f.Category) < 1 || len(f.Message) < 3 || len(f.UserEmail) < 5
 }
 
+// NewFeedback copies values from an arbitrary model into a Feedback form.
 func NewFeedback(m interface{}) (f Feedback, err error) {
 	err = deepcopier.Copy(m).To(&f)
 

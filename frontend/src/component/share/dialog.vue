@@ -12,24 +12,10 @@
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center ga-3">
         <h6 class="text-h6">{{ $gettext(`Share %{s}`, { s: model.modelName() }) }}</h6>
-        <v-btn
-          icon="mdi-link-plus"
-          variant="text"
-          color="primary"
-          :title="$gettext('Add Link')"
-          class="action-add-link"
-          @click.stop="add"
-        ></v-btn>
+        <v-btn icon="mdi-link-plus" variant="text" color="primary" :title="$gettext('Add Link')" class="action-add-link" @click.stop="add"></v-btn>
       </v-card-title>
       <v-card-text>
-        <v-expansion-panels
-          v-model="expanded"
-          variant="accordion"
-          density="compact"
-          rounded="6"
-          tabindex="0"
-          class="elevation-0"
-        >
+        <v-expansion-panels v-model="expanded" variant="accordion" density="compact" rounded="6" tabindex="0" class="elevation-0">
           <v-expansion-panel v-for="(link, index) in links" :key="link.UID" color="secondary" class="pa-0 elevation-0">
             <v-expansion-panel-title class="d-flex justify-start align-center ga-3 text-body-2 px-4">
               <v-icon icon="mdi-link"></v-icon>
@@ -126,9 +112,7 @@
         </v-expansion-panels>
 
         <div class="pt-3 text-caption">
-          {{
-            $gettext(`People you share a link with will be able to view public contents.`, { name: model.modelName() })
-          }}
+          {{ $gettext(`People you share a link with will be able to view public contents.`, { name: model.modelName() }) }}
           {{ $gettext(`A click will copy it to your clipboard.`) }}
           {{ $gettext(`Any private photos and videos remain private and won't be shared.`) }}
           {{ $gettext(`Alternatively, you can upload files directly to WebDAV servers like Nextcloud.`) }}

@@ -1,4 +1,8 @@
+// Package mock provides an in-memory OIDC storage used by the dummy provider in development.
 package mock
+
+// revive:disable
+// Dummy storage implementation for the test OIDC provider; lint strictness is relaxed intentionally.
 
 import (
 	"context"
@@ -10,23 +14,36 @@ import (
 
 	"gopkg.in/square/go-jose.v2"
 
-	"github.com/caos/oidc/pkg/oidc"
-	"github.com/caos/oidc/pkg/op"
+	"github.com/zitadel/oidc/pkg/oidc"
+	"github.com/zitadel/oidc/pkg/op"
 )
 
+var (
+	a     = &AuthRequest{}
+	t     bool
+	c     string
+	state string
+)
+
+// AuthStorage keeps ephemeral keys and auth state for the dummy provider.
 type AuthStorage struct {
 	key *rsa.PrivateKey
 	kid string
 }
 
+// NewAuthStorage constructs the dummy storage with a fresh RSA key.
 func NewAuthStorage() op.Storage {
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
+
 	if err != nil {
 		panic(err)
 	}
 
 	b := make([]byte, 16)
-	rand.Read(b)
+
+	if _, err = rand.Read(b); err != nil {
+		panic(err)
+	}
 
 	return &AuthStorage{
 		key: key,
@@ -34,9 +51,11 @@ func NewAuthStorage() op.Storage {
 	}
 }
 
+// AuthRequest is a lightweight auth request implementation for tests.
 type AuthRequest struct {
 	ID            string
 	ResponseType  oidc.ResponseType
+	ResponseMode  oidc.ResponseMode
 	RedirectURI   string
 	Nonce         string
 	ClientID      string
@@ -86,6 +105,13 @@ func (a *AuthRequest) GetResponseType() oidc.ResponseType {
 	return a.ResponseType
 }
 
+func (a *AuthRequest) GetResponseMode() oidc.ResponseMode {
+	if a.ResponseMode != "" {
+		return a.ResponseMode
+	}
+	return oidc.ResponseModeQuery
+}
+
 func (a *AuthRequest) GetScopes() []string {
 	return []string{
 		"openid",
@@ -108,20 +134,13 @@ func (a *AuthRequest) Done() bool {
 	return true
 }
 
-var (
-	a     = &AuthRequest{}
-	t     bool
-	c     string
-	state string
-)
-
 func (s *AuthStorage) Health(ctx context.Context) error {
 	return nil
 }
 
+// CreateAuthRequest stores the incoming request in memory and returns a stub AuthRequest.
 func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthRequest, userId string) (op.AuthRequest, error) {
 	fmt.Println("Userid: ", userId)
-	fmt.Println("CreateAuthRequest ID: ", authReq.ID)
 	fmt.Println("CreateAuthRequest CodeChallenge: ", authReq.CodeChallenge)
 	fmt.Println("CreateAuthRequest CodeChallengeMethod: ", authReq.CodeChallengeMethod)
 	fmt.Println("CreateAuthRequest State: ", authReq.State)
@@ -132,7 +151,14 @@ func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthReq
 	fmt.Println("CreateAuthRequest Display: ", authReq.Display)
 	fmt.Println("CreateAuthRequest LoginHint: ", authReq.LoginHint)
 	fmt.Println("CreateAuthRequest IDTokenHint: ", authReq.IDTokenHint)
-	a = &AuthRequest{ID: "authReqUserAgentId", ClientID: authReq.ClientID, ResponseType: authReq.ResponseType, Nonce: authReq.Nonce, RedirectURI: authReq.RedirectURI}
+	a = &AuthRequest{
+		ID:           "authReqUserAgentId",
+		ClientID:     authReq.ClientID,
+		ResponseType: authReq.ResponseType,
+		ResponseMode: authReq.ResponseMode,
+		Nonce:        authReq.Nonce,
+		RedirectURI:  authReq.RedirectURI,
+	}
 	if authReq.CodeChallenge != "" {
 		a.CodeChallenge = &oidc.CodeChallenge{
 			Challenge: authReq.CodeChallenge,
@@ -143,12 +169,14 @@ func (s *AuthStorage) CreateAuthRequest(_ context.Context, authReq *oidc.AuthReq
 	t = false
 	return a, nil
 }
+
 func (s *AuthStorage) AuthRequestByCode(_ context.Context, code string) (op.AuthRequest, error) {
 	if code != c {
 		return nil, errors.New("invalid code")
 	}
 	return a, nil
 }
+
 func (s *AuthStorage) SaveAuthCode(_ context.Context, id, code string) error {
 	if a.ID != id {
 		return errors.New("SaveAuthCode: not found")
@@ -156,10 +184,12 @@ func (s *AuthStorage) SaveAuthCode(_ context.Context, id, code string) error {
 	c = code
 	return nil
 }
+
 func (s *AuthStorage) DeleteAuthRequest(context.Context, string) error {
 	t = true
 	return nil
 }
+
 func (s *AuthStorage) AuthRequestByID(_ context.Context, id string) (op.AuthRequest, error) {
 	fmt.Println("AuthRequestByID: ", id)
 	if id != "authReqUserAgentId:usertoken" || t {
@@ -167,12 +197,15 @@ func (s *AuthStorage) AuthRequestByID(_ context.Context, id string) (op.AuthRequ
 	}
 	return a, nil
 }
+
 func (s *AuthStorage) CreateAccessToken(ctx context.Context, request op.TokenRequest) (string, time.Time, error) {
 	return "loginId", time.Now().UTC().Add(5 * time.Minute), nil
 }
+
 func (s *AuthStorage) CreateAccessAndRefreshTokens(ctx context.Context, request op.TokenRequest, currentRefreshToken string) (accessTokenID string, newRefreshToken string, expiration time.Time, err error) {
 	return "loginId", "refreshToken", time.Now().UTC().Add(5 * time.Minute), nil
 }
+
 func (s *AuthStorage) TokenRequestByRefreshToken(ctx context.Context, refreshToken string) (op.RefreshTokenRequest, error) {
 	if refreshToken != c {
 		return nil, errors.New("invalid token")
@@ -183,13 +216,21 @@ func (s *AuthStorage) TokenRequestByRefreshToken(ctx context.Context, refreshTok
 func (s *AuthStorage) TerminateSession(_ context.Context, userID, clientID string) error {
 	return nil
 }
+
+// RevokeToken is a no-op for the dummy implementation.
+func (s *AuthStorage) RevokeToken(_ context.Context, tokenOrTokenID string, userID string, clientID string) *oidc.Error {
+	return nil
+}
+
 func (s *AuthStorage) GetSigningKey(_ context.Context, keyCh chan<- jose.SigningKey) {
-	//keyCh <- jose.SigningKey{Algorithm: jose.RS256, Key: s.key}
+	// keyCh <- jose.SigningKey{Algorithm: jose.RS256, Key: s.key}
 	keyCh <- jose.SigningKey{Algorithm: jose.RS256, Key: &jose.JSONWebKey{Key: s.key, KeyID: s.kid}}
 }
+
 func (s *AuthStorage) GetKey(_ context.Context) (*rsa.PrivateKey, error) {
 	return s.key, nil
 }
+
 func (s *AuthStorage) GetKeySet(_ context.Context) (*jose.JSONWebKeySet, error) {
 	pubkey := s.key.Public()
 
@@ -214,6 +255,7 @@ func (s *AuthStorage) GetKeySet(_ context.Context) (*jose.JSONWebKeySet, error) 
 		},
 	}, nil
 }
+
 func (s *AuthStorage) GetKeyByIDAndUserID(_ context.Context, _, _ string) (*jose.JSONWebKey, error) {
 	pubkey := s.key.Public()
 
@@ -229,6 +271,7 @@ func (s *AuthStorage) GetClientByClientID(_ context.Context, id string) (op.Clie
 	if id == "none" {
 		return nil, errors.New("GetClientByClientID: not found")
 	}
+
 	var appType op.ApplicationType
 	var authMethod oidc.AuthMethod
 	var accessTokenType op.AccessTokenType
@@ -236,22 +279,25 @@ func (s *AuthStorage) GetClientByClientID(_ context.Context, id string) (op.Clie
 	var grantTypes = []oidc.GrantType{
 		oidc.GrantTypeCode,
 	}
-	if id == "web" {
+
+	switch id {
+	case "web":
 		appType = op.ApplicationTypeWeb
 		authMethod = oidc.AuthMethodBasic
 		accessTokenType = op.AccessTokenTypeBearer
 		responseTypes = []oidc.ResponseType{oidc.ResponseTypeCode}
-	} else if id == "native" {
+	case "native":
 		appType = op.ApplicationTypeNative
 		authMethod = oidc.AuthMethodBasic
 		accessTokenType = op.AccessTokenTypeBearer
 		responseTypes = []oidc.ResponseType{oidc.ResponseTypeCode, oidc.ResponseTypeIDToken, oidc.ResponseTypeIDTokenOnly}
-	} else {
+	default:
 		appType = op.ApplicationTypeUserAgent
 		authMethod = oidc.AuthMethodNone
 		accessTokenType = op.AccessTokenTypeJWT
 		responseTypes = []oidc.ResponseType{oidc.ResponseTypeIDToken, oidc.ResponseTypeIDTokenOnly}
 	}
+
 	return &ConfClient{ID: id, applicationType: appType, authMethod: authMethod, accessTokenType: accessTokenType, responseTypes: responseTypes, grantTypes: grantTypes, devMode: true}, nil
 }
 
@@ -262,9 +308,10 @@ func (s *AuthStorage) AuthorizeClientIDSecret(_ context.Context, id string, _ st
 func (s *AuthStorage) SetUserinfoFromToken(ctx context.Context, userinfo oidc.UserInfoSetter, _, _, _ string) error {
 	return s.SetUserinfoFromScopes(ctx, userinfo, "", "", []string{})
 }
+
 func (s *AuthStorage) SetUserinfoFromScopes(ctx context.Context, userinfo oidc.UserInfoSetter, _, _ string, _ []string) error {
 	userinfo.SetSubject(a.GetSubject())
-	//userinfo.SetAddress(oidc.NewUserInfoAddress("Test 789\nPostfach 2", "", "", "", "", ""))
+	// userinfo.SetAddress(oidc.NewUserInfoAddress("Test 789\nPostfach 2", "", "", "", "", ""))
 	userinfo.SetEmail("test@example.com", true)
 	userinfo.SetPhone("0791234567", true)
 	userinfo.SetName("Test")
@@ -273,6 +320,7 @@ func (s *AuthStorage) SetUserinfoFromScopes(ctx context.Context, userinfo oidc.U
 	userinfo.SetPreferredUsername("prefname")
 	return nil
 }
+
 func (s *AuthStorage) GetPrivateClaimsFromScopes(_ context.Context, _, _ string, _ []string) (map[string]interface{}, error) {
 	return map[string]interface{}{"private_claim": "test"}, nil
 }
@@ -281,98 +329,12 @@ func (s *AuthStorage) SetIntrospectionFromToken(ctx context.Context, introspect 
 	if err := s.SetUserinfoFromScopes(ctx, introspect, "", "", []string{}); err != nil {
 		return err
 	}
+
 	introspect.SetClientID(a.ClientID)
+
 	return nil
 }
 
 func (s *AuthStorage) ValidateJWTProfileScopes(ctx context.Context, userID string, scope []string) ([]string, error) {
 	return scope, nil
-}
-
-type ConfClient struct {
-	applicationType op.ApplicationType
-	authMethod      oidc.AuthMethod
-	responseTypes   []oidc.ResponseType
-	grantTypes      []oidc.GrantType
-	ID              string
-	accessTokenType op.AccessTokenType
-	devMode         bool
-}
-
-func (c *ConfClient) GetID() string {
-	return c.ID
-}
-func (c *ConfClient) RedirectURIs() []string {
-	return []string{
-		"https://registered.com/callback",
-		"http://localhost:9999/callback",
-		"http://localhost:5556/auth/callback",
-		"custom://callback",
-		"https://localhost:8443/test/a/instructions-example/callback",
-		"https://op.certification.openid.net:62064/authz_cb",
-		"https://op.certification.openid.net:62064/authz_post",
-		"http://localhost:2342/api/v1/oidc/redirect",
-		"https://app.localssl.dev/api/v1/oidc/redirect",
-	}
-}
-func (c *ConfClient) PostLogoutRedirectURIs() []string {
-	return []string{}
-}
-
-func (c *ConfClient) LoginURL(id string) string {
-	//return "authorize/callback?id=" + id
-	return "login?id=" + id
-}
-
-func (c *ConfClient) ApplicationType() op.ApplicationType {
-	return c.applicationType
-}
-
-func (c *ConfClient) AuthMethod() oidc.AuthMethod {
-	return c.authMethod
-}
-
-func (c *ConfClient) IDTokenLifetime() time.Duration {
-	return 60 * time.Minute
-}
-func (c *ConfClient) AccessTokenType() op.AccessTokenType {
-	return c.accessTokenType
-}
-func (c *ConfClient) ResponseTypes() []oidc.ResponseType {
-	return c.responseTypes
-}
-func (c *ConfClient) GrantTypes() []oidc.GrantType {
-	return c.grantTypes
-}
-
-func (c *ConfClient) DevMode() bool {
-	return c.devMode
-}
-
-func (c *ConfClient) AllowedScopes() []string {
-	return nil
-}
-
-func (c *ConfClient) RestrictAdditionalIdTokenScopes() func(scopes []string) []string {
-	return func(scopes []string) []string {
-		return scopes
-	}
-}
-
-func (c *ConfClient) RestrictAdditionalAccessTokenScopes() func(scopes []string) []string {
-	return func(scopes []string) []string {
-		return scopes
-	}
-}
-
-func (c *ConfClient) IsScopeAllowed(scope string) bool {
-	return false
-}
-
-func (c *ConfClient) IDTokenUserinfoClaimsAssertion() bool {
-	return false
-}
-
-func (c *ConfClient) ClockSkew() time.Duration {
-	return 0
 }

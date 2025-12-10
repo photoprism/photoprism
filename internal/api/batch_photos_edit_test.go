@@ -141,7 +141,7 @@ func TestBatchPhotosEdit(t *testing.T) {
 
 		// Check the save response values.
 		saveValues := gjson.Get(saveBody, "values").Raw
-		//t.Logf("save values: %#v", saveValues)
+		// t.Logf("save values: %#v", saveValues)
 		timezoneAfter := gjson.Get(saveValues, "TimeZone")
 		assert.Equal(t, timezoneAfter.String(), timezoneBefore.String())
 		altitudeAfter := gjson.Get(saveValues, "Altitude")
@@ -200,10 +200,10 @@ func TestBatchPhotosEdit(t *testing.T) {
 		assert.Equal(t, takenAfter.String(), takenBefore.String())
 		takenLocalAfter := gjson.Get(saveValues, "TakenAtLocal")
 		assert.Equal(t, takenLocalAfter.String(), takenLocalBefore.String())
-		//TODO Uncomment once keywords may be supported
-		//keywordsAfter := gjson.Get(saveValues, "DetailsKeywords")
-		//assert.Equal(t, keywordsAfter.String(), keywordsBefore.String())
-		//assert.Equal(t, editValues, saveValues)
+		// TODO Uncomment once keywords may be supported
+		// keywordsAfter := gjson.Get(saveValues, "DetailsKeywords")
+		// assert.Equal(t, keywordsAfter.String(), keywordsBefore.String())
+		// assert.Equal(t, editValues, saveValues)
 	})
 	t.Run("SuccessChangeLocationValues", func(t *testing.T) {
 		// Create new API test instance.
@@ -471,7 +471,7 @@ func TestBatchPhotosEdit(t *testing.T) {
 		editPhotos := gjson.Get(editBody, "models").Array()
 		assert.Equal(t, len(editPhotos), 2)
 		editValues := gjson.Get(editBody, "values").Raw
-		//t.Logf(editValues)
+		// t.Logf(editValues)
 		albumsBefore := gjson.Get(editValues, "Albums")
 		assert.Contains(t, albumsBefore.String(), "{\"value\":\"as6sg6bipotaab19\",\"title\":\"IlikeFood\",\"mixed\":false,\"action\":\"none\"}")
 		assert.Contains(t, albumsBefore.String(), "{\"value\":\"as6sg6bxpogaaba7\",\"title\":\"Christmas 2030\",\"mixed\":true,\"action\":\"none\"}")

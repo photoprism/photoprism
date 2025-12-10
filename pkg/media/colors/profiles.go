@@ -2,6 +2,7 @@ package colors
 
 import "strings"
 
+// Profile represents a color profile name.
 type Profile string
 
 // Supported color profiles.

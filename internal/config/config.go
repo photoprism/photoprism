@@ -40,8 +40,8 @@ import (
 
 	"github.com/dustin/go-humanize"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/mysql"  // register mysql dialect
+	_ "github.com/jinzhu/gorm/dialects/sqlite" // register sqlite dialect
 	"github.com/klauspost/cpuid/v2"
 	gc "github.com/patrickmn/go-cache"
 	"github.com/pbnjay/memory"
@@ -70,7 +70,6 @@ import (
 
 // Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
-	once      sync.Once
 	cliCtx    *cli.Context
 	options   *Options
 	settings  *customize.Settings
@@ -136,13 +135,14 @@ func initLogger() {
 			FullTimestamp: true,
 		})
 
-		if Env(EnvProd) {
+		switch {
+		case Env(EnvProd):
 			SetLogLevel(logrus.WarnLevel)
-		} else if Env(EnvTrace) {
+		case Env(EnvTrace):
 			SetLogLevel(logrus.TraceLevel)
-		} else if Env(EnvDebug) {
+		case Env(EnvDebug):
 			SetLogLevel(logrus.DebugLevel)
-		} else {
+		default:
 			SetLogLevel(logrus.InfoLevel)
 		}
 	})
@@ -240,7 +240,7 @@ func (c *Config) Init() error {
 	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
-			InsecureSkipVerify: c.HttpsProxyInsecure(),
+			InsecureSkipVerify: c.HttpsProxyInsecure(), //nolint:gosec // proxy settings are user-configurable and opt-in
 		}
 
 		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
@@ -455,7 +455,7 @@ func (c *Config) readSerial() string {
 	backupName := c.BackupPath(serialName)
 
 	if fs.FileExists(storageName) {
-		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
+		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 { //nolint:gosec // path is computed from config storage
 			return string(data)
 		} else {
 			log.Tracef("config: could not read %s (%s)", clean.Log(storageName), err)
@@ -463,7 +463,7 @@ func (c *Config) readSerial() string {
 	}
 
 	if fs.FileExists(backupName) {
-		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 {
+		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 { //nolint:gosec // backup file path is generated internally
 			return string(data)
 		} else {
 			log.Tracef("config: could not read %s (%s)", clean.Log(backupName), err)
@@ -714,7 +714,7 @@ func (c *Config) IndexSchedule() string {
 }
 
 // WakeupInterval returns the duration between background worker runs
-// required for face recognition and index maintenance(1-86400s).
+// required for face recognition and index maintenance (1-86400s).
 func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval <= 0 {
 		if c.Unsafe() {
@@ -730,7 +730,7 @@ func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval < MinWakeupInterval/time.Second {
 		return MinWakeupInterval
 	} else if c.options.WakeupInterval < MinWakeupInterval {
-		c.options.WakeupInterval = c.options.WakeupInterval * time.Second
+		c.options.WakeupInterval *= time.Second
 	}
 
 	// Do not run less than once per day.
@@ -787,11 +787,12 @@ func (c *Config) ResolutionLimit() int {
 
 	// Disabling or increasing the limit is at your own risk.
 	// Only sponsors receive support in case of problems.
-	if result == 0 {
+	switch {
+	case result == 0:
 		return DefaultResolutionLimit
-	} else if result < 0 {
+	case result < 0:
 		return -1
-	} else if result > 900 {
+	case result > 900:
 		result = 900
 	}
 
@@ -858,7 +859,7 @@ func (c *Config) initHub() {
 	c.hubCancel = cancel
 	c.hubLock.Unlock()
 
-	d := 23*time.Hour + time.Duration(float64(2*time.Hour)*rand.Float64())
+	d := 23*time.Hour + time.Duration(float64(2*time.Hour)*rand.Float64()) //nolint:gosec // jitter for scheduling only, crypto not required
 	ticker := time.NewTicker(d)
 
 	go func() {

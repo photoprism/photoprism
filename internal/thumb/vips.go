@@ -62,18 +62,25 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 
 	// Choose thumbnail crop.
 	var crop vips.Interesting
-	if method == ResampleFillTopLeft {
+	switch method {
+	case ResampleFillTopLeft:
 		crop = vips.InterestingLow
 		size = vips.SizeBoth
-	} else if method == ResampleFillBottomRight {
+	case ResampleFillBottomRight:
 		crop = vips.InterestingHigh
 		size = vips.SizeBoth
-	} else if method == ResampleFit {
+	case ResampleFit:
 		crop = vips.InterestingNone
 		size = vips.SizeDown
-	} else if method == ResampleFillCenter || method == ResampleResize {
+	case ResampleFillCenter, ResampleResize:
 		crop = vips.InterestingCentre
 		size = vips.SizeBoth
+	default:
+		// Use defaults.
+	}
+
+	if err = vipsSetIccProfileForInteropIndex(img, clean.Log(filepath.Base(imageName))); err != nil {
+		log.Debugf("vips: %s in %s (set icc profile for interop index tag)", err, clean.Log(filepath.Base(imageName)))
 	}
 
 	// Create thumbnail image.

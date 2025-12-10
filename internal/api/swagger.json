@@ -880,6 +880,9 @@
                 "archive": {
                     "type": "boolean"
                 },
+                "batchEdit": {
+                    "type": "boolean"
+                },
                 "calendar": {
                     "type": "boolean"
                 },
@@ -4537,7 +4540,13 @@
                     "type": "string"
                 },
                 "options": {
-                    "$ref": "#/definitions/vision.ApiRequestOptions"
+                    "$ref": "#/definitions/vision.ModelOptions"
+                },
+                "org": {
+                    "type": "string"
+                },
+                "project": {
+                    "type": "string"
                 },
                 "prompt": {
                     "type": "string"
@@ -4562,113 +4571,6 @@
                 },
                 "version": {
                     "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "vision.ApiRequestOptions": {
-            "properties": {
-                "combine_outputs": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "string"
-                },
-                "force_json": {
-                    "type": "boolean"
-                },
-                "frequency_penalty": {
-                    "type": "number"
-                },
-                "low_vram": {
-                    "type": "boolean"
-                },
-                "main_gpu": {
-                    "type": "integer"
-                },
-                "max_output_tokens": {
-                    "type": "integer"
-                },
-                "min_p": {
-                    "type": "number"
-                },
-                "mirostat": {
-                    "type": "integer"
-                },
-                "mirostat_eta": {
-                    "type": "number"
-                },
-                "mirostat_tau": {
-                    "type": "number"
-                },
-                "num_batch": {
-                    "type": "integer"
-                },
-                "num_ctx": {
-                    "type": "integer"
-                },
-                "num_gpu": {
-                    "type": "integer"
-                },
-                "num_keep": {
-                    "type": "integer"
-                },
-                "num_predict": {
-                    "type": "integer"
-                },
-                "num_thread": {
-                    "type": "integer"
-                },
-                "numa": {
-                    "type": "boolean"
-                },
-                "penalize_newline": {
-                    "type": "boolean"
-                },
-                "presence_penalty": {
-                    "type": "number"
-                },
-                "repeat_last_n": {
-                    "type": "integer"
-                },
-                "repeat_penalty": {
-                    "type": "number"
-                },
-                "schema_version": {
-                    "type": "string"
-                },
-                "seed": {
-                    "type": "integer"
-                },
-                "stop": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "temperature": {
-                    "type": "number"
-                },
-                "tfs_z": {
-                    "type": "number"
-                },
-                "top_k": {
-                    "type": "integer"
-                },
-                "top_p": {
-                    "type": "number"
-                },
-                "typical_p": {
-                    "type": "number"
-                },
-                "use_mlock": {
-                    "type": "boolean"
-                },
-                "use_mmap": {
-                    "type": "boolean"
-                },
-                "vocab_only": {
-                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -4794,11 +4696,14 @@
                 "format": {
                     "type": "string"
                 },
+                "model": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "options": {
-                    "$ref": "#/definitions/vision.ApiRequestOptions"
+                    "$ref": "#/definitions/vision.ModelOptions"
                 },
                 "prompt": {
                     "type": "string"
@@ -4843,6 +4748,146 @@
                 "EngineLocal"
             ]
         },
+        "vision.ModelOptions": {
+            "properties": {
+                "combine_outputs": {
+                    "description": "OpenAI",
+                    "type": "string"
+                },
+                "detail": {
+                    "description": "OpenAI",
+                    "type": "string"
+                },
+                "force_json": {
+                    "description": "Ollama, OpenAI",
+                    "type": "boolean"
+                },
+                "frequency_penalty": {
+                    "description": "OpenAI",
+                    "type": "number"
+                },
+                "low_vram": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "main_gpu": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "max_output_tokens": {
+                    "description": "Ollama, OpenAI",
+                    "type": "integer"
+                },
+                "min_p": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "mirostat": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "mirostat_eta": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "mirostat_tau": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "num_batch": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_ctx": {
+                    "description": "Ollama, OpenAI",
+                    "type": "integer"
+                },
+                "num_gpu": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_keep": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_predict": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_thread": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "numa": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "penalize_newline": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "presence_penalty": {
+                    "description": "OpenAI",
+                    "type": "number"
+                },
+                "repeat_last_n": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "repeat_penalty": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "schema_version": {
+                    "description": "Ollama, OpenAI",
+                    "type": "string"
+                },
+                "seed": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "stop": {
+                    "description": "Ollama, OpenAI",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "temperature": {
+                    "description": "Ollama, OpenAI",
+                    "type": "number"
+                },
+                "tfs_z": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "top_k": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "top_p": {
+                    "description": "Ollama, OpenAI",
+                    "type": "number"
+                },
+                "typical_p": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "use_mlock": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "use_mmap": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "vocab_only": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
         "vision.ModelType": {
             "enum": [
                 "labels",
@@ -4872,26 +4917,6 @@
                 "on-index"
             ],
             "type": "string",
-            "x-enum-comments": {
-                "RunAlways": "Run manually, on-schedule, on-demand, and on-index.",
-                "RunAuto": "Automatically decide when to run based on model type and configuration.",
-                "RunManual": "Only run manually e.g. with the \"vision run\" command.",
-                "RunNever": "Never run the model.",
-                "RunNewlyIndexed": "Run manually amd for newly-indexed pictures.",
-                "RunOnDemand": "Run manually, for newly-indexed pictures, and on configured schedule.",
-                "RunOnIndex": "Run manually and on-index.",
-                "RunOnSchedule": "Run manually and on-schedule."
-            },
-            "x-enum-descriptions": [
-                "Automatically decide when to run based on model type and configuration.",
-                "Never run the model.",
-                "Only run manually e.g. with the \"vision run\" command.",
-                "Run manually, on-schedule, on-demand, and on-index.",
-                "Run manually amd for newly-indexed pictures.",
-                "Run manually, for newly-indexed pictures, and on configured schedule.",
-                "Run manually and on-schedule.",
-                "Run manually and on-index."
-            ],
             "x-enum-varnames": [
                 "RunAuto",
                 "RunNever",
@@ -4912,6 +4937,18 @@
                     "type": "string"
                 },
                 "method": {
+                    "type": "string"
+                },
+                "model": {
+                    "description": "Optional endpoint-specific model override.",
+                    "type": "string"
+                },
+                "org": {
+                    "description": "Optional organization header (e.g. OpenAI).",
+                    "type": "string"
+                },
+                "project": {
+                    "description": "Optional project header (e.g. OpenAI).",
                     "type": "string"
                 },
                 "requestFormat": {

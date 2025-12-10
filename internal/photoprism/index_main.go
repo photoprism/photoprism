@@ -25,11 +25,11 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		result.Err = fmt.Errorf("index: skipped %s because it %w", clean.Log(f.RootRelName()), typeErr)
 		result.Status = IndexFailed
 		return result
-	} else if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+	} else if _, limitErr := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
 		result.Err = fmt.Errorf("index: %s", limitErr)
 		result.Status = IndexFailed
 		return result
-	} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+	} else if _, limitErr = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 		result.Err = fmt.Errorf("index: %s", limitErr)
 		result.Status = IndexFailed
 		return result
@@ -49,7 +49,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 			return result
 		} else if img == nil {
 			log.Debugf("index: skipped creating preview image for %s", clean.Log(f.RootRelName()))
-		} else if limitErr, _ := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+		} else if _, limitErr := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 			result.Err = fmt.Errorf("index: %s", limitErr)
 			result.Status = IndexFailed
 			return result

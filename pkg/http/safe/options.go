@@ -21,9 +21,12 @@ var (
 	defaultTimeout = 30 * time.Second
 	defaultMaxSize = int64(200 * 1024 * 1024) // 200 MiB
 
+	// ErrSchemeNotAllowed is returned when a URL scheme is not permitted.
 	ErrSchemeNotAllowed = errors.New("invalid scheme (only http/https allowed)")
-	ErrSizeExceeded     = errors.New("response exceeds maximum allowed size")
-	ErrPrivateIP        = errors.New("connection to private or loopback address not allowed")
+	// ErrSizeExceeded is returned when a response exceeds the configured limit.
+	ErrSizeExceeded = errors.New("response exceeds maximum allowed size")
+	// ErrPrivateIP is returned when the target resolves to a private or loopback address.
+	ErrPrivateIP = errors.New("connection to private or loopback address not allowed")
 )
 
 // envInt64 returns an int64 from env or -1 if unset/invalid.

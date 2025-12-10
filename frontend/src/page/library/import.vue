@@ -6,8 +6,7 @@
         <span v-else-if="busy">{{ $gettext(`Importing files to originals…`) }}</span>
         <span v-else-if="completed">{{ $gettext(`Done.`) }}</span>
         <span v-else-if="$config.filesQuotaReached()"
-          >{{ $gettext(`Insufficient storage.`) }}
-          {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
+          >{{ $gettext(`Insufficient storage.`) }} {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
         >
         <span v-else>{{ $gettext(`Select a source folder to import files…`) }}</span>
       </div>
@@ -42,11 +41,7 @@
             color="surface-variant"
             density="compact"
             :label="$gettext('Move Files')"
-            :hint="
-              $gettext(
-                'Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.'
-              )
-            "
+            :hint="$gettext('Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location.')"
             prepend-icon="mdi-delete"
             persistent-hint
             @update:model-value="onChange"
@@ -62,13 +57,7 @@
       </div>
       <div class="form-actions">
         <div class="action-buttons">
-          <v-btn
-            :disabled="!busy || !ready"
-            variant="flat"
-            color="button"
-            class="action-cancel"
-            @click.stop="cancelImport()"
-          >
+          <v-btn :disabled="!busy || !ready" variant="flat" color="button" class="action-cancel" @click.stop="cancelImport()">
             {{ $gettext(`Cancel`) }}
           </v-btn>
           <v-btn
@@ -82,13 +71,7 @@
             {{ $gettext(`Upload`) }}
             <v-icon end>mdi-cloud-upload</v-icon>
           </v-btn>
-          <v-btn
-            :disabled="busy || !ready || $config.filesQuotaReached()"
-            variant="flat"
-            color="highlight"
-            class="action-import"
-            @click.stop="startImport()"
-          >
+          <v-btn :disabled="busy || !ready || $config.filesQuotaReached()" variant="flat" color="highlight" class="action-import" @click.stop="startImport()">
             {{ $gettext(`Import`) }}
             <v-icon end>mdi-plus</v-icon>
           </v-btn>

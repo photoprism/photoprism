@@ -11,6 +11,7 @@ import PhotoEdit from "../../page-model/photo-edit";
 import Album from "../../page-model/album";
 import Settings from "../../page-model/settings";
 import Library from "../../page-model/library";
+import Notifies from "../../page-model/notifications";
 
 fixture`Test general settings`.page`${testcafeconfig.url}`.beforeEach(async (t) => {
   await page.login("admin", "photoprism");
@@ -27,6 +28,7 @@ const album = new Album();
 const settings = new Settings();
 const library = new Library();
 const getPageUrl = ClientFunction(() => window.location.href);
+const notifies = new Notifies();
 
 test.meta("testID", "settings-general-001").meta({ type: "short", mode: "auth" })(
   "Common: Disable delete",
@@ -133,6 +135,31 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
       .ok()
       .expect(library.indexTab.visible)
       .ok();
+    await menu.openPage("browse");
+    await notifies.waitForPhotosToLoad(7000);
+    await photo.toggleSelectNthPhoto(0, "image");
+    await contextmenu.triggerContextMenuAction("edit");
+    await t
+      .expect(photoedit.batchDialog.visible)
+      .notOk()
+      .click(photoedit.locationAction)
+      .expect(photoedit.locationSearch.visible)
+      .ok()
+      .click(photoedit.locationCancel)
+      .click(photoedit.dialogClose);
+    await photo.toggleSelectNthPhoto(1, "image");
+    await contextmenu.triggerContextMenuAction("edit");
+    await t
+      .expect(photoedit.batchDialog.visible)
+      .ok()
+      .click(photoedit.locationAction)
+      .expect(photoedit.locationSearch.visible)
+      .ok()
+      .click(photoedit.locationCancel)
+      .click(photoedit.dialogClose);
+
+    await contextmenu.clearSelection();
+
     await menu.openPage("settings");
 
     await t.expect(settings.accountTab.visible).ok().expect(settings.servicesTab.visible).ok();
@@ -176,6 +203,25 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
     await t.click(toolbar.cardsViewAction);
 
     await t.expect(page.cardLocation.exists).notOk();
+
+    await photo.toggleSelectNthPhoto(0, "image");
+    await contextmenu.triggerContextMenuAction("edit");
+    await t
+      .expect(photoedit.batchDialog.visible)
+      .notOk()
+      .expect(photoedit.locationAction.visible)
+      .notOk()
+      .click(photoedit.dialogClose);
+    await photo.toggleSelectNthPhoto(1, "image");
+    await contextmenu.triggerContextMenuAction("edit");
+    await t
+      .expect(photoedit.batchDialog.visible)
+      .ok()
+      .expect(photoedit.locationAction.visible)
+      .notOk()
+      .click(photoedit.dialogClose);
+
+    await contextmenu.clearSelection();
 
     await menu.openPage("library");
 
@@ -416,6 +462,8 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
 
     await contextmenu.triggerContextMenuAction("edit", "");
 
+    await t.expect(photoedit.batchDialog.visible).notOk();
+
     await photoedit.checkAllDetailsFieldsDisabled(false);
     await t.expect(photoedit.infoTab.visible).ok();
     await t.click(photoedit.filesTab);
@@ -430,11 +478,18 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
       .ok()
       .click(photoedit.dialogClose);
 
+    await photo.triggerHoverAction("nth", 1, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+
+    await t.expect(photoedit.batchDialog.visible).ok();
+    await t.click(photoedit.dialogClose);
+
     await contextmenu.clearSelection();
     await toolbar.search("photo:true");
     await photoviewer.openPhotoViewer("nth", 0);
 
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
+    await photoviewer.checkPhotoViewerActionAvailability("edit-button", true);
 
     await photoviewer.triggerPhotoViewerAction("close-button");
     await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
@@ -539,6 +594,17 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
       .click(settings.downloadCheckbox)
       .click(settings.editCheckbox)
       .click(settings.shareCheckbox);
+    await t.navigateTo("/library/browse");
+    await photo.triggerHoverAction("nth", 0, "select");
+    await photo.triggerHoverAction("nth", 1, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+
+    await t.expect(photoedit.batchDialog.visible).notOk();
+    await t.click(photoedit.dialogClose);
+
+    await contextmenu.clearSelection();
+    await menu.openPage("settings");
+    await t.click(settings.batchCheckbox);
   }
 );
 

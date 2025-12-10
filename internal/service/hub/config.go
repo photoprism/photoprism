@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // retained for legacy key derivation check
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -25,11 +25,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
+// Status represents the hub registration state.
 type Status string
 
 const (
-	StatusUnknown   Status = ""
-	StatusNew       Status = "unregistered"
+	// StatusUnknown indicates an undefined state.
+	StatusUnknown Status = ""
+	// StatusNew indicates a node has not registered yet.
+	StatusNew Status = "unregistered"
+	// StatusCommunity indicates Community Edition status.
 	StatusCommunity Status = "ce"
 )
 
@@ -122,7 +126,7 @@ func (c *Config) Sanitize() {
 	c.Key = strings.ToLower(c.Key)
 
 	if c.Secret != "" {
-		if c.Key != fmt.Sprintf("%x", sha1.Sum([]byte(c.Secret))) {
+		if c.Key != fmt.Sprintf("%x", sha1.Sum([]byte(c.Secret))) { //nolint:gosec // legacy SHA1 comparison
 			c.Key = ""
 			c.Secret = ""
 			c.Session = ""

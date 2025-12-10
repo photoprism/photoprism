@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Meter represents one meter in decimal degrees at the equator.
 const Meter = 0.00001
 
 // Position represents a geo coordinate.

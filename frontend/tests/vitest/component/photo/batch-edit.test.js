@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import PPhotoBatchEdit from "component/photo/batch-edit.vue";
+import * as contexts from "options/contexts";
 import { Batch } from "model/batch";
 import Thumb from "model/thumb";
 import { Deleted, Mixed } from "options/options";
@@ -393,7 +394,7 @@ describe("component/photo/batch-edit", () => {
       expect(ctx.index).toBe(1);
       expect(ctx.allowEdit).toBe(false);
       expect(ctx.allowSelect).toBe(false);
-      expect(ctx.context).toBe("batch-edit");
+      expect(ctx.context).toBe(contexts.BatchEdit);
 
       spy.mockRestore();
     });

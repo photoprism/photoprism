@@ -49,7 +49,7 @@ func OpenJpeg(fileName string, orientation int) (image.Image, error) {
 	logName := clean.Log(filepath.Base(fileName))
 
 	// Open file.
-	fileReader, err := os.Open(fileName)
+	fileReader, err := os.Open(fileName) //nolint:gosec // fileName is provided by caller and validated earlier
 	if err != nil {
 		return nil, err
 	}
@@ -76,8 +76,7 @@ func OpenJpeg(fileName string, orientation int) (image.Image, error) {
 			log.Tracef("thumb: %s has no color profile", logName)
 		} else if profile, err := iccProfile.Description(); err == nil && profile != "" {
 			log.Tracef("thumb: %s has color profile %s", logName, clean.Log(profile))
-			switch {
-			case colors.ProfileDisplayP3.Equal(profile):
+			if colors.ProfileDisplayP3.Equal(profile) {
 				img = colors.ToSRGB(img, colors.ProfileDisplayP3)
 			}
 		}

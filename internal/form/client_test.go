@@ -40,7 +40,7 @@ func TestAddClientFromCli(t *testing.T) {
 		assert.NoError(t, ctx.Set("provider", "client_credentials"))
 		assert.NoError(t, ctx.Set("method", "oauth2"))
 
-		//t.Logf("ARGS: %#v", ctx.Args())
+		// t.Logf("ARGS: %#v", ctx.Args())
 
 		// Check flag values.
 		assert.True(t, ctx.IsSet("name"))
@@ -69,7 +69,7 @@ func TestAddClientFromCli(t *testing.T) {
 		assert.NoError(t, ctx.Set("provider", ""))
 		assert.NoError(t, ctx.Set("method", ""))
 
-		//t.Logf("ARGS: %#v", ctx.Args())
+		// t.Logf("ARGS: %#v", ctx.Args())
 
 		// Check flag values.
 		assert.True(t, ctx.IsSet("id"))

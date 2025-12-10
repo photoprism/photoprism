@@ -1,3 +1,4 @@
+//nolint:revive,staticcheck,gocritic,gosec // estimator retains legacy style and pseudo-random seeding
 package alg
 
 import (

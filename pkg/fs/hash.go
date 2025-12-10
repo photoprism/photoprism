@@ -1,7 +1,7 @@
 package fs
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // SHA1 retained for legacy hash compatibility
 	"encoding/hex"
 	"hash/crc32"
 	"io"
@@ -14,7 +14,7 @@ import (
 func Hash(fileName string) string {
 	var result []byte
 
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // caller-controlled path; intended file read
 
 	if err != nil {
 		return ""
@@ -22,9 +22,12 @@ func Hash(fileName string) string {
 
 	defer file.Close()
 
-	hash := sha1.New()
+	hash := sha1.New() //nolint:gosec // legacy SHA1 hashes retained for compatibility
 
-	if _, err := io.Copy(hash, file); err != nil {
+	buf := getCopyBuffer()
+	defer putCopyBuffer(buf)
+
+	if _, err = io.CopyBuffer(hash, file, buf); err != nil {
 		return ""
 	}
 
@@ -35,7 +38,7 @@ func Hash(fileName string) string {
 func Checksum(fileName string) string {
 	var result []byte
 
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // caller-controlled path; intended file read
 
 	if err != nil {
 		return ""
@@ -45,7 +48,10 @@ func Checksum(fileName string) string {
 
 	hash := crc32.New(checksum.Crc32Castagnoli)
 
-	if _, err := io.Copy(hash, file); err != nil {
+	buf := getCopyBuffer()
+	defer putCopyBuffer(buf)
+
+	if _, err = io.CopyBuffer(hash, file, buf); err != nil {
 		return ""
 	}
 

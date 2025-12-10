@@ -25,11 +25,12 @@ Additional information can be found in our Developer Guide:
 package api
 
 import (
-	_ "net/http"
+	// Blank imports register HTTP handlers, models, translations, and form bindings via init side effects.
+	_ "net/http" // register net/http handlers referenced by swagger
 
-	_ "github.com/gin-gonic/gin"
+	_ "github.com/gin-gonic/gin" // register gin metadata used by swaggo
 
-	_ "github.com/photoprism/photoprism/internal/auth/acl"
+	_ "github.com/photoprism/photoprism/internal/auth/acl" // embed ACL docs
 	_ "github.com/photoprism/photoprism/internal/entity"
 	_ "github.com/photoprism/photoprism/internal/entity/query"
 	_ "github.com/photoprism/photoprism/internal/event"

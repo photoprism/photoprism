@@ -65,9 +65,10 @@ func showConfigAction(ctx *cli.Context) error {
 		rows, cols := rep.Report(conf)
 		opt := report.Options{Format: format, NoWrap: rep.NoWrap}
 		result, _ := report.Render(rows, cols, opt)
-		if opt.Format == report.Markdown {
+		switch opt.Format {
+		case report.Markdown:
 			fmt.Printf("### %s\n\n", rep.Title)
-		} else if opt.Format == report.Default {
+		case report.Default:
 			fmt.Printf("%s\n\n", strings.ToUpper(rep.Title))
 		}
 		fmt.Println(result)

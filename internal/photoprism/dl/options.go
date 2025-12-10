@@ -89,7 +89,7 @@ func (result Metadata) DownloadWithOptions(
 	if !result.Options.noInfoDownload {
 		jsonTempPath = path.Join(tempPath, "info.json")
 		if err := os.WriteFile(jsonTempPath, result.RawJSON, 0600); err != nil {
-			os.RemoveAll(tempPath)
+			_ = os.RemoveAll(tempPath)
 			return nil, err
 		}
 	}
@@ -98,7 +98,7 @@ func (result Metadata) DownloadWithOptions(
 		waitCh: make(chan struct{}),
 	}
 
-	cmd := exec.CommandContext(
+	cmd := exec.CommandContext( // #nosec G204 yt-dlp command uses validated binary path and controlled args
 		ctx,
 		FindYtDlpBin(),
 		// see comment below about ignoring errors for playlists
@@ -130,12 +130,12 @@ func (result Metadata) DownloadWithOptions(
 
 			if result.Options.PlaylistStart > 0 {
 				cmd.Args = append(cmd.Args,
-					"--playlist-start", strconv.Itoa(int(result.Options.PlaylistStart)),
+					"--playlist-start", strconv.FormatUint(uint64(result.Options.PlaylistStart), 10),
 				)
 			}
 			if result.Options.PlaylistEnd > 0 {
 				cmd.Args = append(cmd.Args,
-					"--playlist-end", strconv.Itoa(int(result.Options.PlaylistEnd)),
+					"--playlist-end", strconv.FormatUint(uint64(result.Options.PlaylistEnd), 10),
 				)
 			}
 		} else {
@@ -268,15 +268,15 @@ func (result Metadata) DownloadWithOptions(
 
 	log.Trace("cmd", " ", redactArgs(cmd.Args))
 	if err := cmd.Start(); err != nil {
-		os.RemoveAll(tempPath)
+		_ = os.RemoveAll(tempPath)
 		return nil, err
 	}
 
 	go func() {
 		_ = cmd.Wait()
-		stdoutW.Close()
-		stderrW.Close()
-		os.RemoveAll(tempPath)
+		_ = stdoutW.Close()
+		_ = stderrW.Close()
+		_ = os.RemoveAll(tempPath)
 		close(dr.waitCh)
 	}()
 

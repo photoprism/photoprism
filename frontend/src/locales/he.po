@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-19 10:56+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2025-11-27 11:38+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
@@ -128,7 +128,7 @@ msgstr "אסימון גישה"
 #: src/component/navigation.vue:1068 src/component/navigation.vue:868
 #: src/component/service/upload.vue:25 src/locales.js:331
 #: src/model/service.js:72 src/model/user.js:151 src/page/settings.vue:112
-#: src/page/settings/general.vue:342
+#: src/page/settings/general.vue:334
 msgid "Account"
 msgstr "חשבון"
 
@@ -213,10 +213,6 @@ msgstr "הוספת חשבון"
 msgid "Add Album"
 msgstr "הוספת אלבום"
 
-#: src/page/settings/general.vue:164
-msgid "Add files to your library via Web Upload."
-msgstr "הוסף קבצים לספריה באמצעות העלאה באתר."
-
 #: src/component/share/dialog.vue:19
 msgid "Add Link"
 msgstr "הוספת קישור"
@@ -240,11 +236,11 @@ msgstr "הוסף תמונות מתוצאות החיפוש על ידי בחירת
 msgid "Add to album"
 msgstr "הוספה לאלבום"
 
-#: src/component/input/chip-selector.vue:181
+#: src/component/input/chip-selector.vue:182
 msgid "Add to all"
 msgstr "הוסף הכל"
 
-#: src/component/input/chip-selector.vue:181
+#: src/component/input/chip-selector.vue:182
 msgid "Add to all selected photos"
 msgstr "הוסף לכל התמונות שנבחרו"
 
@@ -308,7 +304,7 @@ msgstr "אחרי שבועיים"
 msgid "Album"
 msgstr "אלבום"
 
-#: src/page/settings/advanced.vue:193
+#: src/page/settings/advanced.vue:189
 msgid "Album Backups"
 msgstr "גיבויי אלבומים"
 
@@ -388,6 +384,38 @@ msgstr "כל המקורות"
 msgid "All Years"
 msgstr "כל השנים"
 
+#: src/page/settings/general.vue:246
+msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
+msgstr "אפשר תצורה ושימוש באפליקציות ושירותים מחוברים לצורך העלאה וסנכרון מרחוק."
+
+#: src/page/settings/general.vue:201
+msgid "Allow editing of metadata such as title, description, date, and location."
+msgstr "אפשר עריכת מטא-נתונים כגון כותרת, תיאור, תאריך ומיקום."
+
+#: src/page/settings/general.vue:216
+msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
+msgstr "אפשר עריכת מטא-נתונים, תוויות ואלבומים של מספר תמונות בבת אחת."
+
+#: src/page/settings/general.vue:186
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr "הפעל את כלי הייבוא כדי להעתיק או להעביר קבצים מהתיקייה 'ייבוא' לתיקייה 'מקוריים'."
+
+#: src/page/settings/general.vue:276
+msgid "Allow files to be permanently deleted to free up storage space."
+msgstr "אפשר מחיקה קבועה של קבצים כדי לפנות שטח אחסון."
+
+#: src/page/settings/general.vue:261
+msgid "Allow users to archive photos and videos so they are hidden without being deleted."
+msgstr "אפשר למשתמשים לארכיב תמונות וסרטונים כך שהם יוסתרו מבלי להימחק."
+
+#: src/page/settings/general.vue:231
+msgid "Allow users to create and share links, and enable sharing with connected services."
+msgstr "אפשר למשתמשים ליצור ולשתף קישורים, והפעל שיתוף עם שירותים מחוברים."
+
+#: src/page/settings/general.vue:156
+msgid "Allow users to upload new photos and videos through the web interface."
+msgstr "אפשר למשתמשים להעלות תמונות וסרטונים חדשים דרך ממשק האינטרנט."
+
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "לחלופין, ניתן להעלות קבצים ישירות דרך שרתי WebDAV כמו Nextcloud."
@@ -415,7 +443,7 @@ msgstr "AM"
 msgid "Animated"
 msgstr "מונפש"
 
-#: src/page/settings/general.vue:399
+#: src/page/settings/general.vue:391
 msgid "Animation"
 msgstr "אנימציה"
 
@@ -540,7 +568,7 @@ msgstr "חזור"
 msgid "Back to top"
 msgstr "חזרה למעלה"
 
-#: src/page/settings/advanced.vue:165
+#: src/page/settings/advanced.vue:161
 msgid "Backup"
 msgstr "גיבוי"
 
@@ -557,7 +585,7 @@ msgstr "נתיב בסיס"
 msgid "Batch"
 msgstr "קְבוּצָה"
 
-#: src/page/settings/general.vue:238
+#: src/page/settings/general.vue:215
 msgid "Batch Edit"
 msgstr "עריכה קבוצתית"
 
@@ -597,26 +625,14 @@ msgstr "חום"
 
 #: src/component/photo/edit/files.vue:107 src/component/photo/edit/files.vue:67
 #: src/component/photo/edit/files.vue:75 src/component/photo/toolbar.vue:94
-#: src/component/upload/dialog.vue:123 src/component/upload/dialog.vue:75
-#: src/component/upload/dialog.vue:76 src/component/upload/dialog.vue:87
+#: src/component/upload/dialog.vue:112 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 msgid "Browse"
 msgstr "לְדַפדֵף"
-
-#: src/page/settings/general.vue:133
-msgid "Browse and edit image classification labels."
-msgstr "צפה וערוך תוויות סיווג תמונות."
-
-#: src/page/settings/general.vue:103
-msgid "Browse and share your pictures organized into monthly albums."
-msgstr "דפדף ושתף את התמונות שלך מאורגנות באלבומים חודשיים."
 
 #: src/locales.js:278
 msgid "Browse Files"
 msgstr "עיין בקבצים"
-
-#: src/page/settings/general.vue:313
-msgid "Browse indexed files and folders in Library."
-msgstr "צפה בקבצים ותיקיות שנוספו לאינדקס בספרייה."
 
 #: src/component/photo/edit/people.vue:232
 msgid "Browse Pictures"
@@ -635,7 +651,7 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "על ידי שימוש בתוכנה ובשירותים שאנו מספקים, אתה מסכים לתנאי השירות, מדיניות הפרטיות וקוד ההתנהגות שלנו."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
-#: src/options/options.js:263 src/page/settings/general.vue:102
+#: src/options/options.js:263 src/page/settings/general.vue:96
 msgid "Calendar"
 msgstr "לוח שנה"
 
@@ -719,14 +735,6 @@ msgstr "שינוי האווטר"
 msgid "Change Password"
 msgstr "שנה סיסמה"
 
-#: src/page/settings/general.vue:343
-msgid "Change personal profile and security settings."
-msgstr "שנה את הפרופיל האישי ואת הגדרות האבטחה."
-
-#: src/page/settings/general.vue:224
-msgid "Change photo titles, locations, and other metadata."
-msgstr "שנה כותרות תמונות, מיקומים ומטא נתונים אחרים."
-
 #: src/component/photo/clipboard.vue:80
 msgid "Change private flag"
 msgstr "שינוי דגל הפרטיות"
@@ -747,8 +755,8 @@ msgstr "לא ניתן לשמור שינויים"
 #: src/component/photo/edit/files.vue:570 src/component/service/edit.vue:343
 #: src/component/share/dialog.vue:240 src/component/share/dialog.vue:259
 #: src/page/albums.vue:1268 src/page/people/recognized.vue:320
-#: src/page/settings/advanced.vue:539 src/page/settings/content.vue:300
-#: src/page/settings/general.vue:525
+#: src/page/settings/advanced.vue:535 src/page/settings/content.vue:300
+#: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "השינויים נשמרו בהצלחה"
 
@@ -804,7 +812,7 @@ msgstr "אישורי לקוח"
 #: src/component/share/dialog.vue:142 src/component/share/dialog.vue:72
 #: src/component/share/dialog.vue:73 src/component/share/dialog.vue:82
 #: src/component/sidebar/info.vue:6 src/component/update.vue:25
-#: src/component/upload/dialog.vue:120 src/locales.js:206
+#: src/component/upload/dialog.vue:109 src/locales.js:206
 #: src/page/library/errors.vue:139
 msgid "Close"
 msgstr "סגור"
@@ -829,7 +837,7 @@ msgstr "צבע"
 msgid "Color Profile"
 msgstr "פרופיל צבע"
 
-#: src/page/discover.vue:13 src/page/discover.vue:5
+#: src/page/discover.vue:12 src/page/discover.vue:5
 msgid "Colors"
 msgstr "צבעים"
 
@@ -965,15 +973,15 @@ msgstr "צור חשבון"
 msgid "Create album"
 msgstr "צור אלבום"
 
-#: src/page/settings/advanced.vue:178
+#: src/page/settings/advanced.vue:174
 msgid "Create regular backups based on the configured schedule."
 msgstr "צור גיבויי אינדקס בהתבסס על לוח הזמנים שהוגדר."
 
-#: src/page/settings/advanced.vue:194
+#: src/page/settings/advanced.vue:190
 msgid "Create YAML files to back up album metadata."
 msgstr "צור קובצי YAML כדי לגבות מטא נתונים של אלבום."
 
-#: src/page/settings/advanced.vue:210
+#: src/page/settings/advanced.vue:206
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "צור קבצי YAML Sidecar כדי לגבות מטא נתונים של תמונה."
 
@@ -1010,7 +1018,7 @@ msgstr "יומי"
 msgid "Database"
 msgstr "מסד נתונים"
 
-#: src/page/settings/advanced.vue:177
+#: src/page/settings/advanced.vue:173
 msgid "Database Backups"
 msgstr "גיבויים של מסדי נתונים"
 
@@ -1056,7 +1064,7 @@ msgstr "תיקיית ברירת מחדל"
 #: src/component/photo/clipboard.vue:140 src/component/photo/edit/files.vue:62
 #: src/component/photo/edit/files.vue:70 src/component/photo/edit/files.vue:94
 #: src/component/service/remove.vue:22 src/component/share/dialog.vue:112
-#: src/locales.js:317 src/page/settings/general.vue:268
+#: src/locales.js:317 src/page/settings/general.vue:275
 msgid "Delete"
 msgstr "מחק"
 
@@ -1098,47 +1106,51 @@ msgstr "פרטים"
 msgid "Dimensions"
 msgstr "מידות"
 
+#: src/page/settings/advanced.vue:117
+msgid "Disable all face detection and recognition features."
+msgstr "השבת את כל תכונות זיהוי הפנים והזיהוי."
+
 #: src/page/settings/advanced.vue:84
 msgid "Disable Backups"
 msgstr "השבת גיבויים"
 
-#: src/page/settings/advanced.vue:366
+#: src/page/settings/advanced.vue:362
 msgid "Disable Darktable"
 msgstr "השבת את Darktable"
 
-#: src/page/settings/advanced.vue:132
+#: src/page/settings/advanced.vue:148
 msgid "Disable ExifTool"
 msgstr "השבת את ExifTool"
+
+#: src/page/settings/advanced.vue:116
+msgid "Disable Faces"
+msgstr "השבת פנים"
 
 #: src/page/settings/advanced.vue:69
 msgid "Disable features that require write permission for the originals folder."
 msgstr "השבת תכונות הדורשות הרשאת כתיבה עבור תיקיית המקור."
 
-#: src/page/settings/advanced.vue:430
+#: src/page/settings/advanced.vue:426
 msgid "Disable FFmpeg"
 msgstr "השבת FFmpeg"
 
-#: src/page/settings/advanced.vue:414
+#: src/page/settings/advanced.vue:410
 msgid "Disable ImageMagick"
 msgstr "השבת את ImageMagick"
 
-#: src/page/settings/advanced.vue:117
+#: src/page/settings/advanced.vue:133
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "השבת מפות עולם אינטראקטיביות וקידוד גיאוגרפי הפוך."
 
-#: src/page/settings/advanced.vue:116
+#: src/page/settings/advanced.vue:132
 msgid "Disable Places"
 msgstr "השבת מיקומים"
 
-#: src/page/settings/advanced.vue:382
+#: src/page/settings/advanced.vue:378
 msgid "Disable RawTherapee"
 msgstr "השבת את RawTherapee"
 
-#: src/page/settings/advanced.vue:148
-msgid "Disable TensorFlow"
-msgstr "השבת את TensorFlow"
-
-#: src/page/settings/advanced.vue:446
+#: src/page/settings/advanced.vue:442
 msgid "Disable Vectors"
 msgstr "השבת וקטורים"
 
@@ -1150,11 +1162,11 @@ msgstr "השבת את WebDAV"
 msgid "Disabled"
 msgstr "מושבת"
 
-#: src/page/settings/advanced.vue:447
+#: src/page/settings/advanced.vue:443
 msgid "Disables vector graphics support."
 msgstr "משבית תמיכה בגרפיקה וקטורית."
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:427
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "משבית את המרת קידוד וידאו וחילוץ תמונות ממוזערות."
 
@@ -1205,15 +1217,15 @@ msgstr "מִסְמָך"
 msgid "Documents"
 msgstr "מסמכים"
 
-#: src/page/settings/advanced.vue:367
+#: src/page/settings/advanced.vue:363
 msgid "Don't use Darktable to convert RAW images."
 msgstr "אל תשתמש ב- Darktable להמרת קבצי RAW."
 
-#: src/page/settings/advanced.vue:415
+#: src/page/settings/advanced.vue:411
 msgid "Don't use ImageMagick to convert images."
 msgstr "אל תשתמש ב-ImageMagick כדי להמיר תמונות."
 
-#: src/page/settings/advanced.vue:383
+#: src/page/settings/advanced.vue:379
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "אל תשתמש ב- RawTherapee להמרת קבצי RAW."
 
@@ -1224,7 +1236,7 @@ msgstr "אל תשתמש ב- RawTherapee להמרת קבצי RAW."
 msgid "Done"
 msgstr "בוצע"
 
-#: src/component/upload/dialog.vue:43 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "בוצע."
@@ -1233,7 +1245,7 @@ msgstr "בוצע."
 #: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1479
 #: src/component/people/clipboard.vue:31 src/component/photo/clipboard.vue:92
 #: src/component/photo/edit/files.vue:51 src/page/settings/content.vue:183
-#: src/page/settings/general.vue:178
+#: src/page/settings/general.vue:170
 msgid "Download"
 msgstr "הורד"
 
@@ -1245,10 +1257,6 @@ msgstr "הורד רק קבצי מדיה מקוריים, ללא קבצים שנו
 msgid "Download remote files"
 msgstr "הורד קבצים מרוחקים"
 
-#: src/page/settings/general.vue:179
-msgid "Download single files and zip archives."
-msgstr "הורד קבצים בודדים וארכיוני zip."
-
 #: src/component/album/clipboard.vue:227 src/component/album/toolbar.vue:252
 #: src/component/file/clipboard.vue:150 src/component/label/clipboard.vue:172
 #: src/component/lightbox.vue:2426 src/component/people/clipboard.vue:144
@@ -1258,7 +1266,7 @@ msgstr "הורד קבצים בודדים וארכיוני zip."
 msgid "Downloading…"
 msgstr "מוריד…"
 
-#: src/page/settings/advanced.vue:232
+#: src/page/settings/advanced.vue:228
 msgid "Downscaling Filter"
 msgstr "פילטר (אלגוריתם) שנמוך"
 
@@ -1284,11 +1292,11 @@ msgstr "התעלם מכפילויות, והצג רק אחד."
 msgid "Duration"
 msgstr "משך"
 
-#: src/page/settings/advanced.vue:285
+#: src/page/settings/advanced.vue:281
 msgid "Dynamic Previews"
 msgstr "תצוגות מקדימות דינמיות"
 
-#: src/page/settings/advanced.vue:261
+#: src/page/settings/advanced.vue:257
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "גודל דינמי מקסימלי לשמירה במטמון: %{n} פיקסלים"
 
@@ -1298,7 +1306,7 @@ msgstr "דוא\"ל"
 
 #: src/component/album/clipboard.vue:43 src/component/album/toolbar.vue:174
 #: src/component/lightbox.vue:1378 src/component/lightbox.vue:1379
-#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:223
+#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:200
 msgid "Edit"
 msgstr "ערוך"
 
@@ -1316,13 +1324,9 @@ msgstr "ערוך חשבון"
 msgid "Edit Photo"
 msgstr "ערוך תמונה"
 
-#: src/component/photo/batch-edit.vue:665
+#: src/component/photo/batch-edit.vue:664
 msgid "Edit Photos (%{n})"
 msgstr "ערוך תמונות (%{n})"
-
-#: src/page/settings/general.vue:239
-msgid "Edit the metadata, labels, and albums of multiple pictures at once."
-msgstr "ערוך את המטא-נתונים, התוויות והאלבומים של מספר תמונות בבת אחת."
 
 #: src/component/photo/edit/info.vue:222 src/component/photo/edit/info.vue:223
 msgid "Edited"
@@ -1337,11 +1341,23 @@ msgstr "אימייל"
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
 msgstr "אפשר מצב ניפוי באגים כדי להציג יומנים נוספים ועזרה בפתרון בעיות."
 
+#: src/page/settings/general.vue:171
+msgid "Enable downloading of original and sidecar files from the web interface."
+msgstr "אפשר הורדת קבצים מקוריים וקבצי sidecar מממשק האינטרנט."
+
+#: src/page/settings/general.vue:82
+msgid "Enable face recognition and the People view to easily find people you know."
+msgstr "הפעל זיהוי פנים ותצוגת אנשים כדי למצוא בקלות אנשים שאתה מכיר."
+
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
 msgstr "אפשר תכונות חדשות שעשויות להיות לא שלמות או לא יציבות."
 
-#: src/page/settings/advanced.vue:399
+#: src/page/settings/general.vue:305
+msgid "Enable the file browser to navigate the Originals folder structure."
+msgstr "אפשר לדפדפן הקבצים לנווט במבנה התיקיות של Originals."
+
+#: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "מאפשר הגדרות קבועות מראש של ממיר RAW. עשוי להפחית את הביצועים."
 
@@ -1361,7 +1377,7 @@ msgstr "הזן תאריך"
 msgid "Enter dates"
 msgstr "הזן תאריכים"
 
-#: src/component/input/chip-selector.vue:128
+#: src/component/input/chip-selector.vue:129
 msgid "Enter item name..."
 msgstr "הזן שם פריט..."
 
@@ -1406,15 +1422,11 @@ msgstr "הערך את המיקום המשוער של תמונות ללא קוא�
 msgid "Every two days"
 msgstr "כל יומיים"
 
-#: src/page/settings/general.vue:148
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "אל תכלול תוכן המסומן כפרטי מתוצאות חיפוש, אלבומים משותפים, תוויות ומקומות."
-
 #: src/page/people/new.vue:20 src/page/people/recognized.vue:53
 msgid "Exclude hidden"
 msgstr "אל תכלול מוסתר"
 
-#: src/page/settings/advanced.vue:133
+#: src/page/settings/advanced.vue:149
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "חילוץ מטא נתונים עם ExifTool נדרש לתמיכה מלאה בווידאו, צילום חי ו-XMP."
 
@@ -1511,13 +1523,13 @@ msgstr "קובץ"
 msgid "File Browser"
 msgstr "סייר קבצים"
 
-#: src/page/settings/advanced.vue:354
+#: src/page/settings/advanced.vue:350
 msgid "File Conversion"
 msgstr "המרת קבצים"
 
 #: src/component/album/edit/dialog.vue:147
-#: src/component/photo/batch-edit.vue:636
-#: src/component/photo/batch-edit.vue:656 src/component/photo/toolbar.vue:415
+#: src/component/photo/batch-edit.vue:635
+#: src/component/photo/batch-edit.vue:655 src/component/photo/toolbar.vue:415
 #: src/component/photo/toolbar.vue:426 src/component/photo/toolbar.vue:437
 #: src/component/photo/view/list.vue:47
 msgid "File Name"
@@ -1607,10 +1619,6 @@ msgstr "כללי"
 msgid "Generate"
 msgstr "לִיצוֹר"
 
-#: src/page/settings/general.vue:118
-msgid "Generate albums of special moments, journeys, and places."
-msgstr "יוצר אוטומטית אלבומים של רגעים מיוחדים, טיולים ומקומות."
-
 #: src/page/settings/content.vue:58
 msgid "Generate Previews"
 msgstr "צור תצוגות מקדימות"
@@ -1680,9 +1688,9 @@ msgstr "קבצים מוסתרים"
 msgid "Hide"
 msgstr "הסתר"
 
-#: src/page/settings/general.vue:254
-msgid "Hide photos that have been moved to archive."
-msgstr "תמונות מוסתרות שהועברו לארכיון."
+#: src/page/settings/general.vue:141
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr "הסתר פריטים פרטיים מתצוגות גלובליות תוך שמירה על נגישותם בקטע 'פרטי'."
 
 #: src/options/options.js:381
 msgid "High"
@@ -1711,23 +1719,19 @@ msgstr "אם תאבד את הגישה לאפליקציית המאמת או למ�
 msgid "Image"
 msgstr "תמונה"
 
-#: src/page/settings/advanced.vue:301
+#: src/page/settings/advanced.vue:297
 msgid "Image Quality"
 msgstr "איכות תמונה"
 
-#: src/page/library.vue:74 src/page/library/import.vue:44
+#: src/page/library.vue:73 src/page/library/import.vue:44
 #: src/page/library/import.vue:45 src/page/library/import.vue:73
-#: src/page/library/import.vue:86 src/page/settings/general.vue:193
+#: src/page/library/import.vue:86 src/page/settings/general.vue:185
 msgid "Import"
 msgstr "ייבוא"
 
 #: src/page/library/import.vue:57
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "קבצים מיובאים ימוינו לפי תאריך ויקבלו שם ייחודי כדי למנוע כפילויות."
-
-#: src/page/settings/general.vue:194
-msgid "Imported files will be sorted by date and given a unique name."
-msgstr "קבצים מיובאים ימוינו לפי תאריך ויקבלו שם ייחודי."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{s}…"
@@ -1760,18 +1764,14 @@ msgstr "כלול קובצי תמונה RAW בעת הורדת ערימות ואר
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "כלול קבצי Sidecar בעת הורדת ערימות וארכיונים."
 
-#: src/component/upload/dialog.vue:45 src/page/library/import.vue:9
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:9
 msgid "Increase storage size or delete files to continue."
 msgstr "הגדל את נפח האחסון או מחק קבצים כדי להמשיך."
 
-#: src/component/navigation.vue:942 src/page/library.vue:64
+#: src/component/navigation.vue:942 src/page/library.vue:63
 #: src/page/settings/content.vue:12
 msgid "Index"
 msgstr "אינדקס"
-
-#: src/page/settings/general.vue:298
-msgid "Index and import files through the user interface."
-msgstr "אינדקס ויבוא קבצים דרך ממשק המשתמש."
 
 #: src/page/library/index.vue:245 src/page/library/index.vue:251
 msgid "Indexing"
@@ -1798,7 +1798,7 @@ msgstr "מזהה מופע"
 msgid "Instances"
 msgstr "מופעים"
 
-#: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "אחסון לא מספיק."
 
@@ -1861,11 +1861,11 @@ msgstr "פריט"
 msgid "Items per page:"
 msgstr "פריטים בעמוד:"
 
-#: src/page/settings/advanced.vue:308
+#: src/page/settings/advanced.vue:304
 msgid "JPEG Quality: %{n}"
 msgstr "איכות ה-JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:319
 msgid "JPEG Size Limit: %{n}px"
 msgstr "מגבלת גודל קבצי ה-JPEG %{n} פיקסלים"
 
@@ -1893,7 +1893,7 @@ msgstr "תווית"
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:325
-#: src/options/options.js:265 src/page/settings/general.vue:132
+#: src/options/options.js:265 src/page/settings/general.vue:126
 msgid "Labels"
 msgstr "תוויות"
 
@@ -1905,7 +1905,7 @@ msgstr "תוויות נמחקו"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: שימור פרטים, חפצים מינימליים"
 
-#: src/page/settings/general.vue:38
+#: src/page/settings/general.vue:32
 msgid "Language"
 msgstr "שפה"
 
@@ -1958,7 +1958,7 @@ msgid "Lens"
 msgstr "עדשה"
 
 #: src/app/routes.js:475 src/app/routes.js:491 src/app/routes.js:507
-#: src/component/navigation.vue:613 src/page/settings/general.vue:297
+#: src/component/navigation.vue:613 src/page/settings/general.vue:289
 msgid "Library"
 msgstr "ספריה"
 
@@ -2028,7 +2028,7 @@ msgstr "טְעִינָה..."
 
 #: src/options/admin.js:39 src/locales.js:341 src/options/auth.js:23
 #: src/options/auth.js:28 src/options/options.js:93
-#: src/page/settings/general.vue:52
+#: src/page/settings/general.vue:46
 msgid "Local"
 msgstr "מְקוֹמִי"
 
@@ -2039,7 +2039,7 @@ msgstr "זמן מוקמי"
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
 #: src/common/util.js:792 src/component/album/edit/dialog.vue:46
 #: src/component/photo/batch-edit.vue:307
-#: src/component/photo/batch-edit.vue:616
+#: src/component/photo/batch-edit.vue:615
 #: src/component/photo/edit/details.vue:471
 #: src/component/photo/edit/details.vue:591
 #: src/component/photo/edit/details.vue:685
@@ -2062,7 +2062,7 @@ msgid "Logout"
 msgstr "התנתקות"
 
 #: src/component/navigation.vue:948 src/component/navigation.vue:951
-#: src/page/library.vue:87 src/page/settings/general.vue:327
+#: src/page/library.vue:86 src/page/settings/general.vue:319
 msgid "Logs"
 msgstr "יומן"
 
@@ -2110,7 +2110,7 @@ msgstr "יָדָנִי"
 msgid "Manual Upload"
 msgstr "העלאה ידנית"
 
-#: src/page/settings/general.vue:383
+#: src/page/settings/general.vue:375
 msgid "Maps"
 msgstr "מפות"
 
@@ -2175,7 +2175,7 @@ msgid "mixed"
 msgstr "מעורב"
 
 #: src/app/routes.js:192 src/component/navigation.vue:533
-#: src/options/options.js:264 src/page/settings/general.vue:117
+#: src/options/options.js:264 src/page/settings/general.vue:111
 msgid "Moments"
 msgstr "רגעים"
 
@@ -2243,7 +2243,7 @@ msgstr "שם ארוך מדי"
 msgid "Never"
 msgstr "לעולם לא"
 
-#: src/page/people.vue:74
+#: src/page/people.vue:73
 msgid "New"
 msgstr "חדש"
 
@@ -2354,7 +2354,7 @@ msgstr "צמתים"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:101
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "תמונות שאינן נראות צילום או באיכות נמוכה דורשות בדיקה לפני שהן מופיעות בתוצאות החיפוש."
 
@@ -2428,7 +2428,7 @@ msgstr "הישן ראשון"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "ב-Windows, הזן את המשאב הבא בתיבת הדו-שיח של החיבור:"
 
-#: src/page/settings/advanced.vue:287
+#: src/page/settings/advanced.vue:283
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "יצירת תמונות ממוזערות לפי דרישה עשויה לגרום לשימוש גבוה במעבד ובזיכרון. זה לא מומלץ עבור שרתים מוגבלי משאבים והתקני NAS."
 
@@ -2512,7 +2512,7 @@ msgstr "השם המקורי"
 #: src/component/navigation.vue:627 src/component/navigation.vue:633
 #: src/model/file.js:172 src/options/options.js:474
 #: src/page/library/browse.vue:12 src/page/settings/content.vue:193
-#: src/page/settings/general.vue:312
+#: src/page/settings/general.vue:304
 msgid "Originals"
 msgstr "קבצי מקור"
 
@@ -2555,11 +2555,11 @@ msgstr "פנורמה"
 msgid "Panoramas"
 msgstr "פנורמות"
 
-#: src/component/input/chip-selector.vue:187
+#: src/component/input/chip-selector.vue:188
 msgid "Part of all selected photos"
 msgstr "חלק מכל התמונות שנבחרו"
 
-#: src/component/input/chip-selector.vue:185
+#: src/component/input/chip-selector.vue:186
 msgid "Part of some selected photos"
 msgstr "חלק מתמונות נבחרות"
 
@@ -2581,7 +2581,7 @@ msgstr "סיסמא שונתה"
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:260
-#: src/page/settings/general.vue:87
+#: src/page/settings/general.vue:81
 msgid "People"
 msgstr "אנשים"
 
@@ -2592,10 +2592,6 @@ msgstr "אנשים שעימם אתה חולק קישור יוכלו להציג �
 #: src/component/photo/clipboard.vue:315 src/component/photo/toolbar.vue:558
 msgid "Permanently deleted"
 msgstr "נמחק לצמיתות"
-
-#: src/page/settings/general.vue:269
-msgid "Permanently remove files to free up storage."
-msgstr "מחק קבצים לצמיתות בכדי לשחרר נפח אחסון"
 
 #: src/model/subject.js:134
 msgid "Person"
@@ -2630,6 +2626,11 @@ msgstr "חברות PhotoPrism+"
 msgid "Photos"
 msgstr "תמונות"
 
+#: src/component/photo/batch-edit.vue:629
+#: src/component/photo/batch-edit.vue:649
+msgid "Picture"
+msgstr "תמונה"
+
 #: src/component/album/edit/dialog.vue:146 src/component/photo/toolbar.vue:414
 #: src/component/photo/toolbar.vue:425 src/component/photo/toolbar.vue:436
 msgid "Picture Title"
@@ -2650,8 +2651,8 @@ msgstr "מקום וזמן"
 #: src/app/routes.js:335 src/app/routes.js:341 src/app/routes.js:347
 #: src/app/routes.js:362 src/component/navigation.vue:462
 #: src/component/navigation.vue:927 src/options/options.js:262
-#: src/page/places.vue:18 src/page/settings/general.vue:357
-#: src/page/settings/general.vue:371
+#: src/page/places.vue:18 src/page/settings/general.vue:349
+#: src/page/settings/general.vue:363
 msgid "Places"
 msgstr "מקומות"
 
@@ -2663,11 +2664,11 @@ msgstr "אנא אשר את הסיסמה החדשה שלך."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "אנא העתק את סיסמת האפליקציה הבאה שנוצרה באופן אקראי ושמור אותה במקום בטוח, מכיוון שלא תוכל לראות אותה שוב:"
 
-#: src/component/upload/dialog.vue:101
-msgid "Please do not upload any private, unlawful or offensive pictures. "
+#: src/component/upload/dialog.vue:94
+msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "נא לא להעלות תמונות פרטיות, לא חוקיות או פוגעניות."
 
-#: src/component/upload/dialog.vue:104
+#: src/component/upload/dialog.vue:97
 msgid "Please don't upload photos containing offensive content."
 msgstr "נא לא להעלות תמונות המכילות תוכן פוגעני."
 
@@ -2691,7 +2692,7 @@ msgstr "המתן בבקשה…"
 msgid "PM"
 msgstr "רֹאשׁ הַמֶמשָׁלָה"
 
-#: src/page/settings/advanced.vue:338
+#: src/page/settings/advanced.vue:334
 msgid "PNG Size Limit: %{n}px"
 msgstr "מגבלת גודל קבצי ה-PNG %{n} פיקסלים"
 
@@ -2709,11 +2710,11 @@ msgstr "דיוקן"
 msgid "Preserve filenames"
 msgstr "שמור שמות קבצים"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:72
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
 msgid "Press enter to create a new album."
 msgstr "לחץ על Enter בכדי ליצור אלבום חדש."
 
-#: src/component/input/chip-selector.vue:60
+#: src/component/input/chip-selector.vue:61
 msgid "Press enter to create new item"
 msgstr "לחץ על Enter כדי ליצור פריט חדש"
 
@@ -2725,12 +2726,11 @@ msgstr "מנע יצירת גיבויים של מסדי נתונים ואלבומ
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "מנע מאפליקציות אחרות לגשת ל-PhotoPrism ככונן רשת משותף."
 
-#: src/component/photo/batch-edit.vue:630
-#: src/component/photo/batch-edit.vue:650 src/component/photo/edit/files.vue:30
+#: src/component/photo/edit/files.vue:30
 msgid "Preview"
 msgstr "תצוגה מקדימה"
 
-#: src/page/settings/advanced.vue:222
+#: src/page/settings/advanced.vue:218
 msgid "Preview Images"
 msgstr "תצוגה מקדימה של תמונות"
 
@@ -2761,7 +2761,7 @@ msgstr "ראשי"
 #: src/component/navigation.vue:226 src/component/navigation.vue:233
 #: src/component/photo/batch-edit.vue:1491
 #: src/component/photo/edit/info.vue:139 src/component/photo/edit/info.vue:140
-#: src/page/settings/general.vue:146
+#: src/page/settings/general.vue:140
 msgid "Private"
 msgstr "פרטי"
 
@@ -2787,7 +2787,7 @@ msgstr "מסנן איכות"
 msgid "Quality Score"
 msgstr "ציון איכות"
 
-#: src/page/discover.vue:16 src/page/discover.vue:17 src/page/discover.vue:25
+#: src/page/discover.vue:16 src/page/discover.vue:17 src/page/discover.vue:24
 msgid "Random"
 msgstr "אקראי"
 
@@ -2831,11 +2831,7 @@ msgstr "נערך לאחרונה"
 msgid "Recognition starts after indexing has been completed."
 msgstr "ההכרה מתחילה לאחר השלמת האינדקס."
 
-#: src/page/settings/general.vue:88
-msgid "Recognize faces so people can be assigned and found."
-msgstr "מזהה פרצופים כך שאפשר למצוא אנשים ספציפיים."
-
-#: src/page/people.vue:61
+#: src/page/people.vue:60
 msgid "Recognized"
 msgstr "מוּכָּר"
 
@@ -2876,7 +2872,7 @@ msgid "Reload"
 msgstr "טען מחדש"
 
 #: src/component/navigation.vue:1089 src/component/update.vue:62
-#: src/page/settings/general.vue:521
+#: src/page/settings/general.vue:511
 msgid "Reloading…"
 msgstr "טוען מחדש…"
 
@@ -2896,11 +2892,11 @@ msgstr "הסרה נכשלה: אלבום לא ידוע"
 msgid "Remove from Album"
 msgstr "הסר מהאלבום"
 
-#: src/component/input/chip-selector.vue:183
+#: src/component/input/chip-selector.vue:184
 msgid "Remove from all"
 msgstr "הסר מהכל"
 
-#: src/component/input/chip-selector.vue:183
+#: src/component/input/chip-selector.vue:184
 msgid "Remove from all selected photos"
 msgstr "הסר מכל התמונות שנבחרו"
 
@@ -2937,7 +2933,7 @@ msgid "Resolution"
 msgstr "רזולוציה"
 
 #: src/page/connect.vue:74 src/page/connect.vue:83 src/page/connect.vue:76
-#: src/page/connect.vue:85 src/page/settings/advanced.vue:460
+#: src/page/connect.vue:85 src/page/settings/advanced.vue:456
 msgid "Restart"
 msgstr "איתחול"
 
@@ -3064,11 +3060,7 @@ msgstr "טווחים"
 msgid "Search"
 msgstr "חיפוש"
 
-#: src/page/settings/general.vue:358
-msgid "Search and display photos on a map."
-msgstr "חפש והצג תמונות על המפה."
-
-#: src/page/discover.vue:12 src/page/discover.vue:13 src/page/discover.vue:21
+#: src/page/discover.vue:12 src/page/discover.vue:13 src/page/discover.vue:20
 msgid "Season"
 msgstr "עונה"
 
@@ -3097,7 +3089,7 @@ msgid "Select dates"
 msgstr "בחר תאריכים"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:65
+#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:58
 msgid "Select or create albums"
 msgstr "בחירה או יצירה של אלבומים"
 
@@ -3105,7 +3097,7 @@ msgstr "בחירה או יצירה של אלבומים"
 msgid "Select or create labels"
 msgstr "בחר או צור תוויות"
 
-#: src/component/upload/dialog.vue:48
+#: src/component/upload/dialog.vue:41
 msgid "Select the files to upload…"
 msgstr "בחר את הקבצים להעלאה…"
 
@@ -3147,7 +3139,7 @@ msgid "Service URL"
 msgstr "נתיב השרות"
 
 #: src/locales.js:359 src/page/settings.vue:99
-#: src/page/settings/general.vue:282
+#: src/page/settings/general.vue:245
 msgid "Services"
 msgstr "שירותים"
 
@@ -3198,17 +3190,13 @@ msgid "Severity"
 msgstr "חוּמרָה"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
-#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:208
+#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:230
 msgid "Share"
 msgstr "שתף"
 
 #: src/component/share/dialog.vue:14
 msgid "Share %{s}"
 msgstr "שתף %{s}"
-
-#: src/page/settings/general.vue:283
-msgid "Share your pictures with other apps and services."
-msgstr "שתף את התמונות שלך עם אפליקציות ושירותים אחרים."
 
 #: src/page/people/new.vue:70 src/page/people/recognized.vue:127
 msgid "Show"
@@ -3234,9 +3222,33 @@ msgstr "הראה את המוסתר"
 msgid "Show Important Only"
 msgstr "הצג רק דברים חשובים"
 
-#: src/page/settings/general.vue:328
-msgid "Show server logs in Library."
-msgstr "הצג יומני שרת בספרייה."
+#: src/page/settings/general.vue:320
+msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
+msgstr "הצג יומנים בממשק האינטרנט כדי לפקח על הפעילות ולפתור בעיות."
+
+#: src/page/settings/general.vue:112
+msgid "Show smart albums that group pictures by occasion, trip, or location."
+msgstr "הצג אלבומים חכמים המקבצים תמונות לפי אירוע, טיול או מיקום."
+
+#: src/page/settings/general.vue:335
+msgid "Show the Account page so users can manage their profile and security settings."
+msgstr "הצג את דף החשבון כדי שהמשתמשים יוכלו לנהל את הפרופיל וההגדרות האבטחה שלהם."
+
+#: src/page/settings/general.vue:97
+msgid "Show the Calendar view to browse the library by year and month."
+msgstr "הצג את תצוגת לוח השנה כדי לעיין בספרייה לפי שנה וחודש."
+
+#: src/page/settings/general.vue:127
+msgid "Show the Labels section to view and manage AI-generated labels."
+msgstr "הצג את הקטע 'תוויות' כדי להציג ולנהל תוויות שנוצרו על ידי בינה מלאכותית."
+
+#: src/page/settings/general.vue:290
+msgid "Show the Library section to index, manage, and monitor the media library."
+msgstr "הצג את הקטע 'ספרייה' כדי לאנדקס, לנהל ולפקח על ספריית המדיה."
+
+#: src/page/settings/general.vue:350
+msgid "Show the Places view with interactive maps so you can browse photos by location."
+msgstr "הצג את תצוגת המקומות עם מפות אינטראקטיביות כדי שתוכל לדפדף בתמונות לפי מיקום."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"
@@ -3246,7 +3258,7 @@ msgstr "הצג כותרות"
 msgid "Sidecar"
 msgstr "חזית רכב"
 
-#: src/page/settings/advanced.vue:209
+#: src/page/settings/advanced.vue:205
 msgid "Sidecar Files"
 msgstr "קבצי Sidecar"
 
@@ -3256,7 +3268,7 @@ msgstr "קבצי Sidecar"
 msgid "Sign in"
 msgstr "התחבר"
 
-#: src/page/discover.vue:17 src/page/discover.vue:8 src/page/discover.vue:9
+#: src/page/discover.vue:16 src/page/discover.vue:8 src/page/discover.vue:9
 msgid "Similar"
 msgstr "דומה"
 
@@ -3370,11 +3382,11 @@ msgstr "איחודים"
 msgid "Start"
 msgstr "התחל"
 
-#: src/page/settings/general.vue:67
+#: src/page/settings/general.vue:61
 msgid "Start Page"
 msgstr "דף התחלה"
 
-#: src/page/settings/advanced.vue:244
+#: src/page/settings/advanced.vue:240
 msgid "Static Size Limit: %{n}px"
 msgstr "מגבלת גודל סטטי במטמון: %{n} פיקסלים"
 
@@ -3448,10 +3460,6 @@ msgstr "נלקח"
 msgid "Teal"
 msgstr "ירוק כחלחל"
 
-#: src/page/settings/advanced.vue:150
-msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow נדרש לסיווג תמונות, זיהוי פנים וזיהוי תוכן לא בטוח."
-
 #: src/options/options.js:322
 msgid "Terrain"
 msgstr "פְּנֵי הַשֵׁטַח"
@@ -3480,7 +3488,7 @@ msgstr "האינדקס מכיל כרגע %{n} קבצים מוסתרים."
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "ייתכן שהפורמט שלהם לא נתמך, עדיין לא הומרו ל-JPEG או שיש כפילויות."
 
-#: src/locales.js:324 src/page/settings/general.vue:24
+#: src/locales.js:324 src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "ערכת נושא"
 
@@ -3508,7 +3516,7 @@ msgid "Time UTC"
 msgstr "זמן UTC"
 
 #: src/component/photo/batch-edit.vue:295
-#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:53
+#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "אזור זמן"
 
@@ -3560,7 +3568,7 @@ msgstr "החלף תצוגה"
 msgid "Token"
 msgstr "טוקן"
 
-#: src/component/upload/dialog.vue:359
+#: src/component/upload/dialog.vue:342
 msgid "Too many files selected"
 msgstr "נבחרו יותר מדי קבצים"
 
@@ -3692,18 +3700,18 @@ msgstr "שדרג עכשיו"
 #: src/component/photo/toolbar.vue:475 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/service/upload.vue:70
-#: src/component/upload/dialog.vue:190 src/page/albums.vue:556
+#: src/component/upload/dialog.vue:173 src/page/albums.vue:556
 #: src/page/labels.vue:351 src/page/library/import.vue:69
-#: src/page/library/import.vue:75 src/page/settings/general.vue:163
+#: src/page/library/import.vue:75 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:184
 msgid "Upload"
 msgstr "העלה"
 
-#: src/component/upload/dialog.vue:42
+#: src/component/upload/dialog.vue:36
 msgid "Upload complete. Indexing…"
 msgstr "העלאה הושלמה, מאנדקס…"
 
-#: src/component/upload/dialog.vue:38 src/component/upload/dialog.vue:443
+#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
 msgid "Upload failed"
 msgstr "העלאה נכשלה"
 
@@ -3716,16 +3724,12 @@ msgstr "העלה קבצים מקומיים"
 msgid "Upload Path"
 msgstr "נתיב העלאה"
 
-#: src/page/settings/general.vue:209
-msgid "Upload to WebDAV and share links with friends."
-msgstr "העלה ל- WebDAV ושתף קישורים עם חברים."
-
-#: src/component/upload/dialog.vue:40
+#: src/component/upload/dialog.vue:34
 msgid "Uploading %{n} of %{t}…"
 msgstr "מעלה %{n} מתוך %{t}…"
 
-#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:395
+#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
+#: src/component/upload/dialog.vue:378
 msgid "Uploading photos…"
 msgstr "מעלה תמונות…"
 
@@ -3733,11 +3737,11 @@ msgstr "מעלה תמונות…"
 msgid "Uploading…"
 msgstr "מעלה..."
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:98
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "העלאות שעשויות להכיל תמונות כאלה יידחו אוטומטית."
 
-#: src/page/settings/advanced.vue:398
+#: src/page/settings/advanced.vue:394
 msgid "Use Presets"
 msgstr "השתמש בהגדרות קבועות מראש"
 
@@ -3761,7 +3765,7 @@ msgstr "משתמש"
 msgid "User Guide"
 msgstr "מדריך למשתמש"
 
-#: src/page/settings/general.vue:12
+#: src/page/settings/general.vue:6
 msgid "User Interface"
 msgstr "ממשק משתמש"
 
@@ -3950,7 +3954,7 @@ msgstr "ניתן להוריד רק תווית אחת"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "ניתן לחפש מיקום או להזיז את הסמן על המפה כדי לשנות את המיקום:"
 
-#: src/component/upload/dialog.vue:100
+#: src/component/upload/dialog.vue:93
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "אתה יכול להעלות עד %{n} קבצים למטרות בדיקה."
 
@@ -3999,7 +4003,7 @@ msgstr "תוֹכֶן"
 #: src/component/navigation.vue:128 src/component/navigation.vue:152
 #: src/component/navigation.vue:158 src/component/navigation.vue:173
 #: src/component/navigation.vue:188 src/component/navigation.vue:240
-#: src/component/navigation.vue:246 src/page/settings/general.vue:253
+#: src/component/navigation.vue:246 src/page/settings/general.vue:260
 msgctxt "Noun"
 msgid "Archive"
 msgstr "ארכיון"
@@ -4016,6 +4020,69 @@ msgstr "כותרת"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "ארכיון"
+
+#~ msgid "Add files to your library via Web Upload."
+#~ msgstr "הוסף קבצים לספריה באמצעות העלאה באתר."
+
+#~ msgid "Browse and edit image classification labels."
+#~ msgstr "צפה וערוך תוויות סיווג תמונות."
+
+#~ msgid "Browse and share your pictures organized into monthly albums."
+#~ msgstr "דפדף ושתף את התמונות שלך מאורגנות באלבומים חודשיים."
+
+#~ msgid "Browse indexed files and folders in Library."
+#~ msgstr "צפה בקבצים ותיקיות שנוספו לאינדקס בספרייה."
+
+#~ msgid "Change personal profile and security settings."
+#~ msgstr "שנה את הפרופיל האישי ואת הגדרות האבטחה."
+
+#~ msgid "Change photo titles, locations, and other metadata."
+#~ msgstr "שנה כותרות תמונות, מיקומים ומטא נתונים אחרים."
+
+#~ msgid "Download single files and zip archives."
+#~ msgstr "הורד קבצים בודדים וארכיוני zip."
+
+#~ msgid "Edit the metadata, labels, and albums of multiple pictures at once."
+#~ msgstr "ערוך את המטא-נתונים, התוויות והאלבומים של מספר תמונות בבת אחת."
+
+#~ msgid "Exclude content marked as private from search results, shared albums, labels, and places."
+#~ msgstr "אל תכלול תוכן המסומן כפרטי מתוצאות חיפוש, אלבומים משותפים, תוויות ומקומות."
+
+#~ msgid "Generate albums of special moments, journeys, and places."
+#~ msgstr "יוצר אוטומטית אלבומים של רגעים מיוחדים, טיולים ומקומות."
+
+#~ msgid "Hide photos that have been moved to archive."
+#~ msgstr "תמונות מוסתרות שהועברו לארכיון."
+
+#~ msgid "Imported files will be sorted by date and given a unique name."
+#~ msgstr "קבצים מיובאים ימוינו לפי תאריך ויקבלו שם ייחודי."
+
+#~ msgid "Index and import files through the user interface."
+#~ msgstr "אינדקס ויבוא קבצים דרך ממשק המשתמש."
+
+#~ msgid "Permanently remove files to free up storage."
+#~ msgstr "מחק קבצים לצמיתות בכדי לשחרר נפח אחסון"
+
+#~ msgid "Recognize faces so people can be assigned and found."
+#~ msgstr "מזהה פרצופים כך שאפשר למצוא אנשים ספציפיים."
+
+#~ msgid "Search and display photos on a map."
+#~ msgstr "חפש והצג תמונות על המפה."
+
+#~ msgid "Share your pictures with other apps and services."
+#~ msgstr "שתף את התמונות שלך עם אפליקציות ושירותים אחרים."
+
+#~ msgid "Show server logs in Library."
+#~ msgstr "הצג יומני שרת בספרייה."
+
+#~ msgid "Upload to WebDAV and share links with friends."
+#~ msgstr "העלה ל- WebDAV ושתף קישורים עם חברים."
+
+#~ msgid "Disable TensorFlow"
+#~ msgstr "השבת את TensorFlow"
+
+#~ msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+#~ msgstr "TensorFlow נדרש לסיווג תמונות, זיהוי פנים וזיהוי תוכן לא בטוח."
 
 #~ msgid "No server connection"
 #~ msgstr "אין חיבור לשרת"

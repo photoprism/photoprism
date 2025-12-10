@@ -17,7 +17,7 @@ func ConfigFilePath(configPath, baseName, defaultExt string) string {
 		return ""
 	}
 
-	// Search file in current directory if configPath is emtpy.
+	// Search file in current directory if configPath is empty.
 	if configPath == "" {
 		if dir, err := os.Getwd(); err == nil && dir != "" {
 			configPath = dir

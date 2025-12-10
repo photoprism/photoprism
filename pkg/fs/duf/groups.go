@@ -5,11 +5,14 @@ import (
 )
 
 var (
+	// nolint:unused // kept for potential future grouping logic extensions
 	groups = []string{LocalDevice, NetworkDevice, FuseDevice, SpecialDevice, LoopsDevice, BindsMount}
 )
 
+// GroupedMounts maps device types to their mounts.
 type GroupedMounts map[string][]Mount
 
+// GroupMounts groups mounts by device type, applying the given filters.
 func GroupMounts(m []Mount, filters FilterOptions) GroupedMounts {
 	deviceMounts := make(GroupedMounts)
 	hasOnlyDevices := len(filters.OnlyDevices) != 0

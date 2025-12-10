@@ -134,10 +134,6 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 		}
 
-		if err := entity.AddUser(frm); err != nil {
-			return err
-		}
-
-		return nil
+		return entity.AddUser(frm)
 	})
 }

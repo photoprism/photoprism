@@ -29,42 +29,46 @@ func (f OAuthCreateToken) Validate() error {
 	switch f.GrantType {
 	case authn.GrantClientCredentials, authn.GrantUndefined:
 		// Validate client id.
-		if f.ClientID == "" {
+		switch {
+		case f.ClientID == "":
 			return authn.ErrClientIDRequired
-		} else if rnd.InvalidUID(f.ClientID, 'c') {
+		case rnd.InvalidUID(f.ClientID, 'c'):
 			return authn.ErrInvalidCredentials
 		}
 
 		// Validate client secret.
-		if f.ClientSecret == "" {
+		switch {
+		case f.ClientSecret == "":
 			return authn.ErrClientSecretRequired
-		} else if !rnd.IsAlnum(f.ClientSecret) {
+		case !rnd.IsAlnum(f.ClientSecret):
 			return authn.ErrInvalidCredentials
 		}
 	case authn.GrantSession:
 		// Validate request credentials.
-		if f.Username == "" {
+		switch {
+		case f.Username == "":
 			return authn.ErrUsernameRequired
-		} else if len(f.Username) > txt.ClipUsername {
+		case len(f.Username) > txt.ClipUsername:
 			return authn.ErrInvalidCredentials
-		} else if f.ClientName == "" {
+		case f.ClientName == "":
 			return authn.ErrNameRequired
-		} else if f.Scope == "" {
+		case f.Scope == "":
 			return authn.ErrScopeRequired
 		}
 	case authn.GrantPassword:
 		// Validate request credentials.
-		if f.Username == "" {
+		switch {
+		case f.Username == "":
 			return authn.ErrUsernameRequired
-		} else if len(f.Username) > txt.ClipUsername {
+		case len(f.Username) > txt.ClipUsername:
 			return authn.ErrInvalidCredentials
-		} else if f.Password == "" {
+		case f.Password == "":
 			return authn.ErrPasswordRequired
-		} else if len(f.Password) > txt.ClipPassword {
+		case len(f.Password) > txt.ClipPassword:
 			return authn.ErrInvalidCredentials
-		} else if f.ClientName == "" {
+		case f.ClientName == "":
 			return authn.ErrNameRequired
-		} else if f.Scope == "" {
+		case f.Scope == "":
 			return authn.ErrScopeRequired
 		}
 	default:

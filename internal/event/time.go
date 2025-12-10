@@ -2,6 +2,7 @@ package event
 
 import "time"
 
+// Day represents a 24-hour duration.
 const Day = time.Hour * 24
 
 // TimeStamp returns the current timestamp in UTC rounded to seconds.

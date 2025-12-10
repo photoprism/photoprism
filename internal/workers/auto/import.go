@@ -43,7 +43,7 @@ func mustImport(delay time.Duration) bool {
 	importMutex.Lock()
 	defer importMutex.Unlock()
 
-	return !autoImport.IsZero() && autoImport.Sub(time.Now()) < -1*delay && !mutex.IndexWorker.Running()
+	return !autoImport.IsZero() && time.Until(autoImport) < -1*delay && !mutex.IndexWorker.Running()
 }
 
 // Import starts importing originals e.g. after WebDAV uploads.

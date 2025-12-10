@@ -105,15 +105,16 @@ func (c *Config) FFmpegPreset() string {
 
 // FFmpegDevice returns the ffmpeg device path for supported hardware encoders (optional).
 func (c *Config) FFmpegDevice() string {
-	if c.options.FFmpegDevice == "" {
+	switch {
+	case c.options.FFmpegDevice == "":
 		return ""
-	} else if txt.IsUInt(c.options.FFmpegDevice) {
+	case txt.IsUInt(c.options.FFmpegDevice):
 		return c.options.FFmpegDevice
-	} else if fs.DeviceExists(c.options.FFmpegDevice) {
+	case fs.DeviceExists(c.options.FFmpegDevice):
 		return c.options.FFmpegDevice
+	default:
+		return ""
 	}
-
-	return ""
 }
 
 // FFmpegMapVideo returns the video streams to be transcoded as string.
@@ -140,13 +141,14 @@ func (c *Config) FFmpegOptions(encoder encode.Encoder, bitrate string) (encode.O
 	opt := encode.NewVideoOptions(c.FFmpegBin(), encoder, c.FFmpegSize(), c.FFmpegQuality(), c.FFmpegPreset(), c.FFmpegDevice(), c.FFmpegMapVideo(), c.FFmpegMapAudio())
 
 	// Check options and return error if invalid.
-	if opt.Bin == "" {
+	switch {
+	case opt.Bin == "":
 		return opt, fmt.Errorf("ffmpeg is not installed")
-	} else if c.DisableFFmpeg() {
+	case c.DisableFFmpeg():
 		return opt, fmt.Errorf("ffmpeg is disabled")
-	} else if bitrate == "" {
+	case bitrate == "":
 		return opt, fmt.Errorf("bitrate must not be empty")
-	} else if encoder.String() == "" {
+	case encoder.String() == "":
 		return opt, fmt.Errorf("encoder must not be empty")
 	}
 

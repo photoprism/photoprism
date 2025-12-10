@@ -114,7 +114,7 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		size, _ := thumb.Sizes[thumb.Tile500]
+		size := thumb.Sizes[thumb.Tile500]
 
 		images := make([]image.Image, 0, len(p))
 
@@ -147,6 +147,11 @@ func SharePreview(router *gin.RouterGroup) {
 
 		// Create album preview from thumbnail images.
 		preview, err := frame.Collage(frame.Polaroid, images)
+		if err != nil {
+			log.Warnf("preview collage: %v", err)
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
 
 		// Downsize from 1600x900 to 1200x675.
 		preview = imaging.Resize(preview, 1200, 0, imaging.Lanczos)

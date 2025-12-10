@@ -14,7 +14,7 @@ import (
 	gc "github.com/patrickmn/go-cache"
 	"github.com/urfave/cli/v2"
 
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -50,7 +50,7 @@ func testDataPath(assetsPath string) string {
 
 // PkgNameRegexp normalizes database file names by stripping unsupported
 // characters from the Go package identifier supplied by tests.
-var PkgNameRegexp = regexp.MustCompile("[^a-zA-Z\\-_]+")
+var PkgNameRegexp = regexp.MustCompile(`[^a-zA-Z\-_]+`)
 
 // NewTestOptions builds fully-populated Options suited for backend tests. It
 // creates an isolated storage directory under storage/testdata (or the
@@ -329,17 +329,17 @@ func NewTestConfig(dbName string) *Config {
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale(), c.DefaultTimezone().String())
 
 	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
-		log.Fatalf("config: %s", err.Error())
+		log.Panicf("config: %s", err.Error())
 	}
 
 	// Save settings next to the test config path, reusing any existing
 	// `.yaml`/`.yml` variant so the tests mirror production behavior.
 	if err := s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
-		log.Fatalf("config: %s", err.Error())
+		log.Panicf("config: %s", err.Error())
 	}
 
 	if err := c.Init(); err != nil {
-		log.Fatalf("config: %s", err.Error())
+		log.Panicf("config: %s", err.Error())
 	}
 
 	if err := c.InitializeTestData(); err != nil {

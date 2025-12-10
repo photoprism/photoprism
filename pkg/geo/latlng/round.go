@@ -2,6 +2,7 @@ package latlng
 
 import "math"
 
+// RoundDecimals defines the precision used when rounding coordinates.
 var RoundDecimals = float64(10000000)
 
 // Round rounds the given coordinate to six decimal places.

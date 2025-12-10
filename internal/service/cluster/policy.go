@@ -33,7 +33,7 @@ func init() {
 	applyPolicyEnv()
 }
 
-// applyPolicyEnv allows advanced users to fine-tune bootstrap behaviour via environment
+// applyPolicyEnv allows advanced users to fine-tune bootstrap behavior via environment
 // variables without exposing additional user-facing configuration options.
 func applyPolicyEnv() {
 	if v := os.Getenv(clean.EnvVar("cluster-bootstrap-auto-join-enabled")); v != "" {

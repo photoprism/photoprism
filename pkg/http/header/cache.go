@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	// The CacheControl request and response header field contains directives (instructions)
-	// that control caching in browsers and shared caches (e.g. proxies, CDNs).
+	// CacheControl request and response header field contains directives for caching.
 	// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
 	CacheControl = "Cache-Control"
 

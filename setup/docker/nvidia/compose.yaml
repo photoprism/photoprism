@@ -95,10 +95,12 @@ services:
       PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB database password, must be the same as MARIADB_PASSWORD
       ## Run/install on first startup, see https://github.com/photoprism/photoprism/blob/develop/scripts/dist/Makefile:
       PHOTOPRISM_INIT: "https tensorflow-gpu yt-dlp" # common options: update https tensorflow tensorflow-gpu intel gpu davfs yt-dlp
-      ## Computer Vision API (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
+      ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
       PHOTOPRISM_VISION_API: "false"                 # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
       PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
+      OLLAMA_BASE_URL: "http://ollama:11434"         # use "https://ollama.com" for Ollama Cloud
+      OLLAMA_API_KEY: ""                             # API key required to access Ollama (optional)
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"            # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)

@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// Downloads groups files to sync by their directory/prefix.
 type Downloads map[string][]entity.FileSync
 
 // downloadPath returns a temporary download path.

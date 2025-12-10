@@ -40,22 +40,11 @@
         }"
       >
         <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
-        <div
-          v-show="video.controls && controlsShown !== 0"
-          ref="controls"
-          tabindex="-1"
-          class="p-lightbox__controls"
-          @click.stop.prevent
-        >
+        <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
             <v-icon v-else-if="video.seeking || video.waiting" icon="mdi-loading" class="animate-loading"></v-icon>
-            <v-icon
-              v-else-if="video.playing"
-              icon="mdi-pause"
-              class="clickable"
-              @pointerdown.stop.prevent="toggleVideo"
-            ></v-icon>
+            <v-icon v-else-if="video.playing" icon="mdi-pause" class="clickable" @pointerdown.stop.prevent="toggleVideo"></v-icon>
             <v-icon v-else icon="mdi-play" class="clickable" @pointerdown.stop.prevent="toggleVideo"></v-icon>
           </div>
           <div class="video-control video-control--time text-body-2">
@@ -80,19 +69,8 @@
             {{ $util.formatRemainingSeconds(video.time, video.duration) }}
           </div>
           <div v-if="featExperimental && video.castable" class="video-control video-control--cast">
-            <v-icon
-              v-if="video.casting"
-              icon="mdi-cast-connected"
-              class="clickable"
-              @pointerdown.stop.prevent="toggleVideoRemote"
-            ></v-icon>
-            <v-icon
-              v-else
-              icon="mdi-cast"
-              :disabled="video.remote === 'connecting'"
-              class="clickable"
-              @pointerdown.stop.prevent="toggleVideoRemote"
-            ></v-icon>
+            <v-icon v-if="video.casting" icon="mdi-cast-connected" class="clickable" @pointerdown.stop.prevent="toggleVideoRemote"></v-icon>
+            <v-icon v-else icon="mdi-cast" :disabled="video.remote === 'connecting'" class="clickable" @pointerdown.stop.prevent="toggleVideoRemote"></v-icon>
           </div>
         </div>
       </div>
@@ -122,6 +100,7 @@ import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
 import * as media from "common/media";
+import * as contexts from "options/contexts";
 
 const VIDEO_EVENT_TYPES = [
   "loadstart",
@@ -189,7 +168,7 @@ export default {
       selection: this.$clipboard.selection,
       config: this.$config.values,
       collection: null,
-      context: "",
+      context: contexts.Default,
       model: new Thumb(), // Current slide.
       models: [], // Slide models.
       index: 0, // Current slide index in models.
@@ -333,11 +312,7 @@ export default {
       this.$emit("leave");
     },
     focusContent(ev) {
-      if (
-        this.$refs.content &&
-        this.$refs.content instanceof HTMLElement &&
-        document.activeElement !== this.$refs.content
-      ) {
+      if (this.$refs.content && this.$refs.content instanceof HTMLElement && document.activeElement !== this.$refs.content) {
         this.$refs.content.focus();
 
         if (this.debug && ev) {
@@ -470,22 +445,12 @@ export default {
           return Promise.reject();
         }
 
-        const targetIndex = this.normalizeIndex(
-          typeof ctx.index === "number" ? ctx.index : typeof index === "number" ? index : 0,
-          ctx.models.length
-        );
+        const targetIndex = this.normalizeIndex(typeof ctx.index === "number" ? ctx.index : typeof index === "number" ? index : 0, ctx.models.length);
 
         return this.showThumbs(ctx.models, targetIndex, ctx);
       }
 
-      if (
-        !view ||
-        view.loading ||
-        !view.listen ||
-        view.lightbox?.loading ||
-        !Array.isArray(view.results) ||
-        !view.results[index]
-      ) {
+      if (!view || view.loading || !view.listen || view.lightbox?.loading || !Array.isArray(view.results) || !view.results[index]) {
         return Promise.reject();
       }
 
@@ -617,9 +582,7 @@ export default {
          */
 
         // Check the duration so that short videos can be looped, unless a slideshow is playing.
-        const isShort = model?.Duration
-          ? model.Duration > 0 && model.Duration <= this.shortVideoDuration * 1000000000
-          : false;
+        const isShort = model?.Duration ? model.Duration > 0 && model.Duration <= this.shortVideoDuration * 1000000000 : false;
 
         // Set the slide data needed to render and play the video.
         const video = {
@@ -749,12 +712,7 @@ export default {
       });
 
       // Create and append video source elements, depending on file format support.
-      if (
-        format !== media.FormatAvc &&
-        model?.Mime &&
-        model.Mime !== media.ContentTypeMp4AvcMain &&
-        video.canPlayType(model.Mime)
-      ) {
+      if (format !== media.FormatAvc && model?.Mime && model.Mime !== media.ContentTypeMp4AvcMain && video.canPlayType(model.Mime)) {
         const nativeSource = document.createElement("source");
         nativeSource.type = model.Mime;
         nativeSource.src = this.$util.videoFormatUrl(model.Hash, format);
@@ -781,9 +739,7 @@ export default {
       if (this.featExperimental && video.remote && video.remote instanceof RemotePlayback) {
         if (!this.video.castable) {
           const cancel = () => {
-            video.remote
-              .cancelWatchAvailability?.(this.videoAvailabilityListener)
-              .catch(this.trace ? this.log : () => {});
+            video.remote.cancelWatchAvailability?.(this.videoAvailabilityListener).catch(this.trace ? this.log : () => {});
           };
 
           ctrl.signal.addEventListener("abort", cancel, { once: true });
@@ -876,8 +832,7 @@ export default {
         this.resetVideo();
       }
 
-      let isPlaying =
-        video.readyState && !video.paused && !video.ended && !video.waiting && (!video.error || video.error.code === 0);
+      let isPlaying = video.readyState && !video.paused && !video.ended && !video.waiting && (!video.error || video.error.code === 0);
 
       if (ev && ev.type) {
         switch (ev.type) {
@@ -927,20 +882,14 @@ export default {
       this.video.src = video.src;
 
       // Loop short videos of 5 seconds or less, even if the server does not know the duration.
-      if (
-        !data.loop &&
-        video.duration &&
-        video.duration <= this.shortVideoDuration &&
-        data.model?.Type !== media.Live
-      ) {
+      if (!data.loop && video.duration && video.duration <= this.shortVideoDuration && data.model?.Type !== media.Live) {
         data.loop = true;
         video.loop = data.loop && !this.slideshow.active;
       }
 
       // Do not display video controls if a slideshow is running,
       // or the video belongs to an animation or live photo.
-      this.video.controls =
-        !this.slideshow.active && data.model?.Type !== media.Animated && data.model?.Type !== media.Live;
+      this.video.controls = !this.slideshow.active && data.model?.Type !== media.Animated && data.model?.Type !== media.Live;
 
       // Get video playback error, if any:
       // https://developer.mozilla.org/de/docs/Web/API/HTMLMediaElement/error
@@ -1418,12 +1367,7 @@ export default {
           icon: "mdi-image-album",
           text: this.$gettext("Set as Album Cover"),
           disabled: !this.model,
-          visible:
-            this.canManageAlbums &&
-            this.collection &&
-            this.collection instanceof Collection &&
-            !this.model?.Removed &&
-            !this.model?.Archived,
+          visible: this.canManageAlbums && this.collection && this.collection instanceof Collection && !this.model?.Removed && !this.model?.Archived,
           click: () => {
             this.onSetCollectionCover();
           },
@@ -1451,9 +1395,9 @@ export default {
           disabled: !this.model,
           visible:
             this.canArchive &&
-            this.context !== "hidden" &&
-            this.context !== "batch-edit" &&
-            ((this.context !== "archive" && !this.model?.Archived) || this.model?.Archived === false),
+            this.context !== contexts.Hidden &&
+            this.context !== contexts.BatchEdit &&
+            ((this.context !== contexts.Archive && !this.model?.Archived) || this.model?.Archived === false),
           click: () => {
             this.onArchive();
           },
@@ -1466,9 +1410,9 @@ export default {
           disabled: !this.model,
           visible:
             this.canArchive &&
-            this.context !== "hidden" &&
-            this.context !== "batch-edit" &&
-            (this.model?.Archived || (this.context === "archive" && this.model?.Archived !== false)),
+            this.context !== contexts.Hidden &&
+            this.context !== contexts.BatchEdit &&
+            (this.model?.Archived || (this.context === contexts.Archive && this.model?.Archived !== false)),
           click: () => {
             this.onRestore();
           },
@@ -1607,7 +1551,7 @@ export default {
     // Reset the lightbox models and index.
     resetModels() {
       this.collection = null;
-      this.context = "";
+      this.context = contexts.Default;
       this.model = new Thumb();
       this.models = [];
       this.index = 0;
@@ -1804,8 +1748,7 @@ export default {
       // Handle the click and touch events on custom content.
       if (
         ev.target instanceof HTMLMediaElement ||
-        (ev.target instanceof HTMLElement &&
-          (ev.target.classList.contains("pswp__image") || ev.target.classList.contains("pswp__play")))
+        (ev.target instanceof HTMLElement && (ev.target.classList.contains("pswp__image") || ev.target.classList.contains("pswp__play")))
       ) {
         // Always stop slideshow after user interaction with the content.
         if (this.slideshow.active) {
@@ -2028,8 +1971,8 @@ export default {
           this.toggleSelect();
           return true;
         case "KeyA":
-          if (this.canArchive && this.context !== "hidden" && this.context !== "batch-edit") {
-            if (this.model.Archived || (this.context === "archive" && this.model?.Archived !== false)) {
+          if (this.canArchive && this.context !== contexts.Hidden && this.context !== contexts.BatchEdit) {
+            if (this.model.Archived || (this.context === contexts.Archive && this.model?.Archived !== false)) {
               this.onRestore();
             } else {
               this.onArchive();
@@ -2074,10 +2017,7 @@ export default {
         return;
       }
 
-      if (
-        this.info &&
-        (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)
-      ) {
+      if (this.info && (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)) {
         return;
       }
 

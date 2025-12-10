@@ -96,6 +96,7 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Create new zip file.
 		var newZipFile *os.File
+		// #nosec G304 zip name derived from request
 		if newZipFile, err = os.Create(zipFileName); err != nil {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
@@ -124,7 +125,7 @@ func ZipCreate(router *gin.RouterGroup) {
 				alias = file.DownloadName(dlName, seq)
 			}
 
-			aliases[key] += 1
+			aliases[key]++
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {

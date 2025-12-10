@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -136,6 +137,11 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
+		if labelId < 0 {
+			AbortBadRequest(c, errors.New("invalid label id"))
+			return
+		}
+
 		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
@@ -143,13 +149,14 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		if (label.LabelSrc == classify.SrcManual || label.LabelSrc == entity.SrcBatch) && label.Uncertainty < 100 {
+		switch {
+		case (label.LabelSrc == classify.SrcManual || label.LabelSrc == entity.SrcBatch) && label.Uncertainty < 100:
 			logErr("label", entity.Db().Delete(&label).Error)
-		} else if label.LabelSrc != classify.SrcManual && label.LabelSrc != entity.SrcBatch {
+		case label.LabelSrc != classify.SrcManual && label.LabelSrc != entity.SrcBatch:
 			label.Uncertainty = 100
 			label.LabelSrc = entity.SrcManual
 			logErr("label", entity.Db().Save(&label).Error)
-		} else {
+		default:
 			logErr("label", entity.Db().Save(&label).Error)
 		}
 
@@ -209,6 +216,11 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			return
+		}
+
+		if labelId < 0 {
+			AbortBadRequest(c, errors.New("invalid label id"))
 			return
 		}
 

@@ -39,7 +39,7 @@ func mustIndex(delay time.Duration) bool {
 	indexMutex.Lock()
 	defer indexMutex.Unlock()
 
-	return !autoIndex.IsZero() && autoIndex.Sub(time.Now()) < -1*delay && !mutex.IndexWorker.Running()
+	return !autoIndex.IsZero() && time.Until(autoIndex) < -1*delay && !mutex.IndexWorker.Running()
 }
 
 // Index starts indexing originals e.g. after WebDAV uploads.

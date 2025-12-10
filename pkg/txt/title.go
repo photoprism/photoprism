@@ -14,10 +14,9 @@ func Title(s string) string {
 		return ""
 	}
 
-	blocks := strings.Split(s, "/")
-	result := make([]string, 0, len(blocks))
+	result := make([]string, 0, 4)
 
-	for _, block := range blocks {
+	for block := range strings.SplitSeq(s, "/") {
 		words := strings.Fields(block)
 
 		if len(words) == 0 {

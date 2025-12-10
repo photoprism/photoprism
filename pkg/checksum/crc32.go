@@ -5,6 +5,7 @@ import (
 	"hash/crc32"
 )
 
+// Crc32Castagnoli provides the Castagnoli polynomial table for CRC32.
 var Crc32Castagnoli = crc32.MakeTable(crc32.Castagnoli)
 
 // Crc32 returns the CRC-32 checksum of data using the crc32.IEEE polynomial.

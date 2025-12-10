@@ -84,7 +84,7 @@ func TestIsSafe(t *testing.T) {
 				assert.GreaterOrEqual(t, l.Sexy, e.Sexy)
 			}
 
-			isSafe := !(strings.Contains(basename, "porn") || strings.Contains(basename, "hentai"))
+			isSafe := !strings.Contains(basename, "porn") && !strings.Contains(basename, "hentai")
 
 			if isSafe {
 				assert.True(t, l.IsSafe())

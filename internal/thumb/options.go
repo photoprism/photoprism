@@ -4,6 +4,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// ResampleOption enumerates thumbnail resampling strategies.
 const (
 	ResampleFillCenter ResampleOption = iota
 	ResampleFillTopLeft
@@ -15,6 +16,7 @@ const (
 	ResamplePng
 )
 
+// ResampleMethods maps resample options to their string identifiers.
 var ResampleMethods = map[ResampleOption]string{
 	ResampleFillCenter:      "center",
 	ResampleFillTopLeft:     "left",

@@ -23,6 +23,6 @@ var VisionCommands = &cli.Command{
 var VisionSourcesCommand = &cli.Command{
 	Name:   "sources",
 	Usage:  "Displays supported metadata sources and their priorities",
-	Flags:  append(report.CliFlags),
+	Flags:  report.CliFlags,
 	Action: showSourcesAction,
 }

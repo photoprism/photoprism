@@ -128,7 +128,7 @@ export default defineConfig([
       "prettier/prettier": [
         "warn",
         {
-          printWidth: 120,
+          printWidth: 160,
           semi: true,
           singleQuote: false,
           bracketSpacing: true,

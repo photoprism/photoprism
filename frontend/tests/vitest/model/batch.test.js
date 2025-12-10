@@ -71,11 +71,7 @@ describe("model/batch", () => {
 
   it("should toggle and toggleAll", () => {
     const b = new Batch();
-    b.models = [
-      new Photo({ UID: "pt5y3865st5p3k5l" }),
-      new Photo({ UID: "pt5y3863oyip9a2d" }),
-      new Photo({ UID: "pt5y38631t2s9p0a" }),
-    ];
+    b.models = [new Photo({ UID: "pt5y3865st5p3k5l" }), new Photo({ UID: "pt5y3863oyip9a2d" }), new Photo({ UID: "pt5y38631t2s9p0a" })];
     b.setSelections(["pt5y3865st5p3k5l", "pt5y3863oyip9a2d", "pt5y38631t2s9p0a"]);
     expect(b.getLengthOfAllSelected()).toBe(3);
     b.toggle("pt5y3863oyip9a2d");
@@ -149,12 +145,7 @@ describe("model/batch", () => {
     const b = new Batch();
     b.models = [new Photo({ UID: "pt5y3865st5p3k5l" }), new Photo({ UID: "pt5y3863oyip9a2d" })];
 
-    b.setSelections([
-      "pt5y3865st5p3k5l",
-      "pt5y38631t2s9p0a",
-      "pt5y3863oyip9a2d",
-      "pt5y3863kb9amo1x",
-    ]);
+    b.setSelections(["pt5y3865st5p3k5l", "pt5y38631t2s9p0a", "pt5y3863oyip9a2d", "pt5y3863kb9amo1x"]);
 
     expect(b.selection).toEqual([
       { id: "pt5y3865st5p3k5l", selected: true },

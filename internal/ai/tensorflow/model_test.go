@@ -20,23 +20,24 @@ func TestTF1ModelLoad(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	input, output, err := GetInputAndOutputFromSavedModel(model)
+	_, _, err = GetInputAndOutputFromSavedModel(model)
 	if err == nil {
 		t.Fatalf("TF1 does not have signatures, but GetInput worked")
 	}
 
-	input, output, err = GuessInputAndOutput(model)
+	input, output, err := GuessInputAndOutput(model)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if input == nil {
+	switch {
+	case input == nil:
 		t.Fatal("Could not get the input")
-	} else if output == nil {
+	case output == nil:
 		t.Fatal("Could not get the output")
-	} else if input.Shape == nil {
+	case input.Shape == nil:
 		t.Fatal("Could not get the shape")
-	} else {
+	default:
 		t.Logf("Shape: %v", input.Shape)
 	}
 }
@@ -55,15 +56,15 @@ func TestTF2ModelLoad(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if input == nil {
+	switch {
+	case input == nil:
 		t.Fatal("Could not get the input")
-	} else if output == nil {
+	case output == nil:
 		t.Fatal("Could not get the output")
-	} else if input.Shape == nil {
+	case input.Shape == nil:
 		t.Fatal("Could not get the shape")
-	} else if !slices.Equal(input.Shape, DefaultPhotoInputShape()) {
-		t.Fatalf("Invalid shape calculated. Expected BHWC, got %v",
-			input.Shape)
+	case !slices.Equal(input.Shape, DefaultPhotoInputShape()):
+		t.Fatalf("Invalid shape calculated. Expected BHWC, got %v", input.Shape)
 	}
 }
 
@@ -81,16 +82,16 @@ func TestTF2ModelBCHWLoad(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if input == nil {
+	switch {
+	case input == nil:
 		t.Fatal("Could not get the input")
-	} else if output == nil {
+	case output == nil:
 		t.Fatal("Could not get the output")
-	} else if input.Shape == nil {
+	case input.Shape == nil:
 		t.Fatal("Could not get the shape")
-	} else if !slices.Equal(input.Shape, []ShapeComponent{
+	case !slices.Equal(input.Shape, []ShapeComponent{
 		ShapeBatch, ShapeColor, ShapeHeight, ShapeWidth,
-	}) {
-		t.Fatalf("Invalid shape calculated. Expected BCHW, got %v",
-			input.Shape)
+	}):
+		t.Fatalf("Invalid shape calculated. Expected BCHW, got %v", input.Shape)
 	}
 }

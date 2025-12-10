@@ -3,7 +3,7 @@ package face
 import (
 	_ "embed"
 	"fmt"
-	_ "image/jpeg"
+	_ "image/jpeg" // register JPEG decoder for pigo image decoding
 	"os"
 	"path/filepath"
 	"runtime/debug"
@@ -146,7 +146,7 @@ func (d *pigoDetector) Detect(fileName string) (faces []pigo.Detection, params p
 		d.angles = append([]float64(nil), DetectionAngles...)
 	}
 
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // fileName comes from caller; reading local images is expected
 
 	if err != nil {
 		return faces, params, err
@@ -169,11 +169,12 @@ func (d *pigoDetector) Detect(fileName string) (faces []pigo.Detection, params p
 
 	var maxSize int
 
-	if cols < 20 || rows < 20 || cols < d.minSize || rows < d.minSize {
+	switch {
+	case cols < 20 || rows < 20 || cols < d.minSize || rows < d.minSize:
 		return faces, params, fmt.Errorf("image size %dx%d is too small", cols, rows)
-	} else if cols < rows {
+	case cols < rows:
 		maxSize = cols - 4
-	} else {
+	default:
 		maxSize = rows - 4
 	}
 
@@ -370,8 +371,8 @@ func (d *pigoDetector) Faces(det []pigo.Detection, params pigo.CascadeParams, fi
 
 		// Create face.
 		f := Face{
-			Rows:      params.ImageParams.Rows,
-			Cols:      params.ImageParams.Cols,
+			Rows:      params.Rows,
+			Cols:      params.Cols,
 			Score:     int(face.Q),
 			Area:      faceCoord,
 			Eyes:      eyesCoords,

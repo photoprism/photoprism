@@ -336,20 +336,25 @@ func checkUserPasscodePassword(c *gin.Context, user *entity.User, password strin
 		}
 
 		// Check if user login credentials are valid.
-		if authUser, provider, method, authErr := entity.Auth(f, nil, c); method == authn.Method2FA && errors.Is(authErr, authn.ErrPasscodeRequired) {
+		authUser, provider, method, authErr := entity.Auth(f, nil, c)
+
+		switch {
+		case method == authn.Method2FA && errors.Is(authErr, authn.ErrPasscodeRequired):
 			return http.StatusOK, i18n.MsgVerified, nil
-		} else if authErr != nil {
+		case authErr != nil:
 			// Abort if authentication has failed otherwise.
 			return code, msg, authErr
-		} else if authUser == nil {
+		case authUser == nil:
 			// Abort if account was not found.
 			return code, msg, authn.ErrAccountNotFound
-		} else if !authUser.Equal(user) {
+		case !authUser.Equal(user):
 			// Abort if user accounts do not match.
 			return code, msg, authn.ErrUserDoesNotMatch
-		} else if !provider.SupportsPasscodeAuthentication() || method != authn.MethodDefault {
+		case !provider.SupportsPasscodeAuthentication() || method != authn.MethodDefault:
 			// Abort if e.g. an app password was provided.
 			return code, msg, authn.ErrInvalidCredentials
+		default:
+			return http.StatusOK, i18n.MsgVerified, nil
 		}
 	}
 

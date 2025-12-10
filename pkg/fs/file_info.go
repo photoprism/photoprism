@@ -1,5 +1,6 @@
 package fs
 
+// TypeMap maps file types to a representative extension string.
 type TypeMap map[Type]string
 
 // TypeInfo contains human-readable descriptions for supported file formats
