@@ -23,7 +23,7 @@ func NewReader(fileName string, offset int64) (*Reader, error) {
 	}
 
 	// Open file for reading.
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // fileName validated by caller
 
 	if err != nil {
 		return nil, err

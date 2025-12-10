@@ -11,8 +11,6 @@ import (
 
 	"github.com/karrick/godirwalk"
 
-	"github.com/photoprism/photoprism/internal/ai/classify"
-	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -49,22 +47,6 @@ func NewIndex(conf *config.Config, convert *Convert, files *Files, photos *Photo
 	}
 
 	return i
-}
-
-func (ind *Index) shouldFlagPrivate(labels classify.Labels) bool {
-	if ind == nil || ind.conf == nil || !ind.conf.DetectNSFW() {
-		return false
-	}
-
-	threshold := vision.Config.Thresholds.GetNSFW()
-
-	for _, label := range labels {
-		if label.NSFW || label.NSFWConfidence >= threshold {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (ind *Index) originalsPath() string {
@@ -262,20 +244,25 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				if found[f.FileName()].Processed() {
 					// Ignore already processed files.
 					continue
-				} else if limitErr, fileSize := f.ExceedsBytes(o.ByteLimit); fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
-					// Flag file as found but not processed.
-					found[f.FileName()] = fs.Found
-					continue
-				} else if limitErr == nil {
-					// Add to file list.
-					files = append(files, f)
-				} else if related.Main.FileName() != f.FileName() {
-					// Sidecar file is too large, ignore.
-					log.Infof("index: %s", limitErr)
 				} else {
-					// Main file is too large, skip all.
-					log.Warnf("index: %s", limitErr)
-					skip = true
+					fileSize, limitErr := f.ExceedsBytes(o.ByteLimit)
+
+					switch {
+					case fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan):
+						// Flag file as found but not processed.
+						found[f.FileName()] = fs.Found
+						continue
+					case limitErr == nil:
+						// Add to file list.
+						files = append(files, f)
+					case related.Main.FileName() != f.FileName():
+						// Sidecar file is too large, ignore.
+						log.Infof("index: %s", limitErr)
+					default:
+						// Main file is too large, skip all.
+						log.Warnf("index: %s", limitErr)
+						skip = true
+					}
 				}
 
 				found[f.FileName()] = fs.Processed

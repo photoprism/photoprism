@@ -24,9 +24,3 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package ollama
-
-import (
-	"github.com/photoprism/photoprism/internal/event"
-)
-
-var log = event.Log

@@ -192,11 +192,12 @@ func (f Client) Scope() string {
 
 // Expires returns the access token expiry time in seconds or 0 if not specified.
 func (f Client) Expires() int64 {
-	if f.AuthExpires > unix.Month {
+	switch {
+	case f.AuthExpires > unix.Month:
 		return unix.Month
-	} else if f.AuthExpires > 0 {
+	case f.AuthExpires > 0:
 		return f.AuthExpires
-	} else if f.AuthExpires < 0 {
+	case f.AuthExpires < 0:
 		return unix.Hour
 	}
 
@@ -205,11 +206,12 @@ func (f Client) Expires() int64 {
 
 // Tokens returns the access token limit or 0 if not specified.
 func (f Client) Tokens() int64 {
-	if f.AuthTokens > 2147483647 {
+	switch {
+	case f.AuthTokens > 2147483647:
 		return 2147483647
-	} else if f.AuthTokens > 0 {
+	case f.AuthTokens > 0:
 		return f.AuthTokens
-	} else if f.AuthTokens < 0 {
+	case f.AuthTokens < 0:
 		return -1
 	}
 

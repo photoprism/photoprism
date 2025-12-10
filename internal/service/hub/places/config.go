@@ -28,6 +28,11 @@ var Retries = 2
 // RetryDelay specifies the waiting time between retries.
 var RetryDelay = 100 * time.Millisecond
 
-var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca"
-var Secret = "photoprism"
+// Key is the hub places API key (overridden via environment/config in production).
+var Key = "f60f5b25d59c397989e3cd374f81cdd7710a4fca" //nolint:gosec // example/default key
+
+// Secret is the hub places API secret (overridden in production).
+var Secret = "photoprism" //nolint:gosec // example/default secret
+
+// UserAgent overrides the default HTTP User-Agent header for hub places calls.
 var UserAgent = ""

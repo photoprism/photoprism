@@ -1,12 +1,7 @@
 <template>
   <div class="p-photos p-photo-view-mosaic">
     <div v-if="photos.length === 0" class="pa-3">
-      <v-alert
-        color="surface-variant"
-        :icon="isSharedView ? 'mdi-image-off' : 'mdi-lightbulb-outline'"
-        class="no-results"
-        variant="outlined"
-      >
+      <v-alert color="surface-variant" :icon="isSharedView ? 'mdi-image-off' : 'mdi-lightbulb-outline'" class="no-results" variant="outlined">
         <div v-if="filter.order === 'edited'" class="font-weight-bold">
           {{ $gettext(`No recently edited pictures`) }}
         </div>
@@ -16,30 +11,16 @@
         <div class="mt-2">
           {{ $gettext(`Try again using other filters or keywords.`) }}
           <template v-if="!isSharedView">
-            {{
-              $gettext(
-                `In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`
-              )
-            }}
+            {{ $gettext(`In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`) }}
             <template v-if="$config.feature('review')">
-              {{
-                $gettext(
-                  `Non-photographic and low-quality images require a review before they appear in search results.`
-                )
-              }}
+              {{ $gettext(`Non-photographic and low-quality images require a review before they appear in search results.`) }}
             </template>
           </template>
         </div>
       </v-alert>
     </div>
     <div v-else class="v-row search-results photo-results mosaic-view" :class="{ 'select-results': selectMode }">
-      <div
-        v-for="(m, index) in photos"
-        :key="m.ID"
-        ref="items"
-        class="v-col-4 v-col-sm-3 v-col-md-2 v-col-lg-1"
-        :data-index="index"
-      >
+      <div v-for="(m, index) in photos" :key="m.ID" ref="items" class="v-col-4 v-col-sm-3 v-col-md-2 v-col-lg-1" :data-index="index">
         <!--
          The following div is the layout + size container. It makes the browser not
          re-layout all elements in the list when the children of one of them changes
@@ -85,21 +66,9 @@
               <i v-if="m.Type === 'raw'" class="action-raw mdi mdi-raw" :title="$gettext('RAW')" />
               <i v-else-if="m.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo /></i>
               <i v-else-if="m.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
-              <i
-                v-else-if="m.Type === 'vector'"
-                class="action-vector mdi mdi-vector-polyline"
-                :title="$gettext('Vector')"
-              ></i>
-              <i
-                v-else-if="m.Type === 'document'"
-                class="action-document mdi mdi-file-pdf-box"
-                :title="$gettext('Document')"
-              />
-              <i
-                v-else-if="m.Type === 'image' && !selectMode"
-                class="mdi mdi-camera-burst"
-                :title="$gettext('Stack')"
-              />
+              <i v-else-if="m.Type === 'vector'" class="action-vector mdi mdi-vector-polyline" :title="$gettext('Vector')"></i>
+              <i v-else-if="m.Type === 'document'" class="action-document mdi mdi-file-pdf-box" :title="$gettext('Document')" />
+              <i v-else-if="m.Type === 'image' && !selectMode" class="mdi mdi-camera-burst" :title="$gettext('Stack')" />
               <i v-else class="mdi mdi-magnify-plus-outline" :title="$gettext('View')" />
             </button>
 

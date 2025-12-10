@@ -132,10 +132,6 @@ func TestPostVisionNsfw(t *testing.T) {
 			t.Fatal(apiErr)
 		}
 
-		if apiResponse == nil {
-			t.Fatal("api response expected")
-		}
-
 		// t.Logf("error: %s", apiResponse.Err())
 
 		assert.Error(t, apiResponse.Err())

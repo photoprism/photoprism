@@ -149,8 +149,8 @@ func (m *MediaFile) GenerateThumbnails(thumbPath string, force bool) (err error)
 						msg := imgErr.Error()
 
 						// Non-repairable file error?
-						if !(strings.Contains(msg, fs.EOF.Error()) ||
-							strings.HasPrefix(msg, "invalid JPEG")) {
+						if !strings.Contains(msg, fs.EOF.Error()) &&
+							!strings.HasPrefix(msg, "invalid JPEG") {
 							log.Debugf("media: %s in %s", msg, clean.Log(m.RootRelName()))
 							return imgErr
 						}
@@ -210,6 +210,7 @@ func (m *MediaFile) ChangeOrientation(val int) (err error) {
 	}
 
 	cnf := Config()
+	// #nosec G204 -- arguments are built from validated config and file paths.
 	cmd := exec.Command(cnf.ExifToolBin(), "-overwrite_original", "-n", "-Orientation="+strconv.Itoa(val), m.FileName())
 
 	// Fetch command output.

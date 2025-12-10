@@ -25,13 +25,13 @@ Additional information can be found in our Developer Guide:
 package avatar
 
 import (
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
+	_ "image/gif"  // register gif decoder
+	_ "image/jpeg" // register jpeg decoder
+	_ "image/png"  // register png decoder
 
-	_ "golang.org/x/image/bmp"
-	_ "golang.org/x/image/tiff"
-	_ "golang.org/x/image/webp"
+	_ "golang.org/x/image/bmp"  // register bmp decoder
+	_ "golang.org/x/image/tiff" // register tiff decoder
+	_ "golang.org/x/image/webp" // register webp decoder
 
 	"github.com/photoprism/photoprism/internal/event"
 )

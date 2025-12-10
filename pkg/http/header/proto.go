@@ -1,7 +1,10 @@
 package header
 
 var (
-	ProtoHttp  = "http"
+	// ProtoHttp is the HTTP scheme.
+	ProtoHttp = "http"
+	// ProtoHttps is the HTTPS scheme.
 	ProtoHttps = "https"
-	ProtoWss   = "wss"
+	// ProtoWss is the secure WebSocket scheme.
+	ProtoWss = "wss"
 )

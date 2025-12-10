@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	_ "image/jpeg"
+	_ "image/jpeg" // register JPEG decoder for ONNX engine input
 	"math"
 	"os"
 	"path/filepath"
@@ -17,7 +17,7 @@ import (
 	onnxruntime "github.com/yalue/onnxruntime_go"
 )
 
-// ONNXOptions configures how the ONNX runtime-backed detector is initialised.
+// ONNXOptions configures how the ONNX runtime-backed detector is initialized.
 type ONNXOptions struct {
 	ModelPath      string
 	LibraryPath    string
@@ -27,6 +27,7 @@ type ONNXOptions struct {
 }
 
 const (
+	// DefaultONNXModelFilename is the bundled ONNX model name used when none is provided.
 	DefaultONNXModelFilename  = "scrfd.onnx"
 	onnxDefaultScoreThreshold = 0.50
 	onnxDefaultNMSThreshold   = 0.40
@@ -307,7 +308,7 @@ func (o *onnxEngine) Close() error {
 
 // Detect identifies faces in the provided image using the ONNX runtime session.
 func (o *onnxEngine) Detect(fileName string, findLandmarks bool, minSize int) (Faces, error) {
-	file, err := os.Open(fileName)
+	file, err := os.Open(fileName) //nolint:gosec // fileName provided by caller; reading local images is required for detection
 	if err != nil {
 		return Faces{}, err
 	}
@@ -437,9 +438,9 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 			var r, g, b float32
 			if x < newWidth && y < newHeight {
 				cr, cg, cb, _ := resized.At(x, y).RGBA()
-				r = float32(uint8(cr >> 8))
-				g = float32(uint8(cg >> 8))
-				b = float32(uint8(cb >> 8))
+				r = float32((cr >> 8) & 0xff)
+				g = float32((cg >> 8) & 0xff)
+				b = float32((cb >> 8) & 0xff)
 			}
 
 			blob[idx] = (r - onnxInputMean) / onnxInputStd

@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" // register MySQL driver
 )
 
 // ProvisionDSN specifies the admin DSN used for auto-provisioning, for example:

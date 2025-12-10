@@ -1,5 +1,6 @@
 package colors
 
+// ColorExamples contains representative hex values for each Color.
 var ColorExamples = map[Color]string{
 	Black:   "#212121",
 	Grey:    "#9E9E9E",

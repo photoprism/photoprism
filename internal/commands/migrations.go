@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
+// MigrationsStatusCommand lists migration status.
 var MigrationsStatusCommand = &cli.Command{
 	Name:      "ls",
 	Aliases:   []string{"status", "show"},
@@ -25,6 +26,7 @@ var MigrationsStatusCommand = &cli.Command{
 	Action:    migrationsStatusAction,
 }
 
+// MigrationsRunCommand runs pending migrations.
 var MigrationsRunCommand = &cli.Command{
 	Name:      "run",
 	Aliases:   []string{"execute", "migrate"},
@@ -110,15 +112,16 @@ func migrationsStatusAction(ctx *cli.Context) error {
 			finished = "-"
 		}
 
-		if m.Error != "" {
+		switch {
+		case m.Error != "":
 			info = m.Error
-		} else if m.Finished() {
+		case m.Finished():
 			info = "OK"
-		} else if m.StartedAt.IsZero() {
+		case m.StartedAt.IsZero():
 			info = "-"
-		} else if m.Repeat(false) {
+		case m.Repeat(false):
 			info = "Repeat"
-		} else {
+		default:
 			info = "Running?"
 		}
 

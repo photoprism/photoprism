@@ -47,12 +47,11 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 				return result, err
 			}
 
-			switch model.Service.RequestFormat {
-			case ApiFormatOllama:
-				apiRequest.Model, _, _ = model.Model()
-			default:
-				_, apiRequest.Model, apiRequest.Version = model.Model()
+			if apiRequest.Model == "" {
+				apiRequest.Model, _, apiRequest.Version = model.GetModel()
 			}
+
+			model.ApplyService(apiRequest)
 
 			if model.System != "" {
 				apiRequest.System = model.System

@@ -5,6 +5,8 @@ import (
 )
 
 var (
-	TimeUTC   = time.UTC
+	// TimeUTC provides the UTC location.
+	TimeUTC = time.UTC
+	// TimeLocal provides the configured local location.
 	TimeLocal = time.FixedZone(Local, 0)
 )

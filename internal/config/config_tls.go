@@ -8,7 +8,9 @@ import (
 )
 
 const (
+	// PrivateKeyExt is the default file extension for TLS private keys.
 	PrivateKeyExt = ".key"
+	// PublicCertExt is the default file extension for TLS certificates.
 	PublicCertExt = ".crt"
 )
 

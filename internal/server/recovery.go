@@ -48,6 +48,7 @@ func stack(skip int) []byte {
 		// Print this much at least.  If we cannot find the source, it won't show.
 		fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
 		if file != lastFile {
+			// #nosec G304 -- file path comes from runtime.Caller and is limited to source files.
 			data, err := os.ReadFile(file)
 			if err != nil {
 				continue
@@ -90,6 +91,6 @@ func function(pc uintptr) []byte {
 	if period := bytes.Index(name, dot); period >= 0 {
 		name = name[period+1:]
 	}
-	name = bytes.Replace(name, centerDot, dot, -1)
+	name = bytes.ReplaceAll(name, centerDot, dot)
 	return name
 }

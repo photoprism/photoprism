@@ -59,7 +59,7 @@ compose.*.yaml
 __pycache__
 venv
 .venv
-.env
+.env*
 .tmp
 .nv
 .eslintcache

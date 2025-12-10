@@ -1,5 +1,6 @@
 package video
 
+// Codec represents a video codec identifier.
 type Codec = string
 
 // Standard video Codec types, see:

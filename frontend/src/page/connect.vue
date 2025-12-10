@@ -1,11 +1,6 @@
 <template>
   <div class="p-page p-page-upgrade" tabindex="-1">
-    <v-toolbar
-      flat
-      color="secondary"
-      :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
-      class="p-page__navigation"
-    >
+    <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="p-page__navigation">
       <v-toolbar-title>
         {{ $gettext(`Membership`) }}
         <v-icon :icon="rtl ? 'mdi-chevron-left' : 'mdi-chevron-right'"></v-icon>
@@ -23,14 +18,7 @@
         </span>
       </v-toolbar-title>
 
-      <v-btn
-        icon
-        :href="links.compare"
-        target="_blank"
-        rel="noopener"
-        class="action-upgrade"
-        :title="$gettext('Learn more')"
-      >
+      <v-btn icon :href="links.compare" target="_blank" rel="noopener" class="action-upgrade" :title="$gettext('Learn more')">
         <v-icon size="26" color="surface-variant">mdi-diamond-stone</v-icon>
       </v-btn>
     </v-toolbar>
@@ -47,15 +35,7 @@
             <v-btn color="primary" :block="$vuetify.display.xs" variant="outlined" :disabled="busy" @click.stop="reset">
               {{ $gettext(`Cancel`) }}
             </v-btn>
-            <v-btn
-              color="highlight"
-              :block="$vuetify.display.xs"
-              :href="links.contact"
-              target="_blank"
-              rel="noopener"
-              variant="flat"
-              class="action-contact"
-            >
+            <v-btn color="highlight" :block="$vuetify.display.xs" :href="links.contact" target="_blank" rel="noopener" variant="flat" class="action-contact">
               {{ $gettext(`Contact Us`) }}
             </v-btn>
           </div>
@@ -121,20 +101,10 @@
 
           <v-alert color="primary" variant="outlined">
             <p class="text-body-2 text-break text-selectable">
-              <strong>{{
-                $gettext(
-                  `To upgrade, you can either enter an activation code or click "Register" to sign up on our website:`
-                )
-              }}</strong>
+              <strong>{{ $gettext(`To upgrade, you can either enter an activation code or click "Register" to sign up on our website:`) }}</strong>
             </p>
 
-            <v-text-field
-              v-model="form.token"
-              single-line
-              hide-details
-              autocomplete="off"
-              :placeholder="$gettext('Activation Code')"
-            ></v-text-field>
+            <v-text-field v-model="form.token" single-line hide-details autocomplete="off" :placeholder="$gettext('Activation Code')"></v-text-field>
 
             <div class="action-buttons">
               <v-btn
@@ -149,15 +119,7 @@
               >
                 {{ $gettext(`Manage Account`) }}
               </v-btn>
-              <v-btn
-                v-else
-                color="primary"
-                :block="$vuetify.display.xs"
-                variant="outlined"
-                :disabled="busy"
-                class="action-compare"
-                @click.stop="compare"
-              >
+              <v-btn v-else color="primary" :block="$vuetify.display.xs" variant="outlined" :disabled="busy" class="action-compare" @click.stop="compare">
                 {{ $gettext(`Compare Editions`) }}
               </v-btn>
 
@@ -189,16 +151,8 @@
           </v-alert>
 
           <div class="pt-6 text-caption text-break text-selectable">
-            {{
-              $gettext(
-                `You are welcome to contact us at membership@photoprism.app for questions regarding your membership.`
-              )
-            }}
-            {{
-              $gettext(
-                `By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.`
-              )
-            }}
+            {{ $gettext(`You are welcome to contact us at membership@photoprism.app for questions regarding your membership.`) }}
+            {{ $gettext(`By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.`) }}
           </div>
         </div>
       </v-form>

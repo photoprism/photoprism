@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"golang.org/x/mod/semver"
 
@@ -298,7 +298,7 @@ func (c *Config) DatabasePassword() string {
 	} else if fileName := FlagFilePath("DATABASE_PASSWORD"); fileName == "" {
 		// No password set, this is not an error.
 		return ""
-	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from environment variable for DB password
 		log.Warnf("config: failed to read database password from %s (%s)", fileName, err)
 		return ""
 	} else {
@@ -536,11 +536,12 @@ func (c *Config) checkDb(db *gorm.DB) error {
 
 		c.dbVersion = clean.Version(res.Value)
 
-		if c.dbVersion == "" {
+		switch {
+		case c.dbVersion == "":
 			log.Warnf("config: unknown database server version")
-		} else if !c.IsDatabaseVersion("v10.0.0") {
+		case !c.IsDatabaseVersion("v10.0.0"):
 			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
-		} else if !c.IsDatabaseVersion("v10.5.12") {
+		case !c.IsDatabaseVersion("v10.5.12"):
 			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		}
 	case SQLite3:
@@ -641,7 +642,7 @@ func (c *Config) connectDb() error {
 
 // ImportSQL imports a file to the currently configured database.
 func (c *Config) ImportSQL(filename string) {
-	contents, err := os.ReadFile(filename)
+	contents, err := os.ReadFile(filename) //nolint:gosec // import path is provided by trusted caller
 
 	if err != nil {
 		log.Error(err)

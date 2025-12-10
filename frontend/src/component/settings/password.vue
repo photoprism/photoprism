@@ -82,13 +82,7 @@
           <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
             {{ $gettext(`Cancel`) }}
           </v-btn>
-          <v-btn
-            variant="flat"
-            color="highlight"
-            class="action-confirm"
-            :disabled="isDisabled()"
-            @click.stop="onConfirm"
-          >
+          <v-btn variant="flat" color="highlight" class="action-confirm" :disabled="isDisabled()" @click.stop="onConfirm">
             {{ $gettext(`Save`) }}
           </v-btn>
         </v-card-actions>

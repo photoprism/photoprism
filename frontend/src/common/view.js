@@ -521,10 +521,7 @@ export class View {
       const scope = this.scopes.map((s) => `${s?.$options?.name} #${s?.$?.uid.toString()}`).join(" › ");
       // To make them easy to recognize, the collapsed view logs are displayed
       // in the browser console with bold white text on a purple background.
-      console.groupCollapsed(
-        `%c${scope}`,
-        "background: #502A85; color: white; padding: 3px 5px; border-radius: 8px; font-weight: bold;"
-      );
+      console.groupCollapsed(`%c${scope}`, "background: #502A85; color: white; padding: 3px 5px; border-radius: 8px; font-weight: bold;");
       console.log("data:", toRaw(c?.$data));
     }
 
@@ -744,11 +741,7 @@ export class View {
 
     ev.preventDefault();
 
-    const target =
-      (fallback && fallback.isConnected && root.contains(fallback) && fallback) ||
-      resolveFocusTarget(root) ||
-      findFocusElement(component) ||
-      root;
+    const target = (fallback && fallback.isConnected && root.contains(fallback) && fallback) || resolveFocusTarget(root) || findFocusElement(component) || root;
 
     if (!target) {
       return;
@@ -1019,10 +1012,7 @@ export class View {
 
     const current = typeof this.navigation.currentPosition === "number" ? this.navigation.currentPosition : nextPos;
 
-    if (
-      this.navigation.direction !== NavigationDirection.Back &&
-      this.navigation.direction !== NavigationDirection.Forward
-    ) {
+    if (this.navigation.direction !== NavigationDirection.Back && this.navigation.direction !== NavigationDirection.Forward) {
       if (nextPos < current) {
         this.navigation.direction = NavigationDirection.Back;
       } else if (nextPos > current) {

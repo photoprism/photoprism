@@ -86,13 +86,13 @@ func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces,
 }
 
 // ManuallyAddedFaces returns all manually added face clusters for the specified subj_uid, or all subjects if "".
-func ManuallyAddedFaces(hidden, ignored bool, subj_uid string) (result entity.Faces, err error) {
+func ManuallyAddedFaces(hidden, ignored bool, subjUid string) (result entity.Faces, err error) {
 	stmt := Db().
 		Where("face_hidden = ?", hidden).
 		Where("face_src = ?", entity.SrcManual)
 
-	if subj_uid != "" {
-		stmt = stmt.Where("subj_uid = ?", subj_uid)
+	if subjUid != "" {
+		stmt = stmt.Where("subj_uid = ?", subjUid)
 	} else {
 		stmt = stmt.Where("subj_uid <> ''")
 	}
@@ -213,7 +213,7 @@ func PurgeOrphanFaces(faceIds []string, ignored bool) (affected int, err error) 
 		} else {
 			// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360
 			log.Debugf("faces: no affected rows for purge in batch %d - %d", i, j)
-			//affected += len(ids)
+			// affected += len(ids)
 		}
 	}
 

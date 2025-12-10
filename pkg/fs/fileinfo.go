@@ -65,6 +65,7 @@ func WebFileInfo(file webdav.FileInfo, dir string) FileInfo {
 	return result
 }
 
+// FileInfos is a slice helper for bulk file info operations.
 type FileInfos []FileInfo
 
 func (infos FileInfos) Len() int      { return len(infos) }
@@ -72,6 +73,8 @@ func (infos FileInfos) Swap(i, j int) { infos[i], infos[j] = infos[j], infos[i] 
 func (infos FileInfos) Less(i, j int) bool {
 	return strings.Compare(infos[i].Abs, infos[j].Abs) == -1
 }
+
+// Abs returns absolute file paths for all file infos.
 func (infos FileInfos) Abs() (result []string) {
 	for _, info := range infos {
 		result = append(result, info.Abs)
@@ -80,6 +83,7 @@ func (infos FileInfos) Abs() (result []string) {
 	return result
 }
 
+// NewFileInfos builds FileInfos from os.FileInfo with directory prefix.
 func NewFileInfos(infos []os.FileInfo, dir string) FileInfos {
 	var result FileInfos
 

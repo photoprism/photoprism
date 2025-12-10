@@ -4,12 +4,17 @@ import (
 	"math/rand/v2"
 )
 
+// Kind identifies the type of embedding.
 type Kind int
 
 const (
+	// RegularFace represents a standard face embedding.
 	RegularFace Kind = iota + 1
+	// ChildrenFace represents a child face embedding.
 	ChildrenFace
+	// BackgroundFace represents non-face/background embeddings.
 	BackgroundFace
+	// AmbiguousFace represents embeddings that should be treated as uncertain.
 	AmbiguousFace
 )
 
@@ -20,7 +25,7 @@ func RandomDist() float64 {
 
 // RandomFloat64 adds a random distance offset to a float64.
 func RandomFloat64(f, d float64) float64 {
-	return f + (rand.Float64()-0.5)*d
+	return f + (rand.Float64()-0.5)*d //nolint:gosec // pseudo-random is sufficient for test fixtures
 }
 
 // RandomEmbeddings returns random embeddings for testing.
@@ -76,7 +81,7 @@ func RandomChildrenEmbedding() (result Embedding) {
 	}
 
 	d := 0.1 / 512.0
-	n := rand.IntN(len(Children))
+	n := rand.IntN(len(Children)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
 	e := Children[n].Embedding
 
 	for i := range result {
@@ -97,7 +102,7 @@ func RandomBackgroundEmbedding() (result Embedding) {
 	}
 
 	d := 0.1 / 512.0
-	n := rand.IntN(len(Background))
+	n := rand.IntN(len(Background)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
 	e := Background[n].Embedding
 
 	for i := range result {

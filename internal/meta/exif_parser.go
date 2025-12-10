@@ -44,11 +44,12 @@ func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []by
 			_, rawExif, err = sl.Exif()
 
 			if err != nil {
-				if !bruteForce || strings.HasPrefix(err.Error(), "no exif header") {
+				switch {
+				case !bruteForce || strings.HasPrefix(err.Error(), "no exif header"):
 					return rawExif, fmt.Errorf("found no exif header")
-				} else if strings.HasPrefix(err.Error(), "no exif data") {
+				case strings.HasPrefix(err.Error(), "no exif data"):
 					log.Debugf("metadata: failed parsing %s, starting brute-force search (parse jpeg)", logName)
-				} else {
+				default:
 					log.Infof("metadata: %s in %s, starting brute-force search (parse jpeg)", err, logName)
 				}
 			} else {

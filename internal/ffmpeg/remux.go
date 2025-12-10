@@ -131,13 +131,14 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 
 // RemuxCmd returns the FFmpeg command for transferring content from one container format to another without altering the original video or audio stream.
 func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err error) {
-	if srcName == "" {
+	switch {
+	case srcName == "":
 		return nil, fmt.Errorf("empty source filename")
-	} else if !fs.FileExistsNotEmpty(srcName) {
+	case !fs.FileExistsNotEmpty(srcName):
 		return nil, fmt.Errorf("source file is empty or missing")
-	} else if destName == "" {
+	case destName == "":
 		return nil, fmt.Errorf("empty destination filename")
-	} else if srcName == destName {
+	case srcName == destName:
 		return nil, fmt.Errorf("source and destination filenames must be different")
 	}
 
@@ -164,8 +165,7 @@ func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err 
 	}
 
 	// Append format specific "ffmpeg" command flags.
-	switch opt.Container {
-	case fs.VideoMp4:
+	if opt.Container == fs.VideoMp4 {
 		// Ensure MP4 compatibility:
 		flags = append(flags,
 			"-movflags", opt.MovFlags,
@@ -197,6 +197,7 @@ func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err 
 	// Set the destination file name as the last command flag.
 	flags = append(flags, destName)
 
+	// #nosec G204 -- filenames and flags are constructed internally and not user-controlled.
 	cmd = exec.Command(
 		opt.Bin,
 		flags...,

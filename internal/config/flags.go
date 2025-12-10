@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
@@ -116,6 +117,25 @@ var Flags = CliFlags{
 			Usage:   "preferred username `CLAIM` for new OpenID Connect users (preferred_username, name, nickname, email)",
 			Value:   authn.OidcClaimPreferredUsername,
 			EnvVars: EnvVars("OIDC_USERNAME"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "oidc-group-claim",
+			Usage:   "group claim `NAME` to read from OIDC tokens (default groups)",
+			Value:   "",
+			EnvVars: EnvVars("OIDC_GROUP_CLAIM"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringSliceFlag{
+			Name:    "oidc-group",
+			Usage:   "require membership in at least one group `ID` (repeat flag to add multiple)",
+			EnvVars: EnvVars("OIDC_GROUP"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringSliceFlag{
+			Name:    "oidc-group-role",
+			Usage:   "map `GROUP=ROLE`; repeat to add more (roles: " + acl.UserRoles.CliUsageString() + ")",
+			EnvVars: EnvVars("OIDC_GROUP_ROLE"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "oidc-webdav",

@@ -36,7 +36,7 @@ func TestAuthListCommand(t *testing.T) {
 		output, err := RunWithTestContext(AuthListCommand, []string{"ls", "--csv", "alice"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Session ID;")
 		assert.Contains(t, output, "alice;")

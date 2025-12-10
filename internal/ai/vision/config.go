@@ -16,22 +16,38 @@ import (
 )
 
 var (
-	CachePath             = ""
-	ModelsPath            = ""
-	DownloadUrl           = ""
-	ServiceApi            = false
-	ServiceUri            = ""
-	ServiceKey            = ""
-	ServiceTimeout        = 10 * time.Minute
-	ServiceMethod         = http.MethodPost
-	ServiceFileScheme     = scheme.Data
-	ServiceRequestFormat  = ApiFormatVision
+	// CachePath stores the directory used for caching downloaded vision models.
+	CachePath = ""
+	// ModelsPath stores the directory containing downloaded vision models.
+	ModelsPath = ""
+	// DownloadUrl overrides the default model download endpoint when set.
+	DownloadUrl = ""
+	// ServiceApi enables exposing vision APIs via the service layer when true.
+	ServiceApi = false
+	// ServiceUri sets the base URI for the vision service when exposed externally.
+	ServiceUri = ""
+	// ServiceKey provides an optional API key for the vision service.
+	ServiceKey = ""
+	// ServiceTimeout sets the maximum duration for service API requests.
+	ServiceTimeout = 10 * time.Minute
+	// ServiceMethod defines the HTTP verb used when calling the vision service.
+	ServiceMethod = http.MethodPost
+	// ServiceFileScheme specifies how local files are encoded when sent to the service.
+	ServiceFileScheme = scheme.Data
+	// ServiceRequestFormat sets the default payload format for service requests.
+	ServiceRequestFormat = ApiFormatVision
+	// ServiceResponseFormat sets the expected response format from the service.
 	ServiceResponseFormat = ApiFormatVision
-	DefaultResolution     = 224
-	DefaultTemperature    = 0.1
-	MaxTemperature        = 2.0
-	DefaultSrc            = entity.SrcImage
-	DetectNSFWLabels      = false
+	// DefaultResolution specifies the default square resize dimension for model inputs.
+	DefaultResolution = 224
+	// DefaultTemperature sets the sampling temperature for compatible models.
+	DefaultTemperature = 0.1
+	// MaxTemperature clamps user-supplied temperatures to a safe upper bound.
+	MaxTemperature = 2.0
+	// DefaultSrc defines the fallback source string for generated labels.
+	DefaultSrc = entity.SrcImage
+	// DetectNSFWLabels toggles NSFW label detection in vision responses.
+	DetectNSFWLabels = false
 )
 
 // Config reference the current configuration options.
@@ -65,7 +81,7 @@ func (c *ConfigValues) Load(fileName string) error {
 		return fmt.Errorf("%s not found", clean.Log(fileName))
 	}
 
-	yamlConfig, err := os.ReadFile(fileName)
+	yamlConfig, err := os.ReadFile(fileName) // #nosec G304 fileName is from validated config path
 
 	if err != nil {
 		return err
@@ -75,40 +91,13 @@ func (c *ConfigValues) Load(fileName string) error {
 		return err
 	}
 
-	// 1. Ensure that there is at least one configuration for each model type,
-	//    so that adding a copy of the default configuration to the vision.yml file
-	//    is not required. We could alternatively require a model to included in
-	//    the "vision.yml" file, but set the defaults if the "Default" flag is set
-	//    while preserving explicit Run / Disabled overrides.
-	// 2. Use the default "Thresholds" if no custom thresholds are configured.
+	// Replace default placeholders with canonical defaults while respecting
+	// explicit Run / Disabled overrides.
+	c.applyDefaultModels()
 
-	for i, model := range c.Models {
-		if !model.Default {
-			continue
-		}
-
-		runType := model.Run
-		disabled := model.Disabled
-
-		switch model.Type {
-		case ModelTypeLabels:
-			c.Models[i] = NasnetModel.Clone()
-		case ModelTypeNsfw:
-			c.Models[i] = NsfwModel.Clone()
-		case ModelTypeFace:
-			c.Models[i] = FacenetModel.Clone()
-		case ModelTypeCaption:
-			c.Models[i] = CaptionModel.Clone()
-		}
-
-		if runType != RunAuto {
-			c.Models[i].Run = runType
-		}
-
-		if disabled {
-			c.Models[i].Disabled = disabled
-		}
-	}
+	// Add missing default models so users are not required to list them in
+	// vision.yml. Custom models continue to override defaults when present.
+	c.ensureDefaultModels()
 
 	for _, model := range c.Models {
 		model.ApplyEngineDefaults()
@@ -129,6 +118,74 @@ func (c *ConfigValues) Load(fileName string) error {
 	return nil
 }
 
+// applyDefaultModels swaps entries marked as Default with the built-in
+// models while keeping user-specified Run / Disabled overrides intact.
+func (c *ConfigValues) applyDefaultModels() {
+	for i, model := range c.Models {
+		if !model.Default {
+			continue
+		}
+
+		runType := model.Run
+		disabled := model.Disabled
+
+		switch model.Type {
+		case ModelTypeLabels:
+			c.Models[i] = NasnetModel.Clone()
+		case ModelTypeNsfw:
+			c.Models[i] = NsfwModel.Clone()
+		case ModelTypeFace:
+			c.Models[i] = FacenetModel.Clone()
+		case ModelTypeCaption:
+			c.Models[i] = CaptionModel.Clone()
+		default:
+			continue
+		}
+
+		if runType != RunAuto {
+			c.Models[i].Run = runType
+		}
+
+		if disabled {
+			c.Models[i].Disabled = disabled
+		}
+	}
+}
+
+// ensureDefaultModels appends built-in default models for any types
+// that are completely missing from the configuration. Custom models (enabled
+// or disabled) block the addition for their respective types so user intent is
+// preserved.
+func (c *ConfigValues) ensureDefaultModels() {
+	for _, defaultModel := range DefaultModels {
+		if defaultModel == nil {
+			continue
+		}
+
+		if c.hasModelType(defaultModel.Type) {
+			continue
+		}
+
+		c.Models = append(c.Models, defaultModel.Clone())
+	}
+}
+
+// hasModelType reports whether any configured model (enabled or disabled)
+// matches the provided type.
+func (c *ConfigValues) hasModelType(t ModelType) bool {
+	for _, model := range c.Models {
+		if model == nil {
+			continue
+		}
+
+		if model.Type == t {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Save user settings to a file.
 func (c *ConfigValues) Save(fileName string) error {
 	if fileName == "" {
@@ -141,11 +198,7 @@ func (c *ConfigValues) Save(fileName string) error {
 		return err
 	}
 
-	if err = os.WriteFile(fileName, data, fs.ModeConfigFile); err != nil {
-		return err
-	}
-
-	return nil
+	return os.WriteFile(fileName, data, fs.ModeConfigFile)
 }
 
 // Model returns the first enabled model with the matching type.
@@ -260,18 +313,22 @@ func GetModelsPath() string {
 	return ModelsPath
 }
 
+// GetModelPath returns the absolute path of a named model file in CachePath.
 func GetModelPath(name string) string {
 	return filepath.Join(GetModelsPath(), clean.Path(clean.TypeLowerUnderscore(name)))
 }
 
+// GetNasnetModelPath returns the absolute path of the default Nasnet model.
 func GetNasnetModelPath() string {
 	return GetModelPath(NasnetModel.Name)
 }
 
+// GetFacenetModelPath returns the absolute path of the default Facenet model.
 func GetFacenetModelPath() string {
 	return GetModelPath(FacenetModel.Name)
 }
 
+// GetNsfwModelPath returns the absolute path of the default NSFW model.
 func GetNsfwModelPath() string {
 	return GetModelPath(NsfwModel.Name)
 }

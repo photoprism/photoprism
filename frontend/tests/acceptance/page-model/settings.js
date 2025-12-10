@@ -11,6 +11,7 @@ export default class Page {
     this.importCheckbox = Selector(".input-import div.v-selection-control__input");
     this.archiveCheckbox = Selector(".input-archive div.v-selection-control__input");
     this.editCheckbox = Selector(".input-edit div.v-selection-control__input");
+    this.batchCheckbox = Selector(".input-batch-edit div.v-selection-control__input");
     this.filesCheckbox = Selector(".input-files div.v-selection-control__input");
     this.momentsCheckbox = Selector(".input-moments div.v-selection-control__input");
     this.calendarCheckbox = Selector(".input-calendar div.v-selection-control__input");

@@ -11,7 +11,7 @@ func TestCientsRemoveCommand(t *testing.T) {
 		// Run command with test context.
 		output0, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
-		//t.Logf(output0)
+		// t.Logf(output0)
 		assert.NoError(t, err)
 		assert.NotContains(t, output0, "not found")
 		assert.Contains(t, output0, "client")
@@ -20,14 +20,14 @@ func TestCientsRemoveCommand(t *testing.T) {
 		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
 		// Run command with test context.
 		output2, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
-		//t.Logf(output2)
+		// t.Logf(output2)
 		assert.NoError(t, err)
 		assert.NotContains(t, output2, "not found")
 		assert.Contains(t, output2, "client")
@@ -36,7 +36,7 @@ func TestCientsRemoveCommand(t *testing.T) {
 		// Run command with test context.
 		output0, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
-		//t.Logf(output0)
+		// t.Logf(output0)
 		assert.NoError(t, err)
 		assert.NotContains(t, output0, "not found")
 		assert.Contains(t, output0, "client")

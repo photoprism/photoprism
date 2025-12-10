@@ -3,19 +3,29 @@ package thumb
 import "github.com/dustin/go-humanize/english"
 
 const (
-	MiB               = 1024 * 1024
-	GiB               = 1024 * MiB
-	DefaultCacheMem   = 128 * MiB
-	DefaultCacheSize  = 128
+	// MiB represents one mebibyte.
+	MiB = 1024 * 1024
+	// GiB represents one gibibyte.
+	GiB = 1024 * MiB
+	// DefaultCacheMem specifies the default libvips cache memory limit.
+	DefaultCacheMem = 128 * MiB
+	// DefaultCacheSize is the default number of cached operations.
+	DefaultCacheSize = 128
+	// DefaultCacheFiles is the default number of cached files.
 	DefaultCacheFiles = 16
-	DefaultWorkers    = 1
+	// DefaultWorkers is the default worker count when not specified.
+	DefaultWorkers = 1
 )
 
 var (
-	MaxCacheMem   = DefaultCacheMem
-	MaxCacheSize  = DefaultCacheSize
+	// MaxCacheMem is the maximum memory libvips may use for caching.
+	MaxCacheMem = DefaultCacheMem
+	// MaxCacheSize limits the number of cached operations.
+	MaxCacheSize = DefaultCacheSize
+	// MaxCacheFiles limits the number of cached files.
 	MaxCacheFiles = DefaultCacheFiles
-	NumWorkers    = DefaultWorkers
+	// NumWorkers defines the number of libvips worker threads.
+	NumWorkers = DefaultWorkers
 )
 
 // Init initializes the package config based on the available memory,
@@ -38,14 +48,12 @@ func Init(availableMemory uint64, maxWorkers int, imgLib string) {
 	}
 
 	// Set the number of worker threads that libvips can use.
-	if maxWorkers > 0 {
-		// Using the specified number of workers.
-		NumWorkers = maxWorkers
-	} else if maxWorkers < 0 {
-		// Using built-in default.
-		NumWorkers = 0
-	} else {
-		// Default to one worker.
+	switch {
+	case maxWorkers > 0:
+		NumWorkers = maxWorkers // explicitly configured
+	case maxWorkers < 0:
+		NumWorkers = 0 // use libvips default
+	default:
 		NumWorkers = DefaultWorkers
 	}
 

@@ -20,7 +20,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 	rows = [][]string{
 		// Authentication.
-		{"auth-mode", fmt.Sprintf("%s", c.AuthMode())},
+		{"auth-mode", c.AuthMode()},
 		{"admin-user", c.AdminUser()},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
 		{"admin-scope", c.AdminScope()},
@@ -182,12 +182,12 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"portal-url", c.PortalUrl()},
 		{"portal-config-path", c.PortalConfigPath()},
 		{"portal-theme-path", c.PortalThemePath()},
-		{"join-token", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken())))},
+		{"join-token", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken()))},
 		{"node-name", c.NodeName()},
 		{"node-role", c.NodeRole()},
 		{"node-uuid", c.NodeUUID()},
 		{"node-client-id", c.NodeClientID()},
-		{"node-client-secret", fmt.Sprintf("%s", strings.Repeat("*", utf8.RuneCountInString(c.NodeClientSecret())))},
+		{"node-client-secret", strings.Repeat("*", utf8.RuneCountInString(c.NodeClientSecret()))},
 		{"jwks-url", c.JWKSUrl()},
 		{"jwks-cache-ttl", fmt.Sprintf("%d", c.JWKSCacheTTL())},
 		{"jwt-scope", c.JWTAllowedScopes().String()},
@@ -308,19 +308,20 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 	}...)
 
-	if faceEngine == face.EngineONNX {
+	switch faceEngine {
+	case face.EngineONNX:
 		rows = append(rows, [][]string{
 			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
 			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
 			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
 		}...)
-	} else if faceEngine == face.EnginePigo {
+	case face.EnginePigo:
 		rows = append(rows, [][]string{
 			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
 			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
 			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
 		}...)
-	} else {
+	default:
 		rows = append(rows, [][]string{
 			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
 			{"face-size", fmt.Sprintf("%d", c.FaceSize())},

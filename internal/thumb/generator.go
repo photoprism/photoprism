@@ -1,5 +1,6 @@
 package thumb
 
+// Lib identifies the image processing backend.
 type Lib = string
 
 // Supported image processing libraries.

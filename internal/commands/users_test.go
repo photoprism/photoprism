@@ -20,7 +20,7 @@ func TestUsersCommand(t *testing.T) {
 		// Run command with test context.
 		output2, err := RunWithTestContext(UsersShowCommand, []string{"show", "john.admin"})
 
-		//t.Logf(output2)
+		// t.Logf(output2)
 		assert.NoError(t, err)
 		assert.Contains(t, output2, "John")
 		assert.Contains(t, output2, "admin")
@@ -38,7 +38,7 @@ func TestUsersCommand(t *testing.T) {
 		// Run command with test context.
 		output4, err := RunWithTestContext(UsersShowCommand, []string{"show", "john.admin"})
 
-		//t.Logf(output4)
+		// t.Logf(output4)
 		assert.NoError(t, err)
 		assert.Contains(t, output4, "Johnny")
 		assert.Contains(t, output4, "admin")
@@ -57,7 +57,7 @@ func TestUsersCommand(t *testing.T) {
 		// Run command with test context.
 		output6, err := RunWithTestContext(UsersShowCommand, []string{"show", "john.admin"})
 
-		//t.Logf(output6)
+		// t.Logf(output6)
 		assert.NoError(t, err)
 		assert.Contains(t, output6, "Johnny")
 		assert.Contains(t, output6, "admin")

@@ -20,7 +20,7 @@ func TestError(t *testing.T) {
 		},
 		{
 			name: "SanitizeSpecialCharacters",
-			err:  errors.New("permission denied { DROP TABLE users; }\n"),
+			err:  errors.New("permission denied { DROP TABLE users; }"),
 		},
 		{
 			name: "WhitespaceOnly",

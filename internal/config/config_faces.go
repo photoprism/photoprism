@@ -11,7 +11,7 @@ import (
 )
 
 // FaceEngine returns the configured face detection engine. When the config is
-// nil or the vision subsystem is not initialised it reports `face.EngineNone`
+// nil or the vision subsystem is not initialized it reports `face.EngineNone`
 // so callers can short-circuit gracefully.
 func (c *Config) FaceEngine() string {
 	if c == nil {

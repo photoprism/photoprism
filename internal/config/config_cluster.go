@@ -22,7 +22,11 @@ import (
 
 // DefaultPortalUrl specifies the default portal URL with variable cluster domain.
 var DefaultPortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
+
+// DefaultNodeRole is the default node role assigned when none is configured.
 var DefaultNodeRole = cluster.RoleApp
+
+// DefaultJWTAllowedScopes lists default OAuth scopes for cluster-issued JWTs.
 var DefaultJWTAllowedScopes = "config cluster vision metrics"
 
 // ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
@@ -146,7 +150,7 @@ func (c *Config) JoinToken() string {
 		}
 
 		if fs.FileExistsNotEmpty(fileName) {
-			if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 {
+			if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from config directory
 				log.Warnf("config: could not read cluster join token from %s (%s)", fileName, err)
 			} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
 				if c.cache != nil {
@@ -355,7 +359,7 @@ func (c *Config) NodeClientSecret() string {
 		return ""
 	}
 
-	if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
+	if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
 		// Do not cache the value. Always read from the disk to ensure
 		// that updates from other processes are observed.
 		return string(b)
@@ -530,7 +534,7 @@ func (c *Config) SaveClusterUUID(uuid string) error {
 	var m Values
 
 	if fs.FileExists(fileName) {
-		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
+		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
 			_ = yaml.Unmarshal(b, &m)
 		}
 	}
@@ -573,7 +577,7 @@ func (c *Config) SaveNodeUUID(uuid string) error {
 
 	var m Values
 	if fs.FileExists(fileName) {
-		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 {
+		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
 			_ = yaml.Unmarshal(b, &m)
 		}
 	}

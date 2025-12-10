@@ -56,24 +56,10 @@
           <v-btn variant="flat" color="button" class="action-cancel action-close" @click.stop="close">
             {{ $gettext(`Cancel`) }}
           </v-btn>
-          <v-btn
-            v-if="noServices"
-            :disabled="!canManage || (isPublic && !isDemo)"
-            color="highlight"
-            variant="flat"
-            class="action-setup"
-            @click.stop="setup"
-          >
+          <v-btn v-if="noServices" :disabled="!canManage || (isPublic && !isDemo)" color="highlight" variant="flat" class="action-setup" @click.stop="setup">
             {{ $gettext(`Setup`) }}
           </v-btn>
-          <v-btn
-            v-else
-            :disabled="!canUpload || noServices || !service"
-            color="highlight"
-            variant="flat"
-            class="action-upload"
-            @click.stop="confirm"
-          >
+          <v-btn v-else :disabled="!canUpload || noServices || !service" color="highlight" variant="flat" class="action-upload" @click.stop="confirm">
             {{ $gettext(`Upload`) }}
           </v-btn>
         </v-card-actions>

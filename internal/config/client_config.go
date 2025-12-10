@@ -622,7 +622,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 
 	// Exclude pictures in review from total count.
 	if c.Settings().Features.Review {
-		cfg.Count.All = cfg.Count.All - cfg.Count.Review
+		cfg.Count.All -= cfg.Count.Review
 	}
 
 	c.Db().
@@ -742,15 +742,16 @@ func (c *Config) ClientRole(role acl.Role) *ClientConfig {
 
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
-	if sess.NoUser() && sess.IsClient() {
+	switch {
+	case sess.NoUser() && sess.IsClient():
 		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetClientRole())
 		cfg.Settings = c.SessionSettings(sess)
-	} else if sess.GetUser().IsVisitor() {
+	case sess.GetUser().IsVisitor():
 		cfg = c.ClientShare()
-	} else if sess.GetUser().IsRegistered() {
+	case sess.GetUser().IsRegistered():
 		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.GetUserRole())
 		cfg.Settings = c.SessionSettings(sess)
-	} else {
+	default:
 		cfg = c.ClientPublic()
 	}
 

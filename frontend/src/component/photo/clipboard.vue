@@ -13,21 +13,13 @@
         offset="12"
       >
         <template #activator="{ props }">
-          <v-btn
-            v-bind="props"
-            icon
-            size="52"
-            color="highlight"
-            variant="elevated"
-            density="comfortable"
-            class="action-menu opacity-95 ma-5"
-          >
+          <v-btn v-bind="props" icon size="52" color="highlight" variant="elevated" density="comfortable" class="action-menu opacity-95 ma-5">
             <span class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
         </template>
 
         <v-btn
-          v-if="canShare && canServiceUpload && context !== 'archive' && context !== 'hidden' && context !== 'review'"
+          v-if="canShare && canServiceUpload && context !== contexts.Archive && context !== contexts.Hidden && context !== contexts.Review"
           key="action-share"
           :title="$gettext('Share')"
           icon="mdi-share"
@@ -39,7 +31,7 @@
           @click.stop="dialog.share = true"
         ></v-btn>
         <v-btn
-          v-if="canManage && context === 'review'"
+          v-if="canManage && context === contexts.Review"
           key="action-approve"
           :title="$gettext('Approve')"
           icon="mdi-check-bold"
@@ -51,7 +43,7 @@
           @click.stop="batchApprove"
         ></v-btn>
         <v-btn
-          v-if="canArchive && !album && context === 'archive' && context !== 'hidden'"
+          v-if="canArchive && !album && context === contexts.Archive && context !== contexts.Hidden"
           key="action-restore"
           :title="$gettext('Restore')"
           icon="mdi-archive-arrow-up"
@@ -75,7 +67,7 @@
           @click.stop="edit"
         ></v-btn>
         <v-btn
-          v-if="canTogglePrivate && context !== 'archive' && context !== 'hidden'"
+          v-if="canTogglePrivate && context !== contexts.Archive && context !== contexts.Hidden"
           key="action-private"
           :title="$gettext('Change private flag')"
           icon="mdi-lock"
@@ -87,7 +79,7 @@
           @click.stop="batchPrivate"
         ></v-btn>
         <v-btn
-          v-if="canDownload && context !== 'archive'"
+          v-if="canDownload && context !== contexts.Archive"
           key="action-download"
           :title="$gettext('Download')"
           icon="mdi-download"
@@ -99,7 +91,7 @@
           @click.stop="download()"
         ></v-btn>
         <v-btn
-          v-if="canEditAlbum && context !== 'archive' && context !== 'hidden'"
+          v-if="canEditAlbum && context !== contexts.Archive && context !== contexts.Hidden"
           key="action-album"
           :title="$gettext('Add to album')"
           icon="mdi-bookmark"
@@ -111,7 +103,7 @@
           @click.stop="dialog.album = true"
         ></v-btn>
         <v-btn
-          v-if="canArchive && context !== 'archive' && context !== 'hidden'"
+          v-if="canArchive && context !== contexts.Archive && context !== contexts.Hidden"
           key="action-archive"
           :title="$pgettext('Verb', 'Archive')"
           icon="mdi-archive"
@@ -135,7 +127,7 @@
           @click.stop="removeFromAlbum"
         ></v-btn>
         <v-btn
-          v-if="canDelete && !album && context === 'archive'"
+          v-if="canDelete && !album && context === contexts.Archive"
           key="action-delete"
           :title="$gettext('Delete')"
           icon="mdi-delete"
@@ -157,11 +149,7 @@
         ></v-btn>
       </v-speed-dial>
     </div>
-    <p-photo-archive-dialog
-      :visible="dialog.archive"
-      @close="dialog.archive = false"
-      @confirm="batchArchive"
-    ></p-photo-archive-dialog>
+    <p-photo-archive-dialog :visible="dialog.archive" @close="dialog.archive = false" @confirm="batchArchive"></p-photo-archive-dialog>
     <p-confirm-dialog
       :visible="dialog.delete"
       :text="$gettext(`Are you sure you want to permanently delete these pictures?`)"
@@ -170,11 +158,7 @@
       @close="dialog.delete = false"
       @confirm="batchDelete"
     ></p-confirm-dialog>
-    <p-photo-album-dialog
-      :visible="dialog.album"
-      @close="dialog.album = false"
-      @confirm="addToAlbum"
-    ></p-photo-album-dialog>
+    <p-photo-album-dialog :visible="dialog.album" @close="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
     <p-service-upload
       :visible="dialog.share"
       :items="{ photos: selection }"
@@ -189,6 +173,7 @@ import $api from "common/api";
 import $notify from "common/notify";
 import download from "common/download";
 import Photo from "model/photo";
+import * as contexts from "options/contexts";
 
 import PConfirmDialog from "component/confirm/dialog.vue";
 import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
@@ -202,7 +187,7 @@ export default {
   props: {
     context: {
       type: String,
-      default: "photos",
+      default: contexts.Photos,
     },
     refresh: {
       type: Function,
@@ -218,6 +203,7 @@ export default {
     const canEdit = this.$config.allow("photos", "update") && features.edit;
 
     return {
+      contexts,
       selection: this.$clipboard.selection,
       canTogglePrivate: this.$config.allow("photos", "manage") && features.private,
       canArchive: this.$config.allow("photos", "delete") && features.archive,

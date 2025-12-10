@@ -24,6 +24,8 @@ Additional information can be found in our Developer Guide:
 */
 package frame
 
+// Type defines the frame style identifier.
 type Type string
 
+// Polaroid represents the Polaroid-style frame type.
 const Polaroid = "polaroid"

@@ -10,13 +10,7 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
-    <v-form
-      ref="form"
-      validate-on="invalid-input"
-      class="form-album-edit"
-      accept-charset="UTF-8"
-      @submit.prevent="confirm"
-    >
+    <v-form ref="form" validate-on="invalid-input" class="form-album-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon size="28" color="primary">mdi-bookmark</v-icon>
@@ -40,13 +34,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                v-model="model.Location"
-                hide-details
-                :label="$gettext('Location')"
-                :disabled="disabled"
-                class="input-location"
-              ></v-text-field>
+              <v-text-field v-model="model.Location" hide-details :label="$gettext('Location')" :disabled="disabled" class="input-location"></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-textarea
@@ -85,22 +73,10 @@
               ></v-select>
             </v-col>
             <v-col sm="3">
-              <v-checkbox
-                v-model="model.Favorite"
-                :disabled="disabled"
-                :label="$gettext('Favorite')"
-                density="comfortable"
-                hide-details
-              ></v-checkbox>
+              <v-checkbox v-model="model.Favorite" :disabled="disabled" :label="$gettext('Favorite')" density="comfortable" hide-details></v-checkbox>
             </v-col>
             <v-col v-if="experimental && featPrivate" sm="3">
-              <v-checkbox
-                v-model="model.Private"
-                :disabled="disabled"
-                :label="$gettext('Private')"
-                density="comfortable"
-                hide-details
-              ></v-checkbox>
+              <v-checkbox v-model="model.Private" :disabled="disabled" :label="$gettext('Private')" density="comfortable" hide-details></v-checkbox>
             </v-col>
           </v-row>
         </v-card-text>

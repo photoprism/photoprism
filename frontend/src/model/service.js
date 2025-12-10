@@ -59,9 +59,7 @@ export class Service extends RestModel {
       selection = { Photos: selection };
     }
 
-    return $api
-      .post(this.getEntityResource() + "/upload", { selection, folder })
-      .then((response) => Promise.resolve(response.data));
+    return $api.post(this.getEntityResource() + "/upload", { selection, folder }).then((response) => Promise.resolve(response.data));
   }
 
   static getCollectionResource() {

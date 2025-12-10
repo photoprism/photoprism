@@ -57,7 +57,7 @@ func statusAction(ctx *cli.Context) error {
 	if resp, reqErr := client.Do(req); reqErr != nil {
 		return fmt.Errorf("cannot connect to %s:%d", conf.HttpHost(), conf.HttpPort())
 	} else if resp.StatusCode != 200 {
-		return fmt.Errorf("server running at %s:%d, bad status %d\n", conf.HttpHost(), conf.HttpPort(), resp.StatusCode)
+		return fmt.Errorf("server running at %s:%d, bad status %d", conf.HttpHost(), conf.HttpPort(), resp.StatusCode)
 	} else if body, readErr := io.ReadAll(resp.Body); readErr != nil {
 		return readErr
 	} else {

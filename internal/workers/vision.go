@@ -83,11 +83,6 @@ func (w *Vision) scheduledModels() []string {
 	return models
 }
 
-// originalsPath returns the path that holds original media files.
-func (w *Vision) originalsPath() string {
-	return w.conf.OriginalsPath()
-}
-
 // Start runs the requested vision models against photos matching the search
 // filter. `customSrc` allows the caller to override the metadata source string,
 // `force` regenerates metadata regardless of existing values, and `runType`
@@ -194,7 +189,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		generateCaptions := updateCaptions && m.ShouldGenerateCaption(customSrc, force)
 		detectNsfw := updateNsfw && (!photo.PhotoPrivate || force)
 
-		if !(generateLabels || generateCaptions || detectNsfw || detectFaces) {
+		if !generateLabels && !generateCaptions && !detectNsfw && !detectFaces {
 			continue
 		}
 

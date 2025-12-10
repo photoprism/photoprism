@@ -43,13 +43,10 @@ func captionInternal(images Files, mediaSrc media.Src) (result *CaptionResult, m
 			}
 
 			if apiRequest.Model == "" {
-				switch model.Service.RequestFormat {
-				case ApiFormatOllama:
-					apiRequest.Model, _, _ = model.Model()
-				default:
-					_, apiRequest.Model, apiRequest.Version = model.Model()
-				}
+				apiRequest.Model, _, apiRequest.Version = model.GetModel()
 			}
+
+			model.ApplyService(apiRequest)
 
 			apiRequest.System = model.GetSystemPrompt()
 			apiRequest.Prompt = model.GetPrompt()

@@ -51,8 +51,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 		}
 
 		// Check request rate limit.
-		var r *limiter.Request
-		r = limiter.Login.Request(clientIp)
+		r := limiter.Login.Request(clientIp)
 
 		// Abort if failure rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {

@@ -63,16 +63,16 @@ func TestLightMap_Diff(t *testing.T) {
 	t.Run("Happy", func(t *testing.T) {
 		m1 := LightMap{8, 13, 7, 2, 2, 3, 6, 3, 4}
 		d1 := m1.Diff()
-		t.Log(strconv.FormatUint(uint64(d1), 2))
+		t.Log(strconv.FormatUint(uint64(uint16(d1)), 2)) //nolint:gosec // test logging
 		m2 := LightMap{8, 13, 7, 3, 1, 3, 5, 3, 4}
 		d2 := m2.Diff()
-		t.Log(strconv.FormatUint(uint64(d2), 2))
+		t.Log(strconv.FormatUint(uint64(uint16(d2)), 2)) //nolint:gosec // test logging
 		m3 := LightMap{9, 13, 7, 8, 2, 4, 5, 3, 4}
 		d3 := m3.Diff()
-		t.Log(strconv.FormatUint(uint64(d3), 2))
+		t.Log(strconv.FormatUint(uint64(uint16(d3)), 2)) //nolint:gosec // test logging
 		m4 := LightMap{9, 13, 7, 7, 2, 4, 6, 2, 3}
 		d4 := m4.Diff()
-		t.Log(strconv.FormatUint(uint64(d4), 2))
+		t.Log(strconv.FormatUint(uint64(uint16(d4)), 2)) //nolint:gosec // test logging
 
 		t.Logf("values: %d, %d, %d, %d", d1, d2, d3, d4)
 	})

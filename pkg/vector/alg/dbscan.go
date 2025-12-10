@@ -1,3 +1,4 @@
+//nolint:revive,staticcheck,gocritic,gosec // clustering algorithms keep legacy style for clarity
 package alg
 
 import (
@@ -16,7 +17,7 @@ type dbscanClusterer struct {
 	a []int
 	b []int
 
-	// variables used for concurrent computation of nearest neighbours
+	// variables used for concurrent computation of nearest neighbors
 	// dataset len
 	l int
 	// worker number
@@ -38,8 +39,8 @@ type dbscanClusterer struct {
 	d [][]float64
 }
 
-// Implementation of DBSCAN algorithm with concurrent nearest neighbour computation. The number of goroutines acting concurrently
-// is controlled via workers argument. Passing 0 will result in this number being chosen arbitrarily.
+// DBSCAN implements density-based clustering with concurrent nearest neighbor computation.
+// The number of goroutines is controlled via workers (0 picks a default).
 func DBSCAN(minpts int, eps float64, workers int, distance DistFunc) (HardClusterer, error) {
 	if minpts < 1 {
 		return nil, errZeroMinpts
@@ -195,7 +196,7 @@ func (c *dbscanClusterer) run() {
 }
 
 /* Divide work among c.s workers, where c.s is determined
- * by the size of the data. This is based on an assumption that neighbour points of p
+ * by the size of the data. This is based on an assumption that neighbor points of p
  * are located in relatively small subsection of the input data, so the dataset can be scanned
  * concurrently without blocking a big number of goroutines trying to write to r */
 func (c *dbscanClusterer) nearest(p int, l *int, r *[]int) {
@@ -262,13 +263,14 @@ func (c *dbscanClusterer) nearestWorker() {
 func (c *dbscanClusterer) numWorkers() int {
 	var b int
 
-	if c.l < 1000 {
+	switch {
+	case c.l < 1000:
 		b = 1
-	} else if c.l < 10000 {
+	case c.l < 10000:
 		b = 10
-	} else if c.l < 100000 {
+	case c.l < 100000:
 		b = 100
-	} else {
+	default:
 		b = 1000
 	}
 

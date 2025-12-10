@@ -57,22 +57,10 @@
       </div>
       <div class="form-actions">
         <div class="action-buttons">
-          <v-btn
-            :disabled="!busy || !ready"
-            variant="flat"
-            color="button"
-            class="action-cancel"
-            @click.stop="cancelIndexing()"
-          >
+          <v-btn :disabled="!busy || !ready" variant="flat" color="button" class="action-cancel" @click.stop="cancelIndexing()">
             {{ $gettext(`Cancel`) }}
           </v-btn>
-          <v-btn
-            :disabled="busy || !ready"
-            variant="flat"
-            color="highlight"
-            class="action-index"
-            @click.stop="startIndexing()"
-          >
+          <v-btn :disabled="busy || !ready" variant="flat" color="highlight" class="action-index" @click.stop="startIndexing()">
             {{ $gettext(`Start`) }}
             <v-icon end>mdi-update</v-icon>
           </v-btn>
@@ -82,11 +70,7 @@
         <v-alert color="primary" icon="mdi-alert-circle-outline" class="v-alert--default" variant="outlined">
           <div>
             {{ $gettext(`The index currently contains %{n} hidden files.`, { n: config.count.hidden }) }}
-            {{
-              $gettext(
-                `Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.`
-              )
-            }}
+            {{ $gettext(`Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.`) }}
           </div>
         </v-alert>
       </div>

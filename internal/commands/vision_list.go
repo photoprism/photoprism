@@ -17,7 +17,7 @@ import (
 var VisionListCommand = &cli.Command{
 	Name:   "ls",
 	Usage:  "Lists the configured computer vision models",
-	Flags:  append(report.CliFlags),
+	Flags:  report.CliFlags,
 	Action: visionListAction,
 }
 
@@ -27,8 +27,8 @@ func visionListAction(ctx *cli.Context) error {
 		var rows [][]string
 
 		cols := []string{
-			"Type",
 			"Model",
+			"Type",
 			"Engine",
 			"Endpoint",
 			"Format",
@@ -52,7 +52,7 @@ func visionListAction(ctx *cli.Context) error {
 			modelUri, modelMethod := model.Endpoint()
 			tags := ""
 
-			name, _, _ := model.Model()
+			name, _, _ := model.GetModel()
 
 			if model.TensorFlow != nil && model.TensorFlow.Tags != nil {
 				tags = strings.Join(model.TensorFlow.Tags, ", ")
@@ -92,13 +92,13 @@ func visionListAction(ctx *cli.Context) error {
 			engine := model.EngineName()
 
 			rows[i] = []string{
-				model.Type,
 				name,
+				model.Type,
 				engine,
 				fmt.Sprintf("%s %s", modelMethod, modelUri),
 				format,
 				fmt.Sprintf("%d", model.Resolution),
-				report.Bool(len(options) == 0, "tags: "+tags, string(options)),
+				report.Bool(model.TensorFlow != nil, fmt.Sprintf(`{"tags":"%s"}`, tags), string(options)),
 				run,
 				report.Bool(model.Disabled, report.Disabled, report.Enabled),
 			}

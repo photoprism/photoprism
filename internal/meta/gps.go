@@ -18,9 +18,9 @@ const (
 
 // Regular expressions used to extract GPS coordinate components from EXIF strings.
 var (
-	GpsCoordsRegexp = regexp.MustCompile("[0-9\\.]+")
-	GpsRefRegexp    = regexp.MustCompile("[NSEW]+")
-	GpsFloatRegexp  = regexp.MustCompile("[+\\-]?(?:(?:0|[1-9]\\d*)(?:\\.\\d*)?|\\.\\d+)")
+	GpsCoordsRegexp = regexp.MustCompile(`[0-9\.]+`)
+	GpsRefRegexp    = regexp.MustCompile(`[NSEW]+`)
+	GpsFloatRegexp  = regexp.MustCompile(`[+\-]?(?:(?:0|[1-9]\d*)(?:\.\d*)?|\.\d+)`)
 )
 
 // GpsToLatLng returns the GPS latitude and longitude as float point number.

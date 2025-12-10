@@ -32,30 +32,11 @@
           "
         ></v-text-field>
 
-        <v-btn
-          :title="$gettext('Refresh')"
-          icon="mdi-refresh"
-          class="action-reload"
-          @click.stop="refresh"
-        ></v-btn>
+        <v-btn :title="$gettext('Refresh')" icon="mdi-refresh" class="action-reload" @click.stop="refresh"></v-btn>
 
         <template v-if="canManage">
-          <v-btn
-            v-if="!filter.hidden"
-            :title="$gettext('Show hidden')"
-            icon="mdi-eye"
-            class="action-show-hidden"
-            @click.stop="onShowHidden"
-          >
-          </v-btn>
-          <v-btn
-            v-else
-            :title="$gettext('Exclude hidden')"
-            icon="mdi-eye-off"
-            class="action-exclude-hidden"
-            @click.stop="onExcludeHidden()"
-          >
-          </v-btn>
+          <v-btn v-if="!filter.hidden" :title="$gettext('Show hidden')" icon="mdi-eye" class="action-show-hidden" @click.stop="onShowHidden"> </v-btn>
+          <v-btn v-else :title="$gettext('Exclude hidden')" icon="mdi-eye-off" class="action-exclude-hidden" @click.stop="onExcludeHidden()"> </v-btn>
         </template>
       </v-toolbar>
     </v-form>
@@ -64,18 +45,9 @@
       <p-loading></p-loading>
     </div>
     <div v-else style="min-height: 100vh" class="p-page__content">
-      <p-people-clipboard
-        :refresh="refresh"
-        :selection="selection"
-        :clear-selection="clearSelection"
-      ></p-people-clipboard>
+      <p-people-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-people-clipboard>
 
-      <p-scroll
-        :load-more="loadMore"
-        :load-disabled="scrollDisabled"
-        :load-distance="scrollDistance"
-        :loading="loading"
-      ></p-scroll>
+      <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"></p-scroll>
 
       <div v-if="results.length === 0" class="pa-3">
         <v-alert color="surface-variant" icon="mdi-lightbulb-outline" class="no-results" variant="outlined">
@@ -89,18 +61,9 @@
           </div>
         </v-alert>
       </div>
-      <div
-        v-else
-        class="v-row search-results subject-results cards-view"
-        :class="{ 'select-results': selection.length > 0 }"
-      >
+      <div v-else class="v-row search-results subject-results cards-view" :class="{ 'select-results': selection.length > 0 }">
         <div v-for="(m, index) in results" :key="m.UID" class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2">
-          <div
-            :data-uid="m.UID"
-            class="result not-selectable"
-            :class="m.classes(selection.includes(m.UID))"
-            @contextmenu.stop="onContextMenu($event, index)"
-          >
+          <div :data-uid="m.UID" class="result not-selectable" :class="m.classes(selection.includes(m.UID))" @contextmenu.stop="onContextMenu($event, index)">
             <v-img
               :src="m.thumbnailUrl('tile_320')"
               :alt="m.Name"
@@ -182,19 +145,8 @@
       </div>
     </div>
 
-    <p-people-edit-dialog
-      :visible="dialog.edit"
-      :person="model"
-      @close="dialog.edit = false"
-      @confirm="onSave"
-    ></p-people-edit-dialog>
-    <p-people-merge-dialog
-      :visible="merge.visible"
-      :subj1="merge.subj1"
-      :subj2="merge.subj2"
-      @close="onCancelMerge"
-      @confirm="onMerge"
-    ></p-people-merge-dialog>
+    <p-people-edit-dialog :visible="dialog.edit" :person="model" @close="dialog.edit = false" @confirm="onSave"></p-people-edit-dialog>
+    <p-people-merge-dialog :visible="merge.visible" :subj1="merge.subj1" :subj2="merge.subj2" @close="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
 
@@ -570,9 +522,7 @@ export default {
           if (this.scrollDisabled) {
             this.setOffset(resp.offset);
             if (this.results.length > 1) {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} people loaded"), { n: this.results.length }));
             }
           } else {
             this.setOffset(resp.offset + resp.limit);
@@ -740,9 +690,7 @@ export default {
             } else if (this.results.length === 1) {
               this.$notify.info(this.$gettext("One person found"));
             } else {
-              this.$notify.info(
-                this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length })
-              );
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
             }
           } else {
             // this.$notify.info(this.$gettext('More than 20 people found'));

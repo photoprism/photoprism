@@ -2,6 +2,7 @@ package thumb
 
 import "github.com/photoprism/photoprism/pkg/clean"
 
+// ColorSpace represents a thumbnail color profile preference.
 type ColorSpace = string
 
 // Supported thumbnail color profile settings.

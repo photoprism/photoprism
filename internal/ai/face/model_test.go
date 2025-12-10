@@ -123,11 +123,11 @@ func TestNet(t *testing.T) {
 			t.Logf("Dist for %d %d (faces are %d %d) is %f", i, j, faceIndexToPersonID[i], faceIndexToPersonID[j], dist)
 			if faceIndexToPersonID[i] == faceIndexToPersonID[j] {
 				if dist < 1.21 {
-					correct += 1
+					correct++
 				}
 			} else {
 				if dist >= 1.21 {
-					correct += 1
+					correct++
 				}
 			}
 		}

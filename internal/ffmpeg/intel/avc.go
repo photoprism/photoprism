@@ -10,6 +10,7 @@ import (
 func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 	// ffmpeg -hide_banner -h encoder=h264_qsv
 	if opt.Device != "" {
+		// #nosec G204 -- command arguments are built from validated options and paths.
 		return exec.Command(
 			opt.Bin,
 			"-hide_banner",
@@ -33,6 +34,7 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 			destName,
 		)
 	} else {
+		// #nosec G204 -- command arguments are built from validated options and paths.
 		return exec.Command(
 			opt.Bin,
 			"-hide_banner",

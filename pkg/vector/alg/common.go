@@ -2,11 +2,13 @@ package alg
 
 import (
 	"container/heap"
-	"math/rand/v2"
+	"crypto/rand"
+	"math"
+	"math/big"
 	"sync"
 )
 
-// struct denoting start and end indices of database portion to be scanned for nearest neighbours by workers in DBSCAN and OPTICS
+// struct denoting start and end indices of database portion to be scanned for nearest neighbors by workers in DBSCAN and OPTICS
 type rangeJob struct {
 	a, b int
 }
@@ -103,5 +105,10 @@ func bounds(data [][]float64) []*[2]float64 {
 }
 
 func uniform(data *[2]float64) float64 {
-	return rand.Float64()*(data[1]-data[0]) + data[0]
+	n, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	if err != nil {
+		return data[0]
+	}
+	r := float64(n.Int64()) / float64(math.MaxInt64)
+	return r*(data[1]-data[0]) + data[0]
 }

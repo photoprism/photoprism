@@ -99,15 +99,16 @@ func (f CliFlag) CommandFlag() string {
 
 // Usage returns the command flag usage.
 func (f CliFlag) Usage() string {
-	if list.Contains(f.Tags, EnvSponsor) {
+	switch {
+	case list.Contains(f.Tags, EnvSponsor):
 		return f.Flag.GetUsage() + " *members only*"
-	} else if list.Contains(f.Tags, Pro) {
+	case list.Contains(f.Tags, Pro):
 		return f.Flag.GetUsage() + " *pro*"
-	} else if list.Contains(f.Tags, Plus) {
+	case list.Contains(f.Tags, Plus):
 		return f.Flag.GetUsage() + " *plus*"
-	} else if list.Contains(f.Tags, Essentials) {
+	case list.Contains(f.Tags, Essentials):
 		return f.Flag.GetUsage() + " *essentials*"
-	} else {
+	default:
 		return f.Flag.GetUsage()
 	}
 }

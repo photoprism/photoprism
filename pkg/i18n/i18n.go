@@ -34,7 +34,10 @@ import (
 
 //go:generate xgettext --no-wrap --language=c --from-code=UTF-8 --output=../../assets/locales/messages.pot messages.go
 
+// Message represents a localized message identifier.
 type Message int
+
+// MessageMap maps message IDs to their localized strings.
 type MessageMap map[Message]string
 
 var noVars []interface{}
