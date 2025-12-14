@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { shallowMount } from "@vue/test-utils";
+import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import { nextTick } from "vue";
 import PPhotoBatchEdit from "component/photo/batch-edit.vue";
 import * as contexts from "options/contexts";
@@ -16,6 +16,8 @@ vi.mock("model/thumb");
 describe("component/photo/batch-edit", () => {
   let wrapper;
   let mockBatchInstance;
+  let notifySuccessSpy;
+  let notifyErrorSpy;
 
   const mockSelection = ["uid1", "uid2", "uid3"];
 
@@ -136,6 +138,9 @@ describe("component/photo/batch-edit", () => {
     // Mock the Batch constructor to return our mock instance
     vi.mocked(Batch).mockImplementation(() => mockBatchInstance);
 
+    notifySuccessSpy = vi.spyOn(VTUConfig.global.mocks.$notify, "success");
+    notifyErrorSpy = vi.spyOn(VTUConfig.global.mocks.$notify, "error");
+
     wrapper = shallowMount(PPhotoBatchEdit, {
       props: {
         visible: false, // Start with false to avoid initial rendering issues
@@ -146,19 +151,8 @@ describe("component/photo/batch-edit", () => {
       },
       global: {
         mocks: {
-          $notify: {
-            success: vi.fn(),
-            error: vi.fn(),
-          },
           $lightbox: {
             openView: vi.fn(),
-          },
-          $event: {
-            subscribe: vi.fn(),
-            unsubscribe: vi.fn(),
-          },
-          $config: {
-            feature: vi.fn().mockReturnValue(true),
           },
           $vuetify: { display: { mdAndDown: false } },
         },
@@ -202,6 +196,7 @@ describe("component/photo/batch-edit", () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     if (wrapper) {
       wrapper.unmount();
     }
@@ -395,8 +390,6 @@ describe("component/photo/batch-edit", () => {
       expect(ctx.allowEdit).toBe(false);
       expect(ctx.allowSelect).toBe(false);
       expect(ctx.context).toBe(contexts.BatchEdit);
-
-      spy.mockRestore();
     });
 
     it("should clamp invalid index to first photo", () => {
@@ -407,8 +400,6 @@ describe("component/photo/batch-edit", () => {
 
       expect(ctx.index).toBe(0);
       expect(ctx.allowSelect).toBe(false);
-
-      spy.mockRestore();
     });
   });
 
