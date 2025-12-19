@@ -717,7 +717,7 @@ func (c *Config) IndexSchedule() string {
 }
 
 // WakeupInterval returns the duration between background worker runs
-// required for face recognition and index maintenance(1-86400s).
+// required for face recognition and index maintenance (1-86400s).
 func (c *Config) WakeupInterval() time.Duration {
 	if c.options.WakeupInterval <= 0 {
 		if c.Unsafe() {

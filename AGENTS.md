@@ -1,11 +1,10 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** November 25, 2025
+**Last Updated:** December 8, 2025
 
 ## Purpose
 
-This file tells automated coding agents (and humans) where to find the single sources of truth for building, testing, and contributing to PhotoPrism.
-Learn more: https://agents.md/
+This file tells automated coding agents (and humans) where to find the single sources of truth for building, testing, and contributing to this repository. Visit https://agents.md/ to learn more.
 
 ## Sources of Truth
 

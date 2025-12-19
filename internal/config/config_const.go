@@ -33,7 +33,7 @@ const DefaultAutoIndexDelay = 300 // 5 Minutes
 const DefaultAutoImportDelay = -1 // Disabled
 
 // MinWakeupInterval is the minimum allowed interval for the background worker.
-const MinWakeupInterval = time.Minute // 1 Minute
+const MinWakeupInterval = time.Second // 1 Second
 // MaxWakeupInterval is the maximum allowed interval for the background worker.
 const MaxWakeupInterval = time.Hour * 24 // 1 Day
 // DefaultWakeupIntervalSeconds is the default worker interval in seconds.

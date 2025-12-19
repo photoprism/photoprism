@@ -136,10 +136,12 @@ services:
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
       PHOTOPRISM_INIT: "https postgresql"
-      ## Computer Vision API (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
+      ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
       PHOTOPRISM_VISION_API: "true"                  # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
       PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
+      OLLAMA_BASE_URL: "http://ollama:11434"         # use "https://ollama.com" for Ollama Cloud
+      OLLAMA_API_KEY: ""                             # API key required to access Ollama (optional)
       ## External dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
       GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
@@ -357,7 +359,7 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:251124
+    image: photoprism/dummy-webdav:251210
     stop_grace_period: 10s
     environment:
       WEBDAV_USERNAME: admin
@@ -374,7 +376,7 @@ services:
 
   ## Dummy OIDC Identity Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:251124
+    image: photoprism/dummy-oidc:251210
     stop_grace_period: 5s
     labels:
       - "traefik.enable=true"

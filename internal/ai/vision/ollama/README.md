@@ -1,14 +1,14 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** November 14, 2025
+**Last Updated:** December 10, 2025
 
 ### Overview
 
-This package provides PhotoPrism’s native adapter for Ollama-compatible multimodal models. It lets Caption, Labels, and future Generate workflows call locally hosted models without changing worker logic, reusing the shared API client (`internal/ai/vision/api_client.go`) and result types (`LabelResult`, `CaptionResult`). Requests stay inside your infrastructure, rely on base64 thumbnails, and honor the same ACL, timeout, and logging hooks as the default TensorFlow engines.
+This package provides PhotoPrism’s native adapter for Ollama-compatible multimodal models. It lets Caption, Labels, and future Generate workflows call locally hosted models without changing worker logic, reusing the shared API client (`internal/ai/vision/api_client.go`) and result types (`LabelResult`, `CaptionResult`). Requests stay inside your infrastructure, rely on base64 thumbnails, and honor the same ACL, timeout, and logging hooks as the default TensorFlow engines. The adapter resolves `${OLLAMA_BASE_URL}/api/generate`, trimming trailing slashes and defaulting to `http://ollama:11434`; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
 
 #### Context & Constraints
 
-- Engine defaults live in `internal/ai/vision/ollama` and are applied whenever a model sets `Engine: ollama`. Aliases map to `ApiFormatOllama`, `scheme.Base64`, and a default 720 px thumbnail.  
+- Engine defaults live in `internal/ai/vision/ollama` and are applied whenever a model sets `Engine: ollama`. Aliases map to `ApiFormatOllama`, `scheme.Base64`, and a default 720 px thumbnail. Cloud defaults are only selected when `OLLAMA_BASE_URL` equals `https://ollama.com`.  
 - Responses may arrive as newline-delimited JSON chunks. `decodeOllamaResponse` keeps the most recent chunk, while `parseOllamaLabels` replays plain JSON strings found in `response`.  
 - Structured JSON is optional for captions but enforced for labels when `Format: json` (default for label models targeting the Ollama engine).  
 - The adapter never overwrites TensorFlow defaults. If an Ollama call fails, downstream code still has Nasnet, NSFW, and Face models available.  
@@ -72,6 +72,8 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 - `PHOTOPRISM_VISION_LABEL_SCHEMA_FILE` — Absolute path to a JSON snippet that overrides the default label schema (applies to every Ollama label model).  
 - `PHOTOPRISM_VISION_YAML` — Custom `vision.yml` path. Keep it synced in Git if you automate deployments.  
 - `OLLAMA_HOST`, `OLLAMA_MODELS`, `OLLAMA_MAX_QUEUE`, `OLLAMA_NUM_PARALLEL`, etc. — Provided in `compose*.yaml` to tune the Ollama daemon. Adjust `OLLAMA_KEEP_ALIVE` if you want models to stay loaded between worker batches.  
+- `OLLAMA_API_KEY` / `OLLAMA_API_KEY_FILE` — Default bearer token picked up when `Service.Key` is empty; useful for hosted Ollama services (e.g., Ollama Cloud).  
+- `OLLAMA_BASE_URL` — Base URL for the Ollama API; defaults to `http://ollama:11434`, trailing slashes are trimmed. Set to `https://ollama.com` to enable cloud defaults.  
 - `PHOTOPRISM_LOG_LEVEL=trace` — Enables verbose request/response previews (truncated to avoid leaking images). Use temporarily when debugging parsing issues.
 
 #### `vision.yml` Example
@@ -89,7 +91,7 @@ Models:
       Stop: ["\n\n"]
       ForceJson: true
     Service:
-      Uri: http://ollama:11434/api/generate
+      Uri: ${OLLAMA_BASE_URL}/api/generate
       RequestFormat: ollama
       ResponseFormat: ollama
       FileScheme: base64
@@ -101,7 +103,7 @@ Models:
     Options:
       Temperature: 0.2
     Service:
-      Uri: http://ollama:11434/api/generate
+      Uri: ${OLLAMA_BASE_URL}/api/generate
 ```
 
 Guidelines:

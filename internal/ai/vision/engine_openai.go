@@ -28,6 +28,16 @@ func init() {
 		Parser:   openaiParser{},
 		Defaults: openaiDefaults{},
 	})
+
+	RegisterEngineAlias(openai.EngineName, EngineInfo{
+		Uri:               "https://api.openai.com/v1/responses",
+		RequestFormat:     ApiFormatOpenAI,
+		ResponseFormat:    ApiFormatOpenAI,
+		FileScheme:        scheme.Data,
+		DefaultModel:      openai.DefaultModel,
+		DefaultResolution: openai.DefaultResolution,
+		DefaultKey:        openai.APIKeyPlaceholder,
+	})
 }
 
 // SystemPrompt returns the default OpenAI system prompt for the specified model type.
@@ -80,19 +90,19 @@ func (openaiDefaults) SchemaTemplate(model *Model) string {
 }
 
 // Options returns default OpenAI request options for the model.
-func (openaiDefaults) Options(model *Model) *ApiRequestOptions {
+func (openaiDefaults) Options(model *Model) *ModelOptions {
 	if model == nil {
 		return nil
 	}
 
 	switch model.Type {
 	case ModelTypeCaption:
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Detail:          openai.DefaultDetail,
 			MaxOutputTokens: openai.CaptionMaxTokens,
 		}
 	case ModelTypeLabels:
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Detail:          openai.DefaultDetail,
 			MaxOutputTokens: openai.LabelsMaxTokens,
 			ForceJson:       true,

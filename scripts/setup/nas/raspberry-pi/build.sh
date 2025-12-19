@@ -11,7 +11,7 @@ echo "Building PhotoPrismPi SD card image..."
 DESTDIR=$(realpath "${1:-./setup/nas/raspberry-pi}")
 
 # Ubuntu Server version and download URL:
-UBUNTU_VERSION="${2:-24.04.2}"
+UBUNTU_VERSION="${2:-24.04.3}"
 UBUNTU_URL="https://cdimage.ubuntu.com/releases/${UBUNTU_VERSION}/release/ubuntu-${UBUNTU_VERSION}-preinstalled-server-arm64+raspi.img.xz"
 
 # SD card image file name and path:

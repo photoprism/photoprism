@@ -33,10 +33,26 @@ func TestServiceEndpoint(t *testing.T) {
 			wantURI:    "https://keep:me@vision.example.com",
 			wantMethod: ServiceMethod,
 		},
+		{
+			name:       "ExpandsBaseUrlEnv",
+			svc:        Service{Uri: "${OLLAMA_BASE_URL}/api/generate"},
+			wantURI:    "http://custom:11434/api/generate",
+			wantMethod: ServiceMethod,
+		},
+		{
+			name:       "FallbacksWhenEnvMissing",
+			svc:        Service{Uri: "${OLLAMA_BASE_URL}/api/generate"},
+			wantURI:    "http://ollama:11434/api/generate",
+			wantMethod: ServiceMethod,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.name == "ExpandsBaseUrlEnv" {
+				t.Setenv("OLLAMA_BASE_URL", "http://custom:11434")
+			}
+
 			uri, method := tt.svc.Endpoint()
 			if uri != tt.wantURI {
 				t.Fatalf("uri: got %q want %q", uri, tt.wantURI)

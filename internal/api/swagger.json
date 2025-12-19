@@ -4489,11 +4489,11 @@
         "timestamppb.Timestamp": {
             "properties": {
                 "nanos": {
-                    "description": "Non-negative fractions of a second at nanosecond resolution. Negative\nsecond values with fractions must still have non-negative nanos values\nthat count forward in time. Must be from 0 to 999,999,999\ninclusive.",
+                    "description": "Non-negative fractions of a second at nanosecond resolution. This field is\nthe nanosecond portion of the duration, not an alternative to seconds.\nNegative second values with fractions must still have non-negative nanos\nvalues that count forward in time. Must be between 0 and 999,999,999\ninclusive.",
                     "type": "integer"
                 },
                 "seconds": {
-                    "description": "Represents seconds of UTC time since Unix epoch\n1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to\n9999-12-31T23:59:59Z inclusive.",
+                    "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -315576000000 and 315576000000 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
                     "type": "integer"
                 }
             },
@@ -4540,7 +4540,7 @@
                     "type": "string"
                 },
                 "options": {
-                    "$ref": "#/definitions/vision.ApiRequestOptions"
+                    "$ref": "#/definitions/vision.ModelOptions"
                 },
                 "org": {
                     "type": "string"
@@ -4571,113 +4571,6 @@
                 },
                 "version": {
                     "type": "string"
-                }
-            },
-            "type": "object"
-        },
-        "vision.ApiRequestOptions": {
-            "properties": {
-                "combine_outputs": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "string"
-                },
-                "force_json": {
-                    "type": "boolean"
-                },
-                "frequency_penalty": {
-                    "type": "number"
-                },
-                "low_vram": {
-                    "type": "boolean"
-                },
-                "main_gpu": {
-                    "type": "integer"
-                },
-                "max_output_tokens": {
-                    "type": "integer"
-                },
-                "min_p": {
-                    "type": "number"
-                },
-                "mirostat": {
-                    "type": "integer"
-                },
-                "mirostat_eta": {
-                    "type": "number"
-                },
-                "mirostat_tau": {
-                    "type": "number"
-                },
-                "num_batch": {
-                    "type": "integer"
-                },
-                "num_ctx": {
-                    "type": "integer"
-                },
-                "num_gpu": {
-                    "type": "integer"
-                },
-                "num_keep": {
-                    "type": "integer"
-                },
-                "num_predict": {
-                    "type": "integer"
-                },
-                "num_thread": {
-                    "type": "integer"
-                },
-                "numa": {
-                    "type": "boolean"
-                },
-                "penalize_newline": {
-                    "type": "boolean"
-                },
-                "presence_penalty": {
-                    "type": "number"
-                },
-                "repeat_last_n": {
-                    "type": "integer"
-                },
-                "repeat_penalty": {
-                    "type": "number"
-                },
-                "schema_version": {
-                    "type": "string"
-                },
-                "seed": {
-                    "type": "integer"
-                },
-                "stop": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "temperature": {
-                    "type": "number"
-                },
-                "tfs_z": {
-                    "type": "number"
-                },
-                "top_k": {
-                    "type": "integer"
-                },
-                "top_p": {
-                    "type": "number"
-                },
-                "typical_p": {
-                    "type": "number"
-                },
-                "use_mlock": {
-                    "type": "boolean"
-                },
-                "use_mmap": {
-                    "type": "boolean"
-                },
-                "vocab_only": {
-                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -4810,7 +4703,7 @@
                     "type": "string"
                 },
                 "options": {
-                    "$ref": "#/definitions/vision.ApiRequestOptions"
+                    "$ref": "#/definitions/vision.ModelOptions"
                 },
                 "prompt": {
                     "type": "string"
@@ -4854,6 +4747,146 @@
                 "EngineTensorFlow",
                 "EngineLocal"
             ]
+        },
+        "vision.ModelOptions": {
+            "properties": {
+                "combine_outputs": {
+                    "description": "OpenAI",
+                    "type": "string"
+                },
+                "detail": {
+                    "description": "OpenAI",
+                    "type": "string"
+                },
+                "force_json": {
+                    "description": "Ollama, OpenAI",
+                    "type": "boolean"
+                },
+                "frequency_penalty": {
+                    "description": "OpenAI",
+                    "type": "number"
+                },
+                "low_vram": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "main_gpu": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "max_output_tokens": {
+                    "description": "Ollama, OpenAI",
+                    "type": "integer"
+                },
+                "min_p": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "mirostat": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "mirostat_eta": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "mirostat_tau": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "num_batch": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_ctx": {
+                    "description": "Ollama, OpenAI",
+                    "type": "integer"
+                },
+                "num_gpu": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_keep": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_predict": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "num_thread": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "numa": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "penalize_newline": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "presence_penalty": {
+                    "description": "OpenAI",
+                    "type": "number"
+                },
+                "repeat_last_n": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "repeat_penalty": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "schema_version": {
+                    "description": "Ollama, OpenAI",
+                    "type": "string"
+                },
+                "seed": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "stop": {
+                    "description": "Ollama, OpenAI",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "temperature": {
+                    "description": "Ollama, OpenAI",
+                    "type": "number"
+                },
+                "tfs_z": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "top_k": {
+                    "description": "Ollama",
+                    "type": "integer"
+                },
+                "top_p": {
+                    "description": "Ollama, OpenAI",
+                    "type": "number"
+                },
+                "typical_p": {
+                    "description": "Ollama",
+                    "type": "number"
+                },
+                "use_mlock": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "use_mmap": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                },
+                "vocab_only": {
+                    "description": "Ollama",
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
         },
         "vision.ModelType": {
             "enum": [

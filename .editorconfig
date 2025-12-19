@@ -1,0 +1,20 @@
+# Top-most EditorConfig file, https://editorconfig.org
+root = true
+
+# Use Unix-style newlines with a newline ending every file.
+[*]
+end_of_line = lf
+insert_final_newline = false
+
+# Set rules by file type.
+[*.json]
+indent_style = space
+indent_size = 2
+
+[*.{js,yaml,yml,md,txt}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+[Makefile]
+indent_style = tab

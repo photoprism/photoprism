@@ -46,7 +46,7 @@ type Model struct {
 	SchemaFile    string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
 	Resolution    int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
 	TensorFlow    *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
-	Options       *ApiRequestOptions    `yaml:"Options,omitempty" json:"options,omitempty"`
+	Options       *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
 	Service       Service               `yaml:"Service,omitempty" json:"service,omitempty"`
 	Path          string                `yaml:"Path,omitempty" json:"-"`
 	Disabled      bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
@@ -133,8 +133,6 @@ func (m *Model) IsDefault() bool {
 		return m.Name == NsfwModel.Name
 	case ModelTypeFace:
 		return m.Name == FacenetModel.Name
-	case ModelTypeCaption:
-		return m.Name == CaptionModel.Name
 	}
 
 	return false
@@ -334,12 +332,12 @@ func (m *Model) GetSource() string {
 
 // GetOptions returns the API request options, applying engine defaults on
 // demand. Nil receivers return nil.
-func (m *Model) GetOptions() *ApiRequestOptions {
+func (m *Model) GetOptions() *ModelOptions {
 	if m == nil {
 		return nil
 	}
 
-	var engineDefaults *ApiRequestOptions
+	var engineDefaults *ModelOptions
 	if defaults := m.engineDefaults(); defaults != nil {
 		engineDefaults = cloneOptions(defaults.Options(m))
 	}
@@ -348,7 +346,7 @@ func (m *Model) GetOptions() *ApiRequestOptions {
 		switch m.Type {
 		case ModelTypeLabels, ModelTypeCaption, ModelTypeGenerate:
 			if engineDefaults == nil {
-				engineDefaults = &ApiRequestOptions{}
+				engineDefaults = &ModelOptions{}
 			}
 			normalizeOptions(engineDefaults)
 			m.Options = engineDefaults
@@ -364,7 +362,7 @@ func (m *Model) GetOptions() *ApiRequestOptions {
 	return m.Options
 }
 
-func mergeOptionDefaults(target, defaults *ApiRequestOptions) {
+func mergeOptionDefaults(target, defaults *ModelOptions) {
 	if target == nil || defaults == nil {
 		return
 	}
@@ -402,7 +400,7 @@ func mergeOptionDefaults(target, defaults *ApiRequestOptions) {
 	}
 }
 
-func normalizeOptions(opts *ApiRequestOptions) {
+func normalizeOptions(opts *ModelOptions) {
 	if opts == nil {
 		return
 	}
@@ -412,7 +410,7 @@ func normalizeOptions(opts *ApiRequestOptions) {
 	}
 }
 
-func cloneOptions(opts *ApiRequestOptions) *ApiRequestOptions {
+func cloneOptions(opts *ModelOptions) *ModelOptions {
 	if opts == nil {
 		return nil
 	}
@@ -467,34 +465,39 @@ func (m *Model) ApplyEngineDefaults() {
 	}
 
 	engine := strings.TrimSpace(strings.ToLower(m.Engine))
+
 	if engine == "" {
 		return
 	}
 
 	if info, ok := EngineInfoFor(engine); ok {
-		if m.Service.Uri == "" {
+		if strings.TrimSpace(m.Model) == "" && strings.TrimSpace(m.Name) == "" {
+			m.Model = info.DefaultModel
+		}
+
+		if strings.TrimSpace(m.Service.Uri) == "" {
 			m.Service.Uri = info.Uri
 		}
 
-		if m.Service.RequestFormat == "" {
+		if strings.TrimSpace(m.Service.RequestFormat) == "" {
 			m.Service.RequestFormat = info.RequestFormat
 		}
 
-		if m.Service.ResponseFormat == "" {
+		if strings.TrimSpace(m.Service.ResponseFormat) == "" {
 			m.Service.ResponseFormat = info.ResponseFormat
 		}
 
-		if info.FileScheme != "" && m.Service.FileScheme == "" {
+		if strings.TrimSpace(m.Service.FileScheme) == "" && info.FileScheme != "" {
 			m.Service.FileScheme = info.FileScheme
 		}
 
-		if info.DefaultResolution > 0 && m.Resolution <= 0 {
+		if m.Resolution <= 0 && info.DefaultResolution > 0 {
 			m.Resolution = info.DefaultResolution
 		}
-	}
 
-	if engine == openai.EngineName && strings.TrimSpace(m.Service.Key) == "" {
-		m.Service.Key = "${OPENAI_API_KEY}"
+		if strings.TrimSpace(m.Service.Key) == "" && info.DefaultKey != "" {
+			m.Service.Key = info.DefaultKey
+		}
 	}
 
 	m.Engine = engine

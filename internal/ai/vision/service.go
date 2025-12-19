@@ -31,13 +31,17 @@ func (m *Service) Endpoint() (uri, method string) {
 		return "", ""
 	}
 
+	ensureEnv()
+
+	if uri = strings.TrimSpace(os.ExpandEnv(m.Uri)); strings.Contains(uri, "${") {
+		uri = ""
+	}
+
 	if m.Method != "" {
 		method = m.Method
 	} else {
 		method = ServiceMethod
 	}
-
-	uri = strings.TrimSpace(m.Uri)
 
 	if username, password := m.BasicAuth(); username != "" || password != "" {
 		if parsed, err := url.Parse(uri); err == nil {

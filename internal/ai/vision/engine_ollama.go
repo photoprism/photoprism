@@ -2,6 +2,7 @@ package vision
 
 import (
 	"context"
+	"os"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
@@ -23,16 +24,38 @@ func init() {
 		Defaults: ollamaDefaults{},
 	})
 
+	registerOllamaEngineDefaults()
+}
+
+// registerOllamaEngineDefaults selects the default Ollama endpoint based on the
+// configured base URL and registers the engine alias accordingly. When
+// OLLAMA_BASE_URL points at the cloud host we only switch the default model to
+// the cloud preset; the actual base URL continues to come from
+// OLLAMA_BASE_URL (or falls back to the local compose default) so we don't
+// accidentally talk to the hosted service without an explicit endpoint.
+func registerOllamaEngineDefaults() {
+	ensureEnv()
+
+	defaultModel := ollama.DefaultModel
+
+	// Use different default model for the Ollama cloud service.
+	if baseUrl := os.Getenv(ollama.BaseUrlEnv); baseUrl == ollama.CloudBaseUrl {
+		defaultModel = ollama.CloudModel
+	}
+
 	// Register the human-friendly engine name so configuration can simply use
 	// `Engine: "ollama"` and inherit adapter defaults.
 	RegisterEngineAlias(ollama.EngineName, EngineInfo{
+		Uri:               ollama.DefaultUri,
 		RequestFormat:     ApiFormatOllama,
 		ResponseFormat:    ApiFormatOllama,
 		FileScheme:        scheme.Base64,
+		DefaultModel:      defaultModel,
 		DefaultResolution: ollama.DefaultResolution,
+		DefaultKey:        ollama.APIKeyPlaceholder,
 	})
 
-	CaptionModel.Engine = ollama.EngineName
+	// Keep the default caption model config aligned with the defaults.
 	CaptionModel.ApplyEngineDefaults()
 }
 
@@ -78,20 +101,20 @@ func (ollamaDefaults) SchemaTemplate(model *Model) string {
 }
 
 // Options returns the Ollama service request options.
-func (ollamaDefaults) Options(model *Model) *ApiRequestOptions {
+func (ollamaDefaults) Options(model *Model) *ModelOptions {
 	if model == nil {
 		return nil
 	}
 
 	switch model.Type {
 	case ModelTypeLabels:
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Temperature: DefaultTemperature,
 			TopP:        0.9,
 			Stop:        []string{"\n\n"},
 		}
 	case ModelTypeCaption:
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Temperature: DefaultTemperature,
 		}
 	default:

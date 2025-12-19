@@ -158,7 +158,7 @@ func TestModelGetOptionsRespectsCustomValues(t *testing.T) {
 	model := &Model{
 		Type:   ModelTypeLabels,
 		Engine: ollama.EngineName,
-		Options: &ApiRequestOptions{
+		Options: &ModelOptions{
 			Temperature: 5,
 			TopP:        0.95,
 			Stop:        []string{"CUSTOM"},
@@ -183,7 +183,7 @@ func TestModelGetOptionsFillsMissingFields(t *testing.T) {
 	model := &Model{
 		Type:    ModelTypeLabels,
 		Engine:  ollama.EngineName,
-		Options: &ApiRequestOptions{},
+		Options: &ModelOptions{},
 	}
 
 	model.ApplyEngineDefaults()
@@ -226,6 +226,20 @@ func TestModelApplyEngineDefaultsSetsServiceDefaults(t *testing.T) {
 		assert.Equal(t, ApiFormatOpenAI, model.Service.RequestFormat)
 		assert.Equal(t, ApiFormatOpenAI, model.Service.ResponseFormat)
 		assert.Equal(t, scheme.Data, model.Service.FileScheme)
+		assert.Equal(t, openai.APIKeyPlaceholder, model.Service.Key)
+	})
+	t.Run("OllamaEngineDefaults", func(t *testing.T) {
+		model := &Model{
+			Type:   ModelTypeLabels,
+			Engine: ollama.EngineName,
+		}
+
+		model.ApplyEngineDefaults()
+
+		assert.Equal(t, ApiFormatOllama, model.Service.RequestFormat)
+		assert.Equal(t, ApiFormatOllama, model.Service.ResponseFormat)
+		assert.Equal(t, scheme.Base64, model.Service.FileScheme)
+		assert.Equal(t, ollama.APIKeyPlaceholder, model.Service.Key)
 	})
 	t.Run("PreserveExistingService", func(t *testing.T) {
 		model := &Model{
@@ -235,6 +249,7 @@ func TestModelApplyEngineDefaultsSetsServiceDefaults(t *testing.T) {
 				Uri:           "https://custom.example",
 				FileScheme:    scheme.Base64,
 				RequestFormat: ApiFormatOpenAI,
+				Key:           "custom-key",
 			},
 		}
 
@@ -242,6 +257,7 @@ func TestModelApplyEngineDefaultsSetsServiceDefaults(t *testing.T) {
 
 		assert.Equal(t, "https://custom.example", model.Service.Uri)
 		assert.Equal(t, scheme.Base64, model.Service.FileScheme)
+		assert.Equal(t, "custom-key", model.Service.Key)
 	})
 }
 
@@ -291,6 +307,38 @@ func TestModelEndpointKeyOpenAIFallbacks(t *testing.T) {
 		model := &Model{}
 		if got := model.EndpointKey(); got != "global-secret" {
 			t.Fatalf("expected global secret, got %q", got)
+		}
+	})
+}
+
+func TestModelEndpointKeyOllamaFallbacks(t *testing.T) {
+	t.Run("EnvFile", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "ollama.key")
+		if err := os.WriteFile(path, []byte("ollama-from-file\n"), 0o600); err != nil {
+			t.Fatalf("write key file: %v", err)
+		}
+
+		ensureEnvOnce = sync.Once{}
+
+		t.Setenv("OLLAMA_API_KEY", "")
+		t.Setenv("OLLAMA_API_KEY_FILE", path)
+
+		model := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName}
+		model.ApplyEngineDefaults()
+
+		if got := model.EndpointKey(); got != "ollama-from-file" {
+			t.Fatalf("expected file key, got %q", got)
+		}
+	})
+	t.Run("EnvVariable", func(t *testing.T) {
+		t.Setenv("OLLAMA_API_KEY", "ollama-env")
+
+		model := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName}
+		model.ApplyEngineDefaults()
+
+		if got := model.EndpointKey(); got != "ollama-env" {
+			t.Fatalf("expected env key, got %q", got)
 		}
 	})
 }
@@ -347,7 +395,7 @@ func TestModelApplyService(t *testing.T) {
 }
 
 func TestModel_IsDefault(t *testing.T) {
-	nasnetCopy := *NasnetModel //nolint:govet // copy for test inspection only
+	nasnetCopy := NasnetModel.Clone() //nolint:govet // copy for test inspection only
 	nasnetCopy.Default = false
 
 	cases := []struct {
@@ -362,7 +410,7 @@ func TestModel_IsDefault(t *testing.T) {
 		},
 		{
 			name:  "NasnetCopy",
-			model: &nasnetCopy,
+			model: nasnetCopy,
 			want:  true,
 		},
 		{
