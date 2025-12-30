@@ -89,8 +89,7 @@ example.com {
           <v-card color="secondary-light">
             <v-card-text>
               <p>
-                WebSocket proxying automatically works in Caddy 2. There is no need to enable this as necessary for Caddy 1, Apache, and NGINX. In addition,
-                Caddy 2 may automatically create and update Let's Encrypt HTTPS certificates.
+                WebSocket proxying works out of the box in Caddy 2. There is no need to enable anything in your config, unlike other reverse proxies.
               </p>
               <p>Example configuration:</p>
               <pre>
