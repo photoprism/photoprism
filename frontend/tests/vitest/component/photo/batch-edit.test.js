@@ -16,8 +16,6 @@ vi.mock("model/thumb");
 describe("component/photo/batch-edit", () => {
   let wrapper;
   let mockBatchInstance;
-  let notifySuccessSpy;
-  let notifyErrorSpy;
 
   const mockSelection = ["uid1", "uid2", "uid3"];
 
@@ -137,9 +135,6 @@ describe("component/photo/batch-edit", () => {
 
     // Mock the Batch constructor to return our mock instance
     vi.mocked(Batch).mockImplementation(() => mockBatchInstance);
-
-    notifySuccessSpy = vi.spyOn(VTUConfig.global.mocks.$notify, "success");
-    notifyErrorSpy = vi.spyOn(VTUConfig.global.mocks.$notify, "error");
 
     wrapper = shallowMount(PPhotoBatchEdit, {
       props: {
