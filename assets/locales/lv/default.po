@@ -1,0 +1,418 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"POT-Creation-Date: 2025-10-17 17:32+0000\n"
+"PO-Revision-Date: 2026-01-06 10:29+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
+"Language-Team: none\n"
+"Language: lv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= "
+"19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
+"X-Generator: Weblate 5.15.1\n"
+
+#: messages.go:104
+msgid "Something went wrong, try again"
+msgstr "Kaut kas nogāja greizi, mēģiniet vēlreiz"
+
+#: messages.go:105
+msgid "Unable to do that"
+msgstr "To nevar izdarīt"
+
+#: messages.go:106
+msgid "Changes could not be saved"
+msgstr "Izmaiņas nevarēja saglabāt"
+
+#: messages.go:107
+msgid "Could not be deleted"
+msgstr "Nevarēja izdzēst"
+
+#: messages.go:108
+#, c-format
+msgid "%s already exists"
+msgstr "%s jau pastāv"
+
+#: messages.go:109
+msgid "Not found"
+msgstr "Nav atrasts"
+
+#: messages.go:110
+msgid "File not found"
+msgstr "Fails nav atrasts"
+
+#: messages.go:111
+msgid "File too large"
+msgstr "Fails ir pārāk liels"
+
+#: messages.go:112
+msgid "Unsupported"
+msgstr "Neatbalstīts"
+
+#: messages.go:113
+msgid "Unsupported type"
+msgstr "Neatbalstīts tips"
+
+#: messages.go:114
+msgid "Unsupported format"
+msgstr "Neatbalstīts formāts"
+
+#: messages.go:115
+msgid "Originals folder is empty"
+msgstr "Oriģinālu mape ir tukša"
+
+#: messages.go:116
+msgid "Selection not found"
+msgstr "Izvēle nav atrasta"
+
+#: messages.go:117
+msgid "Entity not found"
+msgstr "Vienība nav atrasta"
+
+#: messages.go:118
+msgid "Account not found"
+msgstr "Konts nav atrasts"
+
+#: messages.go:119
+msgid "User not found"
+msgstr "Lietotājs nav atrasts"
+
+#: messages.go:120
+msgid "Label not found"
+msgstr "Etiķete nav atrasta"
+
+#: messages.go:121
+msgid "Album not found"
+msgstr "Albums nav atrasts"
+
+#: messages.go:122
+msgid "Subject not found"
+msgstr "Tēma nav atrasta"
+
+#: messages.go:123
+msgid "Person not found"
+msgstr "Persona nav atrasta"
+
+#: messages.go:124
+msgid "Face not found"
+msgstr "Seja nav atrasta"
+
+#: messages.go:125
+msgid "Not available in public mode"
+msgstr "Nav pieejams publiskajā režīmā"
+
+#: messages.go:126
+msgid "Not available in read-only mode"
+msgstr "Nav pieejams tikai lasīšanas režīmā"
+
+#: messages.go:127
+msgid "Please log in to your account"
+msgstr "Lūdzu, piesakieties savā kontā"
+
+#: messages.go:128
+msgid "Permission denied"
+msgstr "Atļauja liegta"
+
+#: messages.go:129
+msgid "Payment required"
+msgstr "Nepieciešams maksājums"
+
+#: messages.go:130
+msgid "Upload might be offensive"
+msgstr "Augšupielāde varētu būt aizskaroša"
+
+#: messages.go:131
+msgid "Upload failed"
+msgstr "Augšupielāde neizdevās"
+
+#: messages.go:132
+msgid "No items selected"
+msgstr "Nav atlasītu vienumu"
+
+#: messages.go:133
+msgid "Failed creating file, please check permissions"
+msgstr "Neizdevās izveidot failu, lūdzu, pārbaudiet atļaujas."
+
+#: messages.go:134
+msgid "Failed creating folder, please check permissions"
+msgstr "Neizdevās izveidot mapi, lūdzu, pārbaudiet atļaujas."
+
+#: messages.go:135
+msgid "Could not connect, please try again"
+msgstr "Nevarēja izveidot savienojumu, lūdzu, mēģiniet vēlreiz."
+
+#: messages.go:136
+msgid "Enter verification code"
+msgstr "Ievadiet verifikācijas kodu"
+
+#: messages.go:137
+msgid "Invalid verification code, please try again"
+msgstr "Nederīgs verifikācijas kods, lūdzu, mēģiniet vēlreiz"
+
+#: messages.go:138
+msgid "Invalid password, please try again"
+msgstr "Nederīga parole, lūdzu, mēģiniet vēlreiz"
+
+#: messages.go:139
+msgid "Feature disabled"
+msgstr "Funkcija ir atspējota"
+
+#: messages.go:140
+msgid "No labels selected"
+msgstr "Nav atlasītas etiķetes"
+
+#: messages.go:141
+msgid "No albums selected"
+msgstr "Nav atlasīts neviens albums"
+
+#: messages.go:142
+msgid "No files available for download"
+msgstr "Nav lejupielādei pieejamu failu"
+
+#: messages.go:143
+msgid "Failed to create zip file"
+msgstr "Neizdevās izveidot zip failu"
+
+#: messages.go:144
+msgid "Invalid credentials"
+msgstr "Nederīgi akreditācijas dati"
+
+#: messages.go:145
+msgid "Invalid link"
+msgstr "Nederīga saite"
+
+#: messages.go:146
+msgid "Invalid name"
+msgstr "Nederīgs nosaukums"
+
+#: messages.go:147
+msgid "Busy, please try again later"
+msgstr "Aizņemts, lūdzu, mēģiniet vēlreiz vēlāk"
+
+#: messages.go:148
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "Pamošanās intervāls ir %s, bet tam jābūt 1 h vai mazākam."
+
+#: messages.go:149
+msgid "Your account could not be connected"
+msgstr "Jūsu kontu nevarēja savienot"
+
+#: messages.go:150
+msgid "Too many requests"
+msgstr "Pārāk daudz pieprasījumu"
+
+#: messages.go:151
+msgid "Insufficient storage"
+msgstr "Nepietiekama krātuve"
+
+#: messages.go:152
+msgid "Quota exceeded"
+msgstr "Kvota pārsniegta"
+
+#: messages.go:155
+msgid "Changes successfully saved"
+msgstr "Izmaiņas veiksmīgi saglabātas"
+
+#: messages.go:156
+msgid "Album created"
+msgstr "Albums izveidots"
+
+#: messages.go:157
+msgid "Album saved"
+msgstr "Albums saglabāts"
+
+#: messages.go:158
+#, c-format
+msgid "Album %s deleted"
+msgstr "Albums %s ir dzēsts"
+
+#: messages.go:159
+msgid "Album contents cloned"
+msgstr "Albuma saturs ir klonēts"
+
+#: messages.go:160
+msgid "File removed from stack"
+msgstr "Fails noņemts no kaudzītes"
+
+#: messages.go:161
+msgid "File deleted"
+msgstr "Fails ir izdzēsts"
+
+#: messages.go:162
+#, c-format
+msgid "Selection added to %s"
+msgstr "Atlasījums pievienots %s"
+
+#: messages.go:163
+#, c-format
+msgid "One entry added to %s"
+msgstr "Viens ieraksts pievienots %s"
+
+#: messages.go:164
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d ieraksti pievienoti %s"
+
+#: messages.go:165
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Viens ieraksts noņemts no %s"
+
+#: messages.go:166
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d ieraksti noņemti no %s"
+
+#: messages.go:167
+msgid "Account created"
+msgstr "Konts izveidots"
+
+#: messages.go:168
+msgid "Account saved"
+msgstr "Konts saglabāts"
+
+#: messages.go:169
+msgid "Account deleted"
+msgstr "Konts ir dzēsts"
+
+#: messages.go:170
+msgid "Settings saved"
+msgstr "Iestatījumi saglabāti"
+
+#: messages.go:171
+msgid "Password changed"
+msgstr "Parole mainīta"
+
+#: messages.go:172
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Importēšana pabeigta %d s laikā"
+
+#: messages.go:173
+msgid "Import canceled"
+msgstr "Importēšana atcelta"
+
+#: messages.go:174
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Indeksēšana pabeigta %d s laikā"
+
+#: messages.go:175
+msgid "Indexing originals..."
+msgstr "Oriģinālu indeksēšana..."
+
+#: messages.go:176
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Failu indeksēšana %s"
+
+#: messages.go:177
+msgid "Indexing canceled"
+msgstr "Indeksēšana atcelta"
+
+#: messages.go:178
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "Noņemti %d faili un %d fotoattēli"
+
+#: messages.go:179
+#, c-format
+msgid "Moving files from %s"
+msgstr "Failu pārvietošana no %s"
+
+#: messages.go:180
+#, c-format
+msgid "Copying files from %s"
+msgstr "Failu kopēšana no %s"
+
+#: messages.go:181
+msgid "Labels deleted"
+msgstr "Etiķetes ir dzēstas"
+
+#: messages.go:182
+msgid "Label saved"
+msgstr "Etiķete saglabāta"
+
+#: messages.go:183
+msgid "Subject saved"
+msgstr "Tēma saglabāta"
+
+#: messages.go:184
+msgid "Subject deleted"
+msgstr "Tēma dzēsta"
+
+#: messages.go:185
+msgid "Person saved"
+msgstr "Persona saglabāta"
+
+#: messages.go:186
+msgid "Person deleted"
+msgstr "Persona dzēsta"
+
+#: messages.go:187
+msgid "File uploaded"
+msgstr "Fails augšupielādēts"
+
+#: messages.go:188
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d faili augšupielādēti %d sekundēs"
+
+#: messages.go:189
+msgid "Processing upload..."
+msgstr "Notiek augšupielādes apstrāde..."
+
+#: messages.go:190
+msgid "Upload has been processed"
+msgstr "Augšupielāde ir apstrādāta"
+
+#: messages.go:191
+msgid "Selection approved"
+msgstr "Atlase apstiprināta"
+
+#: messages.go:192
+msgid "Selection archived"
+msgstr "Atlase arhivēta"
+
+#: messages.go:193
+msgid "Selection restored"
+msgstr "Atlase atjaunota"
+
+#: messages.go:194
+msgid "Selection marked as private"
+msgstr "Izvēle atzīmēta kā privāta"
+
+#: messages.go:195
+msgid "Albums deleted"
+msgstr "Albumi ir dzēsti"
+
+#: messages.go:196
+#, c-format
+msgid "Zip created in %d s"
+msgstr "ZIP fails izveidots %d sekundēs"
+
+#: messages.go:197
+msgid "Permanently deleted"
+msgstr "Neatgriezeniski dzēsts"
+
+#: messages.go:198
+#, c-format
+msgid "%s has been restored"
+msgstr "%s ir atjaunots"
+
+#: messages.go:199
+msgid "Successfully verified"
+msgstr "Veiksmīgi verificēts"
+
+#: messages.go:200
+msgid "Successfully activated"
+msgstr "Veiksmīgi aktivizēts"
