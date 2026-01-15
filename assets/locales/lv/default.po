@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2025-10-17 17:32+0000\n"
-"PO-Revision-Date: 2026-01-06 10:29+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"PO-Revision-Date: 2026-01-15 09:02+0000\n"
+"Last-Translator: Janis Eglitis <alfabeta.lv@gmail.com>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "MIME-Version: 1.0\n"
@@ -87,7 +86,7 @@ msgstr "Lietotājs nav atrasts"
 
 #: messages.go:120
 msgid "Label not found"
-msgstr "Etiķete nav atrasta"
+msgstr "Birka nav atrasta"
 
 #: messages.go:121
 msgid "Album not found"
@@ -111,7 +110,7 @@ msgstr "Nav pieejams publiskajā režīmā"
 
 #: messages.go:126
 msgid "Not available in read-only mode"
-msgstr "Nav pieejams tikai lasīšanas režīmā"
+msgstr "Nav pieejams lasīšanas režīmā"
 
 #: messages.go:127
 msgid "Please log in to your account"
@@ -135,19 +134,19 @@ msgstr "Augšupielāde neizdevās"
 
 #: messages.go:132
 msgid "No items selected"
-msgstr "Nav atlasītu vienumu"
+msgstr "Nav izvēlēts neviens ieraksts"
 
 #: messages.go:133
 msgid "Failed creating file, please check permissions"
-msgstr "Neizdevās izveidot failu, lūdzu, pārbaudiet atļaujas."
+msgstr "Neizdevās izveidot failu, lūdzu, pārbaudiet atļaujas"
 
 #: messages.go:134
 msgid "Failed creating folder, please check permissions"
-msgstr "Neizdevās izveidot mapi, lūdzu, pārbaudiet atļaujas."
+msgstr "Neizdevās izveidot mapi, lūdzu, pārbaudiet atļaujas"
 
 #: messages.go:135
 msgid "Could not connect, please try again"
-msgstr "Nevarēja izveidot savienojumu, lūdzu, mēģiniet vēlreiz."
+msgstr "Nevarēja izveidot savienojumu, lūdzu, mēģiniet vēlreiz"
 
 #: messages.go:136
 msgid "Enter verification code"
@@ -163,11 +162,11 @@ msgstr "Nederīga parole, lūdzu, mēģiniet vēlreiz"
 
 #: messages.go:139
 msgid "Feature disabled"
-msgstr "Funkcija ir atspējota"
+msgstr "Funkcionalitāte ir izslēgta"
 
 #: messages.go:140
 msgid "No labels selected"
-msgstr "Nav atlasītas etiķetes"
+msgstr "Nav atlasītas nevienas birkas"
 
 #: messages.go:141
 msgid "No albums selected"
@@ -183,7 +182,7 @@ msgstr "Neizdevās izveidot zip failu"
 
 #: messages.go:144
 msgid "Invalid credentials"
-msgstr "Nederīgi akreditācijas dati"
+msgstr "Nederīgs lietotājvārds vai parole"
 
 #: messages.go:145
 msgid "Invalid link"
@@ -200,7 +199,7 @@ msgstr "Aizņemts, lūdzu, mēģiniet vēlreiz vēlāk"
 #: messages.go:148
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr "Pamošanās intervāls ir %s, bet tam jābūt 1 h vai mazākam."
+msgstr "Pamošanās intervāls ir %s, bet tam jābūt 1 h vai mazākam"
 
 #: messages.go:149
 msgid "Your account could not be connected"
@@ -212,7 +211,7 @@ msgstr "Pārāk daudz pieprasījumu"
 
 #: messages.go:151
 msgid "Insufficient storage"
-msgstr "Nepietiekama krātuve"
+msgstr "Nepietiek brīvas vietas"
 
 #: messages.go:152
 msgid "Quota exceeded"
@@ -237,15 +236,15 @@ msgstr "Albums %s ir dzēsts"
 
 #: messages.go:159
 msgid "Album contents cloned"
-msgstr "Albuma saturs ir klonēts"
+msgstr "Albuma saturs ir dublēts"
 
 #: messages.go:160
 msgid "File removed from stack"
-msgstr "Fails noņemts no kaudzītes"
+msgstr "Fails izņemts no saraksta"
 
 #: messages.go:161
 msgid "File deleted"
-msgstr "Fails ir izdzēsts"
+msgstr "Fails izdzēsts"
 
 #: messages.go:162
 #, c-format
@@ -290,7 +289,7 @@ msgstr "Iestatījumi saglabāti"
 
 #: messages.go:171
 msgid "Password changed"
-msgstr "Parole mainīta"
+msgstr "Parole nomainīta"
 
 #: messages.go:172
 #, c-format
@@ -308,12 +307,12 @@ msgstr "Indeksēšana pabeigta %d s laikā"
 
 #: messages.go:175
 msgid "Indexing originals..."
-msgstr "Oriģinālu indeksēšana..."
+msgstr "Notiek oriģinālu indeksēšana..."
 
 #: messages.go:176
 #, c-format
 msgid "Indexing files in %s"
-msgstr "Failu indeksēšana %s"
+msgstr "Notiek failu indeksēšana %s"
 
 #: messages.go:177
 msgid "Indexing canceled"
@@ -336,11 +335,11 @@ msgstr "Failu kopēšana no %s"
 
 #: messages.go:181
 msgid "Labels deleted"
-msgstr "Etiķetes ir dzēstas"
+msgstr "Birkas ir dzēstas"
 
 #: messages.go:182
 msgid "Label saved"
-msgstr "Etiķete saglabāta"
+msgstr "Birka saglabāta"
 
 #: messages.go:183
 msgid "Subject saved"
