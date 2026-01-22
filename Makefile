@@ -72,7 +72,7 @@ watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: run-test-go
+test-go: reset-mariadb-migrate reset-postgres-migrate run-test-go
 test-hub: run-test-hub
 test-pkg: run-test-pkg
 test-ai: run-test-ai
