@@ -37,10 +37,21 @@ export default class Page {
     this.dateTimeStacksCheckbox = Selector(".input-stack-meta div.v-selection-control__input");
     this.uuidStacksCheckbox = Selector(".input-stack-uuid div.v-selection-control__input");
     this.nameStacksCheckbox = Selector(".input-stack-name div.v-selection-control__input");
-    this.downloadRawCheckbox = Selector(".input-download-raw div.v-selection-control__input");
     this.hideTitlesCheckbox = Selector(".input-search-titles div.v-selection-control__input");
     this.hideCaptionsCheckbox = Selector(".input-search-captions div.v-selection-control__input");
     this.hideListViewCheckbox = Selector(".input-search-listview div.v-selection-control__input");
+
+    this.downloadDisabledCheckbox = Selector(".input-download-disabled div.v-selection-control__input");
+    this.downloadNameSelect = Selector(".input-download-name div.v-input__control");
+    this.downloadOriginalsCheckbox = Selector(".input-download-originals div.v-selection-control__input");
+    this.downloadRawCheckbox = Selector(".input-download-raw div.v-selection-control__input");
+    this.downloadSidecarCheckbox = Selector(".input-download-sidecar div.v-selection-control__input");
+
+    this.albumDownloadDisabledCheckbox = Selector(".input-album-download-disabled div.v-selection-control__input");
+    this.albumDownloadNameSelect = Selector(".input-album-download-name div.v-input__control");
+    this.albumDownloadOriginalsCheckbox = Selector(".input-album-download-originals div.v-selection-control__input");
+    this.albumDownloadRawCheckbox = Selector(".input-album-download-raw div.v-selection-control__input");
+    this.albumDownloadSidecarCheckbox = Selector(".input-album-download-sidecar div.v-selection-control__input");
 
     this.advancedTab = Selector("#tab-settings_advanced");
     this.debugCheckbox = Selector("label").withText("Debug Logs");

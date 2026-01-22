@@ -164,16 +164,31 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="settings.features.library && settings.features.download" flat tile class="mt-0 px-1 bg-background">
+      <v-card v-if="canChangeDownloads && (settings.features.download || settings.download.disabled)" flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-0 text-subtitle-2">
-          {{ $gettext(`Download`) }}
+          {{ $gettext(`File Downloads`) }}
         </v-card-title>
 
         <v-card-actions>
           <v-row align="start" dense>
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col v-if="isSuperAdmin" cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
+              <v-checkbox
+                v-model="settings.download.disabled"
+                class="ma-0 pa-0 input-download-disabled"
+                density="compact"
+                :label="$gettext('Disabled')"
+                :hint="$gettext('Prevent downloading of individual files through the web interface.')"
+                prepend-icon="mdi-cancel"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
               <v-checkbox
                 v-model="settings.download.originals"
+                :disabled="settings.download.disabled"
                 class="ma-0 pa-0 input-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
@@ -185,9 +200,10 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
               <v-checkbox
                 v-model="settings.download.mediaRaw"
+                :disabled="settings.download.disabled"
                 class="ma-0 pa-0 input-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
@@ -199,9 +215,10 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
               <v-checkbox
                 v-model="settings.download.mediaSidecar"
+                :disabled="settings.download.disabled"
                 class="ma-0 pa-0 input-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
@@ -211,6 +228,112 @@
                 @update:model-value="onChange"
               >
               </v-checkbox>
+            </v-col>
+
+            <v-col v-if="isSuperAdmin" cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
+              <v-select
+                v-model="settings.download.name"
+                :disabled="busy || settings.download.disabled"
+                :items="options.DownloadName()"
+                item-title="text"
+                item-value="value"
+                :label="$gettext('Name')"
+                :hint="$gettext('File naming convention for downloads.')"
+                :menu-props="{ maxHeight: 346 }"
+                persistent-hint
+                class="input-download-name"
+                @update:model-value="onChange"
+              ></v-select>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+
+      <v-card
+        v-if="canChangeDownloads && (settings.features.download || settings.download.disabled || settings.albums.download.disabled)"
+        flat
+        tile
+        class="mt-0 px-1 bg-background"
+      >
+        <v-card-title class="pb-0 text-subtitle-2">
+          {{ $gettext(`Album Downloads`) }}
+        </v-card-title>
+
+        <v-card-actions>
+          <v-row align="start" dense>
+            <v-col v-if="isSuperAdmin" cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
+              <v-checkbox
+                v-model="settings.albums.download.disabled"
+                class="ma-0 pa-0 input-album-download-disabled"
+                density="compact"
+                :label="$gettext('Disabled')"
+                :hint="$gettext('Prevent downloading of album archives through the web interface.')"
+                prepend-icon="mdi-cancel"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
+              <v-checkbox
+                v-model="settings.albums.download.originals"
+                :disabled="settings.albums.download.disabled"
+                class="ma-0 pa-0 input-album-download-originals"
+                density="compact"
+                :label="$gettext('Originals')"
+                :hint="$gettext('Include only original files in album archives.')"
+                prepend-icon="mdi-camera"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
+              <v-checkbox
+                v-model="settings.albums.download.mediaRaw"
+                :disabled="settings.albums.download.disabled"
+                class="ma-0 pa-0 input-album-download-raw"
+                density="compact"
+                :label="$gettext('RAW')"
+                :hint="$gettext('Include RAW image files in album archives.')"
+                prepend-icon="mdi-raw"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
+              <v-checkbox
+                v-model="settings.albums.download.mediaSidecar"
+                :disabled="settings.albums.download.disabled"
+                class="ma-0 pa-0 input-album-download-sidecar"
+                density="compact"
+                :label="$gettext('Sidecar')"
+                :hint="$gettext('Include sidecar files in album archives.')"
+                prepend-icon="mdi-paperclip"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col v-if="isSuperAdmin" cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2" :style="downloadColStyle()">
+              <v-select
+                v-model="settings.albums.download.name"
+                :disabled="busy || settings.albums.download.disabled"
+                :items="options.DownloadName()"
+                item-title="text"
+                item-value="value"
+                :label="$gettext('Name')"
+                :hint="$gettext('File naming convention for album downloads.')"
+                :menu-props="{ maxHeight: 346 }"
+                persistent-hint
+                class="input-album-download-name"
+                @update:model-value="onChange"
+              ></v-select>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -232,10 +355,14 @@ export default {
     PAboutFooter,
   },
   data() {
+    // Determine if user can change download settings (admins and users, not restricted roles).
+    const canChangeDownloads = this.$session.isAdmin() || (this.$session.isUser() && !this.$session.hasScope());
+
     return {
       isDemo: this.$config.isDemo(),
       isAdmin: this.$session.isAdmin(),
       isSuperAdmin: this.$session.isSuperAdmin(),
+      canChangeDownloads: canChangeDownloads,
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
       config: this.$config.values,
@@ -255,6 +382,14 @@ export default {
     }
   },
   methods: {
+    downloadColStyle() {
+      // The current frontend build does not process <style> blocks in Vue SFCs.
+      // Use inline styles for a 5-column layout on large screens (super admin only).
+      if (this.isSuperAdmin && this.$vuetify?.display?.lgAndUp) {
+        return { flex: "0 0 20%", maxWidth: "20%" };
+      }
+      return null;
+    },
     load() {
       this.busy = true;
       this.$notify.blockUI("busy");
