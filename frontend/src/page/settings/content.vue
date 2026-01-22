@@ -277,9 +277,6 @@
 
             <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
-                v-model="settings.albums.download.originals"
-                :disabled="settings.albums.download.disabled"
-                class="ma-0 pa-0 input-album-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
                 :hint="$gettext('Include only original files in album archives.')"
@@ -289,7 +286,6 @@
               >
               </v-checkbox>
             </v-col>
-
             <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.albums.download.mediaRaw"
@@ -382,6 +378,14 @@ export default {
     }
   },
   methods: {
+    downloadColStyle() {
+      // The current frontend build does not process <style> blocks in Vue SFCs.
+      // Use inline styles for a 5-column layout on large screens (super admin only).
+      if (this.isSuperAdmin && this.$vuetify?.display?.lgAndUp) {
+        return { flex: "0 0 20%", maxWidth: "20%" };
+      }
+      return null;
+    },
     load() {
       this.busy = true;
       this.$notify.blockUI("busy");
