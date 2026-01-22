@@ -72,6 +72,66 @@
       <v-card v-if="!isPortal && !hasScope && (isDemo || isSuperAdmin)" flat tile class="mt-0 px-1 bg-background">
         <v-card-actions>
           <v-row align="start" dense>
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.albums"
+                :disabled="busy"
+                class="ma-0 pa-0 input-albums"
+                density="compact"
+                :label="$gettext('Albums')"
+                :hint="$gettext('Show the Albums section to create and manage photo albums.')"
+                prepend-icon="mdi-bookmark"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.favorites"
+                :disabled="busy"
+                class="ma-0 pa-0 input-favorites"
+                density="compact"
+                :label="$gettext('Favorites')"
+                :hint="$gettext('Show the Favorites section to quickly access your starred photos.')"
+                prepend-icon="mdi-star"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.folders"
+                :disabled="busy"
+                class="ma-0 pa-0 input-folders"
+                density="compact"
+                :label="$gettext('Folders')"
+                :hint="$gettext('Show the Folders section to browse pictures by directory structure.')"
+                prepend-icon="mdi-folder"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.features.videos"
+                :disabled="busy"
+                class="ma-0 pa-0 input-videos"
+                density="compact"
+                :label="$gettext('Media')"
+                :hint="$gettext('Show the Media section to browse videos, live photos, and animations.')"
+                prepend-icon="mdi-play-circle"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
             <v-col v-if="!config.disable.faces" cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.people"

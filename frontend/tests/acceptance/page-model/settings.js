@@ -25,6 +25,10 @@ export default class Page {
     this.peopleCheckbox = Selector(".input-people div.v-selection-control__input");
     this.deleteCheckbox = Selector(".input-delete div.v-selection-control__input");
     this.libraryCheckbox = Selector(".input-library div.v-selection-control__input");
+    this.albumsCheckbox = Selector(".input-albums div.v-selection-control__input");
+    this.favoritesCheckbox = Selector(".input-favorites div.v-selection-control__input");
+    this.foldersCheckbox = Selector(".input-folders div.v-selection-control__input");
+    this.videosCheckbox = Selector(".input-videos div.v-selection-control__input");
 
     this.libraryTab = Selector("#tab-settings_content");
     this.reviewCheckbox = Selector(".input-review div.v-selection-control__input");

@@ -652,3 +652,38 @@ test.meta("testID", "settings-general-007").meta({ type: "short", mode: "auth" }
     await t.expect(getPageUrl()).contains("browse");
   }
 );
+
+test.meta("testID", "settings-general-008").meta({ type: "short", mode: "auth" })(
+  "Common: Disable albums, favorites, folders, and media",
+  async (t) => {
+    await menu.checkMenuItemAvailability("albums", true);
+    await menu.checkMenuItemAvailability("favorites", true);
+    await menu.checkMenuItemAvailability("folders", true);
+    await menu.checkMenuItemAvailability("media", true);
+
+    await menu.openPage("settings");
+    await t
+      .click(settings.albumsCheckbox)
+      .click(settings.favoritesCheckbox)
+      .click(settings.foldersCheckbox)
+      .click(settings.videosCheckbox);
+    await t.eval(() => location.reload());
+
+    await menu.checkMenuItemAvailability("albums", false);
+    await menu.checkMenuItemAvailability("favorites", false);
+    await menu.checkMenuItemAvailability("folders", false);
+    await menu.checkMenuItemAvailability("media", false);
+
+    await menu.openPage("settings");
+    await t
+      .click(settings.albumsCheckbox)
+      .click(settings.favoritesCheckbox)
+      .click(settings.foldersCheckbox)
+      .click(settings.videosCheckbox);
+
+    await menu.checkMenuItemAvailability("albums", true);
+    await menu.checkMenuItemAvailability("favorites", true);
+    await menu.checkMenuItemAvailability("folders", true);
+    await menu.checkMenuItemAvailability("media", true);
+  }
+);
