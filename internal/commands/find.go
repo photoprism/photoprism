@@ -70,7 +70,7 @@ func findAction(ctx *cli.Context) error {
 		return nil
 	}
 
-	cols := []string{"File Name", "Mime Type", "Size", "SHA1 Hash"}
+	cols := []string{"File Name", "Mime Type", "Size", "Checksum"}
 	rows := make([][]string, 0, len(results))
 
 	for _, found := range results {

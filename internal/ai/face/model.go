@@ -129,6 +129,8 @@ func (m *Model) loadModel() error {
 
 // Run returns the face embeddings for an image.
 func (m *Model) Run(img image.Image) Embeddings {
+	defer tensorflow.MaybeCollectTensorMemory()
+
 	// Create input tensor from image.
 	tensor, err := imageToTensor(img, m.resolution)
 

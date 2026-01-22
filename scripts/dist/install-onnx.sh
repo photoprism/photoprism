@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-ONNX_VERSION=${ONNX_VERSION:-1.22.0}
+ONNX_VERSION=${ONNX_VERSION:-1.23.2}
 TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
 SYSTEM=$(uname -s)
@@ -30,11 +30,11 @@ case "${SYSTEM}" in
     case "${ARCH}" in
       amd64|AMD64|x86_64|x86-64)
         archive="onnxruntime-linux-x64-${ONNX_VERSION}.tgz"
-        sha="8344d55f93d5bc5021ce342db50f62079daf39aaafb5d311a451846228be49b3"
+        sha="1fa4dcaef22f6f7d5cd81b28c2800414350c10116f5fdd46a2160082551c5f9b"
         ;;
       arm64|ARM64|aarch64)
         archive="onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"
-        sha="bb76395092d150b52c7092dc6b8f2fe4d80f0f3bf0416d2f269193e347e24702"
+        sha="7c63c73560ed76b1fac6cff8204ffe34fe180e70d6582b5332ec094810241e5c"
         ;;
       *)
         echo "Warning: ONNX Runtime is not provided for Linux/${ARCH}; skipping install." >&2
@@ -46,7 +46,7 @@ case "${SYSTEM}" in
     case "${ARCH}" in
       arm64|ARM64|aarch64|x86_64|x86-64)
         archive="onnxruntime-osx-universal2-${ONNX_VERSION}.tgz"
-        sha="cfa6f6584d87555ed9f6e7e8a000d3947554d589efe3723b8bfa358cd263d03c"
+        sha="49ae8e3a66ccb18d98ad3fe7f5906b6d7887df8a5edd40f49eb2b14e20885809"
         ;;
       *)
         echo "Unsupported macOS architecture '${ARCH}'." >&2

@@ -78,7 +78,9 @@ const config = {
     clean: true,
   },
   resolve: {
-    modules: isCustom ? [PATHS.custom, PATHS.src, PATHS.modules] : [PATHS.src, PATHS.modules],
+    modules: isCustom
+      ? [PATHS.custom, PATHS.src, "node_modules", PATHS.modules]
+      : [PATHS.src, "node_modules", PATHS.modules],
     preferRelative: true,
     alias: {
       "vue$": "vue/dist/vue.runtime.esm-bundler.js",

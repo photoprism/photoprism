@@ -1,12 +1,12 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** December 10, 2025
+**Last Updated:** December 23, 2025
 
 ### Overview
 
 `internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to one of three engines:
 
-- **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required.
+- **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection to return that memory to the OS; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
 
@@ -198,6 +198,10 @@ Models:
 - **TensorFlow**: fast, offline defaults for core features (labels, faces, NSFW). Zero external deps.
 - **Ollama**: private, GPU/CPU-hosted multimodal LLMs; best for richer captions/labels without cloud traffic.
 - **OpenAI**: highest quality reasoning and multimodal support; requires API key and network access.
+
+### Model Unload on Idle
+
+PhotoPrism currently keeps TensorFlow models resident for the lifetime of the process to avoid repeated load costs. A future “model unload on idle” mode would track last-use timestamps and close the TensorFlow session/graph after a configurable idle period, releasing the model’s memory footprint back to the OS. The trade-off is higher latency and CPU overhead when a model is used again, plus extra I/O to reload weights. This may be attractive for low-frequency or memory-constrained deployments but would slow continuous indexing jobs, so it is not enabled today.
 
 ### Related Docs
 

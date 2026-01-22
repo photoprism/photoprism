@@ -1,6 +1,6 @@
 ## Face Detection and Embedding Guidelines
 
-**Last Updated:** October 10, 2025
+**Last Updated:** December 23, 2025
 
 ### Overview
 
@@ -45,6 +45,10 @@ Runtime selection lives in `Config.FaceEngine()`; `auto` resolves to ONNX when t
 - The primary detection angles (`FACE_ANGLE`) do **not** affect landmark estimation, which continues to run at 0° to match the cascade assumptions.
 
 ### Embedding Handling
+
+#### Memory Management
+
+FaceNet embeddings are generated through TensorFlow bindings that allocate tensors in C memory. Those allocations are released by Go GC finalizers, so long-running indexing jobs can show steadily rising RSS even when the Go heap stays small. To keep memory bounded during extended face indexing runs, PhotoPrism now triggers periodic garbage collection and returns freed C-allocated tensor buffers to the OS. You can tune this behavior with `PHOTOPRISM_TF_GC_EVERY` (default **200**; set to `0` to disable). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
 
 #### Normalization
 

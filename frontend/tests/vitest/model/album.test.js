@@ -1,8 +1,18 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
 import { Album, BatchSize } from "model/album";
 
 describe("model/album", () => {
+  let originalBatchSize;
+
+  beforeEach(() => {
+    originalBatchSize = Album.batchSize();
+  });
+
+  afterEach(() => {
+    Album.setBatchSize(originalBatchSize);
+  });
+
   it("should get route view", () => {
     const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);
@@ -312,7 +322,6 @@ describe("model/album", () => {
     expect(Album.batchSize()).toBe(BatchSize);
     Album.setBatchSize(30);
     expect(Album.batchSize()).toBe(30);
-    Album.setBatchSize(BatchSize);
   });
 
   it("should like album", () => {

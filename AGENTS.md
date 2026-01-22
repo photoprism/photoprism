@@ -32,8 +32,11 @@ This file tells automated coding agents (and humans) where to find the single so
   - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyse, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
 - Regenerate `NOTICE` files with `make notice` when dependencies change (e.g., updates to `go.mod`, `go.sum`, `package-lock.json`, or other lockfiles). Do not edit `NOTICE` or `frontend/NOTICE` manually.
 - When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
+- Use RFC 3339 UTC timestamps in request and response examples, and valid ID, UID and UUID examples in docs and tests.
 
 > Document headings must use **Title Case** (in APA or AP style) across Markdown files to keep generated navigation and changelogs consistent. Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
+
+> Refresh the `**Last Updated:**` date at the top of documents whenever you make changes to their contents, using the format `January 20, 2026` (without time); leave it as-is for simple formatting or whitespace-only edits.
 
 ## Safety & Data
 
@@ -162,8 +165,6 @@ Note: Across our public documentation, official images, and in production, the c
 - JS/Vue: use the lint/format scripts in `frontend/package.json` (ESLint + Prettier)
 - All added code and tests **must** be formatted according to our standards.
 
-> Remember to update the `**Last Updated:**` line at the top whenever you edit these guidelines or other files containing a timestamp.
-
 ## Tests
 
 - From within the Development Environment:
@@ -183,7 +184,7 @@ Note: Across our public documentation, official images, and in production, the c
   Use `playwright__browser_navigate` to open `/library/login`, sign in, and then call `playwright__browser_take_screenshot` to capture the page state.
 - **Viewport Defaults** — Desktop sessions open with a `1280×900` viewport by default.
   Use `playwright__browser_resize` if the viewport is not preconfigured or you need to adjust it mid-run.
-- **Mobile Workflows** — When testing responsive layouts, use the `playwright_mobile` server (for example, `playwright_mobile__browser_navigate`).  
+- **Mobile Workflows** — When testing responsive layouts, use the `playwright_mobile` server (for example, `playwright_mobile__browser_navigate`).
   It launches with a `375×667` viewport, matching a typical smartphone display, so you can capture mobile layouts without manual resizing.
 - **Authentication** — Default admin credentials are `admin` / `photoprism`:
   - If login fails, check your active Compose file or container environment for `PHOTOPRISM_ADMIN_USER` and `PHOTOPRISM_ADMIN_PASSWORD`.
