@@ -1066,9 +1066,11 @@ start-alldbms:
 start-postgres:
 	$(DOCKER_COMPOSE) -f compose.postgres.yaml up
 docker-postgres:
-	docker pull --platform=amd64 photoprism/develop:plucky
-	docker pull --platform=amd64 photoprism/develop:plucky-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64 postgres /plucky
+	docker pull --platform=amd64 photoprism/develop:questing
+	docker pull --platform=amd64 photoprism/develop:questing-slim
+	docker pull --platform=arm64 photoprism/develop:questing
+	docker pull --platform=arm64 photoprism/develop:questing-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 postgres /questing
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make
