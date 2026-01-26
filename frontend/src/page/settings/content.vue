@@ -359,8 +359,10 @@ export default {
     PAboutFooter,
   },
   data() {
-    // Determine if user can change download settings (admins and users, not restricted roles).
-    const canChangeDownloads = this.$session.isAdmin() || (this.$session.isUser() && !this.$session.hasScope());
+    const user = this.$session.getUser();
+    const role = user ? user.Role : "";
+    const canChangeDownloads =
+      this.$session.isAdmin() || (this.$session.isUser() && !this.$session.hasScope() && (role === "user" || role === "manager"));
 
     return {
       isDemo: this.$config.isDemo(),
