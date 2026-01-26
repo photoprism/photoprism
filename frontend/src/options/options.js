@@ -509,3 +509,14 @@ export const DownloadName = () => [
   { value: "original", text: $gettext("Original Name") },
   { value: "share", text: $gettext("Share Identifier") },
 ];
+
+export const AlbumSortOrder = () => [
+  { value: "newest", text: $gettext("Newest First") },
+  { value: "oldest", text: $gettext("Oldest First") },
+  { value: "added", text: $gettext("Recently Added") },
+  { value: "title", text: $gettext("Picture Title") },
+  { value: "name", text: $gettext("File Name") },
+  { value: "size", text: $gettext("File Size") },
+  { value: "duration", text: $gettext("Video Duration") },
+  { value: "relevance", text: $gettext("Most Relevant") },
+];
