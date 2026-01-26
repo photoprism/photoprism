@@ -164,7 +164,12 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="canChangeDownloads && (settings.features.download || settings.download.disabled)" flat tile class="mt-0 px-1 bg-background">
+      <v-card
+        v-if="canChangeDownloads && (isSuperAdmin ? settings.features.download || settings.download.disabled : settings.features.download)"
+        flat
+        tile
+        class="mt-0 px-1 bg-background"
+      >
         <v-card-title class="pb-0 text-subtitle-2">
           {{ $gettext(`File Downloads`) }}
         </v-card-title>
