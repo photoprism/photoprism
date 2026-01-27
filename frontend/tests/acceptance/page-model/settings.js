@@ -53,6 +53,12 @@ export default class Page {
     this.albumDownloadRawCheckbox = Selector(".input-album-download-raw div.v-selection-control__input");
     this.albumDownloadSidecarCheckbox = Selector(".input-album-download-sidecar div.v-selection-control__input");
 
+    this.albumOrderSelect = Selector(".input-album-order div.v-input__control");
+    this.folderOrderSelect = Selector(".input-folder-order div.v-input__control");
+    this.momentOrderSelect = Selector(".input-moment-order div.v-input__control");
+    this.stateOrderSelect = Selector(".input-state-order div.v-input__control");
+    this.monthOrderSelect = Selector(".input-month-order div.v-input__control");
+
     this.advancedTab = Selector("#tab-settings_advanced");
     this.debugCheckbox = Selector("label").withText("Debug Logs");
     this.backupCheckbox = Selector("label").withText("Disable Backups");
