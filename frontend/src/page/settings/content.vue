@@ -255,7 +255,7 @@
       </v-card>
 
       <v-card
-        v-if="isSuperAdmin && (settings.features.download || settings.download.disabled || settings.albums.download.disabled)"
+        v-if="isSuperAdmin && !hasScope && (settings.features.download || settings.download.disabled || settings.albums.download.disabled)"
         flat
         tile
         class="mt-0 px-1 bg-background"
@@ -368,6 +368,7 @@ export default {
       isDemo: this.$config.isDemo(),
       isAdmin: this.$session.isAdmin(),
       isSuperAdmin: this.$session.isSuperAdmin(),
+      hasScope: this.$session.hasScope(),
       canChangeDownloads: canChangeDownloads,
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),

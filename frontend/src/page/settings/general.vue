@@ -459,7 +459,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="isSuperAdmin" flat tile class="mt-0 px-1 bg-background">
+      <v-card v-if="isSuperAdmin && !hasScope" flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-2 text-subtitle-2">
           {{ $gettext(`Default Album Order`) }}
         </v-card-title>
