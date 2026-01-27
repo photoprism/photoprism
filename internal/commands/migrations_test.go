@@ -982,7 +982,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		// Remove target database file
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
+			os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")
 		}
 	})
 
