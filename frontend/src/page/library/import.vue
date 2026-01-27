@@ -35,6 +35,43 @@
           </v-progress-linear>
         </div>
         <div class="form-options">
+          <v-combobox 
+            v-model="selectedAlbums"
+            v-model:menu="albumsMenu"
+            :disabled="busy || !ready"
+            hide-details
+            chips
+            closable-chips
+            return-object
+            multiple
+            class="input-albums"
+            :items="albums"
+            item-title="Title"
+            item-value="UID"
+            :placeholder="$gettext('Select or create albums')"
+            @update:menu="onAlbumsMenuUpdate"
+            @keydown.enter.stop="onAlbumsEnter">
+            <template #no-data>
+              <v-list-item>
+                <v-list-item-title>
+                  {{ $gettext(`Press enter to create a new album.`) }}
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+            <template #chip="chip">
+              <v-chip
+                :model-value="chip.selected"
+                :disabled="chip.disabled"
+                prepend-icon="mdi-bookmark"
+                class="text-truncate"
+                @click:close="removeSelection(chip.index)"
+              >
+                {{ chip.item.title ? chip.item.title : chip.item }}
+              </v-chip>
+            </template>
+          </v-combobox>
+          </div>
+          <div class="form-options">
           <v-checkbox
             v-model="settings.import.move"
             :disabled="busy || !ready"
@@ -85,6 +122,8 @@
 import $api from "common/api";
 import Axios from "axios";
 import $notify from "common/notify";
+import Album from "model/album";
+import { createAlbumSelectionWatcher } from "common/albums";
 import Settings from "model/settings";
 import { Folder, RootImport } from "model/folder";
 
@@ -107,7 +146,35 @@ export default {
       root: root,
       dirs: [root],
       rtl: this.$isRtl,
+      albums: [],
+      selectedAlbums: [],
+      albumsMenu: false,
+      suppressAlbumsMenuOpen: false,
     };
+  },
+  watch: {
+    visible: function (show) {
+      if (show) {
+        this.reset();
+
+        // Set currently selected albums.
+        if (this.data && Array.isArray(this.data.albums)) {
+          this.selectedAlbums = this.data.albums;
+        } else {
+          this.selectedAlbums = [];
+        }
+
+        // Fetch albums from backend.
+        this.load("");
+      } else {
+        this.reset();
+      }
+    },
+    selectedAlbums: createAlbumSelectionWatcher("albums"),
+  },
+  reset() {
+    this.albumsMenu = false;
+    this.suppressAlbumsMenuOpen = false;
   },
   created() {
     this.subscriptionId = this.$event.subscribe("import", this.handleEvent);
@@ -117,7 +184,28 @@ export default {
     this.$event.unsubscribe(this.subscriptionId);
   },
   methods: {
-    load() {
+    load(q) {
+      if (this.loading) {
+        return;
+      }
+
+      this.onLoad();
+
+      const params = {
+        q: q,
+        count: 2000,
+        offset: 0,
+        type: "album",
+      };
+
+      Album.search(params)
+        .then((response) => {
+          this.albums = response.models;
+        })
+        .finally(() => {
+          this.onLoaded();
+        });
+
       this.$config.load().then(() => {
         this.settings.setValues(this.$config.getSettings());
         this.dirs = [this.root];
@@ -132,6 +220,12 @@ export default {
         this.ready = true;
       });
     },
+    onLoad() {
+      this.loading = true;
+    },
+    onLoaded() {
+      this.loading = false;
+    },    
     onChange() {
       if (!this.$config.values.disable.settings) {
         this.settings.save();
@@ -142,7 +236,7 @@ export default {
         return;
       }
 
-      this.loading = true;
+      this.onLoad();
 
       Folder.findAllUncached(RootImport)
         .then((r) => {
@@ -164,7 +258,7 @@ export default {
             this.settings.import.path = this.root.path;
           }
         })
-        .finally(() => (this.loading = false));
+        .finally(() => (this.onLoaded()));
     },
     showUpload() {
       this.$event.publish("dialog.upload");
@@ -184,6 +278,25 @@ export default {
 
       const ctx = this;
       $notify.blockUI("busy");
+
+      let addToAlbums = [];
+
+      if (this.selectedAlbums && this.selectedAlbums.length > 0) {
+        this.selectedAlbums.forEach((a) => {
+          if (typeof a === "string") {
+            addToAlbums.push(a);
+          } else if (a instanceof Album && a.UID) {
+            addToAlbums.push(a.UID);
+          } else if (typeof a === "object" && a?.UID) {
+            addToAlbums.push(a.UID);
+          }
+        });
+      }
+
+      // Deduplicate album UIDs
+      addToAlbums = [...new Set(addToAlbums)];
+
+      this.settings.import.albums = addToAlbums
 
       $api
         .post("import", this.settings.import, { cancelToken: this.source.token })
@@ -231,6 +344,23 @@ export default {
         default:
           console.log(data);
       }
+    },
+    onAlbumsEnter() {
+      this.suppressAlbumsMenuOpen = true;
+      this.albumsMenu = false;
+      window.setTimeout(() => {
+        this.suppressAlbumsMenuOpen = false;
+      }, 250);
+    },
+    onAlbumsMenuUpdate(val) {
+      if (val && this.suppressAlbumsMenuOpen) {
+        this.albumsMenu = false;
+        return;
+      }
+      this.albumsMenu = val;
+    },
+    removeSelection(index) {
+      this.selectedAlbums.splice(index, 1);
     },
   },
 };
