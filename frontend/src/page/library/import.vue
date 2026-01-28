@@ -35,7 +35,7 @@
           </v-progress-linear>
         </div>
         <div class="form-options">
-          <v-combobox 
+          <v-combobox
             v-model="selectedAlbums"
             v-model:menu="albumsMenu"
             :disabled="busy || !ready"
@@ -50,7 +50,8 @@
             item-value="UID"
             :placeholder="$gettext('Select or create albums')"
             @update:menu="onAlbumsMenuUpdate"
-            @keydown.enter.stop="onAlbumsEnter">
+            @keydown.enter.stop="onAlbumsEnter"
+          >
             <template #no-data>
               <v-list-item>
                 <v-list-item-title>
@@ -70,8 +71,8 @@
               </v-chip>
             </template>
           </v-combobox>
-          </div>
-          <div class="form-options">
+        </div>
+        <div class="form-options">
           <v-checkbox
             v-model="settings.import.move"
             :disabled="busy || !ready"
@@ -225,7 +226,7 @@ export default {
     },
     onLoaded() {
       this.loading = false;
-    },    
+    },
     onChange() {
       if (!this.$config.values.disable.settings) {
         this.settings.save();
@@ -258,7 +259,7 @@ export default {
             this.settings.import.path = this.root.path;
           }
         })
-        .finally(() => (this.onLoaded()));
+        .finally(() => this.onLoaded());
     },
     showUpload() {
       this.$event.publish("dialog.upload");
@@ -296,7 +297,7 @@ export default {
       // Deduplicate album UIDs
       addToAlbums = [...new Set(addToAlbums)];
 
-      this.settings.import.albums = addToAlbums
+      this.settings.import.albums = addToAlbums;
 
       $api
         .post("import", this.settings.import, { cancelToken: this.source.token })
