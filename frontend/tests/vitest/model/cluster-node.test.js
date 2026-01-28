@@ -1,7 +1,19 @@
 import { describe, expect, it } from "vitest";
-import ClusterNode from "../../../../pro/portal/frontend/model/cluster-node.js";
 
-describe("pro/portal/model/cluster-node", () => {
+let ClusterNode;
+let hasProModule = false;
+
+try {
+  const proModuleUrl = new URL("../../../../pro/portal/frontend/model/cluster-node.js", import.meta.url);
+  ({ default: ClusterNode } = await import(/* @vite-ignore */ proModuleUrl.href));
+  hasProModule = true;
+} catch {
+  hasProModule = false;
+}
+
+const suite = hasProModule ? describe : describe.skip;
+
+suite("pro/portal/model/cluster-node", () => {
   it("derives the node identifier", () => {
     const node = new ClusterNode({ UUID: "abc-123", Name: "portal-node" });
 

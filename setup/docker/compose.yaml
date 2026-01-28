@@ -146,7 +146,7 @@ services:
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
       - "./database:/var/lib/mysql" # DO NOT REMOVE
-    ## See https://link.photoprism.app/mariadb-enviconment-variables:
+    ## See https://link.photoprism.app/mariadb-environment-variables:
     environment:
       MARIADB_AUTO_UPGRADE: "1"
       MARIADB_INITDB_SKIP_TZINFO: "1"

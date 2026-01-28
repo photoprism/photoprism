@@ -249,6 +249,15 @@ dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
+dep-vuln:
+	@echo "Checking Go production dependencies for security vulnerabilities..."
+	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+dep-vuln-verbose:
+	@echo "Conducting verbose security vulnerability checks on Go dependencies..."
+	go run golang.org/x/vuln/cmd/govulncheck@latest -show verbose -show traces ./...
+dep-vuln-test:
+	@echo "Checking Go production & test dependencies for security vulnerabilities..."
+	go run golang.org/x/vuln/cmd/govulncheck@latest -test ./...
 npm: dep-npm npm-version
 npm-version:
 	@echo "📦 Installed npm $$(npm --version)."
