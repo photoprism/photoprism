@@ -449,6 +449,7 @@ vitest-component:
 	$(info Running Vitest component tests...)
 	(cd frontend && npm run test-component)
 reset-mariadb:
+# Warning:  This will reset the photoprism database which is the default database, not a testing database.
 	$(info Resetting photoprism database...)
 	mysql < scripts/sql/mariadb/reset-photoprism.sql
 reset-mariadb-testdb:
@@ -470,6 +471,7 @@ reset-sqlite-unit:
 	cp ./internal/entity/migrate/testdata/migrate_sqlite3 ./storage/testdata/unit.test.db
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-migrate
 reset-postgres:
+# Warning:  This will reset the photoprism database which is the default database, not a testing database.
 	$(info Resetting photoprism database...)
 	psql postgresql://photoprism:photoprism@postgres:5432/postgres -f scripts/sql/postgresql/reset-photoprism.sql
 reset-postgres-testdb:
