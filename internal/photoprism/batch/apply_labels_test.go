@@ -1,12 +1,11 @@
 package batch
 
 import (
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 // TestApplyLabels exercises batch action logic.
@@ -1176,13 +1175,13 @@ func TestApplyLabels(t *testing.T) {
 			t.Error("expected error when adding label with invalid UID, but got none")
 		}
 	})
-	t.Run("RemoveNonExistingLabelByUID", func(t *testing.T) {
+	t.Run("RemoveInvalidLabelByUID", func(t *testing.T) {
 		photo := entity.PhotoFixtures.Pointer("Photo13")
-		nonExistingLabelUID := "lt9lxuqxpobbbbbb" // Non-existing UID
+		invalidLabelUID := "xs6sg1e1wowuy3c2" // invalid UID
 
 		labels := Items{
 			Items: []Item{
-				{Action: ActionRemove, Value: nonExistingLabelUID},
+				{Action: ActionRemove, Value: invalidLabelUID},
 			},
 			Action: ActionUpdate,
 		}
@@ -1191,6 +1190,27 @@ func TestApplyLabels(t *testing.T) {
 		if err == nil {
 			t.Error("expected error when removing non-existing label, but got none")
 		}
+	})
+	t.Run("RemoveNonExistingLabelByUID", func(t *testing.T) {
+		photo := entity.PhotoFixtures.Pointer("Photo13")
+		photo.PreloadLabels()
+		before := len(photo.Labels)
+		nonExistingLabelUID := "lt9mvj62lb9cqzoc" // Non-existing UID
+
+		labels := Items{
+			Items: []Item{
+				{Action: ActionRemove, Value: nonExistingLabelUID},
+			},
+			Action: ActionUpdate,
+		}
+
+		if err := ApplyLabels(photo, labels); err != nil {
+			t.Fatal(err)
+		}
+
+		photo.PreloadLabels()
+		assert.Equal(t, before, len(photo.Labels))
+
 	})
 	t.Run("InvalidActionOnLabel", func(t *testing.T) {
 		photo := entity.PhotoFixtures.Pointer("Photo14")
