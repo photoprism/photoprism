@@ -9,6 +9,7 @@ import Page from "../../page-model/page";
 import Photo from "../../page-model/photo";
 import PhotoEdit from "../../page-model/photo-edit";
 import Album from "../../page-model/album";
+import AlbumDialog from "../../page-model/dialog-album";
 import Settings from "../../page-model/settings";
 import Library from "../../page-model/library";
 import Notifies from "../../page-model/notifications";
@@ -25,6 +26,7 @@ const page = new Page();
 const photo = new Photo();
 const photoedit = new PhotoEdit();
 const album = new Album();
+const albumdialog = new AlbumDialog();
 const settings = new Settings();
 const library = new Library();
 const getPageUrl = ClientFunction(() => window.location.href);
@@ -753,6 +755,55 @@ test.meta("testID", "settings-general-012").meta({ type: "short", mode: "auth" }
 );
 
 test.meta("testID", "settings-general-013").meta({ type: "short", mode: "auth" })(
+  "Common: Default album sort order is applied to newly created albums",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.wait(500);
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Oldest First"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
+
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+    const initialAlbumCount = await album.getAlbumCount("all");
+
+    await toolbar.triggerToolbarAction("add");
+    await t.wait(1000);
+
+    const albumCountAfterCreate = await album.getAlbumCount("all");
+    await t.expect(albumCountAfterCreate).eql(initialAlbumCount + 1);
+
+    const newAlbumUid = await album.getNthAlbumUid("all", 0);
+
+    await album.openAlbumWithUid(newAlbumUid);
+    await t.wait(500);
+
+    await toolbar.triggerToolbarAction("edit");
+    await t.wait(500);
+
+    await t.expect(albumdialog.sortOrderValue.innerText).contains("Oldest");
+
+    await t.click(albumdialog.dialogCancel);
+    await t.wait(300);
+
+    await toolbar.triggerToolbarAction("delete");
+    await t.wait(500);
+
+    await menu.openPage("settings");
+    await t.wait(500);
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Newest First"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Newest");
+  }
+);
+
+test.meta("testID", "settings-general-014").meta({ type: "short", mode: "auth" })(
   "Common: Change default album order settings and verify persistence",
   async (t) => {
     await menu.openPage("settings");
