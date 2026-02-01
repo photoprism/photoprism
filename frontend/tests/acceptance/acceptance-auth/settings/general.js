@@ -687,3 +687,103 @@ test.meta("testID", "settings-general-008").meta({ type: "short", mode: "auth" }
     await menu.checkMenuItemAvailability("media", true);
   }
 );
+
+test.meta("testID", "settings-general-011").meta({ type: "short", mode: "auth" })(
+  "Common: Change file download name setting and verify persistence",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+
+    await t.click(settings.downloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Original Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Original");
+
+    await t.eval(() => location.reload());
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Original");
+
+    await t.click(settings.downloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Share Identifier"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Share");
+
+    await t.click(settings.downloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("File Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("File");
+  }
+);
+
+test.meta("testID", "settings-general-012").meta({ type: "short", mode: "auth" })(
+  "Common: Change album download name setting and verify persistence",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+
+    await t.click(settings.albumDownloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Original Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Original");
+
+    await t.eval(() => location.reload());
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Original");
+
+    await t.click(settings.albumDownloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Share Identifier"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Share");
+
+    await t.click(settings.albumDownloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("File Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("File");
+  }
+);
+
+test.meta("testID", "settings-general-013").meta({ type: "short", mode: "auth" })(
+  "Common: Change default album order settings and verify persistence",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.wait(500);
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Oldest First"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
+
+    await t.click(settings.folderOrderSelect);
+    await t.click(Selector(".v-list-item").withText("File Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");
+
+    await t.eval(() => location.reload());
+    await t.wait(500);
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
+    await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Newest First"));
+    await t.wait(500);
+
+    await t.click(settings.folderOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Newest First"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Newest");
+    await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("Newest");
+  }
+);

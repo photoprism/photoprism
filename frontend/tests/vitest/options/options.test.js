@@ -3,7 +3,9 @@ import "../fixtures";
 import * as options from "options/options";
 import {
   AccountTypes,
+  AlbumSortOrder,
   Colors,
+  DownloadName,
   Expires,
   FallbackLocale,
   FeedbackCategories,
@@ -262,5 +264,31 @@ describe("options/options", () => {
   it("should return service account type options", () => {
     expect(AccountTypes()[0].value).toBe("webdav");
     expect(AccountTypes().length).toBe(1);
+  });
+
+  it("should return download name options", () => {
+    const downloadNames = DownloadName();
+    expect(downloadNames).toHaveLength(3);
+    expect(downloadNames[0].value).toBe("file");
+    expect(downloadNames[0].text).toBe("File Name");
+    expect(downloadNames[1].value).toBe("original");
+    expect(downloadNames[1].text).toBe("Original Name");
+    expect(downloadNames[2].value).toBe("share");
+    expect(downloadNames[2].text).toBe("Share Identifier");
+  });
+
+  it("should return album sort order options", () => {
+    const sortOrders = AlbumSortOrder();
+    expect(sortOrders).toHaveLength(8);
+    expect(sortOrders[0].value).toBe("newest");
+    expect(sortOrders[0].text).toBe("Newest First");
+    expect(sortOrders[1].value).toBe("oldest");
+    expect(sortOrders[1].text).toBe("Oldest First");
+    expect(sortOrders[2].value).toBe("added");
+    expect(sortOrders[3].value).toBe("title");
+    expect(sortOrders[4].value).toBe("name");
+    expect(sortOrders[5].value).toBe("size");
+    expect(sortOrders[6].value).toBe("duration");
+    expect(sortOrders[7].value).toBe("relevance");
   });
 });
