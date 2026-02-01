@@ -758,12 +758,12 @@ test.meta("testID", "settings-general-013").meta({ type: "short", mode: "auth" }
   "Common: Default album sort order is applied to newly created albums",
   async (t) => {
     await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
     await t.wait(500);
 
     await t.click(settings.albumOrderSelect);
     await t.click(Selector(".v-list-item").withText("Oldest First"));
     await t.wait(500);
-
     await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
 
     await menu.openPage("albums");
@@ -793,12 +793,12 @@ test.meta("testID", "settings-general-013").meta({ type: "short", mode: "auth" }
     await t.wait(500);
 
     await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
     await t.wait(500);
 
     await t.click(settings.albumOrderSelect);
     await t.click(Selector(".v-list-item").withText("Newest First"));
     await t.wait(500);
-
     await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Newest");
   }
 );
@@ -807,21 +807,21 @@ test.meta("testID", "settings-general-014").meta({ type: "short", mode: "auth" }
   "Common: Change default album order settings and verify persistence",
   async (t) => {
     await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
     await t.wait(500);
 
     await t.click(settings.albumOrderSelect);
     await t.click(Selector(".v-list-item").withText("Oldest First"));
     await t.wait(500);
-
     await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
 
     await t.click(settings.folderOrderSelect);
     await t.click(Selector(".v-list-item").withText("File Name"));
     await t.wait(500);
-
     await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");
 
     await t.eval(() => location.reload());
+    await t.click(Selector(settings.libraryTab));
     await t.wait(500);
     await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
     await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");
