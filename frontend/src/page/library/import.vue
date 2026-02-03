@@ -29,10 +29,20 @@
             @update:model-value="onChange"
             @focus="onFocus"
           >
+            <template #item="{ props, item }">
+              <v-list-item v-bind="props" :subtitle="item.raw.files" :title="item.raw.name"></v-list-item>
+            </template>
           </v-autocomplete>
           <v-progress-linear :model-value="completed" :indeterminate="busy" :height="16" color="selected">
             <span v-if="eta" class="eta text-caption opacity-80">{{ eta }}</span>
           </v-progress-linear>
+        </div>
+        <div class="form-text">
+          {{
+            $gettext(
+              "Optionally all the files in the folder that you have selected above, and any child folders, will be added to any albums that you select below."
+            )
+          }}
         </div>
         <div class="form-options">
           <v-combobox
@@ -87,9 +97,9 @@
           </v-checkbox>
         </div>
         <div class="form-text">
-          {{ $gettext(`Imported files will be sorted by date and given a unique name to avoid duplicates.`) }}
-          {{ $gettext(`JPEGs and thumbnails are automatically rendered as needed.`) }}
-          {{ $gettext(`Original file names will be stored and indexed.`) }}
+          {{ $gettext(`Imported files will be sorted by date and given a unique name to avoid duplicates.`) }}<br />
+          {{ $gettext(`JPEGs and thumbnails are automatically rendered as needed.`) }}<br />
+          {{ $gettext(`Original file names will be stored and indexed.`) }}<br />
           {{ $gettext(`Note you may manually manage your originals folder and importing is optional.`) }}
         </div>
       </div>
@@ -239,7 +249,7 @@ export default {
 
       this.onLoad();
 
-      Folder.findAllUncached(RootImport)
+      Folder.findAllUncached(RootImport, true)
         .then((r) => {
           const folders = r.models ? r.models : [];
           const currentPath = this.settings.import.path;
@@ -251,8 +261,11 @@ export default {
             if (currentPath === folders[i].Path) {
               found = true;
             }
-
-            this.dirs.push({ path: folders[i].Path, name: "/" + this.$util.truncate(folders[i].Path, 100, "…") });
+            this.dirs.push({
+              path: folders[i].Path,
+              name: "/" + this.$util.truncate(folders[i].Path, 100, "…"),
+              files: this.$gettext(`Folder contains %{n} files`, { n: folders[i].FileCount }),
+            });
           }
 
           if (!found) {
