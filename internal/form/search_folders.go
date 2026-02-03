@@ -2,13 +2,14 @@ package form
 
 // SearchFolders represents search form fields for "/api/v1/folders".
 type SearchFolders struct {
-	Query     string `form:"q"`
-	Recursive bool   `form:"recursive"`
-	Files     bool   `form:"files"`
-	Uncached  bool   `form:"uncached"`
-	Public    bool   `form:"public"`
-	Count     int    `form:"count" serialize:"-"`
-	Offset    int    `form:"offset" serialize:"-"`
+	Query       string `form:"q"`
+	Recursive   bool   `form:"recursive"`
+	Files       bool   `form:"files"`
+	IncludeRoot bool   `form:"includeroot"`
+	Uncached    bool   `form:"uncached"`
+	Public      bool   `form:"public"`
+	Count       int    `form:"count" serialize:"-"`
+	Offset      int    `form:"offset" serialize:"-"`
 }
 
 // GetQuery returns the current search query string.
