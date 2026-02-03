@@ -69,6 +69,12 @@ darktable:
 yt-dlp: update-yt-dlp
 update-yt-dlp:
 	sudo yt-dlp -U
+yt-dlp-nightly: install-yt-dlp-nightly
+install-yt-dlp-nightly:
+	@/scripts/install-yt-dlp.sh --nightly
+yt-dlp-master: install-yt-dlp-master
+install-yt-dlp-master:
+	@/scripts/install-yt-dlp.sh --master
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make
