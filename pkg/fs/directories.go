@@ -2,12 +2,6 @@ package fs
 
 import (
 	"os"
-	"path/filepath"
-	"sort"
-	"strings"
-	"sync"
-
-	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
 // OriginalPaths lists default Originals search paths.
@@ -132,76 +126,6 @@ var ModelsPaths = []string{
 	"photoprism/assets/models",
 	"assets/models",
 	"/var/lib/photoprism/assets/models",
-}
-
-// Dirs returns a slice of directories in a path, optional recursively and with symlinks.
-//
-// Warning: Following symlinks can make the result non-deterministic and hard to test!
-func Dirs(root string, recursive bool, followLinks bool) (result []string, err error) {
-	result = []string{}
-	mutex := sync.Mutex{}
-
-	// Ignore hidden folders as well as those listed in an optional ".ppignore" file.
-	ignore := NewIgnoreList(PPIgnoreFilename, true, false)
-
-	symlinks := make(map[string]bool)
-	symlinksMutex := sync.Mutex{}
-
-	// appendResult adds the relative path of a subdirectory to the results.
-	appendResult := func(dir string) {
-		mutex.Lock()
-		defer mutex.Unlock()
-		result = append(result, strings.Replace(dir, root, "", 1))
-	}
-
-	err = fastwalk.Walk(root, func(dir string, mode os.FileMode) error {
-		if mode.IsDir() || mode == os.ModeSymlink && followLinks {
-			// Skip if symlink does not point to existing directory.
-			if mode == os.ModeSymlink {
-				if info, statErr := os.Stat(dir); statErr != nil || !info.IsDir() {
-					return filepath.SkipDir
-				}
-			}
-
-			// Skip if directory should be ignored.
-			if _ = ignore.Path(dir); ignore.Ignore(dir) {
-				return filepath.SkipDir
-			} else if FileExists(filepath.Join(dir, PPStorageFilename)) {
-				return filepath.SkipDir
-			}
-
-			// Only add subdirectories.
-			if dir != root {
-				if !recursive {
-					appendResult(dir)
-
-					return filepath.SkipDir
-				} else if mode != os.ModeSymlink {
-					appendResult(dir)
-
-					return nil
-				} else if resolved, resolveErr := Resolve(dir); resolveErr == nil {
-					symlinksMutex.Lock()
-					defer symlinksMutex.Unlock()
-
-					if _, ok := symlinks[resolved]; ok {
-						return filepath.SkipDir
-					} else {
-						symlinks[resolved] = true
-						appendResult(dir)
-					}
-
-					return fastwalk.ErrTraverseLink
-				}
-			}
-		}
-
-		return nil
-	})
-
-	sort.Strings(result)
-
-	return result, err
 }
 
 // FindDir checks if any of the specified directories exist and returns the absolute path of the first directory found.
