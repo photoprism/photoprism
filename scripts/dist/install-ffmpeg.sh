@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 # Installs a static FFmpeg build from johnvansickle.com.
-# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-ffmpeg.sh)
-
+# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-ffmpeg.sh) [destdir] [version]
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
@@ -16,7 +15,7 @@ if [[ ${1} == "--help" ]]; then
   echo "" 1>&2
   echo "Supported versions:" 1>&2
   echo "  release   Latest stable release, currently 7.0.2 (default)" 1>&2
-  echo "  latest    Latest git master build (recommended)" 1>&2
+  echo "  latest    Latest git master build" 1>&2
   echo "  6.0.1     Specific version from old-releases (6.0.1, 6.0, 5.1.1, ...)" 1>&2
   exit 0
 fi
