@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# Installs a static FFmpeg build from johnvansickle.com.
+# Installs a static FFmpeg build from BtbN/FFmpeg-Builds or johnvansickle.com.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-ffmpeg.sh) [destdir] [version]
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 if [[ ${1} == "--help" ]]; then
-  echo "Installs a static FFmpeg build from johnvansickle.com." 1>&2
+  echo "Installs a static FFmpeg build." 1>&2
   echo "Usage: ${0##*/} [destdir] [version]" 1>&2
   echo "" 1>&2
   echo "Arguments:" 1>&2
@@ -14,9 +14,9 @@ if [[ ${1} == "--help" ]]; then
   echo "  version   FFmpeg version to install (default: release)" 1>&2
   echo "" 1>&2
   echo "Supported versions:" 1>&2
-  echo "  release   Latest stable release, currently 7.0.2 (default)" 1>&2
-  echo "  latest    Latest git master build" 1>&2
-  echo "  6.0.1     Specific version from old-releases (6.0.1, 6.0, 5.1.1, ...)" 1>&2
+  echo "  latest    Latest git master from BtbN (amd64/arm64 only, recommended)" 1>&2
+  echo "  release   Latest stable release from johnvansickle.com (default)" 1>&2
+  echo "  6.0.1     Specific version from johnvansickle.com old-releases" 1>&2
   exit 0
 fi
 
@@ -48,24 +48,41 @@ case $DESTARCH in
     ;;
 esac
 
-# shellcheck source=/dev/null
-. /etc/os-release
-
 echo "Installing FFmpeg..."
 
-# Determine download URL.
-# - "latest" → https://johnvansickle.com/ffmpeg/builds/ (git master)
-# - "release" → https://johnvansickle.com/ffmpeg/releases/
-# - specific version → https://johnvansickle.com/ffmpeg/old-releases/
+# Determine download URL and source.
+# - "latest" → BtbN/FFmpeg-Builds (amd64/arm64 only)
+# - "release" → johnvansickle.com/ffmpeg/releases/
+# - specific version → johnvansickle.com/ffmpeg/old-releases/
+USE_BTBN=false
+
 if [[ $FFMPEG_VERSION == "latest" ]]; then
-  ARCHIVE="ffmpeg-git-${DESTARCH}-static.tar.xz"
-  URL="https://johnvansickle.com/ffmpeg/builds/${ARCHIVE}"
-elif [[ $FFMPEG_VERSION == "release" ]]; then
-  ARCHIVE="ffmpeg-release-${DESTARCH}-static.tar.xz"
-  URL="https://johnvansickle.com/ffmpeg/releases/${ARCHIVE}"
-else
-  ARCHIVE="ffmpeg-${FFMPEG_VERSION}-${DESTARCH}-static.tar.xz"
-  URL="https://johnvansickle.com/ffmpeg/old-releases/${ARCHIVE}"
+  case $DESTARCH in
+    amd64)
+      USE_BTBN=true
+      ARCHIVE="ffmpeg-master-latest-linux64-gpl.tar.xz"
+      URL="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${ARCHIVE}"
+      ;;
+    arm64)
+      USE_BTBN=true
+      ARCHIVE="ffmpeg-master-latest-linuxarm64-gpl.tar.xz"
+      URL="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${ARCHIVE}"
+      ;;
+    *)
+      echo "BtbN builds not available for ${DESTARCH}, using johnvansickle.com release instead." 1>&2
+      FFMPEG_VERSION="release"
+      ;;
+  esac
+fi
+
+if [[ $USE_BTBN == false ]]; then
+  if [[ $FFMPEG_VERSION == "release" ]]; then
+    ARCHIVE="ffmpeg-release-${DESTARCH}-static.tar.xz"
+    URL="https://johnvansickle.com/ffmpeg/releases/${ARCHIVE}"
+  else
+    ARCHIVE="ffmpeg-${FFMPEG_VERSION}-${DESTARCH}-static.tar.xz"
+    URL="https://johnvansickle.com/ffmpeg/old-releases/${ARCHIVE}"
+  fi
 fi
 
 DESTDIR="${DESTDIR}/bin"
@@ -73,9 +90,14 @@ DESTDIR="${DESTDIR}/bin"
 echo "VERSION: $FFMPEG_VERSION"
 echo "ARCHIVE: $ARCHIVE"
 echo "DESTDIR: $DESTDIR"
+if [[ $USE_BTBN == true ]]; then
+  echo "SOURCE:  BtbN/FFmpeg-Builds"
+else
+  echo "SOURCE:  johnvansickle.com"
+fi
 
 echo ""
-echo "Extracting \"$URL\" to \"$DESTDIR\"..."
+echo "Downloading from: $URL"
 sudo mkdir -p "${DESTDIR}"
 
 if ! curl -fsSL "$URL" | sudo tar --strip-components=1 --overwrite --mode=755 -x --xz -C "$DESTDIR"; then
@@ -86,8 +108,14 @@ fi
 
 sudo chown -R root:root "${DESTDIR}"
 
-FFMPEG_BIN="${DESTDIR}/ffmpeg"
-FFPROBE_BIN="${DESTDIR}/ffprobe"
+# Locate ffmpeg binary (BtbN: bin/, JVS: root).
+if [[ -x "${DESTDIR}/bin/ffmpeg" ]]; then
+  FFMPEG_BIN="${DESTDIR}/bin/ffmpeg"
+  FFPROBE_BIN="${DESTDIR}/bin/ffprobe"
+else
+  FFMPEG_BIN="${DESTDIR}/ffmpeg"
+  FFPROBE_BIN="${DESTDIR}/ffprobe"
+fi
 
 if [[ ! -x "${FFMPEG_BIN}" ]]; then
   echo "Error: Could not find ffmpeg binary in ${DESTDIR}" 1>&2
