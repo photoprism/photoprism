@@ -414,6 +414,21 @@
               >
               </v-checkbox>
             </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.ui.zoom"
+                :disabled="busy"
+                class="ma-0 pa-0 input-zoom"
+                density="compact"
+                :label="$gettext('Accessibility')"
+                :hint="$gettext('Allow zooming with gestures when using the PWA on mobile devices.')"
+                prepend-icon="mdi-magnify-plus-outline"
+                persistent-hint
+                @update:model-value="onChangeZoom"
+              >
+              </v-checkbox>
+            </v-col>
           </v-row>
         </v-card-actions>
       </v-card>
@@ -575,6 +590,18 @@ export default {
           } else {
             this.$notify.success(this.$gettext("Changes successfully saved"));
           }
+        })
+        .finally(() => (this.busy = false));
+    },
+    onChangeZoom() {
+      this.busy = true;
+      this.settings
+        .save()
+        .then(() => {
+          this.$config.setSettings(this.settings);
+          this.$notify.info(this.$gettext("Reloading…"));
+          this.$notify.blockUI();
+          setTimeout(() => window.location.reload(), 100);
         })
         .finally(() => (this.busy = false));
     },
