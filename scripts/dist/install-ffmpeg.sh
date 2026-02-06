@@ -1,27 +1,30 @@
 #!/usr/bin/env bash
 
-# Installs a static FFmpeg build from BtbN/FFmpeg-Builds or johnvansickle.com.
+# Installs a static FFmpeg build from BtbN/FFmpeg-Builds.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-ffmpeg.sh) [destdir] [version]
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
+BTBN_REPO="BtbN/FFmpeg-Builds"
+BTBN_BASE="https://github.com/${BTBN_REPO}/releases/download/latest"
+BTBN_API="https://api.github.com/repos/${BTBN_REPO}/releases/latest"
+
 if [[ ${1} == "--help" ]]; then
-  echo "Installs a static FFmpeg build." 1>&2
+  echo "Installs a static FFmpeg build from BtbN/FFmpeg-Builds." 1>&2
   echo "Usage: ${0##*/} [destdir] [version]" 1>&2
   echo "" 1>&2
   echo "Arguments:" 1>&2
   echo "  destdir   Installation directory (default: /opt/ffmpeg)" 1>&2
-  echo "  version   FFmpeg version to install (default: release)" 1>&2
+  echo "  version   FFmpeg version to install (default: latest)" 1>&2
   echo "" 1>&2
   echo "Supported versions:" 1>&2
-  echo "  latest    Latest git master from BtbN (amd64/arm64 only, recommended)" 1>&2
-  echo "  release   Latest stable release from johnvansickle.com (default)" 1>&2
-  echo "  6.0.1     Specific version from johnvansickle.com old-releases" 1>&2
+  echo "  latest    Latest stable release from BtbN (default)" 1>&2
+  echo "  master    Latest nightly build from BtbN" 1>&2
   exit 0
 fi
 
 DESTDIR=$(realpath "${1:-/opt/ffmpeg}")
-FFMPEG_VERSION=${2:-release}
+FFMPEG_VERSION=${2:-latest}
 
 # Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
@@ -35,90 +38,73 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
     DESTARCH=amd64
+    BTBN_ARCH="linux64"
     ;;
   arm64 | ARM64 | aarch64)
     DESTARCH=arm64
-    ;;
-  arm | ARM | aarch | armv7l | armhf)
-    DESTARCH=armhf
+    BTBN_ARCH="linuxarm64"
     ;;
   *)
-    echo "Unsupported Machine Architecture: \"$DESTARCH\"" 1>&2
+    echo "Unsupported architecture: \"$DESTARCH\" (BtbN builds are available for amd64 and arm64 only)" 1>&2
     exit 1
     ;;
 esac
 
 echo "Installing FFmpeg..."
 
-# Determine download URL and source.
-# - "latest" → BtbN/FFmpeg-Builds (amd64/arm64 only)
-# - "release" → johnvansickle.com/ffmpeg/releases/
-# - specific version → johnvansickle.com/ffmpeg/old-releases/
-USE_BTBN=false
+# Determine download URL.
+# - "master" → nightly build (ffmpeg-master-latest-*)
+# - "latest" → latest stable release (ffmpeg-nX.Y-latest-*)
+case $FFMPEG_VERSION in
+  master)
+    ARCHIVE="ffmpeg-master-latest-${BTBN_ARCH}-gpl.tar.xz"
+    URL="${BTBN_BASE}/${ARCHIVE}"
+    ;;
+  latest)
+    # Discover the highest stable version from BtbN release assets.
+    # Asset names follow the pattern: ffmpeg-n8.0-latest-linux64-gpl-8.0.tar.xz
+    ARCHIVE=$(curl -sSf "$BTBN_API" \
+      | grep -oE "ffmpeg-n[0-9]+\.[0-9]+-latest-${BTBN_ARCH}-gpl-[0-9]+\.[0-9]+\.tar\.xz" \
+      | sort -rV \
+      | head -1)
 
-if [[ $FFMPEG_VERSION == "latest" ]]; then
-  case $DESTARCH in
-    amd64)
-      USE_BTBN=true
-      ARCHIVE="ffmpeg-master-latest-linux64-gpl.tar.xz"
-      URL="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${ARCHIVE}"
-      ;;
-    arm64)
-      USE_BTBN=true
-      ARCHIVE="ffmpeg-master-latest-linuxarm64-gpl.tar.xz"
-      URL="https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${ARCHIVE}"
-      ;;
-    *)
-      echo "BtbN builds not available for ${DESTARCH}, using johnvansickle.com release instead." 1>&2
-      FFMPEG_VERSION="release"
-      ;;
-  esac
-fi
+    if [[ -z $ARCHIVE ]]; then
+      echo "Error: Could not determine latest stable FFmpeg version from BtbN." 1>&2
+      echo "Please check your network connection and try again." 1>&2
+      exit 1
+    fi
 
-if [[ $USE_BTBN == false ]]; then
-  if [[ $FFMPEG_VERSION == "release" ]]; then
-    ARCHIVE="ffmpeg-release-${DESTARCH}-static.tar.xz"
-    URL="https://johnvansickle.com/ffmpeg/releases/${ARCHIVE}"
-  else
-    ARCHIVE="ffmpeg-${FFMPEG_VERSION}-${DESTARCH}-static.tar.xz"
-    URL="https://johnvansickle.com/ffmpeg/old-releases/${ARCHIVE}"
-  fi
-fi
-
-DESTDIR="${DESTDIR}/bin"
+    URL="${BTBN_BASE}/${ARCHIVE}"
+    ;;
+  *)
+    echo "Error: Unsupported version '${FFMPEG_VERSION}'." 1>&2
+    echo "Use 'latest' for the latest stable release or 'master' for nightly builds." 1>&2
+    exit 1
+    ;;
+esac
 
 echo "VERSION: $FFMPEG_VERSION"
 echo "ARCHIVE: $ARCHIVE"
 echo "DESTDIR: $DESTDIR"
-if [[ $USE_BTBN == true ]]; then
-  echo "SOURCE:  BtbN/FFmpeg-Builds"
-else
-  echo "SOURCE:  johnvansickle.com"
-fi
-
+echo "SOURCE:  BtbN/FFmpeg-Builds"
 echo ""
 echo "Downloading from: $URL"
 sudo mkdir -p "${DESTDIR}"
 
 if ! curl -fsSL "$URL" | sudo tar --strip-components=1 --overwrite --mode=755 -x --xz -C "$DESTDIR"; then
   echo "Error: Failed to download or extract FFmpeg archive." 1>&2
-  echo "Please check that the version '${FFMPEG_VERSION}' exists and try again." 1>&2
+  echo "Please check your network connection and try again." 1>&2
   exit 1
 fi
 
 sudo chown -R root:root "${DESTDIR}"
 
-# Locate ffmpeg binary (BtbN: bin/, JVS: root).
-if [[ -x "${DESTDIR}/bin/ffmpeg" ]]; then
-  FFMPEG_BIN="${DESTDIR}/bin/ffmpeg"
-  FFPROBE_BIN="${DESTDIR}/bin/ffprobe"
-else
-  FFMPEG_BIN="${DESTDIR}/ffmpeg"
-  FFPROBE_BIN="${DESTDIR}/ffprobe"
-fi
+# Locate ffmpeg binary (BtbN archives contain a bin/ subdirectory).
+FFMPEG_BIN="${DESTDIR}/bin/ffmpeg"
+FFPROBE_BIN="${DESTDIR}/bin/ffprobe"
 
 if [[ ! -x "${FFMPEG_BIN}" ]]; then
-  echo "Error: Could not find ffmpeg binary in ${DESTDIR}" 1>&2
+  echo "Error: Could not find ffmpeg binary in ${DESTDIR}/bin" 1>&2
   exit 1
 fi
 

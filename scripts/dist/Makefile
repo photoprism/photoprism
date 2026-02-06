@@ -16,10 +16,10 @@ install-https:
 	@/scripts/install-https.sh
 ffmpeg: install-ffmpeg
 install-ffmpeg:
-	@/scripts/install-ffmpeg.sh /opt/ffmpeg release
-ffmpeg-latest: install-ffmpeg-latest
-install-ffmpeg-latest:
-	@/scripts/install-ffmpeg.sh /opt/ffmpeg-latest latest
+	@/scripts/install-ffmpeg.sh /opt/ffmpeg latest
+ffmpeg-master: install-ffmpeg-master
+install-ffmpeg-master:
+	@/scripts/install-ffmpeg.sh /opt/ffmpeg master
 mariadb: mariadb-client
 mariadb-client: install-mariadb-client
 install-mariadb-client:
