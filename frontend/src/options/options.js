@@ -507,7 +507,7 @@ export const AccountTypes = () => [{ value: "webdav", text: $gettext("WebDAV") }
 export const DownloadName = () => [
   { value: "file", text: $gettext("File Name") },
   { value: "original", text: $gettext("Original Name") },
-  { value: "share", text: $gettext("Share Identifier") },
+  { value: "share", text: $gettext("Share Friendly") },
 ];
 
 export const AlbumSortOrder = () => [

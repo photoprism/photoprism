@@ -274,7 +274,7 @@ describe("options/options", () => {
     expect(downloadNames[1].value).toBe("original");
     expect(downloadNames[1].text).toBe("Original Name");
     expect(downloadNames[2].value).toBe("share");
-    expect(downloadNames[2].text).toBe("Share Identifier");
+    expect(downloadNames[2].text).toBe("Share Friendly");
   });
 
   it("should return album sort order options", () => {

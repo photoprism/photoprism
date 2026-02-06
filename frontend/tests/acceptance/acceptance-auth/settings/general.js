@@ -709,7 +709,7 @@ test.meta("testID", "settings-general-011").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Original");
 
     await t.click(settings.downloadNameSelect);
-    await t.click(Selector(".v-list-item").withText("Share Identifier"));
+    await t.click(Selector(".v-list-item").withText("Share Friendly"));
     await t.wait(500);
 
     await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Share");
@@ -741,7 +741,7 @@ test.meta("testID", "settings-general-012").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Original");
 
     await t.click(settings.albumDownloadNameSelect);
-    await t.click(Selector(".v-list-item").withText("Share Identifier"));
+    await t.click(Selector(".v-list-item").withText("Share Friendly"));
     await t.wait(500);
 
     await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Share");

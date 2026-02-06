@@ -176,28 +176,13 @@
 
         <v-card-actions>
           <v-row align="start" dense>
-            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="2" class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.download.disabled"
-                class="ma-0 pa-0 input-download-disabled"
-                density="compact"
-                :label="$gettext('Disabled')"
-                :hint="$gettext('Prevent downloading of individual files through the web interface.')"
-                prepend-icon="mdi-cancel"
-                persistent-hint
-                @update:model-value="onChange"
-              >
-              </v-checkbox>
-            </v-col>
-
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"
-                :disabled="settings.download.disabled"
                 class="ma-0 pa-0 input-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
-                :hint="$gettext('Download only original media files, without any automatically generated files.')"
+                :hint="$gettext('Include only original media files.')"
                 prepend-icon="mdi-camera"
                 persistent-hint
                 @update:model-value="onChange"
@@ -205,14 +190,13 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaRaw"
-                :disabled="settings.download.disabled"
                 class="ma-0 pa-0 input-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
-                :hint="$gettext('Include RAW image files when downloading stacks and archives.')"
+                :hint="$gettext('Include RAW image files.')"
                 prepend-icon="mdi-raw"
                 persistent-hint
                 @update:model-value="onChange"
@@ -220,14 +204,13 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaSidecar"
-                :disabled="settings.download.disabled"
                 class="ma-0 pa-0 input-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
-                :hint="$gettext('Include sidecar files when downloading stacks and archives.')"
+                :hint="$gettext('Include sidecar files.')"
                 prepend-icon="mdi-paperclip"
                 persistent-hint
                 @update:model-value="onChange"
@@ -235,15 +218,15 @@
               </v-checkbox>
             </v-col>
 
-            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="4" class="px-2 pb-2 pt-2">
+            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
               <v-select
                 v-model="settings.download.name"
-                :disabled="busy || settings.download.disabled"
+                :disabled="busy"
                 :items="options.DownloadName()"
                 item-title="text"
                 item-value="value"
                 :label="$gettext('Name')"
-                :hint="$gettext('File naming convention for downloads.')"
+                :hint="$gettext('File naming convention.')"
                 :menu-props="{ maxHeight: 346 }"
                 persistent-hint
                 class="input-download-name"
@@ -272,7 +255,7 @@
                 class="ma-0 pa-0 input-album-download-disabled"
                 density="compact"
                 :label="$gettext('Disabled')"
-                :hint="$gettext('Prevent downloading of album archives through the web interface.')"
+                :hint="$gettext('Prevent downloading of album archives.')"
                 prepend-icon="mdi-cancel"
                 persistent-hint
                 @update:model-value="onChange"
@@ -287,7 +270,7 @@
                 class="ma-0 pa-0 input-album-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
-                :hint="$gettext('Include only original files in album archives.')"
+                :hint="$gettext('Include only original media files.')"
                 prepend-icon="mdi-camera"
                 persistent-hint
                 @update:model-value="onChange"
@@ -301,7 +284,7 @@
                 class="ma-0 pa-0 input-album-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
-                :hint="$gettext('Include RAW image files in album archives.')"
+                :hint="$gettext('Include RAW image files.')"
                 prepend-icon="mdi-raw"
                 persistent-hint
                 @update:model-value="onChange"
@@ -316,7 +299,7 @@
                 class="ma-0 pa-0 input-album-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
-                :hint="$gettext('Include sidecar files in album archives.')"
+                :hint="$gettext('Include sidecar files.')"
                 prepend-icon="mdi-paperclip"
                 persistent-hint
                 @update:model-value="onChange"
@@ -332,7 +315,7 @@
                 item-title="text"
                 item-value="value"
                 :label="$gettext('Name')"
-                :hint="$gettext('File naming convention for album downloads.')"
+                :hint="$gettext('File naming convention.')"
                 :menu-props="{ maxHeight: 346 }"
                 persistent-hint
                 class="input-album-download-name"
@@ -345,7 +328,7 @@
 
       <v-card v-if="isSuperAdmin && !hasScope" flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-2 text-subtitle-2">
-          {{ $gettext(`Default Album Order`) }}
+          {{ $gettext(`Default Sort Order in Albums`) }}
         </v-card-title>
 
         <v-card-actions>
