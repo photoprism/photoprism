@@ -690,6 +690,95 @@ test.meta("testID", "settings-general-008").meta({ type: "short", mode: "auth" }
   }
 );
 
+
+test.meta("testID", "settings-general-009").meta({ type: "short", mode: "auth" })(
+  "Common: Disable album downloads only - file downloads still work",
+  async (t) => {
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+
+    await album.toggleSelectNthAlbum(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("download", true);
+
+    await t.navigateTo("/library/browse");
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+
+    await toolbar.search("photo:true");
+    await photoviewer.openPhotoViewer("nth", 0);
+    await photoviewer.checkPhotoViewerActionAvailability("download", true);
+    await photoviewer.triggerPhotoViewerAction("close-button");
+    await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
+
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.filesTab);
+    await t.expect(photoedit.downloadFile.nth(0).visible).ok();
+    await t.click(photoedit.dialogClose);
+    await contextmenu.clearSelection();
+
+    await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+    await t.click(settings.albumDownloadDisabledCheckbox);
+    await t.wait(500);
+
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+
+    await album.toggleSelectNthAlbum(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("download", false);
+    await contextmenu.clearSelection();
+
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("download", false);
+
+    await t.navigateTo("/library/browse");
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+
+    await photo.triggerHoverAction("nth", 1, "select");
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+
+    await toolbar.search("photo:true");
+    await photoviewer.openPhotoViewer("nth", 0);
+    await photoviewer.checkPhotoViewerActionAvailability("download", true);
+    await photoviewer.triggerPhotoViewerAction("close-button");
+    await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
+
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.filesTab);
+    await t.expect(photoedit.downloadFile.nth(0).visible).ok();
+    await t.click(photoedit.dialogClose);
+    await contextmenu.clearSelection();
+
+    await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+    await t.click(settings.albumDownloadDisabledCheckbox);
+    await t.wait(500);
+
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+    await album.toggleSelectNthAlbum(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+  }
+);
+
 test.meta("testID", "settings-general-011").meta({ type: "short", mode: "auth" })(
   "Common: Change file download name setting and verify persistence",
   async (t) => {
