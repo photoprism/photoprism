@@ -558,6 +558,49 @@ export default {
       // Get the slide model.
       const model = this.models[i];
 
+      // Use original image directly if enabled and available.
+      const displaySettings = this.$config.getSettings()?.display;
+      const original = displaySettings?.originals ? model.Thumbs?.original : null;
+
+      if (original) {
+        // Divide by devicePixelRatio if retina lightbox is enabled, so the browser maps
+        // image pixels 1:1 to device pixels on HiDPI displays.
+        const dpr = displaySettings?.retinaLightbox ? (window.devicePixelRatio || 1) : 1;
+        const img = {
+          src: original.src,
+          width: Math.round(original.w / dpr),
+          height: Math.round(original.h / dpr),
+          alt: model?.Title,
+          model: model,
+          loading: false,
+        };
+
+        // Check if content is playable and return the data needed to render it in "contentLoad".
+        if (model?.Playable && model?.Hash) {
+          const isShort = model?.Duration ? model.Duration > 0 && model.Duration <= this.shortVideoDuration * 1000000000 : false;
+
+          const video = {
+            type: "html",
+            html: `<div class="pswp__html"></div>`,
+            model: model,
+            duration: model.Duration > 0 ? model.Duration / 1000000000 : 0,
+            format: this.$util.videoFormat(model?.Codec, model?.Mime),
+            loop: model?.Type !== media.Live && (isShort || model?.Type === media.Animated),
+            msrc: img.src,
+            loading: true,
+          };
+
+          if (model?.Type === media.Live) {
+            video.width = img.width;
+            video.height = img.height;
+          }
+
+          return video;
+        }
+
+        return img;
+      }
+
       // Get the estimated slide (viewport) size in real pixels.
       const pixels = this.getSlidePixels(model);
 
@@ -2625,6 +2668,11 @@ export default {
       const { slide, content, video, data } = this.getContent();
 
       if (!slide) {
+        return;
+      }
+
+      // No size swapping needed when showing original images.
+      if (data?.src && data.src.endsWith("/original")) {
         return;
       }
 

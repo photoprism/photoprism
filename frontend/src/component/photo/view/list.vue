@@ -64,7 +64,7 @@
                   <div v-if="index < firstVisibleElementIndex || index > lastVisibleElementIndex" class="preview"></div>
                   <div
                     v-else
-                    :style="`background-image: url(${m.thumbnailUrl('tile_224')})`"
+                    :style="`background-image: url(${m.thumbnailUrl(tileSize)})`"
                     class="preview"
                     @touchstart.passive="onMouseDown($event, index)"
                     @touchend.stop="onClick($event, index, false)"
@@ -191,10 +191,12 @@ export default {
     const settings = this.$config.getSettings();
     const showTitles = settings.search.showTitles;
     const showCaptions = settings.search.showCaptions;
+    const tileSize = settings.display?.retinaThumbnails ? "tile_500" : "tile_224";
 
     return {
       showTitles,
       showCaptions,
+      tileSize,
       config: this.$config.values,
       notFoundMessage: m,
       showName: this.filter.order === "name",

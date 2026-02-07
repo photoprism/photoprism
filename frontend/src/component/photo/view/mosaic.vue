@@ -37,7 +37,7 @@
             :data-id="m.ID"
             :data-uid="m.UID"
             :title="showTitles && m.Title ? m.Title : m.getOriginalName()"
-            :style="`background-image: url(${m.thumbnailUrl('tile_224')})`"
+            :style="`background-image: url(${m.thumbnailUrl(tileSize)})`"
             :class="m.classes()"
             class="media result preview"
             @contextmenu.stop="onContextMenu($event, index)"
@@ -166,6 +166,7 @@ export default {
     const settings = this.$config.getSettings();
     const showTitles = settings.search.showTitles;
     const showCaptions = settings.search.showCaptions;
+    const tileSize = settings.display?.retinaThumbnails ? "tile_500" : "tile_224";
 
     return {
       input,
@@ -173,6 +174,7 @@ export default {
       trace,
       showTitles,
       showCaptions,
+      tileSize,
       hidePrivate: this.$config.getSettings().features.private,
       firstVisibleElementIndex: 0,
       lastVisibleElementIndex: 0,

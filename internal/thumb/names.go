@@ -45,6 +45,7 @@ const (
 	Fit4096  Name = "fit_4096"
 	Fit5120  Name = "fit_5120"
 	Fit7680  Name = "fit_7680"
+	Original Name = "original"
 )
 
 // Names contains all default size names.

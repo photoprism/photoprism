@@ -83,6 +83,29 @@ func GetThumb(router *gin.RouterGroup) {
 
 		sizeName := thumb.Name(clean.Token(c.Param("size")))
 
+		// Serve original file directly if "original" size is requested.
+		if sizeName == thumb.Original {
+			f, err := query.FileByHash(fileHash)
+
+			if err != nil {
+				c.Data(http.StatusOK, "image/svg+xml", photoIconSvg)
+				return
+			}
+
+			fileName := photoprism.FileName(f.FileRoot, f.FileName)
+
+			if fileName, err = fs.Resolve(fileName); err != nil {
+				log.Errorf("%s: file %s is missing", logPrefix, clean.Log(f.FileName))
+				c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
+				logErr(logPrefix, f.Update("FileMissing", true))
+				return
+			}
+
+			AddImmutableCacheHeader(c)
+			c.File(fileName)
+			return
+		}
+
 		size, ok := thumb.Sizes[sizeName]
 
 		if !ok {

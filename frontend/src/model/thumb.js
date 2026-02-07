@@ -271,6 +271,9 @@ export class Thumb extends Model {
       };
     }
 
+    // Add original image entry for pixel-perfect lightbox display.
+    result.Thumbs.original = { w: width, h: height, src: photo.thumbnailUrl("original") };
+
     return new this(result);
   }
 
@@ -310,6 +313,9 @@ export class Thumb extends Model {
         src: this.thumbnailUrl(file, t.size),
       };
     }
+
+    // Add original image entry for pixel-perfect lightbox display.
+    result.Thumbs.original = { w: file.Width, h: file.Height, src: this.thumbnailUrl(file, "original") };
 
     return new this(result);
   }

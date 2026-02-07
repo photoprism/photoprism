@@ -28,6 +28,7 @@ type Settings struct {
 	Stack     StackSettings    `json:"stack" yaml:"Stack"`
 	Share     ShareSettings    `json:"share" yaml:"Share"`
 	Download  DownloadSettings `json:"download" yaml:"Download"`
+	Display   DisplaySettings  `json:"display" yaml:"Display"`
 	Albums    AlbumsSettings   `json:"albums" yaml:"Albums"`
 	Templates TemplateSettings `json:"templates" yaml:"Templates"`
 }
@@ -91,6 +92,11 @@ func NewSettings(theme, language, timeZone string) *Settings {
 		},
 		Albums:   NewAlbumSettings(),
 		Download: NewDownloadSettings(),
+		Display: DisplaySettings{
+			Originals:        false,
+			RetinaLightbox:   false,
+			RetinaThumbnails: false,
+		},
 		Templates: TemplateSettings{
 			Default: "index.gohtml",
 		},

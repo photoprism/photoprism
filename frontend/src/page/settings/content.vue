@@ -53,6 +53,65 @@
               >
               </v-checkbox>
             </v-col>
+
+          </v-row>
+        </v-card-actions>
+      </v-card>
+
+      <v-card v-if="isSuperAdmin" flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-0 text-subtitle-2">
+          {{ $gettext(`Display`) }}
+        </v-card-title>
+
+        <v-card-actions class="grid">
+          <v-row align="start" dense>
+            <v-col cols="12" sm="4">
+              <v-checkbox
+                v-model="settings.display.originals"
+                :disabled="isDemo"
+                class="ma-0 pa-0 input-originals"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Original Images')"
+                :hint="$gettext('Serve original image files in the viewer instead of generated thumbnails.')"
+                prepend-icon="mdi-image-check"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="4">
+              <v-checkbox
+                v-model="settings.display.retinaLightbox"
+                :disabled="isDemo"
+                class="ma-0 pa-0 input-retina-lightbox"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Retina Lightbox')"
+                :hint="$gettext('Scale images in the viewer for pixel-perfect quality on high-resolution displays.')"
+                prepend-icon="mdi-monitor-shimmer"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="4">
+              <v-checkbox
+                v-model="settings.display.retinaThumbnails"
+                :disabled="isDemo"
+                class="ma-0 pa-0 input-retina-thumbnails"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Retina Thumbnails')"
+                :hint="$gettext('Use higher-resolution thumbnails in grid views for sharper images on high-resolution displays.')"
+                prepend-icon="mdi-view-grid-plus"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
           </v-row>
         </v-card-actions>
       </v-card>

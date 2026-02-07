@@ -80,7 +80,7 @@
         <div v-else :data-id="m.ID" :data-uid="m.UID" class="media result" :class="m.classes()" @contextmenu.stop="onContextMenu($event, index)">
           <div
             :title="m.Title"
-            :style="`background-image: url(${m.thumbnailUrl('tile_500')})`"
+            :style="`background-image: url(${m.thumbnailUrl(tileSize)})`"
             class="preview"
             @touchstart.passive="input.touchStart($event, index)"
             @touchend.stop="onClick($event, index)"
@@ -322,6 +322,7 @@ export default {
     const featDownload = settings.features.download;
     const showTitles = settings.search.showTitles;
     const showCaptions = settings.search.showCaptions;
+    const tileSize = settings.display?.retinaThumbnails ? "tile_1080" : "tile_500";
 
     return {
       featPlaces,
@@ -329,6 +330,7 @@ export default {
       featDownload,
       showTitles,
       showCaptions,
+      tileSize,
       input,
       debug,
       trace,

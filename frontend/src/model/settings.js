@@ -18,6 +18,11 @@ export class Settings extends Model {
       values.maps.style = "";
     }
 
+    // Ensure display settings exist with defaults.
+    if (!values.display) {
+      values.display = { originals: false, retinaLightbox: false, retinaThumbnails: false };
+    }
+
     super.setValues(values, scalarOnly);
 
     return this;
