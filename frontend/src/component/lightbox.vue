@@ -607,11 +607,15 @@ export default {
       // Find thumbnail size that best matches the current slide size and zoom level.
       const thumb = this.$util.thumb(model.Thumbs, pixels.width, pixels.height);
 
+      // Divide by devicePixelRatio if retina lightbox is enabled, so the browser maps
+      // image pixels 1:1 to device pixels on HiDPI displays.
+      const dpr = displaySettings?.retinaLightbox ? (window.devicePixelRatio || 1) : 1;
+
       // Set thumbnail image URL, width, and height.
       const img = {
         src: thumb.src,
-        width: thumb.w,
-        height: thumb.h,
+        width: Math.round(thumb.w / dpr),
+        height: Math.round(thumb.h / dpr),
         alt: model?.Title,
         model: model,
         loading: false,
