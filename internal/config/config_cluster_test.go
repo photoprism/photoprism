@@ -103,6 +103,18 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.True(t, c.Portal())
 		c.Options().NodeRole = ""
 	})
+	t.Run("PortalProxy", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+
+		c.options.PortalProxy = true
+		assert.False(t, c.PortalProxy())
+
+		c.options.NodeRole = string(cluster.RolePortal)
+		assert.True(t, c.PortalProxy())
+
+		c.options.PortalProxy = false
+		assert.False(t, c.PortalProxy())
+	})
 	t.Run("JWKSUrlSetter", func(t *testing.T) {
 		const existing = "https://existing.example/.well-known/jwks.json"
 		tests := []struct {

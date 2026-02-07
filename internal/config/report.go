@@ -180,6 +180,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"cluster-cidr", c.ClusterCIDR()},
 		{"cluster-uuid", c.ClusterUUID()},
 		{"portal-url", c.PortalUrl()},
+		{"portal-proxy", fmt.Sprintf("%t", c.PortalProxy())},
 		{"portal-config-path", c.PortalConfigPath()},
 		{"portal-theme-path", c.PortalThemePath()},
 		{"join-token", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken()))},
