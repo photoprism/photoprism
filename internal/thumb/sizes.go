@@ -90,7 +90,7 @@ var Sizes = SizeMap{
 	Right480: SizeRight480,
 	Fit720:   SizeFit720,
 	Tile500:  SizeTile500,
-	Tile1080: SizeTile1080, // Optional
+	Tile1080: SizeTile1080,
 	Fit1280:  SizeFit1280,
 	Fit1600:  SizeFit1600, // Optional
 	Fit1920:  SizeFit1920,

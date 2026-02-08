@@ -19,9 +19,11 @@ export default {
   },
   data() {
     const view = this.$view.getData();
+    const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_1080" : "tile_500";
     return {
       view,
-      url: view.model.thumbnailUrl("tile_500"),
+      tileSize,
+      url: view.model.thumbnailUrl(tileSize),
       title: view.model.Title ? view.model.Title : "",
     };
   },
@@ -32,7 +34,7 @@ export default {
   },
   watch: {
     uid() {
-      this.url = this.view.model.thumbnailUrl("tile_500");
+      this.url = this.view.model.thumbnailUrl(this.tileSize);
       this.title = this.view.model.Title ? this.view.model.view.Title : "";
     },
   },

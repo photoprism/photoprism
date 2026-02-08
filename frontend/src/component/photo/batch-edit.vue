@@ -50,7 +50,7 @@
               <template #item.preview="{ item, index }">
                 <div class="media result col-preview">
                   <div
-                    :style="`background-image: url(${item.thumbnailUrl('tile_50')})`"
+                    :style="`background-image: url(${item.thumbnailUrl(tileSize)})`"
                     class="preview"
                     @touchstart.passive="onMouseDown($event, index)"
                     @touchend.stop="onSelectClick($event, index, false)"
@@ -109,7 +109,7 @@
                     <template #item.preview="{ item, index }">
                       <div class="media result col-preview">
                         <div
-                          :style="`background-image: url(${item.thumbnailUrl('tile_50')})`"
+                          :style="`background-image: url(${item.thumbnailUrl(tileSize)})`"
                           class="preview"
                           @touchstart.passive="onMouseDown($event, index)"
                           @touchend.stop="onSelectClick($event, index, false)"
@@ -540,7 +540,9 @@ export default {
   },
   emits: ["close"],
   data() {
+    const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_100" : "tile_50";
     return {
+      tileSize,
       model: new Batch(),
       uid: "",
       loading: false,

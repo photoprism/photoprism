@@ -31,7 +31,7 @@
                             </td>
                             <td>
                               <v-img
-                                :src="file.thumbnailUrl('tile_224')"
+                                :src="file.thumbnailUrl(tileSize)"
                                 aspect-ratio="1"
                                 max-width="150"
                                 max-height="150"
@@ -381,7 +381,9 @@ export default {
   },
   emits: ["close"],
   data() {
+    const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_500" : "tile_224";
     return {
+      tileSize,
       view: this.$view.getData(),
       expanded: [0],
       deleteFile: {

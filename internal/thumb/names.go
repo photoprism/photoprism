@@ -56,6 +56,7 @@ var Names = []Name{
 	Fit2560,
 	Fit1920,
 	Fit1280,
+	Tile1080,
 	Tile500,
 	Fit720,
 	Tile224,
