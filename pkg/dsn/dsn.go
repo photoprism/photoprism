@@ -28,6 +28,7 @@ package dsn
 import (
 	"fmt"
 	"net"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -434,9 +435,21 @@ func (d *DSN) ToString() string {
 		}
 	case DriverPostgreSQL, DriverPostgres:
 		if d.Params != "" {
-			return fmt.Sprintf("%s://%s:%s@%s/%s?%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name, d.Params)
+			return (&url.URL{
+				Scheme:   DriverPostgreSQL,
+				User:     url.UserPassword(d.User, d.Password),
+				Host:     d.Server,
+				Path:     d.Name,
+				RawQuery: d.Params,
+			}).String()
 		} else {
-			return fmt.Sprintf("%s://%s:%s@%s/%s?%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name, Params[DriverPostgreSQL])
+			return (&url.URL{
+				Scheme:   DriverPostgreSQL,
+				User:     url.UserPassword(d.User, d.Password),
+				Host:     d.Server,
+				Path:     d.Name,
+				RawQuery: fmt.Sprintf("%s", Params[DriverPostgreSQL]),
+			}).String()
 		}
 	case DriverMariaDB, DriverMySQL:
 		databaseServer := d.Server
@@ -455,5 +468,10 @@ func (d *DSN) ToString() string {
 
 // ForPSQL returns the DSN in the format that psql expects for postgresql.
 func (d *DSN) ForPSQL() string {
-	return fmt.Sprintf("%s://%s:%s@%s/%s", DriverPostgreSQL, d.User, d.Password, d.Server, d.Name)
+	return (&url.URL{
+		Scheme: DriverPostgreSQL,
+		User:   url.UserPassword(d.User, d.Password),
+		Host:   d.Server,
+		Path:   d.Name,
+	}).String()
 }
