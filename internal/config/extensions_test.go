@@ -144,7 +144,7 @@ func TestInitCoreSkipsBootExtensions(t *testing.T) {
 		return nil
 	}, nil)
 
-	conf := NewMinimalTestConfig(t.TempDir())
+	conf := NewMinimalTestConfig("config", t.TempDir())
 	require.NoError(t, conf.InitCore())
 	assert.False(t, bootCalled)
 	assert.True(t, initCalled)
