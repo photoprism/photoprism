@@ -142,6 +142,9 @@ Go changes require `make build-go` and restarting PhotoPrism.
 - **PR [#5442](https://github.com/photoprism/photoprism/pull/5442)** — Display settings (Original Images, Retina Lightbox, Retina Thumbnails)
 - **Issue [#5444](https://github.com/photoprism/photoprism/issues/5444)** — ARM64 TensorFlow header bug in base image
 
+### TODO
+- [ ] Validate retina thumbnails in: Labels, photo preview, edit details, edit labels, edit files, batch edit, account avatar
+
 ### Future Ideas (not yet implemented)
 - Configurable lightbox background color (e.g. `#303030` instead of black)
 - Configurable metadata templates
