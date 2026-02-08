@@ -1,9 +1,11 @@
 package batch
 
 import (
-	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity/query"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )

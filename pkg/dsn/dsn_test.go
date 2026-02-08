@@ -263,6 +263,29 @@ func TestDSN_ToString(t *testing.T) {
 			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
 		},
 		{
+			name: "PostgreSQLEncodedPassword",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "spec[char$@2&",
+			},
+			want: "postgresql://myuser:spec%5Bchar$%402&@postgres:5432/testdb?sslmode=disable&TimeZone=UTC&lock_timeout=5000",
+		},
+		{
+			name: "PostgreSQLWithParmsEncodedPassword",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "spec[char@$2&",
+				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			},
+			want: "postgresql://myuser:spec%5Bchar%40$2&@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
+		},
+		{
 			name: "MariaDB",
 			in: DSN{
 				Driver:   DriverMariaDB,
@@ -393,6 +416,17 @@ func TestDSN_ForPSQL(t *testing.T) {
 				Password: "password",
 			},
 			want: "postgresql://myuser:password@mariadb:4001/testdb",
+		},
+		{
+			name: "PostgreSQLEncodedPassword",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "spec[char$@2&",
+			},
+			want: "postgresql://myuser:spec%5Bchar$%402&@postgres:5432/testdb",
 		},
 	}
 
