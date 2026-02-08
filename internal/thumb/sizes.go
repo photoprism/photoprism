@@ -62,7 +62,7 @@ var (
 	SizeLeft480  = Size{Left480, Fit1920, "AI", 480, 480, false, false, true, false, Options{ResampleFillTopLeft, ResampleDefault}}
 	SizeRight480 = Size{Right480, Fit1920, "AI", 480, 480, false, false, true, false, Options{ResampleFillBottomRight, ResampleDefault}}
 	SizeTile500  = Size{Tile500, Fit1920, "Cards View", 500, 500, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
-	SizeTile1080 = Size{Tile1080, Fit1920, "Instagram", 1080, 1080, false, false, true, false, Options{ResampleFillCenter, ResampleDefault}}
+	SizeTile1080 = Size{Tile1080, Fit1920, "Retina Cards View", 1080, 1080, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
 	SizeFit1280  = Size{Fit1280, Fit1920, "HD TV, SXGA", 1280, 1024, true, true, false, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit1600  = Size{Fit1600, Fit1920, "Social Media", 1600, 900, false, true, true, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit1920  = Size{Fit1920, "", "Full HD", 1920, 1200, true, true, false, false, Options{ResampleFit, ResampleDefault}}
