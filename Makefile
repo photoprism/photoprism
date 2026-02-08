@@ -472,7 +472,7 @@ reset-mariadb-migrate:
 	mysql < scripts/sql/mariadb/reset-migrate.sql
 reset-sqlite-unit:
 	$(info Resetting SQLite unit database...)
-	[ ! -d "./storage/testdata" ] && mkdir ./storage/testdata
+	mkdir -p ./storage/testdata
 	rm --force ./storage/testdata/unit.test.db
 	cp ./internal/entity/migrate/testdata/migrate_sqlite3 ./storage/testdata/unit.test.db
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-migrate
