@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"strconv"
@@ -128,37 +127,38 @@ func (c *Config) DatabaseDSN() string {
 	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
 		case MySQL:
-			databaseServer := c.DatabaseServer()
-
+			databaseNet := "tcp"
 			// Connect via Unix Domain Socket?
-			if strings.HasPrefix(databaseServer, "/") {
+			if strings.HasPrefix(c.DatabaseServer(), "/") {
 				log.Debugf("mariadb: connecting via Unix domain socket")
-				databaseServer = fmt.Sprintf("unix(%s)", databaseServer)
-			} else {
-				databaseServer = fmt.Sprintf("tcp(%s)", databaseServer)
+				databaseNet = "unix"
 			}
 
-			return fmt.Sprintf(
-				"%s:%s@%s/%s?%s&timeout=%ds",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				databaseServer,
-				c.DatabaseName(),
-				dsn.Params[dsn.DriverMySQL],
-				c.DatabaseTimeout(),
-			)
+			return (&dsn.DSN{
+				Driver:   MySQL,
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Server:   c.DatabaseServer(),
+				Net:      databaseNet,
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("%s&timeout=%ds", dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()),
+			}).ToString()
 		case Postgres:
-			return fmt.Sprintf(
-				"postgresql://%s:%s@%s/%s?connect_timeout=%d&%s",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				c.DatabaseServer(),
-				c.DatabaseName(),
-				c.DatabaseTimeout(),
-				dsn.Params[dsn.DriverPostgreSQL],
-			)
+			return (&dsn.DSN{
+				Driver:   dsn.DriverPostgreSQL,
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Server:   c.DatabaseServer(),
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("connect_timeout=%d&%s", c.DatabaseTimeout(), dsn.Params[dsn.DriverPostgreSQL]),
+			}).ToString()
 		case SQLite3:
-			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
+			return (&dsn.DSN{
+				Driver: dsn.DriverSQLite3,
+				Server: c.StoragePath(),
+				Name:   "index.db",
+				Params: fmt.Sprintf("%s", dsn.Params[dsn.DriverSQLite3]),
+			}).ToString()
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""
