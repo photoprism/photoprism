@@ -89,7 +89,7 @@
                   <v-img
                     :alt="accountInfo"
                     :title="$gettext('Change Avatar')"
-                    :src="$vuetify.display.md ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')"
+                    :src="$vuetify.display.md ? user.getAvatarURL(avatarSizeSm) : user.getAvatarURL(avatarSizeLg)"
                   ></v-img>
                 </v-avatar>
               </v-col>
@@ -345,8 +345,11 @@ export default {
     const isDemo = this.$config.isDemo();
     const isPublic = this.$config.isPublic();
     const user = this.$session.getUser();
+    const retina = this.$config.getSettings().display?.retinaThumbnails;
 
     return {
+      avatarSizeSm: retina ? "tile_224" : "tile_100",
+      avatarSizeLg: retina ? "tile_500" : "tile_224",
       busy: isDemo || isPublic,
       options,
       rules,

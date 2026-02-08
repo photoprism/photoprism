@@ -66,7 +66,7 @@
           >
             <div
               :title="label.Name"
-              :style="`background-image: url(${label.thumbnailUrl('tile_500')})`"
+              :style="`background-image: url(${label.thumbnailUrl(tileSize)})`"
               class="preview"
               @touchstart.passive="input.touchStart($event, index)"
               @touchend.stop="onClick($event, index)"
@@ -162,10 +162,12 @@ export default {
     const settings = {};
 
     const features = this.$config.getSettings().features;
+    const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_1080" : "tile_500";
     const canManage = this.$config.allow("labels", "manage");
     const canAddAlbums = this.$config.allow("albums", "create") && features.albums;
 
     return {
+      tileSize,
       canManage: canManage,
       canUpload: this.$config.allow("files", "upload") && features.upload,
       canSelect: canManage || canAddAlbums,

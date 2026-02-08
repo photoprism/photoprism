@@ -6,7 +6,7 @@
           <v-row dense align="start">
             <v-col cols="0" sm="2" class="form-thumb">
               <div>
-                <img :alt="view?.model.Title" :src="view?.model.thumbnailUrl('tile_500')" class="clickable" @click.stop.prevent.exact="openPhoto()" />
+                <img :alt="view?.model.Title" :src="view?.model.thumbnailUrl(tileSize)" class="clickable" @click.stop.prevent.exact="openPhoto()" />
               </div>
             </v-col>
             <v-col cols="12" sm="10" class="d-flex flex-column ga-4">
@@ -158,7 +158,9 @@ export default {
   },
   emits: ["close"],
   data() {
+    const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_1080" : "tile_500";
     return {
+      tileSize,
       view: this.$view.getData(),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,

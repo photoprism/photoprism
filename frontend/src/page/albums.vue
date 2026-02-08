@@ -168,7 +168,7 @@
             <div
               :key="album.UID"
               :title="album.Title"
-              :style="`background-image: url(${album.thumbnailUrl('tile_500')})`"
+              :style="`background-image: url(${album.thumbnailUrl(tileSize)})`"
               class="preview"
               @touchstart.passive="input.touchStart($event, index)"
               @touchend.stop="onClick($event, index)"
@@ -322,6 +322,7 @@ export default {
     const filter = { q, category, order, reverse, year };
     const settings = {};
     const features = this.$config.getSettings().features;
+    const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_1080" : "tile_500";
 
     let categories = [{ value: "", text: this.$gettext("All Categories") }];
 
@@ -334,6 +335,7 @@ export default {
     }
 
     return {
+      tileSize,
       contexts,
       expanded: false,
       experimental: this.$config.get("experimental") && !this.$config.ce(),

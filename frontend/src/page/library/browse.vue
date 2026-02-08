@@ -40,7 +40,7 @@
             <div :data-uid="m.UID" class="result" :class="m.classes(selection.includes(m.UID))" @contextmenu.stop="onContextMenu($event, index)">
               <div
                 :title="m.Name"
-                :style="`background-image: url(${m.thumbnailUrl('tile_500')})`"
+                :style="`background-image: url(${m.thumbnailUrl(tileSize)})`"
                 class="preview"
                 @touchstart.passive="input.touchStart($event, index)"
                 @touchend.stop="onClick($event, index)"
@@ -111,8 +111,10 @@ export default {
     const all = query["all"] ? query["all"] : "";
     const filter = { q: q, all: all };
     const settings = {};
+    const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_1080" : "tile_500";
 
     return {
+      tileSize,
       config: this.$config.values,
       navIcon: this.$isRtl ? "mdi-chevron-left" : "mdi-chevron-right",
       subscriptions: [],
