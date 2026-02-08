@@ -18,6 +18,11 @@ WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'preview')\gexec
 SELECT 'CREATE DATABASE preview OWNER preview'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'preview')\gexec
 
+SELECT 'CREATE USER portal PASSWORD ''portal'''
+WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'portal')\gexec
+SELECT 'CREATE DATABASE portal OWNER portal'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'portal')\gexec
+
 SELECT 'CREATE USER testdb PASSWORD ''testdb'''
 WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'testdb')\gexec
 SELECT 'CREATE DATABASE testdb OWNER testdb'
