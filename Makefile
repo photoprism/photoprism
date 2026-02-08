@@ -260,6 +260,8 @@ terminal:
 	$(DOCKER_COMPOSE) exec -u $(UID) photoprism bash
 mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
+mariadb-init:
+	mariadb < scripts/sql/mariadb-init.sql
 postgres:
 	$(DOCKER_COMPOSE) exec postgres psql -uphotoprism -pphotoprism photoprism
 root: root-terminal
@@ -287,15 +289,19 @@ dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
+audit: audit-frontend audit-backend
+audit-frontend:
+	$(MAKE) -C frontend audit
+audit-backend: dep-vuln
 dep-vuln:
 	@echo "Checking Go production dependencies for security vulnerabilities..."
-	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	go run golang.org/x/vuln/cmd/govulncheck@latest ./pkg/... ./internal/...
 dep-vuln-verbose:
 	@echo "Conducting verbose security vulnerability checks on Go dependencies..."
-	go run golang.org/x/vuln/cmd/govulncheck@latest -show verbose -show traces ./...
+	go run golang.org/x/vuln/cmd/govulncheck@latest -show verbose -show traces ./pkg/... ./internal/...
 dep-vuln-test:
 	@echo "Checking Go production & test dependencies for security vulnerabilities..."
-	go run golang.org/x/vuln/cmd/govulncheck@latest -test ./...
+	go run golang.org/x/vuln/cmd/govulncheck@latest -test ./pkg/... ./internal/...
 npm: dep-npm npm-version
 npm-version:
 	@echo "📦 Installed npm $$(npm --version)."

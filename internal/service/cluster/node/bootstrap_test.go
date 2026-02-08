@@ -3,11 +3,15 @@ package node
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"encoding/json"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -108,6 +112,57 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.Equal(t, dsn.DriverMySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
+}
+
+func TestRegister_AllowsHTTPPortalNonLoopback(t *testing.T) {
+	var hits int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/api/v1/cluster/nodes/register" {
+			hits++
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{})
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	origTransport := http.DefaultTransport
+	t.Cleanup(func() { http.DefaultTransport = origTransport })
+
+	baseTransport, ok := origTransport.(*http.Transport)
+	if !ok {
+		t.Fatalf("expected http.DefaultTransport to be *http.Transport")
+	}
+	transport := baseTransport.Clone()
+	dialer := &net.Dialer{}
+	transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+		if strings.HasPrefix(addr, "portal.local:") {
+			addr = srv.Listener.Addr().String()
+		}
+		return dialer.DialContext(ctx, network, addr)
+	}
+	http.DefaultTransport = transport
+
+	prevJoin := cluster.BootstrapAutoJoinEnabled
+	prevTheme := cluster.BootstrapAutoThemeEnabled
+	cluster.BootstrapAutoJoinEnabled = true
+	cluster.BootstrapAutoThemeEnabled = false
+	t.Cleanup(func() {
+		cluster.BootstrapAutoJoinEnabled = prevJoin
+		cluster.BootstrapAutoThemeEnabled = prevTheme
+	})
+
+	c := config.NewMinimalTestConfigWithDb("bootstrap-http", t.TempDir())
+	defer c.CloseDb()
+
+	u, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+	c.Options().PortalUrl = "http://portal.local:" + u.Port()
+	c.Options().JoinToken = cluster.ExampleJoinToken
+
+	assert.NoError(t, InitConfig(c))
+	assert.Equal(t, 1, hits)
 }
 
 func TestThemeInstall_Missing(t *testing.T) {

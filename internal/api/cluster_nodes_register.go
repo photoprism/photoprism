@@ -118,7 +118,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			}
 		}
 
-		// Validate advertise URL if provided (https required for non-local domains).
+		// Validate advertise URL if provided (http/https allowed for intra-cluster routing).
 		if u := strings.TrimSpace(req.AdvertiseUrl); u != "" {
 			if !validateAdvertiseURL(u) {
 				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid advertise url", status.Failed})
@@ -414,8 +414,8 @@ func normalizeSiteURL(u string) string {
 	return parsed.String()
 }
 
-// validateAdvertiseURL checks that the URL is absolute with a host and scheme,
-// and requires https for non-local hosts. http is allowed only for localhost/127.0.0.1/::1.
+// validateAdvertiseURL checks that the URL is absolute with a host and scheme.
+// HTTP and HTTPS are both allowed to support internal cluster traffic.
 func validateAdvertiseURL(u string) bool {
 	parsed, err := url.Parse(strings.TrimSpace(u))
 
@@ -423,20 +423,12 @@ func validateAdvertiseURL(u string) bool {
 		return false
 	}
 
-	host := strings.ToLower(parsed.Hostname())
-
-	if parsed.Scheme == "https" {
+	switch parsed.Scheme {
+	case "http", "https":
 		return true
-	}
-
-	if parsed.Scheme == "http" {
-		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
-			return true
-		}
+	default:
 		return false
 	}
-
-	return false
 }
 
 func buildJWKSURL(conf *config.Config) string {
@@ -463,9 +455,30 @@ func buildJWKSURL(conf *config.Config) string {
 	return site + path
 }
 
-// validateSiteURL applies the same rules as validateAdvertiseURL.
+// validateSiteURL checks that the URL is absolute with a host and scheme.
+// HTTPS is required for non-local hosts; HTTP is only allowed for loopback or
+// cluster-internal service domains.
 func validateSiteURL(u string) bool {
-	return validateAdvertiseURL(u)
+	parsed, err := url.Parse(strings.TrimSpace(u))
+
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+		return false
+	}
+
+	host := strings.ToLower(parsed.Hostname())
+
+	if parsed.Scheme == "https" {
+		return true
+	}
+
+	if parsed.Scheme == "http" {
+		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
+			return true
+		}
+		return false
+	}
+
+	return false
 }
 
 // isClusterServiceHost reports whether the host refers to a cluster-internal

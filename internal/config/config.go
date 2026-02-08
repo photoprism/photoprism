@@ -289,6 +289,73 @@ func (c *Config) Init() error {
 	return nil
 }
 
+// InitCore initializes configuration values without connecting to the database
+// or running cluster bootstrap tasks.
+func (c *Config) InitCore() error {
+	start := time.Now()
+
+	// Fail if the originals and storage path are identical.
+	if c.OriginalsPath() == c.StoragePath() {
+		return fmt.Errorf("config: originals and storage folder must be different directories")
+	}
+
+	// Make sure that the configured storage directories exist and are properly configured.
+	if err := c.CreateDirectories(); err != nil {
+		return fmt.Errorf("config: %s", err)
+	}
+
+	// Initialize the storage path with a random serial.
+	if err := c.InitSerial(); err != nil {
+		return fmt.Errorf("config: %s", err)
+	}
+
+	// Detect whether files are stored on a case-insensitive file system.
+	if insensitive, err := c.CaseInsensitive(); err != nil {
+		return err
+	} else if insensitive {
+		log.Infof("config: case-insensitive file system detected")
+		fs.IgnoreCase()
+	}
+
+	// Detect the CPU type and available memory.
+	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
+		log.Debugf("config: running on %s, %s memory detected", clean.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
+	}
+
+	// Fail if less than 128 MB of memory were detected.
+	if TotalMem < 128*MegaByte {
+		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/GigaByte)
+	}
+
+	// Show warning if less than 1 GB RAM was detected.
+	if LowMem {
+		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/GigaByte)
+		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
+	}
+
+	// Show swap space disclaimer.
+	if TotalMem < RecommendedMem {
+		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
+	}
+
+	// Show wake-up interval warning if face recognition is activated and the worker runs less than once an hour.
+	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
+		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
+	}
+
+	// Load settings from the "settings.yml" config file.
+	c.initSettings()
+
+	// Initialize extensions that do not require database access.
+	Ext(StageInit).Init(c)
+
+	// Show log message.
+	log.Debugf("config: successfully initialized [%s]", time.Since(start))
+	c.ready.Store(true)
+
+	return nil
+}
+
 // IsReady checks if the application has been successfully initialized.
 func (c *Config) IsReady() bool {
 	return c.ready.Load()

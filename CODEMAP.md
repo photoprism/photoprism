@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** November 22, 2025
+**Last Updated:** February 2, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -115,6 +115,7 @@ Cluster / Portal
   - Theme sync logs explicitly when refresh/rotation occurs so operators can trace credential churn in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
+- Portal-only extensions: `pro/internal/portal` (Portal defaults, flags, provisioning options, `/p/*` proxy router).
 - See specs cheat sheet: `specs/portal/README.md`.
 
 Logging & Events

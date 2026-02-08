@@ -1,6 +1,8 @@
 package server
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/api"
@@ -11,6 +13,10 @@ import (
 // Security is a middleware that adds security-related headers to the server's response.
 var Security = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, conf.BaseUri(header.ProxyPath)) {
+			return
+		}
+
 		// Only allow crawlers to index the site if it is a public demo (or if there is a public image wall):
 		// https://github.com/photoprism/photoprism/issues/669
 		if !conf.Demo() || !conf.Public() {

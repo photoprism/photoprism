@@ -67,12 +67,6 @@ func InitConfig(c *config.Config) error {
 		return nil
 	}
 
-	// Enforce TLS for non-local URLs.
-	if u.Scheme != "https" && !dns.IsLoopbackHost(u.Hostname()) {
-		log.Warnf("cluster: refusing non-TLS portal URL %s on non-local host", clean.Log(portalURL))
-		return nil
-	}
-
 	// Register with retry policy.
 	var registerResp *cluster.RegisterResponse
 	if cluster.BootstrapAutoJoinEnabled {

@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-01-28
+Date generated: 2026-02-02
 
 ================================================================================
 
@@ -1122,8 +1122,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gabriel-vasile/mimetype
-Version: v1.4.12
-License: MIT (https://github.com/gabriel-vasile/mimetype/blob/v1.4.12/LICENSE)
+Version: v1.4.13
+License: MIT (https://github.com/gabriel-vasile/mimetype/blob/v1.4.13/LICENSE)
 
 MIT License
 
@@ -1234,8 +1234,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-co-op/gocron/v2
-Version: v2.19.0
-License: MIT (https://github.com/go-co-op/gocron/blob/v2.19.0/LICENSE)
+Version: v2.19.1
+License: MIT (https://github.com/go-co-op/gocron/blob/v2.19.1/LICENSE)
 
 MIT License
 
@@ -2455,8 +2455,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/golang-jwt/jwt/v5
-Version: v5.3.0
-License: MIT (https://github.com/golang-jwt/jwt/blob/v5.3.0/LICENSE)
+Version: v5.3.1
+License: MIT (https://github.com/golang-jwt/jwt/blob/v5.3.1/LICENSE)
 
 Copyright (c) 2012 Dave Grijalva
 Copyright (c) 2021 golang-jwt maintainers
@@ -2471,8 +2471,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20260127094820-e55356ad8111
-License: Apache-2.0 (https://github.com/golang/geo/blob/e55356ad8111/LICENSE)
+Version: v0.0.0-20260129164528-943061e2742c
+License: Apache-2.0 (https://github.com/golang/geo/blob/943061e2742c/LICENSE)
 
 
                                  Apache License
