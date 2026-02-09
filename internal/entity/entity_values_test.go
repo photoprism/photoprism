@@ -281,8 +281,8 @@ func TestModelValuesStructOption(t *testing.T) {
 		signedInt32 := int32(1)
 		signedInt64 := int64(1)
 		stringData := "IAmAString"
-		float32 := float32(12.34)
-		float64 := float64(12.3456789)
+		testFloat32 := float32(12.34)
+		testFloat64 := float64(12.3456789)
 		boolean := true
 		otpKey, err := otp.NewKeyFromURL(`otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example&algorithm=sha256&digits=8`)
 		embeddingJSON := json.RawMessage(`{"precomputed": true}`)
@@ -309,10 +309,10 @@ func TestModelValuesStructOption(t *testing.T) {
 			SignedIntPointer64:   &signedInt64,
 			StringData:           stringData,
 			StringPointer:        &stringData,
-			Float32:              float32,
-			Float32Pointer:       &float32,
-			Float64:              float64,
-			Float64Pointer:       &float64,
+			Float32:              testFloat32,
+			Float32Pointer:       &testFloat32,
+			Float64:              testFloat64,
+			Float64Pointer:       &testFloat64,
 			Boolean:              boolean,
 			BooleanPointer:       &boolean,
 			OtpKey:               *otpKey,
