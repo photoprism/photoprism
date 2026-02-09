@@ -33,17 +33,16 @@ func TestUserDetails_HasID(t *testing.T) {
 }
 
 func TestUserDetails_Updates(t *testing.T) {
-	m := &User{
-		UserUID: "1234",
-		UserDetails: &UserDetails{
-			UserUID:    "1234", // m.UserDetails.Updates fails with WHERE conditions required.
-			BirthYear:  1999,
-			BirthMonth: 3,
-			NameTitle:  "Dr.",
-			GivenName:  "John",
-			MiddleName: "Wulfrick",
-			FamilyName: "Doe",
-		}}
+	m := NewUser()
+	m.UserDetails = &UserDetails{
+		UserUID:    m.UserUID, // m.UserDetails.Updates fails with WHERE conditions required.
+		BirthYear:  1999,
+		BirthMonth: 3,
+		NameTitle:  "Dr.",
+		GivenName:  "John",
+		MiddleName: "Wulfrick",
+		FamilyName: "Doe",
+	}
 
 	assert.Nil(t, m.UserDetails.Updates(UserDetails{GivenName: "Jane"}))
 	assert.Equal(t, "Jane", m.UserDetails.GivenName)
@@ -51,16 +50,16 @@ func TestUserDetails_Updates(t *testing.T) {
 
 func TestUserDetails_DisplayName(t *testing.T) {
 	t.Run("DrJohnDoe", func(t *testing.T) {
-		m := &User{
-			UserUID: "1234",
-			UserDetails: &UserDetails{
-				BirthYear:  1999,
-				BirthMonth: 3,
-				NameTitle:  "Dr.",
-				GivenName:  "John",
-				MiddleName: "Wulfrick",
-				FamilyName: "Doe",
-			}}
+		m := NewUser()
+		m.UserDetails = &UserDetails{
+			UserUID:    m.UserUID, // m.UserDetails.Updates fails with WHERE conditions required.
+			BirthYear:  1999,
+			BirthMonth: 3,
+			NameTitle:  "Dr.",
+			GivenName:  "John",
+			MiddleName: "Wulfrick",
+			FamilyName: "Doe",
+		}
 
 		assert.Equal(t, "Dr. John Doe", m.UserDetails.DisplayName())
 	})

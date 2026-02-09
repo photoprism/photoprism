@@ -66,7 +66,8 @@ func TestLabel_SaveForm(t *testing.T) {
 
 func TestFlushLabelCache(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		FlushLabelCache()
+		require.NotPanics(t, func() { FlushLabelCache() })
+		assert.Equal(t, 0, labelCache.ItemCount())
 	})
 }
 

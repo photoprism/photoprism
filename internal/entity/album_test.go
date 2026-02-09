@@ -54,11 +54,11 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -105,11 +105,11 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -148,11 +148,11 @@ func TestAddPhotoToUserAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -1315,17 +1315,17 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		first_photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		second_photo_updatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
+		firstPhotoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		secondPhotoUpdatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, first_photo_updatedAt <= album_updatedAt,
+			t, firstPhotoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" photos are removed",
 		)
 		assert.Truef(
-			t, second_photo_updatedAt <= album_updatedAt,
+			t, secondPhotoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" photos are removed",
 		)

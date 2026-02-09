@@ -158,7 +158,7 @@ func TestFlushCachedKeyword(t *testing.T) {
 		assert.False(t, found)
 	})
 	t.Run("NilKeyword", func(t *testing.T) {
-		FlushCachedKeyword(nil)
+		require.NotPanics(t, func() { FlushCachedKeyword(nil) })
 	})
 }
 

@@ -5,13 +5,15 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFlushSessionCache(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		FlushSessionCache()
+		require.NotPanics(t, func() { FlushSessionCache() })
+		assert.Equal(t, 0, sessionCache.ItemCount())
 	})
 }
 
