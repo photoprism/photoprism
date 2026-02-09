@@ -13,8 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-var editTime = time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC)
-var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 
 func TestInitDBLengths(t *testing.T) {
@@ -95,7 +93,7 @@ func TestInitDBLengths(t *testing.T) {
 
 		expectedCount := int64(0)
 		stmt.Model(m).Count(&expectedCount)
-		expectedCount += 1
+		expectedCount++
 
 		// Prevent the creation of the child records as it prevents cleanup.
 		result := stmt.Omit(clause.Associations).Create(n)
@@ -1690,7 +1688,7 @@ func TestInitDBLengths(t *testing.T) {
 
 		expectedCount := int64(0)
 		stmt.Model(m).Count(&expectedCount)
-		expectedCount += 1
+		expectedCount++
 
 		result := stmt.Omit(clause.Associations).Create(n)
 		assert.NoError(t, result.Error, "Create record")

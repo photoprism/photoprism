@@ -49,11 +49,11 @@ func populatePhotoPrismStructsWithAutoIncrement(t *testing.T, db *gorm.DB) {
 		}
 	}
 
-	error := entity.Error{}
-	if err := populateStructWithMin(&error); err != nil {
+	tmpError := entity.Error{}
+	if err := populateStructWithMin(&tmpError); err != nil {
 		t.Error(err)
 	} else {
-		if result := db.Create(&error); result.Error != nil {
+		if result := db.Create(&tmpError); result.Error != nil {
 			t.Error(result.Error)
 		}
 	}
@@ -141,7 +141,7 @@ func populatePhotoPrismStructsWithAutoIncrement(t *testing.T, db *gorm.DB) {
 	if result := db.Unscoped().Delete(&service); result.Error != nil {
 		t.Error(result.Error)
 	}
-	if result := db.Unscoped().Delete(&error); result.Error != nil {
+	if result := db.Unscoped().Delete(&tmpError); result.Error != nil {
 		t.Error(result.Error)
 	}
 	if result := db.Unscoped().Delete(&camera); result.Error != nil {
@@ -282,11 +282,11 @@ func populatePhotoPrismStructsWithMin(t *testing.T, db *gorm.DB) {
 		}
 	}
 
-	error := entity.Error{}
-	if err := populateStructWithMin(&error); err != nil {
+	tmpError := entity.Error{}
+	if err := populateStructWithMin(&tmpError); err != nil {
 		t.Error(err)
 	} else {
-		if result := db.Create(&error); result.Error != nil {
+		if result := db.Create(&tmpError); result.Error != nil {
 			t.Error(result.Error)
 		}
 	}
@@ -658,11 +658,11 @@ func populatePhotoPrismStructsWithMax(t *testing.T, db *gorm.DB) {
 		}
 	}
 
-	error := entity.Error{}
-	if err := populateStructWithMax(&error, uintMaxInt64); err != nil {
+	tmpError := entity.Error{}
+	if err := populateStructWithMax(&tmpError, uintMaxInt64); err != nil {
 		t.Error(err)
 	} else {
-		if result := db.Create(&error); result.Error != nil {
+		if result := db.Create(&tmpError); result.Error != nil {
 			t.Error(result.Error)
 		}
 	}
@@ -1220,9 +1220,8 @@ func readTag(f reflect.StructField, id string) (result string, valid bool) {
 	val, ok := f.Tag.Lookup(id)
 	if !ok {
 		return id, false
-	} else {
-		return val, true
 	}
+	return val, true
 }
 
 const characterRunes = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

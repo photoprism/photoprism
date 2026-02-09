@@ -28,7 +28,7 @@ func migrateTestBlocker(db *gorm.DB) {
 }
 
 // Function to hold a lock on the Blocker table for 15 seconds.  Hopefully long enough.
-func lock_blocker_for_test(t *testing.T, m interface{}, keyNames ...string) {
+func lockBlockerForTest(t *testing.T, m interface{}, keyNames ...string) {
 
 	// Extract interface slice with all values including zero.
 	values, keys, err := entity.ModelValues(m, keyNames...)
@@ -42,8 +42,8 @@ func lock_blocker_for_test(t *testing.T, m interface{}, keyNames ...string) {
 		return
 	}
 
-	db_test := entity.UnscopedDb()
-	db_test.Transaction(func(tx *gorm.DB) error {
+	dbTest := entity.UnscopedDb()
+	dbTest.Transaction(func(tx *gorm.DB) error {
 		if tx.Error != nil {
 			t.Logf("lock_blocker_for_test Begin = %s", tx.Error.Error())
 			return tx.Error
@@ -94,13 +94,12 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 			t.Fatal(err)
 			return
-		} else {
-			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
-			t.Logf("(1) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
-			t.Logf("(1) Successfully updated values")
 		}
+		assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
+		t.Logf("(1) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
+		t.Logf("(1) Successfully updated values")
 
-		go lock_blocker_for_test(t, m, "ID", "PhotoUID")
+		go lockBlockerForTest(t, m, "ID", "PhotoUID")
 		// Wait a bit for the other thread to start waiting.
 		time.Sleep(time.Second * 2)
 
@@ -118,10 +117,9 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 			}
 			t.Logf("(2) Error was %s", err.Error())
 			return
-		} else {
-			t.Logf("(2) Error not found")
-			t.Fail()
 		}
+		t.Logf("(2) Error not found")
+		t.Fail()
 	})
 
 	if entity.DbDialect() == entity.MySQL {
@@ -129,7 +127,7 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=DEFAULT;")
 	}
 	// Need to sleep here waiting for the child process to end.
-	timeLeft := time.Duration(time.Second*32) - time.Now().Sub(startTime)
+	timeLeft := time.Duration(time.Second*32) - time.Since(startTime)
 	if timeLeft > 0 {
 		time.Sleep(timeLeft)
 	}
@@ -168,13 +166,12 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 			t.Fatal(err)
 			return
-		} else {
-			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
-			t.Logf("(1) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
-			t.Logf("(1) Successfully updated values")
 		}
+		assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
+		t.Logf("(1) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
+		t.Logf("(1) Successfully updated values")
 
-		go lock_blocker_for_test(t, m, "ID", "PhotoUID")
+		go lockBlockerForTest(t, m, "ID", "PhotoUID")
 		// Wait a bit for the other thread to start waiting.
 		time.Sleep(time.Second * 2)
 
@@ -192,10 +189,9 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 			}
 			t.Logf("(2) Error was %s", err.Error())
 			return
-		} else {
-			t.Logf("(2) Error not found")
-			t.Fail()
 		}
+		t.Logf("(2) Error not found")
+		t.Fail()
 	})
 
 	if entity.DbDialect() == entity.MySQL {
@@ -203,7 +199,7 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=DEFAULT;")
 	}
 	// Need to sleep here waiting for the child process to end.
-	timeLeft := time.Duration(time.Second*32) - time.Now().Sub(startTime)
+	timeLeft := time.Duration(time.Second*32) - time.Since(startTime)
 	if timeLeft > 0 {
 		time.Sleep(timeLeft)
 	}

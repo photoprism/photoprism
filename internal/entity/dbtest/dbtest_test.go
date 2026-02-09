@@ -51,12 +51,13 @@ func TestMain(m *testing.M) {
 
 	// Set default database DSN.
 	if driver == entity.SQLite3 {
-		if dsname == "" {
+		switch dsname {
+		case "":
 			dsname = entity.SQLiteMemoryDSN
-		} else if dsname != entity.SQLiteTestDB {
-			// Continue.
-		} else if err := os.Remove(dsname); err == nil {
-			log.Debugf("sqlite: test file %s removed", clean.Log(dsname))
+		case entity.SQLiteTestDB:
+			if err := os.Remove(dsname); err == nil {
+				log.Debugf("sqlite: test file %s removed", clean.Log(dsname))
+			}
 		}
 	}
 

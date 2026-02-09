@@ -140,10 +140,9 @@ func TestValidateSaveCreate(t *testing.T) {
 				t.Log("Expected a foreign key error here")
 				t.FailNow()
 				return res.Error
-			} else {
-				if entity.DbDialect() == entity.Postgres {
-					tx.Exec("ROLLBACK TO SAVEPOINT beforeError")
-				}
+			}
+			if entity.DbDialect() == entity.Postgres {
+				tx.Exec("ROLLBACK TO SAVEPOINT beforeError")
 			}
 
 			assert.ErrorContains(t, res.Error, "constraint")
