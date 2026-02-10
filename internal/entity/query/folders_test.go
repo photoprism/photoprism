@@ -31,7 +31,29 @@ func TestFolderCoverByUID(t *testing.T) {
 
 func TestFoldersByPath(t *testing.T) {
 	t.Run("Root", func(t *testing.T) {
-		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false)
+		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false, true)
+
+		t.Logf("folders: %+v", folders)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, folders, 2)
+	})
+	t.Run("Subdirectory", func(t *testing.T) {
+		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "directory", false, true)
+
+		t.Logf("folders: %+v", folders)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, folders, 3)
+	})
+	t.Run("RootNoRoot", func(t *testing.T) {
+		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false, false)
 
 		t.Logf("folders: %+v", folders)
 
@@ -41,8 +63,8 @@ func TestFoldersByPath(t *testing.T) {
 
 		assert.Len(t, folders, 1)
 	})
-	t.Run("Subdirectory", func(t *testing.T) {
-		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "directory", false)
+	t.Run("SubdirectoryNoRoot", func(t *testing.T) {
+		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "directory", false, false)
 
 		t.Logf("folders: %+v", folders)
 

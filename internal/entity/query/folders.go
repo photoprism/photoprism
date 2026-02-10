@@ -5,35 +5,46 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/dirs"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// FoldersByPath returns a slice of folders in a given directory incl subfolders in recursive mode.
-func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders entity.Folders, err error) {
-	dirs, err := fs.Dirs(filepath.Join(rootPath, path), recursive, true)
+// FoldersByPath returns a slice of folders in a given directory incl subfolders in recursive mode with the number of files found populated in FileCount.
+func FoldersByPath(rootName, rootPath, path string, recursive, includeRoot bool) (folders entity.Folders, err error) {
+	dirs, counts, err := dirs.Dirs(filepath.Join(rootPath, path), recursive, true)
 
 	// Failed?
 	if err != nil {
 		if len(dirs) == 0 {
 			return folders, err
-		} else {
-			// At least one folder found.
-			log.Infof("folders: %s", err)
 		}
+		// At least one folder found.
+		log.Infof("folders: %s", err)
 	}
 
-	folders = make(entity.Folders, len(dirs))
+	if includeRoot {
+		folders = make(entity.Folders, len(dirs))
+	} else {
+		folders = make(entity.Folders, len(dirs)-1)
+	}
 
-	for i, dir := range dirs {
-		newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), fs.ModTime(filepath.Join(rootPath, dir)))
+	i := 0
+	for _, dir := range dirs {
+		if (dir == "/" && includeRoot) || (dir != "/") {
+			newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), fs.ModTime(filepath.Join(rootPath, dir)))
 
-		if err = newFolder.Create(); err == nil {
-			folders[i] = newFolder
-		} else if folder := entity.FindFolder(rootName, filepath.Join(path, dir)); folder != nil {
-			folders[i] = *folder
-		} else {
-			log.Errorf("folders: %s (create folder)", err)
+			if err = newFolder.Create(); err == nil {
+				newFolder.FileCount = counts[dir]
+				folders[i] = newFolder
+				i++
+			} else if folder := entity.FindFolder(rootName, filepath.Join(path, dir)); folder != nil {
+				folder.FileCount = counts[dir]
+				folders[i] = *folder
+				i++
+			} else {
+				log.Errorf("folders: %s (create folder)", err)
+			}
 		}
 	}
 

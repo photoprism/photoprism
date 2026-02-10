@@ -96,12 +96,12 @@ export class Folder extends RestModel {
     return $api.delete(this.getEntityResource() + "/like");
   }
 
-  static findAll(path) {
-    return this.search(path, { recursive: true });
+  static findAll(path, includeRoot = false) {
+    return this.search(path, { recursive: true, includeroot: includeRoot });
   }
 
-  static findAllUncached(path) {
-    return this.search(path, { recursive: true, uncached: true });
+  static findAllUncached(path, includeRoot = false) {
+    return this.search(path, { recursive: true, uncached: true, includeroot: includeRoot });
   }
 
   static originals(path, params) {

@@ -87,6 +87,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		cache := get.FolderCache()
 		recursive := frm.Recursive
 		listFiles := frm.Files
+		includeRoot := frm.IncludeRoot
 		uncached := listFiles || frm.Uncached
 		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
 		path := clean.UserPath(c.Param("path"))
@@ -104,7 +105,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			}
 		}
 
-		if folders, err := query.FoldersByPath(rootName, rootPath, path, recursive); err != nil {
+		if folders, err := query.FoldersByPath(rootName, rootPath, path, recursive, includeRoot); err != nil {
 			log.Errorf("folder: %s", err)
 			c.JSON(http.StatusOK, resp)
 			return
@@ -113,10 +114,17 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		}
 
 		if listFiles {
-			if files, err := query.FilesByPath(frm.Count, frm.Offset, rootName, path, frm.Public); err != nil {
-				log.Errorf("folder: %s", err)
-			} else {
-				resp.Files = files
+			switch urlPath {
+			case "originals":
+				if files, err := query.FilesByPath(frm.Count, frm.Offset, rootName, path, frm.Public); err != nil {
+					log.Errorf("folder: %s", err)
+				} else {
+					resp.Files = files
+				}
+			case "import":
+				log.Info("folder: import listFiles is not supported")
+			default:
+				log.Error("folder: unhandled SearchFolders urlPath")
 			}
 		}
 
