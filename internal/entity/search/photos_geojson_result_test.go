@@ -107,3 +107,29 @@ func TestGeoResults_GeoJSON(t *testing.T) {
 
 	t.Logf("result: %s", b)
 }
+
+func TestGeoResults_GeoJSON_InvalidCoordinates(t *testing.T) {
+	items := GeoResults{
+		GeoResult{
+			ID:       "1",
+			PhotoLat: 5.291683777777778,
+			PhotoLng: -97.31112777777777,
+			FileHash: "hash-1",
+		},
+		GeoResult{
+			ID:       "2",
+			PhotoLat: 22542883,
+			PhotoLng: 140.38819885253906,
+			FileHash: "hash-2",
+		},
+	}
+
+	b, err := items.GeoJSON()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := []byte(`"bbox":[-97.31112777777777,5.291683777777778,140.38819885253906,22542883]`)
+	assert.Truef(t, bytes.Contains(b, expected), "GeoJSON bbox not as expected for invalid coordinates")
+}

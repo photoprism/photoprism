@@ -126,6 +126,13 @@ div.v-dialog > form > div.v-card > .v-card__text .v-expansion-panels__container 
     height: 100%;
 }
 
+.ra-0,
+.ra-0 > a,
+.rounded-0,
+.rounded-0 > a {
+    border-radius: 0 !important;
+}
+
 .ra-2,
 .ra-2 > a,
 .rounded-2,

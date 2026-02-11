@@ -187,6 +187,32 @@ describe("component/photo/edit/files", () => {
     });
   });
 
+  describe("file error alert", () => {
+    it("renders an outlined alert icon with square edges and outlined styling", () => {
+      const previous = VTUConfig.global.renderStubDefaultSlot;
+      VTUConfig.global.renderStubDefaultSlot = true;
+
+      try {
+        const { wrapper } = mountPhotoFiles({
+          fileOverrides: {
+            Error: "Corrupted image",
+          },
+        });
+
+        const alert = wrapper.find("v-alert-stub");
+
+        expect(alert.exists()).toBe(true);
+        expect(alert.attributes("type")).toBe("error");
+        expect(alert.attributes("icon")).toBe("mdi-alert-circle-outline");
+        expect(alert.attributes("variant")).toBe("outlined");
+        expect(alert.attributes("density")).toBe("compact");
+        expect(alert.classes()).toContain("ra-0");
+      } finally {
+        VTUConfig.global.renderStubDefaultSlot = previous;
+      }
+    });
+  });
+
   describe("openFile", () => {
     it("opens file in lightbox using Thumb.fromFile", () => {
       const thumbModel = {};

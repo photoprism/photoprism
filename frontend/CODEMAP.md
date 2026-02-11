@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** February 8, 2026
+**Last Updated:** February 11, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
@@ -67,6 +67,14 @@ Models (REST)
 - Collection helpers: `src/model/collection.js` adds shared behaviors (for example `setCover`) used by collection-types such as albums and labels.
 - Pagination headers used: `X-Count`, `X-Limit`, `X-Offset`
 
+Hidden Error Reasons
+- Hidden reason resolution is centralized in `src/model/photo.js` via `Photo.getHiddenReason()`, which prefers `FileError` from search results and falls back to `Files[*].Error` (primary file first).
+- Hidden errors are rendered in regular result views only:
+  - Cards: `src/component/photo/view/cards.vue`
+  - List: `src/component/photo/view/list.vue`
+  - Mosaic intentionally omits the error row because that layout has no metadata line for message text.
+- Edit Dialog file-level errors are shown in `src/component/photo/edit/files.vue` with an outlined alert (`mdi-alert-circle-outline`), so this visual style can differ from result-view metadata icons.
+
 Routing Conventions
 - Add pages under `src/page/<area>/...` and import them in `src/app/routes.js`
 - Set `meta.requiresAuth`, `meta.admin`, and `meta.settings` as needed
@@ -80,12 +88,14 @@ Testing
 - Vitest config: `frontend/vitest.config.js` (Vue plugin, alias map to `src/*`), `tests/vitest/**/*`
 - Run: `cd frontend && npm run test` (or `make test-js` from repo root)
 - Acceptance: TestCafe configs in `frontend/tests/acceptance`; run against a live server
+- Detailed test/lint guide (humans + agents): `frontend/tests/README.md`
 
 Build & Tooling
 - Webpack is used for bundling; scripts in `frontend/package.json`:
   - `npm run build` (prod), `npm run build-dev` (dev), `npm run watch`
   - Lint/format: `npm run lint` or `make lint-js`; repo root `make lint` runs both backend (golangci-lint via `.golangci.yml`) and frontend linters
   - Security scan: `npm run security:scan` (checks `--ignore-scripts` and forbids `v-html`)
+- ESLint v10 migration status and upgrade checklist are documented in `frontend/tests/README.md`.
 - Licensing: run `make notice` from the repo root to regenerate `NOTICE` files after dependency changes—never edit them manually.
 - Make targets (from repo root): `make build-js`, `make watch-js`, `make test-js`
 - Browser automation (Playwright MCP): workflows are documented in `AGENTS.md` under “Playwright MCP Usage”; use those directions when agents need to script UI checks or capture screenshots.

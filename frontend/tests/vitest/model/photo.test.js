@@ -11,6 +11,22 @@ describe("model/photo", () => {
     expect(result).toBe("Crazy Cat");
   });
 
+  it("should get hidden reason from file error", () => {
+    const photo = new Photo({ FileError: "unsupported raw format" });
+    expect(photo.getHiddenReason()).toBe("unsupported raw format");
+  });
+
+  it("should get hidden reason from primary file error", () => {
+    const photo = new Photo({
+      Files: [
+        { Primary: true, Error: "failed to decode image" },
+        { Primary: false, Error: "secondary error" },
+      ],
+    });
+
+    expect(photo.getHiddenReason()).toBe("failed to decode image");
+  });
+
   it("should get photo uuid", () => {
     const values = { ID: 5, Title: "Crazy Cat", UID: 789 };
     const photo = new Photo(values);

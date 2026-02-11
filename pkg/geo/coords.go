@@ -11,6 +11,29 @@ const (
 // CoordinateBoundaryTolerance accepts tiny IEEE-754 overflow at GPS bounds.
 const CoordinateBoundaryTolerance = 0.0001
 
+// ClampCoordinateBounds clamps coordinates to their hard latitude/longitude limits.
+func ClampCoordinateBounds(lat, lng float64) (float64, float64, bool) {
+	changed := false
+
+	if lat > LatitudeMax {
+		lat = LatitudeMax
+		changed = true
+	} else if lat < LatitudeMin {
+		lat = LatitudeMin
+		changed = true
+	}
+
+	if lng > LongitudeMax {
+		lng = LongitudeMax
+		changed = true
+	} else if lng < LongitudeMin {
+		lng = LongitudeMin
+		changed = true
+	}
+
+	return lat, lng, changed
+}
+
 // NormalizeCoordinateBounds clips minor coordinate overshoot at hard latitude/longitude limits.
 //
 // Values beyond the configured tolerance are intentionally left unchanged so callers can still

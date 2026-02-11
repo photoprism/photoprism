@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** December 8, 2025
+**Last Updated:** February 11, 2026
 
 ## Purpose
 
@@ -320,6 +320,7 @@ Note: Across our public documentation, official images, and in production, the c
 - `PhotoFixtures.Get()` and similar helpers return value copies; when a test needs the database-backed row (with associations preloaded), re-query by UID/ID using helpers like `entity.FindPhoto(fixture)` so updates observe persisted IDs and in-memory caches stay coherent.
 - For slimmer tests that only need config objects, prefer the new helpers in `internal/config/test.go`: `NewMinimalTestConfig(t.TempDir())` when no database is needed, or `NewMinimalTestConfigWithDb("<pkg>", t.TempDir())` to spin up an isolated SQLite schema without seeding all fixtures.
 - When you need illustrative credentials (join tokens, client IDs/secrets, etc.), reuse the shared `Example*` constants (see `internal/service/cluster/examples.go`) so tests, docs, and examples stay consistent.
+- Hidden error UI checks for `/library/hidden` require both `files.file_error` and `photos.photo_quality = -1`; hidden searches are quality-gated, so setting only `file_error` will not surface the row in Hidden results.
 
 ### Roles & ACL
 
