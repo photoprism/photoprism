@@ -29,6 +29,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -36,8 +37,9 @@ import (
 )
 
 var drivers = map[string]func(string) gorm.Dialector{
-	MySQL:   mysql.Open,
-	SQLite3: sqlite.Open,
+	MySQL:    mysql.Open,
+	SQLite3:  sqlite.Open,
+	Postgres: postgres.Open,
 }
 
 var log = event.Log
@@ -77,6 +79,7 @@ func UnscopedDb() *gorm.DB {
 // Supported test databases.
 const (
 	MySQL           = "mysql"
+	Postgres        = "postgres"
 	SQLite3         = "sqlite"
 	SQLiteTestDB    = ".test.db"
 	SQLiteMemoryDSN = ":memory:?cache=shared"
@@ -224,7 +227,7 @@ func main() {
 	var (
 		numberOfPhotos int
 		driver         string
-		dsn            string
+		dsnString      string
 		dropdb         bool
 		sqlitescript   bool
 	)
@@ -235,7 +238,7 @@ func main() {
 
 	flag.IntVar(&numberOfPhotos, "numberOfPhotos", 0, "Number of photos to generate")
 	flag.StringVar(&driver, "driver", "sqlite", "GORM driver to use.  Choose from sqlite, mysql and postgres")
-	flag.StringVar(&dsn, "dsn", "testdb.db", "DSN to access the database")
+	flag.StringVar(&dsnString, "dsn", "testdb.db", "DSN to access the database")
 	flag.BoolVar(&dropdb, "dropdb", false, "Drop/Delete the database")
 	flag.BoolVar(&sqlitescript, "sqlitescript", true, "Create an SQLite database from script")
 	flag.Parse()
@@ -252,63 +255,94 @@ func main() {
 		os.Exit(1)
 	}
 
-	if len(dsn) < 3 {
+	if len(dsnString) < 3 {
 		flag.PrintDefaults()
-		log.Errorf("dsn %v is to short", dsn)
+		log.Errorf("dsn %v is to short", dsnString)
 		os.Exit(1)
 	}
 
+	dsname := dsn.Parse(dsnString)
+
 	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+	if driver == "test" || driver == "sqlite" || driver == "" || dsnString == "" {
 		driver = SQLite3
 	}
 
 	// Set default database DSN.
 	if driver == SQLite3 {
-		if dsn == "" {
-			dsn = SQLiteMemoryDSN
+		if dsnString == "" {
+			dsname.DSN = SQLiteMemoryDSN
+			dsname.Driver = SQLite3
 		}
 	}
 
 	allowDelete := dropdb
-	if driver == MySQL && allowDelete {
-		basedsn := dsn[0 : strings.Index(dsn, "/")+1]
-		basedbname := dsn[strings.Index(dsn, "/")+1 : strings.Index(dsn, "?")]
-		log.Infof("Connecting to %v", basedsn)
-		database, err := gorm.Open(mysql.Open(basedsn), &gorm.Config{})
-		if err != nil {
-			log.Errorf("Unable to connect to MariaDB %v", err)
-		}
-		log.Infof("Dropping database %v if it exists", basedbname)
-		if res := database.Exec("DROP DATABASE IF EXISTS " + basedbname + ";"); res.Error != nil {
-			log.Errorf("Unable to drop database %v", res.Error)
-			os.Exit(1)
-		}
+	if allowDelete {
+		switch dsname.Driver {
+		case MySQL:
+			basedsn := fmt.Sprintf("%s:%s@%s/", dsname.User, dsname.Password, dsname.Server)
+			log.Infof("Connecting to %v", basedsn)
+			database, err := gorm.Open(mysql.Open(basedsn), &gorm.Config{})
+			if err != nil {
+				log.Errorf("Unable to connect to MariaDB %v", err)
+			}
+			log.Infof("Dropping database %v if it exists", dsname.Name)
+			if res := database.Exec("DROP DATABASE IF EXISTS " + dsname.Name + ";"); res.Error != nil {
+				log.Errorf("Unable to drop database %v", res.Error)
+				os.Exit(1)
+			}
 
-		log.Infof("Creating database %v if it doesnt exist", basedbname)
-		if res := database.Exec("CREATE DATABASE IF NOT EXISTS " + basedbname + ";"); res.Error != nil {
-			log.Errorf("Unable to create database %v", res.Error)
-			os.Exit(1)
-		}
-	}
-	if driver == SQLite3 && dsn != SQLiteMemoryDSN && allowDelete {
-		filename := dsn
-		if strings.Index(dsn, "?") > 0 {
-			if strings.Index(dsn, ":") > 0 {
-				filename = dsn[strings.Index(dsn, ":")+1 : strings.Index(dsn, "?")]
-			} else {
-				filename = dsn[0:strings.Index(dsn, "?")]
+			log.Infof("Creating database %v if it doesnt exist", dsname.Name)
+			if res := database.Exec("CREATE DATABASE IF NOT EXISTS " + dsname.Name + ";"); res.Error != nil {
+				log.Errorf("Unable to create database %v", res.Error)
+				os.Exit(1)
+			}
+		case Postgres:
+			pdsn := dsn.DSN{
+				Driver:   dsname.Driver,
+				Name:     "postgres",
+				User:     dsname.User,
+				Password: dsname.Password,
+				Server:   dsname.Server,
+			}
+			log.Infof("Connecting to %v", pdsn.ToString())
+			database, err := gorm.Open(postgres.Open(pdsn.ToString()), &gorm.Config{})
+			if err != nil {
+				log.Errorf("Unable to connect to Postgres %v", err)
+			}
+			log.Infof("Dropping database %v if it exists", dsname.Name)
+			if res := database.Exec("DROP DATABASE IF EXISTS " + dsname.Name + " WITH (FORCE);"); res.Error != nil {
+				log.Errorf("Unable to drop database %v", res.Error)
+				os.Exit(1)
+			}
+
+			log.Infof("Creating database %v if it doesnt exist", dsname.Name)
+			if res := database.Exec("CREATE DATABASE " + dsname.Name + " OWNER " + dsname.User + ";"); res.Error != nil {
+				log.Errorf("Unable to create database %v", res.Error)
+				os.Exit(1)
+			}
+
+		case SQLite3:
+			if dsname.DSN != SQLiteMemoryDSN {
+				filename := fmt.Sprintf("%s/%s", dsname.Server, dsname.Name)
+				// if strings.Index(dsnString, "?") > 0 {
+				// 	if strings.Index(dsnString, ":") > 0 {
+				// 		filename = dsnString[strings.Index(dsnString, ":")+1 : strings.Index(dsnString, "?")]
+				// 	} else {
+				// 		filename = dsnString[0:strings.Index(dsnString, "?")]
+				// 	}
+				// }
+				log.Infof("Removing file %v", filename)
+				os.Remove(filename)
 			}
 		}
-		log.Infof("Removing file %v", filename)
-		os.Remove(filename)
 	}
 
-	log.Infof("Connecting to driver %v with dsn %v", driver, dsn)
+	log.Infof("Connecting to driver %v with dsn %v", driver, dsname.ToString())
 	// Create gorm.DB connection provider.
 	db := &DbConn{
 		Driver: driver,
-		Dsn:    dsn,
+		Dsn:    dsname.ToString(),
 	}
 	defer db.Close()
 
@@ -328,12 +362,12 @@ func main() {
 	if err := Db().Model(&entity.Photo{}).Count(&photoCounter).Error; err != nil {
 		// Handle SQLite differently as it does table recreates on initial migrate, so we need to be able to simulate that.
 		if driver == SQLite3 && sqlitescript {
-			filename := dsn
-			if strings.Index(dsn, "?") > 0 {
-				if strings.Index(dsn, ":") > 0 {
-					filename = dsn[strings.Index(dsn, ":")+1 : strings.Index(dsn, "?")]
+			filename := dsnString
+			if strings.Index(dsnString, "?") > 0 {
+				if strings.Index(dsnString, ":") > 0 {
+					filename = dsnString[strings.Index(dsnString, ":")+1 : strings.Index(dsnString, "?")]
 				} else {
-					filename = dsn[0:strings.Index(dsn, "?")]
+					filename = dsnString[0:strings.Index(dsnString, "?")]
 				}
 			}
 
@@ -368,7 +402,7 @@ func main() {
 			}
 		}
 	} else {
-		log.Errorf("The photos table already exists in driver %v dsn %v.\nAborting...", driver, dsn)
+		log.Errorf("The photos table already exists in driver %v dsn %v.\nAborting...", driver, dsnString)
 		os.Exit(1)
 	}
 
