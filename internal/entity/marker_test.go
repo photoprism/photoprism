@@ -474,11 +474,9 @@ func TestMarker_SyncSubject(t *testing.T) {
 			},
 		}
 
-		if err := m.SyncSubject(true); err == nil {
-			require.Error(t, err)
-		} else {
-			assert.Contains(t, err.Error(), "update known face")
-		}
+		err := m.SyncSubject(false)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "update known face")
 	})
 }
 
