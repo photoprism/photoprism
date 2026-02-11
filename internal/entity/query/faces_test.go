@@ -2,7 +2,6 @@ package query
 
 import (
 	"errors"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -131,36 +130,25 @@ func TestMatchFaceMarkers(t *testing.T) {
 }
 
 func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
-	originalDb := entity.Db()
-	require.NotNil(t, originalDb)
-
-	tempConn := &entity.DbConn{
-		Driver: entity.SQLite3,
-		Dsn:    filepath.Join(t.TempDir(), "match-face-markers-error.db"),
-	}
-
-	tempDb := tempConn.Db()
-	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}))
-	require.NoError(t, tempDb.Create(&entity.Face{
-		ID:         "FACE-MATCH-ERR-1",
-		FaceSrc:    entity.SrcManual,
-		FaceKind:   int(face.RegularFace),
-		FaceHidden: false,
-		SubjUID:    rnd.GenerateUID('j'),
-		Samples:    1,
-	}).Error)
-
-	entity.SetDbProvider(tempConn)
 	t.Cleanup(func() {
-		entity.SetDbProvider(staticDbProvider{db: originalDb})
-		tempConn.Close()
+		require.NoError(t, entity.Db().Migrator().RenameTable("broken", entity.Marker{}.TableName()))
 	})
+	require.NoError(t, entity.Db().Migrator().RenameTable(entity.Marker{}.TableName(), "broken"))
 
+	log.Info("Expect Table Missing error")
 	affected, err := MatchFaceMarkers()
 	require.Error(t, err)
 	assert.Equal(t, int64(0), affected)
-	assert.Contains(t, err.Error(), "no such table")
+	switch DbDialect() {
+	case entity.MySQL:
+		assert.Contains(t, err.Error(), "Table")
+		assert.Contains(t, err.Error(), "doesn't exist")
+	case entity.Postgres:
+		assert.Contains(t, err.Error(), "relation")
+		assert.Contains(t, err.Error(), "does not exist")
+	case entity.SQLite3:
+		assert.Contains(t, err.Error(), "no such table")
+	}
 	assert.Contains(t, err.Error(), entity.Marker{}.TableName())
 }
 

@@ -1,13 +1,16 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var testArea = crop.Area{
@@ -414,29 +417,34 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.NotEmpty(t, m.MatchedAt)
 	})
 	t.Run("ReturnsUpdateError", func(t *testing.T) {
-		originalProvider := dbConn
-		tempConn := &DbConn{
-			Driver: SQLite3,
-			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "clear-face-error.db"),
-		}
-
-		SetDbProvider(tempConn)
+		Db().AddError(errors.New("Force Gorm To Return Error"))
 		t.Cleanup(func() {
-			SetDbProvider(originalProvider)
-			tempConn.Close()
+			Db().Error = nil
 		})
 
 		m := Marker{
 			FaceID:    "FACE-CLEAR-ERR-1",
 			SubjSrc:   SrcAuto,
-			MarkerUID: "",
+			MarkerUID: rnd.GenerateUID('m'),
 		}
 
 		updated, err := m.ClearFace()
 		assert.True(t, updated)
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "no such table")
-		assert.Contains(t, err.Error(), m.TableName())
+		assert.Contains(t, err.Error(), "Force Gorm To Return Error")
+
+		Db().AddError(errors.New("Force Gorm To Return Error"))
+		m = Marker{
+			FaceID:    "FACE-CLEAR-ERR-2",
+			SubjSrc:   SrcBatch,
+			MarkerUID: rnd.GenerateUID('m'),
+		}
+
+		updated, err = m.ClearFace()
+		assert.True(t, updated)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "Force Gorm To Return Error")
+
 	})
 }
 
@@ -450,16 +458,9 @@ func TestMarker_SyncSubject(t *testing.T) {
 		assert.Nil(t, m.SyncSubject(false))
 	})
 	t.Run("UpdateKnownFaceError", func(t *testing.T) {
-		originalProvider := dbConn
-		tempConn := &DbConn{
-			Driver: SQLite3,
-			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "sync-subject-error.db"),
-		}
-
-		SetDbProvider(tempConn)
+		Db().AddError(errors.New("Force Gorm To Return Error"))
 		t.Cleanup(func() {
-			SetDbProvider(originalProvider)
-			tempConn.Close()
+			Db().Error = nil
 		})
 
 		subjUID := "jsyncsubjecterror123"
@@ -473,8 +474,8 @@ func TestMarker_SyncSubject(t *testing.T) {
 			},
 		}
 
-		if err := m.SyncSubject(false); err == nil {
-			t.Fatal("error expected")
+		if err := m.SyncSubject(true); err == nil {
+			require.Error(t, err)
 		} else {
 			assert.Contains(t, err.Error(), "update known face")
 		}
