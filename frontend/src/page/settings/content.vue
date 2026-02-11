@@ -176,13 +176,13 @@
 
         <v-card-actions>
           <v-row align="start" dense>
-            <v-col cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"
                 class="ma-0 pa-0 input-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
-                :hint="$gettext('Include only original media files.')"
+                :hint="$gettext('Download only original media files, without any automatically generated files.')"
                 prepend-icon="mdi-camera"
                 persistent-hint
                 @update:model-value="onChange"
@@ -190,13 +190,13 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaRaw"
                 class="ma-0 pa-0 input-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
-                :hint="$gettext('Include RAW image files.')"
+                :hint="$gettext('Include RAW image files when downloading stacks and archives.')"
                 prepend-icon="mdi-raw"
                 persistent-hint
                 @update:model-value="onChange"
@@ -204,13 +204,13 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaSidecar"
                 class="ma-0 pa-0 input-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
-                :hint="$gettext('Include sidecar files.')"
+                :hint="$gettext('Include sidecar files when downloading stacks and archives.')"
                 prepend-icon="mdi-paperclip"
                 persistent-hint
                 @update:model-value="onChange"
@@ -218,7 +218,7 @@
               </v-checkbox>
             </v-col>
 
-            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="3" class="px-2 pb-2 pt-2">
+            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="4" offset-lg="2" class="px-2 pb-2 pt-2">
               <v-select
                 v-model="settings.download.name"
                 :disabled="busy"
@@ -270,7 +270,7 @@
                 class="ma-0 pa-0 input-album-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
-                :hint="$gettext('Include only original media files.')"
+                :hint="$gettext('Download only original media files, without any automatically generated files.')"
                 prepend-icon="mdi-camera"
                 persistent-hint
                 @update:model-value="onChange"
@@ -284,7 +284,7 @@
                 class="ma-0 pa-0 input-album-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
-                :hint="$gettext('Include RAW image files.')"
+                :hint="$gettext('Include RAW image files when downloading stacks and archives.')"
                 prepend-icon="mdi-raw"
                 persistent-hint
                 @update:model-value="onChange"
@@ -299,7 +299,7 @@
                 class="ma-0 pa-0 input-album-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
-                :hint="$gettext('Include sidecar files.')"
+                :hint="$gettext('Include sidecar files when downloading stacks and archives.')"
                 prepend-icon="mdi-paperclip"
                 persistent-hint
                 @update:model-value="onChange"
