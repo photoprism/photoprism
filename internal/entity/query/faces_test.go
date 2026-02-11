@@ -141,7 +141,7 @@ func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 
 	tempDb := tempConn.Db()
 	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}).Error)
+	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}))
 	require.NoError(t, tempDb.Create(&entity.Face{
 		ID:         "FACE-MATCH-ERR-1",
 		FaceSrc:    entity.SrcManual,

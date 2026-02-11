@@ -1635,7 +1635,7 @@ func TestPhoto_SetPrimary(t *testing.T) {
 			tempConn.Close()
 		})
 
-		require.NoError(t, tempConn.Db().AutoMigrate(&File{}).Error)
+		require.NoError(t, tempConn.Db().AutoMigrate(&File{}))
 
 		m := Photo{
 			ID:           1001,
