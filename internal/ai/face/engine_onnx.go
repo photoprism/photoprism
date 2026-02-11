@@ -166,7 +166,11 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	if err != nil {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
-	defer sessionOpts.Destroy()
+	defer func() {
+		if destroyErr := sessionOpts.Destroy(); destroyErr != nil {
+			log.Debugf("faces: %s (destroy session options)", destroyErr)
+		}
+	}()
 
 	threads := opts.Threads
 	if threads == 0 {
@@ -312,7 +316,11 @@ func (o *onnxEngine) Detect(fileName string, findLandmarks bool, minSize int) (F
 	if err != nil {
 		return Faces{}, err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); closeErr != nil {
+			log.Debugf("faces: %s (close image file)", closeErr)
+		}
+	}()
 
 	img, _, err := image.Decode(file)
 	if err != nil {
@@ -335,7 +343,11 @@ func (o *onnxEngine) Detect(fileName string, findLandmarks bool, minSize int) (F
 	if err != nil {
 		return Faces{}, fmt.Errorf("faces: create tensor: %w", err)
 	}
-	defer tensor.Destroy()
+	defer func() {
+		if destroyErr := tensor.Destroy(); destroyErr != nil {
+			log.Debugf("faces: %s (destroy input tensor)", destroyErr)
+		}
+	}()
 
 	inputs := []onnxruntime.Value{tensor}
 	outputs := make([]onnxruntime.Value, len(o.outputNames))
@@ -344,7 +356,12 @@ func (o *onnxEngine) Detect(fileName string, findLandmarks bool, minSize int) (F
 	}
 	for _, out := range outputs {
 		if out != nil {
-			defer out.Destroy()
+			value := out
+			defer func() {
+				if destroyErr := value.Destroy(); destroyErr != nil {
+					log.Debugf("faces: %s (destroy output tensor)", destroyErr)
+				}
+			}()
 		}
 	}
 
@@ -410,8 +427,7 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 	imRatio := float32(height) / float32(width)
 	modelRatio := float32(inputHeight) / float32(inputWidth)
 
-	newHeight := inputHeight
-	newWidth := inputWidth
+	var newHeight, newWidth int
 	if imRatio > modelRatio {
 		newHeight = inputHeight
 		newWidth = int(float32(newHeight) / imRatio)

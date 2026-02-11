@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -50,8 +49,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestClientRegistry_GetAndDelete(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-delete", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-delete")
 
 	r, _ := NewClientRegistryWithConfig(c)
 
@@ -91,8 +89,7 @@ func TestClientRegistry_GetAndDelete(t *testing.T) {
 }
 
 func TestClientRegistry_ListOrderByUpdatedAtDesc(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-order", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-order")
 
 	r, _ := NewClientRegistryWithConfig(c)
 
@@ -182,8 +179,7 @@ func TestNodeOptsForSession_AdminVsNonAdmin(t *testing.T) {
 }
 
 func TestToNode_Mapping(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-map", t.TempDir())
-	defer c.CloseDb()
+	newRegistryTestConfig(t, "cluster-registry-map")
 
 	m := entity.NewClient().SetName("pp-map").SetRole(cluster.RoleApp)
 	m.NodeUUID = rnd.UUIDv7()
@@ -212,8 +208,7 @@ func TestToNode_Mapping(t *testing.T) {
 }
 
 func TestClientRegistry_GetClusterNodeByUUID(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-getbyuuid", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-getbyuuid")
 	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)
@@ -231,8 +226,7 @@ func TestClientRegistry_GetClusterNodeByUUID(t *testing.T) {
 }
 
 func TestClientRegistry_FindByName_NormalizesDNSLabel(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-findname", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-findname")
 	assert.NoError(t, c.Init())
 
 	r, _ := NewClientRegistryWithConfig(c)

@@ -1,6 +1,6 @@
 # View Helper Guidelines
 
-**Last Updated:** November 12, 2025
+**Last Updated:** February 8, 2026
 
 ## Focus Management
 
@@ -9,6 +9,15 @@ PhotoPrism uses a shared view helper to maintain predictable focus across pages 
 - [`frontend/src/common/view.js`](https://github.com/photoprism/photoprism/blob/develop/frontend/src/common/view.js)
 
 This helper tracks the currently active component, applies focus when views change, and traps focus inside open dialogs, ensuring that tabbing never leaks into the page behind an overlay. The following guidelines explain how to work with the helper when building UI functionality.
+
+### Session Storage Namespacing Notes
+
+When integrating third-party clients (for example mobile webviews) that pre-populate browser storage, keep the following behavior in mind:
+
+- Storage keys are namespaced per app site via `storageNamespace` (derived from `SiteUrl`), but legacy global keys are still read as a fallback and migrated into the active namespace.
+- Session restore requires both `session.token` and `session.id`. A token-only write does not create an authenticated session state during startup.
+- Legacy compatibility keys (`authToken` and `sessionId`) are only migrated by the startup bridge when both values are present.
+- Preferred integration contract for external clients is to set both `session.token` and `session.id` together.
 
 ### Tabindex Cheat Sheet
 

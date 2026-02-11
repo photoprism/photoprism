@@ -201,10 +201,17 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return nil
 			}
 
+			// Skip related groups whose main file is ignored.
+			if related.Main == nil || ignore.Ignore(related.Main.FileName()) {
+				done[fileName] = fs.Processed
+				return nil
+			}
+
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if f.FileSize() == 0 || done[f.FileName()].Processed() {
+				if ignore.Ignore(f.FileName()) || f.FileSize() == 0 || done[f.FileName()].Processed() {
+					done[f.FileName()] = fs.Processed
 					continue
 				}
 

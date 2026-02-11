@@ -43,11 +43,12 @@ const (
 
 // Common file names used across packages (sorted by name).
 const (
-	AppJsFile        = "app.js"
-	AssetsJsonFile   = "assets.json"
-	ManifestJsonFile = "manifest.json"
-	SwJsFile         = "sw.js"
-	VersionTxtFile   = "version.txt"
-	JoinTokenFile    = "join_token"
-	ClientSecretFile = "client_secret"
+	AppJsFile            = "app.js"
+	AssetsJsonFile       = "assets.json"
+	ManifestJsonFile     = "manifest.json"
+	SwJsFile             = "sw.js"
+	SwScopeCleanupJsFile = "sw-scope-cleanup.js"
+	VersionTxtFile       = "version.txt"
+	JoinTokenFile        = "join_token"
+	ClientSecretFile     = "client_secret"
 )

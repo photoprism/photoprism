@@ -46,13 +46,13 @@ func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
 
 	// MKCOL
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/wdvdir", nil)
+	req := httptest.NewRequest(header.MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/wdvdir", nil)
 	authBearer(req)
 	r.ServeHTTP(w, req)
 	assert.InDelta(t, 201, w.Code, 1) // Created
 	// PUT file
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodPut, conf.BaseUri(WebDAVOriginals)+"/wdvdir/hello.txt", bytes.NewBufferString("hello"))
+	req = httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/wdvdir/hello.txt", bytes.NewBufferString("hello"))
 	authBearer(req)
 	r.ServeHTTP(w, req)
 	assert.InDelta(t, 201, w.Code, 1)
@@ -64,6 +64,43 @@ func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
 	assert.Equal(t, "hello", string(b))
 }
 
+func TestWebDAV_NoTrailingSlashRedirectOnBasePath(t *testing.T) {
+	testCases := []struct {
+		name    string
+		siteURL string
+	}{
+		{name: "DefaultBasePath", siteURL: "http://localhost:2342/"},
+		{name: "PrefixedBasePath", siteURL: "https://app.localssl.dev/p/pro-1/"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			conf := newWebDAVTestConfig(t)
+			conf.Options().SiteUrl = tc.siteURL
+			if err := conf.CreateDirectories(); err != nil {
+				t.Fatalf("failed to create test directories: %v", err)
+			}
+
+			r := setupWebDAVRouter(conf)
+			basePath := conf.BaseUri(WebDAVOriginals)
+
+			for _, method := range []string{header.MethodOptions, header.MethodPropfind} {
+				w := httptest.NewRecorder()
+				req := httptest.NewRequest(method, basePath, nil)
+				if method == header.MethodPropfind {
+					req.Header.Set("Depth", "0")
+				}
+				authBasic(req)
+				r.ServeHTTP(w, req)
+
+				if w.Code >= 300 && w.Code < 400 {
+					t.Fatalf("expected no redirect for %s %s, got %d (%s)", method, basePath, w.Code, w.Header().Get("Location"))
+				}
+			}
+		})
+	}
+}
+
 func TestWebDAVWrite_MOVE_COPY(t *testing.T) {
 	conf := newWebDAVTestConfig(t)
 	if err := conf.CreateDirectories(); err != nil {
@@ -73,25 +110,25 @@ func TestWebDAVWrite_MOVE_COPY(t *testing.T) {
 
 	// Ensure source and destination directories via MKCOL
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/src", nil)
+	req := httptest.NewRequest(header.MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/src", nil)
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	assert.InDelta(t, 201, w.Code, 1)
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/dst", nil)
+	req = httptest.NewRequest(header.MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/dst", nil)
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	assert.InDelta(t, 201, w.Code, 1)
 	// Create source file via PUT
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodPut, conf.BaseUri(WebDAVOriginals)+"/src/a.txt", bytes.NewBufferString("A"))
+	req = httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/src/a.txt", bytes.NewBufferString("A"))
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	assert.InDelta(t, 201, w.Code, 1)
 
 	// MOVE /originals/src/a.txt -> /originals/dst/b.txt
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodMove, conf.BaseUri(WebDAVOriginals)+"/src/a.txt", nil)
+	req = httptest.NewRequest(header.MethodMove, conf.BaseUri(WebDAVOriginals)+"/src/a.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/dst/b.txt")
 	authBasic(req)
 	r.ServeHTTP(w, req)
@@ -102,7 +139,7 @@ func TestWebDAVWrite_MOVE_COPY(t *testing.T) {
 
 	// COPY /originals/dst/b.txt -> /originals/dst/c.txt
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodCopy, conf.BaseUri(WebDAVOriginals)+"/dst/b.txt", nil)
+	req = httptest.NewRequest(header.MethodCopy, conf.BaseUri(WebDAVOriginals)+"/dst/b.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/dst/c.txt")
 	authBasic(req)
 	r.ServeHTTP(w, req)
@@ -127,7 +164,7 @@ func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
 
 	// COPY with Overwrite: F -> should not overwrite existing
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodCopy, conf.BaseUri(WebDAVOriginals)+"/src/f.txt", nil)
+	req := httptest.NewRequest(header.MethodCopy, conf.BaseUri(WebDAVOriginals)+"/src/f.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/dst/f.txt")
 	req.Header.Set("Overwrite", "F")
 	authBasic(req)
@@ -142,7 +179,7 @@ func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
 
 	// COPY with Overwrite: T -> must overwrite
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodCopy, conf.BaseUri(WebDAVOriginals)+"/src/f.txt", nil)
+	req = httptest.NewRequest(header.MethodCopy, conf.BaseUri(WebDAVOriginals)+"/src/f.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/dst/f.txt")
 	req.Header.Set("Overwrite", "T")
 	authBasic(req)
@@ -158,7 +195,7 @@ func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
 	_ = os.WriteFile(filepath.Join(conf.OriginalsPath(), "src", "g.txt"), []byte("GNEW"), 0o600)
 	_ = os.WriteFile(filepath.Join(conf.OriginalsPath(), "dst", "g.txt"), []byte("GOLD"), 0o600)
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodMove, conf.BaseUri(WebDAVOriginals)+"/src/g.txt", nil)
+	req = httptest.NewRequest(header.MethodMove, conf.BaseUri(WebDAVOriginals)+"/src/g.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/dst/g.txt")
 	req.Header.Set("Overwrite", "F")
 	authBasic(req)
@@ -168,7 +205,7 @@ func TestWebDAVWrite_OverwriteSemantics(t *testing.T) {
 	}
 	// MOVE with Overwrite: T -> overwrites and removes source
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodMove, conf.BaseUri(WebDAVOriginals)+"/src/g.txt", nil)
+	req = httptest.NewRequest(header.MethodMove, conf.BaseUri(WebDAVOriginals)+"/src/g.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/dst/g.txt")
 	req.Header.Set("Overwrite", "T")
 	authBasic(req)
@@ -192,7 +229,7 @@ func TestWebDAVWrite_MoveMissingDestination(t *testing.T) {
 	_ = os.WriteFile(filepath.Join(conf.OriginalsPath(), "mv", "file.txt"), []byte("X"), 0o600)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodMove, conf.BaseUri(WebDAVOriginals)+"/mv/file.txt", nil)
+	req := httptest.NewRequest(header.MethodMove, conf.BaseUri(WebDAVOriginals)+"/mv/file.txt", nil)
 	// no Destination header
 	authBasic(req)
 	r.ServeHTTP(w, req)
@@ -216,7 +253,7 @@ func TestWebDAVWrite_CopyInvalidDestinationPrefix(t *testing.T) {
 
 	// COPY to a destination outside the handler prefix
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodCopy, conf.BaseUri(WebDAVOriginals)+"/cp/a.txt", nil)
+	req := httptest.NewRequest(header.MethodCopy, conf.BaseUri(WebDAVOriginals)+"/cp/a.txt", nil)
 	req.Header.Set("Destination", "/notwebdav/d.txt")
 	authBasic(req)
 	r.ServeHTTP(w, req)
@@ -238,7 +275,7 @@ func TestWebDAVWrite_MoveNonExistentSource(t *testing.T) {
 	_ = os.MkdirAll(filepath.Join(conf.OriginalsPath(), "dst2"), 0o700)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodMove, conf.BaseUri(WebDAVOriginals)+"/nosuch/file.txt", nil)
+	req := httptest.NewRequest(header.MethodMove, conf.BaseUri(WebDAVOriginals)+"/nosuch/file.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/dst2/file.txt")
 	authBasic(req)
 	r.ServeHTTP(w, req)
@@ -259,14 +296,14 @@ func TestWebDAVWrite_CopyTraversalDestination(t *testing.T) {
 	// Create source file via PUT
 	_ = os.MkdirAll(filepath.Join(conf.OriginalsPath(), "travsrc"), 0o700)
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodPut, conf.BaseUri(WebDAVOriginals)+"/travsrc/a.txt", bytes.NewBufferString("A"))
+	req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/travsrc/a.txt", bytes.NewBufferString("A"))
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	assert.InDelta(t, 201, w.Code, 1)
 
 	// Attempt COPY with traversal in Destination
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodCopy, conf.BaseUri(WebDAVOriginals)+"/travsrc/a.txt", nil)
+	req = httptest.NewRequest(header.MethodCopy, conf.BaseUri(WebDAVOriginals)+"/travsrc/a.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/../evil.txt")
 	authBasic(req)
 	r.ServeHTTP(w, req)
@@ -290,14 +327,14 @@ func TestWebDAVWrite_MoveTraversalDestination(t *testing.T) {
 	// Create source file via PUT
 	_ = os.MkdirAll(filepath.Join(conf.OriginalsPath(), "travsrc2"), 0o700)
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodPut, conf.BaseUri(WebDAVOriginals)+"/travsrc2/a.txt", bytes.NewBufferString("A"))
+	req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/travsrc2/a.txt", bytes.NewBufferString("A"))
 	authBasic(req)
 	r.ServeHTTP(w, req)
 	assert.InDelta(t, 201, w.Code, 1)
 
 	// Attempt MOVE with traversal in Destination
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(MethodMove, conf.BaseUri(WebDAVOriginals)+"/travsrc2/a.txt", nil)
+	req = httptest.NewRequest(header.MethodMove, conf.BaseUri(WebDAVOriginals)+"/travsrc2/a.txt", nil)
 	req.Header.Set("Destination", conf.BaseUri(WebDAVOriginals)+"/../evil2.txt")
 	authBasic(req)
 	r.ServeHTTP(w, req)
@@ -311,13 +348,62 @@ func TestWebDAVWrite_MoveTraversalDestination(t *testing.T) {
 	assert.FileExists(t, filepath.Join(conf.OriginalsPath(), "evil2.txt"))
 }
 
-func TestWebDAVWrite_ReadOnlyForbidden(t *testing.T) {
-	conf := config.TestConfig()
+func TestWebDAVWrite_ReadOnlyMethodNotAllowed(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
 	conf.Options().ReadOnly = true
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	r := setupWebDAVRouter(conf)
+
+	for _, method := range []string{header.MethodMkcol, header.MethodLock, header.MethodUnlock} {
+		t.Run(method, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest(method, conf.BaseUri(WebDAVOriginals)+"/ro", nil)
+			authBearer(req)
+			r.ServeHTTP(w, req)
+			assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
+		})
+	}
+}
+
+func TestWebDAVWrite_PatchMethodNotAllowed(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
 	r := setupWebDAVRouter(conf)
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/ro", nil)
+	req := httptest.NewRequest(header.MethodPatch, conf.BaseUri(WebDAVOriginals)+"/wdvdir/hello.txt", bytes.NewBufferString("{}"))
 	authBearer(req)
 	r.ServeHTTP(w, req)
-	assert.Equal(t, http.StatusForbidden, w.Code)
+	assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
+}
+
+func TestWebDAVWrite_PostNotBlockedByReadOnly(t *testing.T) {
+	readWriteConf := newWebDAVTestConfig(t)
+	if err := readWriteConf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	readWriteRouter := setupWebDAVRouter(readWriteConf)
+
+	readOnlyConf := newWebDAVTestConfig(t)
+	readOnlyConf.Options().ReadOnly = true
+	if err := readOnlyConf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	readOnlyRouter := setupWebDAVRouter(readOnlyConf)
+
+	readWriteResp := httptest.NewRecorder()
+	readWriteReq := httptest.NewRequest(header.MethodPost, readWriteConf.BaseUri(WebDAVOriginals)+"/post-test", nil)
+	authBearer(readWriteReq)
+	readWriteRouter.ServeHTTP(readWriteResp, readWriteReq)
+
+	readOnlyResp := httptest.NewRecorder()
+	readOnlyReq := httptest.NewRequest(header.MethodPost, readOnlyConf.BaseUri(WebDAVOriginals)+"/post-test", nil)
+	authBearer(readOnlyReq)
+	readOnlyRouter.ServeHTTP(readOnlyResp, readOnlyReq)
+
+	assert.Equal(t, readWriteResp.Code, readOnlyResp.Code)
+	assert.NotEqual(t, http.StatusForbidden, readOnlyResp.Code)
 }

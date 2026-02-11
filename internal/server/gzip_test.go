@@ -92,7 +92,9 @@ func TestGzipMiddleware(t *testing.T) {
 
 		zr, err := stdgzip.NewReader(bytes.NewReader(w.Body.Bytes()))
 		require.NoError(t, err)
-		defer zr.Close()
+		defer func() {
+			require.NoError(t, zr.Close())
+		}()
 
 		b, err := io.ReadAll(zr)
 		require.NoError(t, err)

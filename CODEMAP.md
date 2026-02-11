@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** February 2, 2026
+**Last Updated:** February 8, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -46,10 +46,12 @@ High-Level Package Map (Go)
 
 Templates & Static Assets
 - Entry HTML lives in `assets/templates/index.gohtml`, which includes the splash markup from `app.gohtml` and the SPA loader from `app.js.gohtml`.
-- The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs. Update this file (and the partial) in lockstep with the templates in private repos (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`) because they import the same partial, and keep the `<script>` order so the check is executed first.
+- The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs.
+- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml` and `plus/assets/templates/index.gohtml`, because those editions import the same partial.
+- Keep the script tag order unchanged so the browser check executes before the main bundle.
 - `splash.gohtml` renders the loading screen text while the bundle loads; styles are in `frontend/src/css/splash.css`.
 - When adjusting browser support messaging, update both the loader partial and splash styles so the warning message stays consistent across editions.
-- Service worker routes live in `internal/server/routes_webapp.go`. The helper that serves Workbox runtime files (`/workbox-:hash`) sits there as well so service workers run under both the site root and a base URI; remember Gin’s `:hash` parameter excludes the `.js` suffix, so the handler/test matches the full filename manually.
+- Service worker routes live in `internal/server/routes_webapp.go`. Handlers for `sw.js`, `sw-scope-cleanup.js`, and Workbox runtime files (`/workbox-:hash`) are defined there so service workers run under both the site root and a base URI; remember Gin’s `:hash` parameter excludes the `.js` suffix, so the handler/test matches the full filename manually.
 
 HTTP API
 - Handlers live in `internal/api/*.go` and are registered in `internal/server/routes.go`.

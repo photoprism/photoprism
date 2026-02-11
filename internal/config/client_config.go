@@ -33,6 +33,7 @@ type ClientConfig struct {
 	Copyright        string              `json:"copyright"`
 	Flags            string              `json:"flags"`
 	BaseUri          string              `json:"baseUri"`
+	StorageNamespace string              `json:"storageNamespace"`
 	StaticUri        string              `json:"staticUri"`
 	ClientAssets     *ClientAssets       `json:"-"`
 	CssUri           string              `json:"cssUri"`
@@ -283,6 +284,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		About:            c.About(),
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
+		StorageNamespace: c.StorageNamespace(),
 		StaticUri:        c.StaticUri(),
 		ClientAssets:     a,
 		CssUri:           a.AppCssUri(),
@@ -379,6 +381,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		About:            c.About(),
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
+		StorageNamespace: c.StorageNamespace(),
 		StaticUri:        c.StaticUri(),
 		ClientAssets:     a,
 		CssUri:           a.AppCssUri(),
@@ -483,6 +486,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		About:            c.About(),
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
+		StorageNamespace: c.StorageNamespace(),
 		StaticUri:        c.StaticUri(),
 		ClientAssets:     a,
 		CssUri:           a.AppCssUri(),

@@ -46,7 +46,7 @@ func TestMain(m *testing.M) {
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
 	if err = c.CloseDb(); err != nil {
-		log.Errorf("close db: %v", err)
+		log.Warnf("close db: %v", err)
 	}
 
 	_ = os.RemoveAll(tempDir)

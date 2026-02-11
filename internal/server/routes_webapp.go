@@ -14,7 +14,7 @@ import (
 )
 
 // MethodsGetHead enumerates the safe GET/HEAD methods used by web app routes.
-var MethodsGetHead = []string{http.MethodGet, http.MethodHead}
+var MethodsGetHead = []string{header.MethodGet, header.MethodHead}
 
 // registerWebAppRoutes adds routes for the web user interface.
 func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
@@ -63,7 +63,7 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
 		// Return if only headers are requested.
-		if c.Request.Method == http.MethodHead {
+		if c.Request.Method == header.MethodHead {
 			c.Header(header.ContentType, header.ContentTypeJavaScript)
 			return
 		}
@@ -88,6 +88,32 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 	// Primary service worker endpoint (/sw.js relative to the site root).
 	router.Match(MethodsGetHead, "/"+fs.SwJsFile, swWorker)
 
+	// Serve the service worker scope cleanup helper imported by sw.js.
+	swScopeCleanup := func(c *gin.Context) {
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+
+		// Return if only headers are requested.
+		if c.Request.Method == header.MethodHead {
+			c.Header(header.ContentType, header.ContentTypeJavaScript)
+			return
+		}
+
+		if helperFile := conf.StaticBuildFile(fs.SwScopeCleanupJsFile); fs.FileExistsNotEmpty(helperFile) {
+			c.File(helperFile)
+			return
+		}
+
+		if len(fallbackScopeCleanupScript) > 0 {
+			c.Data(http.StatusOK, header.ContentTypeJavaScript, fallbackScopeCleanupScript)
+			return
+		}
+
+		api.Abort(c, http.StatusNotFound, i18n.ErrNotFound)
+	}
+
+	// Scope cleanup helper endpoint (/sw-scope-cleanup.js relative to the site root).
+	router.Match(MethodsGetHead, "/"+fs.SwScopeCleanupJsFile, swScopeCleanup)
+
 	// Expose hashed Workbox runtime helpers alongside sw.js so service worker imports succeed
 	// regardless of whether the app is hosted at the root or under a base URI.
 	workboxHandler := newWorkboxHandler(conf)
@@ -98,6 +124,7 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 	// Handle service worker requests on a shared domain.
 	if conf.BaseUri("") != "" {
 		router.Match(MethodsGetHead, conf.BaseUri("/"+fs.SwJsFile), swWorker)
+		router.Match(MethodsGetHead, conf.BaseUri("/"+fs.SwScopeCleanupJsFile), swScopeCleanup)
 		router.Match(MethodsGetHead, conf.BaseUri("/workbox-:hash"), workboxHandler)
 	}
 }
@@ -123,7 +150,7 @@ func newWorkboxHandler(conf *config.Config) gin.HandlerFunc {
 		}
 
 		// Return if only headers are requested.
-		if c.Request.Method == http.MethodHead {
+		if c.Request.Method == header.MethodHead {
 			c.Header(header.ContentType, header.ContentTypeJavaScript)
 			return
 		}

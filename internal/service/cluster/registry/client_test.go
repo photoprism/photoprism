@@ -6,15 +6,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestClientRegistry_PutFindListRotate(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-client", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-client")
 
 	r, err := NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)

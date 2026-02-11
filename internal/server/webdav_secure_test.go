@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 func TestJoinUnderBase(t *testing.T) {
@@ -42,13 +43,13 @@ func TestWebDAVFileName_PathTraversalRejected(t *testing.T) {
 	grp := r.Group(conf.BaseUri(WebDAVOriginals))
 
 	// Attempt traversal to outside path.
-	req := &http.Request{Method: http.MethodPut}
+	req := &http.Request{Method: header.MethodPut}
 	req.URL = &url.URL{Path: conf.BaseUri(WebDAVOriginals) + "/../../etc/passwd"}
 	got := WebDAVFileName(req, grp, conf)
 	assert.Equal(t, "", got, "should reject traversal")
 
 	// Happy path: file under base resolves and exists.
-	req2 := &http.Request{Method: http.MethodPut}
+	req2 := &http.Request{Method: header.MethodPut}
 	req2.URL = &url.URL{Path: conf.BaseUri(WebDAVOriginals) + "/ok.txt"}
 	got = WebDAVFileName(req2, grp, conf)
 	assert.Equal(t, insideFile, got)
@@ -58,7 +59,7 @@ func TestWebDAVFileName_MethodNotPut(t *testing.T) {
 	conf := newWebDAVTestConfig(t)
 	r := gin.New()
 	grp := r.Group(conf.BaseUri(WebDAVOriginals))
-	req := &http.Request{Method: http.MethodGet}
+	req := &http.Request{Method: header.MethodGet}
 	req.URL = &url.URL{Path: conf.BaseUri(WebDAVOriginals) + "/anything.jpg"}
 	got := WebDAVFileName(req, grp, conf)
 	assert.Equal(t, "", got)
@@ -72,7 +73,7 @@ func TestWebDAVFileName_ImportBasePath(t *testing.T) {
 	file := filepath.Join(conf.ImportPath(), "in.jpg")
 	assert.NoError(t, fs.MkdirAll(filepath.Dir(file)))
 	assert.NoError(t, fs.WriteString(file, "x"))
-	req := &http.Request{Method: http.MethodPut}
+	req := &http.Request{Method: header.MethodPut}
 	req.URL = &url.URL{Path: conf.BaseUri(WebDAVImport) + "/in.jpg"}
 	got := WebDAVFileName(req, grp, conf)
 	assert.Equal(t, file, got)

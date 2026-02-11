@@ -100,6 +100,7 @@ import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
 import * as media from "common/media";
+import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
 
 const VIDEO_EVENT_TYPES = [
@@ -126,6 +127,9 @@ const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PSidebarInfo from "component/sidebar/info.vue";
 
+const appStorage = getAppStorage();
+const appSessionStorage = getAppSessionStorage();
+
 export default {
   name: "PLightbox",
   components: [PLightboxMenu, PSidebarInfo],
@@ -141,13 +145,13 @@ export default {
       visible: false,
       busy: false,
       closing: false,
-      info: localStorage.getItem("lightbox.info") === "true",
+      info: appStorage.getItem("lightbox.info") === "true",
       menuElement: null,
       menuBgColor: "#252525",
       menuVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
-      muted: window.sessionStorage.getItem("lightbox.muted") === "true",
+      muted: appSessionStorage.getItem("lightbox.muted") === "true",
       hasTouch: this.$util.hasTouch(),
       shortVideoDuration: 5, // Duration in seconds for videos that are short enough to automatically loop.
       playControlHideDelay: 1000, // Hide the lightbox controls after this time in ms when a video starts playing.
@@ -272,7 +276,7 @@ export default {
       this.closing = false;
       this.visible = true;
       this.wasFullscreen = $fullscreen.isEnabled();
-      this.info = localStorage.getItem("lightbox.info") === "true";
+      this.info = appStorage.getItem("lightbox.info") === "true";
 
       // Publish init event.
       this.$event.publish("lightbox.init");
@@ -2165,7 +2169,7 @@ export default {
     toggleMute() {
       this.muted = !this.muted;
 
-      window.sessionStorage.setItem("lightbox.muted", this.muted.toString());
+      appSessionStorage.setItem("lightbox.muted", this.muted.toString());
 
       const { video } = this.getContent();
 
@@ -2421,7 +2425,7 @@ export default {
 
       this.info = true;
 
-      localStorage.setItem("lightbox.info", `${this.info.toString()}`);
+      appStorage.setItem("lightbox.info", `${this.info.toString()}`);
 
       // Resize and focus content element.
       this.$nextTick(() => {
@@ -2437,7 +2441,7 @@ export default {
 
       this.info = false;
 
-      localStorage.setItem("lightbox.info", `${this.info.toString()}`);
+      appStorage.setItem("lightbox.info", `${this.info.toString()}`);
 
       // Resize and focus content element.
       this.$nextTick(() => {

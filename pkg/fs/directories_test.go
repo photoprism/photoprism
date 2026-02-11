@@ -19,6 +19,8 @@ func TestDirs(t *testing.T) {
 		assert.Contains(t, result, "/directory")
 		assert.Contains(t, result, "/directory/subdirectory")
 		assert.Contains(t, result, "/directory/subdirectory/animals")
+		assert.NotContains(t, result, "/directory/subdirectory/bar")
+		assert.NotContains(t, result, "/directory/subdirectory/.hiddendir")
 		assert.Contains(t, result, "/originals")
 		assert.NotContains(t, result, "/originals/storage")
 		assert.Contains(t, result, "/linked")

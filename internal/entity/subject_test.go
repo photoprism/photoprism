@@ -124,6 +124,9 @@ func TestSubject_Delete(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 		err := m.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
 		assert.False(t, m.Deleted())
 
 		var subj Subjects

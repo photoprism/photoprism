@@ -186,47 +186,60 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 			return nil, err
 		}
 
-		// Ensure body is closed after handling the response.
-		defer resp.Body.Close()
+		retry, registerResp, err := func() (bool, *cluster.RegisterResponse, error) {
+			defer func() {
+				if closeErr := resp.Body.Close(); closeErr != nil {
+					log.Debugf("cluster: %s (close registration response body)", clean.Error(closeErr))
+				}
+			}()
 
-		switch resp.StatusCode {
-		case http.StatusOK, http.StatusCreated:
-			var r cluster.RegisterResponse
-			dec := json.NewDecoder(resp.Body)
-			if err = dec.Decode(&r); err != nil {
-				return nil, err
+			switch resp.StatusCode {
+			case http.StatusOK, http.StatusCreated:
+				var r cluster.RegisterResponse
+				dec := json.NewDecoder(resp.Body)
+				if err = dec.Decode(&r); err != nil {
+					return false, nil, err
+				}
+				if err = persistRegistration(c, &r, wantRotateDatabase); err != nil {
+					return false, nil, err
+				}
+				primeJWKS(c, r.JWKSUrl)
+				if resp.StatusCode == http.StatusCreated {
+					log.Infof("config: successfully joined cluster as node %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
+				} else {
+					log.Infof("cluster: membership confirmed")
+				}
+				return false, &r, nil
+			case http.StatusUnauthorized, http.StatusForbidden, http.StatusNotFound:
+				// Terminal errors (no retry). 404 likely indicates a Portal without cluster endpoints.
+				return false, nil, errors.New(resp.Status)
+			case http.StatusTooManyRequests:
+				if attempt < maxAttempts {
+					log.Debugf("cluster: join attempt %d/%d rate limited by portal", attempt, maxAttempts)
+					return true, nil, nil
+				}
+				return false, nil, errors.New(resp.Status)
+			case http.StatusConflict, http.StatusBadRequest:
+				// Do not retry on 400/409 per spec intent.
+				return false, nil, errors.New(resp.Status)
+			default:
+				if attempt < maxAttempts {
+					log.Debugf("cluster: join attempt %d/%d failed with status %s", attempt, maxAttempts, resp.Status)
+					// TODO: Consider exponential backoff with jitter instead of constant delay.
+					return true, nil, nil
+				}
+				return false, nil, errors.New(resp.Status)
 			}
-			if err = persistRegistration(c, &r, wantRotateDatabase); err != nil {
-				return nil, err
-			}
-			primeJWKS(c, r.JWKSUrl)
-			if resp.StatusCode == http.StatusCreated {
-				log.Infof("config: successfully joined cluster as node %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
-			} else {
-				log.Infof("cluster: membership confirmed")
-			}
-			return &r, nil
-		case http.StatusUnauthorized, http.StatusForbidden, http.StatusNotFound:
-			// Terminal errors (no retry). 404 likely indicates a Portal without cluster endpoints.
-			return nil, errors.New(resp.Status)
-		case http.StatusTooManyRequests:
-			if attempt < maxAttempts {
-				log.Debugf("cluster: join attempt %d/%d rate limited by portal", attempt, maxAttempts)
-				time.Sleep(delay)
-				continue
-			}
-			return nil, errors.New(resp.Status)
-		case http.StatusConflict, http.StatusBadRequest:
-			// Do not retry on 400/409 per spec intent.
-			return nil, errors.New(resp.Status)
-		default:
-			if attempt < maxAttempts {
-				log.Debugf("cluster: join attempt %d/%d failed with status %s", attempt, maxAttempts, resp.Status)
-				// TODO: Consider exponential backoff with jitter instead of constant delay.
-				time.Sleep(delay)
-				continue
-			}
-			return nil, errors.New(resp.Status)
+		}()
+
+		switch {
+		case err != nil:
+			return nil, err
+		case registerResp != nil:
+			return registerResp, nil
+		case retry:
+			time.Sleep(delay)
+			continue
 		}
 	}
 	return nil, nil
@@ -489,7 +502,11 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			log.Debugf("theme: %s (close theme response body)", clean.Error(closeErr))
+		}
+	}()
 
 	switch resp.StatusCode {
 	case http.StatusOK:
@@ -586,7 +603,11 @@ func oauthAccessToken(portal *url.URL, clientID, clientSecret string) (string, e
 		return "", err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			log.Debugf("cluster: %s (close token response body)", clean.Error(closeErr))
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("%s", resp.Status)
@@ -690,7 +711,11 @@ func obtainNodeCredentialsViaRegister(c *config.Config, portal *url.URL, joinTok
 	if err != nil {
 		return "", "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+		}
+	}()
 
 	switch resp.StatusCode {
 	case http.StatusOK, http.StatusCreated, http.StatusConflict:

@@ -62,8 +62,8 @@ This file tells automated coding agents (and humans) where to find the single so
 ### Web Templates & Shared Assets
 
 - HTML entrypoints live under `assets/templates/`; key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`. The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes.
-- To preserve the fallback messaging, keep the `<script>` order in `app.js.gohtml` so `browser-check.js` loads before `{{ .config.JsUri }}`. Do not add `defer` or `async` to the bundle tag unless you reintroduce a guarded loader.
-- The same loader partial is reused in private packages (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`). Whenever you touch `app.js.gohtml` or change how we load the bundle, mirror the update by running commands such as `cd pro && sed -n '1,160p' assets/templates/index.gohtml` (and similarly for `plus`) to confirm they include the shared partial instead of hard-coding `<script src="{{ .config.JsUri }}">`.
+- To preserve the fallback messaging, keep the script order in `app.js.gohtml` so `browser-check.js` loads before the bundle script (`{{ .config.JsUri }}`). Do not add `defer` or `async` to the bundle tag unless you reintroduce a guarded loader.
+- The same loader partial is reused in private packages (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`). Whenever you touch `app.js.gohtml` or change how we load the bundle, mirror the update by running commands such as `cd pro && sed -n '1,160p' assets/templates/index.gohtml` (and similarly for `plus`) to confirm they include the shared partial instead of hard-coding the bundle tag.
 - Splash styles are defined in `frontend/src/css/splash.css`. Add new splash elements (for example `.splash-warning`) there so both public and private editions remain visually consistent.
 - Browser baseline: PhotoPrism requires Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. Update the message in `assets/templates/app.js.gohtml` (and the matching CSS) if support changes.
 
@@ -422,7 +422,7 @@ Note: Across our public documentation, official images, and in production, the c
   token := s.AuthToken()
   r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", token)
   ```
-  Admins see `AdvertiseUrl` and `Database`; client/user sessions don’t. `SiteUrl` is safe to show to all roles.
+  Admins see `AdvertiseUrl` and `Database`; client/user sessions don’t. `SiteUrl` is safe to show to all roles. Client config also includes `storageNamespace` (SHA-256 of `SiteUrl`) for browser storage scoping and is safe to expose.
 
 ### Preflight Checklist
 

@@ -1,6 +1,10 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PNavigation from "component/navigation.vue";
+import { buildNamespace } from "common/storage";
+import clientConfig from "../config";
+
+const navigationModeKey = `${buildNamespace(clientConfig.storageNamespace)}navigation.mode`;
 
 function mountNavigation({
   routeName = "photos",
@@ -124,6 +128,7 @@ function mountNavigation({
       },
       stubs: {
         "router-link": { template: "<a><slot /></a>" },
+        "v-navigation-drawer": true,
       },
     },
   });
@@ -140,6 +145,10 @@ function mountNavigation({
 }
 
 describe("component/navigation", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -219,7 +228,7 @@ describe("component/navigation", () => {
 
       wrapper.vm.toggleIsMini();
       expect(wrapper.vm.isMini).toBe(!initial);
-      expect(setItemSpy).toHaveBeenCalledWith("navigation.mode", `${!initial}`);
+      expect(setItemSpy).toHaveBeenCalledWith(navigationModeKey, `${!initial}`);
 
       wrapper.vm.isRestricted = true;
       const before = wrapper.vm.isMini;

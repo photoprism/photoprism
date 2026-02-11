@@ -19,6 +19,8 @@ import (
 func (m *Photo) SetCoordinates(lat, lng, altitude float64, source string) {
 	m.SetAltitude(altitude, source)
 
+	lat, lng, _ = geo.NormalizeCoordinateBounds(lat, lng)
+
 	if lat == 0.0 && lng == 0.0 {
 		return
 	}
@@ -54,6 +56,8 @@ func (m *Photo) UnknownLocation() bool {
 
 // SetPosition records an estimated position, randomizing estimates slightly and refreshing location metadata.
 func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
+	pos.Lat, pos.Lng, _ = geo.NormalizeCoordinateBounds(pos.Lat, pos.Lng)
+
 	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
 		return
 	} else if pos.Lat == 0 && pos.Lng == 0 {
@@ -351,6 +355,11 @@ func (m *Photo) GetTakenAtLocal() time.Time {
 // UpdateLocation resolves cells, places, time zones, and labels from the current coordinates.
 func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 	if m.HasLatLng() {
+		if lat, lng, changed := geo.NormalizeCoordinateBounds(m.PhotoLat, m.PhotoLng); changed {
+			m.PhotoLat = lat
+			m.PhotoLng = lng
+		}
+
 		var loc = NewCell(m.PhotoLat, m.PhotoLng)
 
 		if loc.Unknown() {

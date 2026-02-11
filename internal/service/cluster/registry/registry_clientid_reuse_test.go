@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -15,8 +14,7 @@ import (
 // rule prevents hijacking: the update applies to the UUID's row and does not move
 // the ClientID from its original node.
 func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-cid-hijack", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-cid-hijack")
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed two independent nodes
@@ -50,8 +48,7 @@ func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
 // migrates the row to the new UUID. This mirrors restore flows where a node's ClientID
 // is reused for a regenerated or reassigned UUID.
 func TestClientRegistry_ClientIDReuse_ChangesUUIDWhenTargetMissing(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-cid-move", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-cid-move")
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed one node

@@ -439,7 +439,11 @@ func (v *Verifier) fetchJWKS(ctx context.Context, url, etag string) (*jwksFetchR
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			log.Debugf("jwt: %s (close JWKS response body)", closeErr)
+		}
+	}()
 
 	switch resp.StatusCode {
 	case http.StatusNotModified:

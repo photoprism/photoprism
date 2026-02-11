@@ -39,7 +39,11 @@ func testFastWalk(t *testing.T, files map[string]string, callback func(path stri
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(tempdir)
+	t.Cleanup(func() {
+		if removeErr := os.RemoveAll(tempdir); removeErr != nil {
+			t.Fatalf("remove temp dir: %v", removeErr)
+		}
+	})
 
 	for path, contents := range files {
 		file := filepath.Join(tempdir, "/src", path)

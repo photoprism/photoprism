@@ -321,7 +321,7 @@ func SplitOr(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 }
 
-// SplitAnd splits a search string on AND separators (&) while honouring escape
+// SplitAnd splits a search string on AND separators (&) while honoring escape
 // sequences.
 func SplitAnd(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)

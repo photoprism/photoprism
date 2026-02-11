@@ -188,6 +188,7 @@
 <script>
 import PAuthHeader from "component/auth/header.vue";
 import PAuthFooter from "component/auth/footer.vue";
+import { getAppStorage } from "common/storage";
 import Settings from "model/settings";
 import * as options from "options/options";
 
@@ -230,10 +231,10 @@ export default {
     },
   },
   created() {
-    const authError = window.localStorage.getItem("session.error");
+    const authError = getAppStorage().getItem("session.error");
     if (authError) {
       this.$notify.error(authError);
-      window.localStorage.removeItem("session.error");
+      getAppStorage().removeItem("session.error");
     }
   },
   mounted() {

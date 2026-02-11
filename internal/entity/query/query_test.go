@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
@@ -13,6 +14,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// staticDbProvider returns a static *gorm.DB for temporary test provider overrides.
+type staticDbProvider struct {
+	db *gorm.DB
+}
+
+// Db returns the static database handle.
+func (p staticDbProvider) Db() *gorm.DB {
+	return p.db
+}
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()

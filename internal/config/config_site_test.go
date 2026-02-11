@@ -1,6 +1,8 @@
 package config
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -18,6 +20,14 @@ func TestConfig_BaseUri(t *testing.T) {
 	c.options.SiteUrl = "http://foo:2342/foo bar/"
 	assert.Equal(t, "/foo%20bar", c.BaseUri(""))
 	assert.Equal(t, "/foo%20bar/baz", c.BaseUri("/baz"))
+}
+
+func TestConfig_StorageNamespace(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.SiteUrl = "https://example.com/foo/"
+
+	sum := sha256.Sum256([]byte(c.SiteUrl()))
+	assert.Equal(t, fmt.Sprintf("%x", sum), c.StorageNamespace())
 }
 
 func TestConfig_StaticUri(t *testing.T) {

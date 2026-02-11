@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestNewFolder(t *testing.T) {
@@ -193,6 +194,9 @@ func TestFolder_SetForm(t *testing.T) {
 		formValues := Folder{FolderTitle: "Beautiful beach"}
 
 		folderForm, err := form.NewFolder(formValues)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		folder := NewFolder("oldRoot", "oldPath", time.Now().UTC())
 
@@ -221,5 +225,40 @@ func TestFolder_Create(t *testing.T) {
 		result := FindFolder(RootOriginals, "2020/Greece")
 		assert.Equal(t, "2020-greece", result.Slug())
 		assert.Equal(t, "Holiday 2020", result.Title())
+	})
+	t.Run("EmojiSubFolderDoesNotOverwriteParentAlbum", func(t *testing.T) {
+		parentPath := "emoji-collision-parent-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		childPath := parentPath + "/🍷"
+
+		parentFolder := NewFolder(RootOriginals, parentPath, time.Now().UTC())
+		if err := parentFolder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		childFolder := NewFolder(RootOriginals, childPath, time.Now().UTC())
+		if err := childFolder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{parentPath, childPath}).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{parentPath, childPath}).Delete(Album{}).Error
+		})
+
+		parentAlbum := FindFolderAlbum(parentPath)
+		if parentAlbum == nil {
+			t.Fatal("expected parent folder album")
+		}
+
+		childAlbum := FindFolderAlbum(childPath)
+		if childAlbum == nil {
+			t.Fatal("expected child folder album")
+		}
+
+		assert.NotEqual(t, parentAlbum.ID, childAlbum.ID)
+		assert.Equal(t, parentPath, parentAlbum.AlbumPath)
+		assert.Equal(t, childPath, childAlbum.AlbumPath)
+		assert.Equal(t, parentFolder.Title(), parentAlbum.AlbumTitle)
+		assert.Equal(t, childFolder.Title(), childAlbum.AlbumTitle)
 	})
 }

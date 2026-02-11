@@ -2,6 +2,7 @@ package query
 
 import (
 	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -127,6 +128,40 @@ func TestMatchFaceMarkers(t *testing.T) {
 	} else {
 		assert.Equal(t, "js6sg6b1qekk9jx8", m.SubjUID)
 	}
+}
+
+func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
+	originalDb := entity.Db()
+	require.NotNil(t, originalDb)
+
+	tempConn := &entity.DbConn{
+		Driver: entity.SQLite3,
+		Dsn:    filepath.Join(t.TempDir(), "match-face-markers-error.db"),
+	}
+
+	tempDb := tempConn.Db()
+	require.NotNil(t, tempDb)
+	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}).Error)
+	require.NoError(t, tempDb.Create(&entity.Face{
+		ID:         "FACE-MATCH-ERR-1",
+		FaceSrc:    entity.SrcManual,
+		FaceKind:   int(face.RegularFace),
+		FaceHidden: false,
+		SubjUID:    rnd.GenerateUID('j'),
+		Samples:    1,
+	}).Error)
+
+	entity.SetDbProvider(tempConn)
+	t.Cleanup(func() {
+		entity.SetDbProvider(staticDbProvider{db: originalDb})
+		tempConn.Close()
+	})
+
+	affected, err := MatchFaceMarkers()
+	require.Error(t, err)
+	assert.Equal(t, int64(0), affected)
+	assert.Contains(t, err.Error(), "no such table")
+	assert.Contains(t, err.Error(), entity.Marker{}.TableName())
 }
 
 func TestRemoveAnonymousFaceClusters(t *testing.T) {

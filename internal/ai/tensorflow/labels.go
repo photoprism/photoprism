@@ -17,7 +17,11 @@ func loadLabelsFromPath(path string) (labels []string, err error) {
 		return nil, err
 	}
 
-	defer f.Close()
+	defer func() {
+		if closeErr := f.Close(); closeErr != nil {
+			log.Debugf("vision: %s (close labels file)", closeErr)
+		}
+	}()
 
 	scanner := bufio.NewScanner(f)
 

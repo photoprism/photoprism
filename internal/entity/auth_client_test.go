@@ -20,6 +20,21 @@ func TestNewClient(t *testing.T) {
 	assert.Equal(t, m.AuthScope, m.Scope())
 }
 
+func TestClient_GetData(t *testing.T) {
+	c := NewClient()
+	d := &ClientData{
+		Theme: "portal",
+	}
+
+	c.SetData(d)
+
+	first := c.GetData()
+	second := c.GetData()
+
+	assert.Same(t, first, second)
+	assert.Equal(t, "portal", second.Theme)
+}
+
 func TestFindClient(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")

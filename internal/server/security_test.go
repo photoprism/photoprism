@@ -33,7 +33,7 @@ func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
 
 	doRequest := func(path string) *httptest.ResponseRecorder {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, path, nil)
+		req := httptest.NewRequest(header.MethodGet, path, nil)
 		r.ServeHTTP(w, req)
 		return w
 	}

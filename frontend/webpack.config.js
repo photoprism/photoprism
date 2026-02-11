@@ -23,6 +23,7 @@ Additional information can be found in our Developer Guide:
 
 */
 
+const fs = require("fs");
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
@@ -37,6 +38,7 @@ const { VueLoaderPlugin } = require("vue-loader");
 const { VuetifyPlugin } = require("webpack-plugin-vuetify");
 const { DefinePlugin } = require("webpack");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const swScopeCleanupFile = "sw-scope-cleanup.js";
 
 const PATHS = {
   src: path.join(__dirname, "src"),
@@ -47,6 +49,30 @@ const PATHS = {
   splash: path.join(__dirname, "src/splash.js"),
   build: path.join(__dirname, "../assets/static/build"),
 };
+
+const swScopeCleanupPath = path.join(PATHS.src, swScopeCleanupFile);
+
+class EmitStaticFilePlugin {
+  constructor(source, destination) {
+    this.source = source;
+    this.destination = destination;
+  }
+
+  apply(compiler) {
+    compiler.hooks.thisCompilation.tap("EmitStaticFilePlugin", (compilation) => {
+      compilation.hooks.processAssets.tap(
+        {
+          name: "EmitStaticFilePlugin",
+          stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+        },
+        () => {
+          const contents = fs.readFileSync(this.source, "utf8");
+          compilation.emitAsset(this.destination, new webpack.sources.RawSource(contents));
+        }
+      );
+    });
+  }
+}
 
 if (isCustom) {
   PATHS.custom = path.join(__dirname, process.env.CUSTOM_SRC);
@@ -78,9 +104,7 @@ const config = {
     clean: true,
   },
   resolve: {
-    modules: isCustom
-      ? [PATHS.custom, PATHS.src, "node_modules", PATHS.modules]
-      : [PATHS.src, "node_modules", PATHS.modules],
+    modules: isCustom ? [PATHS.custom, PATHS.src, "node_modules", PATHS.modules] : [PATHS.src, "node_modules", PATHS.modules],
     preferRelative: true,
     alias: {
       "vue$": "vue/dist/vue.runtime.esm-bundler.js",
@@ -97,13 +121,15 @@ const config = {
       publicPath: "",
     }),
     new webpack.ProgressPlugin(),
+    new EmitStaticFilePlugin(swScopeCleanupPath, swScopeCleanupFile),
     new VueLoaderPlugin(),
     !isDev &&
       new WorkboxPlugin.GenerateSW({
         swDest: "sw.js",
-        cleanupOutdatedCaches: true,
+        cleanupOutdatedCaches: false,
         clientsClaim: false,
         skipWaiting: false,
+        importScripts: [swScopeCleanupFile],
         navigateFallback: undefined,
         exclude: [
           /\.map$/,

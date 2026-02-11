@@ -20,7 +20,9 @@ func Hash(fileName string) string {
 		return ""
 	}
 
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	hash := sha1.New() //nolint:gosec // legacy SHA1 hashes retained for compatibility
 
@@ -44,7 +46,9 @@ func Checksum(fileName string) string {
 		return ""
 	}
 
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	hash := crc32.New(checksum.Crc32Castagnoli)
 

@@ -25,6 +25,16 @@ var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Ha
 	srv.ServeHTTP(c.Writer, c.Request)
 }
 
+// WebDAVWriteMethod returns true for methods that modify WebDAV state.
+func WebDAVWriteMethod(method string) bool {
+	switch method {
+	case header.MethodPut, header.MethodMkcol, header.MethodDelete, header.MethodMove, header.MethodCopy, header.MethodProppatch, header.MethodLock, header.MethodUnlock:
+		return true
+	default:
+		return false
+	}
+}
+
 // WebDAV handles requests to the "/originals" and "/import" endpoints.
 func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	if router == nil {
@@ -45,9 +55,9 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	loggerFunc := func(request *http.Request, err error) {
 		if err != nil {
 			switch request.Method {
-			case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
+			case header.MethodPut, header.MethodMkcol, header.MethodDelete, header.MethodMove, header.MethodCopy, header.MethodProppatch, header.MethodLock, header.MethodUnlock:
 				log.Errorf("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
-			case MethodPropfind:
+			case header.MethodPropfind:
 				log.Tracef("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
 			default:
 				log.Debugf("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
@@ -67,7 +77,7 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			}
 
 			switch request.Method {
-			case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
+			case header.MethodPut, header.MethodMkcol, header.MethodDelete, header.MethodMove, header.MethodCopy, header.MethodProppatch:
 				log.Infof("webdav: %s %s", clean.Log(request.Method), clean.Log(request.URL.String()))
 
 				if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
@@ -91,10 +101,17 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 
 	// Wrap handler to check quota and permissions.
 	handlerFunc := func(c *gin.Context) {
-		// Abort PUT, POST, PATCH, and COPY requests if there
+		// PATCH is intentionally not supported by the x/net/webdav handler in
+		// PhotoPrism and must return 405 instead of a generic 400 response.
+		if c.Request.Method == header.MethodPatch {
+			c.AbortWithStatus(http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Abort PUT and COPY requests if there
 		// is not enough free storage to upload new files.
 		switch c.Request.Method {
-		case MethodPut, MethodPost, MethodPatch, MethodCopy:
+		case header.MethodPut, header.MethodCopy:
 			if conf.FilesQuotaReached() {
 				c.AbortWithStatus(http.StatusInsufficientStorage)
 				return
@@ -106,44 +123,54 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	}
 
 	// handleRead registers WebDAV methods used for browsing and downloading.
-	handleRead := func(h func(*gin.Context)) {
-		router.Handle(MethodHead, "/*path", h)
-		router.Handle(MethodGet, "/*path", h)
-		router.Handle(MethodOptions, "/*path", h)
-		router.Handle(MethodLock, "/*path", h)
-		router.Handle(MethodUnlock, "/*path", h)
-		router.Handle(MethodPropfind, "/*path", h)
+	handleRead := func(path string, h func(*gin.Context)) {
+		router.Handle(header.MethodHead, path, h)
+		router.Handle(header.MethodGet, path, h)
+		router.Handle(header.MethodPost, path, h)
+		router.Handle(header.MethodOptions, path, h)
+		router.Handle(header.MethodPropfind, path, h)
 	}
 
 	// handleWrite registers WebDAV methods to may modify the file system.
-	handleWrite := func(h func(*gin.Context)) {
-		router.Handle(MethodPut, "/*path", h)
-		router.Handle(MethodPost, "/*path", h)
-		router.Handle(MethodPatch, "/*path", h)
-		router.Handle(MethodDelete, "/*path", h)
-		router.Handle(MethodMkcol, "/*path", h)
-		router.Handle(MethodCopy, "/*path", h)
-		router.Handle(MethodMove, "/*path", h)
-		router.Handle(MethodProppatch, "/*path", h)
+	handleWrite := func(path string, h func(*gin.Context)) {
+		router.Handle(header.MethodPut, path, h)
+		router.Handle(header.MethodDelete, path, h)
+		router.Handle(header.MethodMkcol, path, h)
+		router.Handle(header.MethodCopy, path, h)
+		router.Handle(header.MethodMove, path, h)
+		router.Handle(header.MethodLock, path, h)
+		router.Handle(header.MethodUnlock, path, h)
+		router.Handle(header.MethodProppatch, path, h)
 	}
 
-	// Handle supported WebDAV request methods.
-	handleRead(handlerFunc)
+	// handleUnsupported registers methods that should always return 405.
+	handleUnsupported := func(path string, h func(*gin.Context)) {
+		router.Handle(header.MethodPatch, path, h)
+	}
 
-	// Only supported with read-only mode disabled.
-	if conf.ReadOnly() {
-		handleWrite(func(c *gin.Context) {
-			_ = c.AbortWithError(http.StatusForbidden, fmt.Errorf("forbidden in read-only mode"))
+	// Register both base and wildcard routes to avoid automatic slash redirects
+	// on collection roots such as "/originals" and "/import".
+	for _, route := range []string{"", "/*path"} {
+		handleRead(route, handlerFunc)
+		handleUnsupported(route, func(c *gin.Context) {
+			c.AbortWithStatus(http.StatusMethodNotAllowed)
 		})
-	} else {
-		handleWrite(handlerFunc)
+
+		// Only supported with read-only mode disabled.
+		if conf.ReadOnly() {
+			handleWrite(route, func(c *gin.Context) {
+				c.AbortWithStatus(http.StatusMethodNotAllowed)
+			})
+		} else {
+			handleWrite(route, handlerFunc)
+		}
 	}
 }
 
 // WebDAVFileName determines the name and path of an uploaded file and returns its name if it exists.
 func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config.Config) (fileName string) {
 	// Check if this is a PUT request, as used for file uploads.
-	if request.Method != MethodPut {
+	if request.Method != header.MethodPut {
 		return ""
 	}
 

@@ -14,18 +14,39 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      "app": path.resolve(__dirname, "./src/app"),
-      "common": path.resolve(__dirname, "./src/common"),
-      "component": path.resolve(__dirname, "./src/component"),
-      "model": path.resolve(__dirname, "./src/model"),
-      "options": path.resolve(__dirname, "./src/options"),
-      "page": path.resolve(__dirname, "./src/page"),
-      "ui": path.resolve(__dirname, "./src/options/ui.js"),
-      "model.js": path.resolve(__dirname, "./src/model/model.js"),
-      "link.js": path.resolve(__dirname, "./src/model/link.js"),
-      "websocket.js": path.resolve(__dirname, "./src/common/websocket.js"),
-    },
+    alias: [
+      {
+        find: "component/session/remove/dialog.vue",
+        replacement: path.resolve(__dirname, "../pro/frontend/component/session/remove/dialog.vue"),
+      },
+      {
+        find: "component/user/add/dialog.vue",
+        replacement: path.resolve(__dirname, "../pro/frontend/component/user/add/dialog.vue"),
+      },
+      {
+        find: "component/user/edit/dialog.vue",
+        replacement: path.resolve(__dirname, "../pro/frontend/component/user/edit/dialog.vue"),
+      },
+      {
+        find: "component/user/remove/dialog.vue",
+        replacement: path.resolve(__dirname, "../pro/frontend/component/user/remove/dialog.vue"),
+      },
+      {
+        find: "options/admin",
+        replacement: path.resolve(__dirname, "../pro/frontend/options/admin.js"),
+      },
+      { find: "app", replacement: path.resolve(__dirname, "./src/app") },
+      { find: "common", replacement: path.resolve(__dirname, "./src/common") },
+      { find: "component", replacement: path.resolve(__dirname, "./src/component") },
+      { find: "model", replacement: path.resolve(__dirname, "./src/model") },
+      { find: "options", replacement: path.resolve(__dirname, "./src/options") },
+      { find: "page", replacement: path.resolve(__dirname, "./src/page") },
+      { find: "ui", replacement: path.resolve(__dirname, "./src/options/ui.js") },
+      { find: "model.js", replacement: path.resolve(__dirname, "./src/model/model.js") },
+      { find: "link.js", replacement: path.resolve(__dirname, "./src/model/link.js") },
+      { find: "websocket.js", replacement: path.resolve(__dirname, "./src/common/websocket.js") },
+      { find: "luxon", replacement: path.resolve(__dirname, "./node_modules/luxon") },
+    ],
   },
 
   optimizeDeps: {
