@@ -164,7 +164,7 @@ func (m *Photo) SyncMediaTypeFromFiles(typeSrc string) error {
 
 	if err := UnscopedDb().
 		Model(File{}).
-		Where("photo_id = ? AND file_missing = 0 AND file_sidecar = 0 AND deleted_at IS NULL", m.ID).
+		Where("photo_id = ? AND file_missing = false AND file_sidecar = false AND deleted_at IS NULL", m.ID).
 		Pluck("media_type", &mediaTypes).Error; err != nil {
 		return err
 	}
