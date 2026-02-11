@@ -141,7 +141,7 @@ func TestWebAppRoutes(t *testing.T) {
 		assert.Equal(t, header.ContentTypeJavaScript, w.Header().Get(header.ContentType))
 	})
 	t.Run("ServiceWorkerFallbackAndBaseUri", func(t *testing.T) {
-		swConf := config.NewMinimalTestConfig(t.TempDir())
+		swConf := config.NewMinimalTestConfig("server", t.TempDir())
 		swConf.Options().AssetsPath = t.TempDir()
 		swConf.Options().SiteUrl = "https://portal.example.com/p/acme/"
 
