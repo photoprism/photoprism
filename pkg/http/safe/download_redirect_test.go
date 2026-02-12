@@ -3,7 +3,6 @@ package safe
 import (
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -14,10 +13,9 @@ import (
 func TestDownload_BlockRedirectToPrivate(t *testing.T) {
 	// Public-looking server that redirects to 127.0.0.1
 	redirectTarget := "http://127.0.0.1:65535/secret"
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, redirectTarget, http.StatusFound)
-	}))
-	defer ts.Close()
+	})
 
 	dir := t.TempDir()
 	dest := filepath.Join(dir, "out")
@@ -33,17 +31,15 @@ func TestDownload_BlockRedirectToPrivate(t *testing.T) {
 // With AllowPrivate=true, redirects to a local httptest server should succeed.
 func TestDownload_AllowRedirectToPrivate(t *testing.T) {
 	// Local private target that serves content.
-	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	target := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = io.WriteString(w, "ok")
-	}))
-	defer target.Close()
+	})
 
 	// Public-looking server that redirects to the private target.
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, target.URL, http.StatusFound)
-	}))
-	defer ts.Close()
+	})
 
 	dir := t.TempDir()
 	dest := filepath.Join(dir, "ok")

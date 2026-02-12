@@ -125,7 +125,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
 			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
-			return affected, err
+			return affected, res.Error
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
 		}

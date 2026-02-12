@@ -40,7 +40,11 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 	if err != nil {
 		return "", "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+		}
+	}()
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusConflict {
 		return "", "", fmt.Errorf("%s", resp.Status)
 	}

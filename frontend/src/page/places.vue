@@ -54,6 +54,7 @@ import $api from "common/api";
 import $fullscreen from "common/fullscreen";
 import * as sky from "common/sky";
 import * as map from "common/map";
+import { getAppStorage } from "common/storage";
 import * as options from "options/options";
 import Thumb from "model/thumb";
 import PPagePhotos from "page/photos.vue";
@@ -76,6 +77,7 @@ const easing = (t) => {
 
 // MapLibre GL.
 let maplibregl;
+const appStorage = getAppStorage();
 
 export default {
   name: "PPagePlaces",
@@ -365,7 +367,7 @@ export default {
     },
     getProjection(fromStorage) {
       if (fromStorage || !this.map || typeof this.map.getProjection !== "function") {
-        const lastProjection = localStorage.getItem("places.projection");
+        const lastProjection = appStorage.getItem("places.projection");
         return lastProjection ? lastProjection : "";
       }
 
@@ -417,7 +419,7 @@ export default {
       this.projection = ev.newProjection;
 
       // Remember last used projection.
-      localStorage.setItem("places.projection", ev.newProjection);
+      appStorage.setItem("places.projection", ev.newProjection);
 
       // Render sky if new project is globe.
       if (ev.newProjection === ProjectionGlobe) {

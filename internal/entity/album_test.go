@@ -456,6 +456,56 @@ func TestFindFolderAlbum(t *testing.T) {
 			t.Fatal("album should be nil")
 		}
 	})
+	t.Run("PathBeatsSlugCollision", func(t *testing.T) {
+		parentPath := "emoji-collision-parent-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		childPath := parentPath + "/🍷"
+		parentFilter := `path:"` + parentPath + `" public:true`
+
+		parent := NewFolderAlbum("Parent", parentPath, parentFilter)
+		if parent == nil {
+			t.Fatal("expected parent album")
+		}
+
+		if err := parent.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = parent.DeletePermanently()
+		})
+
+		album := FindFolderAlbum(childPath)
+		assert.Nil(t, album)
+	})
+	t.Run("LegacyFallbackForEmptyPath", func(t *testing.T) {
+		parentPath := "emoji-collision-legacy-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		childPath := parentPath + "/🍷"
+
+		legacy := &Album{
+			AlbumType:   AlbumFolder,
+			AlbumSlug:   txt.Slug(parentPath),
+			AlbumPath:   "",
+			AlbumFilter: `path:"` + parentPath + `" public:true`,
+			CreatedAt:   Now(),
+			UpdatedAt:   Now(),
+		}
+		legacy.SetTitle("Legacy Folder")
+
+		if err := legacy.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = legacy.DeletePermanently()
+		})
+
+		album := FindFolderAlbum(childPath)
+		if album == nil {
+			t.Fatal("expected legacy album")
+		}
+
+		assert.Equal(t, legacy.ID, album.ID)
+	})
 }
 
 // TestFindAlbum exercises the related album behavior.

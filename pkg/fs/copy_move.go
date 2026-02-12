@@ -61,7 +61,9 @@ func Copy(src, dest string, force bool) (err error) {
 		return err
 	}
 
-	defer thisFile.Close()
+	defer func() {
+		err = errors.Join(err, thisFile.Close())
+	}()
 
 	// Open destination for write; create or truncate to avoid trailing bytes
 	destFile, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, ModeFile) //nolint:gosec // dest is derived from validated input
@@ -70,7 +72,9 @@ func Copy(src, dest string, force bool) (err error) {
 		return err
 	}
 
-	defer destFile.Close()
+	defer func() {
+		err = errors.Join(err, destFile.Close())
+	}()
 
 	buf := getCopyBuffer()
 	defer putCopyBuffer(buf)

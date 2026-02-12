@@ -695,15 +695,15 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("CLUSTER_DOMAIN"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "cluster-uuid",
-			Usage:   "cluster `UUID` (v4) to scope node credentials",
-			EnvVars: EnvVars("CLUSTER_UUID"),
-			Hidden:  true,
-		}}, {
-		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
 			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-uuid",
+			Usage:   "cluster `UUID` (v4) to scope node credentials",
+			EnvVars: EnvVars("CLUSTER_UUID"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{

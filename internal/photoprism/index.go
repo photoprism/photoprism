@@ -230,6 +230,12 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
+			// Skip related groups whose main file is ignored.
+			if related.Main == nil || ignore.Ignore(related.Main.FileName()) {
+				found[fileName] = fs.Processed
+				return nil
+			}
+
 			var files MediaFiles
 
 			// Main media file is required to proceed.
@@ -241,8 +247,9 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			// Check related files.
 			for _, f := range related.Files {
-				if found[f.FileName()].Processed() {
+				if ignore.Ignore(f.FileName()) || found[f.FileName()].Processed() {
 					// Ignore already processed files.
+					found[f.FileName()] = fs.Processed
 					continue
 				} else {
 					fileSize, limitErr := f.ExceedsBytes(o.ByteLimit)

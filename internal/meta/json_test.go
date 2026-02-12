@@ -530,6 +530,23 @@ func TestJSON(t *testing.T) {
 			assert.Len(t, data.Albums, 1)
 		}
 	})
+	t.Run("GphotosInvalidCoordinatesJson", func(t *testing.T) {
+		var data Data
+		err := data.GPhoto([]byte(`{
+			"geoData": {
+				"latitude": 22542883,
+				"longitude": 540,
+				"altitude": 0
+			}
+		}`))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 90.0, data.Lat)
+		assert.Equal(t, 180.0, data.Lng)
+	})
 	t.Run("Panorama360Json", func(t *testing.T) {
 		data, err := JSON("testdata/panorama360.json", "panorama360.jpg")
 

@@ -63,6 +63,8 @@ services:
       PHOTOPRISM_PLACES_LOCALE: "local"                    # location details language, e.g. "local", "en", or "de"
       ## OpenID Connect (pre-configured for local tests):
       ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
+      ## the seeded "photoprism-develop" client in scripts/sql/mariadb-init.sql
+      ## allows callbacks for /api/v1/oidc/redirect and /p/* paths
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
       PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
       PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"

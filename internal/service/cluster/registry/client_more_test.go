@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -14,8 +13,7 @@ import (
 
 // Duplicate names: FindByName should return the most recently updated.
 func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-dupes", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-dupes")
 
 	// Create two clients directly to simulate duplicates with same name.
 	c1 := entity.NewClient().SetName("pp-dupe").SetRole(cluster.RoleApp)
@@ -39,8 +37,7 @@ func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
 
 // Role change path: Put should update ClientRole via mapping.
 func TestClientRegistry_RoleChange(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-role", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-role")
 
 	r, _ := NewClientRegistryWithConfig(c)
 	n := &Node{Node: cluster.Node{Name: "pp-role", Role: cluster.RoleService}}

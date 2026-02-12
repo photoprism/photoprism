@@ -1,10 +1,20 @@
 ## PhotoPrism — Config Package
 
-**Last Updated:** November 21, 2025
+**Last Updated:** February 8, 2026
 
 ### Overview
 
 PhotoPrism’s [runtime configuration](https://docs.photoprism.app/developer-guide/configuration/) is managed by this package. Fields are defined in [`options.go`](options.go) and then initialized with values from command-line flags, [environment variables](https://docs.photoprism.app/getting-started/config-options/), and [optional YAML files](https://docs.photoprism.app/getting-started/config-files/) (`storage/config/*.yml`).
+
+Client config values are derived from the runtime configuration and exposed to the frontend via `GET /api/v1/config`. This includes a `storageNamespace` value (SHA-256 hash of `SiteUrl`) used by the browser to scope local storage keys on shared domains.
+
+### Storage Namespace and Legacy Session Compatibility
+
+- `storageNamespace` is deterministic per `SiteUrl` (`SHA-256(SiteUrl)`) and is used by the frontend storage wrappers to isolate data on shared domains.
+- Frontend reads from namespaced keys first and then falls back to legacy global keys; when a legacy value is found, it is migrated to the active namespace on read.
+- Legacy mobile/webview integrations should prefer writing both global `session.token` and `session.id` when pre-populating authentication data.
+- Writing only a token is not enough to restore an authenticated user session in current frontend logic, because session restore requires both token and session id.
+- Older compatibility keys (`authToken` / `sessionId`) are only auto-migrated when both are present.
 
 ### Sources and Precedence
 

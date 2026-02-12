@@ -1,6 +1,7 @@
 package colors
 
 import (
+	"errors"
 	"image"
 	"image/jpeg"
 	"os"
@@ -10,20 +11,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func writeImage(path string, img image.Image) error {
+func writeImage(path string, img image.Image) (err error) {
 	imgFile, err := os.Create(path) //nolint:gosec // test temp file
 
 	if err != nil {
 		return err
 	}
 
-	defer imgFile.Close()
+	defer func() {
+		err = errors.Join(err, imgFile.Close())
+	}()
 
 	opt := jpeg.Options{
 		Quality: 95,
 	}
 
-	return jpeg.Encode(imgFile, img, &opt)
+	err = jpeg.Encode(imgFile, img, &opt)
+	return err
 }
 
 func TestToSRGB(t *testing.T) {
@@ -38,7 +42,9 @@ func TestToSRGB(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		defer imgFile.Close()
+		t.Cleanup(func() {
+			assert.NoError(t, imgFile.Close())
+		})
 
 		img, _, err := image.Decode(imgFile)
 

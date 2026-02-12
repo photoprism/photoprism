@@ -127,3 +127,26 @@ func TestClientExtSkipsNilClientValues(t *testing.T) {
 	values := ClientExt(&Config{}, ClientPublic)
 	assert.Empty(t, values)
 }
+
+func TestInitCoreSkipsBootExtensions(t *testing.T) {
+	cleanup := resetExtensionsForTest(t)
+	defer cleanup()
+
+	var bootCalled bool
+	var initCalled bool
+
+	Register(StageBoot, "boot-ext", func(*Config) error {
+		bootCalled = true
+		return nil
+	}, nil)
+	Register(StageInit, "init-ext", func(*Config) error {
+		initCalled = true
+		return nil
+	}, nil)
+
+	conf := NewMinimalTestConfig(t.TempDir())
+	require.NoError(t, conf.InitCore())
+	assert.False(t, bootCalled)
+	assert.True(t, initCalled)
+	assert.True(t, conf.IsReady())
+}

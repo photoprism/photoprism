@@ -1,6 +1,7 @@
 package config
 
 import (
+	"crypto/sha256"
 	_ "embed"
 	"fmt"
 	"net/url"
@@ -31,6 +32,12 @@ func (c *Config) BaseUri(res string) string {
 	}
 
 	return strings.TrimRight(u.EscapedPath(), "/") + res
+}
+
+// StorageNamespace returns a hashed namespace key for client-side storage.
+func (c *Config) StorageNamespace() string {
+	sum := sha256.Sum256([]byte(c.SiteUrl()))
+	return fmt.Sprintf("%x", sum)
 }
 
 // ApiUri returns the api URI.

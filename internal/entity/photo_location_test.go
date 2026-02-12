@@ -238,6 +238,47 @@ func TestPhoto_SetCoordinates(t *testing.T) {
 		assert.Equal(t, float32(5.555), float32(m.PhotoLng))
 		assert.Equal(t, 5, m.PhotoAltitude)
 	})
+	t.Run("ClampBoundaryOverflow", func(t *testing.T) {
+		m := Photo{ID: 1, PlaceSrc: SrcAuto}
+
+		m.SetCoordinates(90.000003, 180.000002, 0, SrcMeta)
+		assert.Equal(t, 90.0, m.PhotoLat)
+		assert.Equal(t, 180.0, m.PhotoLng)
+	})
+	t.Run("KeepLargeOverflow", func(t *testing.T) {
+		m := Photo{ID: 1, PlaceSrc: SrcAuto}
+
+		m.SetCoordinates(90.5, 180.5, 0, SrcMeta)
+		assert.Equal(t, 90.5, m.PhotoLat)
+		assert.Equal(t, 180.5, m.PhotoLng)
+	})
+}
+
+func TestNormalizeCoordinateBounds(t *testing.T) {
+	t.Run("NoChange", func(t *testing.T) {
+		lat, lng, changed := geo.NormalizeCoordinateBounds(48.51885, 9.0531866)
+		assert.False(t, changed)
+		assert.Equal(t, 48.51885, lat)
+		assert.Equal(t, 9.0531866, lng)
+	})
+	t.Run("ClampNorthEast", func(t *testing.T) {
+		lat, lng, changed := geo.NormalizeCoordinateBounds(90.000003, 180.000002)
+		assert.True(t, changed)
+		assert.Equal(t, 90.0, lat)
+		assert.Equal(t, 180.0, lng)
+	})
+	t.Run("ClampSouthWest", func(t *testing.T) {
+		lat, lng, changed := geo.NormalizeCoordinateBounds(-90.000003, -180.000002)
+		assert.True(t, changed)
+		assert.Equal(t, -90.0, lat)
+		assert.Equal(t, -180.0, lng)
+	})
+	t.Run("KeepInvalid", func(t *testing.T) {
+		lat, lng, changed := geo.NormalizeCoordinateBounds(91.0, -181.0)
+		assert.False(t, changed)
+		assert.Equal(t, 91.0, lat)
+		assert.Equal(t, -181.0, lng)
+	})
 }
 
 func TestPhoto_UnknownLocation(t *testing.T) {
@@ -431,5 +472,27 @@ func TestUpdateLocation(t *testing.T) {
 		assert.Equal(t, 0.0, m.PhotoLng)
 		assert.Equal(t, UnknownID, m.PlaceID)
 		assert.Equal(t, SrcManual, m.PlaceSrc)
+	})
+	t.Run("ClampBoundaryOverflow", func(t *testing.T) {
+		oldGeoApi := GeoApi
+		GeoApi = ""
+		t.Cleanup(func() {
+			GeoApi = oldGeoApi
+		})
+
+		m := Photo{
+			PhotoName:    "north_pole",
+			PhotoCountry: UnknownID,
+			PhotoLat:     90.000003,
+			PhotoLng:     21.600621,
+			PlaceID:      UnknownID,
+			CellID:       UnknownID,
+			PlaceSrc:     SrcMeta,
+		}
+
+		m.UpdateLocation()
+
+		assert.Equal(t, 90.0, m.PhotoLat)
+		assert.Equal(t, 21.600621, m.PhotoLng)
 	})
 }

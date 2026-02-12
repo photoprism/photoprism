@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -169,12 +168,9 @@ func TestClusterNodesRotate_HTTPHappyPath(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	_ = os.Setenv("PHOTOPRISM_PORTAL_URL", ts.URL)
-	_ = os.Setenv("PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
-	_ = os.Setenv("PHOTOPRISM_CLI", "noninteractive")
-	defer os.Unsetenv("PHOTOPRISM_PORTAL_URL")
-	defer os.Unsetenv("PHOTOPRISM_JOIN_TOKEN")
-	defer os.Unsetenv("PHOTOPRISM_CLI")
+	SetEnvForTest(t, "PHOTOPRISM_PORTAL_URL", ts.URL)
+	SetEnvForTest(t, "PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
+	SetEnvForTest(t, "PHOTOPRISM_CLI", "noninteractive")
 	out, err := RunWithTestContext(ClusterNodesRotateCommand, []string{
 		"rotate", "--portal-url=" + ts.URL, "--join-token=" + cluster.ExampleJoinToken, "--db", "--secret", "--yes", "pp-node-03",
 	})
@@ -226,12 +222,9 @@ func TestClusterNodesRotate_HTTPJson(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	_ = os.Setenv("PHOTOPRISM_PORTAL_URL", ts.URL)
-	_ = os.Setenv("PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
-	_ = os.Setenv("PHOTOPRISM_CLI", "noninteractive")
-	defer os.Unsetenv("PHOTOPRISM_PORTAL_URL")
-	defer os.Unsetenv("PHOTOPRISM_JOIN_TOKEN")
-	defer os.Unsetenv("PHOTOPRISM_CLI")
+	SetEnvForTest(t, "PHOTOPRISM_PORTAL_URL", ts.URL)
+	SetEnvForTest(t, "PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
+	SetEnvForTest(t, "PHOTOPRISM_CLI", "noninteractive")
 	out, err := RunWithTestContext(ClusterNodesRotateCommand, []string{
 		"rotate", "--json", "--db", "--secret", "--yes", "pp-node-04",
 	})
@@ -293,12 +286,9 @@ func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	_ = os.Setenv("PHOTOPRISM_PORTAL_URL", ts.URL)
-	_ = os.Setenv("PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
-	_ = os.Setenv("PHOTOPRISM_YES", "true")
-	defer os.Unsetenv("PHOTOPRISM_PORTAL_URL")
-	defer os.Unsetenv("PHOTOPRISM_JOIN_TOKEN")
-	defer os.Unsetenv("PHOTOPRISM_YES")
+	SetEnvForTest(t, "PHOTOPRISM_PORTAL_URL", ts.URL)
+	SetEnvForTest(t, "PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
+	SetEnvForTest(t, "PHOTOPRISM_YES", "true")
 	out, err := RunWithTestContext(ClusterNodesRotateCommand, []string{
 		"rotate", "--json", "--db", "--yes", "pp-node-05",
 	})
@@ -362,10 +352,8 @@ func TestClusterNodesRotate_SecretOnly_JSON(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	_ = os.Setenv("PHOTOPRISM_PORTAL_URL", ts.URL)
-	_ = os.Setenv("PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
-	defer os.Unsetenv("PHOTOPRISM_PORTAL_URL")
-	defer os.Unsetenv("PHOTOPRISM_JOIN_TOKEN")
+	SetEnvForTest(t, "PHOTOPRISM_PORTAL_URL", ts.URL)
+	SetEnvForTest(t, "PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
 	out, err := RunWithTestContext(ClusterNodesRotateCommand, []string{
 		"rotate", "--json", "--secret", "--yes", "pp-node-06",
 	})

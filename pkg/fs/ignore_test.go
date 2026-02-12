@@ -1,7 +1,9 @@
 package fs
 
 import (
+	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/karrick/godirwalk"
@@ -227,4 +229,63 @@ func TestIgnoreList_Reset(t *testing.T) {
 	assert.Equal(t, "testdata123/directory/", ignoreList.ignore[0].Dir)
 	ignoreList.Reset()
 	assert.Len(t, ignoreList.ignore, 0)
+}
+
+func TestIgnoreList_ConcurrentAccess(t *testing.T) {
+	root := t.TempDir()
+	aDir := filepath.Join(root, "a")
+	bDir := filepath.Join(root, "b")
+
+	assert.NoError(t, os.MkdirAll(aDir, ModeDir))
+	assert.NoError(t, os.MkdirAll(bDir, ModeDir))
+	assert.NoError(t, os.WriteFile(filepath.Join(aDir, ".ppignore"), []byte("*.tmp\n"), ModeFile))
+	assert.NoError(t, os.WriteFile(filepath.Join(bDir, ".ppignore"), []byte("*.bak\n"), ModeFile))
+
+	ignore := NewIgnoreList(".ppignore", true, false)
+
+	targets := []string{
+		filepath.Join(aDir, "foo.tmp"),
+		filepath.Join(aDir, "foo.jpg"),
+		filepath.Join(bDir, "bar.bak"),
+		filepath.Join(bDir, "bar.jpg"),
+		filepath.Join(root, ".hidden"),
+	}
+
+	var wg sync.WaitGroup
+	errCh := make(chan error, 64)
+
+	for i := 0; i < 32; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			for j := 0; j < 64; j++ {
+				if err := ignore.Path(aDir); err != nil {
+					errCh <- err
+					return
+				}
+				if err := ignore.Path(bDir); err != nil {
+					errCh <- err
+					return
+				}
+
+				for _, name := range targets {
+					_ = ignore.Ignore(name)
+				}
+
+				_ = ignore.Ignored()
+				_ = ignore.Hidden()
+			}
+		}()
+	}
+
+	wg.Wait()
+	close(errCh)
+
+	for err := range errCh {
+		assert.NoError(t, err)
+	}
+
+	assert.True(t, ignore.Ignore(filepath.Join(aDir, "final.tmp")))
+	assert.True(t, ignore.Ignore(filepath.Join(bDir, "final.bak")))
 }

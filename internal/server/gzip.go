@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // gzipExcludedExtensions contains file extensions that should never be gzip-compressed.
@@ -58,6 +59,7 @@ func NewGzipShouldCompressFn(conf *config.Config) func(c *gin.Context) bool {
 		conf.BaseUri(config.ApiUri + "/albums"),
 		conf.BaseUri(config.ApiUri + "/labels"),
 		conf.BaseUri(config.ApiUri + "/videos"),
+		conf.BaseUri(header.ProxyPath),
 	}
 
 	return func(c *gin.Context) bool {

@@ -1,5 +1,6 @@
 import { toRaw } from "vue";
 import $notify from "common/notify";
+import { getAppSessionStorage, getAppStorage } from "common/storage";
 
 const TouchStartEvent = "touchstart";
 const TouchMoveEvent = "touchmove";
@@ -131,20 +132,21 @@ const isPos = (v) => v && typeof v === "object" && Number.isFinite(v.left) && Nu
 const storage = {
   get(key) {
     try {
-      return localStorage.getItem(key);
+      return getAppStorage().getItem(key);
     } catch {
       return null;
     }
   },
   set(key, val) {
     try {
-      localStorage.setItem(key, val);
+      getAppStorage().setItem(key, val);
     } catch {
       /* ignore */
     }
   },
   remove(key) {
     try {
+      getAppStorage().removeItem(key);
       localStorage.removeItem(key);
     } catch {
       /* ignore */
@@ -156,20 +158,21 @@ const storage = {
 const sessionStore = {
   get(key) {
     try {
-      return sessionStorage.getItem(key);
+      return getAppSessionStorage().getItem(key);
     } catch {
       return null;
     }
   },
   set(key, val) {
     try {
-      sessionStorage.setItem(key, val);
+      getAppSessionStorage().setItem(key, val);
     } catch {
       /* ignore */
     }
   },
   remove(key) {
     try {
+      getAppSessionStorage().removeItem(key);
       sessionStorage.removeItem(key);
     } catch {
       /* ignore */

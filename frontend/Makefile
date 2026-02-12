@@ -59,6 +59,8 @@ watch:
 	npm run watch
 build:
 	npm run build
+audit:
+	npm audit --ignore-scripts --no-update-notifier
 lint:
 	npm run lint || true
 fmt:

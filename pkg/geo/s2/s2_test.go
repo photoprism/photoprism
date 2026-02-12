@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/geo"
 )
 
 func TestToken(t *testing.T) {
@@ -13,6 +15,20 @@ func TestToken(t *testing.T) {
 		expected := "4799e370"
 
 		assert.True(t, strings.HasPrefix(token, expected))
+	})
+	t.Run("LatBoundaryOverflow", func(t *testing.T) {
+		token := Token(90.000003, 21.600621)
+		expected := Token(90, 21.600621)
+
+		assert.NotEmpty(t, token)
+		assert.Equal(t, expected, token)
+	})
+	t.Run("LngBoundaryOverflow", func(t *testing.T) {
+		token := Token(48.56344833333333, 180.000002)
+		expected := Token(48.56344833333333, 180)
+
+		assert.NotEmpty(t, token)
+		assert.Equal(t, expected, token)
 	})
 	t.Run("LatOverflow", func(t *testing.T) {
 		token := Token(548.56344833333333, 8.996878333333333)
@@ -77,10 +93,24 @@ func TestTokenLevel(t *testing.T) {
 
 		assert.Equal(t, expected, token)
 	})
+	t.Run("LatBoundaryOverflow", func(t *testing.T) {
+		token := TokenLevel(90.000003, 21.600621, 30)
+		expected := TokenLevel(90, 21.600621, 30)
+
+		assert.NotEmpty(t, token)
+		assert.Equal(t, expected, token)
+	})
 	t.Run("LngOverflow", func(t *testing.T) {
 		token := TokenLevel(48.56344833333333, 258.996878333333333, 30)
 		expected := ""
 
+		assert.Equal(t, expected, token)
+	})
+	t.Run("LngBoundaryOverflow", func(t *testing.T) {
+		token := TokenLevel(48.56344833333333, 180.000002, 30)
+		expected := TokenLevel(48.56344833333333, 180, 30)
+
+		assert.NotEmpty(t, token)
 		assert.Equal(t, expected, token)
 	})
 	t.Run("LatLongZeroZero", func(t *testing.T) {
@@ -88,6 +118,35 @@ func TestTokenLevel(t *testing.T) {
 		expected := ""
 
 		assert.Equal(t, expected, token)
+	})
+	t.Run("LatBeyondTolerance", func(t *testing.T) {
+		token := TokenLevel(90.01, 21.600621, 30)
+		assert.Equal(t, "", token)
+	})
+	t.Run("LngBeyondTolerance", func(t *testing.T) {
+		token := TokenLevel(48.56344833333333, -180.01, 30)
+		assert.Equal(t, "", token)
+	})
+}
+
+func TestNormalizeCoordinateBounds(t *testing.T) {
+	t.Run("NoChange", func(t *testing.T) {
+		lat, lng, changed := geo.NormalizeCoordinateBounds(48.56344833333333, 8.996878333333333)
+		assert.False(t, changed)
+		assert.Equal(t, 48.56344833333333, lat)
+		assert.Equal(t, 8.996878333333333, lng)
+	})
+	t.Run("ClampBoundaryOverflow", func(t *testing.T) {
+		lat, lng, changed := geo.NormalizeCoordinateBounds(90.000003, -180.000002)
+		assert.True(t, changed)
+		assert.Equal(t, 90.0, lat)
+		assert.Equal(t, -180.0, lng)
+	})
+	t.Run("KeepLargeOverflow", func(t *testing.T) {
+		lat, lng, changed := geo.NormalizeCoordinateBounds(90.5, -181)
+		assert.False(t, changed)
+		assert.Equal(t, 90.5, lat)
+		assert.Equal(t, -181.0, lng)
 	})
 }
 

@@ -409,14 +409,23 @@ func FindFolderAlbum(albumPath string) *Album {
 
 	m := Album{}
 
-	stmt := UnscopedDb().Where("album_type = ?", AlbumFolder).
-		Where("album_slug = ? OR album_path = ?", albumSlug, albumPath)
+	// Prefer exact path matches so emoji child folders do not collide with parent
+	// slugs (e.g. "ins/🍷" and "ins" both normalize to "ins").
+	stmt := UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, albumPath)
 
-	if stmt.First(&m).Error != nil {
-		return nil
+	if stmt.First(&m).Error == nil {
+		return &m
 	}
 
-	return &m
+	// Fallback for legacy rows created before album_path was persisted.
+	stmt = UnscopedDb().Where("album_type = ? AND album_slug = ?", AlbumFolder, albumSlug).
+		Where("(album_path IS NULL OR album_path = '')")
+
+	if stmt.First(&m).Error == nil {
+		return &m
+	}
+
+	return nil
 }
 
 // AlbumSearch creates a new Album to be used as parameter for FindAlbum.

@@ -100,6 +100,7 @@ type Photo struct {
 	FileDiff         int           `json:"-" select:"files.file_diff"`
 	FileChroma       int16         `json:"-" select:"files.file_chroma"`
 	FileLuminance    string        `json:"-" select:"files.file_luminance"`
+	FileError        string        `json:"FileError,omitempty" select:"files.file_error"`
 	Merged           bool          `json:"Merged" select:"-"`
 	CreatedAt        time.Time     `json:"CreatedAt" select:"photos.created_at"`
 	UpdatedAt        time.Time     `json:"UpdatedAt" select:"photos.updated_at"`

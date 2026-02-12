@@ -3,6 +3,7 @@ package s2
 import (
 	gs2 "github.com/golang/geo/s2"
 
+	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/geo/latlng"
 )
 
@@ -22,11 +23,13 @@ func TokenLevel(lat, lng float64, level int) string {
 		return ""
 	}
 
-	if lat < -90 || lat > 90 {
+	lat, lng, _ = geo.NormalizeCoordinateBounds(lat, lng)
+
+	if lat < geo.LatitudeMin || lat > geo.LatitudeMax {
 		return ""
 	}
 
-	if lng < -180 || lng > 180 {
+	if lng < geo.LongitudeMin || lng > geo.LongitudeMax {
 		return ""
 	}
 

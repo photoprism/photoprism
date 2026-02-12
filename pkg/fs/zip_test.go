@@ -19,7 +19,9 @@ func writeZip(t *testing.T, path string, entries map[string][]byte) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	t.Cleanup(func() {
+		assert.NoError(t, f.Close())
+	})
 
 	zw := zip.NewWriter(f)
 
@@ -34,6 +36,21 @@ func writeZip(t *testing.T, path string, entries map[string][]byte) {
 		}
 	}
 	assert.NoError(t, zw.Close())
+}
+
+func openZipReader(t *testing.T, zipPath string) *zip.ReadCloser {
+	t.Helper()
+
+	r, err := zip.OpenReader(zipPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		assert.NoError(t, r.Close())
+	})
+
+	return r
 }
 
 func TestUnzip_SkipRulesAndLimits(t *testing.T) {
@@ -302,17 +319,13 @@ func TestUnzipFileWithLimit_DetectsOverrun(t *testing.T) {
 	zipPath := filepath.Join(dir, "small.zip")
 	writeZip(t, zipPath, map[string][]byte{"a.txt": []byte("abc")}) // 3 bytes
 
-	r, err := zip.OpenReader(zipPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer r.Close()
+	r := openZipReader(t, zipPath)
 
 	if len(r.File) != 1 {
 		t.Fatalf("expected one file, got %d", len(r.File))
 	}
 
-	_, err = unzipFileWithLimit(r.File[0], dir, 1) // limit below actual size
+	_, err := unzipFileWithLimit(r.File[0], dir, 1) // limit below actual size
 	if err == nil {
 		t.Fatalf("expected limit overrun error")
 	}

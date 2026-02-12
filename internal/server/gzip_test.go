@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 func TestGzipMiddleware(t *testing.T) {
@@ -91,7 +92,9 @@ func TestGzipMiddleware(t *testing.T) {
 
 		zr, err := stdgzip.NewReader(bytes.NewReader(w.Body.Bytes()))
 		require.NoError(t, err)
-		defer zr.Close()
+		defer func() {
+			require.NoError(t, zr.Close())
+		}()
 
 		b, err := io.ReadAll(zr)
 		require.NoError(t, err)
@@ -140,6 +143,18 @@ func TestGzipMiddleware(t *testing.T) {
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
 		assert.Equal(t, "preview", w.Body.String())
+	})
+	t.Run("DoesNotCompressPortalProxyPrefix", func(t *testing.T) {
+		proxyPath := conf.BaseUri(header.ProxyPath + "test/ok")
+		r.GET(proxyPath, func(c *gin.Context) {
+			c.String(http.StatusOK, "proxy")
+		})
+
+		w := doRequest(proxyPath, true)
+
+		require.Equal(t, http.StatusOK, w.Code)
+		assert.Empty(t, w.Header().Get("Content-Encoding"))
+		assert.Equal(t, "proxy", w.Body.String())
 	})
 	t.Run("DoesNotCompressWithoutAcceptEncoding", func(t *testing.T) {
 		w := doRequest("/ok", false)

@@ -1337,7 +1337,11 @@ func (m *Photo) SetPrimary(fileUid string) (err error) {
 		return err
 	} else if m.PhotoQuality < 0 {
 		m.PhotoQuality = 0
-		err = m.UpdateQuality()
+		if err = m.UpdateQuality(); err != nil {
+			// Continue after logging because the file index is regenerated below and
+			// most primary-file updates have already been persisted.
+			log.Errorf("photo: %s (set primary update quality)", err)
+		}
 	}
 
 	// Regenerate file search index.
