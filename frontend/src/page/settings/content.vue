@@ -238,7 +238,7 @@
       </v-card>
 
       <v-card
-        v-if="isSuperAdmin && !hasScope && (settings.features.download || settings.download.disabled || settings.albums.download.disabled)"
+        v-if="isSuperAdmin && !hasScope && (settings.features.download || settings.download.disabled)"
         flat
         tile
         class="mt-0 px-1 bg-background"
