@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 11, 2026
+**Last Updated:** February 13, 2026
 
 ## Purpose
 
@@ -335,6 +335,7 @@ Note: Across our public documentation, official images, and in production, the c
 - ImportWorker may skip files if an identical file already exists (duplicate detection). Use unique copies or assert DB rows after ensuring a non‑duplicate destination.
 - Mixed roots: when testing related files, keep `ExamplesPath()/ImportPath()/OriginalsPath()` consistent so `RelatedFiles` and `AllowExt` behave as expected.
 - `IndexOptions*` helpers now require a `*config.Config`; pass the active config (or `config.NewMinimalTestConfig(t.TempDir())` in unit tests) so face/label/NSFW scheduling matches the current run.
+- Folder albums use path-first lookup/update (`album_path`) to avoid slug collisions for emoji child paths; re-indexing can repair stale collision titles when a child folder incorrectly shows the parent name, while preserving user-custom titles.
 
 ### CLI Usage & Assertions
 

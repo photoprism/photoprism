@@ -41,6 +41,12 @@ var RegisterRequireClientSecret = true
 //	@Router		/api/v1/cluster/nodes/register [post]
 func ClusterNodesRegister(router *gin.RouterGroup) {
 	router.POST("/cluster/nodes/register", func(c *gin.Context) {
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			AbortNotFound(c)
+			return
+		}
+
 		conf := get.Config()
 
 		// Must be a portal.

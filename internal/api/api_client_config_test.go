@@ -67,4 +67,17 @@ func TestGetClientConfig(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, "user", gjson.Get(w.Body.String(), "mode").String())
 	})
+	t.Run("ForbiddenFromCDN", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		GetClientConfig(router)
+
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/config", nil)
+		req.Header.Set(header.CdnHost, "edge.example")
+		req.Header.Set(header.Accept, "application/json")
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
 }
