@@ -254,6 +254,12 @@ acceptance-auth-stop:
 	./photoprism --auth-mode="password" -c "./storage/acceptance/config-active" stop
 start:
 	./photoprism start -d
+start-mariadb:
+	./photoprism --database-driver mysql --database-name photoprism --database-server mariadb:4001 --database-password photoprism --database-user photoprism start -d
+start-postgres:
+	./photoprism --database-driver postgres --database-name photoprism --database-server postgres:5432 --database-password photoprism --database-user photoprism start -d
+start-sqlite:
+	./photoprism --database-driver sqlite --database-dsn "storage/index.db?_busy_timeout=5000&_foreign_keys=on" start -d
 stop:
 	./photoprism stop
 terminal:
@@ -1079,10 +1085,6 @@ dummy-ldap:
 	$(DOCKER_COMPOSE) up -d -V --force-recreate dummy-ldap
 
 # PostgreSQL-specific targets:
-start-alldbms:
-	$(DOCKER_COMPOSE) -f compose.alldbms.yaml up
-start-postgres:
-	$(DOCKER_COMPOSE) -f compose.postgres.yaml up
 docker-postgres:
 	docker pull --platform=amd64 photoprism/develop:questing
 	docker pull --platform=amd64 photoprism/develop:questing-slim
