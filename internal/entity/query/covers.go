@@ -442,7 +442,7 @@ func refreshMonthAlbumCover(album entity.Album) error {
 				) p2 
 			WHERE p2.photo_id = f.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			) b
-		WHERE b.photo_year = albums.album_year AND b.photo_month = albums.album_month AND b.photo_path = albums.album_path 
+		WHERE b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		AND albums.album_uid = ? AND albums.album_type = ? AND albums.thumb_src = ?`,
 			album.AlbumYear,
 			album.AlbumMonth,
