@@ -158,23 +158,6 @@ services:
       - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
 
-  ## PostgreSQL Database Server
-  ## Docs: https://www.postgresql.org/docs/
-  postgres:
-    image: postgres:17-alpine
-    stop_grace_period: 15s
-    expose:
-      - "5432"
-    ports:
-      - "5432:5432" # database port (host:container)
-    volumes:
-      - "postgresql:/var/lib/postgresql"
-      - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
-    environment:
-      POSTGRES_DB: photoprism
-      POSTGRES_USER: photoprism
-      POSTGRES_PASSWORD: photoprism
-
   ## MariaDB (Database Server)
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
@@ -205,11 +188,11 @@ services:
   ## Release Notes: https://www.postgresql.org/docs/release/
   postgres:
     image: postgres:18-alpine
+    stop_grace_period: 15s
     expose:
       - "5432"
-    ## Only map port 5432 to a host port if necessary:
-    # ports:
-    #  - "5432:5432" # PostgreSQL port (host:container)
+    ports:
+      - "4002:5432" # PostgreSQL port (host:container)  5432 isn't used intentionally to avoid conflicts
     volumes:
       - "postgres:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
