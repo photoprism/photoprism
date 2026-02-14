@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"math"
 	"math/rand/v2"
 	"testing"
 	"time"
@@ -64,11 +65,10 @@ func TestEntity_Update(t *testing.T) {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 			t.Fatal(err)
 			return
-		} else {
-			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
-			t.Logf("(1) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
-			t.Logf("(1) Successfully updated values")
 		}
+		assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
+		t.Logf("(1) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
+		t.Logf("(1) Successfully updated values")
 
 		// Tests that no error is returned on MySQL/MariaDB although
 		// the number of affected rows is 0.
@@ -76,11 +76,10 @@ func TestEntity_Update(t *testing.T) {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 			t.Fatal(err)
 			return
-		} else {
-			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
-			t.Logf("(2) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
-			t.Logf("(2) Successfully updated values")
 		}
+		assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
+		t.Logf("(2) UpdatedAt: %s -> %s", updatedAt.UTC(), m.UpdatedAt.UTC())
+		t.Logf("(2) Successfully updated values")
 
 		// Make sure that a valid Sub Struct wasn't removed
 		assert.Equal(t, camera.ID, m.Camera.ID)
@@ -91,8 +90,12 @@ func TestEntity_Update(t *testing.T) {
 	})
 	t.Run("NonExistentKeys", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
-		m.ID = uint(10000000 + rand.IntN(10000))
+		m.ID = uint(math.MaxUint32 - rand.IntN(10000))
 		m.PhotoUID = rnd.GenerateUID(PhotoUID)
+		for m.Find() != nil {
+			m.ID = uint(math.MaxUint32 - rand.IntN(10000))
+			m.PhotoUID = rnd.GenerateUID(PhotoUID)
+		}
 		updatedAt := m.UpdatedAt
 		if err := Update(m, "ID", "PhotoUID"); err == nil {
 			t.Errorf("expected error: %#v", m)
