@@ -30,6 +30,7 @@ func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 	var res *gorm.DB
 
 	if len(albums) > 0 {
+		updateAlbumCount := 0
 		for _, album := range albums {
 			if album.AlbumType != entity.AlbumManual || album.ThumbSrc != entity.SrcAuto || album.AlbumUID == "" {
 				continue
@@ -38,8 +39,9 @@ func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 			if err = refreshAlbumCover(album); err != nil {
 				return err
 			}
+			updateAlbumCount++
 		}
-
+		log.Debugf("covers: processed %s [%s]", english.Plural(int(updateAlbumCount), "album", "albums"), time.Since(start))
 		return nil
 	}
 
@@ -108,6 +110,7 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 	var res *gorm.DB
 
 	if len(albums) > 0 {
+		updateAlbumCount := 0
 		for _, album := range albums {
 			if album.AlbumType != entity.AlbumFolder || album.ThumbSrc != entity.SrcAuto || album.AlbumUID == "" {
 				continue
@@ -116,8 +119,9 @@ func UpdateAlbumFolderCovers(albums ...entity.Album) (err error) {
 			if err = refreshAlbumCover(album); err != nil {
 				return err
 			}
+			updateAlbumCount++
 		}
-
+		log.Debugf("covers: processed %s [%s]", english.Plural(int(updateAlbumCount), "folder", "folders"), time.Since(start))
 		return nil
 	}
 
@@ -187,6 +191,7 @@ func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 	var res *gorm.DB
 
 	if len(albums) > 0 {
+		updateAlbumCount := 0
 		for _, album := range albums {
 			if album.AlbumType != entity.AlbumMonth || album.ThumbSrc != entity.SrcAuto || album.AlbumUID == "" {
 				continue
@@ -195,8 +200,10 @@ func UpdateAlbumMonthCovers(albums ...entity.Album) (err error) {
 			if err = refreshAlbumCover(album); err != nil {
 				return err
 			}
+			updateAlbumCount++
 		}
 
+		log.Debugf("covers: processed %s [%s]", english.Plural(int(updateAlbumCount), "month", "months"), time.Since(start))
 		return nil
 	}
 
