@@ -6,7 +6,7 @@
 
 This package provides PhotoPrism’s native adapter for Ollama-compatible multimodal models. It lets Caption, Labels, and future Generate workflows call locally hosted models without changing worker logic, reusing the shared API client (`internal/ai/vision/api_client.go`) and result types (`LabelResult`, `CaptionResult`). Requests stay inside your infrastructure, rely on base64 thumbnails, and honor the same ACL, timeout, and logging hooks as the default TensorFlow engines. The adapter resolves `${OLLAMA_BASE_URL}/api/generate`, trimming trailing slashes and defaulting to `http://ollama:11434`; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
 
-#### Context & Constraints
+#### Constraints
 
 - Engine defaults live in `internal/ai/vision/ollama` and are applied whenever a model sets `Engine: ollama`. Aliases map to `ApiFormatOllama`, `scheme.Base64`, and a default 720 px thumbnail. Cloud defaults are only selected when `OLLAMA_BASE_URL` equals `https://ollama.com`.  
 - Responses may arrive as newline-delimited JSON chunks. `decodeOllamaResponse` keeps the most recent chunk, while `parseOllamaLabels` replays plain JSON strings found in `response`.  

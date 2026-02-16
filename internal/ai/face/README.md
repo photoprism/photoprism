@@ -1,6 +1,6 @@
-## Face Detection and Embedding Guidelines
+## Face Detection & Embedding Guidelines
 
-**Last Updated:** December 23, 2025
+**Last Updated:** February 14, 2026
 
 ### Overview
 

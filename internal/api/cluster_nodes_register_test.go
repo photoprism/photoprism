@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -70,6 +71,22 @@ func TestClusterNodesRegister(t *testing.T) {
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`)
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
+	t.Run("ForbiddenFromCDN", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.Options().NodeRole = cluster.RolePortal
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/cluster/nodes/register", nil)
+		req.Header.Set(header.CdnHost, "edge.example")
+		req.Header.Set(header.Auth, header.AuthBearer+" "+cluster.ExampleJoinToken)
+		req.Header.Set(header.Accept, "application/json")
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
 	t.Run("CreateNodeWithoutRotateSkipsProvisioner", func(t *testing.T) {
 		app, router, conf := NewApiTest()

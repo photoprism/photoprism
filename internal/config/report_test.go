@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
 func TestConfig_Report(t *testing.T) {
@@ -79,4 +81,24 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		_, hasPassword := values["database-password"]
 		assert.False(t, hasPassword)
 	})
+}
+
+func TestConfig_ReportPortalProxyPrefix(t *testing.T) {
+	conf := NewConfig(CliTestContext())
+	conf.options.NodeRole = cluster.RolePortal
+	conf.options.PortalProxyPrefix = "/tenant/"
+
+	rows, _ := conf.Report()
+
+	found := false
+	for _, row := range rows {
+		if len(row) < 2 || row[0] != "portal-proxy-prefix" {
+			continue
+		}
+
+		found = true
+		assert.Equal(t, "/tenant/", row[1])
+	}
+
+	assert.True(t, found)
 }

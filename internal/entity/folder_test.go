@@ -242,4 +242,53 @@ func TestFolder_Create(t *testing.T) {
 		assert.Equal(t, parentFolder.Title(), parentAlbum.AlbumTitle)
 		assert.Equal(t, childFolder.Title(), childAlbum.AlbumTitle)
 	})
+	t.Run("EmojiSubFolderRepairsParentCollisionTitle", func(t *testing.T) {
+		cases := []struct {
+			name      string
+			childName string
+		}{
+			{name: "Wine", childName: "🍷"},
+			{name: "Puzzle", childName: "🧩"},
+			{name: "BeachUmbrella", childName: "⛱️"},
+			{name: "Blossom", childName: "🌸"},
+			{name: "WorkKiss", childName: "Work 😘"},
+		}
+
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				parentPath := "emoji-collision-repair-" + txt.Slug(tc.childName+"-"+time.Now().UTC().Format(time.RFC3339Nano))
+				childPath := parentPath + "/" + tc.childName
+
+				staleAlbum := NewFolderAlbum(txt.Title(parentPath), childPath, `path:"`+childPath+`" public:true`)
+
+				if staleAlbum == nil {
+					t.Fatal("expected stale folder album")
+				}
+
+				if err := staleAlbum.Create(); err != nil {
+					t.Fatal(err)
+				}
+
+				childFolder := NewFolder(RootOriginals, childPath, time.Now().UTC())
+
+				if err := childFolder.Create(); err != nil {
+					t.Fatal(err)
+				}
+
+				t.Cleanup(func() {
+					_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, childPath).Delete(Folder{}).Error
+					_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, childPath).Delete(Album{}).Error
+				})
+
+				childAlbum := FindFolderAlbum(childPath)
+
+				if childAlbum == nil {
+					t.Fatal("expected child folder album")
+				}
+
+				assert.Equal(t, childFolder.Title(), childAlbum.AlbumTitle)
+				assert.NotEqual(t, txt.Title(parentPath), childAlbum.AlbumTitle)
+			})
+		}
+	})
 }

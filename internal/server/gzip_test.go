@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/proxy"
 )
 
 func TestGzipMiddleware(t *testing.T) {
@@ -145,7 +145,7 @@ func TestGzipMiddleware(t *testing.T) {
 		assert.Equal(t, "preview", w.Body.String())
 	})
 	t.Run("DoesNotCompressPortalProxyPrefix", func(t *testing.T) {
-		proxyPath := conf.BaseUri(header.ProxyPath + "test/ok")
+		proxyPath := conf.BaseUri(proxy.PathPrefix + "test/ok")
 		r.GET(proxyPath, func(c *gin.Context) {
 			c.String(http.StatusOK, "proxy")
 		})

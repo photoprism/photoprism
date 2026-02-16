@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 11, 2026
+**Last Updated:** February 14, 2026
 
 ## Purpose
 
@@ -29,12 +29,19 @@ This file tells automated coding agents (and humans) where to find the single so
   - Testing Guides: `specs/dev/backend-testing.md` (Backend/Go), `specs/dev/frontend-testing.md` (Frontend/JS)
   - Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
   - Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
-  - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyse, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
+  - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyze, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
 - Regenerate `NOTICE` files with `make notice` when dependencies change (e.g., updates to `go.mod`, `go.sum`, `package-lock.json`, or other lockfiles). Do not edit `NOTICE` or `frontend/NOTICE` manually.
 - When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
 - Use RFC 3339 UTC timestamps in request and response examples, and valid ID, UID and UUID examples in docs and tests.
+- Document headings must use **Title Case** (in APA or AP style) across Markdown files to keep generated navigation and changelogs consistent. Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
 
-> Document headings must use **Title Case** (in APA or AP style) across Markdown files to keep generated navigation and changelogs consistent. Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
+> Title Case rules (APA/AP implementation):
+> - Capitalize the first word of a title/heading and the first word of a subtitle.
+> - Capitalize the first word after a colon, an em dash, or end punctuation.
+> - Capitalize major words, including the second part of hyphenated major words.
+> - Capitalize all words of four letters or more.
+> - Lowercase only minor words of three letters or fewer (articles, short conjunctions, short prepositions), except when they are in one of the positions above.
+> - In headings, prefer `&` where needed; do not use `And` or `Or` in titles.
 
 > Refresh the `**Last Updated:**` date at the top of documents whenever you make changes to their contents, using the format `January 20, 2026` (without time); leave it as-is for simple formatting or whitespace-only edits.
 
@@ -177,6 +184,7 @@ Note: Across our public documentation, official images, and in production, the c
 - Frontend unit tests use **Vitest**; see scripts in `frontend/package.json`.
   - Vitest watch/coverage: `make vitest-watch` and `make vitest-coverage`
 - Acceptance tests: use the `acceptance-*` targets in the `Makefile`
+- Portal proxy prefix validation: use the Portal test environment with `NODES=2` and verify both tenant routes when changing `PHOTOPRISM_PORTAL_PROXY_PREFIX` (Portal) and matching node `PHOTOPRISM_SITE_URL` prefixes; use `PORTAL_TEST_ENV_ARGS=--proxy-prefix=/tenant/` to regenerate consistent `.env` values.
 
 ### Playwright MCP Usage
 
@@ -335,6 +343,7 @@ Note: Across our public documentation, official images, and in production, the c
 - ImportWorker may skip files if an identical file already exists (duplicate detection). Use unique copies or assert DB rows after ensuring a non‑duplicate destination.
 - Mixed roots: when testing related files, keep `ExamplesPath()/ImportPath()/OriginalsPath()` consistent so `RelatedFiles` and `AllowExt` behave as expected.
 - `IndexOptions*` helpers now require a `*config.Config`; pass the active config (or `config.NewMinimalTestConfig(t.TempDir())` in unit tests) so face/label/NSFW scheduling matches the current run.
+- Folder albums use path-first lookup/update (`album_path`) to avoid slug collisions for emoji child paths; re-indexing can repair stale collision titles when a child folder incorrectly shows the parent name, while preserving user-custom titles.
 
 ### CLI Usage & Assertions
 

@@ -164,9 +164,9 @@ services:
       - apparmor:unconfined
     command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001"
+      - "4001" # 3306 isn't used intentionally to avoid conflicts and confuse port scanners
     ports:
-      - "4001:4001" # database port (host:container)
+      - "4001:4001" # MariaDB port (host:container)
     volumes:
       - "mariadb:/var/lib/mysql"
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -177,6 +177,25 @@ services:
       MARIADB_USER: "photoprism"
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
+
+  ## PostgreSQL (Database Server)
+  ## Docs: https://www.postgresql.org/docs/current/index.html
+  ## Release Notes: https://www.postgresql.org/docs/release/
+  postgres:
+    image: postgres:18-alpine
+    expose:
+      - "5432"
+    ## Only map port 5432 to a host port if necessary:
+    # ports:
+    #  - "5432:5432" # PostgreSQL port (host:container)
+    volumes:
+      - "postgres:/var/lib/postgresql"
+      - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      POSTGRES_DB: photoprism
+      POSTGRES_USER: photoprism
+      POSTGRES_PASSWORD: photoprism
+      PGDATA: /var/lib/postgresql/18/docker
 
   ## Qdrant (Vector Database)
   ## Docs: https://qdrant.tech/documentation/guides/installation/#docker-compose
@@ -444,6 +463,8 @@ volumes:
   go-mod:
     driver: local
   mariadb:
+    driver: local
+  postgres:
     driver: local
 
 ## Create shared "photoprism" network for connecting with services in other compose.yaml files

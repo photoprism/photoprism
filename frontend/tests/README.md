@@ -1,8 +1,8 @@
-# Frontend Tests and Linting
+## Frontend Tests & Linting
 
-**Last Updated:** February 11, 2026
+**Last Updated:** February 14, 2026
 
-## Purpose
+### Purpose
 
 This guide documents the frontend test and lint workflows for PhotoPrism.  
 It is intended for both humans and coding agents.
@@ -14,7 +14,7 @@ Use this file when you need to:
 - lint/format frontend code;
 - evaluate frontend tool upgrades safely.
 
-## Quick Start
+### Quick Start
 
 From the repository root:
 
@@ -33,7 +33,7 @@ From `frontend/`:
 - `npm run lint` runs ESLint.
 - `npm run fmt` runs ESLint with `--fix`.
 
-## Test Suite Layout
+### Test Suite Layout
 
 - Unit and component tests: `frontend/tests/vitest/**/*`
 - Vitest setup: `frontend/tests/vitest/setup.js`
@@ -43,7 +43,7 @@ From `frontend/`:
 - Acceptance config: `frontend/testcaferc.json` and `frontend/tests/testcafeconfig.json`
 - Upload fixtures: `frontend/tests/upload-files/**/*`
 
-## Overlay Test Notes (Plus and Pro)
+### Overlay Test Notes (Plus & Pro)
 
 Plus and Pro frontend overlays reuse the same frontend test and lint toolchain:
 
@@ -54,7 +54,7 @@ Plus and Pro frontend overlays reuse the same frontend test and lint toolchain:
 
 When evaluating frontend tooling changes, test at least one CE run plus Plus and Pro overlay runs.
 
-## Tool Versions
+### Tool Versions
 
 Current frontend tool versions are defined in `frontend/package.json` unless stated otherwise.
 
@@ -84,9 +84,9 @@ Current frontend tool versions are defined in `frontend/package.json` unless sta
 
 Note: TestCafe is available in the development environment but is currently not pinned as a direct dependency in `frontend/package.json`. Verify with `testcafe --version`.
 
-## Upgrade Guidance
+### Upgrade Guidance
 
-### General Upgrade Flow
+#### General Upgrade Flow
 
 1. Review release notes and migration guides for each tool.
 2. Check peer dependency compatibility before installing:
@@ -101,7 +101,7 @@ Note: TestCafe is available in the development environment but is currently not 
 5. If dependencies changed, regenerate notices with `make notice`.
 6. Revert the trial changes if validation fails.
 
-### ESLint v10 Status (As of February 11, 2026)
+#### ESLint v10 Status (As of February 11, 2026)
 
 A trial upgrade from ESLint v9 to ESLint v10 is currently not safe for this repository.
 
@@ -121,7 +121,7 @@ Current recommendation:
 - stay on ESLint v9 until `eslint-plugin-vuetify` and related plugins officially support ESLint v10;
 - re-run the validation flow above before attempting another upgrade.
 
-## See Also
+### See Also
 
 - Frontend architecture map: `frontend/CODEMAP.md`
 - Frontend focus and dialog behavior: `frontend/src/common/README.md`

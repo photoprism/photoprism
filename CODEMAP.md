@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** February 11, 2026
+**Last Updated:** February 12, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -82,6 +82,7 @@ Configuration & Flags
 - Getters are grouped by topic, e.g. DB in `internal/config/config_db.go`, server in `config_server.go`, TLS in `config_tls.go`, etc.
 - Client Config (read-only)
   - Endpoint: GET `/api/v1/config` (see `internal/api/api_client_config.go`).
+  - CDN behavior: Requests carrying CDN headers are rejected with `404` to prevent intermediary cache mix-ups between public and session-specific config payloads.
   - Assembly: Built from `internal/config/client_config.go` (not a direct serialization of Options) plus extension values registered via `config.Register` in `internal/config/extensions.go`.
   - Updates: Back-end calls `UpdateClientConfig()` to publish "config.updated" over websockets after changes (see `internal/api/config_options.go` and `internal/api/config_settings.go`).
   - ACL/mode aware: Values are filtered by user/session and may differ for public vs. authenticated users.
@@ -192,6 +193,9 @@ Security & Hot Spots (Where to Look)
   - Protections: scheme allow‑list (http/https), pre‑DNS + per‑redirect hostname/IP validation, final peer IP check, size and timeout enforcement, temp file `0600` + rename.
   - Avatars: wrapper `internal/thumb/avatar.SafeDownload` applies stricter defaults (15s, 10 MiB, `AllowPrivate=false`, image‑focused `Accept`).
   - Tests: `go test ./pkg/http/safe -count=1` (includes redirect SSRF cases); avatars: `go test ./internal/thumb/avatar -count=1`.
+- CDN guards for credential flows:
+  - Auth/session and OAuth/OIDC endpoints reject CDN-marked requests.
+  - Cluster bootstrap endpoint `POST /api/v1/cluster/nodes/register` also rejects CDN-marked requests to avoid caching responses that may contain bootstrap secrets.
 
 Performance & Limits
 - Prefer existing caches/workers/batching as per Makefile and code.

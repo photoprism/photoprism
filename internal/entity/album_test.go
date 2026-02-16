@@ -996,43 +996,102 @@ func TestAlbum_Updates(t *testing.T) {
 func TestAlbum_UpdateFolder(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxx"}
+
 		assert.Empty(t, a.AlbumPath)
 		assert.Empty(t, a.AlbumFilter)
-		if err := a.UpdateFolder("2222/07", "month:07"); err != nil {
+
+		if err := a.UpdateFolder("2222/07", "month:07", "July 2222"); err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "2222/07", a.AlbumPath)
 		assert.Equal(t, "month:07", a.AlbumFilter)
 	})
 	t.Run("NoChange", func(t *testing.T) {
-		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxx", AlbumSlug: "2222-07", AlbumFilter: "month:07", AlbumPath: "2222/07"}
+		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxx", AlbumTitle: "July 2222", AlbumSlug: "2222-07", AlbumFilter: "month:07", AlbumPath: "2222/07"}
 
-		if err := a.UpdateFolder("2222/07", "month:07"); err != nil {
+		if err := a.UpdateFolder("2222/07", "month:07", "July 2222"); err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "2222/07", a.AlbumPath)
 		assert.Equal(t, "month:07", a.AlbumFilter)
 		assert.Equal(t, "2222-07", a.AlbumSlug)
+		assert.Equal(t, "July 2222", a.AlbumTitle)
+	})
+	t.Run("RepairParentTitleCollisionVariants", func(t *testing.T) {
+		cases := []struct {
+			name       string
+			childName  string
+			childTitle string
+		}{
+			{name: "Wine", childName: "🍷", childTitle: "🍷"},
+			{name: "Puzzle", childName: "🧩", childTitle: "🧩"},
+			{name: "BeachUmbrella", childName: "⛱️", childTitle: "⛱️"},
+			{name: "Blossom", childName: "🌸", childTitle: "🌸"},
+			{name: "WorkKiss", childName: "Work 😘", childTitle: "Work 😘"},
+			{name: "ElfWoman", childName: "🧝‍♀️", childTitle: "🧝‍♀️"},
+		}
+
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				path := "ins/" + tc.childName
+				filter := `path:"` + path + `" public:true`
+
+				a := Album{
+					ID:          99999,
+					AlbumUID:    "as6sg6bitogaaxxx",
+					AlbumTitle:  "Ins",
+					AlbumSlug:   txt.Slug(path),
+					AlbumFilter: filter,
+					AlbumPath:   path,
+				}
+
+				if err := a.UpdateFolder(path, filter, tc.childTitle); err != nil {
+					t.Fatal(err)
+				}
+
+				assert.Equal(t, tc.childTitle, a.AlbumTitle)
+				assert.Equal(t, path, a.AlbumPath)
+				assert.Equal(t, txt.Slug(path), a.AlbumSlug)
+			})
+		}
+	})
+	t.Run("KeepCustomTitle", func(t *testing.T) {
+		a := Album{
+			ID:          99999,
+			AlbumUID:    "as6sg6bitogaaxxy",
+			AlbumTitle:  "My Wine Folder",
+			AlbumSlug:   txt.Slug("ins/🍷"),
+			AlbumFilter: `path:"ins/🍷" public:true`,
+			AlbumPath:   "ins/🍷",
+		}
+
+		if err := a.UpdateFolder("ins/🍷", `path:"ins/🍷" public:true`, "🍷"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "My Wine Folder", a.AlbumTitle)
 	})
 	t.Run("EmptyPath", func(t *testing.T) {
 		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxy"}
 		assert.Empty(t, a.AlbumPath)
 		assert.Empty(t, a.AlbumFilter)
-		err := a.UpdateFolder("", "month:07")
+		err := a.UpdateFolder("", "month:07", "July 2222")
 		assert.Error(t, err)
 	})
 	t.Run("EmptyFilter", func(t *testing.T) {
 		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxy"}
 		assert.Empty(t, a.AlbumPath)
 		assert.Empty(t, a.AlbumFilter)
-		err := a.UpdateFolder("2222/07", "")
+		err := a.UpdateFolder("2222/07", "", "July 2222")
 		assert.Error(t, err)
 	})
 	t.Run("NoUID", func(t *testing.T) {
 		a := Album{ID: 99999}
 		assert.Empty(t, a.AlbumPath)
 		assert.Empty(t, a.AlbumFilter)
-		err := a.UpdateFolder("2222/07", "")
+		err := a.UpdateFolder("2222/07", "", "July 2222")
 		assert.Error(t, err)
 	})
 }

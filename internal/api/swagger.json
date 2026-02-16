@@ -4161,6 +4161,9 @@
                 "Favorite": {
                     "type": "boolean"
                 },
+                "FileError": {
+                    "type": "string"
+                },
                 "FileName": {
                     "type": "string"
                 },

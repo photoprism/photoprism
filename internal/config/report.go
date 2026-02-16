@@ -196,6 +196,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"advertise-url", c.AdvertiseUrl()},
 	}...)
 
+	if c.Portal() {
+		rows = append(rows, []string{"portal-proxy-prefix", c.PortalProxyPrefix()})
+	}
+
 	rows = append(rows, [][]string{
 		// Proxy Servers.
 		{"https-proxy", c.HttpsProxy()},

@@ -6,7 +6,7 @@
 
 `internal/thumb` builds thumbnails with libvips, handling resize/crop options, color management, metadata stripping, and format export (JPEG/PNG). It is used by PhotoPrism’s workers and CLI to generate cached thumbs consistently.
 
-### Context & Constraints
+### Constraints
 
 - Uses libvips via govips; initialization is centralized in `VipsInit`.
 - Works on files or in-memory buffers; writes outputs with `fs.ModeFile`.

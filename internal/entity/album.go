@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"sync"
@@ -747,27 +748,64 @@ func (m *Album) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
-// UpdateFolder updates the path, filter and slug for a folder album.
-func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
+// shouldRepairFolderAlbumTitle reports whether a folder album title likely
+// still reflects a parent-path collision and should be repaired.
+func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) bool {
+	folderTitle = strings.TrimSpace(folderTitle)
+	currentTitle = strings.TrimSpace(currentTitle)
+
+	if folderTitle == "" {
+		return false
+	} else if currentTitle == "" {
+		return true
+	} else if currentTitle == folderTitle {
+		return false
+	}
+
+	parentPath := strings.Trim(path.Dir(albumPath), string(os.PathSeparator))
+
+	if parentPath == "" || parentPath == "." {
+		return false
+	}
+
+	parentTitle := txt.Title(path.Base(parentPath))
+
+	if parentTitle == "" {
+		return false
+	}
+
+	return strings.EqualFold(currentTitle, parentTitle) && !strings.EqualFold(folderTitle, parentTitle)
+}
+
+// UpdateFolder updates the path, filter, slug, and repairable title for a folder album.
+func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 	if !m.HasID() {
 		return fmt.Errorf("album does not exist")
 	}
 
 	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
 	albumSlug := txt.Slug(albumPath)
+	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath)
 
 	if albumSlug == "" || albumPath == "" || albumFilter == "" || !m.HasID() {
 		return fmt.Errorf("folder album must have a path and filter")
-	} else if m.AlbumPath == albumPath && m.AlbumFilter == albumFilter && m.AlbumSlug == albumSlug {
+	} else if m.AlbumPath == albumPath && m.AlbumFilter == albumFilter && m.AlbumSlug == albumSlug && !repairTitle {
 		// Nothing changed.
 		return nil
 	}
 
-	if err := m.Updates(Values{
+	values := Values{
 		"AlbumPath":   albumPath,
 		"AlbumFilter": albumFilter,
 		"AlbumSlug":   albumSlug,
-	}); err != nil {
+	}
+
+	if repairTitle {
+		m.SetTitle(albumTitle)
+		values["AlbumTitle"] = m.AlbumTitle
+	}
+
+	if err := m.Updates(values); err != nil {
 		return err
 	} else if err = UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_type = ? AND album_path = ? AND id <> ?", AlbumFolder, albumPath, m.ID).Error; err != nil {
 		return err

@@ -1,8 +1,8 @@
-# View Helper Guidelines
+## View Helper Guidelines
 
-**Last Updated:** February 8, 2026
+**Last Updated:** February 14, 2026
 
-## Focus Management
+### Focus Management
 
 PhotoPrism uses a shared view helper to maintain predictable focus across pages and dialogs:
 
@@ -10,7 +10,7 @@ PhotoPrism uses a shared view helper to maintain predictable focus across pages 
 
 This helper tracks the currently active component, applies focus when views change, and traps focus inside open dialogs, ensuring that tabbing never leaks into the page behind an overlay. The following guidelines explain how to work with the helper when building UI functionality.
 
-### Session Storage Namespacing Notes
+#### Session Storage Namespacing Notes
 
 When integrating third-party clients (for example mobile webviews) that pre-populate browser storage, keep the following behavior in mind:
 
@@ -19,7 +19,7 @@ When integrating third-party clients (for example mobile webviews) that pre-popu
 - Legacy compatibility keys (`authToken` and `sessionId`) are only migrated by the startup bridge when both values are present.
 - Preferred integration contract for external clients is to set both `session.token` and `session.id` together.
 
-### Tabindex Cheat Sheet
+#### Tabindex Cheat Sheet
 
 | Value      | When to use it                                          | Effect                                                                                         |
 |------------|---------------------------------------------------------|------------------------------------------------------------------------------------------------|
@@ -27,12 +27,12 @@ When integrating third-party clients (for example mobile webviews) that pre-popu
 | `-1`       | Programmatic focus targets (dialog wrappers, sentinels) | Element can receive focus via script but is skipped while tabbing                              |
 | *positive* | **Avoid**                                               | Custom tab order becomes hard to maintain; the view helper no longer knows the “first” element |
 
-**Tips**
+##### Tips
 
 - Root page containers (`<div class="p-page ...">`) should use `tabindex="-1"` so the view helper can focus them when a route becomes active, then immediately move focus to the first interactive control.
 - Leave buttons, inputs, and links at the default `tabindex="0"` (or no attribute) so the browser controls the natural order.
 
-### Dialog Implementation Checklist
+#### Dialog Implementation Checklist
 
 Vuetify dialogs are teleported to the overlay container, so consistent refs and lifecycle hooks are essential.
 
@@ -90,7 +90,7 @@ Vuetify dialogs are teleported to the overlay container, so consistent refs and 
 
    Only add local `@focusout` handlers if a dialog needs custom behaviour. If you do, always call `ev.preventDefault()` when you redirect focus so you do not fight the global handler.
 
-### Keyboard Event Handling
+#### Keyboard Event Handling
 
 Dialogs and page shells often react to keyboard shortcuts (Escape to close, Enter to confirm, etc.). To keep those handlers compatible with text inputs and other interactive children:
 
@@ -130,7 +130,7 @@ Example page container:
 
 Both snippets allow focused inputs to veto shortcuts by calling `event.stopPropagation()` or `event.preventDefault()` before the key reaches the container listener, keeping focus management predictable across the app.
 
-#### Global Shortcut Forwarding
+##### Global Shortcut Forwarding
 
 `common/view.js` registers a single `keydown` listener that forwards shortcut keys to the active component:
 
@@ -156,7 +156,7 @@ onKeyDown(ev) {
 - Persistent dialogs that must suppress Vuetify’s rejection animation should still attach a direct `@keydown.esc.exact` handler; `onShortCut(ev)` alone does not override the built-in dialog behaviour.
 - Return `true` from `onShortCut(ev)` after handling a shortcut to signal `preventDefault()`. Return `false` to fall back to the browser’s native behaviour.
 
-### Example: Delete Confirmation Dialog
+#### Example: Delete Confirmation Dialog
 
 ```vue
 <template>
@@ -221,21 +221,21 @@ This pattern ensures:
 - Focus defaults to the `Cancel` button (first tabbable control).
 - Tabbing continues to cycle between `Cancel` and `Delete` until the dialog closes.
 
-### Troubleshooting Checklist
+#### Troubleshooting Checklist
 
-**Focus escapes the dialog when tabbing**
+##### Focus Escapes the Dialog When Tabbing
 - Verify the dialog calls `$view.enter(this)` / `$view.leave(this)`.
 - Confirm the dialog template has `ref="dialog"`; if you teleport manually, expose `contentEl`.
 - Ensure there is at least one control with `tabindex="0"` inside the card. Pure static content cannot trap focus.
 
-**Focus lands on the overlay instead of a button**
+##### Focus Lands on the Overlay Instead of a Button
 - Check for stray `tabindex="-1"` on child elements. Only the outer container should use `-1`.
 - Use the browser console with `trace` logging enabled (`this.$config.get("trace")`) to see which elements receive `document.focusin/out`.
 
-**Custom focusout handler keeps fighting the trap**
+##### Custom Focusout Handler Keeps Fighting the Trap
 - Make sure the handler checks `this.$view.isActive(this)` and calls `ev.preventDefault()` when redirecting focus.
 - Consider removing the custom handler if the global trap already matches the desired behaviour.
 
-**Nested dialogs (dialog inside dialog)**
+##### Nested Dialogs (Dialog Inside Dialog)
 - Each dialog must have `ref="dialog"` so the helper can distinguish them.
 - The helper chooses the currently active component (`this.$view.getCurrent()`) as the trap owner, so opening a second dialog automatically pauses the first one’s trap.
