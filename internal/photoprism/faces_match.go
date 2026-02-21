@@ -413,7 +413,7 @@ func embeddingSignHash(values []float64) uint32 {
 
 	limit := min(faceIndexHashDims, len(values))
 
-	for i := 0; i < limit; i++ {
+	for i := range limit {
 		if values[i] >= 0 && i < 32 {
 			//nolint:gosec // shift count bounded by 32 bits.
 			hash |= 1 << uint32(i)
@@ -439,7 +439,7 @@ func embeddingSignHashFromEmbeddings(embeddings face.Embeddings) uint32 {
 			continue
 		}
 
-		for i := 0; i < dims; i++ {
+		for i := range dims {
 			sums[i] += emb[i]
 		}
 	}
