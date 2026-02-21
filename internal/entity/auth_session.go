@@ -272,7 +272,7 @@ func (m *Session) Delete() error {
 }
 
 // Updates multiple properties in the database.
-func (m *Session) Updates(values interface{}) error {
+func (m *Session) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

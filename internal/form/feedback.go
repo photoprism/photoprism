@@ -18,7 +18,7 @@ func (f Feedback) Empty() bool {
 }
 
 // NewFeedback copies values from an arbitrary model into a Feedback form.
-func NewFeedback(m interface{}) (f Feedback, err error) {
+func NewFeedback(m any) (f Feedback, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err

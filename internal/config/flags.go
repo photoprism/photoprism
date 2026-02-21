@@ -562,6 +562,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("DEFAULT_THEME"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "theme-url",
+			Usage:   "download `URL` for installing a custom theme if none is installed",
+			EnvVars: EnvVars("THEME_URL"),
+			Hidden:  true,
+		}, Tags: []string{Pro}}, {
+		Flag: &cli.StringFlag{
 			Name:    "places-locale",
 			Usage:   "location details language `CODE`, e.g. en, de, or local",
 			Value:   places.LocalLocale,

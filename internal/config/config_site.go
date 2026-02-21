@@ -199,7 +199,7 @@ func (c *Config) LegalUrl() string {
 func (c *Config) RobotsTxt() ([]byte, error) {
 	if c.Demo() && c.Public() {
 		// Allow public demo instances to be indexed.
-		return []byte(fmt.Sprintf("User-agent: *\nDisallow: /\nAllow: %s/\nAllow: %s/\nAllow: .js\nAllow: .css", LibraryUri, StaticUri)), nil
+		return fmt.Appendf(nil, "User-agent: *\nDisallow: /\nAllow: %s/\nAllow: %s/\nAllow: .js\nAllow: .css", LibraryUri, StaticUri), nil
 	} else if c.Public() {
 		// Do not allow other instances to be indexed when public mode is enabled.
 		return robotsTxt, nil

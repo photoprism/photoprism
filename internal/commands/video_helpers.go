@@ -234,10 +234,10 @@ func videoListRow(found search.Photo) []string {
 }
 
 // videoListJSONRow renders a search result row for JSON output with canonical column keys.
-func videoListJSONRow(found search.Photo) map[string]interface{} {
+func videoListJSONRow(found search.Photo) map[string]any {
 	videoFile, _ := videoPrimaryFile(found)
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"video":        videoFile.FileName,
 		"size":         videoNonNegativeSize(videoFile.FileSize),
 		"resolution":   fmt.Sprintf("%dx%d", videoFile.FileWidth, videoFile.FileHeight),
@@ -252,16 +252,16 @@ func videoListJSONRow(found search.Photo) map[string]interface{} {
 }
 
 // videoListJSON marshals a list of JSON rows using the canonical keys for each column.
-func videoListJSON(rows []map[string]interface{}, cols []string) (string, error) {
+func videoListJSON(rows []map[string]any, cols []string) (string, error) {
 	canon := make([]string, len(cols))
 	for i, col := range cols {
 		canon[i] = report.CanonKey(col)
 	}
 
-	payload := make([]map[string]interface{}, 0, len(rows))
+	payload := make([]map[string]any, 0, len(rows))
 
 	for _, row := range rows {
-		item := make(map[string]interface{}, len(canon))
+		item := make(map[string]any, len(canon))
 		for _, key := range canon {
 			item[key] = row[key]
 		}

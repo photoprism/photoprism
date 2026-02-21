@@ -33,7 +33,7 @@ func NewRecord(m interface{}) (result bool, err error) {
 }
 
 // Update updates the values of an existing database record.
-func Update(m interface{}, keyNames ...string) (err error) {
+func Update(m any, keyNames ...string) (err error) {
 	// Use an unscoped *gorm.DB connection, so that
 	// soft-deleted database records can also be updated.
 	db := UnscopedDb()

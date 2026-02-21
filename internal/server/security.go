@@ -8,12 +8,15 @@ import (
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/proxy"
 )
 
 // Security is a middleware that adds security-related headers to the server's response.
 var Security = func(conf *config.Config) gin.HandlerFunc {
+	proxyPathPrefix := conf.BaseUri(proxy.PathPrefix)
+
 	return func(c *gin.Context) {
-		if strings.HasPrefix(c.Request.URL.Path, conf.BaseUri(header.ProxyPath)) {
+		if strings.HasPrefix(c.Request.URL.Path, proxyPathPrefix) {
 			return
 		}
 

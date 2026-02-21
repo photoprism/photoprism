@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-ONNX_VERSION=${ONNX_VERSION:-1.23.2}
+ONNX_VERSION=${ONNX_VERSION:-1.24.1}
 TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
 SYSTEM=$(uname -s)
@@ -30,11 +30,11 @@ case "${SYSTEM}" in
     case "${ARCH}" in
       amd64|AMD64|x86_64|x86-64)
         archive="onnxruntime-linux-x64-${ONNX_VERSION}.tgz"
-        sha="1fa4dcaef22f6f7d5cd81b28c2800414350c10116f5fdd46a2160082551c5f9b"
+        sha="9142552248b735920f9390027e4512a2cacf8946a1ffcbe9071a5c210531026f"
         ;;
       arm64|ARM64|aarch64)
         archive="onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"
-        sha="7c63c73560ed76b1fac6cff8204ffe34fe180e70d6582b5332ec094810241e5c"
+        sha="0f56edd68f7602df790b68b874a46b115add037e88385c6c842bb763b39b9f89"
         ;;
       *)
         echo "Warning: ONNX Runtime is not provided for Linux/${ARCH}; skipping install." >&2
@@ -44,9 +44,13 @@ case "${SYSTEM}" in
     ;;
   Darwin)
     case "${ARCH}" in
-      arm64|ARM64|aarch64|x86_64|x86-64)
-        archive="onnxruntime-osx-universal2-${ONNX_VERSION}.tgz"
-        sha="49ae8e3a66ccb18d98ad3fe7f5906b6d7887df8a5edd40f49eb2b14e20885809"
+      arm64|ARM64|aarch64)
+        archive="onnxruntime-osx-arm64-${ONNX_VERSION}.tgz"
+        sha="c2969315cd9ce0f5fa04f6b53ff72cb92f87f7dcf38e88cacfa40c8f983fbba9"
+        ;;
+      x86_64|x86-64)
+        echo "Warning: ONNX Runtime is not provided for macOS/${ARCH} in v${ONNX_VERSION}; skipping install." >&2
+        exit 0
         ;;
       *)
         echo "Unsupported macOS architecture '${ARCH}'." >&2
@@ -109,7 +113,7 @@ tar --overwrite --mode=755 -C "${DESTDIR}" -xzf "${package_path}"
 output_lib_dir="${DESTDIR}/lib"
 mkdir -p "${output_lib_dir}"
 
-for extracted in "${DESTDIR}/onnxruntime-linux-x64-${ONNX_VERSION}" "${DESTDIR}/onnxruntime-linux-aarch64-${ONNX_VERSION}" "${DESTDIR}/onnxruntime-osx-universal2-${ONNX_VERSION}"; do
+for extracted in "${DESTDIR}/onnxruntime-linux-x64-${ONNX_VERSION}" "${DESTDIR}/onnxruntime-linux-aarch64-${ONNX_VERSION}" "${DESTDIR}/onnxruntime-osx-arm64-${ONNX_VERSION}" "${DESTDIR}/onnxruntime-osx-universal2-${ONNX_VERSION}"; do
   if [[ -d "${extracted}/lib" ]]; then
     find "${extracted}/lib" -maxdepth 1 -type f -name "libonnxruntime*.so*" -print0 | while IFS= read -r -d '' file; do
       cp -af "${file}" "${output_lib_dir}/"

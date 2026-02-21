@@ -144,13 +144,13 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 }
 
 // Updates multiple columns in the database.
-func (m *Marker) Updates(values interface{}) error {
+func (m *Marker) Updates(values any) error {
 	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update updates a column in the database.
-func (m *Marker) Update(attr string, value interface{}) error {
+func (m *Marker) Update(attr string, value any) error {
 	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }

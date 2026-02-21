@@ -68,10 +68,10 @@ func videoInfoAction(ctx *cli.Context) error {
 
 // videoInfoEntry describes all metadata sections for a single video.
 type videoInfoEntry struct {
-	Index   map[string]interface{} `json:"index"`
-	Exif    interface{}            `json:"exif,omitempty"`
-	FFprobe interface{}            `json:"ffprobe,omitempty"`
-	Raw     map[string]string      `json:"raw,omitempty"`
+	Index   map[string]any    `json:"index"`
+	Exif    any               `json:"exif,omitempty"`
+	FFprobe any               `json:"ffprobe,omitempty"`
+	Raw     map[string]string `json:"raw,omitempty"`
 }
 
 // videoInfoEntryFor collects indexed, ExifTool, and ffprobe metadata for a search result.
@@ -123,8 +123,8 @@ func videoInfoEntryFor(conf *config.Config, found search.Photo, verbose bool) (v
 }
 
 // videoIndexSummary builds a concise map of indexed fields for diagnostics.
-func videoIndexSummary(found search.Photo, file entity.File) map[string]interface{} {
-	return map[string]interface{}{
+func videoIndexSummary(found search.Photo, file entity.File) map[string]any {
+	return map[string]any{
 		"file_name":       file.FileName,
 		"file_root":       file.FileRoot,
 		"file_uid":        file.FileUID,
@@ -152,7 +152,7 @@ func videoIndexSummary(found search.Photo, file entity.File) map[string]interfac
 }
 
 // videoRunFFprobe executes ffprobe and returns parsed JSON plus raw output.
-func videoRunFFprobe(ffprobeBin, filePath string) (interface{}, string, error) {
+func videoRunFFprobe(ffprobeBin, filePath string) (any, string, error) {
 	cmd := exec.Command(ffprobeBin, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filePath) //nolint:gosec // args are validated paths
 
 	var stdout bytes.Buffer
@@ -169,7 +169,7 @@ func videoRunFFprobe(ffprobeBin, filePath string) (interface{}, string, error) {
 		return nil, raw, nil
 	}
 
-	var data interface{}
+	var data any
 	if err := json.Unmarshal([]byte(raw), &data); err != nil {
 		return nil, raw, nil
 	}
@@ -185,7 +185,7 @@ func (v *videoInfoEntry) ensureRaw() {
 }
 
 // videoPrettyJSON returns indented JSON for human-readable output.
-func videoPrettyJSON(value interface{}) string {
+func videoPrettyJSON(value any) string {
 	data, err := json.MarshalIndent(value, "", "  ")
 	if err != nil {
 		return ""

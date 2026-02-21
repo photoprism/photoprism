@@ -126,6 +126,7 @@ type Options struct {
 	DefaultLocale             string        `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
 	DefaultTimezone           string        `yaml:"DefaultTimezone" json:"DefaultTimezone" flag:"default-timezone"`
 	DefaultTheme              string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
+	ThemeUrl                  string        `yaml:"-" json:"-" flag:"theme-url" tags:"pro"`
 	PlacesLocale              string        `yaml:"PlacesLocale" json:"PlacesLocale" flag:"places-locale"`
 	AppName                   string        `yaml:"AppName" json:"AppName" flag:"app-name"`
 	AppMode                   string        `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
@@ -151,6 +152,7 @@ type Options struct {
 	ClusterUUID               string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
 	PortalUrl                 string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
 	PortalProxy               bool          `yaml:"PortalProxy" json:"-" flag:"portal-proxy"`
+	PortalProxyPrefix         string        `yaml:"PortalProxyPrefix" json:"-" flag:"portal-proxy-prefix"`
 	JoinToken                 string        `yaml:"JoinToken" json:"-" flag:"join-token"`
 	NodeName                  string        `yaml:"NodeName" json:"-" flag:"node-name"`
 	NodeUUID                  string        `yaml:"NodeUUID" json:"-" flag:"node-uuid"`

@@ -2,6 +2,7 @@ package registry
 
 import (
 	"errors"
+	"maps"
 	"sort"
 	"time"
 
@@ -142,9 +143,7 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if data.Labels == nil {
 		data.Labels = map[string]string{}
 	}
-	for k, v := range n.Labels {
-		data.Labels[k] = v
-	}
+	maps.Copy(data.Labels, n.Labels)
 	if n.SiteUrl != "" {
 		data.SiteURL = n.SiteUrl
 	}

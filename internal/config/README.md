@@ -1,6 +1,6 @@
 ## PhotoPrism — Config Package
 
-**Last Updated:** February 8, 2026
+**Last Updated:** February 19, 2026
 
 ### Overview
 
@@ -8,7 +8,7 @@ PhotoPrism’s [runtime configuration](https://docs.photoprism.app/developer-gui
 
 Client config values are derived from the runtime configuration and exposed to the frontend via `GET /api/v1/config`. This includes a `storageNamespace` value (SHA-256 hash of `SiteUrl`) used by the browser to scope local storage keys on shared domains.
 
-### Storage Namespace and Legacy Session Compatibility
+### Storage Namespace & Legacy Session Compatibility
 
 - `storageNamespace` is deterministic per `SiteUrl` (`SHA-256(SiteUrl)`) and is used by the frontend storage wrappers to isolate data on shared domains.
 - Frontend reads from namespaced keys first and then falls back to legacy global keys; when a legacy value is found, it is migrated to the active namespace on read.
@@ -16,7 +16,7 @@ Client config values are derived from the runtime configuration and exposed to t
 - Writing only a token is not enough to restore an authenticated user session in current frontend logic, because session restore requires both token and session id.
 - Older compatibility keys (`authToken` / `sessionId`) are only auto-migrated when both are present.
 
-### Sources and Precedence
+### Sources & Precedence
 
 PhotoPrism loads configuration in the following order:
 
@@ -51,7 +51,8 @@ Example output:
 ### CLI Reference
 
 - `photoprism help` (or `photoprism --help`) lists all subcommands and global flags.
-- `photoprism show config` (alias `photoprism config`) renders every active option along with its current value. Pass `--json`, `--md`, `--tsv`, or `--csv` to change the output format.
+- `photoprism show config` (alias `photoprism config`) renders every active option along with its current value. Pass `--json`, `--md`, `--tsv`, or `--csv` to change the output format. Portal-only rows (`portal-proxy`, `portal-proxy-prefix`, `portal-config-path`, `portal-theme-path`) are included only when `node-role` is set to `portal`.
 - `photoprism show config-options` prints the description and default value for each option. Use this when updating [`flags.go`](flags.go).
 - `photoprism show config-yaml` displays the configuration keys and their expected types in the [same structure that the YAML files use](https://docs.photoprism.app/getting-started/config-files/). It is a read-only helper meant to guide you when editing files under `storage/config`.
 - Additional `show` subcommands document search filters, metadata tags, and supported thumbnail sizes; see [`internal/commands/show.go`](../commands/show.go) for the complete list.
+- Pro/Portal builds additionally expose `PHOTOPRISM_THEME_URL` / `--theme-url` (hidden in CE/Plus), which can bootstrap `config/theme/` from a secure ZIP download when no theme files are present yet. HTTP Basic credentials in the URL are supported for protected artifact endpoints and are redacted in config reports.

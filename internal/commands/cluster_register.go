@@ -332,7 +332,7 @@ func (e *httpError) Error() string { return fmt.Sprintf("http %d: %s", e.Status,
 func postWithBackoff(url, token string, payload []byte, out any) error {
 	// backoff: 500ms -> max ~8s, 6 attempts with jitter
 	delay := 500 * time.Millisecond
-	for attempt := 0; attempt < 6; attempt++ {
+	for range 6 {
 		req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload))
 		header.SetAuthorization(req, token)
 		req.Header.Set(header.ContentType, "application/json")

@@ -361,7 +361,7 @@ func (m *Client) Disabled() bool {
 }
 
 // Updates multiple properties in the database.
-func (m *Client) Updates(values interface{}) error {
+func (m *Client) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

@@ -23,8 +23,8 @@ func BenchmarkClusterMaterialize(b *testing.B) {
 	guesses := make([]int, total)
 	sizes := make([]int, clusterCount)
 
-	for cluster := 0; cluster < clusterCount; cluster++ {
-		for j := 0; j < embeddingsPerCluster; j++ {
+	for cluster := range clusterCount {
+		for j := range embeddingsPerCluster {
 			idx := cluster*embeddingsPerCluster + j
 			guesses[idx] = cluster + 1
 			sizes[cluster]++

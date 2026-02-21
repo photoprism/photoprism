@@ -6,7 +6,7 @@
 
 This package contains PhotoPrism’s adapter for the OpenAI Responses API. It enables existing caption and label workflows (`GenerateCaption`, `GenerateLabels`, and the `photoprism vision run` CLI) to call OpenAI models alongside TensorFlow and Ollama without changing worker or API code. The implementation focuses on predictable results, structured outputs, and clear observability so operators can opt in gradually.
 
-#### Context & Constraints
+#### Constraints
 
 - OpenAI requests flow through the existing vision client (`internal/ai/vision/api_client.go`) and must honour PhotoPrism’s timeout, logging, and ACL rules.
 - Structured outputs are preferred but the adapter must gracefully handle free-form text; `output_text` responses are parsed both as JSON and as plain captions.

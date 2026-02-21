@@ -39,21 +39,21 @@ func Warn(msg string) {
 }
 
 // ErrorMsg publishes a localized error notification.
-func ErrorMsg(id i18n.Message, params ...interface{}) {
+func ErrorMsg(id i18n.Message, params ...any) {
 	Error(i18n.Msg(id, params...))
 }
 
 // SuccessMsg publishes a localized success notification.
-func SuccessMsg(id i18n.Message, params ...interface{}) {
+func SuccessMsg(id i18n.Message, params ...any) {
 	Success(i18n.Msg(id, params...))
 }
 
 // InfoMsg publishes a localized informational notification.
-func InfoMsg(id i18n.Message, params ...interface{}) {
+func InfoMsg(id i18n.Message, params ...any) {
 	Info(i18n.Msg(id, params...))
 }
 
 // WarnMsg publishes a localized warning notification.
-func WarnMsg(id i18n.Message, params ...interface{}) {
+func WarnMsg(id i18n.Message, params ...any) {
 	Warn(i18n.Msg(id, params...))
 }

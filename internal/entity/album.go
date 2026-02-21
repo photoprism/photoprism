@@ -99,7 +99,7 @@ func (Album) TableName() string {
 }
 
 // UpdateAlbum updates album attributes directly in the database by UID.
-func UpdateAlbum(albumUID string, values interface{}) (err error) {
+func UpdateAlbum(albumUID string, values any) (err error) {
 	if rnd.InvalidUID(albumUID, AlbumUID) {
 		return fmt.Errorf("album: invalid uid %s", clean.Log(albumUID))
 	} else if err = Db().Model(&Album{}).Where("album_uid = ?", albumUID).UpdateColumns(values).Error; err != nil {
@@ -737,7 +737,7 @@ func (m *Album) SaveForm(f *form.Album) error {
 }
 
 // Update sets a new value for a database column.
-func (m *Album) Update(attr string, value interface{}) error {
+func (m *Album) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("album must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -748,7 +748,7 @@ func (m *Album) Update(attr string, value interface{}) error {
 }
 
 // Updates multiple columns in the database.
-func (m *Album) Updates(values interface{}) error {
+func (m *Album) Updates(values any) error {
 	if m == nil {
 		return errors.New("album must not be nil - you may have found a bug")
 	} else if !m.HasID() {

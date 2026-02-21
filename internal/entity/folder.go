@@ -42,7 +42,7 @@ type Folder struct {
 	FileCount         int            `gorm:"-" json:"FileCount" yaml:"-"`
 	CreatedAt         time.Time      `json:"-" yaml:"-"`
 	UpdatedAt         time.Time      `json:"-" yaml:"-"`
-	ModifiedAt        time.Time      `json:"ModifiedAt,omitempty" yaml:"-"`
+	ModifiedAt        time.Time      `json:"ModifiedAt" yaml:"-"`
 	PublishedAt       *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt         gorm.DeletedAt `sql:"index" json:"-" yaml:"DeletedAt,omitempty"`
 }
@@ -230,7 +230,7 @@ func FirstOrCreateFolder(m *Folder) (folder *Folder, newRec bool, err error) {
 }
 
 // Updates selected properties in the database.
-func (m *Folder) Updates(values interface{}) error {
+func (m *Folder) Updates(values any) error {
 	return Db().Model(m).Updates(values).Error
 }
 

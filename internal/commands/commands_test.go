@@ -127,7 +127,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.HideHelpCommand = true
 	app.Action = func(*cli.Context) error { return nil }
 	app.EnableBashCompletion = false
-	app.Metadata = map[string]interface{}{
+	app.Metadata = map[string]any{
 		"Name":    "PhotoPrism",
 		"About":   "PhotoPrism®",
 		"Edition": "ce",

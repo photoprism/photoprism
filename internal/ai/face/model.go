@@ -187,12 +187,12 @@ func imageToTensor(img image.Image, resolution int) (tfTensor *tf.Tensor, err er
 
 	var tfImage [1][][][3]float32
 
-	for j := 0; j < resolution; j++ {
+	for range resolution {
 		tfImage[0] = append(tfImage[0], make([][3]float32, resolution))
 	}
 
-	for i := 0; i < resolution; i++ {
-		for j := 0; j < resolution; j++ {
+	for i := range resolution {
+		for j := range resolution {
 			r, g, b, _ := img.At(i, j).RGBA()
 			tfImage[0][j][i][0] = convertValue(r)
 			tfImage[0][j][i][1] = convertValue(g)

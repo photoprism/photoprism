@@ -18,7 +18,7 @@ type FileSync struct {
 	RemoteName string    `gorm:"type:bytes;size:255;primaryKey;autoIncrement:false" json:"RemoteName" yaml:"RemoteName,omitempty"`
 	ServiceID  uint      `gorm:"primaryKey;autoIncrement:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
 	FileID     *uint     `gorm:"index;" json:"FileID" yaml:"FileID,omitempty"` // This field is optional...
-	RemoteDate time.Time `json:"RemoteDate,omitempty" yaml:"RemoteDate,omitempty"`
+	RemoteDate time.Time `json:"RemoteDate" yaml:"RemoteDate,omitempty"`
 	RemoteSize int64     `json:"RemoteSize,omitempty" yaml:"RemoteSize,omitempty"`
 	Status     string    `gorm:"type:bytes;size:16;" json:"Status" yaml:"Status,omitempty"`
 	Error      string    `gorm:"type:bytes;size:512;" json:"Error,omitempty" yaml:"Error,omitempty"`
@@ -46,12 +46,12 @@ func NewFileSync(accountID uint, remoteName string) *FileSync {
 }
 
 // Updates mutates multiple columns on the existing row.
-func (m *FileSync) Updates(values interface{}) error {
+func (m *FileSync) Updates(values any) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
 // Update mutates a single column on the existing row.
-func (m *FileSync) Update(attr string, value interface{}) error {
+func (m *FileSync) Update(attr string, value any) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 

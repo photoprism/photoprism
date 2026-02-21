@@ -59,7 +59,7 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		basicAuth := []byte(fmt.Sprintf("alice:%s", sess.AuthToken()))
+		basicAuth := fmt.Appendf(nil, "alice:%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
 		webdavAuthCache.Flush()
@@ -76,7 +76,7 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		basicAuth := []byte(fmt.Sprintf("bob:%s", sess.AuthToken()))
+		basicAuth := fmt.Appendf(nil, "bob:%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
 		webdavAuthCache.Flush()
@@ -93,7 +93,7 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		basicAuth := []byte(fmt.Sprintf(":%s", sess.AuthToken()))
+		basicAuth := fmt.Appendf(nil, ":%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
 		webdavAuthCache.Flush()

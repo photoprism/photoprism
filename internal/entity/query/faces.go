@@ -190,11 +190,7 @@ func PurgeOrphanFaces(faceIds []string, ignored bool) (affected int, err error) 
 	batchSize := BatchSize()
 
 	for i := 0; i < len(faceIds); i += batchSize {
-		j := i + batchSize
-
-		if j > len(faceIds) {
-			j = len(faceIds)
-		}
+		j := min(i+batchSize, len(faceIds))
 
 		// Next batch.
 		ids := faceIds[i:j]

@@ -1,7 +1,6 @@
-Video File Support
-==================
+## Video File Support
 
-## Codecs and Containers
+### Codecs & Containers
 
 For maximum browser compatibility, PhotoPrism can transcode video codecs and containers [supported by FFmpeg](https://www.ffmpeg.org/documentation.html) to [MPEG-4 AVC](https://en.wikipedia.org/wiki/MPEG-4).
 
@@ -19,11 +18,11 @@ Please Note:
 2. HEVC/H.265 video files can have a `.mp4` file extension too, which is often associated with AVC only. This is because MP4 is a *container* format, meaning that the actual video content may be compressed with H.264, H.265, or something else. The file extension doesn't really tell you anything other than that it's probably a video file.
 3. In case [FFmpeg is disabled](https://docs.photoprism.app/user-guide/settings/advanced/#disable-ffmpeg) or not installed, videos cannot be indexed because still images cannot be created. You should also have [Exiftool enabled](https://docs.photoprism.app/getting-started/config-options/#feature-flags) to extract metadata such as duration, resolution, and codec.
 
-## Hybrid Photo/Video Formats
+### Hybrid Photo/Video Formats
 
 For more information on hybrid photo/video file formats, e.g. Apple Live Photos and Samsung/Google Motion Photos, see [github.com/photoprism/photoprism/tree/develop/pkg/media](https://github.com/photoprism/photoprism/tree/develop/pkg/media) and [docs.photoprism.app/developer-guide/media/live](https://docs.photoprism.app/developer-guide/media/live/).
 
-## Standard Resolutions
+### Standard Resolutions
 
 The [`PHOTOPRISM_FFMPEG_SIZE`](../../getting-started/config-options.md#file-converters) config option allows to limit the resolution of [transcoded videos](../../getting-started/advanced/transcoding.md). It accepts the following standard sizes, while other values are automatically adjusted to the next supported size:
 
@@ -38,7 +37,7 @@ The [`PHOTOPRISM_FFMPEG_SIZE`](../../getting-started/config-options.md#file-conv
 | 4096 | DCI 4K, Retina 4K  |
 | 7680 | 8K Ultra HD 2      |
 
-## Technical References and Tutorials 
+### Technical References & Tutorials
 
 | Title                               | URL                                                                         |
 |-------------------------------------|-----------------------------------------------------------------------------|

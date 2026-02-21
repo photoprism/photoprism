@@ -605,7 +605,6 @@ func TestPhoto_ShouldGenerateCaption(t *testing.T) {
 	}
 
 	for _, tc := range ctx {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			result := tc.photo.ShouldGenerateCaption(tc.source, tc.force)
 			assert.Equal(t, tc.expect, result)

@@ -87,7 +87,7 @@ type Config struct {
 }
 
 // Values is a shorthand alias for map[string]interface{}.
-type Values = map[string]interface{}
+type Values = map[string]any
 
 func init() {
 	TotalMem = memory.TotalMemory()
@@ -751,12 +751,9 @@ func (c *Config) IndexWorkers() int {
 	}
 
 	// NumCPU returns the number of logical CPU cores.
-	cores := runtime.NumCPU()
-
-	// Limit to physical cores to avoid high load on HT capable CPUs.
-	if cores > cpuid.CPU.PhysicalCores {
-		cores = cpuid.CPU.PhysicalCores
-	}
+	cores := min(
+		// Limit to physical cores to avoid high load on HT capable CPUs.
+		runtime.NumCPU(), cpuid.CPU.PhysicalCores)
 
 	// Limit number of workers when using SQLite3 to avoid database locking issues.
 	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.IndexWorkers <= 0 || c.options.IndexWorkers > 4) {

@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-02-10
+Date generated: 2026-02-20
 
 ================================================================================
 
@@ -830,8 +830,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/dustinkirkland/golang-petname
-Version: v0.0.0-20240428194347-eebcea082ee0
-License: Apache-2.0 (https://github.com/dustinkirkland/golang-petname/blob/eebcea082ee0/LICENSE)
+Version: v0.0.0-20260215035315-f0c533e9ce9b
+License: Apache-2.0 (https://github.com/dustinkirkland/golang-petname/blob/f0c533e9ce9b/LICENSE)
 
 
                                  Apache License
@@ -4349,8 +4349,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-runewidth
-Version: v0.0.19
-License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.19/LICENSE)
+Version: v0.0.20
+License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.20/LICENSE)
 
 The MIT License (MIT)
 
@@ -4377,8 +4377,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-sqlite3
-Version: v1.14.32
-License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.32/LICENSE)
+Version: v1.14.34
+License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.34/LICENSE)
 
 The MIT License (MIT)
 
@@ -6376,8 +6376,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/yalue/onnxruntime_go
-Version: v1.25.0
-License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.25.0/LICENSE)
+Version: v1.26.0
+License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.26.0/LICENSE)
 
 Copyright (c) 2023 Nathan Otterness
 

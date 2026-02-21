@@ -174,10 +174,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 
 	threads := opts.Threads
 	if threads == 0 {
-		threads = runtime.NumCPU() / 2
-		if threads < 1 {
-			threads = 1
-		}
+		threads = max(runtime.NumCPU()/2, 1)
 	}
 
 	if err := sessionOpts.SetIntraOpNumThreads(threads); err != nil {
@@ -560,11 +557,11 @@ func (o *onnxEngine) anchorCenters(height, width, stride, anchors int) []float32
 
 	centers := make([]float32, height*width*anchors*2)
 	idx := 0
-	for y := 0; y < height; y++ {
+	for y := range height {
 		cy := float32(y * stride)
-		for x := 0; x < width; x++ {
+		for x := range width {
 			cx := float32(x * stride)
-			for a := 0; a < anchors; a++ {
+			for range anchors {
 				centers[idx] = cx
 				centers[idx+1] = cy
 				idx += 2
@@ -599,7 +596,7 @@ func nonMaxSuppression(boxes []onnxDetection, threshold float32) []onnxDetection
 	picked := make([]onnxDetection, 0, len(boxes))
 	suppressed := make([]bool, len(boxes))
 
-	for i := 0; i < len(boxes); i++ {
+	for i := range boxes {
 		if suppressed[i] {
 			continue
 		}

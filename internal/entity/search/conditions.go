@@ -184,7 +184,7 @@ func AnySlug(col, search, sep string) (where string) {
 	var wheres []string
 	var words []string
 
-	for _, w := range strings.Split(search, sep) {
+	for w := range strings.SplitSeq(search, sep) {
 		w = strings.TrimSpace(w)
 
 		words = append(words, txt.Slug(w))
@@ -225,7 +225,7 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 	var matches []int
 	var wheres []string
 
-	for _, n := range strings.Split(numbers, sep) {
+	for n := range strings.SplitSeq(numbers, sep) {
 		i := txt.Int(n)
 
 		if i == 0 || i < min || i > max {
@@ -249,19 +249,19 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 // OrLike prepares a parameterised OR/LIKE clause for a single column. Star (* )
 // wildcards are mapped to SQL percent wildcards before returning the query and
 // bind values.
-func OrLike(col, s string) (where string, values []interface{}) {
+func OrLike(col, s string) (where string, values []any) {
 	if txt.Empty(col) || txt.Empty(s) {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
 	s = strings.ReplaceAll(s, "*", "%")
 	s = strings.ReplaceAll(s, "%%", "%")
 
 	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
-	values = make([]interface{}, len(terms))
+	values = make([]any, len(terms))
 
 	if l := len(terms); l == 0 {
-		return "", []interface{}{}
+		return "", []any{}
 	} else if l == 1 {
 		values[0] = terms[0]
 	} else {
@@ -279,9 +279,9 @@ func OrLike(col, s string) (where string, values []interface{}) {
 // OrLikeCols behaves like OrLike but fans out the same search terms across
 // multiple columns, preserving the order of values so callers can feed them to
 // database/sql.
-func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
+func OrLikeCols(cols []string, s string) (where string, values []any) {
 	if len(cols) == 0 || txt.Empty(s) {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
 	s = strings.ReplaceAll(s, "*", "%")
@@ -290,10 +290,10 @@ func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 
 	if len(terms) == 0 {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
-	values = make([]interface{}, len(terms)*len(cols))
+	values = make([]any, len(terms)*len(cols))
 
 	for j := range terms {
 		for i := range cols {

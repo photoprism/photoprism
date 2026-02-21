@@ -50,7 +50,7 @@ func fsliceEqual(a, b [][]float64) bool {
 		return false
 	}
 
-	for i := 0; i < len(a); i++ {
+	for i := range a {
 		if len(a[i]) != len(b[i]) {
 			return false
 		}

@@ -331,6 +331,9 @@ dep-codex:
 	else \
 	  npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
 	fi
+claude:
+	@echo "Installing Claude Code..."
+	curl -fsSL https://claude.ai/install.sh | bash
 dep-go:
 	go build -v ./...
 dep-upgrade:

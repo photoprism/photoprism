@@ -254,12 +254,12 @@ func TestIgnoreList_ConcurrentAccess(t *testing.T) {
 	var wg sync.WaitGroup
 	errCh := make(chan error, 64)
 
-	for i := 0; i < 32; i++ {
+	for range 32 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 
-			for j := 0; j < 64; j++ {
+			for range 64 {
 				if err := ignore.Path(aDir); err != nil {
 					errCh <- err
 					return

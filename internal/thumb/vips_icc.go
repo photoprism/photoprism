@@ -2,6 +2,7 @@ package thumb
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/davidbyttow/govips/v2/vips"
 )
@@ -35,14 +36,7 @@ func vipsSetIccProfileForInteropIndex(img *vips.ImageRef, logName string) (err e
 	// embedding an ICC profile. Browsers and libvips ignore this tag, so we
 	// inject a matching ICC profile to produce correct thumbnails.
 	iiField := "exif-ifd4-InteroperabilityIndex"
-	hasInterop := false
-
-	for _, field := range img.GetFields() {
-		if field == iiField {
-			hasInterop = true
-			break
-		}
-	}
+	hasInterop := slices.Contains(img.GetFields(), iiField)
 
 	if !hasInterop {
 		return nil

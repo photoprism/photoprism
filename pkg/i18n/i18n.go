@@ -40,14 +40,14 @@ type Message int
 // MessageMap maps message IDs to their localized strings.
 type MessageMap map[Message]string
 
-var noVars []interface{}
+var noVars []any
 
 func gettext(s string) string {
 	return gotext.Get(s, noVars...)
 }
 
 // msgParams replaces message params with the actual values.
-func msgParams(msg string, params ...interface{}) string {
+func msgParams(msg string, params ...any) string {
 	if strings.Contains(msg, "%") {
 		msg = fmt.Sprintf(msg, params...)
 	}
@@ -56,16 +56,16 @@ func msgParams(msg string, params ...interface{}) string {
 }
 
 // Msg returns a translated message string.
-func Msg(id Message, params ...interface{}) string {
+func Msg(id Message, params ...any) string {
 	return msgParams(gotext.Get(Messages[id], noVars...), params...)
 }
 
 // Error returns a translated error message.
-func Error(id Message, params ...interface{}) error {
+func Error(id Message, params ...any) error {
 	return errors.New(Msg(id, params...))
 }
 
 // Lower returns the untranslated message as a lowercase string for use in logs.
-func Lower(id Message, params ...interface{}) string {
+func Lower(id Message, params ...any) string {
 	return strings.ToLower(msgParams(Messages[id], params...))
 }

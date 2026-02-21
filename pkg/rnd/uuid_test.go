@@ -7,7 +7,7 @@ import (
 )
 
 func TestUUID(t *testing.T) {
-	for n := 0; n < 5; n++ {
+	for n := range 5 {
 		s := UUID()
 		t.Logf("UUID %d: %s", n, s)
 		assert.Equal(t, 36, len(s))
@@ -21,7 +21,7 @@ func BenchmarkUUID(b *testing.B) {
 }
 
 func TestState(t *testing.T) {
-	for n := 0; n < 5; n++ {
+	for n := range 5 {
 		s := State()
 		t.Logf("UUID %d: %s", n, s)
 		assert.Equal(t, 36, len(s))

@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/proxy"
 )
 
 func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
@@ -21,7 +22,7 @@ func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
 	r := gin.New()
 	r.Use(Security(conf))
 
-	proxyPath := conf.BaseUri(header.ProxyPath + "test/library/login")
+	proxyPath := conf.BaseUri(proxy.PathPrefix + "test/library/login")
 	regularPath := conf.BaseUri("/library/login")
 
 	r.GET(proxyPath, func(c *gin.Context) {

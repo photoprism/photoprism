@@ -3,17 +3,18 @@ package entity
 import (
 	"fmt"
 	"reflect"
+	"slices"
 )
 
 // Values is a shorthand alias for map[string]interface{}.
-type Values = map[string]interface{}
+type Values = map[string]any
 
 // Map is retained for backward compatibility.
 // TODO: Remove when no longer needed.
 type Map = Values
 
 // ModelValues extracts exported struct fields into a Values map, optionally omitting selected names.
-func ModelValues(m interface{}, omit ...string) (result Values, omitted []interface{}, err error) {
+func ModelValues(m any, omit ...string) (result Values, omitted []any, err error) {
 	return ModelValuesStructOption(m, true, omit...)
 }
 
@@ -22,13 +23,7 @@ func ModelValues(m interface{}, omit ...string) (result Values, omitted []interf
 // There are two white lists which need to be maintained if new data types are used, or pointers to existing types are used.
 func ModelValuesStructOption(m interface{}, includeAll bool, omit ...string) (result Values, omitted []interface{}, err error) {
 	mustOmit := func(name string) bool {
-		for _, s := range omit {
-			if name == s {
-				return true
-			}
-		}
-
-		return false
+		return slices.Contains(omit, name)
 	}
 
 	r := reflect.ValueOf(m)
@@ -46,11 +41,11 @@ func ModelValuesStructOption(m interface{}, includeAll bool, omit ...string) (re
 	t := values.Type()
 	num := t.NumField()
 
-	omitted = make([]interface{}, 0, len(omit))
+	omitted = make([]any, 0, len(omit))
 	result = make(Values, num)
 
 	// Add exported fields to result.
-	for i := 0; i < num; i++ {
+	for i := range num {
 		field := t.Field(i)
 
 		// Skip non-exported fields.

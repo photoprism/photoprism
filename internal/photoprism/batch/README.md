@@ -8,7 +8,7 @@ Batch editing allows signed-in users to update the metadata, albums, and labels 
 
 The `internal/photoprism/batch` package implements the form schema (`PhotosForm`), validation helpers, album/label mutation helpers, and persistence functions (`SavePhotos`) that power the `/api/v1/batch/photos/edit` endpoint. It exists so the API can keep responses consistent with the UI: mixed values stay round-trippable, add/remove operations track intent, and only changed columns hit the database.
 
-#### Context & Constraints
+#### Constraints
 
 - Community requests such as [Issue #271](https://github.com/photoprism/photoprism/issues/271) emphasized the need to bulk-edit core metadata (location, time zone, titles) instead of repeating the same change photo by photo.
 - [PR #5324](https://github.com/photoprism/photoprism/pull/5324) introduced the modern batch dialog, chip controls, and validation rules that this package still serves.

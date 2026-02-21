@@ -33,7 +33,7 @@ func authBearer(req *http.Request) {
 
 func authBasic(req *http.Request) {
 	sess := entity.SessionFixtures.Get("alice_token_webdav")
-	basic := []byte(fmt.Sprintf("alice:%s", sess.AuthToken()))
+	basic := fmt.Appendf(nil, "alice:%s", sess.AuthToken())
 	req.Header.Set(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basic)))
 }
 

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
+	"github.com/photoprism/photoprism/pkg/http/proxy"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -114,6 +115,17 @@ func TestConfig_Cluster(t *testing.T) {
 
 		c.options.PortalProxy = false
 		assert.False(t, c.PortalProxy())
+	})
+	t.Run("PortalProxyPrefix", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+
+		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
+
+		c.options.PortalProxyPrefix = "/tenant"
+		assert.Equal(t, "/tenant", c.PortalProxyPrefix())
+
+		c.options.PortalProxyPrefix = "  "
+		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
 	})
 	t.Run("JWKSUrlSetter", func(t *testing.T) {
 		const existing = "https://existing.example/.well-known/jwks.json"

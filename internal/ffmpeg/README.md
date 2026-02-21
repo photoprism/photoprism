@@ -6,7 +6,7 @@
 
 `internal/ffmpeg` wraps the `ffmpeg` CLI to transcode videos to AVC/H.264, remux containers, and extract preview frames in a predictable, testable way. Command builders share option structs so CLI tools, workers, and tests can select software or hardware encoders without duplicating flag logic.
 
-#### Context & Constraints
+#### Constraints
 
 - Relies on the system `ffmpeg` binary; defaults to `FFmpegBin` but callers may override `Options.Bin`.
 - Inputs are internal filenames and option structs (not user input); exec invocations are annotated with `#nosec G204`.

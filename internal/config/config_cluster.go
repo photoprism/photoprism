@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/proxy"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -99,6 +100,15 @@ func (c *Config) PortalUrl() string {
 // PortalProxy reports whether portal proxy routing is enabled on this node.
 func (c *Config) PortalProxy() bool {
 	return c.Portal() && c.options.PortalProxy
+}
+
+// PortalProxyPrefix returns the configured path prefix for portal proxy routing.
+func (c *Config) PortalProxyPrefix() string {
+	if prefix := strings.TrimSpace(c.options.PortalProxyPrefix); prefix != "" {
+		return prefix
+	}
+
+	return proxy.DefaultPathPrefix
 }
 
 // PortalConfigPath returns the path to the default configuration for cluster portals.

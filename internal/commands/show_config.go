@@ -58,7 +58,7 @@ func showConfigAction(ctx *cli.Context) error {
 			rows, cols := rep.Report(conf)
 			sections = append(sections, section{Title: rep.Title, Items: report.RowsToObjects(rows, cols)})
 		}
-		b, _ := json.Marshal(map[string]interface{}{"sections": sections})
+		b, _ := json.Marshal(map[string]any{"sections": sections})
 		fmt.Println(string(b))
 		return nil
 	}

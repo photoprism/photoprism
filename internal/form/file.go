@@ -17,7 +17,7 @@ func (f *File) Orientation() int {
 }
 
 // NewFile copies values from an arbitrary model into a File form.
-func NewFile(m interface{}) (f File, err error) {
+func NewFile(m any) (f File, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err

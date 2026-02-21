@@ -144,7 +144,7 @@ func (m *UserShare) Save() error {
 }
 
 // Updates changes multiple record values.
-func (m *UserShare) Updates(values interface{}) error {
+func (m *UserShare) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

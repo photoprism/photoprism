@@ -1,8 +1,8 @@
 ## PhotoPrism — Media Package
 
-**Last Updated:** November 22, 2025
+**Last Updated:** February 14, 2026
 
-### Apple iPhone and iPad
+### Apple iPhone & iPad
 
 [iOS Live Photos](https://developer.apple.com/live-photos/) consist of a JPEG/HEIC image and a QuickTime AVC/HEVC video, which are both required for viewing.
 
@@ -25,7 +25,7 @@ The image part of these files can be opened in any image viewer that supports JP
 | Working with Motion Photos                              | Jan 2019 | https://medium.com/android-news/working-with-motion-photos-da0aa49b50c             |
 | Google: Behind the Motion Photos Technology in Pixel 2  | Mar 2018 | https://blog.research.google/2018/03/behind-motion-photos-technology-in.html       |
 
-### Software Libraries and References
+### Software Libraries & References
 
 | Title                                                | URL                                                                     |
 |------------------------------------------------------|-------------------------------------------------------------------------|
