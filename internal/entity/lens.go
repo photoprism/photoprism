@@ -158,7 +158,7 @@ func (m *Lens) Unknown() bool {
 }
 
 // ScopedSearchFirstLens populates lens with the results of a Where(query, values) excluding soft delete records
-func ScopedSearchFirstLens(lens *Lens, query string, values ...interface{}) (tx *gorm.DB) {
+func ScopedSearchFirstLens(lens *Lens, query string, values ...any) (tx *gorm.DB) {
 	// Preload related entities if a matching record is found.
 	stmt := Db()
 

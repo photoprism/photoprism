@@ -28,7 +28,7 @@ func migrateTestBlocker(db *gorm.DB) {
 }
 
 // Function to hold a lock on the Blocker table for 15 seconds.  Hopefully long enough.
-func lockBlockerForTest(t *testing.T, m interface{}, keyNames ...string) {
+func lockBlockerForTest(t *testing.T, m any, keyNames ...string) {
 
 	// Extract interface slice with all values including zero.
 	values, keys, err := entity.ModelValues(m, keyNames...)

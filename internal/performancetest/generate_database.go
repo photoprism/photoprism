@@ -456,14 +456,14 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			log.Debug(err)
 		}
 		// Allocate the labels for this photo
-		for i := 0; i < labelCount; i++ {
+		for range labelCount {
 			photoLabel := entity.NewPhotoLabel(photo.ID, labelRandoms[rand.IntN(len(labelRandoms))], 0, entity.SrcMeta)
 			Db().FirstOrCreate(photoLabel)
 		}
 		// Allocate the keywords for this photo
 		keywordCount := rand.IntN(5)
 		keywordStr := ""
-		for i := 0; i < keywordCount; i++ {
+		for range keywordCount {
 			photoKeyword := entity.PhotoKeyword{PhotoID: photo.ID, KeywordID: keywordRandoms[rand.IntN(len(keywordRandoms))]}
 			keyword := entity.Keyword{}
 			Db().Model(&entity.Keyword{}).Where("id = ?", photoKeyword.KeywordID).First(&keyword)
@@ -535,7 +535,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 
 		// Add Markers
 		markersToCreate := rand.IntN(5)
-		for i := 0; i < markersToCreate; i++ {
+		for range markersToCreate {
 			subject := subjects[rand.IntN(len(subjects))]
 			marker := entity.Marker{
 				MarkerUID:     rnd.GenerateUID('m'),

@@ -263,7 +263,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 
 	runForced := ctx.Bool("force")
 	log.Infoln("migrate: ensure target is empty...")
-	var entitiesToCheck []interface{}
+	var entitiesToCheck []any
 	entitiesToCheck = append(entitiesToCheck, &entity.Photo{})
 	entitiesToCheck = append(entitiesToCheck, &entity.Album{})
 	entitiesToCheck = append(entitiesToCheck, &entity.File{})

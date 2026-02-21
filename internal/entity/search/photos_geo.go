@@ -180,7 +180,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.
 			Clauses(clause.OrderBy{Expression: clause.Expr{
 				SQL:                "(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)",
-				Vars:               []interface{}{frm.Near, frm.Lat, frm.Lng},
+				Vars:               []any{frm.Near, frm.Lat, frm.Lng},
 				WithoutParentheses: true}})
 	}
 

@@ -76,13 +76,13 @@ func TestMigrationCommand(t *testing.T) {
 		s := event.Subscribe("log.*")
 		defer event.Unsubscribe(s)
 
-		var l string
+		var l strings.Builder
 
 		assert.IsType(t, hub.Subscription{}, s)
 
 		go func() {
 			for msg := range s.Receiver {
-				l += msg.Fields["message"].(string) + "\n"
+				l.WriteString(msg.Fields["message"].(string) + "\n")
 			}
 		}()
 
@@ -98,7 +98,7 @@ func TestMigrationCommand(t *testing.T) {
 		// t.Logf("buffer = %s", buffer.String())
 		assert.Empty(t, err)
 		assert.Empty(t, output)
-		assert.Contains(t, l, "migrate: running database migrations")
+		assert.Contains(t, l.String(), "migrate: running database migrations")
 		assert.Contains(t, buffer.String(), "migrate: enabled trace mode")
 		assert.Contains(t, buffer.String(), "migrate: running previously failed migrations")
 	})

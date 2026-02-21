@@ -85,7 +85,7 @@ type User struct {
 	RefID         string         `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
 	CreatedAt     time.Time      `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time      `json:"UpdatedAt" yaml:"-"`
-	DeletedAt     gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	DeletedAt     gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.

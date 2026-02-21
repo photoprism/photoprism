@@ -106,7 +106,7 @@ type Photo struct {
 	UpdatedAt        time.Time      `json:"UpdatedAt" select:"photos.updated_at"`
 	EditedAt         time.Time      `json:"EditedAt" select:"photos.edited_at"`
 	CheckedAt        time.Time      `json:"CheckedAt" select:"photos.checked_at"`
-	DeletedAt        gorm.DeletedAt `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
+	DeletedAt        gorm.DeletedAt `json:"DeletedAt" select:"photos.deleted_at"`
 
 	// Additional information from the details table.
 	DetailsKeywords  string `json:"DetailsKeywords,omitempty" select:"-"`

@@ -12,7 +12,7 @@ func GetCallerFormatted(callerFileName string) string {
 	// The 3rd result tends to be the function that called
 	numOfCallers := runtime.Callers(3, programCounters[:])
 	frames := runtime.CallersFrames(programCounters[:numOfCallers])
-	for i := 0; i < numOfCallers; i++ {
+	for range numOfCallers {
 		frame, _ := frames.Next()
 		if strings.HasPrefix(frame.File, "/go/src/github.com/photoprism/") &&
 			!strings.HasSuffix(frame.File, callerFileName) {

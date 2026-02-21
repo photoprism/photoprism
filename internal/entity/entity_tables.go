@@ -15,7 +15,7 @@ import (
 // TableMap holds the table name and the definition
 type TableMap struct {
 	TableName       string
-	TableDefinition interface{}
+	TableDefinition any
 }
 
 // Tables is the map to allow ordered table setup/teardown
@@ -373,7 +373,7 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 			log.Error("migrate: could not setup join table for Label - Categories: ", err)
 		}
 
-		var entity interface{}
+		var entity any
 		orderedList := make([]int, len(list))
 		i := 0
 		for id := range list {

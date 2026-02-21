@@ -159,7 +159,7 @@ func createDeletePhoto(b *testing.B) {
 
 	// Allocate the labels for this photo
 	labels := make([]uint, labelCount)
-	for i := 0; i < labelCount; i++ {
+	for i := range labelCount {
 		label := entity.Label{
 			LabelSlug:        strings.ToLower(randomString(32)),
 			CustomSlug:       strings.ToLower(randomString(32)),
@@ -185,7 +185,7 @@ func createDeletePhoto(b *testing.B) {
 	keywordCount := rand.IntN(5)
 	keywords := make([]uint, keywordCount)
 	keywordStr := ""
-	for i := 0; i < keywordCount; i++ {
+	for i := range keywordCount {
 		keyword := entity.Keyword{
 			Keyword: randomString(32),
 			Skip:    false,
@@ -262,7 +262,7 @@ func createDeletePhoto(b *testing.B) {
 	// Add Markers
 	markersToCreate := rand.IntN(5)
 	subjects := make([]string, markersToCreate)
-	for i := 0; i < markersToCreate; i++ {
+	for i := range markersToCreate {
 		subject := entity.Subject{
 			SubjUID:      rnd.GenerateUID('j'),
 			SubjType:     entity.SubjPerson,
@@ -386,11 +386,11 @@ func createDeletePhoto(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	for i := 0; i < labelCount; i++ {
+	for i := range labelCount {
 		entity.UnscopedDb().Where("label_id = ?", labels[i]).Delete(&entity.Label{})
 	}
 
-	for i := 0; i < keywordCount; i++ {
+	for i := range keywordCount {
 		entity.UnscopedDb().Where("keyword_id = ?", keywords[i]).Delete(&entity.Keyword{})
 	}
 }

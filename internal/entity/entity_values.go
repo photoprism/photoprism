@@ -21,7 +21,7 @@ func ModelValues(m any, omit ...string) (result Values, omitted []any, err error
 // ModelValuesStructOption extracts Values from an entity model, with the option to includeAll fields like before.
 // When using this for entity Updates includeAll MUST be false, so that GormV2 is forced to behave like GormV1.
 // There are two white lists which need to be maintained if new data types are used, or pointers to existing types are used.
-func ModelValuesStructOption(m interface{}, includeAll bool, omit ...string) (result Values, omitted []interface{}, err error) {
+func ModelValuesStructOption(m any, includeAll bool, omit ...string) (result Values, omitted []any, err error) {
 	mustOmit := func(name string) bool {
 		return slices.Contains(omit, name)
 	}

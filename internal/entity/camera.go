@@ -187,7 +187,7 @@ func (m *Camera) Unknown() bool {
 }
 
 // ScopedSearchFirstCamera populates camera with the results of a Where(query, values) excluding soft delete records
-func ScopedSearchFirstCamera(camera *Camera, query string, values ...interface{}) (tx *gorm.DB) {
+func ScopedSearchFirstCamera(camera *Camera, query string, values ...any) (tx *gorm.DB) {
 	// Preload related entities if a matching record is found.
 	stmt := Db()
 	tempCamera := &Camera{}

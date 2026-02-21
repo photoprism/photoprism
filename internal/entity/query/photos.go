@@ -14,7 +14,7 @@ func CountPhotos() (numberOfPhotos int, err error) {
 }
 
 // UnscopedSearchPhotos populates the photos that match the results of a Where(query, values) including soft delete records
-func UnscopedSearchPhotos(photos *entity.Photos, query string, values ...interface{}) (tx *gorm.DB) {
+func UnscopedSearchPhotos(photos *entity.Photos, query string, values ...any) (tx *gorm.DB) {
 	// Preload related entities if a matching record is found.
 	stmt := UnscopedDb().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
@@ -32,7 +32,7 @@ func UnscopedSearchPhotos(photos *entity.Photos, query string, values ...interfa
 }
 
 // ScopedSearchPhotos populates the photos that match the results of a Where(query, values) excluding soft delete records
-func ScopedSearchPhotos(photos *entity.Photos, query string, values ...interface{}) (tx *gorm.DB) {
+func ScopedSearchPhotos(photos *entity.Photos, query string, values ...any) (tx *gorm.DB) {
 	// Preload related entities if a matching record is found.
 	stmt := Db().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {

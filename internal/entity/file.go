@@ -90,7 +90,7 @@ type File struct {
 	UpdatedAt          time.Time      `json:"UpdatedAt" yaml:"-"`
 	UpdatedIn          int64          `json:"UpdatedIn" yaml:"-"`
 	PublishedAt        *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt          gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	DeletedAt          gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
 	Share              []FileShare    `gorm:"foreignKey:FileID" json:"-" yaml:"-"`
 	Sync               []FileSync     `gorm:"foreignKey:FileID" json:"-" yaml:"-"`
 	OmitMarkers        bool           `gorm:"-" sql:"-" json:"-" yaml:"-"`

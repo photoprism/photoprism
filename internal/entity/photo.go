@@ -107,7 +107,7 @@ type Photo struct {
 	IndexedAt        *time.Time     `json:"IndexedAt,omitempty" yaml:"-"`
 	CheckedAt        *time.Time     `sql:"index" json:"CheckedAt,omitempty" yaml:"-"`
 	EstimatedAt      *time.Time     `json:"EstimatedAt,omitempty" yaml:"-"`
-	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"DeletedAt,omitempty"`
+	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.
@@ -1475,7 +1475,7 @@ func (m *Photo) IsDeleted() bool {
 }
 
 // UnscopedSearchFirstPhoto populates photo with the results of a Where(query, values) including soft delete records
-func UnscopedSearchFirstPhoto(photo *Photo, query string, values ...interface{}) (tx *gorm.DB) {
+func UnscopedSearchFirstPhoto(photo *Photo, query string, values ...any) (tx *gorm.DB) {
 	// Preload related entities if a matching record is found.
 	stmt := UnscopedDb().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
@@ -1497,7 +1497,7 @@ func UnscopedSearchFirstPhoto(photo *Photo, query string, values ...interface{})
 }
 
 // ScopedSearchFirstPhoto populates photo with the results of a Where(query, values) excluding soft delete records
-func ScopedSearchFirstPhoto(photo *Photo, query string, values ...interface{}) (tx *gorm.DB) {
+func ScopedSearchFirstPhoto(photo *Photo, query string, values ...any) (tx *gorm.DB) {
 	// Preload related entities if a matching record is found.
 	stmt := Db().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {

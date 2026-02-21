@@ -54,9 +54,9 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		CreatedAt      time.Time
 		CreatedIn      int64 `json:",omitempty"`
 		UpdatedAt      time.Time
-		UpdatedIn      int64          `json:",omitempty"`
-		DeletedAt      gorm.DeletedAt `json:",omitempty"`
-		Markers        *Markers       `json:",omitempty"`
+		UpdatedIn      int64 `json:",omitempty"`
+		DeletedAt      gorm.DeletedAt
+		Markers        *Markers `json:",omitempty"`
 	}{
 		UID:            m.FileUID,
 		PhotoUID:       m.PhotoUID,

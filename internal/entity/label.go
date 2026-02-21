@@ -46,7 +46,7 @@ type Label struct {
 	CreatedAt        time.Time      `json:"CreatedAt" yaml:"-"`
 	UpdatedAt        time.Time      `json:"UpdatedAt" yaml:"-"`
 	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
 	New              bool           `gorm:"-" json:"-" yaml:"-"`
 }
 

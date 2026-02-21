@@ -78,7 +78,7 @@ func TestPhotos_UnscopedSearch(t *testing.T) {
 
 		// Only check items that are preloaded
 		// Except Labels as they are filtered.
-		for i := 0; i < 3; i++ {
+		for i := range 3 {
 			assert.Equal(t, expectedPhotos[i].ID, photos[i].ID)
 			assert.Equal(t, expectedPhotos[i].UUID, photos[i].UUID)
 			assert.Equal(t, expectedPhotos[i].TakenAt, photos[i].TakenAt)
@@ -150,7 +150,7 @@ func TestPhotos_ScopedSearch(t *testing.T) {
 
 		// Only check items that are preloaded
 		// Except Labels as they are filtered.
-		for i := 0; i < 2; i++ {
+		for i := range 2 {
 			assert.Equal(t, expectedPhotos[i].ID, photos[i].ID)
 			assert.Equal(t, expectedPhotos[i].UUID, photos[i].UUID)
 			assert.Equal(t, expectedPhotos[i].TakenAt, photos[i].TakenAt)

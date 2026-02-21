@@ -895,7 +895,7 @@ func populatePhotoPrismStructsWithMax(t *testing.T, db *gorm.DB) {
 
 }
 
-func populateStructWithMin(m interface{}) (err error) {
+func populateStructWithMin(m any) (err error) {
 
 	r := reflect.ValueOf(m)
 
@@ -914,7 +914,7 @@ func populateStructWithMin(m interface{}) (err error) {
 
 	vT := values.Type()
 	num := vT.NumField()
-	for i := 0; i < num; i++ {
+	for i := range num {
 		field := vT.Field(i)
 
 		// Skip non-exported fields.
@@ -1052,7 +1052,7 @@ func populateStructWithMin(m interface{}) (err error) {
 	return nil
 }
 
-func populateStructWithMax(m interface{}, uintMaxInt64 bool) (err error) {
+func populateStructWithMax(m any, uintMaxInt64 bool) (err error) {
 
 	r := reflect.ValueOf(m)
 
@@ -1071,7 +1071,7 @@ func populateStructWithMax(m interface{}, uintMaxInt64 bool) (err error) {
 
 	vT := values.Type()
 	num := vT.NumField()
-	for i := 0; i < num; i++ {
+	for i := range num {
 		field := vT.Field(i)
 
 		// Skip non-exported fields.

@@ -106,7 +106,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			Where("taken_src <> '' AND taken_at BETWEEN to_date(?, 'YYYY-MM-DD HH24:MI:SS') AND to_date(?, 'YYYY-MM-DD HH24:MI:SS')", rangeMin.Format(time.DateTime), rangeMax.Format(time.DateTime)).
 			Clauses(clause.OrderBy{Expression: clause.Expr{
 				SQL:                "ABS(EXTRACT(EPOCH from (taken_at - to_date(?, 'YYYY-MM-DD HH24:MI:SS'))))",
-				Vars:               []interface{}{m.TakenAt.Format(time.DateTime)},
+				Vars:               []any{m.TakenAt.Format(time.DateTime)},
 				WithoutParentheses: true}}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
 	case MySQL:
@@ -116,7 +116,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			Where("taken_src <> '' AND taken_at BETWEEN CAST(? AS DATETIME) AND CAST(? AS DATETIME)", rangeMin, rangeMax).
 			Clauses(clause.OrderBy{Expression: clause.Expr{
 				SQL:                "ABS(TIMESTAMPDIFF(SECOND, taken_at, ?))",
-				Vars:               []interface{}{m.TakenAt.Format(time.DateTime)},
+				Vars:               []any{m.TakenAt.Format(time.DateTime)},
 				WithoutParentheses: true}}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
 	case SQLite3:
@@ -126,7 +126,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			Where("taken_src <> '' AND taken_at BETWEEN ? AND ?", rangeMin, rangeMax).
 			Clauses(clause.OrderBy{Expression: clause.Expr{
 				SQL:                "ABS(JulianDay(taken_at) - JulianDay(?))",
-				Vars:               []interface{}{m.TakenAt.Format(time.DateTime)},
+				Vars:               []any{m.TakenAt.Format(time.DateTime)},
 				WithoutParentheses: true}}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
 	default:
