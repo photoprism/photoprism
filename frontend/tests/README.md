@@ -59,7 +59,7 @@ When evaluating frontend tooling changes, test at least one CE run plus Plus and
 Current frontend tool versions are defined in `frontend/package.json` unless stated otherwise.
 
 | Tool                                 | Version     |
-|--------------------------------------|-------------|
+|:-------------------------------------|:------------|
 | Node.js engine                       | `>= 18.0.0` |
 | npm engine                           | `>= 9.0.0`  |
 | Vitest                               | `^3.2.4`    |
@@ -80,7 +80,7 @@ Current frontend tool versions are defined in `frontend/package.json` unless sta
 | `eslint-plugin-vuetify`              | `^2.5.3`    |
 | `eslint-webpack-plugin`              | `^5.0.2`    |
 | Prettier                             | `^3.8.1`    |
-| TestCafe CLI (dev environment)       | `3.7.2`     |
+| TestCafe CLI (dev environment)       | `3.7.4`     |
 
 Note: TestCafe is available in the development environment but is currently not pinned as a direct dependency in `frontend/package.json`. Verify with `testcafe --version`.
 

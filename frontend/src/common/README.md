@@ -22,7 +22,7 @@ When integrating third-party clients (for example mobile webviews) that pre-popu
 #### Tabindex Cheat Sheet
 
 | Value      | When to use it                                          | Effect                                                                                         |
-|------------|---------------------------------------------------------|------------------------------------------------------------------------------------------------|
+|:-----------|:--------------------------------------------------------|:-----------------------------------------------------------------------------------------------|
 | `0`        | Interactive controls in the natural tab order           | Element participates in sequential keyboard focus                                              |
 | `-1`       | Programmatic focus targets (dialog wrappers, sentinels) | Element can receive focus via script but is skipped while tabbing                              |
 | *positive* | **Avoid**                                               | Custom tab order becomes hard to maintain; the view helper no longer knows the “first” element |

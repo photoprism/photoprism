@@ -17,7 +17,7 @@ The image part of these files can be opened in any image viewer that supports JP
 ### Introductory Tutorials
 
 | Title                                                   | Date     | URL                                                                                |
-|---------------------------------------------------------|----------|------------------------------------------------------------------------------------|
+|:--------------------------------------------------------|:---------|:-----------------------------------------------------------------------------------|
 | How to detect Android motion photos in Flutter          | May 2023 | https://ente.io/blog/tech/android-motion-photos-flutter/                           |
 | Stripping Embedded MP4s out of Android 12 Motion Photos | Oct 2021 | https://mjanja.ch/2021/10/stripping-embedded-mp4s-out-of-android-12-motion-photos/ |
 | Google Pixel "Motion Photo" Howto                       | Mar 2021 | https://linuxreviews.org/Google_Pixel_%22Motion_Photo%22                           |
@@ -28,7 +28,7 @@ The image part of these files can be opened in any image viewer that supports JP
 ### Software Libraries & References
 
 | Title                                                | URL                                                                     |
-|------------------------------------------------------|-------------------------------------------------------------------------|
+|:-----------------------------------------------------|:------------------------------------------------------------------------|
 | Web Video Codec Guide                                | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs |
 | Media Container Formats                              | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Containers   |
 | MP4 Signature Format                                 | https://www.file-recovery.com/mp4-signature-format.htm                  |

@@ -27,7 +27,7 @@ For more information on hybrid photo/video file formats, e.g. Apple Live Photos 
 The [`PHOTOPRISM_FFMPEG_SIZE`](../../getting-started/config-options.md#file-converters) config option allows to limit the resolution of [transcoded videos](../../getting-started/advanced/transcoding.md). It accepts the following standard sizes, while other values are automatically adjusted to the next supported size:
 
 | Size |       Usage        |
-|------|--------------------|
+|:-----|:-------------------|
 |  720 | SD TV, Mobile      |
 | 1280 | HD TV, SXGA        |
 | 1920 | Full HD            |
@@ -40,7 +40,7 @@ The [`PHOTOPRISM_FFMPEG_SIZE`](../../getting-started/config-options.md#file-conv
 ### Technical References & Tutorials
 
 | Title                               | URL                                                                         |
-|-------------------------------------|-----------------------------------------------------------------------------|
+|:------------------------------------|:----------------------------------------------------------------------------|
 | Web Video Codec Guide               | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs     |
 | Web Video Content-Type Headers      | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/codecs_parameter |
 | Media Container Formats             | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Containers       |

@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 20, 2026
+**Last Updated:** February 21, 2026
 
 ## Purpose
 
@@ -191,6 +191,15 @@ Note: Across our public documentation, official images, and in production, the c
 - Frontend unit tests use **Vitest**; see scripts in `frontend/package.json`.
   - Vitest watch/coverage: `make vitest-watch` and `make vitest-coverage`
 - Acceptance tests: use the `acceptance-*` targets in the `Makefile`
+  - For one-off checks, run a single TestCafe case by `testID` and keep startup/cleanup in the repo root:
+    ```bash
+    make storage/acceptance
+    make acceptance-sqlite-restart
+    make wait-2
+    (cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --config-file ./testcaferc.json --test-meta mode=public,type=short,testID=components-001 "tests/acceptance")
+    make acceptance-sqlite-stop
+    ```
+  - If your command temporarily changes into `frontend/`, run `make acceptance-sqlite-stop` after returning to the repository root; running that target from `frontend/` fails with "No rule to make target".
 - Portal proxy prefix validation: use the Portal test environment with `NODES=2` and verify both tenant routes when changing `PHOTOPRISM_PORTAL_PROXY_PREFIX` (Portal) and matching node `PHOTOPRISM_SITE_URL` prefixes; use `PORTAL_TEST_ENV_ARGS=--proxy-prefix=/tenant/` to regenerate consistent `.env` values.
 
 ### Playwright MCP Usage
