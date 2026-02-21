@@ -7,8 +7,6 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/stretchr/testify/assert"
 
-	"gorm.io/gorm"
-
 	"github.com/photoprism/photoprism/internal/config"
 )
 

@@ -5,8 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"gorm.io/gorm"
-
 	"github.com/photoprism/photoprism/internal/config"
 )
 
