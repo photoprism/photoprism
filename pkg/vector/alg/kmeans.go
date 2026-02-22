@@ -172,7 +172,7 @@ func (c *kmeansClusterer) Online(observations chan []float64, done chan struct{}
 					Observation: o,
 				}
 
-				for i := 0; i < f; i++ {
+				for i := range f {
 					c.m[k][i] = c.alpha*o[i] + h*c.m[k][i]
 				}
 
@@ -302,7 +302,7 @@ func (c *kmeansClusterer) run() {
 	for i := 0; i < c.number; i++ {
 		floats.Scale(1/float64(c.b[i]), c.n[i])
 
-		for j := 0; j < l; j++ {
+		for j := range l {
 			c.m[i][j] = c.n[i][j]
 			c.n[i][j] = 0
 		}

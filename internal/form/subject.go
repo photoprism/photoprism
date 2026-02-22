@@ -18,7 +18,7 @@ type Subject struct {
 }
 
 // NewSubject copies values from an arbitrary model into a Subject form.
-func NewSubject(m interface{}) (*Subject, error) {
+func NewSubject(m any) (*Subject, error) {
 	frm := &Subject{}
 	err := deepcopier.Copy(m).To(frm)
 

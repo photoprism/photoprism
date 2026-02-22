@@ -6,15 +6,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestClientRegistry_PutFindListRotate(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-client", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-client")
 
 	r, err := NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)
@@ -62,6 +60,7 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 		}
 		assert.NotEmpty(t, got.CreatedAt)
 		assert.NotEmpty(t, got.UpdatedAt)
+		assert.True(t, got.AuthEnabled)
 		// Secret is not persisted in plaintext
 		assert.Equal(t, "", got.ClientSecret)
 		assert.NotEmpty(t, got.RotatedAt)
@@ -69,6 +68,19 @@ func TestClientRegistry_PutFindListRotate(t *testing.T) {
 		pw := entity.FindPassword(got.ClientID)
 		if assert.NotNil(t, pw) {
 			assert.True(t, pw.Valid(n.ClientSecret))
+		}
+	}
+	if assert.NotNil(t, got) {
+		err := entity.UnscopedDb().
+			Model(&entity.Client{}).
+			Where("client_uid = ?", got.ClientID).
+			Update("auth_enabled", false).Error
+		assert.NoError(t, err)
+
+		disabled, err := r.FindByName("pp-node-a")
+		assert.NoError(t, err)
+		if assert.NotNil(t, disabled) {
+			assert.False(t, disabled.AuthEnabled)
 		}
 	}
 

@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** November 22, 2025
+**Last Updated:** February 12, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -46,10 +46,12 @@ High-Level Package Map (Go)
 
 Templates & Static Assets
 - Entry HTML lives in `assets/templates/index.gohtml`, which includes the splash markup from `app.gohtml` and the SPA loader from `app.js.gohtml`.
-- The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs. Update this file (and the partial) in lockstep with the templates in private repos (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`) because they import the same partial, and keep the `<script>` order so the check is executed first.
+- The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs.
+- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml` and `plus/assets/templates/index.gohtml`, because those editions import the same partial.
+- Keep the script tag order unchanged so the browser check executes before the main bundle.
 - `splash.gohtml` renders the loading screen text while the bundle loads; styles are in `frontend/src/css/splash.css`.
 - When adjusting browser support messaging, update both the loader partial and splash styles so the warning message stays consistent across editions.
-- Service worker routes live in `internal/server/routes_webapp.go`. The helper that serves Workbox runtime files (`/workbox-:hash`) sits there as well so service workers run under both the site root and a base URI; remember Gin’s `:hash` parameter excludes the `.js` suffix, so the handler/test matches the full filename manually.
+- Service worker routes live in `internal/server/routes_webapp.go`. Handlers for `sw.js`, `sw-scope-cleanup.js`, and Workbox runtime files (`/workbox-:hash`) are defined there so service workers run under both the site root and a base URI; remember Gin’s `:hash` parameter excludes the `.js` suffix, so the handler/test matches the full filename manually.
 
 HTTP API
 - Handlers live in `internal/api/*.go` and are registered in `internal/server/routes.go`.
@@ -61,6 +63,10 @@ HTTP API
   - `make swag-json` runs a stabilization step (`swaggerfix`) removing duplicated enums for `time.Duration`; API uses integer nanoseconds for durations.
 - `/api/v1/metrics` (see `internal/api/metrics.go`) exposes Prometheus metrics, including cached filesystem/account usage derived from `config.Usage()`, registered user/guest totals, and portal cluster node counts when `NodeRole=portal`; the handler returns the standard Prometheus exposition content type (`text/plain; version=0.0.4`).
 - Common groups in `routes.go`: sessions, OAuth/OIDC, config, users, services, thumbnails, video, downloads/zip, index/import, photos/files/labels/subjects/faces, batch ops, cluster, technical (metrics, status, echo).
+- Hidden search behavior (used by `/library/hidden`) is implemented in `internal/entity/search/photos.go`:
+  - `frm.Hidden` enforces `photos.photo_quality = -1` and `photos.deleted_at IS NULL`.
+  - Non-hidden searches exclude errored files by default (`files.file_error = ''`) unless `frm.Error` is explicitly set.
+- Search DTOs in `internal/entity/search/photos_results.go` expose `FileError` (`files.file_error`) so clients can render hidden reasons without loading full file details first.
 
 Configuration & Flags
 - Options struct: `internal/config/options.go` with `yaml:"…"` (for `defaults.yml`/`options.yml`), `json:"…"` (clients/API), and `flag:"…"` (CLI flags/env) tags.
@@ -76,6 +82,7 @@ Configuration & Flags
 - Getters are grouped by topic, e.g. DB in `internal/config/config_db.go`, server in `config_server.go`, TLS in `config_tls.go`, etc.
 - Client Config (read-only)
   - Endpoint: GET `/api/v1/config` (see `internal/api/api_client_config.go`).
+  - CDN behavior: Requests carrying CDN headers are rejected with `404` to prevent intermediary cache mix-ups between public and session-specific config payloads.
   - Assembly: Built from `internal/config/client_config.go` (not a direct serialization of Options) plus extension values registered via `config.Register` in `internal/config/extensions.go`.
   - Updates: Back-end calls `UpdateClientConfig()` to publish "config.updated" over websockets after changes (see `internal/api/config_options.go` and `internal/api/config_settings.go`).
   - ACL/mode aware: Values are filtered by user/session and may differ for public vs. authenticated users.
@@ -115,6 +122,7 @@ Cluster / Portal
   - Theme sync logs explicitly when refresh/rotation occurs so operators can trace credential churn in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
+- Portal-only extensions: `pro/internal/portal` (Portal defaults, flags, provisioning options, `/p/*` proxy router).
 - See specs cheat sheet: `specs/portal/README.md`.
 
 Logging & Events
@@ -185,6 +193,9 @@ Security & Hot Spots (Where to Look)
   - Protections: scheme allow‑list (http/https), pre‑DNS + per‑redirect hostname/IP validation, final peer IP check, size and timeout enforcement, temp file `0600` + rename.
   - Avatars: wrapper `internal/thumb/avatar.SafeDownload` applies stricter defaults (15s, 10 MiB, `AllowPrivate=false`, image‑focused `Accept`).
   - Tests: `go test ./pkg/http/safe -count=1` (includes redirect SSRF cases); avatars: `go test ./internal/thumb/avatar -count=1`.
+- CDN guards for credential flows:
+  - Auth/session and OAuth/OIDC endpoints reject CDN-marked requests.
+  - Cluster bootstrap endpoint `POST /api/v1/cluster/nodes/register` also rejects CDN-marked requests to avoid caching responses that may contain bootstrap secrets.
 
 Performance & Limits
 - Prefer existing caches/workers/batching as per Makefile and code.

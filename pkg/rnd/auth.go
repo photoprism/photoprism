@@ -65,7 +65,7 @@ func AppPassword() string {
 	m := big.NewInt(int64(len(CharsetBase62)))
 	b := make([]byte, 0, AppPasswordLength)
 
-	for i := 0; i < AppPasswordLength; i++ {
+	for i := range AppPasswordLength {
 		if (i+1)%7 == 0 {
 			b = append(b, Separator)
 		} else if i == AppPasswordLength-1 {
@@ -115,7 +115,7 @@ func JoinToken() string {
 	m := big.NewInt(int64(len(CharsetBase62)))
 	token := make([]byte, 0, JoinTokenLength)
 
-	for i := 0; i < JoinTokenLength-1; i++ {
+	for i := range JoinTokenLength - 1 {
 		if isJoinTokenSeparatorIndex(i) {
 			token = append(token, Separator)
 			continue

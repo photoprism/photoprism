@@ -783,6 +783,9 @@
 
 <script>
 import links from "common/links";
+import { getAppStorage } from "common/storage";
+
+const appStorage = getAppStorage();
 
 export default {
   name: "PNavigation",
@@ -828,7 +831,7 @@ export default {
       featFiles: this.$config.feature("files"),
       featUsage: canSeeUsage && this.$config.values?.usage?.filesTotal,
       isRestricted: isRestricted,
-      isMini: localStorage.getItem("navigation.mode") !== "false" || isRestricted,
+      isMini: appStorage.getItem("navigation.mode") !== "false" || isRestricted,
       isDemo: isDemo,
       isPro: isPro,
       isPublic: isPublic,
@@ -941,7 +944,7 @@ export default {
       }
 
       this.isMini = !this.isMini;
-      localStorage.setItem("navigation.mode", `${this.isMini}`);
+      appStorage.setItem("navigation.mode", `${this.isMini}`);
     },
     showAccountSettings() {
       if (this.$config.feature("account")) {

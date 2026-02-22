@@ -79,6 +79,7 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 		// Use defaults.
 	}
 
+	// Embed an ICC profile when a JPEG declares its color space via the EXIF InteroperabilityIndex tag.
 	if err = vipsSetIccProfileForInteropIndex(img, clean.Log(filepath.Base(imageName))); err != nil {
 		log.Debugf("vips: %s in %s (set icc profile for interop index tag)", err, clean.Log(filepath.Base(imageName)))
 	}

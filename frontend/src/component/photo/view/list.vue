@@ -89,7 +89,10 @@
                   :title="m.Title"
                   @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)"
                 >
-                  {{ showTitles && m.Title ? m.Title : m.getOriginalName() }}
+                  <div class="text-truncate">{{ showTitles && m.Title ? m.Title : m.getOriginalName() }}</div>
+                  <div v-if="context === contexts.Hidden && hiddenReason(m)" :title="hiddenReason(m)" class="meta-error text-truncate">
+                    {{ hiddenReason(m) }}
+                  </div>
                 </td>
                 <td class="meta-data meta-date hidden-xs text-start col-taken" :title="m.getDateString()">
                   <span class="text-truncate clickable" @click.stop.prevent="openDate(index)">
@@ -135,6 +138,7 @@ import $notify from "common/notify";
 import { virtualizationTools } from "common/virtualization-tools";
 import IconLivePhoto from "component/icon/live-photo.vue";
 import { PhotoClipboard } from "common/clipboard";
+import * as contexts from "options/contexts";
 
 export default {
   name: "PPhotoViewList",
@@ -200,6 +204,7 @@ export default {
       showName: this.filter.order === "name",
       showLocation: this.$config.values.settings.features.places,
       hidePrivate: this.$config.values.settings.features.private,
+      contexts,
       mouseDown: {
         index: -1,
         scrollY: window.scrollY,
@@ -234,6 +239,13 @@ export default {
     this.intersectionObserver.disconnect();
   },
   methods: {
+    hiddenReason(photo) {
+      if (!photo || typeof photo.getHiddenReason !== "function") {
+        return "";
+      }
+
+      return photo.getHiddenReason();
+    },
     isSelected(m) {
       return PhotoClipboard.has(m);
     },

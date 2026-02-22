@@ -21,7 +21,7 @@ func JoinAnd(values []string) string {
 
 	// length >= 3
 	result := ""
-	for i := 0; i < length; i++ {
+	for i := range length {
 		switch i {
 		case 0:
 			result = values[i]

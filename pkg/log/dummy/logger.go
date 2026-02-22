@@ -41,7 +41,7 @@ func NewLogger() *Logger {
 }
 
 // WithField allocates a new entry and adds a field to it.
-func (logger *Logger) WithField(key string, value interface{}) *logrus.Entry {
+func (logger *Logger) WithField(key string, value any) *logrus.Entry {
 	return &logrus.Entry{Data: logrus.Fields{key: value}}
 }
 
@@ -70,68 +70,68 @@ func (logger *Logger) WithTime(t time.Time) *logrus.Entry {
 	return &logrus.Entry{Time: t}
 }
 
-func (logger *Logger) Logf(level logrus.Level, format string, args ...interface{}) {
+func (logger *Logger) Logf(level logrus.Level, format string, args ...any) {
 }
 
-func (logger *Logger) Tracef(format string, args ...interface{}) {
+func (logger *Logger) Tracef(format string, args ...any) {
 }
 
-func (logger *Logger) Debugf(format string, args ...interface{}) {
+func (logger *Logger) Debugf(format string, args ...any) {
 }
 
-func (logger *Logger) Infof(format string, args ...interface{}) {
+func (logger *Logger) Infof(format string, args ...any) {
 }
 
-func (logger *Logger) Printf(format string, args ...interface{}) {
+func (logger *Logger) Printf(format string, args ...any) {
 }
 
-func (logger *Logger) Warnf(format string, args ...interface{}) {
+func (logger *Logger) Warnf(format string, args ...any) {
 }
 
-func (logger *Logger) Warningf(format string, args ...interface{}) {
+func (logger *Logger) Warningf(format string, args ...any) {
 }
 
-func (logger *Logger) Errorf(format string, args ...interface{}) {
+func (logger *Logger) Errorf(format string, args ...any) {
 }
 
-func (logger *Logger) Fatalf(format string, args ...interface{}) {
+func (logger *Logger) Fatalf(format string, args ...any) {
 }
 
-func (logger *Logger) Panicf(format string, args ...interface{}) {
+func (logger *Logger) Panicf(format string, args ...any) {
 }
 
 // Log will log a message at the level given as parameter.
-func (logger *Logger) Log(level logrus.Level, args ...interface{}) {
+func (logger *Logger) Log(level logrus.Level, args ...any) {
 }
 
 func (logger *Logger) LogFn(level logrus.Level, fn logrus.LogFunction) {
 }
 
-func (logger *Logger) Trace(args ...interface{}) {
+func (logger *Logger) Trace(args ...any) {
 }
 
-func (logger *Logger) Debug(args ...interface{}) {
+func (logger *Logger) Debug(args ...any) {
 }
 
-func (logger *Logger) Info(args ...interface{}) {
+func (logger *Logger) Info(args ...any) {
 }
 
-func (logger *Logger) Print(args ...interface{}) {
+func (logger *Logger) Print(args ...any) {
 }
 
-func (logger *Logger) Warn(args ...interface{}) {
+func (logger *Logger) Warn(args ...any) {
 }
 
-func (logger *Logger) Warning(args ...interface{}) {
+func (logger *Logger) Warning(args ...any) {
 }
 
-func (logger *Logger) Error(args ...interface{}) {
+func (logger *Logger) Error(args ...any) {
 }
 
-func (logger *Logger) Fatal(args ...interface{}) {
+func (logger *Logger) Fatal(args ...any) {
 }
 
-func (logger *Logger) Panic(args ...interface{}) {
+func (logger *Logger) Panic(args ...any) {
 }
 
 func (logger *Logger) TraceFn(fn logrus.LogFunction) {
@@ -161,39 +161,39 @@ func (logger *Logger) FatalFn(fn logrus.LogFunction) {
 func (logger *Logger) PanicFn(fn logrus.LogFunction) {
 }
 
-func (logger *Logger) Logln(level logrus.Level, args ...interface{}) {
+func (logger *Logger) Logln(level logrus.Level, args ...any) {
 }
 
-func (logger *Logger) Traceln(args ...interface{}) {
+func (logger *Logger) Traceln(args ...any) {
 }
 
-func (logger *Logger) Debugln(args ...interface{}) {
+func (logger *Logger) Debugln(args ...any) {
 }
 
-func (logger *Logger) Infoln(args ...interface{}) {
+func (logger *Logger) Infoln(args ...any) {
 	logger.Logln(logrus.InfoLevel, args...)
 }
 
-func (logger *Logger) Println(args ...interface{}) {
+func (logger *Logger) Println(args ...any) {
 }
 
-func (logger *Logger) Warnln(args ...interface{}) {
+func (logger *Logger) Warnln(args ...any) {
 	logger.Logln(logrus.WarnLevel, args...)
 }
 
-func (logger *Logger) Warningln(args ...interface{}) {
+func (logger *Logger) Warningln(args ...any) {
 	logger.Warnln(args...)
 }
 
-func (logger *Logger) Errorln(args ...interface{}) {
+func (logger *Logger) Errorln(args ...any) {
 	logger.Logln(logrus.ErrorLevel, args...)
 }
 
-func (logger *Logger) Fatalln(args ...interface{}) {
+func (logger *Logger) Fatalln(args ...any) {
 	logger.Logln(logrus.FatalLevel, args...)
 }
 
-func (logger *Logger) Panicln(args ...interface{}) {
+func (logger *Logger) Panicln(args ...any) {
 	logger.Logln(logrus.PanicLevel, args...)
 }
 

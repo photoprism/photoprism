@@ -41,7 +41,7 @@ func (pq priorityQueue) Swap(i, j int) {
 	pq[j].i = j
 }
 
-func (pq *priorityQueue) Push(x interface{}) {
+func (pq *priorityQueue) Push(x any) {
 	n := len(*pq)
 	item := x.(*pItem)
 	item.i = n
@@ -49,7 +49,7 @@ func (pq *priorityQueue) Push(x interface{}) {
 	heap.Fix(pq, item.i)
 }
 
-func (pq *priorityQueue) Pop() interface{} {
+func (pq *priorityQueue) Pop() any {
 	old := *pq
 	n := len(old)
 	item := old[n-1]
@@ -76,7 +76,7 @@ func bounds(data [][]float64) []*[2]float64 {
 		r = make([]*[2]float64, l)
 	)
 
-	for i := 0; i < l; i++ {
+	for i := range l {
 		r[i] = &[2]float64{
 			data[0][i],
 			data[0][i],
@@ -85,11 +85,11 @@ func bounds(data [][]float64) []*[2]float64 {
 
 	wg.Add(l)
 
-	for i := 0; i < l; i++ {
+	for i := range l {
 		go func(n int) {
 			defer wg.Done()
 
-			for j := 0; j < len(data); j++ {
+			for j := range data {
 				if data[j][n] < r[n][0] {
 					r[n][0] = data[j][n]
 				} else if data[j][n] > r[n][1] {

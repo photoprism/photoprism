@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -15,8 +14,7 @@ import (
 
 // UUID-first upsert: Put finds existing row by UUID and updates fields.
 func TestClientRegistry_PutUpdateByUUID(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-put-uuid", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-put-uuid")
 
 	r, _ := NewClientRegistryWithConfig(c)
 	uuid := rnd.UUIDv7()
@@ -47,8 +45,7 @@ func TestClientRegistry_PutUpdateByUUID(t *testing.T) {
 
 // Latest-by-UpdatedAt when multiple rows share the same NodeUUID (historical duplicates).
 func TestClientRegistry_FindByNodeUUID_PrefersLatest(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-find-uuid-latest", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-find-uuid-latest")
 
 	uuid := rnd.UUIDv7()
 	// Create two raw client rows with the same NodeUUID and different UpdatedAt
@@ -73,8 +70,7 @@ func TestClientRegistry_FindByNodeUUID_PrefersLatest(t *testing.T) {
 
 // DeleteAllByUUID removes all rows that share a NodeUUID.
 func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-delete-all", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-delete-all")
 
 	uuid := rnd.UUIDv7()
 	// Two rows with same UUID
@@ -94,8 +90,7 @@ func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
 
 // List() should only include clients that represent cluster nodes (i.e., have a NodeUUID).
 func TestClientRegistry_ListOnlyUUID(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-list-only-uuid", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-list-only-uuid")
 
 	// Create one client with empty NodeUUID (non-node), and one proper node
 	nonNode := entity.NewClient().SetName("webapp").SetRole(acl.RoleClient.String())
@@ -116,8 +111,7 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 
 // Put should prefer UUID over ClientID when both are provided, avoiding cross-attachment.
 func TestClientRegistry_PutPrefersUUIDOverClientID(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-put-prefers-uuid", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-put-prefers-uuid")
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed two separate records

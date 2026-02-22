@@ -231,7 +231,7 @@ func (c *opticsClusterer) coreDist(p int, l int, r []int) float64 {
 }
 
 func (c *opticsClusterer) update(p int, d float64, l int, r []int, q *priorityQueue) {
-	for i := 0; i < l; i++ {
+	for i := range l {
 		if !c.v[r[i]] {
 			m := math.Max(d, c.distance(c.d[p], c.d[r[i]]))
 

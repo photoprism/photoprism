@@ -15,37 +15,37 @@ import (
 // Once the frontend adds those controls, extend ConvertToPhotoForm and AddLabels
 // to persist the values before removing this note.
 type PhotosForm struct {
-	PhotoType        String  `json:"Type,omitempty"`
-	PhotoTitle       String  `json:"Title,omitempty"`
-	PhotoCaption     String  `json:"Caption,omitempty"`
-	TakenAt          Time    `json:"TakenAt,omitempty"`
-	TakenAtLocal     Time    `json:"TakenAtLocal,omitempty"`
-	PhotoDay         Int     `json:"Day,omitempty"`
-	PhotoMonth       Int     `json:"Month,omitempty"`
-	PhotoYear        Int     `json:"Year,omitempty"`
-	TimeZone         String  `json:"TimeZone,omitempty"`
-	PhotoCountry     String  `json:"Country,omitempty"`
-	PhotoAltitude    Int     `json:"Altitude,omitempty"`
-	PhotoLat         Float64 `json:"Lat,omitempty"`
-	PhotoLng         Float64 `json:"Lng,omitempty"`
-	PhotoIso         Int     `json:"Iso,omitempty"`
-	PhotoFocalLength Int     `json:"FocalLength,omitempty"`
-	PhotoFNumber     Float32 `json:"FNumber,omitempty"`
-	PhotoExposure    String  `json:"Exposure,omitempty"`
-	PhotoFavorite    Bool    `json:"Favorite,omitempty"`
-	PhotoPrivate     Bool    `json:"Private,omitempty"`
-	PhotoScan        Bool    `json:"Scan,omitempty"`
-	PhotoPanorama    Bool    `json:"Panorama,omitempty"`
-	CameraID         Int     `json:"CameraID,omitempty"`
-	LensID           Int     `json:"LensID,omitempty"`
-	Albums           Items   `json:"Albums,omitempty"`
-	Labels           Items   `json:"Labels,omitempty"`
+	PhotoType        String  `json:"Type"`
+	PhotoTitle       String  `json:"Title"`
+	PhotoCaption     String  `json:"Caption"`
+	TakenAt          Time    `json:"TakenAt"`
+	TakenAtLocal     Time    `json:"TakenAtLocal"`
+	PhotoDay         Int     `json:"Day"`
+	PhotoMonth       Int     `json:"Month"`
+	PhotoYear        Int     `json:"Year"`
+	TimeZone         String  `json:"TimeZone"`
+	PhotoCountry     String  `json:"Country"`
+	PhotoAltitude    Int     `json:"Altitude"`
+	PhotoLat         Float64 `json:"Lat"`
+	PhotoLng         Float64 `json:"Lng"`
+	PhotoIso         Int     `json:"Iso"`
+	PhotoFocalLength Int     `json:"FocalLength"`
+	PhotoFNumber     Float32 `json:"FNumber"`
+	PhotoExposure    String  `json:"Exposure"`
+	PhotoFavorite    Bool    `json:"Favorite"`
+	PhotoPrivate     Bool    `json:"Private"`
+	PhotoScan        Bool    `json:"Scan"`
+	PhotoPanorama    Bool    `json:"Panorama"`
+	CameraID         Int     `json:"CameraID"`
+	LensID           Int     `json:"LensID"`
+	Albums           Items   `json:"Albums"`
+	Labels           Items   `json:"Labels"`
 
-	DetailsKeywords  String `json:"DetailsKeywords,omitempty"`
-	DetailsSubject   String `json:"DetailsSubject,omitempty"`
-	DetailsArtist    String `json:"DetailsArtist,omitempty"`
-	DetailsCopyright String `json:"DetailsCopyright,omitempty"`
-	DetailsLicense   String `json:"DetailsLicense,omitempty"`
+	DetailsKeywords  String `json:"DetailsKeywords"`
+	DetailsSubject   String `json:"DetailsSubject"`
+	DetailsArtist    String `json:"DetailsArtist"`
+	DetailsCopyright String `json:"DetailsCopyright"`
+	DetailsLicense   String `json:"DetailsLicense"`
 }
 
 // NewPhotosForm returns a new batch edit form instance initialized with values from the

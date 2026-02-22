@@ -35,7 +35,9 @@ func ProbeFile(fileName string) (info Info, err error) {
 		return info, err
 	}
 
-	defer file.Close()
+	defer func() {
+		err = errors.Join(err, file.Close())
+	}()
 
 	// Get video information.
 	info, err = Probe(file)

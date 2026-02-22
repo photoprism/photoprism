@@ -95,11 +95,7 @@ func ClusterListNodes(router *gin.RouterGroup) {
 			offset = len(items)
 		}
 
-		end := offset + count
-
-		if end > len(items) {
-			end = len(items)
-		}
+		end := min(offset+count, len(items))
 
 		page := items[offset:end]
 

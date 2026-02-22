@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -14,8 +13,7 @@ import (
 
 // Rotating secret selects the latest row for a UUID and persists rotation timestamp and password.
 func TestClientRegistry_RotateSecretByUUID_LatestRow(t *testing.T) {
-	c := cfg.NewMinimalTestConfigWithDb("cluster-registry-rotate-latest", t.TempDir())
-	defer c.CloseDb()
+	c := newRegistryTestConfig(t, "cluster-registry-rotate-latest")
 
 	r, _ := NewClientRegistryWithConfig(c)
 	uuid := rnd.UUIDv7()

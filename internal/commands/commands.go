@@ -68,6 +68,7 @@ var PhotoPrism = []*cli.Command{
 	MomentsCommand,
 	ConvertCommand,
 	ThumbsCommand,
+	VideosCommands,
 	MigrateCommand,
 	MigrationsCommands,
 	BackupCommand,

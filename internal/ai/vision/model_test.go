@@ -434,7 +434,6 @@ func TestModel_IsDefault(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
 			if got := tc.model.IsDefault(); got != tc.want {

@@ -33,7 +33,7 @@ func ParseModelTypes(s string) (types ModelTypes) {
 	s = strings.ToLower(s)
 	types = make(ModelTypes, 0, strings.Count(s, ","))
 
-	for _, t := range strings.Split(s, ",") {
+	for t := range strings.SplitSeq(s, ",") {
 		t = strings.TrimSpace(t)
 		switch t {
 		case ModelTypeLabels, ModelTypeNsfw, ModelTypeFace, ModelTypeCaption, ModelTypeGenerate:

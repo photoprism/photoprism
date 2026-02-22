@@ -11,6 +11,22 @@ describe("model/photo", () => {
     expect(result).toBe("Crazy Cat");
   });
 
+  it("should get hidden reason from file error", () => {
+    const photo = new Photo({ FileError: "unsupported raw format" });
+    expect(photo.getHiddenReason()).toBe("unsupported raw format");
+  });
+
+  it("should get hidden reason from primary file error", () => {
+    const photo = new Photo({
+      Files: [
+        { Primary: true, Error: "failed to decode image" },
+        { Primary: false, Error: "secondary error" },
+      ],
+    });
+
+    expect(photo.getHiddenReason()).toBe("failed to decode image");
+  });
+
   it("should get photo uuid", () => {
     const values = { ID: 5, Title: "Crazy Cat", UID: 789 };
     const photo = new Photo(values);
@@ -344,21 +360,21 @@ describe("model/photo", () => {
     expect(result5).toBe("July 2012");
   });
 
-  it("should test whether photo has location", () => {
+  it("should report hasLocation true for non-zero coordinates", () => {
     const values = { ID: 5, Title: "Crazy Cat", Lat: 36.442881666666665, Lng: 28.229493333333334 };
     const photo = new Photo(values);
     const result = photo.hasLocation();
     expect(result).toBe(true);
   });
 
-  it("should test whether photo has location", () => {
+  it("should report hasLocation false for zero coordinates", () => {
     const values = { ID: 5, Title: "Crazy Cat", Lat: 0, Lng: 0 };
     const photo = new Photo(values);
     const result = photo.hasLocation();
     expect(result).toBe(false);
   });
 
-  it("should get location", () => {
+  it("should get primary location label with country", () => {
     const values = {
       ID: 5,
       Title: "Crazy Cat",
@@ -372,7 +388,7 @@ describe("model/photo", () => {
     expect(result).toBe("Cape Point, South Africa");
   });
 
-  it("should get location", () => {
+  it("should get full location with state and country", () => {
     const values = {
       ID: 5,
       Title: "Crazy Cat",
@@ -389,7 +405,7 @@ describe("model/photo", () => {
     expect(result).toBe("Cape Point, State, South Africa");
   });
 
-  it("should get location", () => {
+  it("should return Unknown when country name does not match", () => {
     const values = {
       ID: 5,
       Title: "Crazy Cat",
@@ -405,14 +421,14 @@ describe("model/photo", () => {
     expect(result).toBe("Unknown");
   });
 
-  it("should get location", () => {
+  it("should return Unknown when only country name is set", () => {
     const values = { ID: 5, Title: "Crazy Cat", CountryName: "Africa", PlaceCity: "Cape Town" };
     const photo = new Photo(values);
     const result = photo.locationInfo();
     expect(result).toBe("Unknown");
   });
 
-  it("should get camera", () => {
+  it("should get camera from model and file camera data", () => {
     const values = { ID: 5, Title: "Crazy Cat", CameraModel: "EOSD10", CameraMake: "Canon" };
     const photo = new Photo(values);
     const result = photo.getCamera();
@@ -438,7 +454,7 @@ describe("model/photo", () => {
     expect(photo2.getCamera()).toBe("Canon abc");
   });
 
-  it("should get camera", () => {
+  it("should return Unknown when camera info is missing", () => {
     const values = { ID: 5, Title: "Crazy Cat" };
     const photo = new Photo(values);
     const result = photo.getCamera();

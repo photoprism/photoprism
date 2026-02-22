@@ -95,7 +95,11 @@ func TestExecTimeout_DeadlineExceeded(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open: %v", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() {
+		if err := db.Close(); err != nil {
+			t.Fatalf("close db: %v", err)
+		}
+	})
 
 	ctx := context.Background()
 	start := time.Now()
@@ -134,7 +138,11 @@ func TestExecTimeout_ForwardsStatement(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open: %v", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() {
+		if err := db.Close(); err != nil {
+			t.Fatalf("close db: %v", err)
+		}
+	})
 
 	ctx := context.Background()
 	stmt := "DO 1"
@@ -172,7 +180,11 @@ func TestPingWithTimeout_DeadlineExceeded(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open: %v", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() {
+		if err := db.Close(); err != nil {
+			t.Fatalf("close db: %v", err)
+		}
+	})
 
 	ctx := context.Background()
 	start := time.Now()
@@ -189,7 +201,11 @@ func TestPingWithTimeout_Succeeds(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open: %v", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() {
+		if err := db.Close(); err != nil {
+			t.Fatalf("close db: %v", err)
+		}
+	})
 
 	ctx := context.Background()
 	err = pingWithTimeout(ctx, db, 100*time.Millisecond)

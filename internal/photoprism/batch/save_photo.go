@@ -139,7 +139,7 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 	}
 
 	updates := entity.Values{}
-	addUpdate := func(column string, changed bool, value interface{}) {
+	addUpdate := func(column string, changed bool, value any) {
 		if changed {
 			updates[column] = value
 		}

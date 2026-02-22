@@ -14,21 +14,52 @@
 
 {{template "app.gohtml" .}}
 
-<script>{{ if eq .status "success" }}
-  window.localStorage.setItem("session.id", {{ .session_id }});
-  window.localStorage.setItem("session.token", {{ .access_token }});
-  window.localStorage.setItem("session.provider", {{ .provider }});
-  window.localStorage.setItem("session.user", JSON.stringify({{ .user }}));
-  window.localStorage.removeItem("session.error");
-  {{ else if eq .status "failed" }}
-  window.localStorage.setItem("session.error", {{ .error }});
-  {{ else }}
-  window.localStorage.removeItem("session.id");
-  window.localStorage.removeItem("session.token");
-  window.localStorage.removeItem("session.provider");
-  window.localStorage.removeItem("session.user");
-  window.localStorage.removeItem("session.error");
-  {{ end }}
+<script>
+  (function () {
+    const storage = window.localStorage;
+    const rawNamespace = {{ .config.StorageNamespace }};
+    const namespaceKey = rawNamespace && rawNamespace !== "null" && rawNamespace !== "undefined" ? String(rawNamespace) : "root";
+    const prefix = `pp:${namespaceKey}:`;
+    const namespacedKey = (key) => `${prefix}${key}`;
+    const legacyKeys = [
+      "session",
+      "session.token",
+      "session.id",
+      "session.data",
+      "session.user",
+      "session.provider",
+      "session.scope",
+      "session.error",
+    ];
+    const clearLegacy = () => {
+      legacyKeys.forEach((key) => storage.removeItem(key));
+    };
+    const setItem = (key, value) => {
+      storage.setItem(namespacedKey(key), value);
+    };
+    const removeItem = (key) => {
+      storage.removeItem(namespacedKey(key));
+    };
+
+    {{ if eq .status "success" }}
+    clearLegacy();
+    setItem("session.id", {{ .session_id }});
+    setItem("session.token", {{ .access_token }});
+    setItem("session.provider", {{ .provider }});
+    setItem("session.user", JSON.stringify({{ .user }}));
+    removeItem("session.error");
+    {{ else if eq .status "failed" }}
+    clearLegacy();
+    setItem("session.error", {{ .error }});
+    {{ else }}
+    clearLegacy();
+    removeItem("session.id");
+    removeItem("session.token");
+    removeItem("session.provider");
+    removeItem("session.user");
+    removeItem("session.error");
+    {{ end }}
+  })();
   window.location.href = {{ .config.LoginUri }};
 </script>
 </body>

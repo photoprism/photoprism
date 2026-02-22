@@ -1,8 +1,18 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
 import { Marker, BatchSize } from "model/marker";
 
 describe("model/marker", () => {
+  let originalBatchSize;
+
+  beforeEach(() => {
+    originalBatchSize = Marker.batchSize();
+  });
+
+  afterEach(() => {
+    Marker.setBatchSize(originalBatchSize);
+  });
+
   it("should get marker defaults", () => {
     const values = { FileUID: "fghjojp" };
     const marker = new Marker(values);
@@ -193,7 +203,6 @@ describe("model/marker", () => {
     expect(Marker.batchSize()).toBe(BatchSize);
     Marker.setBatchSize(30);
     expect(Marker.batchSize()).toBe(30);
-    Marker.setBatchSize(BatchSize);
   });
 
   it("should get collection resource", () => {

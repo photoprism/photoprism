@@ -19,7 +19,7 @@ import (
 var brokenVideo []byte
 
 // Abort writes a localized error response and stops further handler processing.
-func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
+func Abort(c *gin.Context, code int, id i18n.Message, params ...any) {
 	resp := i18n.NewResponse(code, id, params...)
 
 	if code >= 400 {
@@ -32,7 +32,7 @@ func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
 }
 
 // Error aborts the request while attaching error details to the response payload.
-func Error(c *gin.Context, code int, err error, id i18n.Message, params ...interface{}) {
+func Error(c *gin.Context, code int, err error, id i18n.Message, params ...any) {
 	resp := i18n.NewResponse(code, id, params...)
 
 	if err != nil {

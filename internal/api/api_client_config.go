@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // UpdateClientConfig publishes updated client configuration values over the websocket connections.
@@ -28,6 +29,12 @@ func UpdateClientConfig() {
 //	@Router		/api/v1/config [get]
 func GetClientConfig(router *gin.RouterGroup) {
 	router.GET("/config", func(c *gin.Context) {
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			AbortNotFound(c)
+			return
+		}
+
 		conf := get.Config()
 
 		if s := AuthAny(c, acl.ResourceConfig, acl.Permissions{acl.ActionView}); s.Valid() {

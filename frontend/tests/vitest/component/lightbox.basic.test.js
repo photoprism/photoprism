@@ -3,6 +3,12 @@ import { describe, it, expect, beforeEach } from "vitest";
 import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
+import { buildNamespace } from "common/storage";
+import clientConfig from "../config";
+
+const storagePrefix = buildNamespace(clientConfig.storageNamespace);
+const infoKey = `${storagePrefix}lightbox.info`;
+const mutedKey = `${storagePrefix}lightbox.muted`;
 
 const mountLightbox = () =>
   mount(PLightbox, {
@@ -19,8 +25,8 @@ const mountLightbox = () =>
 
 describe("PLightbox (low-mock, jsdom-friendly)", () => {
   beforeEach(() => {
-    localStorage.removeItem("lightbox.info");
-    sessionStorage.removeItem("lightbox.muted");
+    localStorage.removeItem(infoKey);
+    sessionStorage.removeItem(mutedKey);
   });
 
   it("toggleInfo updates info and localStorage when visible", async () => {
@@ -30,20 +36,20 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     // Use exposed onShortCut to trigger info toggle (KeyI)
     await wrapper.vm.onShortCut({ code: "KeyI" });
     await nextTick();
-    expect(localStorage.getItem("lightbox.info")).toBe("true");
+    expect(localStorage.getItem(infoKey)).toBe("true");
 
     await wrapper.vm.onShortCut({ code: "KeyI" });
     await nextTick();
-    expect(localStorage.getItem("lightbox.info")).toBe("false");
+    expect(localStorage.getItem(infoKey)).toBe("false");
   });
 
   it("toggleMute writes sessionStorage without requiring video or exposed state", async () => {
     const wrapper = mountLightbox();
-    expect(sessionStorage.getItem("lightbox.muted")).toBeNull();
+    expect(sessionStorage.getItem(mutedKey)).toBeNull();
     await wrapper.vm.onShortCut({ code: "KeyM" });
-    expect(sessionStorage.getItem("lightbox.muted")).toBe("true");
+    expect(sessionStorage.getItem(mutedKey)).toBe("true");
     await wrapper.vm.onShortCut({ code: "KeyM" });
-    expect(sessionStorage.getItem("lightbox.muted")).toBe("false");
+    expect(sessionStorage.getItem(mutedKey)).toBe("false");
   });
 
   it("getPadding returns expected structure for large and small screens", async () => {
@@ -62,9 +68,9 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
 
   it("KeyI is ignored when dialog is not visible", async () => {
     const wrapper = mountLightbox();
-    expect(localStorage.getItem("lightbox.info")).toBeNull();
+    expect(localStorage.getItem(infoKey)).toBeNull();
     await wrapper.vm.onShortCut({ code: "KeyI" });
-    expect(localStorage.getItem("lightbox.info")).toBeNull();
+    expect(localStorage.getItem(infoKey)).toBeNull();
   });
 
   it("getViewport falls back to window size without content ref", () => {

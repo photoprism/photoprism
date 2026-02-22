@@ -46,7 +46,7 @@ describe("PSidebarInfo component", () => {
     // Create a mock for DateTime.fromISO
     DateTime.fromISO = vi.fn().mockImplementation(() => {
       return {
-        toLocaleString: (format) => "January 1, 2023, 10:00 AM",
+        toLocaleString: () => "January 1, 2023, 10:00 AM",
       };
     });
 

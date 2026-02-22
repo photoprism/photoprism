@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestResample_Start(t *testing.T) {
@@ -43,6 +45,45 @@ func TestResample_Start(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestThumbs_DirHonorsPPIgnore(t *testing.T) {
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+
+	oldCfg := Config()
+	SetConfig(cfg)
+
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+	})
+
+	dir := t.TempDir()
+
+	ignoreName := filepath.Join(dir, fs.PPIgnoreFilename)
+	if err := os.WriteFile(ignoreName, []byte("*.jpg\n"), fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	jpgData, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	imageName := filepath.Join(dir, "ignored.jpg")
+	if err = os.WriteFile(imageName, jpgData, fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	done, err := NewThumbs(cfg).Dir(dir, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, ok := done[imageName]; !ok {
+		t.Fatalf("expected %s to be tracked in done map", imageName)
+	}
+
+	assert.False(t, done[imageName].Processed())
 }
 
 func TestThumb_Filename(t *testing.T) {

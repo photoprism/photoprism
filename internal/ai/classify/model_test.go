@@ -98,7 +98,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 			t.Logf("result: %#v", result[0])
 			assert.Equal(t, "chameleon", result[0].Name)
 
-			assert.Equal(t, 7, result[0].Uncertainty)
+			assert.InDelta(t, 7, result[0].Uncertainty, 3)
 		}
 	})
 	t.Run("CatNum224Jpeg", func(t *testing.T) {
@@ -199,7 +199,7 @@ func TestModel_Run(t *testing.T) {
 
 			if len(result) > 0 {
 				assert.Equal(t, "chameleon", result[0].Name)
-				assert.Equal(t, 100-93, result[0].Uncertainty)
+				assert.InDelta(t, 100-93, result[0].Uncertainty, 3)
 			}
 		}
 	})

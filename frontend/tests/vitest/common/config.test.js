@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
@@ -11,7 +11,31 @@ const createTestConfig = () => {
   return new Config(new StorageShim(), values);
 };
 
+const resetThemesToDefault = () => {
+  themes.SetOptions([
+    {
+      text: "Default",
+      value: "default",
+      disabled: false,
+    },
+  ]);
+
+  themes.Set("default", {
+    name: "default",
+    title: "Default",
+    colors: {},
+    variables: {},
+  });
+};
+
 describe("common/config", () => {
+  beforeEach(() => {
+    resetThemesToDefault();
+  });
+
+  afterEach(() => {
+    resetThemesToDefault();
+  });
   it("should get all config values", () => {
     const storage = new StorageShim();
     const values = { siteTitle: "Foo", name: "testConfig", year: "2300" };
@@ -116,42 +140,12 @@ describe("common/config", () => {
       variables: {},
     };
 
-    themes.SetOptions([
-      {
-        text: "Default",
-        value: "default",
-        disabled: false,
-      },
-    ]);
-
-    themes.Set("default", {
-      name: "default",
-      title: "Default",
-      colors: {},
-      variables: {},
-    });
-
     themes.Assign([forcedTheme]);
 
     cfg.setTheme("default");
 
     expect(cfg.themeName).toBe("portal-forced");
     expect(cfg.theme.colors.background).toBe("#111111");
-
-    themes.Remove("portal-forced");
-    themes.SetOptions([
-      {
-        text: "Default",
-        value: "default",
-        disabled: false,
-      },
-    ]);
-    themes.Set("default", {
-      name: "default",
-      title: "Default",
-      colors: {},
-      variables: {},
-    });
   });
 
   it("should return app edition", () => {

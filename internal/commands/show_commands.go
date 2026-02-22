@@ -38,10 +38,7 @@ func showCommandsAction(ctx *cli.Context) error {
 	includeHidden := ctx.Bool("all")
 	wantJSON := ctx.Bool("json")
 	nested := ctx.Bool("nested")
-	baseHeading := ctx.Int("base-heading")
-	if baseHeading < 1 {
-		baseHeading = 1
-	}
+	baseHeading := max(ctx.Int("base-heading"), 1)
 
 	// Collect the app metadata to be included in the output.
 	app := catalog.App{}

@@ -51,7 +51,7 @@ func AppendWebsocketTopics(topics ...string) {
 }
 
 // wsSendMessage sends a message to the WebSocket client.
-func wsSendMessage(topic string, data interface{}, ws *websocket.Conn, writeMutex *sync.Mutex) {
+func wsSendMessage(topic string, data any, ws *websocket.Conn, writeMutex *sync.Mutex) {
 	if topic == "" || ws == nil || writeMutex == nil {
 		return
 	}

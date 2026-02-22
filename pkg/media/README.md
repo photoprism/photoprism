@@ -1,8 +1,8 @@
 ## PhotoPrism — Media Package
 
-**Last Updated:** November 22, 2025
+**Last Updated:** February 14, 2026
 
-### Apple iPhone and iPad
+### Apple iPhone & iPad
 
 [iOS Live Photos](https://developer.apple.com/live-photos/) consist of a JPEG/HEIC image and a QuickTime AVC/HEVC video, which are both required for viewing.
 
@@ -17,7 +17,7 @@ The image part of these files can be opened in any image viewer that supports JP
 ### Introductory Tutorials
 
 | Title                                                   | Date     | URL                                                                                |
-|---------------------------------------------------------|----------|------------------------------------------------------------------------------------|
+|:--------------------------------------------------------|:---------|:-----------------------------------------------------------------------------------|
 | How to detect Android motion photos in Flutter          | May 2023 | https://ente.io/blog/tech/android-motion-photos-flutter/                           |
 | Stripping Embedded MP4s out of Android 12 Motion Photos | Oct 2021 | https://mjanja.ch/2021/10/stripping-embedded-mp4s-out-of-android-12-motion-photos/ |
 | Google Pixel "Motion Photo" Howto                       | Mar 2021 | https://linuxreviews.org/Google_Pixel_%22Motion_Photo%22                           |
@@ -25,10 +25,10 @@ The image part of these files can be opened in any image viewer that supports JP
 | Working with Motion Photos                              | Jan 2019 | https://medium.com/android-news/working-with-motion-photos-da0aa49b50c             |
 | Google: Behind the Motion Photos Technology in Pixel 2  | Mar 2018 | https://blog.research.google/2018/03/behind-motion-photos-technology-in.html       |
 
-### Software Libraries and References
+### Software Libraries & References
 
 | Title                                                | URL                                                                     |
-|------------------------------------------------------|-------------------------------------------------------------------------|
+|:-----------------------------------------------------|:------------------------------------------------------------------------|
 | Web Video Codec Guide                                | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs |
 | Media Container Formats                              | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Containers   |
 | MP4 Signature Format                                 | https://www.file-recovery.com/mp4-signature-format.htm                  |

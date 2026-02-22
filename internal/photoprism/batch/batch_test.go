@@ -34,7 +34,7 @@ func testMain(m *testing.M) (code int) {
 		// Prevent UpdateCountsAsync from causing the test suite to fail due to the database closing before the goroutine has finished.
 		mutex.Index.Lock()
 		if err := c.CloseDb(); err != nil {
-			log.Errorf("close db: %v", err)
+			log.Warnf("close db: %v", err)
 		}
 		// Remove temporary SQLite files after running the tests.
 		fs.PurgeTestDbFiles(".", false)

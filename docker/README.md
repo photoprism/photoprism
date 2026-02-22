@@ -1,4 +1,4 @@
-# Dockerfiles for Development and Production
+## Dockerfiles for Development & Production
 
 [**Dockerfiles**](https://docs.docker.com/engine/reference/builder/) are text documents that contain all commands a user could call in a terminal to assemble an application image.
 
@@ -6,7 +6,7 @@
 
 See our [Getting Started FAQ](https://docs.photoprism.app/getting-started/faq/#how-can-i-install-photoprism-without-docker) for alternative installation methods, for example using the [*tar.gz* packages](https://github.com/photoprism/photoprism/blob/develop/setup/pkg/linux/README.md) we provide for download at [dl.photoprism.app/pkg/linux/](https://dl.photoprism.app/pkg/linux/README.html).
 
-## What are the benefits of using Docker? ##
+### What Are the Benefits of Using Docker?
 
 **(1) Docker uses standard features of the Linux kernel.** Containers are nothing new; [Solaris Zones](https://en.wikipedia.org/wiki/Solaris_Containers) were released about 20 years ago and the chroot system call was introduced during [development of Version 7 Unix in 1979](https://en.wikipedia.org/wiki/Chroot). It is used ever since for hosting applications exposed to the public Internet. Modern Linux containers are an incremental improvement of this, based on standard functionality that is part of the kernel.
 
@@ -16,6 +16,6 @@ See our [Getting Started FAQ](https://docs.photoprism.app/getting-started/faq/#h
 
 **(4) Running applications in containers is more secure.** Last but not least, virtually all file format parsers have vulnerabilities that just haven't been discovered yet. This is a known risk that can affect you even if your computer is not directly connected to the Internet. Running apps in a container with limited host access is an easy way to improve security without compromising performance and usability.
 
-## Why not use virtual machines instead? ##
+### Why Not Use Virtual Machines Instead?
 
 A virtual machine with a dedicated operating system environment provides even more security, but usually has side effects such as lower performance and more difficult handling. Using a VM, however, doesn't prevent you from running containerized apps to get the best of both worlds. This is essentially what happens when you install Docker on [virtual cloud servers](https://docs.photoprism.app/getting-started/cloud/digitalocean/) and operating systems other than Linux.

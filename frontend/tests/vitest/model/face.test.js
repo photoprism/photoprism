@@ -1,8 +1,18 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
 import { Face, BatchSize } from "model/face";
 
 describe("model/face", () => {
+  let originalBatchSize;
+
+  beforeEach(() => {
+    originalBatchSize = Face.batchSize();
+  });
+
+  afterEach(() => {
+    Face.setBatchSize(originalBatchSize);
+  });
+
   it("should get face defaults", () => {
     const values = {};
     const face = new Face(values);
@@ -146,7 +156,6 @@ describe("model/face", () => {
     expect(Face.batchSize()).toBe(BatchSize);
     Face.setBatchSize(30);
     expect(Face.batchSize()).toBe(30);
-    Face.setBatchSize(BatchSize);
   });
 
   it("should get collection resource", () => {

@@ -44,7 +44,7 @@ const appDescription = "PhotoPrism® is an AI-Powered Photos App for the Decentr
 const appCopyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
 
 // Metadata contains build specific information.
-var Metadata = map[string]interface{}{
+var Metadata = map[string]any{
 	"Name":        appName,
 	"About":       appAbout,
 	"Edition":     appEdition,

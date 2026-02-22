@@ -132,9 +132,12 @@ import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
+import { getAppStorage } from "common/storage";
 
 import PLoading from "component/loading.vue";
 import PActionMenu from "component/action/menu.vue";
+
+const appStorage = getAppStorage();
 
 export default {
   name: "PPageLabels",
@@ -361,10 +364,10 @@ export default {
     sortOrder() {
       const keyName = "labels.order";
       const queryParam = this.$route.query["order"];
-      const storedOrder = window.localStorage.getItem(keyName);
+      const storedOrder = appStorage.getItem(keyName);
 
       if (queryParam) {
-        window.localStorage.setItem(keyName, queryParam);
+        appStorage.setItem(keyName, queryParam);
         return queryParam;
       } else if (storedOrder) {
         return storedOrder;
@@ -388,7 +391,7 @@ export default {
         return buffered;
       }
 
-      const storedOffset = parseInt(window.localStorage.getItem("labels.offset"));
+      const storedOffset = parseInt(appStorage.getItem("labels.offset"));
 
       if (this.offset > 0 || !Number.isFinite(storedOffset) || storedOffset <= 0) {
         return this.batchSize;
@@ -406,7 +409,7 @@ export default {
     setOffset(offset) {
       const value = Number.isFinite(Number(offset)) ? Number(offset) : 0;
       this.offset = value;
-      window.localStorage.setItem("labels.offset", String(value));
+      appStorage.setItem("labels.offset", String(value));
     },
     buildRestoreKey() {
       const staticFilter = JSON.stringify(this.staticFilter) || "";
@@ -791,7 +794,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("labels." + key, this.settings[key]);
+        appStorage.setItem("labels." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

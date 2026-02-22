@@ -16,7 +16,7 @@ const (
 )
 
 // PublishEntities publishes updated entity data.
-func PublishEntities(channel, ev string, entities interface{}) {
+func PublishEntities(channel, ev string, entities any) {
 	if channel == "" || ev == "" || entities == nil {
 		return
 	}
@@ -29,7 +29,7 @@ func PublishEntities(channel, ev string, entities interface{}) {
 }
 
 // PublishUserEntities publishes updated entity data for a user.
-func PublishUserEntities(channel, ev string, entities interface{}, userUid string) {
+func PublishUserEntities(channel, ev string, entities any, userUid string) {
 	if userUid == "" {
 		PublishEntities(channel, ev, entities)
 		return
@@ -46,26 +46,26 @@ func PublishUserEntities(channel, ev string, entities interface{}, userUid strin
 }
 
 // EntitiesUpdated publishes an update notification for the given channel.
-func EntitiesUpdated(channel string, entities interface{}) {
+func EntitiesUpdated(channel string, entities any) {
 	PublishEntities(channel, EntityUpdated, entities)
 }
 
 // EntitiesCreated publishes a create notification for the given channel.
-func EntitiesCreated(channel string, entities interface{}) {
+func EntitiesCreated(channel string, entities any) {
 	PublishEntities(channel, EntityCreated, entities)
 }
 
 // EntitiesDeleted publishes a delete notification for the given channel.
-func EntitiesDeleted(channel string, entities interface{}) {
+func EntitiesDeleted(channel string, entities any) {
 	PublishEntities(channel, EntityDeleted, entities)
 }
 
 // EntitiesArchived publishes an archive notification for the given channel.
-func EntitiesArchived(channel string, entities interface{}) {
+func EntitiesArchived(channel string, entities any) {
 	PublishEntities(channel, EntityArchived, entities)
 }
 
 // EntitiesRestored publishes a restore notification for the given channel.
-func EntitiesRestored(channel string, entities interface{}) {
+func EntitiesRestored(channel string, entities any) {
 	PublishEntities(channel, EntityRestored, entities)
 }

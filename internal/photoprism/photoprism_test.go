@@ -28,7 +28,7 @@ func testMain(m *testing.M) int {
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
-			log.Errorf("close db: %v", err)
+			log.Warnf("close db: %v", err)
 		}
 		// Remove temporary SQLite files after running the tests.
 		fs.PurgeTestDbFiles(".", false)

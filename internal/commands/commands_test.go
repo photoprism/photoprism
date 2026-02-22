@@ -46,7 +46,7 @@ func testMain(m *testing.M) int {
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
-			log.Errorf("close db: %v", err)
+			log.Warnf("close db: %v", err)
 		}
 		// Remove temporary SQLite files after running the tests.
 		fs.PurgeTestDbFiles(".", false)
@@ -66,6 +66,31 @@ func testMain(m *testing.M) int {
 	return m.Run()
 }
 
+// SetEnvForTest sets an environment variable and restores its original value after the test.
+func SetEnvForTest(t *testing.T, key, value string) {
+	t.Helper()
+
+	previous, hadPrevious := os.LookupEnv(key)
+
+	if err := os.Setenv(key, value); err != nil {
+		t.Fatalf("set env %s: %v", key, err)
+	}
+
+	t.Cleanup(func() {
+		var restoreErr error
+
+		if hadPrevious {
+			restoreErr = os.Setenv(key, previous)
+		} else {
+			restoreErr = os.Unsetenv(key)
+		}
+
+		if restoreErr != nil {
+			t.Errorf("restore env %s: %v", key, restoreErr)
+		}
+	})
+}
+
 // NewTestContext creates a new CLI test context with the flags and arguments provided.
 func NewTestContext(args []string) *cli.Context {
 	// Create new command-line test app.
@@ -83,7 +108,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.HideHelpCommand = true
 	app.Action = func(*cli.Context) error { return nil }
 	app.EnableBashCompletion = false
-	app.Metadata = map[string]interface{}{
+	app.Metadata = map[string]any{
 		"Name":    "PhotoPrism",
 		"About":   "PhotoPrism®",
 		"Edition": "ce",

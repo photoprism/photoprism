@@ -15,7 +15,7 @@ func TestBase10(t *testing.T) {
 		assert.False(t, InvalidRefID(s))
 		assert.Equal(t, 10, len(s))
 
-		for n := 0; n < 10; n++ {
+		for n := range 10 {
 			s = Base10(10)
 			t.Logf("Base10 %d: %s", n, s)
 			assert.NotEmpty(t, s)
@@ -40,7 +40,7 @@ func TestBase36(t *testing.T) {
 		assert.False(t, InvalidRefID(s))
 		assert.Equal(t, 10, len(s))
 
-		for n := 0; n < 10; n++ {
+		for n := range 10 {
 			s = Base36(10)
 			t.Logf("Base36 %d: %s", n, s)
 			assert.NotEmpty(t, s)
@@ -58,7 +58,7 @@ func TestBase36(t *testing.T) {
 
 func TestBase62(t *testing.T) {
 	t.Run("Ten", func(t *testing.T) {
-		for n := 0; n < 10; n++ {
+		for n := range 10 {
 			s := Base62(10)
 			t.Logf("Base62 %d: %s", n, s)
 			assert.NotEmpty(t, s)
@@ -73,7 +73,7 @@ func TestBase62(t *testing.T) {
 		assert.Equal(t, 23, len(s))
 	})
 	t.Run("Num32", func(t *testing.T) {
-		for n := 0; n < 10; n++ {
+		for n := range 10 {
 			s := Base62(32)
 			t.Logf("Base62 (32 chars) %d: %s", n, s)
 			assert.NotEmpty(t, s)
@@ -118,7 +118,7 @@ func TestRandomToken(t *testing.T) {
 		assert.NotEmpty(t, s)
 	})
 	t.Run("Log", func(t *testing.T) {
-		for n := 0; n < 10; n++ {
+		for n := range 10 {
 			s := Base36(8)
 			t.Logf("%d: %s", n, s)
 			assert.NotEmpty(t, s)
