@@ -55,9 +55,11 @@ func (i IgnorePattern) Ignore(dir, name string) bool {
 }
 
 // IgnoreList checks a list of configurable name patterns to see whether they should be ignored.
+// It is safe for concurrent use.
 type IgnoreList struct {
 	Log           IgnoreLogFunc
 	ignore        []IgnorePattern
+	ignoreMutex   sync.RWMutex
 	ignored       []string
 	ignoredMutex  sync.Mutex
 	ignoreHidden  bool
@@ -73,6 +75,8 @@ func NewIgnoreList(configFile string, ignoreHidden bool, caseSensitive bool) *Ig
 	return &IgnoreList{
 		Log:           func(fileName string) {},
 		configFile:    configFile,
+		ignore:        make([]IgnorePattern, 0, 256),
+		ignoreMutex:   sync.RWMutex{},
 		ignored:       make([]string, 0, 256),
 		ignoredMutex:  sync.Mutex{},
 		hidden:        make([]string, 0, 256),
@@ -85,12 +89,24 @@ func NewIgnoreList(configFile string, ignoreHidden bool, caseSensitive bool) *Ig
 
 // Hidden returns hidden files that were ignored.
 func (l *IgnoreList) Hidden() []string {
-	return l.hidden
+	l.ignoredMutex.Lock()
+	defer l.ignoredMutex.Unlock()
+
+	result := make([]string, len(l.hidden))
+	copy(result, l.hidden)
+
+	return result
 }
 
 // Ignored returns files that were ignored in addition to hidden files.
 func (l *IgnoreList) Ignored() []string {
-	return l.ignored
+	l.ignoredMutex.Lock()
+	defer l.ignoredMutex.Unlock()
+
+	result := make([]string, len(l.ignored))
+	copy(result, l.ignored)
+
+	return result
 }
 
 // AddPatterns adds items to the list of ignored items.
@@ -101,6 +117,9 @@ func (l *IgnoreList) AddPatterns(dir string, patterns []string) error {
 		// Nothing to add.
 		return nil
 	}
+
+	l.ignoreMutex.Lock()
+	defer l.ignoreMutex.Unlock()
 
 	for _, pattern := range patterns {
 		// Trim slashes and null bytes from the pattern.
@@ -183,26 +202,34 @@ func (l *IgnoreList) Ignore(name string) bool {
 		return true
 	}
 
-	// Use mutex for thread safety.
-	l.ignoredMutex.Lock()
-	defer l.ignoredMutex.Unlock()
-
 	// Iterate through configured patterns to determine if the name should be ignored.
+	matched := false
+	l.ignoreMutex.RLock()
 	for _, pattern := range l.ignore {
 		if pattern.Ignore(dir, baseName) {
-			l.ignored = append(l.ignored, name)
-
-			if l.Log != nil {
-				l.Log(name)
-			}
-
-			return true
+			matched = true
+			break
 		}
+	}
+	l.ignoreMutex.RUnlock()
+
+	if matched {
+		l.ignoredMutex.Lock()
+		l.ignored = append(l.ignored, name)
+		l.ignoredMutex.Unlock()
+
+		if l.Log != nil {
+			l.Log(name)
+		}
+
+		return true
 	}
 
 	// Ignore hidden files and folders whose name e.g. starts with a "."?
 	if l.ignoreHidden && FileNameHidden(name) {
+		l.ignoredMutex.Lock()
 		l.hidden = append(l.hidden, name)
+		l.ignoredMutex.Unlock()
 
 		return true
 	}
@@ -212,10 +239,17 @@ func (l *IgnoreList) Ignore(name string) bool {
 
 // Reset resets ignored and hidden files.
 func (l *IgnoreList) Reset() {
-	l.ignore = []IgnorePattern{}
+	l.configMutex.Lock()
+	defer l.configMutex.Unlock()
+
+	l.ignoreMutex.Lock()
+	defer l.ignoreMutex.Unlock()
+
+	l.ignoredMutex.Lock()
+	defer l.ignoredMutex.Unlock()
+
+	l.ignore = make([]IgnorePattern, 0, 256)
 	l.ignored = make([]string, 0, 256)
-	l.ignoredMutex = sync.Mutex{}
 	l.hidden = make([]string, 0, 256)
 	l.configFiles = make(map[string][]string)
-	l.configMutex = sync.Mutex{}
 }

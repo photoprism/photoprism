@@ -411,11 +411,7 @@ func minMarkerDistance(faceEmb face.Embedding, embeddings face.Embeddings) float
 func embeddingSignHash(values []float64) uint32 {
 	var hash uint32
 
-	limit := faceIndexHashDims
-
-	if limit > len(values) {
-		limit = len(values)
-	}
+	limit := min(faceIndexHashDims, len(values))
 
 	for i := 0; i < limit; i++ {
 		if values[i] >= 0 && i < 32 {
@@ -434,11 +430,7 @@ func embeddingSignHashFromEmbeddings(embeddings face.Embeddings) uint32 {
 		return 0
 	}
 
-	dims := faceIndexHashDims
-
-	if dims > len(embeddings[0]) {
-		dims = len(embeddings[0])
-	}
+	dims := min(faceIndexHashDims, len(embeddings[0]))
 
 	var sums [faceIndexHashDims]float64
 

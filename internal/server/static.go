@@ -1,8 +1,6 @@
 package server
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -25,7 +23,7 @@ var Static = func(conf *config.Config) gin.HandlerFunc {
 			}
 
 			// Add additional information to preflight OPTION requests.
-			if c.Request.Method == http.MethodOptions {
+			if c.Request.Method == header.MethodOptions {
 				c.Header(header.AccessControlAllowHeaders, conf.CORSHeaders())
 				c.Header(header.AccessControlAllowMethods, conf.CORSMethods())
 				c.Header(header.AccessControlMaxAge, header.DefaultAccessControlMaxAge)

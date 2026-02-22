@@ -86,7 +86,7 @@ var CompatibleBrands = Chunks{
 }
 
 // FileTypeOffset returns the file type start offset, or -1 if it was not found.
-func FileTypeOffset(fileName string, brands Chunks) (int, error) {
+func FileTypeOffset(fileName string, brands Chunks) (index int, err error) {
 	if !fs.FileExists(fileName) {
 		return -1, errors.New("file not found")
 	}
@@ -97,9 +97,9 @@ func FileTypeOffset(fileName string, brands Chunks) (int, error) {
 		return -1, err
 	}
 
-	defer file.Close()
+	defer func() {
+		err = errors.Join(err, file.Close())
+	}()
 
-	index, err := brands.FileTypeOffset(file)
-
-	return index, err
+	return brands.FileTypeOffset(file)
 }

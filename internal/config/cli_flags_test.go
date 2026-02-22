@@ -284,3 +284,26 @@ func TestCliFlags_SetHidden(t *testing.T) {
 	t.Logf("public hidden flag after: %#v", result[0].Hidden())
 	t.Logf("auth-mode hidden flag after: %#v", cliFlags[1].Hidden())
 }
+
+func TestCliFlags_ThemeURLHiddenByDefault(t *testing.T) {
+	var themeURLFlag *CliFlag
+
+	for i := range Flags {
+		if Flags[i].Name() == "theme-url" {
+			themeURLFlag = &Flags[i]
+			break
+		}
+	}
+
+	if assert.NotNil(t, themeURLFlag) {
+		assert.True(t, themeURLFlag.Hidden())
+	}
+
+	rows, _ := Flags.Report()
+
+	for _, row := range rows {
+		if len(row) > 0 && row[0] == "PHOTOPRISM_THEME_URL" {
+			t.Fatalf("expected PHOTOPRISM_THEME_URL to be hidden in the default flag report")
+		}
+	}
+}

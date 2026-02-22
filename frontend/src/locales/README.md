@@ -1,4 +1,4 @@
-# Frontend Translations
+## Frontend Translations
 
 PhotoPrism uses [gettext](https://en.wikipedia.org/wiki/Gettext) for localizing frontend and backend.
 It's one of the most widely adopted standards for translating user interfaces.

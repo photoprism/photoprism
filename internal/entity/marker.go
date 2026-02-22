@@ -142,13 +142,13 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 }
 
 // Updates multiple columns in the database.
-func (m *Marker) Updates(values interface{}) error {
+func (m *Marker) Updates(values any) error {
 	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update updates a column in the database.
-func (m *Marker) Update(attr string, value interface{}) error {
+func (m *Marker) Update(attr string, value any) error {
 	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
@@ -348,7 +348,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 	if m.FaceID == "" || m.SubjUID == "" {
 		// Do nothing.
 	} else if res := Db().Model(&Face{}).Where("id = ? AND subj_uid = ''", m.FaceID).UpdateColumn("subj_uid", m.SubjUID); res.Error != nil {
-		return fmt.Errorf("%s (update known face)", err)
+		return fmt.Errorf("%s (update known face)", res.Error)
 	} else if !updateRelated {
 		return nil
 	} else if err := Db().Model(&Marker{}).
@@ -559,9 +559,13 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 	// Remove subject if set automatically.
 	if m.SubjSrc == SrcAuto {
 		m.SubjUID = ""
-		err = m.Updates(Values{"face_id": m.FaceID, "face_dist": m.FaceDist, "subj_uid": m.SubjUID, "matched_at": m.MatchedAt})
+		if err = m.Updates(Values{"face_id": m.FaceID, "face_dist": m.FaceDist, "subj_uid": m.SubjUID, "matched_at": m.MatchedAt}); err != nil {
+			return updated, err
+		}
 	} else {
-		err = m.Updates(Values{"face_id": m.FaceID, "face_dist": -1.0, "matched_at": m.MatchedAt})
+		if err = m.Updates(Values{"face_id": m.FaceID, "face_dist": -1.0, "matched_at": m.MatchedAt}); err != nil {
+			return updated, err
+		}
 	}
 
 	return updated, m.RefreshPhotos()

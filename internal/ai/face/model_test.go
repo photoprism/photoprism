@@ -112,8 +112,8 @@ func TestNet(t *testing.T) {
 	// Dist Matrix
 	correct := 0
 
-	for i := 0; i < len(embeddings); i++ {
-		for j := 0; j < len(embeddings); j++ {
+	for i := range embeddings {
+		for j := range embeddings {
 			if i >= j {
 				continue
 			}

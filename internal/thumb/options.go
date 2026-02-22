@@ -1,6 +1,8 @@
 package thumb
 
 import (
+	"slices"
+
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -33,13 +35,7 @@ type Options []ResampleOption
 
 // Contains checks if the specified option is set.
 func (o Options) Contains(option ResampleOption) bool {
-	for _, v := range o {
-		if v == option {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(o, option)
 }
 
 // ResampleOptions extracts filter, format, and method from resample options.

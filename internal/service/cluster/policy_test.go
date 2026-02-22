@@ -106,7 +106,9 @@ func TestApplyPolicyEnvNoEnvSet(t *testing.T) {
 	}
 
 	for _, v := range vars {
-		os.Unsetenv(v)
+		if err := os.Unsetenv(v); err != nil {
+			t.Fatalf("failed clearing %s: %v", v, err)
+		}
 	}
 
 	originalAutoJoin := BootstrapAutoJoinEnabled

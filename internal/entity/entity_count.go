@@ -5,7 +5,7 @@ import (
 )
 
 // Count returns the number of records for a given a model and key values.
-func Count(m interface{}, keys []string, values []interface{}) int {
+func Count(m any, keys []string, values []any) int {
 	if m == nil || len(keys) != len(values) {
 		log.Debugf("entity: invalid parameters (count records)")
 		return -1

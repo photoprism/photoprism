@@ -184,13 +184,6 @@ func TestShowConfigOptions_MarkdownSections(t *testing.T) {
 	}
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func TestShowFileFormats_JSON(t *testing.T) {
 	out, err := RunWithTestContext(ShowFileFormatsCommand, []string{"file-formats", "--json"})
 

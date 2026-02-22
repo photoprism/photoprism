@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -99,8 +100,8 @@ type Photo struct {
 	Files            []File        `yaml:"-"`
 	Labels           []PhotoLabel  `yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
-	CreatedAt        time.Time     `json:"CreatedAt,omitempty" yaml:"CreatedAt,omitempty"`
-	UpdatedAt        time.Time     `json:"UpdatedAt,omitempty" yaml:"UpdatedAt,omitempty"`
+	CreatedAt        time.Time     `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time     `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time    `json:"EditedAt,omitempty" yaml:"EditedAt,omitempty"`
 	PublishedAt      *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	IndexedAt        *time.Time    `json:"IndexedAt,omitempty" yaml:"-"`
@@ -332,7 +333,7 @@ func (m *Photo) Save() error {
 }
 
 // Update a column in the database.
-func (m *Photo) Update(attr string, value interface{}) error {
+func (m *Photo) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("photo must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -343,7 +344,7 @@ func (m *Photo) Update(attr string, value interface{}) error {
 }
 
 // Updates multiple columns in the database.
-func (m *Photo) Updates(values interface{}) error {
+func (m *Photo) Updates(values any) error {
 	if values == nil {
 		return nil
 	} else if m == nil {
@@ -411,13 +412,7 @@ func (m *Photo) ResetDuration() {
 func (m *Photo) HasMediaType(types ...media.Type) bool {
 	mediaType := m.MediaType()
 
-	for _, t := range types {
-		if mediaType == t {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(types, mediaType)
 }
 
 // SetMediaType sets a new media type if its priority is higher than that of the current type.
@@ -944,11 +939,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 
 		template := NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, labelSrc)
 		template.Topicality = classifyLabel.Topicality
-		score := 0
-
-		if classifyLabel.NSFWConfidence > 0 {
-			score = classifyLabel.NSFWConfidence
-		}
+		score := max(classifyLabel.NSFWConfidence, 0)
 
 		if classifyLabel.NSFW && score == 0 {
 			score = 100
@@ -979,10 +970,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 			}
 
 			if classifyLabel.NSFWConfidence > 0 || classifyLabel.NSFW {
-				nsfwScore := 0
-				if classifyLabel.NSFWConfidence > 0 {
-					nsfwScore = classifyLabel.NSFWConfidence
-				}
+				nsfwScore := max(classifyLabel.NSFWConfidence, 0)
 				if classifyLabel.NSFW && nsfwScore == 0 {
 					nsfwScore = 100
 				}
@@ -1337,7 +1325,11 @@ func (m *Photo) SetPrimary(fileUid string) (err error) {
 		return err
 	} else if m.PhotoQuality < 0 {
 		m.PhotoQuality = 0
-		err = m.UpdateQuality()
+		if err = m.UpdateQuality(); err != nil {
+			// Continue after logging because the file index is regenerated below and
+			// most primary-file updates have already been persisted.
+			log.Errorf("photo: %s (set primary update quality)", err)
+		}
 	}
 
 	// Regenerate file search index.

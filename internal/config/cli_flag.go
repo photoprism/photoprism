@@ -25,7 +25,7 @@ func (f CliFlag) Skip(tags []string) bool {
 func (f CliFlag) Fields() reflect.Value {
 	fields := reflect.ValueOf(f.Flag)
 
-	for fields.Kind() == reflect.Ptr {
+	for fields.Kind() == reflect.Pointer {
 		fields = reflect.Indirect(fields)
 	}
 

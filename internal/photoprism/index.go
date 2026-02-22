@@ -103,7 +103,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	var wg sync.WaitGroup
 	var numWorkers = ind.conf.IndexWorkers()
 	wg.Add(numWorkers)
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		go func() {
 			IndexWorker(jobs) // HLc
 			wg.Done()

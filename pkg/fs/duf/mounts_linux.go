@@ -135,7 +135,7 @@ func parseMountInfoLine(line string) (int, [11]string) {
 	}
 
 	var i int
-	for _, f := range strings.Fields(line) {
+	for f := range strings.FieldsSeq(line) {
 		// when parsing the optional fields, loop until we find the separator
 		if i == mountinfoOptionalFields {
 			// (6)  optional fields: zero or more fields of the form

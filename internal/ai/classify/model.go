@@ -133,6 +133,8 @@ func (m *Model) Run(img []byte, confidenceThreshold int) (result Labels, err err
 		return nil, loadErr
 	}
 
+	defer tensorflow.MaybeCollectTensorMemory()
+
 	// Create input tensor from image.
 	tensor, err := m.createTensor(img)
 

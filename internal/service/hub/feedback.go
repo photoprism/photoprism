@@ -97,7 +97,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 
 	var r *http.Response
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		r, err = client.Do(req)
 
 		if err == nil {

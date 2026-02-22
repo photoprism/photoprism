@@ -322,31 +322,31 @@ func TestOrLike(t *testing.T) {
 		where, values := OrLike("k.keyword", "")
 
 		assert.Equal(t, "", where)
-		assert.Equal(t, []interface{}{}, values)
+		assert.Equal(t, []any{}, values)
 	})
 	t.Run("OneTerm", func(t *testing.T) {
 		where, values := OrLike("k.keyword", "bar")
 
 		assert.Equal(t, "k.keyword LIKE ?", where)
-		assert.Equal(t, []interface{}{"bar"}, values)
+		assert.Equal(t, []any{"bar"}, values)
 	})
 	t.Run("TwoTerms", func(t *testing.T) {
 		where, values := OrLike("k.keyword", "foo*%|bar")
 
 		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ?", where)
-		assert.Equal(t, []interface{}{"foo%", "bar"}, values)
+		assert.Equal(t, []any{"foo%", "bar"}, values)
 	})
 	t.Run("OneFilename", func(t *testing.T) {
 		where, values := OrLike("files.file_name", " 2790/07/27900704_070228_D6D51B6C.jpg")
 
 		assert.Equal(t, "files.file_name LIKE ?", where)
-		assert.Equal(t, []interface{}{" 2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, []any{" 2790/07/27900704_070228_D6D51B6C.jpg"}, values)
 	})
 	t.Run("TwoFilenames", func(t *testing.T) {
 		where, values := OrLike("files.file_name", "1990*|2790/07/27900704_070228_D6D51B6C.jpg")
 
 		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ?", where)
-		assert.Equal(t, []interface{}{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, []any{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
 	})
 }
 
@@ -355,55 +355,55 @@ func TestOrLikeCols(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "")
 
 		assert.Equal(t, "", where)
-		assert.Equal(t, []interface{}{}, values)
+		assert.Equal(t, []any{}, values)
 	})
 	t.Run("OneTerm", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "bar")
 
 		assert.Equal(t, "k.keyword LIKE ? OR p.photo_caption LIKE ?", where)
-		assert.Equal(t, []interface{}{"bar", "bar"}, values)
+		assert.Equal(t, []any{"bar", "bar"}, values)
 	})
 	t.Run("TwoTerms", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "foo*%|bar")
 
 		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ? OR p.photo_caption LIKE ? OR p.photo_caption LIKE ?", where)
-		assert.Equal(t, []interface{}{"foo%", "bar", "foo%", "bar"}, values)
+		assert.Equal(t, []any{"foo%", "bar", "foo%", "bar"}, values)
 	})
 	t.Run("OneTermEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "\\|bar")
 
 		assert.Equal(t, "k.keyword LIKE ? OR p.photo_caption LIKE ?", where)
-		assert.Equal(t, []interface{}{"|bar", "|bar"}, values)
+		assert.Equal(t, []any{"|bar", "|bar"}, values)
 	})
 	t.Run("TwoTermsEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "foo*%|\\|bar")
 
 		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ? OR p.photo_caption LIKE ? OR p.photo_caption LIKE ?", where)
-		assert.Equal(t, []interface{}{"foo%", "|bar", "foo%", "|bar"}, values)
+		assert.Equal(t, []any{"foo%", "|bar", "foo%", "|bar"}, values)
 	})
 	t.Run("OneFilename", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name"}, " 2790/07/27900704_070228_D6D51B6C.jpg")
 
 		assert.Equal(t, "files.file_name LIKE ?", where)
-		assert.Equal(t, []interface{}{" 2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, []any{" 2790/07/27900704_070228_D6D51B6C.jpg"}, values)
 	})
 	t.Run("TwoFilenames", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name", "photos.photo_name"}, "1990*|2790/07/27900704_070228_D6D51B6C.jpg")
 
 		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ? OR photos.photo_name LIKE ? OR photos.photo_name LIKE ?", where)
-		assert.Equal(t, []interface{}{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, []any{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
 	})
 	t.Run("OneFilenameEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name"}, " 2790/07/27900704_070228_D6D\\|51B6C.jpg")
 
 		assert.Equal(t, "files.file_name LIKE ?", where)
-		assert.Equal(t, []interface{}{" 2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
+		assert.Equal(t, []any{" 2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
 	})
 	t.Run("TwoFilenamesEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name", "photos.photo_name"}, "1990*|2790/07/27900704_070228_D6D\\|51B6C.jpg")
 
 		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ? OR photos.photo_name LIKE ? OR photos.photo_name LIKE ?", where)
-		assert.Equal(t, []interface{}{"1990%", "2790/07/27900704_070228_D6D|51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
+		assert.Equal(t, []any{"1990%", "2790/07/27900704_070228_D6D|51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
 	})
 }
 

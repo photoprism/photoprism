@@ -17,10 +17,13 @@ func NewApiRequestOllama(images Files, fileScheme scheme.Type) (*ApiRequest, err
 	for i := range images {
 		switch fileScheme {
 		case scheme.Data, scheme.Base64:
-			if file, err := os.Open(images[i]); err != nil {
+			file, err := os.Open(images[i])
+			if err != nil {
 				return nil, fmt.Errorf("%s (create data url)", err)
-			} else {
-				imagesData[i] = media.DataBase64(file)
+			}
+			imagesData[i] = media.DataBase64(file)
+			if err := file.Close(); err != nil {
+				return nil, fmt.Errorf("%s (close data url)", err)
 			}
 		default:
 			return nil, fmt.Errorf("unsupported file scheme %s", clean.Log(fileScheme))

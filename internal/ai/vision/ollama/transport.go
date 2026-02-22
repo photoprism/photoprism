@@ -12,7 +12,7 @@ type Response struct {
 	Code               int           `yaml:"Code,omitempty" json:"code,omitempty"`
 	Error              string        `yaml:"Error,omitempty" json:"error,omitempty"`
 	Model              string        `yaml:"Model,omitempty" json:"model,omitempty"`
-	CreatedAt          time.Time     `yaml:"CreatedAt,omitempty" json:"created_at,omitempty"`
+	CreatedAt          time.Time     `yaml:"CreatedAt,omitempty" json:"created_at"`
 	Response           string        `yaml:"Response,omitempty" json:"response,omitempty"`
 	Thinking           string        `yaml:"Thinking,omitempty" json:"thinking,omitempty"`
 	Done               bool          `yaml:"Done,omitempty" json:"done,omitempty"`
@@ -23,7 +23,7 @@ type Response struct {
 	PromptEvalDuration int           `yaml:"PromptEvalDuration,omitempty" json:"prompt_eval_duration,omitempty"`
 	EvalCount          int           `yaml:"EvalCount,omitempty" json:"eval_count,omitempty"`
 	EvalDuration       int64         `yaml:"EvalDuration,omitempty" json:"eval_duration,omitempty"`
-	Result             ResultPayload `yaml:"Result,omitempty" json:"result,omitempty"`
+	Result             ResultPayload `yaml:"Result,omitempty" json:"result"`
 }
 
 // Err returns an error if the request has failed.

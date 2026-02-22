@@ -11,8 +11,8 @@ func JSON(raw string) string {
 		return ""
 	}
 
-	if strings.HasPrefix(trimmed, "```") {
-		trimmed = strings.TrimPrefix(trimmed, "```")
+	if after, ok := strings.CutPrefix(trimmed, "```"); ok {
+		trimmed = after
 		trimmed = strings.TrimSpace(trimmed)
 
 		if !strings.HasPrefix(trimmed, "{") && !strings.HasPrefix(trimmed, "[") {
@@ -36,11 +36,7 @@ func JSON(raw string) string {
 	start := -1
 	switch {
 	case startObj >= 0 && startArr >= 0:
-		if startObj < startArr {
-			start = startObj
-		} else {
-			start = startArr
-		}
+		start = min(startObj, startArr)
 	case startObj >= 0:
 		start = startObj
 	case startArr >= 0:
@@ -53,11 +49,7 @@ func JSON(raw string) string {
 	end := -1
 	switch {
 	case endObj >= 0 && endArr >= 0:
-		if endObj > endArr {
-			end = endObj
-		} else {
-			end = endArr
-		}
+		end = max(endObj, endArr)
 	case endObj >= 0:
 		end = endObj
 	case endArr >= 0:

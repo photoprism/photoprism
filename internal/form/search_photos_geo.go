@@ -47,7 +47,7 @@ type SearchPhotosGeo struct {
 	Square      bool      `form:"square" notes:"Finds square pictures only (aspect ratio 1:1)"`
 	Archived    bool      `form:"archived" notes:"Finds archived content"`
 	Public      bool      `form:"public" notes:"Excludes private content"`
-	Private     bool      `form:"private" notes:"Finds private content"`
+	Private     bool      `form:"private" notes:"Finds private content only (except when public:true)"`
 	Review      bool      `form:"review" notes:"Finds content in review"`
 	Quality     int       `form:"quality" notes:"Minimum quality score (1-7)"`
 	Face        string    `form:"face" notes:"Find pictures with a specific face ID, you can also specify yes, no, new, or a face type"`

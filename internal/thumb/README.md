@@ -1,12 +1,12 @@
 ## PhotoPrism — Thumbnails Package
 
-**Last Updated:** November 24, 2025
+**Last Updated:** February 20, 2026
 
 ### Overview
 
 `internal/thumb` builds thumbnails with libvips, handling resize/crop options, color management, metadata stripping, and format export (JPEG/PNG). It is used by PhotoPrism’s workers and CLI to generate cached thumbs consistently.
 
-### Context & Constraints
+### Constraints
 
 - Uses libvips via govips; initialization is centralized in `VipsInit`.
 - Works on files or in-memory buffers; writes outputs with `fs.ModeFile`.
@@ -67,3 +67,19 @@
 
 - When adding ICC files, place them in `assets/profiles/icc/` and append to `IccProfiles`.
 - Comments for exported identifiers must start with the identifier name (Go style).
+
+### Go 1.26 JPEG Notes
+
+Go `1.26.0` replaced the standard `image/jpeg` encoder and decoder. This package primarily relies on libvips for thumbnail generation, but helper paths and tests that decode or encode JPEGs through Go libraries can observe behavior changes after toolchain upgrades.
+
+Observed impact during internal comparison runs (Go `1.25.4` vs `1.26.0`):
+
+- **Compatibility** — No decode failures for 55/55 JPEG fixtures in `assets/examples` on either version.
+- **Decoded Pixels** — All scanned JPEG fixtures produced different decoded pixel hashes across versions, even though dimensions were unchanged.
+- **Re-Encode Size** — Re-encoded JPEG sizes changed slightly in both directions; aggregate deltas were small (about `+0.014%` at default quality, about `+0.017%` at quality 95 in our fixture scan).
+- **Throughput** — Micro-benchmark runs showed modest improvements in decode and decode+encode throughput in Go `1.26.0`.
+
+Testing guidance:
+
+- Do not rely on bit-for-bit JPEG output across Go toolchain upgrades.
+- Prefer assertions on image dimensions, error-free processing, and perceptual/tolerance metrics where appropriate.

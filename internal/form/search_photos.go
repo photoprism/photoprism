@@ -46,7 +46,7 @@ type SearchPhotos struct {
 	Square      bool      `form:"square" notes:"Finds square pictures only (aspect ratio 1:1)"`
 	Archived    bool      `form:"archived" notes:"Finds archived content"`
 	Public      bool      `form:"public" notes:"Excludes private content"`
-	Private     bool      `form:"private" notes:"Finds private content"`
+	Private     bool      `form:"private" notes:"Finds private content only (except when public:true)"`
 	Review      bool      `form:"review" notes:"Finds content in review"`
 	Error       bool      `form:"error" notes:"Finds content with errors"`
 	Hidden      bool      `form:"hidden" notes:"Finds hidden content (broken or unsupported)"`

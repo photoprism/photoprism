@@ -1,16 +1,16 @@
-# Provisioner Package Guide
+## Provisioner Package Guide
 
-## Overview
+### Overview
 
 The provisioner package manages per-node MariaDB schemas and users for cluster deployments. It derives deterministic identifiers from the cluster UUID and node name using a configurable prefix (default `cluster_`), creates or rotates credentials via the admin DSN, and exposes helpers (`EnsureCredentials`, `DropCredentials`, `GenerateCredentials`) that API and CLI layers can reuse when onboarding or rotating nodes.
 
-## Development Workflow
+### Development Workflow
 
 - Configuration lives in `database.go`. The admin connection string is `ProvisionDSN` (default `root:photoprism@tcp(mariadb:4001)/photoprism?...`). Adjust only when running against a different host or password.
 - `EnsureCredentials` accepts node UUID and name, creates the schema if needed, and returns credentials plus rotation metadata. `DropCredentials` revokes grants, drops the user, and removes the schema. Both functions require a context; prefer `context.WithTimeout` in callers.
 - Identifier generation is centralized in `GenerateCredentials`. Call it instead of handcrafting database or user names so tests, CLI, and API stay aligned. The resulting identifiers follow `<prefix>d<hmac11>` for schemas and `<prefix>u<hmac11>` for users. Portal deployments may override the prefix via the `database-provision-prefix` flag; defaults are `cluster_d…` / `cluster_u…`.
 
-## Testing Guidelines
+### Testing Guidelines
 
 - Run `go test ./internal/service/cluster/provisioner -count=1` for both unit coverage and the lightweight MariaDB integration checks. No environment variables are required; tests connect to the static `ProvisionDSN` and will skip themselves only if that connection is unavailable.
 - The provisioner targets the shared MariaDB instance used by remote cluster nodes. This DB is independent from the Portal’s main database (which may be SQLite), so exercising the package does not require altering application database settings.
@@ -26,7 +26,7 @@ The provisioner package manages per-node MariaDB schemas and users for cluster d
   ```
 - If the response does not return the schema/user (for example, redacted paths), synthesize them via `GenerateCredentials(conf, uuid, name)` before scheduling cleanup.
 
-## MariaDB Troubleshooting
+### MariaDB Troubleshooting
 
 - Connect from the dev container using `mariadb` (already configured to reach `mariadb:4001`). Common snippets:
   ```bash
@@ -60,22 +60,22 @@ The provisioner package manages per-node MariaDB schemas and users for cluster d
   ```
 - Stubborn objects usually indicate the cleanup hook was skipped. Check test logs for failures before the `t.Cleanup` runs, and rerun the suite after manual cleanup to confirm the fix.
 
-## Avoiding Leftovers
+### Avoiding Leftovers
 
 - Always pair credential creation with `DropCredentials` inside `t.Cleanup` for tests and defer blocks for ad-hoc scripts.
 - When troubleshooting API or CLI flows, capture the node UUID and name from the response and call `GenerateCredentials` to identify which schema/user to drop once finished.
 - Before committing, run `SHOW DATABASES LIKE 'cluster_d%';` and `SELECT User FROM mysql.user WHERE User LIKE 'cluster_u%';` to verify the MariaDB instance is clean.
 
-## Focused Commands
+### Focused Commands
 
 - Fast pass: `go test ./internal/service/cluster/provisioner -count=1`
 - End-to-end sanity with API: `go test ./internal/api -run 'ClusterNodesRegister' -count=1` (ensures the API cleanup helper stays aligned with the provisioner)
 
-## ProxySQL Integration
+### ProxySQL Integration
 
 Use ProxySQL to verify tenant provisioning stays in sync with the proxy in addition to MariaDB. The unit test suite ships with an opt-in integration test (`TestEnsureCredentials_ProxySQLIntegration`) that exercises the full flow once ProxySQL is available locally.
 
-### One-Time Setup (inside the dev container)
+#### One-Time Setup (inside the dev container)
 
 1. Download and install ProxySQL (v3.0.2 shown here):
    ```bash
@@ -94,7 +94,7 @@ Use ProxySQL to verify tenant provisioning stays in sync with the proxy in addit
 
 The bundled MariaDB instance (credentials in `.my.cnf` at the repo root) is sufficient as a backend; no extra ProxySQL configuration is required for the integration test.
 
-### Running the Integration Test
+#### Running the Integration Test
 
 1. When ProxySQL is running, toggle the test via an environment variable:
    ```bash
@@ -103,7 +103,7 @@ The bundled MariaDB instance (credentials in `.my.cnf` at the repo root) is suff
    - Override the admin DSN with `PHOTOPRISM_TEST_PROXYSQL_DSN=user:pass@tcp(host:6032)/` if you changed the default credentials or port.
 2. The test provisions a tenant, verifies the ProxySQL `mysql_users` row, reruns the idempotent ensure path, and exercises `DropCredentials`. Cleanup hooks remove both the MariaDB schema/user and the ProxySQL account.
 
-### Tearing Down / Restarting
+#### Tearing Down / Restarting
 
 - Stop ProxySQL when finished:
   ```bash

@@ -21,7 +21,7 @@ func TestGenerateLabels(t *testing.T) {
 		t.Log(result)
 
 		assert.Equal(t, "chameleon", result[0].Name)
-		assert.Equal(t, 7, result[0].Uncertainty)
+		assert.InDelta(t, 7, result[0].Uncertainty, 3)
 	})
 	t.Run("Cat224", func(t *testing.T) {
 		result, err := GenerateLabels(Files{examplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)

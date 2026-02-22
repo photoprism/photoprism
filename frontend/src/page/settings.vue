@@ -88,7 +88,7 @@ export default {
         path: "/settings/advanced",
         icon: "mdi-wrench",
         public: false,
-        portal: true,
+        portal: false,
         admin: true,
         demo: true,
         show: $config.allow("config", "manage") && isSuperAdmin,

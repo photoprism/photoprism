@@ -91,7 +91,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	var wg sync.WaitGroup
 	var numWorkers = imp.conf.IndexWorkers()
 	wg.Add(numWorkers)
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		go func() {
 			ImportWorker(jobs)
 			wg.Done()

@@ -30,9 +30,9 @@ if (typeof global.ResizeObserver === "undefined") {
     constructor(callback) {
       this.callback = callback;
     }
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+    observe() { }
+    unobserve() { }
+    disconnect() { }
   };
 }
 
@@ -54,22 +54,22 @@ config.global.mocks = {
   $event: {
     subscribe: () => "sub-id",
     subscribeOnce: () => "sub-id-once",
-    unsubscribe: () => {},
-    publish: () => {},
+    unsubscribe: () => { },
+    publish: () => { },
   },
   $view: {
-    enter: () => {},
-    leave: () => {},
+    enter: () => { },
+    leave: () => { },
     isActive: () => true,
   },
-  $notify: { success: () => {}, error: () => {}, warn: () => {} },
+  $notify: { success: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() },
   $fullscreen: {
     isSupported: () => true,
     isEnabled: () => false,
     request: () => Promise.resolve(),
     exit: () => Promise.resolve(),
   },
-  $clipboard: { selection: [], has: () => false, toggle: () => {} },
+  $clipboard: { selection: [], has: () => false, toggle: () => { } },
   $util: {
     hasTouch: () => false,
     encodeHTML: (s) => s,

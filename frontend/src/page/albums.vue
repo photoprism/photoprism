@@ -284,11 +284,14 @@ import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
+import { getAppStorage } from "common/storage";
 import * as options from "options/options";
 import * as contexts from "options/contexts";
 
 import PLoading from "component/loading.vue";
 import PActionMenu from "component/action/menu.vue";
+
+const appStorage = getAppStorage();
 
 export default {
   name: "PPageAlbums",
@@ -553,10 +556,10 @@ export default {
       const typeName = this.staticFilter?.type;
       const keyName = "albums.order." + typeName;
       const queryParam = this.$route.query["order"];
-      const storeOrder = window.localStorage.getItem(keyName);
+      const storeOrder = appStorage.getItem(keyName);
 
       if (queryParam) {
-        window.localStorage.setItem(keyName, queryParam);
+        appStorage.setItem(keyName, queryParam);
         return queryParam;
       } else if (storeOrder) {
         return storeOrder;
@@ -580,7 +583,7 @@ export default {
         return buffered;
       }
 
-      const storedOffset = parseInt(window.localStorage.getItem("albums.offset"));
+      const storedOffset = parseInt(appStorage.getItem("albums.offset"));
 
       if (this.offset > 0 || !Number.isFinite(storedOffset) || storedOffset <= 0) {
         return this.batchSize;
@@ -598,7 +601,7 @@ export default {
     setOffset(offset) {
       const value = Number.isFinite(Number(offset)) ? Number(offset) : 0;
       this.offset = value;
-      window.localStorage.setItem("albums.offset", value);
+      appStorage.setItem("albums.offset", value);
     },
     buildRestoreKey() {
       const staticFilter = JSON.stringify(this.staticFilter) || "";
@@ -978,7 +981,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("albums." + key, this.settings[key]);
+        appStorage.setItem("albums." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

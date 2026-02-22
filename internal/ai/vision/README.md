@@ -1,12 +1,12 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** December 10, 2025
+**Last Updated:** December 23, 2025
 
 ### Overview
 
 `internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to one of three engines:
 
-- **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required.
+- **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection to return that memory to the OS; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
 
@@ -17,7 +17,7 @@
 The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so you no longer need placeholder stanzas. The `Thresholds` block is optional; missing or out-of-range values fall back to defaults.
 
 | Field                   | Default                                | Notes                                                                              |
-|-------------------------|----------------------------------------|------------------------------------------------------------------------------------|
+|:------------------------|:---------------------------------------|:-----------------------------------------------------------------------------------|
 | `Type` (required)       | —                                      | `labels`, `caption`, `face`, `nsfw`, `generate`. Drives routing & scheduling.      |
 | `Name`                  | derived from type/version              | Display name; lower-cased by helpers.                                              |
 | `Model`                 | `""`                                   | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.           |
@@ -37,7 +37,7 @@ The `vision.yml` file is usually kept in the `storage/config` directory (overrid
 #### Run Modes
 
 | Value           | When it runs                                                     | Recommended use                                |
-|-----------------|------------------------------------------------------------------|------------------------------------------------|
+|:----------------|:-----------------------------------------------------------------|:-----------------------------------------------|
 | `auto`          | TensorFlow defaults during index; external via metadata/schedule | Leave as-is for most setups.                   |
 | `manual`        | Only when explicitly invoked (CLI/API)                           | Experiments and diagnostics.                   |
 | `on-index`      | During indexing + manual                                         | Fast built-in models only.                     |
@@ -54,7 +54,7 @@ The `vision.yml` file is usually kept in the `storage/config` directory (overrid
 The model `Options` adjust model parameters such as temperature, top-p, and schema constraints when using [Ollama](ollama/README.md) or [OpenAI](openai/README.md). Rows are ordered exactly as defined in `vision/model_options.go`.
 
 | Option             | Engines          | Default              | Description                                                                             |
-|--------------------|------------------|----------------------|-----------------------------------------------------------------------------------------|
+|:-------------------|:-----------------|:---------------------|:----------------------------------------------------------------------------------------|
 | `Temperature`      | Ollama, OpenAI   | engine default       | Controls randomness with a value between `0.01` and `2.0`; not used for OpenAI's GPT-5. |
 | `TopK`             | Ollama           | engine default       | Limits sampling to the top K tokens to reduce rare or noisy outputs.                    |
 | `TopP`             | Ollama, OpenAI   | engine default       | Nucleus sampling; keeps the smallest token set whose cumulative probability ≥ `p`.      |
@@ -94,7 +94,7 @@ The model `Options` adjust model parameters such as temperature, top-p, and sche
 Configures the endpoint URL, method, format, and authentication for [Ollama](ollama/README.md), [OpenAI](openai/README.md), and other engines that perform remote HTTP requests:
 
 | Field                              | Default                                  | Notes                                                                                                                                           |
-|------------------------------------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+|:-----------------------------------|:-----------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------|
 | `Uri`                              | required for remote                      | Endpoint base. Empty keeps model local (TensorFlow). Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`. |
 | `Method`                           | `POST`                                   | Override verb if provider needs it.                                                                                                             |
 | `Key`                              | `""`                                     | Bearer token; prefer env expansion (OpenAI: `OPENAI_API_KEY`, Ollama: `OLLAMA_API_KEY`).                                                        |
@@ -198,6 +198,10 @@ Models:
 - **TensorFlow**: fast, offline defaults for core features (labels, faces, NSFW). Zero external deps.
 - **Ollama**: private, GPU/CPU-hosted multimodal LLMs; best for richer captions/labels without cloud traffic.
 - **OpenAI**: highest quality reasoning and multimodal support; requires API key and network access.
+
+### Model Unload on Idle
+
+PhotoPrism currently keeps TensorFlow models resident for the lifetime of the process to avoid repeated load costs. A future “model unload on idle” mode would track last-use timestamps and close the TensorFlow session/graph after a configurable idle period, releasing the model’s memory footprint back to the OS. The trade-off is higher latency and CPU overhead when a model is used again, plus extra I/O to reload weights. This may be attractive for low-frequency or memory-constrained deployments but would slow continuous indexing jobs, so it is not enabled today.
 
 ### Related Docs
 

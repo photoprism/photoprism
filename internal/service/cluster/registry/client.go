@@ -1,8 +1,12 @@
 package registry
 
 import (
+	"errors"
+	"maps"
 	"sort"
 	"time"
+
+	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -43,6 +47,7 @@ func toNode(c *entity.Client) *Node {
 		CreatedAt:    c.CreatedAt.UTC().Format(time.RFC3339),
 		UpdatedAt:    c.UpdatedAt.UTC().Format(time.RFC3339),
 	}
+	n.AuthEnabled = c.AuthEnabled
 	data := c.GetData()
 
 	if data != nil {
@@ -138,9 +143,7 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if data.Labels == nil {
 		data.Labels = map[string]string{}
 	}
-	for k, v := range n.Labels {
-		data.Labels[k] = v
-	}
+	maps.Copy(data.Labels, n.Labels)
 	if n.SiteUrl != "" {
 		data.SiteURL = n.SiteUrl
 	}
@@ -238,24 +241,18 @@ func (r *ClientRegistry) FindByName(name string) (*Node, error) {
 		return nil, ErrNotFound
 	}
 
-	var list []entity.Client
-	if err := entity.UnscopedDb().Where("client_name = ?", name).Find(&list).Error; err != nil {
+	m := &entity.Client{}
+	if err := entity.UnscopedDb().
+		Where("client_name = ?", name).
+		Order("updated_at DESC").
+		First(m).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 
-	if len(list) == 0 {
-		return nil, ErrNotFound
-	}
-
-	latest := &list[0]
-
-	for i := 1; i < len(list); i++ {
-		if list[i].UpdatedAt.After(latest.UpdatedAt) {
-			latest = &list[i]
-		}
-	}
-
-	return toNode(latest), nil
+	return toNode(m), nil
 }
 
 // FindByNodeUUID looks up a node by its NodeUUID and returns the latest record.

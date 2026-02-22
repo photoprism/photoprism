@@ -31,10 +31,14 @@ func Zip(zipName string, files []string, compress bool) (err error) {
 		return err
 	}
 
-	defer newZipFile.Close()
+	defer func() {
+		err = errors.Join(err, newZipFile.Close())
+	}()
 
 	zipWriter := zip.NewWriter(newZipFile)
-	defer zipWriter.Close()
+	defer func() {
+		err = errors.Join(err, zipWriter.Close())
+	}()
 
 	// Add files to zip archive.
 	for _, fileName := range files {
@@ -56,7 +60,9 @@ func ZipFile(zipWriter *zip.Writer, fileName, fileAlias string, compress bool) (
 	}
 
 	// Close file when done.
-	defer fileToZip.Close()
+	defer func() {
+		err = errors.Join(err, fileToZip.Close())
+	}()
 
 	// Get file information.
 	info, err := fileToZip.Stat()
@@ -105,7 +111,9 @@ func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64) (files []st
 		return files, skipped, err
 	}
 
-	defer zipReader.Close()
+	defer func() {
+		err = errors.Join(err, zipReader.Close())
+	}()
 
 	// Treat 0 as no limit; negative also unlimited.
 	if totalSizeLimit == 0 {
@@ -166,7 +174,9 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 		return fileName, err
 	}
 
-	defer rc.Close()
+	defer func() {
+		err = errors.Join(err, rc.Close())
+	}()
 
 	// Compose destination file or directory path with safety checks.
 	if fileName, err = safeJoin(dir, f.Name); err != nil {
@@ -194,7 +204,9 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 		return fileName, err
 	}
 
-	defer fd.Close()
+	defer func() {
+		err = errors.Join(err, fd.Close())
+	}()
 
 	limit := fileSizeLimit
 

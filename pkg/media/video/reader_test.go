@@ -24,23 +24,25 @@ func TestReader(t *testing.T) {
 		reader, readerErr := NewReader(info.FileName, info.VideoOffset)
 
 		if readerErr != nil {
-			t.Fatal(probeErr)
+			t.Fatal(readerErr)
 		}
 
-		defer reader.Close()
+		t.Cleanup(func() {
+			require.NoError(t, reader.Close())
+		})
 
 		require.NotNil(t, reader)
 
 		videoData, ioErr := io.ReadAll(reader)
 
 		if ioErr != nil {
-			t.Fatal(probeErr)
+			t.Fatal(ioErr)
 		}
 
 		stat, statErr := os.Stat(info.FileName)
 
 		if statErr != nil {
-			t.Fatal(probeErr)
+			t.Fatal(statErr)
 		}
 
 		assert.True(t, int(stat.Size()) > len(videoData))

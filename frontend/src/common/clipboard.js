@@ -27,6 +27,7 @@ import RestModel from "model/rest";
 import $notify from "common/notify";
 import { $gettext } from "common/gettext";
 import { $config } from "app/session";
+import { getAppStorage } from "common/storage";
 import { reactive } from "vue";
 
 export const MaxItems = 999;
@@ -266,4 +267,4 @@ export class Clipboard {
   }
 }
 
-export const PhotoClipboard = reactive(new Clipboard(window.localStorage, "clipboard.photos"));
+export const PhotoClipboard = reactive(new Clipboard(getAppStorage(), "clipboard.photos"));

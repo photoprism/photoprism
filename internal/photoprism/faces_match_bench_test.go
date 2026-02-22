@@ -13,7 +13,7 @@ func BenchmarkSelectBestFace(b *testing.B) {
 
 	faces := make(entity.Faces, 0, candidateCount)
 
-	for i := 0; i < candidateCount; i++ {
+	for range candidateCount {
 		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(5, face.RegularFace))
 		faces = append(faces, *f)
 	}
@@ -41,7 +41,7 @@ func BenchmarkSelectBestFaceLegacy(b *testing.B) {
 
 	faces := make(entity.Faces, 0, candidateCount)
 
-	for i := 0; i < candidateCount; i++ {
+	for range candidateCount {
 		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(5, face.RegularFace))
 		faces = append(faces, *f)
 	}

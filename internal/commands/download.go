@@ -150,7 +150,11 @@ func downloadAction(ctx *cli.Context) error {
 		return err
 	}
 
-	defer os.RemoveAll(downloadPath)
+	defer func() {
+		if rmErr := os.RemoveAll(downloadPath); rmErr != nil {
+			log.Debugf("download: %s (remove temporary download path)", clean.Error(rmErr))
+		}
+	}()
 
 	// Flags for yt-dlp auth and headers
 	cookies := strings.TrimSpace(ctx.String("cookies"))
@@ -282,20 +286,33 @@ func downloadAction(ctx *cli.Context) error {
 					continue
 				}
 				func() {
-					defer downloadResult.Close()
 					f, ferr := os.Create(downloadFilePath) //nolint:gosec // download target path chosen by user
 					if ferr != nil {
+						if closeErr := downloadResult.Close(); closeErr != nil {
+							log.Debugf("download: %s (close stream after create failure)", clean.Error(closeErr))
+						}
 						log.Errorf("create file failed: %v", ferr)
 						failures++
 						return
 					}
-					defer f.Close()
-					if _, cerr := io.Copy(f, downloadResult); cerr != nil {
-						log.Errorf("write file failed: %v", cerr)
+					_, copyErr := io.Copy(f, downloadResult)
+					closeFileErr := f.Close()
+					closeDownloadErr := downloadResult.Close()
+					if copyErr != nil {
+						log.Errorf("write file failed: %v", copyErr)
 						failures++
 						return
 					}
-					_ = f.Close()
+					if closeFileErr != nil {
+						log.Errorf("close file failed: %v", closeFileErr)
+						failures++
+						return
+					}
+					if closeDownloadErr != nil {
+						log.Errorf("close download stream failed: %v", closeDownloadErr)
+						failures++
+						return
+					}
 				}()
 
 				// Remux and embed metadata (pipe policy: always)

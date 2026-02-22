@@ -14,7 +14,7 @@ func TestClientSecret(t *testing.T) {
 	assert.False(t, IsAuthToken(result))
 	assert.False(t, IsHex(result))
 
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := ClientSecret()
 		t.Logf("ClientSecret %d: %s", n, s)
 		assert.True(t, IsClientSecret(s))

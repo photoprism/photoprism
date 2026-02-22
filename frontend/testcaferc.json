@@ -4,6 +4,7 @@
   "selectorTimeout": 3500,
   "assertionTimeout": 3500,
   "hostname": "localhost",
+  "retryTestPages": true,
   "screenshots": {
     "path": "tests/acceptance/screenshots/",
     "takeOnFails": true

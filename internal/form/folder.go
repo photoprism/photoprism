@@ -21,7 +21,7 @@ type Folder struct {
 }
 
 // NewFolder copies values from an arbitrary model into a Folder form.
-func NewFolder(m interface{}) (f Folder, err error) {
+func NewFolder(m any) (f Folder, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err

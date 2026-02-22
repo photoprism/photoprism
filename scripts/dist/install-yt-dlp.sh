@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# Installs the yt-dlp binary, a vector search engine, on Linux.
+# Installs the yt-dlp binary (stable, nightly, or master) on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-yt-dlp.sh)
+# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-yt-dlp.sh) -- --nightly
+# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-yt-dlp.sh) -- --master
 
 set -euo pipefail
 
@@ -12,9 +14,62 @@ fi
 
 # Show usage information if first argument is --help.
 if [[ ${1:-} == "--help" ]]; then
-  echo "Usage: ${0##*/} [destdir] [version]" 1>&2
+  echo "Usage: ${0##*/} [--nightly|--master|--stable] [destdir] [version]" 1>&2
+  echo "       ${0##*/} [--channel nightly|master|stable] [destdir] [version]" 1>&2
+  echo "" 1>&2
+  echo "Environment:" 1>&2
+  echo "  PHOTOPRISM_YTDLP_CHANNEL=nightly|master|stable" 1>&2
   exit 0
 fi
+
+CHANNEL=${PHOTOPRISM_YTDLP_CHANNEL:-stable}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --nightly)
+      CHANNEL=nightly
+      shift
+      ;;
+    --master)
+      CHANNEL=master
+      shift
+      ;;
+    --stable)
+      CHANNEL=stable
+      shift
+      ;;
+    --channel)
+      CHANNEL=${2:-}
+      if [[ -z $CHANNEL ]]; then
+        echo "Error: --channel requires a value (nightly, master, or stable)." 1>&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --help)
+      echo "Usage: ${0##*/} [--nightly|--master|--stable] [destdir] [version]" 1>&2
+      echo "       ${0##*/} [--channel nightly|master|stable] [destdir] [version]" 1>&2
+      echo "" 1>&2
+      echo "Environment:" 1>&2
+      echo "  PHOTOPRISM_YTDLP_CHANNEL=nightly|master|stable" 1>&2
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "Error: Unknown option: $1" 1>&2
+      exit 1
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+# Normalize channel to lowercase to avoid case-sensitivity surprises.
+CHANNEL=${CHANNEL,,}
 
 # You can provide a custom installation directory as the first argument.
 DESTDIR=$(realpath "${1:-/usr/local}")
@@ -75,11 +130,27 @@ case $DESTARCH in
     ;;
 esac
 
-DEFAULT_RELEASES_URL="https://api.github.com/repos/yt-dlp/yt-dlp/releases?per_page=5"
+case $CHANNEL in
+  nightly)
+    REPO="yt-dlp/yt-dlp-nightly-builds"
+    ;;
+  master)
+    REPO="yt-dlp/yt-dlp-master-builds"
+    ;;
+  stable)
+    REPO="yt-dlp/yt-dlp"
+    ;;
+  *)
+    echo "Error: Unknown channel \"$CHANNEL\" (use nightly, master, or stable)." 1>&2
+    exit 1
+    ;;
+esac
+
+DEFAULT_RELEASES_URL="https://api.github.com/repos/${REPO}/releases?per_page=5"
 
 if [[ -n ${2:-} ]]; then
   VERSION=${2}
-  RELEASES_JSON=$(curl --fail --silent --show-error "https://api.github.com/repos/yt-dlp/yt-dlp/releases/tags/${VERSION}" || true)
+  RELEASES_JSON=$(curl --fail --silent --show-error "https://api.github.com/repos/${REPO}/releases/tags/${VERSION}" || true)
   if [[ -z $RELEASES_JSON ]]; then
     echo "Error: Unable to fetch release metadata for tag ${VERSION}." 1>&2
     exit 1
@@ -126,6 +197,7 @@ DESTBIN="${DESTDIR}/bin/yt-dlp"
 echo "--------------------------------------------------------------------------------"
 echo "VERSION : ${VERSION}"
 echo "LATEST  : ${LATEST_TAG:-unknown}"
+echo "CHANNEL : ${CHANNEL}"
 echo "ASSET   : ${ASSET_NAME}"
 echo "DOWNLOAD: ${GITHUB_URL}"
 echo "DESTDIR : ${DESTDIR}"

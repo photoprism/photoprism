@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -36,8 +37,9 @@ func showConfigAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 	conf.SetLogLevel(logrus.FatalLevel)
 	get.SetConfig(conf)
+	hub.Disable()
 
-	if err := conf.Init(); err != nil {
+	if err := conf.InitCore(); err != nil {
 		log.Debug(err)
 	}
 
@@ -56,7 +58,7 @@ func showConfigAction(ctx *cli.Context) error {
 			rows, cols := rep.Report(conf)
 			sections = append(sections, section{Title: rep.Title, Items: report.RowsToObjects(rows, cols)})
 		}
-		b, _ := json.Marshal(map[string]interface{}{"sections": sections})
+		b, _ := json.Marshal(map[string]any{"sections": sections})
 		fmt.Println(string(b))
 		return nil
 	}

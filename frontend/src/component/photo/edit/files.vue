@@ -17,7 +17,15 @@
           <v-card tile>
             <v-card-text class="pa-0">
               <div class="pa-0">
-                <v-alert v-if="file.Error" type="error" class="my-0 text-capitalize">
+                <v-alert
+                  v-if="file.Error"
+                  type="error"
+                  icon="mdi-alert-circle-outline"
+                  density="compact"
+                  variant="outlined"
+                  tile
+                  class="ra-0 ma-0 text-capitalize"
+                >
                   {{ file.Error }}
                 </v-alert>
                 <v-row class="d-flex align-stretch" align="center" justify="center">

@@ -157,12 +157,12 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 		normalizeEmbedding(emb)
 
-		for j := 0; j < dim; j++ {
+		for j := range dim {
 			result[j] += emb[j]
 		}
 	}
 
-	for i := 0; i < dim; i++ {
+	for i := range dim {
 		result[i] *= invCount
 	}
 
@@ -172,7 +172,7 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 	for _, emb := range embeddings {
 		var dist float64
 
-		for i := 0; i < dim; i++ {
+		for i := range dim {
 			diff := result[i] - emb[i]
 			dist += diff * diff
 		}

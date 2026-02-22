@@ -12,7 +12,7 @@ func TestName(t *testing.T) {
 	assert.NotEmpty(t, name)
 	assert.Equal(t, 1, strings.Count(name, " "))
 
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := Name()
 		t.Logf("Name %d: %s", n, s)
 		assert.NotEmpty(t, s)
@@ -31,7 +31,7 @@ func TestNameN(t *testing.T) {
 	assert.NotEmpty(t, name)
 	assert.Equal(t, 1, strings.Count(name, " "))
 
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := NameN(n + 1)
 		t.Logf("NameN %d: %s", n, s)
 		assert.NotEmpty(t, s)

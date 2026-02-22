@@ -1,11 +1,16 @@
 package commands
 
 import (
+	"errors"
+	"os"
 	"syscall"
 
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -19,10 +24,12 @@ var StopCommand = &cli.Command{
 
 // stopAction stops the daemon if it is running.
 func stopAction(ctx *cli.Context) error {
-	conf, err := InitConfig(ctx)
+	conf := config.NewConfig(ctx)
+	get.SetConfig(conf)
+	hub.Disable()
 
-	if err != nil {
-		return err
+	if err := conf.InitCore(); err != nil {
+		log.Debug(err)
 	}
 
 	log.Infof("looking for pid in %s", clean.Log(conf.PIDFilename()))
@@ -32,13 +39,22 @@ func stopAction(ctx *cli.Context) error {
 	child, err := dcxt.Search()
 
 	if err != nil {
-		log.Fatal(err)
+		if errors.Is(err, os.ErrNotExist) {
+			log.Info("daemon is not running")
+			return nil
+		}
+		return err
+	}
+
+	if child == nil {
+		log.Info("daemon is not running")
+		return nil
 	}
 
 	err = child.Signal(syscall.SIGTERM)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	st, err := child.Wait()

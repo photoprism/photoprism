@@ -46,8 +46,7 @@ func TestClusterNodesListCommand(t *testing.T) {
 
 func TestClusterNodesShowCommand(t *testing.T) {
 	t.Run("NotFound", func(t *testing.T) {
-		_ = os.Setenv("PHOTOPRISM_NODE_ROLE", "portal")
-		defer os.Unsetenv("PHOTOPRISM_NODE_ROLE")
+		SetEnvForTest(t, "PHOTOPRISM_NODE_ROLE", "portal")
 		out, err := RunWithTestContext(ClusterNodesShowCommand, []string{"show", "does-not-exist"})
 		assert.Error(t, err)
 		_ = out
@@ -139,12 +138,10 @@ func TestClusterSuccessPaths_PortalLocal(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	_ = os.Setenv("PHOTOPRISM_PORTAL_URL", ts.URL)
-	_ = os.Setenv("PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
-	defer os.Unsetenv("PHOTOPRISM_PORTAL_URL")
-	defer os.Unsetenv("PHOTOPRISM_JOIN_TOKEN")
+	SetEnvForTest(t, "PHOTOPRISM_PORTAL_URL", ts.URL)
+	SetEnvForTest(t, "PHOTOPRISM_JOIN_TOKEN", cluster.ExampleJoinToken)
 
-	out, err = RunWithTestContext(ClusterThemePullCommand.Subcommands[0], []string{"pull", "--dest", destDir, "-f", "--portal-url=" + ts.URL, "--join-token=" + cluster.ExampleJoinToken})
+	_, err = RunWithTestContext(ClusterThemePullCommand.Subcommands[0], []string{"pull", "--dest", destDir, "-f", "--portal-url=" + ts.URL, "--join-token=" + cluster.ExampleJoinToken})
 	assert.NoError(t, err)
 	// Expect extracted file
 	assert.FileExists(t, filepath.Join(destDir, "test.txt"))

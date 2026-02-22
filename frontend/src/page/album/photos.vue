@@ -72,6 +72,9 @@ import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
 import PPhotoViewList from "component/photo/view/list.vue";
 import PScroll from "component/scroll.vue";
 import PLoading from "component/loading.vue";
+import { getAppStorage } from "common/storage";
+
+const appStorage = getAppStorage();
 
 export default {
   name: "PPageAlbumPhotos",
@@ -242,11 +245,11 @@ export default {
     },
     getViewType() {
       let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
-      let defaultType = window.localStorage.getItem("photos.view");
-      let storedType = window.localStorage.getItem("album.photos.view");
+      let defaultType = appStorage.getItem("photos.view");
+      let storedType = appStorage.getItem("album.photos.view");
 
       if (queryParam) {
-        window.localStorage.setItem("album.photos.view", queryParam);
+        appStorage.setItem("album.photos.view", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -420,7 +423,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("album.photos." + key, this.settings[key]);
+        appStorage.setItem("album.photos." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

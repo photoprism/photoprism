@@ -27,6 +27,7 @@ import Axios from "axios";
 import $notify from "common/notify";
 import { $gettext } from "common/gettext";
 import $event from "common/event";
+import { getAppStorage } from "common/storage";
 
 const testConfig = {
   baseUri: "",
@@ -47,7 +48,7 @@ const $api = Axios.create({
   baseURL: c.apiUri,
   headers: {
     common: {
-      "X-Auth-Token": window.localStorage.getItem("session.token"),
+      "X-Auth-Token": getAppStorage().getItem("session.token"),
       "X-Client-Uri": c.jsUri,
       "X-Client-Version": c.version,
     },
