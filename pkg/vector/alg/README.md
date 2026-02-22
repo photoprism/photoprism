@@ -1,4 +1,4 @@
-# Package Clusters
+## Package Clusters
 
 Implements the following clustering algorithms:
 
@@ -13,18 +13,18 @@ It was forked from the following repositories, which don't seem to be maintained
 
 This package also provides utilities for importing data and estimating the optimal number of clusters.
 
-## About
+### About
 
 This library was built out of necessity for a collection of performant cluster analysis utilities for Golang. Go, thanks to its numerous advantages (single binary distribution, relative performance, growing community) seems to become an attractive alternative to languages commonly used in statistical computations and machine learning, yet it still lacks crucial tools and libraries. I use the [*floats* package](https://github.com/gonum/gonum/tree/master/floats) from the robust Gonum library to perform optimized vector calculations in tight loops.
 
-## Installation
+### Installation
 
 If you have Go 1.7+
 ```bash
 go get github.com/photoprism/photoprism/pkg/alg
 ```
 
-## Usage
+### Usage
 
 The currently supported hard clustering algorithms are represented by the *HardClusterer* interface, which defines several common operations. To show an example we create, train and use a KMeans++ clusterer:
 
@@ -129,6 +129,6 @@ if e != nil {
 }
 ```
 
-## Licence
+### License
 
 MIT

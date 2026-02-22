@@ -1,6 +1,7 @@
 package acl
 
 import (
+	"slices"
 	"sort"
 	"testing"
 
@@ -172,13 +173,7 @@ func TestResource_Default_String_And_Compare(t *testing.T) {
 func TestResourceNames_ContainsCore(t *testing.T) {
 	want := []Resource{ResourceDefault, ResourcePhotos, ResourceAlbums, ResourceWebDAV, ResourceApi}
 	for _, w := range want {
-		found := false
-		for _, have := range ResourceNames {
-			if have == w {
-				found = true
-				break
-			}
-		}
+		found := slices.Contains(ResourceNames, w)
 		assert.Truef(t, found, "resource %s not found in ResourceNames", w)
 	}
 }

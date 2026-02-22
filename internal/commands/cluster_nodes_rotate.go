@@ -194,7 +194,7 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			string(acl.ResourceCluster),
 			"rotate node", "%s",
 		}
-		args := []interface{}{clean.Log(nodeID)}
+		args := []any{clean.Log(nodeID)}
 		if detail != "" {
 			segments = append(segments, "%s")
 			args = append(args, clean.Log(detail))

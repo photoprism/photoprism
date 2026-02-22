@@ -64,7 +64,7 @@ func (m *Details) Save() error {
 }
 
 // Update a column in the database.
-func (m *Details) Update(attr string, value interface{}) error {
+func (m *Details) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("photo details must not be nil - you may have found a bug")
 	} else if m.PhotoID < 1 {
@@ -75,7 +75,7 @@ func (m *Details) Update(attr string, value interface{}) error {
 }
 
 // Updates multiple columns in the database.
-func (m *Details) Updates(values interface{}) error {
+func (m *Details) Updates(values any) error {
 	if values == nil {
 		return nil
 	} else if m == nil {

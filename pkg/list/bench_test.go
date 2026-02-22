@@ -7,7 +7,7 @@ import (
 
 func makeStrings(prefix string, n int) []string {
 	out := make([]string, n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		out[i] = fmt.Sprintf("%s_%06d", prefix, i)
 	}
 	return out
@@ -29,7 +29,7 @@ func BenchmarkContainsAny_LargeOverlap(b *testing.B) {
 	a := makeStrings("a", 5000)
 	bList := makeStrings("b", 5000)
 	// Introduce overlap: copy 20% of a into bList
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		bList[i] = a[i*4]
 	}
 	b.ReportAllocs()

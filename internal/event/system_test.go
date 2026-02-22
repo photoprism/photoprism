@@ -19,7 +19,7 @@ type systemTestLogger struct {
 
 type logEntry struct {
 	level logrus.Level
-	args  []interface{}
+	args  []any
 }
 
 func newSystemTestLogger() *systemTestLogger {
@@ -29,11 +29,11 @@ func newSystemTestLogger() *systemTestLogger {
 	return &systemTestLogger{Logger: logger}
 }
 
-func (l *systemTestLogger) Log(level logrus.Level, args ...interface{}) {
+func (l *systemTestLogger) Log(level logrus.Level, args ...any) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	entryArgs := append([]interface{}(nil), args...)
+	entryArgs := append([]any(nil), args...)
 	l.entries = append(l.entries, logEntry{level: level, args: entryArgs})
 }
 
@@ -59,12 +59,12 @@ func TestSystemLoggingFunctions(t *testing.T) {
 	tests := []struct {
 		name  string
 		level logrus.Level
-		call  func(ev []string, args ...interface{})
+		call  func(ev []string, args ...any)
 	}{
-		{name: "Info", level: logrus.InfoLevel, call: func(ev []string, args ...interface{}) { SystemInfo(ev, args...) }},
-		{name: "Warn", level: logrus.WarnLevel, call: func(ev []string, args ...interface{}) { SystemWarn(ev, args...) }},
-		{name: "Debug", level: logrus.DebugLevel, call: func(ev []string, args ...interface{}) { SystemDebug(ev, args...) }},
-		{name: "Error", level: logrus.ErrorLevel, call: func(ev []string, args ...interface{}) { SystemError(ev, args...) }},
+		{name: "Info", level: logrus.InfoLevel, call: func(ev []string, args ...any) { SystemInfo(ev, args...) }},
+		{name: "Warn", level: logrus.WarnLevel, call: func(ev []string, args ...any) { SystemWarn(ev, args...) }},
+		{name: "Debug", level: logrus.DebugLevel, call: func(ev []string, args ...any) { SystemDebug(ev, args...) }},
+		{name: "Error", level: logrus.ErrorLevel, call: func(ev []string, args ...any) { SystemError(ev, args...) }},
 	}
 
 	for _, tt := range tests {
@@ -75,7 +75,7 @@ func TestSystemLoggingFunctions(t *testing.T) {
 			t.Cleanup(func() { SystemLog = orig })
 
 			events := []string{"cleanup %s", "finished"}
-			args := []interface{}{"cache"}
+			args := []any{"cache"}
 			expectedMessage := Format(events, args...)
 			topic := "system.log." + tt.level.String()
 

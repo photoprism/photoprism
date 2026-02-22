@@ -11,7 +11,7 @@ import (
 
 // XmpDocument represents an XMP sidecar file.
 type XmpDocument struct {
-	XMLName xml.Name `xml:"xmpmeta" json:"xmpmeta,omitempty"`
+	XMLName xml.Name `xml:"xmpmeta" json:"xmpmeta"`
 	Text    string   `xml:",chardata" json:"text,omitempty"`
 	X       string   `xml:"x,attr" json:"x,omitempty"`
 	Xmptk   string   `xml:"xmptk,attr" json:"xmptk,omitempty"`
@@ -54,16 +54,16 @@ type XmpDocument struct {
 					Li   struct {
 						Text string `xml:",chardata" json:"text,omitempty"` // Night Shift / Berlin / 20...
 						Lang string `xml:"lang,attr" json:"lang,omitempty"`
-					} `xml:"li" json:"li,omitempty"`
-				} `xml:"Alt" json:"alt,omitempty"`
-			} `xml:"title" json:"title,omitempty"`
+					} `xml:"li" json:"li"`
+				} `xml:"Alt" json:"alt"`
+			} `xml:"title" json:"title"`
 			Creator struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
 				Seq  struct {
 					Text string `xml:",chardata" json:"text,omitempty"`
 					Li   string `xml:"li"` // Michael Mayer
-				} `xml:"Seq" json:"seq,omitempty"`
-			} `xml:"creator" json:"creator,omitempty"`
+				} `xml:"Seq" json:"seq"`
+			} `xml:"creator" json:"creator"`
 			Description struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
 				Alt  struct {
@@ -71,20 +71,20 @@ type XmpDocument struct {
 					Li   struct {
 						Text string `xml:",chardata" json:"text,omitempty"` // Example file for developm...
 						Lang string `xml:"lang,attr" json:"lang,omitempty"`
-					} `xml:"li" json:"li,omitempty"`
-				} `xml:"Alt" json:"alt,omitempty"`
-			} `xml:"description" json:"description,omitempty"`
+					} `xml:"li" json:"li"`
+				} `xml:"Alt" json:"alt"`
+			} `xml:"description" json:"description"`
 			Subject struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
 				Bag  struct {
 					Text string   `xml:",chardata" json:"text,omitempty"`
 					Li   []string `xml:"li"` // desk, coffee, computer
-				} `xml:"Bag" json:"bag,omitempty"`
+				} `xml:"Bag" json:"bag"`
 				Seq struct {
 					Text string   `xml:",chardata" json:"text,omitempty"`
 					Li   []string `xml:"li"` // desk, coffee, computer
-				} `xml:"Seq" json:"seq,omitempty"`
-			} `xml:"subject" json:"subject,omitempty"`
+				} `xml:"Seq" json:"seq"`
+			} `xml:"subject" json:"subject"`
 			Rights struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
 				Alt  struct {
@@ -92,9 +92,9 @@ type XmpDocument struct {
 					Li   struct {
 						Text string `xml:",chardata" json:"text,omitempty"` // This is an (edited) legal...
 						Lang string `xml:"lang,attr" json:"lang,omitempty"`
-					} `xml:"li" json:"li,omitempty"`
-				} `xml:"Alt" json:"alt,omitempty"`
-			} `xml:"rights" json:"rights,omitempty"`
+					} `xml:"li" json:"li"`
+				} `xml:"Alt" json:"alt"`
+			} `xml:"rights" json:"rights"`
 			ImageWidth    string `xml:"ImageWidth"`  // 3648
 			ImageLength   string `xml:"ImageLength"` // 2736
 			BitsPerSample struct {
@@ -102,8 +102,8 @@ type XmpDocument struct {
 				Seq  struct {
 					Text string   `xml:",chardata" json:"text,omitempty"`
 					Li   []string `xml:"li"` // 8
-				} `xml:"Seq" json:"seq,omitempty"`
-			} `xml:"BitsPerSample" json:"bitspersample,omitempty"`
+				} `xml:"Seq" json:"seq"`
+			} `xml:"BitsPerSample" json:"bitspersample"`
 			PhotometricInterpretation string `xml:"PhotometricInterpretation"` // 2
 			Orientation               string `xml:"Orientation"`               // 0
 			SamplesPerPixel           string `xml:"SamplesPerPixel"`           // 3
@@ -121,8 +121,8 @@ type XmpDocument struct {
 				Seq  struct {
 					Text string   `xml:",chardata" json:"text,omitempty"`
 					Li   []string `xml:"li"` // 1, 2, 3, 0
-				} `xml:"Seq" json:"seq,omitempty"`
-			} `xml:"ComponentsConfiguration" json:"componentsconfiguration,omitempty"`
+				} `xml:"Seq" json:"seq"`
+			} `xml:"ComponentsConfiguration" json:"componentsconfiguration"`
 			CompressedBitsPerPixel string `xml:"CompressedBitsPerPixel"` // 95/100
 			PixelXDimension        string `xml:"PixelXDimension"`        // 3648
 			PixelYDimension        string `xml:"PixelYDimension"`        // 2736
@@ -135,8 +135,8 @@ type XmpDocument struct {
 				Seq  struct {
 					Text string `xml:",chardata" json:"text,omitempty"`
 					Li   string `xml:"li"` // 200
-				} `xml:"Seq" json:"seq,omitempty"`
-			} `xml:"ISOSpeedRatings" json:"isospeedratings,omitempty"`
+				} `xml:"Seq" json:"seq"`
+			} `xml:"ISOSpeedRatings" json:"isospeedratings"`
 			ShutterSpeedValue string `xml:"ShutterSpeedValue"` // 298973/10000
 			ApertureValue     string `xml:"ApertureValue"`     // 1695994/1000000
 			BrightnessValue   string `xml:"BrightnessValue"`   // 0/1
@@ -152,7 +152,7 @@ type XmpDocument struct {
 				Mode       string `xml:"Mode"`       // 0
 				Function   string `xml:"Function"`   // False
 				RedEyeMode string `xml:"RedEyeMode"` // False
-			} `xml:"Flash" json:"flash,omitempty"`
+			} `xml:"Flash" json:"flash"`
 			FocalLength           string `xml:"FocalLength"`           // 5580/1000
 			SensingMethod         string `xml:"SensingMethod"`         // 2
 			FileSource            string `xml:"FileSource"`            // 3
@@ -189,16 +189,16 @@ type XmpDocument struct {
 				CiTelWork   string `xml:"CiTelWork"`   // +49123456789
 				CiEmailWork string `xml:"CiEmailWork"` // hello@photoprism.org
 				CiUrlWork   string `xml:"CiUrlWork"`   // https://photoprism.org/
-			} `xml:"CreatorContactInfo" json:"creatorcontactinfo,omitempty"`
+			} `xml:"CreatorContactInfo" json:"creatorcontactinfo"`
 			PersonInImage struct {
 				Text string `xml:",chardata" json:"text,omitempty"`
 				Bag  struct {
 					Text string `xml:",chardata" json:"text,omitempty"`
 					Li   string `xml:"li"` // Gopher
-				} `xml:"Bag" json:"bag,omitempty"`
-			} `xml:"PersonInImage" json:"personinimage,omitempty"`
-		} `xml:"Description" json:"description,omitempty"`
-	} `xml:"RDF" json:"rdf,omitempty"`
+				} `xml:"Bag" json:"bag"`
+			} `xml:"PersonInImage" json:"personinimage"`
+		} `xml:"Description" json:"description"`
+	} `xml:"RDF" json:"rdf"`
 }
 
 // Load parses an XMP file and populates document values with its contents.

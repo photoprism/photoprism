@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -126,13 +127,74 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 		merged = append(merged, merge)
 	}
 
+	if updateErr := original.SyncMediaTypeFromFiles(SrcFile); updateErr != nil {
+		log.Warnf("merge: %s while syncing media type of %s", updateErr, original.String())
+	}
+
 	if original.ID != m.ID {
 		deleted := Now()
 		m.DeletedAt = &deleted
 		m.PhotoQuality = -1
+	} else {
+		m.PhotoType = original.PhotoType
+		m.TypeSrc = original.TypeSrc
 	}
 
 	File{PhotoID: original.ID, PhotoUID: original.PhotoUID}.RegenerateIndex()
 
 	return original, merged, err
+}
+
+// SyncMediaTypeFromFiles updates PhotoType to the highest-priority media type of active non-sidecar files.
+func (m *Photo) SyncMediaTypeFromFiles(typeSrc string) error {
+	if m == nil || !m.HasID() {
+		return nil
+	}
+
+	// Keep explicit user/admin overrides untouched.
+	if SrcPriority[m.TypeSrc] > SrcPriority[typeSrc] {
+		return nil
+	}
+
+	var mediaTypes []string
+
+	if err := UnscopedDb().
+		Model(File{}).
+		Where("photo_id = ? AND file_missing = 0 AND file_sidecar = 0 AND deleted_at IS NULL", m.ID).
+		Pluck("media_type", &mediaTypes).Error; err != nil {
+		return err
+	}
+
+	bestType := media.Image
+	found := false
+
+	for _, mediaType := range mediaTypes {
+		t := media.Type(mediaType)
+
+		if !t.IsMain() {
+			continue
+		}
+
+		if !found || media.Priority[t] > media.Priority[bestType] {
+			bestType = t
+			found = true
+		}
+	}
+
+	// Do not change the current type when no eligible main media file exists.
+	if !found {
+		return nil
+	}
+
+	previousType := m.MediaType()
+	m.SetMediaType(bestType, typeSrc)
+
+	if m.MediaType() == previousType {
+		return nil
+	}
+
+	return m.Updates(Values{
+		"PhotoType": m.PhotoType,
+		"TypeSrc":   m.TypeSrc,
+	})
 }

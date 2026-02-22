@@ -475,7 +475,6 @@ func TestPhoto_ShouldGenerateCaption(t *testing.T) {
 	}
 
 	for _, tc := range ctx {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			result := tc.photo.ShouldGenerateCaption(tc.source, tc.force)
 			assert.Equal(t, tc.expect, result)
@@ -1336,6 +1335,31 @@ func TestPhoto_SetPrimary(t *testing.T) {
 
 		err := m.SetPrimary("")
 		assert.Error(t, err)
+	})
+	t.Run("UpdateQualityErrorIsNonFatal", func(t *testing.T) {
+		originalProvider := dbConn
+		tempConn := &DbConn{
+			Driver: SQLite3,
+			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "set-primary-quality-error.db"),
+		}
+
+		SetDbProvider(tempConn)
+		t.Cleanup(func() {
+			SetDbProvider(originalProvider)
+			tempConn.Close()
+		})
+
+		require.NoError(t, tempConn.Db().AutoMigrate(&File{}).Error)
+
+		m := Photo{
+			ID:           1001,
+			PhotoUID:     rnd.GenerateUID(PhotoUID),
+			PhotoQuality: -1,
+		}
+
+		err := m.SetPrimary("fs-test-primary")
+		require.NoError(t, err)
+		assert.GreaterOrEqual(t, m.PhotoQuality, 0)
 	})
 }
 

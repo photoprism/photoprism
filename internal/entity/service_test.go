@@ -76,6 +76,9 @@ func TestService_SaveForm(t *testing.T) {
 		accountUpdate := Service{AccName: "NewName", AccOwner: "NewOwner", AccURL: "new.com", SyncUpload: true, SyncDownload: true}
 
 		UpdateForm, err := form.NewService(accountUpdate)
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		assert.Equal(t, true, UpdateForm.SyncDownload)
 		assert.Equal(t, true, UpdateForm.SyncUpload)

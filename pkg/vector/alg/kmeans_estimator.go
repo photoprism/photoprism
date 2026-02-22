@@ -201,7 +201,7 @@ func (c *kmeansEstimator) run() {
 	for i := 0; i < c.number; i++ {
 		floats.Scale(1/float64(c.b[i]), c.n[i])
 
-		for j := 0; j < l; j++ {
+		for j := range l {
 			c.m[i][j] = c.n[i][j]
 			c.n[i][j] = 0
 		}
@@ -222,7 +222,7 @@ func (c *kmeansEstimator) wk(data [][]float64, centroids [][]float64, mapping []
 		wk = make([]float64, len(centroids))
 	)
 
-	for i := 0; i < len(mapping); i++ {
+	for i := range mapping {
 		wk[mapping[i]-1] += EuclideanDistSquared(centroids[mapping[i]-1], data[i]) / l
 	}
 
@@ -235,10 +235,10 @@ func (c *kmeansEstimator) buildRandomizedSet(size int, bounds []*[2]float64) [][
 		r = make([][]float64, size)
 	)
 
-	for i := 0; i < size; i++ {
+	for i := range size {
 		r[i] = make([]float64, l)
 
-		for j := 0; j < l; j++ {
+		for j := range l {
 			r[i][j] = uniform(bounds[j])
 		}
 	}

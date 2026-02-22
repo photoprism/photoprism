@@ -6,7 +6,7 @@
 
 `internal/server` wires Gin, middleware, and configuration into the PhotoPrism HTTP/HTTPS/WebDAV servers. It owns startup/shutdown orchestration, route registration, and helpers for recovery/logging. Subpackages (`process`, `limits`, etc.) are kept lightweight so CLI commands and workers can embed the same server behavior without duplicating boilerplate.
 
-#### Context & Constraints
+#### Constraints
 
 - Uses the configured `config.Config` to decide TLS, AutoTLS, Unix sockets, proxies, compression, and trusted headers.
 - Middleware must stay small and deterministic because it runs on every request; heavy logic belongs in handlers.

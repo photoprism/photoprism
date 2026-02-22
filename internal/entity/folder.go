@@ -42,7 +42,7 @@ type Folder struct {
 	FileCount         int        `gorm:"-" json:"FileCount" yaml:"-"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
-	ModifiedAt        time.Time  `json:"ModifiedAt,omitempty" yaml:"-"`
+	ModifiedAt        time.Time  `json:"ModifiedAt" yaml:"-"`
 	PublishedAt       *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"DeletedAt,omitempty"`
 }
@@ -176,7 +176,7 @@ func (m *Folder) Create() error {
 	if a := FindFolderAlbum(m.Path); a != nil {
 		if a.DeletedAt != nil {
 			// Ignore.
-		} else if err := a.UpdateFolder(m.Path, f.Serialize()); err != nil {
+		} else if err := a.UpdateFolder(m.Path, f.Serialize(), m.Title()); err != nil {
 			log.Errorf("folder: %s (update album)", err.Error())
 		}
 	} else if a := NewFolderAlbum(m.Title(), m.Path, f.Serialize()); a != nil {
@@ -230,7 +230,7 @@ func FirstOrCreateFolder(m *Folder) *Folder {
 }
 
 // Updates selected properties in the database.
-func (m *Folder) Updates(values interface{}) error {
+func (m *Folder) Updates(values any) error {
 	return Db().Model(m).Updates(values).Error
 }
 

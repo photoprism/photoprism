@@ -33,7 +33,7 @@ func (r Response) Success() bool {
 }
 
 // NewResponse builds a Response with the given code, message ID, and optional parameters.
-func NewResponse(code int, id Message, params ...interface{}) Response {
+func NewResponse(code int, id Message, params ...any) Response {
 	if code < 400 {
 		return Response{Code: code, Msg: Msg(id, params...)}
 	} else {

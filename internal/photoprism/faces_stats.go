@@ -18,11 +18,11 @@ func (w *Faces) Stats() (err error) {
 		distMin := make([]float64, samples)
 		distMax := make([]float64, samples)
 
-		for i := 0; i < samples; i++ {
+		for i := range samples {
 			min := -1.0
 			max := -1.0
 
-			for j := 0; j < samples; j++ {
+			for j := range samples {
 				if i == j {
 					continue
 				}
@@ -62,7 +62,7 @@ func (w *Faces) Stats() (err error) {
 
 		dist := make(map[string][]float64)
 
-		for i := 0; i < samples; i++ {
+		for i := range samples {
 			f1 := faces[i]
 
 			e1 := f1.Embedding()
@@ -74,7 +74,7 @@ func (w *Faces) Stats() (err error) {
 				max = k[1]
 			}
 
-			for j := 0; j < samples; j++ {
+			for j := range samples {
 				if i == j {
 					continue
 				}

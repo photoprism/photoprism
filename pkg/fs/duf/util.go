@@ -11,7 +11,7 @@ import (
 // parseCommaSeparatedValues parses comma separated string into a map.
 func parseCommaSeparatedValues(values string) FilterValues {
 	m := make(FilterValues)
-	for _, v := range strings.Split(values, ",") {
+	for v := range strings.SplitSeq(values, ",") {
 		v = strings.TrimSpace(v)
 		if len(v) == 0 {
 			continue

@@ -1,6 +1,6 @@
-## Face Detection and Embedding Guidelines
+## Face Detection & Embedding Guidelines
 
-**Last Updated:** October 10, 2025
+**Last Updated:** February 14, 2026
 
 ### Overview
 
@@ -46,6 +46,10 @@ Runtime selection lives in `Config.FaceEngine()`; `auto` resolves to ONNX when t
 
 ### Embedding Handling
 
+#### Memory Management
+
+FaceNet embeddings are generated through TensorFlow bindings that allocate tensors in C memory. Those allocations are released by Go GC finalizers, so long-running indexing jobs can show steadily rising RSS even when the Go heap stays small. To keep memory bounded during extended face indexing runs, PhotoPrism now triggers periodic garbage collection and returns freed C-allocated tensor buffers to the OS. You can tune this behavior with `PHOTOPRISM_TF_GC_EVERY` (default **200**; set to `0` to disable). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
+
 #### Normalization
 
 All embeddings, regardless of origin, are normalized to unit length (‖x‖₂ = 1):
@@ -65,7 +69,7 @@ This guarantees that Euclidean distance comparisons are equivalent to cosine com
 #### Face Kind Reference
 
 | Kind             | Value | Source                                     | Matching Behavior                               | Notes                                                                                                   |
-|------------------|:-----:|--------------------------------------------|-------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+|:-----------------|:-----:|:-------------------------------------------|:------------------------------------------------|:--------------------------------------------------------------------------------------------------------|
 | `RegularFace`    |   1   | Default embedding classification           | Eligible for matching and clustering            | Produced when embeddings are distinct and not flagged as child/background.                              |
 | `ChildrenFace`   |   2   | `Embedding.IsChild()` vs. curated samples  | Excluded from matching (`SkipMatching = true`)  | Helps avoid unreliable matches on juvenile faces; clusters are retained but not auto-assigned.          |
 | `BackgroundFace` |   3   | `Embedding.IsBackground()` heuristics      | Excluded from matching and clustering           | Used for non-face artifacts and background detections; prevents noise from entering optimization runs.  |
@@ -119,7 +123,7 @@ Additional safeguards were introduced in October 2025 so stubborn clusters are o
 ### Configuration Summary
 
 | Setting                  | Default                      | Description                                                                                     |
-|--------------------------|------------------------------|-------------------------------------------------------------------------------------------------|
+|:-------------------------|:-----------------------------|:------------------------------------------------------------------------------------------------|
 | `FACE_ENGINE`            | `auto`                       | Detection engine (`auto`, `pigo`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
 | `FACE_ENGINE_THREADS`    | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads; ignored by Pigo.                                                        |
 | `FACE_ANGLE`             | `-0.3,0,0.3`                 | Detection angles (radians) swept by Pigo.                                                       |
@@ -134,7 +138,7 @@ When the model is left on the default `auto` run mode, face detection participat
 ### Benchmark Reference
 
 | Benchmark                     | Before             | After           |
-|-------------------------------|--------------------|-----------------|
+|:------------------------------|:-------------------|:----------------|
 | `BenchmarkEmbeddingDist`      | ~242 ns/op         | ~155 ns/op      |
 | `BenchmarkEmbeddingsMidpoint` | ~194 µs/op, 528 KB | ~99 µs/op, 4 KB |
 

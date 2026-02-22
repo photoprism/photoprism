@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime/debug"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -312,8 +313,8 @@ func (m *MediaFile) CanonicalNameDefault() string {
 func (m *MediaFile) CanonicalNameFromFile() string {
 	basename := filepath.Base(m.FileName())
 
-	if end := strings.Index(basename, "."); end != -1 {
-		return basename[:end] // Length of canonical name: 16 + 12
+	if before, _, ok := strings.Cut(basename, "."); ok {
+		return before // Length of canonical name: 16 + 12
 	}
 
 	return basename
@@ -1058,13 +1059,7 @@ func (m *MediaFile) MediaType() media.Type {
 func (m *MediaFile) HasMediaType(mediaTypes ...media.Type) bool {
 	mediaType := m.MediaType()
 
-	for _, t := range mediaTypes {
-		if mediaType == t {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(mediaTypes, mediaType)
 }
 
 // HasFileType checks if the file has the given file type.

@@ -186,7 +186,7 @@ func CosineDist(a, b Vector) float64 {
 
 	var sum, s1, s2 float64
 
-	for i := 0; i < len(a); i++ {
+	for i := range a {
 		sum += a[i] * b[i]
 		s1 += a[i] * a[i]
 		s2 += b[i] * b[i]

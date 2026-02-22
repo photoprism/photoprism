@@ -214,12 +214,12 @@ func (m *Service) Directories() (result fs.FileInfos, err error) {
 }
 
 // Updates multiple columns in the database.
-func (m *Service) Updates(values interface{}) error {
+func (m *Service) Updates(values any) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
 // Update a column in the database.
-func (m *Service) Update(attr string, value interface{}) error {
+func (m *Service) Update(attr string, value any) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 

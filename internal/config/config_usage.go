@@ -111,22 +111,14 @@ func (c *Config) Usage() Usage {
 		info.FilesUsedPct = 1
 	}
 
-	info.FilesFreePct = 100 - info.FilesUsedPct
-
-	if info.FilesFreePct < 0 {
-		info.FilesFreePct = 0
-	}
+	info.FilesFreePct = max(100-info.FilesUsedPct, 0)
 
 	info.UsersActive = query.CountUsers(true, true, nil, []string{"guest"})
 	info.GuestsActive = query.CountUsers(true, true, []string{"guest"}, nil)
 
 	if info.UsersQuota = c.UsersQuota(); info.UsersQuota > 0 {
 		info.UsersUsedPct = int(math.Floor(info.UsersUsedRatio() * 100))
-		info.UsersFreePct = 100 - info.UsersUsedPct
-
-		if info.UsersFreePct < 0 {
-			info.UsersFreePct = 0
-		}
+		info.UsersFreePct = max(100-info.UsersUsedPct, 0)
 	} else {
 		info.UsersUsedPct = 0
 		info.UsersFreePct = 0

@@ -60,7 +60,7 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 	var wg sync.WaitGroup
 	var numWorkers = w.conf.IndexWorkers()
 	wg.Add(numWorkers)
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		go func() {
 			ConvertWorker(jobs)
 			wg.Done()

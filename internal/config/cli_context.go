@@ -11,7 +11,7 @@ import (
 )
 
 // ApplyCliContext applies the values of the cli context based on the "flag" annotations.
-func ApplyCliContext(c interface{}, ctx *cli.Context) error {
+func ApplyCliContext(c any, ctx *cli.Context) error {
 	v := reflect.ValueOf(c).Elem()
 
 	// Iterate through all config fields.

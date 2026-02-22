@@ -74,6 +74,10 @@
                   {{ m.locationInfo() }}
                 </button>
               </template>
+              <button v-if="context === contexts.Hidden && hiddenReason(m)" class="meta-error text-truncate">
+                <i class="mdi mdi-alert-circle" />
+                {{ hiddenReason(m) }}
+              </button>
             </div>
           </div>
         </div>
@@ -253,6 +257,10 @@
                   {{ m.locationInfo() }}
                 </button>
               </template>
+              <button v-if="context === contexts.Hidden && hiddenReason(m)" :title="hiddenReason(m)" class="meta-error text-truncate">
+                <i class="mdi mdi-alert-circle" />
+                {{ hiddenReason(m) }}
+              </button>
             </div>
           </div>
         </div>
@@ -362,6 +370,13 @@ export default {
     this.intersectionObserver.disconnect();
   },
   methods: {
+    hiddenReason(photo) {
+      if (!photo || typeof photo.getHiddenReason !== "function") {
+        return "";
+      }
+
+      return photo.getHiddenReason();
+    },
     observeItems() {
       if (this.$refs.items === undefined) {
         return;
@@ -409,7 +424,7 @@ export default {
               }
             });
           }
-        } catch (e) {
+        } catch {
           // Ignore.
         }
       }

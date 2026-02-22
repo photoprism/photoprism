@@ -9,6 +9,7 @@ type Node struct {
 	cluster.Node
 	ClientSecret string `json:"-"`                   // plaintext only when newly created/rotated in-memory
 	RotatedAt    string `json:"RotatedAt,omitempty"` // secret rotation timestamp
+	AuthEnabled  bool   `json:"-"`                   // auth client is enabled
 }
 
 // ensureDatabase returns a writable NodeDatabase, creating one if missing.

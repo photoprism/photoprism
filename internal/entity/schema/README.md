@@ -1,18 +1,18 @@
-# Database Schema
+## Database Schema
 
 *This schema description is for illustrative purposes only, e.g. to generate visual relationship diagrams. It should not be used to update or replace an existing production database.*
 
-## Entity-Relationship Diagram
+### Entity-Relationship Diagram
 
 ↪ [docs.photoprism.app/developer-guide/database/schema/](https://docs.photoprism.app/developer-guide/database/schema/)
 
-## Mermaid Markup
+### Mermaid Markup
 
 With [Mermaid.js](https://mermaid-js.github.io/) you can generate visual diagrams from this markup file:
 
 ↪ [mariadb.mmd](mariadb.mmd)
 
-## MariaDB SQL Dump
+### MariaDB SQL Dump
 
 An SQL schema dump can be created using the command shown below, for example:
 
@@ -33,7 +33,7 @@ cat mariadb.sql | grep -v '^\/\*![0-9]\{5\}.*\/;$' > photoprism-mariadb-database
 
 Please note that the dump we provide is only updated at irregular intervals and should therefore not be used to update or replace an existing production database.
 
-## Schema Migrations
+### Schema Migrations
 
 ↪ [docs.photoprism.app/developer-guide/database/migrations/](https://docs.photoprism.app/developer-guide/database/migrations/)
 

@@ -47,7 +47,7 @@ type Model struct {
 	Resolution    int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
 	TensorFlow    *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
 	Options       *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
-	Service       Service               `yaml:"Service,omitempty" json:"service,omitempty"`
+	Service       Service               `yaml:"Service,omitempty" json:"service"`
 	Path          string                `yaml:"Path,omitempty" json:"-"`
 	Disabled      bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
 	classifyModel *classify.Model

@@ -40,7 +40,6 @@ func TestFilterModels(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			got := FilterModels(tc.models, tc.when, tc.allow)
 			if len(got) != len(tc.expected) {

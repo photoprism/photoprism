@@ -57,7 +57,7 @@ func TestDeleteClientSessions(t *testing.T) {
 	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodDefault, 0))
 
 	// Create 10 test client sessions.
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		sess := NewSession(3600, 0)
 		sess.SetClient(client)
 

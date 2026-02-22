@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/proxy"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -68,6 +69,11 @@ func (c *Config) ClusterUUID() string {
 	return c.options.ClusterUUID
 }
 
+// Portal returns true if the configured node type is "portal".
+func (c *Config) Portal() bool {
+	return c.NodeRole() == cluster.RolePortal
+}
+
 // PortalUrl returns the URL of the cluster management portal server, if configured.
 func (c *Config) PortalUrl() string {
 	if c.options.PortalUrl == "" {
@@ -91,9 +97,18 @@ func (c *Config) PortalUrl() string {
 	return c.options.PortalUrl
 }
 
-// Portal returns true if the configured node type is "portal".
-func (c *Config) Portal() bool {
-	return c.NodeRole() == cluster.RolePortal
+// PortalProxy reports whether portal proxy routing is enabled on this node.
+func (c *Config) PortalProxy() bool {
+	return c.Portal() && c.options.PortalProxy
+}
+
+// PortalProxyPrefix returns the configured path prefix for portal proxy routing.
+func (c *Config) PortalProxyPrefix() string {
+	if prefix := strings.TrimSpace(c.options.PortalProxyPrefix); prefix != "" {
+		return prefix
+	}
+
+	return proxy.DefaultPathPrefix
 }
 
 // PortalConfigPath returns the path to the default configuration for cluster portals.
@@ -500,8 +515,7 @@ func (c *Config) JWTAllowedScopes() list.Attr {
 }
 
 // AdvertiseUrl returns the advertised node URL for intra-cluster calls (scheme://host[:port]).
-// Portal validation permits HTTPS for external hosts and HTTP only for loopback
-// or cluster-internal service domains (e.g., *.svc, *.cluster.local, *.internal).
+// Portal validation permits HTTP and HTTPS to support internal cluster traffic.
 func (c *Config) AdvertiseUrl() string {
 	if c.options.AdvertiseUrl != "" {
 		return strings.TrimRight(c.options.AdvertiseUrl, "/") + "/"

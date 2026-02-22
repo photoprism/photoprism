@@ -49,12 +49,12 @@ func (m *File) MarshalJSON() ([]byte, error) {
 		Software       string        `json:",omitempty"`
 		Error          string        `json:",omitempty"`
 		ModTime        int64         `json:",omitempty"`
-		CreatedAt      time.Time     `json:",omitempty"`
-		CreatedIn      int64         `json:",omitempty"`
-		UpdatedAt      time.Time     `json:",omitempty"`
-		UpdatedIn      int64         `json:",omitempty"`
-		DeletedAt      *time.Time    `json:",omitempty"`
-		Markers        *Markers      `json:",omitempty"`
+		CreatedAt      time.Time
+		CreatedIn      int64 `json:",omitempty"`
+		UpdatedAt      time.Time
+		UpdatedIn      int64      `json:",omitempty"`
+		DeletedAt      *time.Time `json:",omitempty"`
+		Markers        *Markers   `json:",omitempty"`
 	}{
 		UID:            m.FileUID,
 		PhotoUID:       m.PhotoUID,

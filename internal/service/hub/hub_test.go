@@ -99,7 +99,11 @@ func TestConfig_Refresh(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		defer os.Remove(fileName)
+		t.Cleanup(func() {
+			if err := os.Remove(fileName); err != nil {
+				t.Errorf("failed removing %s: %v", fileName, err)
+			}
+		})
 
 		assert.FileExists(t, fileName)
 
@@ -205,7 +209,11 @@ func TestConfig_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		defer os.Remove("testdata/hub-save.yml")
+		t.Cleanup(func() {
+			if err := os.Remove("testdata/hub-save.yml"); err != nil {
+				t.Errorf("failed removing testdata/hub-save.yml: %v", err)
+			}
+		})
 
 		assert.Equal(t, "b32e9ccdc90eb7c0f6f1b9fbc82b8a2b0e993304", c.Key)
 		assert.Equal(t, "5991ea36a9611e9e00a8360c10b91567", c.Secret)

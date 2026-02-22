@@ -32,6 +32,7 @@ import { $lightbox } from "common/lightbox";
 import { PhotoClipboard } from "common/clipboard";
 import $event from "common/event";
 import $log from "common/log";
+import { registerServiceWorker } from "common/pwa";
 import $util from "common/util";
 import * as components from "component/components";
 import icons from "component/icons";
@@ -289,14 +290,5 @@ $config.update().finally(() => {
   app.mount("#app");
 
   // Allows the application to be installed as a PWA.
-  if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
-    const scopeBase = $config.baseUri ? $config.baseUri.replace(/\/+$/, "") + "/" : "/";
-    const swUrl = `${scopeBase}sw.js`.replace(/\/\/+/g, "/");
-
-    navigator.serviceWorker
-      .register(swUrl, { scope: scopeBase })
-      .catch((err) => {
-        $log.warn("service worker: register failed", err);
-      });
-  }
+  registerServiceWorker(typeof navigator === "undefined" ? undefined : navigator, $config, $log);
 });

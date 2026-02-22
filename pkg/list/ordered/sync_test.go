@@ -88,7 +88,7 @@ func TestRaceCondition(t *testing.T) {
 		}()
 	}
 
-	for i := 0; i < 10000; i++ {
+	for range 10000 {
 		asyncSet()
 		asyncGet()
 		asyncDelete()

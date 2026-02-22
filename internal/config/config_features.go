@@ -29,7 +29,7 @@ func (c *Config) DisableRestart() bool {
 
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
-	if c.Public() || c.Demo() {
+	if c.Public() || c.Demo() || c.Portal() {
 		return true
 	}
 

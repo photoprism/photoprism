@@ -72,6 +72,9 @@ import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
 import PPhotoViewList from "component/photo/view/list.vue";
 import PLoading from "component/loading.vue";
 import PScroll from "component/scroll.vue";
+import { getAppStorage } from "common/storage";
+
+const appStorage = getAppStorage();
 
 export default {
   name: "PPagePhotos",
@@ -305,7 +308,7 @@ export default {
       return this.$refs?.toolbar?.hideExpansionPanel();
     },
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("photos.offset"));
+      const offset = parseInt(appStorage.getItem("photos.offset"));
       if (this.offset > 0 || !offset) {
         return this.batchSize;
       }
@@ -313,7 +316,7 @@ export default {
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("photos.offset", offset);
+      appStorage.setItem("photos.offset", offset);
     },
     getViewType() {
       if (this.embedded) {
@@ -321,10 +324,10 @@ export default {
       }
 
       let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
-      let storedType = window.localStorage.getItem("photos.view");
+      let storedType = appStorage.getItem("photos.view");
 
       if (queryParam) {
-        window.localStorage.setItem("photos.view", queryParam);
+        appStorage.setItem("photos.view", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -382,10 +385,10 @@ export default {
       }
 
       let queryOrder = this.$route.query["order"];
-      let storageOrder = window.localStorage.getItem(storageKey);
+      let storageOrder = appStorage.getItem(storageKey);
 
       if (queryOrder) {
-        window.localStorage.setItem(storageKey, queryOrder);
+        appStorage.setItem(storageKey, queryOrder);
         return queryOrder;
       } else if (storageOrder) {
         return storageOrder;
@@ -554,7 +557,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("photos." + key, this.settings[key]);
+        appStorage.setItem("photos." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

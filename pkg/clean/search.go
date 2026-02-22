@@ -29,7 +29,7 @@ func replaceFoldASCII(s, needle, repl string) string {
 	nl := len(needle)
 	// Precompute lower-case needle bytes.
 	nb := make([]byte, nl)
-	for i := 0; i < nl; i++ {
+	for i := range nl {
 		nb[i] = toLower(needle[i])
 	}
 

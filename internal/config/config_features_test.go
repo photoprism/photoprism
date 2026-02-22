@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
 func TestConfig_DisableFrontend(t *testing.T) {
@@ -56,6 +57,9 @@ func TestConfig_DisableWebDAV(t *testing.T) {
 	c.options.Demo = false
 
 	assert.False(t, c.DisableWebDAV())
+
+	c.options.NodeRole = cluster.RolePortal
+	assert.True(t, c.DisableWebDAV())
 }
 
 func TestConfig_DisableExifTool(t *testing.T) {

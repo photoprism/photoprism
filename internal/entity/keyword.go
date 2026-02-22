@@ -37,7 +37,7 @@ func NewKeyword(keyword string) *Keyword {
 
 // Update modifies a single column on an already persisted keyword and relies on
 // the standard GORM callback to evict the cached instance afterwards.
-func (m *Keyword) Update(attr string, value interface{}) error {
+func (m *Keyword) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("keyword must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -50,7 +50,7 @@ func (m *Keyword) Update(attr string, value interface{}) error {
 
 // Updates applies a set of column changes to an existing keyword while keeping
 // the cache consistent via the AfterUpdate hook.
-func (m *Keyword) Updates(values interface{}) error {
+func (m *Keyword) Updates(values any) error {
 	if values == nil {
 		return nil
 	} else if m == nil {

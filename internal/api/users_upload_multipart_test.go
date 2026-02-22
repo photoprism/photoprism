@@ -40,7 +40,7 @@ func buildMultipart(files map[string][]byte) (body *bytes.Buffer, contentType st
 func buildMultipartTwo(name1 string, data1 []byte, name2 string, data2 []byte) (body *bytes.Buffer, contentType string, err error) {
 	body = &bytes.Buffer{}
 	mw := multipart.NewWriter(body)
-	for _, it := range [][2]interface{}{{name1, data1}, {name2, data2}} {
+	for _, it := range [][2]any{{name1, data1}, {name2, data2}} {
 		fw, cerr := mw.CreateFormFile("files", it[0].(string))
 		if cerr != nil {
 			return nil, "", cerr
@@ -342,7 +342,7 @@ func TestUploadUserFiles_Multipart_ZipPartialExtraction(t *testing.T) {
 
 	var zbuf bytes.Buffer
 	zw := zip.NewWriter(&zbuf)
-	for i := 0; i < 20; i++ { // ~20 * 63 KiB ≈ 1.2 MiB
+	for i := range 20 { // ~20 * 63 KiB ≈ 1.2 MiB
 		f, _ := zw.Create(fmt.Sprintf("pic%02d.jpg", i+1))
 		_, _ = f.Write(data)
 	}
@@ -390,7 +390,7 @@ func TestUploadUserFiles_Multipart_ZipDeepNestingStress(t *testing.T) {
 
 	// Build a deeply nested path (20 levels)
 	deep := ""
-	for i := 0; i < 20; i++ {
+	for i := range 20 {
 		if i == 0 {
 			deep = "deep"
 		} else {

@@ -60,10 +60,7 @@ func clusterNodesListAction(ctx *cli.Context) error {
 		if count <= 0 || count > 1000 {
 			count = 100
 		}
-		offset := ctx.Int("offset")
-		if offset < 0 {
-			offset = 0
-		}
+		offset := max(ctx.Int("offset"), 0)
 		if offset > len(items) {
 			offset = len(items)
 		}

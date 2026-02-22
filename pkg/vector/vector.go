@@ -11,7 +11,7 @@ type Vector []float64
 type Vectors = []Vector
 
 // NewVector creates a new vector from the given values.
-func NewVector(values interface{}) (Vector, error) {
+func NewVector(values any) (Vector, error) {
 	switch v := values.(type) {
 	case []uint8:
 		return uint8ToVector(v), nil
