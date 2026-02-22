@@ -157,7 +157,7 @@ func (f CliFlags) SetHidden(hidden bool, names ...string) (result CliFlags) {
 		if list.Contains(names, flag.Name()) {
 			rv := reflect.ValueOf(flag.Flag)
 
-			if rv.Kind() == reflect.Ptr {
+			if rv.Kind() == reflect.Pointer {
 				rv = rv.Elem()
 			}
 

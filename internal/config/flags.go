@@ -562,6 +562,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("DEFAULT_THEME"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "theme-url",
+			Usage:   "download `URL` for installing a custom theme if none is installed",
+			EnvVars: EnvVars("THEME_URL"),
+			Hidden:  true,
+		}, Tags: []string{Pro}}, {
+		Flag: &cli.StringFlag{
 			Name:    "places-locale",
 			Usage:   "location details language `CODE`, e.g. en, de, or local",
 			Value:   places.LocalLocale,
@@ -695,15 +701,15 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("CLUSTER_DOMAIN"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "cluster-uuid",
-			Usage:   "cluster `UUID` (v4) to scope node credentials",
-			EnvVars: EnvVars("CLUSTER_UUID"),
-			Hidden:  true,
-		}}, {
-		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
 			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cluster-uuid",
+			Usage:   "cluster `UUID` (v4) to scope node credentials",
+			EnvVars: EnvVars("CLUSTER_UUID"),
 			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{

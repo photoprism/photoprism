@@ -492,7 +492,7 @@ export default class Config {
       return this;
     }
 
-    // Update the configuration settings and save them to window.localStorage.
+    // Update the configuration settings and save them to namespaced storage.
     if (this.values.settings && this.values.settings.ui) {
       this.values.settings.ui.language = locale;
       this.storage.setItem(this.storageKey + ".locale", locale);
@@ -521,7 +521,7 @@ export default class Config {
       }
     }
 
-    // Get user locale from localStorage if settings have not yet been loaded from backend.
+    // Get user locale from storage if settings have not yet been loaded from backend.
     if (this.loading()) {
       const stored = this.storage.getItem(this.storageKey + ".locale");
       if (stored) {
@@ -727,13 +727,13 @@ export default class Config {
     return this.values;
   }
 
-  // storeValues saves the current configuration values in window.localStorage.
+  // storeValues saves the current configuration values in storage.
   storeValues() {
     this.storage.setItem(this.storageKey, JSON.stringify(this.getValues()));
     return this;
   }
 
-  // restoreValues restores the configuration values from window.localStorage.
+  // restoreValues restores the configuration values from storage.
   restoreValues() {
     const json = this.storage.getItem(this.storageKey);
     if (json !== "undefined") {

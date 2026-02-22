@@ -22,7 +22,7 @@ type Album struct {
 }
 
 // NewAlbum creates a new form struct based on the interface values.
-func NewAlbum(m interface{}) (*Album, error) {
+func NewAlbum(m any) (*Album, error) {
 	frm := &Album{}
 	err := deepcopier.Copy(m).To(frm)
 

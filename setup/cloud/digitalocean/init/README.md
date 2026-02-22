@@ -1,17 +1,14 @@
-PhotoPrism 1-Click App for DigitalOcean
-=======================================
+## PhotoPrism 1-Click App for DigitalOcean
 
 Privately browse, organize, and share your photo collection.
 
-DESCRIPTION
----------------------------------------
+### Description
 
 PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to uploading your visual memories to the cloud!
 
 To learn more, visit https://www.photoprism.app/ or try our [demo](https://try.photoprism.app/).
 
-SOFTWARE INCLUDED
----------------------------------------
+### Software Included
 
 - [PhotoPrism latest](https://docs.photoprism.app/release-notes/), AGPL 3
 - [Docker CE latest](https://docs.docker.com/engine/release-notes/), Apache 2
@@ -19,8 +16,7 @@ SOFTWARE INCLUDED
 - [MariaDB 11](https://mariadb.com/kb/en/release-notes/), GPL 2
 - [Watchtower latest](https://github.com/nicholas-fedor/watchtower/releases), Apache 2
 
-GETTING STARTED
----------------------------------------
+### Getting Started
 
 It may take a few minutes until your Droplet is provisioned, and all services have been initialized.
 
@@ -53,7 +49,7 @@ docker compose stop
 docker compose up -d
 ```
 
-## Using Let's Encrypt HTTPS ##
+### Using Let's Encrypt HTTPS
 
 By default, a self-signed certificate will be used for HTTPS connections. Browsers are going to show a security warning because of that. Depending on your settings, they may also refuse connecting at all.
 
@@ -85,6 +81,6 @@ https://photos.yourdomain.com/
 
 Note the first request may still fail while Traefik gets and installs the new certificate. Try again after 30 seconds.
 
-## System Requirements ##
+### System Requirements
 
 We recommend hosting PhotoPrism on a server with at least 2 cores and 4 GB of memory. Indexing and searching may be slow on smaller Droplets, depending on how many and what types of files you upload.

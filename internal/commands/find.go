@@ -70,14 +70,11 @@ func findAction(ctx *cli.Context) error {
 		return nil
 	}
 
-	cols := []string{"File Name", "Mime Type", "Size", "SHA1 Hash"}
+	cols := []string{"File Name", "Mime Type", "Size", "Checksum"}
 	rows := make([][]string, 0, len(results))
 
 	for _, found := range results {
-		size := found.FileSize
-		if size < 0 {
-			size = 0
-		}
+		size := max(found.FileSize, 0)
 		v := []string{found.FileName, found.FileMime, humanize.Bytes(uint64(size)), found.FileHash} //nolint:gosec // size non-negative after check
 		rows = append(rows, v)
 	}

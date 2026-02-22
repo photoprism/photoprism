@@ -222,7 +222,7 @@ func AnySlug(col, search, sep string) (where string, values []interface{}) {
 	var wheres []string
 	var words []string
 
-	for _, w := range strings.Split(search, sep) {
+	for w := range strings.SplitSeq(search, sep) {
 		w = strings.TrimSpace(w)
 
 		words = append(words, txt.Slug(w))
@@ -267,7 +267,7 @@ func AnyInt(col, numbers, sep string, low, high int) (where string, values []int
 	var matches []int
 	var wheres []string
 
-	for _, n := range strings.Split(numbers, sep) {
+	for n := range strings.SplitSeq(numbers, sep) {
 		i := txt.Int(n)
 
 		if i == 0 || i < low || i > high {
@@ -295,19 +295,19 @@ func AnyInt(col, numbers, sep string, low, high int) (where string, values []int
 // It returns a where statement, and a slice of the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(where, values...)
-func OrLike(col, s string) (where string, values []interface{}) {
+func OrLike(col, s string) (where string, values []any) {
 	if txt.Empty(col) || txt.Empty(s) {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
 	s = strings.ReplaceAll(s, "*", "%")
 	s = strings.ReplaceAll(s, "%%", "%")
 
 	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
-	values = make([]interface{}, len(terms))
+	values = make([]any, len(terms))
 
 	if l := len(terms); l == 0 {
-		return "", []interface{}{}
+		return "", []any{}
 	} else if l == 1 {
 		values[0] = terms[0]
 	} else {
@@ -328,9 +328,9 @@ func OrLike(col, s string) (where string, values []interface{}) {
 // It returns a where statement, and a slice of the parameter values.
 // Expectation is that each set of results will be fed into gorm.Expr
 // eg. gorm.Expr(where, values...)
-func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
+func OrLikeCols(cols []string, s string) (where string, values []any) {
 	if len(cols) == 0 || txt.Empty(s) {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
 	s = strings.ReplaceAll(s, "*", "%")
@@ -339,10 +339,10 @@ func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 
 	if len(terms) == 0 {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
-	values = make([]interface{}, len(terms)*len(cols))
+	values = make([]any, len(terms)*len(cols))
 
 	for j := range terms {
 		for i := range cols {
@@ -370,7 +370,7 @@ func SplitOr(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 }
 
-// SplitAnd splits a search string on AND separators (&) while honouring escape
+// SplitAnd splits a search string on AND separators (&) while honoring escape
 // sequences.
 func SplitAnd(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)

@@ -110,6 +110,19 @@ func TestSession_SetData(t *testing.T) {
 		assert.NotEmpty(t, sess.ID)
 		assert.Equal(t, sess.ID, m.ID)
 	})
+	t.Run("GetDataCached", func(t *testing.T) {
+		m := NewSession(unix.Day, unix.Hour*6)
+		data := NewSessionData()
+		data.Tokens = []string{"alpha"}
+
+		m.SetData(data)
+
+		first := m.GetData()
+		second := m.GetData()
+
+		assert.Same(t, first, second)
+		assert.Equal(t, "alpha", second.Tokens[0])
+	})
 }
 
 func TestSession_Expires(t *testing.T) {
@@ -658,6 +671,9 @@ func TestSession_ChangePassword(t *testing.T) {
 	if err2 != nil {
 		t.Fatal(err2)
 	}
+
+	err3 := m.ChangePassword("123")
+	assert.Error(t, err3)
 }
 
 func TestSession_ValidateScope(t *testing.T) {

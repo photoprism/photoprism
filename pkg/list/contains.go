@@ -1,5 +1,7 @@
 package list
 
+import "slices"
+
 // Any matches everything.
 const Any = "*"
 
@@ -30,10 +32,8 @@ func ContainsAny(l, s []string) bool {
 		return false
 	}
 
-	for _, v := range s {
-		if v == Any {
-			return true
-		}
+	if slices.Contains(s, Any) {
+		return true
 	}
 
 	// Build a set from the smaller slice for O(n+m) intersection.

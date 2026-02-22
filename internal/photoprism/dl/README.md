@@ -1,6 +1,6 @@
 ## PhotoPrism — Download Helpers
 
-**Last Updated:** November 22, 2025
+**Last Updated:** January 28, 2026
 
 ### Overview
 
@@ -50,4 +50,6 @@ It currently supports two invocation methods:
 - Prefer the file method for sources with separate audio/video streams; the pipe method cannot always merge in that case.
 - When the CLI’s `--file-remux=auto` is used, the final ffmpeg remux is skipped for MP4 outputs that already include metadata.
 - Keep `yt-dlp` updated. Releases older than `2025.09.23` are known to miss YouTube video formats (SABR gating); the CLI now logs a warning when it detects an outdated build.
+- If a YouTube change breaks stable releases, you can install the latest nightly build using `scripts/dist/install-yt-dlp.sh --nightly` (or set `PHOTOPRISM_YTDLP_CHANNEL=nightly` before running the script).
+- If you need the master build, use `scripts/dist/install-yt-dlp.sh --master` (or set `PHOTOPRISM_YTDLP_CHANNEL=master` before running the script).
 - Users who favor one approach can set `PHOTOPRISM_DL_METHOD=file` (or `pipe`) in the environment to change the default without touching CLI flags.

@@ -32,7 +32,7 @@ func NewClientData() *ClientData {
 // GetData returns the data that belong to this session.
 func (m *Client) GetData() (data *ClientData) {
 	if m.data != nil {
-		data = m.data
+		return m.data
 	}
 
 	data = NewClientData()

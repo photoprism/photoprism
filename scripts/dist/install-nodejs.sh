@@ -10,8 +10,12 @@ set -e
 # shellcheck source=/dev/null
 . /etc/os-release
 
-# NodeJS version to be installed.
-NODE_MAJOR=22
+# NodeJS major version to be installed (armhf still requires 22.x).
+NODE_MAJOR=24
+
+if [ "$(dpkg --print-architecture)" = "armhf" ]; then
+  NODE_MAJOR=22
+fi
 
 # Check if NodeJS is installed.
 if which node > /dev/null
@@ -47,12 +51,12 @@ sudo npm install -g --no-fund npm@latest n@latest
 echo "Installing npm-check-updates and license-report..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 echo "Installing TestCafe..."
-sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@3.7.2
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error testcafe@3.7.4
 echo "Installing Vitest..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier vitest @vitest/browser @vitest/coverage-v8 @vitest/ui
 echo "Installing ESLint..."
-sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint prettier globals \
-  @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty \
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint@9 prettier globals \
+  @eslint/eslintrc @eslint/js@9 eslint-config-prettier eslint-formatter-pretty \
   eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier \
   eslint-plugin-vue eslint-plugin-vuetify eslint-webpack-plugin
 echo "Installing Vue Language Server..."

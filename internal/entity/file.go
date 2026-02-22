@@ -516,12 +516,12 @@ func (m *File) UpdateVideoInfos() error {
 }
 
 // Update updates a column in the database.
-func (m *File) Update(attr string, value interface{}) error {
+func (m *File) Update(attr string, value any) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
 // Updates multiple columns in the database.
-func (m *File) Updates(values interface{}) error {
+func (m *File) Updates(values any) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 

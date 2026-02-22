@@ -155,7 +155,11 @@ func clusterThemePullAction(ctx *cli.Context) error {
 		if err != nil {
 			return err
 		}
-		defer resp.Body.Close()
+		defer func() {
+			if closeErr := resp.Body.Close(); closeErr != nil {
+				log.Debugf("cluster: %s (close theme response body)", clean.Error(closeErr))
+			}
+		}()
 		if resp.StatusCode != http.StatusOK {
 			// Map common codes to clearer messages
 			switch resp.StatusCode {
@@ -217,7 +221,11 @@ func obtainOAuthToken(portalURL, clientID, clientSecret string) (string, error) 
 		return "", err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			log.Debugf("cluster: %s (close oauth response body)", clean.Error(closeErr))
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("%s", resp.Status)
@@ -277,7 +285,11 @@ func unzipSafe(zipPath, dest string) error {
 	if err != nil {
 		return err
 	}
-	defer r.Close()
+	defer func() {
+		if closeErr := r.Close(); closeErr != nil {
+			log.Debugf("cluster: %s (close theme archive)", clean.Error(closeErr))
+		}
+	}()
 	// Empty theme archives are valid; install succeeds without files.
 	for _, f := range r.File {
 		// Directories are indicated by trailing '/'; ensure canonical path
@@ -315,22 +327,31 @@ func unzipSafe(zipPath, dest string) error {
 			return err
 		}
 
-		// Open for read
+		// Open for read.
 		rc, err := f.Open()
 		if err != nil {
 			return err
 		}
-		defer rc.Close()
 
-		// Create/truncate target
+		// Create/truncate target.
 		out, err := os.OpenFile(target, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, f.Mode()) //nolint:gosec // paths derived from zip entries validated earlier
 		if err != nil {
+			_ = rc.Close()
 			return err
 		}
-		defer out.Close()
 
-		if _, err := io.Copy(out, rc); err != nil { //nolint:gosec // zip entries size is bounded by upstream
-			return err
+		_, copyErr := io.Copy(out, rc) //nolint:gosec // zip entries size is bounded by upstream
+		closeOutErr := out.Close()
+		closeRcErr := rc.Close()
+
+		if copyErr != nil {
+			return copyErr
+		}
+		if closeOutErr != nil {
+			return closeOutErr
+		}
+		if closeRcErr != nil {
+			return closeRcErr
 		}
 	}
 	return nil

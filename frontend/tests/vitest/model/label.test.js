@@ -1,8 +1,18 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
 import { Label, BatchSize } from "model/label";
 
 describe("model/label", () => {
+  let originalBatchSize;
+
+  beforeEach(() => {
+    originalBatchSize = Label.batchSize();
+  });
+
+  afterEach(() => {
+    Label.setBatchSize(originalBatchSize);
+  });
+
   it("should get route view", () => {
     const values = { ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat" };
     const label = new Label(values);
@@ -15,7 +25,6 @@ describe("model/label", () => {
     expect(Label.batchSize()).toBe(BatchSize);
     Label.setBatchSize(30);
     expect(Label.batchSize()).toBe(30);
-    Label.setBatchSize(BatchSize);
   });
 
   it("should return classes", () => {

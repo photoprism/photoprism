@@ -97,7 +97,7 @@ func (w *Moments) Start() (err error) {
 				if a.DeletedAt != nil {
 					// Nothing to do.
 					log.Tracef("moments: %s was deleted (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
-				} else if err := a.UpdateFolder(mom.Path, f.Serialize()); err != nil {
+				} else if err := a.UpdateFolder(mom.Path, f.Serialize(), mom.Title()); err != nil {
 					log.Errorf("moments: %s (update folder)", err.Error())
 				} else {
 					log.Tracef("moments: %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)

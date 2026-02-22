@@ -34,8 +34,11 @@ func NewReader(fileName string, offset int64) (*Reader, error) {
 		offset = 0
 	} else if offset > 0 {
 		if _, seekErr := file.Seek(offset, io.SeekStart); seekErr != nil {
-			_ = file.Close()
-			return nil, err
+			if closeErr := file.Close(); closeErr != nil {
+				return nil, errors.Join(seekErr, closeErr)
+			}
+
+			return nil, seekErr
 		}
 	}
 

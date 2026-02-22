@@ -396,7 +396,7 @@ func (m *Face) Delete() error {
 }
 
 // Update a face property in the database.
-func (m *Face) Update(attr string, value interface{}) error {
+func (m *Face) Update(attr string, value any) error {
 	if m.ID == "" {
 		return fmt.Errorf("empty id")
 	}
@@ -407,7 +407,7 @@ func (m *Face) Update(attr string, value interface{}) error {
 }
 
 // Updates face properties in the database.
-func (m *Face) Updates(values interface{}) error {
+func (m *Face) Updates(values any) error {
 	if m.ID == "" {
 		return fmt.Errorf("empty id")
 	}

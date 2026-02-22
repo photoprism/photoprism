@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
 import * as options from "options/options";
 import {
@@ -25,6 +25,15 @@ import {
 } from "options/options";
 
 describe("options/options", () => {
+  let originalDefaultLocale;
+
+  beforeEach(() => {
+    originalDefaultLocale = options.DefaultLocale;
+  });
+
+  afterEach(() => {
+    SetDefaultLocale(originalDefaultLocale);
+  });
   it("should get timezones", () => {
     const timezones = options.TimeZones();
     expect(timezones[0].ID).toBe("Local");
@@ -93,13 +102,10 @@ describe("options/options", () => {
   });
 
   it("should set default locale", () => {
-    // Assuming DefaultLocale is exported and mutable for testing purposes
-    // Initial state check might depend on test execution order, so we control it here.
-    SetDefaultLocale("en"); // Ensure starting state
+    SetDefaultLocale("en");
     expect(options.DefaultLocale).toBe("en");
     SetDefaultLocale("de");
     expect(options.DefaultLocale).toBe("de");
-    SetDefaultLocale("en"); // Reset for other tests
   });
 
   it("should return default when no locale is provided", () => {

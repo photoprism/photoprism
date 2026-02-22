@@ -22,3 +22,19 @@ func Uri(s string) string {
 		return uri.String()
 	}
 }
+
+// UriRedacted removes credentials from a URI string while preserving non-sensitive components.
+func UriRedacted(s string) string {
+	if s == "" || len(s) > LengthLimit {
+		return ""
+	}
+
+	// Trim whitespace.
+	s = strings.TrimSpace(s)
+
+	if uri, err := url.Parse(s); err != nil {
+		return ""
+	} else {
+		return uri.Redacted()
+	}
+}

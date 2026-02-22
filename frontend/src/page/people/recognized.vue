@@ -156,7 +156,10 @@ import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
+import { getAppStorage } from "common/storage";
 import PLoading from "component/loading.vue";
+
+const appStorage = getAppStorage();
 
 export default {
   name: "PPageSubjects",
@@ -306,7 +309,7 @@ export default {
       });
     },
     searchCount() {
-      const offset = parseInt(window.localStorage.getItem("people.recognized.offset"));
+      const offset = parseInt(appStorage.getItem("people.recognized.offset"));
 
       if (this.offset > 0 || !offset) {
         return this.batchSize;
@@ -319,7 +322,7 @@ export default {
     },
     setOffset(offset) {
       this.offset = offset;
-      window.localStorage.setItem("people.recognized.offset", offset);
+      appStorage.setItem("people.recognized.offset", offset);
     },
     toggleLike(ev, index) {
       if (!this.canManage) {
@@ -561,7 +564,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("people.recognized." + key, this.settings[key]);
+        appStorage.setItem("people.recognized." + key, this.settings[key]);
       }
     },
     updateFilter(props) {

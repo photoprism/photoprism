@@ -9,7 +9,7 @@ type Face struct {
 }
 
 // NewFace copies values from an arbitrary model into a Face form.
-func NewFace(m interface{}) (f Face, err error) {
+func NewFace(m any) (f Face, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err

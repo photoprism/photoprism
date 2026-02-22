@@ -47,7 +47,7 @@ func (c Chunk) Equal(b []byte) bool {
 }
 
 // FileOffset returns the index of the chunk, or -1 if it was not found.
-func (c Chunk) FileOffset(fileName string) (int, error) {
+func (c Chunk) FileOffset(fileName string) (index int, err error) {
 	if !fs.FileExists(fileName) {
 		return -1, errors.New("file not found")
 	}
@@ -58,11 +58,11 @@ func (c Chunk) FileOffset(fileName string) (int, error) {
 		return -1, err
 	}
 
-	defer file.Close()
+	defer func() {
+		err = errors.Join(err, file.Close())
+	}()
 
-	index, err := c.DataOffset(file, 0, -1)
-
-	return index, err
+	return c.DataOffset(file, 0, -1)
 }
 
 // DataOffset returns the index of the chunk in file, or -1 if it was not found.

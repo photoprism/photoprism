@@ -105,7 +105,7 @@ func (m *Passcode) Delete() (err error) {
 }
 
 // Updates multiple properties in the database.
-func (m *Passcode) Updates(values interface{}) error {
+func (m *Passcode) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

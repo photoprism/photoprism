@@ -77,7 +77,7 @@ func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
 
 	wg.Add(numWorkers)
 
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		go func() {
 			ThumbsWorker(jobs)
 			wg.Done()

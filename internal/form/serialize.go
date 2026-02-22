@@ -13,10 +13,10 @@ import (
 )
 
 // Serialize returns a string containing all non-empty fields and values of a struct.
-func Serialize(f interface{}, all bool) string {
+func Serialize(f any, all bool) string {
 	v := reflect.ValueOf(f)
 
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 

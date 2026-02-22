@@ -32,7 +32,7 @@ func TestOAuthToken_RateLimit_ClientCredentials(t *testing.T) {
 
 	// Invalid client secret repeatedly (from UnknownIP: no headers set)
 	path := "/api/v1/oauth/token"
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		data := url.Values{
 			"grant_type":    {authn.GrantClientCredentials.String()},
 			"client_id":     {"cs5cpu17n6gj2qo5"},

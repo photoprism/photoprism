@@ -113,6 +113,7 @@ export class Photo extends RestModel {
       FileUID: "",
       FileRoot: "",
       FileName: "",
+      FileError: "",
       FileType: "",
       MediaType: "",
       FPS: 0.0,
@@ -328,6 +329,31 @@ export class Photo extends RestModel {
   getEntityName() {
     return this.Title;
   }
+
+  getHiddenReason = () => {
+    return this.generateHiddenReason(this.FileError, this.Files);
+  };
+
+  generateHiddenReason = memoizeOne((fileError, files) => {
+    if (fileError && typeof fileError === "string" && fileError.trim()) {
+      return fileError.trim();
+    }
+
+    if (!Array.isArray(files) || files.length < 1) {
+      return "";
+    }
+
+    let file = files.find((f) => !!f.Primary && f.Error);
+    if (!file) {
+      file = files.find((f) => !!f.Error);
+    }
+
+    if (!file || !file.Error) {
+      return "";
+    }
+
+    return String(file.Error).trim();
+  });
 
   getTitle() {
     return this.Title;

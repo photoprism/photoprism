@@ -177,7 +177,7 @@ func TestIssuerClampTTL(t *testing.T) {
 
 	parsed := &Claims{}
 	parser := gojwt.NewParser(gojwt.WithValidMethods([]string{gojwt.SigningMethodEdDSA.Alg()}), gojwt.WithoutClaimsValidation())
-	_, err = parser.ParseWithClaims(token, parsed, func(token *gojwt.Token) (interface{}, error) {
+	_, err = parser.ParseWithClaims(token, parsed, func(token *gojwt.Token) (any, error) {
 		key, _ := mgr.ActiveKey()
 		return key.PublicKey, nil
 	})

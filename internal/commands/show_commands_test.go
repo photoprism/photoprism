@@ -40,7 +40,7 @@ func TestShowCommands_JSON_Flat(t *testing.T) {
 			Name, FullName string
 			Depth          int
 		} `json:"commands"`
-		GlobalFlags []map[string]interface{} `json:"global_flags"`
+		GlobalFlags []map[string]any `json:"global_flags"`
 	}
 	if err := json.Unmarshal(b, &v); err != nil {
 		t.Fatalf("invalid json: %v", err)

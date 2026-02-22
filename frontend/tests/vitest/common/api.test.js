@@ -1,5 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { $api } from "../fixtures";
+import clientConfig from "../config";
+import { buildNamespace } from "common/storage";
 
 describe("common/api", () => {
   const getCollectionResponse = [
@@ -59,4 +61,22 @@ describe("common/api", () => {
     await expect($api.get("error")).rejects.toThrow("Request failed with status code 401");
   });
    */
+
+  it("should bootstrap auth header from namespaced storage", async () => {
+    const baseUri = "/p/pro-1";
+    const namespaceKey = "ns-pro-1";
+    const token = "999900000000000000000000000000000000000000000000";
+    const prevConfig = window.__CONFIG__;
+    window.localStorage.clear();
+    window.__CONFIG__ = { ...clientConfig, baseUri, storageNamespace: namespaceKey };
+    window.localStorage.setItem(`${buildNamespace(namespaceKey)}session.token`, token);
+
+    vi.resetModules();
+    const { default: api } = await import("common/api");
+
+    expect(api.defaults.headers.common["X-Auth-Token"]).toBe(token);
+
+    window.__CONFIG__ = prevConfig;
+    window.localStorage.clear();
+  });
 });

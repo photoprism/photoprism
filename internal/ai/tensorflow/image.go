@@ -38,7 +38,11 @@ func OpenImage(fileName string) (image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() {
+		if closeErr := f.Close(); closeErr != nil {
+			log.Debugf("tensorflow: %s (close image file)", closeErr)
+		}
+	}()
 	img, _, err := image.Decode(f)
 
 	return img, err
@@ -106,7 +110,11 @@ func ImageTransform(image []byte, imageFormat fs.Type, resolution int) (*tf.Tens
 	if err != nil {
 		return nil, err
 	}
-	defer session.Close()
+	defer func() {
+		if closeErr := session.Close(); closeErr != nil {
+			log.Debugf("tensorflow: %s (close inference session)", closeErr)
+		}
+	}()
 
 	normalized, err := session.Run(
 		map[tf.Output]*tf.Tensor{input: tensor},

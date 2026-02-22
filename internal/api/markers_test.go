@@ -102,6 +102,8 @@ func TestCreateMarker(t *testing.T) {
 		newUID := gjson.Get(r.Body.String(), "UID").String()
 		assert.NotEmpty(t, newUID)
 		assert.Equal(t, "/api/v1/markers/"+newUID, r.Header().Get("Location"))
+		assert.Equal(t, "Jens Mander", gjson.Get(r.Body.String(), "Name").String())
+		assert.Equal(t, "manual", gjson.Get(r.Body.String(), "SubjSrc").String())
 	})
 	t.Run("InvalidArea", func(t *testing.T) {
 		app, router, _ := NewApiTest()

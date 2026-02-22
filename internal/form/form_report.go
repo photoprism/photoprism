@@ -9,12 +9,12 @@ import (
 )
 
 // Report returns form fields as table rows for reports.
-func Report(f interface{}) (rows [][]string, cols []string) {
+func Report(f any) (rows [][]string, cols []string) {
 	cols = []string{"Filter", "Type", "Examples", "Notes"}
 
 	v := reflect.ValueOf(f)
 
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 

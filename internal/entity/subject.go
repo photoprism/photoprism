@@ -192,12 +192,12 @@ func (m *Subject) Restore() error {
 }
 
 // Update updates an entity value in the database.
-func (m *Subject) Update(attr string, value interface{}) error {
+func (m *Subject) Update(attr string, value any) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 
 // Updates multiple values in the database.
-func (m *Subject) Updates(values interface{}) error {
+func (m *Subject) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

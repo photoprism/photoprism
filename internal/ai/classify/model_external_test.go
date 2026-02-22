@@ -163,7 +163,11 @@ func TestExternalModel_AllModels(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(tmpPath)
+	t.Cleanup(func() {
+		if rmErr := os.RemoveAll(tmpPath); rmErr != nil {
+			t.Errorf("failed removing temporary model directory: %v", rmErr)
+		}
+	})
 
 	for k, v := range modelsInfo {
 		t.Run(k, func(*testing.T) {
@@ -199,13 +203,21 @@ func downloadLabels(t *testing.T, url, dst string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			t.Errorf("failed closing labels response body: %v", closeErr)
+		}
+	}()
 
 	output, err := os.Create(filepath.Join(dst, "labels.txt")) //nolint:gosec // destination is within a controlled temporary test directory
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer output.Close()
+	defer func() {
+		if closeErr := output.Close(); closeErr != nil {
+			t.Errorf("failed closing labels output file: %v", closeErr)
+		}
+	}()
 
 	_, err = io.Copy(output, resp.Body)
 	if err != nil {
@@ -226,7 +238,11 @@ func downloadRemoteModel(t *testing.T, url, tmpPath string) (model string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			t.Errorf("failed closing model response body: %v", closeErr)
+		}
+	}()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		t.Fatalf("Invalid status code for url %s: %d", url, resp.StatusCode)
@@ -236,6 +252,11 @@ func downloadRemoteModel(t *testing.T, url, tmpPath string) (model string) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer func() {
+		if closeErr := uncompressedBody.Close(); closeErr != nil {
+			t.Errorf("failed closing model archive stream: %v", closeErr)
+		}
+	}()
 
 	tarReader := tar.NewReader(uncompressedBody)
 	for {

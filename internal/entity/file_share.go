@@ -45,12 +45,12 @@ func NewFileShare(fileID, accountID uint, remoteName string) *FileShare {
 }
 
 // Updates mutates multiple columns on the existing row.
-func (m *FileShare) Updates(values interface{}) error {
+func (m *FileShare) Updates(values any) error {
 	return UnscopedDb().Model(m).UpdateColumns(values).Error
 }
 
 // Update mutates a single column on the existing row.
-func (m *FileShare) Update(attr string, value interface{}) error {
+func (m *FileShare) Update(attr string, value any) error {
 	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
 }
 

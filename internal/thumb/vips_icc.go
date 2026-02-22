@@ -2,6 +2,7 @@ package thumb
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/davidbyttow/govips/v2/vips"
 )
@@ -27,10 +28,21 @@ const (
 // but lacks an embedded profile. If an ICC profile is already present, it
 // leaves the image untouched.
 func vipsSetIccProfileForInteropIndex(img *vips.ImageRef, logName string) (err error) {
+	if img.HasICCProfile() {
+		return nil
+	}
+
 	// Some cameras signal color space via EXIF InteroperabilityIndex instead of
 	// embedding an ICC profile. Browsers and libvips ignore this tag, so we
 	// inject a matching ICC profile to produce correct thumbnails.
-	iiFull := img.GetString("exif-ifd4-InteroperabilityIndex")
+	iiField := "exif-ifd4-InteroperabilityIndex"
+	hasInterop := slices.Contains(img.GetFields(), iiField)
+
+	if !hasInterop {
+		return nil
+	}
+
+	iiFull := img.GetString(iiField)
 
 	if iiFull == "" {
 		return nil
@@ -40,19 +52,14 @@ func vipsSetIccProfileForInteropIndex(img *vips.ImageRef, logName string) (err e
 	// a string with a trailing space. Using the first three bytes covers the
 	// meaningful code (e.g., "R03", "R98").
 	if len(iiFull) < 3 {
-		log.Debugf("interopindex: %s has unexpected interop index %q", logName, iiFull)
+		log.Debugf("vips: %s has unexpected interop index %q", logName, iiFull)
 		return nil
 	}
 
 	ii := iiFull[:3]
-	log.Tracef("interopindex: %s read exif and got interopindex %s, %s", logName, ii, iiFull)
+	log.Tracef("vips: %s read exif and got interopindex %s, %s", logName, ii, iiFull)
 
-	if img.HasICCProfile() {
-		log.Debugf("interopindex: %s already has an embedded ICC profile; skipping fallback.", logName)
-		return nil
-	}
-
-	profilePath := ""
+	var profilePath string
 
 	switch ii {
 	case InteropIndexAdobeRGB:
@@ -60,14 +67,14 @@ func vipsSetIccProfileForInteropIndex(img *vips.ImageRef, logName string) (err e
 		profilePath, err = GetIccProfile(IccAdobeRGBCompat, IccAdobeRGBCompatV2, IccAdobeRGBCompatV4)
 
 		if err != nil {
-			return fmt.Errorf("interopindex %s: %w", ii, err)
+			return fmt.Errorf("vips: failed to get %s profile for %s (%w)", ii, logName, err)
 		}
 	case InteropIndexSRGB:
 		// sRGB: browsers and libvips assume sRGB by default, so no embed needed.
 	case InteropIndexThumb:
 		// Thumbnail file; specification unclear—treat as sRGB and do nothing.
 	default:
-		log.Debugf("interopindex: %s has unknown interop index %s", logName, ii)
+		log.Debugf("vips: %s has unknown interop index %s", logName, ii)
 	}
 
 	if profilePath == "" {

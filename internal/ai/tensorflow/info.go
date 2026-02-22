@@ -121,7 +121,7 @@ func (o ResizeOperation) MarshalYAML() (any, error) {
 }
 
 // UnmarshalYAML decodes the resize operation from YAML input.
-func (o *ResizeOperation) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (o *ResizeOperation) UnmarshalYAML(unmarshal func(any) error) error {
 	var s string
 	if err := unmarshal(&s); err != nil {
 		return err
@@ -269,7 +269,7 @@ func (o ColorChannelOrder) MarshalYAML() (any, error) {
 }
 
 // UnmarshalYAML decodes the channel order from YAML input.
-func (o *ColorChannelOrder) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (o *ColorChannelOrder) UnmarshalYAML(unmarshal func(any) error) error {
 	var s string
 	if err := unmarshal(&s); err != nil {
 		return err

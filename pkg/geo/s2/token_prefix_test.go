@@ -58,6 +58,13 @@ func TestPrefixedToken(t *testing.T) {
 
 		assert.True(t, strings.HasPrefix(token, expected))
 	})
+	t.Run("BoundaryOverflow", func(t *testing.T) {
+		token := PrefixedToken(90.000003, 21.600621)
+		expected := PrefixedToken(90, 21.600621)
+
+		assert.NotEmpty(t, token)
+		assert.Equal(t, expected, token)
+	})
 	t.Run("LatOverflow", func(t *testing.T) {
 		token := PrefixedToken(548.56344833333333, 8.996878333333333)
 		expected := ""

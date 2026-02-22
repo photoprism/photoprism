@@ -51,7 +51,7 @@ func TestDigit(t *testing.T) {
 		assert.Equal(t, expected, fmt.Sprintf("%d", result))
 	})
 	t.Run("Rand", func(t *testing.T) {
-		for i := 0; i < 100; i++ {
+		for range 100 {
 			b := make([]byte, 24)
 
 			if _, err := rand.Read(b); err != nil {
