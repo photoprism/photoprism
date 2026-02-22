@@ -39,7 +39,11 @@ func testFastWalk(t *testing.T, files map[string]string, callback func(path stri
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(tempdir)
+	t.Cleanup(func() {
+		if removeErr := os.RemoveAll(tempdir); removeErr != nil {
+			t.Fatalf("remove temp dir: %v", removeErr)
+		}
+	})
 
 	for path, contents := range files {
 		file := filepath.Join(tempdir, "/src", path)
@@ -48,8 +52,8 @@ func testFastWalk(t *testing.T, files map[string]string, callback func(path stri
 			t.Fatal(err)
 		}
 
-		if strings.HasPrefix(contents, "LINK:") {
-			err = os.Symlink(strings.TrimPrefix(contents, "LINK:"), file)
+		if after, ok := strings.CutPrefix(contents, "LINK:"); ok {
+			err = os.Symlink(after, file)
 		} else {
 			err = os.WriteFile(file, []byte(contents), 0o600)
 		}

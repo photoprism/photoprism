@@ -127,7 +127,7 @@ func clusterNodesModAction(ctx *cli.Context) error {
 			string(acl.ResourceCluster),
 			"update node", "%s",
 		}
-		args := []interface{}{clean.Log(nodeID)}
+		args := []any{clean.Log(nodeID)}
 
 		if changeSummary != "" {
 			segments = append(segments, "%s")

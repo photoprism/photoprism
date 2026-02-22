@@ -403,6 +403,31 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.Empty(t, m.FaceID)
 		assert.NotEmpty(t, m.MatchedAt)
 	})
+	t.Run("ReturnsUpdateError", func(t *testing.T) {
+		originalProvider := dbConn
+		tempConn := &DbConn{
+			Driver: SQLite3,
+			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "clear-face-error.db"),
+		}
+
+		SetDbProvider(tempConn)
+		t.Cleanup(func() {
+			SetDbProvider(originalProvider)
+			tempConn.Close()
+		})
+
+		m := Marker{
+			FaceID:    "FACE-CLEAR-ERR-1",
+			SubjSrc:   SrcAuto,
+			MarkerUID: "",
+		}
+
+		updated, err := m.ClearFace()
+		assert.True(t, updated)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "no such table")
+		assert.Contains(t, err.Error(), m.TableName())
+	})
 }
 
 func TestMarker_SyncSubject(t *testing.T) {
@@ -413,6 +438,36 @@ func TestMarker_SyncSubject(t *testing.T) {
 	t.Run("SubjectIsNil", func(t *testing.T) {
 		m := Marker{MarkerType: MarkerFace, subject: nil}
 		assert.Nil(t, m.SyncSubject(false))
+	})
+	t.Run("UpdateKnownFaceError", func(t *testing.T) {
+		originalProvider := dbConn
+		tempConn := &DbConn{
+			Driver: SQLite3,
+			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "sync-subject-error.db"),
+		}
+
+		SetDbProvider(tempConn)
+		t.Cleanup(func() {
+			SetDbProvider(originalProvider)
+			tempConn.Close()
+		})
+
+		subjUID := "jsyncsubjecterror123"
+		m := Marker{
+			MarkerType: MarkerFace,
+			FaceID:     "FACE-SYNC-ERR-1",
+			SubjUID:    subjUID,
+			SubjSrc:    SrcManual,
+			subject: &Subject{
+				SubjUID: subjUID,
+			},
+		}
+
+		if err := m.SyncSubject(false); err == nil {
+			t.Fatal("error expected")
+		} else {
+			assert.Contains(t, err.Error(), "update known face")
+		}
 	})
 }
 

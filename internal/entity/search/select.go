@@ -11,15 +11,15 @@ import (
 type Cols []string
 
 // SelectString returns the columns for a search result struct as a string.
-func SelectString(f interface{}, tags []string) string {
+func SelectString(f any, tags []string) string {
 	return strings.Join(SelectCols(f, tags), ", ")
 }
 
 // SelectCols returns the columns for a search result struct.
-func SelectCols(f interface{}, tags []string) Cols {
+func SelectCols(f any, tags []string) Cols {
 	v := reflect.ValueOf(f)
 
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 

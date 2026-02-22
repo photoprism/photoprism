@@ -126,10 +126,7 @@ func (c *Config) FaceEngineThreads() int {
 	if c == nil {
 		return 1
 	} else if c.options.FaceEngineThreads <= 0 {
-		threads := runtime.NumCPU() / 2
-		if threads < 1 {
-			threads = 1
-		}
+		threads := max(runtime.NumCPU()/2, 1)
 
 		c.options.FaceEngineThreads = threads
 

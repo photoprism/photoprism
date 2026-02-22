@@ -15,11 +15,16 @@ https: install-https
 install-https:
 	@/scripts/install-https.sh
 ffmpeg: install-ffmpeg
-install-ffmpeg:
-	@/scripts/install-ffmpeg.sh /opt/ffmpeg release
+install-ffmpeg: ffmpeg-latest
+ffmpeg-release: install-ffmpeg-release
+install-ffmpeg-release:
+	@/scripts/install-ffmpeg.sh release
 ffmpeg-latest: install-ffmpeg-latest
 install-ffmpeg-latest:
-	@/scripts/install-ffmpeg.sh /opt/ffmpeg-latest latest
+	@/scripts/install-ffmpeg.sh latest /opt/ffmpeg-latest
+ffmpeg-master: install-ffmpeg-master
+install-ffmpeg-master:
+	@/scripts/install-ffmpeg.sh master /opt/ffmpeg-master
 mariadb: mariadb-client
 mariadb-client: install-mariadb-client
 install-mariadb-client:
@@ -61,14 +66,20 @@ install-clitools:
 	@apt-get -qq install zsh nano >/dev/null 2>&1 && echo "init: successfully installed zsh and nano" || echo "init: packages zsh and nano not available for installation"
 	@apt-get -qq install exa duf >/dev/null 2>&1 && echo "init: successfully installed exa and duf" || echo "init: packages exa and duf not available for installation"
 darktable:
-	echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_23.04/ /' | sudo tee /etc/apt/sources.list.d/graphics:darktable.list
-	curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_23.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
+	echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_25.10/ /' | sudo tee /etc/apt/sources.list.d/graphics:darktable.list
+	curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_25.10/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
 	sudo apt-get update
 	sudo apt-get install darktable
 	sudo apt-get autoremove
 yt-dlp: update-yt-dlp
 update-yt-dlp:
 	sudo yt-dlp -U
+yt-dlp-nightly: install-yt-dlp-nightly
+install-yt-dlp-nightly:
+	@/scripts/install-yt-dlp.sh --nightly
+yt-dlp-master: install-yt-dlp-master
+install-yt-dlp-master:
+	@/scripts/install-yt-dlp.sh --master
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make

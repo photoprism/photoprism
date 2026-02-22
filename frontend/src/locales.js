@@ -196,6 +196,10 @@ export let Options = [
     value: "fa",
     rtl: true,
   },
+  {
+    text: "Latviešu", // Latvian
+    value: "lv",
+  },
 ];
 
 // Returns the Vuetify UI messages translated with Gettext.

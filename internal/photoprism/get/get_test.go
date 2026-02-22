@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	if err = c.CloseDb(); err != nil {
-		log.Errorf("close db: %v", err)
+		log.Warnf("close db: %v", err)
 	}
 
 	if err = os.RemoveAll(tempDir); err != nil {

@@ -19,7 +19,7 @@ type ApiResponse struct {
 	Code   int       `yaml:"Code,omitempty" json:"code,omitempty"`
 	Error  string    `yaml:"Error,omitempty" json:"error,omitempty"`
 	Model  *Model    `yaml:"Model,omitempty" json:"model,omitempty"`
-	Result ApiResult `yaml:"Result,omitempty" json:"result,omitempty"`
+	Result ApiResult `yaml:"Result,omitempty" json:"result"`
 }
 
 // Err returns an error if the request has failed.

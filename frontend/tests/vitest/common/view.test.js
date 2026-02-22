@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { $view } from "common/view";
+import { buildNamespace } from "common/storage";
 
 describe("common/view", () => {
   it("should return parent", () => {
@@ -23,6 +24,7 @@ describe("common/view", () => {
 
   describe("window scroll position helpers", () => {
     const storageKey = "window.scroll.pos";
+    const namespacedStorageKey = buildNamespace(window.__CONFIG__?.storageNamespace) + storageKey;
 
     beforeEach(() => {
       localStorage.clear();
@@ -35,12 +37,12 @@ describe("common/view", () => {
       $view.saveWindowScrollPos(pos);
 
       expect(window.positionToRestore).toEqual(pos);
-      expect(localStorage.getItem(storageKey)).toEqual(JSON.stringify(pos));
+      expect(localStorage.getItem(namespacedStorageKey)).toEqual(JSON.stringify(pos));
 
       const restored = $view.getWindowScrollPos();
       expect(restored).toEqual(pos);
       expect(window.positionToRestore).toBeUndefined();
-      expect(localStorage.getItem(storageKey)).toBeNull();
+      expect(localStorage.getItem(namespacedStorageKey)).toBeNull();
     });
 
     it("prefers in-memory value over localStorage", () => {
@@ -48,35 +50,35 @@ describe("common/view", () => {
       const storedPos = { left: 30, top: 40 };
 
       window.positionToRestore = memoryPos;
-      localStorage.setItem(storageKey, JSON.stringify(storedPos));
+      localStorage.setItem(namespacedStorageKey, JSON.stringify(storedPos));
 
       const restored = $view.getWindowScrollPos();
 
       expect(restored).toEqual(memoryPos);
       expect(window.positionToRestore).toBeUndefined();
-      expect(localStorage.getItem(storageKey)).toBeNull();
+      expect(localStorage.getItem(namespacedStorageKey)).toBeNull();
     });
 
     it("falls back to stored value when memory value is invalid", () => {
       window.positionToRestore = { left: Number.NaN, top: 1 };
       const storedPos = { left: 77, top: 88 };
-      localStorage.setItem(storageKey, JSON.stringify(storedPos));
+      localStorage.setItem(namespacedStorageKey, JSON.stringify(storedPos));
 
       const restored = $view.getWindowScrollPos();
 
       expect(restored).toEqual(storedPos);
       expect(window.positionToRestore).toBeUndefined();
-      expect(localStorage.getItem(storageKey)).toBeNull();
+      expect(localStorage.getItem(namespacedStorageKey)).toBeNull();
     });
 
     it("clears invalid stored data", () => {
-      localStorage.setItem(storageKey, "{invalid json");
+      localStorage.setItem(namespacedStorageKey, "{invalid json");
 
       const restored = $view.getWindowScrollPos();
 
       expect(restored).toBeUndefined();
       expect(window.positionToRestore).toBeUndefined();
-      expect(localStorage.getItem(storageKey)).toBeNull();
+      expect(localStorage.getItem(namespacedStorageKey)).toBeNull();
     });
   });
 });

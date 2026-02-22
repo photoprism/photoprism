@@ -13,7 +13,7 @@ var AuditLog Logger
 var AuditPrefix = "audit: "
 
 // Audit optionally reports security-relevant events.
-func Audit(level logrus.Level, ev []string, args ...interface{}) {
+func Audit(level logrus.Level, ev []string, args ...any) {
 	// Skip if empty.
 	if len(ev) == 0 {
 		return
@@ -41,21 +41,21 @@ func Audit(level logrus.Level, ev []string, args ...interface{}) {
 }
 
 // AuditDebug records an audit entry at debug level.
-func AuditDebug(ev []string, args ...interface{}) {
+func AuditDebug(ev []string, args ...any) {
 	Audit(logrus.DebugLevel, ev, args...)
 }
 
 // AuditInfo records an audit entry at info level.
-func AuditInfo(ev []string, args ...interface{}) {
+func AuditInfo(ev []string, args ...any) {
 	Audit(logrus.InfoLevel, ev, args...)
 }
 
 // AuditWarn records an audit entry at warning level.
-func AuditWarn(ev []string, args ...interface{}) {
+func AuditWarn(ev []string, args ...any) {
 	Audit(logrus.WarnLevel, ev, args...)
 }
 
 // AuditErr records an audit entry at error level.
-func AuditErr(ev []string, args ...interface{}) {
+func AuditErr(ev []string, args ...any) {
 	Audit(logrus.ErrorLevel, ev, args...)
 }

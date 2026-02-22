@@ -378,7 +378,7 @@ func (m *User) SaveRelated() *User {
 }
 
 // Updates multiple properties in the database.
-func (m *User) Updates(values interface{}) error {
+func (m *User) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

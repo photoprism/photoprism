@@ -54,7 +54,7 @@ func polaroidCollage(collage image.Image, images []image.Image) (image.Image, er
 		dl := 1500 / n
 		dr := 1350 / n
 
-		for i := 0; i < n; i++ {
+		for i := range n {
 			img := images[i+1]
 
 			framed, err := polaroid(img, RandomAngle(30))

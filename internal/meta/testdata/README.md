@@ -1,4 +1,4 @@
-# Metadata Test Files
+## Metadata Test Files
 
 You may use [ImageMagick](http://www.imagemagick.org/Usage/resize/#resample) 
 to create smaller versions of images to be stored in this repository:

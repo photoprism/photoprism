@@ -2,7 +2,16 @@ import { describe, it, expect, beforeEach } from "vitest";
 import "../fixtures";
 import { $config } from "app/session";
 import Session from "common/session";
+import { buildNamespace, createNamespacedStorage } from "common/storage";
 import StorageShim from "node-storage-shim";
+
+const createConfig = (baseUri, storageNamespace) => {
+  const config = Object.assign(Object.create(Object.getPrototypeOf($config)), $config);
+  config.baseUri = baseUri;
+  config.storageNamespace = storageNamespace;
+  config.progress = () => {};
+  return config;
+};
 
 describe("common/session", () => {
   beforeEach(() => {
@@ -269,6 +278,35 @@ describe("common/session", () => {
     session.useSessionStorage();
     expect(storage.getItem("session")).toBe("true");
     session.deleteData();
+  });
+
+  it("should persist auth tokens in namespaced storage", () => {
+    const rawStorage = new StorageShim();
+    const baseUri = "/p/pro-1";
+    const namespaceKey = "ns-pro-1";
+    const storage = createNamespacedStorage(rawStorage, namespaceKey);
+    const session = new Session(storage, createConfig(baseUri, namespaceKey));
+    const token = "999900000000000000000000000000000000000000000000";
+
+    session.setAuthToken(token);
+
+    const namespaced = buildNamespace(namespaceKey) + "session.token";
+    expect(rawStorage.getItem(namespaced)).toBe(token);
+    expect(rawStorage.getItem("session.token")).toBeNull();
+  });
+
+  it("should migrate legacy auth tokens into namespaced storage", () => {
+    const rawStorage = new StorageShim();
+    const baseUri = "/p/pro-1";
+    const namespaceKey = "ns-pro-1";
+    const namespaced = buildNamespace(namespaceKey) + "session.token";
+    rawStorage.setItem("session.token", "legacy-token");
+
+    const storage = createNamespacedStorage(rawStorage, namespaceKey);
+    const session = new Session(storage, createConfig(baseUri, namespaceKey));
+
+    expect(session.getAuthToken()).toBe("legacy-token");
+    expect(rawStorage.getItem(namespaced)).toBe("legacy-token");
   });
 
   it("should use local storage", () => {

@@ -267,7 +267,7 @@ func (c *Config) ReSync(token string) (err error) {
 	var r *http.Response
 
 	// Send request.
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		r, err = client.Do(req)
 
 		if err == nil {

@@ -65,7 +65,7 @@ type Photo struct {
 }
 
 // NewPhoto creates Photo struct from interface
-func NewPhoto(m interface{}) (f Photo, err error) {
+func NewPhoto(m any) (f Photo, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err

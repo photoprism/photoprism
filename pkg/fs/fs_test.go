@@ -25,6 +25,28 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+// newTestServer creates an HTTP test server and registers cleanup.
+func newTestServer(t *testing.T, handler http.HandlerFunc) *httptest.Server {
+	t.Helper()
+
+	ts := httptest.NewServer(handler)
+	t.Cleanup(ts.Close)
+
+	return ts
+}
+
+// cleanupSocket registers listener/socket cleanup for socket tests.
+func cleanupSocket(t *testing.T, ln net.Listener, sock string) {
+	t.Helper()
+
+	t.Cleanup(func() {
+		assert.NoError(t, ln.Close())
+		if err := os.Remove(sock); err != nil && !os.IsNotExist(err) {
+			assert.NoError(t, err)
+		}
+	})
+}
+
 func TestExists(t *testing.T) {
 	assert.True(t, Exists("./testdata"))
 	assert.True(t, Exists("./testdata/"))
@@ -133,7 +155,9 @@ func TestDirIsEmpty(t *testing.T) {
 		if err := os.Mkdir("./testdata/emptyDir", 0o750); err != nil {
 			t.Fatal(err)
 		}
-		defer os.RemoveAll("./testdata/emptyDir")
+		t.Cleanup(func() {
+			assert.NoError(t, os.RemoveAll("./testdata/emptyDir"))
+		})
 		assert.Equal(t, true, DirIsEmpty("./testdata/emptyDir"))
 	})
 }
@@ -146,7 +170,7 @@ func TestSocketExists(t *testing.T) {
 	if err != nil {
 		t.Skipf("unix sockets not supported: %v", err)
 	}
-	defer func() { _ = ln.Close(); _ = os.Remove(sock) }()
+	cleanupSocket(t, ln, sock)
 
 	assert.True(t, SocketExists(sock))
 	assert.False(t, SocketExists(filepath.Join(dir, "missing.sock")))
@@ -154,17 +178,15 @@ func TestSocketExists(t *testing.T) {
 
 func TestDownload_SuccessAndErrors(t *testing.T) {
 	// Serve known content
-	tsOK := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	tsOK := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("hello world"))
-	}))
-	defer tsOK.Close()
+	})
 
 	// Serve a failure status
-	tsFail := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	tsFail := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "nope", http.StatusBadRequest)
-	}))
-	defer tsFail.Close()
+	})
 
 	dir := t.TempDir()
 	goodPath := filepath.Join(dir, "sub", "file.txt")

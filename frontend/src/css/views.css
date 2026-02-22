@@ -497,6 +497,19 @@
     text-align: start;
 }
 
+.list-view td.meta-data .meta-error {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: rgb(var(--v-theme-error));
+    font-size: 0.75rem;
+    line-height: 1.15;
+}
+
+.list-view td.meta-data .meta-error i {
+    font-size: inherit;
+}
+
 .cards-view .result .preview button {
     width: 36px;
     height: 36px;
@@ -626,6 +639,10 @@
     vertical-align: text-bottom;
     white-space: nowrap;
     text-align: start;
+}
+
+.cards-view .result .meta .meta-details button.meta-error {
+    color: rgb(var(--v-theme-error));
 }
 
 .is-rtl .cards-view .result .meta .meta-details button {

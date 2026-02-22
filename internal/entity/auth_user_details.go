@@ -98,7 +98,7 @@ func (m *UserDetails) Save() error {
 }
 
 // Updates multiple properties in the database.
-func (m *UserDetails) Updates(values interface{}) error {
+func (m *UserDetails) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

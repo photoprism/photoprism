@@ -3,6 +3,7 @@ import globals from "globals";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
+import pluginVue from "eslint-plugin-vue";
 import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,12 +33,11 @@ export default defineConfig([
     "**/.gocache",
     "**/.var",
   ]),
+  ...pluginVue.configs["flat/recommended"],
   {
     extends: compat.extends(
       "eslint:recommended",
-      "plugin:vue/recommended",
       "plugin:prettier/recommended",
-      "plugin:vue/base",
       "plugin:vuetify/base"
     ),
     languageOptions: {

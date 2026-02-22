@@ -21,5 +21,5 @@ type Label struct {
 	ThumbSrc         string    `json:"ThumbSrc,omitempty"`
 	CreatedAt        time.Time `json:"CreatedAt"`
 	UpdatedAt        time.Time `json:"UpdatedAt"`
-	DeletedAt        time.Time `json:"DeletedAt,omitempty"`
+	DeletedAt        time.Time `json:"DeletedAt"`
 }

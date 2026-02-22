@@ -10,7 +10,7 @@ import (
 func TestLogin(t *testing.T) {
 	clientIp := "192.0.2.42"
 
-	for i := 0; i < 9; i++ {
+	for range 9 {
 		t.Logf("tokens now: %f", Login.IP(clientIp).TokensAt(time.Now()))
 		assert.True(t, Login.IP(clientIp).Allow())
 	}
@@ -39,7 +39,7 @@ func TestLogin(t *testing.T) {
 	assert.InEpsilon(t, 10, Login.IP(clientIp).TokensAt(time.Now().Add(DefaultLoginInterval*20)), 0.01)
 	assert.InEpsilon(t, DefaultLoginLimit, Login.IP(clientIp).TokensAt(time.Now().Add(DefaultLoginInterval*DefaultLoginLimit*10)), 0.01)
 
-	for i := 0; i < 30; i++ {
+	for range 30 {
 		assert.False(t, Login.IP(clientIp).Allow())
 	}
 

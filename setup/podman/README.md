@@ -1,4 +1,4 @@
-# PhotoPrism Setup (RedHat, CentOS, Fedora, and AlmaLinux)
+## PhotoPrism Setup (RedHat, CentOS, Fedora, & AlmaLinux)
 
 
 [Podman](https://podman.io/) is supported as a replacement for Docker on Red Hat Enterprise Linux® and compatible Linux distributions such as CentOS, Fedora, AlmaLinux, and Rocky Linux. The following installs the `podman` and `podman-compose` commands if they are not already installed:
@@ -22,21 +22,21 @@ curl -sSf https://dl.photoprism.app/podman/install.sh | bash
 
 Please keep in mind to replace the `docker` and `docker compose` commands with `podman` and `podman-compose` when following the examples in our documentation.
 
-## Documentation
+### Documentation
 
-### Getting Started
+#### Getting Started
 
 ↪ https://docs.photoprism.app/getting-started/
 
-### Knowledge Base
+#### Knowledge Base
 
 ↪ https://www.photoprism.app/kb
 
-### Compliance FAQ
+#### Compliance FAQ
 
 ↪ https://www.photoprism.app/kb/compliance-faq
 
-### Firewall Settings
+#### Firewall Settings
 
 ↪ https://docs.photoprism.app/getting-started/troubleshooting/firewall/
 

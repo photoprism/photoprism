@@ -25,7 +25,7 @@ type Manifest struct {
 	Scope               string        `json:"scope"`
 	StartUrl            string        `json:"start_url,omitempty"`
 	Shortcuts           Urls          `json:"shortcuts"`
-	Serviceworker       Serviceworker `json:"serviceworker,omitempty"`
+	Serviceworker       Serviceworker `json:"serviceworker"`
 	Permissions         list.List     `json:"permissions"`
 	OptionalPermissions list.List     `json:"optional_permissions"`
 	HostPermissions     []string      `json:"host_permissions"`

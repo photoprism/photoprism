@@ -201,7 +201,7 @@ func (m *Label) Skip() bool {
 }
 
 // Update a label property in the database.
-func (m *Label) Update(attr string, value interface{}) error {
+func (m *Label) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("label must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -212,7 +212,7 @@ func (m *Label) Update(attr string, value interface{}) error {
 }
 
 // Updates multiple columns in the database.
-func (m *Label) Updates(values interface{}) error {
+func (m *Label) Updates(values any) error {
 	if values == nil {
 		return nil
 	} else if m == nil {

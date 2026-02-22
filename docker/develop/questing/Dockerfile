@@ -37,7 +37,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     GOBIN="/usr/local/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
-    PROG="photoprism"
+    PROG="photoprism" \
     S6_KEEP_ENV=1 \
     S6_VERBOSITY=0 \
     S6_LOGGING=0
@@ -94,6 +94,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/skel/.bashrc && \
     /scripts/install-dircolors.sh && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \

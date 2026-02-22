@@ -379,7 +379,7 @@ func deletePhotoLabel(pl *entity.PhotoLabel) error {
 // withDeadlockRetry executes fn and retries a few times if the database reports
 // a deadlock, helping batch edits succeed without surfacing errors to users.
 func withDeadlockRetry(action string, fn func() error) (err error) {
-	for attempt := 0; attempt < deadlockRetryAttempts; attempt++ {
+	for attempt := range deadlockRetryAttempts {
 		err = fn()
 		if err == nil {
 			return nil

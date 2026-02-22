@@ -461,8 +461,8 @@ func TestPhotosResults_Merged(t *testing.T) {
 	fileUIDC := rnd.GenerateUID(entity.FileUID)
 
 	results := PhotoResults{
-		{ID: 1, FileID: 10, FileUID: fileUIDA, FileName: "a.jpg"},
-		{ID: 1, FileID: 11, FileUID: fileUIDB, FileName: "b.jpg"},
+		{ID: 1, FileID: 10, FileUID: fileUIDA, FileName: "a.jpg", FileError: "unsupported codec"},
+		{ID: 1, FileID: 11, FileUID: fileUIDB, FileName: "b.jpg", FileError: "metadata read failed"},
 		{ID: 2, FileID: 20, FileUID: fileUIDC, FileName: "c.jpg"},
 	}
 
@@ -477,6 +477,8 @@ func TestPhotosResults_Merged(t *testing.T) {
 	assert.Len(t, first.Files, 2)
 	assert.Equal(t, uint(10), first.Files[0].ID)
 	assert.Equal(t, uint(11), first.Files[1].ID)
+	assert.Equal(t, "unsupported codec", first.Files[0].FileError)
+	assert.Equal(t, "metadata read failed", first.Files[1].FileError)
 
 	second := merged[1]
 	assert.Equal(t, "2-20", second.CompositeID)

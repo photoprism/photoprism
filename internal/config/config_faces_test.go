@@ -162,10 +162,7 @@ func TestConfig_FaceEngineRunType(t *testing.T) {
 
 func TestConfig_FaceEngineThreads(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	expected := runtime.NumCPU() / 2
-	if expected < 1 {
-		expected = 1
-	}
+	expected := max(runtime.NumCPU()/2, 1)
 	assert.Equal(t, expected, c.FaceEngineThreads())
 
 	c.options.FaceEngineThreads = 8

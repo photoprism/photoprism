@@ -138,7 +138,7 @@ func CreateMarker(router *gin.RouterGroup) {
 		// Update marker subject if a name was provided.
 		if strings.TrimSpace(frm.MarkerName) == "" {
 			log.Infof("faces: added new %s marker", clean.Log(marker.MarkerType))
-		} else if changed, saveErr := marker.SaveForm(frm); err != nil {
+		} else if changed, saveErr := marker.SaveForm(frm); saveErr != nil {
 			log.Errorf("faces: %s (update marker)", saveErr)
 			AbortSaveFailed(c)
 			return
@@ -156,7 +156,7 @@ func CreateMarker(router *gin.RouterGroup) {
 		if !file.FilePrimary {
 			log.Infof("faces: skipped updating photo for non-primary file")
 		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
-			log.Errorf("faces: %s (find photo))", err)
+			log.Errorf("faces: %s (find photo)", err)
 		} else if err := p.GenerateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
@@ -254,7 +254,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 		if !file.FilePrimary {
 			log.Infof("faces: skipped updating photo for non-primary file")
 		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
-			log.Errorf("faces: %s (find photo))", err)
+			log.Errorf("faces: %s (find photo)", err)
 		} else if err := p.GenerateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
@@ -316,7 +316,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 		if !file.FilePrimary {
 			log.Infof("faces: skipped updating photo for non-primary file")
 		} else if p, err := query.PhotoByUID(file.PhotoUID); err != nil {
-			log.Errorf("faces: %s (find photo))", err)
+			log.Errorf("faces: %s (find photo)", err)
 		} else if err := p.GenerateAndSaveTitle(); err != nil {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {

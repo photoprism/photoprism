@@ -272,7 +272,7 @@ func (m *Session) Delete() error {
 }
 
 // Updates multiple properties in the database.
-func (m *Session) Updates(values interface{}) error {
+func (m *Session) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
@@ -639,7 +639,9 @@ func (m *Session) ChangePassword(newPw string) (err error) {
 	}
 
 	// Change password.
-	err = u.SetPassword(newPw)
+	if err = u.SetPassword(newPw); err != nil {
+		return err
+	}
 
 	m.SetPreviewToken(u.PreviewToken)
 	m.SetDownloadToken(u.DownloadToken)
@@ -684,7 +686,7 @@ func (m *Session) SetDownloadToken(token string) *Session {
 // GetData returns the data that belong to this session.
 func (m *Session) GetData() (data *SessionData) {
 	if m.data != nil {
-		data = m.data
+		return m.data
 	}
 
 	data = NewSessionData()
