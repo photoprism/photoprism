@@ -3,11 +3,15 @@ package node
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"encoding/json"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,9 +23,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// newBootstrapTestConfig creates a minimal test config and closes its database on test cleanup.
+func newBootstrapTestConfig(t *testing.T, name string) *config.Config {
+	t.Helper()
+	c := config.NewMinimalTestConfigWithDb(name, t.TempDir())
+	t.Cleanup(func() {
+		assert.NoError(t, c.CloseDb())
+	})
+
+	return c
+}
+
 func TestInitConfig_NoPortal_NoOp(t *testing.T) {
-	c := config.NewMinimalTestConfigWithDb("bootstrap", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap")
 
 	// Default NodeRole() resolves to app; no Portal configured.
 	assert.Equal(t, cluster.RoleApp, c.NodeRole())
@@ -29,8 +43,7 @@ func TestInitConfig_NoPortal_NoOp(t *testing.T) {
 }
 
 func TestInitConfig_ServiceRole(t *testing.T) {
-	c := config.NewMinimalTestConfigWithDb("bootstrap-service", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap-service")
 
 	c.Options().NodeRole = cluster.RoleService
 
@@ -81,8 +94,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	jwksURL = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
-	c := config.NewMinimalTestConfigWithDb("bootstrap-reg", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap-reg")
 
 	// Configure Portal.
 	c.Options().PortalUrl = srv.URL
@@ -108,6 +120,56 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.Equal(t, enum.MySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
+}
+
+func TestRegister_AllowsHTTPPortalNonLoopback(t *testing.T) {
+	var hits int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/api/v1/cluster/nodes/register" {
+			hits++
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{})
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+
+	origTransport := http.DefaultTransport
+	t.Cleanup(func() { http.DefaultTransport = origTransport })
+
+	baseTransport, ok := origTransport.(*http.Transport)
+	if !ok {
+		t.Fatalf("expected http.DefaultTransport to be *http.Transport")
+	}
+	transport := baseTransport.Clone()
+	dialer := &net.Dialer{}
+	transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+		if strings.HasPrefix(addr, "portal.local:") {
+			addr = srv.Listener.Addr().String()
+		}
+		return dialer.DialContext(ctx, network, addr)
+	}
+	http.DefaultTransport = transport
+
+	prevJoin := cluster.BootstrapAutoJoinEnabled
+	prevTheme := cluster.BootstrapAutoThemeEnabled
+	cluster.BootstrapAutoJoinEnabled = true
+	cluster.BootstrapAutoThemeEnabled = false
+	t.Cleanup(func() {
+		cluster.BootstrapAutoJoinEnabled = prevJoin
+		cluster.BootstrapAutoThemeEnabled = prevTheme
+	})
+
+	c := newBootstrapTestConfig(t, "bootstrap-http")
+
+	u, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+	c.Options().PortalUrl = "http://portal.local:" + u.Port()
+	c.Options().JoinToken = cluster.ExampleJoinToken
+
+	assert.NoError(t, InitConfig(c))
+	assert.Equal(t, 1, hits)
 }
 
 func TestThemeInstall_Missing(t *testing.T) {
@@ -156,8 +218,7 @@ func TestThemeInstall_Missing(t *testing.T) {
 	jwksURL2 = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
-	c := config.NewMinimalTestConfigWithDb("bootstrap-theme", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap-theme")
 
 	// Point Portal.
 	c.Options().PortalUrl = srv.URL
@@ -220,8 +281,7 @@ func TestThemeInstall_VersionMismatch(t *testing.T) {
 	jwksURL = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
-	c := config.NewMinimalTestConfigWithDb("bootstrap-theme-mismatch", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap-theme-mismatch")
 
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken
@@ -262,8 +322,7 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	jwksURL3 = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
-	c := config.NewMinimalTestConfigWithDb("bootstrap-sqlite", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap-sqlite")
 
 	// SQLite driver by default; set Portal.
 	c.Options().PortalUrl = srv.URL
@@ -285,36 +344,31 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 
 func TestDefaultClusterDomain(t *testing.T) {
 	t.Run("explicit domain", func(t *testing.T) {
-		c := config.NewMinimalTestConfigWithDb("domain-explicit", t.TempDir())
-		defer c.CloseDb()
+		c := newBootstrapTestConfig(t, "domain-explicit")
 
 		c.Options().ClusterDomain = "photoprism.example"
 		assert.Equal(t, "photoprism.example", defaultClusterDomain(c))
 	})
 	t.Run("portal host fallback", func(t *testing.T) {
-		c := config.NewMinimalTestConfigWithDb("domain-portal", t.TempDir())
-		defer c.CloseDb()
+		c := newBootstrapTestConfig(t, "domain-portal")
 
 		c.Options().PortalUrl = "https://portal.photoprism.example"
 		assert.Equal(t, "photoprism.example", defaultClusterDomain(c))
 	})
 	t.Run("no portal domain", func(t *testing.T) {
-		c := config.NewMinimalTestConfigWithDb("domain-none", t.TempDir())
-		defer c.CloseDb()
+		c := newBootstrapTestConfig(t, "domain-none")
 
 		c.Options().PortalUrl = "https://localhost:8443"
 		assert.Equal(t, "", defaultClusterDomain(c))
 	})
 	t.Run("portal ip fallback empty", func(t *testing.T) {
-		c := config.NewMinimalTestConfigWithDb("domain-ip", t.TempDir())
-		defer c.CloseDb()
+		c := newBootstrapTestConfig(t, "domain-ip")
 
 		c.Options().PortalUrl = "https://203.0.113.10"
 		assert.Equal(t, "", defaultClusterDomain(c))
 	})
 	t.Run("invalid Portal URL", func(t *testing.T) {
-		c := config.NewMinimalTestConfigWithDb("domain-invalid", t.TempDir())
-		defer c.CloseDb()
+		c := newBootstrapTestConfig(t, "domain-invalid")
 
 		c.Options().PortalUrl = "://bad url"
 		assert.Equal(t, "", defaultClusterDomain(c))
@@ -340,8 +394,7 @@ func TestRegister_404_NoRetry(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := config.NewMinimalTestConfigWithDb("bootstrap", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap")
 
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken
@@ -369,8 +422,7 @@ func TestThemeInstall_SkipWhenAppJsExists(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := config.NewMinimalTestConfigWithDb("bootstrap", t.TempDir())
-	defer c.CloseDb()
+	c := newBootstrapTestConfig(t, "bootstrap")
 
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = "t0k3n"

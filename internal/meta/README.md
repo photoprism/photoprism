@@ -1,6 +1,6 @@
 ## PhotoPrism — Metadata Pipeline
 
-**Last Updated:** November 22, 2025
+**Last Updated:** February 11, 2026
 
 ### Overview
 
@@ -38,6 +38,7 @@ The `internal/meta` package extracts, normalizes, and reports metadata from imag
 
 - `SanitizeString`, `SanitizeUnicode`, and related helpers strip binary markers, quotes, and invalid Unicode; filenames and keywords use lower-case, dash/underscore-safe regexes.
 - Lower-case regex and quote removal now use `ReplaceAll` and raw strings to avoid double escaping.
+- Google Photos JSON coordinates are clamped to hard latitude/longitude bounds with `geo.ClampCoordinateBounds` before assigning `meta.Data.Lat` and `meta.Data.Lng`.
 
 ### Docs & References
 

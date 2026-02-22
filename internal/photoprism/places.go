@@ -142,7 +142,7 @@ func (w *Places) UpdatePhotos(force bool) (affected int, err error) {
 
 	log.Infof("index: updating references, titles, and keywords")
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		if i%10 == 0 {
 			log.Infof("index: updated %s, %s remaining",
 				english.Plural(i, "photo", "photos"),

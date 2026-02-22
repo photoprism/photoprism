@@ -10,7 +10,7 @@ MODEL_ZIP="/tmp/photoprism/nasnet.zip"
 MODEL_HASH="f18b801354e95cade497b4f12e8d2537d04c04f6  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
 MODEL_BACKUP="storage/backup/nasnet-$TODAY"
-MODEL_21K_LABELS_URL="https://dl.photoprism.app/tensorflow/vision/labels-imagenet21k.txt"
+MODEL_21K_LABELS_URL="https://dl.photoprism.app/tensorflow/models/labels-imagenet21k.txt"
 
 echo "Installing $MODEL_NAME model for TensorFlow..."
 

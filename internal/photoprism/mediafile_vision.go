@@ -38,7 +38,7 @@ func (m *MediaFile) GenerateCaption(captionSrc entity.Src) (caption *vision.Capt
 	fileName, fileErr := m.Thumbnail(Config().ThumbCachePath(), size.Name)
 
 	if fileErr != nil {
-		return caption, err
+		return caption, fileErr
 	}
 
 	// Get matching labels from computer vision model.
@@ -101,7 +101,7 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 	// Get thumbnail filenames for the selected sizes.
 	for _, s := range sizes {
 		if thumbnail, fileErr := m.Thumbnail(Config().ThumbCachePath(), s); fileErr != nil {
-			log.Debugf("index: %s in %s", err, clean.Log(m.RootRelName()))
+			log.Debugf("index: %s in %s", fileErr, clean.Log(m.RootRelName()))
 			continue
 		} else {
 			thumbnails = append(thumbnails, thumbnail)

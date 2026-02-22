@@ -333,7 +333,7 @@ func (e *httpError) Error() string { return fmt.Sprintf("http %d: %s", e.Status,
 func postWithBackoff(url, token string, payload []byte, out any) error {
 	// backoff: 500ms -> max ~8s, 6 attempts with jitter
 	delay := 500 * time.Millisecond
-	for attempt := 0; attempt < 6; attempt++ {
+	for range 6 {
 		req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload))
 		header.SetAuthorization(req, token)
 		req.Header.Set(header.ContentType, "application/json")
@@ -343,10 +343,31 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 		if err != nil {
 			return err
 		}
-		defer resp.Body.Close()
 
-		if resp.StatusCode == http.StatusTooManyRequests {
-			// backoff and retry
+		retry, err := func() (bool, error) {
+			defer func() {
+				if closeErr := resp.Body.Close(); closeErr != nil {
+					log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+				}
+			}()
+
+			if resp.StatusCode == http.StatusTooManyRequests {
+				// backoff and retry
+				return true, nil
+			}
+
+			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+				b, _ := io.ReadAll(resp.Body)
+				return false, &httpError{Status: resp.StatusCode, Body: string(b)}
+			}
+
+			dec := json.NewDecoder(resp.Body)
+			return false, dec.Decode(out)
+		}()
+
+		if err != nil {
+			return err
+		} else if retry {
 			time.Sleep(jitter(delay, 0.25))
 			if delay < 8*time.Second {
 				delay *= 2
@@ -354,12 +375,7 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 			continue
 		}
 
-		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			b, _ := io.ReadAll(resp.Body)
-			return &httpError{Status: resp.StatusCode, Body: string(b)}
-		}
-		dec := json.NewDecoder(resp.Body)
-		return dec.Decode(out)
+		return nil
 	}
 	return &httpError{Status: http.StatusTooManyRequests, Body: "rate limited"}
 }

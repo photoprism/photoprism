@@ -32,7 +32,7 @@ type Service struct {
 }
 
 // NewService creates a new service form.
-func NewService(m interface{}) (f Service, err error) {
+func NewService(m any) (f Service, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err

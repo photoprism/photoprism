@@ -25,6 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import $api from "common/api";
 import $event from "common/event";
+import { createNamespacedStorage } from "common/storage";
 import { $view } from "common/view";
 import User from "model/user";
 import Socket from "websocket.js";
@@ -44,16 +45,20 @@ export default class Session {
     this.storageKey = "session";
     this.loginRedirect = false;
     this.config = config;
+    this.baseUri = config?.baseUri;
     this.provider = "";
     this.user = new User(false);
     this.scope = "";
     this.data = null;
+    this.localStorage = storage;
+    const sessionStorage = typeof window === "undefined" ? undefined : window.sessionStorage;
+    this.sessionStorage = createNamespacedStorage(sessionStorage, this.baseUri);
 
     // Set session storage.
     if (storage.getItem(this.storageKey) === "true") {
-      this.storage = window.sessionStorage;
+      this.storage = this.sessionStorage;
     } else {
-      this.storage = storage;
+      this.storage = this.localStorage;
     }
 
     // Restore authentication data stored under previously used keys.
@@ -147,12 +152,12 @@ export default class Session {
   useSessionStorage() {
     this.reset();
     this.storage.setItem(this.storageKey, "true");
-    this.storage = window.sessionStorage;
+    this.storage = this.sessionStorage;
   }
 
   useLocalStorage() {
     this.storage.setItem(this.storageKey, "false");
-    this.storage = window.localStorage;
+    this.storage = this.localStorage;
   }
 
   setConfig(values) {

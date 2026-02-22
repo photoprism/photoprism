@@ -1,7 +1,6 @@
 package video
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -163,9 +162,7 @@ func TestProbeFile(t *testing.T) {
 
 func TestProbe(t *testing.T) {
 	t.Run("Mp4vAvc1Mp4", func(t *testing.T) {
-		f, fileErr := os.Open("testdata/mp4v-avc1.mp4")
-		require.NoError(t, fileErr)
-		defer f.Close()
+		f := openTestFile(t, "testdata/mp4v-avc1.mp4")
 
 		info, err := Probe(f)
 		require.NoError(t, err)
@@ -193,9 +190,7 @@ func TestProbe(t *testing.T) {
 		assert.Equal(t, true, info.Compatible)
 	})
 	t.Run("IsomAvc1Mp4", func(t *testing.T) {
-		f, fileErr := os.Open("testdata/isom-avc1.mp4")
-		require.NoError(t, fileErr)
-		defer f.Close()
+		f := openTestFile(t, "testdata/isom-avc1.mp4")
 
 		info, err := Probe(f)
 		require.NoError(t, err)
@@ -223,9 +218,7 @@ func TestProbe(t *testing.T) {
 		assert.Equal(t, true, info.Compatible)
 	})
 	t.Run("ImageIsomAvc1Jpg", func(t *testing.T) {
-		f, fileErr := os.Open("testdata/image-isom-avc1.jpg")
-		require.NoError(t, fileErr)
-		defer f.Close()
+		f := openTestFile(t, "testdata/image-isom-avc1.jpg")
 
 		info, err := Probe(f)
 		require.NoError(t, err)
@@ -253,9 +246,7 @@ func TestProbe(t *testing.T) {
 		assert.Equal(t, true, info.Compatible)
 	})
 	t.Run("MotionPhotoHeif", func(t *testing.T) {
-		f, fileErr := os.Open("testdata/motion-photo.heif")
-		require.NoError(t, fileErr)
-		defer f.Close()
+		f := openTestFile(t, "testdata/motion-photo.heif")
 
 		info, err := Probe(f)
 		require.NoError(t, err)

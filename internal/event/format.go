@@ -9,6 +9,6 @@ import (
 var MessageSep = " › "
 
 // Format formats an audit log event.
-func Format(ev []string, args ...interface{}) string {
+func Format(ev []string, args ...any) string {
 	return fmt.Sprintf(strings.Join(ev, MessageSep), args...)
 }

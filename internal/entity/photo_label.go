@@ -42,7 +42,7 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 }
 
 // Updates mutates multiple columns in the database and clears cached copies.
-func (m *PhotoLabel) Updates(values interface{}) error {
+func (m *PhotoLabel) Updates(values any) error {
 	if m == nil {
 		return errors.New("photo label must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -58,7 +58,7 @@ func (m *PhotoLabel) Updates(values interface{}) error {
 }
 
 // Update mutates a single column in the database and clears cached copies.
-func (m *PhotoLabel) Update(attr string, value interface{}) error {
+func (m *PhotoLabel) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("photo label must not be nil - you may have found a bug")
 	} else if !m.HasID() {

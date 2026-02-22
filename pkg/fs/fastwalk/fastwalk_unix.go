@@ -24,7 +24,9 @@ func readDir(dirName string, fn func(dirName, entName string, typ os.FileMode) e
 	if err != nil {
 		return &os.PathError{Op: "open", Path: dirName, Err: err}
 	}
-	defer syscall.Close(fd)
+	defer func() {
+		_ = syscall.Close(fd)
+	}()
 
 	// The buffer must be at least a block long.
 	buf := make([]byte, blockSize) // stack-allocated; doesn't escape

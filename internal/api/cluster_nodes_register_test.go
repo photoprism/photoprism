@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -71,6 +72,22 @@ func TestClusterNodesRegister(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`)
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
+	t.Run("ForbiddenFromCDN", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.Options().NodeRole = cluster.RolePortal
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/cluster/nodes/register", nil)
+		req.Header.Set(header.CdnHost, "edge.example")
+		req.Header.Set(header.Auth, header.AuthBearer+" "+cluster.ExampleJoinToken)
+		req.Header.Set(header.Accept, "application/json")
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
 	t.Run("CreateNodeWithoutRotateSkipsProvisioner", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RolePortal
@@ -121,15 +138,16 @@ func TestClusterNodesRegister(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-lock","NodeUUID":"`+newUUID+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusConflict, r.Code)
 	})
-	t.Run("BadAdvertiseUrlRejected", func(t *testing.T) {
+	t.Run("AdvertiseUrlHttpAllowed", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RolePortal
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
-		// http scheme for public host must be rejected (require https unless localhost).
+		// http scheme is allowed for cluster-internal traffic, even on public hostnames.
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-03","AdvertiseUrl":"http://example.com"}`, cluster.ExampleJoinToken)
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusCreated, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
 	})
 	t.Run("GoodAdvertiseUrlAccepted", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -341,15 +359,14 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 	})
 }
 
-// TestValidateAdvertiseURL ensures the validator accepts HTTPS everywhere and allows
-// HTTP only for loopback or cluster-internal service domains.
+// TestValidateAdvertiseURL ensures the validator accepts HTTP and HTTPS for advertise URLs.
 func TestValidateAdvertiseURL(t *testing.T) {
 	cases := []struct {
 		u  string
 		ok bool
 	}{
 		{"https://example.com", true},
-		{"http://example.com", false},
+		{"http://example.com", true},
 		{"http://localhost:2342", true},
 		{"http://photoprism.default.svc", true},
 		{"http://photoprism.default.svc.cluster.local", true},
@@ -366,7 +383,7 @@ func TestValidateAdvertiseURL(t *testing.T) {
 	}
 }
 
-// TestValidateSiteURL mirrors the advertise URL rules for site URLs.
+// TestValidateSiteURL enforces HTTPS for non-local site URLs.
 func TestValidateSiteURL(t *testing.T) {
 	cases := []struct {
 		u  string

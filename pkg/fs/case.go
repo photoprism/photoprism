@@ -14,7 +14,9 @@ func CaseInsensitive(storagePath string) (result bool, err error) {
 		return false, fmt.Errorf("%s not writable", filepath.Base(storagePath))
 	}
 
-	defer os.Remove(tmpName)
+	defer func() {
+		_ = os.Remove(tmpName)
+	}()
 
 	result = FileExists(filepath.Join(storagePath, ".CASETEST.TMP"))
 

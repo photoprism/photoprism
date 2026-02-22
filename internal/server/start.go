@@ -78,21 +78,10 @@ func Start(ctx context.Context, conf *config.Config) {
 	case "br", "brotli":
 		log.Infof("server: brotli compression is currently not supported")
 	case "gzip":
+		// Use a custom compression predicate for fast, targeted exclusions.
 		router.Use(gzip.Gzip(
 			gzip.DefaultCompression,
-			gzip.WithExcludedExtensions([]string{
-				".png", ".gif", ".jpeg", ".jpg", ".webp", ".mp3", ".mp4", ".zip", ".gz",
-			}),
-			gzip.WithExcludedPaths([]string{
-				conf.BaseUri("/health"),
-				conf.BaseUri(config.ApiUri + "/t"),
-				conf.BaseUri(config.ApiUri + "/folders/t"),
-				conf.BaseUri(config.ApiUri + "/dl"),
-				conf.BaseUri(config.ApiUri + "/zip"),
-				conf.BaseUri(config.ApiUri + "/albums"),
-				conf.BaseUri(config.ApiUri + "/labels"),
-				conf.BaseUri(config.ApiUri + "/videos"),
-			}),
+			gzip.WithCustomShouldCompressFn(NewGzipShouldCompressFn(conf)),
 		))
 		log.Infof("server: enabled gzip compression")
 	}

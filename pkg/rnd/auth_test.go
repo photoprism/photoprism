@@ -14,7 +14,7 @@ func TestAuthToken(t *testing.T) {
 	assert.True(t, IsAuthToken(result))
 	assert.True(t, IsHex(result))
 
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := AuthToken()
 		t.Logf("AuthToken %d: %s", n, s)
 		assert.NotEmpty(t, s)
@@ -54,7 +54,7 @@ func TestAuthTokenID(t *testing.T) {
 		assert.True(t, unicode.IsDigit(r) || (r >= 'a' && r <= 'z'))
 	}
 
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := AuthTokenID("jwt")
 		t.Logf("AuthTokenID %d: %s", n, s)
 		assert.NotEmpty(t, s)
@@ -65,7 +65,7 @@ func TestAuthTokenID(t *testing.T) {
 }
 
 func TestAppPassword(t *testing.T) {
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := AppPassword()
 		t.Logf("AppPassword %d: %s", n, s)
 		assert.Equal(t, AppPasswordLength, len(s))
@@ -126,7 +126,7 @@ func BenchmarkAppPasswordIgnoreChecksum(b *testing.B) {
 }
 
 func TestJoinToken(t *testing.T) {
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := JoinToken()
 		t.Logf("JoinToken %d: %s", n, s)
 		assert.Equal(t, JoinTokenLength, len(s))
@@ -197,7 +197,7 @@ func TestSessionID(t *testing.T) {
 	assert.Equal(t, SessionIdLength, len(result))
 	assert.Equal(t, "f22383a703805a031a9835c8c6b6dafb793a21e8f33d0b4887b4ec9bd7ac8cd5", result)
 
-	for n := 0; n < 10; n++ {
+	for n := range 10 {
 		s := SessionID(AuthToken())
 		t.Logf("SessionID %d: %s", n, s)
 		assert.NotEmpty(t, s)

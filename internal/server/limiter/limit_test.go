@@ -13,14 +13,14 @@ func TestNewLimit(t *testing.T) {
 	t.Run("BelowLimit", func(t *testing.T) {
 		// 10 per minute.
 		l := NewLimit(0.166, 10)
-		for i := 0; i < 9; i++ {
+		for range 9 {
 			assert.True(t, l.IP(clientIp).Allow())
 		}
 	})
 	t.Run("AboveLimit", func(t *testing.T) {
 		// 10 per minute.
 		l := NewLimit(0.166, 10)
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			assert.True(t, l.IP(clientIp).Allow())
 		}
 		assert.False(t, l.IP(clientIp).Allow())
@@ -28,7 +28,7 @@ func TestNewLimit(t *testing.T) {
 	t.Run("MultipleIPs", func(t *testing.T) {
 		// 10 per minute.
 		l := NewLimit(0.166, 10)
-		for i := 0; i < 100; i++ {
+		for i := range 100 {
 			assert.True(t, l.IP(fmt.Sprintf("192.0.2.%d", i)).Allow())
 		}
 	})
@@ -37,17 +37,17 @@ func TestNewLimit(t *testing.T) {
 		l := NewLimit(0.166, 10)
 
 		// Request counter not increased.
-		for i := 0; i < 20; i++ {
+		for range 20 {
 			assert.False(t, l.Reject(clientIp))
 		}
 
 		// Request counter checked and increased.
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			assert.True(t, l.Allow(clientIp))
 		}
 
 		// Limit exceeded.
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			assert.True(t, l.Reject(clientIp))
 			assert.False(t, l.Allow(clientIp))
 		}
@@ -57,18 +57,18 @@ func TestNewLimit(t *testing.T) {
 		l := NewLimit(0.166, 10)
 
 		// Request counter not increased.
-		for i := 0; i < 20; i++ {
+		for range 20 {
 			assert.False(t, l.Reject(clientIp))
 		}
 
 		// Request counter checked and increased.
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			assert.False(t, l.Reject(clientIp))
 			l.Reserve(clientIp)
 		}
 
 		// Limit exceeded.
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			l.Reserve(clientIp)
 			assert.True(t, l.Reject(clientIp))
 		}
@@ -78,7 +78,7 @@ func TestNewLimit(t *testing.T) {
 		l := NewLimit(0.166, 10)
 
 		// Request counter not increased.
-		for i := 0; i < 20; i++ {
+		for range 20 {
 			assert.False(t, l.Reject(clientIp))
 		}
 

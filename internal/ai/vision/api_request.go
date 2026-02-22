@@ -132,10 +132,13 @@ func NewApiRequestImages(images Files, fileScheme scheme.Type) (*ApiRequest, err
 				imageUrls[i] = fmt.Sprintf("%s/%s", DownloadUrl, fileUuid)
 			}
 		case scheme.Data:
-			if file, err := os.Open(images[i]); err != nil {
+			file, err := os.Open(images[i])
+			if err != nil {
 				return nil, fmt.Errorf("%s (create data url)", err)
-			} else {
-				imageUrls[i] = media.DataUrl(file)
+			}
+			imageUrls[i] = media.DataUrl(file)
+			if err := file.Close(); err != nil {
+				return nil, fmt.Errorf("%s (close data url)", err)
 			}
 		default:
 			return nil, fmt.Errorf("unsupported file scheme %s", clean.Log(fileScheme))

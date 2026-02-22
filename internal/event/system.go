@@ -13,7 +13,7 @@ var SystemLog Logger
 var SystemPrefix = "system: "
 
 // System writes a system-level log entry and publishes it to the hub.
-func System(level logrus.Level, ev []string, args ...interface{}) {
+func System(level logrus.Level, ev []string, args ...any) {
 	if len(ev) == 0 {
 		return
 	}
@@ -35,21 +35,21 @@ func System(level logrus.Level, ev []string, args ...interface{}) {
 }
 
 // SystemDebug records a system debug message.
-func SystemDebug(ev []string, args ...interface{}) {
+func SystemDebug(ev []string, args ...any) {
 	System(logrus.DebugLevel, ev, args...)
 }
 
 // SystemInfo records a system info message.
-func SystemInfo(ev []string, args ...interface{}) {
+func SystemInfo(ev []string, args ...any) {
 	System(logrus.InfoLevel, ev, args...)
 }
 
 // SystemWarn records a system warning.
-func SystemWarn(ev []string, args ...interface{}) {
+func SystemWarn(ev []string, args ...any) {
 	System(logrus.WarnLevel, ev, args...)
 }
 
 // SystemError records a system error message.
-func SystemError(ev []string, args ...interface{}) {
+func SystemError(ev []string, args ...any) {
 	System(logrus.ErrorLevel, ev, args...)
 }

@@ -20,7 +20,7 @@ type Location struct {
 	LocCategory string  `json:"category"`
 	TimeZone    string  `json:"timezone,omitempty"`
 	Licence     string  `json:"licence,omitempty"`
-	Place       Place   `json:"place,omitempty"`
+	Place       Place   `json:"place"`
 	Cached      bool    `json:"-"`
 }
 

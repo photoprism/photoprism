@@ -75,6 +75,8 @@ func (m *Model) Run(img []byte) (result Result, err error) {
 		return result, loadErr
 	}
 
+	defer tensorflow.MaybeCollectTensorMemory()
+
 	// Create input tensor from image.
 	input, err := tensorflow.ImageTransform(
 		img, fs.ImageJpeg, m.meta.Input.Resolution())

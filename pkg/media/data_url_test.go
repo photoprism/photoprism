@@ -18,6 +18,16 @@ const gopher = `iVBORw0KGgoAAAANSUhEUgAAAEsAAAA8CAAAAAALAhhPAAAFfUlEQVRYw62XeWwU
 // gopherPng creates an io.Reader by decoding the base64 encoded image data string in the gopher constant.
 func gopherPng() io.Reader { return ReadBase64(strings.NewReader(gopher)) }
 
+// newTestServer creates an HTTP test server and closes it during test cleanup.
+func newTestServer(t *testing.T, handler http.HandlerFunc) *httptest.Server {
+	t.Helper()
+
+	ts := httptest.NewServer(handler)
+	t.Cleanup(ts.Close)
+
+	return ts
+}
+
 func TestDataUrl(t *testing.T) {
 	t.Run("Gopher", func(t *testing.T) {
 		assert.Equal(t, "data:image/png;base64,"+gopher, DataUrl(gopherPng()))
@@ -41,10 +51,9 @@ func TestReadUrl(t *testing.T) {
 		}
 	})
 	t.Run("HttpServer", func(t *testing.T) {
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ts := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte("hello"))
-		}))
-		defer ts.Close()
+		})
 
 		data, err := ReadUrl(ts.URL, []string{"http", "https"})
 		if err != nil {

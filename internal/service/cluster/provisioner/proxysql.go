@@ -47,12 +47,14 @@ var ProvisionProxyOptions = ProxyOptions{
 
 // SyncProxyUser ensures the ProxySQL mysql_users entry matches the provided schema and credentials.
 // When pass is empty the existing password is preserved, allowing non-rotating syncs that only adjust metadata.
-func SyncProxyUser(ctx context.Context, proxyDSN, schema, user, pass string, opts ProxyOptions) error {
+func SyncProxyUser(ctx context.Context, proxyDSN, schema, user, pass string, opts ProxyOptions) (err error) {
 	db, err := sql.Open("mysql", normalizeProxyDSN(proxyDSN))
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer func() {
+		err = errors.Join(err, db.Close())
+	}()
 
 	password := pass
 	if password == "" {
@@ -90,12 +92,14 @@ func SyncProxyUser(ctx context.Context, proxyDSN, schema, user, pass string, opt
 }
 
 // DropProxyUser removes the mysql_users record for a tenant and reloads ProxySQL runtime/disk.
-func DropProxyUser(ctx context.Context, proxyDSN, user string) error {
+func DropProxyUser(ctx context.Context, proxyDSN, user string) (err error) {
 	db, err := sql.Open("mysql", normalizeProxyDSN(proxyDSN))
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer func() {
+		err = errors.Join(err, db.Close())
+	}()
 
 	if _, err = db.ExecContext(ctx, "DELETE FROM mysql_users WHERE username = ?", user); err != nil {
 		return err

@@ -6,7 +6,7 @@
 
 `internal/auth/oidc` implements PhotoPrism’s OpenID Connect (OIDC) Relying Party (RP) flow so users can sign in with third‑party identity providers. The package wraps the `zitadel/oidc` client to perform discovery, build the RP, redirect users to the provider, exchange codes for tokens, and retrieve profile claims in a predictable, testable way.
 
-#### Context & Constraints
+#### Constraints
 
 - Relies on the provider’s `/.well-known/openid-configuration` for discovery and enforces `https` unless explicitly allowed via `insecure`.
 - Uses random per-session cookie keys (16‑byte hash + encrypt) and the shared HTTP client defined in `http_client.go`.

@@ -24,7 +24,7 @@ type Marker struct {
 }
 
 // NewMarker creates a new form initialized with model values.
-func NewMarker(m interface{}) (f Marker, err error) {
+func NewMarker(m any) (f Marker, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err

@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-type Tables map[string]interface{}
+type Tables map[string]any
 
 // Entities contains database entities and their table names.
 var Entities = Tables{
@@ -105,7 +105,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 // Migrate migrates all database tables of registered entities.
 func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 	var name string
-	var entity interface{}
+	var entity any
 
 	defer func() {
 		if r := recover(); r != nil {

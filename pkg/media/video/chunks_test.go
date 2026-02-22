@@ -2,7 +2,6 @@ package video
 
 import (
 	"io"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -54,9 +53,7 @@ func TestChunk_FileOffset(t *testing.T) {
 
 func TestChunks(t *testing.T) {
 	t.Run("Mp4vAvc1Mp4", func(t *testing.T) {
-		f, fileErr := os.Open("testdata/mp4v-avc1.mp4")
-		require.NoError(t, fileErr)
-		defer f.Close()
+		f := openTestFile(t, "testdata/mp4v-avc1.mp4")
 		r := bufseekio.NewReadSeeker(f, 8, 4)
 
 		var startChunk = make([]byte, 4)
@@ -84,9 +81,7 @@ func TestChunks(t *testing.T) {
 		assert.Equal(t, ChunkMP4V.Bytes(), subType[:4])
 	})
 	t.Run("IsomAvc1Mp4", func(t *testing.T) {
-		f, fileErr := os.Open("testdata/isom-avc1.mp4")
-		require.NoError(t, fileErr)
-		defer f.Close()
+		f := openTestFile(t, "testdata/isom-avc1.mp4")
 
 		b := make([]byte, 12)
 
@@ -101,9 +96,7 @@ func TestChunks(t *testing.T) {
 		assert.Equal(t, ChunkISOM[:], b[8:12])
 	})
 	t.Run("ImageIsomAvc1Jpg", func(t *testing.T) {
-		f, fileErr := os.Open("testdata/image-isom-avc1.jpg")
-		require.NoError(t, fileErr)
-		defer f.Close()
+		f := openTestFile(t, "testdata/image-isom-avc1.jpg")
 
 		b := make([]byte, 12)
 

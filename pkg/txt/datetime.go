@@ -52,14 +52,14 @@ const OneYear = time.Hour * 24 * 365
 
 func init() {
 	en := ExifDateTimeRegexp.SubexpNames()
-	for i := 0; i < len(en); i++ {
+	for i := range en {
 		if name := en[i]; name != "" {
 			ExifDateTimeMatch[name] = i
 		}
 	}
 
 	hn := HumanDateTimeRegexp.SubexpNames()
-	for i := 0; i < len(hn); i++ {
+	for i := range hn {
 		if name := hn[i]; name != "" {
 			HumanDateTimeMatch[name] = i
 		}

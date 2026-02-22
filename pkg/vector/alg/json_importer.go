@@ -43,7 +43,7 @@ func (i *jsonImporter) Import(file string, start, end int) ([][]float64, error) 
 		}
 
 		d[i] = make([]float64, 0, s)
-		for j := 0; j < s; j++ {
+		for j := range s {
 			d[i][j] = g[j]
 		}
 	}

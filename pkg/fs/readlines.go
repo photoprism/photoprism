@@ -2,6 +2,7 @@ package fs
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"os"
 	"strings"
@@ -15,7 +16,9 @@ func ReadLines(fileName string) (lines []string, err error) {
 		return lines, err
 	}
 
-	defer file.Close()
+	defer func() {
+		err = errors.Join(err, file.Close())
+	}()
 
 	reader := bufio.NewReader(file)
 

@@ -24,7 +24,7 @@ func TestCreateSession_RateLimitExceeded(t *testing.T) {
 	limiter.Login = limiter.NewLimit(rate.Every(24*time.Hour), 3)
 	limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "wrong"}`)
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	}

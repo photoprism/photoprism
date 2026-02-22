@@ -38,7 +38,7 @@ func RandomAppPassword() string {
 	m := big.NewInt(int64(len(CharsetBase62)))
 	b := make([]byte, 0, 27)
 
-	for i := 0; i < 27; i++ {
+	for i := range 27 {
 		if (i+1)%7 == 0 {
 			b = append(b, '-')
 		} else if i == 27-1 {

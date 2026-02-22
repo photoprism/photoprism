@@ -21,7 +21,6 @@ func TestParseRunType(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
 			if got := ParseRunType(tc.in); got != tc.out {
@@ -65,7 +64,6 @@ func TestModel_RunType(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
 			if got := tc.model.RunType(); got != tc.want {

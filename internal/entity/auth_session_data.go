@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"slices"
 	"strings"
 )
 
@@ -86,13 +87,7 @@ func (data SessionData) HasShare(uid string) bool {
 		return false
 	}
 
-	for _, share := range data.Shares {
-		if share == uid {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(data.Shares, uid)
 }
 
 // SharedUIDs returns shared entity UIDs.

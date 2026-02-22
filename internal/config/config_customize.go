@@ -1,6 +1,7 @@
 package config
 
 import (
+	"net/url"
 	"path"
 	"path/filepath"
 	"strings"
@@ -42,6 +43,52 @@ func (c *Config) DefaultTheme() string {
 	}
 
 	return c.options.DefaultTheme
+}
+
+// ThemeUrl returns the URL for downloading and installing a theme if none is installed.
+func (c *Config) ThemeUrl() string {
+	return sanitizeThemeURL(c.options.ThemeUrl)
+}
+
+// ThemeUrlRedacted returns the sanitized theme URL with sensitive user info masked.
+func (c *Config) ThemeUrlRedacted() string {
+	return clean.UriRedacted(c.ThemeUrl())
+}
+
+// SetThemeUrl sets the URL for downloading and installing a theme if none is installed.
+func (c *Config) SetThemeUrl(u string) *Config {
+	c.options.ThemeUrl = sanitizeThemeURL(u)
+
+	return c
+}
+
+// sanitizeThemeURL normalizes a theme archive URL and rejects invalid or insecure values.
+func sanitizeThemeURL(raw string) string {
+	raw = strings.TrimSpace(raw)
+
+	if raw == "" {
+		return ""
+	}
+
+	u, err := url.Parse(raw)
+
+	if err != nil || u == nil || !u.IsAbs() || u.Host == "" {
+		return ""
+	}
+
+	switch strings.ToLower(u.Scheme) {
+	case "http", "https":
+		// Keep supported scheme.
+	default:
+		return ""
+	}
+
+	// Enforce zip archives so callers cannot point to arbitrary file types.
+	if !strings.HasSuffix(strings.ToLower(u.Path), fs.ExtZip) {
+		return ""
+	}
+
+	return u.String()
 }
 
 // WallpaperUri returns the login screen background image URI.

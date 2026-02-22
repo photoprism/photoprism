@@ -175,7 +175,7 @@ func TestFlagHiddenPhotos(t *testing.T) {
 	t.Run("SuccessWith1000", func(t *testing.T) {
 		var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 		// Load 1000 photos that need to be hidden
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			newPhoto := entity.Photo{ //JPG, Geo from metadata, indexed
 				//ID:               1000049,
 				PhotoUID:         rnd.GenerateUID(entity.PhotoUID),

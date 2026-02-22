@@ -6,6 +6,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
@@ -137,8 +138,7 @@ func (data *Data) GPhoto(jsonData []byte) (err error) {
 
 	if p.Geo.Exists() {
 		if data.Lat == 0 && data.Lng == 0 {
-			data.Lat = p.Geo.Lat
-			data.Lng = p.Geo.Lng
+			data.Lat, data.Lng, _ = geo.ClampCoordinateBounds(p.Geo.Lat, p.Geo.Lng)
 		}
 
 		if data.Altitude == 0 {

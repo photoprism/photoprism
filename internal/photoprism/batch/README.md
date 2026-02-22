@@ -8,7 +8,7 @@ Batch editing allows signed-in users to update the metadata, albums, and labels 
 
 The `internal/photoprism/batch` package implements the form schema (`PhotosForm`), validation helpers, album/label mutation helpers, and persistence functions (`SavePhotos`) that power the `/api/v1/batch/photos/edit` endpoint. It exists so the API can keep responses consistent with the UI: mixed values stay round-trippable, add/remove operations track intent, and only changed columns hit the database.
 
-#### Context & Constraints
+#### Constraints
 
 - Community requests such as [Issue #271](https://github.com/photoprism/photoprism/issues/271) emphasized the need to bulk-edit core metadata (location, time zone, titles) instead of repeating the same change photo by photo.
 - [PR #5324](https://github.com/photoprism/photoprism/pull/5324) introduced the modern batch dialog, chip controls, and validation rules that this package still serves.
@@ -46,7 +46,7 @@ The `internal/photoprism/batch` package implements the form schema (`PhotosForm`
 `POST /api/v1/batch/photos/edit` accepts a `PhotosRequest` payload and returns the refreshed photo models plus a `PhotosForm` snapshot. All fields follow JSON casing from `internal/photoprism/batch/request.go` and `photos.go`.
 
 | Field                   | Type             | Examples                                                     | Notes                                                                                         |
-|-------------------------|------------------|--------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+|:------------------------|:-----------------|:-------------------------------------------------------------|:----------------------------------------------------------------------------------------------|
 | `photos`                | `string[]`       | `['pq1z9t3', 'px4y2k0']`                                     | Required. Contains `PhotoUID` values selected in the UI. Empty lists are rejected with `400`. |
 | `values`                | `PhotosForm`     | `{ "Title": { "action": "update", "value": "Vacation" } }`   | Optional. When omitted, the endpoint only loads the selection + aggregated form data.         |
 | `values.Albums.items[]` | `Items` entry    | `{ "value": "ab1c", "title": "Favorites", "action": "add" }` | Action must be `add`/`remove`; `title` is used to create albums when `value` is empty.        |
@@ -166,7 +166,7 @@ Each field embeds one of the typed wrappers (`String`, `Bool`, `Time`, `Int`, et
 The following shows the actions that Batch Edit is expected to perform when a user requests to remove a label. The **Outcome** can be to **Keep** the current `PhotoLabel`, to permanently **Delete** the `PhotoLabel`, or to **Update** the `PhotoLabel`'s `LabelSrc` or `Uncertainty`.
 
 | `LabelSrc`            | `SrcPriority` | `Uncertainty` | Expected Outcome                                 |
-|-----------------------|---------------|---------------|--------------------------------------------------|
+|:----------------------|:--------------|:--------------|:-------------------------------------------------|
 | image, openai, ollama | 8             | 0             | **Update** LabelSrc: `batch`, Uncertainty: `100` |
 | image, openai, ollama | 8             | 1-99          | **Update** LabelSrc: `batch` ,Uncertainty: `100` |
 | image, openai, ollama | 8             | 100           | **Update** LabelSrc: `batch` ,Uncertainty: `100` |

@@ -88,7 +88,9 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 			return data, fmt.Errorf("invalid %s url (%s)", u.Scheme, httpErr)
 		}
 
-		defer resp.Body.Close()
+		defer func() {
+			err = errors.Join(err, resp.Body.Close())
+		}()
 
 		if data, err = io.ReadAll(resp.Body); err != nil {
 			return data, err
