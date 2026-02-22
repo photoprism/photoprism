@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/enum"
 )
 
 var testArea = crop.Area{
@@ -406,7 +407,7 @@ func TestMarker_ClearFace(t *testing.T) {
 	t.Run("ReturnsUpdateError", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: enum.SQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "clear-face-error.db"),
 		}
 
@@ -442,7 +443,7 @@ func TestMarker_SyncSubject(t *testing.T) {
 	t.Run("UpdateKnownFaceError", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: enum.SQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "sync-subject-error.db"),
 		}
 
