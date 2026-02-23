@@ -25,7 +25,7 @@ describe("common/pwa", () => {
     expect(shouldRegisterServiceWorker({ baseUri: "", values: { portal: true } })).toBe(false);
   });
 
-  it("should allow tenant scope registration in portal mode", () => {
+  it("should allow instance scope registration in portal mode", () => {
     expect(shouldRegisterServiceWorker({ baseUri: "/p/pro-1", values: { portal: true } })).toBe(true);
   });
 
@@ -33,7 +33,7 @@ describe("common/pwa", () => {
     expect(shouldRegisterServiceWorker({ baseUri: "", values: { portal: false } })).toBe(true);
   });
 
-  it("should identify tenant scopes that require root cleanup", () => {
+  it("should identify instance scopes that require root cleanup", () => {
     expect(shouldCleanupRootScopeServiceWorker("/")).toBe(false);
     expect(shouldCleanupRootScopeServiceWorker("/library/")).toBe(false);
     expect(shouldCleanupRootScopeServiceWorker("/p/pro-1/")).toBe(true);
@@ -46,14 +46,14 @@ describe("common/pwa", () => {
     expect(isRootScopeRegistration({ scope: "invalid" })).toBe(false);
   });
 
-  it("should cleanup legacy root-scope workers for tenant paths", async () => {
+  it("should cleanup legacy root-scope workers for instance paths", async () => {
     const rootUnregister = vi.fn().mockResolvedValue(true);
-    const tenantUnregister = vi.fn().mockResolvedValue(true);
+    const instanceUnregister = vi.fn().mockResolvedValue(true);
     const nav = {
       serviceWorker: {
         getRegistrations: vi.fn().mockResolvedValue([
           { scope: "http://localhost:2342/", unregister: rootUnregister },
-          { scope: "http://localhost:2342/p/pro-1/", unregister: tenantUnregister },
+          { scope: "http://localhost:2342/p/pro-1/", unregister: instanceUnregister },
         ]),
       },
     };
@@ -62,10 +62,10 @@ describe("common/pwa", () => {
 
     expect(cleaned).toBe(true);
     expect(rootUnregister).toHaveBeenCalledTimes(1);
-    expect(tenantUnregister).not.toHaveBeenCalled();
+    expect(instanceUnregister).not.toHaveBeenCalled();
   });
 
-  it("should skip cleanup for non-tenant scopes", async () => {
+  it("should skip cleanup for non-instance scopes", async () => {
     const nav = {
       serviceWorker: {
         getRegistrations: vi.fn().mockResolvedValue([]),
@@ -95,7 +95,7 @@ describe("common/pwa", () => {
     expect(debug).toHaveBeenCalledTimes(1);
   });
 
-  it("should register tenant scope service workers in portal mode", async () => {
+  it("should register instance scope service workers in portal mode", async () => {
     const register = vi.fn().mockResolvedValue({});
     const nav = { serviceWorker: { register, getRegistrations: vi.fn().mockResolvedValue([]) } };
 
@@ -106,16 +106,16 @@ describe("common/pwa", () => {
     expect(register).toHaveBeenCalledWith("/p/pro-1/sw.js", { scope: "/p/pro-1/" });
   });
 
-  it("should unregister root scope before tenant registration", async () => {
+  it("should unregister root scope before instance registration", async () => {
     const rootUnregister = vi.fn().mockResolvedValue(true);
-    const tenantUnregister = vi.fn().mockResolvedValue(true);
+    const instanceUnregister = vi.fn().mockResolvedValue(true);
     const register = vi.fn().mockResolvedValue({});
     const nav = {
       serviceWorker: {
         register,
         getRegistrations: vi.fn().mockResolvedValue([
           { scope: "http://localhost:2342/", unregister: rootUnregister },
-          { scope: "http://localhost:2342/p/pro-1/", unregister: tenantUnregister },
+          { scope: "http://localhost:2342/p/pro-1/", unregister: instanceUnregister },
         ]),
       },
     };
@@ -124,7 +124,7 @@ describe("common/pwa", () => {
 
     expect(registered).toBe(true);
     expect(rootUnregister).toHaveBeenCalledTimes(1);
-    expect(tenantUnregister).not.toHaveBeenCalled();
+    expect(instanceUnregister).not.toHaveBeenCalled();
     expect(register).toHaveBeenCalledWith("/p/pro-1/sw.js", { scope: "/p/pro-1/" });
   });
 

@@ -169,6 +169,10 @@ fix-permissions:
 	fi
 gettext-merge:
 	./scripts/gettext-merge.sh
+gettext-extract:
+	./scripts/gettext-extract.sh
+gettext-compile:
+	$(MAKE) -C frontend gettext-compile
 gettext-clear-fuzzy:
 	./scripts/gettext-clear-fuzzy.sh
 clean:
@@ -299,6 +303,7 @@ audit: audit-frontend audit-backend
 audit-frontend:
 	$(MAKE) -C frontend audit
 audit-backend: dep-vuln
+dep-audit: dep-vuln
 dep-vuln:
 	@echo "Checking Go production dependencies for security vulnerabilities..."
 	go run golang.org/x/vuln/cmd/govulncheck@latest ./pkg/... ./internal/...

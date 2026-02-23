@@ -73,7 +73,7 @@ The provisioner package manages per-node MariaDB schemas and users for cluster d
 
 ### ProxySQL Integration
 
-Use ProxySQL to verify tenant provisioning stays in sync with the proxy in addition to MariaDB. The unit test suite ships with an opt-in integration test (`TestEnsureCredentials_ProxySQLIntegration`) that exercises the full flow once ProxySQL is available locally.
+Use ProxySQL to verify instance provisioning stays in sync with the proxy in addition to MariaDB. The unit test suite ships with an opt-in integration test (`TestEnsureCredentials_ProxySQLIntegration`) that exercises the full flow once ProxySQL is available locally.
 
 #### One-Time Setup (inside the dev container)
 
@@ -101,7 +101,7 @@ The bundled MariaDB instance (credentials in `.my.cnf` at the repo root) is suff
    PHOTOPRISM_TEST_PROXYSQL=1 go test ./internal/service/cluster/provisioner -run TestEnsureCredentials_ProxySQLIntegration -count=1
    ```
    - Override the admin DSN with `PHOTOPRISM_TEST_PROXYSQL_DSN=user:pass@tcp(host:6032)/` if you changed the default credentials or port.
-2. The test provisions a tenant, verifies the ProxySQL `mysql_users` row, reruns the idempotent ensure path, and exercises `DropCredentials`. Cleanup hooks remove both the MariaDB schema/user and the ProxySQL account.
+2. The test provisions a instance, verifies the ProxySQL `mysql_users` row, reruns the idempotent ensure path, and exercises `DropCredentials`. Cleanup hooks remove both the MariaDB schema/user and the ProxySQL account.
 
 #### Tearing Down / Restarting
 

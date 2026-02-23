@@ -121,8 +121,8 @@ func TestConfig_Cluster(t *testing.T) {
 
 		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
 
-		c.options.PortalProxyPrefix = "/tenant"
-		assert.Equal(t, "/tenant", c.PortalProxyPrefix())
+		c.options.PortalProxyPrefix = "/instance"
+		assert.Equal(t, "/instance", c.PortalProxyPrefix())
 
 		c.options.PortalProxyPrefix = "  "
 		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
@@ -395,7 +395,7 @@ func TestConfig_Cluster(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
-		c.options.NodeRole = cluster.RoleApp
+		c.options.NodeRole = cluster.RoleInstance
 
 		expected := filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
 		assert.Equal(t, expected, c.JoinTokenFile())
@@ -488,13 +488,15 @@ func TestConfig_Cluster(t *testing.T) {
 
 		// Default / unknown → node
 		c.options.NodeRole = ""
-		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 		c.options.NodeRole = "unknown"
-		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 
 		// Explicit values
-		c.options.NodeRole = string(cluster.RoleApp)
-		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
+		c.options.NodeRole = string(cluster.RoleInstance)
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
+		c.options.NodeRole = "app"
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 		c.options.NodeRole = string(cluster.RolePortal)
 		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
 		c.options.NodeRole = string(cluster.RoleService)

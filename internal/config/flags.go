@@ -730,7 +730,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-role",
-			Usage:   fmt.Sprintf("node `ROLE` (%s or %s)", cluster.RoleApp, cluster.RoleService),
+			Usage:   fmt.Sprintf("node `ROLE` (%s or %s)", cluster.RoleInstance, cluster.RoleService),
 			EnvVars: EnvVars("NODE_ROLE"),
 		}}, {
 		Flag: &cli.StringFlag{

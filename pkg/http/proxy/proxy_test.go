@@ -57,8 +57,8 @@ func TestProxy(t *testing.T) {
 			PathPrefix = previous
 		})
 
-		require.NoError(t, SetPathPrefix("tenant"))
-		assert.Equal(t, "/tenant/", PathPrefix)
+		require.NoError(t, SetPathPrefix("instance"))
+		assert.Equal(t, "/instance/", PathPrefix)
 
 		require.NoError(t, SetPathPrefix("/node-a"))
 		assert.Equal(t, "/node-a/", PathPrefix)
@@ -78,7 +78,7 @@ func TestProxy(t *testing.T) {
 		require.Error(t, SetPathPrefix("/"))
 		assert.Equal(t, previous, PathPrefix)
 
-		require.Error(t, SetPathPrefix("/tenant/*"))
+		require.Error(t, SetPathPrefix("/instance/*"))
 		assert.Equal(t, previous, PathPrefix)
 
 		require.Error(t, SetPathPrefix("/foo//bar"))

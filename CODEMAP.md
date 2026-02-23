@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** February 12, 2026
+**Last Updated:** February 22, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -47,7 +47,7 @@ High-Level Package Map (Go)
 Templates & Static Assets
 - Entry HTML lives in `assets/templates/index.gohtml`, which includes the splash markup from `app.gohtml` and the SPA loader from `app.js.gohtml`.
 - The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs.
-- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml` and `plus/assets/templates/index.gohtml`, because those editions import the same partial.
+- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`, and `portal/assets/templates/index.gohtml`, because those editions import the same partial.
 - Keep the script tag order unchanged so the browser check executes before the main bundle.
 - `splash.gohtml` renders the loading screen text while the bundle loads; styles are in `frontend/src/css/splash.css`.
 - When adjusting browser support messaging, update both the loader partial and splash styles so the warning message stays consistent across editions.
@@ -116,13 +116,13 @@ Background Workers
 - Auto indexer: `internal/workers/auto/*`.
 
 Cluster / Portal
-- Node types: `internal/service/cluster/const.go` (`cluster.RoleApp`, `cluster.RolePortal`, `cluster.RoleService`).
+- Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
   - Registration now retries once on 401/403 by rotating the node client secret with the join token and persists the new credentials (falling back to in-memory storage if the secrets directory is read-only).
   - Theme sync logs explicitly when refresh/rotation occurs so operators can trace credential churn in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
-- Portal-only extensions: `pro/internal/portal` (Portal defaults, flags, provisioning options, `/p/*` proxy router).
+- Portal-only extensions: `portal/internal/portal` (Portal defaults, flags, provisioning options, `/p/*` proxy router).
 - See specs cheat sheet: `specs/portal/README.md`.
 
 Logging & Events

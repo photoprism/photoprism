@@ -61,7 +61,7 @@ func TestHostMatch(t *testing.T) {
 }
 
 func TestRewriteDestinationHost(t *testing.T) {
-	upstream, err := url.Parse("http://tenant.internal:2342")
+	upstream, err := url.Parse("http://instance.internal:2342")
 	require.NoError(t, err)
 
 	t.Run("RewritesMatchingHost", func(t *testing.T) {
@@ -71,7 +71,7 @@ func TestRewriteDestinationHost(t *testing.T) {
 
 		RewriteDestinationHost(req, "portal.example.com", upstream)
 
-		assert.Equal(t, "http://tenant.internal:2342/p/acme/import/dst.txt", req.Header.Get("Destination"))
+		assert.Equal(t, "http://instance.internal:2342/p/acme/import/dst.txt", req.Header.Get("Destination"))
 	})
 
 	t.Run("SkipsDifferentHost", func(t *testing.T) {

@@ -38,9 +38,9 @@ const (
 	DefaultPathPrefix = "/p/"
 	// Timeout defines the upstream response header and idle timeout.
 	Timeout = 60 * time.Second
-	// CacheTTL is the positive cache TTL for tenant resolution.
+	// CacheTTL is the positive cache TTL for instance resolution.
 	CacheTTL = 60 * time.Second
-	// CacheNegativeTTL is the negative cache TTL for missing tenants.
+	// CacheNegativeTTL is the negative cache TTL for missing instances.
 	CacheNegativeTTL = 2 * time.Second
 	// CacheCleanup is the cleanup interval for the proxy cache.
 	CacheCleanup = 1 * time.Minute

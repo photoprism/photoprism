@@ -1,6 +1,6 @@
 ## Frontend Tests & Linting
 
-**Last Updated:** February 14, 2026
+**Last Updated:** February 22, 2026
 
 ### Purpose
 
@@ -43,16 +43,17 @@ From `frontend/`:
 - Acceptance config: `frontend/testcaferc.json` and `frontend/tests/testcafeconfig.json`
 - Upload fixtures: `frontend/tests/upload-files/**/*`
 
-### Overlay Test Notes (Plus & Pro)
+### Overlay Test Notes (Plus, Pro, & Portal)
 
-Plus and Pro frontend overlays reuse the same frontend test and lint toolchain:
+Plus, Pro, and Portal frontend overlays reuse the same frontend test and lint toolchain:
 
 - Plus test run: `make -C plus test-js`
 - Pro test run: `make -C pro test-js`
 - Plus build smoke: `make -C plus build-js`
 - Pro build smoke: `make -C pro build-js`
+- Portal build smoke: `make -C portal build-js`
 
-When evaluating frontend tooling changes, test at least one CE run plus Plus and Pro overlay runs.
+When evaluating frontend tooling changes, test at least one CE run plus Plus and Pro overlay runs, and a Portal build smoke.
 
 ### Tool Versions
 
@@ -98,6 +99,7 @@ Note: TestCafe is available in the development environment but is currently not 
    - `cd frontend && npm run build`
    - `cd frontend && env BUILD_ENV=production NODE_ENV=production CUSTOM_SRC="../plus/frontend" CUSTOM_NAME="PhotoPrism+" npm run build`
    - `cd frontend && env BUILD_ENV=production NODE_ENV=production CUSTOM_SRC="../pro/frontend" CUSTOM_NAME="PhotoPrism Pro" npm run build`
+   - `cd frontend && env BUILD_ENV=production NODE_ENV=production CUSTOM_SRC="../portal/frontend" CUSTOM_NAME="PhotoPrism Portal" npm run build`
 5. If dependencies changed, regenerate notices with `make notice`.
 6. Revert the trial changes if validation fails.
 

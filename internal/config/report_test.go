@@ -100,7 +100,7 @@ func TestConfig_ReportPortalSettingsVisibility(t *testing.T) {
 
 	t.Run("NonPortalOmitsPortalSettings", func(t *testing.T) {
 		conf := NewConfig(CliTestContext())
-		conf.options.NodeRole = cluster.RoleApp
+		conf.options.NodeRole = cluster.RoleInstance
 
 		rows, _ := conf.Report()
 		values := collect(rows)
@@ -119,13 +119,13 @@ func TestConfig_ReportPortalSettingsVisibility(t *testing.T) {
 		conf := NewConfig(CliTestContext())
 		conf.options.NodeRole = cluster.RolePortal
 		conf.options.PortalProxy = true
-		conf.options.PortalProxyPrefix = "/tenant/"
+		conf.options.PortalProxyPrefix = "/instance/"
 
 		rows, _ := conf.Report()
 		values := collect(rows)
 
 		assert.Equal(t, "true", values["portal-proxy"])
-		assert.Equal(t, "/tenant/", values["portal-proxy-prefix"])
+		assert.Equal(t, "/instance/", values["portal-proxy-prefix"])
 		assert.Equal(t, conf.PortalConfigPath(), values["portal-config-path"])
 		assert.Equal(t, conf.PortalThemePath(), values["portal-theme-path"])
 	})
@@ -162,7 +162,7 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 	t.Run("CommunityOmitsThemeURL", func(t *testing.T) {
 		Features = Community
 		conf := NewConfig(CliTestContext())
-		conf.options.NodeRole = cluster.RoleApp
+		conf.options.NodeRole = cluster.RoleInstance
 		conf.SetThemeUrl("https://cdn.photoprism.app/theme.zip")
 
 		rows, _ := conf.Report()
@@ -191,7 +191,7 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 	t.Run("ProIncludesThemeURL", func(t *testing.T) {
 		Features = Pro
 		conf := NewConfig(CliTestContext())
-		conf.options.NodeRole = cluster.RoleApp
+		conf.options.NodeRole = cluster.RoleInstance
 		conf.SetThemeUrl("https://cdn.photoprism.app/theme.zip")
 
 		rows, _ := conf.Report()

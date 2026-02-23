@@ -55,7 +55,7 @@ export const isRootScopeRegistration = (registration) => {
   }
 };
 
-// cleanupLegacyRootScopeServiceWorkers unregisters root-scope workers for tenant paths.
+// cleanupLegacyRootScopeServiceWorkers unregisters root-scope workers for instance paths.
 export const cleanupLegacyRootScopeServiceWorkers = (nav, scopeBase, log = console) => {
   if (!nav || !("serviceWorker" in nav)) {
     return Promise.resolve(false);
@@ -100,13 +100,9 @@ export const cleanupLegacyRootScopeServiceWorkers = (nav, scopeBase, log = conso
 export const shouldRegisterServiceWorker = (config) => {
   const scopeBase = serviceWorkerScopeBase(config?.baseUri);
 
-  // Avoid root-scope service workers for the portal UI on shared domains. Tenant
-  // apps still register workers at /p/<name>/ where cache scopes stay isolated.
-  if (config?.values?.portal && scopeBase === "/") {
-    return false;
-  }
-
-  return true;
+  // Avoid root-scope service workers for the portal UI on shared domains.
+  // Instances still register workers at /p/<name>/ where cache scopes stay isolated.
+  return !(config?.values?.portal && scopeBase === "/");
 };
 
 // registerServiceWorker registers the PWA service worker when supported.

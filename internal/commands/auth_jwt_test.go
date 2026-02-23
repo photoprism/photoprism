@@ -47,7 +47,7 @@ func TestAuthJWTCommands(t *testing.T) {
 	node := &reg.Node{}
 	node.UUID = nodeUUID
 	node.Name = "pp-node-01"
-	node.Role = string(cluster.RoleApp)
+	node.Role = string(cluster.RoleInstance)
 	require.NoError(t, registry.Put(node))
 	t.Cleanup(func() {
 		conf.Options().Edition = origEdition

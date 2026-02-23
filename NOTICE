@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-02-20
+Date generated: 2026-02-22
 
 ================================================================================
 
@@ -18,8 +18,8 @@ Date generated: 2026-02-20
 ================================================================================
 
 Package: filippo.io/edwards25519
-Version: v1.1.0
-License: BSD-3-Clause (https://github.com/FiloSottile/edwards25519/blob/v1.1.0/LICENSE)
+Version: v1.2.0
+License: BSD-3-Clause (https://github.com/FiloSottile/edwards25519/blob/v1.2.0/LICENSE)
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 

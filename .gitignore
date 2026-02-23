@@ -33,6 +33,7 @@ venv
 .eslintcache
 .gocache
 /pro
+/portal
 /plus
 /tmp/
 /internal/tmp/
