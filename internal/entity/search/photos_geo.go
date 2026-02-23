@@ -204,7 +204,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	if txt.NotEmpty(frm.Label) {
 		var categories []entity.Category
 		var labels []entity.Label
-		var labelIDs []uint
+		var labelIds []uint
 
 		if labelErr := Db().Where(AnySlug("label_slug", frm.Label, txt.Or)).Or(AnySlug("custom_slug", frm.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || labelErr != nil {
 			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
@@ -212,17 +212,17 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		}
 
 		for _, l := range labels {
-			labelIDs = append(labelIDs, l.ID)
+			labelIds = append(labelIds, l.ID)
 
 			Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
 			log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 			for _, category := range categories {
-				labelIDs = append(labelIDs, category.LabelID)
+				labelIds = append(labelIds, category.LabelID)
 			}
 		}
 
-		s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIDs).
+		s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
 			Group("photos.id, files.id")
 
 	}
@@ -305,7 +305,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	if frm.Query != "" {
 		var categories []entity.Category
 		var labels []entity.Label
-		var labelIDs []uint
+		var labelIds []uint
 
 		if labelsErr := Db().Where(AnySlug("custom_slug", frm.Query, " ")).Find(&labels).Error; len(labels) == 0 || labelsErr != nil {
 			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(frm.Query))
@@ -315,23 +315,23 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			}
 		} else {
 			for _, l := range labels {
-				labelIDs = append(labelIDs, l.ID)
+				labelIds = append(labelIds, l.ID)
 
 				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
 				log.Tracef("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
-					labelIDs = append(labelIDs, category.LabelID)
+					labelIds = append(labelIds, category.LabelID)
 				}
 			}
 
 			if wheres := LikeAnyKeyword("k.keyword", frm.Query); len(wheres) > 0 {
 				for _, where := range wheres {
 					s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
-						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where), labelIDs)
+						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where), labelIds)
 				}
 			} else {
-				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIDs)
+				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIds)
 			}
 		}
 	}
