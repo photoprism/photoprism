@@ -157,7 +157,7 @@ var ClientFixtures = ClientMap{
 		UserName:     "",
 		user:         nil,
 		ClientName:   "pp-node-fixture",
-		ClientRole:   string(acl.RoleApp),
+		ClientRole:   string(acl.RoleInstance),
 		ClientType:   authn.ClientConfidential,
 		ClientURL:    "",
 		CallbackURL:  "",
