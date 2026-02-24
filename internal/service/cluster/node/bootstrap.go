@@ -124,43 +124,13 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 	// Let the configuration decide if credentials are missing (MySQL with no effective name/user/password).
 	wantRotateDatabase := c.ShouldAutoRotateDatabase()
 
-	payload := cluster.RegisterRequest{
-		NodeName:     c.NodeName(),
-		NodeUUID:     c.NodeUUID(),
-		NodeRole:     c.NodeRole(),
-		AdvertiseUrl: c.AdvertiseUrl(),
-		AppName:      clean.TypeUnicode(c.About()),
-		AppVersion:   clean.TypeUnicode(c.Version()),
-		Theme:        clean.TypeUnicode(c.NodeThemeVersion()),
-	}
-
-	// Auto-derive Advertise/Site URLs from node name and cluster domain when not configured.
-	if domain := strings.TrimSpace(defaultClusterDomain(c)); domain != "" {
-		if payload.NodeName == "" {
-			payload.NodeName = c.NodeName()
-		}
-
-		if payload.AdvertiseUrl == "" {
-			if u := defaultNodeURL(payload.NodeName, domain); u != "" {
-				payload.AdvertiseUrl = u
-			}
-		}
-
-		if payload.SiteUrl == "" && payload.AdvertiseUrl != "" {
-			payload.SiteUrl = payload.AdvertiseUrl
-		}
-	}
+	payload := buildRegisterPayload(c)
 
 	// Include client credentials when present so the Portal can verify re-registration
 	// and authorize UUID/name changes.
 	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
 		payload.ClientID = id
 		payload.ClientSecret = secret
-	}
-
-	// Include SiteUrl whenever configured; the server normalizes duplicates if needed.
-	if su := c.SiteUrl(); su != "" {
-		payload.SiteUrl = su
 	}
 
 	if wantRotateDatabase {
@@ -205,7 +175,7 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 				}
 				primeJWKS(c, r.JWKSUrl)
 				if resp.StatusCode == http.StatusCreated {
-					log.Infof("config: successfully joined cluster as node %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
+					log.Infof("config: successfully joined cluster as instance %s (%d)", clean.LogQuote(r.Node.Name), resp.StatusCode)
 				} else {
 					log.Infof("cluster: membership confirmed")
 				}
@@ -305,9 +275,46 @@ func defaultNodeURL(name, domain string) string {
 	return fmt.Sprintf("https://%s.%s", name, domain)
 }
 
-// persistRegistration merges registration responses into options.yml and, when
-// necessary, reloads the in-memory configuration so future bootstrap steps use
-// the updated values.
+// buildRegisterPayload builds a registration payload with stable defaults so
+// all registration code paths report consistent node metadata.
+func buildRegisterPayload(c *config.Config) cluster.RegisterRequest {
+	payload := cluster.RegisterRequest{
+		NodeName:     c.NodeName(),
+		NodeUUID:     c.NodeUUID(),
+		NodeRole:     c.NodeRole(),
+		AdvertiseUrl: c.AdvertiseUrl(),
+		AppName:      clean.TypeUnicode(c.About()),
+		AppVersion:   clean.TypeUnicode(c.Version()),
+		Theme:        clean.TypeUnicode(c.NodeThemeVersion()),
+	}
+
+	// Auto-derive Advertise/Site URLs from node name and cluster domain when not configured.
+	if domain := strings.TrimSpace(defaultClusterDomain(c)); domain != "" {
+		if payload.NodeName == "" {
+			payload.NodeName = c.NodeName()
+		}
+
+		if payload.AdvertiseUrl == "" {
+			if u := defaultNodeURL(payload.NodeName, domain); u != "" {
+				payload.AdvertiseUrl = u
+			}
+		}
+
+		if payload.SiteUrl == "" && payload.AdvertiseUrl != "" {
+			payload.SiteUrl = payload.AdvertiseUrl
+		}
+	}
+
+	// Include SiteUrl whenever configured; the server normalizes duplicates if needed.
+	if su := c.SiteUrl(); su != "" {
+		payload.SiteUrl = su
+	}
+
+	return payload
+}
+
+// persistRegistration stores registration responses through the config package
+// so cluster option writes and secret-file persistence stay in one place.
 func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRotateDatabase bool) error {
 	updates := cluster.OptionsUpdate{}
 
@@ -365,19 +372,14 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 		return nil
 	}
 
-	wrote, err := ApplyOptionsUpdate(c, updates)
+	wrote, err := c.SaveClusterOptionsUpdate(updates)
 
 	if err != nil {
 		return err
 	}
 
-	if wrote {
-		// Reload into memory so later code paths see updated values during this run.
-		_ = c.Options().Load(c.OptionsYaml())
-
-		if updates.HasDatabaseUpdate() {
-			log.Infof("config: applied portal database settings; restart required to connect with new credentials")
-		}
+	if wrote && updates.HasDatabaseUpdate() {
+		log.Infof("config: applied portal database settings; restart required to connect with new credentials")
 	}
 
 	return nil
@@ -406,8 +408,8 @@ func primeJWKS(c *config.Config, url string) {
 	}
 }
 
-// syncNodeTheme downloads or refreshes the Portal-provided theme in the node-specific
-// theme directory when the local version is missing or differs from the portal version.
+// syncNodeTheme downloads or refreshes the Portal-provided theme in the instance-specific
+// theme directory (NodeThemePath) when the local version is missing or differs from the portal version.
 func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.RegisterResponse) error {
 	themeDir := c.NodeThemePath()
 	localVersion := strings.TrimSpace(c.NodeThemeVersion())
@@ -473,7 +475,7 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 		}
 
 		if shouldRefresh {
-			log.Infof("config: refreshing node credentials for portal theme download")
+			log.Infof("config: refreshing instance credentials for portal theme download")
 		}
 		if shouldRefresh && refreshNodeCredentials(c, portal) {
 			if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
@@ -549,8 +551,8 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	}
 }
 
-// activateNodeThemeIfPresent switches the active theme path to the node-specific
-// directory when a valid cluster-managed theme bundle is available.
+// activateNodeThemeIfPresent switches the active theme path to the instance-specific
+// NodeThemePath directory when a valid cluster-managed theme bundle is available.
 func activateNodeThemeIfPresent(c *config.Config) {
 	if c == nil {
 		return
@@ -646,7 +648,8 @@ func refreshNodeCredentials(c *config.Config, portal *url.URL) bool {
 		return false
 	}
 
-	id, secret, err := obtainNodeCredentialsViaRegister(c, portal, joinToken)
+	id, secret, nodeUUID, err := obtainNodeCredentialsViaRegister(c, portal, joinToken)
+
 	if err != nil {
 		log.Infof("cluster: failed to refresh credentials (%s)", clean.Error(err))
 		return false
@@ -657,19 +660,30 @@ func refreshNodeCredentials(c *config.Config, portal *url.URL) bool {
 		return false
 	}
 
+	// Always prefer the refreshed secret from file over potentially stale inline config.
+	c.Options().NodeClientSecret = ""
 	c.Options().NodeClientID = id
+
+	if rnd.IsUUID(nodeUUID) {
+		c.Options().NodeUUID = nodeUUID
+	}
+
 	updates := cluster.OptionsUpdate{}
+
 	if id != "" {
 		updates.SetNodeClientID(id)
 	}
 
-	if wrote, err := ApplyOptionsUpdate(c, updates); err != nil {
-		log.Warnf("cluster: failed to persist client id (%s)", clean.Error(err))
-	} else if wrote {
-		if loadErr := c.Options().Load(c.OptionsYaml()); loadErr != nil {
-			log.Warnf("cluster: failed to reload options.yml after credential refresh (%s)", clean.Error(loadErr))
-		}
+	if rnd.IsUUID(nodeUUID) {
+		updates.SetNodeUUID(nodeUUID)
 	}
+
+	if _, err := c.SaveClusterOptionsUpdate(updates); err != nil {
+		log.Warnf("cluster: failed to persist refreshed credentials (%s)", clean.Error(err))
+	}
+
+	// Keep inline secret empty so NodeClientSecret() always prefers the secret file.
+	c.Options().NodeClientSecret = ""
 
 	return true
 }
@@ -686,55 +700,107 @@ func isAuthError(err error) bool {
 }
 
 // obtainNodeCredentialsViaRegister calls the portal registration endpoint to
-// rotate the node secret and returns the new client ID and secret.
-func obtainNodeCredentialsViaRegister(c *config.Config, portal *url.URL, joinToken string) (string, string, error) {
+// rotate the node secret and returns the new client ID, secret, and node UUID.
+func obtainNodeCredentialsViaRegister(c *config.Config, portal *url.URL, joinToken string) (string, string, string, error) {
 	if portal == nil {
-		return "", "", fmt.Errorf("invalid portal url")
+		return "", "", "", fmt.Errorf("invalid portal url")
 	}
 
 	endpoint := *portal
 	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/nodes/register"
 
-	payload := cluster.RegisterRequest{
-		NodeName:     c.NodeName(),
-		NodeRole:     c.NodeRole(),
-		RotateSecret: true,
+	payload := buildRegisterPayload(c)
+	payload.RotateSecret = true
+
+	for attempt := 0; attempt < 2; attempt++ {
+		body, _ := json.Marshal(payload)
+		req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Authorization", "Bearer "+joinToken)
+
+		resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req)
+
+		if err != nil {
+			return "", "", "", err
+		}
+
+		status := resp.Status
+		statusCode := resp.StatusCode
+
+		closeRespBody := func() {
+			if closeErr := resp.Body.Close(); closeErr != nil {
+				log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+			}
+		}
+
+		switch statusCode {
+		case http.StatusOK, http.StatusCreated:
+			var regResp cluster.RegisterResponse
+
+			if err = json.NewDecoder(resp.Body).Decode(&regResp); err != nil {
+				closeRespBody()
+				return "", "", "", err
+			}
+
+			closeRespBody()
+
+			id := regResp.Node.ClientID
+			secret := ""
+
+			if regResp.Secrets != nil {
+				secret = regResp.Secrets.ClientSecret
+			}
+
+			if id == "" || secret == "" {
+				return "", "", "", fmt.Errorf("missing client credentials in response")
+			}
+
+			return id, secret, rnd.SanitizeUUID(regResp.Node.UUID), nil
+		case http.StatusConflict:
+			errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+			closeRespBody()
+
+			// A stale local NodeUUID can trigger a conflict when no client credentials are
+			// available. Retry once without NodeUUID so the existing node can rotate secret.
+			if payload.NodeUUID != "" && attempt == 0 {
+				log.Infof("cluster: refresh conflict for node %s with UUID %s; retrying without node UUID", clean.Log(payload.NodeName), clean.Log(payload.NodeUUID))
+				payload.NodeUUID = ""
+				continue
+			}
+
+			return "", "", "", registerStatusError(status, errBody)
+		case http.StatusUnauthorized, http.StatusForbidden:
+			errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+			closeRespBody()
+			return "", "", "", registerStatusError(status, errBody)
+		default:
+			errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+			closeRespBody()
+			return "", "", "", registerStatusError(status, errBody)
+		}
 	}
 
-	body, _ := json.Marshal(payload)
-	req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(body))
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Authorization", "Bearer "+joinToken)
+	return "", "", "", fmt.Errorf("credential refresh request failed")
+}
 
-	resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req)
-	if err != nil {
-		return "", "", err
-	}
-	defer func() {
-		if closeErr := resp.Body.Close(); closeErr != nil {
-			log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
-		}
-	}()
+// registerStatusError formats a readable status error with optional API detail text.
+func registerStatusError(status string, body []byte) error {
+	msg := strings.TrimSpace(string(body))
 
-	switch resp.StatusCode {
-	case http.StatusOK, http.StatusCreated, http.StatusConflict:
-		var regResp cluster.RegisterResponse
-		if err := json.NewDecoder(resp.Body).Decode(&regResp); err != nil {
-			return "", "", err
-		}
-		id := regResp.Node.ClientID
-		secret := ""
-		if regResp.Secrets != nil {
-			secret = regResp.Secrets.ClientSecret
-		}
-		if id == "" || secret == "" {
-			return "", "", fmt.Errorf("missing client credentials in response")
-		}
-		return id, secret, nil
-	case http.StatusUnauthorized, http.StatusForbidden:
-		return "", "", fmt.Errorf("%s", resp.Status)
-	default:
-		return "", "", fmt.Errorf("%s", resp.Status)
+	if msg == "" {
+		return fmt.Errorf("%s", status)
 	}
+
+	var payload struct {
+		Error string `json:"error"`
+	}
+
+	if err := json.Unmarshal(body, &payload); err == nil {
+		if s := strings.TrimSpace(payload.Error); s != "" {
+			return fmt.Errorf("%s: %s", status, s)
+		}
+	}
+
+	return fmt.Errorf("%s: %s", status, msg)
 }

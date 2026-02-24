@@ -4569,6 +4569,9 @@
                 "system": {
                     "type": "string"
                 },
+                "think": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 },
@@ -4959,6 +4962,10 @@
                 },
                 "responseFormat": {
                     "$ref": "#/definitions/vision.ApiFormat"
+                },
+                "think": {
+                    "description": "Optional reasoning hint for compatible engines (e.g. Ollama, GPT-OSS).",
+                    "type": "string"
                 },
                 "uri": {
                     "type": "string"

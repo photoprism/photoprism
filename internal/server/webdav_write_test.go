@@ -70,7 +70,7 @@ func TestWebDAV_NoTrailingSlashRedirectOnBasePath(t *testing.T) {
 		siteURL string
 	}{
 		{name: "DefaultBasePath", siteURL: "http://localhost:2342/"},
-		{name: "PrefixedBasePath", siteURL: "https://app.localssl.dev/p/pro-1/"},
+		{name: "PrefixedBasePath", siteURL: "https://app.localssl.dev/i/pro-1/"},
 	}
 
 	for _, tc := range testCases {

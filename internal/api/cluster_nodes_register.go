@@ -230,7 +230,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				}
 			}
 
-			shouldProvisionDB := req.RotateDatabase || n.Database == nil || n.Database.Name == ""
+			// Provision or rotate database credentials only when explicitly requested.
+			shouldProvisionDB := req.RotateDatabase
 
 			var creds provisioner.Credentials
 			haveCreds := false
@@ -284,7 +285,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 			if portalTheme != "" {
 				resp.Theme = portalTheme
-				log.Debugf("cluster: reporting portal theme hint %s for node %s", clean.Log(portalTheme), clean.Log(name))
+				log.Debugf("cluster: reporting portal theme hint %s for instance %s", clean.Log(portalTheme), clean.Log(name))
 			}
 
 			if n.Database != nil {
@@ -375,7 +376,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		if portalTheme != "" {
 			resp.Theme = portalTheme
-			log.Debugf("cluster: portal theme hint %s for node %s", clean.Log(portalTheme), clean.Log(name))
+			log.Debugf("cluster: portal theme hint %s for instance %s", clean.Log(portalTheme), clean.Log(name))
 		}
 
 		// If DB provisioning is skipped, leave Database fields zero-value.

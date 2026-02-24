@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"gopkg.in/yaml.v2"
-
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -280,16 +278,19 @@ func (c *Config) NodeJoinTokenFile() string {
 	return filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
 }
 
-// deriveNodeNameAndDomainFromHttpHost attempts to derive cluster host and domain name from the site URL.
+// deriveNodeNameAndDomainFromHttpHost attempts to derive cluster host and
+// domain name from the site URL without overriding explicit node-name values.
 func (c *Config) deriveNodeNameAndDomainFromHttpHost() (hostName, domainName string, found bool) {
 	if fqdn := c.SiteDomain(); fqdn != "" && !header.IsIP(fqdn) {
 		hostName, domainName, found = strings.Cut(fqdn, ".")
 		if hostName = clean.DNSLabel(hostName); found && dns.IsLabel(hostName) && dns.IsDomain(domainName) {
-			c.options.NodeName = hostName
+			if clean.DNSLabel(c.options.NodeName) == "" {
+				c.options.NodeName = hostName
+			}
 			if c.options.ClusterDomain == "" {
 				c.options.ClusterDomain = strings.ToLower(domainName)
 			}
-			return c.options.NodeName, c.options.ClusterDomain, found
+			return hostName, strings.ToLower(domainName), found
 		}
 	}
 
@@ -360,37 +361,36 @@ func (c *Config) NodeClientID() string {
 	return clean.ID(c.options.NodeClientID)
 }
 
-// NodeClientSecret returns the node OAuth client secret, reading it from disk
-// when necessary. Portal registration writes this secret so nodes can obtain
-// access tokens in future runs.
+// NodeClientSecret returns the node OAuth client secret. It prefers the
+// dedicated secret file to avoid stale inline values from options.yml, and
+// falls back to inline/env/flag values when no file is available.
 func (c *Config) NodeClientSecret() string {
+	fileName := c.NodeClientSecretFile()
+
+	if fileName != "" {
+		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
+			// Do not cache the value. Always read from the disk to ensure
+			// that updates from other processes are observed.
+			return string(b)
+		}
+
+		if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
+			log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
+		}
+
+		if _, err := os.Stat(fileName); os.IsNotExist(err) {
+			log.Debugf("config: node client secret file %s not found", clean.Log(fileName))
+		} else if err != nil {
+			log.Warnf("config: failed to read node client secret from %s (%s)", clean.Log(fileName), err)
+		}
+	}
+
 	if c.options.NodeClientSecret != "" {
+		// Keep support for manual troubleshooting/failover via flags/env/options.
 		return c.options.NodeClientSecret
 	}
 
-	fileName := c.NodeClientSecretFile()
-
-	if fileName == "" {
-		return ""
-	}
-
-	if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
-		// Do not cache the value. Always read from the disk to ensure
-		// that updates from other processes are observed.
-		return string(b)
-	}
-
-	if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
-		log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
-	}
-
-	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		log.Debugf("config: node client secret file %s not found", clean.Log(fileName))
-	} else if err != nil {
-		log.Warnf("config: failed to read node client secret from %s (%s)", clean.Log(fileName), err)
-	}
-
-	return c.options.NodeClientSecret
+	return ""
 }
 
 // SaveNodeClientSecret stores a new node client secret on disk and updates the
@@ -536,43 +536,11 @@ func (c *Config) SaveClusterUUID(uuid string) error {
 		return errors.New("invalid cluster UUID")
 	}
 
-	// Always resolve against the current ConfigPath and remember it explicitly
-	// so subsequent calls don't accidentally point to a previous default.
-	cfgDir := c.ConfigPath()
-	if err := fs.MkdirAll(cfgDir); err != nil {
-		return err
-	}
+	update := cluster.OptionsUpdate{}
+	update.SetClusterUUID(uuid)
 
-	fileName := c.OptionsYaml()
-
-	var m Values
-
-	if fs.FileExists(fileName) {
-		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
-			_ = yaml.Unmarshal(b, &m)
-		}
-	}
-
-	if m == nil {
-		m = Values{}
-	}
-
-	m["ClusterUUID"] = uuid
-
-	if b, err := yaml.Marshal(m); err != nil {
-		return err
-	} else if err = os.WriteFile(fileName, b, fs.ModeFile); err != nil {
-		return err
-	}
-
-	c.options.ClusterUUID = uuid
-
-	// Remember options.yml path for subsequent loads and ensure in-memory options see the value.
-	if c.options != nil {
-		_ = c.options.Load(fileName)
-	}
-
-	return nil
+	_, err := c.SaveClusterOptionsUpdate(update)
+	return err
 }
 
 // SaveNodeUUID writes or updates the NodeUUID key in options.yml without touching unrelated keys.
@@ -581,31 +549,9 @@ func (c *Config) SaveNodeUUID(uuid string) error {
 		return errors.New("invalid node UUID")
 	}
 
-	cfgDir := c.ConfigPath()
+	update := cluster.OptionsUpdate{}
+	update.SetNodeUUID(uuid)
 
-	if err := fs.MkdirAll(cfgDir); err != nil {
-		return err
-	}
-
-	fileName := c.OptionsYaml()
-
-	var m Values
-	if fs.FileExists(fileName) {
-		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
-			_ = yaml.Unmarshal(b, &m)
-		}
-	}
-	if m == nil {
-		m = Values{}
-	}
-	m["NodeUUID"] = uuid
-	if b, err := yaml.Marshal(m); err != nil {
-		return err
-	} else if err = os.WriteFile(fileName, b, fs.ModeFile); err != nil {
-		return err
-	}
-
-	c.options.NodeUUID = uuid
-
-	return nil
+	_, err := c.SaveClusterOptionsUpdate(update)
+	return err
 }

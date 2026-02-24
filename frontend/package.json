@@ -84,7 +84,7 @@
     "i": "^0.3.7",
     "jsdom": "^26.1.0",
     "luxon": "^3.7.2",
-    "maplibre-gl": "^5.18.0",
+    "maplibre-gl": "^5.19.0",
     "memoize-one": "^6.0.0",
     "mini-css-extract-plugin": "^2.10.0",
     "minimist": "^1.2.8",

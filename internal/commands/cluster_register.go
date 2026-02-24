@@ -8,8 +8,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -20,10 +18,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
-	clusternode "github.com/photoprism/photoprism/internal/service/cluster/node"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -447,25 +443,34 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		updates.SetClusterCIDR(cidr)
 	}
 
-	// Node client secret file
+	if resp.Node.ClientID != "" {
+		updates.SetNodeClientID(resp.Node.ClientID)
+	}
+
+	if rnd.IsUUID(resp.Node.UUID) {
+		updates.SetNodeUUID(resp.Node.UUID)
+	}
+
+	if jwksUrl := strings.TrimSpace(resp.JWKSUrl); jwksUrl != "" {
+		updates.SetJWKSUrl(jwksUrl)
+	}
+
+	// Node client secret is persisted only via config helper.
 	if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
-		// Prefer PHOTOPRISM_NODE_CLIENT_SECRET_FILE; otherwise config cluster path
-		fileName := os.Getenv(config.FlagFileVar("NODE_CLIENT_SECRET"))
-		if fileName == "" {
-			fileName = filepath.Join(conf.PortalConfigPath(), "node-secret")
-		}
-		if err := fs.MkdirAll(filepath.Dir(fileName)); err != nil {
+		if fileName, err := conf.SaveNodeClientSecret(resp.Secrets.ClientSecret); err != nil {
 			return err
+		} else if fileName != "" {
+			log.Infof("wrote node client secret to %s", clean.Log(fileName))
 		}
-		if err := os.WriteFile(fileName, []byte(resp.Secrets.ClientSecret), 0o600); err != nil {
-			return err
-		}
-		log.Infof("wrote node client secret to %s", clean.Log(fileName))
 	}
 
 	// DB settings (MySQL/MariaDB only)
 	if resp.Database.Name != "" && resp.Database.User != "" {
-		updates.SetDatabaseDriver(config.MySQL)
+		driver := strings.TrimSpace(resp.Database.Driver)
+		if driver == "" {
+			driver = config.MySQL
+		}
+		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)
 		updates.SetDatabaseServer(fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port))
 		updates.SetDatabaseUser(resp.Database.User)
@@ -473,7 +478,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 	}
 
 	if !updates.IsZero() {
-		if _, err := clusternode.ApplyOptionsUpdate(conf, updates); err != nil {
+		if _, err := conf.SaveClusterOptionsUpdate(updates); err != nil {
 			return err
 		}
 		log.Infof("updated options.yml with cluster registration settings for node %s", clean.LogQuote(resp.Node.Name))

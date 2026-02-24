@@ -35,7 +35,13 @@ export const serviceWorkerUrl = (scopeBase) => {
 
 // shouldCleanupRootScopeServiceWorker indicates if legacy root-scope workers should be removed.
 export const shouldCleanupRootScopeServiceWorker = (scopeBase) => {
-  return typeof scopeBase === "string" && scopeBase.startsWith("/p/");
+  if (typeof scopeBase !== "string" || !scopeBase.startsWith("/") || scopeBase === "/") {
+    return false;
+  }
+
+  // Proxy-routed instance paths include at least two path segments (prefix + tenant),
+  // e.g. "/<prefix>/<tenant>/" such as "/i/pro-1/" or "/instance/pro-1/".
+  return scopeBase.split("/").filter(Boolean).length >= 2;
 };
 
 // isRootScopeRegistration checks whether a service worker registration controls the root scope.
@@ -101,7 +107,7 @@ export const shouldRegisterServiceWorker = (config) => {
   const scopeBase = serviceWorkerScopeBase(config?.baseUri);
 
   // Avoid root-scope service workers for the portal UI on shared domains.
-  // Instances still register workers at /p/<name>/ where cache scopes stay isolated.
+  // Instances still register workers at /<prefix>/<tenant>/ where cache scopes stay isolated.
   return !(config?.values?.portal && scopeBase === "/");
 };
 

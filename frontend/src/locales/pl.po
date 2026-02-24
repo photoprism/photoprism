@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-11-27 11:38+0000\n"
+"PO-Revision-Date: 2026-02-23 16:05+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 5.13.3\n"
+"X-Generator: Weblate 5.16\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -849,7 +849,7 @@ msgstr "Klaster"
 
 #: src/model/cluster-node.js:80
 msgid "Cluster Node"
-msgstr ""
+msgstr "Węzeł klastra"
 
 #: src/component/photo/edit/files.vue:140
 #: src/component/photo/edit/files.vue:141
@@ -3886,7 +3886,7 @@ msgstr "Użytkownicy"
 
 #: src/page/cluster/nodes.vue:252
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 #: src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239

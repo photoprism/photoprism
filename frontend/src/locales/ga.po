@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-11-27 11:38+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-02-23 16:07+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 5.13.3\n"
+"X-Generator: Weblate 5.16\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -847,7 +847,7 @@ msgstr "Braisle"
 
 #: src/model/cluster-node.js:80
 msgid "Cluster Node"
-msgstr ""
+msgstr "Nód Cnuasaigh"
 
 #: src/component/photo/edit/files.vue:140
 #: src/component/photo/edit/files.vue:141
@@ -3884,7 +3884,7 @@ msgstr "Úsáideoirí"
 
 #: src/page/cluster/nodes.vue:252
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 #: src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239

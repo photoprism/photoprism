@@ -119,6 +119,31 @@ func TestPerformApiRequestOllama(t *testing.T) {
 			assert.Equal(t, "plain text", resp.Result.Caption.Text)
 		}
 	})
+	t.Run("CaptionThinkingFallback", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
+				Model:    "qwen3-vl:4b",
+				Response: "",
+				Thinking: "A tabby cat with a white chest stares upward.",
+			}))
+		}))
+		defer server.Close()
+
+		apiRequest := &ApiRequest{
+			Id:             "test3",
+			Model:          "qwen3-vl:4b",
+			Format:         FormatJSON,
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		resp, err := PerformApiRequest(apiRequest, server.URL, http.MethodPost, "")
+		assert.NoError(t, err)
+		assert.Len(t, resp.Result.Labels, 0)
+		if assert.NotNil(t, resp.Result.Caption) {
+			assert.Equal(t, "A tabby cat with a white chest stares upward.", resp.Result.Caption.Text)
+		}
+	})
 }
 
 func TestPerformApiRequestOpenAIHeaders(t *testing.T) {

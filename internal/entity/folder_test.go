@@ -85,34 +85,65 @@ func TestNewFolder(t *testing.T) {
 }
 
 func TestFirstOrCreateFolder(t *testing.T) {
-	folder := NewFolder(RootOriginals, RootPath, time.Now().UTC())
-	result := FirstOrCreateFolder(&folder)
+	t.Run("ExistingRootFolder", func(t *testing.T) {
+		folder := NewFolder(RootOriginals, RootPath, time.Now().UTC())
+		result := FirstOrCreateFolder(&folder)
 
-	if result == nil {
-		t.Fatal("result must not be nil")
-	}
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
 
-	if folder.FolderTitle != "Originals" {
-		t.Errorf("FolderTitle should be 'Originals'")
-	}
+		if folder.FolderTitle != "Originals" {
+			t.Errorf("FolderTitle should be 'Originals'")
+		}
 
-	if folder.FolderCountry != UnknownID {
-		t.Errorf("FolderCountry should be 'zz'")
-	}
+		if folder.FolderCountry != UnknownID {
+			t.Errorf("FolderCountry should be 'zz'")
+		}
 
-	found := FindFolder(RootOriginals, RootPath)
+		found := FindFolder(RootOriginals, RootPath)
 
-	if found == nil {
-		t.Fatal("found must not be nil")
-	}
+		if found == nil {
+			t.Fatal("found must not be nil")
+		}
 
-	if found.FolderTitle != "Originals" {
-		t.Errorf("FolderTitle should be 'Originals'")
-	}
+		if found.FolderTitle != "Originals" {
+			t.Errorf("FolderTitle should be 'Originals'")
+		}
 
-	if found.FolderCountry != UnknownID {
-		t.Errorf("FolderCountry should be 'zz'")
-	}
+		if found.FolderCountry != UnknownID {
+			t.Errorf("FolderCountry should be 'zz'")
+		}
+	})
+	t.Run("ReturnsSoftDeletedOnCreateConflict", func(t *testing.T) {
+		folderPath := "first-or-create-soft-deleted-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		folder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+
+		if err := folder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+		})
+
+		now := Now()
+		if err := UnscopedDb().Model(Folder{}).Where("root = ? AND path = ?", RootOriginals, folderPath).UpdateColumn("deleted_at", now).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		createCandidate := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+		result := FirstOrCreateFolder(&createCandidate)
+
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		if result.DeletedAt == nil {
+			t.Fatal("expected soft-deleted folder from unscoped conflict lookup")
+		}
+	})
 }
 
 func TestFolder_SetValuesFromPath(t *testing.T) {
@@ -151,6 +182,33 @@ func TestFindFolder(t *testing.T) {
 	t.Run("PathNameIsRootPath", func(t *testing.T) {
 		assert.Nil(t, FindFolder("vvfgt", RootPath))
 	})
+	t.Run("FindsSoftDeleted", func(t *testing.T) {
+		folderPath := "find-folder-soft-deleted-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		folder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+
+		if err := folder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+		})
+
+		now := Now()
+
+		if err := UnscopedDb().Model(Folder{}).Where("root = ? AND path = ?", RootOriginals, folderPath).UpdateColumn("deleted_at", now).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		found := FindFolder(RootOriginals, folderPath)
+
+		if found == nil {
+			t.Fatal("expected folder lookup result")
+		}
+
+		assert.NotNil(t, found.DeletedAt)
+	})
 }
 
 func TestFolder_Updates(t *testing.T) {
@@ -165,6 +223,7 @@ func TestFolder_Updates(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "newRoot", folder.Root)
 		assert.Equal(t, "newPath", folder.Path)
 	})
@@ -175,6 +234,7 @@ func TestFolder_SetForm(t *testing.T) {
 		formValues := Folder{FolderTitle: "Beautiful beach"}
 
 		folderForm, err := form.NewFolder(formValues)
+
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -190,6 +250,7 @@ func TestFolder_SetForm(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Equal(t, "", folder.Root)
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Beautiful beach", folder.FolderTitle)
@@ -200,10 +261,13 @@ func TestFolder_Create(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Holiday 2020", Root: RootOriginals, Path: "2020/Greece"}
 		err := folder.Create()
+
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		result := FindFolder(RootOriginals, "2020/Greece")
+
 		assert.Equal(t, "2020-greece", result.Slug())
 		assert.Equal(t, "Holiday 2020", result.Title())
 	})
@@ -212,11 +276,13 @@ func TestFolder_Create(t *testing.T) {
 		childPath := parentPath + "/🍷"
 
 		parentFolder := NewFolder(RootOriginals, parentPath, time.Now().UTC())
+
 		if err := parentFolder.Create(); err != nil {
 			t.Fatal(err)
 		}
 
 		childFolder := NewFolder(RootOriginals, childPath, time.Now().UTC())
+
 		if err := childFolder.Create(); err != nil {
 			t.Fatal(err)
 		}
@@ -227,11 +293,13 @@ func TestFolder_Create(t *testing.T) {
 		})
 
 		parentAlbum := FindFolderAlbum(parentPath)
+
 		if parentAlbum == nil {
 			t.Fatal("expected parent folder album")
 		}
 
 		childAlbum := FindFolderAlbum(childPath)
+
 		if childAlbum == nil {
 			t.Fatal("expected child folder album")
 		}
@@ -290,5 +358,199 @@ func TestFolder_Create(t *testing.T) {
 				assert.NotEqual(t, txt.Title(parentPath), childAlbum.AlbumTitle)
 			})
 		}
+	})
+	t.Run("ExistingFolderDuplicateCreateDoesNotReconcileAlbum", func(t *testing.T) {
+		folderPath := "existing-folder-recreate-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano)) + "/child"
+		folder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+
+		if err := folder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		album := FindFolderAlbum(folderPath)
+
+		if album == nil {
+			t.Fatal("expected folder album")
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+		})
+
+		if err := album.DeletePermanently(); err != nil {
+			t.Fatal(err)
+		}
+
+		if found := FindFolderAlbum(folderPath); found != nil {
+			t.Fatal("expected folder album to be deleted")
+		}
+
+		rescanFolder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+
+		if err := rescanFolder.Create(); err == nil {
+			t.Fatal("expected duplicate folder create error")
+		}
+
+		if recreated := FindFolderAlbum(folderPath); recreated != nil {
+			t.Fatal("expected duplicate folder create to skip reconciliation")
+		}
+	})
+	t.Run("ExistingFolderRecreatesMissingAlbumOnRescanRepair", func(t *testing.T) {
+		folderPath := "existing-folder-recreate-repair-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano)) + "/child"
+		folder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+
+		if err := folder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		album := FindFolderAlbum(folderPath)
+
+		if album == nil {
+			t.Fatal("expected folder album")
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+		})
+
+		if err := album.DeletePermanently(); err != nil {
+			t.Fatal(err)
+		}
+
+		if found := FindFolderAlbum(folderPath); found != nil {
+			t.Fatal("expected folder album to be deleted")
+		}
+
+		reconciled, err := ReconcileOriginalsFolderAlbums(folderPath)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1, reconciled)
+
+		recreated := FindFolderAlbum(folderPath)
+
+		if recreated == nil {
+			t.Fatal("expected folder album to be recreated")
+		}
+
+		assert.Equal(t, folderPath, recreated.AlbumPath)
+		assert.Equal(t, folder.Title(), recreated.AlbumTitle)
+	})
+	t.Run("ExistingFolderRepairsAlbumTitleOnRescanRepair", func(t *testing.T) {
+		parentPath := "existing-folder-repair-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		folderPath := parentPath + "/child-folder"
+		folder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
+
+		if err := folder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+		})
+
+		album := FindFolderAlbum(folderPath)
+
+		if album == nil {
+			t.Fatal("expected folder album")
+		}
+
+		// Simulate stale collision state where the child album title shows the
+		// parent folder name.
+		parentTitle := txt.Title(parentPath)
+
+		if err := album.Update("AlbumTitle", parentTitle); err != nil {
+			t.Fatal(err)
+		}
+
+		afterUpdate := FindFolderAlbum(folderPath)
+
+		if afterUpdate == nil {
+			t.Fatal("expected folder album after title update")
+		}
+
+		assert.Equal(t, parentTitle, afterUpdate.AlbumTitle)
+
+		reconciled, err := ReconcileOriginalsFolderAlbums(parentPath)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1, reconciled)
+
+		repaired := FindFolderAlbum(folderPath)
+
+		if repaired == nil {
+			t.Fatal("expected repaired folder album")
+		}
+
+		assert.Equal(t, folder.Title(), repaired.AlbumTitle)
+		assert.NotEqual(t, parentTitle, repaired.AlbumTitle)
+	})
+	t.Run("ExistingEmojiSiblingFoldersRepairSwappedTitleOnRescanRepair", func(t *testing.T) {
+		parentPath := "ins-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		pathMirror := parentPath + "/🪞"
+		pathWine := parentPath + "/🍷"
+
+		folderMirror := NewFolder(RootOriginals, pathMirror, time.Now().UTC())
+		folderWine := NewFolder(RootOriginals, pathWine, time.Now().UTC())
+
+		if err := folderMirror.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := folderWine.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathWine}).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
+		})
+
+		// Start from a stale collision state:
+		// - only one album row exists for pathMirror
+		// - title/filter point to pathWine
+		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
+
+		stale := NewFolderAlbum(folderWine.Title(), pathMirror, `path:"`+pathWine+`" public:true`)
+
+		if stale == nil {
+			t.Fatal("expected stale folder album")
+		}
+
+		if err := stale.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		reconciled, err := ReconcileOriginalsFolderAlbums(parentPath)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, 2, reconciled)
+
+		mirrorAlbum := FindFolderAlbum(pathMirror)
+
+		if mirrorAlbum == nil {
+			t.Fatal("expected mirror folder album")
+		}
+
+		wineAlbum := FindFolderAlbum(pathWine)
+
+		if wineAlbum == nil {
+			t.Fatal("expected wine folder album")
+		}
+
+		assert.Equal(t, folderMirror.Title(), mirrorAlbum.AlbumTitle)
+		assert.Equal(t, folderWine.Title(), wineAlbum.AlbumTitle)
+		assert.Equal(t, pathMirror, mirrorAlbum.AlbumPath)
+		assert.Equal(t, pathWine, wineAlbum.AlbumPath)
 	})
 }

@@ -5,11 +5,13 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v2"
+	"gopkg.in/yaml.v2"
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -73,6 +75,91 @@ func TestClusterRegister_HTTPHappyPath(t *testing.T) {
 	assert.Equal(t, "tcp", parsed.Net)
 	assert.Equal(t, "db:3306", parsed.Server)
 	assert.Equal(t, "pp_db", parsed.Name)
+}
+
+func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
+	tempCfg := t.TempDir()
+	SetEnvForTest(t, "PHOTOPRISM_CONFIG_PATH", tempCfg)
+
+	conf := get.Config()
+	previousOptions := *conf.Options()
+	t.Cleanup(func() {
+		*conf.Options() = previousOptions
+	})
+
+	nodeUUID := "01987f09-193d-7d01-9f18-d8d189f0fe88"
+	clusterUUID := "4a47c940-d5de-41b3-88a2-eb816cc659ca"
+
+	jwksURL := ""
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/cluster/nodes/register" {
+			http.NotFound(w, r)
+			return
+		}
+		if r.Header.Get("Authorization") != "Bearer "+cluster.ExampleJoinToken {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			UUID:        clusterUUID,
+			ClusterCIDR: "192.0.2.0/24",
+			JWKSUrl:     jwksURL,
+			Node: cluster.Node{
+				UUID:     nodeUUID,
+				Name:     "pp-node-09",
+				Role:     cluster.RoleInstance,
+				ClientID: cluster.ExampleClientID,
+			},
+			Secrets: &cluster.RegisterSecrets{
+				ClientSecret: cluster.ExampleClientSecret,
+			},
+			Database: cluster.RegisterDatabase{
+				Driver:   cfg.MySQL,
+				Host:     "database",
+				Port:     3306,
+				Name:     "pp_db",
+				User:     "pp_user",
+				Password: "pwd",
+			},
+		})
+	}))
+	jwksURL = ts.URL + "/.well-known/jwks.json"
+	defer ts.Close()
+
+	_, err := RunWithTestContext(ClusterRegisterCommand, []string{
+		"register",
+		"--name", "pp-node-09",
+		"--role", "instance",
+		"--portal-url", ts.URL,
+		"--join-token", cluster.ExampleJoinToken,
+		"--write-config",
+	})
+	assert.NoError(t, err)
+
+	secretFile := conf.NodeClientSecretFile()
+	secretContent, readSecretErr := os.ReadFile(secretFile)
+	assert.NoError(t, readSecretErr)
+	assert.Equal(t, cluster.ExampleClientSecret, string(secretContent))
+
+	optionsContent, readOptionsErr := os.ReadFile(conf.OptionsYaml())
+	assert.NoError(t, readOptionsErr)
+
+	var persisted map[string]any
+	assert.NoError(t, yaml.Unmarshal(optionsContent, &persisted))
+
+	assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
+	assert.Equal(t, "192.0.2.0/24", persisted["ClusterCIDR"])
+	assert.Equal(t, nodeUUID, persisted["NodeUUID"])
+	assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
+	assert.Equal(t, jwksURL, persisted["JWKSUrl"])
+	assert.Equal(t, "pp_db", persisted["DatabaseName"])
+	assert.Equal(t, "pp_user", persisted["DatabaseUser"])
+	assert.Equal(t, "pwd", persisted["DatabasePassword"])
+	_, hasInlineSecret := persisted["NodeClientSecret"]
+	assert.False(t, hasInlineSecret)
 }
 
 func TestClusterRegister_SiteURLFlag(t *testing.T) {

@@ -35,7 +35,7 @@ import (
 
 const (
 	// DefaultPathPrefix defines the default shared-domain proxy route path prefix.
-	DefaultPathPrefix = "/p/"
+	DefaultPathPrefix = "/i/"
 	// Timeout defines the upstream response header and idle timeout.
 	Timeout = 60 * time.Second
 	// CacheTTL is the positive cache TTL for instance resolution.

@@ -70,6 +70,7 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 	t.Setenv("VISION_MODEL", "GEMMA3:Latest")
 	t.Setenv("VISION_ORG", "org-123")
 	t.Setenv("VISION_PROJECT", "proj-abc")
+	t.Setenv("VISION_THINK", "false")
 
 	svc := Service{
 		Username: "${VISION_USER}",
@@ -77,6 +78,7 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 		Model:    "${VISION_MODEL}",
 		Org:      "${VISION_ORG}",
 		Project:  "${VISION_PROJECT}",
+		Think:    "${VISION_THINK}",
 	}
 
 	user, pass := svc.BasicAuth()
@@ -94,5 +96,9 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 
 	if got := svc.EndpointProject(); got != "proj-abc" {
 		t.Fatalf("project: got %q", got)
+	}
+
+	if got := svc.EndpointThink(); got != "false" {
+		t.Fatalf("think: got %q", got)
 	}
 }

@@ -168,6 +168,45 @@ func (m *Folder) Create() error {
 		return nil
 	}
 
+	m.syncOriginalsAlbum()
+
+	return nil
+}
+
+// ReconcileOriginalsFolderAlbums ensures existing originals folders have matching folder albums.
+// When rootPath is set, only that path and its descendants are synchronized.
+func ReconcileOriginalsFolderAlbums(rootPath string) (reconciled int, err error) {
+	rootPath = clean.UserPath(rootPath)
+
+	var folders Folders
+
+	// Keep this scoped to active folders only. Conflict handling uses unscoped
+	// lookups, but bulk reconciliation must not recreate/sync albums for
+	// soft-deleted folder rows.
+	stmt := Db().Where("root = ? AND path <> ''", RootOriginals)
+
+	if rootPath != "" {
+		stmt = stmt.Where("path = ? OR path LIKE ?", rootPath, rootPath+"/%")
+	}
+
+	if err = stmt.Order("path ASC").Find(&folders).Error; err != nil {
+		return reconciled, err
+	}
+
+	for i := range folders {
+		folders[i].syncOriginalsAlbum()
+		reconciled++
+	}
+
+	return reconciled, nil
+}
+
+// syncOriginalsAlbum ensures an originals folder has a matching folder album.
+func (m *Folder) syncOriginalsAlbum() {
+	if m == nil || m.Root != RootOriginals || m.Path == "" {
+		return
+	}
+
 	f := form.SearchPhotos{
 		Path:   m.Path,
 		Public: true,
@@ -191,11 +230,10 @@ func (m *Folder) Create() error {
 			log.Infof("folder: added album %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 		}
 	}
-
-	return nil
 }
 
-// FindFolder returns an existing folder if it exists.
+// FindFolder returns an existing folder, including soft-deleted rows.
+// This function is primarily used for create/index conflict resolution.
 func FindFolder(root, dir string) *Folder {
 	dir = strings.Trim(dir, string(os.PathSeparator))
 
@@ -205,7 +243,11 @@ func FindFolder(root, dir string) *Folder {
 
 	result := Folder{}
 
-	if err := Db().Where("path = ? AND root = ?", dir, root).First(&result).Error; err == nil {
+	if err := UnscopedDb().Where("path = ? AND root = ?", dir, root).First(&result).Error; err == nil {
+		if result.DeletedAt != nil {
+			log.Debugf("folder: found soft-deleted row for path %s in root %s during conflict lookup", clean.LogQuote(dir), clean.LogQuote(root))
+		}
+
 		return &result
 	}
 
@@ -214,14 +256,12 @@ func FindFolder(root, dir string) *Folder {
 
 // FirstOrCreateFolder returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateFolder(m *Folder) *Folder {
-	result := Folder{}
-
-	if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
-		return &result
+	if result := FindFolder(m.Root, m.Path); result != nil {
+		return result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
-		return &result
+	} else if result = FindFolder(m.Root, m.Path); result != nil {
+		return result
 	} else {
 		log.Errorf("folder: %s (find or create %s)", createErr, m.Path)
 	}

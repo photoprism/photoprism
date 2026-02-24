@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"strings"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -46,7 +45,12 @@ func thumbsAction(ctx *cli.Context) error {
 
 	defer conf.Shutdown()
 
-	dir := strings.TrimSpace(ctx.Args().First())
+	dir, err := sanitizeSubfolderArg(ctx.Args().First())
+
+	if err != nil {
+		return err
+	}
+
 	force := ctx.Bool("force")
 	originals := ctx.Bool("originals")
 

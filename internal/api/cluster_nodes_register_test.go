@@ -259,6 +259,27 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "https://photos.example.com", n2.SiteUrl)
 	})
+	t.Run("ExistingNodeWithoutRotateDoesNotProvisionDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.Options().NodeRole = cluster.RolePortal
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		// If provisioning is called unexpectedly, this invalid DSN should cause a 409.
+		conf.Options().DatabaseProvisionDSN = "invalid-dsn"
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{Name: "pp-node-no-provision", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-no-provision","SiteUrl":"https://photos.example.com"}`, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusOK, r.Code)
+		body := r.Body.String()
+		assert.False(t, gjson.Get(body, "AlreadyProvisioned").Bool())
+		assert.Equal(t, "", gjson.Get(body, "Database.Name").String())
+		assert.Equal(t, "", gjson.Get(body, "Database.User").String())
+	})
 	t.Run("AssignNodeUUIDWhenMissing", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RolePortal

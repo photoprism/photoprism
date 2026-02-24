@@ -356,6 +356,19 @@ func TestConfig_Cluster(t *testing.T) {
 		c2.options.NodeClientSecret = "" // ensure it must read the file
 		assert.Equal(t, cluster.ExampleClientSecret, c2.NodeClientSecret())
 	})
+	t.Run("NodeClientSecretPrefersFileOverInline", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
+		assert.NoError(t, err)
+
+		// Inline value should not override the persisted secret file.
+		c.options.NodeClientSecret = "stale-inline-secret"
+		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	})
 	t.Run("NodeClientSecretEnvOverride", func(t *testing.T) {
 		secretFile := filepath.Join(t.TempDir(), "client_secret")
 		assert.NoError(t, os.WriteFile(secretFile, []byte(cluster.ExampleClientSecret), fs.ModeSecretFile))
@@ -378,6 +391,60 @@ func TestConfig_Cluster(t *testing.T) {
 		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
 		assert.Error(t, err)
 		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	})
+	t.Run("SaveClusterOptionsUpdate", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+		c.options.ConfigPath = tempCfg
+		c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		seed := map[string]any{
+			"Existing":         "value",
+			"NodeClientSecret": "legacy-inline-secret",
+		}
+		b, err := yaml.Marshal(seed)
+		assert.NoError(t, err)
+		assert.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+		update := cluster.OptionsUpdate{}
+		update.SetClusterUUID("4a47c940-d5de-41b3-88a2-eb816cc659ca")
+		update.SetNodeClientID(cluster.ExampleClientID)
+		update.SetDatabaseName("cluster_database")
+		update.SetDatabaseUser("cluster_user")
+
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		assert.NoError(t, err)
+		assert.True(t, wrote)
+
+		content, readErr := os.ReadFile(c.OptionsYaml())
+		assert.NoError(t, readErr)
+
+		var merged map[string]any
+		assert.NoError(t, yaml.Unmarshal(content, &merged))
+		assert.Equal(t, "value", merged["Existing"])
+		assert.Equal(t, "legacy-inline-secret", merged["NodeClientSecret"])
+		assert.Equal(t, "4a47c940-d5de-41b3-88a2-eb816cc659ca", merged["ClusterUUID"])
+		assert.Equal(t, cluster.ExampleClientID, merged["NodeClientID"])
+		assert.Equal(t, "cluster_database", merged["DatabaseName"])
+		assert.Equal(t, "cluster_user", merged["DatabaseUser"])
+
+		// Applying the same values again should not rewrite.
+		wrote, err = c.SaveClusterOptionsUpdate(update)
+		assert.NoError(t, err)
+		assert.False(t, wrote)
+	})
+	t.Run("SaveClusterOptionsUpdateInvalidUUID", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		update := cluster.OptionsUpdate{}
+		update.SetClusterUUID("invalid-uuid")
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		assert.Error(t, err)
+		assert.False(t, wrote)
 	})
 	t.Run("JoinTokenFilePortal", func(t *testing.T) {
 		tempCfg := t.TempDir()
@@ -482,6 +549,15 @@ func TestConfig_Cluster(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.NodeName = ""
 		assert.Equal(t, "my-host-name-prod", c.NodeName())
+	})
+	t.Run("NodeNameNotOverriddenByClusterDomainDerivation", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.NodeName = "smiling-ocelot"
+		c.options.ClusterDomain = ""
+		c.options.SiteUrl = "https://media.glowworm.com/i/smiling-ocelot/"
+
+		assert.Equal(t, "glowworm.com", c.ClusterDomain())
+		assert.Equal(t, "smiling-ocelot", c.NodeName())
 	})
 	t.Run("NodeRoleValues", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

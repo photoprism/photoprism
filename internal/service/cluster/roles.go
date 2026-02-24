@@ -10,7 +10,7 @@ import (
 type NodeRole = string
 
 const (
-	// RoleInstance represents a regular PhotoPrism instance node that can join a cluster.
+	// RoleInstance represents a regular PhotoPrism instance that can join a cluster.
 	RoleInstance = NodeRole(acl.RoleInstance)
 	// RolePortal represents a management portal for orchestrating a cluster.
 	RolePortal = NodeRole(acl.RolePortal)

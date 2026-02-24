@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 22, 2026
+**Last Updated:** February 23, 2026
 
 ## Purpose
 
@@ -18,12 +18,13 @@ This file tells automated coding agents (and humans) where to find the single so
 - Packages: `README.md` files under `internal/`, `pkg/`, and `frontend/src/`, e.g. [`internal/photoprism/README.md`](internal/photoprism/README.md), [`internal/photoprism/batch/README.md`](internal/photoprism/batch/README.md), [`internal/config/README.md`](internal/config/README.md), [`internal/server/README.md`](internal/server/README.md), [`internal/api/README.md`](internal/api/README.md), [`internal/thumb/README.md`](internal/thumb/README.md), [`internal/ffmpeg/README.md`](internal/ffmpeg/README.md), and [`frontend/src/common/README.md`](frontend/src/common/README.md).
 - Face Detection & Embeddings: [`internal/ai/face/README.md`](internal/ai/face/README.md)
 - Vision Config & Engines: [`internal/ai/vision/README.md`](internal/ai/vision/README.md), [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
+- Terminology Glossary: [`GLOSSARY.md`](GLOSSARY.md) (single source for term definitions across specs/docs)
 
 ### Local Agent Progress
 
 - Use root-level task files to track progress and handoff notes across sessions/environments:
-  - `TODO.md` for new/upcoming tasks.
-  - `DONE.md` for completed tasks.
+  - `AGENTS_TODO.md` for actionable tasks.
+  - `AGENTS_DONE.md` for completed tasks.
 - These files are local workflow aids and may not exist yet in a given workspace.
 
 > Quick Tip: to inspect GitHub issue details without leaving the terminal, run `curl -s https://api.github.com/repos/photoprism/photoprism/issues/<id>`.
@@ -379,6 +380,7 @@ Note: Across our public documentation, official images, and in production, the c
 - When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
 - Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and the `Run` property set in `vision.yml`. Utilities like `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` help decide when work is required before loading media files.
 - Logging: use the shared logger (`event.Log`) via the package-level `log` variable (see `internal/auth/jwt/logger.go`) instead of direct `fmt.Print*` or ad-hoc loggers.
+- Logging terminology: in human-readable log text, prefer canonical runtime terms (`instance`, `service`) and reserve `node` for contract-bound names (`/cluster/nodes`, `Node*`, `PHOTOPRISM_NODE_*`).
 - Audit outcomes: import `github.com/photoprism/photoprism/pkg/log/status` and end every `event.Audit*` slice with a single outcome token such as `status.Succeeded`, `status.Failed`, `status.Denied`, or other constants defined there (no additional segments afterwards).
 - Error outcomes: when a sanitized error string should be the outcome, call `status.Error(err)` instead of adding a placeholder and passing `clean.Error(err)` manually.
 - Cluster registry tests (`internal/service/cluster/registry`) currently rely on a full test config because they persist `entity.Client` rows. They run migrations and seed the SQLite DB, so they are intentionally slow. If you refactor them, consider sharing a single `config.TestConfig()` across subtests or building a lightweight schema harness; do not swap to the minimal config helper unless the tests stop touching the database.

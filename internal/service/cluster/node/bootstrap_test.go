@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -120,6 +121,296 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.Equal(t, dsn.DriverMySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
+
+	// Secret must be stored in the secret file, not written inline to options.yml.
+	content, readErr := os.ReadFile(c.OptionsYaml())
+	assert.NoError(t, readErr)
+
+	var persisted map[string]any
+	assert.NoError(t, yaml.Unmarshal(content, &persisted))
+	_, hasInlineSecret := persisted["NodeClientSecret"]
+	assert.False(t, hasInlineSecret)
+}
+
+func TestObtainNodeCredentialsViaRegister_UsesFullPayload(t *testing.T) {
+	var got cluster.RegisterRequest
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/cluster/nodes/register" {
+			http.NotFound(w, r)
+			return
+		}
+
+		assert.NoError(t, json.NewDecoder(r.Body).Decode(&got))
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			Node:    cluster.Node{ClientID: "c-test-node-01"},
+			Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+		})
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-refresh-payload")
+
+	c.Options().NodeName = "refresh-node-1"
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().NodeUUID = rnd.UUIDv7()
+	c.Options().SiteUrl = "https://app.example.test/i/refresh-node-1/"
+	c.Options().AdvertiseUrl = "http://refresh-node-1.example.internal:2342/"
+
+	parsed, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+
+	id, secret, nodeUUID, err := obtainNodeCredentialsViaRegister(c, parsed, cluster.ExampleJoinToken)
+	assert.NoError(t, err)
+	assert.Equal(t, "c-test-node-01", id)
+	assert.Equal(t, cluster.ExampleClientSecret, secret)
+	assert.Equal(t, "", nodeUUID)
+
+	assert.Equal(t, c.NodeName(), got.NodeName)
+	assert.Equal(t, c.NodeRole(), got.NodeRole)
+	assert.Equal(t, c.NodeUUID(), got.NodeUUID)
+	assert.Equal(t, c.SiteUrl(), got.SiteUrl)
+	assert.Equal(t, c.AdvertiseUrl(), got.AdvertiseUrl)
+	assert.NotEmpty(t, got.AppName)
+	assert.NotEmpty(t, got.AppVersion)
+	assert.True(t, got.RotateSecret)
+}
+
+func TestObtainNodeCredentialsViaRegister_RetryWithoutNodeUUIDOnConflict(t *testing.T) {
+	var requests []cluster.RegisterRequest
+
+	currentUUID := rnd.UUIDv7()
+	staleUUID := rnd.UUIDv7()
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/cluster/nodes/register" {
+			http.NotFound(w, r)
+			return
+		}
+
+		var req cluster.RegisterRequest
+		assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
+		requests = append(requests, req)
+
+		if req.NodeUUID != "" {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusConflict)
+			_, _ = w.Write([]byte(`{"error":"client secret required to change node uuid"}`))
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			Node: cluster.Node{
+				ClientID: "c-test-node-02",
+				UUID:     currentUUID,
+			},
+			Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+		})
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-refresh-conflict")
+	c.Options().NodeName = "retry-node-1"
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().NodeUUID = staleUUID
+	c.Options().SiteUrl = "https://app.example.test/i/retry-node-1/"
+	c.Options().AdvertiseUrl = "http://retry-node-1.example.internal:2342/"
+
+	parsed, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+
+	id, secret, nodeUUID, err := obtainNodeCredentialsViaRegister(c, parsed, cluster.ExampleJoinToken)
+	assert.NoError(t, err)
+	assert.Equal(t, "c-test-node-02", id)
+	assert.Equal(t, cluster.ExampleClientSecret, secret)
+	assert.Equal(t, currentUUID, nodeUUID)
+
+	if assert.Len(t, requests, 2) {
+		assert.Equal(t, staleUUID, requests[0].NodeUUID)
+		assert.Equal(t, "", requests[1].NodeUUID)
+		assert.Equal(t, c.SiteUrl(), requests[1].SiteUrl)
+		assert.Equal(t, c.AdvertiseUrl(), requests[1].AdvertiseUrl)
+		assert.True(t, requests[1].RotateSecret)
+	}
+}
+
+func TestObtainNodeCredentialsViaRegister_ConflictIncludesPortalError(t *testing.T) {
+	var requests []cluster.RegisterRequest
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/cluster/nodes/register" {
+			http.NotFound(w, r)
+			return
+		}
+
+		var req cluster.RegisterRequest
+		assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
+		requests = append(requests, req)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusConflict)
+		_, _ = w.Write([]byte(`{"error":"client secret required to change node uuid"}`))
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-refresh-conflict-error")
+	c.Options().NodeName = "retry-node-2"
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().NodeUUID = rnd.UUIDv7()
+	c.Options().SiteUrl = "https://app.example.test/i/retry-node-2/"
+	c.Options().AdvertiseUrl = "http://retry-node-2.example.internal:2342/"
+
+	parsed, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+
+	_, _, _, err = obtainNodeCredentialsViaRegister(c, parsed, cluster.ExampleJoinToken)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "409 Conflict")
+		assert.Contains(t, err.Error(), "client secret required to change node uuid")
+	}
+
+	if assert.Len(t, requests, 2) {
+		assert.NotEmpty(t, requests[0].NodeUUID)
+		assert.Equal(t, "", requests[1].NodeUUID)
+	}
+}
+
+func TestRefreshNodeCredentials_PrefersSecretFileOverStaleInlineSecret(t *testing.T) {
+	const staleInlineSecret = "STALE_OLD_SECRET"
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/cluster/nodes/register" {
+			http.NotFound(w, r)
+			return
+		}
+
+		var req cluster.RegisterRequest
+		assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
+		assert.True(t, req.RotateSecret)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			Node: cluster.Node{
+				ClientID: cluster.ExampleClientID,
+				UUID:     rnd.UUIDv7(),
+			},
+			Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+		})
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-refresh-inline-secret")
+	c.Options().NodeName = "inline-secret-node"
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().JoinToken = cluster.ExampleJoinToken
+
+	assert.NoError(t, fs.MkdirAll(filepath.Dir(c.OptionsYaml())))
+	assert.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("NodeClientSecret: "+staleInlineSecret+"\n"), fs.ModeFile))
+	assert.NoError(t, c.Options().Load(c.OptionsYaml()))
+	assert.Equal(t, staleInlineSecret, c.Options().NodeClientSecret)
+	assert.Equal(t, staleInlineSecret, c.NodeClientSecret())
+
+	parsed, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+	assert.True(t, refreshNodeCredentials(c, parsed))
+
+	assert.Equal(t, "", c.Options().NodeClientSecret)
+	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+
+	content, readErr := os.ReadFile(c.OptionsYaml())
+	assert.NoError(t, readErr)
+
+	var persisted map[string]any
+	assert.NoError(t, yaml.Unmarshal(content, &persisted))
+	assert.Equal(t, staleInlineSecret, persisted["NodeClientSecret"])
+}
+
+func TestInitConfig_RefreshesCredentialsOnUnauthorized(t *testing.T) {
+	const staleSecret = "stale-inline-secret"
+
+	var registerCalls int
+	var refreshCalls int
+
+	newClientID := "cs5gfen1bgxz7s9i"
+	newNodeUUID := rnd.UUIDv7()
+	newSecret := cluster.ExampleClientSecret
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/cluster/nodes/register" {
+			http.NotFound(w, r)
+			return
+		}
+
+		var req cluster.RegisterRequest
+		assert.NoError(t, json.NewDecoder(r.Body).Decode(&req))
+
+		if req.RotateSecret {
+			refreshCalls++
+			assert.Equal(t, "Bearer "+cluster.ExampleJoinToken, r.Header.Get("Authorization"))
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+				Node: cluster.Node{
+					ClientID: newClientID,
+					UUID:     newNodeUUID,
+				},
+				Secrets: &cluster.RegisterSecrets{ClientSecret: newSecret},
+			})
+			return
+		}
+
+		registerCalls++
+		if registerCalls == 1 {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		assert.Equal(t, newClientID, req.ClientID)
+		assert.Equal(t, newSecret, req.ClientSecret)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			UUID: rnd.UUIDv7(),
+			Node: cluster.Node{
+				ClientID: newClientID,
+				UUID:     newNodeUUID,
+				Name:     "pp-node-01",
+			},
+		})
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-auth-refresh")
+	c.Options().PortalUrl = srv.URL
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().NodeName = "refresh-on-auth"
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().NodeClientID = "stale-client-id"
+	c.Options().NodeClientSecret = staleSecret
+
+	assert.NoError(t, InitConfig(c))
+
+	assert.Equal(t, 2, registerCalls)
+	assert.Equal(t, 1, refreshCalls)
+	assert.Equal(t, newClientID, c.NodeClientID())
+	assert.Equal(t, newNodeUUID, c.NodeUUID())
+	assert.Equal(t, "", c.Options().NodeClientSecret)
+	assert.Equal(t, newSecret, c.NodeClientSecret())
+
+	content, readErr := os.ReadFile(c.OptionsYaml())
+	assert.NoError(t, readErr)
+
+	var persisted map[string]any
+	assert.NoError(t, yaml.Unmarshal(content, &persisted))
+	_, hasInlineSecret := persisted["NodeClientSecret"]
+	assert.False(t, hasInlineSecret)
 }
 
 func TestRegister_AllowsHTTPPortalNonLoopback(t *testing.T) {

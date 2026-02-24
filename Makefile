@@ -100,6 +100,21 @@ show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
+format-tables: # Format Markdown tables in README.md, AGENTS.md, and CODEMAP.md files.
+	@set -eu; \
+	tmp="$$(mktemp)"; \
+	trap 'rm -f "$$tmp"' EXIT INT TERM; \
+	find "$(CURDIR)" -maxdepth 1 -type f \( -name 'README.md' -o -name 'AGENTS.md' -o -name 'CODEMAP.md' \) -print0 >> "$$tmp"; \
+	for dir in internal pkg docker setup; do \
+		if [ -d "$$dir" ]; then \
+			find "$$dir" -type f \( -name 'README.md' -o -name 'AGENTS.md' -o -name 'CODEMAP.md' \) -print0 >> "$$tmp"; \
+		fi; \
+	done; \
+	if [ ! -s "$$tmp" ]; then \
+		echo "No markdown files found for table formatting."; \
+		exit 0; \
+	fi; \
+	xargs -0 npx --yes markdown-table-formatter < "$$tmp"
 clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm

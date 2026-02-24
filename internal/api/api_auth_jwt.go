@@ -18,13 +18,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// authAnyJWT attempts to authenticate a Portal-issued JWT when a cluster node
+// authAnyJWT attempts to authenticate a Portal-issued JWT when an instance or service
 // receives a request without an existing session. It verifies the token against
-// the node's cached JWKS, ensures the issuer/audience/scope match the expected
+// the local cached JWKS, ensures the issuer/audience/scope match the expected
 // portal values, and, if valid, returns a client session mirroring the JWT
 // claims. It returns nil on any validation failure so the caller can fall back
 // to existing auth flows. By default, only cluster and vision resources are
-// eligible, but nodes may opt in to additional scopes via PHOTOPRISM_JWT_SCOPE.
+// eligible, but instances may opt in to additional scopes via PHOTOPRISM_JWT_SCOPE.
 func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resource, perms acl.Permissions) *entity.Session {
 	// Check if token may be a JWT.
 	if !shouldAttemptJWT(c, authToken) {
@@ -51,7 +51,7 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 
 	// verifyTokenFromPortal handles cryptographic validation (signature, issuer,
 	// audience, temporal claims) and enforces that the token includes any scopes
-	// listed in expected.Scope. Local authorization still happens below so nodes
+	// listed in expected.Scope. Local authorization still happens below so instances
 	// can apply their own allow-list semantics.
 	claims := verifyTokenFromPortal(c.Request.Context(), authToken, expected, jwtIssuerCandidates(conf))
 
@@ -72,7 +72,7 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 	allowedScopes := conf.JWTAllowedScopes()
 	if !acl.ScopeAttrPermits(allowedScopes, resource, perms) {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
-			log.Debugf("auth: portal jwt scope blocked by node allow-list (allowed=%q resource=%s perms=%s)", allowedScopes.String(), resource, perms.String())
+			log.Debugf("auth: portal jwt scope blocked by instance allow-list (allowed=%q resource=%s perms=%s)", allowedScopes.String(), resource, perms.String())
 		}
 		return nil
 	}

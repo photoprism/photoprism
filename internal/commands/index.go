@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -59,7 +58,11 @@ func indexAction(ctx *cli.Context) error {
 	defer conf.Shutdown()
 
 	// Use first argument to limit scope if set.
-	subPath := strings.TrimSpace(ctx.Args().First())
+	subPath, err := sanitizeSubfolderArg(ctx.Args().First())
+
+	if err != nil {
+		return err
+	}
 
 	if subPath == "" {
 		log.Infof("indexing originals in %s", clean.Log(conf.OriginalsPath()))

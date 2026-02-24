@@ -748,9 +748,24 @@ func (m *Album) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
+// extractAlbumFilterPath extracts a normalized path value from a serialized search filter.
+func extractAlbumFilterPath(albumFilter string) string {
+	if strings.TrimSpace(albumFilter) == "" {
+		return ""
+	}
+
+	frm := form.SearchPhotos{Query: albumFilter}
+
+	if err := frm.ParseQueryString(); err != nil || frm.Path == "" {
+		return ""
+	}
+
+	return strings.Trim(frm.Path, string(os.PathSeparator))
+}
+
 // shouldRepairFolderAlbumTitle reports whether a folder album title likely
-// still reflects a parent-path collision and should be repaired.
-func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) bool {
+// still reflects a collision state and should be repaired.
+func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath, albumFilter string) bool {
 	folderTitle = strings.TrimSpace(folderTitle)
 	currentTitle = strings.TrimSpace(currentTitle)
 
@@ -774,7 +789,23 @@ func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) b
 		return false
 	}
 
-	return strings.EqualFold(currentTitle, parentTitle) && !strings.EqualFold(folderTitle, parentTitle)
+	if strings.EqualFold(currentTitle, parentTitle) && !strings.EqualFold(folderTitle, parentTitle) {
+		return true
+	}
+
+	filterPath := extractAlbumFilterPath(albumFilter)
+
+	if filterPath == "" || filterPath == albumPath {
+		return false
+	}
+
+	filterTitle := txt.Title(path.Base(filterPath))
+
+	if filterTitle == "" {
+		return false
+	}
+
+	return strings.EqualFold(currentTitle, filterTitle) && !strings.EqualFold(folderTitle, filterTitle)
 }
 
 // UpdateFolder updates the path, filter, slug, and repairable title for a folder album.
@@ -785,7 +816,7 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 
 	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
 	albumSlug := txt.Slug(albumPath)
-	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath)
+	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath, m.AlbumFilter)
 
 	if albumSlug == "" || albumPath == "" || albumFilter == "" || !m.HasID() {
 		return fmt.Errorf("folder album must have a path and filter")

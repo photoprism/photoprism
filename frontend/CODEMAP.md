@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** February 22, 2026
+**Last Updated:** February 23, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
@@ -40,7 +40,7 @@ Runtime & Plugins
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
 - Tooltips: `floating-vue`
 - Video: HLS.js assigned to `window.Hls`
-- PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/p/<name>/`. Instance clients under `/p/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
+- PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/i/<name>/`. Instance clients under `/i/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
 - Service worker cleanup: `frontend/src/sw-scope-cleanup.js` provides strict same-scope precache cleanup. `cleanupOutdatedCaches` is disabled in `GenerateSW` to avoid broad cross-scope cache deletion on shared origins.
 - WebSocket: `src/common/websocket.js` publishes `websocket.*` events, used by `$session` for client info
 

@@ -143,7 +143,7 @@ func TestWebAppRoutes(t *testing.T) {
 	t.Run("ServiceWorkerFallbackAndBaseUri", func(t *testing.T) {
 		swConf := config.NewMinimalTestConfig(t.TempDir())
 		swConf.Options().AssetsPath = t.TempDir()
-		swConf.Options().SiteUrl = "https://portal.example.com/p/acme/"
+		swConf.Options().SiteUrl = "https://portal.example.com/i/acme/"
 
 		swRouter := gin.New()
 		registerWebAppRoutes(swRouter, swConf)
