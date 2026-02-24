@@ -1,0 +1,7 @@
+{
+  "name": "photoprism-pp",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ]
+}
