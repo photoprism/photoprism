@@ -40,6 +40,41 @@ type Face struct {
 // Faceless can be used as argument to match unmatched face markers.
 var Faceless = []string{""}
 
+// onceMatchMarkers and matchMarkersCanBeSync are used to determine/store if there are to many empty face_id's in the markers for sync processing
+var onceMatchMarkers sync.Once
+var matchMarkersCanBeSync bool
+
+func initMatchMarkersCanBeSync() {
+	syncRowLimit := 5000
+
+	var faceIDs []string
+	res := Db().
+		Model(&Marker{}).
+		Where("marker_invalid = 0 AND marker_type = ? AND face_id = ''", MarkerFace).
+		Limit(syncRowLimit).
+		Pluck("face_id", &faceIDs)
+
+	if res.Error != nil {
+		log.Errorf("faces: failed fetching face_id from markers (%s)", res.Error)
+		matchMarkersCanBeSync = true
+		return
+	}
+
+	if len(faceIDs) == syncRowLimit {
+		// To many records found for sync processing.
+		matchMarkersCanBeSync = false
+	} else {
+		matchMarkersCanBeSync = true
+	}
+}
+
+// MatchMarkersCanBeSync returns true if MatchMarkers can be used in a sync fashion.
+func MatchMarkersCanBeSync() bool {
+	onceMatchMarkers.Do(initMatchMarkersCanBeSync)
+
+	return matchMarkersCanBeSync
+}
+
 // TableName returns the entity table name.
 func (Face) TableName() string {
 	return "faces"
@@ -251,20 +286,22 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 	return revised, nil
 }
 
-// MatchMarkers finds and references matching markers.
-func (m *Face) MatchMarkers(faceIds []string) error {
-	if len(faceIds) == 0 {
+// matchMarkers is the core code of matching markers against all selected faces
+func (m *Face) matchMarkers(faceIDs []string) error {
+	if len(faceIDs) == 0 {
 		return nil
 	}
+
+	log.Debugf("matchMarkers: starting with %+v faceIds", faceIDs)
 
 	var markers Markers
 
 	err := Db().
-		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
+		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIDs).
 		Find(&markers).Error
 
 	if err != nil {
-		log.Debugf("faces: failed fetching markers matching face id %s (%s)", strings.Join(faceIds, ", "), err)
+		log.Debugf("faces: failed fetching markers matching face id %s (%s)", strings.Join(faceIDs, ", "), err)
 		return err
 	}
 
@@ -275,8 +312,23 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 			return err
 		}
 	}
+	return nil
+}
+
+// MatchMarkers finds and references matching markers.
+func (m *Face) MatchMarkers(faceIDs []string) error {
+	if MatchMarkersCanBeSync() {
+		return m.matchMarkers(faceIDs)
+	} else {
+		log.Debugf("faces: match markers as sync has not been run as async is required")
+	}
 
 	return nil
+}
+
+// MatchMarkersAsync finds and references matching markers.
+func (m *Face) MatchMarkersAsync(faceIDs []string) error {
+	return m.matchMarkers(faceIDs)
 }
 
 // UpdateMatchStats persists sample statistics derived from recent matches.

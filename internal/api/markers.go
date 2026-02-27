@@ -143,12 +143,16 @@ func CreateMarker(router *gin.RouterGroup) {
 			AbortSaveFailed(c)
 			return
 		} else if changed {
-			if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
-				log.Errorf("faces: %s (update covers)", updateErr)
-			}
+			if entity.MatchMarkersCanBeSync() {
+				if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
+					log.Errorf("faces: %s (update covers)", updateErr)
+				}
 
-			if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
-				log.Errorf("faces: %s (update counts)", updateErr)
+				if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
+					log.Errorf("faces: %s (update counts)", updateErr)
+				}
+			} else {
+				query.ProcessMatchMarkersAsync(entity.FindFace(marker.FaceID), entity.Faceless)
 			}
 		}
 
@@ -241,12 +245,16 @@ func UpdateMarker(router *gin.RouterGroup) {
 				}
 			}
 
-			if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
-				log.Errorf("faces: %s (update covers)", updateErr)
-			}
+			if entity.MatchMarkersCanBeSync() {
+				if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
+					log.Errorf("faces: %s (update covers)", updateErr)
+				}
 
-			if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
-				log.Errorf("faces: %s (update counts)", updateErr)
+				if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
+					log.Errorf("faces: %s (update counts)", updateErr)
+				}
+			} else {
+				query.ProcessMatchMarkersAsync(entity.FindFace(marker.FaceID), entity.Faceless)
 			}
 		}
 

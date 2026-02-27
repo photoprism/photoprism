@@ -237,8 +237,15 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
 		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
-	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
-		return merged, err
+	}
+	if entity.MatchMarkersCanBeSync() {
+		if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
+			return merged, err
+		}
+	} else {
+		if err := ProcessMatchMarkersAsync(merged, append(merge.IDs(), "")); err != nil {
+			return merged, err
+		}
 	}
 
 	// PurgeOrphanFaces removes unused faces from the index.
@@ -267,6 +274,30 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	}
 
 	return merged, err
+}
+
+// ProcessMatchMarkersAsync finds and references matching markers.
+func ProcessMatchMarkersAsync(m *entity.Face, faceIDs []string) error {
+	if len(faceIDs) == 0 {
+		return nil
+	}
+
+	go func() {
+		log.Debugf("faces: async matching commenced for %s", m.ID)
+		if err := m.MatchMarkersAsync(faceIDs); err != nil {
+			log.Warnf("faces: %s (match markers)", clean.Error(err))
+		}
+		if err := m.RefreshPhotos(); err != nil {
+			log.Warnf("faces: %s (refresh photos)", clean.Error(err))
+		}
+		if err := UpdateSubjectCovers(true); err != nil {
+			log.Warnf("faces: %s (update covers)", clean.Error(err))
+		}
+		if err := entity.UpdateSubjectCounts(true); err != nil {
+			log.Warnf("faces: %s (update counts)", clean.Error(err))
+		}
+	}()
+	return nil
 }
 
 // ResetFaceMergeRetry clears merge retry metadata for all (or subject-specific) clusters.
