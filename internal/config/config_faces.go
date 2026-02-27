@@ -307,3 +307,13 @@ func (c *Config) FaceAngles() []float64 {
 
 	return angles
 }
+
+// FaceMarkerBlankThreshold returns the threshold at which async is enabled for blank face_ids in markers
+func (c *Config) FaceMarkerBlankThreshold() int {
+	if c == nil {
+		return face.BlankFaceMarkerThreshold
+	}
+
+	return c.options.FaceMarkerBlankThreshold
+
+}

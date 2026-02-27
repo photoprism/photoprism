@@ -40,6 +40,8 @@ var (
 	SkipChildren = false
 	// IgnoreBackground determines whether background faces are ignored when generating matches.
 	IgnoreBackground = true
+	// BlankFaceMarkerThreshold is the count at which MatchMarker is run in async
+	BlankFaceMarkerThreshold = 10000
 )
 
 var (

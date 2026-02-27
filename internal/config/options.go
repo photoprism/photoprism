@@ -256,6 +256,7 @@ type Options struct {
 	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
 	FaceSkipChildren          bool          `yaml:"-" json:"-" flag:"face-skip-children"`
 	FaceAllowBackground       bool          `yaml:"-" json:"-" flag:"face-allow-background"`
+	FaceMarkerBlankThreshold  int           `yaml:"-" json:"-" flag:"face-marker-blank-threshold"`
 	PIDFilename               string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename               string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	DetachServer              bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
