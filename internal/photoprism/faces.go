@@ -151,7 +151,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	// Optimize existing face clusters.
 	start = time.Now()
-	if res, err := w.Optimize(); err != nil {
+	if res, err := w.Optimize(true); err != nil {
 		return err
 	} else if res.Merged > 0 {
 		log.Infof("faces: merged %d clusters [%s]", res.Merged, time.Since(start))
@@ -173,7 +173,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	// Match markers with faces and subjects.
 	start = time.Now()
-	matches, err := w.Match(opt)
+	matches, err := w.Match(opt, true)
 
 	if err != nil {
 		log.Errorf("faces: %s (match)", err)

@@ -44,8 +44,11 @@ var Faceless = []string{""}
 var onceMatchMarkers sync.Once
 var matchMarkersCanBeSync bool
 
-func initMatchMarkersCanBeSync() {
-	syncRowLimit := 5000
+func initMatchMarkersCanBeSync(t int) {
+	syncRowLimit := 10000
+	if t > 0 {
+		syncRowLimit = t
+	}
 
 	var faceIDs []string
 	res := Db().
@@ -69,8 +72,8 @@ func initMatchMarkersCanBeSync() {
 }
 
 // MatchMarkersCanBeSync returns true if MatchMarkers can be used in a sync fashion.
-func MatchMarkersCanBeSync() bool {
-	onceMatchMarkers.Do(initMatchMarkersCanBeSync)
+func MatchMarkersCanBeSync(threshold int) bool {
+	onceMatchMarkers.Do(func() { initMatchMarkersCanBeSync(threshold) })
 
 	return matchMarkersCanBeSync
 }
@@ -287,7 +290,7 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 }
 
 // matchMarkers is the core code of matching markers against all selected faces
-func (m *Face) matchMarkers(faceIDs []string) error {
+func (m *Face) matchMarkers(faceIDs []string, mmMustBeSync bool) error {
 	if len(faceIDs) == 0 {
 		return nil
 	}
@@ -308,7 +311,7 @@ func (m *Face) matchMarkers(faceIDs []string) error {
 	for _, marker := range markers {
 		if ok, dist := m.Match(marker.Embeddings()); !ok {
 			// Ignore.
-		} else if _, err = marker.SetFace(m, dist); err != nil {
+		} else if _, err = marker.SetFace(m, dist, mmMustBeSync); err != nil {
 			return err
 		}
 	}
@@ -316,9 +319,9 @@ func (m *Face) matchMarkers(faceIDs []string) error {
 }
 
 // MatchMarkers finds and references matching markers.
-func (m *Face) MatchMarkers(faceIDs []string) error {
-	if MatchMarkersCanBeSync() {
-		return m.matchMarkers(faceIDs)
+func (m *Face) MatchMarkers(faceIDs []string, mustBeSync bool) error {
+	if mustBeSync || MatchMarkersCanBeSync(0) {
+		return m.matchMarkers(faceIDs, mustBeSync)
 	} else {
 		log.Debugf("faces: match markers as sync has not been run as async is required")
 	}
@@ -328,7 +331,7 @@ func (m *Face) MatchMarkers(faceIDs []string) error {
 
 // MatchMarkersAsync finds and references matching markers.
 func (m *Face) MatchMarkersAsync(faceIDs []string) error {
-	return m.matchMarkers(faceIDs)
+	return m.matchMarkers(faceIDs, true)
 }
 
 // UpdateMatchStats persists sample statistics derived from recent matches.

@@ -303,6 +303,9 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.BackupDatabase = true
 	c.BackupAlbums = true
 
+	// Set default blank face_id record threshold
+	c.FaceMarkerBlankThreshold = 10000
+
 	// Initialize options with the values from the "defaults.yml" file, if it exists.
 	if c.DefaultsYaml = defaultsYaml(ctx); !fs.FileExistsNotEmpty(c.DefaultsYaml) {
 		log.Tracef("config: defaults file is empty or missing")

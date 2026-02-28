@@ -154,7 +154,7 @@ func (m *Marker) Update(attr string, value any) error {
 }
 
 // SetName changes the marker name.
-func (m *Marker) SetName(name, src string) (changed bool, err error) {
+func (m *Marker) SetName(name, src string, mmMustBeSync bool) (changed bool, err error) {
 	if src == SrcAuto || SrcPriority[src] < SrcPriority[m.SubjSrc] {
 		return false, nil
 	}
@@ -173,7 +173,7 @@ func (m *Marker) SetName(name, src string) (changed bool, err error) {
 	m.SubjSrc = src
 	m.MarkerName = name
 
-	return true, m.SyncSubject(true)
+	return true, m.SyncSubject(true, mmMustBeSync)
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
@@ -188,7 +188,7 @@ func (m *Marker) SaveForm(frm form.Marker) (changed bool, err error) {
 		changed = true
 	}
 
-	if nameChanged, err := m.SetName(frm.MarkerName, frm.SubjSrc); err != nil {
+	if nameChanged, err := m.SetName(frm.MarkerName, frm.SubjSrc, false); err != nil {
 		return changed, err
 	} else if nameChanged {
 		changed = true
@@ -219,7 +219,7 @@ func (m *Marker) HasFace(f *Face, dist float64) bool {
 }
 
 // SetFace sets a new face for this marker.
-func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
+func (m *Marker) SetFace(f *Face, dist float64, mmMustBeSync bool) (updated bool, err error) {
 	if f == nil {
 		return false, fmt.Errorf("face is nil")
 	}
@@ -286,7 +286,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 		m.SubjUID = f.SubjUID
 	}
 
-	if err = m.SyncSubject(false); err != nil {
+	if err = m.SyncSubject(false, mmMustBeSync); err != nil {
 		return false, err
 	}
 
@@ -313,7 +313,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 }
 
 // SyncSubject maintains the marker subject relationship.
-func (m *Marker) SyncSubject(updateRelated bool) (err error) {
+func (m *Marker) SyncSubject(updateRelated, mmMustBeSync bool) (err error) {
 	// Face marker? If not, return.
 	if m.MarkerType != MarkerFace {
 		return nil
@@ -340,7 +340,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 	// Create known face for subject?
 	if m.FaceID != "" {
 		// Do nothing.
-	} else if f := m.Face(); f != nil {
+	} else if f := m.Face(mmMustBeSync); f != nil {
 		m.FaceID = f.ID
 	}
 
@@ -497,7 +497,7 @@ func (m *Marker) ClearSubject(src string) error {
 }
 
 // Face returns a matching face entity if possible.
-func (m *Marker) Face() (f *Face) {
+func (m *Marker) Face(mmMustBeSync bool) (f *Face) {
 	if m.MarkerUID == "" {
 		log.Debugf("markers: cannot find face when uid is empty")
 		return nil
@@ -527,7 +527,7 @@ func (m *Marker) Face() (f *Face) {
 		} else if f = FirstOrCreateFace(f); f == nil {
 			log.Warnf("faces: failed matching marker %s with subject %s", clean.Log(m.MarkerUID), SubjNames.Log(m.SubjUID))
 			return nil
-		} else if err := f.MatchMarkers(Faceless); err != nil {
+		} else if err := f.MatchMarkers(Faceless, mmMustBeSync); err != nil {
 			log.Errorf("faces: failed matching marker %s with subject %s (%s)", clean.Log(m.MarkerUID), SubjNames.Log(m.SubjUID), err)
 		}
 

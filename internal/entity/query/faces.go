@@ -217,7 +217,7 @@ func PurgeOrphanFaces(faceIds []string, ignored bool) (affected int, err error) 
 }
 
 // MergeFaces returns a new face that replaces multiple others.
-func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err error) {
+func MergeFaces(merge entity.Faces, ignored, mmMustBeSync bool) (merged *entity.Face, err error) {
 	if len(merge) < 2 {
 		// Nothing to merge.
 		return merged, fmt.Errorf("faces: two or more clusters required for merging")
@@ -237,15 +237,8 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
 		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
-	}
-	if entity.MatchMarkersCanBeSync() {
-		if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
-			return merged, err
-		}
-	} else {
-		if err := ProcessMatchMarkersAsync(merged, append(merge.IDs(), "")); err != nil {
-			return merged, err
-		}
+	} else if err := merged.MatchMarkers(append(merge.IDs(), ""), mmMustBeSync); err != nil {
+		return merged, err
 	}
 
 	// PurgeOrphanFaces removes unused faces from the index.

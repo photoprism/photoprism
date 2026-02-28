@@ -153,7 +153,7 @@ func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, fl
 }
 
 // Match matches markers with faces and subjects.
-func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
+func (w *Faces) Match(opt FacesOptions, mmMustBeSync bool) (result FacesMatchResult, err error) {
 	if w.Disabled() {
 		return result, fmt.Errorf("face recognition is disabled")
 	}
@@ -179,7 +179,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 			return result, err
 		}
 
-		if r, err := w.MatchFaces(faces, opt.Force, nil, stats); err != nil {
+		if r, err := w.MatchFaces(faces, opt.Force, nil, stats, mmMustBeSync); err != nil {
 			return result, err
 		} else {
 			result.Add(r)
@@ -190,7 +190,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if unmatchedFaces, err := query.Faces(false, true, false, false); err != nil {
 		log.Error(err)
 	} else if len(unmatchedFaces) > 0 {
-		if r, err := w.MatchFaces(unmatchedFaces, false, matchedAt, stats); err != nil {
+		if r, err := w.MatchFaces(unmatchedFaces, false, matchedAt, stats, mmMustBeSync); err != nil {
 			return result, err
 		} else {
 			result.Add(r)
@@ -224,7 +224,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 }
 
 // MatchFaces matches markers against a slice of faces.
-func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.Time, stats map[*entity.Face]*faceMatchStats) (result FacesMatchResult, err error) {
+func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.Time, stats map[*entity.Face]*faceMatchStats, mmMustBeSync bool) (result FacesMatchResult, err error) {
 	limit := 500
 
 	if stats == nil {
@@ -339,7 +339,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 
 			// Assign matching face to marker.
-			updated, err := marker.SetFace(selFace, dist)
+			updated, err := marker.SetFace(selFace, dist, mmMustBeSync)
 
 			if err != nil {
 				log.Warnf("faces: %s while setting a face for marker %s", err, marker.MarkerUID)
