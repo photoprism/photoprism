@@ -218,7 +218,7 @@ func TestMergeFaces(t *testing.T) {
 
 		faces := entity.Faces{*face1, *face2}
 
-		result, err := MergeFaces(faces, false)
+		result, err := MergeFaces(faces, false, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -254,13 +254,13 @@ func TestMergeFaces(t *testing.T) {
 
 		faces := entity.Faces{*face1, *face2}
 
-		result, err := MergeFaces(faces, false)
+		result, err := MergeFaces(faces, false, true)
 
 		assert.EqualError(t, err, "faces: cannot merge clusters with conflicting subjects jqynvsf28rhn6b0c <> jqynvt925h8c1asv")
 		assert.Nil(t, result)
 	})
 	t.Run("OneSubject", func(t *testing.T) {
-		result, err := MergeFaces(entity.Faces{entity.Face{ID: "4FD6YTOMWTDU5JKD3SS2MTRUTKZRZT7O"}}, false)
+		result, err := MergeFaces(entity.Faces{entity.Face{ID: "4FD6YTOMWTDU5JKD3SS2MTRUTKZRZT7O"}}, false, true)
 
 		assert.EqualError(t, err, "faces: two or more clusters required for merging")
 		assert.Nil(t, result)
@@ -304,7 +304,7 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 		require.NoError(t, entity.Db().Create(marker).Error)
 	}
 
-	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false)
+	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false, true)
 	require.Error(t, err)
 	require.True(t, errors.Is(err, ErrRetainedManualClusters))
 

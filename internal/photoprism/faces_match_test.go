@@ -21,7 +21,7 @@ func TestFaces_Match(t *testing.T) {
 		Threshold: 1,
 	}
 
-	r, err := m.Match(opt)
+	r, err := m.Match(opt, true)
 
 	if err != nil {
 		t.Fatal(err)
@@ -100,7 +100,7 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	faces := entity.Faces{f}
 
 	w.rememberVeto(marker.MarkerUID)
-	_, err = w.MatchFaces(faces, false, nil, stats)
+	_, err = w.MatchFaces(faces, false, nil, stats, true)
 	require.NoError(t, err)
 
 	require.NoError(t, entity.Db().Where("marker_uid = ?", marker.MarkerUID).Take(&marker).Error)
@@ -108,7 +108,7 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 
 	// restore original assignment to keep fixtures consistent
 	dist := minMarkerDistance(f.Embedding(), marker.Embeddings())
-	_, err = marker.SetFace(&f, dist)
+	_, err = marker.SetFace(&f, dist, true)
 	require.NoError(t, err)
 	w.clearVeto(marker.MarkerUID)
 }

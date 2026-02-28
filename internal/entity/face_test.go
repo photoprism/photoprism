@@ -219,8 +219,8 @@ func TestFace_Embedding(t *testing.T) {
 
 func TestFace_MatchMarkersEmpty(t *testing.T) {
 	m := FaceFixtures.Get("joe-biden")
-	require.NoError(t, m.MatchMarkers(nil))
-	require.NoError(t, m.MatchMarkers([]string{}))
+	require.NoError(t, m.MatchMarkers(nil, true))
+	require.NoError(t, m.MatchMarkers([]string{}, true))
 }
 
 func TestFace_UpdateMatchTime(t *testing.T) {

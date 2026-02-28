@@ -11,7 +11,7 @@ func TestFaces_Optimize(t *testing.T) {
 
 	m := NewFaces(c)
 
-	r, err := m.Optimize()
+	r, err := m.Optimize(true)
 
 	if err != nil {
 		t.Fatal(err)

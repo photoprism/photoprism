@@ -65,7 +65,7 @@ func TestMarker_SetName(t *testing.T) {
 		m := MarkerFixtures.Get("actress-a-1")
 		assert.IsType(t, Marker{}, m)
 		assert.Equal(t, "Actress A", m.MarkerName)
-		changed, err := m.SetName("", SrcManual)
+		changed, err := m.SetName("", SrcManual, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -74,7 +74,7 @@ func TestMarker_SetName(t *testing.T) {
 		assert.False(t, changed)
 		assert.Equal(t, "Actress A", m.MarkerName)
 
-		changed, err = m.SetName("Foo Bar", SrcAuto)
+		changed, err = m.SetName("Foo Bar", SrcAuto, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -320,22 +320,22 @@ func TestMarker_ClearSubject(t *testing.T) {
 		assert.Equal(t, "js6sg6b1h1njaaad", m2.SubjUID)
 		assert.Equal(t, "js6sg6b1h1njaaad", m3.SubjUID)
 		assert.Equal(t, "js6sg6b1h1njaaad", m4.SubjUID)
-		assert.NotNil(t, m.Face())
-		assert.NotNil(t, m2.Face())
-		assert.NotNil(t, m3.Face())
-		assert.NotNil(t, m4.Face())
+		assert.NotNil(t, m.Face(true))
+		assert.NotNil(t, m2.Face(true))
+		assert.NotNil(t, m3.Face(true))
+		assert.NotNil(t, m4.Face(true))
 
 		if m := FindMarker("ms6sg6b1wowu1002"); m == nil {
 			t.Fatal("marker is nil")
-		} else if f := m.Face(); f == nil {
+		} else if f := m.Face(true); f == nil {
 			t.Fatal("face is nil")
 		}
 
-		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m.Face().ID)
-		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m2.Face().ID)
-		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m3.Face().ID)
-		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m4.Face().ID)
-		assert.Equal(t, int(0), FindMarker("ms6sg6b1wowu1002").Face().Collisions)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m.Face(true).ID)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m2.Face(true).ID)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m3.Face(true).ID)
+		assert.Equal(t, "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS", m4.Face(true).ID)
+		assert.Equal(t, int(0), FindMarker("ms6sg6b1wowu1002").Face(true).Collisions)
 
 		// Reset face subject.
 		err := m.ClearSubject(SrcAuto)
@@ -433,11 +433,11 @@ func TestMarker_ClearFace(t *testing.T) {
 func TestMarker_SyncSubject(t *testing.T) {
 	t.Run("NoFaceMarker", func(t *testing.T) {
 		m := Marker{MarkerType: "test", subject: nil}
-		assert.Nil(t, m.SyncSubject(false))
+		assert.Nil(t, m.SyncSubject(false, true))
 	})
 	t.Run("SubjectIsNil", func(t *testing.T) {
 		m := Marker{MarkerType: MarkerFace, subject: nil}
-		assert.Nil(t, m.SyncSubject(false))
+		assert.Nil(t, m.SyncSubject(false, true))
 	})
 	t.Run("UpdateKnownFaceError", func(t *testing.T) {
 		originalProvider := dbConn
@@ -463,7 +463,7 @@ func TestMarker_SyncSubject(t *testing.T) {
 			},
 		}
 
-		if err := m.SyncSubject(false); err == nil {
+		if err := m.SyncSubject(false, true); err == nil {
 			t.Fatal("error expected")
 		} else {
 			assert.Contains(t, err.Error(), "update known face")
@@ -578,7 +578,7 @@ func TestMarker_GetFace(t *testing.T) {
 	t.Run("ExistingFaceID", func(t *testing.T) {
 		m := Marker{MarkerUID: "ms6sg6b14ahkyd24", FaceID: "1234", face: &Face{ID: "1234"}}
 
-		if f := m.Face(); f == nil {
+		if f := m.Face(true); f == nil {
 			t.Fatal("return value must not be nil")
 		} else {
 			assert.Equal(t, "1234", f.ID)
@@ -588,7 +588,7 @@ func TestMarker_GetFace(t *testing.T) {
 	t.Run("ConflictingFaceID", func(t *testing.T) {
 		m := Marker{MarkerUID: "ms6sg6b14ahkyd24", FaceID: "8888", face: &Face{ID: "1234"}}
 
-		if f := m.Face(); f != nil {
+		if f := m.Face(true); f != nil {
 			t.Fatal("return value must be nil")
 		} else {
 			assert.Equal(t, "8888", m.FaceID)
@@ -598,7 +598,7 @@ func TestMarker_GetFace(t *testing.T) {
 	t.Run("FindFaceWithId", func(t *testing.T) {
 		m := Marker{MarkerUID: "ms6sg6b14ahkyd24", FaceID: "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6"}
 
-		if f := m.Face(); f == nil {
+		if f := m.Face(true); f == nil {
 			t.Fatal("return value must not be nil")
 		} else {
 			assert.Equal(t, "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6", f.ID)
@@ -607,7 +607,7 @@ func TestMarker_GetFace(t *testing.T) {
 	t.Run("LowQualityMarker", func(t *testing.T) {
 		m := Marker{MarkerUID: "", FaceID: "", SubjSrc: SrcManual, Size: 130}
 
-		assert.Nil(t, m.Face())
+		assert.Nil(t, m.Face(true))
 	})
 	t.Run("CreateFace", func(t *testing.T) {
 		m := Marker{
@@ -619,10 +619,10 @@ func TestMarker_GetFace(t *testing.T) {
 			Score:          40,
 		}
 
-		if m.Face() == nil {
+		if m.Face(true) == nil {
 			t.Fatal("return value must not be nil")
 		} else {
-			assert.NotEmpty(t, m.Face().ID)
+			assert.NotEmpty(t, m.Face(true).ID)
 		}
 	})
 }
@@ -637,26 +637,26 @@ func TestMarker_SetFace(t *testing.T) {
 	t.Run("FaceEqualNil", func(t *testing.T) {
 		m := MarkerFixtures.Pointer("1000003-6")
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
-		updated, _ := m.SetFace(nil, -1)
+		updated, _ := m.SetFace(nil, -1, true)
 		assert.False(t, updated)
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
 	})
 	t.Run("WrongMarkerType", func(t *testing.T) {
 		m := Marker{MarkerType: "xxx"}
-		updated, _ := m.SetFace(&Face{ID: "99876"}, -1)
+		updated, _ := m.SetFace(&Face{ID: "99876"}, -1, true)
 		assert.False(t, updated)
 		assert.Equal(t, "", m.FaceID)
 	})
 	t.Run("SkipSameFace", func(t *testing.T) {
 		m := Marker{MarkerType: MarkerFace, SubjUID: "js6sg6b1qekk9jx8", FaceID: "99876uyt"}
-		updated, _ := m.SetFace(&Face{ID: "99876uyt", SubjUID: "js6sg6b1qekk9jx8"}, -1)
+		updated, _ := m.SetFace(&Face{ID: "99876uyt", SubjUID: "js6sg6b1qekk9jx8"}, -1, true)
 		assert.False(t, updated)
 		assert.Equal(t, "99876uyt", m.FaceID)
 	})
 	t.Run("SetNewFace", func(t *testing.T) {
 		m := Marker{MarkerUID: "mqyz9x61edicxf8j", MarkerType: MarkerFace, SubjUID: "", FaceID: ""}
 
-		updated, _ := m.SetFace(FaceFixtures.Pointer("john-doe"), -1)
+		updated, _ := m.SetFace(FaceFixtures.Pointer("john-doe"), -1, true)
 		assert.True(t, updated)
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
 		updated2, err := m.ClearFace()
