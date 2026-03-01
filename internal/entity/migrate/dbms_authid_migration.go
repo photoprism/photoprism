@@ -30,16 +30,34 @@ func ConvertDBMSAuthIDDataTypes(db *gorm.DB) (err error) {
 			Pk        int
 		}
 
-		if !db.HasTable("auth_sessions") {
-			if err := db.Exec(authSessionsCreate).Error; err != nil {
+		var err error
+		// Start a transaction
+		tx := db.Begin()
+
+		if tx.Error != nil {
+			return fmt.Errorf("migrate: error creating transaction %w", err)
+		}
+
+		defer func() {
+			if err == nil {
+				log.Debug("migrate: committing DBMS AuthID Data Types")
+				tx.Commit()
+			} else {
+				log.Warning("migrate: rolling back DBMS AuthID Data Types")
+				tx.Rollback()
+			}
+		}()
+
+		if !tx.HasTable("auth_sessions") {
+			if err = tx.Exec(authSessionsCreate).Error; err != nil {
 				return fmt.Errorf("migrate: error creating auth_sessions %w", err)
 			}
 		} else {
 			// Data Migration here, by rename, create new, data transfer, drop indexes
-			if err := db.Exec(`ALTER TABLE "auth_sessions" RENAME TO "migrate_auth_sessions"`).Error; err != nil {
+			if err = tx.Exec(`ALTER TABLE "auth_sessions" RENAME TO "migrate_auth_sessions"`).Error; err != nil {
 				return fmt.Errorf("migrate: error renaming auth_sessions %w", err)
 			}
-			if err := db.Exec(authSessionsCreate).Error; err != nil {
+			if err = tx.Exec(authSessionsCreate).Error; err != nil {
 				return fmt.Errorf("migrate: error creating auth_sessions %w", err)
 			}
 
@@ -48,14 +66,14 @@ func ConvertDBMSAuthIDDataTypes(db *gorm.DB) (err error) {
 			var newPragmaColumns []pragmaTable
 			oldColumns := make(map[string]bool)
 
-			if err := db.Raw("PRAGMA table_info(migrate_auth_sessions)").Scan(&oldPragmaColumns).Error; err != nil {
+			if err = tx.Raw("PRAGMA table_info(migrate_auth_sessions)").Scan(&oldPragmaColumns).Error; err != nil {
 				return fmt.Errorf("migrate: error getting column list for migrate_auth_sessions with %w", err)
 			}
 			for _, pragma := range oldPragmaColumns {
 				oldColumns[pragma.Name] = false
 			}
 
-			if err := db.Raw("PRAGMA table_info(auth_sessions)").Scan(&newPragmaColumns).Error; err != nil {
+			if err = tx.Raw("PRAGMA table_info(auth_sessions)").Scan(&newPragmaColumns).Error; err != nil {
 				return fmt.Errorf("migrate: error getting column list for auth_sessions with %w", err)
 			}
 			for _, pragma := range newPragmaColumns {
@@ -73,31 +91,35 @@ func ConvertDBMSAuthIDDataTypes(db *gorm.DB) (err error) {
 
 			populateStmt := fmt.Sprintf("INSERT INTO auth_sessions (%s) SELECT %s FROM migrate_auth_sessions", strings.Join(columns, ", "), strings.Join(columns, ", "))
 
-			if err := db.Exec(populateStmt).Error; err != nil {
+			if err = tx.Exec(populateStmt).Error; err != nil {
 				return fmt.Errorf("migrate: error migrating with stmt %s with %w", populateStmt, err)
 			}
 
 			var indexes []resultIndex
-			if err := db.Raw("SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = ? AND sql IS NOT NULL", "migrate_auth_sessions").Scan(&indexes).Error; err != nil {
+			if err = tx.Raw("SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = ? AND sql IS NOT NULL", "migrate_auth_sessions").Scan(&indexes).Error; err != nil {
 				return fmt.Errorf("migrate: error getting index list %w", err)
 			}
 			for _, index := range indexes {
 				dropStatement := fmt.Sprintf(`DROP INDEX IF EXISTS "%s"`, index.Name)
-				if err := db.Exec(dropStatement).Error; err != nil {
+				if err = tx.Exec(dropStatement).Error; err != nil {
 					return fmt.Errorf("migrate: error dropping index %s was %w", index.Name, err)
 				}
 			}
+
+			if err = tx.Exec("DROP TABLE migrate_auth_sessions").Error; err != nil {
+				return fmt.Errorf("migrate: error dropping table migrate_auth_sessions with %w", err)
+			}
 		}
-		if !db.HasTable("auth_users") {
-			if err := db.Exec(authUsersCreate).Error; err != nil {
+		if !tx.HasTable("auth_users") {
+			if err = tx.Exec(authUsersCreate).Error; err != nil {
 				return fmt.Errorf("migrate: error creating auth_users %w", err)
 			}
 		} else {
 			// Data Migration here, by rename, create new, data transfer, drop indexes
-			if err := db.Exec(`ALTER TABLE "auth_users" RENAME TO "migrate_auth_users"`).Error; err != nil {
+			if err = tx.Exec(`ALTER TABLE "auth_users" RENAME TO "migrate_auth_users"`).Error; err != nil {
 				return fmt.Errorf("migrate: error renaming auth_users %w", err)
 			}
-			if err := db.Exec(authUsersCreate).Error; err != nil {
+			if err = tx.Exec(authUsersCreate).Error; err != nil {
 				return fmt.Errorf("migrate: error creating auth_users %w", err)
 			}
 
@@ -106,14 +128,14 @@ func ConvertDBMSAuthIDDataTypes(db *gorm.DB) (err error) {
 			var newPragmaColumns []pragmaTable
 			oldColumns := make(map[string]bool)
 
-			if err := db.Raw("PRAGMA table_info(migrate_auth_users)").Scan(&oldPragmaColumns).Error; err != nil {
+			if err = tx.Raw("PRAGMA table_info(migrate_auth_users)").Scan(&oldPragmaColumns).Error; err != nil {
 				return fmt.Errorf("migrate: error getting column list for migrate_auth_users with %w", err)
 			}
 			for _, pragma := range oldPragmaColumns {
 				oldColumns[pragma.Name] = false
 			}
 
-			if err := db.Raw("PRAGMA table_info(auth_users)").Scan(&newPragmaColumns).Error; err != nil {
+			if err = tx.Raw("PRAGMA table_info(auth_users)").Scan(&newPragmaColumns).Error; err != nil {
 				return fmt.Errorf("migrate: error getting column list for auth_users with %w", err)
 			}
 			for _, pragma := range newPragmaColumns {
@@ -131,19 +153,23 @@ func ConvertDBMSAuthIDDataTypes(db *gorm.DB) (err error) {
 
 			populateStmt := fmt.Sprintf("INSERT INTO auth_users (%s) SELECT %s FROM migrate_auth_users", strings.Join(columns, ", "), strings.Join(columns, ", "))
 
-			if err := db.Exec(populateStmt).Error; err != nil {
+			if err = tx.Exec(populateStmt).Error; err != nil {
 				return fmt.Errorf("migrate: error migrating with stmt %s with %w", populateStmt, err)
 			}
 
 			var indexes []resultIndex
-			if err := db.Raw("SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = ? AND sql IS NOT NULL", "migrate_auth_users").Scan(&indexes).Error; err != nil {
+			if err = tx.Raw("SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = ? AND sql IS NOT NULL", "migrate_auth_users").Scan(&indexes).Error; err != nil {
 				return fmt.Errorf("migrate: error getting index list %w", err)
 			}
 			for _, index := range indexes {
 				dropStatement := fmt.Sprintf(`DROP INDEX IF EXISTS "%s"`, index.Name)
-				if err := db.Exec(dropStatement).Error; err != nil {
+				if err = tx.Exec(dropStatement).Error; err != nil {
 					return fmt.Errorf("migrate: error dropping index %s was %w", index.Name, err)
 				}
+			}
+
+			if err = tx.Exec("DROP TABLE migrate_auth_users").Error; err != nil {
+				return fmt.Errorf("migrate: error dropping table migrate_auth_users with %w", err)
 			}
 		}
 	// case MySQL: // MySQL
