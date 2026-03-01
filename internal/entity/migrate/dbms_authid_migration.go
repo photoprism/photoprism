@@ -30,21 +30,26 @@ func ConvertDBMSAuthIDDataTypes(db *gorm.DB) (err error) {
 			Pk        int
 		}
 
-		var err error
 		// Start a transaction
 		tx := db.Begin()
 
 		if tx.Error != nil {
-			return fmt.Errorf("migrate: error creating transaction %w", err)
+			return fmt.Errorf("migrate: error creating transaction %w", tx.Error)
 		}
 
 		defer func() {
 			if err == nil {
-				log.Debug("migrate: committing DBMS AuthID Data Types")
-				tx.Commit()
+				if txErr := tx.Commit().Error; txErr != nil {
+					log.Warningf("migrate: commit failure for DBMS AuthID Data Types: %w", txErr)
+				} else {
+					log.Debug("migrate: committed DBMS AuthID Data Types")
+				}
 			} else {
-				log.Warning("migrate: rolling back DBMS AuthID Data Types")
-				tx.Rollback()
+				if txErr := tx.Rollback().Error; txErr != nil {
+					log.Warningf("migrate: rollback failure for DBMS AuthID Data Types: %w", txErr)
+				} else {
+					log.Warning("migrate: rolled back DBMS AuthID Data Types")
+				}
 			}
 		}()
 
