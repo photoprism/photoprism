@@ -217,10 +217,66 @@ func TestFace_Embedding(t *testing.T) {
 	})
 }
 
-func TestFace_MatchMarkersEmpty(t *testing.T) {
-	m := FaceFixtures.Get("joe-biden")
-	require.NoError(t, m.MatchMarkers(nil, true))
-	require.NoError(t, m.MatchMarkers([]string{}, true))
+func TestFace_MatchMarkersEmptySync(t *testing.T) {
+	matchMarkersCanBeSync = true
+	t.Run("true", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(nil, true))
+		require.NoError(t, m.MatchMarkers([]string{}, true))
+	})
+
+	t.Run("false", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(nil, false))
+		require.NoError(t, m.MatchMarkers([]string{}, false))
+	})
+}
+
+func TestFace_MatchMarkersEmptyAsync(t *testing.T) {
+	matchMarkersCanBeSync = false
+	defer func() {
+		matchMarkersCanBeSync = true
+	}()
+	t.Run("true", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(nil, true))
+		require.NoError(t, m.MatchMarkers([]string{}, true))
+	})
+
+	t.Run("false", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(nil, false))
+		require.NoError(t, m.MatchMarkers([]string{}, false))
+	})
+}
+
+func TestFace_MatchMarkersFacelessSync(t *testing.T) {
+	matchMarkersCanBeSync = true
+	t.Run("true", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(Faceless, true))
+	})
+
+	t.Run("false", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(Faceless, false))
+	})
+}
+
+func TestFace_MatchMarkersFacelessAsync(t *testing.T) {
+	matchMarkersCanBeSync = false
+	defer func() {
+		matchMarkersCanBeSync = true
+	}()
+	t.Run("true", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(Faceless, true))
+	})
+
+	t.Run("false", func(t *testing.T) {
+		m := FaceFixtures.Get("joe-biden")
+		require.NoError(t, m.MatchMarkers(Faceless, false))
+	})
 }
 
 func TestFace_UpdateMatchTime(t *testing.T) {
