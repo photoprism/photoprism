@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 )
 
 // UsersResetDescription explains the effect of the users reset command.
@@ -61,8 +62,13 @@ func usersResetAction(ctx *cli.Context) error {
 			return err
 		}
 
+		// Apply non managed auth_id columns
+		if err := migrate.ConvertDBMSAuthIDDataTypes(db); err != nil {
+			return err
+		}
+
 		// Re-create auth_users.
-		if err := db.Migrator().CreateTable(entity.User{}); err != nil {
+		if err := db.Migrator().AutoMigrate(entity.User{}); err != nil {
 			return err
 		}
 
@@ -87,7 +93,7 @@ func usersResetAction(ctx *cli.Context) error {
 		}
 
 		// Re-create auth_sessions.
-		if err := db.Migrator().CreateTable(entity.Session{}); err != nil {
+		if err := db.Migrator().AutoMigrate(entity.Session{}); err != nil {
 			return err
 		}
 
