@@ -189,7 +189,8 @@ func NewTestContextWithParse(appArgs []string, cmdArgs []string) *cli.Context {
 func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []string) (output string, err error) {
 	// Ensure DB connection is open for each command run (some commands call Shutdown).
 	_ = reopenConnection()
-
+	conf := get.Config()
+	previousOptions := *conf.Options()
 	// Redirect the output from cli to buffer for transfer to output for testing
 	var catureOutput bytes.Buffer
 	oldWriter := ctx.App.Writer
@@ -206,6 +207,8 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	ctx.App.Writer = oldWriter
 	output += catureOutput.String()
 
+	// Reset the config options just in case they have been affected
+	*conf.Options() = previousOptions
 	// // Re-open the database after the command completed so follow-up checks
 	// // (potentially issued by the test itself) have an active connection.
 	_ = reopenConnection()
