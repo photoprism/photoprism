@@ -1025,6 +1025,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
+		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -1053,6 +1054,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
+		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -1081,6 +1083,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
+		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -1109,6 +1112,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
+		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
