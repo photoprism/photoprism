@@ -52,7 +52,7 @@ type User struct {
 	AuthProvider  string         `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string         `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthIssuer    string         `gorm:"type:bytes;size:255;default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID        string         `gorm:"type:bytes;size:255;index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthID        string         `gorm:"type:bytes;size:255;index;default:'';-:migration;" json:"AuthID" yaml:"AuthID,omitempty"`
 	UserName      string         `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string         `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string         `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
