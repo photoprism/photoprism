@@ -45,13 +45,8 @@ func TestClusterNodesRegister(t *testing.T) {
 
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-auth", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
-		cleanupRegisterProvisioning(t, conf, rCreate)
-		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
-		var resp cluster.RegisterResponse
-		json.Unmarshal(rCreate.Body.Bytes(), &resp)
-		n := resp.Node
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-auth", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
 		nr, err := regy.RotateSecret(n.UUID)
 		assert.NoError(t, err)
 
@@ -162,16 +157,17 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
-		// Register the node to ensure that the database and registry is there
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-lock", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
-		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		// Pre-create node with a UUID
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-lock", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
 
 		// Attempt to change UUID via join token must fail with conflict.
 		newUUID := rnd.UUIDv7()
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-lock","NodeUUID":"`+newUUID+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusConflict, r.Code)
-		cleanupRegisterProvisioning(t, conf, rCreate)
 	})
 	t.Run("AdvertiseUrlHttpAllowed", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -241,7 +237,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
-		// Empty NodeName → 400
+		// Empty nodeName → 400
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":""}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -257,11 +253,8 @@ func TestClusterNodesRegister(t *testing.T) {
 		// used by OAuth tests running in the same package.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		// Register the node to ensure that the database and registry is there
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeUUID: rnd.UUIDv7(), Name":"pp-node-01", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
-		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
-		cleanupRegisterProvisioning(t, conf, rCreate)
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-01", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
 		n, err = regy.RotateSecret(n.UUID)
 		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
 			return
@@ -364,9 +357,8 @@ func TestClusterNodesRegister(t *testing.T) {
 		// Pre-create node in registry so handler goes through existing-node path.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeUUID: rnd.UUIDv7(), Name":"pp-node-02", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
-		assert.Equal(t, http.StatusCreated, rCreate.Code)
-		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-02", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
 
 		n, err = regy.RotateSecret(n.UUID)
 		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
@@ -383,35 +375,6 @@ func TestClusterNodesRegister(t *testing.T) {
 		n2, err := regy.FindByName("pp-node-02")
 		assert.NoError(t, err)
 		assert.Equal(t, "https://photos.example.com", n2.SiteUrl)
-
-		cleanupRegisterProvisioning(t, conf, rCreate)
-
-	})
-	t.Run("ExistingNodeWithoutRotateDoesNotProvisionDatabase", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		enablePortalAPIs(t, conf)
-		conf.Options().JoinToken = cluster.ExampleJoinToken
-		// If provisioning is called unexpectedly, this invalid DSN should cause a 409.
-		conf.Options().DatabaseProvisionDSN = "invalid-dsn"
-		ClusterNodesRegister(router)
-
-		regy, err := reg.NewClientRegistryWithConfig(conf)
-		assert.NoError(t, err)
-
-		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-no-provision", Role: cluster.RoleInstance}}
-		assert.NoError(t, regy.Put(n))
-		n, err = regy.RotateSecret(n.UUID)
-		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
-			return
-		}
-
-		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
-		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-no-provision","SiteUrl":"https://photos.example.com"}`, token)
-		assert.Equal(t, http.StatusOK, r.Code)
-		body := r.Body.String()
-		assert.False(t, gjson.Get(body, "AlreadyProvisioned").Bool())
-		assert.Equal(t, "", gjson.Get(body, "Database.Name").String())
-		assert.Equal(t, "", gjson.Get(body, "Database.User").String())
 	})
 	t.Run("ExistingNodeWithoutRotateDoesNotProvisionDatabase", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -515,14 +478,9 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 		t.Fatalf("unmarshal register response: %v", err)
 	}
 
-	// Why?  This prevents cleanup in most cases, which means that some tests are failing because the item
-	// is still there after execution of a previous test.  Which means that a test that expects it not to be
-	// there fails.
-	// Every unit test should be able to be run without depending on the results of a previous unit test,
-	// so you should clean up fully every time.
-	// if !resp.AlreadyProvisioned {
-	// 	return
-	// }
+	if !resp.AlreadyProvisioned {
+		return
+	}
 
 	name := resp.Database.Name
 	user := resp.Database.User
@@ -545,67 +503,9 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := provisioner.DropCredentials(ctx, name, user); err != nil {
-			count1269 := strings.Count(err.Error(), "Error 1269")
-			countError := strings.Count(err.Error(), "Error")
-			if countError > count1269 { // Only abort if there was an issue other than Error 1269 (HY000): Can't revoke all privileges for one or more of the requested users
-				t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
-			}
+			t.Fatalf("drop credentials for %s/%s: %v", name, user, err)
 		}
 	})
-
-	if resp.Node.UUID != "" {
-		t.Cleanup(func() {
-			if err := entity.UnscopedDb().Where("node_uuid = ?", resp.Node.UUID).Delete(&entity.Client{}).Error; err != nil {
-				t.Fatalf("remove client for %s: %v", resp.Node.UUID, err)
-			}
-		})
-	}
-
-}
-
-func AuthenticatedRequestWithBodyAndIP(r http.Handler, method, path, body string, authToken string, clientIP string) *httptest.ResponseRecorder {
-	reader := strings.NewReader(body)
-	req, _ := http.NewRequest(method, path, reader)
-	req.RemoteAddr = clientIP + ":12345"
-	header.SetAuthorization(req, authToken)
-
-	w := httptest.NewRecorder()
-	r.ServeHTTP(w, req)
-
-	return w
-}
-
-func oauthNodeAccessToken(t testing.TB, app http.Handler, router *gin.RouterGroup, conf *config.Config, clientID, clientSecret string) string {
-	return oauthNodeAccessTokenWithScope(t, app, router, conf, clientID, clientSecret, "cluster")
-}
-
-func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.RouterGroup, conf *config.Config, clientID, clientSecret, scope string) string {
-	t.Helper()
-
-	prevAuthMode := conf.AuthMode()
-	conf.SetAuthMode(config.AuthModePasswd)
-	t.Cleanup(func() {
-		conf.SetAuthMode(prevAuthMode)
-	})
-
-	OAuthToken(router)
-
-	data := url.Values{
-		"grant_type":    {authn.GrantClientCredentials.String()},
-		"client_id":     {clientID},
-		"client_secret": {clientSecret},
-		"scope":         {scope},
-	}
-
-	req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
-	req.Header.Add(header.ContentType, header.ContentTypeForm)
-
-	w := httptest.NewRecorder()
-	app.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code, "oauth token request failed: %s", w.Body.String())
-
-	return gjson.Get(w.Body.String(), "access_token").String()
 }
 
 func AuthenticatedRequestWithBodyAndIP(r http.Handler, method, path, body string, authToken string, clientIP string) *httptest.ResponseRecorder {
