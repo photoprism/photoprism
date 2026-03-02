@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-01-14 21:02+0000\n"
-"Last-Translator: Janis Eglitis <alfabeta.lv@gmail.com>\n"
+"PO-Revision-Date: 2026-02-23 16:05+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= 19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.16\n"
 
 #: src/locales.js:272
 msgid "{0} appended action"
@@ -846,7 +846,7 @@ msgstr "Klasteris"
 
 #: src/model/cluster-node.js:80
 msgid "Cluster Node"
-msgstr ""
+msgstr "Klastera mezgls"
 
 #: src/component/photo/edit/files.vue:140
 #: src/component/photo/edit/files.vue:141
@@ -2383,7 +2383,7 @@ msgstr "Nav rezultātu"
 
 #: src/component/navigation.vue:335
 msgid "No server connection"
-msgstr ""
+msgstr "Nav servera savienojuma"
 
 #: src/component/service/upload.vue:160
 msgid "No servers configured."
@@ -3832,7 +3832,7 @@ msgstr "Augšupielādes, kas var saturēt šādus attēlus, tiks automātiski no
 
 #: src/page/cluster/nodes.vue:246
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/page/settings/advanced.vue:355
 msgid "Use Presets"
@@ -3883,7 +3883,7 @@ msgstr "Lietotāji"
 
 #: src/page/cluster/nodes.vue:252
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 #: src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239

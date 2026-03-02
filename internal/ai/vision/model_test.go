@@ -375,22 +375,24 @@ func TestModelApplyService(t *testing.T) {
 		req := &ApiRequest{}
 		model := &Model{
 			Engine:  openai.EngineName,
-			Service: Service{Org: "org-123", Project: "proj-abc"},
+			Service: Service{Org: "org-123", Project: "proj-abc", Think: "medium"},
 		}
 
 		model.ApplyService(req)
 
 		assert.Equal(t, "org-123", req.Org)
 		assert.Equal(t, "proj-abc", req.Project)
+		assert.Equal(t, "medium", req.Think)
 	})
-	t.Run("OtherEngineNoop", func(t *testing.T) {
+	t.Run("OtherEngineIgnoresOpenAIHeadersButAppliesThink", func(t *testing.T) {
 		req := &ApiRequest{Org: "keep", Project: "keep"}
-		model := &Model{Engine: ollama.EngineName, Service: Service{Org: "new", Project: "new"}}
+		model := &Model{Engine: ollama.EngineName, Service: Service{Org: "new", Project: "new", Think: "false"}}
 
 		model.ApplyService(req)
 
 		assert.Equal(t, "keep", req.Org)
 		assert.Equal(t, "keep", req.Project)
+		assert.Equal(t, "false", req.Think)
 	})
 }
 

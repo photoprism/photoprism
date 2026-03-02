@@ -48,14 +48,8 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Create new router engine without standard middleware.
 	router := gin.New()
 
-	// Set proxy from which headers related to the client and protocol can be trusted?
-	if trustedProxies := conf.TrustedProxies(); len(trustedProxies) > 0 {
-		if err := router.SetTrustedProxies(trustedProxies); err != nil {
-			log.Warnf("server: %s", err)
-		}
-
-		router.RemoteIPHeaders = conf.ProxyClientHeaders()
-	}
+	// Configure trusted proxy ranges and forwarded client IP headers.
+	configureTrustedProxySettings(router, conf)
 
 	// Set trusted platform client IP address header name?
 	if trustedPlatform := conf.TrustedPlatform(); trustedPlatform != "" {
@@ -146,7 +140,7 @@ func Start(ctx context.Context, conf *config.Config) {
 			if !txt.Bool(unixSocket.Query().Get("force")) {
 				Fail("server: %s socket %s already exists", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
 				return
-			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil {
+			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
 				Fail("server: %s socket %s already exists and cannot be deleted", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
 				return
 			}
@@ -163,7 +157,7 @@ func Start(ctx context.Context, conf *config.Config) {
 			// Update socket permissions?
 			if mode := unixSocket.Query().Get("mode"); mode == "" {
 				// Skip, no socket mode was specified.
-			} else if modeErr := os.Chmod(unixSocket.Path, fs.ParseMode(mode, fs.ModeSocket)); modeErr != nil {
+			} else if modeErr := os.Chmod(unixSocket.Path, fs.ParseMode(mode, fs.ModeSocket)); modeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
 				log.Warnf(
 					"server: failed to change permissions of %s socket %s (%s)",
 					clean.Log(unixSocket.Scheme),
@@ -237,6 +231,26 @@ func Start(ctx context.Context, conf *config.Config) {
 	err := server.Close()
 	if err != nil {
 		log.Errorf("server: shutdown failed (%s)", err)
+	}
+}
+
+// configureTrustedProxySettings configures trusted proxy ranges for client IP resolution.
+func configureTrustedProxySettings(router *gin.Engine, conf *config.Config) {
+	if router == nil || conf == nil {
+		return
+	}
+
+	if trustedProxies := conf.TrustedProxies(); len(trustedProxies) > 0 {
+		if err := router.SetTrustedProxies(trustedProxies); err != nil {
+			log.Warnf("server: %s (trusted proxy), falling back to direct client IP", err)
+			if fallbackErr := router.SetTrustedProxies(nil); fallbackErr != nil {
+				log.Warnf("server: %s (trusted proxy fallback)", fallbackErr)
+			}
+		} else {
+			router.RemoteIPHeaders = conf.ProxyClientHeaders()
+		}
+	} else if err := router.SetTrustedProxies(nil); err != nil {
+		log.Warnf("server: %s", err)
 	}
 }
 

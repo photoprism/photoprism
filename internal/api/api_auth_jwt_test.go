@@ -395,7 +395,7 @@ func TestShouldAttemptJWT(t *testing.T) {
 	assert.False(t, shouldAttemptJWT(c, ""))
 }
 
-func TestNodeAllowsJWT(t *testing.T) {
+func TestInstanceAllowsJWT(t *testing.T) {
 	fx := newPortalJWTFixture(t, "node-allows")
 	conf := fx.nodeConf
 

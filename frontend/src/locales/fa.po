@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-27 11:38+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-02-23 16:07+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 5.13.3\n"
+"X-Generator: Weblate 5.16\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -850,7 +850,7 @@ msgstr "خوشه"
 
 #: src/model/cluster-node.js:80
 msgid "Cluster Node"
-msgstr ""
+msgstr "گره خوشه‌ای"
 
 #: src/component/photo/edit/files.vue:140
 #: src/component/photo/edit/files.vue:141
@@ -3887,7 +3887,7 @@ msgstr "کاربران"
 
 #: src/page/cluster/nodes.vue:252
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 #: src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239

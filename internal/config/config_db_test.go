@@ -250,6 +250,7 @@ func TestDatabaseProvisionPrefix(t *testing.T) {
 func TestShouldAutoRotateDatabase(t *testing.T) {
 	t.Run("PortalAlwaysFalse", func(t *testing.T) {
 		conf := NewMinimalTestConfig("config", t.TempDir())
+		conf.Options().Edition = Portal
 		conf.Options().NodeRole = cluster.RolePortal
 		conf.Options().DatabaseDriver = MySQL
 		assert.False(t, conf.ShouldAutoRotateDatabase())

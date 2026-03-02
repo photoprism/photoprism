@@ -33,6 +33,20 @@ import { ref, reactive } from "vue";
 
 onInit();
 
+// normalizeFrontendUri returns a normalized frontend base URI with a leading slash.
+const normalizeFrontendUri = (baseUri, frontendUri) => {
+  const fallbackUri = `${baseUri || ""}/library`;
+  const rawUri = typeof frontendUri === "string" && frontendUri.trim() !== "" ? frontendUri : fallbackUri;
+  const prefixedUri = rawUri.startsWith("/") ? rawUri : `/${rawUri}`;
+
+  return prefixedUri.replace(/\/+$/, "");
+};
+
+// frontendLoginUri returns the default login URI below the frontend base URI.
+const frontendLoginUri = (frontendUri) => {
+  return `${frontendUri.replace(/\/+$/, "")}/login`;
+};
+
 export default class Config {
   /**
    * @param {Storage} storage
@@ -65,8 +79,9 @@ export default class Config {
       this.theme = themes.Get("default");
       this.themeName = "";
       this.baseUri = "";
+      this.frontendUri = "/library";
       this.staticUri = "/static";
-      this.loginUri = "/library/login";
+      this.loginUri = frontendLoginUri(this.frontendUri);
       this.apiUri = "/api/v1";
       this.contentUri = this.apiUri;
       this.videoUri = this.apiUri;
@@ -81,8 +96,9 @@ export default class Config {
       return;
     } else {
       this.baseUri = values.baseUri ? values.baseUri : "";
+      this.frontendUri = normalizeFrontendUri(this.baseUri, values.frontendUri);
       this.staticUri = values.staticUri ? values.staticUri : this.baseUri + "/static";
-      this.loginUri = values.loginUri ? values.loginUri : this.baseUri + "/library/login";
+      this.loginUri = values.loginUri ? values.loginUri : frontendLoginUri(this.frontendUri);
       this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
       this.videoUri = values.videoUri ? values.videoUri : this.apiUri;

@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"net"
 	"net/url"
 	"strings"
 
@@ -19,9 +20,15 @@ type Account struct {
 }
 
 // Discover performs a service lookup based on the URL and credentials provided and returns an Account if successful.
-func Discover(rawUrl, user, pass string) (result Account, err error) {
+func Discover(rawUrl, user, pass, servicesCIDR string) (result Account, err error) {
 	if rawUrl == "" {
 		return result, errors.New("service URL is empty")
+	}
+
+	var allowedCIDRs []*net.IPNet
+
+	if allowedCIDRs, err = ParseCIDRs(servicesCIDR); err != nil {
+		return result, err
 	}
 
 	u, err := url.Parse(rawUrl)
@@ -51,6 +58,12 @@ func Discover(rawUrl, user, pass string) (result Account, err error) {
 	// Set default scheme
 	if u.Scheme == "" {
 		u.Scheme = "https"
+	} else {
+		u.Scheme = strings.ToLower(u.Scheme)
+	}
+
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return result, errors.New("unsupported service URL scheme")
 	}
 
 	for _, h := range Heuristics {
@@ -58,7 +71,7 @@ func Discover(rawUrl, user, pass string) (result Account, err error) {
 			continue
 		}
 
-		if serviceUrl := h.Discover(u.String(), result.AccUser); serviceUrl != nil {
+		if serviceUrl := h.Discover(u.String(), result.AccUser, allowedCIDRs); serviceUrl != nil {
 			serviceUrl.User = nil
 
 			if w := txt.Keywords(serviceUrl.Host); len(w) > 0 {

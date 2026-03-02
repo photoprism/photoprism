@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
+	"net"
 	"net/url"
 	"os"
 	"path"
@@ -14,6 +14,7 @@ import (
 
 	"github.com/emersion/go-webdav"
 
+	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -25,6 +26,7 @@ type Client struct {
 	endpoint *url.URL
 	timeout  time.Duration
 	mkdir    map[string]bool
+	cidrs    []*net.IPNet
 }
 
 // clientUrl returns the validated server url including username and password, if specified.
@@ -47,21 +49,28 @@ func clientUrl(serverUrl, user, pass string) (*url.URL, error) {
 }
 
 // NewClient creates a new WebDAV client for the specified endpoint.
-func NewClient(serverUrl, user, pass string, timeout Timeout) (*Client, error) {
-	// Create a new http.Client without timeout.
-	httpClient := &http.Client{}
-
+func NewClient(serverUrl, user, pass string, timeout Timeout, servicesCIDR string) (*Client, error) {
 	endpoint, err := clientUrl(serverUrl, user, pass)
 
 	if err != nil {
 		return nil, err
 	}
 
+	allowedCIDRs, err := service.ParseCIDRs(servicesCIDR)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if validateErr := service.ValidateURLHost(endpoint, allowedCIDRs, 5*time.Second); validateErr != nil {
+		return nil, validateErr
+	}
+
 	serverUrl = endpoint.String()
 
 	log.Debugf("webdav: connecting to %s", clean.Log(serverUrl))
 
-	client, err := webdav.NewClient(httpClient, serverUrl)
+	client, err := webdav.NewClient(service.NewHTTPClient(0, allowedCIDRs), serverUrl)
 
 	if err != nil {
 		return nil, err
@@ -74,6 +83,7 @@ func NewClient(serverUrl, user, pass string, timeout Timeout) (*Client, error) {
 		endpoint: endpoint,
 		timeout:  Durations[timeout],
 		mkdir:    make(map[string]bool, 128),
+		cidrs:    allowedCIDRs,
 	}
 
 	return result, nil
@@ -88,7 +98,7 @@ func (c *Client) withTimeout(timeout time.Duration) *webdav.Client {
 	}
 
 	// Create webdav client with the specified total request time.
-	client, err := webdav.NewClient(&http.Client{Timeout: timeout}, c.endpoint.String())
+	client, err := webdav.NewClient(service.NewHTTPClient(timeout, c.cidrs), c.endpoint.String())
 
 	if err != nil {
 		return c.client

@@ -6,7 +6,6 @@ type OptionsUpdate struct {
 	ClusterUUID      *string
 	ClusterCIDR      *string
 	NodeClientID     *string
-	NodeClientSecret *string
 	JWKSUrl          *string
 	NodeUUID         *string
 	DatabaseDriver   *string
@@ -22,7 +21,6 @@ func (u OptionsUpdate) IsZero() bool {
 	return u.ClusterUUID == nil &&
 		u.ClusterCIDR == nil &&
 		u.NodeClientID == nil &&
-		u.NodeClientSecret == nil &&
 		u.JWKSUrl == nil &&
 		u.NodeUUID == nil &&
 		u.DatabaseDriver == nil &&
@@ -58,11 +56,6 @@ func (u *OptionsUpdate) SetClusterCIDR(value string) {
 // SetNodeClientID sets the node client ID.
 func (u *OptionsUpdate) SetNodeClientID(value string) {
 	u.NodeClientID = stringPtr(value)
-}
-
-// SetNodeClientSecret sets the node client secret.
-func (u *OptionsUpdate) SetNodeClientSecret(value string) {
-	u.NodeClientSecret = stringPtr(value)
 }
 
 // SetJWKSUrl sets the JWKS URL.
@@ -115,9 +108,6 @@ func (u OptionsUpdate) Visit(fn func(string, any)) {
 	}
 	if u.NodeClientID != nil {
 		fn("NodeClientID", *u.NodeClientID)
-	}
-	if u.NodeClientSecret != nil {
-		fn("NodeClientSecret", *u.NodeClientSecret)
 	}
 	if u.JWKSUrl != nil {
 		fn("JWKSUrl", *u.JWKSUrl)

@@ -28,17 +28,24 @@ func TestClientUrl(t *testing.T) {
 }
 
 func TestNewClient(t *testing.T) {
-	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow)
+	t.Run("Success", func(t *testing.T) {
+		c, err := NewClient(testUrl, testUser, testPass, TimeoutLow, "")
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	assert.IsType(t, &Client{}, c)
+		assert.IsType(t, &Client{}, c)
+	})
+	t.Run("InvalidCIDR", func(t *testing.T) {
+		c, err := NewClient(testUrl, testUser, testPass, TimeoutLow, "not-a-cidr")
+		assert.Nil(t, c)
+		assert.Error(t, err)
+	})
 }
 
 func TestClient_Files(t *testing.T) {
-	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow)
+	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow, "")
 
 	if err != nil {
 		t.Fatal(err)
@@ -71,7 +78,7 @@ func TestClient_Files(t *testing.T) {
 }
 
 func TestClient_Directories(t *testing.T) {
-	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow)
+	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow, "")
 
 	if err != nil {
 		t.Fatal(err)
@@ -110,7 +117,7 @@ func TestClient_Directories(t *testing.T) {
 }
 
 func TestClient_UploadAndDelete(t *testing.T) {
-	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow)
+	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow, "")
 
 	if err != nil {
 		t.Fatal(err)
@@ -130,7 +137,7 @@ func TestClient_UploadAndDelete(t *testing.T) {
 }
 
 func TestClient_Download(t *testing.T) {
-	c, err := NewClient(testUrl, testUser, testPass, TimeoutDefault)
+	c, err := NewClient(testUrl, testUser, testPass, TimeoutDefault, "")
 
 	if err != nil {
 		t.Fatal(err)
@@ -165,7 +172,7 @@ func TestClient_Download(t *testing.T) {
 }
 
 func TestClient_DownloadDir(t *testing.T) {
-	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow)
+	c, err := NewClient(testUrl, testUser, testPass, TimeoutLow, "")
 
 	if err != nil {
 		t.Fatal(err)

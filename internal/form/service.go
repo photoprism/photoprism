@@ -39,8 +39,8 @@ func NewService(m any) (f Service, err error) {
 }
 
 // Discovery performs automatic service discovery.
-func (f *Service) Discovery() error {
-	acc, err := service.Discover(f.AccURL, f.AccUser, f.AccPass)
+func (f *Service) Discovery(servicesCIDR string) error {
+	acc, err := service.Discover(f.AccURL, f.AccUser, f.AccPass, servicesCIDR)
 
 	if err != nil {
 		return err

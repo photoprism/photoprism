@@ -6,8 +6,9 @@ Responsibilities include:
   - Initializing runtime configuration derived from options and environment.
   - Registering the node with the Portal over HTTP(S), handling non-transient
     errors (401/403/404) as terminal and bounding retries on transient failures.
-  - Persisting returned registration data such as the Node secret and, when
-    appropriate, database settings (never for SQLite), by merging into options.yml.
+  - Persisting returned registration data through the config package, including
+    secret-file storage and selected options.yml updates (never writing secrets
+    into options.yml and never applying DB settings for SQLite).
   - Installing a theme from the Portal if the local theme is missing, without
     overwriting existing installations.
 

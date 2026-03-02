@@ -38,7 +38,6 @@ import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
-import Feedback from "page/about/feedback.vue";
 import License from "page/about/license.vue";
 import Help from "page/help.vue";
 import Connect from "page/connect.vue";
@@ -68,12 +67,6 @@ export default [
     path: "/license",
     component: License,
     meta: { title: $gettext("License"), requiresAuth: false },
-  },
-  {
-    name: "feedback",
-    path: "/feedback",
-    component: Feedback,
-    meta: { title: $gettext("Help & Support"), requiresAuth: true },
   },
   {
     name: "help",

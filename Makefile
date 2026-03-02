@@ -118,6 +118,21 @@ show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
+format-tables: # Format Markdown tables in README.md, AGENTS.md, and CODEMAP.md files.
+	@set -eu; \
+	tmp="$$(mktemp)"; \
+	trap 'rm -f "$$tmp"' EXIT INT TERM; \
+	find "$(CURDIR)" -maxdepth 1 -type f \( -name 'README.md' -o -name 'AGENTS.md' -o -name 'CODEMAP.md' \) -print0 >> "$$tmp"; \
+	for dir in internal pkg docker setup; do \
+		if [ -d "$$dir" ]; then \
+			find "$$dir" -type f \( -name 'README.md' -o -name 'AGENTS.md' -o -name 'CODEMAP.md' \) -print0 >> "$$tmp"; \
+		fi; \
+	done; \
+	if [ ! -s "$$tmp" ]; then \
+		echo "No markdown files found for table formatting."; \
+		exit 0; \
+	fi; \
+	xargs -0 npx --yes markdown-table-formatter < "$$tmp"
 clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
@@ -324,7 +339,7 @@ dep-npm:
 	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
         fi
 dep-js:
-	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
+	npm ci --ignore-scripts --no-update-notifier --no-audit
 codex: dep-codex codex-version
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
@@ -335,6 +350,25 @@ dep-codex:
 	  sudo npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
 	else \
 	  npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	fi
+gh: dep-gh gh-version
+gh-version:
+	@echo "🐙 Installed $$(gh --version | head -n 1)."
+dep-gh:
+	@echo "Installing GitHub CLI..."
+	@if command -v apt-get >/dev/null 2>&1; then \
+	  ./scripts/dist/install-gh.sh; \
+	elif command -v dnf >/dev/null 2>&1; then \
+	  if command -v sudo >/dev/null 2>&1; then \
+	    sudo dnf install -y gh; \
+	  else \
+	    dnf install -y gh; \
+	  fi; \
+	elif command -v brew >/dev/null 2>&1; then \
+	  brew install gh; \
+	else \
+	  echo "ERROR: Could not install gh automatically. See https://cli.github.com/"; \
+	  exit 1; \
 	fi
 claude:
 	@echo "Installing Claude Code..."

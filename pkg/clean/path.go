@@ -33,7 +33,7 @@ func Path(s string) string {
 	return s
 }
 
-// UserPath sanitizes and normalizes a user provided path, so it can be used.
+// UserPath sanitizes and normalizes user-provided paths for use as input.
 func UserPath(dir string) string {
 	if dir == "" {
 		return dir
@@ -47,4 +47,11 @@ func UserPath(dir string) string {
 	}
 
 	return dir
+}
+
+// SlashPath normalizes a slash-based relative path by converting backslashes
+// to slashes, trimming whitespace, and removing leading and trailing slashes.
+func SlashPath(dir string) string {
+	dir = strings.TrimSpace(strings.ReplaceAll(dir, "\\", "/"))
+	return strings.Trim(dir, "/")
 }

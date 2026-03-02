@@ -58,6 +58,7 @@ func TestConfig_DisableWebDAV(t *testing.T) {
 
 	assert.False(t, c.DisableWebDAV())
 
+	c.options.Edition = Portal
 	c.options.NodeRole = cluster.RolePortal
 	assert.True(t, c.DisableWebDAV())
 }

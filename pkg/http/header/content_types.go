@@ -99,6 +99,7 @@ const (
 	ContentTypeBinary     = "application/octet-stream"
 	ContentTypeForm       = "application/x-www-form-urlencoded"
 	ContentTypeMultipart  = "multipart/form-data"
+	ContentTypeManifest   = "application/manifest+json"
 	ContentTypeJson       = "application/json"
 	ContentTypeJsonUtf8   = "application/json; charset=utf-8"
 	ContentTypeJavaScript = "application/javascript"

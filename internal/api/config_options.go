@@ -2,18 +2,13 @@ package api
 
 import (
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
-	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // GetConfigOptions returns backend config options.
@@ -61,62 +56,15 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			return
 		}
 
-		fileName := conf.OptionsYaml()
-
-		if fileName == "" {
-			log.Errorf("config: empty options.yml file path")
-			AbortSaveFailed(c)
-			return
-		}
-
 		v := make(entity.Values)
-
-		if fs.FileExists(fileName) {
-			yamlData, err := os.ReadFile(fileName) // #nosec G304 file path validated above
-
-			if err != nil {
-				log.Errorf("config: failed loading values from %s (%s)", clean.Log(fileName), err)
-				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-				return
-			}
-
-			if err = yaml.Unmarshal(yamlData, v); err != nil {
-				log.Warnf("config: failed parsing values in %s (%s)", clean.Log(fileName), err)
-				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-				return
-			}
-		}
 
 		if err := c.BindJSON(&v); err != nil {
 			AbortBadRequest(c, err)
 			return
 		}
 
-		yamlData, err := yaml.Marshal(v)
-
-		if err != nil {
-			log.Errorf("config: %s (marshal yaml)", err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-			return
-		}
-
-		// Make sure directory exists.
-		if err = fs.MkdirAll(filepath.Dir(fileName)); err != nil {
-			log.Errorf("config: failed to create config path %s (%s)", filepath.Dir(fileName), err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-			return
-		}
-
-		// Write YAML data to file.
-		if err = fs.WriteFile(fileName, yamlData, fs.ModeConfigFile); err != nil {
-			log.Errorf("config: failed writing values to %s (%s)", clean.Log(fileName), err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-			return
-		}
-
-		// Reload options.
-		if err = conf.Options().Load(fileName); err != nil {
-			log.Warnf("config: failed loading values from %s (%s)", clean.Log(fileName), err)
+		if _, err := conf.SaveOptionsPatch(v); err != nil {
+			log.Errorf("config: failed saving options patch (%s)", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}

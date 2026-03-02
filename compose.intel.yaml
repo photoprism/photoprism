@@ -126,10 +126,13 @@ services:
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
       PHOTOPRISM_INIT: "https intel tensorflow"
-      ## External dependencies and tools:
+      ## Additional dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
       GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
       CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
+      CLAUDE_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/claude"
+      GH_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/gh"
+      GH_REPO: "photoprism/photoprism"
     ## Share hardware devices with FFmpeg for hardware video transcoding:
     devices:
       - "/dev/dri:/dev/dri"

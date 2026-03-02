@@ -59,7 +59,7 @@ type cacheEntry struct {
 	FetchedAt int64       `json:"fetchedAt"`
 }
 
-// Verifier validates Portal-issued JWTs on Nodes using JWKS with caching.
+// Verifier validates Portal-issued JWTs on instances and services using JWKS with caching.
 type Verifier struct {
 	conf *config.Config
 

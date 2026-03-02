@@ -359,6 +359,21 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 			}
 		}
 
+		// Check if the DBMS AuthID fix has been applied?
+		version := migrate.FirstOrCreateVersion(db, migrate.NewVersion("DBMS AuthID Fix", "Any Editions"))
+		if version.NeedsMigration() {
+			if err := migrate.ConvertDBMSAuthIDDataTypes(db); err != nil {
+				log.Errorf("migrate: could not apply dbms auth_id fix : %v", err)
+				version.Error = err.Error()
+				version.Save(db)
+			} else {
+				version.Migrated(db)
+				log.Debug("migrate: DBMS AuthID fix migrated")
+			}
+		} else {
+			log.Debug("migrate: DBMS AuthID fix skipped")
+		}
+
 		// Setup required explicit join tables
 		err := db.SetupJoinTable(&Photo{}, "Albums", &PhotoAlbum{})
 		if err != nil {

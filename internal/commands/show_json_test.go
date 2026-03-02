@@ -184,6 +184,62 @@ func TestShowConfigOptions_MarkdownSections(t *testing.T) {
 	}
 }
 
+func TestShowConfigOptions_MarkdownServicesCIDRSectionOrder(t *testing.T) {
+	out, err := RunWithTestContext(ShowConfigOptionsCommand, []string{"config-options", "--md"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	networkingHeading := strings.Index(out, "### Networking")
+	proxyProtoHTTPS := strings.Index(out, "PHOTOPRISM_PROXY_PROTO_HTTPS")
+	servicesCIDR := strings.Index(out, "PHOTOPRISM_SERVICES_CIDR")
+	disableTLS := strings.Index(out, "PHOTOPRISM_DISABLE_TLS")
+
+	if networkingHeading < 0 || proxyProtoHTTPS < 0 || servicesCIDR < 0 || disableTLS < 0 {
+		t.Fatalf("expected networking heading and related rows in output")
+	}
+
+	if servicesCIDR < networkingHeading {
+		t.Fatalf("expected services-cidr row to appear in Networking section")
+	}
+
+	if servicesCIDR < proxyProtoHTTPS {
+		t.Fatalf("expected services-cidr row to appear after proxy-proto-https")
+	}
+
+	if servicesCIDR > disableTLS {
+		t.Fatalf("expected services-cidr row to appear before disable-tls")
+	}
+}
+
+func TestShowConfigYaml_MarkdownServicesCIDRSectionOrder(t *testing.T) {
+	out, err := RunWithTestContext(ShowConfigYamlCommand, []string{"config-yaml", "--md"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	networkingHeading := strings.Index(out, "### Networking")
+	proxyProtoHTTPS := strings.Index(out, "ProxyProtoHttps")
+	servicesCIDR := strings.Index(out, "ServicesCIDR")
+	disableTLS := strings.Index(out, "DisableTLS")
+
+	if networkingHeading < 0 || proxyProtoHTTPS < 0 || servicesCIDR < 0 || disableTLS < 0 {
+		t.Fatalf("expected networking heading and related rows in output")
+	}
+
+	if servicesCIDR < networkingHeading {
+		t.Fatalf("expected ServicesCIDR row to appear in Networking section")
+	}
+
+	if servicesCIDR < proxyProtoHTTPS {
+		t.Fatalf("expected ServicesCIDR row to appear after ProxyProtoHttps")
+	}
+
+	if servicesCIDR > disableTLS {
+		t.Fatalf("expected ServicesCIDR row to appear before DisableTLS")
+	}
+}
+
 func TestShowFileFormats_JSON(t *testing.T) {
 	out, err := RunWithTestContext(ShowFileFormatsCommand, []string{"file-formats", "--json"})
 

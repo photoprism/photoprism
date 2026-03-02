@@ -2,6 +2,7 @@ package vision
 
 import (
 	"bytes"
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -73,4 +74,93 @@ func TestApiRequestWriteLogRedactsBase64(t *testing.T) {
 	if !strings.Contains(output, "https://example.test/image.jpg") {
 		t.Errorf("expected https url to remain unchanged: %s", output)
 	}
+}
+
+func TestApiRequestJSONThinkOmitempty(t *testing.T) {
+	t.Run("OmitWhenEmpty", func(t *testing.T) {
+		req := &ApiRequest{
+			Model:          "qwen3-vl:4b",
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		data, err := req.JSON()
+		if err != nil {
+			t.Fatalf("json marshal failed: %v", err)
+		}
+
+		var payload map[string]any
+		if err := json.Unmarshal(data, &payload); err != nil {
+			t.Fatalf("json unmarshal failed: %v", err)
+		}
+
+		if _, ok := payload["think"]; ok {
+			t.Fatalf("expected think field to be omitted, payload: %s", string(data))
+		}
+	})
+
+	t.Run("IncludeWhenSet", func(t *testing.T) {
+		req := &ApiRequest{
+			Model:          "gpt-oss:20b",
+			Think:          "low",
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		data, err := req.JSON()
+		if err != nil {
+			t.Fatalf("json marshal failed: %v", err)
+		}
+
+		var payload map[string]any
+		if err := json.Unmarshal(data, &payload); err != nil {
+			t.Fatalf("json unmarshal failed: %v", err)
+		}
+
+		if got, ok := payload["think"].(string); !ok || got != "low" {
+			t.Fatalf("expected think=low, got %#v", payload["think"])
+		}
+	})
+
+	t.Run("StringFalseSerializedAsBool", func(t *testing.T) {
+		req := &ApiRequest{
+			Model:          "qwen3-vl:4b",
+			Think:          "false",
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		data, err := req.JSON()
+		if err != nil {
+			t.Fatalf("json marshal failed: %v", err)
+		}
+
+		var payload map[string]any
+		if err := json.Unmarshal(data, &payload); err != nil {
+			t.Fatalf("json unmarshal failed: %v", err)
+		}
+
+		if got, ok := payload["think"].(bool); !ok || got {
+			t.Fatalf("expected think=false bool, got %#v", payload["think"])
+		}
+	})
+
+	t.Run("StringTrueSerializedAsBool", func(t *testing.T) {
+		req := &ApiRequest{
+			Model:          "qwen3-vl:4b",
+			Think:          "true",
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		data, err := req.JSON()
+		if err != nil {
+			t.Fatalf("json marshal failed: %v", err)
+		}
+
+		var payload map[string]any
+		if err := json.Unmarshal(data, &payload); err != nil {
+			t.Fatalf("json unmarshal failed: %v", err)
+		}
+
+		if got, ok := payload["think"].(bool); !ok || !got {
+			t.Fatalf("expected think=true bool, got %#v", payload["think"])
+		}
+	})
 }

@@ -43,6 +43,7 @@ const (
 	ActionReact     Permission = "react"
 	ActionPublish   Permission = "publish"
 	ActionSubscribe Permission = "subscribe"
+	ActionAudit     Permission = "audit"
 	ActionManage    Permission = "manage"
 	ActionManageOwn Permission = "manage_own"
 )

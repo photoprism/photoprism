@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
@@ -13,9 +14,14 @@ import (
 
 func TestClusterNodesMod_LegacyAliasAppToInstance(t *testing.T) {
 	c := get.Config()
+	prevEdition := c.Options().Edition
 	prevRole := c.Options().NodeRole
+	c.Options().Edition = config.Portal
 	c.Options().NodeRole = cluster.RolePortal
-	t.Cleanup(func() { c.Options().NodeRole = prevRole })
+	t.Cleanup(func() {
+		c.Options().Edition = prevEdition
+		c.Options().NodeRole = prevRole
+	})
 
 	r, err := reg.NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)
@@ -35,9 +41,14 @@ func TestClusterNodesMod_LegacyAliasAppToInstance(t *testing.T) {
 
 func TestClusterNodesMod_InvalidRole(t *testing.T) {
 	c := get.Config()
+	prevEdition := c.Options().Edition
 	prevRole := c.Options().NodeRole
+	c.Options().Edition = config.Portal
 	c.Options().NodeRole = cluster.RolePortal
-	t.Cleanup(func() { c.Options().NodeRole = prevRole })
+	t.Cleanup(func() {
+		c.Options().Edition = prevEdition
+		c.Options().NodeRole = prevRole
+	})
 
 	r, err := reg.NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)

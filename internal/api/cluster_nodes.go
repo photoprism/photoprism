@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
-	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -208,11 +209,17 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 
 		uuid := c.Param("uuid")
 
+		// Validate id to avoid path traversal and unexpected file access.
+		if !isSafeNodeID(uuid) {
+			AbortEntityNotFound(c)
+			return
+		}
+
 		var req struct {
-			Role         string            `json:"Role"`
+			Role         *string           `json:"Role"`
 			Labels       map[string]string `json:"Labels"`
-			AdvertiseUrl string            `json:"AdvertiseUrl"`
-			SiteUrl      string            `json:"SiteUrl"`
+			AdvertiseUrl *string           `json:"AdvertiseUrl"`
+			SiteUrl      *string           `json:"SiteUrl"`
 		}
 
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -234,20 +241,49 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			return
 		}
 
-		if req.Role != "" {
-			n.Role = clean.TypeLowerDash(req.Role)
+		if req.Role != nil {
+			role := cluster.NormalizeNodeRole(*req.Role)
+
+			if role != cluster.RoleInstance && role != cluster.RoleService {
+				AbortBadRequest(c, fmt.Errorf("invalid role"))
+				return
+			}
+
+			n.Role = role
 		}
 
 		if req.Labels != nil {
 			n.Labels = req.Labels
 		}
 
-		if req.AdvertiseUrl != "" {
-			n.AdvertiseUrl = req.AdvertiseUrl
+		if req.AdvertiseUrl != nil {
+			advertise := strings.TrimSpace(*req.AdvertiseUrl)
+
+			if advertise == "" {
+				n.AdvertiseUrl = ""
+			} else {
+				if !validateAdvertiseURL(advertise) {
+					AbortBadRequest(c, fmt.Errorf("invalid advertise url"))
+					return
+				}
+
+				n.AdvertiseUrl = normalizeSiteURL(advertise)
+			}
 		}
 
-		if u := normalizeSiteURL(req.SiteUrl); u != "" {
-			n.SiteUrl = u
+		if req.SiteUrl != nil {
+			siteUrl := strings.TrimSpace(*req.SiteUrl)
+
+			if siteUrl == "" {
+				n.SiteUrl = ""
+			} else {
+				if !validateSiteURL(siteUrl) {
+					AbortBadRequest(c, fmt.Errorf("invalid site url"))
+					return
+				}
+
+				n.SiteUrl = normalizeSiteURL(siteUrl)
+			}
 		}
 
 		n.UpdatedAt = time.Now().UTC().Format(time.RFC3339)

@@ -3,13 +3,20 @@ package config
 import (
 	"fmt"
 	"reflect"
-	"slices"
 	"strings"
+
+	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/list"
 )
 
 // Report returns global config values as a table for reporting.
 func (o Options) Report() (rows [][]string, cols []string) {
 	v := reflect.ValueOf(o)
+	activeTags := []string{Features}
+
+	if o.NodeRole == cluster.RolePortal {
+		activeTags = append(activeTags, Portal)
+	}
 
 	cols = []string{"Name", "Type", "CLI Flag"}
 	rows = make([][]string, 0, v.NumField())
@@ -28,7 +35,7 @@ func (o Options) Report() (rows [][]string, cols []string) {
 		// Skip options by feature set if tags are set.
 		if tags := v.Type().Field(i).Tag.Get("tags"); tags == "" {
 			// Report.
-		} else if !slices.Contains(strings.Split(tags, ","), Features) {
+		} else if !list.ContainsAny(strings.Split(tags, ","), activeTags) {
 			// Skip.
 			continue
 		}

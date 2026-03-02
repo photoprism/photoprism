@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** November 22, 2025
+**Last Updated:** February 26, 2026
 
 ### Overview
 
@@ -44,7 +44,8 @@
 ### Configuration & Safety Notes
 
 - Compression: only gzip is enabled; brotli requests log a notice.
-- Trusted proxies/platform headers are read from config; misconfiguration may expose client IP spoofing—keep the list tight.
+- Trusted proxies/platform headers are read from config; keep the list tight.
+- If no trusted proxy ranges are configured (or the configured ranges are invalid), proxy trust is disabled and client IP resolution falls back to the TCP peer address.
 - AutoTLS: uses `autocert` and spins up a redirect listener with explicit read/write timeouts; ensure ports 80/443 are reachable.
 - Unix sockets: optional `force` query removes stale sockets; permissions can be set via `mode` query.
 - Health endpoints (`/livez`, `/health`, `/healthz`, `/readyz`) return `Cache-Control: no-store` and `Access-Control-Allow-Origin: *`.

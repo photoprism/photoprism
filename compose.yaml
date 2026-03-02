@@ -65,7 +65,7 @@ services:
       ## OpenID Connect (pre-configured for local tests):
       ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
       ## the seeded "photoprism-develop" client in scripts/sql/mariadb-init.sql
-      ## allows callbacks for /api/v1/oidc/redirect and /p/* paths
+      ## allows callbacks for /api/v1/oidc/redirect and /i/* paths
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
       PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
       PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
@@ -144,10 +144,13 @@ services:
       PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
       OLLAMA_BASE_URL: "http://ollama:11434"         # use "https://ollama.com" for Ollama Cloud
       OLLAMA_API_KEY: ""                             # API key required to access Ollama (optional)
-      ## External dependencies and tools:
+      ## Additional dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
       GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
       CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
+      CLAUDE_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/claude"
+      GH_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/gh"
+      GH_REPO: "photoprism/photoprism"
     ## Shared devices for video hardware transcoding (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding

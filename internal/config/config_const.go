@@ -9,16 +9,19 @@ import (
 // ApiUri defines the standard path for handling REST requests.
 const ApiUri = "/api/v1"
 
-// DownloadUri defines the file download URI based on the ApiUri.
+// DownloadUri defines the default file download URI based on the ApiUri.
 const DownloadUri = ApiUri + "/dl"
 
-// LibraryUri defines the path for user interface routes.
-const LibraryUri = "/library"
+// DefaultFrontendUri specifies the default base path for accessing the web interface.
+const DefaultFrontendUri = "/library"
 
-// StaticUri defines the standard path for serving static content.
+// FrontendUri specifies the default base path used by FrontendPath() when no custom path is configured.
+var FrontendUri = DefaultFrontendUri
+
+// StaticUri defines the URI path for serving static content.
 const StaticUri = "/static"
 
-// CustomStaticUri defines the standard path for serving custom static content.
+// CustomStaticUri defines the URI path for serving custom static content.
 const CustomStaticUri = "/c/static"
 
 // ThemeUri defines the optional theme URI path for serving theme assets.

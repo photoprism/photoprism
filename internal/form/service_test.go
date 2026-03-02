@@ -45,13 +45,13 @@ func TestService_Discovery(t *testing.T) {
 	t.Run("ErrorEqualNil", func(t *testing.T) {
 		service := Service{AccName: "Foo", AccOwner: "bar", AccURL: "https://www.photoprism.app/", AccType: "test", SyncDownload: false, AccShare: true}
 
-		err := service.Discovery()
+		err := service.Discovery("")
 		assert.Equal(t, nil, err)
 	})
 	t.Run("ErrorNotEqualNil", func(t *testing.T) {
 		service := Service{AccName: "XXX", AccOwner: "bar"}
 
-		err := service.Discovery()
+		err := service.Discovery("")
 		assert.Equal(t, "service URL is empty", err.Error())
 	})
 }

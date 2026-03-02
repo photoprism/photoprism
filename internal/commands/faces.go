@@ -258,7 +258,11 @@ func facesIndexAction(ctx *cli.Context) error {
 	defer conf.Shutdown()
 
 	// Use first argument to limit scope if set.
-	subPath := strings.TrimSpace(ctx.Args().First())
+	subPath, err := sanitizeSubfolderArg(ctx.Args().First())
+
+	if err != nil {
+		return err
+	}
 
 	if subPath == "" {
 		log.Infof("finding faces in %s", clean.Log(conf.OriginalsPath()))

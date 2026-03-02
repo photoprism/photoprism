@@ -52,20 +52,36 @@ func TestConfig_ApiUri(t *testing.T) {
 	assert.Equal(t, "/foo"+ApiUri, c.ApiUri())
 }
 
-func TestConfig_LibraryUri(t *testing.T) {
+func TestConfig_FrontendUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/library", c.LibraryUri(""))
-	assert.Equal(t, "/library/", c.LibraryUri("/"))
-	assert.Equal(t, "/library/browse", c.LibraryUri("/browse"))
+	assert.Equal(t, "/library", c.FrontendUri(""))
+	assert.Equal(t, "/library/", c.FrontendUri("/"))
+	assert.Equal(t, "/library/browse", c.FrontendUri("/browse"))
 	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "/library", c.LibraryUri(""))
-	assert.Equal(t, "/library/", c.LibraryUri("/"))
-	assert.Equal(t, "/library/browse", c.LibraryUri("/browse"))
+	assert.Equal(t, "/library", c.FrontendUri(""))
+	assert.Equal(t, "/library/", c.FrontendUri("/"))
+	assert.Equal(t, "/library/browse", c.FrontendUri("/browse"))
 	c.options.SiteUrl = "http://foo:2342/foo/"
-	assert.Equal(t, "/foo/library", c.LibraryUri(""))
-	assert.Equal(t, "/foo/library/", c.LibraryUri("/"))
-	assert.Equal(t, "/foo/library/browse", c.LibraryUri("/browse"))
+	assert.Equal(t, "/foo/library", c.FrontendUri(""))
+	assert.Equal(t, "/foo/library/", c.FrontendUri("/"))
+	assert.Equal(t, "/foo/library/browse", c.FrontendUri("/browse"))
+
+	c.options.FrontendUri = "/portal/admin/"
+	assert.Equal(t, "/foo/portal/admin", c.FrontendUri(""))
+	assert.Equal(t, "/foo/portal/admin/", c.FrontendUri("/"))
+	assert.Equal(t, "/foo/portal/admin/browse", c.FrontendUri("/browse"))
+
+	c.options.FrontendUri = "  "
+	assert.Equal(t, "/foo/library", c.FrontendUri(""))
+}
+
+func TestNormalizeFrontendPath(t *testing.T) {
+	assert.Equal(t, "", normalizeFrontendPath(""))
+	assert.Equal(t, "", normalizeFrontendPath(" "))
+	assert.Equal(t, "/library", normalizeFrontendPath("/library"))
+	assert.Equal(t, "/portal/admin", normalizeFrontendPath("portal/admin/"))
+	assert.Equal(t, "", normalizeFrontendPath("../admin"))
 }
 
 func TestConfig_ContentUri(t *testing.T) {

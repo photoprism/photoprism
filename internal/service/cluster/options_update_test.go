@@ -11,7 +11,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
-	clusternode "github.com/photoprism/photoprism/internal/service/cluster/node"
 )
 
 func TestOptionsUpdate_IsZero(t *testing.T) {
@@ -46,7 +45,7 @@ func TestOptionsUpdate_Apply(t *testing.T) {
 	update.SetDatabaseName("cluster_database")
 	update.SetDatabaseUser("cluster_user")
 
-	written, err := clusternode.ApplyOptionsUpdate(conf, update)
+	written, err := conf.SaveClusterOptionsUpdate(update)
 	require.NoError(t, err)
 	assert.True(t, written)
 
@@ -64,7 +63,7 @@ func TestOptionsUpdate_Apply(t *testing.T) {
 
 	// Applying an empty update should be a no-op.
 	empty := cluster.OptionsUpdate{}
-	written, err = clusternode.ApplyOptionsUpdate(conf, empty)
+	written, err = conf.SaveClusterOptionsUpdate(empty)
 	require.NoError(t, err)
 	assert.False(t, written)
 }

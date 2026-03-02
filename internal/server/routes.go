@@ -210,7 +210,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.GetStatus(APIv1)
 	api.GetErrors(APIv1)
 	api.DeleteErrors(APIv1)
-	api.SendFeedback(APIv1)
 	api.Connect(APIv1)
 	api.WebSocket(APIv1)
 	api.GetMetrics(APIv1)

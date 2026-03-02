@@ -13,6 +13,43 @@ func TestConfig_Report(t *testing.T) {
 	m := NewConfig(CliTestContext())
 	r, _ := m.Report()
 	assert.GreaterOrEqual(t, len(r), 1)
+
+	values := make(map[string]string, len(r))
+
+	for _, row := range r {
+		if len(row) < 2 {
+			continue
+		}
+
+		values[row[0]] = row[1]
+	}
+
+	assert.Equal(t, m.FrontendUri(""), values["frontend-uri"])
+}
+
+func TestConfig_ReportServicesCIDROrder(t *testing.T) {
+	conf := NewConfig(CliTestContext())
+	rows, _ := conf.Report()
+
+	indexOf := func(name string) int {
+		for i := range rows {
+			if len(rows[i]) > 0 && rows[i][0] == name {
+				return i
+			}
+		}
+
+		return -1
+	}
+
+	proxyProtoHTTPS := indexOf("proxy-proto-https")
+	servicesCIDR := indexOf("services-cidr")
+	disableTLS := indexOf("disable-tls")
+
+	assert.Greater(t, proxyProtoHTTPS, -1)
+	assert.Greater(t, servicesCIDR, -1)
+	assert.Greater(t, disableTLS, -1)
+	assert.Greater(t, servicesCIDR, proxyProtoHTTPS)
+	assert.Less(t, servicesCIDR, disableTLS)
 }
 
 func TestConfig_ReportDatabaseSection(t *testing.T) {
@@ -117,6 +154,7 @@ func TestConfig_ReportPortalSettingsVisibility(t *testing.T) {
 	})
 	t.Run("PortalIncludesPortalSettings", func(t *testing.T) {
 		conf := NewConfig(CliTestContext())
+		conf.options.Edition = Portal
 		conf.options.NodeRole = cluster.RolePortal
 		conf.options.PortalProxy = true
 		conf.options.PortalProxyPrefix = "/instance/"
@@ -176,6 +214,7 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 	t.Run("PortalIncludesThemeURL", func(t *testing.T) {
 		Features = Community
 		conf := NewConfig(CliTestContext())
+		conf.options.Edition = Portal
 		conf.options.NodeRole = cluster.RolePortal
 		conf.SetThemeUrl("https://demo:secret@cdn.photoprism.app/theme.zip")
 

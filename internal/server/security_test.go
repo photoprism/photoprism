@@ -22,8 +22,8 @@ func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
 	r := gin.New()
 	r.Use(Security(conf))
 
-	proxyPath := conf.BaseUri(proxy.PathPrefix + "test/library/login")
-	regularPath := conf.BaseUri("/library/login")
+	proxyPath := conf.BaseUri(proxy.PathPrefix + "test" + conf.FrontendUri("/login"))
+	regularPath := conf.FrontendUri("/login")
 
 	r.GET(proxyPath, func(c *gin.Context) {
 		c.String(http.StatusOK, "proxy")

@@ -36,21 +36,21 @@ func TestForwardedProto(t *testing.T) {
 }
 
 func TestRewriteLocation(t *testing.T) {
-	prefix := "/p/acme/"
+	prefix := "/i/acme/"
 	host := "portal.example.com"
 
-	assert.Equal(t, "/p/acme/library", RewriteLocation("/library", prefix, host))
-	assert.Equal(t, "/p/acme/", RewriteLocation("/", prefix, host))
-	assert.Equal(t, "https://portal.example.com/p/acme/library", RewriteLocation("https://portal.example.com/library", prefix, host))
+	assert.Equal(t, "/i/acme/library", RewriteLocation("/library", prefix, host))
+	assert.Equal(t, "/i/acme/", RewriteLocation("/", prefix, host))
+	assert.Equal(t, "https://portal.example.com/i/acme/library", RewriteLocation("https://portal.example.com/library", prefix, host))
 	assert.Equal(t, "https://other.example.com/library", RewriteLocation("https://other.example.com/library", prefix, host))
 }
 
 func TestRewriteSetCookiePath(t *testing.T) {
-	prefix := "/p/acme/"
+	prefix := "/i/acme/"
 
-	assert.Equal(t, "session=1; Path=/p/acme/; HttpOnly", RewriteSetCookiePath("session=1; Path=/; HttpOnly", prefix))
-	assert.Equal(t, "session=1; HttpOnly; Path=/p/acme/", RewriteSetCookiePath("session=1; HttpOnly", prefix))
-	assert.Equal(t, "session=1; Path=/p/acme/; HttpOnly", RewriteSetCookiePath("session=1; Path=/p/acme/; HttpOnly", prefix))
+	assert.Equal(t, "session=1; Path=/i/acme/; HttpOnly", RewriteSetCookiePath("session=1; Path=/; HttpOnly", prefix))
+	assert.Equal(t, "session=1; HttpOnly; Path=/i/acme/", RewriteSetCookiePath("session=1; HttpOnly", prefix))
+	assert.Equal(t, "session=1; Path=/i/acme/; HttpOnly", RewriteSetCookiePath("session=1; Path=/i/acme/; HttpOnly", prefix))
 }
 
 func TestHostMatch(t *testing.T) {
@@ -67,20 +67,20 @@ func TestRewriteDestinationHost(t *testing.T) {
 	t.Run("RewritesMatchingHost", func(t *testing.T) {
 		req, err := http.NewRequest(http.MethodGet, "http://portal.example.com", nil)
 		require.NoError(t, err)
-		req.Header.Set("Destination", "http://portal.example.com/p/acme/import/dst.txt")
+		req.Header.Set("Destination", "http://portal.example.com/i/acme/import/dst.txt")
 
 		RewriteDestinationHost(req, "portal.example.com", upstream)
 
-		assert.Equal(t, "http://instance.internal:2342/p/acme/import/dst.txt", req.Header.Get("Destination"))
+		assert.Equal(t, "http://instance.internal:2342/i/acme/import/dst.txt", req.Header.Get("Destination"))
 	})
 
 	t.Run("SkipsDifferentHost", func(t *testing.T) {
 		req, err := http.NewRequest(http.MethodGet, "http://portal.example.com", nil)
 		require.NoError(t, err)
-		req.Header.Set("Destination", "http://other.example.com/p/acme/import/dst.txt")
+		req.Header.Set("Destination", "http://other.example.com/i/acme/import/dst.txt")
 
 		RewriteDestinationHost(req, "portal.example.com", upstream)
 
-		assert.Equal(t, "http://other.example.com/p/acme/import/dst.txt", req.Header.Get("Destination"))
+		assert.Equal(t, "http://other.example.com/i/acme/import/dst.txt", req.Header.Get("Destination"))
 	})
 }

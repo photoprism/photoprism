@@ -38,7 +38,7 @@ func ShareToken(router *gin.RouterGroup) {
 		clientConfig := conf.ClientShare()
 		clientConfig.SiteUrl += path.Join("s", token)
 
-		uri := conf.LibraryUri("/albums")
+		uri := conf.FrontendUri("/albums")
 		c.HTML(http.StatusOK, "share.gohtml", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})
 }
@@ -82,7 +82,7 @@ func ShareTokenShared(router *gin.RouterGroup) {
 			}
 		}
 
-		uri := conf.LibraryUri(path.Join("/albums", uid, "view"))
+		uri := conf.FrontendUri(path.Join("/albums", uid, "view"))
 
 		c.HTML(http.StatusOK, "share.gohtml", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
 	})

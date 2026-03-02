@@ -180,6 +180,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// URIs.
 		{"base-uri", c.BaseUri("/")},
+		{"frontend-uri", c.FrontendUri("")},
 		{"api-uri", c.ApiUri()},
 		{"static-uri", c.StaticUri()},
 		{"content-uri", c.ContentUri()},
@@ -214,7 +215,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
 		{"advertise-url", clean.UriRedacted(c.AdvertiseUrl())},
 
-		// Proxy Servers.
+		// Networking.
 		{"https-proxy", clean.UriRedacted(c.HttpsProxy())},
 		{"https-proxy-insecure", fmt.Sprintf("%t", c.HttpsProxyInsecure())},
 		{"trusted-platform", c.TrustedPlatform()},
@@ -222,6 +223,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"proxy-client-header", c.ProxyClientHeader()},
 		{"proxy-proto-header", strings.Join(c.ProxyProtoHeader(), ", ")},
 		{"proxy-proto-https", strings.Join(c.ProxyProtoHttps(), ", ")},
+		{"services-cidr", c.ServicesCIDR()},
 
 		// Web Server.
 		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},

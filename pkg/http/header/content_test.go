@@ -26,6 +26,7 @@ func TestContent(t *testing.T) {
 	t.Run("Types", func(t *testing.T) {
 		assert.Equal(t, "application/x-www-form-urlencoded", ContentTypeForm)
 		assert.Equal(t, "multipart/form-data", ContentTypeMultipart)
+		assert.Equal(t, "application/manifest+json", ContentTypeManifest)
 		assert.Equal(t, "application/json", ContentTypeJson)
 		assert.Equal(t, "application/json; charset=utf-8", ContentTypeJsonUtf8)
 		assert.Equal(t, "application/javascript", ContentTypeJavaScript)

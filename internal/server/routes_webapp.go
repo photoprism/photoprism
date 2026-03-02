@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"regexp"
 
@@ -23,7 +24,7 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 		return
 	}
 
-	// Serve user interface bootstrap template on all routes starting with "/library".
+	// Serve user interface bootstrap template on all routes under the configured frontend base path.
 	ui := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
@@ -45,14 +46,17 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 		c.HTML(http.StatusOK, conf.TemplateName(), values)
 	}
 
-	// HTML bootstrap for the SPA (served from /library/**).
-	router.Any(conf.LibraryUri("/*path"), ui)
+	// HTML bootstrap for the SPA (served from FrontendUri/**).
+	router.Any(conf.FrontendUri("/*path"), ui)
 
 	// Serve the user interface manifest file.
 	manifest := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.ContentType, header.ContentTypeJsonUtf8)
-		c.IndentedJSON(200, conf.AppManifest())
+		if body, err := json.MarshalIndent(conf.AppManifest(), "", "    "); err != nil {
+			api.Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
+		} else {
+			c.Data(http.StatusOK, header.ContentTypeManifest, body)
+		}
 	}
 
 	// Web App Manifest (served at /manifest.json under the base URI).

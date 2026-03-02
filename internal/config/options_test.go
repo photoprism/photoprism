@@ -1,9 +1,13 @@
 package config
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -42,6 +46,60 @@ func TestOptions_SetOptionsFromFile(t *testing.T) {
 	assert.NotEmpty(t, c.DatabaseDriver)
 	assert.NotEmpty(t, c.DatabaseDSN)
 	assert.Equal(t, 81, c.HttpPort)
+}
+
+func TestOptions_LoadDoesNotOverrideEdition(t *testing.T) {
+	c := NewOptions(NewTestContext([]string{}))
+	assert.Equal(t, "ce", c.Edition)
+	assert.Equal(t, "PhotoPrism", c.Name)
+	assert.Equal(t, "PhotoPrism®", c.About)
+	assert.Equal(t, "test", c.Version)
+	assert.Equal(t, "(c) 2018-2025 PhotoPrism UG. All rights reserved.", c.Copyright)
+
+	dir := t.TempDir()
+	fileName := filepath.Join(dir, "options.yml")
+	content := strings.Join([]string{
+		"Edition: portal",
+		"Name: Evil Name",
+		"About: Evil About",
+		"Version: 9.9.9",
+		"Copyright: Evil Copyright",
+		"HttpPort: 4242",
+		"",
+	}, "\n")
+	assert.NoError(t, os.WriteFile(fileName, []byte(content), fs.ModeFile))
+
+	assert.NoError(t, c.Load(fileName))
+	assert.Equal(t, "ce", c.Edition)
+	assert.Equal(t, "PhotoPrism", c.Name)
+	assert.Equal(t, "PhotoPrism®", c.About)
+	assert.Equal(t, "test", c.Version)
+	assert.Equal(t, "(c) 2018-2025 PhotoPrism UG. All rights reserved.", c.Copyright)
+	assert.Equal(t, 4242, c.HttpPort)
+}
+
+func TestOptions_MarshalDoesNotIncludeBuildMetadata(t *testing.T) {
+	c := NewOptions(NewTestContext([]string{}))
+	c.HttpPort = 4242
+
+	data, err := yaml.Marshal(c)
+	assert.NoError(t, err)
+
+	var values map[string]any
+	assert.NoError(t, yaml.Unmarshal(data, &values))
+
+	_, hasName := values["Name"]
+	_, hasAbout := values["About"]
+	_, hasEdition := values["Edition"]
+	_, hasVersion := values["Version"]
+	_, hasCopyright := values["Copyright"]
+
+	assert.False(t, hasName)
+	assert.False(t, hasAbout)
+	assert.False(t, hasEdition)
+	assert.False(t, hasVersion)
+	assert.False(t, hasCopyright)
+	assert.Equal(t, 4242, values["HttpPort"])
 }
 
 func TestOptions_ExpandFilenames(t *testing.T) {

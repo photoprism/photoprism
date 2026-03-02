@@ -204,4 +204,52 @@ func TestOllamaParserFallbacks(t *testing.T) {
 			t.Fatalf("expected cat label, got %+v", resp.Result.Labels)
 		}
 	})
+	t.Run("CaptionFromThinkingField", func(t *testing.T) {
+		req := &ApiRequest{}
+		payload := ollama.Response{
+			Response: "",
+			Thinking: "A tabby cat with a white chest stares upward.",
+		}
+		raw, err := json.Marshal(payload)
+		if err != nil {
+			t.Fatalf("marshal: %v", err)
+		}
+
+		parser := ollamaParser{}
+		resp, err := parser.Parse(context.Background(), req, raw, 200)
+		if err != nil {
+			t.Fatalf("parse failed: %v", err)
+		}
+
+		if resp.Result.Caption == nil {
+			t.Fatal("expected caption result")
+		}
+		if resp.Result.Caption.Text != "A tabby cat with a white chest stares upward." {
+			t.Fatalf("unexpected caption: %q", resp.Result.Caption.Text)
+		}
+	})
+	t.Run("CaptionPrefersResponseOverThinking", func(t *testing.T) {
+		req := &ApiRequest{}
+		payload := ollama.Response{
+			Response: "A tabby cat with a white chest stares upward.",
+			Thinking: "Reasoning text that should not become the caption.",
+		}
+		raw, err := json.Marshal(payload)
+		if err != nil {
+			t.Fatalf("marshal: %v", err)
+		}
+
+		parser := ollamaParser{}
+		resp, err := parser.Parse(context.Background(), req, raw, 200)
+		if err != nil {
+			t.Fatalf("parse failed: %v", err)
+		}
+
+		if resp.Result.Caption == nil {
+			t.Fatal("expected caption result")
+		}
+		if resp.Result.Caption.Text != "A tabby cat with a white chest stares upward." {
+			t.Fatalf("expected response field caption, got %q", resp.Result.Caption.Text)
+		}
+	})
 }

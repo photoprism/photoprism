@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"net"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -120,10 +122,139 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.Equal(t, dsn.DriverMySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
+
+	// Secret must be stored in the secret file, not written inline to options.yml.
+	content, readErr := os.ReadFile(c.OptionsYaml())
+	assert.NoError(t, readErr)
+
+	var persisted map[string]any
+	assert.NoError(t, yaml.Unmarshal(content, &persisted))
+	_, hasInlineSecret := persisted["NodeClientSecret"]
+	assert.False(t, hasInlineSecret)
+
+	info, statErr := os.Stat(c.NodeClientSecretFile())
+	assert.NoError(t, statErr)
+	if statErr == nil {
+		assert.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
+	}
+}
+
+func TestRegisterAuthToken_UsesJoinTokenWithoutNodeCredentials(t *testing.T) {
+	c := newBootstrapTestConfig(t, "bootstrap-auth-join")
+	portal, err := url.Parse("https://portal.example.test")
+	assert.NoError(t, err)
+
+	token, err := registerAuthToken(c, portal, cluster.ExampleJoinToken)
+	assert.NoError(t, err)
+	assert.Equal(t, cluster.ExampleJoinToken, token)
+}
+
+func TestRegisterAuthToken_UsesOAuthWithNodeCredentials(t *testing.T) {
+	var tokenCalls int
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/oauth/token" {
+			http.NotFound(w, r)
+			return
+		}
+
+		tokenCalls++
+		assert.Equal(t, http.MethodPost, r.Method)
+		assert.Equal(
+			t,
+			"Basic "+base64.StdEncoding.EncodeToString([]byte(cluster.ExampleClientID+":"+cluster.ExampleClientSecret)),
+			r.Header.Get("Authorization"),
+		)
+		assert.NoError(t, r.ParseForm())
+		assert.Equal(t, "client_credentials", r.Form.Get("grant_type"))
+		assert.Equal(t, "cluster", r.Form.Get("scope"))
+
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"access_token":"oauth-node-token","token_type":"Bearer"}`))
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-auth-oauth")
+	c.Options().NodeClientID = cluster.ExampleClientID
+	c.Options().NodeClientSecret = cluster.ExampleClientSecret
+
+	portal, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+
+	token, err := registerAuthToken(c, portal, cluster.ExampleJoinToken)
+	assert.NoError(t, err)
+	assert.Equal(t, "oauth-node-token", token)
+	assert.Equal(t, 1, tokenCalls)
+}
+
+func TestRegisterAuthToken_OAuthFailure(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/oauth/token" {
+			http.NotFound(w, r)
+			return
+		}
+
+		w.WriteHeader(http.StatusUnauthorized)
+	}))
+
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-auth-failure")
+	c.Options().NodeClientID = cluster.ExampleClientID
+	c.Options().NodeClientSecret = "stale-secret"
+
+	portal, err := url.Parse(srv.URL)
+	assert.NoError(t, err)
+
+	_, err = registerAuthToken(c, portal, cluster.ExampleJoinToken)
+
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "portal access token request failed")
+		assert.Contains(t, err.Error(), "401")
+	}
+}
+
+func TestInitConfig_DoesNotRetryWithJoinTokenAfterOAuthFailure(t *testing.T) {
+	var tokenCalls int
+	var registerCalls int
+
+	prevTheme := cluster.BootstrapAutoThemeEnabled
+	cluster.BootstrapAutoThemeEnabled = false
+	t.Cleanup(func() {
+		cluster.BootstrapAutoThemeEnabled = prevTheme
+	})
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/v1/oauth/token":
+			tokenCalls++
+			w.WriteHeader(http.StatusUnauthorized)
+		case "/api/v1/cluster/nodes/register":
+			registerCalls++
+			w.WriteHeader(http.StatusCreated)
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-no-refresh-retry")
+	c.Options().PortalUrl = srv.URL
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().NodeName = "pp-node-01"
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().NodeClientID = cluster.ExampleClientID
+	c.Options().NodeClientSecret = "stale-secret"
+
+	assert.NoError(t, InitConfig(c))
+	assert.Equal(t, 1, tokenCalls)
+	assert.Equal(t, 0, registerCalls)
 }
 
 func TestRegister_AllowsHTTPPortalNonLoopback(t *testing.T) {
 	var hits int
+
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/api/v1/cluster/nodes/register" {
 			hits++
@@ -133,15 +264,18 @@ func TestRegister_AllowsHTTPPortalNonLoopback(t *testing.T) {
 		}
 		http.NotFound(w, r)
 	}))
+
 	defer srv.Close()
 
 	origTransport := http.DefaultTransport
 	t.Cleanup(func() { http.DefaultTransport = origTransport })
 
 	baseTransport, ok := origTransport.(*http.Transport)
+
 	if !ok {
 		t.Fatalf("expected http.DefaultTransport to be *http.Transport")
 	}
+
 	transport := baseTransport.Clone()
 	dialer := &net.Dialer{}
 	transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
@@ -202,11 +336,10 @@ func TestThemeInstall_Missing(t *testing.T) {
 			})
 		case "/api/v1/oauth/token":
 			w.Header().Set("Content-Type", "application/json")
-			type tokenResponse struct {
-				AccessToken string `json:"access_token"`
-				TokenType   string `json:"token_type"`
-			}
-			_ = json.NewEncoder(w).Encode(tokenResponse{AccessToken: "tok", TokenType: "Bearer"})
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"access_token": "tok",
+				"token_type":   "Bearer",
+			})
 		case "/api/v1/cluster/theme":
 			w.Header().Set("Content-Type", "application/zip")
 			w.WriteHeader(http.StatusOK)
@@ -264,11 +397,10 @@ func TestThemeInstall_VersionMismatch(t *testing.T) {
 			})
 		case "/api/v1/oauth/token":
 			w.Header().Set("Content-Type", "application/json")
-			type tokenResponse struct {
-				AccessToken string `json:"access_token"`
-				TokenType   string `json:"token_type"`
-			}
-			_ = json.NewEncoder(w).Encode(tokenResponse{AccessToken: "tok", TokenType: "Bearer"})
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"access_token": "tok",
+				"token_type":   "Bearer",
+			})
 		case "/api/v1/cluster/theme":
 			themeHits++
 			w.Header().Set("Content-Type", "application/zip")

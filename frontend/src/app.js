@@ -174,9 +174,9 @@ $config.update().finally(() => {
     }
   });
 
-  // Configure the Vue Router; base path mirrors the library prefix so deep links behave correctly.
+  // Configure the Vue Router; base path mirrors the configured frontend URI so deep links behave correctly.
   const router = createRouter({
-    history: createWebHistory($config.baseUri + "/library/"),
+    history: createWebHistory(`${$config.frontendUri.replace(/\/+$/, "")}/`),
     routes: routes,
     // Apply the last saved scroll position when navigating within the SPA.
     scrollBehavior(to, from, savedPosition) {

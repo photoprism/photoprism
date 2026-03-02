@@ -6,11 +6,12 @@
 UID := $(shell id -u)
 GID := $(shell id -g)
 PWD := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+REPO_ROOT := $(abspath $(PWD)/..)
 NODE_IMAGE ?= node:lts
 
 define DOCKER_NPM
 docker run --rm -it \
-  -v "$(PWD)":/app \
+  -v "$(REPO_ROOT)":/app \
   -w /app \
   --user "$(UID):$(GID)" \
   --read-only --tmpfs /tmp \
@@ -47,11 +48,11 @@ upgrade:
 	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
 npm-install:
 	$(info Installing NPM dependencies...)
-	npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier
+	(cd .. && npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier)
 install: npm-install
 npm-update:
-	$(info Updating NPM dependencies in package.lock and package-lock.json...)
-	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
+	$(info Updating NPM dependencies in package-lock.json...)
+	(cd .. && npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier)
 update: npm-update npm-install
 security-check: # Scan for missing --ignore-scripts and unsafe v-html
 	npm run -s security:scan

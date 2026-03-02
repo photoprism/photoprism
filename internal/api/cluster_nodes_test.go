@@ -13,7 +13,7 @@ import (
 
 func TestClusterEndpoints(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, conf)
 
 	ClusterListNodes(router)
 	ClusterGetNode(router)
@@ -82,7 +82,7 @@ func TestClusterEndpoints(t *testing.T) {
 // Test that ClusterGetNode validates the :uuid path parameter and rejects unsafe values.
 func TestClusterGetNode_UUIDValidation(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, conf)
 
 	// Register route under test.
 	ClusterGetNode(router)
@@ -125,5 +125,18 @@ func TestClusterGetNode_UUIDValidation(t *testing.T) {
 	}
 
 	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+string(longID))
+	assert.Equal(t, http.StatusNotFound, r.Code)
+}
+
+func TestClusterUpdateNode_UUIDValidation(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterUpdateNode(router)
+
+	r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/bad_id", `{"SiteUrl":"https://photos.example.com"}`)
+	assert.Equal(t, http.StatusNotFound, r.Code)
+
+	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/BadID", `{"SiteUrl":"https://photos.example.com"}`)
 	assert.Equal(t, http.StatusNotFound, r.Code)
 }

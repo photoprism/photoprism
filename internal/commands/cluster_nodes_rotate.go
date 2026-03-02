@@ -145,6 +145,15 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			AppVersion:     clean.TypeUnicode(conf.Version()),
 		}
 
+		// Include local node credentials when rotating the current node so the
+		// portal can authorize sensitive mutations.
+		if strings.EqualFold(conf.NodeName(), name) {
+			if id, secret := strings.TrimSpace(conf.NodeClientID()), strings.TrimSpace(conf.NodeClientSecret()); id != "" && secret != "" {
+				payload.ClientID = id
+				payload.ClientSecret = secret
+			}
+		}
+
 		if themeVersion, err := theme.DetectVersion(conf.ThemePath()); err == nil && themeVersion != "" {
 			payload.Theme = themeVersion
 		}

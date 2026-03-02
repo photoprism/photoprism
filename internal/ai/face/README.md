@@ -122,13 +122,13 @@ Additional safeguards were introduced in October 2025 so stubborn clusters are o
 
 ### Configuration Summary
 
-| Setting                  | Default                      | Description                                                                                     |
-|:-------------------------|:-----------------------------|:------------------------------------------------------------------------------------------------|
-| `FACE_ENGINE`            | `auto`                       | Detection engine (`auto`, `pigo`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
-| `FACE_ENGINE_THREADS`    | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads; ignored by Pigo.                                                        |
-| `FACE_ANGLE`             | `-0.3,0,0.3`                 | Detection angles (radians) swept by Pigo.                                                       |
-| `FACE_SCORE`             | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                                |
-| `FACE_OVERLAP`           | `42`                         | Maximum allowed IoU when deduplicating markers.                                                 |
+| Setting               | Default                      | Description                                                                                     |
+|:----------------------|:-----------------------------|:------------------------------------------------------------------------------------------------|
+| `FACE_ENGINE`         | `auto`                       | Detection engine (`auto`, `pigo`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
+| `FACE_ENGINE_THREADS` | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads; ignored by Pigo.                                                        |
+| `FACE_ANGLE`          | `-0.3,0,0.3`                 | Detection angles (radians) swept by Pigo.                                                       |
+| `FACE_SCORE`          | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                                |
+| `FACE_OVERLAP`        | `42`                         | Maximum allowed IoU when deduplicating markers.                                                 |
 
 Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
 When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.

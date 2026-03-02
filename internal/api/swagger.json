@@ -2709,29 +2709,6 @@
             },
             "type": "object"
         },
-        "form.Feedback": {
-            "properties": {
-                "Category": {
-                    "type": "string"
-                },
-                "Message": {
-                    "type": "string"
-                },
-                "UserAgent": {
-                    "type": "string"
-                },
-                "UserEmail": {
-                    "type": "string"
-                },
-                "UserLocales": {
-                    "type": "string"
-                },
-                "UserName": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
         "form.File": {
             "properties": {
                 "Orientation": {
@@ -4569,6 +4546,9 @@
                 "system": {
                     "type": "string"
                 },
+                "think": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 },
@@ -4959,6 +4939,10 @@
                 },
                 "responseFormat": {
                     "$ref": "#/definitions/vision.ApiFormat"
+                },
+                "think": {
+                    "description": "Optional reasoning hint for compatible engines (e.g. Ollama, GPT-OSS).",
+                    "type": "string"
                 },
                 "uri": {
                     "type": "string"
@@ -6734,7 +6718,7 @@
                 "operationId": "ClusterNodesRegister",
                 "parameters": [
                     {
-                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
+                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client.",
                         "in": "body",
                         "name": "request",
                         "required": true,
@@ -7592,44 +7576,6 @@
                 "summary": "updates face properties",
                 "tags": [
                     "Faces"
-                ]
-            }
-        },
-        "/api/v1/feedback": {
-            "post": {
-                "operationId": "SendFeedback",
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/form.Feedback"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    }
-                },
-                "summary": "allows members to submit a feedback message to the PhotoPrism team",
-                "tags": [
-                    "Internal"
                 ]
             }
         },

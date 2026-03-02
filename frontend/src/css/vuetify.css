@@ -446,12 +446,18 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     font-size: 0.75rem;
 }
 
+body .v-table>.v-table__wrapper>table {
+    border-spacing: 0;
+}
+
 .v-table .v-table__wrapper tbody tr td .v-input,
 .v-table .v-table__wrapper tbody tr td .v-input .v-field__input {
     min-height: auto;
     padding: 0;
     margin: 0;
 }
+
+/* Menu */
 
 .v-input.v-select.v-input--density-compact > .v-input__control > .v-field .v-select__selection,
 .v-menu > .v-overlay__content > .v-list > .v-list-item.v-list-item--density-compact > .v-list-item__content > .v-list-item-title {

@@ -83,7 +83,34 @@ describe("common/config", () => {
     const config = new Config(storage, values);
     expect(config.debug).toBe(true);
     expect(config.demo).toBe(false);
+    expect(config.frontendUri).toBe("/library");
+    expect(config.loginUri).toBe("/library/login");
     expect(config.apiUri).toBe("/api/v1");
+  });
+
+  it("derives login uri from configured frontend uri", () => {
+    const storage = new StorageShim();
+    const values = {
+      siteTitle: "Foo",
+      baseUri: "/portal",
+      frontendUri: "/portal/admin/",
+    };
+
+    const config = new Config(storage, values);
+    expect(config.frontendUri).toBe("/portal/admin");
+    expect(config.loginUri).toBe("/portal/admin/login");
+  });
+
+  it("uses base uri fallback when frontend uri is missing", () => {
+    const storage = new StorageShim();
+    const values = {
+      siteTitle: "Foo",
+      baseUri: "/portal",
+    };
+
+    const config = new Config(storage, values);
+    expect(config.frontendUri).toBe("/portal/library");
+    expect(config.loginUri).toBe("/portal/library/login");
   });
 
   it("should store values", () => {

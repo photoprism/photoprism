@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 22, 2026
+**Last Updated:** February 28, 2026
 
 ## Purpose
 
@@ -18,33 +18,62 @@ This file tells automated coding agents (and humans) where to find the single so
 - Packages: `README.md` files under `internal/`, `pkg/`, and `frontend/src/`, e.g. [`internal/photoprism/README.md`](internal/photoprism/README.md), [`internal/photoprism/batch/README.md`](internal/photoprism/batch/README.md), [`internal/config/README.md`](internal/config/README.md), [`internal/server/README.md`](internal/server/README.md), [`internal/api/README.md`](internal/api/README.md), [`internal/thumb/README.md`](internal/thumb/README.md), [`internal/ffmpeg/README.md`](internal/ffmpeg/README.md), and [`frontend/src/common/README.md`](frontend/src/common/README.md).
 - Face Detection & Embeddings: [`internal/ai/face/README.md`](internal/ai/face/README.md)
 - Vision Config & Engines: [`internal/ai/vision/README.md`](internal/ai/vision/README.md), [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
+- Terminology Glossary: [`GLOSSARY.md`](GLOSSARY.md) (single source for term definitions across specs/docs)
+- Regenerate `NOTICE` files with `make notice` when dependencies change (e.g., updates to `go.mod`, `go.sum`, `package-lock.json`, or other lockfiles). Do not edit `NOTICE` or `frontend/NOTICE` manually.
+
+> Quick Tip: to inspect GitHub issue details without leaving the terminal, run `curl -s https://api.github.com/repos/photoprism/photoprism/issues/<id>`; if `gh` is set up, you MAY also run `gh issue view <id> -R photoprism/photoprism`.
 
 ### Local Agent Progress
 
 - Use root-level task files to track progress and handoff notes across sessions/environments:
-  - `TODO.md` for new/upcoming tasks.
-  - `DONE.md` for completed tasks.
+  - `AGENTS_TODO.md` for actionable tasks.
+  - `AGENTS_DONE.md` for completed tasks.
 - These files are local workflow aids and may not exist yet in a given workspace.
 
-> Quick Tip: to inspect GitHub issue details without leaving the terminal, run `curl -s https://api.github.com/repos/photoprism/photoprism/issues/<id>`.
+## Style Notes
 
-### Specifications, Versioning, & Writing Style
+### Commit Messages
 
-- In the main repo, `specs/` and other directories may appear to be ignored because they are nested Git repositories; if so, change directories before staging or committing updates.
-- Availability: The `specs/` repository is private and is not guaranteed to be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths. When `specs/` is available, you MAY run its tools manually (e.g., `bash specs/scripts/lint-status.sh`), but the main repo must remain buildable without `specs/`.
-  - If available, always use the latest spec version for a topic (highest `-vN`), as linked from `specs/README.md`.
-  - Testing Guides: `specs/dev/backend-testing.md` (Backend/Go), `specs/dev/frontend-testing.md` (Frontend/JS)
-  - Whenever the Change Management instructions for a document require it, publish changes as a new file with an incremented version suffix (e.g., `*-v3.md`) rather than overwriting the original file.
-  - Older spec versions remain in the repo for historical reference but are not linked from the main TOC. Do not base new work on superseded files (e.g., `*-v1.md` when `*-v2.md` exists).
-  - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyze, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
-- Regenerate `NOTICE` files with `make notice` when dependencies change (e.g., updates to `go.mod`, `go.sum`, `package-lock.json`, or other lockfiles). Do not edit `NOTICE` or `frontend/NOTICE` manually.
-- Frontend translation extraction source of truth is root `make gettext-extract` (runs `scripts/gettext-extract.sh`), which scans `frontend/src` plus available private overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`. Subrepo compatibility targets (`make -C plus gettext-extract`, `make -C pro gettext-extract`, `make -C portal gettext-extract`) delegate to this root target.
-- Avoid punctuation-only gettext keys (for example `$gettext("—")`), as they create noisy/unhelpful entries in `frontend/src/locales/translations.pot`.
+Use concise, imperative subjects with a one-word prefix indicating the scope or topic:
+
+- `Config: Add tests for "darktable-cli" path detection`
+
+If the commit relates to specific issues or pull requests, reference their IDs in the message:
+
+- `Docker: Use two stage build to reduce image size #123 #5632`
+
+Commit messages must not exceed 80 characters in length.
+
+### GitHub Issues
+
+Issue titles MUST be concise, use the imperative mood, and start with a single capitalized prefix followed by a colon and a space, e.g. `Search: Add filter for RAW image formats`.
+
+Issue descriptions MUST begin with a one-sentence **User Story** where the sentence itself is fully bold in the format: `**As a <role>, I want <goal>, so that <outcome>.**`
+Follow the User Story with a clear summary of the expected behavior, rationale, technical considerations, and constraints.
+
+Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
+- Use GitHub checklist formatting: `- [ ]`
+- Criteria MUST be clear, testable, and unambiguous.
+- Each item MUST use one of the following priority keywords:
+  - `MUST`   — required for the issue to be considered complete
+  - `SHOULD` — strongly recommended but not strictly required
+  - `MAY`    — optional enhancement
+
+Additional details MAY be included as needed, such as related issues, references, screenshots, or external resources.
+
+> Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
+
+### Specifications & Documentation
+
+- Document headings must use **Title Case** (in APA or AP style) across Markdown files to keep generated navigation and changelogs consistent. Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
 - When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
 - Use RFC 3339 UTC timestamps in request and response examples, and valid ID, UID and UUID examples in docs and tests.
-- Document headings must use **Title Case** (in APA or AP style) across Markdown files to keep generated navigation and changelogs consistent. Always spell the product name as `PhotoPrism`; this proper noun is an exception to generic naming rules.
+- Technical specifications in the nested `specs/` subrepository may not be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths. When `specs/` is available, you MAY run its tools manually (e.g., `bash specs/scripts/lint-status.sh`), but the main repo must remain buildable without `specs/`.
+  - Testing Guides: `specs/dev/backend-testing.md` (Backend/Go), `specs/dev/frontend-testing.md` (Frontend/JS)
+  - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyze, or modify anything in this directory; refer humans to `specs/generated/README.md` if regeneration is required.
+  - Nested Git repositories may appear to be ignored; if so, change directories before staging or committing updates.
 
-> Title Case rules (APA/AP implementation):
+> **Title Case** rules (APA/AP implementation):
 > - Capitalize the first word of a title/heading and the first word of a subtitle.
 > - Capitalize the first word after a colon, an em dash, or end punctuation.
 > - Capitalize major words, including the second part of hyphenated major words.
@@ -75,6 +104,8 @@ This file tells automated coding agents (and humans) where to find the single so
 - Frontend: Vue 3 + Vuetify 3 (`frontend/`)
 - Docker/compose for dev/CI; Traefik is used for local TLS (`*.localssl.dev`)
 
+> Nested Git repositories may appear to be ignored; if so, change directories before staging or committing updates.
+
 ### Web Templates & Shared Assets
 
 - HTML entrypoints live under `assets/templates/`; key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`. The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes.
@@ -82,6 +113,11 @@ This file tells automated coding agents (and humans) where to find the single so
 - The same loader partial is reused in private packages (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`, `portal/assets/templates/index.gohtml`). Whenever you touch `app.js.gohtml` or change how we load the bundle, mirror the update by running commands such as `cd pro && sed -n '1,160p' assets/templates/index.gohtml` (and similarly for `plus` and `portal`) to confirm they include the shared partial instead of hard-coding the bundle tag.
 - Splash styles are defined in `frontend/src/css/splash.css`. Add new splash elements (for example `.splash-warning`) there so both public and private editions remain visually consistent.
 - Browser baseline: PhotoPrism requires Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. Update the message in `assets/templates/app.js.gohtml` (and the matching CSS) if support changes.
+
+### Frontend Translations
+
+- Frontend translation extraction source of truth is root `make gettext-extract` (runs `scripts/gettext-extract.sh`), which scans `frontend/src` plus available private overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`. Subrepo compatibility targets (`make -C plus gettext-extract`, `make -C pro gettext-extract`, `make -C portal gettext-extract`) delegate to this root target.
+- Avoid punctuation-only gettext keys (for example `$gettext("—")`), as they create noisy/unhelpful entries in `frontend/src/locales/translations.pot`.
 
 ## Agent Runtime (Host vs Container)
 
@@ -207,7 +243,7 @@ Note: Across our public documentation, official images, and in production, the c
 ### Playwright MCP Usage
 
 - **Endpoint & Navigation** — Playwright MCP is preconfigured to reach the dev server at `http://localhost:2342/`.
-  Use `playwright__browser_navigate` to open `/library/login`, sign in, and then call `playwright__browser_take_screenshot` to capture the page state.
+  Use `playwright__browser_navigate` to open the login route under the configured frontend URI (default `/library/login` for CE/Plus/Pro, `/portal/admin/login` for Portal), sign in, and then call `playwright__browser_take_screenshot` to capture the page state.
 - **Viewport Defaults** — Desktop sessions open with a `1280×900` viewport by default.
   Use `playwright__browser_resize` if the viewport is not preconfigured or you need to adjust it mid-run.
 - **Mobile Workflows** — When testing responsive layouts, use the `playwright_mobile` server (for example, `playwright_mobile__browser_navigate`).
@@ -284,6 +320,7 @@ Note: Across our public documentation, official images, and in production, the c
   - When importing the stdlib package, alias it to avoid collisions: `iofs "io/fs"` or `gofs "io/fs"`.
   - Our package is `github.com/photoprism/photoprism/pkg/fs` and provides the only approved permission constants for `os.MkdirAll`, `os.WriteFile`, `os.OpenFile`, and `os.Chmod`.
 - Prefer `filepath.Join` for filesystem paths; reserve `path.Join` for URL paths.
+- For slash-based logical paths stored in DB/config/API payloads (for example folder album paths), normalize with `clean.SlashPath(...)` instead of repeating ad-hoc `strings.ReplaceAll(..., "\\", "/")` + trim logic.
 
 ### File I/O — Overwrite Policy (force semantics)
 
@@ -303,6 +340,10 @@ Note: Across our public documentation, official images, and in production, the c
   - absolute paths (e.g., `/etc/passwd`).
   - Windows drive/volume paths (e.g., `C:\\…` or `C:/…`).
   - any entry that escapes the target directory after cleaning (path traversal via `..`).
+- ZIP entry names use slash semantics, not host OS semantics:
+  - Validate in ZIP-name space with `path.Clean` / `path.IsAbs`, reject backslashes (`\`), and use `path.Base` for hidden-name checks.
+  - Convert to OS paths only at write time with `filepath.FromSlash(...)`.
+  - Enforce destination containment with `filepath.Rel(...)` rather than string-prefix checks.
 - Enforce per-file and total size budgets to prevent resource exhaustion.
 - Skip OS metadata directories (e.g., `__MACOSX`) and reject suspicious names.
 - Where this lives: `pkg/fs/zip.go` (`Unzip`, `UnzipFile`, `safeJoin`).
@@ -346,7 +387,7 @@ Note: Across our public documentation, official images, and in production, the c
 - `PhotoFixtures.Get()` and similar helpers return value copies; when a test needs the database-backed row (with associations preloaded), re-query by UID/ID using helpers like `entity.FindPhoto(fixture)` so updates observe persisted IDs and in-memory caches stay coherent.
 - For slimmer tests that only need config objects, prefer the new helpers in `internal/config/test.go`: `NewMinimalTestConfig(t.TempDir())` when no database is needed, or `NewMinimalTestConfigWithDb("<pkg>", t.TempDir())` to spin up an isolated SQLite schema without seeding all fixtures.
 - When you need illustrative credentials (join tokens, client IDs/secrets, etc.), reuse the shared `Example*` constants (see `internal/service/cluster/examples.go`) so tests, docs, and examples stay consistent.
-- Hidden error UI checks for `/library/hidden` require both `files.file_error` and `photos.photo_quality = -1`; hidden searches are quality-gated, so setting only `file_error` will not surface the row in Hidden results.
+- Hidden error UI checks for the hidden route under the frontend URI (default `/library/hidden` for CE/Plus/Pro, `/portal/admin/hidden` for Portal) require both `files.file_error` and `photos.photo_quality = -1`; hidden searches are quality-gated, so setting only `file_error` will not surface the row in Hidden results.
 
 ### Roles & ACL
 
@@ -374,11 +415,13 @@ Note: Across our public documentation, official images, and in production, the c
 ### API & Config Changes
 
 - Respect precedence: `options.yml` overrides CLI/env values, which override defaults. When adding a new option, update `internal/config/options.go` (yaml/flag tags), register it in `internal/config/flags.go`, expose a getter, surface it in `*config.Report()`, and write generated values back to `options.yml` by setting `c.options.OptionsYaml` before persisting. Use `CliTestContext` in `internal/config/test.go` to exercise new flags.
+- For `options.yml` writes in Go code, prefer config-owned persistence helpers over ad-hoc YAML handling: use `Config.SaveOptionsPatch(...)` for generic merges and `Config.SaveClusterOptionsUpdate(...)` for cluster-managed metadata updates.
 - Use `pkg/fs.ConfigFilePath` when you need a config filename so existing `.yml` files remain valid and new installs can adopt `.yaml` transparently (the helper also covers other paired extensions such as `.toml`/`.tml`).
 - When touching configuration in Go code, use the public accessors on `*config.Config` (e.g. `Config.JWKSUrl()`, `Config.SetJWKSUrl()`, `Config.ClusterUUID()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures only.
 - When introducing new metadata sources (e.g., `SrcOllama`, `SrcOpenAI`), define them in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`) so UI badges and server priorities stay aligned.
 - Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and the `Run` property set in `vision.yml`. Utilities like `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` help decide when work is required before loading media files.
 - Logging: use the shared logger (`event.Log`) via the package-level `log` variable (see `internal/auth/jwt/logger.go`) instead of direct `fmt.Print*` or ad-hoc loggers.
+- Logging terminology: in human-readable log text, prefer canonical runtime terms (`instance`, `service`) and reserve `node` for contract-bound names (`/cluster/nodes`, `Node*`, `PHOTOPRISM_NODE_*`).
 - Audit outcomes: import `github.com/photoprism/photoprism/pkg/log/status` and end every `event.Audit*` slice with a single outcome token such as `status.Succeeded`, `status.Failed`, `status.Denied`, or other constants defined there (no additional segments afterwards).
 - Error outcomes: when a sanitized error string should be the outcome, call `status.Error(err)` instead of adding a placeholder and passing `clean.Error(err)` manually.
 - Cluster registry tests (`internal/service/cluster/registry`) currently rely on a full test config because they persist `entity.Client` rows. They run migrations and seed the SQLite DB, so they are intentionally slow. If you refactor them, consider sharing a single `config.TestConfig()` across subtests or building a lightweight schema harness; do not swap to the minimal config helper unless the tests stop touching the database.

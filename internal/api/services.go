@@ -106,7 +106,7 @@ func GetServiceFolders(router *gin.RouterGroup) {
 			return
 		}
 
-		list, err := m.Directories()
+		list, err := m.Directories(conf.ServicesCIDR())
 
 		if err != nil {
 			log.Errorf("%s: %s", serviceFolder, err.Error())
@@ -155,7 +155,7 @@ func AddService(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := frm.Discovery(); err != nil {
+		if err := frm.Discovery(conf.ServicesCIDR()); err != nil {
 			log.Error(err)
 			Abort(c, http.StatusBadRequest, i18n.ErrConnectionFailed)
 			return

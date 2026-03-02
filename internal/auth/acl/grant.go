@@ -20,6 +20,7 @@ var (
 		ActionShare:     true,
 		ActionRate:      true,
 		ActionReact:     true,
+		ActionAudit:     true,
 		ActionManage:    true,
 		ActionPublish:   true,
 		ActionSubscribe: true,

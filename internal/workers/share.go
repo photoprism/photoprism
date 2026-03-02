@@ -90,7 +90,7 @@ func (w *Share) Start() (err error) {
 			}
 		}
 
-		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
 
 		if err != nil {
 			return err
@@ -175,7 +175,7 @@ func (w *Share) Start() (err error) {
 			continue
 		}
 
-		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
 
 		if err != nil {
 			return err

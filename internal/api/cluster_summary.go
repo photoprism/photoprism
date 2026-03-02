@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -84,10 +85,10 @@ func ClusterSummary(router *gin.RouterGroup) {
 func ClusterHealth(router *gin.RouterGroup) {
 	router.GET("/cluster/health", func(c *gin.Context) {
 		conf := get.Config()
+		clientIp := ClientIP(c)
 
 		// Align headers with server-level health endpoints.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.AccessControlAllowOrigin, header.Any)
 
 		// Return error if not a portal node.
 		if !conf.Portal() {
@@ -95,7 +96,16 @@ func ClusterHealth(router *gin.RouterGroup) {
 			return
 		}
 
-		event.AuditDebug([]string{ClientIP(c), string(acl.ResourceCluster), "health check", status.Succeeded})
+		// Optional IP-based allowance via ClusterCIDR.
+		if cidr := strings.TrimSpace(conf.ClusterCIDR()); cidr != "" {
+			if !clusterCIDRAllowsClientIP(cidr, clientIp) {
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "health check", "client ip outside cluster-cidr", status.Denied})
+				AbortUnauthorized(c)
+				return
+			}
+		}
+
+		event.AuditDebug([]string{clientIp, string(acl.ResourceCluster), "health check", status.Succeeded})
 
 		c.JSON(http.StatusOK, NewHealthResponse("ok"))
 	})

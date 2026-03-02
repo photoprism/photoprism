@@ -95,3 +95,21 @@ func TestUserPath(t *testing.T) {
 		assert.Equal(t, "", UserPath(""))
 	})
 }
+
+func TestSlashPath(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", SlashPath(""))
+	})
+	t.Run("TrimWhitespace", func(t *testing.T) {
+		assert.Equal(t, "foo/bar", SlashPath("  foo/bar  "))
+	})
+	t.Run("TrimSlashes", func(t *testing.T) {
+		assert.Equal(t, "foo/bar", SlashPath("/foo/bar/"))
+	})
+	t.Run("NormalizeBackslashes", func(t *testing.T) {
+		assert.Equal(t, "foo/bar", SlashPath(`\foo\bar\`))
+	})
+	t.Run("RootOnly", func(t *testing.T) {
+		assert.Equal(t, "", SlashPath("/"))
+	})
+}

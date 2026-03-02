@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
@@ -19,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -34,14 +37,12 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 
-	// Register with existing ClientID requires ClientSecret
-	t.Run("ExistingClientRequiresSecret", func(t *testing.T) {
+	t.Run("ExistingNodeMutationRequiresOAuthToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
-		// Pre-create a node via registry and rotate to get a plaintext secret for tests
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
 		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-auth", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
@@ -53,35 +54,63 @@ func TestClusterNodesRegister(t *testing.T) {
 		n := resp.Node
 		nr, err := regy.RotateSecret(n.UUID)
 		assert.NoError(t, err)
-		secret := nr.ClientSecret
 
-		// Missing secret → 401
-		body := `{"NodeName":"pp-auth","ClientID":"` + nr.ClientID + `"}`
+		// Join tokens must not mutate existing registrations.
+		body := `{"NodeName":"pp-auth","Labels":{"env":"prod"}}`
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
-		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Equal(t, http.StatusConflict, r.Code)
+		assert.Contains(t, r.Body.String(), "already registered")
 
-		// Wrong secret → 401
-		body = `{"NodeName":"pp-auth","ClientID":"` + nr.ClientID + `","ClientSecret":"WRONG"}`
-		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
-		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		// Existing-node mutations with a valid node access token must succeed.
+		token := oauthNodeAccessToken(t, app, router, conf, nr.ClientID, nr.ClientSecret)
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
+		assert.Equal(t, http.StatusOK, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
 
-		// Correct secret → 200 (existing-node path)
-		body = `{"NodeName":"pp-auth","ClientID":"` + nr.ClientID + `","ClientSecret":"` + secret + `"}`
-		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-auth","RotateSecret":true}`, token)
 		assert.Equal(t, http.StatusOK, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
 	})
 	t.Run("MissingToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		ClusterNodesRegister(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`)
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
+	t.Run("ClusterCIDRBlocksClientIPOutsideRange", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		prevClusterCIDR := conf.Options().ClusterCIDR
+		t.Cleanup(func() {
+			conf.Options().ClusterCIDR = prevClusterCIDR
+		})
+		conf.Options().ClusterCIDR = "192.0.2.0/24"
+		ClusterNodesRegister(router)
+
+		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-blocked"}`, cluster.ExampleJoinToken, "198.51.100.9")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
+	t.Run("ClusterCIDRAllowsClientIPInRange", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		prevClusterCIDR := conf.Options().ClusterCIDR
+		t.Cleanup(func() {
+			conf.Options().ClusterCIDR = prevClusterCIDR
+		})
+		conf.Options().ClusterCIDR = "192.0.2.0/24"
+		ClusterNodesRegister(router)
+
+		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-allowed"}`, cluster.ExampleJoinToken, "192.0.2.42")
+		assert.Equal(t, http.StatusCreated, r.Code)
+		cleanupRegisterProvisioning(t, conf, r)
+	})
 	t.Run("ForbiddenFromCDN", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -97,7 +126,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("CreateNodeWithoutRotateSkipsProvisioner", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -115,7 +144,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("CreateNodeRotateDatabaseProvisioned", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -127,9 +156,9 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.True(t, gjson.Get(body, "AlreadyProvisioned").Bool())
 		cleanupRegisterProvisioning(t, conf, r)
 	})
-	t.Run("UUIDChangeRequiresSecret", func(t *testing.T) {
+	t.Run("UUIDChangeWithJoinTokenReturnsConflict", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -138,7 +167,7 @@ func TestClusterNodesRegister(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 
-		// Attempt to change UUID via name without client credentials → 409
+		// Attempt to change UUID via join token must fail with conflict.
 		newUUID := rnd.UUIDv7()
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-lock","NodeUUID":"`+newUUID+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusConflict, r.Code)
@@ -146,7 +175,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("AdvertiseUrlHttpAllowed", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -157,7 +186,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("GoodAdvertiseUrlAccepted", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -173,7 +202,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("SiteUrlValidation", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -188,7 +217,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("NormalizeName", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -208,7 +237,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("BadName", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -218,7 +247,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("RotateSecretPersistsAndRespondsOK", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -229,12 +258,18 @@ func TestClusterNodesRegister(t *testing.T) {
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
 		// Register the node to ensure that the database and registry is there
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeUUID: rnd.UUIDv7(), Name":"pp-node-01", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 		cleanupRegisterProvisioning(t, conf, rCreate)
+		n, err = regy.RotateSecret(n.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
+			return
+		}
 
-		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01","RotateSecret":true}`, cluster.ExampleJoinToken)
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		body := `{"NodeName":"pp-node-01","RotateSecret":true}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
 		assert.Equal(t, http.StatusOK, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
 
@@ -244,23 +279,103 @@ func TestClusterNodesRegister(t *testing.T) {
 		n2, err := regy.FindByName("pp-node-01")
 		assert.NoError(t, err)
 		// With client-backed registry, plaintext secret is not persisted; only rotation timestamp is updated.
-		assert.NotEmpty(t, n2.RotatedAt)
+		if assert.NotNil(t, n2) {
+			assert.NotEmpty(t, n2.RotatedAt)
+		}
+	})
+	t.Run("RotateSecretRequiresMatchingNodeClientCredentials", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		victim := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-victim", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(victim))
+		victim, err = regy.RotateSecret(victim.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, victim) {
+			return
+		}
+
+		attacker := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-attacker", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(attacker))
+		attacker, err = regy.RotateSecret(attacker.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, attacker) {
+			return
+		}
+
+		// Using another node's valid access token must not authorize rotating the victim.
+		token := oauthNodeAccessToken(t, app, router, conf, attacker.ClientID, attacker.ClientSecret)
+		body := `{"NodeName":"pp-victim","RotateSecret":true}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
+		assert.Equal(t, http.StatusConflict, r.Code)
+		assert.NotContains(t, r.Body.String(), "\"ClientSecret\"")
+		assert.NotContains(t, r.Body.String(), "\"Password\"")
+	})
+	t.Run("ExistingNodeMutationRequiresWriteScope", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		node := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-scope-check", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(node))
+		node, err = regy.RotateSecret(node.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, node) {
+			return
+		}
+
+		client := entity.FindClientByUID(node.ClientID)
+		if assert.NotNil(t, client) {
+			client.SetScope("metrics")
+			assert.NoError(t, client.Save())
+		}
+
+		// Tokens that do not include cluster permissions must be denied.
+		token := oauthNodeAccessToken(t, app, router, conf, node.ClientID, node.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-scope-check","SiteUrl":"https://scope.example.com"}`, token)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("RotateDatabaseWithJoinTokenReturnsConflict", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+		n := &reg.Node{Node: cluster.Node{Name: "pp-node-db-rotate", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-db-rotate","RotateDatabase":true}`, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusConflict, r.Code)
 	})
 	t.Run("ExistingNodeSiteUrlPersistsAndRespondsOK", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
 		// Pre-create node in registry so handler goes through existing-node path.
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
-		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-02", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
+		rCreate := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeUUID: rnd.UUIDv7(), Name":"pp-node-02", "NodeRole":"`+cluster.RoleInstance+`"}`, cluster.ExampleJoinToken)
 		assert.Equal(t, http.StatusCreated, rCreate.Code)
 		assert.Contains(t, rCreate.Body.String(), `"AlreadyProvisioned":false`)
 
+		n, err = regy.RotateSecret(n.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
+			return
+		}
+
 		// Provisioner is independent; endpoint should respond 200 and persist metadata.
-		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-02","SiteUrl":"https://Photos.Example.COM"}`, cluster.ExampleJoinToken)
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-02","SiteUrl":"https://Photos.Example.COM"}`, token)
 		assert.Equal(t, http.StatusOK, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
 
@@ -272,9 +387,61 @@ func TestClusterNodesRegister(t *testing.T) {
 		cleanupRegisterProvisioning(t, conf, rCreate)
 
 	})
+	t.Run("ExistingNodeWithoutRotateDoesNotProvisionDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		// If provisioning is called unexpectedly, this invalid DSN should cause a 409.
+		conf.Options().DatabaseProvisionDSN = "invalid-dsn"
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-no-provision", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
+		n, err = regy.RotateSecret(n.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
+			return
+		}
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-no-provision","SiteUrl":"https://photos.example.com"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code)
+		body := r.Body.String()
+		assert.False(t, gjson.Get(body, "AlreadyProvisioned").Bool())
+		assert.Equal(t, "", gjson.Get(body, "Database.Name").String())
+		assert.Equal(t, "", gjson.Get(body, "Database.User").String())
+	})
+	t.Run("ExistingNodeWithoutRotateDoesNotProvisionDatabase", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		// If provisioning is called unexpectedly, this invalid DSN should cause a 409.
+		conf.Options().DatabaseProvisionDSN = "invalid-dsn"
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-node-no-provision", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
+		n, err = regy.RotateSecret(n.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, n) {
+			return
+		}
+
+		token := oauthNodeAccessToken(t, app, router, conf, n.ClientID, n.ClientSecret)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-no-provision","SiteUrl":"https://photos.example.com"}`, token)
+		assert.Equal(t, http.StatusOK, r.Code)
+		body := r.Body.String()
+		assert.False(t, gjson.Get(body, "AlreadyProvisioned").Bool())
+		assert.Equal(t, "", gjson.Get(body, "Database.Name").String())
+		assert.Equal(t, "", gjson.Get(body, "Database.User").String())
+	})
 	t.Run("AssignNodeUUIDWhenMissing", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -298,7 +465,7 @@ func TestClusterNodesRegister(t *testing.T) {
 	})
 	t.Run("ThemeHintProvided", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().JoinToken = cluster.ExampleJoinToken
 		ClusterNodesRegister(router)
 
@@ -322,8 +489,14 @@ func TestClusterNodesRegister(t *testing.T) {
 			assert.Equal(t, "1.0.0", node.Theme)
 		}
 
+		node, err = regy.RotateSecret(node.UUID)
+		if !assert.NoError(t, err) || !assert.NotNil(t, node) {
+			return
+		}
+		token := oauthNodeAccessToken(t, app, router, conf, node.ClientID, node.ClientSecret)
+
 		body = `{"NodeName":"pp-node-theme","Theme":"2.0.0"}`
-		r2 := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		r2 := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
 		assert.Equal(t, http.StatusOK, r2.Code)
 		assert.Equal(t, "2.0.0", gjson.Get(r2.Body.String(), "Theme").String())
 		cleanupRegisterProvisioning(t, conf, r2)
@@ -388,6 +561,96 @@ func cleanupRegisterProvisioning(t *testing.T, conf *config.Config, r *httptest.
 		})
 	}
 
+}
+
+func AuthenticatedRequestWithBodyAndIP(r http.Handler, method, path, body string, authToken string, clientIP string) *httptest.ResponseRecorder {
+	reader := strings.NewReader(body)
+	req, _ := http.NewRequest(method, path, reader)
+	req.RemoteAddr = clientIP + ":12345"
+	header.SetAuthorization(req, authToken)
+
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	return w
+}
+
+func oauthNodeAccessToken(t testing.TB, app http.Handler, router *gin.RouterGroup, conf *config.Config, clientID, clientSecret string) string {
+	return oauthNodeAccessTokenWithScope(t, app, router, conf, clientID, clientSecret, "cluster")
+}
+
+func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.RouterGroup, conf *config.Config, clientID, clientSecret, scope string) string {
+	t.Helper()
+
+	prevAuthMode := conf.AuthMode()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() {
+		conf.SetAuthMode(prevAuthMode)
+	})
+
+	OAuthToken(router)
+
+	data := url.Values{
+		"grant_type":    {authn.GrantClientCredentials.String()},
+		"client_id":     {clientID},
+		"client_secret": {clientSecret},
+		"scope":         {scope},
+	}
+
+	req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+	req.Header.Add(header.ContentType, header.ContentTypeForm)
+
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code, "oauth token request failed: %s", w.Body.String())
+
+	return gjson.Get(w.Body.String(), "access_token").String()
+}
+
+func AuthenticatedRequestWithBodyAndIP(r http.Handler, method, path, body string, authToken string, clientIP string) *httptest.ResponseRecorder {
+	reader := strings.NewReader(body)
+	req, _ := http.NewRequest(method, path, reader)
+	req.RemoteAddr = clientIP + ":12345"
+	header.SetAuthorization(req, authToken)
+
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	return w
+}
+
+func oauthNodeAccessToken(t testing.TB, app http.Handler, router *gin.RouterGroup, conf *config.Config, clientID, clientSecret string) string {
+	return oauthNodeAccessTokenWithScope(t, app, router, conf, clientID, clientSecret, "cluster")
+}
+
+func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.RouterGroup, conf *config.Config, clientID, clientSecret, scope string) string {
+	t.Helper()
+
+	prevAuthMode := conf.AuthMode()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() {
+		conf.SetAuthMode(prevAuthMode)
+	})
+
+	OAuthToken(router)
+
+	data := url.Values{
+		"grant_type":    {authn.GrantClientCredentials.String()},
+		"client_id":     {clientID},
+		"client_secret": {clientSecret},
+		"scope":         {scope},
+	}
+
+	req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+	req.Header.Add(header.ContentType, header.ContentTypeForm)
+
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code, "oauth token request failed: %s", w.Body.String())
+
+	return gjson.Get(w.Body.String(), "access_token").String()
 }
 
 // TestValidateAdvertiseURL ensures the validator accepts HTTP and HTTPS for advertise URLs.

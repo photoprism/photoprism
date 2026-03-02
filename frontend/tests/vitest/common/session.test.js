@@ -282,7 +282,7 @@ describe("common/session", () => {
 
   it("should persist auth tokens in namespaced storage", () => {
     const rawStorage = new StorageShim();
-    const baseUri = "/p/pro-1";
+    const baseUri = "/i/pro-1";
     const namespaceKey = "ns-pro-1";
     const storage = createNamespacedStorage(rawStorage, namespaceKey);
     const session = new Session(storage, createConfig(baseUri, namespaceKey));
@@ -297,7 +297,7 @@ describe("common/session", () => {
 
   it("should migrate legacy auth tokens into namespaced storage", () => {
     const rawStorage = new StorageShim();
-    const baseUri = "/p/pro-1";
+    const baseUri = "/i/pro-1";
     const namespaceKey = "ns-pro-1";
     const namespaced = buildNamespace(namespaceKey) + "session.token";
     rawStorage.setItem("session.token", "legacy-token");

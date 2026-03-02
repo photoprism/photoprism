@@ -1,13 +1,13 @@
 /*
-Package provisioner manages per-node database provisioning for cluster setups.
+Package provisioner manages per-instance database provisioning for cluster setups.
 
 It runs on the Portal and is responsible for:
 
-  - Generating deterministic database and user names for nodes based on the
-    portal's Cluster UUID and the node name, while keeping lengths within
+  - Generating deterministic database and user names for instances based on the
+    portal's Cluster UUID and the technical node name identifier, while keeping lengths within
     engine limits.
   - Creating the database schema if missing and granting minimal privileges
-    to the node's database user.
+    to the instance database user.
   - Creating the user if needed and rotating its password on demand, returning
     credentials (and a ready-to-use DSN) to the caller.
 

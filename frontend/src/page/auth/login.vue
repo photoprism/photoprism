@@ -86,7 +86,7 @@
                         hide-details
                         autocorrect="off"
                         autocapitalize="none"
-                        autocomplete="username"
+                        :autocomplete="usernameAutocomplete"
                         class="input-username text-selectable"
                         prepend-inner-icon="mdi-account"
                         @keyup.enter="onLogin"
@@ -105,7 +105,7 @@
                         hide-details
                         autocorrect="off"
                         autocapitalize="none"
-                        autocomplete="current-password"
+                        :autocomplete="passwordAutocomplete"
                         class="input-password text-selectable"
                         :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                         prepend-inner-icon="mdi-lock"
@@ -219,6 +219,29 @@ export default {
     };
   },
   computed: {
+    autocompleteSection() {
+      const storageNamespace = this.config?.storageNamespace;
+
+      if (typeof storageNamespace === "string" && storageNamespace.trim() !== "") {
+        const section = storageNamespace
+          .toLowerCase()
+          .replace(/[^a-z0-9-]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        if (section !== "") {
+          return `section-${section}`;
+        }
+      }
+
+      return "section-photoprism";
+    },
+    usernameAutocomplete() {
+      return `${this.autocompleteSection} username`;
+    },
+    passwordAutocomplete() {
+      return `${this.autocompleteSection} current-password`;
+    },
     loginDisabled() {
       if (this.loading) {
         return true;

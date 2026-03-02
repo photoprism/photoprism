@@ -32,7 +32,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		ClusterGetTheme(router)
 
 		missing := filepath.Join(os.TempDir(), "photoprism-test-missing-theme")
@@ -49,7 +49,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		ClusterGetTheme(router)
 
 		tempTheme, err := os.MkdirTemp("", "pp-theme-*")
@@ -105,7 +105,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal feature flag for this endpoint.
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		ClusterGetTheme(router)
 
 		// Create an empty temporary theme directory (no includable files).
@@ -128,7 +128,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("CIDRAllowWithoutAuth", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		// Enable portal role and set CIDR to loopback/10.0.0.0/8 for test.
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 		conf.Options().ClusterCIDR = "10.0.0.0/8"
 		ClusterGetTheme(router)
 
@@ -150,7 +150,7 @@ func TestClusterGetTheme(t *testing.T) {
 	t.Run("UpdateThemeVersion", func(t *testing.T) {
 		app, _, conf := NewApiTest()
 		_ = app // unused
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)

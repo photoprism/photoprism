@@ -31,6 +31,7 @@ const (
 	SettingsDir     = "settings"
 	SidecarDir      = "sidecar"
 	StaticDir       = "static"
+	WebDir          = "web"
 	StorageDir      = "storage"
 	TemplatesDir    = "templates"
 	TestdataDir     = "testdata"

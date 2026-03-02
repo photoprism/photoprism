@@ -167,6 +167,10 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 		apiRequest.Org = m.Service.EndpointOrg()
 		apiRequest.Project = m.Service.EndpointProject()
 	}
+
+	if think := m.Service.EndpointThink(); think != "" {
+		apiRequest.Think = think
+	}
 }
 
 // EndpointKey returns the access token belonging to the remote service
