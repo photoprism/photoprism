@@ -81,6 +81,8 @@ Common problems can be quickly diagnosed and solved using our [Troubleshooting C
 
 Our [Project Roadmap](https://link.photoprism.app/roadmap) shows what tasks are in progress and what features will be implemented next. You are invited to give ideas you like a thumbs-up, so we know what's most popular.
 
+For example, [UX: Timeline View](https://github.com/photoprism/photoprism/issues/152) is tracked as a long-running feature request and helps signal interest in timeline-based browsing.
+
 Be aware that we have a zero-bug policy and do our best to help users when they need support or have other questions. This comes at a price though, as we can't give exact release dates for new features. Our team receives many more requests than can be implemented, so we want to emphasize that we are in no way obligated to implement the features, enhancements, or other changes you request. We do, however, appreciate your feedback and carefully consider all requests.
 
 **Because sustained funding is key to quickly releasing new features, we encourage you to support our mission by [signing up for a personal membership](https://link.photoprism.app/membership) or [purchasing a commercial license](https://www.photoprism.app/teams#compare).**
