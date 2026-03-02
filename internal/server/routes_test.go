@@ -48,7 +48,7 @@ func TestStaticRoutes(t *testing.T) {
 
 func TestStaticRoutesWebOverlay(t *testing.T) {
 	t.Run("RootRedirectWithoutIndex", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("server", t.TempDir())
 		require.NoError(t, os.MkdirAll(conf.WebStoragePath(), fs.ModeDir))
 
 		r := gin.New()
@@ -70,7 +70,7 @@ func TestStaticRoutesWebOverlay(t *testing.T) {
 		assert.Equal(t, conf.LoginUri(), w.Header().Get(header.Location))
 	})
 	t.Run("ServeOverlayFileAndDirectoryIndex", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("server", t.TempDir())
 		webDir := conf.WebStoragePath()
 		require.NoError(t, os.MkdirAll(filepath.Join(webDir, "docs"), fs.ModeDir))
 		require.NoError(t, os.WriteFile(filepath.Join(webDir, "hello.txt"), []byte("hello"), fs.ModeFile))
@@ -99,7 +99,7 @@ func TestStaticRoutesWebOverlay(t *testing.T) {
 		assert.Empty(t, w.Body.String())
 	})
 	t.Run("BasePathOverlayMapping", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("server", t.TempDir())
 		conf.Options().SiteUrl = "https://example.com/i/acme/"
 		webDir := conf.WebStoragePath()
 		require.NoError(t, os.MkdirAll(filepath.Join(webDir, "assets"), fs.ModeDir))
@@ -121,7 +121,7 @@ func TestStaticRoutesWebOverlay(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
 	t.Run("HiddenAndSpecialPathsBlocked", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("server", t.TempDir())
 		webDir := conf.WebStoragePath()
 		require.NoError(t, os.MkdirAll(filepath.Join(webDir, "foo"), fs.ModeDir))
 		require.NoError(t, os.MkdirAll(filepath.Join(webDir, "__MACOSX"), fs.ModeDir))
@@ -157,7 +157,7 @@ func TestStaticRoutesWebOverlay(t *testing.T) {
 		assert.Equal(t, "ok", w.Body.String())
 	})
 	t.Run("SensitiveNamesBlocked", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("server", t.TempDir())
 		webDir := conf.WebStoragePath()
 		require.NoError(t, os.MkdirAll(filepath.Join(webDir, "node", "secrets"), fs.ModeDir))
 		require.NoError(t, os.MkdirAll(filepath.Join(webDir, "config", "portal"), fs.ModeDir))
@@ -214,7 +214,7 @@ func TestStaticRoutesWebOverlay(t *testing.T) {
 		assert.Equal(t, "ok", w.Body.String())
 	})
 	t.Run("SymlinkEscapeBlocked", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("server", t.TempDir())
 		webDir := conf.WebStoragePath()
 		outsideDir := filepath.Join(t.TempDir(), "outside")
 		require.NoError(t, os.MkdirAll(webDir, fs.ModeDir))
@@ -242,7 +242,7 @@ func TestStaticRoutesWebOverlay(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, w.Code)
 	})
 	t.Run("EncodedAndAmbiguousPathsBlocked", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("server", t.TempDir())
 		webDir := conf.WebStoragePath()
 		require.NoError(t, os.MkdirAll(filepath.Join(webDir, "docs"), fs.ModeDir))
 		require.NoError(t, os.WriteFile(filepath.Join(webDir, "env"), []byte("public-env"), fs.ModeFile))
@@ -465,7 +465,7 @@ func TestWebAppManifestRouteWithBasePath(t *testing.T) {
 	t.Cleanup(config.FlushCache)
 
 	r := gin.New()
-	conf := config.NewMinimalTestConfig(t.TempDir())
+	conf := config.NewMinimalTestConfig("server", t.TempDir())
 	conf.Options().SiteUrl = "https://app.localssl.dev/instance/pro-1/"
 
 	registerWebAppRoutes(r, conf)

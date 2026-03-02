@@ -222,7 +222,7 @@ func originalsFolderAlbumReconcileScope(rootPath string) string {
 
 // hasOriginalsFolderPath reports whether an active originals folder row exists for rootPath.
 func hasOriginalsFolderPath(rootPath string) bool {
-	var count int
+	var count int64
 
 	if err := Db().Model(&Folder{}).Where("root = ? AND path = ?", RootOriginals, rootPath).Count(&count).Error; err != nil {
 		log.Debugf("folder: %s (check folder path %s)", err, clean.LogQuote(rootPath))
@@ -241,7 +241,7 @@ func hasOriginalsFolderAlbumSlugCollision(rootPath string) bool {
 		return false
 	}
 
-	var collisions int
+	var collisions int64
 
 	if err := Db().Model(&Album{}).
 		Where("album_type = ? AND album_slug = ? AND album_path <> '' AND album_path <> ?", AlbumFolder, albumSlug, rootPath).
@@ -296,7 +296,7 @@ func FindFolder(root, dir string) *Folder {
 	result := Folder{}
 
 	if err := UnscopedDb().Where("path = ? AND root = ?", dir, root).First(&result).Error; err == nil {
-		if result.DeletedAt != nil {
+		if result.DeletedAt.Valid {
 			log.Debugf("folder: found soft-deleted row for path %s in root %s during conflict lookup", clean.LogQuote(dir), clean.LogQuote(root))
 		}
 

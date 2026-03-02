@@ -152,23 +152,23 @@ func TestFirstOrCreateFolder(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(&Album{}).Error
 		})
 
 		now := Now()
-		if err := UnscopedDb().Model(Folder{}).Where("root = ? AND path = ?", RootOriginals, folderPath).UpdateColumn("deleted_at", now).Error; err != nil {
+		if err := UnscopedDb().Model(&Folder{}).Where("root = ? AND path = ?", RootOriginals, folderPath).UpdateColumn("deleted_at", now).Error; err != nil {
 			t.Fatal(err)
 		}
 
 		createCandidate := NewFolder(RootOriginals, folderPath, time.Now().UTC())
-		result := FirstOrCreateFolder(&createCandidate)
+		result, _, _ := FirstOrCreateFolder(&createCandidate)
 
 		if result == nil {
 			t.Fatal("result must not be nil")
 		}
 
-		if result.DeletedAt == nil {
+		if result.DeletedAt.Valid == false {
 			t.Fatal("expected soft-deleted folder from unscoped conflict lookup")
 		}
 	})
@@ -219,13 +219,13 @@ func TestFindFolder(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(&Album{}).Error
 		})
 
 		now := Now()
 
-		if err := UnscopedDb().Model(Folder{}).Where("root = ? AND path = ?", RootOriginals, folderPath).UpdateColumn("deleted_at", now).Error; err != nil {
+		if err := UnscopedDb().Model(&Folder{}).Where("root = ? AND path = ?", RootOriginals, folderPath).UpdateColumn("deleted_at", now).Error; err != nil {
 			t.Fatal(err)
 		}
 
@@ -246,8 +246,8 @@ func TestFindFolder(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(&Album{}).Error
 		})
 
 		found := FindFolder(RootOriginals, strings.ReplaceAll(folderPath, "/", `\`))
@@ -337,8 +337,8 @@ func TestFolder_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{parentPath, childPath}).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{parentPath, childPath}).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{parentPath, childPath}).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{parentPath, childPath}).Delete(&Album{}).Error
 		})
 
 		parentAlbum := FindFolderAlbum(parentPath)
@@ -393,8 +393,8 @@ func TestFolder_Create(t *testing.T) {
 				}
 
 				t.Cleanup(func() {
-					_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, childPath).Delete(Folder{}).Error
-					_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, childPath).Delete(Album{}).Error
+					_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, childPath).Delete(&Folder{}).Error
+					_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, childPath).Delete(&Album{}).Error
 				})
 
 				childAlbum := FindFolderAlbum(childPath)
@@ -423,8 +423,8 @@ func TestFolder_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(&Album{}).Error
 		})
 
 		if err := album.DeletePermanently(); err != nil {
@@ -437,6 +437,7 @@ func TestFolder_Create(t *testing.T) {
 
 		rescanFolder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
 
+		t.Logf("Expect Unique violation from folder %s", folderPath)
 		if err := rescanFolder.Create(); err == nil {
 			t.Fatal("expected duplicate folder create error")
 		}
@@ -460,8 +461,8 @@ func TestFolder_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(&Album{}).Error
 		})
 
 		if err := album.DeletePermanently(); err != nil {
@@ -499,8 +500,8 @@ func TestFolder_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path = ?", RootOriginals, folderPath).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, folderPath).Delete(&Album{}).Error
 		})
 
 		album := FindFolderAlbum(folderPath)
@@ -559,14 +560,14 @@ func TestFolder_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathWine}).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathWine}).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(&Album{}).Error
 		})
 
 		// Start from a stale collision state:
 		// - only one album row exists for pathMirror
 		// - title/filter point to pathWine
-		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
+		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(&Album{}).Error
 
 		stale := NewFolderAlbum(folderWine.Title(), pathMirror, `path:"`+pathWine+`" public:true`)
 
@@ -619,13 +620,13 @@ func TestFolder_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathWine}).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathWine}).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(&Album{}).Error
 		})
 
 		// Start from a stale collision state where only one sibling album row
 		// exists and points to the wrong folder metadata.
-		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
+		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(&Album{}).Error
 
 		stale := NewFolderAlbum(folderWine.Title(), pathMirror, `path:"`+pathWine+`" public:true`)
 
