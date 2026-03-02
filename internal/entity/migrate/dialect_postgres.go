@@ -25,6 +25,6 @@ var DialectPostgres = Migrations{
 		ID:         "20250819-000001",
 		Dialect:    "postgres",
 		Stage:      "post",
-		Statements: []string{"CREATE COLLATION caseinsensitive (provider = icu, locale = 'und', deterministic = false);"},
+		Statements: []string{"CREATE COLLATION IF NOT EXISTS caseinsensitive (provider = icu, locale = 'und', deterministic = false);"},
 	},
 }
