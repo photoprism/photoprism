@@ -45,6 +45,16 @@
         :open-location="openLocation"
         :is-shared-view="isShared"
       ></p-photo-view-list>
+      <p-photo-view-timeline
+        v-else-if="settings.view === 'timeline'"
+        :context="context"
+        :photos="results"
+        :select-mode="selectMode"
+        :filter="filter"
+        :open-photo="openPhoto"
+        :edit-photo="editPhoto"
+        :is-shared-view="isShared"
+      ></p-photo-view-timeline>
       <p-photo-view-cards
         v-else
         :context="context"
@@ -70,6 +80,7 @@ import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
 import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
 import PPhotoViewList from "component/photo/view/list.vue";
+import PPhotoViewTimeline from "component/photo/view/timeline.vue";
 import PLoading from "component/loading.vue";
 import PScroll from "component/scroll.vue";
 import { getAppStorage } from "common/storage";
@@ -84,6 +95,7 @@ export default {
     PPhotoViewCards,
     PPhotoViewMosaic,
     PPhotoViewList,
+    PPhotoViewTimeline,
     PLoading,
     PScroll,
   },

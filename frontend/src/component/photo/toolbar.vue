@@ -64,7 +64,8 @@
         >
           <v-btn value="cards" icon="mdi-view-column" class="ps-1 action-view-cards" @click="setView('cards')"></v-btn>
           <v-btn v-if="listView" value="list" icon="mdi-view-list" class="action-view-list" @click="setView('list')"></v-btn>
-          <v-btn value="mosaic" icon="mdi-view-comfy" class="pe-1 action-view-mosaic" @click="setView('mosaic')"></v-btn>
+          <v-btn value="mosaic" icon="mdi-view-comfy" class="action-view-mosaic" @click="setView('mosaic')"></v-btn>
+          <v-btn value="timeline" icon="mdi-timeline" class="pe-1 action-view-timeline" @click="setView('timeline')"></v-btn>
         </v-btn-toggle>
 
         <v-btn
@@ -386,11 +387,13 @@ export default {
           { value: "mosaic", text: this.$gettext("Mosaic") },
           { value: "cards", text: this.$gettext("Cards") },
           { value: "list", text: this.$gettext("List") },
+          { value: "timeline", text: this.$gettext("Timeline") },
         ];
       } else {
         return [
           { value: "mosaic", text: this.$gettext("Mosaic") },
           { value: "cards", text: this.$gettext("Cards") },
+          { value: "timeline", text: this.$gettext("Timeline") },
         ];
       }
     },
