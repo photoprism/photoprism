@@ -261,4 +261,10 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"UPDATE photos SET indexed_at = checked_at WHERE indexed_at IS NULL;"},
 	},
+	{
+		ID:         "20260303-000001",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE auth_users MODIFY IF EXISTS id BIGINT AUTO_INCREMENT;"},
+	},
 }
