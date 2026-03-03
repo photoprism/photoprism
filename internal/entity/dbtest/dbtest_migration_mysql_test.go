@@ -202,8 +202,9 @@ func TestDialectMysql(t *testing.T) {
 		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_settings' doesn't exist", testextras.GetDBMutexID()))
 		assert.Contains(t, buffer.String(), fmt.Sprintf("Table 'migrate_%02d.auth_users_shares' doesn't exist", testextras.GetDBMutexID()))
 		// There is a blank record.
-		assert.Equal(t, 6, len(strings.Split(buffer.String(), "\n")))
-		if len(strings.Split(buffer.String(), "\n")) != 6 {
+		numberOfErrorsExpected := 7
+		assert.Equal(t, numberOfErrorsExpected, len(strings.Split(buffer.String(), "\n")))
+		if len(strings.Split(buffer.String(), "\n")) != numberOfErrorsExpected {
 			for i := 0; i < len(strings.Split(buffer.String(), "\n")); i++ {
 				assert.Empty(t, strings.Split(buffer.String(), "\n")[i])
 			}
