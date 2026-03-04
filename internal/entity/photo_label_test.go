@@ -149,13 +149,11 @@ func TestPhotoLabel_Update(t *testing.T) {
 		_, found := photoLabelCache.Get(relation.CacheKey())
 		assert.False(t, found)
 	})
-
 	t.Run("NilPhotoLabel", func(t *testing.T) {
 		var label *PhotoLabel
 		err := label.Update("uncertainty", 0)
 		assert.EqualError(t, err, "photo label must not be nil - you may have found a bug")
 	})
-
 	t.Run("MissingID", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 0, LabelID: 1}
 		err := label.Update("uncertainty", 0)
@@ -175,13 +173,11 @@ func TestPhotoLabel_Updates(t *testing.T) {
 		_, found := photoLabelCache.Get(relation.CacheKey())
 		assert.False(t, found)
 	})
-
 	t.Run("NilPhotoLabel", func(t *testing.T) {
 		var label *PhotoLabel
 		err := label.Updates(&PhotoLabel{Uncertainty: 0})
 		assert.EqualError(t, err, "photo label must not be nil - you may have found a bug")
 	})
-
 	t.Run("MissingID", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 0, LabelID: 1}
 		err := label.Updates(&PhotoLabel{Uncertainty: 0})
@@ -205,12 +201,10 @@ func TestPhotoLabel_HasID(t *testing.T) {
 		var label *PhotoLabel
 		assert.False(t, label.HasID())
 	})
-
 	t.Run("Missing", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 1}
 		assert.False(t, label.HasID())
 	})
-
 	t.Run("Complete", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 1, LabelID: 2}
 		assert.True(t, label.HasID())

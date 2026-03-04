@@ -353,9 +353,13 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 			if err := migrate.ConvertDBMSAuthIDDataTypes(db); err != nil {
 				log.Errorf("migrate: could not apply dbms auth_id fix : %v", err)
 				version.Error = err.Error()
-				version.Save(db)
+				if saveErr := version.Save(db); saveErr != nil {
+					log.Errorf("migrate: could not save dbms auth_id fix status: %v", saveErr)
+				}
 			} else {
-				version.Migrated(db)
+				if migratedErr := version.Migrated(db); migratedErr != nil {
+					log.Errorf("migrate: could not persist dbms auth_id fix status: %v", migratedErr)
+				}
 				log.Debug("migrate: DBMS AuthID fix migrated")
 			}
 		} else {

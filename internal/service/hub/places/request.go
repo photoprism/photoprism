@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // GetRequest fetches the cell ID data from the service URL.
@@ -15,6 +16,10 @@ func GetRequest(reqUrl string, locale string) (r *http.Response, err error) {
 
 	// Log request URL.
 	log.Tracef("places: sending request to %s", reqUrl)
+
+	if _, parseErr := safe.URL(reqUrl); parseErr != nil {
+		return r, fmt.Errorf("places: unsupported request URL scheme")
+	}
 
 	// Create GET request instance.
 	req, err = http.NewRequest(http.MethodGet, reqUrl, nil)
@@ -54,6 +59,7 @@ func GetRequest(reqUrl string, locale string) (r *http.Response, err error) {
 
 	// Perform request.
 	for i := 0; i < Retries; i++ {
+		// #nosec G704 reqUrl is parsed and scheme-validated above.
 		r, err = client.Do(req)
 
 		// Ok?

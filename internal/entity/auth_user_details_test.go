@@ -44,7 +44,7 @@ func TestUserDetails_Updates(t *testing.T) {
 		FamilyName: "Doe",
 	}
 
-	assert.Nil(t, m.UserDetails.Updates(UserDetails{GivenName: "Jane"}))
+	assert.NoError(t, m.UserDetails.Updates(UserDetails{GivenName: "Jane"}))
 	assert.Equal(t, "Jane", m.UserDetails.GivenName)
 }
 

@@ -143,12 +143,12 @@ func TestConfig_ReportPortalSettingsVisibility(t *testing.T) {
 		values := collect(rows)
 
 		_, hasProxy := values["portal-proxy"]
-		_, hasPrefix := values["portal-proxy-prefix"]
+		_, hasURI := values["portal-proxy-uri"]
 		_, hasConfigPath := values["portal-config-path"]
 		_, hasThemePath := values["portal-theme-path"]
 
 		assert.False(t, hasProxy)
-		assert.False(t, hasPrefix)
+		assert.False(t, hasURI)
 		assert.False(t, hasConfigPath)
 		assert.False(t, hasThemePath)
 	})
@@ -157,13 +157,13 @@ func TestConfig_ReportPortalSettingsVisibility(t *testing.T) {
 		conf.options.Edition = Portal
 		conf.options.NodeRole = cluster.RolePortal
 		conf.options.PortalProxy = true
-		conf.options.PortalProxyPrefix = "/instance/"
+		conf.options.PortalProxyUri = "https://proxy.example.com/instance/"
 
 		rows, _ := conf.Report()
 		values := collect(rows)
 
 		assert.Equal(t, "true", values["portal-proxy"])
-		assert.Equal(t, "/instance/", values["portal-proxy-prefix"])
+		assert.Equal(t, "https://proxy.example.com/instance/", values["portal-proxy-uri"])
 		assert.Equal(t, conf.PortalConfigPath(), values["portal-config-path"])
 		assert.Equal(t, conf.PortalThemePath(), values["portal-theme-path"])
 	})
@@ -210,7 +210,6 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 		assert.False(t, hasThemeURL)
 		assert.Equal(t, -1, indexOf(rows, "theme-url"))
 	})
-
 	t.Run("PortalIncludesThemeURL", func(t *testing.T) {
 		Features = Community
 		conf := NewConfig(CliTestContext())
@@ -226,7 +225,6 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 		assert.Greater(t, indexOf(rows, "theme-url"), indexOf(rows, "default-theme"))
 		assert.Less(t, indexOf(rows, "theme-url"), indexOf(rows, "places-locale"))
 	})
-
 	t.Run("ProIncludesThemeURL", func(t *testing.T) {
 		Features = Pro
 		conf := NewConfig(CliTestContext())

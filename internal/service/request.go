@@ -3,13 +3,14 @@ package service
 import (
 	"net"
 	"net/http"
-	"net/url"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // TestRequest makes a test request to the given URL and returns true if successful.
 func (h Heuristic) TestRequest(method, rawUrl string, allowedCIDRs []*net.IPNet) bool {
-	u, err := url.Parse(rawUrl)
+	u, err := safe.URL(rawUrl)
 
 	if err != nil {
 		return false
@@ -43,6 +44,9 @@ func (h Heuristic) TestRequest(method, rawUrl string, allowedCIDRs []*net.IPNet)
 	client := NewHTTPClient(30*time.Second, allowedCIDRs)
 
 	// Send request to see if it fails.
+	//
+	// #nosec G704 Request URL was validated via ValidateURLHost and client
+	// transport enforces CIDR restrictions for direct/redirected connections.
 	if resp, reqErr := client.Do(req); reqErr != nil {
 		return false
 	} else {

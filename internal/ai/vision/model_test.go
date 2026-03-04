@@ -15,6 +15,30 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
+func TestReadSchemaFile(t *testing.T) {
+	t.Run("ReadsRegularFile", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "schema.json")
+		if err := os.WriteFile(path, []byte(`{"type":"object"}`), 0o600); err != nil {
+			t.Fatalf("write schema file: %v", err)
+		}
+
+		got, err := readSchemaFile(path)
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		if got != `{"type":"object"}` {
+			t.Fatalf("unexpected schema content: %s", got)
+		}
+	})
+	t.Run("RejectsDirectory", func(t *testing.T) {
+		if _, err := readSchemaFile(t.TempDir()); err == nil {
+			t.Fatal("expected error for directory path")
+		}
+	})
+}
+
 func TestModelGetOptionsDefaultsOllamaLabels(t *testing.T) {
 	ollamaModel := "redule26/huihui_ai_qwen2.5-vl-7b-abliterated:latest"
 

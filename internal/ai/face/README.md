@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** February 14, 2026
+**Last Updated:** March 3, 2026
 
 ### Overview
 
@@ -119,6 +119,17 @@ Additional safeguards were introduced in October 2025 so stubborn clusters are o
   - `BenchmarkEmbeddingsMidpoint`
   - `TestMergeFaces/SameSubjects`
   - `TestNet`
+
+### Troubleshooting FaceNet Model Files
+
+If FaceNet unit tests fail with `Read less bytes than requested`, the local model file is typically incomplete or corrupted (`assets/models/facenet/saved_model.pb`).
+
+Recovery steps:
+
+- `rm -f /tmp/photoprism/facenet.zip`
+- `rm -rf assets/models/facenet`
+- `make dep-tensorflow` (or `scripts/download-facenet.sh`)
+- Re-run `go test ./internal/ai/face -run TestNet -count=1`
 
 ### Configuration Summary
 

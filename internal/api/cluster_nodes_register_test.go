@@ -36,7 +36,6 @@ func TestClusterNodesRegister(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
-
 	t.Run("ExistingNodeMutationRequiresOAuthToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)

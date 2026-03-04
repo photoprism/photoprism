@@ -140,10 +140,10 @@ func (c *Config) PortalProxy() bool {
 	return c.Portal() && c.options.PortalProxy
 }
 
-// PortalProxyPrefix returns the configured path prefix for portal proxy routing.
-func (c *Config) PortalProxyPrefix() string {
-	if prefix := strings.TrimSpace(c.options.PortalProxyPrefix); prefix != "" {
-		return prefix
+// PortalProxyUri returns the configured URI value for portal proxy routing.
+func (c *Config) PortalProxyUri() string {
+	if uri := strings.TrimSpace(c.options.PortalProxyUri); uri != "" {
+		return uri
 	}
 
 	return proxy.DefaultPathPrefix

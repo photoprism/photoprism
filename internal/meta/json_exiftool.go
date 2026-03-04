@@ -133,8 +133,8 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 				if uintVal := jsonValue.Uint(); uintVal > 0 {
 					fieldValue.SetUint(uintVal)
-				} else if intVal := txt.Int64(jsonValue.String()); intVal > 0 {
-					fieldValue.SetUint(uint64(intVal))
+				} else if intVal, parseErr := strconv.ParseUint(strings.TrimSpace(jsonValue.String()), 10, 64); parseErr == nil && intVal > 0 {
+					fieldValue.SetUint(intVal)
 				}
 			case []string:
 				existing := fieldValue.Interface().([]string)

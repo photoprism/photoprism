@@ -255,13 +255,11 @@ func TestShouldAutoRotateDatabase(t *testing.T) {
 		conf.Options().DatabaseDriver = MySQL
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
-
 	t.Run("NonMySQLDriverFalse", func(t *testing.T) {
 		conf := NewMinimalTestConfig("config", t.TempDir())
 		conf.Options().DatabaseDriver = SQLite3
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
-
 	t.Run("MySQLMissingFieldsTrue", func(t *testing.T) {
 		conf := NewMinimalTestConfig("config", t.TempDir())
 		conf.Options().DatabaseDriver = MySQL

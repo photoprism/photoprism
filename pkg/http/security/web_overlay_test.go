@@ -41,19 +41,16 @@ func TestOverlayRelativePath(t *testing.T) {
 		assert.True(t, ok)
 		assert.Equal(t, "assets/app.js", relPath)
 	})
-
 	t.Run("BasePathRoot", func(t *testing.T) {
 		relPath, ok := OverlayRelativePath("/i/acme", "i/acme")
 		assert.True(t, ok)
 		assert.Equal(t, "", relPath)
 	})
-
 	t.Run("BasePathAsset", func(t *testing.T) {
 		relPath, ok := OverlayRelativePath("/i/acme/assets/app.js", "i/acme")
 		assert.True(t, ok)
 		assert.Equal(t, "assets/app.js", relPath)
 	})
-
 	t.Run("OutsideBasePath", func(t *testing.T) {
 		relPath, ok := OverlayRelativePath("/assets/app.js", "i/acme")
 		assert.False(t, ok)
@@ -103,14 +100,12 @@ func TestOverlayResolveFile(t *testing.T) {
 		assert.NotEmpty(t, resolved)
 		assert.FileExists(t, resolved)
 	})
-
 	t.Run("MissingFileReturnsFalse", func(t *testing.T) {
 		webDir := t.TempDir()
 		resolved, ok := OverlayResolveFile(webDir, "missing.txt")
 		assert.False(t, ok)
 		assert.Equal(t, "", resolved)
 	})
-
 	t.Run("SymlinkEscapeReturnsFalse", func(t *testing.T) {
 		rootDir := t.TempDir()
 		outsideDir := t.TempDir()

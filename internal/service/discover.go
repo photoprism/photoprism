@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/http/safe"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -62,8 +63,13 @@ func Discover(rawUrl, user, pass, servicesCIDR string) (result Account, err erro
 		u.Scheme = strings.ToLower(u.Scheme)
 	}
 
-	if u.Scheme != "http" && u.Scheme != "https" {
-		return result, errors.New("unsupported service URL scheme")
+	if validatedURL, validateErr := safe.URL(u.String()); validateErr != nil {
+		if errors.Is(validateErr, safe.ErrSchemeNotAllowed) {
+			return result, errors.New("unsupported service URL scheme")
+		}
+		return result, validateErr
+	} else {
+		u = validatedURL
 	}
 
 	for _, h := range Heuristics {

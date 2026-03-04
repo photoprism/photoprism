@@ -28,13 +28,11 @@ func TestChildren(t *testing.T) {
 		assert.True(t, Children.Contains(samples[6]))  // Dist: 0.29948242058231617
 		assert.False(t, Children.Contains(samples[7])) // Dist: 1.1922265126804392
 	})
-
 	t.Run("Normalized", func(t *testing.T) {
 		for _, cluster := range Children {
 			assert.InDelta(t, 1.0, cluster.Embedding.Magnitude(), 1e-9)
 		}
 	})
-
 	t.Run("Dist", func(t *testing.T) {
 		inside := Children[0].Embedding
 		assert.InDelta(t, 0.0, Children.Dist(inside), 1e-9)

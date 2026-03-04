@@ -136,16 +136,16 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.PortalProxy = false
 		assert.False(t, c.PortalProxy())
 	})
-	t.Run("PortalProxyPrefix", func(t *testing.T) {
+	t.Run("PortalProxyUri", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
-		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
+		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyUri())
 
-		c.options.PortalProxyPrefix = "/instance"
-		assert.Equal(t, "/instance", c.PortalProxyPrefix())
+		c.options.PortalProxyUri = "/instance"
+		assert.Equal(t, "/instance", c.PortalProxyUri())
 
-		c.options.PortalProxyPrefix = "  "
-		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
+		c.options.PortalProxyUri = "https://proxy.example.com/instance/"
+		assert.Equal(t, "https://proxy.example.com/instance/", c.PortalProxyUri())
 	})
 	t.Run("JWKSUrlSetter", func(t *testing.T) {
 		const existing = "https://existing.example/.well-known/jwks.json"

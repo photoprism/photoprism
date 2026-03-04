@@ -17,3 +17,18 @@ func TestStat(t *testing.T) {
 	_, err = Stat("")
 	assert.Error(t, err)
 }
+
+func TestStatFile(t *testing.T) {
+	// Success case.
+	info, err := StatFile("./testdata/test.jpg")
+	assert.NoError(t, err)
+	assert.False(t, info.IsDir())
+
+	// Error on directory path.
+	_, err = StatFile("./testdata")
+	assert.Error(t, err)
+
+	// Error on empty path.
+	_, err = StatFile("")
+	assert.Error(t, err)
+}

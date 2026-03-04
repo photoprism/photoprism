@@ -278,6 +278,7 @@ func TestAuthLocal(t *testing.T) {
 		u := FindUserByName("alice")
 
 		// Create test request form.
+		//nolint:gosec // G101: Static password fixture is intentional for login tests.
 		frm := form.Login{
 			Username: "alice",
 			Password: "DIbS8T-uyGMe1-R3fmTv-vVaR35",
@@ -301,6 +302,7 @@ func TestAuthLocal(t *testing.T) {
 		u := FindUserByName("alice")
 
 		// Create test request form.
+		//nolint:gosec // G101: Static password fixture is intentional for login tests.
 		frm := form.Login{
 			Username: "alice",
 			Password: "5d0rGx-EvsDnV-DcKtYY-HT1aWL",
@@ -324,6 +326,7 @@ func TestAuthLocal(t *testing.T) {
 		u := FindUserByName("bob")
 
 		// Create test request form.
+		//nolint:gosec // G101: Static password fixture is intentional for login tests.
 		frm := form.Login{
 			Username: "alice",
 			Password: "DIbS8T-uyGMe1-R3fmTv-vVaR35",
@@ -500,6 +503,7 @@ func TestSessionLogIn(t *testing.T) {
 		m.SetClientIP(clientIp)
 
 		// Create login form.
+		//nolint:gosec // G101: Static token fixture is intentional for login tests.
 		frm := form.Login{
 			Token: "1jxf3jfn2k",
 		}
@@ -555,6 +559,7 @@ func TestSessionLogIn(t *testing.T) {
 		m.SetClientIP(clientIp)
 
 		// Create login form.
+		//nolint:gosec // G101: Static token fixture is intentional for login tests.
 		frm := form.Login{
 			Token: "1jxf3jfn2k",
 		}

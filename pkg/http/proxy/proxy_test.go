@@ -14,6 +14,10 @@ func TestProxy(t *testing.T) {
 	t.Run("Path", func(t *testing.T) {
 		assert.Equal(t, DefaultPathPrefix, PathPrefix)
 	})
+	t.Run("Origin", func(t *testing.T) {
+		assert.Equal(t, "", OriginScheme)
+		assert.Equal(t, "", OriginHost)
+	})
 	t.Run("Methods", func(t *testing.T) {
 		expected := []string{
 			header.MethodMkcol,
@@ -53,12 +57,18 @@ func TestProxy(t *testing.T) {
 	})
 	t.Run("SetPathPrefix", func(t *testing.T) {
 		previous := PathPrefix
+		previousScheme := OriginScheme
+		previousHost := OriginHost
 		t.Cleanup(func() {
 			PathPrefix = previous
+			OriginScheme = previousScheme
+			OriginHost = previousHost
 		})
 
 		require.NoError(t, SetPathPrefix("instance"))
 		assert.Equal(t, "/instance/", PathPrefix)
+		assert.Equal(t, "", OriginScheme)
+		assert.Equal(t, "", OriginHost)
 
 		require.NoError(t, SetPathPrefix("/node-a"))
 		assert.Equal(t, "/node-a/", PathPrefix)
@@ -71,8 +81,12 @@ func TestProxy(t *testing.T) {
 	})
 	t.Run("SetPathPrefixInvalid", func(t *testing.T) {
 		previous := PathPrefix
+		previousScheme := OriginScheme
+		previousHost := OriginHost
 		t.Cleanup(func() {
 			PathPrefix = previous
+			OriginScheme = previousScheme
+			OriginHost = previousHost
 		})
 
 		require.Error(t, SetPathPrefix("/"))
@@ -92,5 +106,65 @@ func TestProxy(t *testing.T) {
 
 		require.Error(t, SetPathPrefix(`/foo\bar`))
 		assert.Equal(t, previous, PathPrefix)
+	})
+	t.Run("SetProxyURIPathOnly", func(t *testing.T) {
+		previous := PathPrefix
+		previousScheme := OriginScheme
+		previousHost := OriginHost
+		t.Cleanup(func() {
+			PathPrefix = previous
+			OriginScheme = previousScheme
+			OriginHost = previousHost
+		})
+
+		require.NoError(t, SetProxyURI("/instance/"))
+		assert.Equal(t, "/instance/", PathPrefix)
+		assert.Equal(t, "", OriginScheme)
+		assert.Equal(t, "", OriginHost)
+	})
+	t.Run("SetProxyURIAbsolute", func(t *testing.T) {
+		previous := PathPrefix
+		previousScheme := OriginScheme
+		previousHost := OriginHost
+		t.Cleanup(func() {
+			PathPrefix = previous
+			OriginScheme = previousScheme
+			OriginHost = previousHost
+		})
+
+		require.NoError(t, SetProxyURI("https://proxy.example.com:8443/instance/"))
+		assert.Equal(t, "/instance/", PathPrefix)
+		assert.Equal(t, "https", OriginScheme)
+		assert.Equal(t, "proxy.example.com:8443", OriginHost)
+	})
+	t.Run("SetProxyURIAbsoluteDefaultPath", func(t *testing.T) {
+		previous := PathPrefix
+		previousScheme := OriginScheme
+		previousHost := OriginHost
+		t.Cleanup(func() {
+			PathPrefix = previous
+			OriginScheme = previousScheme
+			OriginHost = previousHost
+		})
+
+		require.NoError(t, SetProxyURI("https://proxy.example.com"))
+		assert.Equal(t, DefaultPathPrefix, PathPrefix)
+		assert.Equal(t, "https", OriginScheme)
+		assert.Equal(t, "proxy.example.com", OriginHost)
+	})
+	t.Run("SetProxyURIInvalid", func(t *testing.T) {
+		previous := PathPrefix
+		previousScheme := OriginScheme
+		previousHost := OriginHost
+		t.Cleanup(func() {
+			PathPrefix = previous
+			OriginScheme = previousScheme
+			OriginHost = previousHost
+		})
+
+		require.Error(t, SetProxyURI("https://proxy.example.com/?q=1"))
+		assert.Equal(t, previous, PathPrefix)
+		assert.Equal(t, previousScheme, OriginScheme)
+		assert.Equal(t, previousHost, OriginHost)
 	})
 }

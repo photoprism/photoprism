@@ -6,7 +6,7 @@ The provisioner package manages per-instance MariaDB schemas and users for clust
 
 ### Development Workflow
 
-- Configuration lives in `database.go`. The admin connection string is `ProvisionDSN` (default `root:photoprism@tcp(mariadb:4001)/photoprism?...`). Adjust only when running against a different host or password.
+- Configuration lives in `database.go`. The admin connection string is `ProvisionDSN` (default `root:photoprism@tcp(mariadb:4001)/photoprism`). Query parameters are optional when configuring the portal flag/env (`database-provision-dsn`), for example `charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s`.
 - `EnsureCredentials` accepts the technical node UUID/name identifiers, creates the schema if needed, and returns credentials plus rotation metadata. `DropCredentials` revokes grants, drops the user, and removes the schema. Both functions require a context; prefer `context.WithTimeout` in callers.
 - Identifier generation is centralized in `GenerateCredentials`. Call it instead of handcrafting database or user names so tests, CLI, and API stay aligned. The resulting identifiers follow `<prefix>d<hmac11>` for schemas and `<prefix>u<hmac11>` for users. Portal deployments may override the prefix via the `database-provision-prefix` flag; defaults are `cluster_d…` / `cluster_u…`.
 

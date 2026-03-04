@@ -11,6 +11,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// missingPhotoID returns a photo ID that is not present in the current test database.
+func missingPhotoID() uint {
+	id := uint(10010001)
+
+	for FindPhoto(Photo{ID: id}) != nil {
+		id++
+	}
+
+	return id
+}
+
 func TestEntity_Update(t *testing.T) {
 	t.Run("IDMissing", func(t *testing.T) {
 		uid := rnd.GenerateUID(PhotoUID)
@@ -27,8 +38,7 @@ func TestEntity_Update(t *testing.T) {
 		assert.Equal(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 	})
 	t.Run("UIDMissing", func(t *testing.T) {
-		id := 99999 + rand.IntN(10000)
-		m := &Photo{ID: uint(id), PhotoUID: "", UpdatedAt: Now(), CreatedAt: Now(), PhotoTitle: "Foo"}
+		m := &Photo{ID: PhotoFixtures.Get("Photo01").ID, PhotoUID: "", UpdatedAt: Now(), CreatedAt: Now(), PhotoTitle: "Foo"}
 		updatedAt := m.UpdatedAt
 
 		err := Update(m, "ID", "PhotoUID")
@@ -41,9 +51,8 @@ func TestEntity_Update(t *testing.T) {
 		assert.Equal(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 	})
 	t.Run("NotUpdated", func(t *testing.T) {
-		id := 99999 + rand.IntN(10000)
 		uid := rnd.GenerateUID(PhotoUID)
-		m := &Photo{ID: uint(id), PhotoUID: uid, UpdatedAt: time.Now(), CreatedAt: Now(), PhotoTitle: "Foo"}
+		m := &Photo{ID: missingPhotoID(), PhotoUID: uid, UpdatedAt: time.Now(), CreatedAt: Now(), PhotoTitle: "Foo"}
 		updatedAt := m.UpdatedAt
 
 		err := Update(m, "ID", "PhotoUID")
@@ -90,7 +99,7 @@ func TestEntity_Update(t *testing.T) {
 	})
 	t.Run("NonExistentKeys", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
-		m.ID = uint(math.MaxUint32 - rand.IntN(10000))
+		m.ID = missingPhotoID()
 		m.PhotoUID = rnd.GenerateUID(PhotoUID)
 		for m.Find() != nil {
 			m.ID = uint(math.MaxUint32 - rand.IntN(10000))

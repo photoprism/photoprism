@@ -346,7 +346,7 @@ func TestUser_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			m.Delete()
+			assert.NoError(t, m.Delete())
 			UnscopedDb().Delete(m)
 		})
 
@@ -1939,7 +1939,6 @@ func TestUser_SetAuthID(t *testing.T) {
 		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
 	})
-
 	t.Run("DupeAuthProviderAndID", func(t *testing.T) {
 		m := UserFixtures.Get("guest")
 		n := NewUser()
@@ -1952,10 +1951,10 @@ func TestUser_SetAuthID(t *testing.T) {
 		n.SuperAdmin = false
 		n.CanLogin = true
 		n.SetAuthID(uuid, issuer)
-		n.Save()
+		assert.NoError(t, n.Save())
 
 		t.Cleanup(func() {
-			n.Delete()
+			assert.NoError(t, n.Delete())
 			UnscopedDb().Delete(n)
 		})
 
@@ -2595,14 +2594,12 @@ func TestUser_ScopeHelpers(t *testing.T) {
 		assert.False(t, u.HasScope())
 		assert.True(t, u.NoScope())
 	})
-
 	t.Run("AnyScope", func(t *testing.T) {
 		u := &User{UserScope: list.Any}
 		assert.Equal(t, "*", u.Scope())
 		assert.False(t, u.HasScope())
 		assert.True(t, u.NoScope())
 	})
-
 	t.Run("RestrictedScope", func(t *testing.T) {
 		u := &User{UserScope: "Photos:View"}
 		assert.Equal(t, "photos:view", u.Scope())
@@ -2675,12 +2672,12 @@ func TestUser_AuthIDSQLite(t *testing.T) {
 	original := user.AuthID
 	t.Cleanup(func() {
 		user.AuthID = original
-		user.Save()
+		assert.NoError(t, user.Save())
 	})
 
 	expected := "012345678901234567890123456789"
 	user.AuthID = expected
-	user.Save()
+	assert.NoError(t, user.Save())
 
 	user2 := FindLocalUser("alice")
 	require.NotNil(t, user2)

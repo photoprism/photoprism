@@ -49,7 +49,10 @@ func vipsInit() {
 	}, vipsLogLevel())
 
 	// Start libvips.
-	vips.Startup(vipsConfig())
+	if err := vips.Startup(vipsConfig()); err != nil {
+		vipsStarted = false
+		log.Errorf("vips: %s", err)
+	}
 }
 
 // vipsConfig provides the config for initializing libvips.

@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -14,8 +15,27 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	os.Exit(runMain(m))
+}
+
+// runMain initializes package-level test state and returns the test exit code.
+func runMain(m *testing.M) (code int) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
+
+	// Isolate package fixtures per process so parallel package test runs do not
+	// race on shared storage/testdata directories.
+	testRoot, err := os.MkdirTemp("", "photoprism-test-*")
+	if err != nil {
+		log.Errorf("create test root: %v", err)
+		return 1
+	}
+	defer os.RemoveAll(testRoot)
+
+	if err = os.Setenv("PHOTOPRISM_STORAGE_PATH", filepath.Join(testRoot, "storage")); err != nil {
+		log.Errorf("set PHOTOPRISM_STORAGE_PATH: %v", err)
+		return 1
+	}
 
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)
@@ -34,18 +54,21 @@ func TestMain(m *testing.M) {
 	c := config.NewTestConfig("photoprism")
 	SetConfig(c)
 
+	code = 999
+
+	defer func() {
+		if err := c.CloseDb(); err != nil {
+			log.Errorf("close db: %v", err)
+		}
+		// Remove temporary SQLite files after running the tests.
+		fs.PurgeTestDbFiles(".", false)
+		testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
+		dbc.Close()
+	}()
+
 	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
+	code = m.Run()
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	if err := c.CloseDb(); err != nil {
-		log.Warnf("close db: %v", err)
-	}
-
-	// Remove temporary SQLite files after running the tests.
-	fs.PurgeTestDbFiles(".", false)
-
-	os.Exit(code)
+	return code
 }

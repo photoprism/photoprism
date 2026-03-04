@@ -17,7 +17,6 @@ func TestHashPath(t *testing.T) {
 			t.Fatalf("expected deterministic hash for %q", path)
 		}
 	})
-
 	t.Run("IsScanPath", func(t *testing.T) {
 		if !IsScanPath("/wp-login.php") {
 			t.Fatalf("expected scanner path to be detected")

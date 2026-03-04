@@ -255,13 +255,14 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2 := FindSessionByRefID("sessxkkcxxxx")
 		assert.Equal(t, "charles", m2.UserName)
 	})
 	t.Run("InvalidRefId", func(t *testing.T) {
+		//nolint:gosec // G101: Static auth token fixture is intentional for session tests.
 		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111"
 		id := rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
 
@@ -282,7 +283,7 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2, _ := FindSession(id)
@@ -306,9 +307,10 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
+		//nolint:gosec // G101: Static auth token fixture is intentional for session tests.
 		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
 
 		s2 := &Session{
@@ -359,7 +361,7 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2 := FindSessionByRefID(refID)
@@ -387,7 +389,6 @@ func TestSession_Save(t *testing.T) {
 		m2 := FindSessionByRefID("sessxkkcxxxy")
 		assert.Equal(t, "chris", m2.UserName)
 	})
-
 	t.Run("LongNumericAuthID", func(t *testing.T) {
 		refID := rnd.RefID("ts")
 		m := FindSessionByRefID(refID)
@@ -406,7 +407,7 @@ func TestSession_Save(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2 := FindSessionByRefID(refID)
@@ -1255,7 +1256,6 @@ func TestSession_SetUserScopeDefault(t *testing.T) {
 		assert.Equal(t, user.UserUID, sess.UserUID)
 		assert.Equal(t, user.UserName, sess.UserName)
 	})
-
 	t.Run("KeepsExistingScope", func(t *testing.T) {
 		sess := &Session{AuthScope: "logs:*"}
 		user := &User{UserUID: "u456", UserName: "admin", UserScope: "photos:view"}

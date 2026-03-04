@@ -110,7 +110,7 @@ func (m *Model) Url(imgUrl string, confidenceThreshold int) (result Labels, err 
 
 	var data []byte
 
-	if data, err = media.ReadUrl(imgUrl, scheme.HttpsData); err != nil {
+	if data, err = media.ReadUrlImage(imgUrl, scheme.HttpsData); err != nil {
 		return nil, err
 	}
 

@@ -28,7 +28,6 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 		CaptionModel = originalCaptionModel
 		registerOllamaEngineDefaults()
 	})
-
 	t.Run("SelfHosted", func(t *testing.T) {
 		ensureEnvOnce = sync.Once{}
 		CaptionModel = testCaptionModel.Clone()

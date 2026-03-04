@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
 func TestParse(t *testing.T) {
 	tests := []struct {
 		name string

@@ -86,7 +86,7 @@ func JoinPathPrefix(pathPrefix, pathValue string) string {
 	return scopedPrefix + "/" + scopedPath
 }
 
-// RewriteSetCookiePath enforces cookie Path scoping for proxy-prefixed routes.
+// RewriteSetCookiePath enforces cookie Path scoping for proxy-routed requests.
 func RewriteSetCookiePath(value, pathPrefix string) string {
 	if value == "" || pathPrefix == "" {
 		return value

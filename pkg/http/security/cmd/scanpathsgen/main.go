@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // scanPathEntry stores the source line and hash for deterministic output ordering.
@@ -45,10 +47,14 @@ func run() error {
 
 	source := generateSource(entries)
 
+	// Repository output directory should be readable/executable for maintainers.
+	//nolint:gosec // G301: Non-secret generated source path.
 	if err := os.MkdirAll(filepath.Dir(*outPath), 0o755); err != nil {
 		return fmt.Errorf("create output directory: %w", err)
 	}
 
+	// Generated Go source is committed to the repository and intentionally readable.
+	//nolint:gosec // G306: Non-secret generated source file.
 	if err := os.WriteFile(*outPath, source, 0o644); err != nil {
 		return fmt.Errorf("write output file: %w", err)
 	}
@@ -58,7 +64,7 @@ func run() error {
 
 // loadEntries loads, validates, hashes, and sorts scan path entries.
 func loadEntries(path string) ([]scanPathEntry, error) {
-	file, err := os.Open(path)
+	file, err := openInput(path)
 	if err != nil {
 		return nil, fmt.Errorf("open input file %s: %w", path, err)
 	}
@@ -110,6 +116,17 @@ func loadEntries(path string) ([]scanPathEntry, error) {
 	})
 
 	return entries, nil
+}
+
+// openInput opens a regular input file from a normalized path.
+func openInput(path string) (*os.File, error) {
+	cleanPath := filepath.Clean(path)
+	if _, err := fs.StatFile(cleanPath); err != nil {
+		return nil, err
+	}
+
+	//nolint:gosec // G304: User-provided path is normalized and validated above.
+	return os.Open(cleanPath)
 }
 
 // generateSource renders Go source code for hashed scan path lookup.

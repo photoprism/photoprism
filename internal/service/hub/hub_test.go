@@ -41,8 +41,8 @@ func Token(size uint) string {
 
 	result = append(result, strconv.FormatUint(randomInt, 36)...)
 
-	for i := len(result); i < cap(result); i++ {
-		result = append(result, byte(123-(cap(result)-i)))
+	for len(result) < cap(result) {
+		result = append(result, 'x')
 	}
 
 	return string(result[:size])

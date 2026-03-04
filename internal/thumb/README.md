@@ -1,6 +1,6 @@
 ## PhotoPrism — Thumbnails Package
 
-**Last Updated:** February 20, 2026
+**Last Updated:** March 3, 2026
 
 ### Overview
 
@@ -9,6 +9,7 @@
 ### Constraints
 
 - Uses libvips via govips; initialization is centralized in `VipsInit`.
+- Requires libvips 8.14+ with the current govips bindings (`github.com/davidbyttow/govips/v2`).
 - Works on files or in-memory buffers; writes outputs with `fs.ModeFile`.
 - ICC handling: if a JPEG lacks an embedded profile but sets EXIF `InteroperabilityIndex` (`R03`/Adobe RGB, `R98`/sRGB, `THM`/thumbnail), we embed an Adobe-compatible profile; otherwise we leave color untouched.
 - Metadata is removed from outputs to keep thumbs small.

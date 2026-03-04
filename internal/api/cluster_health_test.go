@@ -22,7 +22,6 @@ func TestClusterHealth(t *testing.T) {
 		assert.Equal(t, header.CacheControlNoStore, r.Header().Get(header.CacheControl))
 		assert.Equal(t, "", r.Header().Get(header.AccessControlAllowOrigin))
 	})
-
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RoleInstance
@@ -31,7 +30,6 @@ func TestClusterHealth(t *testing.T) {
 		r := PerformRequest(app, http.MethodGet, "/api/v1/cluster/health")
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
-
 	t.Run("ClusterCIDRDenied", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)
@@ -45,7 +43,6 @@ func TestClusterHealth(t *testing.T) {
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
-
 	t.Run("ClusterCIDRAllowed", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)

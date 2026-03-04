@@ -50,7 +50,7 @@ type DSN struct {
 	DSN      string
 	Driver   string
 	User     string
-	Password string
+	Password string //nolint:gosec // G117: DSN component intentionally stores password.
 	Net      string
 	Server   string
 	Name     string

@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // Client represents a webdav client.
@@ -31,13 +32,10 @@ type Client struct {
 
 // clientUrl returns the validated server url including username and password, if specified.
 func clientUrl(serverUrl, user, pass string) (*url.URL, error) {
-	result, err := url.Parse(serverUrl)
+	result, err := safe.URL(serverUrl)
 
-	// Check url.
 	if err != nil {
 		return nil, err
-	} else if result == nil {
-		return nil, fmt.Errorf("invalid server url")
 	}
 
 	// Set user and password if provided.
@@ -279,12 +277,12 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	src = trimPath(src)
 
 	// Skip if file already exists.
-	if _, err := os.Stat(dest); err == nil && !force {
+	if fs.Exists(dest) && !force {
 		return fmt.Errorf("webdav: download skipped, %s already exists", clean.Log(dest))
 	}
 
 	dir := path.Dir(dest)
-	dirInfo, err := os.Stat(dir)
+	dirInfo, err := fs.Stat(dir)
 
 	if err != nil {
 		// Create local storage path.
@@ -347,7 +345,7 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 		fileName := path.Join(dest, file.Abs)
 
 		// Check if file already exists.
-		if _, err = os.Stat(fileName); err == nil {
+		if fs.Exists(fileName) {
 			msg := fmt.Errorf("webdav: %s already exists", clean.Log(fileName))
 			log.Warn(msg)
 			errs = append(errs, msg)

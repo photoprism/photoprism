@@ -73,7 +73,6 @@ func TestRewriteDestinationHost(t *testing.T) {
 
 		assert.Equal(t, "http://instance.internal:2342/i/acme/import/dst.txt", req.Header.Get("Destination"))
 	})
-
 	t.Run("SkipsDifferentHost", func(t *testing.T) {
 		req, err := http.NewRequest(http.MethodGet, "http://portal.example.com", nil)
 		require.NoError(t, err)

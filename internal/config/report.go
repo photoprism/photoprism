@@ -196,7 +196,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	if c.Portal() {
 		rows = append(rows, [][]string{
 			{"portal-proxy", fmt.Sprintf("%t", c.PortalProxy())},
-			{"portal-proxy-prefix", c.PortalProxyPrefix()},
+			{"portal-proxy-uri", c.PortalProxyUri()},
 			{"portal-config-path", c.PortalConfigPath()},
 			{"portal-theme-path", c.PortalThemePath()},
 		}...)

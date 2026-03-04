@@ -1,6 +1,6 @@
 ## PhotoPrism — Config Package
 
-**Last Updated:** February 19, 2026
+**Last Updated:** March 2, 2026
 
 ### Overview
 
@@ -51,7 +51,7 @@ Example output:
 ### CLI Reference
 
 - `photoprism help` (or `photoprism --help`) lists all subcommands and global flags.
-- `photoprism show config` (alias `photoprism config`) renders every active option along with its current value. Pass `--json`, `--md`, `--tsv`, or `--csv` to change the output format. Portal-only rows (`portal-proxy`, `portal-proxy-prefix`, `portal-config-path`, `portal-theme-path`) are included only when `node-role` is set to `portal`.
+- `photoprism show config` (alias `photoprism config`) renders every active option along with its current value. Pass `--json`, `--md`, `--tsv`, or `--csv` to change the output format. Portal-only rows (`portal-proxy`, `portal-proxy-uri`, `portal-config-path`, `portal-theme-path`) are included only when `node-role` is set to `portal`.
 - `photoprism show config-options` prints the description and default value for each option. Use this when updating [`flags.go`](flags.go).
 - `photoprism show config-yaml` displays the configuration keys and their expected types in the [same structure that the YAML files use](https://docs.photoprism.app/getting-started/config-files/). It is a read-only helper meant to guide you when editing files under `storage/config`.
 - Additional `show` subcommands document search filters, metadata tags, and supported thumbnail sizes; see [`internal/commands/show.go`](../commands/show.go) for the complete list.

@@ -79,7 +79,6 @@ func TestGenerateLabelsRequestShapingForStructuredOutputIdea(t *testing.T) {
 	t.Cleanup(func() {
 		Config = prevConfig
 	})
-
 	t.Run("OllamaUsesJsonFormatWithSchemaPromptInstructions", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var req ApiRequest

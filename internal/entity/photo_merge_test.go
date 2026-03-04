@@ -96,8 +96,8 @@ func TestPhoto_Merge(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1000023, int(original.ID))
-		assert.Equal(t, 1000024, int(merged[0].ID))
+		assert.EqualValues(t, 1000023, original.ID)
+		assert.EqualValues(t, 1000024, merged[0].ID)
 
 		actual = FindPhoto(Photo{ID: original.ID})
 		assert.Equal(t, 2, len(actual.Labels))
@@ -260,7 +260,6 @@ func TestPhoto_SyncMediaTypeFromFiles(t *testing.T) {
 		assert.Equal(t, MediaVideo, refreshed.PhotoType)
 		assert.Equal(t, SrcAuto, refreshed.TypeSrc)
 	})
-
 	t.Run("PreservesManualOverride", func(t *testing.T) {
 		photo := NewPhoto(true)
 		photo.PhotoUID = rnd.GenerateUID(PhotoUID)

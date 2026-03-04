@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 28, 2026
+**Last Updated:** March 2, 2026
 
 ## Purpose
 
@@ -238,7 +238,8 @@ Note: Across our public documentation, official images, and in production, the c
     make acceptance-sqlite-stop
     ```
   - If your command temporarily changes into `frontend/`, run `make acceptance-sqlite-stop` after returning to the repository root; running that target from `frontend/` fails with "No rule to make target".
-- Portal proxy prefix validation: use the Portal test environment with `NODES=2` and verify both instance routes when changing `PHOTOPRISM_PORTAL_PROXY_PREFIX` (Portal) and matching node `PHOTOPRISM_SITE_URL` prefixes; use `PORTAL_TEST_ENV_ARGS=--proxy-prefix=/instance/` to regenerate consistent `.env` values.
+- Portal proxy URI validation: use the Portal test environment with `NODES=2` and verify both instance routes when changing `PHOTOPRISM_PORTAL_PROXY_URI` (Portal) and matching node `PHOTOPRISM_SITE_URL` prefixes; use `PORTAL_TEST_ENV_ARGS=--proxy-uri=/instance/` to regenerate consistent `.env` values.
+- Portal test environment default: run a full rebuild via `make -C portal test-env NODES=2` before `make -C portal test-start`; avoid `--no-build` partial refreshes unless you intentionally validate env-only changes, as mixed/stale staged assets can load the wrong frontend edition.
 
 ### Playwright MCP Usage
 

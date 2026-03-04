@@ -153,7 +153,7 @@ type Options struct {
 	ClusterUUID               string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
 	PortalUrl                 string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
 	PortalProxy               bool          `yaml:"PortalProxy" json:"-" flag:"portal-proxy"`
-	PortalProxyPrefix         string        `yaml:"PortalProxyPrefix" json:"-" flag:"portal-proxy-prefix"`
+	PortalProxyUri            string        `yaml:"PortalProxyUri" json:"-" flag:"portal-proxy-uri"`
 	JoinToken                 string        `yaml:"JoinToken" json:"-" flag:"join-token"`
 	NodeName                  string        `yaml:"NodeName" json:"-" flag:"node-name"`
 	NodeUUID                  string        `yaml:"NodeUUID" json:"-" flag:"node-uuid"`

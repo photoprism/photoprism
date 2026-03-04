@@ -7,7 +7,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptrace"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,12 +25,9 @@ func Download(destPath, rawURL string, opt *Options) error {
 		return err
 	}
 
-	u, err := url.Parse(rawURL)
+	u, err := URL(rawURL)
 	if err != nil {
 		return err
-	}
-	if !strings.EqualFold(u.Scheme, "http") && !strings.EqualFold(u.Scheme, "https") {
-		return ErrSchemeNotAllowed
 	}
 
 	// Defaults w/ env overrides
@@ -134,6 +130,7 @@ func Download(destPath, rawURL string, opt *Options) error {
 	}
 	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
 
+	// #nosec G704 URL is parsed and validated (scheme, host, optional private-IP checks).
 	resp, err := client.Do(req)
 	if err != nil {
 		return err

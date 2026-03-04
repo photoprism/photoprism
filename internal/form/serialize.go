@@ -144,14 +144,11 @@ func Unserialize(f SearchForm, q string) (result error) {
 							field.SetInt(int64(intValue))
 						}
 					case uint, uint8, uint16, uint32, uint64:
-						if intValue, err := strconv.Atoi(stringValue); err != nil {
+						bitSize := field.Type().Bits()
+						if uintValue, err := strconv.ParseUint(stringValue, 10, int(bitSize)); err != nil {
 							result = err
 						} else {
-							if intValue < 0 {
-								result = fmt.Errorf("unsupported negative value for %s", formName)
-							} else {
-								field.SetUint(uint64(intValue))
-							}
+							field.SetUint(uintValue)
 						}
 					case string:
 						field.SetString(clean.SearchString(stringValue))

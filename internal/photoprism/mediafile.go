@@ -1418,8 +1418,17 @@ func (m *MediaFile) ExceedsBytes(limit int64) (fileSize int64, err error) {
 	case fileSize <= 0 || fileSize <= limit:
 		return fileSize, nil
 	default:
-		return fileSize, fmt.Errorf("%s exceeds file size limit (%s / %s)", clean.Log(m.RootRelName()), humanize.Bytes(uint64(fileSize)), humanize.Bytes(uint64(limit)))
+		return fileSize, fmt.Errorf("%s exceeds file size limit (%s / %s)", clean.Log(m.RootRelName()), humanize.Bytes(nonNegativeUint64(fileSize)), humanize.Bytes(nonNegativeUint64(limit)))
 	}
+}
+
+// nonNegativeUint64 converts a signed integer to uint64 without overflow from negative values.
+func nonNegativeUint64(v int64) uint64 {
+	if v <= 0 {
+		return 0
+	}
+
+	return uint64(v)
 }
 
 // ExceedsResolution checks if an image in a natively supported format exceeds the configured resolution limit in megapixels.

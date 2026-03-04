@@ -45,7 +45,6 @@ func TestIndexCaptionSource(t *testing.T) {
 		require.NotNil(t, caption)
 		assert.Equal(t, captionModel.GetSource(), caption.Source)
 	})
-
 	t.Run("CustomSource", func(t *testing.T) {
 		originalSource := captionModel.GetSource()
 		vision.SetCaptionFunc(func(files vision.Files, mediaSrc media.Src) (*vision.CaptionResult, *vision.Model, error) {
@@ -93,7 +92,6 @@ func TestIndexLabelsSource(t *testing.T) {
 		assert.NotEmpty(t, labels)
 		assert.Equal(t, labelModel.GetSource(), captured)
 	})
-
 	t.Run("CustomSource", func(t *testing.T) {
 		var captured string
 		vision.SetLabelsFunc(func(files vision.Files, mediaSrc media.Src, src entity.Src) (classify.Labels, error) {

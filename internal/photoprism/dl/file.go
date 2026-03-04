@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // DownloadToFileWithOptions downloads media using yt-dlp into files on disk (no piping).
@@ -26,6 +28,11 @@ func (result Metadata) DownloadToFileWithOptions(
 		out := outTpl
 		out = strings.ReplaceAll(out, "%(id)s", "abc")
 		out = strings.ReplaceAll(out, "%(ext)s", "mp4")
+		if sanitizedOut, pathErr := sanitizeDownloadPath(out); pathErr != nil {
+			return nil, pathErr
+		} else {
+			out = sanitizedOut
+		}
 		// #nosec G301 media download directory should be accessible to user
 		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
 			return nil, err
@@ -34,8 +41,8 @@ func (result Metadata) DownloadToFileWithOptions(
 		if content == "" {
 			content = "dummy"
 		}
-		// #nosec G306 downloaded media files are intended to be user-readable
-		if err := os.WriteFile(out, []byte(content), 0o644); err != nil {
+		// Downloaded media files are intended to be user-readable.
+		if err := fs.WriteFile(out, []byte(content), fs.ModeFile); err != nil {
 			return nil, err
 		}
 		return []string{out}, nil
@@ -207,12 +214,19 @@ func (result Metadata) DownloadToFileWithOptions(
 		if line == "" {
 			continue
 		}
-		// If relative, resolve against tempPath
-		if !filepath.IsAbs(line) {
-			line = filepath.Join(tempPath, line)
+
+		downloadedPath, pathErr := sanitizeDownloadPath(line)
+		if pathErr != nil {
+			continue
 		}
-		if _, statErr := os.Stat(line); statErr == nil {
-			files = append(files, line)
+
+		// If relative, resolve against tempPath.
+		if !filepath.IsAbs(line) {
+			downloadedPath = filepath.Join(tempPath, downloadedPath)
+		}
+
+		if _, statErr := fs.Stat(downloadedPath); statErr == nil {
+			files = append(files, downloadedPath)
 		}
 	}
 
@@ -222,4 +236,23 @@ func (result Metadata) DownloadToFileWithOptions(
 	}
 
 	return files, nil
+}
+
+// sanitizeDownloadPath normalizes and validates a file path parsed from user/test input.
+func sanitizeDownloadPath(filePath string) (string, error) {
+	cleanPath := filepath.Clean(strings.TrimSpace(filePath))
+
+	switch cleanPath {
+	case "", ".", string(filepath.Separator):
+		return "", fmt.Errorf("invalid download path")
+	case "..":
+		return "", fmt.Errorf("invalid download path")
+	default:
+		parentPrefix := ".." + string(filepath.Separator)
+		if strings.HasPrefix(cleanPath, parentPrefix) {
+			return "", fmt.Errorf("invalid download path")
+		}
+
+		return cleanPath, nil
+	}
 }

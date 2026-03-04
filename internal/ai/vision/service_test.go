@@ -3,6 +3,7 @@ package vision
 import "testing"
 
 func TestServiceEndpoint(t *testing.T) {
+	//nolint:gosec // G101: Credential-style URLs are intentional test fixtures.
 	tests := []struct {
 		name       string
 		svc        Service

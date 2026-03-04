@@ -58,21 +58,8 @@ func (m Embedding) Dist(other Embedding) float64 {
 
 	var sum float64
 
-	var diff0, diff1, diff2, diff3 float64
-	i := 0
-	limit := len(m)
-
-	for ; i+4 <= limit; i += 4 {
-		diff0 = m[i] - other[i]
-		diff1 = m[i+1] - other[i+1]
-		diff2 = m[i+2] - other[i+2]
-		diff3 = m[i+3] - other[i+3]
-
-		sum += diff0*diff0 + diff1*diff1 + diff2*diff2 + diff3*diff3
-	}
-
-	for ; i < limit; i++ {
-		diff := m[i] - other[i]
+	for i, value := range m {
+		diff := value - other[i]
 		sum += diff * diff
 	}
 

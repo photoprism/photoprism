@@ -125,7 +125,13 @@ func (m *Album) LoadFromYaml(fileName string) error {
 		return fmt.Errorf("yaml filename is empty")
 	}
 
-	data, err := os.ReadFile(fileName)
+	filePath := filepath.Clean(fileName)
+	if _, err := fs.StatFile(filePath); err != nil {
+		return err
+	}
+
+	//nolint:gosec // G304: Path is normalized and validated above with fs.StatFile.
+	data, err := os.ReadFile(filePath)
 
 	if err != nil {
 		return err

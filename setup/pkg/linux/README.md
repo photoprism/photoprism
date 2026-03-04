@@ -4,7 +4,7 @@ As an alternative to our [Docker images](https://docs.photoprism.app/getting-sta
 
 These [binary installation packages](https://dl.photoprism.app/pkg/linux/) are intended for **experienced users** and **maintainers of third-party integrations** only, as they [require manual configuration](#configuration) and [do not include tested system dependencies](#dependencies). Since we are unable to [provide support](https://www.photoprism.app/kb/getting-support) for custom installations, we recommend using [one of our Docker images](https://docs.photoprism.app/getting-started/docker-compose/) to run PhotoPrism on a private server or NAS device.
 
-Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work, but older Linux distributions may not be compatible.
+Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work, but older Linux distributions may not be compatible. Current package builds also require **libvips 8.14+** for thumbnail processing.
 
 ### Usage
 
@@ -80,13 +80,29 @@ PhotoPrism packages bundle TensorFlow 2.18.0 and, starting with the December 202
 
 Install the following packages **before** running PhotoPrism so that thumbnailing, metadata extraction, and the SQLite fallback database work out of the box:
 
-| Distribution family          | Command                                                                                                                                              |
-|------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Debian / Ubuntu              | `sudo apt install libvips42t64 libimage-exiftool-perl ffmpeg sqlite3 tzdata`<br/>Use `libvips42` or, as a fallback, `libvips-dev` on older releases. |
-| Fedora / RHEL / Alma / Rocky | `sudo dnf install vips perl-Image-ExifTool ffmpeg sqlite tzdata`                                                                                     |
-| openSUSE                     | `sudo zypper install vips perl-Image-ExifTool ffmpeg sqlite3 tzdata`                                                                                 |
+| Distribution family          | Command                                                                                                                                                                                |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Debian / Ubuntu              | `sudo apt install libvips42t64 libimage-exiftool-perl ffmpeg sqlite3 tzdata`<br/>Use `libvips42` on releases without `libvips42t64`, but make sure the installed version is **8.14+**. |
+| Fedora / RHEL / Alma / Rocky | `sudo dnf install vips perl-Image-ExifTool ffmpeg sqlite tzdata`                                                                                                                       |
+| openSUSE                     | `sudo zypper install vips perl-Image-ExifTool ffmpeg sqlite3 tzdata`                                                                                                                   |
 
 These packages pull in the full libvips stack (GLib, libjpeg/libtiff/libwebp, archive/zstd, etc.) that the PhotoPrism binary links against. Run `ldd /opt/photoprism/bin/photoprism` if you need to diagnose missing libraries on custom distributions.
+
+#### Installing Newer libvips on Ubuntu 22.04 (Jammy)
+
+Ubuntu 22.04 ships libvips 8.12 by default, which is too old for current package builds. In that case, install a newer backport package first:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libvips.sh)
+vips --version
+```
+
+If you already have this repository checked out locally, you can run the same installer script directly:
+
+```bash
+sudo bash scripts/dist/install-libvips.sh
+vips --version
+```
 
 #### Recommended Extras
 
@@ -95,6 +111,7 @@ For extended RAW processing, HEIF/HEIC support, and database scalability we reco
 - MariaDB or MariaDB Server (external database)
 - Darktable and/or RawTherapee (RAW converters)
 - ImageMagick (CLI utilities)
+- libvips 8.14+ (required; Ubuntu 22.04 users should install a backport with `scripts/dist/install-libvips.sh` if distro packages are too old)
 - libheif (prefer the up-to-date binaries from [dl.photoprism.app/dist/libheif/](https://dl.photoprism.app/dist/libheif/); install with `bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libheif.sh)` when distro packages are outdated)
 - librsvg2-bin or librsvg2-tools (SVG conversion helpers)
 
