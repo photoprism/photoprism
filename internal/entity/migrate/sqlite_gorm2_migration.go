@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// Applies the data type conversions needed for SQLite and Gorm2
+// ConvertSQLiteDataTypes applies the data type conversions needed for SQLite and Gorm2
 // This is a hacky attempt to prevent GORM from create temp, insert, drop, renaming for each column that has changed.
 // It will still do it to create the foreign keys.
 // If someone has a big sqlite database, this is going to take time.
@@ -22,7 +22,7 @@ func ConvertSQLiteDataTypes(db *gorm.DB) (err error) {
 		TblName string
 	}
 	type ResultSQL struct {
-		Sql string
+		SQL string
 	}
 
 	var tables []ResultTables
@@ -41,13 +41,12 @@ func ConvertSQLiteDataTypes(db *gorm.DB) (err error) {
 	reTrailingSpaces := regexp.MustCompile(`([ ]+\))`)
 
 	for _, table := range tables {
-		log.Debugf("Evaluating table %s", table.TblName)
+		log.Debugf("migrate: evaluating table %s", table.TblName)
 		var createstatement ResultSQL
 		db.Raw("SELECT sql FROM sqlite_master WHERE type = 'table' AND tbl_name = ? AND name = ?;", table.TblName, table.TblName).Scan(&createstatement)
-		//log.Debugf("%s", createstatement.Sql)
-		if strings.Contains(strings.ToLower(createstatement.Sql), "varchar") || strings.Contains(strings.ToLower(createstatement.Sql), "varbinary") || strings.Contains(strings.ToLower(createstatement.Sql), "bigint") {
-			log.Debugf("Working on table %s", table.TblName)
-			tempStatement := reDblQuote.ReplaceAll([]byte(createstatement.Sql), []byte("`${1}`"))
+		if strings.Contains(strings.ToLower(createstatement.SQL), "varchar") || strings.Contains(strings.ToLower(createstatement.SQL), "varbinary") || strings.Contains(strings.ToLower(createstatement.SQL), "bigint") {
+			log.Debugf("migrate: working on table %s", table.TblName)
+			tempStatement := reDblQuote.ReplaceAll([]byte(createstatement.SQL), []byte("`${1}`"))
 			tempStatement = reDEFAULTString.ReplaceAll(tempStatement, []byte(`DEFAULT "${1}"`))
 			tempStatement = reVarchar.ReplaceAll(tempStatement, []byte("text"))
 			tempStatement = reVarbinary.ReplaceAll(tempStatement, []byte("blob"))
@@ -61,25 +60,58 @@ func ConvertSQLiteDataTypes(db *gorm.DB) (err error) {
 			dropTempStatement := fmt.Sprintf("DROP TABLE %s;", table.TblName)
 			alterTempStatement := fmt.Sprintf("ALTER TABLE %s__temp RENAME TO %s;", table.TblName, table.TblName)
 
-			if err := db.Exec(createTempStatement).Error; err != nil {
+			// Start a transaction
+			tx := db.Begin()
+			if tx.Error != nil {
+				log.Errorf("migrate: unable to start transaction with %v", err)
+				return fmt.Errorf("migrate: error creating transaction %w", tx.Error)
+			}
+
+			if err := tx.Exec(createTempStatement).Error; err != nil {
+				if txErr := tx.Rollback().Error; txErr != nil {
+					log.Errorf("migrate: rollback failure: %w", txErr)
+				} else {
+					log.Errorf("migrate: rolled back successfully")
+				}
 				log.Errorf("migrate: unable to execute %s with %v", createTempStatement, err)
 				return err
 			}
 
-			if err := db.Exec(insertTempStatement).Error; err != nil {
+			if err := tx.Exec(insertTempStatement).Error; err != nil {
+				if txErr := tx.Rollback().Error; txErr != nil {
+					log.Errorf("migrate: rollback failure: %w", txErr)
+				} else {
+					log.Errorf("migrate: rolled back successfully")
+				}
 				log.Errorf("migrate: unable to execute %s with %v", insertTempStatement, err)
 				return err
 			}
 
-			if err := db.Exec(dropTempStatement).Error; err != nil {
+			if err := tx.Exec(dropTempStatement).Error; err != nil {
+				if txErr := tx.Rollback().Error; txErr != nil {
+					log.Errorf("migrate: rollback failure: %w", txErr)
+				} else {
+					log.Errorf("migrate: rolled back successfully")
+				}
 				log.Errorf("migrate: unable to execute %s with %v", dropTempStatement, err)
 				return err
 			}
 
-			if err := db.Exec(alterTempStatement).Error; err != nil {
+			if err := tx.Exec(alterTempStatement).Error; err != nil {
+				if txErr := tx.Rollback().Error; txErr != nil {
+					log.Errorf("migrate: rollback failure: %w", txErr)
+				} else {
+					log.Errorf("migrate: rolled back successfully")
+				}
 				log.Errorf("migrate: unable to execute %s with %v", alterTempStatement, err)
 				return err
 			}
+
+			if txErr := tx.Commit().Error; txErr != nil {
+				log.Errorf("migrate: commit failure for Convert SQLite Data Types: %w", txErr)
+				return txErr
+			}
+			log.Debugf("migrate: committed changes to %s", table.TblName)
 		}
 	}
 
