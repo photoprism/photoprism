@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -51,6 +52,7 @@ var MigrationsRunCommand = &cli.Command{
 	Action: migrationsRunAction,
 }
 
+// MigrationsTransferCommand runs database to database transfers
 var MigrationsTransferCommand = &cli.Command{
 	Name:      "transfer",
 	Aliases:   []string{"copy"},
@@ -226,15 +228,17 @@ func migrationsTransferAction(ctx *cli.Context) error {
 		return fmt.Errorf("run '%s migrations ls' to display the status of schema migrations", filepath.Base(os.Args[0]))
 	}
 
-	batchSize := int(ctx.Uint("batch"))
+	batchUint := ctx.Uint("batch")
+	if batchUint > math.MaxInt {
+		return fmt.Errorf("migrate: batch size exceeds maximum value %d", math.MaxInt)
+	}
+	batchSize := int(batchUint)
 	log.Infof("migrate: transfer batch size set to %d", batchSize)
 
 	start := time.Now()
 
 	conf := config.NewConfig(ctx)
 	tfrConf := config.NewConfig(ctx)
-
-	//log = event.Log
 
 	if err := tfrConf.SwapDBAndTransfer(); err != nil {
 		return err
@@ -375,7 +379,6 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// Bring the rest of the users across
 	var users entity.Users
 	result := conf.Db().Unscoped().
-		//Clauses(clause.OnConflict{UpdateAll: true}).  // <-- This is not working against sqlite.  Not generating the ON CONFLICT statements.
 		Where("id > 1").
 		FindInBatches(&users, batchSize, func(tx *gorm.DB, batch int) error {
 			var newUsers []*entity.User
@@ -391,14 +394,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of users transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of users transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.User{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.User{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.User{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -419,14 +424,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of albums transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of albums transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Album{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Album{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Album{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -448,14 +455,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of cameras transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of cameras transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Camera{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Camera{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Camera{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -477,14 +486,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of lenses transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of lenses transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Lens{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Lens{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Lens{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -506,7 +517,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of places transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of places transferred %v", result.RowsAffected)
 	}
 
 	var cells []entity.Cell
@@ -526,7 +537,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of cells transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of cells transferred %v", result.RowsAffected)
 	}
 
 	var countries entity.Countries
@@ -546,7 +557,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of countries transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of countries transferred %v", result.RowsAffected)
 	}
 
 	var keywords []entity.Keyword
@@ -565,14 +576,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of keywords transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of keywords transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Keyword{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Keyword{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Keyword{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -593,14 +606,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of labels transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of labels transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Label{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Label{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Label{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -634,14 +649,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of photos transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of photos transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Photo{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Photo{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Photo{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -661,14 +678,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of files transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of files transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.File{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.File{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.File{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -694,7 +713,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of albumusers transfered %v", currentOffset)
+	log.Infof("migrate: number of albumusers transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -713,7 +732,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of albumusers transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of albumusers transferred %v", result.RowsAffected)
 	// }
 
 	var clients entity.Clients
@@ -732,7 +751,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of clients transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of clients transferred %v", result.RowsAffected)
 	}
 
 	var sessions entity.Sessions
@@ -751,7 +770,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of sessions transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of sessions transferred %v", result.RowsAffected)
 	}
 
 	var userdetails []entity.UserDetails
@@ -775,7 +794,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of userdetails transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of userdetails transferred %v", result.RowsAffected)
 	}
 
 	var usersettings []entity.UserSettings
@@ -800,7 +819,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of usersettings transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of usersettings transferred %v", result.RowsAffected)
 	}
 
 	var usershares []entity.UserShare
@@ -824,7 +843,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of usershares transfered %v", currentOffset)
+	log.Infof("migrate: number of usershares transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -845,7 +864,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of usershares transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of usershares transferred %v", result.RowsAffected)
 	// }
 
 	var categories []entity.Category
@@ -869,7 +888,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of categories transfered %v", currentOffset)
+	log.Infof("migrate: number of categories transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -890,7 +909,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// 	log.Errorf("migrate: error in batch category findinbatches %s", result.Error)
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of categories transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of categories transferred %v", result.RowsAffected)
 	// }
 
 	var duplicates []entity.Duplicate
@@ -914,7 +933,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of duplicates transfered %v", currentOffset)
+	log.Infof("migrate: number of duplicates transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -934,7 +953,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of duplicates transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of duplicates transferred %v", result.RowsAffected)
 	// }
 
 	var errors entity.Errors
@@ -958,14 +977,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of errors transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of errors transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Error{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Error{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Error{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -986,7 +1007,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of faces transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of faces transferred %v", result.RowsAffected)
 	}
 
 	var services entity.Services
@@ -1005,14 +1026,16 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of services transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of services transferred %v", result.RowsAffected)
 		if result.RowsAffected > 0 {
 			if result = tfrConf.Db().Unscoped().
 				Model(&entity.Service{}).Select("MAX(id) as id").Scan(&currentid); result.Error != nil {
 				log.Errorf("migrate: error in getting max id %v", result.Error)
 				return result.Error
 			} else {
-				resetIDToValue(tfrConf.Db(), entity.Service{}.TableName(), int(currentid.Id))
+				if err := resetIDToValue(tfrConf.Db(), entity.Service{}.TableName(), currentid.Id); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -1038,7 +1061,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of fileshares transfered %v", currentOffset)
+	log.Infof("migrate: number of fileshares transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -1058,7 +1081,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of fileshares transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of fileshares transferred %v", result.RowsAffected)
 	// }
 
 	var filesyncs []entity.FileSync
@@ -1082,7 +1105,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of filesyncs transfered %v", currentOffset)
+	log.Infof("migrate: number of filesyncs transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -1102,7 +1125,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of filesyncs transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of filesyncs transferred %v", result.RowsAffected)
 	// }
 
 	var folders entity.Folders
@@ -1121,7 +1144,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of folders transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of folders transferred %v", result.RowsAffected)
 	}
 
 	var links entity.Links
@@ -1140,7 +1163,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of links transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of links transferred %v", result.RowsAffected)
 	}
 
 	var markers entity.Markers
@@ -1159,7 +1182,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of markers transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of markers transferred %v", result.RowsAffected)
 	}
 
 	var passcodes []entity.Passcode
@@ -1183,7 +1206,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of passcodes transfered %v", currentOffset)
+	log.Infof("migrate: number of passcodes transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -1203,7 +1226,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of passcodes transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of passcodes transferred %v", result.RowsAffected)
 	// }
 
 	var passwords []entity.Password
@@ -1222,7 +1245,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of passwords transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of passwords transferred %v", result.RowsAffected)
 	}
 
 	var photousers []entity.PhotoUser
@@ -1246,7 +1269,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of photousers transfered %v", currentOffset)
+	log.Infof("migrate: number of photousers transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -1266,7 +1289,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of photousers transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of photousers transferred %v", result.RowsAffected)
 	// }
 
 	var reactions []entity.Reaction
@@ -1290,7 +1313,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 			}
 		}
 	}
-	log.Infof("migrate: number of reactions transfered %v", currentOffset)
+	log.Infof("migrate: number of reactions transferred %v", currentOffset)
 
 	// Gorm bug with composite foreign keys prevents the following from working.
 	// It can be used once pull https://github.com/go-gorm/gorm/pull/7453 (or equivalent) has been made to gorm
@@ -1310,7 +1333,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	// if result.Error != nil {
 	// 	return result.Error
 	// } else {
-	// 	log.Infof("migrate: number of reactions transfered %v", result.RowsAffected)
+	// 	log.Infof("migrate: number of reactions transferred %v", result.RowsAffected)
 	// }
 
 	var subjects entity.Subjects
@@ -1329,7 +1352,7 @@ func migrationsTransferAction(ctx *cli.Context) error {
 	if result.Error != nil {
 		return result.Error
 	} else {
-		log.Infof("migrate: number of subjects transfered %v", result.RowsAffected)
+		log.Infof("migrate: number of subjects transferred %v", result.RowsAffected)
 	}
 
 	elapsed := time.Since(start)
@@ -1340,9 +1363,9 @@ func migrationsTransferAction(ctx *cli.Context) error {
 }
 
 // Reset the ID increment to passed in value
-func resetIDToValue(db *gorm.DB, tableName string, value int) error {
+func resetIDToValue(db *gorm.DB, tableName string, value uint) error {
 	sqlCommand := ""
-	switch db.Dialector.Name() {
+	switch db.Name() {
 	case entity.MySQL:
 		sqlCommand = fmt.Sprintf("ALTER TABLE `%v` AUTO_INCREMENT = %d", tableName, value+1)
 	case entity.Postgres:
@@ -1350,10 +1373,10 @@ func resetIDToValue(db *gorm.DB, tableName string, value int) error {
 	case entity.SQLite3:
 		sqlCommand = fmt.Sprintf("UPDATE SQLITE_SEQUENCE SET SEQ=%d WHERE NAME='%v'", value, tableName)
 	default:
-		return fmt.Errorf("Unsupported Dialector %s", db.Dialector.Name())
+		return fmt.Errorf("unsupported dialector %s", db.Name())
 	}
 	if res := db.Exec(sqlCommand); res.Error != nil {
-		return fmt.Errorf("Reset Auto Increment failed with %v", res.Error)
+		return fmt.Errorf("reset auto increment failed with %v", res.Error)
 	}
 	return nil
 }

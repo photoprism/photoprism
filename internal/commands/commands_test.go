@@ -27,8 +27,11 @@ var savedPath string
 // and re-registers the DB provider before each command invocation. If you see
 // "config: database not connected" during test runs, consider moving shutdown
 // behavior behind an interface or gating it for tests.
-
 func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
+
+func testMain(m *testing.M) (code int) {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	log = logrus.StandardLogger()
@@ -68,7 +71,7 @@ func TestMain(m *testing.M) {
 
 	// Run unit tests.
 	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
+	code = m.Run()
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
@@ -82,7 +85,7 @@ func TestMain(m *testing.M) {
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
-	os.Exit(code)
+	return code
 }
 
 // SetEnvForTest sets an environment variable and restores its original value after the test.
@@ -174,7 +177,7 @@ func NewTestContextWithParse(appArgs []string, cmdArgs []string) *cli.Context {
 	// Parse photoprism command arguments.
 	photoprismFlagSet := flag.NewFlagSet("photoprism", flag.ContinueOnError)
 	for _, f := range app.Flags {
-		f.Apply(photoprismFlagSet)
+		LogErr(f.Apply(photoprismFlagSet))
 	}
 	LogErr(photoprismFlagSet.Parse(appArgs[1:]))
 

@@ -3,7 +3,6 @@ package commands
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -22,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMigrationCommand(t *testing.T) {
@@ -107,8 +107,8 @@ func TestMigrationCommand(t *testing.T) {
 		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Setup target database
-		os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
-		if err := copyFile("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db"); err != nil {
+		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
+		if err := fs.Copy("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db", true); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -155,7 +155,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: transfer batch size set to 100")
 
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
+			_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
 		}
 	})
 
@@ -163,8 +163,8 @@ func TestMigrationCommand(t *testing.T) {
 		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Setup target database
-		os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
-		if err := copyFile("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db"); err != nil {
+		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
+		if err := fs.Copy("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db", true); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -211,7 +211,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: transfer batch size set to 500")
 
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
+			_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
 		}
 	})
 
@@ -222,7 +222,7 @@ func TestMigrationCommand(t *testing.T) {
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
@@ -260,7 +260,7 @@ func TestMigrationCommand(t *testing.T) {
 		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -276,38 +276,38 @@ func TestMigrationCommand(t *testing.T) {
 		// t.Logf(l)
 
 		assert.Contains(t, l, "migrate: transfer batch size set to 10")
-		assert.Contains(t, l, "migrate: number of albums transfered 31")
-		assert.Contains(t, l, "migrate: number of albumusers transfered 0")
-		assert.Contains(t, l, "migrate: number of cameras transfered 6")
-		assert.Contains(t, l, "migrate: number of categories transfered 1")
-		assert.Contains(t, l, "migrate: number of cells transfered 9")
-		assert.Contains(t, l, "migrate: number of clients transfered 7")
-		assert.Contains(t, l, "migrate: number of countries transfered 1")
-		assert.Contains(t, l, "migrate: number of duplicates transfered 0")
-		assert.Contains(t, l, "migrate: number of errors transfered 0")
-		assert.Contains(t, l, "migrate: number of faces transfered 7")
-		assert.Contains(t, l, "migrate: number of files transfered 71")
-		assert.Contains(t, l, "migrate: number of fileshares transfered 2")
-		assert.Contains(t, l, "migrate: number of filesyncs transfered 3")
-		assert.Contains(t, l, "migrate: number of folders transfered 3")
-		assert.Contains(t, l, "migrate: number of keywords transfered 26")
-		assert.Contains(t, l, "migrate: number of labels transfered 32")
-		assert.Contains(t, l, "migrate: number of lenses transfered 2")
-		assert.Contains(t, l, "migrate: number of links transfered 5")
-		assert.Contains(t, l, "migrate: number of markers transfered 18")
-		assert.Contains(t, l, "migrate: number of passcodes transfered 3")
-		assert.Contains(t, l, "migrate: number of passwords transfered 11")
-		assert.Contains(t, l, "migrate: number of photos transfered 58")
-		assert.Contains(t, l, "migrate: number of photousers transfered 0")
-		assert.Contains(t, l, "migrate: number of places transfered 10")
-		assert.Contains(t, l, "migrate: number of reactions transfered 3")
-		assert.Contains(t, l, "migrate: number of sessions transfered 21")
-		assert.Contains(t, l, "migrate: number of services transfered 2")
-		assert.Contains(t, l, "migrate: number of subjects transfered 6")
-		assert.Contains(t, l, "migrate: number of users transfered 11")
-		assert.Contains(t, l, "migrate: number of userdetails transfered 9")
-		assert.Contains(t, l, "migrate: number of usersettings transfered 13")
-		assert.Contains(t, l, "migrate: number of usershares transfered 1")
+		assert.Contains(t, l, "migrate: number of albums transferred 31")
+		assert.Contains(t, l, "migrate: number of albumusers transferred 0")
+		assert.Contains(t, l, "migrate: number of cameras transferred 6")
+		assert.Contains(t, l, "migrate: number of categories transferred 1")
+		assert.Contains(t, l, "migrate: number of cells transferred 9")
+		assert.Contains(t, l, "migrate: number of clients transferred 7")
+		assert.Contains(t, l, "migrate: number of countries transferred 1")
+		assert.Contains(t, l, "migrate: number of duplicates transferred 0")
+		assert.Contains(t, l, "migrate: number of errors transferred 0")
+		assert.Contains(t, l, "migrate: number of faces transferred 7")
+		assert.Contains(t, l, "migrate: number of files transferred 71")
+		assert.Contains(t, l, "migrate: number of fileshares transferred 2")
+		assert.Contains(t, l, "migrate: number of filesyncs transferred 3")
+		assert.Contains(t, l, "migrate: number of folders transferred 3")
+		assert.Contains(t, l, "migrate: number of keywords transferred 26")
+		assert.Contains(t, l, "migrate: number of labels transferred 32")
+		assert.Contains(t, l, "migrate: number of lenses transferred 2")
+		assert.Contains(t, l, "migrate: number of links transferred 5")
+		assert.Contains(t, l, "migrate: number of markers transferred 18")
+		assert.Contains(t, l, "migrate: number of passcodes transferred 3")
+		assert.Contains(t, l, "migrate: number of passwords transferred 11")
+		assert.Contains(t, l, "migrate: number of photos transferred 58")
+		assert.Contains(t, l, "migrate: number of photousers transferred 0")
+		assert.Contains(t, l, "migrate: number of places transferred 10")
+		assert.Contains(t, l, "migrate: number of reactions transferred 3")
+		assert.Contains(t, l, "migrate: number of sessions transferred 21")
+		assert.Contains(t, l, "migrate: number of services transferred 2")
+		assert.Contains(t, l, "migrate: number of subjects transferred 6")
+		assert.Contains(t, l, "migrate: number of users transferred 11")
+		assert.Contains(t, l, "migrate: number of userdetails transferred 9")
+		assert.Contains(t, l, "migrate: number of usersettings transferred 13")
+		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
 		testdb, err := gorm.Open(postgres.Open(tfDSN.ToString()), &gorm.Config{})
@@ -326,12 +326,12 @@ func TestMigrationCommand(t *testing.T) {
 		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
-		os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db")
+		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db")
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
@@ -364,7 +364,7 @@ func TestMigrationCommand(t *testing.T) {
 		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -380,38 +380,38 @@ func TestMigrationCommand(t *testing.T) {
 		// t.Logf(l)
 
 		assert.Contains(t, l, "migrate: transfer batch size set to 1000")
-		assert.Contains(t, l, "migrate: number of albums transfered 31")
-		assert.Contains(t, l, "migrate: number of albumusers transfered 0")
-		assert.Contains(t, l, "migrate: number of cameras transfered 6")
-		assert.Contains(t, l, "migrate: number of categories transfered 1")
-		assert.Contains(t, l, "migrate: number of cells transfered 9")
-		assert.Contains(t, l, "migrate: number of clients transfered 7")
-		assert.Contains(t, l, "migrate: number of countries transfered 1")
-		assert.Contains(t, l, "migrate: number of duplicates transfered 0")
-		assert.Contains(t, l, "migrate: number of errors transfered 0")
-		assert.Contains(t, l, "migrate: number of faces transfered 7")
-		assert.Contains(t, l, "migrate: number of files transfered 71")
-		assert.Contains(t, l, "migrate: number of fileshares transfered 2")
-		assert.Contains(t, l, "migrate: number of filesyncs transfered 3")
-		assert.Contains(t, l, "migrate: number of folders transfered 3")
-		assert.Contains(t, l, "migrate: number of keywords transfered 26")
-		assert.Contains(t, l, "migrate: number of labels transfered 32")
-		assert.Contains(t, l, "migrate: number of lenses transfered 2")
-		assert.Contains(t, l, "migrate: number of links transfered 5")
-		assert.Contains(t, l, "migrate: number of markers transfered 18")
-		assert.Contains(t, l, "migrate: number of passcodes transfered 3")
-		assert.Contains(t, l, "migrate: number of passwords transfered 11")
-		assert.Contains(t, l, "migrate: number of photos transfered 58")
-		assert.Contains(t, l, "migrate: number of photousers transfered 0")
-		assert.Contains(t, l, "migrate: number of places transfered 10")
-		assert.Contains(t, l, "migrate: number of reactions transfered 3")
-		assert.Contains(t, l, "migrate: number of sessions transfered 21")
-		assert.Contains(t, l, "migrate: number of services transfered 2")
-		assert.Contains(t, l, "migrate: number of subjects transfered 6")
-		assert.Contains(t, l, "migrate: number of users transfered 11")
-		assert.Contains(t, l, "migrate: number of userdetails transfered 9")
-		assert.Contains(t, l, "migrate: number of usersettings transfered 13")
-		assert.Contains(t, l, "migrate: number of usershares transfered 1")
+		assert.Contains(t, l, "migrate: number of albums transferred 31")
+		assert.Contains(t, l, "migrate: number of albumusers transferred 0")
+		assert.Contains(t, l, "migrate: number of cameras transferred 6")
+		assert.Contains(t, l, "migrate: number of categories transferred 1")
+		assert.Contains(t, l, "migrate: number of cells transferred 9")
+		assert.Contains(t, l, "migrate: number of clients transferred 7")
+		assert.Contains(t, l, "migrate: number of countries transferred 1")
+		assert.Contains(t, l, "migrate: number of duplicates transferred 0")
+		assert.Contains(t, l, "migrate: number of errors transferred 0")
+		assert.Contains(t, l, "migrate: number of faces transferred 7")
+		assert.Contains(t, l, "migrate: number of files transferred 71")
+		assert.Contains(t, l, "migrate: number of fileshares transferred 2")
+		assert.Contains(t, l, "migrate: number of filesyncs transferred 3")
+		assert.Contains(t, l, "migrate: number of folders transferred 3")
+		assert.Contains(t, l, "migrate: number of keywords transferred 26")
+		assert.Contains(t, l, "migrate: number of labels transferred 32")
+		assert.Contains(t, l, "migrate: number of lenses transferred 2")
+		assert.Contains(t, l, "migrate: number of links transferred 5")
+		assert.Contains(t, l, "migrate: number of markers transferred 18")
+		assert.Contains(t, l, "migrate: number of passcodes transferred 3")
+		assert.Contains(t, l, "migrate: number of passwords transferred 11")
+		assert.Contains(t, l, "migrate: number of photos transferred 58")
+		assert.Contains(t, l, "migrate: number of photousers transferred 0")
+		assert.Contains(t, l, "migrate: number of places transferred 10")
+		assert.Contains(t, l, "migrate: number of reactions transferred 3")
+		assert.Contains(t, l, "migrate: number of sessions transferred 21")
+		assert.Contains(t, l, "migrate: number of services transferred 2")
+		assert.Contains(t, l, "migrate: number of subjects transferred 6")
+		assert.Contains(t, l, "migrate: number of users transferred 11")
+		assert.Contains(t, l, "migrate: number of userdetails transferred 9")
+		assert.Contains(t, l, "migrate: number of usersettings transferred 13")
+		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 		// Make sure that a sequence update has worked.
 		testdb, err := gorm.Open(sqlite.Open("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db?_busy_timeout=5000&_foreign_keys=on"), &gorm.Config{})
 		if err != nil {
@@ -426,7 +426,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		// Remove target database file
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db")
+			_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db")
 		}
 	})
 
@@ -434,15 +434,15 @@ func TestMigrationCommand(t *testing.T) {
 		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
-		os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db")
-		if err := copyFile("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db"); err != nil {
+		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db")
+		if err := fs.Copy("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db", true); err != nil {
 			t.Fatal(err.Error())
 		}
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
@@ -475,7 +475,7 @@ func TestMigrationCommand(t *testing.T) {
 		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -490,38 +490,38 @@ func TestMigrationCommand(t *testing.T) {
 		}
 		// t.Logf(l)
 
-		assert.Contains(t, l, "migrate: number of albums transfered 31")
-		assert.Contains(t, l, "migrate: number of albumusers transfered 0")
-		assert.Contains(t, l, "migrate: number of cameras transfered 6")
-		assert.Contains(t, l, "migrate: number of categories transfered 1")
-		assert.Contains(t, l, "migrate: number of cells transfered 9")
-		assert.Contains(t, l, "migrate: number of clients transfered 7")
-		assert.Contains(t, l, "migrate: number of countries transfered 1")
-		assert.Contains(t, l, "migrate: number of duplicates transfered 0")
-		assert.Contains(t, l, "migrate: number of errors transfered 0")
-		assert.Contains(t, l, "migrate: number of faces transfered 7")
-		assert.Contains(t, l, "migrate: number of files transfered 71")
-		assert.Contains(t, l, "migrate: number of fileshares transfered 2")
-		assert.Contains(t, l, "migrate: number of filesyncs transfered 3")
-		assert.Contains(t, l, "migrate: number of folders transfered 3")
-		assert.Contains(t, l, "migrate: number of keywords transfered 26")
-		assert.Contains(t, l, "migrate: number of labels transfered 32")
-		assert.Contains(t, l, "migrate: number of lenses transfered 2")
-		assert.Contains(t, l, "migrate: number of links transfered 5")
-		assert.Contains(t, l, "migrate: number of markers transfered 18")
-		assert.Contains(t, l, "migrate: number of passcodes transfered 3")
-		assert.Contains(t, l, "migrate: number of passwords transfered 11")
-		assert.Contains(t, l, "migrate: number of photos transfered 58")
-		assert.Contains(t, l, "migrate: number of photousers transfered 0")
-		assert.Contains(t, l, "migrate: number of places transfered 10")
-		assert.Contains(t, l, "migrate: number of reactions transfered 3")
-		assert.Contains(t, l, "migrate: number of sessions transfered 21")
-		assert.Contains(t, l, "migrate: number of services transfered 2")
-		assert.Contains(t, l, "migrate: number of subjects transfered 6")
-		assert.Contains(t, l, "migrate: number of users transfered 11")
-		assert.Contains(t, l, "migrate: number of userdetails transfered 9")
-		assert.Contains(t, l, "migrate: number of usersettings transfered 13")
-		assert.Contains(t, l, "migrate: number of usershares transfered 1")
+		assert.Contains(t, l, "migrate: number of albums transferred 31")
+		assert.Contains(t, l, "migrate: number of albumusers transferred 0")
+		assert.Contains(t, l, "migrate: number of cameras transferred 6")
+		assert.Contains(t, l, "migrate: number of categories transferred 1")
+		assert.Contains(t, l, "migrate: number of cells transferred 9")
+		assert.Contains(t, l, "migrate: number of clients transferred 7")
+		assert.Contains(t, l, "migrate: number of countries transferred 1")
+		assert.Contains(t, l, "migrate: number of duplicates transferred 0")
+		assert.Contains(t, l, "migrate: number of errors transferred 0")
+		assert.Contains(t, l, "migrate: number of faces transferred 7")
+		assert.Contains(t, l, "migrate: number of files transferred 71")
+		assert.Contains(t, l, "migrate: number of fileshares transferred 2")
+		assert.Contains(t, l, "migrate: number of filesyncs transferred 3")
+		assert.Contains(t, l, "migrate: number of folders transferred 3")
+		assert.Contains(t, l, "migrate: number of keywords transferred 26")
+		assert.Contains(t, l, "migrate: number of labels transferred 32")
+		assert.Contains(t, l, "migrate: number of lenses transferred 2")
+		assert.Contains(t, l, "migrate: number of links transferred 5")
+		assert.Contains(t, l, "migrate: number of markers transferred 18")
+		assert.Contains(t, l, "migrate: number of passcodes transferred 3")
+		assert.Contains(t, l, "migrate: number of passwords transferred 11")
+		assert.Contains(t, l, "migrate: number of photos transferred 58")
+		assert.Contains(t, l, "migrate: number of photousers transferred 0")
+		assert.Contains(t, l, "migrate: number of places transferred 10")
+		assert.Contains(t, l, "migrate: number of reactions transferred 3")
+		assert.Contains(t, l, "migrate: number of sessions transferred 21")
+		assert.Contains(t, l, "migrate: number of services transferred 2")
+		assert.Contains(t, l, "migrate: number of subjects transferred 6")
+		assert.Contains(t, l, "migrate: number of users transferred 11")
+		assert.Contains(t, l, "migrate: number of userdetails transferred 9")
+		assert.Contains(t, l, "migrate: number of usersettings transferred 13")
+		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
 		testdb, err := gorm.Open(sqlite.Open("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db?_busy_timeout=5000&_foreign_keys=on"), &gorm.Config{})
@@ -537,7 +537,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		// Remove target database file
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db")
+			_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db")
 		}
 	})
 
@@ -553,7 +553,7 @@ func TestMigrationCommand(t *testing.T) {
 			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
 				t.Fatal(err)
 			}
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
+			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
 				t.Fatal(err)
 			}
 		}
@@ -591,7 +591,7 @@ func TestMigrationCommand(t *testing.T) {
 		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -606,38 +606,38 @@ func TestMigrationCommand(t *testing.T) {
 		}
 		// t.Logf(l)
 
-		assert.Contains(t, l, "migrate: number of albums transfered 31")
-		assert.Contains(t, l, "migrate: number of albumusers transfered 0")
-		assert.Contains(t, l, "migrate: number of cameras transfered 6")
-		assert.Contains(t, l, "migrate: number of categories transfered 1")
-		assert.Contains(t, l, "migrate: number of cells transfered 9")
-		assert.Contains(t, l, "migrate: number of clients transfered 7")
-		assert.Contains(t, l, "migrate: number of countries transfered 1")
-		assert.Contains(t, l, "migrate: number of duplicates transfered 0")
-		assert.Contains(t, l, "migrate: number of errors transfered 0")
-		assert.Contains(t, l, "migrate: number of faces transfered 7")
-		assert.Contains(t, l, "migrate: number of files transfered 71")
-		assert.Contains(t, l, "migrate: number of fileshares transfered 2")
-		assert.Contains(t, l, "migrate: number of filesyncs transfered 3")
-		assert.Contains(t, l, "migrate: number of folders transfered 3")
-		assert.Contains(t, l, "migrate: number of keywords transfered 26")
-		assert.Contains(t, l, "migrate: number of labels transfered 32")
-		assert.Contains(t, l, "migrate: number of lenses transfered 2")
-		assert.Contains(t, l, "migrate: number of links transfered 5")
-		assert.Contains(t, l, "migrate: number of markers transfered 18")
-		assert.Contains(t, l, "migrate: number of passcodes transfered 3")
-		assert.Contains(t, l, "migrate: number of passwords transfered 11")
-		assert.Contains(t, l, "migrate: number of photos transfered 58")
-		assert.Contains(t, l, "migrate: number of photousers transfered 0")
-		assert.Contains(t, l, "migrate: number of places transfered 10")
-		assert.Contains(t, l, "migrate: number of reactions transfered 3")
-		assert.Contains(t, l, "migrate: number of sessions transfered 21")
-		assert.Contains(t, l, "migrate: number of services transfered 2")
-		assert.Contains(t, l, "migrate: number of subjects transfered 6")
-		assert.Contains(t, l, "migrate: number of users transfered 11")
-		assert.Contains(t, l, "migrate: number of userdetails transfered 9")
-		assert.Contains(t, l, "migrate: number of usersettings transfered 13")
-		assert.Contains(t, l, "migrate: number of usershares transfered 1")
+		assert.Contains(t, l, "migrate: number of albums transferred 31")
+		assert.Contains(t, l, "migrate: number of albumusers transferred 0")
+		assert.Contains(t, l, "migrate: number of cameras transferred 6")
+		assert.Contains(t, l, "migrate: number of categories transferred 1")
+		assert.Contains(t, l, "migrate: number of cells transferred 9")
+		assert.Contains(t, l, "migrate: number of clients transferred 7")
+		assert.Contains(t, l, "migrate: number of countries transferred 1")
+		assert.Contains(t, l, "migrate: number of duplicates transferred 0")
+		assert.Contains(t, l, "migrate: number of errors transferred 0")
+		assert.Contains(t, l, "migrate: number of faces transferred 7")
+		assert.Contains(t, l, "migrate: number of files transferred 71")
+		assert.Contains(t, l, "migrate: number of fileshares transferred 2")
+		assert.Contains(t, l, "migrate: number of filesyncs transferred 3")
+		assert.Contains(t, l, "migrate: number of folders transferred 3")
+		assert.Contains(t, l, "migrate: number of keywords transferred 26")
+		assert.Contains(t, l, "migrate: number of labels transferred 32")
+		assert.Contains(t, l, "migrate: number of lenses transferred 2")
+		assert.Contains(t, l, "migrate: number of links transferred 5")
+		assert.Contains(t, l, "migrate: number of markers transferred 18")
+		assert.Contains(t, l, "migrate: number of passcodes transferred 3")
+		assert.Contains(t, l, "migrate: number of passwords transferred 11")
+		assert.Contains(t, l, "migrate: number of photos transferred 58")
+		assert.Contains(t, l, "migrate: number of photousers transferred 0")
+		assert.Contains(t, l, "migrate: number of places transferred 10")
+		assert.Contains(t, l, "migrate: number of reactions transferred 3")
+		assert.Contains(t, l, "migrate: number of sessions transferred 21")
+		assert.Contains(t, l, "migrate: number of services transferred 2")
+		assert.Contains(t, l, "migrate: number of subjects transferred 6")
+		assert.Contains(t, l, "migrate: number of users transferred 11")
+		assert.Contains(t, l, "migrate: number of userdetails transferred 9")
+		assert.Contains(t, l, "migrate: number of usersettings transferred 13")
+		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
 		testdb, err := gorm.Open(mysql.Open(tfDSN.ToString()), &gorm.Config{})
@@ -656,7 +656,7 @@ func TestMigrationCommand(t *testing.T) {
 		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
-		os.Remove("/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db")
+		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db")
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_postgresql"); err != nil {
@@ -667,7 +667,7 @@ func TestMigrationCommand(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
+			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
 				t.Fatal(err)
 			}
 		}
@@ -700,7 +700,7 @@ func TestMigrationCommand(t *testing.T) {
 		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -715,38 +715,38 @@ func TestMigrationCommand(t *testing.T) {
 		}
 		// t.Logf(l)
 
-		assert.Contains(t, l, "migrate: number of albums transfered 31")
-		assert.Contains(t, l, "migrate: number of albumusers transfered 0")
-		assert.Contains(t, l, "migrate: number of cameras transfered 6")
-		assert.Contains(t, l, "migrate: number of categories transfered 1")
-		assert.Contains(t, l, "migrate: number of cells transfered 9")
-		assert.Contains(t, l, "migrate: number of clients transfered 7")
-		assert.Contains(t, l, "migrate: number of countries transfered 1")
-		assert.Contains(t, l, "migrate: number of duplicates transfered 0")
-		assert.Contains(t, l, "migrate: number of errors transfered 0")
-		assert.Contains(t, l, "migrate: number of faces transfered 7")
-		assert.Contains(t, l, "migrate: number of files transfered 71")
-		assert.Contains(t, l, "migrate: number of fileshares transfered 2")
-		assert.Contains(t, l, "migrate: number of filesyncs transfered 3")
-		assert.Contains(t, l, "migrate: number of folders transfered 3")
-		assert.Contains(t, l, "migrate: number of keywords transfered 26")
-		assert.Contains(t, l, "migrate: number of labels transfered 32")
-		assert.Contains(t, l, "migrate: number of lenses transfered 2")
-		assert.Contains(t, l, "migrate: number of links transfered 5")
-		assert.Contains(t, l, "migrate: number of markers transfered 18")
-		assert.Contains(t, l, "migrate: number of passcodes transfered 3")
-		assert.Contains(t, l, "migrate: number of passwords transfered 11")
-		assert.Contains(t, l, "migrate: number of photos transfered 58")
-		assert.Contains(t, l, "migrate: number of photousers transfered 0")
-		assert.Contains(t, l, "migrate: number of places transfered 10")
-		assert.Contains(t, l, "migrate: number of reactions transfered 3")
-		assert.Contains(t, l, "migrate: number of sessions transfered 21")
-		assert.Contains(t, l, "migrate: number of services transfered 2")
-		assert.Contains(t, l, "migrate: number of subjects transfered 6")
-		assert.Contains(t, l, "migrate: number of users transfered 11")
-		assert.Contains(t, l, "migrate: number of userdetails transfered 9")
-		assert.Contains(t, l, "migrate: number of usersettings transfered 13")
-		assert.Contains(t, l, "migrate: number of usershares transfered 1")
+		assert.Contains(t, l, "migrate: number of albums transferred 31")
+		assert.Contains(t, l, "migrate: number of albumusers transferred 0")
+		assert.Contains(t, l, "migrate: number of cameras transferred 6")
+		assert.Contains(t, l, "migrate: number of categories transferred 1")
+		assert.Contains(t, l, "migrate: number of cells transferred 9")
+		assert.Contains(t, l, "migrate: number of clients transferred 7")
+		assert.Contains(t, l, "migrate: number of countries transferred 1")
+		assert.Contains(t, l, "migrate: number of duplicates transferred 0")
+		assert.Contains(t, l, "migrate: number of errors transferred 0")
+		assert.Contains(t, l, "migrate: number of faces transferred 7")
+		assert.Contains(t, l, "migrate: number of files transferred 71")
+		assert.Contains(t, l, "migrate: number of fileshares transferred 2")
+		assert.Contains(t, l, "migrate: number of filesyncs transferred 3")
+		assert.Contains(t, l, "migrate: number of folders transferred 3")
+		assert.Contains(t, l, "migrate: number of keywords transferred 26")
+		assert.Contains(t, l, "migrate: number of labels transferred 32")
+		assert.Contains(t, l, "migrate: number of lenses transferred 2")
+		assert.Contains(t, l, "migrate: number of links transferred 5")
+		assert.Contains(t, l, "migrate: number of markers transferred 18")
+		assert.Contains(t, l, "migrate: number of passcodes transferred 3")
+		assert.Contains(t, l, "migrate: number of passwords transferred 11")
+		assert.Contains(t, l, "migrate: number of photos transferred 58")
+		assert.Contains(t, l, "migrate: number of photousers transferred 0")
+		assert.Contains(t, l, "migrate: number of places transferred 10")
+		assert.Contains(t, l, "migrate: number of reactions transferred 3")
+		assert.Contains(t, l, "migrate: number of sessions transferred 21")
+		assert.Contains(t, l, "migrate: number of services transferred 2")
+		assert.Contains(t, l, "migrate: number of subjects transferred 6")
+		assert.Contains(t, l, "migrate: number of users transferred 11")
+		assert.Contains(t, l, "migrate: number of userdetails transferred 9")
+		assert.Contains(t, l, "migrate: number of usersettings transferred 13")
+		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
 		testdb, err := gorm.Open(sqlite.Open("/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db?_busy_timeout=5000&_foreign_keys=on"), &gorm.Config{})
@@ -762,7 +762,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		// Remove target database file
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db")
+			_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db")
 		}
 	})
 
@@ -770,10 +770,10 @@ func TestMigrationCommand(t *testing.T) {
 		tfDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
-		os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
+		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
 
 		// Load migrate database as source
-		if err := copyFile("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db"); err != nil {
+		if err := fs.Copy("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db", true); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -810,7 +810,7 @@ func TestMigrationCommand(t *testing.T) {
 		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -825,38 +825,38 @@ func TestMigrationCommand(t *testing.T) {
 		}
 		// t.Logf(l)
 
-		assert.Contains(t, l, "migrate: number of albums transfered 31")
-		assert.Contains(t, l, "migrate: number of albumusers transfered 0")
-		assert.Contains(t, l, "migrate: number of cameras transfered 6")
-		assert.Contains(t, l, "migrate: number of categories transfered 1")
-		assert.Contains(t, l, "migrate: number of cells transfered 9")
-		assert.Contains(t, l, "migrate: number of clients transfered 7")
-		assert.Contains(t, l, "migrate: number of countries transfered 1")
-		assert.Contains(t, l, "migrate: number of duplicates transfered 0")
-		assert.Contains(t, l, "migrate: number of errors transfered 0")
-		assert.Contains(t, l, "migrate: number of faces transfered 7")
-		assert.Contains(t, l, "migrate: number of files transfered 71")
-		assert.Contains(t, l, "migrate: number of fileshares transfered 2")
-		assert.Contains(t, l, "migrate: number of filesyncs transfered 3")
-		assert.Contains(t, l, "migrate: number of folders transfered 3")
-		assert.Contains(t, l, "migrate: number of keywords transfered 26")
-		assert.Contains(t, l, "migrate: number of labels transfered 32")
-		assert.Contains(t, l, "migrate: number of lenses transfered 2")
-		assert.Contains(t, l, "migrate: number of links transfered 5")
-		assert.Contains(t, l, "migrate: number of markers transfered 18")
-		assert.Contains(t, l, "migrate: number of passcodes transfered 3")
-		assert.Contains(t, l, "migrate: number of passwords transfered 11")
-		assert.Contains(t, l, "migrate: number of photos transfered 58")
-		assert.Contains(t, l, "migrate: number of photousers transfered 0")
-		assert.Contains(t, l, "migrate: number of places transfered 10")
-		assert.Contains(t, l, "migrate: number of reactions transfered 3")
-		assert.Contains(t, l, "migrate: number of sessions transfered 21")
-		assert.Contains(t, l, "migrate: number of services transfered 2")
-		assert.Contains(t, l, "migrate: number of subjects transfered 6")
-		assert.Contains(t, l, "migrate: number of users transfered 11")
-		assert.Contains(t, l, "migrate: number of userdetails transfered 9")
-		assert.Contains(t, l, "migrate: number of usersettings transfered 13")
-		assert.Contains(t, l, "migrate: number of usershares transfered 1")
+		assert.Contains(t, l, "migrate: number of albums transferred 31")
+		assert.Contains(t, l, "migrate: number of albumusers transferred 0")
+		assert.Contains(t, l, "migrate: number of cameras transferred 6")
+		assert.Contains(t, l, "migrate: number of categories transferred 1")
+		assert.Contains(t, l, "migrate: number of cells transferred 9")
+		assert.Contains(t, l, "migrate: number of clients transferred 7")
+		assert.Contains(t, l, "migrate: number of countries transferred 1")
+		assert.Contains(t, l, "migrate: number of duplicates transferred 0")
+		assert.Contains(t, l, "migrate: number of errors transferred 0")
+		assert.Contains(t, l, "migrate: number of faces transferred 7")
+		assert.Contains(t, l, "migrate: number of files transferred 71")
+		assert.Contains(t, l, "migrate: number of fileshares transferred 2")
+		assert.Contains(t, l, "migrate: number of filesyncs transferred 3")
+		assert.Contains(t, l, "migrate: number of folders transferred 3")
+		assert.Contains(t, l, "migrate: number of keywords transferred 26")
+		assert.Contains(t, l, "migrate: number of labels transferred 32")
+		assert.Contains(t, l, "migrate: number of lenses transferred 2")
+		assert.Contains(t, l, "migrate: number of links transferred 5")
+		assert.Contains(t, l, "migrate: number of markers transferred 18")
+		assert.Contains(t, l, "migrate: number of passcodes transferred 3")
+		assert.Contains(t, l, "migrate: number of passwords transferred 11")
+		assert.Contains(t, l, "migrate: number of photos transferred 58")
+		assert.Contains(t, l, "migrate: number of photousers transferred 0")
+		assert.Contains(t, l, "migrate: number of places transferred 10")
+		assert.Contains(t, l, "migrate: number of reactions transferred 3")
+		assert.Contains(t, l, "migrate: number of sessions transferred 21")
+		assert.Contains(t, l, "migrate: number of services transferred 2")
+		assert.Contains(t, l, "migrate: number of subjects transferred 6")
+		assert.Contains(t, l, "migrate: number of users transferred 11")
+		assert.Contains(t, l, "migrate: number of userdetails transferred 9")
+		assert.Contains(t, l, "migrate: number of usersettings transferred 13")
+		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
 		testdb, err := gorm.Open(mysql.Open(tfDSN.ToString()), &gorm.Config{})
@@ -872,7 +872,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		// Remove target database file
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
+			_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
 		}
 	})
 
@@ -880,10 +880,10 @@ func TestMigrationCommand(t *testing.T) {
 		tfDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
 
 		// Remove target database file
-		os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")
+		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")
 
 		// Load migrate database as source
-		if err := copyFile("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db"); err != nil {
+		if err := fs.Copy("/go/src/github.com/photoprism/photoprism/internal/commands/testdata/transfer_sqlite3", "/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db", true); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -920,7 +920,7 @@ func TestMigrationCommand(t *testing.T) {
 		output, err := RunWithProvidedTestContext(ctx, MigrationsCommands, cmdArgs)
 
 		// Check command output for plausibility.
-		//t.Logf(output)
+		// t.Logf(output)
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -935,38 +935,38 @@ func TestMigrationCommand(t *testing.T) {
 		}
 		// t.Logf(l)
 
-		assert.Contains(t, l, "migrate: number of albums transfered 31")
-		assert.Contains(t, l, "migrate: number of albumusers transfered 0")
-		assert.Contains(t, l, "migrate: number of cameras transfered 6")
-		assert.Contains(t, l, "migrate: number of categories transfered 1")
-		assert.Contains(t, l, "migrate: number of cells transfered 9")
-		assert.Contains(t, l, "migrate: number of clients transfered 7")
-		assert.Contains(t, l, "migrate: number of countries transfered 1")
-		assert.Contains(t, l, "migrate: number of duplicates transfered 0")
-		assert.Contains(t, l, "migrate: number of errors transfered 0")
-		assert.Contains(t, l, "migrate: number of faces transfered 7")
-		assert.Contains(t, l, "migrate: number of files transfered 71")
-		assert.Contains(t, l, "migrate: number of fileshares transfered 2")
-		assert.Contains(t, l, "migrate: number of filesyncs transfered 3")
-		assert.Contains(t, l, "migrate: number of folders transfered 3")
-		assert.Contains(t, l, "migrate: number of keywords transfered 26")
-		assert.Contains(t, l, "migrate: number of labels transfered 32")
-		assert.Contains(t, l, "migrate: number of lenses transfered 2")
-		assert.Contains(t, l, "migrate: number of links transfered 5")
-		assert.Contains(t, l, "migrate: number of markers transfered 18")
-		assert.Contains(t, l, "migrate: number of passcodes transfered 3")
-		assert.Contains(t, l, "migrate: number of passwords transfered 11")
-		assert.Contains(t, l, "migrate: number of photos transfered 58")
-		assert.Contains(t, l, "migrate: number of photousers transfered 0")
-		assert.Contains(t, l, "migrate: number of places transfered 10")
-		assert.Contains(t, l, "migrate: number of reactions transfered 3")
-		assert.Contains(t, l, "migrate: number of sessions transfered 21")
-		assert.Contains(t, l, "migrate: number of services transfered 2")
-		assert.Contains(t, l, "migrate: number of subjects transfered 6")
-		assert.Contains(t, l, "migrate: number of users transfered 11")
-		assert.Contains(t, l, "migrate: number of userdetails transfered 9")
-		assert.Contains(t, l, "migrate: number of usersettings transfered 13")
-		assert.Contains(t, l, "migrate: number of usershares transfered 1")
+		assert.Contains(t, l, "migrate: number of albums transferred 31")
+		assert.Contains(t, l, "migrate: number of albumusers transferred 0")
+		assert.Contains(t, l, "migrate: number of cameras transferred 6")
+		assert.Contains(t, l, "migrate: number of categories transferred 1")
+		assert.Contains(t, l, "migrate: number of cells transferred 9")
+		assert.Contains(t, l, "migrate: number of clients transferred 7")
+		assert.Contains(t, l, "migrate: number of countries transferred 1")
+		assert.Contains(t, l, "migrate: number of duplicates transferred 0")
+		assert.Contains(t, l, "migrate: number of errors transferred 0")
+		assert.Contains(t, l, "migrate: number of faces transferred 7")
+		assert.Contains(t, l, "migrate: number of files transferred 71")
+		assert.Contains(t, l, "migrate: number of fileshares transferred 2")
+		assert.Contains(t, l, "migrate: number of filesyncs transferred 3")
+		assert.Contains(t, l, "migrate: number of folders transferred 3")
+		assert.Contains(t, l, "migrate: number of keywords transferred 26")
+		assert.Contains(t, l, "migrate: number of labels transferred 32")
+		assert.Contains(t, l, "migrate: number of lenses transferred 2")
+		assert.Contains(t, l, "migrate: number of links transferred 5")
+		assert.Contains(t, l, "migrate: number of markers transferred 18")
+		assert.Contains(t, l, "migrate: number of passcodes transferred 3")
+		assert.Contains(t, l, "migrate: number of passwords transferred 11")
+		assert.Contains(t, l, "migrate: number of photos transferred 58")
+		assert.Contains(t, l, "migrate: number of photousers transferred 0")
+		assert.Contains(t, l, "migrate: number of places transferred 10")
+		assert.Contains(t, l, "migrate: number of reactions transferred 3")
+		assert.Contains(t, l, "migrate: number of sessions transferred 21")
+		assert.Contains(t, l, "migrate: number of services transferred 2")
+		assert.Contains(t, l, "migrate: number of subjects transferred 6")
+		assert.Contains(t, l, "migrate: number of users transferred 11")
+		assert.Contains(t, l, "migrate: number of userdetails transferred 9")
+		assert.Contains(t, l, "migrate: number of usersettings transferred 13")
+		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
 		testdb, err := gorm.Open(postgres.Open(tfDSN.ToString()), &gorm.Config{})
@@ -982,50 +982,8 @@ func TestMigrationCommand(t *testing.T) {
 
 		// Remove target database file
 		if !t.Failed() {
-			os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")
+			_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")
 		}
 	})
 
-}
-
-func copyFile(source, target string) error {
-	if _, err := os.Stat(source); err != nil {
-		return fmt.Errorf("copyFile: source file %s is required", source)
-	}
-
-	if _, err := os.Stat(target); err != nil {
-		if err = os.Remove(target); err != nil {
-			if !strings.Contains(err.Error(), "no such file or directory") {
-				return fmt.Errorf("copyFile: target file %s can not be removed with error %s", target, err.Error())
-			}
-		}
-	}
-
-	sourceFile, err := os.Open(source)
-	if err != nil {
-		return fmt.Errorf("copyFile: source file %s can not be opened with error %s", source, err.Error())
-	}
-	defer sourceFile.Close()
-
-	targetFile, err := os.Create(target)
-	if err != nil {
-		return fmt.Errorf("copyFile: target file %s can not be opened with error %s", target, err.Error())
-	}
-
-	defer func() {
-		closeErr := targetFile.Close()
-		if err == nil {
-			err = closeErr
-		}
-	}()
-
-	if _, err = io.Copy(targetFile, sourceFile); err != nil {
-		return fmt.Errorf("copyFile: copy failed with error %s", err.Error())
-	}
-
-	if err = targetFile.Sync(); err != nil {
-		return fmt.Errorf("copyFile: target sync failed with error %s", err.Error())
-	}
-
-	return nil
 }
