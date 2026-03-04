@@ -12,6 +12,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -46,7 +47,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
+			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
 				t.Fatal(err)
 			}
 		}
@@ -174,8 +175,8 @@ func TestDialectPostgreSQL(t *testing.T) {
 		opt := migrate.Opt(true, true, nil)
 
 		// Make sure that migrate and version is done, as the Once doesn't work as it has already been set before we opened the new database..
-		err = db.AutoMigrate(&migrate.Migration{})
-		err = db.AutoMigrate(&migrate.Version{})
+		require.NoError(t, db.AutoMigrate(&migrate.Migration{}))
+		require.NoError(t, db.AutoMigrate(&migrate.Version{}))
 
 		// Setup and capture SQL Logging output
 		buffer := bytes.Buffer{}

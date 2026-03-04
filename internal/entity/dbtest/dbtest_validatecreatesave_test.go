@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -27,18 +28,18 @@ func TestValidateSaveCreate(t *testing.T) {
 		m := &entity.Album{}
 		assert.False(t, rnd.IsUID(m.AlbumUID, entity.AlbumUID))
 		stmt := entity.Db()
-		stmt.Transaction(func(tx *gorm.DB) error {
+		require.Error(t, stmt.Transaction(func(tx *gorm.DB) error {
 			if tx.Error != nil {
 				assert.Nil(t, tx.Error)
 				t.FailNow()
 				return tx.Error
 			}
-			tx.Create(m)
+			require.NoError(t, tx.Create(m).Error)
 
 			assert.NotEmpty(t, m.AlbumUID)
 			assert.True(t, rnd.IsUID(m.AlbumUID, entity.AlbumUID))
 			return errors.New("ForceRollback")
-		})
+		}))
 	})
 
 	// Use direct db Save to validate that values are set.
@@ -50,18 +51,18 @@ func TestValidateSaveCreate(t *testing.T) {
 		m := &entity.Album{}
 		assert.False(t, rnd.IsUID(m.AlbumUID, entity.AlbumUID))
 		stmt := entity.Db()
-		stmt.Transaction(func(tx *gorm.DB) error {
+		require.Error(t, stmt.Transaction(func(tx *gorm.DB) error {
 			if tx.Error != nil {
 				assert.Nil(t, tx.Error)
 				t.FailNow()
 				return tx.Error
 			}
-			tx.Save(m)
+			require.NoError(t, tx.Save(m).Error)
 
 			assert.NotEmpty(t, m.AlbumUID)
 			assert.True(t, rnd.IsUID(m.AlbumUID, entity.AlbumUID))
 			return errors.New("ForceRollback")
-		})
+		}))
 
 	})
 
@@ -74,7 +75,7 @@ func TestValidateSaveCreate(t *testing.T) {
 		m := &entity.Album{AlbumTitle: "Test Before Create"}
 		assert.False(t, rnd.IsUID(m.AlbumUID, entity.AlbumUID))
 		stmt := entity.Db()
-		stmt.Transaction(func(tx *gorm.DB) error {
+		require.Error(t, stmt.Transaction(func(tx *gorm.DB) error {
 			if tx.Error != nil {
 				assert.Nil(t, tx.Error)
 				t.FailNow()
@@ -82,12 +83,12 @@ func TestValidateSaveCreate(t *testing.T) {
 			}
 
 			found := entity.Album{}
-			tx.FirstOrCreate(&found, m)
+			require.NoError(t, tx.FirstOrCreate(&found, m).Error)
 
 			assert.NotEmpty(t, found.AlbumUID)
 			assert.True(t, rnd.IsUID(found.AlbumUID, entity.AlbumUID))
 			return errors.New("ForceRollback")
-		})
+		}))
 
 	})
 
@@ -98,7 +99,7 @@ func TestValidateSaveCreate(t *testing.T) {
 		defer createsavetestMutex.Unlock()
 
 		stmt := entity.Db()
-		stmt.Transaction(func(tx *gorm.DB) error {
+		require.Error(t, stmt.Transaction(func(tx *gorm.DB) error {
 			if tx.Error != nil {
 				assert.Nil(t, tx.Error)
 				t.FailNow()
@@ -178,7 +179,7 @@ func TestValidateSaveCreate(t *testing.T) {
 			}
 
 			return errors.New("ForceRollback")
-		})
+		}))
 	})
 
 	// Use direct db Save with child structs to validate that values are set.
@@ -188,7 +189,7 @@ func TestValidateSaveCreate(t *testing.T) {
 		defer createsavetestMutex.Unlock()
 
 		stmt := entity.Db()
-		stmt.Transaction(func(tx *gorm.DB) error {
+		require.Error(t, stmt.Transaction(func(tx *gorm.DB) error {
 			if tx.Error != nil {
 				assert.Nil(t, tx.Error)
 				t.FailNow()
@@ -237,7 +238,7 @@ func TestValidateSaveCreate(t *testing.T) {
 			}
 
 			return errors.New("ForceRollback")
-		})
+		}))
 	})
 
 	// Use direct db Save with child structs to validate that values are set.
@@ -247,7 +248,7 @@ func TestValidateSaveCreate(t *testing.T) {
 		defer createsavetestMutex.Unlock()
 
 		stmt := entity.Db()
-		stmt.Transaction(func(tx *gorm.DB) error {
+		require.Error(t, stmt.Transaction(func(tx *gorm.DB) error {
 			if tx.Error != nil {
 				assert.Nil(t, tx.Error)
 				t.FailNow()
@@ -298,7 +299,7 @@ func TestValidateSaveCreate(t *testing.T) {
 			}
 
 			return errors.New("ForceRollback")
-		})
+		}))
 	})
 
 	// Use Entity Save with child structs to validate that values are set.

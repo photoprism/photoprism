@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -43,7 +44,7 @@ func lockBlockerForTest(t *testing.T, m any, keyNames ...string) {
 	}
 
 	dbTest := entity.UnscopedDb()
-	dbTest.Transaction(func(tx *gorm.DB) error {
+	err = dbTest.Transaction(func(tx *gorm.DB) error {
 		if tx.Error != nil {
 			t.Logf("lock_blocker_for_test Begin = %s", tx.Error.Error())
 			return tx.Error
@@ -59,6 +60,7 @@ func lockBlockerForTest(t *testing.T, m any, keyNames ...string) {
 		time.Sleep(30 * time.Second)
 		return nil
 	})
+	require.NoError(t, err)
 
 	t.Logf("lock_blocker_for_test Rollback Done")
 }
