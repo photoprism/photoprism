@@ -121,12 +121,12 @@ func (g *DbConn) Close() {
 
 // IsDialect returns true if the given sql dialect is used.
 func IsDialect(name string) bool {
-	return name == Db().Dialector.Name()
+	return name == Db().Name()
 }
 
 // DbDialect returns the sql dialect name.
 func DbDialect() string {
-	return Db().Dialector.Name()
+	return Db().Name()
 }
 
 // SetDbProvider sets the Gorm database connection provider.
@@ -152,7 +152,7 @@ func gormConfig() *gorm.Config {
 			},
 		),
 		// Set UTC as the default for created and updated timestamps.
-		NowFunc: func() time.Time {
+		NowFunc: func() time.Time { //nolint:gocritic // implemented as per gorm.io
 			return UTC()
 		},
 		DisableForeignKeyConstraintWhenMigrating: true,

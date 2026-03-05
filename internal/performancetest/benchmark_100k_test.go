@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
@@ -27,7 +28,7 @@ func Benchmark100k_SQLite(b *testing.B) {
 
 	if !fs.FileExists(testDbOriginal) {
 		log.Info("Generating SQLite database with 100000 records")
-		generateDatabase(100000, "sqlite", testDbOriginal, true, true)
+		require.NoError(b, generateDatabase(100000, "sqlite", testDbOriginal, true, true))
 	}
 
 	// Prepare temporary sqlite db.
@@ -75,9 +76,9 @@ func Benchmark100k_MySQL(b *testing.B) {
 	// Prepare temporary mariadb db.
 	if !fs.FileExists(testDbOriginal) {
 		log.Info("Generating Mariadb database with 100000 records")
-		generateDatabase(100000, "mysql", mysqlDSN, true, true)
+		require.NoError(b, generateDatabase(100000, "mysql", mysqlDSN, true, true))
 		resultFile := "--result-file=" + testDbOriginal
-		if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
+		if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 			b.Fatal(err)
 		}
 	}
@@ -85,7 +86,7 @@ func Benchmark100k_MySQL(b *testing.B) {
 	// Prepare migrate mariadb db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate", //nolint:gosec // test generated input, test only credentials
 		"-e", "source "+dumpName).Run(); err != nil {
 		b.Fatal(err)
 	}
@@ -119,13 +120,13 @@ func Benchmark100k_PostgreSQL(b *testing.B) {
 	loglevel := event.Log.GetLevel()
 	event.Log.SetLevel(logrus.ErrorLevel)
 	testDbOriginal := "../../storage/test-100k.original.postgresql"
-	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate"
+	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate" //nolint:gosec // test only credentials
 	postgresqlParams := "?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
 
 	// Prepare temporary PostgreSQL db.
 	if !fs.FileExists(testDbOriginal) {
 		log.Info("Generating PostgreSQL database with 100000 records")
-		generateDatabase(100000, Postgres, postgresqlDSN+postgresqlParams, true, true)
+		require.NoError(b, generateDatabase(100000, Postgres, postgresqlDSN+postgresqlParams, true, true))
 		if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", testDbOriginal).Run(); err != nil {
 			b.Fatal(err)
 		}
@@ -134,11 +135,11 @@ func Benchmark100k_PostgreSQL(b *testing.B) {
 	// Prepare migrate PostgreSQL db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("dropdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "--force", "--if-exists", "migrate").Run(); err != nil {
+	} else if err = exec.Command("dropdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "--force", "--if-exists", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("createdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil {
+	} else if err = exec.Command("createdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("pg_restore", "-d", postgresqlDSN, dumpName).Run(); err != nil {
+	} else if err = exec.Command("pg_restore", "-d", postgresqlDSN, dumpName).Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
 	}
 
@@ -228,7 +229,7 @@ func createDeleteAlbum(b *testing.B) {
 }
 
 func listAlbums(b *testing.B) {
-	year := rand.IntN(45) + 1980
+	year := rand.IntN(45) + 1980 //nolint:gosec // test data generation crypto rand not required
 	frm := form.SearchAlbums{
 		Year: strconv.Itoa(year),
 	}
@@ -293,16 +294,16 @@ func createDeleteCellAndPlace(b *testing.B) {
 }
 
 func fileRegenerateIndex(b *testing.B) {
-	fileId := uint(rand.IntN(100000))
+	fileId := uint(rand.IntN(100000)) //nolint:gosec // test data generation crypto rand not required
 
 	file := entity.File{ID: fileId}
-	entity.Db().First(&file)
+	require.NoError(b, entity.Db().First(&file).Error)
 
 	file.RegenerateIndex()
 }
 
 func listPhotos(b *testing.B) {
-	year := rand.IntN(45) + 1980
+	year := rand.IntN(45) + 1980 //nolint:gosec // test data generation crypto rand not required
 	frm := form.SearchPhotos{
 		Year: strconv.Itoa(year),
 	}

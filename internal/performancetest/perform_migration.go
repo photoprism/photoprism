@@ -17,6 +17,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
@@ -85,7 +86,7 @@ func sqliteMigration(original string, temp string, numberOfRecords int, skipSpee
 	if skipSpeedup {
 		// Skip the Gorm Migration Speedup.
 		version := migrate.FirstOrCreateVersion(db, migrate.NewVersion("Gorm For SQLite", "V2 Upgrade"))
-		version.Migrated(db)
+		require.NoError(b, version.Migrated(db))
 	}
 
 	// Setup and capture SQL Logging output
@@ -132,7 +133,7 @@ func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string,
 	// Prepare migrate mariadb db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate", //nolint:gosec // test generated input
 		"-e", "source "+dumpName).Run(); err != nil {
 		b.Fatal(err)
 	}
@@ -223,7 +224,7 @@ func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string,
 
 func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname string, expectedDuration time.Duration, b *testing.B) {
 	b.StopTimer()
-	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate"
+	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate" //nolint:gosec // test specific credentials
 	postgresqlParams := "?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
 
 	// Prepare migrate PostgreSQL db.
@@ -233,7 +234,7 @@ func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname st
 		b.Fatal(err)
 	} else if err = exec.Command("createdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("pg_restore", "-d", postgresqlDSN, dumpName).Run(); err != nil {
+	} else if err = exec.Command("pg_restore", "-d", postgresqlDSN, dumpName).Run(); err != nil { //nolint:gosec // test generated parameters
 		b.Fatal(err)
 	}
 

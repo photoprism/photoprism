@@ -13,20 +13,20 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/stretchr/testify/require"
 )
 
 const characterRunes = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const sha1Runes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 func randRange(min, max float64) float64 {
-	return min + rand.Float64()*(max-min)
+	return min + rand.Float64()*(max-min) //nolint:gosec // test data generation crypto rand not required
 }
 
 func randomString(len int) string {
 	sb := strings.Builder{}
 	sb.Grow(len)
 	for i := 0; i < len; {
-		sb.WriteByte(characterRunes[rand.IntN(53)])
+		sb.WriteByte(characterRunes[rand.IntN(53)]) //nolint:gosec // test data generation crypto rand not required
 		i++
 	}
 
@@ -34,11 +34,11 @@ func randomString(len int) string {
 }
 
 func createDeletePhoto(b *testing.B) {
-	month := rand.IntN(11) + 1
-	day := rand.IntN(28) + 1
-	year := rand.IntN(45) + 1980
-	takenAt := time.Date(year, time.Month(month), day, rand.IntN(24), rand.IntN(60), rand.IntN(60), rand.IntN(1000), time.UTC)
-	labelCount := rand.IntN(5)
+	month := rand.IntN(11) + 1                                                                                                 //nolint:gosec // test data generation crypto rand not required
+	day := rand.IntN(28) + 1                                                                                                   //nolint:gosec // test data generation crypto rand not required
+	year := rand.IntN(45) + 1980                                                                                               //nolint:gosec // test data generation crypto rand not required
+	takenAt := time.Date(year, time.Month(month), day, rand.IntN(24), rand.IntN(60), rand.IntN(60), rand.IntN(1000), time.UTC) //nolint:gosec // test data generation crypto rand not required
+	labelCount := rand.IntN(5)                                                                                                 //nolint:gosec // test data generation crypto rand not required
 
 	place := &entity.Place{
 		ID:            randomString(12),
@@ -57,8 +57,8 @@ func createDeletePhoto(b *testing.B) {
 	placeId := place.ID
 
 	// Create the cell for the Photo's location
-	lat := (rand.Float64() * 180.0) - 90.0
-	lng := (rand.Float64() * 360.0) - 180.0
+	lat := (rand.Float64() * 180.0) - 90.0  //nolint:gosec // test data generation crypto rand not required
+	lng := (rand.Float64() * 360.0) - 180.0 //nolint:gosec // test data generation crypto rand not required
 	cell := entity.NewCell(lat, lng)
 	cell.PlaceID = placeId
 	cell.Place = place
@@ -67,12 +67,12 @@ func createDeletePhoto(b *testing.B) {
 	folder := entity.Folder{}
 	if res := entity.Db().Model(&entity.Folder{}).Where("path = ?", fmt.Sprintf("%04d", year)).First(&folder); res.RowsAffected == 0 {
 		folder = entity.NewFolder("/", fmt.Sprintf("%04d", year), time.Now().UTC())
-		folder.Create()
+		require.NoError(b, folder.Create())
 	}
 	folder = entity.Folder{}
 	if res := entity.Db().Model(&entity.Folder{}).Where("path = ?", fmt.Sprintf("%04d/%02d", year, month)).First(&folder); res.RowsAffected == 0 {
 		folder = entity.NewFolder("/", fmt.Sprintf("%04d/%02d", year, month), time.Now().UTC())
-		folder.Create()
+		require.NoError(b, folder.Create())
 	}
 
 	camera := entity.NewCamera("Palasonic", "Palasonic Dumix")
@@ -87,7 +87,7 @@ func createDeletePhoto(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	i := rand.Int64N(60000)
+	i := rand.Int64N(60000) //nolint:gosec // test data generation crypto rand not required
 
 	photo := entity.Photo{
 		//	ID
@@ -155,7 +155,7 @@ func createDeletePhoto(b *testing.B) {
 		DeletedAt:   gorm.DeletedAt{},
 	}
 
-	photo.Create()
+	require.NoError(b, photo.Create())
 
 	// Allocate the labels for this photo
 	labels := make([]uint, labelCount)
@@ -175,20 +175,19 @@ func createDeletePhoto(b *testing.B) {
 			DeletedAt:        gorm.DeletedAt{},
 			New:              false,
 		}
-		label.Create()
+		require.NoError(b, label.Create())
 		labels[i] = label.ID
 
 		photoLabel := entity.NewPhotoLabel(photo.ID, label.ID, 0, entity.SrcMeta)
 		entity.Db().FirstOrCreate(photoLabel)
 	}
 	// Allocate the keywords for this photo
-	keywordCount := rand.IntN(5)
+	keywordCount := rand.IntN(5) //nolint:gosec // test data generation crypto rand not required
 	keywords := make([]uint, keywordCount)
 	keywordStr := ""
 	for i := range keywordCount {
 		keyword := entity.Keyword{
 			Keyword: randomString(32),
-			Skip:    false,
 		}
 		keywords[i] = keyword.ID
 		photoKeyword := entity.PhotoKeyword{PhotoID: photo.ID, KeywordID: keyword.ID}
@@ -217,7 +216,7 @@ func createDeletePhoto(b *testing.B) {
 		FileRoot:     entity.RootSidecar,
 		OriginalName: "",
 		FileHash:     rnd.GenerateUID(entity.FileUID),
-		FileSize:     rand.Int64N(1000000),
+		FileSize:     rand.Int64N(1000000), //nolint:gosec // test data generation crypto rand not required
 		FileCodec:    "",
 		FileType:     string(fs.ImageJpeg),
 		MediaType:    string(media.Image),
@@ -255,12 +254,12 @@ func createDeletePhoto(b *testing.B) {
 		DeletedAt: gorm.DeletedAt{},
 		Share:     []entity.FileShare{},
 		Sync:      []entity.FileSync{},
-		//markers
+		// markers
 	}
 	entity.Db().Create(&file)
 
 	// Add Markers
-	markersToCreate := rand.IntN(5)
+	markersToCreate := rand.IntN(5) //nolint:gosec // test data generation crypto rand not required
 	subjects := make([]string, markersToCreate)
 	for i := range markersToCreate {
 		subject := entity.Subject{
@@ -289,10 +288,10 @@ func createDeletePhoto(b *testing.B) {
 			MarkerInvalid: false,
 			SubjUID:       subject.SubjUID,
 			SubjSrc:       subject.SubjSrc,
-			X:             rand.Float32() * 1024.0,
-			Y:             rand.Float32() * 2048.0,
-			W:             rand.Float32() * 10.0,
-			H:             rand.Float32() * 20.0,
+			X:             rand.Float32() * 1024.0, //nolint:gosec // test data generation crypto rand not required
+			Y:             rand.Float32() * 2048.0, //nolint:gosec // test data generation crypto rand not required
+			W:             rand.Float32() * 10.0,   //nolint:gosec // test data generation crypto rand not required
+			H:             rand.Float32() * 20.0,   //nolint:gosec // test data generation crypto rand not required
 			Q:             10,
 			Size:          100,
 			Score:         10,
@@ -366,7 +365,9 @@ func createDeletePhoto(b *testing.B) {
 	}
 	entity.Db().Create(details)
 
-	photo.DeletePermanently()
+	if _, err := photo.DeletePermanently(); err != nil {
+		b.Fatal(err)
+	}
 
 	if err := entity.UnscopedDb().Delete(lens).Error; err != nil {
 		b.Fatal(err)
