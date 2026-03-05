@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -20,61 +21,78 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 
 	// Setup here
 	loglevel := event.Log.GetLevel()
-	if !fs.FileExists("../../storage/test-1k.original.sqlite") {
-		log.Info("Generating SQLite database with 1000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(1000, "sqlite", "../../storage/test-1k.original.sqlite", true, true)
-		event.Log.SetLevel(loglevel)
-	}
-	if !fs.FileExists("../../storage/test-10k.original.sqlite") {
-		log.Info("Generating SQLite database with 10000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(10000, "sqlite", "../../storage/test-10k.original.sqlite", true, true)
-		event.Log.SetLevel(loglevel)
-	}
-	if !fs.FileExists("../../storage/test-100k.original.sqlite") {
-		log.Info("Generating SQLite database with 100000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(100000, "sqlite", "../../storage/test-100k.original.sqlite", true, true)
-		event.Log.SetLevel(loglevel)
-	}
 
-	event.Log.SetLevel(logrus.ErrorLevel)
 	// tests here
 
 	b.Run("OneKUpgradeTest_Custom", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-1k.original.sqlite") {
+			log.Info("Generating SQLite database with 1000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(1000, "sqlite", "../../storage/test-1k.original.sqlite", true, true))
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
 			sqliteMigration("../../storage/test-1k.original.sqlite", "../../storage/test-1k.db", 1000, false, "OneKUpgradeTest_Custom", time.Minute, b)
 		}
 	})
 
 	b.Run("OneKUpgradeTest_Auto", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-1k.original.sqlite") {
+			log.Info("Generating SQLite database with 1000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(1000, "sqlite", "../../storage/test-1k.original.sqlite", true, true))
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
 			sqliteMigration("../../storage/test-1k.original.sqlite", "../../storage/test-1k.db", 1000, true, "OneKUpgradeTest_Auto", time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest_Custom", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-10k.original.sqlite") {
+			log.Info("Generating SQLite database with 10000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(10000, "sqlite", "../../storage/test-10k.original.sqlite", true, true))
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			sqliteMigration("../../storage/test-10k.original.sqlite", "../../storage/test-10k.db", 10000, false, "TenKUpgradeTest_Custom", time.Minute, b)
+			sqliteMigration("../../storage/test-10k.original.sqlite", "../../storage/test-10k.db", 10000, false, "TenKUpgradeTest_Custom", 2*time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest_Auto", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-10k.original.sqlite") {
+			log.Info("Generating SQLite database with 10000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(10000, "sqlite", "../../storage/test-10k.original.sqlite", true, true))
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			sqliteMigration("../../storage/test-10k.original.sqlite", "../../storage/test-10k.db", 10000, true, "TenKUpgradeTest_Auto", time.Minute, b)
+			sqliteMigration("../../storage/test-10k.original.sqlite", "../../storage/test-10k.db", 10000, true, "TenKUpgradeTest_Auto", 2*time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest_Custom", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-100k.original.sqlite") {
+			log.Info("Generating SQLite database with 100000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(100000, "sqlite", "../../storage/test-100k.original.sqlite", true, true))
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			sqliteMigration("../../storage/test-100k.original.sqlite", "../../storage/test-100k.db", 100000, false, "OneHundredKUpgradeTest_Custom", 5*time.Minute, b)
+			sqliteMigration("../../storage/test-100k.original.sqlite", "../../storage/test-100k.db", 100000, false, "OneHundredKUpgradeTest_Custom", 20*time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest_Auto", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-100k.original.sqlite") {
+			log.Info("Generating SQLite database with 100000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(100000, "sqlite", "../../storage/test-100k.original.sqlite", true, true))
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			sqliteMigration("../../storage/test-100k.original.sqlite", "../../storage/test-100k.db", 100000, true, "OneHundredKUpgradeTest_Auto", 5*time.Minute, b)
+			sqliteMigration("../../storage/test-100k.original.sqlite", "../../storage/test-100k.db", 100000, true, "OneHundredKUpgradeTest_Auto", 20*time.Minute, b)
 		}
 	})
 
@@ -90,56 +108,52 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 
 	// Setup here
 	loglevel := event.Log.GetLevel()
-	// Prepare temporary mariadb db.
-	if !fs.FileExists("../../storage/test-1k.original.mysql") {
-		log.Info("Generating Mariadb database with 1000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(1000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true)
-		resultFile := "--result-file=" + "../../storage/test-1k.original.mysql"
-		if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
-			b.Fatal(err)
-		}
-		event.Log.SetLevel(loglevel)
-	}
-	if !fs.FileExists("../../storage/test-10k.original.mysql") {
-		log.Info("Generating Mariadb database with 10000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(10000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true)
-		resultFile := "--result-file=" + "../../storage/test-10k.original.mysql"
-		if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
-			b.Fatal(err)
-		}
-		event.Log.SetLevel(loglevel)
-	}
-	if !fs.FileExists("../../storage/test-100k.original.mysql") {
-		log.Info("Generating Mariadb database with 100000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(100000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true)
-		resultFile := "--result-file=" + "../../storage/test-100k.original.mysql"
-		if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
-			b.Fatal(err)
-		}
-		event.Log.SetLevel(loglevel)
-	}
-
-	event.Log.SetLevel(logrus.ErrorLevel)
-	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-1k.original.mysql") {
+			log.Info("Generating Mariadb database with 1000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(1000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true))
+			resultFile := "--result-file=" + "../../storage/test-1k.original.mysql"
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
+				b.Fatal(err)
+			}
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
 			mysqlMigration("../../storage/test-1k.original.mysql", 1000, "OneKUpgradeTest", time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-10k.original.mysql") {
+			log.Info("Generating Mariadb database with 10000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(10000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true))
+			resultFile := "--result-file=" + "../../storage/test-10k.original.mysql"
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
+				b.Fatal(err)
+			}
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			mysqlMigration("../../storage/test-10k.original.mysql", 10000, "TenKUpgradeTest", time.Minute, b)
+			mysqlMigration("../../storage/test-10k.original.mysql", 10000, "TenKUpgradeTest", 2*time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-100k.original.mysql") {
+			log.Info("Generating Mariadb database with 100000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(100000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true))
+			resultFile := "--result-file=" + "../../storage/test-100k.original.mysql"
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
+				b.Fatal(err)
+			}
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			mysqlMigration("../../storage/test-100k.original.mysql", 100000, "OneHundredKUpgradeTest", 5*time.Minute, b)
+			mysqlMigration("../../storage/test-100k.original.mysql", 100000, "OneHundredKUpgradeTest", 20*time.Minute, b)
 		}
 	})
 	// teardown here
@@ -154,59 +168,55 @@ func BenchmarkMigration_PostgreSQL(b *testing.B) {
 
 	// Setup here
 	loglevel := event.Log.GetLevel()
-	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate"
+	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate" //nolint:gosec // test only credentials
 	postgresqlParams := "?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
-
-	// Prepare temporary postgresql db.
-	if !fs.FileExists("../../storage/test-1k.original.postgresql") {
-		log.Info("Generating PostgreSQL database with 1000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(1000, Postgres, postgresqlDSN+postgresqlParams, true, true)
-		resultFile := "../../storage/test-1k.original.postgresql"
-		if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
-			b.Fatal(err)
-		}
-		event.Log.SetLevel(loglevel)
-	}
-	if !fs.FileExists("../../storage/test-10k.original.postgresql") {
-		log.Info("Generating PostgreSQL database with 10000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(10000, Postgres, postgresqlDSN+postgresqlParams, true, true)
-		resultFile := "../../storage/test-10k.original.postgresql"
-		if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
-			b.Fatal(err)
-		}
-		event.Log.SetLevel(loglevel)
-	}
-	if !fs.FileExists("../../storage/test-100k.original.postgresql") {
-		log.Info("Generating PostgreSQL database with 100000 records")
-		event.Log.SetLevel(logrus.ErrorLevel)
-		generateDatabase(100000, Postgres, postgresqlDSN+postgresqlParams, true, true)
-		resultFile := "../../storage/test-100k.original.postgresql"
-		if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
-			b.Fatal(err)
-		}
-		event.Log.SetLevel(loglevel)
-	}
-
-	event.Log.SetLevel(logrus.ErrorLevel)
 	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-1k.original.postgresql") {
+			log.Info("Generating PostgreSQL database with 1000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(1000, Postgres, postgresqlDSN+postgresqlParams, true, true))
+			resultFile := "../../storage/test-1k.original.postgresql"
+			if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
+				b.Fatal(err)
+			}
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
 			postgresqlMigration("../../storage/test-1k.original.postgresql", 1000, "OneKUpgradeTest", time.Minute, b)
 		}
 	})
 
 	b.Run("TenKUpgradeTest", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-10k.original.postgresql") {
+			log.Info("Generating PostgreSQL database with 10000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(10000, Postgres, postgresqlDSN+postgresqlParams, true, true))
+			resultFile := "../../storage/test-10k.original.postgresql"
+			if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
+				b.Fatal(err)
+			}
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			postgresqlMigration("../../storage/test-10k.original.postgresql", 10000, "TenKUpgradeTest", time.Minute, b)
+			postgresqlMigration("../../storage/test-10k.original.postgresql", 10000, "TenKUpgradeTest", 2*time.Minute, b)
 		}
 	})
 
 	b.Run("OneHundredKUpgradeTest", func(b *testing.B) {
+		if !fs.FileExists("../../storage/test-100k.original.postgresql") {
+			log.Info("Generating PostgreSQL database with 100000 records")
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(100000, Postgres, postgresqlDSN+postgresqlParams, true, true))
+			resultFile := "../../storage/test-100k.original.postgresql"
+			if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
+				b.Fatal(err)
+			}
+			event.Log.SetLevel(loglevel)
+		}
 		for b.Loop() {
-			postgresqlMigration("../../storage/test-100k.original.postgresql", 100000, "OneHundredKUpgradeTest", 5*time.Minute, b)
+			postgresqlMigration("../../storage/test-100k.original.postgresql", 100000, "OneHundredKUpgradeTest", 20*time.Minute, b)
 		}
 	})
 	// teardown here
