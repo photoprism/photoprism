@@ -16,6 +16,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -29,12 +30,12 @@ var characterNumberRune = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 func randomSHA1() string {
 	result := make([]rune, 32)
 	for i := range result {
-		result[i] = characterNumberRune[rand.IntN(len(characterNumberRune))]
+		result[i] = characterNumberRune[rand.IntN(len(characterNumberRune))] //nolint:gosec // test data generation crypto rand not required
 	}
 	return string(result)
 }
 
-func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool, databasescript bool) {
+func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool, databasescript bool) error {
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
 		driver = SQLite3
@@ -55,17 +56,18 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 		database, err := gorm.Open(mysql.Open(basedsn), &gorm.Config{})
 		if err != nil {
 			log.Errorf("Unable to connect to MariaDB %v", err)
+			return err
 		}
 		log.Infof("Dropping database %v if it exists", basedbname)
 		if res := database.Exec("DROP DATABASE IF EXISTS " + basedbname + ";"); res.Error != nil {
 			log.Errorf("Unable to drop database %v", res.Error)
-			os.Exit(1)
+			return res.Error
 		}
 
 		log.Infof("Creating database %v if it doesnt exist", basedbname)
 		if res := database.Exec("CREATE DATABASE IF NOT EXISTS " + basedbname + ";"); res.Error != nil {
 			log.Errorf("Unable to create database %v", res.Error)
-			os.Exit(1)
+			return res.Error
 		}
 	}
 	if driver == SQLite3 && dsn != SQLiteMemoryDSN && allowDelete {
@@ -78,7 +80,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			}
 		}
 		log.Infof("Removing file %v", filename)
-		os.Remove(filename)
+		_ = os.Remove(filename)
 	}
 
 	log.Infof("Connecting to driver %v with dsn %v", driver, dsn)
@@ -104,7 +106,8 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 	photoCounter := int64(0)
 	if err := Db().Model(&entity.Photo{}).Count(&photoCounter).Error; err != nil {
 		// Handle SQLite differently as it does table recreates on initial migrate, so we need to be able to simulate that.
-		if driver == SQLite3 && databasescript {
+		switch {
+		case driver == SQLite3 && databasescript:
 			filename := dsn
 			if strings.Index(dsn, "?") > 0 {
 				if strings.Index(dsn, ":") > 0 {
@@ -118,7 +121,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 
 			bashCmd := fmt.Sprintf("cat ./testdata/sqlite3.sql | sqlite3 %s", filename)
 
-			cmd = exec.Command("bash", "-c", bashCmd)
+			cmd = exec.Command("bash", "-c", bashCmd) //nolint:gosec // test generated input
 
 			// Write to stdout or file.
 			var f *os.File
@@ -135,20 +138,20 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			if cmdErr := cmd.Run(); cmdErr != nil {
 				if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
 					log.Error(errStr)
-					os.Exit(1)
+					return fmt.Errorf("%s", errStr)
 				}
 			}
-		} else if driver == MySQL && databasescript {
+		case driver == MySQL && databasescript:
 			// Prepare migrate mariadb db.
 			if dumpName, err := filepath.Abs("./testdata/mariadb.sql"); err != nil {
 				log.Error(err)
-				os.Exit(1)
-			} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+				return err
+			} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate", //nolint:gosec // generated command string
 				"-e", "source "+dumpName).Run(); err != nil {
 				log.Error(err)
-				os.Exit(1)
+				return err
 			}
-		} else {
+		default:
 			entity.Entities.Migrate(Db(), migrate.Opt(true, false, nil))
 			if err := entity.Entities.WaitForMigration(Db()); err != nil {
 				log.Errorf("migrate: %s [%s]", err, time.Since(start))
@@ -156,7 +159,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 		}
 	} else {
 		log.Errorf("The photos table already exists in driver %v dsn %v.\nAborting...", driver, dsn)
-		os.Exit(1)
+		return fmt.Errorf("the photos table already exists in driver %v dsn %v", driver, dsn)
 	}
 
 	entity.SetDbProvider(db)
@@ -179,23 +182,27 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			Keyword: label,
 			Skip:    false,
 		}
-		Db().Create(&keyword)
+		if err := Db().Create(&keyword).Error; err != nil {
+			return err
+		}
 		keywords[label] = keyword.ID
 		keywordRandoms[keywordPos] = keyword.ID
 		keywordPos++
 		if rule.Label != "" {
-			if _, found := keywords[rule.Label]; found == false {
+			if _, found := keywords[rule.Label]; !found {
 				keyword = entity.Keyword{
 					Keyword: rule.Label,
 					Skip:    false,
 				}
-				Db().Create(&keyword)
+				if err := Db().Create(&keyword).Error; err != nil {
+					return err
+				}
 				keywords[rule.Label] = keyword.ID
 				keywordRandoms[keywordPos] = keyword.ID
 				keywordPos++
 			}
 			for _, category := range rule.Categories {
-				if _, found := labels[category]; found == false {
+				if _, found := labels[category]; !found {
 					labelDb := entity.Label{
 						LabelSlug:        strings.ToLower(category),
 						CustomSlug:       strings.ToLower(category),
@@ -211,13 +218,15 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 						DeletedAt:        gorm.DeletedAt{},
 						New:              false,
 					}
-					Db().Create(&labelDb)
+					if err := Db().Create(&labelDb).Error; err != nil {
+						return err
+					}
 					labels[category] = labelDb.ID
 					labelRandoms[labelPos] = labelDb.ID
 					labelPos++
 				}
 			}
-			if _, found := labels[rule.Label]; found == false {
+			if _, found := labels[rule.Label]; !found {
 				labelDb := entity.Label{
 					LabelSlug:        strings.ToLower(rule.Label),
 					CustomSlug:       strings.ToLower(rule.Label),
@@ -233,7 +242,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 					DeletedAt:        gorm.DeletedAt{},
 					New:              false,
 				}
-				Db().Create(&labelDb)
+				if err := Db().Create(&labelDb).Error; err != nil {
+					return err
+				}
 				labels[rule.Label] = labelDb.ID
 				labelRandoms[labelPos] = labelDb.ID
 				labelPos++
@@ -242,7 +253,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 						LabelID:    labelDb.ID,
 						CategoryID: labels[category],
 					}
-					Db().Create(&categoryDb)
+					if err := Db().Create(&categoryDb).Error; err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -260,8 +273,10 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 	for _, make := range entity.CameraMakes {
 		for _, model := range entity.CameraModels {
 			camera := entity.NewCamera(make, model)
-			if _, found := cameras[camera.CameraSlug]; found == false {
-				Db().Create(camera)
+			if _, found := cameras[camera.CameraSlug]; !found {
+				if err := Db().Create(camera).Error; err != nil {
+					return err
+				}
 				cameras[camera.CameraSlug] = camera.ID
 				cameraRandoms[cameraPos] = camera.ID
 				cameraPos++
@@ -269,8 +284,10 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 		}
 		for _, model := range lensList {
 			lens := entity.NewLens(make, model)
-			if _, found := lenses[lens.LensSlug]; found == false {
-				Db().Create(lens)
+			if _, found := lenses[lens.LensSlug]; !found {
+				if err := Db().Create(lens).Error; err != nil {
+					return err
+				}
 				lenses[lens.LensSlug] = lens.ID
 				lensRandoms[lensPos] = lens.ID
 				lensPos++
@@ -304,7 +321,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 		counter := int64(0)
 		Db().Model(&entity.Country{}).Where("id = ?", country.ID).Count(&counter)
 		if counter == 0 {
-			Db().Create(country)
+			if err := Db().Create(country).Error; err != nil {
+				return err
+			}
 			countries[countryPos] = strings.ToLower(parts[0])
 			countryPos++
 		}
@@ -312,7 +331,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 
 	for word := range txt.StopWords {
 		placeUID := rnd.GenerateUID(PlaceUID)
-		country := countries[rand.IntN(len(countries))]
+		country := countries[rand.IntN(len(countries))] //nolint:gosec // test data generation crypto rand not required
 		place := entity.Place{
 			ID:            placeUID,
 			PlaceLabel:    word,
@@ -326,7 +345,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			CreatedAt:     time.Now().UTC(),
 			UpdatedAt:     time.Now().UTC(),
 		}
-		Db().Create(&place)
+		if err := Db().Create(&place).Error; err != nil {
+			return err
+		}
 		places[placePos] = placeUID
 		placePos++
 	}
@@ -352,9 +373,27 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			UpdatedAt:    time.Now().UTC(),
 			DeletedAt:    gorm.DeletedAt{},
 		}
-		Db().Create(&subject)
+		if err := Db().Create(&subject).Error; err != nil {
+			return err
+		}
 		subjects[subjectPos] = subject
 		subjectPos++
+	}
+
+	numberOfFaces := int(0.75 * float32(numberOfPhotos))
+	sourceEmbeddings := make(face.Embeddings, numberOfFaces)
+	jsonembed := make([]float32, 512)
+	embeddings := make(face.Embeddings, 1)
+
+	for i := range numberOfFaces {
+		for k := range 512 {
+			if rand.IntN(2) == 0 { //nolint:gosec // test data generation crypto rand not required
+				jsonembed[k] = rand.Float32() //nolint:gosec // test data generation crypto rand not required
+			} else {
+				jsonembed[k] = rand.Float32() * -1.0 //nolint:gosec // test data generation crypto rand not required
+			}
+		}
+		sourceEmbeddings[i] = face.NewEmbedding(jsonembed)
 	}
 
 	log.Info("Start creating photos")
@@ -362,29 +401,35 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 		if _, frac := math.Modf(float64(i) / 100.0); frac == 0 {
 			log.Infof("Generating photo number %v", i)
 		}
-		month := rand.IntN(11) + 1
-		day := rand.IntN(28) + 1
-		year := rand.IntN(45) + 1980
-		takenAt := time.Date(year, time.Month(month), day, rand.IntN(24), rand.IntN(60), rand.IntN(60), rand.IntN(1000), time.UTC)
-		labelCount := rand.IntN(5)
+		month := rand.IntN(11) + 1                                                                                                 //nolint:gosec // test data generation crypto rand not required
+		day := rand.IntN(28) + 1                                                                                                   //nolint:gosec // test data generation crypto rand not required
+		year := rand.IntN(45) + 1980                                                                                               //nolint:gosec // test data generation crypto rand not required
+		takenAt := time.Date(year, time.Month(month), day, rand.IntN(24), rand.IntN(60), rand.IntN(60), rand.IntN(1000), time.UTC) //nolint:gosec // test data generation crypto rand not required
+		labelCount := rand.IntN(5)                                                                                                 //nolint:gosec // test data generation crypto rand not required
 
 		// Create the cell for the Photo's location
-		placeId := places[rand.IntN(len(places))]
-		lat := (rand.Float64() * 180.0) - 90.0
-		lng := (rand.Float64() * 360.0) - 180.0
+		placeId := places[rand.IntN(len(places))] //nolint:gosec // test data generation crypto rand not required
+		lat := (rand.Float64() * 180.0) - 90.0    //nolint:gosec // test data generation crypto rand not required
+		lng := (rand.Float64() * 360.0) - 180.0   //nolint:gosec // test data generation crypto rand not required
 		cell := entity.NewCell(lat, lng)
 		cell.PlaceID = placeId
-		Db().FirstOrCreate(cell)
+		if err := Db().FirstOrCreate(cell).Error; err != nil {
+			return err
+		}
 
 		folder := entity.Folder{}
 		if res := Db().Model(&entity.Folder{}).Where("path = ?", fmt.Sprintf("%04d", year)).First(&folder); res.RowsAffected == 0 {
 			folder = entity.NewFolder("/", fmt.Sprintf("%04d", year), time.Now().UTC())
-			folder.Create()
+			if err := folder.Create(); err != nil {
+				return err
+			}
 		}
 		folder = entity.Folder{}
 		if res := Db().Model(&entity.Folder{}).Where("path = ?", fmt.Sprintf("%04d/%02d", year, month)).First(&folder); res.RowsAffected == 0 {
 			folder = entity.NewFolder("/", fmt.Sprintf("%04d/%02d", year, month), time.Now().UTC())
-			folder.Create()
+			if err := folder.Create(); err != nil {
+				return err
+			}
 		}
 
 		photo := entity.Photo{
@@ -417,7 +462,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			PhotoAltitude:    5,
 			PhotoLat:         lat,
 			PhotoLng:         lng,
-			PhotoCountry:     countries[rand.IntN(len(countries))],
+			PhotoCountry:     countries[rand.IntN(len(countries))], //nolint:gosec // test data generation crypto rand not required
 			PhotoYear:        year,
 			PhotoMonth:       month,
 			PhotoDay:         day,
@@ -430,10 +475,10 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			PhotoResolution:  0,
 			// PhotoDuration    : 0,
 			PhotoColor:   12,
-			CameraID:     cameraRandoms[rand.IntN(len(cameraRandoms))],
+			CameraID:     cameraRandoms[rand.IntN(len(cameraRandoms))], //nolint:gosec // test data generation crypto rand not required
 			CameraSerial: "",
 			CameraSrc:    "",
-			LensID:       lensRandoms[rand.IntN(len(lensRandoms))],
+			LensID:       lensRandoms[rand.IntN(len(lensRandoms))], //nolint:gosec // test data generation crypto rand not required
 			// Details          :,
 			// Camera
 			// Lens
@@ -453,21 +498,25 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			DeletedAt:   gorm.DeletedAt{},
 		}
 		if err := Db().Create(&photo).Error; err != nil {
-			log.Debug(err)
+			return err
 		}
 		// Allocate the labels for this photo
 		for range labelCount {
-			photoLabel := entity.NewPhotoLabel(photo.ID, labelRandoms[rand.IntN(len(labelRandoms))], 0, entity.SrcMeta)
-			Db().FirstOrCreate(photoLabel)
+			photoLabel := entity.NewPhotoLabel(photo.ID, labelRandoms[rand.IntN(len(labelRandoms))], 0, entity.SrcMeta) //nolint:gosec // test data generation crypto rand not required
+			if err := Db().FirstOrCreate(photoLabel).Error; err != nil {
+				return err
+			}
 		}
 		// Allocate the keywords for this photo
-		keywordCount := rand.IntN(5)
+		keywordCount := rand.IntN(5) //nolint:gosec // test data generation crypto rand not required
 		keywordStr := ""
 		for range keywordCount {
-			photoKeyword := entity.PhotoKeyword{PhotoID: photo.ID, KeywordID: keywordRandoms[rand.IntN(len(keywordRandoms))]}
+			photoKeyword := entity.PhotoKeyword{PhotoID: photo.ID, KeywordID: keywordRandoms[rand.IntN(len(keywordRandoms))]} //nolint:gosec // test data generation crypto rand not required
 			keyword := entity.Keyword{}
 			Db().Model(&entity.Keyword{}).Where("id = ?", photoKeyword.KeywordID).First(&keyword)
-			Db().FirstOrCreate(&photoKeyword)
+			if err := Db().FirstOrCreate(&photoKeyword).Error; err != nil {
+				return err
+			}
 			if len(keywordStr) > 0 {
 				keywordStr = fmt.Sprintf("%s,%s", keywordStr, keyword.Keyword)
 			} else {
@@ -491,7 +540,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			FileRoot:     entity.RootSidecar,
 			OriginalName: "",
 			FileHash:     rnd.GenerateUID(entity.FileUID),
-			FileSize:     rand.Int64N(1000000),
+			FileSize:     rand.Int64N(1000000), //nolint:gosec // test data generation crypto rand not required
 			FileCodec:    "",
 			FileType:     string(fs.ImageJpeg),
 			MediaType:    string(media.Image),
@@ -529,34 +578,44 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			DeletedAt: gorm.DeletedAt{},
 			Share:     []entity.FileShare{},
 			Sync:      []entity.FileSync{},
-			//markers
+			// markers
 		}
-		Db().Create(&file)
+		if err := Db().Create(&file).Error; err != nil {
+			return err
+		}
 
 		// Add Markers
-		markersToCreate := rand.IntN(5)
+		markersToCreate := rand.IntN(5) //nolint:gosec // test data generation crypto rand not required
+
 		for range markersToCreate {
-			subject := subjects[rand.IntN(len(subjects))]
+			subject := subjects[rand.IntN(len(subjects))] //nolint:gosec // test data generation crypto rand not required
+
+			embeddings[0] = sourceEmbeddings[rand.IntN(numberOfFaces)] //nolint:gosec // test data generation crypto rand not required
 			marker := entity.Marker{
-				MarkerUID:     rnd.GenerateUID('m'),
-				FileUID:       file.FileUID,
-				MarkerType:    entity.MarkerFace,
-				MarkerName:    subject.SubjName,
+				MarkerUID:  rnd.GenerateUID('m'),
+				FileUID:    file.FileUID,
+				MarkerType: entity.MarkerFace,
+				MarkerSrc:  entity.SrcImage,
+				// MarkerName:    subject.SubjName,
 				MarkerReview:  false,
 				MarkerInvalid: false,
-				SubjUID:       subject.SubjUID,
-				SubjSrc:       subject.SubjSrc,
-				X:             rand.Float32() * 1024.0,
-				Y:             rand.Float32() * 2048.0,
-				W:             rand.Float32() * 10.0,
-				H:             rand.Float32() * 20.0,
-				Q:             10,
-				Size:          100,
-				Score:         10,
-				CreatedAt:     time.Now().UTC(),
-				UpdatedAt:     time.Now().UTC(),
+				// SubjUID:       subject.SubjUID,
+				SubjSrc:        entity.SrcAuto,
+				FaceDist:       rand.Float64(), //nolint:gosec // test data generation crypto rand not required
+				EmbeddingsJSON: embeddings.JSON(),
+				X:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				Y:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				W:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				H:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				Q:              rand.IntN(600), //nolint:gosec // test data generation crypto rand not required
+				Size:           rand.IntN(600), //nolint:gosec // test data generation crypto rand not required
+				Score:          rand.IntN(150), //nolint:gosec // test data generation crypto rand not required
+				CreatedAt:      time.Now().UTC(),
+				UpdatedAt:      time.Now().UTC(),
 			}
-			Db().Create(&marker)
+			if err := Db().Create(&marker).Error; err != nil {
+				return err
+			}
 			face := entity.Face{
 				ID:              randomSHA1(),
 				FaceSrc:         entity.SrcImage,
@@ -570,7 +629,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 				CreatedAt:       time.Now().UTC(),
 				UpdatedAt:       time.Now().UTC(),
 			}
-			Db().Create(&face)
+			if err := Db().Create(&face).Error; err != nil {
+				return err
+			}
 		}
 
 		// Add to Album
@@ -601,7 +662,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 				UpdatedAt:        time.Now().UTC(),
 				DeletedAt:        gorm.DeletedAt{},
 			}
-			Db().Create(&album)
+			if err := Db().Create(&album).Error; err != nil {
+				return err
+			}
 		}
 		photoAlbum := entity.PhotoAlbum{
 			PhotoUID:  photo.PhotoUID,
@@ -612,7 +675,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			CreatedAt: time.Now().UTC(),
 			UpdatedAt: time.Now().UTC(),
 		}
-		Db().Create(photoAlbum)
+		if err := Db().Create(photoAlbum).Error; err != nil {
+			return err
+		}
 
 		details := entity.Details{
 			PhotoID:     photo.ID,
@@ -621,11 +686,16 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			CreatedAt:   time.Now().UTC(),
 			UpdatedAt:   time.Now().UTC(),
 		}
-		Db().Create(details)
+		if err := Db().Create(details).Error; err != nil {
+			return err
+		}
 	}
 
 	entity.File{}.RegenerateIndex()
-	entity.UpdateCounts()
+	if err := entity.UpdateCounts(); err != nil {
+		return err
+	}
 
 	log.Infof("Database Creation completed in %s", time.Since(start))
+	return nil
 }

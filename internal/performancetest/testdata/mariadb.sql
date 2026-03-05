@@ -168,6 +168,7 @@ CREATE TABLE `auth_users` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
+  `user_scope` varbinary(1024) DEFAULT '*',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_auth_users_user_uid` (`user_uid`),
   KEY `idx_auth_users_user_email` (`user_email`),
@@ -242,9 +243,12 @@ CREATE TABLE `auth_users_settings` (
   `download_media_raw` int(11) DEFAULT 0,
   `download_media_sidecar` int(11) DEFAULT 0,
   `upload_path` varbinary(1024) DEFAULT NULL,
-  `default_page` varbinary(128) DEFAULT NULL,
+  `ui_start_page` varbinary(128) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `search_list_view` int(11) DEFAULT 0,
+  `search_show_titles` int(11) DEFAULT 0,
+  `search_show_captions` int(11) DEFAULT 0,
   PRIMARY KEY (`user_uid`)
 );
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -381,6 +385,8 @@ CREATE TABLE `faces` (
   `matched_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `merge_notes` varchar(255) DEFAULT '',
+  `merge_retry` tinyint(3) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_faces_subj_uid` (`subj_uid`)
 );
@@ -437,6 +443,7 @@ CREATE TABLE `files` (
   `updated_in` bigint(20) DEFAULT NULL,
   `published_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
+  `file_pages` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_files_file_uid` (`file_uid`),
   UNIQUE KEY `idx_files_name_root` (`file_name`,`file_root`),
@@ -546,6 +553,7 @@ CREATE TABLE `labels` (
   `updated_at` datetime DEFAULT NULL,
   `published_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
+  `label_nsfw` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_labels_label_uid` (`label_uid`),
   UNIQUE KEY `uix_labels_label_slug` (`label_slug`),
@@ -725,6 +733,7 @@ CREATE TABLE `photos` (
   `checked_at` datetime DEFAULT NULL,
   `estimated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
+  `indexed_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_photos_photo_uid` (`photo_uid`),
   KEY `idx_photos_created_by` (`created_by`),
@@ -773,6 +782,8 @@ CREATE TABLE `photos_labels` (
   `label_id` int(10) unsigned NOT NULL,
   `label_src` varbinary(8) DEFAULT NULL,
   `uncertainty` smallint(6) DEFAULT NULL,
+  `topicality` smallint(6) DEFAULT 0, 
+  `nsfw`smallint(6) DEFAULT 0,
   PRIMARY KEY (`photo_id`,`label_id`),
   KEY `idx_photos_labels_label_id` (`label_id`)
 );
