@@ -7,7 +7,7 @@ ALTER TABLE files_share MODIFY IF EXISTS file_id BIGINT unsigned;
 ALTER TABLE cameras MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;
 ALTER TABLE photos MODIFY IF EXISTS camera_id BIGINT unsigned;
 ALTER TABLE photos MODIFY IF EXISTS lens_id BIGINT unsigned;
-ALTER TABLE markers MODIFY IF EXISTS size BIGINT unsigned;
+ALTER TABLE markers MODIFY IF EXISTS size BIGINT;
 ALTER TABLE files_share MODIFY IF EXISTS service_id BIGINT unsigned;
 ALTER TABLE places MODIFY IF EXISTS photo_count BIGINT;
 ALTER TABLE photos_keywords MODIFY IF EXISTS keyword_id BIGINT unsigned;
