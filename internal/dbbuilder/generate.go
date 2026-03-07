@@ -5,13 +5,13 @@ package main
 
 import (
 	"bufio"
-	"bytes"
+	"crypto/sha1"
+	"encoding/base32"
 	"flag"
 	"fmt"
 	"math"
 	"math/rand/v2"
 	"os"
-	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -26,6 +26,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/event"
@@ -229,7 +230,6 @@ func main() {
 		driver         string
 		dsnString      string
 		dropdb         bool
-		sqlitescript   bool
 	)
 
 	log = logrus.StandardLogger()
@@ -240,7 +240,6 @@ func main() {
 	flag.StringVar(&driver, "driver", "sqlite", "GORM driver to use.  Choose from sqlite, mysql and postgres")
 	flag.StringVar(&dsnString, "dsn", "testdb.db", "DSN to access the database")
 	flag.BoolVar(&dropdb, "dropdb", false, "Drop/Delete the database")
-	flag.BoolVar(&sqlitescript, "sqlitescript", true, "Create an SQLite database from script")
 	flag.Parse()
 
 	if numberOfPhotos < 1 {
@@ -280,9 +279,11 @@ func main() {
 	if allowDelete {
 		switch dsname.Driver {
 		case MySQL:
-			basedsn := fmt.Sprintf("%s:%s@%s/", dsname.User, dsname.Password, dsname.Server)
-			log.Infof("Connecting to %v", basedsn)
-			database, err := gorm.Open(mysql.Open(basedsn), &gorm.Config{})
+			basedsn := dsname
+			basedsn.Name = "mysql"
+			// basedsn := fmt.Sprintf("%s:%s@%s/", dsname.User, dsname.Password, dsname.Server)
+			log.Infof("Connecting to %v", basedsn.ToString())
+			database, err := gorm.Open(mysql.Open(basedsn.ToString()), &gorm.Config{})
 			if err != nil {
 				log.Errorf("Unable to connect to MariaDB %v", err)
 			}
@@ -325,15 +326,11 @@ func main() {
 		case SQLite3:
 			if dsname.DSN != SQLiteMemoryDSN {
 				filename := fmt.Sprintf("%s/%s", dsname.Server, dsname.Name)
-				// if strings.Index(dsnString, "?") > 0 {
-				// 	if strings.Index(dsnString, ":") > 0 {
-				// 		filename = dsnString[strings.Index(dsnString, ":")+1 : strings.Index(dsnString, "?")]
-				// 	} else {
-				// 		filename = dsnString[0:strings.Index(dsnString, "?")]
-				// 	}
-				// }
 				log.Infof("Removing file %v", filename)
-				os.Remove(filename)
+				if err := os.Remove(filename); err != nil {
+					log.Errorf("unable to remove %s with %w", filename, err)
+					os.Exit(1)
+				}
 			}
 		}
 	}
@@ -360,46 +357,9 @@ func main() {
 	// Otherwise assume that we have a valid structured database.
 	photoCounter := int64(0)
 	if err := Db().Model(&entity.Photo{}).Count(&photoCounter).Error; err != nil {
-		// Handle SQLite differently as it does table recreates on initial migrate, so we need to be able to simulate that.
-		if driver == SQLite3 && sqlitescript {
-			filename := dsnString
-			if strings.Index(dsnString, "?") > 0 {
-				if strings.Index(dsnString, ":") > 0 {
-					filename = dsnString[strings.Index(dsnString, ":")+1 : strings.Index(dsnString, "?")]
-				} else {
-					filename = dsnString[0:strings.Index(dsnString, "?")]
-				}
-			}
-
-			var cmd *exec.Cmd
-
-			bashCmd := fmt.Sprintf("cat ./sqlite3.sql | sqlite3 %s", filename)
-
-			cmd = exec.Command("bash", "-c", bashCmd)
-
-			// Write to stdout or file.
-			var f *os.File
-			log.Infof("restore: creating database tables from script")
-			f = os.Stdout
-			var stderr bytes.Buffer
-			cmd.Stderr = &stderr
-			cmd.Stdout = f
-
-			// Log exact command for debugging in trace mode.
-			log.Debug(cmd.String())
-
-			// Run restore command.
-			if cmdErr := cmd.Run(); cmdErr != nil {
-				if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-					log.Error(errStr)
-					os.Exit(1)
-				}
-			}
-		} else {
-			entity.Entities.Migrate(Db(), migrate.Opt(true, false, nil))
-			if err := entity.Entities.WaitForMigration(Db()); err != nil {
-				log.Errorf("migrate: %s [%s]", err, time.Since(start))
-			}
+		entity.Entities.Migrate(Db(), migrate.Opt(true, false, nil))
+		if err := entity.Entities.WaitForMigration(Db()); err != nil {
+			log.Errorf("migrate: %s [%s]", err, time.Since(start))
 		}
 	} else {
 		log.Errorf("The photos table already exists in driver %v dsn %v.\nAborting...", driver, dsnString)
@@ -426,23 +386,27 @@ func main() {
 			Keyword: label,
 			Skip:    false,
 		}
-		Db().Create(&keyword)
+		if err := Db().Create(&keyword).Error; err != nil {
+			log.Errorf("unable to create keyword with %w", err)
+		}
 		keywords[label] = keyword.ID
 		keywordRandoms[keywordPos] = keyword.ID
 		keywordPos++
 		if rule.Label != "" {
-			if _, found := keywords[rule.Label]; found == false {
+			if _, found := keywords[rule.Label]; !found {
 				keyword = entity.Keyword{
 					Keyword: rule.Label,
 					Skip:    false,
 				}
-				Db().Create(&keyword)
+				if err := Db().Create(&keyword).Error; err != nil {
+					log.Errorf("unable to create keyword with %w", err)
+				}
 				keywords[rule.Label] = keyword.ID
 				keywordRandoms[keywordPos] = keyword.ID
 				keywordPos++
 			}
 			for _, category := range rule.Categories {
-				if _, found := labels[category]; found == false {
+				if _, found := labels[category]; !found {
 					labelDb := entity.Label{
 						LabelSlug:        strings.ToLower(category),
 						CustomSlug:       strings.ToLower(category),
@@ -458,13 +422,15 @@ func main() {
 						DeletedAt:        gorm.DeletedAt{},
 						New:              false,
 					}
-					Db().Create(&labelDb)
+					if err := Db().Create(&labelDb).Error; err != nil {
+						log.Errorf("unable to create label with %w", err)
+					}
 					labels[category] = labelDb.ID
 					labelRandoms[labelPos] = labelDb.ID
 					labelPos++
 				}
 			}
-			if _, found := labels[rule.Label]; found == false {
+			if _, found := labels[rule.Label]; !found {
 				labelDb := entity.Label{
 					LabelSlug:        strings.ToLower(rule.Label),
 					CustomSlug:       strings.ToLower(rule.Label),
@@ -480,7 +446,9 @@ func main() {
 					DeletedAt:        gorm.DeletedAt{},
 					New:              false,
 				}
-				Db().Create(&labelDb)
+				if err := Db().Create(&labelDb).Error; err != nil {
+					log.Errorf("unable to create label with %w", err)
+				}
 				labels[rule.Label] = labelDb.ID
 				labelRandoms[labelPos] = labelDb.ID
 				labelPos++
@@ -489,7 +457,9 @@ func main() {
 						LabelID:    labelDb.ID,
 						CategoryID: labels[category],
 					}
-					Db().Create(&categoryDb)
+					if err := Db().Create(&categoryDb).Error; err != nil {
+						log.Errorf("unable to create category with %w", err)
+					}
 				}
 			}
 		}
@@ -507,8 +477,10 @@ func main() {
 	for _, make := range entity.CameraMakes {
 		for _, model := range entity.CameraModels {
 			camera := entity.NewCamera(make, model)
-			if _, found := cameras[camera.CameraSlug]; found == false {
-				Db().Create(camera)
+			if _, found := cameras[camera.CameraSlug]; !found {
+				if err := Db().Create(camera).Error; err != nil {
+					log.Errorf("unable to create camera with %w", err)
+				}
 				cameras[camera.CameraSlug] = camera.ID
 				cameraRandoms[cameraPos] = camera.ID
 				cameraPos++
@@ -516,8 +488,10 @@ func main() {
 		}
 		for _, model := range lensList {
 			lens := entity.NewLens(make, model)
-			if _, found := lenses[lens.LensSlug]; found == false {
-				Db().Create(lens)
+			if _, found := lenses[lens.LensSlug]; !found {
+				if err := Db().Create(lens).Error; err != nil {
+					log.Errorf("unable to create lens with %w", err)
+				}
 				lenses[lens.LensSlug] = lens.ID
 				lensRandoms[lensPos] = lens.ID
 				lensPos++
@@ -551,7 +525,9 @@ func main() {
 		counter := int64(0)
 		Db().Model(&entity.Country{}).Where("id = ?", country.ID).Count(&counter)
 		if counter == 0 {
-			Db().Create(country)
+			if err := Db().Create(country).Error; err != nil {
+				log.Errorf("unable to create country with %w", err)
+			}
 			countries[countryPos] = strings.ToLower(parts[0])
 			countryPos++
 		}
@@ -573,7 +549,9 @@ func main() {
 			CreatedAt:     time.Now().UTC(),
 			UpdatedAt:     time.Now().UTC(),
 		}
-		Db().Create(&place)
+		if err := Db().Create(&place).Error; err != nil {
+			log.Errorf("unable to create place with %w", err)
+		}
 		places[placePos] = placeUID
 		placePos++
 	}
@@ -599,9 +577,27 @@ func main() {
 			UpdatedAt:    time.Now().UTC(),
 			DeletedAt:    gorm.DeletedAt{},
 		}
-		Db().Create(&subject)
+		if err := Db().Create(&subject).Error; err != nil {
+			log.Errorf("unable to create subject with %w", err)
+		}
 		subjects[subjectPos] = subject
 		subjectPos++
+	}
+
+	numberOfFaces := int(0.75 * float32(numberOfPhotos))
+	sourceEmbeddings := make(face.Embeddings, numberOfFaces)
+	jsonembed := make([]float32, 512)
+	embeddings := make(face.Embeddings, 1)
+
+	for i := range numberOfFaces {
+		for k := range 512 {
+			if rand.IntN(2) == 0 { //nolint:gosec // test data generation crypto rand not required
+				jsonembed[k] = rand.Float32() //nolint:gosec // test data generation crypto rand not required
+			} else {
+				jsonembed[k] = rand.Float32() * -1.0 //nolint:gosec // test data generation crypto rand not required
+			}
+		}
+		sourceEmbeddings[i] = face.NewEmbedding(jsonembed)
 	}
 
 	log.Info("Start creating photos")
@@ -621,17 +617,22 @@ func main() {
 		lng := (rand.Float64() * 360.0) - 180.0
 		cell := entity.NewCell(lat, lng)
 		cell.PlaceID = placeId
-		Db().FirstOrCreate(cell)
-
+		if err := Db().FirstOrCreate(cell).Error; err != nil {
+			log.Errorf("unable to create cell with %w", err)
+		}
 		folder := entity.Folder{}
 		if res := Db().Model(&entity.Folder{}).Where("path = ?", fmt.Sprintf("%04d", year)).First(&folder); res.RowsAffected == 0 {
 			folder = entity.NewFolder("/", fmt.Sprintf("%04d", year), time.Now().UTC())
-			folder.Create()
+			if err := folder.Create(); err != nil {
+				log.Errorf("unable to create folder with %w", err)
+			}
 		}
 		folder = entity.Folder{}
 		if res := Db().Model(&entity.Folder{}).Where("path = ?", fmt.Sprintf("%04d/%02d", year, month)).First(&folder); res.RowsAffected == 0 {
 			folder = entity.NewFolder("/", fmt.Sprintf("%04d/%02d", year, month), time.Now().UTC())
-			folder.Create()
+			if err := folder.Create(); err != nil {
+				log.Errorf("unable to create folder with %w", err)
+			}
 		}
 
 		photo := entity.Photo{
@@ -699,11 +700,15 @@ func main() {
 			EstimatedAt: nil,
 			DeletedAt:   gorm.DeletedAt{},
 		}
-		Db().Create(&photo)
+		if err := Db().Create(&photo).Error; err != nil {
+			log.Errorf("unable to create photo with %w", err)
+		}
 		// Allocate the labels for this photo
 		for i := 0; i < labelCount; i++ {
 			photoLabel := entity.NewPhotoLabel(photo.ID, labelRandoms[rand.IntN(len(labelRandoms))], 0, entity.SrcMeta)
-			Db().FirstOrCreate(photoLabel)
+			if err := Db().FirstOrCreate(photoLabel).Error; err != nil {
+				log.Errorf("unable to create photolabel with %w", err)
+			}
 		}
 		// Allocate the keywords for this photo
 		keywordCount := rand.IntN(5)
@@ -711,8 +716,12 @@ func main() {
 		for i := 0; i < keywordCount; i++ {
 			photoKeyword := entity.PhotoKeyword{PhotoID: photo.ID, KeywordID: keywordRandoms[rand.IntN(len(keywordRandoms))]}
 			keyword := entity.Keyword{}
-			Db().Model(&entity.Keyword{}).Where("id = ?", photoKeyword.KeywordID).First(&keyword)
-			Db().FirstOrCreate(&photoKeyword)
+			if err := Db().Model(&entity.Keyword{}).Where("id = ?", photoKeyword.KeywordID).First(&keyword).Error; err != nil {
+				log.Errorf("unable to find keyword with %w", err)
+			}
+			if err := Db().FirstOrCreate(&photoKeyword).Error; err != nil {
+				log.Errorf("unable to create photokeyword with %w", err)
+			}
 			if len(keywordStr) > 0 {
 				keywordStr = fmt.Sprintf("%s,%s", keywordStr, keyword.Keyword)
 			} else {
@@ -774,36 +783,49 @@ func main() {
 			DeletedAt: gorm.DeletedAt{},
 			Share:     []entity.FileShare{},
 			Sync:      []entity.FileSync{},
-			//markers
+			// markers
 		}
-		Db().Create(&file)
+		if err := Db().Create(&file).Error; err != nil {
+			log.Errorf("unable to create file with %w", err)
+		}
 
 		// Add Markers
 		markersToCreate := rand.IntN(5)
-		for i := 0; i < markersToCreate; i++ {
+		for range markersToCreate {
 			subject := subjects[rand.IntN(len(subjects))]
+			embeddings[0] = sourceEmbeddings[rand.IntN(numberOfFaces)] //nolint:gosec // test data generation crypto rand not required
 			marker := entity.Marker{
-				MarkerUID:     rnd.GenerateUID('m'),
-				FileUID:       file.FileUID,
-				MarkerType:    entity.MarkerFace,
-				MarkerName:    subject.SubjName,
+				MarkerUID:  rnd.GenerateUID('m'),
+				FileUID:    file.FileUID,
+				MarkerType: entity.MarkerFace,
+				MarkerSrc:  entity.SrcImage,
+				// MarkerName:    subject.SubjName,
 				MarkerReview:  false,
 				MarkerInvalid: false,
-				SubjUID:       subject.SubjUID,
-				SubjSrc:       subject.SubjSrc,
-				X:             rand.Float32() * 1024.0,
-				Y:             rand.Float32() * 2048.0,
-				W:             rand.Float32() * 10.0,
-				H:             rand.Float32() * 20.0,
-				Q:             10,
-				Size:          100,
-				Score:         10,
-				CreatedAt:     time.Now().UTC(),
-				UpdatedAt:     time.Now().UTC(),
+				// SubjUID:       subject.SubjUID,
+				SubjSrc:        entity.SrcAuto,
+				FaceDist:       rand.Float64(), //nolint:gosec // test data generation crypto rand not required
+				EmbeddingsJSON: embeddings.JSON(),
+				X:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				Y:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				W:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				H:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
+				Q:              rand.IntN(600), //nolint:gosec // test data generation crypto rand not required
+				Size:           rand.IntN(600), //nolint:gosec // test data generation crypto rand not required
+				Score:          rand.IntN(150), //nolint:gosec // test data generation crypto rand not required
+				CreatedAt:      time.Now().UTC(),
+				UpdatedAt:      time.Now().UTC(),
 			}
-			Db().Create(&marker)
+			if err := Db().Create(&marker).Error; err != nil {
+				log.Errorf("unable to create marker with %w", err)
+			}
+
+			//nolint:gosec // G401: Stable identifier hash; not used for security decisions.
+			s := sha1.Sum(embeddings[0].JSON())
+
 			face := entity.Face{
-				ID:              randomSHA1(),
+				ID:              base32.StdEncoding.EncodeToString(s[:]),
+				EmbeddingJSON:   embeddings[0].JSON(),
 				FaceSrc:         entity.SrcImage,
 				FaceKind:        1,
 				FaceHidden:      false,
@@ -815,7 +837,9 @@ func main() {
 				CreatedAt:       time.Now().UTC(),
 				UpdatedAt:       time.Now().UTC(),
 			}
-			Db().Create(&face)
+			if err := Db().FirstOrCreate(&face).Error; err != nil {
+				log.Errorf("unable to create face with %w", err)
+			}
 		}
 
 		// Add to Album
@@ -846,7 +870,9 @@ func main() {
 				UpdatedAt:        time.Now().UTC(),
 				DeletedAt:        gorm.DeletedAt{},
 			}
-			Db().Create(&album)
+			if err := Db().Create(&album).Error; err != nil {
+				log.Errorf("unable to create album with %w", err)
+			}
 		}
 		photoAlbum := entity.PhotoAlbum{
 			PhotoUID:  photo.PhotoUID,
@@ -857,7 +883,9 @@ func main() {
 			CreatedAt: time.Now().UTC(),
 			UpdatedAt: time.Now().UTC(),
 		}
-		Db().Create(photoAlbum)
+		if err := Db().Create(&photoAlbum).Error; err != nil {
+			log.Errorf("unable to create photoalbum with %w", err)
+		}
 
 		details := entity.Details{
 			PhotoID:     photo.ID,
@@ -866,11 +894,15 @@ func main() {
 			CreatedAt:   time.Now().UTC(),
 			UpdatedAt:   time.Now().UTC(),
 		}
-		Db().Create(details)
+		if err := Db().Create(&details).Error; err != nil {
+			log.Errorf("unable to create details with %w", err)
+		}
 	}
 
 	entity.File{}.RegenerateIndex()
-	entity.UpdateCounts()
+	if err := entity.UpdateCounts(); err != nil {
+		log.Errorf("unable to update counts with %w", err)
+	}
 
 	log.Infof("Database Creation completed in %s", time.Since(start))
 	code := 0
