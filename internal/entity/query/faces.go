@@ -274,6 +274,10 @@ func ProcessMatchMarkersAsync(m *entity.Face, faceIDs []string) error {
 	if len(faceIDs) == 0 {
 		return nil
 	}
+	// Handle case where the face was to low quality and wasn't added.
+	if m == nil {
+		return nil
+	}
 
 	go func() {
 		log.Debugf("faces: async matching commenced for %s", m.ID)

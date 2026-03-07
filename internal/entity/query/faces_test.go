@@ -4,6 +4,7 @@ import (
 	"errors"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -341,4 +342,19 @@ func TestRemoveAutoFaceClusters(t *testing.T) {
 	}
 
 	assert.LessOrEqual(t, 3, removed)
+}
+
+func TestProcessMatchMarkersAsync(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		require.Nil(t, ProcessMatchMarkersAsync(entity.FindFace(entity.FaceFixtures.Get("john-doe").ID), entity.Faceless))
+		time.Sleep(2 * time.Second)
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		require.Nil(t, ProcessMatchMarkersAsync(nil, entity.Faceless))
+		time.Sleep(time.Second)
+	})
+	t.Run("NilFaceID", func(t *testing.T) {
+		require.Nil(t, ProcessMatchMarkersAsync(entity.FindFace(entity.FaceFixtures.Get("john-doe").ID), nil))
+		time.Sleep(time.Second)
+	})
 }
