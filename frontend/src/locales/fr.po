@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-08 10:27+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-03-09 08:25+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -3450,7 +3450,7 @@ msgstr "Statut"
 
 #: src/page/auth/login.vue:123
 msgid "Stay signed in on this device"
-msgstr "Reste connecté sur cet appareil"
+msgstr "Rester connecté sur cet appareil"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
