@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-08 10:27+0000\n"
+"PO-Revision-Date: 2026-03-09 09:52+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -1308,7 +1308,7 @@ msgstr "ड्राइवर"
 
 #: src/component/upload/dialog.vue:94
 msgid "Drop files here"
-msgstr ""
+msgstr "फ़ाइलें यहाँ ड्रॉप करें"
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."

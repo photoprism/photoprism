@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-08 10:27+0000\n"
+"PO-Revision-Date: 2026-03-09 09:52+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -1307,7 +1307,7 @@ msgstr "Vezető"
 
 #: src/component/upload/dialog.vue:94
 msgid "Drop files here"
-msgstr ""
+msgstr "Dobja ide a fájlokat"
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."

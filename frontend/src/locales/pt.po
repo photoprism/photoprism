@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-08 10:27+0000\n"
+"PO-Revision-Date: 2026-03-09 09:52+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
 "Language: pt\n"
@@ -1308,7 +1308,7 @@ msgstr "Condutor"
 
 #: src/component/upload/dialog.vue:94
 msgid "Drop files here"
-msgstr ""
+msgstr "Arraste os arquivos para cá."
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
