@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-09 09:52+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-03-10 19:03+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.16.1\n"
+"X-Generator: Weblate 5.16.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1308,7 +1308,7 @@ msgstr "Pilote"
 
 #: src/component/upload/dialog.vue:94
 msgid "Drop files here"
-msgstr "Dépose les fichiers ici"
+msgstr "Déposer les fichiers ici"
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
