@@ -270,7 +270,14 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 		return err
 	}
 
-	for _, marker := range markers {
+	start := time.Now()
+	resultLen := len(markers)
+
+	for i, marker := range markers {
+		if time.Since(start) > time.Duration(time.Minute*15) {
+			log.Infof("faces: matching %d of %d markers", i, resultLen)
+			start = time.Now()
+		}
 		if ok, dist := m.Match(marker.Embeddings()); !ok {
 			// Ignore.
 		} else if _, err = marker.SetFace(m, dist); err != nil {

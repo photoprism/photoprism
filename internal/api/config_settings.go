@@ -85,7 +85,14 @@ func SaveSettings(router *gin.RouterGroup) {
 			settings = conf.Settings()
 
 			// Set values from request.
+			LimitRequestBodyBytes(c, MaxSettingsRequestBytes)
+
 			if err := c.BindJSON(settings); err != nil {
+				if IsRequestBodyTooLarge(err) {
+					AbortRequestTooLarge(c, i18n.ErrBadRequest)
+					return
+				}
+
 				AbortBadRequest(c, err)
 				return
 			}
@@ -112,7 +119,14 @@ func SaveSettings(router *gin.RouterGroup) {
 			settings = &customize.Settings{}
 
 			// Set values from request.
+			LimitRequestBodyBytes(c, MaxSettingsRequestBytes)
+
 			if err := c.BindJSON(settings); err != nil {
+				if IsRequestBodyTooLarge(err) {
+					AbortRequestTooLarge(c, i18n.ErrBadRequest)
+					return
+				}
+
 				AbortBadRequest(c, err)
 				return
 			}

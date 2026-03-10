@@ -493,7 +493,7 @@ func TestFindFolderAlbum(t *testing.T) {
 
 		legacy := &Album{
 			AlbumType:   AlbumFolder,
-			AlbumSlug:   txt.Slug(parentPath),
+			AlbumSlug:   legacyFolderAlbumSlug(parentPath),
 			AlbumPath:   "",
 			AlbumFilter: `path:"` + parentPath + `" public:true`,
 			CreatedAt:   Now(),

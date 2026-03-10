@@ -113,6 +113,16 @@
                         @keyup.enter="onLogin"
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="12" class="pb-0 d-flex align-center justify-center opacity-80">
+                      <v-checkbox
+                        v-model="staySignedIn"
+                        :disabled="loading"
+                        density="compact"
+                        hide-details
+                        class="ma-0 pa-0 input-stay-signed-in"
+                        :label="$gettext('Stay signed in on this device')"
+                      ></v-checkbox>
+                    </v-col>
                   </template>
                   <v-col cols="12" class="auth-actions">
                     <div class="action-buttons auth-buttons pb-1 d-flex ga-3 align-center justify-center">
@@ -204,6 +214,7 @@ export default {
       username: "",
       password: "",
       showPassword: false,
+      staySignedIn: true,
       useRecoveryCode: false,
       code: "",
       enterCode: false,
@@ -254,6 +265,8 @@ export default {
     },
   },
   created() {
+    this.staySignedIn = this.currentStaySignedInState();
+
     const authError = getAppStorage().getItem("session.error");
     if (authError) {
       this.$notify.error(authError);
@@ -316,6 +329,20 @@ export default {
         });
       }
     },
+    currentStaySignedInState() {
+      if (typeof this.$session?.usesSessionStorage === "function") {
+        return !this.$session.usesSessionStorage();
+      }
+
+      return getAppStorage().getItem("session") !== "true";
+    },
+    applySessionPersistence() {
+      if (this.staySignedIn) {
+        this.$session.useLocalStorage();
+      } else {
+        this.$session.useSessionStorage();
+      }
+    },
     onLogin() {
       const username = this.username.trim();
       const password = this.password.trim();
@@ -325,6 +352,7 @@ export default {
         return;
       }
 
+      this.applySessionPersistence();
       this.loading = true;
       this.$session
         .login(username, password, code)
@@ -347,6 +375,7 @@ export default {
       }
 
       if (this.config.ext?.oidc?.loginUri) {
+        this.applySessionPersistence();
         this.loading = true;
         this.$session.followRedirect(this.config.ext.oidc.loginUri);
       } else {

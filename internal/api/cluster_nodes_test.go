@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -139,4 +140,22 @@ func TestClusterUpdateNode_UUIDValidation(t *testing.T) {
 
 	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/BadID", `{"SiteUrl":"https://photos.example.com"}`)
 	assert.Equal(t, http.StatusNotFound, r.Code)
+}
+
+func TestClusterUpdateNode_RequestTooLarge(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterUpdateNode(router)
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-request-limit", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	assert.NoError(t, regy.Put(n))
+
+	body := `{"Labels":{"oversized":"` + strings.Repeat("a", int(MaxClusterRegisterBytes)) + `"}}`
+	r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, body)
+
+	assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 }

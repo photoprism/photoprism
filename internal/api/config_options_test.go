@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/tidwall/gjson"
@@ -100,6 +101,19 @@ func TestSaveConfigOptions(t *testing.T) {
 		assert.Equal(t, "value", merged["Existing"])
 		assert.Equal(t, "https://photos.example.com/", merged["SiteUrl"])
 		assert.Equal(t, true, merged["HttpCachePublic"])
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		SaveConfigOptions(router)
+
+		prepareConfigOptionsSuccessTest(t, conf)
+
+		authToken := AuthenticateAdmin(app, router)
+		body := `{"SiteUrl":"https://photos.example.com/","LogLevel":"` + strings.Repeat("a", int(MaxSettingsRequestBytes)) + `"}`
+		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", body, authToken)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }
 

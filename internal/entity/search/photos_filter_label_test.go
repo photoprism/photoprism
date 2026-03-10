@@ -747,4 +747,24 @@ func TestPhotosQueryLabel(t *testing.T) {
 		}
 		assert.Len(t, photos, 2)
 	})
+	t.Run("HomophoneName", func(t *testing.T) {
+		_, second, _, photoB := createHomophoneSearchFixtures(t)
+
+		var f form.SearchPhotos
+
+		f.Label = second.LabelName
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(photos) != 1 {
+			t.Fatalf("expected one result, got %d", len(photos))
+		}
+
+		assert.Equal(t, photoB.PhotoUID, photos[0].PhotoUID)
+	})
 }

@@ -35,6 +35,26 @@ const PublicSessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd239
 const PublicAuthToken = "234200000000000000000000000000000000000000000000";
 const LoginPage = "login";
 
+const resolveStorageNamespace = (config) => {
+  if (typeof config?.storageNamespace === "string" && config.storageNamespace !== "") {
+    return config.storageNamespace;
+  }
+
+  if (typeof config?.get === "function") {
+    const storageNamespace = config.get("storageNamespace");
+
+    if (typeof storageNamespace === "string" && storageNamespace !== "") {
+      return storageNamespace;
+    }
+  }
+
+  if (typeof config?.values?.storageNamespace === "string" && config.values.storageNamespace !== "") {
+    return config.values.storageNamespace;
+  }
+
+  return "";
+};
+
 export default class Session {
   /**
    * @param {Storage} storage
@@ -46,13 +66,14 @@ export default class Session {
     this.loginRedirect = false;
     this.config = config;
     this.baseUri = config?.baseUri;
+    this.storageNamespace = resolveStorageNamespace(config);
     this.provider = "";
     this.user = new User(false);
     this.scope = "";
     this.data = null;
     this.localStorage = storage;
     const sessionStorage = typeof window === "undefined" ? undefined : window.sessionStorage;
-    this.sessionStorage = createNamespacedStorage(sessionStorage, this.baseUri);
+    this.sessionStorage = createNamespacedStorage(sessionStorage, this.storageNamespace);
 
     // Set session storage.
     if (storage.getItem(this.storageKey) === "true") {
@@ -95,14 +116,14 @@ export default class Session {
 
     // Restore authentication from session storage.
     if (this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) && this.applyId(this.storage.getItem(this.storageKey + ".id"))) {
-      const dataJson = this.storage.getItem(this.storageKey + ".data");
-      if (dataJson && dataJson !== "undefined") {
-        this.data = JSON.parse(dataJson);
+      const data = this.getStoredJSON(this.storageKey + ".data");
+      if (data) {
+        this.data = data;
       }
 
-      const userJson = this.storage.getItem(this.storageKey + ".user");
-      if (userJson && userJson !== "undefined") {
-        this.user = new User(JSON.parse(userJson));
+      const user = this.getStoredJSON(this.storageKey + ".user");
+      if (user) {
+        this.user = new User(user);
       }
 
       const provider = this.storage.getItem(this.storageKey + ".provider");
@@ -149,15 +170,71 @@ export default class Session {
     }
   }
 
+  getStoredJSON(key) {
+    const value = this.storage.getItem(key);
+
+    if (!value || value === "undefined") {
+      return null;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch (_error) {
+      this.storage.removeItem(key);
+      return null;
+    }
+  }
+
+  setStoragePreference(useSessionStorage) {
+    this.localStorage.setItem(this.storageKey, useSessionStorage ? "true" : "false");
+    this.sessionStorage.removeItem(this.storageKey);
+  }
+
   useSessionStorage() {
     this.reset();
-    this.storage.setItem(this.storageKey, "true");
+    this.setStoragePreference(true);
     this.storage = this.sessionStorage;
   }
 
   useLocalStorage() {
-    this.storage.setItem(this.storageKey, "false");
+    this.setStoragePreference(false);
     this.storage = this.localStorage;
+  }
+
+  usesSessionStorage() {
+    return this.storage === this.sessionStorage;
+  }
+
+  clearNamespacedKey(key) {
+    [this.localStorage, this.sessionStorage].forEach((storage) => {
+      if (!storage || typeof storage.removeItem !== "function") {
+        return;
+      }
+
+      if (typeof storage.getLegacyItem === "function") {
+        storage.removeItem(key, { legacy: false });
+      } else {
+        storage.removeItem(key);
+      }
+    });
+  }
+
+  clearLegacyKey(key) {
+    if (!key) {
+      return;
+    }
+
+    [this.localStorage, this.sessionStorage].forEach((storage) => {
+      if (!storage) {
+        return;
+      }
+
+      if (typeof storage.removeLegacyItem === "function") {
+        storage.removeLegacyItem(key);
+      } else if (typeof storage.removeItem === "function") {
+        storage.removeItem(key);
+      }
+    });
   }
 
   setConfig(values) {
@@ -230,18 +307,23 @@ export default class Session {
     this.scope = "";
 
     // "session.id" is the SHA256 hash of the auth token.
-    this.storage.removeItem(this.storageKey + ".id");
-    this.storage.removeItem(this.storageKey + ".token");
-    this.storage.removeItem(this.storageKey + ".provider");
-    this.storage.removeItem(this.storageKey + ".scope");
+    this.clearNamespacedKey(this.storageKey + ".id");
+    this.clearNamespacedKey(this.storageKey + ".token");
+    this.clearNamespacedKey(this.storageKey + ".provider");
+    this.clearNamespacedKey(this.storageKey + ".scope");
 
-    // Remove previously used data e.g. "session_id"
-    // is deprecated in favor of "session.token".
-    this.storage.removeItem("session_id");
-    this.storage.removeItem("sessionId");
-    this.storage.removeItem("authToken");
-    this.storage.removeItem("authError");
-    this.storage.removeItem("provider");
+    // Remove deprecated raw keys from both storage backends. Supported
+    // instances use namespaced keys, so clearing legacy globals is safe.
+    this.clearLegacyKey("session.token");
+    this.clearLegacyKey("authToken");
+    this.clearLegacyKey("session.id");
+    this.clearLegacyKey("sessionId");
+    this.clearLegacyKey("session_id");
+    this.clearLegacyKey("session.provider");
+    this.clearLegacyKey("provider");
+    this.clearLegacyKey("session.scope");
+    this.clearLegacyKey("authError");
+    this.clearLegacyKey("session.error");
 
     delete $api.defaults.headers.common[RequestHeader];
   }
@@ -448,21 +530,23 @@ export default class Session {
 
   deleteData() {
     this.data = null;
-    this.storage.removeItem(this.storageKey + ".data");
-    this.storage.removeItem("sessionData");
+    this.clearNamespacedKey(this.storageKey + ".data");
+    this.clearLegacyKey("sessionData");
+    this.clearLegacyKey("session.data");
   }
 
   deleteUser() {
     this.auth = false;
     this.user = new User(false);
-    this.storage.removeItem(this.storageKey + ".user");
-    this.storage.removeItem("user");
+    this.clearNamespacedKey(this.storageKey + ".user");
+    this.clearLegacyKey("user");
+    this.clearLegacyKey("session.user");
   }
 
   deleteClipboard() {
-    this.storage.removeItem("clipboard");
-    this.storage.removeItem("clipboard.photos");
-    this.storage.removeItem("clipboard.albums");
+    this.clearNamespacedKey("clipboard");
+    this.clearNamespacedKey("clipboard.photos");
+    this.clearNamespacedKey("clipboard.albums");
   }
 
   reset() {

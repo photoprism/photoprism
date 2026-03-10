@@ -13,7 +13,7 @@ import (
 )
 
 var assetsPath = fs.Abs("../../../assets")
-var examplesPath = filepath.Join(assetsPath, "examples")
+var samplesPath = filepath.Join(assetsPath, "samples")
 var modelsPath = filepath.Join(assetsPath, "models")
 var modelPath = modelsPath + "/nasnet"
 var once sync.Once
@@ -70,7 +70,7 @@ func TestModel_ResizeBreakAspectRatio(t *testing.T) {
 }
 
 func runBasicLabelsTest(t *testing.T, model *Model, expectedUncertainty int) {
-	result, err := model.File(examplesPath+"/zebra_green_brown.jpg", 10)
+	result, err := model.File(samplesPath+"/zebra_green_brown.jpg", 10)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
@@ -87,7 +87,7 @@ func runBasicLabelsTest(t *testing.T, model *Model, expectedUncertainty int) {
 func TestModel_LabelsFromFile(t *testing.T) {
 	t.Run("ChameleonLimeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
-		result, err := tensorFlow.File(examplesPath+"/chameleon_lime.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/chameleon_lime.jpg", 10)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -103,7 +103,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 	})
 	t.Run("CatNum224Jpeg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
-		result, err := tensorFlow.File(examplesPath+"/cat_224.jpeg", 10)
+		result, err := tensorFlow.File(samplesPath+"/cat_224.jpeg", 10)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -118,7 +118,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 	})
 	t.Run("CatNum720Jpeg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
-		result, err := tensorFlow.File(examplesPath+"/cat_720.jpeg", 10)
+		result, err := tensorFlow.File(samplesPath+"/cat_720.jpeg", 10)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -134,7 +134,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 	})
 	t.Run("GreenJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
-		result, err := tensorFlow.File(examplesPath+"/green.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/green.jpg", 10)
 
 		t.Logf("labels: %#v", result)
 		assert.NoError(t, err)
@@ -151,14 +151,14 @@ func TestModel_LabelsFromFile(t *testing.T) {
 	t.Run("NotExistingFile", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		result, err := tensorFlow.File(examplesPath+"/notexisting.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/notexisting.jpg", 10)
 		assert.Contains(t, err.Error(), "no such file or directory")
 		assert.Empty(t, result)
 	})
 	t.Run("Disabled", func(t *testing.T) {
 		tensorFlow := NewNasnet(modelsPath, true)
 
-		result, err := tensorFlow.File(examplesPath+"/chameleon_lime.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/chameleon_lime.jpg", 10)
 		assert.Nil(t, err)
 
 		if err != nil {
@@ -181,7 +181,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("ChameleonLimeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "chameleon_lime.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
+		if imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "chameleon_lime.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -206,7 +206,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("DogOrangeJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
+		if imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "dog_orange.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -231,7 +231,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("RandomDocx", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "Random.docx")); err != nil { //nolint:gosec // reading bundled test fixture
+		if imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "Random.docx")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -242,7 +242,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("Num6720PxWhiteJpg", func(t *testing.T) {
 		tensorFlow := NewModelTest(t)
 
-		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "6720px_white.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
+		if imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "6720px_white.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -257,7 +257,7 @@ func TestModel_Run(t *testing.T) {
 	t.Run("Disabled", func(t *testing.T) {
 		tensorFlow := NewNasnet(modelsPath, true)
 
-		if imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
+		if imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "dog_orange.jpg")); err != nil { //nolint:gosec // reading bundled test fixture
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -328,7 +328,7 @@ func BenchmarkModel_BestLabelWithOptimization(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")) //nolint:gosec // reading bundled test fixture
+	imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "dog_orange.jpg")) //nolint:gosec // reading bundled test fixture
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -349,7 +349,7 @@ func BenchmarkModel_BestLabelsNoOptimization(b *testing.B) {
 	}
 	model.builder = nil
 
-	imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "dog_orange.jpg")) //nolint:gosec // reading bundled test fixture
+	imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "dog_orange.jpg")) //nolint:gosec // reading bundled test fixture
 	if err != nil {
 		b.Fatal(err)
 	}

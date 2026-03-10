@@ -55,6 +55,7 @@ import Hls from "hls.js";
 import { createGettext, T } from "common/gettext";
 import { Locale } from "locales";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
+import { VFileUpload } from "vuetify/labs/VFileUpload";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 import "css/app.css";
@@ -117,6 +118,7 @@ $config.update().finally(() => {
 
   // Create Vuetify 3 instance.
   const vuetify = createVuetify({
+    components: { VFileUpload },
     defaults,
     icons: {
       defaultSet: "mdi",

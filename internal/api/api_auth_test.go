@@ -149,6 +149,48 @@ func TestAuthToken(t *testing.T) {
 	})
 }
 
+func TestSessionRefID(t *testing.T) {
+	origConf := get.Config()
+	t.Cleanup(func() { get.SetConfig(origConf) })
+
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "unknown", SessionRefID(nil))
+	})
+	t.Run("UnknownWithoutSession", func(t *testing.T) {
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf.Options().Public = false
+		get.SetConfig(conf)
+
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/session", nil)
+		req.RemoteAddr = "198.51.100.25:1234"
+		c.Request = req
+
+		assert.Equal(t, "unknown", SessionRefID(c))
+	})
+	t.Run("PublicSession", func(t *testing.T) {
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf.Options().Public = true
+		get.SetConfig(conf)
+
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/session", nil)
+		req.RemoteAddr = "198.51.100.26:1234"
+		header.SetAuthorization(req, session.PublicAuthToken)
+		c.Request = req
+
+		expected := get.Session().Public().RefID
+		actual := SessionRefID(c)
+
+		assert.Equal(t, expected, actual)
+		assert.True(t, rnd.IsRefID(actual))
+	})
+}
+
 func TestAuthAnyVisionServiceKey(t *testing.T) {
 	origAPI := vision.ServiceApi
 	origKey := vision.ServiceKey

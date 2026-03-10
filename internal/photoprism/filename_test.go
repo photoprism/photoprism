@@ -18,9 +18,8 @@ func TestFileName(t *testing.T) {
 		assert.Equal(t, c.ImportPath()+"/test.jpg", FileName("import", "test.jpg"))
 	})
 	t.Run("Examples", func(t *testing.T) {
-		assert.Equal(t, c.ExamplesPath()+"/test.jpg", FileName("examples", "test.jpg"))
+		assert.Equal(t, c.SamplesPath()+"/test.jpg", FileName(entity.RootSamples, "test.jpg"))
 	})
-
 }
 
 func TestCacheName(t *testing.T) {

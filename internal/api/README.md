@@ -24,6 +24,8 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 ### Security & Middleware
 
 - Authenticate requests using the standard middleware (`AuthRequired`) and check roles via helpers in `internal/auth/acl` (`acl.ParseRole`, `acl.ScopePermits`, `acl.ScopeAttrPermits`).
+- Bound request bodies before parsing JSON or multipart payloads. Use `LimitRequestBodyBytes(...)` with a route-appropriate cap before `BindJSON(...)` / `ShouldBindJSON(...)`, detect `IsRequestBodyTooLarge(err)`, and return `413 Request Entity Too Large` via `AbortRequestTooLarge(...)`.
+- Keep new JSON binding sites on the shared request-limit path by running `make check-api-request-limits` (also included in `make lint`) after adding or refactoring API handlers in the root repo or private overlays.
 - Never log secrets or tokens. Prefer structured logging through `event.Log` and redact sensitive values before logging.
 - Enforce rate limiting with the shared limiters (`limiter.Auth`, `limiter.Login`) and respond with `limiter.AbortJSON` to maintain consistent 429 JSON payloads.
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
@@ -70,6 +72,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - When handlers interact with the database, initialize fixtures through config helpers such as `config.NewTestConfig("api")` or `config.NewMinimalTestConfigWithDb("api", t.TempDir())` depending on fixture needs.
 - Stub external dependencies (`httptest.Server`) for remote calls and set `AllowPrivate=true` explicitly when the test server binds to loopback addresses.
 - Structure tests with table-driven subtests (`t.Run("CaseName", ...)`) and use PascalCase names. Provide cleanup functions (`t.Cleanup`) to remove temporary files or databases created during tests.
+- Do not run `internal/api` tests in parallel. These suites share fixture files, temporary assets, and database state, so parallel `go test` invocations can cause false failures and readonly/fixture-conflict errors.
 
 ### Focused Test Runs
 
@@ -77,6 +80,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Cluster endpoints: `go test ./internal/api -run 'Cluster' -count=1`
 - Downloads and zip streaming: `go test ./internal/api -run 'Download|Archive' -count=1`
 - Combined CLI and API validation: pair `go test ./internal/commands -run 'Cluster' -count=1` with the matching API suite to ensure DTOs remain compatible.
+- Keep focused `internal/api` runs sequential. Do not launch multiple `go test ./internal/api ...` commands at the same time.
 
 ### Preflight Checklist
 

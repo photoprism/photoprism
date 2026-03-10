@@ -34,6 +34,12 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
+		// Skip browser document headers on WebDAV endpoints to avoid
+		// surprising clients with UI-centric policies.
+		if IsWebDAVPath(c.Request.URL.Path, conf.BaseUri(WebDAVOriginals), conf.BaseUri(WebDAVImport)) {
+			return
+		}
+
 		// Set "Content-Security-Policy" header:
 		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 		c.Header(header.ContentSecurityPolicy, header.DefaultContentSecurityPolicy)

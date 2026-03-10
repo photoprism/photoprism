@@ -180,6 +180,9 @@ type Options struct {
 	TLSKey                    string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	HttpMode                  string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression           string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	HttpHeaderTimeout         time.Duration `yaml:"HttpHeaderTimeout" json:"-" flag:"http-header-timeout"`
+	HttpHeaderBytes           int           `yaml:"HttpHeaderBytes" json:"-" flag:"http-header-bytes"`
+	HttpIdleTimeout           time.Duration `yaml:"HttpIdleTimeout" json:"-" flag:"http-idle-timeout"`
 	HttpCachePublic           bool          `yaml:"HttpCachePublic" json:"HttpCachePublic" flag:"http-cache-public"`
 	HttpCacheMaxAge           int           `yaml:"HttpCacheMaxAge" json:"HttpCacheMaxAge" flag:"http-cache-maxage"`
 	HttpVideoMaxAge           int           `yaml:"HttpVideoMaxAge" json:"HttpVideoMaxAge" flag:"http-video-maxage"`

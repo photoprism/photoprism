@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** February 26, 2026
+**Last Updated:** March 4, 2026
 
 ### Overview
 
@@ -17,7 +17,7 @@
 
 - Provide a single entrypoint (`Start`) that configures listeners, middleware, and routes consistently.
 - Keep health/readiness endpoints lightweight and cache-safe.
-- Ensure redirect and TLS listeners include sensible timeouts.
+- Ensure redirect and TLS listeners include sensible header and idle limits.
 
 #### Non-Goals
 
@@ -32,6 +32,7 @@
 - `logger.go` — request logging middleware (enabled in debug mode).
 - `security.go` — security headers and trusted proxy/platform handling.
 - `webdav_*.go` & tests — WebDAV handlers and regression tests for overwrite, traversal, and metadata flags.
+- `webdav_path.go` — shared helper to classify built-in and path-proxied WebDAV routes.
 - `process/` — light wrappers for server process metadata.
 
 ### Related Packages
@@ -46,14 +47,22 @@
 - Compression: only gzip is enabled; brotli requests log a notice.
 - Trusted proxies/platform headers are read from config; keep the list tight.
 - If no trusted proxy ranges are configured (or the configured ranges are invalid), proxy trust is disabled and client IP resolution falls back to the TCP peer address.
-- AutoTLS: uses `autocert` and spins up a redirect listener with explicit read/write timeouts; ensure ports 80/443 are reachable.
+- HTTP hardening defaults:
+  - `ReadHeaderTimeout` is configured via `PHOTOPRISM_HTTP_HEADER_TIMEOUT` / `--http-header-timeout` (default `15s`).
+  - `MaxHeaderBytes` is configured via `PHOTOPRISM_HTTP_HEADER_BYTES` / `--http-header-bytes` (default `1 MiB`).
+  - `IdleTimeout` is configured via `PHOTOPRISM_HTTP_IDLE_TIMEOUT` / `--http-idle-timeout` (default `180s`).
+  - Global `ReadTimeout` / `WriteTimeout` remain disabled to avoid breaking large transfers.
+- WebDAV response behavior:
+  - Built-in security middleware skips browser-document headers (`Content-Security-Policy`, `X-Frame-Options`) on `/originals` and `/import` paths.
+  - PROPFIND `207 Multi-Status` responses normalize XML media type to `application/xml; charset=utf-8`.
+- AutoTLS: uses `autocert` and spins up a redirect listener; ensure ports 80/443 are reachable.
 - Unix sockets: optional `force` query removes stale sockets; permissions can be set via `mode` query.
 - Health endpoints (`/livez`, `/health`, `/healthz`, `/readyz`) return `Cache-Control: no-store` and `Access-Control-Allow-Origin: *`.
 
 ### Testing
 
 - Lint & unit tests: `golangci-lint run ./internal/server...` and `go test ./internal/server/...`
-- WebDAV behaviors are covered by `webdav_*_test.go`; they rely on temp directories and in-memory routers.
+- WebDAV behaviors are covered by `webdav_*_test.go`; they rely on temp directories and in-memory routers, including PROPFIND `207` XML/header assertions and path classification checks.
 
 ### Operational Tips
 

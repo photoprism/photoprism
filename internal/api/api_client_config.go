@@ -25,6 +25,13 @@ func UpdateClientConfig() {
 
 	clientConfig := conf.ClientUser(false)
 
+	// Do not broadcast session-specific tokens via the config.updated event,
+	// as this is a global broadcast to all connected clients and may overwrite
+	// individual session tokens with the wrong values. Session tokens are
+	// updated via the X-Preview-Token and X-Download-Token response headers.
+	clientConfig.PreviewToken = ""
+	clientConfig.DownloadToken = ""
+
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {

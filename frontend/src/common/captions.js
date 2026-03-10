@@ -251,7 +251,7 @@ class PhotoSwipeDynamicCaption {
 
       slide.dynamicCaption.element = document.createElement("div");
       slide.dynamicCaption.element.className = "pswp__dynamic-caption pswp__hide-on-close";
-      slide.dynamicCaption.element.innerHTML = captionHTML;
+      slide.dynamicCaption.element.innerHTML = captionHTML; // security-reviewed: captionHTML is sanitized or HTML-encoded.
 
       this.pswp.dispatch("dynamicCaptionUpdateHTML", {
         captionElement: slide.dynamicCaption.element,
@@ -403,7 +403,7 @@ class PhotoSwipeDynamicCaption {
         const img = currSlideElement.querySelector("img");
         if (img) {
           // get caption from alt attribute
-          captionHTML = img.getAttribute("alt");
+          captionHTML = $util.encodeHTML(img.getAttribute("alt") || "");
         }
       }
     }

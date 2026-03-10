@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** March 2, 2026
+**Last Updated:** March 8, 2026
 
 ## Purpose
 
@@ -15,7 +15,7 @@ This file tells automated coding agents (and humans) where to find the single so
 - Security: https://github.com/photoprism/photoprism/blob/develop/SECURITY.md
 - REST API: https://docs.photoprism.dev/ (Swagger), https://docs.photoprism.app/developer-guide/api/ (Docs)
 - Code Maps: [`CODEMAP.md`](CODEMAP.md) (Backend/Go), [`frontend/CODEMAP.md`](frontend/CODEMAP.md) (Frontend/JS)
-- Packages: `README.md` files under `internal/`, `pkg/`, and `frontend/src/`, e.g. [`internal/photoprism/README.md`](internal/photoprism/README.md), [`internal/photoprism/batch/README.md`](internal/photoprism/batch/README.md), [`internal/config/README.md`](internal/config/README.md), [`internal/server/README.md`](internal/server/README.md), [`internal/api/README.md`](internal/api/README.md), [`internal/thumb/README.md`](internal/thumb/README.md), [`internal/ffmpeg/README.md`](internal/ffmpeg/README.md), and [`frontend/src/common/README.md`](frontend/src/common/README.md).
+- Packages: `README.md` files under `internal/`, `pkg/`, and `frontend/src/`, e.g. [`internal/photoprism/README.md`](internal/photoprism/README.md), [`internal/photoprism/batch/README.md`](internal/photoprism/batch/README.md), [`internal/config/README.md`](internal/config/README.md), [`internal/server/README.md`](internal/server/README.md), [`internal/api/README.md`](internal/api/README.md), [`internal/service/webdav/README.md`](internal/service/webdav/README.md), [`internal/thumb/README.md`](internal/thumb/README.md), [`internal/ffmpeg/README.md`](internal/ffmpeg/README.md), and [`frontend/src/common/README.md`](frontend/src/common/README.md).
 - Face Detection & Embeddings: [`internal/ai/face/README.md`](internal/ai/face/README.md)
 - Vision Config & Engines: [`internal/ai/vision/README.md`](internal/ai/vision/README.md), [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
 - Terminology Glossary: [`GLOSSARY.md`](GLOSSARY.md) (single source for term definitions across specs/docs)
@@ -109,6 +109,8 @@ Additional details MAY be included as needed, such as related issues, references
 ### Web Templates & Shared Assets
 
 - HTML entrypoints live under `assets/templates/`; key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`. The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes.
+- OIDC login completion for the web UI is bridged through `assets/templates/auth.gohtml`, which writes the session into namespaced browser storage and must stay aligned with `frontend/src/common/session.js`, `frontend/src/common/storage.js`, and the login form toggle in `frontend/src/page/auth/login.vue` (`Stay signed in on this device`). Preserve the `session` storage-preference flag across the OIDC callback so ephemeral `sessionStorage` logins still restore after redirect.
+- When touching frontend session bootstrap, verify that `frontend/src/common/session.js` resolves `storageNamespace` from the real client config shape (`window.__CONFIG__` / `config.values`), not only from simplified mocks. Include a focused test that would fail if session restore fell back to the `pp:root:` namespace.
 - To preserve the fallback messaging, keep the script order in `app.js.gohtml` so `browser-check.js` loads before the bundle script (`{{ .config.JsUri }}`). Do not add `defer` or `async` to the bundle tag unless you reintroduce a guarded loader.
 - The same loader partial is reused in private packages (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`, `portal/assets/templates/index.gohtml`). Whenever you touch `app.js.gohtml` or change how we load the bundle, mirror the update by running commands such as `cd pro && sed -n '1,160p' assets/templates/index.gohtml` (and similarly for `plus` and `portal`) to confirm they include the shared partial instead of hard-coding the bundle tag.
 - Splash styles are defined in `frontend/src/css/splash.css`. Add new splash elements (for example `.splash-warning`) there so both public and private editions remain visually consistent.
@@ -224,6 +226,7 @@ Note: Across our public documentation, official images, and in production, the c
   - Test frontend/backend: `make test-js` and `make test-go`
   - Linting: `make lint` (all), `make lint-go` (golangci-lint with `.golangci.yml`, prints findings without failing due to `--issues-exit-code 0`), `make lint-js` (ESLint/Prettier)
   - Go packages: `go test` (all tests) or `go test -run <name>` (specific tests only)
+- Do not run multiple test commands in parallel. Suites share fixture files, temporary assets, and database state, so concurrent runs can trigger false failures, readonly database errors, or fixture conflicts.
 - Need to inspect the MariaDB data while iterating? Connect directly inside the dev shell with `mariadb -D photoprism` and run SQL without rebuilding Go code.
 - Go tests live beside sources: for `path/to/pkg/<file>.go`, add tests in `path/to/pkg/<file>_test.go` (create if missing). For the same function, group related cases as `t.Run(...)` sub-tests (table-driven where helpful) and use **PascalCase** for subtest names (for example, `t.Run("Success", ...)`).
 - Frontend unit tests use **Vitest**; see scripts in `frontend/package.json`.
@@ -401,9 +404,10 @@ Note: Across our public documentation, official images, and in production, the c
 ### Import/Index
 
 - ImportWorker may skip files if an identical file already exists (duplicate detection). Use unique copies or assert DB rows after ensuring a non‑duplicate destination.
-- Mixed roots: when testing related files, keep `ExamplesPath()/ImportPath()/OriginalsPath()` consistent so `RelatedFiles` and `AllowExt` behave as expected.
+- Mixed roots: when testing related files, keep `SamplesPath()/ImportPath()/OriginalsPath()` consistent so `RelatedFiles` and `AllowExt` behave as expected.
 - `IndexOptions*` helpers now require a `*config.Config`; pass the active config (or `config.NewMinimalTestConfig(t.TempDir())` in unit tests) so face/label/NSFW scheduling matches the current run.
 - Folder albums use path-first lookup/update (`album_path`) to avoid slug collisions for emoji child paths; re-indexing can repair stale collision titles when a child folder incorrectly shows the parent name, while preserving user-custom titles.
+- Label and label-search logic should reuse `entity.FindLabels(...)`, `entity.FindLabelIDs(...)`, and `entity.LabelSlugs(...)` so homophone-aware exact-name matching stays aligned across `internal/entity` and `internal/entity/search`; avoid adding ad-hoc slug SQL in search code.
 
 ### CLI Usage & Assertions
 

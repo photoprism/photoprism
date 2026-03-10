@@ -12,6 +12,7 @@ import (
 // Report returns global config values as a table for reporting.
 func (o Options) Report() (rows [][]string, cols []string) {
 	v := reflect.ValueOf(o)
+	t := v.Type()
 	activeTags := []string{Features}
 
 	if o.NodeRole == cluster.RolePortal {
@@ -24,16 +25,17 @@ func (o Options) Report() (rows [][]string, cols []string) {
 	// Iterate through all config fields.
 	for i := 0; i < v.NumField(); i++ {
 		fieldValue := v.Field(i)
+		field := t.Field(i)
 
-		yamlName := v.Type().Field(i).Tag.Get("yaml")
-		flagName := v.Type().Field(i).Tag.Get("flag")
+		yamlName := strings.SplitN(field.Tag.Get("yaml"), ",", 2)[0]
+		flagName := strings.SplitN(field.Tag.Get("flag"), ",", 2)[0]
 
-		if yamlName == "" || yamlName == "-" || flagName == "" {
+		if yamlName == "" || yamlName == "-" || flagName == "" || flagName == "-" {
 			continue
 		}
 
 		// Skip options by feature set if tags are set.
-		if tags := v.Type().Field(i).Tag.Get("tags"); tags == "" {
+		if tags := field.Tag.Get("tags"); tags == "" {
 			// Report.
 		} else if !list.ContainsAny(strings.Split(tags, ","), activeTags) {
 			// Skip.

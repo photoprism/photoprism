@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     fs: {
       allow: [
-        path.resolve(__dirname, ".."),  // Allow access to parent directory (includes pro/)
+        path.resolve(__dirname, ".."), // Allow access to parent directory (includes pro/)
       ],
     },
   },

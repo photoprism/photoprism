@@ -702,7 +702,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
-			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
+			Usage:   "cluster `CIDR` for IP-based authorization, e.g. 10.0.0.0/8",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
 			Hidden:  true,
 		}}, {
@@ -822,7 +822,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "services-cidr",
-			Usage:   "comma-separated `CIDR` ranges or IPs allowed for outbound service connections (e.g., 172.18.0.0/16,192.168.1.0/24)",
+			Usage:   "comma-separated `CIDR` ranges or IPs allowed for outbound service connections, e.g. 172.18.0.0/16",
 			EnvVars: EnvVars("SERVICES_CIDR"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -862,6 +862,24 @@ var Flags = CliFlags{
 			Aliases: []string{"z"},
 			Usage:   "Web server compression `METHOD` (gzip, none)",
 			EnvVars: EnvVars("HTTP_COMPRESSION"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "http-header-timeout",
+			Usage:   "timeout for reading request headers as `DURATION`",
+			Value:   DefaultHttpHeaderTimeout.String(),
+			EnvVars: EnvVars("HTTP_HEADER_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "http-header-bytes",
+			Usage:   "maximum request header size in `BYTES`",
+			Value:   DefaultHttpHeaderBytes,
+			EnvVars: EnvVars("HTTP_HEADER_BYTES"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "http-idle-timeout",
+			Usage:   "timeout for idle keep-alive connections as `DURATION`",
+			Value:   DefaultHttpIdleTimeout.String(),
+			EnvVars: EnvVars("HTTP_IDLE_TIMEOUT"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "http-cache-public",

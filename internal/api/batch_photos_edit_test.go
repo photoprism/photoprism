@@ -35,6 +35,15 @@ func TestBatchPhotosEdit(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, resp.Code)
 		assert.Contains(t, resp.Body.String(), i18n.Msg(i18n.ErrFeatureDisabled))
 	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosEdit(router)
+
+		body := `{"photos":["pqkm36fjqvset9uy"],"values":{"Title":{"value":"` + strings.Repeat("a", 2*1024*1024) + `"}}}`
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit", body)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, resp.Code)
+	})
 	t.Run("SuccessNoChange", func(t *testing.T) {
 		// Create new API test instance.
 		app, router, _ := NewApiTest()

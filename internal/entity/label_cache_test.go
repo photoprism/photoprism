@@ -37,6 +37,25 @@ func TestFindLabel(t *testing.T) {
 		assert.Error(t, err)
 		assert.NotNil(t, result)
 	})
+	t.Run("FindsExactNameBeforeHomophoneSlug", func(t *testing.T) {
+		first := FirstOrCreateLabel(NewLabel("问", 0))
+		second := FirstOrCreateLabel(NewLabel("吻", 0))
+
+		if first == nil || second == nil {
+			t.Fatal("expected labels")
+		}
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(second).Error
+			_ = Db().Unscoped().Delete(first).Error
+			FlushLabelCache()
+		})
+
+		result, err := FindLabel("吻", true)
+		assert.NoError(t, err)
+		assert.Equal(t, second.ID, result.ID)
+		assert.Equal(t, "吻", result.LabelName)
+	})
 }
 
 func TestFindPhotoLabel(t *testing.T) {

@@ -1,19 +1,22 @@
 ## PhotoPrism — Config Package
 
-**Last Updated:** March 2, 2026
+**Last Updated:** March 8, 2026
 
 ### Overview
 
 PhotoPrism’s [runtime configuration](https://docs.photoprism.app/developer-guide/configuration/) is managed by this package. Fields are defined in [`options.go`](options.go) and then initialized with values from command-line flags, [environment variables](https://docs.photoprism.app/getting-started/config-options/), and [optional YAML files](https://docs.photoprism.app/getting-started/config-files/) (`storage/config/*.yml`).
 
-Client config values are derived from the runtime configuration and exposed to the frontend via `GET /api/v1/config`. This includes a `storageNamespace` value (SHA-256 hash of `SiteUrl`) used by the browser to scope local storage keys on shared domains.
+Client config values are derived from the runtime configuration and exposed to the frontend via `GET /api/v1/config`. This includes a `storageNamespace` value (SHA-256 hash of `SiteUrl`) used by the browser to scope namespaced browser-storage keys on shared domains.
 
 ### Storage Namespace & Legacy Session Compatibility
 
 - `storageNamespace` is deterministic per `SiteUrl` (`SHA-256(SiteUrl)`) and is used by the frontend storage wrappers to isolate data on shared domains.
-- Frontend reads from namespaced keys first and then falls back to legacy global keys; when a legacy value is found, it is migrated to the active namespace on read.
-- Legacy mobile/webview integrations should prefer writing both global `session.token` and `session.id` when pre-populating authentication data.
+- The preferred frontend/browser contract uses namespaced keys in the format `pp:<storageNamespace>:<key>`, with `pp:root:` as the fallback prefix when no namespace is available.
+- Frontend reads namespaced keys first and then falls back to selected legacy global keys; when a legacy value is found, it is migrated to the active namespace on read.
+- New mobile or web-view integrations should write the namespaced `session` preference flag plus both namespaced `session.token` and `session.id` keys when pre-populating authentication data.
 - Writing only a token is not enough to restore an authenticated user session in current frontend logic, because session restore requires both token and session id.
+- A namespaced `localStorage["pp:<storageNamespace>:session"]` value of `"true"` selects namespaced `sessionStorage` for the active session. Any other value uses namespaced `localStorage`.
+- The OIDC callback bridge still honors the legacy unnamespaced `localStorage["session"] === "true"` preference during migration, but new integrations should not depend on that fallback.
 - Older compatibility keys (`authToken` / `sessionId`) are only auto-migrated when both are present.
 
 ### Sources & Precedence
@@ -29,6 +32,13 @@ PhotoPrism loads configuration in the following order:
 The `PHOTOPRISM_CONFIG_PATH` variable controls where PhotoPrism looks for YAML files (defaults to `storage/config`).
 
 > Any change to configuration (flags, env vars, YAML files) requires a restart. The Go process reads options during startup and does not watch for changes.
+
+### HTTP Hardening Defaults
+
+- `PHOTOPRISM_HTTP_HEADER_TIMEOUT` / `--http-header-timeout` configures `http.Server.ReadHeaderTimeout` and defaults to `15s`.
+- `PHOTOPRISM_HTTP_HEADER_BYTES` / `--http-header-bytes` configures `http.Server.MaxHeaderBytes` and defaults to `1048576` (1 MiB).
+- `PHOTOPRISM_HTTP_IDLE_TIMEOUT` / `--http-idle-timeout` configures `http.Server.IdleTimeout` and defaults to `180s`.
+- `ReadTimeout` and `WriteTimeout` remain disabled globally so large uploads/downloads are not interrupted by a one-size-fits-all timeout.
 
 ### Inspect Before Editing
 

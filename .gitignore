@@ -69,7 +69,6 @@ frontend/coverage/
 *.override.md
 /AGENTS_*
 /REPOS.md
-/CLAUDE.md
 /TODO.md
 join_token
 client_secret

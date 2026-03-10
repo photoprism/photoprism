@@ -1,6 +1,6 @@
 ## PhotoPrism — Thumbnails Package
 
-**Last Updated:** March 3, 2026
+**Last Updated:** March 6, 2026
 
 ### Overview
 
@@ -75,7 +75,7 @@ Go `1.26.0` replaced the standard `image/jpeg` encoder and decoder. This package
 
 Observed impact during internal comparison runs (Go `1.25.4` vs `1.26.0`):
 
-- **Compatibility** — No decode failures for 55/55 JPEG fixtures in `assets/examples` on either version.
+- **Compatibility** — No decode failures for 55/55 JPEG fixtures in `assets/samples` on either version.
 - **Decoded Pixels** — All scanned JPEG fixtures produced different decoded pixel hashes across versions, even though dimensions were unchanged.
 - **Re-Encode Size** — Re-encoded JPEG sizes changed slightly in both directions; aggregate deltas were small (about `+0.014%` at default quality, about `+0.017%` at quality 95 in our fixture scan).
 - **Throughput** — Micro-benchmark runs showed modest improvements in decode and decode+encode throughput in Go `1.26.0`.

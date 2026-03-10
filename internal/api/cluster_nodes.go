@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -222,7 +223,14 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			SiteUrl      *string           `json:"SiteUrl"`
 		}
 
+		LimitRequestBodyBytes(c, MaxClusterRegisterBytes)
+
 		if err := c.ShouldBindJSON(&req); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

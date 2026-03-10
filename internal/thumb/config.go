@@ -13,6 +13,6 @@ var (
 	SizeOnDemand       = SizeFit5120.Width // On-demand thumbnail size limit.
 	JpegQualityDefault = QualityMedium     // JpegQualityDefault sets the compression level of newly created JPEGs.
 	CachePublic        = false             // Specifies if static content may be cached by a CDN or caching proxy.
-	ExamplesPath       = fs.Abs("../../assets/examples")
+	SamplesPath        = fs.Abs("../../assets/samples")
 	IccProfilesPath    = fs.Abs("../../assets/profiles/icc")
 )

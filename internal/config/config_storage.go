@@ -707,9 +707,9 @@ func (c *Config) LocalesPath() string {
 	return filepath.Join(c.AssetsPath(), fs.LocalesDir)
 }
 
-// ExamplesPath returns the example files path.
-func (c *Config) ExamplesPath() string {
-	return filepath.Join(c.AssetsPath(), fs.ExamplesDir)
+// SamplesPath returns the bundled sample files path.
+func (c *Config) SamplesPath() string {
+	return filepath.Join(c.AssetsPath(), fs.SamplesDir)
 }
 
 // TestdataPath returns the test files path.

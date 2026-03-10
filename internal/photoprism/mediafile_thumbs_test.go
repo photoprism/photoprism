@@ -23,7 +23,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 	defer os.RemoveAll(thumbsPath)
 
 	t.Run("ElephantsJpg", func(t *testing.T) {
-		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		image, err := NewMediaFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -38,7 +38,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 		assert.FileExists(t, thumbnail)
 	})
 	t.Run("InvalidImageFormat", func(t *testing.T) {
-		image, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.xmp")
+		image, err := NewMediaFile(conf.SamplesPath() + "/canon_eos_6d.xmp")
 
 		if err != nil {
 			t.Fatal(err)
@@ -51,7 +51,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 		t.Log(thumbnail)
 	})
 	t.Run("InvalidThumbnailType", func(t *testing.T) {
-		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		image, err := NewMediaFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +79,7 @@ func TestMediaFile_Resample(t *testing.T) {
 	}(thumbsPath)
 
 	t.Run("ElephantsJpg", func(t *testing.T) {
-		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		image, err := NewMediaFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -95,7 +95,7 @@ func TestMediaFile_Resample(t *testing.T) {
 
 	})
 	t.Run("InvalidType", func(t *testing.T) {
-		image, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		image, err := NewMediaFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -115,7 +115,7 @@ func TestMediaFile_Resample(t *testing.T) {
 
 func TestMediaFile_SkipThumbnailSize(t *testing.T) {
 	t.Run("ElephantsJpg", func(t *testing.T) {
-		m, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "elephants.jpg"))
+		m, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "elephants.jpg"))
 
 		if err != nil {
 			t.Fatal(err)
@@ -151,7 +151,7 @@ func TestMediaFile_GenerateThumbnails(t *testing.T) {
 	}
 
 	t.Run("ElephantsJpg", func(t *testing.T) {
-		m, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "elephants.jpg"))
+		m, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "elephants.jpg"))
 
 		if err != nil {
 			t.Fatal(err)

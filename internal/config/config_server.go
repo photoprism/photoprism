@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/server/limiter"
@@ -101,6 +102,33 @@ func (c *Config) HttpMode() string {
 // HttpCompression returns the http compression method (gzip, or none).
 func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
+}
+
+// HttpHeaderTimeout returns the timeout for reading HTTP request headers.
+func (c *Config) HttpHeaderTimeout() time.Duration {
+	if c.options.HttpHeaderTimeout <= 0 {
+		return DefaultHttpHeaderTimeout
+	}
+
+	return c.options.HttpHeaderTimeout
+}
+
+// HttpHeaderBytes returns the maximum size of HTTP request headers in bytes.
+func (c *Config) HttpHeaderBytes() int {
+	if c.options.HttpHeaderBytes <= 0 {
+		return DefaultHttpHeaderBytes
+	}
+
+	return c.options.HttpHeaderBytes
+}
+
+// HttpIdleTimeout returns the timeout for idle keep-alive connections.
+func (c *Config) HttpIdleTimeout() time.Duration {
+	if c.options.HttpIdleTimeout <= 0 {
+		return DefaultHttpIdleTimeout
+	}
+
+	return c.options.HttpIdleTimeout
 }
 
 // HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.

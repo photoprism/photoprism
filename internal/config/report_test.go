@@ -52,6 +52,37 @@ func TestConfig_ReportServicesCIDROrder(t *testing.T) {
 	assert.Less(t, servicesCIDR, disableTLS)
 }
 
+func TestConfig_ReportHttpHeaderSettingsOrder(t *testing.T) {
+	conf := NewConfig(CliTestContext())
+	rows, _ := conf.Report()
+
+	indexOf := func(name string) int {
+		for i := range rows {
+			if len(rows[i]) > 0 && rows[i][0] == name {
+				return i
+			}
+		}
+
+		return -1
+	}
+
+	httpCompression := indexOf("http-compression")
+	httpHeaderTimeout := indexOf("http-header-timeout")
+	httpHeaderBytes := indexOf("http-header-bytes")
+	httpIdleTimeout := indexOf("http-idle-timeout")
+	httpCachePublic := indexOf("http-cache-public")
+
+	assert.Greater(t, httpCompression, -1)
+	assert.Greater(t, httpHeaderTimeout, -1)
+	assert.Greater(t, httpHeaderBytes, -1)
+	assert.Greater(t, httpIdleTimeout, -1)
+	assert.Greater(t, httpCachePublic, -1)
+	assert.Greater(t, httpHeaderTimeout, httpCompression)
+	assert.Greater(t, httpHeaderBytes, httpHeaderTimeout)
+	assert.Greater(t, httpIdleTimeout, httpHeaderBytes)
+	assert.Less(t, httpIdleTimeout, httpCachePublic)
+}
+
 func TestConfig_ReportDatabaseSection(t *testing.T) {
 	collect := func(rows [][]string) map[string]string {
 		result := make(map[string]string, len(rows))

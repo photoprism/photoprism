@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** February 25, 2026
+**Last Updated:** March 8, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
@@ -54,13 +54,16 @@ HTTP Client
 - Axios instance: `src/common/api.js`
   - Base URL: `window.__CONFIG__.apiUri` (or `/api/v1` in tests)
   - Adds `X-Auth-Token`, `X-Client-Uri`, `X-Client-Version`
+  - Bootstraps `X-Auth-Token` from app-local namespaced storage (`getAppStorage().getItem("session.token")`)
   - Interceptors drive global progress notifications and token refresh via headers `X-Preview-Token`/`X-Download-Token`
 
 Auth, Session, and Config
-- `$session`: `src/common/session.js` — stores `X-Auth-Token` and `session.id` in storage; provides guards and default routes
+- `$session`: `src/common/session.js` — restores and persists namespaced browser session state (`session.token`, `session.id`, user/provider/scope/data), selects `localStorage` vs `sessionStorage` from the namespaced `session` preference flag, resolves `storageNamespace` from the actual client config payload, and provides guards/default routes
+- Browser storage helper: `src/common/storage.js` — applies the `pp:<storageNamespace>:` prefix, supports legacy key migration, and exposes app-local wrappers for `localStorage` and `sessionStorage`
 - `$config`: `src/common/config.js` — reactive view of server config and user settings; sets theme, language, limits; exposes `deny()` for feature flags
 - Route guards live in `src/app.js` (router `beforeEach`/`afterEach`) and use `$session` + `$config`
 - `$view`: `src/common/view.js` — manages focus/scroll helpers; use `saveWindowScrollPos()` / `restoreWindowScrollPos()` when navigating so infinite-scroll pages land back where users left them; behaviour is covered by `tests/vitest/common/view.test.js`
+- Login page: `src/page/auth/login.vue` — password + OIDC entrypoint; the `Stay signed in on this device` toggle maps to persistent namespaced `localStorage` when checked and ephemeral namespaced `sessionStorage` when unchecked, initializing from the current session storage mode
 
 Models (REST)
 - Base class: `src/model/rest.js` provides `search`, `find`, `save`, `update`, `remove` for concrete models (`photo`, `album`, `label`, `subject`, etc.)
@@ -89,6 +92,7 @@ Testing
 - Run: `cd frontend && npm run test` (or `make test-js` from repo root)
 - Acceptance: TestCafe configs in `frontend/tests/acceptance`; run against a live server
 - Detailed test/lint guide (humans + agents): `frontend/tests/README.md`
+- Session/auth storage regressions: when testing `src/common/session.js`, cover both direct `config.storageNamespace` access and the real `Config` shape where the namespace is supplied via `config.values.storageNamespace`
 
 Build & Tooling
 - Webpack is used for bundling; scripts in `frontend/package.json`:

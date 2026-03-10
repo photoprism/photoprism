@@ -19,7 +19,7 @@ func TestMediaFile_Heic(t *testing.T) {
 	c := config.TestConfig()
 
 	t.Run("IphoneSevenHeic", func(t *testing.T) {
-		img, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "iphone_7.heic"))
+		img, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "iphone_7.heic"))
 
 		if err != nil {
 			t.Fatal(err)
@@ -77,12 +77,12 @@ func TestMediaFile_Heic(t *testing.T) {
 		assert.Equal(t, false, jpegInfo.Flash)
 		assert.Equal(t, "", jpegInfo.Caption)
 
-		if err = os.Remove(filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "iphone_7.heic.jpg")); err != nil {
+		if err = os.Remove(filepath.Join(conf.SidecarPath(), conf.SamplesPath(), "iphone_7.heic.jpg")); err != nil {
 			t.Error(err)
 		}
 	})
 	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
-		img, err := NewMediaFile(filepath.Join(c.ExamplesPath(), "iphone_15_pro.heic"))
+		img, err := NewMediaFile(filepath.Join(c.SamplesPath(), "iphone_15_pro.heic"))
 
 		if err != nil {
 			t.Fatal(err)
@@ -136,7 +136,7 @@ func TestMediaFile_Heic(t *testing.T) {
 		assert.Equal(t, false, jpegInfo.Flash)
 		assert.Equal(t, "", jpegInfo.Caption)
 
-		if err = os.Remove(filepath.Join(c.SidecarPath(), c.ExamplesPath(), "iphone_15_pro.heic.jpg")); err != nil {
+		if err = os.Remove(filepath.Join(c.SidecarPath(), c.SamplesPath(), "iphone_15_pro.heic.jpg")); err != nil {
 			t.Error(err)
 		}
 	})

@@ -3,6 +3,7 @@ package alg
 
 import (
 	"sync"
+	"time"
 )
 
 type dbscanClusterer struct {
@@ -10,6 +11,9 @@ type dbscanClusterer struct {
 	eps             float64
 
 	distance DistFunc
+	now      func() time.Time
+	logAfter time.Duration
+	logf     func(done, total int)
 
 	// slices holding the cluster mapping and sizes. Access is synchronized to avoid read during computation.
 	mu sync.RWMutex
@@ -37,11 +41,23 @@ type dbscanClusterer struct {
 
 	// dataset
 	d [][]float64
+
+	loggedAt time.Time
 }
 
 // DBSCAN implements density-based clustering with concurrent nearest neighbor computation.
 // The number of goroutines is controlled via workers (0 picks a default).
 func DBSCAN(minpts int, eps float64, workers int, distance DistFunc) (HardClusterer, error) {
+	return newDBSCANClusterer(minpts, eps, workers, distance, 0, nil)
+}
+
+// DBSCANWithProgress implements DBSCAN with optional time-based progress reporting.
+func DBSCANWithProgress(minpts int, eps float64, workers int, distance DistFunc, interval time.Duration, progressf func(done, total int)) (HardClusterer, error) {
+	return newDBSCANClusterer(minpts, eps, workers, distance, interval, progressf)
+}
+
+// newDBSCANClusterer validates the options and creates a DBSCAN clusterer instance.
+func newDBSCANClusterer(minpts int, eps float64, workers int, distance DistFunc, interval time.Duration, progressf func(done, total int)) (HardClusterer, error) {
 	if minpts < 1 {
 		return nil, errZeroMinpts
 	}
@@ -68,6 +84,9 @@ func DBSCAN(minpts int, eps float64, workers int, distance DistFunc) (HardCluste
 		workers:  workers,
 		eps:      eps,
 		distance: d,
+		now:      time.Now,
+		logAfter: interval,
+		logf:     progressf,
 	}, nil
 }
 
@@ -96,6 +115,7 @@ func (c *dbscanClusterer) Learn(data [][]float64) error {
 
 	c.a = make([]int, c.l)
 	c.b = make([]int, 0)
+	c.loggedAt = time.Time{}
 
 	c.startNearestWorkers()
 
@@ -155,6 +175,8 @@ func (c *dbscanClusterer) run() {
 	)
 
 	for i := 0; i < c.l; i++ {
+		c.logProgress(i)
+
 		if c.v[i] {
 			continue
 		}
@@ -192,6 +214,29 @@ func (c *dbscanClusterer) run() {
 			n++
 			m++
 		}
+	}
+}
+
+// logProgress emits an optional progress update when the reporting interval has elapsed.
+func (c *dbscanClusterer) logProgress(done int) {
+	if c.logf == nil || c.logAfter <= 0 {
+		return
+	}
+
+	now := c.now
+	if now == nil {
+		now = time.Now
+	}
+
+	current := now()
+	if c.loggedAt.IsZero() {
+		c.loggedAt = current
+		return
+	}
+
+	if current.Sub(c.loggedAt) >= c.logAfter {
+		c.logf(done, c.l)
+		c.loggedAt = current
 	}
 }
 

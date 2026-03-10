@@ -45,6 +45,52 @@ const tokenAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
 export const tokenRegexp = /^[a-z0-9]{7}$/;
 export const tokenLength = 7;
 
+const sanitizeHtmlOptions = Object.freeze({
+  allowedTags: [
+    "a",
+    "b",
+    "blockquote",
+    "br",
+    "code",
+    "div",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "i",
+    "li",
+    "ol",
+    "p",
+    "span",
+    "strong",
+    "sub",
+    "sup",
+    "u",
+    "ul",
+  ],
+  allowedAttributes: {
+    a: ["href", "target", "rel"],
+    span: ["dir"],
+  },
+  allowedSchemes: ["http", "https", "mailto"],
+  allowProtocolRelative: false,
+  parseStyleAttributes: false,
+  transformTags: {
+    a: (tagName, attribs) => {
+      const nextAttribs = { ...attribs };
+
+      if (nextAttribs.target === "_blank") {
+        nextAttribs.rel = "noopener noreferrer";
+      }
+
+      return { tagName, attribs: nextAttribs };
+    },
+  },
+});
+
 // True if debug logs should be created.
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
@@ -299,7 +345,7 @@ export default class $util {
       return "";
     }
 
-    return sanitizeHtml(html);
+    return sanitizeHtml(html, sanitizeHtmlOptions);
   }
 
   // openUrl opens a URL in a new tab if possible.
@@ -349,7 +395,7 @@ export default class $util {
       }
 
       // Return HTML link markup.
-      return `<a href="${url}" target="_blank">${matched}</a>`;
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${matched}</a>`;
     }
 
     // Escape HTML control characters.

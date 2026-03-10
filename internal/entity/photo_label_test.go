@@ -57,6 +57,22 @@ func TestFirstOrCreatePhotoLabel(t *testing.T) {
 		assert.Nil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(0, 1, 38, "image")))
 		assert.Nil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(1, 0, 38, "image")))
 	})
+	t.Run("ClearsStaleNotFoundCache", func(t *testing.T) {
+		FlushPhotoLabelCache()
+		relation := createTestPhotoLabel(t)
+
+		photoLabelCache.Set(relation.CacheKey(), PhotoLabel{}, labelCacheErrorExpiration)
+
+		result := FirstOrCreatePhotoLabel(NewPhotoLabel(relation.PhotoID, relation.LabelID, relation.Uncertainty, relation.LabelSrc))
+		require.NotNil(t, result)
+		assert.Equal(t, relation.PhotoID, result.PhotoID)
+		assert.Equal(t, relation.LabelID, result.LabelID)
+
+		cached, err := FindPhotoLabel(relation.PhotoID, relation.LabelID, true)
+		require.NoError(t, err)
+		assert.Equal(t, relation.PhotoID, cached.PhotoID)
+		assert.Equal(t, relation.LabelID, cached.LabelID)
+	})
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {

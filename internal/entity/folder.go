@@ -202,22 +202,28 @@ func ReconcileOriginalsFolderAlbums(rootPath string) (reconciled int, err error)
 }
 
 // originalsFolderAlbumReconcileScope returns the effective reconciliation scope for a path.
-// If a slug collision with a sibling folder album is detected, the scope is expanded to
-// include the parent folder path so related rows can be repaired together.
+// If a slug collision is detected, the scope is expanded to the highest colliding
+// ancestor folder path so related rows can be repaired together.
 func originalsFolderAlbumReconcileScope(rootPath string) string {
 	rootPath = clean.UserPath(rootPath)
 
-	if rootPath == "" || !hasOriginalsFolderPath(rootPath) || !hasOriginalsFolderAlbumSlugCollision(rootPath) {
+	if rootPath == "" || !hasOriginalsFolderPath(rootPath) {
 		return rootPath
 	}
 
-	parentPath := path.Dir(rootPath)
+	scopePath := rootPath
 
-	if parentPath == "/" || parentPath == "." {
-		return rootPath
+	for hasOriginalsFolderAlbumSlugCollision(scopePath) {
+		parentPath := clean.UserPath(path.Dir(scopePath))
+
+		if parentPath == "" || parentPath == "." || parentPath == "/" || parentPath == scopePath {
+			break
+		}
+
+		scopePath = parentPath
 	}
 
-	return parentPath
+	return scopePath
 }
 
 // hasOriginalsFolderPath reports whether an active originals folder row exists for rootPath.
@@ -235,16 +241,16 @@ func hasOriginalsFolderPath(rootPath string) bool {
 // hasOriginalsFolderAlbumSlugCollision reports whether rootPath collides with another
 // active folder album that shares the same slug but stores a different non-empty path.
 func hasOriginalsFolderAlbumSlugCollision(rootPath string) bool {
-	albumSlug := txt.Slug(rootPath)
+	albumSlugs := folderAlbumSlugCandidates(rootPath)
 
-	if albumSlug == "" {
+	if len(albumSlugs) == 0 {
 		return false
 	}
 
 	var collisions int64
 
 	if err := Db().Model(&Album{}).
-		Where("album_type = ? AND album_slug = ? AND album_path <> '' AND album_path <> ?", AlbumFolder, albumSlug, rootPath).
+		Where("album_type = ? AND album_slug IN (?) AND album_path <> '' AND album_path <> ?", AlbumFolder, albumSlugs, rootPath).
 		Count(&collisions).Error; err != nil {
 		log.Debugf("folder: %s (check album slug collision for %s)", err, clean.LogQuote(rootPath))
 		return false

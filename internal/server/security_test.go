@@ -24,6 +24,7 @@ func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
 
 	proxyPath := conf.BaseUri(proxy.PathPrefix + "test" + conf.FrontendUri("/login"))
 	regularPath := conf.FrontendUri("/login")
+	webdavPath := conf.BaseUri(WebDAVOriginals)
 
 	r.GET(proxyPath, func(c *gin.Context) {
 		c.String(http.StatusOK, "proxy")
@@ -31,16 +32,19 @@ func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
 	r.GET(regularPath, func(c *gin.Context) {
 		c.String(http.StatusOK, "regular")
 	})
+	r.Handle(header.MethodPropfind, webdavPath, func(c *gin.Context) {
+		c.String(http.StatusMultiStatus, "webdav")
+	})
 
-	doRequest := func(path string) *httptest.ResponseRecorder {
+	doRequest := func(method, path string) *httptest.ResponseRecorder {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(header.MethodGet, path, nil)
+		req := httptest.NewRequest(method, path, nil)
 		r.ServeHTTP(w, req)
 		return w
 	}
 
 	t.Run("SkipsHeadersForProxyPrefix", func(t *testing.T) {
-		w := doRequest(proxyPath)
+		w := doRequest(header.MethodGet, proxyPath)
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Empty(t, w.Header().Get(header.ContentSecurityPolicy))
@@ -48,11 +52,19 @@ func TestSecurityMiddlewareSkipsPortalProxy(t *testing.T) {
 		assert.Empty(t, w.Header().Get(header.RobotsTag))
 	})
 	t.Run("AddsHeadersForNonProxyPath", func(t *testing.T) {
-		w := doRequest(regularPath)
+		w := doRequest(header.MethodGet, regularPath)
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, header.DefaultContentSecurityPolicy, w.Header().Get(header.ContentSecurityPolicy))
 		assert.Equal(t, header.DefaultFrameOptions, w.Header().Get(header.XFrameOptions))
+		assert.Equal(t, header.RobotsNone, w.Header().Get(header.RobotsTag))
+	})
+	t.Run("SkipsBrowserHeadersForWebDAVPath", func(t *testing.T) {
+		w := doRequest(header.MethodPropfind, webdavPath)
+
+		require.Equal(t, http.StatusMultiStatus, w.Code)
+		assert.Empty(t, w.Header().Get(header.ContentSecurityPolicy))
+		assert.Empty(t, w.Header().Get(header.XFrameOptions))
 		assert.Equal(t, header.RobotsNone, w.Header().Get(header.RobotsTag))
 	})
 }

@@ -401,9 +401,9 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 // FindFolderAlbum looks up a folder album by its canonical path or slug.
 func FindFolderAlbum(albumPath string) *Album {
 	albumPath = clean.SlashPath(albumPath)
-	albumSlug := txt.Slug(albumPath)
+	albumSlugs := folderAlbumSlugCandidates(albumPath)
 
-	if albumSlug == "" {
+	if len(albumSlugs) == 0 {
 		return nil
 	}
 
@@ -418,7 +418,7 @@ func FindFolderAlbum(albumPath string) *Album {
 	}
 
 	// Fallback for legacy rows created before album_path was persisted.
-	stmt = UnscopedDb().Where("album_type = ? AND album_slug = ?", AlbumFolder, albumSlug).
+	stmt = UnscopedDb().Where("album_type = ? AND album_slug IN (?)", AlbumFolder, albumSlugs).
 		Where("(album_path IS NULL OR album_path = '')")
 
 	if stmt.First(&m).Error == nil {

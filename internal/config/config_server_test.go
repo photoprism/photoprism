@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -116,6 +117,42 @@ func TestConfig_HttpCompression(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "", c.HttpCompression())
+}
+
+func TestConfig_HttpHeaderTimeout(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, DefaultHttpHeaderTimeout, c.HttpHeaderTimeout())
+
+	c.Options().HttpHeaderTimeout = 17 * time.Second
+	assert.Equal(t, 17*time.Second, c.HttpHeaderTimeout())
+
+	c.Options().HttpHeaderTimeout = -1 * time.Second
+	assert.Equal(t, DefaultHttpHeaderTimeout, c.HttpHeaderTimeout())
+}
+
+func TestConfig_HttpHeaderBytes(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, DefaultHttpHeaderBytes, c.HttpHeaderBytes())
+
+	c.Options().HttpHeaderBytes = 2048
+	assert.Equal(t, 2048, c.HttpHeaderBytes())
+
+	c.Options().HttpHeaderBytes = 0
+	assert.Equal(t, DefaultHttpHeaderBytes, c.HttpHeaderBytes())
+}
+
+func TestConfig_HttpIdleTimeout(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, DefaultHttpIdleTimeout, c.HttpIdleTimeout())
+
+	c.Options().HttpIdleTimeout = 2 * time.Minute
+	assert.Equal(t, 2*time.Minute, c.HttpIdleTimeout())
+
+	c.Options().HttpIdleTimeout = -1 * time.Second
+	assert.Equal(t, DefaultHttpIdleTimeout, c.HttpIdleTimeout())
 }
 
 func TestConfig_HttpCachePublic(t *testing.T) {

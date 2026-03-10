@@ -44,6 +44,15 @@ const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 // DefaultWakeupInterval is the default worker interval as a duration.
 const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
 
+// DefaultHttpHeaderTimeout is the default timeout for reading request headers.
+const DefaultHttpHeaderTimeout = 15 * time.Second
+
+// DefaultHttpHeaderBytes is the default limit for HTTP request header size.
+const DefaultHttpHeaderBytes = 1 << 20 // 1 MiB
+
+// DefaultHttpIdleTimeout is the default timeout for idle keep-alive connections.
+const DefaultHttpIdleTimeout = 180 * time.Second
+
 // MegaByte defines a megabyte in bytes.
 const MegaByte = 1000 * 1000 // 1,000,000 Bytes
 

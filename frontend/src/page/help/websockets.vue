@@ -88,9 +88,7 @@ example.com {
         <v-expansion-panel-text class="bg-secondary-light">
           <v-card color="secondary-light">
             <v-card-text>
-              <p>
-                WebSocket proxying works out of the box in Caddy 2. There is no need to enable anything in your config, unlike other reverse proxies.
-              </p>
+              <p>WebSocket proxying works out of the box in Caddy 2. There is no need to enable anything in your config, unlike other reverse proxies.</p>
               <p>Example configuration:</p>
               <pre>
 example.com {

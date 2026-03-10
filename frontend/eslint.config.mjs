@@ -35,11 +35,7 @@ export default defineConfig([
   ]),
   ...pluginVue.configs["flat/recommended"],
   {
-    extends: compat.extends(
-      "eslint:recommended",
-      "plugin:prettier/recommended",
-      "plugin:vuetify/base"
-    ),
+    extends: compat.extends("eslint:recommended", "plugin:prettier/recommended", "plugin:vuetify/base"),
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -101,20 +97,7 @@ export default defineConfig([
         {
           ignoreWhenNoAttributes: true,
           ignoreWhenEmpty: true,
-          ignores: [
-            "pre",
-            "textarea",
-            "span",
-            "translate",
-            "a",
-            "v-icon",
-            "v-text-field",
-            "v-input",
-            "v-select",
-            "v-switch",
-            "v-checkbox",
-            "v-img",
-          ],
+          ignores: ["pre", "textarea", "span", "translate", "a", "v-icon", "v-text-field", "v-input", "v-select", "v-switch", "v-checkbox", "v-img"],
           externalIgnores: [],
         },
       ],

@@ -41,7 +41,14 @@ func PostVisionNsfw(router *gin.RouterGroup) {
 		}
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxVisionRequestBytes)
+
 		if err := c.BindJSON(&request); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				c.JSON(http.StatusRequestEntityTooLarge, vision.NewApiError(request.GetId(), http.StatusRequestEntityTooLarge))
+				return
+			}
+
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 			return
 		}

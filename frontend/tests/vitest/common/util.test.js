@@ -75,31 +75,13 @@ describe("common/util", () => {
     expect(long).toBe("45,065,875 ms");
   });
   it("should return formatted camera name", () => {
-    const iPhone15Pro = $util.formatCamera(
-      { Make: "Apple", Model: "iPhone 15 Pro" },
-      23,
-      "Apple",
-      "iPhone 15 Pro",
-      false,
-    );
+    const iPhone15Pro = $util.formatCamera({ Make: "Apple", Model: "iPhone 15 Pro" }, 23, "Apple", "iPhone 15 Pro", false);
     expect(iPhone15Pro).toBe("iPhone 15 Pro");
 
-    const iPhone15ProLong = $util.formatCamera(
-      { Make: "Apple", Model: "iPhone 15 Pro" },
-      23,
-      "Apple",
-      "iPhone 15 Pro",
-      true,
-    );
+    const iPhone15ProLong = $util.formatCamera({ Make: "Apple", Model: "iPhone 15 Pro" }, 23, "Apple", "iPhone 15 Pro", true);
     expect(iPhone15ProLong).toBe("Apple iPhone 15 Pro");
 
-    const iPhone14 = $util.formatCamera(
-      { Make: "Apple", Model: "iPhone 14" },
-      22,
-      "Apple",
-      "iPhone 14",
-      false,
-    );
+    const iPhone14 = $util.formatCamera({ Make: "Apple", Model: "iPhone 14" }, 22, "Apple", "iPhone 14", false);
     expect(iPhone14).toBe("iPhone 14");
 
     const iPhone13 = $util.formatCamera(null, 21, "Apple", "iPhone 13", false);
@@ -147,9 +129,7 @@ describe("common/util", () => {
     expect($util.thumb(thumbs, 1300, 900).size).toBe("fit_1920");
     expect($util.thumb(thumbs, 1300, 900).w).toBe(1800);
     expect($util.thumb(thumbs, 1300, 900).h).toBe(1200);
-    expect($util.thumb(thumbs, 1300, 900).src).toBe(
-      "/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_1920",
-    );
+    expect($util.thumb(thumbs, 1300, 900).src).toBe("/api/v1/t/bfdcf45e58b1978af66bbf6212c195851dc65814/174usyd0/fit_1920");
     expect($util.thumb(thumbs, 1400, 1200).size).toBe("fit_1920");
     expect($util.thumb(thumbs, 100000, 120000).size).toBe("fit_7680");
   });
@@ -204,13 +184,18 @@ describe("common/util", () => {
     const result = $util.encodeHTML("Micha & Theresa > < 'Lilly'");
     expect(result).toBe("Micha &amp; Theresa &gt; &lt; &apos;Lilly&apos;");
   });
-  it.skip("should encode link", () => {
-    const result = $util.encodeHTML(
-      "Try this: https://photoswipe.com/options/?foo=bar&bar=baz. It's a link!",
-    );
+  it("should encode link", () => {
+    const result = $util.encodeHTML("Try this: https://photoswipe.com/options/?foo=bar&bar=baz. It's a link!");
     expect(result).toBe(
-      `Try this: <a href="https://photoswipe.com/options/" target="_blank">https://photoswipe.com/options/</a> It&apos;s a link!`,
+      `Try this: <a href="https://photoswipe.com/options/" target="_blank" rel="noopener noreferrer">https://photoswipe.com/options/</a> It&apos;s a link!`
     );
+  });
+  it("should sanitize html using the shared allowlist", () => {
+    const result = $util.sanitizeHtml(
+      `<p>Hello <strong>there</strong> <img src=x onerror=alert(1) /> <a href="https://example.com" target="_blank">link</a></p>`
+    );
+
+    expect(result).toBe(`<p>Hello <strong>there</strong>  <a href="https://example.com" target="_blank" rel="noopener noreferrer">link</a></p>`);
   });
   it("should generate tokens reliably", () => {
     const tokens = new Set();

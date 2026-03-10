@@ -61,27 +61,14 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	}
 
 	if frm.Query != "" {
-		var labelIds []uint
-		var categories []entity.Category
-		var label entity.Label
-
-		slugString := txt.Slug(frm.Query)
 		likeString := "%" + frm.Query + "%"
 
-		if result := Db().First(&label, "label_slug = ? OR custom_slug = ?", slugString, slugString); result.Error != nil {
+		if labelIds, findErr := entity.FindLabelIDs(frm.Query, " ", true); findErr != nil || len(labelIds) == 0 {
 			log.Infof("search: label %s not found", clean.Log(frm.Query))
 
 			s = s.Where("labels.label_name LIKE ?", likeString)
 		} else {
-			labelIds = append(labelIds, label.ID)
-
-			Db().Where("category_id = ?", label.ID).Find(&categories)
-
-			for _, category := range categories {
-				labelIds = append(labelIds, category.LabelID)
-			}
-
-			log.Infof("search: label %s includes %d categories", clean.Log(label.LabelName), len(labelIds))
+			log.Infof("search: label %s resolves to %d labels", clean.Log(frm.Query), len(labelIds))
 
 			s = s.Where("labels.id IN (?)", labelIds)
 		}

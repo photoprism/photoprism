@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
+import $util from "common/util";
 import { buildNamespace } from "common/storage";
 import clientConfig from "../config";
 
@@ -19,6 +20,9 @@ const mountLightbox = () =>
         "v-slider": true,
         "p-lightbox-menu": true,
         "p-sidebar-info": true,
+      },
+      mocks: {
+        $util,
       },
     },
   });
@@ -97,5 +101,17 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const download = actions.find((a) => a?.name === "download");
     expect(download).toBeTruthy();
     expect(download.visible).toBe(true);
+  });
+
+  it("formatCaption returns sanitized caption html", () => {
+    const wrapper = mountLightbox();
+    const caption = wrapper.vm.$.ctx.formatCaption({
+      Title: `Title <img src=x onerror="alert(1)">`,
+      Caption: `Visit https://example.com/?q=1&x=2`,
+    });
+
+    expect(caption).toContain('<h4>Title &lt;img src=x onerror="alert(1)"&gt;</h4>');
+    expect(caption).toContain(`<p>Visit <a href="https://example.com/" target="_blank" rel="noopener noreferrer">https://example.com/</a></p>`);
+    expect(caption).not.toContain("<img");
   });
 });

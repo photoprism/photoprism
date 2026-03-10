@@ -82,6 +82,8 @@ const (
 	ContentTypeGif    = "image/gif"
 	ContentTypeBmp    = "image/bmp"
 	ContentTypeTiff   = "image/tiff"
+	ContentTypePsd    = "application/vnd.adobe.photoshop"
+	ContentTypePsdAlt = "image/vnd.adobe.photoshop"
 	ContentTypeDng    = "image/dng"
 	ContentTypeAvif   = "image/avif"
 	ContentTypeAvifS  = "image/avif-sequence"

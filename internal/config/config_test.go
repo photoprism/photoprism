@@ -249,11 +249,11 @@ func TestConfig_AdminUser(t *testing.T) {
 	assert.Equal(t, "admin", c.AdminUser())
 }
 
-func TestConfig_ExamplesPath(t *testing.T) {
+func TestConfig_SamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ExamplesPath()
-	assert.Equal(t, ProjectRoot+"/assets/examples", path)
+	path := c.SamplesPath()
+	assert.Equal(t, ProjectRoot+"/assets/samples", path)
 }
 
 func TestConfig_TemplatesPath(t *testing.T) {

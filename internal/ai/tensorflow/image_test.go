@@ -15,7 +15,7 @@ var defaultImageInput = &PhotoInput{
 	Shape:  DefaultPhotoInputShape(),
 }
 
-var examplesPath = filepath.Join(assetsPath, "examples")
+var samplesPath = filepath.Join(assetsPath, "samples")
 
 func TestConvertValue(t *testing.T) {
 	result := convertValue(uint32(98765432), &Interval{Start: -1, End: 1})
@@ -32,7 +32,7 @@ func TestConvertStdMean(t *testing.T) {
 
 func TestImageFromBytes(t *testing.T) {
 	t.Run("CatJpeg", func(t *testing.T) {
-		imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "cat_brown.jpg")) //nolint:gosec // reading bundled test fixture
+		imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "cat_brown.jpg")) //nolint:gosec // reading bundled test fixture
 
 		if err != nil {
 			t.Fatal(err)
@@ -48,7 +48,7 @@ func TestImageFromBytes(t *testing.T) {
 		assert.Equal(t, int64(224), result.Shape()[2])
 	})
 	t.Run("Document", func(t *testing.T) {
-		imageBuffer, err := os.ReadFile(filepath.Join(examplesPath, "Random.docx")) //nolint:gosec // reading bundled test fixture
+		imageBuffer, err := os.ReadFile(filepath.Join(samplesPath, "Random.docx")) //nolint:gosec // reading bundled test fixture
 		assert.Nil(t, err)
 		result, err := ImageFromBytes(imageBuffer, defaultImageInput, nil)
 

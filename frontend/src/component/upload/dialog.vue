@@ -12,7 +12,6 @@
     @keydown.esc.exact="onClose"
   >
     <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="-1" @submit.prevent="onSubmit">
-      <input ref="upload" type="file" multiple :accept="accept" class="d-none input-upload" @change.stop="onUpload()" />
       <v-card :tile="$vuetify.display.mdAndDown">
         <v-toolbar v-if="$vuetify.display.mdAndDown" flat color="navigation" class="mb-4" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
           <v-btn icon @click.stop="onClose">
@@ -87,6 +86,19 @@
                 >
                   <span v-if="eta" class="eta text-caption opacity-80">{{ eta }}</span>
                 </v-progress-linear>
+                <v-file-upload
+                  :model-value="selected"
+                  :filter-by-type="accept"
+                  :disabled="busy || filesQuotaReached"
+                  :multiple="true"
+                  :title="$vuetify.display.mdAndDown ? $gettext('Browse') : $gettext('Drop files here')"
+                  :density="$vuetify.display.mdAndDown ? 'compact' : 'default'"
+                  :icon="$vuetify.display.mdAndDown ? 'mdi-cloud-upload' : 'mdi-image-area'"
+                  clearable
+                  show-size
+                  class="mt-3 input-file-upload"
+                  @update:model-value="onFilesSelected"
+                />
               </div>
               <div class="form-text">
                 <p v-if="isDemo">
@@ -108,8 +120,14 @@
           <v-btn :disabled="busy" variant="flat" color="button" class="action-close" @click.stop="onClose">
             {{ $gettext(`Close`) }}
           </v-btn>
-          <v-btn :disabled="busy || filesQuotaReached" variant="flat" color="highlight" class="action-select action-upload" @click.stop="onUploadDialog()">
-            {{ $gettext(`Browse`) }}
+          <v-btn
+            :disabled="busy || filesQuotaReached || !hasFiles"
+            variant="flat"
+            color="highlight"
+            class="action-select action-upload"
+            @click.stop="onUpload()"
+          >
+            {{ $gettext(`Upload`) }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -171,6 +189,9 @@ export default {
   computed: {
     title() {
       return this.$gettext(`Upload`);
+    },
+    hasFiles() {
+      return Array.isArray(this.selected) && this.selected.length > 0;
     },
   },
   watch: {
@@ -287,8 +308,33 @@ export default {
       this.albumsMenu = false;
       this.suppressAlbumsMenuOpen = false;
     },
-    onUploadDialog() {
-      this.$refs.upload.click();
+    onFilesSelected(newFiles) {
+      const newArr = Array.isArray(newFiles) ? newFiles : newFiles ? [newFiles] : [];
+      const existing = Array.isArray(this.selected) ? this.selected : [];
+
+      // Clear: empty array from the clearable button or a reset.
+      if (newArr.length === 0) {
+        this.selected = [];
+        return;
+      }
+
+      // Remove: every file in the new set is already present by reference →
+      // this is a single-item removal emitted by VFileUploadItem's × button.
+      if (newArr.every((f) => existing.includes(f))) {
+        this.selected = newArr;
+        return;
+      }
+
+      // Browse / drop: merge with existing selection, skip duplicates
+      // identified by name + size + lastModified so re-selecting the same
+      // file on a second browse pass does not add a second entry.
+      const merged = [...existing];
+      for (const f of newArr) {
+        if (!merged.some((e) => e.name === f.name && e.size === f.size && e.lastModified === f.lastModified)) {
+          merged.push(f);
+        }
+      }
+      this.selected = merged;
     },
     onUploadProgress(ev) {
       if (!ev || !ev.loaded || !ev.total) {
@@ -335,25 +381,19 @@ export default {
         return;
       }
 
-      const files = this.$refs.upload.files;
-
       // Too many files selected for upload?
-      if (this.isDemo && files && files.length > this.fileLimit) {
+      if (this.isDemo && this.selected && this.selected.length > this.fileLimit) {
         $notify.error(this.$gettext("Too many files selected"));
         return;
       }
 
-      this.selected = files;
-      this.total = files.length;
-
       // No files selected?
-      if (!this.selected || this.total < 1) {
+      if (!this.selected || this.selected.length < 1) {
         return;
       }
 
       this.uploads = [];
       this.token = this.$util.generateToken();
-      this.selected = this.$refs.upload.files;
       this.busy = true;
       this.indexing = false;
       this.failed = false;
@@ -449,3 +489,4 @@ export default {
   },
 };
 </script>
+

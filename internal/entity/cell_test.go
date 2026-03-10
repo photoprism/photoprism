@@ -57,6 +57,25 @@ func TestCell_Find(t *testing.T) {
 		r := m.Find("")
 		assert.Nil(t, r)
 	})
+	t.Run("RepairsMissingPlaceAssociation", func(t *testing.T) {
+		fixture := CellFixtures["mexico"]
+		fixture.Place = nil
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, "Teotihuacán", fixture.City())
+		})
+		assert.Equal(t, "State of Mexico", fixture.State())
+		assert.Equal(t, "Mexico", fixture.CountryName())
+	})
+	t.Run("MissingPlaceFallsBackToUnknown", func(t *testing.T) {
+		m := &Cell{ID: "s2:testmissingplace", PlaceID: "zz:missing"}
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, "Unknown", m.City())
+		})
+		assert.Equal(t, "Unknown", m.State())
+		assert.Equal(t, "Unknown", m.CountryName())
+	})
 	t.Run("ApiEmpty", func(t *testing.T) {
 		l := NewCell(2, 1)
 		err := l.Find("")

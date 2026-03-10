@@ -21,10 +21,11 @@ func TestConvert_ToImage(t *testing.T) {
 	initErr := cnf.InitializeTestData()
 	assert.NoError(t, initErr)
 	convert := NewConvert(cnf)
+	samplesPath := cnf.SamplesPath()
 
 	t.Run("Video", func(t *testing.T) {
-		fileName := filepath.Join(cnf.ExamplesPath(), "gopher-video.mp4")
-		outputName := filepath.Join(cnf.SidecarPath(), cnf.ExamplesPath(), "gopher-video.mp4.jpg")
+		fileName := filepath.Join(cnf.SamplesPath(), "gopher-video.mp4")
+		outputName := filepath.Join(cnf.SidecarPath(), cnf.SamplesPath(), "gopher-video.mp4.jpg")
 
 		_ = os.Remove(outputName)
 
@@ -171,6 +172,56 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = imageFile.Remove()
 	})
+	t.Run("Layered16BitTiff", func(t *testing.T) {
+		tiffFile := filepath.Join(samplesPath, "layered-16bit-small.tif")
+
+		mediaFile, err := NewMediaFile(tiffFile)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, fs.FileExists(imageFile.FileName()))
+		assert.Equal(t, fs.ImageJpeg, imageFile.FileType())
+		assert.Greater(t, imageFile.Width(), 0)
+		assert.Greater(t, imageFile.Height(), 0)
+
+		_ = imageFile.Remove()
+	})
+	t.Run("PsdWithoutImageMagick", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for PSD preview fallback")
+		}
+
+		psdFile := filepath.Join(samplesPath, "photoshop-standard-small.psd")
+		cnf.Options().DisableImageMagick = true
+		t.Cleanup(func() {
+			cnf.Options().DisableImageMagick = false
+		})
+
+		mediaFile, err := NewMediaFile(psdFile)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, fs.FileExists(imageFile.FileName()))
+		assert.Equal(t, fs.ImageJpeg, imageFile.FileType())
+		assert.Greater(t, imageFile.Width(), 0)
+		assert.Greater(t, imageFile.Height(), 0)
+		assert.Less(t, imageFile.Width(), mediaFile.Width())
+		assert.Less(t, imageFile.Height(), mediaFile.Height())
+
+		_ = imageFile.Remove()
+	})
 	t.Run("DoNotConvertThumb", func(t *testing.T) {
 		thumbFile := fs.Abs("./testdata/animated-earth.thm")
 
@@ -190,6 +241,46 @@ func TestConvert_ToImage(t *testing.T) {
 
 		assert.Nil(t, imageFile)
 	})
+}
+
+func TestConvert_JpegConvertCmds(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for PSD preview fallback")
+	}
+
+	cnf.Options().DisableImageMagick = true
+	t.Cleanup(func() {
+		cnf.Options().DisableImageMagick = false
+	})
+
+	convert := NewConvert(cnf)
+	psdFile := filepath.Join(cnf.SamplesPath(), "photoshop-standard-small.psd")
+	jpegFile := filepath.Join(cnf.SamplesPath(), "photoshop-standard-small.jpg")
+
+	mediaFile, err := NewMediaFile(psdFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmds, useMutex, err := convert.JpegConvertCmds(mediaFile, jpegFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.False(t, useMutex)
+	assert.NotEmpty(t, cmds)
+
+	found := false
+	for _, cmd := range cmds {
+		if strings.Contains(cmd.String(), "-PhotoshopThumbnail") {
+			found = true
+			break
+		}
+	}
+
+	assert.True(t, found)
 }
 
 func TestConvert_PngConvertCmds(t *testing.T) {

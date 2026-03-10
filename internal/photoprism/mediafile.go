@@ -357,8 +357,8 @@ func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relati
 		rootPath = Config().SidecarPath()
 	case entity.RootImport:
 		rootPath = Config().ImportPath()
-	case entity.RootExamples:
-		rootPath = Config().ExamplesPath()
+	case entity.RootSamples:
+		rootPath = Config().SamplesPath()
 	case entity.RootOriginals:
 		rootPath = Config().OriginalsPath()
 	default:
@@ -446,8 +446,8 @@ func (m *MediaFile) RootPath() string {
 		return Config().SidecarPath()
 	case entity.RootImport:
 		return Config().ImportPath()
-	case entity.RootExamples:
-		return Config().ExamplesPath()
+	case entity.RootSamples:
+		return Config().SamplesPath()
 	default:
 		return Config().OriginalsPath()
 	}
@@ -507,7 +507,7 @@ func (m *MediaFile) EditedName() string {
 }
 
 // Root identifies which configured root the media file resides in (originals,
-// import, sidecar, examples). The result is cached so repeated calls are cheap.
+// import, sidecar, samples). The result is cached so repeated calls are cheap.
 func (m *MediaFile) Root() string {
 	if m.fileRoot != entity.RootUnknown {
 		return m.fileRoot
@@ -532,10 +532,10 @@ func (m *MediaFile) Root() string {
 		return m.fileRoot
 	}
 
-	examplesPath := Config().ExamplesPath()
+	samplesPath := Config().SamplesPath()
 
-	if examplesPath != "" && strings.HasPrefix(m.FileName(), examplesPath) {
-		m.fileRoot = entity.RootExamples
+	if samplesPath != "" && strings.HasPrefix(m.FileName(), samplesPath) {
+		m.fileRoot = entity.RootSamples
 		return m.fileRoot
 	}
 
@@ -887,6 +887,16 @@ func (m *MediaFile) IsTiff() bool {
 	return m.HasMimeType(header.ContentTypeTiff)
 }
 
+// IsPsd checks if the file is an Adobe Photoshop image with a supported file type extension.
+func (m *MediaFile) IsPsd() bool {
+	if fs.FileType(m.fileName) != fs.ImagePsd {
+		return false
+	}
+
+	// Check the mime type after other tests have passed to improve performance.
+	return m.HasMimeType(header.ContentTypePsd) || m.HasMimeType(header.ContentTypePsdAlt)
+}
+
 // IsDng checks if the file is a Adobe Digital Negative (DNG) image with a supported file type extension.
 func (m *MediaFile) IsDng() bool {
 	if fs.FileType(m.fileName) != fs.ImageDng {
@@ -1029,6 +1039,8 @@ func (m *MediaFile) CheckType() error {
 		valid = mimeType == header.ContentTypeGif
 	case fs.ImageTiff:
 		valid = mimeType == header.ContentTypeTiff
+	case fs.ImagePsd:
+		valid = mimeType == header.ContentTypePsd || mimeType == header.ContentTypePsdAlt
 	case fs.ImageHeic, fs.ImageHeif:
 		valid = mimeType == header.ContentTypeHeic || mimeType == header.ContentTypeHeicS
 	default:
@@ -1220,7 +1232,7 @@ func (m *MediaFile) IsLive(videoDuration time.Duration) bool {
 
 // ExifSupported returns true if parsing exif metadata is supported for the media file type.
 func (m *MediaFile) ExifSupported() bool {
-	return m.IsJpeg() || m.IsRaw() || m.IsHeif() || m.IsPng() || m.IsTiff()
+	return m.IsJpeg() || m.IsRaw() || m.IsHeif() || m.IsPng() || m.IsTiff() || m.IsPsd()
 }
 
 // IsMedia returns true if this is a media file (photo or video, not sidecar or other).
@@ -1303,21 +1315,29 @@ func (m *MediaFile) decodeDimensions() error {
 	if m.IsImageNative() {
 		cfg, err := m.DecodeConfig()
 
-		if err != nil {
-			return err
+		if err == nil {
+			orientation := m.Orientation()
+
+			if orientation > 4 && orientation <= 8 {
+				m.width = cfg.Height
+				m.height = cfg.Width
+			} else {
+				m.width = cfg.Width
+				m.height = cfg.Height
+			}
+
+			return nil
 		}
 
-		orientation := m.Orientation()
-
-		if orientation > 4 && orientation <= 8 {
-			m.width = cfg.Height
-			m.height = cfg.Width
-		} else {
-			m.width = cfg.Width
-			m.height = cfg.Height
+		// Fall back to metadata when native decoders cannot read layered TIFFs
+		// or other partially supported formats even though dimensions are present.
+		if data := m.MetaData(); data.Error == nil && data.ActualWidth() > 0 && data.ActualHeight() > 0 {
+			m.width = data.ActualWidth()
+			m.height = data.ActualHeight()
+			return nil
 		}
 
-		return nil
+		return err
 	}
 
 	// Extract the width and height from metadata for other formats.

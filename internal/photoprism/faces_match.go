@@ -243,6 +243,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 	totalProcessed := 0
 
 	offset := 0
+	start := time.Now()
 
 	for {
 		var markers entity.Markers
@@ -376,7 +377,12 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			break
 		}
 
-		log.Debugf("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
+		if time.Since(start) > time.Duration(time.Minute*15) {
+			log.Infof("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
+			start = time.Now()
+		} else {
+			log.Debugf("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
+		}
 
 		if totalProcessed >= maxMarkers {
 			break

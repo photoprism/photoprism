@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-02-23 16:05+0000\n"
+"PO-Revision-Date: 2026-03-09 09:52+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.16\n"
+"X-Generator: Weblate 5.16.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -54,7 +54,7 @@ msgstr "已上传 %{n} 个文件"
 msgid "%{n} folders found"
 msgstr "已找到 %{n} 个文件夹"
 
-#: src/component/navigation.vue:646
+#: src/component/navigation.vue:632
 msgid "%{n} GB of %{q} GB used"
 msgstr "已使用%{n}GB，共%{q}GB"
 
@@ -114,11 +114,11 @@ msgstr "%{s} 的新版本已发布："
 #: src/component/user/edit/dialog.vue:135
 #: src/component/user/edit/dialog.vue:136 src/page/about/about.vue:18
 #: src/page/settings/account.vue:139 src/page/settings/account.vue:140
-#: src/page/about/about.vue:19 src/app/routes.js:64
-#: src/component/navigation.vue:422 src/component/navigation.vue:423
-#: src/component/navigation.vue:435 src/component/navigation.vue:444
-#: src/component/navigation.vue:557 src/component/navigation.vue:565
-#: src/component/navigation.vue:589 src/page/people/recognized.vue:132
+#: src/page/about/about.vue:19 src/app/routes.js:63
+#: src/component/navigation.vue:416 src/component/navigation.vue:417
+#: src/component/navigation.vue:429 src/component/navigation.vue:438
+#: src/component/navigation.vue:551 src/component/navigation.vue:559
+#: src/component/navigation.vue:575 src/page/people/recognized.vue:132
 #: src/page/settings/account.vue:123 src/page/settings/account.vue:124
 msgid "About"
 msgstr "关于"
@@ -127,8 +127,8 @@ msgstr "关于"
 msgid "Access Token"
 msgstr "访问令牌"
 
-#: src/component/navigation.vue:543 src/component/navigation.vue:690
-#: src/component/navigation.vue:876 src/component/service/upload.vue:25
+#: src/component/navigation.vue:543 src/component/navigation.vue:676
+#: src/component/navigation.vue:860 src/component/service/upload.vue:25
 #: src/locales.js:335 src/model/service.js:70 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:334
 msgid "Account"
@@ -262,7 +262,7 @@ msgstr "已添加"
 msgid "Adjust Location"
 msgstr "调整位置"
 
-#: src/options/admin.js:6 src/model/cluster-node.js:5 src/common/util.js:813
+#: src/options/admin.js:6 src/model/cluster-node.js:5 src/common/util.js:859
 #: src/options/auth.js:6
 msgid "Admin"
 msgstr "管理员"
@@ -323,8 +323,8 @@ msgstr "相册已创建"
 msgid "Album deleted"
 msgstr "相册已删除"
 
-#: src/app/routes.js:205 src/component/album/toolbar.vue:118
-#: src/component/navigation.vue:191 src/component/navigation.vue:726
+#: src/app/routes.js:198 src/component/album/toolbar.vue:118
+#: src/component/navigation.vue:191 src/component/navigation.vue:712
 #: src/component/photo/batch-edit.vue:432 src/component/photo/edit/info.vue:79
 #: src/component/photo/edit/info.vue:80 src/options/options.js:257
 msgid "Albums"
@@ -366,10 +366,6 @@ msgstr "全部颜色"
 #: src/component/photo/toolbar.vue:357
 msgid "All Countries"
 msgstr "全部国家"
-
-#: src/page/about/feedback.vue:154 src/page/about/feedback.vue:137
-msgid "All fields are required"
-msgstr "所有字段均为必填项"
 
 #: src/page/library/import.vue:94
 msgid "All files from import folder"
@@ -440,7 +436,7 @@ msgstr "海拔（米）"
 msgid "AM"
 msgstr "上午"
 
-#: src/app/routes.js:286 src/component/photo/batch-edit.vue:128
+#: src/app/routes.js:279 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
 #: src/component/photo/edit/files.vue:139
@@ -548,7 +544,7 @@ msgstr "长宽比"
 msgid "Attributes"
 msgstr "属性"
 
-#: src/app/routes.js:279 src/component/navigation.vue:198
+#: src/app/routes.js:272 src/component/navigation.vue:198
 #: src/component/navigation.vue:199 src/component/navigation.vue:211
 #: src/component/navigation.vue:220 src/component/navigation.vue:248
 #: src/options/options.js:358
@@ -569,7 +565,7 @@ msgstr "音频"
 msgid "Authentication"
 msgstr "认证"
 
-#: src/common/util.js:775
+#: src/common/util.js:821
 msgid "Auto"
 msgstr "汽车"
 
@@ -594,7 +590,7 @@ msgstr "徽章"
 msgid "Base Path"
 msgstr "基本路径"
 
-#: src/common/util.js:807
+#: src/common/util.js:853
 msgid "Batch"
 msgstr "批次"
 
@@ -642,9 +638,7 @@ msgstr "棕"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:94
 msgid "Browse"
 msgstr "浏览"
 
@@ -656,7 +650,7 @@ msgstr "浏览文件"
 msgid "Browse Pictures"
 msgstr "浏览图片"
 
-#: src/page/about/feedback.vue:112 src/options/options.js:464
+#: src/options/options.js:464
 msgid "Bug Report"
 msgstr "上报问题"
 
@@ -668,7 +662,7 @@ msgstr "正在忙碌，请稍候…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "通过使用我们提供的软件和服务，您同意我们的服务条款、隐私政策和行为准则。"
 
-#: src/app/routes.js:218 src/component/navigation.vue:390
+#: src/app/routes.js:211 src/component/navigation.vue:390
 #: src/options/options.js:263 src/page/settings/general.vue:96
 msgid "Calendar"
 msgstr "日历"
@@ -682,9 +676,9 @@ msgstr "相机"
 msgid "Camera Serial"
 msgstr "相机序列号"
 
-#: src/page/auth/login.vue:131 src/page/auth/login.vue:152
-#: src/page/auth/login.vue:46 src/page/auth/login.vue:47
-#: src/page/auth/login.vue:61
+#: src/page/auth/login.vue:141 src/page/auth/login.vue:162
+#: src/page/auth/login.vue:49 src/page/auth/login.vue:50
+#: src/page/auth/login.vue:64
 msgid "Can't access your authenticator app or device?"
 msgstr "无法访问您的身份验证应用程序或设备？"
 
@@ -718,16 +712,16 @@ msgstr "无法选择更多项目"
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
 #: src/component/settings/password.vue:83 src/component/share/dialog.vue:160
-#: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
+#: src/locales.js:214 src/page/auth/login.vue:130 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "取消"
 
-#: src/common/util.js:980 src/common/util.js:987
+#: src/common/util.js:1026 src/common/util.js:1033
 msgid "Cannot copy to clipboard"
 msgstr "无法复制到剪贴板"
 
-#: src/common/util.js:795 src/component/photo/batch-edit.vue:177
+#: src/common/util.js:841 src/component/photo/batch-edit.vue:177
 #: src/component/photo/edit/details.vue:32
 #: src/component/photo/view/cards.vue:194 src/component/sidebar/info.vue:21
 msgid "Caption"
@@ -741,9 +735,7 @@ msgstr "卡片"
 msgid "Carousel slide {0} of {1}"
 msgstr "旋转木马幻灯片 {0} of {1}"
 
-#: src/page/about/feedback.vue:34 src/page/about/feedback.vue:35
 #: src/component/album/edit/dialog.vue:58 src/component/photo/toolbar.vue:252
-#: src/page/about/feedback.vue:26 src/page/about/feedback.vue:27
 #: src/page/albums.vue:78
 msgid "Category"
 msgstr "分类"
@@ -813,7 +805,7 @@ msgstr "清理"
 msgid "Clear {0}"
 msgstr "清除 {0}"
 
-#: src/model/cluster-node.js:11 src/options/auth.js:12 src/options/auth.js:24
+#: src/model/cluster-node.js:10 src/options/auth.js:12 src/options/auth.js:24
 #: src/options/auth.js:44
 msgid "Client"
 msgstr "客户"
@@ -839,16 +831,16 @@ msgstr "客户证书"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:121 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "关闭"
 
-#: src/app/routes.js:122
+#: src/app/routes.js:115
 msgid "Cluster"
 msgstr "群组"
 
-#: src/model/cluster-node.js:80
+#: src/model/cluster-node.js:79
 msgid "Cluster Node"
 msgstr "集群节点"
 
@@ -909,8 +901,10 @@ msgstr "确认"
 msgid "Connect"
 msgstr "连接"
 
-#: src/page/settings/account.vue:196 src/component/settings/webdav.vue:15
-#: src/page/settings/account.vue:180 src/page/settings/services.vue:74
+#: src/page/settings/account.vue:182 src/page/settings/account.vue:76
+#: src/page/settings/account.vue:77 src/page/settings/account.vue:196
+#: src/component/settings/webdav.vue:15 src/page/settings/account.vue:180
+#: src/page/settings/services.vue:74
 msgid "Connect via WebDAV"
 msgstr "使用 WebDAV 连接"
 
@@ -922,9 +916,7 @@ msgstr "已连接"
 msgid "Contact Details"
 msgstr "联系方式"
 
-#: src/page/about/feedback.vue:10 src/page/connect.vue:42
-#: src/page/connect.vue:49 src/page/about/feedback.vue:5
-#: src/page/connect.vue:39
+#: src/page/connect.vue:42 src/page/connect.vue:49 src/page/connect.vue:39
 msgid "Contact Us"
 msgstr "联系我们"
 
@@ -961,7 +953,7 @@ msgstr "撰稿人"
 msgid "Converting"
 msgstr "转换中"
 
-#: src/common/util.js:973
+#: src/common/util.js:1019
 msgid "Copied to clipboard"
 msgstr "已复制到剪贴板"
 
@@ -994,7 +986,7 @@ msgstr "找不到任何东西。"
 msgid "Country"
 msgstr "国家"
 
-#: src/page/auth/login.vue:123 src/page/auth/login.vue:130
+#: src/page/auth/login.vue:133 src/page/auth/login.vue:140
 msgid "Create Account"
 msgstr "创建账户"
 
@@ -1077,7 +1069,7 @@ msgstr "调试日志"
 #: src/page/admin/users.vue:231 src/options/admin.js:35
 #: src/page/admin/sessions.vue:371 src/page/admin/users.vue:374
 #: src/page/admin/sessions.vue:369 src/page/admin/users.vue:372
-#: src/common/util.js:777 src/model/session.js:42 src/model/user.js:244
+#: src/common/util.js:823 src/model/session.js:42 src/model/user.js:244
 #: src/options/auth.js:21 src/options/auth.js:22 src/options/auth.js:40
 #: src/options/auth.js:41 src/options/options.js:252 src/options/options.js:255
 #: src/options/options.js:293 src/options/options.js:377
@@ -1213,8 +1205,8 @@ msgstr "丢弃"
 msgid "Discard changes and close"
 msgstr "放弃更改并关闭"
 
-#: src/app/routes.js:590 src/app/routes.js:597 src/app/routes.js:604
-#: src/app/routes.js:611
+#: src/app/routes.js:583 src/app/routes.js:590 src/app/routes.js:597
+#: src/app/routes.js:604
 msgid "Discover"
 msgstr "探索"
 
@@ -1272,7 +1264,7 @@ msgstr "不使用 RawTherapee 转换 RAW 文件。"
 msgid "Done"
 msgstr "完成"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "完成。"
@@ -1314,9 +1306,9 @@ msgstr "在此处拖放文件"
 msgid "Driver"
 msgstr "司机"
 
-#: src/page/about/feedback.vue:22 src/page/about/feedback.vue:17
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "由于我们收到大量的电子邮件，我们的团队可能无法立即回复你。"
+#: src/component/upload/dialog.vue:94
+msgid "Drop files here"
+msgstr "将文件放在此处"
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
@@ -1336,10 +1328,6 @@ msgstr "动态预览"
 #: src/page/settings/advanced.vue:242
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "动态尺寸限制：%{n}px"
-
-#: src/page/about/feedback.vue:80 src/page/about/feedback.vue:70
-msgid "E-Mail"
-msgstr "电子邮件"
 
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:157
 #: src/component/lightbox.vue:1331 src/component/lightbox.vue:1332
@@ -1436,13 +1424,13 @@ msgstr "输入您的密码确认操作并继续："
 msgid "Error"
 msgstr "错误"
 
-#: src/app/routes.js:406 src/component/navigation.vue:370
+#: src/app/routes.js:399 src/component/navigation.vue:370
 #: src/component/navigation.vue:371 src/component/navigation.vue:383
 #: src/component/navigation.vue:392 src/component/navigation.vue:505
 msgid "Errors"
 msgstr "错误"
 
-#: src/common/util.js:779
+#: src/common/util.js:825
 msgid "Estimate"
 msgstr "估算"
 
@@ -1532,32 +1520,25 @@ msgstr "快"
 msgid "Favorite"
 msgstr "收藏"
 
-#: src/app/routes.js:251 src/component/navigation.vue:310
+#: src/app/routes.js:244 src/component/navigation.vue:310
 #: src/options/options.js:261 src/page/albums.vue:388
 msgid "Favorites"
 msgstr "收藏"
 
-#: src/page/about/feedback.vue:111 src/options/options.js:463
+#: src/options/options.js:463
 msgid "Feature Request"
 msgstr "特性请求"
-
-#: src/component/navigation.vue:404 src/component/navigation.vue:405
-#: src/component/navigation.vue:417 src/component/navigation.vue:426
-#: src/component/navigation.vue:539 src/component/navigation.vue:547
-#: src/component/navigation.vue:555 src/component/navigation.vue:563
-msgid "Feedback"
-msgstr "反馈"
 
 #: src/options/options.js:494
 msgid "Female"
 msgstr "女"
 
-#: src/common/util.js:781 src/component/photo/edit/info.vue:94
+#: src/common/util.js:827 src/component/photo/edit/info.vue:94
 #: src/model/file.js:262
 msgid "File"
 msgstr "文件"
 
-#: src/app/routes.js:375
+#: src/app/routes.js:368
 msgid "File Browser"
 msgstr "文件浏览器"
 
@@ -1583,7 +1564,7 @@ msgstr "文件大小"
 msgid "Filename"
 msgstr "文件名"
 
-#: src/component/navigation.vue:744 src/component/photo/edit/dialog.vue:55
+#: src/component/navigation.vue:730 src/component/photo/edit/dialog.vue:55
 #: src/component/photo/edit/dialog.vue:56
 #: src/component/photo/edit/dialog.vue:68
 #: src/component/photo/edit/dialog.vue:70
@@ -1619,12 +1600,12 @@ msgstr "文件夹中有 %{n} 个文件"
 msgid "Folder is empty"
 msgstr "文件夹为空"
 
-#: src/app/routes.js:231 src/component/navigation.vue:457
+#: src/app/routes.js:224 src/component/navigation.vue:457
 #: src/options/options.js:266
 msgid "Folders"
 msgstr "文件夹"
 
-#: src/page/auth/login.vue:162
+#: src/page/auth/login.vue:172
 msgid "Forgot password?"
 msgstr "忘记密码？"
 
@@ -1711,7 +1692,7 @@ msgstr "哈希"
 msgid "Help"
 msgstr "帮助"
 
-#: src/app/routes.js:76 src/app/routes.js:82
+#: src/app/routes.js:75
 msgid "Help & Support"
 msgstr "帮助和支持"
 
@@ -1721,7 +1702,7 @@ msgstr "帮助和支持"
 msgid "Hidden"
 msgstr "隐藏"
 
-#: src/app/routes.js:390
+#: src/app/routes.js:383
 msgid "Hidden Files"
 msgstr "隐藏文件"
 
@@ -1744,10 +1725,6 @@ msgstr "高"
 msgid "High Dynamic Range (HDR)"
 msgstr "高动态范围渲染（HDR）"
 
-#: src/page/about/feedback.vue:52 src/page/about/feedback.vue:44
-msgid "How can we help?"
-msgstr "我们可以帮您吗？"
-
 #: src/options/options.js:304
 msgid "Hybrid"
 msgstr "混合地图"
@@ -1756,7 +1733,7 @@ msgstr "混合地图"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "如果您无法访问身份验证器应用或设备，则可以使用恢复代码重新访问您的帐户。"
 
-#: src/common/util.js:785 src/component/photo/view/cards.vue:246
+#: src/common/util.js:831 src/component/photo/view/cards.vue:246
 #: src/model/file.js:190 src/options/options.js:342
 msgid "Image"
 msgstr "图片"
@@ -1808,11 +1785,11 @@ msgstr "在下载堆栈和档案时包括RAW图像文件。"
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "在下载堆栈和档案时包括sidecar文件。"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "增加存储空间或删除文件以继续。"
 
-#: src/component/navigation.vue:750 src/page/library.vue:56
+#: src/component/navigation.vue:736 src/page/library.vue:56
 #: src/page/settings/content.vue:6
 msgid "Index"
 msgstr "索引"
@@ -1830,8 +1807,7 @@ msgstr "索引媒体和附属文件…"
 msgid "Information"
 msgstr "信息"
 
-#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
-#: src/model/cluster-node.js:9 src/locales.js:364
+#: src/model/cluster-node.js:7 src/model/cluster-node.js:8 src/locales.js:364
 msgid "Instance"
 msgstr "实例"
 
@@ -1844,7 +1820,7 @@ msgstr "实例 ID"
 msgid "Instances"
 msgstr "实例"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "存储不足"
 
@@ -1919,7 +1895,7 @@ msgstr "JPEG 尺寸限制：%{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "系统会根据需要自动生成缩略图及JPEG格式的预览图。"
 
-#: src/common/util.js:797
+#: src/common/util.js:843
 msgid "Keyword"
 msgstr "关键词"
 
@@ -1932,7 +1908,7 @@ msgstr "关键字"
 msgid "Label"
 msgstr "标签"
 
-#: src/page/cluster/nodes.vue:155 src/app/routes.js:421
+#: src/page/cluster/nodes.vue:155 src/app/routes.js:414
 #: src/component/navigation.vue:430 src/component/photo/batch-edit.vue:415
 #: src/component/photo/edit/dialog.vue:37
 #: src/component/photo/edit/dialog.vue:38
@@ -1998,7 +1974,7 @@ msgstr "进一步了解"
 msgid "Learn More"
 msgstr "了解更多"
 
-#: src/component/navigation.vue:458 src/component/navigation.vue:775
+#: src/component/navigation.vue:458 src/component/navigation.vue:761
 msgid "Legal Information"
 msgstr "法律信息"
 
@@ -2007,15 +1983,15 @@ msgstr "法律信息"
 msgid "Lens"
 msgstr "镜头"
 
-#: src/app/routes.js:475 src/app/routes.js:491 src/app/routes.js:507
+#: src/app/routes.js:468 src/app/routes.js:484 src/app/routes.js:500
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
 msgid "Library"
 msgstr "资料库"
 
-#: src/page/connect.vue:5 src/app/routes.js:70 src/component/navigation.vue:410
-#: src/component/navigation.vue:411 src/component/navigation.vue:423
-#: src/component/navigation.vue:432 src/component/navigation.vue:545
-#: src/component/navigation.vue:553 src/component/navigation.vue:569
+#: src/page/connect.vue:5 src/app/routes.js:69 src/component/navigation.vue:404
+#: src/component/navigation.vue:405 src/component/navigation.vue:417
+#: src/component/navigation.vue:426 src/component/navigation.vue:539
+#: src/component/navigation.vue:547 src/component/navigation.vue:555
 #: src/component/photo/batch-edit.vue:401
 #: src/component/photo/edit/details.vue:346 src/page/about/license.vue:5
 msgid "License"
@@ -2056,7 +2032,7 @@ msgstr "列表查看"
 msgid "Live"
 msgstr "实况"
 
-#: src/app/routes.js:265 src/component/navigation.vue:191
+#: src/app/routes.js:258 src/component/navigation.vue:191
 #: src/component/navigation.vue:192 src/component/navigation.vue:204
 #: src/component/navigation.vue:213 src/component/navigation.vue:241
 msgid "Live Photos"
@@ -2085,7 +2061,7 @@ msgid "Local Time"
 msgstr "本地时间"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:787 src/component/album/edit/dialog.vue:37
+#: src/common/util.js:833 src/component/album/edit/dialog.vue:37
 #: src/component/photo/batch-edit.vue:264
 #: src/component/photo/batch-edit.vue:570
 #: src/component/photo/edit/details.vue:459
@@ -2101,16 +2077,16 @@ msgstr "位置"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "每当 PhotoPrism 遇到损坏的文件或其他潜在问题时，日志消息就会出现在这里。"
 
-#: src/component/navigation.vue:320 src/component/navigation.vue:599
-#: src/component/navigation.vue:712
+#: src/component/navigation.vue:320 src/component/navigation.vue:585
+#: src/component/navigation.vue:698
 msgid "Login"
 msgstr "登录"
 
-#: src/component/navigation.vue:396 src/component/navigation.vue:681
+#: src/component/navigation.vue:396 src/component/navigation.vue:667
 msgid "Logout"
 msgstr "登出"
 
-#: src/component/navigation.vue:756 src/page/library.vue:79
+#: src/component/navigation.vue:742 src/page/library.vue:79
 #: src/page/settings/general.vue:319
 msgid "Logs"
 msgstr "日志"
@@ -2119,7 +2095,7 @@ msgstr "日志"
 msgid "Longitude"
 msgstr "经度"
 
-#: src/component/navigation.vue:629
+#: src/component/navigation.vue:615
 msgid "Lost server connection"
 msgstr "服务器连接丢失"
 
@@ -2152,7 +2128,7 @@ msgstr "管理账户"
 msgid "Manager"
 msgstr "经理"
 
-#: src/common/util.js:809
+#: src/common/util.js:855
 msgid "Manual"
 msgstr "手动"
 
@@ -2164,7 +2140,7 @@ msgstr "手动上传"
 msgid "Maps"
 msgstr "地图"
 
-#: src/common/util.js:789 src/model/marker.js:118
+#: src/common/util.js:835 src/model/marker.js:118
 msgid "Marker"
 msgstr "标记"
 
@@ -2172,7 +2148,7 @@ msgstr "标记"
 msgid "Maximum number of accounts has been reached."
 msgstr "账户数已达到上限。"
 
-#: src/app/routes.js:258 src/component/navigation.vue:219
+#: src/app/routes.js:251 src/component/navigation.vue:219
 #: src/options/options.js:258
 msgid "Media"
 msgstr "媒体"
@@ -2189,17 +2165,12 @@ msgstr "会员资格"
 msgid "Merge %{a} with %{b}?"
 msgstr "将 %{a} 与 %{b} 合并？"
 
-#: src/page/about/feedback.vue:51 src/page/cluster/activity.vue:129
-#: src/page/admin/activity.vue:128 src/locales.js:356
-#: src/page/about/feedback.vue:43
+#: src/page/cluster/activity.vue:129 src/page/admin/activity.vue:128
+#: src/locales.js:356
 msgid "Message"
 msgstr "留言"
 
-#: src/page/about/feedback.vue:150 src/page/about/feedback.vue:133
-msgid "Message sent"
-msgstr "消息已发送"
-
-#: src/common/util.js:799
+#: src/common/util.js:845
 msgid "Metadata"
 msgstr "元数据"
 
@@ -2218,7 +2189,7 @@ msgstr "最小化"
 msgid "Missing"
 msgstr "缺失"
 
-#: src/page/auth/login.vue:330
+#: src/page/auth/login.vue:382
 msgid "Missing or invalid configuration"
 msgstr "配置缺失或无效"
 
@@ -2226,7 +2197,7 @@ msgstr "配置缺失或无效"
 msgid "mixed"
 msgstr "混合型"
 
-#: src/app/routes.js:192 src/component/navigation.vue:417
+#: src/app/routes.js:185 src/component/navigation.vue:417
 #: src/options/options.js:264 src/page/settings/general.vue:111
 msgid "Moments"
 msgstr "瞬间"
@@ -2267,9 +2238,8 @@ msgstr "必须至少有%{n}个字符。"
 msgid "Mute"
 msgstr "静音"
 
-#: src/page/about/feedback.vue:65 src/page/about/feedback.vue:66
 #: src/page/cluster/nodes.vue:117 src/page/cluster/nodes.vue:173
-#: src/page/cluster/nodes.vue:244 src/common/util.js:783
+#: src/page/cluster/nodes.vue:244 src/common/util.js:829
 #: src/component/album/edit/dialog.vue:30
 #: src/component/label/edit/dialog.vue:28
 #: src/component/people/edit/dialog.vue:28
@@ -2277,10 +2247,8 @@ msgstr "静音"
 #: src/component/photo/edit/info.vue:37 src/component/photo/edit/people.vue:153
 #: src/component/photo/view/list.vue:43 src/component/service/edit.vue:155
 #: src/component/settings/apps.vue:112 src/component/settings/apps.vue:274
-#: src/locales.js:323 src/page/about/feedback.vue:56
-#: src/page/about/feedback.vue:57 src/page/albums.vue:389
-#: src/page/auth/login.vue:80 src/page/people/new.vue:185
-#: src/page/settings/services.vue:145
+#: src/locales.js:323 src/page/albums.vue:389 src/page/auth/login.vue:80
+#: src/page/people/new.vue:185 src/page/settings/services.vue:145
 msgid "Name"
 msgstr "名称"
 
@@ -2415,7 +2383,7 @@ msgstr "节点"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:113
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查。"
 
@@ -2581,8 +2549,7 @@ msgstr "源文件名"
 msgid "Originals"
 msgstr "源"
 
-#: src/page/about/feedback.vue:113 src/options/options.js:465
-#: src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:495
 msgid "Other"
 msgstr "其他"
 
@@ -2642,8 +2609,8 @@ msgstr "密码"
 msgid "Password changed"
 msgstr "密码已更改"
 
-#: src/app/routes.js:436 src/app/routes.js:460 src/component/navigation.vue:283
-#: src/component/navigation.vue:732 src/component/photo/edit/dialog.vue:46
+#: src/app/routes.js:429 src/app/routes.js:453 src/component/navigation.vue:283
+#: src/component/navigation.vue:718 src/component/photo/edit/dialog.vue:46
 #: src/component/photo/edit/dialog.vue:47
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
@@ -2689,7 +2656,7 @@ msgstr "PhotoPrism是100%自筹资金和独立的。"
 msgid "PhotoPrism+ Membership"
 msgstr "照片棱镜+会员资格"
 
-#: src/app/routes.js:185
+#: src/app/routes.js:178
 msgid "Photos"
 msgstr "照片"
 
@@ -2715,9 +2682,9 @@ msgstr "地点"
 msgid "Place & Time"
 msgstr "地点和时间"
 
-#: src/app/routes.js:335 src/app/routes.js:341 src/app/routes.js:347
-#: src/app/routes.js:362 src/component/navigation.vue:346
-#: src/component/navigation.vue:738 src/options/options.js:262
+#: src/app/routes.js:328 src/app/routes.js:334 src/app/routes.js:340
+#: src/app/routes.js:355 src/component/navigation.vue:346
+#: src/component/navigation.vue:724 src/options/options.js:262
 #: src/page/places.vue:7 src/page/settings/general.vue:349
 #: src/page/settings/general.vue:363
 msgid "Places"
@@ -2731,11 +2698,11 @@ msgstr "请确认新密码。"
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "请复制以下随机生成的应用程序密码并将其保存在安全的地方，因为您将无法再次看到它："
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:106
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "请勿上传任何私人、非法或攻击性图片。"
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:109
 msgid "Please don't upload photos containing offensive content."
 msgstr "请不要上传包含令人反感的内容的照片。"
 
@@ -2778,7 +2745,7 @@ msgstr "人像"
 msgid "Preserve filenames"
 msgstr "保留文件名"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "按下 Enter 键创建一个新相册。"
 
@@ -2823,7 +2790,7 @@ msgstr "上一个视觉"
 msgid "Primary"
 msgstr "主文件"
 
-#: src/app/routes.js:300 src/component/album/edit/dialog.vue:79
+#: src/app/routes.js:293 src/component/album/edit/dialog.vue:79
 #: src/component/navigation.vue:120 src/component/navigation.vue:121
 #: src/component/navigation.vue:133 src/component/navigation.vue:142
 #: src/component/navigation.vue:150 src/component/navigation.vue:170
@@ -2833,7 +2800,7 @@ msgstr "主文件"
 msgid "Private"
 msgstr "私有"
 
-#: src/page/about/feedback.vue:110 src/options/options.js:462
+#: src/options/options.js:462
 msgid "Product Feedback"
 msgstr "产品反馈"
 
@@ -2924,7 +2891,7 @@ msgstr "红"
 msgid "Refresh"
 msgstr "刷新"
 
-#: src/app/routes.js:369 src/component/navigation.vue:275
+#: src/app/routes.js:362 src/component/navigation.vue:275
 #: src/component/navigation.vue:276 src/component/navigation.vue:288
 #: src/component/navigation.vue:297 src/component/navigation.vue:324
 #: src/component/navigation.vue:353 src/component/navigation.vue:361
@@ -2939,12 +2906,12 @@ msgstr "地区"
 msgid "Register"
 msgstr "注册"
 
-#: src/component/navigation.vue:404 src/component/navigation.vue:684
+#: src/component/navigation.vue:404 src/component/navigation.vue:670
 #: src/component/update.vue:28
 msgid "Reload"
 msgstr "重载"
 
-#: src/component/navigation.vue:564 src/component/navigation.vue:897
+#: src/component/navigation.vue:564 src/component/navigation.vue:881
 #: src/component/update.vue:62 src/page/settings/general.vue:511
 msgid "Reloading…"
 msgstr "重载中…"
@@ -3012,11 +2979,15 @@ msgstr "分辨率"
 msgid "Restart"
 msgstr "重新启动"
 
+#: src/component/user/edit/dialog.vue:113
+#: src/component/user/edit/dialog.vue:114
+#: src/component/user/edit/dialog.vue:123
+#: src/component/user/edit/dialog.vue:129
+#: src/component/user/edit/dialog.vue:315
 #: src/component/user/edit/dialog.vue:106
 #: src/component/user/edit/dialog.vue:107
 #: src/component/user/edit/dialog.vue:116
-#: src/component/user/edit/dialog.vue:122
-#: src/component/user/edit/dialog.vue:315 src/component/lightbox.vue:1412
+#: src/component/user/edit/dialog.vue:122 src/component/lightbox.vue:1412
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "恢复"
@@ -3033,7 +3004,7 @@ msgstr "重试限制"
 msgid "Retype Password"
 msgstr "重新输入密码"
 
-#: src/app/routes.js:293 src/component/navigation.vue:113
+#: src/app/routes.js:286 src/component/navigation.vue:113
 #: src/component/navigation.vue:114 src/component/navigation.vue:126
 #: src/component/navigation.vue:135 src/component/navigation.vue:143
 #: src/component/navigation.vue:163
@@ -3069,11 +3040,14 @@ msgstr "卫星"
 #: src/component/user/edit/dialog.vue:114
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:300
+#: src/component/user/edit/dialog.vue:113
+#: src/component/user/edit/dialog.vue:123
+#: src/component/user/edit/dialog.vue:129
+#: src/component/user/edit/dialog.vue:315
 #: src/component/user/edit/dialog.vue:106
 #: src/component/user/edit/dialog.vue:107
 #: src/component/user/edit/dialog.vue:116
 #: src/component/user/edit/dialog.vue:122
-#: src/component/user/edit/dialog.vue:315
 #: src/component/album/edit/dialog.vue:41
 #: src/component/album/edit/dialog.vue:42
 #: src/component/album/edit/dialog.vue:52
@@ -3131,7 +3105,7 @@ msgstr "瞄准镜"
 #: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
 #: src/page/cluster/activity.vue:13 src/page/cluster/nodes.vue:13
 #: src/page/admin/activity.vue:13 src/component/location/dialog.vue:64
-#: src/component/navigation.vue:720 src/component/navigation.vue:91
+#: src/component/navigation.vue:706 src/component/navigation.vue:91
 #: src/component/photo/toolbar.vue:34 src/locales.js:319
 #: src/options/options.js:256 src/page/albums.vue:20 src/page/labels.vue:15
 #: src/page/library/errors.vue:18 src/page/people/recognized.vue:14
@@ -3168,7 +3142,7 @@ msgid "Select dates"
 msgstr "选择日期"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "选择或创建相册"
 
@@ -3176,7 +3150,7 @@ msgstr "选择或创建相册"
 msgid "Select or create labels"
 msgstr "选择或创建标签"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "选择要上传的文件…"
 
@@ -3208,7 +3182,7 @@ msgstr "所选项已恢复"
 msgid "Sequential Name"
 msgstr "顺序名称"
 
-#: src/model/cluster-node.js:10 src/locales.js:362
+#: src/model/cluster-node.js:9 src/locales.js:362
 msgid "Service"
 msgstr "服务"
 
@@ -3246,11 +3220,11 @@ msgstr "设为专辑封面"
 msgid "Set as Cover Image"
 msgstr "设置为封面图像"
 
-#: src/component/navigation.vue:279 src/component/navigation.vue:421
+#: src/component/navigation.vue:280 src/component/navigation.vue:421
 #: src/component/navigation.vue:464 src/component/navigation.vue:467
-#: src/app/routes.js:102 src/app/routes.js:524 src/app/routes.js:536
-#: src/app/routes.js:553 src/app/routes.js:566 src/app/routes.js:579
-#: src/component/navigation.vue:527 src/component/navigation.vue:698
+#: src/app/routes.js:517 src/app/routes.js:529 src/app/routes.js:546
+#: src/app/routes.js:559 src/app/routes.js:572 src/app/routes.js:95
+#: src/component/navigation.vue:527 src/component/navigation.vue:684
 #: src/options/options.js:267
 msgid "Settings"
 msgstr "设置"
@@ -3347,8 +3321,9 @@ msgstr "附属"
 msgid "Sidecar Files"
 msgstr "Sidecar 文件"
 
-#: src/page/auth/login.vue:126 src/page/auth/login.vue:140
-#: src/page/auth/login.vue:42 src/page/auth/login.vue:56
+#: src/page/auth/login.vue:136 src/page/auth/login.vue:150
+#: src/page/auth/login.vue:44 src/page/auth/login.vue:45
+#: src/page/auth/login.vue:59
 msgid "Sign in"
 msgstr "登录"
 
@@ -3479,6 +3454,10 @@ msgstr "静态渲染尺寸限制： %{n}px"
 msgid "Status"
 msgstr "状态"
 
+#: src/page/auth/login.vue:123
+msgid "Stay signed in on this device"
+msgstr "在此设备上保持登录状态"
+
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
 msgid "Storage"
@@ -3488,14 +3467,10 @@ msgstr "存储"
 msgid "Streets"
 msgstr "街道图"
 
-#: src/common/util.js:801 src/component/photo/batch-edit.vue:335
+#: src/common/util.js:847 src/component/photo/batch-edit.vue:335
 #: src/component/photo/edit/details.vue:302
 msgid "Subject"
 msgstr "主题"
-
-#: src/page/about/feedback.vue:92 src/page/about/feedback.vue:83
-msgid "Submit"
-msgstr "提交"
 
 #: src/component/settings/passcode.vue:351
 msgid "Successfully activated"
@@ -3524,7 +3499,7 @@ msgstr "超级管理员"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "随着时间的推移，将增加对其他服务的支持，例如 Google 云端硬盘。"
 
-#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:617
+#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:603
 msgid "Support Our Mission"
 msgstr "支持我们的使命"
 
@@ -3613,7 +3588,7 @@ msgstr "时区"
 msgid "Timeout"
 msgstr "超时"
 
-#: src/common/util.js:803 src/component/photo/view/list.vue:34
+#: src/common/util.js:849 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "标题"
 
@@ -3657,7 +3632,7 @@ msgstr "切换视图"
 msgid "Token"
 msgstr "令牌"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:386
 msgid "Too many files selected"
 msgstr "选择的文件过多"
 
@@ -3706,9 +3681,9 @@ msgstr "撤销"
 msgid "Unique ID"
 msgstr "唯一标识符"
 
-#: src/model/cluster-node.js:43 src/page/settings/account.vue:221
+#: src/model/cluster-node.js:42 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:547 src/component/photo/edit/details.vue:448
+#: src/common/util.js:593 src/component/photo/edit/details.vue:448
 #: src/component/photo/edit/details.vue:47
 #: src/component/photo/edit/details.vue:69
 #: src/component/photo/edit/details.vue:90 src/component/sidebar/info.vue:105
@@ -3725,12 +3700,12 @@ msgid "Unknown"
 msgstr "未知"
 
 #: src/component/navigation.vue:532 src/page/settings/account.vue:467
-#: src/page/settings/account.vue:475 src/component/navigation.vue:865
+#: src/page/settings/account.vue:475 src/component/navigation.vue:849
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
 msgid "Unregistered"
 msgstr "未注册的"
 
-#: src/app/routes.js:244 src/component/navigation.vue:206
+#: src/app/routes.js:237 src/component/navigation.vue:206
 msgid "Unsorted"
 msgstr "未分类"
 
@@ -3773,11 +3748,11 @@ msgid "Updating stacks"
 msgstr "更新堆"
 
 #: src/component/navigation.vue:306 src/page/connect.vue:20
-#: src/component/navigation.vue:416 src/component/navigation.vue:417
-#: src/component/navigation.vue:429 src/component/navigation.vue:438
-#: src/component/navigation.vue:551 src/component/navigation.vue:559
-#: src/component/navigation.vue:575 src/component/navigation.vue:583
-#: src/component/navigation.vue:611 src/component/navigation.vue:769
+#: src/component/navigation.vue:410 src/component/navigation.vue:411
+#: src/component/navigation.vue:423 src/component/navigation.vue:432
+#: src/component/navigation.vue:545 src/component/navigation.vue:553
+#: src/component/navigation.vue:561 src/component/navigation.vue:569
+#: src/component/navigation.vue:597 src/component/navigation.vue:755
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "升级"
@@ -3790,21 +3765,23 @@ msgstr "升级"
 msgid "Upgrade Now"
 msgstr "立即升级"
 
-#: src/component/album/toolbar.vue:176 src/component/navigation.vue:706
+#: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:124
+#: src/component/upload/dialog.vue:191 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "上传"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "上传完成，索引中…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:466
 msgid "Upload failed"
 msgstr "上传失败"
 
@@ -3819,12 +3796,12 @@ msgstr "上传本地文件"
 msgid "Upload Path"
 msgstr "上传路径"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "上传 %{n} / %{t} …"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:275 src/component/upload/dialog.vue:283
+#: src/component/upload/dialog.vue:418
 msgid "Uploading photos…"
 msgstr "上传照片…"
 
@@ -3832,7 +3809,7 @@ msgstr "上传照片…"
 msgid "Uploading…"
 msgstr "上传中…"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:110
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "可能包含此类图像的上传将被自动拒绝。"
 
@@ -3848,9 +3825,9 @@ msgstr "使用预设"
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
 msgstr "当您无法使用身份验证器应用生成有效的验证码时，请使用以下恢复代码访问您的帐户："
 
-#: src/page/auth/login.vue:132 src/page/auth/login.vue:153
-#: src/page/auth/login.vue:47 src/page/auth/login.vue:48
-#: src/page/auth/login.vue:62
+#: src/page/auth/login.vue:142 src/page/auth/login.vue:163
+#: src/page/auth/login.vue:50 src/page/auth/login.vue:51
+#: src/page/auth/login.vue:65
 msgid "Use your recovery code or contact an administrator for help."
 msgstr "使用恢复密码或联系管理员寻求帮助。"
 
@@ -3862,7 +3839,7 @@ msgstr "使用恢复密码或联系管理员寻求帮助。"
 msgid "User"
 msgstr "用户"
 
-#: src/component/navigation.vue:762
+#: src/component/navigation.vue:748
 msgid "User Guide"
 msgstr "用户指南"
 
@@ -3925,7 +3902,7 @@ msgstr "视频"
 msgid "Video Duration"
 msgstr "视频时长"
 
-#: src/app/routes.js:272 src/component/navigation.vue:184
+#: src/app/routes.js:265 src/component/navigation.vue:184
 #: src/component/navigation.vue:185 src/component/navigation.vue:197
 #: src/component/navigation.vue:206 src/component/navigation.vue:234
 #: src/options/options.js:259
@@ -3945,7 +3922,7 @@ msgstr "以列表形式查看搜索结果。"
 msgid "Viewer"
 msgstr "浏览者"
 
-#: src/common/util.js:811
+#: src/common/util.js:857
 msgid "Vision"
 msgstr "愿景"
 
@@ -3962,14 +3939,6 @@ msgstr "视觉相似性"
 msgid "Warning"
 msgstr "警告"
 
-#: src/page/about/feedback.vue:18 src/page/about/feedback.vue:14
-msgid "We appreciate your feedback!"
-msgstr "感谢您的反馈！"
-
-#: src/page/about/feedback.vue:26 src/page/about/feedback.vue:18
-msgid "We do our best to respond within five business days or less."
-msgstr "我们尽力在五个工作日或更短时间内作出回应。"
-
 #: src/component/user/add/dialog.vue:136 src/component/user/edit/dialog.vue:266
 #: src/page/admin/users.vue:184 src/component/user/add/dialog.vue:142
 #: src/component/user/edit/dialog.vue:281 src/page/admin/users.vue:278
@@ -3979,9 +3948,8 @@ msgstr "网络登录"
 
 #: src/component/user/add/dialog.vue:145 src/component/user/edit/dialog.vue:276
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:151
-#: src/component/user/edit/dialog.vue:291 src/page/admin/users.vue:280
-#: src/page/admin/users.vue:278 src/options/auth.js:56 src/options/auth.js:69
-#: src/options/options.js:505
+#: src/component/user/edit/dialog.vue:291 src/page/admin/users.vue:278
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4069,7 +4037,7 @@ msgstr "你只能下载一个标签"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "您可以搜索位置或移动地图上的标记来更改位置："
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:105
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "您最多可以上传 %{n} 个文件用于测试。"
 
@@ -4116,7 +4084,7 @@ msgctxt "Edit"
 msgid "Content"
 msgstr "内容"
 
-#: src/app/routes.js:317 src/component/navigation.vue:127
+#: src/app/routes.js:310 src/component/navigation.vue:127
 #: src/component/navigation.vue:128 src/component/navigation.vue:140
 #: src/component/navigation.vue:149 src/component/navigation.vue:157
 #: src/component/navigation.vue:177 src/page/settings/general.vue:260
@@ -4136,6 +4104,33 @@ msgstr "标题"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "归档"
+
+#~ msgid "All fields are required"
+#~ msgstr "所有字段均为必填项"
+
+#~ msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+#~ msgstr "由于我们收到大量的电子邮件，我们的团队可能无法立即回复你。"
+
+#~ msgid "E-Mail"
+#~ msgstr "电子邮件"
+
+#~ msgid "Feedback"
+#~ msgstr "反馈"
+
+#~ msgid "How can we help?"
+#~ msgstr "我们可以帮您吗？"
+
+#~ msgid "Message sent"
+#~ msgstr "消息已发送"
+
+#~ msgid "Submit"
+#~ msgstr "提交"
+
+#~ msgid "We appreciate your feedback!"
+#~ msgstr "感谢您的反馈！"
+
+#~ msgid "We do our best to respond within five business days or less."
+#~ msgstr "我们尽力在五个工作日或更短时间内作出回应。"
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "从网页上传文件到库。"

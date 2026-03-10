@@ -377,7 +377,7 @@ func (c *Config) Propagate() {
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
 	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
-	thumb.ExamplesPath = c.ExamplesPath()
+	thumb.SamplesPath = c.SamplesPath()
 	thumb.IccProfilesPath = c.IccProfilesPath()
 	initThumbs()
 

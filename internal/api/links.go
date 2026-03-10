@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -28,7 +29,14 @@ func UpdateLink(c *gin.Context) {
 	var frm form.Link
 
 	// Assign and validate request form values.
+	LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 	if err := c.BindJSON(&frm); err != nil {
+		if IsRequestBodyTooLarge(err) {
+			AbortRequestTooLarge(c, i18n.ErrBadRequest)
+			return
+		}
+
 		AbortBadRequest(c, err)
 		return
 	}
@@ -107,7 +115,14 @@ func CreateLink(c *gin.Context) {
 
 	var frm form.Link
 
+	LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 	if err := c.BindJSON(&frm); err != nil {
+		if IsRequestBodyTooLarge(err) {
+			AbortRequestTooLarge(c, i18n.ErrBadRequest)
+			return
+		}
+
 		AbortBadRequest(c, err)
 		return
 	}

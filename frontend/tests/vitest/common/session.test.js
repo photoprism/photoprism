@@ -9,6 +9,7 @@ const createConfig = (baseUri, storageNamespace) => {
   const config = Object.assign(Object.create(Object.getPrototypeOf($config)), $config);
   config.baseUri = baseUri;
   config.storageNamespace = storageNamespace;
+  config.values = { ...config.values, storageNamespace };
   config.progress = () => {};
   return config;
 };
@@ -16,6 +17,8 @@ const createConfig = (baseUri, storageNamespace) => {
 describe("common/session", () => {
   beforeEach(() => {
     window.onbeforeunload = () => "Oh no!";
+    window.localStorage.clear();
+    window.sessionStorage.clear();
   });
 
   it("should construct session", () => {
@@ -316,6 +319,175 @@ describe("common/session", () => {
     session.useLocalStorage();
     expect(storage.getItem("session")).toBe("false");
     session.deleteData();
+  });
+
+  it("should restore session data from namespaced session storage when preferred", () => {
+    const namespaceKey = "ns-session-pref";
+    const namespaced = buildNamespace(namespaceKey);
+    const token = "999900000000000000000000000000000000000000000000";
+    const sessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem(namespaced + "session", "true");
+    window.sessionStorage.setItem(namespaced + "session.token", token);
+    window.sessionStorage.setItem(namespaced + "session.id", sessionID);
+    window.sessionStorage.setItem(namespaced + "session.provider", "public");
+    window.sessionStorage.setItem(namespaced + "session.user", JSON.stringify({ ID: 5, Name: "foo", DisplayName: "Foo" }));
+
+    const storage = createNamespacedStorage(window.localStorage, namespaceKey);
+    const session = new Session(storage, createConfig("/library", namespaceKey));
+
+    expect(session.getAuthToken()).toBe(token);
+    expect(session.getId()).toBe(sessionID);
+    expect(session.getProvider()).toBe("public");
+    expect(session.getUser().DisplayName).toBe("Foo");
+  });
+
+  it("should restore preferred session storage using the client config storageNamespace value", () => {
+    const namespaceKey = "ns-session-config-values";
+    const namespaced = buildNamespace(namespaceKey);
+    const token = "999900000000000000000000000000000000000000000000";
+    const sessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem(namespaced + "session", "true");
+    window.sessionStorage.setItem(namespaced + "session.token", token);
+    window.sessionStorage.setItem(namespaced + "session.id", sessionID);
+    window.sessionStorage.setItem(namespaced + "session.provider", "public");
+    window.sessionStorage.setItem(namespaced + "session.user", JSON.stringify({ ID: 5, Name: "foo", DisplayName: "Foo" }));
+
+    const config = createConfig("/library", namespaceKey);
+    delete config.storageNamespace;
+
+    const storage = createNamespacedStorage(window.localStorage, namespaceKey);
+    const session = new Session(storage, config);
+
+    expect(session.getAuthToken()).toBe(token);
+    expect(session.getId()).toBe(sessionID);
+    expect(session.getProvider()).toBe("public");
+    expect(session.getUser().DisplayName).toBe("Foo");
+  });
+
+  it("should clear only the current namespace from both storage backends on reset", () => {
+    const namespaceKey = "ns-reset-current";
+    const otherNamespaceKey = "ns-reset-other";
+    const namespace = buildNamespace(namespaceKey);
+    const otherNamespace = buildNamespace(otherNamespaceKey);
+    const sessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+    const token = "999900000000000000000000000000000000000000000000";
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+
+    window.localStorage.setItem(namespace + "session", "true");
+    window.localStorage.setItem(namespace + "session.token", token);
+    window.localStorage.setItem(namespace + "session.id", sessionID);
+    window.localStorage.setItem(namespace + "session.user", JSON.stringify({ ID: 5, Name: "foo", DisplayName: "Foo" }));
+    window.localStorage.setItem(otherNamespace + "session.token", "other-local-token");
+
+    window.sessionStorage.setItem(namespace + "session.token", token);
+    window.sessionStorage.setItem(namespace + "session.id", sessionID);
+    window.sessionStorage.setItem(namespace + "session.provider", "public");
+    window.sessionStorage.setItem(namespace + "clipboard.photos", '["p123"]');
+    window.sessionStorage.setItem(otherNamespace + "session.token", "other-session-token");
+
+    const storage = createNamespacedStorage(window.localStorage, namespaceKey);
+    const session = new Session(storage, createConfig("/library", namespaceKey));
+
+    session.reset();
+
+    expect(window.localStorage.getItem(namespace + "session")).toBe("true");
+    expect(window.localStorage.getItem(namespace + "session.token")).toBeNull();
+    expect(window.localStorage.getItem(namespace + "session.id")).toBeNull();
+    expect(window.localStorage.getItem(namespace + "session.user")).toBeNull();
+    expect(window.sessionStorage.getItem(namespace + "session.token")).toBeNull();
+    expect(window.sessionStorage.getItem(namespace + "session.id")).toBeNull();
+    expect(window.sessionStorage.getItem(namespace + "session.provider")).toBeNull();
+    expect(window.sessionStorage.getItem(namespace + "clipboard.photos")).toBeNull();
+
+    expect(window.localStorage.getItem(otherNamespace + "session.token")).toBe("other-local-token");
+    expect(window.sessionStorage.getItem(otherNamespace + "session.token")).toBe("other-session-token");
+  });
+
+  it("should remove legacy auth and payload keys from both storage backends on reset", () => {
+    const namespaceKey = "ns-reset-legacy";
+    const sessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+    const token = "999900000000000000000000000000000000000000000000";
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+
+    const storage = createNamespacedStorage(window.localStorage, namespaceKey);
+    const session = new Session(storage, createConfig("/library", namespaceKey));
+
+    session.setId(sessionID);
+    session.setAuthToken(token);
+    session.setProvider("public");
+    session.setScope("photos:view");
+
+    window.localStorage.setItem("session.token", token);
+    window.localStorage.setItem("authToken", token);
+    window.localStorage.setItem("session.id", sessionID);
+    window.localStorage.setItem("sessionId", sessionID);
+    window.localStorage.setItem("session_id", sessionID);
+    window.localStorage.setItem("provider", "public");
+    window.localStorage.setItem("session.provider", "public");
+    window.localStorage.setItem("session.scope", "photos:view");
+    window.localStorage.setItem("sessionData", '{"user":{"ID":5}}');
+    window.localStorage.setItem("session.data", '{"user":{"ID":5}}');
+    window.localStorage.setItem("user", '{"ID":5,"Name":"foo"}');
+    window.localStorage.setItem("session.user", '{"ID":5,"Name":"foo"}');
+
+    window.sessionStorage.setItem("session.token", "other-token");
+    window.sessionStorage.setItem("sessionId", "other-session-id");
+    window.sessionStorage.setItem("provider", "other-provider");
+    window.sessionStorage.setItem("session.scope", "other-scope");
+    window.sessionStorage.setItem("sessionData", '{"user":{"ID":9}}');
+    window.sessionStorage.setItem("session.data", '{"user":{"ID":9}}');
+    window.sessionStorage.setItem("user", '{"ID":9,"Name":"bar"}');
+    window.sessionStorage.setItem("session.user", '{"ID":9,"Name":"bar"}');
+
+    session.reset();
+
+    expect(window.localStorage.getItem("session.token")).toBeNull();
+    expect(window.localStorage.getItem("authToken")).toBeNull();
+    expect(window.localStorage.getItem("session.id")).toBeNull();
+    expect(window.localStorage.getItem("sessionId")).toBeNull();
+    expect(window.localStorage.getItem("session_id")).toBeNull();
+    expect(window.localStorage.getItem("provider")).toBeNull();
+    expect(window.localStorage.getItem("session.provider")).toBeNull();
+    expect(window.localStorage.getItem("session.scope")).toBeNull();
+    expect(window.localStorage.getItem("sessionData")).toBeNull();
+    expect(window.localStorage.getItem("session.data")).toBeNull();
+    expect(window.localStorage.getItem("user")).toBeNull();
+    expect(window.localStorage.getItem("session.user")).toBeNull();
+
+    expect(window.sessionStorage.getItem("session.token")).toBeNull();
+    expect(window.sessionStorage.getItem("sessionId")).toBeNull();
+    expect(window.sessionStorage.getItem("provider")).toBeNull();
+    expect(window.sessionStorage.getItem("session.scope")).toBeNull();
+    expect(window.sessionStorage.getItem("sessionData")).toBeNull();
+    expect(window.sessionStorage.getItem("session.data")).toBeNull();
+    expect(window.sessionStorage.getItem("user")).toBeNull();
+    expect(window.sessionStorage.getItem("session.user")).toBeNull();
+  });
+
+  it("should discard malformed stored json values", () => {
+    const rawStorage = new StorageShim();
+    const namespaceKey = "ns-bad-json";
+    const namespaced = buildNamespace(namespaceKey);
+    rawStorage.setItem(namespaced + "session.token", "999900000000000000000000000000000000000000000000");
+    rawStorage.setItem(namespaced + "session.id", "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+    rawStorage.setItem(namespaced + "session.user", "{bad json");
+
+    const storage = createNamespacedStorage(rawStorage, namespaceKey);
+    const session = new Session(storage, createConfig("/library", namespaceKey));
+
+    expect(session.getAuthToken()).toBe("999900000000000000000000000000000000000000000000");
+    expect(session.getUser().hasId()).toBe(false);
+    expect(rawStorage.getItem(namespaced + "session.user")).toBe(null);
   });
 
   it("should test redeem token", async () => {

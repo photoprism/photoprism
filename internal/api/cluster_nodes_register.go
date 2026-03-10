@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -78,7 +79,15 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		// Parse request.
 		var req cluster.RegisterRequest
 
+		LimitRequestBodyBytes(c, MaxClusterRegisterBytes)
+
 		if err := c.ShouldBindJSON(&req); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "request too large", status.Error(err)})
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid form", status.Error(err)})
 			AbortBadRequest(c)
 			return

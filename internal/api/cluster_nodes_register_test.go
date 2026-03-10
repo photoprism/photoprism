@@ -73,6 +73,16 @@ func TestClusterNodesRegister(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-01"}`)
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		body := `{"NodeName":"pp-node-big","Labels":{"env":"` + strings.Repeat("a", 300*1024) + `"}}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
+	})
 	t.Run("ClusterCIDRBlocksClientIPOutsideRange", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)
