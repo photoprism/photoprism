@@ -157,7 +157,7 @@ func TestSessionRefID(t *testing.T) {
 		assert.Equal(t, "unknown", SessionRefID(nil))
 	})
 	t.Run("UnknownWithoutSession", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("api", t.TempDir())
 		conf.Options().Public = false
 		get.SetConfig(conf)
 
@@ -171,7 +171,7 @@ func TestSessionRefID(t *testing.T) {
 		assert.Equal(t, "unknown", SessionRefID(c))
 	})
 	t.Run("PublicSession", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("api", t.TempDir())
 		conf.Options().Public = true
 		get.SetConfig(conf)
 

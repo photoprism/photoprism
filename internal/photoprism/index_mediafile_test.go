@@ -93,7 +93,7 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll(cfg)
-		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/beach_sand.jpg")
+		mediaFile, err := NewMediaFile(cfg.SamplesPath() + "/beach_sand.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -117,7 +117,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		assert.Contains(t, photo.Details.Keywords, "blue")
 		assert.Equal(t, IndexStatus("added"), result.Status)
 
-		mediaFile, err = NewMediaFile(cfg.ExamplesPath() + "/beach_sand.json")
+		mediaFile, err = NewMediaFile(cfg.SamplesPath() + "/beach_sand.json")
 		if err != nil {
 			t.Fatal(err)
 		}
