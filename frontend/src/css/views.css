@@ -18,8 +18,33 @@
 .cards-view .v-card,
 .mosaic-view,
 .mosaic-view a,
-.mosaic-view .v-card {
+.mosaic-view .v-card,
+.timeline-view,
+.timeline-view a,
+.timeline-view .v-card {
     user-select: none !important;
+}
+
+.timeline-group-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 16px 4px 4px;
+}
+
+.timeline-group-title {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.timeline-group-count {
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+.timeline-group-photos {
+    margin: 0;
 }
 
 /* Make thumbnails in batch edit dialog show pointer cursor */

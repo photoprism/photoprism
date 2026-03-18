@@ -64,7 +64,8 @@
         >
           <v-btn value="cards" icon="mdi-view-column" class="ps-1 action-view-cards" @click="setView('cards')"></v-btn>
           <v-btn v-if="listView" value="list" icon="mdi-view-list" class="action-view-list" @click="setView('list')"></v-btn>
-          <v-btn value="mosaic" icon="mdi-view-comfy" class="pe-1 action-view-mosaic" @click="setView('mosaic')"></v-btn>
+          <v-btn value="mosaic" icon="mdi-view-comfy" class="action-view-mosaic" @click="setView('mosaic')"></v-btn>
+          <v-btn value="timeline" icon="mdi-timeline-clock-outline" class="pe-1 action-view-timeline" @click="setView('timeline')"></v-btn>
         </v-btn-toggle>
 
         <v-btn
@@ -381,18 +382,17 @@ export default {
       return this.all.categories.concat(this.config.categories);
     },
     viewOptions() {
+      const views = [
+        { value: "mosaic", text: this.$gettext("Mosaic") },
+        { value: "cards", text: this.$gettext("Cards") },
+        { value: "timeline", text: this.$gettext("Timeline") },
+      ];
+
       if (this.$config.getSettings()?.search?.listView) {
-        return [
-          { value: "mosaic", text: this.$gettext("Mosaic") },
-          { value: "cards", text: this.$gettext("Cards") },
-          { value: "list", text: this.$gettext("List") },
-        ];
-      } else {
-        return [
-          { value: "mosaic", text: this.$gettext("Mosaic") },
-          { value: "cards", text: this.$gettext("Cards") },
-        ];
+        views.push({ value: "list", text: this.$gettext("List") });
       }
+
+      return views;
     },
     sortOptions() {
       switch (this.context) {
