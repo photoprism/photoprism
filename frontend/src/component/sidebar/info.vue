@@ -32,6 +32,24 @@
       ></v-textarea -->
         </v-list-item>
         <v-divider v-if="model.Title || model.Caption" class="my-4"></v-divider>
+        <v-list-item v-if="canRate" class="metadata__item metadata__rating px-1 py-2">
+          <div v-tooltip="$gettext('Rating')" class="d-flex align-center gap-1">
+            <v-icon icon="mdi-star-outline" size="18" class="text-secondary mr-1"></v-icon>
+            <v-btn
+              v-for="star in 5"
+              :key="star"
+              :icon="star <= model.Rating ? 'mdi-star' : 'mdi-star-outline'"
+              :color="star <= model.Rating ? 'warning' : 'secondary'"
+              density="compact"
+              size="small"
+              variant="text"
+              :title="star + ' ' + $gettext('Stars')"
+              :aria-label="star + ' ' + $gettext('Stars')"
+              class="pa-0"
+              @click.stop="setRating(star === model.Rating ? 0 : star)"
+            ></v-btn>
+          </div>
+        </v-list-item>
         <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
           <!-- template #append>
             <v-icon icon="mdi-pencil" size="20"></v-icon>
@@ -89,6 +107,7 @@ export default {
     return {
       actions: [],
       featPlaces: this.$config.feature("places"),
+      canRate: this.$config.allow("photos", "manage"),
     };
   },
   computed: {
@@ -99,6 +118,11 @@ export default {
   methods: {
     close() {
       this.$emit("close");
+    },
+    setRating(rating) {
+      if (this.model && this.model.setRating) {
+        this.model.setRating(rating);
+      }
     },
     formatTime(model) {
       if (!model || !model.TakenAtLocal) {

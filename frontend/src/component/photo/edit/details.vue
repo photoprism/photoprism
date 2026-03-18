@@ -382,6 +382,26 @@
             </v-col>
           </v-row>
         </div>
+        <v-row dense class="mt-2">
+          <v-col cols="12">
+            <div class="d-flex align-center">
+              <span class="text-caption text-secondary mr-3">{{ $gettext("Rating") }}</span>
+              <v-btn
+                v-for="star in 5"
+                :key="star"
+                :icon="star <= view.model.Rating ? 'mdi-star' : 'mdi-star-outline'"
+                :color="star <= view.model.Rating ? 'warning' : undefined"
+                :disabled="disabled"
+                density="compact"
+                variant="text"
+                size="small"
+                :title="star + ' ' + $gettext('Stars')"
+                class="input-rating pa-0"
+                @click.stop="setRating(star === view.model.Rating ? 0 : star)"
+              ></v-btn>
+            </div>
+          </v-col>
+        </v-row>
       </div>
       <div v-if="!disabled" class="form-actions form-actions--sticky">
         <div class="action-buttons">
@@ -617,6 +637,11 @@ export default {
     },
     openPhoto() {
       this.$lightbox.openModels(Thumb.fromPhotos([this.view.model]), 0);
+    },
+    setRating(rating) {
+      if (this.view.model && this.view.model.setRating) {
+        this.view.model.setRating(rating);
+      }
     },
     save(close) {
       if (this.invalidDate) {

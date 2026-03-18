@@ -82,6 +82,7 @@ type Photo struct {
 	PhotoFNumber     float32       `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
 	PhotoFocalLength int           `json:"FocalLength" yaml:"FocalLength,omitempty"`
 	PhotoQuality     int           `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
+	PhotoRating      int           `gorm:"type:TINYINT;default:0" json:"Rating" yaml:"Rating,omitempty"`
 	PhotoFaces       int           `json:"Faces,omitempty" yaml:"Faces,omitempty"`
 	PhotoResolution  int           `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"Duration,omitempty"`
@@ -1228,6 +1229,19 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	}
 
 	return nil
+}
+
+// SetRating updates the user star rating (0-5) of a photo.
+func (m *Photo) SetRating(rating int) error {
+	if rating < 0 {
+		rating = 0
+	} else if rating > 5 {
+		rating = 5
+	}
+
+	m.PhotoRating = rating
+
+	return m.Updates(Values{"photo_rating": m.PhotoRating})
 }
 
 // SetStack updates the stack flag of a photo.

@@ -45,6 +45,7 @@ type Photo struct {
 	PhotoExposure    string        `json:"Exposure" select:"photos.photo_exposure"`
 	PhotoFaces       int           `json:"Faces,omitempty" select:"photos.photo_faces"`
 	PhotoQuality     int           `json:"Quality" select:"photos.photo_quality"`
+	PhotoRating      int           `json:"Rating" select:"photos.photo_rating"`
 	PhotoResolution  int           `json:"Resolution" select:"photos.photo_resolution"`
 	PhotoDuration    time.Duration `json:"Duration,omitempty" select:"photos.photo_duration"`
 	PhotoColor       int16         `json:"Color" select:"photos.photo_color"`

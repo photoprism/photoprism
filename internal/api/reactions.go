@@ -12,6 +12,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/react"
 )
 
+// ratingRequest is used to parse the rating value from a JSON request body.
+type ratingRequest struct {
+	Rating int `json:"Rating"`
+}
+
 // LikePhoto flags a photo as favorite.
 //
 //	@Summary	flags a photo as favorite
@@ -103,6 +108,54 @@ func DislikePhoto(router *gin.RouterGroup) {
 			SaveSidecarYaml(&m)
 			PublishPhotoEvent(StatusUpdated, id, c)
 		}
+
+		c.JSON(http.StatusOK, gin.H{"photo": m})
+	})
+}
+
+// RatePhoto sets the star rating (0-5) for a photo.
+//
+//	@Summary	sets the star rating (0-5) for a photo
+//	@Id			RatePhoto
+//	@Tags		Photos
+//	@Accept		json
+//	@Produce	json
+//	@Success	200					{object}	gin.H
+//	@Failure	400,401,403,404,500	{object}	i18n.Response
+//	@Param		uid					path		string			true	"photo uid"
+//	@Param		rating				body		ratingRequest	true	"star rating 0-5"
+//	@Router		/api/v1/photos/{uid}/rating [post]
+func RatePhoto(router *gin.RouterGroup) {
+	router.POST("/photos/:uid/rating", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Abort(c) {
+			return
+		}
+
+		id := clean.UID(c.Param("uid"))
+		m, err := query.PhotoByUID(id)
+
+		if err != nil {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		var req ratingRequest
+
+		if err = c.BindJSON(&req); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
+		if err = m.SetRating(req.Rating); err != nil {
+			log.Errorf("photo: %s", err.Error())
+			AbortSaveFailed(c)
+			return
+		}
+
+		SaveSidecarYaml(&m)
+		PublishPhotoEvent(StatusUpdated, id, c)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})

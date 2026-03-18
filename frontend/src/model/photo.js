@@ -55,6 +55,7 @@ export class Photo extends RestModel {
       CaptionSrc: "",
       Resolution: 0,
       Quality: 0,
+      Rating: 0,
       Faces: 0,
       Lat: 0.0,
       Lng: 0.0,
@@ -1098,6 +1099,11 @@ export class Photo extends RestModel {
       elements.forEach((el) => el.classList.remove("is-favorite"));
       return $api.delete(this.getEntityResource() + "/like");
     }
+  }
+
+  setRating(rating) {
+    this.Rating = Math.min(5, Math.max(0, rating));
+    return $api.post(this.getEntityResource() + "/rating", { Rating: this.Rating });
   }
 
   togglePrivate() {

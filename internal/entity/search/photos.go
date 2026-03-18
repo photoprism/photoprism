@@ -475,6 +475,10 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		} else if frm.Quality != 0 && frm.Private == false {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
+
+		if frm.Rating > 0 {
+			s = s.Where("photos.photo_rating >= ?", frm.Rating)
+		}
 	}
 
 	// Filter private pictures.
