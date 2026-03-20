@@ -123,6 +123,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.RemovePhotoLabel(APIv1)
 	api.UpdatePhotoLabel(APIv1)
 	api.GetMomentsTime(APIv1)
+	api.GetMemoriesOnThisDay(APIv1)
 	api.GetFile(APIv1)
 	api.DeleteFile(APIv1)
 	api.ChangeFileOrientation(APIv1)
