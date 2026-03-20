@@ -77,5 +77,10 @@ func (data *Data) XMP(fileName string) (err error) {
 
 	data.Favorite = doc.Favorite()
 
+	// Import MWG-RS face region metadata (e.g. from Adobe Lightroom/Photoshop).
+	if regions := doc.FaceRegions(); len(regions) > 0 {
+		data.FaceRegions = regions
+	}
+
 	return nil
 }

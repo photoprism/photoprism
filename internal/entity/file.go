@@ -16,6 +16,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -809,6 +810,37 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 	// Append marker if it doesn't conflict with existing marker.
 	if markers := m.Markers(); !markers.Contains(*marker) {
 		markers.AppendWithEmbedding(*marker)
+	}
+}
+
+// AddXmpFaceRegions adds face markers from XMP MWG-RS region metadata to the file.
+// Each region in the slice should have normalized [0,1] top-left coordinates and
+// an optional Name field with the person's name.
+func (m *File) AddXmpFaceRegions(regions crop.Areas) {
+	markers := m.Markers()
+
+	for _, region := range regions {
+		if region.Empty() {
+			continue
+		}
+
+		// Create a face marker from the XMP region (size=0 = unknown pixel size, score=100 = user-tagged).
+		marker := NewMarker(*m, region, "", SrcXmp, MarkerFace, 0, 100)
+
+		if marker == nil {
+			continue
+		}
+
+		// Set the person name from the XMP region metadata.
+		if region.Name != "" {
+			marker.MarkerName = clean.Name(region.Name)
+			marker.SubjSrc = SrcXmp
+		}
+
+		// Only append if a marker at this location doesn't already exist.
+		if !markers.Contains(*marker) {
+			markers.Append(*marker)
+		}
 	}
 }
 

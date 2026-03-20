@@ -3,9 +3,11 @@ package meta
 import (
 	"encoding/xml"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -197,6 +199,27 @@ type XmpDocument struct {
 					Li   string `xml:"li"` // Gopher
 				} `xml:"Bag" json:"bag"`
 			} `xml:"PersonInImage" json:"personinimage"`
+			// Regions holds MWG-RS (Metadata Working Group Regions) face region data.
+			// See https://www.metadataworkinggroup.com/specs/metadata_library.html
+			Regions struct {
+				RegionList struct {
+					Bag struct {
+						Li []struct {
+							// Area defines the face bounding box using normalized stArea coordinates.
+							// Per the MWG-RS spec, stArea:x and stArea:y are the CENTER of the region.
+							Area struct {
+								X    string `xml:"http://ns.adobe.com/xap/1.0/sType/Area# x,attr"`
+								Y    string `xml:"http://ns.adobe.com/xap/1.0/sType/Area# y,attr"`
+								W    string `xml:"http://ns.adobe.com/xap/1.0/sType/Area# w,attr"`
+								H    string `xml:"http://ns.adobe.com/xap/1.0/sType/Area# h,attr"`
+								Unit string `xml:"http://ns.adobe.com/xap/1.0/sType/Area# unit,attr"`
+							} `xml:"Area"`
+							Name string `xml:"Name"` // Person name, e.g. "John Doe"
+							Type string `xml:"Type"` // Region type, e.g. "Face"
+						} `xml:"li"`
+					} `xml:"Bag"`
+				} `xml:"RegionList"`
+			} `xml:"Regions" json:"regions,omitempty"`
 		} `xml:"Description" json:"description"`
 	} `xml:"RDF" json:"rdf"`
 }
@@ -289,4 +312,44 @@ func (doc *XmpDocument) Keywords() string {
 func (doc *XmpDocument) Favorite() bool {
 	fstop := doc.RDF.Description.FStopFavorite
 	return fstop == "1"
+}
+
+// FaceRegions returns face regions from the XMP document's MWG-RS Regions metadata.
+// Per the MWG-RS specification, stArea:x and stArea:y represent the CENTER of the face region.
+// These are converted to top-left corner coordinates as used by PhotoPrism's crop.Area.
+func (doc *XmpDocument) FaceRegions() crop.Areas {
+	var regions crop.Areas
+
+	for _, li := range doc.RDF.Description.Regions.RegionList.Bag.Li {
+		// Only import regions of type "Face", or those with no type set.
+		regionType := strings.TrimSpace(li.Type)
+		if regionType != "" && !strings.EqualFold(regionType, "Face") {
+			continue
+		}
+
+		// Parse the normalized stArea coordinates (center-based per MWG-RS spec).
+		cx, errX := strconv.ParseFloat(strings.TrimSpace(li.Area.X), 32)
+		cy, errY := strconv.ParseFloat(strings.TrimSpace(li.Area.Y), 32)
+		w, errW := strconv.ParseFloat(strings.TrimSpace(li.Area.W), 32)
+		h, errH := strconv.ParseFloat(strings.TrimSpace(li.Area.H), 32)
+
+		if errX != nil || errY != nil || errW != nil || errH != nil {
+			continue
+		}
+
+		if w <= 0 || h <= 0 {
+			continue
+		}
+
+		// Convert center coordinates to top-left corner coordinates.
+		left := float32(cx) - float32(w)/2
+		top := float32(cy) - float32(h)/2
+
+		name := SanitizeString(li.Name)
+
+		// crop.NewArea clips coordinates to [0, 1].
+		regions = append(regions, crop.NewArea(name, left, top, float32(w), float32(h)))
+	}
+
+	return regions
 }

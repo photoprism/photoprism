@@ -495,6 +495,20 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.Favorite {
 				_ = photo.SetFavorite(data.Favorite)
 			}
+
+			// Import face region markers from XMP MWG-RS metadata (e.g. Adobe Lightroom/Photoshop).
+			if len(data.FaceRegions) > 0 {
+				if primaryFile, primaryErr := entity.PrimaryFile(photo.PhotoUID); primaryErr == nil {
+					primaryFile.AddXmpFaceRegions(data.FaceRegions)
+					if _, saveErr := primaryFile.SaveMarkers(); saveErr != nil {
+						log.Errorf("index: %s while saving XMP face markers for %s", saveErr, logName)
+					} else {
+						log.Infof("index: imported %d XMP face region(s) for %s", len(data.FaceRegions), logName)
+					}
+				} else {
+					log.Debugf("index: no primary file found for XMP face regions in %s", logName)
+				}
+			}
 		} else {
 			log.Warn(dataErr.Error())
 			file.FileError = clip.Chars(dataErr.Error(), txt.ClipError)

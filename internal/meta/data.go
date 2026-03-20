@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -71,6 +72,7 @@ type Data struct {
 	Height           int           `meta:"ImageHeight,ImageLength,PixelYDimension,ExifImageHeight,SourceImageHeight"`
 	Orientation      int           `meta:"-"`
 	Rotation         int           `meta:"Rotation"`
+	FaceRegions      crop.Areas    `meta:"-"`
 	Views            int           `meta:"-"`
 	Albums           []string      `meta:"-"`
 	Warning          string        `meta:"Warning" report:"-"`

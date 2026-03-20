@@ -1,0 +1,47 @@
+<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.6-c148 79.164036, 2019/08/13-01:06:57">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+            xmlns:mwg-rs="http://www.metadataworkinggroup.com/schemas/regions/"
+            xmlns:stArea="http://ns.adobe.com/xap/1.0/sType/Area#"
+            xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#">
+         <xmp:CreateDate>2023-06-15T10:30:00</xmp:CreateDate>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">Family Photo</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <tiff:Make>Canon</tiff:Make>
+         <tiff:Model>Canon EOS 5D Mark IV</tiff:Model>
+         <tiff:ImageWidth>4000</tiff:ImageWidth>
+         <tiff:ImageLength>3000</tiff:ImageLength>
+         <!-- MWG-RS face regions: stArea:x and stArea:y are CENTER coordinates per MWG spec -->
+         <mwg-rs:Regions rdf:parseType="Resource">
+            <mwg-rs:AppliedToDimensions stDim:w="4000" stDim:h="3000" stDim:unit="pixel"/>
+            <mwg-rs:RegionList>
+               <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                     <mwg-rs:Area stArea:x="0.4" stArea:y="0.3" stArea:w="0.2" stArea:h="0.4" stArea:unit="normalized"/>
+                     <mwg-rs:Name>John Doe</mwg-rs:Name>
+                     <mwg-rs:Type>Face</mwg-rs:Type>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                     <mwg-rs:Area stArea:x="0.75" stArea:y="0.35" stArea:w="0.15" stArea:h="0.3" stArea:unit="normalized"/>
+                     <mwg-rs:Name>Jane Smith</mwg-rs:Name>
+                     <mwg-rs:Type>Face</mwg-rs:Type>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                     <mwg-rs:Area stArea:x="0.2" stArea:y="0.5" stArea:w="0.1" stArea:h="0.2" stArea:unit="normalized"/>
+                     <mwg-rs:Name></mwg-rs:Name>
+                     <mwg-rs:Type>Pet</mwg-rs:Type>
+                  </rdf:li>
+               </rdf:Bag>
+            </mwg-rs:RegionList>
+         </mwg-rs:Regions>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>
