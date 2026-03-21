@@ -270,6 +270,13 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 			if saveErr := m.SaveVision(); saveErr == nil {
 				updated++
 			}
+
+			// Save sidecar YAML backup if enabled.
+			if w.conf.SidecarYaml() {
+				if yamlErr := m.SaveSidecarYaml(w.conf.OriginalsPath(), w.conf.SidecarPath()); yamlErr != nil {
+					log.Errorf("vision: %s (save yaml sidecar)", yamlErr)
+				}
+			}
 		}
 
 		if mutex.VisionWorker.Canceled() {
