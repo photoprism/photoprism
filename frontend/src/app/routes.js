@@ -303,6 +303,22 @@ export default [
     },
   },
   {
+    name: "duplicates",
+    path: "/duplicates",
+    component: Photos,
+    meta: { title: $gettext("Duplicates"), requiresAuth: true },
+    props: { staticFilter: { duplicate: "true" } },
+    beforeEnter: (to, from, next) => {
+      if ($session.loginRequired()) {
+        next({ name: loginRoute });
+      } else if ($config.deny("photos", "delete")) {
+        next({ name: $session.getDefaultRoute() });
+      } else {
+        next();
+      }
+    },
+  },
+  {
     name: "archive",
     path: "/archive",
     component: Photos,

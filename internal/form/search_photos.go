@@ -28,6 +28,7 @@ type SearchPhotos struct {
 	Stack       bool      `form:"stack" notes:"Finds content with more than one media file"`
 	Unstacked   bool      `form:"unstacked" notes:"Finds content with a file that has been removed"`
 	Stackable   bool      `form:"stackable" notes:"Finds content that can be stacked with additional files"`
+	Duplicate   bool      `form:"duplicate" notes:"Finds content that has exact file duplicates"`
 	Photo       bool      `form:"photo" notes:"Finds regular photos and images, as well as RAW and Live Photos"`
 	Image       bool      `form:"image" notes:"Finds regular photos and images only"`
 	Raw         bool      `form:"raw" notes:"Finds RAW images only"`

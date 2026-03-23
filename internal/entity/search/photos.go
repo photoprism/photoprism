@@ -354,6 +354,12 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		case terms["favorites"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "favorites", "")
 			frm.Favorite = "true"
+		case terms["duplicates"]:
+			frm.Query = strings.ReplaceAll(frm.Query, "duplicates", "")
+			frm.Duplicate = true
+		case terms["duplicate"]:
+			frm.Query = strings.ReplaceAll(frm.Query, "duplicate", "")
+			frm.Duplicate = true
 		case terms["stacks"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "stacks", "")
 			frm.Stack = true
@@ -785,6 +791,11 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	// Find stacks only.
 	if frm.Stack {
 		s = s.Where("photos.id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
+	}
+
+	// Find photos that have exact file duplicates (tracked in the duplicates table).
+	if frm.Duplicate {
+		s = s.Where("files.file_hash IN (SELECT file_hash FROM duplicates WHERE file_hash <> '')")
 	}
 
 	// Find photos in albums or not in an album, unless search results are limited to a scope.

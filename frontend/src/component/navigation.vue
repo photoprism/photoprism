@@ -158,6 +158,12 @@
                   <span v-show="config.count.documents > 0" class="nav-count-item">{{ config.count.documents }}</span>
                 </v-list-item>
 
+                <v-list-item v-if="canManagePhotos" to="/duplicates" variant="text" class="nav-duplicates" @click.stop="">
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Duplicates`) }}
+                  </v-list-item-title>
+                </v-list-item>
+
                 <v-list-item v-if="canManagePhotos" v-show="$config.feature('review')" to="/review" variant="text" class="nav-review" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item`">
                     {{ $gettext(`Review`) }}
