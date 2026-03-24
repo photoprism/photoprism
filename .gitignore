@@ -61,6 +61,7 @@ frontend/coverage/
 /assets/nsfw/
 /assets/static/build/
 /assets/static/maps/
+/assets/static/pdfjs/
 /assets/*net
 /assets/vision/
 /specs/

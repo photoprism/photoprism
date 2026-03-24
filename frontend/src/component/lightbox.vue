@@ -608,6 +608,16 @@ export default {
         return video;
       }
 
+      // Handle PDF/document types: render inline in the browser rather than as a thumbnail image.
+      if (model?.Type === media.Document && model?.DownloadUrl) {
+        return {
+          type: "pdf",
+          model: model,
+          msrc: img.src,
+          downloadUrl: model.DownloadUrl,
+        };
+      }
+
       // Return the image data so that PhotoSwipe can render it in the lightbox,
       // see https://photoswipe.com/data-sources/#dynamically-generated-data.
       return img;
@@ -615,13 +625,46 @@ export default {
     isContentZoomable(isContentZoomable, content) {
       if (content.data?.model?.Type === media.Live) {
         isContentZoomable = true;
+      } else if (content.data?.model?.Type === media.Document) {
+        // PDF slides are not zoomable via PhotoSwipe; the browser's native PDF viewer handles zoom.
+        isContentZoomable = false;
       }
 
       return isContentZoomable;
     },
     onContentLoad(ev) {
       const { content } = ev;
-      if (content.data?.type === "html") {
+      if (content.data?.type === "pdf") {
+        // Prevent default loading behavior.
+        ev.preventDefault();
+
+        try {
+          // Load the PDF inside the full PDF.js viewer application (served from
+          // /static/pdfjs/, downloaded via scripts/download-pdfjs.sh / make dep-pdfjs).
+          // The viewer provides its own toolbar with zoom, page navigation, and thumbnails.
+          const iframe = document.createElement("iframe");
+          iframe.setAttribute("class", "pswp__media pswp__media--document");
+          iframe.setAttribute("title", content.data.model?.Title || "PDF");
+          iframe.setAttribute("allowfullscreen", "");
+          const pdfUrl = content.data.downloadUrl.includes("?") ? `${content.data.downloadUrl}&view=1` : `${content.data.downloadUrl}?view=1`;
+          iframe.src = `/static/pdfjs/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+
+          content.element = iframe;
+          content.state = "loading";
+          content.data.loading = true;
+
+          iframe.addEventListener(
+            "load",
+            () => {
+              content.data.loading = false;
+              content.onLoaded();
+            },
+            { once: true }
+          );
+        } catch (err) {
+          this.log("failed to load PDF viewer", err);
+        }
+      } else if (content.data?.type === "html") {
         // Prevent default loading behavior.
         ev.preventDefault();
 
@@ -667,6 +710,12 @@ export default {
         // Remove video event listeners.
         data.events?.abort();
         data.events = null;
+      }
+
+      // Cancel any in-progress PDF.js loading task.
+      if (ev?.content?.data?.pdfTask) {
+        ev.content.data.pdfTask.destroy().catch(() => {});
+        ev.content.data.pdfTask = null;
       }
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
