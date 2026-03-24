@@ -255,6 +255,19 @@
     visibility: visible;
 }
 
+/* PDF.js viewer iframe — starts below the PhotoSwipe toolbar. */
+.pswp__media.pswp__media--document {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    width: 100vw;
+    height: calc(100vh - 60px);
+    max-width: none;
+    max-height: none;
+    border: none;
+    display: block;
+}
+
 .pswp__img {
     -webkit-touch-callout: default;
 }

@@ -9,6 +9,21 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
+// documentFileHash returns the file hash of the original document file (e.g.
+// PDF) for the given photo UID, or an empty string if none is found. It is used
+// so that the viewer download URL points to the real document rather than the
+// JPEG sidecar that is stored as the primary file for thumbnail generation.
+func documentFileHash(photoUID string) string {
+	var f entity.File
+	if err := entity.UnscopedDb().
+		Select("file_hash").
+		Where("photo_uid = ? AND media_type = ? AND file_missing = 0 AND file_error = ''", photoUID, entity.MediaDocument).
+		First(&f).Error; err != nil {
+		return ""
+	}
+	return f.FileHash
+}
+
 // PhotosViewerResults searches public photos using the provided form and returns
 // them in the lightweight viewer format that powers the slideshow endpoints.
 func PhotosViewerResults(frm form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
@@ -31,6 +46,17 @@ func UserPhotosViewerResults(frm form.SearchPhotos, sess *entity.Session, conten
 // URLs.
 func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
 	mediaHash, mediaCodec, mediaMime, width, height := m.MediaInfo()
+
+	// The viewer query selects the primary JPEG file (used for thumbnails) so
+	// m.FileHash is the sidecar image hash. For document types the download URL
+	// must point to the original document file (e.g. PDF), not the sidecar.
+	downloadHash := m.FileHash
+	if m.PhotoType == entity.MediaDocument {
+		if h := documentFileHash(m.PhotoUID); h != "" {
+			downloadHash = h
+		}
+	}
+
 	return viewer.Result{
 		UID:          m.PhotoUID,
 		Type:         m.PhotoType,
@@ -49,7 +75,7 @@ func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken str
 		Codec:        mediaCodec,
 		Mime:         mediaMime,
 		Thumbs:       thumb.ViewerThumbs(m.FileWidth, m.FileHeight, m.FileHash, contentUri, previewToken),
-		DownloadUrl:  viewer.DownloadUrl(m.FileHash, apiUri, downloadToken),
+		DownloadUrl:  viewer.DownloadUrl(downloadHash, apiUri, downloadToken),
 	}
 }
 
@@ -72,6 +98,12 @@ func (m PhotoResults) ViewerResults(contentUri, apiUri, previewToken, downloadTo
 // ViewerResult converts a geographic search hit into the viewer DTO, reusing
 // the thumbnail and download helpers so photos and map results stay aligned.
 func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
+	downloadHash := m.FileHash
+	if m.PhotoType == entity.MediaDocument {
+		if h := documentFileHash(m.PhotoUID); h != "" {
+			downloadHash = h
+		}
+	}
 	return viewer.Result{
 		UID:          m.PhotoUID,
 		Type:         m.PhotoType,
@@ -90,7 +122,7 @@ func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken 
 		Codec:        m.FileCodec,
 		Mime:         m.FileMime,
 		Thumbs:       thumb.ViewerThumbs(m.FileWidth, m.FileHeight, m.FileHash, contentUri, previewToken),
-		DownloadUrl:  viewer.DownloadUrl(m.FileHash, apiUri, downloadToken),
+		DownloadUrl:  viewer.DownloadUrl(downloadHash, apiUri, downloadToken),
 	}
 }
 
