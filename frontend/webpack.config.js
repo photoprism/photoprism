@@ -292,6 +292,19 @@ const config = {
   },
 };
 
+// Copy the PDF.js worker script so it can be loaded as a separate URL at runtime.
+// The worker file path is set in the lightbox PDF renderer via GlobalWorkerOptions.workerSrc.
+config.plugins.push(
+  new (require("copy-webpack-plugin"))({
+    patterns: [
+      {
+        from: require.resolve("pdfjs-dist/build/pdf.worker.mjs"),
+        to: path.join(PATHS.build, "pdf.worker.mjs"),
+      },
+    ],
+  })
+);
+
 // Don't create sourcemap for production builds.
 if (isDev) {
   const devToolPlugin = new webpack.SourceMapDevToolPlugin({

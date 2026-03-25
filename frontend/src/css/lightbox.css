@@ -255,7 +255,8 @@
     visibility: visible;
 }
 
-/* PDF.js viewer iframe — inset from the PhotoSwipe toolbar and navigation arrows. */
+/* PDF canvas viewer — scrollable column of rendered pages, inset from the
+   PhotoSwipe toolbar (60px) and navigation arrows (min(150px, 16vw)). */
 .pswp__media.pswp__media--document {
     position: fixed;
     left: min(150px, 16vw);
@@ -266,7 +267,30 @@
     max-width: none;
     max-height: none;
     border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    gap: 12px;
+    padding: 16px 0 32px;
+    box-sizing: border-box;
+    background: transparent;
+    outline: none;
+    /* Ensure the browser handles scroll gestures here, not PhotoSwipe. */
+    touch-action: pan-y;
+    pointer-events: auto;
+    overscroll-behavior: contain;
+}
+
+/* Each rendered PDF page canvas. */
+.pswp__media.pswp__media--document .pswp__pdf-page {
     display: block;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    max-width: 100%;
+    flex-shrink: 0;
+    background: #fff;
 }
 
 .pswp__img {
