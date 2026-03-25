@@ -658,6 +658,41 @@ export default {
             () => {
               content.data.loading = false;
               content.onLoaded();
+
+              // Forward keyboard shortcuts from the PDF viewer iframe to the lightbox.
+              // The iframe is same-origin, so we can attach a keydown listener directly
+              // to its contentWindow without needing postMessage.
+              try {
+                const onPdfKeyDown = (ev) => {
+                  if (!ev || !ev.code) return;
+                  switch (ev.code) {
+                    case "Escape":
+                      ev.preventDefault();
+                      this.close();
+                      break;
+                    case "ArrowLeft":
+                      ev.preventDefault();
+                      this.pauseSlideshow();
+                      if (this.index > 0) {
+                        this.pswp()?.prev();
+                      }
+                      break;
+                    case "ArrowRight":
+                      ev.preventDefault();
+                      this.pauseSlideshow();
+                      if (this.models.length > this.index + 1) {
+                        this.pswp()?.next();
+                      }
+                      break;
+                  }
+                };
+                content.data.pdfKeyListener = onPdfKeyDown;
+                iframe.contentWindow.addEventListener("keydown", onPdfKeyDown);
+              } catch (err) {
+                if (this.debug) {
+                  this.log("failed to attach PDF keyboard listener", err);
+                }
+              }
             },
             { once: true }
           );
@@ -716,6 +751,16 @@ export default {
       if (ev?.content?.data?.pdfTask) {
         ev.content.data.pdfTask.destroy().catch(() => {});
         ev.content.data.pdfTask = null;
+      }
+
+      // Remove the keydown listener forwarded from the PDF viewer iframe, if any.
+      if (ev?.content?.data?.pdfKeyListener && ev?.content?.element instanceof HTMLIFrameElement) {
+        try {
+          ev.content.element.contentWindow?.removeEventListener("keydown", ev.content.data.pdfKeyListener);
+        } catch (err) {
+          // Ignore — the iframe contentWindow may already be gone.
+        }
+        ev.content.data.pdfKeyListener = null;
       }
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
