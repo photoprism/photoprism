@@ -65,7 +65,7 @@ endif
 
 # Declare "make" targets.
 all: dep build-js
-dep: dep-tensorflow dep-onnx dep-js dep-pdfjs
+dep: dep-tensorflow dep-onnx dep-js
 biuld: build
 build: build-go
 watch: watch-js
@@ -344,8 +344,6 @@ dep-tensorflow:
 	scripts/download-nsfw.sh
 dep-onnx:
 	scripts/download-scrfd.sh
-dep-pdfjs:
-	scripts/download-pdfjs.sh
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)

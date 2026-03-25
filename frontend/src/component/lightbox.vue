@@ -98,6 +98,12 @@ import $fullscreen from "common/fullscreen";
 import Thumb from "model/thumb";
 import Collection from "model/collection";
 import { Photo } from "model/photo";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Point the PDF.js worker at the copy emitted by CopyWebpackPlugin into the
+// static build output directory (assets/static/build/pdf.worker.mjs).
+// We use an absolute path rooted at the origin to avoid any publicPath ambiguity.
+pdfjsLib.GlobalWorkerOptions.workerSrc = "/static/build/pdf.worker.mjs";
 import { Album } from "model/album";
 import * as media from "common/media";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
@@ -639,65 +645,80 @@ export default {
         ev.preventDefault();
 
         try {
-          // Load the PDF inside the full PDF.js viewer application (served from
-          // /static/pdfjs/, downloaded via scripts/download-pdfjs.sh / make dep-pdfjs).
-          // The viewer provides its own toolbar with zoom, page navigation, and thumbnails.
-          const iframe = document.createElement("iframe");
-          iframe.setAttribute("class", "pswp__media pswp__media--document");
-          iframe.setAttribute("title", content.data.model?.Title || "PDF");
-          iframe.setAttribute("allowfullscreen", "");
-          const pdfUrl = content.data.downloadUrl.includes("?") ? `${content.data.downloadUrl}&view=1` : `${content.data.downloadUrl}?view=1`;
-          iframe.src = `/static/pdfjs/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+          // Create a scrollable container that will hold one <canvas> per PDF page.
+          const container = document.createElement("div");
+          container.setAttribute("class", "pswp__media pswp__media--document");
+          container.setAttribute("tabindex", "0");
+          container.setAttribute("role", "document");
+          container.setAttribute("aria-label", content.data.model?.Title || "PDF");
 
-          content.element = iframe;
+          content.element = container;
           content.state = "loading";
           content.data.loading = true;
 
-          iframe.addEventListener(
-            "load",
-            () => {
+          // Stop wheel and pointer events from bubbling up to PhotoSwipe so that
+          // the native overflow-y scroll works inside the container. Without this
+          // PhotoSwipe's pan/zoom gesture recognizer calls preventDefault() on
+          // pointermove/wheel and kills the browser's built-in scroll behaviour.
+          const scrollCtrl = new AbortController();
+          content.data.pdfScrollEvents = scrollCtrl;
+          const stopScroll = (e) => e.stopPropagation();
+          const scrollOpts = { signal: scrollCtrl.signal };
+          container.addEventListener("wheel", stopScroll, scrollOpts);
+          container.addEventListener("pointerdown", stopScroll, scrollOpts);
+          container.addEventListener("pointermove", stopScroll, scrollOpts);
+          container.addEventListener("pointerup", stopScroll, scrollOpts);
+          container.addEventListener("touchstart", stopScroll, scrollOpts);
+          container.addEventListener("touchmove", stopScroll, scrollOpts);
+
+          // Load and render all pages of the PDF using pdfjs-dist.
+          const pdfUrl = content.data.downloadUrl.includes("?") ? `${content.data.downloadUrl}&view=1` : `${content.data.downloadUrl}?view=1`;
+          const task = pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true });
+          content.data.pdfTask = task;
+
+          task.promise
+            .then(async (pdfDoc) => {
+              if (content.data.pdfTask !== task) return; // slide was destroyed before load finished
+
+              const numPages = pdfDoc.numPages;
+              const devicePixelRatio = window.devicePixelRatio || 1;
+              // Render pages sequentially so the first page appears immediately.
+              for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                if (content.data.pdfTask !== task) return;
+
+                const page = await pdfDoc.getPage(pageNum);
+                // Scale PDF to fill ~90% of the viewport width.
+                const viewportWidth = (window.innerWidth || 800) * 0.9;
+                const unscaled = page.getViewport({ scale: 1 });
+                const scale = (viewportWidth / unscaled.width) * devicePixelRatio;
+                const viewport = page.getViewport({ scale });
+
+                const canvas = document.createElement("canvas");
+                canvas.className = "pswp__pdf-page";
+                // Logical CSS size matches viewport units; physical canvas buffer uses device pixels.
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.style.width = `${viewport.width / devicePixelRatio}px`;
+                canvas.style.height = `${viewport.height / devicePixelRatio}px`;
+
+                container.appendChild(canvas);
+
+                const ctx = canvas.getContext("2d");
+                await page.render({ canvasContext: ctx, viewport }).promise;
+              }
+
               content.data.loading = false;
               content.onLoaded();
-
-              // Forward keyboard shortcuts from the PDF viewer iframe to the lightbox.
-              // The iframe is same-origin, so we can attach a keydown listener directly
-              // to its contentWindow without needing postMessage.
-              try {
-                const onPdfKeyDown = (ev) => {
-                  if (!ev || !ev.code) return;
-                  switch (ev.code) {
-                    case "Escape":
-                      ev.preventDefault();
-                      this.close();
-                      break;
-                    case "ArrowLeft":
-                      ev.preventDefault();
-                      this.pauseSlideshow();
-                      if (this.index > 0) {
-                        this.pswp()?.prev();
-                      }
-                      break;
-                    case "ArrowRight":
-                      ev.preventDefault();
-                      this.pauseSlideshow();
-                      if (this.models.length > this.index + 1) {
-                        this.pswp()?.next();
-                      }
-                      break;
-                  }
-                };
-                content.data.pdfKeyListener = onPdfKeyDown;
-                iframe.contentWindow.addEventListener("keydown", onPdfKeyDown);
-              } catch (err) {
-                if (this.debug) {
-                  this.log("failed to attach PDF keyboard listener", err);
-                }
+            })
+            .catch((err) => {
+              if (this.debug) {
+                this.log("failed to render PDF", err);
               }
-            },
-            { once: true }
-          );
+              content.data.loading = false;
+              content.onLoaded();
+            });
         } catch (err) {
-          this.log("failed to load PDF viewer", err);
+          this.log("failed to load PDF", err);
         }
       } else if (content.data?.type === "html") {
         // Prevent default loading behavior.
@@ -753,14 +774,10 @@ export default {
         ev.content.data.pdfTask = null;
       }
 
-      // Remove the keydown listener forwarded from the PDF viewer iframe, if any.
-      if (ev?.content?.data?.pdfKeyListener && ev?.content?.element instanceof HTMLIFrameElement) {
-        try {
-          ev.content.element.contentWindow?.removeEventListener("keydown", ev.content.data.pdfKeyListener);
-        } catch (err) {
-          // Ignore — the iframe contentWindow may already be gone.
-        }
-        ev.content.data.pdfKeyListener = null;
+      // Remove the scroll-event-blocking listeners added for the PDF canvas container.
+      if (ev?.content?.data?.pdfScrollEvents) {
+        ev.content.data.pdfScrollEvents.abort();
+        ev.content.data.pdfScrollEvents = null;
       }
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.

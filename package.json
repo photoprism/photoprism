@@ -3,5 +3,8 @@
   "private": true,
   "workspaces": [
     "frontend"
-  ]
+  ],
+  "devDependencies": {
+    "copy-webpack-plugin": "^14.0.0"
+  }
 }
