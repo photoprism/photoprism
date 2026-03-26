@@ -289,7 +289,7 @@
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: auto;
     gap: 12px;
     padding: 16px 0 16px;
     box-sizing: border-box;
@@ -356,6 +356,15 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
+.pswp__media.pswp__media--document .pswp__pdf-hand-toggle {
+    position: absolute;
+    right: 6px;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-hand-toggle.is-active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 .pswp__media.pswp__media--document .pswp__pdf-thumbs-drawer {
     position: absolute;
     left: var(--pdf-side-inset);
@@ -388,6 +397,18 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.pswp__media.pswp__media--document.is-hand-mode .pswp__pdf-pages {
+    cursor: grab;
+}
+
+.pswp__media.pswp__media--document.is-hand-mode .pswp__pdf-pages.is-panning {
+    cursor: grabbing;
+}
+
+.pswp__media.pswp__media--document.is-hand-mode .pswp__pdf-pages .pdfViewer {
+    user-select: none;
 }
 
 .pswp__media.pswp__media--document .pswp__pdf-thumb {

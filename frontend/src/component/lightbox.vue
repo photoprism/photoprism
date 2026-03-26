@@ -722,12 +722,19 @@ export default {
           nextBtn.setAttribute("aria-label", this.$gettext("Next page"));
           nextBtn.innerHTML = '<i class="mdi mdi-chevron-down" aria-hidden="true"></i>';
 
+          const handBtn = document.createElement("button");
+          handBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-hand-toggle");
+          handBtn.setAttribute("type", "button");
+          handBtn.setAttribute("aria-label", this.$gettext("Toggle hand tool"));
+          handBtn.innerHTML = '<i class="mdi mdi-hand-back-right" aria-hidden="true"></i>';
+
           toolbarGroup.appendChild(prevBtn);
           toolbarGroup.appendChild(nextBtn);
           toolbarGroup.appendChild(counter);
           toolbarGroup.appendChild(zoomSelect);
           toolbar.appendChild(thumbToggleBtn);
           toolbar.appendChild(toolbarGroup);
+          toolbar.appendChild(handBtn);
 
           // Thumbnails drawer.
           const thumbsDrawer = document.createElement("div");
@@ -809,6 +816,8 @@ export default {
               content.data.pdfPagesReady = false;
               let thumbsOpen = false;
               const thumbItems = [];
+              let handMode = false;
+              let handDrag = null;
 
               // Update the counter label and button disabled states.
               const updateToolbar = (page) => {
@@ -847,6 +856,17 @@ export default {
                 });
               };
 
+              const setHandMode = (enabled) => {
+                handMode = enabled;
+                wrapper.classList.toggle("is-hand-mode", enabled);
+                handBtn.classList.toggle("is-active", enabled);
+
+                if (!enabled) {
+                  handDrag = null;
+                  scrollArea.classList.remove("is-panning");
+                }
+              };
+
               // Move to the given 1-based page index.
               const goToPage = (page) => {
                 if (!content.data.pdfPagesReady) {
@@ -880,6 +900,75 @@ export default {
                 },
                 scrollOpts
               );
+
+              handBtn.addEventListener(
+                "click",
+                (e) => {
+                  e.stopPropagation();
+                  setHandMode(!handMode);
+                },
+                scrollOpts
+              );
+
+              scrollArea.addEventListener(
+                "pointerdown",
+                (e) => {
+                  if (!handMode || e.button !== 0) {
+                    return;
+                  }
+
+                  handDrag = {
+                    pointerId: e.pointerId,
+                    x: e.clientX,
+                    y: e.clientY,
+                    left: scrollArea.scrollLeft,
+                    top: scrollArea.scrollTop,
+                  };
+
+                  if (scrollArea.setPointerCapture) {
+                    scrollArea.setPointerCapture(e.pointerId);
+                  }
+
+                  scrollArea.classList.add("is-panning");
+                  e.preventDefault();
+                  e.stopPropagation();
+                },
+                scrollOpts
+              );
+
+              scrollArea.addEventListener(
+                "pointermove",
+                (e) => {
+                  if (!handMode || !handDrag || handDrag.pointerId !== e.pointerId) {
+                    return;
+                  }
+
+                  const dx = e.clientX - handDrag.x;
+                  const dy = e.clientY - handDrag.y;
+                  scrollArea.scrollLeft = handDrag.left - dx;
+                  scrollArea.scrollTop = handDrag.top - dy;
+
+                  e.preventDefault();
+                  e.stopPropagation();
+                },
+                scrollOpts
+              );
+
+              const stopHandDrag = (e) => {
+                if (!handDrag || handDrag.pointerId !== e.pointerId) {
+                  return;
+                }
+
+                if (scrollArea.releasePointerCapture) {
+                  scrollArea.releasePointerCapture(e.pointerId);
+                }
+
+                handDrag = null;
+                scrollArea.classList.remove("is-panning");
+              };
+
+              scrollArea.addEventListener("pointerup", stopHandDrag, scrollOpts);
+              scrollArea.addEventListener("pointercancel", stopHandDrag, scrollOpts);
 
               prevBtn.addEventListener(
                 "click",
