@@ -678,7 +678,7 @@ export default {
           thumbToggleBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-thumbs-toggle");
           thumbToggleBtn.setAttribute("type", "button");
           thumbToggleBtn.setAttribute("aria-label", this.$gettext("Toggle thumbnails"));
-          thumbToggleBtn.innerHTML = '<i class="mdi mdi-view-grid" aria-hidden="true"></i>';
+          thumbToggleBtn.innerHTML = '<i class="mdi mdi-image-multiple" aria-hidden="true"></i>';
 
           const toolbarGroup = document.createElement("div");
           toolbarGroup.setAttribute("class", "pswp__pdf-toolbar-group");
