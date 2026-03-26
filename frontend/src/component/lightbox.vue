@@ -15,6 +15,7 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
     @keydown.space.exact="onKeyDown"
+    @keyup.space.exact="onSpaceKeyUp"
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
     @keydown.esc.exact.stop="close"
@@ -817,6 +818,7 @@ export default {
               let thumbsOpen = false;
               const thumbItems = [];
               let handMode = false;
+              let spacebarHandMode = false;
               let handDrag = null;
 
               // Update the counter label and button disabled states.
@@ -858,6 +860,7 @@ export default {
 
               const setHandMode = (enabled) => {
                 handMode = enabled;
+                content.data.handModeActive = enabled;
                 wrapper.classList.toggle("is-hand-mode", enabled);
                 handBtn.classList.toggle("is-active", enabled);
 
@@ -866,6 +869,8 @@ export default {
                   scrollArea.classList.remove("is-panning");
                 }
               };
+
+              content.data.setHandMode = setHandMode;
 
               // Move to the given 1-based page index.
               const goToPage = (page) => {
@@ -997,11 +1002,27 @@ export default {
                   e.preventDefault();
                   e.stopPropagation();
                   if (currentPage < numPages) goToPage(currentPage + 1);
+                } else if (e.key === " " && !handMode) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  spacebarHandMode = true;
+                  setHandMode(true);
+                }
+              };
+
+              const onPdfKeyUp = (e) => {
+                if (e.key === " " && spacebarHandMode) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  spacebarHandMode = false;
+                  setHandMode(false);
                 }
               };
 
               wrapper.addEventListener("keydown", onPdfKeyDown, scrollOpts);
               scrollArea.addEventListener("keydown", onPdfKeyDown, scrollOpts);
+              wrapper.addEventListener("keyup", onPdfKeyUp, scrollOpts);
+              scrollArea.addEventListener("keyup", onPdfKeyUp, scrollOpts);
 
               const onPageChanging = ({ pageNumber }) => {
                 updateToolbar(pageNumber);
@@ -2591,6 +2612,16 @@ export default {
           ev.preventDefault();
           ev.stopPropagation();
 
+          // When viewing a PDF, spacebar temporarily activates the hand/pan tool.
+          if (this.model?.Type === media.Document) {
+            const { data } = this.getContent();
+            if (data?.setHandMode && !data.handModeActive) {
+              data._spaceFromParent = true;
+              data.setHandMode(true);
+            }
+            break;
+          }
+
           // Get active video element, if any.
           const { video } = this.getContent();
 
@@ -2600,6 +2631,23 @@ export default {
             this.toggleControls();
           }
           break;
+      }
+    },
+    // Releases the temporary PDF hand tool activated via spacebar when focus was on the outer container.
+    onSpaceKeyUp(ev) {
+      if (!ev || !this.visible || !this.$view.isActive(this)) {
+        return;
+      }
+
+      if (this.model?.Type !== media.Document) {
+        return;
+      }
+
+      const { data } = this.getContent();
+
+      if (data?._spaceFromParent) {
+        data._spaceFromParent = false;
+        data.setHandMode?.(false);
       }
     },
     // Toggles video playback on the current video element, if any.
