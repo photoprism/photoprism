@@ -988,6 +988,21 @@ export default {
                 scrollOpts
               );
 
+              const onPdfKeyDown = (e) => {
+                if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (currentPage > 1) goToPage(currentPage - 1);
+                } else if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (currentPage < numPages) goToPage(currentPage + 1);
+                }
+              };
+
+              wrapper.addEventListener("keydown", onPdfKeyDown, scrollOpts);
+              scrollArea.addEventListener("keydown", onPdfKeyDown, scrollOpts);
+
               const onPageChanging = ({ pageNumber }) => {
                 updateToolbar(pageNumber);
               };
