@@ -99,6 +99,8 @@ import Thumb from "model/thumb";
 import Collection from "model/collection";
 import { Photo } from "model/photo";
 import * as pdfjsLib from "pdfjs-dist";
+import { EventBus, PDFLinkService, PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
+import "pdfjs-dist/web/pdf_viewer.css";
 
 // Point the PDF.js worker at the copy emitted by CopyWebpackPlugin into the
 // static build output directory (assets/static/build/pdf.worker.mjs).
@@ -662,6 +664,11 @@ export default {
           scrollArea.setAttribute("class", "pswp__pdf-pages");
           scrollArea.setAttribute("tabindex", "0");
 
+          // PDF.js viewer root element (required by PDFViewer).
+          const viewerEl = document.createElement("div");
+          viewerEl.setAttribute("class", "pdfViewer");
+          scrollArea.appendChild(viewerEl);
+
           // Page navigation toolbar.
           const toolbar = document.createElement("div");
           toolbar.setAttribute("class", "pswp__pdf-toolbar");
@@ -724,32 +731,60 @@ export default {
           const task = pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true });
           content.data.pdfTask = task;
 
+          const eventBus = new EventBus();
+          const linkService = new PDFLinkService({ eventBus });
+          const pdfViewer = new PDFViewer({
+            container: scrollArea,
+            viewer: viewerEl,
+            eventBus,
+            linkService,
+            textLayerMode: 0,
+            annotationMode: 0,
+            removePageBorders: true,
+          });
+
+          linkService.setViewer(pdfViewer);
+          content.data.pdfEventBus = eventBus;
+          content.data.pdfLinkService = linkService;
+          content.data.pdfViewer = pdfViewer;
+
           task.promise
             .then(async (pdfDoc) => {
               if (content.data.pdfTask !== task) return; // slide was destroyed before load finished
 
               const numPages = pdfDoc.numPages;
-              const devicePixelRatio = window.devicePixelRatio || 1;
-              const canvases = [];
               let currentPage = 1;
+              content.data.pdfPagesReady = false;
 
               // Update the counter label and button disabled states.
               const updateToolbar = (page) => {
                 currentPage = page;
                 counter.textContent = `${page} / ${numPages}`;
-                prevBtn.disabled = page <= 1;
-                nextBtn.disabled = page >= numPages;
+                prevBtn.disabled = !content.data.pdfPagesReady || page <= 1;
+                nextBtn.disabled = !content.data.pdfPagesReady || page >= numPages;
               };
 
-              // Scroll the given 1-based page index into view.
+              // Move to the given 1-based page index.
               const goToPage = (page) => {
-                const target = canvases[page - 1];
-                if (target) {
-                  // Update immediately so repeated clicks continue navigation
-                  // even while smooth scrolling is in progress.
-                  updateToolbar(page);
-                  target.scrollIntoView({ behavior: "auto", block: "start" });
+                if (!content.data.pdfPagesReady) {
+                  return;
                 }
+
+                const targetPage = Math.max(1, Math.min(page, numPages));
+
+                // Prefer the link service API, which drives internal page state.
+                linkService.goToPage(targetPage);
+
+                // Fallbacks for environments where goToPage does not scroll.
+                if (pdfViewer.currentPageNumber !== targetPage) {
+                  pdfViewer.currentPageNumber = targetPage;
+                }
+                pdfViewer.scrollPageIntoView({ pageNumber: targetPage });
+
+                const pageView = pdfViewer.getPageView(targetPage - 1);
+                pageView?.div?.scrollIntoView({ block: "start" });
+
+                updateToolbar(targetPage);
               };
 
               updateToolbar(1);
@@ -772,74 +807,25 @@ export default {
                 scrollOpts
               );
 
-              // Keep the page counter in sync with vertical scroll position.
-              const syncToolbarToScroll = () => {
-                if (!canvases.length) {
-                  return;
-                }
-
-                const scrollTop = scrollArea.scrollTop;
-
-                let visiblePage = 1;
-
-                for (let i = 0; i < canvases.length; i++) {
-                  // When the top of a page crosses into view, consider it active.
-                  if (canvases[i].offsetTop <= scrollTop + 8) {
-                    visiblePage = i + 1;
-                  } else {
-                    break;
-                  }
-                }
-
-                if (visiblePage !== currentPage) {
-                  updateToolbar(visiblePage);
-                }
+              const onPageChanging = ({ pageNumber }) => {
+                updateToolbar(pageNumber);
               };
 
-              let scrollTicking = false;
-              const onPdfScroll = () => {
-                if (scrollTicking) {
-                  return;
-                }
-
-                scrollTicking = true;
-                window.requestAnimationFrame(() => {
-                  scrollTicking = false;
-                  syncToolbarToScroll();
-                });
+              const onPagesInit = () => {
+                content.data.pdfPagesReady = true;
+                // Let PDF.js choose a stable mixed-orientation scale mode.
+                pdfViewer.currentScaleValue = "auto";
+                updateToolbar(pdfViewer.currentPageNumber || 1);
               };
 
-              scrollArea.addEventListener("scroll", onPdfScroll, { signal: scrollCtrl.signal, passive: true });
+              eventBus.on("pagechanging", onPageChanging);
+              eventBus.on("pagesinit", onPagesInit);
+              content.data.pdfEventHandlers = { onPageChanging, onPagesInit };
 
-              // Render pages sequentially so the first page appears immediately.
-              for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                if (content.data.pdfTask !== task) return;
-
-                const page = await pdfDoc.getPage(pageNum);
-                // Scale to the actual scroll-area width so CSS doesn't squeeze
-                // width independently of height (which can look distorted).
-                const availableWidth = Math.max(320, (scrollArea.clientWidth || window.innerWidth || 800) - 16);
-                const unscaled = page.getViewport({ scale: 1 });
-                const scale = (availableWidth / unscaled.width) * devicePixelRatio;
-                const viewport = page.getViewport({ scale });
-
-                const canvas = document.createElement("canvas");
-                canvas.className = "pswp__pdf-page";
-                canvas.dataset.page = String(pageNum);
-                // Physical canvas buffer uses device pixels; CSS size uses logical pixels.
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-                canvas.style.width = `${viewport.width / devicePixelRatio}px`;
-                canvas.style.height = `${viewport.height / devicePixelRatio}px`;
-
-                scrollArea.appendChild(canvas);
-                canvases.push(canvas);
-
-                const ctx = canvas.getContext("2d");
-                await page.render({ canvasContext: ctx, viewport }).promise;
-              }
-
-              syncToolbarToScroll();
+              // Set link service document before viewer document so page navigation
+              // APIs are fully wired when controls are used.
+              linkService.setDocument(pdfDoc, null);
+              pdfViewer.setDocument(pdfDoc);
 
               content.data.loading = false;
             })
@@ -904,6 +890,32 @@ export default {
       if (ev?.content?.data?.pdfTask) {
         ev.content.data.pdfTask.destroy().catch(() => {});
         ev.content.data.pdfTask = null;
+      }
+
+      if (ev?.content?.data?.pdfEventBus && ev?.content?.data?.pdfEventHandlers) {
+        const { onPageChanging, onPagesInit } = ev.content.data.pdfEventHandlers;
+        ev.content.data.pdfEventBus.off("pagechanging", onPageChanging);
+        ev.content.data.pdfEventBus.off("pagesinit", onPagesInit);
+        ev.content.data.pdfEventHandlers = null;
+      }
+
+      if (ev?.content?.data?.pdfViewer) {
+        ev.content.data.pdfViewer.setDocument(null);
+        ev.content.data.pdfViewer.cleanup();
+        ev.content.data.pdfViewer = null;
+      }
+
+      if (ev?.content?.data?.pdfLinkService) {
+        ev.content.data.pdfLinkService.setDocument(null, null);
+        ev.content.data.pdfLinkService = null;
+      }
+
+      if (ev?.content?.data?.pdfEventBus) {
+        ev.content.data.pdfEventBus = null;
+      }
+
+      if (ev?.content?.data) {
+        ev.content.data.pdfPagesReady = false;
       }
 
       // Remove the scroll-event-blocking listeners added for the PDF canvas container.

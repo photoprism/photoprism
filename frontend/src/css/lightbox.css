@@ -294,6 +294,18 @@
     overscroll-behavior: contain;
 }
 
+.pswp__media.pswp__media--document .pswp__pdf-pages .pdfViewer {
+    width: 100%;
+    position: relative;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-pages .pdfViewer .page {
+    margin: 0 auto 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    border: none;
+}
+
 /* Each rendered PDF page canvas. */
 .pswp__media.pswp__media--document .pswp__pdf-page {
     display: block;
