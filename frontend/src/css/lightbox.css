@@ -297,6 +297,10 @@
     overscroll-behavior: contain;
 }
 
+.pswp__media.pswp__media--document .pswp__pdf-pages {
+    transition: left 0.18s ease;
+}
+
 .pswp__media.pswp__media--document.is-thumbs-open .pswp__pdf-pages {
     left: calc(var(--pdf-side-inset) + var(--pdf-thumbs-width) + 8px);
 }
@@ -375,16 +379,12 @@
     border-right: 1px solid rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    transform: translateX(-108%);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.18s ease, opacity 0.18s ease;
+    display: none;
     z-index: 2;
 }
 
 .pswp__media.pswp__media--document.is-thumbs-open .pswp__pdf-thumbs-drawer {
-    transform: translateX(0);
-    opacity: 1;
+    display: block;
     pointer-events: auto;
 }
 
