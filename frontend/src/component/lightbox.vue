@@ -683,6 +683,30 @@ export default {
           counter.setAttribute("class", "pswp__pdf-counter");
           counter.textContent = "— / —";
 
+          const zoomSelect = document.createElement("select");
+          zoomSelect.setAttribute("class", "pswp__pdf-zoom");
+          zoomSelect.setAttribute("aria-label", this.$gettext("Zoom"));
+
+          const zoomOptions = [
+            { value: "auto", label: this.$gettext("Automatic Zoom") },
+            { value: "page-fit", label: this.$gettext("Fit Page") },
+            { value: "page-width", label: this.$gettext("Fit Width") },
+            { value: "page-actual", label: this.$gettext("Actual Size") },
+            { value: "0.5", label: "50%" },
+            { value: "0.75", label: "75%" },
+            { value: "1", label: "100%" },
+            { value: "1.25", label: "125%" },
+            { value: "1.5", label: "150%" },
+            { value: "2", label: "200%" },
+          ];
+
+          zoomOptions.forEach((opt) => {
+            const option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.label;
+            zoomSelect.appendChild(option);
+          });
+
           const nextBtn = document.createElement("button");
           nextBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--next");
           nextBtn.setAttribute("type", "button");
@@ -690,8 +714,9 @@ export default {
           nextBtn.innerHTML = '<i class="mdi mdi-chevron-down" aria-hidden="true"></i>';
 
           toolbar.appendChild(prevBtn);
-          toolbar.appendChild(counter);
           toolbar.appendChild(nextBtn);
+          toolbar.appendChild(counter);
+          toolbar.appendChild(zoomSelect);
           wrapper.appendChild(scrollArea);
           wrapper.appendChild(toolbar);
 
@@ -811,16 +836,46 @@ export default {
                 updateToolbar(pageNumber);
               };
 
+              const onScaleChanging = ({ presetValue, scale }) => {
+                if (typeof presetValue === "string" && zoomOptions.some((opt) => opt.value === presetValue)) {
+                  zoomSelect.value = presetValue;
+                  return;
+                }
+
+                const numericScale = Number(scale);
+                if (Number.isFinite(numericScale)) {
+                  const normalized = String(Number(numericScale.toFixed(2)));
+                  if (zoomOptions.some((opt) => opt.value === normalized)) {
+                    zoomSelect.value = normalized;
+                  }
+                }
+              };
+
               const onPagesInit = () => {
                 content.data.pdfPagesReady = true;
                 // Let PDF.js choose a stable mixed-orientation scale mode.
                 pdfViewer.currentScaleValue = "auto";
+                zoomSelect.value = "auto";
                 updateToolbar(pdfViewer.currentPageNumber || 1);
               };
 
+              zoomSelect.addEventListener(
+                "change",
+                () => {
+                  if (!content.data.pdfPagesReady) {
+                    return;
+                  }
+
+                  const value = zoomSelect.value;
+                  pdfViewer.currentScaleValue = value;
+                },
+                scrollOpts
+              );
+
               eventBus.on("pagechanging", onPageChanging);
+              eventBus.on("scalechanging", onScaleChanging);
               eventBus.on("pagesinit", onPagesInit);
-              content.data.pdfEventHandlers = { onPageChanging, onPagesInit };
+              content.data.pdfEventHandlers = { onPageChanging, onScaleChanging, onPagesInit };
 
               // Set link service document before viewer document so page navigation
               // APIs are fully wired when controls are used.
@@ -893,8 +948,9 @@ export default {
       }
 
       if (ev?.content?.data?.pdfEventBus && ev?.content?.data?.pdfEventHandlers) {
-        const { onPageChanging, onPagesInit } = ev.content.data.pdfEventHandlers;
+        const { onPageChanging, onScaleChanging, onPagesInit } = ev.content.data.pdfEventHandlers;
         ev.content.data.pdfEventBus.off("pagechanging", onPageChanging);
+        ev.content.data.pdfEventBus.off("scalechanging", onScaleChanging);
         ev.content.data.pdfEventBus.off("pagesinit", onPagesInit);
         ev.content.data.pdfEventHandlers = null;
       }
