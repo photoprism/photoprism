@@ -678,6 +678,7 @@ export default {
           thumbToggleBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-thumbs-toggle");
           thumbToggleBtn.setAttribute("type", "button");
           thumbToggleBtn.setAttribute("aria-label", this.$gettext("Toggle thumbnails"));
+          thumbToggleBtn.setAttribute("title", this.$gettext("Toggle thumbnail viewer"));
           thumbToggleBtn.innerHTML = '<i class="mdi mdi-image-multiple" aria-hidden="true"></i>';
 
           const toolbarGroup = document.createElement("div");
@@ -687,15 +688,18 @@ export default {
           prevBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--prev");
           prevBtn.setAttribute("type", "button");
           prevBtn.setAttribute("aria-label", this.$gettext("Previous page"));
+          prevBtn.setAttribute("title", this.$gettext("Previous page"));
           prevBtn.innerHTML = '<i class="mdi mdi-chevron-up" aria-hidden="true"></i>';
 
           const counter = document.createElement("span");
           counter.setAttribute("class", "pswp__pdf-counter");
+          counter.setAttribute("title", this.$gettext("Page"));
           counter.textContent = "— / —";
 
           const zoomSelect = document.createElement("select");
           zoomSelect.setAttribute("class", "pswp__pdf-zoom");
           zoomSelect.setAttribute("aria-label", this.$gettext("Zoom"));
+          zoomSelect.setAttribute("title", this.$gettext("Zoom"));
 
           const zoomOptions = [
             { value: "auto", label: this.$gettext("Automatic Zoom") },
@@ -721,12 +725,14 @@ export default {
           nextBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--next");
           nextBtn.setAttribute("type", "button");
           nextBtn.setAttribute("aria-label", this.$gettext("Next page"));
+          nextBtn.setAttribute("title", this.$gettext("Next page"));
           nextBtn.innerHTML = '<i class="mdi mdi-chevron-down" aria-hidden="true"></i>';
 
           const handBtn = document.createElement("button");
           handBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-hand-toggle");
           handBtn.setAttribute("type", "button");
           handBtn.setAttribute("aria-label", this.$gettext("Toggle hand tool"));
+          handBtn.setAttribute("title", this.$gettext("Toggle hand tool"));
           handBtn.innerHTML = '<i class="mdi mdi-hand-back-right" aria-hidden="true"></i>';
 
           toolbarGroup.appendChild(prevBtn);
