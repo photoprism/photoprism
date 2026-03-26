@@ -843,8 +843,10 @@ export default {
                 thumbToggleBtn.classList.toggle("is-active", open);
 
                 // The viewer container width changes when the drawer is toggled.
-                // Force a relayout and re-apply the selected zoom mode to fit.
-                window.requestAnimationFrame(() => {
+                // Wait for the CSS left-transition on scrollArea to finish before
+                // asking PDF.js to re-apply the zoom, otherwise it rescales to the
+                // pre-transition (wrong) width and the page gets clipped.
+                const relayout = () => {
                   if (!content.data.pdfPagesReady) {
                     return;
                   }
@@ -855,7 +857,30 @@ export default {
                   pdfViewer.update();
                   pdfViewer.currentScaleValue = selectedZoom;
                   pdfViewer.scrollPageIntoView({ pageNumber });
-                });
+                };
+
+                let relayoutDone = false;
+
+                const onTransitionEnd = (e) => {
+                  if (e.propertyName !== "left") {
+                    return;
+                  }
+
+                  scrollArea.removeEventListener("transitionend", onTransitionEnd);
+                  relayoutDone = true;
+                  window.requestAnimationFrame(relayout);
+                };
+
+                scrollArea.addEventListener("transitionend", onTransitionEnd);
+
+                // Fallback: if the transition doesn't fire (e.g. same value, reduced
+                // motion), relayout after the nominal transition duration anyway.
+                window.setTimeout(() => {
+                  if (!relayoutDone) {
+                    scrollArea.removeEventListener("transitionend", onTransitionEnd);
+                    window.requestAnimationFrame(relayout);
+                  }
+                }, 220);
               };
 
               const setHandMode = (enabled) => {
