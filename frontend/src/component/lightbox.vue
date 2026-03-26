@@ -617,7 +617,13 @@ export default {
       // Handle PDF/document types: render inline in the browser rather than as a thumbnail image.
       if (model?.Type === media.Document && model?.DownloadUrl) {
         return {
-          type: "pdf",
+          type: "html", // Must be "html" so PhotoSwipe initialises the content element.
+          html: `<div class="pswp__html"></div>`, // Placeholder replaced in onContentLoad.
+          contentType: "pdf", // Our own marker checked in onContentLoad.
+          // Declare viewport dimensions so PhotoSwipe sizes the zoom-wrap correctly.
+          // Without these, zoom-wrap may be 0×0, collapsing all position:absolute children.
+          width: window.innerWidth || 1920,
+          height: window.innerHeight || 1080,
           model: model,
           msrc: img.src,
           downloadUrl: model.DownloadUrl,
@@ -631,7 +637,7 @@ export default {
     isContentZoomable(isContentZoomable, content) {
       if (content.data?.model?.Type === media.Live) {
         isContentZoomable = true;
-      } else if (content.data?.model?.Type === media.Document) {
+      } else if (content.data?.contentType === "pdf" || content.data?.model?.Type === media.Document) {
         // PDF slides are not zoomable via PhotoSwipe; the browser's native PDF viewer handles zoom.
         isContentZoomable = false;
       }
@@ -640,36 +646,78 @@ export default {
     },
     onContentLoad(ev) {
       const { content } = ev;
-      if (content.data?.type === "pdf") {
+      if (content.data?.contentType === "pdf") {
         // Prevent default loading behavior.
         ev.preventDefault();
 
         try {
-          // Create a scrollable container that will hold one <canvas> per PDF page.
-          const container = document.createElement("div");
-          container.setAttribute("class", "pswp__media pswp__media--document");
-          container.setAttribute("tabindex", "0");
-          container.setAttribute("role", "document");
-          container.setAttribute("aria-label", content.data.model?.Title || "PDF");
+          // Outer shell — PhotoSwipe treats this as the custom content element.
+          const wrapper = document.createElement("div");
+          wrapper.setAttribute("class", "pswp__media pswp__media--document");
+          wrapper.setAttribute("role", "document");
+          wrapper.setAttribute("aria-label", content.data.model?.Title || "PDF");
 
-          content.element = container;
+          // Scrollable area for the rendered page canvases.
+          const scrollArea = document.createElement("div");
+          scrollArea.setAttribute("class", "pswp__pdf-pages");
+          scrollArea.setAttribute("tabindex", "0");
+
+          // Page navigation toolbar.
+          const toolbar = document.createElement("div");
+          toolbar.setAttribute("class", "pswp__pdf-toolbar");
+
+          const prevBtn = document.createElement("button");
+          prevBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--prev");
+          prevBtn.setAttribute("type", "button");
+          prevBtn.setAttribute("aria-label", this.$gettext("Previous page"));
+          prevBtn.innerHTML = '<i class="mdi mdi-chevron-up" aria-hidden="true"></i>';
+
+          const counter = document.createElement("span");
+          counter.setAttribute("class", "pswp__pdf-counter");
+          counter.textContent = "— / —";
+
+          const nextBtn = document.createElement("button");
+          nextBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--next");
+          nextBtn.setAttribute("type", "button");
+          nextBtn.setAttribute("aria-label", this.$gettext("Next page"));
+          nextBtn.innerHTML = '<i class="mdi mdi-chevron-down" aria-hidden="true"></i>';
+
+          toolbar.appendChild(prevBtn);
+          toolbar.appendChild(counter);
+          toolbar.appendChild(nextBtn);
+          wrapper.appendChild(scrollArea);
+          wrapper.appendChild(toolbar);
+
+          content.element = wrapper;
           content.state = "loading";
           content.data.loading = true;
+          // Call onLoaded immediately so PhotoSwipe mounts the wrapper into the slide DOM.
+          // Pages will be rendered asynchronously into it afterwards.
+          content.onLoaded();
 
           // Stop wheel and pointer events from bubbling up to PhotoSwipe so that
-          // the native overflow-y scroll works inside the container. Without this
+          // the native overflow-y scroll works inside the scrollArea. Without this
           // PhotoSwipe's pan/zoom gesture recognizer calls preventDefault() on
           // pointermove/wheel and kills the browser's built-in scroll behaviour.
           const scrollCtrl = new AbortController();
           content.data.pdfScrollEvents = scrollCtrl;
           const stopScroll = (e) => e.stopPropagation();
           const scrollOpts = { signal: scrollCtrl.signal };
-          container.addEventListener("wheel", stopScroll, scrollOpts);
-          container.addEventListener("pointerdown", stopScroll, scrollOpts);
-          container.addEventListener("pointermove", stopScroll, scrollOpts);
-          container.addEventListener("pointerup", stopScroll, scrollOpts);
-          container.addEventListener("touchstart", stopScroll, scrollOpts);
-          container.addEventListener("touchmove", stopScroll, scrollOpts);
+          wrapper.addEventListener("click", stopScroll, scrollOpts);
+          wrapper.addEventListener("pointerdown", stopScroll, scrollOpts);
+          wrapper.addEventListener("pointermove", stopScroll, scrollOpts);
+          wrapper.addEventListener("pointerup", stopScroll, scrollOpts);
+          scrollArea.addEventListener("wheel", stopScroll, scrollOpts);
+          scrollArea.addEventListener("pointerdown", stopScroll, scrollOpts);
+          scrollArea.addEventListener("pointermove", stopScroll, scrollOpts);
+          scrollArea.addEventListener("pointerup", stopScroll, scrollOpts);
+          scrollArea.addEventListener("touchstart", stopScroll, scrollOpts);
+          scrollArea.addEventListener("touchmove", stopScroll, scrollOpts);
+          // Toolbar clicks/pointer events must not reach PhotoSwipe either.
+          toolbar.addEventListener("click", stopScroll, scrollOpts);
+          toolbar.addEventListener("pointerdown", stopScroll, scrollOpts);
+          toolbar.addEventListener("pointermove", stopScroll, scrollOpts);
+          toolbar.addEventListener("pointerup", stopScroll, scrollOpts);
 
           // Load and render all pages of the PDF using pdfjs-dist.
           const pdfUrl = content.data.downloadUrl.includes("?") ? `${content.data.downloadUrl}&view=1` : `${content.data.downloadUrl}?view=1`;
@@ -682,40 +730,124 @@ export default {
 
               const numPages = pdfDoc.numPages;
               const devicePixelRatio = window.devicePixelRatio || 1;
+              const canvases = [];
+              let currentPage = 1;
+
+              // Update the counter label and button disabled states.
+              const updateToolbar = (page) => {
+                currentPage = page;
+                counter.textContent = `${page} / ${numPages}`;
+                prevBtn.disabled = page <= 1;
+                nextBtn.disabled = page >= numPages;
+              };
+
+              // Scroll the given 1-based page index into view.
+              const goToPage = (page) => {
+                const target = canvases[page - 1];
+                if (target) {
+                  // Update immediately so repeated clicks continue navigation
+                  // even while smooth scrolling is in progress.
+                  updateToolbar(page);
+                  target.scrollIntoView({ behavior: "auto", block: "start" });
+                }
+              };
+
+              updateToolbar(1);
+
+              prevBtn.addEventListener(
+                "click",
+                (e) => {
+                  e.stopPropagation();
+                  if (currentPage > 1) goToPage(currentPage - 1);
+                },
+                scrollOpts
+              );
+
+              nextBtn.addEventListener(
+                "click",
+                (e) => {
+                  e.stopPropagation();
+                  if (currentPage < numPages) goToPage(currentPage + 1);
+                },
+                scrollOpts
+              );
+
+              // Keep the page counter in sync with vertical scroll position.
+              const syncToolbarToScroll = () => {
+                if (!canvases.length) {
+                  return;
+                }
+
+                const scrollTop = scrollArea.scrollTop;
+
+                let visiblePage = 1;
+
+                for (let i = 0; i < canvases.length; i++) {
+                  // When the top of a page crosses into view, consider it active.
+                  if (canvases[i].offsetTop <= scrollTop + 8) {
+                    visiblePage = i + 1;
+                  } else {
+                    break;
+                  }
+                }
+
+                if (visiblePage !== currentPage) {
+                  updateToolbar(visiblePage);
+                }
+              };
+
+              let scrollTicking = false;
+              const onPdfScroll = () => {
+                if (scrollTicking) {
+                  return;
+                }
+
+                scrollTicking = true;
+                window.requestAnimationFrame(() => {
+                  scrollTicking = false;
+                  syncToolbarToScroll();
+                });
+              };
+
+              scrollArea.addEventListener("scroll", onPdfScroll, { signal: scrollCtrl.signal, passive: true });
+
               // Render pages sequentially so the first page appears immediately.
               for (let pageNum = 1; pageNum <= numPages; pageNum++) {
                 if (content.data.pdfTask !== task) return;
 
                 const page = await pdfDoc.getPage(pageNum);
-                // Scale PDF to fill ~90% of the viewport width.
-                const viewportWidth = (window.innerWidth || 800) * 0.9;
+                // Scale to the actual scroll-area width so CSS doesn't squeeze
+                // width independently of height (which can look distorted).
+                const availableWidth = Math.max(320, (scrollArea.clientWidth || window.innerWidth || 800) - 16);
                 const unscaled = page.getViewport({ scale: 1 });
-                const scale = (viewportWidth / unscaled.width) * devicePixelRatio;
+                const scale = (availableWidth / unscaled.width) * devicePixelRatio;
                 const viewport = page.getViewport({ scale });
 
                 const canvas = document.createElement("canvas");
                 canvas.className = "pswp__pdf-page";
-                // Logical CSS size matches viewport units; physical canvas buffer uses device pixels.
+                canvas.dataset.page = String(pageNum);
+                // Physical canvas buffer uses device pixels; CSS size uses logical pixels.
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
                 canvas.style.width = `${viewport.width / devicePixelRatio}px`;
                 canvas.style.height = `${viewport.height / devicePixelRatio}px`;
 
-                container.appendChild(canvas);
+                scrollArea.appendChild(canvas);
+                canvases.push(canvas);
 
                 const ctx = canvas.getContext("2d");
                 await page.render({ canvasContext: ctx, viewport }).promise;
               }
 
+              syncToolbarToScroll();
+
               content.data.loading = false;
-              content.onLoaded();
             })
             .catch((err) => {
               if (this.debug) {
                 this.log("failed to render PDF", err);
               }
               content.data.loading = false;
-              content.onLoaded();
             });
         } catch (err) {
           this.log("failed to load PDF", err);
