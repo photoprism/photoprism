@@ -265,7 +265,7 @@
      height: 100%;
      max-width: none;
      max-height: none;
-    --pdf-top-offset: 52px;
+    --pdf-top-offset: 24px;
     --pdf-side-inset: min(110px, 12vw);
     --pdf-thumbs-width: 118px;
     border: none;
