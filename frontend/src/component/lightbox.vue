@@ -673,6 +673,15 @@ export default {
           const toolbar = document.createElement("div");
           toolbar.setAttribute("class", "pswp__pdf-toolbar");
 
+          const thumbToggleBtn = document.createElement("button");
+          thumbToggleBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-thumbs-toggle");
+          thumbToggleBtn.setAttribute("type", "button");
+          thumbToggleBtn.setAttribute("aria-label", this.$gettext("Toggle thumbnails"));
+          thumbToggleBtn.innerHTML = '<i class="mdi mdi-view-grid" aria-hidden="true"></i>';
+
+          const toolbarGroup = document.createElement("div");
+          toolbarGroup.setAttribute("class", "pswp__pdf-toolbar-group");
+
           const prevBtn = document.createElement("button");
           prevBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--prev");
           prevBtn.setAttribute("type", "button");
@@ -713,12 +722,24 @@ export default {
           nextBtn.setAttribute("aria-label", this.$gettext("Next page"));
           nextBtn.innerHTML = '<i class="mdi mdi-chevron-down" aria-hidden="true"></i>';
 
-          toolbar.appendChild(prevBtn);
-          toolbar.appendChild(nextBtn);
-          toolbar.appendChild(counter);
-          toolbar.appendChild(zoomSelect);
+          toolbarGroup.appendChild(prevBtn);
+          toolbarGroup.appendChild(nextBtn);
+          toolbarGroup.appendChild(counter);
+          toolbarGroup.appendChild(zoomSelect);
+          toolbar.appendChild(thumbToggleBtn);
+          toolbar.appendChild(toolbarGroup);
+
+          // Thumbnails drawer.
+          const thumbsDrawer = document.createElement("div");
+          thumbsDrawer.setAttribute("class", "pswp__pdf-thumbs-drawer");
+          thumbsDrawer.setAttribute("aria-hidden", "true");
+
+          const thumbsList = document.createElement("div");
+          thumbsList.setAttribute("class", "pswp__pdf-thumbs-list");
+          thumbsDrawer.appendChild(thumbsList);
           wrapper.appendChild(scrollArea);
           wrapper.appendChild(toolbar);
+          wrapper.appendChild(thumbsDrawer);
 
           content.element = wrapper;
           content.state = "loading";
@@ -750,6 +771,12 @@ export default {
           toolbar.addEventListener("pointerdown", stopScroll, scrollOpts);
           toolbar.addEventListener("pointermove", stopScroll, scrollOpts);
           toolbar.addEventListener("pointerup", stopScroll, scrollOpts);
+          thumbsDrawer.addEventListener("wheel", stopScroll, scrollOpts);
+          thumbsDrawer.addEventListener("pointerdown", stopScroll, scrollOpts);
+          thumbsDrawer.addEventListener("pointermove", stopScroll, scrollOpts);
+          thumbsDrawer.addEventListener("pointerup", stopScroll, scrollOpts);
+          thumbsDrawer.addEventListener("touchstart", stopScroll, scrollOpts);
+          thumbsDrawer.addEventListener("touchmove", stopScroll, scrollOpts);
 
           // Load and render all pages of the PDF using pdfjs-dist.
           const pdfUrl = content.data.downloadUrl.includes("?") ? `${content.data.downloadUrl}&view=1` : `${content.data.downloadUrl}?view=1`;
@@ -780,6 +807,8 @@ export default {
               const numPages = pdfDoc.numPages;
               let currentPage = 1;
               content.data.pdfPagesReady = false;
+              let thumbsOpen = false;
+              const thumbItems = [];
 
               // Update the counter label and button disabled states.
               const updateToolbar = (page) => {
@@ -787,6 +816,35 @@ export default {
                 counter.textContent = `${page} / ${numPages}`;
                 prevBtn.disabled = !content.data.pdfPagesReady || page <= 1;
                 nextBtn.disabled = !content.data.pdfPagesReady || page >= numPages;
+
+                if (thumbItems.length) {
+                  for (let i = 0; i < thumbItems.length; i++) {
+                    const isCurrent = i + 1 === page;
+                    thumbItems[i].classList.toggle("is-current", isCurrent);
+                  }
+                }
+              };
+
+              const setThumbsOpen = (open) => {
+                thumbsOpen = open;
+                wrapper.classList.toggle("is-thumbs-open", open);
+                thumbsDrawer.setAttribute("aria-hidden", open ? "false" : "true");
+                thumbToggleBtn.classList.toggle("is-active", open);
+
+                // The viewer container width changes when the drawer is toggled.
+                // Force a relayout and re-apply the selected zoom mode to fit.
+                window.requestAnimationFrame(() => {
+                  if (!content.data.pdfPagesReady) {
+                    return;
+                  }
+
+                  const pageNumber = pdfViewer.currentPageNumber || 1;
+                  const selectedZoom = zoomSelect.value || "auto";
+
+                  pdfViewer.update();
+                  pdfViewer.currentScaleValue = selectedZoom;
+                  pdfViewer.scrollPageIntoView({ pageNumber });
+                });
               };
 
               // Move to the given 1-based page index.
@@ -813,6 +871,15 @@ export default {
               };
 
               updateToolbar(1);
+
+              thumbToggleBtn.addEventListener(
+                "click",
+                (e) => {
+                  e.stopPropagation();
+                  setThumbsOpen(!thumbsOpen);
+                },
+                scrollOpts
+              );
 
               prevBtn.addEventListener(
                 "click",
@@ -881,6 +948,59 @@ export default {
               // APIs are fully wired when controls are used.
               linkService.setDocument(pdfDoc, null);
               pdfViewer.setDocument(pdfDoc);
+
+              // Render static page thumbnails for quick navigation.
+              const renderThumbs = async () => {
+                const thumbWidth = 92;
+
+                for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                  if (content.data.pdfTask !== task) {
+                    return;
+                  }
+
+                  const page = await pdfDoc.getPage(pageNum);
+                  const baseViewport = page.getViewport({ scale: 1 });
+                  const scale = thumbWidth / baseViewport.width;
+                  const viewport = page.getViewport({ scale });
+
+                  const thumb = document.createElement("button");
+                  thumb.setAttribute("class", "pswp__pdf-thumb");
+                  thumb.setAttribute("type", "button");
+                  thumb.setAttribute("aria-label", `${this.$gettext("Page")} ${pageNum}`);
+                  thumb.dataset.page = String(pageNum);
+
+                  const canvas = document.createElement("canvas");
+                  canvas.width = Math.max(1, Math.floor(viewport.width));
+                  canvas.height = Math.max(1, Math.floor(viewport.height));
+                  canvas.style.width = `${viewport.width}px`;
+                  canvas.style.height = `${viewport.height}px`;
+
+                  const label = document.createElement("span");
+                  label.setAttribute("class", "pswp__pdf-thumb-label");
+                  label.textContent = String(pageNum);
+
+                  thumb.appendChild(canvas);
+                  thumb.appendChild(label);
+                  thumbsList.appendChild(thumb);
+                  thumbItems.push(thumb);
+
+                  thumb.addEventListener(
+                    "click",
+                    (e) => {
+                      e.stopPropagation();
+                      goToPage(pageNum);
+                    },
+                    scrollOpts
+                  );
+
+                  const ctx = canvas.getContext("2d", { alpha: false });
+                  await page.render({ canvasContext: ctx, viewport }).promise;
+                }
+
+                updateToolbar(currentPage);
+              };
+
+              void renderThumbs();
 
               content.data.loading = false;
             })

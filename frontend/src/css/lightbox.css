@@ -265,6 +265,9 @@
      height: 100%;
      max-width: none;
      max-height: none;
+    --pdf-top-offset: 52px;
+    --pdf-side-inset: min(110px, 12vw);
+    --pdf-thumbs-width: 118px;
     border: none;
      display: flex;
     flex-direction: column;
@@ -278,9 +281,9 @@
 /* Scrollable page area inset from top bar and side arrows. */
 .pswp__media.pswp__media--document .pswp__pdf-pages {
     position: absolute;
-    left: min(150px, 16vw);
-    right: min(150px, 16vw);
-    top: 104px;
+    left: var(--pdf-side-inset);
+    right: var(--pdf-side-inset);
+    top: calc(var(--pdf-top-offset) + 44px);
     bottom: 0;
     display: flex;
     flex-direction: column;
@@ -292,6 +295,10 @@
     box-sizing: border-box;
     touch-action: pan-y;
     overscroll-behavior: contain;
+}
+
+.pswp__media.pswp__media--document.is-thumbs-open .pswp__pdf-pages {
+    left: calc(var(--pdf-side-inset) + var(--pdf-thumbs-width) + 8px);
 }
 
 .pswp__media.pswp__media--document .pswp__pdf-pages .pdfViewer {
@@ -318,9 +325,9 @@
 /* Page navigation toolbar — positioned above the PDF pages. */
 .pswp__media.pswp__media--document .pswp__pdf-toolbar {
     position: absolute;
-    left: min(150px, 16vw);
-    right: min(150px, 16vw);
-    top: 60px;
+    left: var(--pdf-side-inset);
+    right: var(--pdf-side-inset);
+    top: var(--pdf-top-offset);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -331,6 +338,88 @@
     -webkit-backdrop-filter: blur(4px);
     pointer-events: auto;
     z-index: 1;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-toolbar-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumbs-toggle {
+    position: absolute;
+    left: 6px;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumbs-toggle.is-active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumbs-drawer {
+    position: absolute;
+    left: var(--pdf-side-inset);
+    top: calc(var(--pdf-top-offset) + 44px);
+    bottom: 0;
+    width: var(--pdf-thumbs-width);
+    background: rgba(0, 0, 0, 0.58);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transform: translateX(-108%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+    z-index: 2;
+}
+
+.pswp__media.pswp__media--document.is-thumbs-open .pswp__pdf-thumbs-drawer {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumbs-list {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumb {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumb.is-current {
+    border-color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumb canvas {
+    display: block;
+    width: 92px;
+    height: auto;
+    background: #fff;
+}
+
+.pswp__media.pswp__media--document .pswp__pdf-thumb-label {
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.9;
 }
 
 .pswp__media.pswp__media--document .pswp__pdf-nav {
