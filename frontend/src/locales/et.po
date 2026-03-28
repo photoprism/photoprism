@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-03-09 09:52+0000\n"
+"PO-Revision-Date: 2026-03-28 10:52+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.1\n"
+"X-Generator: Weblate 5.16.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -3147,7 +3147,7 @@ msgstr "Valige või looge sildid"
 
 #: src/component/upload/dialog.vue:37
 msgid "Select or drop files to upload…"
-msgstr ""
+msgstr "Valige üleslaadimiseks failid või laske need üles laadida…"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"

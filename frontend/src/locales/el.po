@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-03-09 09:52+0000\n"
+"PO-Revision-Date: 2026-03-28 10:52+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.1\n"
+"X-Generator: Weblate 5.16.2\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1109,7 +1109,7 @@ msgstr "Να διαγραφούν όλα;"
 
 #: src/page/library/index.vue:51
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "ΔΙαγραφή ορφανών καταχωρήσεων ευρετηρίου, αρχείων sidecar και μικρογραφιών."
+msgstr "Διαγραφή ορφανών καταχωρήσεων ευρετηρίου, αρχείων sidecar και μικρογραφιών."
 
 #: src/options/options.js:13 src/options/options.js:16
 msgid "deleted"
@@ -2696,7 +2696,7 @@ msgstr "Αντιγράψτε τον ακόλουθο τυχαία δημιουρ
 
 #: src/component/upload/dialog.vue:104
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr "Μην ανεβάζετε προσωπικές, παράνομες ή προσβλητικές φωτογραφίες. "
+msgstr "Μην ανεβάζετε προσωπικές, παράνομες ή προσβλητικές φωτογραφίες."
 
 #: src/component/upload/dialog.vue:107
 msgid "Please don't upload photos containing offensive content."
@@ -3147,7 +3147,7 @@ msgstr "Επιλογή ή δημιουργία ετικετών"
 
 #: src/component/upload/dialog.vue:37
 msgid "Select or drop files to upload…"
-msgstr ""
+msgstr "Επιλέξτε ή αφήστε αρχεία για να τα ανεβάσετε…"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
