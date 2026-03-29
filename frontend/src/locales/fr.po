@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-03-29 19:03+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -3150,7 +3150,7 @@ msgstr "Sélectionner ou créer des étiquettes"
 
 #: src/component/upload/dialog.vue:37
 msgid "Select or drop files to upload…"
-msgstr "Sélectionne ou dépose les fichiers à télécharger…"
+msgstr "Sélectionner ou déposer les fichiers à télécharger…"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
