@@ -489,4 +489,3 @@ export default {
   },
 };
 </script>
-
