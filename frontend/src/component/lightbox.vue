@@ -702,7 +702,8 @@ export default {
       bind(toolbar, ["click", "pointerdown", "pointermove", "pointerup"]);
       bind(thumbsDrawer, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
     },
-    async renderPdfThumbnails({ pdfDoc, numPages, task, content, thumbsList, thumbItems, goToPage, scrollOpts, updateToolbar, currentPage }) {
+    async renderPdfThumbnails(pdfCtx, { pdfDoc, numPages, thumbItems, goToPage, updateToolbar, currentPage }) {
+      const { task, content, thumbsList, scrollOpts } = pdfCtx;
       const thumbWidth = 92;
 
       for (let pageNum = 1; pageNum <= numPages; pageNum++) {
@@ -751,26 +752,26 @@ export default {
 
       updateToolbar(currentPage.value);
     },
-    async onPdfTaskResolved({
-      task,
-      pdfDoc,
-      content,
-      wrapper,
-      scrollArea,
-      thumbsDrawer,
-      thumbsList,
-      thumbToggleBtn,
-      prevBtn,
-      nextBtn,
-      counter,
-      zoomSelect,
-      zoomOptions,
-      handBtn,
-      linkService,
-      pdfViewer,
-      scrollOpts,
-      eventBus,
-    }) {
+    async onPdfTaskResolved(pdfCtx, pdfDoc) {
+      const {
+        task,
+        content,
+        wrapper,
+        scrollArea,
+        thumbsDrawer,
+        thumbToggleBtn,
+        prevBtn,
+        nextBtn,
+        counter,
+        zoomSelect,
+        zoomOptions,
+        handBtn,
+        linkService,
+        pdfViewer,
+        scrollOpts,
+        eventBus,
+      } = pdfCtx;
+
       if (content.data.pdfTask !== task) return; // slide was destroyed before load finished
 
       const numPages = pdfDoc.numPages;
@@ -1060,15 +1061,11 @@ export default {
       linkService.setDocument(pdfDoc, null);
       pdfViewer.setDocument(pdfDoc);
 
-      await this.renderPdfThumbnails({
+      await this.renderPdfThumbnails(pdfCtx, {
         pdfDoc,
         numPages,
-        task,
-        content,
-        thumbsList,
         thumbItems,
         goToPage,
-        scrollOpts,
         updateToolbar,
         currentPage,
       });
@@ -1181,29 +1178,28 @@ export default {
         content.data.pdfLinkService = linkService;
         content.data.pdfViewer = pdfViewer;
 
+        const pdfCtx = {
+          task,
+          content,
+          wrapper,
+          scrollArea,
+          thumbsDrawer,
+          thumbsList,
+          thumbToggleBtn,
+          prevBtn,
+          nextBtn,
+          counter,
+          zoomSelect,
+          zoomOptions,
+          handBtn,
+          linkService,
+          pdfViewer,
+          scrollOpts,
+          eventBus,
+        };
+
         task.promise
-          .then(async (pdfDoc) =>
-            this.onPdfTaskResolved({
-              task,
-              pdfDoc,
-              content,
-              wrapper,
-              scrollArea,
-              thumbsDrawer,
-              thumbsList,
-              thumbToggleBtn,
-              prevBtn,
-              nextBtn,
-              counter,
-              zoomSelect,
-              zoomOptions,
-              handBtn,
-              linkService,
-              pdfViewer,
-              scrollOpts,
-              eventBus,
-            })
-          )
+          .then(async (pdfDoc) => this.onPdfTaskResolved(pdfCtx, pdfDoc))
           .catch((err) => {
             if (this.debug) {
               this.log("failed to render PDF", err);
