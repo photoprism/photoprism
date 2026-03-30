@@ -793,8 +793,7 @@ export default {
           thumbsDrawer.addEventListener("touchmove", stopScroll, scrollOpts);
 
           // Load and render all pages of the PDF using pdfjs-dist.
-          const pdfUrl = content.data.downloadUrl.includes("?") ? `${content.data.downloadUrl}&view=1` : `${content.data.downloadUrl}?view=1`;
-          const task = pdfjsLib.getDocument({ url: pdfUrl, withCredentials: true });
+          const task = pdfjsLib.getDocument({ url: content.data.downloadUrl, withCredentials: true });
           content.data.pdfTask = task;
 
           const eventBus = new EventBus();

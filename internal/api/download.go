@@ -89,18 +89,6 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		// Serve the file inline (without Content-Disposition: attachment) when "view=1" is
-		// requested, e.g. for PDFs rendered in the browser lightbox.
-		if c.Query("view") == "1" {
-			// Remove framing-restriction headers so the browser can render the file
-			// inside the lightbox <iframe>. These headers prevent clickjacking on the
-			// app UI; they are not needed for a file served back to the same-origin page.
-			c.Header("X-Frame-Options", "")
-			c.Header("Content-Security-Policy", "")
-			c.File(fileName)
-			return
-		}
-
 		c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
 	})
 }
