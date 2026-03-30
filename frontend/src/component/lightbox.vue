@@ -133,6 +133,11 @@ const VIDEO_EVENT_TYPES = [
 
 const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 
+const PDF_TEXT_LAYER_MODE_DISABLED = 0;
+const PDF_ANNOTATION_MODE_DISABLED = 0;
+const PDF_DEFAULT_SCALE = "auto";
+const PDF_RELAYOUT_FALLBACK_DELAY_MS = 220;
+
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PSidebarInfo from "component/sidebar/info.vue";
 
@@ -641,7 +646,7 @@ export default {
       if (content.data?.model?.Type === media.Live) {
         isContentZoomable = true;
       } else if (content.data?.contentType === "pdf" || content.data?.model?.Type === media.Document) {
-        // PDF slides are not zoomable via PhotoSwipe; the browser's native PDF viewer handles zoom.
+        // PDF slides are not zoomable via PhotoSwipe; zoom is handled inside the custom PDF.js viewer.
         isContentZoomable = false;
       }
 
@@ -770,27 +775,17 @@ export default {
           content.data.pdfScrollEvents = scrollCtrl;
           const stopScroll = (e) => e.stopPropagation();
           const scrollOpts = { signal: scrollCtrl.signal };
-          wrapper.addEventListener("click", stopScroll, scrollOpts);
-          wrapper.addEventListener("pointerdown", stopScroll, scrollOpts);
-          wrapper.addEventListener("pointermove", stopScroll, scrollOpts);
-          wrapper.addEventListener("pointerup", stopScroll, scrollOpts);
-          scrollArea.addEventListener("wheel", stopScroll, scrollOpts);
-          scrollArea.addEventListener("pointerdown", stopScroll, scrollOpts);
-          scrollArea.addEventListener("pointermove", stopScroll, scrollOpts);
-          scrollArea.addEventListener("pointerup", stopScroll, scrollOpts);
-          scrollArea.addEventListener("touchstart", stopScroll, scrollOpts);
-          scrollArea.addEventListener("touchmove", stopScroll, scrollOpts);
+          const bindStopEvents = (el, eventTypes) => {
+            for (const eventType of eventTypes) {
+              el.addEventListener(eventType, stopScroll, scrollOpts);
+            }
+          };
+
+          bindStopEvents(wrapper, ["click", "pointerdown", "pointermove", "pointerup"]);
+          bindStopEvents(scrollArea, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
           // Toolbar clicks/pointer events must not reach PhotoSwipe either.
-          toolbar.addEventListener("click", stopScroll, scrollOpts);
-          toolbar.addEventListener("pointerdown", stopScroll, scrollOpts);
-          toolbar.addEventListener("pointermove", stopScroll, scrollOpts);
-          toolbar.addEventListener("pointerup", stopScroll, scrollOpts);
-          thumbsDrawer.addEventListener("wheel", stopScroll, scrollOpts);
-          thumbsDrawer.addEventListener("pointerdown", stopScroll, scrollOpts);
-          thumbsDrawer.addEventListener("pointermove", stopScroll, scrollOpts);
-          thumbsDrawer.addEventListener("pointerup", stopScroll, scrollOpts);
-          thumbsDrawer.addEventListener("touchstart", stopScroll, scrollOpts);
-          thumbsDrawer.addEventListener("touchmove", stopScroll, scrollOpts);
+          bindStopEvents(toolbar, ["click", "pointerdown", "pointermove", "pointerup"]);
+          bindStopEvents(thumbsDrawer, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
 
           // Load and render all pages of the PDF using pdfjs-dist.
           const task = pdfjsLib.getDocument({ url: content.data.downloadUrl, withCredentials: true });
@@ -803,8 +798,8 @@ export default {
             viewer: viewerEl,
             eventBus,
             linkService,
-            textLayerMode: 0,
-            annotationMode: 0,
+            textLayerMode: PDF_TEXT_LAYER_MODE_DISABLED,
+            annotationMode: PDF_ANNOTATION_MODE_DISABLED,
             removePageBorders: true,
           });
 
@@ -857,7 +852,7 @@ export default {
                   }
 
                   const pageNumber = pdfViewer.currentPageNumber || 1;
-                  const selectedZoom = zoomSelect.value || "auto";
+                  const selectedZoom = zoomSelect.value || PDF_DEFAULT_SCALE;
 
                   pdfViewer.update();
                   pdfViewer.currentScaleValue = selectedZoom;
@@ -885,7 +880,7 @@ export default {
                     scrollArea.removeEventListener("transitionend", onTransitionEnd);
                     window.requestAnimationFrame(relayout);
                   }
-                }, 220);
+                }, PDF_RELAYOUT_FALLBACK_DELAY_MS);
               };
 
               const setHandMode = (enabled) => {
@@ -1076,8 +1071,8 @@ export default {
               const onPagesInit = () => {
                 content.data.pdfPagesReady = true;
                 // Let PDF.js choose a stable mixed-orientation scale mode.
-                pdfViewer.currentScaleValue = "auto";
-                zoomSelect.value = "auto";
+                pdfViewer.currentScaleValue = PDF_DEFAULT_SCALE;
+                zoomSelect.value = PDF_DEFAULT_SCALE;
                 updateToolbar(pdfViewer.currentPageNumber || 1);
               };
 
