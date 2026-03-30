@@ -652,6 +652,56 @@ export default {
 
       return isContentZoomable;
     },
+    createPdfIconButton(className, label, iconClass) {
+      const button = document.createElement("button");
+      button.setAttribute("class", className);
+      button.setAttribute("type", "button");
+      button.setAttribute("aria-label", label);
+      button.setAttribute("title", label);
+      button.innerHTML = `<i class="mdi ${iconClass}" aria-hidden="true"></i>`;
+
+      return button;
+    },
+    createPdfZoomSelect() {
+      const zoomSelect = document.createElement("select");
+      zoomSelect.setAttribute("class", "pswp__pdf-zoom");
+      zoomSelect.setAttribute("aria-label", this.$gettext("Zoom"));
+      zoomSelect.setAttribute("title", this.$gettext("Zoom"));
+
+      const zoomOptions = [
+        { value: "auto", label: this.$gettext("Automatic Zoom") },
+        { value: "page-fit", label: this.$gettext("Fit Page") },
+        { value: "page-width", label: this.$gettext("Fit Width") },
+        { value: "page-actual", label: this.$gettext("Actual Size") },
+        { value: "0.5", label: "50%" },
+        { value: "0.75", label: "75%" },
+        { value: "1", label: "100%" },
+        { value: "1.25", label: "125%" },
+        { value: "1.5", label: "150%" },
+        { value: "2", label: "200%" },
+      ];
+
+      zoomOptions.forEach((opt) => {
+        const option = document.createElement("option");
+        option.value = opt.value;
+        option.textContent = opt.label;
+        zoomSelect.appendChild(option);
+      });
+
+      return { zoomSelect, zoomOptions };
+    },
+    bindPdfStopEvents(stopScroll, scrollOpts, wrapper, scrollArea, toolbar, thumbsDrawer) {
+      const bind = (el, eventTypes) => {
+        for (const eventType of eventTypes) {
+          el.addEventListener(eventType, stopScroll, scrollOpts);
+        }
+      };
+
+      bind(wrapper, ["click", "pointerdown", "pointermove", "pointerup"]);
+      bind(scrollArea, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
+      bind(toolbar, ["click", "pointerdown", "pointermove", "pointerup"]);
+      bind(thumbsDrawer, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
+    },
     onPdfContentLoad(ev, content) {
       // Prevent default loading behavior.
       ev.preventDefault();
@@ -677,66 +727,27 @@ export default {
         const toolbar = document.createElement("div");
         toolbar.setAttribute("class", "pswp__pdf-toolbar");
 
-        const thumbToggleBtn = document.createElement("button");
-        thumbToggleBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-thumbs-toggle");
-        thumbToggleBtn.setAttribute("type", "button");
-        thumbToggleBtn.setAttribute("aria-label", this.$gettext("Toggle thumbnails"));
-        thumbToggleBtn.setAttribute("title", this.$gettext("Toggle thumbnail viewer"));
-        thumbToggleBtn.innerHTML = '<i class="mdi mdi-image-multiple" aria-hidden="true"></i>';
+        const thumbToggleBtn = this.createPdfIconButton(
+          "pswp__pdf-nav pswp__pdf-thumbs-toggle",
+          this.$gettext("Toggle thumbnail viewer"),
+          "mdi-image-multiple"
+        );
 
         const toolbarGroup = document.createElement("div");
         toolbarGroup.setAttribute("class", "pswp__pdf-toolbar-group");
 
-        const prevBtn = document.createElement("button");
-        prevBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--prev");
-        prevBtn.setAttribute("type", "button");
-        prevBtn.setAttribute("aria-label", this.$gettext("Previous page"));
-        prevBtn.setAttribute("title", this.$gettext("Previous page"));
-        prevBtn.innerHTML = '<i class="mdi mdi-chevron-up" aria-hidden="true"></i>';
+        const prevBtn = this.createPdfIconButton("pswp__pdf-nav pswp__pdf-nav--prev", this.$gettext("Previous page"), "mdi-chevron-up");
 
         const counter = document.createElement("span");
         counter.setAttribute("class", "pswp__pdf-counter");
         counter.setAttribute("title", this.$gettext("Page"));
         counter.textContent = "— / —";
 
-        const zoomSelect = document.createElement("select");
-        zoomSelect.setAttribute("class", "pswp__pdf-zoom");
-        zoomSelect.setAttribute("aria-label", this.$gettext("Zoom"));
-        zoomSelect.setAttribute("title", this.$gettext("Zoom"));
+        const { zoomSelect, zoomOptions } = this.createPdfZoomSelect();
 
-        const zoomOptions = [
-          { value: "auto", label: this.$gettext("Automatic Zoom") },
-          { value: "page-fit", label: this.$gettext("Fit Page") },
-          { value: "page-width", label: this.$gettext("Fit Width") },
-          { value: "page-actual", label: this.$gettext("Actual Size") },
-          { value: "0.5", label: "50%" },
-          { value: "0.75", label: "75%" },
-          { value: "1", label: "100%" },
-          { value: "1.25", label: "125%" },
-          { value: "1.5", label: "150%" },
-          { value: "2", label: "200%" },
-        ];
+        const nextBtn = this.createPdfIconButton("pswp__pdf-nav pswp__pdf-nav--next", this.$gettext("Next page"), "mdi-chevron-down");
 
-        zoomOptions.forEach((opt) => {
-          const option = document.createElement("option");
-          option.value = opt.value;
-          option.textContent = opt.label;
-          zoomSelect.appendChild(option);
-        });
-
-        const nextBtn = document.createElement("button");
-        nextBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-nav--next");
-        nextBtn.setAttribute("type", "button");
-        nextBtn.setAttribute("aria-label", this.$gettext("Next page"));
-        nextBtn.setAttribute("title", this.$gettext("Next page"));
-        nextBtn.innerHTML = '<i class="mdi mdi-chevron-down" aria-hidden="true"></i>';
-
-        const handBtn = document.createElement("button");
-        handBtn.setAttribute("class", "pswp__pdf-nav pswp__pdf-hand-toggle");
-        handBtn.setAttribute("type", "button");
-        handBtn.setAttribute("aria-label", this.$gettext("Toggle hand tool"));
-        handBtn.setAttribute("title", this.$gettext("Toggle hand tool"));
-        handBtn.innerHTML = '<i class="mdi mdi-hand-back-right" aria-hidden="true"></i>';
+        const handBtn = this.createPdfIconButton("pswp__pdf-nav pswp__pdf-hand-toggle", this.$gettext("Toggle hand tool"), "mdi-hand-back-right");
 
         toolbarGroup.appendChild(prevBtn);
         toolbarGroup.appendChild(nextBtn);
@@ -773,17 +784,8 @@ export default {
         content.data.pdfScrollEvents = scrollCtrl;
         const stopScroll = (e) => e.stopPropagation();
         const scrollOpts = { signal: scrollCtrl.signal };
-        const bindStopEvents = (el, eventTypes) => {
-          for (const eventType of eventTypes) {
-            el.addEventListener(eventType, stopScroll, scrollOpts);
-          }
-        };
-
-        bindStopEvents(wrapper, ["click", "pointerdown", "pointermove", "pointerup"]);
-        bindStopEvents(scrollArea, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
-        // Toolbar clicks/pointer events must not reach PhotoSwipe either.
-        bindStopEvents(toolbar, ["click", "pointerdown", "pointermove", "pointerup"]);
-        bindStopEvents(thumbsDrawer, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
+        // Keep PhotoSwipe gesture handlers from swallowing scroll inside PDF panes.
+        this.bindPdfStopEvents(stopScroll, scrollOpts, wrapper, scrollArea, toolbar, thumbsDrawer);
 
         // Load and render all pages of the PDF using pdfjs-dist.
         const task = pdfjsLib.getDocument({ url: content.data.downloadUrl, withCredentials: true });
