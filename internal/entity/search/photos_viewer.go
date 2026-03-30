@@ -24,6 +24,21 @@ func documentFileHash(photoUID string) string {
 	return f.FileHash
 }
 
+// viewerDownloadHash returns the file hash that should be used for viewer
+// downloads. For document media, this resolves to the original document file
+// hash instead of the JPEG sidecar hash used by the viewer query.
+func viewerDownloadHash(photoType, photoUID, fileHash string) string {
+	if photoType != entity.MediaDocument {
+		return fileHash
+	}
+
+	if h := documentFileHash(photoUID); h != "" {
+		return h
+	}
+
+	return fileHash
+}
+
 // PhotosViewerResults searches public photos using the provided form and returns
 // them in the lightweight viewer format that powers the slideshow endpoints.
 func PhotosViewerResults(frm form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
@@ -47,15 +62,7 @@ func UserPhotosViewerResults(frm form.SearchPhotos, sess *entity.Session, conten
 func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
 	mediaHash, mediaCodec, mediaMime, width, height := m.MediaInfo()
 
-	// The viewer query selects the primary JPEG file (used for thumbnails) so
-	// m.FileHash is the sidecar image hash. For document types the download URL
-	// must point to the original document file (e.g. PDF), not the sidecar.
-	downloadHash := m.FileHash
-	if m.PhotoType == entity.MediaDocument {
-		if h := documentFileHash(m.PhotoUID); h != "" {
-			downloadHash = h
-		}
-	}
+	downloadHash := viewerDownloadHash(m.PhotoType, m.PhotoUID, m.FileHash)
 
 	return viewer.Result{
 		UID:          m.PhotoUID,
@@ -98,12 +105,7 @@ func (m PhotoResults) ViewerResults(contentUri, apiUri, previewToken, downloadTo
 // ViewerResult converts a geographic search hit into the viewer DTO, reusing
 // the thumbnail and download helpers so photos and map results stay aligned.
 func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
-	downloadHash := m.FileHash
-	if m.PhotoType == entity.MediaDocument {
-		if h := documentFileHash(m.PhotoUID); h != "" {
-			downloadHash = h
-		}
-	}
+	downloadHash := viewerDownloadHash(m.PhotoType, m.PhotoUID, m.FileHash)
 	return viewer.Result{
 		UID:          m.PhotoUID,
 		Type:         m.PhotoType,
