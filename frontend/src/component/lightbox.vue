@@ -702,6 +702,379 @@ export default {
       bind(toolbar, ["click", "pointerdown", "pointermove", "pointerup"]);
       bind(thumbsDrawer, ["wheel", "pointerdown", "pointermove", "pointerup", "touchstart", "touchmove"]);
     },
+    async renderPdfThumbnails({ pdfDoc, numPages, task, content, thumbsList, thumbItems, goToPage, scrollOpts, updateToolbar, currentPage }) {
+      const thumbWidth = 92;
+
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        if (content.data.pdfTask !== task) {
+          return;
+        }
+
+        const page = await pdfDoc.getPage(pageNum);
+        const baseViewport = page.getViewport({ scale: 1 });
+        const scale = thumbWidth / baseViewport.width;
+        const viewport = page.getViewport({ scale });
+
+        const thumb = document.createElement("button");
+        thumb.setAttribute("class", "pswp__pdf-thumb");
+        thumb.setAttribute("type", "button");
+        thumb.setAttribute("aria-label", `${this.$gettext("Page")} ${pageNum}`);
+        thumb.dataset.page = String(pageNum);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.floor(viewport.width));
+        canvas.height = Math.max(1, Math.floor(viewport.height));
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+
+        const label = document.createElement("span");
+        label.setAttribute("class", "pswp__pdf-thumb-label");
+        label.textContent = String(pageNum);
+
+        thumb.appendChild(canvas);
+        thumb.appendChild(label);
+        thumbsList.appendChild(thumb);
+        thumbItems.push(thumb);
+
+        thumb.addEventListener(
+          "click",
+          (e) => {
+            e.stopPropagation();
+            goToPage(pageNum);
+          },
+          scrollOpts
+        );
+
+        const ctx = canvas.getContext("2d", { alpha: false });
+        await page.render({ canvasContext: ctx, viewport }).promise;
+      }
+
+      updateToolbar(currentPage.value);
+    },
+    async onPdfTaskResolved({
+      task,
+      pdfDoc,
+      content,
+      wrapper,
+      scrollArea,
+      thumbsDrawer,
+      thumbsList,
+      thumbToggleBtn,
+      prevBtn,
+      nextBtn,
+      counter,
+      zoomSelect,
+      zoomOptions,
+      handBtn,
+      linkService,
+      pdfViewer,
+      scrollOpts,
+      eventBus,
+    }) {
+      if (content.data.pdfTask !== task) return; // slide was destroyed before load finished
+
+      const numPages = pdfDoc.numPages;
+      const currentPage = { value: 1 };
+      content.data.pdfPagesReady = false;
+      let thumbsOpen = false;
+      const thumbItems = [];
+      let handMode = false;
+      let spacebarHandMode = false;
+      let handDrag = null;
+
+      // Update the counter label and button disabled states.
+      const updateToolbar = (page) => {
+        currentPage.value = page;
+        counter.textContent = `${page} / ${numPages}`;
+        prevBtn.disabled = !content.data.pdfPagesReady || page <= 1;
+        nextBtn.disabled = !content.data.pdfPagesReady || page >= numPages;
+
+        if (thumbItems.length) {
+          for (let i = 0; i < thumbItems.length; i++) {
+            const isCurrent = i + 1 === page;
+            thumbItems[i].classList.toggle("is-current", isCurrent);
+          }
+        }
+      };
+
+      const setThumbsOpen = (open) => {
+        thumbsOpen = open;
+        wrapper.classList.toggle("is-thumbs-open", open);
+        thumbsDrawer.setAttribute("aria-hidden", open ? "false" : "true");
+        thumbToggleBtn.classList.toggle("is-active", open);
+
+        // The viewer container width changes when the drawer is toggled.
+        // Wait for the CSS left-transition on scrollArea to finish before
+        // asking PDF.js to re-apply the zoom, otherwise it rescales to the
+        // pre-transition (wrong) width and the page gets clipped.
+        const relayout = () => {
+          if (!content.data.pdfPagesReady) {
+            return;
+          }
+
+          const pageNumber = pdfViewer.currentPageNumber || 1;
+          const selectedZoom = zoomSelect.value || PDF_DEFAULT_SCALE;
+
+          pdfViewer.update();
+          pdfViewer.currentScaleValue = selectedZoom;
+          pdfViewer.scrollPageIntoView({ pageNumber });
+        };
+
+        let relayoutDone = false;
+
+        const onTransitionEnd = (e) => {
+          if (e.propertyName !== "left") {
+            return;
+          }
+
+          scrollArea.removeEventListener("transitionend", onTransitionEnd);
+          relayoutDone = true;
+          window.requestAnimationFrame(relayout);
+        };
+
+        scrollArea.addEventListener("transitionend", onTransitionEnd);
+
+        // Fallback: if the transition doesn't fire (e.g. same value, reduced
+        // motion), relayout after the nominal transition duration anyway.
+        window.setTimeout(() => {
+          if (!relayoutDone) {
+            scrollArea.removeEventListener("transitionend", onTransitionEnd);
+            window.requestAnimationFrame(relayout);
+          }
+        }, PDF_RELAYOUT_FALLBACK_DELAY_MS);
+      };
+
+      const setHandMode = (enabled) => {
+        handMode = enabled;
+        content.data.handModeActive = enabled;
+        wrapper.classList.toggle("is-hand-mode", enabled);
+        handBtn.classList.toggle("is-active", enabled);
+
+        if (!enabled) {
+          handDrag = null;
+          scrollArea.classList.remove("is-panning");
+        }
+      };
+
+      content.data.setHandMode = setHandMode;
+
+      // Move to the given 1-based page index.
+      const goToPage = (page) => {
+        if (!content.data.pdfPagesReady) {
+          return;
+        }
+
+        const targetPage = Math.max(1, Math.min(page, numPages));
+
+        // Prefer the link service API, which drives internal page state.
+        linkService.goToPage(targetPage);
+
+        // Fallbacks for environments where goToPage does not scroll.
+        if (pdfViewer.currentPageNumber !== targetPage) {
+          pdfViewer.currentPageNumber = targetPage;
+        }
+        pdfViewer.scrollPageIntoView({ pageNumber: targetPage });
+
+        const pageView = pdfViewer.getPageView(targetPage - 1);
+        pageView?.div?.scrollIntoView({ block: "start" });
+
+        updateToolbar(targetPage);
+      };
+
+      updateToolbar(1);
+
+      thumbToggleBtn.addEventListener(
+        "click",
+        (e) => {
+          e.stopPropagation();
+          setThumbsOpen(!thumbsOpen);
+        },
+        scrollOpts
+      );
+
+      handBtn.addEventListener(
+        "click",
+        (e) => {
+          e.stopPropagation();
+          setHandMode(!handMode);
+        },
+        scrollOpts
+      );
+
+      scrollArea.addEventListener(
+        "pointerdown",
+        (e) => {
+          if (!handMode || e.button !== 0) {
+            return;
+          }
+
+          handDrag = {
+            pointerId: e.pointerId,
+            x: e.clientX,
+            y: e.clientY,
+            left: scrollArea.scrollLeft,
+            top: scrollArea.scrollTop,
+          };
+
+          if (scrollArea.setPointerCapture) {
+            scrollArea.setPointerCapture(e.pointerId);
+          }
+
+          scrollArea.classList.add("is-panning");
+          e.preventDefault();
+          e.stopPropagation();
+        },
+        scrollOpts
+      );
+
+      scrollArea.addEventListener(
+        "pointermove",
+        (e) => {
+          if (!handMode || !handDrag || handDrag.pointerId !== e.pointerId) {
+            return;
+          }
+
+          const dx = e.clientX - handDrag.x;
+          const dy = e.clientY - handDrag.y;
+          scrollArea.scrollLeft = handDrag.left - dx;
+          scrollArea.scrollTop = handDrag.top - dy;
+
+          e.preventDefault();
+          e.stopPropagation();
+        },
+        scrollOpts
+      );
+
+      const stopHandDrag = (e) => {
+        if (!handDrag || handDrag.pointerId !== e.pointerId) {
+          return;
+        }
+
+        if (scrollArea.releasePointerCapture) {
+          scrollArea.releasePointerCapture(e.pointerId);
+        }
+
+        handDrag = null;
+        scrollArea.classList.remove("is-panning");
+      };
+
+      scrollArea.addEventListener("pointerup", stopHandDrag, scrollOpts);
+      scrollArea.addEventListener("pointercancel", stopHandDrag, scrollOpts);
+
+      prevBtn.addEventListener(
+        "click",
+        (e) => {
+          e.stopPropagation();
+          if (currentPage.value > 1) goToPage(currentPage.value - 1);
+        },
+        scrollOpts
+      );
+
+      nextBtn.addEventListener(
+        "click",
+        (e) => {
+          e.stopPropagation();
+          if (currentPage.value < numPages) goToPage(currentPage.value + 1);
+        },
+        scrollOpts
+      );
+
+      const onPdfKeyDown = (e) => {
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (currentPage.value > 1) goToPage(currentPage.value - 1);
+        } else if (e.key === "ArrowDown") {
+          e.preventDefault();
+          e.stopPropagation();
+          if (currentPage.value < numPages) goToPage(currentPage.value + 1);
+        } else if (e.key === " " && !handMode) {
+          e.preventDefault();
+          e.stopPropagation();
+          spacebarHandMode = true;
+          setHandMode(true);
+        }
+      };
+
+      const onPdfKeyUp = (e) => {
+        if (e.key === " " && spacebarHandMode) {
+          e.preventDefault();
+          e.stopPropagation();
+          spacebarHandMode = false;
+          setHandMode(false);
+        }
+      };
+
+      wrapper.addEventListener("keydown", onPdfKeyDown, scrollOpts);
+      scrollArea.addEventListener("keydown", onPdfKeyDown, scrollOpts);
+      wrapper.addEventListener("keyup", onPdfKeyUp, scrollOpts);
+      scrollArea.addEventListener("keyup", onPdfKeyUp, scrollOpts);
+
+      const onPageChanging = ({ pageNumber }) => {
+        updateToolbar(pageNumber);
+      };
+
+      const onScaleChanging = ({ presetValue, scale }) => {
+        if (typeof presetValue === "string" && zoomOptions.some((opt) => opt.value === presetValue)) {
+          zoomSelect.value = presetValue;
+          return;
+        }
+
+        const numericScale = Number(scale);
+        if (Number.isFinite(numericScale)) {
+          const normalized = String(Number(numericScale.toFixed(2)));
+          if (zoomOptions.some((opt) => opt.value === normalized)) {
+            zoomSelect.value = normalized;
+          }
+        }
+      };
+
+      const onPagesInit = () => {
+        content.data.pdfPagesReady = true;
+        // Let PDF.js choose a stable mixed-orientation scale mode.
+        pdfViewer.currentScaleValue = PDF_DEFAULT_SCALE;
+        zoomSelect.value = PDF_DEFAULT_SCALE;
+        updateToolbar(pdfViewer.currentPageNumber || 1);
+      };
+
+      zoomSelect.addEventListener(
+        "change",
+        () => {
+          if (!content.data.pdfPagesReady) {
+            return;
+          }
+
+          const value = zoomSelect.value;
+          pdfViewer.currentScaleValue = value;
+        },
+        scrollOpts
+      );
+
+      eventBus.on("pagechanging", onPageChanging);
+      eventBus.on("scalechanging", onScaleChanging);
+      eventBus.on("pagesinit", onPagesInit);
+      content.data.pdfEventHandlers = { onPageChanging, onScaleChanging, onPagesInit };
+
+      // Set link service document before viewer document so page navigation
+      // APIs are fully wired when controls are used.
+      linkService.setDocument(pdfDoc, null);
+      pdfViewer.setDocument(pdfDoc);
+
+      await this.renderPdfThumbnails({
+        pdfDoc,
+        numPages,
+        task,
+        content,
+        thumbsList,
+        thumbItems,
+        goToPage,
+        scrollOpts,
+        updateToolbar,
+        currentPage,
+      });
+
+      content.data.loading = false;
+    },
     onPdfContentLoad(ev, content) {
       // Prevent default loading behavior.
       ev.preventDefault();
@@ -809,351 +1182,28 @@ export default {
         content.data.pdfViewer = pdfViewer;
 
         task.promise
-          .then(async (pdfDoc) => {
-            if (content.data.pdfTask !== task) return; // slide was destroyed before load finished
-
-            const numPages = pdfDoc.numPages;
-            let currentPage = 1;
-            content.data.pdfPagesReady = false;
-            let thumbsOpen = false;
-            const thumbItems = [];
-            let handMode = false;
-            let spacebarHandMode = false;
-            let handDrag = null;
-
-            // Update the counter label and button disabled states.
-            const updateToolbar = (page) => {
-              currentPage = page;
-              counter.textContent = `${page} / ${numPages}`;
-              prevBtn.disabled = !content.data.pdfPagesReady || page <= 1;
-              nextBtn.disabled = !content.data.pdfPagesReady || page >= numPages;
-
-              if (thumbItems.length) {
-                for (let i = 0; i < thumbItems.length; i++) {
-                  const isCurrent = i + 1 === page;
-                  thumbItems[i].classList.toggle("is-current", isCurrent);
-                }
-              }
-            };
-
-            const setThumbsOpen = (open) => {
-              thumbsOpen = open;
-              wrapper.classList.toggle("is-thumbs-open", open);
-              thumbsDrawer.setAttribute("aria-hidden", open ? "false" : "true");
-              thumbToggleBtn.classList.toggle("is-active", open);
-
-              // The viewer container width changes when the drawer is toggled.
-              // Wait for the CSS left-transition on scrollArea to finish before
-              // asking PDF.js to re-apply the zoom, otherwise it rescales to the
-              // pre-transition (wrong) width and the page gets clipped.
-              const relayout = () => {
-                if (!content.data.pdfPagesReady) {
-                  return;
-                }
-
-                const pageNumber = pdfViewer.currentPageNumber || 1;
-                const selectedZoom = zoomSelect.value || PDF_DEFAULT_SCALE;
-
-                pdfViewer.update();
-                pdfViewer.currentScaleValue = selectedZoom;
-                pdfViewer.scrollPageIntoView({ pageNumber });
-              };
-
-              let relayoutDone = false;
-
-              const onTransitionEnd = (e) => {
-                if (e.propertyName !== "left") {
-                  return;
-                }
-
-                scrollArea.removeEventListener("transitionend", onTransitionEnd);
-                relayoutDone = true;
-                window.requestAnimationFrame(relayout);
-              };
-
-              scrollArea.addEventListener("transitionend", onTransitionEnd);
-
-              // Fallback: if the transition doesn't fire (e.g. same value, reduced
-              // motion), relayout after the nominal transition duration anyway.
-              window.setTimeout(() => {
-                if (!relayoutDone) {
-                  scrollArea.removeEventListener("transitionend", onTransitionEnd);
-                  window.requestAnimationFrame(relayout);
-                }
-              }, PDF_RELAYOUT_FALLBACK_DELAY_MS);
-            };
-
-            const setHandMode = (enabled) => {
-              handMode = enabled;
-              content.data.handModeActive = enabled;
-              wrapper.classList.toggle("is-hand-mode", enabled);
-              handBtn.classList.toggle("is-active", enabled);
-
-              if (!enabled) {
-                handDrag = null;
-                scrollArea.classList.remove("is-panning");
-              }
-            };
-
-            content.data.setHandMode = setHandMode;
-
-            // Move to the given 1-based page index.
-            const goToPage = (page) => {
-              if (!content.data.pdfPagesReady) {
-                return;
-              }
-
-              const targetPage = Math.max(1, Math.min(page, numPages));
-
-              // Prefer the link service API, which drives internal page state.
-              linkService.goToPage(targetPage);
-
-              // Fallbacks for environments where goToPage does not scroll.
-              if (pdfViewer.currentPageNumber !== targetPage) {
-                pdfViewer.currentPageNumber = targetPage;
-              }
-              pdfViewer.scrollPageIntoView({ pageNumber: targetPage });
-
-              const pageView = pdfViewer.getPageView(targetPage - 1);
-              pageView?.div?.scrollIntoView({ block: "start" });
-
-              updateToolbar(targetPage);
-            };
-
-            updateToolbar(1);
-
-            thumbToggleBtn.addEventListener(
-              "click",
-              (e) => {
-                e.stopPropagation();
-                setThumbsOpen(!thumbsOpen);
-              },
-              scrollOpts
-            );
-
-            handBtn.addEventListener(
-              "click",
-              (e) => {
-                e.stopPropagation();
-                setHandMode(!handMode);
-              },
-              scrollOpts
-            );
-
-            scrollArea.addEventListener(
-              "pointerdown",
-              (e) => {
-                if (!handMode || e.button !== 0) {
-                  return;
-                }
-
-                handDrag = {
-                  pointerId: e.pointerId,
-                  x: e.clientX,
-                  y: e.clientY,
-                  left: scrollArea.scrollLeft,
-                  top: scrollArea.scrollTop,
-                };
-
-                if (scrollArea.setPointerCapture) {
-                  scrollArea.setPointerCapture(e.pointerId);
-                }
-
-                scrollArea.classList.add("is-panning");
-                e.preventDefault();
-                e.stopPropagation();
-              },
-              scrollOpts
-            );
-
-            scrollArea.addEventListener(
-              "pointermove",
-              (e) => {
-                if (!handMode || !handDrag || handDrag.pointerId !== e.pointerId) {
-                  return;
-                }
-
-                const dx = e.clientX - handDrag.x;
-                const dy = e.clientY - handDrag.y;
-                scrollArea.scrollLeft = handDrag.left - dx;
-                scrollArea.scrollTop = handDrag.top - dy;
-
-                e.preventDefault();
-                e.stopPropagation();
-              },
-              scrollOpts
-            );
-
-            const stopHandDrag = (e) => {
-              if (!handDrag || handDrag.pointerId !== e.pointerId) {
-                return;
-              }
-
-              if (scrollArea.releasePointerCapture) {
-                scrollArea.releasePointerCapture(e.pointerId);
-              }
-
-              handDrag = null;
-              scrollArea.classList.remove("is-panning");
-            };
-
-            scrollArea.addEventListener("pointerup", stopHandDrag, scrollOpts);
-            scrollArea.addEventListener("pointercancel", stopHandDrag, scrollOpts);
-
-            prevBtn.addEventListener(
-              "click",
-              (e) => {
-                e.stopPropagation();
-                if (currentPage > 1) goToPage(currentPage - 1);
-              },
-              scrollOpts
-            );
-
-            nextBtn.addEventListener(
-              "click",
-              (e) => {
-                e.stopPropagation();
-                if (currentPage < numPages) goToPage(currentPage + 1);
-              },
-              scrollOpts
-            );
-
-            const onPdfKeyDown = (e) => {
-              if (e.key === "ArrowUp") {
-                e.preventDefault();
-                e.stopPropagation();
-                if (currentPage > 1) goToPage(currentPage - 1);
-              } else if (e.key === "ArrowDown") {
-                e.preventDefault();
-                e.stopPropagation();
-                if (currentPage < numPages) goToPage(currentPage + 1);
-              } else if (e.key === " " && !handMode) {
-                e.preventDefault();
-                e.stopPropagation();
-                spacebarHandMode = true;
-                setHandMode(true);
-              }
-            };
-
-            const onPdfKeyUp = (e) => {
-              if (e.key === " " && spacebarHandMode) {
-                e.preventDefault();
-                e.stopPropagation();
-                spacebarHandMode = false;
-                setHandMode(false);
-              }
-            };
-
-            wrapper.addEventListener("keydown", onPdfKeyDown, scrollOpts);
-            scrollArea.addEventListener("keydown", onPdfKeyDown, scrollOpts);
-            wrapper.addEventListener("keyup", onPdfKeyUp, scrollOpts);
-            scrollArea.addEventListener("keyup", onPdfKeyUp, scrollOpts);
-
-            const onPageChanging = ({ pageNumber }) => {
-              updateToolbar(pageNumber);
-            };
-
-            const onScaleChanging = ({ presetValue, scale }) => {
-              if (typeof presetValue === "string" && zoomOptions.some((opt) => opt.value === presetValue)) {
-                zoomSelect.value = presetValue;
-                return;
-              }
-
-              const numericScale = Number(scale);
-              if (Number.isFinite(numericScale)) {
-                const normalized = String(Number(numericScale.toFixed(2)));
-                if (zoomOptions.some((opt) => opt.value === normalized)) {
-                  zoomSelect.value = normalized;
-                }
-              }
-            };
-
-            const onPagesInit = () => {
-              content.data.pdfPagesReady = true;
-              // Let PDF.js choose a stable mixed-orientation scale mode.
-              pdfViewer.currentScaleValue = PDF_DEFAULT_SCALE;
-              zoomSelect.value = PDF_DEFAULT_SCALE;
-              updateToolbar(pdfViewer.currentPageNumber || 1);
-            };
-
-            zoomSelect.addEventListener(
-              "change",
-              () => {
-                if (!content.data.pdfPagesReady) {
-                  return;
-                }
-
-                const value = zoomSelect.value;
-                pdfViewer.currentScaleValue = value;
-              },
-              scrollOpts
-            );
-
-            eventBus.on("pagechanging", onPageChanging);
-            eventBus.on("scalechanging", onScaleChanging);
-            eventBus.on("pagesinit", onPagesInit);
-            content.data.pdfEventHandlers = { onPageChanging, onScaleChanging, onPagesInit };
-
-            // Set link service document before viewer document so page navigation
-            // APIs are fully wired when controls are used.
-            linkService.setDocument(pdfDoc, null);
-            pdfViewer.setDocument(pdfDoc);
-
-            // Render static page thumbnails for quick navigation.
-            const renderThumbs = async () => {
-              const thumbWidth = 92;
-
-              for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                if (content.data.pdfTask !== task) {
-                  return;
-                }
-
-                const page = await pdfDoc.getPage(pageNum);
-                const baseViewport = page.getViewport({ scale: 1 });
-                const scale = thumbWidth / baseViewport.width;
-                const viewport = page.getViewport({ scale });
-
-                const thumb = document.createElement("button");
-                thumb.setAttribute("class", "pswp__pdf-thumb");
-                thumb.setAttribute("type", "button");
-                thumb.setAttribute("aria-label", `${this.$gettext("Page")} ${pageNum}`);
-                thumb.dataset.page = String(pageNum);
-
-                const canvas = document.createElement("canvas");
-                canvas.width = Math.max(1, Math.floor(viewport.width));
-                canvas.height = Math.max(1, Math.floor(viewport.height));
-                canvas.style.width = `${viewport.width}px`;
-                canvas.style.height = `${viewport.height}px`;
-
-                const label = document.createElement("span");
-                label.setAttribute("class", "pswp__pdf-thumb-label");
-                label.textContent = String(pageNum);
-
-                thumb.appendChild(canvas);
-                thumb.appendChild(label);
-                thumbsList.appendChild(thumb);
-                thumbItems.push(thumb);
-
-                thumb.addEventListener(
-                  "click",
-                  (e) => {
-                    e.stopPropagation();
-                    goToPage(pageNum);
-                  },
-                  scrollOpts
-                );
-
-                const ctx = canvas.getContext("2d", { alpha: false });
-                await page.render({ canvasContext: ctx, viewport }).promise;
-              }
-
-              updateToolbar(currentPage);
-            };
-
-            void renderThumbs();
-
-            content.data.loading = false;
-          })
+          .then(async (pdfDoc) =>
+            this.onPdfTaskResolved({
+              task,
+              pdfDoc,
+              content,
+              wrapper,
+              scrollArea,
+              thumbsDrawer,
+              thumbsList,
+              thumbToggleBtn,
+              prevBtn,
+              nextBtn,
+              counter,
+              zoomSelect,
+              zoomOptions,
+              handBtn,
+              linkService,
+              pdfViewer,
+              scrollOpts,
+              eventBus,
+            })
+          )
           .catch((err) => {
             if (this.debug) {
               this.log("failed to render PDF", err);
