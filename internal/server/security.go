@@ -40,12 +40,6 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Skip frame-blocking headers for the bundled PDF.js viewer so it can be
-		// loaded in an iframe from the same origin without being blocked by CSP.
-		if strings.HasPrefix(c.Request.URL.Path, conf.BaseUri("/static/pdfjs/")) {
-			return
-		}
-
 		// Set "Content-Security-Policy" header:
 		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 		c.Header(header.ContentSecurityPolicy, header.DefaultContentSecurityPolicy)
