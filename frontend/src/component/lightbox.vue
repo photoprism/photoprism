@@ -75,7 +75,14 @@
         </div>
       </div>
       <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
-        <p-sidebar-info v-model="model" :collection="collection" :context="context" @close="hideInfo"></p-sidebar-info>
+        <p-sidebar-info
+          v-model="model"
+          :photo="photo"
+          :collection="collection"
+          :context="context"
+          @close="hideInfo"
+          @navigate="onSidebarNavigate"
+        ></p-sidebar-info>
       </div>
     </div>
     <p-lightbox-menu
@@ -174,6 +181,7 @@ export default {
       collection: null,
       context: contexts.Default,
       model: new Thumb(), // Current slide.
+      photo: null, // Full Photo model from LRU cache (null while loading).
       models: [], // Slide models.
       index: 0, // Current slide index in models.
       contextAllowsEdit: true,
@@ -1557,6 +1565,7 @@ export default {
       this.collection = null;
       this.context = contexts.Default;
       this.model = new Thumb();
+      this.photo = null;
       this.models = [];
       this.index = 0;
     },
@@ -1590,6 +1599,12 @@ export default {
         this.model = this.models[this.index];
       }
 
+      // Fetch full photo metadata for the sidebar if it is visible.
+      if (this.info) {
+        this.fetchPhoto(this.model.UID);
+        this.preloadNextPhoto();
+      }
+
       // Pause the slideshow if the index of the next slide does not match.
       if (this.slideshow.next !== this.index) {
         this.pauseSlideshow();
@@ -1597,6 +1612,34 @@ export default {
 
       // Ensure that content is focused.
       this.focusContent();
+    },
+    // Fetches the full Photo model for the given UID using the LRU cache.
+    fetchPhoto(uid) {
+      if (!uid) {
+        this.photo = null;
+        return;
+      }
+
+      Photo.findCached(uid)
+        .then((photo) => {
+          // Only apply if still showing this photo (prevents race on fast swiping).
+          if (this.model && this.model.UID === uid) {
+            this.photo = photo;
+          }
+        })
+        .catch(() => {});
+    },
+    // Preloads the next photo's full metadata when the sidebar is visible.
+    preloadNextPhoto() {
+      if (!this.info || !this.models.length) {
+        return;
+      }
+
+      const next = this.index + 1;
+
+      if (next < this.models.length && this.models[next]?.UID) {
+        Photo.findCached(this.models[next].UID);
+      }
     },
     // Called when the user clicks on the PhotoSwipe lightbox background,
     // see https://photoswipe.com/click-and-tap-actions.
@@ -2424,8 +2467,11 @@ export default {
       }
 
       this.info = true;
-
       appStorage.setItem("lightbox.info", `${this.info.toString()}`);
+
+      // Fetch full photo metadata when sidebar is opened.
+      this.fetchPhoto(this.model?.UID);
+      this.preloadNextPhoto();
 
       // Resize and focus content element.
       this.$nextTick(() => {
@@ -2447,6 +2493,16 @@ export default {
       this.$nextTick(() => {
         this.resize(true);
         this.focusContent();
+      });
+    },
+    // Handles navigation requests from the sidebar (e.g. clicking a label or album chip).
+    onSidebarNavigate(route) {
+      if (!route) {
+        return;
+      }
+
+      this.close().then(() => {
+        this.$router.push(route);
       });
     },
     toggleControls() {

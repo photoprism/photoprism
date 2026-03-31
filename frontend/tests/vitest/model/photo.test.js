@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import "../fixtures";
 import * as media from "common/media";
 import { Photo, BatchSize } from "model/photo";
@@ -1741,5 +1741,134 @@ describe("model/photo", () => {
     ];
     const photo8 = new Photo({ UID: "origName8", Type: media.Raw, Files: files8 });
     expect(photo8.getOriginalName()).toBe("original_raw_name8.raw");
+  });
+
+  it("should format EXIF info with all fields", () => {
+    const photo = new Photo({ FocalLength: 50, FNumber: 1.8, Iso: 400, Exposure: "1/125" });
+    expect(photo.getExifInfo()).toBe("50mm \u2022 \u0192/1.8 \u2022 ISO 400 \u2022 1/125");
+  });
+
+  it("should format EXIF info with partial fields", () => {
+    const photo = new Photo({ FocalLength: 35, Iso: 100 });
+    expect(photo.getExifInfo()).toBe("35mm \u2022 ISO 100");
+  });
+
+  it("should return empty EXIF info when no fields set", () => {
+    const photo = new Photo({});
+    expect(photo.getExifInfo()).toBe("");
+  });
+
+  describe("LRU cache", () => {
+    beforeEach(() => {
+      Photo._cache.clear();
+      Photo._pending.clear();
+    });
+
+    it("should cache a photo after findCached resolves", async () => {
+      const mockPhoto = new Photo({ UID: "cache-test-1", Title: "Cached" });
+      vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(mockPhoto);
+
+      const result = await Photo.findCached("cache-test-1");
+      expect(result.Title).toBe("Cached");
+      expect(Photo._cache.has("cache-test-1")).toBe(true);
+
+      Photo.prototype.find.mockRestore();
+    });
+
+    it("should return cached photo without API call on second request", async () => {
+      const mockPhoto = new Photo({ UID: "cache-test-2", Title: "Cached" });
+      Photo._cache.set("cache-test-2", mockPhoto);
+
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      const result = await Photo.findCached("cache-test-2");
+
+      expect(result.Title).toBe("Cached");
+      expect(findSpy).not.toHaveBeenCalled();
+
+      findSpy.mockRestore();
+    });
+
+    it("should evict oldest entry when cache exceeds LRU_MAX", async () => {
+      for (let i = 0; i < Photo.LRU_MAX; i++) {
+        Photo._cache.set(`uid-${i}`, new Photo({ UID: `uid-${i}` }));
+      }
+      expect(Photo._cache.size).toBe(Photo.LRU_MAX);
+
+      const mockPhoto = new Photo({ UID: "uid-new", Title: "New" });
+      vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(mockPhoto);
+
+      await Photo.findCached("uid-new");
+
+      expect(Photo._cache.size).toBe(Photo.LRU_MAX);
+      expect(Photo._cache.has("uid-0")).toBe(false);
+      expect(Photo._cache.has("uid-new")).toBe(true);
+
+      Photo.prototype.find.mockRestore();
+    });
+
+    it("should move accessed entry to end (most recent)", async () => {
+      Photo._cache.set("uid-a", new Photo({ UID: "uid-a" }));
+      Photo._cache.set("uid-b", new Photo({ UID: "uid-b" }));
+      Photo._cache.set("uid-c", new Photo({ UID: "uid-c" }));
+
+      await Photo.findCached("uid-a");
+
+      const keys = [...Photo._cache.keys()];
+      expect(keys[keys.length - 1]).toBe("uid-a");
+    });
+
+    it("should evict cache entry for a given UID", () => {
+      Photo._cache.set("uid-evict", new Photo({ UID: "uid-evict" }));
+      expect(Photo._cache.has("uid-evict")).toBe(true);
+
+      Photo.evictCache("uid-evict");
+      expect(Photo._cache.has("uid-evict")).toBe(false);
+    });
+
+    it("should handle evictCache with falsy uid gracefully", () => {
+      Photo._cache.set("uid-keep", new Photo({ UID: "uid-keep" }));
+      Photo.evictCache(null);
+      Photo.evictCache(undefined);
+      Photo.evictCache("");
+      expect(Photo._cache.has("uid-keep")).toBe(true);
+    });
+
+    it("should deduplicate concurrent requests for the same UID", async () => {
+      const mockPhoto = new Photo({ UID: "uid-dedup", Title: "Dedup" });
+      const findSpy = vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(mockPhoto);
+
+      const p1 = Photo.findCached("uid-dedup");
+      const p2 = Photo.findCached("uid-dedup");
+
+      const [r1, r2] = await Promise.all([p1, p2]);
+      expect(r1).toBe(r2);
+      expect(findSpy).toHaveBeenCalledTimes(1);
+
+      findSpy.mockRestore();
+    });
+
+    it("should clear pending entry after request completes", async () => {
+      const mockPhoto = new Photo({ UID: "uid-pending", Title: "Pending" });
+      vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(mockPhoto);
+
+      await Photo.findCached("uid-pending");
+      expect(Photo._pending.has("uid-pending")).toBe(false);
+
+      Photo.prototype.find.mockRestore();
+    });
+
+    it("should clear pending entry even if request fails", async () => {
+      vi.spyOn(Photo.prototype, "find").mockRejectedValueOnce(new Error("Network error"));
+
+      try {
+        await Photo.findCached("uid-fail");
+      } catch {
+        // Expected
+      }
+
+      expect(Photo._pending.has("uid-fail")).toBe(false);
+
+      Photo.prototype.find.mockRestore();
+    });
   });
 });

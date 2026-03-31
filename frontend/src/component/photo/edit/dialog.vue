@@ -290,8 +290,7 @@ export default {
       this.selected = index;
       this.selectedId = this.selection[index];
 
-      return this.model
-        .find(this.selectedId)
+      return Photo.findCached(this.selectedId)
         .then((model) => {
           model.refreshFileAttr();
           this.model = model;

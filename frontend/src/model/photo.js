@@ -1069,6 +1069,15 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
+  getExifInfo() {
+    const parts = [];
+    if (this.FocalLength) parts.push(this.FocalLength + "mm");
+    if (this.FNumber) parts.push("\u0192/" + this.FNumber);
+    if (this.Iso) parts.push("ISO " + this.Iso);
+    if (this.Exposure) parts.push(this.Exposure);
+    return parts.join(" \u2022 ");
+  }
+
   getCamera() {
     if (this.Camera) {
       return this.Camera.Make + " " + this.Camera.Model;
@@ -1088,6 +1097,7 @@ export class Photo extends RestModel {
   }
 
   toggleLike() {
+    Photo.evictCache(this.UID);
     const favorite = !this.Favorite;
     const elements = document.querySelectorAll(`.uid-${this.UID}`);
 
@@ -1101,20 +1111,24 @@ export class Photo extends RestModel {
   }
 
   togglePrivate() {
+    Photo.evictCache(this.UID);
     this.Private = !this.Private;
 
     return $api.put(this.getEntityResource(), { Private: this.Private });
   }
 
   setPrimaryFile(fileUID) {
+    Photo.evictCache(this.UID);
     return $api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   unstackFile(fileUID) {
+    Photo.evictCache(this.UID);
     return $api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   deleteFile(fileUID) {
+    Photo.evictCache(this.UID);
     return $api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
@@ -1133,32 +1147,39 @@ export class Photo extends RestModel {
     }
 
     // Change file orientation.
+    Photo.evictCache(this.UID);
     return $api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   like() {
+    Photo.evictCache(this.UID);
     this.Favorite = true;
     return $api.post(this.getEntityResource() + "/like");
   }
 
   unlike() {
+    Photo.evictCache(this.UID);
     this.Favorite = false;
     return $api.delete(this.getEntityResource() + "/like");
   }
 
   addLabel(name) {
+    Photo.evictCache(this.UID);
     return $api.post(this.getEntityResource() + "/label", { Name: name, Priority: 10 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   activateLabel(id) {
+    Photo.evictCache(this.UID);
     return $api.put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   renameLabel(id, name) {
+    Photo.evictCache(this.UID);
     return $api.put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   removeLabel(id) {
+    Photo.evictCache(this.UID);
     return $api.delete(this.getEntityResource() + "/label/" + id).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
@@ -1183,6 +1204,7 @@ export class Photo extends RestModel {
   }
 
   update() {
+    Photo.evictCache(this.UID);
     const values = this.getValues(true);
 
     if (typeof values.Title === "string") {
@@ -1262,6 +1284,52 @@ export class Photo extends RestModel {
 
   static getModelName() {
     return $gettext("Photo");
+  }
+
+  // LRU cache for full Photo metadata fetched via GET /api/v1/photos/{uid}.
+  // Map preserves insertion order; delete+re-set moves entry to end (most recent).
+  static _cache = new Map();
+  static _pending = new Map(); // In-flight requests to avoid duplicate API calls.
+  static LRU_MAX = 50;
+
+  // Returns a cached Photo or fetches it from the API and caches the result.
+  static findCached(uid) {
+    if (Photo._cache.has(uid)) {
+      const cached = Photo._cache.get(uid);
+      Photo._cache.delete(uid);
+      Photo._cache.set(uid, cached);
+      return Promise.resolve(cached);
+    }
+
+    // Return existing in-flight request if one is already pending for this UID.
+    if (Photo._pending.has(uid)) {
+      return Photo._pending.get(uid);
+    }
+
+    const instance = new Photo();
+    const request = instance
+      .find(uid)
+      .then((photo) => {
+        if (Photo._cache.size >= Photo.LRU_MAX) {
+          const oldest = Photo._cache.keys().next().value;
+          Photo._cache.delete(oldest);
+        }
+        Photo._cache.set(uid, photo);
+        return photo;
+      })
+      .finally(() => {
+        Photo._pending.delete(uid);
+      });
+
+    Photo._pending.set(uid, request);
+    return request;
+  }
+
+  // Removes a photo from the LRU cache, e.g. after it has been modified.
+  static evictCache(uid) {
+    if (uid) {
+      Photo._cache.delete(uid);
+    }
   }
 
   static mergeResponse(results, response) {

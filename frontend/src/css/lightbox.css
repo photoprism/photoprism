@@ -122,13 +122,85 @@
     hyphens: auto;
 }
 
-.p-lightbox__container > .p-lightbox__sidebar .meta-caption {
+.p-lightbox__container > .p-lightbox__sidebar .meta-caption,
+.p-lightbox__container > .p-lightbox__sidebar .meta-notes {
     white-space: pre-wrap;
     overflow-wrap: normal;
     word-wrap: normal;
     word-break: break-word;
     text-align: start;
     hyphens: auto;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-scrollable {
+    max-height: 120px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-keywords {
+    word-break: break-word;
+    text-align: start;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-caption a,
+.p-lightbox__container > .p-lightbox__sidebar .meta-notes a {
+    color: rgb(var(--v-theme-info));
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-caption a:hover,
+.p-lightbox__container > .p-lightbox__sidebar .meta-notes a:hover {
+    text-decoration: none;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(var(--v-theme-surface-variant), 0.25);
+    color: rgb(var(--v-theme-on-surface));
+    transition: background 0.15s ease;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip:hover {
+    background: rgba(var(--v-theme-surface-variant), 0.45);
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary {
+    background: rgba(var(--v-theme-info), 0.2);
+    color: rgb(var(--v-theme-info));
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary:hover {
+    background: rgba(var(--v-theme-info), 0.35);
+}
+
+/* Person row in sidebar */
+.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row {
+    min-height: 44px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-person__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-person__name {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Media Content */
