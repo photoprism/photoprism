@@ -78,6 +78,7 @@
         <p-sidebar-info
           v-model="model"
           :photo="photo"
+          :can-edit="shouldShowEditButton()"
           :collection="collection"
           :context="context"
           @close="hideInfo"
