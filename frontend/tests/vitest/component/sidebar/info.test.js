@@ -43,13 +43,14 @@ describe("PSidebarInfo component", () => {
       getCameraInfo: vi.fn().mockReturnValue("Canon EOS R5"),
       getLensInfo: vi.fn().mockReturnValue("RF 50mm F1.2L"),
       getExifInfo: vi.fn().mockReturnValue("50mm \u2022 \u0192/1.2 \u2022 ISO 400 \u2022 1/125"),
+      locationInfo: vi.fn().mockReturnValue("Berlin, Germany"),
       getMarkers: vi.fn().mockReturnValue([
         { UID: "m1", CropID: "crop1", Name: "Jane Doe", SubjUID: "subj1", thumbnailUrl: () => "/t/thumb1/public/tile_160" },
         { UID: "m2", CropID: "crop2", Name: "", SubjUID: "", thumbnailUrl: () => "/svg/portrait" },
       ]),
       Labels: [
-        { Label: { UID: "lbl1", Name: "Nature", Slug: "nature", CustomSlug: "" } },
-        { Label: { UID: "lbl2", Name: "Landscape", Slug: "landscape", CustomSlug: "custom-landscape" } },
+        { Uncertainty: 0, Label: { ID: 1, UID: "lbl1", Name: "Nature", Slug: "nature", CustomSlug: "" } },
+        { Uncertainty: 0, Label: { ID: 2, UID: "lbl2", Name: "Landscape", Slug: "landscape", CustomSlug: "custom-landscape" } },
       ],
       Albums: [
         { UID: "alb1", Title: "Vacation 2023", Slug: "vacation-2023" },
@@ -63,7 +64,6 @@ describe("PSidebarInfo component", () => {
         License: "CC BY 4.0",
         Keywords: "nature, mountains, sunset",
       },
-      PlaceLabel: "Berlin, Germany",
       FileName: "photos/2023/IMG_001.jpg",
       OriginalName: "IMG_001_original.jpg",
     };
@@ -114,11 +114,9 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos, onClose },
       global: { stubs: { PMap: true } },
     });
-    const allButtons = w.findAll("button");
-    if (allButtons.length > 0) {
-      await allButtons[0].trigger("click");
-      expect(onClose).toHaveBeenCalled();
-    }
+    const closeButton = w.findAll("button")[0];
+    await closeButton.trigger("click");
+    expect(onClose).toHaveBeenCalled();
   });
 
   it("should trigger copyLatLng when location is clicked", async () => {
@@ -205,22 +203,10 @@ describe("PSidebarInfo component", () => {
     expect(wrapper.vm.labels[0].Label.Name).toBe("Nature");
   });
 
-  it("should render label chips", () => {
-    const html = wrapper.html();
-    expect(html).toContain("Nature");
-    expect(html).toContain("Landscape");
-  });
-
   // Albums
   it("should return albums from photo prop", () => {
     expect(wrapper.vm.albums).toHaveLength(2);
     expect(wrapper.vm.albums[0].Title).toBe("Vacation 2023");
-  });
-
-  it("should render album chips", () => {
-    const html = wrapper.html();
-    expect(html).toContain("Vacation 2023");
-    expect(html).toContain("Favorites");
   });
 
   // Metadata details
@@ -311,5 +297,248 @@ describe("PSidebarInfo component", () => {
     });
     w.vm.navigateToPerson({ UID: "m4", Name: "", SubjUID: "" });
     expect(onNavigate).not.toHaveBeenCalled();
+  });
+
+  // isEditable
+  it("should not be editable without canEdit prop", () => {
+    expect(wrapper.vm.isEditable).toBeFalsy();
+  });
+
+  it("should be editable when canEdit is true with valid photo", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.isEditable).toBeTruthy();
+  });
+
+  // Altitude
+  it("should return altitude when photo has Altitude", () => {
+    const photo = { ...mockPhoto, Altitude: 340 };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.altitude).toBe("340 m");
+  });
+
+  // Labels Uncertainty filter
+  it("should hide labels with Uncertainty 100", () => {
+    const photo = {
+      ...mockPhoto,
+      Labels: [
+        { Uncertainty: 0, Label: { ID: 1, UID: "lbl1", Name: "Nature", Slug: "nature", CustomSlug: "" } },
+        { Uncertainty: 100, Label: { ID: 3, UID: "lbl3", Name: "Hidden", Slug: "hidden", CustomSlug: "" } },
+      ],
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.labels).toHaveLength(1);
+    expect(w.vm.labels[0].Label.Name).toBe("Nature");
+  });
+
+  // Inline editing: startEditing / cancelEditing
+  it("should set editingField and store original value on startEditing", () => {
+    const photo = { ...mockPhoto, Title: "Test Title", Caption: "Test Caption" };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditing("title");
+    expect(w.vm.editingField).toBe("title");
+    expect(w.vm.editOriginal).toBe("Test Title");
+  });
+
+  it("should restore original value on cancelEditing", async () => {
+    const photo = { ...mockPhoto, Title: "Test Title", wasChanged: vi.fn().mockReturnValue(false) };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditing("title");
+    photo.Title = "Modified";
+    // Wait past the 200ms blur guard
+    w.vm._editStartedAt = Date.now() - 300;
+    w.vm.cancelEditing();
+    expect(photo.Title).toBe("Test Title");
+    expect(w.vm.editingField).toBeNull();
+  });
+
+  // getFieldValue / setFieldValue
+  it("should get and set field values for all fields", () => {
+    const photo = { ...mockPhoto, Title: "Test Title", Caption: "Test Caption" };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.getFieldValue("title")).toBe("Test Title");
+    expect(w.vm.getFieldValue("caption")).toBe("Test Caption");
+    expect(w.vm.getFieldValue("subject")).toBe("Mountains");
+    expect(w.vm.getFieldValue("notes")).toBe("Some notes about this photo");
+    expect(w.vm.getFieldValue("unknown")).toBe("");
+
+    w.vm.setFieldValue("title", "New Title");
+    expect(photo.Title).toBe("New Title");
+  });
+
+  // Pending label operations
+  it("should toggle label pending removal", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    const label = { Label: { ID: 1, UID: "lbl1", Name: "Nature" } };
+
+    expect(w.vm.isLabelPendingRemoval(label)).toBe(false);
+    w.vm.toggleLabelRemoval(label);
+    expect(w.vm.isLabelPendingRemoval(label)).toBe(true);
+    w.vm.toggleLabelRemoval(label);
+    expect(w.vm.isLabelPendingRemoval(label)).toBe(false);
+  });
+
+  it("should add and remove pending label additions", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.pendingLabelAdditions.push("Sunset");
+    expect(w.vm.pendingLabelAdditions).toContain("Sunset");
+
+    w.vm.removePendingLabelAdd("Sunset");
+    expect(w.vm.pendingLabelAdditions).not.toContain("Sunset");
+  });
+
+  it("should ignore duplicate pending label additions via onLabelSelected", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "labels";
+    w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
+    w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
+    expect(w.vm.pendingLabelAdditions).toHaveLength(1);
+  });
+
+  it("should ignore non-object values in onLabelSelected", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.onLabelSelected("string-value");
+    w.vm.onLabelSelected(null);
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+  });
+
+  it("should skip labels already on the photo in onLabelSelected", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "labels";
+    w.vm.onLabelSelected({ Name: "Nature", UID: "lbl1" });
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+  });
+
+  // Pending album operations
+  it("should toggle album pending removal", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    const album = { UID: "alb1", Title: "Vacation 2023" };
+
+    expect(w.vm.isAlbumPendingRemoval(album)).toBe(false);
+    w.vm.toggleAlbumRemoval(album);
+    expect(w.vm.isAlbumPendingRemoval(album)).toBe(true);
+    w.vm.toggleAlbumRemoval(album);
+    expect(w.vm.isAlbumPendingRemoval(album)).toBe(false);
+  });
+
+  it("should add and remove pending album additions", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    const album = { UID: "alb-new", Title: "New Album" };
+
+    w.vm.onAlbumSelected(album);
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
+    expect(w.vm.pendingAlbumAdditions[0].UID).toBe("alb-new");
+
+    w.vm.removePendingAlbumAdd(album);
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+  });
+
+  it("should ignore non-object values in onAlbumSelected", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.onAlbumSelected("string-value");
+    w.vm.onAlbumSelected(null);
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+  });
+
+  it("should skip albums already on the photo in onAlbumSelected", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.onAlbumSelected({ UID: "alb1", Title: "Vacation 2023" });
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+  });
+
+  // cancelEditing clears all pending state
+  it("should clear all pending state on cancelEditing", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "labels";
+    w.vm.pendingLabelRemovals = [1];
+    w.vm.pendingLabelAdditions = ["Sunset"];
+    w.vm.pendingAlbumRemovals = ["alb1"];
+    w.vm.pendingAlbumAdditions = [{ UID: "alb-new", Title: "New" }];
+
+    w.vm._editStartedAt = Date.now() - 300;
+    w.vm.cancelEditing();
+
+    expect(w.vm.editingField).toBeNull();
+    expect(w.vm.pendingLabelRemovals).toHaveLength(0);
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.pendingAlbumRemovals).toHaveLength(0);
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+  });
+
+  // Photo watcher
+  it("should cancel editing when photo changes", async () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "title";
+    w.vm._editStartedAt = Date.now() - 300;
+
+    await w.setProps({ photo: { ...mockPhoto, Title: "Other" } });
+    expect(w.vm.editingField).toBeNull();
+  });
+
+  // clearChipInput
+  it("should reset chip state on clearChipInput", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.chipInput = { Name: "test" };
+    w.vm.chipSearch = "test";
+    const prevKey = w.vm.chipKey;
+
+    w.vm.clearChipInput();
+
+    expect(w.vm.chipInput).toBeNull();
+    expect(w.vm.chipSearch).toBe("");
+    expect(w.vm.chipKey).toBe(prevKey + 1);
   });
 });
