@@ -90,7 +90,7 @@
     "minimist": "^1.2.8",
     "node-storage-shim": "^2.0.1",
     "passive-events-support": "^1.1.0",
-    "pdfjs-dist": "4.10.38",
+    "pdfjs-dist": "^4.10.38",
     "photoswipe": "^5.4.4",
     "playwright": "^1.58.2",
     "postcss": "^8.5.8",
