@@ -112,7 +112,6 @@ type Options struct {
 	DisableClassification     bool          `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DisableFFmpeg             bool          `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
 	DisableExifTool           bool          `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
-	DisableVips               bool          `yaml:"DisableVips" json:"DisableVips" flag:"disable-vips"`
 	DisableSips               bool          `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
 	DisableDarktable          bool          `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
 	DisableRawTherapee        bool          `yaml:"DisableRawTherapee" json:"DisableRawTherapee" flag:"disable-rawtherapee"`
@@ -229,7 +228,6 @@ type Options struct {
 	PreviewToken              string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbLibrary              string        `yaml:"ThumbLibrary" json:"ThumbLibrary" flag:"thumb-library"`
 	ThumbColor                string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
-	ThumbFilter               string        `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
 	ThumbSize                 int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached         int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
 	ThumbUncached             bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
@@ -244,11 +242,9 @@ type Options struct {
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
-	FaceEngineRetry           bool          `yaml:"-" json:"-" flag:"-"`
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore                 float64       `yaml:"-" json:"-" flag:"face-score"`
-	FaceAngles                []float64     `yaml:"-" json:"-" flag:"face-angle"`
 	FaceOverlap               int           `yaml:"-" json:"-" flag:"face-overlap"`
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`

@@ -1,6 +1,6 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** March 6, 2026
+**Last Updated:** April 1, 2026
 
 ### Overview
 
@@ -9,7 +9,7 @@
 ### How It Works
 
 - **Model Loading** — The classifier loads a SavedModel under `assets/models/<name>` and resolves model tags and input/output ops (see `vision.yml` overrides for custom models).
-- **Input Preparation** — JPEGs are decoded and resized/cropped to the model’s expected input resolution.
+- **Input Preparation** — Input images are decoded through PhotoPrism’s bounded image helpers and resized/cropped to the model’s expected input resolution.
 - **Inference** — The model outputs probabilities; `Rules` apply thresholds and priority to produce final labels.
 
 ### Memory & Performance
@@ -24,7 +24,7 @@ TensorFlow tensors allocate C memory and are freed by Go GC finalizers. To keep 
 After the base image and toolchain upgrade on February 20, 2026, we observed measurable drift in TensorFlow label uncertainty values caused by changes in Go's `image/jpeg` implementation:
 
 - **Direct Evidence** — The `ChameleonLimeJpg` fixture shifted from uncertainty `7` with Go `1.25.4` to `8` with Go `1.26.0` for the same model and inputs.
-- **Pipeline Relevance** — Classification input decoding goes through `imaging.Decode(...)` in `model.go`, which uses Go's registered JPEG decoder.
+- **Pipeline Relevance** — Classification input decoding now goes through `pkg/fs` direct dispatch helpers, while in-memory resize/pad work uses PhotoPrism's stdlib/x-image thumbnail helpers. JPEG and PNG continue to use direct Go decoders, while TIFF goes through an explicit header/IFD validation path before `tiff.Decode`.
 - **Fixture Scan Result** — 55/55 JPEG fixtures in `assets/samples` decoded successfully on both versions (no compatibility failures), but all produced different decoded pixel hashes between Go `1.25.4` and `1.26.0`.
 - **Output Stability** — In sampled tests, top labels remained stable (`chameleon`, `cat`, etc.), while confidence and uncertainty values moved slightly.
 
@@ -32,6 +32,7 @@ Operational notes:
 
 - Prefer tolerance-based assertions (`assert.InDelta`) for JPEG-derived uncertainty/confidence tests instead of exact integer equality.
 - Avoid bit-for-bit JPEG expectations in tests unless the codec/toolchain is pinned and intentionally version-locked.
+- Classification no longer relies on generic Go image decoder registration for TIFF input handling.
 
 ### Troubleshooting Tips
 

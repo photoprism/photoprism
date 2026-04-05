@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/disintegration/imaging"
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -58,7 +57,9 @@ func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image,
 		return nil, err
 	}
 
-	return imaging.Open(thumbName)
+	img, _, err = fs.DecodeImageFile(thumbName)
+
+	return img, err
 }
 
 // SkipThumbnailSize tests if the thumbnail size can be skipped,

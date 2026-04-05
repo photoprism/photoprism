@@ -163,9 +163,26 @@ func (c *Client) timeoutRequest(timeout time.Duration) (*webdav.Client, context.
 	return c.withTimeout(timeout), ctx, cancel
 }
 
+// readDirPath returns an absolute WebDAV collection path rooted at the configured endpoint.
+func (c *Client) readDirPath(dir string) string {
+	basePath := c.endpoint.Path
+
+	if basePath == "" {
+		basePath = "/"
+	} else if !strings.HasSuffix(basePath, "/") {
+		basePath += "/"
+	}
+
+	if dir = trimPath(dir); dir != "" {
+		return strings.TrimRight(basePath, "/") + "/" + dir + "/"
+	}
+
+	return basePath
+}
+
 // readDirContext returns the contents of the specified directory using the provided request context.
 func (c *Client) readDirContext(ctx context.Context, dir string, recursive bool, timeout time.Duration) ([]webdav.FileInfo, error) {
-	dir = trimPath(dir)
+	dir = c.readDirPath(dir)
 	return c.withTimeout(timeout).ReadDir(ctx, dir, recursive)
 }
 

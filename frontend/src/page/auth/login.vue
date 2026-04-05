@@ -113,19 +113,9 @@
                         @keyup.enter="onLogin"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" class="pb-0 d-flex align-center justify-center opacity-80">
-                      <v-checkbox
-                        v-model="staySignedIn"
-                        :disabled="loading"
-                        density="compact"
-                        hide-details
-                        class="ma-0 pa-0 input-stay-signed-in"
-                        :label="$gettext('Stay signed in on this device')"
-                      ></v-checkbox>
-                    </v-col>
                   </template>
                   <v-col cols="12" class="auth-actions">
-                    <div class="action-buttons auth-buttons pb-1 d-flex ga-3 align-center justify-center">
+                    <div class="action-buttons auth-buttons pb-2 mb-0 d-flex ga-3 align-center justify-center">
                       <v-btn
                         v-if="enterCode"
                         :block="$vuetify.display.xs"
@@ -158,16 +148,26 @@
                         <v-icon :icon="$config.isRtl() ? 'mdi-chevron-left' : 'mdi-chevron-right'" end></v-icon>
                       </v-btn>
                     </div>
+                    <div class="pb-1 d-flex align-center justify-center opacity-90">
+                      <v-checkbox
+                        v-model="staySignedIn"
+                        :disabled="loading"
+                        density="compact"
+                        hide-details
+                        class="ma-0 pa-0 input-stay-signed-in text-secondary"
+                        :label="$gettext('Stay signed in on this device')"
+                      ></v-checkbox>
+                    </div>
                     <div
                       v-if="enterCode"
-                      class="auth-links text-center opacity-80"
+                      class="auth-links text-center opacity-90"
                       :class="{ clickable: !useRecoveryCode }"
                       @click.stop.prevent="onUseRecoveryCode"
                     >
                       {{ $gettext(`Can't access your authenticator app or device?`) }}
                       {{ $gettext(`Use your recovery code or contact an administrator for help.`) }}
                     </div>
-                    <div v-else-if="passwordResetUri" class="auth-links text-center opacity-80">
+                    <div v-else-if="passwordResetUri" class="auth-links text-center opacity-90">
                       <a :href="passwordResetUri" class="text-secondary">
                         {{ $gettext(`Forgot password?`) }}
                       </a>

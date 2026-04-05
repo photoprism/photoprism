@@ -133,6 +133,10 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
     .expect(page.selectOption.withText("P").visible)
     .ok();
 
+  await t
+    .pressKey("ctrl+a delete")
+    .pressKey("enter");
+
   await t.click(Selector(".input-albums input"));
 
   await t.expect(page.selectOption.withText("Holiday").visible).ok().expect(page.selectOption.withText("Christmas").visible).ok();

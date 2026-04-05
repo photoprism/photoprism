@@ -41,37 +41,3 @@ var (
 	// IgnoreBackground determines whether background faces are ignored when generating matches.
 	IgnoreBackground = true
 )
-
-var (
-	// LandmarkQualityFloor is the minimum score accepted when both eyes are located by the landmark detector.
-	LandmarkQualityFloor = float32(5.0)
-	// LandmarkQualityScaleMin is the minimum face size eligible for the landmark-assisted quality fallback.
-	LandmarkQualityScaleMin = 60
-	// LandmarkQualityScaleMax is the maximum face size eligible for the landmark-assisted quality fallback.
-	LandmarkQualityScaleMax = 90
-	// LandmarkQualitySlack is the maximum allowed difference between the quality threshold and the detected score.
-	LandmarkQualitySlack = float32(4.0)
-)
-
-// PigoQualityThreshold returns the scale-adjusted minimum Pigo quality score threshold for the provided detection scale.
-func PigoQualityThreshold(scale int) (score float32) {
-	score = float32(ScoreThreshold)
-
-	// Smaller faces require higher quality.
-	switch {
-	case scale < 26:
-		score += 12.0
-	case scale < 32:
-		score += 8.0
-	case scale < 40:
-		score += 6.0
-	case scale < 50:
-		score += 4.0
-	case scale < 80:
-		score += 2.0
-	case scale < 110:
-		score += 1.0
-	}
-
-	return score
-}

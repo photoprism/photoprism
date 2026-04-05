@@ -627,9 +627,6 @@
                 "DisableVectors": {
                     "type": "boolean"
                 },
-                "DisableVips": {
-                    "type": "boolean"
-                },
                 "DisableWebDAV": {
                     "type": "boolean"
                 },
@@ -767,9 +764,6 @@
                     "type": "boolean"
                 },
                 "ThumbColor": {
-                    "type": "string"
-                },
-                "ThumbFilter": {
                     "type": "string"
                 },
                 "ThumbLibrary": {

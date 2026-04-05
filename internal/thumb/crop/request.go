@@ -1,13 +1,9 @@
 package crop
 
 import (
-	"bytes"
 	"fmt"
 	"image"
-	"os"
 	"path/filepath"
-
-	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -31,13 +27,7 @@ func FromRequest(hash, area string, size Size, thumbPath string) (fileName strin
 	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area, fs.ExtJpeg)
 	cropName := filepath.Join(filepath.Dir(thumbName), cropBase)
 
-	imageBuffer, err := os.ReadFile(thumbName) //nolint:gosec // thumbName resolved from validated cache path
-
-	if err != nil {
-		return "", err
-	}
-
-	img, err := imaging.Decode(bytes.NewReader(imageBuffer))
+	img, _, err := fs.DecodeImageFile(thumbName)
 
 	if err != nil {
 		return "", err
@@ -51,13 +41,13 @@ func FromRequest(hash, area string, size Size, thumbPath string) (fileName strin
 	}
 
 	// Crop area from image.
-	img = imaging.Crop(img, image.Rect(min.X, min.Y, max.X, max.Y))
+	img = imageCrop(img, image.Rect(min.X, min.Y, max.X, max.Y))
 
 	// Resample crop area.
 	img = thumb.Resample(img, size.Width, size.Height, size.Options...)
 
 	// Save crop image.
-	if err := imaging.Save(img, cropName); err != nil {
+	if err := thumb.Save(img, cropName); err != nil {
 		log.Errorf("failed saving %s - no permission or disk full?", filepath.Base(cropName))
 		log.Debug(err.Error())
 	} else {

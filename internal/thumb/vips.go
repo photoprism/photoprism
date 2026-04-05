@@ -53,6 +53,7 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 		log.Debugf("vips: %s in %s (load image from buffer)", err, clean.Log(filepath.Base(imageName)))
 		return "", nil, err
 	}
+	defer img.Close()
 
 	// Set resample options.
 	var method ResampleOption

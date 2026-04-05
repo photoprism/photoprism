@@ -13,18 +13,14 @@
   >
     <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="-1" @submit.prevent="onSubmit">
       <v-card :tile="$vuetify.display.mdAndDown">
-        <v-toolbar v-if="$vuetify.display.mdAndDown" flat color="navigation" class="mb-4" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
-          <v-btn icon @click.stop="onClose">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+        <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
           <v-toolbar-title>
             {{ title }}
           </v-toolbar-title>
+          <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="onClose">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
         </v-toolbar>
-        <v-card-title v-else class="d-flex justify-start align-center ga-3">
-          <v-icon size="28" color="primary">mdi-cloud-upload</v-icon>
-          <h6 class="text-h6">{{ title }}</h6>
-        </v-card-title>
         <v-card-text class="flex-grow-0">
           <div class="form-container">
             <div class="form-header">
@@ -37,24 +33,39 @@
               <span v-else-if="filesQuotaReached"
                 >{{ $gettext(`Insufficient storage.`) }} {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
               >
-              <span v-else>{{ $gettext(`Select the files to upload…`) }}</span>
+              <span v-else-if="$vuetify.display.mdAndDown">{{ $gettext(`Select the files to upload…`) }}</span>
+              <span v-else>{{ $gettext(`Select or drop files to upload…`) }}</span>
             </div>
             <div class="form-body">
               <div class="form-controls">
+                <v-file-upload
+                  :model-value="selected"
+                  :filter-by-type="accept"
+                  :disabled="busy || filesQuotaReached"
+                  :multiple="true"
+                  :title="$vuetify.display.mdAndDown ? $gettext('Browse') : ''"
+                  :density="$vuetify.display.mdAndDown ? 'compact' : 'comfortable'"
+                  :icon="$vuetify.display.mdAndDown ? 'mdi-cloud-upload' : 'mdi-cloud-upload'"
+                  hide-details
+                  show-size
+                  clearable
+                  class="mt-1 mb-0 pb-0 input-file-upload"
+                  @update:model-value="onFilesSelected"
+                />
                 <v-combobox
                   v-model="selectedAlbums"
                   v-model:menu="albumsMenu"
                   :disabled="busy || loading || total > 0 || filesQuotaReached"
+                  :placeholder="$gettext('Select or create albums')"
+                  :items="albums"
+                  item-title="Title"
+                  item-value="UID"
                   hide-details
                   chips
                   closable-chips
                   return-object
                   multiple
                   class="input-albums"
-                  :items="albums"
-                  item-title="Title"
-                  item-value="UID"
-                  :placeholder="$gettext('Select or create albums')"
                   @update:menu="onAlbumsMenuUpdate"
                   @keydown.enter.stop="onAlbumsEnter"
                 >
@@ -86,19 +97,6 @@
                 >
                   <span v-if="eta" class="eta text-caption opacity-80">{{ eta }}</span>
                 </v-progress-linear>
-                <v-file-upload
-                  :model-value="selected"
-                  :filter-by-type="accept"
-                  :disabled="busy || filesQuotaReached"
-                  :multiple="true"
-                  :title="$vuetify.display.mdAndDown ? $gettext('Browse') : $gettext('Drop files here')"
-                  :density="$vuetify.display.mdAndDown ? 'compact' : 'default'"
-                  :icon="$vuetify.display.mdAndDown ? 'mdi-cloud-upload' : 'mdi-image-area'"
-                  clearable
-                  show-size
-                  class="mt-3 input-file-upload"
-                  @update:model-value="onFilesSelected"
-                />
               </div>
               <div class="form-text">
                 <p v-if="isDemo">
@@ -489,4 +487,3 @@ export default {
   },
 };
 </script>
-

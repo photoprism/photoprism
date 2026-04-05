@@ -10,8 +10,8 @@ func TestParseEngine(t *testing.T) {
 	cases := map[string]EngineName{
 		"":         EngineAuto,
 		"AUTO":     EngineAuto,
-		"pigo":     EnginePigo,
-		"  PIGO  ": EnginePigo,
+		"pigo":     EngineONNX,
+		"  PIGO  ": EngineONNX,
 		"onnx":     EngineONNX,
 		"OnNx":     EngineONNX,
 		"unknown":  EngineAuto,
@@ -26,5 +26,5 @@ func TestParseEngine(t *testing.T) {
 }
 
 func TestActiveEngineName(t *testing.T) {
-	assert.Equal(t, EnginePigo, ActiveEngineName())
+	assert.Equal(t, EngineNone, ActiveEngineName())
 }

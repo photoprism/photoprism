@@ -6,7 +6,7 @@ import (
 
 // Package configuration variables.
 var (
-	Library            = LibImaging        // Image processing library to be used.
+	Library            = LibVips           // Image processing library to be used.
 	Color              = ColorAuto         // Color sets the standard color profile for thumbnails.
 	Filter             = ResampleLanczos   // Filter specifies the default downscaling filter.
 	SizeCached         = SizeFit1920.Width // Pre-generated thumbnail size limit.

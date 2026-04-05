@@ -10,27 +10,39 @@ import (
 
 var (
 	vipsStarted = false
+	vipsStopped = false
 	vipsStart   = sync.Once{}
 )
 
 // VipsInit initializes libvips by checking its version and loading the ICC profiles once.
 func VipsInit() {
+	if vipsStopped {
+		log.Debugf("vips: restart requested after shutdown, ignoring")
+		return
+	}
+
 	vipsStart.Do(vipsInit)
 }
 
-// VipsShutdown shuts down libvips and removes temporary files.
+// VipsShutdown shuts down libvips once as terminal process cleanup.
 func VipsShutdown() {
-	if vipsStarted {
-		vipsStarted = false
-		vipsStart = sync.Once{}
-		vips.Shutdown()
+	if !vipsStarted || vipsStopped {
+		return
 	}
+
+	vipsStopped = true
+	vips.Shutdown()
 }
 
 // vipsInit calls vips.Startup() to initialize libvips.
 func vipsInit() {
+	if vipsStopped {
+		log.Debugf("vips: restart requested after shutdown, ignoring")
+		return
+	}
+
 	if vipsStarted {
-		log.Warnf("vips: already initialized - you may have found a bug")
+		log.Debugf("vips: already initialized")
 		return
 	}
 

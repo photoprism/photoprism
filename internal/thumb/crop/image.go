@@ -1,15 +1,12 @@
 package crop
 
 import (
-	"bytes"
 	"fmt"
 	"image"
-	"os"
+	"image/draw"
 	"path"
 	"path/filepath"
 	"strings"
-
-	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -58,7 +55,7 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	// Cached?
 	if !fs.FileExists(cropName) {
 		// Do nothing.
-	} else if cropImg, cropErr := imaging.Open(cropName); cropErr != nil {
+	} else if cropImg, _, cropErr := fs.DecodeImageFile(cropName); cropErr != nil {
 		log.Errorf("crop: failed loading %s", filepath.Base(cropName))
 	} else {
 		return cropImg, cropName, nil
@@ -79,14 +76,14 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	}
 
 	// Crop area from image.
-	img = imaging.Crop(img, image.Rect(posMin.X, posMin.Y, posMax.X, posMax.Y))
+	img = imageCrop(img, image.Rect(posMin.X, posMin.Y, posMax.X, posMax.Y))
 
 	// Resample crop area.
 	img = thumb.Resample(img, size.Width, size.Height, size.Options...)
 
 	// Cache crop image?
 	if cache {
-		if err = imaging.Save(img, cropName); err != nil {
+		if err = thumb.Save(img, cropName); err != nil {
 			log.Errorf("crop: failed caching %s", filepath.Base(cropName))
 		} else {
 			log.Debugf("crop: saved %s", filepath.Base(cropName))
@@ -177,20 +174,28 @@ func openIdealThumbFile(fileName, hash string, area Area, size Size) (result ima
 
 	if len(hash) != 40 || area.W <= 0 || size.Width <= 0 {
 		// Not a standard thumb name with sha1 hash prefix.
-		if imageBuffer, err := os.ReadFile(fileName); err != nil { //nolint:gosec // file path comes from resolved thumbnails
-			return nil, err
-		} else {
-			return imaging.Decode(bytes.NewReader(imageBuffer), imaging.AutoOrientation(true))
-		}
+		result, _, err = fs.DecodeImageFile(fileName)
+		return result, err
 	}
 
 	if name := findIdealThumbFileName(hash, area.FileWidth(size), filepath.Dir(fileName)); name != "" {
 		fileName = name
 	}
 
-	if imageBuffer, err := os.ReadFile(fileName); err != nil { //nolint:gosec // file path comes from resolved thumbnails
-		return nil, err
-	} else {
-		return imaging.Decode(bytes.NewReader(imageBuffer))
+	result, _, err = fs.DecodeImageFile(fileName)
+	return result, err
+}
+
+// imageCrop returns a copy of the requested crop rectangle.
+func imageCrop(img image.Image, rect image.Rectangle) image.Image {
+	rect = rect.Intersect(img.Bounds())
+
+	if rect.Dx() <= 0 || rect.Dy() <= 0 {
+		return image.NewNRGBA(image.Rect(0, 0, 0, 0))
 	}
+
+	cropped := image.NewNRGBA(image.Rect(0, 0, rect.Dx(), rect.Dy()))
+	draw.Draw(cropped, cropped.Bounds(), img, rect.Min, draw.Src)
+
+	return cropped
 }

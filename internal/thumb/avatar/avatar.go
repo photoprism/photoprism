@@ -30,7 +30,6 @@ import (
 	_ "image/png"  // register png decoder
 
 	_ "golang.org/x/image/bmp"  // register bmp decoder
-	_ "golang.org/x/image/tiff" // register tiff decoder
 	_ "golang.org/x/image/webp" // register webp decoder
 
 	"github.com/photoprism/photoprism/internal/event"

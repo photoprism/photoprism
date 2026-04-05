@@ -2,9 +2,11 @@ package thumb
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -250,5 +252,41 @@ func TestPng(t *testing.T) {
 		}
 
 		assert.Error(t, err)
+	})
+	t.Run("MalformedTiffIfdOffset", func(t *testing.T) {
+		src := filepath.Join(t.TempDir(), "evil.tiff")
+		dst := filepath.Join(t.TempDir(), "evil.png")
+		payload := []byte{0x49, 0x49, 0x2a, 0x00, 0xff, 0xff, 0xff, 0xff}
+		require.NoError(t, os.WriteFile(src, payload, fs.ModeFile))
+
+		img, err := Png(src, dst, OrientationNormal)
+
+		assert.NoFileExists(t, dst)
+		assert.Nil(t, img)
+		assert.Error(t, err)
+	})
+	t.Run("MalformedBigEndianTiffIfdOffset", func(t *testing.T) {
+		src := filepath.Join(t.TempDir(), "evil-mm.tiff")
+		dst := filepath.Join(t.TempDir(), "evil-mm.png")
+		payload := []byte{0x4d, 0x4d, 0x00, 0x2a, 0xff, 0xff, 0xff, 0xff}
+		require.NoError(t, os.WriteFile(src, payload, fs.ModeFile))
+
+		img, err := Png(src, dst, OrientationNormal)
+
+		assert.NoFileExists(t, dst)
+		assert.Nil(t, img)
+		assert.Error(t, err)
+	})
+	t.Run("TruncatedTiffBody", func(t *testing.T) {
+		src := filepath.Join(t.TempDir(), "truncated.tiff")
+		dst := filepath.Join(t.TempDir(), "truncated.png")
+		payload := []byte{0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00}
+		require.NoError(t, os.WriteFile(src, payload, fs.ModeFile))
+
+		img, err := Png(src, dst, OrientationNormal)
+
+		assert.NoFileExists(t, dst)
+		assert.Nil(t, img)
+		require.Error(t, err)
 	})
 }

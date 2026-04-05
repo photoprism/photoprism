@@ -4,8 +4,9 @@ import (
 	"image"
 	"testing"
 
-	"github.com/disintegration/imaging"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestSkip(t *testing.T) {
@@ -40,7 +41,7 @@ func TestSize_Skip(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -53,7 +54,7 @@ func TestSize_Skip(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +67,7 @@ func TestSize_Skip(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -79,7 +80,7 @@ func TestSize_Skip(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -92,7 +93,7 @@ func TestSize_Skip(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -105,7 +106,7 @@ func TestSize_Skip(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)

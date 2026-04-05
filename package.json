@@ -1,6 +1,9 @@
 {
   "name": "photoprism",
   "private": true,
+  "overrides": {
+    "axios": "1.14.0"
+  },
   "workspaces": [
     "frontend"
   ]

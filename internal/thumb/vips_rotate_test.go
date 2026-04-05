@@ -26,6 +26,7 @@ func TestVipsRotate(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer img.Close()
 
 		if err = VipsRotate(img, OrientationNormal); err != nil {
 			t.Fatal(err)
@@ -57,6 +58,7 @@ func TestVipsRotate(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer img.Close()
 
 		if err = VipsRotate(img, OrientationRotate90); err != nil {
 			t.Fatal(err)
@@ -88,6 +90,7 @@ func TestVipsRotate(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer img.Close()
 
 		if err = VipsRotate(img, OrientationRotate180); err != nil {
 			t.Fatal(err)
@@ -119,6 +122,7 @@ func TestVipsRotate(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer img.Close()
 
 		if err = VipsRotate(img, OrientationRotate270); err != nil {
 			t.Fatal(err)

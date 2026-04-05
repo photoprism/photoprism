@@ -135,13 +135,9 @@ func (c *Config) DisableHeifConvert() bool {
 	return c.options.DisableHeifConvert
 }
 
-// DisableVips checks if the use of libvips is disabled.
+// DisableVips checks if libvips is unavailable in the current runtime.
 func (c *Config) DisableVips() bool {
-	if bits.UintSize < 64 {
-		return true
-	}
-
-	return c.options.DisableVips
+	return bits.UintSize < 64
 }
 
 // DisableSips checks if conversion of RAW images with SIPS is disabled.
