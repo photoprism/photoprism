@@ -1,22 +1,29 @@
 ## PhotoPrism MCP Prototype
 
-**Last Updated:** March 25, 2026
+**Last Updated:** April 7, 2026
 
 ### Current capabilities
 
-- CLI entrypoint: `photoprism mcp serve`
-- Transport: stdio only
+- **Transports:**
+  - CLI: `photoprism mcp serve` (stdio, no auth)
+  - HTTP: `POST/GET/DELETE /api/v1/mcp` (Streamable HTTP, authenticated)
+- **Authentication:** HTTP endpoint requires admin role via `ResourceMCP` ACL
+- **Feature gate:** HTTP endpoint requires `--experimental` flag
 - Read-only resources:
   - `photoprism://config-options`
   - `photoprism://search-filters`
 - Read-only tools:
   - `list_config_keys`
   - `find_search_filters`
-- Documented prompt templates:
-  - Support answer draft
-  - Config troubleshooting checklist
-  - Search filter composer
-  - Developer onboarding helper
+
+### Package layout
+
+| Package | Purpose |
+|---------|---------|
+| `internal/mcp/` | Core MCP logic: server factory, data pipeline, resources, tools |
+| `internal/api/mcp_serve.go` | Gin HTTP handler with auth middleware, route registration |
+| `internal/commands/mcp.go` | CLI command (`photoprism mcp serve`) using stdio transport |
+| `internal/auth/acl/` | `ResourceMCP` constant and admin-only grant rules |
 
 ### Goals and non-goals
 
@@ -25,23 +32,21 @@ Goals:
 - Prove the MCP model works end-to-end inside the PhotoPrism codebase
 - Reuse internal reference data instead of maintaining a separate copy
 - Keep outputs concise enough for LLM use
-- Make the prototype easy for another team member to run locally
+- Provide authenticated remote access via Streamable HTTP transport
 
 Non-Goals:
 
 - No write-capable tools
 - No direct database access
 - No live PhotoPrism instance or API queries
-- No production authentication model
-- No broad autonomous troubleshooting
-- No streamable HTTP transport in Week 2
+- No non-admin access
 
 ### Internal data sources
 
-- Config options: `internal/config.Flags.Report()` plus `internal/config.OptionsReportSections`
+- Config options: `internal/config.Flags` plus `internal/config.OptionsReportSections`
 - Search filters: `internal/form.Report(&form.SearchPhotos{})`
 
-### Run locally
+### Run locally (stdio)
 
 Build the CLI:
 
@@ -49,7 +54,7 @@ Build the CLI:
 go build ./cmd/photoprism
 ```
 
-Start the MCP server:
+Start the MCP server over stdio:
 
 ```bash
 ./photoprism mcp serve
@@ -57,9 +62,28 @@ Start the MCP server:
 
 The process waits for an MCP client on stdin/stdout. Logs are written to stderr so the MCP message stream stays valid.
 
+### Run via HTTP
+
+Start PhotoPrism with experimental mode enabled:
+
+```bash
+./photoprism --experimental start
+```
+
+The MCP endpoint is available at `/api/v1/mcp`. Authenticate with an admin token:
+
+```bash
+# Initialize session
+curl -X POST http://localhost:2342/api/v1/mcp \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"curl","version":"1.0"}}}'
+```
+
 ### Test with MCP inspector
 
-Launch the Inspector directly against the CLI command:
+Stdio transport:
 
 ```bash
 npx @modelcontextprotocol/inspector ./photoprism mcp serve
@@ -98,3 +122,13 @@ Useful smoke tests:
 - Inputs: `query`, `type`, `limit`
 - Returns matching search filters with examples and notes
 - Validation rejects unsupported filter `type` values
+
+### Authorization
+
+The HTTP endpoint uses PhotoPrism's existing ACL system:
+
+- **Resource:** `ResourceMCP` (`"mcp"`)
+- **Permission:** `ActionView` for read-only tools
+- **Roles:** Admin-only (`GrantFullAccess`)
+- **Auth model:** Request-level (every HTTP request runs through `Auth()`)
+- **Public mode:** Blocked (returns 403)

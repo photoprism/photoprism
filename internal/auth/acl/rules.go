@@ -138,6 +138,9 @@ var Rules = ACL{
 	ResourceFeedback: Roles{
 		RoleAdmin: GrantFullAccess,
 	},
+	ResourceMCP: Roles{
+		RoleAdmin: GrantFullAccess,
+	},
 	ResourceDefault: Roles{
 		RoleAdmin:    GrantFullAccess,
 		RoleInstance: GrantNone,

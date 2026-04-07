@@ -8,7 +8,7 @@ import (
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/urfave/cli/v2"
 
-	internalmcp "github.com/photoprism/photoprism/internal/api/mcp"
+	internalmcp "github.com/photoprism/photoprism/internal/mcp"
 )
 
 // MCPCommands configures the MCP prototype command group.

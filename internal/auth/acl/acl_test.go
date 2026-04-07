@@ -130,6 +130,36 @@ func TestACL_DenyAll(t *testing.T) {
 	})
 }
 
+func TestACL_ResourceMCP(t *testing.T) {
+	t.Run("AdminActionView", func(t *testing.T) {
+		assert.True(t, Rules.Allow(ResourceMCP, RoleAdmin, ActionView))
+	})
+	t.Run("AdminActionManage", func(t *testing.T) {
+		assert.True(t, Rules.Allow(ResourceMCP, RoleAdmin, ActionManage))
+	})
+	t.Run("AdminFullAccess", func(t *testing.T) {
+		assert.True(t, Rules.Allow(ResourceMCP, RoleAdmin, FullAccess))
+	})
+	t.Run("GuestDenied", func(t *testing.T) {
+		assert.True(t, Rules.DenyAll(ResourceMCP, RoleGuest, Permissions{ActionView, ActionManage}))
+	})
+	t.Run("VisitorDenied", func(t *testing.T) {
+		assert.True(t, Rules.DenyAll(ResourceMCP, RoleVisitor, Permissions{ActionView, ActionManage}))
+	})
+	t.Run("ClientDenied", func(t *testing.T) {
+		assert.True(t, Rules.DenyAll(ResourceMCP, RoleClient, Permissions{ActionView, ActionManage}))
+	})
+	t.Run("ServiceDenied", func(t *testing.T) {
+		assert.True(t, Rules.DenyAll(ResourceMCP, RoleService, Permissions{ActionView, ActionManage}))
+	})
+	t.Run("PortalDenied", func(t *testing.T) {
+		assert.True(t, Rules.DenyAll(ResourceMCP, RolePortal, Permissions{ActionView, ActionManage}))
+	})
+	t.Run("DefaultDenied", func(t *testing.T) {
+		assert.True(t, Rules.DenyAll(ResourceMCP, RoleDefault, Permissions{ActionView, ActionManage}))
+	})
+}
+
 func TestACL_Resources(t *testing.T) {
 	t.Run("Rules", func(t *testing.T) {
 		result := Rules.Resources()

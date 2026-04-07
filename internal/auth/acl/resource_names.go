@@ -29,5 +29,6 @@ var ResourceNames = []Resource{
 	ResourceVision,
 	ResourceCluster,
 	ResourceFeedback,
+	ResourceMCP,
 	ResourceDefault,
 }
