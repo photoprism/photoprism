@@ -11,6 +11,7 @@ import (
 const (
 	defaultResultLimit = 20
 	maxResultLimit     = 50
+	maxQueryLength     = 200
 )
 
 var allowedEditions = map[string]struct{}{
@@ -79,8 +80,15 @@ func listConfigKeys(_ context.Context, _ *sdkmcp.CallToolRequest, input ListConf
 		return nil, ListConfigKeysOutput{}, err
 	}
 
-	query := strings.TrimSpace(strings.ToLower(input.Query))
-	section := strings.TrimSpace(strings.ToLower(input.Section))
+	query, err := validateQuery(input.Query)
+	if err != nil {
+		return nil, ListConfigKeysOutput{}, err
+	}
+
+	section, err := validateQuery(input.Section)
+	if err != nil {
+		return nil, ListConfigKeysOutput{}, err
+	}
 	matches := make([]ConfigKeyMatch, 0, limit)
 	total := 0
 
@@ -157,6 +165,17 @@ func validateLimit(limit int) (int, error) {
 	return limit, nil
 }
 
+// validateQuery validates and normalizes a free-text query string.
+func validateQuery(query string) (string, error) {
+	query = strings.TrimSpace(strings.ToLower(query))
+
+	if len(query) > maxQueryLength {
+		return "", fmt.Errorf("query must not exceed %d characters", maxQueryLength)
+	}
+
+	return query, nil
+}
+
 // matchesSection reports whether an option matches the requested section filter.
 func matchesSection(option ConfigOption, section string) bool {
 	if section == "" {
@@ -187,25 +206,24 @@ func matchesQuery(option ConfigOption, query string) bool {
 	return false
 }
 
-// editionSupportFor returns a conservative edition annotation for a config row.
+// editionSupportFor returns an edition annotation based on a config option's tags.
 func editionSupportFor(option ConfigOption, currentEdition string) string {
 	if currentEdition == "unknown" {
 		return "unknown"
 	}
 
-	lower := strings.ToLower(option.Environment + " " + option.CLIFlag + " " + option.Description)
-
-	if strings.Contains(lower, "portal") {
-		return "portal"
+	if len(option.Tags) == 0 {
+		return "all"
 	}
 
-	if strings.Contains(lower, "pro-only") || strings.Contains(lower, "pro only") {
-		return "pro"
+	// Check tags in priority order (most restrictive first).
+	for _, tag := range []string{"portal", "pro", "plus", "essentials"} {
+		for _, t := range option.Tags {
+			if t == tag {
+				return tag
+			}
+		}
 	}
 
-	if currentEdition == "ce" {
-		return "ce-or-unknown"
-	}
-
-	return currentEdition
+	return "all"
 }

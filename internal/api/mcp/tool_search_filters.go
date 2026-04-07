@@ -53,7 +53,10 @@ func findSearchFilters(_ context.Context, _ *sdkmcp.CallToolRequest, input FindS
 		return nil, FindSearchFiltersOutput{}, err
 	}
 
-	query := strings.TrimSpace(strings.ToLower(input.Query))
+	query, err := validateQuery(input.Query)
+	if err != nil {
+		return nil, FindSearchFiltersOutput{}, err
+	}
 	matches := make([]SearchFilterMatch, 0, limit)
 	total := 0
 

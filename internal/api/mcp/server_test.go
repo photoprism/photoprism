@@ -3,6 +3,7 @@ package mcp
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -150,6 +151,156 @@ func TestListConfigKeysTool(t *testing.T) {
 		})
 		require.NoError(t, err)
 		require.True(t, res.IsError)
+	})
+}
+
+// TestListConfigKeysValidation exercises edge cases for input validation.
+func TestListConfigKeysValidation(t *testing.T) {
+	ctx := context.Background()
+	session := connectTestClient(t)
+
+	t.Run("QueryTooLong", func(t *testing.T) {
+		longQuery := strings.Repeat("a", maxQueryLength+1)
+
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "list_config_keys",
+			Arguments: map[string]any{
+				"query": longQuery,
+			},
+		})
+		require.NoError(t, err)
+		require.True(t, res.IsError)
+	})
+
+	t.Run("WhitespaceQuery", func(t *testing.T) {
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "list_config_keys",
+			Arguments: map[string]any{
+				"query": "   ",
+			},
+		})
+		require.NoError(t, err)
+		require.False(t, res.IsError)
+
+		raw, err := json.Marshal(res.StructuredContent)
+		require.NoError(t, err)
+
+		var out ListConfigKeysOutput
+		require.NoError(t, json.Unmarshal(raw, &out))
+		require.NotEmpty(t, out.Matches, "whitespace-only query should match all")
+	})
+
+	t.Run("UnicodeQuery", func(t *testing.T) {
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "list_config_keys",
+			Arguments: map[string]any{
+				"query": "日本語",
+			},
+		})
+		require.NoError(t, err)
+		require.False(t, res.IsError)
+	})
+
+	t.Run("NegativeLimit", func(t *testing.T) {
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "list_config_keys",
+			Arguments: map[string]any{
+				"limit": -1,
+			},
+		})
+		require.NoError(t, err)
+		require.True(t, res.IsError)
+	})
+
+	t.Run("LimitCappedAtMax", func(t *testing.T) {
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "list_config_keys",
+			Arguments: map[string]any{
+				"limit": maxResultLimit + 10,
+			},
+		})
+		require.NoError(t, err)
+		require.False(t, res.IsError)
+
+		raw, err := json.Marshal(res.StructuredContent)
+		require.NoError(t, err)
+
+		var out ListConfigKeysOutput
+		require.NoError(t, json.Unmarshal(raw, &out))
+		require.LessOrEqual(t, len(out.Matches), maxResultLimit)
+	})
+
+	t.Run("LimitExactlyMax", func(t *testing.T) {
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "list_config_keys",
+			Arguments: map[string]any{
+				"limit": maxResultLimit,
+			},
+		})
+		require.NoError(t, err)
+		require.False(t, res.IsError)
+
+		raw, err := json.Marshal(res.StructuredContent)
+		require.NoError(t, err)
+
+		var out ListConfigKeysOutput
+		require.NoError(t, json.Unmarshal(raw, &out))
+		require.LessOrEqual(t, len(out.Matches), maxResultLimit)
+	})
+
+	t.Run("LimitOne", func(t *testing.T) {
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "list_config_keys",
+			Arguments: map[string]any{
+				"limit": 1,
+			},
+		})
+		require.NoError(t, err)
+		require.False(t, res.IsError)
+
+		raw, err := json.Marshal(res.StructuredContent)
+		require.NoError(t, err)
+
+		var out ListConfigKeysOutput
+		require.NoError(t, json.Unmarshal(raw, &out))
+		require.Len(t, out.Matches, 1)
+	})
+}
+
+// TestFindSearchFiltersValidation exercises edge cases for search filter input validation.
+func TestFindSearchFiltersValidation(t *testing.T) {
+	ctx := context.Background()
+	session := connectTestClient(t)
+
+	t.Run("QueryTooLong", func(t *testing.T) {
+		longQuery := strings.Repeat("a", maxQueryLength+1)
+
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "find_search_filters",
+			Arguments: map[string]any{
+				"query": longQuery,
+			},
+		})
+		require.NoError(t, err)
+		require.True(t, res.IsError)
+	})
+
+	t.Run("WhitespaceQuery", func(t *testing.T) {
+		res, err := session.CallTool(ctx, &sdkmcp.CallToolParams{
+			Name: "find_search_filters",
+			Arguments: map[string]any{
+				"query": "   ",
+			},
+		})
+		require.NoError(t, err)
+		require.False(t, res.IsError)
+
+		raw, err := json.Marshal(res.StructuredContent)
+		require.NoError(t, err)
+
+		var out FindSearchFiltersOutput
+		require.NoError(t, json.Unmarshal(raw, &out))
+		require.NotEmpty(t, out.Matches)
 	})
 }
 

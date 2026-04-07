@@ -35,7 +35,7 @@ func mcpServeAction(ctx *cli.Context) error {
 	}
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}))
 
-	logger.Info("starting mcp prototype", "transport", "stdio", "tools", 1, "resources", 2)
+	logger.Info("starting mcp prototype", "transport", "stdio", "tools", 2, "resources", 2)
 
 	return internalmcp.NewServer(implementation, mcpEdition(ctx)).Run(context.Background(), &sdkmcp.StdioTransport{})
 }

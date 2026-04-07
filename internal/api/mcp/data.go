@@ -22,11 +22,12 @@ type Dataset struct {
 
 // ConfigOption represents a single config option report row with section metadata.
 type ConfigOption struct {
-	Section     string `json:"section"`
-	Environment string `json:"environment"`
-	CLIFlag     string `json:"cli_flag"`
-	Default     string `json:"default"`
-	Description string `json:"description"`
+	Section     string   `json:"section"`
+	Environment string   `json:"environment"`
+	CLIFlag     string   `json:"cli_flag"`
+	Default     string   `json:"default"`
+	Description string   `json:"description"`
+	Tags        []string `json:"-"`
 }
 
 // SearchFilter represents a single search filter report row.
@@ -60,34 +61,37 @@ func NewDataset(currentEdition string) *Dataset {
 
 // buildConfigOptions returns config options with section titles attached.
 func buildConfigOptions() []ConfigOption {
-	rows, _ := config.Flags.Report()
-	sections := config.OptionsReportSections
-	items := make([]ConfigOption, 0, len(rows))
+	// Build a map from section start env vars to section titles.
+	sectionStarts := make(map[string]string)
 
-	j := 0
-
-	for i, section := range sections {
-		for j < len(rows) {
-			row := rows[j]
-
-			if len(row) < 4 {
-				j++
-				continue
-			}
-
-			if i < len(sections)-1 && sections[i+1].Start == row[0] {
-				break
-			}
-
-			items = append(items, ConfigOption{
-				Section:     section.Title,
-				Environment: row[0],
-				CLIFlag:     row[1],
-				Default:     row[2],
-				Description: row[3],
-			})
-			j++
+	for _, section := range config.OptionsReportSections {
+		for _, key := range strings.Split(section.Start, ", ") {
+			sectionStarts[key] = section.Title
 		}
+	}
+
+	items := make([]ConfigOption, 0, len(config.Flags))
+	currentSection := ""
+
+	for _, flag := range config.Flags {
+		if flag.Hidden() {
+			continue
+		}
+
+		envVar := flag.EnvVar()
+
+		if title, ok := sectionStarts[envVar]; ok {
+			currentSection = title
+		}
+
+		items = append(items, ConfigOption{
+			Section:     currentSection,
+			Environment: envVar,
+			CLIFlag:     flag.CommandFlag(),
+			Default:     flag.Default(),
+			Description: flag.Usage(),
+			Tags:        flag.Tags,
+		})
 	}
 
 	return items
