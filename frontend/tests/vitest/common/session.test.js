@@ -495,6 +495,51 @@ describe("common/session", () => {
     expect(rawStorage.getItem(namespaced + "session.user")).toBe(null);
   });
 
+  it("should persist login redirect url to storage", () => {
+    const storage = new StorageShim();
+    const session = new Session(storage, $config);
+
+    session.setLoginRedirectUrl("/albums/abc123/my-album");
+    expect(session.loginRedirect).toBe("/albums/abc123/my-album");
+    expect(storage.getItem("session.loginRedirect")).toBe("/albums/abc123/my-album");
+    expect(session.getLoginRedirectUrl()).toBe("/albums/abc123/my-album");
+  });
+
+  it("should read login redirect url from storage when memory is cleared", () => {
+    const storage = new StorageShim();
+    const session = new Session(storage, $config);
+
+    session.setLoginRedirectUrl("/albums/abc123/my-album");
+
+    // Simulate page reload: clear in-memory value but keep storage.
+    session.loginRedirect = false;
+
+    expect(session.getLoginRedirectUrl()).toBe("/albums/abc123/my-album");
+  });
+
+  it("should clear login redirect url from storage", () => {
+    const storage = new StorageShim();
+    const session = new Session(storage, $config);
+
+    session.setLoginRedirectUrl("/albums/abc123/my-album");
+    session.clearLoginRedirectUrl();
+
+    expect(session.loginRedirect).toBe(false);
+    expect(storage.getItem("session.loginRedirect")).toBeNull();
+    expect(session.getLoginRedirectUrl()).toBe("/");
+  });
+
+  it("should clear login redirect url on reset", () => {
+    const storage = new StorageShim();
+    const session = new Session(storage, $config);
+
+    session.setLoginRedirectUrl("/albums/abc123/my-album");
+    session.reset();
+
+    expect(storage.getItem("session.loginRedirect")).toBeNull();
+    expect(session.getLoginRedirectUrl()).toBe("/");
+  });
+
   it("should test redeem token", async () => {
     const storage = new StorageShim();
     const session = new Session(storage, $config);

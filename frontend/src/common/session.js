@@ -305,6 +305,7 @@ export default class Session {
     this.authToken = null;
     this.provider = "";
     this.scope = "";
+    this.loginRedirect = false;
 
     // "session.id" is the SHA256 hash of the auth token.
     this.clearNamespacedKey(this.storageKey + ".id");
@@ -324,6 +325,7 @@ export default class Session {
     this.clearLegacyKey("session.scope");
     this.clearLegacyKey("authError");
     this.clearLegacyKey("session.error");
+    this.clearNamespacedKey(this.storageKey + ".loginRedirect");
 
     delete $api.defaults.headers.common[RequestHeader];
   }
@@ -473,15 +475,26 @@ export default class Session {
   }
 
   getLoginRedirectUrl(defaultUrl) {
+    if (this.loginRedirect) {
+      return this.loginRedirect;
+    }
+
+    // Fall back to stored value (survives page reload during OIDC flow).
+    const stored = this.storage.getItem(this.storageKey + ".loginRedirect");
+    if (stored) {
+      return stored;
+    }
+
     if (!defaultUrl) {
       defaultUrl = "/";
     }
 
-    return this.loginRedirect ? this.loginRedirect : defaultUrl;
+    return defaultUrl;
   }
 
   clearLoginRedirectUrl() {
     this.loginRedirect = false;
+    this.clearNamespacedKey(this.storageKey + ".loginRedirect");
 
     return this;
   }
@@ -492,6 +505,7 @@ export default class Session {
     }
 
     this.loginRedirect = url;
+    this.storage.setItem(this.storageKey + ".loginRedirect", url);
 
     return this;
   }

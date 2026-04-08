@@ -271,6 +271,8 @@ export default {
     if (authError) {
       this.$notify.error(authError);
       getAppStorage().removeItem("session.error");
+    } else if (this.config.ext?.oidc?.enabled && this.config.ext?.oidc?.redirect) {
+      this.onOidcLogin();
     }
   },
   mounted() {

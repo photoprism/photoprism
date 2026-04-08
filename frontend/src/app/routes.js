@@ -83,7 +83,13 @@ export default [
       if ($session.loginRequired()) {
         next();
       } else {
-        next({ name: $session.getDefaultRoute() });
+        const redirectUrl = $session.getLoginRedirectUrl();
+        $session.clearLoginRedirectUrl();
+        if (redirectUrl && redirectUrl !== "/") {
+          window.location = redirectUrl;
+        } else {
+          next({ name: $session.getDefaultRoute() });
+        }
       }
     },
   },
