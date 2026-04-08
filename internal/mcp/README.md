@@ -123,6 +123,45 @@ Useful smoke tests:
 - Returns matching search filters with examples and notes
 - Validation rejects unsupported filter `type` values
 
+### MCP Client Compatibility
+
+Most MCP clients natively support Streamable HTTP with custom headers (`url` + `headers` in config). Clients that only support stdio-based servers in their config file require [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) as a stdio-to-HTTP bridge.
+
+**Direct HTTP config** (clients with native support):
+
+```json
+{
+  "mcpServers": {
+    "photoprism": {
+      "url": "http://localhost:2342/api/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer <admin-token>"
+      }
+    }
+  }
+}
+```
+
+**stdio bridge** (clients without native HTTP support):
+
+```json
+{
+  "mcpServers": {
+    "photoprism": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "http://localhost:2342/api/v1/mcp",
+        "--header", "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer <admin-token>"
+      }
+    }
+  }
+}
+```
+
 ### Authorization
 
 The HTTP endpoint uses PhotoPrism's existing ACL system:
