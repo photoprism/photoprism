@@ -166,7 +166,6 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.labels).toEqual([]);
     expect(w.vm.albums).toEqual([]);
     expect(w.vm.placeName).toBe("");
-    expect(w.vm.fileName).toBe("");
     expect(w.vm.originalName).toBe("");
     expect(w.vm.subject).toBe("");
     expect(w.vm.artist).toBe("");
@@ -220,7 +219,6 @@ describe("PSidebarInfo component", () => {
 
   it("should return place and file info from photo prop", () => {
     expect(wrapper.vm.placeName).toBe("Berlin, Germany");
-    expect(wrapper.vm.fileName).toBe("photos/2023/IMG_001.jpg");
     expect(wrapper.vm.originalName).toBe("IMG_001_original.jpg");
   });
 

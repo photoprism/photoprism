@@ -117,7 +117,7 @@
           <v-btn variant="flat" color="button" min-width="100" @click.stop="close">
             {{ $gettext("Cancel") }}
           </v-btn>
-          <v-btn color="highlight" min-width="100" :disabled="invalidDate" @click="confirm">
+          <v-btn color="info" min-width="100" :disabled="invalidDate" @click="confirm">
             {{ $gettext("Confirm") }}
           </v-btn>
         </div>

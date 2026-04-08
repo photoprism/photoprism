@@ -7,7 +7,7 @@
     <div v-if="model.UID">
       <v-list nav slim tile density="compact" class="metadata__list mt-2">
         <!-- Title -->
-        <v-list-item v-if="editingField === 'title' || model.Title" class="metadata__item">
+        <v-list-item v-if="editingField === 'title' || model.Title || isEditable" class="metadata__item">
           <v-text-field
             v-if="editingField === 'title'"
             v-model="p.Title"
@@ -22,7 +22,8 @@
             @keydown.escape.prevent="cancelEditing"
             @blur="cancelEditing"
           ></v-text-field>
-          <div v-else class="text-subtitle-2 meta-title">{{ model.Title }}</div>
+          <div v-else-if="model.Title" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
+          <div v-else class="meta-add-prompt" @click.stop="startEditing('title')">{{ $pgettext("Photo", "Title") }}</div>
           <template v-if="isEditable" #append>
             <v-icon
               v-if="editingField === 'title'"
@@ -37,7 +38,7 @@
         </v-list-item>
 
         <!-- Caption -->
-        <v-list-item v-if="editingField === 'caption' || model.Caption" class="metadata__item">
+        <v-list-item v-if="editingField === 'caption' || model.Caption || isEditable" class="metadata__item">
           <v-textarea
             v-if="editingField === 'caption'"
             v-model="p.Caption"
@@ -52,7 +53,8 @@
             @keydown.escape.prevent="cancelEditing"
             @blur="cancelEditing"
           ></v-textarea>
-          <div v-else class="text-body-2 meta-caption meta-scrollable" v-html="captionHtml"></div>
+          <div v-else-if="model.Caption" class="text-body-2 meta-caption meta-scrollable" v-html="captionHtml"></div>
+          <div v-else class="meta-add-prompt" @click.stop="startEditing('caption')">{{ $gettext("Caption") }}</div>
           <template v-if="isEditable" #append>
             <v-icon
               v-if="editingField === 'caption'"
@@ -66,7 +68,7 @@
           </template>
         </v-list-item>
 
-        <v-divider v-if="editingField === 'title' || editingField === 'caption' || model.Title || model.Caption" class="my-4"></v-divider>
+        <v-divider v-if="editingField === 'title' || editingField === 'caption' || model.Title || model.Caption || isEditable" class="my-4"></v-divider>
         <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
           <template v-if="isEditable" #append>
             <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="dateTimeDialog = true"></v-icon>
@@ -83,16 +85,12 @@
 
         <v-list-item v-if="lensInfo" v-tooltip="$gettext('Lens')" :title="lensInfo" prepend-icon="mdi-camera-iris" class="metadata__item"> </v-list-item>
 
-        <v-list-item v-if="exifInfo" v-tooltip="$gettext('Exposure')" :title="exifInfo" prepend-icon="mdi-tune" class="metadata__item"> </v-list-item>
-
         <template v-if="model.Lat && model.Lng">
           <v-divider class="my-4"></v-divider>
           <v-list-item v-if="placeName" v-tooltip="$gettext('Location')" :title="placeName" prepend-icon="mdi-map-marker" class="metadata__item"> </v-list-item>
           <v-list-item
             v-tooltip="$gettext(`Coordinates`)"
-            prepend-icon="mdi-crosshairs-gps"
-            :title="model.getLatLng()"
-            :subtitle="altitude"
+            :title="altitude ? model.getLatLng() + ' \u00b7 ' + altitude : model.getLatLng()"
             class="clickable metadata__item"
             @click.stop="model.copyLatLng()"
           >
@@ -114,8 +112,8 @@
             v-for="m in people"
             :key="m.UID || m.CropID"
             class="metadata__item metadata__person-row"
-            :class="{ clickable: m.Name && !isEditingPerson(m) }"
-            @click.stop.prevent="m.Name && !isEditingPerson(m) ? navigateToPerson(m) : null"
+            :class="{ clickable: m.Name && m.SubjUID && !isEditingPerson(m) }"
+            @click.stop.prevent="m.Name && m.SubjUID && !isEditingPerson(m) ? navigateToPerson(m) : null"
           >
             <template #prepend>
               <img :src="m.thumbnailUrl('tile_160')" :alt="m.Name" class="meta-person__avatar" />
@@ -151,12 +149,20 @@
                 @mousedown.prevent
                 @click.stop="confirmField"
               ></v-icon>
+              <v-icon
+                v-else-if="m.SubjUID"
+                icon="mdi-eject"
+                size="small"
+                class="meta-inline-pencil"
+                :title="$gettext('Detach')"
+                @click.stop="onEjectPerson(m)"
+              ></v-icon>
               <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditingPerson(m)"></v-icon>
             </template>
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'labels' || labels.length > 0">
+        <template v-if="editingField === 'labels' || labels.length > 0 || isEditable">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Labels") }}</div>
@@ -172,7 +178,7 @@
               <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startChipEditing('labels')"></v-icon>
             </template>
           </v-list-item>
-          <v-list-item class="metadata__item metadata__chips">
+          <v-list-item v-if="labels.length > 0 || editingField === 'labels'" class="metadata__item metadata__chips">
             <div class="d-flex flex-wrap ga-1">
               <span
                 v-for="l in labels"
@@ -200,6 +206,9 @@
               </span>
             </div>
           </v-list-item>
+          <v-list-item v-else-if="isEditable" class="metadata__item">
+            <div class="meta-add-prompt" @click.stop="startChipEditing('labels')">{{ $gettext("Add label") }}</div>
+          </v-list-item>
           <v-list-item v-if="editingField === 'labels'" class="metadata__item">
             <v-combobox
               :key="chipKey"
@@ -223,7 +232,7 @@
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'albums' || albums.length > 0">
+        <template v-if="editingField === 'albums' || albums.length > 0 || isEditable">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Albums") }}</div>
@@ -239,7 +248,7 @@
               <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startChipEditing('albums')"></v-icon>
             </template>
           </v-list-item>
-          <v-list-item class="metadata__item metadata__chips">
+          <v-list-item v-if="albums.length > 0 || editingField === 'albums'" class="metadata__item metadata__chips">
             <div class="d-flex flex-wrap ga-1">
               <span
                 v-for="a in albums"
@@ -267,6 +276,9 @@
               </span>
             </div>
           </v-list-item>
+          <v-list-item v-else-if="isEditable" class="metadata__item">
+            <div class="meta-add-prompt" @click.stop="startChipEditing('albums')">{{ $gettext("Add to album") }}</div>
+          </v-list-item>
           <v-list-item v-if="editingField === 'albums'" class="metadata__item">
             <v-autocomplete
               :key="chipKey"
@@ -290,7 +302,147 @@
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'keywords' || keywords">
+        <template
+          v-if="
+            editingField === 'subject' ||
+            editingField === 'artist' ||
+            editingField === 'copyright' ||
+            editingField === 'license' ||
+            subject ||
+            artist ||
+            copyright ||
+            license ||
+            isEditable
+          "
+        >
+          <v-divider class="my-4"></v-divider>
+
+          <!-- Subject -->
+          <v-list-item v-if="editingField === 'subject' || subject || isEditable" v-tooltip="$gettext('Subject')" prepend-icon="mdi-text-box-outline" class="metadata__item">
+            <v-textarea
+              v-if="editingField === 'subject'"
+              v-model="p.Details.Subject"
+              :placeholder="$gettext('Subject')"
+              :rules="[textRule]"
+              variant="plain"
+              density="compact"
+              auto-grow
+              hide-details="auto"
+              autocomplete="off"
+              class="meta-inline-edit"
+              @keydown.escape.prevent="cancelEditing"
+              @blur="cancelEditing"
+            ></v-textarea>
+            <div v-else-if="subject" class="text-body-2 meta-scrollable">{{ subject }}</div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing('subject')">{{ $gettext("Subject") }}</div>
+            <template v-if="isEditable" #append>
+              <v-icon
+                v-if="editingField === 'subject'"
+                icon="mdi-check"
+                size="small"
+                class="meta-inline-confirm"
+                @mousedown.prevent
+                @click.stop="confirmField"
+              ></v-icon>
+              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('subject')"></v-icon>
+            </template>
+          </v-list-item>
+
+          <!-- Artist -->
+          <v-list-item v-if="editingField === 'artist' || artist || isEditable" v-tooltip="$gettext('Artist')" prepend-icon="mdi-palette" class="metadata__item">
+            <v-textarea
+              v-if="editingField === 'artist'"
+              v-model="p.Details.Artist"
+              :placeholder="$gettext('Artist')"
+              :rules="[textRule]"
+              variant="plain"
+              density="compact"
+              auto-grow
+              hide-details="auto"
+              autocomplete="off"
+              class="meta-inline-edit"
+              @keydown.escape.prevent="cancelEditing"
+              @blur="cancelEditing"
+            ></v-textarea>
+            <div v-else-if="artist" class="text-body-2 meta-scrollable">{{ artist }}</div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing('artist')">{{ $gettext("Artist") }}</div>
+            <template v-if="isEditable" #append>
+              <v-icon
+                v-if="editingField === 'artist'"
+                icon="mdi-check"
+                size="small"
+                class="meta-inline-confirm"
+                @mousedown.prevent
+                @click.stop="confirmField"
+              ></v-icon>
+              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('artist')"></v-icon>
+            </template>
+          </v-list-item>
+
+          <!-- Copyright -->
+          <v-list-item v-if="editingField === 'copyright' || copyright || isEditable" v-tooltip="$gettext('Copyright')" prepend-icon="mdi-copyright" class="metadata__item">
+            <v-textarea
+              v-if="editingField === 'copyright'"
+              v-model="p.Details.Copyright"
+              :placeholder="$gettext('Copyright')"
+              :rules="[textRule]"
+              variant="plain"
+              density="compact"
+              auto-grow
+              hide-details="auto"
+              autocomplete="off"
+              class="meta-inline-edit"
+              @keydown.escape.prevent="cancelEditing"
+              @blur="cancelEditing"
+            ></v-textarea>
+            <div v-else-if="copyright" class="text-body-2 meta-scrollable">{{ copyright }}</div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing('copyright')">{{ $gettext("Copyright") }}</div>
+            <template v-if="isEditable" #append>
+              <v-icon
+                v-if="editingField === 'copyright'"
+                icon="mdi-check"
+                size="small"
+                class="meta-inline-confirm"
+                @mousedown.prevent
+                @click.stop="confirmField"
+              ></v-icon>
+              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('copyright')"></v-icon>
+            </template>
+          </v-list-item>
+
+          <!-- License -->
+          <v-list-item v-if="editingField === 'license' || license || isEditable" v-tooltip="$gettext('License')" prepend-icon="mdi-license" class="metadata__item">
+            <v-textarea
+              v-if="editingField === 'license'"
+              v-model="p.Details.License"
+              :placeholder="$gettext('License')"
+              :rules="[textRule]"
+              variant="plain"
+              density="compact"
+              auto-grow
+              hide-details="auto"
+              autocomplete="off"
+              class="meta-inline-edit"
+              @keydown.escape.prevent="cancelEditing"
+              @blur="cancelEditing"
+            ></v-textarea>
+            <div v-else-if="license" class="text-body-2 meta-scrollable">{{ license }}</div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing('license')">{{ $gettext("License") }}</div>
+            <template v-if="isEditable" #append>
+              <v-icon
+                v-if="editingField === 'license'"
+                icon="mdi-check"
+                size="small"
+                class="meta-inline-confirm"
+                @mousedown.prevent
+                @click.stop="confirmField"
+              ></v-icon>
+              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('license')"></v-icon>
+            </template>
+          </v-list-item>
+        </template>
+
+        <template v-if="editingField === 'keywords' || keywords || isEditable">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Keywords") }}</div>
@@ -320,159 +472,44 @@
               @keydown.escape.prevent="cancelEditing"
               @blur="cancelEditing"
             ></v-textarea>
-            <div v-else class="text-body-2 meta-keywords meta-scrollable">{{ keywords }}</div>
+            <div v-else-if="keywords" class="text-body-2 meta-keywords meta-scrollable">{{ keywords }}</div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing('keywords')">{{ $gettext("Keywords") }}</div>
           </v-list-item>
         </template>
 
-        <template
-          v-if="
-            editingField === 'subject' ||
-            editingField === 'artist' ||
-            editingField === 'copyright' ||
-            editingField === 'license' ||
-            subject ||
-            artist ||
-            copyright ||
-            license
-          "
-        >
+        <template v-if="editingField === 'originalname' || originalName || isEditable">
           <v-divider class="my-4"></v-divider>
-
-          <!-- Subject -->
-          <v-list-item v-if="editingField === 'subject' || subject" v-tooltip="$gettext('Subject')" prepend-icon="mdi-text-short" class="metadata__item">
-            <v-textarea
-              v-if="editingField === 'subject'"
-              v-model="p.Details.Subject"
-              :placeholder="$gettext('Subject')"
-              :rules="[textRule]"
+          <v-list-item v-tooltip="$gettext('Original Name')" prepend-icon="mdi-file-outline" class="metadata__item">
+            <v-text-field
+              v-if="editingField === 'originalname'"
+              v-model="p.OriginalName"
+              :placeholder="$gettext('Original Name')"
               variant="plain"
               density="compact"
-              auto-grow
               hide-details="auto"
               autocomplete="off"
               class="meta-inline-edit"
+              @keydown.enter.prevent="confirmField"
               @keydown.escape.prevent="cancelEditing"
               @blur="cancelEditing"
-            ></v-textarea>
-            <div v-else class="text-body-2 meta-scrollable">{{ subject }}</div>
+            ></v-text-field>
+            <div v-else-if="originalName" class="text-body-2">{{ originalName }}</div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing('originalname')">{{ $gettext("Original Name") }}</div>
             <template v-if="isEditable" #append>
               <v-icon
-                v-if="editingField === 'subject'"
+                v-if="editingField === 'originalname'"
                 icon="mdi-check"
                 size="small"
                 class="meta-inline-confirm"
                 @mousedown.prevent
                 @click.stop="confirmField"
               ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('subject')"></v-icon>
-            </template>
-          </v-list-item>
-
-          <!-- Artist -->
-          <v-list-item v-if="editingField === 'artist' || artist" v-tooltip="$gettext('Artist')" prepend-icon="mdi-account-edit" class="metadata__item">
-            <v-textarea
-              v-if="editingField === 'artist'"
-              v-model="p.Details.Artist"
-              :placeholder="$gettext('Artist')"
-              :rules="[textRule]"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
-            ></v-textarea>
-            <div v-else class="text-body-2 meta-scrollable">{{ artist }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'artist'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('artist')"></v-icon>
-            </template>
-          </v-list-item>
-
-          <!-- Copyright -->
-          <v-list-item v-if="editingField === 'copyright' || copyright" v-tooltip="$gettext('Copyright')" prepend-icon="mdi-copyright" class="metadata__item">
-            <v-textarea
-              v-if="editingField === 'copyright'"
-              v-model="p.Details.Copyright"
-              :placeholder="$gettext('Copyright')"
-              :rules="[textRule]"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
-            ></v-textarea>
-            <div v-else class="text-body-2 meta-scrollable">{{ copyright }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'copyright'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('copyright')"></v-icon>
-            </template>
-          </v-list-item>
-
-          <!-- License -->
-          <v-list-item v-if="editingField === 'license' || license" v-tooltip="$gettext('License')" prepend-icon="mdi-license" class="metadata__item">
-            <v-textarea
-              v-if="editingField === 'license'"
-              v-model="p.Details.License"
-              :placeholder="$gettext('License')"
-              :rules="[textRule]"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
-            ></v-textarea>
-            <div v-else class="text-body-2 meta-scrollable">{{ license }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'license'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('license')"></v-icon>
+              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('originalname')"></v-icon>
             </template>
           </v-list-item>
         </template>
 
-        <template v-if="fileName">
-          <v-divider class="my-4"></v-divider>
-          <v-list-item v-tooltip="$gettext('File')" :title="fileName" prepend-icon="mdi-file" class="metadata__item"> </v-list-item>
-          <v-list-item
-            v-if="originalName && originalName !== fileName"
-            v-tooltip="$gettext('Original Name')"
-            :title="originalName"
-            prepend-icon="mdi-file-outline"
-            class="metadata__item"
-          >
-          </v-list-item>
-        </template>
-
-        <template v-if="editingField === 'notes' || notesHtml">
+        <template v-if="editingField === 'notes' || notesHtml || isEditable">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Notes") }}</div>
@@ -502,7 +539,8 @@
               @keydown.escape.prevent="cancelEditing"
               @blur="cancelEditing"
             ></v-textarea>
-            <div v-else class="text-body-2 meta-notes meta-scrollable" v-html="notesHtml"></div>
+            <div v-else-if="notesHtml" class="text-body-2 meta-notes meta-scrollable" v-html="notesHtml"></div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing('notes')">{{ $gettext("Notes") }}</div>
           </v-list-item>
         </template>
       </v-list>
@@ -590,13 +628,6 @@ export default {
       },
     };
   },
-  watch: {
-    photo() {
-      if (this.editingField) {
-        this.cancelEditing();
-      }
-    },
-  },
   computed: {
     model() {
       return this.modelValue;
@@ -665,13 +696,16 @@ export default {
       if (!this.p || !this.p.Altitude) return "";
       return this.p.Altitude + " m";
     },
-    fileName() {
-      if (!this.p) return "";
-      return this.p.FileName || "";
-    },
     originalName() {
       if (!this.p) return "";
       return this.p.OriginalName || "";
+    },
+  },
+  watch: {
+    photo() {
+      if (this.editingField) {
+        this.cancelEditing();
+      }
     },
   },
   methods: {
@@ -696,6 +730,8 @@ export default {
           return this.p.Details.Keywords;
         case "notes":
           return this.p.Details.Notes;
+        case "originalname":
+          return this.p.OriginalName;
         default:
           return "";
       }
@@ -725,6 +761,9 @@ export default {
           break;
         case "notes":
           this.p.Details.Notes = value;
+          break;
+        case "originalname":
+          this.p.OriginalName = value;
           break;
       }
     },
@@ -758,6 +797,11 @@ export default {
       this.$nextTick(() => {
         const input = this.$el.querySelector(".meta-person-edit input");
         if (input) input.focus();
+      });
+    },
+    onEjectPerson(marker) {
+      marker.clearSubject().then(() => {
+        this.startEditingPerson(marker);
       });
     },
     onSelectPerson(marker, person) {

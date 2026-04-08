@@ -184,29 +184,32 @@
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 16px;
     font-size: 13px;
     font-weight: 500;
     line-height: 1.4;
     cursor: pointer;
     user-select: none;
-    background: rgba(var(--v-theme-surface-variant), 0.25);
+    min-height: 32px;
+    transition: all 0.2s ease;
+    background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
     color: rgb(var(--v-theme-on-surface));
-    transition: background 0.15s ease;
+    box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip:hover {
-    background: rgba(var(--v-theme-surface-variant), 0.45);
+    background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.7);
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary {
-    background: rgba(var(--v-theme-info), 0.2);
-    color: rgb(var(--v-theme-info));
+    background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
+    color: rgb(var(--v-theme-on-surface));
+    box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary:hover {
-    background: rgba(var(--v-theme-info), 0.35);
+    background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.7);
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip .v-icon {
@@ -219,13 +222,19 @@
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip--pending-remove {
+    background-color: rgba(var(--v-theme-error), 0.3);
+    color: rgb(var(--v-theme-error));
+    box-shadow: none;
     text-decoration: line-through;
-    opacity: 0.5;
+    opacity: 1;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip--pending-add {
-    border-style: dashed;
-    opacity: 0.75;
+    background-color: rgba(var(--v-theme-download), 0.3);
+    color: rgb(var(--v-theme-download));
+    box-shadow: none;
+    border-style: none;
+    opacity: 1;
 }
 
 /* Person row in sidebar */
@@ -279,6 +288,9 @@
 .p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-field {
     padding-inline-start: 0;
     padding-inline-end: 0;
+    background: rgba(var(--v-theme-on-surface), 0.04);
+    border-radius: 4px;
+    padding: 2px 6px;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-inline-title .v-field__input {
@@ -303,6 +315,18 @@
 
 .p-lightbox__container > .p-lightbox__sidebar .metadata__item:hover > .v-list-item__append .meta-inline-pencil {
     opacity: 1;
+}
+
+/* Add prompt for empty editable fields */
+.p-lightbox__container > .p-lightbox__sidebar .meta-add-prompt {
+    color: rgba(var(--v-theme-on-surface), 0.35);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-add-prompt:hover {
+    color: rgba(var(--v-theme-on-surface), 0.6);
 }
 
 /* Confirm (check) icon: always visible when editing */
