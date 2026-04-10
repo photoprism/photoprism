@@ -80,12 +80,12 @@ func listConfigKeys(_ context.Context, _ *sdkmcp.CallToolRequest, input ListConf
 		return nil, ListConfigKeysOutput{}, err
 	}
 
-	query, err := validateQuery(input.Query)
+	query, err := validateString("query", input.Query)
 	if err != nil {
 		return nil, ListConfigKeysOutput{}, err
 	}
 
-	section, err := validateQuery(input.Section)
+	section, err := validateString("section", input.Section)
 	if err != nil {
 		return nil, ListConfigKeysOutput{}, err
 	}
@@ -165,15 +165,17 @@ func validateLimit(limit int) (int, error) {
 	return limit, nil
 }
 
-// validateQuery validates and normalizes a free-text query string.
-func validateQuery(query string) (string, error) {
-	query = strings.TrimSpace(strings.ToLower(query))
+// validateString validates and normalizes a free-text input field, using the
+// supplied field name in error messages so callers can reuse it for query,
+// section, or any other string parameter.
+func validateString(field, value string) (string, error) {
+	value = strings.TrimSpace(strings.ToLower(value))
 
-	if len(query) > maxQueryLength {
-		return "", fmt.Errorf("query must not exceed %d characters", maxQueryLength)
+	if len(value) > maxQueryLength {
+		return "", fmt.Errorf("%s must not exceed %d characters", field, maxQueryLength)
 	}
 
-	return query, nil
+	return value, nil
 }
 
 // matchesSection reports whether an option matches the requested section filter.

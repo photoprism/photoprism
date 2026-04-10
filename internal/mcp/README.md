@@ -21,9 +21,9 @@
 | Package | Purpose |
 |---------|---------|
 | `internal/mcp/` | Core MCP logic: server factory, data pipeline, resources, tools |
-| `internal/api/mcp_serve.go` | Gin HTTP handler with auth middleware, route registration |
+| `internal/api/mcp.go` | Gin HTTP handler with auth middleware, route registration |
 | `internal/commands/mcp.go` | CLI command (`photoprism mcp serve`) using stdio transport |
-| `internal/auth/acl/` | `ResourceMCP` constant and admin-only grant rules |
+| `internal/auth/acl/` | `ResourceMCP` constant and ACL grant rules (`GrantFullAccess` for admin; `GrantSearchAll` for manager in Pro/Portal and for the API client roles: client, instance, service, portal) |
 
 ### Goals and non-goals
 
@@ -167,7 +167,40 @@ Most MCP clients natively support Streamable HTTP with custom headers (`url` + `
 The HTTP endpoint uses PhotoPrism's existing ACL system:
 
 - **Resource:** `ResourceMCP` (`"mcp"`)
-- **Permission:** `ActionView` for read-only tools
-- **Roles:** Admin-only (`GrantFullAccess`)
+- **Permission:** `ActionView` for read-only tools (handler-level check)
+- **Grants:**
+  - `RoleAdmin` → `GrantFullAccess` in every edition.
+  - `RoleManager` → `GrantSearchAll` in Pro and Portal builds (the role does not exist in CE/Plus).
+  - `RoleClient`, `RoleInstance`, `RoleService`, `RolePortal` → `GrantSearchAll` in every edition.
+  - All other roles (`user`, `viewer`, `guest`, `visitor`, `contributor`, default) are denied.
+- **Why `GrantSearchAll` for non-admins?** It includes `AccessAll`, `ActionView`, and `ActionSearch` — exactly what the read-only tools need — but excludes `ActionManage`/`ActionUpdate`/`ActionDelete`/`ActionCreate`. Any future write-capable MCP tool gated on those permissions will automatically be admin-only without needing per-tool checks.
+- **Client tokens:** API client sessions must also include the `mcp` resource (or a wildcard) in their session scope; the ACL grant alone is not sufficient.
 - **Auth model:** Request-level (every HTTP request runs through `Auth()`)
 - **Public mode:** Blocked (returns 403)
+- **Experimental gate:** the route only registers when `--experimental` is enabled; otherwise `/api/v1/mcp` returns 404.
+
+### How Users Get Access
+
+Regular user accounts (`RoleUser`, `RoleViewer`, etc.) are intentionally **not** in the `ResourceMCP` ACL. Regular users typically don't have shell access to the server, so they can't run the CLI commands themselves — and the prototype's tools only return static reference data, so there's no per-user information to authorize against. Access is therefore granted through admin-issued client tokens.
+
+To onboard a user (or a CI job, IDE, etc.), an administrator runs the following on the PhotoPrism server:
+
+```bash
+./photoprism clients add \
+  --name "Alice's IDE" \
+  --scope mcp \
+  --role client \
+  --expires 2592000          # 30 days; use -1 for no expiry
+```
+
+The command prints a client ID and secret. Combine them into a bearer token (or pass them through the OAuth2 client-credentials flow) and paste the resulting value into the user's MCP client config — the same JSON snippets shown above under *MCP Client Compatibility* apply unchanged. Replace `<admin-token>` with the issued token.
+
+To revoke access without disabling the user account, the administrator runs:
+
+```bash
+./photoprism clients remove <client-id>
+```
+
+> **Heads up:** `photoprism auth add --scope mcp <username>` creates an *app password* tied to a user account, but it currently does **not** grant MCP access — `RoleUser` is not in the `ResourceMCP` ACL. Use `photoprism clients add` for MCP integrations until that policy changes.
+
+When MCP eventually grows tools that need user-scoped data (e.g. "list my albums"), the team will revisit the policy and likely add `RoleUser → GrantSearchAll` so the app-password path lights up. Until then, every MCP integration is an admin-provisioned client token tied to a named application.

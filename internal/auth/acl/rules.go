@@ -139,7 +139,11 @@ var Rules = ACL{
 		RoleAdmin: GrantFullAccess,
 	},
 	ResourceMCP: Roles{
-		RoleAdmin: GrantFullAccess,
+		RoleAdmin:    GrantFullAccess,
+		RoleInstance: GrantSearchAll,
+		RoleService:  GrantSearchAll,
+		RolePortal:   GrantSearchAll,
+		RoleClient:   GrantSearchAll,
 	},
 	ResourceDefault: Roles{
 		RoleAdmin:    GrantFullAccess,

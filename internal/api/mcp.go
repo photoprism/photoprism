@@ -14,7 +14,16 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
-// ServeMCP registers the MCP Streamable HTTP endpoint at /mcp.
+// ServeMCP registers the experimental MCP Streamable HTTP endpoint at /mcp.
+//
+//	@Summary	model context protocol endpoint (experimental)
+//	@Id			ServeMCP
+//	@Tags		MCP
+//	@Accept		json
+//	@Produce	json
+//	@Success	200				{string}	string	"JSON-RPC 2.0 response"
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Router		/api/v1/mcp [post]
 func ServeMCP(router *gin.RouterGroup) {
 	if router == nil {
 		return

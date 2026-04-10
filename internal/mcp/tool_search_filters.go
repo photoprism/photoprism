@@ -53,7 +53,7 @@ func findSearchFilters(_ context.Context, _ *sdkmcp.CallToolRequest, input FindS
 		return nil, FindSearchFiltersOutput{}, err
 	}
 
-	query, err := validateQuery(input.Query)
+	query, err := validateString("query", input.Query)
 	if err != nil {
 		return nil, FindSearchFiltersOutput{}, err
 	}
