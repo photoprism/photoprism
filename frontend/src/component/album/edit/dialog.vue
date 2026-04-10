@@ -12,12 +12,14 @@
   >
     <v-form ref="form" validate-on="invalid-input" class="form-album-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card>
-        <v-card-title class="d-flex justify-start align-center ga-3">
-          <v-icon size="28" color="primary">mdi-bookmark</v-icon>
-          <h6 class="text-h6">
+        <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
+          <v-toolbar-title>
             {{ $gettext(`Edit %{s}`, { s: model.modelName() }) }}
-          </h6>
-        </v-card-title>
+          </v-toolbar-title>
+          <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
 
         <v-card-text class="dense">
           <v-row align="center" dense>

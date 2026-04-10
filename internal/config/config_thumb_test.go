@@ -41,17 +41,7 @@ func TestConfig_JpegQuality(t *testing.T) {
 func TestConfig_ThumbFilter(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
-	c.options.ThumbFilter = "blackman"
-	assert.Equal(t, thumb.ResampleBlackman, c.ThumbFilter())
-	c.options.ThumbFilter = "lanczos"
-	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
-	c.options.ThumbFilter = "linear"
-	assert.Equal(t, thumb.ResampleLinear, c.ThumbFilter())
-	c.options.ThumbFilter = Auto
-	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
-	c.options.ThumbFilter = ""
-	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleAuto, c.ThumbFilter())
 }
 
 func TestConfig_ThumbSizeUncached(t *testing.T) {
@@ -91,13 +81,11 @@ func TestConfig_PngSize(t *testing.T) {
 
 func TestConfig_ThumbLibrary(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.False(t, c.DisableVips())
 	c.options.ThumbLibrary = Auto
 	assert.Equal(t, "vips", c.ThumbLibrary())
-	c.options.DisableVips = true
-	assert.Equal(t, "imaging", c.ThumbLibrary())
-	c.options.DisableVips = false
 	c.options.ThumbLibrary = "libvips"
+	assert.Equal(t, "vips", c.ThumbLibrary())
+	c.options.ThumbLibrary = "imaging"
 	assert.Equal(t, "vips", c.ThumbLibrary())
 	c.options.ThumbLibrary = "xxx"
 	assert.Equal(t, "vips", c.ThumbLibrary())

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math/bits"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -151,11 +152,7 @@ func TestConfig_DisableImageMagick(t *testing.T) {
 func TestConfig_DisableVips(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, false, c.DisableVips())
-	c.options.DisableVips = true
-	assert.True(t, c.DisableVips())
-	c.options.DisableVips = false
-	assert.Equal(t, false, c.DisableVips())
+	assert.Equal(t, bits.UintSize < 64, c.DisableVips())
 }
 
 func TestConfig_DisableSips(t *testing.T) {

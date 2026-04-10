@@ -14,6 +14,7 @@ func TestVipsSetIccProfileForInteropIndex(t *testing.T) {
 
 		img, err := vips.LoadImageFromFile("testdata/interop_index_srgb_icc.jpg", VipsImportParams())
 		require.NoError(t, err)
+		defer img.Close()
 
 		iiFull := img.GetString("exif-ifd4-InteroperabilityIndex")
 		require.NotEmpty(t, iiFull)
@@ -32,6 +33,7 @@ func TestVipsSetIccProfileForInteropIndex(t *testing.T) {
 
 		img, err := vips.LoadImageFromFile("testdata/interop_index.jpg", VipsImportParams())
 		require.NoError(t, err)
+		defer img.Close()
 		require.False(t, img.HasICCProfile(), "fixture should have no embedded ICC profile")
 
 		err = vipsSetIccProfileForInteropIndex(img, "interop_index.jpg")
@@ -44,6 +46,7 @@ func TestVipsSetIccProfileForInteropIndex(t *testing.T) {
 
 		img, err := vips.LoadImageFromFile("testdata/example.jpg", VipsImportParams())
 		require.NoError(t, err)
+		defer img.Close()
 
 		hasICCBefore := img.HasICCProfile()
 		err = vipsSetIccProfileForInteropIndex(img, "example.jpg")
@@ -55,6 +58,7 @@ func TestVipsSetIccProfileForInteropIndex(t *testing.T) {
 
 		img, err := vips.LoadImageFromFile("testdata/interop_index_r98.jpg", VipsImportParams())
 		require.NoError(t, err)
+		defer img.Close()
 		require.False(t, img.HasICCProfile(), "fixture should have no embedded ICC profile")
 
 		err = vipsSetIccProfileForInteropIndex(img, "interop_index_r98.jpg")
@@ -66,6 +70,7 @@ func TestVipsSetIccProfileForInteropIndex(t *testing.T) {
 
 		img, err := vips.LoadImageFromFile("testdata/interop_index_thm.jpg", VipsImportParams())
 		require.NoError(t, err)
+		defer img.Close()
 		require.False(t, img.HasICCProfile(), "fixture should have no embedded ICC profile")
 
 		err = vipsSetIccProfileForInteropIndex(img, "interop_index_thm.jpg")

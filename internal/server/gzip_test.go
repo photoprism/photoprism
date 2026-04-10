@@ -69,6 +69,10 @@ func TestGzipMiddleware(t *testing.T) {
 		c.String(http.StatusOK, "theme")
 	})
 
+	r.NoRoute(func(c *gin.Context) {
+		c.String(http.StatusNotFound, "404 page not found")
+	})
+
 	sharePreviewRoute := conf.BaseUri("/s/:token/:shared/preview")
 	r.GET(sharePreviewRoute, func(c *gin.Context) {
 		c.String(http.StatusOK, "preview")
@@ -163,7 +167,7 @@ func TestGzipMiddleware(t *testing.T) {
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
 		assert.Equal(t, "hello world", w.Body.String())
 	})
-	t.Run("DoesNotCompressNotFound", func(t *testing.T) {
+	t.Run("DoesNotCompressExplicitNoRouteHandler", func(t *testing.T) {
 		w := doRequest("/missing", true)
 
 		require.Equal(t, http.StatusNotFound, w.Code)

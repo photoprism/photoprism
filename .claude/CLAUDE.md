@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. Detailed rules are in `.claude/rules/*.md` files organized by topic.
 
 ## Build Commands
 
@@ -54,8 +54,11 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 - `make fmt-go` — runs `go fmt`, `gofmt -w -s`, then `goimports -w -local "github.com/photoprism"` on `pkg/`, `internal/`, `cmd/`
 - `make fmt-js` — runs ESLint + Prettier via `npm run fmt` in `frontend/`
 - `make fmt-swag` / `make swag` — format and regenerate Swagger docs (`internal/api/swagger.json`)
+- `make lint-go` — runs golangci-lint (prints findings without failing due to `--issues-exit-code 0`)
+- `make lint-js` — runs ESLint/Prettier for frontend
 
 Always run `make fmt-go` before committing Go changes and `make fmt-js` before committing frontend changes.
+When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings.
 
 When editing or creating Markdown files that contain tables, format them with:
 ```bash
@@ -142,8 +145,13 @@ Verify config option names before using them:
 ./photoprism show config-yaml
 ```
 
+### Commit Messages
+
+Use concise, imperative subjects with a one-word prefix indicating scope (e.g. `Config: Add tests for "darktable-cli" path detection`). Reference issue/PR IDs when relevant (e.g. `Docker: Use two stage build #123`). Commit messages must not exceed 80 characters.
+
 ### Key Style Notes
 
-- **Go**: idiomatic Go, small functions, wrapped errors with context, minimal public surface area. Use `goimports` with `-local "github.com/photoprism"` to group imports.
-- **Tests**: use `config.TestConfig()` for shared fixtures or `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` for isolated test DBs. Use build tags `-tags="slow,develop"` for the full test suite.
+- **Go**: idiomatic Go, small functions, wrapped errors with context, minimal public surface area. Use `goimports` with `-local "github.com/photoprism"` to group imports. Code in `pkg/*` MUST NOT import from `internal/*`.
+- **Tests**: use `config.TestConfig()` for shared fixtures or `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` for isolated test DBs. Use build tags `-tags="slow,develop"` for the full test suite. Do not run multiple test commands in parallel (shared fixtures/DB).
 - **Destructive CLI commands** (`photoprism reset`, `users reset`, `auth reset`, `audit reset`) require explicit `--yes` and should never be used in examples without backup warnings.
+- **Safety**: Never commit secrets or local configs. Do not run `git config`. Do not run destructive commands against production data.

@@ -6,8 +6,6 @@ import (
 	"path/filepath"
 	"runtime/debug"
 
-	"github.com/disintegration/imaging"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -27,26 +25,9 @@ func Jpeg(srcFile, jpgFile string, orientation int) (img image.Image, err error)
 		return img, err
 	}
 
-	// Open source image.
-	img, err = imaging.Open(srcFile)
-
-	// Failed?
+	img, err = vipsConvert(srcFile, jpgFile, orientation)
 	if err != nil {
 		log.Debugf("jpeg: failed to open %s", clean.Log(filepath.Base(srcFile)))
-		return img, err
-	}
-
-	// Adjust orientation.
-	if orientation > 1 {
-		img = Rotate(img, orientation)
-	}
-
-	// Get JPEG quality setting.
-	quality := JpegQualityDefault.EncodeOption()
-
-	// Save JPEG file.
-	if err = imaging.Save(img, jpgFile, quality); err != nil {
-		log.Errorf("jpeg: failed to save %s", clean.Log(filepath.Base(jpgFile)))
 		return img, err
 	}
 

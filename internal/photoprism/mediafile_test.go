@@ -1181,6 +1181,22 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		}
 		assert.False(t, mediaFile.IsImageOther())
 	})
+	t.Run("IphoneSevenHeic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/iphone_7.heic")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, mediaFile.IsImageOther())
+		assert.True(t, mediaFile.IsImageNative())
+	})
+	t.Run("FoxProfileAvif", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/fox.profile0.8bpc.yuv420.avif")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, mediaFile.IsImageOther())
+		assert.True(t, mediaFile.IsImageNative())
+	})
 	t.Run("PurpleTiff", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(c.SamplesPath() + "/purple.tiff")
 		if err != nil {

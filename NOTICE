@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-03-09
+Date generated: 2026-04-01
 
 ================================================================================
 
@@ -267,8 +267,8 @@ limitations under the License.
 --------------------------------------------------------------------------------
 
 Package: github.com/abema/go-mp4
-Version: v1.4.1
-License: MIT (https://github.com/abema/go-mp4/blob/v1.4.1/LICENSE)
+Version: v1.5.0
+License: MIT (https://github.com/abema/go-mp4/blob/v1.5.0/LICENSE)
 
 MIT License
 
@@ -519,34 +519,6 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
-
---------------------------------------------------------------------------------
-
-Package: github.com/disintegration/imaging
-Version: v1.6.2
-License: MIT (https://github.com/disintegration/imaging/blob/v1.6.2/LICENSE)
-
-The MIT License (MIT)
-
-Copyright (c) 2012 Grigory Dryapak
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 --------------------------------------------------------------------------------
 
@@ -1038,37 +1010,9 @@ SOFTWARE.
 
 --------------------------------------------------------------------------------
 
-Package: github.com/esimov/pigo/core
-Version: v1.4.6
-License: MIT (https://github.com/esimov/pigo/blob/v1.4.6/LICENSE)
-
-MIT License
-
-Copyright (c) 2018 Endre Simo
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
---------------------------------------------------------------------------------
-
 Package: github.com/fatih/color
-Version: v1.18.0
-License: MIT (https://github.com/fatih/color/blob/v1.18.0/LICENSE.md)
+Version: v1.19.0
+License: MIT (https://github.com/fatih/color/blob/v1.19.0/LICENSE.md)
 
 The MIT License (MIT)
 
@@ -1122,8 +1066,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-contrib/gzip
-Version: v1.2.5
-License: MIT (https://github.com/gin-contrib/gzip/blob/v1.2.5/LICENSE)
+Version: v1.2.6
+License: MIT (https://github.com/gin-contrib/gzip/blob/v1.2.6/LICENSE)
 
 MIT License
 
@@ -1150,8 +1094,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-contrib/sse
-Version: v1.1.0
-License: MIT (https://github.com/gin-contrib/sse/blob/v1.1.0/LICENSE)
+Version: v1.1.1
+License: MIT (https://github.com/gin-contrib/sse/blob/v1.1.1/LICENSE)
 
 The MIT License (MIT)
 
@@ -1248,8 +1192,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/go-jose/go-jose/v4
-Version: v4.1.3
-License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.1.3/LICENSE)
+Version: v4.1.4
+License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.1.4/LICENSE)
 
 
                                  Apache License
@@ -1457,8 +1401,8 @@ License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.1.3/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/go-jose/go-jose/v4/json
-Version: v4.1.3
-License: BSD-3-Clause (https://github.com/go-jose/go-jose/blob/v4.1.3/json/LICENSE)
+Version: v4.1.4
+License: BSD-3-Clause (https://github.com/go-jose/go-jose/blob/v4.1.4/json/LICENSE)
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 
@@ -2399,8 +2343,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/goccy/go-json
-Version: v0.10.5
-License: MIT (https://github.com/goccy/go-json/blob/v0.10.5/LICENSE)
+Version: v0.10.6
+License: MIT (https://github.com/goccy/go-json/blob/v0.10.6/LICENSE)
 
 MIT License
 
@@ -2471,8 +2415,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20260302211937-87f5a40ea07a
-License: Apache-2.0 (https://github.com/golang/geo/blob/87f5a40ea07a/LICENSE)
+Version: v0.0.0-20260401045841-3289a7742193
+License: Apache-2.0 (https://github.com/golang/geo/blob/3289a7742193/LICENSE)
 
 
                                  Apache License
@@ -4199,8 +4143,8 @@ License:
 --------------------------------------------------------------------------------
 
 Package: github.com/lucasb-eyer/go-colorful
-Version: v1.3.0
-License: MIT (https://github.com/lucasb-eyer/go-colorful/blob/v1.3.0/LICENSE)
+Version: v1.4.0
+License: MIT (https://github.com/lucasb-eyer/go-colorful/blob/v1.4.0/LICENSE)
 
 Copyright (c) 2013 Lucas Beyer
 
@@ -4377,8 +4321,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-sqlite3
-Version: v1.14.34
-License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.34/LICENSE)
+Version: v1.14.38
+License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.38/LICENSE)
 
 The MIT License (MIT)
 
@@ -4405,12 +4349,12 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.7.1
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.7.1/LICENSE)
+Version: v0.9.0
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.9.0/LICENSE)
 
 The MIT License (MIT)
 
-Copyright (c) 2014-2023 Montana Flynn (https://montanaflynn.com)
+Copyright (c) 2014-2026 Montana Flynn (https://montanaflynn.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -4558,8 +4502,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/olekukonko/ll
-Version: v0.1.7
-License: MIT (https://github.com/olekukonko/ll/blob/v0.1.7/LICENSE)
+Version: v0.1.8
+License: MIT (https://github.com/olekukonko/ll/blob/v0.1.8/LICENSE)
 
 MIT License
 
@@ -4586,8 +4530,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/olekukonko/tablewriter
-Version: v1.1.3
-License: MIT (https://github.com/olekukonko/tablewriter/blob/v1.1.3/LICENSE.md)
+Version: v1.1.4
+License: MIT (https://github.com/olekukonko/tablewriter/blob/v1.1.4/LICENSE.md)
 
 Copyright (C) 2014 by Oleku Konko
 
@@ -4699,8 +4643,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/pelletier/go-toml/v2
-Version: v2.2.4
-License: MIT (https://github.com/pelletier/go-toml/blob/v2.2.4/LICENSE)
+Version: v2.3.0
+License: MIT (https://github.com/pelletier/go-toml/blob/v2.3.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -5561,8 +5505,8 @@ License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.67.5/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/procfs
-Version: v0.17.0
-License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.17.0/LICENSE)
+Version: v0.20.1
+License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.20.1/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6610,8 +6554,8 @@ License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.7.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3
-Version: v3.45.5
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.45.5/LICENSE)
+Version: v3.45.6
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.45.6/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7268,8 +7212,8 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go-instrume
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel
-Version: v1.40.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.40.0/LICENSE)
+Version: v1.42.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.42.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7505,8 +7449,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/metric
-Version: v1.40.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.40.0/metric/LICENSE)
+Version: v1.42.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.42.0/metric/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7742,8 +7686,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/trace
-Version: v1.40.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.40.0/trace/LICENSE)
+Version: v1.42.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.42.0/trace/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7979,8 +7923,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.yaml.in/yaml/v2
-Version: v2.4.3
-License: Apache-2.0 (https://github.com/yaml/go-yaml/blob/v2.4.3/LICENSE)
+Version: v2.4.4
+License: Apache-2.0 (https://github.com/yaml/go-yaml/blob/v2.4.4/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8396,8 +8340,8 @@ License: Apache-2.0 (https://github.com/go4org/go4/blob/a5071408f32f/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/crypto
-Version: v0.48.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.48.0:LICENSE)
+Version: v0.49.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.49.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8430,8 +8374,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/image
-Version: v0.36.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.36.0:LICENSE)
+Version: v0.38.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.38.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8464,8 +8408,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/mod/semver
-Version: v0.33.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.33.0:LICENSE)
+Version: v0.34.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.34.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8498,8 +8442,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.51.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.51.0:LICENSE)
+Version: v0.52.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.52.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8532,8 +8476,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/oauth2
-Version: v0.35.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.35.0:LICENSE)
+Version: v0.36.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.36.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8634,8 +8578,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/text
-Version: v0.34.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.34.0:LICENSE)
+Version: v0.35.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.35.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 

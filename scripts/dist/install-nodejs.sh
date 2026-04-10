@@ -12,6 +12,8 @@ set -e
 
 # NodeJS major version to be installed (armhf still requires 22.x).
 NODE_MAJOR=24
+NPM_VERSION=latest
+TESTCAFE_VERSION=3.7.4
 
 if [ "$(dpkg --print-architecture)" = "armhf" ]; then
   NODE_MAJOR=22
@@ -47,11 +49,11 @@ fi
 echo "Configuring NPM..."
 sudo npm config set cache ~/.cache/npm
 echo "Updating NPM..."
-sudo npm install -g --no-fund npm@latest n@latest
+sudo npm install -g --no-fund "npm@$NPM_VERSION" n@latest
 echo "Installing npm-check-updates and license-report..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 echo "Installing TestCafe..."
-sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error testcafe@3.7.4
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error "testcafe@$TESTCAFE_VERSION"
 echo "Installing Vitest..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier vitest @vitest/browser @vitest/coverage-v8 @vitest/ui
 echo "Installing ESLint..."

@@ -4,11 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	"image/png"
 	"path"
 	"path/filepath"
-
-	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -134,15 +131,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	result = Resample(img, width, height, opts...)
 
-	var quality imaging.EncodeOption
-
-	if fs.FileType(fileName) == fs.ImagePng {
-		quality = imaging.PNGCompressionLevel(png.DefaultCompression)
-	} else {
-		quality = JpegQuality(width, height).EncodeOption()
-	}
-
-	err = imaging.Save(result, fileName, quality)
+	err = Save(result, fileName, JpegQuality(width, height))
 
 	if err != nil {
 		log.Debugf("thumb: failed to save %s", clean.Log(filepath.Base(fileName)))

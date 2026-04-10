@@ -13,18 +13,14 @@
     @after-leave="afterLeave"
   >
     <v-card ref="content" tabindex="-1" :tile="$vuetify.display.xs">
-      <v-toolbar v-if="$vuetify.display.xs" flat color="navigation" class="mb-4" density="compact">
-        <v-btn icon @click.stop="close">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+      <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
         <v-toolbar-title>
           {{ $gettext("Adjust Location") }}
         </v-toolbar-title>
+        <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="close">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-toolbar>
-      <v-card-title v-else class="d-flex justify-start align-center ga-3">
-        <v-icon size="28" color="primary">mdi-map-marker</v-icon>
-        <h6 class="text-h6">{{ $gettext("Adjust Location") }}</h6>
-      </v-card-title>
       <v-card-text class="pb-3">
         <div class="d-flex flex-column flex-md-row ga-5">
           <div class="flex-grow-1 position-relative mb-4 mb-md-0">

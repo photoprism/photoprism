@@ -493,11 +493,6 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("DISABLE_EXIFTOOL"),
 		}}, {
 		Flag: &cli.BoolFlag{
-			Name:    "disable-vips",
-			Usage:   "disables image processing and conversion with libvips",
-			EnvVars: EnvVars("DISABLE_VIPS"),
-		}}, {
-		Flag: &cli.BoolFlag{
 			Name:    "disable-sips",
 			Usage:   "disables file conversion using the sips command under macOS",
 			EnvVars: EnvVars("DISABLE_SIPS"),
@@ -1141,7 +1136,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
-			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
+			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, vips)",
 			Value:   Auto,
 			EnvVars: EnvVars("THUMB_LIBRARY"),
 		}}, {
@@ -1150,13 +1145,6 @@ var Flags = CliFlags{
 			Usage:   "standard color `PROFILE` for thumbnails (auto, preserve, srgb, none)",
 			Value:   thumb.ColorAuto,
 			EnvVars: EnvVars("THUMB_COLOR"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "thumb-filter",
-			Aliases: []string{"filter"},
-			Usage:   "downscaling filter `NAME` (imaging best to worst: blackman, lanczos, cubic, linear, nearest)",
-			Value:   thumb.ResampleAuto.String(),
-			EnvVars: EnvVars("THUMB_FILTER"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size",
@@ -1237,7 +1225,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-engine",
-			Usage:   "face detection engine `NAME` (auto, pigo, onnx)",
+			Usage:   "face detection engine `NAME` (auto, onnx)",
 			Value:   face.EngineAuto,
 			EnvVars: EnvVars("FACE_ENGINE"),
 		}}, {
@@ -1257,12 +1245,6 @@ var Flags = CliFlags{
 			Usage:   "minimum face `QUALITY` score (1-100)",
 			Value:   face.ScoreThreshold,
 			EnvVars: EnvVars("FACE_SCORE"),
-		}}, {
-		Flag: &cli.Float64SliceFlag{
-			Name:    "face-angle",
-			Usage:   "face detection `ANGLE` in radians (repeatable)",
-			Value:   cli.NewFloat64Slice(face.DefaultAngles...),
-			EnvVars: EnvVars("FACE_ANGLE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",

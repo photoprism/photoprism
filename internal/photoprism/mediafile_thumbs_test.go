@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMediaFile_Thumbnail(t *testing.T) {
@@ -37,6 +38,52 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 		assert.FileExists(t, thumbnail)
 	})
+	t.Run("Layered16BitTiff", func(t *testing.T) {
+		image, err := NewMediaFile(testSamplesPath + "/layered-16bit-small.tif")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		thumbnail, err := image.Thumbnail(thumbsPath, thumb.Fit720)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.FileExists(t, thumbnail)
+
+		img, _, err := fs.DecodeImageFile(thumbnail)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 236, img.Bounds().Dx())
+		assert.Equal(t, 158, img.Bounds().Dy())
+	})
+	t.Run("RotateSixTiff", func(t *testing.T) {
+		image, err := NewMediaFile("testdata/rotate/6.tiff")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		thumbnail, err := image.Thumbnail(thumbsPath, thumb.Fit720)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.FileExists(t, thumbnail)
+
+		img, _, err := fs.DecodeImageFile(thumbnail)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 43, img.Bounds().Dx())
+		assert.Equal(t, 65, img.Bounds().Dy())
+	})
 	t.Run("InvalidImageFormat", func(t *testing.T) {
 		image, err := NewMediaFile(conf.SamplesPath() + "/canon_eos_6d.xmp")
 
@@ -46,7 +93,7 @@ func TestMediaFile_Thumbnail(t *testing.T) {
 
 		thumbnail, err := image.Thumbnail(thumbsPath, "tile_500")
 
-		assert.EqualError(t, err, "media: failed to create thumbnail for canon_eos_6d.xmp (image: unknown format)")
+		assert.EqualError(t, err, "media: failed to create thumbnail for canon_eos_6d.xmp (unsupported image format)")
 
 		t.Log(thumbnail)
 	})

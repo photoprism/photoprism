@@ -437,7 +437,6 @@ func (c *Config) Propagate() {
 	face.MatchDist = c.FaceMatchDist()
 	face.SkipChildren = c.FaceSkipChildren()
 	face.IgnoreBackground = !c.FaceAllowBackground()
-	face.DetectionAngles = c.FaceAngles()
 	if err := face.ConfigureEngine(face.EngineSettings{
 		Name: c.FaceEngine(),
 		ONNX: face.ONNXOptions{

@@ -34,8 +34,11 @@ type testWebDAVEntry struct {
 
 // testWebDAVServerOptions controls quirks exposed by the local WebDAV fixture.
 type testWebDAVServerOptions struct {
-	rejectInfinity    bool
-	duplicateDepthOne bool
+	rejectInfinity             bool
+	duplicateDepthOne          bool
+	redirectSlashlessDepthOne  bool
+	requireBasicAuthOnDepthOne bool
+	requestPathPrefix          string
 }
 
 // testWebDAVTree defines the depth-1 PROPFIND responses returned by the test server.
@@ -91,7 +94,22 @@ func newTestWebDAVServerWithOptions(options testWebDAVServerOptions) *httptest.S
 			return
 		}
 
-		requestPath := testWebDAVCollectionPath(r.URL.Path)
+		rawPath := r.URL.Path
+
+		if prefix := strings.TrimRight(options.requestPathPrefix, "/"); prefix != "" {
+			if !strings.HasPrefix(rawPath, prefix) {
+				http.Error(w, "not found", http.StatusNotFound)
+				return
+			}
+
+			rawPath = strings.TrimPrefix(rawPath, prefix)
+
+			if rawPath == "" {
+				rawPath = "/"
+			}
+		}
+
+		requestPath := testWebDAVCollectionPath(rawPath)
 		depth := strings.ToLower(strings.TrimSpace(r.Header.Get("Depth")))
 
 		if depth == "" {
@@ -107,6 +125,20 @@ func newTestWebDAVServerWithOptions(options testWebDAVServerOptions) *httptest.S
 
 		switch depth {
 		case "1":
+			if options.redirectSlashlessDepthOne && requestPath != "/" && !strings.HasSuffix(rawPath, "/") {
+				http.Redirect(w, r, rawPath+"/", http.StatusMovedPermanently)
+				return
+			}
+
+			if options.requireBasicAuthOnDepthOne {
+				user, pass, ok := r.BasicAuth()
+
+				if !ok || user != testUser || pass != testPass {
+					http.Error(w, "unauthorized", http.StatusUnauthorized)
+					return
+				}
+			}
+
 			entries = testWebDAVDepthOneEntries(requestPath)
 
 			if options.duplicateDepthOne && requestPath == "/Photos" {
@@ -364,6 +396,37 @@ func TestClient_DirectoriesDepthFallback(t *testing.T) {
 		t.Cleanup(server.Close)
 
 		client, err := NewClient(server.URL+"/", "", "", TimeoutLow, "")
+		require.NoError(t, err)
+
+		dirs, err := client.Directories("", true, MaxRequestDuration)
+		require.NoError(t, err)
+		assert.ElementsMatch(t, expected, dirs.Abs())
+	})
+	t.Run("DepthOneFallbackUsesCollectionPaths", func(t *testing.T) {
+		server := newTestWebDAVServerWithOptions(testWebDAVServerOptions{
+			rejectInfinity:             true,
+			redirectSlashlessDepthOne:  true,
+			requireBasicAuthOnDepthOne: true,
+		})
+		t.Cleanup(server.Close)
+
+		client, err := NewClient(server.URL+"/", testUser, testPass, TimeoutLow, "")
+		require.NoError(t, err)
+
+		dirs, err := client.Directories("", true, MaxRequestDuration)
+		require.NoError(t, err)
+		assert.ElementsMatch(t, expected, dirs.Abs())
+	})
+	t.Run("DepthOneFallbackPreservesEndpointPrefix", func(t *testing.T) {
+		server := newTestWebDAVServerWithOptions(testWebDAVServerOptions{
+			rejectInfinity:             true,
+			redirectSlashlessDepthOne:  true,
+			requireBasicAuthOnDepthOne: true,
+			requestPathPrefix:          "/dav",
+		})
+		t.Cleanup(server.Close)
+
+		client, err := NewClient(server.URL+"/dav/", testUser, testPass, TimeoutLow, "")
 		require.NoError(t, err)
 
 		dirs, err := client.Directories("", true, MaxRequestDuration)

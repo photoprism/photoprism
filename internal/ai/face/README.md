@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** March 3, 2026
+**Last Updated:** April 1, 2026
 
 ### Overview
 
@@ -8,41 +8,25 @@ This document captures the current state of PhotoPrism's face detection and embe
 
 Key changes:
 
-- Multi-angle scanning is enabled by default and can be tuned via configuration.
 - Detection thresholds were relaxed to improve recall, while overlap handling was adjusted to preserve historical behaviour.
 - All face embeddings are now L2-normalized at creation, midpoint calculation, and deserialization time to keep cosine and Euclidean comparisons consistent.
 - Benchmarks were added to track the cost of hotspot routines (`Embedding.Dist` and `EmbeddingsMidpoint`).
 
-> **TODO:** Persist detector provenance in `FaceSrc` (e.g., use `entity.SrcONNX` for SCRFD detections) so hybrid libraries can toggle background filtering per embedding source when upgrading from Pigo.
+> **TODO:** Persist detector provenance in `FaceSrc` (for example `entity.SrcONNX`) so ONNX-generated detections remain auditable after future model upgrades.
 
 ### Detection Pipeline
 
-PhotoPrism now supports two interchangeable detection engines:
+PhotoPrism now uses a single detector:
 
-- **Pigo** — CPU-only cascade classifier, retains historical behaviour.
-- **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The ONNX engine consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to half the available CPUs (minimum 1 thread). The engine is enabled automatically when `FACE_ENGINE=auto` and the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present (the prebuilt runtime targets glibc ≥ 2.27 on x86_64/arm64). Operators can switch at runtime via `photoprism --face-engine=<auto|pigo|onnx>` or `photoprism faces reset --engine=<auto|pigo|onnx>` for a full re-index.
+- **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to half the available CPUs (minimum 1 thread). Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present and otherwise disables detection instead of falling back to a legacy engine.
 
-Runtime selection lives in `Config.FaceEngine()`; `auto` resolves to ONNX when the SCRFD assets are available, otherwise Pigo. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` if no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
-
-#### Angle Sweep
-
-- The detector now evaluates the Pigo cascade at **-0.3, 0, and +0.3 radians**. These angles are exposed via the new `FACE_ANGLE` option.
-- Configuration entry points:
-  - CLI flag: `--face-angle=<rad>` (repeatable).
-  - Environment variable: `FACE_ANGLE` (comma-separated list).
-  - Options API: `Config.FaceAngles()`.
-- At start-up the detector receives a copy of `face.DetectionAngles`, so runtime overrides do not mutate the global defaults.
+Runtime selection lives in `Config.FaceEngine()`. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` when no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
 
 #### Quality & Overlap Thresholds
 
 - The dynamic quality curve in `face.QualityThreshold` was flattened for better small-face recall:
   - +12 for scales <26, +8 for <32, +6 for <40, +4 for <50, +2 for <80, +1 for <110.
 - The face overlap floor remains **42 %** to preserve legacy marker behaviour (`OverlapThresholdFloor = 41`). Tests rely on that value (e.g., `Markers.Contains/SameFace`).
-
-#### Landmark Handling
-
-- Landmarks are only evaluated when both eyes are successfully detected for a given face. Eye candidates and cascades respect the configurable perturbation budget.
-- The primary detection angles (`FACE_ANGLE`) do **not** affect landmark estimation, which continues to run at 0° to match the cascade assumptions.
 
 ### Embedding Handling
 
@@ -85,7 +69,7 @@ faces: retained manual clusters after merge: kept 4 candidate cluster(s) [...] f
 
 This is informational—the optimiser skips that merge and progresses. To reduce noise, consider:
 
-- Running `photoprism faces reset --engine=<pigo|onnx>` to regenerate markers with consistent embeddings.
+- Running `photoprism faces reset --engine=<auto|onnx>` to regenerate markers with consistent embeddings.
 - Reviewing the subject’s manual clusters in the UI and trimming outliers or reassigning photos to other people.
 - Confirming that the remaining clusters genuinely represent different appearances (lighting, age); in that case it is safe to ignore the warning.
 
@@ -133,13 +117,12 @@ Recovery steps:
 
 ### Configuration Summary
 
-| Setting               | Default                      | Description                                                                                     |
-|:----------------------|:-----------------------------|:------------------------------------------------------------------------------------------------|
-| `FACE_ENGINE`         | `auto`                       | Detection engine (`auto`, `pigo`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
-| `FACE_ENGINE_THREADS` | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads; ignored by Pigo.                                                        |
-| `FACE_ANGLE`          | `-0.3,0,0.3`                 | Detection angles (radians) swept by Pigo.                                                       |
-| `FACE_SCORE`          | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                                |
-| `FACE_OVERLAP`        | `42`                         | Maximum allowed IoU when deduplicating markers.                                                 |
+| Setting               | Default                      | Description                                                                             |
+|:----------------------|:-----------------------------|:----------------------------------------------------------------------------------------|
+| `FACE_ENGINE`         | `auto`                       | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
+| `FACE_ENGINE_THREADS` | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads.                                                                 |
+| `FACE_SCORE`          | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                        |
+| `FACE_OVERLAP`        | `42`                         | Maximum allowed IoU when deduplicating markers.                                         |
 
 Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
 When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.

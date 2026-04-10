@@ -14,14 +14,13 @@
     @after-leave="afterLeave"
   >
     <v-card ref="content" class="edit-batch__card" :tile="$vuetify.display.mdAndDown" tabindex="-1">
-      <v-toolbar flat color="navigation" :density="$vuetify.display.mdAndDown ? 'compact' : 'comfortable'">
-        <v-btn icon class="action-close" @click.stop="onClose">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-
+      <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
         <v-toolbar-title>
           {{ formTitle }}
         </v-toolbar-title>
+        <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="onClose">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-toolbar>
 
       <v-progress-linear v-if="saving" :indeterminate="true" color="surface-variant"></v-progress-linear>

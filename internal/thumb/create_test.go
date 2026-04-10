@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/disintegration/imaging"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -17,21 +16,21 @@ func TestResampleOptions(t *testing.T) {
 		method, filter, format := ResampleOptions(ResamplePng, ResampleFillCenter, ResampleDefault)
 
 		assert.Equal(t, ResampleFillCenter, method)
-		assert.Equal(t, imaging.Lanczos.Support, filter.Imaging().Support)
+		assert.Equal(t, ResampleLanczos, filter)
 		assert.Equal(t, fs.ImagePng, format)
 	})
 	t.Run("ResampleNearestNeighborFillTopLeft", func(t *testing.T) {
 		method, filter, format := ResampleOptions(ResampleNearestNeighbor, ResampleFillTopLeft)
 
 		assert.Equal(t, ResampleFillTopLeft, method)
-		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Imaging().Support)
+		assert.Equal(t, ResampleNearest, filter)
 		assert.Equal(t, fs.ImageJpeg, format)
 	})
 	t.Run("ResampleNearestNeighborFillBottomRight", func(t *testing.T) {
 		method, filter, format := ResampleOptions(ResampleNearestNeighbor, ResampleFillBottomRight)
 
 		assert.Equal(t, ResampleFillBottomRight, method)
-		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Imaging().Support)
+		assert.Equal(t, ResampleNearest, filter)
 		assert.Equal(t, fs.ImageJpeg, format)
 	})
 }
@@ -44,7 +43,7 @@ func TestResample(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -69,7 +68,7 @@ func TestResample(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -94,7 +93,7 @@ func TestResample(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -119,7 +118,7 @@ func TestResample(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -406,7 +405,7 @@ func TestCreate(t *testing.T) {
 		assert.FileExists(t, src)
 		assert.NoFileExists(t, dst)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -443,7 +442,7 @@ func TestCreate(t *testing.T) {
 		assert.FileExists(t, src)
 		assert.NoFileExists(t, dst)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -480,7 +479,7 @@ func TestCreate(t *testing.T) {
 		assert.FileExists(t, src)
 		assert.NoFileExists(t, dst)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -507,7 +506,7 @@ func TestCreate(t *testing.T) {
 		assert.FileExists(t, src)
 		assert.NoFileExists(t, dst)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)

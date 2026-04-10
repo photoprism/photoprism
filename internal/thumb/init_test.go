@@ -33,11 +33,11 @@ func TestInit(t *testing.T) {
 		assert.Equal(t, 1, NumWorkers)
 		assert.Equal(t, LibVips, Library)
 	})
-	t.Run("LibImaging", func(t *testing.T) {
-		Init(memory.FreeMemory(), runtime.NumCPU(), LibImaging)
+	t.Run("LegacyLibImagingFallsBackToVips", func(t *testing.T) {
+		Init(memory.FreeMemory(), runtime.NumCPU(), "imaging")
 		assert.GreaterOrEqual(t, MaxCacheMem, 64*MiB)
 		assert.GreaterOrEqual(t, NumWorkers, 1)
-		assert.Equal(t, LibImaging, Library)
+		assert.Equal(t, LibVips, Library)
 	})
 	t.Run("Dynamic", func(t *testing.T) {
 		Init(memory.FreeMemory(), runtime.NumCPU(), LibVips)
@@ -45,10 +45,4 @@ func TestInit(t *testing.T) {
 		assert.GreaterOrEqual(t, NumWorkers, 1)
 		assert.Equal(t, LibVips, Library)
 	})
-}
-
-func TestShutdown_NoPanic(t *testing.T) {
-	// Call Shutdown twice to cover both not-started and already-reset states.
-	Shutdown()
-	Shutdown()
 }

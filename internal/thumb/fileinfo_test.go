@@ -1,9 +1,12 @@
 package thumb
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -58,5 +61,14 @@ func TestFileInfo(t *testing.T) {
 			assert.Equal(t, 100, fileInfo.Width)
 			assert.Equal(t, 67, fileInfo.Height)
 		}
+	})
+	t.Run("MalformedTiffIfdOffset", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "evil.tiff")
+		payload := []byte{0x49, 0x49, 0x2a, 0x00, 0xff, 0xff, 0xff, 0xff}
+		require.NoError(t, os.WriteFile(fileName, payload, fs.ModeFile))
+
+		_, err := FileInfo(fileName)
+
+		require.Error(t, err)
 	})
 }
