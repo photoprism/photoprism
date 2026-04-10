@@ -854,9 +854,9 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
-  locationInfo = () => {
+  locationInfo() {
     return this.generateLocationInfo(this.PlaceID, this.Country, this.Place, this.PlaceLabel);
-  };
+  }
 
   generateLocationInfo = memoizeOne((placeId, countryCode, place, placeLabel) => {
     if (placeId === "zz" && countryCode !== "zz") {
@@ -985,9 +985,9 @@ export class Photo extends RestModel {
   });
 
   // Example: Apple iPhone 12 Pro Max, DNG, 4032 × 3024, 32.9 MB
-  getCameraInfo = () => {
+  getCameraInfo() {
     return this.generateCameraInfo(this.Camera, this.CameraID, this.CameraMake, this.CameraModel, this.Iso, this.Exposure);
-  };
+  }
 
   generateCameraInfo = memoizeOne((camera, cameraId, cameraMake, cameraModel, iso, exposure) => {
     let info = [];
@@ -1033,9 +1033,9 @@ export class Photo extends RestModel {
   });
 
   // Example: iPhone 12 Pro Max 5.1mm ƒ/1.6, 26mm, ISO32, 1/4525
-  getLensInfo = () => {
+  getLensInfo() {
     return this.generateLensInfo(this.Lens, this.LensID, this.LensMake, this.LensModel, this.CameraModel, this.FNumber, this.FocalLength);
-  };
+  }
 
   generateLensInfo = memoizeOne((lens, lensId, lensMake, lensModel, cameraModel, fNumber, focalLength) => {
     let info = [];

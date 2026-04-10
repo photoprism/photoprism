@@ -69,13 +69,20 @@
         </v-list-item>
 
         <v-divider v-if="editingField === 'title' || editingField === 'caption' || model.Title || model.Caption || isEditable" class="my-4"></v-divider>
+
+        <v-list-item v-if="fileName" class="metadata__item metadata__file">
+          <div class="meta-filename" :title="fileName">{{ fileName }}</div>
+        </v-list-item>
+
+        <v-list-item v-if="fileInfo" v-tooltip="$gettext('File')" :title="fileInfo" :prepend-icon="fileIcon" class="metadata__item"></v-list-item>
+
+        <v-divider v-if="fileName || fileInfo" class="my-4"></v-divider>
+
         <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
           <template v-if="isEditable" #append>
             <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="dateTimeDialog = true"></v-icon>
           </template>
         </v-list-item>
-
-        <v-list-item v-tooltip="$gettext(`Size`)" :title="model.getTypeInfo()" :prepend-icon="model.getTypeIcon()" class="metadata__item"> </v-list-item>
 
         <v-list-item v-if="cameraInfo || isEditable" v-tooltip="$gettext('Camera')" :title="cameraInfo" prepend-icon="mdi-camera" class="metadata__item">
           <template v-if="isEditable" #append>
@@ -85,22 +92,34 @@
 
         <v-list-item v-if="lensInfo" v-tooltip="$gettext('Lens')" :title="lensInfo" prepend-icon="mdi-camera-iris" class="metadata__item"> </v-list-item>
 
-        <template v-if="model.Lat && model.Lng">
+        <template v-if="(model.Lat && model.Lng) || (isEditable && featPlaces)">
           <v-divider class="my-4"></v-divider>
-          <v-list-item v-if="placeName" v-tooltip="$gettext('Location')" :title="placeName" prepend-icon="mdi-map-marker" class="metadata__item"> </v-list-item>
           <v-list-item
-            v-tooltip="$gettext(`Coordinates`)"
-            :title="altitude ? model.getLatLng() + ' \u00b7 ' + altitude : model.getLatLng()"
-            class="clickable metadata__item"
-            @click.stop="model.copyLatLng()"
+            v-if="placeName || !(model.Lat && model.Lng)"
+            v-tooltip="$gettext('Location')"
+            :title="placeName || $gettext('Unknown')"
+            prepend-icon="mdi-map-marker"
+            class="metadata__item"
           >
-            <template v-if="isEditable && featPlaces" #append>
+            <template v-if="isEditable && featPlaces && !(model.Lat && model.Lng)" #append>
               <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop.prevent="locationDialog = true"></v-icon>
             </template>
           </v-list-item>
-          <v-list-item v-if="featPlaces" class="mx-0 px-0">
-            <p-map :latlng="[model.Lat, model.Lng]" :animate-duration="0"></p-map>
-          </v-list-item>
+          <template v-if="model.Lat && model.Lng">
+            <v-list-item
+              v-tooltip="$gettext(`Coordinates`)"
+              :title="altitude ? model.getLatLng() + ' \u00b7 ' + altitude : model.getLatLng()"
+              class="clickable metadata__item"
+              @click.stop="model.copyLatLng()"
+            >
+              <template v-if="isEditable && featPlaces" #append>
+                <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop.prevent="locationDialog = true"></v-icon>
+              </template>
+            </v-list-item>
+            <v-list-item v-if="featPlaces" class="mx-0 px-0">
+              <p-map :latlng="[model.Lat, model.Lng]" :animate-duration="0"></p-map>
+            </v-list-item>
+          </template>
         </template>
 
         <template v-if="people.length > 0">
@@ -318,7 +337,12 @@
           <v-divider class="my-4"></v-divider>
 
           <!-- Subject -->
-          <v-list-item v-if="editingField === 'subject' || subject || isEditable" v-tooltip="$gettext('Subject')" prepend-icon="mdi-text-box-outline" class="metadata__item">
+          <v-list-item
+            v-if="editingField === 'subject' || subject || isEditable"
+            v-tooltip="$gettext('Subject')"
+            prepend-icon="mdi-text-box-outline"
+            class="metadata__item"
+          >
             <v-textarea
               v-if="editingField === 'subject'"
               v-model="p.Details.Subject"
@@ -349,7 +373,12 @@
           </v-list-item>
 
           <!-- Artist -->
-          <v-list-item v-if="editingField === 'artist' || artist || isEditable" v-tooltip="$gettext('Artist')" prepend-icon="mdi-palette" class="metadata__item">
+          <v-list-item
+            v-if="editingField === 'artist' || artist || isEditable"
+            v-tooltip="$gettext('Artist')"
+            prepend-icon="mdi-palette"
+            class="metadata__item"
+          >
             <v-textarea
               v-if="editingField === 'artist'"
               v-model="p.Details.Artist"
@@ -380,7 +409,12 @@
           </v-list-item>
 
           <!-- Copyright -->
-          <v-list-item v-if="editingField === 'copyright' || copyright || isEditable" v-tooltip="$gettext('Copyright')" prepend-icon="mdi-copyright" class="metadata__item">
+          <v-list-item
+            v-if="editingField === 'copyright' || copyright || isEditable"
+            v-tooltip="$gettext('Copyright')"
+            prepend-icon="mdi-copyright"
+            class="metadata__item"
+          >
             <v-textarea
               v-if="editingField === 'copyright'"
               v-model="p.Details.Copyright"
@@ -411,7 +445,12 @@
           </v-list-item>
 
           <!-- License -->
-          <v-list-item v-if="editingField === 'license' || license || isEditable" v-tooltip="$gettext('License')" prepend-icon="mdi-license" class="metadata__item">
+          <v-list-item
+            v-if="editingField === 'license' || license || isEditable"
+            v-tooltip="$gettext('License')"
+            prepend-icon="mdi-license"
+            class="metadata__item"
+          >
             <v-textarea
               v-if="editingField === 'license'"
               v-model="p.Details.License"
@@ -477,38 +516,6 @@
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'originalname' || originalName || isEditable">
-          <v-divider class="my-4"></v-divider>
-          <v-list-item v-tooltip="$gettext('Original Name')" prepend-icon="mdi-file-outline" class="metadata__item">
-            <v-text-field
-              v-if="editingField === 'originalname'"
-              v-model="p.OriginalName"
-              :placeholder="$gettext('Original Name')"
-              variant="plain"
-              density="compact"
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.enter.prevent="confirmField"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
-            ></v-text-field>
-            <div v-else-if="originalName" class="text-body-2">{{ originalName }}</div>
-            <div v-else class="meta-add-prompt" @click.stop="startEditing('originalname')">{{ $gettext("Original Name") }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'originalname'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('originalname')"></v-icon>
-            </template>
-          </v-list-item>
-        </template>
-
         <template v-if="editingField === 'notes' || notesHtml || isEditable">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
@@ -560,6 +567,7 @@
 import { DateTime } from "luxon";
 import * as formats from "options/formats";
 
+import * as media from "common/media";
 import { Photo } from "model/photo";
 import { Label } from "model/label";
 import { Album } from "model/album";
@@ -649,11 +657,15 @@ export default {
     },
     cameraInfo() {
       if (!this.p) return "";
+      // Suppress "Unknown, ISO 100"-style rows when only ISO/exposure are set.
+      if (!this.$util.formatCamera(this.p.Camera, this.p.CameraID, this.p.CameraMake, this.p.CameraModel, false)) return "";
       const info = this.p.getCameraInfo();
       return info !== this.$gettext("Unknown") ? info : "";
     },
     lensInfo() {
       if (!this.p) return "";
+      const hasLens = (this.p.LensID && this.p.LensID > 1) || this.p.LensMake || this.p.LensModel || this.p.Lens?.Model || this.p.Lens?.Make;
+      if (!hasLens) return "";
       const info = this.p.getLensInfo();
       return info !== this.$gettext("Unknown") ? info : "";
     },
@@ -696,9 +708,43 @@ export default {
       if (!this.p || !this.p.Altitude) return "";
       return this.p.Altitude + " m";
     },
-    originalName() {
+    fileName() {
       if (!this.p) return "";
-      return this.p.OriginalName || "";
+      if (this.p.FileName) return this.p.FileName;
+      const primary = typeof this.p.primaryFile === "function" ? this.p.primaryFile() : null;
+      return primary?.Name || "";
+    },
+    fileInfo() {
+      if (!this.p) return "";
+      switch (this.p.Type) {
+        case media.Video:
+        case media.Live:
+        case media.Animated:
+          return this.p.getVideoInfo();
+        case media.Vector:
+        case media.Document:
+          return this.p.getVectorInfo();
+        default:
+          return this.p.getImageInfo();
+      }
+    },
+    fileIcon() {
+      switch (this.p?.Type) {
+        case media.Raw:
+          return "mdi-raw";
+        case media.Video:
+          return "mdi-video";
+        case media.Live:
+          return "mdi-play-circle-outline";
+        case media.Animated:
+          return "mdi-file-gif-box";
+        case media.Vector:
+          return "mdi-vector-polyline";
+        case media.Document:
+          return "mdi-file-pdf-box";
+        default:
+          return "mdi-image-outline";
+      }
     },
   },
   watch: {
@@ -730,8 +776,6 @@ export default {
           return this.p.Details.Keywords;
         case "notes":
           return this.p.Details.Notes;
-        case "originalname":
-          return this.p.OriginalName;
         default:
           return "";
       }
@@ -762,9 +806,6 @@ export default {
         case "notes":
           this.p.Details.Notes = value;
           break;
-        case "originalname":
-          this.p.OriginalName = value;
-          break;
       }
     },
     startEditing(field) {
@@ -790,7 +831,7 @@ export default {
       }
 
       this.editingField = "person-" + (marker.UID || marker.CropID);
-      this.editOriginal = marker.Name;
+      this.editOriginal = { Name: marker.Name || "", SubjUID: marker.SubjUID || "" };
       this.editMarker = marker;
       this._editStartedAt = Date.now();
 
@@ -800,47 +841,48 @@ export default {
       });
     },
     onEjectPerson(marker) {
-      marker.clearSubject().then(() => {
-        this.startEditingPerson(marker);
-      });
+      // Mutate locally only; the clearSubject() call is deferred until
+      // the user confirms, matching the approval flow for other edits.
+      this.startEditingPerson(marker);
+      marker.Name = "";
+      marker.SubjUID = "";
     },
     onSelectPerson(marker, person) {
       if (typeof person === "object" && person?.Name && person?.UID) {
         marker.Name = person.Name;
         marker.SubjUID = person.UID;
-
-        this.editingField = null;
-        this.editOriginal = null;
-        this.editMarker = null;
-
-        marker.setName();
       }
     },
     confirmField() {
       if (this.editMarker) {
         const marker = this.editMarker;
+        const original = this.editOriginal || { Name: "", SubjUID: "" };
         this.editingField = null;
         this.editOriginal = null;
         this.editMarker = null;
 
-        if (!marker.Name || !marker.Name.trim()) {
-          if (marker.SubjUID) {
+        const name = (marker.Name || "").trim();
+
+        if (!name) {
+          if (original.SubjUID) {
             marker.clearSubject();
           }
-
           return;
         }
 
-        // Match typed name against existing people (case-insensitive).
         const people = this.$config.values?.people;
 
         if (people) {
-          const found = people.find((p) => p.Name.localeCompare(marker.Name, "en", { sensitivity: "base" }) === 0);
+          const found = people.find((p) => p.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
 
           if (found) {
             marker.Name = found.Name;
             marker.SubjUID = found.UID;
           }
+        }
+
+        if (marker.Name === original.Name && marker.SubjUID === original.SubjUID) {
+          return;
         }
 
         marker.setName();
@@ -876,7 +918,8 @@ export default {
 
       if (this.editingField && this.editOriginal !== null) {
         if (this.editMarker) {
-          this.editMarker.Name = this.editOriginal;
+          this.editMarker.Name = this.editOriginal.Name || "";
+          this.editMarker.SubjUID = this.editOriginal.SubjUID || "";
         } else {
           this.setFieldValue(this.editingField, this.editOriginal);
         }
@@ -947,24 +990,51 @@ export default {
       this.chipSearch = "";
       this.chipKey++;
     },
+    addPendingLabel(rawName) {
+      const name = (rawName || "").trim();
+      if (!name) return false;
+      if (name.length > this.$config.get("clip")) {
+        this.$notify.error(this.$gettext("Name too long"));
+        return false;
+      }
+      const norm = this.$util.normalizeLabelTitle(name);
+      if (!norm) return false;
+      if (this.pendingLabelAdditions.some((n) => this.$util.normalizeLabelTitle(n) === norm)) return false;
+      if (this.labels.some((l) => this.$util.normalizeLabelTitle(l?.Label?.Name) === norm)) return false;
+      this.pendingLabelAdditions.push(name);
+      return true;
+    },
+    albumTitleConflicts(norm) {
+      if (!norm) return true;
+      if (this.pendingAlbumAdditions.some((a) => this.$util.normalizeLabelTitle(a?.Title) === norm)) return true;
+      if (this.albums.some((a) => this.$util.normalizeLabelTitle(a?.Title) === norm)) return true;
+      return false;
+    },
+    addPendingAlbum(album) {
+      if (!album || typeof album !== "object") return false;
+      const title = (album.Title || "").trim();
+      if (!title) return false;
+      if (title.length > this.$config.get("clip")) {
+        this.$notify.error(this.$gettext("Name too long"));
+        return false;
+      }
+      if (album.UID) {
+        if (this.pendingAlbumAdditions.some((a) => a.UID === album.UID)) return false;
+        if (this.albums.some((a) => a.UID === album.UID)) return false;
+      }
+      if (this.albumTitleConflicts(this.$util.normalizeLabelTitle(title))) return false;
+      this.pendingAlbumAdditions.push(album);
+      return true;
+    },
     onLabelSelected(value) {
       if (!value || typeof value !== "object" || !value.Name) return;
-
-      const name = value.Name.trim();
-
-      if (name && !this.pendingLabelAdditions.includes(name) && !this.labels.some((l) => l.Label.Name.toLowerCase() === name.toLowerCase())) {
-        this.pendingLabelAdditions.push(name);
-      }
-
+      this.addPendingLabel(value.Name);
       this.clearChipInput();
     },
     onLabelEnter() {
-      const name = (this.chipSearch || "").trim();
-      if (!name) return;
-      if (this.pendingLabelAdditions.includes(name)) return;
-      if (this.labels.some((l) => l.Label.Name.toLowerCase() === name.toLowerCase())) return;
-      this.pendingLabelAdditions.push(name);
-      this.clearChipInput();
+      if (this.addPendingLabel(this.chipSearch)) {
+        this.clearChipInput();
+      }
     },
     removePendingLabelAdd(name) {
       const idx = this.pendingLabelAdditions.indexOf(name);
@@ -1049,17 +1119,27 @@ export default {
         this.clearChipInput();
         return;
       }
-
-      if (!this.pendingAlbumAdditions.find((a) => a.UID === value.UID) && !this.albums.some((a) => a.UID === value.UID)) {
-        this.pendingAlbumAdditions.push(value);
-      }
-
+      this.addPendingAlbum(value);
       this.clearChipInput();
     },
     onAlbumEnter() {
       const search = (this.chipSearch || "").trim();
       if (!search) return;
 
+      if (search.length > this.$config.get("clip")) {
+        this.$notify.error(this.$gettext("Name too long"));
+        return;
+      }
+
+      const norm = this.$util.normalizeLabelTitle(search);
+      if (!norm) {
+        this.clearChipInput();
+        return;
+      }
+
+      // TODO: this partial-match lookup (startsWith/includes against the
+      // typed string) can produce spurious matches for short inputs and
+      // should be revisited separately.
       const lower = search.toLowerCase();
       const match =
         this.albumOptions.find((a) => a.Title.toLowerCase().startsWith(lower)) || this.albumOptions.find((a) => a.Title.toLowerCase().includes(lower));
@@ -1069,16 +1149,18 @@ export default {
         return;
       }
 
-      // Create new album with the typed name.
-      if (this.pendingAlbumAdditions.find((a) => a.Title.toLowerCase() === lower)) return;
+      // Skip the API round-trip if a normalized title clash already exists.
+      if (this.albumTitleConflicts(norm)) {
+        this.clearChipInput();
+        return;
+      }
 
       const album = new Album({ Title: search });
 
       album
         .save()
         .then(() => {
-          if (album.UID) {
-            this.pendingAlbumAdditions.push(album);
+          if (album.UID && this.addPendingAlbum(album)) {
             this.albumOptions.push(album);
           }
         })
@@ -1101,10 +1183,19 @@ export default {
       this.photo.Year = data.Year;
       this.photo.TimeZone = data.TimeZone;
 
-      this.photo.TakenAtLocal = this.photo.localDateString(data.time);
+      const localDate = this.photo.localDate(data.time);
+      if (!localDate.isValid) return;
+
+      const isoTime =
+        localDate.toISO({
+          suppressMilliseconds: true,
+          includeOffset: false,
+        }) + "Z";
+
+      this.photo.TakenAtLocal = isoTime;
 
       if (this.photo.currentTimeZoneUTC()) {
-        this.photo.TakenAt = this.photo.TakenAtLocal;
+        this.photo.TakenAt = isoTime;
       }
 
       this.photo.update().then(() => {

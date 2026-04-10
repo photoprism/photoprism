@@ -3,6 +3,50 @@ import { mount } from "@vue/test-utils";
 import PSidebarInfo from "component/sidebar/info.vue";
 import * as contexts from "options/contexts";
 import { DateTime } from "luxon";
+import $util from "common/util";
+import { Album } from "model/album";
+
+// Max name length used by the validation pipeline (matches the production
+// "clip" client-config value). Override the global $config.get mock so the
+// length-check branch can be exercised in tests.
+const CLIP_LEN = 160;
+const validationConfig = {
+  feature: () => true,
+  get: (key) => (key === "clip" ? CLIP_LEN : false),
+  getSettings: () => ({ features: { edit: true, favorites: true, download: true, archive: true } }),
+  allow: () => true,
+  featExperimental: () => false,
+  featDevelop: () => false,
+  values: {},
+  dir: () => "ltr",
+};
+// Mounted with the real $util.normalizeLabelTitle so the validation
+// pipeline runs against the same normalization the component uses at
+// runtime. Other $util methods needed at render time are stubbed inline.
+const validationUtil = {
+  normalizeLabelTitle: (s) => $util.normalizeLabelTitle(s),
+  formatCamera: (camera, id, make, model, long) => $util.formatCamera(camera, id, make, model, long),
+  encodeHTML: (s) => s,
+  sanitizeHtml: (s) => s,
+  hasTouch: () => false,
+  formatSeconds: (n) => String(n),
+  formatRemainingSeconds: () => "0",
+  videoFormat: () => "avc",
+  videoFormatUrl: () => "/v.mp4",
+  thumb: () => ({ src: "/t.jpg", w: 100, h: 100 }),
+};
+function mountInfoForChips(props) {
+  return mount(PSidebarInfo, {
+    props: { canEdit: true, context: contexts.Photos, ...props },
+    global: {
+      stubs: { PMap: true },
+      mocks: {
+        $config: validationConfig,
+        $util: validationUtil,
+      },
+    },
+  });
+}
 
 // Mock dependencies
 vi.mock("component/map.vue", () => ({
@@ -33,15 +77,23 @@ describe("PSidebarInfo component", () => {
       TimeZone: "UTC",
       Lat: 52.52,
       Lng: 13.405,
-      getTypeInfo: vi.fn().mockReturnValue("JPEG, 1920x1080"),
-      getTypeIcon: vi.fn().mockReturnValue("mdi-file-image"),
       getLatLng: vi.fn().mockReturnValue("52.5200, 13.4050"),
       copyLatLng: vi.fn(),
     };
 
     mockPhoto = {
+      Type: "image",
+      CameraID: 2,
+      CameraMake: "Canon",
+      CameraModel: "EOS R5",
+      LensID: 2,
+      LensMake: "Canon",
+      LensModel: "RF 50mm F1.2L",
       getCameraInfo: vi.fn().mockReturnValue("Canon EOS R5"),
       getLensInfo: vi.fn().mockReturnValue("RF 50mm F1.2L"),
+      getImageInfo: vi.fn().mockReturnValue("JPEG, 1920 × 1080, 4.2 MB"),
+      getVideoInfo: vi.fn().mockReturnValue(""),
+      getVectorInfo: vi.fn().mockReturnValue(""),
       getExifInfo: vi.fn().mockReturnValue("50mm \u2022 \u0192/1.2 \u2022 ISO 400 \u2022 1/125"),
       locationInfo: vi.fn().mockReturnValue("Berlin, Germany"),
       getMarkers: vi.fn().mockReturnValue([
@@ -102,10 +154,26 @@ describe("PSidebarInfo component", () => {
     const html = wrapper.html();
     expect(html).toContain("Test Title");
     expect(html).toContain("Test Caption");
+    expect(html).toContain("photos/2023/IMG_001.jpg");
+    expect(html).toContain("JPEG, 1920 × 1080, 4.2 MB");
 
-    expect(mockModel.getTypeInfo).toHaveBeenCalled();
-    expect(mockModel.getTypeIcon).toHaveBeenCalled();
+    expect(mockPhoto.getImageInfo).toHaveBeenCalled();
     expect(mockModel.getLatLng).toHaveBeenCalled();
+  });
+
+  it("should not render an icon or pencil next to the filename", () => {
+    const fileRow = wrapper.find(".metadata__file");
+    expect(fileRow.exists()).toBe(true);
+    expect(fileRow.find(".meta-inline-pencil").exists()).toBe(false);
+    const filename = fileRow.find(".meta-filename");
+    expect(filename.exists()).toBe(true);
+    expect(filename.find(".v-icon").exists()).toBe(false);
+  });
+
+  it("should render file info row with a prepend icon like Taken/Camera", () => {
+    const html = wrapper.html();
+    expect(html).toContain("JPEG, 1920 × 1080, 4.2 MB");
+    expect(html).toContain("mdi-image-outline");
   });
 
   it("should emit close event when close button is clicked", async () => {
@@ -154,6 +222,44 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.cameraInfo).toBe("");
   });
 
+  it("should hide camera row in read-only mode when only ISO/exposure are set", () => {
+    const photo = {
+      ...mockPhoto,
+      CameraID: 1,
+      CameraMake: "",
+      CameraModel: "",
+      Iso: 100,
+      Exposure: "1/125",
+      getCameraInfo: vi.fn().mockReturnValue("Unknown, ISO 100, 1/125"),
+      getMarkers: vi.fn().mockReturnValue([]),
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: false, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.cameraInfo).toBe("");
+    expect(w.html()).not.toContain("mdi-camera ");
+  });
+
+  it("should hide lens row when only FNumber/FocalLength are set without a real lens", () => {
+    const photo = {
+      ...mockPhoto,
+      LensID: 1,
+      LensMake: "",
+      LensModel: "",
+      Lens: null,
+      FNumber: 1.8,
+      FocalLength: 50,
+      getLensInfo: vi.fn().mockReturnValue("50mm, ƒ/1.8"),
+      getMarkers: vi.fn().mockReturnValue([]),
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: false, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.lensInfo).toBe("");
+  });
+
   it("should return empty strings when photo prop is null", () => {
     const w = mount(PSidebarInfo, {
       props: { modelValue: mockModel, photo: null, context: contexts.Photos },
@@ -166,7 +272,8 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.labels).toEqual([]);
     expect(w.vm.albums).toEqual([]);
     expect(w.vm.placeName).toBe("");
-    expect(w.vm.originalName).toBe("");
+    expect(w.vm.fileName).toBe("");
+    expect(w.vm.fileInfo).toBe("");
     expect(w.vm.subject).toBe("");
     expect(w.vm.artist).toBe("");
     expect(w.vm.copyright).toBe("");
@@ -196,6 +303,80 @@ describe("PSidebarInfo component", () => {
     expect(personRows[1].classes()).not.toContain("clickable");
   });
 
+  // Face marker editing (approval required for every change)
+  it("should not hit the server on eject until the user confirms", async () => {
+    const marker = {
+      UID: "mE",
+      CropID: "cropE",
+      Name: "Alice",
+      SubjUID: "subjA",
+      clearSubject: vi.fn().mockResolvedValue(true),
+      setName: vi.fn().mockResolvedValue(true),
+    };
+    wrapper.vm.onEjectPerson(marker);
+    expect(marker.clearSubject).not.toHaveBeenCalled();
+    expect(marker.Name).toBe("");
+    expect(marker.SubjUID).toBe("");
+    expect(wrapper.vm.isEditingPerson(marker)).toBe(true);
+
+    wrapper.vm.confirmField();
+    expect(marker.clearSubject).toHaveBeenCalledTimes(1);
+    expect(marker.setName).not.toHaveBeenCalled();
+  });
+
+  it("should restore the marker on cancel after eject", () => {
+    const marker = {
+      UID: "mF",
+      CropID: "cropF",
+      Name: "Bob",
+      SubjUID: "subjB",
+      clearSubject: vi.fn(),
+      setName: vi.fn(),
+    };
+    wrapper.vm.onEjectPerson(marker);
+    wrapper.vm._editStartedAt = 0;
+    wrapper.vm.cancelEditing();
+    expect(marker.Name).toBe("Bob");
+    expect(marker.SubjUID).toBe("subjB");
+    expect(marker.clearSubject).not.toHaveBeenCalled();
+    expect(marker.setName).not.toHaveBeenCalled();
+  });
+
+  it("should require confirmation when selecting an existing person from the dropdown", () => {
+    const marker = {
+      UID: "mG",
+      CropID: "cropG",
+      Name: "",
+      SubjUID: "",
+      clearSubject: vi.fn(),
+      setName: vi.fn().mockResolvedValue(true),
+    };
+    wrapper.vm.startEditingPerson(marker);
+    wrapper.vm.onSelectPerson(marker, { Name: "Carol", UID: "subjC" });
+    expect(marker.Name).toBe("Carol");
+    expect(marker.SubjUID).toBe("subjC");
+    expect(marker.setName).not.toHaveBeenCalled();
+    expect(wrapper.vm.isEditingPerson(marker)).toBe(true);
+
+    wrapper.vm.confirmField();
+    expect(marker.setName).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not call setName when confirming an unchanged marker", () => {
+    const marker = {
+      UID: "mH",
+      CropID: "cropH",
+      Name: "Dave",
+      SubjUID: "subjD",
+      clearSubject: vi.fn(),
+      setName: vi.fn(),
+    };
+    wrapper.vm.startEditingPerson(marker);
+    wrapper.vm.confirmField();
+    expect(marker.setName).not.toHaveBeenCalled();
+    expect(marker.clearSubject).not.toHaveBeenCalled();
+  });
+
   // Labels
   it("should return labels from photo prop", () => {
     expect(wrapper.vm.labels).toHaveLength(2);
@@ -219,7 +400,8 @@ describe("PSidebarInfo component", () => {
 
   it("should return place and file info from photo prop", () => {
     expect(wrapper.vm.placeName).toBe("Berlin, Germany");
-    expect(wrapper.vm.originalName).toBe("IMG_001_original.jpg");
+    expect(wrapper.vm.fileName).toBe("photos/2023/IMG_001.jpg");
+    expect(wrapper.vm.fileInfo).toBe("JPEG, 1920 × 1080, 4.2 MB");
   });
 
   // Caption and notes HTML
@@ -409,10 +591,7 @@ describe("PSidebarInfo component", () => {
   });
 
   it("should ignore duplicate pending label additions via onLabelSelected", () => {
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
-      global: { stubs: { PMap: true } },
-    });
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
     w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
@@ -420,23 +599,101 @@ describe("PSidebarInfo component", () => {
   });
 
   it("should ignore non-object values in onLabelSelected", () => {
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
-      global: { stubs: { PMap: true } },
-    });
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onLabelSelected("string-value");
     w.vm.onLabelSelected(null);
     expect(w.vm.pendingLabelAdditions).toHaveLength(0);
   });
 
   it("should skip labels already on the photo in onLabelSelected", () => {
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
-      global: { stubs: { PMap: true } },
-    });
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "Nature", UID: "lbl1" });
     expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+  });
+
+  // Label validation parity with batch edit + labels tab.
+  it("should dedupe pending label additions case-insensitively in onLabelSelected", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.onLabelSelected({ Name: "cat" });
+    w.vm.onLabelSelected({ Name: "CAT" });
+    expect(w.vm.pendingLabelAdditions).toEqual(["cat"]);
+  });
+
+  it("should skip labels already on the photo case-insensitively in onLabelSelected", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.onLabelSelected({ Name: "nature" });
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+  });
+
+  it("should dedupe pending label additions case-insensitively in onLabelEnter", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.pendingLabelAdditions.push("cat");
+    w.vm.chipSearch = "CAT";
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toEqual(["cat"]);
+  });
+
+  it("should trim whitespace in onLabelEnter", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "  dog  ";
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toEqual(["dog"]);
+  });
+
+  it("should silently reject empty or whitespace-only label input in onLabelEnter", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "   ";
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.$notify.error).not.toHaveBeenCalled();
+  });
+
+  it("should reject labels longer than the configured clip length and notify", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "a".repeat(CLIP_LEN + 10);
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.$notify.error).toHaveBeenCalledWith("Name too long");
+  });
+
+  it("should match existing labels through normalization (punctuation stripped)", () => {
+    const photo = {
+      ...mockPhoto,
+      Labels: [{ Uncertainty: 0, Label: { ID: 99, UID: "lbl99", Name: "Cat!", Slug: "cat", CustomSlug: "" } }],
+    };
+    const w = mountInfoForChips({ modelValue: mockModel, photo });
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "cat";
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+  });
+
+  it("should match existing labels through normalization (& vs and)", () => {
+    const photo = {
+      ...mockPhoto,
+      Labels: [{ Uncertainty: 0, Label: { ID: 99, UID: "lbl99", Name: "Rock & Roll", Slug: "rock-and-roll", CustomSlug: "" } }],
+    };
+    const w = mountInfoForChips({ modelValue: mockModel, photo });
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "rock and roll";
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+  });
+
+  it("should silently reject punctuation-only label input", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "!!!";
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.$notify.error).not.toHaveBeenCalled();
   });
 
   // Pending album operations
@@ -455,10 +712,7 @@ describe("PSidebarInfo component", () => {
   });
 
   it("should add and remove pending album additions", () => {
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
-      global: { stubs: { PMap: true } },
-    });
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     const album = { UID: "alb-new", Title: "New Album" };
 
     w.vm.onAlbumSelected(album);
@@ -470,22 +724,94 @@ describe("PSidebarInfo component", () => {
   });
 
   it("should ignore non-object values in onAlbumSelected", () => {
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
-      global: { stubs: { PMap: true } },
-    });
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected("string-value");
     w.vm.onAlbumSelected(null);
     expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
   });
 
   it("should skip albums already on the photo in onAlbumSelected", () => {
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
-      global: { stubs: { PMap: true } },
-    });
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected({ UID: "alb1", Title: "Vacation 2023" });
     expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+  });
+
+  // Album validation parity with batch edit + labels tab.
+  it("should dedupe albums by normalized title even when UIDs differ", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.onAlbumSelected({ UID: "alb-other", Title: "vacation 2023" });
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+  });
+
+  it("should dedupe pending album additions by normalized title", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.pendingAlbumAdditions.push({ UID: "alb-a", Title: "Trip" });
+    w.vm.onAlbumSelected({ UID: "alb-b", Title: "trip" });
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
+  });
+
+  it("should reject overlong album titles in onAlbumEnter and not call save", () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "albums";
+    w.vm.chipSearch = "a".repeat(CLIP_LEN + 10);
+    w.vm.onAlbumEnter();
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.$notify.error).toHaveBeenCalledWith("Name too long");
+    saveSpy.mockRestore();
+  });
+
+  it("should ignore empty/whitespace input in onAlbumEnter and not call save", () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "albums";
+    w.vm.chipSearch = "   ";
+    w.vm.onAlbumEnter();
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    saveSpy.mockRestore();
+  });
+
+  it("should skip onAlbumEnter when title matches existing album case-insensitively", () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "albums";
+    w.vm.chipSearch = "VACATION 2023";
+    w.vm.onAlbumEnter();
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    saveSpy.mockRestore();
+  });
+
+  it("should skip onAlbumEnter when title matches a pending addition case-insensitively", () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "albums";
+    w.vm.pendingAlbumAdditions.push({ UID: "alb-pending", Title: "Trip" });
+    w.vm.chipSearch = "trip";
+    w.vm.onAlbumEnter();
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
+    saveSpy.mockRestore();
+  });
+
+  it("should create a new album in onAlbumEnter and add it to pending", async () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockImplementation(function () {
+      this.UID = "alb-created";
+      return Promise.resolve(this);
+    });
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "albums";
+    w.vm.albumOptions = [];
+    w.vm.chipSearch = "Brand New Trip";
+    w.vm.onAlbumEnter();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(saveSpy).toHaveBeenCalledTimes(1);
+    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
+    expect(w.vm.pendingAlbumAdditions[0].Title).toBe("Brand New Trip");
+    expect(w.vm.albumOptions.some((a) => a.UID === "alb-created")).toBe(true);
+    saveSpy.mockRestore();
   });
 
   // cancelEditing clears all pending state

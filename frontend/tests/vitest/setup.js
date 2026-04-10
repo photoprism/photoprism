@@ -31,9 +31,9 @@ if (typeof global.ResizeObserver === "undefined") {
     constructor(callback) {
       this.callback = callback;
     }
-    observe() { }
-    unobserve() { }
-    disconnect() { }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
   };
 }
 
@@ -55,12 +55,12 @@ config.global.mocks = {
   $event: {
     subscribe: () => "sub-id",
     subscribeOnce: () => "sub-id-once",
-    unsubscribe: () => { },
-    publish: () => { },
+    unsubscribe: () => {},
+    publish: () => {},
   },
   $view: {
-    enter: () => { },
-    leave: () => { },
+    enter: () => {},
+    leave: () => {},
     isActive: () => true,
   },
   $notify: { success: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() },
@@ -70,13 +70,15 @@ config.global.mocks = {
     request: () => Promise.resolve(),
     exit: () => Promise.resolve(),
   },
-  $clipboard: { selection: [], has: () => false, toggle: () => { } },
+  $clipboard: { selection: [], has: () => false, toggle: () => {} },
   $util: {
     hasTouch: () => false,
     encodeHTML: (s) => s,
     sanitizeHtml: (s) => s,
     formatSeconds: (n) => String(n),
     formatRemainingSeconds: () => "0",
+    formatCamera: (camera, id, make, model) => [make, model].filter(Boolean).join(" "),
+    normalizeLabelTitle: (s) => (s || "").toLowerCase().trim(),
     videoFormat: () => "avc",
     videoFormatUrl: () => "/v.mp4",
     thumb: () => ({ src: "/t.jpg", w: 100, h: 100 }),
