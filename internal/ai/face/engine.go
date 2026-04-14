@@ -1,7 +1,6 @@
 package face
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -13,8 +12,6 @@ type EngineName = string
 const (
 	// EngineAuto selects the default engine based on availability.
 	EngineAuto EngineName = "auto"
-	// EnginePigo enables the built-in Pigo cascade detector.
-	EnginePigo EngineName = "pigo"
 	// EngineONNX enables the ONNX runtime-powered SCRFD detector.
 	EngineONNX EngineName = "onnx"
 	// EngineNone disables face detection.
@@ -22,11 +19,14 @@ const (
 )
 
 // ParseEngine normalizes user input and returns a supported engine name or EngineAuto when unknown.
+// Legacy "pigo" values map to EngineONNX so older configs continue to work after detector removal.
 func ParseEngine(s string) EngineName {
 	s = strings.ToLower(strings.TrimSpace(s))
 
 	switch s {
-	case EnginePigo, EngineONNX, EngineNone:
+	case "pigo":
+		return EngineONNX
+	case EngineONNX, EngineNone:
 		return s
 	default:
 		return EngineAuto
@@ -36,7 +36,7 @@ func ParseEngine(s string) EngineName {
 // DetectionEngine represents a strategy for locating faces in an image.
 type DetectionEngine interface {
 	Name() EngineName
-	Detect(fileName string, findLandmarks bool, minSize int) (Faces, error)
+	Detect(fileName string, minSize int) (Faces, error)
 	Close() error
 }
 
@@ -51,19 +51,11 @@ var (
 	activeEngine DetectionEngine
 )
 
-func init() {
-	activeEngine = newPigoEngine()
-}
-
 // UseEngine replaces the active detection engine and returns the previous instance.
 func UseEngine(engine DetectionEngine) (previous DetectionEngine) {
 	engineMu.Lock()
 	prev := activeEngine
-	if engine == nil {
-		activeEngine = newPigoEngine()
-	} else {
-		activeEngine = engine
-	}
+	activeEngine = engine
 	engineMu.Unlock()
 	return prev
 }
@@ -73,7 +65,7 @@ func ConfigureEngine(settings EngineSettings) error {
 	desired := ParseEngine(settings.Name)
 
 	if desired == EngineAuto {
-		desired = EnginePigo
+		desired = EngineONNX
 	}
 
 	var (
@@ -83,24 +75,16 @@ func ConfigureEngine(settings EngineSettings) error {
 
 	switch desired {
 	case EngineNone:
-		return errors.New("no engine selected")
+		newEngine = nil
 	case EngineONNX:
 		if settings.ONNX.ModelPath == "" {
-			initErr = fmt.Errorf("ONNX model path is empty")
-			newEngine = newPigoEngine()
+			initErr = fmt.Errorf("faces: ONNX model path is empty")
 			break
 		}
 
-		if newEngine, initErr = NewONNXEngine(settings.ONNX); initErr != nil {
-			newEngine = newPigoEngine()
-		}
-	case EnginePigo:
-		fallthrough
+		newEngine, initErr = NewONNXEngine(settings.ONNX)
 	default:
-		if desired != EnginePigo {
-			log.Warnf("faces: unknown detection engine %q, falling back to pigo", desired)
-		}
-		newEngine = newPigoEngine()
+		initErr = fmt.Errorf("faces: unsupported detection engine %q", desired)
 	}
 
 	prev := UseEngine(newEngine)
@@ -130,10 +114,10 @@ func ActiveEngineName() EngineName {
 }
 
 // Detect runs the active engine on the provided file and returns the detected faces.
-func Detect(fileName string, findLandmarks bool, minSize int) (Faces, error) {
+func Detect(fileName string, minSize int) (Faces, error) {
 	engine := ActiveEngine()
 	if engine == nil {
 		return Faces{}, fmt.Errorf("faces: detection engine not configured")
 	}
-	return engine.Detect(fileName, findLandmarks, minSize)
+	return engine.Detect(fileName, minSize)
 }

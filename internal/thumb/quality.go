@@ -4,8 +4,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/disintegration/imaging"
-
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -21,11 +19,6 @@ const (
 
 // Quality represents a JPEG image quality.
 type Quality int
-
-// EncodeOption returns the quality as imaging.EncodeOption.
-func (q Quality) EncodeOption() imaging.EncodeOption {
-	return imaging.JPEGQuality(int(q))
-}
 
 // String returns the quality as string.
 func (q Quality) String() string {

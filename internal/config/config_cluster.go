@@ -26,7 +26,7 @@ var DefaultPortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
 var DefaultNodeRole = cluster.RoleInstance
 
 // DefaultJWTAllowedScopes lists default OAuth scopes for cluster-issued JWTs.
-var DefaultJWTAllowedScopes = "config cluster vision metrics"
+var DefaultJWTAllowedScopes = "config cluster vision metrics mcp"
 
 // SaveClusterOptionsUpdate persists a cluster options update to options.yml,
 // reloads in-memory options, and returns true when values changed.

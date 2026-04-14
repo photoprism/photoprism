@@ -627,9 +627,6 @@
                 "DisableVectors": {
                     "type": "boolean"
                 },
-                "DisableVips": {
-                    "type": "boolean"
-                },
                 "DisableWebDAV": {
                     "type": "boolean"
                 },
@@ -767,9 +764,6 @@
                     "type": "boolean"
                 },
                 "ThumbColor": {
-                    "type": "string"
-                },
-                "ThumbFilter": {
                     "type": "string"
                 },
                 "ThumbLibrary": {
@@ -8532,6 +8526,53 @@
                 "summary": "clear the subject of a marker",
                 "tags": [
                     "Files"
+                ]
+            }
+        },
+        "/api/v1/mcp": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "ServeMCP",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JSON-RPC 2.0 response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "model context protocol endpoint (experimental)",
+                "tags": [
+                    "MCP"
                 ]
             }
         },

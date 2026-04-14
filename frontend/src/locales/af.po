@@ -620,10 +620,6 @@ msgstr "Geboortedatum"
 msgid "Black"
 msgstr "Swart"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Swartman: Lanczos-wysiging, minder lui-artefakte"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Blou"
@@ -769,7 +765,7 @@ msgstr "Veranderinge kon nie gestoor word nie"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Veranderinge suksesvol gestoor"
@@ -1017,10 +1013,6 @@ msgstr "Geskep"
 msgid "Creating thumbnails for"
 msgstr "Skep duimnaels vir"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Kubus: Matige kwaliteit, goeie prestasie"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "huidige Sleutelwoord"
@@ -1141,7 +1133,7 @@ msgstr "Deaktiveer alle gesigopsporing- en herkenningsfunksies."
 msgid "Disable Backups"
 msgstr "Deaktiveer rugsteun"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Deaktiveer Darktable"
 
@@ -1157,11 +1149,11 @@ msgstr "Deaktiveer Gesigte"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Deaktiveer kenmerke wat skryftoestemming vir die oorspronklike lêergids vereis."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Deaktiveer FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Deaktiveer ImageMagick"
 
@@ -1173,11 +1165,11 @@ msgstr "Deaktiveer interaktiewe wêreldkaarte en omgekeerde geokodering."
 msgid "Disable Places"
 msgstr "Deaktiveer Plekke"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Deaktiveer RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Deaktiveer vektore"
 
@@ -1189,11 +1181,11 @@ msgstr "Deaktiveer WebDAV"
 msgid "Disabled"
 msgstr "Gestremd"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Deaktiveer vektorgrafika-ondersteuning."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Deaktiveer video-transkodering en duimnael-onttrekking."
 
@@ -1247,15 +1239,15 @@ msgstr "Dokument"
 msgid "Documents"
 msgstr "Dokumente"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Moenie Darktable gebruik om RAW-beelde om te skakel nie."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Moenie ImageMagick gebruik om beelde om te skakel nie."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Moenie RawTherapee gebruik om RAW-beelde om te skakel nie."
 
@@ -1295,10 +1287,6 @@ msgstr "Laai afgeleë lêers af"
 msgid "Downloading…"
 msgstr "Laai tans af …"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Afskaal filter"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Sleep en los lêers hier"
@@ -1318,11 +1306,11 @@ msgstr "Duplikate sal oorgeslaan word en slegs net een keer verskyn."
 msgid "Duration"
 msgstr "Duur"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Dinamiese voorskoue"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dinamiese groottelimiet: %{n}px"
 
@@ -1380,7 +1368,7 @@ msgstr "Aktiveer nuwe kenmerke wat onvolledig of onstabiel kan wees."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Aktiveer die lêerblaaier om deur die Originals-lêergidsstruktuur te navigeer."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiveer RAW-omskakelaarvoorinstellings. Kan prestasie verminder."
 
@@ -1526,7 +1514,7 @@ msgstr "Gunstelinge"
 msgid "Feature Request"
 msgstr "Kenmerkversoek"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Vroulik"
 
@@ -1539,7 +1527,7 @@ msgstr "lêer"
 msgid "File Browser"
 msgstr "Lêerblaaier"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Lêer-omskakeling"
 
@@ -1735,7 +1723,7 @@ msgstr "As jy toegang tot jou staafprogram of toestel verloor, kan jy jou terugs
 msgid "Image"
 msgstr "Beeld"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Beeld kwaliteit"
 
@@ -1880,11 +1868,11 @@ msgstr "Item"
 msgid "Items per page:"
 msgstr "Items per bladsy:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-gehalte: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG-groottelimiet: %{n}px"
 
@@ -1919,10 +1907,6 @@ msgstr "Etikette"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Merkers uitgevee"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Detailbewaring, minimale artefakte"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2005,10 +1989,6 @@ msgstr "Lemmetjie"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limiet bereik, wys eerste %{n} lêers"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineêr: Baie glad, beste prestasie"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2111,7 +2091,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Hoofkleur"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Manlik"
 
@@ -2456,7 +2436,7 @@ msgstr "Oudste Eerste"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Op Windows, voer die volgende hulpbron in die verbindingsdialoog in:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Op-aanvraag generering van duimnaels kan hoë SVE en geheuegebruik veroorsaak. Dit word nie aanbeveel vir hulpbronbeperkte bedieners en NAS-toestelle nie."
 
@@ -2545,7 +2525,7 @@ msgstr "Oorspronklike naam"
 msgid "Originals"
 msgstr "Oorspronklikes"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Ander"
 
@@ -2722,7 +2702,7 @@ msgstr "Wag asseblief…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG-groottelimiet: %{n}px"
 
@@ -2970,7 +2950,7 @@ msgstr "Resolusie"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Begin oor"
 
@@ -3444,7 +3424,7 @@ msgstr "Begin"
 msgid "Start Page"
 msgstr "Begin bladsy"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Statiese groottelimiet: %{n}px"
 
@@ -3815,7 +3795,7 @@ msgstr "Oplaaie wat sulke beelde kan bevat, sal outomaties verwerp word."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Gebruik voorafinstellings"
 
@@ -3947,7 +3927,7 @@ msgstr "Web aanmeld"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4102,6 +4082,21 @@ msgstr "Titel"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Argief"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Swartman: Lanczos-wysiging, minder lui-artefakte"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Kubus: Matige kwaliteit, goeie prestasie"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Afskaal filter"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Detailbewaring, minimale artefakte"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Lineêr: Baie glad, beste prestasie"
 
 #~ msgid "Drop files here"
 #~ msgstr "Laat lêers hier val"

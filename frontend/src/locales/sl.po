@@ -620,10 +620,6 @@ msgstr "Datum rojstva"
 msgid "Black"
 msgstr "Črna"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczosova modifikacija, manj zvonjenja artefaktov"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Modra"
@@ -769,7 +765,7 @@ msgstr "Sprememb ni bilo mogoče shraniti"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Spremembe so bile uspešno shranjene"
@@ -1017,10 +1013,6 @@ msgstr "Ustvarjeno"
 msgid "Creating thumbnails for"
 msgstr "Ustvarjanje sličic za"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Kubični: Srednja kakovost, dobra zmogljivost"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Trenutno geslo"
@@ -1141,7 +1133,7 @@ msgstr "Onemogočite vse funkcije zaznavanja in prepoznavanja obrazov."
 msgid "Disable Backups"
 msgstr "Onemogoči varnostno kopiranje"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Onemogoči Darktable"
 
@@ -1157,11 +1149,11 @@ msgstr "Onemogočite obraze"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Onemogočite funkcije, ki zahtevajo dovoljenje za pisanje v mapo z izvirniki."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Onemogoči FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Onemogočite ImageMagick"
 
@@ -1173,11 +1165,11 @@ msgstr "Onemogočite interaktivne zemljevide sveta in obratno geokodiranje."
 msgid "Disable Places"
 msgstr "Onemogoči mesta"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Onemogoči RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Onemogočite vektorje"
 
@@ -1189,11 +1181,11 @@ msgstr "Onemogoči WebDAV"
 msgid "Disabled"
 msgstr "Onemogočeno"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Onemogoči podporo za vektorsko grafiko."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Onemogoči prekodiranje videoposnetkov in pridobivanje sličic."
 
@@ -1247,15 +1239,15 @@ msgstr "Dokument"
 msgid "Documents"
 msgstr "Dokumenti"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Za pretvorbo datotek RAW ne uporabljajte programa Darktable."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Za pretvorbo slik ne uporabljajte programa ImageMagick."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Za pretvorbo slik RAW ne uporabljajte programa RawTherapee."
 
@@ -1295,10 +1287,6 @@ msgstr "Prenos oddaljenih datotek"
 msgid "Downloading…"
 msgstr "Prenašanje…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Filter za zmanjševanje obsega"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Povlecite in spustite datoteke sem"
@@ -1318,11 +1306,11 @@ msgstr "Podvojeni podatki bodo preskočeni in prikazani samo enkrat."
 msgid "Duration"
 msgstr "Trajanje"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Dinamični predogledi"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Omejitev dinamične velikosti: %{n}px"
 
@@ -1380,7 +1368,7 @@ msgstr "omogočanje novih funkcij, ki so lahko nepopolne ali nestabilne."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Omogočite brskalnik datotek za krmarjenje po strukturi map Originals."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Omogoči prednastavitve pretvornika RAW. Lahko zmanjša zmogljivost."
 
@@ -1526,7 +1514,7 @@ msgstr "Priljubljeno"
 msgid "Feature Request"
 msgstr "Zahteva za funkcijo"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Ženske"
 
@@ -1539,7 +1527,7 @@ msgstr "Datoteka"
 msgid "File Browser"
 msgstr "Brskalnik za datoteke"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Pretvarjanje datotek"
 
@@ -1735,7 +1723,7 @@ msgstr "Če izgubite dostop do aplikacije ali naprave za preverjanje pristnosti,
 msgid "Image"
 msgstr "Slika"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Kakovost slike"
 
@@ -1880,11 +1868,11 @@ msgstr "Artikel"
 msgid "Items per page:"
 msgstr "Elementi na stran:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "Kakovost JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Omejitev velikosti JPEG: %{n}px"
 
@@ -1919,10 +1907,6 @@ msgstr "Značke"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Značke izbrisane"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: ohranjanje podrobnosti, minimalni artefakti"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2005,10 +1989,6 @@ msgstr "Lime"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Omejitev je dosežena, prikazovanje prvih %{n} datotekek"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Linearno: Zelo gladko, najboljša zmogljivost"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2111,7 +2091,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Glavna barva"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Moški"
 
@@ -2456,7 +2436,7 @@ msgstr "Najprej najstarejši"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "V operacijskem sistemu Windows v pogovorno okno za povezavo vnesite naslednji vir:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Ustvarjanje sličic na zahtevo lahko povzroči veliko porabo procesorja in pomnilnika. To ni priporočljivo za strežnike in naprave NAS z omejenimi viri."
 
@@ -2545,7 +2525,7 @@ msgstr "Izvirno ime"
 msgid "Originals"
 msgstr "Izvirniki"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Drugo"
 
@@ -2722,7 +2702,7 @@ msgstr "Počakajte…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "Omejitev velikosti PNG: %{n}px"
 
@@ -2970,7 +2950,7 @@ msgstr "Resolucija"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Ponovni zagon"
 
@@ -3444,7 +3424,7 @@ msgstr "Začetek"
 msgid "Start Page"
 msgstr "Začetna stran"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Omejitev statične velikosti: %{n}px"
 
@@ -3815,7 +3795,7 @@ msgstr "Prenosi, ki bi lahko vsebovali takšne slike, bodo samodejno zavrnjeni."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Uporaba prednastavitev"
 
@@ -3947,7 +3927,7 @@ msgstr "Spletna prijava"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4102,6 +4082,21 @@ msgstr "Naslov"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiv"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: Lanczosova modifikacija, manj zvonjenja artefaktov"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Kubični: Srednja kakovost, dobra zmogljivost"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Filter za zmanjševanje obsega"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: ohranjanje podrobnosti, minimalni artefakti"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Linearno: Zelo gladko, najboljša zmogljivost"
 
 #~ msgid "Drop files here"
 #~ msgstr "Datoteke odvrzite tukaj"

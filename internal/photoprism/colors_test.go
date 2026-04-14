@@ -26,39 +26,39 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 	*/
 	expected := map[string]colors.ColorPerception{
 		"elephant_mono.jpg": {
-			Colors:    colors.Colors{0x1, 0x1, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0, 0x0},
+			Colors:    colors.Colors{0x0, 0x1, 0x0, 0x0, 0x1, 0x1, 0x0, 0x1, 0x1},
 			MainColor: 0,
-			Luminance: colors.LightMap{0xa, 0x9, 0x0, 0x0, 0x6, 0x0, 0x0, 0x0, 0x0},
+			Luminance: colors.LightMap{0x1, 0x8, 0x2, 0x0, 0x7, 0x4, 0x0, 0x2, 0x2},
 			Chroma:    0,
 		},
 		"sharks_blue.jpg": {
-			Colors:    colors.Colors{0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x5, 0x5, 0x6},
+			Colors:    colors.Colors{0x6, 0x6, 0x6, 0x6, 0x6, 0x6, 0x5, 0x5, 0x5},
 			MainColor: 6,
-			Luminance: colors.LightMap{0x9, 0x7, 0x5, 0x4, 0x3, 0x4, 0x3, 0x3, 0x3},
-			Chroma:    89,
+			Luminance: colors.LightMap{0x9, 0x8, 0x8, 0x4, 0x4, 0x4, 0x3, 0x3, 0x3},
+			Chroma:    84,
 		},
 		"cat_black.jpg": {
-			Colors:    colors.Colors{0x1, 0x2, 0x2, 0x2, 0x1, 0x2, 0x1, 0x3, 0x1},
-			MainColor: 2,
-			Luminance: colors.LightMap{0x8, 0xc, 0x9, 0x4, 0x2, 0x7, 0xd, 0xd, 0x3},
-			Chroma:    9,
+			Colors:    colors.Colors{0x2, 0x1, 0x2, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1},
+			MainColor: 1,
+			Luminance: colors.LightMap{0x8, 0x9, 0x8, 0x9, 0x5, 0x4, 0xd, 0xd, 0xa},
+			Chroma:    8,
 		},
 		"cat_brown.jpg": {
-			Colors:    colors.Colors{0x9, 0x3, 0x2, 0x1, 0x1, 0x2, 0x0, 0x6, 0x1},
-			MainColor: 3,
-			Luminance: colors.LightMap{0x4, 0x5, 0xb, 0x4, 0x7, 0x3, 0x2, 0x5, 0x7},
-			Chroma:    13,
+			Colors:    colors.Colors{0x2, 0x2, 0x1, 0x2, 0x1, 0x2, 0x2, 0x2, 0x1},
+			MainColor: 2,
+			Luminance: colors.LightMap{0x4, 0xb, 0x8, 0x6, 0xd, 0x9, 0x3, 0x6, 0x8},
+			Chroma:    11,
 		},
 		"cat_yellow_grey.jpg": {
-			Colors:    colors.Colors{0x1, 0x2, 0x2, 0x9, 0x0, 0x3, 0xb, 0x0, 0x3},
-			MainColor: 3,
-			Luminance: colors.LightMap{0x9, 0x5, 0xb, 0x6, 0x1, 0x6, 0xa, 0x1, 0x8},
-			Chroma:    20,
+			Colors:    colors.Colors{0x1, 0x2, 0x1, 0x9, 0x1, 0x9, 0x9, 0x1, 0x9},
+			MainColor: 9,
+			Luminance: colors.LightMap{0x6, 0x7, 0x9, 0x7, 0x9, 0xa, 0x8, 0x8, 0x9},
+			Chroma:    17,
 		},
 		"Screenshot 2019-05-21 at 10.45.52.png": {
-			Colors:    colors.Colors{4, 4, 4, 4, 4, 4, 4, 4, 4},
+			Colors:    colors.Colors{1, 1, 1, 4, 4, 4, 4, 4, 4},
 			MainColor: 4,
-			Luminance: colors.LightMap{14, 14, 14, 15, 15, 15, 15, 15, 15},
+			Luminance: colors.LightMap{12, 12, 12, 15, 15, 15, 15, 15, 15},
 			Chroma:    1,
 		},
 	}
@@ -112,12 +112,12 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(file, fileErr)
 
 			assert.Nil(t, fileErr)
-			assert.Equal(t, 13, file.Chroma.Int())
-			assert.Equal(t, "D", file.Chroma.Hex())
+			assert.Equal(t, 11, file.Chroma.Int())
+			assert.Equal(t, "B", file.Chroma.Hex())
 			assert.IsType(t, colors.Colors{}, file.Colors)
-			assert.Equal(t, "gold", file.MainColor.Name())
-			assert.Equal(t, colors.Colors{0x9, 0x3, 0x2, 0x1, 0x1, 0x2, 0x0, 0x6, 0x1}, file.Colors)
-			assert.Equal(t, colors.LightMap{0x4, 0x5, 0xb, 0x4, 0x7, 0x3, 0x2, 0x5, 0x7}, file.Luminance)
+			assert.Equal(t, "brown", file.MainColor.Name())
+			assert.Equal(t, colors.Colors{0x2, 0x2, 0x1, 0x2, 0x1, 0x2, 0x2, 0x2, 0x1}, file.Colors)
+			assert.Equal(t, colors.LightMap{0x4, 0xb, 0x8, 0x6, 0xd, 0x9, 0x3, 0x6, 0x8}, file.Luminance)
 		} else {
 			t.Error(err)
 		}
@@ -129,12 +129,12 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(file, fileErr)
 
 			assert.Nil(t, fileErr)
-			assert.Equal(t, 51, file.Chroma.Int())
-			assert.Equal(t, "33", file.Chroma.Hex())
+			assert.Equal(t, 60, file.Chroma.Int())
+			assert.Equal(t, "3C", file.Chroma.Hex())
 			assert.IsType(t, colors.Colors{}, file.Colors)
 			assert.Equal(t, "lime", file.MainColor.Name())
-			assert.Equal(t, colors.Colors{0xa, 0x9, 0xa, 0x9, 0xa, 0xa, 0x9, 0x9, 0x9}, file.Colors)
-			assert.Equal(t, colors.LightMap{0xb, 0x4, 0xa, 0x6, 0x9, 0x8, 0x2, 0x3, 0x4}, file.Luminance)
+			assert.Equal(t, colors.Colors{0xa, 0xa, 0xa, 0xa, 0xa, 0xa, 0x9, 0x9, 0x9}, file.Colors)
+			assert.Equal(t, colors.LightMap{0x9, 0x9, 0x9, 0xa, 0x9, 0xa, 0x5, 0x6, 0x6}, file.Luminance)
 		} else {
 			t.Error(err)
 		}
@@ -160,7 +160,7 @@ func TestMediaFile_Colors(t *testing.T) {
 			assert.IsType(t, colors.Colors{}, file.Colors)
 			assert.Equal(t, "lime", file.MainColor.Name())
 			assert.Equal(t, colors.Colors{9, 10, 10, 10, 10, 10, 10, 10, 10}, file.Colors)
-			assert.Equal(t, colors.LightMap{5, 9, 9, 9, 9, 10, 10, 9, 11}, file.Luminance)
+			assert.Equal(t, colors.LightMap{6, 9, 9, 9, 9, 10, 10, 9, 11}, file.Luminance)
 		} else {
 			t.Error(err)
 		}
@@ -172,11 +172,11 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(file, fileErr)
 
 			assert.Nil(t, fileErr)
-			assert.Equal(t, 7, file.Chroma.Int())
-			assert.Equal(t, "7", file.Chroma.Hex())
+			assert.Equal(t, 9, file.Chroma.Int())
+			assert.Equal(t, "9", file.Chroma.Hex())
 			assert.IsType(t, colors.Colors{}, file.Colors)
 			assert.Equal(t, "blue", file.MainColor.Name())
-			assert.Equal(t, colors.Colors{0x1, 0x6, 0x6, 0x1, 0x1, 0x9, 0x1, 0x0, 0x0}, file.Colors)
+			assert.Equal(t, colors.Colors{0x6, 0x6, 0x6, 0x1, 0x6, 0x9, 0x1, 0x1, 0x1}, file.Colors)
 		} else {
 			t.Error(err)
 		}
@@ -188,12 +188,11 @@ func TestMediaFile_Colors(t *testing.T) {
 			t.Log(file, fileErr)
 
 			assert.Nil(t, fileErr)
-			assert.Equal(t, 16, file.Chroma.Int())
-			assert.Equal(t, "10", file.Chroma.Hex())
+			assert.Equal(t, 17, file.Chroma.Int())
+			assert.Equal(t, "11", file.Chroma.Hex())
 			assert.IsType(t, colors.Colors{}, file.Colors)
-			assert.Equal(t, "gold", file.MainColor.Name())
-
-			assert.Equal(t, colors.Colors{0x0, 0x0, 0x2, 0x3, 0x3, 0x0, 0x2, 0x3, 0x0}, file.Colors)
+			assert.Equal(t, "brown", file.MainColor.Name())
+			assert.Equal(t, colors.Colors{0x1, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x1}, file.Colors)
 		} else {
 			t.Error(err)
 		}

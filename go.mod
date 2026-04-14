@@ -1,7 +1,6 @@
 module github.com/photoprism/photoprism
 
 require (
-	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.6.0
 	github.com/dsoprea/go-exif/v3 v3.0.1
 	github.com/dsoprea/go-heic-exif-extractor/v2 v2.0.0-20210512044107-62067e44c235
@@ -11,10 +10,9 @@ require (
 	github.com/dsoprea/go-png-image-structure/v2 v2.0.0-20210512210324-29b889a6093d
 	github.com/dsoprea/go-tiff-image-structure/v2 v2.0.0-20221003165014-8ecc4f52edca
 	github.com/dustin/go-humanize v1.0.1
-	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v1.2.6
 	github.com/gin-gonic/gin v1.12.0
-	github.com/golang/geo v0.0.0-20260302211937-87f5a40ea07a
+	github.com/golang/geo v0.0.0-20260401045841-3289a7742193
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -25,11 +23,11 @@ require (
 	github.com/klauspost/cpuid/v2 v2.3.0
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.7.2
-	github.com/lib/pq v1.12.0 // indirect
-	github.com/lucasb-eyer/go-colorful v1.3.0
+	github.com/lib/pq v1.12.1 // indirect
+	github.com/lucasb-eyer/go-colorful v1.4.0
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
-	github.com/mattn/go-sqlite3 v1.14.37 // indirect
+	github.com/mattn/go-sqlite3 v1.14.38 // indirect
 	github.com/montanaflynn/stats v0.9.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
@@ -90,7 +88,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.27.0
-	github.com/zitadel/oidc/v3 v3.45.5
+	github.com/zitadel/oidc/v3 v3.45.6
 	golang.org/x/mod v0.34.0
 	golang.org/x/sys v0.42.0
 	google.golang.org/protobuf v1.36.11
@@ -116,7 +114,7 @@ require (
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/gin-contrib/sse v1.1.1 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.22.5 // indirect
@@ -134,6 +132,7 @@ require (
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
+	github.com/google/jsonschema-go v0.4.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -143,6 +142,7 @@ require (
 	github.com/mandykoh/go-parallel v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/modelcontextprotocol/go-sdk v1.4.1
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/muhlemmer/gu v0.3.1 // indirect
@@ -155,11 +155,14 @@ require (
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.59.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/segmentio/asm v1.1.3 // indirect
+	github.com/segmentio/encoding v0.5.4 // indirect
 	github.com/swaggo/swag v1.16.6 // indirect
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 // indirect
+	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	github.com/zitadel/logging v0.7.0 // indirect
 	github.com/zitadel/schema v1.3.2 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect

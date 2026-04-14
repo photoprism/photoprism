@@ -623,10 +623,6 @@ msgstr "Data nașterii"
 msgid "Black"
 msgstr "Negru"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: modificarea Lanczos, mai puține artefacte care sună"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Albastru"
@@ -772,7 +768,7 @@ msgstr "Modificările nu au putut fi salvate"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Modificări salvate cu succes"
@@ -1020,10 +1016,6 @@ msgstr "Creat"
 msgid "Creating thumbnails for"
 msgstr "Crearea de miniaturi pentru"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: Calitate moderată, performanță bună"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Parola curentă"
@@ -1144,7 +1136,7 @@ msgstr "Dezactivați toate funcțiile de detectare și recunoaștere a feței."
 msgid "Disable Backups"
 msgstr "Dezactivați copiile de rezervă"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Dezactivați Darktable"
 
@@ -1160,11 +1152,11 @@ msgstr "Dezactivați fețele"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Dezactivați funcțiile care necesită permisiunea de scriere pentru dosarul de originale."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Dezactivați FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Dezactivați ImageMagick"
 
@@ -1176,11 +1168,11 @@ msgstr "Dezactivați hărțile lumii interactive și geocodarea inversă."
 msgid "Disable Places"
 msgstr "Dezactivați locurile"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Dezactivați RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Dezactivarea vectorilor"
 
@@ -1192,11 +1184,11 @@ msgstr "Dezactivați WebDAV"
 msgid "Disabled"
 msgstr "Persoane cu handicap"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Dezactivează suportul pentru grafica vectorială."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Dezactivează transcodarea video și extragerea miniaturilor."
 
@@ -1250,15 +1242,15 @@ msgstr "Document"
 msgid "Documents"
 msgstr "Documente"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Nu utilizați Darktable pentru a converti fișiere RAW."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Nu folosiți ImageMagick pentru a converti imaginile."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
 
@@ -1298,10 +1290,6 @@ msgstr "Descărcarea fișierelor de la distanță"
 msgid "Downloading…"
 msgstr "Descărcarea…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Filtru de reducere a scării"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Drag and drop fișiere aici"
@@ -1321,11 +1309,11 @@ msgstr "Dublurile vor fi omise și vor apărea doar o singură dată."
 msgid "Duration"
 msgstr "Durata"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Previziuni dinamice"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limita dimensiunii dinamice: %{n}px"
 
@@ -1383,7 +1371,7 @@ msgstr "Activați caracteristici noi care pot fi incomplete sau instabile."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Activați browserul de fișiere pentru a naviga în structura de foldere Originals."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Activează presetările convertorului RAW. Poate reduce performanța."
 
@@ -1529,7 +1517,7 @@ msgstr "Favorite"
 msgid "Feature Request"
 msgstr "Cerere de caracteristici"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Femeie"
 
@@ -1542,7 +1530,7 @@ msgstr "Fișier"
 msgid "File Browser"
 msgstr "Browser de fișiere"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Conversia fișierelor"
 
@@ -1738,7 +1726,7 @@ msgstr "Dacă pierdeți accesul la aplicația sau dispozitivul dvs. de autentifi
 msgid "Image"
 msgstr "Imagine"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Calitatea imaginii"
 
@@ -1883,11 +1871,11 @@ msgstr "Articolul"
 msgid "Items per page:"
 msgstr "Articole pe pagină:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "Calitate JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limita dimensiunii JPEG: %{n}px"
 
@@ -1922,10 +1910,6 @@ msgstr "Etichete"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Etichete șterse"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Conservarea detaliilor, artefacte minime"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2008,10 +1992,6 @@ msgstr "Lămâie verde"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limita a fost atinsă, afișând primele %{n} fișiere"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Liniare: Foarte netedă, cea mai bună performanță"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2114,7 +2094,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Culoare principală"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Bărbat"
 
@@ -2459,7 +2439,7 @@ msgstr "Cel mai vechi Mai întâi"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pe Windows, introduceți următoarea resursă în fereastra de dialog de conectare:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generarea la cerere a miniaturilor poate cauza o utilizare ridicată a procesorului și a memoriei. Nu este recomandată pentru serverele și dispozitivele NAS cu resurse limitate."
 
@@ -2548,7 +2528,7 @@ msgstr "Denumire originală"
 msgid "Originals"
 msgstr "Originale"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Altele"
 
@@ -2725,7 +2705,7 @@ msgstr "Vă rugăm să așteptați…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "Limita de dimensiune PNG: %{n}px"
 
@@ -2973,7 +2953,7 @@ msgstr "Rezoluție"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Reporniți"
 
@@ -3447,7 +3427,7 @@ msgstr "Start"
 msgid "Start Page"
 msgstr "Pagina de start"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Limita dimensiunii statice: %{n}px"
 
@@ -3818,7 +3798,7 @@ msgstr "Încărcările care pot conține astfel de imagini vor fi respinse autom
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Utilizați presetări"
 
@@ -3950,7 +3930,7 @@ msgstr "Autentificare Web"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4105,6 +4085,21 @@ msgstr "Titlu"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiva"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: modificarea Lanczos, mai puține artefacte care sună"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Cubic: Calitate moderată, performanță bună"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Filtru de reducere a scării"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Conservarea detaliilor, artefacte minime"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Liniare: Foarte netedă, cea mai bună performanță"
 
 #~ msgid "Drop files here"
 #~ msgstr "Aruncați fișierele aici"

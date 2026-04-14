@@ -6,7 +6,6 @@ import (
 	_ "image/png"  // register PNG decoder
 
 	_ "golang.org/x/image/bmp"  // register BMP decoder
-	_ "golang.org/x/image/tiff" // register TIFF decoder
 	_ "golang.org/x/image/webp" // register WEBP decoder
 )
 

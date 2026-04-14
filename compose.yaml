@@ -123,8 +123,7 @@ services:
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
       PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
-      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
-      PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
+      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, vips)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)

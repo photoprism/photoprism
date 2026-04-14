@@ -40,7 +40,6 @@ export class ConfigOptions extends Model {
       ThumbUncached: true,
       ThumbLibrary: "",
       ThumbColor: "",
-      ThumbFilter: "",
       ThumbSize: 0,
       ThumbSizeUncached: 0,
       JpegSize: 0,

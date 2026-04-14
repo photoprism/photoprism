@@ -623,10 +623,6 @@ msgstr "Fødselsdato"
 msgid "Black"
 msgstr "Svart"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos, bedre kantutjevning"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Blå"
@@ -772,7 +768,7 @@ msgstr "Kan ikke lagre endringer"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Endringene ble lagret"
@@ -1020,10 +1016,6 @@ msgstr "Opprettet"
 msgid "Creating thumbnails for"
 msgstr "Oppretter miniatyrbilder for"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Kubisk: Moderat kvalitet, god ytelse"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Nåværende Passord"
@@ -1144,7 +1136,7 @@ msgstr "Deaktiver alle funksjoner for ansiktsgjenkjenning og -registrering."
 msgid "Disable Backups"
 msgstr "Deaktiver Sikkerhetskopi"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Deaktiver Darktable"
 
@@ -1160,11 +1152,11 @@ msgstr "Deaktiver ansikter"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Deaktiver funksjoner som krever skrivetillatelse for originalmappen."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Deaktiver FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Deaktiver ImageMagick"
 
@@ -1176,11 +1168,11 @@ msgstr "Deaktiver interaktive verdenskart og omvendt geokoding."
 msgid "Disable Places"
 msgstr "Deaktiver Plasser"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Deaktiver RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Deaktiver vektorer"
 
@@ -1192,11 +1184,11 @@ msgstr "Deaktiver WebDAV"
 msgid "Disabled"
 msgstr "Deaktivert"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Deaktiverer støtte for vektorgrafikk."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Deaktiverer videotranskoding og miniatyrbildeekstraksjon."
 
@@ -1250,15 +1242,15 @@ msgstr "Dokument"
 msgid "Documents"
 msgstr "Dokumenter"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ikke bruk Darktable til å konvertere RAW-bilder."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Ikke bruk ImageMagick til å konvertere bilder."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ikke bruk RawTherapee til å konvertere RAW-bilder."
 
@@ -1298,10 +1290,6 @@ msgstr "Last ned eksterne filer"
 msgid "Downloading…"
 msgstr "Laster ned…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Nedskalerer Filter"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Dra og slipp filer her"
@@ -1321,11 +1309,11 @@ msgstr "Duplikater hopes over og vises bare én gang."
 msgid "Duration"
 msgstr "Varighet"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Dynamiske Forhåndsvisninger"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Grense for Dynamisk Størrelse:%{n}px"
 
@@ -1383,7 +1371,7 @@ msgstr "Aktiver nye funksjoner som kan være ufullstendige eller ustabile."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Aktiver filbrowseren for å navigere i mappestrukturen for Originaler."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverer forhåndsinnstillinger for RAW -omformer. Kan redusere ytelsen."
 
@@ -1529,7 +1517,7 @@ msgstr "Favoritter"
 msgid "Feature Request"
 msgstr "Funksjonsforespørsel"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Hunn"
 
@@ -1542,7 +1530,7 @@ msgstr "Fil"
 msgid "File Browser"
 msgstr "Filutforsker"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Filkonvertering"
 
@@ -1738,7 +1726,7 @@ msgstr "Hvis du mister tilgangen til autentiseringsappen eller enheten din, kan 
 msgid "Image"
 msgstr "Bilde"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Bildekvalitet"
 
@@ -1883,11 +1871,11 @@ msgstr "Element"
 msgid "Items per page:"
 msgstr "Elementer per side:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-kvalitet: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG størrelsesgrense: %{n}px"
 
@@ -1922,10 +1910,6 @@ msgstr "Merkelapper"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Merkelapper slettet"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Detaljbevaring, minimale artefakter"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2008,10 +1992,6 @@ msgstr "Lime"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Grensen nådd, viser de første €{n} filene"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineær: Veldig jevn, beste ytelse"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2114,7 +2094,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Hovedfarge"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Mann"
 
@@ -2459,7 +2439,7 @@ msgstr "Eldste først"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "På Windows skriver du inn følgende ressurs i tilkoblingsdialogen:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generering av miniatyrbilder på forespørsel kan føre til høy CPU- og minnebruk. Det anbefales ikke for servere og NAS-enheter med begrensede ressurser."
 
@@ -2548,7 +2528,7 @@ msgstr "Originalnavn"
 msgid "Originals"
 msgstr "Originaler"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Andre"
 
@@ -2725,7 +2705,7 @@ msgstr "Vennligst vent…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG størrelsesgrense: %{n}px"
 
@@ -2973,7 +2953,7 @@ msgstr "Oppløsning"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Start på nytt"
 
@@ -3447,7 +3427,7 @@ msgstr "Start"
 msgid "Start Page"
 msgstr "Startside"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Statisk Størrelsesgrense: %{n}px"
 
@@ -3818,7 +3798,7 @@ msgstr "Opplastinger som kan inneholde slike bilder blir avvist automatisk."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Bruk Forhåndsinnstillinger"
 
@@ -3950,7 +3930,7 @@ msgstr "Nettinnlogging"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4105,6 +4085,21 @@ msgstr "Tittel"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkivér"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: Lanczos, bedre kantutjevning"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Kubisk: Moderat kvalitet, god ytelse"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Nedskalerer Filter"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Detaljbevaring, minimale artefakter"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Lineær: Veldig jevn, beste ytelse"
 
 #~ msgid "Drop files here"
 #~ msgstr "Legg filer her"

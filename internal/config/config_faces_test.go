@@ -1,7 +1,6 @@
 package config
 
 import (
-	"math"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -18,7 +17,7 @@ func TestConfig_FaceEngine(t *testing.T) {
 	t.Run("Defaults", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		engine := c.FaceEngine()
-		assert.Contains(t, []string{face.EnginePigo, face.EngineONNX}, engine)
+		assert.Contains(t, []string{face.EngineNone, face.EngineONNX}, engine)
 	})
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.Equal(t, face.EngineNone, (*Config)(nil).FaceEngine())
@@ -46,9 +45,14 @@ func TestConfig_FaceEngine(t *testing.T) {
 	})
 	t.Run("ExplicitEngine", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngine = face.EnginePigo
-		assert.Equal(t, face.EnginePigo, c.FaceEngine())
 		c.options.FaceEngine = face.EngineONNX
+		assert.Equal(t, face.EngineONNX, c.FaceEngine())
+		c.options.FaceEngine = face.EngineNone
+		assert.Equal(t, face.EngineNone, c.FaceEngine())
+	})
+	t.Run("LegacyPigoAlias", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngine = "pigo"
 		assert.Equal(t, face.EngineONNX, c.FaceEngine())
 	})
 }
@@ -297,15 +301,4 @@ func TestConfig_FaceAllowBackground(t *testing.T) {
 	assert.False(t, c.FaceAllowBackground())
 	c.options.FaceAllowBackground = true
 	assert.True(t, c.FaceAllowBackground())
-}
-
-func TestConfig_FaceAngles(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.DefaultAngles, c.FaceAngles())
-
-	c.options.FaceAngles = []float64{-0.5, 0, 0.5}
-	assert.Equal(t, []float64{-0.5, 0, 0.5}, c.FaceAngles())
-
-	c.options.FaceAngles = []float64{math.Pi + 0.1, math.NaN(), 4}
-	assert.Equal(t, face.DefaultAngles, c.FaceAngles())
 }

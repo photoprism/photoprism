@@ -98,20 +98,21 @@ const (
 
 // Standard ContentType strings for markup and sidecar files.
 const (
-	ContentTypeBinary     = "application/octet-stream"
-	ContentTypeForm       = "application/x-www-form-urlencoded"
-	ContentTypeMultipart  = "multipart/form-data"
-	ContentTypeManifest   = "application/manifest+json"
-	ContentTypeJson       = "application/json"
-	ContentTypeJsonUtf8   = "application/json; charset=utf-8"
-	ContentTypeJavaScript = "application/javascript"
-	ContentTypeCSS        = "text/css"
-	ContentTypeXml        = "text/xml"
-	ContentTypeHtml       = "text/html; charset=utf-8"
-	ContentTypeText       = "text/plain; charset=utf-8"
-	ContentTypePDF        = "application/pdf"
-	ContentTypeZip        = "application/zip"
-	ContentTypePrometheus = "text/plain; version=0.0.4"
+	ContentTypeBinary      = "application/octet-stream"
+	ContentTypeForm        = "application/x-www-form-urlencoded"
+	ContentTypeMultipart   = "multipart/form-data"
+	ContentTypeManifest    = "application/manifest+json"
+	ContentTypeJson        = "application/json"
+	ContentTypeJsonUtf8    = "application/json; charset=utf-8"
+	ContentTypeJavaScript  = "application/javascript"
+	ContentTypeCSS         = "text/css"
+	ContentTypeXml         = "text/xml"
+	ContentTypeHtml        = "text/html; charset=utf-8"
+	ContentTypeText        = "text/plain; charset=utf-8"
+	ContentTypePDF         = "application/pdf"
+	ContentTypeZip         = "application/zip"
+	ContentTypePrometheus  = "text/plain; version=0.0.4"
+	ContentTypeEventStream = "text/event-stream" // Server-Sent Events (SSE), see https://html.spec.whatwg.org/multipage/server-sent-events.html
 )
 
 // HasContentType checks weather the Content-Type header has the specified type.

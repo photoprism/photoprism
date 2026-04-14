@@ -87,7 +87,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 	start := time.Now()
 
-	// PNG, GIF, BMP, TIFF, and WebP can be handled natively.
+	// PNG, GIF, BMP, TIFF, HEIC/HEIF, AVIF, and WebP can be handled natively.
 	if f.IsImageOther() {
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), f.FileType())
 
@@ -105,9 +105,11 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		if err == nil {
 			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), f.FileType())
 			return NewMediaFile(imageName)
-		} else if !f.IsTiff() && !f.IsWebp() {
+		} else if !f.IsTiff() && !f.IsWebp() && !f.IsHeic() && !f.IsAvif() {
 			// See https://github.com/photoprism/photoprism/issues/1612
-			// for TIFF file format compatibility.
+			// for TIFF file format compatibility. HEIC/HEIF and AVIF keep the
+			// external conversion fallback until we can rely on native libvips
+			// support in every supported runtime.
 			return nil, err
 		}
 	}

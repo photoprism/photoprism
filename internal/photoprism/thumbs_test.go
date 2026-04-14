@@ -8,8 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/disintegration/imaging"
-
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -233,7 +231,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.SamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)
@@ -260,7 +258,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.SamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)
@@ -285,7 +283,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.SamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)

@@ -623,10 +623,6 @@ msgstr "Tanggal Lahir"
 msgid "Black"
 msgstr "Hitam"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Modifikasi Lanczos, Artefak Berdering Lebih Sedikit"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Biru"
@@ -772,7 +768,7 @@ msgstr "Perubahan tidak dapat disimpan"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Perubahan berhasil disimpan"
@@ -1020,10 +1016,6 @@ msgstr "Dibuat"
 msgid "Creating thumbnails for"
 msgstr "Membuat thumbnail untuk"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Kubik: Kualitas Sedang, Performa Bagus"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Kata Sandi Saat Ini"
@@ -1144,7 +1136,7 @@ msgstr "Nonaktifkan semua fitur pendeteksian dan pengenalan wajah."
 msgid "Disable Backups"
 msgstr "Nonaktifkan Cadangan"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Nonaktifkan Darktable"
 
@@ -1160,11 +1152,11 @@ msgstr "Nonaktifkan Wajah"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Nonaktifkan fitur yang memerlukan izin tulis untuk folder asli."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Nonaktifkan FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Nonaktifkan ImageMagick"
 
@@ -1176,11 +1168,11 @@ msgstr "Menonaktifkan peta dunia interaktif dan membalikkan geocoding."
 msgid "Disable Places"
 msgstr "Nonaktifkan Tempat"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Nonaktifkan RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Nonaktifkan Vektor"
 
@@ -1192,11 +1184,11 @@ msgstr "Nonaktifkan WebDAV"
 msgid "Disabled"
 msgstr "Dinonaktifkan"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Menonaktifkan dukungan grafis vektor."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Menonaktifkan transkode video dan ekstraksi gambar mini."
 
@@ -1250,15 +1242,15 @@ msgstr "Dokumen"
 msgid "Documents"
 msgstr "Dokumen"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Jangan gunakan Darktable untuk mengonversi file RAW."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Jangan gunakan ImageMagick untuk mengonversi gambar."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Jangan gunakan RawTherapee untuk mengonversi file RAW."
 
@@ -1298,10 +1290,6 @@ msgstr "Unduh file jarak jauh"
 msgid "Downloading…"
 msgstr "Mengunduh…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Filter Penurunan Skala"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Seret dan jatuhkan file di sini"
@@ -1321,11 +1309,11 @@ msgstr "Duplikat akan dilewati dan hanya muncul sekali."
 msgid "Duration"
 msgstr "Durasi"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Pratinjau Dinamis"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Batas Ukuran Dinamis: %{n}px"
 
@@ -1383,7 +1371,7 @@ msgstr "Mengaktifkan fitur baru yang mungkin tidak lengkap atau tidak stabil."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Aktifkan browser file untuk menavigasi struktur folder Asli."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktifkan preset untuk RAW konverter. Memungkinkan adanya penurunan performa."
 
@@ -1529,7 +1517,7 @@ msgstr "Favorit"
 msgid "Feature Request"
 msgstr "Permintaan Fitur"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Perempuan"
 
@@ -1542,7 +1530,7 @@ msgstr "Berkas"
 msgid "File Browser"
 msgstr "Peramban Berkas"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Konversi File"
 
@@ -1738,7 +1726,7 @@ msgstr "Jika Anda kehilangan akses ke aplikasi atau perangkat pengautentikasi, A
 msgid "Image"
 msgstr "Gambar"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Kualitas Gambar"
 
@@ -1883,11 +1871,11 @@ msgstr "Item"
 msgid "Items per page:"
 msgstr "Item per halaman:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "Kualitas JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Batas Ukuran JPEG: %{n}px"
 
@@ -1922,10 +1910,6 @@ msgstr "Label"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Label dihapus"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Pelestarian Detail, Artefak Minimal"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2008,10 +1992,6 @@ msgstr "Lime"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Batas tercapai, menampilkan %{n} file pertama"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Linear: Sangat Halus, Performa Terbaik"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2114,7 +2094,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Warna Utama"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Laki-laki"
 
@@ -2459,7 +2439,7 @@ msgstr "Paling lama"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pada Windows, masukkan sumber daya berikut ini dalam dialog connection:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Pembuatan gambar mini berdasarkan permintaan dapat menyebabkan penggunaan CPU dan memori yang tinggi. Tidak disarankan untuk server dan perangkat NAS yang memiliki sumber daya terbatas."
 
@@ -2548,7 +2528,7 @@ msgstr "Nama Asli"
 msgid "Originals"
 msgstr "Asli"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Lainnya"
 
@@ -2725,7 +2705,7 @@ msgstr "Mohon tunggu…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "Batas Ukuran PNG: %{n}px"
 
@@ -2973,7 +2953,7 @@ msgstr "Resolusi"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Mulai ulang"
 
@@ -3447,7 +3427,7 @@ msgstr "Mulai"
 msgid "Start Page"
 msgstr "Halaman Awal"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Batas Ukuran Statis: %{n}px"
 
@@ -3818,7 +3798,7 @@ msgstr "Unggahan yang mungkin berisi gambar seperti itu akan ditolak secara otom
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Gunakan Preset"
 
@@ -3950,7 +3930,7 @@ msgstr "Login Web"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4105,6 +4085,21 @@ msgstr "Judul"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arsip"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: Modifikasi Lanczos, Artefak Berdering Lebih Sedikit"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Kubik: Kualitas Sedang, Performa Bagus"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Filter Penurunan Skala"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Pelestarian Detail, Artefak Minimal"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Linear: Sangat Halus, Performa Terbaik"
 
 #~ msgid "Drop files here"
 #~ msgstr "Jatuhkan file di sini"

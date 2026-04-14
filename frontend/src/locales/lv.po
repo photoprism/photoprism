@@ -619,10 +619,6 @@ msgstr "Dzimšanas datums"
 msgid "Black"
 msgstr "Melns"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos modifikācija, mazāk nevēlami efekti"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Zils"
@@ -768,7 +764,7 @@ msgstr "Izmaiņas nevarēja saglabāt"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Izmaiņas veiksmīgi saglabātas"
@@ -1016,10 +1012,6 @@ msgstr "Izveidots"
 msgid "Creating thumbnails for"
 msgstr "Sīktēlu izveide priekš"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: vidēja kvalitāte, laba veiktspēja"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Esošā parole"
@@ -1140,7 +1132,7 @@ msgstr "Izslēgt visas sejas atpazīšanas un noteikšanas iespējas."
 msgid "Disable Backups"
 msgstr "Izslēgt rezerves kopijas"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Izslēgt Darktable"
 
@@ -1156,11 +1148,11 @@ msgstr "Izslēgt sejas"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Izslēgt funkcijas, kurām nepieciešama rakstīšanas atļauja oriģinālu mapē."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Izslēgt FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Izslēgt ImageMagick"
 
@@ -1172,11 +1164,11 @@ msgstr "Izslēgt interaktīvo pasaules karti un adreses noteikšanu pēc koordin
 msgid "Disable Places"
 msgstr "Izslēgt vietas"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Izslēgt RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Izslēgt vektorus"
 
@@ -1188,11 +1180,11 @@ msgstr "Izslēgt WebDAV"
 msgid "Disabled"
 msgstr "Izslēgt"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Izslēdz vektorgrafikas atbalstu."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Izslēdz video pārkodēšanu un sīktēlu izgūšanu."
 
@@ -1246,15 +1238,15 @@ msgstr "Dokuments"
 msgid "Documents"
 msgstr "Dokumenti"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Neizmantojiet Darktable, lai konvertētu RAW attēlus."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Neizmantojiet ImageMagick attēlu konvertēšanai."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Neizmantojiet RawTherapee, lai konvertētu RAW attēlus."
 
@@ -1294,10 +1286,6 @@ msgstr "Lejupielādēt attālinātos failus"
 msgid "Downloading…"
 msgstr "Notiek lejupielāde…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Samazināšanas filtrs"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Velciet un nometiet failus šeit"
@@ -1317,11 +1305,11 @@ msgstr "Dublikāti tiks izlaisti un parādīsies tikai vienu reizi."
 msgid "Duration"
 msgstr "Ilgums"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Dinamiskie priekšskatījumi"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dinamiskā izmēra ierobežojums: %{n}px"
 
@@ -1379,7 +1367,7 @@ msgstr "Ieslēgt funkcionalitāti, kas varētu būt vēl nepilnīga vai nestabil
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Ieslēgt failu pārlūku, lai pārvietotos pa oriģinālu mapi."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ieslēdz RAW pārveidotāja sākotnējos iestatījumus. Var samazināt veiktspēju."
 
@@ -1525,7 +1513,7 @@ msgstr "Favorīti"
 msgid "Feature Request"
 msgstr "Funkcionalitātes pieprasījums"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Sieviete"
 
@@ -1538,7 +1526,7 @@ msgstr "Fails"
 msgid "File Browser"
 msgstr "Failu pārlūks"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Failu konvertēšana"
 
@@ -1734,7 +1722,7 @@ msgstr "Ja zaudējat piekļuvi autentifikatora lietotnei vai ierīcei, varat izm
 msgid "Image"
 msgstr "Attēls"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Attēla kvalitāte"
 
@@ -1879,11 +1867,11 @@ msgstr "Ieraksts"
 msgid "Items per page:"
 msgstr "Vienumi lapā:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG kvalitāte: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG izmēra ierobežojums: %{n} pikseļi"
 
@@ -1918,10 +1906,6 @@ msgstr "Birkas"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Birkas ir dzēstas"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Detaļu saglabāšana, minimāli nevēlami efekti"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2004,10 +1988,6 @@ msgstr "Gaiši zaļš"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Sasniegts limits, tiek rādīti pirmie %{n} faili"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineārs: ļoti vienmērīgs, vislabākā veiktspēja"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2110,7 +2090,7 @@ msgstr "Fuksīna"
 msgid "Main Color"
 msgstr "Galvenā krāsa"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Vīrietis"
 
@@ -2455,7 +2435,7 @@ msgstr "Vecākais vispirms"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Operētājsistēmā Windows savienojuma dialoglodziņā ievadiet šādu resursu:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Sīktēlu ģenerēšana pēc pieprasījuma var izraisīt lielu centrālā procesora un atmiņas izmantošanu. Tas nav ieteicams serveriem un NAS ierīcēm ar ierobežotiem resursiem."
 
@@ -2544,7 +2524,7 @@ msgstr "Sākotnējais nosaukums"
 msgid "Originals"
 msgstr "Oriģināli"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Citi"
 
@@ -2721,7 +2701,7 @@ msgstr "Lūdzu, uzgaidiet…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG izmēra ierobežojums: %{n} pikseļi"
 
@@ -2969,7 +2949,7 @@ msgstr "Izšķirtspēja"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Restartēt"
 
@@ -3443,7 +3423,7 @@ msgstr "Sākt"
 msgid "Start Page"
 msgstr "Sākumlapa"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Statiskā izmēra ierobežojums: %{n}px"
 
@@ -3814,7 +3794,7 @@ msgstr "Augšupielādes, kas var saturēt šādus attēlus, tiks automātiski no
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Izmantojiet sākotnējos iestatījumus"
 
@@ -3946,7 +3926,7 @@ msgstr "Tīmekļa pieteikšanās"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4101,6 +4081,21 @@ msgstr "Nosaukums"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhīvēt"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: Lanczos modifikācija, mazāk nevēlami efekti"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Cubic: vidēja kvalitāte, laba veiktspēja"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Samazināšanas filtrs"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Detaļu saglabāšana, minimāli nevēlami efekti"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Lineārs: ļoti vienmērīgs, vislabākā veiktspēja"
 
 #~ msgid "Drop files here"
 #~ msgstr "Lejupielādējiet failus šeit"

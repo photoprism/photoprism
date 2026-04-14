@@ -620,10 +620,6 @@ msgstr "Syntymäaika"
 msgid "Black"
 msgstr "Musta"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos-muutos, vähemmän pakkausartefakteja"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Sininen"
@@ -769,7 +765,7 @@ msgstr "Muutoksia ei voitu tallentaa"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Muutokset tallennettu onnistuneesti"
@@ -1017,10 +1013,6 @@ msgstr "Luotu"
 msgid "Creating thumbnails for"
 msgstr "Luodaan pikkukuvia kohteelle"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Kuutio: Kohtalainen laatu, hyvä suorituskyky"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Nykyinen salasana"
@@ -1141,7 +1133,7 @@ msgstr "Poista kaikki kasvojen tunnistus- ja tunnistustoiminnot käytöstä."
 msgid "Disable Backups"
 msgstr "Poista varmuuskopiot käytöstä"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Poista Darktable käytöstä"
 
@@ -1157,11 +1149,11 @@ msgstr "Poista kasvot käytöstä"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Poista käytöstä ominaisuudet, jotka vaativat kirjoitusoikeutta alkuperäiskansiossa."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Poista FFmpeg käytöstä"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Poista ImageMagick käytöstä"
 
@@ -1173,11 +1165,11 @@ msgstr "Poista interaktiiviset maailmankartat ja käänteinen geokoodaus käytö
 msgid "Disable Places"
 msgstr "Poista paikat käytöstä"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Poista RawTherapee käytöstä"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Poista vektorit käytöstä"
 
@@ -1189,11 +1181,11 @@ msgstr "Poista WebDAV käytöstä"
 msgid "Disabled"
 msgstr "Pois käytöstä"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Poistaa vektorigrafiikan tuen käytöstä."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Poistaa videon transkoodauksen ja pikkukuvien poiston käytöstä."
 
@@ -1247,15 +1239,15 @@ msgstr "Asiakirja"
 msgid "Documents"
 msgstr "Asiakirjat"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Älä käytä Darktablea RAW-tiedostojen muuntamiseen."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Älä käytä ImageMagickia kuvien muuntamiseen."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Älä käytä RawTherapeeta RAW-tiedostojen muuntamiseen."
 
@@ -1295,10 +1287,6 @@ msgstr "Lataa etätiedostoja"
 msgid "Downloading…"
 msgstr "Ladataan…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Skaalaussuodatin"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Vedä ja pudota tiedostot tänne"
@@ -1318,11 +1306,11 @@ msgstr "Kaksoiskappaleet ohitetaan ja ne näkyvät vain kerran."
 msgid "Duration"
 msgstr "Kesto"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Dynaamiset esikatselut"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dynaaminen kokorajoitus: %{n}px"
 
@@ -1380,7 +1368,7 @@ msgstr "Ota käyttöön uusia ominaisuuksia, jotka voivat olla epätäydellisiä
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Ota tiedostoselain käyttöön, jotta voit selata Originals-kansiorakennetta."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ottaa käyttöön RAW-muuntimen esiasetukset. Saattaa heikentää suorituskykyä."
 
@@ -1526,7 +1514,7 @@ msgstr "Suosikit"
 msgid "Feature Request"
 msgstr "Ominaisuuspyyntö"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Nainen"
 
@@ -1539,7 +1527,7 @@ msgstr "Tiedosto"
 msgid "File Browser"
 msgstr "Tiedostoselain"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Tiedoston muuntaminen"
 
@@ -1735,7 +1723,7 @@ msgstr "Jos menetät käyttöoikeuden todennussovellukseen tai -laitteeseen, voi
 msgid "Image"
 msgstr "Kuva"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Kuvan laatu"
 
@@ -1880,11 +1868,11 @@ msgstr "Kohde"
 msgid "Items per page:"
 msgstr "Kohteita per sivu:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-laatu: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG-kokorajoitus: %{n}px"
 
@@ -1919,10 +1907,6 @@ msgstr "Tunnisteet"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Tunnisteet poistettu"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Yksityiskohtien säilyttäminen, minimaaliset artefaktit"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2005,10 +1989,6 @@ msgstr "Lime"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Raja saavutettu, näytetään ensimmäiset %{n} tiedostoa"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineaarinen: Erittäin tasainen, paras suorituskyky"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2111,7 +2091,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Pääväri"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Mies"
 
@@ -2456,7 +2436,7 @@ msgstr "Vanhin ensin"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Kirjoita Windowsissa seuraava resurssi yhteysvalintaikkunaan:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Pienoiskuvien luominen tilauksesta voi aiheuttaa suurta suorittimen ja muistin käyttöä. Sitä ei suositella resurssirajoitteisille palvelimille ja NAS-laitteille."
 
@@ -2545,7 +2525,7 @@ msgstr "Alkuperäinen nimi"
 msgid "Originals"
 msgstr "Alkuperäiset"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Muut"
 
@@ -2722,7 +2702,7 @@ msgstr "Odota…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG-kokorajoitus: %{n}px"
 
@@ -2970,7 +2950,7 @@ msgstr "Resoluutio"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Käynnistä uudelleen"
 
@@ -3444,7 +3424,7 @@ msgstr "Aloita"
 msgid "Start Page"
 msgstr "Aloitussivu"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Staattinen kokorajoitus: %{n}px"
 
@@ -3815,7 +3795,7 @@ msgstr "Tällaisia kuvia mahdollisesti sisältävät lataukset hylätään autom
 msgid "URL"
 msgstr "URL-osoite"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Käytä esiasetuksia"
 
@@ -3947,7 +3927,7 @@ msgstr "Web-kirjautuminen"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4102,6 +4082,21 @@ msgstr "Otsikko"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkisto"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: Lanczos-muutos, vähemmän pakkausartefakteja"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Kuutio: Kohtalainen laatu, hyvä suorituskyky"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Skaalaussuodatin"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Yksityiskohtien säilyttäminen, minimaaliset artefaktit"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Lineaarinen: Erittäin tasainen, paras suorituskyky"
 
 #~ msgid "Drop files here"
 #~ msgstr "Pudota tiedostot tänne"

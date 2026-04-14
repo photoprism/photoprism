@@ -1,9 +1,10 @@
 package classify
 
 import (
-	"bytes"
 	"fmt"
+	"image"
 	"image/color"
+	"image/draw"
 	"math"
 	"os"
 	"path"
@@ -12,11 +13,12 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/disintegration/imaging"
 	tf "github.com/wamuir/graft/tensorflow"
 
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -301,9 +303,9 @@ func (m *Model) bestLabels(probabilities []float32, confidenceThreshold int) Lab
 	}
 }
 
-// createTensor converts bytes jpeg image in a tensor object required as tensorflow model input
-func (m *Model) createTensor(image []byte) (*tf.Tensor, error) {
-	img, err := imaging.Decode(bytes.NewReader(image), imaging.AutoOrientation(true))
+// createTensor converts image bytes into the tensor format required by the TensorFlow model.
+func (m *Model) createTensor(data []byte) (*tf.Tensor, error) {
+	img, _, err := fs.DecodeImageData(data)
 
 	if err != nil {
 		return nil, err
@@ -313,15 +315,18 @@ func (m *Model) createTensor(image []byte) (*tf.Tensor, error) {
 	if img.Bounds().Dx() != m.meta.Input.Resolution() || img.Bounds().Dy() != m.meta.Input.Resolution() {
 		switch m.meta.Input.ResizeOperation {
 		case tensorflow.ResizeBreakAspectRatio:
-			img = imaging.Resize(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), imaging.Lanczos)
+			img = thumb.Resample(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), thumb.ResampleResize)
 		case tensorflow.CenterCrop:
-			img = imaging.Fill(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), imaging.Center, imaging.Lanczos)
+			img = thumb.Resample(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), thumb.ResampleFillCenter)
 		case tensorflow.Padding:
-			resized := imaging.Fit(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), imaging.Lanczos)
-			dst := imaging.New(m.meta.Input.Resolution(), m.meta.Input.Resolution(), color.NRGBA{0, 0, 0, 255})
-			img = imaging.PasteCenter(dst, resized)
+			resized := thumb.Resample(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), thumb.ResampleFit)
+			dst := image.NewNRGBA(image.Rect(0, 0, m.meta.Input.Resolution(), m.meta.Input.Resolution()))
+			draw.Draw(dst, dst.Bounds(), &image.Uniform{C: color.NRGBA{0, 0, 0, 255}}, image.Point{}, draw.Src)
+			offset := image.Pt((dst.Bounds().Dx()-resized.Bounds().Dx())/2, (dst.Bounds().Dy()-resized.Bounds().Dy())/2)
+			draw.Draw(dst, image.Rectangle{Min: offset, Max: offset.Add(resized.Bounds().Size())}, resized, resized.Bounds().Min, draw.Over)
+			img = dst
 		default:
-			img = imaging.Fill(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), imaging.Center, imaging.Lanczos)
+			img = thumb.Resample(img, m.meta.Input.Resolution(), m.meta.Input.Resolution(), thumb.ResampleFillCenter)
 		}
 	}
 

@@ -622,10 +622,6 @@ msgstr "Születési dátum"
 msgid "Black"
 msgstr "Fekete"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos-módosítás, kevesebb csengő műtárgy"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Kék"
@@ -771,7 +767,7 @@ msgstr "Módosításokat nem sikerült menteni"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Módosítások sikeresen mentve"
@@ -1019,10 +1015,6 @@ msgstr "Létrehozva"
 msgid "Creating thumbnails for"
 msgstr "Miniatűrök létrehozása a következőhöz"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Köbös: Közepes minőség, jó teljesítmény"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Jelenlegi jelszó"
@@ -1143,7 +1135,7 @@ msgstr "Tiltja le az összes arcfelismerő és arcfelismerő funkciót."
 msgid "Disable Backups"
 msgstr "Biztonsági mentések letiltása"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "A Darktable letiltása"
 
@@ -1159,11 +1151,11 @@ msgstr "Arcok letiltása"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Az eredeti mappa írási engedélyét igénylő funkciók letiltása."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Az FFmpeg letiltása"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "ImageMagick letiltása"
 
@@ -1175,11 +1167,11 @@ msgstr "Az interaktív világtérképek és a fordított geokódolás letiltása
 msgid "Disable Places"
 msgstr "Helyek letiltása"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "A RawTherapee letiltása"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Vektorok letiltása"
 
@@ -1191,11 +1183,11 @@ msgstr "A WebDAV letiltása"
 msgid "Disabled"
 msgstr "Tiltva"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Letiltja a vektorgrafika támogatását."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Letiltja a videó átkódolását és a miniatűrök kinyerését."
 
@@ -1249,15 +1241,15 @@ msgstr "Dokumentum"
 msgid "Documents"
 msgstr "Dokumentumok"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ne használja a Darktable-t RAW képek konvertálására."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Ne használd az ImageMagick programot képek konvertálására."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ne használja a RawTherapee-t RAW képek konvertálására."
 
@@ -1297,10 +1289,6 @@ msgstr "Távoli fájlok letöltése"
 msgid "Downloading…"
 msgstr "Letöltés…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Lekicsinyítési szűrő"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Húzza ide a fájlokat"
@@ -1320,11 +1308,11 @@ msgstr "A másolatok kimaradnak, és csak egyszer jelennek meg."
 msgid "Duration"
 msgstr "Időtartam"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Dinamikus előnézetek"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dinamikus méretkorlát: %{n}px"
 
@@ -1382,7 +1370,7 @@ msgstr "Engedélyezze az új funkciókat, amelyek hiányosak vagy instabilak leh
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Engedélyezze a fájlböngésző használatát az Eredeti mappaszerkezetben való navigáláshoz."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljesítményt."
 
@@ -1528,7 +1516,7 @@ msgstr "Kedvencek"
 msgid "Feature Request"
 msgstr "Funkciókérés"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Női"
 
@@ -1541,7 +1529,7 @@ msgstr "Fájl"
 msgid "File Browser"
 msgstr "Fájl böngésző"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Fájl átalakítás"
 
@@ -1737,7 +1725,7 @@ msgstr "Ha elveszíti hozzáférését hitelesítő alkalmazásához vagy eszkö
 msgid "Image"
 msgstr "Kép"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Képminőség"
 
@@ -1882,11 +1870,11 @@ msgstr "Tétel"
 msgid "Items per page:"
 msgstr "Tételek oldalanként:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG minőség: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG méretkorlát: %{n}px"
 
@@ -1921,10 +1909,6 @@ msgstr "Címkék"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Címkék törölve"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Részletmegőrzés, minimális műtárgyak"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2007,10 +1991,6 @@ msgstr "Mész"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Elérte a korlátot, az első %{n} fájl látható"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineáris: Nagyon sima, a legjobb teljesítmény"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2113,7 +2093,7 @@ msgstr "Bíborvörös"
 msgid "Main Color"
 msgstr "Fő szín"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Férfi"
 
@@ -2458,7 +2438,7 @@ msgstr "Először a legidősebb"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windows alatt adja meg a következő erőforrást a kapcsolat párbeszédpanelen:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "A miniatűrök igény szerinti generálása magas CPU- és memóriahasználatot okozhat. Erőforrás-korlátozott szerverek és NAS-eszközök esetében nem ajánlott."
 
@@ -2547,7 +2527,7 @@ msgstr "Eredeti Név"
 msgid "Originals"
 msgstr "Eredetiek"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Egyéb"
 
@@ -2724,7 +2704,7 @@ msgstr "Kérjük, várjon…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG méretkorlát: %{n}px"
 
@@ -2972,7 +2952,7 @@ msgstr "Felbontás"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Újraindítás"
 
@@ -3446,7 +3426,7 @@ msgstr "Rajt"
 msgid "Start Page"
 msgstr "Kezdőlap"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Statikus méretkorlát: %{n}px"
 
@@ -3817,7 +3797,7 @@ msgstr "Az esetlegesen ilyen képeket tartalmazó feltöltések automatikusan el
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Előbeállítások használata"
 
@@ -3949,7 +3929,7 @@ msgstr "Webes bejelentkezés"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4104,6 +4084,21 @@ msgstr "Cím"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archívum"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: Lanczos-módosítás, kevesebb csengő műtárgy"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Köbös: Közepes minőség, jó teljesítmény"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Lekicsinyítési szűrő"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Részletmegőrzés, minimális műtárgyak"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Lineáris: Nagyon sima, a legjobb teljesítmény"
 
 #~ msgid "Drop files here"
 #~ msgstr "Dobja ide a fájlokat"

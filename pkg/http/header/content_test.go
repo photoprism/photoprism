@@ -29,6 +29,7 @@ func TestContent(t *testing.T) {
 		assert.Equal(t, "application/manifest+json", ContentTypeManifest)
 		assert.Equal(t, "application/json", ContentTypeJson)
 		assert.Equal(t, "application/json; charset=utf-8", ContentTypeJsonUtf8)
+		assert.Equal(t, "text/event-stream", ContentTypeEventStream)
 		assert.Equal(t, "application/javascript", ContentTypeJavaScript)
 		assert.Equal(t, "text/css", ContentTypeCSS)
 		assert.Equal(t, "text/html; charset=utf-8", ContentTypeHtml)

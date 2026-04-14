@@ -623,10 +623,6 @@ msgstr "Data de naixement"
 msgid "Black"
 msgstr "Negre"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: modificació de Lanczos, artefactes menys sonors"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Blau"
@@ -772,7 +768,7 @@ msgstr "No s'han pogut desar els canvis"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Els canvis s'han desat correctament"
@@ -1020,10 +1016,6 @@ msgstr "Creat"
 msgid "Creating thumbnails for"
 msgstr "Creació de miniatures per a"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cúbic: qualitat moderada, bon rendiment"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Contrasenya actual"
@@ -1144,7 +1136,7 @@ msgstr "Desactiva totes les funcions de detecció i reconeixement facial."
 msgid "Disable Backups"
 msgstr "Desactiva les còpies de seguretat"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Desactiva Darktable"
 
@@ -1160,11 +1152,11 @@ msgstr "Desactiva les cares"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Desactiveu les funcions que requereixen permís d'escriptura per a la carpeta d'originals."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Desactiva FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Desactiveu ImageMagick"
 
@@ -1176,11 +1168,11 @@ msgstr "Desactiva els mapes del món interactius i la geocodificació inversa."
 msgid "Disable Places"
 msgstr "Desactiva Places"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Desactiveu RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Desactiva Vectors"
 
@@ -1192,11 +1184,11 @@ msgstr "Desactiva WebDAV"
 msgid "Disabled"
 msgstr "Inhabilitat"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Desactiva el suport de gràfics vectorials."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Desactiva la transcodificació de vídeo i l'extracció de miniatures."
 
@@ -1250,15 +1242,15 @@ msgstr "Document"
 msgid "Documents"
 msgstr "Documents"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "No utilitzeu Darktable per convertir fitxers RAW."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "No utilitzeu ImageMagick per convertir imatges."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "No utilitzeu RawTherapee per convertir fitxers RAW."
 
@@ -1298,10 +1290,6 @@ msgstr "Descarrega fitxers remots"
 msgid "Downloading…"
 msgstr "S'està baixant…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Filtre de reducció d'escala"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Arrossegueu i deixeu anar els fitxers aquí"
@@ -1321,11 +1309,11 @@ msgstr "Els duplicats es saltaran i només apareixeran una vegada."
 msgid "Duration"
 msgstr "Duració"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Previsualitzacions dinàmiques"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Límit de mida dinàmica: %{n}px"
 
@@ -1383,7 +1371,7 @@ msgstr "Activa les noves funcions que poden ser incompletes o inestables."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Habiliteu el navegador de fitxers per navegar per l'estructura de carpetes Originals."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Habilita els valors predefinits del convertidor RAW. Pot reduir el rendiment."
 
@@ -1529,7 +1517,7 @@ msgstr "Favorits"
 msgid "Feature Request"
 msgstr "Sol·licitud de funció"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Femení"
 
@@ -1542,7 +1530,7 @@ msgstr "Fitxer"
 msgid "File Browser"
 msgstr "Navegador de fitxers"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Conversió de fitxers"
 
@@ -1738,7 +1726,7 @@ msgstr "Si perdeu l'accés a l'aplicació o al dispositiu d'autenticació, podeu
 msgid "Image"
 msgstr "Imatge"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Qualitat d'imatge"
 
@@ -1883,11 +1871,11 @@ msgstr "Element"
 msgid "Items per page:"
 msgstr "Elements per pàgina:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "Qualitat JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Límit de mida JPEG: %{n}px"
 
@@ -1922,10 +1910,6 @@ msgstr "Etiquetes"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "S'han suprimit les etiquetes"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Preservació de detalls, artefactes mínims"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2008,10 +1992,6 @@ msgstr "Llima"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "S'ha assolit el límit, mostrant els primers %{n} fitxers"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineal: molt suau, millor rendiment"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2114,7 +2094,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Color principal"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Home"
 
@@ -2459,7 +2439,7 @@ msgstr "El més vell primer"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "A Windows, introduïu el recurs següent al diàleg de connexió:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "La generació de miniatures sota demanda pot provocar un ús elevat de la CPU i la memòria. No es recomana per a servidors i dispositius NAS amb recursos limitats."
 
@@ -2548,7 +2528,7 @@ msgstr "Nom original"
 msgid "Originals"
 msgstr "Originals"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Altres"
 
@@ -2725,7 +2705,7 @@ msgstr "Si us plau, espereu…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "Límit de mida del PNG: %{n}px"
 
@@ -2973,7 +2953,7 @@ msgstr "Resolució"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Reinicia"
 
@@ -3447,7 +3427,7 @@ msgstr "Inici"
 msgid "Start Page"
 msgstr "Pàgina d'inici"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Límit de mida estàtica: %{n}px"
 
@@ -3818,7 +3798,7 @@ msgstr "Les càrregues que puguin contenir aquestes imatges seran rebutjades aut
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Utilitzeu presets"
 
@@ -3950,7 +3930,7 @@ msgstr "Inici de sessió web"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4107,6 +4087,21 @@ msgstr "Títol"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arxiu"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: modificació de Lanczos, artefactes menys sonors"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Cúbic: qualitat moderada, bon rendiment"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Filtre de reducció d'escala"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Preservació de detalls, artefactes mínims"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Lineal: molt suau, millor rendiment"
 
 #~ msgid "Drop files here"
 #~ msgstr "Arrossegueu els fitxers aquí"

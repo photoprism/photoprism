@@ -623,10 +623,6 @@ msgstr "जन्म तिथि"
 msgid "Black"
 msgstr "काली"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "ब्लैकमैन: लैंक्ज़ोस संशोधन, कम बजने वाली कलाकृतियाँ"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "नीला"
@@ -772,7 +768,7 @@ msgstr "परिवर्तन सहेजा नहीं जा सका"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "परिवर्तन सफलतापूर्वक सहेजे गए"
@@ -1020,10 +1016,6 @@ msgstr "बनाया था"
 msgid "Creating thumbnails for"
 msgstr "के लिए थंबनेल बनाना"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "घन: मध्यम गुणवत्ता, अच्छा प्रदर्शन"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "वर्तमान पासवर्ड"
@@ -1144,7 +1136,7 @@ msgstr "सभी चेहरा पहचान और पहचान सु�
 msgid "Disable Backups"
 msgstr "पिछला बैकअप"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "डार्कटेबल अक्षम करें"
 
@@ -1160,11 +1152,11 @@ msgstr "चेहरे अक्षम करें"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "उन सुविधाओं को अक्षम करें जिनके लिए मूल फ़ोल्डर के लिए लेखन अनुमति की आवश्यकता होती है।"
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "एफएफएमपीईजी अक्षम करें"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "इमेजमैजिक को अक्षम करें"
 
@@ -1176,11 +1168,11 @@ msgstr "इंटरैक्टिव विश्व मानचित्र 
 msgid "Disable Places"
 msgstr "विकलांग"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "रॉ थेरेपी को अक्षम करें"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "वेक्टर अक्षम करें"
 
@@ -1192,11 +1184,11 @@ msgstr "विकलांग"
 msgid "Disabled"
 msgstr "विकलांग"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "वेक्टर ग्राफ़िक्स समर्थन अक्षम करता है।"
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "वीडियो ट्रांसकोडिंग और थंबनेल निष्कर्षण अक्षम करता है।"
 
@@ -1250,15 +1242,15 @@ msgstr "दस्तावेज़"
 msgid "Documents"
 msgstr "दस्तावेज़"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "रॉ फ़ाइलों को कनवर्ट करने के लिए डार्कटेबल का उपयोग न करें।"
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "छवियों को परिवर्तित करने के लिए ImageMagick का उपयोग न करें।"
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RAW फ़ाइलों को कनवर्ट करने के लिए RawTherapee का उपयोग न करें।"
 
@@ -1298,10 +1290,6 @@ msgstr "दूरस्थ फ़ाइलें डाउनलोड करे
 msgid "Downloading…"
 msgstr "डाउनलोड कर रहा है …"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "गुणवत्ता फ़िल्टर"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "फ़ाइलों को यहां खींचें और छोड़ें"
@@ -1321,11 +1309,11 @@ msgstr "डुप्लिकेट को छोड़ दिया जाए�
 msgid "Duration"
 msgstr "अवधि"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "बिना पढ़े हुए पूर्वावलोकन"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "बिना आकार की सीमा: %{n} px"
 
@@ -1383,7 +1371,7 @@ msgstr "ऐसी नई सुविधाएँ सक्षम करें �
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "फ़ाइल ब्राउज़र को मूल फ़ोल्डर संरचना में नेविगेट करने के लिए सक्षम करें।"
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "रॉ कनवर्टर प्रीसेट सक्षम करता है। प्रदर्शन को कम कर सकता है।"
 
@@ -1529,7 +1517,7 @@ msgstr "पसंदीदा"
 msgid "Feature Request"
 msgstr "महत्वपूर्ण लेख मांगना"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "मादा"
 
@@ -1542,7 +1530,7 @@ msgstr "फ़ाइल"
 msgid "File Browser"
 msgstr "फ़ाइल ब्राउज़र"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "फ़ाइल रूपांतरण"
 
@@ -1738,7 +1726,7 @@ msgstr "यदि आप अपने प्रमाणक ऐप या डि
 msgid "Image"
 msgstr "छवि"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "छवि के गुणवत्ता"
 
@@ -1883,11 +1871,11 @@ msgstr "मद"
 msgid "Items per page:"
 msgstr "प्रति पृष्ठ आइटम:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG गुणवत्ता: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG आकार सीमा: %{n} px"
 
@@ -1922,10 +1910,6 @@ msgstr "लेबल"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "लेबल हटा दिए गए"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "लैंक्ज़ोस: विस्तार संरक्षण, न्यूनतम कलाकृतियाँ"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2008,10 +1992,6 @@ msgstr "चूना"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "पहले %{n} फ़ाइलों को दिखाते हुए, सीमा समाप्त हो गई"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "रैखिक: बहुत चिकना, सर्वश्रेष्ठ प्रदर्शन"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2114,7 +2094,7 @@ msgstr "मैजेंटा"
 msgid "Main Color"
 msgstr "मुखय रंग"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "पुरुष"
 
@@ -2459,7 +2439,7 @@ msgstr "सबसे पुराना पहले"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "विंडोज़ पर, कनेक्शन संवाद में निम्न संसाधन दर्ज करें:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "ऑन-डिमांड थंबनेल बनाने से CPU और मेमोरी का अधिक उपयोग हो सकता है। संसाधन-सीमित सर्वर और NAS डिवाइस के लिए इसकी अनुशंसा नहीं की जाती है।"
 
@@ -2548,7 +2528,7 @@ msgstr "मूल नाम"
 msgid "Originals"
 msgstr "मूल"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "अन्य"
 
@@ -2725,7 +2705,7 @@ msgstr "कृपया प्रतीक्षा करें…"
 msgid "PM"
 msgstr "बजे"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG आकार सीमा: %{n} px"
 
@@ -2973,7 +2953,7 @@ msgstr "रिज़ॉल्यूशन"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "पुनः आरंभ करें"
 
@@ -3447,7 +3427,7 @@ msgstr "शुरू"
 msgid "Start Page"
 msgstr "पृष्ठ आरंभ करें"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "प्री-रेंडर आकार सीमा: %{n} px"
 
@@ -3818,7 +3798,7 @@ msgstr "ऐसे चित्र शामिल होने वाले अ�
 msgid "URL"
 msgstr "यूआरएल"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "प्रीसेट का उपयोग करें"
 
@@ -3950,7 +3930,7 @@ msgstr "वेब लॉगिन"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4105,6 +4085,21 @@ msgstr "शीर्षक"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "पुरालेख"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "ब्लैकमैन: लैंक्ज़ोस संशोधन, कम बजने वाली कलाकृतियाँ"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "घन: मध्यम गुणवत्ता, अच्छा प्रदर्शन"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "गुणवत्ता फ़िल्टर"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "लैंक्ज़ोस: विस्तार संरक्षण, न्यूनतम कलाकृतियाँ"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "रैखिक: बहुत चिकना, सर्वश्रेष्ठ प्रदर्शन"
 
 #~ msgid "Drop files here"
 #~ msgstr "फ़ाइलें यहाँ ड्रॉप करें"

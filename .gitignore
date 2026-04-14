@@ -32,6 +32,7 @@ venv
 .nv
 .eslintcache
 .gocache
+.system
 /pro/
 /portal/
 /plus/
@@ -85,9 +86,10 @@ Thumbs.db
 .glide
 .idea
 .codex
-.claude
 .config
 .local
+*.local.json
+*.local.yaml
 .project
 .vscode
 *.tmproj

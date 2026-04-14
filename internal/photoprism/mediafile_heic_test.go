@@ -19,6 +19,15 @@ func TestMediaFile_Heic(t *testing.T) {
 	c := config.TestConfig()
 
 	t.Run("IphoneSevenHeic", func(t *testing.T) {
+		prevDisableHeifConvert := conf.Options().DisableHeifConvert
+		prevDisableImageMagick := conf.Options().DisableImageMagick
+		conf.Options().DisableHeifConvert = true
+		conf.Options().DisableImageMagick = true
+		t.Cleanup(func() {
+			conf.Options().DisableHeifConvert = prevDisableHeifConvert
+			conf.Options().DisableImageMagick = prevDisableImageMagick
+		})
+
 		img, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "iphone_7.heic"))
 
 		if err != nil {
@@ -56,8 +65,10 @@ func TestMediaFile_Heic(t *testing.T) {
 		assert.Equal(t, "", jpegInfo.DocumentID)
 		assert.Equal(t, "2018-09-10 03:16:13.023 +0000 UTC", jpegInfo.TakenAt.String())
 		assert.Equal(t, "2018-09-10 12:16:13.023 +0000 UTC", jpegInfo.TakenAtLocal.String())
-		// KNOWN ISSUE: Orientation 6 would be correct instead (or the image should already be rotated),
-		// see https://github.com/strukturag/libheif/issues/227#issuecomment-1532842570
+		// The native libvips/libheif path does not apply EXIF orientation for HEIF files
+		// because the HEIF spec treats it as informational only (see strukturag/libheif#227).
+		// This iPhone 7 file lacks an irot box and carries EXIF orientation 6, which is
+		// technically non-conformant.  The output retains the raw sensor dimensions.
 		assert.Equal(t, 1, jpegInfo.Orientation)
 		assert.Equal(t, "iPhone 7", jpegInfo.CameraModel)
 		assert.Equal(t, "Apple", jpegInfo.CameraMake)
@@ -82,6 +93,15 @@ func TestMediaFile_Heic(t *testing.T) {
 		}
 	})
 	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
+		prevDisableHeifConvert := c.Options().DisableHeifConvert
+		prevDisableImageMagick := c.Options().DisableImageMagick
+		c.Options().DisableHeifConvert = true
+		c.Options().DisableImageMagick = true
+		t.Cleanup(func() {
+			c.Options().DisableHeifConvert = prevDisableHeifConvert
+			c.Options().DisableImageMagick = prevDisableImageMagick
+		})
+
 		img, err := NewMediaFile(filepath.Join(c.SamplesPath(), "iphone_15_pro.heic"))
 
 		if err != nil {
@@ -137,6 +157,40 @@ func TestMediaFile_Heic(t *testing.T) {
 		assert.Equal(t, "", jpegInfo.Caption)
 
 		if err = os.Remove(filepath.Join(c.SidecarPath(), c.SamplesPath(), "iphone_15_pro.heic.jpg")); err != nil {
+			t.Error(err)
+		}
+	})
+	t.Run("FoxProfileAvif", func(t *testing.T) {
+		prevDisableHeifConvert := c.Options().DisableHeifConvert
+		prevDisableImageMagick := c.Options().DisableImageMagick
+		c.Options().DisableHeifConvert = true
+		c.Options().DisableImageMagick = true
+		t.Cleanup(func() {
+			c.Options().DisableHeifConvert = prevDisableHeifConvert
+			c.Options().DisableImageMagick = prevDisableImageMagick
+		})
+
+		img, err := NewMediaFile(filepath.Join(c.SamplesPath(), "fox.profile0.8bpc.yuv420.avif"))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(c)
+
+		jpeg, err := convert.ToImage(img, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotNil(t, jpeg)
+		assert.True(t, jpeg.IsJpeg())
+		assert.True(t, jpeg.Exists())
+		assert.Greater(t, jpeg.Width(), 0)
+		assert.Greater(t, jpeg.Height(), 0)
+
+		if err = os.Remove(filepath.Join(c.SidecarPath(), c.SamplesPath(), "fox.profile0.8bpc.yuv420.avif.jpg")); err != nil {
 			t.Error(err)
 		}
 	})

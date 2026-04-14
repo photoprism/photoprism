@@ -5,8 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/disintegration/imaging"
-
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 
@@ -17,7 +16,7 @@ func TestCollage(t *testing.T) {
 	t.Run("Polaroid", func(t *testing.T) {
 		var images []image.Image
 
-		img, err := imaging.Open("testdata/500x500.jpg")
+		img, _, err := fs.DecodeImageFile("testdata/500x500.jpg")
 		assert.NoError(t, err)
 
 		for i := 0; i <= 5; i++ {
@@ -29,7 +28,7 @@ func TestCollage(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		err = imaging.Save(preview, saveName)
+		err = thumb.Save(preview, saveName)
 
 		assert.NoError(t, err)
 		mimeType, _ := fs.DetectMimeType(saveName)
@@ -40,7 +39,7 @@ func TestCollage(t *testing.T) {
 	t.Run("Two", func(t *testing.T) {
 		var images []image.Image
 
-		img, err := imaging.Open("testdata/500x500.jpg")
+		img, _, err := fs.DecodeImageFile("testdata/500x500.jpg")
 		assert.NoError(t, err)
 
 		for i := 0; i <= 1; i++ {
@@ -52,7 +51,7 @@ func TestCollage(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		err = imaging.Save(preview, saveName)
+		err = thumb.Save(preview, saveName)
 
 		assert.NoError(t, err)
 		mimeType, _ := fs.DetectMimeType(saveName)
@@ -68,7 +67,7 @@ func TestCollage(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		err = imaging.Save(preview, saveName)
+		err = thumb.Save(preview, saveName)
 
 		assert.NoError(t, err)
 		mimeType, _ := fs.DetectMimeType(saveName)
@@ -79,7 +78,7 @@ func TestCollage(t *testing.T) {
 	t.Run("UnknownCollageType", func(t *testing.T) {
 		var images []image.Image
 
-		img, err := imaging.Open("testdata/500x500.jpg")
+		img, _, err := fs.DecodeImageFile("testdata/500x500.jpg")
 		assert.NoError(t, err)
 
 		for i := 0; i <= 5; i++ {
@@ -93,7 +92,7 @@ func TestCollage(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, "unknown collage type Unknown", err.Error())
 
-		err = imaging.Save(preview, saveName)
+		err = thumb.Save(preview, saveName)
 
 		assert.NoError(t, err)
 

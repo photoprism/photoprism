@@ -482,13 +482,6 @@ export const ThumbSizes = () => {
   return result;
 };
 
-export const ThumbFilters = () => [
-  { value: "blackman", text: $gettext("Blackman: Lanczos Modification, Less Ringing Artifacts") },
-  { value: "lanczos", text: $gettext("Lanczos: Detail Preservation, Minimal Artifacts") },
-  { value: "cubic", text: $gettext("Cubic: Moderate Quality, Good Performance") },
-  { value: "linear", text: $gettext("Linear: Very Smooth, Best Performance") },
-];
-
 export const Gender = () => [
   { value: "male", text: $gettext("Male") },
   { value: "female", text: $gettext("Female") },

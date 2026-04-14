@@ -3,9 +3,9 @@ package thumb
 import (
 	"testing"
 
-	"github.com/disintegration/imaging"
-
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestFit(t *testing.T) {
@@ -28,7 +28,7 @@ func TestFitBounds(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -48,7 +48,7 @@ func TestFitBounds(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)
@@ -68,7 +68,7 @@ func TestFitBounds(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		img, err := imaging.Open(src, imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(src)
 
 		if err != nil {
 			t.Fatal(err)

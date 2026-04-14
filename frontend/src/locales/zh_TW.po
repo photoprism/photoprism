@@ -623,10 +623,6 @@ msgstr "出生日期"
 msgid "Black"
 msgstr "黑色"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "布萊克曼窗函數：使用Lanczos濾波器修改，減少振鈴現象"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "藍色"
@@ -772,7 +768,7 @@ msgstr "無法儲存更改項目"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "成功儲存變更"
@@ -1020,10 +1016,6 @@ msgstr "已新增"
 msgid "Creating thumbnails for"
 msgstr "為以下項目新增縮圖"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "立方：中等品質，良好效能"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "目前的密碼"
@@ -1144,7 +1136,7 @@ msgstr "關閉所有臉部偵測和辨識功能。"
 msgid "Disable Backups"
 msgstr "停用備份"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "停用 Darktable"
 
@@ -1160,11 +1152,11 @@ msgstr "禁用臉部"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "禁用需要原件文件夹写入权限的功能。"
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "停用 FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "禁用ImageMagick"
 
@@ -1176,11 +1168,11 @@ msgstr "禁用交互式世界地图和反向地理编码。"
 msgid "Disable Places"
 msgstr "停用位置"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "停用 RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "停用向量"
 
@@ -1192,11 +1184,11 @@ msgstr "停用 WebDAV"
 msgid "Disabled"
 msgstr "已停用"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "停用向量圖型支援。"
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "停用影像轉碼和縮圖擷取。"
 
@@ -1250,15 +1242,15 @@ msgstr "文件"
 msgid "Documents"
 msgstr "文件"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "不要使用 Darktable 來轉換 RAW 檔案。"
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "不要用ImageMagick来转换图像。"
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "不要使用 RawTherapee 來轉換 RAW 檔案。"
 
@@ -1298,10 +1290,6 @@ msgstr "下載遠端檔案"
 msgid "Downloading…"
 msgstr "下載中…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "縮小濾鏡"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "將文件拖放到此處"
@@ -1321,11 +1309,11 @@ msgstr "重複的項目會被跳過並只會出現一次。"
 msgid "Duration"
 msgstr "時長"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "動態預覽"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "動態大小限制：%{n} px"
 
@@ -1383,7 +1371,7 @@ msgstr "啟用可能不完整或不穩定的新功能。"
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "啟用檔案瀏覽器以瀏覽 Originals 資料夾結構。"
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "啟用 RAW 轉換器預設集。可能會降低性能。"
 
@@ -1529,7 +1517,7 @@ msgstr "我的最愛"
 msgid "Feature Request"
 msgstr "功能要求"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "女性"
 
@@ -1542,7 +1530,7 @@ msgstr "檔案"
 msgid "File Browser"
 msgstr "檔案瀏覽器"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "檔案轉換"
 
@@ -1738,7 +1726,7 @@ msgstr "如果您失去了對身份驗證器應用程式或裝置的存取權限
 msgid "Image"
 msgstr "圖片"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "影像品質"
 
@@ -1883,11 +1871,11 @@ msgstr "項目"
 msgid "Items per page:"
 msgstr "每頁項目："
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG品質：%{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG大小限制：%{n} px"
 
@@ -1922,10 +1910,6 @@ msgstr "標籤"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "已刪除標籤"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos：保留細節，減少偽像"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2008,10 +1992,6 @@ msgstr "萊姆色"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "到達上限，顯示前 %{n} 個檔案"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "線性：非常平滑，最佳性能"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2114,7 +2094,7 @@ msgstr "洋紅"
 msgid "Main Color"
 msgstr "主要顏色"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "男性"
 
@@ -2459,7 +2439,7 @@ msgstr "最舊優先"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "在 Windows 上，於連接對話框中輸入以下資訊："
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "按需生成缩略图可能会导致较高的 CPU 和内存使用率。不建议资源有限的服务器和 NAS 设备使用。"
 
@@ -2548,7 +2528,7 @@ msgstr "原始名稱"
 msgid "Originals"
 msgstr "來源"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "其他"
 
@@ -2725,7 +2705,7 @@ msgstr "請稍候…"
 msgid "PM"
 msgstr "午安"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG大小限制：%{n} px"
 
@@ -2973,7 +2953,7 @@ msgstr "解析度"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "重新啟動"
 
@@ -3447,7 +3427,7 @@ msgstr "開始"
 msgid "Start Page"
 msgstr "開始頁"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "靜態大小限制：%{n} px"
 
@@ -3818,7 +3798,7 @@ msgstr "上傳此類圖像將可能被自動拒絕。"
 msgid "URL"
 msgstr "網址"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "使用預設"
 
@@ -3950,7 +3930,7 @@ msgstr "網頁登入"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4105,6 +4085,21 @@ msgstr "標題"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "封存"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "布萊克曼窗函數：使用Lanczos濾波器修改，減少振鈴現象"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "立方：中等品質，良好效能"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "縮小濾鏡"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos：保留細節，減少偽像"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "線性：非常平滑，最佳性能"
 
 #~ msgid "Drop files here"
 #~ msgstr "將檔案丟到這裡"

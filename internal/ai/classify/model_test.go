@@ -79,8 +79,7 @@ func runBasicLabelsTest(t *testing.T, model *Model, expectedUncertainty int) {
 
 	if len(result) > 0 {
 		assert.Equal(t, "zebra", result[0].Name)
-
-		assert.Equal(t, expectedUncertainty, result[0].Uncertainty)
+		assert.InDelta(t, expectedUncertainty, result[0].Uncertainty, 1)
 	}
 }
 
@@ -112,8 +111,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 
 		if len(result) > 0 {
 			assert.Equal(t, "cat", result[0].Name)
-
-			assert.Equal(t, 59, result[0].Uncertainty)
+			assert.InDelta(t, 59, result[0].Uncertainty, 2)
 		}
 	})
 	t.Run("CatNum720Jpeg", func(t *testing.T) {
@@ -129,7 +127,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 
 		if len(result) > 0 {
 			assert.Equal(t, "cat", result[0].Name)
-			assert.Equal(t, 60, result[0].Uncertainty)
+			assert.InDelta(t, 60, result[0].Uncertainty, 2)
 		}
 	})
 	t.Run("GreenJpg", func(t *testing.T) {
@@ -144,8 +142,7 @@ func TestModel_LabelsFromFile(t *testing.T) {
 
 		if len(result) > 0 {
 			assert.Equal(t, "outdoor", result[0].Name)
-
-			assert.Equal(t, 70, result[0].Uncertainty)
+			assert.InDelta(t, 70, result[0].Uncertainty, 5)
 		}
 	})
 	t.Run("NotExistingFile", func(t *testing.T) {
@@ -224,7 +221,8 @@ func TestModel_Run(t *testing.T) {
 
 			if len(result) > 0 {
 				assert.Equal(t, "dog", result[0].Name)
-				assert.Equal(t, 34, result[0].Uncertainty)
+				assert.GreaterOrEqual(t, result[0].Uncertainty, 25)
+				assert.LessOrEqual(t, result[0].Uncertainty, 50)
 			}
 		}
 	})

@@ -6,7 +6,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -123,7 +122,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},
 		{"disable-ffmpeg", fmt.Sprintf("%t", c.DisableFFmpeg())},
 		{"disable-exiftool", fmt.Sprintf("%t", c.DisableExifTool())},
-		{"disable-vips", fmt.Sprintf("%t", c.DisableVips())},
 		{"disable-sips", fmt.Sprintf("%t", c.DisableSips())},
 		{"disable-darktable", fmt.Sprintf("%t", c.DisableDarktable())},
 		{"disable-rawtherapee", fmt.Sprintf("%t", c.DisableRawTherapee())},
@@ -308,7 +306,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"preview-token", c.PreviewToken()},
 		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},
-		{"thumb-filter", c.ThumbFilter().String()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
 		{"thumb-size-uncached", fmt.Sprintf("%d", c.ThumbSizeUncached())},
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},
@@ -331,27 +328,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 	}...)
 
-	switch faceEngine {
-	case face.EngineONNX:
-		rows = append(rows, [][]string{
-			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-		}...)
-	case face.EnginePigo:
-		rows = append(rows, [][]string{
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
-		}...)
-	default:
-		rows = append(rows, [][]string{
-			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
-		}...)
-	}
+	rows = append(rows, [][]string{
+		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+	}...)
 
 	rows = append(rows, [][]string{
 		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},

@@ -122,7 +122,7 @@ test.meta("testID", "albums-003").meta({ type: "short", mode: "public" })("Commo
   await t.expect(albumdialog.description.value).eql("All my animals").expect(albumdialog.category.value).eql("Pets");
 
   await t.click(albumdialog.description).pressKey("ctrl+a delete");
-  await t.click(albumdialog.category).click(albumdialog.category).pressKey("ctrl+a delete").click(Selector("form.form-album-edit i.mdi-bookmark"));
+  await t.click(albumdialog.category).click(albumdialog.category).pressKey("ctrl+a delete").click(Selector("form.form-album-edit div.v-toolbar-title"));
   await t.expect(albumdialog.category.value).eql("");
   await t.click(albumdialog.dialogSave);
   await menu.openPage("albums");

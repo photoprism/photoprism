@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-03-29 19:03+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -623,10 +623,6 @@ msgstr "Date de naissance"
 msgid "Black"
 msgstr "Noir"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman : modification de Lanczos, moins d'artefacts de sonnerie"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Bleu"
@@ -772,7 +768,7 @@ msgstr "Les modifications n'ont pu être sauvegardées"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Les modifications ont bien été enregistrées"
@@ -1020,10 +1016,6 @@ msgstr "Créé"
 msgid "Creating thumbnails for"
 msgstr "Création des miniatures pour"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubique : Qualité modérée, bonne performance"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Mot de passe actuel"
@@ -1144,7 +1136,7 @@ msgstr "Désactiver toutes les fonctions de détection et de reconnaissance des 
 msgid "Disable Backups"
 msgstr "Désactiver les sauvegardes"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:308
 msgid "Disable Darktable"
 msgstr "Désactiver Darktable"
 
@@ -1160,11 +1152,11 @@ msgstr "Désactiver la reconnaissance faciale"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Désactiver les fonctions pour lesquelles l'autorisation d'écrire dans le dossier des originaux est nécessaire."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:372
 msgid "Disable FFmpeg"
 msgstr "Désactiver FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:356
 msgid "Disable ImageMagick"
 msgstr "Désactiver ImageMagick"
 
@@ -1176,11 +1168,11 @@ msgstr "Désactiver les cartes du monde interactives et le géocodage inversé."
 msgid "Disable Places"
 msgstr "Désactiver les Lieux"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:324
 msgid "Disable RawTherapee"
 msgstr "Désactiver RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:388
 msgid "Disable Vectors"
 msgstr "Désactiver les vecteurs"
 
@@ -1192,11 +1184,11 @@ msgstr "Désactiver WebDAV"
 msgid "Disabled"
 msgstr "Désactivé"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:389
 msgid "Disables vector graphics support."
 msgstr "Désactive la prise en charge des images vectorielles."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:373
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Désactive le transcodage vidéo et l'extraction des vignettes."
 
@@ -1250,15 +1242,15 @@ msgstr "Document"
 msgid "Documents"
 msgstr "Documents"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:309
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ne pas utiliser Darktable pour convertir les fichers RAW."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:357
 msgid "Don't use ImageMagick to convert images."
 msgstr "Ne pas utiliser ImageMagick pour convertir les images."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:325
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ne pas utiliser RawTherapee pour convertir les fichiers RAW."
 
@@ -1298,10 +1290,6 @@ msgstr "Télécharger les fichiers distants"
 msgid "Downloading…"
 msgstr "Téléchargement en cours…"
 
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Filtre de qualité"
-
 #: src/locales.js:280
 msgid "Drag and drop files here"
 msgstr "Glisser et déposer les fichiers ici"
@@ -1321,11 +1309,11 @@ msgstr "Les doublons seront ignorés et n'apparaîtront qu'une seule fois."
 msgid "Duration"
 msgstr "Durée"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:251
 msgid "Dynamic Previews"
 msgstr "Avant-premières non cachées"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:227
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limite de taille non cachée : %{n}px"
 
@@ -1383,7 +1371,7 @@ msgstr "Activer les nouvelles fonctionnalités, potentiellement incomplètes ou 
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Activez le navigateur de fichiers pour parcourir la structure des dossiers contenant les originaux."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:341
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Active les préréglages du convertisseur RAW. Cela peut réduire les performances."
 
@@ -1529,7 +1517,7 @@ msgstr "Favoris"
 msgid "Feature Request"
 msgstr "Demander une fonctionnalité"
 
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Femme"
 
@@ -1542,7 +1530,7 @@ msgstr "Fichier"
 msgid "File Browser"
 msgstr "Explorateur de fichiers"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:296
 msgid "File Conversion"
 msgstr "Conversion de fichiers"
 
@@ -1738,7 +1726,7 @@ msgstr "En cas de perte d'accès à votre application ou votre appareil d'authen
 msgid "Image"
 msgstr "Image"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:267
 msgid "Image Quality"
 msgstr "Qualité de l'image"
 
@@ -1883,11 +1871,11 @@ msgstr "Item"
 msgid "Items per page:"
 msgstr "Article(s) par page :"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:274
 msgid "JPEG Quality: %{n}"
 msgstr "Qualité des JPEG : %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:281
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limite de taille des JPEGs : %{n}px"
 
@@ -1922,10 +1910,6 @@ msgstr "Étiquettes"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Étiquettes supprimées"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos : Préservation des détails, artefacts minimaux"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -2008,10 +1992,6 @@ msgstr "Citron"
 #: src/page/library/browse.vue:462
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limite atteinte, affichage des %{n} premiers fichiers"
-
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Linéaire : Très lisse, meilleure performance"
 
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
@@ -2114,7 +2094,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Couleur principale"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Homme"
 
@@ -2459,7 +2439,7 @@ msgstr "La plus ancienne d'abord"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Sous Windows, saisissez la ressource suivante dans la boîte de dialogue de connexion :"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:253
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "La génération de vignettes à la demande peut entraîner une charge élevée du processeur et de la mémoire. Elle est déconseillée en cas de serveurs ou d'appareils NAS aux ressources limitées."
 
@@ -2548,7 +2528,7 @@ msgstr "Nom original"
 msgid "Originals"
 msgstr "Originaux"
 
-#: src/options/options.js:465 src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Autre"
 
@@ -2725,7 +2705,7 @@ msgstr "Veuillez patienter…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:288
 msgid "PNG Size Limit: %{n}px"
 msgstr "Limite de taille PNG : %{n}px"
 
@@ -2973,7 +2953,7 @@ msgstr "Résolution"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:402
 msgid "Restart"
 msgstr "Redémarrer"
 
@@ -3150,7 +3130,7 @@ msgstr "Sélectionner ou créer des étiquettes"
 
 #: src/component/upload/dialog.vue:37
 msgid "Select or drop files to upload…"
-msgstr "Sélectionne ou dépose les fichiers à télécharger…"
+msgstr "Sélectionner ou déposer les fichiers à télécharger…"
 
 #: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
@@ -3447,7 +3427,7 @@ msgstr "Démarrer"
 msgid "Start Page"
 msgstr "Page d'accueil"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:219
 msgid "Static Size Limit: %{n}px"
 msgstr "Limite de taille avant rendu : %{n}px"
 
@@ -3818,7 +3798,7 @@ msgstr "Les fichiers chargés qui contiendraient de telles images seront automat
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:340
 msgid "Use Presets"
 msgstr "Utiliser les préréglages"
 
@@ -3950,7 +3930,7 @@ msgstr "Connexion Web"
 #: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
 #: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
 #: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
-#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:505
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4105,6 +4085,21 @@ msgstr "Titre"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archives"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman : modification de Lanczos, moins d'artefacts de sonnerie"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Cubique : Qualité modérée, bonne performance"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Filtre de qualité"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos : Préservation des détails, artefacts minimaux"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Linéaire : Très lisse, meilleure performance"
 
 #~ msgid "Drop files here"
 #~ msgstr "Déposer les fichiers ici"

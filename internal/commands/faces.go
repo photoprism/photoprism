@@ -55,7 +55,7 @@ var FacesCommands = &cli.Command{
 				},
 				&cli.StringFlag{
 					Name:  "engine",
-					Usage: "regenerate markers using detection engine `NAME` (auto, pigo, onnx)",
+					Usage: "regenerate markers using detection engine `NAME` (auto, onnx)",
 				},
 			},
 			Action: facesResetAction,
