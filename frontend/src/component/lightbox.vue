@@ -40,6 +40,16 @@
         }"
       >
         <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
+        <p-face-marker-overlay
+          v-if="shouldShowEditButton() && featPeople && markersVisible && pswp()"
+          ref="faceMarkerOverlay"
+          :mode="addingMarker ? 'draw' : 'display'"
+          :markers="faceMarkers"
+          :pswp="pswp()"
+          :busy="markersBusy"
+          @create="onCreateFaceMarker"
+          @cancel="cancelAddingMarker"
+        ></p-face-marker-overlay>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
@@ -76,13 +86,24 @@
       </div>
       <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
         <p-sidebar-info
+          ref="sidebarInfo"
           v-model="model"
           :photo="photo"
           :can-edit="shouldShowEditButton()"
           :collection="collection"
           :context="context"
+          :markers-visible="markersVisible"
+          :adding-marker="addingMarker"
+          :markers-busy="markersBusy"
+          :new-marker-uid="pendingNameMarkerUid"
           @close="hideInfo"
           @navigate="onSidebarNavigate"
+          @toggle-markers-visible="toggleMarkersVisible"
+          @toggle-adding-marker="toggleAddingMarker"
+          @remove-marker="onRemoveFaceMarker"
+          @eject-marker="onEjectFaceMarker"
+          @reload-markers="onReloadFaceMarkers"
+          @naming-started="pendingNameMarkerUid = null"
         ></p-sidebar-info>
       </div>
     </div>
@@ -134,6 +155,7 @@ const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PSidebarInfo from "component/sidebar/info.vue";
+import { Marker } from "model/marker";
 
 const appStorage = getAppStorage();
 const appSessionStorage = getAppSessionStorage();
@@ -187,6 +209,12 @@ export default {
       index: 0, // Current slide index in models.
       contextAllowsEdit: true,
       contextAllowsSelect: true,
+      featPeople: this.$config.feature("people"),
+      markersVisible: false,
+      addingMarker: false,
+      markersBusy: false,
+      faceMarkers: [],
+      pendingNameMarkerUid: null,
       subscriptions: [], // Event subscriptions.
       // Video properties for rendering the controls.
       video: {
@@ -294,6 +322,7 @@ export default {
     hideDialog() {
       // Reset component state.
       this.onReset();
+      this.resetFaceMarkers();
 
       // Hide sidebar.
       this.info = false;
@@ -1450,12 +1479,15 @@ export default {
     onHideMenu() {
       this.menuVisible = false;
     },
-    close() {
+    async close() {
       if (this.closing) {
         return new Promise((resolve) => {
           this.$event.subscribeOnce("lightbox.leave", resolve);
         });
       }
+
+      const ok = await this.confirmDiscardSidebar();
+      if (!ok) return;
 
       this.closing = true;
 
@@ -1475,7 +1507,45 @@ export default {
     },
     onLightboxOpened() {
       this.addEventListeners();
+      this.wrapPswpNavGuards();
       this.$event.publish("lightbox.opened");
+    },
+    // Wraps pswp.prev/next so the unsaved-changes dialog is awaited BEFORE
+    // pswp actually commits the navigation. This catches arrow keys (which
+    // call this.pswp().prev/next) and pswp's built-in arrow buttons (which
+    // also dispatch pswp.prev/next internally). Swipe/drag goes through
+    // mainScroll directly and is handled by the post-facto rollback in
+    // onChange().
+    wrapPswpNavGuards() {
+      const pswp = this.pswp();
+      if (!pswp || pswp.__navGuardsInstalled) return;
+      const origPrev = pswp.prev ? pswp.prev.bind(pswp) : null;
+      const origNext = pswp.next ? pswp.next.bind(pswp) : null;
+      if (origPrev) {
+        pswp.prev = async () => {
+          if (this._suppressNavCheck) {
+            this._suppressNavCheck = false;
+            return origPrev();
+          }
+          const ok = await this.confirmDiscardSidebar();
+          if (!ok) return;
+          this._suppressNavCheck = true;
+          return origPrev();
+        };
+      }
+      if (origNext) {
+        pswp.next = async () => {
+          if (this._suppressNavCheck) {
+            this._suppressNavCheck = false;
+            return origNext();
+          }
+          const ok = await this.confirmDiscardSidebar();
+          if (!ok) return;
+          this._suppressNavCheck = true;
+          return origNext();
+        };
+      }
+      pswp.__navGuardsInstalled = true;
     },
     onLightboxClose() {
       this.$event.publish("lightbox.pause");
@@ -1585,10 +1655,37 @@ export default {
         return;
       }
 
+      const newIndex = typeof pswp.currIndex === "number" ? pswp.currIndex : -1;
+      const oldIndex = this.index;
+
+      // Rollback guard for swipe/drag/arrow navigation. The check happens
+      // BEFORE the photo reference updates so the sidebar's hasPendingEdit()
+      // still sees the dirty old photo. On cancel, revert via pswp.goTo().
+      if (this._suppressNavCheck) {
+        this._suppressNavCheck = false;
+      } else if (newIndex !== oldIndex && this.info && newIndex >= 0 && oldIndex >= 0) {
+        const sidebar = this.$refs.sidebarInfo;
+        if (sidebar && typeof sidebar.hasPendingEdit === "function" && sidebar.hasPendingEdit()) {
+          const rollbackIndex = oldIndex;
+          this.$nextTick(() => {
+            Promise.resolve(sidebar.confirmDiscardPending()).then((ok) => {
+              if (!ok) {
+                this._suppressNavCheck = true;
+                const p = this.pswp();
+                if (p && typeof p.goTo === "function") p.goTo(rollbackIndex);
+              }
+            });
+          });
+        }
+      }
+
       // Hide action menu when slide changes.
       if (this.$refs.menu) {
         this.$refs.menu.hide();
       }
+
+      // Markers are photo-specific; prevent them leaking across slides.
+      this.resetFaceMarkers();
 
       // Set current slide (model) list index.
       if (typeof pswp.currIndex === "number") {
@@ -1629,6 +1726,160 @@ export default {
           }
         })
         .catch(() => {});
+    },
+    toggleMarkersVisible() {
+      if (!this.shouldShowEditButton()) {
+        return;
+      }
+      if (this.markersVisible) {
+        this.markersVisible = false;
+        this.addingMarker = false;
+        this.faceMarkers = [];
+        return;
+      }
+      this.markersVisible = true;
+      this.reloadFaceMarkers();
+    },
+    toggleAddingMarker() {
+      if (!this.shouldShowEditButton() || this.markersBusy) {
+        return;
+      }
+      if (this.addingMarker) {
+        this.addingMarker = false;
+        return;
+      }
+      this.markersVisible = true;
+      this.addingMarker = true;
+      this.reloadFaceMarkers();
+      if (this.$refs.menu) {
+        this.$refs.menu.hide();
+      }
+    },
+    cancelAddingMarker() {
+      this.addingMarker = false;
+    },
+    reloadFaceMarkers() {
+      if (this.photo && typeof this.photo.getMarkers === "function") {
+        this.faceMarkers = this.photo.getMarkers(true);
+      } else {
+        this.faceMarkers = [];
+      }
+    },
+    resetFaceMarkers() {
+      this.markersVisible = false;
+      this.addingMarker = false;
+      this.markersBusy = false;
+      this.faceMarkers = [];
+      this.pendingNameMarkerUid = null;
+    },
+    confirmDiscardSidebar() {
+      const sidebar = this.$refs.sidebarInfo;
+      if (sidebar && typeof sidebar.confirmDiscardPending === "function") {
+        return Promise.resolve(sidebar.confirmDiscardPending());
+      }
+      return Promise.resolve(true);
+    },
+    onCreateFaceMarker(area) {
+      if (!this.photo || !this.shouldShowEditButton() || this.markersBusy) return;
+
+      const file = Array.isArray(this.photo.Files) ? this.photo.Files.find((f) => !!f.Primary) : null;
+      if (!file || !file.UID) return;
+
+      const marker = new Marker({
+        FileUID: file.UID,
+        Type: "face",
+        X: area.X,
+        Y: area.Y,
+        W: area.W,
+        H: area.H,
+      });
+
+      this.markersBusy = true;
+      marker
+        .save()
+        .then(() => {
+          if (!file.Markers) file.Markers = [];
+          file.Markers.push(marker.getValues());
+          Photo.evictCache(this.photo.UID);
+          this.reloadFaceMarkers();
+          // Trigger inline naming on the fresh row in the sidebar.
+          if (marker.UID) {
+            this.pendingNameMarkerUid = marker.UID;
+          }
+          // Only clear on success — a failed save must leave the rect on
+          // the photo so the user can retry confirmation or cancel.
+          if (this.$refs.faceMarkerOverlay && typeof this.$refs.faceMarkerOverlay.clearPending === "function") {
+            this.$refs.faceMarkerOverlay.clearPending();
+          }
+        })
+        .catch(() => {
+          this.$notify.error(this.$gettext("Failed to save face marker"));
+        })
+        .finally(() => {
+          this.markersBusy = false;
+        });
+    },
+    onEjectFaceMarker(marker) {
+      if (!this.photo || !this.shouldShowEditButton() || this.markersBusy) return;
+      if (!marker || !marker.SubjUID || typeof marker.clearSubject !== "function") return;
+
+      this.markersBusy = true;
+      marker
+        .clearSubject()
+        .then(() => {
+          this.syncMarkerInFile(marker);
+          Photo.evictCache(this.photo.UID);
+          this.reloadFaceMarkers();
+        })
+        .catch(() => {
+          this.$notify.error(this.$gettext("Failed to remove name"));
+        })
+        .finally(() => {
+          this.markersBusy = false;
+        });
+    },
+    // Replaces the raw marker entry in file.Markers with fresh values from
+    // the updated Marker instance. Without this, photo.getMarkers() keeps
+    // returning stale Name/SubjUID after setName/clearSubject, so toggling
+    // visibility re-renders the old label.
+    syncMarkerInFile(marker) {
+      if (!marker || !marker.UID || !this.photo || !Array.isArray(this.photo.Files)) return;
+      const file = this.photo.Files.find((f) => !!f.Primary);
+      if (!file || !Array.isArray(file.Markers)) return;
+      const idx = file.Markers.findIndex((mm) => mm.UID === marker.UID);
+      if (idx >= 0) {
+        file.Markers[idx] = typeof marker.getValues === "function" ? marker.getValues() : { ...file.Markers[idx], ...marker };
+      }
+    },
+    onReloadFaceMarkers(marker) {
+      if (marker) this.syncMarkerInFile(marker);
+      if (this.photo) Photo.evictCache(this.photo.UID);
+      this.reloadFaceMarkers();
+    },
+    onRemoveFaceMarker(marker) {
+      if (!this.photo || !this.shouldShowEditButton() || this.markersBusy) return;
+      if (!marker || marker.SubjUID || typeof marker.reject !== "function") return;
+
+      const file = Array.isArray(this.photo.Files) ? this.photo.Files.find((f) => !!f.Primary) : null;
+      const uid = marker.UID;
+
+      this.markersBusy = true;
+      marker
+        .reject()
+        .then(() => {
+          if (file && Array.isArray(file.Markers) && uid) {
+            const idx = file.Markers.findIndex((mm) => mm.UID === uid);
+            if (idx >= 0) file.Markers.splice(idx, 1);
+          }
+          Photo.evictCache(this.photo.UID);
+          this.reloadFaceMarkers();
+        })
+        .catch(() => {
+          this.$notify.error(this.$gettext("Failed to remove face marker"));
+        })
+        .finally(() => {
+          this.markersBusy = false;
+        });
     },
     // Preloads the next photo's full metadata when the sidebar is visible.
     preloadNextPhoto() {
@@ -2075,7 +2326,9 @@ export default {
 
       this.pauseSlideshow();
 
-      // Handle space and escape key events.
+      // Handle space and escape key events. Arrow-key navigation flows through
+      // pswp and is guarded by the rollback check in onChange(), so all
+      // navigation sources (keyboard, swipe, drag) get the same dialog.
       switch (ev.code) {
         case "ArrowLeft":
           ev.preventDefault();
@@ -2481,10 +2734,13 @@ export default {
       });
     },
     // Hides the lightbox sidebar, if visible.
-    hideInfo() {
+    async hideInfo() {
       if (!this.visible || !this.info) {
         return;
       }
+
+      const ok = await this.confirmDiscardSidebar();
+      if (!ok) return;
 
       this.info = false;
 

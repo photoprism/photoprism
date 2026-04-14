@@ -20,7 +20,7 @@
             class="meta-inline-edit meta-inline-title"
             @keydown.enter.prevent="confirmField"
             @keydown.escape.prevent="cancelEditing"
-            @blur="cancelEditing"
+            @blur="onInlineFieldBlur"
           ></v-text-field>
           <div v-else-if="model.Title" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
           <div v-else class="meta-add-prompt" @click.stop="startEditing('title')">{{ $pgettext("Photo", "Title") }}</div>
@@ -51,7 +51,7 @@
             autocomplete="off"
             class="meta-inline-edit meta-inline-caption"
             @keydown.escape.prevent="cancelEditing"
-            @blur="cancelEditing"
+            @blur="onInlineFieldBlur"
           ></v-textarea>
           <div v-else-if="model.Caption" class="text-body-2 meta-caption meta-scrollable" v-html="captionHtml"></div>
           <div v-else class="meta-add-prompt" @click.stop="startEditing('caption')">{{ $gettext("Caption") }}</div>
@@ -122,61 +122,106 @@
           </template>
         </template>
 
-        <template v-if="people.length > 0">
+        <template v-if="featPeople && (people.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("People") }}</div>
+            <template v-if="isEditable" #append>
+              <v-icon
+                :icon="markersVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                size="small"
+                class="meta-markers-toggle"
+                :class="{ 'is-active': markersVisible }"
+                :title="markersVisible ? $gettext('Hide face markers') : $gettext('Show face markers')"
+                :disabled="markersBusy"
+                @mousedown.prevent
+                @click.stop="onToggleMarkersVisible"
+              ></v-icon>
+              <v-icon
+                :icon="addingMarker ? 'mdi-check' : 'mdi-plus'"
+                size="small"
+                class="meta-marker-add"
+                :class="{ 'is-active': addingMarker }"
+                :title="addingMarker ? $gettext('Done') : $gettext('Add face')"
+                :disabled="markersBusy"
+                @mousedown.prevent
+                @click.stop="onToggleAddingMarker"
+              ></v-icon>
+            </template>
           </v-list-item>
           <v-list-item
             v-for="m in people"
             :key="m.UID || m.CropID"
             class="metadata__item metadata__person-row"
-            :class="{ clickable: m.Name && m.SubjUID && !isEditingPerson(m) }"
-            @click.stop.prevent="m.Name && m.SubjUID && !isEditingPerson(m) ? navigateToPerson(m) : null"
+            :class="{ clickable: editingMarkerUid !== m.UID && m.Name && m.SubjUID }"
+            @click.stop.prevent="editingMarkerUid !== m.UID && m.Name && m.SubjUID ? navigateToPerson(m) : null"
           >
             <template #prepend>
               <img :src="m.thumbnailUrl('tile_160')" :alt="m.Name" class="meta-person__avatar" />
             </template>
             <v-combobox
-              v-if="isEditingPerson(m)"
-              v-model:search="m.Name"
-              :items="$config.values.people"
+              v-if="editingMarkerUid === m.UID"
+              ref="markerNameInput"
+              v-model:search="editingMarkerName"
+              :items="knownPeople"
               item-title="Name"
               item-value="Name"
+              :placeholder="$gettext('Name')"
+              :menu-props="markerMenuProps"
               return-object
               hide-no-data
-              hide-details
-              single-line
-              append-icon=""
+              hide-details="auto"
+              autocomplete="off"
               density="compact"
               variant="plain"
-              :placeholder="$gettext('Name')"
-              :menu-props="personMenuProps"
-              class="meta-inline-edit meta-person-edit"
-              @update:model-value="(person) => onSelectPerson(m, person)"
-              @keydown.enter.prevent="confirmField"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
+              class="meta-inline-edit meta-inline-marker"
+              @update:model-value="onPickPerson"
+              @keydown.enter.prevent="confirmMarkerName"
+              @keydown.escape.prevent="cancelMarkerName"
+              @blur="cancelMarkerName"
+              @click.stop
             ></v-combobox>
             <v-list-item-title v-else-if="m.Name" class="meta-person__name">{{ m.Name }}</v-list-item-title>
+            <v-list-item-title v-else class="meta-person__name meta-person__unnamed">{{ $gettext("Unknown") }}</v-list-item-title>
             <template v-if="isEditable" #append>
               <v-icon
-                v-if="isEditingPerson(m)"
+                v-if="editingMarkerUid === m.UID"
                 icon="mdi-check"
                 size="small"
                 class="meta-inline-confirm"
                 @mousedown.prevent
-                @click.stop="confirmField"
+                @click.stop="confirmMarkerName"
               ></v-icon>
               <v-icon
                 v-else-if="m.SubjUID"
                 icon="mdi-eject"
                 size="small"
-                class="meta-inline-pencil"
-                :title="$gettext('Detach')"
-                @click.stop="onEjectPerson(m)"
+                class="meta-marker-eject"
+                :title="$gettext('Remove Name')"
+                :disabled="markersBusy"
+                @mousedown.prevent
+                @click.stop="onEjectMarker(m)"
               ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditingPerson(m)"></v-icon>
+              <v-icon
+                v-else
+                icon="mdi-close"
+                size="small"
+                class="meta-marker-remove"
+                :title="$gettext('Remove')"
+                :disabled="markersBusy"
+                @mousedown.prevent
+                @click.stop="onRemoveMarker(m)"
+              ></v-icon>
+              <v-icon
+                v-if="editingMarkerUid !== m.UID && !m.SubjUID"
+                icon="mdi-pencil-outline"
+                size="small"
+                class="meta-inline-pencil"
+                :title="$gettext('Add Name')"
+                :disabled="markersBusy"
+                @mousedown.prevent
+                @click.stop="startEditingMarker(m.UID)"
+              ></v-icon>
             </template>
           </v-list-item>
         </template>
@@ -355,7 +400,7 @@
               autocomplete="off"
               class="meta-inline-edit"
               @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
+              @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="subject" class="text-body-2 meta-scrollable">{{ subject }}</div>
             <div v-else class="meta-add-prompt" @click.stop="startEditing('subject')">{{ $gettext("Subject") }}</div>
@@ -391,7 +436,7 @@
               autocomplete="off"
               class="meta-inline-edit"
               @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
+              @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="artist" class="text-body-2 meta-scrollable">{{ artist }}</div>
             <div v-else class="meta-add-prompt" @click.stop="startEditing('artist')">{{ $gettext("Artist") }}</div>
@@ -427,7 +472,7 @@
               autocomplete="off"
               class="meta-inline-edit"
               @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
+              @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="copyright" class="text-body-2 meta-scrollable">{{ copyright }}</div>
             <div v-else class="meta-add-prompt" @click.stop="startEditing('copyright')">{{ $gettext("Copyright") }}</div>
@@ -463,7 +508,7 @@
               autocomplete="off"
               class="meta-inline-edit"
               @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
+              @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="license" class="text-body-2 meta-scrollable">{{ license }}</div>
             <div v-else class="meta-add-prompt" @click.stop="startEditing('license')">{{ $gettext("License") }}</div>
@@ -509,7 +554,7 @@
               autocomplete="off"
               class="meta-inline-edit"
               @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
+              @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="keywords" class="text-body-2 meta-keywords meta-scrollable">{{ keywords }}</div>
             <div v-else class="meta-add-prompt" @click.stop="startEditing('keywords')">{{ $gettext("Keywords") }}</div>
@@ -544,7 +589,7 @@
               autocomplete="off"
               class="meta-inline-edit"
               @keydown.escape.prevent="cancelEditing"
-              @blur="cancelEditing"
+              @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="notesHtml" class="text-body-2 meta-notes meta-scrollable" v-html="notesHtml"></div>
             <div v-else class="meta-add-prompt" @click.stop="startEditing('notes')">{{ $gettext("Notes") }}</div>
@@ -560,6 +605,15 @@
       @close="locationDialog = false"
       @confirm="confirmLocation"
     ></p-location-dialog>
+    <p-confirm-dialog
+      :visible="discardDialog.visible"
+      icon=""
+      :text="$gettext('Discard unsaved changes?')"
+      :action="$gettext('Discard')"
+      confirm-color="info"
+      @close="onDiscardCancel"
+      @confirm="onDiscardConfirm"
+    ></p-confirm-dialog>
   </div>
 </template>
 
@@ -575,6 +629,7 @@ import PMap from "component/map.vue";
 import PDateTimeDialog from "component/sidebar/datetime-dialog.vue";
 import PCameraDialog from "component/sidebar/camera-dialog.vue";
 import PLocationDialog from "component/location/dialog.vue";
+import PConfirmDialog from "component/confirm/dialog.vue";
 
 export default {
   name: "PSidebarInfo",
@@ -583,6 +638,7 @@ export default {
     PDateTimeDialog,
     PCameraDialog,
     PLocationDialog,
+    PConfirmDialog,
   },
   props: {
     modelValue: {
@@ -605,11 +661,38 @@ export default {
       type: String,
       default: "",
     },
+    markersVisible: {
+      type: Boolean,
+      default: false,
+    },
+    addingMarker: {
+      type: Boolean,
+      default: false,
+    },
+    markersBusy: {
+      type: Boolean,
+      default: false,
+    },
+    newMarkerUid: {
+      type: String,
+      default: null,
+    },
   },
-  emits: ["update:modelValue", "close", "navigate"],
+  emits: [
+    "update:modelValue",
+    "close",
+    "navigate",
+    "toggle-markers-visible",
+    "toggle-adding-marker",
+    "remove-marker",
+    "eject-marker",
+    "reload-markers",
+    "naming-started",
+  ],
   data() {
     return {
       actions: [],
+      featPeople: this.$config.feature("people"),
       featPlaces: this.$config.feature("places"),
       textRule: (v) => !v || v.length <= this.$config.get("clip") || this.$gettext("Text too long"),
       dateTimeDialog: false,
@@ -617,7 +700,6 @@ export default {
       locationDialog: false,
       editingField: null,
       editOriginal: null,
-      editMarker: null,
       chipInput: null,
       chipSearch: "",
       chipKey: 0,
@@ -627,12 +709,17 @@ export default {
       pendingLabelAdditions: [],
       pendingAlbumRemovals: [],
       pendingAlbumAdditions: [],
-      personMenuProps: {
-        openOnClick: false,
+      editingMarkerUid: null,
+      editingMarkerName: "",
+      editingMarkerOriginal: "",
+      markerMenuProps: {
         openOnFocus: true,
         closeOnContentClick: true,
-        maxHeight: 200,
-        density: "compact",
+        maxHeight: 260,
+      },
+      discardDialog: {
+        visible: false,
+        resolver: null,
       },
     };
   },
@@ -676,6 +763,11 @@ export default {
     people() {
       if (!this.p) return [];
       return this.p.getMarkers(true);
+    },
+    knownPeople() {
+      const values = this.$config && this.$config.values;
+      if (!values || !Array.isArray(values.people)) return [];
+      return values.people;
     },
     labels() {
       if (!this.p?.Labels) return [];
@@ -748,10 +840,9 @@ export default {
     },
   },
   watch: {
-    photo() {
-      if (this.editingField) {
-        this.cancelEditing();
-      }
+    newMarkerUid(uid) {
+      if (!uid) return;
+      this.$nextTick(() => this.startEditingMarker(uid));
     },
   },
   methods: {
@@ -822,73 +913,143 @@ export default {
         if (input) input.focus();
       });
     },
-    isEditingPerson(marker) {
-      return this.editingField === "person-" + (marker.UID || marker.CropID);
+    onToggleMarkersVisible() {
+      if (!this.isEditable || this.markersBusy) return;
+      this.$emit("toggle-markers-visible");
     },
-    startEditingPerson(marker) {
-      if (this.editingField) {
-        this.cancelEditing();
-      }
-
-      this.editingField = "person-" + (marker.UID || marker.CropID);
-      this.editOriginal = { Name: marker.Name || "", SubjUID: marker.SubjUID || "" };
-      this.editMarker = marker;
-      this._editStartedAt = Date.now();
-
+    onToggleAddingMarker() {
+      if (!this.isEditable || this.markersBusy) return;
+      this.$emit("toggle-adding-marker");
+    },
+    onRemoveMarker(marker) {
+      if (!this.isEditable || this.markersBusy || !marker || marker.SubjUID) return;
+      this.$emit("remove-marker", marker);
+    },
+    onEjectMarker(marker) {
+      if (!this.isEditable || this.markersBusy || !marker || !marker.SubjUID) return;
+      this.$emit("eject-marker", marker);
+    },
+    startEditingMarker(uid) {
+      if (!this.isEditable || !uid) return;
+      const marker = this.people.find((m) => m.UID === uid);
+      if (!marker) return;
+      this.editingMarkerUid = uid;
+      this.editingMarkerOriginal = marker.Name || "";
+      this.editingMarkerName = this.editingMarkerOriginal;
+      this._editMarkerStartedAt = Date.now();
+      this.$emit("naming-started");
       this.$nextTick(() => {
-        const input = this.$el.querySelector(".meta-person-edit input");
+        const input = this.$el && this.$el.querySelector(".meta-inline-marker input");
         if (input) input.focus();
       });
     },
-    onEjectPerson(marker) {
-      // Mutate locally only; the clearSubject() call is deferred until
-      // the user confirms, matching the approval flow for other edits.
-      this.startEditingPerson(marker);
-      marker.Name = "";
-      marker.SubjUID = "";
-    },
-    onSelectPerson(marker, person) {
-      if (typeof person === "object" && person?.Name && person?.UID) {
-        marker.Name = person.Name;
-        marker.SubjUID = person.UID;
+    confirmMarkerName() {
+      if (!this.editingMarkerUid) return;
+      const uid = this.editingMarkerUid;
+      const raw = this.editingMarkerName;
+      // Combobox can bind either the typed string or the selected item object.
+      const typed = typeof raw === "object" && raw !== null ? raw.Name || "" : raw || "";
+      const name = typed.trim();
+      const original = this.editingMarkerOriginal;
+
+      this.editingMarkerUid = null;
+      this.editingMarkerName = "";
+      this.editingMarkerOriginal = "";
+      this._editMarkerStartedAt = null;
+
+      if (!name || name === original) return;
+
+      const marker = this.people.find((m) => m.UID === uid);
+      if (!marker || typeof marker.setName !== "function") return;
+
+      // Link an existing subject when the typed name matches a known person
+      // case-insensitively. Without this the backend would create a new
+      // subject instead of reusing the matching one.
+      const match = this.knownPeople.find((p) => p && p.Name && p.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+      if (match) {
+        marker.Name = match.Name;
+        marker.SubjUID = match.UID;
+      } else {
+        marker.Name = name;
       }
+
+      marker
+        .setName()
+        .then(() => {
+          this.$emit("reload-markers", marker);
+        })
+        .catch(() => {
+          this.$notify.error(this.$gettext("Failed to save name"));
+        });
     },
-    confirmField() {
-      if (this.editMarker) {
-        const marker = this.editMarker;
-        const original = this.editOriginal || { Name: "", SubjUID: "" };
-        this.editingField = null;
-        this.editOriginal = null;
-        this.editMarker = null;
-
-        const name = (marker.Name || "").trim();
-
-        if (!name) {
-          if (original.SubjUID) {
-            marker.clearSubject();
-          }
-          return;
-        }
-
-        const people = this.$config.values?.people;
-
-        if (people) {
-          const found = people.find((p) => p.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
-
-          if (found) {
-            marker.Name = found.Name;
-            marker.SubjUID = found.UID;
-          }
-        }
-
-        if (marker.Name === original.Name && marker.SubjUID === original.SubjUID) {
-          return;
-        }
-
-        marker.setName();
+    onPickPerson(value) {
+      if (!value || typeof value !== "object" || !value.Name) return;
+      this.editingMarkerName = value.Name;
+      // Bypass the 200ms guard so the picked value commits immediately.
+      this._editMarkerStartedAt = null;
+      this.confirmMarkerName();
+    },
+    cancelMarkerName() {
+      // Same 200ms guard as cancelEditing: prevents the pencil/confirm click from
+      // triggering blur before focus lands in the input.
+      if (this._editMarkerStartedAt && Date.now() - this._editMarkerStartedAt < 200) {
         return;
       }
-
+      this.editingMarkerUid = null;
+      this.editingMarkerName = "";
+      this.editingMarkerOriginal = "";
+      this._editMarkerStartedAt = null;
+    },
+    resetInlineEdits() {
+      if (this.editingField) this.cancelEditing();
+      this.editingMarkerUid = null;
+      this.editingMarkerName = "";
+      this.editingMarkerOriginal = "";
+      this._editMarkerStartedAt = null;
+    },
+    // Inline text fields (title/caption/subject/...) are excluded on purpose:
+    // onInlineFieldBlur() auto-commits them before any navigation source can
+    // fire, so they can never have pending state at nav time. Only the
+    // staged editors that do NOT auto-commit on blur belong here.
+    hasPendingEdit() {
+      if (this.editingMarkerUid && this.editingMarkerName !== this.editingMarkerOriginal) return true;
+      if (this.pendingLabelAdditions.length || this.pendingLabelRemovals.length) return true;
+      if (this.pendingAlbumAdditions.length || this.pendingAlbumRemovals.length) return true;
+      return false;
+    },
+    // Async guard used by the lightbox before closing / hiding / navigating.
+    // Returns a Promise<boolean>: true = safe to proceed, false = user canceled.
+    confirmDiscardPending() {
+      if (!this.hasPendingEdit()) return Promise.resolve(true);
+      if (this.discardDialog.visible && this.discardDialog.resolver) {
+        // Another request is already waiting on the dialog; reuse it.
+        return new Promise((resolve) => {
+          const prev = this.discardDialog.resolver;
+          this.discardDialog.resolver = (ok) => {
+            prev(ok);
+            resolve(ok);
+          };
+        });
+      }
+      return new Promise((resolve) => {
+        this.discardDialog.resolver = resolve;
+        this.discardDialog.visible = true;
+      });
+    },
+    onDiscardConfirm() {
+      this.discardDialog.visible = false;
+      const r = this.discardDialog.resolver;
+      this.discardDialog.resolver = null;
+      this.resetInlineEdits();
+      if (r) r(true);
+    },
+    onDiscardCancel() {
+      this.discardDialog.visible = false;
+      const r = this.discardDialog.resolver;
+      this.discardDialog.resolver = null;
+      if (r) r(false);
+    },
+    confirmField() {
       if (!this.p || !this.canEdit) {
         this.editingField = null;
         return;
@@ -917,22 +1078,28 @@ export default {
       }
 
       if (this.editingField && this.editOriginal !== null) {
-        if (this.editMarker) {
-          this.editMarker.Name = this.editOriginal.Name || "";
-          this.editMarker.SubjUID = this.editOriginal.SubjUID || "";
-        } else {
-          this.setFieldValue(this.editingField, this.editOriginal);
-        }
+        this.setFieldValue(this.editingField, this.editOriginal);
       }
 
       this.editingField = null;
       this.editOriginal = null;
-      this.editMarker = null;
       this._editStartedAt = null;
       this.pendingLabelRemovals = [];
       this.pendingLabelAdditions = [];
       this.pendingAlbumRemovals = [];
       this.pendingAlbumAdditions = [];
+    },
+    // Blur handler for inline text fields (title/caption/subject/artist/
+    // copyright/license/keywords/notes). Commits the edit instead of
+    // silently reverting so the user does not lose their typing when
+    // they click away, swipe to the next photo, or press the nav arrow.
+    // Escape still cancels explicitly via cancelEditing().
+    onInlineFieldBlur() {
+      if (this._editStartedAt && Date.now() - this._editStartedAt < 200) {
+        return;
+      }
+      if (!this.editingField) return;
+      this.confirmField();
     },
     formatTime(model) {
       if (!model || !model.TakenAtLocal) {

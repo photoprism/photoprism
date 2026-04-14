@@ -14,6 +14,58 @@ export default class Page {
     this.playButton = Selector('[class^="pswp__button pswp__button--slideshow-toggle pswp__"]', { timeout: 5000 });
     this.favoriteOnIcon = Selector("button.action-favorite i.icon-favorite", { timeout: 5000 });
     this.favoriteOffIcon = Selector("button.action-favorite i.icon-favorite-border", { timeout: 5000 });
+    // Sidebar info + face markers.
+    this.sidebar = Selector("div.p-lightbox__sidebar", { timeout: 15000 });
+    this.sidebarInfo = Selector("div.p-sidebar-info", { timeout: 15000 });
+    this.markersVisibilityToggle = Selector(".meta-markers-toggle", { timeout: 15000 });
+    this.markerAddButton = Selector(".meta-marker-add", { timeout: 15000 });
+    this.markerRemoveButton = Selector(".meta-marker-remove", { timeout: 5000 });
+    this.faceMarkerOverlay = Selector("div.p-face-markers", { timeout: 15000 });
+    this.faceMarkerRect = Selector("rect.p-face-markers__rect", { timeout: 15000 });
+    this.faceMarkerDraft = Selector("rect.p-face-markers__rect--draft", { timeout: 15000 });
+    this.faceMarkerConfirmButton = Selector("button.p-face-markers__btn--confirm", { timeout: 15000 });
+    this.faceMarkerCancelButton = Selector("button.p-face-markers__btn--cancel", { timeout: 15000 });
+    this.personRow = Selector(".metadata__person-row", { timeout: 15000 });
+  }
+
+  async openInfoSidebar() {
+    if (!(await this.sidebar.exists)) {
+      await t.click(Selector("button.pswp__button--info-button"));
+    }
+    await t.expect(this.sidebar.visible).ok();
+  }
+
+  async toggleMarkersVisible() {
+    await t.click(this.markersVisibilityToggle);
+  }
+
+  async startAddingMarker() {
+    await t.click(this.markerAddButton);
+  }
+
+  async cancelMarkerDraft() {
+    await t.click(this.faceMarkerCancelButton);
+  }
+
+  async confirmMarkerDraft() {
+    await t.click(this.faceMarkerConfirmButton);
+  }
+
+  async getRenderedMarkerCount() {
+    return this.faceMarkerRect.count;
+  }
+
+  async getPersonRowCount() {
+    return this.personRow.count;
+  }
+
+  async drawMarkerOnImage(fromX, fromY, toX, toY) {
+    // Drag the overlay from one viewport coordinate to another. The
+    // overlay must already be in draw mode (after clicking +).
+    await t.drag(this.faceMarkerOverlay, toX - fromX, toY - fromY, {
+      offsetX: fromX,
+      offsetY: fromY,
+    });
   }
 
   async openPhotoViewer(mode, uidOrNth) {

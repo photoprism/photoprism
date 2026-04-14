@@ -303,78 +303,687 @@ describe("PSidebarInfo component", () => {
     expect(personRows[1].classes()).not.toContain("clickable");
   });
 
-  // Face marker editing (approval required for every change)
-  it("should not hit the server on eject until the user confirms", async () => {
-    const marker = {
-      UID: "mE",
-      CropID: "cropE",
-      Name: "Alice",
-      SubjUID: "subjA",
-      clearSubject: vi.fn().mockResolvedValue(true),
-      setName: vi.fn().mockResolvedValue(true),
-    };
-    wrapper.vm.onEjectPerson(marker);
-    expect(marker.clearSubject).not.toHaveBeenCalled();
-    expect(marker.Name).toBe("");
-    expect(marker.SubjUID).toBe("");
-    expect(wrapper.vm.isEditingPerson(marker)).toBe(true);
-
-    wrapper.vm.confirmField();
-    expect(marker.clearSubject).toHaveBeenCalledTimes(1);
-    expect(marker.setName).not.toHaveBeenCalled();
+  // People section: face marker buttons (show/hide + add) and per-row remove.
+  // The sidebar emits events; the parent lightbox owns the actual state.
+  it("should render the People header with show/hide and + buttons when editable", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.html()).toContain("People");
+    expect(w.find(".meta-markers-toggle").exists()).toBe(true);
+    expect(w.find(".meta-marker-add").exists()).toBe(true);
   });
 
-  it("should restore the marker on cancel after eject", () => {
-    const marker = {
-      UID: "mF",
-      CropID: "cropF",
-      Name: "Bob",
-      SubjUID: "subjB",
-      clearSubject: vi.fn(),
-      setName: vi.fn(),
-    };
-    wrapper.vm.onEjectPerson(marker);
-    wrapper.vm._editStartedAt = 0;
-    wrapper.vm.cancelEditing();
-    expect(marker.Name).toBe("Bob");
-    expect(marker.SubjUID).toBe("subjB");
-    expect(marker.clearSubject).not.toHaveBeenCalled();
-    expect(marker.setName).not.toHaveBeenCalled();
+  it("should render the People header even when there are no markers, when editable", () => {
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([]) };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.html()).toContain("People");
+    expect(w.find(".meta-markers-toggle").exists()).toBe(true);
+    expect(w.find(".meta-marker-add").exists()).toBe(true);
   });
 
-  it("should require confirmation when selecting an existing person from the dropdown", () => {
-    const marker = {
-      UID: "mG",
-      CropID: "cropG",
+  it("should not render the show/hide or + icons when not editable", () => {
+    // The default wrapper is mounted without canEdit → isEditable false.
+    expect(wrapper.find(".meta-markers-toggle").exists()).toBe(false);
+    expect(wrapper.find(".meta-marker-add").exists()).toBe(false);
+  });
+
+  it("should still list named people when not editable but the photo has markers", () => {
+    expect(wrapper.find(".metadata__person-row").exists()).toBe(true);
+    expect(wrapper.html()).toContain("Jane Doe");
+  });
+
+  it("should hide the People section entirely when not editable and there are no markers", () => {
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([]) };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.html()).not.toContain("People");
+  });
+
+  it("should reflect the markersVisible prop on the toggle icon", () => {
+    const w = mount(PSidebarInfo, {
+      props: {
+        modelValue: mockModel,
+        photo: mockPhoto,
+        canEdit: true,
+        context: contexts.Photos,
+        markersVisible: true,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    const toggle = w.find(".meta-markers-toggle");
+    expect(toggle.classes()).toContain("is-active");
+  });
+
+  it("should emit toggle-markers-visible when the eye icon is clicked", async () => {
+    const onToggle = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "onToggle-markers-visible": onToggle,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    await w.find(".meta-markers-toggle").trigger("click");
+    expect(onToggle).toHaveBeenCalled();
+  });
+
+  it("should emit toggle-adding-marker when the + icon is clicked", async () => {
+    const onToggle = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "onToggle-adding-marker": onToggle,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    const icon = w.find(".meta-marker-add");
+    expect(icon.classes()).toContain("mdi-plus");
+    await icon.trigger("click");
+    expect(onToggle).toHaveBeenCalled();
+  });
+
+  it("should swap the add icon to a check while addingMarker is true", () => {
+    const w = mount(PSidebarInfo, {
+      props: {
+        modelValue: mockModel,
+        photo: mockPhoto,
+        canEdit: true,
+        context: contexts.Photos,
+        addingMarker: true,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    const icon = w.find(".meta-marker-add");
+    expect(icon.classes()).toContain("is-active");
+    expect(icon.classes()).toContain("mdi-check");
+  });
+
+  it("should still emit toggle-adding-marker when addingMarker is true (so the user can exit)", async () => {
+    const onToggle = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "addingMarker": true,
+        "onToggle-adding-marker": onToggle,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    await w.find(".meta-marker-add").trigger("click");
+    expect(onToggle).toHaveBeenCalled();
+  });
+
+  it("should not render the per-row remove icon on a named marker", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    const personRows = w.findAll(".metadata__person-row");
+    // First row is "Jane Doe" with SubjUID — no remove icon.
+    expect(personRows[0].find(".meta-marker-remove").exists()).toBe(false);
+  });
+
+  it("should render the per-row remove icon on an unnamed marker when editable", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    const personRows = w.findAll(".metadata__person-row");
+    // Second row is the unnamed marker.
+    expect(personRows[1].find(".meta-marker-remove").exists()).toBe(true);
+  });
+
+  it("should not render the per-row remove icon when not editable", () => {
+    // wrapper is mounted without canEdit.
+    const personRows = wrapper.findAll(".metadata__person-row");
+    expect(personRows[1].find(".meta-marker-remove").exists()).toBe(false);
+  });
+
+  it("should emit remove-marker with the marker when the remove icon is clicked", async () => {
+    const onRemove = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "onRemove-marker": onRemove,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    const personRows = w.findAll(".metadata__person-row");
+    await personRows[1].find(".meta-marker-remove").trigger("click");
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove.mock.calls[0][0].UID).toBe("m2");
+  });
+
+  it("should refuse to emit remove-marker on a marker that has a SubjUID", () => {
+    const onRemove = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "onRemove-marker": onRemove,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.onRemoveMarker({ UID: "mNamed", SubjUID: "subjX", Name: "Alice" });
+    expect(onRemove).not.toHaveBeenCalled();
+  });
+
+  it("should refuse to emit toggle-markers-visible / toggle-adding-marker / remove-marker while markersBusy is true", () => {
+    const onToggleVisible = vi.fn();
+    const onToggleAdd = vi.fn();
+    const onRemove = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "markersBusy": true,
+        "onToggle-markers-visible": onToggleVisible,
+        "onToggle-adding-marker": onToggleAdd,
+        "onRemove-marker": onRemove,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.onToggleMarkersVisible();
+    w.vm.onToggleAddingMarker();
+    w.vm.onRemoveMarker({ UID: "mX", SubjUID: "" });
+    expect(onToggleVisible).not.toHaveBeenCalled();
+    expect(onToggleAdd).not.toHaveBeenCalled();
+    expect(onRemove).not.toHaveBeenCalled();
+  });
+
+  it("should not render an inline name input until a marker enters naming mode", () => {
+    const w = mount(PSidebarInfo, {
+      props: {
+        modelValue: mockModel,
+        photo: mockPhoto,
+        canEdit: true,
+        context: contexts.Photos,
+        markersVisible: true,
+        addingMarker: true,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.find(".meta-inline-marker").exists()).toBe(false);
+  });
+
+  // Feature flag gate (Task 4): when $config.feature('people') is false,
+  // the entire People section is hidden regardless of marker presence.
+  it("should hide the People section when the people feature is disabled", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: {
+        stubs: { PMap: true },
+        mocks: {
+          $config: { feature: (key) => key !== "people", get: () => false, allow: () => true, values: {}, dir: () => "ltr" },
+        },
+      },
+    });
+    expect(w.html()).not.toContain("People");
+    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+    expect(w.find(".meta-marker-add").exists()).toBe(false);
+    expect(w.find(".metadata__person-row").exists()).toBe(false);
+  });
+
+  // Eject button (Task 2): named markers expose mdi-eject.
+  it("should render the eject icon on a named marker and emit eject-marker on click", async () => {
+    const onEject = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "onEject-marker": onEject,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    const personRows = w.findAll(".metadata__person-row");
+    // First row: Jane Doe (SubjUID set).
+    const ejectIcon = personRows[0].find(".meta-marker-eject");
+    expect(ejectIcon.exists()).toBe(true);
+    // Unnamed marker should NOT have an eject icon.
+    expect(personRows[1].find(".meta-marker-eject").exists()).toBe(false);
+    await ejectIcon.trigger("click");
+    expect(onEject).toHaveBeenCalledTimes(1);
+    expect(onEject.mock.calls[0][0].UID).toBe("m1");
+  });
+
+  it("should refuse to emit eject-marker on a marker without SubjUID", () => {
+    const onEject = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "onEject-marker": onEject,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.onEjectMarker({ UID: "mX", SubjUID: "", Name: "" });
+    expect(onEject).not.toHaveBeenCalled();
+  });
+
+  it("should refuse to emit eject-marker while markersBusy is true", () => {
+    const onEject = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "markersBusy": true,
+        "onEject-marker": onEject,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.onEjectMarker({ UID: "m1", SubjUID: "subj1", Name: "Jane Doe" });
+    expect(onEject).not.toHaveBeenCalled();
+  });
+
+  // Inline naming (Task 1): setting newMarkerUid puts the matching row into
+  // edit mode and emits naming-started so the parent can clear the prop.
+  it("should enter inline name edit mode when newMarkerUid matches a marker", async () => {
+    const onNamingStarted = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": mockPhoto,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "newMarkerUid": null,
+        "onNaming-started": onNamingStarted,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    await w.setProps({ newMarkerUid: "m2" });
+    await w.vm.$nextTick();
+    await w.vm.$nextTick();
+    expect(w.vm.editingMarkerUid).toBe("m2");
+    expect(w.find(".meta-inline-marker").exists()).toBe(true);
+    expect(onNamingStarted).toHaveBeenCalled();
+  });
+
+  it("should call marker.setName and emit reload-markers when confirming an inline name", async () => {
+    const setName = vi.fn().mockResolvedValue(undefined);
+    const namedMarker = {
+      UID: "m2",
+      CropID: "crop2",
       Name: "",
       SubjUID: "",
-      clearSubject: vi.fn(),
-      setName: vi.fn().mockResolvedValue(true),
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
     };
-    wrapper.vm.startEditingPerson(marker);
-    wrapper.vm.onSelectPerson(marker, { Name: "Carol", UID: "subjC" });
-    expect(marker.Name).toBe("Carol");
-    expect(marker.SubjUID).toBe("subjC");
-    expect(marker.setName).not.toHaveBeenCalled();
-    expect(wrapper.vm.isEditingPerson(marker)).toBe(true);
-
-    wrapper.vm.confirmField();
-    expect(marker.setName).toHaveBeenCalledTimes(1);
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([namedMarker]) };
+    const onReload = vi.fn();
+    const w = mount(PSidebarInfo, {
+      props: {
+        "modelValue": mockModel,
+        "photo": photo,
+        "canEdit": true,
+        "context": contexts.Photos,
+        "onReload-markers": onReload,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "Alice";
+    // Bypass the 200ms guard so confirm runs.
+    w.vm._editMarkerStartedAt = null;
+    w.vm.confirmMarkerName();
+    expect(namedMarker.Name).toBe("Alice");
+    expect(setName).toHaveBeenCalled();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(onReload).toHaveBeenCalled();
+    expect(w.vm.editingMarkerUid).toBeNull();
   });
 
-  it("should not call setName when confirming an unchanged marker", () => {
-    const marker = {
-      UID: "mH",
-      CropID: "cropH",
-      Name: "Dave",
-      SubjUID: "subjD",
-      clearSubject: vi.fn(),
-      setName: vi.fn(),
+  it("should revert the marker name when cancelMarkerName runs", async () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditingMarker("m1");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "Changed";
+    w.vm._editMarkerStartedAt = null;
+    w.vm.cancelMarkerName();
+    expect(w.vm.editingMarkerUid).toBeNull();
+    expect(w.vm.editingMarkerName).toBe("");
+  });
+
+  it("should link an existing subject when the typed name matches a known person", async () => {
+    const setName = vi.fn().mockResolvedValue(undefined);
+    const namedMarker = {
+      UID: "m2",
+      Name: "",
+      SubjUID: "",
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
     };
-    wrapper.vm.startEditingPerson(marker);
-    wrapper.vm.confirmField();
-    expect(marker.setName).not.toHaveBeenCalled();
-    expect(marker.clearSubject).not.toHaveBeenCalled();
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([namedMarker]) };
+    const knownPersonConfig = {
+      feature: () => true,
+      get: () => false,
+      getSettings: () => ({ features: { edit: true } }),
+      allow: () => true,
+      featExperimental: () => false,
+      featDevelop: () => false,
+      values: { people: [{ UID: "sXYZ", Name: "Alice Smith" }] },
+      dir: () => "ltr",
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: {
+        stubs: { PMap: true },
+        mocks: { $config: knownPersonConfig },
+      },
+    });
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "alice smith";
+    w.vm._editMarkerStartedAt = null;
+    w.vm.confirmMarkerName();
+    expect(namedMarker.Name).toBe("Alice Smith");
+    expect(namedMarker.SubjUID).toBe("sXYZ");
+    expect(setName).toHaveBeenCalled();
+  });
+
+  it("should commit immediately when onPickPerson selects a dropdown item", async () => {
+    const setName = vi.fn().mockResolvedValue(undefined);
+    const namedMarker = {
+      UID: "m2",
+      Name: "",
+      SubjUID: "",
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
+    };
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([namedMarker]) };
+    const knownPersonConfig = {
+      feature: () => true,
+      get: () => false,
+      getSettings: () => ({ features: { edit: true } }),
+      allow: () => true,
+      featExperimental: () => false,
+      featDevelop: () => false,
+      values: { people: [{ UID: "sBOB", Name: "Bob" }] },
+      dir: () => "ltr",
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: {
+        stubs: { PMap: true },
+        mocks: { $config: knownPersonConfig },
+      },
+    });
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.onPickPerson({ UID: "sBOB", Name: "Bob" });
+    expect(namedMarker.Name).toBe("Bob");
+    expect(namedMarker.SubjUID).toBe("sBOB");
+    expect(setName).toHaveBeenCalled();
+  });
+
+  it("should expose knownPeople from $config.values.people", () => {
+    const knownPersonConfig = {
+      feature: () => true,
+      get: () => false,
+      getSettings: () => ({ features: { edit: true } }),
+      allow: () => true,
+      featExperimental: () => false,
+      featDevelop: () => false,
+      values: {
+        people: [
+          { UID: "sA", Name: "Alice" },
+          { UID: "sB", Name: "Bob" },
+        ],
+      },
+      dir: () => "ltr",
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: {
+        stubs: { PMap: true },
+        mocks: { $config: knownPersonConfig },
+      },
+    });
+    expect(w.vm.knownPeople).toHaveLength(2);
+    expect(w.vm.knownPeople[0].Name).toBe("Alice");
+  });
+
+  it("should fall back to an empty knownPeople list when values.people is missing", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.knownPeople).toEqual([]);
+  });
+
+  it("should not confirm an empty name (treats it as cancel)", async () => {
+    const setName = vi.fn();
+    const namedMarker = {
+      UID: "m2",
+      Name: "",
+      SubjUID: "",
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
+    };
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([namedMarker]) };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "   ";
+    w.vm._editMarkerStartedAt = null;
+    w.vm.confirmMarkerName();
+    expect(setName).not.toHaveBeenCalled();
+    expect(w.vm.editingMarkerUid).toBeNull();
+  });
+
+  // Inline blur now commits the edit instead of silently reverting — this
+  // was the bug where typing in an inline field and clicking away (or
+  // navigating) would quietly lose the change.
+  it("should commit the edit on blur (onInlineFieldBlur calls confirmField)", async () => {
+    const update = vi.fn().mockResolvedValue(undefined);
+    const photo = {
+      ...mockPhoto,
+      Title: "Original",
+      update,
+      wasChanged: function () {
+        return this.Title !== "Original";
+      },
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditing("title");
+    await w.vm.$nextTick();
+    photo.Title = "Changed";
+    w.vm._editStartedAt = null;
+    w.vm.onInlineFieldBlur();
+    expect(update).toHaveBeenCalled();
+    expect(w.vm.editingField).toBeNull();
+    // Value must NOT be reverted to "Original".
+    expect(photo.Title).toBe("Changed");
+  });
+
+  it("should respect the 200ms debounce guard on blur", async () => {
+    const update = vi.fn().mockResolvedValue(undefined);
+    const photo = {
+      ...mockPhoto,
+      Title: "Original",
+      update,
+      wasChanged: () => true,
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditing("title");
+    await w.vm.$nextTick();
+    // _editStartedAt was just set by startEditing; blur should be a no-op.
+    w.vm.onInlineFieldBlur();
+    expect(update).not.toHaveBeenCalled();
+    expect(w.vm.editingField).toBe("title");
+  });
+
+  it("should still cancel on Escape via cancelEditing", async () => {
+    const photo = {
+      ...mockPhoto,
+      Title: "Original",
+      update: vi.fn(),
+      wasChanged: () => true,
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditing("title");
+    await w.vm.$nextTick();
+    photo.Title = "Changed";
+    w.vm._editStartedAt = null;
+    w.vm.cancelEditing();
+    // Escape/cancelEditing reverts to the stored original.
+    expect(photo.Title).toBe("Original");
+    expect(w.vm.editingField).toBeNull();
+  });
+
+  // Inline text fields (title/caption/subject/...) are intentionally NOT
+  // tracked by hasPendingEdit: onInlineFieldBlur() auto-commits them before
+  // any nav source can fire, so they can never be pending at nav time.
+  it("should NOT report hasPendingEdit for a dirty inline text field (auto-commits on blur)", () => {
+    const photo = {
+      ...mockPhoto,
+      Title: "Changed",
+      wasChanged: () => true,
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "title";
+    expect(w.vm.hasPendingEdit()).toBe(false);
+  });
+
+  it("should report hasPendingEdit when labels have pending additions or removals", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.pendingLabelAdditions = ["New Label"];
+    expect(w.vm.hasPendingEdit()).toBe(true);
+    w.vm.pendingLabelAdditions = [];
+    w.vm.pendingLabelRemovals = [{ Label: { UID: "lbl1" } }];
+    expect(w.vm.hasPendingEdit()).toBe(true);
+  });
+
+  it("should report hasPendingEdit when albums have pending additions or removals", () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.pendingAlbumAdditions = [{ UID: "alb-new", Title: "New" }];
+    expect(w.vm.hasPendingEdit()).toBe(true);
+    w.vm.pendingAlbumAdditions = [];
+    w.vm.pendingAlbumRemovals = [{ UID: "alb1" }];
+    expect(w.vm.hasPendingEdit()).toBe(true);
+  });
+
+  it("should report hasPendingEdit while an inline marker name is dirty", async () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "Alice";
+    expect(w.vm.hasPendingEdit()).toBe(true);
+  });
+
+  it("should resolve confirmDiscardPending to true immediately when there is no pending edit", async () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    await expect(w.vm.confirmDiscardPending()).resolves.toBe(true);
+    expect(w.vm.discardDialog.visible).toBe(false);
+  });
+
+  it("should open the discard dialog when confirmDiscardPending is called with a pending edit", async () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "Alice";
+    const promise = w.vm.confirmDiscardPending();
+    expect(w.vm.discardDialog.visible).toBe(true);
+    expect(typeof w.vm.discardDialog.resolver).toBe("function");
+    // Resolve the dialog via the confirm handler so the test doesn't hang.
+    w.vm.onDiscardConfirm();
+    await expect(promise).resolves.toBe(true);
+    expect(w.vm.discardDialog.visible).toBe(false);
+    expect(w.vm.editingMarkerUid).toBeNull();
+  });
+
+  it("should clear pending edits when onDiscardConfirm runs", async () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "Alice";
+    const promise = w.vm.confirmDiscardPending();
+    w.vm.onDiscardConfirm();
+    await expect(promise).resolves.toBe(true);
+    expect(w.vm.editingMarkerUid).toBeNull();
+    expect(w.vm.editingMarkerName).toBe("");
+  });
+
+  it("should keep pending edits when onDiscardCancel runs", async () => {
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.startEditingMarker("m2");
+    await w.vm.$nextTick();
+    w.vm.editingMarkerName = "Alice";
+    const promise = w.vm.confirmDiscardPending();
+    w.vm.onDiscardCancel();
+    await expect(promise).resolves.toBe(false);
+    expect(w.vm.editingMarkerUid).toBe("m2");
+    expect(w.vm.editingMarkerName).toBe("Alice");
   });
 
   // Labels
@@ -836,8 +1445,9 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
   });
 
-  // Photo watcher
-  it("should cancel editing when photo changes", async () => {
+  // Photo watcher: the parent lightbox owns the unsaved-changes guard, so
+  // the sidebar no longer silently cancels inline edits when photo changes.
+  it("should preserve inline edit state across photo changes (parent guards navigation)", async () => {
     const w = mount(PSidebarInfo, {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
@@ -846,7 +1456,7 @@ describe("PSidebarInfo component", () => {
     w.vm._editStartedAt = Date.now() - 300;
 
     await w.setProps({ photo: { ...mockPhoto, Title: "Other" } });
-    expect(w.vm.editingField).toBeNull();
+    expect(w.vm.editingField).toBe("title");
   });
 
   // clearChipInput
