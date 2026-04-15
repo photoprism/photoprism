@@ -10,7 +10,7 @@
     scrim
     persistent
     tiled
-    theme="lightbox"
+    :theme="lightboxThemeName"
     class="p-dialog p-lightbox v-dialog--lightbox no-transition"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
@@ -74,7 +74,7 @@
           </div>
         </div>
       </div>
-      <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
+      <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-surface">
         <p-sidebar-info v-model="model" :collection="collection" :context="context" @close="hideInfo"></p-sidebar-info>
       </div>
     </div>
@@ -141,9 +141,9 @@ export default {
       visible: false,
       busy: false,
       closing: false,
+      lightboxThemeName: this.$config.themeName || "default",
       info: localStorage.getItem("lightbox.info") === "true",
       menuElement: null,
-      menuBgColor: "#252525",
       menuVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
@@ -218,6 +218,7 @@ export default {
     this.subscriptions.push(this.$event.subscribe("lightbox.open", this.openLightbox.bind(this)));
     this.subscriptions.push(this.$event.subscribe("lightbox.pause", this.pauseLightbox.bind(this)));
     this.subscriptions.push(this.$event.subscribe("lightbox.close", this.onClose.bind(this)));
+    this.subscriptions.push(this.$event.subscribe("view.refresh", (ev, config) => this.onRefresh(config)));
   },
   beforeUnmount() {
     // Exit fullscreen mode if enabled, has no effect otherwise.
@@ -310,6 +311,9 @@ export default {
       this.$view.leave(this);
       this.$event.publish("lightbox.leave");
       this.$emit("leave");
+    },
+    onRefresh(config) {
+      this.lightboxThemeName = config?.themeName || this.$config.themeName || "default";
     },
     focusContent(ev) {
       if (this.$refs.content && this.$refs.content instanceof HTMLElement && document.activeElement !== this.$refs.content) {

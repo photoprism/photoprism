@@ -4,15 +4,22 @@ import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
 
-const mountLightbox = () =>
+const defaultStubs = {
+  "v-dialog": true,
+  "v-icon": true,
+  "v-slider": true,
+  "p-lightbox-menu": true,
+  "p-sidebar-info": true,
+};
+
+const mountLightbox = (options = {}) =>
   mount(PLightbox, {
+    ...options,
     global: {
+      ...(options.global || {}),
       stubs: {
-        "v-dialog": true,
-        "v-icon": true,
-        "v-slider": true,
-        "p-lightbox-menu": true,
-        "p-sidebar-info": true,
+        ...defaultStubs,
+        ...(options.global?.stubs || {}),
       },
     },
   });
@@ -91,5 +98,41 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const download = actions.find((a) => a?.name === "download");
     expect(download).toBeTruthy();
     expect(download.visible).toBe(true);
+  });
+
+  it("binds the active theme to the dialog and updates it on refresh", async () => {
+    const subscriptions = {};
+
+    const wrapper = mountLightbox({
+      global: {
+        stubs: {
+          "v-dialog": {
+            name: "VDialog",
+            props: ["theme"],
+            template: '<div class="v-dialog-stub" :data-theme="theme"><slot /></div>',
+          },
+        },
+        mocks: {
+          $config: {
+            ...VTUConfig.global.mocks.$config,
+            themeName: "default",
+          },
+          $event: {
+            ...VTUConfig.global.mocks.$event,
+            subscribe: (event, handler) => {
+              subscriptions[event] = handler;
+              return event;
+            },
+          },
+        },
+      },
+    });
+
+    expect(wrapper.find(".v-dialog-stub").attributes("data-theme")).toBe("default");
+
+    await subscriptions["view.refresh"]("view.refresh", { themeName: "nordic" });
+    await nextTick();
+
+    expect(wrapper.find(".v-dialog-stub").attributes("data-theme")).toBe("nordic");
   });
 });

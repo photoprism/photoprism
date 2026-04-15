@@ -1,6 +1,22 @@
 /* Media Viewer Styles */
 
 .p-lightbox {
+    --p-lightbox-canvas: rgb(var(--v-theme-background));
+    --p-lightbox-surface: rgb(var(--v-theme-surface));
+    --p-lightbox-on-surface: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+    --p-lightbox-on-surface-medium: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+    --p-lightbox-frame: rgba(var(--v-border-color), var(--v-lightbox-frame-opacity, var(--v-border-opacity)));
+    --p-lightbox-button-surface: rgba(var(--v-theme-surface), var(--v-lightbox-button-bg-opacity, 0.78));
+    --p-lightbox-controls-gradient: rgba(var(--v-theme-background), var(--v-lightbox-controls-bg-opacity, 0.78));
+    --p-lightbox-controls-gradient-clear: rgba(var(--v-theme-background), 0);
+    --p-lightbox-shadow: rgba(var(--v-theme-surface), var(--v-lightbox-overlay-shadow-opacity, 0.92));
+    --pswp-bg: var(--p-lightbox-canvas);
+    --pswp-placeholder-bg: rgba(var(--v-theme-surface), 0.92);
+    --pswp-icon-color: var(--p-lightbox-on-surface);
+    --pswp-icon-color-secondary: var(--p-lightbox-shadow);
+    --pswp-icon-stroke-color: var(--p-lightbox-shadow);
+    --pswp-preloader-color: rgba(var(--v-theme-on-surface), 0.24);
+    --pswp-preloader-color-secondary: var(--p-lightbox-on-surface);
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +27,8 @@
 }
 
 .p-lightbox,
-.p-lightbox > .v-overlay__scrim {
+.p-lightbox > .v-overlay__scrim,
+.p-lightbox .v-overlay__content {
     transition: none !important;
 }
 
@@ -29,6 +46,7 @@
     overflow: hidden;
     border-radius: 0;
     z-index: 1;
+    background-color: var(--p-lightbox-canvas);
 }
 
 .p-lightbox__underlay {
@@ -47,6 +65,13 @@
 
 .pswp {
     position: absolute;
+    background-color: var(--p-lightbox-canvas);
+}
+
+.p-lightbox .pswp__bg,
+.p-lightbox .pswp__scroll-wrap,
+.p-lightbox .pswp__container {
+    background-color: var(--p-lightbox-canvas);
 }
 
 .p-lightbox__container > .p-lightbox__content {
@@ -77,7 +102,9 @@
     z-index: 1;
     opacity: 1;
     user-select: none;
-    border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+    color: var(--p-lightbox-on-surface);
+    background-color: var(--p-lightbox-surface);
+    border-color: var(--p-lightbox-frame);
 }
 
 .is-ltr .p-lightbox__container > .p-lightbox__sidebar {
@@ -168,6 +195,9 @@
     max-height: 100vh;
     width: auto;
     height: 100%;
+    box-sizing: border-box;
+    background-color: var(--p-lightbox-surface);
+    border: thin solid var(--p-lightbox-frame);
 }
 
 .pswp__media.pswp__media--live {
@@ -203,11 +233,12 @@
     border-radius: 50%;
     width: auto;
     height: auto;
-    color: #ffffff55;
+    color: rgba(var(--v-theme-on-surface), var(--v-lightbox-play-opacity, 0.55));
     z-index: 3;
     background: transparent;
     overflow: visible;
     visibility: hidden;
+    text-shadow: 0 0 8px var(--p-lightbox-shadow);
 }
 
 .pswp__media.is-broken .pswp__video,
@@ -277,7 +308,7 @@
     top: 0;
     font-size: 14px;
     font-weight: 400;
-    color: #f3f3f3;
+    color: var(--p-lightbox-on-surface);
     pointer-events: auto;
     touch-action: auto;
 }
@@ -354,12 +385,10 @@
 .pswp__dynamic-caption p {
     font-size: 14px;
     text-align: start;
-    color: #f3f3f3;
+    color: inherit;
     text-shadow:
-        -1px -1px 0 #0006,
-        1px -1px 0 #0006,
-        -1px 1px 0 #0006,
-        1px 1px 0 #0006;
+        0 1px 2px var(--p-lightbox-shadow),
+        0 0 1px var(--p-lightbox-shadow);
     line-height: normal;
     letter-spacing: normal;
     margin: 0 0 8px 0;
@@ -411,6 +440,11 @@
     user-select: none;
     justify-content: center !important;
     align-items: center !important;
+    margin-top: 8px;
+    color: var(--p-lightbox-on-surface);
+    background-color: var(--p-lightbox-button-surface);
+    border: thin solid var(--p-lightbox-frame);
+    border-radius: 999px;
 }
 
 .is-rtl .pswp__button--close {
@@ -427,6 +461,7 @@
     right: auto;
     width: 32px;
     height: 32px;
+    color: inherit;
 }
 
 .pswp__top-bar .pswp__button--mdi .pswp__icn {
@@ -485,15 +520,15 @@
     margin: 0;
     padding: 20px 12px 12px 12px;
     gap: 6px;
-    background: linear-gradient(0deg, #000000bf, #00000000);
+    background: linear-gradient(0deg, var(--p-lightbox-controls-gradient), var(--p-lightbox-controls-gradient-clear));
 }
 
 .p-lightbox__controls .video-label,
 .p-lightbox__controls .video-control,
 .p-lightbox__controls .v-slider .v-icon {
-    color: #ffffffdd;
-    stroke: #ffffffdd;
-    fill: #ffffffdd;
+    color: var(--p-lightbox-on-surface-medium);
+    stroke: var(--p-lightbox-on-surface-medium);
+    fill: var(--p-lightbox-on-surface-medium);
 }
 
 .p-lightbox__controls .video-control.video-control--cast,
@@ -502,32 +537,32 @@
 }
 
 .p-lightbox__controls .v-slider .v-slider-thumb {
-    color: #ffffff;
+    color: rgb(var(--v-theme-on-surface));
 }
 
 .p-lightbox__controls .v-slider .v-slider-thumb__label {
-    color: #ffffffdd;
-    background-color: #ffffffdd;
+    color: rgb(var(--v-theme-surface));
+    background-color: rgb(var(--v-theme-on-surface));
 }
 
 .p-lightbox__controls .v-slider .v-slider-thumb__label::before {
-    color: #ffffffdd;
+    color: rgb(var(--v-theme-on-surface));
 }
 
 .p-lightbox__controls .v-slider .v-slider-track__background {
-    background-color: #ffffffcc;
+    background-color: rgba(var(--v-theme-on-surface), 0.36);
 }
 
 .p-lightbox__controls .v-slider .v-slider-track__fill {
-    background-color: #ffffff;
+    background-color: rgba(var(--v-theme-on-surface), 0.96);
 }
 
 .p-lightbox__controls .v-slider .v-slider-track__tick {
-    background-color: #ffffffdd;
+    background-color: rgba(var(--v-theme-on-surface), 0.68);
 }
 
 .p-lightbox__controls .v-slider .v-slider-track__tick--filled {
-    background-color: #ffffffbb;
+    background-color: rgba(var(--v-theme-on-surface), 0.48);
 }
 
 /* Zoom Toggle */
@@ -610,6 +645,11 @@
     top: 50%;
     width: 50px;
     max-width: 16vw;
+    color: var(--p-lightbox-on-surface);
+    background-color: var(--p-lightbox-button-surface);
+    border: thin solid var(--p-lightbox-frame);
+    border-radius: 50%;
+    box-sizing: border-box;
 }
 
 /* Allow navigation buttons on touch devices to be used without being visible. */

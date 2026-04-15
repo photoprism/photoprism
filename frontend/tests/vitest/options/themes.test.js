@@ -63,4 +63,15 @@ describe("options/themes", () => {
     const filtered = available.filter((option) => option?.value === "example");
     expect(filtered).toHaveLength(1);
   });
+
+  it("includes the shared lightbox variables from the active style preset", () => {
+    const theme = themes.Get("default", false);
+
+    expect(theme.variables["lightbox-button-bg-opacity"]).toBeDefined();
+    expect(theme.variables["lightbox-controls-bg-opacity"]).toBeDefined();
+    expect(theme.variables["lightbox-frame-opacity"]).toBeDefined();
+    expect(theme.variables["lightbox-menu-opacity"]).toBeDefined();
+    expect(theme.variables["lightbox-overlay-shadow-opacity"]).toBeDefined();
+    expect(theme.variables["lightbox-play-opacity"]).toBeDefined();
+  });
 });

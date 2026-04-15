@@ -243,11 +243,11 @@ table td > .action-buttons {
 }
 
 .v-menu.action-menu.action-menu--lightbox .action-menu__list {
-    opacity: 0.9;
-    background: #191a1c;
-    color: #ffffff;
-    stroke: #ffffff;
-    border-color: #ffffff12;
+    opacity: var(--v-lightbox-menu-opacity, 0.94);
+    background: rgb(var(--v-theme-surface));
+    color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+    stroke: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+    border-color: rgba(var(--v-border-color), var(--v-lightbox-frame-opacity, var(--v-border-opacity)));
     border-style: solid;
     border-width: thin;
 }
