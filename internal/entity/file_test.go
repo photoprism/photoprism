@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -573,6 +574,33 @@ func TestFile_AddFaces(t *testing.T) {
 		file.AddFaces(faces)
 
 		assert.Equal(t, 0, len(*file.Markers()))
+	})
+	t.Run("MergeExistingImportedMarker", func(t *testing.T) {
+		file := &File{FileUID: "fs6sg6bp4sjk3kda", FileHash: "246b3897eec9ef75e35fbf0bbc4c83c55ca41e31", FileType: "jpg", FileWidth: 1000, FileName: "FacesTest", PhotoID: 1000003, FilePrimary: true}
+
+		imported := NewMarker(*file, crop.NewArea("face", 0.1, 0.05, 0.3, 0.3), "", SrcXmp, MarkerFace, 300, 100)
+		imported.MarkerName = "Gopher"
+		imported.SubjSrc = SrcXmp
+
+		file.Markers().Append(*imported)
+
+		faces := face.Faces{face.Face{
+			Rows:       1000,
+			Cols:       1000,
+			Score:      65,
+			Area:       face.NewArea("face", 200, 250, 300),
+			Embeddings: face.Embeddings{face.RandomEmbedding()},
+		}}
+
+		file.AddFaces(faces)
+
+		if assert.Len(t, *file.Markers(), 1) {
+			marker := (*file.Markers())[0]
+			assert.Equal(t, SrcImage, marker.MarkerSrc)
+			assert.Equal(t, "Gopher", marker.MarkerName)
+			assert.Equal(t, SrcXmp, marker.SubjSrc)
+			assert.True(t, marker.Embeddings().One())
+		}
 	})
 }
 

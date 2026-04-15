@@ -806,9 +806,72 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
-	// Append marker if it doesn't conflict with existing marker.
-	if markers := m.Markers(); !markers.Contains(*marker) {
-		markers.AppendWithEmbedding(*marker)
+	if markers := m.Markers(); markers != nil {
+		matchIndex := -1
+		matchOverlap := 0
+		matchEmbeddings := false
+
+		for i := range *markers {
+			existing := &(*markers)[i]
+
+			if existing.MarkerType != MarkerFace || existing.MarkerInvalid {
+				continue
+			}
+
+			overlap := existing.OverlapPercent(*marker)
+
+			if overlap <= face.OverlapThresholdFloor {
+				continue
+			}
+
+			hasEmbeddings := existing.Embeddings().One()
+
+			if matchIndex == -1 || (hasEmbeddings && !matchEmbeddings) || (hasEmbeddings == matchEmbeddings && overlap > matchOverlap) {
+				matchIndex = i
+				matchOverlap = overlap
+				matchEmbeddings = hasEmbeddings
+			}
+		}
+
+		if matchIndex == -1 {
+			markers.AppendWithEmbedding(*marker)
+			return
+		}
+
+		existing := &(*markers)[matchIndex]
+
+		if existing.Embeddings().One() {
+			return
+		}
+
+		existing.MarkerSrc = marker.MarkerSrc
+		existing.MarkerReview = marker.MarkerReview
+		existing.X = marker.X
+		existing.Y = marker.Y
+		existing.W = marker.W
+		existing.H = marker.H
+		existing.Q = marker.Q
+		existing.Size = marker.Size
+		existing.Score = marker.Score
+		existing.Thumb = marker.Thumb
+		existing.LandmarksJSON = marker.LandmarksJSON
+
+		if err := existing.SetEmbeddings(marker.Embeddings()); err != nil {
+			log.Errorf("faces: %s while merging marker %s", err, clean.Log(existing.MarkerUID))
+			return
+		}
+
+		if existing.SubjSrc != SrcAuto && (existing.MarkerName != "" || existing.SubjUID != "") {
+			if err := existing.SyncSubject(true); err != nil {
+				log.Errorf("faces: %s while merging marker %s", err, clean.Log(existing.MarkerUID))
+			}
+		}
+
+		if !existing.Unsaved() {
+			if err := existing.Save(); err != nil {
+				log.Errorf("faces: %s while saving merged marker %s", err, clean.Log(existing.MarkerUID))
+			}
+		}
 	}
 }
 

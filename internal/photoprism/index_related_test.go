@@ -1,13 +1,19 @@
 package photoprism
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -136,6 +142,65 @@ func TestIndexRelated(t *testing.T) {
 			assert.Contains(t, photo.Details.Keywords, "wiese")
 			assert.Equal(t, "2021-03-24 12:07:29 +0000 UTC", photo.TakenAt.String())
 			assert.Equal(t, "xmp", photo.TakenSrc)
+		}
+	})
+	t.Run("AdobeFaceRegionMerge", func(t *testing.T) {
+		cfg := newIndexRelatedTestConfig(t, "index-related-adobe-face")
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+
+		sourceJpeg, err := NewMediaFile("testdata/apple-test-2.jpg")
+		require.NoError(t, err)
+		require.NoError(t, sourceJpeg.Copy(filepath.Join(testPath, "adobe-face.jpg"), false))
+
+		mainFile, err := NewMediaFile(filepath.Join(testPath, "adobe-face.jpg"))
+		require.NoError(t, err)
+
+		related, err := mainFile.RelatedFiles(true)
+		require.NoError(t, err)
+
+		convert := NewConvert(cfg)
+		opt := IndexOptionsAll(cfg)
+		opt.Convert = false
+		opt.DetectFaces = false
+		opt.DetectNsfw = false
+		opt.GenerateLabels = false
+
+		result := IndexRelated(related, NewIndex(cfg, convert, NewFiles(), NewPhotos()), opt)
+		require.True(t, result.Success())
+
+		primaryFile, err := query.FileByUID(result.FileUID)
+		require.NoError(t, err)
+
+		marker := entity.NewMarker(*primaryFile, crop.NewArea("face", 0.1, 0.05, 0.3, 0.3), "", entity.SrcImage, entity.MarkerFace, int(float32(primaryFile.FileWidth)*0.3), 65)
+		require.NotNil(t, marker)
+		require.NoError(t, marker.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}))
+		require.NoError(t, marker.Save())
+
+		xmpData, err := os.ReadFile(filepath.Join("..", "meta", "testdata", "adobe-face.xmp"))
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(testPath, "adobe-face.xmp"), xmpData, fs.ModeFile))
+
+		mainFile, err = NewMediaFile(filepath.Join(testPath, "adobe-face.jpg"))
+		require.NoError(t, err)
+
+		related, err = mainFile.RelatedFiles(true)
+		require.NoError(t, err)
+
+		result = IndexRelated(related, NewIndex(cfg, convert, NewFiles(), NewPhotos()), opt)
+		require.True(t, result.Success())
+
+		markers, err := entity.FindMarkers(primaryFile.FileUID)
+		require.NoError(t, err)
+
+		if assert.Len(t, markers, 1) {
+			assert.Equal(t, entity.SrcImage, markers[0].MarkerSrc)
+			assert.Equal(t, "Gopher", markers[0].MarkerName)
+			assert.Equal(t, entity.SrcXmp, markers[0].SubjSrc)
+			assert.True(t, markers[0].Embeddings().One())
+			assert.NotEmpty(t, markers[0].FaceID)
 		}
 	})
 }

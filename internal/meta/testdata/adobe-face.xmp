@@ -1,0 +1,25 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 6.0-c002 79.164352, 2020/01/30-15:50:38        ">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <rdf:Description
+      rdf:about=""
+      xmlns:mwg-rs="http://www.metadataworkinggroup.com/schemas/regions/"
+      xmlns:stArea="http://ns.adobe.com/xmp/sType/Area#">
+      <mwg-rs:Regions rdf:parseType="Resource">
+        <mwg-rs:RegionList>
+          <rdf:Bag>
+            <rdf:li rdf:parseType="Resource">
+              <mwg-rs:Name>Gopher</mwg-rs:Name>
+              <mwg-rs:Type>Face</mwg-rs:Type>
+              <mwg-rs:Area stArea:x="0.25" stArea:y="0.20" stArea:w="0.30" stArea:h="0.30" stArea:unit="normalized"/>
+            </rdf:li>
+            <rdf:li rdf:parseType="Resource">
+              <mwg-rs:Name>Ignored Label</mwg-rs:Name>
+              <mwg-rs:Type>Pet</mwg-rs:Type>
+              <mwg-rs:Area stArea:x="0.50" stArea:y="0.50" stArea:w="0.20" stArea:h="0.20" stArea:unit="normalized"/>
+            </rdf:li>
+          </rdf:Bag>
+        </mwg-rs:RegionList>
+      </mwg-rs:Regions>
+    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>

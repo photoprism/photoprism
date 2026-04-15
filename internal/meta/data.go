@@ -74,6 +74,7 @@ type Data struct {
 	Views            int           `meta:"-"`
 	Albums           []string      `meta:"-"`
 	Warning          string        `meta:"Warning" report:"-"`
+	FaceRegions      FaceRegions   `report:"-"`
 	Error            error         `meta:"-"`
 	json             map[string]string
 	exif             map[string]string

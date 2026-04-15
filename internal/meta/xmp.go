@@ -75,6 +75,7 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.AddKeywords(doc.Keywords())
 	}
 
+	data.FaceRegions = doc.FaceRegions()
 	data.Favorite = doc.Favorite()
 
 	return nil

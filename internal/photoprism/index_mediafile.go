@@ -10,11 +10,13 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -494,6 +496,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Update externally marked as favorite.
 			if data.Favorite {
 				_ = photo.SetFavorite(data.Favorite)
+			}
+
+			markerFile := &file
+
+			if primaryFile.ID > 0 {
+				markerFile = &primaryFile
+			} else if !file.FilePrimary {
+				markerFile = nil
+			}
+
+			if err = importXmpFaceRegions(markerFile, data.FaceRegions); err != nil {
+				log.Errorf("index: %s in %s (import face regions)", err, logName)
 			}
 		} else {
 			log.Warn(dataErr.Error())
@@ -1098,4 +1112,86 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	return result
+}
+
+// importXmpFaceRegions merges XMP face regions into the specified file markers.
+func importXmpFaceRegions(file *entity.File, regions meta.FaceRegions) error {
+	if file == nil || len(regions) == 0 {
+		return nil
+	}
+
+	markers := file.Markers()
+
+	if markers == nil {
+		return fmt.Errorf("failed loading markers for file %s", clean.Log(file.FileUID))
+	}
+
+	for _, region := range regions {
+		area := crop.NewArea("face", region.X, region.Y, region.W, region.H)
+		marker := entity.NewMarker(*file, area, "", entity.SrcXmp, entity.MarkerFace, int(float32(file.FileWidth)*region.W), 100)
+
+		if marker == nil {
+			continue
+		}
+
+		matchIndex := -1
+		matchOverlap := 0
+		matchEmbeddings := false
+
+		for i := range *markers {
+			existing := &(*markers)[i]
+
+			if existing.MarkerType != entity.MarkerFace || existing.MarkerInvalid {
+				continue
+			}
+
+			overlap := existing.OverlapPercent(*marker)
+
+			if overlap <= face.OverlapThresholdFloor {
+				continue
+			}
+
+			hasEmbeddings := existing.Embeddings().One()
+
+			if matchIndex == -1 || (hasEmbeddings && !matchEmbeddings) || (hasEmbeddings == matchEmbeddings && overlap > matchOverlap) {
+				matchIndex = i
+				matchOverlap = overlap
+				matchEmbeddings = hasEmbeddings
+			}
+		}
+
+		if matchIndex >= 0 {
+			if region.Name == "" {
+				continue
+			}
+
+			existing := &(*markers)[matchIndex]
+			changed, err := existing.SetName(region.Name, entity.SrcXmp)
+
+			if err != nil {
+				return err
+			} else if changed {
+				if err = existing.Save(); err != nil {
+					return err
+				}
+			}
+
+			continue
+		}
+
+		if region.Name != "" {
+			if _, err := marker.SetName(region.Name, entity.SrcXmp); err != nil {
+				return err
+			}
+		}
+
+		markers.Append(*marker)
+	}
+
+	if markers.Unsaved() {
+		_, err := file.SaveMarkers()
+		return err
+	}
+
+	return nil
 }

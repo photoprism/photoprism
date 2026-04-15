@@ -87,4 +87,19 @@ func TestXMP(t *testing.T) {
 		assert.True(t, data.TakenAtLocal.IsZero())
 		assert.Equal(t, "UTC", data.TimeZone)
 	})
+	t.Run("AdobeFaceRegions", func(t *testing.T) {
+		data, err := XMP("testdata/adobe-face.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if assert.Len(t, data.FaceRegions, 1) {
+			assert.Equal(t, "Gopher", data.FaceRegions[0].Name)
+			assert.InDelta(t, 0.10, data.FaceRegions[0].X, 0.0001)
+			assert.InDelta(t, 0.05, data.FaceRegions[0].Y, 0.0001)
+			assert.InDelta(t, 0.30, data.FaceRegions[0].W, 0.0001)
+			assert.InDelta(t, 0.30, data.FaceRegions[0].H, 0.0001)
+		}
+	})
 }

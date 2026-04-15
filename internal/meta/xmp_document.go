@@ -197,9 +197,43 @@ type XmpDocument struct {
 					Li   string `xml:"li"` // Gopher
 				} `xml:"Bag" json:"bag"`
 			} `xml:"PersonInImage" json:"personinimage"`
+			Regions struct {
+				Text       string `xml:",chardata" json:"text,omitempty"`
+				RegionList struct {
+					Text string `xml:",chardata" json:"text,omitempty"`
+					Bag  struct {
+						Text string `xml:",chardata" json:"text,omitempty"`
+						Li   []struct {
+							Text string `xml:",chardata" json:"text,omitempty"`
+							Name string `xml:"Name"`
+							Type string `xml:"Type"`
+							Area struct {
+								Text string `xml:",chardata" json:"text,omitempty"`
+								X    string `xml:"http://ns.adobe.com/xmp/sType/Area# x,attr"`
+								Y    string `xml:"http://ns.adobe.com/xmp/sType/Area# y,attr"`
+								W    string `xml:"http://ns.adobe.com/xmp/sType/Area# w,attr"`
+								H    string `xml:"http://ns.adobe.com/xmp/sType/Area# h,attr"`
+								Unit string `xml:"http://ns.adobe.com/xmp/sType/Area# unit,attr"`
+							} `xml:"Area"`
+						} `xml:"li" json:"li"`
+					} `xml:"Bag" json:"bag"`
+				} `xml:"RegionList" json:"regionlist"`
+			} `xml:"Regions" json:"regions"`
 		} `xml:"Description" json:"description"`
 	} `xml:"RDF" json:"rdf"`
 }
+
+// FaceRegion represents a normalized face region found in XMP metadata.
+type FaceRegion struct {
+	Name string
+	X    float32
+	Y    float32
+	W    float32
+	H    float32
+}
+
+// FaceRegions represents a list of face regions found in XMP metadata.
+type FaceRegions []FaceRegion
 
 // Load parses an XMP file and populates document values with its contents.
 func (doc *XmpDocument) Load(filename string) error {
@@ -283,6 +317,54 @@ func (doc *XmpDocument) Keywords() string {
 	s := doc.RDF.Description.Subject.Seq.Li
 
 	return strings.Join(s, ", ")
+}
+
+// FaceRegions returns normalized face regions found in the XMP document.
+func (doc *XmpDocument) FaceRegions() (result FaceRegions) {
+	for _, region := range doc.RDF.Description.Regions.RegionList.Bag.Li {
+		if region.Type != "" && !strings.EqualFold(region.Type, "face") {
+			continue
+		} else if !strings.EqualFold(region.Area.Unit, "normalized") {
+			continue
+		}
+
+		w := float32(txt.Float64(region.Area.W))
+		h := float32(txt.Float64(region.Area.H))
+		x := float32(txt.Float64(region.Area.X)) - w/2
+		y := float32(txt.Float64(region.Area.Y)) - h/2
+
+		if x < 0 {
+			w += x
+			x = 0
+		}
+
+		if y < 0 {
+			h += y
+			y = 0
+		}
+
+		if x+w > 1 {
+			w = 1 - x
+		}
+
+		if y+h > 1 {
+			h = 1 - y
+		}
+
+		if w <= 0 || h <= 0 {
+			continue
+		}
+
+		result = append(result, FaceRegion{
+			Name: SanitizeString(region.Name),
+			X:    x,
+			Y:    y,
+			W:    w,
+			H:    h,
+		})
+	}
+
+	return result
 }
 
 // Favorite returns a favorite status in the XMP document.
