@@ -35,6 +35,57 @@
             {{ $gettext(`In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`) }}
           </div>
         </v-alert>
+        <div
+          v-else-if="imagePacking"
+          ref="packedGrid"
+          class="search-results file-results cards-view packed-view"
+          :class="{ 'select-results': selection.length > 0 }"
+          :style="{ '--packed-gutter': `${packedGutter}px` }"
+        >
+          <div v-for="(row, rowIndex) in packedRows" :key="`row-${rowIndex}`" class="packed-row packed-row--cards">
+            <div
+              v-for="rowItem in row.items"
+              :key="rowItem.item.UID"
+              :data-uid="rowItem.item.UID"
+              class="result packed-card"
+              :class="rowItem.item.classes(selection.includes(rowItem.item.UID))"
+              :style="{ width: `${rowItem.width}px` }"
+              @contextmenu.stop="onContextMenu($event, rowItem.index)"
+            >
+              <div
+                :title="rowItem.item.Name"
+                :style="packedPreviewStyle(rowItem.item, rowItem.width, rowItem.height)"
+                class="preview packed-preview"
+                @touchstart.passive="input.touchStart($event, rowItem.index)"
+                @touchend.stop="onClick($event, rowItem.index)"
+                @mousedown.stop.prevent="input.mouseDown($event, rowItem.index)"
+                @click.stop.prevent="onClick($event, rowItem.index)"
+              >
+                <div class="preview__overlay"></div>
+
+                <button
+                  class="input-select"
+                  @touchstart.stop="input.touchStart($event, rowItem.index)"
+                  @touchend.stop="onSelect($event, rowItem.index)"
+                  @touchmove.stop.prevent
+                  @click.stop.prevent="onSelect($event, rowItem.index)"
+                >
+                  <i class="mdi mdi-check-circle select-on" />
+                  <i class="mdi mdi-circle-outline select-off" />
+                </button>
+              </div>
+
+              <div class="meta">
+                <button :title="rowItem.item.isFile() ? rowItem.item.Name : rowItem.item.Title" class="meta-title" @click.exact="openFile(rowItem.index)">
+                  {{ rowItem.item.baseName() }}
+                </button>
+                <div class="meta-description">
+                  {{ rowItem.item.isFile() ? rowItem.item.getInfo() : $gettext(`Folder`) }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div v-else class="v-row search-results file-results cards-view" :class="{ 'select-results': selection.length > 0 }">
           <div v-for="(m, index) in results" :key="m.UID" ref="items" class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2">
             <div :data-uid="m.UID" class="result" :class="m.classes(selection.includes(m.UID))" @contextmenu.stop="onContextMenu($event, index)">
@@ -86,6 +137,7 @@
 </template>
 
 <script>
+import { choosePackedThumbSize, layoutPackedRows } from "common/packed";
 import RestModel from "model/rest";
 import { Folder } from "model/folder";
 import $notify from "common/notify";
@@ -111,9 +163,11 @@ export default {
     const all = query["all"] ? query["all"] : "";
     const filter = { q: q, all: all };
     const settings = {};
+    const imagePacking = !!this.$config.getSettings().display?.imagePacking;
     const tileSize = this.$config.getSettings().display?.retinaThumbnails ? "tile_1080" : "tile_500";
 
     return {
+      imagePacking,
       tileSize,
       config: this.$config.values,
       navIcon: this.$isRtl ? "mdi-chevron-left" : "mdi-chevron-right",
@@ -137,6 +191,10 @@ export default {
       input: new Input(),
       lastId: "",
       breadcrumbs: [],
+      packedGutter: 8,
+      packedTargetRowHeight: this.$isMobile ? 140 : 210,
+      packedRows: [],
+      resizeObserver: null,
     };
   },
   watch: {
@@ -173,16 +231,60 @@ export default {
   },
   mounted() {
     this.$view.enter(this);
+
+    if (this.imagePacking) {
+      this.resizeObserver = new ResizeObserver(() => this.updatePackedLayout());
+      this.observePackedGrid();
+    }
   },
   beforeUnmount() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       this.$event.unsubscribe(this.subscriptions[i]);
     }
+
+    this.resizeObserver?.disconnect();
   },
   unmounted() {
     this.$view.leave(this);
   },
   methods: {
+    observePackedGrid() {
+      const container = this.$refs.packedGrid;
+
+      if (!this.imagePacking || !this.resizeObserver || !container) {
+        return;
+      }
+
+      this.resizeObserver.disconnect();
+      this.resizeObserver.observe(container);
+    },
+    updatePackedLayout() {
+      const container = this.$refs.packedGrid;
+
+      if (!this.imagePacking || !container) {
+        return;
+      }
+
+      const containerWidth = Math.floor(container.clientWidth);
+
+      if (containerWidth <= 0) {
+        return;
+      }
+
+      this.packedRows = layoutPackedRows(this.results, containerWidth, {
+        gutter: this.packedGutter,
+        targetRowHeight: this.packedTargetRowHeight,
+      });
+    },
+    packedPreviewStyle(model, width, height) {
+      const thumbSize = choosePackedThumbSize(width, height, this.$config.getSettings().display?.retinaThumbnails);
+
+      return {
+        width: `${width}px`,
+        height: `${height}px`,
+        backgroundImage: `url(${model.thumbnailUrl(thumbSize)})`,
+      };
+    },
     onShortCut(ev) {
       switch (ev.code) {
         case "KeyR":
@@ -471,6 +573,10 @@ export default {
           this.dirty = false;
           this.loading = false;
           this.listen = true;
+          this.$nextTick(() => {
+            this.observePackedGrid();
+            this.updatePackedLayout();
+          });
         });
     },
     onUpdate(ev, data) {

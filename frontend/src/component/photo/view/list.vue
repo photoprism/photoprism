@@ -64,7 +64,7 @@
                   <div v-if="index < firstVisibleElementIndex || index > lastVisibleElementIndex" class="preview"></div>
                   <div
                     v-else
-                    :style="`background-image: url(${m.thumbnailUrl(tileSize)})`"
+                    :style="previewStyle(m)"
                     class="preview"
                     @touchstart.passive="onMouseDown($event, index)"
                     @touchend.stop="onClick($event, index, false)"
@@ -130,6 +130,7 @@
   </div>
 </template>
 <script>
+import { choosePackedThumbSize } from "common/packed";
 import download from "common/download";
 import $notify from "common/notify";
 import { virtualizationTools } from "common/virtualization-tools";
@@ -189,11 +190,13 @@ export default {
       m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
     }
     const settings = this.$config.getSettings();
+    const imagePacking = !!settings.display?.imagePacking;
     const showTitles = settings.search.showTitles;
     const showCaptions = settings.search.showCaptions;
     const tileSize = settings.display?.retinaThumbnails ? "tile_500" : "tile_224";
 
     return {
+      imagePacking,
       showTitles,
       showCaptions,
       tileSize,
@@ -236,6 +239,19 @@ export default {
     this.intersectionObserver.disconnect();
   },
   methods: {
+    previewStyle(photo) {
+      if (!this.imagePacking) {
+        return `background-image: url(${photo.thumbnailUrl(this.tileSize)})`;
+      }
+
+      const thumbSize = choosePackedThumbSize(50, 50, this.$config.getSettings().display?.retinaThumbnails);
+
+      return {
+        backgroundImage: `url(${photo.thumbnailUrl(thumbSize)})`,
+        backgroundSize: "contain",
+        backgroundColor: "rgba(var(--v-theme-surface-variant), 0.22)",
+      };
+    },
     isSelected(m) {
       return PhotoClipboard.has(m);
     },

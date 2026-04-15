@@ -19,6 +19,170 @@
         </div>
       </v-alert>
     </div>
+    <div
+      v-else-if="imagePacking"
+      ref="packedGrid"
+      class="search-results photo-results cards-view packed-view"
+      :class="{ 'select-results': selectMode }"
+      :style="{ '--packed-gutter': `${packedGutter}px` }"
+    >
+      <div v-for="(row, rowIndex) in packedRows" :key="`row-${rowIndex}`" class="packed-row packed-row--cards">
+        <div
+          v-for="rowItem in row.items"
+          :key="rowItem.item.ID"
+          :data-id="rowItem.item.ID"
+          :data-uid="rowItem.item.UID"
+          class="media result packed-card"
+          :class="rowItem.item.classes()"
+          :style="{ width: `${rowItem.width}px` }"
+          @contextmenu.stop="onContextMenu($event, rowItem.index)"
+        >
+          <div
+            :title="rowItem.item.Title"
+            :style="packedPreviewStyle(rowItem.item, rowItem.width, rowItem.height)"
+            class="preview packed-preview"
+            @touchstart.passive="input.touchStart($event, rowItem.index)"
+            @touchend.stop="onClick($event, rowItem.index)"
+            @mousedown.stop="input.mouseDown($event, rowItem.index)"
+            @click.stop.prevent="onClick($event, rowItem.index)"
+            @mouseover="playLive(rowItem.item)"
+            @mouseleave="pauseLive(rowItem.item)"
+          >
+            <div class="preview__overlay"></div>
+            <div v-if="rowItem.item.Type === 'live' || rowItem.item.Type === 'animated'" class="live-player">
+              <video :id="'live-player-' + rowItem.item.ID" :width="rowItem.width" :height="rowItem.height" preload="none" loop muted playsinline>
+                <source :type="rowItem.item.videoContentType()" :src="rowItem.item.videoUrl()" />
+              </video>
+            </div>
+
+            <button
+              v-if="(rowItem.item.Type !== 'image' && rowItem.item.Type !== 'video') || selectMode || rowItem.item.isStack()"
+              class="input-open"
+              @touchstart.stop="input.touchStart($event, rowItem.index)"
+              @touchend.stop="onOpen($event, rowItem.index, !isSharedView)"
+              @touchmove.stop
+              @click.stop.prevent="onOpen($event, rowItem.index, !isSharedView)"
+            >
+              <i v-if="rowItem.item.Type === 'raw'" class="action-raw mdi mdi-raw" :title="$gettext('RAW')" />
+              <i v-else-if="rowItem.item.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo /></i>
+              <i v-else-if="rowItem.item.Type === 'animated'" class="mdi mdi-file-gif-box" :title="$gettext('Animated')" />
+              <i v-else-if="rowItem.item.Type === 'vector'" class="action-vector mdi mdi-vector-polyline" :title="$gettext('Vector')"></i>
+              <i v-else-if="rowItem.item.Type === 'document'" class="action-document mdi mdi-file-pdf-box" :title="$gettext('Document')" />
+              <i v-else-if="rowItem.item.Type === 'image' && !selectMode" class="mdi mdi-camera-burst" :title="$gettext('Stack')" />
+              <i v-else class="mdi mdi-magnify-plus-outline" :title="$gettext('View')" />
+            </button>
+
+            <div class="preview-details">
+              <div v-if="!isSharedView && featPrivate && rowItem.item.Private" class="info-icon"><i class="mdi mdi-lock" /></div>
+              <div v-if="rowItem.item.Type === 'video'" :title="$gettext('Video')" class="info-text">
+                {{ rowItem.item.getDurationInfo() }}
+              </div>
+            </div>
+
+            <button
+              class="input-select"
+              @touchstart.stop="input.touchStart($event, rowItem.index)"
+              @touchend.stop="onSelect($event, rowItem.index)"
+              @touchmove.stop
+              @click.stop.prevent="onSelect($event, rowItem.index)"
+            >
+              <i class="mdi mdi-check-circle select-on" />
+              <i class="mdi mdi-circle-outline select-off" />
+            </button>
+
+            <button
+              v-if="!isSharedView"
+              class="input-favorite"
+              @touchstart.stop="input.touchStart($event, rowItem.index)"
+              @touchend.stop="toggleLike($event, rowItem.index)"
+              @touchmove.stop
+              @click.stop.prevent="toggleLike($event, rowItem.index)"
+            >
+              <i v-if="rowItem.item.Favorite" class="mdi mdi-star text-favorite favorite-on" />
+              <i v-else class="mdi mdi-star-outline favorite-off" />
+            </button>
+          </div>
+
+          <div class="meta">
+            <button
+              v-if="!showTitles || rowItem.item.Title"
+              :title="rowItem.item.Title"
+              class="action-title-edit meta-title text-truncate"
+              @click.exact="isSharedView ? openPhoto(rowItem.index) : editPhoto(rowItem.index)"
+            >
+              {{ showTitles ? rowItem.item.Title : rowItem.item.getOriginalName() }}
+            </button>
+            <button v-if="showCaptions && rowItem.item.Caption" :title="$gettext('Caption')" class="meta-caption" @click.exact="editPhoto(rowItem.index)">
+              {{ rowItem.item.Caption }}
+            </button>
+            <div class="meta-details">
+              <button v-if="rowItem.item.Year > 0" class="action-open-date meta-date text-truncate" @click.exact="openDate(rowItem.index)">
+                <i :title="$gettext('Taken')" class="mdi mdi-calendar-range" />
+                {{ rowItem.item.getDateString(true) }}
+              </button>
+              <button
+                v-if="rowItem.item.CameraID > 1 || rowItem.item.Iso"
+                :title="$gettext('Camera')"
+                class="meta-camera action-camera-edit text-truncate"
+                @click.exact="editPhoto(rowItem.index, 'details')"
+              >
+                <i class="mdi" :class="rowItem.item.Type === 'video' ? 'mdi-video-vintage' : 'mdi-camera'" />
+                {{ rowItem.item.getCameraInfo() }}
+              </button>
+              <button
+                v-if="rowItem.item.LensID > 1 || rowItem.item.FocalLength"
+                :title="$gettext('Lens')"
+                class="meta-lens action-lens-edit text-truncate"
+                @click.exact="editPhoto(rowItem.index, 'details')"
+              >
+                <i class="mdi mdi-camera-iris" />
+                {{ rowItem.item.getLensInfo() }}
+              </button>
+              <button
+                v-if="rowItem.item.Type === 'video'"
+                :title="$gettext('Video')"
+                class="meta-video text-truncate"
+                @click.exact="editPhoto(rowItem.index, 'details')"
+              >
+                <i class="mdi mdi-movie" />
+                {{ rowItem.item.getVideoInfo() }}
+              </button>
+              <button
+                v-else-if="rowItem.item.Type === 'live'"
+                :title="$gettext('Live')"
+                class="meta-live text-truncate"
+                @click.exact="editPhoto(rowItem.index, 'details')"
+              >
+                <i class="mdi mdi-play-circle-outline" />
+                {{ rowItem.item.getVideoInfo() }}
+              </button>
+              <button
+                v-else-if="rowItem.item.Type === 'animated'"
+                :title="$gettext('Animated') + ' GIF'"
+                class="meta-animated text-truncate"
+                @click.exact="editPhoto(rowItem.index, 'details')"
+              >
+                <i class="mdi mdi-file-gif-box" />
+                {{ rowItem.item.getVideoInfo() }}
+              </button>
+              <button
+                v-else-if="rowItem.item.Type === 'document' || rowItem.item.Type === 'vector'"
+                :title="rowItem.item.Type === 'document' ? $gettext('Document') : $gettext('Vector')"
+                class="meta-vector text-truncate"
+                @click.exact="editPhoto(rowItem.index)"
+              >
+                <i class="mdi" :class="rowItem.item.Type === 'document' ? 'mdi-text-box' : 'mdi-vector-polyline'" />
+                {{ rowItem.item.getVectorInfo() }}
+              </button>
+              <button v-else :title="$gettext('Image')" class="meta-image text-truncate" @click.exact="editPhoto(rowItem.index)">
+                <i class="mdi mdi-image" />
+                {{ rowItem.item.getImageInfo() }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-else class="v-row search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
       <div v-for="(m, index) in photos" :key="m.ID" ref="items" :data-index="index" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2">
         <div v-if="index < firstVisibleElementIndex || index > lastVisibleElementIndex" :data-id="m.ID" :data-uid="m.UID" class="media result placeholder">
@@ -261,6 +425,7 @@
   </div>
 </template>
 <script>
+import { choosePackedThumbSize, layoutPackedRows } from "common/packed";
 import download from "common/download";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
@@ -322,9 +487,11 @@ export default {
     const featDownload = settings.features.download;
     const showTitles = settings.search.showTitles;
     const showCaptions = settings.search.showCaptions;
+    const imagePacking = !!settings.display?.imagePacking;
     const tileSize = settings.display?.retinaThumbnails ? "tile_1080" : "tile_500";
 
     return {
+      imagePacking,
       featPlaces,
       featPrivate,
       featDownload,
@@ -334,6 +501,10 @@ export default {
       input,
       debug,
       trace,
+      packedGutter: 8,
+      packedTargetRowHeight: this.$isMobile ? 200 : 280,
+      packedRows: [],
+      resizeObserver: null,
       contexts,
       firstVisibleElementIndex: 0,
       lastVisibleElementIndex: 0,
@@ -344,7 +515,12 @@ export default {
     photos: {
       handler() {
         this.$nextTick(() => {
-          this.observeItems();
+          if (this.imagePacking) {
+            this.observePackedGrid();
+            this.updatePackedLayout();
+          } else {
+            this.observeItems();
+          }
         });
       },
       immediate: true,
@@ -362,8 +538,56 @@ export default {
   },
   beforeUnmount() {
     this.intersectionObserver.disconnect();
+    this.resizeObserver?.disconnect();
+  },
+  mounted() {
+    if (this.imagePacking) {
+      this.resizeObserver = new ResizeObserver(() => this.updatePackedLayout());
+      this.observePackedGrid();
+
+      this.$nextTick(() => {
+        this.updatePackedLayout();
+      });
+    }
   },
   methods: {
+    observePackedGrid() {
+      const container = this.$refs.packedGrid;
+
+      if (!this.imagePacking || !this.resizeObserver || !container) {
+        return;
+      }
+
+      this.resizeObserver.disconnect();
+      this.resizeObserver.observe(container);
+    },
+    updatePackedLayout() {
+      const container = this.$refs.packedGrid;
+
+      if (!this.imagePacking || !container) {
+        return;
+      }
+
+      const containerWidth = Math.floor(container.clientWidth);
+
+      if (containerWidth <= 0) {
+        return;
+      }
+
+      this.packedRows = layoutPackedRows(this.photos, containerWidth, {
+        gutter: this.packedGutter,
+        targetRowHeight: this.packedTargetRowHeight,
+      });
+    },
+    packedPreviewStyle(photo, width, height) {
+      const thumbSize = choosePackedThumbSize(width, height, this.$config.getSettings().display?.retinaThumbnails);
+
+      return {
+        width: `${width}px`,
+        height: `${height}px`,
+        backgroundImage: `url(${photo.thumbnailUrl(thumbSize)})`,
+      };
+    },
     observeItems() {
       if (this.$refs.items === undefined) {
         return;
@@ -411,7 +635,7 @@ export default {
               }
             });
           }
-        } catch (e) {
+        } catch {
           // Ignore.
         }
       }

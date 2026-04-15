@@ -83,6 +83,22 @@
 
             <v-col cols="12" sm="4">
               <v-checkbox
+                v-model="settings.display.imagePacking"
+                :disabled="isDemo"
+                class="ma-0 pa-0 input-image-packing"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Image Packing')"
+                :hint="$gettext('Arrange previews in justified rows so the full image stays visible without cropping.')"
+                prepend-icon="mdi-view-gallery"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="4">
+              <v-checkbox
                 v-model="settings.display.retinaLightbox"
                 :disabled="isDemo"
                 class="ma-0 pa-0 input-retina-lightbox"

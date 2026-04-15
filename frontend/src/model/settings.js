@@ -20,7 +20,9 @@ export class Settings extends Model {
 
     // Ensure display settings exist with defaults.
     if (!values.display) {
-      values.display = { originals: false, retinaLightbox: false, retinaThumbnails: false };
+      values.display = { originals: false, imagePacking: false, retinaLightbox: false, retinaThumbnails: false };
+    } else if (typeof values.display.imagePacking === "undefined") {
+      values.display.imagePacking = false;
     }
 
     super.setValues(values, scalarOnly);

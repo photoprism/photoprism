@@ -262,6 +262,41 @@
     overflow: hidden !important;
 }
 
+.packed-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--packed-gutter, 6px);
+}
+
+.packed-view .packed-row {
+    display: flex;
+    gap: var(--packed-gutter, 6px);
+}
+
+.packed-view .packed-preview {
+    flex: 0 0 auto;
+    aspect-ratio: auto;
+    background-size: contain;
+    background-color: rgba(var(--v-theme-surface-variant), 0.22);
+}
+
+.packed-view .packed-card {
+    flex: 0 0 auto;
+    overflow: hidden !important;
+    color: rgb(var(--v-theme-on-card));
+    caret: rgb(var(--v-theme-on-card));
+    background: rgb(var(--v-theme-card));
+    border-radius: 6px;
+}
+
+.packed-row--cards {
+    align-items: flex-start;
+}
+
+.packed-row--cards .packed-card .meta {
+    width: 100%;
+}
+
 .search-results.list-view .v-table > .v-table__wrapper > table > thead > tr > th {
     height: 44px;
     padding: 0 8px;

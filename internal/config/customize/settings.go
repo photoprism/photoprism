@@ -94,6 +94,7 @@ func NewSettings(theme, language, timeZone string) *Settings {
 		Download: NewDownloadSettings(),
 		Display: DisplaySettings{
 			Originals:        false,
+			ImagePacking:     false,
 			RetinaLightbox:   false,
 			RetinaThumbnails: false,
 		},
