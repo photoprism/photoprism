@@ -188,6 +188,7 @@
     transform: translate(-50%, -50%);
 }
 
+.pswp__img,
 .pswp__media .pswp__image,
 .pswp__media .pswp__video {
     object-fit: contain;
