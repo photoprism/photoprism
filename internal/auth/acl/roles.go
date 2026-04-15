@@ -84,3 +84,21 @@ func (roles Roles) Allow(role Role, grant Permission) bool {
 
 	return false
 }
+
+// sidebarRestrictedRoles lists user roles that receive the reduced
+// photo viewer sidebar payload instead of the full entity. "contributor"
+// is a Pro-edition role that has no constant in the open-source build,
+// so it is matched by literal string here.
+var sidebarRestrictedRoles = map[Role]struct{}{
+	RoleGuest:           {},
+	RoleVisitor:         {},
+	Role("contributor"): {},
+}
+
+// SidebarFullAccess reports whether the role is allowed to see the full
+// photo viewer sidebar; it is the single source of truth for sidebar
+// access checks.
+func SidebarFullAccess(r Role) bool {
+	_, restricted := sidebarRestrictedRoles[r]
+	return !restricted
+}

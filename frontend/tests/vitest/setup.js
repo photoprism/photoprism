@@ -84,6 +84,9 @@ config.global.mocks = {
     thumb: () => ({ src: "/t.jpg", w: 100, h: 100 }),
   },
   $api: { post: vi.fn(), delete: vi.fn(), get: vi.fn() },
+  $session: {
+    isSidebarRestricted: () => false,
+  },
 };
 
 config.global.plugins = [vuetify];

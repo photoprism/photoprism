@@ -1475,4 +1475,81 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.chipSearch).toBe("");
     expect(w.vm.chipKey).toBe(prevKey + 1);
   });
+
+  describe("restricted-role view", () => {
+    const mountRestricted = (isRestricted) =>
+      mount(PSidebarInfo, {
+        props: {
+          modelValue: mockModel,
+          photo: mockPhoto,
+          canEdit: true,
+          context: contexts.Photos,
+        },
+        global: {
+          stubs: { PMap: true },
+          mocks: {
+            $session: {
+              isSidebarRestricted: () => isRestricted,
+            },
+          },
+        },
+      });
+
+    it("renders permitted fields for restricted sessions", () => {
+      const w = mountRestricted(true);
+      const html = w.html();
+
+      expect(w.vm.restrictedRole).toBe(true);
+      expect(html).toContain("Test Title");
+      expect(html).toContain("Test Caption");
+      expect(html).toContain("JPEG, 1920 × 1080, 4.2 MB");
+      expect(html).toContain("52.5200, 13.4050");
+    });
+
+    it("hides every restricted sidebar section for restricted sessions", () => {
+      const w = mountRestricted(true);
+      const html = w.html();
+
+      expect(w.find(".metadata__file").exists()).toBe(false);
+      expect(html).not.toContain("photos/2023/IMG_001.jpg");
+
+      expect(html).not.toContain("Canon EOS R5");
+      expect(html).not.toContain("RF 50mm F1.2L");
+      expect(html).not.toContain("mdi-camera");
+      expect(html).not.toContain("mdi-camera-iris");
+
+      // Place name; coordinates + map remain visible.
+      expect(html).not.toContain("Berlin, Germany");
+
+      expect(html).not.toContain(">People<");
+      expect(html).not.toContain(">Labels<");
+      expect(html).not.toContain(">Albums<");
+      expect(html).not.toContain(">Keywords<");
+      expect(html).not.toContain(">Notes<");
+
+      expect(html).not.toContain("Jane Doe");
+      expect(html).not.toContain("Nature");
+      expect(html).not.toContain("Vacation 2023");
+      expect(html).not.toContain("Mountains"); // Subject
+      expect(html).not.toContain("John Photographer"); // Artist
+      expect(html).not.toContain("2023 John"); // Copyright
+      expect(html).not.toContain("CC BY 4.0"); // License
+      expect(html).not.toContain("Some notes about this photo");
+      expect(html).not.toContain("nature, mountains, sunset"); // Keywords
+
+      expect(w.vm.isEditable).toBe(false);
+      expect(w.find(".meta-inline-pencil").exists()).toBe(false);
+    });
+
+    it("shows the full sidebar when the session is not restricted", () => {
+      const w = mountRestricted(false);
+      const html = w.html();
+
+      expect(w.vm.restrictedRole).toBe(false);
+      expect(html).toContain("Canon EOS R5");
+      expect(html).toContain("RF 50mm F1.2L");
+      expect(html).toContain("photos/2023/IMG_001.jpg");
+      expect(html).toContain("Berlin, Germany");
+    });
+  });
 });

@@ -11,6 +11,7 @@ export let BatchSize = 99999;
 export let WebDavRoles = ["admin", "manager", "user", "contributor"];
 export let NoBasePathRoles = ["admin", "manager", "user", "viewer"];
 export let NoUploadPathRoles = ["guest", "viewer"];
+export let SidebarRestrictedRoles = ["guest", "visitor", "contributor"];
 
 // User encapsulates account metadata, roles, and helpers for access control.
 export class User extends RestModel {
@@ -237,6 +238,11 @@ export class User extends RestModel {
   // Checks if the user role supports a custom upload path.
   canHaveUploadPath() {
     return !NoUploadPathRoles.includes(this.Role);
+  }
+
+  // Checks if the user role only sees the reduced photo viewer sidebar.
+  isSidebarRestricted() {
+    return SidebarRestrictedRoles.includes(this.Role);
   }
 
   authInfo() {

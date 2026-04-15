@@ -70,13 +70,13 @@
 
         <v-divider v-if="editingField === 'title' || editingField === 'caption' || model.Title || model.Caption || isEditable" class="my-4"></v-divider>
 
-        <v-list-item v-if="fileName" class="metadata__item metadata__file">
+        <v-list-item v-if="!restrictedRole && fileName" class="metadata__item metadata__file">
           <div class="meta-filename" :title="fileName">{{ fileName }}</div>
         </v-list-item>
 
         <v-list-item v-if="fileInfo" v-tooltip="$gettext('File')" :title="fileInfo" :prepend-icon="fileIcon" class="metadata__item"></v-list-item>
 
-        <v-divider v-if="fileName || fileInfo" class="my-4"></v-divider>
+        <v-divider v-if="(!restrictedRole && fileName) || fileInfo" class="my-4"></v-divider>
 
         <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
           <template v-if="isEditable" #append>
@@ -84,18 +84,25 @@
           </template>
         </v-list-item>
 
-        <v-list-item v-if="cameraInfo || isEditable" v-tooltip="$gettext('Camera')" :title="cameraInfo" prepend-icon="mdi-camera" class="metadata__item">
+        <v-list-item
+          v-if="!restrictedRole && (cameraInfo || isEditable)"
+          v-tooltip="$gettext('Camera')"
+          :title="cameraInfo"
+          prepend-icon="mdi-camera"
+          class="metadata__item"
+        >
           <template v-if="isEditable" #append>
             <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="cameraDialog = true"></v-icon>
           </template>
         </v-list-item>
 
-        <v-list-item v-if="lensInfo" v-tooltip="$gettext('Lens')" :title="lensInfo" prepend-icon="mdi-camera-iris" class="metadata__item"> </v-list-item>
+        <v-list-item v-if="!restrictedRole && lensInfo" v-tooltip="$gettext('Lens')" :title="lensInfo" prepend-icon="mdi-camera-iris" class="metadata__item">
+        </v-list-item>
 
-        <template v-if="(model.Lat && model.Lng) || (isEditable && featPlaces)">
+        <template v-if="(model.Lat && model.Lng) || (!restrictedRole && isEditable && featPlaces)">
           <v-divider class="my-4"></v-divider>
           <v-list-item
-            v-if="placeName || !(model.Lat && model.Lng)"
+            v-if="!restrictedRole && (placeName || !(model.Lat && model.Lng))"
             v-tooltip="$gettext('Location')"
             :title="placeName || $gettext('Unknown')"
             prepend-icon="mdi-map-marker"
@@ -108,7 +115,7 @@
           <template v-if="model.Lat && model.Lng">
             <v-list-item
               v-tooltip="$gettext(`Coordinates`)"
-              :title="altitude ? model.getLatLng() + ' \u00b7 ' + altitude : model.getLatLng()"
+              :title="altitude && !restrictedRole ? model.getLatLng() + ' \u00b7 ' + altitude : model.getLatLng()"
               class="clickable metadata__item"
               @click.stop="model.copyLatLng()"
             >
@@ -122,7 +129,7 @@
           </template>
         </template>
 
-        <template v-if="featPeople && (people.length > 0 || isEditable)">
+        <template v-if="!restrictedRole && featPeople && (people.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("People") }}</div>
@@ -226,7 +233,7 @@
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'labels' || labels.length > 0 || isEditable">
+        <template v-if="!restrictedRole && (editingField === 'labels' || labels.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Labels") }}</div>
@@ -296,7 +303,7 @@
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'albums' || albums.length > 0 || isEditable">
+        <template v-if="!restrictedRole && (editingField === 'albums' || albums.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Albums") }}</div>
@@ -368,15 +375,16 @@
 
         <template
           v-if="
-            editingField === 'subject' ||
-            editingField === 'artist' ||
-            editingField === 'copyright' ||
-            editingField === 'license' ||
-            subject ||
-            artist ||
-            copyright ||
-            license ||
-            isEditable
+            !restrictedRole &&
+            (editingField === 'subject' ||
+              editingField === 'artist' ||
+              editingField === 'copyright' ||
+              editingField === 'license' ||
+              subject ||
+              artist ||
+              copyright ||
+              license ||
+              isEditable)
           "
         >
           <v-divider class="my-4"></v-divider>
@@ -526,7 +534,7 @@
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'keywords' || keywords || isEditable">
+        <template v-if="!restrictedRole && (editingField === 'keywords' || keywords || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Keywords") }}</div>
@@ -561,7 +569,7 @@
           </v-list-item>
         </template>
 
-        <template v-if="editingField === 'notes' || notesHtml || isEditable">
+        <template v-if="!restrictedRole && (editingField === 'notes' || notesHtml || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("Notes") }}</div>
@@ -731,7 +739,10 @@ export default {
       return this.photo;
     },
     isEditable() {
-      return this.canEdit && this.p && this.p.Details;
+      return this.canEdit && this.p && this.p.Details && !this.restrictedRole;
+    },
+    restrictedRole() {
+      return this.$session.isSidebarRestricted();
     },
     captionHtml() {
       const raw = this.p?.Caption ?? this.model?.Caption;

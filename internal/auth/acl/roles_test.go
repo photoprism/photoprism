@@ -170,6 +170,37 @@ func TestResource_Default_String_And_Compare(t *testing.T) {
 	assert.True(t, r.NotEqual("photos"))
 }
 
+func TestSidebarFullAccess(t *testing.T) {
+	t.Run("FullAccessRoles", func(t *testing.T) {
+		allowed := []Role{
+			RoleAdmin,
+			RoleUser,
+			RoleViewer,
+			Role("manager"),
+			RoleClient,
+			RoleInstance,
+			RoleService,
+			RolePortal,
+			RoleNone,
+			Role(""),
+			Role("unknown-future-role"),
+		}
+		for _, r := range allowed {
+			assert.Truef(t, SidebarFullAccess(r), "role %q should have full sidebar access", r)
+		}
+	})
+	t.Run("RestrictedRoles", func(t *testing.T) {
+		restricted := []Role{
+			RoleGuest,
+			RoleVisitor,
+			Role("contributor"),
+		}
+		for _, r := range restricted {
+			assert.Falsef(t, SidebarFullAccess(r), "role %q must not have full sidebar access", r)
+		}
+	})
+}
+
 func TestResourceNames_ContainsCore(t *testing.T) {
 	want := []Resource{ResourceDefault, ResourcePhotos, ResourceAlbums, ResourceWebDAV, ResourceApi}
 	for _, w := range want {

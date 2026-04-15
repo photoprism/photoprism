@@ -520,6 +520,13 @@ export default class Session {
     return !this.user || !this.user.hasId();
   }
 
+  // Anonymous / share-link sessions and users in SidebarRestrictedRoles
+  // see only the short photo viewer sidebar; the server enforces the
+  // same field set on the JSON response.
+  isSidebarRestricted() {
+    return this.isAnonymous() || this.user.isSidebarRestricted();
+  }
+
   hasToken(token) {
     if (!this.data || !this.data.tokens) {
       return false;
@@ -554,6 +561,9 @@ export default class Session {
     this.deleteData();
     this.deleteUser();
     this.deleteClipboard();
+    // Clear the Photo LRU so cached metadata cannot leak across role
+    // changes. Dynamic import avoids the session ↔ photo module cycle.
+    import("model/photo").then((m) => m.default.clearCache()).catch(() => {});
   }
 
   sendClientInfo() {

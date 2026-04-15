@@ -1,6 +1,6 @@
 # API Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** April 14, 2026
 
 ## Handler Conventions
 
@@ -19,6 +19,7 @@
 - Use `AuthenticateAdmin`, `AuthenticateUser`, or `OAuthToken` helpers in tests rather than building auth flows manually.
 - Build client-session requests with `entity.AddClientSession(..., authn.GrantClientCredentials, nil)` and `AuthenticatedRequest(...)`.
 - Admin sessions may see `AdvertiseUrl` and `Database`; client and user sessions must not. `SiteUrl` and the client `storageNamespace` derived from it are safe to expose.
+- `GET /api/v1/photos/:uid` must return the reduced `api.PhotoSidebar` DTO for sessions whose role is not allowed full sidebar access (`acl.SidebarFullAccess(r) == false`). The restricted set — guest, visitor (including share-link), and contributor — receives only Title, Caption, Format/MP/Dimensions, Date, Coordinates, and Map; every other field (Camera, ISO, Exposure, Lens, F-Number, Focal Length, Place, Altitude, Labels, Albums, People, Subject, Notes, Keywords, Path, Artist, Copyright, License) must not appear in the JSON response, even with query flags such as `?full=1`. Build the DTO with `BuildPhotoSidebar(p entity.Photo)` in `photo_sidebar.go`; follow the same pattern when adding new photo viewer payloads.
 
 ## Swagger & API Tests
 

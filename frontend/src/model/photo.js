@@ -1332,6 +1332,13 @@ export class Photo extends RestModel {
     }
   }
 
+  // Drops every cached photo and any in-flight request. Called on session
+  // reset so metadata fetched under one role cannot be served to another.
+  static clearCache() {
+    Photo._cache.clear();
+    Photo._pending.clear();
+  }
+
   static mergeResponse(results, response) {
     if (response.offset === 0 || results.length === 0) {
       return response.models;
