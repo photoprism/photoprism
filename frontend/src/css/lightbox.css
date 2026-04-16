@@ -442,7 +442,6 @@
     user-select: none;
     justify-content: center !important;
     align-items: center !important;
-    margin-top: 8px;
     color: var(--p-lightbox-on-surface);
     background-color: transparent;
     border: 0;
