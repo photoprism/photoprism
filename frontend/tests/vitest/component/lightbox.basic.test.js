@@ -126,13 +126,13 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
 
     const html = wrapper.vm.$options.methods.formatCaption.call(wrapper.vm.$.proxy, {
       Caption: "Test caption",
-      DetailsKeywords: "diana, raphe",
+      DetailsKeywords: "keyword-one, keyword-two",
       TakenAtLocal: "2026-01-11T12:44:32Z",
       TimeZone: "America/New_York",
     });
 
     expect(html).toContain("pswp__dynamic-caption-field--keywords");
-    expect(html).toContain("diana, raphe");
+    expect(html).toContain("keyword-one, keyword-two");
     expect(html).toContain("Jan 11, 2026");
     expect(html).toContain("Test caption");
   });
@@ -210,7 +210,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const detailPhoto = {
       UID: "photo-1",
       Caption: "Detailed caption",
-      DetailsKeywords: "diana, raphe",
+      DetailsKeywords: "keyword-one, keyword-two",
       TakenAtLocal: "2026-01-11T12:44:32Z",
       TimeZone: "America/New_York",
     };
@@ -230,9 +230,9 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     expect(wrapper.vm.$data.models[0]).toEqual(slideModel);
     expect(wrapper.vm.$data.models[0].Thumbs.fit_1920.src).toBe("/static/example.jpg");
     expect(wrapper.vm.$data.model.UID).toBe("photo-1");
-    expect(wrapper.vm.$data.model.DetailsKeywords).toBe("diana, raphe");
+    expect(wrapper.vm.$data.model.DetailsKeywords).toBe("keyword-one, keyword-two");
     expect(wrapper.vm.$data.model.Caption).toBe("Detailed caption");
     expect(activeModel).toBe(wrapper.vm.$data.model);
-    expect(html).toContain("diana, raphe");
+    expect(html).toContain("keyword-one, keyword-two");
   });
 });
