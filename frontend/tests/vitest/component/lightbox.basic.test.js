@@ -1,8 +1,9 @@
 import { mount, config as VTUConfig } from "@vue/test-utils";
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
+import Photo from "model/photo";
 import $util from "common/util";
 import { buildNamespace } from "common/storage";
 import clientConfig from "../config";
@@ -113,5 +114,38 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     expect(caption).toContain('<h4>Title &lt;img src=x onerror="alert(1)"&gt;</h4>');
     expect(caption).toContain(`<p>Visit <a href="https://example.com/" target="_blank" rel="noopener noreferrer">https://example.com/</a></p>`);
     expect(caption).not.toContain("<img");
+  });
+
+  it("fetchPhoto skips Photo.findCached for restricted roles", () => {
+    const spy = vi.spyOn(Photo, "findCached");
+    const wrapper = mountLightbox();
+    const ctx = {
+      ...wrapper.vm,
+      photo: null,
+      model: { UID: "ps6sg6be2lvl0yh7" },
+      $session: { isSidebarRestricted: () => true },
+    };
+
+    wrapper.vm.$options.methods.fetchPhoto.call(ctx, "ps6sg6be2lvl0yh7");
+
+    expect(ctx.photo).toBeNull();
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it("fetchPhoto calls Photo.findCached for unrestricted roles", () => {
+    const spy = vi.spyOn(Photo, "findCached").mockResolvedValue({});
+    const wrapper = mountLightbox();
+    const ctx = {
+      ...wrapper.vm,
+      photo: null,
+      model: { UID: "ps6sg6be2lvl0yh7" },
+      $session: { isSidebarRestricted: () => false },
+    };
+
+    wrapper.vm.$options.methods.fetchPhoto.call(ctx, "ps6sg6be2lvl0yh7");
+
+    expect(spy).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
+    spy.mockRestore();
   });
 });

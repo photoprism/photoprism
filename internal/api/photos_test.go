@@ -70,60 +70,6 @@ func TestGetPhoto(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
-
-	t.Run("AdminFullSidebar", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		conf.SetAuthMode(config.AuthModePasswd)
-		defer conf.SetAuthMode(config.AuthModePublic)
-
-		GetPhoto(router)
-		token := AuthenticateAdmin(app, router)
-		r := AuthenticatedRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7", token)
-		assert.Equal(t, http.StatusOK, r.Code)
-
-		body := r.Body.String()
-		// Sample of restricted-to-others keys that are reliably populated
-		// for admin on the ps6sg6be2lvl0yh7 fixture (excludes keys that
-		// drop out via `json:"-"` or `omitempty` on empty values).
-		for _, key := range []string{"Iso", "Exposure", "FNumber", "FocalLength", "Path", "Details", "CameraID", "LensID"} {
-			assert.Truef(t, gjson.Get(body, key).Exists(), "admin response must contain %q", key)
-		}
-		assert.Equal(t, "200", gjson.Get(body, "Iso").String())
-	})
-
-	t.Run("VisitorRestrictedSidebar", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		conf.SetAuthMode(config.AuthModePasswd)
-		defer conf.SetAuthMode(config.AuthModePublic)
-
-		GetPhoto(router)
-		r := AuthenticatedRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7", visitorSessionToken)
-		assert.Equal(t, http.StatusOK, r.Code)
-
-		body := r.Body.String()
-		for _, key := range permittedSidebarKeys {
-			assert.Truef(t, gjson.Get(body, key).Exists(), "visitor response must contain permitted key %q", key)
-		}
-		for _, key := range restrictedSidebarKeys {
-			assert.Falsef(t, gjson.Get(body, key).Exists(), "visitor response must NOT contain restricted key %q", key)
-		}
-	})
-
-	t.Run("VisitorDirectApiQueryFlagsIgnored", func(t *testing.T) {
-		app, router, conf := NewApiTest()
-		conf.SetAuthMode(config.AuthModePasswd)
-		defer conf.SetAuthMode(config.AuthModePublic)
-
-		GetPhoto(router)
-		// Hint query parameters must not bypass the server-side redaction.
-		r := AuthenticatedRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7?full=1&fields=*&include=details,labels", visitorSessionToken)
-		assert.Equal(t, http.StatusOK, r.Code)
-
-		body := r.Body.String()
-		for _, key := range restrictedSidebarKeys {
-			assert.Falsef(t, gjson.Get(body, key).Exists(), "query flag bypass must not surface restricted key %q", key)
-		}
-	})
 }
 
 func TestUpdatePhoto(t *testing.T) {

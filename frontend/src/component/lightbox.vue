@@ -1712,8 +1712,10 @@ export default {
       this.focusContent();
     },
     // Fetches the full Photo model for the given UID using the LRU cache.
+    // Restricted roles (guest, visitor, contributor) skip the extra API
+    // call and let the sidebar work with the viewer data (Thumb model).
     fetchPhoto(uid) {
-      if (!uid) {
+      if (!uid || this.$session.isSidebarRestricted()) {
         this.photo = null;
         return;
       }
@@ -1883,7 +1885,7 @@ export default {
     },
     // Preloads the next photo's full metadata when the sidebar is visible.
     preloadNextPhoto() {
-      if (!this.info || !this.models.length) {
+      if (!this.info || !this.models.length || this.$session.isSidebarRestricted()) {
         return;
       }
 

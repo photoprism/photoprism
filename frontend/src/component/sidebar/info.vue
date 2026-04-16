@@ -818,21 +818,28 @@ export default {
       return primary?.Name || "";
     },
     fileInfo() {
-      if (!this.p) return "";
-      switch (this.p.Type) {
-        case media.Video:
-        case media.Live:
-        case media.Animated:
-          return this.p.getVideoInfo();
-        case media.Vector:
-        case media.Document:
-          return this.p.getVectorInfo();
-        default:
-          return this.p.getImageInfo();
+      if (this.p) {
+        switch (this.p.Type) {
+          case media.Video:
+          case media.Live:
+          case media.Animated:
+            return this.p.getVideoInfo();
+          case media.Vector:
+          case media.Document:
+            return this.p.getVectorInfo();
+          default:
+            return this.p.getImageInfo();
+        }
       }
+      // Fallback for restricted roles: Thumb.getTypeInfo() produces
+      // format, megapixels, and dimensions from the viewer endpoint data.
+      if (this.model && typeof this.model.getTypeInfo === "function") {
+        return this.model.getTypeInfo();
+      }
+      return "";
     },
     fileIcon() {
-      switch (this.p?.Type) {
+      switch (this.p?.Type || this.model?.Type) {
         case media.Raw:
           return "mdi-raw";
         case media.Video:

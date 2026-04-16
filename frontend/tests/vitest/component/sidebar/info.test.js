@@ -1551,5 +1551,28 @@ describe("PSidebarInfo component", () => {
       expect(html).toContain("photos/2023/IMG_001.jpg");
       expect(html).toContain("Berlin, Germany");
     });
+
+    it("falls back to model.getTypeInfo for fileInfo when photo is null", () => {
+      const thumbModel = {
+        ...mockModel,
+        getTypeInfo: vi.fn().mockReturnValue("JPEG\u20034.0MP\u20034032\u2009\u00d7\u20093024"),
+      };
+      const w = mount(PSidebarInfo, {
+        props: {
+          modelValue: thumbModel,
+          photo: null,
+          canEdit: false,
+          context: contexts.Photos,
+        },
+        global: {
+          stubs: { PMap: true },
+          mocks: {
+            $session: { isSidebarRestricted: () => true },
+          },
+        },
+      });
+      expect(w.vm.fileInfo).toBe("JPEG\u20034.0MP\u20034032\u2009\u00d7\u20093024");
+      expect(thumbModel.getTypeInfo).toHaveBeenCalled();
+    });
   });
 });

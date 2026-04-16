@@ -38,9 +38,7 @@ func SaveSidecarYaml(photo *entity.Photo) {
 	_ = photo.SaveSidecarYaml(conf.OriginalsPath(), conf.SidecarPath())
 }
 
-// GetPhoto returns picture details as JSON. Roles without full sidebar
-// access receive a reduced PhotoSidebar DTO instead of the full entity;
-// admin, manager, user, and viewer keep the full response.
+// GetPhoto returns picture details as JSON.
 //
 //	@Summary	returns picture details as JSON
 //	@Id			GetPhoto
@@ -62,11 +60,6 @@ func GetPhoto(router *gin.RouterGroup) {
 
 		if err != nil {
 			AbortEntityNotFound(c)
-			return
-		}
-
-		if !acl.SidebarFullAccess(s.GetUserRole()) {
-			c.IndentedJSON(http.StatusOK, BuildPhotoSidebar(p))
 			return
 		}
 
