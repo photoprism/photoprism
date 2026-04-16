@@ -1305,6 +1305,14 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.$notify.error).not.toHaveBeenCalled();
   });
 
+  it("should accept emoji-only label input", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "🌅";
+    w.vm.onLabelEnter();
+    expect(w.vm.pendingLabelAdditions).toEqual(["🌅"]);
+  });
+
   // Pending album operations
   it("should toggle album pending removal", () => {
     const w = mount(PSidebarInfo, {

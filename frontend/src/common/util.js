@@ -101,7 +101,7 @@ export default class $util {
       .toLowerCase()
       .replace(/&/g, "and")
       .replace(/[+_\-]+/g, " ")
-      .replace(/[^a-z0-9 ]+/g, "")
+      .replace(/[^\p{L}\p{N}\p{Extended_Pictographic}\p{Emoji_Component}\p{Regional_Indicator}\p{Emoji_Modifier}\u200d\ufe0e\ufe0f\u20e3 ]+/gu, "")
       .replace(/\s+/g, " ")
       .trim();
   }

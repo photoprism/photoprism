@@ -209,4 +209,55 @@ describe("common/util", () => {
     // Check they are all unique
     expect(tokens.size).toBe(numTokens);
   });
+
+  describe("normalizeLabelTitle", () => {
+    it("preserves lowercase ASCII", () => {
+      expect($util.normalizeLabelTitle("cat")).toBe("cat");
+    });
+    it("lowercases input", () => {
+      expect($util.normalizeLabelTitle("Cat")).toBe("cat");
+    });
+    it("replaces & with and", () => {
+      expect($util.normalizeLabelTitle("Rock & Roll")).toBe("rock and roll");
+    });
+    it("replaces underscores with spaces", () => {
+      expect($util.normalizeLabelTitle("hello_world")).toBe("hello world");
+    });
+    it("preserves emoji", () => {
+      expect($util.normalizeLabelTitle("🌅")).toBe("🌅");
+    });
+    it("preserves emoji with text", () => {
+      expect($util.normalizeLabelTitle("🏔️ Mountains")).toBe("🏔️ mountains");
+    });
+    it("preserves compound emoji with ZWJ", () => {
+      expect($util.normalizeLabelTitle("👨‍👩‍👧")).toBe("👨‍👩‍👧");
+    });
+    it("preserves accented characters", () => {
+      expect($util.normalizeLabelTitle("café")).toBe("café");
+    });
+    it("preserves flag emoji", () => {
+      expect($util.normalizeLabelTitle("🇺🇸")).toBe("🇺🇸");
+    });
+    it("preserves skin tone emoji", () => {
+      expect($util.normalizeLabelTitle("👋🏽")).toBe("👋🏽");
+    });
+    it("preserves keycap sequences", () => {
+      expect($util.normalizeLabelTitle("1️⃣")).toBe("1️⃣");
+    });
+    it("preserves CJK characters", () => {
+      expect($util.normalizeLabelTitle("猫")).toBe("猫");
+    });
+    it("strips punctuation but keeps emoji and text", () => {
+      expect($util.normalizeLabelTitle("hello! 🌅 world")).toBe("hello 🌅 world");
+    });
+    it("returns empty for punctuation-only input", () => {
+      expect($util.normalizeLabelTitle("!!!")).toBe("");
+    });
+    it("returns empty for null", () => {
+      expect($util.normalizeLabelTitle(null)).toBe("");
+    });
+    it("returns empty for undefined", () => {
+      expect($util.normalizeLabelTitle(undefined)).toBe("");
+    });
+  });
 });
