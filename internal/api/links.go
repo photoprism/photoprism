@@ -236,7 +236,7 @@ func DeleteAlbumLink(router *gin.RouterGroup) {
 //	@Id			GetAlbumLinks
 //	@Tags		Links, Albums
 //	@Produce	json
-//	@Success	200				{object}	entity.Link
+//	@Success	200				{array}		entity.Link
 //	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Param		uid				path		string	true	"album uid"
 //	@Router		/api/v1/albums/{uid}/links [get]

@@ -149,6 +149,8 @@ Verify config option names before using them:
 
 Use concise, imperative subjects with a one-word prefix indicating scope (e.g. `Config: Add tests for "darktable-cli" path detection`). Reference issue/PR IDs when relevant (e.g. `Docker: Use two stage build #123`). Commit messages must not exceed 80 characters.
 
+Do not add `Co-Authored-By: Claude …` trailers to commit messages.
+
 ### Key Style Notes
 
 - **Go**: idiomatic Go, small functions, wrapped errors with context, minimal public surface area. Use `goimports` with `-local "github.com/photoprism"` to group imports. Code in `pkg/*` MUST NOT import from `internal/*`.

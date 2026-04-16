@@ -66,7 +66,7 @@ func GetService(router *gin.RouterGroup) {
 //	@Id			GetServiceFolders
 //	@Tags		Services
 //	@Produce	json
-//	@Success	200					{object}	[]object
+//	@Success	200					{array}		object
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Param		id					path		string	true	"service id"
 //	@Router		/api/v1/services/{id}/folders [get]

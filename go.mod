@@ -12,7 +12,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gin-contrib/gzip v1.2.6
 	github.com/gin-gonic/gin v1.12.0
-	github.com/golang/geo v0.0.0-20260401045841-3289a7742193
+	github.com/golang/geo v0.0.0-20260415063119-550b242b3150
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -27,7 +27,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.4.0
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
-	github.com/mattn/go-sqlite3 v1.14.38 // indirect
+	github.com/mattn/go-sqlite3 v1.14.42 // indirect
 	github.com/montanaflynn/stats v0.9.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
@@ -38,15 +38,15 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
-	golang.org/x/crypto v0.49.0
-	golang.org/x/net v0.52.0
+	golang.org/x/crypto v0.50.0
+	golang.org/x/net v0.53.0
 	gonum.org/v1/gonum v0.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.38.0
+	golang.org/x/image v0.39.0
 )
 
 require github.com/olekukonko/tablewriter v1.1.4
@@ -71,12 +71,12 @@ require (
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
 
-require golang.org/x/text v0.35.0
+require golang.org/x/text v0.36.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
-	github.com/davidbyttow/govips/v2 v2.17.0
-	github.com/go-co-op/gocron/v2 v2.19.1
+	github.com/davidbyttow/govips/v2 v2.18.0
+	github.com/go-co-op/gocron/v2 v2.21.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/pquerna/otp v1.5.0
@@ -88,9 +88,9 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.27.0
-	github.com/zitadel/oidc/v3 v3.45.6
-	golang.org/x/mod v0.34.0
-	golang.org/x/sys v0.42.0
+	github.com/zitadel/oidc/v3 v3.47.3
+	golang.org/x/mod v0.35.0
+	golang.org/x/sys v0.43.0
 	google.golang.org/protobuf v1.36.11
 )
 
@@ -142,7 +142,7 @@ require (
 	github.com/mandykoh/go-parallel v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/modelcontextprotocol/go-sdk v1.4.1
+	github.com/modelcontextprotocol/go-sdk v1.5.0
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/muhlemmer/gu v0.3.1 // indirect
@@ -167,13 +167,13 @@ require (
 	github.com/zitadel/schema v1.3.2 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.42.0 // indirect
-	go.opentelemetry.io/otel/metric v1.42.0 // indirect
-	go.opentelemetry.io/otel/trace v1.42.0 // indirect
+	go.opentelemetry.io/otel v1.43.0 // indirect
+	go.opentelemetry.io/otel/metric v1.43.0 // indirect
+	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
-	golang.org/x/tools v0.43.0 // indirect
+	golang.org/x/tools v0.44.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
@@ -181,10 +181,10 @@ require (
 	github.com/abema/go-mp4 v1.5.0
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
-	github.com/go-playground/validator/v10 v10.30.1 // indirect
+	github.com/go-playground/validator/v10 v10.30.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.3.0 // indirect
 	github.com/sunfish-shogi/bufseekio v0.1.0
-	golang.org/x/arch v0.25.0 // indirect
+	golang.org/x/arch v0.26.0 // indirect
 )
 
 require (

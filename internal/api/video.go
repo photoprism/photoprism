@@ -21,7 +21,7 @@ import (
 // GetVideo returns a video, optionally limited to a byte range for streaming.
 //
 //	@Summary		returns a video, optionally limited to a byte range for streaming
-//	@Description	Fore more information see:
+//	@Description	For more information see:
 //	@Description	- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri
 //	@Id				GetVideo
 //	@Produce		video/mp4

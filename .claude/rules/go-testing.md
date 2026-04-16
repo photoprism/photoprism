@@ -1,6 +1,9 @@
 ## Go Test Coverage
 
 - Every new Go function, including unexported helpers, must have focused test coverage in the corresponding `*_test.go` file; update existing tests or add new ones as needed.
+- Refactors count too: when you split an existing function into new helpers (e.g., splitting one route registrar into two), each new function needs its own `Test<Name>` with at least a Success and an InvalidRequest/error case. Do not rely on the old test name still covering the old path by side effect.
+- Before reporting a Go change as done, grep your diff for `^func ` additions and confirm each has a matching `Test*` entry. If you cannot justify skipping coverage for a helper, add the test.
+- Regenerating `swagger.json` or updating route registration is not a substitute for tests — Swagger documents shape, tests prove behavior. Both are required.
 
 ## Go Testing Patterns
 
