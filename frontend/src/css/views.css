@@ -297,8 +297,8 @@
 }
 
 .search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result .preview,
-.search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td.result .preview,
-.edit-batch.list-view .v-table>table>tbody>tr>td.result .preview {
+.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result .preview,
+.edit-batch.list-view .v-table > table > tbody > tr > td.result .preview {
     width: 50px;
     height: 50px;
 }
@@ -497,6 +497,12 @@
     text-align: start;
 }
 
+.list-view td.meta-data .meta-data__button {
+    display: inline-block;
+    width: 100%;
+    text-align: start;
+}
+
 .cards-view .result .preview button {
     width: 36px;
     height: 36px;
@@ -587,6 +593,10 @@
     justify-content: flex-start;
 }
 
+.cards-view .result .meta .meta-fields {
+    gap: 8px;
+}
+
 .cards-view .result .meta .meta-title {
     font-size: 0.875rem;
     font-weight: bold;
@@ -628,7 +638,61 @@
     text-align: start;
 }
 
+.cards-view .result .meta .meta-fields .meta-field {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 17px;
+}
+
+.cards-view .result .meta .meta-fields .meta-field i {
+    position: absolute;
+    margin-inline-start: -17px;
+    font-family: Material Icons;
+    font-size: inherit;
+    line-height: normal;
+    font-style: normal;
+    font-weight: 400;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    text-transform: none;
+    vertical-align: text-bottom;
+    white-space: nowrap;
+    text-align: start;
+}
+
+.cards-view .result .meta .meta-fields .meta-field--title,
+.cards-view .result .meta .meta-fields .meta-field--caption {
+    padding-inline-start: 0;
+}
+
+.cards-view .result .meta .meta-fields .meta-field--title i,
+.cards-view .result .meta .meta-fields .meta-field--caption i {
+    display: none;
+}
+
+.cards-view .result .meta .meta-fields .meta-field--title {
+    font-size: 0.875rem;
+    font-weight: bold;
+    line-height: normal;
+    letter-spacing: normal;
+}
+
+.cards-view .result .meta .meta-fields .meta-field--caption {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+}
+
 .is-rtl .cards-view .result .meta .meta-details button {
+    padding: 0 17px 0 0;
+}
+
+.is-rtl .cards-view .result .meta .meta-fields .meta-field {
     padding: 0 17px 0 0;
 }
 

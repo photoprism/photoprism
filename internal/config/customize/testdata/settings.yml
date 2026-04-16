@@ -63,6 +63,30 @@ Download:
   Originals: true
   MediaRaw: false
   MediaSidecar: false
+Display:
+  Originals: false
+  RetinaLightbox: false
+  RetinaThumbnails: false
+  Metadata:
+    Cards:
+    - caption
+    - date
+    - keywords
+    List:
+    - filename
+    - date
+    - camera
+    - lens
+    - exposure
+    Lightbox:
+    - date
+    - caption
+    - keywords
+    - camera
+    - lens
+    - exposure
+    - filename
+    - fileInfo
 Albums:
   Download:
     Name: share

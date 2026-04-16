@@ -96,6 +96,7 @@ func NewSettings(theme, language, timeZone string) *Settings {
 			Originals:        false,
 			RetinaLightbox:   false,
 			RetinaThumbnails: false,
+			Metadata:         NewMetadataLayoutSettings(),
 		},
 		Templates: TemplateSettings{
 			Default: "index.gohtml",
@@ -119,6 +120,20 @@ func (s *Settings) Propagate() {
 
 	if s.Maps.Style == "" {
 		s.Maps.Style = DefaultMapsStyle
+	}
+
+	defaultMetadata := NewMetadataLayoutSettings()
+
+	if s.Display.Metadata.Cards == nil {
+		s.Display.Metadata.Cards = defaultMetadata.Cards
+	}
+
+	if s.Display.Metadata.List == nil {
+		s.Display.Metadata.List = defaultMetadata.List
+	}
+
+	if s.Display.Metadata.Lightbox == nil {
+		s.Display.Metadata.Lightbox = defaultMetadata.Lightbox
 	}
 
 	i18n.SetLocale(s.UI.Language)

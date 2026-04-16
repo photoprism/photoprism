@@ -741,7 +741,7 @@ func TestParseQueryString(t *testing.T) {
 
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		u, err := url.Parse("https://www.photoprism.app/api/v1/photos?count=100&offset=0&order=added&added=2022-01-02T13:04:05-01:00&updated=2001-01-02T17:04:05Z&q=")
+		u, err := url.Parse("https://www.photoprism.app/api/v1/photos?count=100&offset=0&order=added&added=2022-01-02T13:04:05-01:00&updated=2001-01-02T17:04:05Z&details=true&q=")
 
 		if err != nil {
 			t.Fatal(err)
@@ -769,6 +769,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "2001-01-02T17:04:05Z", form.Updated.Format(time.RFC3339))
 		assert.Equal(t, 100, form.Count)
 		assert.Equal(t, 0, form.Offset)
+		assert.True(t, form.Details)
 	})
 }
 

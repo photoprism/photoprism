@@ -25,55 +25,11 @@
           <div class="preview" />
           <div v-if="!isSharedView && m.Quality < 3 && context === contexts.Review" class="review" />
           <div class="meta">
-            <button v-if="!showTitles || m.Title" class="action-title-edit meta-title text-truncate">
-              {{ showTitles ? m.Title : m.getOriginalName() }}
-            </button>
-            <button v-if="showCaptions && m.Caption" class="meta-caption">
-              {{ m.Caption }}
-            </button>
-            <div class="meta-details">
-              <button v-if="m.Year > 0" class="action-open-date meta-date text-truncate">
-                <i :title="$gettext('Taken')" class="mdi mdi-calendar-range" />
-                {{ m.getDateString(true) }}
-              </button>
-              <button v-if="m.CameraID > 1 || m.Iso" class="meta-camera action-camera-edit text-truncate">
-                <i class="mdi" :class="m.Type === 'video' ? 'mdi-video-vintage' : 'mdi-camera'" />
-                {{ m.getCameraInfo() }}
-              </button>
-              <button v-if="m.LensID > 1 || m.FocalLength" class="meta-lens action-lens-edit text-truncate">
-                <i class="mdi mdi-camera-iris" />
-                {{ m.getLensInfo() }}
-              </button>
-              <button v-if="m.Type === 'video'" class="meta-video text-truncate">
-                <i class="mdi mdi-movie" />
-                {{ m.getVideoInfo() }}
-              </button>
-              <button v-else-if="m.Type === 'live'" class="meta-live text-truncate">
-                <i class="mdi mdi-play-circle-outline" />
-                {{ m.getVideoInfo() }}
-              </button>
-              <button v-else-if="m.Type === 'animated'" class="meta-animated text-truncate">
-                <i class="mdi mdi-file-gif-box" />
-                {{ m.getVideoInfo() }}
-              </button>
-              <button v-else-if="m.Type === 'document' || m.Type === 'vector'" class="meta-vector text-truncate">
-                <i class="mdi" :class="m.Type === 'document' ? 'mdi-text-box' : 'mdi-vector-polyline'" />
-                {{ m.getVectorInfo() }}
-              </button>
-              <button v-else class="meta-image text-truncate">
-                <i class="mdi mdi-image" />
-                {{ m.getImageInfo() }}
-              </button>
-              <button v-if="showTitles" class="meta-filename text-truncate">
-                <i class="mdi" :class="m.Type === 'video' || m.Type === 'live' ? 'mdi-filmstrip' : 'mdi-film'" />
-                {{ m.getOriginalName() }}
-              </button>
-              <template v-if="featPlaces && m.Country !== 'zz'">
-                <button class="meta-location action-location">
-                  <i class="mdi mdi-map-marker" />
-                  {{ m.locationInfo() }}
-                </button>
-              </template>
+            <div class="meta-details meta-fields">
+              <div v-for="item in cardMetadataItems(m, false)" :key="`${m.ID}-${item.key}`" :title="item.label" :class="item.className">
+                <i v-if="item.showIcon" class="mdi" :class="item.icon" />
+                {{ item.text }}
+              </div>
             </div>
           </div>
         </div>
@@ -179,80 +135,18 @@
             </button>
           </div>
           <div class="meta">
-            <button
-              v-if="!showTitles || m.Title"
-              :title="m.Title"
-              class="action-title-edit meta-title text-truncate"
-              @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)"
-            >
-              {{ showTitles ? m.Title : m.getOriginalName() }}
-            </button>
-            <button v-if="showCaptions && m.Caption" :title="$gettext('Caption')" class="meta-caption" @click.exact="editPhoto(index)">
-              {{ m.Caption }}
-            </button>
-            <div class="meta-details">
-              <button v-if="m.Year > 0" class="action-open-date meta-date text-truncate" @click.exact="openDate(index)">
-                <i :title="$gettext('Taken')" class="mdi mdi-calendar-range" />
-                {{ m.getDateString(true) }}
-              </button>
-              <button
-                v-if="m.CameraID > 1 || m.Iso"
-                :title="$gettext('Camera')"
-                class="meta-camera action-camera-edit text-truncate"
-                @click.exact="editPhoto(index, 'details')"
+            <div class="meta-details meta-fields">
+              <component
+                :is="item.clickable ? 'button' : 'div'"
+                v-for="item in cardMetadataItems(m)"
+                :key="`${m.ID}-${item.key}`"
+                :title="item.label"
+                :class="item.className"
+                @click.exact="onMetadataAction(item.action, index)"
               >
-                <i class="mdi" :class="m.Type === 'video' ? 'mdi-video-vintage' : 'mdi-camera'" />
-                {{ m.getCameraInfo() }}
-              </button>
-              <button
-                v-if="m.LensID > 1 || m.FocalLength"
-                :title="$gettext('Lens')"
-                class="meta-lens action-lens-edit text-truncate"
-                @click.exact="editPhoto(index, 'details')"
-              >
-                <i class="mdi mdi-camera-iris" />
-                {{ m.getLensInfo() }}
-              </button>
-              <button v-if="m.Type === 'video'" :title="$gettext('Video')" class="meta-video text-truncate" @click.exact="editPhoto(index, 'details')">
-                <i class="mdi mdi-movie" />
-                {{ m.getVideoInfo() }}
-              </button>
-              <button v-else-if="m.Type === 'live'" :title="$gettext('Live')" class="meta-live text-truncate" @click.exact="editPhoto(index, 'details')">
-                <i class="mdi mdi-play-circle-outline" />
-                {{ m.getVideoInfo() }}
-              </button>
-              <button
-                v-else-if="m.Type === 'animated'"
-                :title="$gettext('Animated') + ' GIF'"
-                class="meta-animated text-truncate"
-                @click.exact="editPhoto(index, 'details')"
-              >
-                <i class="mdi mdi-file-gif-box" />
-                {{ m.getVideoInfo() }}
-              </button>
-              <button
-                v-else-if="m.Type === 'document' || m.Type === 'vector'"
-                :title="m.Type === 'document' ? $gettext('Document') : $gettext('Vector')"
-                class="meta-vector text-truncate"
-                @click.exact="editPhoto(index)"
-              >
-                <i class="mdi" :class="m.Type === 'document' ? 'mdi-text-box' : 'mdi-vector-polyline'" />
-                {{ m.getVectorInfo() }}
-              </button>
-              <button v-else :title="$gettext('Image')" class="meta-image text-truncate" @click.exact="editPhoto(index)">
-                <i class="mdi mdi-image" />
-                {{ m.getImageInfo() }}
-              </button>
-              <button v-if="showTitles" :title="m.getOriginalName()" class="meta-filename text-truncate" @click.exact="editPhoto(index, 'files')">
-                <i class="mdi" :class="m.Type === 'video' || m.Type === 'live' ? 'mdi-filmstrip' : 'mdi-film'" />
-                {{ m.getOriginalName() }}
-              </button>
-              <template v-if="featPlaces && m.Country !== 'zz'">
-                <button :title="$gettext('Location')" class="meta-location action-location" @click.exact="openLocation(index)">
-                  <i class="mdi mdi-map-marker" />
-                  {{ m.locationInfo() }}
-                </button>
-              </template>
+                <i v-if="item.showIcon" class="mdi" :class="item.icon" />
+                {{ item.text }}
+              </component>
             </div>
           </div>
         </div>
@@ -262,6 +156,7 @@
 </template>
 <script>
 import download from "common/download";
+import { hasMetadataText, metadataIcon, metadataLabel, metadataLayout, metadataText, MetadataView } from "common/metadata";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 import { virtualizationTools } from "common/virtualization-tools";
@@ -320,16 +215,12 @@ export default {
     const featPlaces = settings.features.places;
     const featPrivate = settings.features.private;
     const featDownload = settings.features.download;
-    const showTitles = settings.search.showTitles;
-    const showCaptions = settings.search.showCaptions;
     const tileSize = settings.display?.retinaThumbnails ? "tile_1080" : "tile_500";
 
     return {
       featPlaces,
       featPrivate,
       featDownload,
-      showTitles,
-      showCaptions,
       tileSize,
       input,
       debug,
@@ -348,6 +239,11 @@ export default {
         });
       },
       immediate: true,
+    },
+  },
+  computed: {
+    cardLayout() {
+      return metadataLayout(this.$config.getSettings(), MetadataView.Cards);
     },
   },
   beforeCreate() {
@@ -519,6 +415,83 @@ export default {
        * force an update to fix that.
        */
       this.$forceUpdate();
+    },
+    cardMetadataItems(photo, interactive = true) {
+      return this.cardLayout
+        .map((fieldId, index) => {
+          if (fieldId === "location" && (!this.featPlaces || photo?.Country === "zz")) {
+            return null;
+          } else if (!hasMetadataText(photo, fieldId)) {
+            return null;
+          }
+
+          const action = this.metadataAction(fieldId);
+
+          return {
+            key: `${fieldId}-${index}`,
+            label: metadataLabel(fieldId),
+            text: metadataText(photo, fieldId),
+            icon: metadataIcon(fieldId, photo),
+            showIcon: !["title", "caption"].includes(fieldId),
+            clickable: interactive && action !== "",
+            className: this.metadataClass(fieldId, interactive && action !== ""),
+            action,
+          };
+        })
+        .filter(Boolean);
+    },
+    metadataAction(fieldId) {
+      switch (fieldId) {
+        case "date":
+          return "date";
+        case "location":
+          return "location";
+        case "filename":
+          return this.isSharedView ? "open" : "files";
+        case "camera":
+        case "lens":
+        case "exposure":
+        case "fileInfo":
+          return this.isSharedView ? "open" : "details";
+        case "title":
+        case "caption":
+        case "keywords":
+        default:
+          return this.isSharedView ? "open" : "edit";
+      }
+    },
+    metadataClass(fieldId, clickable) {
+      const classes = ["meta-field", `meta-field--${fieldId}`, `meta-${fieldId}`];
+
+      if (clickable) {
+        classes.push("clickable");
+      }
+
+      return classes.join(" ");
+    },
+    onMetadataAction(action, index) {
+      switch (action) {
+        case "date":
+          this.openDate(index);
+          break;
+        case "location":
+          this.openLocation(index);
+          break;
+        case "files":
+          this.editPhoto(index, "files");
+          break;
+        case "details":
+          this.editPhoto(index, "details");
+          break;
+        case "edit":
+          this.editPhoto(index);
+          break;
+        case "open":
+          this.openPhoto(index);
+          break;
+        default:
+          break;
+      }
     },
   },
 };

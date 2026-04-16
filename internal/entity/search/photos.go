@@ -32,6 +32,10 @@ var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 // PhotosColsView contains the result column names necessary for the photo viewer.
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
 
+// PhotosColsDetails contains the detail-backed result column names that are only
+// available when the details table is joined.
+const PhotosColsDetails = "details.keywords AS details_keywords, details.subject AS details_subject, details.artist AS details_artist, details.copyright AS details_copyright, details.license AS details_license"
+
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(frm form.SearchPhotos) (results PhotoResults, count int, err error) {
 	return searchPhotos(frm, nil, PhotosColsAll)
@@ -52,6 +56,10 @@ func PhotoIds(frm form.SearchPhotos) (files PhotoResults, count int, err error) 
 // searchPhotos finds photos based on the search form and user session then returns them as PhotoResults.
 func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string) (results PhotoResults, count int, err error) {
 	start := time.Now()
+
+	if frm.Details && !strings.Contains(resultCols, "details_keywords") {
+		resultCols = resultCols + ", " + PhotosColsDetails
+	}
 
 	// Parse query string and filter.
 	if err = frm.ParseQueryString(); err != nil {

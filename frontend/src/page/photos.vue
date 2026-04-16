@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { metadataViewRequiresDetails, MetadataView } from "common/metadata";
 import { Photo } from "model/photo";
 import Thumb from "model/thumb";
 import * as contexts from "options/contexts";
@@ -274,6 +275,12 @@ export default {
     this.$view.leave(this);
   },
   methods: {
+    searchNeedsDetails() {
+      const settings = this.$config.getSettings();
+      const browseView = this.settings.view === "list" ? MetadataView.List : MetadataView.Cards;
+
+      return metadataViewRequiresDetails(settings, browseView) || metadataViewRequiresDetails(settings, MetadataView.Lightbox);
+    },
     onShortCut(ev) {
       switch (ev.code) {
         case "Escape":
@@ -491,6 +498,10 @@ export default {
         merged: true,
       };
 
+      if (this.searchNeedsDetails()) {
+        params.details = true;
+      }
+
       Object.assign(params, this.lastFilter);
 
       if (this.staticFilter) {
@@ -608,6 +619,10 @@ export default {
         offset: this.offset,
         merged: true,
       };
+
+      if (this.searchNeedsDetails()) {
+        params.details = true;
+      }
 
       Object.assign(params, this.filter);
 

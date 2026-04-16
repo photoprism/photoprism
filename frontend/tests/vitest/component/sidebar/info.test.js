@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mount } from "@vue/test-utils";
-import PSidebarInfo from "component/sidebar/info.vue";
-import * as contexts from "options/contexts";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
 import { DateTime } from "luxon";
+import PSidebarInfo from "component/sidebar/info.vue";
+import { Photo } from "model/photo";
+import * as contexts from "options/contexts";
 
-// Mock dependencies
 vi.mock("component/map.vue", () => ({
   default: {
     name: "p-map",
@@ -13,46 +13,52 @@ vi.mock("component/map.vue", () => ({
   },
 }));
 
-// Mock formats module properly
 vi.mock("options/formats", () => ({
+  DATE_MED: "DATE_MED",
   DATETIME_MED: "DATETIME_MED",
   DATETIME_MED_TZ: "DATETIME_MED_TZ",
 }));
 
 describe("PSidebarInfo component", () => {
-  let wrapper;
   let originalFromISO;
+  let findSpy;
+  let copyLatLng;
+  let wrapper;
 
-  const mockModel = {
+  const baseModel = {
     UID: "abc123",
     Title: "Test Title",
     Caption: "Test Caption",
+    TakenAt: "2023-01-01T10:00:00Z",
     TakenAtLocal: "2023-01-01T10:00:00Z",
     TimeZone: "UTC",
+    Year: 2023,
+    Month: 1,
+    Day: 1,
     Lat: 52.52,
     Lng: 13.405,
-    getTypeInfo: vi.fn().mockReturnValue("JPEG, 1920x1080"),
-    getTypeIcon: vi.fn().mockReturnValue("mdi-file-image"),
+    FileName: "test-title.jpg",
+    Type: "image",
+    Width: 1920,
+    Height: 1080,
     getLatLng: vi.fn().mockReturnValue("52.5200, 13.4050"),
     copyLatLng: vi.fn(),
   };
 
-  beforeEach(() => {
-    vi.clearAllMocks();
+  async function mountSidebar(modelValue = baseModel, details = baseModel) {
+    copyLatLng = vi.fn();
 
-    // Store original DateTime.fromISO function
-    originalFromISO = DateTime.fromISO;
-
-    // Create a mock for DateTime.fromISO
-    DateTime.fromISO = vi.fn().mockImplementation(() => {
-      return {
-        toLocaleString: (format) => "January 1, 2023, 10:00 AM",
-      };
-    });
+    findSpy = vi.spyOn(Photo.prototype, "find").mockResolvedValue(
+      new Photo({
+        ...details,
+        copyLatLng,
+        getLatLng: vi.fn().mockReturnValue("52.5200, 13.4050"),
+      })
+    );
 
     wrapper = mount(PSidebarInfo, {
       props: {
-        modelValue: mockModel,
+        modelValue,
         context: contexts.Photos,
       },
       global: {
@@ -61,69 +67,68 @@ describe("PSidebarInfo component", () => {
         },
       },
     });
+
+    await flushPromises();
+
+    return wrapper;
+  }
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    originalFromISO = DateTime.fromISO;
+    DateTime.fromISO = vi.fn().mockImplementation(() => ({
+      toLocaleString: () => "January 1, 2023",
+    }));
+
+    await mountSidebar();
   });
 
   afterEach(() => {
-    // Restore original DateTime.fromISO
     DateTime.fromISO = originalFromISO;
+    findSpy?.mockRestore();
+    wrapper?.unmount();
   });
 
-  it("should render correctly with model data", () => {
+  it("renders the configured metadata fields from fetched details", () => {
     expect(wrapper.vm).toBeTruthy();
     expect(wrapper.find(".p-sidebar-info").exists()).toBe(true);
-
-    const html = wrapper.html();
-    expect(html).toContain("Test Title");
-    expect(html).toContain("Test Caption");
-
-    expect(mockModel.getTypeInfo).toHaveBeenCalled();
-    expect(mockModel.getTypeIcon).toHaveBeenCalled();
-    expect(mockModel.getLatLng).toHaveBeenCalled();
+    expect(findSpy).toHaveBeenCalledWith("abc123");
+    expect(wrapper.vm.metadataItems.some((item) => item.key.startsWith("caption-") && item.text === "Test Caption")).toBe(true);
+    expect(wrapper.vm.metadataItems.some((item) => item.key.startsWith("filename-") && item.text.includes("test-title"))).toBe(true);
+    expect(wrapper.html()).toContain("52.5200, 13.4050");
   });
 
-  it("should emit close event when close button is clicked", async () => {
-    // Try finding close button by various selectors
-    const closeButtonSelectors = [".close-button", "button[aria-label='Close']", "button[title='Close']"];
+  it("emits close when the toolbar button is clicked", async () => {
+    const closeButton = wrapper.find("button[title='Close']");
 
-    let closeButton;
-    for (const selector of closeButtonSelectors) {
-      closeButton = wrapper.find(selector);
-      if (closeButton.exists()) break;
-    }
+    expect(closeButton.exists()).toBe(true);
 
-    // If none of the selectors found the button, try getting the first button
-    if (!closeButton || !closeButton.exists()) {
-      const allButtons = wrapper.findAll("button");
-      if (allButtons.length > 0) {
-        closeButton = allButtons[0];
-      }
-    }
+    await closeButton.trigger("click");
 
-    if (closeButton && closeButton.exists()) {
-      await closeButton.trigger("click");
-      expect(wrapper.emitted()).toHaveProperty("close");
-    } else {
-      // If we can't find a button at all, mark this test as pending
-      console.warn("Could not find close button in component");
-    }
+    expect(wrapper.emitted()).toHaveProperty("close");
   });
 
-  it("should trigger copyLatLng when location is clicked", async () => {
-    // Find the location item by its class
+  it("copies the location when the location row is clicked", async () => {
     const clickableItems = wrapper.findAll(".clickable");
-    if (clickableItems.length > 0) {
-      await clickableItems[0].trigger("click");
-      expect(mockModel.copyLatLng).toHaveBeenCalled();
-    }
+
+    expect(clickableItems.length).toBeGreaterThan(0);
+
+    await clickableItems[0].trigger("click");
+
+    expect(copyLatLng).toHaveBeenCalled();
   });
 
-  it("should handle model without taken time", () => {
-    const modelWithoutTime = {
-      ...mockModel,
-      TakenAtLocal: null,
-    };
+  it("hides missing dates", async () => {
+    wrapper.unmount();
+    findSpy.mockRestore();
 
-    const formattedTime = wrapper.vm.formatTime(modelWithoutTime);
-    expect(formattedTime).toBe("Unknown");
+    await mountSidebar(
+      { ...baseModel, UID: "missing-time", TakenAt: "", TakenAtLocal: "", Year: -1, Month: -1, Day: -1, Lat: 0, Lng: 0 },
+      { ...baseModel, UID: "missing-time", TakenAt: "", TakenAtLocal: "", Year: -1, Month: -1, Day: -1, Lat: 0, Lng: 0 }
+    );
+
+    const dateItem = wrapper.vm.metadataItems.find((item) => item.key.startsWith("date-"));
+
+    expect(dateItem).toBeUndefined();
   });
 });

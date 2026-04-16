@@ -154,6 +154,27 @@ span.text-selectable,
     font-size: 0.875rem;
 }
 
+.metadata-layout-editor__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.metadata-layout-editor__actions {
+    display: flex;
+    align-items: center;
+}
+
+.metadata-layout-editor__footer {
+    padding-top: 4px;
+}
+
+.metadata-layout-editor__empty {
+    padding: 8px 0 16px;
+}
+
 .is-rtl .v-card .caption {
     text-align: right;
 }

@@ -53,7 +53,6 @@
               >
               </v-checkbox>
             </v-col>
-
           </v-row>
         </v-card-actions>
       </v-card>
@@ -274,6 +273,30 @@
           </v-row>
         </v-card-actions>
       </v-card>
+
+      <p-settings-metadata-layout
+        :model-value="settings.display.metadata.cards"
+        :title="$gettext('Card View')"
+        :hint="$gettext('Choose which metadata fields appear in the card view and in what order.')"
+        view="cards"
+        @update:model-value="onMetadataLayoutChange('cards', $event)"
+      />
+
+      <p-settings-metadata-layout
+        :model-value="settings.display.metadata.list"
+        :title="$gettext('List View')"
+        :hint="$gettext('Choose which metadata columns appear in the list view and in what order.')"
+        view="list"
+        @update:model-value="onMetadataLayoutChange('list', $event)"
+      />
+
+      <p-settings-metadata-layout
+        :model-value="settings.display.metadata.lightbox"
+        :title="$gettext('Viewer')"
+        :hint="$gettext('Choose which metadata fields appear in the lightbox information panel and in what order.')"
+        view="lightbox"
+        @update:model-value="onMetadataLayoutChange('lightbox', $event)"
+      />
     </v-form>
 
     <p-about-footer></p-about-footer>
@@ -284,11 +307,13 @@
 import Settings from "model/settings";
 import * as options from "options/options";
 import PAboutFooter from "component/about/footer.vue";
+import PSettingsMetadataLayout from "component/settings/metadata-layout.vue";
 
 export default {
   name: "PSettingsContent",
   components: {
     PAboutFooter,
+    PSettingsMetadataLayout,
   },
   data() {
     return {
@@ -327,6 +352,19 @@ export default {
           this.busy = false;
           this.$notify.unblockUI();
         });
+    },
+    onMetadataLayoutChange(view, layout) {
+      if (!this.settings.display) {
+        this.settings.display = {};
+      }
+
+      if (!this.settings.display.metadata) {
+        this.settings.display.metadata = {};
+      }
+
+      this.settings.display.metadata[view] = Array.isArray(layout) ? layout.slice() : [];
+
+      this.onChange();
     },
     onChange() {
       if (this.busy) {

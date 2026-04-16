@@ -16,6 +16,9 @@ func TestNewSettings(t *testing.T) {
 		assert.Equal(t, DefaultTimeZone, s.UI.TimeZone)
 		assert.Equal(t, DefaultStartPage, s.UI.StartPage)
 		assert.Equal(t, DefaultMapsStyle, s.Maps.Style)
+		assert.Equal(t, []string{"caption", "date", "keywords"}, s.Display.Metadata.Cards)
+		assert.Equal(t, []string{"filename", "date", "camera", "lens", "exposure"}, s.Display.Metadata.List)
+		assert.Equal(t, []string{"date", "caption", "keywords", "camera", "lens", "exposure", "filename", "fileInfo"}, s.Display.Metadata.Lightbox)
 	})
 	t.Run("Custom", func(t *testing.T) {
 		s := NewSettings("test", "fr", "Europe/Paris")
@@ -32,11 +35,17 @@ func TestNewSettings(t *testing.T) {
 		s.UI.TimeZone = ""
 		s.UI.StartPage = ""
 		s.Maps.Style = ""
+		s.Display.Metadata.Cards = nil
+		s.Display.Metadata.List = nil
+		s.Display.Metadata.Lightbox = nil
 		s.Propagate()
 		assert.Equal(t, DefaultLanguage, s.UI.Language)
 		assert.Equal(t, DefaultTimeZone, s.UI.TimeZone)
 		assert.Equal(t, DefaultStartPage, s.UI.StartPage)
 		assert.Equal(t, DefaultMapsStyle, s.Maps.Style)
+		assert.Equal(t, []string{"caption", "date", "keywords"}, s.Display.Metadata.Cards)
+		assert.Equal(t, []string{"filename", "date", "camera", "lens", "exposure"}, s.Display.Metadata.List)
+		assert.Equal(t, []string{"date", "caption", "keywords", "camera", "lens", "exposure", "filename", "fileInfo"}, s.Display.Metadata.Lightbox)
 	})
 }
 

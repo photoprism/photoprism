@@ -89,6 +89,42 @@ Mock.onPut("api/v1/photos/pqbemz8276mhtobh").reply(
 );
 
 Mock.onDelete("api/v1/photos/abc123/unlike").reply(200);
+Mock.onGet("api/v1/photos/abc123").reply(
+  200,
+  {
+    UID: "abc123",
+    Title: "Test Title",
+    Caption: "Test Caption",
+    TakenAtLocal: "2023-01-01T10:00:00Z",
+    TimeZone: "UTC",
+    Lat: 52.52,
+    Lng: 13.405,
+    DetailsKeywords: "portrait, family",
+    FileName: "test-title.jpg",
+    Type: "image",
+    Width: 1920,
+    Height: 1080,
+  },
+  mockHeaders
+);
+Mock.onGet("photos/abc123").reply(
+  200,
+  {
+    UID: "abc123",
+    Title: "Test Title",
+    Caption: "Test Caption",
+    TakenAtLocal: "2023-01-01T10:00:00Z",
+    TimeZone: "UTC",
+    Lat: 52.52,
+    Lng: 13.405,
+    DetailsKeywords: "portrait, family",
+    FileName: "test-title.jpg",
+    Type: "image",
+    Width: 1920,
+    Height: 1080,
+  },
+  mockHeaders
+);
 Mock.onDelete("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud").reply(
   200,
   {

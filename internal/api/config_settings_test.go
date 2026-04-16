@@ -42,6 +42,24 @@ func TestSaveSettings(t *testing.T) {
 		r3 := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"ui":{"language": "en"}}`)
 		assert.Equal(t, http.StatusOK, r3.Code)
 	})
+	t.Run("MetadataLayout", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		GetSettings(router)
+		SaveSettings(router)
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"display":{"metadata":{"cards":["date","caption","keywords"],"list":["filename","date"],"lightbox":["date","caption","fileInfo"]}}}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "date", gjson.Get(r.Body.String(), "display.metadata.cards.0").String())
+		assert.Equal(t, "filename", gjson.Get(r.Body.String(), "display.metadata.list.0").String())
+		assert.Equal(t, "fileInfo", gjson.Get(r.Body.String(), "display.metadata.lightbox.2").String())
+
+		r2 := PerformRequest(app, "GET", "/api/v1/settings")
+		assert.Equal(t, http.StatusOK, r2.Code)
+		assert.Equal(t, "date", gjson.Get(r2.Body.String(), "display.metadata.cards.0").String())
+		assert.Equal(t, "filename", gjson.Get(r2.Body.String(), "display.metadata.list.0").String())
+		assert.Equal(t, "fileInfo", gjson.Get(r2.Body.String(), "display.metadata.lightbox.2").String())
+	})
 	t.Run("BadRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 

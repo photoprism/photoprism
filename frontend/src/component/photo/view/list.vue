@@ -30,17 +30,8 @@
               <tr>
                 <th class="col-select"></th>
                 <th class="col-preview"></th>
-                <th class="col-auto text-start">
-                  {{ showTitles ? $gettext("Title") : $gettext("File Name") }}
-                </th>
-                <th class="col-taken text-start hidden-xs">
-                  {{ $gettext("Taken") }}
-                </th>
-                <th class="col-md text-start hidden-sm-and-down">
-                  {{ $gettext("Camera") }}
-                </th>
-                <th class="col-lg text-start hidden-md-and-down">
-                  {{ showName ? $gettext("Name") : $gettext("Location") }}
+                <th v-for="column in visibleListColumns" :key="column.key" class="text-start" :class="column.className">
+                  {{ column.label }}
                 </th>
                 <th v-if="!isSharedView" class="col-xs text-center"></th>
               </tr>
@@ -85,27 +76,20 @@
                   </div>
                 </td>
                 <td
-                  class="meta-data meta-title col-auto text-start clickable"
-                  :title="m.Title"
-                  @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)"
+                  v-for="column in visibleListColumns"
+                  :key="`${m.ID}-${column.key}`"
+                  class="meta-data text-start"
+                  :class="column.className"
+                  :title="metadataText(m, column.id)"
                 >
-                  {{ showTitles && m.Title ? m.Title : m.getOriginalName() }}
-                </td>
-                <td class="meta-data meta-date hidden-xs text-start col-taken" :title="m.getDateString()">
-                  <span class="text-truncate clickable" @click.stop.prevent="openDate(index)">
-                    {{ m.shortDateString() }}
-                  </span>
-                </td>
-                <td class="meta-data hidden-sm-and-down text-start col-md">
-                  <span class="text-truncate clickable" @click.stop.prevent="editPhoto(index)"> {{ m.CameraMake }} {{ m.CameraModel }} </span>
-                </td>
-                <td class="meta-data hidden-md-and-down text-start col-lg">
-                  <span v-if="m.Country !== 'zz' && showLocation" class="text-truncate clickable" @click.stop.prevent="openLocation(index)">
-                    {{ m.locationInfo() }}
-                  </span>
-                  <span v-else class="text-truncate">
-                    {{ m.locationInfo() }}
-                  </span>
+                  <component
+                    :is="column.clickable ? 'button' : 'span'"
+                    class="text-truncate"
+                    :class="{ 'clickable': column.clickable, 'meta-data__button': column.clickable }"
+                    @click.stop.prevent="onColumnAction(column.action, index)"
+                  >
+                    {{ metadataText(m, column.id) }}
+                  </component>
                 </td>
                 <td v-if="!isSharedView" class="text-center col-xs">
                   <div class="table-actions">
@@ -131,10 +115,11 @@
 </template>
 <script>
 import download from "common/download";
+import { metadataLabel, metadataLayout, metadataText, MetadataView } from "common/metadata";
 import $notify from "common/notify";
+import { PhotoClipboard } from "common/clipboard";
 import { virtualizationTools } from "common/virtualization-tools";
 import IconLivePhoto from "component/icon/live-photo.vue";
-import { PhotoClipboard } from "common/clipboard";
 
 export default {
   name: "PPhotoViewList",
@@ -188,18 +173,14 @@ export default {
     if (!this.isSharedView && this.$config.feature("review")) {
       m += " " + this.$gettext("Non-photographic and low-quality images require a review before they appear in search results.");
     }
+
     const settings = this.$config.getSettings();
-    const showTitles = settings.search.showTitles;
-    const showCaptions = settings.search.showCaptions;
     const tileSize = settings.display?.retinaThumbnails ? "tile_500" : "tile_224";
 
     return {
-      showTitles,
-      showCaptions,
       tileSize,
       config: this.$config.values,
       notFoundMessage: m,
-      showName: this.filter.order === "name",
       showLocation: this.$config.values.settings.features.places,
       hidePrivate: this.$config.values.settings.features.private,
       mouseDown: {
@@ -211,6 +192,34 @@ export default {
       lastVisibleElementIndex: 0,
       visibleElementIndices: new Set(),
     };
+  },
+  computed: {
+    listLayout() {
+      return metadataLayout(this.$config.getSettings(), MetadataView.List);
+    },
+    listColumns() {
+      return this.listLayout
+        .map((fieldId, index) => {
+          if (fieldId === "location" && !this.showLocation) {
+            return null;
+          }
+
+          const action = this.columnAction(fieldId);
+
+          return {
+            id: fieldId,
+            key: `${fieldId}-${index}`,
+            label: metadataLabel(fieldId),
+            clickable: action !== "",
+            action,
+            className: this.columnClass(fieldId),
+          };
+        })
+        .filter(Boolean);
+    },
+    visibleListColumns() {
+      return this.listColumns.slice(0, this.maxListColumns());
+    },
   },
   watch: {
     photos: {
@@ -236,6 +245,7 @@ export default {
     this.intersectionObserver.disconnect();
   },
   methods: {
+    metadataText,
     isSelected(m) {
       return PhotoClipboard.has(m);
     },
@@ -314,6 +324,72 @@ export default {
     },
     selectRange(index) {
       this.$clipboard.addRange(index, this.photos);
+    },
+    maxListColumns() {
+      if (this.$vuetify.display.xs) {
+        return 2;
+      } else if (this.$vuetify.display.sm) {
+        return 3;
+      } else if (this.$vuetify.display.md) {
+        return 4;
+      } else if (this.$vuetify.display.lg) {
+        return 5;
+      }
+
+      return this.listColumns.length;
+    },
+    columnClass(fieldId) {
+      const classes = ["col-metadata", `col-metadata--${fieldId}`];
+
+      if (["title", "caption", "filename", "keywords"].includes(fieldId)) {
+        classes.push("col-auto");
+      }
+
+      return classes.join(" ");
+    },
+    columnAction(fieldId) {
+      switch (fieldId) {
+        case "date":
+          return "date";
+        case "location":
+          return this.showLocation ? "location" : "";
+        case "filename":
+          return this.isSharedView ? "open" : "files";
+        case "camera":
+        case "lens":
+        case "exposure":
+        case "fileInfo":
+          return this.isSharedView ? "open" : "details";
+        case "title":
+        case "caption":
+        case "keywords":
+        default:
+          return this.isSharedView ? "open" : "edit";
+      }
+    },
+    onColumnAction(action, index) {
+      switch (action) {
+        case "date":
+          this.openDate(index);
+          break;
+        case "location":
+          this.openLocation(index);
+          break;
+        case "files":
+          this.editPhoto(index, "files");
+          break;
+        case "details":
+          this.editPhoto(index, "details");
+          break;
+        case "edit":
+          this.editPhoto(index);
+          break;
+        case "open":
+          this.openPhoto(index);
+          break;
+        default:
+          break;
+      }
     },
   },
 };

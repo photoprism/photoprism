@@ -100,7 +100,7 @@ type SearchPhotos struct {
 	Order       string    `form:"order" serialize:"-"`                                                                                                                                   // Sort order
 	Reverse     bool      `form:"reverse" serialize:"-"`                                                                                                                                 // Merge FILES in response
 	Merged      bool      `form:"merged" serialize:"-"`                                                                                                                                  // Merge FILES in response
-	Details     bool      `form:"-" serialize:"-"`                                                                                                                                       // Include additional information from details table
+	Details     bool      `form:"details" serialize:"-"`                                                                                                                                 // Include additional information from details table
 }
 
 // GetQuery returns the current search query string.

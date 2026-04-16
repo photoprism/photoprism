@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -28,6 +29,9 @@ type UserSettings struct {
 	SearchListView       int       `gorm:"default:0;" json:"SearchListView,omitempty" yaml:"SearchListView,omitempty"`
 	SearchShowTitles     int       `gorm:"default:0;" json:"SearchShowTitles,omitempty" yaml:"SearchShowTitles,omitempty"`
 	SearchShowCaptions   int       `gorm:"default:0;" json:"SearchShowCaptions,omitempty" yaml:"SearchShowCaptions,omitempty"`
+	DisplayMetadataCards string    `gorm:"type:TEXT;column:display_metadata_cards;" json:"DisplayMetadataCards,omitempty" yaml:"DisplayMetadataCards,omitempty"`
+	DisplayMetadataList  string    `gorm:"type:TEXT;column:display_metadata_list;" json:"DisplayMetadataList,omitempty" yaml:"DisplayMetadataList,omitempty"`
+	DisplayMetadataLight string    `gorm:"type:TEXT;column:display_metadata_lightbox;" json:"DisplayMetadataLight,omitempty" yaml:"DisplayMetadataLight,omitempty"`
 	UploadPath           string    `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
 	CreatedAt            time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt            time.Time `json:"UpdatedAt" yaml:"-"`
@@ -80,6 +84,32 @@ func (m *UserSettings) Save() error {
 // Updates multiple properties in the database.
 func (m *UserSettings) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
+}
+
+// marshalMetadataLayout stores a metadata layout as a JSON array string.
+func marshalMetadataLayout(layout []string) string {
+	data, err := json.Marshal(layout)
+
+	if err != nil {
+		return "[]"
+	}
+
+	return string(data)
+}
+
+// unmarshalMetadataLayout restores a metadata layout from a JSON array string.
+func unmarshalMetadataLayout(value string) []string {
+	if value == "" {
+		return nil
+	}
+
+	var layout []string
+
+	if err := json.Unmarshal([]byte(value), &layout); err != nil {
+		return nil
+	}
+
+	return layout
 }
 
 // Apply applies the settings provided to the user preferences and keeps current values if they are not specified.
@@ -176,6 +206,19 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 		}
 	}
 
+	// Display metadata preferences.
+	if s.Display.Metadata.Cards != nil {
+		m.DisplayMetadataCards = marshalMetadataLayout(s.Display.Metadata.Cards)
+	}
+
+	if s.Display.Metadata.List != nil {
+		m.DisplayMetadataList = marshalMetadataLayout(s.Display.Metadata.List)
+	}
+
+	if s.Display.Metadata.Lightbox != nil {
+		m.DisplayMetadataLight = marshalMetadataLayout(s.Display.Metadata.Lightbox)
+	}
+
 	return m
 }
 
@@ -267,6 +310,18 @@ func (m *UserSettings) ApplyTo(s *customize.Settings) *customize.Settings {
 		s.Search.ShowCaptions = true
 	} else if m.SearchShowCaptions < 0 {
 		s.Search.ShowCaptions = false
+	}
+
+	if layout := unmarshalMetadataLayout(m.DisplayMetadataCards); layout != nil {
+		s.Display.Metadata.Cards = layout
+	}
+
+	if layout := unmarshalMetadataLayout(m.DisplayMetadataList); layout != nil {
+		s.Display.Metadata.List = layout
+	}
+
+	if layout := unmarshalMetadataLayout(m.DisplayMetadataLight); layout != nil {
+		s.Display.Metadata.Lightbox = layout
 	}
 
 	return s

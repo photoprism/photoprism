@@ -85,6 +85,13 @@ func TestUserSettings_Apply(t *testing.T) {
 			ShowTitles:   false,
 			ShowCaptions: true,
 		},
+		Display: customize.DisplaySettings{
+			Metadata: customize.MetadataLayoutSettings{
+				Cards:    []string{"caption", "date", "keywords"},
+				List:     []string{"filename", "date"},
+				Lightbox: []string{"date", "caption", "fileInfo"},
+			},
+		},
 	}
 	r := m.Apply(s)
 
@@ -104,6 +111,9 @@ func TestUserSettings_Apply(t *testing.T) {
 	assert.Equal(t, 1, r.SearchListView)
 	assert.Equal(t, -1, r.SearchShowTitles)
 	assert.Equal(t, 1, r.SearchShowCaptions)
+	assert.Equal(t, `["caption","date","keywords"]`, r.DisplayMetadataCards)
+	assert.Equal(t, `["filename","date"]`, r.DisplayMetadataList)
+	assert.Equal(t, `["date","caption","fileInfo"]`, r.DisplayMetadataLight)
 
 	s2 := &customize.Settings{
 		Download: customize.DownloadSettings{
@@ -133,6 +143,13 @@ func TestUserSettings_Apply(t *testing.T) {
 			ShowTitles:   true,
 			ShowCaptions: false,
 		},
+		Display: customize.DisplaySettings{
+			Metadata: customize.MetadataLayoutSettings{
+				Cards:    []string{},
+				List:     []string{"date", "camera", "lens"},
+				Lightbox: []string{"caption"},
+			},
+		},
 	}
 	r2 := m.Apply(s2)
 
@@ -151,6 +168,9 @@ func TestUserSettings_Apply(t *testing.T) {
 	assert.Equal(t, -1, r.SearchListView)
 	assert.Equal(t, 1, r.SearchShowTitles)
 	assert.Equal(t, -1, r.SearchShowCaptions)
+	assert.Equal(t, `[]`, r.DisplayMetadataCards)
+	assert.Equal(t, `["date","camera","lens"]`, r.DisplayMetadataList)
+	assert.Equal(t, `["caption"]`, r.DisplayMetadataLight)
 }
 
 func TestUserSettings_ApplyTo(t *testing.T) {
@@ -171,6 +191,9 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 		SearchListView:       -1,
 		SearchShowTitles:     1,
 		SearchShowCaptions:   -1,
+		DisplayMetadataCards: `["caption","date","keywords"]`,
+		DisplayMetadataList:  `["filename","date","camera"]`,
+		DisplayMetadataLight: `["date","caption","fileInfo"]`,
 	}
 
 	s := &customize.Settings{
@@ -221,6 +244,9 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, false, r.Search.ListView)
 	assert.Equal(t, true, r.Search.ShowTitles)
 	assert.Equal(t, false, r.Search.ShowCaptions)
+	assert.Equal(t, []string{"caption", "date", "keywords"}, r.Display.Metadata.Cards)
+	assert.Equal(t, []string{"filename", "date", "camera"}, r.Display.Metadata.List)
+	assert.Equal(t, []string{"date", "caption", "fileInfo"}, r.Display.Metadata.Lightbox)
 
 	m2 := &UserSettings{
 		UITheme:              "lavender",
@@ -239,6 +265,9 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 		SearchListView:       1,
 		SearchShowTitles:     -1,
 		SearchShowCaptions:   1,
+		DisplayMetadataCards: `[]`,
+		DisplayMetadataList:  `["filename","date","camera","lens","exposure"]`,
+		DisplayMetadataLight: `["date","caption","keywords","camera"]`,
 	}
 
 	r2 := m2.ApplyTo(s)
@@ -260,4 +289,7 @@ func TestUserSettings_ApplyTo(t *testing.T) {
 	assert.Equal(t, true, r.Search.ListView)
 	assert.Equal(t, false, r.Search.ShowTitles)
 	assert.Equal(t, true, r.Search.ShowCaptions)
+	assert.Equal(t, []string{}, r.Display.Metadata.Cards)
+	assert.Equal(t, []string{"filename", "date", "camera", "lens", "exposure"}, r.Display.Metadata.List)
+	assert.Equal(t, []string{"date", "caption", "keywords", "camera"}, r.Display.Metadata.Lightbox)
 }

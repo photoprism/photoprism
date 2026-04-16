@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { metadataViewRequiresDetails, MetadataView } from "common/metadata";
 import { Photo } from "model/photo";
 import Album from "model/album";
 import Thumb from "model/thumb";
@@ -225,6 +226,12 @@ export default {
     resetLastFilter() {
       this.lastFilter = {};
     },
+    searchNeedsDetails() {
+      const settings = this.$config.getSettings();
+      const browseView = this.settings.view === "list" ? MetadataView.List : MetadataView.Cards;
+
+      return metadataViewRequiresDetails(settings, browseView) || metadataViewRequiresDetails(settings, MetadataView.Lightbox);
+    },
     onShortCut(ev) {
       switch (ev.code) {
         case "KeyR":
@@ -356,6 +363,10 @@ export default {
         reverse: this.sortReverse(),
       };
 
+      if (this.searchNeedsDetails()) {
+        params.details = true;
+      }
+
       Object.assign(params, this.lastFilter);
 
       if (this.staticFilter) {
@@ -477,6 +488,10 @@ export default {
         order: this.sortOrder(),
         reverse: this.sortReverse(),
       };
+
+      if (this.searchNeedsDetails()) {
+        params.details = true;
+      }
 
       Object.assign(params, this.filter);
 

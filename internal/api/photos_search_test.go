@@ -30,6 +30,16 @@ func TestSearchPhotos(t *testing.T) {
 		assert.LessOrEqual(t, int64(2), count.Int())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("Details", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SearchPhotos(router)
+		r := PerformRequest(app, "GET", "/api/v1/photos?count=1&uid=ps6sg6be2lvl0yh7&details=true")
+		body := r.Body.String()
+
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "nature, frog", gjson.Get(body, "0.DetailsKeywords").String())
+		assert.Equal(t, "Lake", gjson.Get(body, "0.DetailsSubject").String())
+	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchPhotos(router)

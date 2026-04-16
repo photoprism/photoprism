@@ -95,6 +95,7 @@ import Lightbox from "photoswipe/lightbox";
 import Captions from "common/captions";
 import $api from "common/api";
 import $fullscreen from "common/fullscreen";
+import { hasMetadataText, metadataLayout, metadataText, MetadataView } from "common/metadata";
 import Thumb from "model/thumb";
 import Collection from "model/collection";
 import { Photo } from "model/photo";
@@ -167,6 +168,7 @@ export default {
       featDevelop: this.$config.featDevelop(), // Enables new features that are still under development.
       selection: this.$clipboard.selection,
       config: this.$config.values,
+      detailRequestUid: "",
       collection: null,
       context: contexts.Default,
       model: new Thumb(), // Current slide.
@@ -565,7 +567,7 @@ export default {
       if (original) {
         // Divide by devicePixelRatio if retina lightbox is enabled, so the browser maps
         // image pixels 1:1 to device pixels on HiDPI displays.
-        const dpr = displaySettings?.retinaLightbox ? (window.devicePixelRatio || 1) : 1;
+        const dpr = displaySettings?.retinaLightbox ? window.devicePixelRatio || 1 : 1;
         const img = {
           src: original.src,
           width: Math.round(original.w / dpr),
@@ -609,7 +611,7 @@ export default {
 
       // Divide by devicePixelRatio if retina lightbox is enabled, so the browser maps
       // image pixels 1:1 to device pixels on HiDPI displays.
-      const dpr = displaySettings?.retinaLightbox ? (window.devicePixelRatio || 1) : 1;
+      const dpr = displaySettings?.retinaLightbox ? window.devicePixelRatio || 1 : 1;
 
       // Set thumbnail image URL, width, and height.
       const img = {
@@ -1541,34 +1543,31 @@ export default {
         return "";
       }
 
-      let caption = "";
-
-      if (model.Title) {
-        caption += `<h4>${this.$util.encodeHTML(model.Title.trim())}</h4>`;
-      }
-
-      /*
-        TODO: Find a good position for the date information that works for all screen sizes and image dimensions.
-              We MAY postpone this and display it along with other metadata in the new sidebar.
-       */
-      /* if (model.TakenAtLocal) {
-         caption += `<div>${this.$util.formatDate(model.TakenAtLocal)}</div>`;
-      } */
-
       if (model.Description && !model.Caption) {
         model.Caption = model.Description;
       }
 
-      let text = typeof model.Caption === "string" ? model.Caption.trim() : "";
+      const layout = metadataLayout(this.$config.getSettings(), MetadataView.Cards);
+      const fields = layout
+        .map((fieldId, index) => {
+          if (fieldId === "location" && (!model?.Lat || !model?.Lng)) {
+            return null;
+          } else if (!hasMetadataText(model, fieldId)) {
+            return null;
+          }
 
-      if (text) {
-        if (!caption && text.split("\n").length < 2) {
-          // Render large caption if there is no title and it has only one line.
-          caption += `<h4>${this.$util.encodeHTML(text)}</h4>`;
-        } else {
-          // Render small caption otherwise.
-          caption += `<p>${this.$util.encodeHTML(text)}</p>`;
-        }
+          return {
+            fieldId,
+            index,
+            text: metadataText(model, fieldId),
+          };
+        })
+        .filter(Boolean);
+
+      let caption = "";
+
+      for (const field of fields) {
+        caption += `<div class="pswp__dynamic-caption-field pswp__dynamic-caption-field--${field.fieldId}">${this.$util.encodeHTML(field.text)}</div>`;
       }
 
       return this.$util.sanitizeHtml(caption);
@@ -1631,6 +1630,7 @@ export default {
       // Set current slide model.
       if (this.index >= 0 && this.models.length > 0 && this.index < this.models.length) {
         this.model = this.models[this.index];
+        this.syncCurrentPhotoDetails();
       }
 
       // Pause the slideshow if the index of the next slide does not match.
@@ -1640,6 +1640,57 @@ export default {
 
       // Ensure that content is focused.
       this.focusContent();
+    },
+    syncCurrentPhotoDetails() {
+      const uid = this.model?.UID;
+
+      if (!uid) {
+        this.detailRequestUid = "";
+        return;
+      }
+
+      this.detailRequestUid = uid;
+
+      new Photo()
+        .find(uid)
+        .then((photo) => {
+          if (this.detailRequestUid !== uid) {
+            return;
+          }
+
+          this.model = photo;
+          this.refreshCurrentCaption();
+        })
+        .catch(() => {
+          if (this.detailRequestUid === uid) {
+            this.refreshCurrentCaption();
+          }
+        });
+    },
+    activeCaptionModel(slide) {
+      const index = typeof slide?.index === "number" ? slide.index : this.index;
+      const slideModel = this.models[index];
+
+      if (slideModel?.UID && this.model?.UID === slideModel.UID) {
+        return this.model;
+      }
+
+      return slideModel || this.model;
+    },
+    refreshCurrentCaption() {
+      const pswp = this.pswp();
+      const slide = pswp?.currSlide;
+      const captionElement = slide?.dynamicCaption?.element;
+
+      if (!slide || !captionElement) {
+        return;
+      }
+
+      const html = this.formatCaption(this.activeCaptionModel(slide));
+      captionElement.innerHTML = html;
+
+      this.captionPlugin?.updateCaptionPosition?.(slide);
+      this.captionPlugin?.showCaption?.(slide);
     },
     // Called when the user clicks on the PhotoSwipe lightbox background,
     // see https://photoswipe.com/click-and-tap-actions.
