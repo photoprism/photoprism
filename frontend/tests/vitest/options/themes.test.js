@@ -67,7 +67,6 @@ describe("options/themes", () => {
   it("includes the shared lightbox variables from the active style preset", () => {
     const theme = themes.Get("default", false);
 
-    expect(theme.variables["lightbox-button-bg-opacity"]).toBeDefined();
     expect(theme.variables["lightbox-controls-bg-opacity"]).toBeDefined();
     expect(theme.variables["lightbox-frame-opacity"]).toBeDefined();
     expect(theme.variables["lightbox-menu-opacity"]).toBeDefined();

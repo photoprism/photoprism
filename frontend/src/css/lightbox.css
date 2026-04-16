@@ -5,8 +5,7 @@
     --p-lightbox-surface: rgb(var(--v-theme-surface));
     --p-lightbox-on-surface: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
     --p-lightbox-on-surface-medium: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
-    --p-lightbox-frame: rgba(var(--v-border-color), var(--v-lightbox-frame-opacity, var(--v-border-opacity)));
-    --p-lightbox-button-surface: rgba(var(--v-theme-surface), var(--v-lightbox-button-bg-opacity, 0.78));
+    --p-lightbox-frame: rgba(var(--v-theme-on-surface), var(--v-lightbox-frame-opacity, 0.3));
     --p-lightbox-controls-gradient: rgba(var(--v-theme-background), var(--v-lightbox-controls-bg-opacity, 0.78));
     --p-lightbox-controls-gradient-clear: rgba(var(--v-theme-background), 0);
     --p-lightbox-shadow: rgba(var(--v-theme-surface), var(--v-lightbox-overlay-shadow-opacity, 0.92));
@@ -199,6 +198,8 @@
     box-sizing: border-box;
     background-color: var(--p-lightbox-surface);
     border: thin solid var(--p-lightbox-frame);
+    border-radius: 5px;
+    outline: 0;
 }
 
 .pswp__media.pswp__media--live {
@@ -443,9 +444,9 @@
     align-items: center !important;
     margin-top: 8px;
     color: var(--p-lightbox-on-surface);
-    background-color: var(--p-lightbox-button-surface);
-    border: thin solid var(--p-lightbox-frame);
-    border-radius: 999px;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
 }
 
 .is-rtl .pswp__button--close {
@@ -647,9 +648,6 @@
     width: 50px;
     max-width: 16vw;
     color: var(--p-lightbox-on-surface);
-    background-color: var(--p-lightbox-button-surface);
-    border: thin solid var(--p-lightbox-frame);
-    border-radius: 50%;
     box-sizing: border-box;
 }
 
