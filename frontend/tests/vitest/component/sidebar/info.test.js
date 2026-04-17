@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import PSidebarInfo from "component/sidebar/info.vue";
+import { Marker } from "model/marker";
 import * as contexts from "options/contexts";
 import { DateTime } from "luxon";
 
-// Mock dependencies
 vi.mock("component/map.vue", () => ({
   default: {
     name: "p-map",
@@ -13,7 +13,6 @@ vi.mock("component/map.vue", () => ({
   },
 }));
 
-// Mock formats module properly
 vi.mock("options/formats", () => ({
   DATETIME_MED: "DATETIME_MED",
   DATETIME_MED_TZ: "DATETIME_MED_TZ",
@@ -39,11 +38,7 @@ describe("PSidebarInfo component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Store original DateTime.fromISO function
     originalFromISO = DateTime.fromISO;
-
-    // Create a mock for DateTime.fromISO
     DateTime.fromISO = vi.fn().mockImplementation(() => {
       return {
         toLocaleString: () => "January 1, 2023, 10:00 AM",
@@ -58,14 +53,18 @@ describe("PSidebarInfo component", () => {
       global: {
         stubs: {
           PMap: true,
+          PConfirmDialog: true,
         },
       },
     });
   });
 
   afterEach(() => {
-    // Restore original DateTime.fromISO
     DateTime.fromISO = originalFromISO;
+
+    if (wrapper) {
+      wrapper.unmount();
+    }
   });
 
   it("should render correctly with model data", () => {
@@ -82,16 +81,16 @@ describe("PSidebarInfo component", () => {
   });
 
   it("should emit close event when close button is clicked", async () => {
-    // Try finding close button by various selectors
     const closeButtonSelectors = [".close-button", "button[aria-label='Close']", "button[title='Close']"];
 
     let closeButton;
     for (const selector of closeButtonSelectors) {
       closeButton = wrapper.find(selector);
-      if (closeButton.exists()) break;
+      if (closeButton.exists()) {
+        break;
+      }
     }
 
-    // If none of the selectors found the button, try getting the first button
     if (!closeButton || !closeButton.exists()) {
       const allButtons = wrapper.findAll("button");
       if (allButtons.length > 0) {
@@ -102,14 +101,10 @@ describe("PSidebarInfo component", () => {
     if (closeButton && closeButton.exists()) {
       await closeButton.trigger("click");
       expect(wrapper.emitted()).toHaveProperty("close");
-    } else {
-      // If we can't find a button at all, mark this test as pending
-      console.warn("Could not find close button in component");
     }
   });
 
   it("should trigger copyLatLng when location is clicked", async () => {
-    // Find the location item by its class
     const clickableItems = wrapper.findAll(".clickable");
     if (clickableItems.length > 0) {
       await clickableItems[0].trigger("click");
@@ -125,5 +120,101 @@ describe("PSidebarInfo component", () => {
 
     const formattedTime = wrapper.vm.formatTime(modelWithoutTime);
     expect(formattedTime).toBe("Unknown");
+  });
+});
+
+describe("PSidebarInfo people markers", () => {
+  let wrapper;
+  let marker;
+
+  const mountSidebar = () =>
+    mount(PSidebarInfo, {
+      props: {
+        modelValue: {
+          UID: "p1",
+          Title: "Example",
+          Caption: "",
+          TakenAtLocal: "2024-01-01T12:00:00Z",
+          TimeZone: "UTC",
+          Lat: 0,
+          Lng: 0,
+          getTypeInfo: () => "JPEG",
+          getTypeIcon: () => "mdi-image",
+          copyLatLng: vi.fn(),
+        },
+        photo: {
+          UID: "p1",
+          getMarkers: vi.fn(() => [marker]),
+        },
+        canEdit: true,
+      },
+      global: {
+        mocks: {
+          $gettext: (msg, values) => {
+            if (!values) {
+              return msg;
+            }
+
+            return msg.replace("%{s}", values.s);
+          },
+          $pgettext: (_ctx, msg) => msg,
+          $notify: {
+            blockUI: vi.fn(),
+            unblockUI: vi.fn(),
+          },
+          $config: {
+            feature: vi.fn((name) => name === "people"),
+            values: {
+              people: [{ UID: "s1", Name: "Jane Doe" }],
+            },
+          },
+        },
+        stubs: {
+          PMap: true,
+          PConfirmDialog: true,
+        },
+      },
+    });
+
+  beforeEach(() => {
+    marker = new Marker({
+      UID: "m1",
+      Name: "",
+      SubjUID: "",
+      Invalid: false,
+      Thumb: "thumb-hash",
+    });
+    marker.reject = vi.fn().mockResolvedValue(marker);
+    marker.clearSubject = vi.fn().mockResolvedValue(marker);
+    marker.setName = vi.fn().mockResolvedValue(marker);
+
+    wrapper = mountSidebar();
+  });
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+    }
+  });
+
+  it("loads markers from the current photo", () => {
+    expect(wrapper.vm.markers).toHaveLength(1);
+    expect(wrapper.vm.markers[0].UID).toBe("m1");
+  });
+
+  it("rejects a marker and requests a reload", async () => {
+    await wrapper.vm.onReject(marker);
+
+    expect(marker.reject).toHaveBeenCalled();
+    expect(wrapper.emitted("reload-markers")).toBeTruthy();
+  });
+
+  it("assigns an existing person name and requests a reload", async () => {
+    await wrapper.vm.onSetPerson(marker, { UID: "s1", Name: "Jane Doe" });
+
+    expect(marker.Name).toBe("Jane Doe");
+    expect(marker.SubjUID).toBe("s1");
+    expect(marker.setName).toHaveBeenCalled();
+    expect(wrapper.emitted("reload-markers")).toBeTruthy();
   });
 });

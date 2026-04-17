@@ -131,6 +131,24 @@
     hyphens: auto;
 }
 
+@media (max-width: 600px) {
+    .p-lightbox__container > .p-lightbox__sidebar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: auto;
+        max-width: none;
+        z-index: 100001;
+    }
+
+    .is-ltr .p-lightbox__container > .p-lightbox__sidebar,
+    .is-rtl .p-lightbox__container > .p-lightbox__sidebar {
+        border-inline: none;
+    }
+}
+
 /* Media Content */
 
 .pswp__content {

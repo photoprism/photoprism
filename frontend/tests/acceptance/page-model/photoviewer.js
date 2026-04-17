@@ -8,7 +8,14 @@ export default class Page {
     this.time = Selector("div.p-time-select", { timeout: 15000 });
     this.search1 = Selector("div.input-search input", { timeout: 15000 });
     this.menuButton = Selector("button.pswp__button--menu-button", { timeout: 15000 });
+    this.infoButton = Selector("button.pswp__button--info-button", { timeout: 15000 });
     this.viewer = Selector("div.p-lightbox__pswp", { timeout: 15000 });
+    this.sidebar = Selector("div.p-lightbox__sidebar", { timeout: 15000 });
+    this.showMarkersButton = Selector("button").withText("Show Markers");
+    this.hideMarkersButton = Selector("button").withText("Hide Markers");
+    this.addFaceButton = Selector("button").withText("Add Face");
+    this.faceMarkerOverlay = Selector("div.p-face-markers", { timeout: 15000 });
+    this.faceMarkerRect = Selector(".p-face-markers__rect", { timeout: 15000 });
     this.caption = Selector("div.pswp__caption__center", { timeout: 5000 });
     this.muteButton = Selector("button.pswp__button--mute", { timeout: 5000 });
     this.playButton = Selector('[class^="pswp__button pswp__button--slideshow-toggle pswp__"]', { timeout: 5000 });
@@ -73,5 +80,13 @@ export default class Page {
     if (t.browser.platform === "mobile") {
       await t.wait(5000);
     }
+  }
+
+  async openInfoPanel() {
+    if (!(await this.sidebar.visible)) {
+      await t.click(this.infoButton);
+    }
+
+    await t.expect(this.sidebar.visible).ok();
   }
 }

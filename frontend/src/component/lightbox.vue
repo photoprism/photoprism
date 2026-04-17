@@ -40,6 +40,16 @@
         }"
       >
         <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
+        <p-face-marker-overlay
+          v-if="showFaceMarkerOverlay"
+          ref="faceMarkerOverlay"
+          :markers="faceMarkers"
+          :pswp="pswp()"
+          :mode="addingMarker ? 'draw' : 'display'"
+          :busy="markersBusy"
+          @create="onCreateFaceMarker"
+          @cancel="cancelAddingMarker"
+        ></p-face-marker-overlay>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
@@ -75,7 +85,22 @@
         </div>
       </div>
       <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
-        <p-sidebar-info v-model="model" :collection="collection" :context="context" @close="hideInfo"></p-sidebar-info>
+        <p-sidebar-info
+          v-model="model"
+          :photo="photo"
+          :collection="collection"
+          :context="context"
+          :can-edit="canEdit && contextAllowsEdit"
+          :markers-visible="markersVisible"
+          :adding-marker="addingMarker"
+          :markers-busy="markersBusy"
+          :photo-loading="photoLoading"
+          :new-marker-uid="newMarkerUid"
+          @close="hideInfo"
+          @toggle-markers="toggleMarkersVisible"
+          @toggle-adding-marker="toggleAddingMarker"
+          @reload-markers="onReloadFaceMarkers"
+        ></p-sidebar-info>
       </div>
     </div>
     <p-lightbox-menu
@@ -99,6 +124,7 @@ import Thumb from "model/thumb";
 import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
+import Marker from "model/marker";
 import * as media from "common/media";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
@@ -125,6 +151,7 @@ const VIDEO_EVENT_TYPES = [
 const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 
 import PLightboxMenu from "component/lightbox/menu.vue";
+import PFaceMarkerOverlay from "component/photo/face-marker-overlay.vue";
 import PSidebarInfo from "component/sidebar/info.vue";
 
 const appStorage = getAppStorage();
@@ -132,7 +159,7 @@ const appSessionStorage = getAppSessionStorage();
 
 export default {
   name: "PLightbox",
-  components: [PLightboxMenu, PSidebarInfo],
+  components: [PLightboxMenu, PFaceMarkerOverlay, PSidebarInfo],
   emits: ["enter", "leave"],
   expose: ["onShortCut"],
   data() {
@@ -169,15 +196,22 @@ export default {
       mobileBreakpoint: 600, // Minimum viewport width for large screens.
       featExperimental: this.$config.featExperimental(), // Enables features that may be incomplete or unstable.
       featDevelop: this.$config.featDevelop(), // Enables new features that are still under development.
+      featPeople: this.$config.feature("people"),
       selection: this.$clipboard.selection,
       config: this.$config.values,
       collection: null,
       context: contexts.Default,
       model: new Thumb(), // Current slide.
+      photo: new Photo(),
       models: [], // Slide models.
       index: 0, // Current slide index in models.
       contextAllowsEdit: true,
       contextAllowsSelect: true,
+      photoLoading: false,
+      markersVisible: false,
+      addingMarker: false,
+      markersBusy: false,
+      newMarkerUid: "",
       subscriptions: [], // Event subscriptions.
       // Video properties for rendering the controls.
       video: {
@@ -217,6 +251,26 @@ export default {
         }
       },
     };
+  },
+  computed: {
+    faceMarkers() {
+      if (!this.photo?.UID || typeof this.photo.getMarkers !== "function") {
+        return [];
+      }
+
+      return this.photo.getMarkers(true);
+    },
+    showFaceMarkerOverlay() {
+      if (!this.featPeople || !this.photo?.UID || this.photo.UID !== this.model?.UID) {
+        return false;
+      }
+
+      if (this.model?.Playable) {
+        return false;
+      }
+
+      return this.markersVisible || this.addingMarker;
+    },
   },
   created() {
     this.subscriptions.push(this.$event.subscribe("lightbox.open", this.openLightbox.bind(this)));
@@ -1187,11 +1241,6 @@ export default {
     addLightboxControls() {
       const lightbox = this.lightbox;
 
-      // Add a sidebar toggle button only if the window is large enough.
-      // TODO: Proof-of-concept only, the sidebar needs to be fully implemented before removing the featDevelop check.
-      // TODO: Once this is fully implemented, remove the "this.experimental" flag check below.
-      // IDEA: We can later try to add styles that display the sidebar at the bottom
-      //       instead of on the side, to allow use on mobile devices.
       lightbox.on("uiRegister", () => {
         // Add close button.
         lightbox.pswp.ui.registerElement({
@@ -1217,25 +1266,22 @@ export default {
             }),
         });
 
-        // Add information toggle button.
-        if (window.innerWidth > this.mobileBreakpoint) {
-          lightbox.pswp.ui.registerElement({
-            name: "sidebar-button",
-            className: "pswp__button--info-button pswp__button--mdi", // Sets the icon style/size in lightbox.css.
-            title: this.$gettext("Information"),
-            ariaLabel: this.$gettext("Information"),
-            order: 9,
-            isButton: true,
-            html: {
-              isCustomSVG: true,
-              inner:
-                '<path d="M11 7V9H13V7H11M14 17V15H13V11H10V13H11V15H10V17H14M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12M20 12C20 7.58 16.42 4 12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12Z" id="pswp__icn-info"/>',
-              outlineID: "pswp__icn-info", // Add this to the <path> in the inner property.
-              size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
-            },
-            onClick: (ev) => this.onControlClick(ev, this.toggleInfo),
-          });
-        }
+        lightbox.pswp.ui.registerElement({
+          name: "sidebar-button",
+          className: "pswp__button--info-button pswp__button--mdi", // Sets the icon style/size in lightbox.css.
+          title: this.$gettext("Information"),
+          ariaLabel: this.$gettext("Information"),
+          order: 9,
+          isButton: true,
+          html: {
+            isCustomSVG: true,
+            inner:
+              '<path d="M11 7V9H13V7H11M14 17V15H13V11H10V13H11V15H10V17H14M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2C17.5 2 22 6.5 22 12M20 12C20 7.58 16.42 4 12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12Z" id="pswp__icn-info"/>',
+            outlineID: "pswp__icn-info", // Add this to the <path> in the inner property.
+            size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
+          },
+          onClick: (ev) => this.onControlClick(ev, this.toggleInfo),
+        });
 
         // Add sound mute/unmute control for videos.
         lightbox.pswp.ui.registerElement({
@@ -1547,6 +1593,7 @@ export default {
       this.resetModels();
       this.contextAllowsEdit = true;
       this.contextAllowsSelect = true;
+      this.resetFaceMarkers(true);
     },
     // Resets the state of the lightbox controls.
     resetControls() {
@@ -1593,6 +1640,12 @@ export default {
       // Pause the slideshow if the index of the next slide does not match.
       if (this.slideshow.next !== this.index) {
         this.pauseSlideshow();
+      }
+
+      this.resetFaceMarkers();
+
+      if (this.info || this.markersVisible) {
+        this.loadPhoto();
       }
 
       // Ensure that content is focused.
@@ -2426,6 +2479,7 @@ export default {
       this.info = true;
 
       appStorage.setItem("lightbox.info", `${this.info.toString()}`);
+      this.loadPhoto();
 
       // Resize and focus content element.
       this.$nextTick(() => {
@@ -2448,6 +2502,144 @@ export default {
         this.resize(true);
         this.focusContent();
       });
+    },
+    resetFaceMarkers(resetVisible = false) {
+      this.photo = new Photo();
+      this.photoLoading = false;
+      this.addingMarker = false;
+      this.markersBusy = false;
+      this.newMarkerUid = "";
+
+      if (resetVisible) {
+        this.markersVisible = false;
+      }
+    },
+    loadPhoto(force = false) {
+      if (!this.featPeople || !this.model?.UID) {
+        return Promise.resolve(null);
+      }
+
+      const uid = this.model.UID;
+
+      if (!force && this.photo?.UID === uid) {
+        return Promise.resolve(this.photo);
+      }
+
+      this.photoLoading = true;
+
+      return new Photo()
+        .find(uid)
+        .then((photo) => {
+          if (!this.visible || this.model?.UID !== uid) {
+            return null;
+          }
+
+          this.photo = photo;
+
+          return photo;
+        })
+        .catch((err) => {
+          if (this.debug) {
+            this.log("failed loading photo", { uid, err });
+          }
+
+          if (this.model?.UID === uid) {
+            this.photo = new Photo();
+          }
+
+          return null;
+        })
+        .finally(() => {
+          if (!this.visible || this.model?.UID === uid) {
+            this.photoLoading = false;
+          }
+        });
+    },
+    primaryPhotoFile() {
+      if (!Array.isArray(this.photo?.Files) || this.photo.Files.length === 0) {
+        return null;
+      }
+
+      return this.photo.Files.find((file) => !!file.Primary) || this.photo.Files[0] || null;
+    },
+    toggleMarkersVisible() {
+      if (!this.featPeople) {
+        return;
+      }
+
+      this.markersVisible = !this.markersVisible;
+
+      if (!this.markersVisible) {
+        this.addingMarker = false;
+        this.newMarkerUid = "";
+        return;
+      }
+
+      this.loadPhoto();
+    },
+    toggleAddingMarker() {
+      if (!this.featPeople || !this.canEdit || !this.contextAllowsEdit) {
+        return;
+      }
+
+      const next = !this.addingMarker;
+
+      this.markersVisible = true;
+      this.addingMarker = next;
+      this.newMarkerUid = "";
+
+      if (next) {
+        this.loadPhoto().then((photo) => {
+          if (!photo?.UID) {
+            this.addingMarker = false;
+          }
+        });
+      }
+    },
+    cancelAddingMarker() {
+      this.addingMarker = false;
+    },
+    reloadFaceMarkers(markerUid = "") {
+      this.newMarkerUid = markerUid || "";
+      return this.loadPhoto(true);
+    },
+    onReloadFaceMarkers(markerUid = "") {
+      return this.reloadFaceMarkers(markerUid);
+    },
+    onCreateFaceMarker(area) {
+      if (this.markersBusy) {
+        return Promise.resolve();
+      }
+
+      const file = this.primaryPhotoFile();
+
+      if (!file?.UID) {
+        this.addingMarker = false;
+        return Promise.resolve();
+      }
+
+      this.markersBusy = true;
+      this.$notify.blockUI("busy");
+
+      return new Marker({
+        FileUID: file.UID,
+        Type: "face",
+        Src: "manual",
+        X: area.X,
+        Y: area.Y,
+        W: area.W,
+        H: area.H,
+      })
+        .save()
+        .then((marker) => {
+          this.addingMarker = false;
+          this.markersVisible = true;
+          return this.reloadFaceMarkers(marker?.UID || "");
+        })
+        .finally(() => {
+          this.$notify.unblockUI();
+          this.markersBusy = false;
+        });
     },
     toggleControls() {
       if (!this.visible) {
