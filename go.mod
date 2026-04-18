@@ -22,7 +22,6 @@ require (
 	github.com/klauspost/cpuid/v2 v2.3.0
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.7.2
-	github.com/lib/pq v1.12.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.0
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
@@ -60,8 +59,6 @@ require (
 	golang.org/x/sync v0.20.0
 	golang.org/x/time v0.15.0
 )
-
-require github.com/go-ldap/ldap/v3 v3.4.13
 
 require (
 	github.com/prometheus/client_golang v1.23.2
@@ -114,7 +111,6 @@ require (
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/gin-contrib/sse v1.1.1 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect

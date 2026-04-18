@@ -9,11 +9,12 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/stretchr/testify/require"
 )
 
 const characterRunes = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
