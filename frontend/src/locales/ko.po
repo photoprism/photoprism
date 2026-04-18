@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -1166,7 +1166,7 @@ msgstr "대화형 세계 지도를 비활성화하고 지오코딩을 역방향�
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "MCP 비활성화"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1178,7 +1178,7 @@ msgstr "RawTherapee 비활성화"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "AI 상담원 통합을 위해 MCP(모델 컨텍스트 프로토콜) API 엔드포인트를 비활성화합니다."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

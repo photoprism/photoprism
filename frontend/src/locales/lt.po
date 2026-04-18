@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
@@ -1166,7 +1166,7 @@ msgstr "Išjunkite interaktyvius pasaulio žemėlapius ir atvirkštinį geokodav
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "MCP išjungimas"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1178,7 +1178,7 @@ msgstr "Išjungti \"RawTherapee"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "Išjunkite modelio konteksto protokolo (MCP) API galinį tašką, skirtą dirbtinio intelekto agentų integracijai."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

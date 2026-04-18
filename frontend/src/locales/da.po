@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
@@ -1166,7 +1166,7 @@ msgstr "Deaktiver interaktive verdenskort og omvendt geokodning."
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "Slå MCP fra"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1178,7 +1178,7 @@ msgstr "Deaktivere RawTherapee"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "Deaktiver API-slutpunktet MCP (Model Context Protocol) for AI-agentintegrationer."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
@@ -1162,7 +1162,7 @@ msgstr "Izslēgt interaktīvo pasaules karti un adreses noteikšanu pēc koordin
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "MCP atspējošana"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1174,7 +1174,7 @@ msgstr "Izslēgt RawTherapee"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "AI aģentu integrācijai atspējojiet modeļa konteksta protokola (MCP) API galapunktu."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

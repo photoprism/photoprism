@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
@@ -1166,7 +1166,7 @@ msgstr "Nexşeyên cîhanê yên înteraktîf neçalak bikin û jeokodkirina ber
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "MCP neçalak bike"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1178,7 +1178,7 @@ msgstr "RawTherapee neçalak bike"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "Xala dawî ya Protokola Çarçoveya Modelê (MCP) API ji bo entegrasyonên ajana AI neçalak bike."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -1166,7 +1166,7 @@ msgstr "Etkileşimli dünya haritalarını ve ters coğrafi kodlamayı devre dı
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "MCP'yi devre dışı bırak"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1178,7 +1178,7 @@ msgstr "RawTherapee'yi devre dışı bırak"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "Yapay zeka aracı entegrasyonları için Model Bağlam Protokolü (MCP) API uç noktasını devre dışı bırakın."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

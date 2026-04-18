@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -1165,7 +1165,7 @@ msgstr "Az interaktív világtérképek és a fordított geokódolás letiltása
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "MCP letiltása"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1177,7 +1177,7 @@ msgstr "A RawTherapee letiltása"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "A Model Context Protocol (MCP) API végpont letiltása az AI-ügynök integrációkhoz."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

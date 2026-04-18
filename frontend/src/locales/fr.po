@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-29 19:03+0000\n"
-"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -1166,7 +1166,7 @@ msgstr "Désactiver les cartes du monde interactives et le géocodage inversé."
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "Désactiver MCP"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1178,7 +1178,7 @@ msgstr "Désactiver RawTherapee"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "Désactive le point de terminaison de l'API du protocole de contexte de modèle (MCP) pour les intégrations d'agents d'IA."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"

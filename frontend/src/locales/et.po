@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1163,7 +1163,7 @@ msgstr "L체litage interaktiivsed maailmakaardid ja vastupidine geokodeerimine v�
 
 #: src/page/settings/advanced.vue:110
 msgid "Disable MCP"
-msgstr ""
+msgstr "L체lita MCP v채lja"
 
 #: src/page/settings/advanced.vue:142
 msgid "Disable Places"
@@ -1175,7 +1175,7 @@ msgstr "Keela RawTherapee"
 
 #: src/page/settings/advanced.vue:111
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
-msgstr ""
+msgstr "L체litage MCP (Model Context Protocol) API-p채채supunkt v채lja tehisintellekti agentide integreerimiseks."
 
 #: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"
