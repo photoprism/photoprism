@@ -70,27 +70,13 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		frm.Dist = geo.DistLimit
 	}
 
-	// Are we PostgreSQL and will a group by be added?
-	postgreSQLRowNumber := txt.NotEmpty(frm.Label) && entity.DbDialect() == entity.Postgres
-	// postgreSQLRowNumber = false
-
 	// Specify table names and joins.
 	var s *gorm.DB
-	if postgreSQLRowNumber {
-		// PostgreSQL doesn't support a GROUP BY that excludes non aggregated columns.
-		// This is the work around.
-		s = UnscopedDb().Table(entity.Photo{}.TableName()).Select("ROW_NUMBER() OVER (PARTITION BY photos.id, files.id ORDER BY files.media_id) as rec_num, " + GeoCols).
-			Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = TRUE AND files.media_id IS NOT NULL`).
-			Joins("LEFT JOIN places ON photos.place_id = places.id").
-			Where("photos.deleted_at IS NULL").
-			Where("photos.photo_lat <> 0")
-	} else {
-		s = UnscopedDb().Table(entity.Photo{}.TableName()).Select(GeoCols).
-			Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = TRUE AND files.media_id IS NOT NULL`).
-			Joins("LEFT JOIN places ON photos.place_id = places.id").
-			Where("photos.deleted_at IS NULL").
-			Where("photos.photo_lat <> 0")
-	}
+	s = UnscopedDb().Table(entity.Photo{}.TableName()).Select(GeoCols).
+		Joins(`JOIN files ON files.photo_id = photos.id AND files.file_primary = TRUE AND files.media_id IS NOT NULL`).
+		Joins("LEFT JOIN places ON photos.place_id = places.id").
+		Where("photos.deleted_at IS NULL").
+		Where("photos.photo_lat <> 0")
 
 	// Accept the album UID as scope for backward compatibility.
 	if rnd.IsUID(frm.Album, entity.AlbumUID) {
@@ -770,16 +756,8 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	}
 
 	// Fetch results.
-	if postgreSQLRowNumber {
-		// PostgreSQL doesn't support a GROUP BY that excludes non aggregated columns.
-		oq := UnscopedDb().Table("(?) as result", s).Select("*").Where("rec_num = ?", 1)
-		if result := oq.Scan(&results); result.Error != nil {
-			return results, result.Error
-		}
-	} else {
-		if result := s.Scan(&results); result.Error != nil {
-			return results, result.Error
-		}
+	if result := s.Scan(&results); result.Error != nil {
+		return results, result.Error
 	}
 
 	log.Debugf("places: found %s for %s [%s]", english.Plural(len(results), "result", "results"), frm.SerializeAll(), time.Since(start))
