@@ -17,7 +17,7 @@ import (
 //	@Id			GetMomentsTime
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200				{object}	entity.Album
+//	@Success	200				{array}		query.Moment
 //	@Failure	401,403,429,500	{object}	i18n.Response
 //	@Router		/api/v1/moments/time [get]
 func GetMomentsTime(router *gin.RouterGroup) {

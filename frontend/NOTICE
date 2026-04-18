@@ -25,7 +25,7 @@ axios-mock-adapter               MIT            Colin Timmermans <colintimmerman
 babel-loader                     MIT            Luis Couto <hello@luiscouto.pt>
 babel-plugin-istanbul            BSD-3-Clause   Thai Pangsakulyanont @dtinth
 babel-plugin-polyfill-corejs3    MIT            n/a
-browserslist                     MIT            Andrey Sitnik <andrey@sitnik.ru>
+browserslist                     MIT            Andrey Sitnik <andrey@sitnik.es>
 cheerio                          MIT            Matt Mueller <mattmuelle@gmail.com>
 core-js                          MIT            Denis Pushkarev zloirock@zloirock.ru http://zloirock.ru
 cross-env                        MIT            Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)

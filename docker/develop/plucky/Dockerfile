@@ -78,7 +78,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         xvfb fonts-freefont-ttf fonts-ipafont-gothic fonts-noto-color-emoji \
         fonts-tlwg-loma-otf fonts-unifont fonts-wqy-zenhei xfonts-cyrillic \
         fonts-ipafont-mincho fonts-tlwg-loma xfonts-base xfonts-scalable \
-        openssh-client bubblewrap \
+        openssh-client bubblewrap pandoc python3-bs4 python3-pygments python3-pil python3-lxml \
     && \
     ln -sf /usr/bin/fdfind /usr/local/bin/fd && \
     ln -sf /usr/bin/batcat /usr/local/bin/bat && \

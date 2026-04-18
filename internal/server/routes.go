@@ -105,6 +105,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Photo Search and Organization.
 	api.SearchPhotos(APIv1)
+	api.SearchPhotosView(APIv1)
 	api.SearchGeo(APIv1)
 	api.GetPlacesReverse(APIv1)
 	api.GetPlacesSearch(APIv1)
@@ -204,6 +205,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.ClusterSummary(APIv1)
 	api.ClusterMetrics(APIv1)
 	api.ClusterHealth(APIv1)
+
+	// Model Context Protocol (MCP).
+	api.ServeMCP(APIv1)
 
 	// Technical Endpoints.
 	api.GetSvg(APIv1)

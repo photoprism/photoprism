@@ -80,8 +80,8 @@ func SearchString(s string) string {
 	s = strings.ReplaceAll(s, "%", "*")
 	s = strings.ReplaceAll(s, "**", "*")
 
-	// Trim.
-	return strings.Trim(s, "|\\<>\n\r\t")
+	// Trim — keep '\' so downstream filters can honor escape sequences.
+	return strings.Trim(s, "|<>\n\r\t")
 }
 
 // SearchQuery replaces search operator with default symbols.

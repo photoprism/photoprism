@@ -68,7 +68,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev libavcodec-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
-        openssh-client bubblewrap \
+        openssh-client bubblewrap pandoc python3-bs4 python3-pygments python3-pil python3-lxml \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \

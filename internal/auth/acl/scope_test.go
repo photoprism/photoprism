@@ -71,6 +71,17 @@ func TestScopePermits(t *testing.T) {
 		assert.False(t, ScopePermits("read settings", "sessions", Permissions{ActionDelete}))
 		assert.False(t, ScopePermits("read settings", "sessions", Permissions{ActionDelete}))
 	})
+	t.Run("MCPScope", func(t *testing.T) {
+		// "mcp" is the canonical scope token for ResourceMCP and is accepted both
+		// standalone and combined with other scopes; unrelated scopes are denied.
+		assert.True(t, ScopePermits("mcp", ResourceMCP, Permissions{ActionView}))
+		assert.True(t, ScopePermits("mcp", ResourceMCP, Permissions{ActionSearch}))
+		assert.True(t, ScopePermits("MCP", ResourceMCP, Permissions{ActionView}))
+		assert.True(t, ScopePermits("mcp metrics", ResourceMCP, Permissions{ActionView}))
+		assert.True(t, ScopePermits("read mcp", ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopePermits("read mcp", ResourceMCP, Permissions{ActionUpdate}))
+		assert.False(t, ScopePermits("metrics", ResourceMCP, Permissions{ActionView}))
+	})
 }
 
 func TestScopeAttr(t *testing.T) {

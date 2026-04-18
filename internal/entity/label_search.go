@@ -220,3 +220,155 @@ func FindLabelIDs(search, sep string, includeCategories bool) ([]uint, error) {
 
 	return result, nil
 }
+
+// ErrLabelNotFound reports that a positive label-filter AND group matched no
+// known labels. Callers use this to short-circuit to an empty result set while
+// still distinguishing the case from "only negative groups given".
+var ErrLabelNotFound = fmt.Errorf("label not found")
+
+// unescapeLabelTerm decodes '\\', '\!', '\|', '\&' escape sequences in a single
+// label search term to their literal characters. Escape sequences in front of
+// other runes are preserved so existing escape-free terms are untouched.
+func unescapeLabelTerm(s string) string {
+	if !strings.ContainsRune(s, txt.EscapeRune) {
+		return s
+	}
+
+	var b strings.Builder
+	b.Grow(len(s))
+
+	escaped := false
+
+	for _, r := range s {
+		if escaped {
+			switch r {
+			case '!', txt.OrRune, txt.AndRune, txt.EscapeRune:
+				b.WriteRune(r)
+			default:
+				b.WriteRune(txt.EscapeRune)
+				b.WriteRune(r)
+			}
+
+			escaped = false
+
+			continue
+		}
+
+		if r == txt.EscapeRune {
+			escaped = true
+
+			continue
+		}
+
+		b.WriteRune(r)
+	}
+
+	if escaped {
+		b.WriteRune(txt.EscapeRune)
+	}
+
+	return b.String()
+}
+
+// resolveLabelGroup unions the category-expanded label IDs for every '|'
+// alternative in a single AND group, respecting escape sequences.
+func resolveLabelGroup(group string) (ids []uint) {
+	alts := txt.TrimmedSplitWithEscape(group, txt.OrRune, txt.EscapeRune)
+
+	if len(alts) == 0 {
+		return nil
+	}
+
+	seen := make(map[uint]struct{}, len(alts))
+
+	add := func(id uint) {
+		if id == 0 {
+			return
+		}
+
+		if _, ok := seen[id]; ok {
+			return
+		}
+
+		seen[id] = struct{}{}
+		ids = append(ids, id)
+	}
+
+	for _, alt := range alts {
+		alt = strings.TrimSpace(unescapeLabelTerm(alt))
+
+		if alt == "" {
+			continue
+		}
+
+		altIDs, lookupErr := FindLabelIDs(alt, txt.Or, true)
+		if lookupErr != nil {
+			continue
+		}
+
+		for _, id := range altIDs {
+			add(id)
+		}
+	}
+
+	return ids
+}
+
+// ParseLabelFilter splits a label filter into positive and negative groups of
+// category-expanded label IDs. Each element of include is the OR-expanded ID
+// set for one positive AND group (all positive groups must match); each element
+// of exclude is the OR-expanded ID set for one negative AND group (none must
+// match). A leading '!' on an AND group marks it as an exclusion; an escaped
+// '\\!' is treated as a literal label-name character. sawPositive reports
+// whether at least one positive group was parsed, so callers can distinguish
+// "only negative groups" from "unknown positive label => empty result". An
+// ErrLabelNotFound return means a positive group resolved to zero labels and
+// the caller should short-circuit to an empty result set.
+func ParseLabelFilter(s string) (include, exclude [][]uint, sawPositive bool, err error) {
+	s = strings.TrimSpace(s)
+
+	if s == "" {
+		return nil, nil, false, nil
+	}
+
+	groups := txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)
+
+	for _, group := range groups {
+		group = strings.TrimSpace(group)
+
+		if group == "" {
+			continue
+		}
+
+		negate := strings.HasPrefix(group, "!")
+
+		if negate {
+			group = strings.TrimSpace(group[1:])
+		}
+
+		if group == "" {
+			continue
+		}
+
+		ids := resolveLabelGroup(group)
+
+		if len(ids) == 0 {
+			if negate {
+				continue
+			}
+
+			sawPositive = true
+
+			return nil, nil, true, ErrLabelNotFound
+		}
+
+		if negate {
+			exclude = append(exclude, ids)
+		} else {
+			sawPositive = true
+			include = append(include, ids)
+		}
+	}
+
+	return include, exclude, sawPositive, nil
+}

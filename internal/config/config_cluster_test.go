@@ -225,7 +225,7 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.JWTScope = "cluster vision"
 		assert.Equal(t, list.ParseAttr("cluster vision"), c.JWTAllowedScopes())
 		c.options.JWTScope = ""
-		assert.Equal(t, list.ParseAttr("config cluster vision metrics"), c.JWTAllowedScopes())
+		assert.Equal(t, list.ParseAttr("config cluster vision metrics mcp"), c.JWTAllowedScopes())
 	})
 	t.Run("Paths", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
