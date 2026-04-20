@@ -1135,6 +1135,22 @@ describe("PSidebarInfo component", () => {
     expect(wrapper.vm.albums[0].Title).toBe("Vacation 2023");
   });
 
+  it("should hide private albums from sidebar cross-links", () => {
+    const photoWithPrivateAlbum = {
+      ...mockPhoto,
+      Albums: [
+        { UID: "alb1", Title: "Vacation 2023", Slug: "vacation-2023" },
+        { UID: "alb2", Title: "Favorites", Slug: "favorites" },
+        { UID: "alb3", Title: "Secret", Slug: "secret", Private: true },
+      ],
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: photoWithPrivateAlbum, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.albums.map((a) => a.UID)).toEqual(["alb1", "alb2"]);
+  });
+
   // Metadata details
   it("should return metadata details from photo prop", () => {
     expect(wrapper.vm.subject).toBe("Mountains");

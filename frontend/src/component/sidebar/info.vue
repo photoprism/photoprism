@@ -797,7 +797,7 @@ export default {
     },
     albums() {
       if (!this.p?.Albums) return [];
-      return this.p.Albums.filter((a) => a.Title);
+      return this.p.Albums.filter((a) => a.Title && !a.Private);
     },
     subject() {
       return this.p?.Details?.Subject || "";
