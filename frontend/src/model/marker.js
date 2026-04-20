@@ -15,7 +15,7 @@ export class Marker extends RestModel {
       FileUID: "",
       Thumb: "",
       Type: "",
-      Src: "",
+      Src: src.Manual,
       Name: "",
       Invalid: false,
       Review: false,

@@ -514,6 +514,17 @@
     color: rgb(var(--v-theme-on-surface)) !important;
 }
 
+/* Sidebar inline dropdowns (name, labels, albums) render in a body-level
+   overlay, so they're outside `.p-lightbox__sidebar`. The lightbox theme
+   has `surface` identical to `background`, which makes the default menu
+   invisible against the sidebar; lift it to `surface-bright` and add a
+   border for a clear edge. */
+.meta-inline-menu .v-overlay__content,
+.meta-inline-menu > .v-list {
+    background: rgb(var(--v-theme-surface-bright)) !important;
+    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity, 0.12));
+}
+
 /* Media Content */
 
 .pswp__content {

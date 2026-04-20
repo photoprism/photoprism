@@ -97,7 +97,6 @@
           :markers-busy="markersBusy"
           :new-marker-uid="pendingNameMarkerUid"
           @close="hideInfo"
-          @navigate="onSidebarNavigate"
           @toggle-markers-visible="toggleMarkersVisible"
           @toggle-adding-marker="toggleAddingMarker"
           @remove-marker="onRemoveFaceMarker"
@@ -156,6 +155,7 @@ const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PSidebarInfo from "component/sidebar/info.vue";
 import { Marker } from "model/marker";
+import * as src from "common/src";
 
 const appStorage = getAppStorage();
 const appSessionStorage = getAppSessionStorage();
@@ -1790,6 +1790,7 @@ export default {
       const marker = new Marker({
         FileUID: file.UID,
         Type: "face",
+        Src: src.Manual,
         X: area.X,
         Y: area.Y,
         W: area.W,
@@ -2752,16 +2753,6 @@ export default {
       this.$nextTick(() => {
         this.resize(true);
         this.focusContent();
-      });
-    },
-    // Handles navigation requests from the sidebar (e.g. clicking a label or album chip).
-    onSidebarNavigate(route) {
-      if (!route) {
-        return;
-      }
-
-      this.close().then(() => {
-        this.$router.push(route);
       });
     },
     toggleControls() {

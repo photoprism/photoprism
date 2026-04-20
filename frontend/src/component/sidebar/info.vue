@@ -87,7 +87,7 @@
         <v-list-item
           v-if="!restrictedRole && (cameraInfo || isEditable)"
           v-tooltip="$gettext('Camera')"
-          :title="cameraInfo"
+          :title="cameraInfo || $gettext('Unknown')"
           prepend-icon="mdi-camera"
           class="metadata__item"
         >
@@ -156,61 +156,64 @@
               ></v-icon>
             </template>
           </v-list-item>
-          <v-list-item
-            v-for="m in people"
-            :key="m.UID || m.CropID"
-            class="metadata__item metadata__person-row"
-            :class="{ clickable: editingMarkerUid !== m.UID && m.Name && m.SubjUID }"
-            @click.stop.prevent="editingMarkerUid !== m.UID && m.Name && m.SubjUID ? navigateToPerson(m) : null"
-          >
+          <v-list-item v-for="m in people" :key="m.UID || m.CropID" :data-marker-uid="m.UID" class="metadata__item metadata__person-row">
             <template #prepend>
-              <img :src="m.thumbnailUrl('tile_160')" :alt="m.Name" class="meta-person__avatar" />
+              <img
+                :src="m.thumbnailUrl('tile_160')"
+                :alt="m.Name"
+                class="meta-person__avatar"
+                :class="{ clickable: m.Name && m.SubjUID }"
+                @click.stop="m.Name && m.SubjUID ? navigateToPerson(m) : null"
+              />
             </template>
             <v-combobox
-              v-if="editingMarkerUid === m.UID"
-              ref="markerNameInput"
-              v-model:search="editingMarkerName"
+              v-if="isEditable"
+              :model-value="markerInputValue(m.UID)"
+              :search="markerInputSearch(m.UID)"
               :items="knownPeople"
               item-title="Name"
               item-value="Name"
               :placeholder="$gettext('Name')"
               :menu-props="markerMenuProps"
+              :readonly="markersBusy"
+              :rules="[markerNameRule]"
               return-object
               hide-no-data
               hide-details="auto"
+              single-line
+              open-on-clear
+              append-icon=""
               autocomplete="off"
               density="compact"
               variant="plain"
               class="meta-inline-edit meta-inline-marker"
-              @update:model-value="onPickPerson"
-              @keydown.enter.prevent="confirmMarkerName"
-              @keydown.escape.prevent="cancelMarkerName"
-              @blur="cancelMarkerName"
+              :class="{ 'meta-inline-marker--named': m.SubjUID }"
+              @update:model-value="(v) => onPickPerson(m, v)"
+              @update:search="(v) => setMarkerInputValue(m.UID, v)"
+              @keydown.enter.prevent="confirmMarkerName(m, 'enter')"
+              @keydown.escape.prevent="cancelMarkerName(m)"
+              @blur="confirmMarkerName(m, 'blur')"
               @click.stop
-            ></v-combobox>
+            >
+              <template v-if="!m.SubjUID" #prepend-inner>
+                <v-icon icon="mdi-account-plus" size="x-small" class="meta-marker-icon"></v-icon>
+              </template>
+              <template v-if="m.SubjUID" #append-inner>
+                <v-icon
+                  icon="mdi-eject"
+                  size="x-small"
+                  class="meta-marker-eject"
+                  :title="$gettext('Remove Name')"
+                  :disabled="markersBusy"
+                  @mousedown.prevent
+                  @click.stop="onEjectMarker(m)"
+                ></v-icon>
+              </template>
+            </v-combobox>
             <v-list-item-title v-else-if="m.Name" class="meta-person__name">{{ m.Name }}</v-list-item-title>
             <v-list-item-title v-else class="meta-person__name meta-person__unnamed">{{ $gettext("Unknown") }}</v-list-item-title>
-            <template v-if="isEditable" #append>
+            <template v-if="isEditable && !m.SubjUID" #append>
               <v-icon
-                v-if="editingMarkerUid === m.UID"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmMarkerName"
-              ></v-icon>
-              <v-icon
-                v-else-if="m.SubjUID"
-                icon="mdi-eject"
-                size="small"
-                class="meta-marker-eject"
-                :title="$gettext('Remove Name')"
-                :disabled="markersBusy"
-                @mousedown.prevent
-                @click.stop="onEjectMarker(m)"
-              ></v-icon>
-              <v-icon
-                v-else
                 icon="mdi-close"
                 size="small"
                 class="meta-marker-remove"
@@ -218,16 +221,6 @@
                 :disabled="markersBusy"
                 @mousedown.prevent
                 @click.stop="onRemoveMarker(m)"
-              ></v-icon>
-              <v-icon
-                v-if="editingMarkerUid !== m.UID && !m.SubjUID"
-                icon="mdi-pencil-outline"
-                size="small"
-                class="meta-inline-pencil"
-                :title="$gettext('Add Name')"
-                :disabled="markersBusy"
-                @mousedown.prevent
-                @click.stop="startEditingMarker(m.UID)"
               ></v-icon>
             </template>
           </v-list-item>
@@ -296,6 +289,7 @@
               hide-no-data
               append-icon=""
               autocomplete="off"
+              :menu-props="chipMenuProps"
               class="meta-inline-edit"
               @update:model-value="onLabelSelected"
               @keydown.enter.prevent="onLabelEnter"
@@ -366,6 +360,7 @@
               return-object
               append-icon=""
               autocomplete="off"
+              :menu-props="chipMenuProps"
               class="meta-inline-edit"
               @update:model-value="onAlbumSelected"
               @keydown.enter="onAlbumEnter"
@@ -622,6 +617,15 @@
       @close="onDiscardCancel"
       @confirm="onDiscardConfirm"
     ></p-confirm-dialog>
+    <p-confirm-dialog
+      :visible="addNameDialog.visible"
+      icon="mdi-account-plus"
+      :icon-size="42"
+      :text="addNameDialog.name ? $gettext('Add %{s}?', { s: addNameDialog.name }) : $gettext('Add person?')"
+      confirm-color="info"
+      @close="onAddNameCancel"
+      @confirm="onAddNameConfirm"
+    ></p-confirm-dialog>
   </div>
 </template>
 
@@ -686,17 +690,7 @@ export default {
       default: null,
     },
   },
-  emits: [
-    "update:modelValue",
-    "close",
-    "navigate",
-    "toggle-markers-visible",
-    "toggle-adding-marker",
-    "remove-marker",
-    "eject-marker",
-    "reload-markers",
-    "naming-started",
-  ],
+  emits: ["update:modelValue", "close", "toggle-markers-visible", "toggle-adding-marker", "remove-marker", "eject-marker", "reload-markers", "naming-started"],
   data() {
     return {
       actions: [],
@@ -717,17 +711,25 @@ export default {
       pendingLabelAdditions: [],
       pendingAlbumRemovals: [],
       pendingAlbumAdditions: [],
-      editingMarkerUid: null,
-      editingMarkerName: "",
-      editingMarkerOriginal: "",
+      markerDrafts: {},
+      markerNameRule: (v) => !v || v.length <= this.$config.get("clip") || this.$gettext("Text too long"),
       markerMenuProps: {
         openOnFocus: true,
         closeOnContentClick: true,
         maxHeight: 260,
+        class: "meta-inline-menu",
+      },
+      chipMenuProps: {
+        class: "meta-inline-menu",
       },
       discardDialog: {
         visible: false,
         resolver: null,
+      },
+      addNameDialog: {
+        visible: false,
+        marker: null,
+        name: "",
       },
     };
   },
@@ -755,6 +757,15 @@ export default {
     },
     cameraInfo() {
       if (!this.p) return "";
+      // Backend returns the "Unknown" placeholder camera (CameraID=1,
+      // Camera={Make:"", Model:"Unknown"}) when no EXIF camera is set, and
+      // formatCamera() happily renders that as " Unknown". Suppress it so
+      // the read-only sidebar doesn't surface an empty camera row.
+      const hasRealCamera =
+        (this.p.CameraID && this.p.CameraID > 1) ||
+        (this.p.CameraMake && this.p.CameraMake.trim()) ||
+        (this.p.CameraModel && this.p.CameraModel.trim() && this.p.CameraModel !== "Unknown");
+      if (!hasRealCamera) return "";
       // Suppress "Unknown, ISO 100"-style rows when only ISO/exposure are set.
       if (!this.$util.formatCamera(this.p.Camera, this.p.CameraID, this.p.CameraMake, this.p.CameraModel, false)) return "";
       const info = this.p.getCameraInfo();
@@ -858,9 +869,15 @@ export default {
     },
   },
   watch: {
+    people: {
+      immediate: true,
+      handler(markers) {
+        this.syncMarkerDrafts(Array.isArray(markers) ? markers : []);
+      },
+    },
     newMarkerUid(uid) {
       if (!uid) return;
-      this.$nextTick(() => this.startEditingMarker(uid));
+      this.$nextTick(() => this.focusMarkerInput(uid));
     },
   },
   methods: {
@@ -947,49 +964,94 @@ export default {
       if (!this.isEditable || this.markersBusy || !marker || !marker.SubjUID) return;
       this.$emit("eject-marker", marker);
     },
-    startEditingMarker(uid) {
-      if (!this.isEditable || !uid) return;
-      const marker = this.people.find((m) => m.UID === uid);
-      if (!marker) return;
-      this.editingMarkerUid = uid;
-      this.editingMarkerOriginal = marker.Name || "";
-      this.editingMarkerName = this.editingMarkerOriginal;
-      this._editMarkerStartedAt = Date.now();
+    // Combobox can bind either the typed string or the selected subject object.
+    unwrapMarkerName(value) {
+      return typeof value === "object" && value !== null ? value.Name || "" : value || "";
+    },
+    syncMarkerDrafts(markers) {
+      const seen = new Set();
+      markers.forEach((m) => {
+        if (!m || !m.UID) return;
+        seen.add(m.UID);
+        const original = m.Name || "";
+        const existing = this.markerDrafts[m.UID];
+        if (!existing) {
+          this.markerDrafts[m.UID] = { original, current: original };
+        } else if (existing.original !== original) {
+          existing.original = original;
+          existing.current = original;
+        }
+      });
+      Object.keys(this.markerDrafts).forEach((uid) => {
+        if (!seen.has(uid)) delete this.markerDrafts[uid];
+      });
+    },
+    markerInputValue(uid) {
+      const d = this.markerDrafts[uid];
+      return d ? d.current : "";
+    },
+    markerInputSearch(uid) {
+      return this.unwrapMarkerName(this.markerInputValue(uid));
+    },
+    setMarkerInputValue(uid, value) {
+      if (!uid) return;
+      if (!this.markerDrafts[uid]) {
+        this.markerDrafts[uid] = { original: "", current: value };
+      } else {
+        this.markerDrafts[uid].current = value;
+      }
+    },
+    focusMarkerInput(uid) {
+      if (!uid) return;
       this.$emit("naming-started");
       this.$nextTick(() => {
-        const input = this.$el && this.$el.querySelector(".meta-inline-marker input");
+        const input = this.$el && this.$el.querySelector(`[data-marker-uid="${uid}"] input`);
         if (input) input.focus();
       });
     },
-    confirmMarkerName() {
-      if (!this.editingMarkerUid) return;
-      const uid = this.editingMarkerUid;
-      const raw = this.editingMarkerName;
-      // Combobox can bind either the typed string or the selected item object.
-      const typed = typeof raw === "object" && raw !== null ? raw.Name || "" : raw || "";
-      const name = typed.trim();
-      const original = this.editingMarkerOriginal;
-
-      this.editingMarkerUid = null;
-      this.editingMarkerName = "";
-      this.editingMarkerOriginal = "";
-      this._editMarkerStartedAt = null;
+    // Match a typed name against knownPeople case-insensitively so the backend
+    // doesn't create a duplicate subject when the input only differs in case.
+    findKnownPerson(name) {
+      if (!name) return null;
+      return this.knownPeople.find((p) => p && p.Name && p.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0) || null;
+    },
+    confirmMarkerName(marker, source = "enter") {
+      if (!marker || !marker.UID) return;
+      const draft = this.markerDrafts[marker.UID];
+      if (!draft) return;
+      const name = this.unwrapMarkerName(draft.current).trim();
+      const original = (draft.original || "").trim();
 
       if (!name || name === original) return;
+      if (typeof marker.setName !== "function") return;
 
-      const marker = this.people.find((m) => m.UID === uid);
-      if (!marker || typeof marker.setName !== "function") return;
+      const match = this.findKnownPerson(name);
 
-      // Link an existing subject when the typed name matches a known person
-      // case-insensitively. Without this the backend would create a new
-      // subject instead of reusing the matching one.
-      const match = this.knownPeople.find((p) => p && p.Name && p.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+      // Blur without Enter on an unnamed marker → ask before committing a new
+      // name. Skip the dialog if the person already exists (match) or if the
+      // marker is already named (eject/rename path) — both are unambiguous.
+      if (source === "blur" && !marker.SubjUID && !match) {
+        this.addNameDialog = { visible: true, marker, name };
+        return;
+      }
+
+      this.commitMarkerName(marker, match, name);
+    },
+    commitMarkerName(marker, match, name) {
+      const draft = this.markerDrafts[marker.UID];
+      if (!draft) return;
+
       if (match) {
         marker.Name = match.Name;
         marker.SubjUID = match.UID;
       } else {
         marker.Name = name;
       }
+
+      // Lock the draft to the saved name so a parallel people-reload watcher
+      // tick doesn't snap the input back to the old value mid-request.
+      draft.original = marker.Name || "";
+      draft.current = marker.Name || "";
 
       marker
         .setName()
@@ -1000,37 +1062,52 @@ export default {
           this.$notify.error(this.$gettext("Failed to save name"));
         });
     },
-    onPickPerson(value) {
-      if (!value || typeof value !== "object" || !value.Name) return;
-      this.editingMarkerName = value.Name;
-      // Bypass the 200ms guard so the picked value commits immediately.
-      this._editMarkerStartedAt = null;
-      this.confirmMarkerName();
+    onPickPerson(marker, value) {
+      if (!marker || !value || typeof value !== "object" || !value.Name) return;
+      this.setMarkerInputValue(marker.UID, value.Name);
+      this.confirmMarkerName(marker, "enter");
     },
-    cancelMarkerName() {
-      // Same 200ms guard as cancelEditing: prevents the pencil/confirm click from
-      // triggering blur before focus lands in the input.
-      if (this._editMarkerStartedAt && Date.now() - this._editMarkerStartedAt < 200) {
-        return;
+    onAddNameConfirm() {
+      const { marker, name } = this.addNameDialog;
+      this.addNameDialog = { visible: false, marker: null, name: "" };
+      if (!marker || !name) return;
+      this.commitMarkerName(marker, this.findKnownPerson(name), name);
+    },
+    onAddNameCancel() {
+      const { marker } = this.addNameDialog;
+      this.addNameDialog = { visible: false, marker: null, name: "" };
+      const draft = marker && marker.UID ? this.markerDrafts[marker.UID] : null;
+      if (draft) draft.current = draft.original || "";
+    },
+    cancelMarkerName(marker) {
+      if (!marker || !marker.UID) return;
+      const draft = this.markerDrafts[marker.UID];
+      if (!draft) return;
+      draft.current = draft.original;
+      // Blur the active input so the user gets a visual cue the edit was
+      // dropped; @blur re-fires confirmMarkerName but it's a no-op now that
+      // current === original.
+      if (typeof document !== "undefined" && document.activeElement && typeof document.activeElement.blur === "function") {
+        document.activeElement.blur();
       }
-      this.editingMarkerUid = null;
-      this.editingMarkerName = "";
-      this.editingMarkerOriginal = "";
-      this._editMarkerStartedAt = null;
     },
     resetInlineEdits() {
       if (this.editingField) this.cancelEditing();
-      this.editingMarkerUid = null;
-      this.editingMarkerName = "";
-      this.editingMarkerOriginal = "";
-      this._editMarkerStartedAt = null;
+      Object.keys(this.markerDrafts).forEach((uid) => {
+        const d = this.markerDrafts[uid];
+        if (d) d.current = d.original;
+      });
     },
     // Inline text fields (title/caption/subject/...) are excluded on purpose:
     // onInlineFieldBlur() auto-commits them before any navigation source can
     // fire, so they can never have pending state at nav time. Only the
     // staged editors that do NOT auto-commit on blur belong here.
     hasPendingEdit() {
-      if (this.editingMarkerUid && this.editingMarkerName !== this.editingMarkerOriginal) return true;
+      for (const uid of Object.keys(this.markerDrafts)) {
+        const d = this.markerDrafts[uid];
+        if (!d) continue;
+        if (this.unwrapMarkerName(d.current).trim() !== (d.original || "").trim()) return true;
+      }
       if (this.pendingLabelAdditions.length || this.pendingLabelRemovals.length) return true;
       if (this.pendingAlbumAdditions.length || this.pendingAlbumRemovals.length) return true;
       return false;
@@ -1134,18 +1211,29 @@ export default {
         return dateTime.toLocaleString(formats.DATETIME_MED);
       }
     },
+    openInNewTab(route) {
+      if (!route) return;
+      const resolved = this.$router ? this.$router.resolve(route) : null;
+      const href = resolved?.href || "";
+      if (!href || typeof window === "undefined" || typeof window.open !== "function") return;
+      window.open(href, "_blank", "noopener,noreferrer");
+    },
     navigateToLabel(label) {
+      if (!label) return;
       const slug = label.CustomSlug || label.Slug;
-      this.$emit("navigate", { name: "browse", query: { q: "label:" + slug } });
+      if (!slug) return;
+      this.openInNewTab({ name: "browse", query: { q: "label:" + slug } });
     },
     navigateToAlbum(album) {
-      this.$emit("navigate", { name: "album", params: { album: album.UID, slug: "view" } });
+      if (!album || !album.UID) return;
+      this.openInNewTab({ name: "album", params: { album: album.UID, slug: "view" } });
     },
     navigateToPerson(marker) {
+      if (!marker) return;
       if (marker.SubjUID) {
-        this.$emit("navigate", { name: "browse", query: { q: "subject:" + marker.SubjUID } });
+        this.openInNewTab({ name: "browse", query: { q: "subject:" + marker.SubjUID } });
       } else if (marker.Name) {
-        this.$emit("navigate", { name: "browse", query: { q: "person:" + marker.Name } });
+        this.openInNewTab({ name: "browse", query: { q: "person:" + marker.Name } });
       }
     },
     startChipEditing(field) {
@@ -1216,8 +1304,16 @@ export default {
       this.addPendingLabel(value.Name);
       this.clearChipInput();
     },
-    onLabelEnter() {
-      if (this.addPendingLabel(this.chipSearch)) {
+    // Read the typed name from the input DOM as a fallback so that
+    // Vuetify clearing `chipSearch` on the same Enter keystroke we
+    // handle does not silently swallow the pending addition.
+    pendingChipName(ev) {
+      if (this.chipSearch) return this.chipSearch;
+      const target = ev && ev.target ? ev.target : null;
+      return target && typeof target.value === "string" ? target.value : "";
+    },
+    onLabelEnter(ev) {
+      if (this.addPendingLabel(this.pendingChipName(ev))) {
         this.clearChipInput();
       }
     },
@@ -1307,8 +1403,8 @@ export default {
       this.addPendingAlbum(value);
       this.clearChipInput();
     },
-    onAlbumEnter() {
-      const search = (this.chipSearch || "").trim();
+    onAlbumEnter(ev) {
+      const search = this.pendingChipName(ev).trim();
       if (!search) return;
 
       if (search.length > this.$config.get("clip")) {
