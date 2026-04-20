@@ -116,6 +116,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-backups", fmt.Sprintf("%t", c.DisableBackups())},
 		{"disable-restart", fmt.Sprintf("%t", c.DisableRestart())},
 		{"disable-webdav", fmt.Sprintf("%t", c.DisableWebDAV())},
+		{"disable-mcp", fmt.Sprintf("%t", c.DisableMCP())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},

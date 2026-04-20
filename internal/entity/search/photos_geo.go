@@ -208,12 +208,19 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Filter by label, label category and keywords.
 	if txt.NotEmpty(frm.Label) {
-		if labelIds, labelErr := entity.FindLabelIDs(frm.Label, txt.Or, true); labelErr != nil || len(labelIds) == 0 {
+		include, exclude, sawPositive, labelErr := entity.ParseLabelFilter(frm.Label)
+
+		if labelErr != nil || (sawPositive && len(include) == 0) {
 			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
 			return GeoResults{}, nil
-		} else {
-			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
-				Group("photos.id, files.id")
+		}
+
+		for _, ids := range include {
+			s = s.Where("files.photo_id IN (SELECT photo_id FROM photos_labels WHERE uncertainty < 100 AND label_id IN (?))", ids)
+		}
+
+		for _, ids := range exclude {
+			s = s.Where("files.photo_id NOT IN (SELECT photo_id FROM photos_labels WHERE uncertainty < 100 AND label_id IN (?))", ids)
 		}
 	}
 

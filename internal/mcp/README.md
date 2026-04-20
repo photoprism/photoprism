@@ -1,6 +1,6 @@
 ## PhotoPrism MCP Server
 
-**Last Updated:** April 13, 2026
+**Last Updated:** April 18, 2026
 
 > See `specs/platform/mcp.md` for the canonical specification, including the rationale for the user-access policy and the role/grant matrix per edition.
 
@@ -8,9 +8,8 @@
 
 - **Transports:**
   - CLI: `photoprism mcp serve` (stdio, no auth; development and testing)
-  - HTTP: `POST/GET/DELETE /api/v1/mcp` (Streamable HTTP, authenticated)
+  - HTTP: `POST/GET/DELETE /api/v1/mcp` (Streamable HTTP, authenticated). Can be disabled via `--disable-mcp` / `PHOTOPRISM_DISABLE_MCP` / `DisableMCP` so the route responds with the standard 404 when an operator does not want the endpoint exposed. The flag is also surfaced to the frontend through `ClientConfig.Disable.MCP` (`disable.mcp`), letting the UI hide MCP-related controls while the endpoint is off.
 - **Authorization:** HTTP endpoint enforces the `ResourceMCP` ACL (admin plus the API client roles in every edition, manager in Pro/Portal); anonymous access is permitted in public mode for the currently registered read-only tools.
-- **Feature gate:** HTTP endpoint requires the `--experimental` flag; absent that flag `/api/v1/mcp` returns 404.
 - Read-only resources:
   - `photoprism://config-options`
   - `photoprism://search-filters`
@@ -65,10 +64,10 @@ The process waits for an MCP client on stdin/stdout. Logs are written to stderr 
 
 ### Run via HTTP
 
-Start PhotoPrism with experimental mode enabled:
+Start PhotoPrism:
 
 ```bash
-./photoprism --experimental start
+./photoprism start
 ```
 
 The MCP endpoint is available at `/api/v1/mcp`. Authenticate with an admin token:
@@ -178,7 +177,6 @@ The HTTP endpoint uses PhotoPrism's existing ACL system:
 - **Client tokens:** API client sessions must also include the `mcp` resource (or a wildcard) in their session scope; the ACL grant alone is not sufficient.
 - **Auth model:** request-level. The handler runs `Auth(c, acl.ResourceMCP, acl.ActionView)` followed by `s.Abort(c)`, which writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
 - **Public mode:** anonymous access is permitted. In public mode, `api.Session()` returns the default public session (effectively admin), so `Auth(...)` passes and the currently registered read-only tools are reachable without a token. This is an intentional, narrow allowance for demo deployments (`demo.photoprism.app`); it is safe only because every registered tool today returns static reference metadata derived from `config.Flags` and `form.Report(&form.SearchPhotos{})` — no database access, no per-user state, no secrets, no mutations. **Any future tool that touches per-user state, the database, or mutates anything MUST NOT be registered on this server without an additional per-tool check**. See *Extending the Tool Surface* below.
-- **Experimental gate:** the route only registers when `--experimental` is enabled; otherwise `/api/v1/mcp` returns 404. Public-mode anonymous access therefore also requires the operator to explicitly opt into experimental features.
 
 ### Rate Limiting
 
@@ -186,7 +184,7 @@ The MCP handler does not install a custom rate limiter — there is no per-endpo
 
 | Build  | Generic per-IP HTTP limiter? | Notes                                                                                                                                                                                                                                                        |
 |--------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CE     | no                           | Only the experimental gate and the admin/client auth check protect the endpoint. In public mode all callers are anonymous, so CE deployments that run with `--public --experimental` have no per-request throttle in front of MCP.                           |
+| CE     | no                           | Only the admin/client auth check protects the endpoint. In public mode all callers are anonymous, so CE deployments that run with `--public` have no per-request throttle in front of MCP.                                                                   |
 | Plus   | no                           | Same as CE. The IPS middleware exists but only consumes tokens on known scanner/exploit paths, so it does not throttle MCP traffic.                                                                                                                          |
 | Pro    | yes                          | `pro/internal/server/register.go` calls `router.Use(limiter.Middleware(limiter.NewLimit(rate.Every(secOpt.RequestInterval), secOpt.RequestLimit)))` when both options are set. The limiter is per client IP and applies to every API endpoint, MCP included. |
 | Portal | yes                          | Same wiring as Pro in `portal/internal/server/register.go`.                                                                                                                                                                                                  |

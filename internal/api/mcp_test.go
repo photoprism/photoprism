@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
-// prepareMCPTest sets auth mode to password, disables public mode, and enables
-// experimental mode so that MCP auth checks behave as in production.
+// prepareMCPTest sets auth mode to password and disables public mode so that
+// MCP auth checks behave as in production.
 func prepareMCPTest(t *testing.T) *config.Config {
 	t.Helper()
 
@@ -27,7 +27,6 @@ func prepareMCPTest(t *testing.T) *config.Config {
 
 	conf.Options().AuthMode = config.AuthModePasswd
 	conf.Options().Public = false
-	conf.Options().Experimental = true
 
 	return conf
 }
@@ -54,9 +53,9 @@ func mcpPost(app http.Handler, body, authToken, sessionID string) *httptest.Resp
 }
 
 // TestServeMCP exercises the HTTP handler installed by ServeMCP: the
-// public-mode anonymous path, unauthenticated and non-admin denial, the
-// experimental-off 404 short-circuit, and the full admin round-trip
-// through initialize, notifications/initialized, and tools/call.
+// public-mode anonymous path, unauthenticated and non-admin denial, and
+// the full admin round-trip through initialize, notifications/initialized,
+// and tools/call.
 func TestServeMCP(t *testing.T) {
 	t.Run("AllowedPublicMode", func(t *testing.T) {
 		// In public mode, Session() returns the default public session and
@@ -89,6 +88,18 @@ func TestServeMCP(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w4.Code)
 		assert.Contains(t, w4.Body.String(), "matches")
 	})
+	t.Run("DisabledViaConfig", func(t *testing.T) {
+		// When DisableMCP is set, ServeMCP must skip route registration so
+		// the endpoint responds with the standard 404 — mirroring how the
+		// other Disable* flags short-circuit route setup.
+		app, router, _ := NewApiTest()
+		conf := prepareMCPTest(t)
+		conf.Options().DisableMCP = true
+		ServeMCP(router)
+
+		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, "", "")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
 	t.Run("UnauthorizedAnonymous", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		prepareMCPTest(t)
@@ -105,16 +116,6 @@ func TestServeMCP(t *testing.T) {
 		authToken := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
 		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, authToken, "")
 		assert.Equal(t, http.StatusForbidden, r.Code)
-	})
-	t.Run("NotFoundExperimentalOff", func(t *testing.T) {
-		app, router, _ := NewApiTest()
-		conf := prepareMCPTest(t)
-		conf.Options().Experimental = false
-		ServeMCP(router)
-
-		authToken := AuthenticateAdmin(app, router)
-		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, authToken, "")
-		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("InitializeAndCallTools", func(t *testing.T) {
 		app, router, _ := NewApiTest()

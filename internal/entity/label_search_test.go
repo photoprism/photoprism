@@ -72,3 +72,152 @@ func TestFindLabelIDs(t *testing.T) {
 		assert.Len(t, labelIDs, 2)
 	})
 }
+
+func TestUnescapeLabelTerm(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", unescapeLabelTerm(""))
+	})
+	t.Run("WithoutEscape", func(t *testing.T) {
+		assert.Equal(t, "cake", unescapeLabelTerm("cake"))
+	})
+	t.Run("EscapedOperators", func(t *testing.T) {
+		assert.Equal(t, "!weird", unescapeLabelTerm(`\!weird`))
+		assert.Equal(t, "cat&dog", unescapeLabelTerm(`cat\&dog`))
+		assert.Equal(t, "a|b", unescapeLabelTerm(`a\|b`))
+		assert.Equal(t, `a\b`, unescapeLabelTerm(`a\\b`))
+	})
+	t.Run("UnknownEscapePreserved", func(t *testing.T) {
+		assert.Equal(t, `a\bc`, unescapeLabelTerm(`a\bc`))
+	})
+	t.Run("TrailingEscapePreserved", func(t *testing.T) {
+		assert.Equal(t, `a\`, unescapeLabelTerm(`a\`))
+	})
+}
+
+func TestResolveLabelGroup(t *testing.T) {
+	t.Run("SingleExact", func(t *testing.T) {
+		ids := resolveLabelGroup("cake")
+		assert.Equal(t, []uint{LabelFixtures.Get("cake").ID}, ids)
+	})
+	t.Run("OrAlternatives", func(t *testing.T) {
+		ids := resolveLabelGroup("cake|cow")
+		assert.Contains(t, ids, LabelFixtures.Get("cake").ID)
+		assert.Contains(t, ids, LabelFixtures.Get("cow").ID)
+	})
+	t.Run("CategoryExpansion", func(t *testing.T) {
+		ids := resolveLabelGroup("landscape")
+		assert.Contains(t, ids, LabelFixtures.Get("landscape").ID)
+		assert.Contains(t, ids, LabelFixtures.Get("flower").ID)
+	})
+	t.Run("UnknownReturnsEmpty", func(t *testing.T) {
+		assert.Empty(t, resolveLabelGroup("totally-unknown-label-name"))
+	})
+	t.Run("EscapedAmpersandName", func(t *testing.T) {
+		ids := resolveLabelGroup(`construction\&failure`)
+		assert.Equal(t, []uint{LabelFixtures.Get("construction&failure").ID}, ids)
+	})
+}
+
+func TestParseLabelFilter(t *testing.T) {
+	cakeID := LabelFixtures.Get("cake").ID
+	cowID := LabelFixtures.Get("cow").ID
+	flowerID := LabelFixtures.Get("flower").ID
+	landscapeID := LabelFixtures.Get("landscape").ID
+
+	t.Run("Empty", func(t *testing.T) {
+		include, exclude, sawPositive, err := ParseLabelFilter("")
+		require.NoError(t, err)
+		assert.False(t, sawPositive)
+		assert.Empty(t, include)
+		assert.Empty(t, exclude)
+	})
+	t.Run("SinglePositive", func(t *testing.T) {
+		include, exclude, sawPositive, err := ParseLabelFilter("cake")
+		require.NoError(t, err)
+		assert.True(t, sawPositive)
+		require.Len(t, include, 1)
+		assert.Equal(t, []uint{cakeID}, include[0])
+		assert.Empty(t, exclude)
+	})
+	t.Run("SingleNegative", func(t *testing.T) {
+		include, exclude, sawPositive, err := ParseLabelFilter("!cake")
+		require.NoError(t, err)
+		assert.False(t, sawPositive)
+		assert.Empty(t, include)
+		require.Len(t, exclude, 1)
+		assert.Equal(t, []uint{cakeID}, exclude[0])
+	})
+	t.Run("IncludeAndExclude", func(t *testing.T) {
+		include, exclude, sawPositive, err := ParseLabelFilter("cake&!flower")
+		require.NoError(t, err)
+		assert.True(t, sawPositive)
+		require.Len(t, include, 1)
+		assert.Equal(t, []uint{cakeID}, include[0])
+		require.Len(t, exclude, 1)
+		assert.Equal(t, []uint{flowerID}, exclude[0])
+	})
+	t.Run("MultipleIncludes", func(t *testing.T) {
+		include, exclude, sawPositive, err := ParseLabelFilter("cake&cow")
+		require.NoError(t, err)
+		assert.True(t, sawPositive)
+		require.Len(t, include, 2)
+		assert.Equal(t, []uint{cakeID}, include[0])
+		assert.Equal(t, []uint{cowID}, include[1])
+		assert.Empty(t, exclude)
+	})
+	t.Run("OrWithinPositiveGroup", func(t *testing.T) {
+		include, _, sawPositive, err := ParseLabelFilter("cake|cow")
+		require.NoError(t, err)
+		assert.True(t, sawPositive)
+		require.Len(t, include, 1)
+		assert.ElementsMatch(t, []uint{cakeID, cowID}, include[0])
+	})
+	t.Run("UnknownPositiveShortCircuits", func(t *testing.T) {
+		_, _, sawPositive, err := ParseLabelFilter("cake&totally-unknown-label")
+		assert.ErrorIs(t, err, ErrLabelNotFound)
+		assert.True(t, sawPositive)
+	})
+	t.Run("UnknownNegativeIsNoOp", func(t *testing.T) {
+		include, exclude, sawPositive, err := ParseLabelFilter("cake&!totally-unknown-label")
+		require.NoError(t, err)
+		assert.True(t, sawPositive)
+		require.Len(t, include, 1)
+		assert.Empty(t, exclude)
+	})
+	t.Run("NegativeCategoryExpansion", func(t *testing.T) {
+		_, exclude, _, err := ParseLabelFilter("!landscape")
+		require.NoError(t, err)
+		require.Len(t, exclude, 1)
+		assert.Contains(t, exclude[0], landscapeID)
+		assert.Contains(t, exclude[0], flowerID)
+	})
+	t.Run("EscapedLeadingBang", func(t *testing.T) {
+		// A leading \! is a literal label name. No label named "!weird"
+		// exists in fixtures, so the lookup short-circuits.
+		_, _, sawPositive, err := ParseLabelFilter(`\!weird`)
+		assert.ErrorIs(t, err, ErrLabelNotFound)
+		assert.True(t, sawPositive)
+	})
+	t.Run("NegatedEscapedBang", func(t *testing.T) {
+		// "!\!weird" = NOT a label literally named "!weird"; unknown negative is a no-op.
+		include, exclude, sawPositive, err := ParseLabelFilter(`!\!weird`)
+		require.NoError(t, err)
+		assert.False(t, sawPositive)
+		assert.Empty(t, include)
+		assert.Empty(t, exclude)
+	})
+	t.Run("EscapedAmpersandName", func(t *testing.T) {
+		include, _, sawPositive, err := ParseLabelFilter(`construction\&failure`)
+		require.NoError(t, err)
+		assert.True(t, sawPositive)
+		require.Len(t, include, 1)
+		assert.Equal(t, []uint{LabelFixtures.Get("construction&failure").ID}, include[0])
+	})
+	t.Run("LoneBangDropped", func(t *testing.T) {
+		include, exclude, sawPositive, err := ParseLabelFilter("!")
+		require.NoError(t, err)
+		assert.False(t, sawPositive)
+		assert.Empty(t, include)
+		assert.Empty(t, exclude)
+	})
+}

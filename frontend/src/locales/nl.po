@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
@@ -310,7 +310,7 @@ msgstr "Na twee weken"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/settings/advanced.vue:183
+#: src/page/settings/advanced.vue:199
 msgid "Album Backups"
 msgstr "Back-ups van albums"
 
@@ -576,7 +576,7 @@ msgstr "Terug"
 msgid "Back to top"
 msgstr "Terug naar boven"
 
-#: src/page/settings/advanced.vue:155
+#: src/page/settings/advanced.vue:171
 msgid "Backup"
 msgstr "Back-up"
 
@@ -768,7 +768,7 @@ msgstr "Wijzigingen kunnen niet worden opgeslagen"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:491 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Wijzigingen succesvol opgeslagen"
@@ -994,15 +994,15 @@ msgstr "Account aanmaken"
 msgid "Create album"
 msgstr "Nieuw album"
 
-#: src/page/settings/advanced.vue:168
+#: src/page/settings/advanced.vue:184
 msgid "Create regular backups based on the configured schedule."
 msgstr "Indexback-ups maken op basis van het geconfigureerde schema."
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:200
 msgid "Create YAML files to back up album metadata."
 msgstr "YAML-bestanden maken om albummetadata te back-uppen."
 
-#: src/page/settings/advanced.vue:200
+#: src/page/settings/advanced.vue:216
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Maak YAML sidecar-bestanden om een back-up te maken van afbeeldingsmetagegevens."
 
@@ -1036,7 +1036,7 @@ msgstr "Dagelijks"
 msgid "Database"
 msgstr "Database"
 
-#: src/page/settings/advanced.vue:167
+#: src/page/settings/advanced.vue:183
 msgid "Database Backups"
 msgstr "Back-ups van databases"
 
@@ -1128,7 +1128,7 @@ msgstr "Details"
 msgid "Dimensions"
 msgstr "Afmetingen"
 
-#: src/page/settings/advanced.vue:111
+#: src/page/settings/advanced.vue:127
 msgid "Disable all face detection and recognition features."
 msgstr "Schakel alle functies voor gezichtsdetectie en -herkenning uit."
 
@@ -1136,15 +1136,15 @@ msgstr "Schakel alle functies voor gezichtsdetectie en -herkenning uit."
 msgid "Disable Backups"
 msgstr "Back-ups uitschakelen"
 
-#: src/page/settings/advanced.vue:308
+#: src/page/settings/advanced.vue:324
 msgid "Disable Darktable"
 msgstr "Uitschakelen Darktable"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
 msgstr "Schakel ExifTool uit"
 
-#: src/page/settings/advanced.vue:110
+#: src/page/settings/advanced.vue:126
 msgid "Disable Faces"
 msgstr "Gezichten uitschakelen"
 
@@ -1152,27 +1152,35 @@ msgstr "Gezichten uitschakelen"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Schakel functies uit die schrijfrechten vereisen voor de map Originals."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:388
 msgid "Disable FFmpeg"
 msgstr "FFmpeg uitschakelen"
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:372
 msgid "Disable ImageMagick"
 msgstr "ImageMagick uitschakelen"
 
-#: src/page/settings/advanced.vue:127
+#: src/page/settings/advanced.vue:143
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Schakel interactieve wereldkaarten en omgekeerde geocodering uit."
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:110
+msgid "Disable MCP"
+msgstr "MCP uitschakelen"
+
+#: src/page/settings/advanced.vue:142
 msgid "Disable Places"
 msgstr "Locaties"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:340
 msgid "Disable RawTherapee"
 msgstr "RawTherapee uitschakelen"
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:111
+msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
+msgstr "Schakel het Model Context Protocol (MCP) API eindpunt uit voor AI agent integraties."
+
+#: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"
 msgstr "Vectoren uitschakelen"
 
@@ -1184,11 +1192,11 @@ msgstr "WebDAV uitschakelen"
 msgid "Disabled"
 msgstr "Uitgeschakeld"
 
-#: src/page/settings/advanced.vue:389
+#: src/page/settings/advanced.vue:405
 msgid "Disables vector graphics support."
 msgstr "Schakelt ondersteuning voor vectorafbeeldingen uit."
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:389
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Schakelt videoconversie en extractie van miniaturen uit."
 
@@ -1242,15 +1250,15 @@ msgstr "Document"
 msgid "Documents"
 msgstr "Documenten"
 
-#: src/page/settings/advanced.vue:309
+#: src/page/settings/advanced.vue:325
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Gebruik geen Darktable om RAW-beelden te converteren."
 
-#: src/page/settings/advanced.vue:357
+#: src/page/settings/advanced.vue:373
 msgid "Don't use ImageMagick to convert images."
 msgstr "Gebruik geen ImageMagick om afbeeldingen te converteren."
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:341
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Gebruik geen RawTherapee om RAW beelden te converteren."
 
@@ -1309,11 +1317,11 @@ msgstr "Duplicaten worden overgeslagen en verschijnen slechts één keer."
 msgid "Duration"
 msgstr "Duur"
 
-#: src/page/settings/advanced.vue:251
+#: src/page/settings/advanced.vue:267
 msgid "Dynamic Previews"
 msgstr "Dynamische Voorbeelden"
 
-#: src/page/settings/advanced.vue:227
+#: src/page/settings/advanced.vue:243
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dynamische Groottegrens: %{n}px"
 
@@ -1371,7 +1379,7 @@ msgstr "Nieuwe functies inschakelen die mogelijk incompleet of instabiel zijn."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Schakel de bestandsbrowser in om door de mappenstructuur van Originals te navigeren."
 
-#: src/page/settings/advanced.vue:341
+#: src/page/settings/advanced.vue:357
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Schakelt RAW-converterpresets in. Kan de prestaties verminderen."
 
@@ -1438,7 +1446,7 @@ msgstr "Om de twee dagen"
 msgid "Exclude hidden"
 msgstr "Verborgen uitsluiten"
 
-#: src/page/settings/advanced.vue:143
+#: src/page/settings/advanced.vue:159
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Metadata-extractie met ExifTool is vereist voor volledige ondersteuning van video, live foto's en XMP."
 
@@ -1530,7 +1538,7 @@ msgstr "Bestand"
 msgid "File Browser"
 msgstr "Bestands Browser"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:312
 msgid "File Conversion"
 msgstr "Bestandsconversie"
 
@@ -1726,7 +1734,7 @@ msgstr "Als u de toegang tot uw authenticatie-app of -apparaat verliest, kunt u 
 msgid "Image"
 msgstr "Afbeelding"
 
-#: src/page/settings/advanced.vue:267
+#: src/page/settings/advanced.vue:283
 msgid "Image Quality"
 msgstr "Beeldkwaliteit"
 
@@ -1871,11 +1879,11 @@ msgstr "Item"
 msgid "Items per page:"
 msgstr "Artikelen per pagina:"
 
-#: src/page/settings/advanced.vue:274
+#: src/page/settings/advanced.vue:290
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-kwaliteit: %{n}"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:297
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG-groottegrens: %{n}px"
 
@@ -2439,7 +2447,7 @@ msgstr "Oudste eerst"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "In Windows voert u de volgende bron in het verbindingsdialoogvenster in:"
 
-#: src/page/settings/advanced.vue:253
+#: src/page/settings/advanced.vue:269
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Het op aanvraag genereren van miniaturen kan een hoog CPU- en geheugengebruik veroorzaken. Het wordt niet aanbevolen voor servers en NAS-apparaten met beperkte bronnen."
 
@@ -2705,7 +2713,7 @@ msgstr "Wacht even…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:288
+#: src/page/settings/advanced.vue:304
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG-groottegrens: %{n}px"
 
@@ -2744,7 +2752,7 @@ msgstr "Voorkom dat andere apps toegang hebben tot PhotoPrism als een gedeeld ne
 msgid "Preview"
 msgstr "Voorbeeld"
 
-#: src/page/settings/advanced.vue:212
+#: src/page/settings/advanced.vue:228
 msgid "Preview Images"
 msgstr "Voorbeeldafbeeldingen"
 
@@ -2953,7 +2961,7 @@ msgstr "Resolutie"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:402
+#: src/page/settings/advanced.vue:418
 msgid "Restart"
 msgstr "Herstart"
 
@@ -3299,7 +3307,7 @@ msgstr "Titels tonen"
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:199
+#: src/page/settings/advanced.vue:215
 msgid "Sidecar Files"
 msgstr "Zijspan Bestanden"
 
@@ -3427,7 +3435,7 @@ msgstr "Start"
 msgid "Start Page"
 msgstr "Startpagina"
 
-#: src/page/settings/advanced.vue:219
+#: src/page/settings/advanced.vue:235
 msgid "Static Size Limit: %{n}px"
 msgstr "Statische Grootte Limiet: %{n}px"
 
@@ -3798,7 +3806,7 @@ msgstr "Uploads die dergelijke beelden kunnen bevatten, worden automatisch gewei
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:356
 msgid "Use Presets"
 msgstr "Gebruik Voorinstellingen"
 

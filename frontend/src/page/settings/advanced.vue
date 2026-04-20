@@ -102,6 +102,22 @@
 
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
+                v-model="settings.DisableMCP"
+                :disabled="isDemo"
+                class="ma-0 pa-0 input-disable-mcp"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Disable MCP')"
+                :hint="$gettext('Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations.')"
+                prepend-icon="mdi-robot-off"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3">
+              <v-checkbox
                 v-model="settings.DisableFaces"
                 :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-faces"

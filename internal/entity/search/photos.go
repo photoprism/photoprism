@@ -286,12 +286,27 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 	// Filter by label, label category and keywords.
 	if txt.NotEmpty(frm.Label) {
-		if labelIds, labelErr := entity.FindLabelIDs(frm.Label, txt.Or, true); labelErr != nil || len(labelIds) == 0 {
+		include, exclude, sawPositive, labelErr := entity.ParseLabelFilter(frm.Label)
+
+		if labelErr != nil || (sawPositive && len(include) == 0) {
 			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
 			return PhotoResults{}, 0, nil
-		} else {
-			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
-				Group("photos.id, files.id")
+		}
+
+		// JOIN the first positive group so photos_labels.uncertainty is
+		// available for the "relevance" sort order; subsequent positive
+		// groups compose as AND via IN subqueries.
+		for i, ids := range include {
+			if i == 0 {
+				s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", ids).
+					Group("photos.id, files.id")
+			} else {
+				s = s.Where("files.photo_id IN (SELECT photo_id FROM photos_labels WHERE uncertainty < 100 AND label_id IN (?))", ids)
+			}
+		}
+
+		for _, ids := range exclude {
+			s = s.Where("files.photo_id NOT IN (SELECT photo_id FROM photos_labels WHERE uncertainty < 100 AND label_id IN (?))", ids)
 		}
 	}
 

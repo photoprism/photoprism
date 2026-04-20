@@ -15,11 +15,9 @@ import (
 )
 
 // ServeMCP registers the Model Context Protocol (MCP) Streamable HTTP
-// endpoint at /api/v1/mcp. The endpoint is a no-op until the operator
-// enables experimental features (--experimental / PHOTOPRISM_EXPERIMENTAL)
-// because the route returns early before any handler is attached.
+// endpoint at /api/v1/mcp.
 //
-//	@Summary	model context protocol endpoint (experimental)
+//	@Summary	model context protocol endpoint
 //	@Id			ServeMCP
 //	@Tags		MCP
 //	@Accept		json
@@ -34,9 +32,17 @@ func ServeMCP(router *gin.RouterGroup) {
 
 	conf := get.Config()
 
-	// Skip registration when no config is available or experimental mode
-	// is off, so /api/v1/mcp returns the standard 404 in that case.
-	if conf == nil || !conf.Experimental() {
+	// Skip registration when no config is available, so
+	// /api/v1/mcp returns the standard 404 in that case.
+	if conf == nil {
+		return
+	}
+
+	// Skip registration when the MCP endpoint has been disabled via
+	// --disable-mcp / PHOTOPRISM_DISABLE_MCP / DisableMCP, so requests
+	// to /api/v1/mcp return the standard 404 response.
+	if conf.DisableMCP() {
+		log.Info("mcp: disabled")
 		return
 	}
 

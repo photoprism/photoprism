@@ -102,9 +102,11 @@ func TestPhotosFilterLabel(t *testing.T) {
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
+		// Option A: a literal '&' inside a label name must be escaped because
+		// the unescaped form is now parsed as an AND separator between groups.
 		var f form.SearchPhotos
 
-		f.Label = "&friendship"
+		f.Label = `\&friendship`
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -118,7 +120,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Label = "construction&failure"
+		f.Label = `construction\&failure`
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -132,7 +134,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Label = "goal&"
+		f.Label = `goal\&`
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -463,7 +465,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "label:\"&friendship\""
+		f.Query = `label:"\&friendship"`
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -477,7 +479,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "label:\"construction&failure\""
+		f.Query = `label:"construction\&failure"`
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -491,7 +493,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "label:\"goal&\""
+		f.Query = `label:"goal\&"`
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -743,5 +745,132 @@ func TestPhotosQueryLabel(t *testing.T) {
 		}
 
 		assert.Equal(t, photoB.PhotoUID, photos[0].PhotoUID)
+	})
+}
+
+// baselinePhotoCount returns the merged-photo result count for a search with no
+// label filter. Used by NOT/AND tests to derive expected counts.
+func baselinePhotoCount(t *testing.T) int {
+	t.Helper()
+
+	var f form.SearchPhotos
+
+	f.Merged = true
+
+	photos, _, err := Photos(f)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return len(photos)
+}
+
+// photosWithLabel runs a label filter search and returns the merged photos.
+func photosWithLabel(t *testing.T, label string) PhotoResults {
+	t.Helper()
+
+	var f form.SearchPhotos
+
+	f.Label = label
+	f.Merged = true
+
+	photos, _, err := Photos(f)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return photos
+}
+
+// containsPhotoUID reports whether any of the photos in results carries the
+// given UID.
+func containsPhotoUID(results PhotoResults, uid string) bool {
+	for _, p := range results {
+		if p.PhotoUID == uid {
+			return true
+		}
+	}
+
+	return false
+}
+
+func TestPhotosFilterLabelNotAnd(t *testing.T) {
+	t.Run("SingleExclude", func(t *testing.T) {
+		base := baselinePhotoCount(t)
+		withFlower := len(photosWithLabel(t, "flower"))
+		result := photosWithLabel(t, "!flower")
+		assert.Equal(t, base-withFlower, len(result))
+	})
+	t.Run("ExcludeUnknownIsNoOp", func(t *testing.T) {
+		base := baselinePhotoCount(t)
+		result := photosWithLabel(t, "!totally-unknown-label")
+		assert.Equal(t, base, len(result))
+	})
+	t.Run("OnlyNegative", func(t *testing.T) {
+		base := baselinePhotoCount(t)
+		withCake := len(photosWithLabel(t, "cake"))
+		result := photosWithLabel(t, "!cake")
+		assert.Equal(t, base-withCake, len(result))
+	})
+	t.Run("IncludeAndExclude", func(t *testing.T) {
+		result := photosWithLabel(t, "cake&!flower")
+		assert.Len(t, result, 2)
+	})
+	t.Run("MultipleIncludes", func(t *testing.T) {
+		result := photosWithLabel(t, "cake&flower")
+		assert.Len(t, result, 3)
+	})
+	t.Run("MultipleIncludesPlusExclude", func(t *testing.T) {
+		result := photosWithLabel(t, "cake&flower&!cow")
+		assert.Len(t, result, 1)
+	})
+	t.Run("IncludeOrExcludeBlurry", func(t *testing.T) {
+		result := photosWithLabel(t, "cake|flower&!cow")
+		assert.Len(t, result, 2)
+	})
+	t.Run("CategoryExpansion", func(t *testing.T) {
+		base := baselinePhotoCount(t)
+		withLandscape := len(photosWithLabel(t, "landscape"))
+		result := photosWithLabel(t, "!landscape")
+		assert.Equal(t, base-withLandscape, len(result))
+		assert.Greater(t, withLandscape, 0)
+	})
+	t.Run("EscapeLiteralBang", func(t *testing.T) {
+		// No fixture label named "!weird" exists, so a positive lookup for the
+		// escaped literal short-circuits to an empty result set.
+		result := photosWithLabel(t, `\!weird`)
+		assert.Empty(t, result)
+	})
+	t.Run("EscapeLiteralBangNegated", func(t *testing.T) {
+		// Negating an unknown literal label "!weird" is a no-op.
+		base := baselinePhotoCount(t)
+		result := photosWithLabel(t, `!\!weird`)
+		assert.Equal(t, base, len(result))
+	})
+	t.Run("LegacyAmpersandName", func(t *testing.T) {
+		escaped := photosWithLabel(t, `construction\&failure`)
+		assert.Len(t, escaped, 2)
+
+		// The same input without escape is now parsed as two positive AND
+		// groups: neither "construction" nor "failure" exists as a fixture
+		// label, so the result short-circuits to empty.
+		unescaped := photosWithLabel(t, "construction&failure")
+		assert.Empty(t, unescaped)
+	})
+	t.Run("OnlyNegativeTwoGroups", func(t *testing.T) {
+		base := baselinePhotoCount(t)
+		// With disjoint label sets, the count equals base minus union; since
+		// flower ⊂ landscape-category here, use an independent pair.
+		withCake := len(photosWithLabel(t, "cake"))
+		withCow := len(photosWithLabel(t, "cow"))
+		result := photosWithLabel(t, "!cake&!cow")
+		// The difference must be between base-(cake+cow) and base-max(cake,cow).
+		maxSide := withCake
+		if withCow > maxSide {
+			maxSide = withCow
+		}
+
+		assert.LessOrEqual(t, len(result), base-maxSide)
+		assert.GreaterOrEqual(t, len(result), base-(withCake+withCow))
 	})
 }

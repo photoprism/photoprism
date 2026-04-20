@@ -603,6 +603,9 @@
                 "DisableJpegXL": {
                     "type": "boolean"
                 },
+                "DisableMCP": {
+                    "type": "boolean"
+                },
                 "DisableOIDC": {
                     "type": "boolean"
                 },
@@ -8698,7 +8701,7 @@
                         }
                     }
                 },
-                "summary": "model context protocol endpoint (experimental)",
+                "summary": "model context protocol endpoint",
                 "tags": [
                     "MCP"
                 ]

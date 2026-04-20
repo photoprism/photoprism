@@ -88,7 +88,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.27.0
-	github.com/zitadel/oidc/v3 v3.47.3
+	github.com/zitadel/oidc/v3 v3.47.4
 	golang.org/x/mod v0.35.0
 	golang.org/x/sys v0.43.0
 	google.golang.org/protobuf v1.36.11

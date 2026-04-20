@@ -463,6 +463,11 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("DISABLE_WEBDAV"),
 		}}, {
 		Flag: &cli.BoolFlag{
+			Name:    "disable-mcp",
+			Usage:   "disables the Model Context Protocol (MCP) API endpoint for AI agent integrations",
+			EnvVars: EnvVars("DISABLE_MCP"),
+		}}, {
+		Flag: &cli.BoolFlag{
 			Name:    "disable-places",
 			Usage:   "disables interactive world maps and reverse geocoding",
 			EnvVars: EnvVars("DISABLE_PLACES"),

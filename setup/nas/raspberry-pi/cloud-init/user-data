@@ -253,6 +253,7 @@ write_files:
             PHOTOPRISM_EXPERIMENTAL: "false"
             PHOTOPRISM_DISABLE_CHOWN: "false"
             PHOTOPRISM_DISABLE_WEBDAV: "false"
+            PHOTOPRISM_DISABLE_MCP: "false"
             PHOTOPRISM_DISABLE_SETTINGS: "false"
             PHOTOPRISM_DISABLE_TENSORFLOW: "false"
             PHOTOPRISM_DISABLE_FACES: "false"
