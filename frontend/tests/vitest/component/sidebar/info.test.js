@@ -241,6 +241,57 @@ describe("PSidebarInfo component", () => {
     expect(w.html()).not.toContain("mdi-camera ");
   });
 
+  // Backend hydrates every photo with the "Unknown" placeholder camera
+  // (CameraID=1, Camera={Make:"", Model:"Unknown"}). The read-only sidebar
+  // must not surface that as an empty " Unknown" row.
+  it("should hide camera row when backend returns the Unknown placeholder camera", () => {
+    const photo = {
+      ...mockPhoto,
+      CameraID: 1,
+      Camera: { ID: 1, Make: "", Model: "Unknown", Slug: "zz" },
+      CameraMake: "",
+      CameraModel: "Unknown",
+      Iso: 0,
+      Exposure: "",
+      getCameraInfo: vi.fn().mockReturnValue(" Unknown"),
+      getMarkers: vi.fn().mockReturnValue([]),
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: false, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.cameraInfo).toBe("");
+    expect(w.html()).not.toContain("mdi-camera ");
+  });
+
+  // Editable users (admin) need an actionable camera row even when the
+  // photo has no camera set — hide the cameraInfo text would leave the row
+  // blank with just a pencil icon. Fall back to "Unknown" so the intent is
+  // clear and the click target is discoverable.
+  it("should show 'Unknown' in the camera row for editable users when no camera info is set", () => {
+    const photo = {
+      ...mockPhoto,
+      CameraID: 1,
+      Camera: { ID: 1, Make: "", Model: "Unknown", Slug: "zz" },
+      CameraMake: "",
+      CameraModel: "Unknown",
+      Iso: 0,
+      Exposure: "",
+      getCameraInfo: vi.fn().mockReturnValue(" Unknown"),
+      getMarkers: vi.fn().mockReturnValue([]),
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    // cameraInfo itself stays suppressed; the template falls back to the
+    // localized "Unknown" placeholder only when the row is visible.
+    expect(w.vm.cameraInfo).toBe("");
+    const cameraRow = w.find(".v-list-item [class*='mdi-camera']")?.element?.closest(".v-list-item");
+    expect(cameraRow).toBeTruthy();
+    expect(cameraRow.textContent).toContain("Unknown");
+  });
+
   it("should hide lens row when only FNumber/FocalLength are set without a real lens", () => {
     const photo = {
       ...mockPhoto,
@@ -297,10 +348,12 @@ describe("PSidebarInfo component", () => {
     expect(avatars.length).toBe(2);
   });
 
-  it("should make named people clickable", () => {
+  it("should make the avatar of named people clickable for navigation", () => {
     const personRows = wrapper.findAll(".metadata__person-row");
-    expect(personRows[0].classes()).toContain("clickable");
-    expect(personRows[1].classes()).not.toContain("clickable");
+    const namedAvatar = personRows[0].find(".meta-person__avatar");
+    const unnamedAvatar = personRows[1].find(".meta-person__avatar");
+    expect(namedAvatar.classes()).toContain("clickable");
+    expect(unnamedAvatar.classes()).not.toContain("clickable");
   });
 
   // People section: face marker buttons (show/hide + add) and per-row remove.
@@ -513,7 +566,7 @@ describe("PSidebarInfo component", () => {
     expect(onRemove).not.toHaveBeenCalled();
   });
 
-  it("should not render an inline name input until a marker enters naming mode", () => {
+  it("should render an inline name input for every marker when canEdit is true", () => {
     const w = mount(PSidebarInfo, {
       props: {
         modelValue: mockModel,
@@ -525,7 +578,10 @@ describe("PSidebarInfo component", () => {
       },
       global: { stubs: { PMap: true } },
     });
-    expect(w.find(".meta-inline-marker").exists()).toBe(false);
+    // One input per marker row — no pencil click required to edit.
+    const inputs = w.findAll(".meta-inline-marker");
+    expect(inputs.length).toBe(2);
+    expect(w.find(".meta-inline-pencil.meta-person-pencil").exists()).toBe(false);
   });
 
   // Feature flag gate (Task 4): when $config.feature('people') is false,
@@ -603,9 +659,9 @@ describe("PSidebarInfo component", () => {
     expect(onEject).not.toHaveBeenCalled();
   });
 
-  // Inline naming (Task 1): setting newMarkerUid puts the matching row into
-  // edit mode and emits naming-started so the parent can clear the prop.
-  it("should enter inline name edit mode when newMarkerUid matches a marker", async () => {
+  // newMarkerUid focuses the input on the freshly-created marker and emits
+  // naming-started so the parent can clear the prop.
+  it("should focus the matching marker input when newMarkerUid changes", async () => {
     const onNamingStarted = vi.fn();
     const w = mount(PSidebarInfo, {
       props: {
@@ -617,13 +673,13 @@ describe("PSidebarInfo component", () => {
         "onNaming-started": onNamingStarted,
       },
       global: { stubs: { PMap: true } },
+      attachTo: document.body,
     });
     await w.setProps({ newMarkerUid: "m2" });
     await w.vm.$nextTick();
     await w.vm.$nextTick();
-    expect(w.vm.editingMarkerUid).toBe("m2");
-    expect(w.find(".meta-inline-marker").exists()).toBe(true);
     expect(onNamingStarted).toHaveBeenCalled();
+    w.unmount();
   });
 
   it("should call marker.setName and emit reload-markers when confirming an inline name", async () => {
@@ -648,31 +704,27 @@ describe("PSidebarInfo component", () => {
       },
       global: { stubs: { PMap: true } },
     });
-    w.vm.startEditingMarker("m2");
-    await w.vm.$nextTick();
-    w.vm.editingMarkerName = "Alice";
-    // Bypass the 200ms guard so confirm runs.
-    w.vm._editMarkerStartedAt = null;
-    w.vm.confirmMarkerName();
+    w.vm.setMarkerInputValue("m2", "Alice");
+    w.vm.confirmMarkerName(namedMarker);
     expect(namedMarker.Name).toBe("Alice");
     expect(setName).toHaveBeenCalled();
     await new Promise((r) => setTimeout(r, 0));
     expect(onReload).toHaveBeenCalled();
-    expect(w.vm.editingMarkerUid).toBeNull();
+    expect(w.vm.hasPendingEdit()).toBe(false);
   });
 
-  it("should revert the marker name when cancelMarkerName runs", async () => {
+  it("should revert the draft to the marker's saved name when cancelMarkerName runs", async () => {
+    const markers = mockPhoto.getMarkers();
     const w = mount(PSidebarInfo, {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.startEditingMarker("m1");
     await w.vm.$nextTick();
-    w.vm.editingMarkerName = "Changed";
-    w.vm._editMarkerStartedAt = null;
-    w.vm.cancelMarkerName();
-    expect(w.vm.editingMarkerUid).toBeNull();
-    expect(w.vm.editingMarkerName).toBe("");
+    w.vm.setMarkerInputValue("m1", "Changed");
+    expect(w.vm.hasPendingEdit()).toBe(true);
+    w.vm.cancelMarkerName(markers[0]);
+    expect(w.vm.markerInputValue("m1")).toBe("Jane Doe");
+    expect(w.vm.hasPendingEdit()).toBe(false);
   });
 
   it("should link an existing subject when the typed name matches a known person", async () => {
@@ -702,11 +754,9 @@ describe("PSidebarInfo component", () => {
         mocks: { $config: knownPersonConfig },
       },
     });
-    w.vm.startEditingMarker("m2");
     await w.vm.$nextTick();
-    w.vm.editingMarkerName = "alice smith";
-    w.vm._editMarkerStartedAt = null;
-    w.vm.confirmMarkerName();
+    w.vm.setMarkerInputValue("m2", "alice smith");
+    w.vm.confirmMarkerName(namedMarker);
     expect(namedMarker.Name).toBe("Alice Smith");
     expect(namedMarker.SubjUID).toBe("sXYZ");
     expect(setName).toHaveBeenCalled();
@@ -739,9 +789,8 @@ describe("PSidebarInfo component", () => {
         mocks: { $config: knownPersonConfig },
       },
     });
-    w.vm.startEditingMarker("m2");
     await w.vm.$nextTick();
-    w.vm.onPickPerson({ UID: "sBOB", Name: "Bob" });
+    w.vm.onPickPerson(namedMarker, { UID: "sBOB", Name: "Bob" });
     expect(namedMarker.Name).toBe("Bob");
     expect(namedMarker.SubjUID).toBe("sBOB");
     expect(setName).toHaveBeenCalled();
@@ -796,13 +845,105 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.startEditingMarker("m2");
     await w.vm.$nextTick();
-    w.vm.editingMarkerName = "   ";
-    w.vm._editMarkerStartedAt = null;
-    w.vm.confirmMarkerName();
+    w.vm.setMarkerInputValue("m2", "   ");
+    w.vm.confirmMarkerName(namedMarker);
     expect(setName).not.toHaveBeenCalled();
-    expect(w.vm.editingMarkerUid).toBeNull();
+  });
+
+  // Blur on an unnamed marker with a new name (and no matching known person)
+  // must prompt the user before persisting, mirroring the people-tab pattern.
+  it("should open the Add-name dialog on blur for an unnamed marker with a novel name", async () => {
+    const setName = vi.fn().mockResolvedValue(undefined);
+    const marker = {
+      UID: "m2",
+      Name: "",
+      SubjUID: "",
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
+    };
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([marker]) };
+    const w = mountInfoForChips({ modelValue: mockModel, photo });
+    await w.vm.$nextTick();
+    w.vm.setMarkerInputValue("m2", "Plane Port");
+    w.vm.confirmMarkerName(marker, "blur");
+    expect(setName).not.toHaveBeenCalled();
+    expect(w.vm.addNameDialog.visible).toBe(true);
+    expect(w.vm.addNameDialog.marker?.UID).toBe("m2");
+    expect(w.vm.addNameDialog.name).toBe("Plane Port");
+  });
+
+  it("should persist when the Add-name dialog is confirmed", async () => {
+    const setName = vi.fn().mockResolvedValue(undefined);
+    const marker = {
+      UID: "m2",
+      Name: "",
+      SubjUID: "",
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
+    };
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([marker]) };
+    const w = mountInfoForChips({ modelValue: mockModel, photo });
+    await w.vm.$nextTick();
+    w.vm.setMarkerInputValue("m2", "Plane Port");
+    w.vm.confirmMarkerName(marker, "blur");
+    expect(w.vm.addNameDialog.visible).toBe(true);
+    w.vm.onAddNameConfirm();
+    expect(marker.Name).toBe("Plane Port");
+    expect(setName).toHaveBeenCalledTimes(1);
+    expect(w.vm.addNameDialog.visible).toBe(false);
+  });
+
+  it("should revert the input and skip save when the Add-name dialog is canceled", async () => {
+    const setName = vi.fn();
+    const marker = {
+      UID: "m2",
+      Name: "",
+      SubjUID: "",
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
+    };
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([marker]) };
+    const w = mountInfoForChips({ modelValue: mockModel, photo });
+    await w.vm.$nextTick();
+    w.vm.setMarkerInputValue("m2", "Plane Port");
+    w.vm.confirmMarkerName(marker, "blur");
+    w.vm.onAddNameCancel();
+    expect(setName).not.toHaveBeenCalled();
+    expect(w.vm.addNameDialog.visible).toBe(false);
+    expect(w.vm.markerInputValue("m2")).toBe("");
+  });
+
+  // Skip the dialog when the typed name already resolves to a known subject —
+  // there's nothing ambiguous to ask about.
+  it("should skip the Add-name dialog and save immediately on blur when the name matches a known person", async () => {
+    const setName = vi.fn().mockResolvedValue(undefined);
+    const marker = {
+      UID: "m2",
+      Name: "",
+      SubjUID: "",
+      thumbnailUrl: () => "/t/thumb2/public/tile_160",
+      setName,
+    };
+    const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([marker]) };
+    const knownPersonConfig = {
+      ...validationConfig,
+      values: { people: [{ UID: "sALC", Name: "Alice Smith" }] },
+    };
+    const w = mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+      global: {
+        stubs: { PMap: true },
+        mocks: { $config: knownPersonConfig, $util: validationUtil },
+      },
+    });
+    await w.vm.$nextTick();
+    w.vm.setMarkerInputValue("m2", "alice smith");
+    w.vm.confirmMarkerName(marker, "blur");
+    expect(w.vm.addNameDialog.visible).toBe(false);
+    expect(setName).toHaveBeenCalled();
+    expect(marker.Name).toBe("Alice Smith");
+    expect(marker.SubjUID).toBe("sALC");
   });
 
   // Inline blur now commits the edit instead of silently reverting — this
@@ -922,10 +1063,9 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    expect(w.vm.hasPendingEdit()).toBe(false);
-    w.vm.startEditingMarker("m2");
     await w.vm.$nextTick();
-    w.vm.editingMarkerName = "Alice";
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.setMarkerInputValue("m2", "Alice");
     expect(w.vm.hasPendingEdit()).toBe(true);
   });
 
@@ -943,9 +1083,8 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.startEditingMarker("m2");
     await w.vm.$nextTick();
-    w.vm.editingMarkerName = "Alice";
+    w.vm.setMarkerInputValue("m2", "Alice");
     const promise = w.vm.confirmDiscardPending();
     expect(w.vm.discardDialog.visible).toBe(true);
     expect(typeof w.vm.discardDialog.resolver).toBe("function");
@@ -953,7 +1092,7 @@ describe("PSidebarInfo component", () => {
     w.vm.onDiscardConfirm();
     await expect(promise).resolves.toBe(true);
     expect(w.vm.discardDialog.visible).toBe(false);
-    expect(w.vm.editingMarkerUid).toBeNull();
+    expect(w.vm.hasPendingEdit()).toBe(false);
   });
 
   it("should clear pending edits when onDiscardConfirm runs", async () => {
@@ -961,14 +1100,13 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.startEditingMarker("m2");
     await w.vm.$nextTick();
-    w.vm.editingMarkerName = "Alice";
+    w.vm.setMarkerInputValue("m2", "Alice");
     const promise = w.vm.confirmDiscardPending();
     w.vm.onDiscardConfirm();
     await expect(promise).resolves.toBe(true);
-    expect(w.vm.editingMarkerUid).toBeNull();
-    expect(w.vm.editingMarkerName).toBe("");
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    expect(w.vm.markerInputValue("m2")).toBe("");
   });
 
   it("should keep pending edits when onDiscardCancel runs", async () => {
@@ -976,14 +1114,13 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.startEditingMarker("m2");
     await w.vm.$nextTick();
-    w.vm.editingMarkerName = "Alice";
+    w.vm.setMarkerInputValue("m2", "Alice");
     const promise = w.vm.confirmDiscardPending();
     w.vm.onDiscardCancel();
     await expect(promise).resolves.toBe(false);
-    expect(w.vm.editingMarkerUid).toBe("m2");
-    expect(w.vm.editingMarkerName).toBe("Alice");
+    expect(w.vm.markerInputValue("m2")).toBe("Alice");
+    expect(w.vm.hasPendingEdit()).toBe(true);
   });
 
   // Labels
@@ -1027,65 +1164,71 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.captionHtml).toBe("");
   });
 
-  // Navigation events
-  it("should emit navigate event for label click with slug", () => {
-    const onNavigate = vi.fn();
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos, onNavigate },
-      global: { stubs: { PMap: true } },
+  // Cross-link navigation — label, album, and named-person avatars must open
+  // in a new browser tab so the current lightbox edit context is preserved.
+  function mountWithMockRouter(resolveHref) {
+    return mount(PSidebarInfo, {
+      props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos },
+      global: {
+        stubs: { PMap: true },
+        mocks: {
+          $router: { resolve: vi.fn().mockReturnValue({ href: resolveHref }) },
+        },
+      },
     });
+  }
+
+  it("should open a new tab with a label filter for label clicks", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/browse?q=label%3Anature");
     w.vm.navigateToLabel({ UID: "lbl1", Name: "Nature", Slug: "nature", CustomSlug: "" });
-    expect(onNavigate).toHaveBeenCalledWith({ name: "browse", query: { q: "label:nature" } });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "browse", query: { q: "label:nature" } });
+    expect(openSpy).toHaveBeenCalledWith("/library/browse?q=label%3Anature", "_blank", "noopener,noreferrer");
+    openSpy.mockRestore();
   });
 
   it("should prefer CustomSlug for label navigation", () => {
-    const onNavigate = vi.fn();
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos, onNavigate },
-      global: { stubs: { PMap: true } },
-    });
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/browse?q=label%3Acustom-landscape");
     w.vm.navigateToLabel({ UID: "lbl2", Name: "Landscape", Slug: "landscape", CustomSlug: "custom-landscape" });
-    expect(onNavigate).toHaveBeenCalledWith({ name: "browse", query: { q: "label:custom-landscape" } });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "browse", query: { q: "label:custom-landscape" } });
+    expect(openSpy).toHaveBeenCalled();
+    openSpy.mockRestore();
   });
 
-  it("should emit navigate event for album click", () => {
-    const onNavigate = vi.fn();
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos, onNavigate },
-      global: { stubs: { PMap: true } },
-    });
+  it("should open a new tab for album clicks", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/albums/alb1/view");
     w.vm.navigateToAlbum({ UID: "alb1", Title: "Vacation 2023" });
-    expect(onNavigate).toHaveBeenCalledWith({ name: "album", params: { album: "alb1", slug: "view" } });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "album", params: { album: "alb1", slug: "view" } });
+    expect(openSpy).toHaveBeenCalledWith("/library/albums/alb1/view", "_blank", "noopener,noreferrer");
+    openSpy.mockRestore();
   });
 
-  it("should emit navigate with subject filter for person with SubjUID", () => {
-    const onNavigate = vi.fn();
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos, onNavigate },
-      global: { stubs: { PMap: true } },
-    });
+  it("should open a new tab with a subject filter for person avatars that have SubjUID", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/browse?q=subject%3Asubj1");
     w.vm.navigateToPerson({ UID: "m1", Name: "Jane Doe", SubjUID: "subj1" });
-    expect(onNavigate).toHaveBeenCalledWith({ name: "browse", query: { q: "subject:subj1" } });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "browse", query: { q: "subject:subj1" } });
+    expect(openSpy).toHaveBeenCalled();
+    openSpy.mockRestore();
   });
 
-  it("should emit navigate with person filter when only Name available", () => {
-    const onNavigate = vi.fn();
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos, onNavigate },
-      global: { stubs: { PMap: true } },
-    });
+  it("should open a new tab with a person filter when only Name is available", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/browse?q=person%3AUnknown%20Person");
     w.vm.navigateToPerson({ UID: "m3", Name: "Unknown Person", SubjUID: "" });
-    expect(onNavigate).toHaveBeenCalledWith({ name: "browse", query: { q: "person:Unknown Person" } });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "browse", query: { q: "person:Unknown Person" } });
+    expect(openSpy).toHaveBeenCalled();
+    openSpy.mockRestore();
   });
 
-  it("should not emit navigate for person without name or SubjUID", () => {
-    const onNavigate = vi.fn();
-    const w = mount(PSidebarInfo, {
-      props: { modelValue: mockModel, photo: mockPhoto, context: contexts.Photos, onNavigate },
-      global: { stubs: { PMap: true } },
-    });
+  it("should not open a tab for a person without name or SubjUID", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/browse");
     w.vm.navigateToPerson({ UID: "m4", Name: "", SubjUID: "" });
-    expect(onNavigate).not.toHaveBeenCalled();
+    expect(openSpy).not.toHaveBeenCalled();
+    openSpy.mockRestore();
   });
 
   // isEditable
@@ -1581,6 +1724,370 @@ describe("PSidebarInfo component", () => {
       });
       expect(w.vm.fileInfo).toBe("JPEG\u20034.0MP\u20034032\u2009\u00d7\u20093024");
       expect(thumbModel.getTypeInfo).toHaveBeenCalled();
+    });
+  });
+
+  // Exhaustive matrix: for every role (admin, user, guest, visitor,
+  // contributor, and anonymous share-link sessions) assert which fields
+  // the sidebar renders and which edit affordances it exposes, against
+  // both a fully-populated photo and a photo without any metadata.
+  //
+  // The matrix mirrors SidebarRestrictedRoles in
+  // frontend/src/model/user.js and the isSidebarRestricted() contract
+  // in frontend/src/common/session.js. Role restriction is mocked
+  // directly on $session because the component reads it from
+  // $session.isSidebarRestricted(); the real role-to-restriction
+  // mapping is covered by the User/Session model unit tests.
+  describe("role x field visibility matrix", () => {
+    // Text fragments the tests look for. Keeping them here so a single
+    // change to the fixture (e.g. a label rename) stays localized.
+    const TEXT = {
+      title: "Matrix Title",
+      caption: "Matrix Caption",
+      filename: "photos/matrix/IMG_9001.jpg",
+      camera: "Canon EOS R5",
+      lens: "RF 50mm F1.2L",
+      placeName: "Berlin, Germany",
+      altitude: "128 m",
+      peopleHeader: ">People<",
+      labelsHeader: ">Labels<",
+      albumsHeader: ">Albums<",
+      keywordsHeader: ">Keywords<",
+      notesHeader: ">Notes<",
+      namedMarker: "Jane Doe",
+      labelName: "Nature",
+      albumTitle: "Vacation 2024",
+      keywords: "sunset, mountains",
+      notes: "A short note on this photo",
+      subject: "Mountains",
+      artist: "John Photographer",
+      copyright: "2024 John",
+      license: "CC BY 4.0",
+    };
+
+    // Build a model with just enough for the sidebar header to render.
+    function buildModel({ withMetadata }) {
+      const base = {
+        UID: "matrix-photo",
+        TakenAtLocal: "2024-05-01T10:00:00Z",
+        TimeZone: "UTC",
+        getLatLng: vi.fn().mockReturnValue("52.5200, 13.4050"),
+        copyLatLng: vi.fn(),
+      };
+      if (withMetadata) {
+        return {
+          ...base,
+          Title: TEXT.title,
+          Caption: TEXT.caption,
+          Lat: 52.52,
+          Lng: 13.405,
+          Altitude: 128,
+        };
+      }
+      // Empty-metadata photo: no title, no caption, no coordinates.
+      return { ...base, Title: "", Caption: "", Lat: 0, Lng: 0 };
+    }
+
+    function buildPhoto({ withMetadata }) {
+      if (!withMetadata) {
+        return {
+          Type: "image",
+          // No CameraID, no Lens, no markers, no labels, no albums, no
+          // Details; the component must suppress the corresponding rows.
+          getCameraInfo: vi.fn().mockReturnValue(""),
+          getLensInfo: vi.fn().mockReturnValue(""),
+          getImageInfo: vi.fn().mockReturnValue(""),
+          getVideoInfo: vi.fn().mockReturnValue(""),
+          getVectorInfo: vi.fn().mockReturnValue(""),
+          getExifInfo: vi.fn().mockReturnValue(""),
+          locationInfo: vi.fn().mockReturnValue(""),
+          getMarkers: vi.fn().mockReturnValue([]),
+          Labels: [],
+          Albums: [],
+          Details: null,
+          FileName: "",
+        };
+      }
+      return {
+        Type: "image",
+        Lat: 52.52,
+        Lng: 13.405,
+        Altitude: 128,
+        CameraID: 2,
+        CameraMake: "Canon",
+        CameraModel: "EOS R5",
+        LensID: 2,
+        LensMake: "Canon",
+        LensModel: "RF 50mm F1.2L",
+        Iso: 400,
+        Exposure: "1/125",
+        FNumber: 1.2,
+        FocalLength: 50,
+        getCameraInfo: vi.fn().mockReturnValue(TEXT.camera),
+        getLensInfo: vi.fn().mockReturnValue(TEXT.lens),
+        getImageInfo: vi.fn().mockReturnValue("JPEG, 1920 x 1080, 4.2 MB"),
+        getVideoInfo: vi.fn().mockReturnValue(""),
+        getVectorInfo: vi.fn().mockReturnValue(""),
+        getExifInfo: vi.fn().mockReturnValue("50mm \u2022 f/1.2 \u2022 ISO 400 \u2022 1/125"),
+        locationInfo: vi.fn().mockReturnValue(TEXT.placeName),
+        getMarkers: vi.fn().mockReturnValue([
+          { UID: "m1", CropID: "crop1", Name: TEXT.namedMarker, SubjUID: "subj1", thumbnailUrl: () => "/t/thumb1/public/tile_160" },
+          { UID: "m2", CropID: "crop2", Name: "", SubjUID: "", thumbnailUrl: () => "/svg/portrait" },
+        ]),
+        Labels: [
+          { Uncertainty: 0, Label: { ID: 1, UID: "lbl1", Name: TEXT.labelName, Slug: "nature", CustomSlug: "" } },
+          // One high-uncertainty label the component must suppress.
+          { Uncertainty: 100, Label: { ID: 9, UID: "lbl9", Name: "HiddenLabel", Slug: "hidden", CustomSlug: "" } },
+        ],
+        Albums: [{ UID: "alb1", Title: TEXT.albumTitle, Slug: "vacation-2024" }],
+        Details: {
+          Keywords: TEXT.keywords,
+          Notes: TEXT.notes,
+          Subject: TEXT.subject,
+          Artist: TEXT.artist,
+          Copyright: TEXT.copyright,
+          License: TEXT.license,
+        },
+        FileName: TEXT.filename,
+      };
+    }
+
+    function mountFor({ anonymous, restricted, editable }, shape) {
+      return mount(PSidebarInfo, {
+        props: {
+          modelValue: buildModel(shape),
+          photo: buildPhoto(shape),
+          canEdit: editable,
+          context: contexts.Photos,
+        },
+        global: {
+          stubs: { PMap: true },
+          mocks: {
+            $session: {
+              isAnonymous: () => !!anonymous,
+              isSidebarRestricted: () => !!restricted,
+            },
+          },
+        },
+      });
+    }
+
+    // Role-string mapping: the component reads the contract through
+    // $session.isSidebarRestricted(), so the visibility matrix below
+    // only needs the two equivalence classes. The concrete role list
+    // lives in `frontend/src/model/user.js` and is covered by the
+    // user/session model's own tests; this guard catches regressions
+    // where a new restricted role is added to the product but not to
+    // the documented list.
+    it("keeps the restricted-role contract in sync with SidebarRestrictedRoles", async () => {
+      const mod = await import("model/user");
+      expect(mod.SidebarRestrictedRoles).toEqual(expect.arrayContaining(["guest", "visitor", "contributor"]));
+    });
+
+    describe("editable session (admin/user)", () => {
+      let w;
+      beforeEach(() => {
+        w = mountFor({ anonymous: false, restricted: false, editable: true }, { withMetadata: true });
+      });
+
+      it("renders every metadata section and its content", () => {
+        expect(w.vm.restrictedRole).toBe(false);
+        expect(w.vm.isEditable).toBe(true);
+        const html = w.html();
+        for (const needle of [
+          TEXT.title,
+          TEXT.caption,
+          "JPEG, 1920 x 1080, 4.2 MB",
+          "52.5200, 13.4050",
+          TEXT.filename,
+          TEXT.camera,
+          TEXT.lens,
+          TEXT.placeName,
+          TEXT.peopleHeader,
+          TEXT.labelsHeader,
+          TEXT.albumsHeader,
+          TEXT.keywordsHeader,
+          TEXT.notesHeader,
+          TEXT.namedMarker,
+          TEXT.labelName,
+          TEXT.albumTitle,
+          TEXT.subject,
+          TEXT.artist,
+          TEXT.copyright,
+          TEXT.license,
+          TEXT.keywords,
+          TEXT.notes,
+        ]) {
+          expect(html).toContain(needle);
+        }
+        expect(w.find(".metadata__file").exists()).toBe(true);
+      });
+
+      it("renders pencil icons and face-marker controls", () => {
+        expect(w.findAll(".meta-inline-pencil").length).toBeGreaterThanOrEqual(10);
+        expect(w.find(".meta-markers-toggle").exists()).toBe(true);
+        expect(w.find(".meta-marker-add").exists()).toBe(true);
+      });
+    });
+
+    describe("restricted session (guest/visitor/contributor/share-link)", () => {
+      let w;
+      beforeEach(() => {
+        w = mountFor({ anonymous: false, restricted: true, editable: false }, { withMetadata: true });
+      });
+
+      it("renders only the shared fields and hides every restricted section", () => {
+        expect(w.vm.restrictedRole).toBe(true);
+        expect(w.vm.isEditable).toBe(false);
+        const html = w.html();
+        // Allow-list.
+        expect(html).toContain(TEXT.title);
+        expect(html).toContain(TEXT.caption);
+        expect(html).toContain("JPEG, 1920 x 1080, 4.2 MB");
+        expect(html).toContain("52.5200, 13.4050");
+        // Deny-list.
+        expect(w.find(".metadata__file").exists()).toBe(false);
+        for (const needle of [
+          TEXT.filename,
+          TEXT.camera,
+          TEXT.lens,
+          TEXT.placeName,
+          TEXT.altitude,
+          TEXT.peopleHeader,
+          TEXT.labelsHeader,
+          TEXT.albumsHeader,
+          TEXT.keywordsHeader,
+          TEXT.notesHeader,
+          TEXT.namedMarker,
+          TEXT.labelName,
+          TEXT.albumTitle,
+          TEXT.subject,
+          TEXT.artist,
+          TEXT.copyright,
+          TEXT.license,
+          TEXT.keywords,
+          TEXT.notes,
+        ]) {
+          expect(html).not.toContain(needle);
+        }
+      });
+
+      it("exposes no edit affordances or face-marker controls", () => {
+        expect(w.find(".meta-inline-pencil").exists()).toBe(false);
+        expect(w.find(".meta-inline-edit").exists()).toBe(false);
+        expect(w.find(".meta-add-prompt").exists()).toBe(false);
+        expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+        expect(w.find(".meta-marker-add").exists()).toBe(false);
+        expect(w.find(".meta-marker-remove").exists()).toBe(false);
+      });
+    });
+
+    describe("empty metadata", () => {
+      it("editable session still suppresses rows whose values are empty", () => {
+        const w = mountFor({ anonymous: false, restricted: false, editable: true }, { withMetadata: false });
+        // Details is null for this fixture, which forces isEditable to
+        // be falsy even for an otherwise-editable session.
+        expect(w.vm.isEditable).toBeFalsy();
+        const html = w.html();
+        for (const needle of [TEXT.camera, TEXT.lens, TEXT.placeName, TEXT.peopleHeader, TEXT.labelsHeader, TEXT.keywordsHeader, TEXT.notesHeader]) {
+          expect(html).not.toContain(needle);
+        }
+        expect(w.find(".meta-inline-pencil").exists()).toBe(false);
+      });
+
+      it("restricted session renders the minimal shell only", () => {
+        const w = mountFor({ anonymous: false, restricted: true, editable: false }, { withMetadata: false });
+        expect(w.vm.restrictedRole).toBe(true);
+        expect(w.find(".meta-inline-pencil").exists()).toBe(false);
+        expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+      });
+    });
+
+    // Parent-driven editor (canEdit=true, Details present, not
+    // restricted, empty fields) must expose "add prompt" affordances
+    // so admins can populate metadata from scratch.
+    it("shows add-prompt affordances to admins editing an empty Details object", () => {
+      const w = mount(PSidebarInfo, {
+        props: {
+          modelValue: buildModel({ withMetadata: false }),
+          photo: {
+            ...buildPhoto({ withMetadata: false }),
+            // A fresh, empty Details object is enough to unblock isEditable.
+            Details: { Keywords: "", Notes: "", Subject: "", Artist: "", Copyright: "", License: "" },
+          },
+          canEdit: true,
+          context: contexts.Photos,
+        },
+        global: {
+          stubs: { PMap: true },
+          mocks: {
+            $session: { isAnonymous: () => false, isSidebarRestricted: () => false },
+          },
+        },
+      });
+      expect(w.vm.isEditable).toBe(true);
+      // Add-prompt spans are the "click to start editing" placeholders.
+      const prompts = w.findAll(".meta-add-prompt");
+      expect(prompts.length).toBeGreaterThanOrEqual(5);
+      // At least title, caption, keywords, notes, subject are all expected.
+      const texts = prompts.map((p) => p.text());
+      expect(texts).toContain("Title");
+      expect(texts).toContain("Caption");
+      expect(texts).toContain("Keywords");
+      expect(texts).toContain("Notes");
+      expect(texts).toContain("Subject");
+    });
+
+    // Explicit share-link (anonymous) case: the sidebar must behave
+    // identically to a restricted-role session even though the backing
+    // User record is empty.
+    it("treats anonymous share-link sessions as restricted even with canEdit=true", () => {
+      const w = mount(PSidebarInfo, {
+        props: {
+          modelValue: buildModel({ withMetadata: true }),
+          photo: buildPhoto({ withMetadata: true }),
+          // Simulate a lightbox that forgot to flip canEdit off: the
+          // sidebar must still drop all edit affordances, driven by
+          // restrictedRole alone.
+          canEdit: true,
+          context: contexts.Photos,
+        },
+        global: {
+          stubs: { PMap: true },
+          mocks: {
+            $session: { isAnonymous: () => true, isSidebarRestricted: () => true },
+          },
+        },
+      });
+      expect(w.vm.restrictedRole).toBe(true);
+      expect(w.vm.isEditable).toBe(false);
+      expect(w.find(".meta-inline-pencil").exists()).toBe(false);
+      expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+      expect(w.find(".meta-marker-add").exists()).toBe(false);
+    });
+
+    // featPeople = false must hide the People section even for an
+    // admin on a photo that has markers.
+    it("hides the People section when featPeople is disabled, regardless of role", () => {
+      const w = mount(PSidebarInfo, {
+        props: {
+          modelValue: buildModel({ withMetadata: true }),
+          photo: buildPhoto({ withMetadata: true }),
+          canEdit: true,
+          context: contexts.Photos,
+        },
+        global: {
+          stubs: { PMap: true },
+          mocks: {
+            $config: { ...validationConfig, feature: (k) => k !== "people" },
+            $session: { isAnonymous: () => false, isSidebarRestricted: () => false },
+          },
+        },
+      });
+      const html = w.html();
+      expect(html).not.toContain(TEXT.peopleHeader);
+      expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+      expect(w.find(".meta-marker-add").exists()).toBe(false);
     });
   });
 });

@@ -714,4 +714,32 @@ describe("PFaceMarkerOverlay", () => {
     expect(pending.x).toBe(50);
     expect(pending.y).toBe(50);
   });
+
+  // Role gating — a full pointer cycle in display mode must never emit
+  // `create`, and the draft confirm/cancel buttons must not be mounted.
+  // The complementary display-mode rendering and single-event tests
+  // live above (lines 404 and 420).
+  it("is inert for the full pointer cycle in display mode", async () => {
+    const onCreate = vi.fn();
+    const markers = [{ UID: "m1", Name: "Jane", X: 0.1, Y: 0.1, W: 0.2, H: 0.2 }];
+    const { wrapper } = mountOverlay({ mode: "display", markers }, { onCreate });
+    wrapper.vm.onPointerDown({
+      button: 0,
+      pointerId: 2,
+      clientX: 200,
+      clientY: 150,
+      stopPropagation: () => {},
+      preventDefault: () => {},
+    });
+    wrapper.vm.onPointerMove({ pointerId: 2, clientX: 360, clientY: 260 });
+    wrapper.vm.onPointerUp({ pointerId: 2 });
+    expect(wrapper.vm.pending).toBeNull();
+    expect(wrapper.vm.draft).toBeNull();
+    expect(wrapper.vm.interaction).toBeNull();
+    expect(onCreate).not.toHaveBeenCalled();
+    await nextTick();
+    await flushPromises();
+    expect(wrapper.element.querySelector("button.p-face-markers__btn--confirm")).toBeNull();
+    expect(wrapper.element.querySelector("button.p-face-markers__btn--cancel")).toBeNull();
+  });
 });
