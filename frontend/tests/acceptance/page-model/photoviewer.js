@@ -84,15 +84,6 @@ export default class Page {
     return this.personRow.count;
   }
 
-  async drawMarkerOnImage(fromX, fromY, toX, toY) {
-    // Drag the overlay from one viewport coordinate to another. The
-    // overlay must already be in draw mode (after clicking +).
-    await t.drag(this.faceMarkerOverlay, toX - fromX, toY - fromY, {
-      offsetX: fromX,
-      offsetY: fromY,
-    });
-  }
-
   // Draw a small rectangle in the middle of the overlay, sized in
   // percent of the overlay's actual box. Avoids viewport-dependent
   // coordinates (Mac Chrome vs headless Linux) that can land outside
