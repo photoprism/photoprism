@@ -175,7 +175,7 @@
               item-value="Name"
               :placeholder="$gettext('Name')"
               :menu-props="markerMenuProps"
-              :readonly="markersBusy"
+              :readonly="markersBusy || !!m.SubjUID"
               :rules="[markerNameRule]"
               return-object
               hide-no-data

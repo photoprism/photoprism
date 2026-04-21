@@ -630,6 +630,20 @@ describe("PSidebarInfo component", () => {
     expect(onEject.mock.calls[0][0].UID).toBe("m1");
   });
 
+  // Named markers keep the combobox (so named and unnamed rows look
+  // identical) but render it readonly — renaming a named face requires
+  // ejecting first. Mirrors the edit dialog's People tab gate.
+  it("should render the named marker combobox as readonly", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    const personRows = w.findAll(".metadata__person-row");
+    const namedInput = personRows[0].find(".meta-inline-marker--named input");
+    expect(namedInput.exists()).toBe(true);
+    expect(namedInput.element.readOnly).toBe(true);
+    const unnamedInput = personRows[1].find(".meta-inline-marker input");
+    expect(unnamedInput.exists()).toBe(true);
+    expect(unnamedInput.element.readOnly).toBe(false);
+  });
+
   it("should refuse to emit eject-marker on a marker without SubjUID", () => {
     const onEject = vi.fn();
     const w = mount(PSidebarInfo, {
