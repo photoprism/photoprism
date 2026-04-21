@@ -195,11 +195,9 @@
               @blur="confirmMarkerName(m, 'blur')"
               @click.stop
             >
-              <template v-if="!m.SubjUID" #prepend-inner>
-                <v-icon icon="mdi-account-plus" size="x-small" class="meta-marker-icon"></v-icon>
-              </template>
-              <template v-if="m.SubjUID" #append-inner>
+              <template #append-inner>
                 <v-icon
+                  v-if="m.SubjUID"
                   icon="mdi-eject"
                   size="x-small"
                   class="meta-marker-eject"
@@ -208,21 +206,20 @@
                   @mousedown.prevent
                   @click.stop="onEjectMarker(m)"
                 ></v-icon>
+                <v-icon
+                  v-else
+                  icon="mdi-close"
+                  size="x-small"
+                  class="meta-marker-remove"
+                  :title="$gettext('Remove')"
+                  :disabled="markersBusy"
+                  @mousedown.prevent
+                  @click.stop="onRemoveMarker(m)"
+                ></v-icon>
               </template>
             </v-combobox>
             <v-list-item-title v-else-if="m.Name" class="meta-person__name">{{ m.Name }}</v-list-item-title>
             <v-list-item-title v-else class="meta-person__name meta-person__unnamed">{{ $gettext("Unknown") }}</v-list-item-title>
-            <template v-if="isEditable && !m.SubjUID" #append>
-              <v-icon
-                icon="mdi-close"
-                size="small"
-                class="meta-marker-remove"
-                :title="$gettext('Remove')"
-                :disabled="markersBusy"
-                @mousedown.prevent
-                @click.stop="onRemoveMarker(m)"
-              ></v-icon>
-            </template>
           </v-list-item>
         </template>
 
