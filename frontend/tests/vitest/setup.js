@@ -37,6 +37,30 @@ if (typeof global.ResizeObserver === "undefined") {
   };
 }
 
+// jsdom does not implement window.visualViewport, which Vuetify's VOverlay
+// location strategies read eagerly via `watch(..., { immediate: true })` —
+// any overlay-backed component (v-combobox, v-menu, v-dialog...) throws
+// ReferenceError without this shim.
+if (!window.visualViewport) {
+  Object.defineProperty(window, "visualViewport", {
+    configurable: true,
+    value: {
+      width: 1024,
+      height: 768,
+      offsetLeft: 0,
+      offsetTop: 0,
+      pageLeft: 0,
+      pageTop: 0,
+      scale: 1,
+      addEventListener() {},
+      removeEventListener() {},
+      dispatchEvent() {
+        return true;
+      },
+    },
+  });
+}
+
 // Configure Vue Test Utils global configuration
 config.global.mocks = {
   $gettext: mockGettext,

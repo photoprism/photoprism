@@ -13,25 +13,6 @@ if (typeof URL.createObjectURL === "undefined") {
   URL.revokeObjectURL = () => {};
 }
 
-// VDialog relies on window.visualViewport which jsdom does not provide.
-if (typeof window.visualViewport === "undefined") {
-  Object.defineProperty(window, "visualViewport", {
-    value: {
-      width: 1024,
-      height: 768,
-      offsetLeft: 0,
-      offsetTop: 0,
-      pageLeft: 0,
-      pageTop: 0,
-      scale: 1,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-    },
-    writable: true,
-    configurable: true,
-  });
-}
-
 // Vuetify instance that includes both standard and labs components (for VFileUpload).
 const vuetify = createVuetify({
   components: { ...components, ...labsComponents },

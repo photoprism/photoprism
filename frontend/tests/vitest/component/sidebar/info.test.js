@@ -145,6 +145,10 @@ describe("PSidebarInfo component", () => {
 
   afterEach(() => {
     DateTime.fromISO = originalFromISO;
+    if (wrapper) {
+      wrapper.unmount();
+      wrapper = null;
+    }
   });
 
   it("should render correctly with model data", () => {
