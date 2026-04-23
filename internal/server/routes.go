@@ -206,7 +206,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.ClusterMetrics(APIv1)
 	api.ClusterHealth(APIv1)
 
-	// Model Context Protocol (MCP).
+	// Model Context Protocol (MCP). Can be disabled via --disable-mcp /
+	// PHOTOPRISM_DISABLE_MCP if the endpoint is not needed or should not
+	// be exposed (e.g. for security reasons).
 	api.ServeMCP(APIv1)
 
 	// Technical Endpoints.

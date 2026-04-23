@@ -56,7 +56,7 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 
 ### Specifications & Documentation
 
-- Markdown headings must use Title Case. Always spell the product name as `PhotoPrism`.
+- Markdown headings use a Chicago-style title case, with additional code- and path-aware normalization rules (see *Title Case rules* below). Always spell the product name as `PhotoPrism`.
 - Put option flags before positional arguments unless the command requires another order.
 - Use RFC 3339 UTC timestamps and valid ID, UID, and UUID examples in docs and tests.
 - The nested `specs/` repository may be absent. Do not add main-repo `Makefile` targets that depend on it; when present, you may run its tools manually.
@@ -65,9 +65,11 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 - Refresh `**Last Updated:**` when you change document contents, but leave it unchanged for whitespace-only or formatting-only edits.
 - Nested Git repositories may appear ignored; change into them before staging or committing updates.
 
-Title Case rules:
+Title Case rules (Chicago-style, with code- and path-aware normalization):
 - Capitalize the first word, the first word after a colon, dash, or end punctuation, and all major words, including the second part of a hyphenated major word.
 - Lowercase only articles, short conjunctions, and short prepositions of three letters or fewer when they are not in one of those positions.
+- Preserve known acronyms (for example, API, CLI, HTTP, JSON) and slash-separated acronym groups (for example, CSV/TSV) as uppercase.
+- Preserve inline code spans (`` `foo` ``), file paths (e.g. `docs/foo-bar.md`), and slash commands (e.g. `/grill-me`) verbatim; do not recase their contents.
 - Prefer `&` where needed; do not use `And` or `Or` in titles.
 
 ## Safety & Data
@@ -112,7 +114,7 @@ Title Case rules:
 - Bash check: `[ -f "/.dockerenv" ] && echo container || echo host`
 - Node.js check: `require("fs").existsSync("/.dockerenv")`
 - Inside the container, prefer `npm exec --yes <agent> -- --help` or `npx <agent> ...`; if a global npm install is unavoidable, install it only inside the container.
-- The `photoprism/develop` base image sets the npm env to ignore install scripts by default. When running `npm ci` or `npm install` outside that image — e.g. in a coding-agent env that does not inherit it — pass `--ignore-scripts` explicitly to mitigate supply-chain attacks; add a targeted `npm rebuild <pkg>` only if a native addon needs compiling.
+- The `photoprism/develop` base image and the repo `Makefile` both set `NPM_CONFIG_IGNORE_SCRIPTS=true`, so `npm ci`/`npm install` via `make` targets skip install scripts out of the box. When running npm directly in an environment that does not set or inherit that default, pass `--ignore-scripts` explicitly to mitigate supply-chain attacks. Rebuild native addons with `npm rebuild --ignore-scripts=false <pkg>` — a bare `npm rebuild` is a silent no-op wherever the env default is active.
 - On the host, use the vendor-recommended install method and run from the repository root so agent discovery sees this file.
 
 ## Build, Format & Test

@@ -106,6 +106,7 @@ type Options struct {
 	DisableBackups            bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
 	DisableRestart            bool          `yaml:"DisableRestart" json:"-" flag:"disable-restart"`
 	DisableWebDAV             bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
+	DisableMCP                bool          `yaml:"DisableMCP" json:"DisableMCP" flag:"disable-mcp"`
 	DisablePlaces             bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableTensorFlow         bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
 	DisableFaces              bool          `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`

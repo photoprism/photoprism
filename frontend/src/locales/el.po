@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -307,7 +307,7 @@ msgstr "Μετά από δύο εβδομάδες"
 msgid "Album"
 msgstr "Άλμπουμ"
 
-#: src/page/settings/advanced.vue:183
+#: src/page/settings/advanced.vue:199
 msgid "Album Backups"
 msgstr "Αντίγραφα Ασφαλείας Άλμπουμ"
 
@@ -573,7 +573,7 @@ msgstr "Πίσω"
 msgid "Back to top"
 msgstr "Επιστροφή στην κορυφή"
 
-#: src/page/settings/advanced.vue:155
+#: src/page/settings/advanced.vue:171
 msgid "Backup"
 msgstr "Δημιουργία αντιγράφων ασφαλείας"
 
@@ -765,7 +765,7 @@ msgstr "Οι αλλαγές δεν ήταν δυνατό να αποθηκευτ
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:491 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Οι αλλαγές αποθηκεύτηκαν επιτυχώς"
@@ -991,15 +991,15 @@ msgstr "Δημιουργία λογαριασμού"
 msgid "Create album"
 msgstr "Δημιουργία άλμπουμ"
 
-#: src/page/settings/advanced.vue:168
+#: src/page/settings/advanced.vue:184
 msgid "Create regular backups based on the configured schedule."
 msgstr "Δημιουργία αντιγράφων ασφαλείας ευρετηρίου με βάση το ρυθμισμένο χρονοδιάγραμμα."
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:200
 msgid "Create YAML files to back up album metadata."
 msgstr "Δημιουργία αρχείων YAML για την εξασφάλιση των μεταδεδομένων των άλμπουμ."
 
-#: src/page/settings/advanced.vue:200
+#: src/page/settings/advanced.vue:216
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Δημιουργία αρχείων YAML sidecar για την εξασφάλιση των μεταδεδομένων των εικόνων."
 
@@ -1033,7 +1033,7 @@ msgstr "Καθημερινά"
 msgid "Database"
 msgstr "Βάση δεδομένων"
 
-#: src/page/settings/advanced.vue:167
+#: src/page/settings/advanced.vue:183
 msgid "Database Backups"
 msgstr "Αντίγραφα Ασφαλείας Βάσης Δεδομένων"
 
@@ -1125,7 +1125,7 @@ msgstr "Λεπτομέρειες"
 msgid "Dimensions"
 msgstr "Διαστάσεις"
 
-#: src/page/settings/advanced.vue:111
+#: src/page/settings/advanced.vue:127
 msgid "Disable all face detection and recognition features."
 msgstr "Απενεργοποιήστε όλες τις λειτουργίες ανίχνευσης και αναγνώρισης προσώπου."
 
@@ -1133,15 +1133,15 @@ msgstr "Απενεργοποιήστε όλες τις λειτουργίες α
 msgid "Disable Backups"
 msgstr "Απενεργοποίηση Αντιγράφων Ασφαλείας"
 
-#: src/page/settings/advanced.vue:308
+#: src/page/settings/advanced.vue:324
 msgid "Disable Darktable"
 msgstr "Απενεργοποίηση Darktable"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
 msgstr "Απενεργοποίηση ExifTool"
 
-#: src/page/settings/advanced.vue:110
+#: src/page/settings/advanced.vue:126
 msgid "Disable Faces"
 msgstr "Απενεργοποίηση προσώπων"
 
@@ -1149,27 +1149,35 @@ msgstr "Απενεργοποίηση προσώπων"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Απενεργοποίηση των λειτουργιών που απαιτούν δικαίωμα εγγραφής στο φάκελο πρωτοτύπων."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:388
 msgid "Disable FFmpeg"
 msgstr "Απενεργοποίηση FFmpeg"
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:372
 msgid "Disable ImageMagick"
 msgstr "Απενεργοποίηση του ImageMagick"
 
-#: src/page/settings/advanced.vue:127
+#: src/page/settings/advanced.vue:143
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Απενεργοποίηση των διαδραστικών παγκόσμιων χαρτών και της αντίστροφης γεωκωδικοποίησης."
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:110
+msgid "Disable MCP"
+msgstr "Απενεργοποίηση MCP"
+
+#: src/page/settings/advanced.vue:142
 msgid "Disable Places"
 msgstr "Απενεργοποίηση Τοποθεσιών"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:340
 msgid "Disable RawTherapee"
 msgstr "Απενεργοποίηση RawTherapee"
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:111
+msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
+msgstr "Απενεργοποιήστε το τελικό σημείο API του Model Context Protocol (MCP) για τις ενσωματώσεις των πρακτόρων AI."
+
+#: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"
 msgstr "Απενεργοποίηση Διανυσμάτων"
 
@@ -1181,11 +1189,11 @@ msgstr "Απενεργοποίηση WebDAV"
 msgid "Disabled"
 msgstr "Απενεργοποιημένο"
 
-#: src/page/settings/advanced.vue:389
+#: src/page/settings/advanced.vue:405
 msgid "Disables vector graphics support."
 msgstr "Απενεργοποιεί την υποστήριξη διανυσματικών γραφικών."
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:389
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Απενεργοποιεί τη μετακωδικοποίηση βίντεο και την εξαγωγή μικρογραφιών."
 
@@ -1239,15 +1247,15 @@ msgstr "Έγγραφο"
 msgid "Documents"
 msgstr "Έγγραφα"
 
-#: src/page/settings/advanced.vue:309
+#: src/page/settings/advanced.vue:325
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Μη χρήση του Darktable για τη μετατροπή εικόνων RAW."
 
-#: src/page/settings/advanced.vue:357
+#: src/page/settings/advanced.vue:373
 msgid "Don't use ImageMagick to convert images."
 msgstr "Μη χρήση του ImageMagick για τη μετατροπή εικόνων."
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:341
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Μη χρήση του RawTherapee για τη μετατροπή εικόνων RAW."
 
@@ -1306,11 +1314,11 @@ msgstr "Τα διπλότυπα θα παραλείπονται και θα εμ
 msgid "Duration"
 msgstr "Διάρκεια"
 
-#: src/page/settings/advanced.vue:251
+#: src/page/settings/advanced.vue:267
 msgid "Dynamic Previews"
 msgstr "Δυναμικές Προεπισκοπήσεις"
 
-#: src/page/settings/advanced.vue:227
+#: src/page/settings/advanced.vue:243
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Όριο Δυναμικού Μεγέθους: %{n}px"
 
@@ -1368,7 +1376,7 @@ msgstr "Ενεργοποίηση νέων λειτουργιών που μπορ
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Ενεργοποιήστε το πρόγραμμα περιήγησης αρχείων για την πλοήγηση στη δομή φακέλων Originals."
 
-#: src/page/settings/advanced.vue:341
+#: src/page/settings/advanced.vue:357
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ενεργοποιεί τις προεπιλογές μετατροπέα RAW. Μπορεί να μειώσει την απόδοση."
 
@@ -1435,7 +1443,7 @@ msgstr "Κάθε δύο ημέρες"
 msgid "Exclude hidden"
 msgstr "Εξαίρεση κρυφών"
 
-#: src/page/settings/advanced.vue:143
+#: src/page/settings/advanced.vue:159
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Η εξαγωγή μεταδεδομένων με το ExifTool απαιτείται για πλήρη υποστήριξη βίντεο, ζωντανής φωτογραφίας και XMP."
 
@@ -1527,7 +1535,7 @@ msgstr "Αρχείο"
 msgid "File Browser"
 msgstr "Πρόγραμμα περιήγησης αρχείων"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:312
 msgid "File Conversion"
 msgstr "Μετατροπή Αρχείων"
 
@@ -1723,7 +1731,7 @@ msgstr "Εάν χάσετε την πρόσβαση στην εφαρμογή ή
 msgid "Image"
 msgstr "Εικόνα"
 
-#: src/page/settings/advanced.vue:267
+#: src/page/settings/advanced.vue:283
 msgid "Image Quality"
 msgstr "Ποιότητα Εικόνας"
 
@@ -1868,11 +1876,11 @@ msgstr "Στοιχείο"
 msgid "Items per page:"
 msgstr "Στοιχεία ανά σελίδα:"
 
-#: src/page/settings/advanced.vue:274
+#: src/page/settings/advanced.vue:290
 msgid "JPEG Quality: %{n}"
 msgstr "Ποιότητα JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:297
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Όριο Μεγέθους JPEG: %{n}px"
 
@@ -2436,7 +2444,7 @@ msgstr "Πρώτα τα πιο Παλιά"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Στα Windows, εισάγετε τον ακόλουθο πόρο στο παράθυρο διαλόγου σύνδεσης:"
 
-#: src/page/settings/advanced.vue:253
+#: src/page/settings/advanced.vue:269
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Η κατά παραγγελία δημιουργία μικρογραφιών μπορεί να προκαλέσει υψηλή χρήση της CPU και της μνήμης. Δεν συνιστάται για διακομιστές με περιορισμένους πόρους και συσκευές NAS."
 
@@ -2702,7 +2710,7 @@ msgstr "Περιμένετε…"
 msgid "PM"
 msgstr "ΜΜ"
 
-#: src/page/settings/advanced.vue:288
+#: src/page/settings/advanced.vue:304
 msgid "PNG Size Limit: %{n}px"
 msgstr "Όριο Μεγέθους PNG: %{n}px"
 
@@ -2741,7 +2749,7 @@ msgstr "Αποτροπή της πρόσβασης άλλων εφαρμογών
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
-#: src/page/settings/advanced.vue:212
+#: src/page/settings/advanced.vue:228
 msgid "Preview Images"
 msgstr "Εικόνες Προεπισκόπισης"
 
@@ -2950,7 +2958,7 @@ msgstr "Ανάλυση"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:402
+#: src/page/settings/advanced.vue:418
 msgid "Restart"
 msgstr "Επανεκκίνηση"
 
@@ -3296,7 +3304,7 @@ msgstr "Εμφάνιση Τίτλων"
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:199
+#: src/page/settings/advanced.vue:215
 msgid "Sidecar Files"
 msgstr "Αρχεία Sidecar"
 
@@ -3424,7 +3432,7 @@ msgstr "Έναρξη"
 msgid "Start Page"
 msgstr "Σελίδα έναρξης"
 
-#: src/page/settings/advanced.vue:219
+#: src/page/settings/advanced.vue:235
 msgid "Static Size Limit: %{n}px"
 msgstr "Όριο Στατικού Μεγέθους: %{n}px"
 
@@ -3795,7 +3803,7 @@ msgstr "Ανεβάσματα που ενδέχεται να περιέχουν �
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:356
 msgid "Use Presets"
 msgstr "Χρήση Προεπιλογών"
 

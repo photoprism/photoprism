@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -307,7 +307,7 @@ msgstr "Tar éis dhá sheachtain"
 msgid "Album"
 msgstr "Albam"
 
-#: src/page/settings/advanced.vue:183
+#: src/page/settings/advanced.vue:199
 msgid "Album Backups"
 msgstr "Cúltaca Albam"
 
@@ -573,7 +573,7 @@ msgstr "Ar ais"
 msgid "Back to top"
 msgstr "Ar ais go barr"
 
-#: src/page/settings/advanced.vue:155
+#: src/page/settings/advanced.vue:171
 msgid "Backup"
 msgstr "Cúltaca"
 
@@ -765,7 +765,7 @@ msgstr "Níorbh fhéidir na hathruithe a shábháil"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:491 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Sábháladh na hathruithe"
@@ -991,15 +991,15 @@ msgstr "Cruthaigh Cuntas"
 msgid "Create album"
 msgstr "Cruthaigh albam"
 
-#: src/page/settings/advanced.vue:168
+#: src/page/settings/advanced.vue:184
 msgid "Create regular backups based on the configured schedule."
 msgstr "Cruthaigh cúltacaí rialta bunaithe ar an sceideal cumraithe."
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:200
 msgid "Create YAML files to back up album metadata."
 msgstr "Cruthaigh comhaid YAML chun meiteashonraí albam a chúltaca."
 
-#: src/page/settings/advanced.vue:200
+#: src/page/settings/advanced.vue:216
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Cruthaigh comhaid taobhcharr YAML chun meiteashonraí pictiúir a chúltaca."
 
@@ -1033,7 +1033,7 @@ msgstr "laethúil"
 msgid "Database"
 msgstr "Bunachar Sonraí"
 
-#: src/page/settings/advanced.vue:167
+#: src/page/settings/advanced.vue:183
 msgid "Database Backups"
 msgstr "Cúltaca Bunachar Sonraí"
 
@@ -1125,7 +1125,7 @@ msgstr "Sonraí"
 msgid "Dimensions"
 msgstr "Toisí"
 
-#: src/page/settings/advanced.vue:111
+#: src/page/settings/advanced.vue:127
 msgid "Disable all face detection and recognition features."
 msgstr "Díchumasaigh gach gné braite agus aitheantais aghaidhe."
 
@@ -1133,15 +1133,15 @@ msgstr "Díchumasaigh gach gné braite agus aitheantais aghaidhe."
 msgid "Disable Backups"
 msgstr "Díchumasaigh Cúltaca"
 
-#: src/page/settings/advanced.vue:308
+#: src/page/settings/advanced.vue:324
 msgid "Disable Darktable"
 msgstr "Díchumasaigh Darktable"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
 msgstr "Díchumasaigh ExifTool"
 
-#: src/page/settings/advanced.vue:110
+#: src/page/settings/advanced.vue:126
 msgid "Disable Faces"
 msgstr "Díchumasaigh Aghaidheanna"
 
@@ -1149,27 +1149,35 @@ msgstr "Díchumasaigh Aghaidheanna"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Díchumasaigh gnéithe a dteastaíonn cead scríofa uathu don fhillteán bunleagan."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:388
 msgid "Disable FFmpeg"
 msgstr "Díchumasaigh FFmpeg"
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:372
 msgid "Disable ImageMagick"
 msgstr "Díchumasaigh ImageMagick"
 
-#: src/page/settings/advanced.vue:127
+#: src/page/settings/advanced.vue:143
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Díchumasaigh léarscáileanna idirghníomhacha an domhain agus geochódú droim ar ais."
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:110
+msgid "Disable MCP"
+msgstr "Díchumasaigh MCP"
+
+#: src/page/settings/advanced.vue:142
 msgid "Disable Places"
 msgstr "Díchumasaigh Áiteanna"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:340
 msgid "Disable RawTherapee"
 msgstr "Díchumasaigh RawTherapee"
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:111
+msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
+msgstr "Díchumasaigh críochphointe API an Phrotacail Chomhthéacs Múnla (MCP) le haghaidh comhtháthuithe gníomhairí IS."
+
+#: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"
 msgstr "Díchumasaigh Veicteoirí"
 
@@ -1181,11 +1189,11 @@ msgstr "Díchumasaigh WebDAV"
 msgid "Disabled"
 msgstr "Míchumasaithe"
 
-#: src/page/settings/advanced.vue:389
+#: src/page/settings/advanced.vue:405
 msgid "Disables vector graphics support."
 msgstr "Díchumasaigh tacaíocht grafaicí veicteora."
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:389
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Díchumasaítear traschódú físeáin agus eastóscadh mionsamhlacha."
 
@@ -1239,15 +1247,15 @@ msgstr "Doiciméad"
 msgid "Documents"
 msgstr "Doiciméid"
 
-#: src/page/settings/advanced.vue:309
+#: src/page/settings/advanced.vue:325
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ná húsáid Darktable chun íomhánna RAW a thiontú."
 
-#: src/page/settings/advanced.vue:357
+#: src/page/settings/advanced.vue:373
 msgid "Don't use ImageMagick to convert images."
 msgstr "Ná húsáid ImageMagick chun íomhánna a thiontú."
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:341
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ná húsáid RawTherapee chun íomhánna RAW a thiontú."
 
@@ -1306,11 +1314,11 @@ msgstr "Déanfar dúblaigh a scipeáil agus ní thaispeánfar iad ach uair amhá
 msgid "Duration"
 msgstr "Fad"
 
-#: src/page/settings/advanced.vue:251
+#: src/page/settings/advanced.vue:267
 msgid "Dynamic Previews"
 msgstr "Réamhamhairc Dinimiciúla"
 
-#: src/page/settings/advanced.vue:227
+#: src/page/settings/advanced.vue:243
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Teorainn Mhéid Dinimiciúla: %{n}px"
 
@@ -1368,7 +1376,7 @@ msgstr "Cumasaigh gnéithe nua a d'fhéadfadh a bheith neamhiomlán nó éagobhs
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Cumasaigh an brabhsálaí comhad chun nascleanúint a dhéanamh trí struchtúr na bhfillteán Bunleaganacha."
 
-#: src/page/settings/advanced.vue:341
+#: src/page/settings/advanced.vue:357
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Cumasaíonn sé réamhshocruithe tiontaire RAW. D'fhéadfadh sé feidhmíocht a laghdú."
 
@@ -1435,7 +1443,7 @@ msgstr "Gach dhá lá"
 msgid "Exclude hidden"
 msgstr "Fág i bhfolach"
 
-#: src/page/settings/advanced.vue:143
+#: src/page/settings/advanced.vue:159
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Tá ExifTool ag teastáil chun tacaíocht iomlán a thabhairt do mheiteashonraí, físeáin agus Grianghraif Beo XMP."
 
@@ -1527,7 +1535,7 @@ msgstr "Comhad"
 msgid "File Browser"
 msgstr "Brabhsálaí Comhad"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:312
 msgid "File Conversion"
 msgstr "Tiontú Comhad"
 
@@ -1723,7 +1731,7 @@ msgstr "Má chailleann tú rochtain ar d'aip nó gléas fíordheimhnitheora, is 
 msgid "Image"
 msgstr "Íomhá"
 
-#: src/page/settings/advanced.vue:267
+#: src/page/settings/advanced.vue:283
 msgid "Image Quality"
 msgstr "Cáilíocht Íomhá"
 
@@ -1868,11 +1876,11 @@ msgstr "Mír"
 msgid "Items per page:"
 msgstr "Míreanna in aghaidh an leathanaigh:"
 
-#: src/page/settings/advanced.vue:274
+#: src/page/settings/advanced.vue:290
 msgid "JPEG Quality: %{n}"
 msgstr "Cáilíocht JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:297
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Teorainn Méid JPEG: %{n}px"
 
@@ -2436,7 +2444,7 @@ msgstr "Is sine ar dtús"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Ar Windows, cuir isteach an acmhainn seo a leanas sa dialóg naisc:"
 
-#: src/page/settings/advanced.vue:253
+#: src/page/settings/advanced.vue:269
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "D'fhéadfadh úsáid ard LAP agus cuimhne a bheith mar chúis le giniúint mionsamhlacha ar éileamh. Ní mholtar é do fhreastalaithe teoranta ó thaobh acmhainní agus feistí NAS."
 
@@ -2702,7 +2710,7 @@ msgstr "Fan le do thoil…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:288
+#: src/page/settings/advanced.vue:304
 msgid "PNG Size Limit: %{n}px"
 msgstr "Teorainn Méid PNG: %{n}px"
 
@@ -2741,7 +2749,7 @@ msgstr "Cosc a chur ar aipeanna eile rochtain a fháil ar PhotoPrim mar thiomán
 msgid "Preview"
 msgstr "Réamhamharc"
 
-#: src/page/settings/advanced.vue:212
+#: src/page/settings/advanced.vue:228
 msgid "Preview Images"
 msgstr "Íomhánna Réamhamhairc"
 
@@ -2950,7 +2958,7 @@ msgstr "Rún"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:402
+#: src/page/settings/advanced.vue:418
 msgid "Restart"
 msgstr "Atosaigh"
 
@@ -3296,7 +3304,7 @@ msgstr "Taispeáin Teidil"
 msgid "Sidecar"
 msgstr "Taobhcharr"
 
-#: src/page/settings/advanced.vue:199
+#: src/page/settings/advanced.vue:215
 msgid "Sidecar Files"
 msgstr "Comhaid Thaobhcharr"
 
@@ -3424,7 +3432,7 @@ msgstr "Tosaigh"
 msgid "Start Page"
 msgstr "Leathanach Tosaigh"
 
-#: src/page/settings/advanced.vue:219
+#: src/page/settings/advanced.vue:235
 msgid "Static Size Limit: %{n}px"
 msgstr "Teorainn Mhéid Statach: %{n}px"
 
@@ -3795,7 +3803,7 @@ msgstr "Diúltófar go huathoibríoch d’uaslódálacha a bhféadfadh íomhánn
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:356
 msgid "Use Presets"
 msgstr "Úsáid Réamhshocruithe"
 

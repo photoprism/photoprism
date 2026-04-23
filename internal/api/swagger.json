@@ -603,6 +603,9 @@
                 "DisableJpegXL": {
                     "type": "boolean"
                 },
+                "DisableMCP": {
+                    "type": "boolean"
+                },
                 "DisableOIDC": {
                     "type": "boolean"
                 },
@@ -8691,6 +8694,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -8698,7 +8707,7 @@
                         }
                     }
                 },
-                "summary": "model context protocol endpoint (experimental)",
+                "summary": "model context protocol endpoint",
                 "tags": [
                     "MCP"
                 ]

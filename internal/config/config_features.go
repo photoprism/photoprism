@@ -36,6 +36,11 @@ func (c *Config) DisableWebDAV() bool {
 	return c.options.DisableWebDAV
 }
 
+// DisableMCP checks if the Model Context Protocol (MCP) API endpoint should be disabled.
+func (c *Config) DisableMCP() bool {
+	return c.options.DisableMCP
+}
+
 // DisablePlaces checks if geocoding and maps should be disabled.
 func (c *Config) DisablePlaces() bool {
 	return c.options.DisablePlaces || len(places.LocationServiceUrls) == 0

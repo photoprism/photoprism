@@ -17,7 +17,7 @@ Run `make help` to list all available targets. Key commands:
 
 **Dependencies:**
 - `make dep` — install all dependencies (TensorFlow models, ONNX models, JS packages)
-- `make dep-js` — install JS dependencies only (`npm ci`). Prefer `make dep-js` inside the dev container (the `photoprism/develop` base image already ignores install scripts); if you must run npm directly outside it, add `--ignore-scripts` and rebuild only the native addons that need it.
+- `make dep-js` — install JS dependencies only (`npm ci`). The `photoprism/develop` image and the repo `Makefile` both set `NPM_CONFIG_IGNORE_SCRIPTS=true`, so install scripts are skipped automatically; when running npm directly in an env without that default, pass `--ignore-scripts`. Rebuild native addons with `npm rebuild --ignore-scripts=false <pkg>` — a bare `npm rebuild` no-ops wherever the env default is active.
 
 **Docker dev environment:**
 - `make docker-build` — build local Docker image

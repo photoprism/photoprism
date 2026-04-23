@@ -19,6 +19,7 @@ export class ConfigOptions extends Model {
       SidecarYaml: true,
       DisableRestart: true,
       DisableWebDAV: $config.values.disable.webdav,
+      DisableMCP: $config.values.disable.mcp,
       DisableSettings: $config.values.disable.settings,
       DisableFaces: $config.values.disable.faces,
       DisablePlaces: $config.values.disable.places,

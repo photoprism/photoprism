@@ -64,6 +64,19 @@ func TestConfig_DisableWebDAV(t *testing.T) {
 	assert.True(t, c.DisableWebDAV())
 }
 
+func TestConfig_DisableMCP(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Option defaults to false so the MCP endpoint is registered.
+	assert.False(t, c.DisableMCP())
+
+	c.options.DisableMCP = true
+	assert.True(t, c.DisableMCP())
+
+	c.options.DisableMCP = false
+	assert.False(t, c.DisableMCP())
+}
+
 func TestConfig_DisableExifTool(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.False(t, c.DisableExifTool())

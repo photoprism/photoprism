@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-03-28 10:52+0000\n"
+"PO-Revision-Date: 2026-04-18 09:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
@@ -306,7 +306,7 @@ msgstr "Pēc divām nedēļām"
 msgid "Album"
 msgstr "Albums"
 
-#: src/page/settings/advanced.vue:183
+#: src/page/settings/advanced.vue:199
 msgid "Album Backups"
 msgstr "Albuma dublējumkopijas"
 
@@ -572,7 +572,7 @@ msgstr "Atpakaļ"
 msgid "Back to top"
 msgstr "Atpakaļ uz augšu"
 
-#: src/page/settings/advanced.vue:155
+#: src/page/settings/advanced.vue:171
 msgid "Backup"
 msgstr "Rezerves kopija"
 
@@ -764,7 +764,7 @@ msgstr "Izmaiņas nevarēja saglabāt"
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
 #: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:475 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:491 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Izmaiņas veiksmīgi saglabātas"
@@ -990,15 +990,15 @@ msgstr "Izveidot kontu"
 msgid "Create album"
 msgstr "Izveidot albumu"
 
-#: src/page/settings/advanced.vue:168
+#: src/page/settings/advanced.vue:184
 msgid "Create regular backups based on the configured schedule."
 msgstr "Veidot regulāras rezerves kopijas saskaņā ar plānoto grafiku."
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:200
 msgid "Create YAML files to back up album metadata."
 msgstr "Izveidojiet YAML failus, lai dublētu albuma metadatus."
 
-#: src/page/settings/advanced.vue:200
+#: src/page/settings/advanced.vue:216
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Izveidojiet YAML blakusfailus, lai dublētu attēlu metadatus."
 
@@ -1032,7 +1032,7 @@ msgstr "Dienas"
 msgid "Database"
 msgstr "Datubāze"
 
-#: src/page/settings/advanced.vue:167
+#: src/page/settings/advanced.vue:183
 msgid "Database Backups"
 msgstr "Datu bāzes rezerves kopijas"
 
@@ -1124,7 +1124,7 @@ msgstr "Sīkāka informācija"
 msgid "Dimensions"
 msgstr "Izmēri"
 
-#: src/page/settings/advanced.vue:111
+#: src/page/settings/advanced.vue:127
 msgid "Disable all face detection and recognition features."
 msgstr "Izslēgt visas sejas atpazīšanas un noteikšanas iespējas."
 
@@ -1132,15 +1132,15 @@ msgstr "Izslēgt visas sejas atpazīšanas un noteikšanas iespējas."
 msgid "Disable Backups"
 msgstr "Izslēgt rezerves kopijas"
 
-#: src/page/settings/advanced.vue:308
+#: src/page/settings/advanced.vue:324
 msgid "Disable Darktable"
 msgstr "Izslēgt Darktable"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
 msgstr "Izslēgt ExifTool"
 
-#: src/page/settings/advanced.vue:110
+#: src/page/settings/advanced.vue:126
 msgid "Disable Faces"
 msgstr "Izslēgt sejas"
 
@@ -1148,27 +1148,35 @@ msgstr "Izslēgt sejas"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Izslēgt funkcijas, kurām nepieciešama rakstīšanas atļauja oriģinālu mapē."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:388
 msgid "Disable FFmpeg"
 msgstr "Izslēgt FFmpeg"
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:372
 msgid "Disable ImageMagick"
 msgstr "Izslēgt ImageMagick"
 
-#: src/page/settings/advanced.vue:127
+#: src/page/settings/advanced.vue:143
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Izslēgt interaktīvo pasaules karti un adreses noteikšanu pēc koordinātēm."
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:110
+msgid "Disable MCP"
+msgstr "MCP atspējošana"
+
+#: src/page/settings/advanced.vue:142
 msgid "Disable Places"
 msgstr "Izslēgt vietas"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:340
 msgid "Disable RawTherapee"
 msgstr "Izslēgt RawTherapee"
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:111
+msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
+msgstr "AI aģentu integrācijai atspējojiet modeļa konteksta protokola (MCP) API galapunktu."
+
+#: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"
 msgstr "Izslēgt vektorus"
 
@@ -1180,11 +1188,11 @@ msgstr "Izslēgt WebDAV"
 msgid "Disabled"
 msgstr "Izslēgt"
 
-#: src/page/settings/advanced.vue:389
+#: src/page/settings/advanced.vue:405
 msgid "Disables vector graphics support."
 msgstr "Izslēdz vektorgrafikas atbalstu."
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:389
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Izslēdz video pārkodēšanu un sīktēlu izgūšanu."
 
@@ -1238,15 +1246,15 @@ msgstr "Dokuments"
 msgid "Documents"
 msgstr "Dokumenti"
 
-#: src/page/settings/advanced.vue:309
+#: src/page/settings/advanced.vue:325
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Neizmantojiet Darktable, lai konvertētu RAW attēlus."
 
-#: src/page/settings/advanced.vue:357
+#: src/page/settings/advanced.vue:373
 msgid "Don't use ImageMagick to convert images."
 msgstr "Neizmantojiet ImageMagick attēlu konvertēšanai."
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:341
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Neizmantojiet RawTherapee, lai konvertētu RAW attēlus."
 
@@ -1305,11 +1313,11 @@ msgstr "Dublikāti tiks izlaisti un parādīsies tikai vienu reizi."
 msgid "Duration"
 msgstr "Ilgums"
 
-#: src/page/settings/advanced.vue:251
+#: src/page/settings/advanced.vue:267
 msgid "Dynamic Previews"
 msgstr "Dinamiskie priekšskatījumi"
 
-#: src/page/settings/advanced.vue:227
+#: src/page/settings/advanced.vue:243
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dinamiskā izmēra ierobežojums: %{n}px"
 
@@ -1367,7 +1375,7 @@ msgstr "Ieslēgt funkcionalitāti, kas varētu būt vēl nepilnīga vai nestabil
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Ieslēgt failu pārlūku, lai pārvietotos pa oriģinālu mapi."
 
-#: src/page/settings/advanced.vue:341
+#: src/page/settings/advanced.vue:357
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ieslēdz RAW pārveidotāja sākotnējos iestatījumus. Var samazināt veiktspēju."
 
@@ -1434,7 +1442,7 @@ msgstr "Ik pēc divām dienām"
 msgid "Exclude hidden"
 msgstr "Izlaist slēptos"
 
-#: src/page/settings/advanced.vue:143
+#: src/page/settings/advanced.vue:159
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Pilnīgam XMP metadatu, videoklipu un Live Photos atbalstam ir nepieciešams ExifTool."
 
@@ -1526,7 +1534,7 @@ msgstr "Fails"
 msgid "File Browser"
 msgstr "Failu pārlūks"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:312
 msgid "File Conversion"
 msgstr "Failu konvertēšana"
 
@@ -1722,7 +1730,7 @@ msgstr "Ja zaudējat piekļuvi autentifikatora lietotnei vai ierīcei, varat izm
 msgid "Image"
 msgstr "Attēls"
 
-#: src/page/settings/advanced.vue:267
+#: src/page/settings/advanced.vue:283
 msgid "Image Quality"
 msgstr "Attēla kvalitāte"
 
@@ -1867,11 +1875,11 @@ msgstr "Ieraksts"
 msgid "Items per page:"
 msgstr "Vienumi lapā:"
 
-#: src/page/settings/advanced.vue:274
+#: src/page/settings/advanced.vue:290
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG kvalitāte: %{n}"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:297
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG izmēra ierobežojums: %{n} pikseļi"
 
@@ -2435,7 +2443,7 @@ msgstr "Vecākais vispirms"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Operētājsistēmā Windows savienojuma dialoglodziņā ievadiet šādu resursu:"
 
-#: src/page/settings/advanced.vue:253
+#: src/page/settings/advanced.vue:269
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Sīktēlu ģenerēšana pēc pieprasījuma var izraisīt lielu centrālā procesora un atmiņas izmantošanu. Tas nav ieteicams serveriem un NAS ierīcēm ar ierobežotiem resursiem."
 
@@ -2701,7 +2709,7 @@ msgstr "Lūdzu, uzgaidiet…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:288
+#: src/page/settings/advanced.vue:304
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG izmēra ierobežojums: %{n} pikseļi"
 
@@ -2740,7 +2748,7 @@ msgstr "Neļaujiet citām lietotnēm piekļūt PhotoPrism kā koplietojamam tīk
 msgid "Preview"
 msgstr "Priekšskatījums"
 
-#: src/page/settings/advanced.vue:212
+#: src/page/settings/advanced.vue:228
 msgid "Preview Images"
 msgstr "Priekšskatīt attēlus"
 
@@ -2949,7 +2957,7 @@ msgstr "Izšķirtspēja"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:402
+#: src/page/settings/advanced.vue:418
 msgid "Restart"
 msgstr "Restartēt"
 
@@ -3295,7 +3303,7 @@ msgstr "Rādīt nosaukumus"
 msgid "Sidecar"
 msgstr "Blakusvāģis"
 
-#: src/page/settings/advanced.vue:199
+#: src/page/settings/advanced.vue:215
 msgid "Sidecar Files"
 msgstr "Blakusvāģu faili"
 
@@ -3423,7 +3431,7 @@ msgstr "Sākt"
 msgid "Start Page"
 msgstr "Sākumlapa"
 
-#: src/page/settings/advanced.vue:219
+#: src/page/settings/advanced.vue:235
 msgid "Static Size Limit: %{n}px"
 msgstr "Statiskā izmēra ierobežojums: %{n}px"
 
@@ -3794,7 +3802,7 @@ msgstr "Augšupielādes, kas var saturēt šādus attēlus, tiks automātiski no
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:356
 msgid "Use Presets"
 msgstr "Izmantojiet sākotnējos iestatījumus"
 
