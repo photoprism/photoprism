@@ -255,6 +255,20 @@
     visibility: visible;
 }
 
+/* PDF Document Viewer */
+
+.pswp__pdf-container {
+    --pdf-top-offset: 72px;
+    --pdf-side-inset: 60px;
+    position: absolute;
+    top: var(--pdf-top-offset);
+    left: var(--pdf-side-inset);
+    right: var(--pdf-side-inset);
+    bottom: 0;
+    overflow: auto;
+    background-color: #525659;
+}
+
 .pswp__img {
     -webkit-touch-callout: default;
 }

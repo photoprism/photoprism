@@ -102,6 +102,12 @@ import { Album } from "model/album";
 import * as media from "common/media";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
+import * as pdfjsLib from "pdfjs-dist";
+import { EventBus, PDFLinkService, PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
+import "pdfjs-dist/web/pdf_viewer.css";
+
+// Configure the PDF.js worker with absolute path.
+pdfjsLib.GlobalWorkerOptions.workerSrc = "/static/build/pdf.worker.mjs";
 
 const VIDEO_EVENT_TYPES = [
   "loadstart",
@@ -578,6 +584,18 @@ export default {
         loading: false,
       };
 
+      // Check if content is a PDF document.
+      if (model?.Type === media.Document && model?.Mime === "application/pdf" && model?.DownloadUrl) {
+        return {
+          type: "pdf", // Render PDF viewer.
+          html: `<div class="pswp__html"></div>`,
+          model: model,
+          pdfUrl: model.DownloadUrl,
+          msrc: img.src, // Thumbnail preview.
+          loading: true,
+        };
+      }
+
       // Check if content is playable and return the data needed to render it in "contentLoad".
       if (model?.Playable && model?.Hash) {
         /*
@@ -615,12 +633,31 @@ export default {
     isContentZoomable(isContentZoomable, content) {
       if (content.data?.model?.Type === media.Live) {
         isContentZoomable = true;
+      } else if (content.data?.model?.Type === media.Document) {
+        isContentZoomable = false;
       }
 
       return isContentZoomable;
     },
     onContentLoad(ev) {
       const { content } = ev;
+
+      if (content.data?.type === "pdf") {
+        ev.preventDefault();
+
+        try {
+          // Create container for PDF.
+          content.element = this.createPdfViewerElement(content);
+          content.state = "loading";
+          content.data.loading = false;
+          content.onLoaded();
+        } catch (err) {
+          this.log("failed to load PDF", err);
+        }
+
+        return;
+      }
+
       if (content.data?.type === "html") {
         // Prevent default loading behavior.
         ev.preventDefault();
@@ -668,6 +705,103 @@ export default {
         data.events?.abort();
         data.events = null;
       }
+
+      // Clean up PDF viewer resources.
+      if (ev?.content?.data?.pdfViewer) {
+        const data = ev.content.data;
+
+        if (this.debug) {
+          this.log(`content.destroy PDF`, data);
+        }
+
+        // Disconnect the resize observer.
+        if (data.resizeObserver) {
+          data.resizeObserver.disconnect();
+          data.resizeObserver = null;
+        }
+
+        // Clean up the PDF viewer.
+        data.pdfViewer.cleanup();
+        data.pdfViewer = null;
+
+        // Clean up the PDF document.
+        if (data.pdfDocument) {
+          data.pdfDocument.destroy();
+          data.pdfDocument = null;
+        }
+      }
+    },
+    // Creates a PDF viewer element using pdfjs-dist.
+    createPdfViewerElement(content) {
+      const data = content.data;
+      const pdfUrl = data.pdfUrl;
+
+      // Create container structure for PDF.js viewer.
+      // PDFViewer expects: container (scrollable) > div.pdfViewer (pages rendered here)
+      const container = document.createElement("div");
+      container.setAttribute("class", "pswp__pdf-container");
+
+      // Stop wheel events from propagating to PhotoSwipe (which uses them for zoom).
+      // This allows normal mouse wheel scrolling within the PDF container.
+      container.addEventListener("wheel", (ev) => {
+        ev.stopPropagation();
+      });
+
+      const viewerDiv = document.createElement("div");
+      viewerDiv.setAttribute("class", "pdfViewer");
+
+      container.appendChild(viewerDiv);
+
+      // Initialize PDF.js viewer components.
+      const eventBus = new EventBus();
+
+      const linkService = new PDFLinkService({
+        eventBus,
+      });
+
+      const pdfViewer = new PDFViewer({
+        container: container,
+        viewer: viewerDiv,
+        eventBus,
+        linkService,
+        textLayerMode: 0, // Disable text layer for now.
+        annotationMode: 0, // Disable annotations for now.
+      });
+
+      linkService.setViewer(pdfViewer);
+
+      // Store references for cleanup.
+      data.pdfViewer = pdfViewer;
+      data.eventBus = eventBus;
+
+      // Load the PDF document.
+      const loadingTask = pdfjsLib.getDocument(pdfUrl);
+      loadingTask.promise
+        .then((pdfDocument) => {
+          data.pdfDocument = pdfDocument;
+          pdfViewer.setDocument(pdfDocument);
+          linkService.setDocument(pdfDocument, null);
+        })
+        .catch((err) => {
+          this.log("failed to load PDF document", err);
+        });
+
+      // Handle page initialization.
+      eventBus.on("pagesinit", () => {
+        // Scale to fit the container width.
+        pdfViewer.currentScaleValue = "page-width";
+      });
+
+      // Watch for container resize and rescale the PDF to fit.
+      const resizeObserver = new ResizeObserver(() => {
+        if (pdfViewer.pagesCount > 0) {
+          pdfViewer.currentScaleValue = "page-width";
+        }
+      });
+      resizeObserver.observe(container);
+      data.resizeObserver = resizeObserver;
+
+      return container;
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
     createVideoElement(content, autoplay = false, loop = false, mute = false) {

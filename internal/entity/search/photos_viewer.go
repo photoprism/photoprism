@@ -9,6 +9,36 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
+// documentFileHash returns the file hash of the original document file (e.g.
+// PDF) for the given photo UID, or an empty string if none is found. It is used
+// so that the viewer download URL points to the real document rather than the
+// JPEG sidecar that is stored as the primary file for thumbnail generation.
+func documentFileHash(photoUID string) string {
+	var f entity.File
+	if err := entity.UnscopedDb().
+		Select("file_hash").
+		Where("photo_uid = ? AND media_type = ? AND file_missing = 0 AND file_error = ''", photoUID, entity.MediaDocument).
+		First(&f).Error; err != nil {
+		return ""
+	}
+	return f.FileHash
+}
+
+// viewerDownloadHash returns the file hash that should be used for viewer
+// downloads. For document media, this resolves to the original document file
+// hash instead of the JPEG sidecar hash used by the viewer query.
+func viewerDownloadHash(photoType, photoUID, fileHash string) string {
+	if photoType != entity.MediaDocument {
+		return fileHash
+	}
+
+	if h := documentFileHash(photoUID); h != "" {
+		return h
+	}
+
+	return fileHash
+}
+
 // PhotosViewerResults searches public photos using the provided form and returns
 // them in the lightweight viewer format that powers the slideshow endpoints.
 func PhotosViewerResults(frm form.SearchPhotos, contentUri, apiUri, previewToken, downloadToken string) (viewer.Results, int, error) {
@@ -49,7 +79,7 @@ func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken str
 		Codec:        mediaCodec,
 		Mime:         mediaMime,
 		Thumbs:       thumb.ViewerThumbs(m.FileWidth, m.FileHeight, m.FileHash, contentUri, previewToken),
-		DownloadUrl:  viewer.DownloadUrl(m.FileHash, apiUri, downloadToken),
+		DownloadUrl:  viewer.DownloadUrl(mediaHash, apiUri, downloadToken),
 	}
 }
 
@@ -72,6 +102,7 @@ func (m PhotoResults) ViewerResults(contentUri, apiUri, previewToken, downloadTo
 // ViewerResult converts a geographic search hit into the viewer DTO, reusing
 // the thumbnail and download helpers so photos and map results stay aligned.
 func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken string) viewer.Result {
+	downloadHash := viewerDownloadHash(m.PhotoType, m.PhotoUID, m.FileHash)
 	return viewer.Result{
 		UID:          m.PhotoUID,
 		Type:         m.PhotoType,
@@ -90,7 +121,7 @@ func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken 
 		Codec:        m.FileCodec,
 		Mime:         m.FileMime,
 		Thumbs:       thumb.ViewerThumbs(m.FileWidth, m.FileHeight, m.FileHash, contentUri, previewToken),
-		DownloadUrl:  viewer.DownloadUrl(m.FileHash, apiUri, downloadToken),
+		DownloadUrl:  viewer.DownloadUrl(downloadHash, apiUri, downloadToken),
 	}
 }
 
