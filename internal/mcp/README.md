@@ -1,6 +1,6 @@
 ## PhotoPrism MCP Server
 
-**Last Updated:** April 18, 2026
+**Last Updated:** April 20, 2026
 
 > See `specs/platform/mcp.md` for the canonical specification, including the rationale for the user-access policy and the role/grant matrix per edition.
 
@@ -10,6 +10,8 @@
   - CLI: `photoprism mcp serve` (stdio, no auth; development and testing)
   - HTTP: `POST/GET/DELETE /api/v1/mcp` (Streamable HTTP, authenticated). Can be disabled via `--disable-mcp` / `PHOTOPRISM_DISABLE_MCP` / `DisableMCP` so the route responds with the standard 404 when an operator does not want the endpoint exposed. The flag is also surfaced to the frontend through `ClientConfig.Disable.MCP` (`disable.mcp`), letting the UI hide MCP-related controls while the endpoint is off.
 - **Authorization:** HTTP endpoint enforces the `ResourceMCP` ACL (admin plus the API client roles in every edition, manager in Pro/Portal); anonymous access is permitted in public mode for the currently registered read-only tools.
+- **Request Body Cap:** HTTP POST bodies are bounded at `MaxMCPRequestBytes` (currently `MaxMutationRequestBytes`, 256 KiB). Oversized requests receive the standard `413 Request Entity Too Large` response before the upstream SDK reads the body. Early rejection via `Content-Length` protects against large known-size payloads; `http.MaxBytesReader` plus a response-writer wrapper handle chunked bodies. The wrapper translates the SDK's internal `400 "failed to read body"` into a consistent `413` and suppresses the SDK's error phrasing so it does not leak to clients.
+- **Session Timeout:** Streamable HTTP sessions idle out after `McpSessionTimeout` (5 minutes by default). Active clients renew the idle timer on every JSON-RPC request, so interactive IDE use is unaffected; sessions abandoned without the `DELETE` tear-down free up promptly instead of lingering.
 - Read-only resources:
   - `photoprism://config-options`
   - `photoprism://search-filters`
@@ -190,6 +192,8 @@ The MCP handler does not install a custom rate limiter — there is no per-endpo
 | Portal | yes                          | Same wiring as Pro in `portal/internal/server/register.go`.                                                                                                                                                                                                  |
 
 A per-endpoint limiter (via `limiter.Auth` / `limiter.Login` / `limiter.AbortJSON`) is only worth adding when MCP grows write-capable tools or endpoints that warrant stricter throttling than the generic IP limiter — for example, anything that mutates state or that triggers expensive backend work.
+
+CE and Plus deployments that expose the endpoint to untrusted networks should enforce per-IP request limits at the reverse proxy. The application-level `McpSessionTimeout` (5 minutes) and `MaxMCPRequestBytes` (256 KiB) bound the per-session memory footprint and per-request allocation, but they do not throttle request frequency; a proxy rule (for example nginx `limit_req_zone` or Traefik `rateLimit` middleware) is the recommended companion control in builds without a generic HTTP limiter.
 
 ### Scope Plumbing
 

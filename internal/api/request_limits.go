@@ -35,6 +35,10 @@ const (
 	MaxMultipartOverheadBytes int64 = 1024 * 1024
 	// MaxAvatarUploadBytes bounds avatar uploads including multipart overhead.
 	MaxAvatarUploadBytes int64 = 20000000 + MaxMultipartOverheadBytes
+	// MaxMCPRequestBytes bounds Model Context Protocol (MCP) JSON-RPC payloads.
+	// The upstream SDK reads the full POST body into memory via io.ReadAll, so
+	// this cap must be enforced at the handler boundary before dispatch.
+	MaxMCPRequestBytes int64 = MaxMutationRequestBytes
 )
 
 // LimitRequestBodyBytes caps the readable request body size for the current handler.

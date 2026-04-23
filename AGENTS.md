@@ -114,7 +114,7 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 - Bash check: `[ -f "/.dockerenv" ] && echo container || echo host`
 - Node.js check: `require("fs").existsSync("/.dockerenv")`
 - Inside the container, prefer `npm exec --yes <agent> -- --help` or `npx <agent> ...`; if a global npm install is unavoidable, install it only inside the container.
-- The `photoprism/develop` base image sets the npm env to ignore install scripts by default. When running `npm ci` or `npm install` outside that image — e.g. in a coding-agent env that does not inherit it — pass `--ignore-scripts` explicitly to mitigate supply-chain attacks; add a targeted `npm rebuild <pkg>` only if a native addon needs compiling.
+- The `photoprism/develop` base image and the repo `Makefile` both set `NPM_CONFIG_IGNORE_SCRIPTS=true`, so `npm ci`/`npm install` via `make` targets skip install scripts out of the box. When running npm directly in an environment that does not set or inherit that default, pass `--ignore-scripts` explicitly to mitigate supply-chain attacks. Rebuild native addons with `npm rebuild --ignore-scripts=false <pkg>` — a bare `npm rebuild` is a silent no-op wherever the env default is active.
 - On the host, use the vendor-recommended install method and run from the repository root so agent discovery sees this file.
 
 ## Build, Format & Test
