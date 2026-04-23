@@ -745,6 +745,14 @@ export default {
       const toolbar = document.createElement("div");
       toolbar.setAttribute("class", "pdf-toolbar");
 
+      // Stop pointer events from propagating to PhotoSwipe.
+      toolbar.addEventListener("pointerdown", (ev) => {
+        ev.stopPropagation();
+      });
+      toolbar.addEventListener("mousedown", (ev) => {
+        ev.stopPropagation();
+      });
+
       // Create page navigation controls.
       const pageNav = document.createElement("div");
       pageNav.setAttribute("class", "pdf-toolbar__page-nav");
@@ -792,6 +800,50 @@ export default {
       pageNav.appendChild(nextBtn);
       pageNav.appendChild(pageCounter);
       toolbar.appendChild(pageNav);
+
+      // Create zoom control dropdown with wrapper.
+      const zoomWrapper = document.createElement("div");
+      zoomWrapper.setAttribute("class", "pdf-toolbar__zoom-wrapper");
+
+      const zoomSelect = document.createElement("select");
+      zoomSelect.setAttribute("class", "pdf-toolbar__zoom-select");
+      zoomSelect.setAttribute("title", "Zoom");
+
+      const zoomOptions = [
+        { value: "auto", label: "Automatic Zoom" },
+        { value: "page-fit", label: "Fit Page" },
+        { value: "page-width", label: "Fit Width" },
+        { value: "0.5", label: "50%" },
+        { value: "0.75", label: "75%" },
+        { value: "1", label: "100%" },
+        { value: "1.25", label: "125%" },
+        { value: "1.5", label: "150%" },
+        { value: "2", label: "200%" },
+      ];
+
+      zoomOptions.forEach((opt) => {
+        const option = document.createElement("option");
+        option.value = opt.value;
+        option.textContent = opt.label;
+        if (opt.value === "page-width") {
+          option.selected = true; // Default to fit width.
+        }
+        zoomSelect.appendChild(option);
+      });
+
+      zoomSelect.addEventListener("change", (ev) => {
+        ev.stopPropagation();
+        if (data.pdfViewer) {
+          data.pdfViewer.currentScaleValue = ev.target.value;
+        }
+      });
+
+      const zoomIcon = document.createElement("i");
+      zoomIcon.setAttribute("class", "mdi mdi-chevron-down pdf-toolbar__zoom-icon");
+
+      zoomWrapper.appendChild(zoomSelect);
+      zoomWrapper.appendChild(zoomIcon);
+      toolbar.appendChild(zoomWrapper);
       mediaElement.appendChild(toolbar);
 
       // Create container structure for PDF.js viewer.

@@ -321,6 +321,34 @@
     margin: 0 10px;
 }
 
+.pdf-toolbar__zoom-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: 16px;
+}
+
+.pdf-toolbar__zoom-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    border: 1px solid gray;
+    border-radius: 4px;
+    color: var(--pswp-icon-color);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 6px 28px 6px 12px;
+}
+
+.pdf-toolbar__zoom-icon {
+    position: absolute;
+    right: 6px;
+    color: var(--pswp-icon-color);
+    font-size: 18px;
+    pointer-events: none;
+}
+
 .pswp__img {
     -webkit-touch-callout: default;
 }
