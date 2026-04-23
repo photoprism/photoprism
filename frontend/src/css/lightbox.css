@@ -258,14 +258,12 @@
 /* PDF Document Viewer */
 
 .pswp__pdf-container {
-    --pdf-side-inset: 60px;
     position: absolute;
     top: 0;
-    left: var(--pdf-side-inset);
-    right: var(--pdf-side-inset);
+    left: 0;
+    right: 0;
     bottom: 0;
     overflow: auto;
-    background-color: #525659;
 }
 
 .pdfViewer .page {
