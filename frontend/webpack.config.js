@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 const fs = require("fs");
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const WorkboxPlugin = require("workbox-webpack-plugin");
@@ -151,6 +152,14 @@ const config = {
       __VUE_OPTIONS_API__: JSON.stringify(true), // Change to false as needed
       __VUE_PROD_DEVTOOLS__: JSON.stringify(false), // Change to true to enable in production
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false), // Change to true for detailed warnings
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: require.resolve("pdfjs-dist/build/pdf.worker.mjs"),
+          to: path.join(PATHS.build, "pdf.worker.mjs"),
+        },
+      ],
     }),
   ].filter(Boolean),
   performance: {
