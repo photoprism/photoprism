@@ -257,12 +257,14 @@
 
 /* PDF Document Viewer */
 
-.pswp__pdf-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+.pswp__media--document {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pdf-container {
+    position: relative;
     overflow: auto;
 }
 
@@ -279,6 +281,44 @@
 .pdfViewer .page,
 .pdfViewer .canvasWrapper {
     width: 100% !important;
+}
+
+.pdf-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+}
+
+.pdf-toolbar__page-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pdf-toolbar__nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: var(--pswp-icon-color);
+    cursor: pointer;
+}
+
+.pdf-toolbar__nav-btn:disabled {
+    color: gray;
+    cursor: default;
+    pointer-events: none;
+}
+
+.pdf-toolbar__nav-btn .mdi {
+    font-size: 24px;
+}
+
+.pdf-toolbar__page-counter {
+    color: var(--pswp-icon-color);
+    font-size: 14px;
+    margin: 0 10px;
 }
 
 .pswp__img {

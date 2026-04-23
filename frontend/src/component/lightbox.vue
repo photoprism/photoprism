@@ -741,10 +741,63 @@ export default {
       const mediaElement = document.createElement("div");
       mediaElement.setAttribute("class", "pswp__media--document");
 
+      // Create toolbar for PDF navigation.
+      const toolbar = document.createElement("div");
+      toolbar.setAttribute("class", "pdf-toolbar");
+
+      // Create page navigation controls.
+      const pageNav = document.createElement("div");
+      pageNav.setAttribute("class", "pdf-toolbar__page-nav");
+
+      // Previous page button.
+      const prevBtn = document.createElement("button");
+      prevBtn.setAttribute("class", "pdf-toolbar__nav-btn");
+      prevBtn.setAttribute("type", "button");
+      prevBtn.setAttribute("title", "Previous Page");
+      prevBtn.disabled = true; // Disabled initially (start on page 1).
+      prevBtn.innerHTML = '<i class="mdi mdi-chevron-up"></i>';
+      prevBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        if (data.pdfViewer && data.pdfViewer.currentPageNumber > 1) {
+          data.pdfViewer.currentPageNumber--;
+        }
+      });
+
+      // Next page button.
+      const nextBtn = document.createElement("button");
+      nextBtn.setAttribute("class", "pdf-toolbar__nav-btn");
+      nextBtn.setAttribute("type", "button");
+      nextBtn.setAttribute("title", "Next Page");
+      nextBtn.innerHTML = '<i class="mdi mdi-chevron-down"></i>';
+      nextBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        if (data.pdfViewer && data.pdfViewer.currentPageNumber < data.pdfViewer.pagesCount) {
+          data.pdfViewer.currentPageNumber++;
+        }
+      });
+
+      // Helper to update button disabled states.
+      const updateNavButtons = (currentPage, totalPages) => {
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPages;
+      };
+
+      // Page counter display.
+      const pageCounter = document.createElement("span");
+      pageCounter.setAttribute("class", "pdf-toolbar__page-counter");
+      pageCounter.setAttribute("title", "Page");
+      pageCounter.textContent = "– / –";
+
+      pageNav.appendChild(prevBtn);
+      pageNav.appendChild(nextBtn);
+      pageNav.appendChild(pageCounter);
+      toolbar.appendChild(pageNav);
+      mediaElement.appendChild(toolbar);
+
       // Create container structure for PDF.js viewer.
       // PDFViewer expects: container (scrollable) > div.pdfViewer (pages rendered here)
       const container = document.createElement("div");
-      container.setAttribute("class", "pswp__pdf-container");
+      container.setAttribute("class", "pdf-container");
 
       // Stop wheel events from propagating to PhotoSwipe (which uses them for zoom).
       // This allows normal mouse wheel scrolling within the PDF container.
@@ -796,6 +849,17 @@ export default {
       eventBus.on("pagesinit", () => {
         // Scale to fit the container width.
         pdfViewer.currentScaleValue = "page-width";
+        // Update page counter with total pages.
+        pageCounter.textContent = `${pdfViewer.currentPageNumber} / ${pdfViewer.pagesCount}`;
+        // Update navigation button states.
+        updateNavButtons(pdfViewer.currentPageNumber, pdfViewer.pagesCount);
+      });
+
+      // Update page counter on page change.
+      eventBus.on("pagechanging", (ev) => {
+        pageCounter.textContent = `${ev.pageNumber} / ${pdfViewer.pagesCount}`;
+        // Update navigation button states.
+        updateNavButtons(ev.pageNumber, pdfViewer.pagesCount);
       });
 
       // Watch for container resize and rescale the PDF to fit.
