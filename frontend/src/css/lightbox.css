@@ -266,21 +266,14 @@
 .pdf-container {
     position: relative;
     overflow: auto;
+    display: flex;
+    justify-content: center;
 }
 
 .pdfViewer .page {
-    border-left: none;
-    border-right: none;
+    border: none;
     margin: 0;
-}
-
-.pdfViewer :first-child {
-    border-top: none;
-}
-
-.pdfViewer .page,
-.pdfViewer .canvasWrapper {
-    width: 100% !important;
+    margin-bottom: 20px;
 }
 
 .pdf-toolbar {
