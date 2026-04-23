@@ -592,6 +592,8 @@ export default {
           model: model,
           pdfUrl: model.DownloadUrl,
           msrc: img.src, // Thumbnail preview.
+          width: Math.min(window.innerWidth - 140, 1200),
+          height: window.innerHeight - 180,
           loading: true,
         };
       }
@@ -736,6 +738,9 @@ export default {
       const data = content.data;
       const pdfUrl = data.pdfUrl;
 
+      const mediaElement = document.createElement("div");
+      mediaElement.setAttribute("class", "pswp__media--document");
+
       // Create container structure for PDF.js viewer.
       // PDFViewer expects: container (scrollable) > div.pdfViewer (pages rendered here)
       const container = document.createElement("div");
@@ -751,6 +756,7 @@ export default {
       viewerDiv.setAttribute("class", "pdfViewer");
 
       container.appendChild(viewerDiv);
+      mediaElement.appendChild(container);
 
       // Initialize PDF.js viewer components.
       const eventBus = new EventBus();
@@ -801,7 +807,7 @@ export default {
       resizeObserver.observe(container);
       data.resizeObserver = resizeObserver;
 
-      return container;
+      return mediaElement;
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
     createVideoElement(content, autoplay = false, loop = false, mute = false) {

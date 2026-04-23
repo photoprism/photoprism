@@ -258,15 +258,29 @@
 /* PDF Document Viewer */
 
 .pswp__pdf-container {
-    --pdf-top-offset: 72px;
     --pdf-side-inset: 60px;
     position: absolute;
-    top: var(--pdf-top-offset);
+    top: 0;
     left: var(--pdf-side-inset);
     right: var(--pdf-side-inset);
     bottom: 0;
     overflow: auto;
     background-color: #525659;
+}
+
+.pdfViewer .page {
+    border-left: none;
+    border-right: none;
+    margin: 0;
+}
+
+.pdfViewer :first-child {
+    border-top: none;
+}
+
+.pdfViewer .page,
+.pdfViewer .canvasWrapper {
+    width: 100% !important;
 }
 
 .pswp__img {
