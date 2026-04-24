@@ -739,15 +739,8 @@ export default {
         }
       }
     },
-    // Creates a PDF viewer element using pdfjs-dist.
-    createPdfViewerElement(content) {
-      const data = content.data;
-      const pdfUrl = data.pdfUrl;
-
-      const mediaElement = document.createElement("div");
-      mediaElement.setAttribute("class", "pswp__media--document");
-
-      // Create toolbar for PDF navigation.
+    // Creates the PDF toolbar.
+    createPdfToolbar(data) {
       const toolbar = document.createElement("div");
       toolbar.setAttribute("class", "pdf-toolbar");
 
@@ -800,7 +793,7 @@ export default {
       prevBtn.innerHTML = '<i class="mdi mdi-chevron-up"></i>';
       prevBtn.addEventListener("click", (ev) => {
         ev.stopPropagation();
-        if (data.pdfViewer && data.pdfViewer.currentPageNumber > 1) {
+        if (data.pdfDocument && data.pdfViewer && data.pdfViewer.currentPageNumber > 1) {
           data.pdfViewer.currentPageNumber--;
         }
       });
@@ -810,16 +803,18 @@ export default {
       nextBtn.setAttribute("class", "pdf-toolbar__nav-btn");
       nextBtn.setAttribute("type", "button");
       nextBtn.setAttribute("title", "Next Page");
+      nextBtn.disabled = true; // Disabled initially until PDF is loaded.
       nextBtn.innerHTML = '<i class="mdi mdi-chevron-down"></i>';
       nextBtn.addEventListener("click", (ev) => {
         ev.stopPropagation();
-        if (data.pdfViewer && data.pdfViewer.currentPageNumber < data.pdfViewer.pagesCount) {
+        if (data.pdfDocument && data.pdfViewer && data.pdfViewer.currentPageNumber < data.pdfDocument.numPages) {
           data.pdfViewer.currentPageNumber++;
         }
       });
 
       // Helper to update button disabled states.
-      const updateNavButtons = (currentPage, totalPages) => {
+      const updateNavButtons = (currentPage) => {
+        const totalPages = data.pdfDocument ? data.pdfDocument.numPages : 0;
         prevBtn.disabled = currentPage <= 1;
         nextBtn.disabled = currentPage >= totalPages;
       };
@@ -883,9 +878,17 @@ export default {
       toolbar.appendChild(toolbarLeft);
       toolbar.appendChild(toolbarCenter);
       toolbar.appendChild(toolbarRight);
-      mediaElement.appendChild(toolbar);
 
-      // Create thumbnail drawer.
+      return {
+        element: toolbar,
+        thumbToggleBtn,
+        panToggleBtn,
+        pageCounter,
+        updateNavButtons,
+      };
+    },
+    // Creates the PDF thumbnail drawer panel.
+    createPdfThumbnailDrawer() {
       const thumbDrawer = document.createElement("div");
       thumbDrawer.setAttribute("class", "pdf-thumbnail-drawer");
 
@@ -904,17 +907,45 @@ export default {
       thumbList.setAttribute("class", "pdf-thumbnail-list");
       thumbDrawer.appendChild(thumbList);
 
-      // Toggle thumbnail drawer visibility.
-      thumbToggleBtn.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        thumbDrawer.classList.toggle("pdf-thumbnail-drawer--open");
-        thumbToggleBtn.classList.toggle("pdf-toolbar__nav-btn--active");
-      });
+      return {
+        element: thumbDrawer,
+        list: thumbList,
+      };
+    },
+    // Creates a PDF viewer element using pdfjs-dist.
+    createPdfViewerElement(content) {
+      const data = content.data;
+      const pdfUrl = data.pdfUrl;
+      const isMobile = window.innerWidth < this.mobileBreakpoint;
+
+      const mediaElement = document.createElement("div");
+      mediaElement.setAttribute("class", "pswp__media--document");
+
+      // Desktop-only: toolbar and thumbnail drawer.
+      let toolbarControls = null;
+      let thumbDrawer = null;
+
+      if (!isMobile) {
+        toolbarControls = this.createPdfToolbar(data);
+        thumbDrawer = this.createPdfThumbnailDrawer();
+
+        // Toggle thumbnail drawer visibility.
+        toolbarControls.thumbToggleBtn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          thumbDrawer.element.classList.toggle("pdf-thumbnail-drawer--open");
+          toolbarControls.thumbToggleBtn.classList.toggle("pdf-toolbar__nav-btn--active");
+        });
+
+        mediaElement.appendChild(toolbarControls.element);
+      }
 
       // Create wrapper for drawer and PDF container.
       const contentWrapper = document.createElement("div");
       contentWrapper.setAttribute("class", "pdf-content-wrapper");
-      contentWrapper.appendChild(thumbDrawer);
+
+      if (thumbDrawer) {
+        contentWrapper.appendChild(thumbDrawer.element);
+      }
 
       // Create container structure for PDF.js viewer.
       // PDFViewer expects: container (scrollable) > div.pdfViewer (pages rendered here)
@@ -929,13 +960,15 @@ export default {
       let scrollStartX = 0;
       let scrollStartY = 0;
 
-      // Toggle pan mode.
-      panToggleBtn.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        isPanMode = !isPanMode;
-        panToggleBtn.classList.toggle("pdf-toolbar__nav-btn--active", isPanMode);
-        container.classList.toggle("pdf-container--pan-mode", isPanMode);
-      });
+      // Desktop-only: toggle pan mode via toolbar button.
+      if (toolbarControls) {
+        toolbarControls.panToggleBtn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          isPanMode = !isPanMode;
+          toolbarControls.panToggleBtn.classList.toggle("pdf-toolbar__nav-btn--active", isPanMode);
+          container.classList.toggle("pdf-container--pan-mode", isPanMode);
+        });
+      }
 
       // Track if pan mode was activated via spacebar (vs button click).
       let isPanViaSpacebar = false;
@@ -946,7 +979,9 @@ export default {
           if (!isPanViaSpacebar) {
             isPanViaSpacebar = true;
             isPanMode = true;
-            panToggleBtn.classList.add("pdf-toolbar__nav-btn--active");
+            if (toolbarControls) {
+              toolbarControls.panToggleBtn.classList.add("pdf-toolbar__nav-btn--active");
+            }
             container.classList.add("pdf-container--pan-mode");
           }
         },
@@ -954,7 +989,9 @@ export default {
           if (isPanViaSpacebar) {
             isPanViaSpacebar = false;
             isPanMode = false;
-            panToggleBtn.classList.remove("pdf-toolbar__nav-btn--active");
+            if (toolbarControls) {
+              toolbarControls.panToggleBtn.classList.remove("pdf-toolbar__nav-btn--active");
+            }
             container.classList.remove("pdf-container--pan-mode");
           }
         },
@@ -1026,8 +1063,8 @@ export default {
         viewer: viewerDiv,
         eventBus,
         linkService,
-        textLayerMode: 0, // Disable text layer for now.
-        annotationMode: 0, // Disable annotations for now.
+        textLayerMode: 0,
+        annotationMode: 0,
       });
 
       linkService.setViewer(pdfViewer);
@@ -1044,16 +1081,19 @@ export default {
           pdfViewer.setDocument(pdfDocument);
           linkService.setDocument(pdfDocument, null);
 
-          // Generate thumbnails for each page.
-          this.generatePdfThumbnails(pdfDocument, thumbList, pdfViewer);
+          // Generate thumbnails for each page (desktop only).
+          if (thumbDrawer) {
+            this.generatePdfThumbnails(pdfDocument, thumbDrawer.list, pdfViewer);
+          }
         })
         .catch((err) => {
           this.log("failed to load PDF document", err);
         });
 
-      // Helper to update active thumbnail.
+      // Helper to update active thumbnail (desktop only).
       const updateActiveThumbnail = (pageNumber) => {
-        thumbList.querySelectorAll(".pdf-thumbnail-item").forEach((item) => {
+        if (!thumbDrawer) return;
+        thumbDrawer.list.querySelectorAll(".pdf-thumbnail-item").forEach((item) => {
           if (parseInt(item.getAttribute("data-page"), 10) === pageNumber) {
             item.classList.add("pdf-thumbnail-item--active");
           } else {
@@ -1066,10 +1106,13 @@ export default {
       eventBus.on("pagesinit", () => {
         // Scale to fit the container width.
         pdfViewer.currentScaleValue = "page-width";
-        // Update page counter with total pages.
-        pageCounter.textContent = `${pdfViewer.currentPageNumber} / ${pdfViewer.pagesCount}`;
-        // Update navigation button states.
-        updateNavButtons(pdfViewer.currentPageNumber, pdfViewer.pagesCount);
+
+        // Update toolbar controls (desktop only).
+        if (toolbarControls) {
+          toolbarControls.pageCounter.textContent = `${pdfViewer.currentPageNumber} / ${data.pdfDocument.numPages}`;
+          toolbarControls.updateNavButtons(pdfViewer.currentPageNumber);
+        }
+
         // Update active thumbnail.
         updateActiveThumbnail(pdfViewer.currentPageNumber);
       });
@@ -1081,11 +1124,14 @@ export default {
         });
       });
 
-      // Update page counter on page change.
+      // Handle page change.
       eventBus.on("pagechanging", (ev) => {
-        pageCounter.textContent = `${ev.pageNumber} / ${pdfViewer.pagesCount}`;
-        // Update navigation button states.
-        updateNavButtons(ev.pageNumber, pdfViewer.pagesCount);
+        // Update toolbar controls (desktop only).
+        if (toolbarControls) {
+          toolbarControls.pageCounter.textContent = `${ev.pageNumber} / ${data.pdfDocument.numPages}`;
+          toolbarControls.updateNavButtons(ev.pageNumber);
+        }
+
         // Update active thumbnail.
         updateActiveThumbnail(ev.pageNumber);
       });
@@ -1095,7 +1141,7 @@ export default {
 
       // Watch for container resize and rescale the PDF.
       const resizeObserver = new ResizeObserver(() => {
-        if (pdfViewer.pagesCount > 0 && data.currentZoom) {
+        if (data.pdfDocument && data.currentZoom) {
           pdfViewer.currentScaleValue = data.currentZoom;
         }
       });
