@@ -40,7 +40,7 @@ async function openSidebarOnFirstPhoto() {
   return uid;
 }
 
-test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })("Edits title, caption, and plain-text inline fields from the sidebar", async (t) => {
+test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })("Common: Edits title, caption, and plain-text inline fields from the sidebar", async (t) => {
   await openSidebarOnFirstPhoto();
 
   // Title: if the sidebar renders an add-prompt (empty title), click

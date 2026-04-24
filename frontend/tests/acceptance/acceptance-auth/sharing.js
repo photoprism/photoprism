@@ -198,7 +198,7 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })("Multi-
   await contextmenu.clearSelection();
 });
 
-test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Share Link: Lightbox sidebar shows only restricted metadata", async (t) => {
+test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common: Lightbox sidebar shows only restricted metadata on share links", async (t) => {
   // Reuse the shared album exposed by sharing-002. The Vitest role x
   // field matrix already covers the per-role logic against a mocked
   // $session; this test pins the real anonymous path end-to-end.

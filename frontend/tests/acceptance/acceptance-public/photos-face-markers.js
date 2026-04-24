@@ -19,7 +19,7 @@ async function openSidebarOnFirstPhoto(t) {
   return uid;
 }
 
-test.meta("testID", "face-markers-001").meta({ mode: "public" })("Show/hide markers toggle reveals and hides marker overlays", async (t) => {
+test.meta("testID", "face-markers-001").meta({ mode: "public" })("Common: Show/hide markers toggle reveals and hides marker overlays", async (t) => {
   await openSidebarOnFirstPhoto(t);
 
   // Sidebar People header has the show/hide and + buttons.
@@ -36,7 +36,7 @@ test.meta("testID", "face-markers-001").meta({ mode: "public" })("Show/hide mark
 });
 
 test.meta("testID", "face-markers-002").meta({ mode: "public" })(
-  "People header and marker controls are visible to admin regardless of marker state",
+  "Common: People header and marker controls are visible to admin regardless of marker state",
   async (t) => {
     await t.click(toolbar.cardsViewAction);
     const uid = await photo.getNthPhotoUid("image", 0);
@@ -48,7 +48,7 @@ test.meta("testID", "face-markers-002").meta({ mode: "public" })(
   }
 );
 
-test.meta("testID", "face-markers-003").meta({ mode: "public" })("Drawing a new face marker persists it and shows it in the People list", async (t) => {
+test.meta("testID", "face-markers-003").meta({ mode: "public" })("Common: Drawing a new face marker persists it and shows it in the People list", async (t) => {
   await openSidebarOnFirstPhoto(t);
 
   const beforeRows = await photoviewer.getPersonRowCount();
@@ -64,7 +64,7 @@ test.meta("testID", "face-markers-003").meta({ mode: "public" })("Drawing a new 
   await t.expect(photoviewer.faceMarkerRect.count).gte(1);
 });
 
-test.meta("testID", "face-markers-004").meta({ mode: "public" })("Cancelling a draft does not persist anything", async (t) => {
+test.meta("testID", "face-markers-004").meta({ mode: "public" })("Common: Cancelling a draft does not persist anything", async (t) => {
   await openSidebarOnFirstPhoto(t);
 
   const beforeRows = await photoviewer.getPersonRowCount();
@@ -80,7 +80,7 @@ test.meta("testID", "face-markers-004").meta({ mode: "public" })("Cancelling a d
 });
 
 test.meta("testID", "face-markers-005").meta({ mode: "public" })(
-  "Removing an unnamed marker is immediate and does not show a confirmation dialog",
+  "Common: Removing an unnamed marker is immediate and does not show a confirmation dialog",
   async (t) => {
     await openSidebarOnFirstPhoto(t);
 
@@ -106,7 +106,7 @@ test.meta("testID", "face-markers-005").meta({ mode: "public" })(
   }
 );
 
-test.meta("testID", "face-markers-006").meta({ mode: "public" })("Named markers do not expose a remove icon", async (t) => {
+test.meta("testID", "face-markers-006").meta({ mode: "public" })("Common: Named markers do not expose a remove icon", async (t) => {
   await t.click(toolbar.cardsViewAction);
   // Try to find a photo that has at least one named marker. We open the
   // first image and then check the rendered People list. The fixture set
@@ -123,7 +123,7 @@ test.meta("testID", "face-markers-006").meta({ mode: "public" })("Named markers 
   }
 });
 
-test.meta("testID", "face-markers-007").meta({ mode: "public" })("Newly added markers persist across photo viewer reopens", async (t) => {
+test.meta("testID", "face-markers-007").meta({ mode: "public" })("Common: Newly added markers persist across photo viewer reopens", async (t) => {
   await openSidebarOnFirstPhoto(t);
   const beforeRows = await photoviewer.getPersonRowCount();
 
@@ -145,7 +145,7 @@ test.meta("testID", "face-markers-007").meta({ mode: "public" })("Newly added ma
   await t.expect(photoviewer.personRow.count).eql(beforeRows + 1);
 });
 
-test.meta("testID", "face-markers-008").meta({ mode: "public" })("Renaming an unnamed marker via the inline combobox persists the subject", async (t) => {
+test.meta("testID", "face-markers-008").meta({ mode: "public" })("Common: Renaming an unnamed marker via the inline combobox persists the subject", async (t) => {
   await openSidebarOnFirstPhoto(t);
 
   // Create an unnamed marker to rename. Draw at the overlay's center
@@ -174,7 +174,7 @@ test.meta("testID", "face-markers-008").meta({ mode: "public" })("Renaming an un
   await t.expect(namedRow.exists).ok();
 });
 
-test.meta("testID", "face-markers-010").meta({ mode: "public" })("Blurring an unnamed marker with a novel name opens the Add-name dialog", async (t) => {
+test.meta("testID", "face-markers-010").meta({ mode: "public" })("Common: Blurring an unnamed marker with a novel name opens the Add-name dialog", async (t) => {
   await openSidebarOnFirstPhoto(t);
 
   // Draw a new unnamed marker so we control the row.
@@ -204,7 +204,7 @@ test.meta("testID", "face-markers-010").meta({ mode: "public" })("Blurring an un
   await t.expect(photoviewer.personRow.filter((node) => (node.textContent || "").indexOf("SidebarBlurDialogPerson") !== -1).exists).notOk();
 });
 
-test.meta("testID", "face-markers-009").meta({ mode: "public" })("Ejecting a named marker removes the subject link but keeps the marker", async (t) => {
+test.meta("testID", "face-markers-009").meta({ mode: "public" })("Common: Ejecting a named marker removes the subject link but keeps the marker", async (t) => {
   await openSidebarOnFirstPhoto(t);
 
   // Ensure at least one named marker exists: if the first photo
