@@ -760,6 +760,9 @@ export default {
       const toolbarCenter = document.createElement("div");
       toolbarCenter.setAttribute("class", "pdf-toolbar__center");
 
+      const toolbarRight = document.createElement("div");
+      toolbarRight.setAttribute("class", "pdf-toolbar__right");
+
       // Create thumbnail toggle button.
       const thumbToggleBtn = document.createElement("button");
       thumbToggleBtn.setAttribute("class", "pdf-toolbar__nav-btn");
@@ -768,6 +771,15 @@ export default {
       thumbToggleBtn.innerHTML = '<i class="mdi mdi-image-multiple"></i>';
 
       toolbarLeft.appendChild(thumbToggleBtn);
+
+      // Create hand/pan toggle button.
+      const panToggleBtn = document.createElement("button");
+      panToggleBtn.setAttribute("class", "pdf-toolbar__nav-btn");
+      panToggleBtn.setAttribute("type", "button");
+      panToggleBtn.setAttribute("title", "Hand Tool");
+      panToggleBtn.innerHTML = '<i class="mdi mdi-hand-back-left"></i>';
+
+      toolbarRight.appendChild(panToggleBtn);
 
       // Create page navigation controls.
       const pageNav = document.createElement("div");
@@ -864,6 +876,7 @@ export default {
 
       toolbar.appendChild(toolbarLeft);
       toolbar.appendChild(toolbarCenter);
+      toolbar.appendChild(toolbarRight);
       mediaElement.appendChild(toolbar);
 
       // Create thumbnail drawer.
@@ -901,6 +914,63 @@ export default {
       // PDFViewer expects: container (scrollable) > div.pdfViewer (pages rendered here)
       const container = document.createElement("div");
       container.setAttribute("class", "pdf-container");
+
+      // Pan/drag state.
+      let isPanMode = false;
+      let isPanning = false;
+      let panStartX = 0;
+      let panStartY = 0;
+      let scrollStartX = 0;
+      let scrollStartY = 0;
+
+      // Toggle pan mode.
+      panToggleBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        isPanMode = !isPanMode;
+        panToggleBtn.classList.toggle("pdf-toolbar__nav-btn--active", isPanMode);
+        container.classList.toggle("pdf-container--pan-mode", isPanMode);
+      });
+
+      // Pan/drag event handlers.
+      container.addEventListener("pointerdown", (ev) => {
+        if (!isPanMode) return;
+        ev.stopPropagation();
+        ev.preventDefault();
+        isPanning = true;
+        panStartX = ev.clientX;
+        panStartY = ev.clientY;
+        scrollStartX = container.scrollLeft;
+        scrollStartY = container.scrollTop;
+        container.classList.add("pdf-container--panning");
+        container.setPointerCapture(ev.pointerId);
+      });
+
+      container.addEventListener("pointermove", (ev) => {
+        if (!isPanning) return;
+        ev.stopPropagation();
+        ev.preventDefault();
+        const dx = ev.clientX - panStartX;
+        const dy = ev.clientY - panStartY;
+        container.scrollLeft = scrollStartX - dx;
+        container.scrollTop = scrollStartY - dy;
+      });
+
+      container.addEventListener("pointerup", (ev) => {
+        if (isPanning) {
+          ev.stopPropagation();
+          container.releasePointerCapture(ev.pointerId);
+        }
+        isPanning = false;
+        container.classList.remove("pdf-container--panning");
+      });
+
+      container.addEventListener("pointercancel", (ev) => {
+        if (isPanning) {
+          container.releasePointerCapture(ev.pointerId);
+        }
+        isPanning = false;
+        container.classList.remove("pdf-container--panning");
+      });
 
       // Stop wheel events from propagating to PhotoSwipe (which uses them for zoom).
       // This allows normal mouse wheel scrolling within the PDF container.

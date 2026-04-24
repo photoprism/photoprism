@@ -268,6 +268,14 @@
     overflow: auto;
 }
 
+.pdf-container--pan-mode {
+    cursor: grab;
+}
+
+.pdf-container--panning {
+    cursor: grabbing;
+}
+
 .pdf-container .pdfViewer {
     text-align: center;
 }
@@ -280,8 +288,12 @@
 .pdf-toolbar {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     padding: 8px 16px;
+}
+
+.pdf-toolbar__left {
+    min-width: 40px;
 }
 
 .pdf-toolbar__center {
@@ -289,6 +301,10 @@
     align-items: center;
     justify-content: center;
     flex: 1;
+}
+
+.pdf-toolbar__right {
+    min-width: 40px;
 }
 
 .pdf-toolbar__page-nav {
