@@ -834,6 +834,7 @@ export default {
       zoomSelect.addEventListener("change", (ev) => {
         ev.stopPropagation();
         if (data.pdfViewer) {
+          data.currentZoom = ev.target.value;
           data.pdfViewer.currentScaleValue = ev.target.value;
         }
       });
@@ -907,6 +908,13 @@ export default {
         updateNavButtons(pdfViewer.currentPageNumber, pdfViewer.pagesCount);
       });
 
+      // Reset horizontal scroll when scale changes.
+      eventBus.on("scalechanging", () => {
+        requestAnimationFrame(() => {
+          container.scrollLeft = 0;
+        });
+      });
+
       // Update page counter on page change.
       eventBus.on("pagechanging", (ev) => {
         pageCounter.textContent = `${ev.pageNumber} / ${pdfViewer.pagesCount}`;
@@ -914,10 +922,13 @@ export default {
         updateNavButtons(ev.pageNumber, pdfViewer.pagesCount);
       });
 
-      // Watch for container resize and rescale the PDF to fit.
+      // Store the current zoom selection for resize handling.
+      data.currentZoom = "page-width";
+
+      // Watch for container resize and rescale the PDF.
       const resizeObserver = new ResizeObserver(() => {
-        if (pdfViewer.pagesCount > 0) {
-          pdfViewer.currentScaleValue = "page-width";
+        if (pdfViewer.pagesCount > 0 && data.currentZoom) {
+          pdfViewer.currentScaleValue = data.currentZoom;
         }
       });
       resizeObserver.observe(container);

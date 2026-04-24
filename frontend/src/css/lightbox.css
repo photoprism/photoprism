@@ -266,14 +266,15 @@
 .pdf-container {
     position: relative;
     overflow: auto;
-    display: flex;
-    justify-content: center;
+}
+
+.pdf-container .pdfViewer {
+    text-align: center;
 }
 
 .pdfViewer .page {
     border: none;
-    margin: 0;
-    margin-bottom: 20px;
+    margin: 0 auto 20px auto;
 }
 
 .pdf-toolbar {
