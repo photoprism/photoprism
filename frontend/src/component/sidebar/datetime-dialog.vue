@@ -114,10 +114,10 @@
           </v-col>
         </v-row>
         <div class="action-buttons mt-4 d-flex justify-end ga-2">
-          <v-btn variant="flat" color="button" min-width="100" @click.stop="close">
+          <v-btn variant="flat" color="button" class="action-cancel" min-width="100" @click.stop="close">
             {{ $gettext("Cancel") }}
           </v-btn>
-          <v-btn color="info" min-width="100" :disabled="invalidDate" @click="confirm">
+          <v-btn color="info" class="action-confirm" min-width="100" :disabled="invalidDate" @click="confirm">
             {{ $gettext("Confirm") }}
           </v-btn>
         </div>

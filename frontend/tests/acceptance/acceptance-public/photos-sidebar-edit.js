@@ -1,139 +1,115 @@
-import { Selector, t } from "testcafe";
+import { Selector } from "testcafe";
 import testcafeconfig from "../../testcafeconfig.json";
-import Toolbar from "../page-model/toolbar";
-import Photo from "../page-model/photo";
 import PhotoViewer from "../page-model/photoviewer";
+import Menu from "../page-model/menu";
+import Label from "../page-model/label";
+import Album from "../page-model/album";
 
 // Drives inline editing of every editable sidebar field against a real
-// backend. The companion Vitest matrix covers per-role visibility; this
-// test pins the DOM wiring and persistence path end-to-end.
+// backend. The companion Vitest matrix covers per-role visibility; these
+// tests pin the DOM wiring and persistence path end-to-end.
 fixture`Test lightbox sidebar inline editing`.page`${testcafeconfig.url}`;
 
-const toolbar = new Toolbar();
-const photo = new Photo();
 const photoviewer = new PhotoViewer();
+const menu = new Menu();
+const label = new Label();
+const album = new Album();
 
-// Clicks the pencil in a sidebar row keyed by its MDI prepend-icon,
-// then returns the active input/textarea that the user would type in.
-async function startInlineEditByIcon(iconClass) {
-  const row = photoviewer.sidebarRow(iconClass);
-  await t.expect(row.exists).ok();
-  await t.click(row.find(".meta-inline-pencil"));
-  const input = row.find(".meta-inline-edit").find("input,textarea");
-  await t.expect(input.visible).ok();
-  return input;
-}
+test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })(
+  "Common: Edits title, caption, keywords, notes, and plain-text inline fields from the sidebar",
+  async (t) => {
+    await photoviewer.openSidebarOnFirstPhoto();
 
-// Commits an open inline edit by clicking the check-mark icon inside
-// the same row.
-async function confirmInlineEditByIcon(iconClass) {
-  const confirmIcon = photoviewer.sidebarRow(iconClass).find(".meta-inline-confirm");
-  await t.expect(confirmIcon.visible).ok();
-  await t.click(confirmIcon);
-}
+    const titleInput = Selector(".p-sidebar-info .meta-inline-title input", { timeout: 15000 });
+    await photoviewer.startInlineEditOrAdd("meta-title", "Title");
+    await t.expect(titleInput.visible).ok();
+    await t.typeText(titleInput, "Sidebar Edit Title", { replace: true }).pressKey("enter");
+    await t.expect(Selector(".p-sidebar-info .meta-title").withText("Sidebar Edit Title").exists).ok();
 
-async function openSidebarOnFirstPhoto() {
-  await t.click(toolbar.cardsViewAction);
-  const uid = await photo.getNthPhotoUid("image", 0);
-  await photoviewer.openPhotoViewer("uid", uid);
-  await photoviewer.openInfoSidebar();
-  return uid;
-}
+    const captionTextarea = Selector(".p-sidebar-info .meta-inline-caption textarea", { timeout: 15000 });
+    await photoviewer.startInlineEditOrAdd("meta-caption", "Caption");
+    await t.expect(captionTextarea.visible).ok();
+    await t.typeText(captionTextarea, "Caption added in sidebar edit test", { replace: true });
+    const captionConfirm = captionTextarea.parent(".p-sidebar-info .v-list-item").find(".meta-inline-confirm");
+    await t.click(captionConfirm);
+    await t.expect(Selector(".p-sidebar-info .meta-caption").withText("Caption added in sidebar edit test").exists).ok();
 
-test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })("Common: Edits title, caption, and plain-text inline fields from the sidebar", async (t) => {
-  await openSidebarOnFirstPhoto();
+    const plainTextFields = [
+      { icon: "mdi-text-box-outline", value: "Testing sidebar edits" }, // Subject
+      { icon: "mdi-palette", value: "Test Artist" },
+      { icon: "mdi-copyright", value: "2024 Test" },
+      { icon: "mdi-license", value: "Test-License-1.0" },
+    ];
+    for (const field of plainTextFields) {
+      const input = await photoviewer.startInlineEditByIcon(field.icon);
+      await t.typeText(input, field.value, { replace: true });
+      await photoviewer.confirmInlineEditByIcon(field.icon);
+      await t.expect(photoviewer.sidebarRow(field.icon).withText(field.value).exists).ok();
+    }
 
-  // Title: if the sidebar renders an add-prompt (empty title), click
-  // it; otherwise use the pencil. Either way we type a deterministic
-  // value and assert it persists.
-  const titleInput = Selector(".p-sidebar-info .meta-inline-title input", { timeout: 15000 });
-  const titleDisplay = Selector(".p-sidebar-info .meta-title", { timeout: 15000 });
-  if (await titleDisplay.exists) {
-    await t.click(titleDisplay.parent(".p-sidebar-info .v-list-item").find(".meta-inline-pencil"));
-  } else {
-    await t.click(Selector(".p-sidebar-info .meta-add-prompt").withText("Title"));
+    // The backend normalizes keywords (split on whitespace/commas,
+    // lowercased, deduped), so we assert on a unique single-word token
+    // that survives that pass.
+    const keywordsInput = await photoviewer.startInlineEditBySection("Keywords");
+    await t.typeText(keywordsInput, "sidebareditkw", { replace: true });
+    await photoviewer.confirmInlineEditBySection("Keywords");
+    await t.expect(Selector(".p-sidebar-info .meta-keywords").withText("sidebareditkw").exists).ok();
+
+    const notesInput = await photoviewer.startInlineEditBySection("Notes");
+    await t.typeText(notesInput, "SidebarNoteFromTest", { replace: true });
+    await photoviewer.confirmInlineEditBySection("Notes");
+    await t.expect(Selector(".p-sidebar-info .meta-notes").withText("SidebarNoteFromTest").exists).ok();
   }
-  await t.expect(titleInput.visible).ok();
-  await t.typeText(titleInput, "Sidebar Edit Title", { replace: true }).pressKey("enter");
-  await t.expect(Selector(".p-sidebar-info .meta-title").withText("Sidebar Edit Title").exists).ok();
+);
 
-  // Caption.
-  const captionTextarea = Selector(".p-sidebar-info .meta-inline-caption textarea", { timeout: 15000 });
-  const captionDisplay = Selector(".p-sidebar-info .meta-caption", { timeout: 15000 });
-  if (await captionDisplay.exists) {
-    await t.click(captionDisplay.parent(".p-sidebar-info .v-list-item").find(".meta-inline-pencil"));
-  } else {
-    await t.click(Selector(".p-sidebar-info .meta-add-prompt").withText("Caption"));
-  }
-  await t.expect(captionTextarea.visible).ok();
-  await t.typeText(captionTextarea, "Caption added in sidebar edit test", { replace: true });
-  // Caption confirms via the check icon inside the same row.
-  const captionConfirm = captionTextarea.parent(".p-sidebar-info .v-list-item").find(".meta-inline-confirm");
-  await t.click(captionConfirm);
-  await t.expect(Selector(".p-sidebar-info .meta-caption").withText("Caption added in sidebar edit test").exists).ok();
+test.meta("testID", "sidebar-edit-002").meta({ mode: "public" })("Common: Adds a label and an album inline and persists them to the photo", async (t) => {
+  const uid = await photoviewer.openSidebarOnFirstPhoto();
 
-  // Subject, Artist, Copyright, License — all share the same textarea
-  // shape and confirm-via-check pattern. Each field lives in a row
-  // identified by its prepend-icon.
-  const plainTextFields = [
-    { icon: "mdi-text-box-outline", value: "Testing sidebar edits" }, // Subject
-    { icon: "mdi-palette", value: "Test Artist" },
-    { icon: "mdi-copyright", value: "2024 Test" },
-    { icon: "mdi-license", value: "Test-License-1.0" },
-  ];
-  for (const field of plainTextFields) {
-    const input = await startInlineEditByIcon(field.icon);
-    await t.typeText(input, field.value, { replace: true });
-    await confirmInlineEditByIcon(field.icon);
-    await t.expect(photoviewer.sidebarRow(field.icon).withText(field.value).exists).ok();
-  }
+  // Unique names per run avoid collisions with leftover fixtures from
+  // earlier executions that didn't tear down cleanly.
+  const stamp = Date.now();
+  const labelTitle = `SidebarEditLabel-${stamp}`;
+  const albumTitle = `SidebarEditAlbum-${stamp}`;
 
-  // Keywords and Notes — section-level pencils in the section header,
-  // the edit textarea appears in the row below. The backend normalizes
-  // keywords (split on whitespace/commas, lowercased, deduped), so we
-  // check for a unique single-word token that survives that pass.
-  const keywordsSection = Selector(".p-sidebar-info .text-subtitle-2").withText("Keywords").parent(".p-sidebar-info .v-list-item");
-  await t.click(keywordsSection.find(".meta-inline-pencil"));
-  const activeTextarea = Selector(".p-sidebar-info .meta-inline-edit textarea");
-  await t.expect(activeTextarea.visible).ok();
-  await t.typeText(activeTextarea, "sidebareditkw", { replace: true });
-  await t.click(keywordsSection.find(".meta-inline-confirm"));
-  await t.expect(Selector(".p-sidebar-info .meta-keywords").withText("sidebareditkw").exists).ok();
+  await photoviewer.typeAndConfirmInlineChip("Labels", labelTitle);
+  await photoviewer.typeAndConfirmInlineChip("Albums", albumTitle);
 
-  const notesSection = Selector(".p-sidebar-info .text-subtitle-2").withText("Notes").parent(".p-sidebar-info .v-list-item");
-  await t.click(notesSection.find(".meta-inline-pencil"));
-  await t.expect(activeTextarea.visible).ok();
-  await t.typeText(activeTextarea, "SidebarNoteFromTest", { replace: true });
-  await t.click(notesSection.find(".meta-inline-confirm"));
-  await t.expect(Selector(".p-sidebar-info .meta-notes").withText("SidebarNoteFromTest").exists).ok();
+  await photoviewer.closePhotoViewer();
 
-  // Labels — start chip edit, type a new label name, press Enter to
-  // stage it as a pending add, then confirm the section. Vuetify's
-  // combobox may clear its internal search buffer on the same Enter
-  // event we read it from, so we assert the persisted state after the
-  // final reopen rather than the in-flight pending chip.
-  const labelsSection = Selector(".p-sidebar-info .text-subtitle-2").withText("Labels").parent(".p-sidebar-info .v-list-item");
-  await t.click(labelsSection.find(".meta-inline-pencil"));
-  const activeChipInput = Selector(".p-sidebar-info .meta-inline-edit input");
-  await t.expect(activeChipInput.visible).ok();
-  await t.typeText(activeChipInput, "SidebarEditLabel");
-  await t.wait(200);
-  await t.pressKey("enter");
-  await t.click(labelsSection.find(".meta-inline-confirm"));
+  await menu.openPage("labels");
+  await label.openByTitle(labelTitle);
+  await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).exists).ok();
 
-  // Albums — same chip-edit flow; the sidebar lets the user create a
-  // new album inline via the autocomplete input.
-  const albumsSection = Selector(".p-sidebar-info .text-subtitle-2").withText("Albums").parent(".p-sidebar-info .v-list-item");
-  await t.click(albumsSection.find(".meta-inline-pencil"));
-  await t.expect(activeChipInput.visible).ok();
-  await t.typeText(activeChipInput, "SidebarEditAlbum");
-  await t.wait(200);
-  await t.pressKey("enter");
-  await t.click(albumsSection.find(".meta-inline-confirm"));
+  await menu.openPage("albums");
+  await album.openByTitle(albumTitle);
+  await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).exists).ok();
+});
 
-  // Dialog launchers (Taken At, Camera, Location) and the reopen-and-
-  // verify persistence pass are covered by the dedicated Vitest suites
-  // for each dialog component plus the sidebar info matrix; leaving them
-  // out of this end-to-end run avoids fighting Vuetify teleports and
-  // keeps the happy path fast and deterministic.
+test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })("Common: Edits taken-at, camera, and location via the sidebar dialogs", async (t) => {
+  await photoviewer.openSidebarOnFirstPhoto();
+
+  // Asserting on the year alone is enough to catch the "dialog confirms
+  // but nothing persists" regression that vitest missed.
+  await photoviewer.openSidebarDialog("takenAt");
+  const yearInput = photoviewer.dateTimeDialog.find(".input-year input");
+  await t.typeText(yearInput, "2022", { replace: true }).pressKey("enter");
+  await t.click(photoviewer.dateTimeDialog.find(".action-confirm"));
+  await t.expect(photoviewer.dateTimeDialog.visible).notOk();
+  await t.expect(photoviewer.sidebarRow("mdi-calendar").withText("2022").exists).ok();
+
+  await photoviewer.openSidebarDialog("camera");
+  const isoInput = photoviewer.cameraDialog.find(".input-iso input");
+  await t.typeText(isoInput, "6400", { replace: true });
+  await t.click(photoviewer.cameraDialog.find(".action-confirm"));
+  await t.expect(photoviewer.cameraDialog.visible).notOk();
+
+  // A raw coordinate string avoids hitting an external reverse-geocoder,
+  // which keeps the test deterministic in offline acceptance environments.
+  await photoviewer.openSidebarDialog("location");
+  const coordsInput = photoviewer.locationDialog.find(".input-coordinates input");
+  await t.expect(coordsInput.visible).ok();
+  await t.typeText(coordsInput, "52.5200, 13.4050", { replace: true }).pressKey("enter");
+  await t.click(photoviewer.locationDialog.find(".action-confirm"));
+  await t.expect(photoviewer.locationDialog.visible).notOk();
+  await t.expect(Selector(".p-sidebar-info .p-map").exists).ok();
 });

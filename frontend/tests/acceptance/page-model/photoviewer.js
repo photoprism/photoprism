@@ -1,4 +1,6 @@
 import { Selector, t } from "testcafe";
+import Toolbar from "./toolbar";
+import Photo from "./photo";
 
 export default class Page {
   constructor() {
@@ -43,6 +45,11 @@ export default class Page {
     this.sidebarChips = Selector(".p-sidebar-info .meta-chip", { timeout: 15000 });
     this.faceMarkerEjectButton = Selector(".metadata__person-row .meta-marker-eject", { timeout: 15000 });
     this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
+    // Edit dialogs launched from the sidebar pencils. Timeouts are generous
+    // enough for Vuetify teleport mounting + reverse-geocoder lookups.
+    this.dateTimeDialog = Selector(".p-datetime-dialog", { timeout: 15000 });
+    this.cameraDialog = Selector(".p-camera-dialog", { timeout: 15000 });
+    this.locationDialog = Selector(".p-location-dialog", { timeout: 15000 });
   }
 
   // Locate the v-list-item that contains a given MDI prepend-icon.
@@ -53,11 +60,103 @@ export default class Page {
     return Selector("." + iconClass).parent(".p-sidebar-info .v-list-item");
   }
 
+  // Return the section-level v-list-item for a subtitle label such as
+  // "Keywords", "Notes", "Labels", or "Albums". The pencil in these rows
+  // lives in the section header rather than on the value row below.
+  sidebarSection(sectionLabel) {
+    return Selector(".p-sidebar-info .text-subtitle-2").withText(sectionLabel).parent(".p-sidebar-info .v-list-item");
+  }
+
+  async startInlineEditByIcon(iconClass) {
+    const row = this.sidebarRow(iconClass);
+    await t.click(row.find(".meta-inline-pencil"));
+    const input = row.find(".meta-inline-edit").find("input,textarea");
+    await t.expect(input.visible).ok();
+    return input;
+  }
+
+  async confirmInlineEditByIcon(iconClass) {
+    await t.click(this.sidebarRow(iconClass).find(".meta-inline-confirm"));
+  }
+
+  async startInlineEditBySection(sectionLabel) {
+    const section = this.sidebarSection(sectionLabel);
+    await t.click(section.find(".meta-inline-pencil"));
+    // The active editor lives in a sibling v-list-item outside this section
+    // header, so it must be queried from the sidebar root. `meta-inline-marker`
+    // inputs (one per face marker) are always rendered in edit mode, so they
+    // must be excluded — otherwise typeText lands in a marker's name field.
+    const input = Selector(".p-sidebar-info .meta-inline-edit:not(.meta-inline-marker)").find("input,textarea");
+    await t.expect(input.visible).ok();
+    return input;
+  }
+
+  async confirmInlineEditBySection(sectionLabel) {
+    await t.click(this.sidebarSection(sectionLabel).find(".meta-inline-confirm"));
+  }
+
+  // Vuetify's combobox may swallow the same Enter event that seeds the
+  // chip, so short-wait between typing and pressing Enter.
+  async typeAndConfirmInlineChip(sectionLabel, value) {
+    const input = await this.startInlineEditBySection(sectionLabel);
+    await t.typeText(input, value);
+    await t.wait(200);
+    await t.pressKey("enter");
+    await this.confirmInlineEditBySection(sectionLabel);
+  }
+
+  // Title/Caption enter editing from either a pencil (value present) or
+  // an add-prompt (empty); the test doesn't know which until it looks.
+  async startInlineEditOrAdd(displayClass, promptLabel) {
+    const display = Selector(".p-sidebar-info ." + displayClass, { timeout: 15000 });
+    if (await display.exists) {
+      await t.click(display.parent(".p-sidebar-info .v-list-item").find(".meta-inline-pencil"));
+    } else {
+      await t.click(Selector(".p-sidebar-info .meta-add-prompt").withText(promptLabel));
+    }
+  }
+
+  async openSidebarOnFirstPhoto() {
+    const toolbar = new Toolbar();
+    const photo = new Photo();
+    await t.click(toolbar.cardsViewAction);
+    const uid = await photo.getNthPhotoUid("image", 0);
+    await this.openPhotoViewer("uid", uid);
+    await this.openInfoSidebar();
+    return uid;
+  }
+
+  async openSidebarDialog(which) {
+    if (which === "takenAt") {
+      await t.click(this.sidebarRow("mdi-calendar").find(".meta-inline-pencil"));
+      await t.expect(this.dateTimeDialog.visible).ok();
+    } else if (which === "camera") {
+      await t.click(this.sidebarRow("mdi-camera").find(".meta-inline-pencil"));
+      await t.expect(this.cameraDialog.visible).ok();
+    } else if (which === "location") {
+      // Two rows (Location and Coordinates) host a location pencil depending
+      // on whether the photo has lat/lng; both carry the modifier class that
+      // disambiguates them from the other inline metadata pencils.
+      await t.click(Selector(".p-sidebar-info .meta-inline-pencil--location"));
+      await t.expect(this.locationDialog.visible).ok();
+    } else {
+      throw new Error(`Unknown sidebar dialog: ${which}`);
+    }
+  }
+
   async openInfoSidebar() {
     if (!(await this.sidebar.exists)) {
       await t.click(Selector("button.pswp__button--info-button"));
     }
     await t.expect(this.sidebar.visible).ok();
+  }
+
+  // Close the lightbox. The PhotoSwipe close button uses the
+  // `--close-button` suffix, not `--close`, so `triggerPhotoViewerAction`
+  // cannot reach it with its generic `--${action}` pattern.
+  async closePhotoViewer() {
+    await t.click(Selector("button.pswp__button--close-button"));
+    await t.expect(this.viewer.exists).notOk();
   }
 
   async toggleMarkersVisible() {

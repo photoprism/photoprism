@@ -109,7 +109,12 @@
             class="metadata__item"
           >
             <template v-if="isEditable && featPlaces && !(model.Lat && model.Lng)" #append>
-              <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop.prevent="locationDialog = true"></v-icon>
+              <v-icon
+                icon="mdi-pencil-outline"
+                size="small"
+                class="meta-inline-pencil meta-inline-pencil--location"
+                @click.stop.prevent="locationDialog = true"
+              ></v-icon>
             </template>
           </v-list-item>
           <template v-if="model.Lat && model.Lng">
@@ -120,7 +125,12 @@
               @click.stop="model.copyLatLng()"
             >
               <template v-if="isEditable && featPlaces" #append>
-                <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop.prevent="locationDialog = true"></v-icon>
+                <v-icon
+                  icon="mdi-pencil-outline"
+                  size="small"
+                  class="meta-inline-pencil meta-inline-pencil--location"
+                  @click.stop.prevent="locationDialog = true"
+                ></v-icon>
               </template>
             </v-list-item>
             <v-list-item v-if="featPlaces" class="mx-0 px-0">
