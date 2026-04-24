@@ -920,6 +920,9 @@ export default {
 
       const mediaElement = document.createElement("div");
       mediaElement.setAttribute("class", "pswp__media--document");
+      if (isMobile) {
+        mediaElement.classList.add("pswp__media--document-mobile");
+      }
 
       // Desktop-only: toolbar and thumbnail drawer.
       let toolbarControls = null;

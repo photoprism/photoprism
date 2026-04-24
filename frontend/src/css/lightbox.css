@@ -277,12 +277,15 @@
 }
 
 .pdf-container .pdfViewer {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
 
 .pdfViewer .page {
     border: none;
-    margin: 0 auto 20px auto;
+    margin: 0;
 }
 
 .pdf-toolbar {
@@ -429,6 +432,45 @@
     color: #f3f3f3;
     font-size: 11px;
     font-weight: bold;    
+}
+
+/* PDF Mobile Styles */
+
+.pswp__media--document-mobile {
+    width: 100vw !important;
+    padding-top: 50px;
+    box-sizing: border-box;
+}
+
+/* Override PhotoSwipe's inline positioning for mobile PDF viewer */
+.pswp__zoom-wrap:has(.pswp__media--document-mobile) {
+    transform: none !important;
+    left: 0 !important;
+    width: 100vw !important;
+    top: 0 !important;
+}
+
+.pswp__media--document-mobile .pdfViewer {
+    gap: 16px;
+}
+
+/* Override PDF.js inline styles to make pages full width on mobile */
+.pswp__media--document-mobile .pdfViewer .page {
+    margin: 0;
+    width: 100% !important;
+    height: auto !important;
+    background-color: transparent !important;
+}
+
+.pswp__media--document-mobile .pdfViewer .page .canvasWrapper {
+    position: relative !important;
+    height: auto !important;
+}
+
+.pswp__media--document-mobile .pdfViewer .page canvas {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
 }
 
 .pswp__img {
