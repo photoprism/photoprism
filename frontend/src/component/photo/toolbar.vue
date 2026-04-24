@@ -287,6 +287,7 @@ import * as options from "options/options";
 import $api from "common/api";
 import $notify from "common/notify";
 import links from "common/links";
+import Photo from "model/photo";
 import * as contexts from "options/contexts";
 
 import PActionMenu from "component/action/menu.vue";
@@ -547,6 +548,7 @@ export default {
     },
     onDeleted() {
       $notify.success(this.$gettext("Permanently deleted"));
+      Photo.clearCache();
       this.$clipboard.clear();
     },
   },

@@ -1286,36 +1286,45 @@ export class Photo extends RestModel {
     return $gettext("Photo");
   }
 
-  // LRU cache for full Photo metadata fetched via GET /api/v1/photos/{uid}.
-  // Map preserves insertion order; delete+re-set moves entry to end (most recent).
   static _cache = new Map();
-  static _pending = new Map(); // In-flight requests to avoid duplicate API calls.
+  static _pending = new Map();
   static LRU_MAX = 50;
 
-  // Returns a cached Photo or fetches it from the API and caches the result.
+  // Returns an isolated Photo clone built from the cached values, fetching
+  // from the API on cache miss. Each caller receives its own instance so that
+  // local edits (e.g. inline v-model bindings) cannot pollute the cache.
   static findCached(uid) {
-    if (Photo._cache.has(uid)) {
-      const cached = Photo._cache.get(uid);
+    const cached = Photo._cache.get(uid);
+    if (cached !== undefined) {
+      // LRU: move entry to the most-recent slot.
       Photo._cache.delete(uid);
       Photo._cache.set(uid, cached);
-      return Promise.resolve(cached);
+      return Promise.resolve(new Photo(JSON.parse(JSON.stringify(cached))));
     }
 
-    // Return existing in-flight request if one is already pending for this UID.
+    // Piggy-back on an in-flight fetch, but hand each waiter an isolated clone.
     if (Photo._pending.has(uid)) {
-      return Photo._pending.get(uid);
+      return Photo._pending.get(uid).then(() => {
+        const values = Photo._cache.get(uid);
+        if (!values) return Promise.reject();
+        return new Photo(JSON.parse(JSON.stringify(values)));
+      });
     }
 
-    const instance = new Photo();
-    const request = instance
+    const request = new Photo()
       .find(uid)
       .then((photo) => {
         if (Photo._cache.size >= Photo.LRU_MAX) {
           const oldest = Photo._cache.keys().next().value;
           Photo._cache.delete(oldest);
         }
-        Photo._cache.set(uid, photo);
-        return photo;
+        // `freshValues` is a new top-level object from getValues(); its nested
+        // refs are owned by `photo`, which goes out of scope after this .then,
+        // so handing them to the originating caller is safe. The cache gets a
+        // deep copy so later hits remain isolated from that first caller.
+        const freshValues = photo.getValues(false);
+        Photo._cache.set(uid, JSON.parse(JSON.stringify(freshValues)));
+        return new Photo(freshValues);
       })
       .finally(() => {
         Photo._pending.delete(uid);

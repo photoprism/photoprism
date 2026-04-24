@@ -249,6 +249,7 @@ export default {
     },
     onApproved() {
       $notify.success(this.$gettext("Selection approved"));
+      this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
     },
     archivePhotos() {
@@ -279,6 +280,7 @@ export default {
     },
     onArchived() {
       $notify.success(this.$gettext("Selection archived"));
+      this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
     },
     deletePhotos() {
@@ -299,12 +301,14 @@ export default {
     },
     onDeleted() {
       $notify.success(this.$gettext("Permanently deleted"));
+      this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
     },
     batchPrivate() {
       $api.post("batch/photos/private", { photos: this.selection }).then(() => this.onPrivateSaved());
     },
     onPrivateSaved() {
+      this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
     },
     batchRestore() {
@@ -312,6 +316,7 @@ export default {
     },
     onRestored() {
       $notify.success(this.$gettext("Selection restored"));
+      this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
     },
     addToAlbum(ppidOrList) {
@@ -346,6 +351,7 @@ export default {
         });
     },
     onAdded() {
+      this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
     },
     removeFromAlbum() {
@@ -372,6 +378,7 @@ export default {
         });
     },
     onRemoved() {
+      this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
     },
     download() {

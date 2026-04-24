@@ -2609,9 +2609,14 @@ export default {
 
       this.model.Removed = true;
 
-      $api.delete(`albums/${this.collection.UID}/photos`, { data: { photos: [this.model.UID] } }).catch(() => {
-        this.model.Removed = false;
-      });
+      $api
+        .delete(`albums/${this.collection.UID}/photos`, { data: { photos: [this.model.UID] } })
+        .then(() => {
+          Photo.evictCache(this.model.UID);
+        })
+        .catch(() => {
+          this.model.Removed = false;
+        });
     },
     onArchive() {
       if (!this.canArchive) {
@@ -2628,6 +2633,7 @@ export default {
       this.model.Archived = true;
 
       return $api.post("batch/photos/archive", { photos: [this.model.UID] }).then(() => {
+        Photo.evictCache(this.model.UID);
         this.$notify.success(this.$gettext("Archived"));
       });
     },
@@ -2646,6 +2652,7 @@ export default {
       this.model.Archived = false;
 
       $api.post("batch/photos/restore", { photos: [this.model.UID] }).then(() => {
+        Photo.evictCache(this.model.UID);
         this.$notify.success(this.$gettext("Restored"));
       });
     },

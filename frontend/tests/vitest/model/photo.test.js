@@ -1777,7 +1777,7 @@ describe("model/photo", () => {
 
     it("should return cached photo without API call on second request", async () => {
       const mockPhoto = new Photo({ UID: "cache-test-2", Title: "Cached" });
-      Photo._cache.set("cache-test-2", mockPhoto);
+      Photo._cache.set("cache-test-2", mockPhoto.getValues(false));
 
       const findSpy = vi.spyOn(Photo.prototype, "find");
       const result = await Photo.findCached("cache-test-2");
@@ -1788,9 +1788,21 @@ describe("model/photo", () => {
       findSpy.mockRestore();
     });
 
+    it("should hand out isolated clones so consumers cannot mutate the cache", async () => {
+      const mockPhoto = new Photo({ UID: "cache-test-clone", Title: "Original" });
+      Photo._cache.set("cache-test-clone", mockPhoto.getValues(false));
+
+      const first = await Photo.findCached("cache-test-clone");
+      first.Title = "Mutated";
+
+      const second = await Photo.findCached("cache-test-clone");
+      expect(second).not.toBe(first);
+      expect(second.Title).toBe("Original");
+    });
+
     it("should evict oldest entry when cache exceeds LRU_MAX", async () => {
       for (let i = 0; i < Photo.LRU_MAX; i++) {
-        Photo._cache.set(`uid-${i}`, new Photo({ UID: `uid-${i}` }));
+        Photo._cache.set(`uid-${i}`, new Photo({ UID: `uid-${i}` }).getValues(false));
       }
       expect(Photo._cache.size).toBe(Photo.LRU_MAX);
 
@@ -1807,9 +1819,9 @@ describe("model/photo", () => {
     });
 
     it("should move accessed entry to end (most recent)", async () => {
-      Photo._cache.set("uid-a", new Photo({ UID: "uid-a" }));
-      Photo._cache.set("uid-b", new Photo({ UID: "uid-b" }));
-      Photo._cache.set("uid-c", new Photo({ UID: "uid-c" }));
+      Photo._cache.set("uid-a", new Photo({ UID: "uid-a" }).getValues(false));
+      Photo._cache.set("uid-b", new Photo({ UID: "uid-b" }).getValues(false));
+      Photo._cache.set("uid-c", new Photo({ UID: "uid-c" }).getValues(false));
 
       await Photo.findCached("uid-a");
 
@@ -1818,7 +1830,7 @@ describe("model/photo", () => {
     });
 
     it("should evict cache entry for a given UID", () => {
-      Photo._cache.set("uid-evict", new Photo({ UID: "uid-evict" }));
+      Photo._cache.set("uid-evict", new Photo({ UID: "uid-evict" }).getValues(false));
       expect(Photo._cache.has("uid-evict")).toBe(true);
 
       Photo.evictCache("uid-evict");
@@ -1826,7 +1838,7 @@ describe("model/photo", () => {
     });
 
     it("should handle evictCache with falsy uid gracefully", () => {
-      Photo._cache.set("uid-keep", new Photo({ UID: "uid-keep" }));
+      Photo._cache.set("uid-keep", new Photo({ UID: "uid-keep" }).getValues(false));
       Photo.evictCache(null);
       Photo.evictCache(undefined);
       Photo.evictCache("");
@@ -1841,8 +1853,12 @@ describe("model/photo", () => {
       const p2 = Photo.findCached("uid-dedup");
 
       const [r1, r2] = await Promise.all([p1, p2]);
-      expect(r1).toBe(r2);
       expect(findSpy).toHaveBeenCalledTimes(1);
+      expect(r1).not.toBe(r2);
+      expect(r1.UID).toBe("uid-dedup");
+      expect(r2.UID).toBe("uid-dedup");
+      expect(r1.Title).toBe("Dedup");
+      expect(r2.Title).toBe("Dedup");
 
       findSpy.mockRestore();
     });
