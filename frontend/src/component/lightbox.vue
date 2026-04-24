@@ -15,6 +15,7 @@
     @after-enter="afterEnter"
     @after-leave="afterLeave"
     @keydown.space.exact="onKeyDown"
+    @keyup.space.exact="onKeyUp"
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
     @keydown.esc.exact.stop="close"
@@ -722,6 +723,11 @@ export default {
           data.resizeObserver = null;
         }
 
+        // Clean up pan keyboard handler references.
+        if (data.panKeyHandlers) {
+          data.panKeyHandlers = null;
+        }
+
         // Clean up the PDF viewer.
         data.pdfViewer.cleanup();
         data.pdfViewer = null;
@@ -930,6 +936,29 @@ export default {
         panToggleBtn.classList.toggle("pdf-toolbar__nav-btn--active", isPanMode);
         container.classList.toggle("pdf-container--pan-mode", isPanMode);
       });
+
+      // Track if pan mode was activated via spacebar (vs button click).
+      let isPanViaSpacebar = false;
+
+      // Spacebar shortcut handlers for pan mode (called from Vue component).
+      data.panKeyHandlers = {
+        activate: () => {
+          if (!isPanViaSpacebar) {
+            isPanViaSpacebar = true;
+            isPanMode = true;
+            panToggleBtn.classList.add("pdf-toolbar__nav-btn--active");
+            container.classList.add("pdf-container--pan-mode");
+          }
+        },
+        deactivate: () => {
+          if (isPanViaSpacebar) {
+            isPanViaSpacebar = false;
+            isPanMode = false;
+            panToggleBtn.classList.remove("pdf-toolbar__nav-btn--active");
+            container.classList.remove("pdf-container--pan-mode");
+          }
+        },
+      };
 
       // Pan/drag event handlers.
       container.addEventListener("pointerdown", (ev) => {
@@ -2509,14 +2538,35 @@ export default {
           ev.stopPropagation();
 
           // Get active video element, if any.
-          const { video } = this.getContent();
+          const { data, video } = this.getContent();
 
-          if (video) {
+          // Handle PDF pan mode activation.
+          if (data?.pdfViewer && data?.panKeyHandlers) {
+            data.panKeyHandlers.activate();
+          } else if (video) {
             this.toggleVideo();
           } else {
             this.toggleControls();
           }
           break;
+      }
+    },
+    // Handles key up events.
+    onKeyUp(ev) {
+      if (!ev || !ev.code || !this.visible || !this.$view.isActive(this)) {
+        return;
+      }
+
+      if (ev.code === "Space") {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const { data } = this.getContent();
+
+        // Handle PDF pan mode deactivation.
+        if (data?.pdfViewer && data?.panKeyHandlers) {
+          data.panKeyHandlers.deactivate();
+        }
       }
     },
     // Toggles video playback on the current video element, if any.
