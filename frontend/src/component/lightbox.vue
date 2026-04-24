@@ -753,6 +753,22 @@ export default {
         ev.stopPropagation();
       });
 
+      // Create toolbar sections for layout.
+      const toolbarLeft = document.createElement("div");
+      toolbarLeft.setAttribute("class", "pdf-toolbar__left");
+
+      const toolbarCenter = document.createElement("div");
+      toolbarCenter.setAttribute("class", "pdf-toolbar__center");
+
+      // Create thumbnail toggle button.
+      const thumbToggleBtn = document.createElement("button");
+      thumbToggleBtn.setAttribute("class", "pdf-toolbar__nav-btn");
+      thumbToggleBtn.setAttribute("type", "button");
+      thumbToggleBtn.setAttribute("title", "Thumbnails");
+      thumbToggleBtn.innerHTML = '<i class="mdi mdi-image-multiple"></i>';
+
+      toolbarLeft.appendChild(thumbToggleBtn);
+
       // Create page navigation controls.
       const pageNav = document.createElement("div");
       pageNav.setAttribute("class", "pdf-toolbar__page-nav");
@@ -799,7 +815,7 @@ export default {
       pageNav.appendChild(prevBtn);
       pageNav.appendChild(nextBtn);
       pageNav.appendChild(pageCounter);
-      toolbar.appendChild(pageNav);
+      toolbarCenter.appendChild(pageNav);
 
       // Create zoom control dropdown with wrapper.
       const zoomWrapper = document.createElement("div");
@@ -844,8 +860,42 @@ export default {
 
       zoomWrapper.appendChild(zoomSelect);
       zoomWrapper.appendChild(zoomIcon);
-      toolbar.appendChild(zoomWrapper);
+      toolbarCenter.appendChild(zoomWrapper);
+
+      toolbar.appendChild(toolbarLeft);
+      toolbar.appendChild(toolbarCenter);
       mediaElement.appendChild(toolbar);
+
+      // Create thumbnail drawer.
+      const thumbDrawer = document.createElement("div");
+      thumbDrawer.setAttribute("class", "pdf-thumbnail-drawer");
+
+      // Stop events from propagating to PhotoSwipe.
+      thumbDrawer.addEventListener("wheel", (ev) => {
+        ev.stopPropagation();
+      });
+      thumbDrawer.addEventListener("pointerdown", (ev) => {
+        ev.stopPropagation();
+      });
+      thumbDrawer.addEventListener("mousedown", (ev) => {
+        ev.stopPropagation();
+      });
+
+      const thumbList = document.createElement("div");
+      thumbList.setAttribute("class", "pdf-thumbnail-list");
+      thumbDrawer.appendChild(thumbList);
+
+      // Toggle thumbnail drawer visibility.
+      thumbToggleBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        thumbDrawer.classList.toggle("pdf-thumbnail-drawer--open");
+        thumbToggleBtn.classList.toggle("pdf-toolbar__nav-btn--active");
+      });
+
+      // Create wrapper for drawer and PDF container.
+      const contentWrapper = document.createElement("div");
+      contentWrapper.setAttribute("class", "pdf-content-wrapper");
+      contentWrapper.appendChild(thumbDrawer);
 
       // Create container structure for PDF.js viewer.
       // PDFViewer expects: container (scrollable) > div.pdfViewer (pages rendered here)
@@ -862,7 +912,8 @@ export default {
       viewerDiv.setAttribute("class", "pdfViewer");
 
       container.appendChild(viewerDiv);
-      mediaElement.appendChild(container);
+      contentWrapper.appendChild(container);
+      mediaElement.appendChild(contentWrapper);
 
       // Initialize PDF.js viewer components.
       const eventBus = new EventBus();
@@ -893,10 +944,24 @@ export default {
           data.pdfDocument = pdfDocument;
           pdfViewer.setDocument(pdfDocument);
           linkService.setDocument(pdfDocument, null);
+
+          // Generate thumbnails for each page.
+          this.generatePdfThumbnails(pdfDocument, thumbList, pdfViewer);
         })
         .catch((err) => {
           this.log("failed to load PDF document", err);
         });
+
+      // Helper to update active thumbnail.
+      const updateActiveThumbnail = (pageNumber) => {
+        thumbList.querySelectorAll(".pdf-thumbnail-item").forEach((item) => {
+          if (parseInt(item.getAttribute("data-page"), 10) === pageNumber) {
+            item.classList.add("pdf-thumbnail-item--active");
+          } else {
+            item.classList.remove("pdf-thumbnail-item--active");
+          }
+        });
+      };
 
       // Handle page initialization.
       eventBus.on("pagesinit", () => {
@@ -906,6 +971,8 @@ export default {
         pageCounter.textContent = `${pdfViewer.currentPageNumber} / ${pdfViewer.pagesCount}`;
         // Update navigation button states.
         updateNavButtons(pdfViewer.currentPageNumber, pdfViewer.pagesCount);
+        // Update active thumbnail.
+        updateActiveThumbnail(pdfViewer.currentPageNumber);
       });
 
       // Reset horizontal scroll when scale changes.
@@ -920,6 +987,8 @@ export default {
         pageCounter.textContent = `${ev.pageNumber} / ${pdfViewer.pagesCount}`;
         // Update navigation button states.
         updateNavButtons(ev.pageNumber, pdfViewer.pagesCount);
+        // Update active thumbnail.
+        updateActiveThumbnail(ev.pageNumber);
       });
 
       // Store the current zoom selection for resize handling.
@@ -935,6 +1004,52 @@ export default {
       data.resizeObserver = resizeObserver;
 
       return mediaElement;
+    },
+    // Generates thumbnail images for each page of a PDF document.
+    async generatePdfThumbnails(pdfDocument, thumbList, pdfViewer) {
+      const numPages = pdfDocument.numPages;
+      const thumbScale = 0.2; // Scale for thumbnail rendering.
+
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        try {
+          const page = await pdfDocument.getPage(pageNum);
+          const viewport = page.getViewport({ scale: thumbScale });
+
+          // Create canvas for thumbnail.
+          const canvas = document.createElement("canvas");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          const context = canvas.getContext("2d");
+          await page.render({
+            canvasContext: context,
+            viewport: viewport,
+          }).promise;
+
+          // Create thumbnail container.
+          const thumbItem = document.createElement("div");
+          thumbItem.setAttribute("class", "pdf-thumbnail-item");
+          thumbItem.setAttribute("data-page", pageNum);
+
+          // Add page number label.
+          const pageLabel = document.createElement("span");
+          pageLabel.setAttribute("class", "pdf-thumbnail-label");
+          pageLabel.textContent = pageNum;
+
+          thumbItem.appendChild(canvas);
+          thumbItem.appendChild(pageLabel);
+
+          // Navigate to page on click.
+          thumbItem.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            pdfViewer.currentPageNumber = pageNum;
+          });
+
+          thumbList.appendChild(thumbItem);
+        } catch (err) {
+          this.log(`failed to generate thumbnail for page ${pageNum}`, err);
+        }
+      }
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
     createVideoElement(content, autoplay = false, loop = false, mute = false) {

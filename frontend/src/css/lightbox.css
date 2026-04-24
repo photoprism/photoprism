@@ -284,6 +284,13 @@
     padding: 8px 16px;
 }
 
+.pdf-toolbar__center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
 .pdf-toolbar__page-nav {
     display: flex;
     align-items: center;
@@ -307,6 +314,10 @@
 
 .pdf-toolbar__nav-btn .mdi {
     font-size: 24px;
+}
+
+.pdf-toolbar__nav-btn--active {
+    color: #2196f3;
 }
 
 .pdf-toolbar__page-counter {
@@ -341,6 +352,67 @@
     color: var(--pswp-icon-color);
     font-size: 18px;
     pointer-events: none;
+}
+
+/* PDF Content Wrapper (drawer + viewer) */
+
+.pdf-content-wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.pdf-content-wrapper .pdf-container {
+    flex: 1;
+    min-width: 0;
+}
+
+/* PDF Thumbnail Drawer */
+
+.pdf-thumbnail-drawer {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.25s ease;
+}
+
+.pdf-thumbnail-drawer--open {
+    width: 160px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.pdf-thumbnail-list {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pdf-thumbnail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.15s ease;
+}
+
+.pdf-thumbnail-item--active {
+    border-color: gray;
+}
+
+.pdf-thumbnail-item canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.pdf-thumbnail-label {
+    color: #f3f3f3;
+    font-size: 11px;
+    font-weight: bold;    
 }
 
 .pswp__img {
