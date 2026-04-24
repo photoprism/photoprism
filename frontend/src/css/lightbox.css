@@ -386,15 +386,15 @@
 /* PDF Thumbnail Drawer */
 
 .pdf-thumbnail-drawer {
-    width: 0;
-    overflow: hidden;
-    transition: width 0.25s ease;
-}
-
-.pdf-thumbnail-drawer--open {
     width: 160px;
     overflow-y: auto;
     overflow-x: hidden;
+    margin-left: -160px;
+    transition: margin-left 0.25s ease;
+}
+
+.pdf-thumbnail-drawer--open {
+    margin-left: 0;
 }
 
 .pdf-thumbnail-list {
