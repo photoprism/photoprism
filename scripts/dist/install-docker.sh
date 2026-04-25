@@ -20,7 +20,18 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 
 # Install Docker with Compose Plugin.
 sudo apt-get update
-sudo apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-buildx-plugin docker-compose-plugin cgroupfs-mount libltdl7 pigz
+
+# "cgroupfs-mount" was retired upstream once systemd took over cgroup v2 setup
+# and is no longer shipped on Ubuntu 26.04 (resolute) / Debian trixie+. Only
+# include the package when the active apt index actually lists it; otherwise
+# the install line aborts with "E: Package 'cgroupfs-mount' has no installation
+# candidate" before Docker itself is installed.
+EXTRA_PKGS=""
+if apt-cache show cgroupfs-mount >/dev/null 2>&1; then
+  EXTRA_PKGS="cgroupfs-mount"
+fi
+
+sudo apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-buildx-plugin docker-compose-plugin $EXTRA_PKGS libltdl7 pigz
 
 # Add docker-compose alias for Compose Plugin.
 if [ ! -f "/bin/docker-compose" ]; then
