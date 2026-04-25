@@ -10,13 +10,27 @@
 #         libminizip1, ...) are close enough to Ubuntu LTS that apt can resolve
 #         them by pulling those few libs from the Debian repo; the chromium
 #         binary itself runs fine on Ubuntu glibc from jammy (22.04, 2.35) up.
-# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-chrome.sh)
+#
+# This script must run as root. Use one of these invocations:
+#
+#   # Pipe via stdin (recommended one-liner — works everywhere, incl. SSH):
+#   curl -fsSL https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-chrome.sh | sudo bash
+#
+#   # Or download first and run:
+#   curl -fsSL https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-chrome.sh -o /tmp/install-chrome.sh
+#   sudo bash /tmp/install-chrome.sh
+#
+# Do NOT use process substitution under sudo (`sudo bash <(curl …)`): the
+# substitution opens /dev/fd/63 in the *parent* (unprivileged) shell, which
+# the elevated bash cannot read once sudo re-execs — the script aborts
+# immediately with `bash: /dev/fd/63: No such file or directory`.
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 # Abort if not executed as root.
 if [[ $(id -u) != "0" ]]; then
-  echo "Usage: run ${0##*/} as root" 1>&2
+  echo "Usage: ${0##*/} must run as root. Try:" 1>&2
+  echo "  curl -fsSL <url-to-this-script> | sudo bash" 1>&2
   exit 1
 fi
 
@@ -39,7 +53,7 @@ install_chromium_from_debian_bookworm() {
 
   install -m 0755 -d /etc/apt/keyrings
   curl -fsSL https://ftp-master.debian.org/keys/archive-key-12.asc \
-    | gpg --dearmor -o "$keyring"
+    | gpg --no-tty --batch --yes --dearmor -o "$keyring"
 
   cat > "$src" <<EOF
 Types: deb
@@ -58,7 +72,7 @@ case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
     echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
     set -e
-    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /etc/apt/trusted.gpg.d/dl-ssl.google.com.gpg
+    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --no-tty --batch --yes --dearmor -o /etc/apt/trusted.gpg.d/dl-ssl.google.com.gpg
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     apt-get update
     apt-get -qq install google-chrome-stable
