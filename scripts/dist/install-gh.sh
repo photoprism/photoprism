@@ -37,6 +37,8 @@ if [[ "$(id -u)" -ne 0 ]]; then
 fi
 
 export DEBIAN_FRONTEND="noninteractive"
+export DO_NOT_TRACK="true"
+export GH_TELEMETRY="false"
 
 if ! command -v wget >/dev/null 2>&1; then
   ${SUDO} apt-get update

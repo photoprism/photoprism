@@ -1,5 +1,5 @@
-#### Base Image: Ubuntu 25.10 (Questing Quokka)
-FROM ubuntu:questing
+#### Base Image: Ubuntu 26.04 LTS (Resolute Raccoon)
+FROM ubuntu:resolute
 
 # Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
 #
@@ -8,8 +8,8 @@ FROM ubuntu:questing
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Base Image (Ubuntu 25.10)"
-LABEL org.opencontainers.image.description="Ubuntu 25.10 (Questing Quokka)"
+LABEL org.opencontainers.image.title="PhotoPrism® Base Image (Ubuntu 26.04 LTS)"
+LABEL org.opencontainers.image.description="Ubuntu 26.04 LTS (Resolute Raccoon)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
@@ -66,12 +66,12 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
+        libheif-examples libheif-plugin-libde265 libheif-plugin-x265 libheif-plugin-aomdec libheif-plugin-aomenc libheif-plugin-dav1d \
         va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
-    /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \

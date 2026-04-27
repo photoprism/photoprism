@@ -36,7 +36,8 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
-ENV PHOTOPRISM_ARCH=$TARGETARCH \
+ENV DO_NOT_TRACK=true \
+    PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
     PS1="\u@$BUILD_TAG:\w\$ " \

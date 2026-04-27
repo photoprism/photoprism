@@ -50,7 +50,7 @@ fi
 echo "Configuring NPM..."
 sudo npm config set cache ~/.cache/npm
 echo "Updating NPM..."
-sudo npm install -g --no-fund "npm@$NPM_VERSION" n@latest
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@$NPM_VERSION" n@latest
 echo "Installing npm-check-updates and license-report..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 echo "Installing TestCafe..."

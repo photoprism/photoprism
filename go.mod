@@ -76,7 +76,7 @@ require golang.org/x/text v0.36.0
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
 	github.com/davidbyttow/govips/v2 v2.18.0
-	github.com/go-co-op/gocron/v2 v2.21.0
+	github.com/go-co-op/gocron/v2 v2.21.1
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/pquerna/otp v1.5.0
@@ -87,8 +87,8 @@ require (
 	github.com/ugjka/go-tz/v2 v2.2.8
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
-	github.com/yalue/onnxruntime_go v1.27.0
-	github.com/zitadel/oidc/v3 v3.47.4
+	github.com/yalue/onnxruntime_go v1.28.0
+	github.com/zitadel/oidc/v3 v3.47.5
 	golang.org/x/mod v0.35.0
 	golang.org/x/sys v0.43.0
 	google.golang.org/protobuf v1.36.11

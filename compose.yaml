@@ -43,6 +43,8 @@ services:
       - "traefik.http.routers.photoprism.tls=true"
     ## Override variables with optional env file, see https://docs.docker.com/reference/compose-file/services/#required
     env_file:
+      - path: ".telemetry"
+        required: false
       - path: ".env"
         required: false
     ## Configure development environment
@@ -144,8 +146,8 @@ services:
       GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
       CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
       CLAUDE_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/claude"
-      GH_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/gh"
       GH_REPO: "photoprism/photoprism"
+      GH_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/gh"
     ## Shared devices for video hardware transcoding (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding

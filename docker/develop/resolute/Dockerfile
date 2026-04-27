@@ -1,5 +1,5 @@
-#### Base Image: Debian 12 (Bookworm)
-FROM debian:bookworm-slim
+#### Base Image: Ubuntu 26.04 LTS (Resolute Raccoon)
+FROM ubuntu:resolute
 
 # Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
 #
@@ -8,8 +8,8 @@ FROM debian:bookworm-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Build Image (Debian 12)"
-LABEL org.opencontainers.image.description="Debian 12 (Bookworm)"
+LABEL org.opencontainers.image.title="PhotoPrism® Build Image (Ubuntu 26.04 LTS)"
+LABEL org.opencontainers.image.description="Ubuntu 26.04 LTS (Resolute Raccoon)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
@@ -49,11 +49,17 @@ ENV DO_NOT_TRACK=true \
     GOBIN="/usr/local/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
-    PROG="photoprism"
+    PROG="photoprism" \
+    S6_KEEP_ENV=1 \
+    S6_VERBOSITY=0 \
+    S6_LOGGING=0 \
+    CODEX_HOME="/go/src/github.com/photoprism/photoprism/.local/codex" \
+    CLAUDE_CONFIG_DIR="/go/src/github.com/photoprism/photoprism/.local/claude" \
+    GH_CONFIG_DIR="/go/src/github.com/photoprism/photoprism/.local/gh" \
+    GH_REPO="photoprism/photoprism"
 
 # Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
-COPY --chown=root:root --chmod=644 /docker/develop/bookworm/sources.list /etc/apt/sources.list.d/bookworm.list
 COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
 
 # Update base image and add dependencies.
@@ -65,27 +71,38 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
-        libc6 ca-certificates sudo bash tzdata \
-        xz-utils gpg zip unzip wget curl rsync make nano \
-        jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev libyuv0 \
-        exiftool rawtherapee libheif-examples librsvg2-bin librav1e-dev \
-        ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
-        libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
-        iputils-ping dnsutils binutils binutils-gold \
+        libc6 libbsd-dev ca-certificates bash sudo nano tzdata gpg make zip unzip wget curl rsync \
+        xz-utils avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 postgresql-client \
+        ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
+        libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
+        libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
+        libheif-examples libheif-plugin-libde265 libheif-plugin-x265 libheif-plugin-aomdec libheif-plugin-aomenc libheif-plugin-dav1d \
+        va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
     && \
     apt-get -qq install \
-        apt-utils pkg-config software-properties-common \
-        build-essential gcc g++ git gettext davfs2 chrpath shellcheck apache2-utils \
-        chromium chromium-driver chromium-sandbox firefox-esr \
-        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev libavcodec-dev \
+        build-essential software-properties-common pkg-config apt-utils htop \
+        gcc g++ git autoconf automake cmake gettext apache2-utils davfs2 \
+        chrpath tree ripgrep fd-find bat eza git-delta shellcheck shfmt fzf xxd \
+        libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
+        libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
+        librsvg2-bin ghostscript gsfonts pdf2svg ps2eps libsharpyuv-dev \
+        xvfb fonts-freefont-ttf fonts-ipafont-gothic fonts-noto-color-emoji \
+        fonts-tlwg-loma-otf fonts-unifont fonts-wqy-zenhei xfonts-cyrillic \
+        fonts-ipafont-mincho fonts-tlwg-loma xfonts-base xfonts-scalable \
         openssh-client bubblewrap pandoc python3-bs4 python3-pygments python3-pil python3-lxml \
     && \
+    ln -sf /usr/bin/fdfind /usr/local/bin/fd && \
+    ln -sf /usr/bin/batcat /usr/local/bin/bat && \
+    ln -sf /usr/bin/python3 /usr/local/bin/python && \
     /scripts/install-nodejs.sh && \
+    /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-tensorflow.sh && \
     /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
+    /scripts/install-yt-dlp.sh && \
+    /scripts/install-chrome.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     mkdir -p /etc/skel/.config/go/telemetry && \
     echo 'off 2025-01-03' > '/etc/skel/.config/go/telemetry/mode' && \
@@ -100,7 +117,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/skel/.bashrc && \
     /scripts/install-dircolors.sh && \
     cp /etc/skel/.bashrc /root/.bashrc && \
-    cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \
@@ -111,6 +128,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/backups \
         /photoprism/storage/config \
         /photoprism/storage/cache && \
+    /scripts/install-s6.sh && \
+    apt modernize-sources && \
     /scripts/cleanup.sh
 
 # Download machine learning models and test data.
@@ -132,8 +151,6 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 # - 40000 (Go Debugger)
 EXPOSE 2342 2343 2442 2443 9515 40000
 
-# Declare container entrypoint script.
-ENTRYPOINT ["/scripts/entrypoint.sh"]
-
-# Keep container running.
-CMD ["tail", "-f", "/dev/null"]
+# Set default entrypoint and command.
+ENTRYPOINT ["/init"]
+CMD ["/scripts/cmd.sh", "tail", "-f", "/dev/null"]

@@ -1,7 +1,7 @@
 FROM photoprism/photoprism:preview-ce-ubuntu AS build
-
 # Set environment variables
-ENV TF_CPP_MIN_LOG_LEVEL=4 \
+ENV DO_NOT_TRACK=true \
+    TF_CPP_MIN_LOG_LEVEL=4 \
     TF_ENABLE_ONEDNN_OPTS=1 \
     MALLOC_ARENA_MAX=2 \
     PHOTOPRISM_STORAGE_PATH="/photoprism/storage" \

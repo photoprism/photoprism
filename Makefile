@@ -6,6 +6,11 @@
 export GO111MODULE=on
 export NPM_CONFIG_IGNORE_SCRIPTS ?= true
 
+ifneq (,$(wildcard .telemetry))
+include .telemetry
+export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' .telemetry)
+endif
+
 -include .semver
 -include .env
 
@@ -290,9 +295,9 @@ npm-version:
 dep-npm:
 	@echo "Installing NPM package manager..."
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
         else \
-	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
         fi
 dep-js:
 	npm ci --ignore-scripts --no-update-notifier --no-audit
@@ -303,10 +308,13 @@ dep-codex:
 	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
 	else \
-	  npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
 	fi
+	@codex features disable general_analytics || true
+skills: agents-skills claude-skills
+agents-skills: codex-skills
 codex-skills:
 	@if [ -d "specs/.agents/skills" ]; then \
 	  echo "Linking Codex skills from specs/.agents/skills..."; \
@@ -608,6 +616,14 @@ docker-develop-bookworm-slim:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm-slim /bookworm-slim
+docker-develop-trixie:
+	docker pull --platform=amd64 debian:trixie-slim
+	docker pull --platform=arm64 debian:trixie-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 trixie /trixie
+docker-develop-trixie-slim:
+	docker pull --platform=amd64 debian:trixie-slim
+	docker pull --platform=arm64 debian:trixie-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 trixie-slim /trixie-slim
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:1-bullseye
 	docker pull --platform=arm64 golang:1-bullseye
@@ -685,6 +701,14 @@ docker-develop-questing-slim:
 	docker pull --platform=amd64 ubuntu:questing
 	docker pull --platform=arm64 ubuntu:questing
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 questing-slim /questing-slim
+docker-develop-resolute:
+	docker pull --platform=amd64 ubuntu:resolute
+	docker pull --platform=arm64 ubuntu:resolute
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute
+docker-develop-resolute-slim:
+	docker pull --platform=amd64 ubuntu:resolute
+	docker pull --platform=arm64 ubuntu:resolute
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute-slim /resolute-slim
 unstable: docker-unstable
 docker-unstable: docker-unstable-mantic
 docker-unstable-jammy:
@@ -920,6 +944,10 @@ docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
 	scripts/docker/build.sh photoprism ce-bookworm /bookworm "-t photoprism/photoprism:local"
+docker-local-trixie:
+	docker pull photoprism/develop:trixie
+	docker pull debian:trixie-slim
+	scripts/docker/build.sh photoprism ce-trixie /trixie "-t photoprism/photoprism:local"
 docker-local-bullseye:
 	docker pull photoprism/develop:bullseye
 	docker pull photoprism/develop:bullseye-slim
@@ -960,12 +988,19 @@ docker-local-plucky:
 	docker pull photoprism/develop:plucky
 	docker pull ubuntu:plucky
 	scripts/docker/build.sh photoprism ce-plucky /plucky "-t photoprism/photoprism:local"
+docker-local-resolute:
+	docker pull photoprism/develop:resolute
+	docker pull ubuntu:resolute
+	scripts/docker/build.sh photoprism ce-resolute /resolute "-t photoprism/photoprism:local"
 local-develop: docker-local-develop
 docker-local-develop: docker-local-develop-questing
 docker-local-develop-all: docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
+docker-local-develop-trixie:
+	docker pull debian:trixie-slim
+	scripts/docker/build.sh develop trixie /trixie
 docker-local-develop-bullseye:
 	docker pull golang:1-bullseye
 	scripts/docker/build.sh develop bullseye /bullseye
@@ -996,6 +1031,9 @@ docker-local-develop-questing:
 docker-local-develop-plucky:
 	docker pull ubuntu:plucky
 	scripts/docker/build.sh develop plucky /plucky
+docker-local-develop-resolute:
+	docker pull ubuntu:resolute
+	scripts/docker/build.sh develop resolute /resolute
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
