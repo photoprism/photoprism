@@ -380,7 +380,7 @@ services:
 
   ## Dummy OIDC Identity Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:251210
+    image: photoprism/dummy-oidc:260427
     stop_grace_period: 5s
     labels:
       - "traefik.enable=true"

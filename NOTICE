@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-04-15
+Date generated: 2026-04-27
 
 ================================================================================
 
@@ -1150,8 +1150,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-co-op/gocron/v2
-Version: v2.21.0
-License: MIT (https://github.com/go-co-op/gocron/blob/v2.21.0/LICENSE)
+Version: v2.21.1
+License: MIT (https://github.com/go-co-op/gocron/blob/v2.21.1/LICENSE)
 
 MIT License
 
@@ -6627,8 +6627,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/yalue/onnxruntime_go
-Version: v1.27.0
-License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.27.0/LICENSE)
+Version: v1.28.0
+License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.28.0/LICENSE)
 
 Copyright (c) 2023 Nathan Otterness
 
@@ -6893,8 +6893,8 @@ License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.7.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3
-Version: v3.47.3
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.47.3/LICENSE)
+Version: v3.47.5
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.47.5/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -9323,7 +9323,7 @@ node-storage-shim                ISC            Michael Nahkies
 passive-events-support           MIT            Ignas Damunskis <ignas3run@gmail.com>
 photoswipe                       MIT            Dmytro Semenov (https://dimsemenov.com)
 playwright                       Apache-2.0     Microsoft Corporation
-postcss                          MIT            Andrey Sitnik <andrey@sitnik.ru>
+postcss                          MIT            Andrey Sitnik <andrey@sitnik.es>
 postcss-import                   MIT            Maxime Thirouin
 postcss-loader                   MIT            Andrey Sitnik <andrey@sitnik.ru>
 postcss-preset-env               MIT-0          n/a

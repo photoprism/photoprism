@@ -59,7 +59,7 @@ node-storage-shim                ISC            Michael Nahkies
 passive-events-support           MIT            Ignas Damunskis <ignas3run@gmail.com>
 photoswipe                       MIT            Dmytro Semenov (https://dimsemenov.com)
 playwright                       Apache-2.0     Microsoft Corporation
-postcss                          MIT            Andrey Sitnik <andrey@sitnik.ru>
+postcss                          MIT            Andrey Sitnik <andrey@sitnik.es>
 postcss-import                   MIT            Maxime Thirouin
 postcss-loader                   MIT            Andrey Sitnik <andrey@sitnik.ru>
 postcss-preset-env               MIT-0          n/a
