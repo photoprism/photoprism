@@ -609,11 +609,11 @@
         </template>
       </v-list>
     </div>
-    <p-date-time-dialog :visible="dateTimeDialog" :photo="photo" @close="dateTimeDialog = false" @confirm="confirmDateTime"></p-date-time-dialog>
-    <p-camera-dialog :visible="cameraDialog" :photo="photo" @close="cameraDialog = false" @confirm="confirmCamera"></p-camera-dialog>
+    <p-date-time-dialog :visible="dateTimeDialog" :photo="p" @close="dateTimeDialog = false" @confirm="confirmDateTime"></p-date-time-dialog>
+    <p-camera-dialog :visible="cameraDialog" :photo="p" @close="cameraDialog = false" @confirm="confirmCamera"></p-camera-dialog>
     <p-location-dialog
       :visible="locationDialog"
-      :latlng="[photo ? Number(photo.Lat) || 0 : 0, photo ? Number(photo.Lng) || 0 : 0]"
+      :latlng="[p ? Number(p.Lat) || 0 : 0, p ? Number(p.Lng) || 0 : 0]"
       @close="locationDialog = false"
       @confirm="confirmLocation"
     ></p-location-dialog>
