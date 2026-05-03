@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,14 +17,84 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/proxy"
 )
 
-func TestNewCompressMiddleware_Gzip(t *testing.T) {
+func TestShouldExcludeGzipExt(t *testing.T) {
+	t.Run("ExcludesCompressedFormats", func(t *testing.T) {
+		excludedExts := []string{".png", ".gif", ".jpeg", ".jpg", ".webp", ".mp3", ".mp4", ".zip", ".gz"}
+		for _, ext := range excludedExts {
+			assert.True(t, ShouldExcludeGzipExt(ext), "extension %s should be excluded", ext)
+		}
+	})
+	t.Run("ExcludesCaseInsensitive", func(t *testing.T) {
+		assert.True(t, ShouldExcludeGzipExt(".PNG"))
+		assert.True(t, ShouldExcludeGzipExt(".Jpg"))
+		assert.True(t, ShouldExcludeGzipExt(".GZ"))
+	})
+	t.Run("DoesNotExcludeTextFormats", func(t *testing.T) {
+		allowedExts := []string{".html", ".css", ".js", ".json", ".xml", ".txt", ".svg"}
+		for _, ext := range allowedExts {
+			assert.False(t, ShouldExcludeGzipExt(ext), "extension %s should not be excluded", ext)
+		}
+	})
+	t.Run("EmptyExtension", func(t *testing.T) {
+		assert.False(t, ShouldExcludeGzipExt(""))
+	})
+}
+
+func TestMatchesPrefixExclusion(t *testing.T) {
+	prefixes := []string{"/api/v1/dl", "/health", "/livez"}
+
+	t.Run("MatchesPrefix", func(t *testing.T) {
+		assert.True(t, matchesPrefixExclusion("/api/v1/dl/file", prefixes))
+		assert.True(t, matchesPrefixExclusion("/health", prefixes))
+		assert.True(t, matchesPrefixExclusion("/healthz", prefixes))
+		assert.True(t, matchesPrefixExclusion("/livez", prefixes))
+	})
+	t.Run("DoesNotMatchNonPrefixes", func(t *testing.T) {
+		assert.False(t, matchesPrefixExclusion("/api/v1/photos", prefixes))
+		assert.False(t, matchesPrefixExclusion("/other", prefixes))
+	})
+	t.Run("EmptyPrefixes", func(t *testing.T) {
+		assert.False(t, matchesPrefixExclusion("/anything", nil))
+		assert.False(t, matchesPrefixExclusion("/anything", []string{}))
+	})
+	t.Run("EmptyPath", func(t *testing.T) {
+		assert.False(t, matchesPrefixExclusion("", prefixes))
+	})
+}
+
+func TestMatchesFallbackExclusion(t *testing.T) {
+	clusterTheme := "/api/v1/cluster/theme"
+	photoDl := "/api/v1/photos/"
+	share := "/s/"
+
+	t.Run("MatchesClusterTheme", func(t *testing.T) {
+		assert.True(t, matchesFallbackExclusion(clusterTheme, clusterTheme, photoDl, share))
+	})
+	t.Run("MatchesPhotoDl", func(t *testing.T) {
+		assert.True(t, matchesFallbackExclusion("/api/v1/photos/abc123/dl", clusterTheme, photoDl, share))
+	})
+	t.Run("MatchesSharePreview", func(t *testing.T) {
+		assert.True(t, matchesFallbackExclusion("/s/token/shared/preview", clusterTheme, photoDl, share))
+	})
+	t.Run("DoesNotMatchOtherPaths", func(t *testing.T) {
+		assert.False(t, matchesFallbackExclusion("/api/v1/photos/abc123", clusterTheme, photoDl, share))
+		assert.False(t, matchesFallbackExclusion("/s/token/shared/view", clusterTheme, photoDl, share))
+		assert.False(t, matchesFallbackExclusion("/library/something/preview", clusterTheme, photoDl, share))
+	})
+}
+
+func TestGzipMiddleware(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
+	// Enable gzip for this test router.
 	conf := config.TestConfig()
 	conf.Options().HttpCompression = "gzip"
 
 	r := gin.New()
-	r.Use(NewCompressMiddleware(conf))
+	r.Use(gzip.Gzip(
+		gzip.DefaultCompression,
+		gzip.WithCustomShouldCompressFn(NewGzipShouldCompressFn(conf)),
+	))
 
 	r.GET("/ok", func(c *gin.Context) {
 		c.String(http.StatusOK, "hello world")
@@ -64,10 +135,6 @@ func TestNewCompressMiddleware_Gzip(t *testing.T) {
 		c.String(http.StatusOK, "theme")
 	})
 
-	r.NoRoute(func(c *gin.Context) {
-		c.String(http.StatusNotFound, "404 page not found")
-	})
-
 	sharePreviewRoute := conf.BaseUri("/s/:token/:shared/preview")
 	r.GET(sharePreviewRoute, func(c *gin.Context) {
 		c.String(http.StatusOK, "preview")
@@ -88,7 +155,6 @@ func TestNewCompressMiddleware_Gzip(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, "gzip", w.Header().Get("Content-Encoding"))
-		assert.Contains(t, w.Header().Get("Vary"), "Accept-Encoding")
 
 		zr, err := stdgzip.NewReader(bytes.NewReader(w.Body.Bytes()))
 		require.NoError(t, err)
@@ -105,7 +171,6 @@ func TestNewCompressMiddleware_Gzip(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
-		assert.Empty(t, w.Header().Get("Vary"))
 		assert.Equal(t, "download", w.Body.String())
 	})
 	t.Run("DoesNotCompressExcludedExtensions", func(t *testing.T) {
@@ -145,7 +210,7 @@ func TestNewCompressMiddleware_Gzip(t *testing.T) {
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
 		assert.Equal(t, "preview", w.Body.String())
 	})
-	t.Run("DoesNotCompressPortalProxyURI", func(t *testing.T) {
+	t.Run("DoesNotCompressPortalProxyPrefix", func(t *testing.T) {
 		proxyPath := conf.BaseUri(proxy.PathPrefix + "test/ok")
 		r.GET(proxyPath, func(c *gin.Context) {
 			c.String(http.StatusOK, "proxy")
@@ -162,19 +227,13 @@ func TestNewCompressMiddleware_Gzip(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
-		// Vary still set so caches don't serve compressed bytes to clients that won't accept them.
-		assert.Contains(t, w.Header().Get("Vary"), "Accept-Encoding")
 		assert.Equal(t, "hello world", w.Body.String())
 	})
-	t.Run("BypassesCompressionFor404", func(t *testing.T) {
+	t.Run("DoesNotCompressNotFound", func(t *testing.T) {
 		w := doRequest("/missing", true)
 
-		// 404 falls through NoRoute; error responses bypass the encoder so the
-		// raw body lands on the wire, even though the predicate would have
-		// allowed compression for this path.
 		require.Equal(t, http.StatusNotFound, w.Code)
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
-		assert.Contains(t, w.Header().Get("Vary"), "Accept-Encoding")
 		assert.Contains(t, w.Body.String(), "404")
 	})
 }

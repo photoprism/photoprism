@@ -35,16 +35,16 @@ func (m *MediaFile) GenerateCaption(captionSrc entity.Src) (caption *vision.Capt
 	size := vision.Thumb(vision.ModelTypeCaption)
 
 	// Get thumbnail filenames for the selected sizes.
-	fileName, fileErr := m.Thumbnail(Config().ThumbCachePath(), size.Name)
+	fileName, err := m.Thumbnail(Config().ThumbCachePath(), size.Name)
 
-	if fileErr != nil {
-		return caption, fileErr
+	if err != nil {
+		return caption, err
 	}
 
 	// Get matching labels from computer vision model.
 	// Generate a caption using the configured vision model.
 	if caption, _, err = vision.GenerateCaption(vision.Files{fileName}, media.SrcLocal); err != nil {
-		// Failed.
+		log.Debugf("vision: %s in %s (generate caption)", err, clean.Log(m.RootRelName()))
 	} else if caption.Text != "" {
 		if captionSrc != entity.SrcAuto {
 			caption.Source = captionSrc
@@ -128,7 +128,7 @@ func (m *MediaFile) DetectNSFW() bool {
 	filename, err := m.Thumbnail(Config().ThumbCachePath(), thumb.Fit720)
 
 	if err != nil {
-		log.Error(err)
+		log.Errorf("vision: %s in %s (thumbnail for nsfw)", err, clean.Log(m.RootRelName()))
 		return false
 	}
 

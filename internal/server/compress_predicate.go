@@ -10,10 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/proxy"
 )
 
-// excludedExtensions lists file extensions whose responses should never be
-// HTTP-compressed. These formats are already compressed or typically served
-// as large binary payloads where gzip/zstd add CPU cost without saving bytes.
-var excludedExtensions = map[string]struct{}{
+// GzipExcludedExtensions contains file extensions that should never be gzip-compressed.
+// These formats are already compressed or typically served as large binary payloads.
+var GzipExcludedExtensions = map[string]struct{}{
 	".png":  {},
 	".gif":  {},
 	".jpeg": {},
@@ -25,13 +24,16 @@ var excludedExtensions = map[string]struct{}{
 	".gz":   {},
 }
 
-// NewShouldCompressFn returns an encoding-agnostic predicate that decides
-// whether a given request is eligible for HTTP response compression. The
-// predicate inspects the request URL path, file extension, and matched Gin
-// route pattern; it deliberately does not look at Accept-Encoding or
-// Connection headers (the middleware owns those checks). When conf is nil it
-// returns a predicate that always declines.
-func NewShouldCompressFn(conf *config.Config) func(c *gin.Context) bool {
+// ShouldExcludeGzipExt returns true if the given file extension should not be gzip-compressed.
+func ShouldExcludeGzipExt(ext string) bool {
+	_, ok := GzipExcludedExtensions[strings.ToLower(ext)]
+	return ok
+}
+
+// NewGzipShouldCompressFn returns a high-performance gzip decision function for PhotoPrism.
+// It mirrors the legacy exclusion rules (extensions and path prefixes) and adds targeted
+// route exclusions for binary/streaming endpoints that must not be compressed.
+func NewGzipShouldCompressFn(conf *config.Config) func(c *gin.Context) bool {
 	if conf == nil {
 		return func(*gin.Context) bool { return false }
 	}
@@ -43,16 +45,16 @@ func NewShouldCompressFn(conf *config.Config) func(c *gin.Context) bool {
 	photoDlPrefix := apiBase + "/photos/"
 	clusterThemePath := apiBase + "/cluster/theme"
 
-	// FullPath patterns (exact match) for dynamic routes that should bypass compression.
+	// FullPath patterns (exact match) for dynamic routes that should bypass gzip.
 	excludedFullPaths := map[string]struct{}{
 		apiBase + "/photos/:uid/dl":               {},
 		apiBase + "/cluster/theme":                {},
 		conf.BaseUri("/s/:token/:shared/preview"): {},
 	}
 
-	// Path prefixes that should bypass compression (prefix match on raw URL path).
+	// Path prefixes that should bypass gzip (prefix match on raw URL path).
 	excludedPrefixes := []string{
-		// Health endpoints are small and frequently polled; compression would add overhead.
+		// Health endpoints are small and frequently polled; gzip would add overhead.
 		conf.BaseUri("/livez"),
 		conf.BaseUri("/health"),
 		conf.BaseUri("/readyz"),
@@ -64,60 +66,93 @@ func NewShouldCompressFn(conf *config.Config) func(c *gin.Context) bool {
 		conf.BaseUri(config.ApiUri + "/labels"),
 		conf.BaseUri(config.ApiUri + "/videos"),
 		conf.BaseUri(proxy.PathPrefix),
-		// Bundled and custom static assets are served with precompressed
-		// .zst / .gz siblings via PrecompressedStatic; bypass the runtime
-		// encoder so it never re-encodes an already-encoded body and so
-		// PHOTOPRISM_HTTP_COMPRESSION=none consistently disables every
-		// encoded code path on these routes.
-		conf.BaseUri(config.StaticUri),
-		conf.BaseUri(config.CustomStaticUri),
 	}
 
 	return func(c *gin.Context) bool {
-		if c == nil || c.Request == nil {
+		return shouldCompressGzip(c, excludedFullPaths, excludedPrefixes, clusterThemePath, photoDlPrefix, sharePrefix)
+	}
+}
+
+// shouldCompressGzip is the core decision logic for gzip compression.
+// It is separated from NewGzipShouldCompressFn to enable unit testing.
+func shouldCompressGzip(c *gin.Context, excludedFullPaths map[string]struct{}, excludedPrefixes []string, clusterThemePath, photoDlPrefix, sharePrefix string) bool {
+	if c == nil || c.Request == nil {
+		return false
+	}
+
+	// Only compress when the client explicitly accepts gzip and the connection is not upgraded.
+	if !clientAcceptsGzip(c) {
+		return false
+	}
+	if isConnectionUpgrade(c) {
+		return false
+	}
+
+	path := c.Request.URL.Path
+	if path == "" {
+		return false
+	}
+
+	// Exclude known already-compressed/binary extensions.
+	if ext := strings.ToLower(filepath.Ext(path)); ext != "" {
+		if ShouldExcludeGzipExt(ext) {
 			return false
 		}
+	}
 
-		path := c.Request.URL.Path
-		if path == "" {
+	// Exclude configured prefix groups.
+	if matchesPrefixExclusion(path, excludedPrefixes) {
+		return false
+	}
+
+	// Exclude matched route patterns for dynamic endpoints.
+	if full := c.FullPath(); full != "" {
+		if _, ok := excludedFullPaths[full]; ok {
 			return false
 		}
+	}
 
-		// Exclude known already-compressed/binary extensions.
-		if ext := strings.ToLower(filepath.Ext(path)); ext != "" {
-			if _, ok := excludedExtensions[ext]; ok {
-				return false
-			}
-		}
+	// Fallback exclusions using raw path checks for robustness.
+	if matchesFallbackExclusion(path, clusterThemePath, photoDlPrefix, sharePrefix) {
+		return false
+	}
 
-		// Exclude configured prefix groups.
-		for _, prefix := range excludedPrefixes {
-			if prefix != "" && strings.HasPrefix(path, prefix) {
-				return false
-			}
-		}
+	return true
+}
 
-		// Exclude matched route patterns for dynamic endpoints.
-		if full := c.FullPath(); full != "" {
-			if _, ok := excludedFullPaths[full]; ok {
-				return false
-			}
-		}
+// clientAcceptsGzip checks if the client accepts gzip encoding.
+func clientAcceptsGzip(c *gin.Context) bool {
+	return strings.Contains(strings.ToLower(c.GetHeader("Accept-Encoding")), "gzip")
+}
 
-		// Fallback exclusions using raw path checks for robustness.
-		// Note: Keep the prefix guard here (not just HasSuffix), as the frontend SPA
-		// wildcard route may include paths ending in "/preview" (HTML) that should
-		// remain compressible (e.g., "/library/.../preview").
-		if path == clusterThemePath {
-			return false
-		}
-		if strings.HasPrefix(path, photoDlPrefix) && strings.HasSuffix(path, "/dl") {
-			return false
-		}
-		if strings.HasPrefix(path, sharePrefix) && strings.HasSuffix(path, "/preview") {
-			return false
-		}
+// isConnectionUpgrade checks if the connection is being upgraded (e.g., WebSocket).
+func isConnectionUpgrade(c *gin.Context) bool {
+	return strings.Contains(strings.ToLower(c.GetHeader("Connection")), "upgrade")
+}
 
+// matchesPrefixExclusion checks if the path matches any excluded prefix.
+func matchesPrefixExclusion(path string, excludedPrefixes []string) bool {
+	for _, prefix := range excludedPrefixes {
+		if prefix != "" && strings.HasPrefix(path, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+// matchesFallbackExclusion checks for fallback exclusions using raw path checks.
+// Note: Keep the prefix guard here (not just HasSuffix), as the frontend SPA
+// wildcard route may include paths ending in "/preview" (HTML) that should
+// remain compressible (e.g., "/library/.../preview").
+func matchesFallbackExclusion(path, clusterThemePath, photoDlPrefix, sharePrefix string) bool {
+	if path == clusterThemePath {
 		return true
 	}
+	if strings.HasPrefix(path, photoDlPrefix) && strings.HasSuffix(path, "/dl") {
+		return true
+	}
+	if strings.HasPrefix(path, sharePrefix) && strings.HasSuffix(path, "/preview") {
+		return true
+	}
+	return false
 }
