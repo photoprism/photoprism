@@ -1,6 +1,6 @@
 ## Frontend Tests & Linting
 
-**Last Updated:** February 22, 2026
+**Last Updated:** May 3, 2026
 
 ### Purpose
 
@@ -59,29 +59,29 @@ When evaluating frontend tooling changes, test at least one CE run plus Plus and
 
 Current frontend tool versions are defined in `frontend/package.json` unless stated otherwise.
 
-| Tool                                 | Version     |
-|:-------------------------------------|:------------|
-| Node.js engine                       | `>= 18.0.0` |
-| npm engine                           | `>= 9.0.0`  |
-| Vitest                               | `^3.2.4`    |
-| `@vitest/ui`                         | `^3.2.4`    |
-| `@vitest/coverage-v8`                | `^3.2.4`    |
-| `@vitejs/plugin-vue`                 | `^6.0.4`    |
-| `@vue/test-utils`                    | `^2.4.6`    |
-| JSDOM                                | `^26.1.0`   |
-| Playwright (Vitest browser provider) | `^1.58.2`   |
-| ESLint                               | `^9.39.2`   |
-| `@eslint/js`                         | `^9.33.0`   |
-| `@eslint/eslintrc`                   | `^3.3.3`    |
-| `eslint-config-prettier`             | `^10.1.8`   |
-| `eslint-plugin-import`               | `^2.32.0`   |
-| `eslint-plugin-node`                 | `^11.1.0`   |
-| `eslint-plugin-prettier`             | `^5.5.5`    |
-| `eslint-plugin-vue`                  | `^10.7.0`   |
-| `eslint-plugin-vuetify`              | `^2.5.3`    |
-| `eslint-webpack-plugin`              | `^5.0.2`    |
-| Prettier                             | `^3.8.1`    |
-| TestCafe CLI (dev environment)       | `3.7.4`     |
+| Tool                                 | Version      |
+|:-------------------------------------|:-------------|
+| Node.js engine                       | `>= 22.15.0` |
+| npm engine                           | `>= 9.0.0`   |
+| Vitest                               | `^3.2.4`     |
+| `@vitest/ui`                         | `^3.2.4`     |
+| `@vitest/coverage-v8`                | `^3.2.4`     |
+| `@vitejs/plugin-vue`                 | `^6.0.4`     |
+| `@vue/test-utils`                    | `^2.4.6`     |
+| JSDOM                                | `^26.1.0`    |
+| Playwright (Vitest browser provider) | `^1.58.2`    |
+| ESLint                               | `^9.39.2`    |
+| `@eslint/js`                         | `^9.33.0`    |
+| `@eslint/eslintrc`                   | `^3.3.3`     |
+| `eslint-config-prettier`             | `^10.1.8`    |
+| `eslint-plugin-import`               | `^2.32.0`    |
+| `eslint-plugin-node`                 | `^11.1.0`    |
+| `eslint-plugin-prettier`             | `^5.5.5`     |
+| `eslint-plugin-vue`                  | `^10.7.0`    |
+| `eslint-plugin-vuetify`              | `^2.5.3`     |
+| `eslint-webpack-plugin`              | `^5.0.2`     |
+| Prettier                             | `^3.8.1`     |
+| TestCafe CLI (dev environment)       | `3.7.4`      |
 
 Note: TestCafe is available in the development environment but is currently not pinned as a direct dependency in `frontend/package.json`. Verify with `testcafe --version`.
 

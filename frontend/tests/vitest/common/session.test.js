@@ -1,9 +1,14 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import "../fixtures";
 import { $config } from "app/session";
 import Session from "common/session";
 import { buildNamespace, createNamespacedStorage } from "common/storage";
 import StorageShim from "node-storage-shim";
+import { Photo } from "model/photo";
+
+// Lets the suite drain the dynamic import + microtask chain that
+// Session.reset() uses to call Photo.clearCache().
+const flushMicrotasks = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const createConfig = (baseUri, storageNamespace) => {
   const config = Object.assign(Object.create(Object.getPrototypeOf($config)), $config);
@@ -497,5 +502,120 @@ describe("common/session", () => {
     await session.redeemToken("token123");
     expect(session.data.token).toBe("123token");
     session.deleteData();
+  });
+
+  describe("Photo cache invalidation on reset", () => {
+    // Session.reset() dynamically imports model/photo and calls
+    // Photo.clearCache() so metadata fetched under one role cannot leak
+    // to another after logout, login, or role change. Pin the contract
+    // here because the cache lives in a separate module and is wired
+    // up via a runtime import — easy to break without noticing.
+    it("clears the Photo LRU cache when reset() runs", async () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+
+      Photo._cache.clear();
+      Photo._cache.set("uid-pre-reset", { UID: "uid-pre-reset", Title: "Cached" });
+      expect(Photo._cache.has("uid-pre-reset")).toBe(true);
+
+      session.reset();
+
+      // The dynamic import resolves on the microtask queue.
+      await flushMicrotasks();
+
+      expect(Photo._cache.has("uid-pre-reset")).toBe(false);
+    });
+
+    // End-to-end repro of the post-logout race spec Open Question #1
+    // describes: an in-flight Photo.findCached() under role A must
+    // neither re-seed Photo._cache after Session.reset() has wiped it
+    // NOR resolve to role-A data that a caller's .then handler could
+    // route into role-B UI. The ModelCache epoch counter rejects the
+    // stale fetch so both guarantees hold.
+    it("rejects in-flight findCached() after reset() so neither cache nor UI sees role-A data", async () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+
+      Photo._cache.clear();
+
+      let resolveFind;
+      const findSpy = vi.spyOn(Photo.prototype, "find").mockImplementation(
+        () =>
+          new Promise((res) => {
+            resolveFind = res;
+          })
+      );
+
+      // Open the sidebar under role A — issues Photo.findCached().
+      const inFlight = Photo.findCached("uid-leak");
+      // Let the loader actually run.
+      await Promise.resolve();
+
+      // Logout while the request is still pending.
+      session.reset();
+      await flushMicrotasks();
+      expect(Photo._cache.size()).toBe(0);
+
+      // Backend response from role A finally arrives.
+      resolveFind(new Photo({ UID: "uid-leak", Title: "Role A" }));
+
+      // The promise rejects — both guarantees hold:
+      //   1. cache stays empty (next read reissues under role B)
+      //   2. waiter's .then never fires (no role-A data into UI)
+      await expect(inFlight).rejects.toThrow(/stale fetch/i);
+      expect(Photo._cache.has("uid-leak")).toBe(false);
+      expect(Photo._cache.size()).toBe(0);
+
+      findSpy.mockRestore();
+    });
+  });
+
+  describe("isSidebarRestricted", () => {
+    // Default-deny: an authenticated user with an empty / missing Role
+    // composes through Session.isSidebarRestricted() as restricted, so a
+    // misconfigured account never reaches the full editing surface.
+    it("returns true for an authenticated user with an empty Role", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+      session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+      session.setAuthToken("234200000000000000000000000000000000000000000000");
+      session.setData({ user: { ID: 7, Role: "" } });
+
+      expect(session.isAnonymous()).toBe(false);
+      expect(session.isSidebarRestricted()).toBe(true);
+    });
+
+    it("returns true for restricted roles (guest, visitor, contributor)", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+      session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+      session.setAuthToken("234200000000000000000000000000000000000000000000");
+
+      ["guest", "visitor", "contributor"].forEach((role) => {
+        session.setData({ user: { ID: 7, Role: role } });
+        expect(session.isSidebarRestricted()).toBe(true);
+      });
+    });
+
+    it("returns false for unrestricted roles (admin, user)", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+      session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+      session.setAuthToken("234200000000000000000000000000000000000000000000");
+
+      ["admin", "user"].forEach((role) => {
+        session.setData({ user: { ID: 7, Role: role } });
+        expect(session.isSidebarRestricted()).toBe(false);
+      });
+    });
+
+    it("returns true for anonymous sessions regardless of Role", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+      // No setId/setAuthToken/setData — session.user has no id, so
+      // isAnonymous() returns true and short-circuits the composition.
+      expect(session.isAnonymous()).toBe(true);
+      expect(session.isSidebarRestricted()).toBe(true);
+    });
   });
 });

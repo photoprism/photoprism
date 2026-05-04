@@ -673,17 +673,32 @@ func UpdateSubjectCovers(public bool) (err error) {
 	return err
 }
 
-// UpdateCoversAsync runs UpdateCovers in a go routine
-// and logs the returned error, if any, as a warning.
+// UpdateCoversAsync runs UpdateCovers in a goroutine and logs the
+// returned error, if any, as a warning. The launched goroutine is
+// registered with the shared entity package WaitGroup so config.CloseDb
+// can drain in-flight work via entity.WaitForAsyncJobs before tearing
+// down the database connection. A deferred recover guards against any
+// future shutdown race producing a process-killing panic instead of a
+// clean log line.
 func UpdateCoversAsync() {
+	entity.AsyncJobAdd()
 	go func() {
+		defer entity.AsyncJobDone()
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("index: recovered from panic in UpdateCoversAsync (%v)", r)
+			}
+		}()
 		if err := UpdateCovers(); err != nil {
 			log.Warnf("index: %s (update covers)", clean.Error(err))
 		}
 	}()
 }
 
-// UpdateCovers updates album, subject, and label cover thumbs.
+// UpdateCovers updates album, subject, and label cover thumbs. It
+// returns nil without doing any work when the entity database provider
+// has been torn down (e.g. during test shutdown), so a stray async
+// invocation after CloseDb does not panic on a nil dialect lookup.
 func UpdateCovers() (err error) {
 	if !coversBusy.CompareAndSwap(false, true) {
 		log.Debugf("index: skipped updating covers because it is already in progress")
@@ -691,6 +706,11 @@ func UpdateCovers() (err error) {
 	}
 
 	defer coversBusy.Store(false)
+
+	if entity.Db() == nil {
+		log.Debugf("index: skipped updating covers because database is not connected")
+		return nil
+	}
 
 	log.Debugf("index: updating covers")
 

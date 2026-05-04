@@ -23,7 +23,16 @@ Additional information can be found in our Developer Guide:
 
 */
 
+// Model is the base class every domain model in `frontend/src/model/`
+// extends. It provides setValues/getValues/wasChanged/rollback semantics
+// over a single source of truth — `__originalValues`, the snapshot of the
+// last load or save. Subclasses typically override getDefaults() to declare
+// the field shape and type hints used by getValues() coercion.
 export class Model {
+  // Initializes __originalValues to an empty object and seeds the instance
+  // by routing through setValues() — either with the caller-supplied values
+  // or, when none are given, with the subclass's getDefaults() so every
+  // tracked field starts in a known state.
   constructor(values) {
     this.__originalValues = {};
 
@@ -34,6 +43,13 @@ export class Model {
     }
   }
 
+  // Copies every own enumerable key of `values` onto `this` and records a
+  // snapshot in __originalValues so wasChanged()/rollback()/getValues(true)
+  // can later compare the current state against it. Scalars are copied as-is;
+  // objects are deep-cloned with JSON so future mutations on this[key] don't
+  // bleed into the snapshot. Pass scalarOnly=true to skip object snapshots
+  // (used when a partial update should not reset object diffs). The reserved
+  // key "__originalValues" is always ignored. No-op for falsy `values`.
   setValues(values, scalarOnly) {
     if (!values) return;
 
@@ -52,6 +68,14 @@ export class Model {
     return this;
   }
 
+  // Returns a plain object containing the model's tracked fields. When
+  // `changed` is true, only the fields whose current value differs from
+  // __originalValues are included — that's the diff Rest.update() ships to
+  // the API. Values are coerced to match the type declared by getDefaults():
+  // strings replace null/undefined with "", numeric and boolean fields are
+  // forced through parseFloat / Boolean. Fields without a default pass
+  // through as-is, so subclasses that hold transient runtime data (functions,
+  // helpers) are safe.
   getValues(changed) {
     const result = {};
     const defaults = this.getDefaults();
@@ -91,6 +115,11 @@ export class Model {
     return result;
   }
 
+  // Returns the snapshot stored for `key` in __originalValues — i.e., the
+  // value as of the last load or save. If the field was never tracked but
+  // exists on the instance, returns the live value as a fallback so callers
+  // don't have to special-case ad-hoc fields. Returns null when the key is
+  // unknown or when "__originalValues" is requested directly.
   originalValue(key) {
     if (this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
       return this.__originalValues[key];
@@ -101,6 +130,10 @@ export class Model {
     return null;
   }
 
+  // Returns true when any tracked field has been modified since the last
+  // load or save, i.e. when getValues(true) yields a non-empty diff.
+  // rollback() is the natural inverse: after rollback() runs, wasChanged()
+  // is false until the next mutation.
   wasChanged() {
     const changed = this.getValues(true);
 
@@ -111,6 +144,32 @@ export class Model {
     return !(changed.constructor === Object && Object.keys(changed).length === 0);
   }
 
+  // Restores every tracked field to the snapshot stored in __originalValues
+  // (the values captured the last time setValues() ran — typically when the
+  // model was loaded or saved). Object values are deep-cloned on the way
+  // back so future mutations on this[key] don't bleed into the snapshot.
+  // Use this to undo an optimistic local mutation when the corresponding
+  // API call rejects; wasChanged() is the natural inverse check.
+  rollback() {
+    for (let key in this.__originalValues) {
+      if (this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
+        const original = this.__originalValues[key];
+        if (typeof original === "object" && original !== null) {
+          this[key] = JSON.parse(JSON.stringify(original));
+        } else {
+          this[key] = original;
+        }
+      }
+    }
+    return this;
+  }
+
+  // Returns the default field shape for this model, used by the constructor
+  // (when no values are passed) and as a type hint by getValues() for
+  // string/number/boolean coercion. Subclasses MUST override this and list
+  // every persisted field with a representative default of the right type;
+  // fields not listed here are still copied by setValues() but skip
+  // coercion, so getValues() returns them verbatim.
   getDefaults() {
     return {};
   }

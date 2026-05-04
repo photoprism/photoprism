@@ -69,6 +69,7 @@ export default {
       default: () => {},
     },
   },
+  emits: ["close", "confirm"],
   data() {
     return {
       disabled: !this.$config.allow("people", "manage"),

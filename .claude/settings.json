@@ -10,7 +10,8 @@
       "Edit",
       "Grep",
       "Glob",
-      "WebSearch"
+      "WebSearch",
+      "mcp__playwright__*"
     ],
     "defaultMode": "acceptEdits"
   },

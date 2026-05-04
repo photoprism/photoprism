@@ -197,4 +197,162 @@ describe("model/abstract", () => {
     expect(response.count).toBe(2);
     expect(response.models.length).toBe(2);
   });
+
+  describe("setValues", () => {
+    it("returns the instance so calls can be chained", () => {
+      const album = new Album({ Name: "First" });
+      expect(album.setValues({ Name: "Second" })).toBe(album);
+    });
+
+    it("ignores a falsy values argument", () => {
+      const album = new Album({ Name: "Kept" });
+      album.setValues(null);
+      album.setValues(undefined);
+      album.setValues(false);
+      expect(album.Name).toBe("Kept");
+      expect(album.wasChanged()).toBe(false);
+    });
+
+    it("skips the reserved __originalValues key", () => {
+      const album = new Album({ Name: "Original" });
+      album.setValues({ __originalValues: { Name: "Tampered" } });
+      expect(album.__originalValues.Name).toBe("Original");
+    });
+
+    it("snapshots scalars and deep-clones objects so mutations don't bleed into __originalValues", () => {
+      const link = new Link({ ID: 1, UID: "abc", Token: "tkn", ShareUID: "shr" });
+      // Scalar mutation never reaches the snapshot.
+      link.Token = "changed";
+      expect(link.__originalValues.Token).toBe("tkn");
+    });
+
+    it("skips object snapshots when scalarOnly is true", () => {
+      const album = new Album({ Title: "Trip" });
+      const nested = { foo: "bar" };
+      album.setValues({ Title: "Trip", Notes: "x", Extras: nested }, true);
+      expect(album.Extras).toBe(nested);
+      // scalarOnly: object values are not tracked in __originalValues, so
+      // wasChanged() can't detect mutations on them — by design.
+      expect(album.__originalValues.Extras).toBeUndefined();
+      expect(album.__originalValues.Title).toBe("Trip");
+    });
+  });
+
+  describe("getValues", () => {
+    it("with changed=true returns only fields that differ from the snapshot", () => {
+      const album = new Album({ ID: 1, Title: "Trip", Slug: "trip", PhotoCount: 0 });
+      album.Title = "Vacation";
+      album.PhotoCount = 5;
+      const diff = album.getValues(true);
+      expect(diff).toEqual({ Title: "Vacation", PhotoCount: 5 });
+    });
+
+    it("coerces strings, numbers, and booleans according to getDefaults()", () => {
+      const album = new Album({ Title: "Trip", PhotoCount: 0, Favorite: false });
+      // String default => null becomes "".
+      album.Title = null;
+      // Number default => parseFloat applied to whatever is on the instance.
+      album.PhotoCount = "42";
+      // Boolean default => coerced via Boolean().
+      album.Favorite = 1;
+      const values = album.getValues();
+      expect(values.Title).toBe("");
+      expect(values.PhotoCount).toBe(42);
+      expect(values.Favorite).toBe(true);
+    });
+
+    it("passes through fields that have no default verbatim", () => {
+      // Album.getDefaults() has no `ID`, so ID is tracked in __originalValues
+      // but bypasses type coercion — getValues() returns it as-is.
+      const album = new Album({ ID: 7, Title: "Trip" });
+      const values = album.getValues();
+      expect(values.ID).toBe(7);
+    });
+  });
+
+  describe("originalValue", () => {
+    it("returns the snapshot value for a tracked key", () => {
+      const album = new Album({ Title: "Original", PhotoCount: 3 });
+      album.Title = "Mutated";
+      album.PhotoCount = 99;
+      expect(album.originalValue("Title")).toBe("Original");
+      expect(album.originalValue("PhotoCount")).toBe(3);
+    });
+
+    it("falls back to the live value for an untracked own property", () => {
+      const album = new Album({ Title: "Trip" });
+      album.RuntimeOnly = "ad-hoc";
+      // RuntimeOnly was assigned after construction, so it isn't in
+      // __originalValues; the fallback returns whatever's currently on `this`.
+      expect(album.originalValue("RuntimeOnly")).toBe("ad-hoc");
+    });
+
+    it("returns null for unknown keys", () => {
+      const album = new Album({ Title: "Trip" });
+      expect(album.originalValue("DoesNotExist")).toBeNull();
+    });
+
+    it("returns null when the reserved __originalValues key is requested", () => {
+      const album = new Album({ Title: "Trip" });
+      expect(album.originalValue("__originalValues")).toBeNull();
+    });
+  });
+
+  describe("wasChanged", () => {
+    it("returns false on a freshly loaded model", () => {
+      const album = new Album({ ID: 1, Title: "Trip" });
+      expect(album.wasChanged()).toBe(false);
+    });
+
+    it("returns true after any tracked field is mutated", () => {
+      const album = new Album({ ID: 1, Title: "Trip" });
+      album.Title = "Vacation";
+      expect(album.wasChanged()).toBe(true);
+    });
+
+    it("flips back to false after rollback() restores the snapshot", () => {
+      const album = new Album({ ID: 1, Title: "Trip" });
+      album.Title = "Vacation";
+      album.rollback();
+      expect(album.wasChanged()).toBe(false);
+    });
+  });
+
+  describe("rollback", () => {
+    it("restores scalar fields to the __originalValues snapshot", () => {
+      const album = new Album({ ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 });
+      album.Name = "Mutated";
+      album.Slug = "mutated";
+      expect(album.wasChanged()).toBe(true);
+      album.rollback();
+      expect(album.Name).toBe("Christmas 2019");
+      expect(album.Slug).toBe("christmas-2019");
+      expect(album.wasChanged()).toBe(false);
+    });
+
+    it("deep-clones object fields so post-rollback mutations don't bleed into the snapshot", () => {
+      const link = new Link({ ID: 1, UID: "abc", Token: "tkn", ShareUID: "shr" });
+      link.Token = "changed";
+      link.rollback();
+      expect(link.Token).toBe("tkn");
+      // A second mutation must still be rollable — the snapshot wasn't aliased.
+      link.Token = "changed-again";
+      link.rollback();
+      expect(link.Token).toBe("tkn");
+    });
+
+    it("returns the model so calls can be chained", () => {
+      const album = new Album({ Name: "X" });
+      album.Name = "Y";
+      expect(album.rollback()).toBe(album);
+    });
+
+    it("is a no-op on a clean model", () => {
+      const album = new Album({ ID: 1, Name: "Pristine" });
+      expect(album.wasChanged()).toBe(false);
+      album.rollback();
+      expect(album.Name).toBe("Pristine");
+      expect(album.wasChanged()).toBe(false);
+    });
+  });
 });

@@ -3,4 +3,6 @@
 !CLAUDE.md
 !rules
 !rules/*.md
+!agents
+!agents/*.md
 !settings.json

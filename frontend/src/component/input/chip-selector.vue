@@ -142,7 +142,7 @@ export default {
       if (typeof this.normalizeTitleForCompare === "function") {
         try {
           return this.normalizeTitleForCompare(input);
-        } catch (e) {
+        } catch {
           return input.toLowerCase();
         }
       }

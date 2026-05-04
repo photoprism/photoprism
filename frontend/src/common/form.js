@@ -218,7 +218,7 @@ export class rules {
 
     try {
       new URL(v);
-    } catch (e) {
+    } catch {
       return false;
     }
     return true;

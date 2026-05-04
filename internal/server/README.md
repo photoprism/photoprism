@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** March 4, 2026
+**Last Updated:** May 3, 2026
 
 ### Overview
 
@@ -28,6 +28,7 @@
 
 - `start.go` — main startup flow, listener selection (HTTP/HTTPS/AutoTLS/Unix socket), graceful shutdown.
 - `routes_webapp.go` — Web UI routes and shared method helpers (`MethodsGetHead`).
+- `static_precompressed.go` — `PrecompressedStatic` handler that serves bundled `/static/*` assets from precompressed siblings emitted by `frontend/scripts/precompress.js`; the same handler accepts operator-supplied siblings for `/c/static/*` and falls back to identity when none exist. Range requests always serve identity, and `http.ServeContent` continues to handle `Last-Modified` + `If-Modified-Since` revalidation for both encoded and identity responses (the handler does not set an `ETag`, so `If-None-Match` is latent rather than active).
 - `recovery.go` — panic recovery middleware with stack trace logging.
 - `logger.go` — request logging middleware (enabled in debug mode).
 - `security.go` — security headers and trusted proxy/platform handling.
@@ -44,7 +45,8 @@
 
 ### Configuration & Safety Notes
 
-- Compression: only gzip is enabled; brotli requests log a notice.
+- Compression: configured via `PHOTOPRISM_HTTP_COMPRESSION` / `--http-compression` as a comma-separated preference list. Supported tokens are `zstd`, `gzip`, and `none` (empty value also disables compression). The default ships as `zstd,gzip` so capable clients receive zstd while everyone else falls back to gzip; unknown tokens are ignored with a startup warning. See [`specs/platform/http-compression.md`](../../specs/platform/http-compression.md) for the negotiation rules and exclusion list.
+- Bundled frontend assets under `/static/*` are served with precompressed `.zst` / `.gz` siblings produced at build time by `frontend/scripts/precompress.js` (the npm `postbuild` hook for `make build-js`), selected via `PrecompressedStatic` in `static_precompressed.go`. Custom static assets under `/c/static/*` go through the same handler so extensions and operators *may* ship precompressed siblings alongside their files; without siblings the route serves identity. The runtime middleware bypasses both routes so it never re-encodes an already-encoded body and so `PHOTOPRISM_HTTP_COMPRESSION=none` consistently disables every encoded code path on these routes.
 - Trusted proxies/platform headers are read from config; keep the list tight.
 - If no trusted proxy ranges are configured (or the configured ranges are invalid), proxy trust is disabled and client IP resolution falls back to the TCP peer address.
 - HTTP hardening defaults:

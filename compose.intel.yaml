@@ -37,6 +37,12 @@ services:
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
+    ## Override variables with optional env file, see https://docs.docker.com/reference/compose-file/services/#required
+    env_file:
+      - path: ".telemetry"
+        required: false
+      - path: ".env"
+        required: false
     ## Configure development environment
     environment:
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
@@ -87,7 +93,7 @@ services:
       PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"             # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
@@ -131,8 +137,8 @@ services:
       GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
       CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
       CLAUDE_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/claude"
-      GH_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/gh"
       GH_REPO: "photoprism/photoprism"
+      GH_CONFIG_DIR: "/go/src/github.com/photoprism/photoprism/.local/gh"
     ## Share hardware devices with FFmpeg for hardware video transcoding:
     devices:
       - "/dev/dri:/dev/dri"

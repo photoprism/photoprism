@@ -252,12 +252,12 @@ export default {
     this.subscriptions.push(this.$event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(
-      this.$event.subscribe("lightbox.opened", (ev, data) => {
+      this.$event.subscribe("lightbox.opened", () => {
         this.lightbox.open = true;
       })
     );
     this.subscriptions.push(
-      this.$event.subscribe("lightbox.closed", (ev, data) => {
+      this.$event.subscribe("lightbox.closed", () => {
         this.lightbox.open = false;
       })
     );

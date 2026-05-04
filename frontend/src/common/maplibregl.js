@@ -81,7 +81,7 @@ maplibregl.Map.prototype.setLanguage = function (language, noAlt) {
   if (!this.styleUndecorated) {
     try {
       this.styleUndecorated = this.getStyle();
-    } catch (e) {
+    } catch {
       // Ignore.
     }
   }

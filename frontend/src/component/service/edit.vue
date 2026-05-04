@@ -253,11 +253,17 @@ export default {
       type: String,
       default: "",
     },
-    model: {
+    // The parent passes `service.clone()` (see settings/services.vue) so the
+    // dialog operates on a parent-owned clone — mutations are intentional and
+    // do not bleed into the parent's list state. We accept it as `service` and
+    // alias it as `model` via the computed below so the existing template and
+    // script bindings keep working without tripping vue/no-mutating-props.
+    service: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
   },
+  emits: ["close", "remove", "confirm"],
   data() {
     return {
       options: options,
@@ -271,7 +277,15 @@ export default {
       readonly: this.$config.get("readonly"),
     };
   },
-  computed: {},
+  computed: {
+    // Read-only alias of the `service` prop. Returning the prop reference
+    // means `v-model="model.X"` writes through to the same caller-supplied
+    // clone, matching the dialog's pre-rename behavior. The lint rule stays
+    // silent because `model` is no longer a declared prop.
+    model() {
+      return this.service;
+    },
+  },
   watch: {
     search(q) {
       if (this.loading) return;

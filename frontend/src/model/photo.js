@@ -1,10 +1,12 @@
 import memoizeOne from "memoize-one";
 import RestModel from "model/rest";
+import ModelCache from "model/model-cache";
 import File from "model/file";
 import Marker from "model/marker";
 import { DateTime } from "luxon";
 import { $config } from "app/session";
 import $api from "common/api";
+import $event from "common/event";
 import $util from "common/util";
 import countries from "options/countries.json";
 import { $gettext } from "common/gettext";
@@ -854,9 +856,9 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
-  locationInfo = () => {
+  locationInfo() {
     return this.generateLocationInfo(this.PlaceID, this.Country, this.Place, this.PlaceLabel);
-  };
+  }
 
   generateLocationInfo = memoizeOne((placeId, countryCode, place, placeLabel) => {
     if (placeId === "zz" && countryCode !== "zz") {
@@ -985,9 +987,9 @@ export class Photo extends RestModel {
   });
 
   // Example: Apple iPhone 12 Pro Max, DNG, 4032 × 3024, 32.9 MB
-  getCameraInfo = () => {
+  getCameraInfo() {
     return this.generateCameraInfo(this.Camera, this.CameraID, this.CameraMake, this.CameraModel, this.Iso, this.Exposure);
-  };
+  }
 
   generateCameraInfo = memoizeOne((camera, cameraId, cameraMake, cameraModel, iso, exposure) => {
     let info = [];
@@ -1033,9 +1035,9 @@ export class Photo extends RestModel {
   });
 
   // Example: iPhone 12 Pro Max 5.1mm ƒ/1.6, 26mm, ISO32, 1/4525
-  getLensInfo = () => {
+  getLensInfo() {
     return this.generateLensInfo(this.Lens, this.LensID, this.LensMake, this.LensModel, this.CameraModel, this.FNumber, this.FocalLength);
-  };
+  }
 
   generateLensInfo = memoizeOne((lens, lensId, lensMake, lensModel, cameraModel, fNumber, focalLength) => {
     let info = [];
@@ -1069,6 +1071,15 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
+  getExifInfo() {
+    const parts = [];
+    if (this.FocalLength) parts.push(this.FocalLength + "mm");
+    if (this.FNumber) parts.push("\u0192/" + this.FNumber);
+    if (this.Iso) parts.push("ISO " + this.Iso);
+    if (this.Exposure) parts.push(this.Exposure);
+    return parts.join(" \u2022 ");
+  }
+
   getCamera() {
     if (this.Camera) {
       return this.Camera.Make + " " + this.Camera.Model;
@@ -1079,6 +1090,15 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
+  // Moves this photo to the archive (soft delete). Intentionally
+  // does NOT flip a local Archived flag the way Thumb.archive()
+  // does — no Photo consumer reads `photo.Archived` (the lightbox's
+  // `this.model?.Archived` checks all run against a Thumb), so an
+  // optimistic flip on Photo would just add dead state. The actual
+  // UI update for the photo-grid caller (view/cards.vue) is driven
+  // by the `photos.archived` WS event handler in page/photos.vue
+  // around line 802, which calls removeResult() to drop the row
+  // from the search results outside the Archive context.
   archive() {
     return $api.post("batch/photos/archive", { photos: [this.getId()] });
   }
@@ -1264,6 +1284,72 @@ export class Photo extends RestModel {
     return $gettext("Photo");
   }
 
+  // Module-level Photo cache. Per-subclass scoping (rather than a shared
+  // static on Rest) keeps Photo's size budget and invalidation surface
+  // independent from other model caches — see
+  // specs/frontend/model-lru-cache.md. Snapshot via getValues so
+  // type coercion through getDefaults() is applied; hydrate by constructing
+  // a fresh Photo from the cached values.
+  static _cache = new ModelCache({
+    max: 50,
+    ttl: 0,
+    snapshot: (photo) => (photo instanceof Photo ? photo.getValues(false) : photo),
+    hydrate: (values) => new Photo(values),
+  });
+
+  // getCache exposes the ModelCache so the inherited Rest.findCached and
+  // Rest.prefetch helpers can route through it. Subclasses that don't want
+  // caching simply don't override Rest.getCache() (default: null).
+  static getCache() {
+    return Photo._cache;
+  }
+
+  // Removes a photo from the LRU cache. Mutating methods on this model
+  // no longer call this directly: the backend publishes "photos.updated"
+  // / "photos.deleted" / "photos.archived" / "photos.restored" via
+  // websocket and the cache is evicted from there (see the module-level
+  // subscriptions below). This stays public as an escape hatch for flows
+  // that mutate a photo without firing one of those events — currently
+  // album-membership changes, which only emit "albums.updated".
+  static evictCache(uid) {
+    if (uid) {
+      Photo._cache.evict(uid);
+    }
+  }
+
+  // Drops every cached photo and any in-flight request. Called on session
+  // reset so metadata fetched under one role cannot be served to another.
+  // ModelCache.clear() bumps an internal session-epoch counter and any
+  // in-flight fetch whose epoch no longer matches REJECTS with
+  // ModelCacheStaleFetchError instead of resolving — so neither the
+  // cache nor a .then-chained UI assignment can leak role-A data into
+  // role B during the post-logout unmount window. See
+  // specs/frontend/model-lru-cache.md Decisions §5 for the design.
+  static clearCache() {
+    Photo._cache.clear();
+  }
+
+  // Warms the cache for the slides around `index` so the next/previous
+  // sidebar open hits a cached entity. Defaults match the lightbox's
+  // current policy (one slide forward, none back). Each prefetch is
+  // fire-and-forget; rejections are absorbed via Promise.allSettled.
+  static prefetchAround(models, index, { before = 0, after = 1 } = {}) {
+    if (!Array.isArray(models) || typeof index !== "number" || index < 0) {
+      return Promise.resolve([]);
+    }
+    const tasks = [];
+    const start = Math.max(0, index - before);
+    const end = Math.min(models.length - 1, index + after);
+    for (let i = start; i <= end; i++) {
+      if (i === index) continue;
+      const uid = models[i]?.UID;
+      if (uid) {
+        tasks.push(Photo.prefetch(uid));
+      }
+    }
+    return Promise.allSettled(tasks);
+  }
+
   static mergeResponse(results, response) {
     if (response.offset === 0 || results.length === 0) {
       return response.models;
@@ -1281,5 +1367,43 @@ export class Photo extends RestModel {
     return results.concat(response.models);
   }
 }
+
+// Drops cached entries from the WS event payload. The backend uses
+// two different shapes on the same channel family — handle both:
+//
+//   - "photos.updated" (PublishPhotoEvent in internal/api/api_event.go)
+//     emits a search.Photos result: an array of objects with .UID.
+//   - "photos.archived" / "photos.restored" / "photos.deleted"
+//     (EntitiesArchived / EntitiesRestored / EntitiesDeleted in
+//     internal/event/publish_entities.go) emit a []string of bare UIDs.
+//
+// A single helper covers both so we don't have to keep them in sync.
+// The "photos.updated" payload is consumed as an EVICT signal (not a
+// refresh) because search.Photos flattens nested fields like Details
+// into top-level columns (DetailsKeywords, DetailsSubject, ...);
+// hydrating from that snapshot would leave Photo.Details === undefined
+// and collapse the sidebar's isEditable computed. Eviction sends the
+// next read back to find() and the field-complete /photos/:uid endpoint.
+function evictCachedFromEntities(data) {
+  if (!data || !Array.isArray(data.entities)) {
+    return;
+  }
+  data.entities.forEach((entity) => {
+    if (typeof entity === "string" && entity) {
+      Photo._cache.evict(entity);
+    } else if (entity && typeof entity === "object" && entity.UID) {
+      Photo._cache.evict(entity.UID);
+    }
+  });
+}
+
+// Subscribe once per channel. Adding "archived" and "restored" here
+// retires the per-mutation Photo.evictCache calls that lightbox.vue
+// previously made after onArchive / onRestore — the WS round-trip
+// covers it for every consumer in this tab.
+$event.subscribe("photos.updated", (_ev, data) => evictCachedFromEntities(data));
+$event.subscribe("photos.deleted", (_ev, data) => evictCachedFromEntities(data));
+$event.subscribe("photos.archived", (_ev, data) => evictCachedFromEntities(data));
+$event.subscribe("photos.restored", (_ev, data) => evictCachedFromEntities(data));
 
 export default Photo;

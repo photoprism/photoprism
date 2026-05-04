@@ -2,7 +2,8 @@ FROM ubuntu:22.04
 
 LABEL maintainer="PhotoPrism UG <hello@photoprism.app>"
 
-ENV DEBIAN_FRONTEND="noninteractive"
+ENV DO_NOT_TRACK=true \
+    DEBIAN_FRONTEND="noninteractive"
 ENV TMP=/tmp
 
 # see https://docs.docker.com/build/building/variables/#env-usage-example

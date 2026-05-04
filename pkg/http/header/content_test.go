@@ -19,6 +19,7 @@ func TestContent(t *testing.T) {
 		assert.Equal(t, "Content-Language", ContentLanguage)
 		assert.Equal(t, "Content-Length", ContentLength)
 		assert.Equal(t, "Content-Range", ContentRange)
+		assert.Equal(t, "Range", Range)
 		assert.Equal(t, "Location", Location)
 		assert.Equal(t, "Origin", Origin)
 		assert.Equal(t, "Vary", Vary)

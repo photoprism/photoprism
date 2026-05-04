@@ -67,6 +67,111 @@
     z-index: 1;
 }
 
+/* Face Marker Overlay */
+
+.p-face-markers {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    user-select: none;
+    /* Stays transparent so PhotoSwipe pan/zoom keeps working; .is-drawing
+       captures the pointer. */
+    pointer-events: none;
+    touch-action: auto;
+    cursor: default;
+}
+
+.p-face-markers.is-drawing {
+    pointer-events: auto;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.p-face-markers__svg {
+    pointer-events: none;
+    overflow: visible;
+}
+
+.p-face-markers__rect {
+    fill: rgba(255, 255, 255, 0.06);
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.p-face-markers__rect--named {
+    stroke: rgba(167, 139, 250, 0.98);
+    cursor: default;
+}
+
+.p-face-markers__rect--draft {
+    stroke: rgba(196, 167, 255, 1);
+    stroke-dasharray: 6 4;
+    fill: rgba(167, 139, 250, 0.14);
+    pointer-events: none;
+}
+
+.p-face-markers__handle {
+    fill: rgba(167, 139, 250, 1);
+    stroke: rgba(70, 40, 140, 0.95);
+    stroke-width: 1.5px;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.p-face-markers__label {
+    font-size: 13px;
+    font-weight: 600;
+    fill: #fff;
+    stroke: rgba(0, 0, 0, 0.85);
+    stroke-width: 3px;
+    paint-order: stroke fill;
+    pointer-events: none;
+    user-select: none;
+    dominant-baseline: hanging;
+}
+
+.p-face-markers__confirm {
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+    z-index: 3;
+}
+
+.p-face-markers__btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+    color: #fff;
+    transition: transform 0.08s ease-out;
+}
+
+.p-face-markers__btn:hover {
+    transform: scale(1.08);
+}
+
+.p-face-markers__btn--confirm {
+    background: rgba(126, 87, 230, 0.95);
+}
+
+.p-face-markers__btn--cancel {
+    background: rgba(90, 90, 90, 0.95);
+}
+
+.p-face-markers__btn.is-disabled,
+.p-face-markers__btn[disabled] {
+    cursor: default;
+    opacity: 0.6;
+    transform: none;
+}
+
 /* Sidebar Info */
 
 .p-lightbox__container > .p-lightbox__sidebar {
@@ -114,6 +219,13 @@
     user-select: text;
 }
 
+.p-lightbox__container > .p-lightbox__sidebar .metadata__item .v-list-item-title,
+.p-lightbox__container > .p-lightbox__sidebar .metadata__item .v-list-item-subtitle {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+}
+
 .p-lightbox__container > .p-lightbox__sidebar .meta-title {
     font-weight: 700;
     word-wrap: normal;
@@ -122,13 +234,295 @@
     hyphens: auto;
 }
 
-.p-lightbox__container > .p-lightbox__sidebar .meta-caption {
+.p-lightbox__container > .p-lightbox__sidebar .metadata__file {
+    display: block;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-filename {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    word-break: break-all;
+    text-align: start;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-caption,
+.p-lightbox__container > .p-lightbox__sidebar .meta-notes {
     white-space: pre-wrap;
     overflow-wrap: normal;
     word-wrap: normal;
     word-break: break-word;
     text-align: start;
     hyphens: auto;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-scrollable {
+    max-height: 120px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--v-theme-on-surface), 0.2) transparent;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-scrollable::-webkit-scrollbar {
+    width: 4px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-scrollable::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-scrollable::-webkit-scrollbar-thumb {
+    background: rgba(var(--v-theme-on-surface), 0.2);
+    border-radius: 2px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-scrollable::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--v-theme-on-surface), 0.4);
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-keywords {
+    word-break: break-word;
+    text-align: start;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-caption a,
+.p-lightbox__container > .p-lightbox__sidebar .meta-notes a {
+    color: rgb(var(--v-theme-info));
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-caption a:hover,
+.p-lightbox__container > .p-lightbox__sidebar .meta-notes a:hover {
+    text-decoration: none;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+    user-select: none;
+    min-height: 32px;
+    transition: all 0.2s ease;
+    background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
+    color: rgb(var(--v-theme-on-surface));
+    box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip:hover {
+    background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.7);
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary {
+    background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
+    color: rgb(var(--v-theme-on-surface));
+    box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary:hover {
+    background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.7);
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip .v-icon {
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip .v-icon:hover {
+    opacity: 1;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip--pending-remove {
+    background-color: rgba(var(--v-theme-error), 0.3);
+    color: rgb(var(--v-theme-error));
+    box-shadow: none;
+    opacity: 1;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip--pending-add {
+    background-color: rgba(var(--v-theme-download), 0.3);
+    color: rgb(var(--v-theme-download));
+    box-shadow: none;
+    border-style: none;
+    opacity: 1;
+}
+
+/* Person row in sidebar */
+.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row {
+    min-height: 44px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-person__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 12px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-person__name {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Inline edit fields in sidebar */
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit {
+    margin: 0;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-field__input {
+    padding: 2px 0;
+    min-height: 1.5em;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    mask-image: none;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit textarea.v-field__input {
+    min-height: unset;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--v-theme-on-surface), 0.2) transparent;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit textarea.v-field__input::-webkit-scrollbar {
+    width: 4px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit textarea.v-field__input::-webkit-scrollbar-thumb {
+    background: rgba(var(--v-theme-on-surface), 0.2);
+    border-radius: 2px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-field {
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+    background: rgb(var(--v-theme-surface-bright, var(--v-theme-surface)));
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-title .v-field__input {
+    font-weight: 700;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-caption .v-field__input {
+    white-space: pre-wrap;
+    overflow-wrap: normal;
+    word-wrap: normal;
+    word-break: break-word;
+}
+
+/* Pencil icon: hidden by default, shown on list-item hover */
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-pencil {
+    opacity: 0;
+    cursor: pointer;
+    font-size: 16px;
+    color: rgba(var(--v-theme-on-surface), 0.5);
+    transition: opacity 0.15s ease;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .metadata__item:hover > .v-list-item__append .meta-inline-pencil {
+    opacity: 1;
+}
+
+/* Add prompt for empty editable fields */
+.p-lightbox__container > .p-lightbox__sidebar .meta-add-prompt {
+    color: rgba(var(--v-theme-on-surface), 0.35);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-add-prompt:hover {
+    color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+/* Always visible when isEditable — unlike the per-row remove icon below,
+   these don't follow the hover-to-reveal convention. */
+.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle,
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-add {
+    opacity: 0.7;
+    cursor: pointer;
+    font-size: 18px;
+    color: rgba(var(--v-theme-on-surface), 0.7);
+    margin-inline-start: 4px;
+    transition: opacity 0.15s ease;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle:hover,
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-add:hover {
+    opacity: 1;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle.is-active {
+    color: rgb(var(--v-theme-info));
+    opacity: 1;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle[disabled],
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-add[disabled],
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-remove[disabled],
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-eject[disabled] {
+    pointer-events: none;
+    opacity: 0.35;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-remove,
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-eject {
+    opacity: 0;
+    cursor: pointer;
+    font-size: 16px;
+    color: rgba(var(--v-theme-on-surface), 0.6);
+    transition: opacity 0.15s ease;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-remove,
+.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-eject {
+    opacity: 1;
+}
+
+/* Confirm (check) icon: always visible when editing */
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-confirm {
+    cursor: pointer;
+    font-size: 18px;
+    color: rgb(var(--v-theme-info));
+}
+
+/* Keep labels and selection text readable when fields are focused.
+   Vuetify 3 applies the focused color via an inline style, so overriding
+   it requires !important. */
+.p-camera-dialog .v-field--focused .v-label.v-field-label,
+.p-camera-dialog .v-field--focused .v-label.v-field-label--floating,
+.p-datetime-dialog .v-field--focused .v-label.v-field-label,
+.p-datetime-dialog .v-field--focused .v-label.v-field-label--floating {
+    color: rgb(var(--v-theme-on-surface)) !important;
+    opacity: var(--v-medium-emphasis-opacity, 0.7);
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-combobox__selection,
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-autocomplete__selection,
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-select__selection,
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-field--focused .v-label.v-field-label {
+    color: rgb(var(--v-theme-on-surface)) !important;
+}
+
+/* Sidebar inline dropdowns (name, labels, albums) render in a body-level
+   overlay, so they're outside `.p-lightbox__sidebar`. The lightbox theme
+   has `surface` identical to `background`, which makes the default menu
+   invisible against the sidebar; lift it to `surface-bright` and add a
+   border for a clear edge. */
+.meta-inline-menu .v-overlay__content,
+.meta-inline-menu > .v-list {
+    background: rgb(var(--v-theme-surface-bright)) !important;
+    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity, 0.12));
 }
 
 /* Media Content */

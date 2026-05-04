@@ -55,8 +55,8 @@
                   single-line
                   density="comfortable"
                   class="input-name pa-0 ma-0"
-                  @blur="(ev) => onSetName(m, ev)"
-                  @keyup.enter="(ev) => onSetName(m, ev)"
+                  @blur="() => onSetName(m)"
+                  @keyup.enter="() => onSetName(m)"
                 ></v-text-field>
                 <v-combobox
                   v-else
@@ -77,8 +77,8 @@
                   density="comfortable"
                   class="input-name pa-0 ma-0 text-selectable"
                   @update:model-value="(person) => onSetPerson(m, person)"
-                  @blur="(ev) => onSetName(m, ev)"
-                  @keyup.enter="(ev) => onSetName(m, ev)"
+                  @blur="() => onSetName(m)"
+                  @keyup.enter="() => onSetName(m)"
                 >
                 </v-combobox>
               </v-card-actions>
@@ -92,14 +92,6 @@
         </div>
       </div>
     </div>
-    <p-confirm-dialog
-      :visible="confirm.visible"
-      icon="mdi-account-plus"
-      :icon-size="42"
-      :text="confirm?.model?.Name ? $gettext('Add %{s}?', { s: confirm.model.Name }) : $gettext('Add person?')"
-      @close="onCancelRename"
-      @confirm="onConfirmRename"
-    ></p-confirm-dialog>
   </div>
 </template>
 
@@ -109,14 +101,12 @@ import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
-import PConfirmDialog from "component/confirm/dialog.vue";
 import PLoading from "component/loading.vue";
 
 export default {
   name: "PPageFaces",
   components: {
     PLoading,
-    PConfirmDialog,
   },
   props: {
     staticFilter: {
@@ -158,11 +148,6 @@ export default {
       titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
-      confirm: {
-        visible: false,
-        model: new Face(),
-        text: this.$gettext("Add person?"),
-      },
       menuProps: {
         openOnClick: false,
         openOnFocus: true,
@@ -624,24 +609,16 @@ export default {
 
       return true;
     },
-    onSetName(model, ev) {
+    onSetName(model) {
       if (this.busy || !model) {
-        return;
-      }
-
-      // If there's a pending confirmation for a different face, don't process new input
-      if (this.confirm.visible && this.confirm.model && this.confirm.model.ID !== model.ID) {
         return;
       }
 
       const name = model?.Name;
 
       if (!name) {
-        this.onCancelRename();
         return;
       }
-
-      this.confirm.model = model;
 
       const people = this.$config.values?.people;
 
@@ -660,32 +637,7 @@ export default {
       model.Name = name;
       model.SubjUID = "";
 
-      if (model.Name) {
-        if (ev && ev.key === "Enter" && !ev.isComposing && !ev.repeat) {
-          this.setName(model, model.Name);
-        } else {
-          this.confirm.visible = true;
-        }
-      }
-    },
-    onConfirmRename() {
-      if (!this.confirm?.model?.Name) {
-        return;
-      }
-
-      if (this.confirm.model.wasChanged()) {
-        this.setName(this.confirm.model, this.confirm?.model?.Name);
-      } else {
-        this.confirm.model = null;
-        this.confirm.visible = false;
-      }
-    },
-    onCancelRename() {
-      if (this.confirm && this.confirm.model) {
-        this.confirm.model.Name = "";
-        this.confirm.model.SubjUID = "";
-      }
-      this.confirm.visible = false;
+      this.setName(model, model.Name);
     },
     setName(model, newName) {
       if (this.busy || !model || !newName || newName.trim() === "") {
@@ -699,8 +651,6 @@ export default {
       return model.setName(newName).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
-        this.confirm.model = null;
-        this.confirm.visible = false;
         this.changeFaceCount(-1);
       });
     },

@@ -40,6 +40,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    // Override animation duration (ms). -1 = use global setting, 0 = no animation.
+    animateDuration: {
+      type: Number,
+      default: -1,
+    },
   },
   emits: ["update:latlng", "marker-moved", "map-clicked"],
   data() {
@@ -49,7 +54,7 @@ export default {
       map: null,
       marker: null,
       position: [0.0, 0.0],
-      animate: settings.maps.animate,
+      animate: this.animateDuration >= 0 ? this.animateDuration : settings.maps.animate,
       options: {
         container: null,
         // Styles can be edited/created with https://maplibre.org/maputnik/.

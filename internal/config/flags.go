@@ -860,7 +860,7 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "http-compression",
 			Aliases: []string{"z"},
-			Usage:   "Web server compression `METHOD` (gzip, none)",
+			Usage:   "Web server compression `METHODS` as a comma-separated preference list (e.g. \"zstd,gzip\"; supported: gzip, zstd, none)",
 			EnvVars: EnvVars("HTTP_COMPRESSION"),
 		}}, {
 		Flag: &cli.StringFlag{

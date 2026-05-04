@@ -70,7 +70,7 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 - Lowercase only articles, short conjunctions, and short prepositions of three letters or fewer when they are not in one of those positions.
 - Preserve known acronyms (for example, API, CLI, HTTP, JSON) and slash-separated acronym groups (for example, CSV/TSV) as uppercase.
 - Preserve inline code spans (`` `foo` ``), file paths (e.g. `docs/foo-bar.md`), and slash commands (e.g. `/grill-me`) verbatim; do not recase their contents.
-- Prefer `&` where needed; do not use `And` or `Or` in titles.
+- Use `&` instead of `And`/`Or` in headings.
 
 ## Safety & Data
 

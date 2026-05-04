@@ -437,8 +437,14 @@ func (c *Config) Db() *gorm.DB {
 	return c.db
 }
 
-// CloseDb closes the db connection (if any).
+// CloseDb closes the db connection (if any). Before tearing down the
+// connection it drains async work registered with entity.AsyncJobAdd so
+// goroutines launched by UpdateCountsAsync, UpdateCoversAsync, and
+// similar helpers do not race the provider being nilled and panic on a
+// nil dialect lookup.
 func (c *Config) CloseDb() error {
+	entity.WaitForAsyncJobs()
+
 	if c.db != nil {
 		sqldb, dberr := c.db.DB()
 		if dberr == nil {

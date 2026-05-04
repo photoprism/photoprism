@@ -6,6 +6,7 @@
 
 - Follow the lint/format scripts in `frontend/package.json`; all added JS, Vue, and tests must conform.
 - Unit tests (Vitest): `make test-js`, `make vitest-watch`, `make vitest-coverage`. Acceptance: `acceptance-*` targets in the root `Makefile`.
+- **Always invoke Vitest through the npm/make wrapper, never bare `npx vitest run`.** `frontend/package.json`'s `test` script wraps the call in `cross-env TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test`. Without those env vars ~50 component tests (Vuetify renders, chip-selector, login, location-input, batch-edit, people-tab, lightbox `toggleInfo`, etc.) and TZ-sensitive date tests fail spuriously — the failures look real but only reproduce in the unwrapped invocation. Do not compare a "failed N, passed M" report from bare `npx vitest run` against a `make test-js` baseline. For ad-hoc filtering on a single file, mirror the env explicitly: `(cd frontend && TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test npx vitest run <path>)`.
 - One-off TestCafe (single case by `testID`):
   ```bash
   make storage/acceptance
@@ -27,6 +28,7 @@
 - Prefer waits over sleeps; click only visible/enabled elements; use role/label/text selectors (not XPath).
 - Screenshots: small and reproducible — JPEG, visible viewport, deterministic `.local/screenshots/<case>/<step>__<viewport>.jpg` names, no large inline screenshots.
 - If `npx` fetches an MCP server at runtime, add `--yes` or preinstall to avoid prompts.
+- Delegate to the `ui-tester` subagent for any flow with more than ~2 browser steps (login + navigate + assert, multi-step forms, regression sweeps). Brief it with the URL, credentials, exact steps, and the verdict format you want back; ask for a short report so raw snapshots and console dumps stay out of the parent context. Drive Playwright MCP inline only for one-shot checks (single navigate, single screenshot).
 
 ## Frontend Focus Management
 

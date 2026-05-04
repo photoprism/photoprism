@@ -19,6 +19,17 @@ describe("model/marker", () => {
     const result = marker.getDefaults();
     expect(result.UID).toBe("");
     expect(result.FileUID).toBe("");
+    // Frontend-instantiated markers are always manual (user-drawn) — backend
+    // markers overwrite Src via setValues() when they arrive from the API.
+    expect(result.Src).toBe("manual");
+  });
+
+  it("should default Src to 'manual' when constructed without values", () => {
+    // getDefaults is only applied when no values are passed to the
+    // constructor; manual markers in lightbox.onCreateFaceMarker pass
+    // Src explicitly, but the default guards the no-argument code path.
+    const marker = new Marker();
+    expect(marker.Src).toBe("manual");
   });
 
   it("should get route view", () => {

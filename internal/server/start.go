@@ -9,12 +9,12 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/api"
@@ -68,17 +68,15 @@ func Start(ctx context.Context, conf *config.Config) {
 		router.Use(Logger())
 	}
 
+	// Warn once per unsupported compression token so operator typos are visible.
+	for _, token := range conf.HttpCompressionUnknown() {
+		log.Warnf("server: ignored unsupported http-compression value %q", token)
+	}
+
 	// Register compression middleware if enabled in the configuration.
-	switch conf.HttpCompression() {
-	case "br", "brotli":
-		log.Infof("server: brotli compression is currently not supported")
-	case "gzip":
-		// Use a custom compression predicate for fast, targeted exclusions.
-		router.Use(gzip.Gzip(
-			gzip.DefaultCompression,
-			gzip.WithCustomShouldCompressFn(NewGzipShouldCompressFn(conf)),
-		))
-		log.Infof("server: enabled gzip compression")
+	if prefs := conf.HttpCompressionPreferences(); len(prefs) > 0 {
+		router.Use(NewCompressMiddleware(conf))
+		log.Infof("server: enabled http compression (%s)", strings.Join(prefs, " > "))
 	}
 
 	// Register security middleware.

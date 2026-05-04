@@ -8,6 +8,12 @@ GID := $(shell id -g)
 PWD := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 REPO_ROOT := $(abspath $(PWD)/..)
 NODE_IMAGE ?= node:lts
+export NPM_CONFIG_IGNORE_SCRIPTS ?= true
+
+ifneq (,$(wildcard $(REPO_ROOT)/.telemetry))
+include $(REPO_ROOT)/.telemetry
+export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' $(REPO_ROOT)/.telemetry)
+endif
 
 define DOCKER_NPM
 docker run --rm -it \
@@ -16,10 +22,9 @@ docker run --rm -it \
   --user "$(UID):$(GID)" \
   --read-only --tmpfs /tmp \
   -v ~/.cache/npm:/npm-cache \
+  --env-file "$(REPO_ROOT)/.telemetry" \
   -e NPM_CONFIG_CACHE=/npm-cache \
-  -e NPM_CONFIG_AUDIT=false \
-  -e NPM_CONFIG_FUND=false \
-  -e NO_UPDATE_NOTIFIER=true \
+  -e NPM_CONFIG_IGNORE_SCRIPTS=true \
   --cap-drop ALL --security-opt no-new-privileges --pids-limit 256 \
   $(NODE_IMAGE) sh -lc
 endef
@@ -36,8 +41,8 @@ notice:
 	@echo "Creating license report for frontend dependencies..."
 	license-report --only=prod --config=.report.json > NOTICE
 install-npm:
-	# Keep scripts enabled for npm itself; split other globals and disable scripts for safety
-	sudo npm install -g npm@latest
+	# Split global installs and disable package scripts for safety.
+	sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm@latest
 	sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 install-testcafe:
 	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@latest

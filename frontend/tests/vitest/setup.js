@@ -31,10 +31,34 @@ if (typeof global.ResizeObserver === "undefined") {
     constructor(callback) {
       this.callback = callback;
     }
-    observe() { }
-    unobserve() { }
-    disconnect() { }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
   };
+}
+
+// jsdom does not implement window.visualViewport, which Vuetify's VOverlay
+// location strategies read eagerly via `watch(..., { immediate: true })` —
+// any overlay-backed component (v-combobox, v-menu, v-dialog...) throws
+// ReferenceError without this shim.
+if (!window.visualViewport) {
+  Object.defineProperty(window, "visualViewport", {
+    configurable: true,
+    value: {
+      width: 1024,
+      height: 768,
+      offsetLeft: 0,
+      offsetTop: 0,
+      pageLeft: 0,
+      pageTop: 0,
+      scale: 1,
+      addEventListener() {},
+      removeEventListener() {},
+      dispatchEvent() {
+        return true;
+      },
+    },
+  });
 }
 
 // Configure Vue Test Utils global configuration
@@ -55,12 +79,12 @@ config.global.mocks = {
   $event: {
     subscribe: () => "sub-id",
     subscribeOnce: () => "sub-id-once",
-    unsubscribe: () => { },
-    publish: () => { },
+    unsubscribe: () => {},
+    publish: () => {},
   },
   $view: {
-    enter: () => { },
-    leave: () => { },
+    enter: () => {},
+    leave: () => {},
     isActive: () => true,
   },
   $notify: { success: vi.fn(), error: vi.fn(), warn: vi.fn(), info: vi.fn() },
@@ -70,18 +94,23 @@ config.global.mocks = {
     request: () => Promise.resolve(),
     exit: () => Promise.resolve(),
   },
-  $clipboard: { selection: [], has: () => false, toggle: () => { } },
+  $clipboard: { selection: [], has: () => false, toggle: () => {} },
   $util: {
     hasTouch: () => false,
     encodeHTML: (s) => s,
     sanitizeHtml: (s) => s,
     formatSeconds: (n) => String(n),
     formatRemainingSeconds: () => "0",
+    formatCamera: (camera, id, make, model) => [make, model].filter(Boolean).join(" "),
+    normalizeLabelTitle: (s) => (s || "").toLowerCase().trim(),
     videoFormat: () => "avc",
     videoFormatUrl: () => "/v.mp4",
     thumb: () => ({ src: "/t.jpg", w: 100, h: 100 }),
   },
   $api: { post: vi.fn(), delete: vi.fn(), get: vi.fn() },
+  $session: {
+    isSidebarRestricted: () => false,
+  },
 };
 
 config.global.plugins = [vuetify];

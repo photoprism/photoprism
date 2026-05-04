@@ -3,6 +3,7 @@ package entity
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -17,6 +18,35 @@ import (
 
 // countsBusy indicates whether count refresh jobs are currently running.
 var countsBusy = atomic.Bool{}
+
+// asyncWG tracks in-flight goroutines spawned by entity package async
+// helpers (UpdateCountsAsync and the cover-update goroutine in
+// internal/entity/query). Callers that intend to tear down the database
+// connection — most importantly config.CloseDb during test shutdown —
+// should invoke WaitForAsyncJobs first to avoid a nil-DB race in the
+// running goroutines.
+var asyncWG sync.WaitGroup
+
+// AsyncJobAdd registers a new in-flight async job spawned by the entity
+// package or its sub-packages. It must be paired with AsyncJobDone in a
+// deferred call so the WaitForAsyncJobs helper can drain reliably.
+func AsyncJobAdd() {
+	asyncWG.Add(1)
+}
+
+// AsyncJobDone marks an in-flight async job as finished. Always pair it
+// with a preceding AsyncJobAdd via defer so panics in the goroutine still
+// release the WaitGroup.
+func AsyncJobDone() {
+	asyncWG.Done()
+}
+
+// WaitForAsyncJobs blocks until every async job started via the package's
+// async helpers has finished. Callers that need to safely tear down the
+// database connection should invoke this before nilling the provider.
+func WaitForAsyncJobs() {
+	asyncWG.Wait()
+}
 
 type LabelPhotoCount struct {
 	LabelID    int
@@ -261,17 +291,32 @@ func UpdateLabelCounts() (err error) {
 	return nil
 }
 
-// UpdateCountsAsync runs UpdateCounts in a go routine
-// and logs the returned error, if any, as a warning.
+// UpdateCountsAsync runs UpdateCounts in a goroutine and logs the
+// returned error, if any, as a warning. The launched goroutine is
+// registered with the package WaitGroup (via AsyncJobAdd / AsyncJobDone)
+// so config.CloseDb can drain in-flight work via WaitForAsyncJobs before
+// tearing down the database connection. A deferred recover guards against
+// any future shutdown race producing a process-killing panic instead of
+// a clean log line.
 func UpdateCountsAsync() {
+	AsyncJobAdd()
 	go func() {
+		defer AsyncJobDone()
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("index: recovered from panic in UpdateCountsAsync (%v)", r)
+			}
+		}()
 		if err := UpdateCounts(); err != nil {
 			log.Warnf("index: %s (update counts)", clean.Error(err))
 		}
 	}()
 }
 
-// UpdateCounts updates precalculated photo and file counts.
+// UpdateCounts updates precalculated photo and file counts. It returns
+// nil without doing any work when the entity database provider has been
+// torn down (e.g. during test shutdown), so a stray async invocation
+// after CloseDb does not panic on a nil dialect lookup.
 func UpdateCounts() (err error) {
 	if !countsBusy.CompareAndSwap(false, true) {
 		log.Debugf("index: skipped updating counts because it is already in progress")
@@ -279,6 +324,11 @@ func UpdateCounts() (err error) {
 	}
 
 	defer countsBusy.Store(false)
+
+	if Db() == nil {
+		log.Debugf("index: skipped updating counts because database is not connected")
+		return nil
+	}
 
 	log.Debug("index: updating counts")
 

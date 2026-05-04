@@ -322,4 +322,27 @@ describe("model/user", () => {
     const result = await user.changePassword("old", "new");
     expect(result.new_password).toBe("new");
   });
+
+  describe("isSidebarRestricted", () => {
+    it("returns true for restricted roles", () => {
+      ["guest", "visitor", "contributor"].forEach((role) => {
+        const user = new User({ ID: 1, Role: role });
+        expect(user.isSidebarRestricted()).toBe(true);
+      });
+    });
+
+    it("returns false for unrestricted roles", () => {
+      ["admin", "user"].forEach((role) => {
+        const user = new User({ ID: 1, Role: role });
+        expect(user.isSidebarRestricted()).toBe(false);
+      });
+    });
+
+    it("default-denies when Role is empty, missing, or null", () => {
+      [{ ID: 1, Role: "" }, { ID: 1, Role: null }, { ID: 1 }].forEach((values) => {
+        const user = new User(values);
+        expect(user.isSidebarRestricted()).toBe(true);
+      });
+    });
+  });
 });

@@ -124,20 +124,23 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	// Serves static favicon.
 	router.StaticFile(conf.BaseUri("/favicon.ico"), conf.SiteFavicon())
 
-	// Serves bundled assets like JS, CSS, and fonts.
+	// Serves bundled assets like JS, CSS, and fonts. Prefers precompressed
+	// .zst / .gz siblings emitted by frontend/scripts/precompress.js when the
+	// client's Accept-Encoding allows; see static_precompressed.go for the
+	// negotiation rules and Range/Vary handling.
 	if dir := conf.StaticPath(); dir != "" {
 		group := router.Group(conf.BaseUri(config.StaticUri), Static(conf))
-		{
-			group.Static("", dir)
-		}
+		handler := PrecompressedStatic(conf, dir)
+		group.GET("/*filepath", handler)
+		group.HEAD("/*filepath", handler)
 	}
 
 	// Serves custom assets, e.g. bundled with extensions.
 	if dir := conf.CustomStaticPath(); dir != "" {
 		group := router.Group(conf.BaseUri(config.CustomStaticUri), Static(conf))
-		{
-			group.Static("", dir)
-		}
+		handler := PrecompressedStatic(conf, dir)
+		group.GET("/*filepath", handler)
+		group.HEAD("/*filepath", handler)
 	}
 
 	// Serves rainbow test page.

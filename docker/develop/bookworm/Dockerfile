@@ -21,7 +21,19 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
-ENV PHOTOPRISM_ARCH=$TARGETARCH \
+ENV DO_NOT_TRACK=true \
+    GH_TELEMETRY=false \
+    DISABLE_TELEMETRY=1 \
+    DISABLE_ERROR_REPORTING=1 \
+    DISABLE_FEEDBACK_COMMAND=1 \
+    CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1 \
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
+    DISABLE_AUTOUPDATER=1 \
+    NO_UPDATE_NOTIFIER=true \
+    NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_FUND=false \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
     NODE_ENV="production" \
@@ -63,7 +75,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \
-        build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
+        build-essential gcc g++ git gettext davfs2 chrpath shellcheck apache2-utils \
         chromium chromium-driver chromium-sandbox firefox-esr \
         libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev libavcodec-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
@@ -80,6 +92,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     cp -r /etc/skel/.config /root/.config && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
+    /scripts/install-hadolint.sh && \
+    /scripts/install-osv-scanner.sh && \
+    /scripts/install-gitleaks.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/skel/.bashrc && \

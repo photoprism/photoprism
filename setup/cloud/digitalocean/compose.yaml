@@ -128,7 +128,7 @@ services:
       PHOTOPRISM_SITE_AUTHOR: ""                       # meta site author
       PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # YOUR INITIAL "admin" PASSWORD
       PHOTOPRISM_AUTH_MODE: "password"                 # authentication mode (public, password)
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"              # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"         # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
       PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, or error
       PHOTOPRISM_READONLY: "false"                     # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"                 # enables experimental features

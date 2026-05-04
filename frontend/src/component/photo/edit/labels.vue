@@ -206,7 +206,7 @@ export default {
 
       const name = label.Name;
 
-      this.view.model.removeLabel(label.ID).then((m) => {
+      this.view.model.removeLabel(label.ID).then(() => {
         this.$notify.success("removed " + name);
       });
     },
@@ -215,7 +215,7 @@ export default {
         return;
       }
 
-      this.view.model.addLabel(this.newLabel).then((m) => {
+      this.view.model.addLabel(this.newLabel).then(() => {
         this.$notify.success("added " + this.newLabel);
 
         this.newLabel = "";

@@ -50,6 +50,7 @@ venv
 /frontend/tests_output/
 frontend/coverage/
 **/__screenshots__/
+/.playwright-mcp/
 /photoprism
 /photoprism-*
 /photos/originals/*

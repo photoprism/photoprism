@@ -271,7 +271,7 @@ export default {
       if (!existing || existing.UID === m.UID) {
         this.busy = true;
         m.update()
-          .then((m) => {
+          .then(() => {
             this.$notify.success(this.$gettext("Changes successfully saved"));
             this.dialog.edit = false;
           })

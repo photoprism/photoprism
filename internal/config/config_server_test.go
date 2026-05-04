@@ -117,6 +117,67 @@ func TestConfig_HttpCompression(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "", c.HttpCompression())
+
+	c.Options().HttpCompression = "  Zstd, GZIP "
+	assert.Equal(t, "zstd, gzip", c.HttpCompression())
+}
+
+func TestConfig_HttpCompressionPreferences(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Empty", func(t *testing.T) {
+		c.Options().HttpCompression = ""
+		assert.Empty(t, c.HttpCompressionPreferences())
+	})
+	t.Run("None", func(t *testing.T) {
+		c.Options().HttpCompression = "none"
+		assert.Empty(t, c.HttpCompressionPreferences())
+	})
+	t.Run("LegacyGzip", func(t *testing.T) {
+		c.Options().HttpCompression = "gzip"
+		assert.Equal(t, []string{"gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("ZstdThenGzip", func(t *testing.T) {
+		c.Options().HttpCompression = "zstd,gzip"
+		assert.Equal(t, []string{"zstd", "gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("PreservesOrderAndDeduplicates", func(t *testing.T) {
+		c.Options().HttpCompression = "gzip, zstd, gzip"
+		assert.Equal(t, []string{"gzip", "zstd"}, c.HttpCompressionPreferences())
+	})
+	t.Run("DropsUnknownTokens", func(t *testing.T) {
+		c.Options().HttpCompression = "br, zstd, gzip"
+		assert.Equal(t, []string{"zstd", "gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("WhitespaceAndCaseInsensitive", func(t *testing.T) {
+		c.Options().HttpCompression = "  ZSTD ,  GZip  "
+		assert.Equal(t, []string{"zstd", "gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("IdentityIsOff", func(t *testing.T) {
+		c.Options().HttpCompression = "identity"
+		assert.Empty(t, c.HttpCompressionPreferences())
+	})
+}
+
+func TestConfig_HttpCompressionUnknown(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("None", func(t *testing.T) {
+		c.Options().HttpCompression = "zstd, gzip"
+		assert.Empty(t, c.HttpCompressionUnknown())
+	})
+	t.Run("ReportsUnknown", func(t *testing.T) {
+		c.Options().HttpCompression = "br, zstd, deflate, gzip"
+		assert.Equal(t, []string{"br", "deflate"}, c.HttpCompressionUnknown())
+	})
+	t.Run("DeduplicatesUnknown", func(t *testing.T) {
+		c.Options().HttpCompression = "br, br, deflate"
+		assert.Equal(t, []string{"br", "deflate"}, c.HttpCompressionUnknown())
+	})
+	t.Run("EmptyDoesNotReportUnknown", func(t *testing.T) {
+		c.Options().HttpCompression = ""
+		assert.Empty(t, c.HttpCompressionUnknown())
+	})
 }
 
 func TestConfig_HttpHeaderTimeout(t *testing.T) {

@@ -95,7 +95,7 @@
     <p-service-remove :visible="dialog.remove" :model="model" @close="close('remove')" @confirm="onRemoved"></p-service-remove>
     <p-service-edit
       :visible="dialog.edit"
-      :model="model"
+      :service="model"
       :scope="editScope"
       @remove="remove(model)"
       @close="close('edit')"

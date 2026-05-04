@@ -97,13 +97,20 @@ const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 export default class $util {
   static normalizeLabelTitle(s) {
     if (s === null || s === undefined) return "";
-    return String(s)
-      .toLowerCase()
-      .replace(/&/g, "and")
-      .replace(/[+_\-]+/g, " ")
-      .replace(/[^a-z0-9 ]+/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
+    return (
+      String(s)
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/[+_-]+/g, " ")
+        // ZWJ (U+200D), VS-15/16 (U+FE0E/F), and the keycap combining mark (U+20E3) sit in this
+        // class on purpose so composite emoji sequences survive normalization; eslint flags them as
+        // a "misleading character class" because they only carry meaning when paired with the
+        // pictographic ranges already listed above.
+        // eslint-disable-next-line no-misleading-character-class
+        .replace(/[^\p{L}\p{N}\p{Extended_Pictographic}\p{Emoji_Component}\p{Regional_Indicator}\p{Emoji_Modifier}\u200d\ufe0e\ufe0f\u20e3 ]+/gu, "")
+        .replace(/\s+/g, " ")
+        .trim()
+    );
   }
   static slugifyLabelTitle(s) {
     if (s === null || s === undefined) return "";

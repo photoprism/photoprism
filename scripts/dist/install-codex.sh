@@ -30,9 +30,9 @@ fi
 
 # Some npm versions don’t support --location=global; detect and adapt
 if npm help install 2>/dev/null | grep -q -- '--location'; then
-  NPM_GLOBAL_OPTS=(install -g --location=global --no-fund --no-audit)
+  NPM_GLOBAL_OPTS=(install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier)
 else
-  NPM_GLOBAL_OPTS=(install -g --no-fund --no-audit)
+  NPM_GLOBAL_OPTS=(install -g --ignore-scripts --no-fund --no-audit --no-update-notifier)
 fi
 
 # Install / update Codex CLI
@@ -42,6 +42,7 @@ $SUDO npm "${NPM_GLOBAL_OPTS[@]}" "@openai/codex@latest"
 if command -v codex >/dev/null 2>&1; then
   echo "Codex installed at: $(command -v codex)"
   codex --version || true
+  codex features disable general_analytics || true
 fi
 
 echo "Done."

@@ -20,9 +20,7 @@ export default class Page {
   }
 
   async toggleSelectNthLabel(nth) {
-    await t
-      .hover(Selector("div.is-label", { timeout: 4000 }).nth(nth))
-      .click(Selector("div.is-label .input-select").nth(nth));
+    await t.hover(Selector("div.is-label", { timeout: 4000 }).nth(nth)).click(Selector("div.is-label .input-select").nth(nth));
   }
 
   async openNthLabel(nth) {
@@ -31,6 +29,17 @@ export default class Page {
 
   async openLabelWithUid(uid) {
     await t.click(Selector("div.is-label").withAttribute("data-uid", uid));
+  }
+
+  async openByTitle(title) {
+    // Enter submits the filter to the backend; without it the grid stays on
+    // the default (count-sorted) ordering and a freshly-added label with
+    // count=1 is pushed off-screen by virtual scrolling.
+    await t.typeText(this.search, title, { replace: true }).pressKey("enter");
+    const card = Selector("div.is-label", { timeout: 10000 }).withText(title);
+    await t.expect(card.exists).ok();
+    await t.click(card);
+    await t.expect(Selector("div.is-photo").visible).ok();
   }
 
   async triggerHoverAction(mode, uidOrNth, action) {

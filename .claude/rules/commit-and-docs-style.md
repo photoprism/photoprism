@@ -37,13 +37,10 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
   - Nested Git repositories may appear to be ignored; if so, change directories before staging or committing updates.
 
 > **Title Case** rules (Chicago-style headline capitalization, with code- and path-aware normalization):
-> - Capitalize the first word of a title/heading and the first word of a subtitle.
-> - Capitalize the first word after a colon, a dash, or end punctuation.
-> - Capitalize major words, including the second part of hyphenated major words.
-> - Capitalize all words of four letters or more.
-> - Lowercase only minor words of three letters or fewer (articles, short conjunctions, short prepositions), except when they are in one of the positions above.
+> - Capitalize the first word, the first word after a colon, dash, or end punctuation, and all major words, including the second part of a hyphenated major word.
+> - Lowercase only articles, short conjunctions, and short prepositions of three letters or fewer when they are not in one of those positions.
 > - Preserve known acronyms (for example, API, CLI, HTTP, JSON) and slash-separated acronym groups (for example, CSV/TSV) as uppercase.
 > - Preserve inline code spans (`` `foo` ``), file paths (e.g. `docs/foo-bar.md`), and slash commands (e.g. `/grill-me`) verbatim; do not recase their contents.
-> - In headings, prefer `&` where needed; do not use `And` or `Or` in titles.
+> - Use `&` instead of `And`/`Or` in headings.
 
 > Refresh the `**Last Updated:**` date at the top of documents whenever you make changes to their contents, using the format `January 20, 2026` (without time); leave it as-is for simple formatting or whitespace-only edits.
