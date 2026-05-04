@@ -38,6 +38,8 @@ Being completely [**self-funded and independent**](https://link.photoprism.app/m
 
 Step-by-step [installation instructions](https://docs.photoprism.app/getting-started/) for our self-hosted [community edition](https://link.photoprism.app/personal-editions) can be found on [docs.photoprism.app](https://docs.photoprism.app/getting-started/) - all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) to run the server. It is available for Mac, Linux, and Windows.
 
+There is currently no dedicated LXC image; if you run PhotoPrism in LXC/LXD, use Docker inside the container and treat it as a community-supported setup.
+
 The [stable releases](https://docs.photoprism.app/release-notes/) and [development preview](https://docs.photoprism.app/getting-started/updates/#development-preview) are available as a [multi-arch image](https://link.photoprism.app/docker-hub) for 64-bit AMD, Intel, and ARM processors.
 That means, [Raspberry Pi](https://docs.photoprism.app/getting-started/raspberry-pi/) and Apple Silicon users enjoy the exact same functionality and can follow the same [installation steps](https://docs.photoprism.app/getting-started/docker-compose/).
 
