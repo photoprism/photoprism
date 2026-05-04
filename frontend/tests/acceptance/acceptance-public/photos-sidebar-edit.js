@@ -94,30 +94,58 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
     // the dialog after save is the most direct check that each field round-
     // tripped through the API; the sidebar only formats a subset of these
     // (year is always rendered, timezone only when set).
+    //
+    // Day/Month/Year/Timezone are <v-autocomplete>. Mirror the page-model
+    // editFormSelectValue helper: typeText filters the dropdown, then click
+    // the matching div[role="option"] to commit. Tab/Enter does not commit
+    // the selection on every browser/OS combo (notably macOS Chrome). Day,
+    // Month and Year option titles are zero-padded numeric strings (see
+    // options.MonthsShort/Days/Years), so the month for July is "07", not
+    // "Jul".
     await photoviewer.openSidebarDialog("takenAt");
     const yearInput = photoviewer.dateTimeDialog.find(".input-year input");
     const monthInput = photoviewer.dateTimeDialog.find(".input-month input");
     const dayInput = photoviewer.dateTimeDialog.find(".input-day input");
     const timeInput = photoviewer.dateTimeDialog.find(".input-local-time input");
     const timeZoneInput = photoviewer.dateTimeDialog.find(".input-timezone input");
-    await t.typeText(yearInput, "2022", { replace: true }).pressKey("tab");
-    await t.typeText(monthInput, "7", { replace: true }).pressKey("tab");
-    await t.typeText(dayInput, "15", { replace: true }).pressKey("tab");
-    await t.typeText(timeInput, "13:45:30", { replace: true }).pressKey("tab");
-    await t.typeText(timeZoneInput, "UTC", { replace: true }).pressKey("enter");
+    const optionWith = (text) => Selector('div[role="option"]').withText(text);
+    await t.typeText(yearInput, "2022", { replace: true }).click(optionWith("2022"));
+    await t.typeText(monthInput, "07", { replace: true }).click(optionWith("07"));
+    await t.typeText(dayInput, "15", { replace: true }).click(optionWith("15"));
+    await t.typeText(timeInput, "13:45:30", { replace: true });
+    await t.typeText(timeZoneInput, "UTC", { replace: true }).click(optionWith("UTC"));
     await t.click(photoviewer.dateTimeDialog.find(".action-confirm"));
     await t.expect(photoviewer.dateTimeDialog.visible).notOk();
-    await t.expect(photoviewer.sidebarRow("mdi-calendar").withText("2022").exists).ok();
 
-    // Re-open and verify each input was persisted. The autocompletes render
-    // their selected value as the input's `value` attribute, so we read it
-    // back rather than relying on locale-formatted display strings.
+    // formatTime(model) in info.vue renders DATETIME_MED_TZ ("Jul 15, 2022,
+    // 1:45:30 PM <abbr>") only when TimeZone is set AND not "Local"/"UTC";
+    // otherwise it falls back to DATETIME_MED ("Jul 15, 2022, 1:45:30 PM")
+    // without any zone abbreviation. So for a UTC photo the sidebar never
+    // contains the literal text "UTC" — verify timezone persistence via the
+    // re-opened dialog input below instead.
+    const calendarRow = photoviewer.sidebarRow("mdi-calendar");
+    await t.expect(calendarRow.withText("2022").exists).ok();
+    await t.expect(calendarRow.withText("Jul").exists).ok();
+    await t.expect(calendarRow.withText("15").exists).ok();
+
+    // Re-open and verify each field was persisted. For v-autocomplete the
+    // inner <input>.value tracks the search/filter string, not the chosen
+    // item's title — the selected text is rendered in a sibling
+    // `.v-autocomplete__selection` element (mirrors photo-edit page-model's
+    // year/monthValue/dayValue/timezoneValue helpers). Day/Month/Year items
+    // use zero-padded numeric text (see options.MonthsShort/Days/Years), so
+    // the month for July is "07", not "Jul". timeInput is a plain text
+    // field, so its .value still works.
     await photoviewer.openSidebarDialog("takenAt");
-    await t.expect(yearInput.value).eql("2022");
-    await t.expect(monthInput.value).eql("7");
-    await t.expect(dayInput.value).eql("15");
+    const yearValue = photoviewer.dateTimeDialog.find(".input-year .v-autocomplete__selection");
+    const monthValue = photoviewer.dateTimeDialog.find(".input-month .v-autocomplete__selection");
+    const dayValue = photoviewer.dateTimeDialog.find(".input-day .v-autocomplete__selection");
+    const timeZoneValue = photoviewer.dateTimeDialog.find(".input-timezone .v-autocomplete__selection");
+    await t.expect(yearValue.innerText).eql("2022");
+    await t.expect(monthValue.innerText).eql("07");
+    await t.expect(dayValue.innerText).eql("15");
     await t.expect(timeInput.value).eql("13:45:30");
-    await t.expect(timeZoneInput.value).eql("UTC");
+    await t.expect(timeZoneValue.innerText).eql("UTC");
     await t.click(photoviewer.dateTimeDialog.find(".action-cancel"));
     await t.expect(photoviewer.dateTimeDialog.visible).notOk();
 
@@ -136,6 +164,17 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
     await t.typeText(focalLengthInput, "35", { replace: true });
     await t.click(photoviewer.cameraDialog.find(".action-confirm"));
     await t.expect(photoviewer.cameraDialog.visible).notOk();
+
+    // Photo.getCameraInfo() composes "<camera>, ISO <iso>, <exposure>", so
+    // ISO/exposure persistence is visible from the sidebar regardless of the
+    // fixture camera name. The lens row is intentionally not asserted: when
+    // the fixture's lens model name exceeds 45 chars, generateLensInfo()
+    // short-circuits and returns only the model — focal length and f-number
+    // never make it into the rendered string. Persistence of those two
+    // fields is verified via the re-opened dialog assertions below.
+    const cameraRow = photoviewer.sidebarRow("mdi-camera");
+    await t.expect(cameraRow.withText("ISO 6400").exists).ok();
+    await t.expect(cameraRow.withText("1/250").exists).ok();
 
     // Re-open and verify every numeric field came back from the backend.
     await photoviewer.openSidebarDialog("camera");
@@ -157,10 +196,11 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
     await t.expect(photoviewer.locationDialog.visible).notOk();
     await t.expect(Selector(".p-sidebar-info .p-map").exists).ok();
 
-    // The coordinates row title is composed by Photo.getLatLng(); we assert
-    // both halves so the test fails noisily if either axis fails to persist.
+    // Thumb.getLatLng() formats with .toFixed(5), so the visible row text is
+    // "52.52000°N 13.40500°E". Match each axis as a substring so the optional
+    // " · <altitude> m" suffix and unicode separators don't break the check.
     const coordinatesRow = photoviewer.sidebarRow("mdi-map-marker").nextSibling(".v-list-item");
-    await t.expect(coordinatesRow.getAttribute("title")).contains("52.52");
-    await t.expect(coordinatesRow.getAttribute("title")).contains("13.405");
+    await t.expect(coordinatesRow.withText("52.52000").exists).ok();
+    await t.expect(coordinatesRow.withText("13.40500").exists).ok();
   }
 );
