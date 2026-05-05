@@ -249,6 +249,7 @@ acceptance-file-reset:
 	rm -rf storage/acceptance/originals/2017
 	rm storage/acceptance/photoprism.log
 acceptance-database-reset-%:
+	./photoprism -c "./storage/acceptance/config-active" stop
 	@if [ -f storage/acceptance/config-active/dbms.sqlite ]; then \
 		echo "resetting sqlite"; \
 		cp -f storage/acceptance/backup.db storage/acceptance/index.db; \
