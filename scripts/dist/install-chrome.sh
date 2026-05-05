@@ -4,12 +4,12 @@
 #   - AMD64: Google Chrome stable (apt repo at dl.google.com).
 #   - ARM64: Chromium (native apt package; no snap).
 #       - Debian hosts: native apt chromium.
-#       - Ubuntu hosts: Debian bookworm chromium, since Ubuntu's chromium-browser
-#         is only a snap-shim transitional package and unusable in Docker.
-#         Bookworm's userspace lib requirements (libjpeg62-turbo, libopenh264-7,
-#         libminizip1, ...) are close enough to Ubuntu LTS that apt can resolve
-#         them by pulling those few libs from the Debian repo; the chromium
-#         binary itself runs fine on Ubuntu glibc from jammy (22.04, 2.35) up.
+#       - Ubuntu hosts: chromium from the XtraDeb PPA. Ubuntu's own
+#         chromium-browser is a snap-shim transitional package and unusable
+#         in Docker; the XtraDeb PPA ships native .deb chromium for the
+#         current Ubuntu LTS releases (jammy, noble, questing, resolute,
+#         ...) so apt resolves cleanly without cross-distro pinning. PPA:
+#         https://launchpad.net/~xtradeb/+archive/ubuntu/apps
 #
 # This script must run as root. Use one of these invocations:
 #
@@ -46,46 +46,27 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 # shellcheck source=/dev/null
 . /etc/os-release
 
-# Adds the Debian bookworm apt source and installs chromium from it.
-install_chromium_from_debian_bookworm() {
-  local keyring=/etc/apt/keyrings/debian-archive-bookworm.gpg
-  local src=/etc/apt/sources.list.d/debian-bookworm-chromium.sources
-  local pin=/etc/apt/preferences.d/debian-bookworm-chromium.pref
+# Adds the XtraDeb PPA apt source and installs chromium from it.
+install_chromium_from_xtradeb_ppa() {
+  local keyring=/etc/apt/keyrings/xtradeb-apps.gpg
+  local src=/etc/apt/sources.list.d/xtradeb-apps.sources
 
   install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://ftp-master.debian.org/keys/archive-key-12.asc \
+  # PPA signing key fingerprint: 5301FA4FD93244FBC6F6149982BB6851C64F6880
+  curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x5301FA4FD93244FBC6F6149982BB6851C64F6880" \
     | gpg --no-tty --batch --yes --dearmor -o "$keyring"
 
   cat > "$src" <<EOF
 Types: deb
-URIs: http://deb.debian.org/debian
-Suites: bookworm
+URIs: https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu
+Suites: ${VERSION_CODENAME}
 Components: main
 Signed-By: ${keyring}
 EOF
 
-  # Pin Debian bookworm to a low priority so apt only pulls Bookworm packages
-  # that have no Ubuntu equivalent. Without this, apt's solver "upgrades"
-  # unrelated Ubuntu packages such as libjpeg-dev to Bookworm's higher epoch
-  # version (1:2.1.5-2 vs Ubuntu's 8c-*ubuntu*), which then pulls
-  # libjpeg62-turbo-dev and collides with Ubuntu's already-installed
-  # libjpeg-turbo8-dev (both ship /usr/include/<triplet>/jconfig.h).
-  # The chromium-* packages are elevated to priority 990 so they still install
-  # from Bookworm; their runtime dep on libjpeg62-turbo (no Ubuntu equivalent)
-  # is resolved as the only available candidate, which is harmless.
-  cat > "$pin" <<EOF
-Package: *
-Pin: release o=Debian,n=bookworm
-Pin-Priority: 100
-
-Package: chromium chromium-common chromium-driver chromium-sandbox
-Pin: release o=Debian,n=bookworm
-Pin-Priority: 990
-EOF
-
   apt-get update
   apt-get -qq install -y --no-install-recommends \
-    chromium chromium-common chromium-driver chromium-sandbox
+    chromium chromium-driver chromium-sandbox
 }
 
 case $DESTARCH in
@@ -108,9 +89,9 @@ case $DESTARCH in
         ;;
 
       ubuntu)
-        echo "Installing Chromium (via Debian bookworm) on ${ID} ${VERSION_CODENAME:-} for ${DESTARCH^^}..."
+        echo "Installing Chromium (via XtraDeb PPA) on ${ID} ${VERSION_CODENAME:-} for ${DESTARCH^^}..."
         apt-get -qq install -y --no-install-recommends ca-certificates curl gnupg
-        install_chromium_from_debian_bookworm
+        install_chromium_from_xtradeb_ppa
         ;;
 
       *)

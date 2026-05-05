@@ -1,5 +1,5 @@
 # Ubuntu 25.10 (Questing Quokka)
-FROM photoprism/develop:260427-questing
+FROM photoprism/develop:260504-questing
 
 # Harden npm usage by default (applies to npm ci / install in dev container)
 ENV NPM_CONFIG_IGNORE_SCRIPTS=true

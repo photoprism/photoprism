@@ -7,6 +7,44 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestActiveLabelByExactName(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Nil(t, activeLabelByExactName(""))
+	})
+	t.Run("ResolvesRenamedLabelByPreviousName", func(t *testing.T) {
+		original := FirstOrCreateLabel(NewLabel("RenameAxnA", 0))
+		require.NotNil(t, original)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(original).Error
+			FlushLabelCache()
+		})
+
+		require.True(t, original.SetName("RenameAxnB"))
+		require.NoError(t, Db().Save(original).Error)
+		FlushLabelCache()
+
+		got := activeLabelByExactName("RenameAxnA")
+		require.NotNil(t, got)
+		assert.Equal(t, original.ID, got.ID)
+		assert.Equal(t, "RenameAxnB", got.LabelName)
+	})
+	t.Run("DoesNotMergeHomophones", func(t *testing.T) {
+		first := FirstOrCreateLabel(NewLabel("问", 0))
+		require.NotNil(t, first)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(first).Error
+			FlushLabelCache()
+		})
+
+		// "吻" slugifies to the same value as "问" but does not yet exist;
+		// activeLabelByExactName must not return the existing "问" row for it.
+		got := activeLabelByExactName("吻")
+		assert.Nil(t, got)
+	})
+}
+
 func TestLabelSlugs(t *testing.T) {
 	t.Run("PipeSeparated", func(t *testing.T) {
 		assert.Equal(t, []string{"cake", "flower"}, LabelSlugs("cake|flower", "|"))
@@ -44,6 +82,29 @@ func TestFindLabels(t *testing.T) {
 		require.Len(t, labels, 1)
 		assert.Equal(t, second.ID, labels[0].ID)
 		assert.Equal(t, "吻", labels[0].LabelName)
+	})
+	t.Run("ResolvesRenamedLabelByPreviousNameEndToEnd", func(t *testing.T) {
+		// Integration check: searching by an old name yields the renamed
+		// row. FindLabels has multiple slug fallbacks of its own; the
+		// activeLabelByExactName branch is pinned directly by
+		// TestActiveLabelByExactName/ResolvesRenamedLabelByPreviousName.
+		original := FirstOrCreateLabel(NewLabel("RenameDog", 0))
+		require.NotNil(t, original)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(original).Error
+			FlushLabelCache()
+		})
+
+		require.True(t, original.SetName("RenameHund"))
+		require.NoError(t, Db().Save(original).Error)
+		FlushLabelCache()
+
+		labels, err := FindLabels("RenameDog", " ")
+		require.NoError(t, err)
+		require.Len(t, labels, 1)
+		assert.Equal(t, original.ID, labels[0].ID)
+		assert.Equal(t, "RenameHund", labels[0].LabelName)
 	})
 	t.Run("PreservesPipeSeparatorSemantics", func(t *testing.T) {
 		labels, err := FindLabels("potato|couch", "|")
