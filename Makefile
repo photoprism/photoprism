@@ -107,10 +107,10 @@ acceptance-postgres-auth-run-chromium: storage/acceptance storage/postgres accep
 acceptance-postgres-public-run-chromium: storage/acceptance storage/postgres acceptance-public-exec-chromium
 
 # The actual tests that are called for acceptance tests.  Don't call these directly, use the ones with run in the name.
-acceptance-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-auth-stop acceptance-database-reset-2 acceptance-public-start wait-2 acceptance acceptance-public-stop
-acceptance-exec-chromium-short: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth-short acceptance-auth-stop acceptance-database-reset-2 acceptance-public-start wait-2 acceptance-short acceptance-public-stop
-acceptance-auth-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-auth-stop
-acceptance-public-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-public-start wait-1 acceptance acceptance-public-stop
+acceptance-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-stop-auth acceptance-database-reset-2 acceptance-public-start wait-2 acceptance acceptance-stop-public
+acceptance-exec-chromium-short: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth-short acceptance-stop-auth acceptance-database-reset-2 acceptance-public-start wait-2 acceptance-short acceptance-stop-public
+acceptance-auth-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-stop-auth
+acceptance-public-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-public-start wait-1 acceptance acceptance-stop-public
 help: list
 list:
 	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
@@ -247,9 +247,8 @@ acceptance-file-reset:
 	rm -rf storage/acceptance/originals/2011
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
-	rm storage/acceptance/photoprism.log
-acceptance-database-reset-%:
-	./photoprism -c "./storage/acceptance/config-active" stop
+	find storage/acceptance/photoprism.log -type f -mtime +3 -delete
+acceptance-database-reset-%: acceptance-stop-%
 	@if [ -f storage/acceptance/config-active/dbms.sqlite ]; then \
 		echo "resetting sqlite"; \
 		cp -f storage/acceptance/backup.db storage/acceptance/index.db; \
@@ -271,12 +270,10 @@ acceptance-database-reset-%:
 	fi
 acceptance-public-start:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-active" start -d
-acceptance-public-stop:
-	./photoprism --auth-mode="public" -c "./storage/acceptance/config-active" stop
 acceptance-auth-start:
 	./photoprism --auth-mode="password" -c "./storage/acceptance/config-active" start -d
-acceptance-auth-stop:
-	./photoprism --auth-mode="password" -c "./storage/acceptance/config-active" stop
+acceptance-stop-%:
+	./photoprism -c "./storage/acceptance/config-active" stop
 start:
 	./photoprism start -d
 start-mariadb:
