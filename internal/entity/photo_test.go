@@ -881,20 +881,20 @@ func TestPhoto_AddLabels(t *testing.T) {
 		require.NoError(t, Db().Save(original).Error)
 		FlushLabelCache()
 
-		var before int
+		var before int64
 		require.NoError(t, UnscopedDb().Model(&Label{}).
 			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
 			Count(&before).Error)
-		assert.Equal(t, 1, before)
+		assert.Equal(t, int64(1), before)
 
 		photo := PhotoFixtures.Get("19800101_000002_D640C559")
 		photo.AddLabels(classify.Labels{{Name: "RenameClassifyA", Uncertainty: 30, Source: SrcImage, Priority: 0}})
 
-		var after int
+		var after int64
 		require.NoError(t, UnscopedDb().Model(&Label{}).
 			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
 			Count(&after).Error)
-		assert.Equal(t, 1, after, "classifier with old name must not create a duplicate label")
+		assert.Equal(t, int64(1), after, "classifier with old name must not create a duplicate label")
 
 		joined, err := FindPhotoLabel(photo.ID, original.ID, false)
 		require.NoError(t, err)
