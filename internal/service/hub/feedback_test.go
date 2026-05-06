@@ -27,7 +27,7 @@ func TestSendFeedback(t *testing.T) {
 			UserName:      "Test User",
 			UserEmail:     "test@example.com",
 			UserAgent:     "",
-			ApiKey:        "123456",
+			ApiKey:        "",
 			ClientVersion: "test",
 			ClientOS:      "linux",
 			ClientArch:    "amd64",
