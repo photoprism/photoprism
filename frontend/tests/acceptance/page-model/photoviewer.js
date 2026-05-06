@@ -1,6 +1,9 @@
 import { Selector, t } from "testcafe";
 import Toolbar from "./toolbar";
 import Photo from "./photo";
+import DateTimeDialog from "./dialog/date-time";
+import CameraDialog from "./dialog/camera";
+import LocationDialog from "./dialog/location";
 
 export default class Page {
   constructor() {
@@ -45,11 +48,10 @@ export default class Page {
     this.sidebarChips = Selector(".p-sidebar-info .meta-chip", { timeout: 15000 });
     this.faceMarkerEjectButton = Selector(".metadata__person-row .meta-marker-eject", { timeout: 15000 });
     this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
-    // Edit dialogs launched from the sidebar pencils. Timeouts are generous
-    // enough for Vuetify teleport mounting + reverse-geocoder lookups.
-    this.dateTimeDialog = Selector(".p-datetime-dialog", { timeout: 15000 });
-    this.cameraDialog = Selector(".p-camera-dialog", { timeout: 15000 });
-    this.locationDialog = Selector(".p-location-dialog", { timeout: 15000 });
+    // Edit dialogs launched from the sidebar pencils.
+    this.dateTimeDialog = new DateTimeDialog();
+    this.cameraDialog = new CameraDialog();
+    this.locationDialog = new LocationDialog();
   }
 
   // Locate the v-list-item that contains a given MDI prepend-icon.
@@ -103,6 +105,10 @@ export default class Page {
     await t.wait(200);
     await t.pressKey("enter");
     await this.confirmInlineEditBySection(sectionLabel);
+    // The combobox menu teleports to <body>; on fast systems a lingering
+    // overlay intercepts the next click (notably the lightbox close).
+    await t.expect(Selector(".p-sidebar-info .meta-inline-edit:not(.meta-inline-marker)").exists).notOk();
+    await t.expect(Selector(".meta-inline-menu").exists).notOk();
   }
 
   // Title/Caption enter editing from either a pencil (value present) or
@@ -129,16 +135,15 @@ export default class Page {
   async openSidebarDialog(which) {
     if (which === "takenAt") {
       await t.click(this.sidebarRow("mdi-calendar").find(".meta-inline-pencil"));
-      await t.expect(this.dateTimeDialog.visible).ok();
+      await t.expect(this.dateTimeDialog.root.visible).ok();
     } else if (which === "camera") {
       await t.click(this.sidebarRow("mdi-camera").find(".meta-inline-pencil"));
-      await t.expect(this.cameraDialog.visible).ok();
+      await t.expect(this.cameraDialog.root.visible).ok();
     } else if (which === "location") {
-      // Two rows (Location and Coordinates) host a location pencil depending
-      // on whether the photo has lat/lng; both carry the modifier class that
-      // disambiguates them from the other inline metadata pencils.
+      // Both the Location and Coordinates rows expose a pencil with this
+      // modifier class; either one opens the same dialog.
       await t.click(Selector(".p-sidebar-info .meta-inline-pencil--location"));
-      await t.expect(this.locationDialog.visible).ok();
+      await t.expect(this.locationDialog.root.visible).ok();
     } else {
       throw new Error(`Unknown sidebar dialog: ${which}`);
     }
