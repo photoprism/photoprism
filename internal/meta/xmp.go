@@ -36,43 +36,108 @@ func (data *Data) XMP(fileName string) (err error) {
 		return fmt.Errorf("metadata: cannot read %s (xmp)", clean.Log(filepath.Base(fileName)))
 	}
 
-	if doc.Title() != "" {
-		data.Title = doc.Title()
+	if v := doc.Title(); v != "" {
+		data.Title = v
+	}
+	if v := doc.Artist(); v != "" {
+		data.Artist = v
+	}
+	if v := doc.Description(); v != "" {
+		data.Caption = v
+	}
+	if v := doc.Copyright(); v != "" {
+		data.Copyright = v
+	}
+	if v := doc.License(); v != "" {
+		data.License = v
+	}
+	if v := doc.Software(); v != "" {
+		data.Software = v
+	}
+	if v := doc.DocumentID(); v != "" {
+		data.DocumentID = v
+	}
+	if v := doc.InstanceID(); v != "" {
+		data.InstanceID = v
 	}
 
-	if doc.Artist() != "" {
-		data.Artist = doc.Artist()
+	// GPS Lat/Lng pass through NormalizeGPS for parity with the embedded
+	// path's clamp/normalise behaviour.
+	if lat, lng := doc.Lat(), doc.Lng(); lat != 0 || lng != 0 {
+		data.Lat, data.Lng = NormalizeGPS(lat, lng)
+	}
+	if v := doc.Altitude(); v != 0 {
+		data.Altitude = v
+	}
+	if v := doc.TakenGps(); !v.IsZero() {
+		data.TakenGps = v.UTC()
 	}
 
-	if doc.Description() != "" {
-		data.Caption = doc.Description()
+	if v := doc.CameraMake(); v != "" {
+		data.CameraMake = v
+	}
+	if v := doc.CameraModel(); v != "" {
+		data.CameraModel = v
+	}
+	if v := doc.LensMake(); v != "" {
+		data.LensMake = v
+	}
+	if v := doc.LensModel(); v != "" {
+		data.LensModel = v
+	}
+	if v := doc.CameraSerial(); v != "" {
+		data.CameraSerial = v
+	}
+	if v := doc.CameraOwner(); v != "" {
+		data.CameraOwner = v
+	}
+	if v := doc.Projection(); v != "" {
+		data.Projection = v
+	}
+	if v := doc.ColorProfile(); v != "" {
+		data.ColorProfile = v
 	}
 
-	if doc.Copyright() != "" {
-		data.Copyright = doc.Copyright()
+	if v := doc.Aperture(); v != 0 {
+		data.Aperture = v
+	}
+	if v := doc.FNumber(); v != 0 {
+		data.FNumber = v
+	}
+	if v := doc.FocalLength(); v != 0 {
+		data.FocalLength = v
+	}
+	if v := doc.Iso(); v != 0 {
+		data.Iso = v
+	}
+	if v := doc.Exposure(); v != "" {
+		data.Exposure = v
+	}
+	if doc.Flash() {
+		data.Flash = true
+	}
+	if v := doc.Notes(); v != "" {
+		data.Notes = v
 	}
 
-	if doc.CameraMake() != "" {
-		data.CameraMake = doc.CameraMake()
-	}
-
-	if doc.CameraModel() != "" {
-		data.CameraModel = doc.CameraModel()
-	}
-
-	if doc.LensModel() != "" {
-		data.LensModel = doc.LensModel()
-	}
-
-	if takenAt := doc.TakenAt(data.TimeZone); !takenAt.IsZero() {
-		data.TakenAt = takenAt.UTC()
+	if v := doc.TakenAt(data.TimeZone); !v.IsZero() {
+		data.TakenAt = v.UTC()
 		if data.TimeZone == "" {
 			data.TimeZone = tz.UTC
 		}
 	}
+	if v := doc.TakenNs(); v > 0 {
+		data.TakenNs = v
+	}
+	if v := doc.CreatedAt(data.TimeZone); !v.IsZero() {
+		data.CreatedAt = v.UTC()
+	}
+	if v := doc.TimeOffset(); v != "" {
+		data.TimeOffset = v
+	}
 
-	if len(doc.Keywords()) != 0 {
-		data.AddKeywords(doc.Keywords())
+	if v := doc.Keywords(); len(v) != 0 {
+		data.AddKeywords(v)
 	}
 
 	data.Favorite = doc.Favorite()
