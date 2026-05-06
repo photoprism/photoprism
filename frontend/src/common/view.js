@@ -724,6 +724,40 @@ export class View {
       return;
     }
 
+    // Sibling-menu gate: components like v-autocomplete, v-select, and v-combobox
+    // teleport their dropdown menus to <body>, so the menu's overlay element is
+    // a sibling of the dialog's overlay (both children of the same parent),
+    // NOT a descendant of the dialog. When the user opens such a menu, focus
+    // moves from the input (inside the dialog) to a list item (inside the
+    // sibling menu overlay) — the `root.contains(next)` check above does not
+    // cover that case, so without this gate the focus trap would yank focus
+    // back to the dialog and immediately close the menu.
+    //
+    // We only skip the trap when ALL of the following hold:
+    //   - the dialog is itself wrapped in a Vuetify overlay (v-dialog)
+    //   - relatedTarget points into a `.v-overlay__content` (the menu's content
+    //     wrapper) — anything else is treated as focus genuinely leaving the
+    //     dialog and gets re-trapped
+    //   - that overlay is a `.v-menu` (excludes nested v-dialogs and other
+    //     overlay types where re-trapping is still desired)
+    //   - the menu overlay is a sibling of the dialog overlay (same parent),
+    //     confirming both were teleported to the same root and that the menu
+    //     belongs to the same modal stack
+    //   - the menu is currently visible (`display !== "none"` — Vuetify uses
+    //     `v-show` to hide closed menus while keeping them mounted)
+    //   - relatedTarget really is inside that menu's content
+    //
+    // History note: Vuetify 3.12.3 added an `onFocusout` handler to
+    // VAutocomplete/VSelect/VCombobox that flips `isFocused=false` whenever
+    // relatedTarget is outside the textfield, which closed long autocomplete
+    // menus on open (issue #5538, Vuetify PR fixing #22697). PhotoPrism is
+    // pinned to Vuetify 3.12.2 to avoid that regression — see
+    // `frontend/package.json` and `frontend/CODEMAP.md`. If the pin is ever
+    // lifted to >=3.12.3, this gate alone is NOT sufficient: that bug fires
+    // before the user ever interacts with the menu. Vuetify 3.12.2 itself has
+    // an unrelated upstream caveat (issue #22828, v-select @blur firing on
+    // open); PhotoPrism is not affected because we don't bind @blur to
+    // v-select anywhere.
     const dialogOverlay = root.closest(".v-overlay");
     const menuOverlayContent = next instanceof HTMLElement ? next.closest(".v-overlay__content") : null;
 
@@ -737,7 +771,6 @@ export class View {
         menuOverlay.style.display !== "none" &&
         menuOverlayContent.contains(next)
       ) {
-        // Allow focus to move into sibling menu overlays (e.g., combobox suggestions)
         return;
       }
     }

@@ -27,6 +27,8 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 
 > Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
 
+The repo's issue templates use the new GitHub `type:` property (`Bug`, `Feature`) instead of `bug`/`idea` labels. `gh issue create` does not yet accept a `--type` flag, so when filing issues programmatically use `--label` only and tell the user to set the issue type via the web UI.
+
 ## Specifications & Documentation
 
 - Document headings use a **Chicago-style title case**, with additional code- and path-aware normalization rules (see below). Always spell the product name as `PhotoPrism`.
@@ -35,6 +37,7 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 - Technical specifications in the nested `specs/` subrepository may not be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths.
   - Auto-generated configuration and command references live under `specs/generated/`. Agents MUST NOT read, analyze, or modify anything in this directory.
   - Nested Git repositories may appear to be ignored; if so, change directories before staging or committing updates.
+- **Never reference `specs/` paths from public artifacts** — issue bodies, PR descriptions, package READMEs (`frontend/README.md`, `internal/*/README.md`, etc.), top-level `CODEMAP.md`/`GLOSSARY.md`, code comments outside `specs/`. External readers see a 404 and the private subrepo's existence is leaked. Hints in `AGENTS.md` and `CLAUDE.md` files are the documented exception. Quick check: `grep -n "specs/" <file>` should return no matches before saving any public-facing file.
 
 > **Title Case** rules (Chicago-style headline capitalization, with code- and path-aware normalization):
 > - Capitalize the first word, the first word after a colon, dash, or end punctuation, and all major words, including the second part of a hyphenated major word.

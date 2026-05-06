@@ -10,6 +10,7 @@
         <v-list-item v-if="editingField === 'title' || model.Title || isEditable" class="metadata__item">
           <v-text-field
             v-if="editingField === 'title'"
+            :ref="setInlineEditorRef"
             v-model="photo.Title"
             :placeholder="$pgettext('Photo', 'Title')"
             :rules="[textRule]"
@@ -41,6 +42,7 @@
         <v-list-item v-if="editingField === 'caption' || model.Caption || isEditable" class="metadata__item">
           <v-textarea
             v-if="editingField === 'caption'"
+            :ref="setInlineEditorRef"
             v-model="photo.Caption"
             :placeholder="$gettext('Caption')"
             variant="plain"
@@ -236,52 +238,44 @@
 
         <template v-if="!restrictedRole && (editingField === 'labels' || labels.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
-          <v-list-item class="metadata__item">
+          <v-list-item class="metadata__item meta-labels">
             <div class="text-subtitle-2">{{ $gettext("Labels") }}</div>
             <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'labels'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmLabels"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startChipEditing('labels')"></v-icon>
+              <p-sidebar-inline-toolbar :editing="editingField === 'labels'" @confirm="confirmLabels" @start="startChipEditing('labels')" />
             </template>
           </v-list-item>
-          <v-list-item v-if="labels.length > 0 || editingField === 'labels'" class="metadata__item metadata__chips">
+          <v-list-item v-if="labels.length > 0 || chipState.labels.additions.length > 0" class="metadata__item metadata__chips meta-labels">
             <div class="d-flex flex-wrap ga-1">
               <span
                 v-for="l in labels"
                 :key="l.Label.UID"
                 class="meta-chip meta-chip--primary"
-                :class="{ 'meta-chip--pending-remove': isLabelPendingRemoval(l) }"
-                @click.stop.prevent="editingField !== 'labels' ? navigateToLabel(l.Label) : toggleLabelRemoval(l)"
+                :class="{ 'meta-chip--pending-remove': isChipPendingRemoval('labels', l.Label.ID) }"
+                @click.stop.prevent="editingField !== 'labels' ? navigateToLabel(l.Label) : togglePendingChipRemoval('labels', l.Label.ID)"
               >
                 {{ l.Label.Name }}
                 <v-icon
                   v-if="editingField === 'labels'"
-                  :icon="isLabelPendingRemoval(l) ? 'mdi-undo' : 'mdi-close-circle'"
+                  :icon="isChipPendingRemoval('labels', l.Label.ID) ? 'mdi-undo' : 'mdi-close-circle'"
                   size="x-small"
                   class="ml-1"
                 ></v-icon>
               </span>
               <span
-                v-for="name in pendingLabelAdditions"
+                v-for="name in chipState.labels.additions"
                 :key="'add-' + name"
                 class="meta-chip meta-chip--pending-add"
-                @click.stop.prevent="removePendingLabelAdd(name)"
+                @click.stop.prevent="removePendingChipAdd('labels', name)"
               >
                 {{ name }}
                 <v-icon icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
               </span>
             </div>
           </v-list-item>
-          <v-list-item v-else-if="isEditable" class="metadata__item">
+          <v-list-item v-else-if="isEditable && editingField !== 'labels'" class="metadata__item meta-labels">
             <div class="meta-add-prompt" @click.stop="startChipEditing('labels')">{{ $gettext("Add label") }}</div>
           </v-list-item>
-          <v-list-item v-if="editingField === 'labels'" class="metadata__item">
+          <v-list-item v-if="editingField === 'labels'" class="metadata__item meta-labels">
             <v-combobox
               :key="chipKey"
               v-model="chipInput"
@@ -307,52 +301,44 @@
 
         <template v-if="!restrictedRole && (editingField === 'albums' || albums.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
-          <v-list-item class="metadata__item">
+          <v-list-item class="metadata__item meta-albums">
             <div class="text-subtitle-2">{{ $gettext("Albums") }}</div>
             <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'albums'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmAlbums"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startChipEditing('albums')"></v-icon>
+              <p-sidebar-inline-toolbar :editing="editingField === 'albums'" @confirm="confirmAlbums" @start="startChipEditing('albums')" />
             </template>
           </v-list-item>
-          <v-list-item v-if="albums.length > 0 || editingField === 'albums'" class="metadata__item metadata__chips">
+          <v-list-item v-if="albums.length > 0 || chipState.albums.additions.length > 0" class="metadata__item metadata__chips meta-albums">
             <div class="d-flex flex-wrap ga-1">
               <span
                 v-for="a in albums"
                 :key="a.UID"
                 class="meta-chip meta-chip--primary"
-                :class="{ 'meta-chip--pending-remove': isAlbumPendingRemoval(a) }"
-                @click.stop.prevent="editingField !== 'albums' ? navigateToAlbum(a) : toggleAlbumRemoval(a)"
+                :class="{ 'meta-chip--pending-remove': isChipPendingRemoval('albums', a.UID) }"
+                @click.stop.prevent="editingField !== 'albums' ? navigateToAlbum(a) : togglePendingChipRemoval('albums', a.UID)"
               >
                 {{ a.Title }}
                 <v-icon
                   v-if="editingField === 'albums'"
-                  :icon="isAlbumPendingRemoval(a) ? 'mdi-undo' : 'mdi-close-circle'"
+                  :icon="isChipPendingRemoval('albums', a.UID) ? 'mdi-undo' : 'mdi-close-circle'"
                   size="x-small"
                   class="ml-1"
                 ></v-icon>
               </span>
               <span
-                v-for="a in pendingAlbumAdditions"
+                v-for="a in chipState.albums.additions"
                 :key="'add-' + a.UID"
                 class="meta-chip meta-chip--pending-add"
-                @click.stop.prevent="removePendingAlbumAdd(a)"
+                @click.stop.prevent="removePendingChipAdd('albums', a.UID)"
               >
                 {{ a.Title }}
                 <v-icon icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
               </span>
             </div>
           </v-list-item>
-          <v-list-item v-else-if="isEditable" class="metadata__item">
+          <v-list-item v-else-if="isEditable && editingField !== 'albums'" class="metadata__item meta-albums">
             <div class="meta-add-prompt" @click.stop="startChipEditing('albums')">{{ $gettext("Add to album") }}</div>
           </v-list-item>
-          <v-list-item v-if="editingField === 'albums'" class="metadata__item">
+          <v-list-item v-if="editingField === 'albums'" class="metadata__item meta-albums">
             <v-autocomplete
               :key="chipKey"
               v-model="chipInput"
@@ -376,33 +362,22 @@
           </v-list-item>
         </template>
 
-        <template
-          v-if="
-            !restrictedRole &&
-            (editingField === 'subject' ||
-              editingField === 'artist' ||
-              editingField === 'copyright' ||
-              editingField === 'license' ||
-              subject ||
-              artist ||
-              copyright ||
-              license ||
-              isEditable)
-          "
-        >
+        <template v-if="showDetailsSection">
           <v-divider class="my-4"></v-divider>
-
-          <!-- Subject -->
           <v-list-item
-            v-if="editingField === 'subject' || subject || isEditable"
-            v-tooltip="$gettext('Subject')"
-            prepend-icon="mdi-text-box-outline"
+            v-for="f in detailsFields"
+            v-show="shouldShowFieldRow(f)"
+            :key="f.key"
+            v-tooltip="f.label"
+            :prepend-icon="f.icon"
             class="metadata__item"
+            :class="`meta-${f.key}`"
           >
             <v-textarea
-              v-if="editingField === 'subject'"
-              v-model="photo.Details.Subject"
-              :placeholder="$gettext('Subject')"
+              v-if="editingField === f.key"
+              :ref="setInlineEditorRef"
+              :model-value="f.read(photo)"
+              :placeholder="f.label"
               :rules="[textRule]"
               variant="plain"
               density="compact"
@@ -410,202 +385,53 @@
               hide-details="auto"
               autocomplete="off"
               class="meta-inline-edit"
+              :class="`meta-inline-${f.key}`"
+              @update:model-value="(v) => f.write(photo, v)"
               @keydown.escape.prevent="cancelEditing"
               @blur="onInlineFieldBlur"
             ></v-textarea>
-            <div v-else-if="subject" class="text-body-2 meta-scrollable">{{ subject }}</div>
-            <div v-else class="meta-add-prompt" @click.stop="startEditing('subject')">{{ $gettext("Subject") }}</div>
+            <div v-else-if="f.read(photo)" class="text-body-2 meta-scrollable">{{ f.read(photo) }}</div>
+            <div v-else class="meta-add-prompt" @click.stop="startEditing(f.key)">{{ f.label }}</div>
             <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'subject'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('subject')"></v-icon>
-            </template>
-          </v-list-item>
-
-          <!-- Artist -->
-          <v-list-item
-            v-if="editingField === 'artist' || artist || isEditable"
-            v-tooltip="$gettext('Artist')"
-            prepend-icon="mdi-palette"
-            class="metadata__item"
-          >
-            <v-textarea
-              v-if="editingField === 'artist'"
-              v-model="photo.Details.Artist"
-              :placeholder="$gettext('Artist')"
-              :rules="[textRule]"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="onInlineFieldBlur"
-            ></v-textarea>
-            <div v-else-if="artist" class="text-body-2 meta-scrollable">{{ artist }}</div>
-            <div v-else class="meta-add-prompt" @click.stop="startEditing('artist')">{{ $gettext("Artist") }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'artist'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('artist')"></v-icon>
-            </template>
-          </v-list-item>
-
-          <!-- Copyright -->
-          <v-list-item
-            v-if="editingField === 'copyright' || copyright || isEditable"
-            v-tooltip="$gettext('Copyright')"
-            prepend-icon="mdi-copyright"
-            class="metadata__item"
-          >
-            <v-textarea
-              v-if="editingField === 'copyright'"
-              v-model="photo.Details.Copyright"
-              :placeholder="$gettext('Copyright')"
-              :rules="[textRule]"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="onInlineFieldBlur"
-            ></v-textarea>
-            <div v-else-if="copyright" class="text-body-2 meta-scrollable">{{ copyright }}</div>
-            <div v-else class="meta-add-prompt" @click.stop="startEditing('copyright')">{{ $gettext("Copyright") }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'copyright'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('copyright')"></v-icon>
-            </template>
-          </v-list-item>
-
-          <!-- License -->
-          <v-list-item
-            v-if="editingField === 'license' || license || isEditable"
-            v-tooltip="$gettext('License')"
-            prepend-icon="mdi-license"
-            class="metadata__item"
-          >
-            <v-textarea
-              v-if="editingField === 'license'"
-              v-model="photo.Details.License"
-              :placeholder="$gettext('License')"
-              :rules="[textRule]"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="onInlineFieldBlur"
-            ></v-textarea>
-            <div v-else-if="license" class="text-body-2 meta-scrollable">{{ license }}</div>
-            <div v-else class="meta-add-prompt" @click.stop="startEditing('license')">{{ $gettext("License") }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'license'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('license')"></v-icon>
+              <p-sidebar-inline-toolbar :editing="editingField === f.key" @confirm="confirmField" @start="startEditing(f.key)" />
             </template>
           </v-list-item>
         </template>
 
-        <template v-if="!restrictedRole && (editingField === 'keywords' || keywords || isEditable)">
-          <v-divider class="my-4"></v-divider>
-          <v-list-item class="metadata__item">
-            <div class="text-subtitle-2">{{ $gettext("Keywords") }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'keywords'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('keywords')"></v-icon>
-            </template>
-          </v-list-item>
-          <v-list-item class="metadata__item">
-            <v-textarea
-              v-if="editingField === 'keywords'"
-              v-model="photo.Details.Keywords"
-              :placeholder="$gettext('Keywords')"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="onInlineFieldBlur"
-            ></v-textarea>
-            <div v-else-if="keywords" class="text-body-2 meta-keywords meta-scrollable">{{ keywords }}</div>
-            <div v-else class="meta-add-prompt" @click.stop="startEditing('keywords')">{{ $gettext("Keywords") }}</div>
-          </v-list-item>
-        </template>
-
-        <template v-if="!restrictedRole && (editingField === 'notes' || notesHtml || isEditable)">
-          <v-divider class="my-4"></v-divider>
-          <v-list-item class="metadata__item">
-            <div class="text-subtitle-2">{{ $gettext("Notes") }}</div>
-            <template v-if="isEditable" #append>
-              <v-icon
-                v-if="editingField === 'notes'"
-                icon="mdi-check"
-                size="small"
-                class="meta-inline-confirm"
-                @mousedown.prevent
-                @click.stop="confirmField"
-              ></v-icon>
-              <v-icon v-else icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="startEditing('notes')"></v-icon>
-            </template>
-          </v-list-item>
-          <v-list-item class="metadata__item">
-            <v-textarea
-              v-if="editingField === 'notes'"
-              v-model="photo.Details.Notes"
-              :placeholder="$gettext('Notes')"
-              variant="plain"
-              density="compact"
-              auto-grow
-              hide-details="auto"
-              autocomplete="off"
-              class="meta-inline-edit"
-              @keydown.escape.prevent="cancelEditing"
-              @blur="onInlineFieldBlur"
-            ></v-textarea>
-            <!-- eslint-disable-next-line vue/no-v-html -- notesHtml is encode-then-sanitized via $util.sanitizeHtml($util.encodeHTML(raw)); see notesHtml() computed -->
-            <div v-else-if="notesHtml" class="text-body-2 meta-notes meta-scrollable" v-html="notesHtml"></div>
-            <div v-else class="meta-add-prompt" @click.stop="startEditing('notes')">{{ $gettext("Notes") }}</div>
-          </v-list-item>
+        <template v-for="f in textFields" :key="f.key">
+          <template v-if="!restrictedRole && shouldShowFieldRow(f)">
+            <v-divider class="my-4"></v-divider>
+            <v-list-item class="metadata__item" :class="`meta-${f.key}`">
+              <div class="text-subtitle-2">{{ f.label }}</div>
+              <template v-if="isEditable" #append>
+                <p-sidebar-inline-toolbar :editing="editingField === f.key" @confirm="confirmField" @start="startEditing(f.key)" />
+              </template>
+            </v-list-item>
+            <v-list-item class="metadata__item" :class="`meta-${f.key}`">
+              <v-textarea
+                v-if="editingField === f.key"
+                :ref="setInlineEditorRef"
+                :model-value="f.read(photo)"
+                :placeholder="f.label"
+                variant="plain"
+                density="compact"
+                auto-grow
+                hide-details="auto"
+                autocomplete="off"
+                class="meta-inline-edit"
+                :class="`meta-inline-${f.key}`"
+                @update:model-value="(v) => f.write(photo, v)"
+                @keydown.escape.prevent="cancelEditing"
+                @blur="onInlineFieldBlur"
+              ></v-textarea>
+              <!-- eslint-disable-next-line vue/no-v-html -- f.htmlValue references a sanitized computed (e.g. notesHtml) — encode-then-sanitize via $util.sanitizeHtml($util.encodeHTML(raw)). -->
+              <div v-else-if="f.display === 'html' && fieldHtml(f)" class="text-body-2 meta-scrollable" :class="`meta-${f.key}`" v-html="fieldHtml(f)"></div>
+              <div v-else-if="f.display !== 'html' && f.read(photo)" class="text-body-2 meta-scrollable" :class="`meta-${f.key}`">
+                {{ f.read(photo) }}
+              </div>
+              <div v-else class="meta-add-prompt" @click.stop="startEditing(f.key)">{{ f.label }}</div>
+            </v-list-item>
+          </template>
         </template>
       </v-list>
     </div>
@@ -651,6 +477,7 @@ import PDateTimeDialog from "component/sidebar/datetime-dialog.vue";
 import PCameraDialog from "component/sidebar/camera-dialog.vue";
 import PLocationDialog from "component/location/dialog.vue";
 import PConfirmDialog from "component/confirm/dialog.vue";
+import PSidebarInlineToolbar from "component/sidebar/inline-toolbar.vue";
 
 export default {
   name: "PSidebarInfo",
@@ -660,6 +487,7 @@ export default {
     PCameraDialog,
     PLocationDialog,
     PConfirmDialog,
+    PSidebarInlineToolbar,
   },
   props: {
     // UID of the photo currently shown in the parent lightbox. Drives the
@@ -695,10 +523,14 @@ export default {
       chipKey: 0,
       labelOptions: [],
       albumOptions: [],
-      pendingLabelRemovals: [],
-      pendingLabelAdditions: [],
-      pendingAlbumRemovals: [],
-      pendingAlbumAdditions: [],
+      // Pending chip mutations staged during edit mode. Labels are keyed by
+      // Label.ID for removals and by typed name for additions; albums are
+      // keyed by Album.UID for removals and stored as full album objects
+      // for additions (the title is read off the object at confirm time).
+      chipState: {
+        labels: { additions: [], removals: [] },
+        albums: { additions: [], removals: [] },
+      },
       markerDrafts: {},
       markerNameRule: (v) => !v || v.length <= this.$config.get("clip") || this.$gettext("Text too long"),
       markerMenuProps: {
@@ -828,6 +660,104 @@ export default {
     keywords() {
       return this.photo?.Details?.Keywords || "";
     },
+    // Single source of truth for inline-text fields. Each entry knows how to
+    // read/write its raw value, what label to render (tooltip, placeholder,
+    // add-prompt), and whether the display branch should treat the value as
+    // sanitized HTML (Caption, Notes) or plain text (everything else).
+    // detailsFields/textFields below select subsets for the two visual layouts.
+    fieldRegistry() {
+      return {
+        title: {
+          key: "title",
+          label: this.$pgettext("Photo", "Title"),
+          read: (p) => p?.Title,
+          write: (p, v) => {
+            if (p) p.Title = v;
+          },
+          display: "text",
+        },
+        caption: {
+          key: "caption",
+          label: this.$gettext("Caption"),
+          read: (p) => p?.Caption,
+          write: (p, v) => {
+            if (p) p.Caption = v;
+          },
+          display: "html",
+          htmlValue: "captionHtml",
+        },
+        subject: {
+          key: "subject",
+          label: this.$gettext("Subject"),
+          icon: "mdi-text-box-outline",
+          read: (p) => p?.Details?.Subject,
+          write: (p, v) => {
+            if (p?.Details) p.Details.Subject = v;
+          },
+          display: "text",
+        },
+        artist: {
+          key: "artist",
+          label: this.$gettext("Artist"),
+          icon: "mdi-palette",
+          read: (p) => p?.Details?.Artist,
+          write: (p, v) => {
+            if (p?.Details) p.Details.Artist = v;
+          },
+          display: "text",
+        },
+        copyright: {
+          key: "copyright",
+          label: this.$gettext("Copyright"),
+          icon: "mdi-copyright",
+          read: (p) => p?.Details?.Copyright,
+          write: (p, v) => {
+            if (p?.Details) p.Details.Copyright = v;
+          },
+          display: "text",
+        },
+        license: {
+          key: "license",
+          label: this.$gettext("License"),
+          icon: "mdi-license",
+          read: (p) => p?.Details?.License,
+          write: (p, v) => {
+            if (p?.Details) p.Details.License = v;
+          },
+          display: "text",
+        },
+        keywords: {
+          key: "keywords",
+          label: this.$gettext("Keywords"),
+          read: (p) => p?.Details?.Keywords,
+          write: (p, v) => {
+            if (p?.Details) p.Details.Keywords = v;
+          },
+          display: "text",
+        },
+        notes: {
+          key: "notes",
+          label: this.$gettext("Notes"),
+          read: (p) => p?.Details?.Notes,
+          write: (p, v) => {
+            if (p?.Details) p.Details.Notes = v;
+          },
+          display: "html",
+          htmlValue: "notesHtml",
+        },
+      };
+    },
+    detailsFields() {
+      return ["subject", "artist", "copyright", "license"].map((k) => this.fieldRegistry[k]);
+    },
+    textFields() {
+      return ["keywords", "notes"].map((k) => this.fieldRegistry[k]);
+    },
+    showDetailsSection() {
+      if (this.restrictedRole) return false;
+      if (this.isEditable) return true;
+      return this.detailsFields.some((f) => Boolean(f.read(this.photo)));
+    },
     placeName() {
       if (!this.photo) return "";
       return this.photo.locationInfo() || "";
@@ -899,55 +829,34 @@ export default {
       this.$emit("close");
     },
     getFieldValue(field) {
-      switch (field) {
-        case "title":
-          return this.photo.Title;
-        case "caption":
-          return this.photo.Caption;
-        case "subject":
-          return this.photo.Details.Subject;
-        case "artist":
-          return this.photo.Details.Artist;
-        case "copyright":
-          return this.photo.Details.Copyright;
-        case "license":
-          return this.photo.Details.License;
-        case "keywords":
-          return this.photo.Details.Keywords;
-        case "notes":
-          return this.photo.Details.Notes;
-        default:
-          return "";
-      }
+      const f = this.fieldRegistry[field];
+      if (!f) return "";
+      const v = f.read(this.photo);
+      return v == null ? "" : v;
     },
     setFieldValue(field, value) {
-      if (!this.view?.photo) return;
-      switch (field) {
-        case "title":
-          this.view.photo.Title = value;
-          break;
-        case "caption":
-          this.view.photo.Caption = value;
-          break;
-        case "subject":
-          this.view.photo.Details.Subject = value;
-          break;
-        case "artist":
-          this.view.photo.Details.Artist = value;
-          break;
-        case "copyright":
-          this.view.photo.Details.Copyright = value;
-          break;
-        case "license":
-          this.view.photo.Details.License = value;
-          break;
-        case "keywords":
-          this.view.photo.Details.Keywords = value;
-          break;
-        case "notes":
-          this.view.photo.Details.Notes = value;
-          break;
-      }
+      const f = this.fieldRegistry[field];
+      if (!f || !this.view?.photo) return;
+      f.write(this.view.photo, value);
+    },
+    // Function ref shared by every inline editor. Vue invokes it with the
+    // mounted component on mount and null on unmount; since each editor is
+    // gated by a unique `editingField === '<key>'`, only one is mounted at
+    // a time, so the latest non-null call always identifies the active one.
+    setInlineEditorRef(el) {
+      if (el) this._inlineEditorEl = el;
+      else if (!this.editingField) this._inlineEditorEl = null;
+    },
+    fieldHtml(f) {
+      if (!f || f.display !== "html" || !f.htmlValue) return "";
+      return this[f.htmlValue] || "";
+    },
+    shouldShowFieldRow(f) {
+      if (!f) return false;
+      if (this.editingField === f.key) return true;
+      if (this.isEditable) return true;
+      if (f.display === "html") return Boolean(this.fieldHtml(f));
+      return Boolean(f.read(this.photo));
     },
     startEditing(field) {
       if (this.editingField) {
@@ -959,8 +868,8 @@ export default {
       this._editStartedAt = Date.now();
 
       this.$nextTick(() => {
-        const input = this.$el.querySelector(".meta-inline-edit input, .meta-inline-edit textarea");
-        if (input) input.focus();
+        const editor = this._inlineEditorEl;
+        if (editor && typeof editor.focus === "function") editor.focus();
       });
     },
     onToggleMarkersVisible() {
@@ -1123,8 +1032,7 @@ export default {
         if (!d) continue;
         if (this.unwrapMarkerName(d.current).trim() !== (d.original || "").trim()) return true;
       }
-      if (this.pendingLabelAdditions.length || this.pendingLabelRemovals.length) return true;
-      if (this.pendingAlbumAdditions.length || this.pendingAlbumRemovals.length) return true;
+      if (Object.values(this.chipState).some((s) => s.additions.length || s.removals.length)) return true;
       return false;
     },
     // Async guard used by the lightbox before closing / hiding / navigating.
@@ -1204,10 +1112,7 @@ export default {
       this.editingField = null;
       this.editOriginal = null;
       this._editStartedAt = null;
-      this.pendingLabelRemovals = [];
-      this.pendingLabelAdditions = [];
-      this.pendingAlbumRemovals = [];
-      this.pendingAlbumAdditions = [];
+      this.resetChipState();
     },
     // Blur handler for inline text fields (title/caption/subject/artist/
     // copyright/license/keywords/notes). Commits the edit instead of
@@ -1288,6 +1193,36 @@ export default {
       this.chipSearch = "";
       this.chipKey++;
     },
+    // Generic chip-state helpers. Field is "labels" or "albums"; the key is
+    // whatever uniquely identifies a chip in that field's domain (Label.ID
+    // for labels, Album.UID for albums on the removals side; the typed name
+    // for label additions, Album.UID for album additions).
+    isChipPendingRemoval(field, key) {
+      const state = this.chipState[field];
+      return Boolean(state && key != null && state.removals.includes(key));
+    },
+    togglePendingChipRemoval(field, key) {
+      const state = this.chipState[field];
+      if (!state || key == null) return;
+      const idx = state.removals.indexOf(key);
+      if (idx >= 0) {
+        state.removals.splice(idx, 1);
+      } else {
+        state.removals.push(key);
+      }
+    },
+    removePendingChipAdd(field, key) {
+      const state = this.chipState[field];
+      if (!state || key == null) return;
+      const idx = field === "labels" ? state.additions.indexOf(key) : state.additions.findIndex((a) => a.UID === key);
+      if (idx >= 0) state.additions.splice(idx, 1);
+    },
+    resetChipState() {
+      Object.values(this.chipState).forEach((s) => {
+        s.additions = [];
+        s.removals = [];
+      });
+    },
     addPendingLabel(rawName) {
       const name = (rawName || "").trim();
       if (!name) return false;
@@ -1297,14 +1232,15 @@ export default {
       }
       const norm = this.$util.normalizeLabelTitle(name);
       if (!norm) return false;
-      if (this.pendingLabelAdditions.some((n) => this.$util.normalizeLabelTitle(n) === norm)) return false;
+      const additions = this.chipState.labels.additions;
+      if (additions.some((n) => this.$util.normalizeLabelTitle(n) === norm)) return false;
       if (this.labels.some((l) => this.$util.normalizeLabelTitle(l?.Label?.Name) === norm)) return false;
-      this.pendingLabelAdditions.push(name);
+      additions.push(name);
       return true;
     },
     albumTitleConflicts(norm) {
       if (!norm) return true;
-      if (this.pendingAlbumAdditions.some((a) => this.$util.normalizeLabelTitle(a?.Title) === norm)) return true;
+      if (this.chipState.albums.additions.some((a) => this.$util.normalizeLabelTitle(a?.Title) === norm)) return true;
       if (this.albums.some((a) => this.$util.normalizeLabelTitle(a?.Title) === norm)) return true;
       return false;
     },
@@ -1316,12 +1252,13 @@ export default {
         this.$notify.error(this.$gettext("Name too long"));
         return false;
       }
+      const additions = this.chipState.albums.additions;
       if (album.UID) {
-        if (this.pendingAlbumAdditions.some((a) => a.UID === album.UID)) return false;
+        if (additions.some((a) => a.UID === album.UID)) return false;
         if (this.albums.some((a) => a.UID === album.UID)) return false;
       }
       if (this.albumTitleConflicts(this.$util.normalizeLabelTitle(title))) return false;
-      this.pendingAlbumAdditions.push(album);
+      additions.push(album);
       return true;
     },
     onLabelSelected(value) {
@@ -1342,54 +1279,33 @@ export default {
         this.clearChipInput();
       }
     },
-    removePendingLabelAdd(name) {
-      const idx = this.pendingLabelAdditions.indexOf(name);
-      if (idx >= 0) this.pendingLabelAdditions.splice(idx, 1);
-    },
-    isLabelPendingRemoval(label) {
-      return this.pendingLabelRemovals.includes(label.Label.ID);
-    },
-    toggleLabelRemoval(label) {
-      if (!label?.Label?.ID) return;
-      const id = label.Label.ID;
-      const idx = this.pendingLabelRemovals.indexOf(id);
-      if (idx >= 0) {
-        this.pendingLabelRemovals.splice(idx, 1);
-      } else {
-        this.pendingLabelRemovals.push(id);
-      }
-    },
     confirmLabels() {
       if (!this.photo) {
         this.editingField = null;
         return;
       }
 
-      const removals = this.pendingLabelRemovals.slice();
-      const additions = this.pendingLabelAdditions.slice();
+      const state = this.chipState.labels;
+      const removals = state.removals.slice();
+      const additions = state.additions.slice();
       this.editingField = null;
-      this.pendingLabelRemovals = [];
-      this.pendingLabelAdditions = [];
+      state.removals = [];
+      state.additions = [];
 
       const promises = [];
       removals.forEach((id) => promises.push(this.photo.removeLabel(id)));
       additions.forEach((name) => promises.push(this.photo.addLabel(name)));
 
+      // Cache freshness: photo.addLabel / removeLabel patch this.photo.Labels
+      // locally on success, and the backend publishes photos.updated which
+      // evicts the cached entry via evictCachedFromEntities — see
+      // model/photo.js. confirmAlbums needs an explicit evict + re-find
+      // because Album mutations go through raw $api.delete/post and don't
+      // patch this.photo.Albums; that asymmetry is intentional.
       if (promises.length) {
-        Promise.all(promises).catch(() => {});
-      }
-    },
-    isAlbumPendingRemoval(album) {
-      return this.pendingAlbumRemovals.includes(album.UID);
-    },
-    toggleAlbumRemoval(album) {
-      if (!album?.UID) return;
-      const uid = album.UID;
-      const idx = this.pendingAlbumRemovals.indexOf(uid);
-      if (idx >= 0) {
-        this.pendingAlbumRemovals.splice(idx, 1);
-      } else {
-        this.pendingAlbumRemovals.push(uid);
+        Promise.all(promises).catch(() => {
+          this.$notify.error(this.$gettext("Failed to save changes"));
+        });
       }
     },
     confirmAlbums() {
@@ -1398,11 +1314,12 @@ export default {
         return;
       }
 
-      const removals = this.pendingAlbumRemovals.slice();
-      const additions = this.pendingAlbumAdditions.slice();
+      const state = this.chipState.albums;
+      const removals = state.removals.slice();
+      const additions = state.additions.slice();
       this.editingField = null;
-      this.pendingAlbumRemovals = [];
-      this.pendingAlbumAdditions = [];
+      state.removals = [];
+      state.additions = [];
 
       const promises = [];
       removals.forEach((uid) => promises.push(this.$api.delete(`albums/${uid}/photos`, { data: { photos: [this.photo.UID] } })));
@@ -1411,13 +1328,19 @@ export default {
       if (promises.length) {
         Promise.all(promises)
           .then(() => {
+            // Album mutations don't patch this.photo.Albums locally and the
+            // backend publishes only albums.updated (not photos.updated) for
+            // membership changes, so we evict + re-find here so the sidebar
+            // reflects the saved state without waiting for navigation.
             Photo.evictCache(this.photo.UID);
             return this.photo.find(this.photo.UID);
           })
           .then((photo) => {
             this.photo.setValues(photo.getValues());
           })
-          .catch(() => {});
+          .catch(() => {
+            this.$notify.error(this.$gettext("Failed to save changes"));
+          });
       }
     },
     onAlbumSelected(value) {
@@ -1474,10 +1397,6 @@ export default {
         .finally(() => {
           this.clearChipInput();
         });
-    },
-    removePendingAlbumAdd(album) {
-      const idx = this.pendingAlbumAdditions.findIndex((a) => a.UID === album.UID);
-      if (idx >= 0) this.pendingAlbumAdditions.splice(idx, 1);
     },
     confirmDateTime(data) {
       this.dateTimeDialog = false;

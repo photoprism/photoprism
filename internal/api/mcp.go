@@ -72,11 +72,15 @@ func ServeMCP(router *gin.RouterGroup) {
 	// McpSessionTimeout bounds how long idle sessions linger; active
 	// clients renew the timer on every request, so interactive IDE use
 	// is unaffected while abandoned sessions free up promptly.
+	// CrossOriginProtection must be set explicitly: go-sdk v1.6.0 dropped
+	// the implicit default that previously rejected cross-origin requests
+	// when the field was nil (modelcontextprotocol/go-sdk#906).
 	handler := sdkmcp.NewStreamableHTTPHandler(
 		func(r *http.Request) *sdkmcp.Server { return mcpServer },
 		&sdkmcp.StreamableHTTPOptions{
-			SessionTimeout: McpSessionTimeout,
-			Logger:         slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelWarn})),
+			SessionTimeout:        McpSessionTimeout,
+			Logger:                slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelWarn})),
+			CrossOriginProtection: &http.CrossOriginProtection{},
 		},
 	)
 

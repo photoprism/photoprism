@@ -220,6 +220,33 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		assert.Equal(t, first.LabelSlug, first.CustomSlug)
 		assert.Equal(t, second.LabelSlug, second.CustomSlug)
 	})
+	t.Run("ReusesRenamedLabelByPreviousName", func(t *testing.T) {
+		original := FirstOrCreateLabel(NewLabel("RenameCat", 0))
+		require.NotNil(t, original)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(original).Error
+			FlushLabelCache()
+		})
+
+		require.True(t, original.SetName("RenameKatze"))
+		require.NoError(t, Db().Save(original).Error)
+		FlushLabelCache()
+
+		assert.Equal(t, "renamecat", original.LabelSlug)
+		assert.Equal(t, "renamekatze", original.CustomSlug)
+
+		again := FirstOrCreateLabel(NewLabel("RenameCat", 0))
+		require.NotNil(t, again)
+		assert.Equal(t, original.ID, again.ID)
+		assert.Equal(t, "RenameKatze", again.LabelName)
+
+		var rows []Label
+		require.NoError(t, UnscopedDb().
+			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renamecat%", "renamecat%").
+			Find(&rows).Error)
+		assert.Len(t, rows, 1, "rename + re-add must not create a duplicate")
+	})
 }
 
 func TestLabel_UpdateClassify(t *testing.T) {

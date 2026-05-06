@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-05-03
+Date generated: 2026-05-05
 
 ================================================================================
 
@@ -1907,8 +1907,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-sql-driver/mysql
-Version: v1.9.3
-License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.9.3/LICENSE)
+Version: v1.10.0
+License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.10.0/LICENSE)
 
 Mozilla Public License Version 2.0
 ==================================
@@ -2596,8 +2596,8 @@ License: Apache-2.0 (https://github.com/golang/geo/blob/41a1a8c7eb2a/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/google/jsonschema-go/jsonschema
-Version: v0.4.2
-License: MIT (https://github.com/google/jsonschema-go/blob/v0.4.2/LICENSE)
+Version: v0.4.3
+License: MIT (https://github.com/google/jsonschema-go/blob/v0.4.3/LICENSE)
 
 MIT License
 
@@ -4723,8 +4723,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/modelcontextprotocol/go-sdk
-Version: v1.5.0
-License: Apache-2.0 (https://github.com/modelcontextprotocol/go-sdk/blob/v1.5.0/LICENSE)
+Version: v1.6.0
+License: Apache-2.0 (https://github.com/modelcontextprotocol/go-sdk/blob/v1.6.0/LICENSE)
 
 The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 ("Apache-2.0"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0.
 
@@ -6973,8 +6973,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/yalue/onnxruntime_go
-Version: v1.28.0
-License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.28.0/LICENSE)
+Version: v1.30.0
+License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.30.0/LICENSE)
 
 Copyright (c) 2023 Nathan Otterness
 
@@ -9620,8 +9620,6 @@ Package                           License       Copyright
 @eslint/js                       MIT            n/a
 @mdi/font                        Apache-2.0     Austin Andrews
 @testing-library/jest-dom        MIT            Ernesto Garcia <gnapse@gmail.com> (http://gnapse.github.io)
-@testing-library/react           MIT            Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
-@vitejs/plugin-react             MIT            Evan You
 @vitejs/plugin-vue               MIT            Evan You
 @vitest/browser                  MIT            n/a
 @vitest/coverage-v8              MIT            Anthony Fu <anthonyfu117@hotmail.com>
@@ -9636,7 +9634,6 @@ babel-loader                     MIT            Luis Couto <hello@luiscouto.pt>
 babel-plugin-istanbul            BSD-3-Clause   Thai Pangsakulyanont @dtinth
 babel-plugin-polyfill-corejs3    MIT            n/a
 browserslist                     MIT            Andrey Sitnik <andrey@sitnik.es>
-cheerio                          MIT            Matt Mueller <mattmuelle@gmail.com>
 core-js                          MIT            Denis Pushkarev zloirock@zloirock.ru http://zloirock.ru
 cross-env                        MIT            Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
 css-loader                       MIT            Tobias Koppers @sokra
@@ -9674,7 +9671,6 @@ postcss-import                   MIT            Maxime Thirouin
 postcss-loader                   MIT            Andrey Sitnik <andrey@sitnik.ru>
 postcss-preset-env               MIT-0          n/a
 postcss-reporter                 MIT            David Clark david.dave.clark@gmail.com https://davidtheclark.com
-postcss-url                      MIT            Maxime Thirouin
 prettier                         MIT            James Long
 pubsub-js                        MIT            Morgan Roderick morgan@roderick.dk http://roderick.dk
 regenerator-runtime              MIT            Ben Newman <bn@cs.stanford.edu>
@@ -9688,7 +9684,6 @@ svg-url-loader                   MIT            Hovhannes Babayan
 tar                              BlueOak-1.0.0  Isaac Z. Schlueter
 url-loader                       MIT            Tobias Koppers @sokra
 util                             MIT            Joyent http://www.joyent.com
-vite-tsconfig-paths              MIT            aleclarson
 vitest                           MIT            Anthony Fu <anthonyfu117@hotmail.com>
 vue                              MIT            Evan You
 vue-3-sanitize                   MIT            Vannsl, Vanessa Otto <mail@vannsl.io>

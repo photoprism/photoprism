@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** May 5, 2026
 
 ## Purpose
 
@@ -15,7 +15,8 @@ Entry point for agents and humans.
 - Security: https://github.com/photoprism/photoprism/blob/develop/SECURITY.md
 - REST API: https://docs.photoprism.dev/ and https://docs.photoprism.app/developer-guide/api/
 - Code maps: [`CODEMAP.md`](CODEMAP.md), [`frontend/CODEMAP.md`](frontend/CODEMAP.md)
-- Package docs: `README.md` files under `internal/`, `pkg/`, and `frontend/src/`
+- Package docs: `README.md` files under `internal/`, `pkg/`, `frontend/`, and `frontend/src/`
+- Frontend dependency pins, override layer, and orphan-audit pattern: [`frontend/README.md`](frontend/README.md) (read before bumping any non-caret pin or adding/removing a top-level dep)
 - AI/Vision docs: [`internal/ai/face/README.md`](internal/ai/face/README.md), [`internal/ai/vision/README.md`](internal/ai/vision/README.md), [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
 - Glossary: [`GLOSSARY.md`](GLOSSARY.md)
 - When dependencies change, regenerate `NOTICE` files with `make notice`; do not edit `NOTICE` or `frontend/NOTICE` manually.
@@ -148,3 +149,10 @@ Formatting and test entry points:
 - Prefer focused test runs such as `go test ./path/to/pkg -run Name -count=1` while iterating.
 - Use `mariadb -D photoprism` inside the dev shell when you need to inspect MariaDB state directly.
 - Run `shellcheck <file>` on edited shell scripts, or use the corresponding `make` target.
+
+### Container Image Builds
+
+- **Never mix Debian and Ubuntu `apt` repositories in the same image:**
+  - Don't add a Debian source to an Ubuntu base (or vice versa) to install a single missing package — the transitive deps drift, apt's solver pulls newer libraries from the foreign distro, and other build steps in the same `RUN` (e.g. `install-libheif.sh` running `apt-get install libavcodec-dev`) silently link against the wrong soname.
+  - Symptoms surface much later as `dlopen: libfoo.so.N: cannot open shared object file` at image runtime, with the binary referencing a soname that exists only in the foreign distro.
+  - If a package isn't available in the host distro's repos, prefer (a) a same-distro PPA / backports source, (b) a vendor-supplied .deb (e.g. Google Chrome from `dl.google.com`), or (c) a from-source build pinned to a known version.

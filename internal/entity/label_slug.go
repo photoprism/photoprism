@@ -38,7 +38,7 @@ func findLabelByExactName(name string) *Label {
 	result := &Label{}
 
 	if err := UnscopedDb().Where("label_name = ?", name).First(result).Error; err != nil {
-		if candidate := findLabelBySlugValue(txt.Slug(name), 0); candidate != nil && sameLabelName(candidate.LabelName, name) {
+		if candidate := findLabelBySlugValue(txt.Slug(name), 0); candidate != nil && acceptLabelSlugMatch(candidate, name) {
 			return candidate
 		}
 
@@ -46,6 +46,32 @@ func findLabelByExactName(name string) *Label {
 	}
 
 	return result
+}
+
+// acceptLabelSlugMatch reports whether a slug-based hit should resolve to the
+// queried name. It accepts the match when the canonical names also agree
+// (homophone-safe), or when the candidate was renamed away from the queried
+// name: its immutable LabelSlug still records the old slug while CustomSlug
+// has moved to the slug of the current name. The rename branch deliberately
+// excludes the case where LabelSlug equals CustomSlug, which is how the
+// first-created member of a homophone pair is stored — the second homophone
+// always carries a hashed LabelSlug, so it cannot trigger this branch.
+func acceptLabelSlugMatch(candidate *Label, name string) bool {
+	if candidate == nil {
+		return false
+	}
+
+	if sameLabelName(candidate.LabelName, name) {
+		return true
+	}
+
+	queriedSlug := txt.Slug(name)
+
+	if queriedSlug == "" {
+		return false
+	}
+
+	return candidate.LabelSlug == queriedSlug && candidate.CustomSlug != queriedSlug
 }
 
 // findLabelBySlugValue looks up a label by label or custom slug, including soft-deleted rows.

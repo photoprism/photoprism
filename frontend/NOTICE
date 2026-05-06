@@ -10,8 +10,6 @@ Package                          License        Copyright
 @eslint/js                       MIT            n/a
 @mdi/font                        Apache-2.0     Austin Andrews
 @testing-library/jest-dom        MIT            Ernesto Garcia <gnapse@gmail.com> (http://gnapse.github.io)
-@testing-library/react           MIT            Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
-@vitejs/plugin-react             MIT            Evan You
 @vitejs/plugin-vue               MIT            Evan You
 @vitest/browser                  MIT            n/a
 @vitest/coverage-v8              MIT            Anthony Fu <anthonyfu117@hotmail.com>
@@ -26,7 +24,6 @@ babel-loader                     MIT            Luis Couto <hello@luiscouto.pt>
 babel-plugin-istanbul            BSD-3-Clause   Thai Pangsakulyanont @dtinth
 babel-plugin-polyfill-corejs3    MIT            n/a
 browserslist                     MIT            Andrey Sitnik <andrey@sitnik.es>
-cheerio                          MIT            Matt Mueller <mattmuelle@gmail.com>
 core-js                          MIT            Denis Pushkarev zloirock@zloirock.ru http://zloirock.ru
 cross-env                        MIT            Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
 css-loader                       MIT            Tobias Koppers @sokra
@@ -64,7 +61,6 @@ postcss-import                   MIT            Maxime Thirouin
 postcss-loader                   MIT            Andrey Sitnik <andrey@sitnik.ru>
 postcss-preset-env               MIT-0          n/a
 postcss-reporter                 MIT            David Clark david.dave.clark@gmail.com https://davidtheclark.com
-postcss-url                      MIT            Maxime Thirouin
 prettier                         MIT            James Long
 pubsub-js                        MIT            Morgan Roderick morgan@roderick.dk http://roderick.dk
 regenerator-runtime              MIT            Ben Newman <bn@cs.stanford.edu>
@@ -78,7 +74,6 @@ svg-url-loader                   MIT            Hovhannes Babayan
 tar                              BlueOak-1.0.0  Isaac Z. Schlueter
 url-loader                       MIT            Tobias Koppers @sokra
 util                             MIT            Joyent http://www.joyent.com
-vite-tsconfig-paths              MIT            aleclarson
 vitest                           MIT            Anthony Fu <anthonyfu117@hotmail.com>
 vue                              MIT            Evan You
 vue-3-sanitize                   MIT            Vannsl, Vanessa Otto <mail@vannsl.io>

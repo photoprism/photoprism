@@ -111,7 +111,13 @@ else
       --push .
 fi
 
+# Capture the buildx exit code so we can still run cleanup below
+# and propagate the failure to make. Without this, a failed build
+# would silently exit 0 because the trailing `echo` succeeds.
+rc=$?
+
 echo "Removing multibuilder..."
 docker buildx rm multibuilder
 
 echo "Done."
+exit "$rc"

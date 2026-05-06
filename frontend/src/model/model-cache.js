@@ -25,8 +25,7 @@ Additional information can be found in our Developer Guide:
 
 // Deep-clones a plain object via JSON. Used at both ends of the cache
 // lifecycle (set + hydrate) so callers can never share refs with cached
-// values — see "isolation contract" in
-// specs/frontend/model-lru-cache.md.
+// values (cache isolation contract).
 function deepClone(value) {
   if (value === null || typeof value !== "object") {
     return value;
@@ -52,7 +51,7 @@ export class ModelCacheStaleFetchError extends Error {
 // is model-layer infrastructure: a subclass (e.g. Photo) supplies snapshot
 // and hydrate hooks so the cache can stay neutral about model shape.
 //
-// Contract (see specs/frontend/model-lru-cache.md):
+// Contract:
 //   - Stores plain value snapshots, never live model instances.
 //   - Returns a fresh hydrated instance for every cache hit so callers
 //     can mutate freely without aliasing the cached source of truth.

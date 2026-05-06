@@ -1,3 +1,8 @@
+// MUST be the first import: filters jsdom's known false-positive
+// "Could not parse CSS stylesheet" warnings on Vuetify-flavored
+// stylesheets before any subsequent import injects CSS.
+import "./helpers/jsdom-quiet";
+
 import { afterEach, vi } from "vitest";
 import "@testing-library/jest-dom";
 import { config } from "@vue/test-utils";

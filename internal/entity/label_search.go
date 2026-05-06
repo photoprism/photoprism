@@ -11,6 +11,8 @@ import (
 
 // activeLabelByExactName finds an active label by exact name, falling back to a
 // same-name slug match when only the slug lookup is stable across collations.
+// A slug-only hit is also accepted when the candidate was renamed away from
+// the queried name (see acceptLabelSlugMatch).
 func activeLabelByExactName(name string) *Label {
 	name = normalizeLabelName(name)
 
@@ -24,7 +26,7 @@ func activeLabelByExactName(name string) *Label {
 		return result
 	}
 
-	if candidate := activeLabelBySlugValue(txt.Slug(name)); candidate != nil && sameLabelName(candidate.LabelName, name) {
+	if candidate := activeLabelBySlugValue(txt.Slug(name)); acceptLabelSlugMatch(candidate, name) {
 		return candidate
 	}
 

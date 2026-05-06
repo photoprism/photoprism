@@ -2,7 +2,7 @@
 name: Feature Request
 about: Suggest a new feature or enhancement
 title: 'Category: Short Description (PLEASE CHANGE)'
-labels: idea
+type: Feature
 assignees: ''
 
 ---

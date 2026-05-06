@@ -312,7 +312,7 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 }
 
 // NewTestConfig initializes test data so required directories exist before tests run.
-// See AGENTS.md (Test Data & Fixtures) and specs/dev/backend-testing.md for guidance.
+// See AGENTS.md (Test Data & Fixtures) for guidance.
 func NewTestConfig(dbName string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
