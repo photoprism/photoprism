@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:GPano="http://ns.google.com/photos/1.0/panorama/">
+   <GPano:ProjectionType>equirectangular</GPano:ProjectionType>
+   <GPano:UsePanoramaViewer>True</GPano:UsePanoramaViewer>
+   <GPano:CroppedAreaImageWidthPixels>4096</GPano:CroppedAreaImageWidthPixels>
+   <GPano:CroppedAreaImageHeightPixels>2048</GPano:CroppedAreaImageHeightPixels>
+   <GPano:FullPanoWidthPixels>4096</GPano:FullPanoWidthPixels>
+   <GPano:FullPanoHeightPixels>2048</GPano:FullPanoHeightPixels>
+   <GPano:CroppedAreaLeftPixels>0</GPano:CroppedAreaLeftPixels>
+   <GPano:CroppedAreaTopPixels>0</GPano:CroppedAreaTopPixels>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

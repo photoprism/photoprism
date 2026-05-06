@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+
+<rdf:Description rdf:about='internal/meta/testdata/xmp/synthetic/xmpdm-creationdate.xmp'
+  xmlns:et='http://ns.exiftool.org/1.0/' et:toolkit='Image::ExifTool 13.25'
+  xmlns:ExifTool='http://ns.exiftool.org/ExifTool/1.0/'
+  xmlns:System='http://ns.exiftool.org/File/System/1.0/'
+  xmlns:File='http://ns.exiftool.org/File/1.0/'
+  xmlns:XMP-x='http://ns.exiftool.org/XMP/XMP-x/1.0/'
+  xmlns:XMP-xmpDM='http://ns.exiftool.org/XMP/XMP-xmpDM/1.0/'>
+ <ExifTool:ExifToolVersion>13.25</ExifTool:ExifToolVersion>
+ <System:FileName>xmpdm-creationdate.xmp</System:FileName>
+ <System:Directory>internal/meta/testdata/xmp/synthetic</System:Directory>
+ <System:FileSize>391 bytes</System:FileSize>
+ <System:FileModifyDate>2026:05:06 07:32:30+00:00</System:FileModifyDate>
+ <System:FileAccessDate>2026:05:06 07:32:30+00:00</System:FileAccessDate>
+ <System:FileInodeChangeDate>2026:05:06 07:32:30+00:00</System:FileInodeChangeDate>
+ <System:FilePermissions>-rw-r--r--</System:FilePermissions>
+ <File:FileType>XMP</File:FileType>
+ <File:FileTypeExtension>xmp</File:FileTypeExtension>
+ <File:MIMEType>application/rdf+xml</File:MIMEType>
+ <XMP-x:XMPToolkit>PhotoPrism Synthetic Fixture</XMP-x:XMPToolkit>
+ <XMP-xmpDM:CreationDate>2026:05:06 15:42:18+02:00</XMP-xmpDM:CreationDate>
+</rdf:Description>
+</rdf:RDF>
