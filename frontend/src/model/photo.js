@@ -1286,9 +1286,8 @@ export class Photo extends RestModel {
 
   // Module-level Photo cache. Per-subclass scoping (rather than a shared
   // static on Rest) keeps Photo's size budget and invalidation surface
-  // independent from other model caches — see
-  // specs/frontend/model-lru-cache.md. Snapshot via getValues so
-  // type coercion through getDefaults() is applied; hydrate by constructing
+  // independent from other model caches. Snapshot via getValues so type
+  // coercion through getDefaults() is applied; hydrate by constructing
   // a fresh Photo from the cached values.
   static _cache = new ModelCache({
     max: 50,
@@ -1323,8 +1322,7 @@ export class Photo extends RestModel {
   // in-flight fetch whose epoch no longer matches REJECTS with
   // ModelCacheStaleFetchError instead of resolving — so neither the
   // cache nor a .then-chained UI assignment can leak role-A data into
-  // role B during the post-logout unmount window. See
-  // specs/frontend/model-lru-cache.md Decisions §5 for the design.
+  // role B during the post-logout unmount window.
   static clearCache() {
     Photo._cache.clear();
   }

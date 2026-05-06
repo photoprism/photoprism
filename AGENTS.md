@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** May 5, 2026
 
 ## Purpose
 
@@ -15,7 +15,8 @@ Entry point for agents and humans.
 - Security: https://github.com/photoprism/photoprism/blob/develop/SECURITY.md
 - REST API: https://docs.photoprism.dev/ and https://docs.photoprism.app/developer-guide/api/
 - Code maps: [`CODEMAP.md`](CODEMAP.md), [`frontend/CODEMAP.md`](frontend/CODEMAP.md)
-- Package docs: `README.md` files under `internal/`, `pkg/`, and `frontend/src/`
+- Package docs: `README.md` files under `internal/`, `pkg/`, `frontend/`, and `frontend/src/`
+- Frontend dependency pins, override layer, and orphan-audit pattern: [`frontend/README.md`](frontend/README.md) (read before bumping any non-caret pin or adding/removing a top-level dep)
 - AI/Vision docs: [`internal/ai/face/README.md`](internal/ai/face/README.md), [`internal/ai/vision/README.md`](internal/ai/vision/README.md), [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md), [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md)
 - Glossary: [`GLOSSARY.md`](GLOSSARY.md)
 - When dependencies change, regenerate `NOTICE` files with `make notice`; do not edit `NOTICE` or `frontend/NOTICE` manually.

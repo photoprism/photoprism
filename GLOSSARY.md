@@ -4,7 +4,7 @@
 
 ### Purpose & Scope
 
-- This is the single source of truth for terminology used across `specs/` and related docs.
+- This is the single source of truth for terminology used across PhotoPrism documentation.
 - Define terms once here and reference this file instead of redefining the same terms in multiple documents.
 - Keep technical/API contract names unchanged where required, even when user-facing wording differs.
 

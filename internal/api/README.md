@@ -56,7 +56,6 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
       status.Error(err),
   }, refID)
   ```
-- See `specs/common/audit-logs.md` for the full conventions and additional examples that agents should follow.
 
 ### Swagger Documentation
 

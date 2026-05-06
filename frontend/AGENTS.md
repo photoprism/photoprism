@@ -1,6 +1,14 @@
 # Frontend Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** May 5, 2026
+
+## Dependencies & Pins
+
+- [`frontend/README.md`](README.md) is the canonical doc for dependency pin rationale, the `overrides` layer, ESM-only upgrade blockers, and the orphan-audit pattern.
+- **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.16.0"`, `"vuetify": "3.12.2"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
+- npm is a workspace; run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates.
+- After dep changes run `make audit`, `make build-js`, `make test-js`, and `make notice`.
+- Before adding a new dep — and especially before declaring an existing one "unused" — verify with `rg -nF "<pkg>" frontend …` plus `npm ls <pkg> --all` that no consumer or peer-dep needs it.
 
 ## Frontend Linting & Test Entry Points
 

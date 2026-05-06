@@ -1112,10 +1112,10 @@ describe("PSidebarInfo component", () => {
       global: { stubs: { PMap: true } },
     });
     expect(w.vm.hasPendingEdit()).toBe(false);
-    w.vm.pendingLabelAdditions = ["New Label"];
+    w.vm.chipState.labels.additions = ["New Label"];
     expect(w.vm.hasPendingEdit()).toBe(true);
-    w.vm.pendingLabelAdditions = [];
-    w.vm.pendingLabelRemovals = [{ Label: { UID: "lbl1" } }];
+    w.vm.chipState.labels.additions = [];
+    w.vm.chipState.labels.removals = [{ Label: { UID: "lbl1" } }];
     expect(w.vm.hasPendingEdit()).toBe(true);
   });
 
@@ -1125,10 +1125,10 @@ describe("PSidebarInfo component", () => {
       global: { stubs: { PMap: true } },
     });
     expect(w.vm.hasPendingEdit()).toBe(false);
-    w.vm.pendingAlbumAdditions = [{ UID: "alb-new", Title: "New" }];
+    w.vm.chipState.albums.additions = [{ UID: "alb-new", Title: "New" }];
     expect(w.vm.hasPendingEdit()).toBe(true);
-    w.vm.pendingAlbumAdditions = [];
-    w.vm.pendingAlbumRemovals = [{ UID: "alb1" }];
+    w.vm.chipState.albums.additions = [];
+    w.vm.chipState.albums.removals = [{ UID: "alb1" }];
     expect(w.vm.hasPendingEdit()).toBe(true);
   });
 
@@ -1784,13 +1784,13 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    const label = { Label: { ID: 1, UID: "lbl1", Name: "Nature" } };
+    const id = 1;
 
-    expect(w.vm.isLabelPendingRemoval(label)).toBe(false);
-    w.vm.toggleLabelRemoval(label);
-    expect(w.vm.isLabelPendingRemoval(label)).toBe(true);
-    w.vm.toggleLabelRemoval(label);
-    expect(w.vm.isLabelPendingRemoval(label)).toBe(false);
+    expect(w.vm.isChipPendingRemoval("labels", id)).toBe(false);
+    w.vm.togglePendingChipRemoval("labels", id);
+    expect(w.vm.isChipPendingRemoval("labels", id)).toBe(true);
+    w.vm.togglePendingChipRemoval("labels", id);
+    expect(w.vm.isChipPendingRemoval("labels", id)).toBe(false);
   });
 
   it("should add and remove pending label additions", () => {
@@ -1798,11 +1798,11 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.pendingLabelAdditions.push("Sunset");
-    expect(w.vm.pendingLabelAdditions).toContain("Sunset");
+    w.vm.chipState.labels.additions.push("Sunset");
+    expect(w.vm.chipState.labels.additions).toContain("Sunset");
 
-    w.vm.removePendingLabelAdd("Sunset");
-    expect(w.vm.pendingLabelAdditions).not.toContain("Sunset");
+    w.vm.removePendingChipAdd("labels", "Sunset");
+    expect(w.vm.chipState.labels.additions).not.toContain("Sunset");
   });
 
   it("should ignore duplicate pending label additions via onLabelSelected", () => {
@@ -1810,21 +1810,21 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
     w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
-    expect(w.vm.pendingLabelAdditions).toHaveLength(1);
+    expect(w.vm.chipState.labels.additions).toHaveLength(1);
   });
 
   it("should ignore non-object values in onLabelSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onLabelSelected("string-value");
     w.vm.onLabelSelected(null);
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
   });
 
   it("should skip labels already on the photo in onLabelSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "Nature", UID: "lbl1" });
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
   });
 
   // Label validation parity with batch edit + labels tab.
@@ -1833,23 +1833,23 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "cat" });
     w.vm.onLabelSelected({ Name: "CAT" });
-    expect(w.vm.pendingLabelAdditions).toEqual(["cat"]);
+    expect(w.vm.chipState.labels.additions).toEqual(["cat"]);
   });
 
   it("should skip labels already on the photo case-insensitively in onLabelSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "nature" });
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
   });
 
   it("should dedupe pending label additions case-insensitively in onLabelEnter", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.editingField = "labels";
-    w.vm.pendingLabelAdditions.push("cat");
+    w.vm.chipState.labels.additions.push("cat");
     w.vm.chipSearch = "CAT";
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toEqual(["cat"]);
+    expect(w.vm.chipState.labels.additions).toEqual(["cat"]);
   });
 
   it("should trim whitespace in onLabelEnter", () => {
@@ -1857,7 +1857,7 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.chipSearch = "  dog  ";
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toEqual(["dog"]);
+    expect(w.vm.chipState.labels.additions).toEqual(["dog"]);
   });
 
   it("should silently reject empty or whitespace-only label input in onLabelEnter", () => {
@@ -1865,7 +1865,7 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.chipSearch = "   ";
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
     expect(w.vm.$notify.error).not.toHaveBeenCalled();
   });
 
@@ -1874,7 +1874,7 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.chipSearch = "a".repeat(CLIP_LEN + 10);
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
     expect(w.vm.$notify.error).toHaveBeenCalledWith("Name too long");
   });
 
@@ -1887,7 +1887,7 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.chipSearch = "cat";
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
   });
 
   it("should match existing labels through normalization (& vs and)", () => {
@@ -1899,7 +1899,7 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.chipSearch = "rock and roll";
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
   });
 
   it("should silently reject punctuation-only label input", () => {
@@ -1907,7 +1907,7 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.chipSearch = "!!!";
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
     expect(w.vm.$notify.error).not.toHaveBeenCalled();
   });
 
@@ -1916,7 +1916,7 @@ describe("PSidebarInfo component", () => {
     w.vm.editingField = "labels";
     w.vm.chipSearch = "🌅";
     w.vm.onLabelEnter();
-    expect(w.vm.pendingLabelAdditions).toEqual(["🌅"]);
+    expect(w.vm.chipState.labels.additions).toEqual(["🌅"]);
   });
 
   // Pending album operations
@@ -1925,13 +1925,13 @@ describe("PSidebarInfo component", () => {
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    const album = { UID: "alb1", Title: "Vacation 2023" };
+    const uid = "alb1";
 
-    expect(w.vm.isAlbumPendingRemoval(album)).toBe(false);
-    w.vm.toggleAlbumRemoval(album);
-    expect(w.vm.isAlbumPendingRemoval(album)).toBe(true);
-    w.vm.toggleAlbumRemoval(album);
-    expect(w.vm.isAlbumPendingRemoval(album)).toBe(false);
+    expect(w.vm.isChipPendingRemoval("albums", uid)).toBe(false);
+    w.vm.togglePendingChipRemoval("albums", uid);
+    expect(w.vm.isChipPendingRemoval("albums", uid)).toBe(true);
+    w.vm.togglePendingChipRemoval("albums", uid);
+    expect(w.vm.isChipPendingRemoval("albums", uid)).toBe(false);
   });
 
   it("should add and remove pending album additions", () => {
@@ -1939,38 +1939,38 @@ describe("PSidebarInfo component", () => {
     const album = { UID: "alb-new", Title: "New Album" };
 
     w.vm.onAlbumSelected(album);
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
-    expect(w.vm.pendingAlbumAdditions[0].UID).toBe("alb-new");
+    expect(w.vm.chipState.albums.additions).toHaveLength(1);
+    expect(w.vm.chipState.albums.additions[0].UID).toBe("alb-new");
 
-    w.vm.removePendingAlbumAdd(album);
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    w.vm.removePendingChipAdd("albums", album.UID);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
   });
 
   it("should ignore non-object values in onAlbumSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected("string-value");
     w.vm.onAlbumSelected(null);
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
   });
 
   it("should skip albums already on the photo in onAlbumSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected({ UID: "alb1", Title: "Vacation 2023" });
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
   });
 
   // Album validation parity with batch edit + labels tab.
   it("should dedupe albums by normalized title even when UIDs differ", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected({ UID: "alb-other", Title: "vacation 2023" });
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
   });
 
   it("should dedupe pending album additions by normalized title", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.pendingAlbumAdditions.push({ UID: "alb-a", Title: "Trip" });
+    w.vm.chipState.albums.additions.push({ UID: "alb-a", Title: "Trip" });
     w.vm.onAlbumSelected({ UID: "alb-b", Title: "trip" });
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
+    expect(w.vm.chipState.albums.additions).toHaveLength(1);
   });
 
   it("should reject overlong album titles in onAlbumEnter and not call save", () => {
@@ -1980,7 +1980,7 @@ describe("PSidebarInfo component", () => {
     w.vm.chipSearch = "a".repeat(CLIP_LEN + 10);
     w.vm.onAlbumEnter();
     expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
     expect(w.vm.$notify.error).toHaveBeenCalledWith("Name too long");
     saveSpy.mockRestore();
   });
@@ -1992,7 +1992,7 @@ describe("PSidebarInfo component", () => {
     w.vm.chipSearch = "   ";
     w.vm.onAlbumEnter();
     expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
     saveSpy.mockRestore();
   });
 
@@ -2003,7 +2003,7 @@ describe("PSidebarInfo component", () => {
     w.vm.chipSearch = "VACATION 2023";
     w.vm.onAlbumEnter();
     expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
     saveSpy.mockRestore();
   });
 
@@ -2011,11 +2011,11 @@ describe("PSidebarInfo component", () => {
     const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.editingField = "albums";
-    w.vm.pendingAlbumAdditions.push({ UID: "alb-pending", Title: "Trip" });
+    w.vm.chipState.albums.additions.push({ UID: "alb-pending", Title: "Trip" });
     w.vm.chipSearch = "trip";
     w.vm.onAlbumEnter();
     expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
+    expect(w.vm.chipState.albums.additions).toHaveLength(1);
     saveSpy.mockRestore();
   });
 
@@ -2031,8 +2031,8 @@ describe("PSidebarInfo component", () => {
     w.vm.onAlbumEnter();
     await new Promise((r) => setTimeout(r, 0));
     expect(saveSpy).toHaveBeenCalledTimes(1);
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(1);
-    expect(w.vm.pendingAlbumAdditions[0].Title).toBe("Brand New Trip");
+    expect(w.vm.chipState.albums.additions).toHaveLength(1);
+    expect(w.vm.chipState.albums.additions[0].Title).toBe("Brand New Trip");
     expect(w.vm.albumOptions.some((a) => a.UID === "alb-created")).toBe(true);
     saveSpy.mockRestore();
   });
@@ -2044,19 +2044,19 @@ describe("PSidebarInfo component", () => {
       global: { stubs: { PMap: true } },
     });
     w.vm.editingField = "labels";
-    w.vm.pendingLabelRemovals = [1];
-    w.vm.pendingLabelAdditions = ["Sunset"];
-    w.vm.pendingAlbumRemovals = ["alb1"];
-    w.vm.pendingAlbumAdditions = [{ UID: "alb-new", Title: "New" }];
+    w.vm.chipState.labels.removals = [1];
+    w.vm.chipState.labels.additions = ["Sunset"];
+    w.vm.chipState.albums.removals = ["alb1"];
+    w.vm.chipState.albums.additions = [{ UID: "alb-new", Title: "New" }];
 
     w.vm._editStartedAt = Date.now() - 300;
     w.vm.cancelEditing();
 
     expect(w.vm.editingField).toBeNull();
-    expect(w.vm.pendingLabelRemovals).toHaveLength(0);
-    expect(w.vm.pendingLabelAdditions).toHaveLength(0);
-    expect(w.vm.pendingAlbumRemovals).toHaveLength(0);
-    expect(w.vm.pendingAlbumAdditions).toHaveLength(0);
+    expect(w.vm.chipState.labels.removals).toHaveLength(0);
+    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(w.vm.chipState.albums.removals).toHaveLength(0);
+    expect(w.vm.chipState.albums.additions).toHaveLength(0);
   });
 
   // Photo watcher: the parent lightbox owns the unsaved-changes guard, so

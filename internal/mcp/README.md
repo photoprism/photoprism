@@ -1,8 +1,6 @@
 ## PhotoPrism MCP Server
 
-**Last Updated:** April 20, 2026
-
-> See `specs/platform/mcp.md` for the canonical specification, including the rationale for the user-access policy and the role/grant matrix per edition.
+**Last Updated:** May 5, 2026
 
 ### Current Capabilities
 
@@ -242,6 +240,6 @@ To revoke access without disabling the user account, the administrator runs:
 ./photoprism clients remove <client-id>
 ```
 
-> **Heads up:** `photoprism auth add --scope mcp <username>` creates an *app password* tied to a user account, but it currently does **not** grant MCP access — `RoleUser` is not in the `ResourceMCP` ACL. Use `photoprism clients add` for MCP integrations until that policy changes. The reasoning is documented in `specs/platform/mcp.md` under *User Access Model* (deliberate hold, not an oversight).
+> **Heads up:** `photoprism auth add --scope mcp <username>` creates an *app password* tied to a user account, but it currently does **not** grant MCP access — `RoleUser` is not in the `ResourceMCP` ACL. Use `photoprism clients add` for MCP integrations until that policy changes. This is a deliberate hold, not an oversight.
 
 When MCP eventually grows tools that need user-scoped data (e.g. "list my albums"), the team will revisit the policy and likely add `RoleUser → GrantSearchAll` so the app-password path lights up. Until then, every MCP integration is an admin-provisioned client token tied to a named application.

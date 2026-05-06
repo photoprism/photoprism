@@ -1,8 +1,7 @@
 name: Bug Report 🐞
 description: Report a new and clearly identified bug that must be fixed directly in the application.
 title: "Category: Short bug description (PLEASE CHANGE)"
-labels:
-  - bug
+type: Bug
 assignees: []
 body:
   - type: markdown
