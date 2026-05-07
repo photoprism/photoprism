@@ -228,6 +228,49 @@ describe("component/photo/batch-edit", () => {
       expect(wrapper.vm.isLocationMixed).toBe(true);
       expect(wrapper.vm.currentCoordinates).toEqual([0, 0]);
     });
+
+    // availableLabelOptions / availableAlbumOptions are computeds that
+    // hide already-selected items from the chip-selector dropdown and
+    // sort the survivors via locale-aware compare. Raw cache results
+    // live on cachedLabelOptions / cachedAlbumOptions so the canonical
+    // resolveLabelFromText path still finds matches for items already
+    // in labelItems.
+    it("filters cached label options by labelItems and sorts alphabetically", () => {
+      wrapper.vm.cachedLabelOptions = [
+        { value: "lbl-mountain", title: "Mountain" },
+        { value: "lbl-apple", title: "apple" },
+        { value: "lbl-beach", title: "Beach" },
+        { value: "lbl-earth", title: "Earth" },
+      ];
+      wrapper.vm.labelItems = [{ value: "lbl-earth", title: "Earth", action: "none" }];
+
+      const titles = wrapper.vm.availableLabelOptions.map((o) => o.title);
+      // Earth is filtered (in labelItems); the rest sort case-insensitively.
+      expect(titles).toEqual(["apple", "Beach", "Mountain"]);
+    });
+
+    it("filters labelItems by normalized title (punctuation/case variants collapse)", () => {
+      wrapper.vm.cachedLabelOptions = [
+        { value: "lbl-hc-canonical", title: "hello-cat" },
+        { value: "lbl-mountain", title: "Mountain" },
+      ];
+      wrapper.vm.labelItems = [{ value: "lbl-hc", title: "Hello Cat", action: "add" }];
+
+      const titles = wrapper.vm.availableLabelOptions.map((o) => o.title);
+      expect(titles).toEqual(["Mountain"]);
+    });
+
+    it("filters cached album options by albumItems and sorts alphabetically", () => {
+      wrapper.vm.cachedAlbumOptions = [
+        { value: "alb-zebra", title: "Zebra" },
+        { value: "alb-alpha", title: "alpha" },
+        { value: "alb-mango", title: "Mango" },
+      ];
+      wrapper.vm.albumItems = [{ value: "alb-mango", title: "Mango", action: "add" }];
+
+      const titles = wrapper.vm.availableAlbumOptions.map((o) => o.title);
+      expect(titles).toEqual(["alpha", "Zebra"]);
+    });
   });
 
   describe("Form Data Management", () => {

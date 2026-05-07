@@ -319,6 +319,25 @@
     background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.7);
 }
 
+/* Keyboard-visible focus ring for tabbable chips. The default browser outline
+   is hard to see against the chip's inset shadow and rounded corners; this
+   draws a clear, theme-aware ring INSIDE the chip area (negative offset) so
+   the ring isn't clipped when chips wrap against the sidebar edge. The
+   outline still follows border-radius in modern browsers. Uses on-surface
+   at moderate alpha so the ring is clearly more prominent than the chip's
+   12%-alpha resting border without reading as a near-white halo against
+   the dark sidebar — and without reusing a notification token like info. */
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip:focus {
+    outline: 2px solid rgba(var(--v-theme-on-surface), 0.5);
+    outline-offset: -2px;
+}
+
+/* Suppress the ring on mouse focus where supported; click on a chip already
+   navigates or toggles, so a transient outline there is just visual noise. */
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip:focus:not(:focus-visible) {
+    outline: none;
+}
+
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary {
     background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
     color: rgb(var(--v-theme-on-surface));
@@ -342,14 +361,6 @@
     background-color: rgba(var(--v-theme-error), 0.3);
     color: rgb(var(--v-theme-error));
     box-shadow: none;
-    opacity: 1;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-chip--pending-add {
-    background-color: rgba(var(--v-theme-download), 0.3);
-    color: rgb(var(--v-theme-download));
-    box-shadow: none;
-    border-style: none;
     opacity: 1;
 }
 
@@ -515,14 +526,25 @@
 }
 
 /* Sidebar inline dropdowns (name, labels, albums) render in a body-level
-   overlay, so they're outside `.p-lightbox__sidebar`. The lightbox theme
-   has `surface` identical to `background`, which makes the default menu
-   invisible against the sidebar; lift it to `surface-bright` and add a
-   border for a clear edge. */
-.meta-inline-menu .v-overlay__content,
-.meta-inline-menu > .v-list {
-    background: rgb(var(--v-theme-surface-bright)) !important;
-    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity, 0.12));
+   overlay so they inherit the lightbox theme. The lightbox `surface`
+   equals `background` (#040709), which would render the menu list
+   invisibly against the sidebar. Lift the inner `.v-list` to
+   `secondary-light` (#1e1e1e) — distinctly above the input's
+   `surface-bright` (#141417) bg so the menu reads as a separate,
+   slightly elevated surface instead of merging into the input it's
+   anchored to. The standard MD elevation shadow provides the edge,
+   matching every other v-select / v-autocomplete menu in the app. */
+.meta-inline-menu .v-list {
+    background: rgb(var(--v-theme-secondary-light)) !important;
+}
+
+/* Vuetify's density="compact" on v-list sizes the row height/padding but
+   leaves the title font at the default 16px, which still reads oversized
+   next to the sidebar's 0.875rem inline editors. Trim the title font so
+   the menu visually matches the rest of the sidebar typography. */
+.meta-inline-menu .v-list-item-title {
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
 }
 
 /* Media Content */

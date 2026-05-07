@@ -3,6 +3,7 @@
 package commands
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -58,7 +59,7 @@ func createFakeYtDlp(t *testing.T) string {
 	b.WriteString("for a in \"$@\"; do if [[ \"$a\" == \"--version\" ]]; then echo '2025.09.23'; exit 0; fi; done\n")
 	b.WriteString("OUT_TPL=\"\"\n")
 	b.WriteString("i=0; while [[ $i -lt $# ]]; do i=$((i+1)); arg=\"${!i}\"; if [[ \"$arg\" == \"--dump-single-json\" ]]; then echo '{\"id\":\"abc\",\"title\":\"Test\",\"url\":\"http://example.com\",\"_type\":\"video\"}'; exit 0; fi; if [[ \"$arg\" == \"--output\" ]]; then i=$((i+1)); OUT_TPL=\"${!i}\"; fi; done\n")
-	b.WriteString("if [[ $* == *'--print '* ]]; then OUT=\"$OUT_TPL\"; OUT=${OUT//%(id)s/abc}; OUT=${OUT//%(ext)s/mp4}; mkdir -p \"$(dirname \"$OUT\")\"; CONTENT=\"${YTDLP_DUMMY_CONTENT:-dummy}\"; echo \"$CONTENT\" > \"$OUT\"; echo \"$OUT\"; exit 0; fi\n")
+	b.WriteString("if [[ $* == *'--print '* ]]; then if [[ \"${YTDLP_FAIL_FILE_DOWNLOAD:-}\" == \"1\" ]]; then echo 'simulated yt-dlp failure' 1>&2; exit 1; fi; OUT=\"$OUT_TPL\"; OUT=${OUT//%(id)s/abc}; OUT=${OUT//%(ext)s/mp4}; mkdir -p \"$(dirname \"$OUT\")\"; CONTENT=\"${YTDLP_DUMMY_CONTENT:-dummy}\"; echo \"$CONTENT\" > \"$OUT\"; echo \"$OUT\"; exit 0; fi\n")
 	if err := os.WriteFile(path, []byte(b.String()), 0o755); err != nil {
 		t.Fatalf("failed to write fake yt-dlp: %v", err)
 	}
@@ -217,8 +218,62 @@ func TestDownloadImpl_FileMethod_Always_RemuxFails(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected failure when remux is required but ffmpeg is unavailable")
 	}
+	if err.Error() != "1 download failed" {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
 	// Cleanup destination folder if anything was created
+	c := get.Config()
+	outDir := filepath.Join(c.OriginalsPath(), dest)
+	_ = os.RemoveAll(outDir)
+}
+
+func TestDownloadImpl_FileMethod_ErrorWithoutFilesCountsFailure(t *testing.T) {
+	t.Setenv("YTDLP_FORCE_SHELL", "1")
+	t.Setenv("YTDLP_FAIL_FILE_DOWNLOAD", "1")
+	dl.ResetVersionWarningForTest()
+
+	fake := createFakeYtDlp(t)
+	orig := dl.YtDlpBin
+	defer func() { dl.YtDlpBin = orig }()
+
+	dest := "dl-e2e-file-error"
+	if c := get.Config(); c != nil {
+		c.Options().FFmpegBin = "/bin/false"
+		s := c.Settings()
+		s.Index.Convert = false
+	}
+	conf := get.Config()
+	if conf == nil {
+		t.Fatalf("missing test config")
+	}
+
+	conf.RegisterDb()
+	dl.YtDlpBin = fake
+
+	var logOutput bytes.Buffer
+	log.SetOutput(&logOutput)
+	t.Cleanup(func() {
+		log.SetOutput(os.Stderr)
+	})
+
+	var err error
+	err = runDownload(conf, DownloadOpts{
+		Dest:      dest,
+		Method:    "file",
+		FileRemux: "skip",
+	}, []string{"https://example.com/video"})
+
+	if err == nil {
+		t.Fatalf("expected file method failure when yt-dlp returns no files")
+	}
+	if err.Error() != "1 download failed" {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(logOutput.String(), "completed with 1 error in") {
+		t.Fatalf("expected singularized summary log, got: %q", logOutput.String())
+	}
+
 	c := get.Config()
 	outDir := filepath.Join(c.OriginalsPath(), dest)
 	_ = os.RemoveAll(outDir)

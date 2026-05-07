@@ -1182,6 +1182,44 @@ export class Photo extends RestModel {
     return $api.delete(this.getEntityResource() + "/label/" + id).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
+  // Adds this photo to the given album. The album-membership endpoint
+  // returns only an ack, so on success the LRU cache is evicted and the
+  // photo is refetched so this.Albums reflects the saved state. Without
+  // the explicit refind, callers would have to wait for an albums.updated
+  // websocket round-trip — and the WS handler in this file evicts on
+  // photos.* channels, not albums.*.
+  //
+  // The name overlaps with Thumb.addToAlbum/removeFromAlbum on purpose:
+  // those operate at the photo-grid layer (toggling a Removed flag on a
+  // single thumbnail for lightbox menu visibility — see lightbox.vue
+  // onRemoveFromAlbum). The Photo-level methods here update this.Albums
+  // for sidebar chip rendering. Different layers, different semantics —
+  // both contracts are pinned in their respective tests so a future
+  // "consolidation" PR doesn't accidentally collapse them.
+  addToAlbum(albumUID) {
+    if (!albumUID) return Promise.resolve(this);
+    return $api
+      .post(`albums/${albumUID}/photos`, { photos: [this.UID] })
+      .then(() => {
+        Photo.evictCache(this.UID);
+        return this.find(this.UID);
+      })
+      .then((photo) => Promise.resolve(this.setValues(photo.getValues())));
+  }
+
+  // Removes this photo from the given album. Mirrors addToAlbum's
+  // evict + refind pattern — see that method for rationale.
+  removeFromAlbum(albumUID) {
+    if (!albumUID) return Promise.resolve(this);
+    return $api
+      .delete(`albums/${albumUID}/photos`, { data: { photos: [this.UID] } })
+      .then(() => {
+        Photo.evictCache(this.UID);
+        return this.find(this.UID);
+      })
+      .then((photo) => Promise.resolve(this.setValues(photo.getValues())));
+  }
+
   getMarkers(valid) {
     let result = [];
 

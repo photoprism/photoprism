@@ -95,7 +95,13 @@ const sanitizeHtmlOptions = Object.freeze({
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
 export default class $util {
-  static normalizeLabelTitle(s) {
+  // Canonical-form normalizer for short identifiers that are user-typed
+  // and dedup-compared (label names, album titles, and similar). Lowercases,
+  // expands `&` to `and`, treats `+` / `_` / `-` as whitespace, strips other
+  // punctuation, and collapses runs of whitespace. Letters, digits, and
+  // emoji sequences (incl. ZWJ + skin-tone modifiers + regional indicators)
+  // are preserved so user-defined emoji-only titles round-trip.
+  static normalizeTitle(s) {
     if (s === null || s === undefined) return "";
     return (
       String(s)

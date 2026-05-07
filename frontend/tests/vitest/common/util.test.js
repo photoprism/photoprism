@@ -210,54 +210,54 @@ describe("common/util", () => {
     expect(tokens.size).toBe(numTokens);
   });
 
-  describe("normalizeLabelTitle", () => {
+  describe("normalizeTitle", () => {
     it("preserves lowercase ASCII", () => {
-      expect($util.normalizeLabelTitle("cat")).toBe("cat");
+      expect($util.normalizeTitle("cat")).toBe("cat");
     });
     it("lowercases input", () => {
-      expect($util.normalizeLabelTitle("Cat")).toBe("cat");
+      expect($util.normalizeTitle("Cat")).toBe("cat");
     });
     it("replaces & with and", () => {
-      expect($util.normalizeLabelTitle("Rock & Roll")).toBe("rock and roll");
+      expect($util.normalizeTitle("Rock & Roll")).toBe("rock and roll");
     });
     it("replaces underscores with spaces", () => {
-      expect($util.normalizeLabelTitle("hello_world")).toBe("hello world");
+      expect($util.normalizeTitle("hello_world")).toBe("hello world");
     });
     it("preserves emoji", () => {
-      expect($util.normalizeLabelTitle("🌅")).toBe("🌅");
+      expect($util.normalizeTitle("🌅")).toBe("🌅");
     });
     it("preserves emoji with text", () => {
-      expect($util.normalizeLabelTitle("🏔️ Mountains")).toBe("🏔️ mountains");
+      expect($util.normalizeTitle("🏔️ Mountains")).toBe("🏔️ mountains");
     });
     it("preserves compound emoji with ZWJ", () => {
-      expect($util.normalizeLabelTitle("👨‍👩‍👧")).toBe("👨‍👩‍👧");
+      expect($util.normalizeTitle("👨‍👩‍👧")).toBe("👨‍👩‍👧");
     });
     it("preserves accented characters", () => {
-      expect($util.normalizeLabelTitle("café")).toBe("café");
+      expect($util.normalizeTitle("café")).toBe("café");
     });
     it("preserves flag emoji", () => {
-      expect($util.normalizeLabelTitle("🇺🇸")).toBe("🇺🇸");
+      expect($util.normalizeTitle("🇺🇸")).toBe("🇺🇸");
     });
     it("preserves skin tone emoji", () => {
-      expect($util.normalizeLabelTitle("👋🏽")).toBe("👋🏽");
+      expect($util.normalizeTitle("👋🏽")).toBe("👋🏽");
     });
     it("preserves keycap sequences", () => {
-      expect($util.normalizeLabelTitle("1️⃣")).toBe("1️⃣");
+      expect($util.normalizeTitle("1️⃣")).toBe("1️⃣");
     });
     it("preserves CJK characters", () => {
-      expect($util.normalizeLabelTitle("猫")).toBe("猫");
+      expect($util.normalizeTitle("猫")).toBe("猫");
     });
     it("strips punctuation but keeps emoji and text", () => {
-      expect($util.normalizeLabelTitle("hello! 🌅 world")).toBe("hello 🌅 world");
+      expect($util.normalizeTitle("hello! 🌅 world")).toBe("hello 🌅 world");
     });
     it("returns empty for punctuation-only input", () => {
-      expect($util.normalizeLabelTitle("!!!")).toBe("");
+      expect($util.normalizeTitle("!!!")).toBe("");
     });
     it("returns empty for null", () => {
-      expect($util.normalizeLabelTitle(null)).toBe("");
+      expect($util.normalizeTitle(null)).toBe("");
     });
     it("returns empty for undefined", () => {
-      expect($util.normalizeLabelTitle(undefined)).toBe("");
+      expect($util.normalizeTitle(undefined)).toBe("");
     });
   });
 });

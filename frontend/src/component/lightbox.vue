@@ -18,6 +18,7 @@
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
     @keydown.esc.exact.stop="close"
+    @keydown.tab="onTabKey"
     @click.capture="captureDialogClick"
     @pointerdown.capture="captureDialogPointerDown"
   >
@@ -1104,6 +1105,14 @@ export default {
       this.lightbox.on("pointerUp", this.lightboxPointerListener);
       this.lightbox.on("pointerDown", this.lightboxPointerListener);
       // this.lightbox.on("pointerMove", this.lightboxPointerListener);
+
+      // Suppress PhotoSwipe's document-level keydown shortcuts (notably "z"
+      // for toggleZoom) while the user is typing in the info sidebar.
+      // PhotoSwipe checks `defaultPrevented` on the dispatched event and
+      // returns early if we mark it; see photoswipe.esm.js _onKeyDown. The
+      // Vue-bound onKeyDown in this component already skips when info is open
+      // and the focus is on an input/textarea — same predicate here.
+      this.lightbox.on("keydown", this.onPswpKeyDown);
 
       // Add PhotoSwipe lightbox controls,
       // see https://photoswipe.com/adding-ui-elements/.
@@ -2361,6 +2370,39 @@ export default {
             this.toggleControls();
           }
           break;
+      }
+    },
+    // Bridges PhotoSwipe's dispatched 'keydown' event so printable keys
+    // typed into the info sidebar (notably "z" for the Subject textarea)
+    // are not swallowed by PhotoSwipe's toggleZoom shortcut. Calling
+    // preventDefault on the dispatched event causes _onKeyDown in
+    // photoswipe.esm.js to return before its switch statement runs.
+    //
+    // Tab is handled separately at the v-dialog level via onTabKey: stopping
+    // propagation there is enough because PhotoSwipe's Tab path only calls
+    // _focusRoot() (a focus trap), which Vuetify's v-dialog and the
+    // PhotoPrism $view trap (common/view.js) already provide more generically.
+    onPswpKeyDown(ev) {
+      if (!ev || !this.info) return;
+      const active = document.activeElement;
+      if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || (active && active.isContentEditable)) {
+        ev.preventDefault();
+      }
+    },
+    // Tab keypress handler on the v-dialog root. Stops propagation so
+    // PhotoSwipe's document-level _focusRoot() Tab handler doesn't fire,
+    // letting browser-default Tab navigation continue normally and keeping
+    // sidebar chips, inputs, and pencils reachable by keyboard. Suppression
+    // is gated on focus being inside the lightbox tree so an event bubbling
+    // up from somewhere unexpected (e.g. a teleported overlay) can still
+    // reach PhotoSwipe. Vuetify's v-dialog focus scope and the PhotoPrism
+    // $view focus trap re-anchor focus that escapes the modal.
+    onTabKey(ev) {
+      if (!ev) return;
+      const root = this.$refs.container || this.$refs.content;
+      const active = document.activeElement;
+      if (root && active && root.contains(active)) {
+        ev.stopPropagation();
       }
     },
     // Toggles video playback on the current video element, if any.

@@ -47,9 +47,8 @@ test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })(
       await t.expect(photoviewer.sidebarRow(field.icon).withText(field.value).exists).ok();
     }
 
-    // The backend normalizes keywords (split on whitespace/commas,
-    // lowercased, deduped), so we assert on a unique single-word token
-    // that survives that pass.
+    // The backend lower-cases and dedupes keywords; assert on a single
+    // lowercase token that survives that pass.
     const keywordsInput = await photoviewer.startInlineEditBySection("Keywords");
     await t.typeText(keywordsInput, "sidebareditkw", { replace: true });
     await photoviewer.confirmInlineEditBySection("Keywords");
@@ -74,7 +73,7 @@ test.meta("testID", "sidebar-edit-002").meta({ mode: "public" })("Common: Adds a
   await photoviewer.typeAndConfirmInlineChip("Labels", labelTitle);
   await photoviewer.typeAndConfirmInlineChip("Albums", albumTitle);
 
-  await photoviewer.closePhotoViewer();
+  await photoviewer.triggerPhotoViewerAction("close-button");
 
   await menu.openPage("labels");
   await label.openByTitle(labelTitle);
@@ -90,77 +89,140 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
   async (t) => {
     await photoviewer.openSidebarOnFirstPhoto();
 
-    // Date / time dialog: change all five user-editable fields. Re-opening
-    // the dialog after save is the most direct check that each field round-
-    // tripped through the API; the sidebar only formats a subset of these
-    // (year is always rendered, timezone only when set).
+    const dateTimeDialog = photoviewer.dateTimeDialog;
+    const cameraDialog = photoviewer.cameraDialog;
+    const locationDialog = photoviewer.locationDialog;
+    const optionWith = (text) => Selector('div[role="option"]').withText(text);
+
+    // Clicking a rendered option is racy on fast systems where the list
+    // re-mounts between visibility and click; keyboard nav is stable.
+    const pickAutocomplete = async (input, value) => {
+      await t.typeText(input, value, { replace: true }).pressKey("down enter");
+    };
+    const pickFromSelect = async (field, value) => {
+      await t.click(field).click(optionWith(value));
+    };
+
+    // Other tests in this suite edit the same photo; snapshot now and
+    // restore at the end so leftover timezone/values don't leak.
     await photoviewer.openSidebarDialog("takenAt");
-    const yearInput = photoviewer.dateTimeDialog.find(".input-year input");
-    const monthInput = photoviewer.dateTimeDialog.find(".input-month input");
-    const dayInput = photoviewer.dateTimeDialog.find(".input-day input");
-    const timeInput = photoviewer.dateTimeDialog.find(".input-local-time input");
-    const timeZoneInput = photoviewer.dateTimeDialog.find(".input-timezone input");
-    await t.typeText(yearInput, "2022", { replace: true }).pressKey("tab");
-    await t.typeText(monthInput, "7", { replace: true }).pressKey("tab");
-    await t.typeText(dayInput, "15", { replace: true }).pressKey("tab");
-    await t.typeText(timeInput, "13:45:30", { replace: true }).pressKey("tab");
-    await t.typeText(timeZoneInput, "UTC", { replace: true }).pressKey("enter");
-    await t.click(photoviewer.dateTimeDialog.find(".action-confirm"));
-    await t.expect(photoviewer.dateTimeDialog.visible).notOk();
-    await t.expect(photoviewer.sidebarRow("mdi-calendar").withText("2022").exists).ok();
+    const initialYear = await dateTimeDialog.yearValue.innerText;
+    const initialMonth = await dateTimeDialog.monthValue.innerText;
+    const initialDay = await dateTimeDialog.dayValue.innerText;
+    const initialLocalTime = await dateTimeDialog.localTime.value;
+    const initialTimezone = await dateTimeDialog.timezoneValue.innerText;
+    await t.click(dateTimeDialog.cancel);
+    await t.expect(dateTimeDialog.root.visible).notOk();
 
-    // Re-open and verify each input was persisted. The autocompletes render
-    // their selected value as the input's `value` attribute, so we read it
-    // back rather than relying on locale-formatted display strings.
-    await photoviewer.openSidebarDialog("takenAt");
-    await t.expect(yearInput.value).eql("2022");
-    await t.expect(monthInput.value).eql("7");
-    await t.expect(dayInput.value).eql("15");
-    await t.expect(timeInput.value).eql("13:45:30");
-    await t.expect(timeZoneInput.value).eql("UTC");
-    await t.click(photoviewer.dateTimeDialog.find(".action-cancel"));
-    await t.expect(photoviewer.dateTimeDialog.visible).notOk();
-
-    // Camera dialog: change every numeric field. Camera/Lens autocompletes
-    // are intentionally skipped — their item lists depend on backend fixture
-    // data, which varies across acceptance environments. The four numeric
-    // fields cover the dialog's persistence path end-to-end.
     await photoviewer.openSidebarDialog("camera");
-    const isoInput = photoviewer.cameraDialog.find(".input-iso input");
-    const exposureInput = photoviewer.cameraDialog.find(".input-exposure input");
-    const fNumberInput = photoviewer.cameraDialog.find(".input-fnumber input");
-    const focalLengthInput = photoviewer.cameraDialog.find(".input-focal-length input");
-    await t.typeText(isoInput, "6400", { replace: true });
-    await t.typeText(exposureInput, "1/250", { replace: true });
-    await t.typeText(fNumberInput, "1.8", { replace: true });
-    await t.typeText(focalLengthInput, "35", { replace: true });
-    await t.click(photoviewer.cameraDialog.find(".action-confirm"));
-    await t.expect(photoviewer.cameraDialog.visible).notOk();
+    const initialCamera = await cameraDialog.cameraValue.innerText;
+    const initialLens = await cameraDialog.lensValue.innerText;
+    const initialIso = await cameraDialog.iso.value;
+    const initialExposure = await cameraDialog.exposure.value;
+    const initialFnumber = await cameraDialog.fnumber.value;
+    const initialFocalLength = await cameraDialog.focalLength.value;
+    await t.click(cameraDialog.cancel);
+    await t.expect(cameraDialog.root.visible).notOk();
 
-    // Re-open and verify every numeric field came back from the backend.
-    await photoviewer.openSidebarDialog("camera");
-    await t.expect(isoInput.value).eql("6400");
-    await t.expect(exposureInput.value).eql("1/250");
-    await t.expect(fNumberInput.value).eql("1.8");
-    await t.expect(focalLengthInput.value).eql("35");
-    await t.click(photoviewer.cameraDialog.find(".action-cancel"));
-    await t.expect(photoviewer.cameraDialog.visible).notOk();
-
-    // Location dialog: a raw coordinate string avoids hitting an external
-    // reverse-geocoder, which keeps the test deterministic in offline
-    // acceptance environments.
     await photoviewer.openSidebarDialog("location");
-    const coordsInput = photoviewer.locationDialog.find(".input-coordinates input");
-    await t.expect(coordsInput.visible).ok();
-    await t.typeText(coordsInput, "52.5200, 13.4050", { replace: true }).pressKey("enter");
-    await t.click(photoviewer.locationDialog.find(".action-confirm"));
-    await t.expect(photoviewer.locationDialog.visible).notOk();
+    const initialCoordinates = await locationDialog.coordinates.value;
+    await t.click(locationDialog.cancel);
+    await t.expect(locationDialog.root.visible).notOk();
+
+    await photoviewer.openSidebarDialog("takenAt");
+    await pickAutocomplete(dateTimeDialog.year, "2022");
+    await pickAutocomplete(dateTimeDialog.month, "07");
+    await pickAutocomplete(dateTimeDialog.day, "15");
+    await t.typeText(dateTimeDialog.localTime, "13:45:30", { replace: true }).pressKey("tab");
+    await pickAutocomplete(dateTimeDialog.timezone, "UTC");
+    await t.click(dateTimeDialog.confirm);
+    await t.expect(dateTimeDialog.root.visible).notOk();
+
+    // For UTC photos formatTime() drops the zone abbreviation, so "UTC"
+    // never appears in the sidebar text — verified via the dialog below.
+    const calendarRow = photoviewer.sidebarRow("mdi-calendar");
+    await t.expect(calendarRow.withText("2022").exists).ok();
+    await t.expect(calendarRow.withText("Jul").exists).ok();
+    await t.expect(calendarRow.withText("15").exists).ok();
+
+    await photoviewer.openSidebarDialog("takenAt");
+    await t.expect(dateTimeDialog.yearValue.innerText).eql("2022");
+    await t.expect(dateTimeDialog.monthValue.innerText).eql("07");
+    await t.expect(dateTimeDialog.dayValue.innerText).eql("15");
+    await t.expect(dateTimeDialog.localTime.value).eql("13:45:30");
+    await t.expect(dateTimeDialog.timezoneValue.innerText).eql("UTC");
+    await t.click(dateTimeDialog.cancel);
+    await t.expect(dateTimeDialog.root.visible).notOk();
+
+    const cameraName = "Canon EOS M10";
+    const lensName = "EF-M15-45mm f/3.5-6.3 IS STM";
+    await photoviewer.openSidebarDialog("camera");
+    await pickFromSelect(cameraDialog.camera, cameraName);
+    await pickFromSelect(cameraDialog.lens, lensName);
+    await t.typeText(cameraDialog.iso, "6400", { replace: true });
+    await t.typeText(cameraDialog.exposure, "1/250", { replace: true });
+    await t.typeText(cameraDialog.fnumber, "1.8", { replace: true });
+    await t.typeText(cameraDialog.focalLength, "35", { replace: true });
+    await t.click(cameraDialog.confirm);
+    await t.expect(cameraDialog.root.visible).notOk();
+
+    const cameraRow = photoviewer.sidebarRow("mdi-camera");
+    await t.expect(cameraRow.withText(cameraName).exists).ok();
+    await t.expect(cameraRow.withText("ISO 6400").exists).ok();
+    await t.expect(cameraRow.withText("1/250").exists).ok();
+
+    await photoviewer.openSidebarDialog("camera");
+    await t.expect(cameraDialog.cameraValue.innerText).eql(cameraName);
+    await t.expect(cameraDialog.lensValue.innerText).eql(lensName);
+    await t.expect(cameraDialog.iso.value).eql("6400");
+    await t.expect(cameraDialog.exposure.value).eql("1/250");
+    await t.expect(cameraDialog.fnumber.value).eql("1.8");
+    await t.expect(cameraDialog.focalLength.value).eql("35");
+    await t.click(cameraDialog.cancel);
+    await t.expect(cameraDialog.root.visible).notOk();
+
+    // Raw coordinates avoid hitting the external reverse-geocoder.
+    await photoviewer.openSidebarDialog("location");
+    await t.expect(locationDialog.coordinates.visible).ok();
+    await t.typeText(locationDialog.coordinates, "52.5200, 13.4050", { replace: true }).pressKey("enter");
+    await t.click(locationDialog.confirm);
+    await t.expect(locationDialog.root.visible).notOk();
     await t.expect(Selector(".p-sidebar-info .p-map").exists).ok();
 
-    // The coordinates row title is composed by Photo.getLatLng(); we assert
-    // both halves so the test fails noisily if either axis fails to persist.
+    // Substring match — the optional " · <altitude> m" suffix can follow.
     const coordinatesRow = photoviewer.sidebarRow("mdi-map-marker").nextSibling(".v-list-item");
-    await t.expect(coordinatesRow.getAttribute("title")).contains("52.52");
-    await t.expect(coordinatesRow.getAttribute("title")).contains("13.405");
+    await t.expect(coordinatesRow.withText("52.52000").exists).ok();
+    await t.expect(coordinatesRow.withText("13.40500").exists).ok();
+
+    // Skip empty fields: typeText("") is a no-op and v-select has no clear.
+    await photoviewer.openSidebarDialog("takenAt");
+    if (initialYear) await pickAutocomplete(dateTimeDialog.year, initialYear);
+    if (initialMonth) await pickAutocomplete(dateTimeDialog.month, initialMonth);
+    if (initialDay) await pickAutocomplete(dateTimeDialog.day, initialDay);
+    if (initialLocalTime) {
+      await t.typeText(dateTimeDialog.localTime, initialLocalTime, { replace: true }).pressKey("tab");
+    }
+    if (initialTimezone) await pickAutocomplete(dateTimeDialog.timezone, initialTimezone);
+    await t.click(dateTimeDialog.confirm);
+    await t.expect(dateTimeDialog.root.visible).notOk();
+
+    await photoviewer.openSidebarDialog("camera");
+    if (initialCamera) await pickFromSelect(cameraDialog.camera, initialCamera);
+    if (initialLens) await pickFromSelect(cameraDialog.lens, initialLens);
+    if (initialIso) await t.typeText(cameraDialog.iso, initialIso, { replace: true });
+    if (initialExposure) await t.typeText(cameraDialog.exposure, initialExposure, { replace: true });
+    if (initialFnumber) await t.typeText(cameraDialog.fnumber, initialFnumber, { replace: true });
+    if (initialFocalLength) {
+      await t.typeText(cameraDialog.focalLength, initialFocalLength, { replace: true });
+    }
+    await t.click(cameraDialog.confirm);
+    await t.expect(cameraDialog.root.visible).notOk();
+
+    if (initialCoordinates) {
+      await photoviewer.openSidebarDialog("location");
+      await t.typeText(locationDialog.coordinates, initialCoordinates, { replace: true }).pressKey("enter");
+      await t.click(locationDialog.confirm);
+      await t.expect(locationDialog.root.visible).notOk();
+    }
   }
 );

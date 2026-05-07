@@ -42,7 +42,7 @@ func mcpServeAction(ctx *cli.Context) error {
 }
 
 // runMCPServer builds an MCP server from the CLI app metadata (Version,
-// Edition) and runs it over the given transport until ctx is cancelled or
+// Edition) and runs it over the given transport until ctx is canceled or
 // the transport closes. The transport is a parameter so tests can
 // substitute an in-memory transport for the stdio one mcpServeAction uses
 // in production.

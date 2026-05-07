@@ -95,10 +95,15 @@ func videoRemuxAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof("remux: processed %d, skipped %d, failed %d", processed, skipped, failed)
+		log.Infof(
+			"remux: processed %s, skipped %s, %s",
+			formatCount(processed, "file", "files"),
+			formatCount(skipped, "file", "files"),
+			formatFailedCount(failed, "file", "files"),
+		)
 
 		if failed > 0 {
-			return fmt.Errorf("remux: %d files failed", failed)
+			return fmt.Errorf("remux: %s", formatFailedCount(failed, "file", "files"))
 		}
 
 		return nil

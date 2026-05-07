@@ -1,5 +1,5 @@
 import { mount, config as VTUConfig } from "@vue/test-utils";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as contexts from "options/contexts";
 import { nextTick } from "vue";
 import PLightbox from "component/lightbox.vue";
@@ -78,6 +78,135 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     expect(localStorage.getItem(infoKey)).toBeNull();
     await wrapper.vm.onShortCut({ code: "KeyI" });
     expect(localStorage.getItem(infoKey)).toBeNull();
+  });
+
+  describe("onPswpKeyDown — sidebar input focus guard", () => {
+    let scratch;
+    beforeEach(() => {
+      scratch = document.createElement("div");
+      document.body.appendChild(scratch);
+    });
+    afterEach(() => {
+      if (scratch && scratch.parentNode) scratch.parentNode.removeChild(scratch);
+    });
+
+    it("calls preventDefault when info is open and an INPUT is focused", () => {
+      const wrapper = mountLightbox();
+      wrapper.vm.info = true;
+      const input = document.createElement("input");
+      scratch.appendChild(input);
+      input.focus();
+      const ev = { preventDefault: vi.fn() };
+      wrapper.vm.$options.methods.onPswpKeyDown.call(wrapper.vm, ev);
+      expect(ev.preventDefault).toHaveBeenCalledTimes(1);
+    });
+
+    it("calls preventDefault when info is open and a TEXTAREA is focused", () => {
+      const wrapper = mountLightbox();
+      wrapper.vm.info = true;
+      const ta = document.createElement("textarea");
+      scratch.appendChild(ta);
+      ta.focus();
+      const ev = { preventDefault: vi.fn() };
+      wrapper.vm.$options.methods.onPswpKeyDown.call(wrapper.vm, ev);
+      expect(ev.preventDefault).toHaveBeenCalledTimes(1);
+    });
+
+    // Note: isContentEditable behavior isn't reliably simulated by jsdom, so
+    // the contenteditable branch of onPswpKeyDown is exercised in the browser
+    // ui-tester run. The INPUT / TEXTAREA / non-editable / no-info / no-event
+    // cases here cover the predicate's two-class boundary in unit tests.
+    it("does NOT call preventDefault when info is closed even with input focused", () => {
+      const wrapper = mountLightbox();
+      wrapper.vm.info = false;
+      const input = document.createElement("input");
+      scratch.appendChild(input);
+      input.focus();
+      const ev = { preventDefault: vi.fn() };
+      wrapper.vm.$options.methods.onPswpKeyDown.call(wrapper.vm, ev);
+      expect(ev.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it("does NOT call preventDefault when focus is on a non-editable element", () => {
+      const wrapper = mountLightbox();
+      wrapper.vm.info = true;
+      const span = document.createElement("span");
+      span.tabIndex = 0;
+      scratch.appendChild(span);
+      span.focus();
+      const ev = { preventDefault: vi.fn() };
+      wrapper.vm.$options.methods.onPswpKeyDown.call(wrapper.vm, ev);
+      expect(ev.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it("tolerates a missing event argument", () => {
+      const wrapper = mountLightbox();
+      wrapper.vm.info = true;
+      expect(() => wrapper.vm.$options.methods.onPswpKeyDown.call(wrapper.vm, undefined)).not.toThrow();
+    });
+  });
+
+  describe("onTabKey — Tab focus suppression scoped to lightbox tree", () => {
+    let scratch;
+    beforeEach(() => {
+      scratch = document.createElement("div");
+      document.body.appendChild(scratch);
+    });
+    afterEach(() => {
+      if (scratch && scratch.parentNode) scratch.parentNode.removeChild(scratch);
+    });
+
+    it("calls stopPropagation when focus is inside the lightbox tree", () => {
+      const wrapper = mountLightbox();
+      const root = document.createElement("div");
+      const inner = document.createElement("input");
+      root.appendChild(inner);
+      scratch.appendChild(root);
+      inner.focus();
+      const ev = { stopPropagation: vi.fn() };
+      // Call with a fake `this` that supplies the container ref — the
+      // mountLightbox-built proxy doesn't expose a writable `$refs`.
+      wrapper.vm.$options.methods.onTabKey.call({ $refs: { container: root } }, ev);
+      expect(ev.stopPropagation).toHaveBeenCalledTimes(1);
+    });
+
+    it("falls back to the content ref when container is missing", () => {
+      const wrapper = mountLightbox();
+      const content = document.createElement("div");
+      const inner = document.createElement("input");
+      content.appendChild(inner);
+      scratch.appendChild(content);
+      inner.focus();
+      const ev = { stopPropagation: vi.fn() };
+      wrapper.vm.$options.methods.onTabKey.call({ $refs: { container: null, content } }, ev);
+      expect(ev.stopPropagation).toHaveBeenCalledTimes(1);
+    });
+
+    it("does NOT call stopPropagation when focus is outside the lightbox tree", () => {
+      const wrapper = mountLightbox();
+      const root = document.createElement("div");
+      scratch.appendChild(root);
+      const outsider = document.createElement("input");
+      scratch.appendChild(outsider);
+      outsider.focus();
+      const ev = { stopPropagation: vi.fn() };
+      wrapper.vm.$options.methods.onTabKey.call({ $refs: { container: root } }, ev);
+      expect(ev.stopPropagation).not.toHaveBeenCalled();
+    });
+
+    it("does NOT call stopPropagation when no container ref is available", () => {
+      const wrapper = mountLightbox();
+      const ev = { stopPropagation: vi.fn() };
+      wrapper.vm.$options.methods.onTabKey.call({ $refs: { container: null, content: null } }, ev);
+      expect(ev.stopPropagation).not.toHaveBeenCalled();
+    });
+
+    it("tolerates a missing event argument", () => {
+      const wrapper = mountLightbox();
+      expect(() =>
+        wrapper.vm.$options.methods.onTabKey.call({ $refs: { container: scratch } }, undefined)
+      ).not.toThrow();
+    });
   });
 
   it("getViewport falls back to window size without content ref", () => {

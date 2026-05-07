@@ -19,8 +19,8 @@
             hide-details="auto"
             autocomplete="off"
             class="meta-inline-edit meta-inline-title"
-            @keydown.enter.prevent="confirmField"
-            @keydown.escape.prevent="cancelEditing"
+            @keydown.enter.stop.prevent="confirmField"
+            @keydown.escape.stop.prevent="cancelEditing"
             @blur="onInlineFieldBlur"
           ></v-text-field>
           <div v-else-if="model.Title" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
@@ -52,7 +52,7 @@
             hide-details="auto"
             autocomplete="off"
             class="meta-inline-edit meta-inline-caption"
-            @keydown.escape.prevent="cancelEditing"
+            @keydown.escape.stop.prevent="cancelEditing"
             @blur="onInlineFieldBlur"
           ></v-textarea>
           <!-- eslint-disable-next-line vue/no-v-html -- captionHtml is encode-then-sanitized via $util.sanitizeHtml($util.encodeHTML(raw)); see captionHtml() computed -->
@@ -188,6 +188,7 @@
               item-value="Name"
               :placeholder="$gettext('Name')"
               :menu-props="markerMenuProps"
+              :list-props="chipListProps"
               :readonly="markersBusy || !!m.SubjUID"
               :rules="[markerNameRule]"
               return-object
@@ -203,8 +204,8 @@
               :class="{ 'meta-inline-marker--named': m.SubjUID }"
               @update:model-value="(v) => onPickPerson(m, v)"
               @update:search="(v) => setMarkerInputValue(m.UID, v)"
-              @keydown.enter.prevent="confirmMarkerName(m, 'enter')"
-              @keydown.escape.prevent="cancelMarkerName(m)"
+              @keydown.enter.stop.prevent="confirmMarkerName(m, 'enter')"
+              @keydown.escape.stop.prevent="cancelMarkerName(m)"
               @blur="confirmMarkerName(m, 'blur')"
               @click.stop
             >
@@ -236,51 +237,42 @@
           </v-list-item>
         </template>
 
-        <template v-if="!restrictedRole && (editingField === 'labels' || labels.length > 0 || isEditable)">
+        <template v-if="!restrictedRole && (labels.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item meta-labels">
             <div class="text-subtitle-2">{{ $gettext("Labels") }}</div>
-            <template v-if="isEditable" #append>
-              <p-sidebar-inline-toolbar :editing="editingField === 'labels'" @confirm="confirmLabels" @start="startChipEditing('labels')" />
+            <template v-if="isEditable && chipState.labels.removals.length > 0" #append>
+              <p-sidebar-inline-toolbar :editing="true" @confirm="confirmLabels" />
             </template>
           </v-list-item>
-          <v-list-item v-if="labels.length > 0 || chipState.labels.additions.length > 0" class="metadata__item metadata__chips meta-labels">
+          <v-list-item v-if="labels.length > 0" class="metadata__item metadata__chips meta-labels">
             <div class="d-flex flex-wrap ga-1">
               <span
                 v-for="l in labels"
                 :key="l.Label.UID"
+                tabindex="0"
                 class="meta-chip meta-chip--primary"
                 :class="{ 'meta-chip--pending-remove': isChipPendingRemoval('labels', l.Label.ID) }"
-                @click.stop.prevent="editingField !== 'labels' ? navigateToLabel(l.Label) : togglePendingChipRemoval('labels', l.Label.ID)"
+                @click.stop.prevent="onChipActivate('labels', l)"
+                @keydown.enter.stop.prevent="onChipActivate('labels', l)"
+                @keydown.delete.stop.prevent="onChipDelete('labels', l)"
               >
                 {{ l.Label.Name }}
                 <v-icon
-                  v-if="editingField === 'labels'"
+                  v-if="isEditable"
                   :icon="isChipPendingRemoval('labels', l.Label.ID) ? 'mdi-undo' : 'mdi-close-circle'"
                   size="x-small"
                   class="ml-1"
                 ></v-icon>
               </span>
-              <span
-                v-for="name in chipState.labels.additions"
-                :key="'add-' + name"
-                class="meta-chip meta-chip--pending-add"
-                @click.stop.prevent="removePendingChipAdd('labels', name)"
-              >
-                {{ name }}
-                <v-icon icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
-              </span>
             </div>
           </v-list-item>
-          <v-list-item v-else-if="isEditable && editingField !== 'labels'" class="metadata__item meta-labels">
-            <div class="meta-add-prompt" @click.stop="startChipEditing('labels')">{{ $gettext("Add label") }}</div>
-          </v-list-item>
-          <v-list-item v-if="editingField === 'labels'" class="metadata__item meta-labels">
+          <v-list-item v-if="isEditable" class="metadata__item meta-labels">
             <v-combobox
-              :key="chipKey"
-              v-model="chipInput"
-              v-model:search="chipSearch"
-              :items="labelOptions"
+              :key="chipState.labels.key"
+              v-model="chipState.labels.input"
+              v-model:search="chipState.labels.search"
+              :items="chipState.labels.options"
               item-title="Name"
               item-value="Name"
               return-object
@@ -292,58 +284,47 @@
               append-icon=""
               autocomplete="off"
               :menu-props="chipMenuProps"
+              :list-props="chipListProps"
               class="meta-inline-edit"
+              @focus="loadChipOptions('labels')"
               @update:model-value="onLabelSelected"
-              @keydown.enter.prevent="onLabelEnter"
+              @keydown.enter.stop.prevent="onLabelEnter"
+              @keydown.escape.stop.prevent="onChipEscape('labels')"
             ></v-combobox>
           </v-list-item>
         </template>
 
-        <template v-if="!restrictedRole && (editingField === 'albums' || albums.length > 0 || isEditable)">
+        <template v-if="!restrictedRole && (albums.length > 0 || isEditable)">
           <v-divider class="my-4"></v-divider>
           <v-list-item class="metadata__item meta-albums">
             <div class="text-subtitle-2">{{ $gettext("Albums") }}</div>
-            <template v-if="isEditable" #append>
-              <p-sidebar-inline-toolbar :editing="editingField === 'albums'" @confirm="confirmAlbums" @start="startChipEditing('albums')" />
+            <template v-if="isEditable && chipState.albums.removals.length > 0" #append>
+              <p-sidebar-inline-toolbar :editing="true" @confirm="confirmAlbums" />
             </template>
           </v-list-item>
-          <v-list-item v-if="albums.length > 0 || chipState.albums.additions.length > 0" class="metadata__item metadata__chips meta-albums">
+          <v-list-item v-if="albums.length > 0" class="metadata__item metadata__chips meta-albums">
             <div class="d-flex flex-wrap ga-1">
               <span
                 v-for="a in albums"
                 :key="a.UID"
+                tabindex="0"
                 class="meta-chip meta-chip--primary"
                 :class="{ 'meta-chip--pending-remove': isChipPendingRemoval('albums', a.UID) }"
-                @click.stop.prevent="editingField !== 'albums' ? navigateToAlbum(a) : togglePendingChipRemoval('albums', a.UID)"
+                @click.stop.prevent="onChipActivate('albums', a)"
+                @keydown.enter.stop.prevent="onChipActivate('albums', a)"
+                @keydown.delete.stop.prevent="onChipDelete('albums', a)"
               >
                 {{ a.Title }}
-                <v-icon
-                  v-if="editingField === 'albums'"
-                  :icon="isChipPendingRemoval('albums', a.UID) ? 'mdi-undo' : 'mdi-close-circle'"
-                  size="x-small"
-                  class="ml-1"
-                ></v-icon>
-              </span>
-              <span
-                v-for="a in chipState.albums.additions"
-                :key="'add-' + a.UID"
-                class="meta-chip meta-chip--pending-add"
-                @click.stop.prevent="removePendingChipAdd('albums', a.UID)"
-              >
-                {{ a.Title }}
-                <v-icon icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
+                <v-icon v-if="isEditable" :icon="isChipPendingRemoval('albums', a.UID) ? 'mdi-undo' : 'mdi-close-circle'" size="x-small" class="ml-1"></v-icon>
               </span>
             </div>
           </v-list-item>
-          <v-list-item v-else-if="isEditable && editingField !== 'albums'" class="metadata__item meta-albums">
-            <div class="meta-add-prompt" @click.stop="startChipEditing('albums')">{{ $gettext("Add to album") }}</div>
-          </v-list-item>
-          <v-list-item v-if="editingField === 'albums'" class="metadata__item meta-albums">
+          <v-list-item v-if="isEditable" class="metadata__item meta-albums">
             <v-autocomplete
-              :key="chipKey"
-              v-model="chipInput"
-              v-model:search="chipSearch"
-              :items="albumOptions"
+              :key="chipState.albums.key"
+              v-model="chipState.albums.input"
+              v-model:search="chipState.albums.search"
+              :items="chipState.albums.options"
               item-title="Title"
               item-value="UID"
               :placeholder="$gettext('Add to album')"
@@ -355,9 +336,12 @@
               append-icon=""
               autocomplete="off"
               :menu-props="chipMenuProps"
+              :list-props="chipListProps"
               class="meta-inline-edit"
+              @focus="loadChipOptions('albums')"
               @update:model-value="onAlbumSelected"
-              @keydown.enter="onAlbumEnter"
+              @keydown.enter.stop="onAlbumEnter"
+              @keydown.escape.stop.prevent="onChipEscape('albums')"
             ></v-autocomplete>
           </v-list-item>
         </template>
@@ -387,7 +371,7 @@
               class="meta-inline-edit"
               :class="`meta-inline-${f.key}`"
               @update:model-value="(v) => f.write(photo, v)"
-              @keydown.escape.prevent="cancelEditing"
+              @keydown.escape.stop.prevent="cancelEditing"
               @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="f.read(photo)" class="text-body-2 meta-scrollable">{{ f.read(photo) }}</div>
@@ -421,7 +405,7 @@
                 class="meta-inline-edit"
                 :class="`meta-inline-${f.key}`"
                 @update:model-value="(v) => f.write(photo, v)"
-                @keydown.escape.prevent="cancelEditing"
+                @keydown.escape.stop.prevent="cancelEditing"
                 @blur="onInlineFieldBlur"
               ></v-textarea>
               <!-- eslint-disable-next-line vue/no-v-html -- f.htmlValue references a sanitized computed (e.g. notesHtml) — encode-then-sanitize via $util.sanitizeHtml($util.encodeHTML(raw)). -->
@@ -445,10 +429,9 @@
     ></p-location-dialog>
     <p-confirm-dialog
       :visible="discardDialog.visible"
-      icon=""
+      icon="mdi-alert-circle-outline"
       :text="$gettext('Discard unsaved changes?')"
       :action="$gettext('Discard')"
-      confirm-color="info"
       @close="onDiscardCancel"
       @confirm="onDiscardConfirm"
     ></p-confirm-dialog>
@@ -469,8 +452,7 @@ import { DateTime } from "luxon";
 import * as formats from "options/formats";
 
 import * as media from "common/media";
-import { Photo } from "model/photo";
-import { Label } from "model/label";
+import typeaheadCache from "common/typeahead-cache";
 import { Album } from "model/album";
 import PMap from "component/map.vue";
 import PDateTimeDialog from "component/sidebar/datetime-dialog.vue";
@@ -518,18 +500,26 @@ export default {
       locationDialog: false,
       editingField: null,
       editOriginal: null,
-      chipInput: null,
-      chipSearch: "",
-      chipKey: 0,
-      labelOptions: [],
-      albumOptions: [],
-      // Pending chip mutations staged during edit mode. Labels are keyed by
-      // Label.ID for removals and by typed name for additions; albums are
-      // keyed by Album.UID for removals and stored as full album objects
-      // for additions (the title is read off the object at confirm time).
+      // Per-field combobox state. The combobox/autocomplete row stays
+      // mounted whenever the section is editable (no pencil-to-edit
+      // gesture for chips), so each section needs its own input/search
+      // scratch refs and per-field force-remount key.
+      //
+      // - input/search: Vuetify v-model and v-model:search bindings.
+      //   `search` doubles as the "typed-but-not-yet-Enter" detector
+      //   for hasPendingEdit().
+      // - key: incremented on Enter to force-remount the combobox so
+      //   stale dropdown state clears alongside the input.
+      // - options: typeahead suggestions populated lazily from the
+      //   shared typeaheadCache (common/typeahead-cache.js); shape
+      //   matches the v-combobox/v-autocomplete item-title bindings.
+      // - removals: pending Label.ID / Album.UID removals committed
+      //   by the toolbar ✓. Additions take an instant-save path
+      //   (addLabelImmediate / addAlbumImmediate → Photo model
+      //   methods), so they never enter chipState.
       chipState: {
-        labels: { additions: [], removals: [] },
-        albums: { additions: [], removals: [] },
+        labels: { input: null, search: "", key: 0, options: [], removals: [] },
+        albums: { input: null, search: "", key: 0, options: [], removals: [] },
       },
       markerDrafts: {},
       markerNameRule: (v) => !v || v.length <= this.$config.get("clip") || this.$gettext("Text too long"),
@@ -541,6 +531,12 @@ export default {
       },
       chipMenuProps: {
         class: "meta-inline-menu",
+      },
+      // Forwarded to the inner v-list of the combobox/autocomplete dropdown.
+      // density="compact" on the input itself only sizes the trigger field —
+      // list-props is the documented way to size the menu items themselves.
+      chipListProps: {
+        density: "compact",
       },
       discardDialog: {
         visible: false,
@@ -824,6 +820,17 @@ export default {
       this.$nextTick(() => this.focusMarkerInput(uid));
     },
   },
+  mounted() {
+    // Warm the typeahead options for editable sessions so the combobox
+    // dropdown is populated by the time the user focuses the input.
+    // The shared cache (common/typeahead-cache.js) deduplicates concurrent
+    // callers, so a sidebar mount during an open batch-edit session adds
+    // no extra network round-trips.
+    if (this.isEditable && !this.restrictedRole) {
+      this.loadChipOptions("labels");
+      this.loadChipOptions("albums");
+    }
+  },
   methods: {
     close() {
       this.$emit("close");
@@ -1017,10 +1024,15 @@ export default {
     },
     resetInlineEdits() {
       if (this.editingField) this.cancelEditing();
+      this.resetChipState();
+      this.clearChipInput();
       Object.keys(this.markerDrafts).forEach((uid) => {
         const d = this.markerDrafts[uid];
         if (d) d.current = d.original;
       });
+      if (this.addNameDialog && this.addNameDialog.visible) {
+        this.addNameDialog = { visible: false, marker: null, name: "" };
+      }
     },
     // Inline text fields (title/caption/subject/...) are excluded on purpose:
     // onInlineFieldBlur() auto-commits them before any navigation source can
@@ -1032,7 +1044,15 @@ export default {
         if (!d) continue;
         if (this.unwrapMarkerName(d.current).trim() !== (d.original || "").trim()) return true;
       }
-      if (Object.values(this.chipState).some((s) => s.additions.length || s.removals.length)) return true;
+      // Pending chip removals (staged via × icon) and typed-but-uncommitted
+      // text in the always-visible combobox both count as pending. Pressing
+      // Enter would fire the instant-save path (addLabelImmediate /
+      // addAlbumImmediate), but until then the characters live only in
+      // chipState.<field>.search and would silently vanish on navigation.
+      if (Object.values(this.chipState).some((s) => s.removals.length || (s.search || "").trim() !== "")) return true;
+      // An open Add-name confirmation for an unnamed marker is also pending
+      // input until the user picks Add or Cancel.
+      if (this.addNameDialog && this.addNameDialog.visible) return true;
       return false;
     },
     // Async guard used by the lightbox before closing / hiding / navigating.
@@ -1112,7 +1132,6 @@ export default {
       this.editingField = null;
       this.editOriginal = null;
       this._editStartedAt = null;
-      this.resetChipState();
     },
     // Blur handler for inline text fields (title/caption/subject/artist/
     // copyright/license/keywords/notes). Commits the edit instead of
@@ -1166,37 +1185,67 @@ export default {
         this.openInNewTab({ name: "browse", query: { q: "person:" + marker.Name } });
       }
     },
-    startChipEditing(field) {
-      if (this.editingField) {
-        this.cancelEditing();
-      }
-
-      this.editingField = field;
-      this._editStartedAt = Date.now();
-
-      if (field === "labels" && !this.labelOptions.length) {
-        Label.search({ count: 1000, order: "name", all: true })
-          .then((resp) => {
-            this.labelOptions = (resp.models || []).map((l) => ({ Name: l.Name, UID: l.UID }));
+    // Pulls the typeahead suggestions from the shared module-scope
+    // cache (`common/typeahead-cache.js`). Fired on combobox @focus —
+    // cheap when the cache is warm (returns the same array reference)
+    // and refreshes after WS-driven evictions (`labels.updated` /
+    // `albums.updated` / `config.updated`) without per-component
+    // subscriptions. Errors are swallowed so a transient network hiccup
+    // never blocks the editor.
+    //
+    // The cache returns whatever order the backend emitted (which is
+    // not reliably alphabetical even when search?order=name is set),
+    // so we sort client-side via locale-aware localeCompare. This
+    // also keeps Hebrew/Cyrillic libraries readable, where byte-order
+    // sort would not match the user's expectation.
+    loadChipOptions(field) {
+      const collator = (key) => (a, b) => (a[key] || "").localeCompare(b[key] || "", undefined, { sensitivity: "base", numeric: true });
+      if (field === "labels") {
+        typeaheadCache
+          .getLabels()
+          .then((models) => {
+            this.chipState.labels.options = models.map((l) => ({ Name: l.Name, UID: l.UID })).sort(collator("Name"));
           })
           .catch(() => {});
-      } else if (field === "albums" && !this.albumOptions.length) {
-        Album.search({ count: 1000, order: "name", type: "album" })
-          .then((resp) => {
-            this.albumOptions = resp.models || [];
+      } else if (field === "albums") {
+        typeaheadCache
+          .getAlbums()
+          .then((models) => {
+            this.chipState.albums.options = models.slice().sort(collator("Title"));
           })
           .catch(() => {});
       }
     },
-    clearChipInput() {
-      this.chipInput = null;
-      this.chipSearch = "";
-      this.chipKey++;
+    // Clears the typed text and selection for one combobox. The key
+    // bump force-remounts the v-combobox / v-autocomplete so any stale
+    // dropdown state (a half-rendered no-data row, a tracked input
+    // value Vuetify retained after the model went null) goes with it.
+    clearChipInput(field) {
+      if (!field) {
+        // Legacy callers without a field argument clear both —
+        // cancelEditing() takes this path during inline-text rollback.
+        Object.keys(this.chipState).forEach((f) => this.clearChipInput(f));
+        return;
+      }
+      const state = this.chipState[field];
+      if (!state) return;
+      state.input = null;
+      state.search = "";
+      state.key++;
+    },
+    // Esc inside a chip combobox clears the typed text and the staged
+    // pending removals for that field, then drops focus from the input.
+    // Matches the inline-text Esc semantic (revert to baseline) without
+    // crossing into editingField (chip sections no longer have one).
+    onChipEscape(field) {
+      const state = this.chipState[field];
+      if (!state) return;
+      state.removals = [];
+      this.clearChipInput(field);
     },
     // Generic chip-state helpers. Field is "labels" or "albums"; the key is
     // whatever uniquely identifies a chip in that field's domain (Label.ID
-    // for labels, Album.UID for albums on the removals side; the typed name
-    // for label additions, Album.UID for album additions).
+    // for labels, Album.UID for albums).
     isChipPendingRemoval(field, key) {
       const state = this.chipState[field];
       return Boolean(state && key != null && state.removals.includes(key));
@@ -1211,148 +1260,161 @@ export default {
         state.removals.push(key);
       }
     },
-    removePendingChipAdd(field, key) {
-      const state = this.chipState[field];
-      if (!state || key == null) return;
-      const idx = field === "labels" ? state.additions.indexOf(key) : state.additions.findIndex((a) => a.UID === key);
-      if (idx >= 0) state.additions.splice(idx, 1);
-    },
     resetChipState() {
       Object.values(this.chipState).forEach((s) => {
-        s.additions = [];
         s.removals = [];
       });
     },
-    addPendingLabel(rawName) {
+    // Click + Enter behavior on a primary chip: navigate to the label/album
+    // page when the section is read-only, toggle pending removal when the
+    // section is editable. The two chip shapes differ: labels are wrapped
+    // (`{ Label: { ID, ... } }`) while albums come through directly
+    // (`{ UID, ... }`).
+    onChipActivate(field, item) {
+      if (!item) return;
+      if (!this.isEditable) {
+        if (field === "labels") return this.navigateToLabel(item.Label);
+        if (field === "albums") return this.navigateToAlbum(item);
+        return;
+      }
+      const key = field === "labels" ? item?.Label?.ID : item.UID;
+      this.togglePendingChipRemoval(field, key);
+    },
+    // Delete / Backspace on a primary chip: only meaningful in edit mode,
+    // where it toggles pending removal (same effect as click).
+    onChipDelete(field, item) {
+      if (!item || !this.isEditable) return;
+      const key = field === "labels" ? item?.Label?.ID : item.UID;
+      this.togglePendingChipRemoval(field, key);
+    },
+    // Validates `rawName` and, when valid, fires `Photo.addLabel(name)`
+    // immediately. The model method chains `setValues(r.data)` so the new
+    // label appears as a real primary chip on `this.photo.Labels` as soon
+    // as the response lands — there's no transient pending-add chip. On
+    // rejection the caller sees a $notify.error and the chip never appears.
+    // Returns true when a save was triggered (caller clears the input).
+    addLabelImmediate(rawName) {
+      if (!this.photo) return false;
       const name = (rawName || "").trim();
       if (!name) return false;
       if (name.length > this.$config.get("clip")) {
         this.$notify.error(this.$gettext("Name too long"));
         return false;
       }
-      const norm = this.$util.normalizeLabelTitle(name);
+      const norm = this.$util.normalizeTitle(name);
       if (!norm) return false;
-      const additions = this.chipState.labels.additions;
-      if (additions.some((n) => this.$util.normalizeLabelTitle(n) === norm)) return false;
-      if (this.labels.some((l) => this.$util.normalizeLabelTitle(l?.Label?.Name) === norm)) return false;
-      additions.push(name);
+      // Already on the photo? Skip the API call.
+      if (this.labels.some((l) => this.$util.normalizeTitle(l?.Label?.Name) === norm)) return false;
+      // Match against the system-wide label list — if a normalized match
+      // exists, send the canonical existing-label name so the backend
+      // doesn't create a near-duplicate (e.g. typed `Hello Cat` reuses an
+      // existing `hello-cat` label) and the user sees the canonical casing.
+      const existing = this.chipState.labels.options.find((l) => this.$util.normalizeTitle(l.Name) === norm);
+      const finalName = existing ? existing.Name : name;
+      this.photo.addLabel(finalName).catch(() => {
+        this.$notify.error(this.$gettext("Failed to save changes"));
+      });
       return true;
     },
     albumTitleConflicts(norm) {
       if (!norm) return true;
-      if (this.chipState.albums.additions.some((a) => this.$util.normalizeLabelTitle(a?.Title) === norm)) return true;
-      if (this.albums.some((a) => this.$util.normalizeLabelTitle(a?.Title) === norm)) return true;
-      return false;
+      return this.albums.some((a) => this.$util.normalizeTitle(a?.Title) === norm);
     },
-    addPendingAlbum(album) {
-      if (!album || typeof album !== "object") return false;
+    // Validates `album` and, when valid, fires `Photo.addToAlbum(uid)`
+    // immediately. The model method evicts the LRU cache and refetches
+    // the canonical photo so `this.photo.Albums` repopulates with the
+    // saved state — no transient pending-add chip. Caller in onAlbumEnter
+    // wraps brand-new albums in `Album.save()` first so a UID exists.
+    addAlbumImmediate(album) {
+      if (!this.photo) return false;
+      if (!album || typeof album !== "object" || !album.UID) return false;
       const title = (album.Title || "").trim();
       if (!title) return false;
       if (title.length > this.$config.get("clip")) {
         this.$notify.error(this.$gettext("Name too long"));
         return false;
       }
-      const additions = this.chipState.albums.additions;
-      if (album.UID) {
-        if (additions.some((a) => a.UID === album.UID)) return false;
-        if (this.albums.some((a) => a.UID === album.UID)) return false;
-      }
-      if (this.albumTitleConflicts(this.$util.normalizeLabelTitle(title))) return false;
-      additions.push(album);
+      if (this.albums.some((a) => a.UID === album.UID)) return false;
+      const norm = this.$util.normalizeTitle(title);
+      if (this.albumTitleConflicts(norm)) return false;
+      this.photo.addToAlbum(album.UID).catch(() => {
+        this.$notify.error(this.$gettext("Failed to save changes"));
+      });
       return true;
     },
     onLabelSelected(value) {
       if (!value || typeof value !== "object" || !value.Name) return;
-      this.addPendingLabel(value.Name);
-      this.clearChipInput();
+      this.addLabelImmediate(value.Name);
+      this.clearChipInput("labels");
     },
-    // Read the typed name from the input DOM as a fallback so that
-    // Vuetify clearing `chipSearch` on the same Enter keystroke we
-    // handle does not silently swallow the pending addition.
-    pendingChipName(ev) {
-      if (this.chipSearch) return this.chipSearch;
+    // Read the typed name from the per-field search ref. The ev.target
+    // fallback guards against Vuetify clearing `search` on the same Enter
+    // keystroke we handle, which would otherwise drop the pending addition.
+    pendingChipName(field, ev) {
+      const search = this.chipState[field]?.search;
+      if (search) return search;
       const target = ev && ev.target ? ev.target : null;
       return target && typeof target.value === "string" ? target.value : "";
     },
     onLabelEnter(ev) {
-      if (this.addPendingLabel(this.pendingChipName(ev))) {
-        this.clearChipInput();
+      if (this.addLabelImmediate(this.pendingChipName("labels", ev))) {
+        this.clearChipInput("labels");
       }
     },
+    // Confirms pending REMOVALS via Photo.removeLabel — additions take the
+    // instant-save path (addLabelImmediate) and never reach this method.
     confirmLabels() {
-      if (!this.photo) {
-        this.editingField = null;
-        return;
-      }
+      if (!this.photo) return;
 
       const state = this.chipState.labels;
       const removals = state.removals.slice();
-      const additions = state.additions.slice();
-      this.editingField = null;
       state.removals = [];
-      state.additions = [];
 
-      const promises = [];
-      removals.forEach((id) => promises.push(this.photo.removeLabel(id)));
-      additions.forEach((name) => promises.push(this.photo.addLabel(name)));
-
-      // Cache freshness: photo.addLabel / removeLabel patch this.photo.Labels
-      // locally on success, and the backend publishes photos.updated which
-      // evicts the cached entry via evictCachedFromEntities — see
-      // model/photo.js. confirmAlbums needs an explicit evict + re-find
-      // because Album mutations go through raw $api.delete/post and don't
-      // patch this.photo.Albums; that asymmetry is intentional.
-      if (promises.length) {
-        Promise.all(promises).catch(() => {
+      // photo.removeLabel chains .then((r) => this.setValues(r.data)) (see
+      // model/photo.js), so a successful response repopulates
+      // this.photo.Labels with the backend-provided list. The websocket
+      // photos.updated subscriber additionally evicts the cached entry via
+      // evictCachedFromEntities, so the next read after navigation
+      // rehydrates from GET /photos/:uid. confirmAlbums takes a different
+      // path because album mutations only emit albums.updated (not
+      // photos.updated) — see Photo.removeFromAlbum / addToAlbum for the
+      // explicit evict+refind. The asymmetry is intentional.
+      if (removals.length) {
+        Promise.all(removals.map((id) => this.photo.removeLabel(id))).catch(() => {
           this.$notify.error(this.$gettext("Failed to save changes"));
         });
       }
     },
+    // Confirms pending REMOVALS via Photo.removeFromAlbum — additions take
+    // the instant-save path (addAlbumImmediate) and never reach this method.
     confirmAlbums() {
-      if (!this.photo) {
-        this.editingField = null;
-        return;
-      }
+      if (!this.photo) return;
 
       const state = this.chipState.albums;
       const removals = state.removals.slice();
-      const additions = state.additions.slice();
-      this.editingField = null;
       state.removals = [];
-      state.additions = [];
 
-      const promises = [];
-      removals.forEach((uid) => promises.push(this.$api.delete(`albums/${uid}/photos`, { data: { photos: [this.photo.UID] } })));
-      additions.forEach((a) => promises.push(this.$api.post(`albums/${a.UID}/photos`, { photos: [this.photo.UID] })));
-
-      if (promises.length) {
-        Promise.all(promises)
-          .then(() => {
-            // Album mutations don't patch this.photo.Albums locally and the
-            // backend publishes only albums.updated (not photos.updated) for
-            // membership changes, so we evict + re-find here so the sidebar
-            // reflects the saved state without waiting for navigation.
-            Photo.evictCache(this.photo.UID);
-            return this.photo.find(this.photo.UID);
-          })
-          .then((photo) => {
-            this.photo.setValues(photo.getValues());
-          })
-          .catch(() => {
-            this.$notify.error(this.$gettext("Failed to save changes"));
-          });
+      // Photo.removeFromAlbum owns the evict+refind dance per call, so the
+      // sidebar's this.photo.Albums reflects the saved state without an
+      // extra Photo.evictCache + find here. See model/photo.js for the
+      // contract; the per-call extra GET is acceptable for the typical
+      // 1-2 chip removals at a time.
+      if (removals.length) {
+        Promise.all(removals.map((uid) => this.photo.removeFromAlbum(uid))).catch(() => {
+          this.$notify.error(this.$gettext("Failed to save changes"));
+        });
       }
     },
     onAlbumSelected(value) {
       if (!value || typeof value !== "object" || !value.UID) {
-        this.clearChipInput();
+        this.clearChipInput("albums");
         return;
       }
-      this.addPendingAlbum(value);
-      this.clearChipInput();
+      this.addAlbumImmediate(value);
+      this.clearChipInput("albums");
     },
     onAlbumEnter(ev) {
-      const search = this.pendingChipName(ev).trim();
+      const search = this.pendingChipName("albums", ev).trim();
       if (!search) return;
 
       if (search.length > this.$config.get("clip")) {
@@ -1360,27 +1422,41 @@ export default {
         return;
       }
 
-      const norm = this.$util.normalizeLabelTitle(search);
+      const norm = this.$util.normalizeTitle(search);
       if (!norm) {
-        this.clearChipInput();
+        this.clearChipInput("albums");
         return;
       }
 
-      // TODO: this partial-match lookup (startsWith/includes against the
-      // typed string) can produce spurious matches for short inputs and
-      // should be revisited separately.
+      const options = this.chipState.albums.options;
+
+      // Normalized exact-match against the full known-albums list first.
+      // normalizeTitle ignores case, strips punctuation, and treats
+      // `+` / `_` / `-` as space, so `Hello Cat`, `hello-cat`, and
+      // `hello.CAT` all resolve to the same canonical album. This match
+      // mirrors the Labels validation pipeline and avoids the spurious
+      // substring merges (e.g. typing `ar` matching `Berlin`) that the
+      // legacy startsWith/includes fallback below produced for short input.
+      const exactMatch = options.find((a) => this.$util.normalizeTitle(a.Title) === norm);
+      if (exactMatch) {
+        this.onAlbumSelected(exactMatch);
+        return;
+      }
+
+      // Fuzzy fallback: only kicks in when no normalized exact match
+      // exists. Useful for partial typing where the user expects the
+      // dropdown's leading-prefix suggestion to be picked up by Enter.
       const lower = search.toLowerCase();
-      const match =
-        this.albumOptions.find((a) => a.Title.toLowerCase().startsWith(lower)) || this.albumOptions.find((a) => a.Title.toLowerCase().includes(lower));
-
-      if (match) {
-        this.onAlbumSelected(match);
+      const fuzzyMatch = options.find((a) => a.Title.toLowerCase().startsWith(lower)) || options.find((a) => a.Title.toLowerCase().includes(lower));
+      if (fuzzyMatch) {
+        this.onAlbumSelected(fuzzyMatch);
         return;
       }
 
-      // Skip the API round-trip if a normalized title clash already exists.
+      // Skip the API round-trip if a normalized title clash already exists
+      // among the photo's current albums.
       if (this.albumTitleConflicts(norm)) {
-        this.clearChipInput();
+        this.clearChipInput("albums");
         return;
       }
 
@@ -1389,13 +1465,13 @@ export default {
       album
         .save()
         .then(() => {
-          if (album.UID && this.addPendingAlbum(album)) {
-            this.albumOptions.push(album);
+          if (album.UID && this.addAlbumImmediate(album)) {
+            options.push(album);
           }
         })
         .catch(() => {})
         .finally(() => {
-          this.clearChipInput();
+          this.clearChipInput("albums");
         });
     },
     confirmDateTime(data) {

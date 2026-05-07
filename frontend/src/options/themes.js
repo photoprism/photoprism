@@ -733,12 +733,22 @@ let themes = {
       "surface-variant": "#242628",
       "on-surface-variant": "#f6f6f6",
       "card": "#171717",
-      "selected": "#9c9c9c",
+      // Mirrors highlight so Vuetify-internal selection surfaces (active
+      // list item, autocomplete-active row, on-selected fallback in
+      // views.css) stay neutral on the near-black sidebar instead of
+      // reading as a near-white block.
+      "selected": "#3d3f40",
       "table": "#242424", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
       "button": "#1D1E1F",
       "switch": "#101112",
       "primary": "#ebebeb",
-      "highlight": "#9c9c9c",
+      // Dark grey so the confirm button on PConfirmDialog reads as a button
+      // (not a flat near-white block) against the lightbox's near-black
+      // surface. The lightbox is grayscale by design — info/success carry
+      // the purple accent — so highlight stays neutral too. No other surface
+      // in the lightbox tree binds the highlight token, so this is scoped to
+      // the modal action button.
+      "highlight": "#3d3f40",
       "secondary": "#191919",
       "secondary-light": "#1e1e1e",
       "accent": "#2D2E2E",
@@ -763,6 +773,13 @@ let themes = {
     variables: {
       "border-color": "#ffffff",
       "border-opacity": 0.1,
+      // The lightbox sidebar's autocomplete/combobox dropdowns and v-list
+      // items inherit Vuetify's hover/focus overlay opacities. The dark
+      // defaults (~0.02) over a near-white overlay color leave hovered and
+      // keyboard-focused items barely distinguishable on the lightbox's
+      // near-black surface; bump them so navigation reads cleanly.
+      "hover-opacity": 0.06,
+      "focus-opacity": 0.08,
     },
   },
 

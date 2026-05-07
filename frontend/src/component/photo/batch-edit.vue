@@ -417,7 +417,7 @@
                       v-model:items="labelItems"
                       :available-items="availableLabelOptions"
                       :resolve-item-from-text="resolveLabelFromText"
-                      :normalize-title-for-compare="normalizeLabelTitleForCompare"
+                      :normalize-title-for-compare="normalizeTitleForCompare"
                       :input-placeholder="$gettext('Select or create labels')"
                       :empty-text="$gettext('No labels assigned')"
                       :loading="loading"
@@ -494,16 +494,13 @@ import * as options from "options/options";
 import * as contexts from "options/contexts";
 import IconLivePhoto from "../icon/live-photo.vue";
 import { Batch } from "model/batch";
-import Album from "model/album";
-import Label from "model/label";
 import Thumb from "model/thumb";
 import PLocationDialog from "component/location/dialog.vue";
 import PLocationInput from "component/location/input.vue";
 import PInputChipSelector from "component/input/chip-selector.vue";
 import $util from "common/util";
+import typeaheadCache from "common/typeahead-cache";
 
-// TODO: Handle cases where users have more than 10000 albums and/or labels.
-const MaxResults = 10000;
 const iconClear = "mdi-close-circle";
 const iconUndo = "mdi-undo";
 
@@ -567,8 +564,13 @@ export default {
       locationDialog: false,
       placesDisabled: !this.$config.feature("places"),
       locationLabel: this.$gettext(`Location`),
-      availableAlbumOptions: [],
-      availableLabelOptions: [],
+      // Raw cache results — used for canonical-name matching in
+      // resolveLabelFromText so an existing label is found even when
+      // it's already in the chip list. The template binds the
+      // `availableLabelOptions` / `availableAlbumOptions` computeds
+      // below, which hide already-assigned items and sort alphabetically.
+      cachedAlbumOptions: [],
+      cachedLabelOptions: [],
       albumItems: [],
       labelItems: [],
       tableHeaders: [
@@ -709,6 +711,29 @@ export default {
       }
       return !!(this.formData.Lat.value || this.formData.Lng.value);
     },
+    // Suggestions surfaced in the labels chip-selector dropdown — the
+    // cached label list with anything already in labelItems filtered
+    // out (regardless of action: stage-to-add, stage-to-remove, and
+    // already-assigned all live in labelItems and shouldn't appear as
+    // suggestions) and sorted alphabetically via locale-aware compare.
+    // resolveLabelFromText still walks cachedLabelOptions for canonical
+    // matching so an existing label is found even when filtered out.
+    availableLabelOptions() {
+      const normalize = (s) => $util.normalizeTitle(s || "");
+      const assignedKeys = new Set(this.labelItems.map((i) => normalize(i?.title)).filter(Boolean));
+      return this.cachedLabelOptions
+        .filter((opt) => !assignedKeys.has(normalize(opt.title)))
+        .slice()
+        .sort((a, b) => (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: "base", numeric: true }));
+    },
+    availableAlbumOptions() {
+      const normalize = (s) => $util.normalizeTitle(s || "");
+      const assignedKeys = new Set(this.albumItems.map((i) => normalize(i?.title)).filter(Boolean));
+      return this.cachedAlbumOptions
+        .filter((opt) => !assignedKeys.has(normalize(opt.title)))
+        .slice()
+        .sort((a, b) => (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: "base", numeric: true }));
+    },
   },
   watch: {
     selection: {
@@ -774,27 +799,31 @@ export default {
     getModelCount() {
       return this.model?.models?.length ? this.model.models.length : 0;
     },
-    normalizeLabelTitleForCompare(s) {
-      return $util.normalizeLabelTitle(s);
+    normalizeTitleForCompare(s) {
+      return $util.normalizeTitle(s);
     },
     resolveLabelFromText(inputTitle) {
-      if (!inputTitle || !Array.isArray(this.availableLabelOptions)) {
+      // Walks the unfiltered cachedLabelOptions so canonical matches
+      // are found even for labels already in labelItems (the filtered
+      // availableLabelOptions hides those, but resolution still needs
+      // them so a typed duplicate maps onto the existing chip's title).
+      if (!inputTitle || !Array.isArray(this.cachedLabelOptions)) {
         return null;
       }
 
       const t = String(inputTitle).trim();
       if (!t) return null;
 
-      const nt = $util.normalizeLabelTitle(t);
+      const nt = $util.normalizeTitle(t);
       const st = $util.slugifyLabelTitle(t);
 
-      let found = this.availableLabelOptions.find((o) => o.title.toLowerCase() === t.toLowerCase());
+      let found = this.cachedLabelOptions.find((o) => o.title.toLowerCase() === t.toLowerCase());
       if (found) return { value: found.value, title: found.title };
 
-      found = this.availableLabelOptions.find((o) => o.slug === st || o.customSlug === st);
+      found = this.cachedLabelOptions.find((o) => o.slug === st || o.customSlug === st);
       if (found) return { value: found.value, title: found.title };
 
-      found = this.availableLabelOptions.find((o) => $util.normalizeLabelTitle(o.title) === nt);
+      found = this.cachedLabelOptions.find((o) => $util.normalizeTitle(o.title) === nt);
       if (found) return { value: found.value, title: found.title };
 
       return { value: "", title: t };
@@ -1451,22 +1480,26 @@ export default {
       this.formData[collectionType].items = items;
       this.formData[collectionType].action = hasChanges ? this.actions.update : this.actions.none;
     },
-    // Fetch available options for dropdowns
+    // Reads from the shared typeahead cache (common/typeahead-cache.js)
+    // so opening this dialog while the lightbox sidebar is also editable
+    // costs zero extra round-trips. The cache invalidates on
+    // labels.updated / albums.updated / config.updated so a label or
+    // album created in another tab shows up in the dropdowns next time
+    // the dialog opens. Stored on the raw cached* refs; the
+    // availableLabelOptions / availableAlbumOptions computeds filter
+    // out anything already in *Items and sort alphabetically.
     async fetchAvailableOptions() {
       try {
         this.loading = true;
 
-        const [albumsResponse, labelsResponse] = await Promise.all([
-          Album.search({ count: MaxResults, type: "album", order: "name" }),
-          Label.search({ count: MaxResults, order: "name", all: true }),
-        ]);
+        const [albums, labels] = await Promise.all([typeaheadCache.getAlbums(), typeaheadCache.getLabels()]);
 
-        this.availableAlbumOptions = (albumsResponse.models || []).map((album) => ({
+        this.cachedAlbumOptions = albums.map((album) => ({
           value: album.UID,
           title: album.Title,
         }));
 
-        this.availableLabelOptions = (labelsResponse.models || []).map((label) => ({
+        this.cachedLabelOptions = labels.map((label) => ({
           value: label.UID,
           title: label.Name,
           slug: (label.Slug || "").toLowerCase(),

@@ -5,6 +5,7 @@ import * as contexts from "options/contexts";
 import { DateTime } from "luxon";
 import $util from "common/util";
 import { Album } from "model/album";
+import typeaheadCache from "common/typeahead-cache";
 
 // Max name length used by the validation pipeline (matches the production
 // "clip" client-config value). Override the global $config.get mock so the
@@ -20,11 +21,11 @@ const validationConfig = {
   values: {},
   dir: () => "ltr",
 };
-// Mounted with the real $util.normalizeLabelTitle so the validation
-// pipeline runs against the same normalization the component uses at
-// runtime. Other $util methods needed at render time are stubbed inline.
+// Mounted with the real $util.normalizeTitle so the validation pipeline
+// runs against the same normalization the component uses at runtime.
+// Other $util methods needed at render time are stubbed inline.
 const validationUtil = {
-  normalizeLabelTitle: (s) => $util.normalizeLabelTitle(s),
+  normalizeTitle: (s) => $util.normalizeTitle(s),
   formatCamera: (camera, id, make, model, long) => $util.formatCamera(camera, id, make, model, long),
   encodeHTML: (s) => s,
   sanitizeHtml: (s) => s,
@@ -172,10 +173,21 @@ describe("PSidebarInfo component", () => {
       },
       FileName: "photos/2023/IMG_001.jpg",
       OriginalName: "IMG_001_original.jpg",
+      // Album/label membership writes — the sidebar's instant-save additions
+      // path (addLabelImmediate / addAlbumImmediate) and the batched removal
+      // path (confirmLabels / confirmAlbums) all route through these.
+      addLabel: vi.fn().mockResolvedValue({}),
+      removeLabel: vi.fn().mockResolvedValue({}),
+      addToAlbum: vi.fn().mockResolvedValue({}),
+      removeFromAlbum: vi.fn().mockResolvedValue({}),
     };
   }
 
   beforeEach(() => {
+    // typeaheadCache is module-scope; clear it before each test so a
+    // cached labels/albums list from a previous test doesn't bleed
+    // into the next one's network-spy assertions.
+    typeaheadCache.clear();
     createMocks();
 
     originalFromISO = DateTime.fromISO;
@@ -1106,28 +1118,25 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.hasPendingEdit()).toBe(false);
   });
 
-  it("should report hasPendingEdit when labels have pending additions or removals", () => {
+  // Additions go through the instant-save path (addLabelImmediate /
+  // addAlbumImmediate), so they never enter chipState — only batched
+  // removals can leave the sidebar in a pending state.
+  it("should report hasPendingEdit when labels have pending removals", () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
     expect(w.vm.hasPendingEdit()).toBe(false);
-    w.vm.chipState.labels.additions = ["New Label"];
-    expect(w.vm.hasPendingEdit()).toBe(true);
-    w.vm.chipState.labels.additions = [];
     w.vm.chipState.labels.removals = [{ Label: { UID: "lbl1" } }];
     expect(w.vm.hasPendingEdit()).toBe(true);
   });
 
-  it("should report hasPendingEdit when albums have pending additions or removals", () => {
+  it("should report hasPendingEdit when albums have pending removals", () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
     expect(w.vm.hasPendingEdit()).toBe(false);
-    w.vm.chipState.albums.additions = [{ UID: "alb-new", Title: "New" }];
-    expect(w.vm.hasPendingEdit()).toBe(true);
-    w.vm.chipState.albums.additions = [];
     w.vm.chipState.albums.removals = [{ UID: "alb1" }];
     expect(w.vm.hasPendingEdit()).toBe(true);
   });
@@ -1140,6 +1149,38 @@ describe("PSidebarInfo component", () => {
     await w.vm.$nextTick();
     expect(w.vm.hasPendingEdit()).toBe(false);
     w.vm.setMarkerInputValue("m2", "Alice");
+    expect(w.vm.hasPendingEdit()).toBe(true);
+  });
+
+  it("should report hasPendingEdit for typed-but-uncommitted text in the labels combobox", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.chipState.labels.search = "alpha";
+    expect(w.vm.hasPendingEdit()).toBe(true);
+    // Trimmed-empty input is not pending.
+    w.vm.chipState.labels.search = "   ";
+    expect(w.vm.hasPendingEdit()).toBe(false);
+  });
+
+  it("should report hasPendingEdit for typed-but-uncommitted text in the albums autocomplete", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.chipState.albums.search = "vacation";
+    expect(w.vm.hasPendingEdit()).toBe(true);
+  });
+
+  it("should report hasPendingEdit while the Add-name confirmation dialog is visible", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.addNameDialog = { visible: true, marker: { UID: "m2" }, name: "Alice" };
     expect(w.vm.hasPendingEdit()).toBe(true);
   });
 
@@ -1793,88 +1834,56 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.isChipPendingRemoval("labels", id)).toBe(false);
   });
 
-  it("should add and remove pending label additions", () => {
-    const w = mountSidebar({
-      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
-      global: { stubs: { PMap: true } },
-    });
-    w.vm.chipState.labels.additions.push("Sunset");
-    expect(w.vm.chipState.labels.additions).toContain("Sunset");
-
-    w.vm.removePendingChipAdd("labels", "Sunset");
-    expect(w.vm.chipState.labels.additions).not.toContain("Sunset");
-  });
-
-  it("should ignore duplicate pending label additions via onLabelSelected", () => {
+  // L8: instant-save additions — onLabelSelected / onLabelEnter call
+  // photo.addLabel(name) immediately. The chip appears as a real primary
+  // chip via the model's setValues(r.data) chain (mocked here as a
+  // resolved Promise). chipState.labels.additions does not exist anymore.
+  it("should call photo.addLabel immediately on onLabelSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
-    w.vm.onLabelSelected({ Name: "Sunset", UID: "lbl-new" });
-    expect(w.vm.chipState.labels.additions).toHaveLength(1);
+    expect(mockPhoto.addLabel).toHaveBeenCalledWith("Sunset");
+    expect(mockPhoto.addLabel).toHaveBeenCalledTimes(1);
   });
 
   it("should ignore non-object values in onLabelSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onLabelSelected("string-value");
     w.vm.onLabelSelected(null);
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(mockPhoto.addLabel).not.toHaveBeenCalled();
   });
 
   it("should skip labels already on the photo in onLabelSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "Nature", UID: "lbl1" });
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
-  });
-
-  // Label validation parity with batch edit + labels tab.
-  it("should dedupe pending label additions case-insensitively in onLabelSelected", () => {
-    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
-    w.vm.onLabelSelected({ Name: "cat" });
-    w.vm.onLabelSelected({ Name: "CAT" });
-    expect(w.vm.chipState.labels.additions).toEqual(["cat"]);
+    expect(mockPhoto.addLabel).not.toHaveBeenCalled();
   });
 
   it("should skip labels already on the photo case-insensitively in onLabelSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
     w.vm.onLabelSelected({ Name: "nature" });
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(mockPhoto.addLabel).not.toHaveBeenCalled();
   });
 
-  it("should dedupe pending label additions case-insensitively in onLabelEnter", () => {
+  it("should trim whitespace in onLabelEnter before calling photo.addLabel", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
-    w.vm.chipState.labels.additions.push("cat");
-    w.vm.chipSearch = "CAT";
+    w.vm.chipState.labels.search = "  dog  ";
     w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toEqual(["cat"]);
-  });
-
-  it("should trim whitespace in onLabelEnter", () => {
-    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
-    w.vm.chipSearch = "  dog  ";
-    w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toEqual(["dog"]);
+    expect(mockPhoto.addLabel).toHaveBeenCalledWith("dog");
   });
 
   it("should silently reject empty or whitespace-only label input in onLabelEnter", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
-    w.vm.chipSearch = "   ";
+    w.vm.chipState.labels.search = "   ";
     w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(mockPhoto.addLabel).not.toHaveBeenCalled();
     expect(w.vm.$notify.error).not.toHaveBeenCalled();
   });
 
   it("should reject labels longer than the configured clip length and notify", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
-    w.vm.chipSearch = "a".repeat(CLIP_LEN + 10);
+    w.vm.chipState.labels.search = "a".repeat(CLIP_LEN + 10);
     w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(mockPhoto.addLabel).not.toHaveBeenCalled();
     expect(w.vm.$notify.error).toHaveBeenCalledWith("Name too long");
   });
 
@@ -1884,10 +1893,9 @@ describe("PSidebarInfo component", () => {
       Labels: [{ Uncertainty: 0, Label: { ID: 99, UID: "lbl99", Name: "Cat!", Slug: "cat", CustomSlug: "" } }],
     };
     const w = mountInfoForChips({ modelValue: mockModel, photo });
-    w.vm.editingField = "labels";
-    w.vm.chipSearch = "cat";
+    w.vm.chipState.labels.search = "cat";
     w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(photo.addLabel).not.toHaveBeenCalled();
   });
 
   it("should match existing labels through normalization (& vs and)", () => {
@@ -1896,27 +1904,66 @@ describe("PSidebarInfo component", () => {
       Labels: [{ Uncertainty: 0, Label: { ID: 99, UID: "lbl99", Name: "Rock & Roll", Slug: "rock-and-roll", CustomSlug: "" } }],
     };
     const w = mountInfoForChips({ modelValue: mockModel, photo });
-    w.vm.editingField = "labels";
-    w.vm.chipSearch = "rock and roll";
+    w.vm.chipState.labels.search = "rock and roll";
     w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(photo.addLabel).not.toHaveBeenCalled();
   });
 
   it("should silently reject punctuation-only label input", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
-    w.vm.chipSearch = "!!!";
+    w.vm.chipState.labels.search = "!!!";
     w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
+    expect(mockPhoto.addLabel).not.toHaveBeenCalled();
     expect(w.vm.$notify.error).not.toHaveBeenCalled();
   });
 
-  it("should accept emoji-only label input", () => {
+  it("should accept emoji-only label input and call photo.addLabel", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "labels";
-    w.vm.chipSearch = "🌅";
+    w.vm.chipState.labels.search = "🌅";
     w.vm.onLabelEnter();
-    expect(w.vm.chipState.labels.additions).toEqual(["🌅"]);
+    expect(mockPhoto.addLabel).toHaveBeenCalledWith("🌅");
+  });
+
+  it("should notify on photo.addLabel rejection (no transient chip)", async () => {
+    mockPhoto.addLabel = vi.fn().mockRejectedValue(new Error("boom"));
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.chipState.labels.search = "Sunset";
+    w.vm.onLabelEnter();
+    // Wait two microtasks for the promise rejection + .catch handler.
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(w.vm.$notify.error).toHaveBeenCalledWith("Failed to save changes");
+  });
+
+  // L3: addLabelImmediate cross-checks labelOptions via $util.normalizeTitle
+  // so typed variants like `Hello Cat` / `hello-cat` collapse onto the
+  // canonical existing label (preserving server-side casing/punctuation).
+  it("should canonicalize the typed name to an existing labelOption when normalized-equal", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.chipState.labels.options = [{ UID: "lbl-canonical", Name: "Hello Cat" }];
+    w.vm.chipState.labels.search = "hello-cat";
+    w.vm.onLabelEnter();
+    // Backend gets the canonical existing-label name, NOT the typed variant.
+    expect(mockPhoto.addLabel).toHaveBeenCalledWith("Hello Cat");
+  });
+
+  it("should pass the typed name through when no labelOption matches", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.chipState.labels.options = [{ UID: "lbl-canonical", Name: "Hello Cat" }];
+    w.vm.chipState.labels.search = "Sunset";
+    w.vm.onLabelEnter();
+    // Sunset has no match in labelOptions → typed name is sent verbatim.
+    expect(mockPhoto.addLabel).toHaveBeenCalledWith("Sunset");
+  });
+
+  it("should canonicalize across punctuation and case variants", () => {
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.chipState.labels.options = [{ UID: "lbl-canonical", Name: "Rock & Roll" }];
+    // & expands to "and" in normalization, so "Rock and Roll" maps to the
+    // same canonical label and the saved name picks up the & spelling.
+    w.vm.chipState.labels.search = "Rock and Roll";
+    w.vm.onLabelEnter();
+    expect(mockPhoto.addLabel).toHaveBeenCalledWith("Rock & Roll");
   });
 
   // Pending album operations
@@ -1934,53 +1981,123 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.isChipPendingRemoval("albums", uid)).toBe(false);
   });
 
-  it("should add and remove pending album additions", () => {
+  // L8: instant-save additions — onAlbumSelected calls photo.addToAlbum
+  // with the album UID immediately. The chip appears as a real primary
+  // chip via the model's evict+refind chain (mocked here as a resolved
+  // Promise). chipState.albums.additions does not exist anymore.
+  it("should call photo.addToAlbum immediately on onAlbumSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     const album = { UID: "alb-new", Title: "New Album" };
 
     w.vm.onAlbumSelected(album);
-    expect(w.vm.chipState.albums.additions).toHaveLength(1);
-    expect(w.vm.chipState.albums.additions[0].UID).toBe("alb-new");
+    expect(mockPhoto.addToAlbum).toHaveBeenCalledWith("alb-new");
+    expect(mockPhoto.addToAlbum).toHaveBeenCalledTimes(1);
+  });
 
-    w.vm.removePendingChipAdd("albums", album.UID);
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
+  // Chip keyboard accessibility (proposal item L6) — onChipActivate covers
+  // click + Enter, onChipDelete covers Delete + Backspace.
+  it("onChipActivate navigates a label chip when the section is read-only", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    // mountWithMockRouter omits canEdit → isEditable false, so chips fall
+    // through to the navigate path instead of toggling pending removal.
+    const w = mountWithMockRouter("/library/browse");
+    w.vm.onChipActivate("labels", { Label: { ID: 1, UID: "lbl1", Name: "Nature", Slug: "nature", CustomSlug: "" } });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "browse", query: { q: "label:nature" } });
+    expect(openSpy).toHaveBeenCalled();
+    openSpy.mockRestore();
+  });
+
+  it("onChipActivate toggles label removal when the section is editable", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    const label = { Label: { ID: 7, UID: "lbl7", Name: "Beach" } };
+    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(false);
+    w.vm.onChipActivate("labels", label);
+    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(true);
+    w.vm.onChipActivate("labels", label);
+    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(false);
+  });
+
+  it("onChipActivate navigates an album chip when the section is read-only", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/albums/alb1/view");
+    w.vm.onChipActivate("albums", { UID: "alb1", Title: "Vacation 2023" });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "album", params: { album: "alb1", slug: "view" } });
+    expect(openSpy).toHaveBeenCalled();
+    openSpy.mockRestore();
+  });
+
+  it("onChipActivate toggles album removal when the section is editable", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    const album = { UID: "alb-x", Title: "Trip" };
+    w.vm.onChipActivate("albums", album);
+    expect(w.vm.isChipPendingRemoval("albums", "alb-x")).toBe(true);
+  });
+
+  it("onChipDelete is a no-op when the section is not editable", () => {
+    // mountWithMockRouter omits canEdit → isEditable false. onChipDelete
+    // should refuse to stage a removal in a read-only context.
+    const w = mountWithMockRouter("/library/browse");
+    w.vm.onChipDelete("labels", { Label: { ID: 1 } });
+    w.vm.onChipDelete("albums", { UID: "alb1" });
+    expect(w.vm.chipState.labels.removals).toHaveLength(0);
+    expect(w.vm.chipState.albums.removals).toHaveLength(0);
+  });
+
+  it("onChipDelete toggles removal independently per field when editable", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    // Both fields' chips are deletable simultaneously now that the chip
+    // sections share a single isEditable gate (no per-section edit-mode).
+    w.vm.onChipDelete("labels", { Label: { ID: 9 } });
+    w.vm.onChipDelete("albums", { UID: "alb-y" });
+    expect(w.vm.isChipPendingRemoval("labels", 9)).toBe(true);
+    expect(w.vm.isChipPendingRemoval("albums", "alb-y")).toBe(true);
+  });
+
+  it("onChipActivate / onChipDelete tolerate falsy items", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(() => w.vm.onChipActivate("labels", null)).not.toThrow();
+    expect(() => w.vm.onChipDelete("labels", undefined)).not.toThrow();
   });
 
   it("should ignore non-object values in onAlbumSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected("string-value");
     w.vm.onAlbumSelected(null);
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
+    expect(mockPhoto.addToAlbum).not.toHaveBeenCalled();
   });
 
   it("should skip albums already on the photo in onAlbumSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected({ UID: "alb1", Title: "Vacation 2023" });
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
+    expect(mockPhoto.addToAlbum).not.toHaveBeenCalled();
   });
 
   // Album validation parity with batch edit + labels tab.
   it("should dedupe albums by normalized title even when UIDs differ", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected({ UID: "alb-other", Title: "vacation 2023" });
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
-  });
-
-  it("should dedupe pending album additions by normalized title", () => {
-    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.chipState.albums.additions.push({ UID: "alb-a", Title: "Trip" });
-    w.vm.onAlbumSelected({ UID: "alb-b", Title: "trip" });
-    expect(w.vm.chipState.albums.additions).toHaveLength(1);
+    expect(mockPhoto.addToAlbum).not.toHaveBeenCalled();
   });
 
   it("should reject overlong album titles in onAlbumEnter and not call save", () => {
     const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "albums";
-    w.vm.chipSearch = "a".repeat(CLIP_LEN + 10);
+    w.vm.chipState.albums.search = "a".repeat(CLIP_LEN + 10);
     w.vm.onAlbumEnter();
     expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
+    expect(mockPhoto.addToAlbum).not.toHaveBeenCalled();
     expect(w.vm.$notify.error).toHaveBeenCalledWith("Name too long");
     saveSpy.mockRestore();
   });
@@ -1988,75 +2105,144 @@ describe("PSidebarInfo component", () => {
   it("should ignore empty/whitespace input in onAlbumEnter and not call save", () => {
     const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "albums";
-    w.vm.chipSearch = "   ";
+    w.vm.chipState.albums.search = "   ";
     w.vm.onAlbumEnter();
     expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
+    expect(mockPhoto.addToAlbum).not.toHaveBeenCalled();
     saveSpy.mockRestore();
   });
 
   it("should skip onAlbumEnter when title matches existing album case-insensitively", () => {
     const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "albums";
-    w.vm.chipSearch = "VACATION 2023";
+    w.vm.chipState.albums.search = "VACATION 2023";
     w.vm.onAlbumEnter();
     expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
+    expect(mockPhoto.addToAlbum).not.toHaveBeenCalled();
     saveSpy.mockRestore();
   });
 
-  it("should skip onAlbumEnter when title matches a pending addition case-insensitively", () => {
-    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
-    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "albums";
-    w.vm.chipState.albums.additions.push({ UID: "alb-pending", Title: "Trip" });
-    w.vm.chipSearch = "trip";
-    w.vm.onAlbumEnter();
-    expect(saveSpy).not.toHaveBeenCalled();
-    expect(w.vm.chipState.albums.additions).toHaveLength(1);
-    saveSpy.mockRestore();
-  });
-
-  it("should create a new album in onAlbumEnter and add it to pending", async () => {
+  it("should create a new album in onAlbumEnter and add the photo to it", async () => {
     const saveSpy = vi.spyOn(Album.prototype, "save").mockImplementation(function () {
       this.UID = "alb-created";
       return Promise.resolve(this);
     });
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
-    w.vm.editingField = "albums";
-    w.vm.albumOptions = [];
-    w.vm.chipSearch = "Brand New Trip";
+    w.vm.chipState.albums.options = [];
+    w.vm.chipState.albums.search = "Brand New Trip";
     w.vm.onAlbumEnter();
     await new Promise((r) => setTimeout(r, 0));
     expect(saveSpy).toHaveBeenCalledTimes(1);
-    expect(w.vm.chipState.albums.additions).toHaveLength(1);
-    expect(w.vm.chipState.albums.additions[0].Title).toBe("Brand New Trip");
-    expect(w.vm.albumOptions.some((a) => a.UID === "alb-created")).toBe(true);
+    // After Album.save resolves with a UID, the sidebar fires the
+    // instant-save addAlbumImmediate path → photo.addToAlbum(newUid).
+    expect(mockPhoto.addToAlbum).toHaveBeenCalledWith("alb-created");
+    expect(w.vm.chipState.albums.options.some((a) => a.UID === "alb-created")).toBe(true);
     saveSpy.mockRestore();
   });
 
-  // cancelEditing clears all pending state
-  it("should clear all pending state on cancelEditing", () => {
+  it("should notify on photo.addToAlbum rejection (no transient chip)", async () => {
+    mockPhoto.addToAlbum = vi.fn().mockRejectedValue(new Error("boom"));
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.onAlbumSelected({ UID: "alb-new", Title: "New Album" });
+    // Wait two microtasks for the promise rejection + .catch handler.
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(w.vm.$notify.error).toHaveBeenCalledWith("Failed to save changes");
+  });
+
+  // L1: onAlbumEnter should pick up an existing album by normalized exact
+  // match (case + punctuation + `+`/`_`/`-` → space) BEFORE falling back to
+  // fuzzy substring matching. This avoids the silent-merge spurious matches
+  // the legacy `.startsWith` / `.includes` chain produced for short input
+  // (e.g. typing `ar` silently merging into an existing `Berlin`).
+  it("onAlbumEnter prefers a normalized exact match in albumOptions over fuzzy", () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.chipState.albums.options = [
+      { UID: "alb-berlin", Title: "Berlin" },
+      { UID: "alb-archive", Title: "Archive" },
+      { UID: "alb-arctic", Title: "Arctic" },
+    ];
+    // `ar` would historically `.startsWith`-match "Archive" (or `.includes`
+    // "Berlin") and silently merge — neither is a normalized exact match.
+    // The user expectation is to fall through to fuzzy and pick `Archive`.
+    w.vm.chipState.albums.search = "ar";
+    w.vm.onAlbumEnter();
+    // No exact normalized match → fuzzy startsWith picks "Archive".
+    expect(mockPhoto.addToAlbum).toHaveBeenCalledWith("alb-archive");
+    expect(saveSpy).not.toHaveBeenCalled();
+    saveSpy.mockRestore();
+  });
+
+  it("onAlbumEnter normalizes punctuation and case for exact-match resolution", () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.chipState.albums.options = [{ UID: "alb-hello-cat", Title: "Hello Cat" }];
+    // `hello-cat`, `Hello+Cat`, `HELLO CAT` all normalize to "hello cat", so
+    // they should resolve to the existing "Hello Cat" album. Note that `.`
+    // is stripped (not space-converted) by normalizeTitle, so `hello.CAT`
+    // would map to `hellocat`, NOT `hello cat` — hence excluded here.
+    for (const typed of ["hello-cat", "Hello+Cat", "HELLO CAT"]) {
+      mockPhoto.addToAlbum.mockClear();
+      w.vm.chipState.albums.search = typed;
+      w.vm.onAlbumEnter();
+      expect(mockPhoto.addToAlbum).toHaveBeenCalledWith("alb-hello-cat");
+      // Pulled out the existing album — no Album.save round-trip.
+      expect(saveSpy).not.toHaveBeenCalled();
+    }
+    saveSpy.mockRestore();
+  });
+
+  it("onAlbumEnter falls through to fuzzy match when no normalized exact match exists", () => {
+    const saveSpy = vi.spyOn(Album.prototype, "save").mockResolvedValue();
+    const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+    w.vm.chipState.albums.options = [{ UID: "alb-summer-2023", Title: "Summer 2023" }];
+    // `summer` is a substring prefix of "Summer 2023" but not a normalized
+    // exact match (norm("summer") !== norm("Summer 2023")), so the fuzzy
+    // fallback picks it up.
+    w.vm.chipState.albums.search = "summer";
+    w.vm.onAlbumEnter();
+    expect(mockPhoto.addToAlbum).toHaveBeenCalledWith("alb-summer-2023");
+    expect(saveSpy).not.toHaveBeenCalled();
+    saveSpy.mockRestore();
+  });
+
+  // cancelEditing only resets inline-text edit state. Pending chip
+  // removals are independent (committed via the toolbar ✓) and survive
+  // an inline-text Esc — chip state is cleared by resetInlineEdits()
+  // when the discard-pending dialog confirms.
+  it("should leave chip removals intact when cancelEditing fires", () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.editingField = "labels";
+    w.vm.editingField = "title";
+    w.vm.editOriginal = "Original Title";
     w.vm.chipState.labels.removals = [1];
-    w.vm.chipState.labels.additions = ["Sunset"];
     w.vm.chipState.albums.removals = ["alb1"];
-    w.vm.chipState.albums.additions = [{ UID: "alb-new", Title: "New" }];
 
     w.vm._editStartedAt = Date.now() - 300;
     w.vm.cancelEditing();
 
     expect(w.vm.editingField).toBeNull();
+    expect(w.vm.chipState.labels.removals).toEqual([1]);
+    expect(w.vm.chipState.albums.removals).toEqual(["alb1"]);
+  });
+
+  it("should clear all pending state on resetInlineEdits", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.chipState.labels.removals = [1];
+    w.vm.chipState.albums.removals = ["alb1"];
+    w.vm.chipState.labels.search = "typed-but-not-saved";
+
+    w.vm.resetInlineEdits();
+
     expect(w.vm.chipState.labels.removals).toHaveLength(0);
-    expect(w.vm.chipState.labels.additions).toHaveLength(0);
     expect(w.vm.chipState.albums.removals).toHaveLength(0);
-    expect(w.vm.chipState.albums.additions).toHaveLength(0);
+    expect(w.vm.chipState.labels.search).toBe("");
   });
 
   // Photo watcher: the parent lightbox owns the unsaved-changes guard, so
@@ -2073,21 +2259,139 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.editingField).toBe("title");
   });
 
-  // clearChipInput
-  it("should reset chip state on clearChipInput", () => {
+  // L10: loadChipOptions reads from the shared module-scope typeahead
+  // cache. The cache itself owns the cap warning + de-dup contract
+  // (see common/typeahead-cache.test.js); these tests only pin that
+  // the sidebar populates chipState.<field>.options from getLabels /
+  // getAlbums and maps to the consumer-friendly shape.
+  describe("loadChipOptions cache integration", () => {
+    it("populates chipState.labels.options from typeaheadCache.getLabels", async () => {
+      typeaheadCache.clear();
+      const models = [{ Name: "Cat", UID: "lbl-cat", Slug: "cat" }];
+      const cacheSpy = vi.spyOn(typeaheadCache, "getLabels").mockResolvedValueOnce(models);
+      const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+      w.vm.loadChipOptions("labels");
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(cacheSpy).toHaveBeenCalled();
+      // Sidebar maps to the {Name, UID} shape its combobox needs.
+      expect(w.vm.chipState.labels.options).toEqual([{ Name: "Cat", UID: "lbl-cat" }]);
+      cacheSpy.mockRestore();
+    });
+
+    it("populates chipState.albums.options from typeaheadCache.getAlbums", async () => {
+      typeaheadCache.clear();
+      const models = [{ Title: "Trip", UID: "alb-trip" }];
+      const cacheSpy = vi.spyOn(typeaheadCache, "getAlbums").mockResolvedValueOnce(models);
+      const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+      w.vm.loadChipOptions("albums");
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(cacheSpy).toHaveBeenCalled();
+      // Sidebar passes album models through unchanged.
+      expect(w.vm.chipState.albums.options).toEqual(models);
+      cacheSpy.mockRestore();
+    });
+
+    it("swallows cache errors so a transient fetch failure does not block the editor", async () => {
+      const cacheSpy = vi.spyOn(typeaheadCache, "getLabels").mockRejectedValueOnce(new Error("boom"));
+      const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+      expect(() => w.vm.loadChipOptions("labels")).not.toThrow();
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(w.vm.chipState.labels.options).toEqual([]);
+      cacheSpy.mockRestore();
+    });
+
+    // The backend's order=name doesn't always return a clean
+    // alphabetical list (and the cap-bounded fetch may interleave).
+    // Sort client-side via locale-aware comparison so the dropdown
+    // reads naturally for the user.
+    it("sorts label options alphabetically (case-insensitive)", async () => {
+      typeaheadCache.clear();
+      const cacheSpy = vi
+        .spyOn(typeaheadCache, "getLabels")
+        .mockResolvedValueOnce([
+          { Name: "Mountain", UID: "1" },
+          { Name: "apple", UID: "2" },
+          { Name: "Beach", UID: "3" },
+        ]);
+      const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+      w.vm.loadChipOptions("labels");
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(w.vm.chipState.labels.options.map((l) => l.Name)).toEqual(["apple", "Beach", "Mountain"]);
+      cacheSpy.mockRestore();
+    });
+
+    it("sorts album options alphabetically by title", async () => {
+      typeaheadCache.clear();
+      const cacheSpy = vi
+        .spyOn(typeaheadCache, "getAlbums")
+        .mockResolvedValueOnce([
+          { Title: "Zebra", UID: "z" },
+          { Title: "alpha", UID: "a" },
+          { Title: "Mango", UID: "m" },
+        ]);
+      const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+      w.vm.loadChipOptions("albums");
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(w.vm.chipState.albums.options.map((a) => a.Title)).toEqual(["alpha", "Mango", "Zebra"]);
+      cacheSpy.mockRestore();
+    });
+  });
+
+  // clearChipInput now takes a field argument; the no-arg form clears
+  // every field (used by resetInlineEdits during a discard-pending).
+  it("should reset per-field chip state on clearChipInput(field)", () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    w.vm.chipInput = { Name: "test" };
-    w.vm.chipSearch = "test";
-    const prevKey = w.vm.chipKey;
+    w.vm.chipState.labels.input = { Name: "test" };
+    w.vm.chipState.labels.search = "test";
+    const prevKey = w.vm.chipState.labels.key;
+
+    w.vm.clearChipInput("labels");
+
+    expect(w.vm.chipState.labels.input).toBeNull();
+    expect(w.vm.chipState.labels.search).toBe("");
+    expect(w.vm.chipState.labels.key).toBe(prevKey + 1);
+  });
+
+  it("should reset both fields when clearChipInput is called without arguments", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.chipState.labels.search = "type-l";
+    w.vm.chipState.albums.search = "type-a";
 
     w.vm.clearChipInput();
 
-    expect(w.vm.chipInput).toBeNull();
-    expect(w.vm.chipSearch).toBe("");
-    expect(w.vm.chipKey).toBe(prevKey + 1);
+    expect(w.vm.chipState.labels.search).toBe("");
+    expect(w.vm.chipState.albums.search).toBe("");
+  });
+
+  // L9: onChipEscape clears the typed text and pending removals for one
+  // field — independent of any inline-text editingField that might be
+  // active in the sidebar.
+  it("should clear search and removals on onChipEscape(field)", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.chipState.labels.search = "summer";
+    w.vm.chipState.labels.removals = [42];
+    w.vm.chipState.albums.removals = ["alb-x"];
+
+    w.vm.onChipEscape("labels");
+
+    expect(w.vm.chipState.labels.search).toBe("");
+    expect(w.vm.chipState.labels.removals).toHaveLength(0);
+    // Albums removals untouched — Esc is per-field.
+    expect(w.vm.chipState.albums.removals).toEqual(["alb-x"]);
   });
 
   describe("restricted-role view", () => {

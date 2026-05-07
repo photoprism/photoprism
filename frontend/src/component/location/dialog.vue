@@ -8,7 +8,7 @@
     scrim
     scrollable
     class="p-location-dialog"
-    @keydown.esc.exact="close"
+    @keydown.esc.exact.stop="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >

@@ -52,6 +52,7 @@ Mock.onGet("api/v1/error").reply(401, "custom error cat", mockHeaders);
 Mock.onPost("api/v1/batch/photos/archive").reply(200, { photos: [1, 3] }, mockHeaders);
 Mock.onPost("api/v1/batch/photos/restore").reply(200, { photos: [1, 3] }, mockHeaders);
 Mock.onDelete(/^albums\/[A-Za-z0-9_-]+\/photos$/).reply(200, { Success: "ok" }, mockHeaders);
+Mock.onPost(/^albums\/[A-Za-z0-9_-]+\/photos$/).reply(200, { Success: "ok" }, mockHeaders);
 Mock.onPost("api/v1/photos/pqbemz8276mhtobh/approve").reply(200, {}, mockHeaders);
 Mock.onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/primary").reply(
   200,

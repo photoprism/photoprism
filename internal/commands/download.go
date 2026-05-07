@@ -340,6 +340,10 @@ func downloadAction(ctx *cli.Context) error {
 				if dlErr != nil {
 					log.Errorf("download failed: %v", dlErr)
 					// even on error, any completed files returned will be imported
+					if len(files) == 0 {
+						failures++
+						continue
+					}
 				}
 
 				// Ensure container/metadata per remux policy for file method
@@ -370,13 +374,13 @@ func downloadAction(ctx *cli.Context) error {
 	elapsed := time.Since(start)
 
 	if failures > 0 {
-		log.Warnf("completed with %d error(s) in %s", failures, elapsed)
+		log.Warnf("completed with %s in %s", formatCount(failures, "error", "errors"), elapsed)
 	} else {
 		log.Infof("completed in %s", elapsed)
 	}
 
 	if failures > 0 {
-		return fmt.Errorf("some downloads failed: %d", failures)
+		return fmt.Errorf("%s", formatFailedCount(failures, "download", "downloads"))
 	}
 
 	return nil

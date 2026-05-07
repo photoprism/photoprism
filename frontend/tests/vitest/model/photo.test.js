@@ -1448,6 +1448,137 @@ describe("model/photo", () => {
     expect(response.success).toBe("ok");
   });
 
+  describe("addToAlbum", () => {
+    beforeEach(() => {
+      Photo._cache.clear();
+    });
+
+    it("posts to albums/<uid>/photos, evicts the cache, refinds, and resyncs this.Albums", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh", Albums: [{ UID: "axxalbum1", Title: "Existing" }] });
+      const refreshed = new Photo({
+        UID: "pqbemz8276mhtobh",
+        Albums: [
+          { UID: "axxalbum1", Title: "Existing" },
+          { UID: "axxalbum2", Title: "New" },
+        ],
+      });
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const findSpy = vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(refreshed);
+
+      const result = await photo.addToAlbum("axxalbum2");
+
+      expect(findSpy).toHaveBeenCalledWith("pqbemz8276mhtobh");
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(false);
+      expect(result).toBe(photo);
+      expect(photo.Albums.map((a) => a.UID)).toEqual(["axxalbum1", "axxalbum2"]);
+
+      findSpy.mockRestore();
+    });
+
+    it("resolves to this without a request when albumUID is falsy", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      const result = await photo.addToAlbum("");
+      expect(result).toBe(photo);
+      expect(findSpy).not.toHaveBeenCalled();
+      findSpy.mockRestore();
+    });
+
+    it("propagates the rejection without evicting or refinding when the POST fails", async () => {
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const postSpy = vi.spyOn($api, "post").mockRejectedValueOnce(err);
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+
+      await expect(photo.addToAlbum("axxalbum2")).rejects.toBe(err);
+
+      expect(findSpy).not.toHaveBeenCalled();
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(true);
+      postSpy.mockRestore();
+      findSpy.mockRestore();
+    });
+
+    // Pin the layer split: Photo.addToAlbum must NOT toggle a Removed flag
+    // (that's Thumb's contract). A future "consolidation" PR that tries to
+    // collapse the two methods into one will trip this assertion.
+    it("does not flip a Removed flag (Photo layer ≠ Thumb layer)", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(new Photo({ UID: "pqbemz8276mhtobh", Albums: [] }));
+      await photo.addToAlbum("axxalbum2");
+      expect(photo.Removed).toBeUndefined();
+      Photo.prototype.find.mockRestore();
+    });
+  });
+
+  describe("removeFromAlbum", () => {
+    beforeEach(() => {
+      Photo._cache.clear();
+    });
+
+    it("deletes albums/<uid>/photos, evicts the cache, refinds, and resyncs this.Albums", async () => {
+      const photo = new Photo({
+        UID: "pqbemz8276mhtobh",
+        Albums: [
+          { UID: "axxalbum1", Title: "Existing" },
+          { UID: "axxalbum2", Title: "Other" },
+        ],
+      });
+      const refreshed = new Photo({
+        UID: "pqbemz8276mhtobh",
+        Albums: [{ UID: "axxalbum1", Title: "Existing" }],
+      });
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const findSpy = vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(refreshed);
+
+      const result = await photo.removeFromAlbum("axxalbum2");
+
+      expect(findSpy).toHaveBeenCalledWith("pqbemz8276mhtobh");
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(false);
+      expect(result).toBe(photo);
+      expect(photo.Albums.map((a) => a.UID)).toEqual(["axxalbum1"]);
+
+      findSpy.mockRestore();
+    });
+
+    it("resolves to this without a request when albumUID is falsy", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      const result = await photo.removeFromAlbum(null);
+      expect(result).toBe(photo);
+      expect(findSpy).not.toHaveBeenCalled();
+      findSpy.mockRestore();
+    });
+
+    it("propagates the rejection without evicting or refinding when the DELETE fails", async () => {
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const deleteSpy = vi.spyOn($api, "delete").mockRejectedValueOnce(err);
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+
+      await expect(photo.removeFromAlbum("axxalbum2")).rejects.toBe(err);
+
+      expect(findSpy).not.toHaveBeenCalled();
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(true);
+      deleteSpy.mockRestore();
+      findSpy.mockRestore();
+    });
+
+    // Pin the layer split: Photo.removeFromAlbum must NOT toggle a Removed
+    // flag (that's Thumb.removeFromAlbum's contract — see model/thumb.js
+    // and the matching test in tests/vitest/model/thumb.test.js).
+    it("does not flip a Removed flag (Photo layer ≠ Thumb layer)", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(new Photo({ UID: "pqbemz8276mhtobh", Albums: [] }));
+      await photo.removeFromAlbum("axxalbum2");
+      expect(photo.Removed).toBeUndefined();
+      Photo.prototype.find.mockRestore();
+    });
+  });
+
   it("should test update", async () => {
     const values = {
       ID: 10,

@@ -156,7 +156,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		if themeVersion, err := theme.DetectVersion(conf.ThemePath()); err == nil && themeVersion != "" {
 			payload.Theme = themeVersion
 		}
-		b, _ := json.Marshal(payload)
+		b := marshalRegisterRequest(payload)
 
 		// In dry-run, we allow empty portalURL (will print derived/empty values).
 		if ctx.Bool("dry-run") {
