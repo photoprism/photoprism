@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-04-18 09:33+0000\n"
+"PO-Revision-Date: 2026-05-10 17:35+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
 "Language: sv\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -214,7 +214,7 @@ msgstr "Lägg till %{s}?"
 #: src/component/sidebar/info.vue:24 src/component/sidebar/info.vue:25
 #: src/component/sidebar/info.vue:45 src/component/sidebar/info.vue:58
 msgid "Add a Caption"
-msgstr ""
+msgstr "Lägg till en bildtext"
 
 #: src/component/user/add/dialog.vue:16 src/component/service/add.vue:17
 msgid "Add Account"
@@ -226,11 +226,11 @@ msgstr "Lägg till album"
 
 #: src/component/sidebar/info.vue:164
 msgid "Add face"
-msgstr ""
+msgstr "Lägg till ansikte"
 
 #: src/component/sidebar/info.vue:278
 msgid "Add label"
-msgstr ""
+msgstr "Lägg till etikett"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -985,7 +985,7 @@ msgstr "Konverterar"
 
 #: src/component/sidebar/info.vue:124
 msgid "Coordinates"
-msgstr ""
+msgstr "Koordinater"
 
 #: src/common/util.js:1061
 msgid "Copied to clipboard"
@@ -1247,7 +1247,7 @@ msgstr "Kassera ändringar och stäng"
 
 #: src/component/sidebar/info.vue:432
 msgid "Discard unsaved changes?"
-msgstr ""
+msgstr "Kasta bort osparade ändringar?"
 
 #: src/app/routes.js:583 src/app/routes.js:590 src/app/routes.js:597
 #: src/app/routes.js:604
@@ -1384,11 +1384,11 @@ msgstr "Redigera konto"
 
 #: src/component/sidebar/camera-dialog.vue:18
 msgid "Edit Camera Details"
-msgstr ""
+msgstr "Redigera kameradetaljer"
 
 #: src/component/sidebar/datetime-dialog.vue:18
 msgid "Edit Date & Time"
-msgstr ""
+msgstr "Redigera datum och tid"
 
 #: src/component/photo/edit/dialog.vue:169
 msgid "Edit Photo"
@@ -1543,11 +1543,11 @@ msgstr "Misslyckades med att ansluta konto."
 
 #: src/component/lightbox.vue:1888
 msgid "Failed to remove face marker"
-msgstr ""
+msgstr "Lyckades inte ta bort ansiktsmarkören"
 
 #: src/component/lightbox.vue:1845
 msgid "Failed to remove name"
-msgstr ""
+msgstr "Misslyckades med att ta bort namn"
 
 #: src/component/photo/batch-edit.vue:1405 src/component/sidebar/info.vue:1106
 #: src/component/sidebar/info.vue:1308 src/component/sidebar/info.vue:1334
@@ -1559,11 +1559,11 @@ msgstr "Misslyckades med att spara ändringar"
 
 #: src/component/lightbox.vue:1826
 msgid "Failed to save face marker"
-msgstr ""
+msgstr "Misslyckades med att spara ansiktsmarkör"
 
 #: src/component/sidebar/info.vue:981
 msgid "Failed to save name"
-msgstr ""
+msgstr "Misslyckades med att spara namn"
 
 #: src/component/share/dialog.vue:216
 msgid "Failed updating link"
@@ -1780,7 +1780,7 @@ msgstr "Dölj"
 
 #: src/component/sidebar/info.vue:154
 msgid "Hide face markers"
-msgstr ""
+msgstr "Dölj ansiktsmarkörer"
 
 #: src/page/settings/general.vue:141
 msgid "Hide private content from global views while keeping it accessible in the Private section."
@@ -3017,7 +3017,7 @@ msgstr "Ta bort importerade filer för att spara lagringsutrymme. Filer som inte
 
 #: src/component/sidebar/info.vue:217
 msgid "Remove Name"
-msgstr ""
+msgstr "Ta bort namn"
 
 #: src/page/cluster/nodes.vue:197 src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
@@ -3354,7 +3354,7 @@ msgstr "Visa bildtexter"
 
 #: src/component/sidebar/info.vue:154
 msgid "Show face markers"
-msgstr ""
+msgstr "Visa ansiktsmarkörer"
 
 #: src/page/people/new.vue:9 src/page/people/recognized.vue:38
 msgid "Show hidden"
@@ -4188,7 +4188,7 @@ msgstr "Arkiv"
 #: src/component/sidebar/info.vue:13 src/component/sidebar/info.vue:26
 msgctxt "Photo"
 msgid "Add a Title"
-msgstr ""
+msgstr "Lägg till en titel"
 
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:19 src/component/photo/edit/info.vue:79

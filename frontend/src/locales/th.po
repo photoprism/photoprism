@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-04-18 09:33+0000\n"
+"PO-Revision-Date: 2026-05-10 17:35+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -214,7 +214,7 @@ msgstr "เพิ่ม %{s}?"
 #: src/component/sidebar/info.vue:24 src/component/sidebar/info.vue:25
 #: src/component/sidebar/info.vue:45 src/component/sidebar/info.vue:58
 msgid "Add a Caption"
-msgstr ""
+msgstr "เพิ่มคำบรรยาย"
 
 #: src/component/user/add/dialog.vue:16 src/component/service/add.vue:17
 msgid "Add Account"
@@ -226,11 +226,11 @@ msgstr "เพิ่มอัลบั้ม"
 
 #: src/component/sidebar/info.vue:164
 msgid "Add face"
-msgstr ""
+msgstr "เพิ่มใบหน้า"
 
 #: src/component/sidebar/info.vue:278
 msgid "Add label"
-msgstr ""
+msgstr "เพิ่มป้ายกำกับ"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -985,7 +985,7 @@ msgstr "กำลังแปลง"
 
 #: src/component/sidebar/info.vue:124
 msgid "Coordinates"
-msgstr ""
+msgstr "พิกัด"
 
 #: src/common/util.js:1061
 msgid "Copied to clipboard"
@@ -1247,7 +1247,7 @@ msgstr "ยกเลิกการเปลี่ยนแปลงและป
 
 #: src/component/sidebar/info.vue:432
 msgid "Discard unsaved changes?"
-msgstr ""
+msgstr "ทิ้งการเปลี่ยนแปลงที่ไม่ได้บันทึก?"
 
 #: src/app/routes.js:583 src/app/routes.js:590 src/app/routes.js:597
 #: src/app/routes.js:604
@@ -1384,11 +1384,11 @@ msgstr "แก้ไขบัญชี"
 
 #: src/component/sidebar/camera-dialog.vue:18
 msgid "Edit Camera Details"
-msgstr ""
+msgstr "แก้ไขรายละเอียดกล้อง"
 
 #: src/component/sidebar/datetime-dialog.vue:18
 msgid "Edit Date & Time"
-msgstr ""
+msgstr "แก้ไขวันที่และเวลา"
 
 #: src/component/photo/edit/dialog.vue:169
 msgid "Edit Photo"
@@ -1543,11 +1543,11 @@ msgstr "ไม่สามารถเชื่อมต่อบัญชีไ
 
 #: src/component/lightbox.vue:1888
 msgid "Failed to remove face marker"
-msgstr ""
+msgstr "ไม่สามารถลบเครื่องหมายบนใบหน้าได้"
 
 #: src/component/lightbox.vue:1845
 msgid "Failed to remove name"
-msgstr ""
+msgstr "ไม่สามารถลบชื่อได้"
 
 #: src/component/photo/batch-edit.vue:1405 src/component/sidebar/info.vue:1106
 #: src/component/sidebar/info.vue:1308 src/component/sidebar/info.vue:1334
@@ -1559,11 +1559,11 @@ msgstr "ไม่สามารถบันทึกการเปลี่ย
 
 #: src/component/lightbox.vue:1826
 msgid "Failed to save face marker"
-msgstr ""
+msgstr "ไม่สามารถบันทึกเครื่องหมายบันทึกหน้าได้"
 
 #: src/component/sidebar/info.vue:981
 msgid "Failed to save name"
-msgstr ""
+msgstr "ไม่สามารถบันทึกชื่อได้"
 
 #: src/component/share/dialog.vue:216
 msgid "Failed updating link"
@@ -1780,7 +1780,7 @@ msgstr "ซ่อน"
 
 #: src/component/sidebar/info.vue:154
 msgid "Hide face markers"
-msgstr ""
+msgstr "ซ่อนเครื่องหมายบนใบหน้า"
 
 #: src/page/settings/general.vue:141
 msgid "Hide private content from global views while keeping it accessible in the Private section."
@@ -3017,7 +3017,7 @@ msgstr "ลบไฟล์ที่นำเข้าเพื่อประห
 
 #: src/component/sidebar/info.vue:217
 msgid "Remove Name"
-msgstr ""
+msgstr "ลบชื่อ"
 
 #: src/page/cluster/nodes.vue:197 src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
@@ -3354,7 +3354,7 @@ msgstr "แสดงคำบรรยาย"
 
 #: src/component/sidebar/info.vue:154
 msgid "Show face markers"
-msgstr ""
+msgstr "แสดงเครื่องหมายใบหน้า"
 
 #: src/page/people/new.vue:9 src/page/people/recognized.vue:38
 msgid "Show hidden"
@@ -4188,7 +4188,7 @@ msgstr "คลังเก็บเอกสารสำคัญ"
 #: src/component/sidebar/info.vue:13 src/component/sidebar/info.vue:26
 msgctxt "Photo"
 msgid "Add a Title"
-msgstr ""
+msgstr "เพิ่มชื่อเรื่อง"
 
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:19 src/component/photo/edit/info.vue:79

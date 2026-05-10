@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-04-18 09:33+0000\n"
+"PO-Revision-Date: 2026-05-10 17:35+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -211,7 +211,7 @@ msgstr "Thêm %{s}?"
 #: src/component/sidebar/info.vue:24 src/component/sidebar/info.vue:25
 #: src/component/sidebar/info.vue:45 src/component/sidebar/info.vue:58
 msgid "Add a Caption"
-msgstr ""
+msgstr "Thêm chú thích"
 
 #: src/component/user/add/dialog.vue:16 src/component/service/add.vue:17
 msgid "Add Account"
@@ -223,11 +223,11 @@ msgstr "Thêm Anbom"
 
 #: src/component/sidebar/info.vue:164
 msgid "Add face"
-msgstr ""
+msgstr "Thêm khuôn mặt"
 
 #: src/component/sidebar/info.vue:278
 msgid "Add label"
-msgstr ""
+msgstr "Thêm nhãn"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -982,7 +982,7 @@ msgstr "Chuyển đổi"
 
 #: src/component/sidebar/info.vue:124
 msgid "Coordinates"
-msgstr ""
+msgstr "Tọa độ"
 
 #: src/common/util.js:1061
 msgid "Copied to clipboard"
@@ -1244,7 +1244,7 @@ msgstr "Hủy bỏ các thay đổi và đóng"
 
 #: src/component/sidebar/info.vue:432
 msgid "Discard unsaved changes?"
-msgstr ""
+msgstr "Bỏ qua những thay đổi chưa được lưu nhé?"
 
 #: src/app/routes.js:583 src/app/routes.js:590 src/app/routes.js:597
 #: src/app/routes.js:604
@@ -1381,11 +1381,11 @@ msgstr "Chỉnh sửa tài khoản"
 
 #: src/component/sidebar/camera-dialog.vue:18
 msgid "Edit Camera Details"
-msgstr ""
+msgstr "Chỉnh sửa thông tin máy ảnh"
 
 #: src/component/sidebar/datetime-dialog.vue:18
 msgid "Edit Date & Time"
-msgstr ""
+msgstr "Chỉnh sửa ngày và giờ"
 
 #: src/component/photo/edit/dialog.vue:169
 msgid "Edit Photo"
@@ -1540,11 +1540,11 @@ msgstr "Không thể kết nối tài khoản."
 
 #: src/component/lightbox.vue:1888
 msgid "Failed to remove face marker"
-msgstr ""
+msgstr "Không thể xóa điểm đánh dấu khuôn mặt"
 
 #: src/component/lightbox.vue:1845
 msgid "Failed to remove name"
-msgstr ""
+msgstr "Không thể xóa tên"
 
 #: src/component/photo/batch-edit.vue:1405 src/component/sidebar/info.vue:1106
 #: src/component/sidebar/info.vue:1308 src/component/sidebar/info.vue:1334
@@ -1556,11 +1556,11 @@ msgstr "Không thể lưu các thay đổi"
 
 #: src/component/lightbox.vue:1826
 msgid "Failed to save face marker"
-msgstr ""
+msgstr "Không lưu được điểm đánh dấu khuôn mặt"
 
 #: src/component/sidebar/info.vue:981
 msgid "Failed to save name"
-msgstr ""
+msgstr "Không lưu được tên"
 
 #: src/component/share/dialog.vue:216
 msgid "Failed updating link"
@@ -1777,7 +1777,7 @@ msgstr "Trốn"
 
 #: src/component/sidebar/info.vue:154
 msgid "Hide face markers"
-msgstr ""
+msgstr "Ẩn các điểm đánh dấu trên khuôn mặt"
 
 #: src/page/settings/general.vue:141
 msgid "Hide private content from global views while keeping it accessible in the Private section."
@@ -3014,7 +3014,7 @@ msgstr "Xóa các tập tin đã nhập để tiết kiệm dung lượng. Các 
 
 #: src/component/sidebar/info.vue:217
 msgid "Remove Name"
-msgstr ""
+msgstr "Xóa tên"
 
 #: src/page/cluster/nodes.vue:197 src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
@@ -3351,7 +3351,7 @@ msgstr "Hiển thị phụ đề"
 
 #: src/component/sidebar/info.vue:154
 msgid "Show face markers"
-msgstr ""
+msgstr "Hiển thị các điểm đánh dấu trên khuôn mặt"
 
 #: src/page/people/new.vue:9 src/page/people/recognized.vue:38
 msgid "Show hidden"
@@ -4187,7 +4187,7 @@ msgstr "Lưu trữ"
 #: src/component/sidebar/info.vue:13 src/component/sidebar/info.vue:26
 msgctxt "Photo"
 msgid "Add a Title"
-msgstr ""
+msgstr "Thêm tiêu đề"
 
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:19 src/component/photo/edit/info.vue:79

@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-04-18 09:33+0000\n"
+"PO-Revision-Date: 2026-05-10 17:35+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -211,7 +211,7 @@ msgstr "Voeg %{s} by?"
 #: src/component/sidebar/info.vue:24 src/component/sidebar/info.vue:25
 #: src/component/sidebar/info.vue:45 src/component/sidebar/info.vue:58
 msgid "Add a Caption"
-msgstr ""
+msgstr "Voeg 'n onderskrif by"
 
 #: src/component/user/add/dialog.vue:16 src/component/service/add.vue:17
 msgid "Add Account"
@@ -223,11 +223,11 @@ msgstr "Voeg album by"
 
 #: src/component/sidebar/info.vue:164
 msgid "Add face"
-msgstr ""
+msgstr "Voeg gesig by"
 
 #: src/component/sidebar/info.vue:278
 msgid "Add label"
-msgstr ""
+msgstr "Voeg etiket by"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -982,7 +982,7 @@ msgstr "Omskakeling"
 
 #: src/component/sidebar/info.vue:124
 msgid "Coordinates"
-msgstr ""
+msgstr "Koördinate"
 
 #: src/common/util.js:1061
 msgid "Copied to clipboard"
@@ -1244,7 +1244,7 @@ msgstr "Gooi veranderinge weg en maak toe"
 
 #: src/component/sidebar/info.vue:432
 msgid "Discard unsaved changes?"
-msgstr ""
+msgstr "Verwerp ongespaarde veranderinge?"
 
 #: src/app/routes.js:583 src/app/routes.js:590 src/app/routes.js:597
 #: src/app/routes.js:604
@@ -1381,11 +1381,11 @@ msgstr "Redigeer rekening"
 
 #: src/component/sidebar/camera-dialog.vue:18
 msgid "Edit Camera Details"
-msgstr ""
+msgstr "Redigeer kameradetaljes"
 
 #: src/component/sidebar/datetime-dialog.vue:18
 msgid "Edit Date & Time"
-msgstr ""
+msgstr "Bewerk Datum en Tyd"
 
 #: src/component/photo/edit/dialog.vue:169
 msgid "Edit Photo"
@@ -1540,11 +1540,11 @@ msgstr "Kon nie rekening koppel nie."
 
 #: src/component/lightbox.vue:1888
 msgid "Failed to remove face marker"
-msgstr ""
+msgstr "Het misluk om die gesigsmerker te verwyder"
 
 #: src/component/lightbox.vue:1845
 msgid "Failed to remove name"
-msgstr ""
+msgstr "Het misluk om die naam te verwyder"
 
 #: src/component/photo/batch-edit.vue:1405 src/component/sidebar/info.vue:1106
 #: src/component/sidebar/info.vue:1308 src/component/sidebar/info.vue:1334
@@ -1556,11 +1556,11 @@ msgstr "Kon nie veranderinge stoor nie"
 
 #: src/component/lightbox.vue:1826
 msgid "Failed to save face marker"
-msgstr ""
+msgstr "Het misluk om die gesigmerker te stoor"
 
 #: src/component/sidebar/info.vue:981
 msgid "Failed to save name"
-msgstr ""
+msgstr "Het misluk om die naam te stoor"
 
 #: src/component/share/dialog.vue:216
 msgid "Failed updating link"
@@ -1777,7 +1777,7 @@ msgstr "Versteek"
 
 #: src/component/sidebar/info.vue:154
 msgid "Hide face markers"
-msgstr ""
+msgstr "Verberg gesigsmerkers"
 
 #: src/page/settings/general.vue:141
 msgid "Hide private content from global views while keeping it accessible in the Private section."
@@ -3014,7 +3014,7 @@ msgstr "Verwyder ingevoerde lêers om berging te bespaar. Nie-ondersteunde lêer
 
 #: src/component/sidebar/info.vue:217
 msgid "Remove Name"
-msgstr ""
+msgstr "Verwyder Naam"
 
 #: src/page/cluster/nodes.vue:197 src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
@@ -3351,7 +3351,7 @@ msgstr "Wys onderskrifte"
 
 #: src/component/sidebar/info.vue:154
 msgid "Show face markers"
-msgstr ""
+msgstr "Wys gesigsmerkers"
 
 #: src/page/people/new.vue:9 src/page/people/recognized.vue:38
 msgid "Show hidden"
@@ -4185,7 +4185,7 @@ msgstr "Argief"
 #: src/component/sidebar/info.vue:13 src/component/sidebar/info.vue:26
 msgctxt "Photo"
 msgid "Add a Title"
-msgstr ""
+msgstr "Voeg 'n titel by"
 
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:19 src/component/photo/edit/info.vue:79

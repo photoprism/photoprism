@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-04-18 09:33+0000\n"
+"PO-Revision-Date: 2026-05-10 17:35+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -214,7 +214,7 @@ msgstr "添加 %{s}?"
 #: src/component/sidebar/info.vue:24 src/component/sidebar/info.vue:25
 #: src/component/sidebar/info.vue:45 src/component/sidebar/info.vue:58
 msgid "Add a Caption"
-msgstr ""
+msgstr "添加标题"
 
 #: src/component/user/add/dialog.vue:16 src/component/service/add.vue:17
 msgid "Add Account"
@@ -226,11 +226,11 @@ msgstr "添加相册"
 
 #: src/component/sidebar/info.vue:164
 msgid "Add face"
-msgstr ""
+msgstr "添加面孔"
 
 #: src/component/sidebar/info.vue:278
 msgid "Add label"
-msgstr ""
+msgstr "添加标签"
 
 #: src/component/share/dialog.vue:15
 msgid "Add Link"
@@ -985,7 +985,7 @@ msgstr "转换中"
 
 #: src/component/sidebar/info.vue:124
 msgid "Coordinates"
-msgstr ""
+msgstr "坐标"
 
 #: src/common/util.js:1061
 msgid "Copied to clipboard"
@@ -1247,7 +1247,7 @@ msgstr "放弃更改并关闭"
 
 #: src/component/sidebar/info.vue:432
 msgid "Discard unsaved changes?"
-msgstr ""
+msgstr "丢弃未保存的更改？"
 
 #: src/app/routes.js:583 src/app/routes.js:590 src/app/routes.js:597
 #: src/app/routes.js:604
@@ -1384,11 +1384,11 @@ msgstr "编辑账户"
 
 #: src/component/sidebar/camera-dialog.vue:18
 msgid "Edit Camera Details"
-msgstr ""
+msgstr "编辑相机详细信息"
 
 #: src/component/sidebar/datetime-dialog.vue:18
 msgid "Edit Date & Time"
-msgstr ""
+msgstr "编辑日期和时间"
 
 #: src/component/photo/edit/dialog.vue:169
 msgid "Edit Photo"
@@ -1543,11 +1543,11 @@ msgstr "连接账户失败。"
 
 #: src/component/lightbox.vue:1888
 msgid "Failed to remove face marker"
-msgstr ""
+msgstr "未能移除面部标记"
 
 #: src/component/lightbox.vue:1845
 msgid "Failed to remove name"
-msgstr ""
+msgstr "移除名称失败"
 
 #: src/component/photo/batch-edit.vue:1405 src/component/sidebar/info.vue:1106
 #: src/component/sidebar/info.vue:1308 src/component/sidebar/info.vue:1334
@@ -1559,11 +1559,11 @@ msgstr "保存更改失败"
 
 #: src/component/lightbox.vue:1826
 msgid "Failed to save face marker"
-msgstr ""
+msgstr "面子标记失败"
 
 #: src/component/sidebar/info.vue:981
 msgid "Failed to save name"
-msgstr ""
+msgstr "保存名称失败"
 
 #: src/component/share/dialog.vue:216
 msgid "Failed updating link"
@@ -1780,7 +1780,7 @@ msgstr "隐藏"
 
 #: src/component/sidebar/info.vue:154
 msgid "Hide face markers"
-msgstr ""
+msgstr "隐藏脸部标记"
 
 #: src/page/settings/general.vue:141
 msgid "Hide private content from global views while keeping it accessible in the Private section."
@@ -3019,7 +3019,7 @@ msgstr "移除导入的文件以节省存储空间，不支持的文件类型将
 
 #: src/component/sidebar/info.vue:217
 msgid "Remove Name"
-msgstr ""
+msgstr "删除名称"
 
 #: src/page/cluster/nodes.vue:197 src/locales.js:366
 msgid "Remove the selected instance from the cluster registry?"
@@ -3356,7 +3356,7 @@ msgstr "显示字幕"
 
 #: src/component/sidebar/info.vue:154
 msgid "Show face markers"
-msgstr ""
+msgstr "显示人脸标记"
 
 #: src/page/people/new.vue:9 src/page/people/recognized.vue:38
 msgid "Show hidden"
@@ -4190,7 +4190,7 @@ msgstr "归档"
 #: src/component/sidebar/info.vue:13 src/component/sidebar/info.vue:26
 msgctxt "Photo"
 msgid "Add a Title"
-msgstr ""
+msgstr "添加标题"
 
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:19 src/component/photo/edit/info.vue:79
