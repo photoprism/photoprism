@@ -76,11 +76,15 @@ func TestUpdatePhoto(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdatePhoto(router)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0y13", `{"Title": "Updated01", "Country": "de"}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0y13", `{"Title": "Updated01", "Country": "de", "Rating": 4}`)
 		val := gjson.Get(r.Body.String(), "Title")
 		assert.Equal(t, "Updated01", val.String())
 		val2 := gjson.Get(r.Body.String(), "Country")
 		assert.Equal(t, "de", val2.String())
+		val3 := gjson.Get(r.Body.String(), "Rating")
+		assert.Equal(t, "4", val3.String())
+		val4 := gjson.Get(r.Body.String(), "RatingSrc")
+		assert.Equal(t, "manual", val4.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("BadRequest", func(t *testing.T) {

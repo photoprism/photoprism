@@ -658,6 +658,8 @@ CREATE TABLE `photos` (
   `photo_f_number` float DEFAULT NULL,
   `photo_focal_length` int(11) DEFAULT NULL,
   `photo_quality` smallint(6) DEFAULT NULL,
+  `photo_rating` smallint(6) DEFAULT 0,
+  `rating_src` varbinary(8) DEFAULT NULL,
   `photo_faces` int(11) DEFAULT NULL,
   `photo_resolution` smallint(6) DEFAULT NULL,
   `photo_duration` bigint(20) DEFAULT NULL,

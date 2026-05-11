@@ -17,6 +17,8 @@ func TestSavePhoto(t *testing.T) {
 	require.NotNil(t, photo)
 	originalTitle := photo.PhotoTitle
 	originalFavorite := photo.PhotoFavorite
+	originalRating := photo.PhotoRating
+	originalRatingSrc := photo.RatingSrc
 	originalYear := photo.PhotoYear
 	originalMonth := photo.PhotoMonth
 	originalDay := photo.PhotoDay
@@ -31,6 +33,7 @@ func TestSavePhoto(t *testing.T) {
 		values := &PhotosForm{
 			PhotoTitle:    String{Value: fmt.Sprintf("Batch %d", time.Now().UnixNano()), Action: ActionUpdate},
 			PhotoFavorite: Bool{Value: !photo.PhotoFavorite, Action: ActionUpdate},
+			PhotoRating:   Int{Value: 4, Action: ActionUpdate},
 			PhotoYear:     Int{Value: 2024, Action: ActionUpdate},
 			PhotoMonth:    Int{Value: 12, Action: ActionUpdate},
 			PhotoDay:      Int{Value: 31, Action: ActionUpdate},
@@ -38,6 +41,8 @@ func TestSavePhoto(t *testing.T) {
 		frm := &form.Photo{
 			PhotoTitle:    values.PhotoTitle.Value,
 			PhotoFavorite: values.PhotoFavorite.Value,
+			PhotoRating:   values.PhotoRating.Value,
+			RatingSrc:     entity.SrcBatch,
 			PhotoYear:     values.PhotoYear.Value,
 			PhotoMonth:    values.PhotoMonth.Value,
 			PhotoDay:      values.PhotoDay.Value,
@@ -58,6 +63,8 @@ func TestSavePhoto(t *testing.T) {
 		require.NotNil(t, updated)
 		require.Equal(t, values.PhotoTitle.Value, updated.PhotoTitle)
 		require.Equal(t, values.PhotoFavorite.Value, updated.PhotoFavorite)
+		require.Equal(t, values.PhotoRating.Value, updated.PhotoRating)
+		require.Equal(t, entity.SrcBatch, updated.RatingSrc)
 		require.Equal(t, values.PhotoYear.Value, updated.PhotoYear)
 		require.Equal(t, values.PhotoMonth.Value, updated.PhotoMonth)
 		require.Equal(t, values.PhotoDay.Value, updated.PhotoDay)
@@ -67,6 +74,8 @@ func TestSavePhoto(t *testing.T) {
 		restorePhoto(t, fixture.PhotoUID, entity.Values{
 			"photo_title":    originalTitle,
 			"photo_favorite": originalFavorite,
+			"photo_rating":   originalRating,
+			"rating_src":     originalRatingSrc,
 			"photo_year":     originalYear,
 			"photo_month":    originalMonth,
 			"photo_day":      originalDay,

@@ -22,6 +22,7 @@ type GeoResult struct {
 	TakenAtLocal  time.Time     `json:"TakenAtLocal" select:"photos.taken_at_local"`
 	TimeZone      string        `json:"TimeZone" select:"photos.time_zone"`
 	PhotoFavorite bool          `json:"Favorite,omitempty" select:"photos.photo_favorite"`
+	PhotoRating   int           `json:"Rating,omitempty" select:"photos.photo_rating"`
 	PhotoDuration time.Duration `json:"Duration,omitempty" select:"photos.photo_duration"`
 	FileID        uint          `json:"-" select:"files.id AS file_id"` // File
 	FileWidth     int           `json:"Width" select:"files.file_width"`
@@ -93,6 +94,9 @@ func (photos GeoResults) GeoJSON() ([]byte, error) {
 
 		if p.PhotoFavorite {
 			props["Favorite"] = true
+		}
+		if p.PhotoRating > 0 {
+			props["Rating"] = p.PhotoRating
 		}
 
 		feat := geojson.NewPointFeature([]float64{p.Lng(), p.Lat()})

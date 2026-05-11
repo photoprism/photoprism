@@ -111,6 +111,23 @@
                 >
               </td>
             </tr>
+            <tr v-if="$config.feature('ratings')">
+              <td>
+                {{ $gettext(`Rating`) }}
+              </td>
+              <td v-tooltip="sourceName(view.model?.RatingSrc, $gettext('Unknown'))">
+                <v-rating
+                  :model-value="view.model.Rating || 0"
+                  :length="5"
+                  size="small"
+                  density="compact"
+                  color="favorite"
+                  clearable
+                  :readonly="!canRate"
+                  @update:model-value="setRating"
+                ></v-rating>
+              </td>
+            </tr>
             <tr>
               <td>
                 {{ $gettext(`Quality Score`) }}
@@ -336,6 +353,9 @@ export default {
     };
   },
   computed: {
+    canRate() {
+      return !this.readonly && this.$config.feature("ratings") && this.$config.allow("photos", "update");
+    },
     albums() {
       if (!this.view?.model || !Array.isArray(this.view.model?.Albums) || this.view.model.Albums?.length < 1) {
         return [];
@@ -352,6 +372,14 @@ export default {
     $gettext,
     sourceName(src, defaultValue) {
       return this.$util.sourceName(src, defaultValue);
+    },
+    setRating(rating) {
+      if (!this.canRate || !this.view?.model) {
+        return;
+      }
+
+      this.view.model.Rating = rating || 0;
+      this.save();
     },
     formatTime(s) {
       return DateTime.fromISO(s, { zone: this.timeZone }).toLocaleString(formats.TIMESTAMP);

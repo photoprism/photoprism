@@ -290,3 +290,8 @@ func (doc *XmpDocument) Favorite() bool {
 	fstop := doc.RDF.Description.FStopFavorite
 	return fstop == "1"
 }
+
+// Rating returns the star rating found in the XMP document.
+func (doc *XmpDocument) Rating() (int, bool) {
+	return parseRatingValue(doc.RDF.Description.Rating)
+}

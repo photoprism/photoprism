@@ -607,6 +607,17 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Contains(t, err.Error(), "invalid syntax")
 	})
+	t.Run("QueryForRating", func(t *testing.T) {
+		form := &SearchPhotos{Query: "rating:3-5"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "3-5", form.Rating)
+	})
 	t.Run("QueryForCountWithInvalidType", func(t *testing.T) {
 		form := &SearchPhotos{Query: "dist:ca(%t"}
 

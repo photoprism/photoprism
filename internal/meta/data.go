@@ -40,6 +40,8 @@ type Data struct {
 	Subject          string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords         Keywords      `meta:"Keywords"`
 	Favorite         bool          `meta:"Favorite"`
+	Rating           int           `meta:"-"`
+	RatingSet        bool          `json:"-" yaml:"-" meta:"-" report:"-"`
 	Notes            string        `meta:"Comment,UserComment"`
 	Artist           string        `meta:"Artist,Creator,By-line,OwnerName,Owner" xmp:"Creator"`
 	Copyright        string        `meta:"Rights,Copyright,CopyrightNotice,WebStatement" xmp:"Rights,Rights.Alt"`
@@ -82,6 +84,11 @@ type Data struct {
 // NewData returns a new Data struct with default values.
 func NewData() Data {
 	return Data{}
+}
+
+// HasRating reports whether a star rating was found in the metadata.
+func (data Data) HasRating() bool {
+	return data.RatingSet
 }
 
 // AspectRatio returns the aspect ratio based on width and height.

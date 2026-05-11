@@ -33,6 +33,7 @@ type PhotosForm struct {
 	PhotoFNumber     Float32 `json:"FNumber"`
 	PhotoExposure    String  `json:"Exposure"`
 	PhotoFavorite    Bool    `json:"Favorite"`
+	PhotoRating      Int     `json:"Rating"`
 	PhotoPrivate     Bool    `json:"Private"`
 	PhotoScan        Bool    `json:"Scan"`
 	PhotoPanorama    Bool    `json:"Panorama"`
@@ -325,6 +326,14 @@ func NewPhotosFormWithEntities(photos search.PhotoResults, preloaded map[string]
 		} else if photo.PhotoFavorite != frm.PhotoFavorite.Value {
 			frm.PhotoFavorite.Mixed = true
 			frm.PhotoFavorite.Value = false
+		}
+
+		if i == 0 {
+			frm.PhotoRating.Value = photo.PhotoRating
+			frm.PhotoRating.Action = ActionNone
+		} else if photo.PhotoRating != frm.PhotoRating.Value {
+			frm.PhotoRating.Mixed = true
+			frm.PhotoRating.Value = 0
 		}
 
 		if i == 0 {

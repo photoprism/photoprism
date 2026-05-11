@@ -50,6 +50,7 @@ type SearchPhotosGeo struct {
 	Private     bool      `form:"private" notes:"Finds private content only (except when public:true)"`
 	Review      bool      `form:"review" notes:"Finds content in review"`
 	Quality     int       `form:"quality" notes:"Minimum quality score (1-7)"`
+	Rating      string    `form:"rating" example:"rating:4 rating:3-5" notes:"Star rating (0-5, or range)"`
 	Face        string    `form:"face" notes:"Find pictures with a specific face ID, you can also specify yes, no, new, or a face type"`
 	Faces       string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of detected faces (yes means 1)"` // Find or exclude faces if detected.
 	Near        string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`

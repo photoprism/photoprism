@@ -119,6 +119,10 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 	if v.PhotoFavorite.Action == ActionUpdate {
 		photoForm.PhotoFavorite = v.PhotoFavorite.Value
 	}
+	if v.PhotoRating.Action == ActionUpdate {
+		photoForm.PhotoRating = v.PhotoRating.Value
+		photoForm.RatingSrc = entity.SrcBatch
+	}
 	if v.PhotoPrivate.Action == ActionUpdate {
 		photoForm.PhotoPrivate = v.PhotoPrivate.Value
 	}

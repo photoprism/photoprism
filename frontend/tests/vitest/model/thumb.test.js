@@ -20,6 +20,8 @@ describe("model/thumb", () => {
     const thumb = new Thumb(values);
     const result = thumb.getDefaults();
     expect(result.UID).toBe("");
+    expect(result.Rating).toBe(0);
+    expect(result.RatingSrc).toBe("");
   });
 
   it("should get id", () => {
@@ -88,11 +90,15 @@ describe("model/thumb", () => {
       TakenAtLocal: "2012-07-08T14:45:39Z",
       Caption: "Nice description",
       Favorite: true,
+      Rating: 3,
+      RatingSrc: "manual",
     };
     const photo = new Photo(values2);
     const result = Thumb.fromFile(photo, file);
     expect(result.UID).toBe("5");
     expect(result.Caption).toBe("Nice description");
+    expect(result.Rating).toBe(3);
+    expect(result.RatingSrc).toBe("manual");
     expect(result.Width).toBe(500);
     const result2 = Thumb.fromFile();
     expect(result2.UID).toBe("");
@@ -182,6 +188,8 @@ describe("model/thumb", () => {
       ID: 8,
       UID: "ABC123",
       Caption: "Nice description 3",
+      Rating: 5,
+      RatingSrc: "xmp",
       Hash: "345ggh",
       Files: [
         {
@@ -199,6 +207,8 @@ describe("model/thumb", () => {
     const result = Thumb.fromPhoto(photo);
     expect(result.UID).toBe("ABC123");
     expect(result.Caption).toBe("Nice description 3");
+    expect(result.Rating).toBe(5);
+    expect(result.RatingSrc).toBe("xmp");
     expect(result.Width).toBe(500);
     const values3 = {
       ID: 8,

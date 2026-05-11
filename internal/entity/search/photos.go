@@ -492,6 +492,10 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		}
 	}
 
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(frm.Rating, 0, 5); rangeErr == nil {
+		s = s.Where("photos.photo_rating >= ? AND photos.photo_rating <= ?", rangeStart, rangeEnd)
+	}
+
 	// Filter private pictures.
 	if frm.Public {
 		s = s.Where("photos.photo_private = 0")

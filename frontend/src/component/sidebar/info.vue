@@ -80,6 +80,24 @@
 
         <v-divider v-if="(!restrictedRole && fileName) || fileInfo" class="mt-3 mb-4"></v-divider>
 
+        <v-list-item
+          v-if="showRating"
+          v-tooltip="sourceName(photo?.RatingSrc || model?.RatingSrc, $gettext('Unknown'))"
+          prepend-icon="mdi-star-outline"
+          class="metadata__item metadata__rating"
+        >
+          <v-rating
+            :model-value="photo?.Rating || model?.Rating || 0"
+            :length="5"
+            size="x-small"
+            density="compact"
+            color="favorite"
+            clearable
+            :readonly="!canRate"
+            @update:model-value="setRating"
+          ></v-rating>
+        </v-list-item>
+
         <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
           <template v-if="isEditable" #append>
             <v-icon icon="mdi-pencil-outline" size="small" class="meta-inline-pencil" @click.stop="dateTimeDialog = true"></v-icon>
@@ -582,6 +600,12 @@ export default {
     isEditable() {
       return this.canEdit && this.photo && this.photo.Details && !this.restrictedRole;
     },
+    canRate() {
+      return Boolean(this.$config.feature("ratings") && this.$config.allow("photos", "update") && this.canEdit && this.photo);
+    },
+    showRating() {
+      return Boolean(this.$config.feature("ratings") && !this.restrictedRole && (this.canRate || this.photo?.Rating || this.model?.Rating));
+    },
     restrictedRole() {
       return this.$session.isSidebarRestricted();
     },
@@ -820,8 +844,35 @@ export default {
     }
   },
   methods: {
+    sourceName(src, defaultValue) {
+      if (this.$util && typeof this.$util.sourceName === "function") {
+        return this.$util.sourceName(src, defaultValue);
+      }
+
+      return src || defaultValue;
+    },
     close() {
       this.$emit("close");
+    },
+    setRating(rating) {
+      if (!this.canRate || !this.photo) {
+        return;
+      }
+
+      this.photo.Rating = rating || 0;
+      this.photo.RatingSrc = "manual";
+
+      this.photo
+        .update()
+        .then(() => {
+          if (!this.view?.model) return;
+          this.view.model.Rating = this.photo.Rating;
+          this.view.model.RatingSrc = this.photo.RatingSrc;
+        })
+        .catch(() => {
+          this.photo.rollback();
+          this.$notify.error(this.$gettext("Failed to save changes"));
+        });
     },
     getFieldValue(field) {
       const f = this.fieldRegistry[field];

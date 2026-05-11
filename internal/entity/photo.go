@@ -82,6 +82,8 @@ type Photo struct {
 	PhotoFNumber     float32       `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
 	PhotoFocalLength int           `json:"FocalLength" yaml:"FocalLength,omitempty"`
 	PhotoQuality     int           `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
+	PhotoRating      int           `gorm:"type:SMALLINT;default:0" json:"Rating" yaml:"Rating,omitempty"`
+	RatingSrc        string        `gorm:"type:VARBINARY(8);" json:"RatingSrc" yaml:"RatingSrc,omitempty"`
 	PhotoFaces       int           `json:"Faces,omitempty" yaml:"Faces,omitempty"`
 	PhotoResolution  int           `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
 	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"Duration,omitempty"`
@@ -155,9 +157,15 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 	}
 
 	locChanged := m.PhotoLat != form.PhotoLat || m.PhotoLng != form.PhotoLng || m.PhotoCountry != form.PhotoCountry
+	ratingChanged := m.PhotoRating != form.PhotoRating
+	oldRatingSrc := m.RatingSrc
 
 	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
+	}
+
+	if ratingChanged && m.RatingSrc == oldRatingSrc {
+		m.RatingSrc = SrcManual
 	}
 
 	m.NormalizeValues()
@@ -818,6 +826,11 @@ func (m *Photo) NormalizeValues() (normalized bool) {
 
 	if timeZone := tz.Name(m.TimeZone); timeZone != m.TimeZone {
 		m.TimeZone = timeZone
+		normalized = true
+	}
+
+	if rating := normalizeRating(m.PhotoRating); rating != m.PhotoRating {
+		m.PhotoRating = rating
 		normalized = true
 	}
 

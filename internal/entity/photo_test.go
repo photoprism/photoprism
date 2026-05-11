@@ -26,6 +26,7 @@ func TestSavePhotoForm(t *testing.T) {
 			PhotoTitle:       "Pink beach",
 			TitleSrc:         SrcManual,
 			PhotoFavorite:    true,
+			PhotoRating:      4,
 			PhotoPrivate:     true,
 			PhotoType:        "image",
 			PhotoLat:         7.9999,
@@ -66,6 +67,8 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.Equal(t, "Pink beach", m.PhotoTitle)
 		assert.Equal(t, "manual", m.TitleSrc)
 		assert.Equal(t, true, m.PhotoFavorite)
+		assert.Equal(t, 4, m.PhotoRating)
+		assert.Equal(t, SrcManual, m.RatingSrc)
 		assert.Equal(t, true, m.PhotoPrivate)
 		assert.Equal(t, "image", m.PhotoType)
 		assert.InEpsilon(t, 7.9999, m.PhotoLat, 0.0001)

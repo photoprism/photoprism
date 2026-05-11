@@ -17,6 +17,7 @@ type Result struct {
 	TakenAtLocal time.Time     `json:"TakenAtLocal"`
 	TimeZone     string        `json:"TimeZone,omitempty"`
 	Favorite     bool          `json:"Favorite"`
+	Rating       int           `json:"Rating,omitempty"`
 	Playable     bool          `json:"Playable"`
 	Duration     time.Duration `json:"Duration,omitempty"`
 	Width        int           `json:"Width"`

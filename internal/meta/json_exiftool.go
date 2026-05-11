@@ -179,6 +179,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
+	if data.Rating, data.RatingSet = exiftoolRating(jsonValues); !data.RatingSet {
+		data.Rating, data.RatingSet = exiftoolRatingPercent(jsonValues)
+	}
+
 	// Nanoseconds.
 	if data.TakenNs <= 0 {
 		for _, name := range exifSubSecTags {
@@ -404,4 +408,30 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	return nil
+}
+
+// exiftoolRating returns the star rating parsed from ExifTool JSON tags.
+func exiftoolRating(values map[string]gjson.Result) (int, bool) {
+	for _, tag := range []string{"Rating", "UserRating"} {
+		if value, ok := values[tag]; ok {
+			if rating, ok := parseRatingValue(value.String()); ok {
+				return rating, true
+			}
+		}
+	}
+
+	return 0, false
+}
+
+// exiftoolRatingPercent returns a star rating parsed from percent-based ExifTool JSON tags.
+func exiftoolRatingPercent(values map[string]gjson.Result) (int, bool) {
+	for _, tag := range []string{"RatingPercent", "UserRatingPercent"} {
+		if value, ok := values[tag]; ok {
+			if rating, ok := parseRatingPercent(value.String()); ok {
+				return rating, true
+			}
+		}
+	}
+
+	return 0, false
 }

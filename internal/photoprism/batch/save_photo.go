@@ -46,6 +46,10 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 		p.PhotoFavorite = formValues.PhotoFavorite.Value
 	}
 
+	if formValues.PhotoRating.Action == ActionUpdate {
+		p.SetRating(formData.PhotoRating, formData.RatingSrc)
+	}
+
 	if formValues.PhotoPrivate.Action == ActionUpdate {
 		p.PhotoPrivate = formValues.PhotoPrivate.Value
 	}
@@ -152,6 +156,8 @@ func savePhoto(req *PhotoSaveRequest) (bool, error) {
 	addUpdate("photo_type", p.PhotoType != original.PhotoType, p.PhotoType)
 	addUpdate("type_src", p.TypeSrc != original.TypeSrc, p.TypeSrc)
 	addUpdate("photo_favorite", p.PhotoFavorite != original.PhotoFavorite, p.PhotoFavorite)
+	addUpdate("photo_rating", p.PhotoRating != original.PhotoRating, p.PhotoRating)
+	addUpdate("rating_src", p.RatingSrc != original.RatingSrc, p.RatingSrc)
 	addUpdate("photo_private", p.PhotoPrivate != original.PhotoPrivate, p.PhotoPrivate)
 	addUpdate("photo_scan", p.PhotoScan != original.PhotoScan, p.PhotoScan)
 	addUpdate("photo_panorama", p.PhotoPanorama != original.PhotoPanorama, p.PhotoPanorama)

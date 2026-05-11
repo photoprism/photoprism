@@ -267,6 +267,8 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "ELE-L29", data.CameraModel)
 		assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)
 		assert.Equal(t, 1, data.Orientation)
+		assert.True(t, data.HasRating())
+		assert.Equal(t, 4, data.Rating)
 	})
 	t.Run("CanonEosSixDJson", func(t *testing.T) {
 		data, err := JSON("testdata/canon_eos_6d.json", "")
@@ -1049,6 +1051,8 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 0.0, data.Lng)
 		assert.Equal(t, 0.0, data.Altitude)
 		assert.Equal(t, 1, data.Orientation)
+		assert.True(t, data.HasRating())
+		assert.Equal(t, 2, data.Rating)
 	})
 	t.Run("SonyMp4ExiftoolJson", func(t *testing.T) {
 		data, err := JSON("testdata/sony_mp4_exiftool.json", "")

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import "../fixtures";
+import { Mock } from "../fixtures";
 import * as media from "common/media";
 import { Photo, BatchSize } from "model/photo";
 import $event from "common/event";
@@ -507,6 +507,26 @@ describe("model/photo", () => {
     const photo = new Photo(values);
     const result = photo.getDefaults();
     expect(result.UID).toBe("");
+    expect(result.Rating).toBe(0);
+    expect(result.RatingSrc).toBe("");
+  });
+
+  it("should mark rating edits as manual", async () => {
+    Mock.resetHistory();
+    Mock.onPut("photos/rating-test").reply(200, { UID: "rating-test", Rating: 4, RatingSrc: "manual" });
+
+    const photo = new Photo({ UID: "rating-test", Rating: 1, RatingSrc: "xmp" });
+    photo.Rating = 4;
+
+    await photo.update();
+
+    const request = Mock.history.put.find((r) => r.url === "photos/rating-test");
+    const payload = JSON.parse(request.data);
+
+    expect(payload.Rating).toBe(4);
+    expect(payload.RatingSrc).toBe("manual");
+    expect(photo.Rating).toBe(4);
+    expect(photo.RatingSrc).toBe("manual");
   });
 
   it("should get photos base name", () => {

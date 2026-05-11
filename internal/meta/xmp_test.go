@@ -35,6 +35,8 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
 		assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)
+		assert.True(t, data.HasRating())
+		assert.Equal(t, 4, data.Rating)
 	})
 	t.Run("CanonEosSixD", func(t *testing.T) {
 		data, err := XMP("testdata/canon_eos_6d.xmp")
@@ -75,6 +77,16 @@ func TestXMP(t *testing.T) {
 		}
 
 		assert.Equal(t, true, data.Favorite)
+	})
+	t.Run("LadybugRating", func(t *testing.T) {
+		data, err := XMP("testdata/ladybug.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, data.HasRating())
+		assert.Equal(t, 1, data.Rating)
 	})
 	t.Run("DateHeic", func(t *testing.T) {
 		data, err := XMP("testdata/date.heic.xmp")

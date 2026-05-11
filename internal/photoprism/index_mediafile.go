@@ -481,6 +481,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetCaption(data.Caption, entity.SrcXmp)
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcXmp)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcXmp)
+			if data.HasRating() {
+				photo.SetRating(data.Rating, entity.SrcXmp)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcXmp)
@@ -507,6 +510,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
+			if data.HasRating() {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -603,6 +609,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			if data.HasRating() {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -657,6 +666,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			if data.HasRating() {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -711,6 +723,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
+			if data.HasRating() {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -846,6 +861,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
+			if data.HasRating() {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)

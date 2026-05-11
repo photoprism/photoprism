@@ -362,6 +362,20 @@
                     >
                     </v-autocomplete>
                   </v-col>
+                  <v-col v-if="$config.feature('ratings')" cols="12" sm="4">
+                    <div class="d-flex flex-column input-rating">
+                      <label class="form-label mb-2 text-subtitle-2">{{ $gettext("Rating") }}</label>
+                      <v-rating
+                        :model-value="formData.Rating.value"
+                        :length="5"
+                        size="small"
+                        density="compact"
+                        color="favorite"
+                        clearable
+                        @update:model-value="(val) => changeValue(val || 0, 'input-field', 'Rating')"
+                      ></v-rating>
+                    </div>
+                  </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
                       hide-details
@@ -839,7 +853,7 @@ export default {
       if (fieldType === "input-field") {
         if (fieldName === "Lat" || fieldName === "Lng") {
           processedValue = parseFloat(newValue) || 0;
-        } else if (["Altitude", "Day", "Month", "Year", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)) {
+        } else if (["Altitude", "Day", "Month", "Year", "Rating", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)) {
           processedValue = parseInt(newValue) || 0;
         } else if (fieldName === "FNumber") {
           processedValue = parseFloat(newValue) || 0;
@@ -959,6 +973,7 @@ export default {
         // be added in a follow-up, so leave them here until that work lands.
         { type: "text-field", name: "DetailsKeywords" },
         { type: "select-field", name: "Type" },
+        { type: "input-field", name: "Rating" },
         { type: "input-field", name: "Iso" },
         { type: "input-field", name: "FocalLength" },
         { type: "input-field", name: "FNumber" },
@@ -1134,7 +1149,7 @@ export default {
       const formatNumericValue = (value) => {
         if (["Lat", "Lng", "FNumber"].includes(fieldName)) {
           return parseFloat(value) || 0;
-        } else if (["Altitude", "Day", "Month", "Year", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)) {
+        } else if (["Altitude", "Day", "Month", "Year", "Rating", "Iso", "FocalLength", "CameraID", "LensID"].includes(fieldName)) {
           return parseInt(value) || 0;
         }
         return value;

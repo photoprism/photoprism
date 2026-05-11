@@ -50,6 +50,8 @@ func runNewPhotosFormFromJSON(t *testing.T) {
 	assert.Equal(t, true, frm.PhotoCaption.Mixed)
 	assert.Equal(t, false, frm.PhotoFavorite.Value)
 	assert.Equal(t, true, frm.PhotoFavorite.Mixed)
+	assert.Equal(t, 0, frm.PhotoRating.Value)
+	assert.Equal(t, true, frm.PhotoRating.Mixed)
 	assert.Equal(t, false, frm.PhotoPrivate.Value)
 	assert.Equal(t, false, frm.PhotoPrivate.Mixed)
 	assert.Equal(t, 1000003, frm.CameraID.Value)

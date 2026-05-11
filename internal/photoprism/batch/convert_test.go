@@ -34,6 +34,9 @@ func TestConvertToPhotoForm(t *testing.T) {
 		v.PhotoFavorite.Action = ActionUpdate
 		v.PhotoFavorite.Value = true
 
+		v.PhotoRating.Action = ActionUpdate
+		v.PhotoRating.Value = 4
+
 		v.PhotoPrivate.Action = ActionUpdate
 		v.PhotoPrivate.Value = true
 
@@ -56,6 +59,8 @@ func TestConvertToPhotoForm(t *testing.T) {
 		assert.Equal(t, entity.SrcBatch, form.TypeSrc)
 
 		assert.True(t, form.PhotoFavorite)
+		assert.Equal(t, 4, form.PhotoRating)
+		assert.Equal(t, entity.SrcBatch, form.RatingSrc)
 		assert.True(t, form.PhotoPrivate)
 		assert.True(t, form.PhotoScan)
 		assert.True(t, form.PhotoPanorama)

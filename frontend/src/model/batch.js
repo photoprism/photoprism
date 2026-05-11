@@ -35,6 +35,7 @@ export class Batch extends Model {
       DetailsKeywords: {},
       Type: {},
       Scan: {},
+      Rating: {},
       Private: {},
       Favorite: {},
       Panorama: {},

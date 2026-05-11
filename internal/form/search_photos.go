@@ -89,6 +89,7 @@ type SearchPhotos struct {
 	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, supports * wildcards"`                                                                          // Album UIDs or name
 	Albums      string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album names, combinable with & or |"`                                                          // Multi search with and/or
 	Quality     int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                                                           // Photo quality score
+	Rating      string    `form:"rating" example:"rating:4 rating:3-5" notes:"Star rating (0-5, or range)"`                                                                              // Photo star rating
 	Added       time.Time `form:"added" example:"added:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content added at or after this time"`              // Pictures added at or after this time
 	Updated     time.Time `form:"updated" example:"updated:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content updated at or after this time"`        // Pictures updated at or after this time
 	Edited      time.Time `form:"edited" example:"edited:\"2006-01-02T15:04:05Z\"" time_format:"2006-01-02T15:04:05Z07:00" notes:"Finds content edited at or after this time"`           // Pictures edited at or after this time

@@ -57,6 +57,8 @@ export class Photo extends RestModel {
       CaptionSrc: "",
       Resolution: 0,
       Quality: 0,
+      Rating: 0,
+      RatingSrc: "",
       Faces: 0,
       Lat: 0.0,
       Lng: 0.0,
@@ -1253,6 +1255,10 @@ export class Photo extends RestModel {
 
     if (typeof values.Caption === "string") {
       values.CaptionSrc = src.Manual;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(values, "Rating")) {
+      values.RatingSrc = src.Manual;
     }
 
     if (values.Lat || values.Lng || values.Country) {

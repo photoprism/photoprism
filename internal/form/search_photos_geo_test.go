@@ -234,6 +234,17 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Contains(t, err.Error(), "invalid syntax")
 	})
+	t.Run("QueryForRating", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "rating:3-5"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "3-5", form.Rating)
+	})
 	t.Run("QueryForDistWithInvalidType", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "dist:c@t"}
 
