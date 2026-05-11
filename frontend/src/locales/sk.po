@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-10 17:35+0000\n"
+"PO-Revision-Date: 2026-05-11 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
@@ -271,11 +271,11 @@ msgstr "Pridané"
 
 #: src/component/sidebar/camera-dialog.vue:18
 msgid "Adjust Camera Info"
-msgstr ""
+msgstr "Úprava informácií o fotoaparáte"
 
 #: src/component/sidebar/datetime-dialog.vue:18
 msgid "Adjust Date & Time"
-msgstr ""
+msgstr "Nastavenie dátumu a času"
 
 #: src/component/location/dialog.vue:18 src/component/photo/batch-edit.vue:274
 #: src/component/photo/edit/details.vue:146
