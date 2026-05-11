@@ -125,6 +125,12 @@
                   </v-list-item-title>
                 </v-list-item>
 
+                <v-list-item :to="{ name: 'memories' }" variant="text" class="nav-memories" @click.stop="">
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Memories`) }}
+                  </v-list-item-title>
+                </v-list-item>
+
                 <v-list-item
                   v-show="isSponsor"
                   :to="{ name: 'browse', query: { q: 'vectors' } }"
