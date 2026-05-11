@@ -1,13 +1,16 @@
 package photoprism
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -137,5 +140,101 @@ func TestIndexRelated(t *testing.T) {
 			assert.Equal(t, "2021-03-24 12:07:29 +0000 UTC", photo.TakenAt.String())
 			assert.Equal(t, "xmp", photo.TakenSrc)
 		}
+	})
+	t.Run("XmpCameraLensExposureMapping", func(t *testing.T) {
+		// Verifies that camera, lens, and exposure values from an XMP sidecar
+		// reach entity.Photo via the IsXMP indexer branch.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-camera")
+
+		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-camera-mapping"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		xmpContent := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
+    xmlns:exifEX="http://cipa.jp/exif/1.0/"
+    xmlns:aux="http://ns.adobe.com/exif/1.0/aux/">
+   <tiff:Make>SyntheticCam</tiff:Make>
+   <tiff:Model>SC-1 Mark II</tiff:Model>
+   <exifEX:LensMake>SyntheticLens Co.</exifEX:LensMake>
+   <exifEX:LensModel>SL 50mm f/1.4</exifEX:LensModel>
+   <aux:SerialNumber>BODY-XMP-9001</aux:SerialNumber>
+   <exif:ISOSpeedRatings>
+    <rdf:Seq><rdf:li>800</rdf:li></rdf:Seq>
+   </exif:ISOSpeedRatings>
+   <exif:FNumber>14/10</exif:FNumber>
+   <exif:FocalLength>50/1</exif:FocalLength>
+   <exif:ExposureTime>1/250</exif:ExposureTime>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(xmpContent), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+
+		assert.False(t, result.Failed())
+		assert.True(t, result.Success())
+
+		photo, err := query.PhotoByUID(result.PhotoUID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// Camera from XMP wiring (IsXMP branch). Re-resolve by Make/Model
+		// from the cache and assert the photo references the same row.
+		expectedCamera := entity.FirstOrCreateCamera(entity.NewCamera("SyntheticCam", "SC-1 Mark II"))
+		if assert.NotNil(t, expectedCamera) {
+			assert.Equal(t, expectedCamera.ID, photo.CameraID)
+			assert.NotEqual(t, entity.UnknownCamera.ID, photo.CameraID)
+		}
+		assert.Equal(t, entity.SrcXmp, photo.CameraSrc)
+
+		// Lens from XMP wiring.
+		expectedLens := entity.FirstOrCreateLens(entity.NewLens("SyntheticLens Co.", "SL 50mm f/1.4"))
+		if assert.NotNil(t, expectedLens) {
+			assert.Equal(t, expectedLens.ID, photo.LensID)
+			assert.NotEqual(t, entity.UnknownLens.ID, photo.LensID)
+		}
+
+		// Exposure values from XMP wiring.
+		assert.Equal(t, 800, photo.PhotoIso)
+		assert.InDelta(t, 1.4, float64(photo.PhotoFNumber), 0.001)
+		assert.Equal(t, 50, photo.PhotoFocalLength)
+		assert.Equal(t, "1/250", photo.PhotoExposure)
+
+		// Camera serial from XMP wiring.
+		assert.Equal(t, "BODY-XMP-9001", photo.CameraSerial)
 	})
 }

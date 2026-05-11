@@ -114,6 +114,10 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.Exposure = v
 	}
 	if doc.Flash() {
+		// Mirror the embedded-EXIF flow: set the bool *and* add the
+		// "flash" keyword, so XMP-sidecar-only photos surface in the
+		// same searches as photos indexed via the EXIF path.
+		data.AddKeywords(KeywordFlash)
 		data.Flash = true
 	}
 	if v := doc.Notes(); v != "" {

@@ -481,6 +481,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetCaption(data.Caption, entity.SrcXmp)
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcXmp)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcXmp)
+			photo.SetCameraSerial(data.CameraSerial)
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcXmp)
@@ -490,6 +491,41 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetCopyright(data.Copyright, entity.SrcXmp)
 			details.SetLicense(data.License, entity.SrcXmp)
 			details.SetSoftware(data.Software, entity.SrcXmp)
+
+			// Adopt the XMP DocumentID as the photo UUID. SrcXmp wins
+			// over an auto-generated UUID assigned in the SrcMeta branch.
+			// Real-world XMP DocumentIDs are often non-canonical (no dashes,
+			// `adobe:docid:` or `xmp.did:` prefixes), so the strict UUID
+			// check from data.HasDocumentID() is too narrow here.
+			if data.DocumentID != "" {
+				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
+				photo.UUID = data.DocumentID
+			}
+
+			// Update camera, lens, and exposure from the sidecar.
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(data.CameraMake, data.CameraModel)), entity.SrcXmp)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(data.LensMake, data.LensModel)), entity.SrcXmp)
+			photo.SetExposure(data.FocalLength, data.FNumber, data.Iso, data.Exposure, entity.SrcXmp)
+
+			// Mirror file-level identity metadata to the primary file. Writing
+			// it onto the sidecar entity would be invisible to users since
+			// the UI displays per-file fields for the primary JPEG/HEIC.
+			//
+			// ColorProfile and Projection are intentionally NOT mirrored:
+			// they describe physical properties of the image file itself
+			// (the embedded ICC profile, the actual panorama projection),
+			// not user-supplied metadata. A sidecar tag should not override
+			// what the JPEG/HEIC container says about itself.
+			if primary, primaryErr := photo.PrimaryFile(); primaryErr == nil && primary != nil {
+				if data.InstanceID != "" {
+					log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
+					primary.InstanceID = data.InstanceID
+				}
+				primary.SetSoftware(data.Software)
+				if saveErr := primary.Save(); saveErr != nil {
+					log.Warnf("index: %s could not save primary file metadata (%s)", logName, saveErr)
+				}
+			}
 
 			// Update externally marked as favorite.
 			if data.Favorite {
