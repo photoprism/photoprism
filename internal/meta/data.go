@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -38,6 +39,7 @@ type Data struct {
 	Title            string        `meta:"Title,Headline" xmp:"dc:title" dc:"title,title.Alt"`
 	Caption          string        `meta:"Description,ImageDescription,Caption,Caption-Abstract" xmp:"Description,Description.Alt"`
 	Subject          string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
+	FaceRegions      crop.Areas    `meta:"-"`
 	Keywords         Keywords      `meta:"Keywords"`
 	Favorite         bool          `meta:"Favorite"`
 	Notes            string        `meta:"Comment,UserComment"`

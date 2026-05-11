@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -574,6 +575,28 @@ func TestFile_AddFaces(t *testing.T) {
 
 		assert.Equal(t, 0, len(*file.Markers()))
 	})
+}
+
+func TestFile_AddFaceRegions(t *testing.T) {
+	file := &File{FileUID: "fs6sg6bp4sjk3kdx", FileHash: "246b3897eec9ef75e35fbf0bbc4c83c55ca41e31", FileType: "jpg", FileWidth: 720, FileName: "RegionsTest", PhotoID: 1000003, FilePrimary: true}
+
+	file.AddFaceRegions(crop.Areas{
+		crop.NewArea("Ryan Gosling", 0.2802765, 0.125, 0.436419, 0.485614),
+	})
+
+	if assert.Len(t, *file.Markers(), 1) {
+		marker := (*file.Markers())[0]
+
+		assert.Equal(t, MarkerFace, marker.MarkerType)
+		assert.Equal(t, SrcXmp, marker.MarkerSrc)
+		assert.Equal(t, SrcXmp, marker.SubjSrc)
+		assert.Equal(t, "Ryan Gosling", marker.MarkerName)
+		assert.Equal(t, false, marker.MarkerReview)
+		assert.InDelta(t, 0.2802765, marker.X, 0.000001)
+		assert.InDelta(t, 0.125, marker.Y, 0.000001)
+		assert.InDelta(t, 0.436419, marker.W, 0.000001)
+		assert.InDelta(t, 0.485614, marker.H, 0.000001)
+	}
 }
 
 func TestFile_ValidFaceCount(t *testing.T) {

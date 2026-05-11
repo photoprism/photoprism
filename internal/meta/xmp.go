@@ -75,6 +75,10 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.AddKeywords(doc.Keywords())
 	}
 
+	if faceRegions := doc.FaceRegions(); len(faceRegions) != 0 {
+		data.FaceRegions = faceRegions
+	}
+
 	data.Favorite = doc.Favorite()
 
 	return nil

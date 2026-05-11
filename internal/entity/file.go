@@ -16,6 +16,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -809,6 +810,41 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 	// Append marker if it doesn't conflict with existing marker.
 	if markers := m.Markers(); !markers.Contains(*marker) {
 		markers.AppendWithEmbedding(*marker)
+	}
+}
+
+// AddFaceRegions adds face markers from image metadata.
+func (m *File) AddFaceRegions(regions crop.Areas) {
+	if m.FileUID == "" || m.FileHash == "" {
+		return
+	}
+
+	for _, area := range regions {
+		if area.Empty() {
+			continue
+		}
+
+		marker := Marker{
+			FileUID:       m.FileUID,
+			MarkerType:    MarkerFace,
+			MarkerSrc:     SrcXmp,
+			MarkerName:    area.Name,
+			MarkerReview:  area.Name == "",
+			MarkerInvalid: false,
+			SubjSrc:       SrcXmp,
+			FaceDist:      -1,
+			X:             area.X,
+			Y:             area.Y,
+			W:             area.W,
+			H:             area.H,
+			Size:          int(float32(m.FileWidth) * area.W),
+			Thumb:         area.Thumb(m.FileHash),
+			MatchedAt:     nil,
+		}
+
+		if markers := m.Markers(); !markers.Contains(marker) {
+			markers.Append(marker)
+		}
 	}
 }
 

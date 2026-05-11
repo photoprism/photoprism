@@ -1,0 +1,51 @@
+<?xpacket begin="" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+   xmlns:mwg-rs="http://www.metadataworkinggroup.com/schemas/regions/"
+   xmlns:stArea="http://ns.adobe.com/xmp/sType/Area#"
+   xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#">
+   <mwg-rs:Regions rdf:parseType="Resource">
+    <mwg-rs:AppliedToDimensions
+     stDim:w="200"
+     stDim:h="100"
+     stDim:unit="pixel"/>
+    <mwg-rs:RegionList>
+     <rdf:Bag>
+      <rdf:li>
+       <rdf:Description mwg-rs:Name="Ryan Gosling" mwg-rs:Type="Face">
+        <mwg-rs:Area
+         stArea:x="0.498486"
+         stArea:y="0.367807"
+         stArea:w="0.436419"
+         stArea:h="0.485614"
+         stArea:unit="normalized"/>
+       </rdf:Description>
+      </rdf:li>
+      <rdf:li>
+       <rdf:Description mwg-rs:Name="Pixel Face" mwg-rs:Type="Face">
+        <mwg-rs:Area
+         stArea:x="100"
+         stArea:y="80"
+         stArea:w="40"
+         stArea:h="20"
+         stArea:unit="pixel"/>
+       </rdf:Description>
+      </rdf:li>
+      <rdf:li>
+       <rdf:Description mwg-rs:Name="Not a face" mwg-rs:Type="Pet">
+        <mwg-rs:Area
+         stArea:x="0.1"
+         stArea:y="0.1"
+         stArea:w="0.2"
+         stArea:h="0.2"
+         stArea:unit="normalized"/>
+       </rdf:Description>
+      </rdf:li>
+     </rdf:Bag>
+    </mwg-rs:RegionList>
+   </mwg-rs:Regions>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>

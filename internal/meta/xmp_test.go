@@ -87,4 +87,24 @@ func TestXMP(t *testing.T) {
 		assert.True(t, data.TakenAtLocal.IsZero())
 		assert.Equal(t, "UTC", data.TimeZone)
 	})
+	t.Run("MwgRegions", func(t *testing.T) {
+		data, err := XMP("testdata/mwg-regions.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if assert.Len(t, data.FaceRegions, 2) {
+			assert.Equal(t, "Ryan Gosling", data.FaceRegions[0].Name)
+			assert.InDelta(t, 0.2802765, data.FaceRegions[0].X, 0.000001)
+			assert.InDelta(t, 0.125, data.FaceRegions[0].Y, 0.000001)
+			assert.InDelta(t, 0.436419, data.FaceRegions[0].W, 0.000001)
+			assert.InDelta(t, 0.485614, data.FaceRegions[0].H, 0.000001)
+			assert.Equal(t, "Pixel Face", data.FaceRegions[1].Name)
+			assert.InDelta(t, 0.4, data.FaceRegions[1].X, 0.000001)
+			assert.InDelta(t, 0.7, data.FaceRegions[1].Y, 0.000001)
+			assert.InDelta(t, 0.2, data.FaceRegions[1].W, 0.000001)
+			assert.InDelta(t, 0.2, data.FaceRegions[1].H, 0.000001)
+		}
+	})
 }

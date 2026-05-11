@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -67,6 +68,35 @@ func ApplyDetectedFaces(file *entity.File, faces face.Faces) (saved bool, count 
 	}
 
 	file.AddFaces(faces)
+
+	savedMarkers, saveErr := file.SaveMarkers()
+
+	if saveErr != nil {
+		return false, 0, saveErr
+	}
+
+	if savedMarkers == 0 {
+		return false, 0, nil
+	}
+
+	if count, err = file.UpdatePhotoFaceCount(); err != nil {
+		return true, count, err
+	}
+
+	return true, count, nil
+}
+
+// ApplyFaceRegions persists metadata face regions on the given file and updates face counts.
+func ApplyFaceRegions(file *entity.File, regions crop.Areas) (saved bool, count int, err error) {
+	if file == nil {
+		return false, 0, fmt.Errorf("faces: file is nil")
+	}
+
+	if len(regions) == 0 {
+		return false, 0, nil
+	}
+
+	file.AddFaceRegions(regions)
 
 	savedMarkers, saveErr := file.SaveMarkers()
 

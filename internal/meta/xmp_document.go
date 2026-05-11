@@ -3,11 +3,38 @@ package meta
 import (
 	"encoding/xml"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+type xmpRegions struct {
+	AppliedToDimensions struct {
+		W    string `xml:"w,attr" json:"w,omitempty"`
+		H    string `xml:"h,attr" json:"h,omitempty"`
+		Unit string `xml:"unit,attr" json:"unit,omitempty"`
+	} `xml:"AppliedToDimensions" json:"appliedToDimensions"`
+	RegionList struct {
+		Bag struct {
+			Li []struct {
+				Description struct {
+					Name string `xml:"Name,attr" json:"name,omitempty"`
+					Type string `xml:"Type,attr" json:"type,omitempty"`
+					Area struct {
+						X    string `xml:"x,attr" json:"x,omitempty"`
+						Y    string `xml:"y,attr" json:"y,omitempty"`
+						W    string `xml:"w,attr" json:"w,omitempty"`
+						H    string `xml:"h,attr" json:"h,omitempty"`
+						Unit string `xml:"unit,attr" json:"unit,omitempty"`
+					} `xml:"Area" json:"area"`
+				} `xml:"Description" json:"description"`
+			} `xml:"li" json:"li"`
+		} `xml:"Bag" json:"bag"`
+	} `xml:"RegionList" json:"regionList"`
+}
 
 // XmpDocument represents an XMP sidecar file.
 type XmpDocument struct {
@@ -197,6 +224,7 @@ type XmpDocument struct {
 					Li   string `xml:"li"` // Gopher
 				} `xml:"Bag" json:"bag"`
 			} `xml:"PersonInImage" json:"personinimage"`
+			Regions xmpRegions `xml:"Regions" json:"regions"`
 		} `xml:"Description" json:"description"`
 	} `xml:"RDF" json:"rdf"`
 }
@@ -289,4 +317,61 @@ func (doc *XmpDocument) Keywords() string {
 func (doc *XmpDocument) Favorite() bool {
 	fstop := doc.RDF.Description.FStopFavorite
 	return fstop == "1"
+}
+
+// FaceRegions returns face areas found in MWG region metadata.
+func (doc *XmpDocument) FaceRegions() crop.Areas {
+	mwg := doc.RDF.Description.Regions
+	regions := mwg.RegionList.Bag.Li
+	result := make(crop.Areas, 0, len(regions))
+	dimW, dimH, hasDim := xmpDimensions(mwg.AppliedToDimensions.W, mwg.AppliedToDimensions.H, mwg.AppliedToDimensions.Unit)
+
+	for _, region := range regions {
+		desc := region.Description
+
+		if !strings.EqualFold(desc.Type, "Face") {
+			continue
+		}
+
+		if area, ok := xmpRegionArea(desc.Area.X, desc.Area.Y, desc.Area.W, desc.Area.H, desc.Area.Unit, dimW, dimH, hasDim); ok {
+			area.Name = SanitizeString(desc.Name)
+			result = append(result, area)
+		}
+	}
+
+	return result
+}
+
+func xmpRegionArea(xVal, yVal, wVal, hVal, unit string, dimW, dimH float32, hasDim bool) (crop.Area, bool) {
+	x, okX := xmpFloat(xVal)
+	y, okY := xmpFloat(yVal)
+	w, okW := xmpFloat(wVal)
+	h, okH := xmpFloat(hVal)
+
+	if !okX || !okY || !okW || !okH || w <= 0 || h <= 0 {
+		return crop.Area{}, false
+	}
+
+	switch {
+	case strings.EqualFold(unit, "normalized"):
+	case strings.EqualFold(unit, "pixel") && hasDim:
+		x, y, w, h = x/dimW, y/dimH, w/dimW, h/dimH
+	default:
+		return crop.Area{}, false
+	}
+
+	return crop.NewArea("", x-(w/2), y-(h/2), w, h), true
+}
+
+func xmpDimensions(wVal, hVal, unit string) (float32, float32, bool) {
+	w, okW := xmpFloat(wVal)
+	h, okH := xmpFloat(hVal)
+
+	return w, h, okW && okH && w > 0 && h > 0 && strings.EqualFold(unit, "pixel")
+}
+
+func xmpFloat(s string) (float32, bool) {
+	f, err := strconv.ParseFloat(strings.TrimSpace(s), 32)
+
+	return float32(f), err == nil
 }
