@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-11 09:31+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-05-12 01:03+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.17\n"
+"X-Generator: Weblate 5.17.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1549,7 +1549,7 @@ msgstr "Échec de la connexion au compte."
 
 #: src/component/lightbox.vue:1888
 msgid "Failed to remove face marker"
-msgstr "N'a pas réussi à enlever le marqueur de visage"
+msgstr "Échec de la suppression du marqueur de visage"
 
 #: src/component/lightbox.vue:1845
 msgid "Failed to remove name"
@@ -1565,7 +1565,7 @@ msgstr "L'enregistrement des modifications a échoué"
 
 #: src/component/lightbox.vue:1826
 msgid "Failed to save face marker"
-msgstr "N'a pas réussi à sauver le marqueur de visage"
+msgstr "L'enregistrement du marqueur de visage a échoué"
 
 #: src/component/sidebar/info.vue:981
 msgid "Failed to save name"
@@ -4192,7 +4192,7 @@ msgstr "Archives"
 #: src/component/sidebar/info.vue:13 src/component/sidebar/info.vue:26
 msgctxt "Photo"
 msgid "Add a Title"
-msgstr "Ajoute un titre"
+msgstr "Ajouter un titre"
 
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:19 src/component/photo/edit/info.vue:79
