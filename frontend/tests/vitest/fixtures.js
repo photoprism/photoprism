@@ -99,6 +99,24 @@ Mock.onDelete("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud").reply(
   },
   mockHeaders
 );
+Mock.onDelete("api/v1/photos/pqbemz8276mhtobh/duplicates?name=1980%2F01%2Fduplicate.jpg&root=%2F").reply(
+  200,
+  {
+    ID: 10,
+    UID: "pqbemz8276mhtobh",
+    Files: [
+      {
+        UID: "fqbfk181n4ca5abc",
+        Name: "1980/01/superCuteKitten.mp4",
+        Primary: true,
+        FileType: "mp4",
+        Hash: "1xxbgdt89",
+      },
+    ],
+    Duplicates: [],
+  },
+  mockHeaders
+);
 Mock.onPost("api/v1/photos/pqbemz8276mhtobh/files/fqbfk181n4ca5sud/unstack").reply(
   200,
   {

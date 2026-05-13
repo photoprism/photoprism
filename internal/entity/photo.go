@@ -98,6 +98,7 @@ type Photo struct {
 	Keywords         []Keyword     `json:"-" yaml:"-"`
 	Albums           []Album       `json:"Albums" yaml:"-"`
 	Files            []File        `yaml:"-"`
+	Duplicates       []File        `json:"Duplicates,omitempty" yaml:"-"`
 	Labels           []PhotoLabel  `yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time     `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
@@ -750,6 +751,60 @@ func (m *Photo) PreloadFiles() *Photo {
 		Order("files.file_name DESC")
 
 	Log("photo", "preload files", q.Scan(&m.Files).Error)
+
+	return m
+}
+
+// PreloadDuplicates loads duplicate records that share the photo's file hashes
+// and exposes them as File-shaped payloads for reuse in existing UI panels.
+func (m *Photo) PreloadDuplicates() *Photo {
+	if m == nil || !m.HasID() {
+		return m
+	}
+
+	m.Duplicates = nil
+
+	if len(m.Files) == 0 {
+		m.PreloadFiles()
+	}
+
+	hashes := make([]string, 0, len(m.Files))
+	seen := make(map[string]struct{}, len(m.Files))
+
+	for _, file := range m.Files {
+		if file.FileHash == "" {
+			continue
+		}
+		if _, ok := seen[file.FileHash]; ok {
+			continue
+		}
+		seen[file.FileHash] = struct{}{}
+		hashes = append(hashes, file.FileHash)
+	}
+
+	if len(hashes) == 0 {
+		return m
+	}
+
+	var duplicates Duplicates
+
+	q := Db().
+		Table(Duplicate{}.TableName()).
+		Select("duplicates.*").
+		Where("duplicates.file_hash IN (?)", hashes).
+		Order("duplicates.file_name ASC")
+
+	Log("photo", "preload duplicates", q.Scan(&duplicates).Error)
+
+	if len(duplicates) == 0 {
+		return m
+	}
+
+	m.Duplicates = make([]File, 0, len(duplicates))
+
+	for _, duplicate := range duplicates {
+		m.Duplicates = append(m.Duplicates, duplicate.AsFile(m.PhotoUID))
+	}
 
 	return m
 }

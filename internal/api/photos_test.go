@@ -3,22 +3,37 @@ package api
 import (
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func TestGetPhoto(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
+		photo, err := query.PhotoPreloadByUID("ps6sg6be2lvl0yh7")
+		assert.NoError(t, err)
+		if len(photo.Files) > 0 {
+			assert.NoError(t, entity.AddDuplicate("api-test/duplicate.jpg", "/", photo.Files[0].FileHash, 123, time.Now().Unix()))
+			defer func() {
+				_ = entity.PurgeDuplicate("api-test/duplicate.jpg", "/")
+			}()
+		}
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7")
 		assert.Equal(t, http.StatusOK, r.Code)
 		val := gjson.Get(r.Body.String(), "Iso")
 		assert.Equal(t, "200", val.String())
+		duplicates := gjson.Get(r.Body.String(), "Duplicates")
+		assert.True(t, duplicates.Exists())
+		assert.Equal(t, "api-test/duplicate.jpg", duplicates.Get("0.Name").String())
+		assert.Equal(t, photo.Files[0].FileHash, duplicates.Get("0.Hash").String())
 	})
 	t.Run("AliceAppPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()

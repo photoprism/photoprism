@@ -3,7 +3,7 @@
     <v-expansion-panels v-model="expanded" class="pa-0 elevation-0" variant="accordion" multiple>
       <v-expansion-panel
         v-for="file in view.model.fileModels().filter((f) => !f.Missing)"
-        :key="file.UID"
+        :key="file.UID || `${file.Root}:${file.Name}`"
         tabindex="0"
         style="margin-top: 1px"
         class="pa-0 elevation-0"
@@ -56,7 +56,7 @@
                             <td>
                               <div class="action-buttons">
                                 <v-btn
-                                  v-if="features.download"
+                                  v-if="features.download && !file.Duplicate"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -68,7 +68,7 @@
                                   <v-icon icon="mdi-download" size="18" end></v-icon>
                                 </v-btn>
                                 <v-btn
-                                  v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary"
+                                  v-if="!file.Duplicate && features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -80,7 +80,7 @@
                                   <v-icon icon="mdi-image" size="18" end></v-icon>
                                 </v-btn>
                                 <v-btn
-                                  v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'"
+                                  v-if="!file.Duplicate && features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'"
                                   density="comfortable"
                                   variant="flat"
                                   color="highlight"
@@ -117,7 +117,7 @@
                               </div>
                             </td>
                           </tr>
-                          <tr>
+                          <tr v-if="file.UID">
                             <td title="Unique ID">UID</td>
                             <td class="text-break">
                               <span class="cursor-copy text-uppercase" @click.stop.prevent="$util.copyText(file.UID)">{{ file.UID }}</span>
@@ -152,6 +152,14 @@
                               {{ $gettext(`Storage`) }}
                             </td>
                             <td>{{ file.storageInfo() }}</td>
+                          </tr>
+                          <tr v-if="file.Duplicate">
+                            <td>
+                              {{ $gettext(`Status`) }}
+                            </td>
+                            <td>
+                              {{ $gettext(`Duplicate`) }}
+                            </td>
                           </tr>
                           <tr v-if="file.OriginalName">
                             <td>
@@ -337,7 +345,7 @@
                               {{ $gettext(`Yes`) }}
                             </td>
                           </tr>
-                          <tr>
+                          <tr v-if="file.CreatedAt">
                             <td>
                               {{ $gettext(`Added`) }}
                             </td>
@@ -519,7 +527,9 @@ export default {
       this.deleteFile.file = null;
     },
     confirmDeleteFile() {
-      if (this.deleteFile.file && this.deleteFile.file.UID) {
+      if (this.deleteFile.file?.Duplicate) {
+        this.view.model.deleteDuplicate(this.deleteFile.file).finally(() => this.closeDeleteDialog());
+      } else if (this.deleteFile.file && this.deleteFile.file.UID) {
         this.view.model.deleteFile(this.deleteFile.file.UID).finally(() => this.closeDeleteDialog());
       } else {
         this.closeDeleteDialog();

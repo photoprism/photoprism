@@ -1408,6 +1408,33 @@ describe("model/photo", () => {
     expect(response.success).toBe("successfully deleted");
   });
 
+  it("should delete duplicate", async () => {
+    const values = {
+      ID: 10,
+      UID: "pqbemz8276mhtobh",
+      Files: [
+        {
+          UID: "fqbfk181n4ca5abc",
+          Name: "1980/01/superCuteKitten.mp4",
+          Primary: true,
+          FileType: "mp4",
+          Hash: "1xxbgdt89",
+        },
+      ],
+      Duplicates: [
+        {
+          Name: "1980/01/duplicate.jpg",
+          Root: "/",
+          Hash: "1xxbgdt55",
+          Size: 100,
+        },
+      ],
+    };
+    const photo = new Photo(values);
+    const response = await photo.deleteDuplicate(photo.fileModels().find((file) => file.Duplicate));
+    expect(response.Duplicates).toEqual([]);
+  });
+
   it("should add label", async () => {
     const values = {
       ID: 10,

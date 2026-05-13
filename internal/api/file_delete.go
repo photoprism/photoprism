@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -102,6 +103,99 @@ func DeleteFile(router *gin.RouterGroup) {
 			AbortEntityNotFound(c)
 			return
 		} else {
+			c.JSON(http.StatusOK, p)
+		}
+	})
+
+	router.DELETE("/photos/:uid/duplicates", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceFiles, acl.ActionDelete)
+
+		if s.Abort(c) {
+			return
+		}
+
+		conf := get.Config()
+
+		if conf.ReadOnly() || !conf.Settings().Features.Edit {
+			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
+			return
+		}
+
+		photoUid := clean.UID(c.Param("uid"))
+		fileName := clean.Path(c.Query("name"))
+		fileRoot := clean.Path(c.DefaultQuery("root", "/"))
+
+		if fileRoot == "" {
+			fileRoot = "/"
+		}
+
+		if fileName == "" {
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
+			return
+		}
+
+		duplicate := entity.Duplicate{FileName: fileName, FileRoot: fileRoot}
+
+		if err := duplicate.Find(); err != nil {
+			log.Errorf("duplicates: %s (delete)", err)
+			AbortEntityNotFound(c)
+			return
+		}
+
+		photo, err := query.PhotoPreloadByUID(photoUid)
+
+		if err != nil {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		allowed := false
+
+		for _, file := range photo.Files {
+			if file.FileHash != "" && file.FileHash == duplicate.FileHash {
+				allowed = true
+				break
+			}
+		}
+
+		if !allowed {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		fileNameOnDisk := photoprism.FileName(duplicate.FileRoot, duplicate.FileName)
+		baseName := filepath.Base(fileNameOnDisk)
+
+		mediaFile, err := photoprism.NewMediaFile(fileNameOnDisk)
+
+		if err != nil {
+			log.Errorf("duplicates: %s (delete %s)", err, clean.Log(baseName))
+			AbortEntityNotFound(c)
+			return
+		}
+
+		event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", duplicate.FileName})
+
+		if err = mediaFile.Remove(); err != nil {
+			log.Errorf("duplicates: %s (delete %s from folder)", err, clean.Log(baseName))
+		} else {
+			log.Infof("duplicates: deleted %s", clean.Log(baseName))
+		}
+
+		if err = duplicate.Purge(); err != nil {
+			log.Errorf("duplicates: %s (delete %s from index)", err, clean.Log(baseName))
+			AbortDeleteFailed(c)
+			return
+		}
+
+		PublishPhotoEvent(StatusUpdated, photoUid, c)
+		event.SuccessMsg(i18n.MsgFileDeleted)
+
+		if p, err := query.PhotoPreloadByUID(photoUid); err != nil {
+			AbortEntityNotFound(c)
+			return
+		} else {
+			p.PreloadDuplicates()
 			c.JSON(http.StatusOK, p)
 		}
 	})

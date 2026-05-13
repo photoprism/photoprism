@@ -218,6 +218,8 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			return
 		}
 
+		p.PreloadDuplicates()
+
 		c.JSON(http.StatusOK, p)
 	})
 }

@@ -18,6 +18,29 @@ type Duplicate struct {
 	ModTime  int64  `json:"ModTime" yaml:"-"`
 }
 
+// AsFile converts a duplicate entry into a File-shaped payload so existing
+// UI consumers can render it alongside indexed files without a separate model.
+func (m Duplicate) AsFile(photoUID string) File {
+	return File{
+		PhotoUID:     photoUID,
+		FileName:     m.FileName,
+		FileRoot:     m.FileRoot,
+		FileHash:     m.FileHash,
+		FileSize:     m.FileSize,
+		ModTime:      m.ModTime,
+		FileMissing:  false,
+		FilePrimary:  false,
+		FileSidecar:  false,
+		OriginalName: "",
+		FileError:    "",
+		FileType:     "",
+		MediaType:    "",
+		FileMime:     "",
+		FileSoftware: "",
+		FileUID:      "",
+	}
+}
+
 // TableName returns the entity table name.
 func (Duplicate) TableName() string {
 	return "duplicates"

@@ -511,6 +511,22 @@ func TestPhoto_PreloadFiles(t *testing.T) {
 	})
 }
 
+func TestPhoto_PreloadDuplicates(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		m.PreloadFiles()
+		if assert.NotEmpty(t, m.Files) {
+			assert.NoError(t, AddDuplicate("photo01/duplicate.jpg", RootOriginals, m.Files[0].FileHash, 42, time.Now().Unix()))
+			defer func() {
+				_ = PurgeDuplicate("photo01/duplicate.jpg", RootOriginals)
+			}()
+			m.PreloadDuplicates()
+			assert.NotEmpty(t, m.Duplicates)
+			assert.Equal(t, "photo01/duplicate.jpg", m.Duplicates[0].FileName)
+		}
+	})
+}
+
 func TestPhoto_PreloadKeywords(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")

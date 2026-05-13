@@ -63,6 +63,8 @@ func GetPhoto(router *gin.RouterGroup) {
 			return
 		}
 
+		p.PreloadDuplicates()
+
 		c.IndentedJSON(http.StatusOK, p)
 	})
 }

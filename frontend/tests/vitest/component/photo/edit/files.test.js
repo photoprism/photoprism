@@ -33,6 +33,7 @@ function createFile(overrides = {}) {
     isAnimated: vi.fn(() => false),
     baseName: vi.fn(() => "file.jpg"),
     download: vi.fn(),
+    Duplicate: false,
     ...overrides,
   };
 }
@@ -79,6 +80,7 @@ function mountPhotoFiles({
   const model = {
     fileModels: vi.fn(() => [file]),
     deleteFile: vi.fn(() => Promise.resolve()),
+    deleteDuplicate: vi.fn(() => Promise.resolve()),
     unstackFile: vi.fn(),
     setPrimaryFile: vi.fn(),
     changeFileOrientation: vi.fn(() => Promise.resolve()),
@@ -310,6 +312,21 @@ describe("component/photo/edit/files", () => {
       expect(deleteFileSpy).toHaveBeenCalledWith(file.UID);
       expect(wrapper.vm.deleteFile.dialog).toBe(false);
       expect(wrapper.vm.deleteFile.file).toBeNull();
+    });
+  });
+
+  describe("duplicate actions", () => {
+    it("routes duplicate deletion through deleteDuplicate", async () => {
+      const { wrapper, model } = mountPhotoFiles({
+        fileOverrides: { UID: "", Duplicate: true, Name: "1980/01/duplicate.jpg", Root: "/" },
+      });
+
+      const duplicate = wrapper.vm.view.model.fileModels()[0];
+      wrapper.vm.showDeleteDialog(duplicate);
+      wrapper.vm.confirmDeleteFile();
+
+      expect(model.deleteDuplicate).toHaveBeenCalledWith(duplicate);
+      expect(model.deleteFile).not.toHaveBeenCalled();
     });
   });
 

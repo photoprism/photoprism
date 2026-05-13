@@ -98,6 +98,7 @@ export class Photo extends RestModel {
         SoftwareSrc: "",
       },
       Files: [],
+      Duplicates: [],
       Labels: [],
       Keywords: [],
       Albums: [],
@@ -663,12 +664,16 @@ export class Photo extends RestModel {
   fileModels() {
     let result = [];
 
-    if (!this.Files) {
+    if (!this.Files && !this.Duplicates) {
       return result;
     }
 
-    this.Files.forEach((f) => {
+    (this.Files || []).forEach((f) => {
       result.push(new File(f));
+    });
+
+    (this.Duplicates || []).forEach((f) => {
+      result.push(new File({ ...f, Duplicate: true }));
     });
 
     // Get main file UID so it can be sorted first.
@@ -688,6 +693,10 @@ export class Photo extends RestModel {
         return -1;
       } else if (a.Primary < b.Primary) {
         return 1;
+      }
+
+      if (!!a.Duplicate !== !!b.Duplicate) {
+        return a.Duplicate ? 1 : -1;
       }
 
       return a.Name.localeCompare(b.Name);
@@ -1136,6 +1145,15 @@ export class Photo extends RestModel {
 
   deleteFile(fileUID) {
     return $api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) => Promise.resolve(this.setValues(r.data)));
+  }
+
+  deleteDuplicate(file) {
+    if (!file || !file.Name) {
+      return Promise.resolve(this);
+    }
+
+    const params = new URLSearchParams({ name: file.Name, root: file.Root || "/" });
+    return $api.delete(`${this.getEntityResource()}/duplicates?${params.toString()}`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   changeFileOrientation(file) {

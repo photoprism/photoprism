@@ -58,6 +58,7 @@ export class File extends RestModel {
       UpdatedAt: "",
       UpdatedIn: 0,
       DeletedAt: "",
+      Duplicate: false,
     };
   }
 
