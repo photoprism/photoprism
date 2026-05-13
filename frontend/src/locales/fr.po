@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-12 01:03+0000\n"
+"PO-Revision-Date: 2026-05-13 21:46+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -265,6 +265,7 @@ msgid "Added"
 msgstr "Ajouté"
 
 #: src/component/meta/camera/dialog.vue:18
+#, fuzzy
 msgid "Adjust Camera Info"
 msgstr "Ajuster les infos de l'appareil photo"
 
@@ -824,7 +825,7 @@ msgstr "Nettoyage"
 #: src/component/meta/location/input.vue:49
 #: src/component/meta/location/input.vue:67
 msgid "Clear"
-msgstr ""
+msgstr "Clair"
 
 #: src/locales.js:270
 msgid "Clear {0}"

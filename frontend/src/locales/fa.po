@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-11 09:31+0000\n"
+"PO-Revision-Date: 2026-05-13 21:46+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 5.17\n"
+"X-Generator: Weblate 5.17.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -824,7 +824,7 @@ msgstr "پاک کردن"
 #: src/component/meta/location/input.vue:49
 #: src/component/meta/location/input.vue:67
 msgid "Clear"
-msgstr ""
+msgstr "شفاف"
 
 #: src/locales.js:270
 msgid "Clear {0}"
