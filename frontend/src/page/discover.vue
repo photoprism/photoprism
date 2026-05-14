@@ -17,6 +17,10 @@
         {{ $gettext(`Random`) }}
       </v-tab>
 
+      <v-tab id="tab-discover-memories" ripple @click="changePath('/discover/memories')">
+        {{ $gettext(`Memories`) }}
+      </v-tab>
+
       <v-tabs-window v-model="active">
         <v-tabs-window-item>
           <p-tab-discover-colors></p-tab-discover-colors>
@@ -33,6 +37,10 @@
         <v-tabs-window-item>
           <p-tab-discover-todo></p-tab-discover-todo>
         </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-discover-memories></p-tab-discover-memories>
+        </v-tabs-window-item>
       </v-tabs-window>
     </v-tabs>
   </div>
@@ -40,12 +48,14 @@
 
 <script>
 import tabColors from "page/discover/colors.vue";
+import tabMemories from "page/discover/memories.vue";
 import tabTodo from "page/discover/todo.vue";
 
 export default {
   name: "PPageDiscover",
   components: {
     "p-tab-discover-colors": tabColors,
+    "p-tab-discover-memories": tabMemories,
     "p-tab-discover-todo": tabTodo,
   },
   props: {

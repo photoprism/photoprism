@@ -605,6 +605,13 @@ export default [
     props: { tab: 3 },
   },
   {
+    name: "discover_memories",
+    path: "/discover/memories",
+    component: Discover,
+    meta: { title: $gettext("Discover"), requiresAuth: true, background: "background" },
+    props: { tab: 4 },
+  },
+  {
     path: "/:pathMatch(.*)*",
     redirect: "/albums",
   },
