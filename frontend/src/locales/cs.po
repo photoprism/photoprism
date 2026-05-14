@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-13 21:46+0000\n"
+"PO-Revision-Date: 2026-05-14 09:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
@@ -231,7 +231,7 @@ msgstr "Přidat odkaz"
 
 #: src/component/sidebar/info.vue:851
 msgid "Add Notes"
-msgstr ""
+msgstr "Přidat poznámky"
 
 #: src/component/photo/edit/people.vue:133
 #: src/component/photo/edit/people.vue:97 src/component/sidebar/info.vue:475
@@ -3009,7 +3009,7 @@ msgstr "Odstranit"
 
 #: src/component/photo/face-marker-overlay.vue:78
 msgid "Remove Face"
-msgstr ""
+msgstr "Odstranění obličeje"
 
 #: src/component/photo/clipboard.vue:359
 msgid "remove failed: unknown album"
@@ -3766,7 +3766,7 @@ msgstr "Nelze odstranit"
 
 #: src/component/sidebar/info.vue:272
 msgid "Unassign"
-msgstr ""
+msgstr "Zrušení přiřazení"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"

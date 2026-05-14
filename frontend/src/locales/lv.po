@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-05-13 21:46+0000\n"
+"PO-Revision-Date: 2026-05-14 09:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
@@ -227,7 +227,7 @@ msgstr "Pievienot saiti"
 
 #: src/component/sidebar/info.vue:851
 msgid "Add Notes"
-msgstr ""
+msgstr "Pievienot piezīmes"
 
 #: src/component/photo/edit/people.vue:133
 #: src/component/photo/edit/people.vue:97 src/component/sidebar/info.vue:475
@@ -3005,7 +3005,7 @@ msgstr "Noņemt"
 
 #: src/component/photo/face-marker-overlay.vue:78
 msgid "Remove Face"
-msgstr ""
+msgstr "Noņemt seju"
 
 #: src/component/photo/clipboard.vue:359
 msgid "remove failed: unknown album"
@@ -3762,7 +3762,7 @@ msgstr "Nevar izdzēst"
 
 #: src/component/sidebar/info.vue:272
 msgid "Unassign"
-msgstr ""
+msgstr "Atcelt"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"

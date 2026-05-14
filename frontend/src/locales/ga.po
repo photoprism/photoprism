@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-05-13 21:46+0000\n"
+"PO-Revision-Date: 2026-05-14 09:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -228,7 +228,7 @@ msgstr "Cuir Nasc leis"
 
 #: src/component/sidebar/info.vue:851
 msgid "Add Notes"
-msgstr ""
+msgstr "Cuir Nótaí Leis"
 
 #: src/component/photo/edit/people.vue:133
 #: src/component/photo/edit/people.vue:97 src/component/sidebar/info.vue:475
@@ -3006,7 +3006,7 @@ msgstr "Bain"
 
 #: src/component/photo/face-marker-overlay.vue:78
 msgid "Remove Face"
-msgstr ""
+msgstr "Bain an aghaidh"
 
 #: src/component/photo/clipboard.vue:359
 msgid "remove failed: unknown album"
@@ -3763,7 +3763,7 @@ msgstr "Ní féidir scriosadh"
 
 #: src/component/sidebar/info.vue:272
 msgid "Unassign"
-msgstr ""
+msgstr "Neamhshann"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"

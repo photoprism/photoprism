@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-13 21:46+0000\n"
+"PO-Revision-Date: 2026-05-14 09:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -231,7 +231,7 @@ msgstr "लिंक जोड़ें"
 
 #: src/component/sidebar/info.vue:851
 msgid "Add Notes"
-msgstr ""
+msgstr "नोट्स जोड़ें"
 
 #: src/component/photo/edit/people.vue:133
 #: src/component/photo/edit/people.vue:97 src/component/sidebar/info.vue:475
@@ -3009,7 +3009,7 @@ msgstr "हटाना"
 
 #: src/component/photo/face-marker-overlay.vue:78
 msgid "Remove Face"
-msgstr ""
+msgstr "चेहरा हटाएँ"
 
 #: src/component/photo/clipboard.vue:359
 msgid "remove failed: unknown album"
@@ -3766,7 +3766,7 @@ msgstr "हटाने में असमर्थ"
 
 #: src/component/sidebar/info.vue:272
 msgid "Unassign"
-msgstr ""
+msgstr "असाइन न करें"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"
