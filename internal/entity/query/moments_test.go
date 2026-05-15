@@ -67,6 +67,40 @@ func TestMomentsTime(t *testing.T) {
 	})
 }
 
+func TestMomentsMemories(t *testing.T) {
+	t.Run("PublicOnly", func(t *testing.T) {
+		results, err := MomentsMemories(1, true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("MomentsMemories %+v", results)
+
+		for _, mom := range results {
+			t.Logf("Title: %s, Slug: %s, Month: %d, Day: %d, Years: %d", mom.Title(), mom.Slug(), mom.Month, mom.Day, mom.YearCount)
+
+			assert.GreaterOrEqual(t, mom.Month, 1)
+			assert.LessOrEqual(t, mom.Month, 12)
+			assert.GreaterOrEqual(t, mom.Day, 1)
+			assert.LessOrEqual(t, mom.Day, 31)
+			assert.GreaterOrEqual(t, mom.YearCount, 2)
+			assert.GreaterOrEqual(t, mom.PhotoCount, 1)
+			assert.NotEmpty(t, mom.Title())
+			assert.NotEmpty(t, mom.Slug())
+		}
+	})
+	t.Run("IncludePrivate", func(t *testing.T) {
+		results, err := MomentsMemories(1, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("MomentsMemories (private) %+v", results)
+	})
+}
+
 func TestMomentsCountries(t *testing.T) {
 	t.Run("PublicOnly", func(t *testing.T) {
 		results, err := MomentsCountries(1, true)

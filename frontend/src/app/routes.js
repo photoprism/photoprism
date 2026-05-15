@@ -218,6 +218,19 @@ export default [
     meta: { collectionTitle: "Calendar", collectionRoute: "calendar", requiresAuth: true },
   },
   {
+    name: "memories",
+    path: "/memories",
+    component: Albums,
+    meta: { title: $gettext("Memories"), requiresAuth: true },
+    props: { view: "memory", defaultOrder: "newest", staticFilter: { type: "memory" } },
+  },
+  {
+    name: "memory",
+    path: "/memories/:album/:slug",
+    component: AlbumPhotos,
+    meta: { collectionTitle: $gettext("Memories"), collectionRoute: "memories", requiresAuth: true },
+  },
+  {
     name: "folders",
     path: "/folders",
     component: Albums,

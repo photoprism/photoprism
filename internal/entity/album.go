@@ -28,6 +28,7 @@ const (
 	AlbumMoment = "moment"
 	AlbumMonth  = "month"
 	AlbumState  = "state"
+	AlbumMemory = "memory"
 )
 
 var (
@@ -36,6 +37,7 @@ var (
 	DefaultOrderMoment = sortby.Oldest
 	DefaultOrderState  = sortby.Newest
 	DefaultOrderMonth  = sortby.Oldest
+	DefaultOrderMemory = sortby.Oldest
 )
 
 var (
@@ -350,6 +352,54 @@ func FindMonthAlbum(year, month int) *Album {
 	}
 
 	if UnscopedDb().First(&m, "album_year = ? AND album_month = ? AND album_type = ?", year, month, AlbumMonth).Error != nil {
+		return nil
+	}
+
+	return &m
+}
+
+// NewMemoryAlbum creates an automatically generated "on this day" album for a given month and day.
+func NewMemoryAlbum(albumTitle, albumSlug string, month, day int) *Album {
+	albumTitle = strings.TrimSpace(albumTitle)
+	albumSlug = strings.TrimSpace(albumSlug)
+
+	if albumTitle == "" || albumSlug == "" || month < 1 || month > 12 || day < 1 || day > 31 {
+		return nil
+	}
+
+	f := form.SearchPhotos{
+		Month:  strconv.Itoa(month),
+		Day:    strconv.Itoa(day),
+		Public: true,
+	}
+
+	now := Now()
+
+	result := &Album{
+		AlbumOrder:  DefaultOrderMemory,
+		AlbumType:   AlbumMemory,
+		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
+		AlbumFilter: f.Serialize(),
+		AlbumMonth:  month,
+		AlbumDay:    day,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+
+	result.SetTitle(albumTitle)
+
+	return result
+}
+
+// FindMemoryAlbum returns the memory album for the given month and day, or nil if none exists.
+func FindMemoryAlbum(month, day int) *Album {
+	m := Album{}
+
+	if month < 1 || month > 12 || day < 1 || day > 31 {
+		return nil
+	}
+
+	if UnscopedDb().First(&m, "album_month = ? AND album_day = ? AND album_type = ?", month, day, AlbumMemory).Error != nil {
 		return nil
 	}
 

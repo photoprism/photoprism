@@ -253,6 +253,29 @@ func (w *Moments) Start() (err error) {
 		}
 	}
 
+	// Create memory albums for days that have photos from at least two different years.
+	if results, queryErr := query.MomentsMemories(1, w.conf.Settings().Features.Private); queryErr != nil {
+		log.Errorf("moments: %s", queryErr.Error())
+	} else {
+		for _, mom := range results {
+			if a := entity.FindMemoryAlbum(mom.Month, mom.Day); a != nil {
+				if !a.Deleted() {
+					log.Tracef("moments: memory %s already exists (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
+				} else if restoreErr := a.Restore(); restoreErr != nil {
+					log.Errorf("moments: %s (restore memory)", restoreErr.Error())
+				} else {
+					log.Infof("moments: %s restored", clean.Log(a.AlbumTitle))
+				}
+			} else if a := entity.NewMemoryAlbum(mom.Title(), mom.Slug(), mom.Month, mom.Day); a != nil {
+				if err := a.Create(); err != nil {
+					log.Errorf("moments: %s (create memory)", err)
+				} else {
+					log.Infof("moments: added memory %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
+				}
+			}
+		}
+	}
+
 	// UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
 	if queryErr := query.UpdateFolderDates(); queryErr != nil {
 		log.Errorf("moments: %s (update folder dates)", queryErr.Error())

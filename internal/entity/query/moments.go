@@ -305,6 +305,51 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 	return results, nil
 }
 
+// MemoryMoment represents a day-of-year (month + day) that has photos spanning at least two calendar years.
+type MemoryMoment struct {
+	Month      int `json:"Month"`
+	Day        int `json:"Day"`
+	YearCount  int `json:"YearCount"`
+	PhotoCount int `json:"PhotoCount"`
+}
+
+// Title returns a human-readable title for the memory album, e.g. "January 15".
+func (m MemoryMoment) Title() string {
+	t := time.Date(2000, time.Month(m.Month), m.Day, 0, 0, 0, 0, time.UTC)
+	return t.Format("January 2")
+}
+
+// Slug returns a URL-friendly identifier for the memory album, e.g. "january-15".
+func (m MemoryMoment) Slug() string {
+	return txt.Slug(m.Title())
+}
+
+// MomentsMemories returns day-of-year groups (month + day) that have photos from at least two distinct years.
+func MomentsMemories(threshold int, public bool) (results []MemoryMoment, err error) {
+	stmt := UnscopedDb().Table("photos").
+		Select("photo_month AS month, photo_day AS day, COUNT(DISTINCT photo_year) AS year_count, COUNT(*) AS photo_count").
+		Where("photo_quality >= 3 AND deleted_at IS NULL AND photo_year > 0 AND photo_month > 0 AND photo_day > 0")
+
+	if public {
+		stmt = stmt.Where("photo_private = 0")
+	}
+
+	minYears := 2
+	if threshold > minYears {
+		minYears = threshold
+	}
+
+	stmt = stmt.Group("photo_month, photo_day").
+		Order("photo_month, photo_day").
+		Having("year_count >= ?", minYears)
+
+	if err = stmt.Scan(&results).Error; err != nil {
+		return results, err
+	}
+
+	return results, nil
+}
+
 // RemoveDuplicateMoments deletes generated albums with duplicate slug or filter.
 func RemoveDuplicateMoments() (removed int, err error) {
 	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid 
