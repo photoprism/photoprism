@@ -145,6 +145,17 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, time.Date(2018, 01, 15, 0, 0, 0, 0, time.UTC), form.After)
 		assert.Equal(t, 33.45343166666667, form.Lng)
 	})
+	t.Run("Rating", func(t *testing.T) {
+		form := &SearchPhotos{Query: "rating:4-5"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "4-5", form.Rating)
+	})
 	t.Run("ValidQueryWithFilter", func(t *testing.T) {
 		form := &SearchPhotos{Query: "label:cat title:\"fooBar baz\"", Filter: "label:dog"}
 
@@ -892,6 +903,11 @@ func TestSearchPhotos_FindUidOnly(t *testing.T) {
 	})
 	t.Run("False", func(t *testing.T) {
 		f := &SearchPhotos{Query: "label:cat", UID: "priqwb43p5dh7777"}
+
+		assert.False(t, f.FindUidOnly())
+	})
+	t.Run("Rating", func(t *testing.T) {
+		f := &SearchPhotos{Rating: "4", UID: "priqwb43p5dh7777"}
 
 		assert.False(t, f.FindUidOnly())
 	})

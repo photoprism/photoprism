@@ -51,6 +51,7 @@ type SearchPhotos struct {
 	Error       bool      `form:"error" notes:"Finds content with errors"`
 	Hidden      bool      `form:"hidden" notes:"Finds hidden content (broken or unsupported)"`
 	Favorite    string    `form:"favorite" example:"favorite:true favorite:false" notes:"Finds favorite content"`
+	Rating      string    `form:"rating" example:"rating:3 rating:4-5" notes:"Finds content with a star rating from 0 to 5"`
 	Unsorted    bool      `form:"unsorted" notes:"Finds content that is not in an album"`
 	Near        string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
 	S2          string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"Position, specified as S2 Cell ID"`
@@ -180,7 +181,7 @@ func (f *SearchPhotos) SerializeAll() string {
 
 // FindUidOnly checks if search filters other than UID may be skipped to improve performance.
 func (f *SearchPhotos) FindUidOnly() bool {
-	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
+	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == "" && f.Rating == ""
 }
 
 // NewSearchPhotos creates a SearchPhotos form with the provided query.

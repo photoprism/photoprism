@@ -76,6 +76,31 @@ func TestXMP(t *testing.T) {
 
 		assert.Equal(t, true, data.Favorite)
 	})
+	t.Run("Rating", func(t *testing.T) {
+		testCases := []struct {
+			name   string
+			file   string
+			rating int
+		}{
+			{name: "Rating", file: "testdata/rating.xmp", rating: 4},
+			{name: "RatingZero", file: "testdata/rating-zero.xmp", rating: 0},
+			{name: "UserRating", file: "testdata/user-rating.xmp", rating: 5},
+			{name: "RatingPercent", file: "testdata/rating-percent.xmp", rating: 3},
+		}
+
+		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				data, err := XMP(tc.file)
+
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				assert.True(t, data.RatingSet)
+				assert.Equal(t, tc.rating, data.Rating)
+			})
+		}
+	})
 	t.Run("DateHeic", func(t *testing.T) {
 		data, err := XMP("testdata/date.heic.xmp")
 

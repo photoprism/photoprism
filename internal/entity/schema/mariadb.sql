@@ -638,6 +638,8 @@ CREATE TABLE `photos` (
   `original_name` varbinary(755) DEFAULT NULL,
   `photo_stack` tinyint(4) DEFAULT NULL,
   `photo_favorite` tinyint(1) DEFAULT NULL,
+  `photo_rating` smallint(6) DEFAULT -1,
+  `rating_src` varbinary(8) DEFAULT NULL,
   `photo_private` tinyint(1) DEFAULT NULL,
   `photo_scan` tinyint(1) DEFAULT NULL,
   `photo_panorama` tinyint(1) DEFAULT NULL,

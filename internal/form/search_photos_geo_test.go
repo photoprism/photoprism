@@ -116,6 +116,17 @@ func TestSearchPhotosGeo(t *testing.T) {
 		assert.Equal(t, 25000.0, form.Dist)
 		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
+	t.Run("Rating", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "rating:4-5"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "4-5", form.Rating)
+	})
 	t.Run("ValidQueryPathEmptyFolderNotEmpty", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "q:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667 folder:test"}
 
@@ -343,6 +354,11 @@ func TestSearchPhotosGeo_FindUidOnly(t *testing.T) {
 	})
 	t.Run("False", func(t *testing.T) {
 		f := &SearchPhotosGeo{Query: "label:cat", UID: "priqwb43p5dh7777"}
+
+		assert.False(t, f.FindUidOnly())
+	})
+	t.Run("Rating", func(t *testing.T) {
+		f := &SearchPhotosGeo{Rating: "4", UID: "priqwb43p5dh7777"}
 
 		assert.False(t, f.FindUidOnly())
 	})

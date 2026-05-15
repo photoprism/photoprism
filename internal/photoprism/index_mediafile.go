@@ -495,6 +495,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.Favorite {
 				_ = photo.SetFavorite(data.Favorite)
 			}
+
+			applyPhotoRating(&photo, data, entity.SrcXmp)
 		} else {
 			log.Warn(dataErr.Error())
 			file.FileError = clip.Chars(dataErr.Error(), txt.ClipError)
@@ -516,6 +518,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetCopyright(data.Copyright, entity.SrcMeta)
 			details.SetLicense(data.License, entity.SrcMeta)
 			details.SetSoftware(data.Software, entity.SrcMeta)
+
+			applyPhotoRating(&photo, data, entity.SrcMeta)
 
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
@@ -613,6 +617,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetLicense(data.License, entity.SrcMeta)
 			details.SetSoftware(data.Software, entity.SrcMeta)
 
+			applyPhotoRating(&photo, data, entity.SrcMeta)
+
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
@@ -667,6 +673,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetLicense(data.License, entity.SrcMeta)
 			details.SetSoftware(data.Software, entity.SrcMeta)
 
+			applyPhotoRating(&photo, data, entity.SrcMeta)
+
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
@@ -720,6 +728,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetCopyright(data.Copyright, entity.SrcMeta)
 			details.SetLicense(data.License, entity.SrcMeta)
 			details.SetSoftware(data.Software, entity.SrcMeta)
+
+			applyPhotoRating(&photo, data, entity.SrcMeta)
 
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
@@ -855,6 +865,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetCopyright(data.Copyright, entity.SrcMeta)
 			details.SetLicense(data.License, entity.SrcMeta)
 			details.SetSoftware(data.Software, entity.SrcMeta)
+
+			applyPhotoRating(&photo, data, entity.SrcMeta)
 
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
@@ -1098,4 +1110,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	return result
+}
+
+// applyPhotoRating applies imported star ratings while preserving source priority.
+func applyPhotoRating(photo *entity.Photo, data meta.Data, source entity.Src) {
+	if photo == nil || !data.RatingSet {
+		return
+	}
+
+	photo.SetRating(data.Rating, source)
 }

@@ -28,6 +28,7 @@ type SearchPhotosGeo struct {
 	Before      time.Time `form:"before" time_format:"2006-01-02" notes:"Finds content created before this date"`
 	After       time.Time `form:"after" time_format:"2006-01-02" notes:"Finds content created on or after this date"`
 	Favorite    string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
+	Rating      string    `form:"rating" example:"rating:3 rating:4-5" notes:"Finds content with a star rating from 0 to 5"`
 	Unsorted    bool      `form:"unsorted" notes:"Finds content that is not in an album"`
 	Photo       bool      `form:"photo" notes:"Finds regular photos and images, as well as RAW and Live Photos"`
 	Image       bool      `form:"image" notes:"Finds regular photos and images only"`
@@ -163,7 +164,7 @@ func (f *SearchPhotosGeo) SerializeAll() string {
 
 // FindUidOnly checks if search filters other than UID may be skipped to improve performance.
 func (f *SearchPhotosGeo) FindUidOnly() bool {
-	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == ""
+	return f.UID != "" && f.Query == "" && f.Scope == "" && f.Filter == "" && f.Album == "" && f.Albums == "" && f.Rating == ""
 }
 
 // NewSearchPhotosGeo creates a SearchPhotosGeo form with the provided query.

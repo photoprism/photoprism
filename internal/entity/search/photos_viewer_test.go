@@ -30,6 +30,8 @@ func TestPhoto_ViewerResult(t *testing.T) {
 		TakenAtLocal:  taken,
 		TimeZone:      "UTC",
 		PhotoFavorite: true,
+		PhotoRating:   4,
+		RatingSrc:     entity.SrcMeta,
 		PhotoDuration: 5 * time.Second,
 		FileHash:      imgHash,
 		FileWidth:     800,
@@ -58,6 +60,8 @@ func TestPhoto_ViewerResult(t *testing.T) {
 	assert.Equal(t, taken, result.TakenAtLocal)
 	assert.Equal(t, "UTC", result.TimeZone)
 	assert.True(t, result.Favorite)
+	assert.Equal(t, 4, result.Rating)
+	assert.Equal(t, entity.SrcMeta, result.RatingSrc)
 	assert.True(t, result.Playable)
 	assert.Equal(t, 5*time.Second, result.Duration)
 	assert.Equal(t, videoHash, result.Hash)
@@ -114,6 +118,8 @@ func TestGeoResult_ViewerResult(t *testing.T) {
 		TakenAtLocal:  taken,
 		TimeZone:      "Europe/Berlin",
 		PhotoFavorite: false,
+		PhotoRating:   3,
+		RatingSrc:     entity.SrcXmp,
 		PhotoDuration: 0,
 		FileHash:      "img-hash",
 		FileCodec:     "jpeg",
@@ -133,6 +139,8 @@ func TestGeoResult_ViewerResult(t *testing.T) {
 	assert.Equal(t, taken, result.TakenAtLocal)
 	assert.Equal(t, "Europe/Berlin", result.TimeZone)
 	assert.False(t, result.Favorite)
+	assert.Equal(t, 3, result.Rating)
+	assert.Equal(t, entity.SrcXmp, result.RatingSrc)
 	assert.False(t, result.Playable)
 	assert.Equal(t, "img-hash", result.Hash)
 	assert.Equal(t, "jpeg", result.Codec)

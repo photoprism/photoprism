@@ -1,0 +1,2 @@
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS photo_rating SMALLINT DEFAULT -1 AFTER photo_favorite;
+ALTER TABLE photos ADD COLUMN IF NOT EXISTS rating_src VARBINARY(8) AFTER photo_rating;

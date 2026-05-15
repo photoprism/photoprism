@@ -1,0 +1,2 @@
+ALTER TABLE photos ADD COLUMN photo_rating SMALLINT DEFAULT -1;
+ALTER TABLE photos ADD COLUMN rating_src VARBINARY(8);

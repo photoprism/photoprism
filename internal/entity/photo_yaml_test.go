@@ -22,6 +22,19 @@ func TestPhoto_Yaml(t *testing.T) {
 
 		t.Logf("YAML: %s", result)
 	})
+	t.Run("RatingZero", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		m.PhotoRating = 0
+		m.RatingSrc = SrcMeta
+
+		result, err := m.Yaml()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Contains(t, string(result), "Rating: 0")
+	})
 }
 
 func TestPhoto_SaveAsYaml(t *testing.T) {

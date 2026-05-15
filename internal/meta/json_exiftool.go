@@ -179,6 +179,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		}
 	}
 
+	// Normalize explicit star ratings after generic tag parsing so that
+	// "0" remains distinguishable from a missing rating.
+	data.SetExiftoolRating()
+
 	// Nanoseconds.
 	if data.TakenNs <= 0 {
 		for _, name := range exifSubSecTags {

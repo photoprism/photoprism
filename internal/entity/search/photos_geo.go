@@ -478,6 +478,11 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
+	// Filter by star rating.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(frm.Rating, 0, 5); rangeErr == nil {
+		s = s.Where("photos.photo_rating BETWEEN ? AND ?", rangeStart, rangeEnd)
+	}
+
 	// Filter by scan flag.
 	if txt.No(frm.Scan) {
 		s = s.Where("photos.photo_scan = 0")

@@ -75,6 +75,10 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.AddKeywords(doc.Keywords())
 	}
 
+	if rating, ok := doc.Rating(); ok {
+		data.SetRating(rating)
+	}
+
 	data.Favorite = doc.Favorite()
 
 	return nil

@@ -62,6 +62,8 @@ type Photo struct {
 	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoStack       int8          `json:"Stack" yaml:"Stack,omitempty"`
 	PhotoFavorite    bool          `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoRating      int8          `gorm:"type:SMALLINT;default:-1;" json:"Rating" yaml:"Rating"`
+	RatingSrc        string        `gorm:"type:VARBINARY(8);" json:"RatingSrc" yaml:"RatingSrc,omitempty"`
 	PhotoPrivate     bool          `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool          `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool          `json:"Panorama" yaml:"Panorama,omitempty"`
@@ -126,6 +128,7 @@ func NewUserPhoto(stackable bool, userUid string) Photo {
 		PhotoTitle:   UnknownTitle,
 		PhotoType:    MediaImage,
 		PhotoCountry: UnknownCountry.ID,
+		PhotoRating:  -1,
 		CameraID:     UnknownCamera.ID,
 		LensID:       UnknownLens.ID,
 		CellID:       UnknownLocation.ID,
@@ -533,6 +536,14 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
+	if m.PhotoRating == 0 && m.RatingSrc == "" {
+		m.PhotoRating = PhotoRatingUnknown
+
+		if err := scope.SetColumn("PhotoRating", m.PhotoRating); err != nil {
+			return err
+		}
+	}
+
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := Now()
 
@@ -818,6 +829,19 @@ func (m *Photo) NormalizeValues() (normalized bool) {
 
 	if timeZone := tz.Name(m.TimeZone); timeZone != m.TimeZone {
 		m.TimeZone = timeZone
+		normalized = true
+	}
+
+	if m.PhotoRating < -1 {
+		m.PhotoRating = -1
+		normalized = true
+	} else if m.PhotoRating > 5 {
+		m.PhotoRating = 5
+		normalized = true
+	}
+
+	if m.PhotoRating < 0 && m.RatingSrc != "" {
+		m.RatingSrc = ""
 		normalized = true
 	}
 
