@@ -17,6 +17,10 @@ func TestXMP(t *testing.T) {
 
 		assert.Equal(t, "Botanischer Garten", data.Title)
 		assert.Equal(t, time.Date(2021, 3, 24, 13, 07, 29, 0, time.FixedZone("", +3600)).UTC(), data.TakenAt.UTC())
+		// GPS resolves to Europe/Berlin; March 24 2021 is still CET (DST starts March 28),
+		// so wall-clock 13:07:29 +01:00 = 12:07:29 UTC.
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "2021-03-24 13:07:29", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
 		assert.Equal(t, "Tulpen am See", data.Caption)
 		assert.Equal(t, Keywords{"blume", "krokus", "schöne", "wiese"}, data.Keywords)
 		// Apple GPS — pure-decimal value with separate *Ref.
@@ -31,7 +35,14 @@ func TestXMP(t *testing.T) {
 		}
 
 		assert.Equal(t, "Night Shift / Berlin / 2020", data.Title)
-		assert.Equal(t, time.Date(2020, 1, 1, 17, 28, 25, 729626112, time.UTC), data.TakenAt)
+		// GPS resolves to Europe/Berlin. Wall-clock from photoshop:DateCreated is
+		// "2020-01-01T17:28:25.729626112" — the resolver re-parses it in Berlin
+		// (CET / +01:00) and re-joins the sub-second fraction from
+		// exif:SubSecTimeOriginal (899614 → 899614000ns), matching the EXIF flow
+		// where SubSecTimeOriginal is authoritative for the nanosecond component.
+		assert.Equal(t, time.Date(2020, 1, 1, 16, 28, 25, 899614000, time.UTC), data.TakenAt)
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "2020-01-01 17:28:25", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
 		assert.Equal(t, "Michael Mayer", data.Artist)
 		assert.Equal(t, "Example file for development", data.Caption)
 		assert.Equal(t, "This is an (edited) legal notice", data.Copyright)
@@ -92,12 +103,61 @@ func TestXMP(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		// photoshop:DateCreated = "2022-09-03T17:48:26-07:00" → 00:48:26 UTC the
+		// next day. GPS resolves to America/Los_Angeles, so TakenAtLocal carries
+		// the Seattle-area wall-clock (17:48:26 on Sept 3).
 		assert.Equal(t, time.Date(2022, 9, 4, 0, 48, 26, 0, time.UTC), data.TakenAt.UTC())
-		assert.True(t, data.TakenAtLocal.IsZero())
-		assert.Equal(t, "UTC", data.TimeZone)
+		assert.Equal(t, "America/Los_Angeles", data.TimeZone)
+		assert.Equal(t, "2022-09-03 17:48:26", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
 		// Apple HEIC: pure-decimal GPS with W cardinal → negative Lng.
 		assert.InDelta(t, 47.675403, data.Lat, 1e-4)
 		assert.InDelta(t, -122.317392, data.Lng, 1e-4)
 		assert.InDelta(t, 63.63, data.Altitude, 0.01)
+	})
+	t.Run("SyntheticTimeOffsetsSubsec", func(t *testing.T) {
+		// No GPS — resolver derives the time zone from exif:OffsetTimeOriginal
+		// ("+02:00") and applies exif:SubSecTimeOriginal (123456 → 123456000ns).
+		data, err := XMP("testdata/xmp/synthetic/time-offsets-subsec.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "+02:00", data.TimeOffset)
+		assert.Equal(t, "UTC+2", data.TimeZone)
+		// photoshop:DateCreated already carries an inline .123456 fraction; the
+		// resolver preserves it because TakenAt.Nanosecond() != 0 short-circuits
+		// the TakenNs re-application.
+		assert.Equal(t, 123456000, data.TakenAt.Nanosecond())
+		assert.Equal(t, "2026-05-06 15:42:18", data.TakenAt.Format("2006-01-02 15:04:05"))
+	})
+	t.Run("SyntheticGpsTimeCombined", func(t *testing.T) {
+		// GPS coordinates + combined GPS timestamp ("2026-05-06T15:42:18Z"), no
+		// other capture timestamp. Resolver falls back to GPS UTC time first,
+		// then promotes the IANA zone from coordinates.
+		data, err := XMP("testdata/xmp/synthetic/gps-time-combined.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, time.Date(2026, 5, 6, 15, 42, 18, 0, time.UTC), data.TakenAt.UTC())
+		// May 6 is CEST in Berlin (+02:00); 15:42:18 UTC → 17:42:18 wall-clock.
+		assert.Equal(t, "2026-05-06 17:42:18", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
+	})
+	t.Run("SyntheticGpsTimeSplit", func(t *testing.T) {
+		// Same payload as Combined but expressed as split GPSDateStamp/GPSTimeStamp.
+		// Doc reader must reassemble them and the resolver must produce identical
+		// entity state to the combined case.
+		data, err := XMP("testdata/xmp/synthetic/gps-time-split.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, time.Date(2026, 5, 6, 15, 42, 18, 0, time.UTC), data.TakenAt.UTC())
+		assert.Equal(t, "2026-05-06 17:42:18", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
 	})
 }

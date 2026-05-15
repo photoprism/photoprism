@@ -237,4 +237,121 @@ func TestIndexRelated(t *testing.T) {
 		// Camera serial from XMP wiring.
 		assert.Equal(t, "BODY-XMP-9001", photo.CameraSerial)
 	})
+	t.Run("XmpSidecarTimezoneFromGps", func(t *testing.T) {
+		// Apple sidecar timestamp "2021-03-24T13:07:29+01:00" with Berlin GPS
+		// (52.525, 13.369) must reach the entity as Europe/Berlin time zone
+		// with the wall-clock preserved on TakenAtLocal — proves the shared
+		// ResolveTimeZone helper runs on the IsXMP indexer branch.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-tz-gps")
+
+		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testRelated, err := baseFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+
+		for _, f := range testRelated.Files {
+			dest := filepath.Join(testPath, f.BaseName())
+			if copyErr := f.Copy(dest, false); copyErr != nil {
+				t.Fatalf("copying test file failed: %s", copyErr)
+			}
+		}
+
+		mainFile, err := NewMediaFile(filepath.Join(testPath, "apple-test-2.jpg"))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+		assert.True(t, result.Success())
+
+		photo, err := query.PhotoByUID(result.PhotoUID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Europe/Berlin", photo.TimeZone)
+		assert.Equal(t, "2021-03-24 12:07:29 +0000 UTC", photo.TakenAt.String())
+		assert.Equal(t, "2021-03-24 13:07:29", photo.TakenAtLocal.Format("2006-01-02 15:04:05"))
+		assert.Equal(t, entity.SrcXmp, photo.TakenSrc)
+	})
+	t.Run("XmpSidecarNoGpsNoOffset", func(t *testing.T) {
+		// Sidecar without GPS coordinates and without OffsetTime* — the
+		// resolver leaves data.TimeZone empty, and the entity layer's
+		// SetTakenAt maps the empty value to "Local" (its default for a
+		// timestamp with no derivable zone). The wall-clock is preserved
+		// verbatim on TakenAtLocal.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-tz-utc")
+
+		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-tz-utc"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		xmpContent := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">
+   <photoshop:DateCreated>2024-06-15T12:00:00</photoshop:DateCreated>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(xmpContent), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+		assert.True(t, result.Success())
+
+		photo, err := query.PhotoByUID(result.PhotoUID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Local", photo.TimeZone)
+		assert.Equal(t, "2024-06-15 12:00:00 +0000 UTC", photo.TakenAt.String())
+		assert.Equal(t, "2024-06-15 12:00:00", photo.TakenAtLocal.Format("2006-01-02 15:04:05"))
+	})
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
 // XMP parses an XMP file and returns a Data struct.
@@ -125,10 +124,12 @@ func (data *Data) XMP(fileName string) (err error) {
 	}
 
 	if v := doc.TakenAt(data.TimeZone); !v.IsZero() {
-		data.TakenAt = v.UTC()
-		if data.TimeZone == "" {
-			data.TimeZone = tz.UTC
-		}
+		// Keep the wall-clock value (carrying any FixedZone parsed from the
+		// XMP timestamp) on both fields so the shared resolver can normalize
+		// UTC and local time consistently — mirrors how the EXIF reflection
+		// loop fills TakenAt and TakenAtLocal from the same source tag.
+		data.TakenAt = v
+		data.TakenAtLocal = v
 	}
 	if v := doc.TakenNs(); v > 0 {
 		data.TakenNs = v
@@ -145,6 +146,11 @@ func (data *Data) XMP(fileName string) (err error) {
 	}
 
 	data.Favorite = doc.Favorite()
+
+	// Normalize capture time, local time, and time zone using the shared
+	// resolver so the XMP sidecar path produces the same entity state the
+	// ExifTool JSON path would for identical metadata.
+	data.ResolveTimeZone(clean.Log(filepath.Base(fileName)))
 
 	return nil
 }
