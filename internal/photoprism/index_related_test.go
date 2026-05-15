@@ -354,4 +354,139 @@ func TestIndexRelated(t *testing.T) {
 		assert.Equal(t, "2024-06-15 12:00:00 +0000 UTC", photo.TakenAt.String())
 		assert.Equal(t, "2024-06-15 12:00:00", photo.TakenAtLocal.Format("2006-01-02 15:04:05"))
 	})
+	t.Run("XmpSidecarGpsOverridesEmbedded", func(t *testing.T) {
+		// digikam.jpg carries embedded EXIF GPS in Berlin (52.46, 13.33).
+		// The synthesised XMP sidecar declares Tokyo coordinates so the
+		// override is unambiguous: photo.PhotoLat/PhotoLng must match the
+		// sidecar and photo.PlaceSrc must be tagged SrcXmp because
+		// SrcPriority[SrcXmp]=32 > SrcPriority[SrcMeta]=16.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-gps-override")
+
+		baseFile, err := NewMediaFile("testdata/digikam.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-gps-override"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		xmpContent := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/">
+   <exif:GPSLatitude>35.6586</exif:GPSLatitude>
+   <exif:GPSLatitudeRef>N</exif:GPSLatitudeRef>
+   <exif:GPSLongitude>139.7454</exif:GPSLongitude>
+   <exif:GPSLongitudeRef>E</exif:GPSLongitudeRef>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(xmpContent), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+		assert.True(t, result.Success())
+
+		photo, err := query.PhotoByUID(result.PhotoUID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// Sidecar GPS (Tokyo) overrides embedded EXIF GPS (Berlin).
+		assert.InDelta(t, 35.6586, photo.PhotoLat, 1e-3)
+		assert.InDelta(t, 139.7454, photo.PhotoLng, 1e-3)
+		assert.Equal(t, entity.SrcXmp, photo.PlaceSrc)
+	})
+	t.Run("XmpSidecarMalformedFileMarkedAndJpegIndexed", func(t *testing.T) {
+		// A malformed XMP sidecar must not block JPEG indexing. The IsXMP
+		// branch logs a warning, sets FileError on the XMP file row, and
+		// the indexer proceeds with the remaining related files.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-malformed")
+
+		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-malformed"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		// Truncated XML — opening tag never closed.
+		malformedXmp := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about="">
+   <broken>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(malformedXmp), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+
+		// JPEG indexing must succeed even though the sidecar is broken.
+		assert.True(t, result.Success())
+		photo, err := query.PhotoByUID(result.PhotoUID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// Locate the XMP file row and assert FileError is populated.
+		var xmpFile *entity.File
+		for _, f := range photo.AllFiles() {
+			if filepath.Ext(f.FileName) == ".xmp" {
+				file := f
+				xmpFile = &file
+				break
+			}
+		}
+		if assert.NotNil(t, xmpFile, "malformed XMP file row must exist") {
+			assert.NotEmpty(t, xmpFile.FileError, "FileError must record the parse failure")
+		}
+	})
 }
