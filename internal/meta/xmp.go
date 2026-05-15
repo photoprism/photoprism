@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 // XMP parses an XMP file and returns a Data struct.
@@ -146,6 +147,18 @@ func (data *Data) XMP(fileName string) (err error) {
 	}
 
 	data.Favorite = doc.Favorite()
+
+	// Auto-derive keywords from projection and caption text so XMP-only
+	// photos surface in the same searches as EXIF-indexed photos. Mirrors
+	// the EXIF and ExifTool JSON flows (exif.go:321-328,
+	// json_exiftool.go:282-289). AutoAddKeywords also sets data.ImageType
+	// to ImageTypeHDR when the caption mentions "hdr".
+	if projection.Equirectangular.Equal(data.Projection) {
+		data.AddKeywords(KeywordPanorama)
+	}
+	if data.Caption != "" {
+		data.AutoAddKeywords(data.Caption)
+	}
 
 	// Normalize capture time, local time, and time zone using the shared
 	// resolver so the XMP sidecar path produces the same entity state the

@@ -1,10 +1,14 @@
 package meta
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestXMP(t *testing.T) {
@@ -159,5 +163,44 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, time.Date(2026, 5, 6, 15, 42, 18, 0, time.UTC), data.TakenAt.UTC())
 		assert.Equal(t, "2026-05-06 17:42:18", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
+	})
+	t.Run("SyntheticPanoramaKeyword", func(t *testing.T) {
+		// GPano:ProjectionType=equirectangular must auto-add the "panorama"
+		// keyword for parity with the EXIF/ExifTool paths
+		// (exif.go:327, json_exiftool.go:282-284).
+		data, err := XMP("testdata/xmp/synthetic/gpano-360.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "equirectangular", data.Projection)
+		assert.Contains(t, data.Keywords.String(), "panorama")
+	})
+	t.Run("SyntheticAutoKeywordsFromCaption", func(t *testing.T) {
+		// dc:description containing "HDR" must trigger AutoAddKeywords —
+		// the "hdr" keyword is added and data.ImageType is set to
+		// ImageTypeHDR for parity with json_exiftool.go:287.
+		body := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
+   <dc:description><rdf:Alt><rdf:li xml:lang="x-default">HDR sunset</rdf:li></rdf:Alt></dc:description>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>`
+		tmp := filepath.Join(t.TempDir(), "caption-hdr.xmp")
+		if err := os.WriteFile(tmp, []byte(body), fs.ModeFile); err != nil {
+			t.Fatal(err)
+		}
+
+		data, err := XMP(tmp)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "HDR sunset", data.Caption)
+		assert.Contains(t, data.Keywords.String(), "hdr")
+		assert.Equal(t, ImageTypeHDR, data.ImageType)
 	})
 }
