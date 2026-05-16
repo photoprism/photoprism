@@ -17,6 +17,9 @@
                 <mwg-rs:Area stArea:x="0.25" stArea:y="0.25" stArea:w="0.1" stArea:h="0.1" stArea:unit="normalized"/>
               </rdf:Description>
             </rdf:li>
+            <rdf:li rdf:parseType="Resource" mwg-rs:Name="Neil Armstrong" mwg-rs:Type="Face">
+              <mwg-rs:Area stArea:x="0.3" stArea:y="0.4" stArea:w="0.2" stArea:h="0.3" stArea:unit="normalized"/>
+            </rdf:li>
           </rdf:Bag>
         </mwg-rs:RegionList>
       </mwg-rs:Regions>

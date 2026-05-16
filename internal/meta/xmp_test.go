@@ -94,7 +94,7 @@ func TestXMP(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if assert.Len(t, data.FaceRegions, 1) {
+		if assert.Len(t, data.FaceRegions, 2) {
 			region := data.FaceRegions[0]
 
 			assert.Equal(t, "Ryan Gosling", region.Name)
@@ -105,6 +105,15 @@ func TestXMP(t *testing.T) {
 			assert.InDelta(t, 0.485614, region.H, 0.000001)
 			assert.InDelta(t, 0.2802765, region.Left(), 0.000001)
 			assert.InDelta(t, 0.125, region.Top(), 0.000001)
+
+			direct := data.FaceRegions[1]
+
+			assert.Equal(t, "Neil Armstrong", direct.Name)
+			assert.Equal(t, "Face", direct.Type)
+			assert.InDelta(t, 0.3, direct.X, 0.000001)
+			assert.InDelta(t, 0.4, direct.Y, 0.000001)
+			assert.InDelta(t, 0.2, direct.W, 0.000001)
+			assert.InDelta(t, 0.3, direct.H, 0.000001)
 		}
 	})
 }

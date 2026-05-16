@@ -22,20 +22,25 @@ type xmpRegions struct {
 	RegionList struct {
 		Bag struct {
 			Li []struct {
+				Name        string        `xml:"http://www.metadataworkinggroup.com/schemas/regions/ Name,attr"`
+				Type        string        `xml:"http://www.metadataworkinggroup.com/schemas/regions/ Type,attr"`
+				DirectArea  xmpRegionArea `xml:"Area"`
 				Description struct {
-					Name string `xml:"http://www.metadataworkinggroup.com/schemas/regions/ Name,attr"`
-					Type string `xml:"http://www.metadataworkinggroup.com/schemas/regions/ Type,attr"`
-					Area struct {
-						X    string `xml:"http://ns.adobe.com/xmp/sType/Area# x,attr"`
-						Y    string `xml:"http://ns.adobe.com/xmp/sType/Area# y,attr"`
-						W    string `xml:"http://ns.adobe.com/xmp/sType/Area# w,attr"`
-						H    string `xml:"http://ns.adobe.com/xmp/sType/Area# h,attr"`
-						Unit string `xml:"http://ns.adobe.com/xmp/sType/Area# unit,attr"`
-					} `xml:"Area"`
+					Name string        `xml:"http://www.metadataworkinggroup.com/schemas/regions/ Name,attr"`
+					Type string        `xml:"http://www.metadataworkinggroup.com/schemas/regions/ Type,attr"`
+					Area xmpRegionArea `xml:"Area"`
 				} `xml:"Description"`
 			} `xml:"li"`
 		} `xml:"Bag"`
 	} `xml:"RegionList"`
+}
+
+type xmpRegionArea struct {
+	X    string `xml:"http://ns.adobe.com/xmp/sType/Area# x,attr"`
+	Y    string `xml:"http://ns.adobe.com/xmp/sType/Area# y,attr"`
+	W    string `xml:"http://ns.adobe.com/xmp/sType/Area# w,attr"`
+	H    string `xml:"http://ns.adobe.com/xmp/sType/Area# h,attr"`
+	Unit string `xml:"http://ns.adobe.com/xmp/sType/Area# unit,attr"`
 }
 
 func parseRegionFloat(s string) float32 {
@@ -63,15 +68,23 @@ func (r FaceRegion) Valid() bool {
 
 func (r xmpRegions) FaceRegions() (regions FaceRegions) {
 	for _, li := range r.RegionList.Bag.Li {
-		d := li.Description
+		name := li.Description.Name
+		regionType := li.Description.Type
+		area := li.Description.Area
+
+		if name == "" && regionType == "" {
+			name = li.Name
+			regionType = li.Type
+			area = li.DirectArea
+		}
 
 		region := FaceRegion{
-			Name: SanitizeString(d.Name),
-			Type: SanitizeString(d.Type),
-			X:    parseRegionFloat(d.Area.X),
-			Y:    parseRegionFloat(d.Area.Y),
-			W:    parseRegionFloat(d.Area.W),
-			H:    parseRegionFloat(d.Area.H),
+			Name: SanitizeString(name),
+			Type: SanitizeString(regionType),
+			X:    parseRegionFloat(area.X),
+			Y:    parseRegionFloat(area.Y),
+			W:    parseRegionFloat(area.W),
+			H:    parseRegionFloat(area.H),
 		}
 
 		if region.Valid() {
