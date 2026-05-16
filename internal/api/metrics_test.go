@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -114,6 +115,29 @@ func TestGetMetrics(t *testing.T) {
 			accountsFree := parseValue(`photoprism_usage_accounts_ratio{state="free"} (` + floatPattern + `)`)
 			assert.InEpsilon(t, 1.0, accountsUsed+accountsFree, 0.01)
 		})
+	})
+	t.Run("ExposeWorkerProgressMetrics", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		GetMetrics(router)
+
+		photoprism.StartWorkerProgress(photoprism.ActionImport)
+		photoprism.ObserveWorkerProgress(photoprism.ActionImport, 2048)
+		t.Cleanup(func() {
+			photoprism.FinishWorkerProgress(photoprism.ActionImport)
+		})
+
+		resp := PerformRequestWithStream(app, "GET", "/api/v1/metrics")
+
+		if resp.Code != http.StatusOK {
+			t.Fatal(resp.Body.String())
+		}
+
+		body := resp.Body.String()
+
+		assert.Contains(t, body, `photoprism_worker_running{worker="import"} 1`)
+		assert.Contains(t, body, `photoprism_worker_files_processed{worker="import"} 1`)
+		assert.Contains(t, body, `photoprism_worker_bytes_processed{worker="import"} 2048`)
 	})
 	t.Run("ExposeClusterMetricsForPortal", func(t *testing.T) {
 		app, router, conf := NewApiTest()

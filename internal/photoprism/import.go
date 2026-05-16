@@ -85,6 +85,9 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		defer mutex.IndexWorker.Stop()
 	}
 
+	StartWorkerProgress(opt.Action)
+	defer FinishWorkerProgress(opt.Action)
+
 	jobs := make(chan ImportJob)
 
 	// Start a fixed number of goroutines to import files.

@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -24,10 +25,12 @@ const (
 	metricsUsageSubsystem      = "usage"
 	metricsStatisticsSubsystem = "statistics"
 	metricsClusterSubsystem    = "cluster"
+	metricsWorkerSubsystem     = "worker"
 
 	metricsLabelState   = "state"
 	metricsLabelStat    = "stat"
 	metricsLabelRole    = "role"
+	metricsLabelWorker  = "worker"
 	metricsLabelUUID    = "uuid"
 	metricsLabelCIDR    = "cidr"
 	metricsLabelEdition = "edition"
@@ -42,6 +45,11 @@ const (
 	metricBuildInfo      = "build_info"
 	metricClusterNodes   = "nodes"
 	metricClusterInfo    = "info"
+	metricWorkerRunning  = "running"
+	metricWorkerFiles    = "files_processed"
+	metricWorkerBytes    = "bytes_processed"
+	metricWorkerStarted  = "started_time_seconds"
+	metricWorkerFinished = "finished_time_seconds"
 
 	metricsAccountsHelp      = "active user and guest accounts on this PhotoPrism instance"
 	metricsFilesBytesHelp    = "filesystem usage in bytes for files indexed by this PhotoPrism instance"
@@ -51,6 +59,11 @@ const (
 	metricsBuildInfoHelp     = "information about the photoprism instance"
 	metricsClusterNodesHelp  = "registered cluster nodes grouped by role"
 	metricsClusterInfoHelp   = "cluster metadata for this PhotoPrism portal"
+	metricsWorkerRunningHelp = "whether a PhotoPrism worker is currently processing files"
+	metricsWorkerFilesHelp   = "files processed by a PhotoPrism worker during its current or most recent run"
+	metricsWorkerBytesHelp   = "bytes processed by a PhotoPrism worker during its current or most recent run"
+	metricsWorkerStartedHelp  = "unix time when a PhotoPrism worker current or most recent run started"
+	metricsWorkerFinishedHelp = "unix time when a PhotoPrism worker most recent run finished"
 )
 
 // GetMetrics provides a Prometheus-compatible metrics endpoint for monitoring the instance, including usage details and portal cluster metrics.
@@ -87,6 +100,7 @@ func GetMetrics(router *gin.RouterGroup) {
 			registerBuildInfoMetric(factory, conf.ClientPublic())
 			registerUsageMetrics(factory, usage)
 			registerClusterMetrics(factory, conf)
+			registerWorkerProgressMetrics(factory, photoprism.WorkerProgressSnapshots())
 
 			var metrics []*dto.MetricFamily
 			var err error
@@ -296,4 +310,81 @@ func clusterNodeCounts(conf *config.Config) (map[string]int, error) {
 	}
 
 	return counts, nil
+}
+
+// registerWorkerProgressMetrics exports import and index processing progress metrics.
+func registerWorkerProgressMetrics(factory promauto.Factory, snapshots []photoprism.WorkerProgress) {
+	running := factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsWorkerSubsystem,
+			Name:      metricWorkerRunning,
+			Help:      metricsWorkerRunningHelp,
+		}, []string{metricsLabelWorker},
+	)
+
+	files := factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsWorkerSubsystem,
+			Name:      metricWorkerFiles,
+			Help:      metricsWorkerFilesHelp,
+		}, []string{metricsLabelWorker},
+	)
+
+	bytes := factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsWorkerSubsystem,
+			Name:      metricWorkerBytes,
+			Help:      metricsWorkerBytesHelp,
+		}, []string{metricsLabelWorker},
+	)
+
+	started := factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsWorkerSubsystem,
+			Name:      metricWorkerStarted,
+			Help:      metricsWorkerStartedHelp,
+		}, []string{metricsLabelWorker},
+	)
+
+	finished := factory.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsWorkerSubsystem,
+			Name:      metricWorkerFinished,
+			Help:      metricsWorkerFinishedHelp,
+		}, []string{metricsLabelWorker},
+	)
+
+	for _, snapshot := range snapshots {
+		if snapshot.Worker == "" {
+			continue
+		}
+
+		labels := prometheus.Labels{metricsLabelWorker: snapshot.Worker}
+
+		if snapshot.Running {
+			running.With(labels).Set(1)
+		} else {
+			running.With(labels).Set(0)
+		}
+
+		files.With(labels).Set(float64(snapshot.Files))
+		bytes.With(labels).Set(float64(snapshot.Bytes))
+
+		if snapshot.StartedAt.IsZero() {
+			started.With(labels).Set(0)
+		} else {
+			started.With(labels).Set(float64(snapshot.StartedAt.Unix()))
+		}
+
+		if snapshot.FinishedAt.IsZero() {
+			finished.With(labels).Set(0)
+		} else {
+			finished.With(labels).Set(float64(snapshot.FinishedAt.Unix()))
+		}
+	}
 }

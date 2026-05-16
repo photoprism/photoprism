@@ -73,6 +73,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		return result
 	}
 
+	ObserveWorkerProgress(o.Action, fileSize)
+
 	fileHash := ""
 	fileChanged := true
 	fileRenamed := false

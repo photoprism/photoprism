@@ -96,6 +96,8 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	defer mutex.IndexWorker.Stop()
+	StartWorkerProgress(o.Action)
+	defer FinishWorkerProgress(o.Action)
 
 	jobs := make(chan IndexJob)
 
