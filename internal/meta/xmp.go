@@ -76,6 +76,7 @@ func (data *Data) XMP(fileName string) (err error) {
 	}
 
 	data.Favorite = doc.Favorite()
+	data.FaceRegions = doc.FaceRegions()
 
 	return nil
 }

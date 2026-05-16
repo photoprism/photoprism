@@ -197,6 +197,7 @@ type XmpDocument struct {
 					Li   string `xml:"li"` // Gopher
 				} `xml:"Bag" json:"bag"`
 			} `xml:"PersonInImage" json:"personinimage"`
+			Regions xmpRegions `xml:"Regions" json:"regions"`
 		} `xml:"Description" json:"description"`
 	} `xml:"RDF" json:"rdf"`
 }
@@ -289,4 +290,9 @@ func (doc *XmpDocument) Keywords() string {
 func (doc *XmpDocument) Favorite() bool {
 	fstop := doc.RDF.Description.FStopFavorite
 	return fstop == "1"
+}
+
+// FaceRegions returns normalized face regions found in the XMP document.
+func (doc *XmpDocument) FaceRegions() FaceRegions {
+	return doc.RDF.Description.Regions.FaceRegions()
 }

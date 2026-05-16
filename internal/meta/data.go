@@ -73,6 +73,7 @@ type Data struct {
 	Rotation         int           `meta:"Rotation"`
 	Views            int           `meta:"-"`
 	Albums           []string      `meta:"-"`
+	FaceRegions      FaceRegions   `meta:"-"`
 	Warning          string        `meta:"Warning" report:"-"`
 	Error            error         `meta:"-"`
 	json             map[string]string

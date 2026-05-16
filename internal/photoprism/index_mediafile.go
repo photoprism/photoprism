@@ -495,6 +495,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.Favorite {
 				_ = photo.SetFavorite(data.Favorite)
 			}
+
+			if _, markerErr := importXmpFaceRegions(photo.ID, &file, data.FaceRegions); markerErr != nil {
+				log.Warnf("index: %s in %s (xmp face regions)", markerErr, logName)
+			}
 		} else {
 			log.Warn(dataErr.Error())
 			file.FileError = clip.Chars(dataErr.Error(), txt.ClipError)
