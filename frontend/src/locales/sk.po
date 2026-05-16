@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-14 09:17+0000\n"
+"PO-Revision-Date: 2026-05-16 14:47+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
@@ -1268,7 +1268,7 @@ msgstr "Odstránenie zmien a zatvorenie"
 
 #: src/component/lightbox/sidebar.vue:940
 msgid "Discard invalid changes?"
-msgstr ""
+msgstr "Vyradiť neplatné zmeny?"
 
 #: src/component/lightbox/sidebar.vue:942
 msgid "Discard unsaved changes?"
@@ -1808,7 +1808,7 @@ msgstr "Skryť"
 
 #: src/component/lightbox.vue:1542
 msgid "Hide Caption"
-msgstr ""
+msgstr "Skryť titulok"
 
 #: src/component/lightbox/sidebar.vue:214
 msgid "Hide face markers"
@@ -3403,7 +3403,7 @@ msgstr "Zobraziť všetky nové tváre"
 
 #: src/component/lightbox.vue:1531
 msgid "Show Caption"
-msgstr ""
+msgstr "Zobraziť titulok"
 
 #: src/page/settings/content.vue:155
 msgid "Show Captions"

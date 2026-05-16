@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-14 09:17+0000\n"
+"PO-Revision-Date: 2026-05-16 14:47+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
@@ -1268,7 +1268,7 @@ msgstr "Guhertinan betal bike û bigire"
 
 #: src/component/lightbox/sidebar.vue:940
 msgid "Discard invalid changes?"
-msgstr ""
+msgstr "Guhertinên nederbasdar betal bikin?"
 
 #: src/component/lightbox/sidebar.vue:942
 msgid "Discard unsaved changes?"
@@ -1808,7 +1808,7 @@ msgstr "Veşartin"
 
 #: src/component/lightbox.vue:1542
 msgid "Hide Caption"
-msgstr ""
+msgstr "Sernivîsê Veşêre"
 
 #: src/component/lightbox/sidebar.vue:214
 msgid "Hide face markers"
@@ -3403,7 +3403,7 @@ msgstr "Hemî rûyên nû nîşan bidin"
 
 #: src/component/lightbox.vue:1531
 msgid "Show Caption"
-msgstr ""
+msgstr "Sernivîsê nîşan bide"
 
 #: src/page/settings/content.vue:155
 msgid "Show Captions"

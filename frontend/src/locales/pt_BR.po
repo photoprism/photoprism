@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-14 09:17+0000\n"
+"PO-Revision-Date: 2026-05-16 14:47+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -1268,7 +1268,7 @@ msgstr "Descartar alterações e fechar"
 
 #: src/component/lightbox/sidebar.vue:940
 msgid "Discard invalid changes?"
-msgstr ""
+msgstr "Descartar alterações inválidas?"
 
 #: src/component/lightbox/sidebar.vue:942
 msgid "Discard unsaved changes?"
@@ -1808,7 +1808,7 @@ msgstr "Esconder"
 
 #: src/component/lightbox.vue:1542
 msgid "Hide Caption"
-msgstr ""
+msgstr "Ocultar legenda"
 
 #: src/component/lightbox/sidebar.vue:214
 msgid "Hide face markers"
@@ -3403,7 +3403,7 @@ msgstr "Mostrar todos os rostos novos"
 
 #: src/component/lightbox.vue:1531
 msgid "Show Caption"
-msgstr ""
+msgstr "Mostrar legenda"
 
 #: src/page/settings/content.vue:155
 msgid "Show Captions"

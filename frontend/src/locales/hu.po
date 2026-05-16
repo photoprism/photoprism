@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-14 09:17+0000\n"
+"PO-Revision-Date: 2026-05-16 14:47+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -1267,7 +1267,7 @@ msgstr "A módosítások elvetése és bezárása"
 
 #: src/component/lightbox/sidebar.vue:940
 msgid "Discard invalid changes?"
-msgstr ""
+msgstr "Érvénytelen módosítások elvetése?"
 
 #: src/component/lightbox/sidebar.vue:942
 msgid "Discard unsaved changes?"
@@ -1807,7 +1807,7 @@ msgstr "Elrejt"
 
 #: src/component/lightbox.vue:1542
 msgid "Hide Caption"
-msgstr ""
+msgstr "Felirat elrejtése"
 
 #: src/component/lightbox/sidebar.vue:214
 msgid "Hide face markers"
@@ -3402,7 +3402,7 @@ msgstr "Az összes új arc megjelenítése"
 
 #: src/component/lightbox.vue:1531
 msgid "Show Caption"
-msgstr ""
+msgstr "Felirat megjelenítése"
 
 #: src/page/settings/content.vue:155
 msgid "Show Captions"

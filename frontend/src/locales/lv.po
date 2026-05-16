@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-05-14 09:17+0000\n"
+"PO-Revision-Date: 2026-05-16 14:47+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
@@ -1264,7 +1264,7 @@ msgstr "Atcelt izmaiņas un aizvērt"
 
 #: src/component/lightbox/sidebar.vue:940
 msgid "Discard invalid changes?"
-msgstr ""
+msgstr "Nederīgu izmaiņu noraidīšana?"
 
 #: src/component/lightbox/sidebar.vue:942
 msgid "Discard unsaved changes?"
@@ -1804,7 +1804,7 @@ msgstr "Slēpt"
 
 #: src/component/lightbox.vue:1542
 msgid "Hide Caption"
-msgstr ""
+msgstr "Paslēpt Virsrakstu"
 
 #: src/component/lightbox/sidebar.vue:214
 msgid "Hide face markers"
@@ -3399,7 +3399,7 @@ msgstr "Rādīt visas jaunās sejas"
 
 #: src/component/lightbox.vue:1531
 msgid "Show Caption"
-msgstr ""
+msgstr "Rādīt apakšvirsrakstu"
 
 #: src/page/settings/content.vue:155
 msgid "Show Captions"

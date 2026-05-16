@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-05-14 09:17+0000\n"
+"PO-Revision-Date: 2026-05-16 14:47+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -1267,7 +1267,7 @@ msgstr "Odrzuć zmiany i zamknij"
 
 #: src/component/lightbox/sidebar.vue:940
 msgid "Discard invalid changes?"
-msgstr ""
+msgstr "Odrzucić nieprawidłowe zmiany?"
 
 #: src/component/lightbox/sidebar.vue:942
 msgid "Discard unsaved changes?"
@@ -1807,7 +1807,7 @@ msgstr "Ukryj"
 
 #: src/component/lightbox.vue:1542
 msgid "Hide Caption"
-msgstr ""
+msgstr "Ukryj podpis"
 
 #: src/component/lightbox/sidebar.vue:214
 msgid "Hide face markers"
@@ -3402,7 +3402,7 @@ msgstr "Pokaż wszystkie nowe twarze"
 
 #: src/component/lightbox.vue:1531
 msgid "Show Caption"
-msgstr ""
+msgstr "Pokaż podpis"
 
 #: src/page/settings/content.vue:155
 msgid "Show Captions"
