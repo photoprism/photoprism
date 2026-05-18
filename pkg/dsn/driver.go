@@ -29,7 +29,7 @@ func ParseDriver(s string) string {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case DriverMySQL, DriverMariaDB:
 		return DriverMySQL
-	case DriverPostgres, "postgresql":
+	case DriverPostgres, DriverPostgreSQL:
 		return DriverPostgreSQL
 	case DriverSQLite3, "sqlite3", "test", "file", "":
 		return DriverSQLite3

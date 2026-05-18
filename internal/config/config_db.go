@@ -39,9 +39,7 @@ func (c *Config) DatabaseDriver() string {
 		c.options.DatabaseDriver = dsn.DriverMySQL
 	case dsn.DriverSQLite3:
 		c.options.DatabaseDriver = dsn.DriverSQLite3
-	case dsn.DriverPostgres:
-		c.options.DatabaseDriver = dsn.DriverPostgres
-	case dsn.DriverPostgreSQL:
+	case dsn.DriverPostgreSQL, dsn.DriverPostgres:
 		c.options.DatabaseDriver = dsn.DriverPostgreSQL
 	case dsn.DriverTiDB:
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
@@ -64,8 +62,6 @@ func (c *Config) DatabaseDriverName() string {
 		return "MariaDB"
 	case dsn.DriverSQLite3:
 		return "SQLite"
-	case dsn.DriverPostgres:
-		return "Postgres"
 	case dsn.DriverPostgreSQL:
 		return "PostgreSQL"
 	default:
@@ -133,16 +129,7 @@ func (c *Config) DatabaseDSN() string {
 				Name:     c.DatabaseName(),
 				Params:   fmt.Sprintf("%s&timeout=%ds", dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()),
 			}).ToString()
-		case dsn.DriverPostgres:
-			return (&dsn.DSN{
-				Driver:   dsn.DriverPostgres,
-				User:     c.DatabaseUser(),
-				Password: c.DatabasePassword(),
-				Server:   c.DatabaseServer(),
-				Name:     c.DatabaseName(),
-				Params:   fmt.Sprintf("connect_timeout=%d %s", c.DatabaseTimeout(), dsn.Params[dsn.DriverPostgres]),
-			}).ToString()
-		case dsn.DriverPostgreSQL:
+		case dsn.DriverPostgres, dsn.DriverPostgreSQL:
 			return (&dsn.DSN{
 				Driver:   dsn.DriverPostgreSQL,
 				User:     c.DatabaseUser(),

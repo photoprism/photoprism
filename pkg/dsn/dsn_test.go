@@ -1,6 +1,8 @@
 package dsn
 
 import (
+	"encoding/json"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -97,7 +99,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   "user=alice password=s3cr3t dbname=app",
 			want: DSN{
 				DSN:      "user=alice password=s3cr3t dbname=app",
-				Driver:   DriverPostgres,
+				Driver:   DriverPostgreSQL,
 				User:     "alice",
 				Password: "s3cr3t",
 				Name:     "app",
@@ -109,12 +111,12 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
 			want: DSN{
 				DSN:      "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
-				Driver:   DriverPostgres,
+				Driver:   DriverPostgreSQL,
 				User:     "alice",
 				Password: "s3cr3t",
 				Server:   "db.internal:5432",
 				Name:     "app",
-				Params:   "connect_timeout=5 sslmode=require",
+				Params:   "connect_timeout=5&sslmode=require",
 			},
 			ok: true,
 		},
@@ -123,7 +125,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   `user="alice" password="s ec ret" dbname="app" host=db.internal`,
 			want: DSN{
 				DSN:      `user="alice" password="s ec ret" dbname="app" host=db.internal`,
-				Driver:   DriverPostgres,
+				Driver:   DriverPostgreSQL,
 				User:     "alice",
 				Password: "s ec ret",
 				Server:   "db.internal",
@@ -134,7 +136,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 		{
 			name: "MissingDatabase",
 			in:   "user=alice host=db.internal",
-			want: DSN{DSN: "user=alice host=db.internal"},
+			want: DSN{DSN: "user=alice host=db.internal"}, // Parsing should abort as dbname is missing.
 			ok:   false,
 		},
 	}
@@ -145,18 +147,13 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			ok := d.parsePostgres()
 
 			assert.Equal(t, tt.in, d.String())
-
-			if ok != tt.ok {
-				t.Fatalf("parsePostgres(%q) ok=%v, want %v", tt.in, ok, tt.ok)
-			}
-
-			if ok && d != tt.want {
-				t.Fatalf("parsePostgres(%q) = %#v, want %#v", tt.in, d, tt.want)
-			}
+			assert.Equal(t, tt.ok, ok)
+			assert.Equal(t, tt.want, d)
 		})
 	}
 }
 
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
 func TestDSN_ToString(t *testing.T) {
 	cases := []struct {
 		name string
@@ -237,7 +234,7 @@ func TestDSN_ToString(t *testing.T) {
 				Server:   "postgres:5432",
 				User:     "myuser",
 				Password: "password",
-				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+				Params:   "sslmode=require TimeZone=UTC lock_timeout=5000",
 			},
 			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
 		},
@@ -351,11 +348,27 @@ func TestDSN_ToString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			d := tt.in
 
-			assert.Equal(t, tt.want, d.ToString())
+			if d.Driver == DriverPostgreSQL || d.Driver == DriverPostgres {
+				// Postgres uses a URI, which means that the Query part is not ordered.  Causing string assert.Equal to fail (sometimes).
+				expected, eerr := url.Parse(tt.want)
+				actual, aerr := url.Parse(d.ToString())
+				assert.Equal(t, eerr, aerr)
+				exQ := expected.Query()
+				acQ := actual.Query()
+				expected.RawQuery = ""
+				actual.RawQuery = ""
+				assert.Equal(t, expected, actual)
+				exJ, _ := json.Marshal(exQ)
+				acJ, _ := json.Marshal(acQ)
+				assert.JSONEq(t, string(exJ), string(acJ))
+			} else {
+				assert.Equal(t, tt.want, d.ToString())
+			}
 		})
 	}
 }
 
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
 func TestDSN_ForPSQL(t *testing.T) {
 	cases := []struct {
 		name string
@@ -437,6 +450,108 @@ func TestDSN_ForPSQL(t *testing.T) {
 			d := tt.in
 
 			assert.Equal(t, tt.want, d.ForPSQL())
+		})
+	}
+}
+
+func TestPostgresEncodeParams(t *testing.T) {
+	cases := []struct {
+		name string
+		in   DSN
+		want string
+	}{
+		{
+			name: "SingleParam",
+			in: DSN{
+				Params: "_busy_timeout=5000",
+			},
+			want: "_busy_timeout=5000",
+		},
+		{
+			name: "TwoParams",
+			in: DSN{
+				Params: "_busy_timeout=15000 _foreign_keys=off",
+			},
+			want: "_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "ThreeParams",
+			in: DSN{
+				Params: "sslmode=require TimeZone=UTC lock_timeout=5000",
+			},
+			want: "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+		},
+		{
+			name: "AlreadyEncoded",
+			in: DSN{
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "_busy_timeout=15000&_foreign_keys=off",
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := tt.in
+			postgresEncodeParams(&d)
+
+			exQ, eerr := url.ParseQuery(tt.want)
+			acQ, aerr := url.ParseQuery(d.Params)
+			exJ, _ := json.Marshal(exQ)
+			acJ, _ := json.Marshal(acQ)
+			assert.Nil(t, eerr)
+			assert.Equal(t, eerr, aerr)
+			assert.JSONEq(t, string(exJ), string(acJ))
+		})
+	}
+}
+
+func TestPostgresDequote(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{
+			name: "Quoted",
+			in:   "'quotedstring'",
+			want: "quotedstring",
+		},
+		{
+			name: "QuotedEscapedBackSlash",
+			in:   `'quoted\\backslash'`,
+			want: `quoted\backslash`,
+		},
+		{
+			name: "QuotedEscapedQuote",
+			in:   `'quoted\'quote'`,
+			want: `quoted'quote`,
+		},
+		{
+			name: "LeadingQuote",
+			in:   `'leadingquote`,
+			want: `'leadingquote`,
+		},
+		{
+			name: "TrailingQuote",
+			in:   `trailingquote'`,
+			want: `trailingquote'`,
+		},
+		{
+			name: "EscapedBackSlash",
+			in:   `escaped\\backslash`,
+			want: `escaped\backslash`,
+		},
+		{
+			name: "EscapedQuote",
+			in:   `escaped\'quote`,
+			want: `escaped'quote`,
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, postgresDequote(tt.in))
 		})
 	}
 }
