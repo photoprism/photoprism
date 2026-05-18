@@ -62,30 +62,30 @@ func TestMain(m *testing.M) {
 
 func TestDbDialect(t *testing.T) {
 	t.Run("SQLite", func(t *testing.T) {
-		if DbDialect() != SQLite3 {
+		if DbDialect() != dsn.DialectSQLite {
 			t.SkipNow()
 		}
 		assert.Equal(t, "sqlite", DbDialect())
 	})
 
 	t.Run("MariaDB", func(t *testing.T) {
-		if DbDialect() != MySQL {
+		if DbDialect() != dsn.DialectMySQL {
 			t.SkipNow()
 		}
-		assert.Equal(t, MySQL, DbDialect())
+		assert.Equal(t, dsn.DialectMySQL, DbDialect())
 	})
 
 	t.Run("Postgres", func(t *testing.T) {
-		if DbDialect() != Postgres {
+		if DbDialect() != dsn.DialectPostgreSQL {
 			t.SkipNow()
 		}
-		assert.Equal(t, Postgres, DbDialect())
+		assert.Equal(t, dsn.DialectPostgreSQL, DbDialect())
 	})
 }
 
 func TestBatchSize(t *testing.T) {
 	t.Run("SQLite", func(t *testing.T) {
-		if DbDialect() != SQLite3 {
+		if DbDialect() != dsn.DialectSQLite {
 			t.SkipNow()
 		}
 		assert.Equal(t, 333, BatchSize())

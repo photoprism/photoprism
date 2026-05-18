@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // TableMap holds the table name and the definition
@@ -120,14 +121,14 @@ func resetIDToMax(tableName string, db *gorm.DB) (err error) {
 		fallthrough
 	case migrate.Version{}.TableName():
 		switch DbDialect() {
-		case MySQL:
+		case dsn.DialectMySQL:
 			sqlCommand = fmt.Sprintf("ALTER TABLE `%v` AUTO_INCREMENT = 1", tableName)
-		case Postgres:
+		case dsn.DialectPostgreSQL:
 			if err := db.Table(tableName).Select("COALESCE(MAX(id), 0) as MaxID").Row().Scan(&maxid); err != nil {
 				return fmt.Errorf("resetIDToMax: unable to get max id from %s with %+v", tableName, err)
 			}
 			sqlCommand = fmt.Sprintf("ALTER SEQUENCE %v_id_seq RESTART WITH %d", tableName, maxid+1)
-		case SQLite3:
+		case dsn.DialectSQLite:
 			if err := db.Table(tableName).Select("COALESCE(MAX(id), 0) as MaxID").Row().Scan(&maxid); err != nil {
 				return fmt.Errorf("resetIDToMax: unable to get max id from %s with %+v", tableName, err)
 			}
@@ -367,7 +368,7 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 		}
 
 		// Check if the GORMv2 sqlite conversion has been done?
-		if db.Dialector.Name() == SQLite3 {
+		if db.Dialector.Name() == dsn.DialectSQLite {
 			version := migrate.FirstOrCreateVersion(db, migrate.NewVersion("Gorm For SQLite", "V2 Upgrade"))
 			if version.NeedsMigration() {
 				if err := migrate.ConvertSQLiteDataTypes(db); err != nil {

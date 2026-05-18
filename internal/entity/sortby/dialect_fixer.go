@@ -3,6 +3,8 @@ package sortby
 import (
 	"regexp"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Find PostgreSQL column names in order by strings that need collate statements.
@@ -33,7 +35,7 @@ var PostgreSQLOrderByReplacer = strings.NewReplacer(PostgreSQLOrderColumnsSlice[
 
 // DialectOrderByFix updates order by strings to comply with requirements for specific database dialects.
 func DialectOrderByFix(s string, dialect string) string {
-	if dialect == Postgres {
+	if dialect == dsn.DialectPostgreSQL {
 		return PostgreSQLOrderColumnsMatch.ReplaceAllStringFunc(s, PostgreSQLOrderByFix)
 	} else {
 		return s

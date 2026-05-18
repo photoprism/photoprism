@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 
 	"gorm.io/gorm"
@@ -1366,11 +1367,11 @@ func migrationsTransferAction(ctx *cli.Context) error {
 func resetIDToValue(db *gorm.DB, tableName string, value uint) error {
 	sqlCommand := ""
 	switch db.Name() {
-	case entity.MySQL:
+	case dsn.DialectMySQL:
 		sqlCommand = fmt.Sprintf("ALTER TABLE `%v` AUTO_INCREMENT = %d", tableName, value+1)
-	case entity.Postgres:
+	case dsn.DialectPostgreSQL:
 		sqlCommand = fmt.Sprintf("ALTER SEQUENCE %v_id_seq RESTART WITH %d", tableName, value+1)
-	case entity.SQLite3:
+	case dsn.DialectSQLite:
 		sqlCommand = fmt.Sprintf("UPDATE SQLITE_SEQUENCE SET SEQ=%d WHERE NAME='%v'", value, tableName)
 	default:
 		return fmt.Errorf("unsupported dialector %s", db.Name())

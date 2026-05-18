@@ -100,7 +100,7 @@ func (m *Photo) EstimateLocation(force bool) {
 	var mostRecent Photos
 
 	switch DbDialect() {
-	case dsn.DriverPostgreSQL:
+	case dsn.DialectPostgreSQL:
 		err = UnscopedDb().
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).
@@ -110,7 +110,7 @@ func (m *Photo) EstimateLocation(force bool) {
 				Vars:               []any{m.TakenAt.Format(time.DateTime)},
 				WithoutParentheses: true}}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		err = UnscopedDb().
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).
@@ -120,7 +120,7 @@ func (m *Photo) EstimateLocation(force bool) {
 				Vars:               []any{m.TakenAt.Format(time.DateTime)},
 				WithoutParentheses: true}}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		err = UnscopedDb().
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).

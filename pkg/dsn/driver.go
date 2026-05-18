@@ -1,6 +1,8 @@
 package dsn
 
-import "strings"
+import (
+	"strings"
+)
 
 // SQL database drivers.
 const (

@@ -7,8 +7,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/dsn"
-
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -122,7 +120,7 @@ func TestConfig_normalizeDatabaseDSN(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
 		c.options.Deprecated.DatabaseDsn = "postgresql://foo:b@r@honeypot:1234/baz?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
-		c.options.DatabaseDriver = Postgres
+		c.options.DatabaseDriver = dsn.DriverPostgreSQL
 
 		assert.Equal(t, "honeypot:1234", c.DatabaseServer())
 		assert.Equal(t, "honeypot", c.DatabaseHost())
@@ -324,7 +322,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		resetDatabaseOptions(c)
 		driver := c.DatabaseDriver()
-		assert.Equal(t, SQLite3, driver)
+		assert.Equal(t, dsn.DriverSQLite3, driver)
 		c.options.DatabaseDriver = "Postgres"
 		c.options.DatabasePassword = "spec[char@$2&"
 		assert.Equal(t, "postgresql://photoprism:spec%5Bchar%40$2&@localhost/photoprism?connect_timeout=15&sslmode=disable&TimeZone=UTC&lock_timeout=5000", c.DatabaseDSN())

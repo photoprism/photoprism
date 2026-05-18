@@ -15,6 +15,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // dbConn is the global gorm.DB connection provider.
@@ -81,23 +82,23 @@ func (g *DbConn) Open() {
 	log.Infof("Opening DB connection with driver %s", g.Driver)
 	var db *gorm.DB
 	var err error
-	if g.Driver == Postgres {
+	if g.Driver == dsn.DriverPostgres || g.Driver == dsn.DriverPostgreSQL {
 		postgresDB, pgxPool := OpenPostgreSQL(g.Dsn)
 		g.pool = pgxPool
 		db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 	} else {
-		db, err = gorm.Open(drivers[g.Driver](g.Dsn), gormConfig())
+		db, err = gorm.Open(dsn.GormDrivers[g.Driver](g.Dsn), gormConfig())
 	}
 
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
 			fmt.Printf("gorm.Open(%s, %s) %d\n", g.Driver, g.Dsn, i)
-			if g.Driver == Postgres {
+			if g.Driver == dsn.DriverPostgres || g.Driver == dsn.DriverPostgreSQL {
 				postgresDB, pgxPool := OpenPostgreSQL(g.Dsn)
 				g.pool = pgxPool
 				db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 			} else {
-				db, err = gorm.Open(drivers[g.Driver](g.Dsn), gormConfig())
+				db, err = gorm.Open(dsn.GormDrivers[g.Driver](g.Dsn), gormConfig())
 			}
 
 			if db != nil && err == nil {
@@ -114,7 +115,7 @@ func (g *DbConn) Open() {
 	}
 	log.Info("DB connection established successfully")
 
-	if g.Driver != Postgres {
+	if g.Driver != dsn.DriverPostgres && g.Driver != dsn.DriverPostgreSQL {
 		sqlDB, _ := db.DB()
 
 		sqlDB.SetMaxIdleConns(4)   // in config_db it uses c.DatabaseConnsIdle(), but we don't have the c here.

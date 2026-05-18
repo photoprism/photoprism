@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service/maps"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -484,7 +485,7 @@ func FindAlbum(find Album) *Album {
 		}
 	} else if find.AlbumTitle != "" && find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
 		switch DbDialect() {
-		case Postgres:
+		case dsn.DialectPostgreSQL:
 			stmt = stmt.Where("album_slug = ? OR album_title ILIKE ?", find.AlbumSlug, find.AlbumTitle)
 		default:
 			stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
@@ -493,7 +494,7 @@ func FindAlbum(find Album) *Album {
 		stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
 	} else if find.AlbumTitle != "" {
 		switch DbDialect() {
-		case Postgres:
+		case dsn.DialectPostgreSQL:
 			stmt = stmt.Where("album_title ILIKE ?", find.AlbumTitle)
 		default:
 			stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)

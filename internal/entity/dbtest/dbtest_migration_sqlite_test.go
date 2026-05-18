@@ -28,7 +28,7 @@ func TestDialectSQLite3(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	if entity.DbDialect() != entity.SQLite3 {
+	if entity.DbDialect() != dsn.DialectSQLite {
 		t.Skip("skipping test as not SQLite")
 	}
 

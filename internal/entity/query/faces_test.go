@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -140,13 +141,13 @@ func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 	require.Error(t, err)
 	assert.Equal(t, int64(0), affected)
 	switch DbDialect() {
-	case entity.MySQL:
+	case dsn.DialectMySQL:
 		assert.Contains(t, err.Error(), "Table")
 		assert.Contains(t, err.Error(), "doesn't exist")
-	case entity.Postgres:
+	case dsn.DialectPostgreSQL:
 		assert.Contains(t, err.Error(), "relation")
 		assert.Contains(t, err.Error(), "does not exist")
-	case entity.SQLite3:
+	case dsn.DialectSQLite:
 		assert.Contains(t, err.Error(), "no such table")
 	}
 	assert.Contains(t, err.Error(), entity.Marker{}.TableName())

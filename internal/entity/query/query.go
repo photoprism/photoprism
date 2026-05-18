@@ -74,7 +74,7 @@ func DbDialect() string {
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
 	switch DbDialect() {
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		return 333
 	default:
 		return 1000

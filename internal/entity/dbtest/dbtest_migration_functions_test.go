@@ -14,6 +14,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func populatePhotoPrismStructsWithAutoIncrement(t *testing.T, db *gorm.DB) {
@@ -523,7 +524,7 @@ func populatePhotoPrismStructsWithMax(t *testing.T, db *gorm.DB) {
 	var uintMaxInt64 bool
 
 	switch db.Name() {
-	case entity.SQLite3, entity.Postgres:
+	case dsn.DialectSQLite, dsn.DialectPostgreSQL:
 		uintMaxInt64 = true
 	default:
 		uintMaxInt64 = false

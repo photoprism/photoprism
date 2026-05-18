@@ -41,7 +41,7 @@ func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
 	case "added":
 		s = s.Order(OrderExpr(fmt.Sprintf("%s.created_at DESC", subjTable), frm.Reverse))
 	case "relevance":
-		if entity.DbDialect() == entity.Postgres {
+		if entity.DbDialect() == dsn.DialectPostgreSQL {
 			s = s.Order(OrderExpr("subj_favorite DESC, photo_count DESC NULLS LAST", frm.Reverse))
 		} else {
 			s = s.Order(OrderExpr("subj_favorite DESC, photo_count DESC", frm.Reverse))
@@ -64,7 +64,7 @@ func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
 		var wheres []string
 		var values [][]any
 		switch entity.DbDialect() {
-		case dsn.DriverPostgreSQL:
+		case dsn.DialectPostgreSQL:
 			wheres, values = LikeAllNames(Cols{"lower(subj_name)", "lower(subj_alias)"}, strings.ToLower(frm.Query))
 		default:
 			wheres, values = LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query)
@@ -137,7 +137,7 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 	whereString2 := ""
 	valueString := ""
 	switch entity.DbDialect() {
-	case entity.Postgres:
+	case dsn.DialectPostgreSQL:
 		whereString1 = "lower(subj_name)"
 		whereString2 = "lower(subj_alias)"
 		valueString = strings.ToLower(s)

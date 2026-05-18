@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestFilesByPath(t *testing.T) {
@@ -119,18 +120,18 @@ func TestFilesByUID(t *testing.T) {
 	})
 
 	t.Run("Negative limit with offset", func(t *testing.T) {
-		if entity.DbDialect() == entity.MySQL {
+		if entity.DbDialect() == dsn.DialectMySQL {
 			log.Info("Expect SQL syntax Error to be generated")
 		}
 		files, err := FilesByUID([]string{"fs6sg6bw45bnlqdw"}, -100, 100)
 
 		switch entity.DbDialect() {
-		case entity.Postgres, entity.SQLite3:
+		case dsn.DialectPostgreSQL, dsn.DialectSQLite:
 			if err != nil {
 				t.Fatal(err)
 			}
 			assert.Equal(t, 0, len(files))
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			assert.Error(t, err)
 		default:
 			t.Fatal(fmt.Sprintf("Unsupported dialect %s", entity.DbDialect()))

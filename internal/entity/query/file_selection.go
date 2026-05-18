@@ -99,11 +99,11 @@ func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, e
 
 	var concat string
 	switch DbDialect() {
-	case dsn.DriverPostgreSQL:
+	case dsn.DialectPostgreSQL:
 		concat = "CONCAT(convert_from(a.path,'UTF8'), '/%')"
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		concat = "CONCAT(a.path, '/%')"
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		concat = "a.path || '/%'"
 	default:
 		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())
@@ -112,7 +112,7 @@ func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, e
 	// Search condition.
 	where := ""
 	switch DbDialect() {
-	case Postgres:
+	case dsn.DialectPostgreSQL:
 		where = fmt.Sprintf(`photos.photo_uid IN (?) 
 		OR photos.place_id IN (?) 
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
@@ -124,7 +124,7 @@ func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, e
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND pl.uncertainty < 100 AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
 			concat, entity.Marker{}.TableName())
-	case MySQL, SQLite3:
+	case dsn.DialectMySQL, dsn.DialectSQLite:
 		where = fmt.Sprintf(`photos.photo_uid IN (?) 
 		OR photos.place_id IN (?) 
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))

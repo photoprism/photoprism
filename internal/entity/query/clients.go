@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -22,7 +23,7 @@ func Clients(limit, offset int, sortOrder, search string) (result entity.Clients
 		stmt = stmt.Where("user_uid = ?", search)
 	} else if search != "" {
 		switch entity.DbDialect() {
-		case entity.Postgres:
+		case dsn.DialectPostgreSQL:
 			stmt = stmt.Where("lower(client_name) LIKE ? OR lower(user_name) LIKE ?", strings.ToLower(search+"%"), strings.ToLower(search+"%"))
 		default:
 			stmt = stmt.Where("client_name LIKE ? OR user_name LIKE ?", search+"%", search+"%")

@@ -13,6 +13,7 @@ import (
 	"gorm.io/gorm/schema"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -1718,7 +1719,7 @@ func TestInitDBLengths(t *testing.T) {
 		assert.Len(t, a.AlbumSlug, 161)
 		assert.NotEqual(t, sTxt, a.AlbumSlug)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, a.Create(), "Data too long")
 		default:
 			require.NoError(t, a.Create())
@@ -1748,7 +1749,7 @@ func TestInitDBLengths(t *testing.T) {
 		assert.Len(t, c.CameraSlug, 162)
 		assert.NotEqual(t, sTxt, c.CameraSlug)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, c.Create(), "Data too long")
 		default:
 			require.NoError(t, c.Create())
@@ -1761,7 +1762,7 @@ func TestInitDBLengths(t *testing.T) {
 		c.CameraSlug = txt.Clip(slug.Make(s), 162)
 		assert.Len(t, c.CameraSlug, 162)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, c.Create(), "Data too long")
 		default:
 			require.NoError(t, c.Create())
@@ -1792,7 +1793,7 @@ func TestInitDBLengths(t *testing.T) {
 		assert.Len(t, c.CountrySlug, 161)
 		assert.NotEqual(t, sTxt, c.CountrySlug)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, c.Create(), "Data too long")
 		default:
 			require.NoError(t, c.Create())
@@ -1826,7 +1827,7 @@ func TestInitDBLengths(t *testing.T) {
 		assert.Len(t, l.LabelSlug, 161)
 		assert.NotEqual(t, sTxt, l.LabelSlug)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, l.Create(), "Data too long")
 		default:
 			require.NoError(t, l.Create())
@@ -1857,7 +1858,7 @@ func TestInitDBLengths(t *testing.T) {
 		assert.Len(t, l.LensSlug, 161)
 		assert.NotEqual(t, sTxt, l.LensSlug)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, l.Create(), "Data too long")
 		default:
 			require.NoError(t, l.Create())
@@ -1888,7 +1889,7 @@ func TestInitDBLengths(t *testing.T) {
 		assert.Len(t, l.ShareSlug, 161)
 		assert.NotEqual(t, sTxt, l.ShareSlug)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, l.Save(), "Data too long")
 		default:
 			require.NoError(t, l.Save())
@@ -1919,7 +1920,7 @@ func TestInitDBLengths(t *testing.T) {
 		assert.Len(t, l.SubjSlug, 161)
 		assert.NotEqual(t, sTxt, l.SubjSlug)
 		switch entity.DbDialect() {
-		case entity.MySQL:
+		case dsn.DialectMySQL:
 			require.ErrorContains(t, l.Create(), "Data too long")
 		default:
 			require.NoError(t, l.Create())

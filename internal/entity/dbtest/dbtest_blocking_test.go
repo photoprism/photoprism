@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Test Table to be blocked
@@ -78,7 +79,7 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 
 	entity.UnscopedDb().Debug().Where("1=1").Delete(&Blocker{})
 
-	if entity.DbDialect() == entity.MySQL {
+	if entity.DbDialect() == dsn.DialectMySQL {
 		entity.Db().Exec("SET GLOBAL lock_wait_timeout=5;")
 		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=5;")
 	}
@@ -108,7 +109,7 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 		// Should return an error with lock timeout.
 		if err := entity.Update(m, "ID", "PhotoUID"); err != nil {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
-			if entity.DbDialect() == entity.SQLite3 {
+			if entity.DbDialect() == dsn.DialectSQLite {
 				if strings.Contains(err.Error(), "locked") {
 					assert.ErrorContains(t, err, "is locked") // if using a file you get a different message.  Gotta love sqlite
 				} else {
@@ -124,7 +125,7 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 		t.Fail()
 	})
 
-	if entity.DbDialect() == entity.MySQL {
+	if entity.DbDialect() == dsn.DialectMySQL {
 		entity.Db().Exec("SET GLOBAL lock_wait_timeout=DEFAULT;")
 		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=DEFAULT;")
 	}
@@ -149,7 +150,7 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 
 	entity.UnscopedDb().Debug().Where("1=1").Delete(&Blocker{})
 
-	if entity.DbDialect() == entity.MySQL {
+	if entity.DbDialect() == dsn.DialectMySQL {
 		entity.Db().Exec("SET GLOBAL lock_wait_timeout=5;")
 		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=5;")
 	}
@@ -180,7 +181,7 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 		// Should return an error with lock timeout.
 		if err := entity.Update(m, "ID", "PhotoUID"); err != nil {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
-			if entity.DbDialect() == entity.SQLite3 {
+			if entity.DbDialect() == dsn.DialectSQLite {
 				if strings.Contains(err.Error(), "locked") {
 					assert.ErrorContains(t, err, "is locked") // if using a file you get a different message.  Gotta love sqlite
 				} else {
@@ -196,7 +197,7 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 		t.Fail()
 	})
 
-	if entity.DbDialect() == entity.MySQL {
+	if entity.DbDialect() == dsn.DialectMySQL {
 		entity.Db().Exec("SET GLOBAL lock_wait_timeout=DEFAULT;")
 		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=DEFAULT;")
 	}

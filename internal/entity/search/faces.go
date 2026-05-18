@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -25,7 +26,7 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 			m.marker_type, m.marker_review, m.marker_invalid, m.size, m.score, m.thumb, m.face_dist`, facesTable))
 
 		switch entity.DbDialect() {
-		case entity.Postgres:
+		case dsn.DialectPostgreSQL:
 			if txt.Yes(frm.Unknown) {
 				s = s.Joins(`JOIN (
 					SELECT face_id, MIN(convert_from(marker_uid, 'UTF8')) AS marker_uid FROM markers
@@ -50,7 +51,7 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 			}
 
 			s = s.Joins("JOIN markers m ON m.marker_uid = convert_to(fm.marker_uid, 'UTF8')")
-		case entity.MySQL, entity.SQLite3:
+		case dsn.DialectMySQL, dsn.DialectSQLite:
 			if txt.Yes(frm.Unknown) {
 				s = s.Joins(`JOIN (
 					SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers

@@ -133,7 +133,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 	condition := gorm.Expr("subj_type = ?", SubjPerson)
 
 	switch DbDialect() {
-	case Postgres:
+	case dsn.DialectPostgreSQL:
 		res = Db().Exec(`UPDATE ?
 						SET (file_count, photo_count) = (SELECT COALESCE(COUNT(DISTINCT f.id),0) AS file_count, COALESCE(COUNT(DISTINCT f.photo_id), 0) AS photo_count
 						FROM files f
@@ -142,7 +142,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 						WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL
 						AND m.subj_uid = subjects.subj_uid)
 						WHERE ?`, gorm.Expr(subjTable), photosJoin, condition)
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res = Db().Exec(`UPDATE ? LEFT JOIN (
 		SELECT m.subj_uid, COUNT(DISTINCT f.id) AS subj_files, COUNT(DISTINCT f.photo_id) AS subj_photos
 			FROM files f
@@ -153,7 +153,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 		SET subjects.file_count = CASE WHEN b.subj_files IS NULL THEN 0 ELSE b.subj_files END, 
 			subjects.photo_count = CASE WHEN b.subj_photos IS NULL THEN 0 ELSE b.subj_photos END
 		WHERE ?`, gorm.Expr(subjTable), photosJoin, condition)
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		// Update files count.
 		res = Db().Table(subjTable).
 			Where("subj_type = ?", SubjPerson).
@@ -229,7 +229,7 @@ func UpdateLabelCounts() (err error) {
 	start := time.Now()
 	var res *gorm.DB
 	switch DbDialect() {
-	case dsn.DriverPostgres:
+	case dsn.DialectPostgreSQL:
 		res = Db().Exec(`UPDATE labels
 					SET photo_count = (SELECT COALESCE(COUNT(DISTINCT photo_id),0) AS photo_count
 						FROM (SELECT p.id AS photo_id FROM photos p
@@ -242,7 +242,7 @@ func UpdateLabelCounts() (err error) {
 							WHERE p.photo_quality > -1 AND p.photo_private = FALSE AND p.deleted_at IS NULL AND c.category_id = labels.id
 							) p2
                     )`)
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		res = Db().Exec(`UPDATE labels LEFT JOIN (
 			SELECT p2.label_id, COUNT(DISTINCT photo_id) AS label_photos FROM (
 				SELECT pl.label_id as label_id, p.id AS photo_id FROM photos p
@@ -256,7 +256,7 @@ func UpdateLabelCounts() (err error) {
 				) p2 GROUP BY p2.label_id
 			) b ON b.label_id = labels.id
 			SET photo_count = CASE WHEN b.label_photos IS NULL THEN 0 ELSE b.label_photos END`)
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		res = Db().
 			Table("labels").
 			Where("id is not null").

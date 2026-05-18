@@ -39,8 +39,10 @@ func (c *Config) DatabaseDriver() string {
 		c.options.DatabaseDriver = dsn.DriverMySQL
 	case dsn.DriverSQLite3:
 		c.options.DatabaseDriver = dsn.DriverSQLite3
-	case Postgres:
+	case dsn.DriverPostgres:
 		c.options.DatabaseDriver = dsn.DriverPostgres
+	case dsn.DriverPostgreSQL:
+		c.options.DatabaseDriver = dsn.DriverPostgreSQL
 	case dsn.DriverTiDB:
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
 		c.options.DatabaseDriver = dsn.DriverSQLite3
@@ -62,7 +64,9 @@ func (c *Config) DatabaseDriverName() string {
 		return "MariaDB"
 	case dsn.DriverSQLite3:
 		return "SQLite"
-	case Postgres:
+	case dsn.DriverPostgres:
+		return "Postgres"
+	case dsn.DriverPostgreSQL:
 		return "PostgreSQL"
 	default:
 		return "unsupported database"
@@ -120,9 +124,8 @@ func (c *Config) DatabaseDSN() string {
 				log.Debugf("mariadb: connecting via Unix domain socket")
 				databaseNet = "unix"
 			}
-
 			return (&dsn.DSN{
-				Driver:   MySQL,
+				Driver:   dsn.DriverMySQL,
 				User:     c.DatabaseUser(),
 				Password: c.DatabasePassword(),
 				Server:   c.DatabaseServer(),
@@ -131,6 +134,15 @@ func (c *Config) DatabaseDSN() string {
 				Params:   fmt.Sprintf("%s&timeout=%ds", dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()),
 			}).ToString()
 		case dsn.DriverPostgres:
+			return (&dsn.DSN{
+				Driver:   dsn.DriverPostgres,
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Server:   c.DatabaseServer(),
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("connect_timeout=%d %s", c.DatabaseTimeout(), dsn.Params[dsn.DriverPostgres]),
+			}).ToString()
+		case dsn.DriverPostgreSQL:
 			return (&dsn.DSN{
 				Driver:   dsn.DriverPostgreSQL,
 				User:     c.DatabaseUser(),
@@ -479,7 +491,7 @@ func (c *Config) SetDbOptions() {
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
-	case dsn.DriverPostgres:
+	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
 		// Ignore for now.
 	case dsn.DriverSQLite3:
 		// Not required as Unicode is default.
@@ -588,7 +600,7 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		case !c.IsDatabaseVersion("v10.5.12"):
 			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		}
-	case Postgres:
+	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
 		var versions []string
 		err := db.Raw("SELECT VERSION() AS Value").Pluck("value", &versions).Error
 		// Version query not supported.
@@ -677,25 +689,25 @@ func (c *Config) connectDb() error {
 		// Open database connection.
 		var db *gorm.DB
 		var err error
-		if dbDriver == Postgres {
+		if dbDriver == dsn.DriverPostgres || dbDriver == dsn.DriverPostgreSQL {
 			postgresDB, pgxPool := entity.OpenPostgreSQL(dbDSN)
 			c.pool = pgxPool
 			db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 		} else {
 			c.pool = nil
-			db, err = gorm.Open(drivers[dbDriver](dbDSN), gormConfig())
+			db, err = gorm.Open(dsn.GormDrivers[dbDriver](dbDSN), gormConfig())
 		}
 		if err != nil || db == nil {
 			log.Infof("config: waiting for the database to become available")
 
 			for i := 1; i <= 12; i++ {
-				if dbDriver == Postgres {
+				if dbDriver == dsn.DriverPostgres || dbDriver == dsn.DriverPostgreSQL {
 					postgresDB, pgxPool := entity.OpenPostgreSQL(dbDSN)
 					c.pool = pgxPool
 					db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 				} else {
 					c.pool = nil
-					db, err = gorm.Open(drivers[dbDriver](dbDSN), gormConfig())
+					db, err = gorm.Open(dsn.GormDrivers[dbDriver](dbDSN), gormConfig())
 				}
 
 				if db != nil && err == nil {
@@ -711,7 +723,7 @@ func (c *Config) connectDb() error {
 		}
 
 		// Set database connection parameters.
-		if dbDriver != Postgres {
+		if dbDriver != dsn.DriverPostgres && dbDriver != dsn.DriverPostgreSQL {
 			sqlDB, err := db.DB()
 			if err != nil {
 				return err

@@ -59,7 +59,7 @@ func TestDialectSQLite3(t *testing.T) {
 	)
 
 	// Enable Foreign Keys on sqlite
-	if db.Dialector.Name() == SQLite3 {
+	if db.Dialector.Name() == dsn.DialectSQLite {
 		db.Exec("PRAGMA foreign_keys = ON")
 		log.Info("sqlite foreign keys enabled")
 	}

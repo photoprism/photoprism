@@ -491,7 +491,7 @@ func (m *Subject) RefreshPhotos() error {
 
 	var err error
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		update := fmt.Sprintf(`UPDATE photos p JOIN files f ON f.photo_id = p.id JOIN %s m ON m.file_uid = f.file_uid
 			SET p.checked_at = NULL WHERE m.subj_uid = ?`, Marker{}.TableName())
 		err = UnscopedDb().Exec(update, m.SubjUID).Error

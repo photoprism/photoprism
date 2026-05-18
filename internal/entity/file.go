@@ -132,7 +132,7 @@ func (m File) RegenerateIndex() {
 
 	switch DbDialect() {
 
-	case dsn.DriverPostgreSQL:
+	case dsn.DialectPostgreSQL:
 		// The following code (commented out), shows an alternative where DBMS specific conversions are not needed.
 		// It may be useful later as an example on how to do these updates.
 		// photoTakenAtTx := Db().Clauses(clause.From{Tables: []clause.Table{{Name: "photos"}}})
@@ -160,7 +160,7 @@ func (m File) RegenerateIndex() {
 			Db().Exec("UPDATE files SET time_index = convert_to(CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - to_number(to_char(photo_taken_at, 'YYYYMMDDHHMISS'),'99999999999999'), '-', convert_from(media_id,'UTF8')) ELSE NULL END, 'UTF8') WHERE ?",
 				updateWhere).Error)
 
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files JOIN ? p ON p.id = files.photo_id SET files.photo_taken_at = p.taken_at_local WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)
@@ -172,7 +172,7 @@ func (m File) RegenerateIndex() {
 		Log("files", "regenerate time_index",
 			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) ELSE NULL END WHERE ?",
 				updateWhere).Error)
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files SET photo_taken_at = (SELECT p.taken_at_local FROM ? p WHERE p.id = photo_id) WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)

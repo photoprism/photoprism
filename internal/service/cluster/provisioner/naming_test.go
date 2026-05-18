@@ -118,7 +118,7 @@ func TestGetCredentials_PostgresRejected(t *testing.T) {
 	ctx := context.Background()
 	c := config.NewConfig(config.CliTestContext())
 	origDriver := DatabaseDriver
-	DatabaseDriver = config.Postgres
+	DatabaseDriver = dsn.DriverPostgreSQL
 	t.Cleanup(func() { DatabaseDriver = origDriver })
 
 	_, _, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)

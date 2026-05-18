@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -78,7 +79,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	// Set sort order.
 	switch frm.Order {
 	case sortby.Count:
-		if entity.DbDialect() == entity.Postgres {
+		if entity.DbDialect() == dsn.DialectPostgreSQL {
 			s = s.Order(OrderExpr("photo_count DESC NULLS LAST, albums.album_title, albums.album_uid DESC", frm.Reverse))
 		} else {
 			s = s.Order(OrderExpr("photo_count DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
@@ -149,7 +150,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		q := "%" + strings.Trim(frm.Query, " *%") + "%"
 
 		switch entity.DbDialect() {
-		case entity.Postgres:
+		case dsn.DialectPostgreSQL:
 			if frm.Type == entity.AlbumFolder {
 				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ? OR convert_from(albums.album_path, 'UTF8') LIKE ?", q, q, q)
 			} else {

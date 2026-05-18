@@ -50,15 +50,15 @@ func testMain(m *testing.M) (code int) {
 
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsname == "" {
-		driver = entity.SQLite3
+		driver = dsn.DriverSQLite3
 	}
 
 	// Set default database DSN.
-	if driver == entity.SQLite3 {
+	if driver == dsn.DriverSQLite3 {
 		switch dsname {
 		case "":
-			dsname = entity.SQLiteMemoryDSN
-		case entity.SQLiteTestDB:
+			dsname = dsn.SQLiteMemoryShared
+		case dsn.SQLiteTestDB:
 			if err := os.Remove(dsname); err == nil {
 				log.Debugf("sqlite: test file %s removed", clean.Log(dsname))
 			}

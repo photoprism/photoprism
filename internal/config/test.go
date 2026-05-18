@@ -229,7 +229,7 @@ func TestConfig() *Config {
 func RestoreDBFromCache(c *Config) (cachedDB bool) {
 	cachedDB = false
 	// Try to restore test db from cache.
-	if len(testDbCache) > 0 && c.DatabaseDriver() == SQLite3 && !fs.FileExists(c.DatabaseFile()) {
+	if len(testDbCache) > 0 && c.DatabaseDriver() == dsn.DriverSQLite3 && !fs.FileExists(c.DatabaseFile()) {
 		if err := os.WriteFile(c.DatabaseFile(), testDbCache, fs.ModeFile); err != nil {
 			log.Warnf("config: %s (restore test database)", err)
 		} else {

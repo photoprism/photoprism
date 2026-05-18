@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
@@ -84,7 +85,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	var album entity.Album
 	var albumErr error
 
-	postgreSQLRowNumber := txt.NotEmpty(frm.Label) && entity.DbDialect() == entity.Postgres
+	postgreSQLRowNumber := txt.NotEmpty(frm.Label) && entity.DbDialect() == dsn.DialectPostgreSQL
 	// log.Debugf("postgreSQLRowNumber = %v, frm.Label = %v, DbDialect = %v", postgreSQLRowNumber, frm.Label, entity.DbDialect())
 
 	// Need to pre-execute some of the logic to find out if the frm.Label is reset.
@@ -112,7 +113,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			return PhotoResults{}, 0, ErrBadFilter
 		}
 	}
-	if !postgreSQLRowNumber && txt.NotEmpty(frm.Scope) && entity.DbDialect() == entity.Postgres {
+	if !postgreSQLRowNumber && txt.NotEmpty(frm.Scope) && entity.DbDialect() == dsn.DialectPostgreSQL {
 		// If the form's label has been updated, make sure that we enable the PostgreSQL work around to GROUP BY.
 		postgreSQLRowNumber = txt.NotEmpty(frm2.Label)
 		// log.Debugf("postgreSQLRowNumber = %v, frm2.Label = %v, DbDialect = %v", postgreSQLRowNumber, frm2.Label, entity.DbDialect())
@@ -545,7 +546,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		v := strings.Trim(frm.Camera, "*%") + "%"
 		w := strings.ToLower(v)
 		switch entity.DbDialect() {
-		case entity.Postgres:
+		case dsn.DialectPostgreSQL:
 			s = s.Where("lower(cameras.camera_name) LIKE ? OR lower(cameras.camera_model) LIKE ? OR cameras.camera_slug LIKE ?", w, w, v)
 		default:
 			s = s.Where("cameras.camera_name LIKE ? OR cameras.camera_model LIKE ? OR cameras.camera_slug LIKE ?", v, v, v)
@@ -559,7 +560,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		v := strings.Trim(frm.Lens, "*%") + "%"
 		w := strings.ToLower(v)
 		switch entity.DbDialect() {
-		case entity.Postgres:
+		case dsn.DialectPostgreSQL:
 			s = s.Where("lower(lenses.lens_name) LIKE ? OR lower(lenses.lens_model) LIKE ? OR lenses.lens_slug LIKE ?", w, w, v)
 		default:
 			s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
@@ -758,7 +759,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			likeString := ""
 			titleString := ""
 			switch entity.DbDialect() {
-			case entity.Postgres:
+			case dsn.DialectPostgreSQL:
 				likeString = "lower(photos.photo_title)"
 				titleString = strings.ToLower(frm.Title)
 			default:
@@ -780,7 +781,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			likeString := ""
 			titleString := ""
 			switch entity.DbDialect() {
-			case entity.Postgres:
+			case dsn.DialectPostgreSQL:
 				likeString = "lower(photos.photo_caption)"
 				titleString = strings.ToLower(frm.Caption)
 			default:
@@ -800,7 +801,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			s = s.Where("photos.photo_title <> '' OR photos.photo_caption <> ''")
 		} else {
 			switch entity.DbDialect() {
-			case entity.Postgres:
+			case dsn.DialectPostgreSQL:
 				where, values := OrLikeCols([]string{"lower(photos.photo_title)", "lower(photos.photo_caption)"}, strings.ToLower(frm.Description))
 				s = s.Where(where, values...)
 			default:
@@ -889,7 +890,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		} else if txt.NotEmpty(frm.Album) {
 			v := strings.Trim(frm.Album, "*%") + "%"
 			switch entity.DbDialect() {
-			case entity.Postgres:
+			case dsn.DialectPostgreSQL:
 				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title ILIKE ? OR a.album_slug LIKE ?))", v, v)
 			default:
 				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)

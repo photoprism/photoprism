@@ -121,7 +121,7 @@ func UpdateAlbumDates() error {
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		return UnscopedDb().Exec(`UPDATE albums INNER JOIN (
              SELECT photo_path, MAX(taken_at_local) AS taken_max
 			 FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
@@ -129,7 +129,7 @@ func UpdateAlbumDates() error {
 	    ) AS p ON albums.album_path = p.photo_path
 		SET albums.album_year = YEAR(taken_max), albums.album_month = MONTH(taken_max), albums.album_day = DAY(taken_max)
 		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
-	case Postgres:
+	case dsn.DialectPostgreSQL:
 		return UnscopedDb().Exec(`UPDATE albums
 			SET album_year = date_part('year', taken_max), album_month = date_part('month', taken_max), album_day = date_part('day', taken_max)
 			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
@@ -137,7 +137,7 @@ func UpdateAlbumDates() error {
 	 			GROUP BY photo_path
 			) AS p
 			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
-	case SQLite3:
+	case dsn.DialectSQLite:
 		return UnscopedDb().Exec(`UPDATE albums
 			SET album_year = strftime('%Y', taken_max), album_month = strftime('%m', taken_max), album_day = strftime('%d', taken_max)
 			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max

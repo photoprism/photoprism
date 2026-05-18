@@ -30,7 +30,7 @@ func TestDialectMysql(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	if entity.DbDialect() != entity.MySQL {
+	if entity.DbDialect() != dsn.DialectMySQL {
 		t.Skip("skipping test as not MariaDB")
 	}
 

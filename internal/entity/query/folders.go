@@ -75,7 +75,7 @@ func UpdateFolderDates() error {
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		return UnscopedDb().Exec(`UPDATE folders
 		INNER JOIN
 			(SELECT photo_path, MAX(taken_at_local) AS taken_max
@@ -83,7 +83,7 @@ func UpdateFolderDates() error {
 			GROUP BY photo_path) AS p ON folders.path = p.photo_path
 		SET folders.folder_year = YEAR(taken_max), folders.folder_month = MONTH(taken_max), folders.folder_day = DAY(taken_max)
 		WHERE p.taken_max IS NOT NULL`).Error
-	case Postgres:
+	case dsn.DialectPostgreSQL:
 		return UnscopedDb().Exec(`UPDATE folders
 			SET folder_year = date_part('year', taken_max), folder_month = date_part('month', taken_max), folder_day = date_part('day', taken_max)
 			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
@@ -91,7 +91,7 @@ func UpdateFolderDates() error {
 	 			GROUP BY photo_path
 			) AS p
 			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL`).Error
-	case SQLite3:
+	case dsn.DialectSQLite:
 		return UnscopedDb().Exec(`UPDATE folders
 			SET folder_year = strftime('%Y', taken_max), folder_month = strftime('%m', taken_max), folder_day = strftime('%d', taken_max)
 			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max

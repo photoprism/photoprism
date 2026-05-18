@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -129,7 +130,7 @@ func TestValidateSaveCreate(t *testing.T) {
 
 			// PostgreSQL will error all statements after a failure in a transaction.
 			// So enable a savepoint to rollback to after the error we are about to create.
-			if entity.DbDialect() == entity.Postgres {
+			if entity.DbDialect() == dsn.DialectPostgreSQL {
 				tx.Exec("SAVEPOINT beforeError")
 			}
 
@@ -142,7 +143,7 @@ func TestValidateSaveCreate(t *testing.T) {
 				t.FailNow()
 				return res.Error
 			}
-			if entity.DbDialect() == entity.Postgres {
+			if entity.DbDialect() == dsn.DialectPostgreSQL {
 				tx.Exec("ROLLBACK TO SAVEPOINT beforeError")
 			}
 

@@ -29,7 +29,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	if entity.DbDialect() != entity.Postgres {
+	if entity.DbDialect() != dsn.DialectPostgreSQL {
 		t.Skip("skipping test as not PostgreSQL")
 	}
 
