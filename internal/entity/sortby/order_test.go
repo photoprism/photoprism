@@ -3,8 +3,9 @@ package sortby
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestOrderExpr(t *testing.T) {
