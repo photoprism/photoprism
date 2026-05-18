@@ -81,6 +81,14 @@ func TestScopePermits(t *testing.T) {
 		assert.True(t, ScopePermits("read mcp", ResourceMCP, Permissions{ActionView}))
 		assert.False(t, ScopePermits("read mcp", ResourceMCP, Permissions{ActionUpdate}))
 		assert.False(t, ScopePermits("metrics", ResourceMCP, Permissions{ActionView}))
+		// "mcp:read" is NOT an alias for "mcp read" - KeyValue.Parse treats
+		// it as {key=mcp, value=read}, which Attr.Find("mcp") never matches
+		// because the resource lookup expects a {mcp,true} entry. This
+		// regression assertion locks in the documented behavior in
+		// specs/platform/acl-scopes.md so the parser does not silently
+		// start accepting the colon form.
+		assert.False(t, ScopePermits("mcp:read", ResourceMCP, Permissions{ActionView}))
+		assert.False(t, ScopePermits("mcp:read", ResourceMCP, Permissions{ActionUpdate}))
 	})
 }
 

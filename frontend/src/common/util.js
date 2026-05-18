@@ -95,31 +95,32 @@ const sanitizeHtmlOptions = Object.freeze({
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
 export default class $util {
-  // Canonical-form normalizer for short identifiers that are user-typed
-  // and dedup-compared (label names, album titles, and similar). Lowercases,
-  // expands `&` to `and`, treats `+` / `_` / `-` as whitespace, strips other
-  // punctuation, and collapses runs of whitespace. Letters, digits, and
-  // emoji sequences (incl. ZWJ + skin-tone modifiers + regional indicators)
-  // are preserved so user-defined emoji-only titles round-trip.
+  // normalizeTitle returns the dedup-comparison form of a user-typed identifier:
+  // lowercased, `&` → `and`, non-letter/digit/emoji runs collapsed to single
+  // spaces and trimmed. Emoji sequences (ZWJ, skin tone, regional indicators)
+  // are preserved so emoji-only titles round-trip.
   static normalizeTitle(s) {
-    if (s === null || s === undefined) return "";
+    if (s === null || s === undefined) {
+      return "";
+    }
     return (
       String(s)
         .toLowerCase()
         .replace(/&/g, "and")
-        .replace(/[+_-]+/g, " ")
         // ZWJ (U+200D), VS-15/16 (U+FE0E/F), and the keycap combining mark (U+20E3) sit in this
         // class on purpose so composite emoji sequences survive normalization; eslint flags them as
         // a "misleading character class" because they only carry meaning when paired with the
         // pictographic ranges already listed above.
         // eslint-disable-next-line no-misleading-character-class
-        .replace(/[^\p{L}\p{N}\p{Extended_Pictographic}\p{Emoji_Component}\p{Regional_Indicator}\p{Emoji_Modifier}\u200d\ufe0e\ufe0f\u20e3 ]+/gu, "")
+        .replace(/[^\p{L}\p{N}\p{Extended_Pictographic}\p{Emoji_Component}\p{Regional_Indicator}\p{Emoji_Modifier}\u200d\ufe0e\ufe0f\u20e3 ]+/gu, " ")
         .replace(/\s+/g, " ")
         .trim()
     );
   }
   static slugifyLabelTitle(s) {
-    if (s === null || s === undefined) return "";
+    if (s === null || s === undefined) {
+      return "";
+    }
     return String(s)
       .toLowerCase()
       .replace(/&/g, "and")
@@ -321,8 +322,9 @@ export default class $util {
       I: 1,
     };
     let a;
-    if (number < 1 || number > 3999) return "";
-    else {
+    if (number < 1 || number > 3999) {
+      return "";
+    } else {
       for (let key in romanNumList) {
         a = Math.floor(number / romanNumList[key]);
         if (a >= 0) {
@@ -820,6 +822,35 @@ export default class $util {
         return "Pentax PEF";
       default:
         return value.toUpperCase();
+    }
+  }
+
+  // typeName returns the localized label for a media type value
+  // (the same `value` field used by options/options.js#PhotoTypes).
+  // Returns `defaultValue` (or the empty string) for unknown / missing
+  // types so callers can fall back to a generic label like "File".
+  static typeName(type, defaultValue) {
+    switch (type) {
+      case media.Image:
+        return $gettext("Image");
+      case media.Raw:
+        return $gettext("Raw");
+      case media.Live:
+        return $gettext("Live");
+      case media.Video:
+        return $gettext("Video");
+      case media.Audio:
+        return $gettext("Audio");
+      case media.Animated:
+        return $gettext("Animated");
+      case media.Vector:
+        return $gettext("Vector");
+      case media.Document:
+        return $gettext("Document");
+      case media.Sidecar:
+        return $gettext("Sidecar");
+      default:
+        return defaultValue !== undefined ? defaultValue : "";
     }
   }
 

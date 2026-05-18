@@ -25,7 +25,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.4.0
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
-	github.com/mattn/go-sqlite3 v1.14.42 // indirect
+	github.com/mattn/go-sqlite3 v1.14.44 // indirect
 	github.com/montanaflynn/stats v0.9.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
@@ -33,18 +33,18 @@ require (
 	github.com/sevlyar/go-daemon v0.1.6
 	github.com/sirupsen/logrus v1.9.4
 	github.com/stretchr/testify v1.11.1
-	github.com/tidwall/gjson v1.18.0
+	github.com/tidwall/gjson v1.19.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
-	golang.org/x/crypto v0.50.0
-	golang.org/x/net v0.53.0
+	golang.org/x/crypto v0.51.0
+	golang.org/x/net v0.54.0
 	gonum.org/v1/gonum v0.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.39.0
+	golang.org/x/image v0.40.0
 )
 
 require github.com/olekukonko/tablewriter v1.1.4
@@ -67,12 +67,12 @@ require (
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
 
-require golang.org/x/text v0.36.0
+require golang.org/x/text v0.37.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
 	github.com/davidbyttow/govips/v2 v2.18.0
-	github.com/go-co-op/gocron/v2 v2.21.1
+	github.com/go-co-op/gocron/v2 v2.21.2
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/klauspost/compress v1.18.6
@@ -84,10 +84,10 @@ require (
 	github.com/ugjka/go-tz/v2 v2.2.8
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
-	github.com/yalue/onnxruntime_go v1.30.0
+	github.com/yalue/onnxruntime_go v1.30.1
 	github.com/zitadel/oidc/v3 v3.47.5
-	golang.org/x/mod v0.35.0
-	golang.org/x/sys v0.43.0
+	golang.org/x/mod v0.36.0
+	golang.org/x/sys v0.44.0
 	google.golang.org/protobuf v1.36.11
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
@@ -199,4 +199,4 @@ require github.com/emersion/go-webdav v0.7.0
 
 go 1.25.0
 
-toolchain go1.26.2
+toolchain go1.26.3

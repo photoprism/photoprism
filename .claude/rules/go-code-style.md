@@ -1,10 +1,9 @@
 ## Go Code Style
 
-- Run `make lint-go` (golangci-lint) after Go changes; prefer `golangci-lint run ./internal/<pkg>/...` for focused edits.
-- Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period. All new functions (including unexported helpers) need a concise doc comment explaining behavior.
-- For short examples inside comments, indent code rather than using backticks; godoc treats indented blocks as preformatted.
-- Every Go package must contain a `<package>.go` file in its root (e.g. `internal/auth/jwt/jwt.go`) with the standard license header and a short package description comment.
-- Go is formatted by `gofmt` with tabs. Do not hand-format indentation. After edits run `make fmt-go` (gofmt + goimports).
+- **Comments:** Follow the code comment rules in `code-comments.md`.
+- **Packages:** Every Go package must contain a `<package>.go` file in its root (e.g. `internal/auth/jwt/jwt.go`) with the standard license header and a short package description comment.
+- **Format:** Go is formatted by `gofmt` with tabs. Do not hand-format indentation. After edits run `make fmt-go` (gofmt + goimports).
+- **Linting:** Run `make lint-go` (`golangci-lint`) after Go changes; prefer `golangci-lint run ./internal/<pkg>/...` for focused edits.
 
 ## Package Boundaries
 

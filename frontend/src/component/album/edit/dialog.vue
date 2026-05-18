@@ -26,9 +26,8 @@
             <v-col v-if="album.Type !== 'month'" cols="12">
               <v-text-field
                 v-model="model.Title"
-                hide-details
                 autofocus
-                :rules="[titleRule]"
+                :rules="rules.text(false, 0, AlbumMaxLength.Title, $gettext('Name'))"
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
@@ -95,7 +94,8 @@
   </v-dialog>
 </template>
 <script>
-import Album from "model/album";
+import Album, { MaxLength as AlbumMaxLength } from "model/album";
+import { rules } from "common/form";
 
 export default {
   name: "PAlbumEditDialog",
@@ -130,7 +130,8 @@ export default {
       ],
       category: null,
       categories: this.$config.albumCategories(),
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
+      rules,
+      AlbumMaxLength,
     };
   },
   watch: {

@@ -2,7 +2,7 @@ import { Selector } from "testcafe";
 
 export default class DateTimeDialog {
   constructor() {
-    this.root = Selector(".p-datetime-dialog", { timeout: 15000 });
+    this.root = Selector(".p-meta-datetime-dialog", { timeout: 15000 });
     this.year = this.root.find(".input-year input");
     this.month = this.root.find(".input-month input");
     this.day = this.root.find(".input-day input");

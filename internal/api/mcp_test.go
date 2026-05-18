@@ -12,7 +12,9 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -119,6 +121,45 @@ func TestServeMCP(t *testing.T) {
 		authToken := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
 		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, authToken, "")
 		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("AdminAppPasswordWithoutMCPScope", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		prepareMCPTest(t)
+		ServeMCP(router)
+
+		user := entity.FindUserByName("alice")
+		if user == nil {
+			t.Fatal("admin fixture user 'alice' must not be nil")
+		}
+
+		sess, err := entity.AddClientSession("mcp-test-wrong-scope", 3600, "webdav", authn.GrantCLI, user)
+		assert.NoError(t, err)
+		if err != nil {
+			return
+		}
+
+		r := mcpPost(app, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, sess.AuthToken(), "")
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("AdminAppPasswordWithMCPScope", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		prepareMCPTest(t)
+		ServeMCP(router)
+
+		user := entity.FindUserByName("alice")
+		if user == nil {
+			t.Fatal("admin fixture user 'alice' must not be nil")
+		}
+
+		sess, err := entity.AddClientSession("mcp-test-right-scope", 3600, "mcp", authn.GrantCLI, user)
+		assert.NoError(t, err)
+		if err != nil {
+			return
+		}
+
+		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"qa","version":"1.0"}}}`
+		r := mcpPost(app, initBody, sess.AuthToken(), "")
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("RequestTooLargeContentLength", func(t *testing.T) {
 		// The handler must reject oversized POST bodies with a 413 before

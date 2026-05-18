@@ -26,9 +26,8 @@
             <v-col cols="12">
               <v-text-field
                 v-model="model.Name"
-                hide-details
                 autofocus
-                :rules="[titleRule]"
+                :rules="rules.text(false, 0, LabelMaxLength.Name, $gettext('Name'))"
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
@@ -52,7 +51,8 @@
   </v-dialog>
 </template>
 <script>
-import Label from "model/label";
+import Label, { MaxLength as LabelMaxLength } from "model/label";
+import { rules } from "common/form";
 
 export default {
   name: "PLabelEditDialog",
@@ -71,7 +71,8 @@ export default {
     return {
       disabled: !this.$config.allow("labels", "manage"),
       model: new Label(),
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
+      rules,
+      LabelMaxLength,
     };
   },
   watch: {

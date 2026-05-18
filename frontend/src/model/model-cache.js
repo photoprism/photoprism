@@ -23,9 +23,7 @@ Additional information can be found in our Developer Guide:
 
 */
 
-// Deep-clones a plain object via JSON. Used at both ends of the cache
-// lifecycle (set + hydrate) so callers can never share refs with cached
-// values (cache isolation contract).
+// deepClone returns a JSON deep copy so cached values never share refs with callers.
 function deepClone(value) {
   if (value === null || typeof value !== "object") {
     return value;
@@ -33,12 +31,8 @@ function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
-// ModelCacheStaleFetchError is raised by fetch() when clear() bumps
-// the session-epoch counter while the loader is still in flight. It
-// signals "the cache state this fetch belonged to is gone — discard
-// the result." Existing callers absorb it via their .catch handlers;
-// the export lets future callers discriminate this from real loader
-// failures (network, auth, etc.) if they need to.
+// ModelCacheStaleFetchError signals that a fetch() result was discarded because
+// clear() bumped the session-epoch counter while the loader was still in flight.
 export class ModelCacheStaleFetchError extends Error {
   constructor(key) {
     super(`ModelCache: discarded stale fetch for "${key}" after clear()`);
@@ -47,34 +41,17 @@ export class ModelCacheStaleFetchError extends Error {
   }
 }
 
-// ModelCache is a small in-memory LRU for full-entity model snapshots. It
-// is model-layer infrastructure: a subclass (e.g. Photo) supplies snapshot
-// and hydrate hooks so the cache can stay neutral about model shape.
-//
+// ModelCache is a small in-memory LRU for full-entity model snapshots; a
+// subclass supplies snapshot/hydrate hooks so the cache stays shape-neutral.
 // Contract:
-//   - Stores plain value snapshots, never live model instances.
-//   - Returns a fresh hydrated instance for every cache hit so callers
-//     can mutate freely without aliasing the cached source of truth.
-//   - Coalesces concurrent fetch() calls for the same key behind one
-//     in-flight Promise, then hydrates each waiter independently.
-//   - LRU ordering: every read or refresh moves the entry to the most-
-//     recent slot; size is capped at `max` and the oldest entry is
-//     evicted when the cap is exceeded.
-//   - Optional TTL (`ttl` ms). 0 / null / negative means "disabled" —
-//     the recommended default for full-entity caches that lean on the
-//     websocket update channel for freshness.
-//   - clear() empties items and the pending-request map AND bumps an
-//     internal session-epoch counter. In-flight loader Promises are
-//     not literally aborted (we don't thread an AbortController
-//     through every loader), but every fetch records the epoch at
-//     start and a fetch whose epoch no longer matches REJECTS with
-//     ModelCacheStaleFetchError instead of resolving. Net effect: a
-//     logout-then-relogin sequence cannot serve data that was fetched
-//     under the previous role — neither into the cache, nor through
-//     a waiter's .then handler into UI state. Existing callers absorb
-//     the rejection via their .catch handlers. Synchronous mutators
-//     (set / refreshIfPresent) are not gated — they have no async
-//     window to race against.
+//   - Stores plain snapshot values, never live model instances.
+//   - Returns a fresh hydrated instance per cache hit (callers may mutate freely).
+//   - Coalesces concurrent fetch() calls for the same key onto one in-flight Promise.
+//   - LRU promotion on read/refresh; capped at `max`, oldest evicted on overflow.
+//   - Optional TTL (`ttl` ms; 0/null/negative disables) for full-entity caches.
+//   - clear() empties the cache and bumps an epoch counter so in-flight fetches
+//     that started under the previous epoch REJECT with ModelCacheStaleFetchError
+//     instead of leaking data across a logout/relogin boundary.
 export class ModelCache {
   // Constructs a ModelCache with the given options:
   //   - max:      hard size cap; oldest entry is evicted on overflow.
@@ -96,19 +73,12 @@ export class ModelCache {
     this.now = now;
     this.items = new Map();
     this.pending = new Map();
-    // Monotonic counter bumped on clear(). fetch() and the direct
-    // mutators capture this value at their entry point and compare
-    // it before mutating items, so a Promise that started under epoch
-    // N can never write into the cache after clear() advanced it to
-    // N+1. See class-level docs.
+    // Monotonic counter bumped on clear(); see class-level docs.
     this._epoch = 0;
   }
 
-  // Returns true if the key has a live (non-expired) entry. Lazy-prunes
-  // an expired entry before reporting absence so size() / refreshIfPresent()
-  // / oldest-eviction-on-overflow stay consistent with what readers can
-  // actually retrieve. Does NOT change LRU ordering for live entries —
-  // has() is a probe, not a touch.
+  // has returns true if the key has a live (non-expired) entry; expired entries
+  // are pruned before reporting absence. Probe only — does not promote LRU order.
   has(key) {
     if (!this.items.has(key)) {
       return false;
@@ -121,10 +91,8 @@ export class ModelCache {
     return true;
   }
 
-  // Returns a freshly hydrated model for the given key, or null on miss
-  // or expiration. Touching the entry promotes it to the most-recent LRU
-  // slot. Hydration always happens against a deep clone of the snapshot
-  // so the returned instance can be safely mutated.
+  // get returns a freshly hydrated model for the key (or null on miss/expiry),
+  // promoting the entry to the most-recent LRU slot.
   get(key) {
     const entry = this.items.get(key);
     if (!entry) {
@@ -140,15 +108,9 @@ export class ModelCache {
     return this.hydrate(deepClone(entry.value));
   }
 
-  // Stores or refreshes the entry for `key`. The argument is routed
-  // through the configured snapshot() callback so the cache always
-  // holds normalized snapshot values, never live model instances —
-  // even when callers pass models directly. The snapshot is also
-  // deep-cloned before being stored so future caller-side mutations
-  // on `value` cannot bleed into the cache. LRU ordering and size
-  // cap are enforced. snapshot() must be idempotent for already-
-  // snapshotted plain values; the Photo snapshot satisfies that
-  // ("photo instanceof Photo ? photo.getValues() : photo").
+  // set stores or refreshes the entry for `key`, routing the value through
+  // snapshot() and a deep clone so the cache holds normalized plain values.
+  // snapshot() must be idempotent for already-snapshotted inputs.
   set(key, value) {
     if (this.max <= 0) {
       return;
@@ -157,12 +119,7 @@ export class ModelCache {
     if (this.items.has(key)) {
       this.items.delete(key);
     } else if (this.items.size >= this.max) {
-      // Reclaim every expired slot before evicting a live entry.
-      // Without this pass an expired ghost can hold a slot until
-      // overflow churn happens to evict it — and under non-uniform
-      // LRU promotion a fresh entry can even get evicted ahead of
-      // a stale one. The pass is O(n) but only runs at the cap and
-      // is a no-op when ttl <= 0 (the Photo default).
+      // Reclaim expired slots before evicting a live entry; no-op when ttl <= 0.
       if (this.ttl > 0) {
         const cutoff = this.now();
         for (const [k, entry] of this.items) {
@@ -182,21 +139,10 @@ export class ModelCache {
     });
   }
 
-  // Returns a hydrated model for `key`, fetching via `loader` on miss.
-  // Concurrent fetches for the same key share a single in-flight Promise;
-  // each waiter receives an isolated hydrated instance. The loader is
-  // expected to return a model whose values flow through `snapshot`.
-  //
-  // Epoch gate: the entry epoch is captured before the loader runs.
-  // If clear() bumps the epoch while the loader is still in flight,
-  // the returned Promise REJECTS with ModelCacheStaleFetchError so
-  // waiters' .then handlers never see the stale value — caller-side
-  // .catch() handlers absorb the rejection. The cache stays empty;
-  // the next read goes back through the loader under the new epoch.
-  // Rejecting (rather than resolving with the value) is what makes
-  // the post-logout guarantee airtight: lightbox.vue / dialog.vue
-  // both already chain a .catch(), so a stale role-A fetch can't
-  // sneak data into UI mounted under role B.
+  // fetch returns a hydrated model for `key`, calling `loader` on miss and
+  // sharing one in-flight Promise across concurrent waiters. If clear() bumps
+  // the epoch mid-flight the returned Promise rejects with ModelCacheStaleFetchError
+  // so stale role-A data cannot leak into role-B UI after a logout/relogin.
   fetch(key, loader) {
     const cached = this.get(key);
     if (cached) {
@@ -210,13 +156,7 @@ export class ModelCache {
       .then(loader)
       .then((model) => {
         if (this._epoch !== epoch) {
-          // clear() bumped the epoch while this loader was in
-          // flight. Reject so the original waiter's .then doesn't
-          // fire — otherwise a logout-then-relogin window could
-          // route role-A data into role-B's UI before the route
-          // change unmounts the component. set() will re-snapshot;
-          // the snapshot callback is required to be idempotent for
-          // plain snapshot values.
+          // clear() advanced the epoch mid-flight — drop the stale result.
           throw new ModelCacheStaleFetchError(key);
         }
         const snapshot = this.snapshot(model);
@@ -224,9 +164,8 @@ export class ModelCache {
         return snapshot;
       })
       .finally(() => {
-        // Only forget the pending entry if it still belongs to this
-        // fetch. clear() already wiped pending; a new fetch on the
-        // same key under the next epoch may have re-seeded it.
+        // Only forget the pending entry if it still belongs to this fetch —
+        // a post-clear() refetch on the same key may have re-seeded it.
         if (this.pending.get(key) === request) {
           this.pending.delete(key);
         }
@@ -235,15 +174,8 @@ export class ModelCache {
     return request.then((snapshot) => this.hydrate(deepClone(snapshot)));
   }
 
-  // Refreshes an entry only if it is already cached AND still live.
-  // Used by background event handlers (e.g. websocket "updated"
-  // payloads) so the cache doesn't grow from traffic the user hasn't
-  // actively browsed. The expired-entry probe goes through has() so
-  // an entry past its TTL is pruned and reported as absent rather
-  // than silently revived under a fresh expiry. The value is routed
-  // through snapshot() via set() so callers can pass models or
-  // pre-snapshotted plain values interchangeably. Returns true when
-  // an entry was refreshed, false otherwise.
+  // refreshIfPresent updates an entry only if it is already cached and live,
+  // so background event handlers don't grow the cache with un-browsed keys.
   refreshIfPresent(key, value) {
     if (!this.has(key)) {
       return false;
@@ -258,23 +190,16 @@ export class ModelCache {
     this.pending.delete(key);
   }
 
-  // Empties the cache and the pending-request map, then bumps the
-  // session-epoch counter. In-flight loader Promises are not literally
-  // aborted, but a fetch that started under the previous epoch will
-  // see the bump in its .then handler and skip the cache write — so
-  // a logout-then-relogin sequence cannot leak data fetched under the
-  // previous role even though its loader resolves after clear().
+  // clear empties the cache and the pending-request map and bumps the epoch
+  // counter so in-flight fetches under the previous epoch reject instead of writing.
   clear() {
     this.items.clear();
     this.pending.clear();
     this._epoch++;
   }
 
-  // Returns the current entry count. With TTL enabled this is a coarse
-  // upper bound — expired entries are lazy-pruned on has() / get() /
-  // refreshIfPresent(), not by a sweeper. For tests and debug counters
-  // call has() (or query items.size after a representative read pass)
-  // when an exact live count matters.
+  // size returns the entry count; with TTL enabled this is a coarse upper
+  // bound — expired entries are lazy-pruned on read, not by a sweeper.
   size() {
     return this.items.size;
   }

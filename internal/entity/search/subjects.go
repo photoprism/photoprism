@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -60,21 +61,16 @@ func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
 	}
 
 	if frm.Query != "" {
-		whereString1 := ""
-		whereString2 := ""
-		valueString := ""
+		var wheres []string
+		var values [][]any
 		switch entity.DbDialect() {
-		case entity.Postgres:
-			whereString1 = "lower(subj_name)"
-			whereString2 = "lower(subj_alias)"
-			valueString = strings.ToLower(frm.Query)
+		case dsn.DriverPostgreSQL:
+			wheres, values = LikeAllNames(Cols{"lower(subj_name)", "lower(subj_alias)"}, strings.ToLower(frm.Query))
 		default:
-			whereString1 = "subj_name"
-			whereString2 = "subj_alias"
-			valueString = frm.Query
+			wheres, values = LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Query)
 		}
-		for _, where := range LikeAllNames(Cols{whereString1, whereString2}, valueString) {
-			s = s.Where("?", gorm.Expr(where))
+		for i, where := range wheres {
+			s = s.Where("?", gorm.Expr(where, values[i]...))
 		}
 	}
 
@@ -150,7 +146,7 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 		whereString2 = "subj_alias"
 		valueString = s
 	}
-	wheres := LikeAllNames(Cols{whereString1, whereString2}, valueString)
+	wheres, values := LikeAllNames(Cols{whereString1, whereString2}, valueString)
 
 	if len(wheres) == 0 {
 		return result, names, s
@@ -158,11 +154,11 @@ func SubjectUIDs(s string) (result []string, names []string, remaining string) {
 
 	remaining = s
 
-	for _, where := range wheres {
+	for i, where := range wheres {
 		var subj []string
 
 		stmt := Db().Model(&entity.Subject{})
-		stmt = stmt.Where("?", gorm.Expr(where))
+		stmt = stmt.Where("?", gorm.Expr(where, values[i]...))
 
 		if err := stmt.Scan(&matches).Error; err != nil {
 			log.Errorf("search: %s while finding subjects", err)

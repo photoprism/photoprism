@@ -2,7 +2,7 @@ import { Selector } from "testcafe";
 
 export default class CameraDialog {
   constructor() {
-    this.root = Selector(".p-camera-dialog", { timeout: 15000 });
+    this.root = Selector(".p-meta-camera-dialog", { timeout: 15000 });
     this.camera = this.root.find(".input-camera");
     this.lens = this.root.find(".input-lens");
     // v-select renders the chosen option in `.v-select__selection-text`.

@@ -155,7 +155,7 @@
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Description`) }}</v-col>
                   <v-col cols="12">
                     <v-text-field
-                      hide-details
+                      :rules="rules.text(false, 0, PhotoMaxLength.Title, $pgettext(`Photo`, `Title`))"
                       :label="$pgettext(`Photo`, `Title`)"
                       :model-value="formData.Title.value"
                       :placeholder="getFieldData('text-field', 'Title').placeholder"
@@ -170,7 +170,7 @@
                   </v-col>
                   <v-col cols="12">
                     <v-textarea
-                      hide-details
+                      :rules="rules.text(false, 0, PhotoMaxLength.Caption, $gettext('Caption'))"
                       autocomplete="off"
                       auto-grow
                       :label="$gettext('Caption')"
@@ -262,7 +262,7 @@
                   </v-col>
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Location`) }}</v-col>
                   <v-col cols="12" md="6">
-                    <p-location-input
+                    <p-meta-location-input
                       :latlng="currentCoordinates"
                       :placeholder="locationPlaceholder"
                       :persistent-placeholder="true"
@@ -281,7 +281,7 @@
                       @open-map="adjustLocation"
                       @delete="onLocationDelete"
                       @undo="onLocationUndo"
-                    ></p-location-input>
+                    ></p-meta-location-input>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
                     <v-autocomplete
@@ -328,7 +328,7 @@
                   <v-col cols="12" class="text-subtitle-2">{{ $pgettext(`Edit`, `Content`) }}</v-col>
                   <v-col cols="12" sm="8">
                     <v-textarea
-                      hide-details
+                      :rules="rules.text(false, 0, PhotoMaxLength.Subject, $gettext('Subject'))"
                       autocomplete="off"
                       auto-grow
                       :label="$gettext('Subject')"
@@ -364,7 +364,7 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      hide-details
+                      :rules="rules.text(false, 0, PhotoMaxLength.Copyright, $gettext('Copyright'))"
                       autocomplete="off"
                       :label="$gettext('Copyright')"
                       :model-value="formData.DetailsCopyright.value"
@@ -379,7 +379,7 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      hide-details
+                      :rules="rules.text(false, 0, PhotoMaxLength.Artist, $gettext('Artist'))"
                       autocomplete="off"
                       :label="$gettext('Artist')"
                       :model-value="formData.DetailsArtist.value"
@@ -394,7 +394,7 @@
                   </v-col>
                   <v-col cols="12">
                     <v-textarea
-                      hide-details
+                      :rules="rules.text(false, 0, PhotoMaxLength.License, $gettext('License'))"
                       autocomplete="off"
                       auto-grow
                       :label="$gettext('License')"
@@ -410,7 +410,22 @@
                     ></v-textarea>
                   </v-col>
                 </v-row>
-                <v-row dense>
+                <v-row v-if="canViewAlbums" dense>
+                  <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Albums`) }}</v-col>
+                  <v-col cols="12">
+                    <p-input-chip-selector
+                      v-model:items="albumItems"
+                      :available-items="availableAlbumOptions"
+                      :input-placeholder="$gettext('Select or create albums')"
+                      :empty-text="$gettext('No albums assigned')"
+                      :loading="loading"
+                      :disabled="false"
+                      class="input-albums"
+                      @update:items="onAlbumsUpdate"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row v-if="canViewLabels" dense>
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Labels`) }}</v-col>
                   <v-col cols="12">
                     <p-input-chip-selector
@@ -424,21 +439,6 @@
                       :disabled="false"
                       class="input-labels"
                       @update:items="onLabelsUpdate"
-                    />
-                  </v-col>
-                </v-row>
-                <v-row dense>
-                  <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Albums`) }}</v-col>
-                  <v-col cols="12">
-                    <p-input-chip-selector
-                      v-model:items="albumItems"
-                      :available-items="availableAlbumOptions"
-                      :input-placeholder="$gettext('Select or create albums')"
-                      :empty-text="$gettext('No albums assigned')"
-                      :loading="loading"
-                      :disabled="false"
-                      class="input-albums"
-                      @update:items="onAlbumsUpdate"
                     />
                   </v-col>
                 </v-row>
@@ -486,7 +486,12 @@
         </v-col>
       </v-row>
     </v-card>
-    <p-location-dialog :visible="locationDialog" :latlng="currentCoordinates" @close="locationDialog = false" @confirm="confirmLocation"></p-location-dialog>
+    <p-meta-location-dialog
+      :visible="locationDialog"
+      :latlng="currentCoordinates"
+      @close="locationDialog = false"
+      @confirm="confirmLocation"
+    ></p-meta-location-dialog>
   </v-dialog>
 </template>
 <script>
@@ -495,8 +500,10 @@ import * as contexts from "options/contexts";
 import IconLivePhoto from "../icon/live-photo.vue";
 import { Batch } from "model/batch";
 import Thumb from "model/thumb";
-import PLocationDialog from "component/location/dialog.vue";
-import PLocationInput from "component/location/input.vue";
+import { MaxLength as PhotoMaxLength } from "model/photo";
+import { rules } from "common/form";
+import PMetaLocationDialog from "component/meta/location/dialog.vue";
+import PMetaLocationInput from "component/meta/location/input.vue";
 import PInputChipSelector from "component/input/chip-selector.vue";
 import $util from "common/util";
 import typeaheadCache from "common/typeahead-cache";
@@ -508,8 +515,8 @@ export default {
   name: "PPhotoBatchEdit",
   components: {
     IconLivePhoto,
-    PLocationDialog,
-    PLocationInput,
+    PMetaLocationDialog,
+    PMetaLocationInput,
     PInputChipSelector,
   },
   props: {
@@ -548,6 +555,8 @@ export default {
       isAllSelected: true,
       allSelectedLength: 0,
       options,
+      rules,
+      PhotoMaxLength,
       firstVisibleElementIndex: 0,
       lastVisibleElementIndex: 0,
       mouseDown: {
@@ -711,6 +720,17 @@ export default {
       }
       return !!(this.formData.Lat.value || this.formData.Lng.value);
     },
+    // canViewLabels gates the Labels section on the deployment's
+    // `labels` feature flag and the session's `labels:search` grant —
+    // same composition as `lightbox/sidebar.vue` so the dialog and the
+    // sidebar appear/disappear together.
+    canViewLabels() {
+      return this.$config.feature("labels") && this.$config.allow("labels", "search");
+    },
+    // canViewAlbums mirrors canViewLabels for the Albums section.
+    canViewAlbums() {
+      return this.$config.feature("albums") && this.$config.allow("albums", "search");
+    },
     // Suggestions surfaced in the labels chip-selector dropdown — the
     // cached label list with anything already in labelItems filtered
     // out (regardless of action: stage-to-add, stage-to-remove, and
@@ -781,6 +801,12 @@ export default {
           this.values = this.model.values;
           this.setFormData();
           this.allSelectedLength = this.model.getLengthOfAllSelected();
+          // Seed validation so the per-field `:rules` are active from
+          // the first render. Without this, Vuetify's `validate-on=
+          // "invalid-input"` default keeps rules dormant until the
+          // first failed validate() and save() can proceed against an
+          // overlength value. Mirrors page/settings/account.vue.
+          this.$nextTick(() => this.$refs.form?.validate?.());
         })
         .catch(() => {
           this.values = {};
@@ -812,24 +838,34 @@ export default {
       }
 
       const t = String(inputTitle).trim();
-      if (!t) return null;
+      if (!t) {
+        return null;
+      }
 
       const nt = $util.normalizeTitle(t);
       const st = $util.slugifyLabelTitle(t);
 
       let found = this.cachedLabelOptions.find((o) => o.title.toLowerCase() === t.toLowerCase());
-      if (found) return { value: found.value, title: found.title };
+      if (found) {
+        return { value: found.value, title: found.title };
+      }
 
       found = this.cachedLabelOptions.find((o) => o.slug === st || o.customSlug === st);
-      if (found) return { value: found.value, title: found.title };
+      if (found) {
+        return { value: found.value, title: found.title };
+      }
 
       found = this.cachedLabelOptions.find((o) => $util.normalizeTitle(o.title) === nt);
-      if (found) return { value: found.value, title: found.title };
+      if (found) {
+        return { value: found.value, title: found.title };
+      }
 
       return { value: "", title: t };
     },
     changeValue(newValue, fieldType, fieldName) {
-      if (!fieldName) return;
+      if (!fieldName) {
+        return;
+      }
 
       const previousValue = this.previousFormData[fieldName].value;
       this.formData[fieldName].action = this.actions.update;
@@ -855,7 +891,9 @@ export default {
       this.getIcon(fieldType, fieldName);
     },
     changeSelectValue(newValue, fieldType, fieldName) {
-      if (!fieldName) return;
+      if (!fieldName) {
+        return;
+      }
 
       const previousValue = this.previousFormData[fieldName].value;
       this.formData[fieldName].action = this.actions.update;
@@ -912,11 +950,15 @@ export default {
       return y > 0 && m > 0 && !yearMixed && !monthMixed;
     },
     clampBatchDayIfResolvable() {
-      if (!this.isBatchDateResolvable()) return;
+      if (!this.isBatchDateResolvable()) {
+        return;
+      }
       const y = this.batchYear();
       const m = this.batchMonth();
       const d = parseInt(this.formData?.Day?.value, 10);
-      if (isNaN(d) || d <= 0) return; // Unknown or empty: do nothing in batch UI
+      if (isNaN(d) || d <= 0) {
+        return;
+      } // Unknown or empty: do nothing in batch UI
       const maxDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
       if (d > maxDay) {
         this.formData.Day.value = maxDay;
@@ -924,7 +966,9 @@ export default {
       }
     },
     changeToggleValue(newValue, fieldName) {
-      if (!fieldName) return;
+      if (!fieldName) {
+        return;
+      }
 
       const previousValue = this.previousFormData[fieldName].value;
       this.formData[fieldName].action = this.actions.update;
@@ -971,7 +1015,9 @@ export default {
         const formKey = key || name;
         const fieldData = this.values[formKey];
 
-        if (!fieldData) return;
+        if (!fieldData) {
+          return;
+        }
 
         const { value, placeholder } = this.getFieldData(type, name);
         this.formData[formKey] = {
@@ -999,7 +1045,9 @@ export default {
       // Set values for toggle fields (boolean fields)
       this.toggleFieldsArray.forEach((fieldName) => {
         const fieldData = this.values[fieldName];
-        if (!fieldData) return;
+        if (!fieldData) {
+          return;
+        }
 
         const toggleValue = this.getToggleValue(fieldName);
 
@@ -1057,7 +1105,9 @@ export default {
     },
     toggleOptions(fieldName) {
       const fieldData = this.values[fieldName];
-      if (!fieldData) return [];
+      if (!fieldData) {
+        return [];
+      }
 
       const result = [
         { text: this.$gettext("Yes"), value: true },
@@ -1111,7 +1161,9 @@ export default {
       const fieldData = this.values[fieldName];
       const isDeleted = this.deletedFields?.[fieldName];
 
-      if (!fieldData) return;
+      if (!fieldData) {
+        return;
+      }
       const previousField = this.previousFormData[fieldName];
 
       if (this.formData[fieldName].value !== previousField?.value || isDeleted) {
@@ -1128,7 +1180,9 @@ export default {
       const fieldData = this.values[fieldName];
       const isDeleted = this.deletedFields?.[fieldName];
 
-      if (!fieldData) return { value: "", placeholder: "", persistent: false };
+      if (!fieldData) {
+        return { value: "", placeholder: "", persistent: false };
+      }
 
       // Helper function to format numeric values
       const formatNumericValue = (value) => {
@@ -1372,9 +1426,24 @@ export default {
       this.locationDialog = false;
     },
     save(close) {
+      const form = this.$refs.form;
+      const validate = typeof form?.validate === "function" ? form.validate() : Promise.resolve({ valid: true });
+
+      return Promise.resolve(validate).then((result) => {
+        if (result && result.valid === false) {
+          this.$notify.error(this.$gettext("Changes could not be saved"));
+          return;
+        }
+
+        return this.persistChanges(close);
+      });
+    },
+    // persistChanges runs the actual batch save once form-level validation
+    // has passed. Split out so save() can early-return cleanly on invalid
+    // input without nesting two levels of `.then(...)`.
+    persistChanges(close) {
       this.saving = true;
 
-      // Filter form data to only include fields with changes
       const filteredFormData = this.getFilteredFormData();
 
       if (!filteredFormData || Object.keys(filteredFormData).length === 0) {
@@ -1385,7 +1454,6 @@ export default {
         return Promise.resolve();
       }
 
-      // Get currently selected photo UIDs from the model
       const currentlySelectedUIDs = this.model.selection.filter((photo) => photo.selected).map((photo) => photo.id);
 
       return this.model
@@ -1489,10 +1557,25 @@ export default {
     // availableLabelOptions / availableAlbumOptions computeds filter
     // out anything already in *Items and sort alphabetically.
     async fetchAvailableOptions() {
+      // Skip prefetch for disabled sections so a deployment that disables
+      // labels or albums via Settings doesn't spend a round-trip the
+      // dialog never reads.
+      const wantAlbums = this.canViewAlbums;
+      const wantLabels = this.canViewLabels;
+
+      if (!wantAlbums && !wantLabels) {
+        this.cachedAlbumOptions = [];
+        this.cachedLabelOptions = [];
+        return;
+      }
+
       try {
         this.loading = true;
 
-        const [albums, labels] = await Promise.all([typeaheadCache.getAlbums(), typeaheadCache.getLabels()]);
+        const [albums, labels] = await Promise.all([
+          wantAlbums ? typeaheadCache.getAlbums() : Promise.resolve([]),
+          wantLabels ? typeaheadCache.getLabels() : Promise.resolve([]),
+        ]);
 
         this.cachedAlbumOptions = albums.map((album) => ({
           value: album.UID,

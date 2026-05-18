@@ -7,6 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/pkg/dsn"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
@@ -103,7 +105,7 @@ func TestEnsureCredentials_SqliteRejected(t *testing.T) {
 	ctx := context.Background()
 	c := config.NewConfig(config.CliTestContext())
 	origDriver := DatabaseDriver
-	DatabaseDriver = config.SQLite3
+	DatabaseDriver = dsn.DriverSQLite3
 	t.Cleanup(func() { DatabaseDriver = origDriver })
 
 	_, _, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)

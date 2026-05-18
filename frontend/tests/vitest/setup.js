@@ -76,6 +76,7 @@ config.global.mocks = {
     get: () => false,
     getSettings: () => ({ features: { edit: true, favorites: true, download: true, archive: true } }),
     allow: () => true,
+    deny: () => false,
     featExperimental: () => false,
     featDevelop: () => false,
     values: {},
@@ -108,14 +109,13 @@ config.global.mocks = {
     formatRemainingSeconds: () => "0",
     formatCamera: (camera, id, make, model) => [make, model].filter(Boolean).join(" "),
     normalizeTitle: (s) => (s || "").toLowerCase().trim(),
+    typeName: (type, defaultValue) => (type ? String(type) : defaultValue !== undefined ? defaultValue : ""),
     videoFormat: () => "avc",
     videoFormatUrl: () => "/v.mp4",
     thumb: () => ({ src: "/t.jpg", w: 100, h: 100 }),
   },
   $api: { post: vi.fn(), delete: vi.fn(), get: vi.fn() },
-  $session: {
-    isSidebarRestricted: () => false,
-  },
+  $session: {},
 };
 
 config.global.plugins = [vuetify];

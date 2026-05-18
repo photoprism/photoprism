@@ -86,12 +86,7 @@ func findSearchFilters(_ context.Context, _ *sdkmcp.CallToolRequest, input FindS
 		total++
 
 		if len(matches) < limit {
-			matches = append(matches, SearchFilterMatch{
-				Filter:   filter.Filter,
-				Type:     filter.Type,
-				Examples: filter.Examples,
-				Notes:    filter.Notes,
-			})
+			matches = append(matches, SearchFilterMatch(filter))
 		}
 	}
 

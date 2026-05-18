@@ -12,11 +12,11 @@ function mountPhotoLabels({ modelOverrides = {}, routerOverrides = {}, utilOverr
 
   const model = viewHasModel
     ? {
-        removeLabel: vi.fn(() => Promise.resolve()),
-        addLabel: vi.fn(() => Promise.resolve()),
-        activateLabel: vi.fn(),
-        ...modelOverrides,
-      }
+      removeLabel: vi.fn(() => Promise.resolve()),
+      addLabel: vi.fn(() => Promise.resolve()),
+      activateLabel: vi.fn(),
+      ...modelOverrides,
+    }
     : null;
 
   const router = {
@@ -81,6 +81,61 @@ function mountPhotoLabels({ modelOverrides = {}, routerOverrides = {}, utilOverr
 describe("component/photo/edit/labels", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  describe("name validation rule", () => {
+    // Regression: the v-combobox initializes with newLabelModel = null
+    // and Vuetify validates :rules on mount, so the rule must tolerate
+    // null, strings (free-text entry), and item objects (return-object).
+    // The shared rules.text(...) factory in common/form.js short-circuits
+    // on non-string input via maxLen, so all three cases pass without
+    // throwing the historical "Cannot read properties of null" error.
+    //
+    // The cap now comes from LabelMaxLength.Name (160, backend VARCHAR)
+    // — not the legacy $config.get('clip') 160 ceiling — so a backend
+    // bump propagates without per-component edits.
+    const maxLen = (wrapper, cap = wrapper.vm.LabelMaxLength.Name) => {
+      const [, rule] = wrapper.vm.rules.text(false, 0, cap, "Name");
+      return rule;
+    };
+
+    it("exposes LabelMaxLength.Name from the model", () => {
+      const { wrapper } = mountPhotoLabels();
+      expect(wrapper.vm.LabelMaxLength).toEqual({ Name: 160, Description: 2048, Notes: 1024 });
+    });
+
+    it("returns valid for null without throwing (initial / cleared combobox)", () => {
+      const { wrapper } = mountPhotoLabels();
+      expect(maxLen(wrapper)(null)).toBe(true);
+    });
+
+    it("returns valid for undefined", () => {
+      const { wrapper } = mountPhotoLabels();
+      expect(maxLen(wrapper)(undefined)).toBe(true);
+    });
+
+    it("validates a short typed string as valid", () => {
+      const { wrapper } = mountPhotoLabels();
+      expect(maxLen(wrapper)("hello")).toBe(true);
+    });
+
+    it("returns the error message when a typed string exceeds the cap", () => {
+      const { wrapper } = mountPhotoLabels();
+      expect(maxLen(wrapper, 5)("toolong")).toBe("Name is too long");
+    });
+
+    it("short-circuits return-object combobox selections (objects pass)", () => {
+      // Backend caps existing labels at LabelMaxLength.Name (160), so
+      // every item-object selection already fits — the factory's
+      // maxLen short-circuit on non-string input is the correct
+      // behavior here. Trade-off: a synthetic object with an
+      // overlength .Name would no longer surface a frontend error,
+      // but in production such objects can't reach the dropdown.
+      const { wrapper } = mountPhotoLabels();
+      expect(maxLen(wrapper, 10)({ Name: "Flower" })).toBe(true);
+      expect(maxLen(wrapper, 10)({ Name: "a really long name" })).toBe(true);
+      expect(maxLen(wrapper, 10)({})).toBe(true);
+    });
   });
 
   describe("sourceName", () => {

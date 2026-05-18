@@ -64,10 +64,18 @@ export class File extends RestModel {
   classes(selected) {
     let classes = ["is-file", "uid-" + this.UID];
 
-    if (this.Primary) classes.push("is-primary");
-    if (this.Sidecar) classes.push("is-sidecar");
-    if (this.Video) classes.push("is-video");
-    if (selected) classes.push("is-selected");
+    if (this.Primary) {
+      classes.push("is-primary");
+    }
+    if (this.Sidecar) {
+      classes.push("is-sidecar");
+    }
+    if (this.Video) {
+      classes.push("is-video");
+    }
+    if (selected) {
+      classes.push("is-selected");
+    }
 
     return classes;
   }

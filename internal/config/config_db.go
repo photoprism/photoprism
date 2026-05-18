@@ -11,9 +11,7 @@ import (
 	"time"
 
 	"golang.org/x/mod/semver"
-	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
@@ -27,56 +25,45 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// SQL Databases.
-const (
-	Auto     = "auto"
-	MySQL    = dsn.DriverMySQL
-	MariaDB  = dsn.DriverMariaDB
-	Postgres = dsn.DriverPostgres
-	SQLite3  = dsn.DriverSQLite3
-)
-
-var drivers = map[string]func(string) gorm.Dialector{
-	MySQL:    mysql.Open,
-	SQLite3:  sqlite.Open,
-	Postgres: postgres.Open,
-}
+// Auto requests automatic detection of an implementation-defined default
+// (e.g. the database driver). The canonical SQL driver identifiers live in
+// pkg/dsn (dsn.DriverMySQL, dsn.DriverSQLite3, …).
+const Auto = "auto"
 
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
 	c.normalizeDatabaseDSN()
 
-	switch strings.ToLower(c.options.DatabaseDriver) {
-	case MySQL, MariaDB:
-		c.options.DatabaseDriver = MySQL
-	case SQLite3, "sqlite3", "test", "file", "":
-		c.options.DatabaseDriver = SQLite3
+	switch dsn.ParseDriver(c.options.DatabaseDriver) {
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
+		c.options.DatabaseDriver = dsn.DriverMySQL
+	case dsn.DriverSQLite3:
+		c.options.DatabaseDriver = dsn.DriverSQLite3
 	case Postgres:
-		c.options.DatabaseDriver = Postgres
-	case "tidb":
+		c.options.DatabaseDriver = dsn.DriverPostgres
+	case dsn.DriverTiDB:
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
-		c.options.DatabaseDriver = SQLite3
+		c.options.DatabaseDriver = dsn.DriverSQLite3
 		c.options.DatabaseDSN = ""
 	default:
 		log.Warnf("config: unsupported database driver %s, using sqlite", c.options.DatabaseDriver)
-		c.options.DatabaseDriver = SQLite3
+		c.options.DatabaseDriver = dsn.DriverSQLite3
 		c.options.DatabaseDSN = ""
 	}
 
 	return c.options.DatabaseDriver
 }
 
-// DatabaseDriverName returns the formatted database driver name.
+// DatabaseDriverName returns the formatted database driver name. Input is
+// always canonical after DatabaseDriver(); the default arm is defensive.
 func (c *Config) DatabaseDriverName() string {
 	switch c.DatabaseDriver() {
-	case MySQL, MariaDB:
+	case dsn.DriverMySQL:
 		return "MariaDB"
-	case SQLite3, "sqlite3", "test", "file", "":
+	case dsn.DriverSQLite3:
 		return "SQLite"
 	case Postgres:
 		return "PostgreSQL"
-	case "tidb":
-		return "TiDB"
 	default:
 		return "unsupported database"
 	}
@@ -103,7 +90,7 @@ func (c *Config) DatabaseSsl() bool {
 	}
 
 	switch c.DatabaseDriver() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
 		return c.IsDatabaseVersion("v11.4")
 	default:
@@ -126,7 +113,7 @@ func (c *Config) DatabaseDSN() string {
 	// Generate matching database DSN based on the configured database driver.
 	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
-		case MySQL:
+		case dsn.DriverMySQL:
 			databaseNet := "tcp"
 			// Connect via Unix Domain Socket?
 			if strings.HasPrefix(c.DatabaseServer(), "/") {
@@ -143,7 +130,7 @@ func (c *Config) DatabaseDSN() string {
 				Name:     c.DatabaseName(),
 				Params:   fmt.Sprintf("%s&timeout=%ds", dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()),
 			}).ToString()
-		case Postgres:
+		case dsn.DriverPostgres:
 			return (&dsn.DSN{
 				Driver:   dsn.DriverPostgreSQL,
 				User:     c.DatabaseUser(),
@@ -152,7 +139,7 @@ func (c *Config) DatabaseDSN() string {
 				Name:     c.DatabaseName(),
 				Params:   fmt.Sprintf("connect_timeout=%d&%s", c.DatabaseTimeout(), dsn.Params[dsn.DriverPostgreSQL]),
 			}).ToString()
-		case SQLite3:
+		case dsn.DriverSQLite3:
 			return (&dsn.DSN{
 				Driver: dsn.DriverSQLite3,
 				Server: c.StoragePath(),
@@ -166,7 +153,7 @@ func (c *Config) DatabaseDSN() string {
 	}
 
 	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
-	if c.DatabaseDriver() == MySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
+	if c.DatabaseDriver() == dsn.DriverMySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
 		c.options.DatabaseDSN = fmt.Sprintf(
 			"%s?%s&timeout=%ds",
 			c.options.DatabaseDSN,
@@ -192,7 +179,7 @@ func (c *Config) HasDatabaseDSN() bool {
 // ReportDatabaseDSN checks if the database data source name (DSN) should be reported
 // instead of database name, server, user, and password.
 func (c *Config) ReportDatabaseDSN() bool {
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		return true
 	}
 
@@ -203,7 +190,7 @@ func (c *Config) ReportDatabaseDSN() bool {
 func (c *Config) ParseDatabaseDSN() {
 	if c.NoDatabaseDSN() {
 		return
-	} else if c.options.DatabaseServer != "" && c.DatabaseDriver() == SQLite3 {
+	} else if c.options.DatabaseServer != "" && c.DatabaseDriver() == dsn.DriverSQLite3 {
 		return
 	}
 
@@ -225,7 +212,7 @@ func (c *Config) DatabaseFile() string {
 func (c *Config) DatabaseServer() string {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		return ""
 	} else if c.options.DatabaseServer == "" {
 		return localhost
@@ -238,7 +225,7 @@ func (c *Config) DatabaseServer() string {
 func (c *Config) DatabaseHost() string {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == SQLite3 || c.NoDatabaseDSN() {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 || c.NoDatabaseDSN() {
 		d := dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer(), DSN: ""}
 		return d.Host()
 	}
@@ -251,7 +238,7 @@ func (c *Config) DatabaseHost() string {
 func (c *Config) DatabasePort() int {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == SQLite3 || c.NoDatabaseDSN() {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 || c.NoDatabaseDSN() {
 		d := dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer(), DSN: ""}
 		return d.Port()
 	}
@@ -262,7 +249,7 @@ func (c *Config) DatabasePort() int {
 
 // DatabasePortString the database server port as string.
 func (c *Config) DatabasePortString() string {
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		return ""
 	}
 
@@ -273,7 +260,7 @@ func (c *Config) DatabasePortString() string {
 func (c *Config) DatabaseName() string {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		return c.DatabaseDSN()
 	} else if c.options.DatabaseName == "" {
 		return "photoprism"
@@ -284,7 +271,7 @@ func (c *Config) DatabaseName() string {
 
 // DatabaseUser returns the database user name.
 func (c *Config) DatabaseUser() string {
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		return ""
 	}
 
@@ -299,7 +286,7 @@ func (c *Config) DatabaseUser() string {
 
 // DatabasePassword returns the database user password.
 func (c *Config) DatabasePassword() string {
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		return ""
 	}
 
@@ -371,7 +358,7 @@ func (c *Config) DatabaseProvisionPrefix() string {
 // ShouldAutoRotateDatabase decides whether callers should request DB rotation automatically.
 // It is used by both the CLI and node bootstrap to avoid unnecessary provisioning calls.
 func (c *Config) ShouldAutoRotateDatabase() bool {
-	if c.Portal() || c.DatabaseDriver() != MySQL {
+	if c.Portal() || c.DatabaseDriver() != dsn.DriverMySQL {
 		return false
 	}
 
@@ -490,11 +477,11 @@ func (c *Config) IsDbOpen() bool {
 // SetDbOptions sets the database collation to unicode if supported.
 func (c *Config) SetDbOptions() {
 	switch c.DatabaseDriver() {
-	case MySQL, MariaDB:
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
-	case Postgres:
+	case dsn.DriverPostgres:
 		// Ignore for now.
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		// Not required as Unicode is default.
 	}
 }
@@ -572,7 +559,7 @@ func (c *Config) checkDb(db *gorm.DB) error {
 	}
 
 	switch c.DatabaseDriver() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		type Res struct {
 			Value string `gorm:"column:Value;"`
 		}
@@ -615,7 +602,7 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		if c.dbVersion == "" {
 			log.Warnf("config: unknown database server version")
 		}
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		type Res struct {
 			Value string `gorm:"column:Value;"`
 		}

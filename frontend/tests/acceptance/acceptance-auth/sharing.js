@@ -218,14 +218,16 @@ test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common
   await t.expect(photoviewer.inlinePencils.exists).notOk();
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
   await t.expect(photoviewer.markerAddButton.exists).notOk();
-  await t.expect(Selector(".p-sidebar-info .metadata__file").exists).notOk();
+  // Merged file row renders for restricted sessions (type + size as
+  // the title) but the filename subtitle must be suppressed.
+  await t.expect(Selector(".p-lightbox-sidebar .meta-file .v-list-item-subtitle").exists).notOk();
   await t.expect(photoviewer.sidebarRow("mdi-camera").exists).notOk();
   await t.expect(photoviewer.sidebarRow("mdi-camera-iris").exists).notOk();
-  await t.expect(Selector(".p-sidebar-info .text-subtitle-2").withText("People").exists).notOk();
-  await t.expect(Selector(".p-sidebar-info .text-subtitle-2").withText("Labels").exists).notOk();
-  await t.expect(Selector(".p-sidebar-info .text-subtitle-2").withText("Albums").exists).notOk();
-  await t.expect(Selector(".p-sidebar-info .text-subtitle-2").withText("Keywords").exists).notOk();
-  await t.expect(Selector(".p-sidebar-info .text-subtitle-2").withText("Notes").exists).notOk();
+  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
+  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Labels").exists).notOk();
+  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Albums").exists).notOk();
+  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Keywords").exists).notOk();
+  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Notes").exists).notOk();
 
   await photoviewer.triggerPhotoViewerAction("close-button");
 });

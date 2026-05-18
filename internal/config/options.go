@@ -94,7 +94,7 @@ type Options struct {
 	BackupRetain              int           `yaml:"BackupRetain" json:"BackupRetain" flag:"backup-retain"`
 	BackupDatabase            bool          `yaml:"BackupDatabase" json:"BackupDatabase" flag:"backup-database" default:"true"`
 	BackupAlbums              bool          `yaml:"BackupAlbums" json:"BackupAlbums" flag:"backup-albums" default:"true"`
-	IndexWorkers              int           `yaml:"IndexWorkers" json:"IndexWorkers" flag:"index-workers"`
+	IndexWorkers              string        `yaml:"IndexWorkers" json:"IndexWorkers" flag:"index-workers"`
 	IndexSchedule             string        `yaml:"IndexSchedule" json:"IndexSchedule" flag:"index-schedule"`
 	WakeupInterval            time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex                 int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`

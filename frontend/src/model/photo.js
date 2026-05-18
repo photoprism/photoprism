@@ -6,7 +6,7 @@ import Marker from "model/marker";
 import { DateTime } from "luxon";
 import { $config } from "app/session";
 import $api from "common/api";
-import $event from "common/event";
+import { subscribeEntityActions } from "common/event";
 import $util from "common/util";
 import countries from "options/countries.json";
 import { $gettext } from "common/gettext";
@@ -23,6 +23,20 @@ export const TimeZoneUTC = "UTC";
 export const TimeZoneLocal = "Local";
 
 export let BatchSize = 156;
+
+// MaxLength mirrors the backend Set*-helper clips (txt.ClipShortText / ClipText)
+// so UI validation matches what the server persists; keep in sync with details.go.
+export const MaxLength = Object.freeze({
+  Title: 200,
+  Caption: 4096,
+  Subject: 1024,
+  Artist: 1024,
+  Copyright: 1024,
+  License: 1024,
+  Keywords: 2048,
+  Notes: 2048,
+  Exposure: 64,
+});
 
 // Photo models core metadata for images and videos shown in the UI.
 export class Photo extends RestModel {
@@ -145,12 +159,24 @@ export class Photo extends RestModel {
   generateClasses = memoizeOne((isPlayable, isInClipboard, portrait, favorite, isPrivate, isStack) => {
     let classes = ["is-photo", "uid-" + this.UID, "type-" + this.Type];
 
-    if (isPlayable) classes.push("is-playable");
-    if (isInClipboard) classes.push("is-selected");
-    if (portrait) classes.push("is-portrait");
-    if (favorite) classes.push("is-favorite");
-    if (isPrivate) classes.push("is-private");
-    if (isStack) classes.push("is-stack");
+    if (isPlayable) {
+      classes.push("is-playable");
+    }
+    if (isInClipboard) {
+      classes.push("is-selected");
+    }
+    if (portrait) {
+      classes.push("is-portrait");
+    }
+    if (favorite) {
+      classes.push("is-favorite");
+    }
+    if (isPrivate) {
+      classes.push("is-private");
+    }
+    if (isStack) {
+      classes.push("is-stack");
+    }
 
     return classes;
   });
@@ -749,27 +775,35 @@ export class Photo extends RestModel {
       // Originals only?
       if (s.download.originals && file.Root.length > 1) {
         // Don't download broken files and sidecars.
-        if ($config.debug) console.log(`download: skipped ${file.Root} file ${file.Name}`);
+        if ($config.debug) {
+          console.log(`download: skipped ${file.Root} file ${file.Name}`);
+        }
         return;
       }
 
       // Skip metadata sidecar files?
       if (!s.download.mediaSidecar && (file.MediaType === media.Sidecar || file.Sidecar)) {
         // Don't download broken files and sidecars.
-        if ($config.debug) console.log(`download: skipped sidecar file ${file.Name}`);
+        if ($config.debug) {
+          console.log(`download: skipped sidecar file ${file.Name}`);
+        }
         return;
       }
 
       // Skip RAW images?
       if (!s.download.mediaRaw && (file.MediaType === media.Raw || file.FileType === media.Raw)) {
-        if ($config.debug) console.log(`download: skipped raw file ${file.Name}`);
+        if ($config.debug) {
+          console.log(`download: skipped raw file ${file.Name}`);
+        }
         return;
       }
 
       // If this is a video, always skip stacked images...
       // see https://github.com/photoprism/photoprism/issues/1436
       if (this.Type === media.Video && !(file.MediaType === media.Video || file.Video)) {
-        if ($config.debug) console.log(`download: skipped video sidecar ${file.Name}`);
+        if ($config.debug) {
+          console.log(`download: skipped video sidecar ${file.Name}`);
+        }
         return;
       }
 
@@ -856,22 +890,38 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
+  // Localized location label with the "Unknown" fallback — for views
+  // that render the placeholder as an edit prompt (cards, list, edit
+  // dialog). Read-only renderers should use `placeName()`.
   locationInfo() {
-    return this.generateLocationInfo(this.PlaceID, this.Country, this.Place, this.PlaceLabel);
+    return this.placeName() || $gettext("Unknown");
   }
 
-  generateLocationInfo = memoizeOne((placeId, countryCode, place, placeLabel) => {
-    if (placeId === "zz" && countryCode !== "zz") {
-      const country = countries.find((c) => c.Code === countryCode);
+  // Returns the place label, or "" when the photo has no real
+  // geocoding data. Read-only callers gate row visibility on this.
+  placeName() {
+    return this.generatePlaceName(this.PlaceID, this.Country, this.Place, this.PlaceLabel);
+  }
 
+  generatePlaceName = memoizeOne((placeId, countryCode, place, placeLabel) => {
+    let label = "";
+
+    if (placeId === "zz" && countryCode && countryCode !== "zz") {
+      const country = countries.find((c) => c.Code === countryCode);
       if (country) {
         return country.Name;
       }
     } else if (place && place.Label) {
-      return place.Label;
+      label = place.Label;
     }
 
-    return placeLabel ? placeLabel : $gettext("Unknown");
+    if (!label) {
+      label = placeLabel || "";
+    }
+
+    // Strip the DB literal from UnknownPlace (`internal/entity/place.go`).
+    // Backend-set, not translated — safe to compare.
+    return label === "Unknown" ? "" : label;
   });
 
   addSizeInfo(file, info) {
@@ -1073,10 +1123,18 @@ export class Photo extends RestModel {
 
   getExifInfo() {
     const parts = [];
-    if (this.FocalLength) parts.push(this.FocalLength + "mm");
-    if (this.FNumber) parts.push("\u0192/" + this.FNumber);
-    if (this.Iso) parts.push("ISO " + this.Iso);
-    if (this.Exposure) parts.push(this.Exposure);
+    if (this.FocalLength) {
+      parts.push(this.FocalLength + "mm");
+    }
+    if (this.FNumber) {
+      parts.push("\u0192/" + this.FNumber);
+    }
+    if (this.Iso) {
+      parts.push("ISO " + this.Iso);
+    }
+    if (this.Exposure) {
+      parts.push(this.Exposure);
+    }
     return parts.join(" \u2022 ");
   }
 
@@ -1090,15 +1148,9 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
-  // Moves this photo to the archive (soft delete). Intentionally
-  // does NOT flip a local Archived flag the way Thumb.archive()
-  // does — no Photo consumer reads `photo.Archived` (the lightbox's
-  // `this.model?.Archived` checks all run against a Thumb), so an
-  // optimistic flip on Photo would just add dead state. The actual
-  // UI update for the photo-grid caller (view/cards.vue) is driven
-  // by the `photos.archived` WS event handler in page/photos.vue
-  // around line 802, which calls removeResult() to drop the row
-  // from the search results outside the Archive context.
+  // archive moves the photo to the archive (soft delete). No local flag flip:
+  // Photo consumers don't read .Archived (Thumb carries that state); the grid
+  // refreshes via the photos.archived WS handler.
   archive() {
     return $api.post("batch/photos/archive", { photos: [this.getId()] });
   }
@@ -1182,22 +1234,14 @@ export class Photo extends RestModel {
     return $api.delete(this.getEntityResource() + "/label/" + id).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
-  // Adds this photo to the given album. The album-membership endpoint
-  // returns only an ack, so on success the LRU cache is evicted and the
-  // photo is refetched so this.Albums reflects the saved state. Without
-  // the explicit refind, callers would have to wait for an albums.updated
-  // websocket round-trip — and the WS handler in this file evicts on
-  // photos.* channels, not albums.*.
-  //
-  // The name overlaps with Thumb.addToAlbum/removeFromAlbum on purpose:
-  // those operate at the photo-grid layer (toggling a Removed flag on a
-  // single thumbnail for lightbox menu visibility — see lightbox.vue
-  // onRemoveFromAlbum). The Photo-level methods here update this.Albums
-  // for sidebar chip rendering. Different layers, different semantics —
-  // both contracts are pinned in their respective tests so a future
-  // "consolidation" PR doesn't accidentally collapse them.
+  // addToAlbum adds this photo to the album, then evicts and refetches so
+  // this.Albums reflects the saved state without waiting on a WS round-trip.
+  // Distinct from Thumb.addToAlbum (grid layer, Removed flag); both contracts
+  // are pinned in tests.
   addToAlbum(albumUID) {
-    if (!albumUID) return Promise.resolve(this);
+    if (!albumUID) {
+      return Promise.resolve(this);
+    }
     return $api
       .post(`albums/${albumUID}/photos`, { photos: [this.UID] })
       .then(() => {
@@ -1207,10 +1251,11 @@ export class Photo extends RestModel {
       .then((photo) => Promise.resolve(this.setValues(photo.getValues())));
   }
 
-  // Removes this photo from the given album. Mirrors addToAlbum's
-  // evict + refind pattern — see that method for rationale.
+  // removeFromAlbum mirrors addToAlbum's evict + refind pattern.
   removeFromAlbum(albumUID) {
-    if (!albumUID) return Promise.resolve(this);
+    if (!albumUID) {
+      return Promise.resolve(this);
+    }
     return $api
       .delete(`albums/${albumUID}/photos`, { data: { photos: [this.UID] } })
       .then(() => {
@@ -1341,26 +1386,17 @@ export class Photo extends RestModel {
     return Photo._cache;
   }
 
-  // Removes a photo from the LRU cache. Mutating methods on this model
-  // no longer call this directly: the backend publishes "photos.updated"
-  // / "photos.deleted" / "photos.archived" / "photos.restored" via
-  // websocket and the cache is evicted from there (see the module-level
-  // subscriptions below). This stays public as an escape hatch for flows
-  // that mutate a photo without firing one of those events — currently
-  // album-membership changes, which only emit "albums.updated".
+  // evictCache drops a photo from the LRU. Mutating methods rely on the
+  // photos.* WS subscriptions below; this stays as an escape hatch for flows
+  // that mutate a photo without a matching event (e.g. album-membership).
   static evictCache(uid) {
     if (uid) {
       Photo._cache.evict(uid);
     }
   }
 
-  // Drops every cached photo and any in-flight request. Called on session
-  // reset so metadata fetched under one role cannot be served to another.
-  // ModelCache.clear() bumps an internal session-epoch counter and any
-  // in-flight fetch whose epoch no longer matches REJECTS with
-  // ModelCacheStaleFetchError instead of resolving — so neither the
-  // cache nor a .then-chained UI assignment can leak role-A data into
-  // role B during the post-logout unmount window.
+  // clearCache drops every cached photo and rejects in-flight fetches via the
+  // session-epoch gate so metadata fetched under one role cannot reach another.
   static clearCache() {
     Photo._cache.clear();
   }
@@ -1377,7 +1413,9 @@ export class Photo extends RestModel {
     const start = Math.max(0, index - before);
     const end = Math.min(models.length - 1, index + after);
     for (let i = start; i <= end; i++) {
-      if (i === index) continue;
+      if (i === index) {
+        continue;
+      }
       const uid = models[i]?.UID;
       if (uid) {
         tasks.push(Photo.prefetch(uid));
@@ -1404,22 +1442,10 @@ export class Photo extends RestModel {
   }
 }
 
-// Drops cached entries from the WS event payload. The backend uses
-// two different shapes on the same channel family — handle both:
-//
-//   - "photos.updated" (PublishPhotoEvent in internal/api/api_event.go)
-//     emits a search.Photos result: an array of objects with .UID.
-//   - "photos.archived" / "photos.restored" / "photos.deleted"
-//     (EntitiesArchived / EntitiesRestored / EntitiesDeleted in
-//     internal/event/publish_entities.go) emit a []string of bare UIDs.
-//
-// A single helper covers both so we don't have to keep them in sync.
-// The "photos.updated" payload is consumed as an EVICT signal (not a
-// refresh) because search.Photos flattens nested fields like Details
-// into top-level columns (DetailsKeywords, DetailsSubject, ...);
-// hydrating from that snapshot would leave Photo.Details === undefined
-// and collapse the sidebar's isEditable computed. Eviction sends the
-// next read back to find() and the field-complete /photos/:uid endpoint.
+// evictCachedFromEntities drops cached entries from a WS payload, accepting
+// both bare-UID arrays and search.Photos result objects. Treat photos.updated
+// as evict-only — its flattened search-result shape would collapse Photo.Details
+// on hydrate; the next read goes back through /photos/:uid for the full record.
 function evictCachedFromEntities(data) {
   if (!data || !Array.isArray(data.entities)) {
     return;
@@ -1433,13 +1459,7 @@ function evictCachedFromEntities(data) {
   });
 }
 
-// Subscribe once per channel. Adding "archived" and "restored" here
-// retires the per-mutation Photo.evictCache calls that lightbox.vue
-// previously made after onArchive / onRestore — the WS round-trip
-// covers it for every consumer in this tab.
-$event.subscribe("photos.updated", (_ev, data) => evictCachedFromEntities(data));
-$event.subscribe("photos.deleted", (_ev, data) => evictCachedFromEntities(data));
-$event.subscribe("photos.archived", (_ev, data) => evictCachedFromEntities(data));
-$event.subscribe("photos.restored", (_ev, data) => evictCachedFromEntities(data));
+// Evict cache entries on any standard mutation verb in the photos namespace.
+subscribeEntityActions("photos", (_ev, data) => evictCachedFromEntities(data));
 
 export default Photo;

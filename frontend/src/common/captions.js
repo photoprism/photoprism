@@ -14,6 +14,9 @@ const defaultOptions = {
   mobileCaptionOverlapRatio: 0.3,
   mobileLayoutBreakpoint: 1024,
   verticallyCenterImage: false,
+  // enabled gates the layout-shrinking work in onCalcSlideSize; the caption
+  // element is still created so a later toggle-on resumes cleanly.
+  enabled: () => true,
 };
 
 class PhotoSwipeDynamicCaption {
@@ -267,7 +270,17 @@ class PhotoSwipeDynamicCaption {
 
     this.storeOriginalPanAreaSize(slide);
 
+    // Refresh bounds against the current zoomLevels.initial so adjustPanArea
+    // positions the photo inside the new box (bounds is this plugin's job).
     slide.bounds.update(slide.zoomLevels.initial);
+
+    // External gate (e.g. the lightbox's Ctrl+H caption toggle): when disabled,
+    // skip the panAreaSize shrink so the photo fills the viewport. Drop any
+    // stale adjustedPanAreaSize so adjustPanArea is a no-op until re-enabled.
+    if (typeof this.options.enabled === "function" && !this.options.enabled()) {
+      delete slide.dynamicCaption.adjustedPanAreaSize;
+      return;
+    }
 
     if (this.useMobileLayout()) {
       slide.dynamicCaption.type = "mobile";

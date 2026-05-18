@@ -14,12 +14,12 @@ export default class Page {
     this.peopleTab = Selector("#tab-people", { timeout: 15000 });
 
     this.locationAction = Selector(".input-coordinates i.action-map", { timeout: 15000 });
-    this.locationSearch = Selector("div.p-location-dialog .v-autocomplete", { timeout: 15000 });
+    this.locationSearch = Selector("div.p-meta-location-dialog .v-autocomplete", { timeout: 15000 });
     this.locationClear = Selector(".input-coordinates i.action-delete", { timeout: 15000 });
-    this.locationUndo = Selector("div.p-location-dialog .input-coordinates i.action-undo", { timeout: 15000 });
-    this.locationInput = Selector("div.p-location-dialog .input-coordinates input", { timeout: 15000 });
-    this.locationConfirm = Selector("div.p-location-dialog button.action-confirm", { timeout: 15000 });
-    this.locationCancel = Selector("div.p-location-dialog button.action-cancel", { timeout: 15000 });
+    this.locationUndo = Selector("div.p-meta-location-dialog .input-coordinates i.action-undo", { timeout: 15000 });
+    this.locationInput = Selector("div.p-meta-location-dialog .input-coordinates input", { timeout: 15000 });
+    this.locationConfirm = Selector("div.p-meta-location-dialog button.action-confirm", { timeout: 15000 });
+    this.locationCancel = Selector("div.p-meta-location-dialog button.action-cancel", { timeout: 15000 });
     this.locationMarker = Selector("div.maplibregl-marker", { timeout: 15000 });
 
     this.batchDialog = Selector("div.v-dialog--batch-edit");

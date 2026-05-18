@@ -7,7 +7,7 @@
     persistent
     scrim
     scrollable
-    class="p-location-dialog"
+    class="p-meta-location-dialog"
     @keydown.esc.exact.stop="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
@@ -65,8 +65,9 @@
                 clearable
                 autocomplete="off"
                 no-filter
-                menu-icon=""
+                :menu-icon="null"
                 :menu-props="{ maxHeight: 300 }"
+                :list-props="{ density: 'compact' }"
                 @update:search="onSearchQueryChange"
                 @update:model-value="onPlaceSelected"
                 @click:clear="clearSearch"
@@ -74,12 +75,12 @@
                 <template #item="{ props }">
                   <v-list-item v-bind="props" density="compact">
                     <template #prepend>
-                      <v-icon>mdi-map-marker</v-icon>
+                      <v-icon size="small">mdi-map-marker</v-icon>
                     </template>
                   </v-list-item>
                 </template>
                 <template #no-data>
-                  <v-list-item v-if="searchQuery && searchQuery.length >= 2 && !searchLoading && searchResults.length === 0">
+                  <v-list-item v-if="searchQuery && searchQuery.length >= 2 && !searchLoading && searchResults.length === 0" density="compact">
                     <v-list-item-title>{{ $gettext("No results") }}</v-list-item-title>
                   </v-list-item>
                 </template>
@@ -97,7 +98,7 @@
             </div>
 
             <div class="flex-grow-1">
-              <p-location-input
+              <p-meta-location-input
                 :latlng="[currentLat, currentLng]"
                 density="comfortable"
                 :enable-undo="true"
@@ -106,7 +107,7 @@
                 @update:latlng="onLatLngUpdate"
                 @changed="onLocationChanged"
                 @cleared="onLocationCleared"
-              ></p-location-input>
+              ></p-meta-location-input>
             </div>
 
             <div class="action-buttons">
@@ -114,9 +115,10 @@
                 {{ $gettext("Cancel") }}
               </v-btn>
               <v-btn
-                color="info"
+                variant="flat"
+                color="highlight"
                 min-width="120"
-                class="action-confirm"
+                class="action-save action-confirm"
                 :disabled="!(currentLat !== null && currentLng !== null) || locationLoading"
                 :loading="locationLoading"
                 @click="confirm"
@@ -132,13 +134,13 @@
 </template>
 
 <script>
-import PLocationInput from "component/location/input.vue";
+import PMetaLocationInput from "component/meta/location/input.vue";
 import PMap from "component/map.vue";
 
 export default {
-  name: "PLocationDialog",
+  name: "PMetaLocationDialog",
   components: {
-    PLocationInput,
+    PMetaLocationInput,
     PMap,
   },
   props: {

@@ -21,9 +21,9 @@ export default class Page {
     this.favoriteOffIcon = Selector("button.action-favorite i.icon-favorite-border", { timeout: 5000 });
     // Sidebar info + face markers.
     this.sidebar = Selector("div.p-lightbox__sidebar", { timeout: 15000 });
-    this.sidebarInfo = Selector("div.p-sidebar-info", { timeout: 15000 });
+    this.sidebarInfo = Selector("div.p-lightbox-sidebar", { timeout: 15000 });
     this.markersVisibilityToggle = Selector(".meta-markers-toggle", { timeout: 15000 });
-    this.markerAddButton = Selector(".meta-marker-add", { timeout: 15000 });
+    this.markerAddButton = Selector(".meta-faces-edit", { timeout: 15000 });
     this.markerRemoveButton = Selector(".meta-marker-remove", { timeout: 5000 });
     this.faceMarkerOverlay = Selector("div.p-face-markers", { timeout: 15000 });
     this.faceMarkerRect = Selector("rect.p-face-markers__rect", { timeout: 15000 });
@@ -34,18 +34,18 @@ export default class Page {
     // Inline edit affordances in the sidebar. Pencils share the same
     // `meta-inline-pencil` class across all rows, so tests that need a
     // specific row scope it via a row selector (see sidebarRow below).
-    this.inlinePencils = Selector(".p-sidebar-info .meta-inline-pencil", { timeout: 15000 });
-    this.inlineEditInputs = Selector(".p-sidebar-info .meta-inline-edit input, .p-sidebar-info .meta-inline-edit textarea", { timeout: 15000 });
-    this.inlineConfirm = Selector(".p-sidebar-info .meta-inline-confirm", { timeout: 15000 });
-    this.inlineAddPrompt = Selector(".p-sidebar-info .meta-add-prompt", { timeout: 15000 });
-    this.sidebarTitle = Selector(".p-sidebar-info .meta-title", { timeout: 15000 });
-    this.sidebarCaption = Selector(".p-sidebar-info .meta-caption", { timeout: 15000 });
-    this.sidebarKeywords = Selector(".p-sidebar-info .meta-keywords", { timeout: 15000 });
-    this.sidebarNotes = Selector(".p-sidebar-info .meta-notes", { timeout: 15000 });
+    this.inlinePencils = Selector(".p-lightbox-sidebar .meta-inline-pencil", { timeout: 15000 });
+    this.inlineEditInputs = Selector(".p-lightbox-sidebar .meta-inline-edit input, .p-lightbox-sidebar .meta-inline-edit textarea", { timeout: 15000 });
+    this.inlineConfirm = Selector(".p-lightbox-sidebar .meta-inline-confirm", { timeout: 15000 });
+    this.inlineAddPrompt = Selector(".p-lightbox-sidebar .meta-add-prompt", { timeout: 15000 });
+    this.sidebarTitle = Selector(".p-lightbox-sidebar .meta-title", { timeout: 15000 });
+    this.sidebarCaption = Selector(".p-lightbox-sidebar .meta-caption", { timeout: 15000 });
+    this.sidebarKeywords = Selector(".p-lightbox-sidebar .meta-keywords", { timeout: 15000 });
+    this.sidebarNotes = Selector(".p-lightbox-sidebar .meta-notes", { timeout: 15000 });
     // All rendered chips in the sidebar (labels + albums + pending
     // additions). Individual tests filter further if they need a
     // specific section.
-    this.sidebarChips = Selector(".p-sidebar-info .meta-chip", { timeout: 15000 });
+    this.sidebarChips = Selector(".p-lightbox-sidebar .meta-chip", { timeout: 15000 });
     this.faceMarkerEjectButton = Selector(".metadata__person-row .meta-marker-eject", { timeout: 15000 });
     this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
     // Edit dialogs launched from the sidebar pencils.
@@ -59,14 +59,14 @@ export default class Page {
   // so this matches rows deterministically without relying on the DOM
   // order of siblings.
   sidebarRow(iconClass) {
-    return Selector("." + iconClass).parent(".p-sidebar-info .v-list-item");
+    return Selector("." + iconClass).parent(".p-lightbox-sidebar .v-list-item");
   }
 
   // Return the section-level v-list-item for a subtitle label such as
   // "Keywords", "Notes", "Labels", or "Albums". The pencil in these rows
   // lives in the section header rather than on the value row below.
   sidebarSection(sectionLabel) {
-    return Selector(".p-sidebar-info .text-subtitle-2").withText(sectionLabel).parent(".p-sidebar-info .v-list-item");
+    return Selector(".p-lightbox-sidebar .text-subtitle-2").withText(sectionLabel).parent(".p-lightbox-sidebar .v-list-item");
   }
 
   async startInlineEditByIcon(iconClass) {
@@ -88,7 +88,7 @@ export default class Page {
     // header, so it must be queried from the sidebar root. `meta-inline-marker`
     // inputs (one per face marker) are always rendered in edit mode, so they
     // must be excluded — otherwise typeText lands in a marker's name field.
-    const input = Selector(".p-sidebar-info .meta-inline-edit:not(.meta-inline-marker)").find("input,textarea");
+    const input = Selector(".p-lightbox-sidebar .meta-inline-edit:not(.meta-inline-marker)").find("input,textarea");
     await t.expect(input.visible).ok();
     return input;
   }
@@ -107,18 +107,18 @@ export default class Page {
     await this.confirmInlineEditBySection(sectionLabel);
     // The combobox menu teleports to <body>; on fast systems a lingering
     // overlay intercepts the next click (notably the lightbox close).
-    await t.expect(Selector(".p-sidebar-info .meta-inline-edit:not(.meta-inline-marker)").exists).notOk();
+    await t.expect(Selector(".p-lightbox-sidebar .meta-inline-edit:not(.meta-inline-marker)").exists).notOk();
     await t.expect(Selector(".meta-inline-menu").exists).notOk();
   }
 
   // Title/Caption enter editing from either a pencil (value present) or
   // an add-prompt (empty); the test doesn't know which until it looks.
   async startInlineEditOrAdd(displayClass, promptLabel) {
-    const display = Selector(".p-sidebar-info ." + displayClass, { timeout: 15000 });
+    const display = Selector(".p-lightbox-sidebar ." + displayClass, { timeout: 15000 });
     if (await display.exists) {
-      await t.click(display.parent(".p-sidebar-info .v-list-item").find(".meta-inline-pencil"));
+      await t.click(display.parent(".p-lightbox-sidebar .v-list-item").find(".meta-inline-pencil"));
     } else {
-      await t.click(Selector(".p-sidebar-info .meta-add-prompt").withText(promptLabel));
+      await t.click(Selector(".p-lightbox-sidebar .meta-add-prompt").withText(promptLabel));
     }
   }
 
@@ -142,7 +142,7 @@ export default class Page {
     } else if (which === "location") {
       // Both the Location and Coordinates rows expose a pencil with this
       // modifier class; either one opens the same dialog.
-      await t.click(Selector(".p-sidebar-info .meta-inline-pencil--location"));
+      await t.click(Selector(".p-lightbox-sidebar .meta-inline-pencil--location"));
       await t.expect(this.locationDialog.root.visible).ok();
     } else {
       throw new Error(`Unknown sidebar dialog: ${which}`);

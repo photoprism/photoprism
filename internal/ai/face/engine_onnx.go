@@ -391,7 +391,7 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 	return result, nil
 }
 
-// buildBlob normalises the input image into the tensor layout expected by SCRFD.
+// buildBlob normalizes the input image into the tensor layout expected by SCRFD.
 func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 	inputWidth := o.inputWidth
 	inputHeight := o.inputHeight

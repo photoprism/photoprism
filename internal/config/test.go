@@ -204,7 +204,7 @@ func NewTestOptionsError() *Options {
 		OriginalsPath:  dataPath + "/originals",
 		ImportPath:     dataPath + "/import",
 		TempPath:       dataPath + "/temp",
-		DatabaseDriver: SQLite3,
+		DatabaseDriver: dsn.DriverSQLite3,
 		DatabaseDSN:    ".test-error.db",
 	}
 
@@ -273,7 +273,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 
 	c.InitTestDb()
 
-	if testDbCache == nil && c.DatabaseDriver() == SQLite3 && fs.FileExistsNotEmpty(c.DatabaseFile()) {
+	if testDbCache == nil && c.DatabaseDriver() == dsn.DriverSQLite3 && fs.FileExistsNotEmpty(c.DatabaseFile()) {
 		testDbMutex.Lock()
 		defer testDbMutex.Unlock()
 

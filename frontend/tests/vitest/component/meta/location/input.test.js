@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import PLocationInput from "component/location/input.vue";
+import PMetaLocationInput from "component/meta/location/input.vue";
 
-describe("PLocationInput", () => {
+describe("PMetaLocationInput", () => {
   let wrapper;
 
   const defaultProps = {
@@ -36,7 +36,7 @@ describe("PLocationInput", () => {
   });
 
   const createWrapper = (props = {}) => {
-    return mount(PLocationInput, {
+    return mount(PMetaLocationInput, {
       props: { ...defaultProps, ...props },
     });
   };

@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import $api from "common/api";
-import $event from "common/event";
+import $event, { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import * as themes from "options/themes";
 import * as options from "options/options";
 import { Photo } from "model/photo";
@@ -246,10 +246,10 @@ export default class Config {
     }
 
     switch (type) {
-      case "created":
+      case ACTION_CREATED:
         this.values.people.unshift(...data.entities);
         break;
-      case "updated":
+      case ACTION_UPDATED:
         for (let i = 0; i < data.entities.length; i++) {
           const values = data.entities[i];
 
@@ -264,7 +264,7 @@ export default class Config {
             });
         }
         break;
-      case "deleted":
+      case ACTION_DELETED:
         for (let i = 0; i < data.entities.length; i++) {
           const index = this.values.people.findIndex((m) => m.UID === data.entities[i]);
 
@@ -402,7 +402,9 @@ export default class Config {
     const perms = ["update", "search", "manage", "share", "delete"];
 
     perms.forEach((perm) => {
-      if (this.deny(resource, perm)) result.push(`disable-${perm}`);
+      if (this.deny(resource, perm)) {
+        result.push(`disable-${perm}`);
+      }
     });
 
     return result;

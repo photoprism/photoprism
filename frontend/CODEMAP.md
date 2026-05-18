@@ -42,7 +42,7 @@ Runtime & Plugins
 - Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal/admin` for Portal)
 - I18n: `vue3-gettext` via `common/gettext.js`; canonical extraction via root `make gettext-extract` (scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`), compile with `npm run gettext-compile`
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
-- Tooltips: `floating-vue`
+- Tooltips: Vuetify `<v-tooltip>` component + `v-tooltip` directive (auto-imported per SFC by `webpack-plugin-vuetify`)
 - Video: HLS.js assigned to `window.Hls`
 - PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/i/<name>/`. Instance clients under `/i/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
 - Service worker cleanup: `frontend/src/sw-scope-cleanup.js` provides strict same-scope precache cleanup. `cleanupOutdatedCaches` is disabled in `GenerateSW` to avoid broad cross-scope cache deletion on shared origins.

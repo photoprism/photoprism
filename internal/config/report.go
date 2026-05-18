@@ -101,7 +101,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"backup-albums-path", c.BackupAlbumsPath()},
 
 		// Indexing.
-		{"index-workers", fmt.Sprintf("%d", c.IndexWorkers())},
+		{"index-workers", fmt.Sprintf("%d (%s)", c.IndexWorkers(), c.IndexWorkersReason())},
 		{"index-schedule", c.IndexSchedule()},
 		{"wakeup-interval", c.WakeupInterval().String()},
 		{"auto-index", fmt.Sprintf("%d", c.AutoIndex()/time.Second)},

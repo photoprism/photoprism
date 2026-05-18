@@ -2,12 +2,14 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"os"
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mcp"
 )
 
@@ -29,8 +31,22 @@ var MCPServeCommand = &cli.Command{
 
 // mcpServeAction starts the MCP server over the stdio transport,
 // writing a startup line to stderr so the JSON-RPC stream on stdout
-// stays clean for the MCP client.
+// stays clean for the MCP client. The action loads the active config
+// and refuses to start when DisableMCP is set, mirroring how the
+// HTTP transport at /api/v1/mcp is gated; pass --disable-mcp=false on
+// the command line to override the operator setting for ad-hoc
+// development runs.
 func mcpServeAction(ctx *cli.Context) error {
+	conf, err := InitConfig(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if err = mcpDisabledExit(conf); err != nil {
+		return err
+	}
+
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	logger.Info("starting mcp server",
 		"transport", "stdio",
@@ -39,6 +55,17 @@ func mcpServeAction(ctx *cli.Context) error {
 	)
 
 	return runMCPServer(context.Background(), ctx, &sdkmcp.StdioTransport{})
+}
+
+// mcpDisabledExit returns a cli.ExitCoder error when MCP is disabled
+// by config, pointing the caller at --disable-mcp=false for ad-hoc
+// development runs. It returns nil when MCP is enabled.
+func mcpDisabledExit(conf *config.Config) error {
+	if conf == nil || !conf.DisableMCP() {
+		return nil
+	}
+
+	return cli.Exit(errors.New("mcp serve disabled by config; pass --disable-mcp=false to override"), 1)
 }
 
 // runMCPServer builds an MCP server from the CLI app metadata (Version,

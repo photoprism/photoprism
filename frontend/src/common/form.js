@@ -194,6 +194,10 @@ export class rules {
 
   // isTime validates HH:MM:SS style times with any non-digit separator.
   static isTime(v) {
+    if (typeof v !== "string" || v === "") {
+      return true;
+    }
+
     return /^(2[0-3]|[0-1][0-9])\D[0-5][0-9]\D[0-5][0-9]$/.test(v); // 23:59:59
   }
 
@@ -245,7 +249,7 @@ export class rules {
   // time returns Vuetify rule callbacks enforcing HH:MM:SS format.
   static time(required) {
     if (required) {
-      return [(v) => !!v || $gettext("This field is required"), (v) => this.isTime(v) || $gettext("Invalid time")];
+      return [(v) => !!v || $gettext("This field is required"), (v) => !v || this.isTime(v) || $gettext("Invalid time")];
     } else {
       return [(v) => !v || this.isTime(v) || $gettext("Invalid time")];
     }

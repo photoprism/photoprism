@@ -44,8 +44,8 @@ export default class Page {
       .click(Selector(".action-confirm"));
     if (handleTMR) {
       if (await Selector(".p-notify--error").withText("Too many requests").exists) {
-        console.log("Rate Limiting recovery in progress, test may be slowed by 1 minute")
-        let counter = 0
+        console.log("Rate Limiting recovery in progress, test may be slowed by 1 minute");
+        let counter = 0;
         while (await Selector(".p-notify--error").withText("Too many requests").exists) {
           if (counter === 62) {
             break;

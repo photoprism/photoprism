@@ -355,4 +355,37 @@ describe("model/abstract", () => {
       expect(album.wasChanged()).toBe(false);
     });
   });
+
+  describe("getWriteOnly", () => {
+    it("returns an empty object on the base Model", () => {
+      const album = new Album({ ID: 1, Name: "Trip" });
+      expect(album.getWriteOnly()).toEqual({});
+    });
+
+    it("seeds declared write-only fields into __originalValues on construction", () => {
+      class WithSecret extends Album {
+        getWriteOnly() {
+          return { Secret: "" };
+        }
+      }
+      const item = new WithSecret({ ID: 1, Name: "Trip" });
+      expect(item.Secret).toBe("");
+      expect(item.__originalValues.Secret).toBe("");
+      // A subsequent edit must show up in the change diff.
+      item.Secret = "shh";
+      expect(item.getValues(true)).toEqual({ Secret: "shh" });
+    });
+
+    it("does not overwrite a write-only field that was provided in values", () => {
+      class WithSecret extends Album {
+        getWriteOnly() {
+          return { Secret: "" };
+        }
+      }
+      const item = new WithSecret({ ID: 1, Name: "Trip", Secret: "from-api" });
+      expect(item.Secret).toBe("from-api");
+      expect(item.__originalValues.Secret).toBe("from-api");
+      expect(item.wasChanged()).toBe(false);
+    });
+  });
 });

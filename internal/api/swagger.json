@@ -682,7 +682,7 @@
                     "type": "string"
                 },
                 "IndexWorkers": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "JpegQuality": {
                     "type": "integer"

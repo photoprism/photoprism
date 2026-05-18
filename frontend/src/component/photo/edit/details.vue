@@ -14,8 +14,7 @@
                 v-model="view.model.Title"
                 :append-inner-icon="view.model.TitleSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                :rules="[textRule]"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.Title, $pgettext('Photo', 'Title'))"
                 :label="$pgettext('Photo', 'Title')"
                 placeholder=""
                 autocomplete="off"
@@ -26,7 +25,7 @@
                 v-model="view.model.Caption"
                 :append-inner-icon="view.model.CaptionSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.Caption, $gettext('Caption'))"
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Caption')"
@@ -135,7 +134,7 @@
               ></v-autocomplete>
             </v-col>
             <v-col cols="12" sm="6" md="6">
-              <p-location-input
+              <p-meta-location-input
                 :latlng="[view.model.Lat, view.model.Lng]"
                 :disabled="disabled"
                 hide-details
@@ -149,7 +148,7 @@
                 @update:latlng="updateLatLng"
                 @changed="onLocationChanged"
                 @open-map="adjustLocation"
-              ></p-location-input>
+              ></p-meta-location-input>
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-autocomplete
@@ -158,7 +157,6 @@
                 :disabled="disabled"
                 :readonly="!!(view.model.Lat || view.model.Lng)"
                 :label="$gettext('Country')"
-                hide-details
                 hide-no-data
                 autocomplete="off"
                 item-value="Code"
@@ -175,7 +173,6 @@
               <v-text-field
                 v-model="view.model.Altitude"
                 :disabled="disabled"
-                hide-details
                 flat
                 autocomplete="off"
                 autocorrect="off"
@@ -212,7 +209,6 @@
               <v-text-field
                 v-model="view.model.Iso"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -220,7 +216,7 @@
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.number(false, 0, 1048576)"
+                :rules="rules.number(false, 0, 128000)"
                 class="input-iso"
               ></v-text-field>
             </v-col>
@@ -228,7 +224,6 @@
               <v-text-field
                 v-model="view.model.Exposure"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -236,7 +231,7 @@
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.text(false, 0, 64)"
+                :rules="rules.text(false, 0, PhotoMaxLength.Exposure, $gettext('Exposure'))"
                 class="input-exposure"
               ></v-text-field>
             </v-col>
@@ -262,7 +257,6 @@
               <v-text-field
                 v-model="view.model.FNumber"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -270,7 +264,7 @@
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.number(false, 0, 1048576)"
+                :rules="rules.number(false, 0, 256)"
                 class="input-fnumber"
               ></v-text-field>
             </v-col>
@@ -278,13 +272,12 @@
               <v-text-field
                 v-model="view.model.FocalLength"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 :label="$gettext('Focal Length')"
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.number(false, 0, 1048576)"
+                :rules="rules.number(false, 0, 128000)"
                 class="input-focal-length"
               ></v-text-field>
             </v-col>
@@ -295,8 +288,7 @@
                 v-model="view.model.Details.Subject"
                 :append-inner-icon="view.model.Details.SubjectSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                :rules="[textRule]"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.Subject, $gettext('Subject'))"
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Subject')"
@@ -311,8 +303,7 @@
                 v-model="view.model.Details.Copyright"
                 :append-inner-icon="view.model.Details.CopyrightSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                :rules="[textRule]"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.Copyright, $gettext('Copyright'))"
                 autocomplete="off"
                 :label="$gettext('Copyright')"
                 placeholder=""
@@ -325,8 +316,7 @@
                 v-model="view.model.Details.Artist"
                 :append-inner-icon="view.model.Details.ArtistSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                :rules="[textRule]"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.Artist, $gettext('Artist'))"
                 autocomplete="off"
                 :label="$gettext('Artist')"
                 placeholder=""
@@ -339,8 +329,7 @@
                 v-model="view.model.Details.License"
                 :append-inner-icon="view.model.Details.LicenseSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                :rules="[textRule]"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.License, $gettext('License'))"
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('License')"
@@ -355,7 +344,7 @@
                 v-model="view.model.Details.Keywords"
                 :append-inner-icon="view.model.Details.KeywordsSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.Keywords, $gettext('Keywords'))"
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Keywords')"
@@ -370,7 +359,7 @@
                 v-model="view.model.Details.Notes"
                 :append-inner-icon="view.model.Details.NotesSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
-                hide-details
+                :rules="rules.text(false, 0, PhotoMaxLength.Notes, $gettext('Notes'))"
                 autocomplete="off"
                 auto-grow
                 :label="$gettext('Notes')"
@@ -409,28 +398,29 @@
         </div>
       </div>
     </v-form>
-    <p-location-dialog
+    <p-meta-location-dialog
       :visible="locationDialog"
       :latlng="[view.model.Lat ? Number(view.model.Lat) : 0, view.model.Lng ? Number(view.model.Lng) : 0]"
       @close="locationDialog = false"
       @confirm="confirmLocation"
-    ></p-location-dialog>
+    ></p-meta-location-dialog>
   </div>
 </template>
 
 <script>
 import countries from "options/countries.json";
 import Thumb from "model/thumb";
+import { MaxLength as PhotoMaxLength } from "model/photo";
 import * as options from "options/options";
 import { rules } from "common/form";
-import PLocationDialog from "component/location/dialog.vue";
-import PLocationInput from "component/location/input.vue";
+import PMetaLocationDialog from "component/meta/location/dialog.vue";
+import PMetaLocationInput from "component/meta/location/input.vue";
 
 export default {
   name: "PTabPhotoDetails",
   components: {
-    PLocationDialog,
-    PLocationInput,
+    PMetaLocationDialog,
+    PMetaLocationInput,
   },
   props: {
     uid: {
@@ -450,6 +440,7 @@ export default {
       readonly: this.$config.get("readonly"),
       options,
       rules,
+      PhotoMaxLength,
       countries,
       featReview: this.$config.feature("review"),
       showDatePicker: false,
@@ -458,7 +449,6 @@ export default {
       time: "",
       locationLabel: this.$gettext("Location"),
       locationDialog: false,
-      textRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Text too long"),
       rtl: this.$isRtl,
       placesDisabled: !this.$config.feature("places"),
     };
@@ -481,6 +471,14 @@ export default {
   },
   created() {
     this.syncData();
+  },
+  mounted() {
+    // Seed validation so the per-field `:rules` are active from the
+    // first render. Without this, Vuetify's `validate-on="invalid-input"`
+    // default keeps the rules dormant until the first failed validate()
+    // — which means overlength input renders no error and save() can
+    // proceed against an invalid value. Mirrors page/settings/account.vue.
+    this.$refs.form?.validate?.();
   },
   methods: {
     setDay(v) {
@@ -532,20 +530,26 @@ export default {
     },
     // Returns the effective year used for validation: explicit year or from TakenAtLocal if unknown
     effectiveYear() {
-      if (this.view?.model?.Year && this.view.model.Year > 0) return this.view.model.Year;
+      if (this.view?.model?.Year && this.view.model.Year > 0) {
+        return this.view.model.Year;
+      }
       const y = this.view?.model?.TakenAtLocal ? parseInt(this.view.model.TakenAtLocal.substring(0, 4)) : new Date().getUTCFullYear();
       return isNaN(y) ? new Date().getUTCFullYear() : y;
     },
     // Returns the effective month used for validation: explicit month or from TakenAtLocal if unknown
     effectiveMonth() {
-      if (this.view?.model?.Month && this.view.model.Month > 0) return this.view.model.Month;
+      if (this.view?.model?.Month && this.view.model.Month > 0) {
+        return this.view.model.Month;
+      }
       const m = this.view?.model?.TakenAtLocal ? parseInt(this.view.model.TakenAtLocal.substring(5, 7)) : new Date().getUTCMonth() + 1;
       return isNaN(m) ? new Date().getUTCMonth() + 1 : m;
     },
     // Clamp day to the maximum valid day of the current effective month/year
     clampDayToValidRange() {
       const day = this.view?.model?.Day || 0;
-      if (day <= 0) return; // Unknown day stays unknown
+      if (day <= 0) {
+        return;
+      } // Unknown day stays unknown
       const y = this.effectiveYear();
       const m = this.effectiveMonth();
       // JS Date trick: day 0 of next month yields last day of current month
@@ -621,17 +625,27 @@ export default {
     save(close) {
       if (this.invalidDate) {
         this.$notify.error(this.$gettext("Invalid date"));
-        return;
+        return Promise.resolve();
       }
 
-      this.updateModel();
+      const form = this.$refs.form;
+      const validate = typeof form?.validate === "function" ? form.validate() : Promise.resolve({ valid: true });
 
-      this.view.model.update().then(() => {
-        if (close) {
-          this.$emit("close");
+      return Promise.resolve(validate).then((result) => {
+        if (result && result.valid === false) {
+          this.$notify.error(this.$gettext("Changes could not be saved"));
+          return;
         }
 
-        this.syncData();
+        this.updateModel();
+
+        return this.view.model.update().then(() => {
+          if (close) {
+            this.$emit("close");
+          }
+
+          this.syncData();
+        });
       });
     },
     close() {

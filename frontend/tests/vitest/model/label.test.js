@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
-import { Label, BatchSize } from "model/label";
+import { Label, BatchSize, MaxLength } from "model/label";
 
 describe("model/label", () => {
   let originalBatchSize;
@@ -11,6 +11,18 @@ describe("model/label", () => {
 
   afterEach(() => {
     Label.setBatchSize(originalBatchSize);
+  });
+
+  // Pins per-field caps to the backend VARCHAR columns on internal/entity/label.go.
+  // A backend bump must move the frontend cap in lockstep so client-side
+  // validation matches what the server persists.
+  it("MaxLength mirrors the backend VARCHAR caps", () => {
+    expect(MaxLength).toEqual({
+      Name: 160,
+      Description: 2048,
+      Notes: 1024,
+    });
+    expect(Object.isFrozen(MaxLength)).toBe(true);
   });
 
   it("should get route view", () => {

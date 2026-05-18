@@ -38,6 +38,16 @@ export class Service extends RestModel {
     };
   }
 
+  // AccPass and AccKey are tagged `json:"-"` on the backend, so they never
+  // arrive in GET responses. Seeded here so the change-diff in update()
+  // picks up user edits in the service edit dialog.
+  getWriteOnly() {
+    return {
+      AccPass: "",
+      AccKey: "",
+    };
+  }
+
   getEntityName() {
     return this.AccName;
   }

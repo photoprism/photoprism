@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { nextTick } from "vue";
 import PFaceMarkerOverlay from "component/photo/face-marker-overlay.vue";
+import { FaceMarkerDisplay, FaceMarkerEdit } from "options/face-marker";
 
 // Stub image bounds on the page.
 const IMAGE_RECT = { left: 100, top: 50, width: 400, height: 300, right: 500, bottom: 350 };
@@ -32,14 +33,15 @@ function mountOverlay(props = {}, listeners = {}) {
       markers: [],
       pswp,
       // Default to draw mode so the existing pointer-driven tests work
-      // unchanged. Display-mode tests pass `mode: "display"` explicitly.
-      mode: "draw",
+      // unchanged. Display-mode tests pass `mode: FaceMarkerDisplay`.
+      mode: FaceMarkerEdit,
       ...props,
       // Forward listeners as props so `wrapper.emitted()` limitations
       // don't matter — the component calls `this.$emit(name, ...)`, which
       // Vue then dispatches to the `on<Event>` prop provided here.
       onCreate: listeners.onCreate || (() => {}),
       onCancel: listeners.onCancel || (() => {}),
+      onRemove: listeners.onRemove || (() => {}),
     },
     attachTo: document.body,
   });
@@ -289,7 +291,8 @@ describe("PFaceMarkerOverlay", () => {
     wrapper.vm.onPointerUp({ pointerId: 14 });
     expect(wrapper.vm.pending).not.toBeNull();
 
-    wrapper.vm.onKeyDown({ key: "Escape" });
+    const consumed = wrapper.vm.handleEscape();
+    expect(consumed).toBe(true);
     expect(wrapper.vm.pending).toBeNull();
     expect(onCancel).not.toHaveBeenCalled();
   });
@@ -367,17 +370,73 @@ describe("PFaceMarkerOverlay", () => {
     wrapper.vm.onPointerMove({ pointerId: 6, clientX: 300, clientY: 250 });
     expect(wrapper.vm.interaction).toBe("draw");
 
-    wrapper.vm.onKeyDown({ key: "Escape" });
+    const consumed = wrapper.vm.handleEscape();
+    expect(consumed).toBe(true);
     expect(wrapper.vm.interaction).toBeNull();
     expect(wrapper.vm.draft).toBeNull();
     expect(onCreate).not.toHaveBeenCalled();
   });
 
-  it("emits cancel on Escape when not drafting", () => {
-    const onCancel = vi.fn();
-    const { wrapper } = mountOverlay({}, { onCancel });
-    wrapper.vm.onKeyDown({ key: "Escape" });
-    expect(onCancel).toHaveBeenCalledTimes(1);
+  // handleEscape returns false when there is no in-flight interaction
+  // and no pending rect — the lightbox uses this signal to decide
+  // whether to exit draw mode or close the lightbox.
+  it("handleEscape returns false when there is nothing to cancel", () => {
+    const { wrapper } = mountOverlay();
+    expect(wrapper.vm.handleEscape()).toBe(false);
+  });
+
+  // Letterbox math: when the <img> element's box dimensions don't match
+  // the image's natural aspect ratio (typical for video / Live / Animated
+  // slides where the JPG cover is CSS-stretched), updateBounds must inset
+  // by the letterbox / pillarbox bars so markers render against the
+  // inscribed image rect, not the full element box.
+  it("insets bounds for top/bottom letterboxing when image is wider than its box", () => {
+    const { wrapper, pswp } = mountOverlay();
+    // Box is 400×300 (4:3); intrinsic image is 16:9 (e.g. 480×270).
+    // Inscribed image inside the box: width=400, height=400/(16/9)≈225,
+    // top offset = (300-225)/2 = 37.5.
+    pswp.img.getBoundingClientRect = () => ({ left: 100, top: 50, width: 400, height: 300, right: 500, bottom: 350 });
+    Object.defineProperty(pswp.img, "naturalWidth", { value: 480, configurable: true });
+    Object.defineProperty(pswp.img, "naturalHeight", { value: 270, configurable: true });
+    wrapper.vm.updateBounds();
+    const b = wrapper.vm.bounds;
+    expect(b.left).toBe(100);
+    expect(b.width).toBe(400);
+    expect(b.top).toBeCloseTo(50 + 37.5, 3);
+    expect(b.height).toBeCloseTo(225, 3);
+  });
+
+  it("insets bounds for left/right pillarboxing when image is taller than its box", () => {
+    const { wrapper, pswp } = mountOverlay();
+    // Box is 400×300 (4:3); intrinsic image is 1:2 portrait (e.g. 200×400).
+    // Inscribed image inside the box: height=300, width=300*(1/2)=150,
+    // left offset = (400-150)/2 = 125.
+    pswp.img.getBoundingClientRect = () => ({ left: 100, top: 50, width: 400, height: 300, right: 500, bottom: 350 });
+    Object.defineProperty(pswp.img, "naturalWidth", { value: 200, configurable: true });
+    Object.defineProperty(pswp.img, "naturalHeight", { value: 400, configurable: true });
+    wrapper.vm.updateBounds();
+    const b = wrapper.vm.bounds;
+    expect(b.top).toBe(50);
+    expect(b.height).toBe(300);
+    expect(b.left).toBeCloseTo(100 + 125, 3);
+    expect(b.width).toBeCloseTo(150, 3);
+  });
+
+  it("returns the element box unchanged when natural ratio already matches", () => {
+    const { wrapper, pswp } = mountOverlay();
+    pswp.img.getBoundingClientRect = () => ({ left: 100, top: 50, width: 400, height: 300, right: 500, bottom: 350 });
+    Object.defineProperty(pswp.img, "naturalWidth", { value: 800, configurable: true });
+    Object.defineProperty(pswp.img, "naturalHeight", { value: 600, configurable: true });
+    wrapper.vm.updateBounds();
+    expect(wrapper.vm.bounds).toEqual({ left: 100, top: 50, width: 400, height: 300 });
+  });
+
+  it("falls back to the element box when natural dimensions are missing", () => {
+    const { wrapper, pswp } = mountOverlay();
+    pswp.img.getBoundingClientRect = () => ({ left: 100, top: 50, width: 400, height: 300, right: 500, bottom: 350 });
+    // naturalWidth/Height default to 0 on freshly created <img>; no setter needed.
+    wrapper.vm.updateBounds();
+    expect(wrapper.vm.bounds).toEqual({ left: 100, top: 50, width: 400, height: 300 });
   });
 
   it("clamps the drawn square inside the image bounds", () => {
@@ -403,7 +462,7 @@ describe("PFaceMarkerOverlay", () => {
   // capture the pointer, so PhotoSwipe pan/zoom keeps working.
   it("does not start drafting on pointer down in display mode", () => {
     const onCreate = vi.fn();
-    const { wrapper } = mountOverlay({ mode: "display" }, { onCreate });
+    const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay }, { onCreate });
     wrapper.vm.onPointerDown({
       button: 0,
       pointerId: 1,
@@ -419,7 +478,7 @@ describe("PFaceMarkerOverlay", () => {
 
   it("renders existing markers in display mode", async () => {
     const markers = [{ UID: "m1", Name: "Jane", X: 0.1, Y: 0.1, W: 0.2, H: 0.2 }];
-    const { wrapper } = mountOverlay({ mode: "display", markers });
+    const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay, markers });
     await nextTick();
     await flushPromises();
     const rects = wrapper.element.querySelectorAll("rect");
@@ -431,7 +490,7 @@ describe("PFaceMarkerOverlay", () => {
       { UID: "m1", Name: "Jane", X: 0.1, Y: 0.1, W: 0.2, H: 0.2 },
       { UID: "m2", Name: "", X: 0.5, Y: 0.5, W: 0.1, H: 0.1 },
     ];
-    const { wrapper } = mountOverlay({ mode: "display", markers });
+    const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay, markers });
     await nextTick();
     await flushPromises();
     const labels = wrapper.element.querySelectorAll("text.p-face-markers__label");
@@ -443,13 +502,18 @@ describe("PFaceMarkerOverlay", () => {
     expect(labelY).toBeGreaterThan(rectBottom);
   });
 
-  it("does not render visible name labels while in draw mode", async () => {
+  it("also renders visible name labels in draw / edit mode", async () => {
+    // Names stay visible during edit mode so the user can distinguish
+    // named markers (untouchable via overlay-click) from unnamed ones
+    // (clickable for removal). Previously hidden in draw mode for
+    // visual quiet; the trade-off flipped once click-to-remove arrived.
     const markers = [{ UID: "m1", Name: "Jane", X: 0.1, Y: 0.1, W: 0.2, H: 0.2 }];
-    const { wrapper } = mountOverlay({ mode: "draw", markers });
+    const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers });
     await nextTick();
     await flushPromises();
     const labels = wrapper.element.querySelectorAll("text.p-face-markers__label");
-    expect(labels.length).toBe(0);
+    expect(labels.length).toBe(1);
+    expect(labels[0].textContent).toBe("Jane");
   });
 
   it("discards an active draft when the mode changes from draw to display", async () => {
@@ -466,7 +530,7 @@ describe("PFaceMarkerOverlay", () => {
     wrapper.vm.onPointerUp({ pointerId: 21 });
     expect(wrapper.vm.pending).not.toBeNull();
 
-    await wrapper.setProps({ mode: "display" });
+    await wrapper.setProps({ mode: FaceMarkerDisplay });
     expect(wrapper.vm.pending).toBeNull();
     expect(wrapper.vm.draft).toBeNull();
     expect(wrapper.vm.interaction).toBeNull();
@@ -642,7 +706,7 @@ describe("PFaceMarkerOverlay", () => {
     // Pending was mutated mid-resize.
     expect(wrapper.vm.pending.w).not.toBe(pending.w);
 
-    wrapper.vm.onKeyDown({ key: "Escape" });
+    wrapper.vm.handleEscape();
 
     expect(wrapper.vm.pending).toEqual(pending);
     expect(wrapper.vm.interaction).toBeNull();
@@ -662,7 +726,7 @@ describe("PFaceMarkerOverlay", () => {
     wrapper.vm.onPointerMove({ pointerId: 107, clientX: 260, clientY: 200 });
     expect(wrapper.vm.pending.x).not.toBe(pending.x);
 
-    wrapper.vm.onKeyDown({ key: "Escape" });
+    wrapper.vm.handleEscape();
 
     expect(wrapper.vm.pending).toEqual(pending);
     expect(wrapper.vm.interaction).toBeNull();
@@ -722,7 +786,7 @@ describe("PFaceMarkerOverlay", () => {
   it("is inert for the full pointer cycle in display mode", async () => {
     const onCreate = vi.fn();
     const markers = [{ UID: "m1", Name: "Jane", X: 0.1, Y: 0.1, W: 0.2, H: 0.2 }];
-    const { wrapper } = mountOverlay({ mode: "display", markers }, { onCreate });
+    const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay, markers }, { onCreate });
     wrapper.vm.onPointerDown({
       button: 0,
       pointerId: 2,
@@ -741,5 +805,149 @@ describe("PFaceMarkerOverlay", () => {
     await flushPromises();
     expect(wrapper.element.querySelector("button.p-face-markers__btn--confirm")).toBeNull();
     expect(wrapper.element.querySelector("button.p-face-markers__btn--cancel")).toBeNull();
+  });
+
+  // The Back button is the user-facing exit for face-marker mode while
+  // the toolbar chrome is hidden by .face-marker-mode CSS. It must be
+  // present whenever the overlay is mounted (display + draw) and emit
+  // `cancel` so the lightbox routes through exitFaceMarkerMode.
+  it("renders the Back button in display mode and emits cancel on click", async () => {
+    const onCancel = vi.fn();
+    const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay, markers: [] }, { onCancel });
+    const btn = wrapper.element.querySelector("button.p-face-markers__btn--back");
+    expect(btn).not.toBeNull();
+    btn.click();
+    await nextTick();
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders the Back button in draw mode and emits cancel + clears any pending draft on click", async () => {
+    const onCancel = vi.fn();
+    const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [] }, { onCancel });
+    // Stage a pending draft so we can confirm the back click also clears it.
+    wrapper.vm.pending = { x: 10, y: 10, w: 50, h: 50 };
+    await nextTick();
+    const btn = wrapper.element.querySelector("button.p-face-markers__btn--back");
+    expect(btn).not.toBeNull();
+    btn.click();
+    await nextTick();
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(wrapper.vm.pending).toBeNull();
+    expect(wrapper.vm.draft).toBeNull();
+  });
+
+  // Click-to-remove flow: in edit mode, clicking an unnamed marker rect
+  // opens an inline confirm pill. ✓ emits `remove` with the marker; ✕
+  // dismisses without mutation. Named markers (m.SubjUID truthy) are
+  // not removable via this path — the backend gate (marker.reject only
+  // accepts unnamed markers) is mirrored in the overlay's hit-test.
+  describe("edit-mode click-to-remove", () => {
+    const unnamed = { UID: "m2", Name: "", X: 0.2, Y: 0.2, W: 0.2, H: 0.2 };
+    const named = { UID: "m1", Name: "Jane", SubjUID: "subj1", X: 0.6, Y: 0.6, W: 0.2, H: 0.2 };
+
+    function clickAt(wrapper, normX, normY) {
+      // Convert normalized marker coords (0..1 within the image) back to
+      // client coords on the stubbed image rect. Click the centre of
+      // the rect at (normX, normY).
+      const clientX = IMAGE_RECT.left + normX * IMAGE_RECT.width;
+      const clientY = IMAGE_RECT.top + normY * IMAGE_RECT.height;
+      wrapper.vm.onPointerDown({
+        button: 0,
+        pointerId: 99,
+        clientX,
+        clientY,
+        stopPropagation: () => {},
+        preventDefault: () => {},
+      });
+    }
+
+    it("clicking an unnamed marker rect sets removingMarker and skips draft start", () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      expect(wrapper.vm.removingMarker?.UID).toBe(unnamed.UID);
+      expect(wrapper.vm.interaction).toBeNull();
+      expect(wrapper.vm.draft).toBeNull();
+    });
+
+    it("renders an inline confirm pill anchored to the targeted marker", async () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      await nextTick();
+      const pill = wrapper.element.querySelector(".p-face-markers__remove-confirm");
+      expect(pill).not.toBeNull();
+      expect(pill.querySelector("button.p-face-markers__btn--remove")).not.toBeNull();
+    });
+
+    it("highlights the targeted rect with the --removing modifier class", async () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      await nextTick();
+      const rects = wrapper.element.querySelectorAll("rect.p-face-markers__rect");
+      expect(rects[0].classList.contains("p-face-markers__rect--removing")).toBe(true);
+    });
+
+    it("✓ click emits remove with the marker and clears removingMarker", async () => {
+      const onRemove = vi.fn();
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] }, { onRemove });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      await nextTick();
+      wrapper.element.querySelector("button.p-face-markers__btn--remove").click();
+      await nextTick();
+      expect(onRemove).toHaveBeenCalledTimes(1);
+      expect(onRemove.mock.calls[0][0]?.UID).toBe(unnamed.UID);
+      expect(wrapper.vm.removingMarker).toBeNull();
+    });
+
+    it("✕ click in the remove pill clears removingMarker without emitting", async () => {
+      const onRemove = vi.fn();
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] }, { onRemove });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      await nextTick();
+      wrapper.element.querySelector("button.p-face-markers__btn--cancel").click();
+      await nextTick();
+      expect(onRemove).not.toHaveBeenCalled();
+      expect(wrapper.vm.removingMarker).toBeNull();
+    });
+
+    it("named markers are not removable via this path — hit-test skips them", () => {
+      const onRemove = vi.fn();
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [named] }, { onRemove });
+      clickAt(wrapper, named.X + named.W / 2, named.Y + named.H / 2);
+      expect(wrapper.vm.removingMarker).toBeNull();
+      // The click falls through to the draft-start path because no
+      // unnamed marker was hit at that location.
+      expect(wrapper.vm.interaction).not.toBeNull();
+    });
+
+    it("clicking empty space cancels any pending remove pill", () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      expect(wrapper.vm.removingMarker?.UID).toBe(unnamed.UID);
+      clickAt(wrapper, 0.95, 0.95);
+      expect(wrapper.vm.removingMarker).toBeNull();
+    });
+
+    it("display mode ignores marker clicks (overlay is read-only)", () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay, markers: [unnamed] });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      expect(wrapper.vm.removingMarker).toBeNull();
+    });
+
+    it("handleEscape clears a pending remove first", () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      expect(wrapper.vm.removingMarker?.UID).toBe(unnamed.UID);
+      const consumed = wrapper.vm.handleEscape();
+      expect(consumed).toBe(true);
+      expect(wrapper.vm.removingMarker).toBeNull();
+    });
+
+    it("leaving draw mode clears a pending remove", async () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
+      clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
+      expect(wrapper.vm.removingMarker?.UID).toBe(unnamed.UID);
+      await wrapper.setProps({ mode: FaceMarkerDisplay });
+      expect(wrapper.vm.removingMarker).toBeNull();
+    });
   });
 });

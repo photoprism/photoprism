@@ -207,10 +207,22 @@ describe("common/form", () => {
     it("validates time values", () => {
       expect(rules.isTime("23:59:59")).toBe(true);
       expect(rules.isTime("24:00:00")).toBe(false);
+      // isTime mirrors the other is* helpers: non-string / empty
+      // inputs are "no value", returning true so the wrapper rule's
+      // own !v / !!v gate decides required-ness.
+      expect(rules.isTime(null)).toBe(true);
+      expect(rules.isTime(undefined)).toBe(true);
+      expect(rules.isTime("")).toBe(true);
+      expect(rules.isTime({ value: "23:59:59" })).toBe(true);
       const required = rules.time(true);
       expect(required[0]("")).toBe("This field is required");
       expect(required[1]("23:59:59")).toBe(true);
       expect(required[1]("25:00:00")).toBe("Invalid time");
+      // Required-mode validity rule must short-circuit on empty so
+      // the "required" message isn't flashed alongside "Invalid time"
+      // — matches the email(true) / url(true) pattern.
+      expect(required[1]("")).toBe(true);
+      expect(required[1](null)).toBe(true);
       const optional = rules.time(false);
       expect(optional[0]("")).toBe(true);
     });
@@ -243,6 +255,27 @@ describe("common/form", () => {
       expect(optionalText[0]("a")).toBe("Name is too short");
       expect(optionalText[1]("abcde")).toBe("Name is too long");
       expect(optionalText[0]("abc")).toBe(true);
+    });
+
+    // Defensive-input regression for the centralized rules.text
+    // factory. Several per-component titleRule / textRule arrow
+    // functions did `v.length` without a null guard, which crashed
+    // on v-combobox-with-return-object modelValue = null (see the
+    // labels.vue nameRule fix). Migrating those call sites to the
+    // factory eliminates the crash class entirely.
+    it("tolerates null / undefined / object inputs without throwing", () => {
+      const [minLenRule, maxLenRule] = rules.text(false, 2, 4, "Name");
+      // null / undefined short-circuit the !v guard in minLen/maxLen.
+      expect(minLenRule(null)).toBe(true);
+      expect(maxLenRule(null)).toBe(true);
+      expect(minLenRule(undefined)).toBe(true);
+      expect(maxLenRule(undefined)).toBe(true);
+      // Non-string inputs (objects from return-object comboboxes,
+      // numbers, etc.) short-circuit the typeof v !== "string" guard.
+      expect(minLenRule({ Name: "Flower" })).toBe(true);
+      expect(maxLenRule({ Name: "a really long name from a return-object combobox" })).toBe(true);
+      expect(minLenRule(42)).toBe(true);
+      expect(maxLenRule(42)).toBe(true);
     });
 
     it("validates country, day, month, and year ranges", () => {

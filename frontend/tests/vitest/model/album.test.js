@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
-import { Album, BatchSize } from "model/album";
+import { Album, BatchSize, MaxLength } from "model/album";
 
 describe("model/album", () => {
   let originalBatchSize;
@@ -11,6 +11,18 @@ describe("model/album", () => {
 
   afterEach(() => {
     Album.setBatchSize(originalBatchSize);
+  });
+
+  // Pins per-field caps to the backend VARCHAR columns on internal/entity/album.go
+  // so client-side validation moves in lockstep with the server.
+  it("MaxLength mirrors the backend VARCHAR caps", () => {
+    expect(MaxLength).toEqual({
+      Title: 160,
+      Location: 160,
+      Caption: 1024,
+      Description: 2048,
+    });
+    expect(Object.isFrozen(MaxLength)).toBe(true);
   });
 
   it("should get route view", () => {

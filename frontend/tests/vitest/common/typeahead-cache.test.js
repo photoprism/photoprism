@@ -54,6 +54,27 @@ describe("typeaheadCache.getLabels", () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
+  // Pins the create-channel subscription. Without this, freshly added
+  // labels (e.g. typing 你好 in the sidebar combobox when no such label
+  // exists yet) would stay invisible to subsequent typeahead consumers
+  // until something else evicted the cache.
+  it("re-fetches after labels.created WS event evicts the cache", async () => {
+    const first = [{ Name: "Existing", UID: "lbl-1" }];
+    const second = [
+      { Name: "Existing", UID: "lbl-1" },
+      { Name: "你好", UID: "lbl-2" },
+    ];
+    const spy = vi
+      .spyOn(Label, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    expect(await typeaheadCache.getLabels()).toEqual(first);
+    $event.publishSync("labels.created", { entities: [{ UID: "lbl-2", Name: "你好" }] });
+    expect(await typeaheadCache.getLabels()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
   it("re-fetches after labels.deleted WS event", async () => {
     const first = [{ Name: "First", UID: "lbl-1" }];
     const second = [];
@@ -125,6 +146,28 @@ describe("typeaheadCache.getAlbums", () => {
 
     await typeaheadCache.getAlbums();
     $event.publishSync("albums.updated", { entities: [] });
+    expect(await typeaheadCache.getAlbums()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  // Mirrors the labels.created test: the entity layer publishes albums.created
+  // via PublishUserEntities("albums", EntityCreated, …) from Album.Save(),
+  // and the websocket writer strips the user.<uid>. prefix before relaying.
+  // Without this subscription, brand-new albums would stay invisible to
+  // every other typeahead consumer in the same browser session.
+  it("re-fetches after albums.created WS event", async () => {
+    const first = [{ Title: "Existing", UID: "alb-1" }];
+    const second = [
+      { Title: "Existing", UID: "alb-1" },
+      { Title: "Trip", UID: "alb-2" },
+    ];
+    const spy = vi
+      .spyOn(Album, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    await typeaheadCache.getAlbums();
+    $event.publishSync("albums.created", { entities: [{ UID: "alb-2", Title: "Trip" }] });
     expect(await typeaheadCache.getAlbums()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });
@@ -203,5 +246,64 @@ describe("typeaheadCache.evict / clear", () => {
     expect(await typeaheadCache.getAlbums()).toEqual([{ Title: "A2", UID: "a2" }]);
     expect(labelSpy).toHaveBeenCalledTimes(2);
     expect(albumSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+// Forward-compat coverage for the subscribeEntityActions refactor:
+// future entity-mutation verbs published by the backend (e.g.
+// labels.edited / albums.edited via event.EntitiesEdited) flow
+// through the namespace-level subscriber and evict without any
+// per-channel wiring in this module. Non-mutation actions stay
+// no-ops so an unrelated future event under the same namespace
+// can't pull the cache out from under live consumers.
+describe("subscribeEntityActions integration", () => {
+  it("re-fetches after labels.edited (future mutation verb under ENTITY_MUTATIONS)", async () => {
+    const first = [{ Name: "A", UID: "1" }];
+    const second = [{ Name: "B", UID: "2" }];
+    const spy = vi
+      .spyOn(Label, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    await typeaheadCache.getLabels();
+    $event.publishSync("labels.edited", { entities: ["1"] });
+    expect(await typeaheadCache.getLabels()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("re-fetches after albums.edited", async () => {
+    const first = [{ Title: "First", UID: "alb-1" }];
+    const second = [{ Title: "Second", UID: "alb-2" }];
+    const spy = vi
+      .spyOn(Album, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    await typeaheadCache.getAlbums();
+    $event.publishSync("albums.edited", { entities: ["alb-1"] });
+    expect(await typeaheadCache.getAlbums()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("ignores labels.* events whose action is not in ENTITY_MUTATIONS", async () => {
+    const cached = [{ Name: "A", UID: "1" }];
+    const spy = vi.spyOn(Label, "search").mockResolvedValueOnce({ models: cached });
+
+    await typeaheadCache.getLabels();
+    $event.publishSync("labels.merged", { entities: ["1"] });
+    $event.publishSync("labels.viewed", {});
+    expect(await typeaheadCache.getLabels()).toEqual(cached);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores albums.* events whose action is not in ENTITY_MUTATIONS", async () => {
+    const cached = [{ Title: "First", UID: "alb-1" }];
+    const spy = vi.spyOn(Album, "search").mockResolvedValueOnce({ models: cached });
+
+    await typeaheadCache.getAlbums();
+    $event.publishSync("albums.merged", { entities: ["alb-1"] });
+    $event.publishSync("albums.viewed", {});
+    expect(await typeaheadCache.getAlbums()).toEqual(cached);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });

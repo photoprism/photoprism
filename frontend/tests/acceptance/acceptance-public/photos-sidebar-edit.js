@@ -20,19 +20,19 @@ test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })(
   async (t) => {
     await photoviewer.openSidebarOnFirstPhoto();
 
-    const titleInput = Selector(".p-sidebar-info .meta-inline-title input", { timeout: 15000 });
+    const titleInput = Selector(".p-lightbox-sidebar .meta-inline-title input", { timeout: 15000 });
     await photoviewer.startInlineEditOrAdd("meta-title", "Title");
     await t.expect(titleInput.visible).ok();
     await t.typeText(titleInput, "Sidebar Edit Title", { replace: true }).pressKey("enter");
-    await t.expect(Selector(".p-sidebar-info .meta-title").withText("Sidebar Edit Title").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .meta-title").withText("Sidebar Edit Title").exists).ok();
 
-    const captionTextarea = Selector(".p-sidebar-info .meta-inline-caption textarea", { timeout: 15000 });
+    const captionTextarea = Selector(".p-lightbox-sidebar .meta-inline-caption textarea", { timeout: 15000 });
     await photoviewer.startInlineEditOrAdd("meta-caption", "Caption");
     await t.expect(captionTextarea.visible).ok();
     await t.typeText(captionTextarea, "Caption added in sidebar edit test", { replace: true });
-    const captionConfirm = captionTextarea.parent(".p-sidebar-info .v-list-item").find(".meta-inline-confirm");
+    const captionConfirm = captionTextarea.parent(".p-lightbox-sidebar .v-list-item").find(".meta-inline-confirm");
     await t.click(captionConfirm);
-    await t.expect(Selector(".p-sidebar-info .meta-caption").withText("Caption added in sidebar edit test").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .meta-caption").withText("Caption added in sidebar edit test").exists).ok();
 
     const plainTextFields = [
       { icon: "mdi-text-box-outline", value: "Testing sidebar edits" }, // Subject
@@ -52,12 +52,12 @@ test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })(
     const keywordsInput = await photoviewer.startInlineEditBySection("Keywords");
     await t.typeText(keywordsInput, "sidebareditkw", { replace: true });
     await photoviewer.confirmInlineEditBySection("Keywords");
-    await t.expect(Selector(".p-sidebar-info .meta-keywords").withText("sidebareditkw").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .meta-keywords").withText("sidebareditkw").exists).ok();
 
     const notesInput = await photoviewer.startInlineEditBySection("Notes");
     await t.typeText(notesInput, "SidebarNoteFromTest", { replace: true });
     await photoviewer.confirmInlineEditBySection("Notes");
-    await t.expect(Selector(".p-sidebar-info .meta-notes").withText("SidebarNoteFromTest").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .meta-notes").withText("SidebarNoteFromTest").exists).ok();
   }
 );
 
@@ -187,7 +187,7 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
     await t.typeText(locationDialog.coordinates, "52.5200, 13.4050", { replace: true }).pressKey("enter");
     await t.click(locationDialog.confirm);
     await t.expect(locationDialog.root.visible).notOk();
-    await t.expect(Selector(".p-sidebar-info .p-map").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .p-map").exists).ok();
 
     // Substring match — the optional " · <altitude> m" suffix can follow.
     const coordinatesRow = photoviewer.sidebarRow("mdi-map-marker").nextSibling(".v-list-item");
@@ -196,22 +196,40 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
 
     // Skip empty fields: typeText("") is a no-op and v-select has no clear.
     await photoviewer.openSidebarDialog("takenAt");
-    if (initialYear) await pickAutocomplete(dateTimeDialog.year, initialYear);
-    if (initialMonth) await pickAutocomplete(dateTimeDialog.month, initialMonth);
-    if (initialDay) await pickAutocomplete(dateTimeDialog.day, initialDay);
+    if (initialYear) {
+      await pickAutocomplete(dateTimeDialog.year, initialYear);
+    }
+    if (initialMonth) {
+      await pickAutocomplete(dateTimeDialog.month, initialMonth);
+    }
+    if (initialDay) {
+      await pickAutocomplete(dateTimeDialog.day, initialDay);
+    }
     if (initialLocalTime) {
       await t.typeText(dateTimeDialog.localTime, initialLocalTime, { replace: true }).pressKey("tab");
     }
-    if (initialTimezone) await pickAutocomplete(dateTimeDialog.timezone, initialTimezone);
+    if (initialTimezone) {
+      await pickAutocomplete(dateTimeDialog.timezone, initialTimezone);
+    }
     await t.click(dateTimeDialog.confirm);
     await t.expect(dateTimeDialog.root.visible).notOk();
 
     await photoviewer.openSidebarDialog("camera");
-    if (initialCamera) await pickFromSelect(cameraDialog.camera, initialCamera);
-    if (initialLens) await pickFromSelect(cameraDialog.lens, initialLens);
-    if (initialIso) await t.typeText(cameraDialog.iso, initialIso, { replace: true });
-    if (initialExposure) await t.typeText(cameraDialog.exposure, initialExposure, { replace: true });
-    if (initialFnumber) await t.typeText(cameraDialog.fnumber, initialFnumber, { replace: true });
+    if (initialCamera) {
+      await pickFromSelect(cameraDialog.camera, initialCamera);
+    }
+    if (initialLens) {
+      await pickFromSelect(cameraDialog.lens, initialLens);
+    }
+    if (initialIso) {
+      await t.typeText(cameraDialog.iso, initialIso, { replace: true });
+    }
+    if (initialExposure) {
+      await t.typeText(cameraDialog.exposure, initialExposure, { replace: true });
+    }
+    if (initialFnumber) {
+      await t.typeText(cameraDialog.fnumber, initialFnumber, { replace: true });
+    }
     if (initialFocalLength) {
       await t.typeText(cameraDialog.focalLength, initialFocalLength, { replace: true });
     }

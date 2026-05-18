@@ -50,20 +50,9 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 
 ## Formatting & Linting
 
-- `make fmt` — format everything (Go + JS + Swagger)
-- `make fmt-go` — runs `go fmt`, `gofmt -w -s`, then `goimports -w -local "github.com/photoprism"` on `pkg/`, `internal/`, `cmd/`
-- `make fmt-js` — runs ESLint + Prettier via `npm run fmt` in `frontend/`
-- `make fmt-swag` / `make swag` — format and regenerate Swagger docs (`internal/api/swagger.json`)
-- `make lint-go` — runs golangci-lint (prints findings without failing due to `--issues-exit-code 0`)
-- `make lint-js` — runs ESLint/Prettier for frontend
+Available targets: `make fmt` (everything), `make fmt-go`, `make fmt-js`, `make fmt-swag` / `make swag` (Swagger), `make lint-go`, `make lint-js`. Detailed conventions live in `.claude/rules/go-code-style.md` and `.claude/rules/frontend-rules.md`.
 
-Always run `make fmt-go` before committing Go changes and `make fmt-js` before committing frontend changes.
-When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings.
-
-When editing or creating Markdown files that contain tables, format them with:
-```bash
-npx --yes markdown-table-formatter <filename>
-```
+When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings. When editing Markdown files that contain tables, format them with `npx --yes markdown-table-formatter <filename>`.
 
 ## Schema Migrations
 
@@ -114,19 +103,17 @@ PhotoPrism is a self-hosted photo management app. The backend is Go, the fronten
 
 Vue 3 app using the Options API and Vuetify 3.
 
-| Directory                 | Purpose                                                                     |
-|---------------------------|-----------------------------------------------------------------------------|
-| `frontend/src/model/`     | Client-side models mirroring API responses (Photo, Album, File, User, etc.) |
-| `frontend/src/app/`       | App bootstrap, Vuex store, routing                                          |
-| `frontend/src/page/`      | Page-level components                                                       |
-| `frontend/src/component/` | Reusable UI components                                                      |
-| `frontend/src/common/`    | Shared utilities and API client                                             |
-| `frontend/src/locales/`   | i18n translation files                                                      |
-| `frontend/tests/`         | Vitest unit tests + TestCafe acceptance tests                               |
+| Directory                 | Purpose                                                                                         |
+|---------------------------|-------------------------------------------------------------------------------------------------|
+| `frontend/src/model/`     | Client-side models mirroring API responses (Photo, Album, File, User, etc.)                     |
+| `frontend/src/app/`       | App bootstrap, routing (`routes.js`), and the `$session` reactive singleton                     |
+| `frontend/src/page/`      | Page-level components                                                                           |
+| `frontend/src/component/` | Reusable UI components                                                                          |
+| `frontend/src/common/`    | Shared utilities, the API client (`$api`), and reactive singletons (`$config`, `$view`, `$log`) |
+| `frontend/src/locales/`   | i18n translation files                                                                          |
+| `frontend/tests/`         | Vitest unit tests + TestCafe acceptance tests                                                   |
 
-- Use the Options API consistently; do not introduce Composition API.
-- Keep all UI strings translatable; never hardcode locale strings.
-- Follow existing Vuex store patterns for state management.
+State management uses reactive singleton modules in `src/common/` and `src/app/`, not Vuex or Pinia. Frontend code-style, formatting, testing, translation, and Playwright rules live in `.claude/rules/frontend-rules.md`.
 
 ### API Conventions
 
@@ -145,15 +132,17 @@ Verify config option names before using them:
 ./photoprism show config-yaml
 ```
 
-### Commit Messages
+### Verify Before Propagating
 
-Use concise, imperative subjects with a one-word prefix indicating scope (e.g. `Config: Add tests for "darktable-cli" path detection`). Reference issue/PR IDs when relevant (e.g. `Docker: Use two stage build #123`). Commit messages must not exceed 80 characters.
+Before promoting a claim from `CLAUDE.md`, `AGENTS.md`, a memory entry, or another spec into a new rule, spec, code comment, or commit message, verify it against the current code (grep imports, list directories, read the cited file). Stale documentation silently turns into stale rules and stale specs that future sessions will trust. When the claim names a package, function, file, or framework, the cost of one grep is much smaller than the cost of repeating an error across multiple files.
 
-Do not add `Co-Authored-By: Claude …` trailers to commit messages.
+### Detailed Rules
 
-### Key Style Notes
+Topic-specific conventions live under `.claude/rules/` and are loaded alongside this file:
 
-- **Go**: idiomatic Go, small functions, wrapped errors with context, minimal public surface area. Use `goimports` with `-local "github.com/photoprism"` to group imports. Code in `pkg/*` MUST NOT import from `internal/*`.
-- **Tests**: use `config.TestConfig()` for shared fixtures or `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` for isolated test DBs. Use build tags `-tags="slow,develop"` for the full test suite. Do not run multiple test commands in parallel (shared fixtures/DB).
-- **Destructive CLI commands** (`photoprism reset`, `users reset`, `auth reset`, `audit reset`) require explicit `--yes` and should never be used in examples without backup warnings.
-- **Safety**: Never commit secrets or local configs. Do not run `git config`. Do not run destructive commands against production data.
+- `code-comments.md` — shared JS/Go doc comment rules (length cap, what to omit); referenced by both style files.
+- `go-code-style.md`, `go-testing.md` — Go style, package boundaries, test patterns, fixtures.
+- `frontend-rules.md` — JS/Vue code style, formatting, dependencies, tests, Playwright, translations.
+- `commit-and-docs-style.md` — commit-message format, GitHub issue templates, spec heading style.
+- `safety-and-security.md` — Git/data safety, destructive commands, file I/O and archive-extraction policies, HTTP download helpers.
+- `api-and-config.md`, `cluster-operations.md`, `import-index-download.md`, `build-and-runtime.md`, `sources-of-truth.md` — domain-specific guidance.

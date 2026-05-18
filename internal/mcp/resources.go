@@ -42,7 +42,7 @@ func registerResources(server *sdkmcp.Server, data *Dataset) {
 
 // newResourceResult marshals payload to indented JSON and wraps it in an
 // MCP ReadResourceResult with the given URI and header.ContentTypeJson as
-// the advertised MIME type. Returns an error if JSON marshalling fails.
+// the advertised MIME type. Returns an error if JSON marshaling fails.
 func newResourceResult(uri string, payload any) (*sdkmcp.ReadResourceResult, error) {
 	body, err := json.MarshalIndent(payload, "", "  ")
 	if err != nil {

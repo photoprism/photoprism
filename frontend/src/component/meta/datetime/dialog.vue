@@ -7,7 +7,7 @@
     persistent
     scrim
     scrollable
-    class="p-datetime-dialog"
+    class="p-meta-datetime-dialog"
     @keydown.esc.exact.stop="close"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
@@ -15,14 +15,14 @@
     <v-card ref="content" tabindex="-1" :tile="$vuetify.display.xs">
       <v-toolbar flat color="navigation" density="comfortable">
         <v-toolbar-title>
-          {{ $gettext("Edit Date & Time") }}
+          {{ $gettext("Adjust Date & Time") }}
         </v-toolbar-title>
         <v-btn icon :aria-label="$gettext('Close')" @click.stop="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-card-text class="pb-3">
-        <v-row dense>
+      <v-card-text class="dense">
+        <v-row dense class="py-2">
           <v-col cols="4">
             <v-autocomplete
               :model-value="day > 0 ? day : null"
@@ -86,6 +86,7 @@
           <v-col cols="6">
             <v-text-field
               v-model="time"
+              :error="invalidDate"
               :label="timeLabel"
               prepend-inner-icon="mdi-clock-time-eight-outline"
               autocomplete="off"
@@ -113,15 +114,15 @@
             ></v-autocomplete>
           </v-col>
         </v-row>
-        <div class="action-buttons mt-4 d-flex justify-end ga-2">
-          <v-btn variant="flat" color="button" class="action-cancel" min-width="100" @click.stop="close">
-            {{ $gettext("Cancel") }}
-          </v-btn>
-          <v-btn color="info" class="action-confirm" min-width="100" :disabled="invalidDate" @click="confirm">
-            {{ $gettext("Confirm") }}
-          </v-btn>
-        </div>
       </v-card-text>
+      <v-card-actions class="action-buttons">
+        <v-btn variant="flat" color="button" class="action-cancel" min-width="100" @click.stop="close">
+          {{ $gettext("Cancel") }}
+        </v-btn>
+        <v-btn variant="flat" color="highlight" class="action-save action-confirm" min-width="100" :disabled="invalidDate" :aria-label="$gettext('Save changes')" @click="confirm">
+          {{ $gettext("Save") }}
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -132,7 +133,7 @@ import * as options from "options/options";
 import { rules } from "common/form";
 
 export default {
-  name: "PDateTimeDialog",
+  name: "PMetaDatetimeDialog",
   props: {
     visible: {
       type: Boolean,
@@ -179,7 +180,9 @@ export default {
       this.$view.leave(this);
     },
     loadFromPhoto() {
-      if (!this.photo) return;
+      if (!this.photo) {
+        return;
+      }
 
       this.day = this.photo.Day;
       this.month = this.photo.Month;
@@ -191,17 +194,23 @@ export default {
       this.invalidDate = false;
     },
     effectiveYear() {
-      if (this.year > 0) return this.year;
+      if (this.year > 0) {
+        return this.year;
+      }
       const y = this.photo?.TakenAtLocal ? parseInt(this.photo.TakenAtLocal.substring(0, 4)) : new Date().getUTCFullYear();
       return isNaN(y) ? new Date().getUTCFullYear() : y;
     },
     effectiveMonth() {
-      if (this.month > 0) return this.month;
+      if (this.month > 0) {
+        return this.month;
+      }
       const m = this.photo?.TakenAtLocal ? parseInt(this.photo.TakenAtLocal.substring(5, 7)) : new Date().getUTCMonth() + 1;
       return isNaN(m) ? new Date().getUTCMonth() + 1 : m;
     },
     clampDayToValidRange() {
-      if (this.day <= 0) return;
+      if (this.day <= 0) {
+        return;
+      }
       const maxDay = new Date(Date.UTC(this.effectiveYear(), this.effectiveMonth(), 0)).getUTCDate();
       if (this.day > maxDay) {
         this.day = maxDay;
@@ -252,30 +261,46 @@ export default {
       }
     },
     setTime() {
-      if (rules.isTime(this.time)) {
-        this.updateLocalDate();
+      // Always reflect time validity in invalidDate — the previous
+      // `if (isTime) updateLocalDate()` shape skipped the update on bad
+      // input, leaving invalidDate stale and the Confirm button enabled
+      // against a malformed time string.
+      if (!rules.isTime(this.time)) {
+        this.invalidDate = true;
+        return;
       }
+      this.updateLocalDate();
     },
     syncTime() {
       this.updateLocalDate();
     },
     localYearString() {
-      if (this.year <= 0) return "";
+      if (this.year <= 0) {
+        return "";
+      }
       return this.year.toString().padStart(4, "0");
     },
     localMonthString() {
-      if (this.month <= 0) return "01";
+      if (this.month <= 0) {
+        return "01";
+      }
       return this.month.toString().padStart(2, "0");
     },
     localDayString() {
-      if (this.day <= 0) return "01";
+      if (this.day <= 0) {
+        return "01";
+      }
       return this.day.toString().padStart(2, "0");
     },
     updateLocalDate() {
-      if (!this.photo) return;
+      if (!this.photo) {
+        return;
+      }
 
       const yearStr = this.localYearString();
-      if (!yearStr) return;
+      if (!yearStr) {
+        return;
+      }
 
       const date = yearStr + "-" + this.localMonthString() + "-" + this.localDayString();
       const time = this.time || "12:00:00";
@@ -289,7 +314,9 @@ export default {
       this.$emit("close");
     },
     confirm() {
-      if (this.invalidDate) return;
+      if (this.invalidDate) {
+        return;
+      }
 
       this.$emit("confirm", {
         Day: this.day,

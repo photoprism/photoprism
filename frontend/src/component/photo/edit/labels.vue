@@ -115,7 +115,7 @@
                             out before the tab geometry settles, which
                             mispositions it). The user clicks the input when
                             they want to type.
-                            menu-icon="" hides the default dropdown chevron
+                            :menu-icon="null" hides the default dropdown chevron
                             because the row's density makes the chevron sit
                             visibly below the input baseline; the auto-open
                             on focus is the discovery affordance instead.
@@ -132,17 +132,16 @@
                             item-title="Name"
                             item-value="Name"
                             return-object
-                            :rules="[nameRule]"
+                            :rules="rules.text(false, 0, LabelMaxLength.Name, $gettext('Name'))"
                             color="surface-variant"
                             autocomplete="off"
                             single-line
                             flat
                             variant="plain"
                             density="compact"
-                            hide-details
                             hide-no-data
                             append-icon=""
-                            menu-icon=""
+                            :menu-icon="null"
                             :menu-props="menuProps"
                             :list-props="{ density: 'compact' }"
                             class="input-label ma-0 pa-0"
@@ -176,6 +175,8 @@
 
 <script>
 import Thumb from "model/thumb";
+import { MaxLength as LabelMaxLength } from "model/label";
+import { rules } from "common/form";
 import typeaheadCache from "common/typeahead-cache";
 
 export default {
@@ -193,6 +194,8 @@ export default {
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      rules,
+      LabelMaxLength,
       selected: [],
       newLabel: "",
       newLabelModel: null,
@@ -247,7 +250,6 @@ export default {
           align: "center",
         },
       ],
-      nameRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
   },
   computed: {
@@ -292,8 +294,8 @@ export default {
       // Apply the same canonical-match dedup the sidebar uses for L3:
       // typing `Hello Cat` resolves to an existing `hello-cat` label so
       // the backend isn't asked to create a near-duplicate. normalizeTitle
-      // ignores case, strips punctuation, and treats `+`/`_`/`-` as
-      // space.
+      // ignores case and converts every punctuation character to
+      // whitespace.
       const normalize = (s) => (this.$util.normalizeTitle ? this.$util.normalizeTitle(s) : (s || "").toLowerCase());
       const norm = normalize(typed);
       let finalName = typed;

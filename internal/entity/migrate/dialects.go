@@ -1,22 +1,19 @@
 package migrate
 
-import "sync"
+import (
+	"sync"
 
-// Supported database dialects.
-const (
-	MySQL    = "mysql"
-	SQLite3  = "sqlite"
-	Postgres = "postgres"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 var Dialects = map[string]Migrations{
-	MySQL:    DialectMySQL,
-	SQLite3:  DialectSQLite,
-	Postgres: DialectPostgres,
+	dsn.DriverMySQL:      DialectMySQL,
+	dsn.DriverSQLite3:    DialectSQLite,
+	dsn.DriverPostgreSQL: DialectPostgres,
 }
 
 var once = map[string]*sync.Once{
-	MySQL:    {},
-	SQLite3:  {},
-	Postgres: {},
+	dsn.DriverMySQL:      {},
+	dsn.DriverSQLite3:    {},
+	dsn.DriverPostgreSQL: {},
 }

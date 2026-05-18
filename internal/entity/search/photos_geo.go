@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
@@ -315,8 +316,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			default:
 				whereString = "k.keyword"
 			}
-			for _, where := range LikeAnyKeyword(whereString, frm.Query) {
-				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
+			wheres, values := LikeAnyKeyword(whereString, frm.Query)
+			for i, where := range wheres {
+				s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where, values[i]...))
 			}
 		} else {
 			whereString := ""
@@ -326,10 +328,10 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			default:
 				whereString = "k.keyword"
 			}
-			if wheres := LikeAnyKeyword(whereString, frm.Query); len(wheres) > 0 {
-				for _, where := range wheres {
+			if wheres, values := LikeAnyKeyword(whereString, frm.Query); len(wheres) > 0 {
+				for i, where := range wheres {
 					s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?)) OR "+
-						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where), labelIds)
+						"photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", gorm.Expr(where, values[i]...), labelIds)
 				}
 			} else {
 				s = s.Where("photos.id IN (SELECT pl.photo_id FROM photos_labels pl WHERE pl.uncertainty < 100 AND pl.label_id IN (?))", labelIds)
@@ -346,8 +348,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		default:
 			whereString = "k.keyword"
 		}
-		for _, where := range LikeAnyWord(whereString, frm.Keywords) {
-			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
+		wheres, values := LikeAnyWord(whereString, frm.Keywords)
+		for i, where := range wheres {
+			s = s.Where("photos.id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where, values[i]...))
 		}
 	}
 
@@ -394,27 +397,24 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE WHERE subj_uid IN (?))",
 					entity.Marker{}.TableName()), subjects)
 			} else {
+				w, v := AnySlug("s.subj_slug", subj, txt.Or)
 				s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
-					entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(AnySlug("s.subj_slug", subj, txt.Or)))
+					entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(w, v...))
 			}
 		}
 	} else if frm.Subjects != "" {
-		whereString1 := ""
-		whereString2 := ""
-		valueString := ""
+		var wheres []string
+		var values [][]any
 		switch entity.DbDialect() {
-		case entity.Postgres:
-			whereString1 = "lower(subj_name)"
-			whereString2 = "lower(subj_alias)"
-			valueString = strings.ToLower(frm.Subjects)
+		case dsn.DriverPostgreSQL:
+			wheres, values = LikeAllNames(Cols{"lower(subj_name)", "lower(subj_alias)"}, strings.ToLower(frm.Subjects))
 		default:
-			whereString1 = "subj_name"
-			whereString2 = "subj_alias"
-			valueString = frm.Subjects
+			wheres, values = LikeAllNames(Cols{"subj_name", "subj_alias"}, frm.Subjects)
 		}
-		for _, where := range LikeAllNames(Cols{whereString1, whereString2}, valueString) {
+
+		for i, where := range wheres {
 			s = s.Where(fmt.Sprintf("photos.id IN (SELECT photo_id FROM files f JOIN %s m ON f.file_uid = m.file_uid AND m.marker_invalid = FALSE JOIN %s s ON s.subj_uid = m.subj_uid WHERE (?))",
-				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where))
+				entity.Marker{}.TableName(), entity.Subject{}.TableName()), gorm.Expr(where, values[i]...))
 		}
 	}
 
@@ -431,15 +431,17 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
 			}
 		} else if txt.NotEmpty(frm.Albums) {
-			whereString := ""
+			var wheres []string
+			var values [][]any
 			switch entity.DbDialect() {
-			case entity.Postgres:
-				whereString = "lower(a.album_title)"
+			case dsn.DriverPostgreSQL:
+				wheres, values = LikeAnyWord("lower(a.album_title)", frm.Albums)
 			default:
-				whereString = "a.album_title"
+				wheres, values = LikeAnyWord("a.album_title", frm.Albums)
 			}
-			for _, where := range LikeAnyWord(whereString, frm.Albums) {
-				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (?))", gorm.Expr(where))
+
+			for i, where := range wheres {
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (?))", gorm.Expr(where, values[i]...))
 			}
 		}
 	}
@@ -471,17 +473,20 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 	// Filter by year.
 	if frm.Year != "" {
-		s = s.Where(AnyInt("photos.photo_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax))
+		w, v := AnyInt("photos.photo_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax)
+		s = s.Where(w, v...)
 	}
 
 	// Filter by month.
 	if frm.Month != "" {
-		s = s.Where(AnyInt("photos.photo_month", frm.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
+		w, v := AnyInt("photos.photo_month", frm.Month, txt.Or, entity.UnknownMonth, txt.MonthMax)
+		s = s.Where(w, v...)
 	}
 
 	// Filter by day.
 	if frm.Day != "" {
-		s = s.Where(AnyInt("photos.photo_day", frm.Day, txt.Or, entity.UnknownDay, txt.DayMax))
+		w, v := AnyInt("photos.photo_day", frm.Day, txt.Or, entity.UnknownDay, txt.DayMax)
+		s = s.Where(w, v...)
 	}
 
 	// Filter by Resolution in Megapixels (MP).

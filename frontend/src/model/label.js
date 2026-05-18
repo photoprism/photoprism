@@ -6,6 +6,14 @@ import Collection from "model/collection";
 
 export let BatchSize = 180;
 
+// MaxLength mirrors the backend VARCHAR caps on internal/entity/label.go
+// so UI validation matches what the server persists.
+export const MaxLength = Object.freeze({
+  Name: 160,
+  Description: 2048,
+  Notes: 1024,
+});
+
 // Label models user-defined keywords and AI-generated tags.
 export class Label extends Collection {
   getDefaults() {
@@ -35,8 +43,12 @@ export class Label extends Collection {
   classes(selected) {
     let classes = ["is-label", "uid-" + this.UID];
 
-    if (this.Favorite) classes.push("is-favorite");
-    if (selected) classes.push("is-selected");
+    if (this.Favorite) {
+      classes.push("is-favorite");
+    }
+    if (selected) {
+      classes.push("is-selected");
+    }
 
     return classes;
   }

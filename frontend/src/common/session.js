@@ -35,6 +35,10 @@ const PublicSessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd239
 const PublicAuthToken = "234200000000000000000000000000000000000000000000";
 const LoginPage = "login";
 
+// login.* keys survive auth.gohtml's session.* wipe after the OIDC roundtrip.
+const LoginRedirectKey = "login.next";
+const LogoutSignalKey = "login.logout";
+
 const resolveStorageNamespace = (config) => {
   if (typeof config?.storageNamespace === "string" && config.storageNamespace !== "") {
     return config.storageNamespace;
@@ -472,26 +476,37 @@ export default class Session {
     return this;
   }
 
+  // Returns the post-login redirect target: in-memory first, then namespaced
+  // storage (survives the OIDC roundtrip), else `defaultUrl` (defaults to "/";
+  // pass null to branch on "no redirect recorded").
   getLoginRedirectUrl(defaultUrl) {
-    if (!defaultUrl) {
-      defaultUrl = "/";
+    if (this.loginRedirect) {
+      return this.loginRedirect;
     }
 
-    return this.loginRedirect ? this.loginRedirect : defaultUrl;
+    const stored = this.localStorage?.getItem(LoginRedirectKey);
+    if (stored) {
+      return stored;
+    }
+
+    return defaultUrl === undefined ? "/" : defaultUrl;
   }
 
   clearLoginRedirectUrl() {
     this.loginRedirect = false;
+    this.localStorage?.removeItem(LoginRedirectKey);
 
     return this;
   }
 
+  // Records the post-login target. Persisted so it survives the OIDC roundtrip.
   setLoginRedirectUrl(url) {
     if (!url) {
       return this.clearLoginRedirectUrl();
     }
 
     this.loginRedirect = url;
+    this.localStorage?.setItem(LoginRedirectKey, url);
 
     return this;
   }
@@ -518,13 +533,6 @@ export default class Session {
 
   isAnonymous() {
     return !this.user || !this.user.hasId();
-  }
-
-  // Anonymous / share-link sessions and users in SidebarRestrictedRoles
-  // see only the short photo viewer sidebar; the server enforces the
-  // same field set on the JSON response.
-  isSidebarRestricted() {
-    return this.isAnonymous() || this.user.isSidebarRestricted();
   }
 
   hasToken(token) {
@@ -693,15 +701,30 @@ export default class Session {
   }
 
   onLogout(noRedirect) {
-    // Delete all authentication and session data.
     this.reset();
 
-    // Perform redirect?
+    // Drop stale deep-link redirects; raise one-shot flag so /login skips
+    // auto-OIDC once when PHOTOPRISM_OIDC_REDIRECT is on.
+    this.clearLoginRedirectUrl();
+    this.localStorage?.setItem(LogoutSignalKey, "1");
+
     if (noRedirect !== true && !this.isLogin()) {
       this.followRedirect(this.config.loginUri);
     }
 
     return Promise.resolve();
+  }
+
+  // Reads and clears the one-shot logout flag set by onLogout().
+  consumeLogoutSignal() {
+    if (!this.localStorage) {
+      return false;
+    }
+    const raised = this.localStorage.getItem(LogoutSignalKey) === "1";
+    if (raised) {
+      this.localStorage.removeItem(LogoutSignalKey);
+    }
+    return raised;
   }
 
   logout(noRedirect) {
@@ -717,5 +740,17 @@ export default class Session {
     } else {
       return this.onLogout(noRedirect);
     }
+  }
+
+  // Synchronous logout for SPA route guards (/logout): fires server DELETE
+  // with the captured token first (avoiding a 401 echo that would re-raise
+  // the logout flag), then resets client state.
+  signOut() {
+    const token = this.getAuthToken();
+    if (token) {
+      $api.delete("session", { headers: { [RequestHeader]: token } }).catch(() => {});
+    }
+    this.onLogout(true);
+    return this;
   }
 }

@@ -42,7 +42,6 @@ eslint-webpack-plugin            MIT            Ricardo Gobbo de Souza <ricardog
 eventsource-polyfill             MIT            amvtek <devel@amvtek.com>
 file-loader                      MIT            Tobias Koppers @sokra
 file-saver                       MIT            Eli Grey <me@eligrey.com>
-floating-vue                     MIT            Guillaume Chau <guillaume.b.chau@gmail.com>
 globals                          MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 hls.js                           Apache-2.0     n/a
 i                                MIT            Pavan Kumar Sunkara <pavan.sss1991@gmail.com> (pksunkara.github.com)

@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -99,7 +100,7 @@ func (m *Photo) EstimateLocation(force bool) {
 	var mostRecent Photos
 
 	switch DbDialect() {
-	case Postgres:
+	case dsn.DriverPostgreSQL:
 		err = UnscopedDb().
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).
@@ -109,7 +110,7 @@ func (m *Photo) EstimateLocation(force bool) {
 				Vars:               []any{m.TakenAt.Format(time.DateTime)},
 				WithoutParentheses: true}}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
-	case MySQL:
+	case dsn.DriverMySQL:
 		err = UnscopedDb().
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).
@@ -119,7 +120,7 @@ func (m *Photo) EstimateLocation(force bool) {
 				Vars:               []any{m.TakenAt.Format(time.DateTime)},
 				WithoutParentheses: true}}).Limit(2).
 			Preload("Place").Find(&mostRecent).Error
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		err = UnscopedDb().
 			Where("photo_lat <> 0 AND photo_lng <> 0").
 			Where("place_src <> '' AND place_src <> ? AND place_id IS NOT NULL AND place_id <> '' AND place_id <> 'zz'", SrcEstimate).

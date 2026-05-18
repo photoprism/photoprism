@@ -104,6 +104,7 @@
 </template>
 <script>
 import Photo from "model/photo";
+import { ACTION_UPDATED } from "common/event";
 
 import PhotoDetails from "component/photo/edit/details.vue";
 import PhotoLabels from "component/photo/edit/labels.vue";
@@ -211,7 +212,7 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
+        case ACTION_UPDATED:
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             if (values.UID && values.Title && this.model.UID === values.UID) {

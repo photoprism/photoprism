@@ -97,6 +97,7 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 			saveRequests []*batch.PhotoSaveRequest
 			saveResults  []bool
 			savedAny     bool
+			mutated      bool
 		)
 
 		if frm.Values != nil {
@@ -118,8 +119,9 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 			saveResults = outcome.Results
 			preloadedPhotos = outcome.Preloaded
 			savedAny = outcome.SavedAny
+			mutated = savedAny || outcome.Stats.AlbumMutations > 0 || outcome.Stats.LabelMutations > 0
 
-			if n := len(saveRequests); n > 0 && (savedAny || outcome.Stats.AlbumMutations > 0 || outcome.Stats.LabelMutations > 0) {
+			if n := len(saveRequests); n > 0 && mutated {
 				event.AuditInfo([]string{ClientIP(c), "session %s", "batch edit", "update %s", status.Succeeded},
 					s.RefID, english.Plural(n, "picture", "pictures"))
 			}
@@ -148,13 +150,31 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 					photo = saveRequests[i].Photo
 				}
 
-				// PublishPhotoEvent(StatusUpdated, photo.PhotoUID, c)
 				SaveSidecarYaml(photo)
 			}
 
 			if savedAny {
 				UpdateClientConfig()
 				FlushCoverCache()
+			}
+		}
+
+		// Signal frontend caches (Photo._cache LRU and any future per-UID
+		// consumers) to drop the affected entries; emitting one event for
+		// the whole batch avoids the per-UID payload storm that
+		// PublishPhotoEvent would otherwise produce. Fires whenever any
+		// mutation landed — including label/album-only changes that leave
+		// SaveBatchResult.Results[i] false but still alter visible state.
+		if mutated && len(saveRequests) > 0 {
+			affectedUIDs := make([]string, 0, len(saveRequests))
+			for _, req := range saveRequests {
+				if req != nil && req.Photo != nil && req.Photo.PhotoUID != "" {
+					affectedUIDs = append(affectedUIDs, req.Photo.PhotoUID)
+				}
+			}
+
+			if len(affectedUIDs) > 0 {
+				event.EntitiesEdited("photos", affectedUIDs)
 			}
 		}
 

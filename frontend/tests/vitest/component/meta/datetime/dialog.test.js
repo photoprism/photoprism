@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { DateTime } from "luxon";
-import PDateTimeDialog from "component/sidebar/datetime-dialog.vue";
+import PMetaDatetimeDialog from "component/meta/datetime/dialog.vue";
 
-describe("PDateTimeDialog component", () => {
+describe("PMetaDatetimeDialog component", () => {
   function mockPhoto(overrides = {}) {
     const base = {
       Day: 15,
@@ -25,7 +25,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should load values from photo via loadFromPhoto", () => {
     const photo = mockPhoto();
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -43,7 +43,7 @@ describe("PDateTimeDialog component", () => {
   });
 
   it("should handle null photo gracefully", () => {
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: null },
     });
 
@@ -57,7 +57,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should emit close event", () => {
     const onClose = vi.fn();
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto(), onClose },
     });
 
@@ -67,7 +67,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should emit confirm with edited values", () => {
     const onConfirm = vi.fn();
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto(), onConfirm },
     });
 
@@ -93,7 +93,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should not emit confirm when date is invalid", () => {
     const onConfirm = vi.fn();
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto(), onConfirm },
     });
 
@@ -105,13 +105,41 @@ describe("PDateTimeDialog component", () => {
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
+  // Regression: setTime() previously short-circuited on malformed input
+  // (skipping updateLocalDate), leaving invalidDate stale. Without this
+  // branch the Confirm button stayed enabled against bad time strings
+  // and the parent received "25:99:99" as the new time.
+  it("should mark the date invalid when the time field contains a malformed value", () => {
+    const onConfirm = vi.fn();
+    const w = mount(PMetaDatetimeDialog, {
+      props: { visible: false, photo: mockPhoto(), onConfirm },
+    });
+
+    w.vm.loadFromPhoto();
+    expect(w.vm.invalidDate).toBe(false);
+
+    // Malformed time → setTime flips invalidDate and bails before update.
+    w.vm.time = "25:99:99";
+    w.vm.setTime();
+    expect(w.vm.invalidDate).toBe(true);
+
+    // confirm() then refuses to emit.
+    w.vm.confirm();
+    expect(onConfirm).not.toHaveBeenCalled();
+
+    // Recovering to a valid time clears invalidDate via updateLocalDate.
+    w.vm.time = "09:15:00";
+    w.vm.setTime();
+    expect(w.vm.invalidDate).toBe(false);
+  });
+
   it("should show UTC label when photo time is UTC", () => {
     const photo = mockPhoto({
       timeIsUTC() {
         return true;
       },
     });
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -119,7 +147,7 @@ describe("PDateTimeDialog component", () => {
   });
 
   it("should show Local Time label when photo time is not UTC", () => {
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto() },
     });
 
@@ -128,7 +156,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should clamp day when month changes to shorter month", () => {
     const photo = mockPhoto({ Day: 31, Month: 1, Year: 2023 });
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -143,7 +171,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should handle leap year day clamping", () => {
     const photo = mockPhoto({ Day: 31, Month: 1, Year: 2024 });
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -155,7 +183,7 @@ describe("PDateTimeDialog component", () => {
   });
 
   it("should build correct local date strings", () => {
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto() },
     });
 
@@ -168,7 +196,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should pad single-digit values in date strings", () => {
     const photo = mockPhoto({ Day: 5, Month: 3, Year: 800 });
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -181,7 +209,7 @@ describe("PDateTimeDialog component", () => {
 
   it("should use defaults for missing photo fields", () => {
     const photo = mockPhoto({ Day: 0, Month: 0, Year: 2023, TimeZone: "" });
-    const w = mount(PDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 

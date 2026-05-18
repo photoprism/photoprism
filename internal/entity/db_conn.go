@@ -7,9 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
@@ -17,24 +15,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
-
-	"github.com/photoprism/photoprism/pkg/dsn"
 )
-
-// Supported test databases.
-const (
-	MySQL           = dsn.DriverMySQL
-	Postgres        = dsn.DriverPostgres
-	SQLite3         = dsn.DriverSQLite3
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:?cache=shared&_foreign_keys=on"
-)
-
-var drivers = map[string]func(string) gorm.Dialector{
-	MySQL:    mysql.Open,
-	Postgres: postgres.Open,
-	SQLite3:  sqlite.Open,
-}
 
 // dbConn is the global gorm.DB connection provider.
 var dbConn Gorm

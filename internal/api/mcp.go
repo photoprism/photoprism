@@ -67,14 +67,8 @@ func ServeMCP(router *gin.RouterGroup) {
 		Version: conf.Version(),
 	}, conf.Edition())
 
-	// Streamable HTTP handler. Warn-level logging keeps the default log
-	// quiet under normal operation while still surfacing SDK warnings.
-	// McpSessionTimeout bounds how long idle sessions linger; active
-	// clients renew the timer on every request, so interactive IDE use
-	// is unaffected while abandoned sessions free up promptly.
-	// CrossOriginProtection must be set explicitly: go-sdk v1.6.0 dropped
-	// the implicit default that previously rejected cross-origin requests
-	// when the field was nil (modelcontextprotocol/go-sdk#906).
+	// Streamable HTTP handler with warn-level logging and an explicit
+	// CrossOriginProtection (go-sdk no longer enables it implicitly).
 	handler := sdkmcp.NewStreamableHTTPHandler(
 		func(r *http.Request) *sdkmcp.Server { return mcpServer },
 		&sdkmcp.StreamableHTTPOptions{
@@ -84,16 +78,10 @@ func ServeMCP(router *gin.RouterGroup) {
 		},
 	)
 
-	// mcpHandler authenticates each request, caps the JSON-RPC payload
-	// size before delegating to the SDK handler, and translates an
-	// oversized-body condition into a standard 413 response. In public
-	// mode Session() returns the default public session (treated as
-	// admin by the ACL), so the read-only tools registered today are
-	// reachable anonymously — intentional to support demo deployments
-	// such as demo.photoprism.app. Any future tool that touches
-	// per-user state, the database, or mutates anything MUST NOT be
-	// registered on this shared server without an additional per-tool
-	// gate; see internal/mcp/README.md for the recommended patterns.
+	// mcpHandler authenticates each request, caps the JSON-RPC payload size,
+	// and surfaces 413 on overflow. Public mode reaches read-only tools as
+	// the default public session; any tool that touches per-user state must
+	// add an explicit gate before being registered on this shared server.
 	mcpHandler := func(c *gin.Context) {
 		s := Auth(c, acl.ResourceMCP, acl.ActionView)
 
@@ -112,13 +100,8 @@ func ServeMCP(router *gin.RouterGroup) {
 			return
 		}
 
-		// Cap the request body size before the upstream SDK reads it
-		// via io.ReadAll. LimitRequestBodyBytes swaps c.Request.Body
-		// for an http.MaxBytesReader, matching the shared pattern used
-		// by every other JSON API handler; mcpLimitReader then tracks
-		// whether the cap was exceeded so the response-writer wrapper
-		// can rewrite the SDK's 400 "failed to read body" into the
-		// standard 413 we use for oversized JSON bodies elsewhere.
+		// Cap the body before the SDK reads it; the wrapper rewrites the
+		// SDK's "failed to read body" 400 into a standard 413 on overflow.
 		LimitRequestBodyBytes(c, MaxMCPRequestBytes)
 
 		tripped := &atomic.Bool{}

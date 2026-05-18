@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -469,7 +470,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 	if resp.Database.Name != "" && resp.Database.User != "" {
 		driver := strings.TrimSpace(resp.Database.Driver)
 		if driver == "" {
-			driver = config.MySQL
+			driver = dsn.DriverMySQL
 		}
 		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)
