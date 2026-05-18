@@ -15,6 +15,11 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	code := testMain(m)
+	os.Exit(code)
+}
+
+func testMain(m *testing.M) (code int) {
 	// Init test logger.
 	log := logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
@@ -35,13 +40,14 @@ func TestMain(m *testing.M) {
 	dsn.SetDSNToEnv(dsname)
 
 	// Run unit tests.
-	code := m.Run()
+	code = m.Run()
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
 	// Remove temporary SQLite files after running the tests.
 	fs.PurgeTestDbFiles(".", false)
-	os.Exit(code)
+
+	return code
 }
 
 func cleanupDB(t *testing.T, ctx context.Context, creds Credentials) {

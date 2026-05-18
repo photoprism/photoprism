@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// function to transform PHOTOPRISM_TEST_DSN environment variables to driver and dsn strings
+// PhotoPrismTestToDriverDSN function to transform PHOTOPRISM_TEST_DSN environment variables to driver and dsn strings
 func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 	dsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
 	switch dsnName {
@@ -56,7 +56,7 @@ func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 	return driver, dsn
 }
 
-// Gets the folder name to use to enforce folder separation for DBMS tests
+// PhotoPrismTestToFolderName gets the folder name to use to enforce folder separation for DBMS tests
 func PhotoPrismTestToFolderName() (folderName string) {
 	folderName = os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
 	if folderName == "" {
@@ -65,18 +65,19 @@ func PhotoPrismTestToFolderName() (folderName string) {
 	return folderName
 }
 
+// SetDSNToEnv pushes the required parameters into the os environment so tests run correctly.
 func SetDSNToEnv(dsn string) {
 	dsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
 	switch dsnName {
 	case "sqlite":
-		os.Setenv("PHOTOPRISM_TEST_DSN_SQLITE", dsn)
+		_ = os.Setenv("PHOTOPRISM_TEST_DSN_SQLITE", dsn)
 	case "sqlitefile":
-		os.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", dsn)
+		_ = os.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", dsn)
 	case "mariadb":
-		os.Setenv("PHOTOPRISM_TEST_DSN_MARIADB", dsn)
+		_ = os.Setenv("PHOTOPRISM_TEST_DSN_MARIADB", dsn)
 	case "mysql8":
-		os.Setenv("PHOTOPRISM_TEST_DSN_MYSQL8", dsn)
+		_ = os.Setenv("PHOTOPRISM_TEST_DSN_MYSQL8", dsn)
 	case "postgres":
-		os.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", dsn)
+		_ = os.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", dsn)
 	}
 }
