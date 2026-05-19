@@ -49,7 +49,6 @@ func TestMediaFile_GenerateCaption(t *testing.T) {
 		require.NotNil(t, caption)
 		assert.Equal(t, captionModel.GetSource(), caption.Source)
 	})
-
 	t.Run("CustomSourceOverrides", func(t *testing.T) {
 		vision.SetCaptionFunc(func(files vision.Files, mediaSrc media.Src) (*vision.CaptionResult, *vision.Model, error) {
 			return &vision.CaptionResult{Text: "stub", Source: captionModel.GetSource()}, captionModel, nil
@@ -60,7 +59,6 @@ func TestMediaFile_GenerateCaption(t *testing.T) {
 		require.NotNil(t, caption)
 		assert.Equal(t, entity.SrcManual, caption.Source)
 	})
-
 	t.Run("MissingModelReturnsError", func(t *testing.T) {
 		vision.Config = &vision.ConfigValues{}
 		vision.SetCaptionFunc(nil)
@@ -95,7 +93,6 @@ func TestMediaFile_GenerateLabels(t *testing.T) {
 		assert.NotEmpty(t, labels)
 		assert.Equal(t, labelModel.GetSource(), captured)
 	})
-
 	t.Run("CustomSourceOverrides", func(t *testing.T) {
 		var captured string
 		vision.SetLabelsFunc(func(files vision.Files, mediaSrc media.Src, src entity.Src) (classify.Labels, error) {
@@ -107,7 +104,6 @@ func TestMediaFile_GenerateLabels(t *testing.T) {
 		assert.NotEmpty(t, labels)
 		assert.Equal(t, entity.SrcManual, captured)
 	})
-
 	t.Run("MissingModel", func(t *testing.T) {
 		vision.Config = &vision.ConfigValues{}
 		vision.SetLabelsFunc(nil)
@@ -128,7 +124,6 @@ func TestMediaFile_DetectNSFW(t *testing.T) {
 
 		assert.True(t, mediaFile.DetectNSFW())
 	})
-
 	t.Run("SafeContent", func(t *testing.T) {
 		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
 			return []nsfw.Result{{Neutral: 0.9}}, nil

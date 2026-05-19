@@ -321,6 +321,33 @@ func TestUploadUserFiles_Multipart_TotalLimitExceeded(t *testing.T) {
 	assert.LessOrEqual(t, len(files), 1)
 }
 
+func TestUploadUserFiles_Multipart_RequestTooLarge(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.Options().UploadAllow = "jpg"
+	conf.Options().UploadLimit = 1
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+
+	adminUid := entity.Admin.UserUID
+	defer removeUploadDirsForToken(t, filepath.Join(conf.UserStoragePath(adminUid), "upload"), "toolarge")
+
+	tooLarge := bytes.Repeat([]byte("A"), 3*1024*1024)
+	body, ctype, err := buildMultipart(map[string][]byte{"big.jpg": tooLarge})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/toolarge", body)
+	req.Header.Set("Content-Type", ctype)
+	header.SetAuthorization(req, token)
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
+	files := findUploadedFilesForToken(t, filepath.Join(conf.UserStoragePath(adminUid), "upload"), "toolarge")
+	assert.Empty(t, files)
+}
+
 func TestUploadUserFiles_Multipart_ZipPartialExtraction(t *testing.T) {
 	app, router, conf := NewApiTest()
 	conf.Options().UploadArchives = true

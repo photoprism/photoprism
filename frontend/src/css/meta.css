@@ -1,0 +1,165 @@
+/* Metadata Styles */
+
+/* Camera & Datetime Dialogs */
+
+/* Keep labels and selection text readable when fields are focused.
+   Vuetify 3 applies the focused color via an inline style, so overriding
+   it requires !important. */
+.p-meta-camera-dialog .v-field--focused .v-label.v-field-label,
+.p-meta-camera-dialog .v-field--focused .v-label.v-field-label--floating,
+.p-meta-datetime-dialog .v-field--focused .v-label.v-field-label,
+.p-meta-datetime-dialog .v-field--focused .v-label.v-field-label--floating {
+    color: rgb(var(--v-theme-on-surface)) !important;
+    opacity: var(--v-medium-emphasis-opacity, 0.7);
+}
+
+/* Face Markers */
+
+.p-meta-face-markers {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    user-select: none;
+    /* Stays transparent so PhotoSwipe pan/zoom keeps working; .is-edit
+       captures the pointer. */
+    pointer-events: none;
+    touch-action: auto;
+    cursor: default;
+}
+
+.p-meta-face-markers.is-edit {
+    pointer-events: auto;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.p-meta-face-markers__svg {
+    pointer-events: none;
+    overflow: visible;
+}
+
+.p-meta-face-markers__rect {
+    fill: rgba(255, 255, 255, 0.06);
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.p-meta-face-markers__rect--named {
+    stroke: rgba(167, 139, 250, 0.98);
+    cursor: default;
+}
+
+.p-meta-face-markers__rect--draft {
+    stroke: rgba(196, 167, 255, 1);
+    stroke-dasharray: 6 4;
+    fill: rgba(167, 139, 250, 0.14);
+    pointer-events: none;
+}
+
+/* Visual emphasis on a marker that the user has clicked for removal —
+   the inline remove-confirm pill is anchored below it. Red stroke
+   plus a faint red fill makes the destructive intent obvious. */
+.p-meta-face-markers__rect--removing {
+    stroke: rgba(244, 67, 54, 0.95);
+    fill: rgba(244, 67, 54, 0.16);
+    stroke-width: 2.5px;
+}
+
+/* Hover highlight driven by sidebar People-row hover. Listed after --named
+   so it overrides the named-marker stroke color too. */
+.p-meta-face-markers__rect--hovered {
+    stroke: rgba(196, 167, 255, 1);
+    stroke-width: 4px;
+    fill: rgba(167, 139, 250, 0);
+    filter: drop-shadow(0 0 4px rgba(196, 167, 255, 0.7));
+}
+
+.p-meta-face-markers__handle {
+    fill: rgba(167, 139, 250, 1);
+    stroke: rgba(70, 40, 140, 0.95);
+    stroke-width: 1.5px;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.p-meta-face-markers__label {
+    font-size: 13px;
+    font-weight: 600;
+    fill: #fff;
+    stroke: rgba(0, 0, 0, 0.85);
+    stroke-width: 3px;
+    paint-order: stroke fill;
+    pointer-events: none;
+    user-select: none;
+    dominant-baseline: hanging;
+}
+
+.p-meta-face-markers__confirm,
+.p-meta-face-markers__remove-confirm {
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+    z-index: 3;
+}
+
+.p-meta-face-markers__btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+    color: #fff;
+    transition: transform 0.08s ease-out;
+}
+
+.p-meta-face-markers__btn:hover {
+    transform: scale(1.08);
+}
+
+.p-meta-face-markers__btn--confirm {
+    background: rgba(126, 87, 230, 0.95);
+}
+
+.p-meta-face-markers__btn--cancel {
+    background: rgba(90, 90, 90, 0.95);
+}
+
+.p-meta-face-markers__btn--remove {
+    background: rgba(211, 47, 47, 0.95);
+}
+
+/* Back button — anchored top-left in LTR / top-right in RTL with its own
+   pointer-events so it works regardless of the overlay root's pointer state. */
+.p-meta-face-markers__btn--back {
+    position: absolute;
+    top: 12px;
+    background: rgba(20, 20, 20, 0.7);
+    backdrop-filter: blur(4px);
+    pointer-events: auto;
+    z-index: 4;
+}
+
+.is-ltr .p-meta-face-markers__btn--back {
+    left: 12px;
+}
+
+.is-rtl .p-meta-face-markers__btn--back {
+    right: 12px;
+}
+
+.p-meta-face-markers__btn--back:hover {
+    background: rgba(40, 40, 40, 0.85);
+}
+
+.p-meta-face-markers__btn.is-disabled,
+.p-meta-face-markers__btn[disabled] {
+    cursor: default;
+    opacity: 0.6;
+    transform: none;
+}

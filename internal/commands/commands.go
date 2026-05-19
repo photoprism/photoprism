@@ -79,6 +79,7 @@ var PhotoPrism = []*cli.Command{
 	ClientsCommands,
 	ClusterCommands,
 	AuthCommands,
+	MCPCommands,
 	ShowCommands,
 	VersionCommand,
 	EditionCommand,

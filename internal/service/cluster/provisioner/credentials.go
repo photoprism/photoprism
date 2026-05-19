@@ -18,7 +18,7 @@ type Credentials struct {
 	Port      int
 	Name      string
 	User      string
-	Password  string
+	Password  string //nolint:gosec // G117: Provisioned database password output.
 	DSN       string
 	RotatedAt string
 }

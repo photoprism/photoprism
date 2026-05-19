@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
@@ -701,6 +702,41 @@ func TestPhoto_AddLabels(t *testing.T) {
 		}
 		assert.Equal(t, labelCountBefore, labelCountAfter)
 	})
+	t.Run("ReusesRenamedLabelFromClassifier", func(t *testing.T) {
+		// Reproduces the AI ingestion path from issue #5531: a classifier
+		// re-emitting the previous name of a renamed label must reuse the
+		// existing row instead of creating a duplicate.
+		original := FirstOrCreateLabel(NewLabel("RenameClassifyA", 0))
+		require.NotNil(t, original)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(original).Error
+			FlushLabelCache()
+		})
+
+		require.True(t, original.SetName("RenameClassifyB"))
+		require.NoError(t, Db().Save(original).Error)
+		FlushLabelCache()
+
+		var before int
+		require.NoError(t, UnscopedDb().Model(&Label{}).
+			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
+			Count(&before).Error)
+		assert.Equal(t, 1, before)
+
+		photo := PhotoFixtures.Get("19800101_000002_D640C559")
+		photo.AddLabels(classify.Labels{{Name: "RenameClassifyA", Uncertainty: 30, Source: SrcImage, Priority: 0}})
+
+		var after int
+		require.NoError(t, UnscopedDb().Model(&Label{}).
+			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
+			Count(&after).Error)
+		assert.Equal(t, 1, after, "classifier with old name must not create a duplicate label")
+
+		joined, err := FindPhotoLabel(photo.ID, original.ID, false)
+		require.NoError(t, err)
+		assert.Equal(t, original.ID, joined.LabelID)
+	})
 	t.Run("SkipZeroProbability", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo15")
 		initialLen := len(photo.Labels)
@@ -1339,7 +1375,7 @@ func TestPhoto_SetPrimary(t *testing.T) {
 	t.Run("UpdateQualityErrorIsNonFatal", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: dsn.DriverSQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "set-primary-quality-error.db"),
 		}
 

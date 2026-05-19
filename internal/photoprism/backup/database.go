@@ -15,10 +15,10 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -73,7 +73,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	var cmd *exec.Cmd
 
 	switch c.DatabaseDriver() {
-	case config.MySQL, config.MariaDB:
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// Connect via Unix Domain Socket?
 		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
 			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
@@ -112,7 +112,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 				c.DatabaseName(),
 			)
 		}
-	case config.SQLite3:
+	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
 		}
@@ -254,7 +254,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	var cmd *exec.Cmd
 
 	switch c.DatabaseDriver() {
-	case config.MySQL, config.MariaDB:
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// Connect via Unix Domain Socket?
 		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
 			cmd = exec.Command( // #nosec G204 database connection parameters from config
@@ -296,7 +296,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				c.DatabaseName(),
 			)
 		}
-	case config.SQLite3:
+	case dsn.DriverSQLite3:
 		log.Infoln("restore: dropping existing sqlite database tables")
 		tables.Drop(c.Db())
 		cmd = exec.Command( // #nosec G204 sqlite restore uses configured binary and db path

@@ -129,11 +129,11 @@ test.meta("testID", "shortcuts-003").meta({ type: "short", mode: "public" })(
 
     await t.expect(photoviewer.viewer.visible).ok();
 
-    await triggerKeyPress("a", "KeyA", 65, true, false);
+    await triggerKeyPress("x", "KeyX", 88, true, false);
 
     await t.click(Selector("div.p-notify--success").withText("Archived"));
 
-    await triggerKeyPress("a", "KeyA", 65, true, false);
+    await triggerKeyPress("x", "KeyX", 88, true, false);
 
     await t.click(Selector("div.p-notify--success").withText("Restored"));
 

@@ -90,6 +90,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 [**Kevin "BentoFox" Gelking**](https://github.com/KevinGelking) (Patreon, December 2024)
 
+[**Lukaz**](https://github.com/lukazvprecisn) (Patreon, May 2025)
+
 [**Philipp Marmet**](https://github.com/fujexo) (October 2025)
 
 ## Infrastructure Sponsors ##

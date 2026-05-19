@@ -2,28 +2,24 @@ package thumb
 
 import (
 	"image"
-
-	"github.com/disintegration/imaging"
 )
 
 // Resample downscales an image and returns it.
 func Resample(img image.Image, width, height int, opts ...ResampleOption) image.Image {
-	var resImg image.Image
-
 	method, filter, _ := ResampleOptions(opts...)
 
 	switch method {
 	case ResampleFit:
-		resImg = imaging.Fit(img, width, height, filter.Imaging())
+		return fitImage(img, width, height, filter)
 	case ResampleFillCenter:
-		resImg = imaging.Fill(img, width, height, imaging.Center, filter.Imaging())
+		return fillImage(img, width, height, filter, cropAnchorCenter)
 	case ResampleFillTopLeft:
-		resImg = imaging.Fill(img, width, height, imaging.TopLeft, filter.Imaging())
+		return fillImage(img, width, height, filter, cropAnchorTopLeft)
 	case ResampleFillBottomRight:
-		resImg = imaging.Fill(img, width, height, imaging.BottomRight, filter.Imaging())
+		return fillImage(img, width, height, filter, cropAnchorBottomRight)
 	case ResampleResize:
-		resImg = imaging.Resize(img, width, height, filter.Imaging())
+		return resizeImage(img, width, height, filter)
+	default:
+		return cloneImage(img)
 	}
-
-	return resImg
 }

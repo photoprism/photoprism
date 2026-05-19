@@ -292,7 +292,14 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	frm := &form.Passcode{}
 
 	// Validate request form values.
+	LimitRequestBodyBytes(c, MaxAuthRequestBytes)
+
 	if err := c.BindJSON(frm); err != nil {
+		if IsRequestBodyTooLarge(err) {
+			AbortRequestTooLarge(c, i18n.ErrInvalidPassword)
+			return s, nil, nil, authn.ErrInvalidRequest
+		}
+
 		Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 		return s, nil, nil, authn.ErrInvalidRequest
 	} else if authn.KeyTOTP.NotEqual(frm.Type) {

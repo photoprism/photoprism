@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -49,5 +50,14 @@ func TestSaveSettings(t *testing.T) {
 
 		r := PerformRequestWithBody(app, "POST", "/api/v1/settings", `{"ui":{"language":123}}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		SaveSettings(router)
+
+		body := `{"ui":{"language":"` + strings.Repeat("a", 300*1024) + `"}}`
+		r := PerformRequestWithBody(app, "POST", "/api/v1/settings", body)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }

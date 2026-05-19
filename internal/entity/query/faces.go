@@ -26,7 +26,7 @@ type FaceMap map[string]entity.Face
 // because markers still reference them. Callers may treat this as a non-fatal warning.
 var ErrRetainedManualClusters = errors.New("faces: retained manual clusters after merge")
 
-// MergeMaxRetry limits how often the optimiser retries stubborn manual clusters (0 = unlimited).
+// MergeMaxRetry limits how often the optimizer retries stubborn manual clusters (0 = unlimited).
 var MergeMaxRetry = 1
 
 func init() {

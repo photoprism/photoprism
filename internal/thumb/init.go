@@ -63,7 +63,7 @@ func Init(availableMemory uint64, maxWorkers int, imgLib string) {
 		Library = LibVips
 		log.Debugf("vips: max cache size is %d MB, using up to %s", MaxCacheMem/MiB, english.Plural(NumWorkers, "worker", "workers"))
 	default:
-		Library = LibImaging
+		Library = LibVips
 	}
 }
 

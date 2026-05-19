@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/pkg/dsn"
+
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
@@ -406,7 +408,7 @@ func TestMarker_ClearFace(t *testing.T) {
 	t.Run("ReturnsUpdateError", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: dsn.DriverSQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "clear-face-error.db"),
 		}
 
@@ -442,7 +444,7 @@ func TestMarker_SyncSubject(t *testing.T) {
 	t.Run("UpdateKnownFaceError", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: dsn.DriverSQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "sync-subject-error.db"),
 		}
 

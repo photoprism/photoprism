@@ -22,7 +22,7 @@ services:
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_PREVIEW: "https://i.photoprism.app/logo?cover=17&title=Demo"
       PHOTOPRISM_SITE_AUTHOR: "PhotoPrism"
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"
       PHOTOPRISM_DEFAULT_LOCALE: "en"
 
   traefik:

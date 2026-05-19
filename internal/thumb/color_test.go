@@ -13,10 +13,10 @@ func TestParseColor(t *testing.T) {
 		assert.Equal(t, ColorPreserve, ParseColor(ColorSRGB, LibVips))
 		assert.Equal(t, ColorPreserve, ParseColor(ColorNone, LibVips))
 	})
-	t.Run("Imaging", func(t *testing.T) {
-		assert.Equal(t, ColorNone, ParseColor("", LibImaging))
-		assert.Equal(t, ColorSRGB, ParseColor(ColorAuto, LibImaging))
-		assert.Equal(t, ColorSRGB, ParseColor(ColorSRGB, LibImaging))
-		assert.Equal(t, ColorNone, ParseColor(ColorNone, LibImaging))
+	t.Run("LegacyImagingFallback", func(t *testing.T) {
+		assert.Equal(t, ColorNone, ParseColor("", "imaging"))
+		assert.Equal(t, ColorSRGB, ParseColor(ColorAuto, "imaging"))
+		assert.Equal(t, ColorSRGB, ParseColor(ColorSRGB, "imaging"))
+		assert.Equal(t, ColorNone, ParseColor(ColorNone, "imaging"))
 	})
 }

@@ -17,10 +17,7 @@ func ytDlpCommand(ctx context.Context, args []string) *exec.Cmd {
 	force := os.Getenv("YTDLP_FORCE_SHELL") == "1"
 
 	if force || isShellScript(bin) {
-		sh := os.Getenv("YTDLP_SHELL")
-		if sh == "" {
-			sh = "bash"
-		}
+		const sh = "bash"
 		return exec.CommandContext(ctx, sh, append([]string{bin}, args...)...) // #nosec G204 command constructed from validated yt-dlp path and args
 	}
 

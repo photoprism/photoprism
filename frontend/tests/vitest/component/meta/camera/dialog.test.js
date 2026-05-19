@@ -1,0 +1,133 @@
+import { describe, it, expect, vi } from "vitest";
+import { mount } from "@vue/test-utils";
+import PMetaCameraDialog from "component/meta/camera/dialog.vue";
+
+describe("PMetaCameraDialog component", () => {
+  const mockPhoto = {
+    CameraID: 5,
+    LensID: 3,
+    Iso: "200",
+    Exposure: "1/250",
+    FNumber: "2.8",
+    FocalLength: "50",
+  };
+
+  it("should load values from photo via loadFromPhoto", () => {
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: mockPhoto },
+    });
+
+    expect(w.vm.cameraID).toBe(0);
+
+    w.vm.loadFromPhoto();
+
+    expect(w.vm.cameraID).toBe(5);
+    expect(w.vm.lensID).toBe(3);
+    expect(w.vm.iso).toBe("200");
+    expect(w.vm.exposure).toBe("1/250");
+    expect(w.vm.fNumber).toBe("2.8");
+    expect(w.vm.focalLength).toBe("50");
+  });
+
+  it("should handle null photo gracefully", () => {
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: null },
+    });
+
+    w.vm.loadFromPhoto();
+
+    expect(w.vm.cameraID).toBe(0);
+    expect(w.vm.lensID).toBe(0);
+    expect(w.vm.iso).toBe("");
+  });
+
+  it("should emit close event", () => {
+    const onClose = vi.fn();
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: mockPhoto, onClose },
+    });
+    w.vm.close();
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it("should emit confirm with edited values", async () => {
+    const onConfirm = vi.fn();
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: mockPhoto, onConfirm },
+    });
+
+    w.vm.loadFromPhoto();
+
+    w.vm.cameraID = 10;
+    w.vm.lensID = 7;
+    w.vm.iso = "400";
+    w.vm.exposure = "1/125";
+    w.vm.fNumber = "1.4";
+    w.vm.focalLength = "35";
+
+    await w.vm.confirm();
+
+    expect(onConfirm).toHaveBeenCalledOnce();
+    expect(onConfirm).toHaveBeenCalledWith({
+      CameraID: 10,
+      LensID: 7,
+      Iso: "400",
+      Exposure: "1/125",
+      FNumber: "1.4",
+      FocalLength: "35",
+    });
+  });
+
+  // Regression: confirm() previously emitted the form values without
+  // running the v-form rules, so an out-of-range ISO/FNumber or an
+  // overlength Exposure bypassed the inline rules and reached the
+  // parent's save handler. The new $refs.form.validate() gate blocks
+  // the emit when any rule fails.
+  it("blocks confirm and notifies when form validation fails", async () => {
+    const onConfirm = vi.fn();
+    const notifyError = vi.fn();
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: mockPhoto, onConfirm },
+      global: { mocks: { $notify: { error: notifyError } } },
+    });
+
+    w.vm.loadFromPhoto();
+
+    // Inject a failing validate() onto the internal instance's $refs.
+    const validate = vi.fn().mockResolvedValue({ valid: false });
+    w.vm.$.refs.form = { validate };
+
+    await w.vm.confirm();
+
+    expect(validate).toHaveBeenCalled();
+    expect(onConfirm).not.toHaveBeenCalled();
+    expect(notifyError).toHaveBeenCalledWith("Changes could not be saved");
+  });
+
+  // Save button is :disabled="!valid"; flipping the v-form-backed
+  // `valid` flag toggles the button so the user gets a visual cue
+  // before clicking. Mirrors the datetime dialog's :disabled
+  // ="invalidDate" pattern. valid starts true so a freshly opened
+  // dialog on valid data doesn't flash disabled.
+  it("starts with valid=true so the Save button is enabled by default", () => {
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: mockPhoto },
+    });
+
+    // The button is :disabled="!valid"; valid: true → button enabled.
+    expect(w.vm.valid).toBe(true);
+  });
+
+  it("should use defaults for missing photo fields", () => {
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: { CameraID: 2 } },
+    });
+
+    w.vm.loadFromPhoto();
+
+    expect(w.vm.cameraID).toBe(2);
+    expect(w.vm.lensID).toBe(0);
+    expect(w.vm.iso).toBe("");
+    expect(w.vm.exposure).toBe("");
+  });
+});

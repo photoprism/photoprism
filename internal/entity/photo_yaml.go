@@ -58,11 +58,7 @@ func (m *Photo) SaveAsYaml(fileName string) error {
 	defer photoYamlMutex.Unlock()
 
 	// Write YAML data to file.
-	if err = fs.WriteFile(fileName, data, fs.ModeFile); err != nil {
-		return err
-	}
-
-	return nil
+	return fs.WriteFile(fileName, data, fs.ModeFile)
 }
 
 // YamlFileName returns both the absolute file path and the relative name for the YAML sidecar file, e.g. for logging.
@@ -103,9 +99,9 @@ func (m *Photo) SaveSidecarYaml(originalsPath, sidecarPath string) error {
 	if err = m.SaveAsYaml(fileName); err != nil {
 		log.Warnf("photo: %s (%s %s)", err, action, clean.Log(relName))
 		return err
-	} else {
-		log.Debugf("photo: %sd sidecar file %s", action, clean.Log(relName))
 	}
+
+	log.Debugf("photo: %sd sidecar file %s", action, clean.Log(relName))
 
 	return nil
 }
@@ -118,7 +114,14 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 		return fmt.Errorf("yaml filename is empty")
 	}
 
-	data, err := os.ReadFile(fileName)
+	filePath := filepath.Clean(fileName)
+
+	if _, err := fs.StatFile(filePath); err != nil {
+		return err
+	}
+
+	//nolint:gosec // G304: Path is normalized and validated above with fs.StatFile.
+	data, err := os.ReadFile(filePath)
 
 	if err != nil {
 		return err

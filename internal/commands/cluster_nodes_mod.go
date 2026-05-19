@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -17,7 +18,7 @@ import (
 
 // flags for nodes mod
 var (
-	nodesModRoleFlag = &cli.StringFlag{Name: "role", Aliases: []string{"t"}, Usage: "node `ROLE` (portal, app, service)"}
+	nodesModRoleFlag = &cli.StringFlag{Name: "role", Aliases: []string{"t"}, Usage: "node `ROLE` (portal, instance, service)"}
 	nodesModInternal = &cli.StringFlag{Name: "advertise-url", Aliases: []string{"i"}, Usage: "internal service `URL`"}
 	nodesModLabel    = &cli.StringSliceFlag{Name: "label", Aliases: []string{"l"}, Usage: "`k=v` label (repeatable)"}
 )
@@ -74,7 +75,13 @@ func clusterNodesModAction(ctx *cli.Context) error {
 		changes := make([]string, 0, 4)
 
 		if v := ctx.String("role"); v != "" {
-			n.Role = clean.TypeLowerDash(v)
+			role := cluster.NormalizeNodeRole(v)
+			switch role {
+			case cluster.RolePortal, cluster.RoleInstance, cluster.RoleService:
+				n.Role = role
+			default:
+				return cli.Exit(fmt.Errorf("invalid --role (must be portal, instance, or service)"), 2)
+			}
 			changes = append(changes, fmt.Sprintf("role=%s", clean.Log(n.Role)))
 		}
 		if v := ctx.String("advertise-url"); v != "" {

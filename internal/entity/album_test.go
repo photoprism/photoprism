@@ -442,6 +442,16 @@ func TestFindFolderAlbum(t *testing.T) {
 		assert.False(t, album.IsDefault())
 		assert.False(t, album.IsState())
 	})
+	t.Run("NormalizesBackslashes", func(t *testing.T) {
+		album := FindFolderAlbum(`1990\04`)
+
+		if album == nil {
+			t.Fatal("expected to find an album")
+		}
+
+		assert.Equal(t, "April 1990", album.AlbumTitle)
+		assert.Equal(t, "april-1990", album.AlbumSlug)
+	})
 	t.Run("EmptySlug", func(t *testing.T) {
 		album := FindFolderAlbum("")
 
@@ -483,7 +493,7 @@ func TestFindFolderAlbum(t *testing.T) {
 
 		legacy := &Album{
 			AlbumType:   AlbumFolder,
-			AlbumSlug:   txt.Slug(parentPath),
+			AlbumSlug:   legacyFolderAlbumSlug(parentPath),
 			AlbumPath:   "",
 			AlbumFilter: `path:"` + parentPath + `" public:true`,
 			CreatedAt:   Now(),
@@ -1005,6 +1015,20 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		}
 
 		assert.Equal(t, "2222/07", a.AlbumPath)
+		assert.Equal(t, "month:07", a.AlbumFilter)
+	})
+	t.Run("NormalizesBackslashes", func(t *testing.T) {
+		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxx"}
+
+		assert.Empty(t, a.AlbumPath)
+		assert.Empty(t, a.AlbumFilter)
+
+		if err := a.UpdateFolder(`2222\07`, "month:07", "July 2222"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2222/07", a.AlbumPath)
+		assert.Equal(t, "2222-07", a.AlbumSlug)
 		assert.Equal(t, "month:07", a.AlbumFilter)
 	})
 	t.Run("NoChange", func(t *testing.T) {

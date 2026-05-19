@@ -2,7 +2,7 @@ package form
 
 // Link represents a link sharing form.
 type Link struct {
-	Password    string `json:"Password"`
+	Password    string `json:"Password"` //nolint:gosec // G117: Expected user-supplied credential field.
 	ShareSlug   string `json:"Slug"`
 	LinkToken   string `json:"Token"`
 	LinkExpires int    `json:"Expires"`

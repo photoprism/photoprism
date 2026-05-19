@@ -17,7 +17,7 @@ func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (re
 	if Config == nil {
 		return result, errors.New("vision service is not configured")
 	} else if model := Config.Model(ModelTypeFace); model != nil {
-		result, err = face.Detect(fileName, false, minSize)
+		result, err = face.Detect(fileName, minSize)
 
 		if err != nil {
 			return result, err

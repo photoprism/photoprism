@@ -15,7 +15,7 @@ import (
 
 func TestNewApiRequest(t *testing.T) {
 	t.Run("Data", func(t *testing.T) {
-		thumbnails := Files{examplesPath + "/chameleon_lime.jpg"}
+		thumbnails := Files{samplesPath + "/chameleon_lime.jpg"}
 		result, err := NewApiRequestImages(thumbnails, scheme.Data)
 
 		assert.NoError(t, err)
@@ -30,7 +30,7 @@ func TestNewApiRequest(t *testing.T) {
 		}
 	})
 	t.Run("Https", func(t *testing.T) {
-		thumbnails := Files{examplesPath + "/chameleon_lime.jpg"}
+		thumbnails := Files{samplesPath + "/chameleon_lime.jpg"}
 		result, err := NewApiRequestImages(thumbnails, scheme.Https)
 
 		assert.NoError(t, err)
@@ -119,6 +119,31 @@ func TestPerformApiRequestOllama(t *testing.T) {
 			assert.Equal(t, "plain text", resp.Result.Caption.Text)
 		}
 	})
+	t.Run("CaptionThinkingFallback", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
+				Model:    "qwen3-vl:4b",
+				Response: "",
+				Thinking: "A tabby cat with a white chest stares upward.",
+			}))
+		}))
+		defer server.Close()
+
+		apiRequest := &ApiRequest{
+			Id:             "test3",
+			Model:          "qwen3-vl:4b",
+			Format:         FormatJSON,
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		resp, err := PerformApiRequest(apiRequest, server.URL, http.MethodPost, "")
+		assert.NoError(t, err)
+		assert.Len(t, resp.Result.Labels, 0)
+		if assert.NotNil(t, resp.Result.Caption) {
+			assert.Equal(t, "A tabby cat with a white chest stares upward.", resp.Result.Caption.Text)
+		}
+	})
 }
 
 func TestPerformApiRequestOpenAIHeaders(t *testing.T) {
@@ -160,4 +185,17 @@ func TestPerformApiRequestOpenAIHeaders(t *testing.T) {
 	assert.NotNil(t, resp)
 	assert.NotNil(t, resp.Result.Caption)
 	assert.Equal(t, "A scenic mountain view.", resp.Result.Caption.Text)
+}
+
+func TestValidateApiRequestURL(t *testing.T) {
+	t.Run("AcceptHttpAndHttps", func(t *testing.T) {
+		assert.NoError(t, validateApiRequestURL("http://localhost:1234/api"))
+		assert.NoError(t, validateApiRequestURL("https://api.example.com/v1"))
+	})
+	t.Run("RejectUnsupportedScheme", func(t *testing.T) {
+		assert.Error(t, validateApiRequestURL("file:///tmp/payload.json"))
+	})
+	t.Run("RejectMissingHost", func(t *testing.T) {
+		assert.Error(t, validateApiRequestURL("https:///v1"))
+	})
 }

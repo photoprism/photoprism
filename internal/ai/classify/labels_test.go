@@ -100,7 +100,6 @@ func TestLabels_Names(t *testing.T) {
 
 		assert.Equal(t, []string{"cat", "bird"}, labels.Names())
 	})
-
 	t.Run("NilLabels", func(t *testing.T) {
 		var labels Labels
 		assert.Nil(t, labels.Names())
@@ -118,7 +117,6 @@ func TestLabels_Count(t *testing.T) {
 
 		assert.Equal(t, 2, labels.Count())
 	})
-
 	t.Run("NilLabels", func(t *testing.T) {
 		var labels Labels
 		assert.Equal(t, 0, labels.Count())
@@ -130,7 +128,6 @@ func TestLabels_String(t *testing.T) {
 		labels := Labels{{Name: "cat"}, {Name: "dog"}, {Name: "bird"}}
 		assert.Equal(t, "cat, dog, and bird", labels.String())
 	})
-
 	t.Run("NoneForNil", func(t *testing.T) {
 		var labels Labels
 		assert.Equal(t, "none", labels.String())

@@ -6,6 +6,7 @@ var date = time.Date(2050, 3, 6, 2, 6, 51, 0, time.UTC)
 
 type LinkMap map[string]Link
 
+//nolint:gosec // G101: Deterministic fixture tokens for tests only.
 var LinkFixtures = LinkMap{
 	"1jxf3jfn2k": {
 		LinkUID:     "ss62xpryd1ob7gtf",

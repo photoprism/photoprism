@@ -26,6 +26,29 @@ type Cell struct {
 	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
+// ensurePlace loads or synthesizes the related place so callers can safely
+// access place-derived fields even when the association was not preloaded.
+func (m *Cell) ensurePlace() *Place {
+	if m.Place != nil {
+		return m.Place
+	}
+
+	if m.PlaceID == "" || m.PlaceID == UnknownPlace.ID {
+		m.Place = &UnknownPlace
+		return m.Place
+	}
+
+	if place := FindPlace(m.PlaceID); place != nil {
+		m.Place = place
+		return m.Place
+	}
+
+	log.Warnf("cell: place %s for %s is missing", m.PlaceID, m.ID)
+	m.Place = &UnknownPlace
+
+	return m.Place
+}
+
 // TableName returns the entity table name.
 func (Cell) TableName() string {
 	return "cells"
@@ -139,6 +162,7 @@ func (m *Cell) Find(api string) error {
 	db := Db()
 
 	if err := db.Preload("Place").First(m, "id = ?", m.ID).Error; err == nil {
+		m.ensurePlace()
 		log.Tracef("cell: found %s", m.ID)
 		return nil
 	}
@@ -249,10 +273,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 
 // Keywords returns search keywords for a location.
 func (m *Cell) Keywords() (result []string) {
-	if m.Place == nil {
-		log.Errorf("cell: place for %s is missing - you may have found a bug", m.ID)
-		return result
-	}
+	place := m.ensurePlace()
 
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.District(), "-"))...)
 	result = append(result, txt.Keywords(txt.ReplaceSpaces(m.City(), "-"))...)
@@ -261,7 +282,7 @@ func (m *Cell) Keywords() (result []string) {
 	result = append(result, txt.Keywords(m.Name())...)
 	result = append(result, txt.Keywords(m.Street())...)
 	result = append(result, txt.Keywords(m.Category())...)
-	result = append(result, txt.Words(m.Place.PlaceKeywords)...)
+	result = append(result, txt.Words(place.PlaceKeywords)...)
 
 	result = txt.UniqueWords(result)
 
@@ -315,17 +336,17 @@ func (m *Cell) NoCategory() bool {
 
 // Label returns the location place label
 func (m *Cell) Label() string {
-	return m.Place.Label()
+	return m.ensurePlace().Label()
 }
 
 // District returns the district name if any.
 func (m *Cell) District() string {
-	return m.Place.District()
+	return m.ensurePlace().District()
 }
 
 // City returns the location city name if any.
 func (m *Cell) City() string {
-	return m.Place.City()
+	return m.ensurePlace().City()
 }
 
 // LongCity checks if the city name is more than 16 char
@@ -345,20 +366,20 @@ func (m *Cell) CityContains(text string) bool {
 
 // State returns the location place state
 func (m *Cell) State() string {
-	return m.Place.State()
+	return m.ensurePlace().State()
 }
 
 // NoState checks if the location place has no state
 func (m *Cell) NoState() bool {
-	return m.Place.State() == ""
+	return m.State() == ""
 }
 
 // CountryCode returns the location place country code
 func (m *Cell) CountryCode() string {
-	return m.Place.CountryCode()
+	return m.ensurePlace().CountryCode()
 }
 
 // CountryName returns the location place country name
 func (m *Cell) CountryName() string {
-	return m.Place.CountryName()
+	return m.ensurePlace().CountryName()
 }

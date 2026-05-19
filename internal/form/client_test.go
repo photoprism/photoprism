@@ -178,6 +178,7 @@ func TestClient_ID(t *testing.T) {
 
 func TestClient_Secret(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
+		//nolint:gosec // G101: Intentional static test fixture secret.
 		c := Client{ClientSecret: "LKHTREDSAWCVGHBNJUYTREWSDFLOIUYG"}
 		assert.Equal(t, "LKHTREDSAWCVGHBNJUYTREWSDFLOIUYG", c.Secret())
 	})

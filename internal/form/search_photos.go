@@ -72,7 +72,7 @@ type SearchPhotos struct {
 	Diff        uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Geo         string    `form:"geo" example:"geo:yes" notes:"Finds content with or without latitude and longitude"`
 	Keywords    string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords, combinable with & and |"`
-	Label       string    `form:"label" example:"label:cat|dog" notes:"Label names, separated by |"`
+	Label       string    `form:"label" example:"label:\"cat|dog&!blurry\"" notes:"Label names: | is OR within a group, & is AND between groups (every positive group must match), leading ! negates a group (e.g. !rejected). Category expansion applies to both positive and negative terms. Escape a literal &, |, or leading ! with \\"`
 	Category    string    `form:"category" example:"category:airport" notes:"Location category type"`
 	Country     string    `form:"country" example:"country:\"de|us\"" notes:"Country codes, separated by |"`                                                                             // Moments
 	State       string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"State or province names, separated by |"`                                                           // Moments

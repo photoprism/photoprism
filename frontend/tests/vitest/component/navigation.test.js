@@ -56,9 +56,15 @@ function mountNavigation({
     isPro: baseConfig.isPro || vi.fn(() => false),
     isSponsor: baseConfig.isSponsor || vi.fn(() => false),
     get: vi.fn((key) => {
-      if (key === "demo") return false;
-      if (key === "public") return isPublic;
-      if (key === "readonly") return false;
+      if (key === "demo") {
+        return false;
+      }
+      if (key === "public") {
+        return isPublic;
+      }
+      if (key === "readonly") {
+        return false;
+      }
       return false;
     }),
     feature: vi.fn((name) => {

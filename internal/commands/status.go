@@ -54,7 +54,7 @@ func statusAction(ctx *cli.Context) error {
 
 	var response string
 
-	if resp, reqErr := client.Do(req); reqErr != nil {
+	if resp, reqErr := client.Do(req); reqErr != nil { //nolint:gosec // endpointUrl is built from local config values.
 		return fmt.Errorf("cannot connect to %s:%d", conf.HttpHost(), conf.HttpPort())
 	} else if resp.StatusCode != 200 {
 		return fmt.Errorf("server running at %s:%d, bad status %d", conf.HttpHost(), conf.HttpPort(), resp.StatusCode)

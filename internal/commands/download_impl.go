@@ -236,6 +236,10 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 				})
 				if err != nil {
 					log.Errorf("download failed: %v", err)
+					if len(files) == 0 {
+						failures++
+						continue
+					}
 				}
 				if fileRemux != "skip" {
 					for _, fp := range files {
@@ -261,8 +265,8 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 
 	elapsed := time.Since(start)
 	if failures > 0 {
-		log.Warnf("completed with %d error(s) in %s", failures, elapsed)
-		return fmt.Errorf("some downloads failed: %d", failures)
+		log.Warnf("completed with %s in %s", formatCount(failures, "error", "errors"), elapsed)
+		return fmt.Errorf("%s", formatFailedCount(failures, "download", "downloads"))
 	}
 	log.Infof("completed in %s", elapsed)
 	return nil

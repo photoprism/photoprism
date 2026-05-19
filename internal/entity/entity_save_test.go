@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"math/rand/v2"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,19 +10,19 @@ import (
 
 func TestSave(t *testing.T) {
 	t.Run("HasCreatedUpdatedAt", func(t *testing.T) {
-		id := 99999 + rand.IntN(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), UpdatedAt: Now(), CreatedAt: Now()}
+		id := missingPhotoID()
+		m := Photo{ID: id, PhotoUID: rnd.GenerateUID(PhotoUID), UpdatedAt: Now(), CreatedAt: Now()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 			return
 		}
 
+		assert.Equal(t, id, m.ID)
 		assert.NotNil(t, FindPhoto(m))
 	})
 	t.Run("HasCreatedAt", func(t *testing.T) {
-		id := 99999 + rand.IntN(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
+		m := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
@@ -33,8 +32,7 @@ func TestSave(t *testing.T) {
 		assert.NotNil(t, FindPhoto(m))
 	})
 	t.Run("NoCreatedAt", func(t *testing.T) {
-		id := 99999 + rand.IntN(10000)
-		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
+		m := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)

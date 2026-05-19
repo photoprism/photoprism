@@ -1,3 +1,5 @@
+import $util from "common/util";
+
 export default {
   global: {
     ripple: false,
@@ -82,6 +84,12 @@ export default {
     itemValue: "value",
     validateOn: "invalid-input",
     hideDetails: "auto",
+  },
+  VTooltip: {
+    openDelay: 0,
+    closeDelay: 0,
+    disabled: $util.isMobile(),
+    transition: false,
   },
   VMenu: {
     origin: "auto",

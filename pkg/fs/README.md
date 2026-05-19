@@ -1,16 +1,17 @@
 ## PhotoPrism — pkg/fs
 
-**Last Updated:** November 25, 2025
+**Last Updated:** April 1, 2026
 
 ### Overview
 
-`pkg/fs` provides safe, cross-platform filesystem helpers used across PhotoPrism. It supplies permission constants, copy/move utilities with force-aware semantics, safe path joins, archive extraction with size limits, MIME and extension lookups, hashing, canonical path casing, and fast directory walking with ignore lists.
+`pkg/fs` provides safe, cross-platform filesystem helpers used across PhotoPrism. It supplies permission constants, copy/move utilities with force-aware semantics, safe path joins, archive extraction with size limits, bounded image decode helpers, MIME and extension lookups, hashing, canonical path casing, and fast directory walking with ignore lists.
 
 #### Goals
 
 - Offer reusable, side-effect-safe filesystem helpers that other packages can call without importing `internal/*`.
 - Enforce shared permission defaults (`ModeDir`, `ModeFile`, `ModeConfigFile`, `ModeSecretFile`, `ModeBackupFile`).
 - Protect against common filesystem attacks (path traversal, overwrite of non-empty files without `force`, unsafe zip extraction).
+- Provide bounded image decode helpers that do not route TIFF through generic `image.Decode()` dispatch.
 - Provide consistent file-type detection (extensions/MIME), hashing, and fast walkers with skip logic for caches and `.ppstorage` markers.
 
 #### Non-Goals
@@ -23,6 +24,7 @@
 - Permissions & paths: `mode.go`, `filepath.go`, `canonical.go`, `case.go`.
 - Copy/Move & write helpers: `copy_move.go`, `write.go`, `cache.go`, `purge.go`.
 - Archive extraction: `zip.go` (size limits, safe join), tests in `zip_test.go`.
+- Bounded image decode helpers: `image_decode.go` (direct JPEG/PNG/GIF/BMP/TIFF/WEBP dispatch with TIFF offset validation).
 - File info & types: `file_type*.go`, `mime.go`, `file_ext*.go`, `name.go`.
 - Hashing & IDs: `hash.go`, `id.go`.
 - Walkers & ignore rules: `walk.go`, `ignore.go`, `done.go`.
@@ -33,6 +35,7 @@
 - Overwrite semantics: pass `force=true` only when the caller explicitly confirmed replacement; empty files may be replaced without `force`.
 - Permissions: use provided mode constants; do not mix with stdlib `io/fs` bits.
 - Zip extraction: always set `fileSizeLimit` / `totalSizeLimit` in `Unzip` for untrusted inputs; ensure tests cover path traversal and size caps (see `zip_test.go`).
+- Image decode helpers: use `DecodeImageFile`, `DecodeImageConfigFile`, `DecodeImageData`, or `DecodeImageConfigData` instead of generic `image.Decode()` / `image.DecodeConfig()` for user media. TIFF headers are validated against the bounded reader size before decode.
 - Focused tests: `go test ./pkg/fs -run 'Copy|Move|Unzip|Write' -count=1` keeps feedback quick; full package: `go test ./pkg/fs -count=1`.
 
 ### Recent Changes & Improvements

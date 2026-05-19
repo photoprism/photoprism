@@ -35,6 +35,30 @@ const PublicSessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd239
 const PublicAuthToken = "234200000000000000000000000000000000000000000000";
 const LoginPage = "login";
 
+// login.* keys survive auth.gohtml's session.* wipe after the OIDC roundtrip.
+const LoginRedirectKey = "login.next";
+const LogoutSignalKey = "login.logout";
+
+const resolveStorageNamespace = (config) => {
+  if (typeof config?.storageNamespace === "string" && config.storageNamespace !== "") {
+    return config.storageNamespace;
+  }
+
+  if (typeof config?.get === "function") {
+    const storageNamespace = config.get("storageNamespace");
+
+    if (typeof storageNamespace === "string" && storageNamespace !== "") {
+      return storageNamespace;
+    }
+  }
+
+  if (typeof config?.values?.storageNamespace === "string" && config.values.storageNamespace !== "") {
+    return config.values.storageNamespace;
+  }
+
+  return "";
+};
+
 export default class Session {
   /**
    * @param {Storage} storage
@@ -46,13 +70,14 @@ export default class Session {
     this.loginRedirect = false;
     this.config = config;
     this.baseUri = config?.baseUri;
+    this.storageNamespace = resolveStorageNamespace(config);
     this.provider = "";
     this.user = new User(false);
     this.scope = "";
     this.data = null;
     this.localStorage = storage;
     const sessionStorage = typeof window === "undefined" ? undefined : window.sessionStorage;
-    this.sessionStorage = createNamespacedStorage(sessionStorage, this.baseUri);
+    this.sessionStorage = createNamespacedStorage(sessionStorage, this.storageNamespace);
 
     // Set session storage.
     if (storage.getItem(this.storageKey) === "true") {
@@ -95,14 +120,14 @@ export default class Session {
 
     // Restore authentication from session storage.
     if (this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) && this.applyId(this.storage.getItem(this.storageKey + ".id"))) {
-      const dataJson = this.storage.getItem(this.storageKey + ".data");
-      if (dataJson && dataJson !== "undefined") {
-        this.data = JSON.parse(dataJson);
+      const data = this.getStoredJSON(this.storageKey + ".data");
+      if (data) {
+        this.data = data;
       }
 
-      const userJson = this.storage.getItem(this.storageKey + ".user");
-      if (userJson && userJson !== "undefined") {
-        this.user = new User(JSON.parse(userJson));
+      const user = this.getStoredJSON(this.storageKey + ".user");
+      if (user) {
+        this.user = new User(user);
       }
 
       const provider = this.storage.getItem(this.storageKey + ".provider");
@@ -149,15 +174,71 @@ export default class Session {
     }
   }
 
+  getStoredJSON(key) {
+    const value = this.storage.getItem(key);
+
+    if (!value || value === "undefined") {
+      return null;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch {
+      this.storage.removeItem(key);
+      return null;
+    }
+  }
+
+  setStoragePreference(useSessionStorage) {
+    this.localStorage.setItem(this.storageKey, useSessionStorage ? "true" : "false");
+    this.sessionStorage.removeItem(this.storageKey);
+  }
+
   useSessionStorage() {
     this.reset();
-    this.storage.setItem(this.storageKey, "true");
+    this.setStoragePreference(true);
     this.storage = this.sessionStorage;
   }
 
   useLocalStorage() {
-    this.storage.setItem(this.storageKey, "false");
+    this.setStoragePreference(false);
     this.storage = this.localStorage;
+  }
+
+  usesSessionStorage() {
+    return this.storage === this.sessionStorage;
+  }
+
+  clearNamespacedKey(key) {
+    [this.localStorage, this.sessionStorage].forEach((storage) => {
+      if (!storage || typeof storage.removeItem !== "function") {
+        return;
+      }
+
+      if (typeof storage.getLegacyItem === "function") {
+        storage.removeItem(key, { legacy: false });
+      } else {
+        storage.removeItem(key);
+      }
+    });
+  }
+
+  clearLegacyKey(key) {
+    if (!key) {
+      return;
+    }
+
+    [this.localStorage, this.sessionStorage].forEach((storage) => {
+      if (!storage) {
+        return;
+      }
+
+      if (typeof storage.removeLegacyItem === "function") {
+        storage.removeLegacyItem(key);
+      } else if (typeof storage.removeItem === "function") {
+        storage.removeItem(key);
+      }
+    });
   }
 
   setConfig(values) {
@@ -230,18 +311,23 @@ export default class Session {
     this.scope = "";
 
     // "session.id" is the SHA256 hash of the auth token.
-    this.storage.removeItem(this.storageKey + ".id");
-    this.storage.removeItem(this.storageKey + ".token");
-    this.storage.removeItem(this.storageKey + ".provider");
-    this.storage.removeItem(this.storageKey + ".scope");
+    this.clearNamespacedKey(this.storageKey + ".id");
+    this.clearNamespacedKey(this.storageKey + ".token");
+    this.clearNamespacedKey(this.storageKey + ".provider");
+    this.clearNamespacedKey(this.storageKey + ".scope");
 
-    // Remove previously used data e.g. "session_id"
-    // is deprecated in favor of "session.token".
-    this.storage.removeItem("session_id");
-    this.storage.removeItem("sessionId");
-    this.storage.removeItem("authToken");
-    this.storage.removeItem("authError");
-    this.storage.removeItem("provider");
+    // Remove deprecated raw keys from both storage backends. Supported
+    // instances use namespaced keys, so clearing legacy globals is safe.
+    this.clearLegacyKey("session.token");
+    this.clearLegacyKey("authToken");
+    this.clearLegacyKey("session.id");
+    this.clearLegacyKey("sessionId");
+    this.clearLegacyKey("session_id");
+    this.clearLegacyKey("session.provider");
+    this.clearLegacyKey("provider");
+    this.clearLegacyKey("session.scope");
+    this.clearLegacyKey("authError");
+    this.clearLegacyKey("session.error");
 
     delete $api.defaults.headers.common[RequestHeader];
   }
@@ -390,32 +476,44 @@ export default class Session {
     return this;
   }
 
+  // Returns the post-login redirect target: in-memory first, then namespaced
+  // storage (survives the OIDC roundtrip), else `defaultUrl` (defaults to "/";
+  // pass null to branch on "no redirect recorded").
   getLoginRedirectUrl(defaultUrl) {
-    if (!defaultUrl) {
-      defaultUrl = "/";
+    if (this.loginRedirect) {
+      return this.loginRedirect;
     }
 
-    return this.loginRedirect ? this.loginRedirect : defaultUrl;
+    const stored = this.localStorage?.getItem(LoginRedirectKey);
+    if (stored) {
+      return stored;
+    }
+
+    return defaultUrl === undefined ? "/" : defaultUrl;
   }
 
   clearLoginRedirectUrl() {
     this.loginRedirect = false;
+    this.localStorage?.removeItem(LoginRedirectKey);
 
     return this;
   }
 
+  // Records the post-login target. Persisted so it survives the OIDC roundtrip.
   setLoginRedirectUrl(url) {
     if (!url) {
       return this.clearLoginRedirectUrl();
     }
 
     this.loginRedirect = url;
+    this.localStorage?.setItem(LoginRedirectKey, url);
 
     return this;
   }
 
+  // isUser returns true when the current session has a fully-loaded user record.
   isUser() {
-    return this.user && this.user.hasId();
+    return !!this.user?.hasId();
   }
 
   getDefaultRoute() {
@@ -426,12 +524,14 @@ export default class Session {
     return this.config.getDefaultRoute();
   }
 
+  // isAdmin returns true when the session belongs to an admin or super-admin user.
   isAdmin() {
-    return this.user && this.user.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin);
+    return !!(this.user?.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin));
   }
 
+  // isSuperAdmin returns true when the session belongs to a super-admin user.
   isSuperAdmin() {
-    return this.user && this.user.hasId() && this.user.SuperAdmin;
+    return !!(this.user?.hasId() && this.user.SuperAdmin);
   }
 
   isAnonymous() {
@@ -448,21 +548,23 @@ export default class Session {
 
   deleteData() {
     this.data = null;
-    this.storage.removeItem(this.storageKey + ".data");
-    this.storage.removeItem("sessionData");
+    this.clearNamespacedKey(this.storageKey + ".data");
+    this.clearLegacyKey("sessionData");
+    this.clearLegacyKey("session.data");
   }
 
   deleteUser() {
     this.auth = false;
     this.user = new User(false);
-    this.storage.removeItem(this.storageKey + ".user");
-    this.storage.removeItem("user");
+    this.clearNamespacedKey(this.storageKey + ".user");
+    this.clearLegacyKey("user");
+    this.clearLegacyKey("session.user");
   }
 
   deleteClipboard() {
-    this.storage.removeItem("clipboard");
-    this.storage.removeItem("clipboard.photos");
-    this.storage.removeItem("clipboard.albums");
+    this.clearNamespacedKey("clipboard");
+    this.clearNamespacedKey("clipboard.photos");
+    this.clearNamespacedKey("clipboard.albums");
   }
 
   reset() {
@@ -470,6 +572,9 @@ export default class Session {
     this.deleteData();
     this.deleteUser();
     this.deleteClipboard();
+    // Clear the Photo LRU so cached metadata cannot leak across role
+    // changes. Dynamic import avoids the session ↔ photo module cycle.
+    import("model/photo").then((m) => m.default.clearCache()).catch(() => {});
   }
 
   sendClientInfo() {
@@ -483,7 +588,7 @@ export default class Session {
 
     try {
       Socket.send(JSON.stringify(clientInfo));
-    } catch (e) {
+    } catch {
       if (this.config.debug) {
         console.log("session: can't use websocket, not connected (yet)");
       }
@@ -599,15 +704,30 @@ export default class Session {
   }
 
   onLogout(noRedirect) {
-    // Delete all authentication and session data.
     this.reset();
 
-    // Perform redirect?
+    // Drop stale deep-link redirects; raise one-shot flag so /login skips
+    // auto-OIDC once when PHOTOPRISM_OIDC_REDIRECT is on.
+    this.clearLoginRedirectUrl();
+    this.localStorage?.setItem(LogoutSignalKey, "1");
+
     if (noRedirect !== true && !this.isLogin()) {
       this.followRedirect(this.config.loginUri);
     }
 
     return Promise.resolve();
+  }
+
+  // Reads and clears the one-shot logout flag set by onLogout().
+  consumeLogoutSignal() {
+    if (!this.localStorage) {
+      return false;
+    }
+    const raised = this.localStorage.getItem(LogoutSignalKey) === "1";
+    if (raised) {
+      this.localStorage.removeItem(LogoutSignalKey);
+    }
+    return raised;
   }
 
   logout(noRedirect) {
@@ -623,5 +743,17 @@ export default class Session {
     } else {
       return this.onLogout(noRedirect);
     }
+  }
+
+  // Synchronous logout for SPA route guards (/logout): fires server DELETE
+  // with the captured token first (avoiding a 401 echo that would re-raise
+  // the logout flag), then resets client state.
+  signOut() {
+    const token = this.getAuthToken();
+    if (token) {
+      $api.delete("session", { headers: { [RequestHeader]: token } }).catch(() => {});
+    }
+    this.onLogout(true);
+    return this;
   }
 }

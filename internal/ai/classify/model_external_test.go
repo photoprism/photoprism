@@ -335,7 +335,7 @@ func testModelLabelsFromFile(t *testing.T, tensorFlow *Model) {
 	}
 
 	t.Run(testName("chameleon_lime.jpg"), func(t *testing.T) {
-		result, err := tensorFlow.File(examplesPath+"/chameleon_lime.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/chameleon_lime.jpg", 10)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -353,7 +353,7 @@ func testModelLabelsFromFile(t *testing.T, tensorFlow *Model) {
 		}
 	})
 	t.Run(testName("cat_224.jpeg"), func(t *testing.T) {
-		result, err := tensorFlow.File(examplesPath+"/cat_224.jpeg", 10)
+		result, err := tensorFlow.File(samplesPath+"/cat_224.jpeg", 10)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -370,7 +370,7 @@ func testModelLabelsFromFile(t *testing.T, tensorFlow *Model) {
 		}
 	})
 	t.Run(testName("cat_720.jpeg"), func(t *testing.T) {
-		result, err := tensorFlow.File(examplesPath+"/cat_720.jpeg", 10)
+		result, err := tensorFlow.File(samplesPath+"/cat_720.jpeg", 10)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -389,7 +389,7 @@ func testModelLabelsFromFile(t *testing.T, tensorFlow *Model) {
 		}
 	})
 	t.Run(testName("green.jpg"), func(t *testing.T) {
-		result, err := tensorFlow.File(examplesPath+"/green.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/green.jpg", 10)
 
 		t.Logf("labels: %#v", result)
 		assert.NoError(t, err)
@@ -407,7 +407,7 @@ func testModelLabelsFromFile(t *testing.T, tensorFlow *Model) {
 		}
 	})
 	t.Run(testName("not existing file"), func(t *testing.T) {
-		result, err := tensorFlow.File(examplesPath+"/notexisting.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/notexisting.jpg", 10)
 		assert.Contains(t, err.Error(), "no such file or directory")
 		assert.Empty(t, result)
 	})
@@ -415,7 +415,7 @@ func testModelLabelsFromFile(t *testing.T, tensorFlow *Model) {
 		tensorFlow.disabled = true
 		defer func() { tensorFlow.disabled = false }()
 
-		result, err := tensorFlow.File(examplesPath+"/chameleon_lime.jpg", 10)
+		result, err := tensorFlow.File(samplesPath+"/chameleon_lime.jpg", 10)
 		assert.Nil(t, err)
 
 		if err != nil {
@@ -440,7 +440,7 @@ func testModelRun(t *testing.T, tensorFlow *Model) {
 	}
 
 	t.Run(testName("chameleon_lime.jpg"), func(t *testing.T) {
-		if imageBuffer, err := os.ReadFile(examplesPath + "/chameleon_lime.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(samplesPath + "/chameleon_lime.jpg"); err != nil {
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -467,7 +467,7 @@ func testModelRun(t *testing.T, tensorFlow *Model) {
 		}
 	})
 	t.Run(testName("dog_orange.jpg"), func(t *testing.T) {
-		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(samplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -494,7 +494,7 @@ func testModelRun(t *testing.T, tensorFlow *Model) {
 		}
 	})
 	t.Run(testName("Random.docx"), func(t *testing.T) {
-		if imageBuffer, err := os.ReadFile(examplesPath + "/Random.docx"); err != nil {
+		if imageBuffer, err := os.ReadFile(samplesPath + "/Random.docx"); err != nil {
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -503,7 +503,7 @@ func testModelRun(t *testing.T, tensorFlow *Model) {
 		}
 	})
 	t.Run(testName("6720px_white.jpg"), func(t *testing.T) {
-		if imageBuffer, err := os.ReadFile(examplesPath + "/6720px_white.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(samplesPath + "/6720px_white.jpg"); err != nil {
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)
@@ -518,7 +518,7 @@ func testModelRun(t *testing.T, tensorFlow *Model) {
 	t.Run(testName("disabled true"), func(t *testing.T) {
 		tensorFlow.disabled = true
 		defer func() { tensorFlow.disabled = false }()
-		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
+		if imageBuffer, err := os.ReadFile(samplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
 		} else {
 			result, err := tensorFlow.Run(imageBuffer, 10)

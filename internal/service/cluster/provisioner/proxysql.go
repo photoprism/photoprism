@@ -8,21 +8,21 @@ import (
 )
 
 const (
-	// DefaultProxyHostgroup routes tenant connections to the primary (writer) backend hostgroup.
+	// DefaultProxyHostgroup routes instance connections to the primary (writer) backend hostgroup.
 	DefaultProxyHostgroup = 10
-	// DefaultProxyFrontend enables clients to authenticate through ProxySQL; required for tenant users.
+	// DefaultProxyFrontend enables clients to authenticate through ProxySQL; required for instance users.
 	DefaultProxyFrontend = 1
-	// DefaultProxyBackend keeps tenant users from authenticating against upstream servers directly.
+	// DefaultProxyBackend keeps instance users from authenticating against upstream servers directly.
 	DefaultProxyBackend = 0
-	// DefaultProxyMaxConnections caps concurrent connections per tenant to avoid exhausting ProxySQL.
+	// DefaultProxyMaxConnections caps concurrent connections per instance to avoid exhausting ProxySQL.
 	DefaultProxyMaxConnections = 200
-	// DefaultProxyUseSSL toggles ProxySQL's SSL flag for tenant accounts (0 = disabled by default).
+	// DefaultProxyUseSSL toggles ProxySQL's SSL flag for instance accounts (0 = disabled by default).
 	DefaultProxyUseSSL = 0
 	// DefaultProxyComment labels provisioned users so operators can distinguish auto-managed accounts.
-	DefaultProxyComment = "Portal provisioned tenant"
+	DefaultProxyComment = "Portal provisioned instance"
 )
 
-// ProxyOptions describes the ProxySQL mysql_users attributes to apply when syncing tenant accounts.
+// ProxyOptions describes the ProxySQL mysql_users attributes to apply when syncing instance accounts.
 type ProxyOptions struct {
 	Hostgroup      int
 	Frontend       int
@@ -35,7 +35,7 @@ type ProxyOptions struct {
 // ProvisionProxyDSN specifies the optional ProxySQL admin DSN (port 6032 by default) for keeping user accounts in sync.
 var ProvisionProxyDSN = ""
 
-// ProvisionProxyOptions stores the current defaults used when synchronizing ProxySQL tenant accounts.
+// ProvisionProxyOptions stores the current defaults used when synchronizing ProxySQL instance accounts.
 var ProvisionProxyOptions = ProxyOptions{
 	Hostgroup:      DefaultProxyHostgroup,
 	Frontend:       DefaultProxyFrontend,
@@ -91,7 +91,7 @@ func SyncProxyUser(ctx context.Context, proxyDSN, schema, user, pass string, opt
 	return applyProxySQL(ctx, db)
 }
 
-// DropProxyUser removes the mysql_users record for a tenant and reloads ProxySQL runtime/disk.
+// DropProxyUser removes the mysql_users record for a instance and reloads ProxySQL runtime/disk.
 func DropProxyUser(ctx context.Context, proxyDSN, user string) (err error) {
 	db, err := sql.Open("mysql", normalizeProxyDSN(proxyDSN))
 	if err != nil {

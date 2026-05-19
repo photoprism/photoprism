@@ -2,6 +2,7 @@ package config
 
 import (
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -13,7 +14,8 @@ import (
 type CliFlag struct {
 	Flag       cli.DocGenerationFlag
 	Tags       []string
-	DocDefault string
+	Secret     bool   // Secret marks the flag as carrying sensitive data.
+	DocDefault string // DocDefault contains the default value for use in docs.
 }
 
 // Skip checks if the parameter should be skipped based on a list of tags.
@@ -32,13 +34,23 @@ func (f CliFlag) Fields() reflect.Value {
 	return fields
 }
 
-// Default returns the default value.
+// Default returns the documented default value of the flag, never the
+// runtime value urfave/cli writes back into f.Value once an environment
+// variable or CLI argument has been applied. Secret flags collapse to
+// DocDefault (or "") regardless of any source-code default so generated
+// docs and config reports stay stable across deployments.
 func (f CliFlag) Default() string {
-	if f.DocDefault != "" {
+	if f.Secret || f.DocDefault != "" {
 		return f.DocDefault
 	}
 
-	return f.Flag.GetValue()
+	text := f.Flag.GetDefaultText()
+
+	if unquoted, err := strconv.Unquote(text); err == nil {
+		return unquoted
+	}
+
+	return text
 }
 
 // Hidden checks if the flag is hidden.
@@ -102,6 +114,8 @@ func (f CliFlag) Usage() string {
 	switch {
 	case list.Contains(f.Tags, EnvSponsor):
 		return f.Flag.GetUsage() + " *members only*"
+	case list.Contains(f.Tags, Portal):
+		return f.Flag.GetUsage() + " *portal*"
 	case list.Contains(f.Tags, Pro):
 		return f.Flag.GetUsage() + " *pro*"
 	case list.Contains(f.Tags, Plus):

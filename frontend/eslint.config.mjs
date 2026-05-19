@@ -35,11 +35,7 @@ export default defineConfig([
   ]),
   ...pluginVue.configs["flat/recommended"],
   {
-    extends: compat.extends(
-      "eslint:recommended",
-      "plugin:prettier/recommended",
-      "plugin:vuetify/base"
-    ),
+    extends: compat.extends("eslint:recommended", "plugin:prettier/recommended", "plugin:vuetify/base"),
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -76,18 +72,24 @@ export default defineConfig([
       },
     },
     rules: {
-      // Defer indentation to Prettier so we don't get conflicting expectations.
-      "indent": "off",
+      // Match what Prettier was producing: 2-space indent (4 for CSS lives in .prettierrc), switch
+      // cases nested one level, method-chain continuations indented one level.
+      "indent": ["warn", 2, { SwitchCase: 1, MemberExpression: 1 }],
       "linebreak-style": ["error", "unix"],
       "quotes": [
-        "off",
+        "warn",
         "double",
         {
           avoidEscape: true,
           allowTemplateLiterals: true,
         },
       ],
-      "semi": ["error", "always"],
+      "semi": ["warn", "always"],
+      "curly": ["warn", "all"],
+      // Forces braced bodies onto their own line so curly's autofix produces
+      // multi-line `if (x) {\n  return;\n}` instead of `if (x) {return;}`.
+      // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 9.
+      "brace-style": ["warn", "1tbs", { allowSingleLine: false }],
       "no-unused-vars": ["warn"],
       "no-console": 0,
       "no-case-declarations": 0,
@@ -119,25 +121,18 @@ export default defineConfig([
         },
       ],
       "vue/first-attribute-linebreak": [
-        "error",
+        "warn",
         {
           singleline: "ignore",
           multiline: "ignore",
         },
       ],
-      "prettier/prettier": [
-        "warn",
-        {
-          printWidth: 160,
-          semi: true,
-          singleQuote: false,
-          bracketSpacing: true,
-          trailingComma: "es5",
-          htmlWhitespaceSensitivity: "css",
-          quoteProps: "consistent",
-          proseWrap: "never",
-        },
-      ],
+      // Prettier reflow is off — it collapses intentional newlines (multi-line method chains,
+      // predicate lists) that help readability. Quote style and indent are enforced by the
+      // ESLint rules above instead. Run `prettier --write <file>` manually for full reflow.
+      // The plugin:prettier/recommended extends above still applies eslint-config-prettier,
+      // which disables ESLint stylistic rules that would conflict with Prettier-formatted code.
+      "prettier/prettier": "off",
     },
   },
 ]);

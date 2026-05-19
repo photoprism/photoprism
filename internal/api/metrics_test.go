@@ -117,7 +117,7 @@ func TestGetMetrics(t *testing.T) {
 	})
 	t.Run("ExposeClusterMetricsForPortal", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 
 		GetMetrics(router)
 
@@ -128,7 +128,7 @@ func TestGetMetrics(t *testing.T) {
 			name string
 			role string
 		}{
-			{"metrics-app-1", string(cluster.RoleApp)},
+			{"metrics-app-1", string(cluster.RoleInstance)},
 			{"metrics-service-1", string(cluster.RoleService)},
 		}
 
@@ -154,7 +154,7 @@ func TestGetMetrics(t *testing.T) {
 		body := resp.Body.String()
 		floatPattern := `[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?`
 		assert.Regexp(t, regexp.MustCompile(`photoprism_cluster_nodes{role="total"} `+floatPattern), body)
-		assert.Regexp(t, regexp.MustCompile(`photoprism_cluster_nodes{role="app"} `+floatPattern), body)
+		assert.Regexp(t, regexp.MustCompile(`photoprism_cluster_nodes{role="instance"} `+floatPattern), body)
 		assert.Regexp(t, regexp.MustCompile(`photoprism_cluster_nodes{role="service"} `+floatPattern), body)
 		infoPattern := `photoprism_cluster_info\{(?:cidr="[^"]*",[^}]*uuid="[^"]*"|uuid="[^"]*",[^}]*cidr="[^"]*")\} 1`
 		assert.Regexp(t, regexp.MustCompile(infoPattern), body)

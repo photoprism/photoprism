@@ -4,12 +4,15 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -79,5 +82,42 @@ func TestGetClientConfig(t *testing.T) {
 		app.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
+}
+
+// TestUpdateClientConfig pins the contract that PreviewToken and
+// DownloadToken are stripped from the global "config.updated" broadcast
+// so a per-session value cannot overwrite another session's tokens. The
+// session-bound copy still carries the live tokens via ClientSession;
+// see internal/config/client_config.go and the docs/comments on
+// UpdateClientConfig.
+func TestUpdateClientConfig(t *testing.T) {
+	t.Run("OmitsTokensFromBroadcast", func(t *testing.T) {
+		_, _, conf := NewApiTest()
+
+		// Sanity-check that the un-redacted user config would carry
+		// non-empty tokens, so the assertion below proves the strip is
+		// the load-bearing control rather than an empty default.
+		direct := conf.ClientUser(false)
+		require.NotEmpty(t, direct.PreviewToken)
+		require.NotEmpty(t, direct.DownloadToken)
+
+		sub := event.Subscribe("config.updated")
+		defer event.Unsubscribe(sub)
+
+		UpdateClientConfig()
+
+		select {
+		case msg := <-sub.Receiver:
+			assert.Equal(t, "config.updated", msg.Topic())
+
+			payload, ok := msg.Fields["config"].(*config.ClientConfig)
+			require.True(t, ok, "config field must be *config.ClientConfig, got %T", msg.Fields["config"])
+
+			assert.Empty(t, payload.PreviewToken, "PreviewToken must be stripped from the global config.updated broadcast")
+			assert.Empty(t, payload.DownloadToken, "DownloadToken must be stripped from the global config.updated broadcast")
+		case <-time.After(5 * time.Second):
+			t.Fatal("timed out waiting for config.updated event")
+		}
 	})
 }

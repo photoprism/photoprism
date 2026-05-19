@@ -24,7 +24,7 @@ const (
 	// DefaultModel names the default caption model bundled with our adapter defaults.
 	DefaultModel = "gemma3:latest"
 	// CloudModel names the default caption for the Ollama cloud service, see https://ollama.com/cloud.
-	CloudModel = "qwen3-vl:235b-instruct"
+	CloudModel = "qwen3-vl:235b-instruct-cloud"
 	// CaptionPrompt instructs Ollama caption models to emit a single, active-voice sentence.
 	CaptionPrompt = "Create a caption with exactly one sentence in the active voice that describes the main visual content. Begin with the main subject and clear action. Avoid text formatting, meta-language, and filler words."
 	// LabelConfidenceDefault is used when the model omits the confidence field.

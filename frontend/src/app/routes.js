@@ -38,7 +38,6 @@ import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
-import Feedback from "page/about/feedback.vue";
 import License from "page/about/license.vue";
 import Help from "page/help.vue";
 import Connect from "page/connect.vue";
@@ -70,12 +69,6 @@ export default [
     meta: { title: $gettext("License"), requiresAuth: false },
   },
   {
-    name: "feedback",
-    path: "/feedback",
-    component: Feedback,
-    meta: { title: $gettext("Help & Support"), requiresAuth: true },
-  },
-  {
     name: "help",
     path: "/help/:pathMatch(.*)*",
     component: Help,
@@ -89,9 +82,30 @@ export default [
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
         next();
+        return;
+      }
+      // Already authenticated (typically returning from the OIDC roundtrip):
+      // hard-navigate to the deep link the router guard recorded so the
+      // stored absolute path (incl. frontend base) is honored verbatim.
+      const stored = $session.getLoginRedirectUrl(null);
+      if (stored) {
+        $session.followLoginRedirectUrl();
+        next(false);
       } else {
         next({ name: $session.getDefaultRoute() });
       }
+    },
+  },
+  {
+    name: "logout",
+    path: "/logout",
+    meta: { title: siteTitle, requiresAuth: false, hideNav: true },
+    beforeEnter: (to, from, next) => {
+      // signOut() resets client state synchronously so /login sees an
+      // unauthenticated user; the one-shot logout flag suppresses the next
+      // auto-OIDC bounce. Server DELETE runs best-effort in the background.
+      $session.signOut();
+      next({ name: loginRoute });
     },
   },
   {

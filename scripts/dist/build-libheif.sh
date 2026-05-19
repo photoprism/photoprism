@@ -78,8 +78,17 @@ rm -rf "/tmp/libheif"
 echo "Cloning git repository..."
 git clone -c advice.detachedHead=false -b "$LIBHEIF_VERSION" --depth 1 https://github.com/strukturag/libheif.git libheif
 cd libheif || exit
-(mkdir build && cd build && cmake --preset=release ..)
-make -C build
+
+EXTRA_CMAKE=()
+if [[ $VERSION_CODENAME == "jammy" ]]; then
+  # Ubuntu 22.04 (Jammy) ships libdav1d 0.9.x, which predates the Dav1dSettings::n_threads
+  # field that libheif 1.21+ writes. Skip the dav1d plugin on Jammy; AV1 decode still works
+  # via the aomdec plugin.
+  EXTRA_CMAKE+=("-DWITH_DAV1D=OFF")
+fi
+
+(mkdir build && cd build && cmake --preset=release "${EXTRA_CMAKE[@]}" ..) || exit 1
+make -C build || exit 1
 
 # Install heif-convert, heif-enc, heif-info, and heif-thumbnailer in "/usr/local".
 echo "Installing binaries..."

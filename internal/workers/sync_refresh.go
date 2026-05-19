@@ -14,7 +14,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		return false, nil
 	}
 
-	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
 
 	if err != nil {
 		return false, err

@@ -58,7 +58,7 @@ type MetricsResponse struct {
 // RegisterSecrets contains newly issued or rotated node secrets.
 // swagger:model RegisterSecrets
 type RegisterSecrets struct {
-	ClientSecret string `json:"ClientSecret,omitempty"`
+	ClientSecret string `json:"ClientSecret,omitempty"` //nolint:gosec // G117: Rotated OAuth client secret payload.
 	RotatedAt    string `json:"RotatedAt,omitempty"`
 }
 
@@ -70,7 +70,7 @@ type RegisterDatabase struct {
 	Port      int    `json:"Port"`
 	Name      string `json:"Name"`
 	User      string `json:"User"`
-	Password  string `json:"Password,omitempty"`
+	Password  string `json:"Password,omitempty"` //nolint:gosec // G117: Provisioned database password payload.
 	DSN       string `json:"DSN,omitempty"`
 	RotatedAt string `json:"RotatedAt,omitempty"`
 }

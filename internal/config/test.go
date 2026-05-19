@@ -205,7 +205,7 @@ func NewTestOptionsError() *Options {
 		OriginalsPath:  dataPath + "/originals",
 		ImportPath:     dataPath + "/import",
 		TempPath:       dataPath + "/temp",
-		DatabaseDriver: SQLite3,
+		DatabaseDriver: dsn.DriverSQLite3,
 		DatabaseDSN:    ".test-error.db",
 	}
 
@@ -244,7 +244,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 	cachedDb := false
 
 	// Try to restore test db from cache.
-	if len(testDbCache) > 0 && c.DatabaseDriver() == SQLite3 && !fs.FileExists(c.DatabaseDSN()) {
+	if len(testDbCache) > 0 && c.DatabaseDriver() == dsn.DriverSQLite3 && !fs.FileExists(c.DatabaseDSN()) {
 		if err := os.WriteFile(c.DatabaseDSN(), testDbCache, fs.ModeFile); err != nil {
 			log.Warnf("config: %s (restore test database)", err)
 		} else {
@@ -264,7 +264,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 
 	c.InitTestDb()
 
-	if testDbCache == nil && c.DatabaseDriver() == SQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
+	if testDbCache == nil && c.DatabaseDriver() == dsn.DriverSQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
 		testDbMutex.Lock()
 		defer testDbMutex.Unlock()
 
@@ -312,7 +312,7 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 }
 
 // NewTestConfig initializes test data so required directories exist before tests run.
-// See AGENTS.md (Test Data & Fixtures) and specs/dev/backend-testing.md for guidance.
+// See AGENTS.md (Test Data & Fixtures) for guidance.
 func NewTestConfig(dbName string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 

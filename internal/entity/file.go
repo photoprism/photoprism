@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/colors"
@@ -129,7 +130,7 @@ func (m File) RegenerateIndex() {
 	}
 
 	switch DbDialect() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files JOIN ? p ON p.id = files.photo_id SET files.photo_taken_at = p.taken_at_local WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)
@@ -141,7 +142,7 @@ func (m File) RegenerateIndex() {
 		Log("files", "regenerate time_index",
 			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) ELSE NULL END WHERE ?",
 				updateWhere).Error)
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files SET photo_taken_at = (SELECT p.taken_at_local FROM ? p WHERE p.id = photo_id) WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)

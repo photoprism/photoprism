@@ -3,11 +3,8 @@ package thumb
 import (
 	"fmt"
 	"image"
-	"image/png"
 	"path/filepath"
 	"runtime/debug"
-
-	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -28,23 +25,9 @@ func Png(srcFile, pngFile string, orientation int) (img image.Image, err error) 
 		return img, err
 	}
 
-	// Open source image.
-	img, err = imaging.Open(srcFile)
-
-	// Failed?
+	img, err = vipsConvert(srcFile, pngFile, orientation)
 	if err != nil {
 		log.Debugf("png: failed to open %s", clean.Log(filepath.Base(srcFile)))
-		return img, err
-	}
-
-	// Adjust orientation.
-	if orientation > 1 {
-		img = Rotate(img, orientation)
-	}
-
-	// Save PNG file.
-	if err = imaging.Save(img, pngFile, imaging.PNGCompressionLevel(png.BestCompression)); err != nil {
-		log.Errorf("png: failed to save %s", clean.Log(filepath.Base(pngFile)))
 		return img, err
 	}
 

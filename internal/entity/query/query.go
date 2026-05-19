@@ -29,15 +29,10 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 var log = event.Log
-
-// Supported database dialect identifiers.
-const (
-	MySQL   = "mysql"
-	SQLite3 = "sqlite3"
-)
 
 // Cols represents a list of database columns.
 type Cols []string
@@ -79,7 +74,7 @@ func DbDialect() string {
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
 	switch DbDialect() {
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		return 333
 	default:
 		return 1000

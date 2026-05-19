@@ -62,7 +62,7 @@ func (m *Model) Url(imgUrl string) (result Result, err error) {
 
 	var img []byte
 
-	if img, err = media.ReadUrl(imgUrl, scheme.HttpsData); err != nil {
+	if img, err = media.ReadUrlImage(imgUrl, scheme.HttpsData); err != nil {
 		return result, err
 	}
 

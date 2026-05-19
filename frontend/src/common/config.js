@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import $api from "common/api";
-import $event from "common/event";
+import $event, { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import * as themes from "options/themes";
 import * as options from "options/options";
 import { Photo } from "model/photo";
@@ -32,6 +32,20 @@ import { onInit, onSetTheme } from "common/hooks";
 import { ref, reactive } from "vue";
 
 onInit();
+
+// normalizeFrontendUri returns a normalized frontend base URI with a leading slash.
+const normalizeFrontendUri = (baseUri, frontendUri) => {
+  const fallbackUri = `${baseUri || ""}/library`;
+  const rawUri = typeof frontendUri === "string" && frontendUri.trim() !== "" ? frontendUri : fallbackUri;
+  const prefixedUri = rawUri.startsWith("/") ? rawUri : `/${rawUri}`;
+
+  return prefixedUri.replace(/\/+$/, "");
+};
+
+// frontendLoginUri returns the default login URI below the frontend base URI.
+const frontendLoginUri = (frontendUri) => {
+  return `${frontendUri.replace(/\/+$/, "")}/login`;
+};
 
 export default class Config {
   /**
@@ -65,8 +79,9 @@ export default class Config {
       this.theme = themes.Get("default");
       this.themeName = "";
       this.baseUri = "";
+      this.frontendUri = "/library";
       this.staticUri = "/static";
-      this.loginUri = "/library/login";
+      this.loginUri = frontendLoginUri(this.frontendUri);
       this.apiUri = "/api/v1";
       this.contentUri = this.apiUri;
       this.videoUri = this.apiUri;
@@ -81,8 +96,9 @@ export default class Config {
       return;
     } else {
       this.baseUri = values.baseUri ? values.baseUri : "";
+      this.frontendUri = normalizeFrontendUri(this.baseUri, values.frontendUri);
       this.staticUri = values.staticUri ? values.staticUri : this.baseUri + "/static";
-      this.loginUri = values.loginUri ? values.loginUri : this.baseUri + "/library/login";
+      this.loginUri = values.loginUri ? values.loginUri : frontendLoginUri(this.frontendUri);
       this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
       this.videoUri = values.videoUri ? values.videoUri : this.apiUri;
@@ -230,10 +246,10 @@ export default class Config {
     }
 
     switch (type) {
-      case "created":
+      case ACTION_CREATED:
         this.values.people.unshift(...data.entities);
         break;
-      case "updated":
+      case ACTION_UPDATED:
         for (let i = 0; i < data.entities.length; i++) {
           const values = data.entities[i];
 
@@ -248,7 +264,7 @@ export default class Config {
             });
         }
         break;
-      case "deleted":
+      case ACTION_DELETED:
         for (let i = 0; i < data.entities.length; i++) {
           const index = this.values.people.findIndex((m) => m.UID === data.entities[i]);
 
@@ -386,7 +402,9 @@ export default class Config {
     const perms = ["update", "search", "manage", "share", "delete"];
 
     perms.forEach((perm) => {
-      if (this.deny(resource, perm)) result.push(`disable-${perm}`);
+      if (this.deny(resource, perm)) {
+        result.push(`disable-${perm}`);
+      }
     });
 
     return result;
@@ -823,17 +841,17 @@ export default class Config {
 
   // isPublic returns true if the instance is running in public mode, i.e. without authentication.
   isPublic() {
-    return this.values && this.values.public;
+    return !!this.values?.public;
   }
 
   // isDemo returns true if the instance is running in demo mode for public or private testing.
   isDemo() {
-    return this.values && this.values.demo;
+    return !!this.values?.demo;
   }
 
   // isPortal returns true if this is a cluster portal server.
   isPortal() {
-    return this.values && this.values.portal;
+    return !!this.values?.portal;
   }
 
   // isPro returns true if this is team version.

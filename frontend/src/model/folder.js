@@ -38,9 +38,15 @@ export class Folder extends RestModel {
   classes(selected) {
     let classes = ["is-folder", "uid-" + this.UID];
 
-    if (this.Favorite) classes.push("is-favorite");
-    if (this.Private) classes.push("is-private");
-    if (selected) classes.push("is-selected");
+    if (this.Favorite) {
+      classes.push("is-favorite");
+    }
+    if (this.Private) {
+      classes.push("is-private");
+    }
+    if (selected) {
+      classes.push("is-selected");
+    }
 
     return classes;
   }

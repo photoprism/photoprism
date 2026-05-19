@@ -1,6 +1,7 @@
 package face
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
@@ -40,7 +41,6 @@ func TestEmbedding_Dist(t *testing.T) {
 		assert.InDelta(t, 5.0, a.Dist(b), 1e-9)
 		assert.InDelta(t, 5.0, b.Dist(a), 1e-9)
 	})
-
 	t.Run("MismatchedLength", func(t *testing.T) {
 		a := Embedding{0, 0}
 		b := Embedding{1}
@@ -61,16 +61,35 @@ func TestNewEmbedding_Normalized(t *testing.T) {
 	assert.InDelta(t, 1.0, math.Sqrt(sum), 1e-9)
 }
 
-var benchmarkDist float64
+var benchmarkEmbeddingDist float64
+
+// benchmarkEmbeddingPair returns deterministic embeddings for Dist benchmarks.
+func benchmarkEmbeddingPair(dim int) (Embedding, Embedding) {
+	a := make(Embedding, dim)
+	other := make(Embedding, dim)
+
+	scale := float64(dim)
+
+	for i := 0; i < dim; i++ {
+		a[i] = float64(i+1) / scale
+		other[i] = float64(dim-i) / scale
+	}
+
+	return a, other
+}
 
 func BenchmarkEmbeddingDist(b *testing.B) {
-	a := RandomEmbedding()
-	other := RandomEmbedding()
+	for _, dim := range []int{128, 512, 1024} {
+		b.Run(fmt.Sprintf("Dim%d", dim), func(b *testing.B) {
+			a, other := benchmarkEmbeddingPair(dim)
 
-	b.ReportAllocs()
+			b.SetBytes(int64(dim * 16))
+			b.ReportAllocs()
 
-	for b.Loop() {
-		benchmarkDist = a.Dist(other)
+			for b.Loop() {
+				benchmarkEmbeddingDist = a.Dist(other)
+			}
+		})
 	}
 }
 

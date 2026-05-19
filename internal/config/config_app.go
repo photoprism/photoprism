@@ -91,6 +91,7 @@ func (c *Config) AppConfig() pwa.Config {
 		DefaultLocale: c.DefaultLocale(),
 		Mode:          c.AppMode(),
 		BaseUri:       c.BaseUri("/"),
+		FrontendUri:   c.FrontendUri(""),
 		StaticUri:     c.StaticUri(),
 		SiteUrl:       c.SiteUrl(),
 		CdnUrl:        c.CdnUrl("/"),

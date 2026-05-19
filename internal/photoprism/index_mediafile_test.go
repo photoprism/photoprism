@@ -59,7 +59,7 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll(cfg)
-		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
+		mediaFile, err := NewMediaFile(cfg.SamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
 			t.Fatal(err)
 		}

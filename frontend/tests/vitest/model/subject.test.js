@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
-import { Subject, BatchSize } from "model/subject";
+import { Subject, BatchSize, MaxLength } from "model/subject";
 
 describe("model/subject", () => {
   let originalBatchSize;
@@ -11,6 +11,21 @@ describe("model/subject", () => {
 
   afterEach(() => {
     Subject.setBatchSize(originalBatchSize);
+  });
+
+  // Pins per-field caps to the backend VARCHAR columns on internal/entity/subject.go
+  // so client-side validation moves in lockstep with the server.
+  it("MaxLength mirrors the backend VARCHAR caps", () => {
+    expect(MaxLength).toEqual({
+      Name: 160,
+    });
+    expect(Object.isFrozen(MaxLength)).toBe(true);
+  });
+
+  it("trimInputs() strips whitespace from MaxLength string fields", () => {
+    const subject = new Subject({ Name: "  Alice  " });
+    subject.trimInputs();
+    expect(subject.Name).toBe("Alice");
   });
 
   it("should get face defaults", () => {

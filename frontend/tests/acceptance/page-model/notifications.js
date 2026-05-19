@@ -1,11 +1,11 @@
 import { Selector, t } from "testcafe";
 
 const showLogs = process.env.SHOW_LOGS == "true";
-const waitAfterClick = 350 // Please note that all t.click have to wait to allow the clicked item time to go away (300ms fade out).
+const waitAfterClick = 350; // Please note that all t.click have to wait to allow the clicked item time to go away (300ms fade out).
 
 export default class Page {
   constructor() {
-    this.notifyClose250 = Selector(".p-notify__close", {timeout: 250})    
+    this.notifyClose250 = Selector(".p-notify__close", {timeout: 250});    
   }
 
   logMessage(message) {
@@ -24,7 +24,7 @@ export default class Page {
         showLogs && this.logMessage("After  Click in closeAllEventPopups");
       } catch {
         showLogs && this.logMessage("After  Click In Catch in closeAllEventPopups");
-        showLogs && console.trace("notify close missed in closeAllEventPopups")
+        showLogs && console.trace("notify close missed in closeAllEventPopups");
       }
     }
     showLogs && console.timeEnd("closeAllEventPopups");
@@ -44,9 +44,9 @@ export default class Page {
         } catch {
           // ignore the error as the item may not show up
           showLogs && this.logMessage("After  Click In Catch in waitForSpecficEvent");
-          console.trace("notify close missed in waitForSpecficEvent " + event)
+          console.trace("notify close missed in waitForSpecficEvent " + event);
         } finally {
-          return
+          return;
         }
       }
       try {
@@ -55,7 +55,7 @@ export default class Page {
         showLogs && this.logMessage("After  Click in waitForSpecficEvent");
       } catch {
         showLogs && this.logMessage("After  Click In Catch in waitForSpecficEvent");
-        showLogs && console.trace("notify close missed in waitForSpecficEvent Pre")
+        showLogs && console.trace("notify close missed in waitForSpecficEvent Pre");
       }
     }
     showLogs && this.logMessage("Before Visible in waitForSpecficEvent");
@@ -67,80 +67,80 @@ export default class Page {
       } catch {
         // ignore the error as the item may not show up
         showLogs && this.logMessage("After  Click In Catch in waitForSpecficEvent");
-        showLogs && console.trace("notify close missed in waitForSpecficEvent")
+        showLogs && console.trace("notify close missed in waitForSpecficEvent");
       }
     }
   }
 
   async waitForFileDeleted(delay = 10000, close = true) {
-    showLogs && console.time("waitForFileDeleted")
+    showLogs && console.time("waitForFileDeleted");
     await this.waitForSpecficEvent("File deleted", delay, close);
-    showLogs && console.timeEnd("waitForFileDeleted")
+    showLogs && console.timeEnd("waitForFileDeleted");
   }  
 
   async waitForFoldersToLoad(delay, close) {
-    showLogs && console.time("waitForFoldersToLoad")
+    showLogs && console.time("waitForFoldersToLoad");
     await this.waitForSpecficEvent(/[fF]older/, delay, close);
-    showLogs && console.timeEnd("waitForFoldersToLoad")
+    showLogs && console.timeEnd("waitForFoldersToLoad");
   }
 
   async waitForImport(delay = 10000, close = true) {
-    showLogs && console.time("waitForImport")
+    showLogs && console.time("waitForImport");
     await this.waitForSpecficEvent("Import completed in", delay, close);
-    showLogs && console.timeEnd("waitForImport")
+    showLogs && console.timeEnd("waitForImport");
   }
 
   async waitForIndexing(delay = 10000, close = true) {
-    showLogs && console.time("waitForIndexing")
+    showLogs && console.time("waitForIndexing");
     await this.waitForSpecficEvent("Indexing completed in", delay, close);
-    showLogs && console.timeEnd("waitForIndexing")
+    showLogs && console.timeEnd("waitForIndexing");
   }
 
   async waitForPeopleToLoad(delay, close = true) {
-    showLogs && console.time("waitForPeopleToLoad")
+    showLogs && console.time("waitForPeopleToLoad");
     await this.waitForSpecficEvent(/(people|person) (found|loaded)/, delay, close);
-    showLogs && console.timeEnd("waitForPeopleToLoad")
+    showLogs && console.timeEnd("waitForPeopleToLoad");
   }
 
   async waitForPersonCoverUpdate(delay, close = true) {
-    showLogs && console.time("waitForPersonCoverUpdate")
+    showLogs && console.time("waitForPersonCoverUpdate");
     await this.waitForSpecficEvent("Person cover updated", delay, close);
-    showLogs && console.timeEnd("waitForPersonCoverUpdate")
+    showLogs && console.timeEnd("waitForPersonCoverUpdate");
   }
 
   async waitForPhotosToLoad(delay, close = true){
-    showLogs && console.time("waitForPhotosToLoad")
+    showLogs && console.time("waitForPhotosToLoad");
     await this.waitForSpecficEvent(/(picture|pictures) found/, delay, close);
-    showLogs && console.timeEnd("waitForPhotosToLoad")
+    showLogs && console.timeEnd("waitForPhotosToLoad");
   }
 
   async waitForAlbumsToLoad(delay, close = true){
-    showLogs && console.time("waitForAlbumsToLoad")
+    showLogs && console.time("waitForAlbumsToLoad");
     await this.waitForSpecficEvent(/(album|albums) found/, delay, close);
-    showLogs && console.timeEnd("waitForAlbumsToLoad")
+    showLogs && console.timeEnd("waitForAlbumsToLoad");
   }
 
   async waitForSearchToFinish(delay, close = true){
-    showLogs && console.time("waitForSearchToFinish")
+    showLogs && console.time("waitForSearchToFinish");
     await this.waitForSpecficEvent(/(found|contain|empty)/, delay, close);
-    showLogs && console.timeEnd("waitForSearchToFinish")
+    showLogs && console.timeEnd("waitForSearchToFinish");
   }
 
   async waitForUnstack(delay = 12000, close = true) {
-    showLogs && console.time("waitForUnstack")
+    showLogs && console.time("waitForUnstack");
     await this.waitForSpecficEvent("File removed from stack", delay, close);
-    showLogs && console.timeEnd("waitForUnstack")
+    showLogs && console.timeEnd("waitForUnstack");
   }
 
   async waitForUpload(delay = 15000, close = true) {
-    showLogs && console.time("waitForUpload")
+    showLogs && console.time("waitForUpload");
     await this.waitForSpecficEvent("Upload has been processed", delay, close);
-    showLogs && console.timeEnd("waitForUpload")
+    showLogs && console.timeEnd("waitForUpload");
   }
 
   async waitForUploadFailed(delay = 15000, close = true) {
-    showLogs && console.time("waitForUploadFailed")
+    showLogs && console.time("waitForUploadFailed");
     await this.waitForSpecficEvent("Upload failed", delay, close);
-    showLogs && console.timeEnd("waitForUploadFailed")
+    showLogs && console.timeEnd("waitForUploadFailed");
   }
 }

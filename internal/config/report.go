@@ -6,7 +6,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -102,7 +101,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"backup-albums-path", c.BackupAlbumsPath()},
 
 		// Indexing.
-		{"index-workers", fmt.Sprintf("%d", c.IndexWorkers())},
+		{"index-workers", fmt.Sprintf("%d (%s)", c.IndexWorkers(), c.IndexWorkersReason())},
 		{"index-schedule", c.IndexSchedule()},
 		{"wakeup-interval", c.WakeupInterval().String()},
 		{"auto-index", fmt.Sprintf("%d", c.AutoIndex()/time.Second)},
@@ -117,13 +116,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-backups", fmt.Sprintf("%t", c.DisableBackups())},
 		{"disable-restart", fmt.Sprintf("%t", c.DisableRestart())},
 		{"disable-webdav", fmt.Sprintf("%t", c.DisableWebDAV())},
+		{"disable-mcp", fmt.Sprintf("%t", c.DisableMCP())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
 		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},
 		{"disable-ffmpeg", fmt.Sprintf("%t", c.DisableFFmpeg())},
 		{"disable-exiftool", fmt.Sprintf("%t", c.DisableExifTool())},
-		{"disable-vips", fmt.Sprintf("%t", c.DisableVips())},
 		{"disable-sips", fmt.Sprintf("%t", c.DisableSips())},
 		{"disable-darktable", fmt.Sprintf("%t", c.DisableDarktable())},
 		{"disable-rawtherapee", fmt.Sprintf("%t", c.DisableRawTherapee())},
@@ -180,6 +179,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// URIs.
 		{"base-uri", c.BaseUri("/")},
+		{"frontend-uri", c.FrontendUri("")},
 		{"api-uri", c.ApiUri()},
 		{"static-uri", c.StaticUri()},
 		{"content-uri", c.ContentUri()},
@@ -195,7 +195,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	if c.Portal() {
 		rows = append(rows, [][]string{
 			{"portal-proxy", fmt.Sprintf("%t", c.PortalProxy())},
-			{"portal-proxy-prefix", c.PortalProxyPrefix()},
+			{"portal-proxy-uri", c.PortalProxyUri()},
 			{"portal-config-path", c.PortalConfigPath()},
 			{"portal-theme-path", c.PortalThemePath()},
 		}...)
@@ -214,7 +214,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
 		{"advertise-url", clean.UriRedacted(c.AdvertiseUrl())},
 
-		// Proxy Servers.
+		// Networking.
 		{"https-proxy", clean.UriRedacted(c.HttpsProxy())},
 		{"https-proxy-insecure", fmt.Sprintf("%t", c.HttpsProxyInsecure())},
 		{"trusted-platform", c.TrustedPlatform()},
@@ -222,6 +222,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"proxy-client-header", c.ProxyClientHeader()},
 		{"proxy-proto-header", strings.Join(c.ProxyProtoHeader(), ", ")},
 		{"proxy-proto-https", strings.Join(c.ProxyProtoHttps(), ", ")},
+		{"services-cidr", c.ServicesCIDR()},
 
 		// Web Server.
 		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
@@ -231,6 +232,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-key", c.TLSKey()},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
+		{"http-header-timeout", c.HttpHeaderTimeout().String()},
+		{"http-header-bytes", fmt.Sprintf("%d", c.HttpHeaderBytes())},
+		{"http-idle-timeout", c.HttpIdleTimeout().String()},
 		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-cache-maxage", fmt.Sprintf("%d", c.HttpCacheMaxAge())},
 		{"http-video-maxage", fmt.Sprintf("%d", c.HttpVideoMaxAge())},
@@ -303,7 +307,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"preview-token", c.PreviewToken()},
 		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},
-		{"thumb-filter", c.ThumbFilter().String()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
 		{"thumb-size-uncached", fmt.Sprintf("%d", c.ThumbSizeUncached())},
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},
@@ -326,27 +329,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 	}...)
 
-	switch faceEngine {
-	case face.EngineONNX:
-		rows = append(rows, [][]string{
-			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-		}...)
-	case face.EnginePigo:
-		rows = append(rows, [][]string{
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
-		}...)
-	default:
-		rows = append(rows, [][]string{
-			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
-		}...)
-	}
+	rows = append(rows, [][]string{
+		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+	}...)
 
 	rows = append(rows, [][]string{
 		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},

@@ -439,7 +439,7 @@ export default {
           if (context && typeof context.getParameter == "function") {
             return false;
           }
-        } catch (e) {
+        } catch {
           // WebGL is supported, but disabled.
         }
         return this.$gettext("WebGL support is disabled in your browser");

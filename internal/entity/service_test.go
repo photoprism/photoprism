@@ -141,7 +141,7 @@ func TestService_Directories(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		result, err := model.Directories()
+		result, err := model.Directories("")
 
 		if err != nil {
 			t.Fatal(err)
@@ -166,7 +166,7 @@ func TestService_Directories(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		result, err := model.Directories()
+		result, err := model.Directories("")
 
 		if err != nil {
 			t.Fatal(err)

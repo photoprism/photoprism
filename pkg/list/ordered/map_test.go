@@ -24,41 +24,35 @@ func TestGet(t *testing.T) {
 		_, ok := m.Get("foo")
 		assert.False(t, ok)
 	})
-
 	t.Run("ReturnsNotOKIfNonStringKeyDoesntExist", func(t *testing.T) {
 		m := ordered.NewMap[int, string]()
 		_, ok := m.Get(123)
 		assert.False(t, ok)
 	})
-
 	t.Run("ReturnsOKIfKeyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		_, ok := m.Get("foo")
 		assert.True(t, ok)
 	})
-
 	t.Run("ReturnsValueForKey", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		value, _ := m.Get("foo")
 		assert.Equal(t, "bar", value)
 	})
-
 	t.Run("ReturnsDynamicValueForKey", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
 		value, _ := m.Get("foo")
 		assert.Equal(t, "baz", value)
 	})
-
 	t.Run("KeyDoesntExistOnNonEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
 		_, ok := m.Get("bar")
 		assert.False(t, ok)
 	})
-
 	t.Run("ValueForKeyDoesntExistOnNonEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
@@ -73,26 +67,22 @@ func TestSet(t *testing.T) {
 		ok := m.Set("foo", "bar")
 		assert.True(t, ok)
 	})
-
 	t.Run("ReturnsTrueIfNonStringKeyIsNew", func(t *testing.T) {
 		m := ordered.NewMap[int, string]()
 		ok := m.Set(123, "bar")
 		assert.True(t, ok)
 	})
-
 	t.Run("ValueCanBeNonString", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		ok := m.Set(123, true)
 		assert.True(t, ok)
 	})
-
 	t.Run("ReturnsFalseIfKeyIsNotNew", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		ok := m.Set("foo", "bar")
 		assert.False(t, ok)
 	})
-
 	t.Run("SetThreeDifferentKeys", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
@@ -107,7 +97,6 @@ func TestReplaceKey(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.False(t, m.ReplaceKey("foo", "bar"))
 	})
-
 	t.Run("ReturnsFalseIfNewKeyAlreadyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
@@ -115,7 +104,6 @@ func TestReplaceKey(t *testing.T) {
 		assert.False(t, m.ReplaceKey("foo", "baz"))
 		assert.Equal(t, []string{"foo", "baz"}, slices.Collect(m.Keys()))
 	})
-
 	t.Run("ReturnsTrueIfOnlyOriginalKeyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
@@ -136,7 +124,6 @@ func TestReplaceKey(t *testing.T) {
 		_, ok = m.Get("foo") // original key
 		assert.False(t, ok)
 	})
-
 	t.Run("KeyMaintainsOrderWhenReplaced", func(t *testing.T) {
 		count := 100
 		// Build a larger map to help validate that the order is not coincidental.
@@ -168,13 +155,11 @@ func TestLen(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.Equal(t, 0, m.Len())
 	})
-
 	t.Run("SingleElementIsLenOne", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(123, true)
 		assert.Equal(t, 1, m.Len())
 	})
-
 	t.Run("ThreeElements", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
@@ -189,13 +174,11 @@ func TestKeys(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		assert.Empty(t, slices.Collect(m.Keys()))
 	})
-
 	t.Run("OneElement", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
 		assert.Equal(t, []int{1}, slices.Collect(m.Keys()))
 	})
-
 	t.Run("RetainsOrder", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		for i := 1; i < 10; i++ {
@@ -205,7 +188,6 @@ func TestKeys(t *testing.T) {
 			[]int{1, 2, 3, 4, 5, 6, 7, 8, 9},
 			slices.Collect(m.Keys()))
 	})
-
 	t.Run("ReplacingKeyDoesntChangeOrder", func(t *testing.T) {
 		m := ordered.NewMap[string, bool]()
 		m.Set("foo", true)
@@ -215,7 +197,6 @@ func TestKeys(t *testing.T) {
 			[]string{"foo", "bar"},
 			slices.Collect(m.Keys()))
 	})
-
 	t.Run("KeysAfterDelete", func(t *testing.T) {
 		m := ordered.NewMap[string, bool]()
 		m.Set("foo", true)
@@ -230,13 +211,11 @@ func TestDelete(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.False(t, m.Delete("foo"))
 	})
-
 	t.Run("KeyDoesExist", func(t *testing.T) {
 		m := ordered.NewMap[string, any]()
 		m.Set("foo", nil)
 		assert.True(t, m.Delete("foo"))
 	})
-
 	t.Run("KeyNoLongerExists", func(t *testing.T) {
 		m := ordered.NewMap[string, any]()
 		m.Set("foo", nil)
@@ -244,7 +223,6 @@ func TestDelete(t *testing.T) {
 		_, exists := m.Get("foo")
 		assert.False(t, exists)
 	})
-
 	t.Run("KeyDeleteIsIsolated", func(t *testing.T) {
 		m := ordered.NewMap[string, any]()
 		m.Set("foo", nil)
@@ -260,7 +238,6 @@ func TestMap_Front(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		assert.Nil(t, m.Front())
 	})
-
 	t.Run("NilOnEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
@@ -273,7 +250,6 @@ func TestMap_Back(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		assert.Nil(t, m.Back())
 	})
-
 	t.Run("NilOnEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
@@ -308,7 +284,6 @@ func TestGetElement(t *testing.T) {
 
 		assert.Equal(t, []any{"foo", "bar"}, results)
 	})
-
 	t.Run("ElementForKeyDoesntExistOnNonEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
@@ -373,7 +348,6 @@ func TestIterators(t *testing.T) {
 			i++
 		}
 	})
-
 	t.Run("ReverseIterator", func(t *testing.T) {
 		i := len(expected) - 1
 		for key, value := range m.AllFromBack() {
@@ -389,13 +363,11 @@ func TestMap_Has(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.False(t, m.Has("foo"))
 	})
-
 	t.Run("ReturnsTrueIfKeyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		assert.True(t, m.Has("foo"))
 	})
-
 	t.Run("KeyDoesNotExistAfterDelete", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")

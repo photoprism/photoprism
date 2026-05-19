@@ -2,7 +2,6 @@ package thumb
 
 import (
 	"github.com/davidbyttow/govips/v2/vips"
-	"github.com/disintegration/imaging"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -23,24 +22,6 @@ const (
 // String returns the downscaling filter name as string.
 func (a ResampleFilter) String() string {
 	return string(a)
-}
-
-// Imaging returns the downscaling filter for use with the "imaging" library.
-func (a ResampleFilter) Imaging() imaging.ResampleFilter {
-	switch a {
-	case ResampleBlackman:
-		return imaging.Blackman
-	case ResampleLanczos, ResampleAuto:
-		return imaging.Lanczos
-	case ResampleCubic:
-		return imaging.CatmullRom
-	case ResampleLinear:
-		return imaging.Linear
-	case ResampleNearest:
-		return imaging.NearestNeighbor
-	default:
-		return imaging.Lanczos
-	}
 }
 
 // Vips returns the downscaling filter for use with the "govips" library.

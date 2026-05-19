@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -86,6 +87,17 @@ func TestCreateSession(t *testing.T) {
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": 123, "password": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateSession(router)
+
+		body := `{"username":"` + strings.Repeat("a", 70*1024) + `","password":"photoprism"}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", body)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 	t.Run("PublicInvalidToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()

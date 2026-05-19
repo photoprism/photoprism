@@ -7,9 +7,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// State returns the full, normalized state name.
+// State returns the normalized state name clipped to at most txt.ClipName
+// runes; injection patterns (`${`, `ldap://`) drop the value entirely.
 func State(s, countryCode string) string {
-	if s == "" || reject(s, txt.ClipName) {
+	if s == "" || reject(s, 0) {
 		return Empty
 	}
 
@@ -49,6 +50,5 @@ func State(s, countryCode string) string {
 		s = normalized
 	}
 
-	// Return normalized state name.
-	return s
+	return txt.Clip(s, txt.ClipName)
 }

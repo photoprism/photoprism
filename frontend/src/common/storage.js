@@ -197,16 +197,34 @@ export class NamespacedStorage {
   }
 
   // Removes the namespaced key and optionally its legacy counterpart.
-  removeItem(key) {
+  removeItem(key, options = {}) {
     if (!key) {
       return;
     }
 
     this.storage.removeItem(this.namespacedKey(key));
 
-    if (this.allowLegacy && this.legacyClearKeys.has(key)) {
+    if (options.legacy !== false && this.allowLegacy && this.legacyClearKeys.has(key)) {
       this.storage.removeItem(key);
     }
+  }
+
+  // Reads a raw legacy value without namespacing or migration.
+  getLegacyItem(key) {
+    if (!key) {
+      return null;
+    }
+
+    return this.storage.getItem(key);
+  }
+
+  // Removes a raw legacy key without touching namespaced values.
+  removeLegacyItem(key) {
+    if (!key) {
+      return;
+    }
+
+    this.storage.removeItem(key);
   }
 
   // Clears only keys in the current namespace.

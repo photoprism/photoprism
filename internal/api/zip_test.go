@@ -15,6 +15,15 @@ func TestZip(t *testing.T) {
 	ZipCreate(router)
 	ZipDownload(router)
 
+	originalOptions := *conf.Options()
+
+	t.Cleanup(func() {
+		*conf.Options() = originalOptions
+	})
+
+	// Isolate ZIP output from shared singleton config mutations in other tests.
+	conf.Options().TempPath = t.TempDir()
+
 	t.Run("Download", func(t *testing.T) {
 		resetZipDownloadFixtures(t)
 

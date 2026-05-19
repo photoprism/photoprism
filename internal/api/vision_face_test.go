@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -177,5 +178,14 @@ func TestPostVisionFace(t *testing.T) {
 		PostVisionFace(router)
 		r := PerformRequest(app, http.MethodPost, "/api/v1/vision/face")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		PostVisionFace(router)
+
+		body := `{"images":["data:image/jpeg;base64,` + strings.Repeat("a", int(MaxVisionRequestBytes)) + `"]}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/vision/face", body)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }

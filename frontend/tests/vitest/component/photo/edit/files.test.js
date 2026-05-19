@@ -63,7 +63,9 @@ function mountPhotoFiles({
       features,
     })),
     get: vi.fn((key) => {
-      if (key === "experimental") return experimental;
+      if (key === "experimental") {
+        return experimental;
+      }
       if (baseConfig.get) {
         return baseConfig.get(key);
       }

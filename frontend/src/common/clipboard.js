@@ -229,7 +229,9 @@ export class Clipboard {
   }
 
   setIds(ids) {
-    if (!Array.isArray(ids)) return;
+    if (!Array.isArray(ids)) {
+      return;
+    }
 
     this.selection = ids;
     this.selectionMap = {};

@@ -86,7 +86,7 @@
                         hide-details
                         autocorrect="off"
                         autocapitalize="none"
-                        autocomplete="username"
+                        :autocomplete="usernameAutocomplete"
                         class="input-username text-selectable"
                         prepend-inner-icon="mdi-account"
                         @keyup.enter="onLogin"
@@ -105,7 +105,7 @@
                         hide-details
                         autocorrect="off"
                         autocapitalize="none"
-                        autocomplete="current-password"
+                        :autocomplete="passwordAutocomplete"
                         class="input-password text-selectable"
                         :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                         prepend-inner-icon="mdi-lock"
@@ -115,7 +115,7 @@
                     </v-col>
                   </template>
                   <v-col cols="12" class="auth-actions">
-                    <div class="action-buttons auth-buttons pb-1 d-flex ga-3 align-center justify-center">
+                    <div class="action-buttons auth-buttons pb-2 mb-0 d-flex ga-3 align-center justify-center">
                       <v-btn
                         v-if="enterCode"
                         :block="$vuetify.display.xs"
@@ -148,16 +148,26 @@
                         <v-icon :icon="$config.isRtl() ? 'mdi-chevron-left' : 'mdi-chevron-right'" end></v-icon>
                       </v-btn>
                     </div>
+                    <div class="pb-1 d-flex align-center justify-center opacity-90">
+                      <v-checkbox
+                        v-model="staySignedIn"
+                        :disabled="loading"
+                        density="compact"
+                        hide-details
+                        class="ma-0 pa-0 input-stay-signed-in text-secondary"
+                        :label="$gettext('Stay signed in on this device')"
+                      ></v-checkbox>
+                    </div>
                     <div
                       v-if="enterCode"
-                      class="auth-links text-center opacity-80"
+                      class="auth-links text-center opacity-90"
                       :class="{ clickable: !useRecoveryCode }"
                       @click.stop.prevent="onUseRecoveryCode"
                     >
                       {{ $gettext(`Can't access your authenticator app or device?`) }}
                       {{ $gettext(`Use your recovery code or contact an administrator for help.`) }}
                     </div>
-                    <div v-else-if="passwordResetUri" class="auth-links text-center opacity-80">
+                    <div v-else-if="passwordResetUri" class="auth-links text-center opacity-90">
                       <a :href="passwordResetUri" class="text-secondary">
                         {{ $gettext(`Forgot password?`) }}
                       </a>
@@ -204,6 +214,7 @@ export default {
       username: "",
       password: "",
       showPassword: false,
+      staySignedIn: true,
       useRecoveryCode: false,
       code: "",
       enterCode: false,
@@ -219,6 +230,29 @@ export default {
     };
   },
   computed: {
+    autocompleteSection() {
+      const storageNamespace = this.config?.storageNamespace;
+
+      if (typeof storageNamespace === "string" && storageNamespace.trim() !== "") {
+        const section = storageNamespace
+          .toLowerCase()
+          .replace(/[^a-z0-9-]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        if (section !== "") {
+          return `section-${section}`;
+        }
+      }
+
+      return "section-photoprism";
+    },
+    usernameAutocomplete() {
+      return `${this.autocompleteSection} username`;
+    },
+    passwordAutocomplete() {
+      return `${this.autocompleteSection} current-password`;
+    },
     loginDisabled() {
       if (this.loading) {
         return true;
@@ -231,10 +265,18 @@ export default {
     },
   },
   created() {
+    this.staySignedIn = this.currentStaySignedInState();
+
     const authError = getAppStorage().getItem("session.error");
     if (authError) {
       this.$notify.error(authError);
       getAppStorage().removeItem("session.error");
+    }
+
+    // Auto-redirect unauthenticated users when PHOTOPRISM_OIDC_REDIRECT is on,
+    // except for one render right after an explicit logout (one-shot flag).
+    if (!this.$session.isAuthenticated() && this.config.ext?.oidc?.enabled && this.config.ext?.oidc?.redirect && !this.$session.consumeLogoutSignal()) {
+      this.onOidcLogin();
     }
   },
   mounted() {
@@ -293,6 +335,20 @@ export default {
         });
       }
     },
+    currentStaySignedInState() {
+      if (typeof this.$session?.usesSessionStorage === "function") {
+        return !this.$session.usesSessionStorage();
+      }
+
+      return getAppStorage().getItem("session") !== "true";
+    },
+    applySessionPersistence() {
+      if (this.staySignedIn) {
+        this.$session.useLocalStorage();
+      } else {
+        this.$session.useSessionStorage();
+      }
+    },
     onLogin() {
       const username = this.username.trim();
       const password = this.password.trim();
@@ -302,6 +358,7 @@ export default {
         return;
       }
 
+      this.applySessionPersistence();
       this.loading = true;
       this.$session
         .login(username, password, code)
@@ -324,6 +381,7 @@ export default {
       }
 
       if (this.config.ext?.oidc?.loginUri) {
+        this.applySessionPersistence();
         this.loading = true;
         this.$session.followRedirect(this.config.ext.oidc.loginUri);
       } else {

@@ -22,7 +22,7 @@ import (
 
 // WebDAVHandler wraps the http request handler so that it can be customized.
 var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Handler) {
-	srv.ServeHTTP(c.Writer, c.Request)
+	ServeWebDAV(c.Writer, c.Request, srv)
 }
 
 // WebDAVWriteMethod returns true for methods that modify WebDAV state.

@@ -13,7 +13,9 @@ vi.mock("component/loading-bar.vue", async (importOriginal) => {
     ...actual,
     queue: (fn) => {
       fn((next) => {
-        if (next) next();
+        if (next) {
+          next();
+        }
       });
     },
   };

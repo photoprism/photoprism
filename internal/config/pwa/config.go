@@ -9,6 +9,7 @@ type Config struct {
 	Color         string `json:"color"`
 	Mode          string `json:"mode"`
 	BaseUri       string `json:"baseUri"`
+	FrontendUri   string `json:"frontendUri"`
 	StaticUri     string `json:"staticUri"`
 	SiteUrl       string `json:"siteUrl"`
 	CdnUrl        string `json:"cdnUrl"`

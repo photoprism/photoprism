@@ -1,0 +1,142 @@
+#### Base Image: Debian 13 (Trixie)
+FROM debian:trixie-slim
+
+# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://www.photoprism.app/
+
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism® Build Image (Debian 13)"
+LABEL org.opencontainers.image.description="Debian 13 (Trixie)"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
+
+# Declare build parameters.
+ARG TARGETARCH
+ARG BUILD_TAG
+
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
+ENV DO_NOT_TRACK=true \
+    GH_TELEMETRY=false \
+    DISABLE_TELEMETRY=1 \
+    DISABLE_ERROR_REPORTING=1 \
+    DISABLE_FEEDBACK_COMMAND=1 \
+    CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1 \
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
+    DISABLE_AUTOUPDATER=1 \
+    NO_UPDATE_NOTIFIER=true \
+    NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_FUND=false \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    PHOTOPRISM_ARCH=$TARGETARCH \
+    DOCKER_TAG=$BUILD_TAG \
+    DOCKER_ENV="develop" \
+    NODE_ENV="production" \
+    PS1="\u@$BUILD_TAG:\w\$ " \
+    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
+    DEBIAN_FRONTEND="noninteractive" \
+    TMPDIR="/tmp" \
+    TF_CPP_MIN_LOG_LEVEL=1 \
+    TF_ENABLE_ONEDNN_OPTS=1 \
+    MALLOC_ARENA_MAX=2 \
+    GOPATH="/go" \
+    GOBIN="/usr/local/bin" \
+    GO111MODULE="on" \
+    CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
+    PROG="photoprism" \
+    S6_KEEP_ENV=1 \
+    S6_VERBOSITY=0 \
+    S6_LOGGING=0
+
+# Copy scripts and package sources config.
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
+COPY --chown=root:root --chmod=644 /docker/develop/trixie/sources.list /etc/apt/sources.list.d/trixie.list
+COPY --chown=root:root --chmod=644 /.my.cnf /etc/my.cnf
+
+# Update base image and add dependencies.
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
+    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
+    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+    echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
+    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install \
+        libc6 ca-certificates sudo bash tzdata \
+        xz-utils gpg zip unzip wget curl rsync make nano \
+        jq lsof lshw sqlite3 mariadb-client postgresql-client \
+        imagemagick libvips-dev libyuv0 libjxl-dev libjxl-tools \
+        exiftool rawtherapee libheif-examples librsvg2-bin librav1e-dev \
+        ffmpeg libavcodec-extra libffmpeg-nvenc-dev libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
+        libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
+        va-driver-all libva2 iputils-ping dnsutils binutils binutils-gold \
+    && \
+    apt-get -qq install \
+        apt-utils pkg-config \
+        build-essential gcc g++ git gettext davfs2 chrpath ripgrep shellcheck apache2-utils \
+        chromium chromium-driver chromium-sandbox firefox-esr \
+        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev libavcodec-dev \
+        libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
+        libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
+        openssh-client bubblewrap pandoc python3-bs4 python3-pygments python3-pil python3-lxml \
+    && \
+    /scripts/install-nodejs.sh && \
+    /scripts/install-tensorflow.sh && \
+    /scripts/install-onnx.sh && \
+    /scripts/install-darktable.sh && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
+    mkdir -p /etc/skel/.config/go/telemetry && \
+    echo 'off 2025-01-03' > '/etc/skel/.config/go/telemetry/mode' && \
+    cp -r /etc/skel/.config /root/.config && \
+    /scripts/install-go.sh && \
+    /scripts/install-go-tools.sh && \
+    /scripts/install-hadolint.sh && \
+    /scripts/install-osv-scanner.sh && \
+    /scripts/install-gitleaks.sh && \
+    echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/skel/.bashrc && \
+    /scripts/install-dircolors.sh && \
+    cp /etc/skel/.bashrc /root/.bashrc && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \
+    /scripts/create-users.sh && \
+    install -d -m 0777 -o 1000 -g 1000 \
+        /photoprism/originals \
+        /photoprism/import \
+        /photoprism/storage \
+        /photoprism/storage/sidecar \
+        /photoprism/storage/albums \
+        /photoprism/storage/backups \
+        /photoprism/storage/config \
+        /photoprism/storage/cache && \
+    /scripts/install-s6.sh && \
+    /scripts/cleanup.sh
+
+# Download machine learning models and test data.
+RUN mkdir /tmp/photoprism && \
+    wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
+    wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
+    wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
+    wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
+
+# Set default working directory.
+WORKDIR "/go/src/github.com/photoprism/photoprism"
+
+# Expose the following container ports:
+# - 2342 (HTTP)
+# - 2343 (Acceptance Tests)
+# - 2442 (HTTP)
+# - 2443 (HTTPS)
+# - 9515 (Chromedriver)
+# - 40000 (Go Debugger)
+EXPOSE 2342 2343 2442 2443 9515 40000
+
+# Set default entrypoint and command.
+ENTRYPOINT ["/init"]
+CMD ["/scripts/cmd.sh", "tail", "-f", "/dev/null"]

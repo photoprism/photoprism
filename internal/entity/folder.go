@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"os"
 	"path"
 	"strings"
 	"sync"
@@ -65,7 +64,7 @@ func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
 func NewFolder(root, dir string, modTime time.Time) Folder {
 	now := Now()
 
-	dir = strings.Trim(dir, string(os.PathSeparator))
+	dir = clean.SlashPath(dir)
 
 	if dir == RootPath {
 		dir = ""
@@ -168,6 +167,103 @@ func (m *Folder) Create() error {
 		return nil
 	}
 
+	m.syncOriginalsAlbum()
+
+	return nil
+}
+
+// ReconcileOriginalsFolderAlbums ensures existing originals folders have matching folder albums.
+// When rootPath is set, only that path and its descendants are synchronized.
+func ReconcileOriginalsFolderAlbums(rootPath string) (reconciled int, err error) {
+	rootPath = originalsFolderAlbumReconcileScope(rootPath)
+
+	var folders Folders
+
+	// Keep this scoped to active folders only. Conflict handling uses unscoped
+	// lookups, but bulk reconciliation must not recreate/sync albums for
+	// soft-deleted folder rows.
+	stmt := Db().Where("root = ? AND path <> ''", RootOriginals)
+
+	if rootPath != "" {
+		stmt = stmt.Where("path = ? OR path LIKE ?", rootPath, rootPath+"/%")
+	}
+
+	if err = stmt.Order("path ASC").Find(&folders).Error; err != nil {
+		return reconciled, err
+	}
+
+	for i := range folders {
+		folders[i].syncOriginalsAlbum()
+		reconciled++
+	}
+
+	return reconciled, nil
+}
+
+// originalsFolderAlbumReconcileScope returns the effective reconciliation scope for a path.
+// If a slug collision is detected, the scope is expanded to the highest colliding
+// ancestor folder path so related rows can be repaired together.
+func originalsFolderAlbumReconcileScope(rootPath string) string {
+	rootPath = clean.UserPath(rootPath)
+
+	if rootPath == "" || !hasOriginalsFolderPath(rootPath) {
+		return rootPath
+	}
+
+	scopePath := rootPath
+
+	for hasOriginalsFolderAlbumSlugCollision(scopePath) {
+		parentPath := clean.UserPath(path.Dir(scopePath))
+
+		if parentPath == "" || parentPath == "." || parentPath == "/" || parentPath == scopePath {
+			break
+		}
+
+		scopePath = parentPath
+	}
+
+	return scopePath
+}
+
+// hasOriginalsFolderPath reports whether an active originals folder row exists for rootPath.
+func hasOriginalsFolderPath(rootPath string) bool {
+	var count int
+
+	if err := Db().Model(&Folder{}).Where("root = ? AND path = ?", RootOriginals, rootPath).Count(&count).Error; err != nil {
+		log.Debugf("folder: %s (check folder path %s)", err, clean.LogQuote(rootPath))
+		return false
+	}
+
+	return count > 0
+}
+
+// hasOriginalsFolderAlbumSlugCollision reports whether rootPath collides with another
+// active folder album that shares the same slug but stores a different non-empty path.
+func hasOriginalsFolderAlbumSlugCollision(rootPath string) bool {
+	albumSlugs := folderAlbumSlugCandidates(rootPath)
+
+	if len(albumSlugs) == 0 {
+		return false
+	}
+
+	var collisions int
+
+	if err := Db().Model(&Album{}).
+		Where("album_type = ? AND album_slug IN (?) AND album_path <> '' AND album_path <> ?", AlbumFolder, albumSlugs, rootPath).
+		Count(&collisions).Error; err != nil {
+		log.Debugf("folder: %s (check album slug collision for %s)", err, clean.LogQuote(rootPath))
+		return false
+	}
+
+	return collisions > 0
+}
+
+// syncOriginalsAlbum ensures an originals folder has a matching folder album.
+func (m *Folder) syncOriginalsAlbum() {
+	if m == nil || m.Root != RootOriginals || m.Path == "" {
+		return
+	}
+
 	f := form.SearchPhotos{
 		Path:   m.Path,
 		Public: true,
@@ -191,13 +287,12 @@ func (m *Folder) Create() error {
 			log.Infof("folder: added album %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
 		}
 	}
-
-	return nil
 }
 
-// FindFolder returns an existing folder if it exists.
+// FindFolder returns an existing folder, including soft-deleted rows.
+// This function is primarily used for create/index conflict resolution.
 func FindFolder(root, dir string) *Folder {
-	dir = strings.Trim(dir, string(os.PathSeparator))
+	dir = clean.SlashPath(dir)
 
 	if dir == RootPath {
 		dir = ""
@@ -205,7 +300,11 @@ func FindFolder(root, dir string) *Folder {
 
 	result := Folder{}
 
-	if err := Db().Where("path = ? AND root = ?", dir, root).First(&result).Error; err == nil {
+	if err := UnscopedDb().Where("path = ? AND root = ?", dir, root).First(&result).Error; err == nil {
+		if result.DeletedAt != nil {
+			log.Debugf("folder: found soft-deleted row for path %s in root %s during conflict lookup", clean.LogQuote(dir), clean.LogQuote(root))
+		}
+
 		return &result
 	}
 
@@ -214,14 +313,12 @@ func FindFolder(root, dir string) *Folder {
 
 // FirstOrCreateFolder returns the existing row, inserts a new row or nil in case of errors.
 func FirstOrCreateFolder(m *Folder) *Folder {
-	result := Folder{}
-
-	if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
-		return &result
+	if result := FindFolder(m.Root, m.Path); result != nil {
+		return result
 	} else if createErr := m.Create(); createErr == nil {
 		return m
-	} else if err := Db().Where("path = ? AND root = ?", m.Path, m.Root).First(&result).Error; err == nil {
-		return &result
+	} else if result = FindFolder(m.Root, m.Path); result != nil {
+		return result
 	} else {
 		log.Errorf("folder: %s (find or create %s)", createErr, m.Path)
 	}

@@ -105,6 +105,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Photo Search and Organization.
 	api.SearchPhotos(APIv1)
+	api.SearchPhotosView(APIv1)
 	api.SearchGeo(APIv1)
 	api.GetPlacesReverse(APIv1)
 	api.GetPlacesSearch(APIv1)
@@ -205,12 +206,16 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.ClusterMetrics(APIv1)
 	api.ClusterHealth(APIv1)
 
+	// Model Context Protocol (MCP). Can be disabled via --disable-mcp /
+	// PHOTOPRISM_DISABLE_MCP if the endpoint is not needed or should not
+	// be exposed (e.g. for security reasons).
+	api.ServeMCP(APIv1)
+
 	// Technical Endpoints.
 	api.GetSvg(APIv1)
 	api.GetStatus(APIv1)
 	api.GetErrors(APIv1)
 	api.DeleteErrors(APIv1)
-	api.SendFeedback(APIv1)
 	api.Connect(APIv1)
 	api.WebSocket(APIv1)
 	api.GetMetrics(APIv1)

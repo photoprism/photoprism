@@ -44,7 +44,14 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -115,7 +122,14 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -185,7 +199,14 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -245,7 +266,14 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -312,7 +340,14 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

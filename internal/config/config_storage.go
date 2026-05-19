@@ -266,8 +266,8 @@ func (c *Config) OptionsYaml() string {
 	return fs.Abs(c.options.OptionsYaml)
 }
 
-// configPath resolves the config path name from the CLI context.
-func configPath(ctx *cli.Context) string {
+// resolveConfigPath resolves the config path name from the CLI context.
+func resolveConfigPath(ctx *cli.Context) string {
 	if dir := ctx.String("config-path"); dir != "" {
 		return fs.Abs(dir)
 	}
@@ -297,7 +297,7 @@ func defaultsYaml(ctx *cli.Context) string {
 		return fs.Abs(fileName)
 	}
 
-	fileName = fs.ConfigFilePath(configPath(ctx), "defaults", fs.ExtYml)
+	fileName = fs.ConfigFilePath(resolveConfigPath(ctx), "defaults", fs.ExtYml)
 
 	if fs.FileExistsNotEmpty(fileName) {
 		return fs.Abs(fileName)
@@ -472,6 +472,11 @@ func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 	}
 
 	return dir, nil
+}
+
+// WebStoragePath returns the path used for serving web content.
+func (c *Config) WebStoragePath() string {
+	return filepath.Join(c.StoragePath(), fs.WebDir)
 }
 
 // TempPath returns the cached temporary directory name e.g. for uploads and downloads.
@@ -702,9 +707,9 @@ func (c *Config) LocalesPath() string {
 	return filepath.Join(c.AssetsPath(), fs.LocalesDir)
 }
 
-// ExamplesPath returns the example files path.
-func (c *Config) ExamplesPath() string {
-	return filepath.Join(c.AssetsPath(), fs.ExamplesDir)
+// SamplesPath returns the bundled sample files path.
+func (c *Config) SamplesPath() string {
+	return filepath.Join(c.AssetsPath(), fs.SamplesDir)
 }
 
 // TestdataPath returns the test files path.

@@ -1,6 +1,6 @@
 ## PhotoPrism — TensorFlow Package
 
-**Last Updated:** December 23, 2025
+**Last Updated:** March 3, 2026
 
 ### Overview
 
@@ -29,6 +29,11 @@ TensorFlow tensors are allocated in C memory and freed by Go GC finalizers in th
 ### Troubleshooting Tips
 
 - **Model fails to load:** Verify the SavedModel path, tags, and that `saved_model.pb` plus `variables/` exist under `assets/models/<name>`.
+- **FaceNet load error `Read less bytes than requested`:** The local `assets/models/facenet/saved_model.pb` file is usually incomplete or corrupted. Remove cached/downloaded files and reinstall:
+  - `rm -f /tmp/photoprism/facenet.zip`
+  - `rm -rf assets/models/facenet`
+  - `make dep-tensorflow` (or `scripts/download-facenet.sh`)
+  - Re-run the face tests (`go test ./internal/ai/face -run TestNet -count=1`)
 - **Input/output mismatch:** Check logs for inferred inputs/outputs and confirm `vision.yml` overrides (name, resolution, and `TensorFlow.Input/Output`).
 - **Unexpected probabilities:** Ensure logits are handled correctly and labels match output indices.
 - **High memory usage:** Confirm `PHOTOPRISM_TF_GC_EVERY` is set appropriately; model weights remain resident for the life of the process by design.

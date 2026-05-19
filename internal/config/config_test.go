@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -232,11 +231,11 @@ func TestConfig_AdminUser(t *testing.T) {
 	assert.Equal(t, "admin", c.AdminUser())
 }
 
-func TestConfig_ExamplesPath(t *testing.T) {
+func TestConfig_SamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	path := c.ExamplesPath()
-	assert.Equal(t, ProjectRoot+"/assets/examples", path)
+	path := c.SamplesPath()
+	assert.Equal(t, ProjectRoot+"/assets/samples", path)
 }
 
 func TestConfig_TemplatesPath(t *testing.T) {
@@ -314,84 +313,6 @@ func TestConfig_ThemePath(t *testing.T) {
 	assert.Equal(t, ProjectRoot+"/internal/config/testdata/static/img/wallpaper", c.ThemePath())
 	c.SetThemePath("")
 	assert.Equal(t, ProjectRoot+"/storage/testdata/config/theme", c.ThemePath())
-}
-
-func TestConfig_IndexWorkers(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.GreaterOrEqual(t, c.IndexWorkers(), 1)
-}
-
-func TestConfig_IndexSchedule(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, DefaultIndexSchedule, c.IndexSchedule())
-}
-
-func TestConfig_WakeupInterval(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	i := c.WakeupInterval()
-
-	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = 45
-
-	assert.Equal(t, "45s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = 0
-
-	assert.Equal(t, "15m0s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = 150
-
-	assert.Equal(t, "2m30s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = i
-
-	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
-}
-
-func TestConfig_AutoIndex(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, -1*time.Second, c.AutoIndex())
-}
-
-func TestConfig_AutoImport(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, 2*time.Hour, c.AutoImport())
-}
-
-func TestConfig_OriginalsLimit(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, -1, c.OriginalsLimit())
-	c.options.OriginalsLimit = 800
-	assert.Equal(t, 800, c.OriginalsLimit())
-}
-
-func TestConfig_OriginalsLimitBytes(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, int64(-1), c.OriginalsLimitBytes())
-	c.options.OriginalsLimit = 800
-	assert.Equal(t, int64(838860800), c.OriginalsLimitBytes())
-}
-
-func TestConfig_ResolutionLimit(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
-	c.options.ResolutionLimit = 800
-	assert.Equal(t, 800, c.ResolutionLimit())
-	c.options.ResolutionLimit = 950
-	assert.Equal(t, 900, c.ResolutionLimit())
-	c.options.ResolutionLimit = 0
-	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
-	c.options.ResolutionLimit = -1
-	assert.Equal(t, -1, c.ResolutionLimit())
-	c.options.Sponsor = false
-	assert.Equal(t, -1, c.ResolutionLimit())
-	c.options.Sponsor = true
-	assert.Equal(t, -1, c.ResolutionLimit())
 }
 
 func TestConfig_Serial(t *testing.T) {

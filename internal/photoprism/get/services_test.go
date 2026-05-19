@@ -1,6 +1,8 @@
 package get
 
 import (
+	"errors"
+	"net/url"
 	"testing"
 
 	gc "github.com/patrickmn/go-cache"
@@ -8,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/auth/session"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
@@ -65,5 +68,55 @@ func TestSession(t *testing.T) {
 }
 
 func TestOIDC(t *testing.T) {
-	assert.IsType(t, &oidc.Client{}, OIDC())
+	origConf := Config()
+	origFactory := newOIDCClient
+
+	t.Cleanup(func() {
+		newOIDCClient = origFactory
+		SetConfig(origConf)
+	})
+
+	t.Run("CachesSuccess", func(t *testing.T) {
+		tempConf := config.NewMinimalTestConfig(t.TempDir())
+		SetConfig(tempConf)
+
+		calls := 0
+		expected := &oidc.Client{}
+
+		newOIDCClient = func(_ *url.URL, _ string, _ string, _ string, _ string, _ bool) (*oidc.Client, error) {
+			calls++
+			return expected, nil
+		}
+
+		client := OIDC()
+		assert.Same(t, expected, client)
+		assert.Equal(t, 1, calls)
+		assert.Same(t, expected, OIDC())
+		assert.Equal(t, 1, calls)
+	})
+	t.Run("RetriesAfterFailure", func(t *testing.T) {
+		tempConf := config.NewMinimalTestConfig(t.TempDir())
+		SetConfig(tempConf)
+
+		calls := 0
+		expected := &oidc.Client{}
+
+		newOIDCClient = func(_ *url.URL, _ string, _ string, _ string, _ string, _ bool) (*oidc.Client, error) {
+			calls++
+			if calls == 1 {
+				return nil, errors.New("service discovery failed")
+			}
+
+			return expected, nil
+		}
+
+		assert.Nil(t, OIDC())
+		assert.Equal(t, 1, calls)
+
+		client := OIDC()
+		assert.Same(t, expected, client)
+		assert.Equal(t, 2, calls)
+		assert.Same(t, expected, OIDC())
+		assert.Equal(t, 2, calls)
+	})
 }

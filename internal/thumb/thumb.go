@@ -32,7 +32,6 @@ import (
 	"math"
 
 	_ "golang.org/x/image/bmp"  // register BMP decoder for thumbnail generation
-	_ "golang.org/x/image/tiff" // register TIFF decoder for thumbnail generation
 	_ "golang.org/x/image/webp" // register WEBP decoder for thumbnail generation
 
 	"github.com/photoprism/photoprism/internal/event"

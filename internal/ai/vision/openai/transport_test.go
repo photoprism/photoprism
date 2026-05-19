@@ -33,7 +33,6 @@ func TestParseErrorMessage(t *testing.T) {
 			t.Fatalf("expected message, got %q", msg)
 		}
 	})
-
 	t.Run("returns empty string when error is missing", func(t *testing.T) {
 		raw := []byte(`{"output":[]}`)
 		if msg := ParseErrorMessage(raw); msg != "" {

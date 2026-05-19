@@ -8,17 +8,17 @@ const RoleAliasNone = "none"
 
 // Roles that can be granted Permissions to use a Resource.
 const (
-	RoleDefault Role = "default"
-	RoleAdmin   Role = "admin"
-	RoleUser    Role = "user"
-	RoleViewer  Role = "viewer"
-	RoleGuest   Role = "guest"
-	RoleVisitor Role = "visitor"
-	RoleApp     Role = "app"
-	RoleService Role = "service"
-	RolePortal  Role = "portal"
-	RoleClient  Role = "client"
-	RoleNone    Role = ""
+	RoleDefault  Role = "default"
+	RoleAdmin    Role = "admin"
+	RoleUser     Role = "user"
+	RoleViewer   Role = "viewer"
+	RoleGuest    Role = "guest"
+	RoleVisitor  Role = "visitor"
+	RoleInstance Role = "instance"
+	RoleService  Role = "service"
+	RolePortal   Role = "portal"
+	RoleClient   Role = "client"
+	RoleNone     Role = ""
 )
 
 // Permissions to use a Resource that can be granted to a Role.
@@ -43,6 +43,7 @@ const (
 	ActionReact     Permission = "react"
 	ActionPublish   Permission = "publish"
 	ActionSubscribe Permission = "subscribe"
+	ActionAudit     Permission = "audit"
 	ActionManage    Permission = "manage"
 	ActionManageOwn Permission = "manage_own"
 )
@@ -76,6 +77,7 @@ const (
 	ResourceVision    Resource = "vision"
 	ResourceCluster   Resource = "cluster"
 	ResourceFeedback  Resource = "feedback"
+	ResourceMCP       Resource = "mcp"
 	ResourceDefault   Resource = "default"
 )
 

@@ -1,6 +1,6 @@
 ## PhotoPrism — OIDC Integration
 
-**Last Updated:** November 27, 2025
+**Last Updated:** February 22, 2026
 
 ### Overview
 
@@ -40,7 +40,7 @@
 
 - `internal/server/routes.go` registers the OIDC auth and callback endpoints.
 - `pkg/authn` defines required scopes and shared auth helpers.
-- `internal/auth/acl` and (Pro) `pro/internal/auth/ldap` handle role/group mapping; the planned OIDC group parsing will mirror this logic.
+- `internal/auth/acl` and private extension LDAP packages (`pro/internal/auth/ldap`, `portal/internal/auth/ldap`) handle role/group mapping; the planned OIDC group parsing will mirror this logic.
 - `internal/config` provides OIDC options/flags (issuer, client ID/secret, scopes, insecure).
 - `internal/event` supplies the logger used for audit and error reporting.
 
@@ -70,7 +70,7 @@ The following features are supported by the current implementation:
 
 #### Integration Guide for Entra ID
 
-1. Register an app in Microsoft Entra ID (v2) or reuse your existing PhotoPrism registration. Note the tenant ID and the application (client) ID.
+1. Register an app in Microsoft Entra ID (v2) or reuse your existing PhotoPrism registration. Note the instance ID and the application (client) ID.
 2. Redirect URI: add [`https://{hostname}/api/v1/oidc/redirect`](https://docs.photoprism.app/getting-started/advanced/openid-connect/#redirect-url).
 3. Token configuration → **Add optional claim** → **Token type** = ID (and Access if you prefer) → **Groups** → choose **Security groups**.
 4. Under “Emit groups as”, pick **Group name** (cloud-only) or **sAMAccountName** / **DNSDomainName\sAMAccountName** for synced AD; this makes tokens carry human-friendly names instead of GUIDs.
@@ -93,7 +93,7 @@ The following features are supported by the current implementation:
 Please note:
 
 - Entra ID security groups are only supported in PhotoPrism® Pro.
-- If tokens still contain GUIDs, revisit Token configuration → Groups and change “Emit groups as” to a name format; reissue tokens by signing out/in. Names must be unique in your tenant for deterministic mapping.
+- If tokens still contain GUIDs, revisit Token configuration → Groups and change “Emit groups as” to a name format; reissue tokens by signing out/in. Names must be unique in your instance for deterministic mapping.
 - Overage: when the `_claim_names.groups` marker is present and no groups are in the token, PhotoPrism cannot validate membership and will block login if `oidc-group` is set. (Graph-based resolution is described in the next section but is not yet implemented.)
 - For mixed environments, you can supply both names and GUIDs in `oidc-group` / `oidc-group-role`; all entries are normalized and deduplicated.
 
@@ -118,7 +118,7 @@ Implementation outline:
 
 - Config: add flags/options such as `oidc-graph-lookup` (enable), `oidc-graph-timeout` (default ~3–5s), `oidc-graph-mode` (`client` for Client Credentials, `obo` for On-Behalf-Of), and optional scope override (default `https://graph.microsoft.com/.default`). Surface in flags, reports, and `options.yml`.
 - Token acquisition:
-  - Client Credentials flow using the existing OIDC client ID/secret against the tenant token endpoint with Graph scope; requires admin-consented Application permission `Group.Read.All`.
+  - Client Credentials flow using the existing OIDC client ID/secret against the instance token endpoint with Graph scope; requires admin-consented Application permission `Group.Read.All`.
   - On-Behalf-Of flow exchanging the user access token plus the same secret; requires Delegated `Group.Read.All` consent.
 - Graph calls:
   - Prefer a single batch or `/v1.0/me/transitiveMemberOf?$select=id,displayName` to retrieve security groups; filter to `@odata.type` that ends with `group`.

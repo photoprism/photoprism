@@ -58,9 +58,17 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 		}
 
 		// Parse upload form.
+		LimitRequestBodyBytes(c, MaxAvatarUploadBytes)
+
 		f, err := c.MultipartForm()
 
 		if err != nil {
+			if IsRequestBodyTooLarge(err) {
+				event.AuditWarn([]string{ClientIP(c), "session %s", "upload avatar", "request too large"}, s.RefID)
+				AbortRequestTooLarge(c, i18n.ErrFileTooLarge)
+				return
+			}
+
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", status.Error(err)}, s.RefID)
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return

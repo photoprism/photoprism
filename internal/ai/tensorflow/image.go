@@ -1,13 +1,9 @@
 package tensorflow
 
 import (
-	"bytes"
 	"fmt"
 	"image"
-	_ "image/jpeg" // register JPEG decoder
-	_ "image/png"  // register PNG decoder
 	"math"
-	"os"
 	"runtime/debug"
 
 	tf "github.com/wamuir/graft/tensorflow"
@@ -32,25 +28,15 @@ func ImageFromFile(fileName string, input *PhotoInput) (*tf.Tensor, error) {
 	}
 }
 
-// OpenImage opens an image file and decodes it using the registered decoders.
+// OpenImage opens a natively supported image file and decodes it with PhotoPrism's direct dispatch helpers.
 func OpenImage(fileName string) (image.Image, error) {
-	f, err := os.Open(fileName) //nolint:gosec // fileName supplied by trusted caller; reading local images is expected
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if closeErr := f.Close(); closeErr != nil {
-			log.Debugf("tensorflow: %s (close image file)", closeErr)
-		}
-	}()
-	img, _, err := image.Decode(f)
-
+	img, _, err := fs.DecodeImageFile(fileName)
 	return img, err
 }
 
 // ImageFromBytes converts raw image bytes into a tensor using the provided input definition.
 func ImageFromBytes(b []byte, input *PhotoInput, builder *ImageTensorBuilder) (*tf.Tensor, error) {
-	img, _, imgErr := image.Decode(bytes.NewReader(b))
+	img, _, imgErr := fs.DecodeImageData(b)
 
 	if imgErr != nil {
 		return nil, imgErr

@@ -11,28 +11,24 @@ func TestResponseErr(t *testing.T) {
 			t.Fatalf("expected nil-response error, got %v", err)
 		}
 	})
-
 	t.Run("HTTPErrorWithMessage", func(t *testing.T) {
 		resp := &Response{Code: 429, Error: "too many requests"}
 		if err := resp.Err(); err == nil || err.Error() != "too many requests" {
 			t.Fatalf("expected message error, got %v", err)
 		}
 	})
-
 	t.Run("HTTPErrorWithoutMessage", func(t *testing.T) {
 		resp := &Response{Code: 500}
 		if err := resp.Err(); err == nil || err.Error() != "error 500" {
 			t.Fatalf("expected formatted error, got %v", err)
 		}
 	})
-
 	t.Run("NoResult", func(t *testing.T) {
 		resp := &Response{Code: 200}
 		if err := resp.Err(); err == nil || err.Error() != "no result" {
 			t.Fatalf("expected no-result error, got %v", err)
 		}
 	})
-
 	t.Run("HasLabels", func(t *testing.T) {
 		resp := &Response{
 			Code:   200,
@@ -43,7 +39,6 @@ func TestResponseErr(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	})
-
 	t.Run("HasCaption", func(t *testing.T) {
 		resp := &Response{
 			Code:   200,

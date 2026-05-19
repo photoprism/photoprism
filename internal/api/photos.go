@@ -104,7 +104,14 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		}
 
 		// 2) Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err = c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
