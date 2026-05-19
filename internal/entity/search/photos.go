@@ -896,10 +896,17 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
 			}
 		} else if txt.NotEmpty(frm.Albums) {
+			var wheres []string
+			var values [][]any
+			switch entity.DbDialect() {
+			case dsn.DialectPostgreSQL:
+				wheres, values = LikeAnyWord("lower(a.album_title)", strings.ToLower(frm.Albums))
+			default:
+				wheres, values = LikeAnyWord("a.album_title", frm.Albums)
+			}
 
-			wheres, values := LikeAnyWord("a.album_title", frm.Albums)
 			for i, where := range wheres {
-				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (?))", gorm.Expr(where, values[i]...))
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (?))", gorm.Expr(where, values[i]...))
 			}
 		}
 	}
