@@ -21,12 +21,12 @@ import (
 // "config: database not connected" during test runs, consider moving shutdown
 // behavior behind an interface or gating it for tests.
 
-// TestMain executes testMain returning it's results.  It is done this way so that defer can be used to cleanup.
+// TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
-	os.Exit(testMain(m))
+	os.Exit(runTestMain(m))
 }
 
-func testMain(m *testing.M) int {
+func runTestMain(m *testing.M) int {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	log = logrus.StandardLogger()
