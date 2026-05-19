@@ -470,12 +470,10 @@ export default class $util {
     return navigator.maxTouchPoints > 0;
   }
 
-  // isMobile performs a basic user-agent and capability check for mobile devices.
+  // isMobile returns true when the current user agent or touch capability indicates a mobile device.
+  // The `> 2` touch check covers iPads in desktop mode, where the user agent omits the mobile hint.
   static isMobile() {
-    return (
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 2)
-    );
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|IEMobile|Opera Mini/i.test(navigator?.userAgent) || navigator?.maxTouchPoints > 2;
   }
 
   // isHttps returns true when the current page is served over HTTPS.

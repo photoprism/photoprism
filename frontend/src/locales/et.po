@@ -70,7 +70,7 @@ msgid "%{n} pictures found"
 msgstr "%{n} pilti leitud"
 
 #: src/common/form.js:286 src/common/form.js:291
-#: src/component/lightbox/sidebar.vue:1728
+#: src/component/lightbox/sidebar.vue:1637
 msgid "%{s} is too long"
 msgstr "%{s} on liiga pikk"
 
@@ -127,7 +127,7 @@ msgstr "Juurdepääsutunnus"
 
 #: src/component/navigation.vue:543 src/component/navigation.vue:676
 #: src/component/navigation.vue:860 src/component/service/upload.vue:25
-#: src/locales.js:335 src/model/service.js:70 src/model/user.js:151
+#: src/locales.js:335 src/model/service.js:80 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:334
 msgid "Account"
 msgstr "Konto"
@@ -205,7 +205,7 @@ msgstr "Tegevus"
 msgid "Add"
 msgstr "Lisa"
 
-#: src/component/lightbox/sidebar.vue:475
+#: src/component/lightbox/sidebar.vue:468
 #: src/component/photo/edit/people.vue:96
 msgid "Add %{s}?"
 msgstr "Lisa %{s}?"
@@ -228,11 +228,11 @@ msgstr "Lisa album"
 msgid "Add Link"
 msgstr "Lisa link"
 
-#: src/component/lightbox/sidebar.vue:897
+#: src/component/lightbox/sidebar.vue:876
 msgid "Add Notes"
 msgstr "Lisa märkmeid"
 
-#: src/component/lightbox/sidebar.vue:475
+#: src/component/lightbox/sidebar.vue:468
 #: src/component/photo/edit/people.vue:135
 #: src/component/photo/edit/people.vue:96
 msgid "Add person?"
@@ -250,11 +250,11 @@ msgstr "Lisa pilte otsingutulemustest neid valides."
 msgid "Add to album"
 msgstr "Lisa albumisse"
 
-#: src/component/input/chip-selector.vue:187
+#: src/component/input/chip-selector.vue:186
 msgid "Add to all"
 msgstr "Lisa kõigile"
 
-#: src/component/input/chip-selector.vue:187
+#: src/component/input/chip-selector.vue:186
 msgid "Add to all selected photos"
 msgstr "Lisa kõigile valitud fotodele"
 
@@ -340,8 +340,8 @@ msgstr "Album lisatud"
 msgid "Album deleted"
 msgstr "Album kustutatud"
 
-#: src/app/routes.js:198 src/component/album/toolbar.vue:118
-#: src/component/lightbox/sidebar.vue:291 src/component/navigation.vue:191
+#: src/app/routes.js:219 src/component/album/toolbar.vue:118
+#: src/component/lightbox/sidebar.vue:284 src/component/navigation.vue:191
 #: src/component/navigation.vue:712 src/component/photo/batch-edit.vue:414
 #: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
 #: src/options/options.js:257
@@ -454,7 +454,7 @@ msgstr "Kõrgus (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:279 src/common/util.js:845
+#: src/app/routes.js:300 src/common/util.js:845
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -508,7 +508,7 @@ msgstr "Muudatuste kinnitamine ja salvestamine"
 msgid "Apps and Devices"
 msgstr "Rakendused ja seadmed"
 
-#: src/component/lightbox.vue:2907 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:2906 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Arhiveeritud"
@@ -547,7 +547,7 @@ msgstr "Kas oled kindel, et soovid selle faili lõplikult kustutada?"
 msgid "Are you sure?"
 msgstr "Kas sa oled kindel?"
 
-#: src/component/lightbox/sidebar.vue:854
+#: src/component/lightbox/sidebar.vue:833
 #: src/component/photo/batch-edit.vue:382
 #: src/component/photo/batch-edit.vue:384
 #: src/component/photo/edit/details.vue:319
@@ -566,7 +566,7 @@ msgstr "Küljesuhe"
 msgid "Attributes"
 msgstr "Atribuudid"
 
-#: src/app/routes.js:272 src/common/util.js:843
+#: src/app/routes.js:293 src/common/util.js:843
 #: src/component/navigation.vue:198 src/component/navigation.vue:199
 #: src/component/navigation.vue:211 src/component/navigation.vue:220
 #: src/component/navigation.vue:248 src/options/options.js:358
@@ -591,9 +591,8 @@ msgstr "Autentimine"
 msgid "Auto"
 msgstr "Auto"
 
-#: src/component/photo/face-marker-overlay.vue:94
-#: src/component/photo/face-marker-overlay.vue:95
-#: src/component/settings/apps.vue:50
+#: src/component/meta/face/markers.vue:94
+#: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:50
 msgid "Back"
 msgstr "tagasi"
 
@@ -682,7 +681,7 @@ msgstr "Hõivatud, palun oota…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Meie poolt pakutavat tarkvara ja teenuseid kasutades nõustud kasutustingimuste, privaatsuspoliitika ja käitumiskoodeksiga."
 
-#: src/app/routes.js:211 src/component/navigation.vue:390
+#: src/app/routes.js:232 src/component/navigation.vue:390
 #: src/options/options.js:263 src/page/settings/general.vue:96
 msgid "Calendar"
 msgstr "Kalender"
@@ -729,14 +728,14 @@ msgstr "Rohkem objekte ei saa valida"
 #: src/component/label/edit/dialog.vue:43
 #: src/component/meta/camera/dialog.vue:118
 #: src/component/meta/datetime/dialog.vue:120
+#: src/component/meta/face/markers.vue:66
+#: src/component/meta/face/markers.vue:85
 #: src/component/meta/location/dialog.vue:115
 #: src/component/people/edit/dialog.vue:46
-#: src/component/photo/album/dialog.vue:64
-#: src/component/photo/face-marker-overlay.vue:66
-#: src/component/photo/face-marker-overlay.vue:85
-#: src/component/service/add.vue:97 src/component/service/edit.vue:232
-#: src/component/service/remove.vue:19 src/component/service/upload.vue:57
-#: src/component/settings/apps.vue:151 src/component/settings/passcode.vue:101
+#: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
+#: src/component/service/edit.vue:232 src/component/service/remove.vue:19
+#: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
+#: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
 #: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
@@ -748,7 +747,7 @@ msgstr "Katkesta"
 msgid "Cannot copy to clipboard"
 msgstr "Ei saa kopeerida lõikelauale"
 
-#: src/common/util.js:885 src/component/lightbox/sidebar.vue:813
+#: src/common/util.js:885 src/component/lightbox/sidebar.vue:792
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -800,7 +799,7 @@ msgstr "Muudatuste salvestamine ebaõnnestus"
 #: src/component/user/edit/dialog.vue:494
 #: src/component/user/edit/dialog.vue:418
 #: src/component/album/edit/dialog.vue:172
-#: src/component/label/edit/dialog.vue:102 src/component/lightbox.vue:2859
+#: src/component/label/edit/dialog.vue:102 src/component/lightbox.vue:2858
 #: src/component/photo/batch-edit.vue:1466
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -855,8 +854,8 @@ msgstr "Kliendi volitused"
 #: src/page/admin/sessions.vue:184 src/component/user/edit/dialog.vue:316
 #: src/page/admin/sessions.vue:224 src/page/cluster/nodes.vue:188
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1293
-#: src/component/lightbox.vue:1294 src/component/lightbox.vue:469
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1292
+#: src/component/lightbox.vue:1293 src/component/lightbox.vue:468
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -881,7 +880,7 @@ msgstr "Kliendi volitused"
 msgid "Close"
 msgstr "Sulge"
 
-#: src/app/routes.js:115
+#: src/app/routes.js:136
 msgid "Cluster"
 msgstr "Klaster"
 
@@ -926,6 +925,7 @@ msgstr "Täielik taasskannimine"
 msgid "Confidence"
 msgstr "Kindlus"
 
+#: src/component/meta/face/markers.vue:59
 #: src/component/meta/location/dialog.vue:118
 #: src/component/meta/location/dialog.vue:58
 #: src/component/meta/location/dialog.vue:59
@@ -935,7 +935,6 @@ msgstr "Kindlus"
 #: src/component/photo/album/dialog.vue:34
 #: src/component/photo/album/dialog.vue:43
 #: src/component/photo/album/dialog.vue:67
-#: src/component/photo/face-marker-overlay.vue:59
 #: src/component/settings/passcode.vue:104
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
@@ -1016,7 +1015,7 @@ msgstr "Kopeeritud lõikelauale"
 msgid "Copy"
 msgstr "Kopeeri"
 
-#: src/component/lightbox/sidebar.vue:840
+#: src/component/lightbox/sidebar.vue:819
 #: src/component/photo/batch-edit.vue:367
 #: src/component/photo/batch-edit.vue:369
 #: src/component/photo/edit/details.vue:306
@@ -1253,7 +1252,7 @@ msgstr "Lülitab vektorgraafika toetuse välja."
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Lülitab välja video transkodeerimise ja pisipildi väljavõtte."
 
-#: src/component/lightbox/sidebar.vue:467
+#: src/component/lightbox/sidebar.vue:460
 #: src/component/photo/batch-edit.vue:470
 #: src/component/photo/edit/details.vue:384
 msgid "Discard"
@@ -1263,16 +1262,16 @@ msgstr "Viska ära"
 msgid "Discard changes and close"
 msgstr "Viska muudatused kõrvale ja sulge"
 
-#: src/component/lightbox/sidebar.vue:940
+#: src/component/lightbox/sidebar.vue:915
 msgid "Discard invalid changes?"
 msgstr "Kas kehtetud muudatused visatakse kõrvale?"
 
-#: src/component/lightbox/sidebar.vue:942
+#: src/component/lightbox/sidebar.vue:917
 msgid "Discard unsaved changes?"
 msgstr "Salvestamata muudatused ära visata?"
 
-#: src/app/routes.js:583 src/app/routes.js:590 src/app/routes.js:597
-#: src/app/routes.js:604
+#: src/app/routes.js:604 src/app/routes.js:611 src/app/routes.js:618
+#: src/app/routes.js:625
 msgid "Discover"
 msgstr "Avasta"
 
@@ -1324,7 +1323,7 @@ msgstr "Ärge kasutage ImageMagicki piltide teisendamiseks."
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ärge kasutage RawTherapee't RAW-piltide teisendamiseks."
 
-#: src/component/lightbox/sidebar.vue:201 src/component/settings/apps.vue:51
+#: src/component/lightbox/sidebar.vue:194 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
 #: src/component/share/dialog.vue:162
@@ -1337,7 +1336,7 @@ msgid "Done."
 msgstr "Tehtud."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1520
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1519
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/content.vue:169
 #: src/page/settings/general.vue:170
@@ -1354,7 +1353,7 @@ msgstr "Laadi alla kaugfailid"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:2947 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:2946 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:227
@@ -1389,11 +1388,11 @@ msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dünaamiline suuruse limiit: %{n}px"
 
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1424 src/component/lightbox.vue:1425
+#: src/component/lightbox.vue:1423 src/component/lightbox.vue:1424
 #: src/component/lightbox/sidebar.vue:110
 #: src/component/lightbox/sidebar.vue:131
 #: src/component/lightbox/sidebar.vue:164
-#: src/component/lightbox/sidebar.vue:201
+#: src/component/lightbox/sidebar.vue:194
 #: src/component/lightbox/sidebar/toolbar.vue:32
 #: src/component/photo/clipboard.vue:60 src/page/settings/general.vue:200
 msgid "Edit"
@@ -1467,7 +1466,7 @@ msgstr "Sisestage kuupäev"
 msgid "Enter dates"
 msgstr "Sisestage kuupäevad"
 
-#: src/component/input/chip-selector.vue:128
+#: src/component/input/chip-selector.vue:127
 msgid "Enter item name..."
 msgstr "Sisestage kirje nimi..."
 
@@ -1483,12 +1482,12 @@ msgstr "Sisesta kontrollkood"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Toimingu kinnitamiseks ja jätkamiseks sisestage oma parool:"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:473
+#: src/page/connect.vue:14 src/component/lightbox.vue:472
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Viga"
 
-#: src/app/routes.js:399 src/component/navigation.vue:370
+#: src/app/routes.js:420 src/component/navigation.vue:370
 #: src/component/navigation.vue:371 src/component/navigation.vue:383
 #: src/component/navigation.vue:392 src/component/navigation.vue:505
 msgid "Errors"
@@ -1562,31 +1561,31 @@ msgstr "Lingi eemaldamine ebaõnnestus"
 msgid "Failed to connect account."
 msgstr "Konto ühendamine ebaõnnestus."
 
-#: src/component/lightbox.vue:2028
+#: src/component/lightbox.vue:2027
 msgid "Failed to remove face marker"
 msgstr "Ei õnnestunud eemaldada näomarkerit"
 
-#: src/component/lightbox.vue:1961
+#: src/component/lightbox.vue:1960
 msgid "Failed to remove name"
 msgstr "Nimi ei õnnestunud eemaldada"
 
-#: src/component/lightbox/sidebar.vue:1754
-#: src/component/lightbox/sidebar.vue:2010
-#: src/component/lightbox/sidebar.vue:2053
+#: src/component/lightbox/sidebar.vue:1661
+#: src/component/lightbox/sidebar.vue:1894
+#: src/component/lightbox/sidebar.vue:1935
+#: src/component/lightbox/sidebar.vue:1993
+#: src/component/lightbox/sidebar.vue:2013
 #: src/component/lightbox/sidebar.vue:2120
-#: src/component/lightbox/sidebar.vue:2142
-#: src/component/lightbox/sidebar.vue:2256
-#: src/component/lightbox/sidebar.vue:2279
-#: src/component/lightbox/sidebar.vue:2309
+#: src/component/lightbox/sidebar.vue:2143
+#: src/component/lightbox/sidebar.vue:2173
 #: src/component/photo/batch-edit.vue:1473
 msgid "Failed to save changes"
 msgstr "Muudatusi ei õnnestunud salvestada"
 
-#: src/component/lightbox.vue:1933
+#: src/component/lightbox.vue:1932
 msgid "Failed to save face marker"
 msgstr "Ebaõnnestus näo märkimine"
 
-#: src/component/lightbox/sidebar.vue:1479
+#: src/component/lightbox/sidebar.vue:1416
 msgid "Failed to save name"
 msgstr "Nime ei õnnestunud salvestada"
 
@@ -1612,7 +1611,7 @@ msgstr "Kiire"
 msgid "Favorite"
 msgstr "Lemmik"
 
-#: src/app/routes.js:244 src/component/navigation.vue:310
+#: src/app/routes.js:265 src/component/navigation.vue:310
 #: src/options/options.js:261 src/page/albums.vue:388
 msgid "Favorites"
 msgstr "Lemmikud"
@@ -1625,12 +1624,12 @@ msgstr "Funktsiooni taotlus"
 msgid "Female"
 msgstr "Naine"
 
-#: src/common/util.js:871 src/component/lightbox/sidebar.vue:1098
+#: src/common/util.js:871 src/component/lightbox/sidebar.vue:1068
 #: src/component/photo/edit/info.vue:94 src/model/file.js:270
 msgid "File"
 msgstr "Fail"
 
-#: src/app/routes.js:368
+#: src/app/routes.js:389
 msgid "File Browser"
 msgstr "Failibrauser"
 
@@ -1693,7 +1692,7 @@ msgstr "Kaust sisaldab %{n} faili"
 msgid "Folder is empty"
 msgstr "Kaust on tühi"
 
-#: src/app/routes.js:224 src/component/navigation.vue:457
+#: src/app/routes.js:245 src/component/navigation.vue:457
 #: src/options/options.js:266
 msgid "Folders"
 msgstr "Kaustad"
@@ -1720,7 +1719,7 @@ msgstr "Kaadrid"
 msgid "Full Access"
 msgstr "Täielik juurdepääs"
 
-#: src/component/lightbox.vue:1370 src/component/lightbox.vue:1371
+#: src/component/lightbox.vue:1369 src/component/lightbox.vue:1370
 msgid "Fullscreen"
 msgstr "Täisekraan"
 
@@ -1795,7 +1794,7 @@ msgstr "Abi ja tugi"
 msgid "Hidden"
 msgstr "Peidetud"
 
-#: src/app/routes.js:383
+#: src/app/routes.js:404
 msgid "Hidden Files"
 msgstr "Peidetud failid"
 
@@ -1803,11 +1802,11 @@ msgstr "Peidetud failid"
 msgid "Hide"
 msgstr "Peida"
 
-#: src/component/lightbox.vue:1542
+#: src/component/lightbox.vue:1541
 msgid "Hide Caption"
 msgstr "Peida pildiallkiri"
 
-#: src/component/lightbox/sidebar.vue:214
+#: src/component/lightbox/sidebar.vue:207
 msgid "Hide face markers"
 msgstr "Peida näo markerid"
 
@@ -1904,7 +1903,7 @@ msgstr "Indekseerimine"
 msgid "Indexing media and sidecar files…"
 msgstr "Meedia- ja abifailide indekseerimine…"
 
-#: src/component/lightbox.vue:1318 src/component/lightbox.vue:1319
+#: src/component/lightbox.vue:1317 src/component/lightbox.vue:1318
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Teave"
@@ -2001,7 +2000,7 @@ msgstr "JPEG- ja pisipildid renderdatakse automaatselt vastavalt vajadusele."
 msgid "Keyword"
 msgstr "Märksõna"
 
-#: src/component/lightbox/sidebar.vue:882
+#: src/component/lightbox/sidebar.vue:861
 #: src/component/photo/edit/details.vue:347
 #: src/component/photo/edit/details.vue:350
 msgid "Keywords"
@@ -2012,8 +2011,8 @@ msgstr "Märksõnad"
 msgid "Label"
 msgstr "Silt"
 
-#: src/page/cluster/nodes.vue:155 src/app/routes.js:414
-#: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
+#: src/page/cluster/nodes.vue:155 src/app/routes.js:435
+#: src/component/lightbox/sidebar.vue:344 src/component/navigation.vue:430
 #: src/component/photo/batch-edit.vue:429
 #: src/component/photo/edit/dialog.vue:37
 #: src/component/photo/edit/dialog.vue:38
@@ -2086,13 +2085,13 @@ msgstr "Õigusalane teave"
 msgid "Lens"
 msgstr "Objektiiv"
 
-#: src/app/routes.js:468 src/app/routes.js:484 src/app/routes.js:500
+#: src/app/routes.js:489 src/app/routes.js:505 src/app/routes.js:521
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
 msgid "Library"
 msgstr "Fototeek"
 
 #: src/page/connect.vue:5 src/app/routes.js:69
-#: src/component/lightbox/sidebar.vue:868 src/component/navigation.vue:404
+#: src/component/lightbox/sidebar.vue:847 src/component/navigation.vue:404
 #: src/component/navigation.vue:405 src/component/navigation.vue:417
 #: src/component/navigation.vue:426 src/component/navigation.vue:539
 #: src/component/navigation.vue:547 src/component/navigation.vue:555
@@ -2103,7 +2102,7 @@ msgstr "Fototeek"
 msgid "License"
 msgstr "Litsents"
 
-#: src/component/lightbox.vue:1388 src/component/lightbox.vue:1389
+#: src/component/lightbox.vue:1387 src/component/lightbox.vue:1388
 msgid "Like"
 msgstr "Meeldib"
 
@@ -2134,7 +2133,7 @@ msgstr "Nimekirja vaade"
 msgid "Live"
 msgstr "Live"
 
-#: src/app/routes.js:258 src/component/navigation.vue:191
+#: src/app/routes.js:279 src/component/navigation.vue:191
 #: src/component/navigation.vue:192 src/component/navigation.vue:204
 #: src/component/navigation.vue:213 src/component/navigation.vue:241
 msgid "Live Photos"
@@ -2252,7 +2251,7 @@ msgstr "Märk"
 msgid "Maximum number of accounts has been reached."
 msgstr "Maksimaalne kontode arv on saavutatud."
 
-#: src/app/routes.js:251 src/component/navigation.vue:219
+#: src/app/routes.js:272 src/component/navigation.vue:219
 #: src/options/options.js:258
 msgid "Media"
 msgstr "Meedia"
@@ -2293,7 +2292,7 @@ msgstr "Minimeeri"
 msgid "Missing"
 msgstr "Puudub"
 
-#: src/page/auth/login.vue:382
+#: src/page/auth/login.vue:388
 msgid "Missing or invalid configuration"
 msgstr "Puuduv või vigane konfiguratsioon"
 
@@ -2301,7 +2300,7 @@ msgstr "Puuduv või vigane konfiguratsioon"
 msgid "mixed"
 msgstr "segatud"
 
-#: src/app/routes.js:185 src/component/navigation.vue:417
+#: src/app/routes.js:206 src/component/navigation.vue:417
 #: src/options/options.js:264 src/page/settings/general.vue:111
 msgid "Moments"
 msgstr "Hetked"
@@ -2319,7 +2318,7 @@ msgstr "Mustvalge"
 msgid "Month"
 msgstr "Kuu"
 
-#: src/component/lightbox.vue:1443
+#: src/component/lightbox.vue:1442
 msgid "More options"
 msgstr "Rohkem võimalusi"
 
@@ -2339,7 +2338,7 @@ msgstr "Liiguta failid"
 msgid "Must have at least %{n} characters."
 msgstr "Peab olema vähemalt %{n} tähemärki."
 
-#: src/component/lightbox.vue:1337 src/component/lightbox.vue:1338
+#: src/component/lightbox.vue:1336 src/component/lightbox.vue:1337
 msgid "Mute"
 msgstr "Mute"
 
@@ -2349,8 +2348,8 @@ msgstr "Mute"
 #: src/component/album/edit/dialog.vue:31
 #: src/component/label/edit/dialog.vue:30
 #: src/component/label/edit/dialog.vue:31
-#: src/component/lightbox/sidebar.vue:245
-#: src/component/lightbox/sidebar.vue:249
+#: src/component/lightbox/sidebar.vue:238
+#: src/component/lightbox/sidebar.vue:242
 #: src/component/people/edit/dialog.vue:30
 #: src/component/people/edit/dialog.vue:31
 #: src/component/photo/edit/files.vue:417 src/component/photo/edit/info.vue:36
@@ -2363,10 +2362,10 @@ msgstr "Mute"
 msgid "Name"
 msgstr "Nimi"
 
-#: src/component/lightbox/sidebar.vue:1985
-#: src/component/lightbox/sidebar.vue:2037
-#: src/component/lightbox/sidebar.vue:2091
-#: src/component/lightbox/sidebar.vue:2167
+#: src/component/lightbox/sidebar.vue:1870
+#: src/component/lightbox/sidebar.vue:1919
+#: src/component/lightbox/sidebar.vue:1968
+#: src/component/lightbox/sidebar.vue:2035
 msgid "Name too long"
 msgstr "Nimi on liiga pikk"
 
@@ -2390,7 +2389,7 @@ msgstr "Uus parool"
 msgid "Newest First"
 msgstr "Uuemad eespool"
 
-#: src/component/lightbox.vue:472 src/locales.js:301
+#: src/component/lightbox.vue:471 src/locales.js:301
 msgid "Next"
 msgstr "Järgmine"
 
@@ -2500,12 +2499,12 @@ msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, e
 msgid "None"
 msgstr "Puudub"
 
-#: src/component/lightbox.vue:885 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:884 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Ei ole lubatud"
 
-#: src/component/lightbox.vue:882
+#: src/component/lightbox.vue:881
 msgid "Not found"
 msgstr "Ei leitud"
 
@@ -2513,7 +2512,7 @@ msgstr "Ei leitud"
 msgid "Not sorted."
 msgstr "Ei ole sorteeritud."
 
-#: src/component/lightbox.vue:879 src/component/lightbox.vue:993
+#: src/component/lightbox.vue:878 src/component/lightbox.vue:992
 msgid "Not supported"
 msgstr "Ei toetata"
 
@@ -2529,7 +2528,7 @@ msgstr "Märkus:"
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "Märkus: Ainult WebDAV servereid, nagu Nextcloud või PhotoPrism, saab seadistada kaugteenusena varundamiseks ja failide üleslaadimiseks."
 
-#: src/component/lightbox/sidebar.vue:896
+#: src/component/lightbox/sidebar.vue:875
 #: src/component/photo/edit/details.vue:362
 #: src/component/photo/edit/details.vue:365
 msgid "Notes"
@@ -2697,11 +2696,11 @@ msgstr "Panoraam"
 msgid "Panoramas"
 msgstr "Panoraamid"
 
-#: src/component/input/chip-selector.vue:193
+#: src/component/input/chip-selector.vue:192
 msgid "Part of all selected photos"
 msgstr "Osa kõigist valitud fotodest"
 
-#: src/component/input/chip-selector.vue:191
+#: src/component/input/chip-selector.vue:190
 msgid "Part of some selected photos"
 msgstr "Osa valitud fotodest"
 
@@ -2718,7 +2717,7 @@ msgstr "Parool"
 msgid "Password changed"
 msgstr "Parool muudetud"
 
-#: src/app/routes.js:429 src/app/routes.js:453
+#: src/app/routes.js:450 src/app/routes.js:474
 #: src/component/lightbox/sidebar.vue:177 src/component/navigation.vue:283
 #: src/component/navigation.vue:718 src/component/photo/edit/dialog.vue:46
 #: src/component/photo/edit/dialog.vue:47
@@ -2766,7 +2765,7 @@ msgstr "PhotoPrism on 100% omafinantseeringuline ja sõltumatu."
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ liikmelisus"
 
-#: src/app/routes.js:178
+#: src/app/routes.js:199
 msgid "Photos"
 msgstr "Fotod"
 
@@ -2792,8 +2791,8 @@ msgstr "Koht"
 msgid "Place & Time"
 msgstr "Koht ja aeg"
 
-#: src/app/routes.js:328 src/app/routes.js:334 src/app/routes.js:340
-#: src/app/routes.js:355 src/component/navigation.vue:346
+#: src/app/routes.js:349 src/app/routes.js:355 src/app/routes.js:361
+#: src/app/routes.js:376 src/component/navigation.vue:346
 #: src/component/navigation.vue:724 src/options/options.js:262
 #: src/page/places.vue:7 src/page/settings/general.vue:349
 #: src/page/settings/general.vue:363
@@ -2859,7 +2858,7 @@ msgstr "Säilita failinimed"
 msgid "Press enter to create a new album."
 msgstr "Uue albumi lisamiseks vajuta Enter."
 
-#: src/component/input/chip-selector.vue:60
+#: src/component/input/chip-selector.vue:59
 msgid "Press enter to create new item"
 msgstr "Uue elemendi loomiseks vajutage enter"
 
@@ -2879,7 +2878,7 @@ msgstr "Eelvaade"
 msgid "Preview Images"
 msgstr "Eelvaatepildid"
 
-#: src/component/lightbox.vue:471 src/locales.js:302
+#: src/component/lightbox.vue:470 src/locales.js:302
 msgid "Previous"
 msgstr "Eelmine"
 
@@ -2900,7 +2899,7 @@ msgstr "Eelmine visuaalne"
 msgid "Primary"
 msgstr "Primaarne"
 
-#: src/app/routes.js:293 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:314 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:120 src/component/navigation.vue:121
 #: src/component/navigation.vue:133 src/component/navigation.vue:142
 #: src/component/navigation.vue:150 src/component/navigation.vue:170
@@ -3000,7 +2999,7 @@ msgstr "Punane"
 msgid "Refresh"
 msgstr "Värskenda"
 
-#: src/app/routes.js:362 src/component/navigation.vue:275
+#: src/app/routes.js:383 src/component/navigation.vue:275
 #: src/component/navigation.vue:276 src/component/navigation.vue:288
 #: src/component/navigation.vue:297 src/component/navigation.vue:324
 #: src/component/navigation.vue:353 src/component/navigation.vue:361
@@ -3029,10 +3028,10 @@ msgstr "Uuesti laadimine…"
 msgid "Remote Sync"
 msgstr "Kaugsünkroonimine"
 
-#: src/component/lightbox/sidebar.vue:313
-#: src/component/lightbox/sidebar.vue:373
+#: src/component/lightbox/sidebar.vue:306
+#: src/component/lightbox/sidebar.vue:366
+#: src/component/meta/face/markers.vue:78
 #: src/component/photo/edit/people.vue:20
-#: src/component/photo/face-marker-overlay.vue:78
 msgid "Remove"
 msgstr "Eemalda"
 
@@ -3040,15 +3039,15 @@ msgstr "Eemalda"
 msgid "remove failed: unknown album"
 msgstr "eemaldamine ebaõnnestus: tundmatu album"
 
-#: src/component/lightbox.vue:1475 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1474 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Eemalda albumist"
 
-#: src/component/input/chip-selector.vue:189
+#: src/component/input/chip-selector.vue:188
 msgid "Remove from all"
 msgstr "Eemaldage kõikidest"
 
-#: src/component/input/chip-selector.vue:189
+#: src/component/input/chip-selector.vue:188
 msgid "Remove from all selected photos"
 msgstr "Eemaldage kõik valitud fotod"
 
@@ -3069,7 +3068,7 @@ msgstr "Eemaldatud"
 msgid "Repeated"
 msgstr "Korduv"
 
-#: src/common/api.js:103 src/component/lightbox.vue:989
+#: src/common/api.js:103 src/component/lightbox.vue:988
 msgid "Request failed - are you offline?"
 msgstr "Taotlus ebaõnnestus - kas olete võrguühenduseta?"
 
@@ -3099,12 +3098,12 @@ msgstr "Restart"
 #: src/component/user/edit/dialog.vue:110
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
-#: src/component/user/edit/dialog.vue:126 src/component/lightbox.vue:1505
+#: src/component/user/edit/dialog.vue:126 src/component/lightbox.vue:1504
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Taasta"
 
-#: src/component/lightbox.vue:2926
+#: src/component/lightbox.vue:2925
 msgid "Restored"
 msgstr "Taastatud"
 
@@ -3116,7 +3115,7 @@ msgstr "Korduvkatsete limiit"
 msgid "Retype Password"
 msgstr "Parool uuesti"
 
-#: src/app/routes.js:286 src/component/navigation.vue:113
+#: src/app/routes.js:307 src/component/navigation.vue:113
 #: src/component/navigation.vue:114 src/component/navigation.vue:126
 #: src/component/navigation.vue:135 src/component/navigation.vue:143
 #: src/component/navigation.vue:163
@@ -3248,7 +3247,7 @@ msgstr "Salajane"
 msgid "Security and Access"
 msgstr "Turvalisus ja ligipääs"
 
-#: src/component/lightbox.vue:1406 src/component/lightbox.vue:1407
+#: src/component/lightbox.vue:1405 src/component/lightbox.vue:1406
 msgid "Select"
 msgstr "Vali"
 
@@ -3264,13 +3263,13 @@ msgstr "Valige kuupäev"
 msgid "Select dates"
 msgstr "Valige kuupäevad"
 
-#: src/component/lightbox/sidebar.vue:328
+#: src/component/lightbox/sidebar.vue:321
 #: src/component/photo/album/dialog.vue:38
 #: src/component/photo/batch-edit.vue:419 src/component/upload/dialog.vue:59
 msgid "Select or create albums"
 msgstr "Valige või looge albumeid"
 
-#: src/component/lightbox/sidebar.vue:388
+#: src/component/lightbox/sidebar.vue:381
 #: src/component/photo/batch-edit.vue:436
 msgid "Select or create labels"
 msgstr "Valige või looge sildid"
@@ -3341,7 +3340,7 @@ msgstr "Seansi ID"
 msgid "Sessions"
 msgstr "Sessioonid"
 
-#: src/component/lightbox.vue:1465
+#: src/component/lightbox.vue:1464
 msgid "Set as Album Cover"
 msgstr "Komplekt albumikaanena"
 
@@ -3351,8 +3350,8 @@ msgstr "Määra kaanepildiks"
 
 #: src/component/navigation.vue:280 src/component/navigation.vue:421
 #: src/component/navigation.vue:464 src/component/navigation.vue:467
-#: src/app/routes.js:517 src/app/routes.js:529 src/app/routes.js:546
-#: src/app/routes.js:559 src/app/routes.js:572 src/app/routes.js:95
+#: src/app/routes.js:116 src/app/routes.js:538 src/app/routes.js:550
+#: src/app/routes.js:567 src/app/routes.js:580 src/app/routes.js:593
 #: src/component/navigation.vue:527 src/component/navigation.vue:684
 #: src/options/options.js:267
 msgid "Settings"
@@ -3398,7 +3397,7 @@ msgstr "Näita kõiki etikette"
 msgid "Show all new faces"
 msgstr "Näita kõiki uusi nägusid"
 
-#: src/component/lightbox.vue:1531
+#: src/component/lightbox.vue:1530
 msgid "Show Caption"
 msgstr "Näita pildiallkirja"
 
@@ -3406,7 +3405,7 @@ msgstr "Näita pildiallkirja"
 msgid "Show Captions"
 msgstr "Näita pildiallkirju"
 
-#: src/component/lightbox/sidebar.vue:214
+#: src/component/lightbox/sidebar.vue:207
 msgid "Show face markers"
 msgstr "Näita näo markerid"
 
@@ -3480,7 +3479,7 @@ msgstr "Saidi URL"
 msgid "Size"
 msgstr "Suurus"
 
-#: src/component/lightbox.vue:1353 src/component/lightbox.vue:1354
+#: src/component/lightbox.vue:1352 src/component/lightbox.vue:1353
 msgid "Slideshow"
 msgstr "Slaidiesitlus"
 
@@ -3512,7 +3511,7 @@ msgstr "Mõnda albumit ei saanud luua. Palun redigeerige nimesid ja proovige uue
 msgid "Some albums could not be updated"
 msgstr "Mõnda albumit ei saanud uuendada"
 
-#: src/component/lightbox.vue:986
+#: src/component/lightbox.vue:985
 msgid "Something went wrong, try again"
 msgstr "Midagi läks valesti, proovige uuesti"
 
@@ -3603,7 +3602,7 @@ msgstr "Asukoht"
 msgid "Streets"
 msgstr "Tänavad"
 
-#: src/common/util.js:891 src/component/lightbox/sidebar.vue:826
+#: src/common/util.js:891 src/component/lightbox/sidebar.vue:805
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -3802,7 +3801,7 @@ msgstr "Tüüp"
 msgid "Unable to delete"
 msgstr "Ei saa kustutada"
 
-#: src/component/lightbox/sidebar.vue:272
+#: src/component/lightbox/sidebar.vue:265
 msgid "Unassign"
 msgstr "Unassign"
 
@@ -3823,12 +3822,12 @@ msgstr "Unikaalne ID"
 
 #: src/model/cluster-node.js:42 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:608 src/component/lightbox/sidebar.vue:1005
-#: src/component/lightbox/sidebar.vue:119
-#: src/component/lightbox/sidebar.vue:1801
-#: src/component/lightbox/sidebar.vue:284
-#: src/component/lightbox/sidebar.vue:697
-#: src/component/lightbox/sidebar.vue:709
+#: src/common/util.js:608 src/component/lightbox/sidebar.vue:119
+#: src/component/lightbox/sidebar.vue:1701
+#: src/component/lightbox/sidebar.vue:277
+#: src/component/lightbox/sidebar.vue:679
+#: src/component/lightbox/sidebar.vue:691
+#: src/component/lightbox/sidebar.vue:978
 #: src/component/meta/datetime/dialog.vue:31
 #: src/component/meta/datetime/dialog.vue:51
 #: src/component/meta/datetime/dialog.vue:71
@@ -3854,7 +3853,7 @@ msgstr "Teadmata"
 msgid "Unregistered"
 msgstr "Mitteregistreeritud"
 
-#: src/app/routes.js:237 src/component/navigation.vue:206
+#: src/app/routes.js:258 src/component/navigation.vue:206
 msgid "Unsorted"
 msgstr "Sorteerimata"
 
@@ -4051,7 +4050,7 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Video kestus"
 
-#: src/app/routes.js:265 src/component/navigation.vue:184
+#: src/app/routes.js:286 src/component/navigation.vue:184
 #: src/component/navigation.vue:185 src/component/navigation.vue:197
 #: src/component/navigation.vue:206 src/component/navigation.vue:234
 #: src/options/options.js:259
@@ -4220,7 +4219,7 @@ msgstr "Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied erilistest hetkedest, reisidest ja kohtadest."
 
-#: src/component/lightbox.vue:470
+#: src/component/lightbox.vue:469
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
 
@@ -4236,7 +4235,7 @@ msgctxt "Edit"
 msgid "Content"
 msgstr "Sisu"
 
-#: src/app/routes.js:310 src/component/navigation.vue:127
+#: src/app/routes.js:331 src/component/navigation.vue:127
 #: src/component/navigation.vue:128 src/component/navigation.vue:140
 #: src/component/navigation.vue:149 src/component/navigation.vue:157
 #: src/component/navigation.vue:177 src/page/settings/general.vue:260
@@ -4249,7 +4248,7 @@ msgctxt "Photo"
 msgid "Add a Title"
 msgstr "Lisa pealkiri"
 
-#: src/component/lightbox/sidebar.vue:801
+#: src/component/lightbox/sidebar.vue:780
 #: src/component/photo/batch-edit.vue:158
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:17
@@ -4258,7 +4257,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Pealkiri"
 
-#: src/component/lightbox.vue:1490 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1489 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"

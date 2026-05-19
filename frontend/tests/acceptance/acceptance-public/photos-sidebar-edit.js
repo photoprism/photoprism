@@ -5,9 +5,6 @@ import Menu from "../page-model/menu";
 import Label from "../page-model/label";
 import Album from "../page-model/album";
 
-// Drives inline editing of every editable sidebar field against a real
-// backend. The companion Vitest matrix covers per-role visibility; these
-// tests pin the DOM wiring and persistence path end-to-end.
 fixture`Test lightbox sidebar inline editing`.page`${testcafeconfig.url}`;
 
 const photoviewer = new PhotoViewer();
@@ -26,46 +23,32 @@ test.meta("testID", "sidebar-edit-001").meta({ mode: "public" })(
     await t.typeText(titleInput, "Sidebar Edit Title", { replace: true }).pressKey("enter");
     await t.expect(Selector(".p-lightbox-sidebar .meta-title").withText("Sidebar Edit Title").exists).ok();
 
+    // Caption commits on blur (Enter inserts a newline).
     const captionTextarea = Selector(".p-lightbox-sidebar .meta-inline-caption textarea", { timeout: 15000 });
     await photoviewer.startInlineEditOrAdd("meta-caption", "Caption");
     await t.expect(captionTextarea.visible).ok();
-    await t.typeText(captionTextarea, "Caption added in sidebar edit test", { replace: true });
-    const captionConfirm = captionTextarea.parent(".p-lightbox-sidebar .v-list-item").find(".meta-inline-confirm");
-    await t.click(captionConfirm);
+    await t.typeText(captionTextarea, "Caption added in sidebar edit test", { replace: true }).pressKey("tab");
     await t.expect(Selector(".p-lightbox-sidebar .meta-caption").withText("Caption added in sidebar edit test").exists).ok();
 
+    // Keyword value is a single lowercase token to survive the backend's lowercase + dedup.
     const plainTextFields = [
-      { icon: "mdi-text-box-outline", value: "Testing sidebar edits" }, // Subject
-      { icon: "mdi-palette", value: "Test Artist" },
-      { icon: "mdi-copyright", value: "2024 Test" },
-      { icon: "mdi-license", value: "Test-License-1.0" },
+      { key: "subject",   value: "Testing sidebar edits", commitKey: "enter" },
+      { key: "artist",    value: "Test Artist",           commitKey: "enter" },
+      { key: "copyright", value: "2024 Test",             commitKey: "enter" },
+      { key: "license",   value: "Test-License-1.0",      commitKey: "enter" },
+      { key: "keywords",  value: "sidebareditkw",         commitKey: "enter" },
+      { key: "notes",     value: "SidebarNoteFromTest",   commitKey: "tab" },
     ];
     for (const field of plainTextFields) {
-      const input = await photoviewer.startInlineEditByIcon(field.icon);
-      await t.typeText(input, field.value, { replace: true });
-      await photoviewer.confirmInlineEditByIcon(field.icon);
-      await t.expect(photoviewer.sidebarRow(field.icon).withText(field.value).exists).ok();
+      await photoviewer.editTextFieldByKey(field.key, field.value, field.commitKey);
     }
-
-    // The backend lower-cases and dedupes keywords; assert on a single
-    // lowercase token that survives that pass.
-    const keywordsInput = await photoviewer.startInlineEditBySection("Keywords");
-    await t.typeText(keywordsInput, "sidebareditkw", { replace: true });
-    await photoviewer.confirmInlineEditBySection("Keywords");
-    await t.expect(Selector(".p-lightbox-sidebar .meta-keywords").withText("sidebareditkw").exists).ok();
-
-    const notesInput = await photoviewer.startInlineEditBySection("Notes");
-    await t.typeText(notesInput, "SidebarNoteFromTest", { replace: true });
-    await photoviewer.confirmInlineEditBySection("Notes");
-    await t.expect(Selector(".p-lightbox-sidebar .meta-notes").withText("SidebarNoteFromTest").exists).ok();
   }
 );
 
 test.meta("testID", "sidebar-edit-002").meta({ mode: "public" })("Common: Adds a label and an album inline and persists them to the photo", async (t) => {
   const uid = await photoviewer.openSidebarOnFirstPhoto();
 
-  // Unique names per run avoid collisions with leftover fixtures from
-  // earlier executions that didn't tear down cleanly.
+  // Date-stamp names so reruns don't collide with leftovers from previous failed runs.
   const stamp = Date.now();
   const labelTitle = `SidebarEditLabel-${stamp}`;
   const albumTitle = `SidebarEditAlbum-${stamp}`;
@@ -94,8 +77,8 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
     const locationDialog = photoviewer.locationDialog;
     const optionWith = (text) => Selector('div[role="option"]').withText(text);
 
-    // Clicking a rendered option is racy on fast systems where the list
-    // re-mounts between visibility and click; keyboard nav is stable.
+    // Keyboard nav is more stable than click on autocomplete options
+    // (the list re-mounts between visibility and click on fast systems).
     const pickAutocomplete = async (input, value) => {
       await t.typeText(input, value, { replace: true }).pressKey("down enter");
     };
@@ -103,8 +86,8 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
       await t.click(field).click(optionWith(value));
     };
 
-    // Other tests in this suite edit the same photo; snapshot now and
-    // restore at the end so leftover timezone/values don't leak.
+    // Snapshot the initial values so the test can restore them on exit and other
+    // tests in this suite see a clean photo.
     await photoviewer.openSidebarDialog("takenAt");
     const initialYear = await dateTimeDialog.yearValue.innerText;
     const initialMonth = await dateTimeDialog.monthValue.innerText;
@@ -138,8 +121,8 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
     await t.click(dateTimeDialog.confirm);
     await t.expect(dateTimeDialog.root.visible).notOk();
 
-    // For UTC photos formatTime() drops the zone abbreviation, so "UTC"
-    // never appears in the sidebar text — verified via the dialog below.
+    // formatTime() drops the zone abbreviation on UTC photos, so "UTC" never appears
+    // in the sidebar text — it's only checked via the dialog below.
     const calendarRow = photoviewer.sidebarRow("mdi-calendar");
     await t.expect(calendarRow.withText("2022").exists).ok();
     await t.expect(calendarRow.withText("Jul").exists).ok();
@@ -183,18 +166,21 @@ test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
 
     // Raw coordinates avoid hitting the external reverse-geocoder.
     await photoviewer.openSidebarDialog("location");
+    // (search field skipped on purpose to keep the test offline)
     await t.expect(locationDialog.coordinates.visible).ok();
     await t.typeText(locationDialog.coordinates, "52.5200, 13.4050", { replace: true }).pressKey("enter");
     await t.click(locationDialog.confirm);
     await t.expect(locationDialog.root.visible).notOk();
     await t.expect(Selector(".p-lightbox-sidebar .p-map").exists).ok();
 
-    // Substring match — the optional " · <altitude> m" suffix can follow.
-    const coordinatesRow = photoviewer.sidebarRow("mdi-map-marker").nextSibling(".v-list-item");
-    await t.expect(coordinatesRow.withText("52.52000").exists).ok();
-    await t.expect(coordinatesRow.withText("13.40500").exists).ok();
+    // Thumb.getLatLngShort() formats as 4-digit decimals with °N / °E suffix —
+    // assert the suffix too so a regression that drops it doesn't silently pass.
+    const locationRow = photoviewer.sidebarRow("mdi-map-marker");
+    await t.expect(locationRow.withText("52.5200°N").visible).ok();
+    await t.expect(locationRow.withText("13.4050°E").visible).ok();
 
-    // Skip empty fields: typeText("") is a no-op and v-select has no clear.
+    // Restore the snapshotted initial values. Skip empty ones — typeText("") is
+    // a no-op and v-select has no clear.
     await photoviewer.openSidebarDialog("takenAt");
     if (initialYear) {
       await pickAutocomplete(dateTimeDialog.year, initialYear);

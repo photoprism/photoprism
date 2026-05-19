@@ -511,8 +511,9 @@ export default class Session {
     return this;
   }
 
+  // isUser returns true when the current session has a fully-loaded user record.
   isUser() {
-    return this.user && this.user.hasId();
+    return !!this.user?.hasId();
   }
 
   getDefaultRoute() {
@@ -523,12 +524,14 @@ export default class Session {
     return this.config.getDefaultRoute();
   }
 
+  // isAdmin returns true when the session belongs to an admin or super-admin user.
   isAdmin() {
-    return this.user && this.user.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin);
+    return !!(this.user?.hasId() && (this.user.Role === "admin" || this.user.SuperAdmin));
   }
 
+  // isSuperAdmin returns true when the session belongs to a super-admin user.
   isSuperAdmin() {
-    return this.user && this.user.hasId() && this.user.SuperAdmin;
+    return !!(this.user?.hasId() && this.user.SuperAdmin);
   }
 
   isAnonymous() {

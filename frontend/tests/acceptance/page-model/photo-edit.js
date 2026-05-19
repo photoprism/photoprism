@@ -13,10 +13,10 @@ export default class Page {
     this.labelsTab = Selector("#tab-labels", { timeout: 15000 });
     this.peopleTab = Selector("#tab-people", { timeout: 15000 });
 
-    this.locationAction = Selector(".input-coordinates i.action-map", { timeout: 15000 });
+    this.locationAction = Selector(".input-coordinates .action-map", { timeout: 15000 });
     this.locationSearch = Selector("div.p-meta-location-dialog .v-autocomplete", { timeout: 15000 });
-    this.locationClear = Selector(".input-coordinates i.action-delete", { timeout: 15000 });
-    this.locationUndo = Selector("div.p-meta-location-dialog .input-coordinates i.action-undo", { timeout: 15000 });
+    this.locationClear = Selector(".input-coordinates .action-delete", { timeout: 15000 });
+    this.locationUndo = Selector("div.p-meta-location-dialog .input-coordinates .action-undo", { timeout: 15000 });
     this.locationInput = Selector("div.p-meta-location-dialog .input-coordinates input", { timeout: 15000 });
     this.locationConfirm = Selector("div.p-meta-location-dialog button.action-confirm", { timeout: 15000 });
     this.locationCancel = Selector("div.p-meta-location-dialog button.action-cancel", { timeout: 15000 });

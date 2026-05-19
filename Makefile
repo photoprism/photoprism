@@ -123,6 +123,7 @@ show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
+format: format-tables fmt-go fmt-swag
 format-tables: # Format Markdown tables in README.md, AGENTS.md, and CODEMAP.md files.
 	@set -eu; \
 	tmp="$$(mktemp)"; \
@@ -317,9 +318,10 @@ dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
+vuln: audit
 audit: audit-frontend audit-backend
 audit-frontend:
-	$(MAKE) -C frontend audit
+	npm audit --ignore-scripts --no-fund --no-audit --no-update-notifier
 audit-backend: dep-vuln
 dep-audit: dep-vuln
 dep-vuln:
@@ -343,6 +345,7 @@ dep-npm:
         fi
 dep-js:
 	npm ci --ignore-scripts --no-update-notifier --no-audit
+tools: gh claude codex
 codex: dep-codex codex-version codex-skills
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."

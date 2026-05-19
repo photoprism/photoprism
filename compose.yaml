@@ -15,12 +15,13 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ## Expose HTTP and debug ports
+    ## Publish the dev environment's HTTP, TLS, and debugger ports on the host (Docker
+    ## picks the first free port from the range if the default is already in use):
     ports:
-      - "2342:2342"   # Default HTTP port (host:container)
-      - "2443:2443"   # Default TLS port (host:container)
-      - "2343:2343"   # Acceptance Test HTTP port (host:container)
-      - "40000:40000" # Go Debugger (host:container)
+      - "${CUSTOM_BIND_HOST:-0.0.0.0}:2342-2999:2342"   # HTTP (default)
+      - "${CUSTOM_BIND_HOST:-0.0.0.0}:2443-2999:2443"   # TLS (default)
+      - "${CUSTOM_BIND_HOST:-0.0.0.0}:2343-2999:2343"   # HTTP (acceptance tests)
+      - "${CUSTOM_BIND_HOST:-0.0.0.0}:40000-40999:40000" # Go debugger
     shm_size: "2gb"
     ## Set links and labels for use with Traefik reverse proxy
     links:
@@ -33,7 +34,7 @@ services:
       - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
@@ -90,7 +91,7 @@ services:
       PHOTOPRISM_DISABLE_TLS: "true"
       PHOTOPRISM_DEFAULT_TLS: "true"
       ## Site Information:
-      PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
+      PHOTOPRISM_SITE_URL: "${PHOTOPRISM_SITE_URL:-https://app.localssl.dev/}" # "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
@@ -163,6 +164,24 @@ services:
       - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
 
+  ## Traefik v3 (Reverse Proxy)
+  ## includes "*.localssl.dev" SSL certificate for test environments
+  ## Docs: https://doc.traefik.io/traefik/
+  traefik:
+    image: photoprism/traefik:latest
+    stop_grace_period: 15s
+    security_opt:
+      - no-new-privileges:true
+    ## Publish Traefik's HTTP and HTTPS entrypoints on the host (Docker picks the first free
+    ## port from the range if the default is already in use):
+    ports:
+      - "${CUSTOM_BIND_HOST:-0.0.0.0}:${CUSTOM_HTTP_PORT:-80-380}:80"    # HTTP (redirects to HTTPS)
+      - "${CUSTOM_BIND_HOST:-0.0.0.0}:${CUSTOM_HTTPS_PORT:-443-743}:443" # HTTPS (required)
+    labels:
+      - "traefik.enable=true"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
+
   ## MariaDB (Database Server)
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
@@ -175,8 +194,9 @@ services:
     command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # 3306 isn't used intentionally to avoid conflicts and confuse port scanners
+    ## Publish the MariaDB port on the host for direct access from outside the compose network:
     ports:
-      - "4001:4001" # MariaDB port (host:container)
+      - "${CUSTOM_BIND_HOST:-0.0.0.0}:${CUSTOM_MARIADB_PORT:-4001-4999}:4001" # MariaDB
     volumes:
       - "mariadb:/var/lib/mysql"
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -196,8 +216,9 @@ services:
     stop_grace_period: 15s
     expose:
       - "5432"
-    ports:
-      - "4002:5432" # PostgreSQL port (host:container)  5432 isn't used intentionally to avoid conflicts
+    ## Optionally publish the PostgreSQL port on the host for direct access from outside the compose network:
+    # ports:
+    #  - "${CUSTOM_BIND_HOST:-0.0.0.0}:${CUSTOM_POSTGRES_PORT:-5432-5999}:5432" # PostgreSQL
     volumes:
       - "postgres:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -221,6 +242,7 @@ services:
       - "traefik:vision.localssl.dev"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.qdrant.loadbalancer.server.port=6333"
       - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
       - "traefik.http.routers.qdrant.entrypoints=websecure"
@@ -247,13 +269,12 @@ services:
     ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
     ## docker compose --profile ollama up -d
     profiles: [ "all", "ollama", "vision" ]
-    ## Insecurely exposes the Ollama service on port 11434
-    ## without authentication (for private networks only):
+    ## Optionally publish the Ollama API on the host (no built-in auth — private/internal networks only):
     # ports:
-    #  - "11434:11434"
+    #  - "${CUSTOM_BIND_HOST:-0.0.0.0}:11434-11999:11434" # Ollama API
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.ollama.loadbalancer.server.port=11434"
       - "traefik.http.routers.ollama.rule=Host(`ollama.localssl.dev`)"
       - "traefik.http.routers.ollama.entrypoints=websecure"
@@ -299,12 +320,12 @@ services:
     ## Only starts this service if the "all", "ollama", "open-webui", or "vision" profile is specified::
     ## docker compose --profile ollama up -d
     profiles: [ "all", "ollama", "open-webui", "vision" ]
-    ## Exposes Open WebUI at http://localhost:8080 (use https://chat.localssl.dev/ to access it through Traefik):
-    ports:
-      - "127.0.0.1:8080:8080"
+    ## Optionally publish Open WebUI on the host (default access is via https://chat.localssl.dev/ through Traefik):
+    # ports:
+    #  - "${CUSTOM_BIND_HOST:-0.0.0.0}:8080-8999:8080" # Open WebUI
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.open-webui.loadbalancer.server.port=8080"
       - "traefik.http.routers.open-webui.rule=Host(`chat.localssl.dev`) || Host(`open-webui.localssl.dev`) || Host(`ollama-ui.localssl.dev`)"
       - "traefik.http.routers.open-webui.entrypoints=websecure"
@@ -334,14 +355,15 @@ services:
       - "traefik:qdrant.localssl.dev"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.qdrant.loadbalancer.server.port=5000"
-      - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
-      - "traefik.http.routers.qdrant.entrypoints=websecure"
-      - "traefik.http.routers.qdrant.rule=Host(`vision.localssl.dev`)"
-      - "traefik.http.routers.qdrant.priority=3"
-      - "traefik.http.routers.qdrant.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.qdrant.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.qdrant.tls=true"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
+      - "traefik.http.services.vision.loadbalancer.server.port=5000"
+      - "traefik.http.services.vision.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.vision.entrypoints=websecure"
+      - "traefik.http.routers.vision.rule=Host(`vision.localssl.dev`)"
+      - "traefik.http.routers.vision.priority=3"
+      - "traefik.http.routers.vision.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.vision.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.vision.tls=true"
     expose:
       - 5000
     environment:
@@ -349,22 +371,6 @@ services:
       ## Ollama client configuration (for the service, see below):
       OLLAMA_ENABLED: "true"
       OLLAMA_HOST: "http://ollama:11434"
-
-  ## Traefik v3 (Reverse Proxy)
-  ## includes "*.localssl.dev" SSL certificate for test environments
-  ## Docs: https://doc.traefik.io/traefik/
-  traefik:
-    image: photoprism/traefik:latest
-    stop_grace_period: 15s
-    security_opt:
-      - no-new-privileges:true
-    ports:
-      - "80:80" # HTTP (redirects to HTTPS)
-      - "443:443" # HTTPS (required)
-    labels:
-      - "traefik.enable=true"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
   ## Dummy WebDAV Server
   dummy-webdav:
@@ -375,6 +381,7 @@ services:
       WEBDAV_PASSWORD: photoprism
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.dummy-webdav.loadbalancer.server.port=80"
       - "traefik.http.routers.dummy-webdav.entrypoints=websecure"
       - "traefik.http.routers.dummy-webdav.rule=Host(`dummy-webdav.localssl.dev`)"
@@ -389,6 +396,7 @@ services:
     stop_grace_period: 5s
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
       - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
       - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.localssl.dev`)"
@@ -402,11 +410,13 @@ services:
   dummy-ldap:
     image: glauth/glauth-plugins:latest
     stop_grace_period: 5s
-    ports:
-      - "127.0.0.1:389:389"
+    ## Optionally publish the dummy-ldap port on the host (default access is via "dummy-ldap:389" within the compose network):
+    # ports:
+    #  - "${CUSTOM_BIND_HOST:-0.0.0.0}:${CUSTOM_LDAP_PORT:-389-442}:389" # LDAP
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.ldap.loadbalancer.server.port=5555"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
+      - "traefik.http.services.dummy-ldap.loadbalancer.server.port=5555"
       - "traefik.http.routers.dummy-ldap.entrypoints=websecure"
       - "traefik.http.routers.dummy-ldap.rule=Host(`dummy-ldap.localssl.dev`)"
       - "traefik.http.routers.dummy-ldap.priority=3"
@@ -429,6 +439,7 @@ services:
       - "traefik:app.localssl.dev"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
       - "traefik.http.routers.keycloak.rule=Host(`keycloak.localssl.dev`)"
@@ -458,6 +469,7 @@ services:
     profiles: [ "all", "auth", "prometheus" ]
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${CUSTOM_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
       - "traefik.http.routers.prometheus.entrypoints=websecure"
       - "traefik.http.routers.prometheus.rule=Host(`prometheus.localssl.dev`)"
@@ -479,8 +491,9 @@ volumes:
   postgres:
     driver: local
 
-## Create shared "photoprism" network for connecting with services in other compose.yaml files
+## Create a shared bridge network for connecting with services in other compose.yaml files.
+## Override CUSTOM_NETWORK_NAME to run multiple parallel environments without colliding on the default name.
 networks:
   default:
-    name: photoprism
+    name: ${CUSTOM_NETWORK_NAME:-photoprism}
     driver: bridge

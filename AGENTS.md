@@ -49,12 +49,12 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 
 ### GitHub Issues
 
-- Titles must be concise, imperative, and start with one capitalized prefix plus `: `, for example `Search: Add filter for RAW image formats`.
-- Descriptions must begin with a one-sentence bold user story: `**As a <role>, I want <goal>, so that <outcome>.**`
-- Use level-4 Markdown headings for sections within issue descriptions, for example `#### Acceptance Criteria`.
+- Titles MUST be concise, imperative, and start with one capitalized prefix plus `: `, for example `Search: Add filter for RAW image formats`.
+- Descriptions MUST begin with a one-sentence bold user story: `**As a <role>, I want <goal>, so that <outcome>.**`
+- Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
 - Follow with behavior, rationale, technical considerations, and constraints.
 - End with `- [ ]` checklist items for the acceptance criteria, each using `MUST`, `SHOULD`, or `MAY`.
-- Agents may create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
+- Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
 
 ### Specifications & Documentation
 
@@ -71,6 +71,7 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 - Capitalize the first word, the first word after a colon, dash, or end punctuation, and all major words, including the second part of a hyphenated major word.
 - Lowercase only articles, short conjunctions, and short prepositions of three letters or fewer when they are not in one of those positions.
 - Preserve known acronyms (for example, API, CLI, HTTP, JSON) and slash-separated acronym groups (for example, CSV/TSV) as uppercase.
+- Preserve RFC 2119 / RFC 8174 normative keywords (MUST, SHOULD, MAY, SHALL, REQUIRED, RECOMMENDED, OPTIONAL) as uppercase when used in their normative sense.
 - Preserve inline code spans (`` `foo` ``), file paths (e.g. `docs/foo-bar.md`), and slash commands (e.g. `/grill-me`) verbatim; do not recase their contents.
 - Use `&` instead of `And`/`Or` in headings.
 
@@ -108,14 +109,14 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 ### JS/Go Code Comments
 
 A doc comment is **required** for every function (including unexported helpers), as well as for every non-trivial Vue `methods:` / `computed:` / watcher:
-- Keep comments **compact** and default to one line for WHAT in the format `// Name does X.`. Skip trivial getters (`isOpen: () => this.open`).
-- Add up to three follow-up lines (`// …`) only when the WHY is non-obvious: a hidden invariant, a workaround that would otherwise be undone by a future cleanup, a contract a reader can't infer from the code.
-- If readers can derive the WHY from the function body or a nearby line, leave it out. Multi-paragraph explanations belong in `specs/`, package `README.md` files, or GitHub issues — never in the source itself.
-- For short examples in comments, indent code instead of using backticks.
+- Keep comments **compact** and default to one line for "what" in the format `// Name does X.`. Skip trivial getters (`isOpen: () => this.open`).
+- Add 1-2 follow-up lines (`// …`) **only** if the "why" is non-obvious: a hidden invariant, a workaround that would otherwise be undone by a future cleanup, a contract a reader can't infer from the code. If readers can infer the "why" from the function body or a nearby line, then omit it.
+- Multi-paragraph explanations belong in `specs/`, package `README.md` files, or GitHub issues — never in the source itself.
 
-Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period.
-Use US English spelling in all code comments (`parameterized`, `behavior`, `color`, `serialize`, `normalize`, `optimize`, …) — not the British `-ised`/`-our`/`-re` variants. Identifiers in code that already use a different spelling (e.g. an existing exported symbol) are not in scope; only the prose in comments and doc strings.
- 
+Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period. For short examples in comments, indent code instead of using backticks.
+
+Use US English spelling in all code comments (`parameterized`, `behavior`, `color`, `serialize`, `normalize`, `optimize`, …) — not the British `-ised`/`-our`/`-re` variants.
+
 > **Don't include in code comments:** Issue / PR numbers, "previously…" history, alternatives considered, what the function used to do, references to old commits, names of subsequent reviewers, or any narrative that names the change rather than the steady-state behavior. That context belongs in commit messages, specs, or handover notes.
 
 ## Agent Runtime

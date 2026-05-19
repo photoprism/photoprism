@@ -269,6 +269,25 @@ describe("model/file", () => {
     };
     const file = new File(values);
     expect(file.isAnimated()).toBe(true);
+    expect(typeof file.isAnimated()).toBe("boolean");
+  });
+
+  // A10 contract: isAnimated() must return a Boolean for every input shape,
+  // so a future binding to a Vuetify Boolean prop never short-circuits to 0.
+  it("isAnimated returns Boolean false for an image with no frames or duration", () => {
+    const file = new File({ MediaType: "image", Frames: 0, Duration: 0 });
+    const result = file.isAnimated();
+    expect(typeof result).toBe("boolean");
+    expect(result).toBe(false);
+  });
+  it("isAnimated returns Boolean false for non-image media types", () => {
+    expect(new File({ MediaType: "video", Duration: 5000 }).isAnimated()).toBe(false);
+    expect(new File({ MediaType: "", Duration: 5000 }).isAnimated()).toBe(false);
+    expect(typeof new File({ MediaType: "video" }).isAnimated()).toBe("boolean");
+  });
+  it("isAnimated returns Boolean true for a multi-frame image", () => {
+    const file = new File({ MediaType: "image", Frames: 5, Duration: 0 });
+    expect(file.isAnimated()).toBe(true);
   });
 
   it("should get type info", () => {

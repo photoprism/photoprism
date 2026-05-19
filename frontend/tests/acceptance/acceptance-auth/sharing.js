@@ -207,7 +207,7 @@ test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common
   await t.expect(toolbar.toolbarSecondTitle.withText("British Columbia").visible).ok();
 
   await photoviewer.openPhotoViewer("nth", 0);
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
 
   // Allow-list: file info and taken-at rows render for anonymous
   // viewers so they can tell what they are looking at.
@@ -215,7 +215,7 @@ test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common
 
   // Deny-list: edit affordances, face-marker controls, and every
   // restricted section must be gone.
-  await t.expect(photoviewer.inlinePencils.exists).notOk();
+  await photoviewer.assertSidebarIsReadOnly();
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
   await t.expect(photoviewer.markerAddButton.exists).notOk();
   // Merged file row renders for restricted sessions (type + size as

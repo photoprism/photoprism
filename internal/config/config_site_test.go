@@ -110,11 +110,44 @@ func TestConfig_VideoUri(t *testing.T) {
 func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost"
-	assert.Equal(t, "http://superhost/", c.SiteUrl())
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		// Baseline behavior.
+		{"Default", "", "http://localhost:2342/"},
+		{"NoTrailingSlash", "http://superhost", "http://superhost/"},
+		{"NonDefaultPort", "http://superhost:2342/", "http://superhost:2342/"},
+
+		// Default-port stripping.
+		{"HttpsDefaultPort", "https://app.localssl.dev:443/", "https://app.localssl.dev/"},
+		{"HttpDefaultPort", "http://example.com:80/sub", "http://example.com/sub/"},
+		{"NonDefaultPortPreserved", "https://example.com:8443/", "https://example.com:8443/"},
+		{"MismatchedScheme", "http://example.com:443/", "http://example.com:443/"},
+
+		// Uncommon but well-formed inputs.
+		{"IPv6DefaultPort", "https://[::1]:443/", "https://[::1]/"},
+		{"IPv6NonDefaultPort", "https://[2001:db8::1]:8443/path", "https://[2001:db8::1]:8443/path/"},
+		{"PathPreserved", "https://example.com:443/i/pro-1/", "https://example.com/i/pro-1/"},
+		{"QueryStripped", "https://example.com:443/i/pro-1/?lang=de&page=2", "https://example.com/i/pro-1/"},
+		{"ForceQueryStripped", "https://example.com/?", "https://example.com/"},
+		{"FragmentStripped", "https://example.com/library/#photo123", "https://example.com/library/"},
+		{"SurroundingWhitespace", "  https://app.example.com:443/  ", "https://app.example.com/"},
+		{"ExtraTrailingSlashes", "https://example.com:443////", "https://example.com/"},
+		{"Whitespace", "   ", "http://localhost:2342/"},
+
+		// Unix-socket schemes: port stripping must stay a no-op.
+		{"UnixScheme", "unix:///var/run/photoprism.sock", "unix:///var/run/photoprism.sock/"},
+		{"HttpUnixScheme", "http+unix:///var/run/photoprism.sock", "http+unix:///var/run/photoprism.sock/"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c.options.SiteUrl = tc.in
+			assert.Equal(t, tc.want, c.SiteUrl())
+		})
+	}
 }
 
 func TestConfig_SiteHttps(t *testing.T) {

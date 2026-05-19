@@ -28,6 +28,46 @@ describe("model/photo", () => {
     expect(Object.isFrozen(MaxLength)).toBe(true);
   });
 
+  // Title, Caption, and Exposure live directly on the Photo; the Details
+  // fields (Subject, Artist, etc.) live one level down — the override
+  // must handle both shapes without crashing on a Photo without Details.
+  it("trimInputs() trims both direct fields and Details nested fields", () => {
+    const photo = new Photo({
+      Title: "  Sunset  ",
+      Caption: "\tBeach\n",
+      Exposure: " 1/250s ",
+      Details: {
+        Subject: " woman walking ",
+        Artist: "\tAnsel Adams ",
+        Copyright: "  © 2026 ",
+        License: " CC-BY ",
+        Keywords: " sunset,beach ",
+        Notes: "  scenic view  ",
+      },
+      Slug: " untouched ",
+    });
+
+    photo.trimInputs();
+
+    expect(photo.Title).toBe("Sunset");
+    expect(photo.Caption).toBe("Beach");
+    expect(photo.Exposure).toBe("1/250s");
+    expect(photo.Details.Subject).toBe("woman walking");
+    expect(photo.Details.Artist).toBe("Ansel Adams");
+    expect(photo.Details.Copyright).toBe("© 2026");
+    expect(photo.Details.License).toBe("CC-BY");
+    expect(photo.Details.Keywords).toBe("sunset,beach");
+    expect(photo.Details.Notes).toBe("scenic view");
+    // Slug isn't in MaxLength — passes through.
+    expect(photo.Slug).toBe(" untouched ");
+  });
+
+  it("trimInputs() is safe to call on a Photo without Details", () => {
+    const photo = new Photo({ Title: " bare " });
+    expect(() => photo.trimInputs()).not.toThrow();
+    expect(photo.Title).toBe("bare");
+  });
+
   it("should get photo entity name", () => {
     const values = { UID: 5, Title: "Crazy Cat" };
     const photo = new Photo(values);

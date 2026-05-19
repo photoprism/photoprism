@@ -25,6 +25,30 @@ describe("model/album", () => {
     expect(Object.isFrozen(MaxLength)).toBe(true);
   });
 
+  // trimInputs mutates the model so post-save the user reads exactly what
+  // the backend stored; the override fires before getValues() on the
+  // PUT/POST path. Non-string and unknown fields pass through untouched.
+  it("trimInputs() strips leading and trailing whitespace from MaxLength string fields", () => {
+    const album = new Album({
+      Title: "  Vacation  ",
+      Location: "\tBerlin\n",
+      Caption: " Sunny day ",
+      Description: "   ",
+      Slug: " untouched ",
+      Favorite: true,
+    });
+
+    album.trimInputs();
+
+    expect(album.Title).toBe("Vacation");
+    expect(album.Location).toBe("Berlin");
+    expect(album.Caption).toBe("Sunny day");
+    expect(album.Description).toBe("");
+    // Slug isn't in MaxLength and Favorite isn't a string — both pass through.
+    expect(album.Slug).toBe(" untouched ");
+    expect(album.Favorite).toBe(true);
+  });
+
   it("should get route view", () => {
     const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);

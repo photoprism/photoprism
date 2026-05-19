@@ -274,21 +274,26 @@ export class rules {
   }
 
   // text returns string length validators with optional localization label.
+  // Leading and trailing whitespace is ignored so whitespace-only input
+  // explicitly fails the required / minLen check rather than passing through
+  // to the backend, which trims via txt.Clip / clean.Name on its side.
   static text(required, min, max, s) {
     if (!s) {
       s = $gettext("Text");
     }
 
+    const trim = (v) => (typeof v === "string" ? v.trim() : v);
+
     if (required) {
       return [
-        (v) => !!v || $gettext("This field is required"),
-        (v) => this.minLen(v, min ? min : 0) || $gettext(`%{s} is too short`, { s }),
-        (v) => this.maxLen(v, max ? max : 200) || $gettext("%{s} is too long", { s }),
+        (v) => !!trim(v) || $gettext("This field is required"),
+        (v) => this.minLen(trim(v), min ? min : 0) || $gettext(`%{s} is too short`, { s }),
+        (v) => this.maxLen(trim(v), max ? max : 200) || $gettext("%{s} is too long", { s }),
       ];
     } else {
       return [
-        (v) => this.minLen(v, min ? min : 0) || $gettext("%{s} is too short", { s }),
-        (v) => this.maxLen(v, max ? max : 200) || $gettext("%{s} is too long", { s }),
+        (v) => this.minLen(trim(v), min ? min : 0) || $gettext("%{s} is too short", { s }),
+        (v) => this.maxLen(trim(v), max ? max : 200) || $gettext("%{s} is too long", { s }),
       ];
     }
   }

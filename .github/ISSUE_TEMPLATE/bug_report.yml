@@ -1,16 +1,17 @@
 name: Bug Report 🐞
 description: Report a new and clearly identified bug that must be fixed directly in the application.
-title: "Category: Short bug description (PLEASE CHANGE)"
+title: "Bug: Edit the title before submitting"
 type: Bug
 assignees: []
 body:
   - type: markdown
     attributes:
       value: |
-        PLEASE ONLY PROCEED IF YOU ARE SURE THIS IS NOT A SUPPORT REQUEST, AND THE ISSUE IS NOT RELATED TO A CUSTOM SETUP OR OTHER SOFTWARE YOU ARE USING:
-        1. Thoroughly review our [Getting Started](https://docs.photoprism.app/getting-started/) and [User Guides](https://docs.photoprism.app/user-guide/).          
+        Please proceed only if you are sure that this is not a technical support incident and/or a problem with some other software you are using:
+        1. Thoroughly review our [Getting Started](https://docs.photoprism.app/getting-started/) and [User Guides](https://docs.photoprism.app/user-guide/).
         2. Work through the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) we provide.
         3. Do not report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs.
+        4. Use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) for community help, and visit our [Support Guide](https://www.photoprism.app/kb/getting-support) to learn more about support options.
   - type: checkboxes
     id: prerequisites
     attributes:
@@ -87,5 +88,5 @@ body:
     id: networking-setup
     attributes:
       label: Do You Use a Reverse Proxy, Firewall, VPN, or CDN?
-      description: Specify type and version if applicable; include NGINX configuration when relevant.
+      description: Describe your network setup. If applicable, include details about your NGINX or other reverse proxy configuration.
       placeholder: Describe proxies, VPNs, CDNs, or firewall software involved. Include versions and configuration snippets when helpful.

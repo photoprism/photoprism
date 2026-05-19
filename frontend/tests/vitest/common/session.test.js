@@ -674,4 +674,33 @@ describe("common/session", () => {
     });
   });
 
+  // A10 contract: isUser / isAdmin / isSuperAdmin must always return a Boolean,
+  // so bindings like `:disabled="isAdmin"` never pass null/undefined to a
+  // Vuetify Boolean prop. See specs/frontend/best-practices.md#a10.
+  describe("isUser / isAdmin / isSuperAdmin Boolean contract", () => {
+    it("return Boolean false when no user is loaded", () => {
+      const session = new Session(new StorageShim(), $config);
+      for (const fn of ["isUser", "isAdmin", "isSuperAdmin"]) {
+        const result = session[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
+    it("return Boolean true for an admin user (super-admin only for isSuperAdmin)", () => {
+      const session = new Session(new StorageShim(), $config);
+      session.setData({ user: { ID: 1, Name: "admin", Role: "admin", SuperAdmin: true } });
+      for (const fn of ["isUser", "isAdmin", "isSuperAdmin"]) {
+        expect(typeof session[fn](), fn).toBe("boolean");
+        expect(session[fn](), fn).toBe(true);
+      }
+      session.deleteData();
+    });
+    it("isSuperAdmin returns Boolean false for a non-super admin", () => {
+      const session = new Session(new StorageShim(), $config);
+      session.setData({ user: { ID: 2, Name: "ops", Role: "admin", SuperAdmin: false } });
+      expect(typeof session.isSuperAdmin()).toBe("boolean");
+      expect(session.isSuperAdmin()).toBe(false);
+      session.deleteData();
+    });
+  });
 });

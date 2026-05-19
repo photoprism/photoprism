@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { nextTick } from "vue";
-import PFaceMarkerOverlay from "component/photo/face-marker-overlay.vue";
+import PMetaFaceMarkers from "component/meta/face/markers.vue";
 import { FaceMarkerDisplay, FaceMarkerEdit } from "options/face-marker";
 
 // Stub image bounds on the page.
@@ -28,7 +28,7 @@ function createPswpStub() {
 
 function mountOverlay(props = {}, listeners = {}) {
   const pswp = createPswpStub();
-  const wrapper = mount(PFaceMarkerOverlay, {
+  const wrapper = mount(PMetaFaceMarkers, {
     props: {
       markers: [],
       pswp,
@@ -52,7 +52,7 @@ function mountOverlay(props = {}, listeners = {}) {
   return { wrapper, pswp };
 }
 
-describe("PFaceMarkerOverlay", () => {
+describe("PMetaFaceMarkers", () => {
   beforeEach(() => {
     // Ensure rAF runs synchronously for predictable tests.
     vi.stubGlobal("requestAnimationFrame", (cb) => {
@@ -127,8 +127,8 @@ describe("PFaceMarkerOverlay", () => {
     await nextTick();
     await flushPromises();
     const rects = wrapper.element.querySelectorAll("rect");
-    expect(rects[0].classList.contains("p-face-markers__rect--named")).toBe(true);
-    expect(rects[1].classList.contains("p-face-markers__rect--named")).toBe(false);
+    expect(rects[0].classList.contains("p-meta-face-markers__rect--named")).toBe(true);
+    expect(rects[1].classList.contains("p-meta-face-markers__rect--named")).toBe(false);
   });
 
   it("commits a draft as pending on pointer up without emitting yet", () => {
@@ -493,7 +493,7 @@ describe("PFaceMarkerOverlay", () => {
     const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay, markers });
     await nextTick();
     await flushPromises();
-    const labels = wrapper.element.querySelectorAll("text.p-face-markers__label");
+    const labels = wrapper.element.querySelectorAll("text.p-meta-face-markers__label");
     expect(labels.length).toBe(1);
     expect(labels[0].textContent).toBe("Jane");
     // Label is positioned below the rect (y > rect's y + height).
@@ -511,7 +511,7 @@ describe("PFaceMarkerOverlay", () => {
     const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers });
     await nextTick();
     await flushPromises();
-    const labels = wrapper.element.querySelectorAll("text.p-face-markers__label");
+    const labels = wrapper.element.querySelectorAll("text.p-meta-face-markers__label");
     expect(labels.length).toBe(1);
     expect(labels[0].textContent).toBe("Jane");
   });
@@ -736,7 +736,7 @@ describe("PFaceMarkerOverlay", () => {
     const { wrapper } = drawPending();
     await nextTick();
     // Before the drag, confirm group is rendered.
-    expect(wrapper.element.querySelector(".p-face-markers__confirm")).not.toBeNull();
+    expect(wrapper.element.querySelector(".p-meta-face-markers__confirm")).not.toBeNull();
 
     wrapper.vm.onPointerDown({
       button: 0,
@@ -748,13 +748,13 @@ describe("PFaceMarkerOverlay", () => {
     });
     await nextTick();
     // During the move, the confirm group is hidden.
-    expect(wrapper.element.querySelector(".p-face-markers__confirm")).toBeNull();
+    expect(wrapper.element.querySelector(".p-meta-face-markers__confirm")).toBeNull();
 
     wrapper.vm.onPointerMove({ pointerId: 108, clientX: 220, clientY: 170 });
     wrapper.vm.onPointerUp({ pointerId: 108 });
     await nextTick();
     // After release the confirm group is back.
-    expect(wrapper.element.querySelector(".p-face-markers__confirm")).not.toBeNull();
+    expect(wrapper.element.querySelector(".p-meta-face-markers__confirm")).not.toBeNull();
   });
 
   it("enforces the minimum square side during a corner resize", () => {
@@ -803,8 +803,8 @@ describe("PFaceMarkerOverlay", () => {
     expect(onCreate).not.toHaveBeenCalled();
     await nextTick();
     await flushPromises();
-    expect(wrapper.element.querySelector("button.p-face-markers__btn--confirm")).toBeNull();
-    expect(wrapper.element.querySelector("button.p-face-markers__btn--cancel")).toBeNull();
+    expect(wrapper.element.querySelector("button.p-meta-face-markers__btn--confirm")).toBeNull();
+    expect(wrapper.element.querySelector("button.p-meta-face-markers__btn--cancel")).toBeNull();
   });
 
   // The Back button is the user-facing exit for face-marker mode while
@@ -814,7 +814,7 @@ describe("PFaceMarkerOverlay", () => {
   it("renders the Back button in display mode and emits cancel on click", async () => {
     const onCancel = vi.fn();
     const { wrapper } = mountOverlay({ mode: FaceMarkerDisplay, markers: [] }, { onCancel });
-    const btn = wrapper.element.querySelector("button.p-face-markers__btn--back");
+    const btn = wrapper.element.querySelector("button.p-meta-face-markers__btn--back");
     expect(btn).not.toBeNull();
     btn.click();
     await nextTick();
@@ -827,7 +827,7 @@ describe("PFaceMarkerOverlay", () => {
     // Stage a pending draft so we can confirm the back click also clears it.
     wrapper.vm.pending = { x: 10, y: 10, w: 50, h: 50 };
     await nextTick();
-    const btn = wrapper.element.querySelector("button.p-face-markers__btn--back");
+    const btn = wrapper.element.querySelector("button.p-meta-face-markers__btn--back");
     expect(btn).not.toBeNull();
     btn.click();
     await nextTick();
@@ -873,17 +873,17 @@ describe("PFaceMarkerOverlay", () => {
       const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
       clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
       await nextTick();
-      const pill = wrapper.element.querySelector(".p-face-markers__remove-confirm");
+      const pill = wrapper.element.querySelector(".p-meta-face-markers__remove-confirm");
       expect(pill).not.toBeNull();
-      expect(pill.querySelector("button.p-face-markers__btn--remove")).not.toBeNull();
+      expect(pill.querySelector("button.p-meta-face-markers__btn--remove")).not.toBeNull();
     });
 
     it("highlights the targeted rect with the --removing modifier class", async () => {
       const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
       clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
       await nextTick();
-      const rects = wrapper.element.querySelectorAll("rect.p-face-markers__rect");
-      expect(rects[0].classList.contains("p-face-markers__rect--removing")).toBe(true);
+      const rects = wrapper.element.querySelectorAll("rect.p-meta-face-markers__rect");
+      expect(rects[0].classList.contains("p-meta-face-markers__rect--removing")).toBe(true);
     });
 
     it("✓ click emits remove with the marker and clears removingMarker", async () => {
@@ -891,7 +891,7 @@ describe("PFaceMarkerOverlay", () => {
       const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] }, { onRemove });
       clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
       await nextTick();
-      wrapper.element.querySelector("button.p-face-markers__btn--remove").click();
+      wrapper.element.querySelector("button.p-meta-face-markers__btn--remove").click();
       await nextTick();
       expect(onRemove).toHaveBeenCalledTimes(1);
       expect(onRemove.mock.calls[0][0]?.UID).toBe(unnamed.UID);
@@ -903,7 +903,7 @@ describe("PFaceMarkerOverlay", () => {
       const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] }, { onRemove });
       clickAt(wrapper, unnamed.X + unnamed.W / 2, unnamed.Y + unnamed.H / 2);
       await nextTick();
-      wrapper.element.querySelector("button.p-face-markers__btn--cancel").click();
+      wrapper.element.querySelector("button.p-meta-face-markers__btn--cancel").click();
       await nextTick();
       expect(onRemove).not.toHaveBeenCalled();
       expect(wrapper.vm.removingMarker).toBeNull();

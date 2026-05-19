@@ -1503,10 +1503,12 @@ export default {
           } else if (field.action && field.action !== this.actions.none) {
             // For regular fields with changes
             const isMixed = field.action !== this.actions.none ? false : field.mixed || false;
+            // Trim strings to match the backend; non-string values pass through.
+            const value = typeof field.value === "string" ? field.value.trim() : field.value;
             filtered[key] = {
               action: field.action,
               mixed: isMixed,
-              value: field.value,
+              value,
             };
           }
         }

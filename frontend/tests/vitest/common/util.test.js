@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import "../fixtures";
 import $util from "common/util";
 import { tokenRegexp, tokenLength } from "common/util";
@@ -329,6 +329,44 @@ describe("common/util", () => {
     it("returns empty string when no defaultValue and unknown type", () => {
       expect($util.typeName("unknown")).toBe("");
       expect($util.typeName(null)).toBe("");
+    });
+  });
+
+  // isMobile must return a Boolean. Earlier code short-circuited
+  // `navigator.maxTouchPoints && maxTouchPoints > 2`, which returned the
+  // Number 0 on desktop and tripped Vue prop type checks (VTooltip.disabled).
+  describe("isMobile", () => {
+    const userAgent = navigator.userAgent;
+    const maxTouchPoints = navigator.maxTouchPoints;
+    const stub = (ua, touch) => {
+      Object.defineProperty(navigator, "userAgent", { value: ua, configurable: true });
+      Object.defineProperty(navigator, "maxTouchPoints", { value: touch, configurable: true });
+    };
+    afterEach(() => stub(userAgent, maxTouchPoints));
+
+    it("returns Boolean false on desktop with no touch", () => {
+      stub("Mozilla/5.0 (X11; Linux x86_64)", 0);
+      const result = $util.isMobile();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("returns Boolean false when maxTouchPoints is undefined", () => {
+      stub("Mozilla/5.0 (X11; Linux x86_64)", undefined);
+      const result = $util.isMobile();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("returns true for a mobile user agent", () => {
+      stub("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)", 0);
+      expect($util.isMobile()).toBe(true);
+    });
+    it("returns true when maxTouchPoints > 2 (iPad in desktop mode)", () => {
+      stub("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", 5);
+      expect($util.isMobile()).toBe(true);
+    });
+    it("returns false when maxTouchPoints is 2 or less", () => {
+      stub("Mozilla/5.0 (X11; Linux x86_64)", 2);
+      expect($util.isMobile()).toBe(false);
     });
   });
 });

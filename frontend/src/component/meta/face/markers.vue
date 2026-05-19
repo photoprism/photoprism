@@ -1,7 +1,7 @@
 <template>
   <div
     ref="root"
-    class="p-face-markers"
+    class="p-meta-face-markers"
     :class="{ 'is-edit': isEditMode, 'is-display': !isEditMode }"
     :style="rootStyle"
     @pointerdown="onPointerDown"
@@ -9,14 +9,14 @@
     @pointerleave="onHoverLeave"
     @wheel="onWheel"
   >
-    <svg v-if="bounds" class="p-face-markers__svg" :style="svgStyle" :viewBox="`0 0 ${bounds.width} ${bounds.height}`">
+    <svg v-if="bounds" class="p-meta-face-markers__svg" :style="svgStyle" :viewBox="`0 0 ${bounds.width} ${bounds.height}`">
       <g v-for="m in markers" :key="m.UID || m.CropID">
         <rect
-          class="p-face-markers__rect"
+          class="p-meta-face-markers__rect"
           :class="{
-            'p-face-markers__rect--named': !!m.Name,
-            'p-face-markers__rect--removing': removingMarker && removingMarker.UID === m.UID,
-            'p-face-markers__rect--hovered': hoveredUid && hoveredUid === m.UID,
+            'p-meta-face-markers__rect--named': !!m.Name,
+            'p-meta-face-markers__rect--removing': removingMarker && removingMarker.UID === m.UID,
+            'p-meta-face-markers__rect--hovered': hoveredUid && hoveredUid === m.UID,
           }"
           :x="m.X * bounds.width"
           :y="m.Y * bounds.height"
@@ -27,7 +27,7 @@
         </rect>
         <text
           v-if="m.Name"
-          class="p-face-markers__label"
+          class="p-meta-face-markers__label"
           text-anchor="middle"
           :x="m.X * bounds.width + (m.W * bounds.width) / 2"
           :y="m.Y * bounds.height + m.H * bounds.height + 16"
@@ -37,23 +37,23 @@
       </g>
       <rect
         v-if="activeDraft"
-        class="p-face-markers__rect p-face-markers__rect--draft"
+        class="p-meta-face-markers__rect p-meta-face-markers__rect--draft"
         :x="activeDraft.x"
         :y="activeDraft.y"
         :width="activeDraft.w"
         :height="activeDraft.h"
       ></rect>
       <g v-if="pending && !interaction">
-        <circle class="p-face-markers__handle p-face-markers__handle--tl" :cx="pending.x" :cy="pending.y" r="6"></circle>
-        <circle class="p-face-markers__handle p-face-markers__handle--tr" :cx="pending.x + pending.w" :cy="pending.y" r="6"></circle>
-        <circle class="p-face-markers__handle p-face-markers__handle--bl" :cx="pending.x" :cy="pending.y + pending.h" r="6"></circle>
-        <circle class="p-face-markers__handle p-face-markers__handle--br" :cx="pending.x + pending.w" :cy="pending.y + pending.h" r="6"></circle>
+        <circle class="p-meta-face-markers__handle p-meta-face-markers__handle--tl" :cx="pending.x" :cy="pending.y" r="6"></circle>
+        <circle class="p-meta-face-markers__handle p-meta-face-markers__handle--tr" :cx="pending.x + pending.w" :cy="pending.y" r="6"></circle>
+        <circle class="p-meta-face-markers__handle p-meta-face-markers__handle--bl" :cx="pending.x" :cy="pending.y + pending.h" r="6"></circle>
+        <circle class="p-meta-face-markers__handle p-meta-face-markers__handle--br" :cx="pending.x + pending.w" :cy="pending.y + pending.h" r="6"></circle>
       </g>
     </svg>
-    <div v-if="pending && bounds && !interaction" class="p-face-markers__confirm" :style="confirmStyle" @pointerdown.stop @pointerup.stop>
+    <div v-if="pending && bounds && !interaction" class="p-meta-face-markers__confirm" :style="confirmStyle" @pointerdown.stop @pointerup.stop>
       <button
         type="button"
-        class="p-face-markers__btn p-face-markers__btn--confirm"
+        class="p-meta-face-markers__btn p-meta-face-markers__btn--confirm"
         :class="{ 'is-disabled': busy }"
         :disabled="busy"
         :title="$gettext('Confirm')"
@@ -63,16 +63,16 @@
           <path fill="currentColor" d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
         </svg>
       </button>
-      <button type="button" class="p-face-markers__btn p-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelPending">
+      <button type="button" class="p-meta-face-markers__btn p-meta-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelPending">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           <path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
         </svg>
       </button>
     </div>
-    <div v-if="removingMarker && bounds" class="p-face-markers__remove-confirm" :style="removeConfirmStyle" @pointerdown.stop @pointerup.stop>
+    <div v-if="removingMarker && bounds" class="p-meta-face-markers__remove-confirm" :style="removeConfirmStyle" @pointerdown.stop @pointerup.stop>
       <button
         type="button"
-        class="p-face-markers__btn p-face-markers__btn--remove"
+        class="p-meta-face-markers__btn p-meta-face-markers__btn--remove"
         :class="{ 'is-disabled': busy }"
         :disabled="busy"
         :title="$gettext('Remove')"
@@ -82,7 +82,7 @@
           <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"></path>
         </svg>
       </button>
-      <button type="button" class="p-face-markers__btn p-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelRemove">
+      <button type="button" class="p-meta-face-markers__btn p-meta-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelRemove">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           <path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
         </svg>
@@ -90,7 +90,7 @@
     </div>
     <button
       type="button"
-      class="p-face-markers__btn p-face-markers__btn--back"
+      class="p-meta-face-markers__btn p-meta-face-markers__btn--back"
       :title="$gettext('Back')"
       :aria-label="$gettext('Back')"
       @click.stop="onBackClick"
@@ -120,7 +120,7 @@ const InteractionMove = "move";
 const InteractionResize = "resize";
 
 export default {
-  name: "PFaceMarkerOverlay",
+  name: "PMetaFaceMarkers",
   props: {
     markers: {
       type: Array,

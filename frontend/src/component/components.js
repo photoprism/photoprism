@@ -67,7 +67,9 @@ import PPhotoPreview from "component/photo/preview.vue";
 import PPhotoArchiveDialog from "component/photo/archive/dialog.vue";
 import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
 import PPhotoEditDialog from "component/photo/edit/dialog.vue";
-import PFaceMarkerOverlay from "component/photo/face-marker-overlay.vue";
+
+// Meta.
+import PMetaFaceMarkers from "component/meta/face/markers.vue";
 
 // Upload.
 import PUploadDialog from "component/upload/dialog.vue";
@@ -135,7 +137,9 @@ export function install(app) {
   app.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
   app.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
   app.component("PPhotoEditDialog", PPhotoEditDialog);
-  app.component("PFaceMarkerOverlay", PFaceMarkerOverlay);
+
+  app.component("PMetaFaceMarkers", PMetaFaceMarkers);
+
   app.component("PUploadDialog", PUploadDialog);
 
   app.component("PServiceAdd", PServiceAdd);

@@ -88,6 +88,8 @@ export default {
   methods: {
     afterEnter() {
       this.$view.enter(this);
+      // Seed validation so pre-filled overlong input surfaces the inline error on first render.
+      this.$refs.form?.validate?.();
     },
     afterLeave() {
       this.$view.leave(this);
@@ -101,7 +103,19 @@ export default {
         return;
       }
 
-      this.$emit("confirm", this.model);
+      // Form-level gate: :rules alone only renders the inline error.
+      const form = this.$refs.form;
+      const validate = typeof form?.validate === "function" ? form.validate() : Promise.resolve({ valid: true });
+
+      return Promise.resolve(validate).then((result) => {
+        if (result && result.valid === false) {
+          this.$notify.error(this.$gettext("Changes could not be saved"));
+          return;
+        }
+
+        // Trim runs in Subject.update() at the model boundary (parent emits-then-saves).
+        this.$emit("confirm", this.model);
+      });
     },
   },
 };

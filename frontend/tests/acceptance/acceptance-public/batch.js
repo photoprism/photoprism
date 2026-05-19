@@ -121,7 +121,9 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
   await t.expect(photoedit.countryValue.innerText).eql("Germany");
   await t.click(Selector(".input-labels input"));
 
-  await t.expect(page.selectOption.withText("People").visible).ok().expect(page.selectOption.withText("Cat").visible).ok();
+  // The dropdown hides labels already assigned to any selected photo:
+  // "Cat" is a chip on photo 1, "Animal" is unassigned across all 4.
+  await t.expect(page.selectOption.withText("Cat").exists).notOk().expect(page.selectOption.withText("Animal").visible).ok();
 
   await t.typeText(Selector(".input-labels input"), "P", { replace: true });
 
@@ -139,7 +141,8 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
 
   await t.click(Selector(".input-albums input"));
 
-  await t.expect(page.selectOption.withText("Holiday").visible).ok().expect(page.selectOption.withText("Christmas").visible).ok();
+  // "Holiday" is on photo 3, "Christmas" is unassigned.
+  await t.expect(page.selectOption.withText("Holiday").exists).notOk().expect(page.selectOption.withText("Christmas").visible).ok();
 
   await t.typeText(Selector(".input-albums input"), "C", { replace: true });
 

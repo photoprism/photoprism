@@ -323,4 +323,38 @@ describe("model/user", () => {
     expect(result.new_password).toBe("new");
   });
 
+  // A10 contract: isRemote / hasWebDAV must always return a Boolean, so a
+  // `:disabled` binding to these methods never passes undefined / "" to a
+  // Vuetify Boolean prop. See specs/frontend/best-practices.md#a10.
+  describe("isRemote / hasWebDAV Boolean contract", () => {
+    it("isRemote returns Boolean false when AuthProvider is missing", () => {
+      const user = new User({ ID: 1, Name: "max" });
+      const result = user.isRemote();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("isRemote returns Boolean false when AuthProvider is empty string", () => {
+      const user = new User({ ID: 1, Name: "max", AuthProvider: "" });
+      expect(typeof user.isRemote()).toBe("boolean");
+      expect(user.isRemote()).toBe(false);
+    });
+    it("hasWebDAV returns Boolean false when WebDAV is missing", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "admin" });
+      const result = user.hasWebDAV();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("hasWebDAV returns Boolean false when WebDAV is 0", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "admin", WebDAV: 0 });
+      const result = user.hasWebDAV();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("hasWebDAV returns Boolean true when WebDAV is true and role permits", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "admin", WebDAV: true });
+      const result = user.hasWebDAV();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(true);
+    });
+  });
 });

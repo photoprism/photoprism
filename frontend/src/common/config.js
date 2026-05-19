@@ -841,17 +841,17 @@ export default class Config {
 
   // isPublic returns true if the instance is running in public mode, i.e. without authentication.
   isPublic() {
-    return this.values && this.values.public;
+    return !!this.values?.public;
   }
 
   // isDemo returns true if the instance is running in demo mode for public or private testing.
   isDemo() {
-    return this.values && this.values.demo;
+    return !!this.values?.demo;
   }
 
   // isPortal returns true if this is a cluster portal server.
   isPortal() {
-    return this.values && this.values.portal;
+    return !!this.values?.portal;
   }
 
   // isPro returns true if this is team version.

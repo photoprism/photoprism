@@ -28,6 +28,7 @@ Additional information can be found in our Developer Guide:
 @import url("root.css");
 @import url("splash.css");
 @import url("text.css");
+@import url("meta.css");
 @import url("lightbox.css");
 @import url("controls.css");
 @import url("wallpapers.css");

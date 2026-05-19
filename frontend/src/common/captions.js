@@ -38,6 +38,9 @@ class PhotoSwipeDynamicCaption {
     const { pswp } = this;
 
     pswp.on("change", () => {
+      // Refresh first so a slide preloaded with stale Title/Caption picks
+      // up any photos.updated event that landed before activation.
+      this.refreshCaption(this.pswp.currSlide);
       // make sure caption is displayed after slides are switched
       this.showCaption(this.pswp.currSlide);
     });
@@ -245,24 +248,12 @@ class PhotoSwipeDynamicCaption {
         type: false,
         hidden: false,
       };
-
-      const captionHTML = this.getCaptionHTML(slide);
-
-      if (!captionHTML) {
-        return;
-      }
-
-      slide.dynamicCaption.element = document.createElement("div");
-      slide.dynamicCaption.element.className = "pswp__dynamic-caption pswp__hide-on-close";
-      slide.dynamicCaption.element.innerHTML = captionHTML; // security-reviewed: captionHTML is sanitized or HTML-encoded.
-
-      this.pswp.dispatch("dynamicCaptionUpdateHTML", {
-        captionElement: slide.dynamicCaption.element,
-        slide,
-      });
-
-      slide.holderElement.appendChild(slide.dynamicCaption.element);
     }
+
+    // Recompute on every layout pass so edits made via the sidebar (or
+    // photos.updated events from other clients) surface when the caption
+    // becomes visible again.
+    this.refreshCaption(slide);
 
     if (!slide.dynamicCaption.element) {
       return;
@@ -400,12 +391,70 @@ class PhotoSwipeDynamicCaption {
     }
   }
 
+  // refreshCaption rebuilds the slide's caption HTML in place so the lightbox
+  // picks up edits applied through the sidebar or pushed via photos.updated.
+  // Creates the element lazily on first non-empty HTML; once created, the
+  // element stays in the DOM and is just updated, so the layout adjustments
+  // in onCalcSlideSize can keep their pan-area bookkeeping consistent.
+  refreshCaption(slide) {
+    if (!slide || !slide.dynamicCaption) {
+      return;
+    }
+
+    const captionHTML = this.getCaptionHTML(slide);
+
+    if (!slide.dynamicCaption.element) {
+      if (!captionHTML) {
+        return;
+      }
+      slide.dynamicCaption.element = document.createElement("div");
+      slide.dynamicCaption.element.className = "pswp__dynamic-caption pswp__hide-on-close";
+      slide.dynamicCaption.element.innerHTML = captionHTML; // security-reviewed: captionHTML is sanitized or HTML-encoded.
+      slide.holderElement?.appendChild(slide.dynamicCaption.element);
+      this.pswp.dispatch("dynamicCaptionUpdateHTML", {
+        captionElement: slide.dynamicCaption.element,
+        slide,
+      });
+      return;
+    }
+
+    if (slide.dynamicCaption.element.innerHTML === captionHTML) {
+      return;
+    }
+
+    slide.dynamicCaption.element.innerHTML = captionHTML; // security-reviewed: captionHTML is sanitized or HTML-encoded.
+    this.pswp.dispatch("dynamicCaptionUpdateHTML", {
+      captionElement: slide.dynamicCaption.element,
+      slide,
+    });
+  }
+
+  // refreshCurrentCaption refreshes the caption for the slide currently shown.
+  refreshCurrentCaption() {
+    if (this.pswp && this.pswp.currSlide) {
+      this.refreshCaption(this.pswp.currSlide);
+    }
+  }
+
   getCaptionHTML(slide) {
+    if (!slide) {
+      return "";
+    }
+
+    // Prefer a model-aware lookup when the host provides one — the plugin
+    // owns the HTML format so callers don't reimplement encoding/sanitizing.
+    if (typeof this.options.getModel === "function") {
+      const model = this.options.getModel.call(this, slide);
+      if (model) {
+        return this.formatCaption(model);
+      }
+    }
+
     if (typeof this.options.captionContent === "function") {
       return this.options.captionContent.call(this, slide);
     }
 
-    const currSlideElement = slide.data.element;
+    const currSlideElement = slide.data?.element;
     let captionHTML = "";
     if (currSlideElement) {
       const hiddenCaption = currSlideElement.querySelector(this.options.captionContent);
@@ -421,6 +470,38 @@ class PhotoSwipeDynamicCaption {
       }
     }
     return captionHTML;
+  }
+
+  // formatCaption returns the PhotoPrism caption HTML (sanitized) for a slide
+  // model. Title renders as <h4>; caption text renders as <h4> when it stands
+  // alone on a single line, otherwise as <p>. Falls back to Description when
+  // Caption is empty. Pure: does not mutate the model.
+  formatCaption(model) {
+    if (!model) {
+      return "";
+    }
+
+    let html = "";
+
+    if (model.Title) {
+      html += `<h4>${$util.encodeHTML(model.Title.trim())}</h4>`;
+    }
+
+    let text = typeof model.Caption === "string" ? model.Caption.trim() : "";
+    if (!text && typeof model.Description === "string") {
+      text = model.Description.trim();
+    }
+
+    if (text) {
+      if (!html && text.split("\n").length < 2) {
+        // Single-line, no title — promote to <h4> so it reads as the headline.
+        html += `<h4>${$util.encodeHTML(text)}</h4>`;
+      } else {
+        html += `<p>${$util.encodeHTML(text)}</p>`;
+      }
+    }
+
+    return $util.sanitizeHtml(html);
   }
 }
 

@@ -327,6 +327,23 @@ describe("PLightboxSidebar component", () => {
     expect(result).toBe("June 2024");
   });
 
+  // Limited-access sessions get an empty Photo placeholder whose default
+  // getDateString() renders "Unknown" against empty Year/Month/Day. The UID
+  // gate makes formatTime fall through to the Thumb's TakenAtLocal instead.
+  it("skips photo.getDateString and uses Thumb.TakenAtLocal for the empty Photo placeholder", () => {
+    const getDateString = vi.fn().mockReturnValue("Unknown");
+    const emptyPhoto = { UID: "", getDateString, getMarkers: vi.fn().mockReturnValue([]) };
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: emptyPhoto, canEdit: false, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+
+    const result = w.vm.formatTime(mockModel);
+
+    expect(getDateString).not.toHaveBeenCalled();
+    expect(result).toBe("January 1, 2023, 10:00 AM");
+  });
+
   // Camera, lens, and EXIF info
   it("should display camera info from photo prop", () => {
     expect(wrapper.vm.cameraInfo).toBe("Canon EOS R5");
@@ -631,7 +648,7 @@ describe("PLightboxSidebar component", () => {
   // the combobox's #append-inner slot) was retired: it looked like a
   // "clear input" affordance but rejected the marker on the backend
   // without confirmation. Removal now lives on the face-marker overlay
-  // — see tests/vitest/component/photo/face-marker-overlay.test.js for
+  // — see tests/vitest/component/meta/face/markers.test.js for
   // the click-to-remove + confirm-pill flow.
   it("should not render a per-row remove icon on any person row", () => {
     const w = mountSidebar({
@@ -2019,6 +2036,30 @@ describe("PLightboxSidebar component", () => {
       w.vm.confirmField();
 
       expect(photo.update).not.toHaveBeenCalled();
+      expect(w.vm.$notify.error).not.toHaveBeenCalled();
+    });
+
+    it("trims surrounding whitespace before checking the field cap so a value that fits after trim still saves", () => {
+      // Mirrors the backend trim performed by txt.Clip; without it a user
+      // typing "x"*1024 + trailing spaces would trip the cap and the
+      // editor would stay open even though the trimmed value fits the
+      // column.
+      const photo = buildInlineEditPhoto();
+      photo.update.mockResolvedValueOnce({});
+      const w = mountSidebar({
+        props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
+        global: { stubs: { PMap: true } },
+      });
+
+      // Copyright cap is 1024; "x"*1024 + trailing spaces is fine after trim.
+      photo.Details = { Copyright: "x".repeat(1024) + "   " };
+      w.vm.editingField = "copyright";
+
+      w.vm.confirmField();
+
+      // Trimmed value persisted on the photo and the editor closed.
+      expect(photo.Details.Copyright).toBe("x".repeat(1024));
+      expect(w.vm.editingField).toBeNull();
       expect(w.vm.$notify.error).not.toHaveBeenCalled();
     });
 
@@ -3478,6 +3519,29 @@ describe("PLightboxSidebar component", () => {
         global: { stubs: { PMap: true } },
       });
       expect(w.vm.fileTypeName).toBe("File");
+    });
+
+    // Limited-access sessions never load the full Photo; the empty
+    // placeholder Photo.getDefaults() returns is seeded Type="image" and
+    // would mask the Thumb's real type (e.g. live) without the UID gate.
+    it("mediaType / fileTypeName / fileIcon fall through to Thumb.Type when Photo is the empty placeholder", () => {
+      const thumbModel = { ...mockModel, Type: "live" };
+      const emptyPhoto = { UID: "", Type: "image", getMarkers: vi.fn().mockReturnValue([]) };
+      const w = mountSidebar({
+        props: {
+          modelValue: thumbModel,
+          photo: emptyPhoto,
+          canEdit: false,
+          context: contexts.Photos,
+        },
+        global: {
+          stubs: { PMap: true },
+          mocks: { $config: restrictedConfig(true) },
+        },
+      });
+      expect(w.vm.mediaType).toBe("live");
+      expect(w.vm.fileTypeName).toBe("live");
+      expect(w.vm.fileIcon).toBe("mdi-play-circle-outline");
     });
   });
 

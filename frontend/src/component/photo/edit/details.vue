@@ -639,6 +639,7 @@ export default {
 
         this.updateModel();
 
+        // Photo.update() runs trimInputs() before the PUT.
         return this.view.model.update().then(() => {
           if (close) {
             this.$emit("close");

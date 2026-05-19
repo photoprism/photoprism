@@ -8,8 +8,7 @@ const SubjPerson = "person";
 
 export let BatchSize = 60;
 
-// MaxLength mirrors the backend VARCHAR caps on internal/entity/subject.go
-// so UI validation matches what the server persists.
+// MaxLength mirrors the backend setter clip in internal/entity/subject.go (SetName → clean.Name).
 export const MaxLength = Object.freeze({
   Name: 160,
 });
@@ -73,6 +72,15 @@ export class Subject extends Collection {
 
   getEntityName() {
     return this.Slug;
+  }
+
+  // trimInputs strips whitespace from MaxLength string fields before save.
+  trimInputs() {
+    for (const key of Object.keys(MaxLength)) {
+      if (typeof this[key] === "string") {
+        this[key] = this[key].trim();
+      }
+    }
   }
 
   getTitle() {

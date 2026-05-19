@@ -33,7 +33,7 @@ const makeFaceMarkers = (overrides = {}) => ({
 });
 
 const storagePrefix = buildNamespace(clientConfig.storageNamespace);
-const infoKey = `${storagePrefix}lightbox.info`;
+const sidebarKey = `${storagePrefix}lightbox.sidebar`;
 const mutedKey = `${storagePrefix}lightbox.muted`;
 const captionKey = `${storagePrefix}lightbox.caption`;
 
@@ -66,23 +66,23 @@ const allowAllConfig = { allow: () => true, deny: () => false };
 
 describe("PLightbox (low-mock, jsdom-friendly)", () => {
   beforeEach(() => {
-    localStorage.removeItem(infoKey);
+    localStorage.removeItem(sidebarKey);
     localStorage.removeItem(captionKey);
     sessionStorage.removeItem(mutedKey);
   });
 
-  it("toggleInfo updates info and localStorage when visible", async () => {
+  it("toggleSidebar updates sidebar and localStorage when visible", async () => {
     const wrapper = mountLightbox();
     await wrapper.setData({ visible: true });
 
-    // Use exposed onShortCut to trigger info toggle (KeyI)
+    // Use exposed onShortCut to trigger sidebar toggle (KeyI)
     await wrapper.vm.onShortCut({ code: "KeyI" });
     await nextTick();
-    expect(localStorage.getItem(infoKey)).toBe("true");
+    expect(localStorage.getItem(sidebarKey)).toBe("true");
 
     await wrapper.vm.onShortCut({ code: "KeyI" });
     await nextTick();
-    expect(localStorage.getItem(infoKey)).toBe("false");
+    expect(localStorage.getItem(sidebarKey)).toBe("false");
   });
 
   it("toggleMute writes sessionStorage without requiring video or exposed state", async () => {
@@ -110,15 +110,15 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
 
   it("KeyI is ignored when dialog is not visible", async () => {
     const wrapper = mountLightbox();
-    expect(localStorage.getItem(infoKey)).toBeNull();
+    expect(localStorage.getItem(sidebarKey)).toBeNull();
     await wrapper.vm.onShortCut({ code: "KeyI" });
-    expect(localStorage.getItem(infoKey)).toBeNull();
+    expect(localStorage.getItem(sidebarKey)).toBeNull();
   });
 
   // Ctrl+H (#5580) toggles the PhotoSwipe Dynamic Caption overlay and
   // persists the choice to localStorage. Default state is visible
   // (hideCaption reads "lightbox.caption" with a strict !== "false"
-  // check, so missing-key resolves to true). Mirrors the toggleInfo
+  // check, so missing-key resolves to true). Mirrors the toggleSidebar
   // pattern so future shortcut additions can copy the same shape.
   it("toggleCaption updates hideCaption and localStorage when visible", async () => {
     const wrapper = mountLightbox();
@@ -223,9 +223,9 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       }
     });
 
-    it("calls preventDefault when info is open and an INPUT is focused", () => {
+    it("calls preventDefault when sidebar is open and an INPUT is focused", () => {
       const wrapper = mountLightbox();
-      wrapper.vm.info = true;
+      wrapper.vm.sidebarVisible = true;
       const input = document.createElement("input");
       scratch.appendChild(input);
       input.focus();
@@ -234,9 +234,9 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(ev.preventDefault).toHaveBeenCalledTimes(1);
     });
 
-    it("calls preventDefault when info is open and a TEXTAREA is focused", () => {
+    it("calls preventDefault when sidebar is open and a TEXTAREA is focused", () => {
       const wrapper = mountLightbox();
-      wrapper.vm.info = true;
+      wrapper.vm.sidebarVisible = true;
       const ta = document.createElement("textarea");
       scratch.appendChild(ta);
       ta.focus();
@@ -247,11 +247,11 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
 
     // Note: isContentEditable behavior isn't reliably simulated by jsdom, so
     // the contenteditable branch of onPswpKeyDown is exercised in the browser
-    // ui-tester run. The INPUT / TEXTAREA / non-editable / no-info / no-event
+    // ui-tester run. The INPUT / TEXTAREA / non-editable / no-sidebar / no-event
     // cases here cover the predicate's two-class boundary in unit tests.
-    it("does NOT call preventDefault when info is closed even with input focused", () => {
+    it("does NOT call preventDefault when sidebar is closed even with input focused", () => {
       const wrapper = mountLightbox();
-      wrapper.vm.info = false;
+      wrapper.vm.sidebarVisible = false;
       const input = document.createElement("input");
       scratch.appendChild(input);
       input.focus();
@@ -262,7 +262,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
 
     it("does NOT call preventDefault when focus is on a non-editable element", () => {
       const wrapper = mountLightbox();
-      wrapper.vm.info = true;
+      wrapper.vm.sidebarVisible = true;
       const span = document.createElement("span");
       span.tabIndex = 0;
       scratch.appendChild(span);
@@ -274,7 +274,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
 
     it("tolerates a missing event argument", () => {
       const wrapper = mountLightbox();
-      wrapper.vm.info = true;
+      wrapper.vm.sidebarVisible = true;
       expect(() => wrapper.vm.$options.methods.onPswpKeyDown.call(wrapper.vm, undefined)).not.toThrow();
     });
   });
@@ -416,12 +416,12 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     // exits it. The eye and ✓ Done controls live in the sidebar, so a
     // closed sidebar would otherwise leave the overlay mounted with no
     // way to disable it.
-    it("hideInfo exits face-marker UI so the overlay tears down", async () => {
+    it("hideSidebar exits face-marker UI so the overlay tears down", async () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const ctx = {
         visible: true,
-        info: true,
+        sidebarVisible: true,
         faceMarkers: makeFaceMarkers({ active: true, isEdit: true, mode: FaceMarkerEdit }),
         exitFaceMarkerMode,
         confirmDiscardSidebar: () => Promise.resolve(true),
@@ -429,20 +429,20 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
         resize: vi.fn(),
         focusContent: vi.fn(),
       };
-      await wrapper.vm.$options.methods.hideInfo.call(ctx);
-      expect(ctx.info).toBe(false);
+      await wrapper.vm.$options.methods.hideSidebar.call(ctx);
+      expect(ctx.sidebarVisible).toBe(false);
       expect(exitFaceMarkerMode).toHaveBeenCalledTimes(1);
     });
 
-    // Guard: hideInfo does not exit face-marker UI if the user cancels
+    // Guard: hideSidebar does not exit face-marker UI if the user cancels
     // out of the discard prompt. Sidebar (and overlay) stay open.
-    it("hideInfo keeps face-marker UI when confirmDiscardSidebar resolves false", async () => {
+    it("hideSidebar keeps face-marker UI when confirmDiscardSidebar resolves false", async () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const faceMarkers = makeFaceMarkers({ active: true, isEdit: true, mode: FaceMarkerEdit });
       const ctx = {
         visible: true,
-        info: true,
+        sidebarVisible: true,
         faceMarkers,
         exitFaceMarkerMode,
         confirmDiscardSidebar: () => Promise.resolve(false),
@@ -450,8 +450,8 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
         resize: vi.fn(),
         focusContent: vi.fn(),
       };
-      await wrapper.vm.$options.methods.hideInfo.call(ctx);
-      expect(ctx.info).toBe(true);
+      await wrapper.vm.$options.methods.hideSidebar.call(ctx);
+      expect(ctx.sidebarVisible).toBe(true);
       expect(faceMarkers.mode).toBe(FaceMarkerEdit);
       expect(exitFaceMarkerMode).not.toHaveBeenCalled();
     });
@@ -706,7 +706,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
           const toggleVideo = vi.fn();
           const ctx = {
             visible: true,
-            info: false,
+            sidebarVisible: false,
             faceMarkers: makeFaceMarkers({ active: true, ...modeFlags }),
             isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
             $view: { isActive: () => true },
@@ -737,24 +737,25 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       it("onShortCut still routes Escape + KeyI even when face-marker mode is active", () => {
         const wrapper = mountLightbox();
         const onEscapeKey = vi.fn();
-        const toggleInfo = vi.fn();
+        const toggleSidebar = vi.fn();
         const ctx = {
           faceMarkers: makeFaceMarkers({ active: true, isDisplay: true, mode: FaceMarkerDisplay }),
           isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
           onEscapeKey,
-          toggleInfo,
+          toggleSidebar,
         };
         wrapper.vm.$options.methods.onShortCut.call(ctx, { code: "Escape" });
         wrapper.vm.$options.methods.onShortCut.call(ctx, { code: "KeyI" });
         expect(onEscapeKey).toHaveBeenCalledTimes(1);
-        expect(toggleInfo).toHaveBeenCalledTimes(1);
+        expect(toggleSidebar).toHaveBeenCalledTimes(1);
       });
     });
   });
 
-  it("formatCaption returns sanitized caption html", () => {
-    const wrapper = mountLightbox();
-    const caption = wrapper.vm.$.ctx.formatCaption({
+  it("captionPlugin.formatCaption returns sanitized caption html", async () => {
+    const Captions = (await import("common/captions")).default;
+    const plugin = new Captions({ on() {} }, {});
+    const caption = plugin.formatCaption({
       Title: `Title <img src=x onerror="alert(1)">`,
       Caption: `Visit https://example.com/?q=1&x=2`,
     });
@@ -810,7 +811,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const wrapper = mountLightbox();
     const ctx = {
       ...wrapper.vm,
-      info: true,
+      sidebarVisible: true,
       models: [{ UID: "uid-curr" }, { UID: "uid-next" }],
       index: 0,
       $config: { ...wrapper.vm.$config, deny: () => true, allow: () => false },
@@ -827,7 +828,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const wrapper = mountLightbox();
     const ctx = {
       ...wrapper.vm,
-      info: false,
+      sidebarVisible: false,
       models: [{ UID: "uid-curr" }, { UID: "uid-next" }],
       index: 0,
     };
@@ -844,7 +845,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const models = [{ UID: "uid-curr" }, { UID: "uid-next" }];
     const ctx = {
       ...wrapper.vm,
-      info: true,
+      sidebarVisible: true,
       models,
       index: 0,
       $config: allowAllConfig,
@@ -993,7 +994,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const models = [{ UID: "uid-curr" }, { UID: "uid-next" }];
       const ctx = {
         ...wrapper.vm,
-        info: true,
+        sidebarVisible: true,
         models,
         index: 0,
         $config: allowAllConfig,

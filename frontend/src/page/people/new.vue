@@ -643,7 +643,8 @@ export default {
       this.setName(model, model.Name);
     },
     setName(model, newName) {
-      if (this.busy || !model || !newName || newName.trim() === "") {
+      const trimmed = (newName || "").trim();
+      if (this.busy || !model || trimmed === "") {
         // Ignore if busy, refuse to save empty name.
         return;
       }
@@ -651,7 +652,7 @@ export default {
       this.busy = true;
       this.$notify.blockUI("busy");
 
-      return model.setName(newName).finally(() => {
+      return model.setName(trimmed).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
         this.changeFaceCount(-1);

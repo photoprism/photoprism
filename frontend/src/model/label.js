@@ -6,8 +6,7 @@ import Collection from "model/collection";
 
 export let BatchSize = 180;
 
-// MaxLength mirrors the backend VARCHAR caps on internal/entity/label.go
-// so UI validation matches what the server persists.
+// MaxLength mirrors the backend setter clips in internal/entity/label.go.
 export const MaxLength = Object.freeze({
   Name: 160,
   Description: 2048,
@@ -55,6 +54,15 @@ export class Label extends Collection {
 
   getEntityName() {
     return this.Slug;
+  }
+
+  // trimInputs strips whitespace from MaxLength string fields before save.
+  trimInputs() {
+    for (const key of Object.keys(MaxLength)) {
+      if (typeof this[key] === "string") {
+        this[key] = this[key].trim();
+      }
+    }
   }
 
   getTitle() {

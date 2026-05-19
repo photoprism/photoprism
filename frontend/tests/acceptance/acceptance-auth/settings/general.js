@@ -290,9 +290,11 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   // that rewrote the sidebar gated both on $config.feature("people"),
   // so this assertion fails if the feature flag no longer propagates.
   await photoviewer.openPhotoViewer("nth", 0);
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).ok();
-  await t.expect(photoviewer.markersVisibilityToggle.exists).ok();
+  // Admin (Edit on) sees the pencil "Edit" button (.meta-faces-edit),
+  // not the eye .meta-markers-toggle — see info.vue per-role split.
+  await t.expect(photoviewer.markerAddButton.exists).ok();
   await photoviewer.triggerPhotoViewerAction("close-button");
 
   await menu.checkMenuItemAvailability("people", true);
@@ -317,7 +319,7 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   // People section and the face-marker toggle/add controls, even for
   // an admin on a photo that has markers in the fixtures.
   await photoviewer.openPhotoViewer("nth", 0);
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
   await t.expect(photoviewer.markerAddButton.exists).notOk();
@@ -456,10 +458,10 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.checkPhotoViewerActionAvailability("download", true);
   await photoviewer.checkPhotoViewerActionAvailability("edit-button", true);
 
-  // Baseline sidebar assertion: with Edit enabled, the lightbox
-  // sidebar exposes pencil icons for inline editing.
-  await photoviewer.openInfoSidebar();
-  await t.expect(photoviewer.inlinePencils.exists).ok();
+  // Baseline sidebar assertion: with Edit enabled, every editable row
+  // surfaces its editor / dialog when clicked.
+  await photoviewer.openSidebar();
+  await photoviewer.assertSidebarIsEditable();
 
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
@@ -552,13 +554,18 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.checkPhotoViewerActionAvailability("download", false);
   await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
 
-  // With Edit disabled, the sidebar must drop every inline edit
-  // affordance: no pencil icons, no add-prompt placeholders, and no
-  // active inline edit inputs.
-  await photoviewer.openInfoSidebar();
-  await t.expect(photoviewer.inlinePencils.exists).notOk();
-  await t.expect(photoviewer.inlineAddPrompt.exists).notOk();
+  await photoviewer.openSidebar();
+  await photoviewer.assertSidebarIsReadOnly();
+  await photoviewer.triggerPhotoViewerAction("close-button");
+  await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 
+  // Positive control for .meta-markers-toggle — search a photo with markers (the People
+  // section only renders the toggle when people.length > 0 for non-editable users).
+  await toolbar.search("Filmpreis");
+  await photoviewer.openPhotoViewer("nth", 0);
+  await photoviewer.openSidebar();
+  await t.expect(photoviewer.markersVisibilityToggle.visible).ok();
+  await t.expect(photoviewer.markerAddButton.exists).notOk();
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 

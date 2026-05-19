@@ -53,7 +53,7 @@
             :ref="setInlineEditorRef"
             v-model="photo.Caption"
             :rows="1"
-            :max-rows="6"
+            :max-rows="14"
             density="compact"
             auto-grow
             hide-details="auto"
@@ -293,11 +293,12 @@
                 :key="a.UID"
                 tabindex="0"
                 class="meta-chip meta-chip--primary"
+                :title="a.Title"
                 @click.stop.prevent="onChipActivate('albums', a)"
                 @keydown.enter.stop.prevent="onChipActivate('albums', a)"
                 @keydown.delete.stop.prevent="onChipDelete('albums', a)"
               >
-                {{ a.Title }}
+                <span class="meta-chip__label text-truncate">{{ a.Title }}</span>
                 <v-icon
                   v-if="isEditable"
                   icon="mdi-close-circle"
@@ -353,11 +354,12 @@
                 :key="l.Label.UID"
                 tabindex="0"
                 class="meta-chip meta-chip--primary"
+                :title="l.Label.Name"
                 @click.stop.prevent="onChipActivate('labels', l)"
                 @keydown.enter.stop.prevent="onChipActivate('labels', l)"
                 @keydown.delete.stop.prevent="onChipDelete('labels', l)"
               >
-                {{ l.Label.Name }}
+                <span class="meta-chip__label text-truncate">{{ l.Label.Name }}</span>
                 <v-icon
                   v-if="isEditable"
                   icon="mdi-close-circle"
@@ -1043,8 +1045,17 @@ export default {
       }
       return "";
     },
+    // mediaType returns the active media type for icon / label lookup.
+    // Gate on UID: Photo.getDefaults() seeds an empty Photo with Type=image,
+    // which would mask the Thumb's real type for limited-access sessions.
+    mediaType() {
+      if (this.photo && this.photo.UID && this.photo.Type) {
+        return this.photo.Type;
+      }
+      return this.model?.Type || "";
+    },
     fileIcon() {
-      switch (this.photo?.Type || this.model?.Type) {
+      switch (this.mediaType) {
         case media.Raw:
           return "mdi-raw";
         case media.Video:
@@ -1064,8 +1075,7 @@ export default {
     // Localized media-type label for the file row tooltip, with a
     // generic "File" fallback when Type is missing.
     fileTypeName() {
-      const type = this.photo?.Type || this.model?.Type;
-      return this.$util.typeName(type, this.$gettext("File"));
+      return this.$util.typeName(this.mediaType, this.$gettext("File"));
     },
   },
   watch: {
@@ -1628,14 +1638,18 @@ export default {
       const field = this.editingField;
       const fieldDef = this.fieldRegistry[field];
 
-      // Length gate: the inline editor has no parent v-form, so without
-      // this imperative check photo.update() would persist overlength
-      // input. Mirrors addLabelImmediate / addAlbumImmediate.
-      if (fieldDef && fieldDef.maxLength > 0) {
+      // Trim before the length gate so trailing whitespace doesn't trip the cap; Photo.update() trims again.
+      if (fieldDef) {
         const currentValue = fieldDef.read(this.photo);
-        if (typeof currentValue === "string" && currentValue.length > fieldDef.maxLength) {
-          this.$notify.error(this.$gettext("%{s} is too long", { s: fieldDef.label }));
-          return;
+        if (typeof currentValue === "string") {
+          const trimmed = currentValue.trim();
+          if (trimmed !== currentValue) {
+            fieldDef.write(this.photo, trimmed);
+          }
+          if (fieldDef.maxLength > 0 && trimmed.length > fieldDef.maxLength) {
+            this.$notify.error(this.$gettext("%{s} is too long", { s: fieldDef.label }));
+            return;
+          }
         }
       }
 
@@ -1689,11 +1703,11 @@ export default {
       this.confirmField();
     },
     formatTime(model) {
-      // Prefer Photo.getDateString() — it's the source of truth for the
-      // Unknown / year-only / month+year fallbacks. The Thumb model
-      // lacks Year/Month/Day, so we fall back to TakenAtLocal until the
-      // full photo loads.
-      if (this.photo && typeof this.photo.getDateString === "function") {
+      // Prefer Photo.getDateString() — source of truth for the Unknown /
+      // year-only / month+year fallbacks. Gate on UID so limited-access
+      // sessions (empty Photo placeholder) fall through to TakenAtLocal
+      // instead of getDateString rendering "Unknown" against empty defaults.
+      if (this.photo && this.photo.UID && typeof this.photo.getDateString === "function") {
         return this.photo.getDateString(true);
       }
 

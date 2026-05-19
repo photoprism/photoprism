@@ -22,6 +22,12 @@ describe("model/subject", () => {
     expect(Object.isFrozen(MaxLength)).toBe(true);
   });
 
+  it("trimInputs() strips whitespace from MaxLength string fields", () => {
+    const subject = new Subject({ Name: "  Alice  " });
+    subject.trimInputs();
+    expect(subject.Name).toBe("Alice");
+  });
+
   it("should get face defaults", () => {
     const values = {};
     const subject = new Subject(values);

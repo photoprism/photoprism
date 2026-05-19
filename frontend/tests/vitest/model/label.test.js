@@ -25,6 +25,14 @@ describe("model/label", () => {
     expect(Object.isFrozen(MaxLength)).toBe(true);
   });
 
+  it("trimInputs() strips whitespace from MaxLength string fields", () => {
+    const label = new Label({ Name: "  Cat  ", Description: "\tfluffy\n", Notes: " " });
+    label.trimInputs();
+    expect(label.Name).toBe("Cat");
+    expect(label.Description).toBe("fluffy");
+    expect(label.Notes).toBe("");
+  });
+
   it("should get route view", () => {
     const values = { ID: 5, UID: "ABC123", Name: "Black Cat", Slug: "black-cat" };
     const label = new Label(values);

@@ -183,8 +183,9 @@ export class File extends RestModel {
     }
   }
 
+  // isAnimated returns true when the file is an image with multiple frames or a non-trivial duration.
   isAnimated() {
-    return this.MediaType && this.MediaType === media.Image && ((this.Frames && this.Frames > 1) || (this.Duration && this.Duration > 1));
+    return this.MediaType === media.Image && (this.Frames > 1 || this.Duration > 1);
   }
 
   typeInfo() {

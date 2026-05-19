@@ -207,17 +207,18 @@ export class User extends RestModel {
     return "*";
   }
 
+  // isRemote returns true when the user is authenticated through a remote provider (currently LDAP).
   isRemote() {
-    return this.AuthProvider && this.AuthProvider === "ldap";
+    return this.AuthProvider === "ldap";
   }
 
   requiresPassword() {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
-  // Checks if WebDAV access is allowed for this user.
+  // hasWebDAV returns true when WebDAV access is enabled for this user and the role permits it.
   hasWebDAV() {
-    return this.WebDAV && this.canEnableWebDAV();
+    return !!this.WebDAV && this.canEnableWebDAV();
   }
 
   // Checks if the user role permits WebDAV access.

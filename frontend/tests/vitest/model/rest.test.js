@@ -56,6 +56,23 @@ describe("model/abstract", () => {
     expect(album.Description).toBe("Test description");
   });
 
+  // update() / save() route through trimInputs() so user-typed string
+  // fields are trimmed before they leave the client, matching what the
+  // backend (txt.Clip / clean.Name) would persist anyway.
+  it("update() trims string fields via trimInputs()", async () => {
+    const album = new Album({ UID: "abc", Title: "  Vacation  ", Location: "\tBerlin\n" });
+    await album.update();
+    expect(album.Title).toBe("Vacation");
+    expect(album.Location).toBe("Berlin");
+  });
+
+  it("save() trims string fields on the new-entity POST path", async () => {
+    const album = new Album({ Title: "  Vacation  " });
+    expect(album.hasId()).toBe(false);
+    await album.save();
+    expect(album.Title).toBe("Vacation");
+  });
+
   it("should save album", async () => {
     const values = { UID: "abc", Name: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);

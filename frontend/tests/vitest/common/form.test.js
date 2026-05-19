@@ -263,6 +263,24 @@ describe("common/form", () => {
     // on v-combobox-with-return-object modelValue = null (see the
     // labels.vue nameRule fix). Migrating those call sites to the
     // factory eliminates the crash class entirely.
+    // Whitespace is trimmed before the rule fires so a user typing only
+    // spaces explicitly trips "required" / "is too short" and a trailing
+    // space doesn't push a value past its cap.
+    it("trims whitespace before required, minLen, and maxLen checks", () => {
+      const required = rules.text(true, 2, 4, "Name");
+      expect(required[0]("   ")).toBe("This field is required");
+      expect(required[1]("  a  ")).toBe("Name is too short");
+      // 4-char content with leading/trailing spaces still fits the cap.
+      expect(required[2]("  abcd  ")).toBe(true);
+      // 5-char content with surrounding spaces still trips the cap.
+      expect(required[2]("  abcde  ")).toBe("Name is too long");
+
+      const optional = rules.text(false, 0, 4, "Name");
+      expect(optional[0]("    ")).toBe(true);
+      expect(optional[1]("  abcd  ")).toBe(true);
+      expect(optional[1]("  abcde  ")).toBe("Name is too long");
+    });
+
     it("tolerates null / undefined / object inputs without throwing", () => {
       const [minLenRule, maxLenRule] = rules.text(false, 2, 4, "Name");
       // null / undefined short-circuit the !v guard in minLen/maxLen.

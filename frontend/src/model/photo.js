@@ -91,7 +91,10 @@ export class Photo extends RestModel {
       LensID: 0,
       LensMake: "",
       LensModel: "",
-      Country: "",
+      // "zz" mirrors the backend UnknownCountry default; without it the
+      // required country rule flashes red between dialog mount and the
+      // findCached() resolve that hydrates the real value.
+      Country: "zz",
       Year: YearUnknown,
       Month: MonthUnknown,
       Day: DayUnknown,
@@ -1285,7 +1288,21 @@ export class Photo extends RestModel {
     return result;
   }
 
+  // trimInputs strips whitespace from MaxLength fields; Subject/Artist/etc. live under Details.
+  trimInputs() {
+    for (const key of Object.keys(MaxLength)) {
+      if (typeof this[key] === "string") {
+        this[key] = this[key].trim();
+        continue;
+      }
+      if (this.Details && typeof this.Details[key] === "string") {
+        this.Details[key] = this.Details[key].trim();
+      }
+    }
+  }
+
   update() {
+    this.trimInputs();
     const values = this.getValues(true);
 
     if (typeof values.Title === "string") {
