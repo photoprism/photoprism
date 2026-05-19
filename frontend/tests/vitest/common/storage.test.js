@@ -33,23 +33,37 @@ describe("common/storage", () => {
     expect(storage.getItem("photos.view")).toBe("legacy-view");
     expect(storage.getItem(namespace + "photos.view")).toBeNull();
 
-    storage.setItem("clipboard.photos", "[\"p123\"]");
-    storage.setItem(namespace + "clipboard.photos", "[\"p456\"]");
+    storage.setItem("clipboard.photos", '["p123"]');
+    storage.setItem(namespace + "clipboard.photos", '["p456"]');
     ns.removeItem("clipboard.photos");
     expect(storage.getItem("clipboard.photos")).toBeNull();
     expect(storage.getItem(namespace + "clipboard.photos")).toBeNull();
 
-    storage.setItem("clipboard", "[\"legacy\"]");
-    storage.setItem(namespace + "clipboard", "[\"namespaced\"]");
+    storage.setItem("clipboard", '["legacy"]');
+    storage.setItem(namespace + "clipboard", '["namespaced"]');
     ns.removeItem("clipboard");
     expect(storage.getItem("clipboard")).toBeNull();
     expect(storage.getItem(namespace + "clipboard")).toBeNull();
 
-    storage.setItem("clipboard.albums", "[\"a123\"]");
-    storage.setItem(namespace + "clipboard.albums", "[\"a456\"]");
+    storage.setItem("clipboard.albums", '["a123"]');
+    storage.setItem(namespace + "clipboard.albums", '["a456"]');
     ns.removeItem("clipboard.albums");
     expect(storage.getItem("clipboard.albums")).toBeNull();
     expect(storage.getItem(namespace + "clipboard.albums")).toBeNull();
+  });
+
+  it("can remove namespaced keys without clearing legacy keys", () => {
+    const storage = new StorageShim();
+    const namespace = buildNamespace("ns-pro-1");
+    const ns = createNamespacedStorage(storage, "ns-pro-1");
+
+    storage.setItem("session.token", "legacy");
+    storage.setItem(namespace + "session.token", "namespaced");
+
+    ns.removeItem("session.token", { legacy: false });
+
+    expect(storage.getItem("session.token")).toBe("legacy");
+    expect(storage.getItem(namespace + "session.token")).toBeNull();
   });
 
   it("supports an explicit namespace key", () => {
@@ -74,5 +88,4 @@ describe("common/storage", () => {
     expect(map.get("ns-b")).toBe("token-b");
     expect(map.get("/")).toBe("legacy-root");
   });
-
 });

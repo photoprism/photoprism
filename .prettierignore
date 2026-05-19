@@ -12,3 +12,13 @@ tests/upload-files/
 *.html
 *.md
 .*
+
+# JS / Vue / configs — ESLint owns formatting (see frontend/eslint.config.mjs).
+# Prettier on these collapses intentional multi-line method chains and
+# predicate lists; we deliberately moved them off Prettier's autofix path.
+# Vue templates are formatted by eslint-plugin-vue's flat/recommended preset
+# (vue/html-indent, vue/html-quotes, vue/max-attributes-per-line, etc.).
+**/*.js
+**/*.mjs
+**/*.cjs
+**/*.vue

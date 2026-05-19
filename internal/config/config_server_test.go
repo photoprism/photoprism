@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -116,6 +117,103 @@ func TestConfig_HttpCompression(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "", c.HttpCompression())
+
+	c.Options().HttpCompression = "  Zstd, GZIP "
+	assert.Equal(t, "zstd, gzip", c.HttpCompression())
+}
+
+func TestConfig_HttpCompressionPreferences(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Empty", func(t *testing.T) {
+		c.Options().HttpCompression = ""
+		assert.Empty(t, c.HttpCompressionPreferences())
+	})
+	t.Run("None", func(t *testing.T) {
+		c.Options().HttpCompression = "none"
+		assert.Empty(t, c.HttpCompressionPreferences())
+	})
+	t.Run("LegacyGzip", func(t *testing.T) {
+		c.Options().HttpCompression = "gzip"
+		assert.Equal(t, []string{"gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("ZstdThenGzip", func(t *testing.T) {
+		c.Options().HttpCompression = "zstd,gzip"
+		assert.Equal(t, []string{"zstd", "gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("PreservesOrderAndDeduplicates", func(t *testing.T) {
+		c.Options().HttpCompression = "gzip, zstd, gzip"
+		assert.Equal(t, []string{"gzip", "zstd"}, c.HttpCompressionPreferences())
+	})
+	t.Run("DropsUnknownTokens", func(t *testing.T) {
+		c.Options().HttpCompression = "br, zstd, gzip"
+		assert.Equal(t, []string{"zstd", "gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("WhitespaceAndCaseInsensitive", func(t *testing.T) {
+		c.Options().HttpCompression = "  ZSTD ,  GZip  "
+		assert.Equal(t, []string{"zstd", "gzip"}, c.HttpCompressionPreferences())
+	})
+	t.Run("IdentityIsOff", func(t *testing.T) {
+		c.Options().HttpCompression = "identity"
+		assert.Empty(t, c.HttpCompressionPreferences())
+	})
+}
+
+func TestConfig_HttpCompressionUnknown(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("None", func(t *testing.T) {
+		c.Options().HttpCompression = "zstd, gzip"
+		assert.Empty(t, c.HttpCompressionUnknown())
+	})
+	t.Run("ReportsUnknown", func(t *testing.T) {
+		c.Options().HttpCompression = "br, zstd, deflate, gzip"
+		assert.Equal(t, []string{"br", "deflate"}, c.HttpCompressionUnknown())
+	})
+	t.Run("DeduplicatesUnknown", func(t *testing.T) {
+		c.Options().HttpCompression = "br, br, deflate"
+		assert.Equal(t, []string{"br", "deflate"}, c.HttpCompressionUnknown())
+	})
+	t.Run("EmptyDoesNotReportUnknown", func(t *testing.T) {
+		c.Options().HttpCompression = ""
+		assert.Empty(t, c.HttpCompressionUnknown())
+	})
+}
+
+func TestConfig_HttpHeaderTimeout(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, DefaultHttpHeaderTimeout, c.HttpHeaderTimeout())
+
+	c.Options().HttpHeaderTimeout = 17 * time.Second
+	assert.Equal(t, 17*time.Second, c.HttpHeaderTimeout())
+
+	c.Options().HttpHeaderTimeout = -1 * time.Second
+	assert.Equal(t, DefaultHttpHeaderTimeout, c.HttpHeaderTimeout())
+}
+
+func TestConfig_HttpHeaderBytes(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, DefaultHttpHeaderBytes, c.HttpHeaderBytes())
+
+	c.Options().HttpHeaderBytes = 2048
+	assert.Equal(t, 2048, c.HttpHeaderBytes())
+
+	c.Options().HttpHeaderBytes = 0
+	assert.Equal(t, DefaultHttpHeaderBytes, c.HttpHeaderBytes())
+}
+
+func TestConfig_HttpIdleTimeout(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, DefaultHttpIdleTimeout, c.HttpIdleTimeout())
+
+	c.Options().HttpIdleTimeout = 2 * time.Minute
+	assert.Equal(t, 2*time.Minute, c.HttpIdleTimeout())
+
+	c.Options().HttpIdleTimeout = -1 * time.Second
+	assert.Equal(t, DefaultHttpIdleTimeout, c.HttpIdleTimeout())
 }
 
 func TestConfig_HttpCachePublic(t *testing.T) {

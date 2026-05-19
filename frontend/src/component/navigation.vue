@@ -550,20 +550,6 @@
                     </v-list-item-title>
                   </v-list-item>
 
-                  <v-list-item
-                    v-show="featFeedback"
-                    :to="{ name: 'feedback' }"
-                    :exact="true"
-                    variant="text"
-                    class="nav-feedback"
-                    :ripple="false"
-                    @click.stop=""
-                  >
-                    <v-list-item-title :class="`menu-item`">
-                      {{ $gettext(`Feedback`) }}
-                    </v-list-item-title>
-                  </v-list-item>
-
                   <v-list-item :to="{ name: 'license' }" :exact="true" variant="text" class="nav-license" :ripple="false" @click.stop="">
                     <v-list-item-title :class="`menu-item`">
                       {{ $gettext(`License`) }}
@@ -807,7 +793,6 @@ export default {
     const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
     const isSuperAdmin = this.$session.isSuperAdmin();
-    const hasScope = this.$session.hasScope();
     const tier = this.$config.getTier();
 
     return {
@@ -827,7 +812,6 @@ export default {
       drawer: null,
       featUpgrade: tier < 6 && isSuperAdmin && !isPublic && !isDemo,
       featMembership: tier < 3 && isSuperAdmin && !isPublic && !isDemo,
-      featFeedback: !hasScope && tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
       featFiles: this.$config.feature("files"),
       featUsage: canSeeUsage && this.$config.values?.usage?.filesTotal,
       isRestricted: isRestricted,

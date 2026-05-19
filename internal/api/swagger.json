@@ -603,6 +603,9 @@
                 "DisableJpegXL": {
                     "type": "boolean"
                 },
+                "DisableMCP": {
+                    "type": "boolean"
+                },
                 "DisableOIDC": {
                     "type": "boolean"
                 },
@@ -625,9 +628,6 @@
                     "type": "boolean"
                 },
                 "DisableVectors": {
-                    "type": "boolean"
-                },
-                "DisableVips": {
                     "type": "boolean"
                 },
                 "DisableWebDAV": {
@@ -682,7 +682,7 @@
                     "type": "string"
                 },
                 "IndexWorkers": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "JpegQuality": {
                     "type": "integer"
@@ -767,9 +767,6 @@
                     "type": "boolean"
                 },
                 "ThumbColor": {
-                    "type": "string"
-                },
-                "ThumbFilter": {
                     "type": "string"
                 },
                 "ThumbLibrary": {
@@ -2709,29 +2706,6 @@
             },
             "type": "object"
         },
-        "form.Feedback": {
-            "properties": {
-                "Category": {
-                    "type": "string"
-                },
-                "Message": {
-                    "type": "string"
-                },
-                "UserAgent": {
-                    "type": "string"
-                },
-                "UserEmail": {
-                    "type": "string"
-                },
-                "UserLocales": {
-                    "type": "string"
-                },
-                "UserName": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
         "form.File": {
             "properties": {
                 "Orientation": {
@@ -3815,6 +3789,29 @@
             },
             "type": "object"
         },
+        "query.Moment": {
+            "properties": {
+                "Country": {
+                    "type": "string"
+                },
+                "Label": {
+                    "type": "string"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Year": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
         "search.Album": {
             "properties": {
                 "Caption": {
@@ -4485,6 +4482,46 @@
                 "ShapeBatch"
             ]
         },
+        "thumb.Thumb": {
+            "properties": {
+                "h": {
+                    "type": "integer"
+                },
+                "src": {
+                    "type": "string"
+                },
+                "w": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "thumb.Viewer": {
+            "properties": {
+                "fit_1280": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_1920": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_2560": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_4096": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_5120": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_720": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_7680": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                }
+            },
+            "type": "object"
+        },
         "time.Duration": {
             "format": "int64",
             "type": "integer"
@@ -4497,6 +4534,65 @@
                 },
                 "seconds": {
                     "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -315576000000 and 315576000000 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "viewer.Result": {
+            "properties": {
+                "Caption": {
+                    "type": "string"
+                },
+                "Codec": {
+                    "type": "string"
+                },
+                "DownloadUrl": {
+                    "type": "string"
+                },
+                "Duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Hash": {
+                    "type": "string"
+                },
+                "Height": {
+                    "type": "integer"
+                },
+                "Lat": {
+                    "type": "number"
+                },
+                "Lng": {
+                    "type": "number"
+                },
+                "Mime": {
+                    "type": "string"
+                },
+                "Playable": {
+                    "type": "boolean"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "Thumbs": {
+                    "$ref": "#/definitions/thumb.Viewer"
+                },
+                "TimeZone": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "Width": {
                     "type": "integer"
                 }
             },
@@ -4567,6 +4663,9 @@
                     "type": "string"
                 },
                 "system": {
+                    "type": "string"
+                },
+                "think": {
                     "type": "string"
                 },
                 "url": {
@@ -4959,6 +5058,10 @@
                 },
                 "responseFormat": {
                     "$ref": "#/definitions/vision.ApiFormat"
+                },
+                "think": {
+                    "description": "Optional reasoning hint for compatible engines (e.g. Ollama, GPT-OSS).",
+                    "type": "string"
                 },
                 "uri": {
                     "type": "string"
@@ -5557,7 +5660,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Link"
+                            "items": {
+                                "$ref": "#/definitions/entity.Link"
+                            },
+                            "type": "array"
                         }
                     },
                     "401": {
@@ -6734,7 +6840,7 @@
                 "operationId": "ClusterNodesRegister",
                 "parameters": [
                     {
-                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
+                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client.",
                         "in": "body",
                         "name": "request",
                         "required": true,
@@ -7595,44 +7701,6 @@
                 ]
             }
         },
-        "/api/v1/feedback": {
-            "post": {
-                "operationId": "SendFeedback",
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/form.Feedback"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    }
-                },
-                "summary": "allows members to submit a feedback message to the PhotoPrism team",
-                "tags": [
-                    "Internal"
-                ]
-            }
-        },
         "/api/v1/files/{hash}": {
             "get": {
                 "operationId": "GetFile",
@@ -8175,7 +8243,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/search.Label"
+                            "items": {
+                                "$ref": "#/definitions/search.Label"
+                            },
+                            "type": "array"
                         }
                     },
                     "400": {
@@ -8589,6 +8660,59 @@
                 ]
             }
         },
+        "/api/v1/mcp": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "ServeMCP",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JSON-RPC 2.0 response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "model context protocol endpoint",
+                "tags": [
+                    "MCP"
+                ]
+            }
+        },
         "/api/v1/metrics": {
             "get": {
                 "operationId": "GetMetrics",
@@ -8634,7 +8758,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Album"
+                            "items": {
+                                "$ref": "#/definitions/query.Moment"
+                            },
+                            "type": "array"
                         }
                     },
                     "401": {
@@ -8918,7 +9045,7 @@
         },
         "/api/v1/photos": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
                 "operationId": "SearchPhotos",
                 "parameters": [
                     {
@@ -9048,6 +9175,143 @@
                     }
                 },
                 "summary": "finds pictures and returns them as JSON",
+                "tags": [
+                    "Photos"
+                ]
+            }
+        },
+        "/api/v1/photos/view": {
+            "get": {
+                "description": "Returns search results formatted for the photo viewer (lightbox) in the web UI,\nincluding resolved content URLs and preview/download tokens.\nFor more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
+                "operationId": "SearchPhotosView",
+                "parameters": [
+                    {
+                        "description": "maximum number of files",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "name": "count",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "description": "file offset",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "name": "offset",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "sort order",
+                        "enum": [
+                            "name",
+                            "title",
+                            "added",
+                            "edited",
+                            "newest",
+                            "oldest",
+                            "size",
+                            "random",
+                            "duration",
+                            "relevance"
+                        ],
+                        "in": "query",
+                        "name": "order",
+                        "type": "string"
+                    },
+                    {
+                        "description": "groups consecutive files that belong to the same photo",
+                        "in": "query",
+                        "name": "merged",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "excludes private pictures",
+                        "in": "query",
+                        "name": "public",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "minimum quality score (1-7)",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                        ],
+                        "in": "query",
+                        "name": "quality",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "search query",
+                        "in": "query",
+                        "name": "q",
+                        "type": "string"
+                    },
+                    {
+                        "description": "album uid",
+                        "in": "query",
+                        "name": "s",
+                        "type": "string"
+                    },
+                    {
+                        "description": "photo path",
+                        "in": "query",
+                        "name": "path",
+                        "type": "string"
+                    },
+                    {
+                        "description": "is type video",
+                        "in": "query",
+                        "name": "video",
+                        "type": "boolean"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/viewer.Result"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "finds pictures and returns a viewer-formatted JSON result for the lightbox",
                 "tags": [
                     "Photos"
                 ]
@@ -11455,7 +11719,7 @@
         },
         "/api/v1/t/{thumb}/{token}/{size}": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
                 "operationId": "GetThumb",
                 "parameters": [
                     {
@@ -12237,7 +12501,7 @@
         },
         "/api/v1/videos/{hash}/{token}/{format}": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
                 "operationId": "GetVideo",
                 "parameters": [
                     {

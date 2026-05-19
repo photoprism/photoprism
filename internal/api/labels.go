@@ -54,7 +54,14 @@ func UpdateLabel(router *gin.RouterGroup) {
 		}
 
 		// Set form values from request.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if frmErr = c.BindJSON(frm); frmErr != nil {
+			if IsRequestBodyTooLarge(frmErr) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, frmErr)
 			return
 		} else if frmErr = frm.Validate(); frmErr != nil {

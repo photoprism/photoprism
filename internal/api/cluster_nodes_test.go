@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,7 @@ import (
 
 func TestClusterEndpoints(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, conf)
 
 	ClusterListNodes(router)
 	ClusterGetNode(router)
@@ -28,7 +29,7 @@ func TestClusterEndpoints(t *testing.T) {
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
 
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n))
 
 	n2 := &reg.Node{Node: cluster.Node{Name: "pp-node-02", Role: "service", UUID: rnd.UUIDv7()}}
@@ -82,7 +83,7 @@ func TestClusterEndpoints(t *testing.T) {
 // Test that ClusterGetNode validates the :uuid path parameter and rejects unsafe values.
 func TestClusterGetNode_UUIDValidation(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, conf)
 
 	// Register route under test.
 	ClusterGetNode(router)
@@ -91,7 +92,7 @@ func TestClusterGetNode_UUIDValidation(t *testing.T) {
 	regy, err := reg.NewClientRegistryWithConfig(conf)
 	assert.NoError(t, err)
 
-	n := &reg.Node{Node: cluster.Node{Name: "pp-node-99", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-99", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
 	assert.NoError(t, regy.Put(n))
 
 	n, err = regy.FindByName("pp-node-99")
@@ -126,4 +127,35 @@ func TestClusterGetNode_UUIDValidation(t *testing.T) {
 
 	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+string(longID))
 	assert.Equal(t, http.StatusNotFound, r.Code)
+}
+
+func TestClusterUpdateNode_UUIDValidation(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterUpdateNode(router)
+
+	r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/bad_id", `{"SiteUrl":"https://photos.example.com"}`)
+	assert.Equal(t, http.StatusNotFound, r.Code)
+
+	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/BadID", `{"SiteUrl":"https://photos.example.com"}`)
+	assert.Equal(t, http.StatusNotFound, r.Code)
+}
+
+func TestClusterUpdateNode_RequestTooLarge(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterUpdateNode(router)
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-request-limit", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	assert.NoError(t, regy.Put(n))
+
+	body := `{"Labels":{"oversized":"` + strings.Repeat("a", int(MaxClusterRegisterBytes)) + `"}}`
+	r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, body)
+
+	assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 }

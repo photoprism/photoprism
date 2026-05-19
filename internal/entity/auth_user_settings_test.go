@@ -39,7 +39,7 @@ func TestUserSettings_Updates(t *testing.T) {
 			UILanguage: "de",
 		}}
 
-	m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"})
+	assert.NoError(t, m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
 	assert.Equal(t, "vanta", m.UserSettings.UITheme)
 	assert.Equal(t, "en", m.UserSettings.UILanguage)
 }

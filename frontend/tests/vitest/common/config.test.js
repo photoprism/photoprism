@@ -83,7 +83,34 @@ describe("common/config", () => {
     const config = new Config(storage, values);
     expect(config.debug).toBe(true);
     expect(config.demo).toBe(false);
+    expect(config.frontendUri).toBe("/library");
+    expect(config.loginUri).toBe("/library/login");
     expect(config.apiUri).toBe("/api/v1");
+  });
+
+  it("derives login uri from configured frontend uri", () => {
+    const storage = new StorageShim();
+    const values = {
+      siteTitle: "Foo",
+      baseUri: "/portal",
+      frontendUri: "/portal/admin/",
+    };
+
+    const config = new Config(storage, values);
+    expect(config.frontendUri).toBe("/portal/admin");
+    expect(config.loginUri).toBe("/portal/admin/login");
+  });
+
+  it("uses base uri fallback when frontend uri is missing", () => {
+    const storage = new StorageShim();
+    const values = {
+      siteTitle: "Foo",
+      baseUri: "/portal",
+    };
+
+    const config = new Config(storage, values);
+    expect(config.frontendUri).toBe("/portal/library");
+    expect(config.loginUri).toBe("/portal/library/login");
   });
 
   it("should store values", () => {
@@ -452,5 +479,37 @@ describe("common/config", () => {
     await cfg.setLanguage("en", true);
     expect(document.dir).toBe("ltr");
     expect(cfg.dir()).toBe("ltr");
+  });
+
+  // A10 contract: isPublic / isDemo / isPortal must return a Boolean for every
+  // input shape so that bindings like `:disabled="isDemo"` never pass undefined
+  // to a Vuetify Boolean prop. See #4966.
+  describe("isPublic / isDemo / isPortal Boolean contract", () => {
+    const make = (overrides) => new Config(new StorageShim(), { ...window.__CONFIG__, ...overrides });
+
+    it("return Boolean false when the underlying flag is missing", () => {
+      const cfg = make({ public: undefined, demo: undefined, portal: undefined });
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
+    it("return Boolean true when the underlying flag is true", () => {
+      const cfg = make({ public: true, demo: true, portal: true });
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(true);
+      }
+    });
+    it("return Boolean false when `values` itself is missing", () => {
+      const cfg = new Config(new StorageShim(), null);
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
   });
 });

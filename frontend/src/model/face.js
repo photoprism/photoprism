@@ -47,8 +47,12 @@ export class Face extends RestModel {
   classes(selected) {
     let classes = ["is-face", "uid-" + this.ID];
 
-    if (this.Hidden) classes.push("is-hidden");
-    if (selected) classes.push("is-selected");
+    if (this.Hidden) {
+      classes.push("is-hidden");
+    }
+    if (selected) {
+      classes.push("is-selected");
+    }
 
     return classes;
   }

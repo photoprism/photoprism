@@ -20,17 +20,17 @@ func TestImportWorker_OriginalFileNames(t *testing.T) {
 	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 	imp := &Import{cfg, ind, convert, cfg.ImportAllow()}
 
-	mediaFileName := cfg.ExamplesPath() + "/beach_sand.jpg"
+	mediaFileName := cfg.SamplesPath() + "/beach_sand.jpg"
 	mediaFile, err := NewMediaFile(mediaFileName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	mediaFileName2 := cfg.ExamplesPath() + "/beach_wood.jpg"
+	mediaFileName2 := cfg.SamplesPath() + "/beach_wood.jpg"
 	mediaFile2, err2 := NewMediaFile(mediaFileName2)
 	if err2 != nil {
 		t.Fatal(err2)
 	}
-	mediaFileName3 := cfg.ExamplesPath() + "/beach_colorfilter.jpg"
+	mediaFileName3 := cfg.SamplesPath() + "/beach_colorfilter.jpg"
 	mediaFile3, err3 := NewMediaFile(mediaFileName3)
 	if err3 != nil {
 		t.Fatal(err3)

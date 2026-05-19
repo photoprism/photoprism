@@ -28,7 +28,7 @@ Additional information can be found in our Developer Guide:
   const WorkboxPrecacheCacheName = "workbox-precache-v2";
 
   // cleanupOutdatedCaches() in Workbox uses a broad scope match (`includes`),
-  // which can remove tenant caches when the Portal runs with root scope.
+  // which can remove instance caches when the Portal runs with root scope.
   // Keep cleanup strict to the exact registration scope instead.
   self.addEventListener("activate", (event) => {
     const scope = self && self.registration ? self.registration.scope : "";

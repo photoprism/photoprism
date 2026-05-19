@@ -9,19 +9,40 @@ import (
 	"github.com/olekukonko/tablewriter/tw"
 )
 
+// escapeMarkdownCell escapes Markdown table-significant runes (`|`, the
+// horizontal-rule sequence `* * *`) and angle brackets in a single cell.
+// Angle brackets are backslash-escaped so a value that happens to look
+// like an HTML tag renders as plain text in both the Markdown source
+// and any HTML produced from it (e.g. on docs.photoprism.app). CommonMark
+// guarantees that `\<` renders as the literal `<` (entity `&lt;`) in
+// HTML, so the escaped form is safe in both pipelines.
+func escapeMarkdownCell(cell string) string {
+	if strings.ContainsRune(cell, '|') {
+		cell = strings.ReplaceAll(cell, "|", "\\|")
+	}
+	if strings.Contains(cell, "* * *") {
+		cell = strings.ReplaceAll(cell, "* * *", "\\* \\* \\*")
+	}
+	if strings.ContainsRune(cell, '<') {
+		cell = strings.ReplaceAll(cell, "<", "\\<")
+	}
+	if strings.ContainsRune(cell, '>') {
+		cell = strings.ReplaceAll(cell, ">", "\\>")
+	}
+	return cell
+}
+
 // MarkdownTable returns a text-formatted table with caption, optionally as valid Markdown,
 // so the output can be pasted into the docs.
 func MarkdownTable(rows [][]string, cols []string, opt Options) string {
 	// Escape Markdown.
 	if opt.Valid {
+		for i := range cols {
+			cols[i] = escapeMarkdownCell(cols[i])
+		}
 		for i := range rows {
 			for j := range rows[i] {
-				if strings.ContainsRune(rows[i][j], '|') {
-					rows[i][j] = strings.ReplaceAll(rows[i][j], "|", "\\|")
-				}
-				if strings.ContainsRune(rows[i][j], '*') {
-					rows[i][j] = strings.ReplaceAll(rows[i][j], "* * *", "\\* \\* \\*")
-				}
+				rows[i][j] = escapeMarkdownCell(rows[i][j])
 			}
 		}
 	}

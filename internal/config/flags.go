@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 
-	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -39,7 +38,7 @@ var Flags = CliFlags{
 			Usage:   "secret `KEY` for signing authentication tokens",
 			EnvVars: EnvVars("AUTH_SECRET"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.BoolFlag{
 			Name:    "public",
 			Aliases: []string{"p"},
@@ -59,7 +58,7 @@ var Flags = CliFlags{
 			Aliases: []string{"pw"},
 			Usage:   fmt.Sprintf("initial `PASSWORD` of the superadmin account (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVars: EnvVars("ADMIN_PASSWORD"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.IntFlag{
 			Name:    "password-length",
 			Usage:   "minimum password `LENGTH` in characters",
@@ -83,7 +82,7 @@ var Flags = CliFlags{
 			Usage:   "client `SECRET` for single sign-on via OpenID Connect",
 			Value:   "",
 			EnvVars: EnvVars("OIDC_SECRET"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "oidc-scopes",
 			Usage:   "client authorization `SCOPES` for single sign-on via OpenID Connect",
@@ -393,13 +392,13 @@ var Flags = CliFlags{
 			Usage:   "enables the use of YAML files for backing up album metadata",
 			EnvVars: EnvVars("BACKUP_ALBUMS"),
 		}, DocDefault: "true"}, {
-		Flag: &cli.IntFlag{
+		Flag: &cli.StringFlag{
 			Name:    "index-workers",
 			Aliases: []string{"workers"},
-			Usage:   "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",
-			Value:   cpuid.CPU.PhysicalCores / 2,
+			Usage:   "maximum `NUMBER` of indexing workers, or 'auto' to derive from the available CPU cores",
+			Value:   IndexWorkersAuto,
 			EnvVars: EnvVars("INDEX_WORKERS", "WORKERS"),
-		}, DocDefault: " "}, {
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "index-schedule",
 			Usage:   "indexing `SCHEDULE` in cron format (e.g. \"@every 3h\" for every 3 hours; \"\" to disable)",
@@ -463,6 +462,11 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("DISABLE_WEBDAV"),
 		}}, {
 		Flag: &cli.BoolFlag{
+			Name:    "disable-mcp",
+			Usage:   "disables the Model Context Protocol (MCP) API endpoint for AI agent integrations",
+			EnvVars: EnvVars("DISABLE_MCP"),
+		}}, {
+		Flag: &cli.BoolFlag{
 			Name:    "disable-places",
 			Usage:   "disables interactive world maps and reverse geocoding",
 			EnvVars: EnvVars("DISABLE_PLACES"),
@@ -491,11 +495,6 @@ var Flags = CliFlags{
 			Name:    "disable-exiftool",
 			Usage:   "disables metadata extraction with ExifTool (required for full Video, Live Photo, and XMP support)",
 			EnvVars: EnvVars("DISABLE_EXIFTOOL"),
-		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "disable-vips",
-			Usage:   "disables image processing and conversion with libvips",
-			EnvVars: EnvVars("DISABLE_VIPS"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-sips",
@@ -566,7 +565,7 @@ var Flags = CliFlags{
 			Usage:   "download `URL` for installing a custom theme if none is installed",
 			EnvVars: EnvVars("THEME_URL"),
 			Hidden:  true,
-		}, Tags: []string{Pro}}, {
+		}, Tags: []string{Portal, Pro}}, {
 		Flag: &cli.StringFlag{
 			Name:    "places-locale",
 			Usage:   "location details language `CODE`, e.g. en, de, or local",
@@ -702,7 +701,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
-			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
+			Usage:   "cluster `CIDR` for IP-based authorization, e.g. 10.0.0.0/8",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
 			Hidden:  true,
 		}}, {
@@ -722,7 +721,7 @@ var Flags = CliFlags{
 			Name:    "join-token",
 			Usage:   "secret `TOKEN` required to join a cluster; min 24 chars",
 			EnvVars: EnvVars("JOIN_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-name",
 			Usage:   "node `NAME` (unique in cluster domain; [a-z0-9-]{1,32})",
@@ -730,7 +729,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-role",
-			Usage:   fmt.Sprintf("node `ROLE` (%s or %s)", cluster.RoleApp, cluster.RoleService),
+			Usage:   fmt.Sprintf("node `ROLE` (%s or %s)", cluster.RoleInstance, cluster.RoleService),
 			EnvVars: EnvVars("NODE_ROLE"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -750,7 +749,7 @@ var Flags = CliFlags{
 			Usage:   "node OAuth client `SECRET` (auto-assigned via join token)",
 			EnvVars: EnvVars("NODE_CLIENT_SECRET"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "jwks-url",
 			Usage:   "JWKS endpoint `URL` provided by the cluster portal for JWT verification",
@@ -820,6 +819,11 @@ var Flags = CliFlags{
 			Value:   cli.NewStringSlice(scheme.Https),
 			EnvVars: EnvVars("PROXY_PROTO_HTTPS"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "services-cidr",
+			Usage:   "comma-separated `CIDR` ranges or IPs allowed for outbound service connections, e.g. 172.18.0.0/16",
+			EnvVars: EnvVars("SERVICES_CIDR"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-tls",
 			Usage:   "disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available",
@@ -855,8 +859,26 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "http-compression",
 			Aliases: []string{"z"},
-			Usage:   "Web server compression `METHOD` (gzip, none)",
+			Usage:   "Web server compression `METHODS` as a comma-separated preference list (e.g. \"zstd,gzip\"; supported: gzip, zstd, none)",
 			EnvVars: EnvVars("HTTP_COMPRESSION"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "http-header-timeout",
+			Usage:   "timeout for reading request headers as `DURATION`",
+			Value:   DefaultHttpHeaderTimeout.String(),
+			EnvVars: EnvVars("HTTP_HEADER_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "http-header-bytes",
+			Usage:   "maximum request header size in `BYTES`",
+			Value:   DefaultHttpHeaderBytes,
+			EnvVars: EnvVars("HTTP_HEADER_BYTES"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "http-idle-timeout",
+			Usage:   "timeout for idle keep-alive connections as `DURATION`",
+			Value:   DefaultHttpIdleTimeout.String(),
+			EnvVars: EnvVars("HTTP_IDLE_TIMEOUT"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "http-cache-public",
@@ -927,7 +949,8 @@ var Flags = CliFlags{
 			Aliases: []string{"db-pass"},
 			Usage:   "database user `PASSWORD`",
 			EnvVars: EnvVars("DATABASE_PASSWORD"),
-		}}, {
+		},
+		Secret: true}, {
 		Flag: &cli.IntFlag{
 			Name:    "database-timeout",
 			Usage:   "timeout in `SECONDS` for establishing a database connection (1-60)",
@@ -1109,16 +1132,16 @@ var Flags = CliFlags{
 			Name:    "download-token",
 			Usage:   "`DEFAULT` download URL token for originals (leave blank for a random value)",
 			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "preview-token",
 			Usage:   "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
 			EnvVars: EnvVars("PREVIEW_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
-			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
+			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, vips)",
 			Value:   Auto,
 			EnvVars: EnvVars("THUMB_LIBRARY"),
 		}}, {
@@ -1127,13 +1150,6 @@ var Flags = CliFlags{
 			Usage:   "standard color `PROFILE` for thumbnails (auto, preserve, srgb, none)",
 			Value:   thumb.ColorAuto,
 			EnvVars: EnvVars("THUMB_COLOR"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "thumb-filter",
-			Aliases: []string{"filter"},
-			Usage:   "downscaling filter `NAME` (imaging best to worst: blackman, lanczos, cubic, linear, nearest)",
-			Value:   thumb.ResampleAuto.String(),
-			EnvVars: EnvVars("THUMB_FILTER"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size",
@@ -1195,7 +1211,7 @@ var Flags = CliFlags{
 			Usage:   "vision service access `TOKEN` *optional*",
 			Value:   "",
 			EnvVars: EnvVars("VISION_KEY"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "vision-schedule",
 			Usage:   "vision worker `SCHEDULE` for background processing (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
@@ -1214,7 +1230,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-engine",
-			Usage:   "face detection engine `NAME` (auto, pigo, onnx)",
+			Usage:   "face detection engine `NAME` (auto, onnx)",
 			Value:   face.EngineAuto,
 			EnvVars: EnvVars("FACE_ENGINE"),
 		}}, {
@@ -1234,12 +1250,6 @@ var Flags = CliFlags{
 			Usage:   "minimum face `QUALITY` score (1-100)",
 			Value:   face.ScoreThreshold,
 			EnvVars: EnvVars("FACE_SCORE"),
-		}}, {
-		Flag: &cli.Float64SliceFlag{
-			Name:    "face-angle",
-			Usage:   "face detection `ANGLE` in radians (repeatable)",
-			Value:   cli.NewFloat64Slice(face.DefaultAngles...),
-			EnvVars: EnvVars("FACE_ANGLE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",

@@ -1,4 +1,5 @@
 import Model from "model.js";
+import Photo from "model/photo";
 import $api from "common/api";
 import $util from "common/util";
 import { $config } from "app/session.js";
@@ -8,6 +9,13 @@ const thumbs = window.__CONFIG__.thumbs;
 
 // Thumb represents a lightweight slide/photo preview record used by the lightbox.
 export class Thumb extends Model {
+  // Returns the default field shape for a Thumb. These fields are
+  // all reactive once the instance is wrapped by Vue's data() proxy
+  // and define the snapshot served when no server data is available.
+  // `Archived` and `Removed` are intentionally NOT declared here so
+  // the lightbox's tri-state visibility checks (e.g. the explicit
+  // `this.model?.Archived === false` at lightbox.vue:1437) can
+  // distinguish "never set" from "explicitly not archived".
   getDefaults() {
     return {
       UID: "",
@@ -31,6 +39,9 @@ export class Thumb extends Model {
     };
   }
 
+  // Returns the canonical identifier for this slide, preferring UID
+  // over numeric ID. Returns `false` when neither is set so callers
+  // can branch on truthiness.
   getId() {
     if (this.UID) {
       return this.UID;
@@ -39,10 +50,17 @@ export class Thumb extends Model {
     return this.ID ? this.ID : false;
   }
 
+  // Convenience predicate around getId() — true when this Thumb
+  // represents a real photo (vs. a notFound() placeholder).
   hasId() {
     return !!this.getId();
   }
 
+  // Toggles the favorite flag and posts/deletes the like to the
+  // backend. Flips `Favorite` synchronously first so the heart icon
+  // re-renders immediately; the API call is fire-and-forget. No
+  // rollback on failure — matches the existing optimistic-toggle
+  // pattern used elsewhere in the frontend.
   toggleLike() {
     this.Favorite = !this.Favorite;
 
@@ -53,24 +71,95 @@ export class Thumb extends Model {
     }
   }
 
+  // loadPhoto resolves to the full Photo entity for this slide via the LRU
+  // cache, or an empty Photo placeholder when this thumb has no UID.
+  loadPhoto() {
+    if (!this.UID) {
+      return Promise.resolve(new Photo());
+    }
+    return Photo.findCached(this.UID);
+  }
+
+  // evictPhoto drops the cached Photo for this slide so the next loadPhoto()
+  // rehydrates from /photos/:uid. Use for mutations without a photos.* WS event.
+  evictPhoto() {
+    if (this.UID) {
+      Photo.evictCache(this.UID);
+    }
+  }
+
+  // archive moves the photo to the archive (soft delete) and optimistically
+  // flips Archived so menu buttons re-render before the round-trip; rollback
+  // restores the captured prior value (not a literal false) on rejection.
+  archive() {
+    const prev = this.Archived;
+    this.Archived = true;
+    return $api.post("batch/photos/archive", { photos: [this.UID] }).catch((err) => {
+      this.Archived = prev;
+      throw err;
+    });
+  }
+
+  // Restores this photo from the archive. Captures the pre-call
+  // Archived value and restores it on rejection (mirroring
+  // archive()) so a no-op restore on an already-restored photo
+  // doesn't leave Archived === true. Resolves on success; the
+  // backend publishes photos.restored for automatic cache eviction.
+  restore() {
+    const prev = this.Archived;
+    this.Archived = false;
+    return $api.post("batch/photos/restore", { photos: [this.UID] }).catch((err) => {
+      this.Archived = prev;
+      throw err;
+    });
+  }
+
+  // Removes this photo from the given album. Optimistic flip on
+  // Removed (drives menu visibility) with previous-value rollback
+  // on rejection. Backend publishes only albums.updated (not a
+  // photos event), so callers that mutate the sidebar's cached
+  // Photo.Albums list MUST also call evictPhoto() — see
+  // lightbox.vue onRemoveFromAlbum for the pattern.
+  removeFromAlbum(albumUID) {
+    const prev = this.Removed;
+    this.Removed = true;
+    return $api.delete(`albums/${albumUID}/photos`, { data: { photos: [this.UID] } }).catch((err) => {
+      this.Removed = prev;
+      throw err;
+    });
+  }
+
+  // getLatLng formats Lat/Lng as EXIF-style coordinates (en-space separator),
+  // returning a 0/0 placeholder when coordinates are missing so the row holds.
   getLatLng() {
     if (!this.Lat || !this.Lng) {
       return `0°N\u20030°E`;
     }
 
-    return `${this.Lat.toFixed(5)}°N\u2003${this.Lng.toFixed(5)}°E`;
+    return `${this.Lat.toFixed(5)}°N\u2002${this.Lng.toFixed(5)}°E`;
   }
 
+  // getLatLngShort formats Lat/Lng rounded to ~11 m precision for the sidebar
+  // Location row; returns an empty string when coordinates are missing.
+  getLatLngShort() {
+    if (!this.Lat || !this.Lng) {
+      return "";
+    }
+
+    return `${this.Lat.toFixed(4)}°N\u2002${this.Lng.toFixed(4)}°E`;
+  }
+
+  // copyLatLng copies coordinates to the clipboard as `lat,lng` decimals;
+  // no-op when coordinates are missing (avoid pasting a misleading "0,0").
   copyLatLng() {
-    // Abort if latitude or longitude are not set.
     if (!this.Lat || !this.Lng) {
       return;
     }
-
-    // Use the browser API to copy the coordinates to the clipboard.
     $util.copyText(`${this.Lat.toString()},${this.Lng.toString()}`);
   }
 
+  // getMegaPixels returns a rounded megapixel string (e.g. "12.0MP"); returns
+  // the literal "0.0MP" when dimensions are unknown — getTypeInfo skips on that.
   getMegaPixels() {
     if (!this.Width || !this.Height) {
       return "0.0MP";
@@ -79,6 +168,7 @@ export class Thumb extends Model {
     return `${((this.Width * this.Height) / 1000000).toFixed(1)}MP`;
   }
 
+  // getTypeIcon returns the Material Design icon name for the type chip; falls back to mdi-image.
   getTypeIcon() {
     switch (this.Type) {
       case "raw":
@@ -98,6 +188,9 @@ export class Thumb extends Model {
     }
   }
 
+  // getTypeInfo builds the codec/megapixels/dimensions summary next to the
+  // type chip. Segment order varies by media type so the most useful field
+  // leads (duration for video, codec for raw); may return an empty string.
   getTypeInfo() {
     let info = [];
     const mp = this.getMegaPixels();
@@ -168,6 +261,8 @@ export class Thumb extends Model {
     return info.join("\u2003");
   }
 
+  // notFound returns a placeholder Thumb-shaped object for slides that can't
+  // be rendered (missing hash, deleted file); each Thumbs entry uses the 404 image.
   static notFound() {
     const result = {
       UID: "",
@@ -203,6 +298,7 @@ export class Thumb extends Model {
     return result;
   }
 
+  // fromPhotos builds a Thumb array from a Photos search response via fromPhoto.
   static fromPhotos(photos) {
     let result = [];
     const n = photos.length;
@@ -214,6 +310,8 @@ export class Thumb extends Model {
     return result;
   }
 
+  // fromPhoto builds a Thumb from a Photo entity using originalFile() (RAW/Live
+  // preferred over JPEG) and falling back to top-level fields when Files is empty.
   static fromPhoto(photo) {
     if (!photo || (!photo.Hash && !photo.Files?.length)) {
       return this.notFound();
@@ -274,6 +372,8 @@ export class Thumb extends Model {
     return new this(result);
   }
 
+  // fromFile builds a Thumb from a specific File of a Photo for the file-list view;
+  // the Photo provides metadata, the File provides hash/dimensions/codec.
   static fromFile(photo, file) {
     if (!photo || !file || !file.Hash) {
       return this.notFound();
@@ -314,10 +414,14 @@ export class Thumb extends Model {
     return new this(result);
   }
 
+  // wrap turns plain Thumb-shaped values into Thumb instances, bypassing the
+  // fromPhoto / fromFile mappers for endpoints that already return Thumb shape.
   static wrap(data) {
     return data.map((values) => new this(values));
   }
 
+  // fromFiles is like fromPhotos but expands each photo's Files[] into one
+  // Thumb per jpg/png file; used by stack views. Other file types are skipped.
   static fromFiles(photos) {
     let result = [];
 
@@ -352,9 +456,10 @@ export class Thumb extends Model {
     return result;
   }
 
+  // calculateSize scales a file's dimensions to fit within a (width, height)
+  // box, preserving aspect ratio; never upscales (returns native size when smaller).
   static calculateSize(file, width, height) {
     if (width >= file.Width && height >= file.Height) {
-      // Smaller
       return { width: file.Width, height: file.Height };
     }
 
@@ -374,6 +479,8 @@ export class Thumb extends Model {
     return { width: newW, height: newH };
   }
 
+  // thumbnailUrl builds the cached-thumbnail URL for the given file and size;
+  // returns the static 404 image when the file has no hash.
   static thumbnailUrl(file, size) {
     if (!file.Hash) {
       return `${$config.staticUri}/img/404.jpg`;
@@ -382,6 +489,8 @@ export class Thumb extends Model {
     return `${$config.contentUri}/t/${file.Hash}/${$config.previewToken}/${size}`;
   }
 
+  // downloadUrl builds the original-file download URL; returns "" when the
+  // file has no hash so consumers can guard with truthiness.
   static downloadUrl(file) {
     if (!file || !file.Hash) {
       return "";

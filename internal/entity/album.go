@@ -3,7 +3,6 @@ package entity
 import (
 	"errors"
 	"fmt"
-	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -401,10 +400,10 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 
 // FindFolderAlbum looks up a folder album by its canonical path or slug.
 func FindFolderAlbum(albumPath string) *Album {
-	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
-	albumSlug := txt.Slug(albumPath)
+	albumPath = clean.SlashPath(albumPath)
+	albumSlugs := folderAlbumSlugCandidates(albumPath)
 
-	if albumSlug == "" {
+	if len(albumSlugs) == 0 {
 		return nil
 	}
 
@@ -419,7 +418,7 @@ func FindFolderAlbum(albumPath string) *Album {
 	}
 
 	// Fallback for legacy rows created before album_path was persisted.
-	stmt = UnscopedDb().Where("album_type = ? AND album_slug = ?", AlbumFolder, albumSlug).
+	stmt = UnscopedDb().Where("album_type = ? AND album_slug IN (?)", AlbumFolder, albumSlugs).
 		Where("(album_path IS NULL OR album_path = '')")
 
 	if stmt.First(&m).Error == nil {
@@ -748,9 +747,25 @@ func (m *Album) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
+// extractAlbumFilterPath extracts a normalized path value from a serialized search filter.
+func extractAlbumFilterPath(albumFilter string) string {
+	if strings.TrimSpace(albumFilter) == "" {
+		return ""
+	}
+
+	frm := form.SearchPhotos{Query: albumFilter}
+
+	if err := frm.ParseQueryString(); err != nil || frm.Path == "" {
+		return ""
+	}
+
+	return clean.SlashPath(frm.Path)
+}
+
 // shouldRepairFolderAlbumTitle reports whether a folder album title likely
-// still reflects a parent-path collision and should be repaired.
-func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) bool {
+// still reflects a collision state and should be repaired.
+func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath, albumFilter string) bool {
+	albumPath = clean.SlashPath(albumPath)
 	folderTitle = strings.TrimSpace(folderTitle)
 	currentTitle = strings.TrimSpace(currentTitle)
 
@@ -762,11 +777,13 @@ func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) b
 		return false
 	}
 
-	parentPath := strings.Trim(path.Dir(albumPath), string(os.PathSeparator))
+	parentPath := path.Dir(albumPath)
 
-	if parentPath == "" || parentPath == "." {
+	if parentPath == "" || parentPath == "." || parentPath == "/" {
 		return false
 	}
+
+	parentPath = clean.SlashPath(parentPath)
 
 	parentTitle := txt.Title(path.Base(parentPath))
 
@@ -774,7 +791,23 @@ func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) b
 		return false
 	}
 
-	return strings.EqualFold(currentTitle, parentTitle) && !strings.EqualFold(folderTitle, parentTitle)
+	if strings.EqualFold(currentTitle, parentTitle) && !strings.EqualFold(folderTitle, parentTitle) {
+		return true
+	}
+
+	filterPath := extractAlbumFilterPath(albumFilter)
+
+	if filterPath == "" || filterPath == albumPath {
+		return false
+	}
+
+	filterTitle := txt.Title(path.Base(filterPath))
+
+	if filterTitle == "" {
+		return false
+	}
+
+	return strings.EqualFold(currentTitle, filterTitle) && !strings.EqualFold(folderTitle, filterTitle)
 }
 
 // UpdateFolder updates the path, filter, slug, and repairable title for a folder album.
@@ -783,9 +816,9 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 		return fmt.Errorf("album does not exist")
 	}
 
-	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
+	albumPath = clean.SlashPath(albumPath)
 	albumSlug := txt.Slug(albumPath)
-	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath)
+	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath, m.AlbumFilter)
 
 	if albumSlug == "" || albumPath == "" || albumFilter == "" || !m.HasID() {
 		return fmt.Errorf("folder album must have a path and filter")

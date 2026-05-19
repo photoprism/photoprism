@@ -99,7 +99,14 @@ func CreateMarker(router *gin.RouterGroup) {
 		}
 
 		// Initialize form.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -214,7 +221,16 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (create marker form)", err)
 			AbortSaveFailed(c)
 			return
-		} else if err = c.BindJSON(&frm); err != nil {
+		}
+
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
+		if err = c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			log.Errorf("faces: %s (bind marker form)", err)
 			AbortBadRequest(c, err)
 			return

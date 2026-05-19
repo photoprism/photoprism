@@ -138,7 +138,14 @@ func CreateAlbum(router *gin.RouterGroup) {
 		var frm form.Album
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -238,7 +245,14 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		}
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err = c.BindJSON(frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -487,7 +501,14 @@ func CloneAlbums(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err = c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -548,7 +569,14 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -656,7 +684,14 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

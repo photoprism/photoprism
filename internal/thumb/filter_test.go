@@ -17,14 +17,14 @@ func TestParseFilter(t *testing.T) {
 		assert.Equal(t, ResampleAuto, ParseFilter("linear", LibVips))
 		assert.Equal(t, ResampleAuto, ParseFilter("invalid", LibVips))
 	})
-	t.Run("Imaging", func(t *testing.T) {
-		assert.Equal(t, ResampleLanczos, ParseFilter("", LibImaging))
-		assert.Equal(t, ResampleLanczos, ParseFilter("auto", LibImaging))
-		assert.Equal(t, ResampleBlackman, ParseFilter("blackman", LibImaging))
-		assert.Equal(t, ResampleLanczos, ParseFilter("lanczos", LibImaging))
-		assert.Equal(t, ResampleCubic, ParseFilter("cubic", LibImaging))
-		assert.Equal(t, ResampleLinear, ParseFilter("linear", LibImaging))
-		assert.Equal(t, ResampleLanczos, ParseFilter("invalid", LibImaging))
+	t.Run("LegacyImagingFallback", func(t *testing.T) {
+		assert.Equal(t, ResampleLanczos, ParseFilter("", "imaging"))
+		assert.Equal(t, ResampleLanczos, ParseFilter("auto", "imaging"))
+		assert.Equal(t, ResampleBlackman, ParseFilter("blackman", "imaging"))
+		assert.Equal(t, ResampleLanczos, ParseFilter("lanczos", "imaging"))
+		assert.Equal(t, ResampleCubic, ParseFilter("cubic", "imaging"))
+		assert.Equal(t, ResampleLinear, ParseFilter("linear", "imaging"))
+		assert.Equal(t, ResampleLanczos, ParseFilter("invalid", "imaging"))
 	})
 }
 

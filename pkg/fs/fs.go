@@ -55,6 +55,19 @@ func Stat(filePath string) (os.FileInfo, error) {
 	return os.Stat(filePath)
 }
 
+// StatFile returns file info for regular files and errors on directories.
+func StatFile(filePath string) (os.FileInfo, error) {
+	info, err := Stat(filePath)
+	if err != nil {
+		return nil, err
+	}
+	if info.IsDir() {
+		return nil, fmt.Errorf("%s is a directory", filePath)
+	}
+
+	return info, nil
+}
+
 // SocketExists returns true if the specified socket exists and is not a regular file or directory.
 func SocketExists(socketName string) bool {
 	if socketName == "" {

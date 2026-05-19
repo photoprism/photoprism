@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -136,5 +137,17 @@ func TestUpdateUser(t *testing.T) {
 				string(userForm), sessId)
 			assert.Equal(t, http.StatusNotFound, r.Code)
 		}
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		body := `{"DisplayName":"` + strings.Repeat("a", int(MaxMutationRequestBytes)) + `"}`
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", body, sessId)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }

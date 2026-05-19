@@ -47,6 +47,7 @@ type ApiRequest struct {
 	Url            string             `form:"url" yaml:"Url,omitempty" json:"url,omitempty"`
 	Org            string             `form:"org" yaml:"Org,omitempty" json:"org,omitempty"`
 	Project        string             `form:"project" yaml:"Project,omitempty" json:"project,omitempty"`
+	Think          string             `form:"think" yaml:"Think,omitempty" json:"think,omitempty"`
 	Options        *ModelOptions      `form:"options" yaml:"Options,omitempty" json:"options,omitempty"`
 	Context        *ApiRequestContext `form:"context" yaml:"Context,omitempty" json:"context,omitempty"`
 	Stream         bool               `form:"stream" yaml:"Stream,omitempty" json:"stream"`
@@ -181,7 +182,28 @@ func (r *ApiRequest) JSON() ([]byte, error) {
 		return r.openAIJSON()
 	}
 
-	return json.Marshal(*r)
+	data, err := json.Marshal(*r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Normalize "true"/"false" to JSON booleans so Ollama accepts think values
+	// configured as strings while still supporting string levels like "low".
+	normalizedThink, hasThink := normalizeThinkValue(r.Think)
+	if !hasThink {
+		return data, nil
+	}
+
+	var payload map[string]any
+
+	if err = json.Unmarshal(data, &payload); err != nil {
+		return nil, err
+	}
+
+	payload["think"] = normalizedThink
+
+	return json.Marshal(payload)
 }
 
 // WriteLog logs the request data when trace log mode is enabled.
@@ -274,6 +296,25 @@ func isLikelyBase64(value string) bool {
 	}
 
 	return true
+}
+
+// normalizeThinkValue returns the serialized think value and whether it should
+// be included in the outgoing payload.
+func normalizeThinkValue(value string) (any, bool) {
+	value = strings.TrimSpace(value)
+
+	if value == "" {
+		return nil, false
+	}
+
+	switch strings.ToLower(value) {
+	case "true":
+		return true, true
+	case "false":
+		return false, true
+	default:
+		return value, true
+	}
 }
 
 // openAIJSON converts the request data into an OpenAI Responses API payload.

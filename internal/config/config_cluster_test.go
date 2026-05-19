@@ -38,6 +38,7 @@ func TestConfig_PortalUrl(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
+		c.options.Edition = Portal
 		c.options.NodeRole = cluster.RolePortal
 		c.options.JoinToken = ""
 
@@ -51,8 +52,20 @@ func TestConfig_PortalUrl(t *testing.T) {
 		assert.FileExists(t, secretFile)
 		info, err := os.Stat(secretFile)
 		assert.NoError(t, err)
-		assert.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
+		if err == nil {
+			assert.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
+		}
 		assert.Equal(t, token, c.JoinToken())
+	})
+	t.Run("RegularInstallCannotEnablePortalRole", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.Edition = Community
+		c.options.NodeRole = cluster.RolePortal
+		c.options.JoinToken = ""
+
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
+		assert.False(t, c.Portal())
+		assert.Equal(t, "", c.JoinToken())
 	})
 	t.Run("Default", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -99,8 +112,12 @@ func TestConfig_Cluster(t *testing.T) {
 		// Defaults
 		assert.False(t, c.Portal())
 
-		// Toggle values
+		// Regular installations cannot enable portal mode through the role flag.
 		c.Options().NodeRole = string(cluster.RolePortal)
+		assert.False(t, c.Portal())
+
+		// Portal edition is always treated as a portal node.
+		c.Options().Edition = Portal
 		assert.True(t, c.Portal())
 		c.Options().NodeRole = ""
 	})
@@ -111,21 +128,24 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.False(t, c.PortalProxy())
 
 		c.options.NodeRole = string(cluster.RolePortal)
+		assert.False(t, c.PortalProxy())
+
+		c.options.Edition = Portal
 		assert.True(t, c.PortalProxy())
 
 		c.options.PortalProxy = false
 		assert.False(t, c.PortalProxy())
 	})
-	t.Run("PortalProxyPrefix", func(t *testing.T) {
+	t.Run("PortalProxyUri", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
-		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
+		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyUri())
 
-		c.options.PortalProxyPrefix = "/tenant"
-		assert.Equal(t, "/tenant", c.PortalProxyPrefix())
+		c.options.PortalProxyUri = "/instance"
+		assert.Equal(t, "/instance", c.PortalProxyUri())
 
-		c.options.PortalProxyPrefix = "  "
-		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
+		c.options.PortalProxyUri = "https://proxy.example.com/instance/"
+		assert.Equal(t, "https://proxy.example.com/instance/", c.PortalProxyUri())
 	})
 	t.Run("JWKSUrlSetter", func(t *testing.T) {
 		const existing = "https://existing.example/.well-known/jwks.json"
@@ -205,7 +225,7 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.JWTScope = "cluster vision"
 		assert.Equal(t, list.ParseAttr("cluster vision"), c.JWTAllowedScopes())
 		c.options.JWTScope = ""
-		assert.Equal(t, list.ParseAttr("config cluster vision metrics"), c.JWTAllowedScopes())
+		assert.Equal(t, list.ParseAttr("config cluster vision metrics mcp"), c.JWTAllowedScopes())
 	})
 	t.Run("Paths", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -311,6 +331,7 @@ func TestConfig_Cluster(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
+		c.options.Edition = Portal
 		c.options.NodeRole = cluster.RolePortal
 
 		c.options.JoinToken = "onwnOVt-MZCCkA0z-YJXHnzJ"
@@ -356,6 +377,19 @@ func TestConfig_Cluster(t *testing.T) {
 		c2.options.NodeClientSecret = "" // ensure it must read the file
 		assert.Equal(t, cluster.ExampleClientSecret, c2.NodeClientSecret())
 	})
+	t.Run("NodeClientSecretPrefersFileOverInline", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+
+		_, err := c.SaveNodeClientSecret(cluster.ExampleClientSecret)
+		assert.NoError(t, err)
+
+		// Inline value should not override the persisted secret file.
+		c.options.NodeClientSecret = "stale-inline-secret"
+		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	})
 	t.Run("NodeClientSecretEnvOverride", func(t *testing.T) {
 		secretFile := filepath.Join(t.TempDir(), "client_secret")
 		assert.NoError(t, os.WriteFile(secretFile, []byte(cluster.ExampleClientSecret), fs.ModeSecretFile))
@@ -379,11 +413,112 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
 	})
+	t.Run("SaveClusterOptionsUpdate", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+		c.options.ConfigPath = tempCfg
+		c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		seed := map[string]any{
+			"Existing":         "value",
+			"NodeClientSecret": "legacy-inline-secret",
+		}
+		b, err := yaml.Marshal(seed)
+		assert.NoError(t, err)
+		assert.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+		update := cluster.OptionsUpdate{}
+		update.SetClusterUUID("4a47c940-d5de-41b3-88a2-eb816cc659ca")
+		update.SetNodeClientID(cluster.ExampleClientID)
+		update.SetDatabaseName("cluster_database")
+		update.SetDatabaseUser("cluster_user")
+
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		assert.NoError(t, err)
+		assert.True(t, wrote)
+
+		content, readErr := os.ReadFile(c.OptionsYaml())
+		assert.NoError(t, readErr)
+
+		var merged map[string]any
+		assert.NoError(t, yaml.Unmarshal(content, &merged))
+		assert.Equal(t, "value", merged["Existing"])
+		assert.Equal(t, "legacy-inline-secret", merged["NodeClientSecret"])
+		assert.Equal(t, "4a47c940-d5de-41b3-88a2-eb816cc659ca", merged["ClusterUUID"])
+		assert.Equal(t, cluster.ExampleClientID, merged["NodeClientID"])
+		assert.Equal(t, "cluster_database", merged["DatabaseName"])
+		assert.Equal(t, "cluster_user", merged["DatabaseUser"])
+
+		// Applying the same values again should not rewrite.
+		wrote, err = c.SaveClusterOptionsUpdate(update)
+		assert.NoError(t, err)
+		assert.False(t, wrote)
+	})
+	t.Run("SaveClusterOptionsUpdateInvalidUUID", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		update := cluster.OptionsUpdate{}
+		update.SetClusterUUID("invalid-uuid")
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		assert.Error(t, err)
+		assert.False(t, wrote)
+	})
+	t.Run("SaveOptionsPatch", func(t *testing.T) {
+		tempCfg := t.TempDir()
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("config-path", tempCfg))
+		c := NewConfig(ctx)
+		c.options.ConfigPath = tempCfg
+		c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		seed := map[string]any{
+			"Existing": "value",
+		}
+		b, err := yaml.Marshal(seed)
+		assert.NoError(t, err)
+		assert.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+		patch := Values{
+			"SiteUrl": "https://photos.example.com/",
+			"Public":  true,
+		}
+
+		wrote, err := c.SaveOptionsPatch(patch)
+		assert.NoError(t, err)
+		assert.True(t, wrote)
+
+		content, readErr := os.ReadFile(c.OptionsYaml())
+		assert.NoError(t, readErr)
+
+		var merged map[string]any
+		assert.NoError(t, yaml.Unmarshal(content, &merged))
+		assert.Equal(t, "value", merged["Existing"])
+		assert.Equal(t, "https://photos.example.com/", merged["SiteUrl"])
+		assert.Equal(t, true, merged["Public"])
+
+		wrote, err = c.SaveOptionsPatch(patch)
+		assert.NoError(t, err)
+		assert.False(t, wrote)
+	})
+	t.Run("SaveOptionsPatchEmpty", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		wrote, err := c.SaveOptionsPatch(nil)
+		assert.NoError(t, err)
+		assert.False(t, wrote)
+	})
 	t.Run("JoinTokenFilePortal", func(t *testing.T) {
 		tempCfg := t.TempDir()
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
+		c.options.Edition = Portal
 		c.options.NodeRole = cluster.RolePortal
 
 		expected := filepath.Join(c.PortalConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
@@ -395,7 +530,7 @@ func TestConfig_Cluster(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
-		c.options.NodeRole = cluster.RoleApp
+		c.options.NodeRole = cluster.RoleInstance
 
 		expected := filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
 		assert.Equal(t, expected, c.JoinTokenFile())
@@ -483,22 +618,42 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.NodeName = ""
 		assert.Equal(t, "my-host-name-prod", c.NodeName())
 	})
+	t.Run("NodeNameNotOverriddenByClusterDomainDerivation", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.NodeName = "smiling-ocelot"
+		c.options.ClusterDomain = ""
+		c.options.SiteUrl = "https://media.glowworm.com/i/smiling-ocelot/"
+
+		assert.Equal(t, "glowworm.com", c.ClusterDomain())
+		assert.Equal(t, "smiling-ocelot", c.NodeName())
+	})
 	t.Run("NodeRoleValues", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
 		// Default / unknown → node
 		c.options.NodeRole = ""
-		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 		c.options.NodeRole = "unknown"
-		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 
 		// Explicit values
-		c.options.NodeRole = string(cluster.RoleApp)
-		assert.Equal(t, string(cluster.RoleApp), c.NodeRole())
+		c.options.NodeRole = string(cluster.RoleInstance)
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
+		c.options.NodeRole = "app"
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 		c.options.NodeRole = string(cluster.RolePortal)
-		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 		c.options.NodeRole = string(cluster.RoleService)
 		assert.Equal(t, string(cluster.RoleService), c.NodeRole())
+
+		// Portal edition always resolves to portal.
+		c.options.Edition = Portal
+		c.options.NodeRole = string(cluster.RoleInstance)
+		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
+		c.options.NodeRole = string(cluster.RoleService)
+		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
+		c.options.NodeRole = string(cluster.RolePortal)
+		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
 	})
 	t.Run("SecretsFromFiles", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

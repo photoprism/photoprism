@@ -63,7 +63,7 @@ describe("common/api", () => {
    */
 
   it("should bootstrap auth header from namespaced storage", async () => {
-    const baseUri = "/p/pro-1";
+    const baseUri = "/i/pro-1";
     const namespaceKey = "ns-pro-1";
     const token = "999900000000000000000000000000000000000000000000";
     const prevConfig = window.__CONFIG__;

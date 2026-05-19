@@ -11,7 +11,7 @@ import (
 )
 
 // JWT captures the subset of JWT fields needed to construct
-// an in-memory session for portal-to-node authentication flows.
+// an in-memory session for portal-to-instance authentication flows.
 type JWT struct {
 	Token     string
 	ID        string

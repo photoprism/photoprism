@@ -19,7 +19,7 @@ import (
 // GetThumb returns a thumbnail image matching the file hash, crop area, and type.
 //
 //	@Summary		returns a thumbnail image with the requested size
-//	@Description	Fore more information see:
+//	@Description	For more information see:
 //	@Description	- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri
 //	@Id				GetThumb
 //	@Produce		image/jpeg, image/svg+xml

@@ -233,7 +233,7 @@ func FindLinks(token, shared string) (found Links) {
 	}
 
 	if err := q.Order("modified_at DESC").Find(&found).Error; err != nil {
-		event.AuditErr([]string{"token %s", status.Error(err)}, clean.Log(token))
+		event.AuditErr([]string{"share token lookup failed", status.Error(err)})
 	}
 
 	return found

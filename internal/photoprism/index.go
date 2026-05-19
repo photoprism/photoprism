@@ -298,6 +298,14 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		log.Error(err.Error())
 	}
 
+	if o.Rescan && !o.FacesOnly {
+		if reconciled, reconcileErr := entity.ReconcileOriginalsFolderAlbums(o.Path); reconcileErr != nil {
+			log.Warnf("index: %s (reconcile folder albums)", reconcileErr)
+		} else if reconciled > 0 {
+			log.Debugf("index: reconciled %d folder albums", reconciled)
+		}
+	}
+
 	if updated > 0 {
 		event.Publish("index.updating", event.Data{
 			"uid":  o.UID,

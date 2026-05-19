@@ -13,7 +13,7 @@ import (
 )
 
 var assetsPath = fs.Abs("../../../assets")
-var examplesPath = filepath.Join(assetsPath, "examples")
+var samplesPath = filepath.Join(assetsPath, "samples")
 
 // TestMain executes testMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {

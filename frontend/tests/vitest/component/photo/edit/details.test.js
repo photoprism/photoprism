@@ -11,9 +11,15 @@ const createMockModel = (overrides = {}) => ({
   localDate: vi.fn().mockReturnValue({
     isValid: true,
     toFormat: (fmt) => {
-      if (fmt === "d") return "1";
-      if (fmt === "L") return "4";
-      if (fmt === "y") return "2024";
+      if (fmt === "d") {
+        return "1";
+      }
+      if (fmt === "L") {
+        return "4";
+      }
+      if (fmt === "y") {
+        return "2024";
+      }
       return "2024-04-01T11:29:54";
     },
     toISO: () => "2024-04-01T11:29:54",
@@ -80,14 +86,24 @@ const makeWrapper = (overrides = {}) => {
         $vuetify: { display: { xs: false } },
         $config: {
           feature: vi.fn().mockImplementation((f) => {
-            if (f === "edit") return true;
-            if (f === "review") return true;
-            if (f === "places") return true;
+            if (f === "edit") {
+              return true;
+            }
+            if (f === "review") {
+              return true;
+            }
+            if (f === "places") {
+              return true;
+            }
             return false;
           }),
           get: vi.fn().mockImplementation((k) => {
-            if (k === "clip") return 255;
-            if (k === "readonly") return false;
+            if (k === "clip") {
+              return 255;
+            }
+            if (k === "readonly") {
+              return false;
+            }
             return "";
           }),
           values: {
@@ -108,8 +124,8 @@ const makeWrapper = (overrides = {}) => {
         VAutocomplete: { template: "<select></select>" },
         VSelect: { template: "<select></select>" },
         VBtn: { template: "<button><slot /></button>" },
-        PLocationInput: { template: '<div class="p-location-input"></div>' },
-        PLocationDialog: { template: '<div class="p-location-dialog"></div>' },
+        PMetaLocationInput: { template: '<div class="p-meta-location-input"></div>' },
+        PMetaLocationDialog: { template: '<div class="p-meta-location-dialog"></div>' },
       },
     },
     ...overrides,
@@ -124,7 +140,9 @@ describe("component/photo/edit/details", () => {
   });
 
   afterEach(() => {
-    if (wrapper) wrapper.unmount();
+    if (wrapper) {
+      wrapper.unmount();
+    }
   });
 
   describe("initialization and data sync", () => {
@@ -262,9 +280,15 @@ describe("component/photo/edit/details", () => {
       const mockLocalDate = {
         isValid: true,
         toFormat: vi.fn().mockImplementation((fmt) => {
-          if (fmt === "d") return "15";
-          if (fmt === "L") return "6";
-          if (fmt === "y") return "2023";
+          if (fmt === "d") {
+            return "15";
+          }
+          if (fmt === "L") {
+            return "6";
+          }
+          if (fmt === "y") {
+            return "2023";
+          }
           return "2023-06-15";
         }),
         toISO: () => "2023-06-15T14:30:00",
@@ -362,8 +386,8 @@ describe("component/photo/edit/details", () => {
           },
           stubs: {
             VAutocomplete: false,
-            PLocationInput: { template: '<div class="p-location-input"></div>' },
-            PLocationDialog: { template: '<div class="p-location-dialog"></div>' },
+            PMetaLocationInput: { template: '<div class="p-meta-location-input"></div>' },
+            PMetaLocationDialog: { template: '<div class="p-meta-location-dialog"></div>' },
           },
         },
       });
@@ -415,14 +439,94 @@ describe("component/photo/edit/details", () => {
       expect(wrapper.emitted("close")).toBeTruthy();
     });
 
-    it("validates text length with textRule", () => {
-      const longText = "a".repeat(300); // Longer than clip limit of 255
-      const result = wrapper.vm.textRule(longText);
-      expect(result).toBe("Text too long");
+    // Vue 3's component proxy intercepts $refs reads; standard assignment
+    // doesn't stick. The internal instance (vm.$) exposes the underlying
+    // `refs` object that the proxy reads from, so injecting the mock
+    // there lets `this.$refs.form.validate` resolve to the spy when
+    // save() runs.
+    const overrideFormRef = (vm, validate) => {
+      vm.$.refs.form = { validate };
+    };
 
-      const shortText = "Valid text";
-      const validResult = wrapper.vm.textRule(shortText);
-      expect(validResult).toBe(true);
+    it("blocks save and notifies when form validation fails", async () => {
+      wrapper.vm.invalidDate = false;
+      const validate = vi.fn().mockResolvedValue({ valid: false });
+      overrideFormRef(wrapper.vm, validate);
+
+      await wrapper.vm.save(false);
+
+      expect(validate).toHaveBeenCalled();
+      expect(wrapper.vm.view.model.update).not.toHaveBeenCalled();
+      expect(wrapper.vm.$notify.error).toHaveBeenCalledWith("Changes could not be saved");
+    });
+
+    it("proceeds with save when form validation passes", async () => {
+      wrapper.vm.invalidDate = false;
+      const validate = vi.fn().mockResolvedValue({ valid: true });
+      overrideFormRef(wrapper.vm, validate);
+
+      await wrapper.vm.save(false);
+
+      expect(validate).toHaveBeenCalled();
+      expect(wrapper.vm.view.model.update).toHaveBeenCalled();
+    });
+
+    it("validates text length via the centralized rules.text factory", () => {
+      // After migrating the per-component textRule to the shared
+      // common/form rules.text(...) factory, each :rules attribute
+      // calls the factory inline. The component exposes `rules` on
+      // its instance so call sites can invoke it from the template.
+      const [, maxLenRule] = wrapper.vm.rules.text(false, 0, 255, "Title");
+
+      // Too long → label-specific localized message.
+      expect(maxLenRule("a".repeat(300))).toBe("Title is too long");
+
+      // Short input → passes.
+      expect(maxLenRule("Valid text")).toBe(true);
+
+      // Defensive: null / undefined / object inputs don't crash, the
+      // factory's maxLen short-circuits on non-string input.
+      expect(maxLenRule(null)).toBe(true);
+      expect(maxLenRule(undefined)).toBe(true);
+      expect(maxLenRule({ Name: "obj" })).toBe(true);
+    });
+
+    // Per-field caps must come from PhotoMaxLength (backend VARCHAR), not
+    // the historical $config.get('clip') = 160 ceiling. These cases lock
+    // each field's exposure to its real backend cap so a future bare
+    // `clip` regression fails loudly here.
+    it("exposes PhotoMaxLength and wires the per-field caps", () => {
+      const m = wrapper.vm.PhotoMaxLength;
+      expect(m).toEqual({
+        Title: 200,
+        Caption: 4096,
+        Subject: 1024,
+        Artist: 1024,
+        Copyright: 1024,
+        License: 1024,
+        Keywords: 2048,
+        Notes: 2048,
+        Exposure: 64,
+      });
+
+      const cases = [
+        ["Title", "Title", m.Title],
+        ["Caption", "Caption", m.Caption],
+        ["Subject", "Subject", m.Subject],
+        ["Copyright", "Copyright", m.Copyright],
+        ["Artist", "Artist", m.Artist],
+        ["License", "License", m.License],
+        ["Keywords", "Keywords", m.Keywords],
+        ["Notes", "Notes", m.Notes],
+      ];
+
+      for (const [label, errorLabel, cap] of cases) {
+        const [, rule] = wrapper.vm.rules.text(false, 0, cap, label);
+        // At the cap → passes (200 valid for Title, 4096 for Caption, …).
+        expect(rule("a".repeat(cap))).toBe(true);
+        // One char beyond → label-specific error.
+        expect(rule("a".repeat(cap + 1))).toBe(`${errorLabel} is too long`);
+      }
     });
   });
 

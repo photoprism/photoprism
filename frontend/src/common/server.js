@@ -42,8 +42,8 @@ function poll(interval, maxAttempts) {
         // console.log("response:", xhr.response);
         return resolve();
       }
-    } catch (e) {
-      // console.log("status:", e);
+    } catch {
+      // Ignore status probe failures.
     }
 
     if (maxAttempts && attempts === maxAttempts) {

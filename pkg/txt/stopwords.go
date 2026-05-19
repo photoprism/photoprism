@@ -2154,7 +2154,6 @@ var StopWords = map[string]bool{
 	"tellement":        true,
 	"telles":           true,
 	"tels":             true,
-	"tenant":           true,
 	"tend":             true,
 	"tenir":            true,
 	"tente":            true,

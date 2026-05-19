@@ -69,7 +69,7 @@ func TestConfig_UsersOriginalsPath(t *testing.T) {
 
 func TestConfig_UsersStoragePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Contains(t, c.UsersStoragePath(), "users")
+	assert.Contains(t, c.UsersStoragePath(), fs.UsersDir)
 }
 
 func TestConfig_UserStoragePath(t *testing.T) {
@@ -101,6 +101,11 @@ func TestConfig_UserUploadPath(t *testing.T) {
 	} else {
 		assert.Contains(t, dir, "users/urjult03ceelhw6k/upload/foo")
 	}
+}
+
+func TestConfig_WebStoragePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.WebStoragePath(), fs.WebDir)
 }
 
 func TestConfig_SidecarPathIsAbs(t *testing.T) {

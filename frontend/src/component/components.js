@@ -6,7 +6,7 @@ import PUpdate from "component/update.vue";
 import PLoading from "component/loading.vue";
 import PLoadingBar from "component/loading-bar.vue";
 import PLightboxMenu from "component/lightbox/menu.vue";
-import PSidebarInfo from "component/sidebar/info.vue";
+import PLightboxSidebar from "component/lightbox/sidebar.vue";
 import PMap from "component/map.vue";
 import PLightbox from "component/lightbox.vue";
 
@@ -68,6 +68,9 @@ import PPhotoArchiveDialog from "component/photo/archive/dialog.vue";
 import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
 import PPhotoEditDialog from "component/photo/edit/dialog.vue";
 
+// Meta.
+import PMetaFaceMarkers from "component/meta/face/markers.vue";
+
 // Upload.
 import PUploadDialog from "component/upload/dialog.vue";
 
@@ -86,7 +89,7 @@ export function install(app) {
   app.component("PLoading", PLoading);
   app.component("PLoadingBar", PLoadingBar);
   app.component("PLightboxMenu", PLightboxMenu);
-  app.component("PSidebarInfo", PSidebarInfo);
+  app.component("PLightboxSidebar", PLightboxSidebar);
   app.component("PMap", PMap);
   app.component("PLightbox", PLightbox);
 
@@ -134,6 +137,9 @@ export function install(app) {
   app.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
   app.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
   app.component("PPhotoEditDialog", PPhotoEditDialog);
+
+  app.component("PMetaFaceMarkers", PMetaFaceMarkers);
+
   app.component("PUploadDialog", PUploadDialog);
 
   app.component("PServiceAdd", PServiceAdd);

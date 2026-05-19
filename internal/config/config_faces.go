@@ -1,7 +1,6 @@
 package config
 
 import (
-	"math"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -16,7 +15,7 @@ import (
 func (c *Config) FaceEngine() string {
 	if c == nil {
 		return face.EngineNone
-	} else if c.options.FaceEngine == face.EnginePigo || c.options.FaceEngine == face.EngineONNX {
+	} else if c.options.FaceEngine == face.EngineONNX || c.options.FaceEngine == face.EngineNone {
 		return c.options.FaceEngine
 	}
 
@@ -28,14 +27,10 @@ func (c *Config) FaceEngine() string {
 	modelPath := c.FaceEngineModelPath()
 
 	if desired == face.EngineAuto {
-		if modelPath != "" {
-			if _, err := os.Stat(modelPath); err == nil {
-				desired = face.EngineONNX
-			} else {
-				desired = face.EnginePigo
-			}
+		if _, err := os.Stat(modelPath); err == nil {
+			desired = face.EngineONNX
 		} else {
-			desired = face.EnginePigo
+			desired = face.EngineNone
 		}
 
 		c.options.FaceEngine = desired
@@ -110,15 +105,6 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	}
 
 	return false
-}
-
-// FaceEngineRetry controls whether detection retries at a higher resolution should be performed.
-func (c *Config) FaceEngineRetry() bool {
-	if c == nil {
-		return false
-	}
-
-	return c.FaceEngine() == face.EnginePigo && c.IndexWorkers() > 2
 }
 
 // FaceEngineThreads returns the configured thread count for ONNX inference.
@@ -273,37 +259,4 @@ func (c *Config) FaceAllowBackground() bool {
 	}
 
 	return c.options.FaceAllowBackground
-}
-
-// FaceAngles returns the set of detection angles in radians.
-func (c *Config) FaceAngles() []float64 {
-	if len(c.options.FaceAngles) == 0 {
-		return append([]float64(nil), face.DefaultAngles...)
-	}
-
-	angles := make([]float64, 0, len(c.options.FaceAngles))
-	seen := make(map[float64]struct{}, len(c.options.FaceAngles))
-
-	for _, angle := range c.options.FaceAngles {
-		if math.IsNaN(angle) || math.IsInf(angle, 0) {
-			continue
-		}
-
-		if angle < -math.Pi || angle > math.Pi {
-			continue
-		}
-
-		if _, ok := seen[angle]; ok {
-			continue
-		}
-
-		seen[angle] = struct{}{}
-		angles = append(angles, angle)
-	}
-
-	if len(angles) == 0 {
-		return append([]float64(nil), face.DefaultAngles...)
-	}
-
-	return angles
 }

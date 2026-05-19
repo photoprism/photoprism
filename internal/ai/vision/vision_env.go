@@ -2,6 +2,7 @@ package vision
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -52,7 +53,9 @@ func loadEnvKeyFromFile(envVar, fileVar string) {
 		return
 	}
 
-	// #nosec G304 path provided via env
+	filePath = filepath.Clean(filePath)
+
+	// #nosec G304,G703 path is validated and intended for local secret file loading.
 	if data, err := os.ReadFile(filePath); err == nil {
 		if key := clean.Auth(string(data)); key != "" {
 			_ = os.Setenv(envVar, key)

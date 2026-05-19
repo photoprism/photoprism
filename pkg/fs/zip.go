@@ -128,8 +128,17 @@ func Unzip(zipName, dir string, fileSizeLimit, totalSizeLimit int64) (files []st
 		}
 
 		// Skip directories like __OSX and potentially malicious file names containing "..".
-		if strings.HasPrefix(zipFile.Name, "__") || strings.Contains(zipFile.Name, "..") ||
-			fileSizeLimit > 0 && zipFile.UncompressedSize64 > uint64(fileSizeLimit) {
+		skipEntry := strings.HasPrefix(zipFile.Name, "__") || strings.Contains(zipFile.Name, "..")
+
+		if !skipEntry && fileSizeLimit > 0 {
+			if zipFile.UncompressedSize64 > uint64(math.MaxInt64) {
+				skipEntry = true
+			} else if int64(zipFile.UncompressedSize64) > fileSizeLimit { //nolint:gosec // bounded by MaxInt64 check above
+				skipEntry = true
+			}
+		}
+
+		if skipEntry {
 			skipped = append(skipped, zipFile.Name)
 			continue
 		}

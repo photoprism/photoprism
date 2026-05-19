@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** November 22, 2025
+**Last Updated:** March 3, 2026
 
 ### Overview
 
@@ -47,6 +47,8 @@
   - `go test ./internal/photoprism/index_mediafile_test.go -run TestIndexMediaFile`  
   Full suite: `go test ./internal/photoprism/...` (heavy; migrates fixtures).
 - Fixtures live under `storage/testdata`; tests expect initialized config (`config.TestConfig()` / `config.NewMinimalTestConfigWithDb`).
+- `internal/photoprism` tests isolate package-level storage and SQLite DSN in `TestMain` using temporary per-process paths (`PHOTOPRISM_STORAGE_PATH`, `PHOTOPRISM_TEST_DSN`) to avoid flaky cross-process collisions on macOS/Linux when multiple `go test` processes run in parallel.
+- Stateful tests that import/index media files should prefer isolated helpers like `config.NewMinimalTestConfigWithDb("<name>", filepath.Join(t.TempDir(), "storage"))` instead of shared `config.TestConfig()`.
 
 ### Operational Notes
 
@@ -54,3 +56,5 @@
 - File I/O permissions must use `pkg/fs` modes; overwrite requires explicit `force` flags.
 - Exec calls to external tools are parameterized by config paths/binaries (`config.Config`).
 - Stacking rules honor document IDs, time/place proximity, and configuration (`StackUUID`, `StackMeta`).
+- Forced rescans (`IndexOptions.Rescan=true`) run folder album reconciliation at the end of indexing via `entity.ReconcileOriginalsFolderAlbums(...)`; normal incremental runs skip this pass.
+- Folder create/index conflict lookup uses unscoped folder reads in `internal/entity/folder.go` so soft-deleted rows are detectable for troubleshooting instead of causing repeated create/find mismatches.

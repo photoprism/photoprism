@@ -190,7 +190,7 @@ test.meta("testID", "account-006").meta({ type: "short", mode: "auth" })(
 );
 
 test.meta("testID", "account-007").meta({ type: "short", mode: "auth" })("Core: Force rate limiting", async (t) => {
-  let counter = 0
+  let counter = 0;
   do {
     if (await Selector(".p-notify--error").exists) {
       await t.click(Selector(".p-notify__close"));
@@ -199,10 +199,10 @@ test.meta("testID", "account-007").meta({ type: "short", mode: "auth" })("Core: 
       .typeText(Selector(".input-username input"), "admin", { replace: true })
       .typeText(Selector(".input-password input"), "wrongpassword", { replace: true })
       .click(Selector(".action-confirm"));
-      if (await Selector(".p-notify--error").withText("Too many requests").exists) {
-        break
-      }
-  } while (counter++ < 10)
+    if (await Selector(".p-notify--error").withText("Too many requests").exists) {
+      break;
+    }
+  } while (counter++ < 10);
   if (await Selector(".p-notify--error").exists) {
     await t.click(Selector(".p-notify__close"));
   }

@@ -73,6 +73,18 @@ func TestSetBaseURLRejectsHTTP(t *testing.T) {
 	assert.Equal(t, ProdBaseURL, GetServiceURL(""))
 }
 
+func TestValidateServiceURL(t *testing.T) {
+	t.Run("ValidHttps", func(t *testing.T) {
+		assert.NoError(t, ValidateServiceURL("https://my.photoprism.app/v1/hello/demo"))
+	})
+	t.Run("RejectInsecureScheme", func(t *testing.T) {
+		assert.Error(t, ValidateServiceURL("http://my.photoprism.app/v1/hello/demo"))
+	})
+	t.Run("RejectMissingHost", func(t *testing.T) {
+		assert.Error(t, ValidateServiceURL("https:///v1/hello"))
+	})
+}
+
 func TestApplyTestConfig(t *testing.T) {
 	t.Run("DisableByDefault", func(t *testing.T) {
 		cleanup := restoreBaseURL(t)
@@ -85,7 +97,6 @@ func TestApplyTestConfig(t *testing.T) {
 
 		assert.True(t, Disabled())
 	})
-
 	t.Run("EnableTest", func(t *testing.T) {
 		cleanup := restoreBaseURL(t)
 		t.Cleanup(cleanup)
@@ -98,7 +109,6 @@ func TestApplyTestConfig(t *testing.T) {
 		assert.False(t, Disabled())
 		assert.Equal(t, TestBaseURL, GetServiceURL(""))
 	})
-
 	t.Run("EnableProd", func(t *testing.T) {
 		cleanup := restoreBaseURL(t)
 		t.Cleanup(cleanup)

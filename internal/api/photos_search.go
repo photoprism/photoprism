@@ -16,10 +16,43 @@ import (
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
+// searchPhotosForm checks authorization and parses the photo search request.
+func searchPhotosForm(c *gin.Context) (frm form.SearchPhotos, s *entity.Session, err error) {
+	s = AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})
+
+	// Abort if permission is not granted.
+	if s.Abort(c) {
+		return frm, s, i18n.Error(i18n.ErrForbidden)
+	}
+
+	// Abort if request params are invalid.
+	if err = c.MustBindWith(&frm, binding.Form); err != nil {
+		event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", status.Error(err)}, s.RefID)
+		AbortBadRequest(c, err)
+		return frm, s, err
+	}
+
+	settings := get.Config().Settings()
+
+	// Ignore private flag if feature is disabled.
+	if !settings.Features.Private {
+		frm.Public = false
+	}
+
+	// Ignore private flag if feature is disabled.
+	if frm.Scope == "" &&
+		settings.Features.Review &&
+		acl.Rules.Deny(acl.ResourcePhotos, s.GetUserRole(), acl.ActionManage) {
+		frm.Quality = 3
+	}
+
+	return frm, s, nil
+}
+
 // SearchPhotos finds pictures and returns them as JSON.
 //
 //	@Summary		finds pictures and returns them as JSON
-//	@Description	Fore more information see:
+//	@Description	For more information see:
 //	@Description	- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos
 //	@Id				SearchPhotos
 //	@Tags			Photos
@@ -38,42 +71,8 @@ import (
 //	@Param			video			query		bool	false	"is type video"
 //	@Router			/api/v1/photos [get]
 func SearchPhotos(router *gin.RouterGroup) {
-	// searchPhotos checking authorization and parses the search request.
-	searchForm := func(c *gin.Context) (frm form.SearchPhotos, s *entity.Session, err error) {
-		s = AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})
-
-		// Abort if permission is not granted.
-		if s.Abort(c) {
-			return frm, s, i18n.Error(i18n.ErrForbidden)
-		}
-
-		// Abort if request params are invalid.
-		if err = c.MustBindWith(&frm, binding.Form); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "form invalid", status.Error(err)}, s.RefID)
-			AbortBadRequest(c, err)
-			return frm, s, err
-		}
-
-		settings := get.Config().Settings()
-
-		// Ignore private flag if feature is disabled.
-		if !settings.Features.Private {
-			frm.Public = false
-		}
-
-		// Ignore private flag if feature is disabled.
-		if frm.Scope == "" &&
-			settings.Features.Review &&
-			acl.Rules.Deny(acl.ResourcePhotos, s.GetUserRole(), acl.ActionManage) {
-			frm.Quality = 3
-		}
-
-		return frm, s, nil
-	}
-
-	// defaultHandler a standard JSON result with all fields.
-	defaultHandler := func(c *gin.Context) {
-		f, s, err := searchForm(c)
+	router.GET("/photos", func(c *gin.Context) {
+		f, s, err := searchPhotosForm(c)
 
 		// Abort if authorization or form are invalid.
 		if err != nil {
@@ -98,11 +97,35 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		// Return as JSON.
 		c.JSON(http.StatusOK, result)
-	}
+	})
+}
 
-	// viewHandler returns a photo viewer formatted result.
-	viewHandler := func(c *gin.Context) {
-		f, s, err := searchForm(c)
+// SearchPhotosView finds pictures and returns a viewer-formatted JSON result for the lightbox.
+//
+//	@Summary		finds pictures and returns a viewer-formatted JSON result for the lightbox
+//	@Description	Returns search results formatted for the photo viewer (lightbox) in the web UI,
+//	@Description	including resolved content URLs and preview/download tokens.
+//	@Description	For more information see:
+//	@Description	- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos
+//	@Id				SearchPhotosView
+//	@Tags			Photos
+//	@Produce		json
+//	@Success		200				{object}	viewer.Results
+//	@Failure		400,401,403,404	{object}	i18n.Response
+//	@Param			count			query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
+//	@Param			offset			query		int		false	"file offset"				minimum(0)	maximum(100000)
+//	@Param			order			query		string	false	"sort order"				Enums(name, title, added, edited, newest, oldest, size, random, duration, relevance)
+//	@Param			merged			query		bool	false	"groups consecutive files that belong to the same photo"
+//	@Param			public			query		bool	false	"excludes private pictures"
+//	@Param			quality			query		int		false	"minimum quality score (1-7)"	Enums(0, 1, 2, 3, 4, 5, 6, 7)
+//	@Param			q				query		string	false	"search query"
+//	@Param			s				query		string	false	"album uid"
+//	@Param			path			query		string	false	"photo path"
+//	@Param			video			query		bool	false	"is type video"
+//	@Router			/api/v1/photos/view [get]
+func SearchPhotosView(router *gin.RouterGroup) {
+	router.GET("/photos/view", func(c *gin.Context) {
+		f, s, err := searchPhotosForm(c)
 
 		// Abort if authorization or form are invalid.
 		if err != nil {
@@ -127,9 +150,5 @@ func SearchPhotos(router *gin.RouterGroup) {
 
 		// Return as JSON.
 		c.JSON(http.StatusOK, result)
-	}
-
-	// Register route handlers.
-	router.GET("/photos", defaultHandler)
-	router.GET("/photos/view", viewHandler)
+	})
 }

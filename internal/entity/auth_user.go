@@ -1282,12 +1282,12 @@ func (m *User) RedeemToken(token string) (n int) {
 			share.Comment = link.Comment
 
 			if err := share.Save(); err != nil {
-				event.AuditErr([]string{"user %s", "token %s", "failed to redeem shares", status.Error(err)}, m.RefID, clean.Log(token))
+				event.AuditErr([]string{"user %s", "share token redeem failed", status.Error(err)}, m.RefID)
 			} else {
 				link.Redeem()
 			}
 		} else if err := found.UpdateLink(link); err != nil {
-			event.AuditErr([]string{"user %s", "token %s", "failed to update shares", status.Error(err)}, m.RefID, clean.Log(token))
+			event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
 		}
 	}
 

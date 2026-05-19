@@ -92,7 +92,6 @@ func TestPhotoPreloadByUIDs(t *testing.T) {
 		}
 		assert.Greater(t, len(second.Labels), 0)
 	})
-
 	t.Run("Empty", func(t *testing.T) {
 		photos, err := PhotoPreloadByUIDs(nil)
 		if err != nil {

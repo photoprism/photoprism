@@ -8,7 +8,7 @@ import (
 // Passcode represents a multi-factor authentication key setup form.
 type Passcode struct {
 	Type     string `form:"type" json:"type,omitempty"`
-	Password string `form:"password" json:"password,omitempty"`
+	Password string `form:"password" json:"password,omitempty"` //nolint:gosec // G117: Expected user-supplied credential field.
 	Code     string `form:"code" json:"code,omitempty"`
 }
 

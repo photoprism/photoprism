@@ -29,6 +29,24 @@ var (
 	photoLabelCacheMutex = sync.Mutex{}
 )
 
+// labelCacheNameKey returns the cache key for an exact label name lookup.
+func labelCacheNameKey(name string) string {
+	if name == "" {
+		return ""
+	}
+
+	return "name:" + name
+}
+
+// labelCacheSlugKey returns the cache key for a label slug lookup.
+func labelCacheSlugKey(slug string) string {
+	if slug == "" {
+		return ""
+	}
+
+	return "slug:" + slug
+}
+
 // photoLabelCacheKey returns a string key for the photoLabelCache.
 func photoLabelCacheKey(photoId, labelId uint) string {
 	return fmt.Sprintf("%d-%d", photoId, labelId)
@@ -100,24 +118,29 @@ func FindLabel(name string, cached bool) (*Label, error) {
 		return &Label{}, errors.New("missing label name")
 	}
 
-	// Use the label slug as natural key cache.
-	cacheKey := txt.Slug(name)
+	labelName := normalizeLabelName(name)
+	slugKey := txt.Slug(name)
+	nameCacheKey := labelCacheNameKey(labelName)
+	slugCacheKey := labelCacheSlugKey(slugKey)
 
-	if cacheKey == "" {
-		return &Label{}, fmt.Errorf("invalid label slug %s", clean.LogQuote(cacheKey))
+	if labelName == "" && slugKey == "" {
+		return &Label{}, fmt.Errorf("invalid label slug %s", clean.LogQuote(slugKey))
 	}
 
 	// Return cached label, if found.
 	if cached {
-		if cacheData, ok := labelCache.Get(cacheKey); ok {
-			log.Tracef("label: cache hit for %s", cacheKey)
+		for _, cacheKey := range []string{nameCacheKey, slugCacheKey} {
+			if cacheKey == "" {
+				continue
+			}
 
-			// Get cached data.
-			if result := cacheData.(*Label); result.HasID() {
-				// Return cached entity.
-				return result, nil
-			} else {
-				// Return cached "not found" error.
+			if cacheData, ok := labelCache.Get(cacheKey); ok {
+				log.Tracef("label: cache hit for %s", cacheKey)
+
+				if result := cacheData.(*Label); result.HasID() {
+					return result, nil
+				}
+
 				return &Label{}, fmt.Errorf("label not found")
 			}
 		}
@@ -126,14 +149,44 @@ func FindLabel(name string, cached bool) (*Label, error) {
 	// Fetch and cache label.
 	result := &Label{}
 
-	if find := Db().First(result, "(label_slug <> '' AND label_slug = ? OR custom_slug <> '' AND custom_slug = ?)", cacheKey, cacheKey); find.RecordNotFound() {
-		labelCache.Set(cacheKey, result, labelCacheErrorExpiration)
+	if labelName != "" {
+		if find := Db().First(result, "label_name = ?", labelName); find.Error == nil {
+			if nameCacheKey != "" {
+				labelCache.SetDefault(nameCacheKey, result)
+			}
+			if slugCacheKey != "" {
+				labelCache.SetDefault(slugCacheKey, result)
+			}
+			return result, nil
+		}
+	}
+
+	if find := Db().First(result, "(label_slug <> '' AND label_slug = ? OR custom_slug <> '' AND custom_slug = ?)", slugKey, slugKey); find.RecordNotFound() {
+		if nameCacheKey != "" {
+			labelCache.Set(nameCacheKey, result, labelCacheErrorExpiration)
+		}
+		if slugCacheKey != "" {
+			labelCache.Set(slugCacheKey, result, labelCacheErrorExpiration)
+		}
 		return result, fmt.Errorf("label not found")
 	} else if find.Error != nil {
-		labelCache.Set(cacheKey, result, labelCacheErrorExpiration)
+		if nameCacheKey != "" {
+			labelCache.Set(nameCacheKey, result, labelCacheErrorExpiration)
+		}
+		if slugCacheKey != "" {
+			labelCache.Set(slugCacheKey, result, labelCacheErrorExpiration)
+		}
 		return result, find.Error
 	} else {
-		labelCache.SetDefault(result.LabelSlug, result)
+		if nameCacheKey != "" {
+			labelCache.SetDefault(nameCacheKey, result)
+		}
+		if result.LabelSlug != "" {
+			labelCache.SetDefault(labelCacheSlugKey(result.LabelSlug), result)
+		}
+		if result.CustomSlug != "" {
+			labelCache.SetDefault(labelCacheSlugKey(result.CustomSlug), result)
+		}
 	}
 
 	return result, nil

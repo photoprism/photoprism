@@ -16,7 +16,8 @@ func TestConfig_ClientConfig(t *testing.T) {
 		result := c.ClientPublic()
 		assert.IsType(t, &ClientConfig{}, result)
 		assert.Equal(t, AuthModePublic, result.AuthMode)
-		assert.Equal(t, c.LibraryUri("/"), result.LoginUri)
+		assert.Equal(t, c.FrontendUri(""), result.FrontendUri)
+		assert.Equal(t, c.LoginUri(), result.LoginUri)
 		assert.Equal(t, "", result.LoginInfo)
 		assert.Equal(t, "", result.RegisterUri)
 		assert.Equal(t, 0, result.PasswordLength)
@@ -70,6 +71,27 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.LessOrEqual(t, 1, cfg.Count.Private)
 		assert.LessOrEqual(t, 4, cfg.Count.Albums)
 	})
+}
+
+func TestConfig_ClientConfigDisableMCP(t *testing.T) {
+	// ClientPublic, ClientShare, and ClientUser must all propagate the MCP
+	// disable flag so the frontend can hide any MCP-related controls when
+	// the endpoint is turned off via --disable-mcp / PHOTOPRISM_DISABLE_MCP.
+	c := NewMinimalTestConfigWithDb("client-mcp", t.TempDir())
+	c.SetAuthMode(AuthModePasswd)
+
+	original := c.Options().DisableMCP
+	t.Cleanup(func() { c.Options().DisableMCP = original })
+
+	c.Options().DisableMCP = false
+	assert.False(t, c.ClientPublic().Disable.MCP)
+	assert.False(t, c.ClientShare().Disable.MCP)
+	assert.False(t, c.ClientUser(true).Disable.MCP)
+
+	c.Options().DisableMCP = true
+	assert.True(t, c.ClientPublic().Disable.MCP)
+	assert.True(t, c.ClientShare().Disable.MCP)
+	assert.True(t, c.ClientUser(true).Disable.MCP)
 }
 
 func TestConfig_ClientShareConfig(t *testing.T) {

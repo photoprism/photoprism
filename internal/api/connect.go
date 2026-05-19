@@ -38,14 +38,22 @@ func Connect(router *gin.RouterGroup) {
 		var frm form.Connect
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAuthRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				log.Warnf("connect: request too large (%s)", clean.Log(name))
+				AbortRequestTooLarge(c, i18n.ErrAccountConnect)
+				return
+			}
+
 			log.Warnf("connect: invalid form values (%s)", clean.Log(name))
 			Abort(c, http.StatusBadRequest, i18n.ErrAccountConnect)
 			return
 		}
 
 		if frm.Invalid() {
-			log.Warnf("connect: invalid token %s", clean.Log(frm.Token))
+			log.Warnf("connect: invalid connect token (%s)", clean.Log(name))
 			Abort(c, http.StatusBadRequest, i18n.ErrAccountConnect)
 			return
 		}

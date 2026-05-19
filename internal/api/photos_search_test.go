@@ -37,3 +37,30 @@ func TestSearchPhotos(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, result.Code)
 	})
 }
+
+func TestSearchPhotosView(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SearchPhotosView(router)
+		r := PerformRequest(app, "GET", "/api/v1/photos/view?count=10")
+		body := r.Body.String()
+
+		t.Logf("response body: %s", body)
+
+		assert.Equal(t, http.StatusOK, r.Code)
+		count := gjson.Get(body, "#")
+		assert.LessOrEqual(t, int64(2), count.Int())
+
+		// Viewer-formatted results expose resolved download/preview URLs
+		// that the default search endpoint does not populate.
+		first := gjson.Get(body, "0")
+		assert.True(t, first.Exists(), "expected at least one result")
+		assert.NotEmpty(t, first.Get("DownloadUrl").String(), "DownloadUrl should be set for viewer results")
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SearchPhotosView(router)
+		result := PerformRequest(app, "GET", "/api/v1/photos/view?xxx=10")
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+	})
+}

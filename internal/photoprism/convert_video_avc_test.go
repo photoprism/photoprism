@@ -17,8 +17,8 @@ func TestConvert_ToAvc(t *testing.T) {
 		conf := config.TestConfig()
 		convert := NewConvert(conf)
 
-		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
-		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "gopher-video.mp4.avc")
+		fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
+		outputName := filepath.Join(conf.SidecarPath(), conf.SamplesPath(), "gopher-video.mp4.avc")
 
 		_ = os.Remove(outputName)
 
@@ -47,8 +47,8 @@ func TestConvert_ToAvc(t *testing.T) {
 		conf := config.TestConfig()
 		convert := NewConvert(conf)
 
-		fileName := filepath.Join(conf.ExamplesPath(), "cat_black.jpg")
-		outputName := filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "cat_black.jpg.avc")
+		fileName := filepath.Join(conf.SamplesPath(), "cat_black.jpg")
+		outputName := filepath.Join(conf.SidecarPath(), conf.SamplesPath(), "cat_black.jpg.avc")
 
 		_ = os.Remove(outputName)
 
@@ -71,7 +71,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 	convert := NewConvert(conf)
 
 	t.Run("Low", func(t *testing.T) {
-		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
 
@@ -84,7 +84,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		assert.Equal(t, "1M", convert.AvcBitrate(mf))
 	})
 	t.Run("Medium", func(t *testing.T) {
-		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
 
@@ -100,7 +100,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		assert.Equal(t, "16M", convert.AvcBitrate(mf))
 	})
 	t.Run("High", func(t *testing.T) {
-		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
 
@@ -116,7 +116,7 @@ func TestConvert_AvcBitrate(t *testing.T) {
 		assert.Equal(t, "25M", convert.AvcBitrate(mf))
 	})
 	t.Run("VeryHigh", func(t *testing.T) {
-		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
 
 		assert.Truef(t, fs.FileExists(fileName), "input file does not exist: %s", fileName)
 
@@ -138,7 +138,7 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 	convert := NewConvert(conf)
 
 	t.Run("MP4", func(t *testing.T) {
-		fileName := filepath.Join(conf.ExamplesPath(), "gopher-video.mp4")
+		fileName := filepath.Join(conf.SamplesPath(), "gopher-video.mp4")
 		mf, err := NewMediaFile(fileName)
 
 		if err != nil {
@@ -155,7 +155,7 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		assert.Contains(t, r.Args, "mp4")
 	})
 	t.Run("Jpeg", func(t *testing.T) {
-		fileName := filepath.Join(conf.ExamplesPath(), "cat_black.jpg")
+		fileName := filepath.Join(conf.SamplesPath(), "cat_black.jpg")
 		mf, err := NewMediaFile(fileName)
 
 		if err != nil {

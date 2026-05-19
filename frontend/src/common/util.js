@@ -45,22 +45,82 @@ const tokenAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
 export const tokenRegexp = /^[a-z0-9]{7}$/;
 export const tokenLength = 7;
 
+const sanitizeHtmlOptions = Object.freeze({
+  allowedTags: [
+    "a",
+    "b",
+    "blockquote",
+    "br",
+    "code",
+    "div",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "i",
+    "li",
+    "ol",
+    "p",
+    "span",
+    "strong",
+    "sub",
+    "sup",
+    "u",
+    "ul",
+  ],
+  allowedAttributes: {
+    a: ["href", "target", "rel"],
+    span: ["dir"],
+  },
+  allowedSchemes: ["http", "https", "mailto"],
+  allowProtocolRelative: false,
+  parseStyleAttributes: false,
+  transformTags: {
+    a: (tagName, attribs) => {
+      const nextAttribs = { ...attribs };
+
+      if (nextAttribs.target === "_blank") {
+        nextAttribs.rel = "noopener noreferrer";
+      }
+
+      return { tagName, attribs: nextAttribs };
+    },
+  },
+});
+
 // True if debug logs should be created.
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
 export default class $util {
-  static normalizeLabelTitle(s) {
-    if (s === null || s === undefined) return "";
-    return String(s)
-      .toLowerCase()
-      .replace(/&/g, "and")
-      .replace(/[+_\-]+/g, " ")
-      .replace(/[^a-z0-9 ]+/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
+  // normalizeTitle returns the dedup-comparison form of a user-typed identifier:
+  // lowercased, `&` → `and`, non-letter/digit/emoji runs collapsed to single
+  // spaces and trimmed. Emoji sequences (ZWJ, skin tone, regional indicators)
+  // are preserved so emoji-only titles round-trip.
+  static normalizeTitle(s) {
+    if (s === null || s === undefined) {
+      return "";
+    }
+    return (
+      String(s)
+        .toLowerCase()
+        .replace(/&/g, "and")
+        // ZWJ (U+200D), VS-15/16 (U+FE0E/F), and the keycap combining mark (U+20E3) sit in this
+        // class on purpose so composite emoji sequences survive normalization; eslint flags them as
+        // a "misleading character class" because they only carry meaning when paired with the
+        // pictographic ranges already listed above.
+        // eslint-disable-next-line no-misleading-character-class
+        .replace(/[^\p{L}\p{N}\p{Extended_Pictographic}\p{Emoji_Component}\p{Regional_Indicator}\p{Emoji_Modifier}\u200d\ufe0e\ufe0f\u20e3 ]+/gu, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+    );
   }
   static slugifyLabelTitle(s) {
-    if (s === null || s === undefined) return "";
+    if (s === null || s === undefined) {
+      return "";
+    }
     return String(s)
       .toLowerCase()
       .replace(/&/g, "and")
@@ -262,8 +322,9 @@ export default class $util {
       I: 1,
     };
     let a;
-    if (number < 1 || number > 3999) return "";
-    else {
+    if (number < 1 || number > 3999) {
+      return "";
+    } else {
       for (let key in romanNumList) {
         a = Math.floor(number / romanNumList[key]);
         if (a >= 0) {
@@ -299,7 +360,7 @@ export default class $util {
       return "";
     }
 
-    return sanitizeHtml(html);
+    return sanitizeHtml(html, sanitizeHtmlOptions);
   }
 
   // openUrl opens a URL in a new tab if possible.
@@ -349,7 +410,7 @@ export default class $util {
       }
 
       // Return HTML link markup.
-      return `<a href="${url}" target="_blank">${matched}</a>`;
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${matched}</a>`;
     }
 
     // Escape HTML control characters.
@@ -409,12 +470,10 @@ export default class $util {
     return navigator.maxTouchPoints > 0;
   }
 
-  // isMobile performs a basic user-agent and capability check for mobile devices.
+  // isMobile returns true when the current user agent or touch capability indicates a mobile device.
+  // The `> 2` touch check covers iPads in desktop mode, where the user agent omits the mobile hint.
   static isMobile() {
-    return (
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 2)
-    );
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|IEMobile|Opera Mini/i.test(navigator?.userAgent) || navigator?.maxTouchPoints > 2;
   }
 
   // isHttps returns true when the current page is served over HTTPS.
@@ -761,6 +820,35 @@ export default class $util {
         return "Pentax PEF";
       default:
         return value.toUpperCase();
+    }
+  }
+
+  // typeName returns the localized label for a media type value
+  // (the same `value` field used by options/options.js#PhotoTypes).
+  // Returns `defaultValue` (or the empty string) for unknown / missing
+  // types so callers can fall back to a generic label like "File".
+  static typeName(type, defaultValue) {
+    switch (type) {
+      case media.Image:
+        return $gettext("Image");
+      case media.Raw:
+        return $gettext("Raw");
+      case media.Live:
+        return $gettext("Live");
+      case media.Video:
+        return $gettext("Video");
+      case media.Audio:
+        return $gettext("Audio");
+      case media.Animated:
+        return $gettext("Animated");
+      case media.Vector:
+        return $gettext("Vector");
+      case media.Document:
+        return $gettext("Document");
+      case media.Sidecar:
+        return $gettext("Sidecar");
+      default:
+        return defaultValue !== undefined ? defaultValue : "";
     }
   }
 

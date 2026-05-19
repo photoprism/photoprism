@@ -14,9 +14,13 @@ import (
 )
 
 func TestDialectMysql(t *testing.T) {
-	if dumpName, err := filepath.Abs("./testdata/migrate_mysql.sql"); err != nil {
+	dumpName, err := filepath.Abs("./testdata/migrate_mysql.sql")
+	if err != nil {
 		t.Fatal(err)
-	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+	}
+
+	//nolint:gosec // G204: dumpName comes from a fixed local fixture path in testdata.
+	if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
 		"-e", "source "+dumpName).Run(); err != nil {
 		t.Fatal(err)
 	}

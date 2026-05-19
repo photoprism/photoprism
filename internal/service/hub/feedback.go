@@ -22,7 +22,7 @@ type Feedback struct {
 	UserName      string `json:"UserName"`
 	UserEmail     string `json:"UserEmail"`
 	UserAgent     string `json:"UserAgent"`
-	ApiKey        string `json:"ApiKey"`
+	ApiKey        string `json:"ApiKey"` //nolint:gosec // G117: Hub API key payload field.
 	ClientVersion string `json:"ClientVersion"`
 	ClientSerial  string `json:"ClientSerial"`
 	ClientOS      string `json:"ClientOS"`
@@ -71,6 +71,8 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	// Return if no endpoint URL is set.
 	if endpointUrl == "" {
 		return errors.New("unable to send feedback (service disabled)")
+	} else if err = ValidateServiceURL(endpointUrl); err != nil {
+		return err
 	}
 
 	method := http.MethodPost
@@ -98,6 +100,7 @@ func (c *Config) SendFeedback(frm form.Feedback) (err error) {
 	var r *http.Response
 
 	for range 3 {
+		// #nosec G704 endpointUrl is validated with ValidateServiceURL.
 		r, err = client.Do(req)
 
 		if err == nil {

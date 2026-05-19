@@ -1,12 +1,25 @@
 package service
 
 import (
+	"net"
 	"net/http"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // TestRequest makes a test request to the given URL and returns true if successful.
-func (h Heuristic) TestRequest(method, rawUrl string) bool {
+func (h Heuristic) TestRequest(method, rawUrl string, allowedCIDRs []*net.IPNet) bool {
+	u, err := safe.URL(rawUrl)
+
+	if err != nil {
+		return false
+	}
+
+	if validateErr := ValidateURLHost(u, allowedCIDRs, 5*time.Second); validateErr != nil {
+		return false
+	}
+
 	req, err := http.NewRequest(method, rawUrl, nil)
 
 	if err != nil {
@@ -28,13 +41,20 @@ func (h Heuristic) TestRequest(method, rawUrl string) bool {
 	// redirects, and reading the response body. The timer remains
 	// running after Get, Head, Post, or Do return and will
 	// interrupt reading of the Response.Body.
-	client := &http.Client{Timeout: 30 * time.Second}
+	client := NewHTTPClient(30*time.Second, allowedCIDRs)
 
 	// Send request to see if it fails.
+	//
+	// #nosec G704 Request URL was validated via ValidateURLHost and client
+	// transport enforces CIDR restrictions for direct/redirected connections.
 	if resp, reqErr := client.Do(req); reqErr != nil {
 		return false
-	} else if resp.StatusCode < 400 {
-		return true
+	} else {
+		_ = resp.Body.Close()
+
+		if resp.StatusCode < 400 {
+			return true
+		}
 	}
 
 	return false

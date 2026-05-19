@@ -1,8 +1,12 @@
 package txt
 
 import (
+	"crypto/sha256"
 	"encoding/base32"
+	"fmt"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/gosimple/slug"
 )
@@ -32,9 +36,59 @@ func Slug(s string) string {
 
 	if result == "" {
 		result = string(SlugEncoded) + SlugEncoding.EncodeToString([]byte(s))
+	} else if tokens := slugRuneTokens(s); tokens != "" {
+		result += "-" + tokens
+		result = clipSlugWithHash(result, s)
 	}
 
 	return Clip(result, ClipSlug)
+}
+
+// slugRuneTokens returns stable rune tokens for non-ASCII symbols that slug.Make would drop.
+func slugRuneTokens(s string) string {
+	tokens := make([]string, 0, 4)
+
+	for _, r := range s {
+		if r <= unicode.MaxASCII || slug.Make(string(r)) != "" {
+			continue
+		}
+
+		switch {
+		case unicode.IsSymbol(r):
+		case r == '\u200d':
+		case r >= '\ufe00' && r <= '\ufe0f':
+		case r >= '\U0001f3fb' && r <= '\U0001f3ff':
+		default:
+			continue
+		}
+
+		tokens = append(tokens, fmt.Sprintf("u%x", r))
+	}
+
+	return strings.Join(tokens, "-")
+}
+
+// clipSlugWithHash clips long slugs and appends a deterministic hash suffix to avoid collisions.
+func clipSlugWithHash(result, source string) string {
+	if utf8.RuneCountInString(result) <= ClipSlug {
+		return result
+	}
+
+	hash := sha256.Sum256([]byte(source))
+	suffix := fmt.Sprintf("%x", hash[:4])
+	prefixLen := ClipSlug - len(suffix) - 1
+
+	if prefixLen <= 0 {
+		return Clip(result, ClipSlug)
+	}
+
+	prefix := strings.TrimRight(Clip(result, prefixLen), "-")
+
+	if prefix == "" {
+		return Clip(result, ClipSlug)
+	}
+
+	return prefix + "-" + suffix
 }
 
 // SlugToTitle converts a slug back to a title

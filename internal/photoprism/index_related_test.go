@@ -11,16 +11,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// newIndexRelatedTestConfig returns an isolated test config for IndexRelated tests.
+func newIndexRelatedTestConfig(t *testing.T, dbName string) *config.Config {
+	t.Helper()
+
+	return config.NewMinimalTestConfigWithDb(dbName, filepath.Join(t.TempDir(), "storage"))
+}
+
 func TestIndexRelated(t *testing.T) {
 	t.Run("Num2018Num04TwelveNineteenNum24Num49Gif", func(t *testing.T) {
-		cfg := config.TestConfig()
-
-		/* TODO: Investigate and resolve sporadic test failures
-		cfg := config.NewTestConfig("index-related-gif")
-
-		// Ensure a clean originals/cache to avoid duplicate-by-hash from previous tests.
-		_ = cfg.RemoveTestData()
-		_ = fs.MkdirAll(cfg.OriginalsPath()) */
+		cfg := newIndexRelatedTestConfig(t, "index-related-gif")
 
 		testFile, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
 
@@ -76,14 +76,7 @@ func TestIndexRelated(t *testing.T) {
 		}
 	})
 	t.Run("AppleTestTwoJpg", func(t *testing.T) {
-		cfg := config.TestConfig()
-
-		/* TODO: Investigate and resolve sporadic test failures
-		cfg := config.NewTestConfig("index-related-apple")
-
-		// Ensure a clean originals/cache to avoid duplicate-by-hash from previous tests.
-		_ = cfg.RemoveTestData()
-		_ = fs.MkdirAll(cfg.OriginalsPath()) */
+		cfg := newIndexRelatedTestConfig(t, "index-related-apple")
 
 		testFile, err := NewMediaFile("testdata/apple-test-2.jpg")
 

@@ -6,13 +6,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
-
-	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
 func TestClusterMetrics_EmptyCounts(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, conf)
 	conf.Options().ClusterCIDR = "192.0.2.0/24"
 
 	ClusterMetrics(router)

@@ -178,7 +178,7 @@ export default {
 
       Promise.all(uniqueTargets.map((uid) => $api.post(`albums/${uid}/clone`, { albums: this.selection })))
         .then(() => this.onCloned())
-        .catch((error) => {
+        .catch(() => {
           $notify.error(this.$gettext("Some albums could not be copied"));
         });
     },

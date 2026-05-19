@@ -76,6 +76,7 @@ func TestConfig_AppConfig(t *testing.T) {
 	assert.Equal(t, c.AppIcon(), result.Icon)
 	assert.Equal(t, c.SiteDescription(), result.Description)
 	assert.Equal(t, c.BaseUri("/"), result.BaseUri)
+	assert.Equal(t, c.FrontendUri(""), result.FrontendUri)
 	assert.Equal(t, c.StaticUri(), result.StaticUri)
 }
 
@@ -92,7 +93,7 @@ func TestConfig_AppManifest(t *testing.T) {
 		assert.Equal(t, appConf.Name, result.ShortName)
 		assert.Equal(t, appConf.Description, result.Description)
 		assert.Equal(t, appConf.BaseUri, result.Scope)
-		assert.Equal(t, appConf.BaseUri+"library/", result.StartUrl)
+		assert.Equal(t, pwa.StartUrl(appConf.BaseUri, appConf.FrontendUri), result.StartUrl)
 		assert.Len(t, result.Icons, len(pwa.IconSizes))
 		assert.Len(t, result.Categories, len(pwa.Categories))
 		assert.Len(t, result.Permissions, len(pwa.Permissions))
@@ -103,7 +104,7 @@ func TestConfig_AppManifest(t *testing.T) {
 		assert.Equal(t, appConf.Name, cached.ShortName)
 		assert.Equal(t, appConf.Description, cached.Description)
 		assert.Equal(t, appConf.BaseUri, cached.Scope)
-		assert.Equal(t, appConf.BaseUri+"library/", cached.StartUrl)
+		assert.Equal(t, pwa.StartUrl(appConf.BaseUri, appConf.FrontendUri), cached.StartUrl)
 		assert.Len(t, cached.Icons, len(pwa.IconSizes))
 		assert.Len(t, cached.Categories, len(pwa.Categories))
 		assert.Len(t, cached.Permissions, len(pwa.Permissions))

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -45,6 +46,15 @@ func TestBatchPhotosArchive(t *testing.T) {
 		BatchPhotosArchive(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/archive", `{"photos": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosArchive(router)
+
+		body := `{"photos":["` + strings.Repeat("p", int(MaxSelectionRequestBytes)) + `"]}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/batch/photos/archive", body)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }
 
@@ -135,6 +145,15 @@ func TestBatchAlbumsDelete(t *testing.T) {
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/albums/delete", `{"albums": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchAlbumsDelete(router)
+
+		body := `{"albums":["` + strings.Repeat("a", int(MaxSelectionRequestBytes)) + `"]}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/batch/albums/delete", body)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
+	})
 }
 
 func TestBatchPhotosPrivate(t *testing.T) {
@@ -219,6 +238,15 @@ func TestBatchLabelsDelete(t *testing.T) {
 		BatchLabelsDelete(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/labels/delete", `{"labels": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchLabelsDelete(router)
+
+		body := `{"labels":["` + strings.Repeat("l", int(MaxSelectionRequestBytes)) + `"]}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/batch/labels/delete", body)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }
 

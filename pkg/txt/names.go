@@ -65,21 +65,23 @@ func JoinNames(names []string, shorten bool) (result string) {
 
 	// Shorten names?
 	if shorten {
-		shortNames := make([]string, l)
+		shortNames := make([]string, 0, l)
 		var lastShort string
+		var lastFull string
 
-		for i, full := range names {
+		for _, full := range names {
 			parts := strings.SplitN(full, Space, 2)
 			currShort := parts[0]
 
-			if i > 0 && currShort == lastShort {
-				shortNames[i] = full
-				shortNames[i-1] = names[i-1]
+			if len(shortNames) > 0 && currShort == lastShort {
+				shortNames[len(shortNames)-1] = lastFull
+				shortNames = append(shortNames, full)
 			} else {
-				shortNames[i] = currShort
+				shortNames = append(shortNames, currShort)
 			}
 
 			lastShort = currShort
+			lastFull = full
 		}
 
 		names = shortNames

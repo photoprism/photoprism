@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -55,7 +54,11 @@ func convertAction(ctx *cli.Context) error {
 	convertPath := conf.OriginalsPath()
 
 	// Use first argument to limit scope if set.
-	subPath := strings.TrimSpace(ctx.Args().First())
+	subPath, err := sanitizeSubfolderArg(ctx.Args().First())
+
+	if err != nil {
+		return err
+	}
 
 	if subPath != "" {
 		convertPath = filepath.Join(convertPath, subPath)

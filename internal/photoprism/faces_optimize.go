@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -63,7 +65,14 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 							"subject %s, iteration %d, cluster %d, count %d, ids %s",
 						}, subject, i, j, len(merge), clusterIDs)
 
-						log.Debugf("faces: retained manual clusters after merge: kept %d candidate cluster(s) [%s] for subject %s (merge) itr %d cluster %d", len(merge), clusterIDs, subject, i, j)
+						log.Debugf(
+							"faces: retained manual clusters after merge: kept %s [%s] for subject %s (merge) itr %d cluster %d",
+							english.Plural(len(merge), "candidate cluster", "candidate clusters"),
+							clusterIDs,
+							subject,
+							i,
+							j,
+						)
 					} else {
 						log.Errorf("%s (merge) itr %d cluster %d count %d", mergeErr, i, j, len(merge))
 					}

@@ -44,6 +44,7 @@ func TestVips(t *testing.T) {
 
 		dstimg, err := vips.LoadImageFromFile(dst, vips.NewImportParams())
 		assert.NoError(t, err)
+		defer dstimg.Close()
 		assert.True(t, dstimg.HasICCProfile())
 		assert.True(t, dstimg.IsColorSpaceSupported())
 	})

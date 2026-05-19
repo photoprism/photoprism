@@ -2433,4 +2433,30 @@ func TestPhotos(t *testing.T) {
 			assert.NotEmpty(t, p.PhotoName)
 		}
 	})
+	t.Run("QueryMatchesHomophoneLabel", func(t *testing.T) {
+		_, first, photoA, photoB := createHomophoneSearchFixtures(t)
+
+		var f form.SearchPhotos
+
+		f.Query = first.LabelName
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		foundRight := false
+
+		for _, photo := range photos {
+			assert.NotEqual(t, photoA.PhotoUID, photo.PhotoUID)
+
+			if photo.PhotoUID == photoB.PhotoUID {
+				foundRight = true
+			}
+		}
+
+		assert.True(t, foundRight)
+	})
 }

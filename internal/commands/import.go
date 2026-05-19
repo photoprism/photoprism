@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"path/filepath"
 	"strings"
 	"time"
@@ -12,7 +11,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ImportCommand configures the command name, flags, and action.
@@ -68,12 +66,16 @@ func importAction(ctx *cli.Context) error {
 	}
 
 	if sourcePath == conf.OriginalsPath() {
-		return errors.New("import path is identical with originals")
+		return cli.Exit("source path is identical with originals", 2)
 	}
 
 	var destFolder string
+
 	if ctx.IsSet("dest") {
-		destFolder = clean.UserPath(ctx.String("dest"))
+		destFolder, err = sanitizeDestinationArg(ctx.String("dest"))
+		if err != nil {
+			return err
+		}
 	} else {
 		destFolder = conf.ImportDest()
 	}

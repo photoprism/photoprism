@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-17 17:32+0000\n"
 "PO-Revision-Date: 2026-01-15 09:02+0000\n"
 "Last-Translator: Janis Eglitis <alfabeta.lv@gmail.com>\n"

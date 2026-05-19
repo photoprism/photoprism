@@ -25,6 +25,7 @@ func (m SessionMap) Pointer(name string) *Session {
 	return &Session{}
 }
 
+//nolint:gosec // G101: Deterministic fixture tokens for tests only.
 var SessionFixtures = SessionMap{
 	"alice": {
 		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",

@@ -40,6 +40,11 @@ func Audit(level logrus.Level, ev []string, args ...any) {
 	}
 }
 
+// AuditTrace records an audit entry at trace level.
+func AuditTrace(ev []string, args ...any) {
+	Audit(logrus.TraceLevel, ev, args...)
+}
+
 // AuditDebug records an audit entry at debug level.
 func AuditDebug(ev []string, args ...any) {
 	Audit(logrus.DebugLevel, ev, args...)

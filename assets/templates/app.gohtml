@@ -2,13 +2,13 @@
   <div id="photoprism" class="splash-screen container{{if .config.SiteCaption}} theme-{{ .config.Settings.UI.Theme }}{{end}}">
     <noscript>
       <div id="noscript-info" class="splash-info">
-        <a href="https://enable-javascript.com/" target="_blank">Please enable JavaScript in your browser.</a>
+        <a href="https://enable-javascript.com/" target="_blank" rel="noopener noreferrer">Please enable JavaScript in your browser.</a>
       </div>
     </noscript>
     <div id="splash-info" class="has-js splash-info">
       {{if .error }}<span class="legal-info">{{ .error }}</span>
       {{else if .config.LegalInfo}}
-      {{if .config.LegalUrl}}<a href="{{ .config.LegalUrl }}" target="_blank" class="legal-info">{{ .config.LegalInfo }}</a>
+      {{if .config.LegalUrl}}<a href="{{ .config.LegalUrl }}" target="_blank" rel="noopener" class="legal-info">{{ .config.LegalInfo }}</a>
       {{else}}<span class="legal-info">{{ .config.LegalInfo }}</span>{{end}}
       {{else}}
       <div class="about">

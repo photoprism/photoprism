@@ -131,13 +131,19 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 	// Count embeddings.
 	count = len(embeddings)
 
+	var first Embedding
+	for _, emb := range embeddings {
+		first = emb
+		break
+	}
+
 	// Only one embedding?
 	if count == 1 {
 		// Return embedding if there is only one.
-		return embeddings[0], 0.0, 1
+		return first, 0.0, 1
 	}
 
-	dim := len(embeddings[0])
+	dim := len(first)
 
 	// No embedding values?
 	if dim == 0 {

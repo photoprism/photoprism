@@ -1,7 +1,7 @@
 FROM photoprism/photoprism:preview-ce-debian AS build
-
 # Set environment variables
-ENV TF_CPP_MIN_LOG_LEVEL=4 \
+ENV DO_NOT_TRACK=true \
+    TF_CPP_MIN_LOG_LEVEL=4 \
     TF_ENABLE_ONEDNN_OPTS=1 \
     MALLOC_ARENA_MAX=2 \
     PHOTOPRISM_STORAGE_PATH="/photoprism/storage" \
@@ -13,7 +13,6 @@ ENV TF_CPP_MIN_LOG_LEVEL=4 \
     PHOTOPRISM_UPLOAD_NSFW="false" \
     PHOTOPRISM_DETECT_NSFW="false" \
     PHOTOPRISM_THUMB_LIBRARY="auto" \
-    PHOTOPRISM_THUMB_FILTER="auto" \
     PHOTOPRISM_THUMB_COLOR="auto" \
     PHOTOPRISM_THUMB_SIZE=4096 \
     PHOTOPRISM_THUMB_SIZE_UNCACHED=4096 \

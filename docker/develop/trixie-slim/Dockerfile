@@ -1,0 +1,102 @@
+#### Base Image: Debian 13 (Trixie)
+FROM debian:trixie-slim
+
+# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+#
+# Questions? Email us at hello@photoprism.app or visit our website to learn
+# more about our team, products and services: https://www.photoprism.app/
+
+# Add Open Container Initiative (OCI) annotations.
+# See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.title="PhotoPrism® Base Image (Debian 13)"
+LABEL org.opencontainers.image.description="Debian 13 (Trixie)"
+LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
+LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
+LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
+LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
+LABEL org.opencontainers.image.vendor="PhotoPrism UG"
+
+# Declare build parameters.
+ARG TARGETARCH
+ARG BUILD_TAG
+
+# Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
+ENV DO_NOT_TRACK=true \
+    GH_TELEMETRY=false \
+    DISABLE_TELEMETRY=1 \
+    DISABLE_ERROR_REPORTING=1 \
+    DISABLE_FEEDBACK_COMMAND=1 \
+    CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1 \
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
+    DISABLE_AUTOUPDATER=1 \
+    NO_UPDATE_NOTIFIER=true \
+    NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_FUND=false \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    PHOTOPRISM_ARCH=$TARGETARCH \
+    DOCKER_TAG=$BUILD_TAG \
+    DOCKER_ENV="prod" \
+    PS1="\u@$BUILD_TAG:\w\$ " \
+    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
+    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
+    TMPDIR="/tmp" \
+    DEBIAN_FRONTEND="noninteractive" \
+    TF_CPP_MIN_LOG_LEVEL=4 \
+    TF_ENABLE_ONEDNN_OPTS=1 \
+    MALLOC_ARENA_MAX=2 \
+    PROG="photoprism" \
+    S6_KEEP_ENV=0 \
+    S6_VERBOSITY=0 \
+    S6_LOGGING=0
+
+# Copy scripts and package sources config.
+COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
+COPY --chown=root:root --chmod=644 /docker/develop/trixie/sources.list /etc/apt/sources.list.d/trixie.list
+
+# Update base image and add dependencies.
+RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
+    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
+    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+    echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
+    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install \
+      libc6 ca-certificates sudo bash tzdata \
+      xz-utils gpg zip unzip wget curl rsync make nano \
+      jq lsof lshw sqlite3 mariadb-client postgresql-client ripgrep \
+      imagemagick libvips-dev libyuv0 libjxl-dev libjxl-tools \
+      exiftool darktable rawtherapee libheif-examples librsvg2-bin librav1e-dev \
+      ffmpeg libavcodec-extra libffmpeg-nvenc-dev libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
+      libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
+      va-driver-all libva2 iputils-ping dnsutils binutils binutils-gold \
+    && \
+    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
+    /scripts/install-dircolors.sh && \
+    cp /etc/skel/.bashrc /root/.bashrc && \
+    /scripts/create-users.sh && \
+    install -d -m 0777 -o 1000 -g 1000 \
+      /photoprism/originals \
+      /photoprism/import \
+      /photoprism/storage \
+      /photoprism/storage/sidecar \
+      /photoprism/storage/albums \
+      /photoprism/storage/backups \
+      /photoprism/storage/config \
+      /photoprism/storage/cache && \
+    /scripts/install-s6.sh && \
+    ln -sf /scripts/services/photoprism /etc/s6-overlay/s6-rc.d/photoprism && \
+    touch /etc/s6-overlay/s6-rc.d/user/contents.d/photoprism && \
+    /scripts/cleanup.sh
+
+# Set default working directory.
+WORKDIR /photoprism
+
+# Expose default HTTP and HTTPS ports.
+EXPOSE 2342 2442 2443
+
+# Set default entrypoint and command.
+ENTRYPOINT ["/init"]
+CMD ["tail", "-f", "/dev/null"]

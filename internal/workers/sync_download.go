@@ -89,7 +89,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	// Display log message.
 	log.Infof("sync: downloading from %s", a.AccName)
 
-	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
 
 	if err != nil {
 		return false, err

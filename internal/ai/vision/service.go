@@ -19,6 +19,7 @@ type Service struct {
 	Key            string    `yaml:"Key,omitempty" json:"-"`
 	Org            string    `yaml:"Org,omitempty" json:"org,omitempty"`         // Optional organization header (e.g. OpenAI).
 	Project        string    `yaml:"Project,omitempty" json:"project,omitempty"` // Optional project header (e.g. OpenAI).
+	Think          string    `yaml:"Think,omitempty" json:"think,omitempty"`     // Optional reasoning hint for compatible engines (e.g. Ollama, GPT-OSS).
 	FileScheme     string    `yaml:"FileScheme,omitempty" json:"fileScheme,omitempty"`
 	RequestFormat  ApiFormat `yaml:"RequestFormat,omitempty" json:"requestFormat,omitempty"`
 	ResponseFormat ApiFormat `yaml:"ResponseFormat,omitempty" json:"responseFormat,omitempty"`
@@ -105,6 +106,17 @@ func (m *Service) EndpointProject() string {
 	ensureEnv()
 
 	return strings.TrimSpace(os.ExpandEnv(m.Project))
+}
+
+// EndpointThink returns the optional thinking/reasoning setting for the endpoint, if any.
+func (m *Service) EndpointThink() string {
+	if m.Disabled {
+		return ""
+	}
+
+	ensureEnv()
+
+	return strings.TrimSpace(os.ExpandEnv(m.Think))
 }
 
 // BasicAuth returns the username and password for basic authentication.

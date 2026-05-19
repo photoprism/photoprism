@@ -1,6 +1,6 @@
 ## View Helper Guidelines
 
-**Last Updated:** February 14, 2026
+**Last Updated:** March 8, 2026
 
 ### Focus Management
 
@@ -10,14 +10,54 @@ PhotoPrism uses a shared view helper to maintain predictable focus across pages 
 
 This helper tracks the currently active component, applies focus when views change, and traps focus inside open dialogs, ensuring that tabbing never leaks into the page behind an overlay. The following guidelines explain how to work with the helper when building UI functionality.
 
-#### Session Storage Namespacing Notes
+#### Session Storage & Web View Notes
 
-When integrating third-party clients (for example mobile webviews) that pre-populate browser storage, keep the following behavior in mind:
+When integrating third-party clients such as native mobile apps that embed the PhotoPrism web UI in a web view and pre-populate browser storage, keep the following behavior in mind:
 
-- Storage keys are namespaced per app site via `storageNamespace` (derived from `SiteUrl`), but legacy global keys are still read as a fallback and migrated into the active namespace.
+- Storage keys are namespaced per app site via `storageNamespace` and use the format `pp:<storageNamespace>:<key>`. When no namespace is available, the fallback prefix is `pp:root:`.
 - Session restore requires both `session.token` and `session.id`. A token-only write does not create an authenticated session state during startup.
-- Legacy compatibility keys (`authToken` and `sessionId`) are only migrated by the startup bridge when both values are present.
-- Preferred integration contract for external clients is to set both `session.token` and `session.id` together.
+- Optional session metadata keys are `session.provider`, `session.user`, `session.scope`, `session.data`, and `session.error`.
+- The storage preference flag is always stored in namespaced `localStorage` under `session`. A value of `"true"` tells the app to use namespaced `sessionStorage` for the active session; any other value falls back to namespaced `localStorage`.
+- `Session` must resolve `storageNamespace` from the actual client config shape used at runtime. In production, that value may be present on `config.values.storageNamespace` even when a direct `config.storageNamespace` property is absent.
+- The OIDC callback template clears legacy global auth/session payload keys and namespaced session data keys from `localStorage` and `sessionStorage`, but preserves the `session` storage-preference flag so OIDC flows using ephemeral `sessionStorage` remain logged in after redirect.
+- During migration, the OIDC callback also honors the legacy unnamespaced `localStorage["session"] === "true"` preference when choosing the preferred write target before rewriting the session into namespaced storage.
+- Legacy compatibility keys (`authToken`, `sessionId`, `sessionData`, `user`, and `provider`) are only migrated by the startup bridge when both the legacy token and legacy session id are present. New integrations should not rely on those keys.
+- Malformed JSON stored in `session.user` or `session.data` is discarded during startup instead of being reused.
+- In the standard login UI, this preference is exposed through the `Stay signed in on this device` toggle. Checked means persistent namespaced `localStorage`; unchecked means ephemeral namespaced `sessionStorage`.
+- The login page initializes that toggle from the current session storage mode when available, and otherwise falls back to the stored namespaced `session` preference flag.
+- Logout and session reset clear the current app namespace from both `localStorage` and `sessionStorage`, and also remove deprecated raw legacy auth keys from both stores, without touching other namespaced instances on the same origin.
+- Regression tests for session restore should exercise both preferred `sessionStorage` and a real `Config`-shaped object so namespace resolution bugs cannot silently fall back to `pp:root:`.
+
+Preferred integration contract for new native or web view clients:
+
+1. Read `storageNamespace` from the client config so the keys match the current PhotoPrism site.
+2. Decide whether the session should be ephemeral or persistent:
+   - Set `localStorage["pp:<storageNamespace>:session"] = "true"` for ephemeral auth stored in namespaced `sessionStorage`.
+   - Set `localStorage["pp:<storageNamespace>:session"] = "false"` or leave it unset for persistent auth stored in namespaced `localStorage`.
+3. Write both `session.token` and `session.id` into the selected namespaced store before loading the main app.
+4. Optionally write `session.provider`, `session.user`, `session.scope`, and `session.data` if the embedding flow already has those values.
+
+Example for a persistent session:
+
+```js
+const ns = "app.localssl.dev";
+const prefix = `pp:${ns}:`;
+
+window.localStorage.setItem(prefix + "session", "false");
+window.localStorage.setItem(prefix + "session.token", "<access-token>");
+window.localStorage.setItem(prefix + "session.id", "<session-id>");
+```
+
+Example for an ephemeral session:
+
+```js
+const ns = "app.localssl.dev";
+const prefix = `pp:${ns}:`;
+
+window.localStorage.setItem(prefix + "session", "true");
+window.sessionStorage.setItem(prefix + "session.token", "<access-token>");
+window.sessionStorage.setItem(prefix + "session.id", "<session-id>");
+```
 
 #### Tabindex Cheat Sheet
 

@@ -7,6 +7,7 @@ const clientConfig = {
   copyright: "(c) 2018-2025 PhotoPrism UG. All rights reserved.",
   flags: "public debug develop experimental settings",
   baseUri: "",
+  frontendUri: "/library",
   storageNamespace: "6d65cd87947148b5d7bf88e5c41dce8c167746a37e0abb7eb052dc911a3880bf",
   staticUri: "/static",
   apiUri: "/api/v1",

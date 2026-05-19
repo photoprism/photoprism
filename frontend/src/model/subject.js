@@ -8,6 +8,11 @@ const SubjPerson = "person";
 
 export let BatchSize = 60;
 
+// MaxLength mirrors the backend setter clip in internal/entity/subject.go (SetName → clean.Name).
+export const MaxLength = Object.freeze({
+  Name: 160,
+});
+
 // Subject tracks people and other recognizable subjects derived from face/marker data.
 export class Subject extends Collection {
   getDefaults() {
@@ -46,17 +51,36 @@ export class Subject extends Collection {
   classes(selected) {
     let classes = ["is-subject", "uid-" + this.UID];
 
-    if (this.Favorite) classes.push("is-favorite");
-    if (this.Hidden) classes.push("is-hidden");
-    if (this.Private) classes.push("is-private");
-    if (this.Excluded) classes.push("is-excluded");
-    if (selected) classes.push("is-selected");
+    if (this.Favorite) {
+      classes.push("is-favorite");
+    }
+    if (this.Hidden) {
+      classes.push("is-hidden");
+    }
+    if (this.Private) {
+      classes.push("is-private");
+    }
+    if (this.Excluded) {
+      classes.push("is-excluded");
+    }
+    if (selected) {
+      classes.push("is-selected");
+    }
 
     return classes;
   }
 
   getEntityName() {
     return this.Slug;
+  }
+
+  // trimInputs strips whitespace from MaxLength string fields before save.
+  trimInputs() {
+    for (const key of Object.keys(MaxLength)) {
+      if (typeof this[key] === "string") {
+        this[key] = this[key].trim();
+      }
+    }
   }
 
   getTitle() {

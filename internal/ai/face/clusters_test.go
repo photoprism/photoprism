@@ -17,7 +17,6 @@ func TestClustersContains(t *testing.T) {
 
 		assert.True(t, clusters.Contains(embedding))
 	})
-
 	t.Run("OutsideRadius", func(t *testing.T) {
 		clusters := Clusters{
 			{Radius: 0.4, Embedding: Embedding{0, 0}},
@@ -27,7 +26,6 @@ func TestClustersContains(t *testing.T) {
 
 		assert.False(t, clusters.Contains(embedding))
 	})
-
 	t.Run("DisabledClusterBackground", func(t *testing.T) {
 		clusters := Clusters{
 			{Radius: 1, Embedding: Embedding{0, 0}, Disabled: true},
@@ -52,7 +50,6 @@ func TestClustersDist(t *testing.T) {
 
 		assert.InDelta(t, math.Sqrt(0.05), dist, 1e-9)
 	})
-
 	t.Run("NoEnabledClusters", func(t *testing.T) {
 		clusters := Clusters{
 			{Radius: 0.2, Embedding: Embedding{0, 0}, Disabled: true},

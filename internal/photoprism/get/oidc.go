@@ -6,10 +6,14 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 )
 
-var onceOidc sync.Once
+var (
+	oidcMutex     sync.Mutex
+	newOIDCClient = oidc.NewClient
+)
 
-func initOidc() {
-	services.OIDC, _ = oidc.NewClient(
+// initOIDC initializes and caches the OIDC client if discovery succeeds.
+func initOIDC() *oidc.Client {
+	client, err := newOIDCClient(
 		Config().OIDCUri(),
 		Config().OIDCClient(),
 		Config().OIDCSecret(),
@@ -17,11 +21,32 @@ func initOidc() {
 		Config().SiteUrl(),
 		false,
 	)
+
+	if err != nil {
+		return nil
+	}
+
+	services.OIDC = client
+
+	return client
+}
+
+// resetOIDC clears the cached OIDC client so the next lookup retries initialization.
+func resetOIDC() {
+	oidcMutex.Lock()
+	defer oidcMutex.Unlock()
+
+	services.OIDC = nil
 }
 
 // OIDC returns the singleton OIDC client instance.
 func OIDC() *oidc.Client {
-	onceOidc.Do(initOidc)
+	oidcMutex.Lock()
+	defer oidcMutex.Unlock()
 
-	return services.OIDC
+	if services.OIDC != nil {
+		return services.OIDC
+	}
+
+	return initOIDC()
 }

@@ -87,3 +87,32 @@ func TestEnsureLabelUIDCreatesAndReuses(t *testing.T) {
 		}
 	})
 }
+
+// Regression pin for the user-reported batch-edit homophone bug:
+// when only `问` exists (slug `wen`) and the user adds `吻` (same pinyin
+// slug `wen`), the batch resolver must create a NEW `吻` label instead
+// of collapsing onto the existing `问`. The pre-fix code routed through
+// FindLabel, whose slug fallback returned `问` and silently dropped the
+// user's typed label.
+func TestEnsureLabelUIDDoesNotCollapseHomophones(t *testing.T) {
+	first := entity.FirstOrCreateLabel(entity.NewLabel("问", 0))
+	require.NotNil(t, first)
+	require.True(t, first.HasUID())
+
+	t.Cleanup(func() {
+		entity.FlushLabelCache()
+		_ = entity.Db().Unscoped().Delete(first).Error
+	})
+
+	uid := ensureLabelUID("吻")
+	require.True(t, rnd.IsUID(uid, entity.LabelUID))
+	assert.NotEqual(t, first.LabelUID, uid)
+
+	var resolved entity.Label
+	require.NoError(t, entity.Db().Where("label_uid = ?", uid).First(&resolved).Error)
+	assert.Equal(t, "吻", resolved.LabelName)
+
+	t.Cleanup(func() {
+		_ = entity.Db().Unscoped().Delete(&resolved).Error
+	})
+}

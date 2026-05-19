@@ -14,7 +14,7 @@ func TestMediaFile_Location(t *testing.T) {
 	c := config.TestConfig()
 
 	t.Run("IphoneSevenHeic", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/iphone_7.heic")
 
 		if err != nil {
 			t.Fatal(err)
@@ -52,7 +52,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "兵庫県", location2.State())
 	})
 	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/iphone_15_pro.heic")
 
 		if err != nil {
 			t.Fatal(err)
@@ -89,7 +89,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "Berlin", location2.State())
 	})
 	t.Run("IphoneXrJpg", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_xr.jpg")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/iphone_xr.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -125,7 +125,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "岐阜県", location2.State())
 	})
 	t.Run("CatBrownJpg", func(t *testing.T) {
-		f, err := NewMediaFile(c.ExamplesPath() + "/cat_brown.jpg")
+		f, err := NewMediaFile(c.SamplesPath() + "/cat_brown.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -147,7 +147,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.True(t, strings.HasPrefix(loc.ID, s2.TokenPrefix+"4799e4a5"))
 	})
 	t.Run("DogOrangeJpg", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/dog_orange.jpg")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/dog_orange.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -160,7 +160,7 @@ func TestMediaFile_Location(t *testing.T) {
 		}
 	})
 	t.Run("RandomDocx", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/Random.docx")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/Random.docx")
 
 		if err != nil {
 			t.Fatal(err)

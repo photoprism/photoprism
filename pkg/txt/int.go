@@ -55,19 +55,28 @@ func IntRange(s string, min, max int) (start int, end int, err error) {
 	valid := false
 
 	p := 0
-	v := [][]byte{make([]byte, 0, 20), make([]byte, 0, 20)}
+	startValue := make([]byte, 0, 20)
+	endValue := make([]byte, 0, 20)
 
-	for i, r := range s {
-		if r == 45 {
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == '-' {
 			if i == 0 || p == 1 {
-				v[p] = append(v[p], byte(r))
+				if p == 0 {
+					startValue = append(startValue, c)
+				} else {
+					endValue = append(endValue, c)
+				}
 			} else {
 				p = 1
 			}
-		}
-		if r == 46 || r >= 48 && r <= 57 {
+		} else if c == '.' || c >= '0' && c <= '9' {
 			valid = true
-			v[p] = append(v[p], byte(r)) //nolint:gosec
+			if p == 0 {
+				startValue = append(startValue, c)
+			} else {
+				endValue = append(endValue, c)
+			}
 		}
 	}
 
@@ -76,11 +85,11 @@ func IntRange(s string, min, max int) (start int, end int, err error) {
 	}
 
 	if p == 0 {
-		start = Int(string(v[0]))
+		start = Int(string(startValue))
 		end = start
 	} else {
-		start = Int(string(v[0]))
-		end = Int(string(v[1]))
+		start = Int(string(startValue))
+		end = Int(string(endValue))
 	}
 
 	if start > max {

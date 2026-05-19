@@ -51,6 +51,9 @@ func DetectMimeType(filename string) (mimeType string, err error) {
 	// Adobe Digital Negative
 	case ImageDng:
 		return header.ContentTypeDng, nil
+	// Adobe Photoshop Document
+	case ImagePsd:
+		return header.ContentTypePsd, nil
 	// Adobe Illustrator
 	case VectorAI:
 		return header.ContentTypeAI, nil

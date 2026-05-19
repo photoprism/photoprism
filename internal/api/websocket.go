@@ -38,7 +38,7 @@ var wsConnection = websocket.Upgrader{
 
 // wsClient represents information about the WebSocket client.
 type wsClient struct {
-	AuthToken string `json:"session"`
+	AuthToken string `json:"session"` //nolint:gosec // API payload field used for websocket auth handshake.
 	CssUri    string `json:"css"`
 	JsUri     string `json:"js"`
 	Version   string `json:"version"`

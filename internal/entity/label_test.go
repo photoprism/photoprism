@@ -172,20 +172,81 @@ func TestLabel_GetSlug(t *testing.T) {
 }
 
 func TestFirstOrCreateLabel(t *testing.T) {
-	label := LabelFixtures.Get("flower")
-	result := FirstOrCreateLabel(&label)
+	t.Run("Existing", func(t *testing.T) {
+		label := LabelFixtures.Get("flower")
+		result := FirstOrCreateLabel(&label)
 
-	if result == nil {
-		t.Fatal("result must not be nil")
-	}
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
 
-	if result.LabelName != label.LabelName {
-		t.Errorf("LabelName should be the same: %s %s", result.LabelName, label.LabelName)
-	}
+		if result.LabelName != label.LabelName {
+			t.Errorf("LabelName should be the same: %s %s", result.LabelName, label.LabelName)
+		}
 
-	if result.LabelSlug != label.LabelSlug {
-		t.Errorf("LabelName should be the same: %s %s", result.LabelSlug, label.LabelSlug)
-	}
+		if result.LabelSlug != label.LabelSlug {
+			t.Errorf("LabelName should be the same: %s %s", result.LabelSlug, label.LabelSlug)
+		}
+	})
+	t.Run("MatchesExistingNameIgnoringCase", func(t *testing.T) {
+		result := FirstOrCreateLabel(NewLabel("cow", 0))
+
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		assert.Equal(t, LabelFixtures.Get("cow").ID, result.ID)
+		assert.Equal(t, "cow", result.LabelSlug)
+	})
+	t.Run("CreatesDistinctHomophoneLabels", func(t *testing.T) {
+		first := FirstOrCreateLabel(NewLabel("问", 0))
+		second := FirstOrCreateLabel(NewLabel("吻", 0))
+
+		if first == nil || second == nil {
+			t.Fatal("expected labels")
+		}
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(second).Error
+			_ = Db().Unscoped().Delete(first).Error
+		})
+
+		assert.Equal(t, "问", first.LabelName)
+		assert.Equal(t, "吻", second.LabelName)
+		assert.NotEqual(t, first.ID, second.ID)
+		assert.Equal(t, "wen", first.LabelSlug)
+		assert.Contains(t, second.LabelSlug, "wen-")
+		assert.NotEqual(t, first.LabelSlug, second.LabelSlug)
+		assert.Equal(t, first.LabelSlug, first.CustomSlug)
+		assert.Equal(t, second.LabelSlug, second.CustomSlug)
+	})
+	t.Run("ReusesRenamedLabelByPreviousName", func(t *testing.T) {
+		original := FirstOrCreateLabel(NewLabel("RenameCat", 0))
+		require.NotNil(t, original)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(original).Error
+			FlushLabelCache()
+		})
+
+		require.True(t, original.SetName("RenameKatze"))
+		require.NoError(t, Db().Save(original).Error)
+		FlushLabelCache()
+
+		assert.Equal(t, "renamecat", original.LabelSlug)
+		assert.Equal(t, "renamekatze", original.CustomSlug)
+
+		again := FirstOrCreateLabel(NewLabel("RenameCat", 0))
+		require.NotNil(t, again)
+		assert.Equal(t, original.ID, again.ID)
+		assert.Equal(t, "RenameKatze", again.LabelName)
+
+		var rows []Label
+		require.NoError(t, UnscopedDb().
+			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renamecat%", "renamecat%").
+			Find(&rows).Error)
+		assert.Len(t, rows, 1, "rename + re-add must not create a duplicate")
+	})
 }
 
 func TestLabel_UpdateClassify(t *testing.T) {
@@ -269,6 +330,28 @@ func TestLabel_Update(t *testing.T) {
 		err := label.Update("LabelPriority", 1)
 		assert.EqualError(t, err, "label ID must not be empty - you may have found a bug")
 	})
+}
+
+func TestLabel_SaveForm_CollidingSlug(t *testing.T) {
+	base := FirstOrCreateLabel(NewLabel("问", 0))
+	other := createTestLabel(t, "save-form-collision")
+
+	if base == nil {
+		t.Fatal("expected base label")
+	}
+
+	t.Cleanup(func() {
+		_ = Db().Unscoped().Delete(base).Error
+	})
+
+	originalSlug := other.LabelSlug
+	frm := &form.Label{LabelName: "吻"}
+	require.NoError(t, other.SaveForm(frm))
+
+	assert.Equal(t, "吻", other.LabelName)
+	assert.Equal(t, originalSlug, other.LabelSlug)
+	assert.NotEqual(t, "wen", other.CustomSlug)
+	assert.Contains(t, other.CustomSlug, "wen-")
 }
 
 func TestLabel_Updates(t *testing.T) {

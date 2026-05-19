@@ -3,13 +3,16 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 func TestUploadUserFiles(t *testing.T) {
@@ -43,6 +46,23 @@ func TestUploadUserFiles(t *testing.T) {
 		r := PerformRequestWithBody(app, "POST", reqUrl, "{foo:123}")
 		assert.Equal(t, http.StatusInsufficientStorage, r.Code)
 		config.Options().FilesQuota = 0
+	})
+	t.Run("ProcessRequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		adminUid := entity.Admin.UserUID
+		reqUrl := fmt.Sprintf("/api/v1/users/%s/upload/abc123456789", adminUid)
+		ProcessUserUpload(router)
+		token := AuthenticateAdmin(app, router)
+
+		body := `{"albums":["` + strings.Repeat("a", 300*1024) + `"]}`
+		req := httptest.NewRequest(http.MethodPut, reqUrl, strings.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		header.SetAuthorization(req, token)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
 	})
 }
 

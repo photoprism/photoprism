@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // Default service base URLs for testing and production.
@@ -66,6 +67,20 @@ func GetServiceHost() string {
 	}
 
 	return u.Host
+}
+
+// ValidateServiceURL ensures outbound Hub requests use an absolute HTTPS URL.
+func ValidateServiceURL(rawURL string) error {
+	u, err := safe.URL(rawURL)
+	if err != nil {
+		return err
+	}
+
+	if strings.ToLower(u.Scheme) != "https" {
+		return fmt.Errorf("unsupported service URL scheme")
+	}
+
+	return nil
 }
 
 // SetBaseURL updates the Hub endpoint, ignoring inputs that are not HTTPS or

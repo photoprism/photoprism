@@ -68,6 +68,7 @@ func SetConfig(c *config.Config) {
 	}
 
 	resetJWT()
+	resetOIDC()
 
 	conf = c
 

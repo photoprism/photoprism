@@ -77,9 +77,19 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		start := time.Now()
 		token := clean.Token(c.Param("token"))
 
+		if totalSizeLimit := conf.UploadLimitBytes(); totalSizeLimit > 0 {
+			LimitRequestBodyBytes(c, totalSizeLimit+MaxMultipartOverheadBytes)
+		}
+
 		f, err := c.MultipartForm()
 
 		if err != nil {
+			if IsRequestBodyTooLarge(err) {
+				log.Errorf("upload: %s", err)
+				AbortRequestTooLarge(c, i18n.ErrFileTooLarge)
+				return
+			}
+
 			log.Errorf("upload: %s", err)
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
@@ -305,7 +315,14 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		var frm form.UploadOptions
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxUploadOptionsRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

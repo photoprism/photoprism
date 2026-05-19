@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -51,6 +52,13 @@ func TestCreateAlbum(t *testing.T) {
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CreateAlbum(router)
+		body := `{"Title":"` + strings.Repeat("a", 300*1024) + `"}`
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", body)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
+	})
 }
 func TestUpdateAlbum(t *testing.T) {
 	app, router, _ := NewApiTest()
@@ -76,6 +84,13 @@ func TestUpdateAlbum(t *testing.T) {
 		UpdateAlbum(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums"+uid, `{"Title": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbum(router)
+		body := `{"Title":"` + strings.Repeat("a", 300*1024) + `"}`
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/"+uid, body)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()

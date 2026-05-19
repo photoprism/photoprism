@@ -158,11 +158,11 @@ func (c *Config) RegisterUri() string {
 // LoginUri returns the user authentication page URI.
 func (c *Config) LoginUri() string {
 	if c.Public() {
-		return c.LibraryUri("/")
+		return c.FrontendUri("/")
 	}
 
 	if c.options.LoginUri == "" {
-		return c.LibraryUri("/login")
+		return c.FrontendUri("/login")
 	}
 
 	return c.options.LoginUri

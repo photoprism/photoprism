@@ -15,13 +15,13 @@ func TestClientRegistry_ListExcludesNodeRoleWithoutUUID(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-list-exclude-node-role")
 
 	// Bad records: node-like roles but empty NodeUUID
-	bad1 := entity.NewClient().SetName("pp-bad1").SetRole(cluster.RoleApp)
+	bad1 := entity.NewClient().SetName("pp-bad1").SetRole(cluster.RoleInstance)
 	assert.NoError(t, bad1.Create())
 	bad2 := entity.NewClient().SetName("pp-bad2").SetRole(cluster.RoleService)
 	assert.NoError(t, bad2.Create())
 
 	// Good record: proper NodeUUID
-	good := entity.NewClient().SetName("pp-good").SetRole(cluster.RoleApp)
+	good := entity.NewClient().SetName("pp-good").SetRole(cluster.RoleInstance)
 	good.NodeUUID = rnd.UUIDv7()
 	assert.NoError(t, good.Create())
 

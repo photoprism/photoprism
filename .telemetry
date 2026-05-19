@@ -1,0 +1,17 @@
+# Privacy defaults: opt out of third-party telemetry, analytics, update checks,
+# and other non-essential network calls. Uses plain KEY=VALUE lines so this
+# file can be referenced by Docker Compose via env_file: and sourced from
+# shells, in addition to being included by the Makefile.
+
+DO_NOT_TRACK=true
+DISABLE_AUTOUPDATER=1
+DISABLE_TELEMETRY=1
+DISABLE_ERROR_REPORTING=1
+DISABLE_FEEDBACK_COMMAND=1
+NO_UPDATE_NOTIFIER=true
+NPM_CONFIG_UPDATE_NOTIFIER=false
+NPM_CONFIG_AUDIT=false
+NPM_CONFIG_FUND=false
+GH_TELEMETRY=false
+CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1
+CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1

@@ -6,7 +6,6 @@
         :key="item.value || item.title"
         :text="getChipTooltip(item)"
         location="top"
-        :disabled="$vuetify?.display?.mobile === true"
       >
         <template #activator="{ props }">
           <div
@@ -51,7 +50,6 @@
         class="chip-selector__input"
         @click:control="focusInput"
         @keydown.enter.prevent="onEnter"
-        @blur="addNewItem"
         @update:model-value="onComboboxChange"
         @update:menu="onMenuUpdate"
       >
@@ -142,7 +140,7 @@ export default {
       if (typeof this.normalizeTitleForCompare === "function") {
         try {
           return this.normalizeTitleForCompare(input);
-        } catch (e) {
+        } catch {
           return input.toLowerCase();
         }
       }
@@ -171,9 +169,15 @@ export default {
     },
 
     getChipIcon(item) {
-      if (item.action === "add") return "mdi-plus";
-      if (item.action === "remove") return "mdi-minus";
-      if (item.mixed) return "mdi-circle-half-full";
+      if (item.action === "add") {
+        return "mdi-plus";
+      }
+      if (item.action === "remove") {
+        return "mdi-minus";
+      }
+      if (item.mixed) {
+        return "mdi-circle-half-full";
+      }
       return null;
     },
 
@@ -189,7 +193,9 @@ export default {
     },
 
     handleChipClick(item) {
-      if (this.loading || this.disabled) return;
+      if (this.loading || this.disabled) {
+        return;
+      }
 
       let newAction;
 
@@ -256,14 +262,20 @@ export default {
         return;
       }
 
-      if (!title) return;
+      if (!title) {
+        return;
+      }
 
       let resolvedApplied = false;
       if (typeof this.resolveItemFromText === "function") {
         const resolved = this.resolveItemFromText(title);
         if (resolved && typeof resolved === "object") {
-          if (resolved.title) title = resolved.title;
-          if (resolved.value) value = resolved.value;
+          if (resolved.title) {
+            title = resolved.title;
+          }
+          if (resolved.value) {
+            value = resolved.value;
+          }
           resolvedApplied = true;
         }
       }

@@ -29,7 +29,7 @@ func (ev Event) String() string {
 // PublishPhotoEvent publishes updated photo data after changes have been made.
 func PublishPhotoEvent(ev Event, uid string, c *gin.Context) {
 	if result, _, err := search.Photos(form.SearchPhotos{UID: uid, Merged: true}); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s photo %s", status.Error(err)}, AuthToken(c), string(ev), uid)
+		event.AuditErr([]string{ClientIP(c), "session %s", "%s photo %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
 	} else {
 		event.PublishEntities("photos", string(ev), result)
 	}
@@ -39,7 +39,7 @@ func PublishPhotoEvent(ev Event, uid string, c *gin.Context) {
 func PublishAlbumEvent(ev Event, uid string, c *gin.Context) {
 	f := form.SearchAlbums{UID: uid}
 	if result, err := search.Albums(f); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s album %s", status.Error(err)}, AuthToken(c), string(ev), uid)
+		event.AuditErr([]string{ClientIP(c), "session %s", "%s album %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
 	} else {
 		event.PublishEntities("albums", string(ev), result)
 	}
@@ -49,7 +49,7 @@ func PublishAlbumEvent(ev Event, uid string, c *gin.Context) {
 func PublishLabelEvent(ev Event, uid string, c *gin.Context) {
 	f := form.SearchLabels{UID: uid}
 	if result, err := search.Labels(f); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s label %s", status.Error(err)}, AuthToken(c), string(ev), uid)
+		event.AuditErr([]string{ClientIP(c), "session %s", "%s label %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
 	} else {
 		event.PublishEntities("labels", string(ev), result)
 	}
@@ -59,7 +59,7 @@ func PublishLabelEvent(ev Event, uid string, c *gin.Context) {
 func PublishSubjectEvent(ev Event, uid string, c *gin.Context) {
 	f := form.SearchSubjects{UID: uid}
 	if result, err := search.Subjects(f); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s subject %s", status.Error(err)}, AuthToken(c), string(ev), uid)
+		event.AuditErr([]string{ClientIP(c), "session %s", "%s subject %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
 	} else {
 		event.PublishEntities("subjects", string(ev), result)
 	}

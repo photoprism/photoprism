@@ -3,66 +3,66 @@
 export const dark = "dark";
 
 export const colorsDark = {
-  "background": "#2c2d2f",
-  "surface": "#161718",
-  "on-surface": "#ffffff",
-  "surface-bright": "#333333",
-  "surface-variant": "#7E4FE3",
-  "on-surface-variant": "#f6f7e8",
-  "card": "#171718",
-  "table": "#1F2022",
-  "button": "#1D1E1F",
-  "switch": "#101112",
-  "primary": "#9E7BEA",
-  "highlight": "#5F1DB7",
-  "selected": "#4d4d4e",
-  "secondary": "#191A1C",
-  "secondary-light": "#1E2022",
-  "accent": "#2D2E2E",
-  "error": "#e57373",
-  "danger": "#e57373",
-  "info": "#00acc1",
-  "success": "#4db6ac",
-  "warning": "#bc9714",
-  "favorite": "#FFD600",
-  "remove": "#da4e4c",
-  "restore": "#00d48a",
-  "album": "#ed9e00",
-  "on-album": "#ffffff",
-  "download": "#00bfa5",
-  "private": "#00b8d4",
-  "edit": "#2196F3",
-  "share": "#3F51B5",
-  "love": "#ef5350",
-  "terminal": "#4A464F",
-  "navigation": "#141417",
-  "navigation-home": "#0e0f10",
+  "background": "#2c2d2f", // Page canvas; the lowest elevation level (cards and data tables fall back to this).
+  "surface": "#161718", // Default container surface for sheets, dialogs, and list items.
+  "on-surface": "#ffffff", // Body text and icon color on `surface`, `surface-bright`, and `surface-light`.
+  "surface-bright": "#333333", // Lifted variant of `surface`; raised tiles, hover states, inline editors.
+  "surface-variant": "#7E4FE3", // Foreground tone consumed by Vuetify defaults for active dropdown rows, focus rings, and `color="surface-variant"` props.
+  "on-surface-variant": "#f6f7e8", // Text/icon color that contrasts with `surface-variant` when used as a background.
+  "card": "#171718", // Dedicated card-container background; a third tier between `surface` and `background`.
+  "table": "#1F2022", // VDataTable row and header background.
+  "button": "#1D1E1F", // Secondary button color (Cancel, dismiss) — the neutral companion to `highlight`.
+  "switch": "#101112", // VSwitch track background when off.
+  "primary": "#9E7BEA", // Brand/identity accent (icons, active-tab text, chip focus ring).
+  "highlight": "#5F1DB7", // Primary call-to-action accent (Confirm/Save/Apply buttons, chips, active toggle).
+  "selected": "#4d4d4e", // Active list-item background; pairs with `on-selected` for text inside the row.
+  "secondary": "#191A1C", // Background for secondary panels (tab strips, expansion-panel headers, nav drawer sections).
+  "secondary-light": "#1E2022", // Lifted variant of `secondary`; used for raised surfaces inside secondary panels.
+  "accent": "#2D2E2E", // Small-decoration tint for hover/focus subtleties; not a primary action color.
+  "error": "#e57373", // Error state for banners, validation errors, and error toasts.
+  "danger": "#e57373", // Legacy alias for `error`; kept for backward compatibility — new code should bind `error`.
+  "info": "#00acc1", // Informational notification color (snackbars, info-level log icons, neutral badges).
+  "success": "#4db6ac", // Successful-outcome notification color (saved toast, completed-job indicator).
+  "warning": "#bc9714", // Caution / recoverable-concern notification color (warning banners, paused indicators).
+  "favorite": "#FFD600", // Favorite-star color.
+  "remove": "#da4e4c", // Destructive "remove from collection" action color (distinct from `error`, which is a fault state).
+  "restore": "#00d48a", // Restore-from-trash / undo-remove action color.
+  "album": "#ed9e00", // Album identity color (album icons, chips, thumbnail accents).
+  "on-album": "#ffffff", // Text/icon color on album-tinted backgrounds.
+  "download": "#00bfa5", // Download affordance (buttons, progress).
+  "private": "#00b8d4", // Private badge / lock indicator.
+  "edit": "#2196F3", // Edit affordance (usually muted; rarely tinted).
+  "share": "#3F51B5", // Share affordance (share links, share dialog accents).
+  "love": "#ef5350", // Love / heart indicator (emotional emphasis only).
+  "terminal": "#4A464F", // Background for terminal / code blocks (log views, code samples).
+  "navigation": "#141417", // App bar / top toolbar background.
+  "navigation-home": "#0e0f10", // "Home" navigation-state background (typically a touch darker than `navigation`).
 };
 
 export const variablesDark = {
-  "btn-height": "34px",
-  "table-row-height": "44px",
-  "table-header-height": "44px",
-  "border-color": "#FFFFFF",
-  "border-opacity": 0.05,
-  "high-emphasis-opacity": 0.96,
-  "medium-emphasis-opacity": 0.88,
-  "label-opacity": 0.67,
-  "disabled-opacity": 0.75,
-  "idle-opacity": 0.1,
-  "fill-opacity": 0.04,
-  "hover-opacity": 0.019,
-  "focus-opacity": 0.022,
-  "selected-opacity": 0.08,
-  "activated-opacity": 0,
-  "pressed-opacity": 0.16,
-  "dragged-opacity": 0.08,
-  "overlay-color": "#131313",
-  "overlay-opacity": 0.54,
-  "theme-kbd": "#212529",
-  "theme-on-kbd": "#FFFFFF",
-  "theme-code": "#343434",
-  "theme-on-code": "#CCCCCC",
+  "btn-height": "34px", // Fixed pixel height for `VBtn`.
+  "table-row-height": "44px", // Fixed pixel height for `VDataTable` body rows.
+  "table-header-height": "44px", // Fixed pixel height for `VDataTable` header rows.
+  "border-color": "#FFFFFF", // Divider and outlined-variant border color (text fields, cards, alerts).
+  "border-opacity": 0.05, // Alpha applied to `border-color`.
+  "high-emphasis-opacity": 0.96, // Body-text alpha (primary text on `surface`).
+  "medium-emphasis-opacity": 0.88, // Secondary-text alpha (captions, helper text).
+  "label-opacity": 0.67, // Floating-label and helper-text alpha on inputs.
+  "disabled-opacity": 0.75, // Alpha applied to disabled controls.
+  "idle-opacity": 0.1, // Idle-state alpha for toggle controls (off-state `VSwitch`, etc.).
+  "fill-opacity": 0.04, // Background fill alpha for `solo-filled` inputs.
+  "hover-opacity": 0.019, // Hover-overlay alpha on list items, buttons, and rows.
+  "focus-opacity": 0.022, // Keyboard-focus overlay alpha on inputs and rows.
+  "selected-opacity": 0.08, // Active/selected-state overlay alpha on list items and rows.
+  "activated-opacity": 0, // Activated-state overlay alpha (currently no overlay).
+  "pressed-opacity": 0.16, // Press/click overlay alpha on buttons and rows.
+  "dragged-opacity": 0.08, // Dragged-state overlay alpha for sortable / draggable rows.
+  "overlay-color": "#131313", // Scrim color behind dialogs, menus, and the navigation drawer.
+  "overlay-opacity": 0.54, // Scrim alpha applied to `overlay-color`.
+  "theme-kbd": "#212529", // `<kbd>` block background.
+  "theme-on-kbd": "#FFFFFF", // `<kbd>` block foreground (text/icon color).
+  "theme-code": "#343434", // Inline `<code>` background (distinct from the `terminal` color token, which paints code-block surfaces).
+  "theme-on-code": "#CCCCCC", // Inline `<code>` foreground.
 };
 
 export const light = "light";
