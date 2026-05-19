@@ -216,9 +216,9 @@ services:
     stop_grace_period: 15s
     expose:
       - "5432"
-    ## Optionally publish the PostgreSQL port on the host for direct access from outside the compose network:
-    # ports:
-    #  - "${CUSTOM_BIND_HOST:-0.0.0.0}:${CUSTOM_POSTGRES_PORT:-5432-5999}:5432" # PostgreSQL
+    ## Publish the PostgreSQL port on the host for direct access from outside the compose network:
+    ports:
+     - "${CUSTOM_BIND_HOST:-0.0.0.0}:${CUSTOM_POSTGRES_PORT:-4002-5999}:5432" # PostgreSQL
     volumes:
       - "postgres:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
