@@ -69,11 +69,10 @@ func TestConfig_DatabaseDriverName(t *testing.T) {
 		assert.Equal(t, "PostgreSQL", c.DatabaseDriverName())
 	})
 	t.Run("PostgreSQLReportsAsPostgreSQL", func(t *testing.T) {
-		// "mariadb" collapses onto DriverMySQL in ParseDriver; format stays "MariaDB".
 		c := NewConfig(CliTestContext())
 		resetDatabaseOptions(c)
 		c.options.DatabaseDriver = dsn.DriverPostgreSQL
-		assert.Equal(t, "MariaPostgreSQLDB", c.DatabaseDriverName())
+		assert.Equal(t, "PostgreSQL", c.DatabaseDriverName())
 	})
 	t.Run("DeprecatedTiDBReportsAsSQLite", func(t *testing.T) {
 		// DatabaseDriver() warns and rewrites "tidb" to SQLite3 before this runs.
