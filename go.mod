@@ -170,7 +170,7 @@ require (
 )
 
 require (
-	github.com/mattn/go-runewidth v0.0.21 // indirect
+	github.com/mattn/go-runewidth v0.0.23 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/zitadel/schema v1.3.2 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.6.0 // indirect
