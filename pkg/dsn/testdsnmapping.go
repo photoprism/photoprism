@@ -81,3 +81,29 @@ func SetDSNToEnv(dsn string) {
 		_ = os.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", dsn)
 	}
 }
+
+// TestDSNPortFromEnv generates a testing DSN for MariaDB or Postgres using the appropriate environment port.
+// the dbname is used for the database, user and password as per test database standard config.
+func TestDSNPortFromEnv(driver string, dbname string, dbn int) (dbDSN DSN) {
+	switch driver {
+	case DriverMySQL:
+		port := os.Getenv("MARIADB_PORT")
+		if port == "" {
+			port = "4001"
+		}
+		dbDSN = DSN{Driver: DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("%s_%02d", dbname, dbn), Server: fmt.Sprintf("mysql:%s", port), User: dbname, Password: dbname}
+	case DriverPostgres, DriverPostgreSQL:
+		port := os.Getenv("POSTGRES_PORT")
+		if port == "" {
+			port = "4002"
+		}
+		dbDSN = DSN{Driver: DriverPostgreSQL, Name: fmt.Sprintf("%s_%02d", dbname, dbn), Server: fmt.Sprintf("postgres:%s", port), User: dbname, Password: dbname}
+	default:
+		port := os.Getenv("MARIADB_PORT")
+		if port == "" {
+			port = "4001"
+		}
+		dbDSN = DSN{Driver: DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("%s_%02d", dbname, dbn), Server: fmt.Sprintf("mariadb:%s", port), User: dbname, Password: dbname}
+	}
+	return dbDSN
+}

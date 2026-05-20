@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"gorm.io/gorm"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // ResetMariaDB will drop and recreate the named database, using the dbID as part of the name as fmt.Sprintf("%s_%02d", dbName, dbID)
@@ -26,7 +28,11 @@ func ResetMariaDB(dbName string, dbID int) error {
 
 	var db *gorm.DB
 	var err error
-	dbDSN := "root:photoprism@tcp(mariadb:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
+	d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+	d.User = "root"
+	d.Password = "photoprism"
+	d.Name = "photoprism"
+	dbDSN := d.ToString()
 	db, err = gorm.Open(drivers[MySQL](dbDSN), gormConfig())
 	if err != nil || db == nil {
 		log.Fatal(err)
@@ -82,7 +88,12 @@ func ResetPostgresDB(dbName string, dbID int) error {
 
 	var db *gorm.DB
 	var err error
-	dbDSN := "postgresql://photoprism:photoprism@postgres:5432/postgres?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
+	d := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", 1)
+	d.User = "photoprism"
+	d.Password = "photoprism"
+	d.Name = "postgres"
+	dbDSN := d.ToString()
+
 	db, err = gorm.Open(drivers[Postgres](dbDSN), gormConfig())
 	if err != nil || db == nil {
 		log.Fatal(err)

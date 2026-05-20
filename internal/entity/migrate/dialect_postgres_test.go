@@ -1,7 +1,6 @@
 package migrate
 
 import (
-	"fmt"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -24,7 +23,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		t.Skip("skipping test as not PostgreSQL")
 	}
 	t.Run("Existing", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
 
 		if dumpName, err := filepath.Abs("./testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
@@ -110,7 +109,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 	})
 
 	t.Run("New", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
 
 		if dumpName, err := filepath.Abs("./testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)

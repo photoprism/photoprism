@@ -113,7 +113,8 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-1k.original.mysql") {
 			log.Info("Generating Mariadb database with 1000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(1000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true))
+			d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+			require.NoError(b, generateDatabase(1000, "mysql", d.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-1k.original.mysql"
 			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
 				b.Fatal(err)
@@ -129,7 +130,8 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-10k.original.mysql") {
 			log.Info("Generating Mariadb database with 10000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(10000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true))
+			d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+			require.NoError(b, generateDatabase(10000, "mysql", d.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-10k.original.mysql"
 			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
 				b.Fatal(err)
@@ -145,7 +147,8 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-100k.original.mysql") {
 			log.Info("Generating Mariadb database with 100000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(100000, "mysql", "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", true, true))
+			d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+			require.NoError(b, generateDatabase(100000, "mysql", d.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-100k.original.mysql"
 			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
 				b.Fatal(err)
@@ -168,17 +171,16 @@ func BenchmarkMigration_PostgreSQL(b *testing.B) {
 
 	// Setup here
 	loglevel := event.Log.GetLevel()
-	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate" //nolint:gosec // test only credentials
-	postgresqlParams := "?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
+	mDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", 1)
 	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {
 		if !fs.FileExists("../../storage/test-1k.original.postgresql") {
 			log.Info("Generating PostgreSQL database with 1000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(1000, Postgres, postgresqlDSN+postgresqlParams, true, true))
+			require.NoError(b, generateDatabase(1000, Postgres, mDSN.ToString(), true, true))
 			resultFile := "../../storage/test-1k.original.postgresql"
-			if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
+			if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F c", "-f", resultFile).Run(); err != nil { //nolint:gosec // test generated input
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -192,9 +194,9 @@ func BenchmarkMigration_PostgreSQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-10k.original.postgresql") {
 			log.Info("Generating PostgreSQL database with 10000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(10000, Postgres, postgresqlDSN+postgresqlParams, true, true))
+			require.NoError(b, generateDatabase(10000, Postgres, mDSN.ToString(), true, true))
 			resultFile := "../../storage/test-10k.original.postgresql"
-			if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
+			if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F c", "-f", resultFile).Run(); err != nil { //nolint:gosec // test generated input
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -208,9 +210,9 @@ func BenchmarkMigration_PostgreSQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-100k.original.postgresql") {
 			log.Info("Generating PostgreSQL database with 100000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(100000, Postgres, postgresqlDSN+postgresqlParams, true, true))
+			require.NoError(b, generateDatabase(100000, Postgres, mDSN.ToString(), true, true))
 			resultFile := "../../storage/test-100k.original.postgresql"
-			if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", resultFile).Run(); err != nil {
+			if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F c", "-f", resultFile).Run(); err != nil { //nolint:gosec // test generated input
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)

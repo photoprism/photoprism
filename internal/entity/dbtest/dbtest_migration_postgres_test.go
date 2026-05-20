@@ -2,7 +2,6 @@ package entity
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -37,7 +36,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 	defer dbtestMutex.Unlock()
 	log.Info("Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 	t.Run("ValidMigration", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
 
 		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
@@ -135,7 +134,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 	})
 
 	t.Run("EmptyDB", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
 
 		// Clear Postgres source (migrate)
 		if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {

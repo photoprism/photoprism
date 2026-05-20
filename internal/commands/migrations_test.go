@@ -104,7 +104,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("TargetPopulated", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
 
 		// Setup target database
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
@@ -160,7 +160,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("TargetPopulatedBatch500", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
 
 		// Setup target database
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db")
@@ -216,8 +216,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoPostgreSQL", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
-		tfDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
+		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
@@ -323,7 +323,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoSQLite", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
 
 		// Remove target database file
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db")
@@ -431,7 +431,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoSQLitePopulated", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
 
 		// Remove target database file
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db")
@@ -542,8 +542,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("PostgreSQLtoMySQL", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
-		tfDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
+		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_postgresql"); err != nil {
@@ -653,7 +653,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("PostgreSQLtoSQLite", func(t *testing.T) {
-		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
 
 		// Remove target database file
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db")
@@ -767,7 +767,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("SQLiteToMySQL", func(t *testing.T) {
-		tfDSN := dsn.DSN{Driver: dsn.DriverMariaDB, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
 
 		// Remove target database file
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
@@ -877,7 +877,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("SQLiteToPostgreSQL", func(t *testing.T) {
-		tfDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "postgres:5432", User: "migrate", Password: "migrate"}
+		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
 
 		// Remove target database file
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")

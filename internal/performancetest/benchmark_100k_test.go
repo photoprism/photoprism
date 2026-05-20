@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -71,7 +72,8 @@ func Benchmark100k_MySQL(b *testing.B) {
 	loglevel := event.Log.GetLevel()
 	event.Log.SetLevel(logrus.ErrorLevel)
 	testDbOriginal := "../../storage/test-100k.original.mysql"
-	mysqlDSN := "migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
+	mysqlD := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+	mysqlDSN := mysqlD.ToString()
 
 	// Prepare temporary mariadb db.
 	if !fs.FileExists(testDbOriginal) {
@@ -120,14 +122,17 @@ func Benchmark100k_PostgreSQL(b *testing.B) {
 	loglevel := event.Log.GetLevel()
 	event.Log.SetLevel(logrus.ErrorLevel)
 	testDbOriginal := "../../storage/test-100k.original.postgresql"
-	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate" //nolint:gosec // test only credentials
-	postgresqlParams := "?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
+	mDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", 1)
+	pDSN := mDSN
+	pDSN.User = "photoprism"     //nolint:gosec // test only credentials
+	pDSN.Password = "photoprism" //nolint:gosec // test only credentials
+	pDSN.Name = "postgres"
 
 	// Prepare temporary PostgreSQL db.
 	if !fs.FileExists(testDbOriginal) {
 		log.Info("Generating PostgreSQL database with 100000 records")
-		require.NoError(b, generateDatabase(100000, Postgres, postgresqlDSN+postgresqlParams, true, true))
-		if err := exec.Command("pg_dump", "-d", postgresqlDSN, "-F c", "-f", testDbOriginal).Run(); err != nil {
+		require.NoError(b, generateDatabase(100000, Postgres, mDSN.ToString(), true, true))
+		if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F c", "-f", testDbOriginal).Run(); err != nil { //nolint:gosec // test generated input
 			b.Fatal(err)
 		}
 	}
@@ -135,11 +140,11 @@ func Benchmark100k_PostgreSQL(b *testing.B) {
 	// Prepare migrate PostgreSQL db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("dropdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "--force", "--if-exists", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
+	} else if err = exec.Command("dropdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "--force", "--if-exists", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("createdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
+	} else if err = exec.Command("createdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("pg_restore", "-d", postgresqlDSN, dumpName).Run(); err != nil { //nolint:gosec // test generated input, test only credentials
+	} else if err = exec.Command("pg_restore", "-d", mDSN.ForPSQL(), dumpName).Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
 	}
 
@@ -149,7 +154,7 @@ func Benchmark100k_PostgreSQL(b *testing.B) {
 	// Create gorm.DB connection provider.
 	db := &entity.DbConn{
 		Driver: Postgres,
-		Dsn:    postgresqlDSN + postgresqlParams,
+		Dsn:    mDSN.ToString(),
 	}
 
 	// Insert test fixtures into the database.

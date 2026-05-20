@@ -2,6 +2,7 @@ package performancetest
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -143,9 +144,9 @@ func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string,
 
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.ErrorLevel)
-
+	d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
 	db, err := gorm.Open(mysql.Open(
-		"migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"),
+		d.ToString()),
 		&gorm.Config{
 			Logger: logger.New(
 				log,
@@ -224,17 +225,20 @@ func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string,
 
 func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname string, expectedDuration time.Duration, b *testing.B) {
 	b.StopTimer()
-	postgresqlDSN := "postgresql://migrate:migrate@postgres:5432/migrate" //nolint:gosec // test specific credentials
-	postgresqlParams := "?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
+	mDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", 1)
+	pDSN := mDSN
+	pDSN.User = "photoprism"     //nolint:gosec // test only credentials
+	pDSN.Password = "photoprism" //nolint:gosec // test only credentials
+	pDSN.Name = "postgres"
 
 	// Prepare migrate PostgreSQL db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("dropdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "--force", "--if-exists", "migrate").Run(); err != nil {
+	} else if err = exec.Command("dropdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "--force", "--if-exists", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("createdb", "--maintenance-db=postgresql://photoprism:photoprism@postgres:5432/postgres", "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil {
+	} else if err = exec.Command("createdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("pg_restore", "-d", postgresqlDSN, dumpName).Run(); err != nil { //nolint:gosec // test generated parameters
+	} else if err = exec.Command("pg_restore", "-d", pDSN.ForPSQL(), dumpName).Run(); err != nil { //nolint:gosec // test generated parameters
 		b.Fatal(err)
 	}
 
@@ -245,7 +249,7 @@ func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname st
 	log.SetLevel(logrus.ErrorLevel)
 
 	db, err := gorm.Open(postgres.Open(
-		postgresqlDSN+postgresqlParams),
+		mDSN.ToString()),
 		&gorm.Config{
 			Logger: logger.New(
 				log,
