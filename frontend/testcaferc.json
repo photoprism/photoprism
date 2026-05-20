@@ -8,6 +8,11 @@
   "screenshots": {
     "path": "tests/acceptance/screenshots/",
     "takeOnFails": true
+  },
+  "d-videoPath": "tests/acceptance/videos/",
+  "d-videoOptions": {
+    "failedOnly": true,
+    "singleFile": false
   }
 }
 
