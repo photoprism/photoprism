@@ -271,7 +271,7 @@ acceptance-database-reset-%: acceptance-stop-%
 	@if [ -f storage/acceptance/config-active/dbms.postgresql ]; then \
 		echo "resetting postgresql"; \
 		cp -f storage/acceptance/backup.db storage/acceptance/index.db; \
-		psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-acceptance.sql; \
+		psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-acceptance.sql; \
 		./photoprism --database-driver sqlite --database-dsn "storage/acceptance/index.db?_busy_timeout=5000&_foreign_keys=on" --transfer-driver postgres --transfer-dsn "$(subst testdb,acceptance,$(PHOTOPRISM_TEST_DSN_POSTGRES))" migrations transfer -force; \
 		cp -f storage/acceptance/config-active/settingsBackup.yml storage/acceptance/config-active/settings.yml; \
 	fi
@@ -284,9 +284,9 @@ acceptance-stop-%:
 start:
 	./photoprism start -d
 start-mariadb:
-	./photoprism --database-driver mysql --database-name photoprism --database-server mariadb:4001 --database-password photoprism --database-user photoprism start -d
+	./photoprism --database-driver mysql --database-name photoprism --database-server mariadb:$(MYSQL_TCP_PORT) --database-password photoprism --database-user photoprism start -d
 start-postgres:
-	./photoprism --database-driver postgres --database-name photoprism --database-server postgres:5432 --database-password photoprism --database-user photoprism start -d
+	./photoprism --database-driver postgres --database-name photoprism --database-server postgres:$(PGPORT) --database-password photoprism --database-user photoprism start -d
 start-sqlite:
 	./photoprism --database-driver sqlite --database-dsn "storage/index.db?_busy_timeout=5000&_foreign_keys=on" start -d
 stop:
@@ -586,19 +586,19 @@ reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-accept
 reset-postgres:
 # Warning:  This will reset the photoprism database which is the default database, not a testing database.
 	$(info Resetting photoprism database...)
-	psql postgresql://photoprism:photoprism@postgres:5432/postgres -f scripts/sql/postgresql/reset-photoprism.sql
+	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres -f scripts/sql/postgresql/reset-photoprism.sql
 reset-postgres-testdb:
 	$(info Resetting testdb database...)
-	psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-testdb.sql
+	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-testdb.sql
 reset-postgres-local:
 	$(info Resetting local database...)
-	psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-local.sql
+	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-local.sql
 reset-postgres-acceptance:
 	$(info Resetting acceptance database...)
-	psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-acceptance.sql
+	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-acceptance.sql
 reset-postgres-migrate:
 	$(info Resetting migrate database...)
-	psql postgresql://photoprism:photoprism@postgres:5432/postgres  -f scripts/sql/postgresql/reset-migrate.sql
+	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-migrate.sql
 reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb reset-postgres-migrate
 # reset-acceptance: reset-mariadb-acceptance
