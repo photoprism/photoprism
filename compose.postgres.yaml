@@ -8,9 +8,9 @@ services:
     image: postgres:18-alpine
     stop_grace_period: 15s
     expose:
-      - "5432"
+      - "${POSTGRES_PORT:-4002}"
     ports:
-      - "4002:5432" # database port (host:container) 5432 isn't used intentionally to avoid conflicts
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${POSTGRES_PORT:-4002}:${POSTGRES_PORT:-4002}" # PostgreSQL
     volumes:
       - "postgresql:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -25,9 +25,9 @@ services:
     image: postgres:17-alpine
     stop_grace_period: 15s
     expose:
-      - "5432"
+      - "${POSTGRES_PORT:-4002}"
     ports:
-      - "4002:5432" # database port (host:container) 5432 isn't used intentionally to avoid conflicts
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${POSTGRES_PORT:-4002}:${POSTGRES_PORT:-4002}" # PostgreSQL
     volumes:
       - "postgresql:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
