@@ -22,6 +22,12 @@ export default defineConfig([
     "tests/acceptance/screenshots/",
     "tests/upload-files/",
     "**/*.html",
+    // CSS/SCSS/SASS are owned by Prettier (see `frontend/.prettierrc.json` overrides).
+    // Ignored here to avoid the "no matching configuration" warning and any
+    // accidental formatter jitter from a future ESLint CSS plugin.
+    "**/*.css",
+    "**/*.scss",
+    "**/*.sass",
     "**/.idea",
     "**/.codex",
     "**/.env",
@@ -35,7 +41,7 @@ export default defineConfig([
   ]),
   ...pluginVue.configs["flat/recommended"],
   {
-    extends: compat.extends("eslint:recommended", "plugin:prettier/recommended", "plugin:vuetify/base"),
+    extends: compat.extends("eslint:recommended", "eslint-config-prettier", "plugin:vuetify/base"),
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -46,30 +52,6 @@ export default defineConfig([
 
       ecmaVersion: "latest",
       sourceType: "module",
-    },
-    settings: {
-      "prettier/prettier": {
-        // Settings for how to process Vue SFC Blocks
-        SFCBlocks: {
-          template: false,
-          script: false,
-          style: false,
-        },
-
-        // Use prettierrc for prettier options or not (default: `true`)
-        usePrettierrc: true,
-
-        // Set the options for `prettier.getFileInfo`.
-        // @see https://prettier.io/docs/en/api.html#prettiergetfileinfofilepath-options
-        fileInfoOptions: {
-          // Path to ignore file (default: `'.prettierignore'`)
-          // Notice that the ignore file is only used for this plugin
-          ignorePath: ".testignore",
-
-          // Process the files in `node_modules` or not (default: `false`)
-          withNodeModules: false,
-        },
-      },
     },
     rules: {
       // Match what Prettier was producing: 2-space indent (4 for CSS lives in .prettierrc), switch
@@ -127,12 +109,10 @@ export default defineConfig([
           multiline: "ignore",
         },
       ],
-      // Prettier reflow is off — it collapses intentional newlines (multi-line method chains,
-      // predicate lists) that help readability. Quote style and indent are enforced by the
-      // ESLint rules above instead. Run `prettier --write <file>` manually for full reflow.
-      // The plugin:prettier/recommended extends above still applies eslint-config-prettier,
-      // which disables ESLint stylistic rules that would conflict with Prettier-formatted code.
-      "prettier/prettier": "off",
+      // Note: Prettier is no longer invoked by ESLint. The `eslint-config-prettier` extends
+      // above still disables ESLint stylistic rules that would conflict with hand-run Prettier
+      // formatting on CSS/SCSS/SASS. Run `prettier --write src/**/*.{css,scss,sass}` (or use
+      // the `fmt-css` / `lint-css` npm scripts) to format stylesheets.
     },
   },
 ]);

@@ -51,6 +51,11 @@
       </g>
     </svg>
     <div v-if="pending && bounds && !interaction" class="p-meta-face-markers__confirm" :style="confirmStyle" @pointerdown.stop @pointerup.stop>
+      <button type="button" class="p-meta-face-markers__btn p-meta-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelPending">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+        </svg>
+      </button>
       <button
         type="button"
         class="p-meta-face-markers__btn p-meta-face-markers__btn--confirm"
@@ -63,13 +68,13 @@
           <path fill="currentColor" d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
         </svg>
       </button>
-      <button type="button" class="p-meta-face-markers__btn p-meta-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelPending">
+    </div>
+    <div v-if="removingMarker && bounds" class="p-meta-face-markers__remove-confirm" :style="removeConfirmStyle" @pointerdown.stop @pointerup.stop>
+      <button type="button" class="p-meta-face-markers__btn p-meta-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelRemove">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           <path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
         </svg>
       </button>
-    </div>
-    <div v-if="removingMarker && bounds" class="p-meta-face-markers__remove-confirm" :style="removeConfirmStyle" @pointerdown.stop @pointerup.stop>
       <button
         type="button"
         class="p-meta-face-markers__btn p-meta-face-markers__btn--remove"
@@ -80,11 +85,6 @@
       >
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"></path>
-        </svg>
-      </button>
-      <button type="button" class="p-meta-face-markers__btn p-meta-face-markers__btn--cancel" :title="$gettext('Cancel')" @click.stop="onCancelRemove">
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
         </svg>
       </button>
     </div>

@@ -188,7 +188,6 @@ export default {
       sidebarVisible: shouldShowSidebar(),
       hideCaption: shouldHideCaption() || shouldShowSidebar(),
       menuElement: null,
-      menuBgColor: "#252525",
       menuVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.

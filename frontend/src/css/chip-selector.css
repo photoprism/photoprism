@@ -1,112 +1,130 @@
 /* Chip Selector Styles */
 .chip-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .chip-selector__title {
-  font-weight: 500;
-  font-size: 14px;
-  color: rgba(var(--v-theme-on-surface), 0.87);
-  margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    color: rgba(var(--v-theme-on-surface), 0.87);
+    margin-bottom: 8px;
 }
 
 .chip-selector__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  min-height: 40px;
-  align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 40px;
+    align-items: flex-start;
 }
 
 .chip-selector__input-container {
-  margin-top: 8px;
+    margin-top: 8px;
 }
 
 .chip-selector__input {
-  width: 100%;
+    width: 100%;
 }
 
 /* Chip Styles */
 .chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  user-select: none;
-  min-height: 32px;
-  transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    min-height: 32px;
+    max-width: 100%;
+    min-width: 0;
+    transition: all 0.2s ease;
 }
 
 .chip__content {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .chip__icon {
-  font-size: 16px;
-  opacity: 0.9;
+    font-size: 16px;
+    opacity: 0.9;
+    flex-shrink: 0;
 }
 
-/* Chip States */
-.chip--gray {
-  background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
-  color: rgb(var(--v-theme-on-surface));
-  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
+/* Allow the label to shrink within the chip's inline-flex layout so
+   Vuetify's `text-truncate` (overflow + ellipsis + nowrap) can engage on
+   single-word titles like `WWWWWWW…`; the chip itself is constrained by
+   `max-width: 100%` against its flex-wrap parent. */
+.chip__text {
+    min-width: 0;
 }
 
-.chip--gray-light {
-  background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.55);
-  color: rgb(var(--v-theme-on-surface));
-  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
+/* Chip States — class names mirror the `item.action` value the chip-selector
+   emits (`add` / `remove` / default), and `--mixed` is the partial-selection
+   variant (action applies to only some of the selected items). Selectors are
+   doubled (`.chip.chip--*`) so the `color` rules out-rank the UA-level
+   `[role="button"] { color: inherit }` reset, which would otherwise strip the
+   on-token foreground from a solid chip rendered as a button. */
+.chip.chip--default {
+    background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
+    color: rgb(var(--v-theme-on-surface));
+    box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
 }
 
-.chip--green {
-    background-color: rgb(var(--v-theme-download));
-  color: rgb(var(--v-theme-on-download));
+.chip.chip--default-mixed {
+    background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.55);
+    color: rgb(var(--v-theme-on-surface));
+    box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
 }
 
-.chip--green-light {
-  background-color: rgba(var(--v-theme-download), 0.3);
-  color: rgb(var(--v-theme-download));
+.chip.chip--add {
+    background-color: rgba(var(--v-theme-add), 0.8);
+    color: rgb(var(--v-theme-on-add));
 }
 
-.chip--red {
-  background-color: rgb(var(--v-theme-error));
-  color: rgb(var(--v-theme-on-error));
+.chip.chip--add-mixed {
+    background-color: rgba(var(--v-theme-add-darken-1), 0.45);
+    color: rgb(var(--v-theme-on-add));
 }
 
-.chip--red-light {
-  background-color: rgba(var(--v-theme-error), 0.3);
-  color: rgb(var(--v-theme-error));
+.chip.chip--remove {
+    background-color: rgba(var(--v-theme-remove), 0.8);
+    color: rgb(var(--v-theme-on-remove));
+}
+
+.chip.chip--remove-mixed {
+    background-color: rgba(var(--v-theme-remove-darken-1), 0.45);
+    color: rgb(var(--v-theme-on-remove));
 }
 
 /* Empty state */
 .chip-selector__empty {
-  padding: 16px;
-  text-align: center;
-  color: rgba(var(--v-theme-on-surface), 0.6);
-  font-style: italic;
+    padding: 16px;
+    text-align: center;
+    color: rgba(var(--v-theme-on-surface), 0.6);
+    font-style: italic;
 }
 
 /* Mobile optimizations */
 @media (max-width: 600px) {
-  .chip-selector__chips {
-    gap: 6px;
-  }
-  
-  .chip {
-    padding: 4px 8px;
-    font-size: 12px;
-    min-height: 28px;
-  }
-  
-  .chip__icon {
-    font-size: 14px;
-  }
+    .chip-selector__chips {
+        gap: 6px;
+    }
+
+    .chip {
+        padding: 4px 8px;
+        font-size: 12px;
+        min-height: 28px;
+    }
+
+    .chip__icon {
+        font-size: 14px;
+    }
 }

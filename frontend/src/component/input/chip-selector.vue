@@ -22,7 +22,7 @@
               <v-icon v-if="getChipIcon(item)" class="chip__icon">
                 {{ getChipIcon(item) }}
               </v-icon>
-              <span class="chip__text">{{ item.title }}</span>
+              <span class="chip__text text-truncate">{{ item.title }}</span>
             </div>
           </div>
         </template>
@@ -156,13 +156,13 @@ export default {
       }
 
       if (item.action === "add") {
-        classes.push(item.mixed ? `${baseClass}--green-light` : `${baseClass}--green`);
+        classes.push(item.mixed ? `${baseClass}--add-mixed` : `${baseClass}--add`);
       } else if (item.action === "remove") {
-        classes.push(item.mixed ? `${baseClass}--red-light` : `${baseClass}--red`);
+        classes.push(item.mixed ? `${baseClass}--remove-mixed` : `${baseClass}--remove`);
       } else if (item.mixed) {
-        classes.push(`${baseClass}--gray-light`);
+        classes.push(`${baseClass}--default-mixed`);
       } else {
-        classes.push(`${baseClass}--gray`);
+        classes.push(`${baseClass}--default`);
       }
 
       return classes;

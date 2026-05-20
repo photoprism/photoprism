@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import $api from "common/api";
 import { $config } from "app/session";
-import $notify from "notify.js";
+import $notify from "common/notify";
 
 function poll(interval, maxAttempts) {
   let attempts = 0;

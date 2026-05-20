@@ -272,12 +272,6 @@ export default {
       this.$notify.error(authError);
       getAppStorage().removeItem("session.error");
     }
-
-    // Auto-redirect unauthenticated users when PHOTOPRISM_OIDC_REDIRECT is on,
-    // except for one render right after an explicit logout (one-shot flag).
-    if (!this.$session.isAuthenticated() && this.config.ext?.oidc?.enabled && this.config.ext?.oidc?.redirect && !this.$session.consumeLogoutSignal()) {
-      this.onOidcLogin();
-    }
   },
   mounted() {
     this.$view.enter(this, this.$refs?.form, 'input[value=""], button.action-confirm');

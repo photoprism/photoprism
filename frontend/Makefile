@@ -47,7 +47,7 @@ install-npm:
 install-testcafe:
 	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@latest
 install-eslint:
-	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
+	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
 upgrade:
 	$(info Securely upgrading NPM dependencies...)
 	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'

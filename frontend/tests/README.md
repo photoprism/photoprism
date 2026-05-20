@@ -76,7 +76,6 @@ Current frontend tool versions are defined in `frontend/package.json` unless sta
 | `eslint-config-prettier`             | `^10.1.8`    |
 | `eslint-plugin-import`               | `^2.32.0`    |
 | `eslint-plugin-node`                 | `^11.1.0`    |
-| `eslint-plugin-prettier`             | `^5.5.5`     |
 | `eslint-plugin-vue`                  | `^10.7.0`    |
 | `eslint-plugin-vuetify`              | `^2.5.3`     |
 | `eslint-webpack-plugin`              | `^5.0.2`     |

@@ -81,14 +81,28 @@ export default [
     meta: { title: siteTitle, requiresAuth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
+        // Auto-OIDC fires only for deep-link arrivals — the global router
+        // guard records the originally-requested URL via
+        // setLoginRedirectUrl() before sending the user here. A direct
+        // visit to /library/login leaves hasLoginRedirectUrl() false so
+        // the form stays visible and local/LDAP/AD credentials still work,
+        // even when PHOTOPRISM_OIDC_REDIRECT is enabled (the flag opts
+        // deep links into IdP SSO, it does not make OIDC the only path).
+        // The one-shot logout signal suppresses one auto-bounce so users
+        // can re-authenticate locally immediately after signing out.
+        const oidc = $config.values?.ext?.oidc;
+        if (oidc?.enabled && oidc?.redirect && oidc?.loginUri && $session.hasLoginRedirectUrl() && !$session.consumeLogoutSignal()) {
+          $session.followRedirect(oidc.loginUri);
+          next(false);
+          return;
+        }
         next();
         return;
       }
       // Already authenticated (typically returning from the OIDC roundtrip):
       // hard-navigate to the deep link the router guard recorded so the
       // stored absolute path (incl. frontend base) is honored verbatim.
-      const stored = $session.getLoginRedirectUrl(null);
-      if (stored) {
+      if ($session.hasLoginRedirectUrl()) {
         $session.followLoginRedirectUrl();
         next(false);
       } else {

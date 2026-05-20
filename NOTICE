@@ -9644,7 +9644,6 @@ eslint-formatter-pretty          MIT            Sindre Sorhus sindresorhus@gmail
 eslint-plugin-html               ISC            n/a
 eslint-plugin-import             MIT            Ben Mosher <me@benmosher.com>
 eslint-plugin-node               MIT            Toru Nagashima
-eslint-plugin-prettier           MIT            Teddy Katz
 eslint-plugin-vue                MIT            Toru Nagashima (https://github.com/mysticatea)
 eslint-plugin-vuetify            MIT            Kael Watts-Deuchar <kaelwd@gmail.com>
 eslint-webpack-plugin            MIT            Ricardo Gobbo de Souza <ricardogobbosouza@yahoo.com.br>

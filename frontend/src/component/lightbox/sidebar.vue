@@ -63,7 +63,7 @@
             @blur="onInlineFieldBlur"
           ></v-textarea>
           <!-- eslint-disable-next-line vue/no-v-html -- captionHtml is encode-then-sanitized via $util.sanitizeHtml($util.encodeHTML(raw)); see captionHtml() computed -->
-          <div v-else-if="model.Caption" class="text-body-2 meta-caption meta-scrollable" v-html="captionHtml"></div>
+          <div v-else-if="model.Caption" class="text-body-2 meta-caption meta-scrollable text-html" v-html="captionHtml"></div>
           <div v-else class="meta-add-prompt" @click.stop="startEditing('caption')">{{ $gettext("Add a Caption") }}</div>
           <template v-if="isEditable" #append>
             <p-lightbox-sidebar-toolbar
@@ -429,7 +429,7 @@
                 @blur="onInlineFieldBlur"
               ></v-textarea>
               <!-- eslint-disable-next-line vue/no-v-html -- f.htmlValue points at a sanitized computed (e.g. notesHtml) which runs $util.sanitizeHtml($util.encodeHTML(raw)). -->
-              <div v-else-if="f.display === 'html' && fieldHtml(f)" class="text-body-2 meta-scrollable" :class="`meta-${f.key}`" v-html="fieldHtml(f)"></div>
+              <div v-else-if="f.display === 'html' && fieldHtml(f)" class="text-body-2 meta-scrollable text-html" :class="`meta-${f.key}`" v-html="fieldHtml(f)"></div>
               <div v-else-if="f.display !== 'html' && f.read(photo)" class="text-body-2 meta-scrollable" :class="`meta-${f.key}`">{{ f.read(photo) }}</div>
               <div v-else class="meta-add-prompt" @click.stop="startEditing(f.key)">{{ f.placeholder ? f.placeholder : f.label }}</div>
               <template v-if="isEditable" #append>

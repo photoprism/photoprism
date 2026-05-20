@@ -1,4 +1,4 @@
-/* Media Viewer Styles */
+/* Lightbox Styles */
 
 .p-lightbox {
     position: fixed;
@@ -67,7 +67,14 @@
     z-index: 1;
 }
 
-/* Sidebar Info */
+/* Lightbox Tooltips */
+
+.v-tooltip.v-theme--lightbox > .v-overlay__content {
+    background: rgba(var(--v-theme-surface), var(--v-medium-emphasis-opacity));
+    color: rgb(var(--v-theme-on-surface));
+}
+
+/* Lightbox Sidebar */
 
 .p-lightbox__container > .p-lightbox__sidebar {
     position: relative;
@@ -175,17 +182,6 @@
 .p-lightbox__container > .p-lightbox__sidebar .meta-keywords {
     word-break: break-word;
     text-align: start;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-caption a,
-.p-lightbox__container > .p-lightbox__sidebar .meta-notes a {
-    text-decoration: underline;
-    word-break: break-all;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-caption a:hover,
-.p-lightbox__container > .p-lightbox__sidebar .meta-notes a:hover {
-    text-decoration: none;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip {
@@ -396,14 +392,6 @@
 .meta-inline-menu .v-list-item-title {
     font-size: 0.8125rem;
     line-height: 1.125rem;
-}
-
-/* Flip surface/on-surface-variant for lightbox tooltips so they read as a
-   dark popover instead of a near-white block over the dark sidebar.
-   Tooltips are body-teleported, so the theme class lands on the popper itself. */
-.v-tooltip.v-theme--lightbox > .v-overlay__content {
-    background: rgb(var(--v-theme-on-surface-variant));
-    color: rgb(var(--v-theme-surface-variant));
 }
 
 /* Media Content */
@@ -668,20 +656,6 @@
     padding: 0;
     pointer-events: none;
     touch-action: none;
-}
-
-.pswp__dynamic-caption a {
-    color: inherit;
-    text-decoration: underline;
-    white-space: normal;
-    overflow-wrap: normal;
-    word-wrap: normal;
-    word-break: break-word;
-    text-align: start;
-    text-overflow: ellipsis;
-    hyphens: auto;
-    pointer-events: auto;
-    touch-action: auto;
 }
 
 .pswp__dynamic-caption h4 {

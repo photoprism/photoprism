@@ -492,6 +492,17 @@ export default class Session {
     return defaultUrl === undefined ? "/" : defaultUrl;
   }
 
+  // Reports whether a deep-link redirect target is recorded. The /login
+  // route guard uses this as the deep-link arrival signal: a stored URL
+  // means the global router guard bounced the user here from a protected
+  // page, while a missing one means the user opened /login directly.
+  hasLoginRedirectUrl() {
+    if (this.loginRedirect) {
+      return true;
+    }
+    return !!this.localStorage?.getItem(LoginRedirectKey);
+  }
+
   clearLoginRedirectUrl() {
     this.loginRedirect = false;
     this.localStorage?.removeItem(LoginRedirectKey);

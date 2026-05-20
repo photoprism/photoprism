@@ -535,6 +535,30 @@ describe("common/session", () => {
       expect(session.getLoginRedirectUrl(null)).toBeNull();
     });
 
+    // hasLoginRedirectUrl() is the deep-link arrival signal the /login
+    // route guard uses to decide whether to auto-bounce through OIDC. A
+    // stored URL means the global router guard sent the user here from a
+    // protected page; no URL means the user opened /login directly.
+    it("hasLoginRedirectUrl() reports the deep-link arrival signal across the OIDC roundtrip", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-has";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      session.setLoginRedirectUrl("/library/albums/at1sqs7gr75pl5r7/view");
+      expect(session.hasLoginRedirectUrl()).toBe(true);
+
+      // A brand-new Session (the post-OIDC reboot) still sees the signal
+      // from namespaced storage even though in-memory state is fresh.
+      const reborn = new Session(storage, createConfig("/library", namespaceKey));
+      expect(reborn.hasLoginRedirectUrl()).toBe(true);
+
+      reborn.clearLoginRedirectUrl();
+      expect(reborn.hasLoginRedirectUrl()).toBe(false);
+    });
+
     it("returns the default URL when no redirect is recorded", () => {
       const storage = new StorageShim();
       const session = new Session(storage, $config);
