@@ -20,10 +20,16 @@ export default class Page {
     this.favoriteOnIcon = Selector("button.action-favorite i.icon-favorite", { timeout: 5000 });
     this.favoriteOffIcon = Selector("button.action-favorite i.icon-favorite-border", { timeout: 5000 });
     this.sidebar = Selector("div.p-lightbox__sidebar div.p-lightbox-sidebar", { timeout: 15000 });
-    // People-section toggles render one of two buttons depending on role:
-    // .meta-markers-toggle (eye) for non-editable, .meta-faces-edit (pencil) for editable.
-    this.markersVisibilityToggle = Selector(".meta-markers-toggle", { timeout: 15000 });
-    this.markerAddButton = Selector(".meta-faces-edit", { timeout: 15000 });
+    // People-section toggles render one of two variants depending on role.
+    // Both carry the shared `.meta-markers-toggle` role class (since edit mode
+    // also toggles visibility), plus a dedicated discriminator:
+    // - eye (non-editable, read-only display): `.meta-faces-display`
+    // - pencil (editable, edit-mode superset of display): `.meta-faces-edit`
+    //
+    // `markersVisibilityToggle` matches the eye-only variant; `markersEditToggle`
+    // matches the pencil-only variant.
+    this.markersVisibilityToggle = Selector(".meta-faces-display", { timeout: 15000 });
+    this.markersEditToggle = Selector(".meta-faces-edit", { timeout: 15000 });
     this.faceMarkerOverlay = Selector("div.p-meta-face-markers", { timeout: 15000 });
     this.faceMarkerRect = Selector("rect.p-meta-face-markers__rect", { timeout: 15000 });
     this.faceMarkerUnnamedRect = Selector(
@@ -41,7 +47,7 @@ export default class Page {
     this.sidebarKeywords = Selector(".p-lightbox-sidebar .meta-keywords", { timeout: 15000 });
     this.sidebarNotes = Selector(".p-lightbox-sidebar .meta-notes", { timeout: 15000 });
     this.sidebarChips = Selector(".p-lightbox-sidebar .meta-chip", { timeout: 15000 });
-    this.faceMarkerEjectButton = Selector(".metadata__person-row .meta-marker-eject", { timeout: 15000 });
+    this.faceMarkerClearSubjectButton = Selector(".metadata__person-row .meta-marker-clear-subject", { timeout: 15000 });
     this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
     this.peopleHeader = Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People");
     this.addNameDialog = Selector(".v-dialog.p-confirm-dialog", { timeout: 15000 });
@@ -56,14 +62,29 @@ export default class Page {
     return this.personRow.filter((node) => node.querySelector(".meta-inline-marker:not(.meta-inline-marker--named)") !== null);
   }
 
-  // namedPersonRows are sidebar person rows that surface an eject icon (named markers only).
+  // namedPersonRows are sidebar person rows whose inline-marker combobox is in named mode.
+  // Discriminates on `.meta-inline-marker--named` rather than the Unassign icon, which is
+  // gated on edit mode and would miss named rows when the People section is read-only.
   get namedPersonRows() {
-    return this.personRow.filter((node) => node.querySelector(".meta-marker-eject") !== null);
+    return this.personRow.filter((node) => node.querySelector(".meta-inline-marker--named") !== null);
   }
 
-  // ejectMarker hovers the row so the display:none eject button is revealed, then clicks it.
-  async ejectMarker(row) {
-    await t.hover(row).click(row.find(".meta-marker-eject"));
+  // ensureMarkersEdit toggles the People section into edit mode if it isn't already.
+  // The pencil button (`.meta-faces-edit`) flips null ↔ FaceMarkerEdit; calling
+  // startMarkersEdit unconditionally would silently EXIT edit mode for callers
+  // that are already in it, so probe `.is-active` (the `markersEdit` binding) first.
+  async ensureMarkersEdit() {
+    if (!(await this.markersEditToggle.hasClass("is-active"))) {
+      await this.startMarkersEdit();
+    }
+  }
+
+  // clearMarkerSubject ensures the People section is in edit mode (the Unassign
+  // button is gated on `markersEdit`), hovers the row to reveal the display:none
+  // button, then clicks it.
+  async clearMarkerSubject(row) {
+    await this.ensureMarkersEdit();
+    await t.hover(row).click(row.find(".meta-marker-clear-subject"));
   }
 
   // sidebarRow returns the v-list-item that contains the given MDI prepend-icon class.
@@ -221,8 +242,8 @@ export default class Page {
     await t.expect(this.sidebar.visible).ok();
   }
 
-  async startAddingMarker() {
-    await t.click(this.markerAddButton);
+  async startMarkersEdit() {
+    await t.click(this.markersEditToggle);
   }
 
   async cancelMarkerDraft() {
@@ -237,7 +258,7 @@ export default class Page {
   // Used by tests that draw a marker for setup and want to undo before exit so the fixture stays clean.
   async removeLastUnnamedMarker() {
     if (!(await this.faceMarkerOverlay.visible)) {
-      await this.startAddingMarker();
+      await this.startMarkersEdit();
       await t.expect(this.faceMarkerOverlay.visible).ok();
     }
     await t.click(this.faceMarkerUnnamedRect.nth(-1));

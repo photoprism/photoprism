@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -13,15 +15,26 @@ import (
 	_ "github.com/go-sql-driver/mysql" // register MySQL driver
 )
 
+// devDatabasePort returns the dev MariaDB port, honoring MARIADB_PORT when set so
+// the provisioner stays aligned with compose.yaml overrides.
+func devDatabasePort() int {
+	if v := os.Getenv("MARIADB_PORT"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 && n < 65536 {
+			return n
+		}
+	}
+	return 4001
+}
+
 // ProvisionDSN specifies the admin DSN used for auto-provisioning, for example:
 // root:insecure@tcp(127.0.0.1:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true
-var ProvisionDSN = "root:photoprism@tcp(mariadb:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
+var ProvisionDSN = fmt.Sprintf("root:photoprism@tcp(mariadb:%d)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", devDatabasePort())
 
 // DatabaseHost is the hostname of the admin server used for provisioning operations.
 var DatabaseHost = "mariadb"
 
 // DatabasePort is the port of the admin server used for provisioning operations.
-var DatabasePort = 4001
+var DatabasePort = devDatabasePort()
 
 // DatabaseDriver indicates the SQL driver used for provisioning (independent from the app DB driver).
 var DatabaseDriver = "mysql"

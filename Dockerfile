@@ -1,5 +1,5 @@
 # Ubuntu 26.04 LTS (Resolute Raccoon)
-FROM photoprism/develop:260510-resolute
+FROM photoprism/develop:260520-resolute
 
 # Harden npm usage by default (applies to npm ci / install in dev container)
 ENV NPM_CONFIG_IGNORE_SCRIPTS=true
@@ -24,5 +24,10 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 # Copy source to image.
 COPY . .
 COPY --chown=root:root /scripts/dist/ /scripts/
+
+# Re-install the dev "mariadb" client config so a custom MARIADB_PORT in .env
+# is honored even when the base image was built before the port=<n> line was
+# removed (no-op once the next dated base image picks up the new .my.cnf).
+COPY --chown=root:root --chmod=644 .my.cnf /etc/my.cnf
 
 RUN sudo /scripts/install-yt-dlp.sh

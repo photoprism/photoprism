@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -41,7 +42,12 @@ func TestDialectMysql(t *testing.T) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	dbDSN := dsn.DSN{Driver: dsn.DriverMySQL, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: "mariadb:4001", User: "migrate", Password: "migrate"}
+	port := os.Getenv("MARIADB_PORT")
+	if port == "" {
+		port = "4001"
+	}
+
+	dbDSN := dsn.DSN{Driver: dsn.DriverMySQL, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: fmt.Sprintf("mariadb:%s", port), User: "migrate", Password: "migrate"}
 
 	db, err := gorm.Open(mysql.Open(
 		dbDSN.ToString()),

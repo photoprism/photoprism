@@ -150,7 +150,8 @@ devtools: install-go dep-npm
 .SILENT: help;
 logs:
 	$(DOCKER_COMPOSE) logs -f
-down:
+down: docker-down
+docker-down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
 docs: swag
 swag: swag-json

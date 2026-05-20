@@ -217,7 +217,7 @@ test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common
   // restricted section must be gone.
   await photoviewer.assertSidebarIsReadOnly();
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
-  await t.expect(photoviewer.markerAddButton.exists).notOk();
+  await t.expect(photoviewer.markersEditToggle.exists).notOk();
   // Merged file row renders for restricted sessions (type + size as
   // the title) but the filename subtitle must be suppressed.
   await t.expect(Selector(".p-lightbox-sidebar .meta-file .v-list-item-subtitle").exists).notOk();

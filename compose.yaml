@@ -102,13 +102,15 @@ services:
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"       # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
+      MYSQL_TCP_PORT: "${MARIADB_PORT:-4001}"        # default MariaDB database port used by the "mariadb" client (see .my.cnf)
+      PGPORT: "${POSTGRES_PORT:-4002}"               # default PostgreSQL database port used by "qsql"
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DSN_NAME: "sqlite"
-      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
       PHOTOPRISM_TEST_DSN_MARIADB: "root:photoprism@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
       PHOTOPRISM_TEST_DSN_SQLITE: ""
       PHOTOPRISM_TEST_DSN_SQLITEFILE: "file:/go/src/github.com/photoprism/photoprism/storage/testdata/unit.test.db?_foreign_keys=on&_busy_timeout=5000"
@@ -191,12 +193,21 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command:
+      - "--port=${MARIADB_PORT:-4001}"
+      - --innodb-strict-mode=1
+      - --innodb-buffer-pool-size=256M
+      - --transaction-isolation=READ-COMMITTED
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max-connections=512
+      - --innodb-rollback-on-timeout=OFF
+      - --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # 3306 isn't used intentionally to avoid conflicts and confuse port scanners
+      - "${MARIADB_PORT:-4001}" # does not default to 3306 in order to avoid conflicts and confuse port scanners
     ## Publish the MariaDB port on the host for direct access from the host:
     ports:
-      - "${SERVICES_BIND_HOST:-127.0.0.1}:4001:4001" # MariaDB
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${MARIADB_PORT:-4001}:${MARIADB_PORT:-4001}" # MariaDB
     volumes:
       - "mariadb:/var/lib/mysql"
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -215,10 +226,10 @@ services:
     image: postgres:18-alpine
     stop_grace_period: 15s
     expose:
-      - "5432"
+      - "${POSTGRES_PORT:-4002}"
     ## Publish the PostgreSQL port on the host for direct access from the host:
     ports:
-      - "${SERVICES_BIND_HOST:-127.0.0.1}:4002:5432" # PostgreSQL
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${POSTGRES_PORT:-4002}:${POSTGRES_PORT:-4002}" # PostgreSQL
     volumes:
       - "postgres:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -226,6 +237,7 @@ services:
       POSTGRES_DB: photoprism
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
+      PGPORT: "${POSTGRES_PORT:-4002}"
       PGDATA: /var/lib/postgresql/18/docker
 
   ## Qdrant (Vector Database)
@@ -455,7 +467,7 @@ services:
       KC_HOSTNAME_STRICT: "false"
       KC_PROXY: "edge"
       KC_DB: "mariadb"
-      KC_DB_URL: "jdbc:mariadb://mariadb:4001/keycloak"
+      KC_DB_URL: "jdbc:mariadb://mariadb:${MARIADB_PORT:-4001}/keycloak"
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
 

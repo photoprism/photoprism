@@ -49,13 +49,13 @@ const validationUtil = {
 // `mount(PLightboxSidebar, ` -> `mountSidebar(` renamed.
 function mountSidebar(options = {}) {
   const props = { ...(options.props || {}) };
-  // Translate the legacy boolean props (`markersVisible` / `addingMarker`)
+  // Translate the legacy boolean props (`markersVisible` / `markersEdit`)
   // into the new state-machine value (F2-1: `faceMarkerMode`). Tests
   // pre-dating the enum still set the booleans; new tests can pass
   // `faceMarkerMode` directly.
   let faceMarkerMode = props.faceMarkerMode;
   if (faceMarkerMode === undefined) {
-    if (props.addingMarker) {
+    if (props.markersEdit) {
       faceMarkerMode = "edit";
     } else if (props.markersVisible) {
       faceMarkerMode = "display";
@@ -76,7 +76,7 @@ function mountSidebar(options = {}) {
   // into the shared face-markers singleton. The sidebar's computeds now
   // read directly from `$faceMarkers` (mode / busy / pendingNameMarkerUid)
   // so individual tests can still drive them via the friendly props
-  // (`markersVisible`, `addingMarker`, `markersBusy`, `newMarkerUid`).
+  // (`markersVisible`, `markersEdit`, `markersBusy`, `newMarkerUid`).
   // Each `mountSidebar()` call is treated as a fresh test scope.
   $faceMarkers.reset();
   if (faceMarkerMode) {
@@ -96,7 +96,7 @@ function mountSidebar(options = {}) {
   delete props.collection;
   delete props.context;
   delete props.markersVisible;
-  delete props.addingMarker;
+  delete props.markersEdit;
   delete props.faceMarkerMode;
   delete props.markersBusy;
   delete props.newMarkerUid;
@@ -519,7 +519,11 @@ describe("PLightboxSidebar component", () => {
     });
     expect(w.html()).toContain("People");
     expect(w.find(".meta-faces-edit").exists()).toBe(true);
-    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+    // `.meta-markers-toggle` is shared by both toggle variants (the eye
+    // for read-only display and the pencil for edit, since edit-mode also
+    // toggles visibility). `.meta-faces-display` is the eye-only
+    // discriminator that should be absent in editable contexts.
+    expect(w.find(".meta-faces-display").exists()).toBe(false);
   });
 
   it("should render the pencil toggle even when the photo has no face markers (so editable users can add the first one)", () => {
@@ -530,7 +534,7 @@ describe("PLightboxSidebar component", () => {
     });
     expect(w.html()).toContain("People");
     expect(w.find(".meta-faces-edit").exists()).toBe(true);
-    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+    expect(w.find(".meta-faces-display").exists()).toBe(false);
   });
 
   it("should render only the eye toggle when not editable, on a photo with face markers", () => {
@@ -580,7 +584,7 @@ describe("PLightboxSidebar component", () => {
         "modelValue": mockModel,
         "photo": mockPhoto,
         "context": contexts.Photos,
-        "onToggle-face-marker-mode": onToggle,
+        "onToggleFaceMarkerMode": onToggle,
       },
       global: { stubs: { PMap: true } },
     });
@@ -596,7 +600,7 @@ describe("PLightboxSidebar component", () => {
         "photo": mockPhoto,
         "canEdit": true,
         "context": contexts.Photos,
-        "onToggle-face-marker-edit": onToggle,
+        "onToggleFaceMarkerEdit": onToggle,
       },
       global: { stubs: { PMap: true } },
     });
@@ -611,14 +615,14 @@ describe("PLightboxSidebar component", () => {
     expect(onToggle).toHaveBeenCalled();
   });
 
-  it("should swap the edit icon to pencil-off while addingMarker is true", () => {
+  it("should swap the edit icon to pencil-off while markersEdit is true", () => {
     const w = mountSidebar({
       props: {
         modelValue: mockModel,
         photo: mockPhoto,
         canEdit: true,
         context: contexts.Photos,
-        addingMarker: true,
+        markersEdit: true,
       },
       global: { stubs: { PMap: true } },
     });
@@ -627,7 +631,7 @@ describe("PLightboxSidebar component", () => {
     expect(btn.find("i.mdi-pencil-off-outline").exists()).toBe(true);
   });
 
-  it("should still emit toggle-face-marker-edit when addingMarker is true (so the user can exit)", async () => {
+  it("should still emit toggle-face-marker-edit when markersEdit is true (so the user can exit)", async () => {
     const onToggle = vi.fn();
     const w = mountSidebar({
       props: {
@@ -635,8 +639,8 @@ describe("PLightboxSidebar component", () => {
         "photo": mockPhoto,
         "canEdit": true,
         "context": contexts.Photos,
-        "addingMarker": true,
-        "onToggle-face-marker-edit": onToggle,
+        "markersEdit": true,
+        "onToggleFaceMarkerEdit": onToggle,
       },
       global: { stubs: { PMap: true } },
     });
@@ -671,8 +675,8 @@ describe("PLightboxSidebar component", () => {
         "canEdit": true,
         "context": contexts.Photos,
         "markersBusy": true,
-        "onToggle-face-marker-mode": onToggleMode,
-        "onToggle-face-marker-edit": onToggleDraw,
+        "onToggleFaceMarkerMode": onToggleMode,
+        "onToggleFaceMarkerEdit": onToggleDraw,
       },
       global: { stubs: { PMap: true } },
     });
@@ -690,7 +694,7 @@ describe("PLightboxSidebar component", () => {
         canEdit: true,
         context: contexts.Photos,
         markersVisible: true,
-        addingMarker: true,
+        markersEdit: true,
       },
       global: { stubs: { PMap: true } },
     });
@@ -718,28 +722,48 @@ describe("PLightboxSidebar component", () => {
     expect(w.find(".metadata__person-row").exists()).toBe(false);
   });
 
-  // Eject button (Task 2): named markers expose mdi-eject.
-  it("should render the eject icon on a named marker and emit eject-marker on click", async () => {
-    const onEject = vi.fn();
+  // Unassign button: named markers expose mdi-eject inside the
+  // combobox's #append-inner slot, but only while the People section
+  // is in edit mode (pencil on) — gated so a casual hover can't
+  // accidentally clear a face's subject assignment.
+  it("should render the Unassign icon on a named marker in edit mode and emit clear-subject on click", async () => {
+    const onClearSubject = vi.fn();
     const w = mountSidebar({
       props: {
         "modelValue": mockModel,
         "photo": mockPhoto,
         "canEdit": true,
         "context": contexts.Photos,
-        "onEject-marker": onEject,
+        "markersEdit": true,
+        "onClearSubject": onClearSubject,
       },
       global: { stubs: { PMap: true } },
     });
     const personRows = w.findAll(".metadata__person-row");
     // First row: Jane Doe (SubjUID set).
-    const ejectIcon = personRows[0].find(".meta-marker-eject");
-    expect(ejectIcon.exists()).toBe(true);
-    // Unnamed marker should NOT have an eject icon.
-    expect(personRows[1].find(".meta-marker-eject").exists()).toBe(false);
-    await ejectIcon.trigger("click");
-    expect(onEject).toHaveBeenCalledTimes(1);
-    expect(onEject.mock.calls[0][0].UID).toBe("m1");
+    const clearSubjectIcon = personRows[0].find(".meta-marker-clear-subject");
+    expect(clearSubjectIcon.exists()).toBe(true);
+    // Unnamed marker should NOT have an Unassign icon.
+    expect(personRows[1].find(".meta-marker-clear-subject").exists()).toBe(false);
+    await clearSubjectIcon.trigger("click");
+    expect(onClearSubject).toHaveBeenCalledTimes(1);
+    expect(onClearSubject.mock.calls[0][0].UID).toBe("m1");
+  });
+
+  it("should hide the Unassign icon on a named marker when not in edit mode", () => {
+    const w = mountSidebar({
+      props: {
+        modelValue: mockModel,
+        photo: mockPhoto,
+        canEdit: true,
+        context: contexts.Photos,
+      },
+      global: { stubs: { PMap: true } },
+    });
+    const personRows = w.findAll(".metadata__person-row");
+    // Even though the first row is named, the Unassign affordance is
+    // suppressed outside edit mode.
+    expect(personRows[0].find(".meta-marker-clear-subject").exists()).toBe(false);
   });
 
   // Named markers keep the combobox (so named and unnamed rows look
@@ -782,24 +806,24 @@ describe("PLightboxSidebar component", () => {
     expect(personRows[1].find(".v-combobox__menu-icon").exists()).toBe(false);
   });
 
-  it("should refuse to emit eject-marker on a marker without SubjUID", () => {
-    const onEject = vi.fn();
+  it("should refuse to emit clear-subject on a marker without SubjUID", () => {
+    const onClearSubject = vi.fn();
     const w = mountSidebar({
       props: {
         "modelValue": mockModel,
         "photo": mockPhoto,
         "canEdit": true,
         "context": contexts.Photos,
-        "onEject-marker": onEject,
+        "onClearSubject": onClearSubject,
       },
       global: { stubs: { PMap: true } },
     });
-    w.vm.onEjectMarker({ UID: "mX", SubjUID: "", Name: "" });
-    expect(onEject).not.toHaveBeenCalled();
+    w.vm.onClearSubject({ UID: "mX", SubjUID: "", Name: "" });
+    expect(onClearSubject).not.toHaveBeenCalled();
   });
 
-  it("should refuse to emit eject-marker while markersBusy is true", () => {
-    const onEject = vi.fn();
+  it("should refuse to emit clear-subject while markersBusy is true", () => {
+    const onClearSubject = vi.fn();
     const w = mountSidebar({
       props: {
         "modelValue": mockModel,
@@ -807,12 +831,12 @@ describe("PLightboxSidebar component", () => {
         "canEdit": true,
         "context": contexts.Photos,
         "markersBusy": true,
-        "onEject-marker": onEject,
+        "onClearSubject": onClearSubject,
       },
       global: { stubs: { PMap: true } },
     });
-    w.vm.onEjectMarker({ UID: "m1", SubjUID: "subj1", Name: "Jane Doe" });
-    expect(onEject).not.toHaveBeenCalled();
+    w.vm.onClearSubject({ UID: "m1", SubjUID: "subj1", Name: "Jane Doe" });
+    expect(onClearSubject).not.toHaveBeenCalled();
   });
 
   // pendingNameMarkerUid focuses the input on the freshly-created marker and
@@ -828,7 +852,7 @@ describe("PLightboxSidebar component", () => {
         "canEdit": true,
         "context": contexts.Photos,
         "newMarkerUid": null,
-        "onNaming-started": onNamingStarted,
+        "onNamingStarted": onNamingStarted,
       },
       global: { stubs: { PMap: true } },
       attachTo: document.body,
@@ -858,7 +882,7 @@ describe("PLightboxSidebar component", () => {
         "photo": photo,
         "canEdit": true,
         "context": contexts.Photos,
-        "onReload-markers": onReload,
+        "onReloadMarkers": onReload,
       },
       global: { stubs: { PMap: true } },
     });
@@ -1245,7 +1269,7 @@ describe("PLightboxSidebar component", () => {
     expect(setName).not.toHaveBeenCalled();
   });
 
-  // P1-7 — onRemoveMarker / onEjectMarker stamp _lastDestructiveMarkerActionAt;
+  // P1-7 — onRemoveMarker / onClearSubject stamp _lastDestructiveMarkerActionAt;
   // a follow-on @blur within 200ms must be ignored to prevent the destructive
   // action from racing the inline-commit path.
   it("confirmMarkerName bails when an icon click was registered <200ms ago", async () => {
@@ -1270,16 +1294,16 @@ describe("PLightboxSidebar component", () => {
     expect(setName).toHaveBeenCalledTimes(1);
   });
 
-  // P1-7 — onEjectMarker arms the destructive-action stamp even when
+  // P1-7 — onClearSubject arms the destructive-action stamp even when
   // emitting upward; the parent lightbox owns the actual mutation. The
   // sibling onRemoveMarker path was retired when the combobox's
   // mdi-close hazard moved to the overlay's edit-mode click-to-remove.
-  it("onEjectMarker arms _lastDestructiveMarkerActionAt before emitting", () => {
+  it("onClearSubject arms _lastDestructiveMarkerActionAt before emitting", () => {
     const marker = { UID: "m1", Name: "Jane Doe", SubjUID: "subj1", thumbnailUrl: () => "/t/x/p/tile_160" };
     const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([marker]) };
     const w = mountInfoForChips({ modelValue: mockModel, photo });
     expect(w.vm._lastDestructiveMarkerActionAt).toBeFalsy();
-    w.vm.onEjectMarker(marker);
+    w.vm.onClearSubject(marker);
     expect(w.vm._lastDestructiveMarkerActionAt).toBeGreaterThan(0);
   });
 
@@ -3766,9 +3790,11 @@ describe("PLightboxSidebar component", () => {
       it("renders inline pencils and only the Edit Faces toggle (no eye toggle for editable users)", () => {
         expect(w.findAll(".meta-inline-pencil").length).toBeGreaterThanOrEqual(10);
         expect(w.find(".meta-faces-edit").exists()).toBe(true);
-        // Editable users see only the pencil toggle — draw mode is a
-        // strict superset of display mode for them.
-        expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+        // Editable users see only the pencil toggle — edit mode is a
+        // strict superset of display mode for them. The pencil and the eye
+        // share `.meta-markers-toggle` (the visibility-toggle role);
+        // `.meta-faces-display` is the eye-only discriminator.
+        expect(w.find(".meta-faces-display").exists()).toBe(false);
       });
     });
 

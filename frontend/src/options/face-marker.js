@@ -1,6 +1,6 @@
 // Face-marker UI state-machine values. Shared between the lightbox
 // (`$faceMarkers.mode`), the face-marker overlay (`mode` prop), and
-// the sidebar info panel (which derives `markersVisible` / `addingMarker`
+// the sidebar info panel (which derives `markersVisible` / `markersEdit`
 // booleans from these). `null` represents the inactive state; we don't
 // give it a name because `null` is meaningful in itself.
 

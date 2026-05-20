@@ -97,7 +97,7 @@
           @close="hideSidebar"
           @toggle-face-marker-mode="toggleFaceMarkerMode"
           @toggle-face-marker-edit="toggleFaceMarkerEdit"
-          @eject-marker="onEjectFaceMarker"
+          @clear-subject="onClearMarkerSubject"
           @reload-markers="onReloadFaceMarkers"
           @naming-started="faceMarkers.setPendingNameMarkerUid('')"
         ></p-lightbox-sidebar>
@@ -1937,13 +1937,13 @@ export default {
           this.faceMarkers.setBusy(false);
         });
     },
-    // Handles the sidebar's `eject-marker` emit (⏏ button on a named
+    // Handles the sidebar's `clear-subject` emit (⏏ button on a named
     // marker). Clears the marker's subject assignment via the backend,
     // syncs the file's marker entry with fresh server values, and
     // evicts the Photo cache. The overlay re-renders via the `markers`
     // computed, which re-reads `photo.getMarkers(true)` whenever the
     // underlying `file.Markers` array is mutated.
-    onEjectFaceMarker(marker) {
+    onClearMarkerSubject(marker) {
       if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) {
         return;
       }

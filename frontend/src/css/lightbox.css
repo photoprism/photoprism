@@ -368,15 +368,15 @@
     color: rgba(var(--v-theme-on-surface), 0.6);
 }
 
-/* Per-row marker buttons (× reject, ⏏ eject) — hidden by default, revealed
+/* Per-row marker buttons (× reject, ⏏ Unassign) — hidden by default, revealed
    on row hover so a non-hovered row has no nested focusable targets. */
 .p-lightbox__container > .p-lightbox__sidebar .meta-marker-remove,
-.p-lightbox__container > .p-lightbox__sidebar .meta-marker-eject {
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-clear-subject {
     display: none;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-remove,
-.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-eject {
+.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-clear-subject {
     display: inline-flex;
 }
 

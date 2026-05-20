@@ -292,9 +292,11 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   await photoviewer.openPhotoViewer("nth", 0);
   await photoviewer.openSidebar();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).ok();
-  // Admin (Edit on) sees the pencil "Edit" button (.meta-faces-edit),
-  // not the eye .meta-markers-toggle — see info.vue per-role split.
-  await t.expect(photoviewer.markerAddButton.exists).ok();
+  // Admin (Edit on) sees the pencil "Edit" button. The pencil carries both
+  // `.meta-markers-toggle` (visibility-toggle role, shared with the eye) and
+  // `.meta-faces-edit` (edit-mode discriminator); `markersEditToggle` is the
+  // compound selector that only matches the pencil variant.
+  await t.expect(photoviewer.markersEditToggle.exists).ok();
   await photoviewer.triggerPhotoViewerAction("close-button");
 
   await menu.checkMenuItemAvailability("people", true);
@@ -322,7 +324,7 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   await photoviewer.openSidebar();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
-  await t.expect(photoviewer.markerAddButton.exists).notOk();
+  await t.expect(photoviewer.markersEditToggle.exists).notOk();
   await photoviewer.triggerPhotoViewerAction("close-button");
 
   await menu.checkMenuItemAvailability("people", false);
@@ -559,13 +561,15 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 
-  // Positive control for .meta-markers-toggle — search a photo with markers (the People
-  // section only renders the toggle when people.length > 0 for non-editable users).
+  // Positive control for the eye toggle — search a photo with markers (the People
+  // section only renders the eye when people.length > 0 for non-editable users).
+  // `markersVisibilityToggle` resolves to the eye here because the pencil branch
+  // doesn't render for non-editable sessions.
   await toolbar.search("Filmpreis");
   await photoviewer.openPhotoViewer("nth", 0);
   await photoviewer.openSidebar();
   await t.expect(photoviewer.markersVisibilityToggle.visible).ok();
-  await t.expect(photoviewer.markerAddButton.exists).notOk();
+  await t.expect(photoviewer.markersEditToggle.exists).notOk();
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 

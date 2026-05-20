@@ -117,7 +117,8 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 
 	// Obtain test database credentials.
 	//
-	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL:
+	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL (the port matches the dev
+	// MariaDB service, which defaults to 4001 unless MARIADB_PORT overrides it):
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
 	testDriver, testDsn := dsn.PhotoPrismTestToDriverDSN(0)
