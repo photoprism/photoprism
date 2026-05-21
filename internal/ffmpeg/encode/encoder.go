@@ -20,6 +20,7 @@ const (
 	VaapiAvc    Encoder = "h264_vaapi"        // VaapiAvc is the Video Acceleration API H.264 encoder.
 	NvidiaAvc   Encoder = "h264_nvenc"        // NvidiaAvc is the NVIDIA H.264 encoder.
 	V4LAvc      Encoder = "h264_v4l2m2m"      // V4LAvc is the Video4Linux H.264 encoder.
+	VulkanAvc   Encoder = "h264_vulkan"       // VulkanAvc is the Vulkan video extensions H.264 encoder (requires FFmpeg 8+).
 )
 
 // AvcEncoders is the list of supported H.264 encoders with aliases.
@@ -51,6 +52,9 @@ var AvcEncoders = map[string]Encoder{
 	"raspberry":         V4LAvc,
 	"raspberrypi":       V4LAvc,
 	string(V4LAvc):      V4LAvc,
+	"vulkan":            VulkanAvc,
+	"vk":                VulkanAvc,
+	string(VulkanAvc):   VulkanAvc,
 }
 
 // FindEncoder finds an FFmpeg encoder by name.

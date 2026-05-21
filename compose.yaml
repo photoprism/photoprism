@@ -103,7 +103,7 @@ services:
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"       # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
       MYSQL_TCP_PORT: "${MARIADB_PORT:-4001}"        # default MariaDB database port used by the "mariadb" client (see .my.cnf)
-      PGPORT: "${POSTGRES_PORT:-4002}"               # default PostgreSQL database port used by "qsql"
+      PGPORT: "${POSTGRES_PORT:-4002}"               # default PostgreSQL database port used by "psql"
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
@@ -137,7 +137,7 @@ services:
       PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, vips)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
-      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
@@ -189,7 +189,7 @@ services:
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
     image: mariadb:11
-    stop_grace_period: 10s
+    stop_grace_period: 15s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
@@ -224,6 +224,9 @@ services:
   ## Release Notes: https://www.postgresql.org/docs/release/
   postgres:
     image: postgres:18-alpine
+    ## Only starts if the "all" or "postgres" profile is specified:
+    ## docker compose --profile postgres up -d
+    profiles: [ "all", "postgres" ]
     stop_grace_period: 15s
     expose:
       - "${POSTGRES_PORT:-4002}"
@@ -246,6 +249,8 @@ services:
   ## Web UI: https://qdrant.localssl.dev/dashboard
   qdrant:
     image: qdrant/qdrant:latest
+    ## Only starts if the "all" or "qdrant" profile is specified:
+    ## docker compose --profile qdrant up -d
     profiles: [ "all", "qdrant" ]
     stop_grace_period: 10s
     links:
@@ -277,10 +282,10 @@ services:
   ## docker compose exec ollama ollama pull gemma3:latest
   ollama:
     image: ollama/ollama:latest
-    stop_grace_period: 10s
-    ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
+    ## Only starts if the "all", "ollama", or "vision" profile is specified:
     ## docker compose --profile ollama up -d
     profiles: [ "all", "ollama", "vision" ]
+    stop_grace_period: 10s
     ## Optionally publish the Ollama API on the host (no built-in auth — private/internal networks only):
     # ports:
     #   - "${SERVICES_BIND_HOST:-127.0.0.1}:11434:11434" # Ollama API
@@ -328,10 +333,10 @@ services:
   ## see https://github.com/open-webui/open-webui
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
-    stop_grace_period: 10s
-    ## Only starts this service if the "all", "ollama", "open-webui", or "vision" profile is specified::
-    ## docker compose --profile ollama up -d
+    ## Only starts if the "all", "ollama", "open-webui", or "vision" profile is specified:
+    ## docker compose --profile open-webui up -d
     profiles: [ "all", "ollama", "open-webui", "vision" ]
+    stop_grace_period: 10s
     ## Publish Open WebUI on the host (default access is via https://chat.localssl.dev/ through Traefik):
     ports:
       - "${SERVICES_BIND_HOST:-127.0.0.1}:8080:8080" # Open WebUI
@@ -356,10 +361,10 @@ services:
   ## see https://github.com/photoprism/photoprism-vision
   photoprism-vision:
     image: photoprism/vision:latest
-    stop_grace_period: 15s
-    ## Only starts this service if the "all" or "vision" profile is specified::
+    ## Only starts if the "all" or "vision" profile is specified:
     ## docker compose --profile vision up -d
     profiles: [ "all", "vision" ]
+    stop_grace_period: 15s
     working_dir: "/app"
     links:
       - "traefik:localssl.dev"
@@ -443,8 +448,10 @@ services:
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
-    stop_grace_period: 10s
+    ## Only starts if the "all", "auth", or "keycloak" profile is specified:
+    ## docker compose --profile keycloak up -d
     profiles: [ "all", "auth", "keycloak" ]
+    stop_grace_period: 10s
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
@@ -477,8 +484,10 @@ services:
   ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
   prometheus:
     image: prom/prometheus:latest
-    stop_grace_period: 10s
+    ## Only starts if the "all", "auth", or "prometheus" profile is specified:
+    ## docker compose --profile prometheus up -d
     profiles: [ "all", "auth", "prometheus" ]
+    stop_grace_period: 10s
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"

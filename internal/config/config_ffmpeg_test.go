@@ -18,6 +18,8 @@ func TestConfig_FFmpegEncoder(t *testing.T) {
 	assert.Equal(t, encode.SoftwareAvc, c.FFmpegEncoder())
 	c.options.FFmpegEncoder = "intel"
 	assert.Equal(t, encode.IntelAvc, c.FFmpegEncoder())
+	c.options.FFmpegEncoder = "vulkan"
+	assert.Equal(t, encode.VulkanAvc, c.FFmpegEncoder())
 	c.options.FFmpegEncoder = "xxx"
 	assert.Equal(t, encode.SoftwareAvc, c.FFmpegEncoder())
 	c.options.FFmpegEncoder = ""

@@ -105,6 +105,10 @@ export default {
       type: Function,
       default: null,
     },
+    maxLength: {
+      type: Number,
+      default: 0,
+    },
   },
   emits: ["update:items"],
   data() {
@@ -263,6 +267,14 @@ export default {
       }
 
       if (!title) {
+        return;
+      }
+
+      // Block the create path when the typed title exceeds the configured cap —
+      // otherwise the backend setter clips with an ellipsis and the user is
+      // shown a green success against a renamed entity they didn't intend.
+      if (this.maxLength > 0 && title.length > this.maxLength) {
+        this.$notify.error(this.$gettext("%{s} is too long", { s: this.$gettext("Name") }));
         return;
       }
 

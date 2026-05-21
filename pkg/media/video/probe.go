@@ -150,11 +150,13 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 		}
 	}
 
-	// If no AVC video was found, search the video data for High Efficiency Video Coding (HEVC) chunks,
+	// If no AVC video was found, search the file head for High Efficiency Video Coding (HEVC) chunks,
 	// see https://stackoverflow.com/questions/63468587/what-hevc-codec-tag-to-use-with-fmp4-hvc1-or-hev1.
+	// A single-pass scan covers all 8 HEVC sample-entry codes at once; the Codecs lookup table
+	// normalizes HVC1/HVC2/HVC3/DVH1 → CodecHvc1 and HEV1/HEV2/HEV3/DVHE → CodecHev1.
 	if info.VideoCodec == "" {
-		if fileOffset, fileErr := ChunkHVC1.DataOffset(file, 0, -1); fileOffset > 0 && fileErr == nil {
-			info.VideoCodec = CodecHvc1
+		if pos, hit, fileErr := HevcChunks.DataOffset(file, 0, HevcHeadScanLimit); pos > 0 && fileErr == nil {
+			info.VideoCodec = Codecs[hit.String()]
 		}
 	}
 

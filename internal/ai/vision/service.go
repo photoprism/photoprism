@@ -65,6 +65,8 @@ func (m *Service) Endpoint() (uri, method string) {
 }
 
 // GetModel returns the model identifier override for the endpoint, if any.
+// Case is preserved because upstream catalogs (e.g. Hugging Face IDs on
+// OpenAI-compatible servers) match identifiers verbatim.
 func (m *Service) GetModel() string {
 	if m.Disabled {
 		return ""
@@ -72,7 +74,7 @@ func (m *Service) GetModel() string {
 
 	ensureEnv()
 
-	return clean.TypeLower(os.ExpandEnv(m.Model))
+	return clean.Type(os.ExpandEnv(m.Model))
 }
 
 // EndpointKey returns the access token belonging to the remote service endpoint, if any.

@@ -13,6 +13,11 @@ func TestFindEncoder(t *testing.T) {
 	t.Run("Apple", func(t *testing.T) {
 		assert.Equal(t, "h264_videotoolbox", FindEncoder("apple").String())
 	})
+	t.Run("Vulkan", func(t *testing.T) {
+		assert.Equal(t, "h264_vulkan", FindEncoder("vulkan").String())
+		assert.Equal(t, "h264_vulkan", FindEncoder("vk").String())
+		assert.Equal(t, "h264_vulkan", FindEncoder("h264_vulkan").String())
+	})
 	t.Run("Unsupported", func(t *testing.T) {
 		assert.Equal(t, "libx264", FindEncoder("xxx").String())
 	})

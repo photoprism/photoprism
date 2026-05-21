@@ -420,6 +420,7 @@
                       :empty-text="$gettext('No albums assigned')"
                       :loading="loading"
                       :disabled="false"
+                      :max-length="AlbumMaxLength.Title"
                       class="input-albums"
                       @update:items="onAlbumsUpdate"
                     />
@@ -437,6 +438,7 @@
                       :empty-text="$gettext('No labels assigned')"
                       :loading="loading"
                       :disabled="false"
+                      :max-length="LabelMaxLength.Name"
                       class="input-labels"
                       @update:items="onLabelsUpdate"
                     />
@@ -501,6 +503,8 @@ import IconLivePhoto from "../icon/live-photo.vue";
 import { Batch } from "model/batch";
 import Thumb from "model/thumb";
 import { MaxLength as PhotoMaxLength } from "model/photo";
+import { MaxLength as AlbumMaxLength } from "model/album";
+import { MaxLength as LabelMaxLength } from "model/label";
 import { rules } from "common/form";
 import PMetaLocationDialog from "component/meta/location/dialog.vue";
 import PMetaLocationInput from "component/meta/location/input.vue";
@@ -557,6 +561,8 @@ export default {
       options,
       rules,
       PhotoMaxLength,
+      AlbumMaxLength,
+      LabelMaxLength,
       firstVisibleElementIndex: 0,
       lastVisibleElementIndex: 0,
       mouseDown: {

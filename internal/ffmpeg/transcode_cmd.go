@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg/nvidia"
 	"github.com/photoprism/photoprism/internal/ffmpeg/v4l"
 	"github.com/photoprism/photoprism/internal/ffmpeg/vaapi"
+	"github.com/photoprism/photoprism/internal/ffmpeg/vulkan"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -66,6 +67,8 @@ func TranscodeCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, 
 		cmd = nvidia.TranscodeToAvcCmd(srcName, destName, opt)
 	case encode.V4LAvc:
 		cmd = v4l.TranscodeToAvcCmd(srcName, destName, opt)
+	case encode.VulkanAvc:
+		cmd = vulkan.TranscodeToAvcCmd(srcName, destName, opt)
 	default:
 		cmd = encode.TranscodeToAvcCmd(srcName, destName, opt)
 	}

@@ -93,7 +93,7 @@ func (c *Config) ContentUri() string {
 
 // DownloadUrl returns the download URL based on the SiteUrl and the DownloadUri.
 func (c *Config) DownloadUrl() string {
-	return strings.TrimRight(c.options.SiteUrl, "/") + DownloadUri
+	return strings.TrimRight(c.SiteUrl(), "/") + DownloadUri
 }
 
 // VideoUri returns the video streaming URI.
@@ -118,8 +118,8 @@ func (c *Config) StaticAssetUri(res string) string {
 // SiteUrl returns the normalized public base URL (default "http://localhost:2342/").
 // Strips default ports, query strings, and fragments so absolute URLs stay stable.
 func (c *Config) SiteUrl() string {
-	if siteUrl := strings.TrimSpace(c.options.SiteUrl); siteUrl != "" {
-		return scheme.NormalizeBaseURL(siteUrl)
+	if siteUrl := scheme.NormalizeBaseURL(c.options.SiteUrl); siteUrl != "" {
+		return siteUrl
 	}
 
 	return "http://localhost:2342/"
@@ -202,7 +202,7 @@ func (c *Config) SitePreview() string {
 			return c.options.SitePreview
 
 		} else if fileName := filepath.Join(c.ThemePath(), c.options.SitePreview); fs.FileExistsNotEmpty(fileName) {
-			return strings.TrimRight(c.options.SiteUrl, "/") + path.Join(ThemeUri, c.options.SitePreview)
+			return strings.TrimRight(c.SiteUrl(), "/") + path.Join(ThemeUri, c.options.SitePreview)
 		}
 
 		return c.SiteUrl() + strings.TrimPrefix(c.options.SitePreview, "/")

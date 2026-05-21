@@ -97,7 +97,7 @@ services:
       OLLAMA_BASE_URL: "http://ollama:11434"         # use "https://ollama.com" for Ollama Cloud
       OLLAMA_API_KEY: ""                             # API key required to access Ollama (optional)
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
-      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbps (default: 60)
     working_dir: "/photoprism" # do not change or remove

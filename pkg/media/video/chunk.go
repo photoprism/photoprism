@@ -8,8 +8,6 @@ import (
 	"io"
 	"os"
 
-	"github.com/sunfish-shogi/bufseekio"
-
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -66,52 +64,9 @@ func (c Chunk) FileOffset(fileName string) (index int, err error) {
 }
 
 // DataOffset returns the index of the chunk in file, or -1 if it was not found.
+// Delegates to Chunks.DataOffset so the single-needle and multi-needle scans
+// share one buffered-read implementation.
 func (c Chunk) DataOffset(file io.ReadSeeker, offset, maxOffset int) (int, error) {
-	if file == nil {
-		return -1, errors.New("file is nil")
-	}
-
-	data := c.Bytes()
-	dataSize := len(data)
-	blockSize := 128 * 1024
-	buffer := make([]byte, blockSize)
-
-	// Create buffered read seeker.
-	r := bufseekio.NewReadSeeker(file, blockSize, dataSize)
-
-	if seekOffset, seekErr := r.Seek(int64(offset), io.SeekStart); seekErr != nil {
-		return -1, seekErr
-	} else {
-		offset = int(seekOffset)
-	}
-
-	// Search in batches.
-	for {
-		n, err := r.Read(buffer)
-		buffer = buffer[:n]
-
-		if err != nil {
-			if err != io.EOF {
-				return -1, err
-			}
-
-			break
-		} else if n == 0 {
-			break
-		}
-
-		// Return data index, if found.
-		if i := bytes.Index(buffer, data); i >= 0 {
-			return offset + i, nil
-		}
-
-		offset += n
-
-		// Return if the chunk was not found up to the maximum offset.
-		if maxOffset > 0 && maxOffset <= offset {
-			return -1, nil
-		}
-	}
-
-	return -1, nil
+	pos, _, err := Chunks{c}.DataOffset(file, offset, maxOffset)
+	return pos, err
 }
