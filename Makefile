@@ -1233,11 +1233,11 @@ dummy-ldap:
 
 # PostgreSQL-specific targets:
 docker-postgres:
-	docker pull --platform=amd64 photoprism/develop:questing
-	docker pull --platform=amd64 photoprism/develop:questing-slim
-	docker pull --platform=arm64 photoprism/develop:questing
-	docker pull --platform=arm64 photoprism/develop:questing-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 postgres /questing
+	docker pull --platform=amd64 photoprism/develop:resolute
+	docker pull --platform=amd64 photoprism/develop:resolute-slim
+	docker pull --platform=arm64 photoprism/develop:resolute
+	docker pull --platform=arm64 photoprism/develop:resolute-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 postgres /resolute
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make
