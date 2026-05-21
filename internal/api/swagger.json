@@ -9234,7 +9234,7 @@
         },
         "/api/v1/photos/timeline": {
             "get": {
-                "description": "Returns month buckets in descending local-date order.\nResult-shaping parameters such as count, offset, order, reverse, and merged are not part of this endpoint.",
+                "description": "Returns month buckets in descending local-date order.\nResult-shaping parameters such as count, offset, reverse, and merged are not part of this endpoint.\nThe order parameter is accepted only to keep order-specific search filters aligned with photo search results.",
                 "operationId": "SearchPhotoTimeline",
                 "parameters": [
                     {
@@ -9279,6 +9279,29 @@
                         "description": "album uid",
                         "in": "query",
                         "name": "s",
+                        "type": "string"
+                    },
+                    {
+                        "description": "search order filters",
+                        "enum": [
+                            "added",
+                            "archived",
+                            "duration",
+                            "edited",
+                            "imported",
+                            "name",
+                            "newest",
+                            "oldest",
+                            "random",
+                            "relevance",
+                            "similar",
+                            "size",
+                            "title",
+                            "updated",
+                            "updated_at"
+                        ],
+                        "in": "query",
+                        "name": "order",
                         "type": "string"
                     },
                     {

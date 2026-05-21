@@ -1464,7 +1464,6 @@ export class Photo extends RestModel {
     delete values.count;
     delete values.offset;
     delete values.merged;
-    delete values.order;
     delete values.reverse;
     delete values.view;
 

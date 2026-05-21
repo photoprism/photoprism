@@ -60,15 +60,15 @@ func UserPhotoTimeline(frm form.SearchPhotos, sess *entity.Session, bucket strin
 
 	frm.Count = 0
 	frm.Offset = 0
-	frm.Order = ""
 	frm.Reverse = false
 	frm.Merged = false
 
 	query, err := newSearchPhotosQueryWithOptions(frm, sess, searchPhotosQueryOptions{
-		applyOrder:      false,
-		applyPagination: false,
-		applyLabelGroup: false,
-		allowUIDFast:    false,
+		applyOrder:        false,
+		applyOrderFilters: true,
+		applyPagination:   false,
+		applyLabelGroup:   false,
+		allowUIDFast:      false,
 	})
 
 	if err != nil {

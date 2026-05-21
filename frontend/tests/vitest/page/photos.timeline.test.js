@@ -94,6 +94,7 @@ describe("page/photos.vue timeline rail", () => {
       year: 2024,
       month: 5,
       day: 21,
+      order: "newest",
       public: "",
       quality: "3",
       q: "cats",

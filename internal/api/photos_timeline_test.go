@@ -125,7 +125,18 @@ func TestSearchPhotoTimeline(t *testing.T) {
 		assert.Equal(t, "1990-04", gjson.Get(body, "buckets.0.key").String())
 	})
 
-	t.Run("OrderRejected", func(t *testing.T) {
+	t.Run("OrderFilterAccepted", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SearchPhotoTimeline(router)
+
+		r := PerformRequest(app, "GET", "/api/v1/photos/timeline?bucket=month&order=similar")
+		body := r.Body.String()
+
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "desc", gjson.Get(body, "order").String())
+	})
+
+	t.Run("InvalidOrderRejected", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchPhotoTimeline(router)
 
@@ -134,13 +145,16 @@ func TestSearchPhotoTimeline(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 
-	t.Run("EmptyOrderRejected", func(t *testing.T) {
+	t.Run("EmptyOrderIgnored", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchPhotoTimeline(router)
 
 		r := PerformRequest(app, "GET", "/api/v1/photos/timeline?bucket=month&uid=ps6sg6be2lvl0yh0&order=")
+		body := r.Body.String()
 
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "desc", gjson.Get(body, "order").String())
+		assert.Equal(t, int64(1), gjson.Get(body, "photoCount").Int())
 	})
 
 	t.Run("InvalidFilterRejected", func(t *testing.T) {

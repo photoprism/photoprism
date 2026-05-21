@@ -48,13 +48,6 @@ func photosTimelineForm(c *gin.Context) (frm form.SearchPhotos, bucket string, s
 		return frm, bucket, s, err
 	}
 
-	if values.Has("order") {
-		err = fmt.Errorf("unsupported timeline order")
-		event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourceCalendar), "timeline order invalid", status.Error(err)}, s.RefID)
-		AbortBadRequest(c, err)
-		return frm, bucket, s, err
-	}
-
 	// Abort if request params are invalid.
 	if err = bindPhotoTimelineFilters(values, &frm); err != nil {
 		event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourceCalendar), "timeline form invalid", status.Error(err)}, s.RefID)
@@ -84,7 +77,6 @@ func photosTimelineForm(c *gin.Context) (frm form.SearchPhotos, bucket string, s
 	// Timeline buckets do not use seek/pagination or file-merge semantics.
 	frm.Count = 0
 	frm.Offset = 0
-	frm.Order = ""
 	frm.Reverse = false
 	frm.Merged = false
 
@@ -102,7 +94,6 @@ func bindPhotoTimelineFilters(values url.Values, frm *form.SearchPhotos) error {
 	filters.Del("bucket")
 	filters.Del("count")
 	filters.Del("offset")
-	filters.Del("order")
 	filters.Del("reverse")
 	filters.Del("merged")
 
@@ -113,7 +104,8 @@ func bindPhotoTimelineFilters(values url.Values, frm *form.SearchPhotos) error {
 //
 //	@Summary		returns local photo timeline buckets
 //	@Description	Returns month buckets in descending local-date order.
-//	@Description	Result-shaping parameters such as count, offset, order, reverse, and merged are not part of this endpoint.
+//	@Description	Result-shaping parameters such as count, offset, reverse, and merged are not part of this endpoint.
+//	@Description	The order parameter is accepted only to keep order-specific search filters aligned with photo search results.
 //	@Id				SearchPhotoTimeline
 //	@Tags			Photos
 //	@Produce		json
@@ -124,6 +116,7 @@ func bindPhotoTimelineFilters(values url.Values, frm *form.SearchPhotos) error {
 //	@Param			quality			query		int		false	"minimum quality score (1-7)"	Enums(0, 1, 2, 3, 4, 5, 6, 7)
 //	@Param			q				query		string	false	"search query"
 //	@Param			s				query		string	false	"album uid"
+//	@Param			order			query		string	false	"search order filters"	Enums(added, archived, duration, edited, imported, name, newest, oldest, random, relevance, similar, size, title, updated, updated_at)
 //	@Param			path			query		string	false	"photo path"
 //	@Param			video			query		bool	false	"is type video"
 //	@Router			/api/v1/photos/timeline [get]

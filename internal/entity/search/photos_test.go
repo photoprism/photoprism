@@ -2660,6 +2660,57 @@ func TestUserPhotoTimeline(t *testing.T) {
 		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
 	})
 
+	t.Run("OrderFiltersMatchPhotoSearch", func(t *testing.T) {
+		for _, order := range []string{sortby.Similar, sortby.Edited, sortby.Updated, sortby.UpdatedAt, sortby.Size, sortby.Random} {
+			t.Run(order, func(t *testing.T) {
+				photos, _, err := Photos(form.SearchPhotos{Order: order, Count: MaxResults})
+
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				expectedPhotos := make(map[string]struct{})
+				expectedBuckets := make(map[string]map[string]struct{})
+
+				for _, photo := range photos {
+					expectedPhotos[photo.PhotoUID] = struct{}{}
+
+					if photo.PhotoYear <= 0 || photo.PhotoMonth <= 0 {
+						continue
+					}
+
+					key := time.Date(photo.PhotoYear, time.Month(photo.PhotoMonth), 1, 0, 0, 0, 0, time.UTC).Format("2006-01")
+
+					if expectedBuckets[key] == nil {
+						expectedBuckets[key] = make(map[string]struct{})
+					}
+
+					expectedBuckets[key][photo.PhotoUID] = struct{}{}
+				}
+
+				timeline, err := UserPhotoTimeline(form.SearchPhotos{Order: order}, nil, PhotoTimelineBucketMonth)
+
+				assert.NoError(t, err)
+				assert.Equal(t, len(expectedPhotos), timeline.PhotoCount)
+				assert.Len(t, timeline.Buckets, len(expectedBuckets))
+
+				for i, bucket := range timeline.Buckets {
+					assert.Equal(t, len(expectedBuckets[bucket.Key]), bucket.PhotoCount)
+
+					if i > 0 {
+						assert.GreaterOrEqual(t, timeline.Buckets[i-1].Key, bucket.Key)
+					}
+				}
+			})
+		}
+	})
+
+	t.Run("InvalidOrder", func(t *testing.T) {
+		_, err := UserPhotoTimeline(form.SearchPhotos{Order: "asc"}, nil, PhotoTimelineBucketMonth)
+
+		assert.ErrorIs(t, err, ErrBadSortOrder)
+	})
+
 	t.Run("PrimaryFilterIsSupported", func(t *testing.T) {
 		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: uid, Primary: true}, nil, PhotoTimelineBucketMonth)
 

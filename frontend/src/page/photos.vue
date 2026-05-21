@@ -218,7 +218,6 @@ export default {
       const ignored = {
         count: true,
         offset: true,
-        order: true,
         reverse: true,
         merged: true,
         view: true,
