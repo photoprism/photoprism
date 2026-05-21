@@ -48,7 +48,7 @@ func TestDialectMysql(t *testing.T) {
 
 		log = logrus.StandardLogger()
 		log.SetLevel(logrus.TraceLevel)
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMySQL, "migrate", testextras.GetDBMutexID())
+		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
 
 		db, err := gorm.Open(mysql.Open(
 			dbDSN.ToString()),
