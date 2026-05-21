@@ -394,6 +394,32 @@
             </v-list-item>
 
             <v-list-item
+              v-if="isMini && $config.feature('calendar')"
+              :to="{ name: 'discover_memories' }"
+              variant="text"
+              class="nav-discover-memories"
+              :ripple="false"
+              @click.stop=""
+            >
+              <v-icon class="ma-auto">mdi-history</v-icon>
+            </v-list-item>
+            <v-list-item
+              v-else-if="!isMini && $config.feature('calendar')"
+              :to="{ name: 'discover_memories' }"
+              variant="text"
+              class="nav-discover-memories"
+              :ripple="false"
+              @click.stop=""
+            >
+              <v-list-item-title class="nav-menu-item">
+                <v-icon>mdi-history</v-icon>
+                <p class="nav-item-title">
+                  {{ $gettext(`Memories`) }}
+                </p>
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
               v-if="isMini && $config.feature('moments')"
               :to="{ name: 'moments' }"
               variant="text"

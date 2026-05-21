@@ -5,6 +5,10 @@
         {{ $gettext(`Colors`) }}
       </v-tab>
 
+      <v-tab id="tab-discover-memories" ripple @click="changePath('/discover/memories')">
+        {{ $gettext(`Memories`) }}
+      </v-tab>
+
       <v-tab id="tab-discover-similar" ripple @click="changePath('/discover/similar')">
         {{ $gettext(`Similar`) }}
       </v-tab>
@@ -20,6 +24,10 @@
       <v-tabs-window v-model="active">
         <v-tabs-window-item>
           <p-tab-discover-colors></p-tab-discover-colors>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item>
+          <p-tab-discover-memories></p-tab-discover-memories>
         </v-tabs-window-item>
 
         <v-tabs-window-item>
@@ -40,12 +48,14 @@
 
 <script>
 import tabColors from "page/discover/colors.vue";
+import tabMemories from "page/discover/memories.vue";
 import tabTodo from "page/discover/todo.vue";
 
 export default {
   name: "PPageDiscover",
   components: {
     "p-tab-discover-colors": tabColors,
+    "p-tab-discover-memories": tabMemories,
     "p-tab-discover-todo": tabTodo,
   },
   props: {
@@ -59,6 +69,11 @@ export default {
       readonly: this.$config.get("readonly"),
       active: this.tab,
     };
+  },
+  watch: {
+    tab(value) {
+      this.active = value;
+    },
   },
   mounted() {
     this.$view.enter(this);

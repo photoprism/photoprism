@@ -134,7 +134,10 @@ function mountNavigation({
       },
       stubs: {
         "router-link": { template: "<a><slot /></a>" },
-        "v-navigation-drawer": true,
+        "v-navigation-drawer": { template: "<div><slot /></div>" },
+        "v-list": { template: "<div><slot /></div>" },
+        "v-list-item": { template: "<div><slot /></div>" },
+        "v-list-item-title": { template: "<div><slot /></div>" },
       },
     },
   });
@@ -192,6 +195,16 @@ describe("component/navigation", () => {
     it("visible is false when route meta.hideNav is true", () => {
       const { wrapper } = mountNavigation({ routeMeta: { hideNav: true } });
       expect(wrapper.vm.visible).toBe(false);
+    });
+  });
+
+  describe("feature navigation", () => {
+    it("shows Memories when calendar search is enabled", () => {
+      const { wrapper } = mountNavigation({
+        featureOverrides: { calendar: true },
+      });
+
+      expect(wrapper.find(".nav-discover-memories").exists()).toBe(true);
     });
   });
 
