@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import "../fixtures";
+import { Mock } from "../fixtures";
 import * as media from "common/media";
 import { Photo, BatchSize, MaxLength } from "model/photo";
 import $event from "common/event";
@@ -528,6 +528,51 @@ describe("model/photo", () => {
   it("should get collection resource", () => {
     const result = Photo.getCollectionResource();
     expect(result).toBe("photos");
+  });
+
+  it("should get photo timeline with sanitized params", async () => {
+    const params = {
+      q: "sunset",
+      label: "vacation",
+      country: "de",
+      public: "",
+      private: "true",
+      quality: 3,
+      count: 25,
+      offset: 50,
+      merged: true,
+      order: "taken_at",
+      reverse: true,
+      view: "list",
+      year: 2024,
+      month: 5,
+      day: 21,
+    };
+    const original = { ...params };
+    const response = { bucket: "month", count: 1, entries: [{ date: "2024-05", count: 1 }] };
+
+    Mock.history.get.length = 0;
+    Mock.onGet("api/v1/photos/timeline").reply(200, response);
+
+    const result = await Photo.timeline(params);
+
+    expect(result).toEqual(response);
+    expect(params).toEqual(original);
+    expect(Mock.history.get).toHaveLength(1);
+    const call = Mock.history.get[0];
+    expect(call.url).toMatch(/photos\/timeline$/);
+    expect(call.params).toEqual({
+      q: "sunset",
+      label: "vacation",
+      country: "de",
+      public: "",
+      private: "true",
+      quality: 3,
+      bucket: "month",
+      year: 2024,
+      month: 5,
+      day: 21,
+    });
   });
 
   it("should return batch size", () => {

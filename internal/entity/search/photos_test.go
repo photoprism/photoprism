@@ -2460,3 +2460,274 @@ func TestPhotos(t *testing.T) {
 		assert.True(t, foundRight)
 	})
 }
+
+func TestPhotosUidOnlyMergedBehavior(t *testing.T) {
+	const uid = "ps6sg6be2lvl0yh0"
+
+	t.Run("Unmerged", func(t *testing.T) {
+		frm := form.SearchPhotos{UID: uid}
+
+		photos, count, err := Photos(frm)
+
+		assert.NoError(t, err)
+		assert.Len(t, photos, 3)
+		assert.Equal(t, 3, count)
+
+		for _, photo := range photos {
+			assert.Equal(t, uid, photo.PhotoUID)
+			assert.Empty(t, photo.Files)
+		}
+	})
+
+	t.Run("Merged", func(t *testing.T) {
+		frm := form.SearchPhotos{UID: uid, Merged: true}
+
+		photos, count, err := Photos(frm)
+
+		assert.NoError(t, err)
+		assert.Len(t, photos, 1)
+		assert.Equal(t, 3, count)
+		assert.Equal(t, uid, photos[0].PhotoUID)
+		assert.True(t, photos[0].Merged)
+		assert.Len(t, photos[0].Files, 3)
+	})
+
+	t.Run("CountAndOffsetDoNotDisableUidOnlyPath", func(t *testing.T) {
+		frm := form.SearchPhotos{
+			UID:    uid,
+			Count:  1,
+			Offset: 1,
+			Merged: true,
+		}
+
+		photos, count, err := Photos(frm)
+
+		assert.NoError(t, err)
+		assert.Len(t, photos, 1)
+		assert.Equal(t, 3, count)
+		assert.Equal(t, uid, photos[0].PhotoUID)
+		assert.Len(t, photos[0].Files, 3)
+	})
+
+	t.Run("LabelFieldDoesNotDisableUidOnlyPath", func(t *testing.T) {
+		frm := form.SearchPhotos{
+			UID:    uid,
+			Label:  "totally-unknown-label",
+			Merged: true,
+		}
+
+		photos, count, err := Photos(frm)
+
+		assert.NoError(t, err)
+		assert.Len(t, photos, 1)
+		assert.Equal(t, 3, count)
+		assert.Equal(t, uid, photos[0].PhotoUID)
+		assert.Len(t, photos[0].Files, 3)
+	})
+
+	t.Run("ParsedQueryLabelDoesNotDisableUidOnlyPath", func(t *testing.T) {
+		frm := form.SearchPhotos{
+			UID:    uid,
+			Query:  `label:"totally-unknown-label"`,
+			Merged: true,
+		}
+
+		photos, count, err := Photos(frm)
+
+		assert.NoError(t, err)
+		assert.Len(t, photos, 1)
+		assert.Equal(t, 3, count)
+		assert.Equal(t, uid, photos[0].PhotoUID)
+		assert.Len(t, photos[0].Files, 3)
+	})
+}
+
+func TestUserPhotoTimeline(t *testing.T) {
+	const uid = "ps6sg6be2lvl0yh0"
+
+	t.Run("MonthBucketCountsMergedPhotoOnce", func(t *testing.T) {
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: uid}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, PhotoTimelineBucketMonth, timeline.Bucket)
+		assert.Equal(t, PhotoTimelineOrderDesc, timeline.Order)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Equal(t, 0, timeline.UnknownDateCount)
+		assert.Len(t, timeline.Buckets, 1)
+		assert.Equal(t, "1990-04", timeline.Buckets[0].Key)
+		assert.Equal(t, 1990, timeline.Buckets[0].Year)
+		assert.Equal(t, 4, timeline.Buckets[0].Month)
+		assert.Nil(t, timeline.Buckets[0].Day)
+		assert.Equal(t, "1990-04-01", timeline.Buckets[0].From)
+		assert.Equal(t, "1990-05-01", timeline.Buckets[0].Until)
+		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
+	})
+
+	t.Run("MonthBucketsAreDescending", func(t *testing.T) {
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: "ps6sg6be2lvl0y11|ps6sg6be2lvl0yh0"}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, PhotoTimelineOrderDesc, timeline.Order)
+		assert.Equal(t, 2, timeline.PhotoCount)
+		assert.Equal(t, 0, timeline.UnknownDateCount)
+		assert.Len(t, timeline.Buckets, 2)
+		assert.Equal(t, "2014-07", timeline.Buckets[0].Key)
+		assert.Equal(t, "1990-04", timeline.Buckets[1].Key)
+	})
+
+	t.Run("MonthBucketIncludesIncompleteDay", func(t *testing.T) {
+		incompleteUID := "ps6sg6be2lvl0y11"
+
+		assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", incompleteUID).UpdateColumn("photo_day", 0).Error)
+
+		t.Cleanup(func() {
+			assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", incompleteUID).UpdateColumn("photo_day", 10).Error)
+		})
+
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: incompleteUID}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Equal(t, 0, timeline.UnknownDateCount)
+		assert.Len(t, timeline.Buckets, 1)
+		assert.Equal(t, "2014-07", timeline.Buckets[0].Key)
+		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
+	})
+
+	t.Run("DayBucketTreatsIncompleteDayAsUnknown", func(t *testing.T) {
+		incompleteUID := "ps6sg6be2lvl0y11"
+
+		assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", incompleteUID).UpdateColumn("photo_day", 0).Error)
+
+		t.Cleanup(func() {
+			assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", incompleteUID).UpdateColumn("photo_day", 10).Error)
+		})
+
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: incompleteUID}, nil, PhotoTimelineBucketDay)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Equal(t, 1, timeline.UnknownDateCount)
+		assert.Empty(t, timeline.Buckets)
+	})
+
+	t.Run("DayBucketUsesLocalDateFields", func(t *testing.T) {
+		localUID := "ps6sg6be2lvl0y11"
+		takenAt := time.Date(2020, 6, 30, 23, 30, 0, 0, time.UTC)
+		takenAtLocal := time.Date(2020, 7, 1, 1, 30, 0, 0, time.UTC)
+
+		assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", localUID).UpdateColumns(entity.Values{
+			"taken_at":       takenAt,
+			"taken_at_local": takenAtLocal,
+			"photo_year":     2020,
+			"photo_month":    7,
+			"photo_day":      1,
+		}).Error)
+
+		t.Cleanup(func() {
+			assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", localUID).UpdateColumns(entity.Values{
+				"taken_at":       time.Date(2014, 7, 17, 15, 42, 12, 0, time.UTC),
+				"taken_at_local": time.Date(2014, 7, 17, 17, 42, 12, 0, time.UTC),
+				"photo_year":     2014,
+				"photo_month":    7,
+				"photo_day":      10,
+			}).Error)
+		})
+
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: localUID}, nil, PhotoTimelineBucketDay)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Equal(t, 0, timeline.UnknownDateCount)
+		assert.Len(t, timeline.Buckets, 1)
+		assert.Equal(t, "2020-07-01", timeline.Buckets[0].Key)
+		assert.Equal(t, "2020-07-01", timeline.Buckets[0].From)
+		assert.Equal(t, "2020-07-02", timeline.Buckets[0].Until)
+		assert.NotNil(t, timeline.Buckets[0].Day)
+
+		if timeline.Buckets[0].Day != nil {
+			assert.Equal(t, 1, *timeline.Buckets[0].Day)
+		}
+	})
+
+	t.Run("CountAndOffsetDoNotChangeBuckets", func(t *testing.T) {
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: uid, Count: 1, Offset: 1}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Len(t, timeline.Buckets, 1)
+		assert.Equal(t, "1990-04", timeline.Buckets[0].Key)
+		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
+	})
+
+	t.Run("PrimaryFilterIsSupported", func(t *testing.T) {
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: uid, Primary: true}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Len(t, timeline.Buckets, 1)
+		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
+	})
+
+	t.Run("UnknownDateCount", func(t *testing.T) {
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: "ps6sg6be2lvl0y45"}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Equal(t, 1, timeline.UnknownDateCount)
+		assert.Empty(t, timeline.Buckets)
+	})
+
+	t.Run("NullDateFieldsCountAsUnknown", func(t *testing.T) {
+		nullUID := "ps6sg6be2lvl0y11"
+
+		assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", nullUID).UpdateColumns(entity.Values{
+			"photo_year":  nil,
+			"photo_month": nil,
+			"photo_day":   nil,
+		}).Error)
+
+		t.Cleanup(func() {
+			assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", nullUID).UpdateColumns(entity.Values{
+				"photo_year":  2014,
+				"photo_month": 7,
+				"photo_day":   10,
+			}).Error)
+		})
+
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: nullUID}, nil, PhotoTimelineBucketDay)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Equal(t, 1, timeline.UnknownDateCount)
+		assert.Empty(t, timeline.Buckets)
+	})
+
+	t.Run("LabelFilterDoesNotDuplicatePhotoCount", func(t *testing.T) {
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{
+			UID:   uid,
+			Label: "cow|updatePhotoLabel",
+		}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 1, timeline.PhotoCount)
+		assert.Len(t, timeline.Buckets, 1)
+		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
+	})
+
+	t.Run("NoMatchReturnsEmptyBucketSlice", func(t *testing.T) {
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{Label: "totally-unknown-label"}, nil, PhotoTimelineBucketMonth)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 0, timeline.PhotoCount)
+		assert.Equal(t, 0, timeline.UnknownDateCount)
+		assert.NotNil(t, timeline.Buckets)
+		assert.Empty(t, timeline.Buckets)
+	})
+
+	t.Run("InvalidBucket", func(t *testing.T) {
+		_, err := UserPhotoTimeline(form.SearchPhotos{UID: uid}, nil, "year")
+
+		assert.ErrorIs(t, err, ErrBadRequest)
+	})
+}

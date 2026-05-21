@@ -1457,6 +1457,21 @@ export class Photo extends RestModel {
 
     return results.concat(response.models);
   }
+
+  static timeline(params) {
+    const values = params ? { ...params } : {};
+
+    delete values.count;
+    delete values.offset;
+    delete values.merged;
+    delete values.order;
+    delete values.reverse;
+    delete values.view;
+
+    values.bucket = params?.bucket || "month";
+
+    return $api.get(this.getCollectionResource() + "/timeline", { params: values }).then((resp) => resp.data);
+  }
 }
 
 // evictCachedFromEntities drops cached entries from a WS payload, accepting

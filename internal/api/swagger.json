@@ -4301,6 +4301,58 @@
             },
             "type": "object"
         },
+        "search.PhotoTimeline": {
+            "properties": {
+                "bucket": {
+                    "type": "string"
+                },
+                "buckets": {
+                    "items": {
+                        "$ref": "#/definitions/search.PhotoTimelineBucket"
+                    },
+                    "type": "array"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "photoCount": {
+                    "type": "integer"
+                },
+                "unknownDateCount": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "search.PhotoTimelineBucket": {
+            "properties": {
+                "day": {
+                    "type": "integer"
+                },
+                "from": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "month": {
+                    "type": "integer"
+                },
+                "photoCount": {
+                    "type": "integer"
+                },
+                "until": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
         "search.Subject": {
             "properties": {
                 "Alias": {
@@ -9175,6 +9227,109 @@
                     }
                 },
                 "summary": "finds pictures and returns them as JSON",
+                "tags": [
+                    "Photos"
+                ]
+            }
+        },
+        "/api/v1/photos/timeline": {
+            "get": {
+                "description": "Returns month buckets in descending local-date order.\nResult-shaping parameters such as count, offset, order, reverse, and merged are not part of this endpoint.",
+                "operationId": "SearchPhotoTimeline",
+                "parameters": [
+                    {
+                        "description": "timeline bucket",
+                        "enum": [
+                            "month"
+                        ],
+                        "in": "query",
+                        "name": "bucket",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "excludes private pictures",
+                        "in": "query",
+                        "name": "public",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "minimum quality score (1-7)",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                        ],
+                        "in": "query",
+                        "name": "quality",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "search query",
+                        "in": "query",
+                        "name": "q",
+                        "type": "string"
+                    },
+                    {
+                        "description": "album uid",
+                        "in": "query",
+                        "name": "s",
+                        "type": "string"
+                    },
+                    {
+                        "description": "photo path",
+                        "in": "query",
+                        "name": "path",
+                        "type": "string"
+                    },
+                    {
+                        "description": "is type video",
+                        "in": "query",
+                        "name": "video",
+                        "type": "boolean"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/search.PhotoTimeline"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "returns local photo timeline buckets",
                 "tags": [
                     "Photos"
                 ]

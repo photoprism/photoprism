@@ -11,12 +11,55 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/config/pwa"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
+
+func TestRegisterRoutesSearchPhotoTimeline(t *testing.T) {
+	r := gin.New()
+	conf := config.TestConfig()
+
+	r.LoadHTMLFiles(conf.TemplateFiles()...)
+
+	oldAPIv1 := APIv1
+	oldRegisterAPIDocs := registerAPIDocs
+
+	APIv1 = r.Group(conf.BaseUri(config.ApiUri), APIMiddleware(conf))
+	registerAPIDocs = nil
+
+	t.Cleanup(func() {
+		APIv1 = oldAPIv1
+		registerAPIDocs = oldRegisterAPIDocs
+	})
+
+	registerRoutes(r, conf)
+
+	t.Run("TimelineRoute", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(header.MethodGet, conf.BaseUri(config.ApiUri+"/photos/timeline")+"?bucket=month&uid=ps6sg6be2lvl0yh0", nil)
+
+		r.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "month", gjson.Get(w.Body.String(), "bucket").String())
+		assert.Equal(t, "desc", gjson.Get(w.Body.String(), "order").String())
+		assert.Equal(t, int64(1), gjson.Get(w.Body.String(), "photoCount").Int())
+	})
+
+	t.Run("PhotoUidRoute", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(header.MethodGet, conf.BaseUri(config.ApiUri+"/photos/ps6sg6be2lvl0yh0"), nil)
+
+		r.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "ps6sg6be2lvl0yh0", gjson.Get(w.Body.String(), "UID").String())
+	})
+}
 
 func TestStaticRoutes(t *testing.T) {
 	// Create router.

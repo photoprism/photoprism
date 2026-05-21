@@ -23,40 +23,53 @@
 
       <p-photo-clipboard :context="context" :refresh="refresh"></p-photo-clipboard>
 
-      <p-photo-view-mosaic
-        v-if="settings.view === 'mosaic'"
-        :context="context"
-        :photos="results"
-        :select-mode="selectMode"
-        :filter="filter"
-        :edit-photo="editPhoto"
-        :open-photo="openPhoto"
-        :is-shared-view="isShared"
-      ></p-photo-view-mosaic>
-      <p-photo-view-list
-        v-else-if="settings.view === 'list'"
-        :context="context"
-        :photos="results"
-        :select-mode="selectMode"
-        :filter="filter"
-        :open-photo="openPhoto"
-        :edit-photo="editPhoto"
-        :open-date="openDate"
-        :open-location="openLocation"
-        :is-shared-view="isShared"
-      ></p-photo-view-list>
-      <p-photo-view-cards
-        v-else
-        :context="context"
-        :photos="results"
-        :select-mode="selectMode"
-        :filter="filter"
-        :open-photo="openPhoto"
-        :edit-photo="editPhoto"
-        :open-date="openDate"
-        :open-location="openLocation"
-        :is-shared-view="isShared"
-      ></p-photo-view-cards>
+      <div class="p-photo-results" :class="{ 'p-photo-results--with-timeline': timelineVisible }">
+        <div class="p-photo-results__views">
+          <p-photo-view-mosaic
+            v-if="settings.view === 'mosaic'"
+            :context="context"
+            :photos="results"
+            :select-mode="selectMode"
+            :filter="filter"
+            :edit-photo="editPhoto"
+            :open-photo="openPhoto"
+            :is-shared-view="isShared"
+          ></p-photo-view-mosaic>
+          <p-photo-view-list
+            v-else-if="settings.view === 'list'"
+            :context="context"
+            :photos="results"
+            :select-mode="selectMode"
+            :filter="filter"
+            :open-photo="openPhoto"
+            :edit-photo="editPhoto"
+            :open-date="openDate"
+            :open-location="openLocation"
+            :is-shared-view="isShared"
+          ></p-photo-view-list>
+          <p-photo-view-cards
+            v-else
+            :context="context"
+            :photos="results"
+            :select-mode="selectMode"
+            :filter="filter"
+            :open-photo="openPhoto"
+            :edit-photo="editPhoto"
+            :open-date="openDate"
+            :open-location="openLocation"
+            :is-shared-view="isShared"
+          ></p-photo-view-cards>
+        </div>
+
+        <div v-if="timelineEnabled" v-show="timelineVisible" class="p-photo-results__timeline">
+          <p-photo-timeline
+            :filter="timelineParams"
+            :refresh-token="timelineRefreshToken"
+            :update-query="updateQuery"
+            @visibility="setTimelineVisible"
+          ></p-photo-timeline>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -68,6 +81,7 @@ import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION
 import * as contexts from "options/contexts";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
+import PPhotoTimeline from "component/photo/timeline.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
 import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
 import PPhotoViewList from "component/photo/view/list.vue";
@@ -82,6 +96,7 @@ export default {
   components: {
     PPhotoToolbar,
     PPhotoClipboard,
+    PPhotoTimeline,
     PPhotoViewCards,
     PPhotoViewMosaic,
     PPhotoViewList,
@@ -112,6 +127,7 @@ export default {
     const lens = query["lens"] ? parseInt(query["lens"]) : 0;
     const year = query["year"] ? parseInt(query["year"]) : 0;
     const month = query["month"] ? parseInt(query["month"]) : 0;
+    const day = query["day"] ? parseInt(query["day"]) : 0;
     const color = query["color"] ? query["color"] : "";
     const label = query["label"] ? query["label"] : "";
     const latlng = query["latlng"] ? query["latlng"] : "";
@@ -125,6 +141,7 @@ export default {
       latlng: latlng,
       year: year,
       month: month,
+      day: day,
       color: color,
       order: order,
       reverse: this.sortReverse(),
@@ -168,6 +185,8 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
+      timelineRefreshToken: 0,
+      timelineRailVisible: true,
       loading: true,
       lightbox: {
         results: [],
@@ -185,6 +204,47 @@ export default {
     },
     context: function () {
       return this.getContext();
+    },
+    // timelineEnabled keeps the rail out of disabled, embedded, and mobile layouts.
+    timelineEnabled: function () {
+      return !this.embedded && !!this.$vuetify?.display?.mdAndUp && this.$config.feature("calendar") && this.$config.allow("calendar", "search");
+    },
+    timelineVisible: function () {
+      return this.timelineEnabled && this.timelineRailVisible;
+    },
+    // timelineParams mirrors search filters without result-shaping params.
+    timelineParams: function () {
+      const params = {};
+      const ignored = {
+        count: true,
+        offset: true,
+        order: true,
+        reverse: true,
+        merged: true,
+        view: true,
+      };
+      const addFilter = (filter, keepOverrides) => {
+        if (!filter || typeof filter !== "object") {
+          return;
+        }
+
+        for (const [key, value] of Object.entries(filter)) {
+          if (ignored[key] || value === undefined || value === null) {
+            continue;
+          }
+
+          if (!keepOverrides && (value === "" || value === false || value === 0)) {
+            continue;
+          }
+
+          params[key] = value;
+        }
+      };
+
+      addFilter(this.filter, false);
+      addFilter(this.staticFilter, true);
+
+      return params;
     },
   },
   watch: {
@@ -214,6 +274,7 @@ export default {
       this.filter.lens = query["lens"] ? parseInt(query["lens"]) : 0;
       this.filter.year = query["year"] ? parseInt(query["year"]) : 0;
       this.filter.month = query["month"] ? parseInt(query["month"]) : 0;
+      this.filter.day = query["day"] ? parseInt(query["day"]) : 0;
       this.filter.color = query["color"] ? query["color"] : "";
       this.filter.label = query["label"] ? query["label"] : "";
       this.filter.latlng = query["latlng"] ? query["latlng"] : "";
@@ -579,8 +640,25 @@ export default {
         }
       }
     },
+    refreshTimeline() {
+      this.timelineRefreshToken++;
+    },
+    setTimelineVisible(visible) {
+      this.timelineRailVisible = !!visible;
+    },
     updateQuery(props) {
-      this.updateFilter(props);
+      let updates = props;
+
+      if (props && typeof props === "object" && !props.target) {
+        const hasDay = Object.prototype.hasOwnProperty.call(props, "day");
+        const hasDateScope = Object.prototype.hasOwnProperty.call(props, "year") || Object.prototype.hasOwnProperty.call(props, "month");
+
+        if (hasDateScope && !hasDay) {
+          updates = { ...props, day: 0 };
+        }
+      }
+
+      this.updateFilter(updates);
 
       if (this.loading) {
         return false;
@@ -644,6 +722,7 @@ export default {
       // Enable infinite scrolling if it was disabled.
       this.scrollDisabled = false;
 
+      this.refreshTimeline();
       this.loadMore(true);
     },
     reset() {
@@ -731,6 +810,7 @@ export default {
         return;
       }
 
+      this.refreshTimeline();
       this.loadMore(true);
     },
     updateResults(entity) {
@@ -771,9 +851,11 @@ export default {
       }
 
       const type = ev.split(".")[1];
+      let refreshTimeline = false;
 
       switch (type) {
         case ACTION_UPDATED:
+          refreshTimeline = true;
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
 
@@ -787,6 +869,7 @@ export default {
           }
           break;
         case ACTION_RESTORED:
+          refreshTimeline = true;
           this.dirty = true;
           this.complete = false;
 
@@ -803,6 +886,7 @@ export default {
 
           break;
         case ACTION_ARCHIVED:
+          refreshTimeline = true;
           this.dirty = true;
           this.complete = false;
 
@@ -820,6 +904,7 @@ export default {
 
           break;
         case ACTION_DELETED:
+          refreshTimeline = true;
           this.dirty = true;
           this.complete = false;
 
@@ -833,12 +918,14 @@ export default {
 
           break;
         case ACTION_CREATED:
+          refreshTimeline = true;
           this.dirty = true;
           this.scrollDisabled = false;
           this.complete = false;
 
           break;
         case ACTION_EDITED:
+          refreshTimeline = true;
           // photos.edited is a lightweight UID-only batch signal
           // (event.EntitiesEdited). The cards list may now show stale
           // labels/albums/title for the affected UIDs; mark dirty so
@@ -851,6 +938,10 @@ export default {
           break;
         default:
           console.warn("unexpected event type", ev);
+      }
+
+      if (refreshTimeline) {
+        this.refreshTimeline();
       }
 
       // TODO: Needed?

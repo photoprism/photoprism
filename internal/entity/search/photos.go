@@ -53,10 +53,66 @@ func PhotoIds(frm form.SearchPhotos) (files PhotoResults, count int, err error) 
 func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
+	query, err := newSearchPhotosQuery(frm, sess, resultCols)
+	if err != nil {
+		return PhotoResults{}, 0, err
+	} else if query.db == nil {
+		return PhotoResults{}, 0, nil
+	}
+
+	frm = query.form
+	s := query.db
+
+	// Query database.
+	if err = s.Scan(&results).Error; err != nil {
+		return results, 0, err
+	}
+
+	// Log number of results.
+	log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), frm.SerializeAll(), time.Since(start))
+
+	// Merge files that belong to the same photo.
+	if frm.Merged {
+		// Return merged files.
+		return results.Merge()
+	}
+
+	// Return unmerged files.
+	return results, len(results), nil
+}
+
+type searchPhotosQuery struct {
+	db   *gorm.DB
+	form form.SearchPhotos
+}
+
+type searchPhotosQueryOptions struct {
+	resultCols      string
+	applyOrder      bool
+	applyPagination bool
+	applyLabelGroup bool
+	allowUIDFast    bool
+}
+
+// newSearchPhotosQuery builds the photos search query without scanning results.
+func newSearchPhotosQuery(frm form.SearchPhotos, sess *entity.Session, resultCols string) (query searchPhotosQuery, err error) {
+	return newSearchPhotosQueryWithOptions(frm, sess, searchPhotosQueryOptions{
+		resultCols:      resultCols,
+		applyOrder:      true,
+		applyPagination: true,
+		applyLabelGroup: true,
+		allowUIDFast:    true,
+	})
+}
+
+// newSearchPhotosQueryWithOptions builds a photos query with optional result shaping.
+func newSearchPhotosQueryWithOptions(frm form.SearchPhotos, sess *entity.Session, opts searchPhotosQueryOptions) (query searchPhotosQuery, err error) {
+	query.form = frm
+
 	// Parse query string and filter.
 	if err = frm.ParseQueryString(); err != nil {
 		log.Debugf("search: %s", err)
-		return PhotoResults{}, 0, ErrBadRequest
+		return query, ErrBadRequest
 	}
 
 	// Find photos near another?
@@ -66,7 +122,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		// Find a nearby picture using the UID or return an empty result otherwise.
 		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
 			log.Debugf("search: %s (find nearby)", err)
-			return PhotoResults{}, 0, ErrNotFound
+			return query, ErrNotFound
 		}
 
 		// Set the S2 Cell ID to search for.
@@ -81,8 +137,12 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	}
 
 	// Specify table names and joins.
-	s := UnscopedDb().Table(entity.File{}.TableName()).Select(resultCols).
+	s := UnscopedDb().Table(entity.File{}.TableName()).
 		Joins("JOIN photos ON files.photo_id = photos.id AND files.media_id IS NOT NULL")
+
+	if opts.resultCols != "" {
+		s = s.Select(opts.resultCols)
+	}
 
 	// Include additional columns from details table?
 	if frm.Details {
@@ -110,15 +170,15 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		frm.Scope = strings.ToLower(frm.Scope)
 
 		if idType, idPrefix := rnd.IdType(frm.Scope); idType != rnd.TypeUID || idPrefix != entity.AlbumUID {
-			return PhotoResults{}, 0, ErrInvalidId
+			return query, ErrInvalidId
 		} else if album, albumErr = entity.CachedAlbumByUID(frm.Scope); albumErr != nil || album.AlbumUID == "" {
-			return PhotoResults{}, 0, ErrInvalidId
+			return query, ErrInvalidId
 		} else if album.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", album.AlbumUID)
 		} else if formErr := form.Unserialize(&frm, album.AlbumFilter); formErr != nil {
 			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(album.AlbumFilter))
-			return PhotoResults{}, 0, ErrBadFilter
+			return query, ErrBadFilter
 		} else {
 			frm.Filter = album.AlbumFilter
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", album.AlbumUID)
@@ -160,7 +220,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
 			frm.Scope == "" && acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
-			return PhotoResults{}, 0, ErrForbidden
+			return query, ErrForbidden
 		}
 
 		// Limit results for external users.
@@ -178,41 +238,46 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		}
 	}
 
-	// Set sort order.
-	switch frm.Order {
-	case sortby.Edited:
-		s = s.Where("photos.edited_at IS NOT NULL").Order(OrderExpr("photos.edited_at DESC, files.media_id", frm.Reverse))
-	case sortby.Updated, sortby.UpdatedAt:
-		s = s.Where("photos.updated_at > photos.created_at").Order(OrderExpr("photos.updated_at DESC, files.media_id", frm.Reverse))
-	case sortby.Archived:
-		s = s.Order(OrderExpr("photos.deleted_at DESC, files.media_id", frm.Reverse))
-	case sortby.Relevance:
-		if frm.Label != "" {
-			s = s.Order(OrderExpr("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index", frm.Reverse))
-		} else {
-			s = s.Order(OrderExpr("photos.photo_quality DESC, files.time_index", frm.Reverse))
+	if opts.applyOrder {
+		// Set sort order.
+		switch frm.Order {
+		case sortby.Edited:
+			s = s.Where("photos.edited_at IS NOT NULL").Order(OrderExpr("photos.edited_at DESC, files.media_id", frm.Reverse))
+		case sortby.Updated, sortby.UpdatedAt:
+			s = s.Where("photos.updated_at > photos.created_at").Order(OrderExpr("photos.updated_at DESC, files.media_id", frm.Reverse))
+		case sortby.Archived:
+			s = s.Order(OrderExpr("photos.deleted_at DESC, files.media_id", frm.Reverse))
+		case sortby.Relevance:
+			if frm.Label != "" {
+				s = s.Order(OrderExpr("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index", frm.Reverse))
+			} else {
+				s = s.Order(OrderExpr("photos.photo_quality DESC, files.time_index", frm.Reverse))
+			}
+		case sortby.Duration:
+			s = s.Order(OrderExpr("photos.photo_duration DESC, files.time_index", frm.Reverse))
+		case sortby.Size:
+			s = s.Order(OrderExpr("files.file_size DESC, files.time_index", frm.Reverse))
+		case sortby.Newest:
+			s = s.Order(OrderExpr("files.time_index", frm.Reverse))
+		case sortby.Oldest:
+			s = s.Order(OrderExpr("files.photo_taken_at ASC, files.media_id", frm.Reverse))
+		case sortby.Similar:
+			s = s.Where("files.file_diff > 0")
+			s = s.Order(OrderExpr("photos.photo_color ASC, photos.cell_id ASC, files.file_diff, files.photo_id, files.time_index", frm.Reverse))
+		case sortby.Name:
+			s = s.Order(OrderExpr("photos.photo_path ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		case sortby.Title:
+			s = s.Order(OrderExpr("photos.photo_title ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		case sortby.Random:
+			s = s.Order(sortby.RandomExpr(s.Dialect()))
+		case sortby.Default, sortby.Imported, sortby.Added:
+			s = s.Order(OrderExpr("files.media_id", frm.Reverse))
+		default:
+			return query, ErrBadSortOrder
 		}
-	case sortby.Duration:
-		s = s.Order(OrderExpr("photos.photo_duration DESC, files.time_index", frm.Reverse))
-	case sortby.Size:
-		s = s.Order(OrderExpr("files.file_size DESC, files.time_index", frm.Reverse))
-	case sortby.Newest:
-		s = s.Order(OrderExpr("files.time_index", frm.Reverse))
-	case sortby.Oldest:
-		s = s.Order(OrderExpr("files.photo_taken_at ASC, files.media_id", frm.Reverse))
-	case sortby.Similar:
-		s = s.Where("files.file_diff > 0")
-		s = s.Order(OrderExpr("photos.photo_color ASC, photos.cell_id ASC, files.file_diff, files.photo_id, files.time_index", frm.Reverse))
-	case sortby.Name:
-		s = s.Order(OrderExpr("photos.photo_path ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
-	case sortby.Title:
-		s = s.Order(OrderExpr("photos.photo_title ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
-	case sortby.Random:
-		s = s.Order(sortby.RandomExpr(s.Dialect()))
-	case sortby.Default, sortby.Imported, sortby.Added:
-		s = s.Order(OrderExpr("files.media_id", frm.Reverse))
-	default:
-		return PhotoResults{}, 0, ErrBadSortOrder
+	} else {
+		frm.Order = sortby.Default
+		frm.Reverse = false
 	}
 
 	// Exclude files with errors by default.
@@ -245,7 +310,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		idType, prefix := rnd.ContainsType(ids)
 
 		if idType == rnd.TypeUnknown {
-			return PhotoResults{}, 0, fmt.Errorf("%s ids specified", idType)
+			return query, fmt.Errorf("%s ids specified", idType)
 		} else if idType.SHA() {
 			s = s.Where("files.file_hash IN (?)", ids)
 		} else if idType == rnd.TypeUID {
@@ -255,23 +320,15 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			case entity.FileUID:
 				s = s.Where("files.file_uid IN (?)", ids)
 			default:
-				return PhotoResults{}, 0, fmt.Errorf("invalid ids specified")
+				return query, fmt.Errorf("invalid ids specified")
 			}
 		}
 
 		// Find UIDs only to improve performance.
-		if sess == nil && frm.FindUidOnly() {
-			if result := s.Scan(&results); result.Error != nil {
-				return results, 0, result.Error
-			}
-
-			log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), frm.SerializeAll(), time.Since(start))
-
-			if frm.Merged {
-				return results.Merge()
-			}
-
-			return results, len(results), nil
+		if opts.allowUIDFast && sess == nil && frm.FindUidOnly() {
+			query.db = s
+			query.form = frm
+			return query, nil
 		}
 	}
 
@@ -290,7 +347,8 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 		if labelErr != nil || (sawPositive && len(include) == 0) {
 			log.Debugf("search: label %s not found", txt.LogParamLower(frm.Label))
-			return PhotoResults{}, 0, nil
+			query.form = frm
+			return query, nil
 		}
 
 		// JOIN the first positive group so photos_labels.uncertainty is
@@ -298,8 +356,11 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		// groups compose as AND via IN subqueries.
 		for i, ids := range include {
 			if i == 0 {
-				s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", ids).
-					Group("photos.id, files.id")
+				s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", ids)
+
+				if opts.applyLabelGroup {
+					s = s.Group("photos.id, files.id")
+				}
 			} else {
 				s = s.Where("files.photo_id IN (SELECT photo_id FROM photos_labels WHERE uncertainty < 100 AND label_id IN (?))", ids)
 			}
@@ -824,27 +885,16 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		}
 	}
 
-	// Search result count and offset.
-	if frm.Count <= 0 || frm.Count > MaxResults {
-		frm.Count = MaxResults
+	if opts.applyPagination {
+		// Search result count and offset.
+		if frm.Count <= 0 || frm.Count > MaxResults {
+			frm.Count = MaxResults
+		}
+
+		s = s.Limit(frm.Count).Offset(frm.Offset)
 	}
 
-	s = s.Limit(frm.Count).Offset(frm.Offset)
-
-	// Query database.
-	if err = s.Scan(&results).Error; err != nil {
-		return results, 0, err
-	}
-
-	// Log number of results.
-	log.Debugf("photos: found %s for %s [%s]", english.Plural(len(results), "result", "results"), frm.SerializeAll(), time.Since(start))
-
-	// Merge files that belong to the same photo.
-	if frm.Merged {
-		// Return merged files.
-		return results.Merge()
-	}
-
-	// Return unmerged files.
-	return results, len(results), nil
+	query.db = s
+	query.form = frm
+	return query, nil
 }

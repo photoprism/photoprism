@@ -20,6 +20,7 @@ function newStub() {
     dirty: false,
     complete: true,
     scrollDisabled: true,
+    timelineRefreshToken: 0,
     results: [],
     lightbox: { results: [] },
     $clipboard: { removeId: vi.fn() },
@@ -28,6 +29,9 @@ function newStub() {
     updateResults: vi.fn(),
     loadMore: vi.fn(),
     refresh: vi.fn(),
+    refreshTimeline: vi.fn(function () {
+      this.timelineRefreshToken++;
+    }),
   };
 }
 
@@ -51,6 +55,8 @@ describe("page/photos.vue onUpdate", () => {
     // updateResults work should run.
     expect(stub.removeResult).not.toHaveBeenCalled();
     expect(stub.updateResults).not.toHaveBeenCalled();
+    expect(stub.refreshTimeline).toHaveBeenCalledTimes(1);
+    expect(stub.timelineRefreshToken).toBe(1);
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
@@ -62,6 +68,7 @@ describe("page/photos.vue onUpdate", () => {
 
     expect(stub.dirty).toBe(false);
     expect(stub.complete).toBe(true);
+    expect(stub.refreshTimeline).not.toHaveBeenCalled();
   });
 
   it("short-circuits on malformed payloads without warning", () => {
@@ -71,6 +78,7 @@ describe("page/photos.vue onUpdate", () => {
     onUpdate.call(stub, "photos.edited", { entities: "not-an-array" });
 
     expect(stub.dirty).toBe(false);
+    expect(stub.refreshTimeline).not.toHaveBeenCalled();
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
@@ -79,6 +87,17 @@ describe("page/photos.vue onUpdate", () => {
     onUpdate.call(stub, "photos.unknown", { entities: ["uid-1"] });
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(stub.refreshTimeline).not.toHaveBeenCalled();
+  });
+
+  it("refreshes timeline counts when imports complete", () => {
+    const stub = newStub();
+
+    PPagePhotos.methods.onImportCompleted.call(stub);
+
+    expect(stub.refreshTimeline).toHaveBeenCalledTimes(1);
+    expect(stub.timelineRefreshToken).toBe(1);
+    expect(stub.loadMore).toHaveBeenCalledWith(true);
   });
 });
 

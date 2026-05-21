@@ -201,6 +201,110 @@
     padding: 0;
 }
 
+.p-photo-results {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.p-photo-results__views {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+}
+
+.p-photo-results--with-timeline {
+    gap: 8px;
+}
+
+.p-photo-results__timeline {
+    flex: 0 0 88px;
+    width: 88px;
+}
+
+.p-photo-timeline {
+    position: sticky;
+    top: 72px;
+    width: 100%;
+    max-height: calc(100vh - 84px);
+    padding: 10px 8px;
+    overflow-y: auto;
+    color: rgba(var(--v-theme-on-surface), 0.76);
+    user-select: none;
+}
+
+.p-photo-timeline__group + .p-photo-timeline__group {
+    margin-top: 12px;
+}
+
+.p-photo-timeline__year {
+    margin: 0 0 5px;
+    padding-left: 2px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(var(--v-theme-on-surface), 0.56);
+}
+
+.p-photo-timeline__months {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+}
+
+.p-photo-timeline__month {
+    min-width: 0;
+    padding: 4px 2px;
+    border: 0;
+    border-radius: 7px;
+    color: inherit;
+    background: transparent;
+    cursor: pointer;
+}
+
+.p-photo-timeline__month:hover {
+    background: rgba(var(--v-theme-on-surface), 0.08);
+}
+
+.p-photo-timeline__month:focus-visible {
+    background: rgba(var(--v-theme-on-surface), 0.08);
+    outline: 2px solid rgba(var(--v-theme-on-surface), 0.5);
+    outline-offset: -2px;
+}
+
+.p-photo-timeline__month.is-active {
+    color: rgb(var(--v-theme-on-primary));
+    background: rgb(var(--v-theme-primary));
+}
+
+.p-photo-timeline__month-label,
+.p-photo-timeline__month-count {
+    display: block;
+    overflow: hidden;
+    line-height: 1.1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.p-photo-timeline__month-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.p-photo-timeline__month-count {
+    margin-top: 1px;
+    font-size: 0.61rem;
+    opacity: 0.68;
+}
+
+.p-photo-timeline__unknown {
+    margin-top: 12px;
+    padding: 0 2px;
+    font-size: 0.68rem;
+    line-height: 1.25;
+    color: rgba(var(--v-theme-on-surface), 0.52);
+}
+
 .search-results.cards-view {
     margin: 0;
     padding: 2px;
