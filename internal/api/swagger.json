@@ -4326,9 +4326,6 @@
         },
         "search.PhotoTimelineBucket": {
             "properties": {
-                "day": {
-                    "type": "integer"
-                },
                 "from": {
                     "type": "string"
                 },

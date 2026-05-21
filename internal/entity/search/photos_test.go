@@ -2557,7 +2557,6 @@ func TestUserPhotoTimeline(t *testing.T) {
 		assert.Equal(t, "1990-04", timeline.Buckets[0].Key)
 		assert.Equal(t, 1990, timeline.Buckets[0].Year)
 		assert.Equal(t, 4, timeline.Buckets[0].Month)
-		assert.Nil(t, timeline.Buckets[0].Day)
 		assert.Equal(t, "1990-04-01", timeline.Buckets[0].From)
 		assert.Equal(t, "1990-05-01", timeline.Buckets[0].Until)
 		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
@@ -2592,62 +2591,6 @@ func TestUserPhotoTimeline(t *testing.T) {
 		assert.Len(t, timeline.Buckets, 1)
 		assert.Equal(t, "2014-07", timeline.Buckets[0].Key)
 		assert.Equal(t, 1, timeline.Buckets[0].PhotoCount)
-	})
-
-	t.Run("DayBucketTreatsIncompleteDayAsUnknown", func(t *testing.T) {
-		incompleteUID := "ps6sg6be2lvl0y11"
-
-		assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", incompleteUID).UpdateColumn("photo_day", 0).Error)
-
-		t.Cleanup(func() {
-			assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", incompleteUID).UpdateColumn("photo_day", 10).Error)
-		})
-
-		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: incompleteUID}, nil, PhotoTimelineBucketDay)
-
-		assert.NoError(t, err)
-		assert.Equal(t, 1, timeline.PhotoCount)
-		assert.Equal(t, 1, timeline.UnknownDateCount)
-		assert.Empty(t, timeline.Buckets)
-	})
-
-	t.Run("DayBucketUsesLocalDateFields", func(t *testing.T) {
-		localUID := "ps6sg6be2lvl0y11"
-		takenAt := time.Date(2020, 6, 30, 23, 30, 0, 0, time.UTC)
-		takenAtLocal := time.Date(2020, 7, 1, 1, 30, 0, 0, time.UTC)
-
-		assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", localUID).UpdateColumns(entity.Values{
-			"taken_at":       takenAt,
-			"taken_at_local": takenAtLocal,
-			"photo_year":     2020,
-			"photo_month":    7,
-			"photo_day":      1,
-		}).Error)
-
-		t.Cleanup(func() {
-			assert.NoError(t, entity.Db().Model(&entity.Photo{}).Where("photo_uid = ?", localUID).UpdateColumns(entity.Values{
-				"taken_at":       time.Date(2014, 7, 17, 15, 42, 12, 0, time.UTC),
-				"taken_at_local": time.Date(2014, 7, 17, 17, 42, 12, 0, time.UTC),
-				"photo_year":     2014,
-				"photo_month":    7,
-				"photo_day":      10,
-			}).Error)
-		})
-
-		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: localUID}, nil, PhotoTimelineBucketDay)
-
-		assert.NoError(t, err)
-		assert.Equal(t, 1, timeline.PhotoCount)
-		assert.Equal(t, 0, timeline.UnknownDateCount)
-		assert.Len(t, timeline.Buckets, 1)
-		assert.Equal(t, "2020-07-01", timeline.Buckets[0].Key)
-		assert.Equal(t, "2020-07-01", timeline.Buckets[0].From)
-		assert.Equal(t, "2020-07-02", timeline.Buckets[0].Until)
-		assert.NotNil(t, timeline.Buckets[0].Day)
-
-		if timeline.Buckets[0].Day != nil {
-			assert.Equal(t, 1, *timeline.Buckets[0].Day)
-		}
 	})
 
 	t.Run("CountAndOffsetDoNotChangeBuckets", func(t *testing.T) {
@@ -2746,7 +2689,7 @@ func TestUserPhotoTimeline(t *testing.T) {
 			}).Error)
 		})
 
-		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: nullUID}, nil, PhotoTimelineBucketDay)
+		timeline, err := UserPhotoTimeline(form.SearchPhotos{UID: nullUID}, nil, PhotoTimelineBucketMonth)
 
 		assert.NoError(t, err)
 		assert.Equal(t, 1, timeline.PhotoCount)
@@ -2778,6 +2721,12 @@ func TestUserPhotoTimeline(t *testing.T) {
 
 	t.Run("InvalidBucket", func(t *testing.T) {
 		_, err := UserPhotoTimeline(form.SearchPhotos{UID: uid}, nil, "year")
+
+		assert.ErrorIs(t, err, ErrBadRequest)
+	})
+
+	t.Run("DayBucketUnsupported", func(t *testing.T) {
+		_, err := UserPhotoTimeline(form.SearchPhotos{UID: uid}, nil, "day")
 
 		assert.ErrorIs(t, err, ErrBadRequest)
 	})

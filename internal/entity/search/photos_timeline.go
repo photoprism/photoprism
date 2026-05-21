@@ -12,7 +12,6 @@ import (
 
 const (
 	PhotoTimelineBucketMonth = "month"
-	PhotoTimelineBucketDay   = "day"
 	PhotoTimelineOrderDesc   = "desc"
 )
 
@@ -31,7 +30,6 @@ type PhotoTimelineBucket struct {
 	Label      string `json:"label"`
 	Year       int    `json:"year"`
 	Month      int    `json:"month"`
-	Day        *int   `json:"day,omitempty"`
 	From       string `json:"from"`
 	Until      string `json:"until"`
 	PhotoCount int    `json:"photoCount"`
@@ -40,7 +38,6 @@ type PhotoTimelineBucket struct {
 type photoTimelineBucketRow struct {
 	Year       int `gorm:"column:year"`
 	Month      int `gorm:"column:month"`
-	Day        int `gorm:"column:day"`
 	PhotoCount int `gorm:"column:photo_count"`
 }
 
@@ -54,7 +51,7 @@ func UserPhotoTimeline(frm form.SearchPhotos, sess *entity.Session, bucket strin
 		bucket = PhotoTimelineBucketMonth
 	}
 
-	if bucket != PhotoTimelineBucketMonth && bucket != PhotoTimelineBucketDay {
+	if bucket != PhotoTimelineBucketMonth {
 		return timeline, ErrBadRequest
 	}
 
@@ -85,11 +82,7 @@ func UserPhotoTimeline(frm form.SearchPhotos, sess *entity.Session, bucket strin
 
 	validWhere := "photos.photo_year > 0 AND photos.photo_month > 0"
 
-	if bucket == PhotoTimelineBucketDay {
-		validWhere += " AND photos.photo_day > 0"
-	}
-
-	buckets, err := photoTimelineBuckets(query.db, bucket, validWhere)
+	buckets, err := photoTimelineBuckets(query.db, validWhere)
 
 	if err != nil {
 		return timeline, err
@@ -127,17 +120,11 @@ func photoTimelineCount(s *gorm.DB, where string) (count int, err error) {
 }
 
 // photoTimelineBuckets returns grouped local-date photo buckets.
-func photoTimelineBuckets(s *gorm.DB, bucket, validWhere string) (buckets []PhotoTimelineBucket, err error) {
+func photoTimelineBuckets(s *gorm.DB, validWhere string) (buckets []PhotoTimelineBucket, err error) {
 	rows := make([]photoTimelineBucketRow, 0)
 	selectCols := "photos.photo_year AS year, photos.photo_month AS month, COUNT(DISTINCT photos.id) AS photo_count"
 	groupCols := "photos.photo_year, photos.photo_month"
 	orderCols := "photos.photo_year DESC, photos.photo_month DESC"
-
-	if bucket == PhotoTimelineBucketDay {
-		selectCols = "photos.photo_year AS year, photos.photo_month AS month, photos.photo_day AS day, COUNT(DISTINCT photos.id) AS photo_count"
-		groupCols = "photos.photo_year, photos.photo_month, photos.photo_day"
-		orderCols = "photos.photo_year DESC, photos.photo_month DESC, photos.photo_day DESC"
-	}
 
 	if err = s.Select(selectCols).Where(validWhere).Group(groupCols).Order(orderCols).Scan(&rows).Error; err != nil {
 		return buckets, err
@@ -146,31 +133,14 @@ func photoTimelineBuckets(s *gorm.DB, bucket, validWhere string) (buckets []Phot
 	buckets = make([]PhotoTimelineBucket, 0, len(rows))
 
 	for _, row := range rows {
-		buckets = append(buckets, newPhotoTimelineBucket(row, bucket))
+		buckets = append(buckets, newPhotoTimelineBucket(row))
 	}
 
 	return buckets, nil
 }
 
 // newPhotoTimelineBucket formats a local-date bucket row for API responses.
-func newPhotoTimelineBucket(row photoTimelineBucketRow, bucket string) PhotoTimelineBucket {
-	if bucket == PhotoTimelineBucketDay {
-		day := row.Day
-		date := time.Date(row.Year, time.Month(row.Month), row.Day, 0, 0, 0, 0, time.UTC)
-		next := date.AddDate(0, 0, 1)
-
-		return PhotoTimelineBucket{
-			Key:        date.Format("2006-01-02"),
-			Label:      date.Format("Jan 2, 2006"),
-			Year:       row.Year,
-			Month:      row.Month,
-			Day:        &day,
-			From:       date.Format("2006-01-02"),
-			Until:      next.Format("2006-01-02"),
-			PhotoCount: row.PhotoCount,
-		}
-	}
-
+func newPhotoTimelineBucket(row photoTimelineBucketRow) PhotoTimelineBucket {
 	date := time.Date(row.Year, time.Month(row.Month), 1, 0, 0, 0, 0, time.UTC)
 	next := date.AddDate(0, 1, 0)
 
@@ -179,7 +149,6 @@ func newPhotoTimelineBucket(row photoTimelineBucketRow, bucket string) PhotoTime
 		Label:      fmt.Sprintf("%s %d", date.Month(), row.Year),
 		Year:       row.Year,
 		Month:      row.Month,
-		Day:        nil,
 		From:       date.Format("2006-01-02"),
 		Until:      next.Format("2006-01-02"),
 		PhotoCount: row.PhotoCount,
