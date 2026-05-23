@@ -33,6 +33,16 @@
         :open-photo="openPhoto"
         :is-shared-view="isShared"
       ></p-photo-view-mosaic>
+      <p-photo-view-timeline
+        v-else-if="settings.view === 'timeline'"
+        :context="context"
+        :photos="results"
+        :select-mode="selectMode"
+        :filter="filter"
+        :edit-photo="editPhoto"
+        :open-photo="openPhoto"
+        :is-shared-view="isShared"
+      ></p-photo-view-timeline>
       <p-photo-view-list
         v-else-if="settings.view === 'list'"
         :context="context"
@@ -70,6 +80,7 @@ import PPhotoToolbar from "component/photo/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
 import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
+import PPhotoViewTimeline from "component/photo/view/timeline.vue";
 import PPhotoViewList from "component/photo/view/list.vue";
 import PLoading from "component/loading.vue";
 import PScroll from "component/scroll.vue";
@@ -84,6 +95,7 @@ export default {
     PPhotoClipboard,
     PPhotoViewCards,
     PPhotoViewMosaic,
+    PPhotoViewTimeline,
     PPhotoViewList,
     PLoading,
     PScroll,
@@ -116,7 +128,12 @@ export default {
     const label = query["label"] ? query["label"] : "";
     const latlng = query["latlng"] ? query["latlng"] : "";
     const view = this.getViewType();
-    const order = this.sortOrder();
+    let order = this.sortOrder();
+
+    if (view === "timeline" && order !== "newest" && order !== "oldest") {
+      order = "newest";
+    }
+
     const filter = {
       country: country,
       camera: camera,
@@ -217,10 +234,12 @@ export default {
       this.filter.color = query["color"] ? query["color"] : "";
       this.filter.label = query["label"] ? query["label"] : "";
       this.filter.latlng = query["latlng"] ? query["latlng"] : "";
-      this.filter.order = this.sortOrder();
-      this.filter.reverse = this.sortReverse();
-
       this.settings.view = this.getViewType();
+      this.filter.order = this.sortOrder();
+      if (this.settings.view === "timeline" && this.filter.order !== "newest" && this.filter.order !== "oldest") {
+        this.filter.order = "newest";
+      }
+      this.filter.reverse = this.sortReverse();
 
       /**
        * Even if the filter is unchanged, if the route is changed (for example
@@ -326,11 +345,12 @@ export default {
 
       let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
       let storedType = appStorage.getItem("photos.view");
+      const supportedTypes = ["cards", "list", "mosaic", "timeline"];
 
-      if (queryParam) {
+      if (queryParam && supportedTypes.includes(queryParam)) {
         appStorage.setItem("photos.view", queryParam);
         return queryParam;
-      } else if (storedType) {
+      } else if (storedType && supportedTypes.includes(storedType)) {
         return storedType;
       } else if (window.innerWidth < 960) {
         return "mosaic";

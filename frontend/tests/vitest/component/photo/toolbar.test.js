@@ -207,6 +207,15 @@ describe("component/photo/toolbar", () => {
   });
 
   describe("view handling", () => {
+    it("includes timeline in the view options", () => {
+      const { wrapper } = mountToolbar({
+        searchOverrides: { listView: false },
+      });
+
+      const values = wrapper.vm.viewOptions.map((o) => o.value);
+      expect(values).toEqual(["mosaic", "cards", "timeline"]);
+    });
+
     it("setView keeps list when listView search setting is enabled", () => {
       const refresh = vi.fn();
       const { wrapper } = mountToolbar({
@@ -234,9 +243,42 @@ describe("component/photo/toolbar", () => {
       expect(refresh).toHaveBeenCalledWith({ view: "mosaic" });
       expect(wrapper.vm.expanded).toBe(false);
     });
+
+    it("setView resets non-date sort order when switching to timeline", () => {
+      const refresh = vi.fn();
+      const updateFilter = vi.fn();
+      const { wrapper } = mountToolbar({
+        refresh,
+        updateFilter,
+        filter: {
+          q: "",
+          country: "",
+          camera: 0,
+          year: 0,
+          month: 0,
+          color: "",
+          label: "",
+          order: "relevance",
+          latlng: null,
+        },
+      });
+
+      wrapper.vm.expanded = true;
+      wrapper.vm.setView("timeline");
+
+      expect(updateFilter).toHaveBeenCalledWith({ order: "newest" });
+      expect(refresh).toHaveBeenCalledWith({ view: "timeline" });
+      expect(wrapper.vm.expanded).toBe(false);
+    });
   });
 
   describe("sortOptions", () => {
+    it("limits timeline sorting to chronological order", () => {
+      const { wrapper } = mountToolbar({ settings: { view: "timeline" } });
+
+      expect(wrapper.vm.sortOptions.map((o) => o.value)).toEqual(["newest", "oldest"]);
+    });
+
     it("provides archive-specific sort options for archive context", () => {
       const { wrapper } = mountToolbar({ context: contexts.Archive });
 
@@ -342,5 +384,4 @@ describe("component/photo/toolbar", () => {
     });
   });
 });
-
 
