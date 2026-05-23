@@ -183,12 +183,15 @@ services:
       OLLAMA_MULTIUSER_CACHE: "false"  # optimize prompt caching for multi-user scenarios
       OLLAMA_NOPRUNE: "false"          # disables pruning of model blobs at startup
       OLLAMA_NOHISTORY: "true"         # disables readline history
-      OLLAMA_FLASH_ATTENTION: "false"  # enables the experimental flash attention feature
-      OLLAMA_KV_CACHE_TYPE: "f16"      # cache quantization (f16, q8_0, or q4_0)
+      OLLAMA_FLASH_ATTENTION: "true"   # required for OLLAMA_KV_CACHE_TYPE quantization
+      OLLAMA_KV_CACHE_TYPE: "f16"      # cache precision: f16 (default), q8_0, q4_0
       OLLAMA_SCHED_SPREAD: "false"     # allows scheduling models across all GPUs.
-      OLLAMA_NEW_ENGINE: "true"        # enables the new Ollama engine
       # OLLAMA_DEBUG: "true"             # shows additional debug information
       # OLLAMA_INTEL_GPU: "true"         # enables experimental Intel GPU detection
+      ## Telemetry / privacy opt-outs (containers do not inherit /etc/environment):
+      DO_NOT_TRACK: "true"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      # OLLAMA_NO_CLOUD: "1"           # uncomment to disable Ollama Cloud models/features
     volumes:
       - "./ollama:/root/.ollama"
 

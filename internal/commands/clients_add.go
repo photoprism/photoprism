@@ -31,6 +31,12 @@ func clientsAddAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		conf.MigrateDb(false, nil)
 
+		// Reject flags placed after the username; the stdlib flag parser
+		// would silently drop them and register the client with the defaults.
+		if err := RejectTrailingFlags(ctx); err != nil {
+			return err
+		}
+
 		frm := form.AddClientFromCli(ctx)
 
 		interactive := true

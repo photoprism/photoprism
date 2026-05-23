@@ -14,6 +14,7 @@
 /assets/models/
 /storage/
 /build/
+/setup/Makefile
 /photoprism
 /photoprism-*
 /frontend/tests/acceptance/screenshots/
@@ -69,6 +70,7 @@ venv
 .nv
 .eslintcache
 .gocache
+.gitconfig
 .DS_Store
 .DS_Store?
 ._*

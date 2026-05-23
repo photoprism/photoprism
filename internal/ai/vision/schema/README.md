@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Schema Reference
 
-**Last Updated:** November 14, 2025
+**Last Updated:** May 21, 2026
 
 ### Overview
 
@@ -13,12 +13,12 @@ Both helpers build on the same field set (`name`, `confidence`, `topicality`, an
 
 ### Schema Types & Differences
 
-| Helper                    | Target Engine            | Format                                                 | Validation Style                                                                    | When To Use                                                                                                     |
-|:--------------------------|:-------------------------|:-------------------------------------------------------|:------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------|
-| `LabelsJsonSchema(false)` | OpenAI (standard labels) | JSON Schema Draft                                      | Strong: OpenAI enforces field types/ranges server-side before returning a response. | When calling GPT‑vision models via `ApiFormatOpenAI` to ensure PhotoPrism receives well-formed label arrays.    |
-| `LabelsJsonSchema(true)`  | OpenAI (labels + NSFW)   | JSON Schema Draft with additional boolean/float fields | Strong: same enforcement plus required NSFW fields.                                 | When `DetectNSFWLabels` or NSFW-specific prompts are active and the model must emit `nsfw` + `nsfw_confidence`. |
-| `LabelsJson(false)`       | Ollama (standard labels) | Plain JSON example                                     | Soft: model is nudged to mimic the structure through prompt instructions.           | When running self-hosted Ollama models that support “JSON mode” but do not consume JSON Schema definitions.     |
-| `LabelsJson(true)`        | Ollama (labels + NSFW)   | Plain JSON example with NSFW keys                      | Soft: prompts describe the required keys; the adapter validates after parsing.      | When Ollama prompts mention NSFW scoring or PhotoPrism sets `DetectNSFWLabels=true`.                            |
+| Helper                    | Target Engine            | Format                                                 | Validation Style                                                                    | When To Use                                                                                                                                                        |
+|:--------------------------|:-------------------------|:-------------------------------------------------------|:------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `LabelsJsonSchema(false)` | OpenAI (standard labels) | JSON Schema Draft                                      | Strong: OpenAI enforces field types/ranges server-side before returning a response. | When calling GPT‑vision models via `ApiFormatOpenAI` to ensure PhotoPrism receives well-formed label arrays.                                                       |
+| `LabelsJsonSchema(true)`  | OpenAI (labels + NSFW)   | JSON Schema Draft with additional boolean/float fields | Strong: same enforcement plus required NSFW fields.                                 | When `DetectNSFWLabels` (gated on `DETECT_NSFW=true && EXPERIMENTAL=true`) or NSFW-specific prompts are active and the model must emit `nsfw` + `nsfw_confidence`. |
+| `LabelsJson(false)`       | Ollama (standard labels) | Plain JSON example                                     | Soft: model is nudged to mimic the structure through prompt instructions.           | When running self-hosted Ollama models that support “JSON mode” but do not consume JSON Schema definitions.                                                        |
+| `LabelsJson(true)`        | Ollama (labels + NSFW)   | Plain JSON example with NSFW keys                      | Soft: prompts describe the required keys; the adapter validates after parsing.      | When Ollama prompts mention NSFW scoring or PhotoPrism sets `DetectNSFWLabels=true`.                                                                               |
 
 **Key technical distinction:** OpenAI’s Responses API accepts a JSON Schema (see `LabelsJsonSchema*`) and guarantees compliance by rejecting invalid responses, while Ollama currently relies on prompt-directed output. For Ollama integrations we provide a representative JSON document (`LabelsJson*`) that models can imitate; PhotoPrism then normalizes and validates the results in Go.
 

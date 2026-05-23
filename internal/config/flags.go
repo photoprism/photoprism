@@ -289,7 +289,7 @@ var Flags = CliFlags{
 		Flag: &cli.BoolFlag{
 			Name:    "upload-nsfw",
 			Aliases: []string{"n"},
-			Usage:   "allows uploads that might be offensive (detecting unsafe content requires TensorFlow)",
+			Usage:   "allows uploads that might be offensive (when disabled, files flagged by the NSFW model are rejected before indexing)",
 			EnvVars: EnvVars("UPLOAD_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1225,7 +1225,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
-			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",
+			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{

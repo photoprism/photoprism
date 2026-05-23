@@ -46,10 +46,11 @@ services:
       PHOTOPRISM_TEST_DSN_SQLITE: ""
       PHOTOPRISM_TEST_DSN_SQLITEFILE: ".test.db?_foreign_keys=on&_busy_timeout=5000"
       PHOTOPRISM_TEST_DSN_POSTGRES: "postgresql://testdb:testdb@postgres:${POSTGRES_PORT:-4002}/testdb?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
-      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
-      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
+      PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
+      PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/originals"
+      PHOTOPRISM_IMPORT_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # Don't backup photo and album metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
@@ -82,9 +83,9 @@ services:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
     #  - "/dev/dri/card0:/dev/dri/card0"
-    working_dir: "/go/src/github.com/photoprism/photoprism"
+    working_dir: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     volumes:
-      - ".:/go/src/github.com/photoprism/photoprism"
+      - ".:${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
       - "go-mod:/go/pkg/mod"
 
   ## MariaDB Database Server

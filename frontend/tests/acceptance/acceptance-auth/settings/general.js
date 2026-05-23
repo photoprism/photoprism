@@ -299,6 +299,16 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   await t.expect(photoviewer.markersEditToggle.exists).ok();
   await photoviewer.triggerPhotoViewerAction("close-button");
 
+  await photo.toggleSelectNthPhoto(0, "image");
+  await photo.toggleSelectNthPhoto(1, "image");
+  await contextmenu.triggerContextMenuAction("edit");
+
+  await t.expect(photoedit.batchDialog.visible).ok();
+  await t.expect(photoedit.batchLabels.visible).ok();
+
+  await t.click(photoedit.dialogClose);
+  await contextmenu.clearSelection();
+
   await menu.checkMenuItemAvailability("people", true);
   await menu.checkMenuItemAvailability("labels", true);
   await menu.openPage("settings");
@@ -326,6 +336,16 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
   await t.expect(photoviewer.markersEditToggle.exists).notOk();
   await photoviewer.triggerPhotoViewerAction("close-button");
+
+  await photo.toggleSelectNthPhoto(0, "image");
+  await photo.toggleSelectNthPhoto(1, "image");
+  await contextmenu.triggerContextMenuAction("edit");
+
+  await t.expect(photoedit.batchDialog.visible).ok();
+  await t.expect(photoedit.batchLabels.exists).notOk();
+
+  await t.click(photoedit.dialogClose);
+  await contextmenu.clearSelection();
 
   await menu.checkMenuItemAvailability("people", false);
   await menu.checkMenuItemAvailability("labels", false);
@@ -557,7 +577,9 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
 
   await photoviewer.openSidebar();
-  await photoviewer.assertSidebarIsReadOnly();
+  // The first non-stacked photo has Title + Labels + Albums but no Caption or People;
+  // the Filmpreis-anchored block below covers the People positive case.
+  await photoviewer.assertSidebarIsReadOnly({ expectCaption: false, expectPeople: false });
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 

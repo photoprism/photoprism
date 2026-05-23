@@ -107,15 +107,48 @@ export default class Page {
   // typeAndConfirmInlineChip adds a Labels or Albums chip via the always-rendered combobox.
   // The short wait lets Vuetify's combobox seat the typed value before Enter commits it.
   async typeAndConfirmInlineChip(sectionLabel, value) {
-    const sectionClass = sectionLabel === "Labels" ? "meta-labels" : sectionLabel === "Albums" ? "meta-albums" : null;
-    if (!sectionClass) {
-      throw new Error(`Unknown chip section: ${sectionLabel}`);
-    }
+    const sectionClass = this._chipSectionClass(sectionLabel);
     const input = Selector(`.p-lightbox-sidebar .${sectionClass} .meta-inline-edit input`, { timeout: 15000 });
     await t.click(input).typeText(input, value);
     await t.wait(200);
     await t.pressKey("enter");
     await t.expect(Selector(".meta-inline-menu").exists).notOk();
+  }
+
+  // chipByTitle returns the .meta-chip in the Labels or Albums section matching `title`.
+  chipByTitle(sectionLabel, title) {
+    const sectionClass = this._chipSectionClass(sectionLabel);
+    return Selector(`.p-lightbox-sidebar .${sectionClass}.metadata__chips .meta-chip`, { timeout: 15000 }).withText(title);
+  }
+
+  // removeInlineChip clicks the × on a Labels or Albums chip matching `title`.
+  // Soft-removes locally via chipState.<field>.removals until confirm or undo.
+  async removeInlineChip(sectionLabel, title) {
+    await t.click(this.chipByTitle(sectionLabel, title).find(".meta-chip__remove"));
+  }
+
+  // undoChipRemovals clicks Undo in the Labels or Albums chip toolbar,
+  // restoring all soft-removed chips for that section.
+  async undoChipRemovals(sectionLabel) {
+    const sectionClass = this._chipSectionClass(sectionLabel);
+    await t.click(Selector(`.p-lightbox-sidebar .${sectionClass} .meta-chip-undo`, { timeout: 15000 }));
+  }
+
+  // confirmChipRemovals clicks Save in the Labels or Albums chip toolbar,
+  // persisting all pending removals.
+  async confirmChipRemovals(sectionLabel) {
+    const sectionClass = this._chipSectionClass(sectionLabel);
+    await t.click(Selector(`.p-lightbox-sidebar .${sectionClass} .meta-chip-confirm`, { timeout: 15000 }));
+  }
+
+  _chipSectionClass(sectionLabel) {
+    if (sectionLabel === "Labels") {
+      return "meta-labels";
+    }
+    if (sectionLabel === "Albums") {
+      return "meta-albums";
+    }
+    throw new Error(`Unknown chip section: ${sectionLabel}`);
   }
 
   // startInlineEditOrAdd enters edit mode for Title or Caption by clicking the row, or
@@ -164,6 +197,16 @@ export default class Page {
   // editor or dialog. Paired with assertSidebarIsReadOnly() so every selector has both a
   // positive and a negative assertion.
   async assertSidebarIsEditable() {
+    // Title and Caption render unconditionally in editable mode; click each
+    // to open its inline editor and escape back out before continuing.
+    await this.startInlineEditOrAdd("meta-title", "Add a Title");
+    await t.expect(Selector(".p-lightbox-sidebar .meta-inline-title").visible).ok();
+    await t.pressKey("esc");
+
+    await this.startInlineEditOrAdd("meta-caption", "Add a Caption");
+    await t.expect(Selector(".p-lightbox-sidebar .meta-inline-caption").visible).ok();
+    await t.pressKey("esc");
+
     await t.click(this.sidebarRow("mdi-calendar"));
     await t.expect(this.dateTimeDialog.root.visible).ok();
     await t.click(this.dateTimeDialog.cancel);
@@ -180,6 +223,18 @@ export default class Page {
       await t.click(this.locationDialog.cancel);
     }
 
+    // People, Albums, and Labels: assert their editable-only controls render.
+    // The pencil toggle and chip-add inputs only exist when isEditable=true,
+    // so they discriminate edit mode from read-only mode (which uses the eye
+    // toggle and renders chips without an add input).
+    await t.expect(this.peopleHeader.exists).ok();
+    await t.expect(this.markersEditToggle.exists).ok();
+    await t.expect(this.markersVisibilityToggle.exists).notOk();
+    await t.expect(Selector(".p-lightbox-sidebar .v-list-item.meta-albums").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .meta-albums .meta-inline-edit").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .v-list-item.meta-labels").exists).ok();
+    await t.expect(Selector(".p-lightbox-sidebar .meta-labels .meta-inline-edit").exists).ok();
+
     // The next iteration's row click cancels the previous edit, so only the trailing
     // toolbar click is needed for cleanup. Gate on .visible so rows that v-show hides
     // for empty fields are skipped.
@@ -194,19 +249,76 @@ export default class Page {
     await t.click(Selector(".p-lightbox-sidebar .v-toolbar-title"));
   }
 
-  // assertSidebarIsReadOnly is the inverse of assertSidebarIsEditable.
-  async assertSidebarIsReadOnly() {
+  // assertSidebarIsReadOnly verifies the sidebar surfaces no editors or dialogs.
+  // restricted=true asserts the visitor subset (Title, Caption, Date, Location).
+  // expect* flags toggle positive existence checks; defaults assert presence.
+  async assertSidebarIsReadOnly({
+    restricted = false,
+    expectTitle = true,
+    expectCaption = true,
+    expectPeople = true,
+    expectLabels = true,
+    expectAlbums = true,
+  } = {}) {
     await t.click(this.sidebarRow("mdi-calendar"));
     await t.expect(this.dateTimeDialog.root.visible).notOk();
+
+    if (await this.sidebarRow("mdi-map-marker").exists) {
+      await t.click(this.sidebarRow("mdi-map-marker"));
+      await t.expect(this.locationDialog.root.visible).notOk();
+    }
+
+    for (const [key, expected] of [
+      ["title", expectTitle],
+      ["caption", expectCaption],
+    ]) {
+      const display = Selector(`.p-lightbox-sidebar .meta-${key}`);
+      if (expected) {
+        await t.expect(display.exists).ok();
+        const row = display.parent(".v-list-item");
+        await t.click(row);
+        await t.expect(row.find(".meta-inline-edit").exists).notOk();
+      } else {
+        await t.expect(display.exists).notOk();
+      }
+    }
+    // meta-add-prompt is an editing affordance and must never render here.
+    await t.expect(Selector(".p-lightbox-sidebar .meta-add-prompt").visible).notOk();
+
+    if (restricted) {
+      await t.expect(this.sidebarRow("mdi-camera").exists).notOk();
+      await t.expect(this.sidebarRow("mdi-camera-iris").exists).notOk();
+      await t.expect(this.peopleHeader.exists).notOk();
+      await t.expect(Selector(".p-lightbox-sidebar .metadata__person-row").exists).notOk();
+      await t.expect(this.markersVisibilityToggle.exists).notOk();
+      await t.expect(this.markersEditToggle.exists).notOk();
+      await t.expect(Selector(".p-lightbox-sidebar .meta-albums").exists).notOk();
+      await t.expect(Selector(".p-lightbox-sidebar .meta-labels").exists).notOk();
+      for (const key of ["subject", "artist", "copyright", "license", "keywords", "notes"]) {
+        await t.expect(Selector(`.p-lightbox-sidebar .v-list-item.meta-${key}`).exists).notOk();
+      }
+      return;
+    }
 
     if (await this.sidebarRow("mdi-camera").exists) {
       await t.click(this.sidebarRow("mdi-camera"));
       await t.expect(this.cameraDialog.root.visible).notOk();
     }
 
-    if (await this.sidebarRow("mdi-map-marker").exists) {
-      await t.click(this.sidebarRow("mdi-map-marker"));
-      await t.expect(this.locationDialog.root.visible).notOk();
+    // Mirror the editable assertions: section renders, but with read-only
+    // controls only — eye toggle for People, no chip-add input for Albums/Labels.
+    if (expectPeople) {
+      await t.expect(this.peopleHeader.exists).ok();
+      await t.expect(this.markersVisibilityToggle.exists).ok();
+      await t.expect(this.markersEditToggle.exists).notOk();
+    }
+    if (expectAlbums) {
+      await t.expect(Selector(".p-lightbox-sidebar .v-list-item.meta-albums").exists).ok();
+      await t.expect(Selector(".p-lightbox-sidebar .meta-albums .meta-inline-edit").exists).notOk();
+    }
+    if (expectLabels) {
+      await t.expect(Selector(".p-lightbox-sidebar .v-list-item.meta-labels").exists).ok();
+      await t.expect(Selector(".p-lightbox-sidebar .meta-labels .meta-inline-edit").exists).notOk();
     }
 
     for (const key of ["subject", "artist", "copyright", "license", "keywords", "notes"]) {

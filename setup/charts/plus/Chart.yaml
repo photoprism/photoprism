@@ -1,0 +1,43 @@
+apiVersion: v2
+name: photoprism-plus
+type: application
+description: >-
+  Deploys PhotoPrism® on Kubernetes with optional portal integration,
+  persistent storage, and configurable authentication backends.
+version: "1.1.0"
+appVersion: "260305"
+home: https://www.photoprism.app/
+icon: https://dl.photoprism.app/icons/logo/256.png
+maintainers:
+  - name: PhotoPrism UG
+    url: https://www.photoprism.app/contact
+keywords:
+  - photos
+  - photoprism
+  - ai
+  - media
+  - dam
+  - webdav
+  - oidc
+sources:
+  - https://docs.photoprism.app/
+  - https://www.photoprism.app/kb
+  - https://www.photoprism.app/kb/getting-support
+  - https://github.com/photoprism/photoprism
+annotations:
+  catalog.cattle.io/display-name: "PhotoPrism®"
+  catalog.cattle.io/type: "app"
+  catalog.cattle.io/category: "Digital Asset Management (DAM)"
+  catalog.cattle.io/requests-cpu: "1000m"
+  catalog.cattle.io/requests-memory: "1Gi"
+  catalog.cattle.io/os: "linux"
+  catalog.cattle.io/featured: "true"
+  artifacthub.io/license: "AGPL-3.0-or-later"
+  artifacthub.io/category: "storage"
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://docs.photoprism.app/
+    - name: Knowledge Base
+      url: https://www.photoprism.app/kb
+    - name: Support
+      url: https://www.photoprism.app/kb/getting-support

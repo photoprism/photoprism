@@ -10,21 +10,15 @@ body:
         Before submitting a new request, please check our GitHub roadmap and issues for similar requests:
         - https://link.photoprism.app/roadmap
         - https://github.com/photoprism/photoprism/issues
-  - type: checkboxes
-    id: request-prep
-    attributes:
-      label: Before You Continue
-      description: Make sure you completed these steps before opening a new request.
-      options:
-        - label: This is not a support request, and I verified that no similar issues exist
-          required: true
   - type: textarea
     id: user-story
     attributes:
       label: User Story
       description: |
-        Feature requests MUST begin with a one sentence user story in the format `**As a <role>, I want <goal>, so that <outcome>.**`
+        Feature requests MUST begin with a one sentence user story.
+        **As a <role>, I want <goal>, so that <outcome>.**
       placeholder: "**As a <role>, I want <goal>, so that <outcome>.**"
+      value: "**As a <role>, I want <goal>, so that <outcome>.**"
     validations:
       required: true
   - type: textarea
@@ -49,6 +43,13 @@ body:
       label: Which alternatives or workarounds have you considered?
       description: Describe alternative solutions, workarounds, or related features you evaluated.
       placeholder: Mention any alternative solutions, workarounds, or related features you evaluated.
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Have you verified that no similar issues exist?
+      options:
+        - label: This is not a support request, and I verified that no similar issues exist
+          required: true
   - type: textarea
     id: additional-context
     attributes:
@@ -56,29 +57,17 @@ body:
       description: Add any other context or screenshots about the feature request here.
       placeholder: Add any other context or screenshots that help explain the request.
   - type: textarea
-    id: open-questions
-    attributes:
-      label: Open Questions
-      description: Use checklist items to capture ambiguities, tradeoffs, or decisions that still need clarification.
-      placeholder: |
-        - [ ] <question> — options A/B/C and implications.
-        - [ ] <question> — potential ambiguity or conflict to clarify.
-      render: markdown
-  - type: textarea
     id: acceptance-criteria
     attributes:
       label: Acceptance Criteria
       description: Use checklist items and RFC 2119 keywords such as MUST, SHOULD, and MAY to define the expected behavior.
       placeholder: |
-        - [ ] <component> MUST <expected behavior>
-        - [ ] <component> SHOULD <expected behavior>
-        - [ ] <component> MAY <expected behavior>
-      render: markdown
+        - [ ] <component> MUST <expected behavior>.
+        - [ ] <component> SHOULD <expected behavior>.
+        - [ ] <component> MAY <expected behavior>.
+      value: |
+        - [ ] <component> MUST <expected behavior>.
+        - [ ] <component> SHOULD <expected behavior>.
+        - [ ] <component> MAY <expected behavior>.
     validations:
       required: true
-  - type: textarea
-    id: references
-    attributes:
-      label: References
-      description: Add links to external documentation, references, or examples.
-      placeholder: Add links to documentation, references, or examples that support the request.

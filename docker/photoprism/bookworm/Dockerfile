@@ -1,7 +1,7 @@
 ##################################################### BUILD STAGE ######################################################
 FROM photoprism/develop:bookworm AS build
 
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/

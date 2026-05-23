@@ -1,4 +1,4 @@
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -39,6 +39,7 @@ BUILD_ARCH ?= $(shell ./scripts/dist/arch.sh)
 export BUILD_ARCH
 JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
 TF_VERSION ?= 2.18.0
+WORKING_DIR ?= /go/src/github.com/photoprism/photoprism
 
 # Install parameters.
 INSTALL_PATH ?= $(BUILD_PATH)/photoprism-ce_$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
@@ -186,10 +187,10 @@ notice:
 fix-permissions:
 	$(info Updating filesystem permissions...)
 	@if [ $(UID) != 0 ]; then\
-		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
-		sudo chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism || true;\
-		echo "Running \"chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
-		sudo chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
+		sudo chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
+		sudo chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism || true;\
 		echo "Done."; \
 	else\
 		echo "Running as root. Nothing to do."; \

@@ -48,6 +48,12 @@ func authAddAction(ctx *cli.Context) error {
 		// Get username from command flag.
 		userName := clean.Username(ctx.Args().First())
 
+		// Reject flags placed after the username; the stdlib flag parser
+		// would silently drop them and create the token with the defaults.
+		if err := RejectTrailingFlags(ctx); err != nil {
+			return err
+		}
+
 		// Find user account.
 		user := entity.FindUserByName(userName)
 

@@ -199,9 +199,6 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })("Multi-
 });
 
 test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common: Lightbox sidebar shows only restricted metadata on share links", async (t) => {
-  // Reuse the shared album exposed by sharing-002. The Vitest role x
-  // field matrix already covers the per-role logic against a mocked
-  // $session; this test pins the real anonymous path end-to-end.
   await t.useRole(Role.anonymous());
   await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
   await t.expect(toolbar.toolbarSecondTitle.withText("British Columbia").visible).ok();
@@ -209,20 +206,13 @@ test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common
   await photoviewer.openPhotoViewer("nth", 0);
   await photoviewer.openSidebar();
 
-  // Allow-list: file info and taken-at rows render for anonymous
-  // viewers so they can tell what they are looking at.
   await t.expect(photoviewer.sidebarRow("mdi-calendar").exists).ok();
 
-  // Deny-list: edit affordances, face-marker controls, and every
-  // restricted section must be gone.
-  await photoviewer.assertSidebarIsReadOnly();
-  await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
-  await t.expect(photoviewer.markersEditToggle.exists).notOk();
+  // The visitor share-link photo carries a Title but no Caption.
+  await photoviewer.assertSidebarIsReadOnly({ restricted: true, expectCaption: false });
   // Merged file row renders for restricted sessions (type + size as
   // the title) but the filename subtitle must be suppressed.
   await t.expect(Selector(".p-lightbox-sidebar .meta-file .v-list-item-subtitle").exists).notOk();
-  await t.expect(photoviewer.sidebarRow("mdi-camera").exists).notOk();
-  await t.expect(photoviewer.sidebarRow("mdi-camera-iris").exists).notOk();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Labels").exists).notOk();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Albums").exists).notOk();
