@@ -35,6 +35,42 @@ func TestClient_GetData(t *testing.T) {
 	assert.Equal(t, "portal", second.Theme)
 }
 
+func TestClient_GetData_OIDCFields(t *testing.T) {
+	t.Run("RoundTripThroughDataJSON", func(t *testing.T) {
+		src := NewClient()
+		src.SetData(&ClientData{
+			AllowGroups:     []string{"media-acme-admin", "media-acme-viewer"},
+			AllowGroupRoles: map[string]string{"media-acme-admin": "admin", "media-acme-viewer": "viewer"},
+			RedirectURIs:    []string{"https://photos.example.com/api/v1/oidc/redirect"},
+		})
+
+		// Read back from a fresh Client populated only via the marshaled JSON,
+		// so the test exercises the json.Unmarshal path, not the m.data cache.
+		dst := &Client{DataJSON: src.DataJSON}
+		got := dst.GetData()
+
+		assert.Equal(t, []string{"media-acme-admin", "media-acme-viewer"}, got.AllowGroups)
+		assert.Equal(t, "admin", got.AllowGroupRoles["media-acme-admin"])
+		assert.Equal(t, "viewer", got.AllowGroupRoles["media-acme-viewer"])
+		assert.Equal(t, []string{"https://photos.example.com/api/v1/oidc/redirect"}, got.RedirectURIs)
+	})
+
+	t.Run("OmitEmpty", func(t *testing.T) {
+		c := NewClient()
+		c.SetData(&ClientData{Theme: "portal"})
+
+		// Older rows without the OIDC fields must round-trip cleanly and report zero values.
+		assert.NotContains(t, string(c.DataJSON), "allowGroups")
+		assert.NotContains(t, string(c.DataJSON), "allowGroupRoles")
+		assert.NotContains(t, string(c.DataJSON), "redirectUris")
+
+		got := (&Client{DataJSON: c.DataJSON}).GetData()
+		assert.Nil(t, got.AllowGroups)
+		assert.Nil(t, got.AllowGroupRoles)
+		assert.Nil(t, got.RedirectURIs)
+	})
+}
+
 func TestFindClient(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")

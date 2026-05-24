@@ -49,6 +49,18 @@ func TestConfig_DatabaseDriverName(t *testing.T) {
 		resetDatabaseOptions(c)
 		assert.Equal(t, "SQLite", c.DatabaseDriverName())
 	})
+	t.Run("Whitespace", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = "   "
+		assert.Equal(t, "SQLite", c.DatabaseDriverName())
+	})
+	t.Run("Auto", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = " AUTO "
+		assert.Equal(t, "SQLite", c.DatabaseDriverName())
+	})
 	t.Run("MySQLReportsAsMariaDB", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		resetDatabaseOptions(c)

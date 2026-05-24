@@ -20,6 +20,19 @@ import (
 
 const shortTestJoinToken = "short-token"
 
+func TestConfig_PortalOIDCIssuer(t *testing.T) {
+	t.Run("DefaultsToSiteUrl", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, c.SiteUrl(), c.PortalOIDCIssuer())
+	})
+
+	t.Run("FollowsSiteUrlOverride", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://portal.example.com/"
+		assert.Equal(t, "https://portal.example.com/", c.PortalOIDCIssuer())
+	})
+}
+
 func TestConfig_PortalUrl(t *testing.T) {
 	t.Run("Unset", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

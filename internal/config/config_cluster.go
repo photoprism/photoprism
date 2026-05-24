@@ -112,6 +112,14 @@ func (c *Config) Portal() bool {
 	return c.NodeRole() == cluster.RolePortal
 }
 
+// PortalOIDCIssuer returns the issuer URL advertised by the Portal's OIDC OP
+// (discovery doc, ID tokens, userinfo). Defaults to SiteUrl; a future env
+// override (PHOTOPRISM_PORTAL_OIDC_ISSUER) will let operators advertise a
+// different URL when the Portal is fronted by a path-rewriting proxy.
+func (c *Config) PortalOIDCIssuer() string {
+	return c.SiteUrl()
+}
+
 // PortalUrl returns the URL of the cluster management portal server, if configured.
 func (c *Config) PortalUrl() string {
 	if c.options.PortalUrl == "" {
