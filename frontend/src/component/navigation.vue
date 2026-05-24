@@ -119,6 +119,19 @@
                   </v-list-item-title>
                 </v-list-item>
 
+                <v-list-item
+                  v-show="$config.feature('calendar')"
+                  :to="{ name: 'memories' }"
+                  :exact="true"
+                  variant="text"
+                  class="nav-memories"
+                  @click.stop=""
+                >
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Memories`) }}
+                  </v-list-item-title>
+                </v-list-item>
+
                 <v-list-item :to="{ name: 'photos', query: { q: 'stacks' } }" :exact="true" variant="text" class="nav-stacks" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item`">
                     {{ $gettext(`Stacks`) }}

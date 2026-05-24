@@ -48,6 +48,18 @@ const c = window.__CONFIG__;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 const loginRoute = "login";
 
+const memoriesRouteProps = () => {
+  const today = new Date();
+
+  return {
+    staticFilter: {
+      quality: "3",
+      month: `${today.getMonth() + 1}`,
+      day: `${today.getDate()}`,
+    },
+  };
+};
+
 export default [
   {
     name: "home",
@@ -245,6 +257,13 @@ export default [
     component: Albums,
     meta: { title: $gettext("Calendar"), requiresAuth: true },
     props: { view: "month", defaultOrder: "newest", staticFilter: { type: "month" } },
+  },
+  {
+    name: "memories",
+    path: "/memories",
+    component: Photos,
+    meta: { title: $gettext("Memories"), requiresAuth: true },
+    props: memoriesRouteProps,
   },
   {
     name: "month",
