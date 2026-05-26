@@ -119,7 +119,8 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 
 	// Obtain test database credentials.
 	//
-	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL:
+	// Example PHOTOPRISM_TEST_DSN for MariaDB / MySQL (the port matches the dev
+	// MariaDB service, which defaults to 4001 unless MARIADB_PORT overrides it):
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
 	testDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
@@ -152,7 +153,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	opts := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
-		Copyright:       "(c) 2018-2025 PhotoPrism UG. All rights reserved.",
+		Copyright:       "(c) 2018-2026 PhotoPrism UG. All rights reserved.",
 		Public:          true,
 		Sponsor:         true,
 		AuthMode:        "",
@@ -205,7 +206,7 @@ func NewTestOptionsError() *Options {
 		OriginalsPath:  dataPath + "/originals",
 		ImportPath:     dataPath + "/import",
 		TempPath:       dataPath + "/temp",
-		DatabaseDriver: SQLite3,
+		DatabaseDriver: dsn.DriverSQLite3,
 		DatabaseDSN:    ".test-error.db",
 	}
 
@@ -244,7 +245,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 	cachedDb := false
 
 	// Try to restore test db from cache.
-	if len(testDbCache) > 0 && c.DatabaseDriver() == SQLite3 && !fs.FileExists(c.DatabaseDSN()) {
+	if len(testDbCache) > 0 && c.DatabaseDriver() == dsn.DriverSQLite3 && !fs.FileExists(c.DatabaseDSN()) {
 		if err := os.WriteFile(c.DatabaseDSN(), testDbCache, fs.ModeFile); err != nil {
 			log.Warnf("config: %s (restore test database)", err)
 		} else {
@@ -264,7 +265,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 
 	c.InitTestDb()
 
-	if testDbCache == nil && c.DatabaseDriver() == SQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
+	if testDbCache == nil && c.DatabaseDriver() == dsn.DriverSQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
 		testDbMutex.Lock()
 		defer testDbMutex.Unlock()
 
@@ -373,7 +374,7 @@ func NewTestContext(args []string) *cli.Context {
 	app := cli.NewApp()
 	app.Usage = "PhotoPrism®"
 	app.Version = "test"
-	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
+	app.Copyright = "(c) 2018-2026 PhotoPrism UG. All rights reserved."
 	app.EnableBashCompletion = true
 	app.Flags = Flags.Cli()
 	app.Metadata = Values{

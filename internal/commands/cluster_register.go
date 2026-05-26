@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -156,7 +157,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		if themeVersion, err := theme.DetectVersion(conf.ThemePath()); err == nil && themeVersion != "" {
 			payload.Theme = themeVersion
 		}
-		b, _ := json.Marshal(payload)
+		b := marshalRegisterRequest(payload)
 
 		// In dry-run, we allow empty portalURL (will print derived/empty values).
 		if ctx.Bool("dry-run") {
@@ -469,7 +470,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 	if resp.Database.Name != "" && resp.Database.User != "" {
 		driver := strings.TrimSpace(resp.Database.Driver)
 		if driver == "" {
-			driver = config.MySQL
+			driver = dsn.DriverMySQL
 		}
 		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)

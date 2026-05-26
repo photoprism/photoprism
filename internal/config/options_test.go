@@ -54,7 +54,7 @@ func TestOptions_LoadDoesNotOverrideEdition(t *testing.T) {
 	assert.Equal(t, "PhotoPrism", c.Name)
 	assert.Equal(t, "PhotoPrism®", c.About)
 	assert.Equal(t, "test", c.Version)
-	assert.Equal(t, "(c) 2018-2025 PhotoPrism UG. All rights reserved.", c.Copyright)
+	assert.Equal(t, "(c) 2018-2026 PhotoPrism UG. All rights reserved.", c.Copyright)
 
 	dir := t.TempDir()
 	fileName := filepath.Join(dir, "options.yml")
@@ -74,7 +74,7 @@ func TestOptions_LoadDoesNotOverrideEdition(t *testing.T) {
 	assert.Equal(t, "PhotoPrism", c.Name)
 	assert.Equal(t, "PhotoPrism®", c.About)
 	assert.Equal(t, "test", c.Version)
-	assert.Equal(t, "(c) 2018-2025 PhotoPrism UG. All rights reserved.", c.Copyright)
+	assert.Equal(t, "(c) 2018-2026 PhotoPrism UG. All rights reserved.", c.Copyright)
 	assert.Equal(t, 4242, c.HttpPort)
 }
 
@@ -100,6 +100,35 @@ func TestOptions_MarshalDoesNotIncludeBuildMetadata(t *testing.T) {
 	assert.False(t, hasVersion)
 	assert.False(t, hasCopyright)
 	assert.Equal(t, 4242, values["HttpPort"])
+}
+
+// TestOptions_IndexWorkersYamlRoundTrip pins yaml.v2's loose-typing
+// behavior for the IndexWorkers field after its type changed from int to
+// string. The test asserts that legacy options.yml files using the
+// bare-int form (`IndexWorkers: 4`) still load — yaml.v2 coerces scalar
+// nodes into the string field — alongside the new "auto" sentinel and
+// the explicit quoted-string form.
+func TestOptions_IndexWorkersYamlRoundTrip(t *testing.T) {
+	cases := map[string]struct {
+		yaml string
+		want string
+	}{
+		"BareInt":     {"IndexWorkers: 4\n", "4"},
+		"QuotedInt":   {"IndexWorkers: \"4\"\n", "4"},
+		"Auto":        {"IndexWorkers: auto\n", "auto"},
+		"QuotedAuto":  {"IndexWorkers: \"auto\"\n", "auto"},
+		"Negative":    {"IndexWorkers: -1\n", "-1"},
+		"Empty":       {"IndexWorkers: \"\"\n", ""},
+		"Unspecified": {"AdminUser: admin\n", ""},
+	}
+
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			var o Options
+			assert.NoError(t, yaml.Unmarshal([]byte(tc.yaml), &o))
+			assert.Equal(t, tc.want, o.IndexWorkers)
+		})
+	}
 }
 
 func TestOptions_ExpandFilenames(t *testing.T) {

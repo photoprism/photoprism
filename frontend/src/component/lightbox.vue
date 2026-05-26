@@ -17,7 +17,9 @@
     @keydown.space.exact="onKeyDown"
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
-    @keydown.esc.exact.stop="close"
+    @keydown.esc.exact.stop="onEscapeKey"
+    @keydown.enter.exact="onEnterKey"
+    @keydown.tab="onTabKey"
     @click.capture="captureDialogClick"
     @pointerdown.capture="captureDialogPointerDown"
   >
@@ -28,7 +30,9 @@
         tabindex="-1"
         class="p-lightbox__content no-transition"
         :class="{
-          'sidebar-visible': info,
+          'hide-caption': hideCaption,
+          'sidebar-visible': sidebarVisible,
+          'face-marker-mode': faceMarkers.active,
           'slideshow-active': slideshow.active,
           'is-fullscreen': isFullscreen(),
           'is-zoomable': isZoomable,
@@ -40,16 +44,18 @@
         }"
       >
         <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
-        <p-face-marker-overlay
-          v-if="shouldShowEditButton() && featPeople && markersVisible && pswp()"
+        <p-meta-face-markers
+          v-if="featPeople && faceMarkers.active && pswp()"
           ref="faceMarkerOverlay"
-          :mode="addingMarker ? 'draw' : 'display'"
-          :markers="faceMarkers"
+          :mode="faceMarkers.mode"
+          :markers="markers"
           :pswp="pswp()"
-          :busy="markersBusy"
+          :busy="faceMarkers.busy"
+          :hovered-uid="faceMarkers.hoveredMarkerUid"
           @create="onCreateFaceMarker"
-          @cancel="cancelAddingMarker"
-        ></p-face-marker-overlay>
+          @cancel="exitFaceMarkerMode"
+          @remove="onRemoveFaceMarker"
+        ></p-meta-face-markers>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
@@ -84,18 +90,17 @@
           </div>
         </div>
       </div>
-      <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
-        <p-sidebar-info
-          ref="sidebarInfo"
+      <div v-if="sidebarVisible" tabindex="-1" class="p-lightbox__sidebar bg-background">
+        <p-lightbox-sidebar
+          ref="sidebar"
           :uid="model.UID"
-          @close="hideInfo"
-          @toggle-markers-visible="toggleMarkersVisible"
-          @toggle-adding-marker="toggleAddingMarker"
-          @remove-marker="onRemoveFaceMarker"
-          @eject-marker="onEjectFaceMarker"
+          @close="hideSidebar"
+          @toggle-face-marker-mode="toggleFaceMarkerMode"
+          @toggle-face-marker-edit="toggleFaceMarkerEdit"
+          @clear-subject="onClearMarkerSubject"
           @reload-markers="onReloadFaceMarkers"
-          @naming-started="pendingNameMarkerUid = null"
-        ></p-sidebar-info>
+          @naming-started="faceMarkers.setPendingNameMarkerUid('')"
+        ></p-lightbox-sidebar>
       </div>
     </div>
     <p-lightbox-menu
@@ -122,6 +127,7 @@ import { Album } from "model/album";
 import * as media from "common/media";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
+import { $faceMarkers } from "common/face-markers";
 
 const VIDEO_EVENT_TYPES = [
   "loadstart",
@@ -145,16 +151,28 @@ const VIDEO_EVENT_TYPES = [
 const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 
 import PLightboxMenu from "component/lightbox/menu.vue";
-import PSidebarInfo from "component/sidebar/info.vue";
+import PLightboxSidebar from "component/lightbox/sidebar.vue";
 import { Marker } from "model/marker";
 import * as src from "common/src";
 
 const appStorage = getAppStorage();
 const appSessionStorage = getAppSessionStorage();
+const viewportPadding = { top: 0, bottom: 0, left: 0, right: 0 };
+
+// shouldShowSidebar returns the persisted sidebar visibility flag.
+const shouldShowSidebar = () => {
+  return appStorage.getItem("lightbox.sidebar") === "true";
+};
+
+// shouldHideCaption returns the persisted Ctrl+H caption visibility flag;
+// a missing key resolves to visible so first-time users see the caption.
+const shouldHideCaption = () => {
+  return appStorage.getItem("lightbox.caption") === "false";
+};
 
 export default {
   name: "PLightbox",
-  components: [PLightboxMenu, PSidebarInfo],
+  components: [PLightboxMenu, PLightboxSidebar],
   emits: ["enter", "leave"],
   expose: ["onShortCut"],
   data() {
@@ -164,12 +182,12 @@ export default {
     return {
       debug,
       trace,
-      visible: false,
       busy: false,
       closing: false,
-      info: appStorage.getItem("lightbox.info") === "true",
+      visible: false,
+      sidebarVisible: shouldShowSidebar(),
+      hideCaption: shouldHideCaption() || shouldShowSidebar(),
       menuElement: null,
-      menuBgColor: "#252525",
       menuVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
@@ -205,11 +223,10 @@ export default {
       contextAllowsEdit: true,
       contextAllowsSelect: true,
       featPeople: this.$config.feature("people"),
-      markersVisible: false,
-      addingMarker: false,
-      markersBusy: false,
-      faceMarkers: [],
-      pendingNameMarkerUid: null,
+      // Shared face-marker state (`common/face-markers.js`). The lightbox
+      // owns policy; the sidebar reads the same singleton. Entering any
+      // non-null mode pauses playback; exit does NOT resume.
+      faceMarkers: $faceMarkers,
       subscriptions: [], // Event subscriptions.
       // Video properties for rendering the controls.
       video: {
@@ -250,10 +267,39 @@ export default {
       },
     };
   },
+  computed: {
+    // Face-marker rectangles for the current photo, re-derived from
+    // `photo.getMarkers(true)` on every reactive read. Replaces the
+    // legacy local `faceMarkers` data array — Vue's reactivity tracks
+    // the underlying `file.Markers` array so create / eject / remove
+    // mutations propagate to the overlay without an explicit refresh.
+    markers() {
+      if (!this.photo?.UID || typeof this.photo.getMarkers !== "function") {
+        return [];
+      }
+      return this.photo.getMarkers(true);
+    },
+  },
+  watch: {
+    // Routes null ↔ active transitions through enterFaceMarkerMode /
+    // exitFaceMarkerMode. display ↔ draw transitions (both truthy) are
+    // no-ops — playback is already paused and markers stay on screen.
+    "faceMarkers.mode"(now, was) {
+      if (!was && now) {
+        this.enterFaceMarkerMode();
+      } else if (was && !now) {
+        this.exitFaceMarkerMode();
+      }
+    },
+  },
   created() {
     this.subscriptions.push(this.$event.subscribe("lightbox.open", this.openLightbox.bind(this)));
     this.subscriptions.push(this.$event.subscribe("lightbox.pause", this.pauseLightbox.bind(this)));
     this.subscriptions.push(this.$event.subscribe("lightbox.close", this.onClose.bind(this)));
+    // Pick up Title/Caption edits made by other clients so the dynamic
+    // caption reflects them on the next layout pass without waiting for
+    // the slide to be re-created.
+    this.subscriptions.push(this.$event.subscribe("photos.updated", this.onPhotosUpdated.bind(this)));
   },
   beforeUnmount() {
     // Exit fullscreen mode if enabled, has no effect otherwise.
@@ -308,7 +354,8 @@ export default {
       this.closing = false;
       this.visible = true;
       this.wasFullscreen = $fullscreen.isEnabled();
-      this.info = appStorage.getItem("lightbox.info") === "true";
+      this.sidebarVisible = shouldShowSidebar();
+      this.hideCaption = shouldHideCaption() || this.sidebarVisible;
 
       // Publish init event.
       this.$event.publish("lightbox.init");
@@ -320,7 +367,7 @@ export default {
       this.resetFaceMarkers();
 
       // Hide sidebar.
-      this.info = false;
+      this.sidebarVisible = false;
 
       // Remove lightbox focus and hide lightbox.
       if (this.visible) {
@@ -376,10 +423,10 @@ export default {
 
       return this.$refs.lightbox;
     },
-    // Returns the metadata sidebar element.
-    getSidebarElement() {
+    // Returns the sidebar Vue component proxy.
+    getSidebar() {
       if (!this.$refs.sidebar) {
-        this.log("sidebar element is not visible");
+        this.log("sidebar component is not visible");
         return null;
       }
 
@@ -418,6 +465,7 @@ export default {
         tapAction: (point, ev) => this.onContentTap(ev),
         imageClickAction: (point, ev) => this.onContentClick(ev),
         bgClickAction: (point, ev) => this.onBgClick(ev),
+        padding: viewportPadding,
         paddingFn: (viewport, data) => this.getPadding(viewport, data),
         getViewportSizeFn: () => this.getViewport(),
         closeTitle: this.$gettext("Close"),
@@ -1057,18 +1105,20 @@ export default {
       this.captionPlugin = new Captions(this.lightbox, {
         type: "below",
         mobileLayoutBreakpoint: 1024,
-        captionContent: (slide) => {
+        // Gate the plugin's panAreaSize adjustment on the user's
+        // Ctrl+H toggle (#5580). When disabled, the photo gets the
+        // full viewport instead of leaving room for the caption.
+        // toggleCaption() calls pswp.updateSize(true) to force a
+        // re-layout when this flips.
+        enabled: () => !this.hideCaption,
+        // Resolve slide → model here; the plugin owns the HTML format
+        // (sanitization, title/caption layout) so it can stay in sync
+        // with the sidebar's caption renderer.
+        getModel: (slide) => {
           if (!slide || !this.models || slide?.index < 0) {
-            return "";
+            return null;
           }
-
-          const model = this.models[slide.index];
-
-          if (model) {
-            return this.formatCaption(model);
-          }
-
-          return "";
+          return this.models[slide.index] || null;
         },
       });
 
@@ -1104,6 +1154,14 @@ export default {
       this.lightbox.on("pointerUp", this.lightboxPointerListener);
       this.lightbox.on("pointerDown", this.lightboxPointerListener);
       // this.lightbox.on("pointerMove", this.lightboxPointerListener);
+
+      // Suppress PhotoSwipe's document-level keydown shortcuts (notably "z"
+      // for toggleZoom) while the user is typing in the info sidebar.
+      // PhotoSwipe checks `defaultPrevented` on the dispatched event and
+      // returns early if we mark it; see photoswipe.esm.js _onKeyDown. The
+      // Vue-bound onKeyDown in this component already skips when info is open
+      // and the focus is on an input/textarea — same predicate here.
+      this.lightbox.on("keydown", this.onPswpKeyDown);
 
       // Add PhotoSwipe lightbox controls,
       // see https://photoswipe.com/adding-ui-elements/.
@@ -1250,7 +1308,7 @@ export default {
             }),
         });
 
-        // Add information toggle button.
+        // Add sidebar toggle control.
         if (window.innerWidth > this.mobileBreakpoint) {
           lightbox.pswp.ui.registerElement({
             name: "sidebar-button",
@@ -1266,7 +1324,7 @@ export default {
               outlineID: "pswp__icn-info", // Add this to the <path> in the inner property.
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: (ev) => this.onControlClick(ev, this.toggleInfo),
+            onClick: (ev) => this.onControlClick(ev, this.toggleSidebar),
           });
         }
 
@@ -1428,7 +1486,7 @@ export default {
           name: "archive",
           icon: "mdi-archive",
           text: this.$pgettext("Verb", "Archive"),
-          shortcut: "Ctrl-A",
+          shortcut: "Ctrl-X",
           disabled: !this.model,
           visible:
             this.canArchive &&
@@ -1443,7 +1501,7 @@ export default {
           name: "restore",
           icon: "mdi-archive-arrow-up",
           text: this.$gettext("Restore"),
-          shortcut: "Ctrl-A",
+          shortcut: "Ctrl-X",
           disabled: !this.model,
           visible:
             this.canArchive &&
@@ -1465,6 +1523,28 @@ export default {
             this.onDownload();
           },
         },
+        {
+          name: "show-caption",
+          icon: "mdi-text-box-outline",
+          text: this.$gettext("Show Caption"),
+          shortcut: "Ctrl-H",
+          visible: !this.sidebarVisible && this.hideCaption,
+          click: () => {
+            this.toggleCaption();
+            this.$refs.menu?.hide();
+          },
+        },
+        {
+          name: "hide-caption",
+          icon: "mdi-text-box-remove-outline",
+          text: this.$gettext("Hide Caption"),
+          shortcut: "Ctrl-H",
+          visible: !this.sidebarVisible && !this.hideCaption,
+          click: () => {
+            this.toggleCaption();
+            this.$refs.menu?.hide();
+          },
+        },
       ];
     },
     onShowMenu() {
@@ -1482,7 +1562,9 @@ export default {
       }
 
       const ok = await this.confirmDiscardSidebar();
-      if (!ok) return;
+      if (!ok) {
+        return;
+      }
 
       this.closing = true;
 
@@ -1513,7 +1595,9 @@ export default {
     // onChange().
     wrapPswpNavGuards() {
       const pswp = this.pswp();
-      if (!pswp || pswp.__navGuardsInstalled) return;
+      if (!pswp || pswp.__navGuardsInstalled) {
+        return;
+      }
       const origPrev = pswp.prev ? pswp.prev.bind(pswp) : null;
       const origNext = pswp.next ? pswp.next.bind(pswp) : null;
       if (origPrev) {
@@ -1523,7 +1607,9 @@ export default {
             return origPrev();
           }
           const ok = await this.confirmDiscardSidebar();
-          if (!ok) return;
+          if (!ok) {
+            return;
+          }
           this._suppressNavCheck = true;
           return origPrev();
         };
@@ -1535,7 +1621,9 @@ export default {
             return origNext();
           }
           const ok = await this.confirmDiscardSidebar();
-          if (!ok) return;
+          if (!ok) {
+            return;
+          }
           this._suppressNavCheck = true;
           return origNext();
         };
@@ -1565,44 +1653,6 @@ export default {
       this.$nextTick(() => {
         this.hideDialog();
       });
-    },
-    // Returns the picture (model) caption as sanitized HTML, if any.
-    formatCaption(model) {
-      if (!model) {
-        return "";
-      }
-
-      let caption = "";
-
-      if (model.Title) {
-        caption += `<h4>${this.$util.encodeHTML(model.Title.trim())}</h4>`;
-      }
-
-      /*
-        TODO: Find a good position for the date information that works for all screen sizes and image dimensions.
-              We MAY postpone this and display it along with other metadata in the new sidebar.
-       */
-      /* if (model.TakenAtLocal) {
-         caption += `<div>${this.$util.formatDate(model.TakenAtLocal)}</div>`;
-      } */
-
-      if (model.Description && !model.Caption) {
-        model.Caption = model.Description;
-      }
-
-      let text = typeof model.Caption === "string" ? model.Caption.trim() : "";
-
-      if (text) {
-        if (!caption && text.split("\n").length < 2) {
-          // Render large caption if there is no title and it has only one line.
-          caption += `<h4>${this.$util.encodeHTML(text)}</h4>`;
-        } else {
-          // Render small caption otherwise.
-          caption += `<p>${this.$util.encodeHTML(text)}</p>`;
-        }
-      }
-
-      return this.$util.sanitizeHtml(caption);
     },
     // Removes any event listeners before the lightbox is fully closed.
     onClose() {
@@ -1658,8 +1708,8 @@ export default {
       // still sees the dirty old photo. On cancel, revert via pswp.goTo().
       if (this._suppressNavCheck) {
         this._suppressNavCheck = false;
-      } else if (newIndex !== oldIndex && this.info && newIndex >= 0 && oldIndex >= 0) {
-        const sidebar = this.$refs.sidebarInfo;
+      } else if (newIndex !== oldIndex && this.sidebarVisible && newIndex >= 0 && oldIndex >= 0) {
+        const sidebar = this.getSidebar();
         if (sidebar && typeof sidebar.hasPendingEdit === "function" && sidebar.hasPendingEdit()) {
           const rollbackIndex = oldIndex;
           this.$nextTick(() => {
@@ -1667,7 +1717,9 @@ export default {
               if (!ok) {
                 this._suppressNavCheck = true;
                 const p = this.pswp();
-                if (p && typeof p.goTo === "function") p.goTo(rollbackIndex);
+                if (p && typeof p.goTo === "function") {
+                  p.goTo(rollbackIndex);
+                }
               }
             });
           });
@@ -1693,7 +1745,7 @@ export default {
       }
 
       // Fetch full photo metadata for the sidebar if it is visible.
-      if (this.info) {
+      if (this.sidebarVisible) {
         this.fetchPhoto(this.model.UID);
         this.preloadNextPhoto();
       }
@@ -1706,13 +1758,56 @@ export default {
       // Ensure that content is focused.
       this.focusContent();
     },
+    // Mirrors Title/Caption mutations from photos.updated WS events onto the
+    // in-memory slide models so the dynamic caption (and any other model-bound
+    // UI) reflects edits made by other clients. The lightbox stays mounted in
+    // the background after close, so skip work unless it is actually visible
+    // with a live PhotoSwipe instance.
+    onPhotosUpdated(ev, data) {
+      if (!this.visible || !this.lightbox || !this.models.length) {
+        return;
+      }
+      if (!data || !Array.isArray(data.entities)) {
+        return;
+      }
+      if (ev.split(".")[1] !== "updated") {
+        return;
+      }
+
+      let currentChanged = false;
+      for (const values of data.entities) {
+        if (!values || typeof values !== "object" || !values.UID) {
+          continue;
+        }
+        const idx = this.models.findIndex((m) => m && m.UID === values.UID);
+        if (idx < 0) {
+          continue;
+        }
+        const model = this.models[idx];
+        if (typeof values.Title === "string") {
+          model.Title = values.Title;
+        }
+        if (typeof values.Caption === "string") {
+          model.Caption = values.Caption;
+        }
+        if (idx === this.index) {
+          currentChanged = true;
+        }
+      }
+
+      if (currentChanged) {
+        this.captionPlugin?.refreshCurrentCaption();
+      }
+    },
     // Fetches the full Photo model for the given UID using the LRU
     // cache, delegated to the Thumb model so the photo-fetch policy
-    // lives on the slide that owns it (Thumb.loadPhoto). Restricted
-    // roles (guest, visitor, contributor) skip the extra API call
-    // and let the sidebar work with the viewer data (Thumb model).
+    // lives on the slide that owns it (Thumb.loadPhoto). Sessions
+    // without library access (share-link visitors, guests, etc.) skip
+    // the extra API call and let the sidebar work with the viewer
+    // data (Thumb model) — the long-form sidebar fields they would
+    // render are gated by the same ACL anyway.
     fetchPhoto(uid) {
-      if (!uid || this.$session.isSidebarRestricted()) {
+      if (!uid || this.$config.deny("photos", "access_library")) {
         this.photo = new Photo();
         return;
       }
@@ -1727,63 +1822,84 @@ export default {
         })
         .catch(() => {});
     },
-    toggleMarkersVisible() {
-      if (!this.shouldShowEditButton()) {
-        return;
+    // Pauses playback on face-marker entry. The CSS `face-marker-mode`
+    // class swaps video for the JPEG cover so marker boxes align with
+    // the detector frame. Exit does NOT resume playback.
+    enterFaceMarkerMode() {
+      this.pauseLightbox();
+
+      // The visibility swap moves layout from <video> to <img>; the overlay
+      // anchors its bounds on the image element, so schedule a recompute
+      // once the next frame paints (after CSS visibility flips).
+      const overlay = this.$refs.faceMarkerOverlay;
+      if (overlay && typeof overlay.scheduleUpdate === "function") {
+        this.$nextTick(() => overlay.scheduleUpdate());
       }
-      if (this.markersVisible) {
-        this.markersVisible = false;
-        this.addingMarker = false;
-        this.faceMarkers = [];
-        return;
-      }
-      this.markersVisible = true;
-      this.reloadFaceMarkers();
     },
-    toggleAddingMarker() {
-      if (!this.shouldShowEditButton() || this.markersBusy) {
+    // Fully exits face-marker UI. Eye-toggle / Escape / hideSidebar all
+    // route through here.
+    exitFaceMarkerMode() {
+      this.faceMarkers.exit();
+    },
+    // toggleFaceMarkerMode flips between no overlay and FaceMarkerDisplay
+    // (read-only); rendered only for non-editable users.
+    toggleFaceMarkerMode() {
+      if (!this.featPeople) {
         return;
       }
-      if (this.addingMarker) {
-        this.addingMarker = false;
+      if (this.faceMarkers.active) {
+        this.exitFaceMarkerMode();
         return;
       }
-      this.markersVisible = true;
-      this.addingMarker = true;
-      this.reloadFaceMarkers();
+      this.faceMarkers.display();
+    },
+    // toggleFaceMarkerEdit flips between no overlay and FaceMarkerEdit
+    // (drag-to-create + click-to-remove); rendered only for editable users.
+    toggleFaceMarkerEdit() {
+      if (!this.shouldShowEditButton() || this.faceMarkers.busy) {
+        return;
+      }
+      if (this.faceMarkers.active) {
+        this.exitFaceMarkerMode();
+        return;
+      }
+      this.faceMarkers.edit();
       if (this.$refs.menu) {
         this.$refs.menu.hide();
       }
     },
-    cancelAddingMarker() {
-      this.addingMarker = false;
-    },
-    reloadFaceMarkers() {
-      if (this.photo.UID && typeof this.photo.getMarkers === "function") {
-        this.faceMarkers = this.photo.getMarkers(true);
-      } else {
-        this.faceMarkers = [];
-      }
-    },
+    // Hard reset of every face-marker UI flag — called from `hideDialog`
+    // and slide navigation so a closed lightbox or a different photo
+    // never inherits stale mode, busy flag, or pending-name UID from the
+    // previous session.
     resetFaceMarkers() {
-      this.markersVisible = false;
-      this.addingMarker = false;
-      this.markersBusy = false;
-      this.faceMarkers = [];
-      this.pendingNameMarkerUid = null;
+      this.faceMarkers.reset();
     },
+    // Asks the sidebar (if mounted) whether it has unsaved edits, returning
+    // a Promise that resolves true to proceed and false to cancel. Used by
+    // every gesture that would tear the sidebar down (hideSidebar, slide nav,
+    // close) so the user is prompted before their in-flight changes disappear.
     confirmDiscardSidebar() {
-      const sidebar = this.$refs.sidebarInfo;
+      const sidebar = this.getSidebar();
       if (sidebar && typeof sidebar.confirmDiscardPending === "function") {
         return Promise.resolve(sidebar.confirmDiscardPending());
       }
       return Promise.resolve(true);
     },
+    // Handles the overlay's `create` emit when the user confirms a drawn
+    // face region. Persists the new Marker to the backend, evicts the
+    // Photo cache, and primes the sidebar to enter inline naming for
+    // the freshly-saved row; the overlay re-renders via the `markers`
+    // computed.
     onCreateFaceMarker(area) {
-      if (!this.photo.UID || !this.shouldShowEditButton() || this.markersBusy) return;
+      if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) {
+        return;
+      }
 
       const file = Array.isArray(this.photo.Files) ? this.photo.Files.find((f) => !!f.Primary) : null;
-      if (!file || !file.UID) return;
+      if (!file || !file.UID) {
+        return;
+      }
 
       const marker = new Marker({
         FileUID: file.UID,
@@ -1795,17 +1911,18 @@ export default {
         H: area.H,
       });
 
-      this.markersBusy = true;
+      this.faceMarkers.setBusy(true);
       marker
         .save()
         .then(() => {
-          if (!file.Markers) file.Markers = [];
+          if (!file.Markers) {
+            file.Markers = [];
+          }
           file.Markers.push(marker.getValues());
           Photo.evictCache(this.photo.UID);
-          this.reloadFaceMarkers();
           // Trigger inline naming on the fresh row in the sidebar.
           if (marker.UID) {
-            this.pendingNameMarkerUid = marker.UID;
+            this.faceMarkers.setPendingNameMarkerUid(marker.UID);
           }
           // Only clear on success — a failed save must leave the rect on
           // the photo so the user can retry confirmation or cancel.
@@ -1817,77 +1934,112 @@ export default {
           this.$notify.error(this.$gettext("Failed to save face marker"));
         })
         .finally(() => {
-          this.markersBusy = false;
+          this.faceMarkers.setBusy(false);
         });
     },
-    onEjectFaceMarker(marker) {
-      if (!this.photo.UID || !this.shouldShowEditButton() || this.markersBusy) return;
-      if (!marker || !marker.SubjUID || typeof marker.clearSubject !== "function") return;
+    // Handles the sidebar's `clear-subject` emit (⏏ button on a named
+    // marker). Clears the marker's subject assignment via the backend,
+    // syncs the file's marker entry with fresh server values, and
+    // evicts the Photo cache. The overlay re-renders via the `markers`
+    // computed, which re-reads `photo.getMarkers(true)` whenever the
+    // underlying `file.Markers` array is mutated.
+    onClearMarkerSubject(marker) {
+      if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) {
+        return;
+      }
+      if (!marker || !marker.SubjUID || typeof marker.clearSubject !== "function") {
+        return;
+      }
 
-      this.markersBusy = true;
+      this.faceMarkers.setBusy(true);
       marker
         .clearSubject()
         .then(() => {
           this.syncMarkerInFile(marker);
           Photo.evictCache(this.photo.UID);
-          this.reloadFaceMarkers();
         })
         .catch(() => {
           this.$notify.error(this.$gettext("Failed to remove name"));
         })
         .finally(() => {
-          this.markersBusy = false;
+          this.faceMarkers.setBusy(false);
         });
     },
-    // Replaces the raw marker entry in file.Markers with fresh values from
-    // the updated Marker instance. Without this, photo.getMarkers() keeps
-    // returning stale Name/SubjUID after setName/clearSubject, so toggling
-    // visibility re-renders the old label.
+    // Replaces the raw marker entry in file.Markers with fresh values
+    // from the updated Marker instance. Needed because setName /
+    // clearSubject mutate the Marker instance returned by the API but
+    // leave `file.Markers[idx]` (the raw object the overlay re-derives
+    // from via `photo.getMarkers(true)`) stale.
     syncMarkerInFile(marker) {
-      if (!marker || !marker.UID || !this.photo.UID || !Array.isArray(this.photo.Files)) return;
+      if (!marker || !marker.UID || !this.photo.UID || !Array.isArray(this.photo.Files)) {
+        return;
+      }
       const file = this.photo.Files.find((f) => !!f.Primary);
-      if (!file || !Array.isArray(file.Markers)) return;
+      if (!file || !Array.isArray(file.Markers)) {
+        return;
+      }
       const idx = file.Markers.findIndex((mm) => mm.UID === marker.UID);
       if (idx >= 0) {
         file.Markers[idx] = typeof marker.getValues === "function" ? marker.getValues() : { ...file.Markers[idx], ...marker };
       }
     },
+    // Handles the sidebar's `reload-markers` emit (post-name-change).
+    // Syncs the saved marker into the file array and evicts the Photo
+    // cache so future reads see the updated row; the overlay re-renders
+    // via the `markers` computed.
     onReloadFaceMarkers(marker) {
-      if (marker) this.syncMarkerInFile(marker);
-      if (this.photo.UID) Photo.evictCache(this.photo.UID);
-      this.reloadFaceMarkers();
+      if (marker) {
+        this.syncMarkerInFile(marker);
+      }
+      if (this.photo.UID) {
+        Photo.evictCache(this.photo.UID);
+      }
     },
+    // Handles the overlay's `remove` emit (✓ on the inline confirm pill
+    // that appears when the user clicks an unnamed marker in edit mode).
+    // Rejects the marker via the backend, removes its raw entry from
+    // `file.Markers` on success, and evicts the Photo cache; the
+    // overlay re-renders via the `markers` computed. Named markers
+    // never reach this handler — the overlay's hit-test skips them and
+    // the backend gate (`marker.SubjUID` truthy) is a defense in depth.
     onRemoveFaceMarker(marker) {
-      if (!this.photo.UID || !this.shouldShowEditButton() || this.markersBusy) return;
-      if (!marker || marker.SubjUID || typeof marker.reject !== "function") return;
+      if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) {
+        return;
+      }
+      if (!marker || marker.SubjUID || typeof marker.reject !== "function") {
+        return;
+      }
 
       const file = Array.isArray(this.photo.Files) ? this.photo.Files.find((f) => !!f.Primary) : null;
       const uid = marker.UID;
 
-      this.markersBusy = true;
+      this.faceMarkers.setBusy(true);
       marker
         .reject()
         .then(() => {
           if (file && Array.isArray(file.Markers) && uid) {
             const idx = file.Markers.findIndex((mm) => mm.UID === uid);
-            if (idx >= 0) file.Markers.splice(idx, 1);
+            if (idx >= 0) {
+              file.Markers.splice(idx, 1);
+            }
           }
           Photo.evictCache(this.photo.UID);
-          this.reloadFaceMarkers();
         })
         .catch(() => {
           this.$notify.error(this.$gettext("Failed to remove face marker"));
         })
         .finally(() => {
-          this.markersBusy = false;
+          this.faceMarkers.setBusy(false);
         });
     },
     // Preloads the next photo's full metadata when the sidebar is visible.
     // Navigation policy lives on Photo so the lightbox only decides "when"
     // to prefetch; "what to prefetch" is owned by the model. See
-    // Photo.prefetchAround in model/photo.js.
+    // Photo.prefetchAround in model/photo.js. Mirrors the fetchPhoto gate
+    // so sessions without library access don't issue prefetch GETs for
+    // long-form sidebar fields they aren't allowed to see anyway.
     preloadNextPhoto() {
-      if (!this.info || !this.models.length || this.$session.isSidebarRestricted()) {
+      if (!this.sidebarVisible || !this.models.length || this.$config.deny("photos", "access_library")) {
         return;
       }
       Photo.prefetchAround(this.models, this.index, { before: 0, after: 1 });
@@ -2180,6 +2332,24 @@ export default {
 
       return result;
     },
+    // Stops playback on the specified video element, if any.
+    pauseVideo(video) {
+      if (!video || !(video instanceof HTMLMediaElement)) {
+        return;
+      }
+
+      if (!video.paused) {
+        try {
+          video.pause();
+        } catch (err) {
+          if (this.debug) {
+            this.log("video.pause", { err });
+          }
+        }
+        video.parentElement?.classList.remove("is-playing");
+        this.showControls();
+      }
+    },
     // Finds and pauses an actively playing video, e.g. before closing the lightbox.
     pausePlaying() {
       // Get active video element, if any.
@@ -2257,9 +2427,22 @@ export default {
         this.log("shortcut", { ev });
       }
 
+      // Focus gate: defer to native handling when a text-editable element has
+      // focus so Ctrl+A/C/X/V/Z keep working inside inline editors.
+      const active = document.activeElement;
+      if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || active?.isContentEditable) {
+        return false;
+      }
+
+      // While face-marker mode is active, only Escape / Tab / KeyI /
+      // KeyD / KeyF / KeyM stay enabled (see `isShortcutDisabledInFaceMarkerMode`).
+      if (this.faceMarkers?.active && this.isShortcutDisabledInFaceMarkerMode(ev.code)) {
+        return false;
+      }
+
       switch (ev.code) {
         case "Escape":
-          this.close();
+          this.onEscapeKey();
           return true;
         case "Period":
           if (!this.contextAllowsSelect) {
@@ -2268,7 +2451,7 @@ export default {
           this.onShowMenu();
           this.toggleSelect();
           return true;
-        case "KeyA":
+        case "KeyX":
           if (this.canArchive && this.context !== contexts.Hidden && this.context !== contexts.BatchEdit) {
             if (this.model.Archived || (this.context === contexts.Archive && this.model?.Archived !== false)) {
               this.onRestore();
@@ -2292,8 +2475,11 @@ export default {
             this.toggleFullscreen();
           }
           break;
+        case "KeyH":
+          this.toggleCaption();
+          return true;
         case "KeyI":
-          this.toggleInfo();
+          this.toggleSidebar();
           return true;
         case "KeyL":
           this.onShowMenu();
@@ -2315,7 +2501,14 @@ export default {
         return;
       }
 
-      if (this.info && (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)) {
+      if (this.sidebarVisible && (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)) {
+        return;
+      }
+
+      // See the matching gate in onShortCut. Arrow keys would tear
+      // down the overlay (slide-nav); Space would un-pause the video
+      // and contradict the entry-only-pause contract.
+      if (this.faceMarkers?.active && this.isShortcutDisabledInFaceMarkerMode(ev.code)) {
         return;
       }
 
@@ -2361,6 +2554,75 @@ export default {
             this.toggleControls();
           }
           break;
+      }
+    },
+    // Returns true when the given KeyboardEvent.code names a shortcut
+    // that should be inert while face-marker mode is active. Used by
+    // both `onShortCut` (Ctrl/⌘ + key forwarder) and `onKeyDown`
+    // (template-bound Arrow / Space / Escape). Keep the set tight —
+    // every key that's safe in either mode stays out of this set.
+    isShortcutDisabledInFaceMarkerMode(code) {
+      switch (code) {
+        case "Period":
+        case "KeyX":
+        case "KeyE":
+        case "KeyH":
+        case "KeyL":
+        case "KeyS":
+        case "ArrowLeft":
+        case "ArrowRight":
+        case "Space":
+          return true;
+        default:
+          return false;
+      }
+    },
+    // Escape priority: overlay's in-flight draft → exit face-marker
+    // mode → close lightbox. Shared by the v-dialog binding and the
+    // `$view.onShortCut` forwarder.
+    onEscapeKey() {
+      const overlay = this.$refs.faceMarkerOverlay;
+      if (overlay && typeof overlay.handleEscape === "function" && overlay.handleEscape()) {
+        return;
+      }
+      if (this.faceMarkers.active) {
+        this.exitFaceMarkerMode();
+        return;
+      }
+      this.close();
+    },
+    // Commits a pending face-marker rectangle. Sidebar inputs stop
+    // Enter on their own handlers, so this only fires outside them.
+    onEnterKey() {
+      const overlay = this.$refs.faceMarkerOverlay;
+      if (overlay && typeof overlay.handleEnter === "function") {
+        overlay.handleEnter();
+      }
+    },
+    // Stops PhotoSwipe's "z" shortcut from swallowing printable keys
+    // typed into sidebar inputs. `preventDefault` makes `_onKeyDown`
+    // bail before its switch statement.
+    onPswpKeyDown(ev) {
+      if (!ev || !this.sidebarVisible) {
+        return;
+      }
+      const active = document.activeElement;
+      if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || (active && active.isContentEditable)) {
+        ev.preventDefault();
+      }
+    },
+    // Suppresses PhotoSwipe's document-level `_focusRoot` Tab handler
+    // when focus is inside the lightbox tree, so browser-default Tab
+    // navigation reaches sidebar inputs/chips. Vuetify + `$view` re-anchor
+    // any focus that escapes the modal.
+    onTabKey(ev) {
+      if (!ev) {
+        return;
+      }
+      const root = this.$refs.container || this.$refs.content;
+      const active = document.activeElement;
+      if (root && active && root.contains(active)) {
+        ev.stopPropagation();
       }
     },
     // Toggles video playback on the current video element, if any.
@@ -2443,23 +2705,35 @@ export default {
 
       return true;
     },
-    // Stops playback on the specified video element, if any.
-    pauseVideo(video) {
-      if (!video || !(video instanceof HTMLMediaElement)) {
+    // Toggles the Dynamic Caption overlay. Persisted to localStorage so
+    // the choice survives slide nav and reload. The relayout runs via
+    // `this.resize(true)` inside `$nextTick` so PhotoSwipe's `paddingFn`
+    // reads the flushed `.hide-caption` class — see H8 in best-practices.
+    // No-op when the lightbox is hidden or the sidebar is open.
+    toggleCaption() {
+      if (!this.visible || this.sidebarVisible) {
         return;
       }
 
-      if (!video.paused) {
-        try {
-          video.pause();
-        } catch (err) {
-          if (this.debug) {
-            this.log("video.pause", { err });
+      this.hideCaption = !this.hideCaption;
+      appStorage.setItem("lightbox.caption", (!this.hideCaption).toString());
+
+      // Resize and focus content element.
+      this.$nextTick(() => {
+        // If there are still issues with resizing images after
+        // hiding the caption, consider the following approach:
+        //   const viewport = this.getViewport();
+        //   slide.zoomLevels.update(viewport.x, viewport.y, slide.panAreaSize);
+        //   slide.bounds.update(slide.zoomLevels.fit);
+        this.resize(true).then(() => {
+          this.focusContent();
+          this.resize(true);
+          // Show controls if caption was hidden.
+          if (!this.hideCaption) {
+            this.showControls();
           }
-        }
-        video.parentElement?.classList.remove("is-playing");
-        this.showControls();
-      }
+        });
+      });
     },
     // Mutes/unmutes the sound for videos.
     toggleMute() {
@@ -2700,35 +2974,38 @@ export default {
         this.$event.publish("dialog.edit", { selection, album, index });
       });
     },
-    resize(force) {
-      this.$nextTick(() => {
-        if (this.visible && this.getLightboxElement() && !this.isBusy("resize")) {
-          const pswp = this.pswp();
-          if (pswp && pswp?.updateSize) {
-            pswp.updateSize(force);
-          }
+    async resize(force) {
+      await this.$nextTick();
+
+      if (this.visible && this.getLightboxElement() && !this.isBusy("resize")) {
+        const pswp = this.pswp();
+        if (pswp && pswp?.updateSize) {
+          pswp.updateSize(force);
         }
-      });
+      }
     },
-    toggleInfo() {
+    toggleSidebar() {
       if (!this.visible) {
         return;
       }
 
-      if (this.info) {
-        this.hideInfo();
+      if (this.sidebarVisible) {
+        this.hideSidebar();
       } else {
-        this.showInfo();
+        this.showSidebar();
       }
     },
     // Shows the lightbox sidebar, if hidden.
-    showInfo() {
-      if (!this.visible || this.info) {
+    showSidebar() {
+      if (!this.visible || this.sidebarVisible) {
         return;
       }
 
-      this.info = true;
-      appStorage.setItem("lightbox.info", `${this.info.toString()}`);
+      this.sidebarVisible = true;
+      // Sidebar renders the caption itself; suppress the overlay so it
+      // doesn't reserve viewport padding. hideSidebar() restores the choice.
+      this.hideCaption = true;
+      appStorage.setItem("lightbox.sidebar", `${this.sidebarVisible.toString()}`);
 
       // Fetch full photo metadata when sidebar is opened.
       this.fetchPhoto(this.model?.UID);
@@ -2740,18 +3017,32 @@ export default {
         this.focusContent();
       });
     },
-    // Hides the lightbox sidebar, if visible.
-    async hideInfo() {
-      if (!this.visible || !this.info) {
+    // Hides the lightbox sidebar, if visible. Also fully exits face-marker
+    // UI when active — the eye and pencil controls live in the sidebar,
+    // so a closed sidebar would otherwise leave the overlay mounted with
+    // no UI to disable it (see P1-10).
+    async hideSidebar() {
+      if (!this.visible || !this.sidebarVisible) {
         return;
       }
 
       const ok = await this.confirmDiscardSidebar();
-      if (!ok) return;
+      if (!ok) {
+        return;
+      }
 
-      this.info = false;
+      this.sidebarVisible = false;
+      // Restore the user's persisted Ctrl+H caption preference (#5580).
+      this.hideCaption = shouldHideCaption();
+      if (this.faceMarkers.active) {
+        this.exitFaceMarkerMode();
+      }
 
-      appStorage.setItem("lightbox.info", `${this.info.toString()}`);
+      appStorage.setItem("lightbox.sidebar", `${this.sidebarVisible.toString()}`);
+
+      // Push edits made through the sidebar into the (possibly hidden)
+      // caption element so it doesn't fade back in with stale HTML.
+      this.captionPlugin?.refreshCurrentCaption();
 
       // Resize and focus content element.
       this.$nextTick(() => {
@@ -2881,6 +3172,15 @@ export default {
       // Get viewport size without sidebar, if visible.
       const viewport = this.getViewport();
 
+      // Caption hidden (Ctrl+H or sidebar open) → reclaim its viewport
+      // space for the photo. Mirrors the getPadding() early-return below.
+      if (this.hideCaption) {
+        return {
+          width: viewport.x * window.devicePixelRatio,
+          height: viewport.y * window.devicePixelRatio,
+        };
+      }
+
       // Subtract viewport padding to get estimated slide size if it is an image or vector graphic.
       if (model && (model.Type === media.Image || model.Type === media.Raw || model.Type === media.Vector)) {
         const padding = this.getPadding(viewport, { width: model.Width, height: model.Height });
@@ -2901,8 +3201,9 @@ export default {
         left = 0,
         right = 0;
 
-      // No lightbox padding if content width or height is not specified.
-      if (!viewport || !data?.width || !data?.height) {
+      // No padding when the caption is hidden (Ctrl+H or sidebar open)
+      // or content dimensions are unknown (branching below would no-op).
+      if (this.hideCaption || !viewport || !data?.width || !data?.height) {
         return { top, bottom, left, right };
       }
 

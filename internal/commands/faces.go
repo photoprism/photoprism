@@ -89,6 +89,7 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesOptimizeAction,
 		},
+		FacesConfigCommand,
 	},
 }
 

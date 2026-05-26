@@ -42,7 +42,6 @@ $SUDO npm "${NPM_GLOBAL_OPTS[@]}" "@openai/codex@latest"
 if command -v codex >/dev/null 2>&1; then
   echo "Codex installed at: $(command -v codex)"
   codex --version || true
-  codex features disable general_analytics || true
 fi
 
 echo "Done."

@@ -141,9 +141,9 @@ func (m *Folder) SetValuesFromPath() {
 	}
 }
 
-// Slug returns a slug based on the folder title.
+// Slug returns a collision-resistant slug derived from the folder path.
 func (m *Folder) Slug() string {
-	return txt.Slug(m.Path)
+	return txt.SlugUnique(m.Path)
 }
 
 // RootPath returns the full folder path including root.

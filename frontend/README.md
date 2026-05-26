@@ -27,14 +27,14 @@ Other frontend documentation lives next to this file:
 
 ## Dependency Pinning Policy
 
-**Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.16.0"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -- frontend/package.json | grep -B2 -A4 "<pkg>"`).
+**Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.16.1"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -- frontend/package.json | grep -B2 -A4 "<pkg>"`).
 
 ### Currently Pinned Packages
 
 | Package   | Pin      | Reason                                                                                                                                                                                                                                                                                                            |
 |-----------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `vuetify` | `3.12.2` | 3.12.3+ added an `onFocusout` handler to `VAutocomplete`/`VSelect`/`VCombobox` that closes long autocomplete/select dropdowns on open (#5538). Still unfixed in 3.12.5; upstream development moved to v4. See the long `//vuetify` comment in `package.json` and `frontend/CODEMAP.md` for retest steps.          |
-| `axios`   | `1.16.0` | High-risk package. Originally pinned to `1.14.0` after the March 2026 supply-chain compromise (malicious `1.14.1`/`0.30.4` from a hijacked maintainer account). Quarantine was unwound on 2026-04-27 once OSV-Scanner came back clean. Keep an exact pin (no caret) per industry guidance for high-risk packages. |
+| `axios`   | `1.16.1` | High-risk package. Originally pinned to `1.14.0` after the March 2026 supply-chain compromise (malicious `1.14.1`/`0.30.4` from a hijacked maintainer account). Quarantine was unwound on 2026-04-27 once OSV-Scanner came back clean. Keep an exact pin (no caret) per industry guidance for high-risk packages. |
 
 ### Override Layer (Transitive Pins)
 
@@ -54,7 +54,6 @@ Some major upgrades are blocked by config-file module style. The configs referen
 |-------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `postcss-preset-env` 11.x     | ESM    | `frontend/postcss.config.js` is CommonJS (`module.exports = { plugins: [require("postcss-preset-env"), ...] }`).                                       |
 | `webpack-manifest-plugin` 6.x | ESM    | `frontend/webpack.config.js` is CommonJS (`require("webpack-manifest-plugin")`). Webpack accepts ESM configs, but the migration is non-trivial.        |
-| `escape-string-regexp` 5.x    | ESM    | v5 is ESM-only; verify every consumer (including transitive build-time tooling) before bumping.                                                        |
 | `vuetify` 4.x                 | —      | See the `vuetify` row in [Currently Pinned Packages](#currently-pinned-packages); also a separate v3 → v4 migration project.                           |
 | `vue-router` 5.x              | —      | Major release with breaking changes across `frontend/src/app/routes.js` and dynamic imports. Needs its own evaluation pass with TestCafe verification. |
 

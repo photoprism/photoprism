@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/jinzhu/gorm"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // ConvertDBMSAuthIDDataTypes applies the data type conversion for auth_id columns for SQLite
@@ -12,7 +14,7 @@ import (
 // This can't be done in a script as the order of columns is not known, and is determined by the age of the database
 func ConvertDBMSAuthIDDataTypes(db *gorm.DB) (err error) {
 	switch db.Dialect().GetName() {
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		// These create statements will get out of date, but that is ok, as the main migrate path will add any missing columns/indexes in later.
 		authSessionsCreate := `CREATE TABLE "auth_sessions" ("id" VARBINARY(2048),"user_uid" VARBINARY(42) DEFAULT '',"user_name" varchar(200),"client_uid" VARBINARY(42) DEFAULT '',"client_name" varchar(200) DEFAULT '',"client_ip" varchar(64),"auth_provider" VARBINARY(128) DEFAULT '',"auth_method" VARBINARY(128) DEFAULT '',"auth_issuer" VARBINARY(255) DEFAULT '',"auth_id" TEXT NOT NULL COLLATE BINARY DEFAULT '',"auth_scope" varchar(1024) DEFAULT '',"grant_type" VARBINARY(64) DEFAULT '',"last_active" bigint,"sess_expires" bigint,"sess_timeout" bigint,"preview_token" VARBINARY(64) DEFAULT '',"download_token" VARBINARY(64) DEFAULT '',"access_token" VARBINARY(4096) DEFAULT '',"refresh_token" VARBINARY(2048) DEFAULT '',"id_token" VARBINARY(2048) DEFAULT '',"user_agent" varchar(512),"data_json" VARBINARY(4096),"ref_id" VARBINARY(16) DEFAULT '',"login_ip" varchar(64),"login_at" datetime,"created_at" datetime,"updated_at" datetime , PRIMARY KEY ("id"))`
 		authUsersCreate := `CREATE TABLE "auth_users" ("id" integer primary key autoincrement,"user_uuid" VARBINARY(64),"user_uid" VARBINARY(42),"auth_provider" VARBINARY(128) DEFAULT '',"auth_method" VARBINARY(128) DEFAULT '',"auth_issuer" VARBINARY(255) DEFAULT '',"auth_id" TEXT NOT NULL COLLATE BINARY DEFAULT '',"user_name" varchar(200),"display_name" varchar(200),"user_email" varchar(255),"backup_email" varchar(255),"user_role" varchar(64) DEFAULT '',"user_scope" varchar(1024) DEFAULT '*',"user_attr" varchar(1024) DEFAULT '',"super_admin" bool,"can_login" bool,"login_at" datetime,"expires_at" datetime,"webdav" bool,"base_path" VARBINARY(1024),"upload_path" VARBINARY(1024),"can_invite" bool,"invite_token" VARBINARY(64),"invited_by" varchar(64),"verify_token" VARBINARY(64),"verified_at" datetime,"consent_at" datetime,"born_at" datetime,"reset_token" VARBINARY(64),"preview_token" VARBINARY(64),"download_token" VARBINARY(64),"thumb" VARBINARY(128) DEFAULT '',"thumb_src" VARBINARY(8) DEFAULT '',"ref_id" VARBINARY(16),"created_at" datetime,"updated_at" datetime,"deleted_at" datetime )`

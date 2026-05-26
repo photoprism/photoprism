@@ -66,6 +66,13 @@ export class Rest extends Model {
     return $api.get(this.getEntityResource(this.getId())).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
+  // Subclasses override this to trim user-typed string fields (those
+  // listed in the model's MaxLength export) before they reach the API,
+  // so the post-save round-trip value matches what the user reads in the
+  // editor. The base implementation is a no-op so subclasses without
+  // editable string fields need no override.
+  trimInputs() {}
+
   // Persists the model to the backend: PUT (delegates to update()) for
   // an existing entity, POST against the collection resource for a new
   // one. The response payload reseeds the local fields so server-
@@ -75,6 +82,7 @@ export class Rest extends Model {
       return this.update();
     }
 
+    this.trimInputs();
     return $api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
@@ -85,6 +93,8 @@ export class Rest extends Model {
   // payload reseeds the local fields and __originalValues, so a
   // subsequent wasChanged() reads false.
   update() {
+    this.trimInputs();
+
     // Get updated values.
     const values = this.getValues(true);
 

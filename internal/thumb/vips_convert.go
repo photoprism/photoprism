@@ -19,23 +19,15 @@ func vipsConvertImportParams() *vips.ImportParams {
 	return params
 }
 
-// vipsConvert loads a source image with libvips, applies the explicit orientation, and exports it.
-// Unlike thumbnail generation, format conversion preserves source metadata where libvips can carry it over.
-//
-// Orientation handling for HEIF/AVIF (see strukturag/libheif#227):
-// libheif always applies ISOBMFF irot/imir transforms during decode, and the HEIF spec treats
-// EXIF orientation as informational only.  There is no reliable metadata signal from libheif
-// that distinguishes "irot was applied" from "no irot was present," so we follow the spec:
-// when the image was loaded through libheif (detected via the vips-loader field), we never
-// apply the caller's EXIF orientation.  This is correct for conformant files and avoids
-// double-rotation for all transform types including square rotations and pure flips.
-//
-// Trade-off: some older Apple HEIC files (e.g. iPhone 7) carry EXIF orientation without an
-// irot box, which is non-conformant per the HEIF spec.  These files will not be auto-rotated
-// by this path.  The libheif maintainer recommends treating this as the spec-correct behavior
-// rather than introducing heuristics that risk corrupting conformant files.
+// vipsConvert loads a source image with libvips, applies the explicit
+// orientation, and exports it. EXIF orientation is skipped for HEIF/AVIF
+// (libheif already applied any irot/imir during decode — the HEIF spec treats
+// EXIF orientation as informational only). Non-conformant HEIC files that
+// carry EXIF orientation without irot will not be auto-rotated by this path.
 func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err error) {
 	VipsInit()
+
+	logName := clean.Log(filepath.Base(dstFile))
 
 	img, err := vips.LoadImageFromFile(srcFile, vipsConvertImportParams())
 	if err != nil {
@@ -43,13 +35,7 @@ func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err e
 	}
 	defer img.Close()
 
-	// Apply orientation — but not for images loaded through libheif.
-	//
-	// libheif applies all ISOBMFF irot/imir pixel transforms during decode and the HEIF
-	// spec says EXIF orientation is informational only (strukturag/libheif#227).  There is
-	// no post-load signal that reliably distinguishes "irot applied" from "no irot present"
-	// for every transform type (dimension-preserving rotations, flips), so we follow the
-	// spec and skip explicit rotation entirely for heifload images.
+	// Skip EXIF orientation for HEIF/AVIF — libheif already applied irot/imir during decode.
 	if orientation > OrientationNormal && !vipsLoadedViaHeif(img) {
 		if err = VipsRotate(img, orientation); err != nil {
 			return nil, err
@@ -66,7 +52,17 @@ func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err e
 	switch fs.FileType(dstFile) {
 	case fs.ImagePng:
 		params := VipsPngExportParams(width, height)
+		// Try to export PNG image.
 		imageBytes, _, err = img.ExportPng(params)
+		// If that fails, try again without the ICC profile, since libpng may reject an invalid ICCP chunk (e.g. malformed profile length).
+		if err != nil && img.HasICCProfile() {
+			log.Tracef("vips: %s in %s (export png with icc)", err, logName)
+			if iccErr := img.RemoveICCProfile(); iccErr != nil {
+				log.Debugf("vips: %s in %s (remove icc profile)", iccErr, logName)
+			} else if imageBytes, _, err = img.ExportPng(params); err != nil {
+				log.Debugf("vips: %s in %s (export png without icc)", err, logName)
+			}
+		}
 	default:
 		params := VipsJpegExportParams(width, height)
 		imageBytes, _, err = img.ExportJpeg(params)
@@ -81,8 +77,9 @@ func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err e
 	}
 
 	decoded, _, err := fs.DecodeImageData(imageBytes)
+
 	if err != nil {
-		return nil, fmt.Errorf("vips: %s in %s (decode exported image)", err, clean.Log(filepath.Base(dstFile)))
+		return nil, fmt.Errorf("vips: %s in %s (decode exported image)", err, logName)
 	}
 
 	return decoded, nil

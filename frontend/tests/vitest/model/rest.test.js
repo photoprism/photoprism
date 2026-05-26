@@ -56,6 +56,23 @@ describe("model/abstract", () => {
     expect(album.Description).toBe("Test description");
   });
 
+  // update() / save() route through trimInputs() so user-typed string
+  // fields are trimmed before they leave the client, matching what the
+  // backend (txt.Clip / clean.Name) would persist anyway.
+  it("update() trims string fields via trimInputs()", async () => {
+    const album = new Album({ UID: "abc", Title: "  Vacation  ", Location: "\tBerlin\n" });
+    await album.update();
+    expect(album.Title).toBe("Vacation");
+    expect(album.Location).toBe("Berlin");
+  });
+
+  it("save() trims string fields on the new-entity POST path", async () => {
+    const album = new Album({ Title: "  Vacation  " });
+    expect(album.hasId()).toBe(false);
+    await album.save();
+    expect(album.Title).toBe("Vacation");
+  });
+
   it("should save album", async () => {
     const values = { UID: "abc", Name: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);
@@ -353,6 +370,39 @@ describe("model/abstract", () => {
       album.rollback();
       expect(album.Name).toBe("Pristine");
       expect(album.wasChanged()).toBe(false);
+    });
+  });
+
+  describe("getWriteOnly", () => {
+    it("returns an empty object on the base Model", () => {
+      const album = new Album({ ID: 1, Name: "Trip" });
+      expect(album.getWriteOnly()).toEqual({});
+    });
+
+    it("seeds declared write-only fields into __originalValues on construction", () => {
+      class WithSecret extends Album {
+        getWriteOnly() {
+          return { Secret: "" };
+        }
+      }
+      const item = new WithSecret({ ID: 1, Name: "Trip" });
+      expect(item.Secret).toBe("");
+      expect(item.__originalValues.Secret).toBe("");
+      // A subsequent edit must show up in the change diff.
+      item.Secret = "shh";
+      expect(item.getValues(true)).toEqual({ Secret: "shh" });
+    });
+
+    it("does not overwrite a write-only field that was provided in values", () => {
+      class WithSecret extends Album {
+        getWriteOnly() {
+          return { Secret: "" };
+        }
+      }
+      const item = new WithSecret({ ID: 1, Name: "Trip", Secret: "from-api" });
+      expect(item.Secret).toBe("from-api");
+      expect(item.__originalValues.Secret).toBe("from-api");
+      expect(item.wasChanged()).toBe(false);
     });
   });
 });

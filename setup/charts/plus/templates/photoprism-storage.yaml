@@ -1,0 +1,17 @@
+{{- $store := .Values.persistence.storage -}}
+{{- if $store.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "photoprism-plus.fullname" . }}-storage
+  labels:
+    {{- include "photoprism-plus.labels" . | nindent 4 }}
+spec:
+  accessModes: {{ toYaml $store.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ $store.size }}
+{{- if .Values.persistence.storageClassName }}
+  storageClassName: {{ .Values.persistence.storageClassName }}
+{{- end }}
+{{- end }}

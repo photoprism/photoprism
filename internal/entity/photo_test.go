@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
@@ -1374,7 +1375,7 @@ func TestPhoto_SetPrimary(t *testing.T) {
 	t.Run("UpdateQualityErrorIsNonFatal", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: dsn.DriverSQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "set-primary-quality-error.db"),
 		}
 

@@ -48,7 +48,7 @@ func (m SizeMap) All() SizeList {
 
 // Size presets used throughout the application.
 var (
-	SizeColors   = Size{Colors, Fit720, "Color Detection", 3, 3, false, false, false, true, Options{ResampleResize, ResampleNearestNeighbor, ResamplePng}}
+	SizeColors   = Size{Colors, Fit720, "Color Detection", 3, 3, false, false, false, true, Options{ResampleResize, ResampleNearestNeighbor, ResamplePng, ResampleStripICC}}
 	SizeTile50   = Size{Tile50, Fit720, "List View", 50, 50, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
 	SizeTile100  = Size{Tile100, Fit720, "Places View", 100, 100, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}
 	SizeTile224  = Size{Tile224, Fit720, "AI, Mosaic View", 224, 224, false, false, false, true, Options{ResampleFillCenter, ResampleDefault}}

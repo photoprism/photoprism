@@ -11,7 +11,6 @@ export let BatchSize = 99999;
 export let WebDavRoles = ["admin", "manager", "user", "contributor"];
 export let NoBasePathRoles = ["admin", "manager", "user", "viewer"];
 export let NoUploadPathRoles = ["guest", "viewer"];
-export let SidebarRestrictedRoles = ["guest", "visitor", "contributor"];
 
 // User encapsulates account metadata, roles, and helpers for access control.
 export class User extends RestModel {
@@ -208,17 +207,18 @@ export class User extends RestModel {
     return "*";
   }
 
+  // isRemote returns true when the user is authenticated through a remote provider (currently LDAP).
   isRemote() {
-    return this.AuthProvider && this.AuthProvider === "ldap";
+    return this.AuthProvider === "ldap";
   }
 
   requiresPassword() {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
-  // Checks if WebDAV access is allowed for this user.
+  // hasWebDAV returns true when WebDAV access is enabled for this user and the role permits it.
   hasWebDAV() {
-    return this.WebDAV && this.canEnableWebDAV();
+    return !!this.WebDAV && this.canEnableWebDAV();
   }
 
   // Checks if the user role permits WebDAV access.
@@ -238,16 +238,6 @@ export class User extends RestModel {
   // Checks if the user role supports a custom upload path.
   canHaveUploadPath() {
     return !NoUploadPathRoles.includes(this.Role);
-  }
-
-  // Checks if the user role only sees the reduced photo viewer sidebar.
-  // Default-deny: an empty or missing Role is treated as restricted so accounts
-  // without an explicit role never get the full editing surface.
-  isSidebarRestricted() {
-    if (!this.Role) {
-      return true;
-    }
-    return SidebarRestrictedRoles.includes(this.Role);
   }
 
   authInfo() {

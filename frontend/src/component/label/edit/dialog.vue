@@ -26,9 +26,8 @@
             <v-col cols="12">
               <v-text-field
                 v-model="model.Name"
-                hide-details
                 autofocus
-                :rules="[titleRule]"
+                :rules="rules.text(false, 0, LabelMaxLength.Name, $gettext('Name'))"
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
@@ -52,7 +51,8 @@
   </v-dialog>
 </template>
 <script>
-import Label from "model/label";
+import Label, { MaxLength as LabelMaxLength } from "model/label";
+import { rules } from "common/form";
 
 export default {
   name: "PLabelEditDialog",
@@ -71,7 +71,8 @@ export default {
     return {
       disabled: !this.$config.allow("labels", "manage"),
       model: new Label(),
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
+      rules,
+      LabelMaxLength,
     };
   },
   watch: {
@@ -84,6 +85,8 @@ export default {
   methods: {
     afterEnter() {
       this.$view.enter(this);
+      // Seed validation so pre-filled overlong input surfaces the inline error on first render.
+      this.$refs.form?.validate?.();
     },
     afterLeave() {
       this.$view.leave(this);
@@ -97,9 +100,21 @@ export default {
         return;
       }
 
-      this.model.update().then(() => {
-        this.$notify.success(this.$gettext("Changes successfully saved"));
-        this.$emit("close");
+      // Form-level gate: :rules alone only renders the inline error.
+      const form = this.$refs.form;
+      const validate = typeof form?.validate === "function" ? form.validate() : Promise.resolve({ valid: true });
+
+      return Promise.resolve(validate).then((result) => {
+        if (result && result.valid === false) {
+          this.$notify.error(this.$gettext("Changes could not be saved"));
+          return;
+        }
+
+        // Label.update() runs trimInputs() before the PUT.
+        return this.model.update().then(() => {
+          this.$notify.success(this.$gettext("Changes successfully saved"));
+          this.$emit("close");
+        });
       });
     },
   },

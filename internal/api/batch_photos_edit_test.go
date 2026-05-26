@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
@@ -12,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
@@ -966,6 +968,59 @@ func TestBatchPhotosEdit(t *testing.T) {
 		reErr := entity.Db().Where("photo_id = ? AND label_id = ?", p.ID, flowerLabelPtr.ID).First(&re).Error
 		if reErr == nil {
 			t.Fatalf("removed label reappeared unexpectedly (src=%s uncertainty=%d)", re.LabelSrc, re.Uncertainty)
+		}
+	})
+	t.Run("EmitsPhotosEditedAfterSave", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosEdit(router)
+
+		// Subscribe to photos.edited before mutating; drain on cleanup.
+		sub := event.Subscribe("photos.edited")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+
+		photoUIDs := `["pqkm36fjqvset9uy", "pqkm36fjqvset9uz"]`
+		body := fmt.Sprintf(`{"photos": %s, "values": {"Labels":{"action":"update","items":[{"action":"add","value":"","title":"BatchEditedLabel"}]}}}`, photoUIDs)
+
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit", body)
+		assert.Equal(t, http.StatusOK, resp.Code)
+
+		// One event for the whole batch with the full UID list — never per UID.
+		select {
+		case msg := <-sub.Receiver:
+			assert.Equal(t, "photos.edited", msg.Name)
+			uids, ok := msg.Fields["entities"].([]string)
+			assert.True(t, ok, "entities payload should be []string, got %T", msg.Fields["entities"])
+			assert.ElementsMatch(t, []string{"pqkm36fjqvset9uy", "pqkm36fjqvset9uz"}, uids)
+		case <-time.After(2 * time.Second):
+			t.Fatal("expected one photos.edited event after batch save")
+		}
+
+		// No further events for this batch — pin the one-event-per-batch contract.
+		select {
+		case extra := <-sub.Receiver:
+			t.Fatalf("unexpected extra photos.edited event: %s %v", extra.Name, extra.Fields)
+		case <-time.After(200 * time.Millisecond):
+			// expected: queue drained.
+		}
+	})
+	t.Run("NoEditedEventWhenNothingSaved", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosEdit(router)
+
+		sub := event.Subscribe("photos.edited")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+
+		// SuccessNoChange path: photos selected but no Values supplied,
+		// so PrepareAndSavePhotos runs no save requests and savedAny stays false.
+		photoUIDs := `["pqkm36fjqvset9uy", "pqkm36fjqvset9uz"]`
+		resp := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit", fmt.Sprintf(`{"photos": %s}`, photoUIDs))
+		assert.Equal(t, http.StatusOK, resp.Code)
+
+		select {
+		case msg := <-sub.Receiver:
+			t.Fatalf("unexpected photos.edited on no-change request: %s %v", msg.Name, msg.Fields)
+		case <-time.After(200 * time.Millisecond):
+			// expected: nothing saved, nothing published.
 		}
 	})
 }

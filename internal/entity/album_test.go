@@ -516,6 +516,82 @@ func TestFindFolderAlbum(t *testing.T) {
 
 		assert.Equal(t, legacy.ID, album.ID)
 	})
+	t.Run("LegacyFallbackForLongAsciiPath", func(t *testing.T) {
+		unique := txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		folderPath := "pictures/Ferie 2008 Mellomeuropa/Galleri-konvertert/bilder/" + unique + "/01 Praha, Dresden, Wroclaw"
+
+		legacy := &Album{
+			AlbumType:   AlbumFolder,
+			AlbumSlug:   legacyFolderAlbumSlug(folderPath),
+			AlbumPath:   "",
+			AlbumFilter: `path:"` + folderPath + `" public:true`,
+			CreatedAt:   Now(),
+			UpdatedAt:   Now(),
+		}
+		legacy.SetTitle("Legacy Folder")
+
+		if err := legacy.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = legacy.DeletePermanently()
+		})
+
+		album := FindFolderAlbum(folderPath)
+		if album == nil {
+			t.Fatal("expected legacy album")
+		}
+
+		assert.Equal(t, legacy.ID, album.ID)
+		assert.NotEqual(t, txt.SlugUnique(folderPath), legacy.AlbumSlug)
+	})
+	t.Run("LongAsciiSiblingsDoNotCollide", func(t *testing.T) {
+		unique := txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		base := "pictures/Ferie 2008 Mellomeuropa/Galleri-konvertert/bilder/" + unique + "/"
+		pathA := base + "01 Praha, Dresden, Wroclaw"
+		pathB := base + "02 Wroclaw, Auschwitz"
+		filterA := `path:"` + pathA + `" public:true`
+		filterB := `path:"` + pathB + `" public:true`
+
+		albumA := NewFolderAlbum("01 Praha, Dresden, Wroclaw", pathA, filterA)
+		if albumA == nil {
+			t.Fatal("expected albumA")
+		}
+
+		if err := albumA.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = albumA.DeletePermanently()
+		})
+
+		albumB := NewFolderAlbum("02 Wroclaw, Auschwitz", pathB, filterB)
+		if albumB == nil {
+			t.Fatal("expected albumB")
+		}
+
+		if err := albumB.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = albumB.DeletePermanently()
+		})
+
+		assert.NotEqual(t, albumA.AlbumSlug, albumB.AlbumSlug)
+
+		foundA := FindFolderAlbum(pathA)
+		foundB := FindFolderAlbum(pathB)
+
+		if foundA == nil || foundB == nil {
+			t.Fatalf("expected both folder albums to resolve, got A=%v B=%v", foundA, foundB)
+		}
+
+		assert.Equal(t, albumA.ID, foundA.ID)
+		assert.Equal(t, albumB.ID, foundB.ID)
+	})
 }
 
 // TestFindAlbum exercises the related album behavior.

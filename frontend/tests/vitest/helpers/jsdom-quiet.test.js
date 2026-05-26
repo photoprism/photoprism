@@ -22,9 +22,15 @@ describe("helpers/jsdom-quiet", () => {
 
   function makeError({ type, message, sheetText, cause } = {}) {
     const e = new Error(message ?? "boom");
-    if (type !== undefined) e.type = type;
-    if (sheetText !== undefined) e.sheetText = sheetText;
-    if (cause !== undefined) e.cause = cause;
+    if (type !== undefined) {
+      e.type = type;
+    }
+    if (sheetText !== undefined) {
+      e.sheetText = sheetText;
+    }
+    if (cause !== undefined) {
+      e.cause = cause;
+    }
     return e;
   }
 

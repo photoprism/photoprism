@@ -48,14 +48,10 @@ func findLabelByExactName(name string) *Label {
 	return result
 }
 
-// acceptLabelSlugMatch reports whether a slug-based hit should resolve to the
-// queried name. It accepts the match when the canonical names also agree
-// (homophone-safe), or when the candidate was renamed away from the queried
-// name: its immutable LabelSlug still records the old slug while CustomSlug
-// has moved to the slug of the current name. The rename branch deliberately
-// excludes the case where LabelSlug equals CustomSlug, which is how the
-// first-created member of a homophone pair is stored — the second homophone
-// always carries a hashed LabelSlug, so it cannot trigger this branch.
+// acceptLabelSlugMatch reports whether a slug-based hit resolves to the queried
+// name: canonical names match (homophone-safe), or the candidate was renamed
+// away (immutable LabelSlug holds the old slug, CustomSlug holds the new one).
+// LabelSlug == CustomSlug is excluded so first-created homophones don't match.
 func acceptLabelSlugMatch(candidate *Label, name string) bool {
 	if candidate == nil {
 		return false

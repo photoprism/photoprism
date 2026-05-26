@@ -183,23 +183,26 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	if txt.NotEmpty(frm.Year) {
 		// Filter by the pictures included if it is a manually managed album, as these do not have an explicit
 		// year assigned to them, unlike calendar albums and moments for example.
+		w, v := AnyInt("albums.album_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax)
 		if frm.Type == entity.AlbumManual {
 			s = s.Where("? OR albums.album_uid IN (SELECT DISTINCT pay.album_uid FROM photos_albums pay "+
 				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = 0 AND pay.missing = 0)",
-				gorm.Expr(AnyInt("albums.album_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax)), strings.Split(frm.Year, txt.Or))
+				gorm.Expr(w, v...), strings.Split(frm.Year, txt.Or))
 		} else {
-			s = s.Where(AnyInt("albums.album_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax))
+			s = s.Where(w, v...)
 		}
 	}
 
 	// Filter by month?
 	if txt.NotEmpty(frm.Month) {
-		s = s.Where(AnyInt("albums.album_month", frm.Month, txt.Or, entity.UnknownMonth, txt.MonthMax))
+		w, v := AnyInt("albums.album_month", frm.Month, txt.Or, entity.UnknownMonth, txt.MonthMax)
+		s = s.Where(w, v...)
 	}
 
 	// Filter by day?
 	if txt.NotEmpty(frm.Day) {
-		s = s.Where(AnyInt("albums.album_day", frm.Day, txt.Or, entity.UnknownDay, txt.DayMax))
+		w, v := AnyInt("albums.album_day", frm.Day, txt.Or, entity.UnknownDay, txt.DayMax)
+		s = s.Where(w, v...)
 	}
 
 	// Limit result count.

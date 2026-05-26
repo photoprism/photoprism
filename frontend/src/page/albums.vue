@@ -285,6 +285,7 @@ import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 import { getAppStorage } from "common/storage";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import * as options from "options/options";
 import * as contexts from "options/contexts";
 
@@ -366,7 +367,6 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Title too long"),
       input: new Input(),
       lastId: "",
       dialog: {
@@ -1245,7 +1245,7 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
+        case ACTION_UPDATED:
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -1272,7 +1272,7 @@ export default {
           this.categories = categories;
 
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -1287,7 +1287,7 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {

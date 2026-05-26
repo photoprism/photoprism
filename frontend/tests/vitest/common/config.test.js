@@ -480,4 +480,36 @@ describe("common/config", () => {
     expect(document.dir).toBe("ltr");
     expect(cfg.dir()).toBe("ltr");
   });
+
+  // A10 contract: isPublic / isDemo / isPortal must return a Boolean for every
+  // input shape so that bindings like `:disabled="isDemo"` never pass undefined
+  // to a Vuetify Boolean prop. See #4966.
+  describe("isPublic / isDemo / isPortal Boolean contract", () => {
+    const make = (overrides) => new Config(new StorageShim(), { ...window.__CONFIG__, ...overrides });
+
+    it("return Boolean false when the underlying flag is missing", () => {
+      const cfg = make({ public: undefined, demo: undefined, portal: undefined });
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
+    it("return Boolean true when the underlying flag is true", () => {
+      const cfg = make({ public: true, demo: true, portal: true });
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(true);
+      }
+    });
+    it("return Boolean false when `values` itself is missing", () => {
+      const cfg = new Config(new StorageShim(), null);
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
+  });
 });

@@ -2,10 +2,14 @@ package query
 
 import (
 	"testing"
+	"time"
 
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestMomentsTime(t *testing.T) {
@@ -331,5 +335,38 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 			// TODO: Needs review, variable number of results.
 			assert.GreaterOrEqual(t, removed, 1)
 		}
+	})
+	t.Run("KeepsLongAsciiSiblings", func(t *testing.T) {
+		unique := txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		base := "pictures/Ferie 2008 Mellomeuropa/Galleri-konvertert/bilder/" + unique + "/"
+		pathA := base + "01 Praha, Dresden, Wroclaw"
+		pathB := base + "02 Wroclaw, Auschwitz"
+
+		albumA := entity.NewFolderAlbum("01 Praha, Dresden, Wroclaw", pathA, `path:"`+pathA+`" public:true`)
+		if albumA == nil {
+			t.Fatal("expected albumA")
+		}
+		if err := albumA.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = albumA.DeletePermanently() })
+
+		albumB := entity.NewFolderAlbum("02 Wroclaw, Auschwitz", pathB, `path:"`+pathB+`" public:true`)
+		if albumB == nil {
+			t.Fatal("expected albumB")
+		}
+		if err := albumB.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = albumB.DeletePermanently() })
+
+		assert.NotEqual(t, albumA.AlbumSlug, albumB.AlbumSlug)
+
+		if _, err := RemoveDuplicateMoments(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotNil(t, entity.FindFolderAlbum(pathA), "albumA should survive RemoveDuplicateMoments")
+		assert.NotNil(t, entity.FindFolderAlbum(pathB), "albumB should survive RemoveDuplicateMoments")
 	})
 }

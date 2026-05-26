@@ -10,6 +10,8 @@ import (
 )
 
 // folderAlbumSlugCandidates returns the current and legacy slug candidates for a folder path.
+// The first entry is the canonical slug used by new rows; later entries cover legacy formats
+// so FindFolderAlbum can resolve rows written before the collision-safe slug landed.
 func folderAlbumSlugCandidates(albumPath string) []string {
 	albumPath = clean.SlashPath(albumPath)
 
@@ -17,9 +19,9 @@ func folderAlbumSlugCandidates(albumPath string) []string {
 		return nil
 	}
 
-	candidates := make([]string, 0, 2)
+	candidates := make([]string, 0, 3)
 
-	for _, value := range []string{txt.Slug(albumPath), legacyFolderAlbumSlug(albumPath)} {
+	for _, value := range []string{txt.SlugUnique(albumPath), txt.Slug(albumPath), legacyFolderAlbumSlug(albumPath)} {
 		if value == "" {
 			continue
 		}

@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** March 3, 2026
+**Last Updated:** May 21, 2026
 
 ### Overview
 
@@ -42,6 +42,7 @@
 - Import: run via `ImportWorker` with `ImportOptions`; stacked handling is driven by metadata and document IDs.
 - Converters: use `Convert.ToImage` / `Convert.ToVideo` / `Convert.ToJson`; options come from `config.Config`.
 - Vision: thumbnails for vision models are selected in `mediafile_vision.go`; ensure models exist in `internal/ai/vision`.
+- NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when the labels-path NSFW shortcut (LLM with `DETECT_NSFW=true && EXPERIMENTAL=true`) hits or, as a fallback, when `m.DetectNSFW()` returns true and `PHOTOPRISM_DETECT_NSFW=true`. Both promotions short-circuit when `DetectNSFW()` is false. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
 - Tests: targeted runs keep iteration fast, e.g.  
   - `go test ./internal/photoprism -run TestMediaFile_ -count=1`  
   - `go test ./internal/photoprism/index_mediafile_test.go -run TestIndexMediaFile`  

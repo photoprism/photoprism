@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -579,7 +580,7 @@ func (m *Marker) RefreshPhotos() error {
 
 	var err error
 	switch DbDialect() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		err = UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
 			JOIN ? m ON m.file_uid = f.file_uid SET p.checked_at = NULL
 			WHERE m.marker_uid = ?`,

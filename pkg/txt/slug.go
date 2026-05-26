@@ -44,6 +44,36 @@ func Slug(s string) string {
 	return Clip(result, ClipSlug)
 }
 
+// SlugUnique converts a string to a slug like Slug, but always uses a stable
+// hash suffix instead of plain truncation when the result would exceed
+// ClipSlug runes. Use it where two distinct long inputs sharing a common
+// prefix would otherwise collide on the truncated slug (e.g. deeply nested
+// folder album paths with identical ancestor segments).
+func SlugUnique(s string) string {
+	s = strings.TrimSpace(s)
+
+	if s == "" || s == "-" {
+		return s
+	}
+
+	if s[0] == SlugEncoded && ContainsAlnumLower(s[1:]) {
+		return Clip(s, ClipSlug)
+	}
+
+	result := slug.Make(s)
+
+	if result == "" {
+		result = string(SlugEncoded) + SlugEncoding.EncodeToString([]byte(s))
+		return Clip(result, ClipSlug)
+	}
+
+	if tokens := slugRuneTokens(s); tokens != "" {
+		result += "-" + tokens
+	}
+
+	return clipSlugWithHash(result, s)
+}
+
 // slugRuneTokens returns stable rune tokens for non-ASCII symbols that slug.Make would drop.
 func slugRuneTokens(s string) string {
 	tokens := make([]string, 0, 4)

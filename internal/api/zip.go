@@ -87,6 +87,12 @@ func ZipCreate(router *gin.RouterGroup) {
 			return
 		}
 
+		// Refuse to assemble a new download zip if storage is over quota or critically low.
+		if conf.InsufficientStorage() {
+			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+			return
+		}
+
 		// Configure file names.
 		dlName := DownloadName(c)
 		// Build filesystem paths using filepath for OS compatibility.

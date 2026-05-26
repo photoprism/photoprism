@@ -13,25 +13,10 @@ API_DIRS=(
 
 violations=()
 
-# check_file scans the given Go file for request-body sinks that are not
-# preceded within WINDOW_LINES by a LimitRequestBodyBytes call. Three
-# sink patterns are covered:
-#
-#   (1) c.BindJSON / c.ShouldBindJSON — the common Gin binding path.
-#   (2) <name>.ServeHTTP(<writer>, c.Request) — delegation to a third
-#       party handler (e.g. the MCP SDK) that reads the body internally
-#       (via io.ReadAll or a decoder) without a size cap of its own.
-#       Handlers that forward raw requests MUST still wrap c.Request.Body
-#       with http.MaxBytesReader via api.LimitRequestBodyBytes beforehand
-#       so the cap applies before the third-party code reads the body.
-#   (3) io.ReadAll(c.Request.Body) / json.NewDecoder(c.Request.Body) —
-#       direct unbounded reads that bypass both Gin's binding helpers
-#       and the SDK-delegation pattern. Same remediation applies: wrap
-#       c.Request.Body via LimitRequestBodyBytes before the call.
-#
-# The three sink patterns share the same fifteen-line window rule so the
-# regression guard stays uniform regardless of how a handler ingests
-# its body.
+# check_file flags request-body sinks not preceded within WINDOW_LINES by a
+# LimitRequestBodyBytes call. Covered sinks: c.BindJSON / c.ShouldBindJSON,
+# <name>.ServeHTTP(<writer>, c.Request), and direct io.ReadAll /
+# json.NewDecoder / xml.NewDecoder / yaml.NewDecoder on c.Request.Body.
 check_file() {
   local file="$1"
   local rel="${file#"$ROOT_DIR"/}"

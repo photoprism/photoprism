@@ -1,19 +1,32 @@
+## Frontend Code Style & Test Coverage
+
+- **Comments:** Follow the code comment rules in `code-comments.md`.
+- **Tests:** Test new JS functions (including helpers) and new Vue components whenever practical; update existing tests when behavior changes. When a unit test is impractical (DOM-heavy flows, third-party widget integration), the doc comment is still mandatory — it's the minimum bar.
+- **State:** Shared state lives in reactive singleton modules under `src/common/` and `src/app/` (e.g., `app/session.js`, `common/config.js`, `common/clipboard.js`, `common/log.js`) that export a `reactive()` / `ref()` object directly; components access them via `import` or via the globally-installed `$config` / `$session` plugins. Do not introduce Vuex, Pinia, or new ad-hoc stores — extend an existing singleton or add a new one alongside its peers in `common/` or `app/`.
+- **Vue/Vuetify:** Use the Options API in Vue components (consistent with the rest of the codebase); do not introduce Composition API or `<script setup>`.
+- **TypeScript:** Do not introduce TypeScript. The frontend is a pure JS + Vue SFC codebase: no `.ts` files, no `tsconfig.json`, no `<script lang="ts">` blocks. JSDoc type annotations in comments are fine; full TS migrations are out of scope.
+
+## Frontend Formatting
+
+- ESLint + Prettier own formatting. After edits run `make fmt-js` (or `npm run fmt` inside `frontend/`) and `make lint-js` to verify; `frontend/eslint.config.mjs` is the flat-config source of truth.
+- The dev container preinstalls `eslint` and `prettier` on the global `PATH` at the same version `frontend/package.json` pins (`eslint --version` should match the `eslint` entry in `frontend/package.json`). Invoke them directly (e.g. `eslint --fix tests/`) from `frontend/` — no need for `npx`, which adds a spawn step and an extra resolution layer.
+- Prettier reflow is **not** part of `make fmt-js` / `eslint --fix` — the `prettier/prettier` rule is set to `"off"` so intentional newlines (multi-line method chains, vertical predicate lists) are preserved. Run `prettier --write <file>` explicitly when a full reflow is wanted; do not run it blanket across `src/` or `tests/`.
+- Prettier uses `printWidth: 160`, double quotes, semicolons, `trailingComma: "es5"`, and `proseWrap: "never"` (see `frontend/.prettierrc.json`). Do not hand-wrap long lines — let Prettier decide. CSS/SCSS use `tabWidth: 4`.
+- The repo-root `.editorconfig` covers indentation and newline style; don't override it locally.
+- Vue SFC block order is `<template>` → `<script>` → `<style>`; keep it consistent with existing components.
+
 ## Frontend Dependencies & Pins
 
 - `frontend/README.md` is the canonical doc for pin rationale, the `overrides` layer, ESM-only upgrade blockers, and the orphan-audit pattern — read it before bumping any non-caret pin or adding/removing a top-level dep.
-- **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.16.0"`, `"vuetify": "3.12.2"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
+- **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.16.1"`, `"vuetify": "3.12.2"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
 - npm is a workspace; run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates. After dep changes also run `make audit`, `make build-js`, `make test-js`, and `make notice`.
 - Before adding a new dep or removing one as "unused", run `rg -nF "<pkg>" frontend ...` plus `npm ls <pkg> --all` to confirm there's no transitive consumer or peer-dep. Recent precedents: `postcss-url`, `@vitejs/plugin-react`, `cheerio`, `@testing-library/react`, `vite-tsconfig-paths` (all true orphans removed once consumer left).
-
-## Frontend Test Coverage
-
-- Test new JS functions (including helpers) and new Vue components whenever practical; update existing tests when behavior changes.
 
 ## Frontend Linting & Test Entry Points
 
 - Follow the lint/format scripts in `frontend/package.json`; all added JS, Vue, and tests must conform.
 - Unit tests (Vitest): `make test-js`, `make vitest-watch`, `make vitest-coverage`. Acceptance: `acceptance-*` targets in the root `Makefile`.
-- **Always invoke Vitest through the npm/make wrapper, never bare `npx vitest run`.** `frontend/package.json`'s `test` script wraps the call in `cross-env TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test`. Without those env vars ~50 component tests (Vuetify renders, chip-selector, login, location-input, batch-edit, people-tab, lightbox `toggleInfo`, etc.) and TZ-sensitive date tests fail spuriously — the failures look real but only reproduce in the unwrapped invocation. Do not compare a "failed N, passed M" report from bare `npx vitest run` against a `make test-js` baseline. For ad-hoc filtering on a single file, mirror the env explicitly: `(cd frontend && TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test npx vitest run <path>)`.
+- **Always invoke Vitest through the npm/make wrapper, never bare `npx vitest run`.** `frontend/package.json`'s `test` script wraps the call in `cross-env TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test`. Without those env vars ~50 component tests (Vuetify renders, chip-selector, login, location-input, batch-edit, people-tab, lightbox `toggleSidebar`, etc.) and TZ-sensitive date tests fail spuriously — the failures look real but only reproduce in the unwrapped invocation. Do not compare a "failed N, passed M" report from bare `npx vitest run` against a `make test-js` baseline. For ad-hoc filtering on a single file, mirror the env explicitly: `(cd frontend && TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test npx vitest run <path>)`.
 - One-off TestCafe (single case by `testID`):
   ```bash
   make storage/acceptance
@@ -46,6 +59,7 @@
 
 ## Frontend Translations
 
+- Never hardcode locale strings in templates or scripts — every user-visible string MUST go through `$gettext` / `T` so it appears in `frontend/src/locales/translations.pot`.
 - Extraction source of truth: root `make gettext-extract` (via `scripts/gettext-extract.sh`), which scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, `portal/frontend`.
 - Avoid punctuation-only gettext keys (e.g. `$gettext("—")`) — they clutter `frontend/src/locales/translations.pot`.
 

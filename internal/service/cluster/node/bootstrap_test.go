@@ -468,7 +468,7 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 
 	// NodeClientSecret should persist, but DB should remain SQLite (no DSN update).
 	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
-	assert.Equal(t, config.SQLite3, c.DatabaseDriver())
+	assert.Equal(t, dsn.DriverSQLite3, c.DatabaseDriver())
 	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "203.0.113.0/24", c.ClusterCIDR())

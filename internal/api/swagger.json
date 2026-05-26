@@ -376,6 +376,12 @@
                     "description": "NodeName",
                     "type": "string"
                 },
+                "RedirectURIs": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "Role": {
                     "description": "NodeRole",
                     "type": "string"
@@ -682,7 +688,7 @@
                     "type": "string"
                 },
                 "IndexWorkers": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "JpegQuality": {
                     "type": "integer"
@@ -7019,7 +7025,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to update (Role, Labels, AdvertiseUrl, SiteUrl)",
+                        "description": "properties to update (Role, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)",
                         "in": "body",
                         "name": "node",
                         "required": true,

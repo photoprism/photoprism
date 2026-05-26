@@ -17,12 +17,12 @@
               <v-btn
                 v-if="!m.SubjUID && !m.Invalid"
                 :ripple="false"
-                class="input-reject"
+                :title="$gettext('Remove')"
                 icon
                 variant="text"
                 density="comfortable"
                 position="absolute"
-                :title="$gettext('Remove')"
+                class="input-reject"
                 @click.stop.prevent="onReject(m)"
               >
                 <v-icon class="action-reject">mdi-close</v-icon>
@@ -48,12 +48,11 @@
               <v-text-field
                 v-else-if="m.SubjUID"
                 v-model="m.Name"
-                :rules="[textRule]"
+                :rules="rules.text(true, 0, SubjectMaxLength.Name, $gettext('Name'))"
                 :disabled="busy"
                 :readonly="true"
                 autocomplete="off"
                 autocorrect="off"
-                hide-details
                 single-line
                 clearable
                 persistent-clear
@@ -70,6 +69,7 @@
                 item-value="Name"
                 :disabled="busy"
                 :menu-props="menuProps"
+                :menu-icon="null"
                 return-object
                 hide-no-data
                 hide-details
@@ -102,7 +102,8 @@
 
 <script>
 import Marker from "model/marker";
-import Subject from "model/subject";
+import Subject, { MaxLength as SubjectMaxLength } from "model/subject";
+import { rules } from "common/form";
 import PConfirmDialog from "component/confirm/dialog.vue";
 import PActionMenu from "component/action/menu.vue";
 
@@ -126,6 +127,8 @@ export default {
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      rules,
+      SubjectMaxLength,
       confirm: {
         visible: false,
         model: new Marker(),
@@ -148,13 +151,6 @@ export default {
         scrollStrategy: "reposition",
         origin: "auto",
       },
-      textRule: (v) => {
-        if (!v || !v.length) {
-          return this.$gettext("Name");
-        }
-
-        return v.length <= this.$config.get("clip") || this.$gettext("Name too long");
-      },
     };
   },
   watch: {
@@ -169,7 +165,9 @@ export default {
       }
     },
     onReject(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       this.$notify.blockUI("busy");
@@ -249,13 +247,13 @@ export default {
       const subjectPromise = cached
         ? Promise.resolve(new Subject(cached))
         : this.loadSubject(marker.SubjUID).then((subject) => {
-            if (!subject) {
-              this.$notify.error(this.$gettext("Person not found"));
-              return null;
-            }
-            this.updatePersonList(subject);
-            return subject;
-          });
+          if (!subject) {
+            this.$notify.error(this.$gettext("Person not found"));
+            return null;
+          }
+          this.updatePersonList(subject);
+          return subject;
+        });
 
       return subjectPromise
         .then((subject) => {
@@ -284,12 +282,12 @@ export default {
       const subjectPromise = cached
         ? Promise.resolve(new Subject(cached))
         : this.loadSubject(marker.SubjUID).then((subject) => {
-            if (!subject) {
-              this.$notify.error(this.$gettext("Person not found"));
-              return null;
-            }
-            return subject;
-          });
+          if (!subject) {
+            this.$notify.error(this.$gettext("Person not found"));
+            return null;
+          }
+          return subject;
+        });
 
       return subjectPromise
         .then((subject) => {
@@ -314,14 +312,18 @@ export default {
         });
     },
     onApprove(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
 
       model.approve().finally(() => (this.busy = false));
     },
     onClearSubject(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       this.$notify.blockUI("busy");

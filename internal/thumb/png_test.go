@@ -289,4 +289,19 @@ func TestPng(t *testing.T) {
 		assert.Nil(t, img)
 		require.Error(t, err)
 	})
+	t.Run("BadIccProfileSurvivesPngConversion", func(t *testing.T) {
+		// The vipsConvert PNG path (used for vector → PNG and other
+		// format conversions) must recover when libpng rejects a malformed
+		// iCCP chunk by retrying without the broken profile.
+		src := "testdata/icc_profile_bad_length.jpg"
+		dst := filepath.Join(t.TempDir(), "icc_profile_bad_length.jpg.png")
+
+		img, err := Png(src, dst, OrientationNormal)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.FileExists(t, dst)
+		assert.NotNil(t, img)
+	})
 }

@@ -112,6 +112,53 @@ func TestChunks(t *testing.T) {
 	})
 }
 
+func TestChunks_DataOffset(t *testing.T) {
+	t.Run("FirstMatchWins", func(t *testing.T) {
+		f := openTestFile(t, "testdata/motion-photo.heif")
+		// ChunkHVC1 lives at 976016; ChunkHEIC lives at 8. With both as needles
+		// the earlier one (HEIC) must win the single-pass scan.
+		pos, hit, err := Chunks{ChunkHVC1, ChunkHEIC}.DataOffset(f, 0, -1)
+		require.NoError(t, err)
+		assert.Equal(t, 8, pos)
+		assert.Equal(t, ChunkHEIC, hit)
+	})
+	t.Run("SingleChunkSamePosition", func(t *testing.T) {
+		f := openTestFile(t, "testdata/motion-photo.heif")
+		pos, hit, err := Chunks{ChunkHVC1}.DataOffset(f, 0, -1)
+		require.NoError(t, err)
+		assert.Equal(t, 976016, pos)
+		assert.Equal(t, ChunkHVC1, hit)
+	})
+	t.Run("MaxOffsetCapsScan", func(t *testing.T) {
+		f := openTestFile(t, "testdata/motion-photo.heif")
+		// HVC1 sits at 976016; a cap below that must short-circuit before reading it.
+		pos, hit, err := Chunks{ChunkHVC1}.DataOffset(f, 0, 512*1024)
+		require.NoError(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		f := openTestFile(t, "testdata/mp4v-avc1.mp4")
+		pos, hit, err := Chunks{ChunkHVC1, ChunkHEV1}.DataOffset(f, 0, -1)
+		require.NoError(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		f := openTestFile(t, "testdata/mp4v-avc1.mp4")
+		pos, hit, err := Chunks{}.DataOffset(f, 0, -1)
+		require.NoError(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+	t.Run("NilFile", func(t *testing.T) {
+		pos, hit, err := Chunks{ChunkHVC1}.DataOffset(nil, 0, -1)
+		require.Error(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+}
+
 func TestChunks_Contains(t *testing.T) {
 	t.Run("Found", func(t *testing.T) {
 		assert.True(t, CompatibleBrands.Contains(ChunkMP41))

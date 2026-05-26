@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 
 import $api from "common/api";
 import { $config } from "app/session";
-import $notify from "notify.js";
+import $notify from "common/notify";
 
 function poll(interval, maxAttempts) {
   let attempts = 0;

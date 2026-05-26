@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 
-	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -39,7 +38,7 @@ var Flags = CliFlags{
 			Usage:   "secret `KEY` for signing authentication tokens",
 			EnvVars: EnvVars("AUTH_SECRET"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.BoolFlag{
 			Name:    "public",
 			Aliases: []string{"p"},
@@ -59,7 +58,7 @@ var Flags = CliFlags{
 			Aliases: []string{"pw"},
 			Usage:   fmt.Sprintf("initial `PASSWORD` of the superadmin account (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVars: EnvVars("ADMIN_PASSWORD"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.IntFlag{
 			Name:    "password-length",
 			Usage:   "minimum password `LENGTH` in characters",
@@ -83,7 +82,7 @@ var Flags = CliFlags{
 			Usage:   "client `SECRET` for single sign-on via OpenID Connect",
 			Value:   "",
 			EnvVars: EnvVars("OIDC_SECRET"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "oidc-scopes",
 			Usage:   "client authorization `SCOPES` for single sign-on via OpenID Connect",
@@ -290,7 +289,7 @@ var Flags = CliFlags{
 		Flag: &cli.BoolFlag{
 			Name:    "upload-nsfw",
 			Aliases: []string{"n"},
-			Usage:   "allows uploads that might be offensive (detecting unsafe content requires TensorFlow)",
+			Usage:   "allows uploads that might be offensive (when disabled, files flagged by the NSFW model are rejected before indexing)",
 			EnvVars: EnvVars("UPLOAD_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -393,13 +392,13 @@ var Flags = CliFlags{
 			Usage:   "enables the use of YAML files for backing up album metadata",
 			EnvVars: EnvVars("BACKUP_ALBUMS"),
 		}, DocDefault: "true"}, {
-		Flag: &cli.IntFlag{
+		Flag: &cli.StringFlag{
 			Name:    "index-workers",
 			Aliases: []string{"workers"},
-			Usage:   "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",
-			Value:   cpuid.CPU.PhysicalCores / 2,
+			Usage:   "maximum `NUMBER` of indexing workers, or 'auto' to derive from the available CPU cores",
+			Value:   IndexWorkersAuto,
 			EnvVars: EnvVars("INDEX_WORKERS", "WORKERS"),
-		}, DocDefault: " "}, {
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "index-schedule",
 			Usage:   "indexing `SCHEDULE` in cron format (e.g. \"@every 3h\" for every 3 hours; \"\" to disable)",
@@ -722,7 +721,7 @@ var Flags = CliFlags{
 			Name:    "join-token",
 			Usage:   "secret `TOKEN` required to join a cluster; min 24 chars",
 			EnvVars: EnvVars("JOIN_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-name",
 			Usage:   "node `NAME` (unique in cluster domain; [a-z0-9-]{1,32})",
@@ -750,7 +749,7 @@ var Flags = CliFlags{
 			Usage:   "node OAuth client `SECRET` (auto-assigned via join token)",
 			EnvVars: EnvVars("NODE_CLIENT_SECRET"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "jwks-url",
 			Usage:   "JWKS endpoint `URL` provided by the cluster portal for JWT verification",
@@ -773,6 +772,29 @@ var Flags = CliFlags{
 			Usage:   "JWT clock skew allowance in `SECONDS` (default 60, max 300)",
 			Value:   60,
 			EnvVars: EnvVars("JWT_LEEWAY"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-issuer",
+			Usage:   "Portal OIDC OP issuer `URL` advertised in discovery and ID tokens (defaults to site-url)",
+			EnvVars: EnvVars("PORTAL_OIDC_ISSUER"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-ttl",
+			Usage:   "Portal OIDC OP access/ID-token lifetime in `SECONDS` (default 300, max 900)",
+			Value:   300,
+			EnvVars: EnvVars("PORTAL_OIDC_TTL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-code-ttl",
+			Usage:   "Portal OIDC OP authorization-code lifetime in `SECONDS` (default 60, max 300)",
+			Value:   60,
+			EnvVars: EnvVars("PORTAL_OIDC_CODE_TTL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-default-policy",
+			Usage:   "Portal OIDC OP routing policy when a user has access to multiple instances (`chooser` or `direct`)",
+			Value:   "chooser",
+			EnvVars: EnvVars("PORTAL_OIDC_DEFAULT_POLICY"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "advertise-url",
@@ -950,7 +972,8 @@ var Flags = CliFlags{
 			Aliases: []string{"db-pass"},
 			Usage:   "database user `PASSWORD`",
 			EnvVars: EnvVars("DATABASE_PASSWORD"),
-		}}, {
+		},
+		Secret: true}, {
 		Flag: &cli.IntFlag{
 			Name:    "database-timeout",
 			Usage:   "timeout in `SECONDS` for establishing a database connection (1-60)",
@@ -1132,12 +1155,12 @@ var Flags = CliFlags{
 			Name:    "download-token",
 			Usage:   "`DEFAULT` download URL token for originals (leave blank for a random value)",
 			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "preview-token",
 			Usage:   "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
 			EnvVars: EnvVars("PREVIEW_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
@@ -1211,7 +1234,7 @@ var Flags = CliFlags{
 			Usage:   "vision service access `TOKEN` *optional*",
 			Value:   "",
 			EnvVars: EnvVars("VISION_KEY"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "vision-schedule",
 			Usage:   "vision worker `SCHEDULE` for background processing (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
@@ -1225,7 +1248,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
-			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",
+			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{

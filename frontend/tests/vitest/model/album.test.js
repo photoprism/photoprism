@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
-import { Album, BatchSize } from "model/album";
+import { Album, BatchSize, MaxLength } from "model/album";
 
 describe("model/album", () => {
   let originalBatchSize;
@@ -11,6 +11,42 @@ describe("model/album", () => {
 
   afterEach(() => {
     Album.setBatchSize(originalBatchSize);
+  });
+
+  // Pins per-field caps to the backend VARCHAR columns on internal/entity/album.go
+  // so client-side validation moves in lockstep with the server.
+  it("MaxLength mirrors the backend VARCHAR caps", () => {
+    expect(MaxLength).toEqual({
+      Title: 160,
+      Location: 160,
+      Caption: 1024,
+      Description: 2048,
+    });
+    expect(Object.isFrozen(MaxLength)).toBe(true);
+  });
+
+  // trimInputs mutates the model so post-save the user reads exactly what
+  // the backend stored; the override fires before getValues() on the
+  // PUT/POST path. Non-string and unknown fields pass through untouched.
+  it("trimInputs() strips leading and trailing whitespace from MaxLength string fields", () => {
+    const album = new Album({
+      Title: "  Vacation  ",
+      Location: "\tBerlin\n",
+      Caption: " Sunny day ",
+      Description: "   ",
+      Slug: " untouched ",
+      Favorite: true,
+    });
+
+    album.trimInputs();
+
+    expect(album.Title).toBe("Vacation");
+    expect(album.Location).toBe("Berlin");
+    expect(album.Caption).toBe("Sunny day");
+    expect(album.Description).toBe("");
+    // Slug isn't in MaxLength and Favorite isn't a string — both pass through.
+    expect(album.Slug).toBe(" untouched ");
+    expect(album.Favorite).toBe(true);
   });
 
   it("should get route view", () => {

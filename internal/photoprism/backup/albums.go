@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Albums creates a YAML file backup of all albums.
@@ -25,8 +26,10 @@ func Albums(backupPath string, force bool) (count int, err error) {
 		return count, queryErr
 	}
 
+	c := get.Config()
+
 	if !fs.PathExists(backupPath) {
-		backupPath = get.Config().BackupAlbumsPath()
+		backupPath = c.BackupAlbumsPath()
 	}
 
 	log.Debugf("backup: album backups will be stored in %s", clean.Log(backupPath))
@@ -52,6 +55,13 @@ func Albums(backupPath string, force bool) (count int, err error) {
 		// Remember the latest modification timestamp.
 		if changed.After(latest) {
 			latest = changed
+		}
+
+		// Stop writing new backups if storage is over quota or critically low on free disk space.
+		// The disk-free cache rate-limits this to one actual probe per CacheTTL.
+		if c.InsufficientStorage() {
+			err = status.ErrInsufficientStorage
+			break
 		}
 
 		// Write album metadata to YAML backup file.

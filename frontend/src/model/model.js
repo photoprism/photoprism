@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -41,6 +41,16 @@ export class Model {
     } else {
       this.setValues(this.getDefaults());
     }
+
+    // Seed any write-only fields the API never returns (entity tags
+    // `json:"-"`) so user edits to them flow through getValues(true).
+    const writeOnly = this.getWriteOnly();
+    for (let key in writeOnly) {
+      if (writeOnly.hasOwnProperty(key) && !this.__originalValues.hasOwnProperty(key)) {
+        this[key] = writeOnly[key];
+        this.__originalValues[key] = writeOnly[key];
+      }
+    }
   }
 
   // Copies every own enumerable key of `values` onto `this` and records a
@@ -51,7 +61,9 @@ export class Model {
   // (used when a partial update should not reset object diffs). The reserved
   // key "__originalValues" is always ignored. No-op for falsy `values`.
   setValues(values, scalarOnly) {
-    if (!values) return;
+    if (!values) {
+      return;
+    }
 
     for (let key in values) {
       if (values.hasOwnProperty(key) && key !== "__originalValues") {
@@ -171,6 +183,16 @@ export class Model {
   // fields not listed here are still copied by setValues() but skip
   // coercion, so getValues() returns them verbatim.
   getDefaults() {
+    return {};
+  }
+
+  // Subclasses override to declare write-only fields — typically entity
+  // columns tagged `json:"-"` on the backend, which are accepted on PUT/POST
+  // but stripped from GET responses (e.g., credentials, secret tokens). The
+  // shape mirrors getDefaults(): each key maps to a seed value used for
+  // change detection. The constructor seeds these into __originalValues so
+  // getValues(true) reports user edits even when the response omits them.
+  getWriteOnly() {
     return {};
   }
 }

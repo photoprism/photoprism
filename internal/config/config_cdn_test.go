@@ -32,6 +32,39 @@ func TestConfig_CdnUrl(t *testing.T) {
 	assert.True(t, c.UseCdn())
 }
 
+func TestConfig_CdnUrl_DefaultPortEqualsSite(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.SiteUrl = "https://host/"
+	c.options.CdnUrl = "https://host:443/"
+	assert.False(t, c.UseCdn())
+	assert.True(t, c.NoCdn())
+	assert.Equal(t, "/api/v1", c.CdnUrl(ApiUri))
+	assert.Equal(t, "", c.CdnDomain())
+	assert.False(t, c.CdnVideo())
+
+	c.options.SiteUrl = "https://host:443/"
+	c.options.CdnUrl = "https://host/"
+	assert.False(t, c.UseCdn())
+	assert.True(t, c.NoCdn())
+
+	c.options.SiteUrl = "http://host/"
+	c.options.CdnUrl = "http://host:80/"
+	assert.False(t, c.UseCdn())
+}
+
+func TestConfig_CdnBaseUrl(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.CdnBaseUrl())
+	c.options.CdnUrl = "  "
+	assert.Equal(t, "", c.CdnBaseUrl())
+	c.options.CdnUrl = "https://cdn.example.com:443/"
+	assert.Equal(t, "https://cdn.example.com/", c.CdnBaseUrl())
+	c.options.CdnUrl = "http://foo:2342/foo/"
+	assert.Equal(t, "http://foo:2342/foo/", c.CdnBaseUrl())
+}
+
 func TestConfig_CdnDomain(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

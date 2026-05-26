@@ -1,5 +1,5 @@
 <template>
-  <div ref="map" class="p-map"></div>
+  <div ref="map" class="p-map" :class="{ 'is-marker-clickable': markerClickable }"></div>
 </template>
 
 <script>
@@ -40,13 +40,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    // When true, attaches a click listener to the marker's DOM element
+    // that emits `marker-clicked`. The marker's cursor is gated on the
+    // same prop so it only reads as pointer when the consumer is
+    // actually listening (see `places.css` `.p-map.is-marker-clickable`).
+    markerClickable: {
+      type: Boolean,
+      default: false,
+    },
     // Override animation duration (ms). -1 = use global setting, 0 = no animation.
     animateDuration: {
       type: Number,
       default: -1,
     },
   },
-  emits: ["update:latlng", "marker-moved", "map-clicked"],
+  emits: ["update:latlng", "marker-moved", "marker-clicked", "map-clicked"],
   data() {
     const settings = this.$config.getSettings();
 
@@ -217,6 +225,22 @@ export default {
             this.$emit("marker-moved", { lat: lngLat.lat, lng: lngLat.lng });
             this.$emit("update:latlng", [lngLat.lat, lngLat.lng]);
           });
+        }
+
+        // Add click listener on the marker's DOM element when the
+        // consumer opted in via `markerClickable`. MapLibre renders
+        // the default marker as a <button>, so we get keyboard
+        // activation for free; `.stop` prevents the click from
+        // bubbling to a possible map-level handler.
+        if (this.markerClickable) {
+          const el = this.marker.getElement();
+          if (el) {
+            el.addEventListener("click", (ev) => {
+              ev.stopPropagation();
+              const lngLat = this.marker.getLngLat();
+              this.$emit("marker-clicked", { lat: lngLat.lat, lng: lngLat.lng });
+            });
+          }
         }
       }
     },

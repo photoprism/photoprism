@@ -101,7 +101,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"backup-albums-path", c.BackupAlbumsPath()},
 
 		// Indexing.
-		{"index-workers", fmt.Sprintf("%d", c.IndexWorkers())},
+		{"index-workers", fmt.Sprintf("%d (%s)", c.IndexWorkers(), c.IndexWorkersReason())},
 		{"index-schedule", c.IndexSchedule()},
 		{"wakeup-interval", c.WakeupInterval().String()},
 		{"auto-index", fmt.Sprintf("%d", c.AutoIndex()/time.Second)},
@@ -359,6 +359,37 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 	if v := c.CustomStaticUri(); v != "" {
 		rows = append(rows, []string{"custom-static-uri", v})
+	}
+
+	return rows, cols
+}
+
+// FaceReport returns the face-detection and face-recognition config values as
+// a table for reporting. It mirrors the values used by Report() so output stays
+// consistent between `photoprism config` and `photoprism faces config`.
+func (c *Config) FaceReport() (rows [][]string, cols []string) {
+	cols = []string{"Name", "Value"}
+
+	rows = [][]string{
+		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
+		{"vision-yaml", c.VisionYaml()},
+		{"face-engine", c.FaceEngine()},
+		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
+		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"facenet-model-path", c.FacenetModelPath()},
+		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
+		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
+		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
+		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
+		{"face-cluster-dist", fmt.Sprintf("%f", c.FaceClusterDist())},
+		{"face-cluster-radius", fmt.Sprintf("%f", c.FaceClusterRadius())},
+		{"face-collision-dist", fmt.Sprintf("%f", c.FaceCollisionDist())},
+		{"face-epsilon-dist", fmt.Sprintf("%f", c.FaceEpsilonDist())},
+		{"face-match-dist", fmt.Sprintf("%f", c.FaceMatchDist())},
+		{"face-skip-children", fmt.Sprintf("%t", c.FaceSkipChildren())},
+		{"face-allow-background", fmt.Sprintf("%t", c.FaceAllowBackground())},
 	}
 
 	return rows, cols

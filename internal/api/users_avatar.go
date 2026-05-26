@@ -57,6 +57,13 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			return
 		}
 
+		// Abort if there is not enough free storage to upload a new avatar.
+		if conf.InsufficientStorage() {
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", status.InsufficientStorage}, s.RefID)
+			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+			return
+		}
+
 		// Parse upload form.
 		LimitRequestBodyBytes(c, MaxAvatarUploadBytes)
 

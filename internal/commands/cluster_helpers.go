@@ -31,7 +31,7 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 		NodeRole:     cluster.RoleInstance,
 		RotateSecret: true,
 	}
-	b, _ := json.Marshal(payload)
+	b := marshalRegisterRequest(payload)
 	// endpoint is derived from a parsed portal URL with explicit scheme/host validation above.
 	req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(b)) //nolint:gosec
 	req.Header.Set("Content-Type", "application/json")
@@ -61,6 +61,15 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 		return "", "", fmt.Errorf("missing client credentials in response")
 	}
 	return id, secret, nil
+}
+
+// marshalRegisterRequest JSON-encodes a cluster register payload for portal requests.
+func marshalRegisterRequest(payload cluster.RegisterRequest) []byte {
+	// Register requests may intentionally include client credentials when
+	// re-registering a node or rotating its secret.
+	b, _ := json.Marshal(payload) //nolint:gosec
+
+	return b
 }
 
 // clusterAuditWho builds the leading audit log segments for CLI commands.

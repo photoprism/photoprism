@@ -28,10 +28,12 @@ __pycache__
 venv
 .venv
 .env*
+!.env.example
 .tmp
 .nv
 .eslintcache
 .gocache
+.gitconfig
 .system
 /pro/
 /portal/
@@ -57,6 +59,7 @@ frontend/coverage/
 /photos/import/*
 /storage/
 /build/
+/setup/Makefile
 /assets/docs/
 /assets/facenet/
 /assets/nasnet/

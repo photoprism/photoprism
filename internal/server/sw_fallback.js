@@ -9,6 +9,6 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", () => {
-  // Default network-first behaviour; caching is delegated to the
+  // Default network-first behavior; caching is delegated to the
   // Workbox-generated service worker in production builds.
 });

@@ -95,7 +95,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.Usage = "PhotoPrism®"
 	app.Description = ""
 	app.Version = "test"
-	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
+	app.Copyright = "(c) 2018-2026 PhotoPrism UG. All rights reserved."
 	app.Flags = config.Flags.Cli()
 	app.Commands = PhotoPrism
 	app.HelpName = app.Name

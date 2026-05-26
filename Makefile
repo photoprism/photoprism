@@ -1,4 +1,4 @@
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -39,6 +39,7 @@ BUILD_ARCH ?= $(shell ./scripts/dist/arch.sh)
 export BUILD_ARCH
 JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
 TF_VERSION ?= 2.18.0
+WORKING_DIR ?= /go/src/github.com/photoprism/photoprism
 
 # Install parameters.
 INSTALL_PATH ?= $(BUILD_PATH)/photoprism-ce_$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
@@ -105,6 +106,7 @@ show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
+format: format-tables fmt-go fmt-swag
 format-tables: # Format Markdown tables in README.md, AGENTS.md, and CODEMAP.md files.
 	@set -eu; \
 	tmp="$$(mktemp)"; \
@@ -126,7 +128,8 @@ devtools: install-go dep-npm
 .SILENT: help;
 logs:
 	$(DOCKER_COMPOSE) logs -f
-down:
+down: docker-down
+docker-down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
 docs: swag
 swag: swag-json
@@ -161,10 +164,10 @@ notice:
 fix-permissions:
 	$(info Updating filesystem permissions...)
 	@if [ $(UID) != 0 ]; then\
-		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
-		sudo chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism || true;\
-		echo "Running \"chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
-		sudo chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
+		sudo chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
+		sudo chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism || true;\
 		echo "Done."; \
 	else\
 		echo "Running as root. Nothing to do."; \
@@ -275,9 +278,10 @@ dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
+vuln: audit
 audit: audit-frontend audit-backend
 audit-frontend:
-	$(MAKE) -C frontend audit
+	npm audit --ignore-scripts --no-fund --no-audit --no-update-notifier
 audit-backend: dep-vuln
 dep-audit: dep-vuln
 dep-vuln:
@@ -301,6 +305,7 @@ dep-npm:
         fi
 dep-js:
 	npm ci --ignore-scripts --no-update-notifier --no-audit
+tools: gh claude codex
 codex: dep-codex codex-version codex-skills
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
@@ -312,7 +317,6 @@ dep-codex:
 	else \
 	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
 	fi
-	@codex features disable general_analytics || true
 skills: agents-skills claude-skills
 agents-skills: codex-skills
 codex-skills:
@@ -526,7 +530,7 @@ run-test-hub:
 	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
 	$(info Running all Go tests on MariaDB...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/...
@@ -607,7 +611,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-questing docker-develop-questing-slim
+docker-develop-ubuntu: docker-develop-resolute docker-develop-resolute-slim
 docker-develop-legacy: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
@@ -699,7 +703,7 @@ docker-develop-plucky-slim:
 docker-develop-questing:
 	docker pull --platform=amd64 ubuntu:questing
 	docker pull --platform=arm64 ubuntu:questing
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 questing /questing "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 questing /questing
 docker-develop-questing-slim:
 	docker pull --platform=amd64 ubuntu:questing
 	docker pull --platform=arm64 ubuntu:questing
@@ -707,7 +711,7 @@ docker-develop-questing-slim:
 docker-develop-resolute:
 	docker pull --platform=amd64 ubuntu:resolute
 	docker pull --platform=arm64 ubuntu:resolute
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-resolute-slim:
 	docker pull --platform=amd64 ubuntu:resolute
 	docker pull --platform=arm64 ubuntu:resolute
@@ -729,10 +733,10 @@ docker-unstable-mantic:
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-ce: docker-preview-questing
+docker-preview-ce: docker-preview-resolute
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-questing
+docker-preview-ubuntu: docker-preview-resolute
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
@@ -808,13 +812,19 @@ docker-preview-questing:
 	docker pull --platform=amd64 photoprism/develop:questing-slim
 	docker pull --platform=arm64 photoprism/develop:questing
 	docker pull --platform=arm64 photoprism/develop:questing-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /questing
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-questing /questing
+docker-preview-resolute:
+	docker pull --platform=amd64 photoprism/develop:resolute
+	docker pull --platform=amd64 photoprism/develop:resolute-slim
+	docker pull --platform=arm64 photoprism/develop:resolute
+	docker pull --platform=arm64 photoprism/develop:resolute-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /resolute
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-questing
+docker-release-ubuntu: docker-release-resolute
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
@@ -890,7 +900,13 @@ docker-release-questing:
 	docker pull --platform=amd64 photoprism/develop:questing-slim
 	docker pull --platform=arm64 photoprism/develop:questing
 	docker pull --platform=arm64 photoprism/develop:questing-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /questing
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-questing /questing
+docker-release-resolute:
+	docker pull --platform=amd64 photoprism/develop:resolute
+	docker pull --platform=amd64 photoprism/develop:resolute-slim
+	docker pull --platform=arm64 photoprism/develop:resolute
+	docker pull --platform=arm64 photoprism/develop:resolute-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /resolute
 start-traefik:
 	$(DOCKER_COMPOSE) up -d --wait traefik
 stop-traefik:
@@ -937,12 +953,12 @@ terminal-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml exec photoprism-preview bash
 logs-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml logs -f photoprism-preview
-docker-local: docker-local-questing
+docker-local: docker-local-resolute
 docker-local-up:
 	$(DOCKER_COMPOSE) -f compose.local.yaml up --force-recreate
 docker-local-down:
 	$(DOCKER_COMPOSE) -f compose.local.yaml down --remove-orphans
-docker-local-all: docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
+docker-local-all: docker-local-resolute docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -996,8 +1012,8 @@ docker-local-resolute:
 	docker pull ubuntu:resolute
 	scripts/docker/build.sh photoprism ce-resolute /resolute "-t photoprism/photoprism:local"
 local-develop: docker-local-develop
-docker-local-develop: docker-local-develop-questing
-docker-local-develop-all: docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop: docker-local-develop-resolute
+docker-local-develop-all: docker-local-develop-resolute docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm

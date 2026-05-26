@@ -1,4 +1,4 @@
-/* Media Viewer Styles */
+/* Lightbox Styles */
 
 .p-lightbox {
     position: fixed;
@@ -67,112 +67,14 @@
     z-index: 1;
 }
 
-/* Face Marker Overlay */
+/* Lightbox Tooltips */
 
-.p-face-markers {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    user-select: none;
-    /* Stays transparent so PhotoSwipe pan/zoom keeps working; .is-drawing
-       captures the pointer. */
-    pointer-events: none;
-    touch-action: auto;
-    cursor: default;
+.v-tooltip.v-theme--lightbox > .v-overlay__content {
+    background: rgba(var(--v-theme-surface), var(--v-medium-emphasis-opacity));
+    color: rgb(var(--v-theme-on-surface));
 }
 
-.p-face-markers.is-drawing {
-    pointer-events: auto;
-    touch-action: none;
-    cursor: crosshair;
-}
-
-.p-face-markers__svg {
-    pointer-events: none;
-    overflow: visible;
-}
-
-.p-face-markers__rect {
-    fill: rgba(255, 255, 255, 0.06);
-    stroke: rgba(255, 255, 255, 0.9);
-    stroke-width: 2px;
-    vector-effect: non-scaling-stroke;
-    pointer-events: none;
-}
-
-.p-face-markers__rect--named {
-    stroke: rgba(167, 139, 250, 0.98);
-    cursor: default;
-}
-
-.p-face-markers__rect--draft {
-    stroke: rgba(196, 167, 255, 1);
-    stroke-dasharray: 6 4;
-    fill: rgba(167, 139, 250, 0.14);
-    pointer-events: none;
-}
-
-.p-face-markers__handle {
-    fill: rgba(167, 139, 250, 1);
-    stroke: rgba(70, 40, 140, 0.95);
-    stroke-width: 1.5px;
-    vector-effect: non-scaling-stroke;
-    pointer-events: none;
-}
-
-.p-face-markers__label {
-    font-size: 13px;
-    font-weight: 600;
-    fill: #fff;
-    stroke: rgba(0, 0, 0, 0.85);
-    stroke-width: 3px;
-    paint-order: stroke fill;
-    pointer-events: none;
-    user-select: none;
-    dominant-baseline: hanging;
-}
-
-.p-face-markers__confirm {
-    display: flex;
-    gap: 8px;
-    pointer-events: auto;
-    z-index: 3;
-}
-
-.p-face-markers__btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
-    color: #fff;
-    transition: transform 0.08s ease-out;
-}
-
-.p-face-markers__btn:hover {
-    transform: scale(1.08);
-}
-
-.p-face-markers__btn--confirm {
-    background: rgba(126, 87, 230, 0.95);
-}
-
-.p-face-markers__btn--cancel {
-    background: rgba(90, 90, 90, 0.95);
-}
-
-.p-face-markers__btn.is-disabled,
-.p-face-markers__btn[disabled] {
-    cursor: default;
-    opacity: 0.6;
-    transform: none;
-}
-
-/* Sidebar Info */
+/* Lightbox Sidebar */
 
 .p-lightbox__container > .p-lightbox__sidebar {
     position: relative;
@@ -219,6 +121,12 @@
     user-select: text;
 }
 
+/* Reset Vuetify's `v-list nav` cursor:pointer on non-clickable rows so the
+   browser picks context-appropriate cursors (text I-beam, link pointer). */
+.p-lightbox__container > .p-lightbox__sidebar .metadata__item:not(.clickable) {
+    cursor: auto;
+}
+
 .p-lightbox__container > .p-lightbox__sidebar .metadata__item .v-list-item-title,
 .p-lightbox__container > .p-lightbox__sidebar .metadata__item .v-list-item-subtitle {
     white-space: normal;
@@ -230,20 +138,7 @@
     font-weight: 700;
     word-wrap: normal;
     word-break: break-word;
-    text-align: start;
     hyphens: auto;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .metadata__file {
-    display: block;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-filename {
-    font-size: 0.95rem;
-    font-weight: 700;
-    line-height: 1.3;
-    word-break: break-all;
-    text-align: start;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-caption,
@@ -252,7 +147,6 @@
     overflow-wrap: normal;
     word-wrap: normal;
     word-break: break-word;
-    text-align: start;
     hyphens: auto;
 }
 
@@ -262,6 +156,10 @@
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(var(--v-theme-on-surface), 0.2) transparent;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-scrollable.meta-caption {
+    max-height: 320px;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-scrollable::-webkit-scrollbar {
@@ -286,18 +184,6 @@
     text-align: start;
 }
 
-.p-lightbox__container > .p-lightbox__sidebar .meta-caption a,
-.p-lightbox__container > .p-lightbox__sidebar .meta-notes a {
-    color: rgb(var(--v-theme-info));
-    text-decoration: underline;
-    word-break: break-all;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-caption a:hover,
-.p-lightbox__container > .p-lightbox__sidebar .meta-notes a:hover {
-    text-decoration: none;
-}
-
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip {
     display: inline-flex;
     align-items: center;
@@ -309,14 +195,37 @@
     cursor: pointer;
     user-select: none;
     min-height: 32px;
+    max-width: 100%;
+    min-width: 0;
     transition: all 0.2s ease;
     background-color: rgb(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))));
     color: rgb(var(--v-theme-on-surface));
     box-shadow: inset 0 0 0 1px rgba(var(--v-theme-on-surface), 0.12);
 }
 
+/* Allow the label to shrink within the chip's inline-flex layout so
+   Vuetify's `text-truncate` (overflow + ellipsis + nowrap) can engage on
+   single-word titles like `WWWWWWW…`; the chip itself is constrained by
+   `max-width: 100%` against its flex-wrap parent. */
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip__label {
+    min-width: 0;
+}
+
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip:hover {
     background-color: rgba(var(--v-theme-secondary-light, var(--v-theme-surface-bright, var(--v-theme-surface))), 0.7);
+}
+
+/* Keyboard focus ring drawn inside the chip (negative offset) so it isn't
+   clipped when chips wrap against the sidebar edge. */
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip:focus {
+    outline: 2px solid rgba(var(--v-theme-on-surface), 0.5);
+    outline-offset: -2px;
+}
+
+/* Suppress the ring on mouse focus where supported; click on a chip already
+   navigates or toggles, so a transient outline there is just visual noise. */
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip--primary {
@@ -332,24 +241,10 @@
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip .v-icon {
     opacity: 0.7;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-chip .v-icon:hover {
-    opacity: 1;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-chip--pending-remove {
-    background-color: rgba(var(--v-theme-error), 0.3);
-    color: rgb(var(--v-theme-error));
-    box-shadow: none;
-    opacity: 1;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-chip--pending-add {
-    background-color: rgba(var(--v-theme-download), 0.3);
-    color: rgb(var(--v-theme-download));
-    box-shadow: none;
-    border-style: none;
     opacity: 1;
 }
 
@@ -378,16 +273,31 @@
     margin: 0;
 }
 
-.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-field__input {
-    padding: 2px 0;
-    min-height: 1.5em;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    mask-image: none;
+.p-lightbox__container > .p-lightbox__sidebar .v-input--density-compact {
+    /* Sets the v-text-field control height and the floor for auto-grown
+       textareas. Do not add `min-height` on .v-field__input — it would
+       shadow Vuetify's auto-grow inheritance and freeze textareas at 36 px. */
+    --v-input-control-height: 36px;
 }
 
+.p-lightbox__container > .p-lightbox__sidebar .v-input--density-compact .v-field {
+    --v-field-input-padding-top: 6px;
+    --v-field-input-padding-bottom: 6px;
+    --v-field-padding-start: 10px;
+    --v-field-padding-end: 10px;
+    --v-field-padding-after: 0;
+    --v-field-padding-top: 6px;
+    --v-field-padding-bottom: 6px;
+    padding-inline-end: 4px;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .v-input--density-compact .v-field .v-field__input {
+    font-size: 0.875rem;
+}
+
+/* Thin themed scrollbar for textareas; legible against the dark surface on
+   Firefox/Chromium. Do not unset min-height — see the comment above. */
 .p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit textarea.v-field__input {
-    min-height: unset;
     scrollbar-width: thin;
     scrollbar-color: rgba(var(--v-theme-on-surface), 0.2) transparent;
 }
@@ -401,14 +311,6 @@
     border-radius: 2px;
 }
 
-.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-field {
-    padding-inline-start: 0;
-    padding-inline-end: 0;
-    background: rgb(var(--v-theme-surface-bright, var(--v-theme-surface)));
-    border-radius: 4px;
-    padding: 2px 6px;
-}
-
 .p-lightbox__container > .p-lightbox__sidebar .meta-inline-title .v-field__input {
     font-weight: 700;
 }
@@ -420,17 +322,38 @@
     word-break: break-word;
 }
 
-/* Pencil icon: hidden by default, shown on list-item hover */
+/* Drop Vuetify's top fade-mask on auto-grown inline textareas — without
+   a scroll viewport, the mask just dims the first line of text. */
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-field__input,
+.p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-textarea__sizer {
+    mask-image: none;
+}
+
+/* Pencil button: hidden by default, revealed on list-item hover. */
 .p-lightbox__container > .p-lightbox__sidebar .meta-inline-pencil {
-    opacity: 0;
-    cursor: pointer;
-    font-size: 16px;
-    color: rgba(var(--v-theme-on-surface), 0.5);
-    transition: opacity 0.15s ease;
+    display: none;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .metadata__item:hover > .v-list-item__append .meta-inline-pencil {
-    opacity: 1;
+    display: inline-flex;
+}
+
+/* `.hide-edit-pencils` on the sidebar root hides every pencil even on hover;
+   row clicks and chip-toolbar Save/Undo remain reachable. */
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-pencils .metadata__item:hover > .v-list-item__append .meta-inline-pencil,
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-pencils .meta-inline-pencil {
+    display: none;
+}
+
+/* Hide inline-text Undo/Save (keyboard covers commit/cancel/revert); chip
+   toolbars opt out via `meta-chip-*`. Keep `:not()` on the hide rule itself
+   so the minifier doesn't collapse it into `:is()` and break the combinator. */
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-undo .meta-inline-undo:not(.meta-chip-undo) {
+    display: none;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-save .meta-inline-confirm:not(.meta-chip-confirm) {
+    display: none;
 }
 
 /* Add prompt for empty editable fields */
@@ -445,66 +368,16 @@
     color: rgba(var(--v-theme-on-surface), 0.6);
 }
 
-/* Always visible when isEditable — unlike the per-row remove icon below,
-   these don't follow the hover-to-reveal convention. */
-.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle,
-.p-lightbox__container > .p-lightbox__sidebar .meta-marker-add {
-    opacity: 0.7;
-    cursor: pointer;
-    font-size: 18px;
-    color: rgba(var(--v-theme-on-surface), 0.7);
-    margin-inline-start: 4px;
-    transition: opacity 0.15s ease;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle:hover,
-.p-lightbox__container > .p-lightbox__sidebar .meta-marker-add:hover {
-    opacity: 1;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle.is-active {
-    color: rgb(var(--v-theme-info));
-    opacity: 1;
-}
-
-.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle[disabled],
-.p-lightbox__container > .p-lightbox__sidebar .meta-marker-add[disabled],
-.p-lightbox__container > .p-lightbox__sidebar .meta-marker-remove[disabled],
-.p-lightbox__container > .p-lightbox__sidebar .meta-marker-eject[disabled] {
-    pointer-events: none;
-    opacity: 0.35;
-}
-
+/* Per-row marker buttons (× reject, ⏏ Unassign) — hidden by default, revealed
+   on row hover so a non-hovered row has no nested focusable targets. */
 .p-lightbox__container > .p-lightbox__sidebar .meta-marker-remove,
-.p-lightbox__container > .p-lightbox__sidebar .meta-marker-eject {
-    opacity: 0;
-    cursor: pointer;
-    font-size: 16px;
-    color: rgba(var(--v-theme-on-surface), 0.6);
-    transition: opacity 0.15s ease;
+.p-lightbox__container > .p-lightbox__sidebar .meta-marker-clear-subject {
+    display: none;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-remove,
-.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-eject {
-    opacity: 1;
-}
-
-/* Confirm (check) icon: always visible when editing */
-.p-lightbox__container > .p-lightbox__sidebar .meta-inline-confirm {
-    cursor: pointer;
-    font-size: 18px;
-    color: rgb(var(--v-theme-info));
-}
-
-/* Keep labels and selection text readable when fields are focused.
-   Vuetify 3 applies the focused color via an inline style, so overriding
-   it requires !important. */
-.p-camera-dialog .v-field--focused .v-label.v-field-label,
-.p-camera-dialog .v-field--focused .v-label.v-field-label--floating,
-.p-datetime-dialog .v-field--focused .v-label.v-field-label,
-.p-datetime-dialog .v-field--focused .v-label.v-field-label--floating {
-    color: rgb(var(--v-theme-on-surface)) !important;
-    opacity: var(--v-medium-emphasis-opacity, 0.7);
+.p-lightbox__container > .p-lightbox__sidebar .metadata__person-row:hover .meta-marker-clear-subject {
+    display: inline-flex;
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .meta-inline-edit .v-combobox__selection,
@@ -514,15 +387,11 @@
     color: rgb(var(--v-theme-on-surface)) !important;
 }
 
-/* Sidebar inline dropdowns (name, labels, albums) render in a body-level
-   overlay, so they're outside `.p-lightbox__sidebar`. The lightbox theme
-   has `surface` identical to `background`, which makes the default menu
-   invisible against the sidebar; lift it to `surface-bright` and add a
-   border for a clear edge. */
-.meta-inline-menu .v-overlay__content,
-.meta-inline-menu > .v-list {
-    background: rgb(var(--v-theme-surface-bright)) !important;
-    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity, 0.12));
+/* density="compact" leaves the v-list title at 16 px; trim it so the menu
+   matches the sidebar's 0.875 rem inline editors. */
+.meta-inline-menu .v-list-item-title {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
 }
 
 /* Media Content */
@@ -649,6 +518,33 @@
     visibility: visible;
 }
 
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--video .pswp__video,
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--live .pswp__video,
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--animated .pswp__video,
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--video .pswp__play,
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--live .pswp__play,
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--animated .pswp__play {
+    visibility: hidden !important;
+}
+
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--video .pswp__image,
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--live .pswp__image,
+.p-lightbox__content.face-marker-mode .pswp__media.pswp__media--animated .pswp__image {
+    visibility: visible !important;
+}
+
+/* Hide every chrome element while face-marker mode is active; the overlay's
+   Back button (.p-meta-face-markers__btn--back) is the sole exit affordance.
+   Sidebar chrome lives in a different region and stays reachable. */
+.p-lightbox__content.face-marker-mode .pswp__top-bar .pswp__button,
+.p-lightbox__content.face-marker-mode .pswp__button--arrow,
+.p-lightbox__content.face-marker-mode .pswp__dynamic-caption,
+.p-lightbox__content.face-marker-mode .pswp__counter,
+.p-lightbox__content.face-marker-mode .p-lightbox__controls {
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
 .pswp__img {
     -webkit-touch-callout: default;
 }
@@ -762,20 +658,6 @@
     touch-action: none;
 }
 
-.pswp__dynamic-caption a {
-    color: inherit;
-    text-decoration: underline;
-    white-space: normal;
-    overflow-wrap: normal;
-    word-wrap: normal;
-    word-break: break-word;
-    text-align: start;
-    text-overflow: ellipsis;
-    hyphens: auto;
-    pointer-events: auto;
-    touch-action: auto;
-}
-
 .pswp__dynamic-caption h4 {
     font-weight: 600;
     word-wrap: normal;
@@ -790,6 +672,13 @@
 .pswp__dynamic-caption p {
     font-weight: 400;
     white-space: pre-wrap;
+}
+
+/* User-toggled caption visibility (Ctrl+H, #5580). */
+
+.p-lightbox__container > .p-lightbox__content.hide-caption .pswp__dynamic-caption {
+    display: none !important;
+    transition: none !important;
 }
 
 /* Top Bar Controls */

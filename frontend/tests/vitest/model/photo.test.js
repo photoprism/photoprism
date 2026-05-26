@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import "../fixtures";
 import * as media from "common/media";
-import { Photo, BatchSize } from "model/photo";
+import { Photo, BatchSize, MaxLength } from "model/photo";
 import $event from "common/event";
 
 // Drains the pubsub-js async queue so subscribers configured as `async: true`
@@ -9,6 +9,65 @@ import $event from "common/event";
 const flushEvents = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe("model/photo", () => {
+  // Pins the per-field length caps to the backend VARCHAR + clip ceilings.
+  // If a backend bump (internal/entity/photo.go or details.go) changes any
+  // of these, this test fails on purpose so the frontend cap moves with it.
+  it("MaxLength mirrors the backend VARCHAR + clip caps", () => {
+    expect(MaxLength).toEqual({
+      Title: 200,
+      Caption: 4096,
+      Subject: 1024,
+      Artist: 1024,
+      Copyright: 1024,
+      License: 1024,
+      Keywords: 2048,
+      Notes: 2048,
+      Exposure: 64,
+    });
+    // Frozen so consumers can't accidentally mutate per-field caps.
+    expect(Object.isFrozen(MaxLength)).toBe(true);
+  });
+
+  // Title, Caption, and Exposure live directly on the Photo; the Details
+  // fields (Subject, Artist, etc.) live one level down — the override
+  // must handle both shapes without crashing on a Photo without Details.
+  it("trimInputs() trims both direct fields and Details nested fields", () => {
+    const photo = new Photo({
+      Title: "  Sunset  ",
+      Caption: "\tBeach\n",
+      Exposure: " 1/250s ",
+      Details: {
+        Subject: " woman walking ",
+        Artist: "\tAnsel Adams ",
+        Copyright: "  © 2026 ",
+        License: " CC-BY ",
+        Keywords: " sunset,beach ",
+        Notes: "  scenic view  ",
+      },
+      Slug: " untouched ",
+    });
+
+    photo.trimInputs();
+
+    expect(photo.Title).toBe("Sunset");
+    expect(photo.Caption).toBe("Beach");
+    expect(photo.Exposure).toBe("1/250s");
+    expect(photo.Details.Subject).toBe("woman walking");
+    expect(photo.Details.Artist).toBe("Ansel Adams");
+    expect(photo.Details.Copyright).toBe("© 2026");
+    expect(photo.Details.License).toBe("CC-BY");
+    expect(photo.Details.Keywords).toBe("sunset,beach");
+    expect(photo.Details.Notes).toBe("scenic view");
+    // Slug isn't in MaxLength — passes through.
+    expect(photo.Slug).toBe(" untouched ");
+  });
+
+  it("trimInputs() is safe to call on a Photo without Details", () => {
+    const photo = new Photo({ Title: " bare " });
+    expect(() => photo.trimInputs()).not.toThrow();
+    expect(photo.Title).toBe("bare");
+  });
+
   it("should get photo entity name", () => {
     const values = { UID: 5, Title: "Crazy Cat" };
     const photo = new Photo(values);
@@ -1096,6 +1155,80 @@ describe("model/photo", () => {
     expect(photo2.locationInfo()).toBe("Spain");
   });
 
+  it("should return empty placeName when the photo has no geocoding", () => {
+    const photo = new Photo({ ID: 1, UID: "ABC1" });
+    expect(photo.placeName()).toBe("");
+  });
+
+  it("should resolve placeName from Place.Label when set", () => {
+    const photo = new Photo({
+      ID: 2,
+      UID: "ABC2",
+      PlaceID: "s2:abc",
+      Country: "de",
+      Place: { ID: "s2:abc", Label: "Berlin, Germany" },
+    });
+    expect(photo.placeName()).toBe("Berlin, Germany");
+  });
+
+  it("should fall back to PlaceLabel when Place is not preloaded", () => {
+    const photo = new Photo({
+      ID: 3,
+      UID: "ABC3",
+      PlaceID: "s2:def",
+      Country: "fr",
+      PlaceLabel: "Paris, France",
+    });
+    expect(photo.placeName()).toBe("Paris, France");
+  });
+
+  it("should resolve placeName to the country name for unknown places with a known country", () => {
+    const photo = new Photo({ ID: 4, UID: "ABC4", PlaceID: "zz", Country: "es" });
+    expect(photo.placeName()).toBe("Spain");
+  });
+
+  it("should strip the UnknownPlace literal so placeName returns empty for unresolved photos", () => {
+    // Mirrors the join shape PhotoPreloadByUID returns when a photo
+    // points at UnknownPlace (`internal/entity/place.go`): every text
+    // column is the English literal "Unknown" and Country is also "zz".
+    const photo = new Photo({
+      ID: 5,
+      UID: "ABC5",
+      PlaceID: "zz",
+      Country: "zz",
+      PlaceLabel: "Unknown",
+      Place: { ID: "zz", Label: "Unknown" },
+    });
+    expect(photo.placeName()).toBe("");
+    // locationInfo() still surfaces the localized fallback for callers
+    // that want a placeholder (cards / list / edit dialog).
+    expect(photo.locationInfo()).toBe("Unknown");
+  });
+
+  it("should strip a denormalized 'Unknown' PlaceLabel even when Place is not preloaded", () => {
+    const photo = new Photo({
+      ID: 6,
+      UID: "ABC6",
+      PlaceID: "zz",
+      Country: "zz",
+      PlaceLabel: "Unknown",
+    });
+    expect(photo.placeName()).toBe("");
+  });
+
+  it("should keep a user label that merely contains the substring Unknown", () => {
+    const photo = new Photo({
+      ID: 7,
+      UID: "ABC7",
+      PlaceID: "s2:ghi",
+      Country: "us",
+      PlaceLabel: "Unknown Trail, Yosemite",
+    });
+    // The filter matches the exact DB sentinel, not substrings — a
+    // user-curated label like "Unknown Trail" stays put.
+    expect(photo.placeName()).toBe("Unknown Trail, Yosemite");
+  });
+
   it("should return video info", () => {
     const values = {
       ID: 9,
@@ -1446,6 +1579,137 @@ describe("model/photo", () => {
     const photo = new Photo(values);
     const response = await photo.removeLabel(12345);
     expect(response.success).toBe("ok");
+  });
+
+  describe("addToAlbum", () => {
+    beforeEach(() => {
+      Photo._cache.clear();
+    });
+
+    it("posts to albums/<uid>/photos, evicts the cache, refinds, and resyncs this.Albums", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh", Albums: [{ UID: "axxalbum1", Title: "Existing" }] });
+      const refreshed = new Photo({
+        UID: "pqbemz8276mhtobh",
+        Albums: [
+          { UID: "axxalbum1", Title: "Existing" },
+          { UID: "axxalbum2", Title: "New" },
+        ],
+      });
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const findSpy = vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(refreshed);
+
+      const result = await photo.addToAlbum("axxalbum2");
+
+      expect(findSpy).toHaveBeenCalledWith("pqbemz8276mhtobh");
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(false);
+      expect(result).toBe(photo);
+      expect(photo.Albums.map((a) => a.UID)).toEqual(["axxalbum1", "axxalbum2"]);
+
+      findSpy.mockRestore();
+    });
+
+    it("resolves to this without a request when albumUID is falsy", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      const result = await photo.addToAlbum("");
+      expect(result).toBe(photo);
+      expect(findSpy).not.toHaveBeenCalled();
+      findSpy.mockRestore();
+    });
+
+    it("propagates the rejection without evicting or refinding when the POST fails", async () => {
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const postSpy = vi.spyOn($api, "post").mockRejectedValueOnce(err);
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+
+      await expect(photo.addToAlbum("axxalbum2")).rejects.toBe(err);
+
+      expect(findSpy).not.toHaveBeenCalled();
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(true);
+      postSpy.mockRestore();
+      findSpy.mockRestore();
+    });
+
+    // Pin the layer split: Photo.addToAlbum must NOT toggle a Removed flag
+    // (that's Thumb's contract). A future "consolidation" PR that tries to
+    // collapse the two methods into one will trip this assertion.
+    it("does not flip a Removed flag (Photo layer ≠ Thumb layer)", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(new Photo({ UID: "pqbemz8276mhtobh", Albums: [] }));
+      await photo.addToAlbum("axxalbum2");
+      expect(photo.Removed).toBeUndefined();
+      Photo.prototype.find.mockRestore();
+    });
+  });
+
+  describe("removeFromAlbum", () => {
+    beforeEach(() => {
+      Photo._cache.clear();
+    });
+
+    it("deletes albums/<uid>/photos, evicts the cache, refinds, and resyncs this.Albums", async () => {
+      const photo = new Photo({
+        UID: "pqbemz8276mhtobh",
+        Albums: [
+          { UID: "axxalbum1", Title: "Existing" },
+          { UID: "axxalbum2", Title: "Other" },
+        ],
+      });
+      const refreshed = new Photo({
+        UID: "pqbemz8276mhtobh",
+        Albums: [{ UID: "axxalbum1", Title: "Existing" }],
+      });
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const findSpy = vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(refreshed);
+
+      const result = await photo.removeFromAlbum("axxalbum2");
+
+      expect(findSpy).toHaveBeenCalledWith("pqbemz8276mhtobh");
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(false);
+      expect(result).toBe(photo);
+      expect(photo.Albums.map((a) => a.UID)).toEqual(["axxalbum1"]);
+
+      findSpy.mockRestore();
+    });
+
+    it("resolves to this without a request when albumUID is falsy", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      const result = await photo.removeFromAlbum(null);
+      expect(result).toBe(photo);
+      expect(findSpy).not.toHaveBeenCalled();
+      findSpy.mockRestore();
+    });
+
+    it("propagates the rejection without evicting or refinding when the DELETE fails", async () => {
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const deleteSpy = vi.spyOn($api, "delete").mockRejectedValueOnce(err);
+      const findSpy = vi.spyOn(Photo.prototype, "find");
+      Photo._cache.set("pqbemz8276mhtobh", { UID: "pqbemz8276mhtobh", Title: "Cached" });
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+
+      await expect(photo.removeFromAlbum("axxalbum2")).rejects.toBe(err);
+
+      expect(findSpy).not.toHaveBeenCalled();
+      expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(true);
+      deleteSpy.mockRestore();
+      findSpy.mockRestore();
+    });
+
+    // Pin the layer split: Photo.removeFromAlbum must NOT toggle a Removed
+    // flag (that's Thumb.removeFromAlbum's contract — see model/thumb.js
+    // and the matching test in tests/vitest/model/thumb.test.js).
+    it("does not flip a Removed flag (Photo layer ≠ Thumb layer)", async () => {
+      const photo = new Photo({ UID: "pqbemz8276mhtobh" });
+      vi.spyOn(Photo.prototype, "find").mockResolvedValueOnce(new Photo({ UID: "pqbemz8276mhtobh", Albums: [] }));
+      await photo.removeFromAlbum("axxalbum2");
+      expect(photo.Removed).toBeUndefined();
+      Photo.prototype.find.mockRestore();
+    });
   });
 
   it("should test update", async () => {
@@ -1986,6 +2250,28 @@ describe("model/photo", () => {
         expect(Photo._cache.has("uid-ws-res")).toBe(false);
       });
 
+      // event.EntitiesEdited("photos", savedUIDs) in
+      // internal/api/batch_photos_edit.go — one event per batch save,
+      // payload is the full UID list (always []string, not entity
+      // objects). This is the lightweight signal that closes the
+      // stale-cache bug after batch edits where PublishPhotoEvent
+      // would have emitted N heavy payloads.
+      it("evicts every cached entry when photos.edited arrives with the batch UID list", async () => {
+        seedCache("uid-edited-1", { Title: "Stale 1" });
+        seedCache("uid-edited-2", { Title: "Stale 2" });
+        seedCache("uid-edited-keep", { Title: "Untouched" });
+
+        $event.publish("photos.edited", {
+          entities: ["uid-edited-1", "uid-edited-2"],
+        });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-edited-1")).toBe(false);
+        expect(Photo._cache.has("uid-edited-2")).toBe(false);
+        // Entries outside the payload must survive.
+        expect(Photo._cache.has("uid-edited-keep")).toBe(true);
+      });
+
       it("ignores empty-string entries in archived/restored payloads", async () => {
         seedCache("uid-keep-empty", {});
 
@@ -2042,7 +2328,7 @@ describe("model/photo", () => {
 
         // Each subscribed channel runs the same guard, so malformed
         // payloads on any of them must leave the cache untouched.
-        ["photos.updated", "photos.deleted", "photos.archived", "photos.restored"].forEach((ev) => {
+        ["photos.updated", "photos.deleted", "photos.archived", "photos.restored", "photos.edited"].forEach((ev) => {
           $event.publish(ev, null);
           $event.publish(ev, {});
           $event.publish(ev, { entities: "not-an-array" });
@@ -2051,6 +2337,37 @@ describe("model/photo", () => {
         await flushEvents();
 
         expect(Photo._cache.has("uid-keep")).toBe(true);
+      });
+
+      // photos.created flows through the same subscribeEntityActions
+      // helper as the other mutation verbs. The cache doesn't usually
+      // hold a brand-new UID (the indexer creates it fresh), but if a
+      // call site has seeded one — e.g. an upsert flow where the UID
+      // already exists in cache — the WS event must evict it so the
+      // next read returns the post-create state instead of a stale
+      // snapshot.
+      it("evicts cached entries when photos.created arrives for a known UID", async () => {
+        seedCache("uid-created", { Title: "Pre-create" });
+
+        $event.publish("photos.created", { entities: ["uid-created"] });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-created")).toBe(false);
+      });
+
+      // Forward-compat: a hypothetical new mutation verb (e.g.
+      // "merged") would auto-evict if added to ENTITY_MUTATIONS in
+      // common/event.js. Until then it must be a no-op so unrelated
+      // future events on the photos namespace don't pull the cache
+      // out from under live consumers.
+      it("ignores photos.* events whose action is not in ENTITY_MUTATIONS", async () => {
+        seedCache("uid-merged", { Title: "Keep" });
+
+        $event.publish("photos.merged", { entities: ["uid-merged"] });
+        $event.publish("photos.viewed", { entities: ["uid-merged"] });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-merged")).toBe(true);
       });
     });
 

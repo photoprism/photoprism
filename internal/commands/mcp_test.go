@@ -10,6 +10,8 @@ import (
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 // TestMCPCommandRegistered ensures the MCP command is present in the CLI catalog.
@@ -83,6 +85,65 @@ func TestRunMCPServerOverInMemoryTransport(t *testing.T) {
 	case <-time.After(5 * time.Second):
 		t.Fatal("runMCPServer did not shut down within 5 seconds")
 	}
+}
+
+// TestMCPDisabledExit covers the gate helper that mcpServeAction calls
+// before starting the stdio transport: DisableMCP=true must return a
+// cli.ExitCoder error whose message points at --disable-mcp=false as
+// the documented override; DisableMCP=false must return nil so the
+// server can start; nil config must be tolerated.
+func TestMCPDisabledExit(t *testing.T) {
+	conf := get.Config()
+	require.NotNil(t, conf, "test harness must provide a shared config")
+
+	original := conf.Options().DisableMCP
+	t.Cleanup(func() { conf.Options().DisableMCP = original })
+
+	t.Run("DisableMCPTrue_Refuses", func(t *testing.T) {
+		conf.Options().DisableMCP = true
+
+		err := mcpDisabledExit(conf)
+		require.Error(t, err)
+
+		coder, ok := err.(cli.ExitCoder)
+		require.True(t, ok, "expected cli.ExitCoder, got %T", err)
+		require.Equal(t, 1, coder.ExitCode())
+		require.Contains(t, err.Error(), "--disable-mcp=false")
+	})
+
+	t.Run("DisableMCPFalse_Allows", func(t *testing.T) {
+		conf.Options().DisableMCP = false
+
+		require.NoError(t, mcpDisabledExit(conf))
+	})
+
+	t.Run("NilConfig_Allows", func(t *testing.T) {
+		require.NoError(t, mcpDisabledExit(nil))
+	})
+}
+
+// TestMCPServeRefusesWhenDisabled drives the full mcp serve action through
+// RunWithTestContext to confirm the gate trips end-to-end before the stdio
+// transport is started. The DisableMCP=false branch is not exercised here
+// because mcpServeAction would block on stdin once it reaches the transport;
+// the gate-level coverage in TestMCPDisabledExit is sufficient to assert the
+// pre-transport branch.
+func TestMCPServeRefusesWhenDisabled(t *testing.T) {
+	conf := get.Config()
+	require.NotNil(t, conf, "test harness must provide a shared config")
+
+	original := conf.Options().DisableMCP
+	t.Cleanup(func() { conf.Options().DisableMCP = original })
+
+	conf.Options().DisableMCP = true
+
+	_, err := RunWithTestContext(MCPServeCommand, []string{"serve"})
+	require.Error(t, err)
+
+	coder, ok := err.(cli.ExitCoder)
+	require.True(t, ok, "expected cli.ExitCoder, got %T", err)
+	require.Equal(t, 1, coder.ExitCode())
+	require.Contains(t, err.Error(), "--disable-mcp=false")
 }
 
 // TestMCPAppMetadata covers the happy path and every fallback branch of

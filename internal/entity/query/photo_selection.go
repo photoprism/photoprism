@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/photoprism/photoprism/pkg/dsn"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
@@ -24,9 +26,9 @@ func SelectedPhotos(frm form.Selection) (results entity.Photos, err error) {
 	var concat string
 
 	switch DbDialect() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		concat = "CONCAT(a.path, '/%')"
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		concat = "a.path || '/%'"
 	default:
 		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())

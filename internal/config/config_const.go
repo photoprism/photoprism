@@ -27,6 +27,12 @@ const CustomStaticUri = "/c/static"
 // ThemeUri defines the optional theme URI path for serving theme assets.
 const ThemeUri = "/_theme"
 
+// IndexWorkersAuto is the sentinel value of the index-workers option that
+// asks IndexWorkers() to derive the worker count from the available CPU
+// cores and database driver. Operators can keep "auto" or set a positive
+// numeric string to pin the worker count explicitly.
+const IndexWorkersAuto = "auto"
+
 // DefaultIndexSchedule defines the default indexing schedule in cron format.
 const DefaultIndexSchedule = "" // e.g. "0 */3 * * *" for every 3 hours
 

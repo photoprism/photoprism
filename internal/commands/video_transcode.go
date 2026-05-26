@@ -103,10 +103,15 @@ func videoTranscodeAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof("transcode: processed %d, skipped %d, failed %d", processed, skipped, failed)
+		log.Infof(
+			"transcode: processed %s, skipped %s, %s",
+			formatCount(processed, "file", "files"),
+			formatCount(skipped, "file", "files"),
+			formatFailedCount(failed, "file", "files"),
+		)
 
 		if failed > 0 {
-			return fmt.Errorf("transcode: %d files failed", failed)
+			return fmt.Errorf("transcode: %s", formatFailedCount(failed, "file", "files"))
 		}
 
 		return nil

@@ -49,11 +49,12 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 
 ### GitHub Issues
 
-- Titles must be concise, imperative, and start with one capitalized prefix plus `: `, for example `Search: Add filter for RAW image formats`.
-- Descriptions must begin with a one-sentence bold user story: `**As a <role>, I want <goal>, so that <outcome>.**`
+- Titles MUST be concise, imperative, and start with one capitalized prefix plus `: `, for example `Search: Add filter for RAW image formats`.
+- Descriptions MUST begin with a one-sentence bold user story: `**As a <role>, I want <goal>, so that <outcome>.**`
+- Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
 - Follow with behavior, rationale, technical considerations, and constraints.
 - End with `- [ ]` checklist items for the acceptance criteria, each using `MUST`, `SHOULD`, or `MAY`.
-- Agents may create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
+- Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
 
 ### Specifications & Documentation
 
@@ -70,6 +71,7 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 - Capitalize the first word, the first word after a colon, dash, or end punctuation, and all major words, including the second part of a hyphenated major word.
 - Lowercase only articles, short conjunctions, and short prepositions of three letters or fewer when they are not in one of those positions.
 - Preserve known acronyms (for example, API, CLI, HTTP, JSON) and slash-separated acronym groups (for example, CSV/TSV) as uppercase.
+- Preserve RFC 2119 / RFC 8174 normative keywords (MUST, SHOULD, MAY, SHALL, REQUIRED, RECOMMENDED, OPTIONAL) as uppercase when used in their normative sense.
 - Preserve inline code spans (`` `foo` ``), file paths (e.g. `docs/foo-bar.md`), and slash commands (e.g. `/grill-me`) verbatim; do not recase their contents.
 - Use `&` instead of `And`/`Or` in headings.
 
@@ -90,23 +92,32 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 - Frontend: Vue 3 plus Vuetify 3 under `frontend/`.
 - Local dev and CI use Docker Compose; Traefik provides local TLS via `*.localssl.dev`.
 - Code in `pkg/*` must not import from `internal/*`. If you need config, entity, or DB access, add code under `internal/`.
-- Shared Go filesystem rules:
+- Shared Go rules:
+  - After Go edits, run `make fmt-go` and keep `gofmt` tab indentation.
+  - Every added/modified Go function, including unexported helpers, must have focused test coverage in the corresponding `*_test.go` files; update existing tests or add new ones as needed.
+  - Every Go package must contain a root `<package>.go` file with the standard license header and a short package description comment.
   - Use `pkg/fs` permission constants: `fs.ModeDir`, `fs.ModeFile`, `fs.ModeConfigFile`, `fs.ModeSecretFile`, and `fs.ModeBackupFile`.
   - When importing the stdlib `io/fs`, alias it to avoid collisions, for example `iofs "io/fs"` or `gofs "io/fs"`.
   - Do not pass stdlib `io/fs` mode flags where permission bits are expected.
   - Prefer `filepath.Join` for filesystem paths and `path.Join` only for URL paths.
   - Normalize slash-based logical paths stored in DB, config, or API payloads with `clean.SlashPath(...)`.
-- Shared Go style rules:
-  - After Go edits, run `make fmt-go` and keep `gofmt` tab indentation.
-  - Doc comments for packages and exported identifiers must be complete sentences that begin with the described name and end with a period.
-  - Every new function, including unexported helpers, needs a concise doc comment.
-  - Every new Go function, including unexported helpers, must have focused test coverage in the corresponding `*_test.go` files; update existing tests or add new ones as needed.
-  - For short examples in comments, indent code instead of using backticks.
-  - Every Go package must contain a root `<package>.go` file with the standard license header and a short package description comment.
-- Shared JS/Vue testing rules:
-  - New JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.
-  - New Vue components should have component-test coverage, and existing component tests should be updated as needed when behavior changes.
+- Shared JS/Vue rules:
+  - Added/modified JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.
+  - Added/modified Vue components should have component-test coverage, and existing component tests should be updated as needed when behavior changes.
 - When adding a metadata source such as `SrcOllama` or `SrcOpenAI`, update both `internal/entity/src.go` and `frontend/src/common/util.js` so backend and UI stay aligned.
+
+### JS/Go Code Comments
+
+A doc comment is **required** for every function (including unexported helpers), as well as for every non-trivial Vue `methods:` / `computed:` / watcher:
+- Keep comments **compact** and default to one line for "what" in the format `// Name does X.`. Skip trivial getters (`isOpen: () => this.open`).
+- Add 1-2 follow-up lines (`// …`) **only** if the "why" is non-obvious: a hidden invariant, a workaround that would otherwise be undone by a future cleanup, a contract a reader can't infer from the code. If readers can infer the "why" from the function body or a nearby line, then omit it.
+- Multi-paragraph explanations belong in `specs/`, package `README.md` files, or GitHub issues — never in the source itself.
+
+Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period. For short examples in comments, indent code instead of using backticks.
+
+Use US English spelling in all code comments (`parameterized`, `behavior`, `color`, `serialize`, `normalize`, `optimize`, …) — not the British `-ised`/`-our`/`-re` variants.
+
+> **Don't include in code comments:** Issue / PR numbers, "previously…" history, alternatives considered, what the function used to do, references to old commits, names of subsequent reviewers, or any narrative that names the change rather than the steady-state behavior. That context belongs in commit messages, specs, or handover notes.
 
 ## Agent Runtime
 

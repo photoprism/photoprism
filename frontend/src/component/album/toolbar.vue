@@ -125,7 +125,6 @@ export default {
         edit: false,
         delete: false,
       },
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
   },
   methods: {

@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -69,8 +70,11 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 	}
 
+	// Refuse to write a new file if storage is read-only or insufficient.
 	if !w.conf.SidecarWritable() {
 		return nil, fmt.Errorf("convert: disabled in read-only mode (%s)", clean.Log(f.RootRelName()))
+	} else if w.conf.InsufficientStorage() {
+		return nil, status.ErrInsufficientStorage
 	}
 
 	fileName := f.RelName(w.conf.OriginalsPath())

@@ -6,7 +6,7 @@ import clientConfig from "../../config";
 
 const storagePrefix = buildNamespace(clientConfig.storageNamespace);
 
-function mountLogin({ oidcEnabled = false, sessionOverrides = {}, configOverrides = {} } = {}) {
+function mountLogin({ oidcEnabled = false, oidcRedirect = false, sessionOverrides = {}, configOverrides = {} } = {}) {
   const baseConfig = VTUConfig.global.mocks.$config || {};
   const baseSession = VTUConfig.global.mocks.$session || {};
   const baseNotify = VTUConfig.global.mocks.$notify || {};
@@ -20,6 +20,8 @@ function mountLogin({ oidcEnabled = false, sessionOverrides = {}, configOverride
     useSessionStorage: vi.fn(),
     usesSessionStorage: vi.fn(() => false),
     getDefaultRoute: vi.fn(() => "browse"),
+    isAuthenticated: vi.fn(() => false),
+    consumeLogoutSignal: vi.fn(() => false),
     ...baseSession,
     ...sessionOverrides,
   };
@@ -38,6 +40,7 @@ function mountLogin({ oidcEnabled = false, sessionOverrides = {}, configOverride
       ext: {
         oidc: {
           enabled: oidcEnabled,
+          redirect: oidcRedirect,
           loginUri: oidcEnabled ? "/api/v1/oidc/login" : "",
           provider: "OIDC",
           icon: "/oidc.svg",
@@ -134,5 +137,31 @@ describe("page/auth/login", () => {
     expect(session.useSessionStorage).toHaveBeenCalledTimes(1);
     expect(session.useLocalStorage).not.toHaveBeenCalled();
     expect(session.followRedirect).toHaveBeenCalledWith("/api/v1/oidc/login");
+  });
+
+  // Auto-OIDC redirect for unauthenticated visitors now lives in the
+  // /login route guard (see frontend/tests/vitest/app/routes.test.js).
+  // Mounting the component must NEVER bounce the user — manual visits
+  // to /library/login have to keep working when PHOTOPRISM_OIDC_REDIRECT
+  // is on, so users can still authenticate with local or LDAP/AD
+  // credentials.
+  describe("does not auto-redirect on mount", () => {
+    it("never calls followRedirect when oidc.redirect is enabled and the user is unauthenticated", () => {
+      const { session } = mountLogin({ oidcEnabled: true, oidcRedirect: true });
+
+      expect(session.followRedirect).not.toHaveBeenCalled();
+    });
+
+    it("never calls followRedirect when oidc.redirect is disabled", () => {
+      const { session } = mountLogin({ oidcEnabled: true, oidcRedirect: false });
+
+      expect(session.followRedirect).not.toHaveBeenCalled();
+    });
+
+    it("never reads the logout signal during mount (route guard owns it)", () => {
+      const { session } = mountLogin({ oidcEnabled: true, oidcRedirect: true });
+
+      expect(session.consumeLogoutSignal).not.toHaveBeenCalled();
+    });
   });
 });

@@ -117,7 +117,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 				ClientSecret: cluster.ExampleClientSecret,
 			},
 			Database: cluster.RegisterDatabase{
-				Driver:   cfg.MySQL,
+				Driver:   dsn.DriverMySQL,
 				Host:     "database",
 				Port:     3306,
 				Name:     "pp_db",

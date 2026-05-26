@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import "../fixtures";
 import $util from "common/util";
 import { tokenRegexp, tokenLength } from "common/util";
@@ -210,54 +210,163 @@ describe("common/util", () => {
     expect(tokens.size).toBe(numTokens);
   });
 
-  describe("normalizeLabelTitle", () => {
+  describe("normalizeTitle", () => {
     it("preserves lowercase ASCII", () => {
-      expect($util.normalizeLabelTitle("cat")).toBe("cat");
+      expect($util.normalizeTitle("cat")).toBe("cat");
     });
     it("lowercases input", () => {
-      expect($util.normalizeLabelTitle("Cat")).toBe("cat");
+      expect($util.normalizeTitle("Cat")).toBe("cat");
     });
     it("replaces & with and", () => {
-      expect($util.normalizeLabelTitle("Rock & Roll")).toBe("rock and roll");
+      expect($util.normalizeTitle("Rock & Roll")).toBe("rock and roll");
     });
     it("replaces underscores with spaces", () => {
-      expect($util.normalizeLabelTitle("hello_world")).toBe("hello world");
+      expect($util.normalizeTitle("hello_world")).toBe("hello world");
+    });
+    it("replaces hyphens with spaces", () => {
+      expect($util.normalizeTitle("hello-world")).toBe("hello world");
+    });
+    it("replaces pluses with spaces", () => {
+      expect($util.normalizeTitle("hello+world")).toBe("hello world");
+    });
+    it("replaces periods with spaces", () => {
+      expect($util.normalizeTitle("hello.cat")).toBe("hello cat");
+      expect($util.normalizeTitle("photoprism.app")).toBe("photoprism app");
+      expect($util.normalizeTitle("2024.07.15")).toBe("2024 07 15");
+    });
+    it("treats all punctuation as word separators for case-insensitive comparison", () => {
+      // All punctuation (`.`, `,`, `;`, `:`, `!`, `?`, `/`, …) collapses
+      // to whitespace so the dedup comparison ignores it. Letters, digits,
+      // and emoji are preserved.
+      expect($util.normalizeTitle("foo,bar")).toBe("foo bar");
+      expect($util.normalizeTitle("foo;bar")).toBe("foo bar");
+      expect($util.normalizeTitle("foo:bar")).toBe("foo bar");
+      expect($util.normalizeTitle("foo!bar?baz")).toBe("foo bar baz");
+      expect($util.normalizeTitle("Mr. Smith")).toBe("mr smith");
+    });
+    it("collapses runs of mixed word separators into a single space", () => {
+      expect($util.normalizeTitle("hello._-+cat")).toBe("hello cat");
+      expect($util.normalizeTitle("hello . cat")).toBe("hello cat");
+      expect($util.normalizeTitle("foo,,, bar")).toBe("foo bar");
+    });
+    it("normalizes hello.cat, hello-cat, hello_cat, hello,cat, and Hello Cat to the same value", () => {
+      expect($util.normalizeTitle("hello.cat")).toBe("hello cat");
+      expect($util.normalizeTitle("hello-cat")).toBe("hello cat");
+      expect($util.normalizeTitle("hello_cat")).toBe("hello cat");
+      expect($util.normalizeTitle("hello,cat")).toBe("hello cat");
+      expect($util.normalizeTitle("Hello Cat")).toBe("hello cat");
     });
     it("preserves emoji", () => {
-      expect($util.normalizeLabelTitle("🌅")).toBe("🌅");
+      expect($util.normalizeTitle("🌅")).toBe("🌅");
     });
     it("preserves emoji with text", () => {
-      expect($util.normalizeLabelTitle("🏔️ Mountains")).toBe("🏔️ mountains");
+      expect($util.normalizeTitle("🏔️ Mountains")).toBe("🏔️ mountains");
     });
     it("preserves compound emoji with ZWJ", () => {
-      expect($util.normalizeLabelTitle("👨‍👩‍👧")).toBe("👨‍👩‍👧");
+      expect($util.normalizeTitle("👨‍👩‍👧")).toBe("👨‍👩‍👧");
     });
     it("preserves accented characters", () => {
-      expect($util.normalizeLabelTitle("café")).toBe("café");
+      expect($util.normalizeTitle("café")).toBe("café");
     });
     it("preserves flag emoji", () => {
-      expect($util.normalizeLabelTitle("🇺🇸")).toBe("🇺🇸");
+      expect($util.normalizeTitle("🇺🇸")).toBe("🇺🇸");
     });
     it("preserves skin tone emoji", () => {
-      expect($util.normalizeLabelTitle("👋🏽")).toBe("👋🏽");
+      expect($util.normalizeTitle("👋🏽")).toBe("👋🏽");
     });
     it("preserves keycap sequences", () => {
-      expect($util.normalizeLabelTitle("1️⃣")).toBe("1️⃣");
+      expect($util.normalizeTitle("1️⃣")).toBe("1️⃣");
     });
     it("preserves CJK characters", () => {
-      expect($util.normalizeLabelTitle("猫")).toBe("猫");
+      expect($util.normalizeTitle("猫")).toBe("猫");
     });
-    it("strips punctuation but keeps emoji and text", () => {
-      expect($util.normalizeLabelTitle("hello! 🌅 world")).toBe("hello 🌅 world");
+    it("converts punctuation to whitespace and keeps emoji and text", () => {
+      expect($util.normalizeTitle("hello! 🌅 world")).toBe("hello 🌅 world");
     });
     it("returns empty for punctuation-only input", () => {
-      expect($util.normalizeLabelTitle("!!!")).toBe("");
+      // Punctuation-only inputs collapse to a single space and then trim,
+      // so they normalize to empty — a title made entirely of punctuation
+      // characters cannot be created or matched.
+      expect($util.normalizeTitle("!!!")).toBe("");
+      expect($util.normalizeTitle("...")).toBe("");
+      expect($util.normalizeTitle("---")).toBe("");
+      expect($util.normalizeTitle("+_-.")).toBe("");
+      expect($util.normalizeTitle(",;:!?")).toBe("");
+    });
+    it("trims leading and trailing whitespace", () => {
+      expect($util.normalizeTitle("  hello cat  ")).toBe("hello cat");
+      expect($util.normalizeTitle(".hello-cat.")).toBe("hello cat");
+      expect($util.normalizeTitle("!!!hello!!!")).toBe("hello");
     });
     it("returns empty for null", () => {
-      expect($util.normalizeLabelTitle(null)).toBe("");
+      expect($util.normalizeTitle(null)).toBe("");
     });
     it("returns empty for undefined", () => {
-      expect($util.normalizeLabelTitle(undefined)).toBe("");
+      expect($util.normalizeTitle(undefined)).toBe("");
+    });
+  });
+
+  describe("typeName", () => {
+    it("returns the localized label for known media types", () => {
+      expect($util.typeName("image")).toBe("Image");
+      expect($util.typeName("raw")).toBe("Raw");
+      expect($util.typeName("live")).toBe("Live");
+      expect($util.typeName("video")).toBe("Video");
+      expect($util.typeName("audio")).toBe("Audio");
+      expect($util.typeName("animated")).toBe("Animated");
+      expect($util.typeName("vector")).toBe("Vector");
+      expect($util.typeName("document")).toBe("Document");
+      expect($util.typeName("sidecar")).toBe("Sidecar");
+    });
+    it("falls back to defaultValue for unknown type", () => {
+      expect($util.typeName("unknown", "File")).toBe("File");
+    });
+    it("falls back to defaultValue for empty/null/undefined input", () => {
+      expect($util.typeName("", "File")).toBe("File");
+      expect($util.typeName(null, "File")).toBe("File");
+      expect($util.typeName(undefined, "File")).toBe("File");
+    });
+    it("returns empty string when no defaultValue and unknown type", () => {
+      expect($util.typeName("unknown")).toBe("");
+      expect($util.typeName(null)).toBe("");
+    });
+  });
+
+  // isMobile must return a Boolean. Earlier code short-circuited
+  // `navigator.maxTouchPoints && maxTouchPoints > 2`, which returned the
+  // Number 0 on desktop and tripped Vue prop type checks (VTooltip.disabled).
+  describe("isMobile", () => {
+    const userAgent = navigator.userAgent;
+    const maxTouchPoints = navigator.maxTouchPoints;
+    const stub = (ua, touch) => {
+      Object.defineProperty(navigator, "userAgent", { value: ua, configurable: true });
+      Object.defineProperty(navigator, "maxTouchPoints", { value: touch, configurable: true });
+    };
+    afterEach(() => stub(userAgent, maxTouchPoints));
+
+    it("returns Boolean false on desktop with no touch", () => {
+      stub("Mozilla/5.0 (X11; Linux x86_64)", 0);
+      const result = $util.isMobile();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("returns Boolean false when maxTouchPoints is undefined", () => {
+      stub("Mozilla/5.0 (X11; Linux x86_64)", undefined);
+      const result = $util.isMobile();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("returns true for a mobile user agent", () => {
+      stub("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)", 0);
+      expect($util.isMobile()).toBe(true);
+    });
+    it("returns true when maxTouchPoints > 2 (iPad in desktop mode)", () => {
+      stub("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", 5);
+      expect($util.isMobile()).toBe(true);
+    });
+    it("returns false when maxTouchPoints is 2 or less", () => {
+      stub("Mozilla/5.0 (X11; Linux x86_64)", 2);
+      expect($util.isMobile()).toBe(false);
     });
   });
 });

@@ -7,19 +7,9 @@ import (
 	"strings"
 )
 
-// PurgeTestDbFiles removes temporary SQLite-related test files in dir.
-//
-// Patterns (case-insensitive), aligned with `make reset-sqlite`:
-//   - '.*.db'          (hidden SQLite database files)
-//   - '.*.db-journal'  (SQLite journal files)
-//   - '.test.*'        (generic hidden test artifacts)
-//
-// If recursive is true, it traverses dir recursively. If false, it only checks
-// files directly within dir so TestMain in a parent package won't affect
-// sub-packages that may run in parallel.
-//
-// Errors from removing individual files are ignored; this is a best-effort
-// cleanup helper for tests and local tooling.
+// PurgeTestDbFiles removes hidden SQLite test artifacts (`.*.db`,
+// `.*.db-journal`, `.test.*`) from dir, optionally recursively. Aligned with
+// `make reset-sqlite`. Removal errors are ignored — best-effort cleanup.
 func PurgeTestDbFiles(dir string, recursive bool) {
 	if dir == "" {
 		return

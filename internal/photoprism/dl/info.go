@@ -306,16 +306,8 @@ func infoFromURL(
 		}
 	}
 
-	// as we ignore errors for playlists some entries might show up as null
-	//
-	// note: instead of doing full recursion, we assume entries in
-	// playlists and channels are at most 2 levels deep, and we just
-	// collect entries from both levels.
-	//
-	// the following cases have not been tested:
-	//
-	// - entries that are more than 2 levels deep (will be missed)
-	// - the ability to restrict entries to a single level (we include both levels)
+	// Flatten up to two levels of playlist/channel nesting; deeper entries
+	// are not collected and per-level filtering is not supported.
 	if options.Type == TypePlaylist || options.Type == TypeChannel {
 		var filteredEntries []Info
 		for _, e := range info.Entries {

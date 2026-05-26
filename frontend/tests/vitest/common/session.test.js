@@ -504,6 +504,233 @@ describe("common/session", () => {
     session.deleteData();
   });
 
+  describe("login redirect persistence", () => {
+    // The OIDC roundtrip hard-navigates the browser through the IdP and back,
+    // which wipes every in-memory property on the Session instance. The deep
+    // link must survive in namespaced localStorage so the post-callback boot
+    // can return the user to the originally-requested page.
+    it("persists the redirect URL to namespaced storage so it survives a fresh Session instance", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const original = new Session(storage, createConfig("/library", namespaceKey));
+
+      original.setLoginRedirectUrl("/library/albums/at1sqs7gr75pl5r7/view");
+      expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.next")).toBe("/library/albums/at1sqs7gr75pl5r7/view");
+
+      // Simulate the OIDC roundtrip: a brand-new Session reads from storage.
+      const reborn = new Session(storage, createConfig("/library", namespaceKey));
+      expect(reborn.getLoginRedirectUrl(null)).toBe("/library/albums/at1sqs7gr75pl5r7/view");
+    });
+
+    it("clears the persisted redirect URL on clearLoginRedirectUrl()", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-clear";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.setLoginRedirectUrl("/library/people");
+      session.clearLoginRedirectUrl();
+      expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.next")).toBeNull();
+      expect(session.getLoginRedirectUrl(null)).toBeNull();
+    });
+
+    // hasLoginRedirectUrl() is the deep-link arrival signal the /login
+    // route guard uses to decide whether to auto-bounce through OIDC. A
+    // stored URL means the global router guard sent the user here from a
+    // protected page; no URL means the user opened /login directly.
+    it("hasLoginRedirectUrl() reports the deep-link arrival signal across the OIDC roundtrip", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-has";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      session.setLoginRedirectUrl("/library/albums/at1sqs7gr75pl5r7/view");
+      expect(session.hasLoginRedirectUrl()).toBe(true);
+
+      // A brand-new Session (the post-OIDC reboot) still sees the signal
+      // from namespaced storage even though in-memory state is fresh.
+      const reborn = new Session(storage, createConfig("/library", namespaceKey));
+      expect(reborn.hasLoginRedirectUrl()).toBe(true);
+
+      reborn.clearLoginRedirectUrl();
+      expect(reborn.hasLoginRedirectUrl()).toBe(false);
+    });
+
+    it("returns the default URL when no redirect is recorded", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+      expect(session.getLoginRedirectUrl("/")).toBe("/");
+      expect(session.getLoginRedirectUrl(null)).toBeNull();
+    });
+
+    // Defends against null/undefined/whitespace inputs and crafted
+    // ?return_to=/login URLs. Storing a login page as the deep-link target
+    // would either no-op the post-login redirect (same-URL guard in
+    // view.redirect) or re-trigger auto-OIDC forever.
+    it("rejects invalid post-login redirect URLs via invalidRedirectUrl", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-valid-guard";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      // Direct helper checks: rejected inputs.
+      expect(session.invalidRedirectUrl(null)).toBe(true);
+      expect(session.invalidRedirectUrl(undefined)).toBe(true);
+      expect(session.invalidRedirectUrl("")).toBe(true);
+      expect(session.invalidRedirectUrl("   ")).toBe(true);
+      expect(session.invalidRedirectUrl(42)).toBe(true);
+      expect(session.invalidRedirectUrl("/portal/admin/login")).toBe(true);
+      expect(session.invalidRedirectUrl("/library/login?return_to=evil")).toBe(true);
+      expect(session.invalidRedirectUrl("/library/login/")).toBe(true);
+
+      // Direct helper checks: accepted inputs.
+      expect(session.invalidRedirectUrl("/library/photos")).toBe(false);
+      expect(session.invalidRedirectUrl("/oauth/authorize?client_id=x")).toBe(false);
+
+      // setLoginRedirectUrl gates on the helper.
+      session.setLoginRedirectUrl("/portal/admin/login");
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+      session.setLoginRedirectUrl("   ");
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+      session.setLoginRedirectUrl(null);
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      // Non-login deep links still record normally.
+      session.setLoginRedirectUrl("/library/photos");
+      expect(session.getLoginRedirectUrl(null)).toBe("/library/photos");
+    });
+
+    it("clears any stale redirect on logout so a fresh session does not return to the previous deep link", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-logout";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.setLoginRedirectUrl("/library/albums/old/view");
+      session.onLogout(true);
+
+      expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.next")).toBeNull();
+    });
+  });
+
+  describe("signOut", () => {
+    // /logout is a SPA route that runs in vue-router's beforeEnter, so it must
+    // reset client-side session state synchronously — otherwise the login
+    // route's guard would still see an authenticated user and bounce to the
+    // default page.
+    it("synchronously clears session state so the next route guard sees an unauthenticated user", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-signout-sync";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+      session.setAuthToken("999900000000000000000000000000000000000000000000");
+      session.applyId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+      session.user = new (session.user.constructor)({ ID: 7, Name: "x", DisplayName: "X" });
+
+      expect(session.isAuthenticated()).toBe(true);
+      session.signOut();
+      expect(session.isAuthenticated()).toBe(false);
+      expect(session.getAuthToken()).toBeNull();
+    });
+
+    it("raises the one-shot logout flag so a direct /logout visit suppresses auto-OIDC", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-signout-flag";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.signOut();
+      expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.logout")).toBe("1");
+    });
+  });
+
+  describe("logout signal", () => {
+    // The one-shot logout flag tells the login page to skip a single
+    // auto-OIDC bounce so an explicit logout actually shows the login form
+    // when PHOTOPRISM_OIDC_REDIRECT is enabled.
+    it("raises a one-shot flag on logout that consumeLogoutSignal() reads and clears", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-logout-signal";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      expect(session.consumeLogoutSignal()).toBe(false);
+
+      session.onLogout(true);
+      expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.logout")).toBe("1");
+
+      // First read consumes the flag; subsequent reads are false.
+      expect(session.consumeLogoutSignal()).toBe(true);
+      expect(session.consumeLogoutSignal()).toBe(false);
+      expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.logout")).toBeNull();
+    });
+  });
+
+  describe("OIDC attempt one-shot", () => {
+    // The /login route guard uses markOidcAttempt + consumeOidcAttempt to cap
+    // auto-OIDC at one attempt per browser tab. Without it, a deep-link target
+    // persisted to localStorage during a failed/abandoned OIDC roundtrip would
+    // re-trigger the redirect on every subsequent /login visit, locking the
+    // user out of the local form indefinitely.
+    it("markOidcAttempt sets a one-shot flag in namespaced sessionStorage", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-set";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.markOidcAttempt();
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBe("1");
+    });
+
+    it("consumeOidcAttempt returns true once then false", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-consume";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      expect(session.consumeOidcAttempt()).toBe(false);
+
+      session.markOidcAttempt();
+      expect(session.consumeOidcAttempt()).toBe(true);
+      expect(session.consumeOidcAttempt()).toBe(false);
+
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBeNull();
+    });
+
+    it("clearLoginRedirectUrl also clears the OIDC attempt so the next deep link can retry", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-paired";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.setLoginRedirectUrl("/library/people");
+      session.markOidcAttempt();
+      session.clearLoginRedirectUrl();
+
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBeNull();
+      expect(session.consumeOidcAttempt()).toBe(false);
+    });
+
+    it("onLogout clears the OIDC attempt alongside the deep link target", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-logout";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.markOidcAttempt();
+      session.onLogout(true);
+
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBeNull();
+    });
+  });
+
   describe("Photo cache invalidation on reset", () => {
     // Session.reset() dynamically imports model/photo and calls
     // Photo.clearCache() so metadata fetched under one role cannot leak
@@ -570,52 +797,33 @@ describe("common/session", () => {
     });
   });
 
-  describe("isSidebarRestricted", () => {
-    // Default-deny: an authenticated user with an empty / missing Role
-    // composes through Session.isSidebarRestricted() as restricted, so a
-    // misconfigured account never reaches the full editing surface.
-    it("returns true for an authenticated user with an empty Role", () => {
-      const storage = new StorageShim();
-      const session = new Session(storage, $config);
-      session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
-      session.setAuthToken("234200000000000000000000000000000000000000000000");
-      session.setData({ user: { ID: 7, Role: "" } });
-
-      expect(session.isAnonymous()).toBe(false);
-      expect(session.isSidebarRestricted()).toBe(true);
+  // A10 contract: isUser / isAdmin / isSuperAdmin must always return a Boolean,
+  // so bindings like `:disabled="isAdmin"` never pass null/undefined to a
+  // Vuetify Boolean prop. See specs/frontend/best-practices.md#a10.
+  describe("isUser / isAdmin / isSuperAdmin Boolean contract", () => {
+    it("return Boolean false when no user is loaded", () => {
+      const session = new Session(new StorageShim(), $config);
+      for (const fn of ["isUser", "isAdmin", "isSuperAdmin"]) {
+        const result = session[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
     });
-
-    it("returns true for restricted roles (guest, visitor, contributor)", () => {
-      const storage = new StorageShim();
-      const session = new Session(storage, $config);
-      session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
-      session.setAuthToken("234200000000000000000000000000000000000000000000");
-
-      ["guest", "visitor", "contributor"].forEach((role) => {
-        session.setData({ user: { ID: 7, Role: role } });
-        expect(session.isSidebarRestricted()).toBe(true);
-      });
+    it("return Boolean true for an admin user (super-admin only for isSuperAdmin)", () => {
+      const session = new Session(new StorageShim(), $config);
+      session.setData({ user: { ID: 1, Name: "admin", Role: "admin", SuperAdmin: true } });
+      for (const fn of ["isUser", "isAdmin", "isSuperAdmin"]) {
+        expect(typeof session[fn](), fn).toBe("boolean");
+        expect(session[fn](), fn).toBe(true);
+      }
+      session.deleteData();
     });
-
-    it("returns false for unrestricted roles (admin, user)", () => {
-      const storage = new StorageShim();
-      const session = new Session(storage, $config);
-      session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
-      session.setAuthToken("234200000000000000000000000000000000000000000000");
-
-      ["admin", "user"].forEach((role) => {
-        session.setData({ user: { ID: 7, Role: role } });
-        expect(session.isSidebarRestricted()).toBe(false);
-      });
-    });
-
-    it("returns true for anonymous sessions regardless of Role", () => {
-      const storage = new StorageShim();
-      const session = new Session(storage, $config);
-      // No setId/setAuthToken/setData — session.user has no id, so
-      // isAnonymous() returns true and short-circuits the composition.
-      expect(session.isAnonymous()).toBe(true);
-      expect(session.isSidebarRestricted()).toBe(true);
+    it("isSuperAdmin returns Boolean false for a non-super admin", () => {
+      const session = new Session(new StorageShim(), $config);
+      session.setData({ user: { ID: 2, Name: "ops", Role: "admin", SuperAdmin: false } });
+      expect(typeof session.isSuperAdmin()).toBe("boolean");
+      expect(session.isSuperAdmin()).toBe(false);
+      session.deleteData();
     });
   });
 });

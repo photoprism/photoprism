@@ -46,9 +46,15 @@ vi.mock("common/notify", () => ({
 function buildConfigMock(overrides = {}) {
   return {
     get: vi.fn((key) => {
-      if (key === "demo") return false;
-      if (key === "uploadAllow") return "image/*";
-      if (key === "uploadNSFW") return false;
+      if (key === "demo") {
+        return false;
+      }
+      if (key === "uploadAllow") {
+        return "image/*";
+      }
+      if (key === "uploadNSFW") {
+        return false;
+      }
       return null;
     }),
     feature: vi.fn(() => false),
@@ -84,7 +90,9 @@ describe("component/upload/dialog", () => {
   });
 
   afterEach(() => {
-    if (wrapper) wrapper.unmount();
+    if (wrapper) {
+      wrapper.unmount();
+    }
     vi.clearAllMocks();
   });
 

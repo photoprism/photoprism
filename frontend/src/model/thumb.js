@@ -71,14 +71,8 @@ export class Thumb extends Model {
     }
   }
 
-  // Resolves to the full Photo entity for this slide, fetched via
-  // the shared LRU cache. Each call returns a fresh hydrated
-  // instance so consumers can mutate locally without aliasing the
-  // cached snapshot. Resolves to an empty Photo placeholder when
-  // this thumb has no UID. Lightbox uses this to load sidebar
-  // metadata for the current slide and to warm neighbours via
-  // Photo.prefetchAround. Rejections (e.g. ModelCacheStaleFetchError
-  // after a logout-clear) propagate to callers' .catch handlers.
+  // loadPhoto resolves to the full Photo entity for this slide via the LRU
+  // cache, or an empty Photo placeholder when this thumb has no UID.
   loadPhoto() {
     if (!this.UID) {
       return Promise.resolve(new Photo());
@@ -86,34 +80,17 @@ export class Thumb extends Model {
     return Photo.findCached(this.UID);
   }
 
-  // Drops the cached Photo entity for this slide so the next
-  // loadPhoto() rehydrates from GET /photos/:uid. Used by flows
-  // that mutate the photo without firing a photos.* WS event the
-  // cache subscribes to (currently: album-membership changes,
-  // which only publish albums.updated). archive / restore / delete
-  // already auto-evict via the photo.js WS subscribers, so call
-  // sites for those don't need this.
+  // evictPhoto drops the cached Photo for this slide so the next loadPhoto()
+  // rehydrates from /photos/:uid. Use for mutations without a photos.* WS event.
   evictPhoto() {
     if (this.UID) {
       Photo.evictCache(this.UID);
     }
   }
 
-  // Moves this photo to the archive (soft delete) and flips the
-  // local Archived flag immediately so menu buttons re-render
-  // without waiting for the API round-trip. The pre-call value of
-  // Archived is captured in a closure and restored on rejection —
-  // a literal `false` rollback would be wrong if the field was
-  // undefined (defaults aren't declared) or already true (no-op
-  // re-archive). Resolves on success; the backend publishes
-  // photos.archived which the photo cache subscribes to for
-  // automatic eviction. Mirrors the batch-photos endpoint that
-  // view/cards.vue already targets via Photo.prototype.archive —
-  // kept on Thumb for the lightbox flow which holds a Thumb (not a
-  // Photo) for the current slide. Rapid-fire prevention is the
-  // caller's responsibility; if a UI flow needs it, it can add
-  // `blockUI("busy")` / `unblockUI()` or a similar guard at the
-  // handler layer without making the model stateful.
+  // archive moves the photo to the archive (soft delete) and optimistically
+  // flips Archived so menu buttons re-render before the round-trip; rollback
+  // restores the captured prior value (not a literal false) on rejection.
   archive() {
     const prev = this.Archived;
     this.Archived = true;
@@ -152,35 +129,37 @@ export class Thumb extends Model {
     });
   }
 
-  // Formats Lat/Lng as an EXIF-style coordinate pair separated by
-  // an em-space (U+2003) — see the literal in the body. Returns a
-  // 0/0 placeholder when coordinates are missing so the sidebar
-  // EXIF row doesn't collapse.
+  // getLatLng formats Lat/Lng as EXIF-style coordinates (en-space separator),
+  // returning a 0/0 placeholder when coordinates are missing so the row holds.
   getLatLng() {
     if (!this.Lat || !this.Lng) {
       return `0°N\u20030°E`;
     }
 
-    return `${this.Lat.toFixed(5)}°N\u2003${this.Lng.toFixed(5)}°E`;
+    return `${this.Lat.toFixed(5)}°N\u2002${this.Lng.toFixed(5)}°E`;
   }
 
-  // Copies Lat/Lng to the system clipboard as `lat,lng` decimals so
-  // they paste cleanly into mapping tools. No-ops when coordinates
-  // are missing rather than copying a misleading "0,0".
+  // getLatLngShort formats Lat/Lng rounded to ~11 m precision for the sidebar
+  // Location row; returns an empty string when coordinates are missing.
+  getLatLngShort() {
+    if (!this.Lat || !this.Lng) {
+      return "";
+    }
+
+    return `${this.Lat.toFixed(4)}°N\u2002${this.Lng.toFixed(4)}°E`;
+  }
+
+  // copyLatLng copies coordinates to the clipboard as `lat,lng` decimals;
+  // no-op when coordinates are missing (avoid pasting a misleading "0,0").
   copyLatLng() {
-    // Abort if latitude or longitude are not set.
     if (!this.Lat || !this.Lng) {
       return;
     }
-
-    // Use the browser API to copy the coordinates to the clipboard.
     $util.copyText(`${this.Lat.toString()},${this.Lng.toString()}`);
   }
 
-  // Returns a rounded megapixel string (e.g. "12.0MP") for the
-  // type-info row. Returns the literal "0.0MP" — not 0 or empty —
-  // when dimensions are unknown; getTypeInfo() uses that sentinel
-  // to decide whether to skip the MP segment.
+  // getMegaPixels returns a rounded megapixel string (e.g. "12.0MP"); returns
+  // the literal "0.0MP" when dimensions are unknown — getTypeInfo skips on that.
   getMegaPixels() {
     if (!this.Width || !this.Height) {
       return "0.0MP";
@@ -189,9 +168,7 @@ export class Thumb extends Model {
     return `${((this.Width * this.Height) / 1000000).toFixed(1)}MP`;
   }
 
-  // Returns the Material Design icon name for this slide's media
-  // type, used by the lightbox type chip. Falls back to a generic
-  // image icon for unknown types.
+  // getTypeIcon returns the Material Design icon name for the type chip; falls back to mdi-image.
   getTypeIcon() {
     switch (this.Type) {
       case "raw":
@@ -211,12 +188,9 @@ export class Thumb extends Model {
     }
   }
 
-  // Builds the EXIF-summary string shown next to the type chip
-  // (codec / megapixels / dimensions, joined by em-spaces). The
-  // segment order varies by media type so the most useful field
-  // leads — duration first for video, codec for raw, etc. Returns
-  // localized "Document" for documents and may return an empty
-  // string when nothing useful is known.
+  // getTypeInfo builds the codec/megapixels/dimensions summary next to the
+  // type chip. Segment order varies by media type so the most useful field
+  // leads (duration for video, codec for raw); may return an empty string.
   getTypeInfo() {
     let info = [];
     const mp = this.getMegaPixels();
@@ -287,12 +261,8 @@ export class Thumb extends Model {
     return info.join("\u2003");
   }
 
-  // Returns a placeholder Thumb-shaped object for slides that can't
-  // be rendered (missing hash, deleted file, etc.). Every Thumbs
-  // entry points at the static 404 image so the lightbox grid stays
-  // visually consistent without throwing on missing assets. Returns
-  // a plain object (not a Thumb instance) — callers that need an
-  // instance wrap the result themselves.
+  // notFound returns a placeholder Thumb-shaped object for slides that can't
+  // be rendered (missing hash, deleted file); each Thumbs entry uses the 404 image.
   static notFound() {
     const result = {
       UID: "",
@@ -328,9 +298,7 @@ export class Thumb extends Model {
     return result;
   }
 
-  // Builds a Thumb array from a Photos search response. Each photo
-  // flows through fromPhoto(), which picks the best available file
-  // for thumbnail rendering (RAW/Live preferred over JPEG).
+  // fromPhotos builds a Thumb array from a Photos search response via fromPhoto.
   static fromPhotos(photos) {
     let result = [];
     const n = photos.length;
@@ -342,11 +310,8 @@ export class Thumb extends Model {
     return result;
   }
 
-  // Constructs a Thumb from a Photo entity, choosing the original
-  // file (RAW/Live preferred over JPEG via Photo.originalFile()) to
-  // source hash/dimensions/codec. Falls back to the Photo's own
-  // top-level fields when no Files are available. Returns a
-  // notFound() placeholder when neither hash nor files exist.
+  // fromPhoto builds a Thumb from a Photo entity using originalFile() (RAW/Live
+  // preferred over JPEG) and falling back to top-level fields when Files is empty.
   static fromPhoto(photo) {
     if (!photo || (!photo.Hash && !photo.Files?.length)) {
       return this.notFound();
@@ -407,11 +372,8 @@ export class Thumb extends Model {
     return new this(result);
   }
 
-  // Constructs a Thumb from a specific File belonging to a Photo —
-  // used by the file-list view to surface each file as its own
-  // slide. The Photo provides title / location / EXIF metadata; the
-  // File provides hash / dimensions / codec. Returns notFound()
-  // when any required input or hash is missing.
+  // fromFile builds a Thumb from a specific File of a Photo for the file-list view;
+  // the Photo provides metadata, the File provides hash/dimensions/codec.
   static fromFile(photo, file) {
     if (!photo || !file || !file.Hash) {
       return this.notFound();
@@ -452,17 +414,14 @@ export class Thumb extends Model {
     return new this(result);
   }
 
-  // Wraps an array of plain Thumb-shaped values as Thumb instances.
-  // Used by endpoints that already return Thumb-shaped JSON (e.g.
-  // /photos/view), bypassing the fromPhoto / fromFile mappers.
+  // wrap turns plain Thumb-shaped values into Thumb instances, bypassing the
+  // fromPhoto / fromFile mappers for endpoints that already return Thumb shape.
   static wrap(data) {
     return data.map((values) => new this(values));
   }
 
-  // Like fromPhotos but expands each photo's Files[] into one Thumb
-  // per JPEG/PNG file — used by stack views where every variant
-  // should be its own slide. Skips photos without files and any
-  // file types other than jpg/png.
+  // fromFiles is like fromPhotos but expands each photo's Files[] into one
+  // Thumb per jpg/png file; used by stack views. Other file types are skipped.
   static fromFiles(photos) {
     let result = [];
 
@@ -497,15 +456,10 @@ export class Thumb extends Model {
     return result;
   }
 
-  // Scales a file's actual dimensions to fit within a (width,
-  // height) box, preserving aspect ratio. Returns the file's
-  // native size unchanged when the box is already big enough so we
-  // don't upscale low-resolution thumbnails. Mirrors
-  // Photo.calculateSize but operates on a File rather than a Photo
-  // so file/edit views can size individual files.
+  // calculateSize scales a file's dimensions to fit within a (width, height)
+  // box, preserving aspect ratio; never upscales (returns native size when smaller).
   static calculateSize(file, width, height) {
     if (width >= file.Width && height >= file.Height) {
-      // Smaller
       return { width: file.Width, height: file.Height };
     }
 
@@ -525,10 +479,8 @@ export class Thumb extends Model {
     return { width: newW, height: newH };
   }
 
-  // Builds the cached-thumbnail URL for a file at the given size
-  // (one of the keys from window.__CONFIG__.thumbs). Returns the
-  // static 404 image when the file has no hash so the lightbox grid
-  // still renders without throwing on broken assets.
+  // thumbnailUrl builds the cached-thumbnail URL for the given file and size;
+  // returns the static 404 image when the file has no hash.
   static thumbnailUrl(file, size) {
     if (!file.Hash) {
       return `${$config.staticUri}/img/404.jpg`;
@@ -537,9 +489,8 @@ export class Thumb extends Model {
     return `${$config.contentUri}/t/${file.Hash}/${$config.previewToken}/${size}`;
   }
 
-  // Builds the original-file download URL for a file. Returns an
-  // empty string (not a "broken" URL) when the file has no hash so
-  // consumers can guard with truthiness.
+  // downloadUrl builds the original-file download URL; returns "" when the
+  // file has no hash so consumers can guard with truthiness.
   static downloadUrl(file) {
     if (!file || !file.Hash) {
       return "";

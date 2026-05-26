@@ -68,7 +68,8 @@ func TestThumbs_DirHonorsPPIgnore(t *testing.T) {
 	}
 
 	imageName := filepath.Join(dir, "ignored.jpg")
-	if err = os.WriteFile(imageName, jpgData, fs.ModeFile); err != nil {
+	// The destination is a fixed test filename under t.TempDir().
+	if err = os.WriteFile(imageName, jpgData, fs.ModeFile); err != nil { //nolint:gosec
 		t.Fatal(err)
 	}
 

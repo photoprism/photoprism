@@ -288,7 +288,9 @@ export default {
   },
   watch: {
     search(q) {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
 
       const exists = this.paths.findIndex((p) => p.abs === q);
 

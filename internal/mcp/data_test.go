@@ -1,9 +1,13 @@
 package mcp
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // TestBuildConfigOptions asserts that every non-hidden config flag
@@ -51,6 +55,88 @@ func TestNormalizeEdition(t *testing.T) {
 		t.Run(tc.input, func(t *testing.T) {
 			require.Equal(t, tc.expected, normalizeEdition(tc.input))
 		})
+	}
+}
+
+// TestBuildConfigOptionsReturnsDocumentedDefaults pins the dataset
+// contract that backs photoprism://config-options and list_config_keys:
+// the rows reflect the documented defaults compiled into the binary,
+// never the runtime values an operator supplies through environment
+// variables. Each marker below maps to one Secret-annotated flag whose
+// Default field must remain empty regardless of the env override.
+func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
+	const (
+		adminMarker    = "TestBuildConfigOptionsReturnsDocumentedDefaults-admin"
+		dbMarker       = "TestBuildConfigOptionsReturnsDocumentedDefaults-db"
+		oidcMarker     = "TestBuildConfigOptionsReturnsDocumentedDefaults-oidc"
+		joinMarker     = "TestBuildConfigOptionsReturnsDocumentedDefaults-join"
+		downloadMarker = "TestBuildConfigOptionsReturnsDocumentedDefaults-download"
+		previewMarker  = "TestBuildConfigOptionsReturnsDocumentedDefaults-preview"
+		visionMarker   = "TestBuildConfigOptionsReturnsDocumentedDefaults-vision"
+	)
+
+	env := map[string]string{
+		"PHOTOPRISM_ADMIN_PASSWORD":    adminMarker,
+		"PHOTOPRISM_DATABASE_PASSWORD": dbMarker,
+		"PHOTOPRISM_OIDC_SECRET":       oidcMarker,
+		"PHOTOPRISM_JOIN_TOKEN":        joinMarker,
+		"PHOTOPRISM_DOWNLOAD_TOKEN":    downloadMarker,
+		"PHOTOPRISM_PREVIEW_TOKEN":     previewMarker,
+		"PHOTOPRISM_VISION_KEY":        visionMarker,
+	}
+
+	for k, v := range env {
+		t.Setenv(k, v)
+	}
+
+	app := cli.NewApp()
+	app.Flags = config.Flags.Cli()
+	app.Action = func(*cli.Context) error { return nil }
+	require.NoError(t, app.Run([]string{"photoprism"}))
+
+	items := buildConfigOptions()
+	require.NotEmpty(t, items)
+
+	markers := []string{adminMarker, dbMarker, oidcMarker, joinMarker, downloadMarker, previewMarker, visionMarker}
+
+	for _, item := range items {
+		fields := []struct {
+			name  string
+			value string
+		}{
+			{"Environment", item.Environment},
+			{"CLIFlag", item.CLIFlag},
+			{"Default", item.Default},
+			{"Description", item.Description},
+		}
+
+		for _, f := range fields {
+			for _, marker := range markers {
+				require.NotContains(t, f.value, marker,
+					"item %s field %s echoed runtime value %q", item.Environment, f.name, marker)
+			}
+		}
+	}
+
+	expectEmpty := map[string]struct{}{
+		"PHOTOPRISM_ADMIN_PASSWORD":    {},
+		"PHOTOPRISM_DATABASE_PASSWORD": {},
+		"PHOTOPRISM_OIDC_SECRET":       {},
+		"PHOTOPRISM_JOIN_TOKEN":        {},
+		"PHOTOPRISM_DOWNLOAD_TOKEN":    {},
+		"PHOTOPRISM_PREVIEW_TOKEN":     {},
+		"PHOTOPRISM_VISION_KEY":        {},
+	}
+
+	for _, item := range items {
+		for envVar := range expectEmpty {
+			if !strings.Contains(item.Environment, envVar) {
+				continue
+			}
+
+			require.Empty(t, item.Default,
+				"flag %s must surface an empty Default; got %q", item.Environment, item.Default)
+		}
 	}
 }
 

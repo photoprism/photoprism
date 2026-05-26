@@ -8,16 +8,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-
-	"github.com/photoprism/photoprism/pkg/dsn"
-)
-
-// Supported test databases.
-const (
-	MySQL           = dsn.DriverMySQL
-	SQLite3         = dsn.DriverSQLite3
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:?cache=shared"
 )
 
 // dbConn is the global gorm.DB connection provider.

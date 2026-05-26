@@ -21,24 +21,11 @@ type compressFlusher interface {
 	Flush() error
 }
 
-// statusBypassesCompression reports whether response bodies with the given
-// status code should be sent uncompressed. Bypassed:
-//
-//   - 4xx and 5xx error responses — bodies are typically tiny JSON envelopes
-//     and spending CPU compressing them works against the rate limiter when
-//     429s are flying (or makes overload worse when the server is already
-//     in 5xx territory).
-//   - 206 Partial Content — Range responses serve a slice of the identity
-//     representation. Compressing them would change the byte sequence the
-//     client asked for, breaking the offsets in any subsequent Range
-//     continuations and contradicting the Content-Range header. This
-//     matters for static assets and service-worker files served by
-//     internal/server/routes_static.go and routes_webapp.go.
-//   - 204 No Content and 304 Not Modified — there is no body to encode and
-//     we don't want the encoder to emit a stray frame trailer.
-//
-// A status of 0 means the handler hasn't called WriteHeader yet, in which
-// case Gin will default to 200 — treat it as compressible.
+// statusBypassesCompression reports whether responses with the given status
+// should be sent uncompressed: 4xx/5xx (tiny error bodies aren't worth the CPU),
+// 206 Partial Content (Range offsets are over the identity representation), and
+// 204/304 (no body to encode). Status 0 means the handler hasn't written yet
+// and defaults to 200, which is compressible.
 func statusBypassesCompression(status int) bool {
 	switch {
 	case status >= 400:
@@ -51,17 +38,10 @@ func statusBypassesCompression(status int) bool {
 	return false
 }
 
-// weakenETag rewrites a strong ETag header (e.g. `"abc123"`) to its weak
-// form (e.g. `W/"abc123"`) so caches don't reuse a compressed representation
-// for a client that asked for a different content-coding. Already-weak
-// ETags and missing ETags are left untouched.
-//
-// Per RFC 9110 §13.2.4 strong validators must change when the representation
-// bytes change, and content-coding negotiation produces distinct byte
-// sequences for the same selected representation. Weak ETags are not usable
-// for strong-comparison contexts such as `If-Range`, but PhotoPrism already
-// excludes download/video/proxy paths from compression so this does not
-// regress practical range-download flows.
+// weakenETag rewrites a strong ETag to its weak form (W/"…") so caches don't
+// reuse a compressed representation across content-codings. Per RFC 9110
+// §13.2.4 strong validators must change when the bytes change. Already-weak
+// or missing ETags are left as-is.
 func weakenETag(h http.Header) {
 	etag := h.Get(header.ETag)
 	if etag == "" || strings.HasPrefix(etag, "W/") {
@@ -70,18 +50,11 @@ func weakenETag(h http.Header) {
 	h.Set(header.ETag, "W/"+etag)
 }
 
-// compressWriter wraps a Gin ResponseWriter so that body writes pass through
-// the configured encoder when the response is eligible for compression. On
-// the first Write it inspects the recorded HTTP status and either:
-//
-//   - bypasses the encoder for error responses (4xx/5xx) and bodyless
-//     responses (204/304), removing the Content-Encoding header so the
-//     client receives the raw body, or
-//   - clears Content-Length and routes subsequent writes through the encoder.
-//
-// The encoded flag tracks whether any byte actually flowed through the
-// encoder so the middleware can suppress the encoder's frame trailer when
-// nothing was written.
+// compressWriter wraps a Gin ResponseWriter and routes body writes through the
+// configured encoder. On the first Write it either bypasses the encoder (for
+// 4xx/5xx/204/304 — Content-Encoding is removed) or clears Content-Length so
+// subsequent writes can stream through. `encoded` tracks whether any byte
+// reached the encoder so the middleware can suppress an empty frame trailer.
 type compressWriter struct {
 	gin.ResponseWriter
 	encoder    io.Writer
@@ -91,14 +64,10 @@ type compressWriter struct {
 	encoded    bool
 }
 
-// Write encodes data through the wrapped encoder, or — for error and
-// bodyless responses — bypasses the encoder and writes the raw bytes
-// straight to the underlying ResponseWriter. On the first call it also
-// clears any handler-supplied Content-Length when compression is taking
-// effect (the post-encoding length is unknown up front), weakens any
-// strong ETag the handler set so caches don't mix encodings, and removes
-// the Content-Encoding header in the bypass path so the client doesn't
-// see a stale "gzip"/"zstd" advertisement.
+// Write encodes data through the wrapper or bypasses the encoder for error/
+// bodyless responses. The first call also clears Content-Length, weakens any
+// strong ETag (so caches don't mix encodings), and removes Content-Encoding
+// in the bypass path.
 func (cw *compressWriter) Write(p []byte) (int, error) {
 	if !cw.headerDone {
 		cw.headerDone = true
@@ -117,16 +86,13 @@ func (cw *compressWriter) Write(p []byte) (int, error) {
 	return cw.encoder.Write(p)
 }
 
-// WriteString encodes a string through the wrapped encoder by delegating to
-// Write so the bypass and Content-Length-reset logic stays in one place.
+// WriteString delegates to Write so bypass and Content-Length-reset logic stays in one place.
 func (cw *compressWriter) WriteString(s string) (int, error) {
 	return cw.Write([]byte(s))
 }
 
-// Flush forwards a flush request to the encoder (if buffered) and then to the
-// underlying ResponseWriter so streaming consumers receive partial output.
-// In bypass mode it skips the encoder flush, since no encoded bytes are
-// pending.
+// Flush forwards to the encoder (when not bypassed) and then to the underlying
+// ResponseWriter so streaming consumers receive partial output.
 func (cw *compressWriter) Flush() {
 	if !cw.bypass {
 		if f, ok := cw.encoder.(compressFlusher); ok {
@@ -136,26 +102,12 @@ func (cw *compressWriter) Flush() {
 	cw.ResponseWriter.Flush()
 }
 
-// NewCompressMiddleware returns a Gin middleware that negotiates an HTTP
-// content-encoding for each response based on the operator's configured
-// preference list and the client's Accept-Encoding header. Supported
-// encodings are "gzip" (compress/gzip at DefaultCompression) and "zstd"
-// (klauspost/compress/zstd at SpeedDefault).
-//
-// Requests on connections that are being upgraded (e.g. WebSockets) are
-// skipped, and so are paths that the shared NewShouldCompressFn predicate
-// excludes (already-compressed media, health endpoints, photo originals,
-// theme zip, share previews, portal proxy, etc.). Eligible responses always
-// receive a "Vary: Accept-Encoding" header so caches behave correctly even
-// when the negotiator selects the identity encoding.
-//
-// Error responses (4xx/5xx) and bodyless responses (204/304) bypass the
-// encoder per statusBypassesCompression so the server doesn't burn CPU on
-// small error payloads — this matters most during rate-limit storms (429)
-// and when the server is already under pressure (5xx).
-//
-// When conf is nil or no encodings are configured, the middleware is a
-// no-op and behaves identically to passing the request through unchanged.
+// NewCompressMiddleware returns a Gin middleware that negotiates gzip or zstd
+// content-encoding per request based on the operator's preferences and the
+// client's Accept-Encoding header. Connection upgrades, paths excluded by
+// NewShouldCompressFn, HEAD requests, and 4xx/5xx/204/206/304 bodies are
+// skipped. Eligible responses always set `Vary: Accept-Encoding`. Returns a
+// pass-through middleware when conf is nil or no encodings are configured.
 func NewCompressMiddleware(conf *config.Config) gin.HandlerFunc {
 	if conf == nil {
 		return func(c *gin.Context) { c.Next() }
@@ -200,19 +152,12 @@ func NewCompressMiddleware(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Always advertise that Accept-Encoding affects the response, even when
-		// the negotiator selects identity, so shared caches keep separate entries.
-		// HEAD responses also carry this header per RFC 9110 §15.4.5: the
-		// corresponding GET would be content-coding negotiated, and caches need
-		// to know that — even though the HEAD itself sends no body and may
-		// legitimately omit other content-determined fields like Content-Length.
+		// Vary: Accept-Encoding on every eligible response so shared caches keep
+		// separate entries even when the negotiator selects identity. Also set
+		// on HEAD per RFC 9110 §15.4.5 since the corresponding GET would vary.
 		c.Writer.Header().Add(header.Vary, header.AcceptEncoding)
 
-		// HEAD requests carry no body — net/http silently discards anything
-		// the handler writes. Wrapping c.Writer would consume an encoder pool
-		// slot and burn CPU compressing bytes that never reach the wire, so
-		// skip the encoder while still advertising that the GET would vary by
-		// Accept-Encoding (set above).
+		// HEAD bodies are discarded by net/http — skip the encoder pool entirely.
 		if c.Request.Method == http.MethodHead {
 			c.Next()
 			return
@@ -226,10 +171,7 @@ func NewCompressMiddleware(conf *config.Config) gin.HandlerFunc {
 			cw := &compressWriter{ResponseWriter: c.Writer, encoder: gz, encoding: EncodingGzip}
 			c.Writer = cw
 			defer func() {
-				// When no body was encoded (bypass path, or handler wrote
-				// nothing), drop the optimistic Content-Encoding header and
-				// redirect the encoder's trailer to /dev/null so it doesn't
-				// land on the wire.
+				// Nothing encoded — drop Content-Encoding and discard the trailer.
 				if !cw.encoded {
 					cw.ResponseWriter.Header().Del(header.ContentEncoding)
 					gz.Reset(io.Discard)

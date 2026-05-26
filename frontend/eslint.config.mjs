@@ -22,6 +22,12 @@ export default defineConfig([
     "tests/acceptance/screenshots/",
     "tests/upload-files/",
     "**/*.html",
+    // CSS/SCSS/SASS are owned by Prettier (see `frontend/.prettierrc.json` overrides).
+    // Ignored here to avoid the "no matching configuration" warning and any
+    // accidental formatter jitter from a future ESLint CSS plugin.
+    "**/*.css",
+    "**/*.scss",
+    "**/*.sass",
     "**/.idea",
     "**/.codex",
     "**/.env",
@@ -35,7 +41,7 @@ export default defineConfig([
   ]),
   ...pluginVue.configs["flat/recommended"],
   {
-    extends: compat.extends("eslint:recommended", "plugin:prettier/recommended", "plugin:vuetify/base"),
+    extends: compat.extends("eslint:recommended", "eslint-config-prettier", "plugin:vuetify/base"),
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -47,43 +53,25 @@ export default defineConfig([
       ecmaVersion: "latest",
       sourceType: "module",
     },
-    settings: {
-      "prettier/prettier": {
-        // Settings for how to process Vue SFC Blocks
-        SFCBlocks: {
-          template: false,
-          script: false,
-          style: false,
-        },
-
-        // Use prettierrc for prettier options or not (default: `true`)
-        usePrettierrc: true,
-
-        // Set the options for `prettier.getFileInfo`.
-        // @see https://prettier.io/docs/en/api.html#prettiergetfileinfofilepath-options
-        fileInfoOptions: {
-          // Path to ignore file (default: `'.prettierignore'`)
-          // Notice that the ignore file is only used for this plugin
-          ignorePath: ".testignore",
-
-          // Process the files in `node_modules` or not (default: `false`)
-          withNodeModules: false,
-        },
-      },
-    },
     rules: {
-      // Defer indentation to Prettier so we don't get conflicting expectations.
-      "indent": "off",
+      // Match what Prettier was producing: 2-space indent (4 for CSS lives in .prettierrc), switch
+      // cases nested one level, method-chain continuations indented one level.
+      "indent": ["warn", 2, { SwitchCase: 1, MemberExpression: 1 }],
       "linebreak-style": ["error", "unix"],
       "quotes": [
-        "off",
+        "warn",
         "double",
         {
           avoidEscape: true,
           allowTemplateLiterals: true,
         },
       ],
-      "semi": ["error", "always"],
+      "semi": ["warn", "always"],
+      "curly": ["warn", "all"],
+      // Forces braced bodies onto their own line so curly's autofix produces
+      // multi-line `if (x) {\n  return;\n}` instead of `if (x) {return;}`.
+      // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 9.
+      "brace-style": ["warn", "1tbs", { allowSingleLine: false }],
       "no-unused-vars": ["warn"],
       "no-console": 0,
       "no-case-declarations": 0,
@@ -97,30 +85,34 @@ export default defineConfig([
         {
           ignoreWhenNoAttributes: true,
           ignoreWhenEmpty: true,
-          ignores: ["pre", "textarea", "span", "translate", "a", "v-icon", "v-text-field", "v-input", "v-select", "v-switch", "v-checkbox", "v-img"],
+          ignores: [
+            "pre",
+            "textarea",
+            "span",
+            "translate",
+            "a",
+            "v-icon",
+            "v-text-field",
+            "v-input",
+            "v-select",
+            "v-switch",
+            "v-checkbox",
+            "v-img",
+          ],
           externalIgnores: [],
         },
       ],
       "vue/first-attribute-linebreak": [
-        "error",
+        "warn",
         {
           singleline: "ignore",
           multiline: "ignore",
         },
       ],
-      "prettier/prettier": [
-        "warn",
-        {
-          printWidth: 160,
-          semi: true,
-          singleQuote: false,
-          bracketSpacing: true,
-          trailingComma: "es5",
-          htmlWhitespaceSensitivity: "css",
-          quoteProps: "consistent",
-          proseWrap: "never",
-        },
-      ],
+      // Note: Prettier is no longer invoked by ESLint. The `eslint-config-prettier` extends
+      // above still disables ESLint stylistic rules that would conflict with hand-run Prettier
+      // formatting on CSS/SCSS/SASS. Run `prettier --write src/**/*.{css,scss,sass}` (or use
+      // the `fmt-css` / `lint-css` npm scripts) to format stylesheets.
     },
   },
 ]);

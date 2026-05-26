@@ -238,7 +238,7 @@ func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 
 // NewFolderAlbum creates a new album representing a filesystem folder.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
-	albumSlug := txt.Slug(albumPath)
+	albumSlug := txt.SlugUnique(albumPath)
 
 	if albumTitle == "" || albumSlug == "" || albumPath == "" || albumFilter == "" {
 		return nil
@@ -817,7 +817,7 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 	}
 
 	albumPath = clean.SlashPath(albumPath)
-	albumSlug := txt.Slug(albumPath)
+	albumSlug := txt.SlugUnique(albumPath)
 	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath, m.AlbumFilter)
 
 	if albumSlug == "" || albumPath == "" || albumFilter == "" || !m.HasID() {

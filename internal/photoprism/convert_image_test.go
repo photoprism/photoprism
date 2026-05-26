@@ -283,6 +283,58 @@ func TestConvert_JpegConvertCmds(t *testing.T) {
 	assert.True(t, found)
 }
 
+// TestConvert_JpegConvertCmds_HeifFallback verifies that the documented external
+// fallback command is emitted for HEIC and AVIF inputs when libheif tooling
+// (heif-dec / heif-convert) is available — see issue #5509.
+func TestConvert_JpegConvertCmds_HeifFallback(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.HeifConvertEnabled() {
+		t.Skip("heif-dec/heif-convert must be available for the HEIF fallback path")
+	}
+
+	convert := NewConvert(cnf)
+	heifBin := filepath.Base(cnf.HeifConvertBin())
+
+	cases := []struct {
+		name, src, dst string
+	}{
+		{"Heic", "iphone_15_pro.heic", "iphone_15_pro.heic.jpg"},
+		{"Avif", "fox.profile0.8bpc.yuv420.avif", "fox.profile0.8bpc.yuv420.avif.jpg"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			srcFile := filepath.Join(cnf.SamplesPath(), tc.src)
+			dstFile := filepath.Join(cnf.SidecarPath(), cnf.SamplesPath(), tc.dst)
+
+			mediaFile, err := NewMediaFile(srcFile)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			cmds, useMutex, err := convert.JpegConvertCmds(mediaFile, dstFile, "")
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			assert.False(t, useMutex)
+			assert.NotEmpty(t, cmds)
+
+			found := false
+			for _, cmd := range cmds {
+				s := cmd.String()
+				if strings.Contains(s, heifBin) && strings.Contains(s, srcFile) && strings.Contains(s, dstFile) {
+					found = true
+					break
+				}
+			}
+
+			assert.True(t, found, "expected a %s fallback command for %s", heifBin, tc.src)
+		})
+	}
+}
+
 func TestConvert_PngConvertCmds(t *testing.T) {
 	cnf := config.TestConfig()
 	convert := NewConvert(cnf)

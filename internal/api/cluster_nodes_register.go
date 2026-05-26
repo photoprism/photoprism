@@ -543,6 +543,59 @@ func validateSiteURL(u string) bool {
 	return false
 }
 
+// normalizeRedirectURIs validates each entry and returns a deduplicated slice.
+// nil in = nil out ("no change"); non-nil in = non-nil out (replaces the persisted set).
+func normalizeRedirectURIs(in []string) ([]string, error) {
+	if in == nil {
+		return nil, nil
+	}
+
+	out := make([]string, 0, len(in))
+	seen := make(map[string]struct{}, len(in))
+
+	for _, raw := range in {
+		uri := strings.TrimSpace(raw)
+		if uri == "" {
+			continue
+		}
+		if !validateRedirectURI(uri) {
+			return nil, fmt.Errorf("invalid redirect uri: %s", clean.Log(uri))
+		}
+		if _, dup := seen[uri]; dup {
+			continue
+		}
+		seen[uri] = struct{}{}
+		out = append(out, uri)
+	}
+
+	return out, nil
+}
+
+// validateRedirectURI accepts HTTPS or loopback / cluster-internal HTTP, with a host and no fragment.
+func validateRedirectURI(u string) bool {
+	parsed, err := url.Parse(strings.TrimSpace(u))
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+		return false
+	}
+	if parsed.Fragment != "" {
+		return false
+	}
+
+	host := strings.ToLower(parsed.Hostname())
+
+	if parsed.Scheme == "https" {
+		return true
+	}
+
+	if parsed.Scheme == "http" {
+		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // isClusterServiceHost reports whether the host refers to a cluster-internal
 // service DNS name so that HTTP can be permitted for intra-cluster traffic.
 func isClusterServiceHost(host string) bool {

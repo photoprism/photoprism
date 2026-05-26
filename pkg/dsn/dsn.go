@@ -2,7 +2,7 @@
 Package dsn provides helpers for parsing database data source names, masking
 credentials, and sharing driver-specific defaults used throughout PhotoPrism.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -365,24 +365,17 @@ func (d *DSN) splitKeyValue(input string) ([]string, bool) {
 	return tokens, true
 }
 
-// detectDriver infers the driver name from DSN contents when it is not explicitly specified.
+// detectDriver infers the driver name from DSN contents. Explicit driver names
+// flow through ParseDriver so both helpers share an alias set; unknown but
+// non-empty names are kept (lowercased) rather than misclassified by the
+// DSN-string heuristics below.
 func (d *DSN) detectDriver() {
-	driver := strings.ToLower(d.Driver)
-
-	switch driver {
-	case "postgres", "postgresql":
-		d.Driver = DriverPostgres
-		return
-	case "mysql", "mariadb":
-		d.Driver = DriverMySQL
-		return
-	case "sqlite", "sqlite3", "file":
-		d.Driver = DriverSQLite3
-		return
-	}
-
-	if driver != "" {
-		d.Driver = driver
+	if d.Driver != "" {
+		if normalized := ParseDriver(d.Driver); normalized != "" {
+			d.Driver = normalized
+			return
+		}
+		d.Driver = strings.ToLower(d.Driver)
 		return
 	}
 

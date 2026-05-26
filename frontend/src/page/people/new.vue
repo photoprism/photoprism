@@ -48,10 +48,9 @@
                 <v-text-field
                   v-if="m.SubjUID"
                   v-model="m.Name"
-                  :rules="[textRule]"
+                  :rules="rules.text(true, 0, SubjectMaxLength.Name, $gettext('Name'))"
                   :readonly="readonly"
                   autocomplete="off"
-                  hide-details
                   single-line
                   density="comfortable"
                   class="input-name pa-0 ma-0"
@@ -66,6 +65,7 @@
                   item-value="Name"
                   :readonly="readonly"
                   :menu-props="menuProps"
+                  :menu-icon="null"
                   return-object
                   hide-no-data
                   hide-details
@@ -98,9 +98,12 @@
 <script>
 import Face from "model/face";
 import RestModel from "model/rest";
+import { MaxLength as SubjectMaxLength } from "model/subject";
+import { rules } from "common/form";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import PLoading from "component/loading.vue";
 
 export default {
@@ -128,6 +131,8 @@ export default {
     return {
       view: "all",
       config: this.$config.values,
+      rules,
+      SubjectMaxLength,
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -145,7 +150,6 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
       menuProps: {
@@ -164,13 +168,6 @@ export default {
         locationStrategy: "connected",
         scrollStrategy: "reposition",
         origin: "auto",
-      },
-      textRule: (v) => {
-        if (!v || !v.length) {
-          return this.$gettext("Name");
-        }
-
-        return v.length <= this.$config.get("clip") || this.$gettext("Text too long");
       },
     };
   },
@@ -319,7 +316,7 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
+        case ACTION_UPDATED:
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -333,7 +330,7 @@ export default {
             }
           }
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -348,7 +345,7 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
           break;
         default:
@@ -568,7 +565,9 @@ export default {
         });
     },
     onShow(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       model.show().finally(() => {
@@ -577,7 +576,9 @@ export default {
       });
     },
     onHide(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       model.hide().finally(() => {
@@ -586,7 +587,9 @@ export default {
       });
     },
     toggleHidden(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
 
@@ -640,7 +643,8 @@ export default {
       this.setName(model, model.Name);
     },
     setName(model, newName) {
-      if (this.busy || !model || !newName || newName.trim() === "") {
+      const trimmed = (newName || "").trim();
+      if (this.busy || !model || trimmed === "") {
         // Ignore if busy, refuse to save empty name.
         return;
       }
@@ -648,7 +652,7 @@ export default {
       this.busy = true;
       this.$notify.blockUI("busy");
 
-      return model.setName(newName).finally(() => {
+      return model.setName(trimmed).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
         this.changeFaceCount(-1);

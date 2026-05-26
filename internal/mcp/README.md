@@ -1,12 +1,12 @@
 ## PhotoPrism MCP Server
 
-**Last Updated:** May 5, 2026
+**Last Updated:** May 10, 2026
 
 ### Current Capabilities
 
 - **Transports:**
-  - CLI: `photoprism mcp serve` (stdio, no auth; development and testing)
-  - HTTP: `POST/GET/DELETE /api/v1/mcp` (Streamable HTTP, authenticated). Can be disabled via `--disable-mcp` / `PHOTOPRISM_DISABLE_MCP` / `DisableMCP` so the route responds with the standard 404 when an operator does not want the endpoint exposed. The flag is also surfaced to the frontend through `ClientConfig.Disable.MCP` (`disable.mcp`), letting the UI hide MCP-related controls while the endpoint is off.
+  - CLI: `photoprism mcp serve` (stdio, no auth; development and testing). The static-data contract documented under *Authorization* and *Extending the Tool Surface* below applies — write-capable tools MUST require a session token even on stdio.
+  - HTTP: `POST/GET/DELETE /api/v1/mcp` (Streamable HTTP, authenticated). Disabled together with the stdio transport via `--disable-mcp` / `PHOTOPRISM_DISABLE_MCP` / `DisableMCP`: the HTTP route responds with the standard 404 and `photoprism mcp serve` refuses to start (pass `--disable-mcp=false` on the command line to override for ad-hoc development runs). The flag is also surfaced to the frontend through `ClientConfig.Disable.MCP` (`disable.mcp`), letting the UI hide MCP-related controls while the endpoint is off.
 - **Authorization:** HTTP endpoint enforces the `ResourceMCP` ACL (admin plus the API client roles in every edition, manager in Pro/Portal); anonymous access is permitted in public mode for the currently registered read-only tools.
 - **Request Body Cap:** HTTP POST bodies are bounded at `MaxMCPRequestBytes` (currently `MaxMutationRequestBytes`, 256 KiB). Oversized requests receive the standard `413 Request Entity Too Large` response before the upstream SDK reads the body. Early rejection via `Content-Length` protects against large known-size payloads; `http.MaxBytesReader` plus a response-writer wrapper handle chunked bodies. The wrapper translates the SDK's internal `400 "failed to read body"` into a consistent `413` and suppresses the SDK's error phrasing so it does not leak to clients.
 - **Session Timeout:** Streamable HTTP sessions idle out after `McpSessionTimeout` (5 minutes by default). Active clients renew the idle timer on every JSON-RPC request, so interactive IDE use is unaffected; sessions abandoned without the `DELETE` tear-down free up promptly instead of lingering.
@@ -61,6 +61,12 @@ Start the MCP server over stdio:
 ```
 
 The process waits for an MCP client on stdin/stdout. Logs are written to stderr so the MCP message stream stays valid.
+
+When the running config has `DisableMCP=true` (via `options.yml`, `PHOTOPRISM_DISABLE_MCP`, or `--disable-mcp`), the command refuses to start with `mcp serve disabled by config; pass --disable-mcp=false to override`. Pass the override on the command line for ad-hoc development runs without flipping the operator-facing setting:
+
+```bash
+./photoprism --disable-mcp=false mcp serve
+```
 
 ### Run via HTTP
 
@@ -177,6 +183,7 @@ The HTTP endpoint uses PhotoPrism's existing ACL system:
 - **Client tokens:** API client sessions must also include the `mcp` resource (or a wildcard) in their session scope; the ACL grant alone is not sufficient.
 - **Auth model:** request-level. The handler runs `Auth(c, acl.ResourceMCP, acl.ActionView)` followed by `s.Abort(c)`, which writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
 - **Public mode:** anonymous access is permitted. In public mode, `api.Session()` returns the default public session (effectively admin), so `Auth(...)` passes and the currently registered read-only tools are reachable without a token. This is an intentional, narrow allowance for demo deployments (`demo.photoprism.app`); it is safe only because every registered tool today returns static reference metadata derived from `config.Flags` and `form.Report(&form.SearchPhotos{})` — no database access, no per-user state, no secrets, no mutations. **Any future tool that touches per-user state, the database, or mutates anything MUST NOT be registered on this server without an additional per-tool check**. See *Extending the Tool Surface* below.
+- **Stdio transport:** no authentication for the currently registered read-only tools — the trust boundary is the OS process pipe between client and server, and the spawning shell already has full PhotoPrism access on the host. The same static-data contract that makes public-mode HTTP safe makes stdio safe. **Any future write-capable, destructive, or per-user tool MUST require a session token on stdio too** (for example via `PHOTOPRISM_MCP_TOKEN` or a `--session` flag, validated through the same `Auth(...)` path the HTTP handler uses), so a misbehaving or prompt-injected MCP client cannot destroy data the user did not explicitly authorize. See *Extending the Tool Surface* below.
 
 ### Rate Limiting
 
@@ -216,7 +223,17 @@ If a proposed tool does **not** fit that contract, do not register it on the def
 2. **Per-tool context checks.** `sdkmcp.AddTool` closures receive a `*sdkmcp.CallToolRequest`; stash caller context on the MCP session at `initialize` and reject inside the tool closure when public mode is active or the ACL deny list applies. Use this when the same tool has different output per caller (e.g. admin sees raw values, client sees redacted).
 3. **SDK middleware.** For cross-cutting concerns such as per-tool rate limits or structured audit entries, wire an `sdkmcp.Middleware` that inspects the JSON-RPC method and tool name before dispatch.
 
-Whichever path you pick, **add a test in `internal/mcp/server_test.go` that fails if the restricted tool shows up in `tools/list` or is callable over the public path**, and update the *Available Tools* table below.
+When the new tool needs an authenticated stdio session (any write-capable, destructive, or per-user tool), apply the same gate to `mcp serve`:
+
+4. **Spawn-time session token.** Accept the token via `PHOTOPRISM_MCP_TOKEN` or a `--session` CLI flag in `internal/commands/mcp.go`, resolve it through the same `Auth(...)` path the HTTP handler uses (`acl.ResourceMCP` + the appropriate `Action*`), and pass the resolved session into the factory the same way the HTTP handler does. No token → static-data server (current behavior, unchanged); valid token → role-scoped server. The two-server factory from option 1 still applies — only the gate keying differs.
+
+Cross-cutting MCP primitives that protect *every* transport (and SHOULD be applied whenever they fit):
+
+- **Roots.** Server-enforce the client's `initialize`-time `roots` for any tool that walks the catalog (albums, folders, files). Never trust the client to keep itself in scope.
+- **`destructiveHint` annotation.** Mark high-blast-radius tools (`delete_album`, `wipe_index`, `reset_users`) with `annotations.destructiveHint: true` so MCP-aware UIs warn the human before approving the call.
+- **`elicitation/create` for confirmation.** For destructive calls, ask the host to elicit human consent before mutating — the MCP-native equivalent of the `--yes` flag the destructive CLI commands already require.
+
+Whichever path you pick, **add a test in `internal/mcp/server_test.go` that fails if the restricted tool shows up in `tools/list` or is callable over the public path or an unauthenticated stdio session**, and update the *Available Tools* table below.
 
 ### How Users Get Access
 

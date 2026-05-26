@@ -68,7 +68,7 @@ func TestServiceEndpoint(t *testing.T) {
 func TestServiceCredentialsAndHeaders(t *testing.T) {
 	t.Setenv("VISION_USER", "alice")
 	t.Setenv("VISION_PASS", "hunter2")
-	t.Setenv("VISION_MODEL", "GEMMA3:Latest")
+	t.Setenv("VISION_MODEL", "QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ")
 	t.Setenv("VISION_ORG", "org-123")
 	t.Setenv("VISION_PROJECT", "proj-abc")
 	t.Setenv("VISION_THINK", "false")
@@ -87,7 +87,7 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 		t.Fatalf("basic auth: got %q/%q", user, pass)
 	}
 
-	if got := svc.GetModel(); got != "gemma3:latest" {
+	if got := svc.GetModel(); got != "QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ" {
 		t.Fatalf("model override: got %q", got)
 	}
 

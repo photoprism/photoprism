@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/fs/duf"
 )
 
@@ -116,6 +117,72 @@ func TestConfig_FilesQuotaReached(t *testing.T) {
 	assert.False(t, c.FilesQuotaReached())
 
 	c.options.FilesQuota = uint64(0)
+}
+
+func TestConfig_StorageLow(t *testing.T) {
+	c := TestConfig()
+
+	free, low, err := c.StorageLow()
+	assert.NoError(t, err)
+	assert.False(t, low, "test storage filesystem must not be reported as low")
+	assert.NotZero(t, free)
+}
+
+func TestConfig_StorageLow_SkipCheck(t *testing.T) {
+	c := TestConfig()
+
+	// Seed a low entry so the check would normally return low=true.
+	disk.SetFree(c.StoragePath(), 1, 1000)
+	t.Cleanup(disk.FlushFree)
+
+	// Toggling skipStorageCheck mirrors what PHOTOPRISM_STORAGE_SKIP_CHECK does at startup.
+	prev := skipStorageCheck
+	skipStorageCheck = true
+	t.Cleanup(func() { skipStorageCheck = prev })
+
+	free, low, err := c.StorageLow()
+	assert.NoError(t, err)
+	assert.False(t, low, "skip flag must bypass the disk probe")
+	assert.Zero(t, free)
+}
+
+func TestConfig_InsufficientStorage(t *testing.T) {
+	c := TestConfig()
+
+	// Drive the disk side from the cache so the verdict is independent of the host filesystem.
+	disk.SetFree(c.StoragePath(), 999, 1000)
+	t.Cleanup(disk.FlushFree)
+
+	t.Run("Neither", func(t *testing.T) {
+		c.options.FilesQuota = 0
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 999, 1000)
+
+		assert.False(t, c.InsufficientStorage())
+	})
+	t.Run("QuotaOnly", func(t *testing.T) {
+		c.options.FilesQuota = 1
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 999, 1000)
+
+		assert.True(t, c.InsufficientStorage())
+	})
+	t.Run("StorageLowOnly", func(t *testing.T) {
+		c.options.FilesQuota = 0
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 1, 1000)
+
+		assert.True(t, c.InsufficientStorage())
+	})
+	t.Run("Both", func(t *testing.T) {
+		c.options.FilesQuota = 1
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 1, 1000)
+
+		assert.True(t, c.InsufficientStorage())
+	})
+
+	c.options.FilesQuota = 0
 }
 
 func TestConfig_UsersQuotaReached(t *testing.T) {

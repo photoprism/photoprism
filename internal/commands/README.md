@@ -20,6 +20,24 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 - When integrating configuration options, call the accessors on `*config.Config` (for example, `conf.ClusterUUID()`) rather than mutating option structs directly.
 - For HTTP interactions, depend on the safe download helpers in `pkg/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
 
+### Positional Arguments & Flag Order
+
+`urfave/cli` v2 delegates flag parsing to the Go stdlib `flag` package, which **stops parsing at the first non-flag token**. For any subcommand that takes a positional argument (for example `photoprism users mod USERNAME --role guest`), flags placed **after** the positional are not parsed — they are returned as additional positionals and `ctx.IsSet(...)` reports `false` for each of them.
+
+Without guarding for this, an action that conditionally applies values via `if ctx.IsSet("role") { ... }` will silently no-op while still logging success.
+
+#### Mitigation Helper
+
+Call `commands.RejectTrailingFlags(ctx)` near the top of every leaf action whose CLI shape is `Action <positional> [--flags...]`. The helper returns a clear `flag "--name" must appear before positional arguments` error when it detects a flag-like token in `ctx.Args().Tail()`, so the user is told to re-order rather than seeing a silent no-op. Pair it with `commands.TrailingFlagToken(ctx)` when the action needs to inspect the offending token before deciding what to do.
+
+Helper behavior:
+
+- Single-dash `-` and the `--` terminator are treated as positionals, not flags, so commands like `photoprism backup -` (write to stdout) and `photoprism foo bar -- --literal` keep working.
+- Unknown flags placed before the positional are not the helper's concern — `urfave/cli` raises its own "flag provided but not defined" error in that path.
+- For commands that use a flag-based identifier instead of a positional, still call the helper after the existence check so trailing flags surface as a usage error rather than a silent ignore.
+
+The underlying parser limitation is tracked as a known issue for a broader fix; until a global arg-reorder pass lands, all new leaf actions that accept a positional MUST call `RejectTrailingFlags` before applying flag values.
+
 ### Configuration & Flags Integration
 
 - Define new options in `internal/config/options.go` with the appropriate struct tags (`yaml`, `json`, `flag`) so they propagate to YAML, CLI, and API layers consistently.

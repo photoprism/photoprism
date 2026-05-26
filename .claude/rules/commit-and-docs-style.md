@@ -10,17 +10,20 @@ If the commit relates to specific issues or pull requests, reference their IDs i
 
 Commit messages must not exceed 80 characters in length.
 
+Do not add `Co-Authored-By: Claude …` trailers (or any other AI-authorship trailer) to commit messages.
+
 ## GitHub Issues
 
 Issue titles MUST be concise, use the imperative mood, and start with a single capitalized prefix followed by a colon and a space, e.g. `Search: Add filter for RAW image formats`.
 
 Issue descriptions MUST begin with a one-sentence **User Story** in the format: `**As a <role>, I want <goal>, so that <outcome>.**`
+Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
 Follow the User Story with a clear summary of the expected behavior, rationale, technical considerations, and constraints.
 
 Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 - Use GitHub checklist formatting: `- [ ]`
 - Criteria MUST be clear, testable, and unambiguous.
-- Each item MUST use one of the following priority keywords:
+- Each item MUST use one of the following requirement-level keywords:
   - `MUST`   — required for the issue to be considered complete
   - `SHOULD` — strongly recommended but not strictly required
   - `MAY`    — optional enhancement
@@ -43,6 +46,7 @@ The repo's issue templates use the new GitHub `type:` property (`Bug`, `Feature`
 > - Capitalize the first word, the first word after a colon, dash, or end punctuation, and all major words, including the second part of a hyphenated major word.
 > - Lowercase only articles, short conjunctions, and short prepositions of three letters or fewer when they are not in one of those positions.
 > - Preserve known acronyms (for example, API, CLI, HTTP, JSON) and slash-separated acronym groups (for example, CSV/TSV) as uppercase.
+> - Preserve RFC 2119 / RFC 8174 normative keywords (MUST, SHOULD, MAY, SHALL, REQUIRED, RECOMMENDED, OPTIONAL) as uppercase when used in their normative sense.
 > - Preserve inline code spans (`` `foo` ``), file paths (e.g. `docs/foo-bar.md`), and slash commands (e.g. `/grill-me`) verbatim; do not recase their contents.
 > - Use `&` instead of `And`/`Or` in headings.
 

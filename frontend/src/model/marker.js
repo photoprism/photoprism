@@ -39,9 +39,15 @@ export class Marker extends RestModel {
   classes(selected) {
     let classes = ["is-marker", "uid-" + this.getId()];
 
-    if (this.Invalid) classes.push("is-invalid");
-    if (this.Review) classes.push("is-review");
-    if (selected) classes.push("is-selected");
+    if (this.Invalid) {
+      classes.push("is-invalid");
+    }
+    if (this.Review) {
+      classes.push("is-review");
+    }
+    if (selected) {
+      classes.push("is-selected");
+    }
 
     return classes;
   }

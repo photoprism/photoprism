@@ -105,3 +105,33 @@ func TestParse(t *testing.T) {
 		})
 	}
 }
+
+// TestParse_DriverDetection exercises detectDriver via Parse: alias unification
+// with ParseDriver and the preserve-unknown contract.
+func TestParse_DriverDetection(t *testing.T) {
+	t.Run("PostgresqlAliasNormalizes", func(t *testing.T) {
+		got := Parse("postgresql://alice:s3cr3t@db.local:5432/app")
+		assert.Equal(t, DriverPostgres, got.Driver)
+	})
+	t.Run("PostgresqlAliasCaseInsensitive", func(t *testing.T) {
+		got := Parse("POSTGRESQL://alice:s3cr3t@db.local:5432/app")
+		assert.Equal(t, DriverPostgres, got.Driver)
+	})
+	t.Run("MariaDBAliasCollapsesToMySQL", func(t *testing.T) {
+		got := Parse("mariadb://user:secret@db.local:3306/app")
+		assert.Equal(t, DriverMySQL, got.Driver)
+	})
+	t.Run("SqliteAliasNormalizes", func(t *testing.T) {
+		got := Parse("sqlite:///data/index.db")
+		assert.Equal(t, DriverSQLite3, got.Driver)
+	})
+	t.Run("UnknownDriverPreserved", func(t *testing.T) {
+		// Unknown explicit drivers are kept instead of falling through to heuristics.
+		got := Parse("oracle://user:secret@db.local:1521/app")
+		assert.Equal(t, "oracle", got.Driver)
+	})
+	t.Run("UnknownDriverPreservedLowercased", func(t *testing.T) {
+		got := Parse("Snowflake://user:secret@account.region/db")
+		assert.Equal(t, "snowflake", got.Driver)
+	})
+}

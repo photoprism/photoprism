@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -194,6 +194,10 @@ export class rules {
 
   // isTime validates HH:MM:SS style times with any non-digit separator.
   static isTime(v) {
+    if (typeof v !== "string" || v === "") {
+      return true;
+    }
+
     return /^(2[0-3]|[0-1][0-9])\D[0-5][0-9]\D[0-5][0-9]$/.test(v); // 23:59:59
   }
 
@@ -245,7 +249,7 @@ export class rules {
   // time returns Vuetify rule callbacks enforcing HH:MM:SS format.
   static time(required) {
     if (required) {
-      return [(v) => !!v || $gettext("This field is required"), (v) => this.isTime(v) || $gettext("Invalid time")];
+      return [(v) => !!v || $gettext("This field is required"), (v) => !v || this.isTime(v) || $gettext("Invalid time")];
     } else {
       return [(v) => !v || this.isTime(v) || $gettext("Invalid time")];
     }
@@ -270,21 +274,26 @@ export class rules {
   }
 
   // text returns string length validators with optional localization label.
+  // Leading and trailing whitespace is ignored so whitespace-only input
+  // explicitly fails the required / minLen check rather than passing through
+  // to the backend, which trims via txt.Clip / clean.Name on its side.
   static text(required, min, max, s) {
     if (!s) {
       s = $gettext("Text");
     }
 
+    const trim = (v) => (typeof v === "string" ? v.trim() : v);
+
     if (required) {
       return [
-        (v) => !!v || $gettext("This field is required"),
-        (v) => this.minLen(v, min ? min : 0) || $gettext(`%{s} is too short`, { s }),
-        (v) => this.maxLen(v, max ? max : 200) || $gettext("%{s} is too long", { s }),
+        (v) => !!trim(v) || $gettext("This field is required"),
+        (v) => this.minLen(trim(v), min ? min : 0) || $gettext(`%{s} is too short`, { s }),
+        (v) => this.maxLen(trim(v), max ? max : 200) || $gettext("%{s} is too long", { s }),
       ];
     } else {
       return [
-        (v) => this.minLen(v, min ? min : 0) || $gettext("%{s} is too short", { s }),
-        (v) => this.maxLen(v, max ? max : 200) || $gettext("%{s} is too long", { s }),
+        (v) => this.minLen(trim(v), min ? min : 0) || $gettext("%{s} is too short", { s }),
+        (v) => this.maxLen(trim(v), max ? max : 200) || $gettext("%{s} is too long", { s }),
       ];
     }
   }

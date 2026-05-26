@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/pkg/dsn"
+
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
@@ -104,7 +106,7 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		rows, _ := conf.Report()
 		values := collect(rows)
 
-		assert.Equal(t, SQLite3, values["database-driver"])
+		assert.Equal(t, dsn.DriverSQLite3, values["database-driver"])
 		assert.Equal(t, conf.DatabaseDSN(), values["database-dsn"])
 		_, hasName := values["database-name"]
 		assert.False(t, hasName)
@@ -113,7 +115,7 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		conf := NewConfig(CliTestContext())
 		resetDatabaseOptions(conf)
 
-		conf.options.DatabaseDriver = MySQL
+		conf.options.DatabaseDriver = dsn.DriverMySQL
 		conf.options.DatabaseServer = "db.internal:3306"
 		conf.options.DatabaseName = "photoprism"
 		conf.options.DatabaseUser = "app"
@@ -122,7 +124,7 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		rows, _ := conf.Report()
 		values := collect(rows)
 
-		assert.Equal(t, MySQL, values["database-driver"])
+		assert.Equal(t, dsn.DriverMySQL, values["database-driver"])
 		assert.Equal(t, "photoprism", values["database-name"])
 		assert.Equal(t, "db.internal:3306", values["database-server"])
 		assert.Equal(t, "db.internal", values["database-host"])
@@ -136,13 +138,13 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		conf := NewConfig(CliTestContext())
 		resetDatabaseOptions(conf)
 
-		conf.options.DatabaseDriver = MySQL
+		conf.options.DatabaseDriver = dsn.DriverMySQL
 		conf.options.DatabaseDSN = "user:pass@tcp(db.internal:3306)/photoprism"
 
 		rows, _ := conf.Report()
 		values := collect(rows)
 
-		assert.Equal(t, MySQL, values["database-driver"])
+		assert.Equal(t, dsn.DriverMySQL, values["database-driver"])
 		assert.Equal(t, "user:***@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", values["database-dsn"])
 		_, hasName := values["database-name"]
 		assert.False(t, hasName)
@@ -269,6 +271,57 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 		assert.Greater(t, indexOf(rows, "theme-url"), indexOf(rows, "default-theme"))
 		assert.Less(t, indexOf(rows, "theme-url"), indexOf(rows, "places-locale"))
 	})
+}
+
+func TestConfig_FaceReport(t *testing.T) {
+	m := NewConfig(CliTestContext())
+	rows, cols := m.FaceReport()
+
+	assert.Equal(t, []string{"Name", "Value"}, cols)
+	assert.GreaterOrEqual(t, len(rows), 1)
+
+	values := make(map[string]string, len(rows))
+	for _, row := range rows {
+		if len(row) < 2 {
+			continue
+		}
+		values[row[0]] = row[1]
+	}
+
+	// Spot-check that the core face-related options are present.
+	expected := []string{
+		"disable-faces",
+		"vision-yaml",
+		"face-engine",
+		"face-engine-run",
+		"face-engine-threads",
+		"facenet-model-path",
+		"face-size",
+		"face-score",
+		"face-overlap",
+		"face-cluster-size",
+		"face-cluster-score",
+		"face-cluster-core",
+		"face-cluster-dist",
+		"face-cluster-radius",
+		"face-collision-dist",
+		"face-epsilon-dist",
+		"face-match-dist",
+		"face-skip-children",
+		"face-allow-background",
+	}
+
+	for _, name := range expected {
+		_, ok := values[name]
+		assert.True(t, ok, "FaceReport missing %q", name)
+	}
+
+	// Non-face options must not leak into the focused report.
+	unexpected := []string{"originals-path", "auth-mode", "ffmpeg-bin", "site-url"}
+	for _, name := range unexpected {
+		_, ok := values[name]
+		assert.False(t, ok, "FaceReport unexpectedly includes %q", name)
+	}
 }
 
 func TestConfig_ReportURIRedaction(t *testing.T) {

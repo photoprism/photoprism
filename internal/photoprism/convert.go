@@ -10,10 +10,14 @@ import (
 	"github.com/karrick/godirwalk"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/list"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Convert represents a file format conversion worker.
@@ -39,6 +43,22 @@ func NewConvert(conf *config.Config) *Convert {
 	return c
 }
 
+// Cancel stops the current conversion operation.
+func (w *Convert) Cancel() {
+	mutex.IndexWorker.Cancel()
+}
+
+// insufficientStorage reports whether the converter must abort due to quota or low free disk space.
+func (w *Convert) insufficientStorage() bool {
+	if !w.conf.InsufficientStorage() {
+		return false
+	}
+
+	log.Errorf("convert: aborting due to insufficient storage")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	return true
+}
+
 // Start converts all files in the specified directory based on the current configuration.
 func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 	defer func() {
@@ -47,6 +67,13 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 			log.Error(err)
 		}
 	}()
+
+	// Reset the cached disk usage so a freshly freed disk is detected immediately.
+	disk.FlushFree()
+
+	if w.insufficientStorage() {
+		return status.ErrInsufficientStorage
+	}
 
 	if err = mutex.IndexWorker.Start(); err != nil {
 		return err
@@ -90,7 +117,13 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 			}()
 
 			if mutex.IndexWorker.Canceled() {
-				return errors.New("canceled")
+				return status.ErrCanceled
+			}
+
+			// Stop the walk if storage drops below the threshold mid-convert.
+			if w.insufficientStorage() {
+				w.Cancel()
+				return status.ErrInsufficientStorage
 			}
 
 			isDir, _ := info.IsDirOrSymlinkToDir()
@@ -128,6 +161,13 @@ func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 
 	close(jobs)
 	wg.Wait()
+
+	logWalkResult("convert", err)
+
+	// A user-initiated Ctrl+C is expected; do not surface it as a CLI error.
+	if errors.Is(err, status.ErrCanceled) {
+		return nil
+	}
 
 	return err
 }

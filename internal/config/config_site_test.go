@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/sha256"
 	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -110,11 +111,44 @@ func TestConfig_VideoUri(t *testing.T) {
 func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost"
-	assert.Equal(t, "http://superhost/", c.SiteUrl())
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		// Baseline behavior.
+		{"Default", "", "http://localhost:2342/"},
+		{"NoTrailingSlash", "http://superhost", "http://superhost/"},
+		{"NonDefaultPort", "http://superhost:2342/", "http://superhost:2342/"},
+
+		// Default-port stripping.
+		{"HttpsDefaultPort", "https://app.localssl.dev:443/", "https://app.localssl.dev/"},
+		{"HttpDefaultPort", "http://example.com:80/sub", "http://example.com/sub/"},
+		{"NonDefaultPortPreserved", "https://example.com:8443/", "https://example.com:8443/"},
+		{"MismatchedScheme", "http://example.com:443/", "http://example.com:443/"},
+
+		// Uncommon but well-formed inputs.
+		{"IPv6DefaultPort", "https://[::1]:443/", "https://[::1]/"},
+		{"IPv6NonDefaultPort", "https://[2001:db8::1]:8443/path", "https://[2001:db8::1]:8443/path/"},
+		{"PathPreserved", "https://example.com:443/i/pro-1/", "https://example.com/i/pro-1/"},
+		{"QueryStripped", "https://example.com:443/i/pro-1/?lang=de&page=2", "https://example.com/i/pro-1/"},
+		{"ForceQueryStripped", "https://example.com/?", "https://example.com/"},
+		{"FragmentStripped", "https://example.com/library/#photo123", "https://example.com/library/"},
+		{"SurroundingWhitespace", "  https://app.example.com:443/  ", "https://app.example.com/"},
+		{"ExtraTrailingSlashes", "https://example.com:443////", "https://example.com/"},
+		{"Whitespace", "   ", "http://localhost:2342/"},
+
+		// Unix-socket schemes: port stripping must stay a no-op.
+		{"UnixScheme", "unix:///var/run/photoprism.sock", "unix:///var/run/photoprism.sock/"},
+		{"HttpUnixScheme", "http+unix:///var/run/photoprism.sock", "http+unix:///var/run/photoprism.sock/"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c.options.SiteUrl = tc.in
+			assert.Equal(t, tc.want, c.SiteUrl())
+		})
+	}
 }
 
 func TestConfig_SiteHttps(t *testing.T) {
@@ -161,6 +195,32 @@ func TestConfig_SitePreview(t *testing.T) {
 	assert.Equal(t, "http://localhost:2342/foo/preview123.jpg", c.SitePreview())
 	c.options.SitePreview = "/foo/preview123.jpg"
 	assert.Equal(t, "http://localhost:2342/foo/preview123.jpg", c.SitePreview())
+}
+
+func TestConfig_SitePreview_StripsDefaultPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	tmp := t.TempDir()
+	c.SetThemePath(tmp)
+	previewFile := filepath.Join(c.ThemePath(), "preview.jpg")
+	if err := os.WriteFile(previewFile, []byte("test"), fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	c.options.SiteUrl = "https://host:443/"
+	c.options.SitePreview = "preview.jpg"
+	assert.Equal(t, "https://host/_theme/preview.jpg", c.SitePreview())
+}
+
+func TestConfig_DownloadUrl_StripsDefaultPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.SiteUrl = "https://host:443/"
+	assert.Equal(t, "https://host"+DownloadUri, c.DownloadUrl())
+	c.options.SiteUrl = "http://host:80/"
+	assert.Equal(t, "http://host"+DownloadUri, c.DownloadUrl())
+	c.options.SiteUrl = "https://host:8443/"
+	assert.Equal(t, "https://host:8443"+DownloadUri, c.DownloadUrl())
 }
 
 func TestConfig_SiteAuthor(t *testing.T) {

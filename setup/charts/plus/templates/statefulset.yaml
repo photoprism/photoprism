@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "photoprism-plus.fullname" . }}
+  labels:
+    {{- include "photoprism-plus.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "photoprism-plus.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  serviceName: {{ include "photoprism-plus.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "photoprism-plus.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.command }}
+          command:
+            {{- range .Values.command }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.args }}
+          args:
+            {{- range .Values.args }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          env:
+            {{- $siteURL := include "photoprism-plus.siteURL" . | trim -}}
+            {{- if ne $siteURL "" }}
+            - name: PHOTOPRISM_SITE_URL
+              value: {{ $siteURL | quote }}
+            {{- end }}
+            {{- if .Values.cluster.integration.enabled }}
+            {{- $integration := .Values.cluster.integration -}}
+            {{- $secretName := include "photoprism-plus.clusterSecretName" . | trim -}}
+            {{- $clusterFields := dict
+                "PHOTOPRISM_PORTAL_URL"     $integration.portalURL
+                "PHOTOPRISM_CLUSTER_DOMAIN" $integration.domain
+                "PHOTOPRISM_CLUSTER_UUID"   $integration.uuid
+                "PHOTOPRISM_CLUSTER_CIDR"   $integration.cidr
+                "PHOTOPRISM_TRUSTED_PROXY"  $integration.trustedProxy
+                "PHOTOPRISM_JOIN_TOKEN"     $integration.joinToken
+                "PHOTOPRISM_JWT_SCOPE"      $integration.jwtScope -}}
+            {{- range $key, $value := $clusterFields }}
+            {{- $inline := trim (default "" $value) -}}
+            {{- if ne $inline "" }}
+            - name: {{ $key }}
+              value: {{ $inline | quote }}
+            {{- else if ne $secretName "" }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName | quote }}
+                  key: {{ $key }}
+                  optional: true
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            - name: PHOTOPRISM_ADMIN_USER
+              value: {{ .Values.adminUser | quote }}
+            - name: PHOTOPRISM_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-secrets" (include "photoprism-plus.fullname" .) }}
+                  key: PHOTOPRISM_ADMIN_PASSWORD
+            - name: PHOTOPRISM_DATABASE_DRIVER
+              value: {{ .Values.database.driver | quote }}
+            {{- $dbServer := trim (default "" .Values.database.server) -}}
+            {{- if ne $dbServer "" }}
+            - name: PHOTOPRISM_DATABASE_SERVER
+              value: {{ $dbServer | quote }}
+            {{- end }}
+            {{- $dbName := trim (default "" .Values.database.name) -}}
+            {{- if ne $dbName "" }}
+            - name: PHOTOPRISM_DATABASE_NAME
+              value: {{ $dbName | quote }}
+            {{- end }}
+            {{- $dbUser := trim (default "" .Values.database.user) -}}
+            {{- if ne $dbUser "" }}
+            - name: PHOTOPRISM_DATABASE_USER
+              value: {{ $dbUser | quote }}
+            {{- end }}
+            {{- $dbPassword := trim (default "" .Values.database.password) -}}
+            {{- if ne $dbPassword "" }}
+            - name: PHOTOPRISM_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-secrets" (include "photoprism-plus.fullname" .) }}
+                  key: PHOTOPRISM_DATABASE_PASSWORD
+            {{- end }}
+            - name: PHOTOPRISM_DATABASE_TIMEOUT
+              value: {{ printf "%v" .Values.database.timeout | quote }}
+            - name: PHOTOPRISM_DATABASE_CONNS
+              value: {{ printf "%v" .Values.database.conns | quote }}
+            - name: PHOTOPRISM_DATABASE_CONNS_IDLE
+              value: {{ printf "%v" .Values.database.connsIdle | quote }}
+            {{- range $key, $value := .Values.oidc }}
+            {{- if ne (printf "%v" $value) "" }}
+            - name: {{ $key }}
+              value: {{ printf "%v" $value | quote }}
+            {{- end }}
+            {{- end }}
+            {{- range $key, $value := .Values.config }}
+            {{- if ne (printf "%v" $value) "" }}
+            - name: {{ $key }}
+              value: {{ printf "%v" $value | quote }}
+            {{- end }}
+            {{- end }}
+          ports:
+            - containerPort: 2342
+              name: http
+          volumeMounts:
+            {{- if .Values.persistence.originals.enabled }}
+            - name: originals
+              mountPath: {{ .Values.persistence.originals.mountPath }}
+            {{- end }}
+            {{- if .Values.persistence.storage.enabled }}
+            - name: storage
+              mountPath: {{ .Values.persistence.storage.mountPath }}
+            {{- end }}
+      volumes:
+        {{- if .Values.persistence.originals.enabled }}
+        - name: originals
+          {{- if and .Values.persistence.originals.enabled .Values.persistence.originals.nfs.enabled }}
+          nfs:
+            server: {{ required "persistence.originals.nfs.server is required when NFS mode is enabled" .Values.persistence.originals.nfs.server | quote }}
+            path: {{ required "persistence.originals.nfs.path is required when NFS mode is enabled" .Values.persistence.originals.nfs.path | quote }}
+          {{- else }}
+          persistentVolumeClaim:
+            claimName: {{ include "photoprism-plus.fullname" . }}-originals
+          {{- end }}
+        {{- end }}
+        {{- if .Values.persistence.storage.enabled }}
+        - name: storage
+          persistentVolumeClaim:
+            claimName: {{ include "photoprism-plus.fullname" . }}-storage
+        {{- end }}

@@ -22,6 +22,9 @@ type ClientData struct {
 	ClusterUUID     string            `json:"clusterUUID,omitempty"`
 	ServiceKind     string            `json:"serviceKind,omitempty"`
 	ServiceFeatures []string          `json:"serviceFeatures,omitempty"`
+	AllowGroups     []string          `json:"allowGroups,omitempty"`
+	AllowGroupRoles map[string]string `json:"allowGroupRoles,omitempty"`
+	RedirectURIs    []string          `json:"redirectUris,omitempty"`
 }
 
 // NewClientData creates a new client data struct and returns a pointer to it.

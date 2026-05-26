@@ -104,10 +104,15 @@ func videoTrimAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof("trim: processed %d, skipped %d, failed %d", processed, skipped, failed)
+		log.Infof(
+			"trim: processed %s, skipped %s, %s",
+			formatCount(processed, "file", "files"),
+			formatCount(skipped, "file", "files"),
+			formatFailedCount(failed, "file", "files"),
+		)
 
 		if failed > 0 {
-			return fmt.Errorf("trim: %d files failed", failed)
+			return fmt.Errorf("trim: %s", formatFailedCount(failed, "file", "files"))
 		}
 
 		return nil

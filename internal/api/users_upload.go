@@ -68,7 +68,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		}
 
 		// Abort if there is not enough free storage to upload new files.
-		if conf.FilesQuotaReached() {
+		if conf.InsufficientStorage() {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
 			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
