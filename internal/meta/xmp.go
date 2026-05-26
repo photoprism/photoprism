@@ -19,21 +19,23 @@ func XMP(fileName string) (data Data, err error) {
 
 // XMP parses an XMP file and returns a Data struct.
 func (data *Data) XMP(fileName string) (err error) {
+	logName := clean.Log(filepath.Base(fileName))
+
 	defer func() {
 		if e := recover(); e != nil {
-			err = fmt.Errorf("metadata: %s in %s (xmp panic)\nstack: %s", e, clean.Log(filepath.Base(fileName)), debug.Stack())
+			err = fmt.Errorf("metadata: %s in %s (xmp panic)\nstack: %s", e, logName, debug.Stack())
 		}
 	}()
 
 	// Resolve file name e.g. in case it's a symlink.
 	if fileName, err = fs.Resolve(fileName); err != nil {
-		return fmt.Errorf("metadata: %s %s (xmp)", err, clean.Log(filepath.Base(fileName)))
+		return fmt.Errorf("metadata: %s %s (xmp)", err, logName)
 	}
 
 	doc := XmpDocument{}
 
 	if err = doc.Load(fileName); err != nil {
-		return fmt.Errorf("metadata: cannot read %s (xmp)", clean.Log(filepath.Base(fileName)))
+		return fmt.Errorf("metadata: cannot read %s (xmp)", logName)
 	}
 
 	if v := doc.Title(); v != "" {
@@ -62,7 +64,7 @@ func (data *Data) XMP(fileName string) (err error) {
 	}
 
 	// GPS Lat/Lng pass through NormalizeGPS for parity with the embedded
-	// path's clamp/normalise behaviour.
+	// path's clamp/normalize behavior.
 	if lat, lng := doc.Lat(), doc.Lng(); lat != 0 || lng != 0 {
 		data.Lat, data.Lng = NormalizeGPS(lat, lng)
 	}
@@ -163,7 +165,7 @@ func (data *Data) XMP(fileName string) (err error) {
 	// Normalize capture time, local time, and time zone using the shared
 	// resolver so the XMP sidecar path produces the same entity state the
 	// ExifTool JSON path would for identical metadata.
-	data.ResolveTimeZone(clean.Log(filepath.Base(fileName)))
+	data.ResolveTimeZone(logName)
 
 	return nil
 }

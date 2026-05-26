@@ -507,15 +507,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(data.LensMake, data.LensModel)), entity.SrcXmp)
 			photo.SetExposure(data.FocalLength, data.FNumber, data.Iso, data.Exposure, entity.SrcXmp)
 
-			// Mirror file-level identity metadata to the primary file. Writing
-			// it onto the sidecar entity would be invisible to users since
-			// the UI displays per-file fields for the primary JPEG/HEIC.
-			//
-			// ColorProfile and Projection are intentionally NOT mirrored:
-			// they describe physical properties of the image file itself
-			// (the embedded ICC profile, the actual panorama projection),
-			// not user-supplied metadata. A sidecar tag should not override
-			// what the JPEG/HEIC container says about itself.
+			// Mirror file-level identity metadata to the primary file so the
+			// UI surfaces it (per-file fields render the primary JPEG/HEIC).
+			// ColorProfile and Projection are not mirrored — they describe
+			// physical container properties, not user-supplied metadata.
 			if primary, primaryErr := photo.PrimaryFile(); primaryErr == nil && primary != nil {
 				if data.InstanceID != "" {
 					log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))

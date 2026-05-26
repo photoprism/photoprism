@@ -361,7 +361,7 @@ func (doc *XmpDocument) Description() string {
 
 // Copyright returns the rights statement.
 // Priority: dc:rights (Alt/x-default → first rdf:Alt entry → bare text) → xmpRights:WebStatement.
-// WebStatement is a URL approximation of the rights text but matches the embedded path's behaviour.
+// WebStatement is a URL approximation of the rights text but matches the embedded path's behavior.
 func (doc *XmpDocument) Copyright() string {
 	return SanitizeString(xmpRightsChain.firstNonEmpty(doc.doc))
 }

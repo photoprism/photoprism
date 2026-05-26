@@ -88,12 +88,10 @@ func TestGpsToDecimal(t *testing.T) {
 	})
 }
 
-// TestGpsToDecimal_RegressionAgainstExistingFixtures asserts that the
-// 2-component XMP-form branch added for #2260 does not regress the
-// 3-component DMS form that the embedded path consumes through these
-// fixtures. The strings here are quoted from the named JSON fixtures
-// under testdata/ so a future regression in GpsToDecimal would surface
-// here before it surfaces in the broader exif/json test suites.
+// TestGpsToDecimal_RegressionAgainstExistingFixtures asserts that
+// GpsToDecimal still parses the 3-component DMS form used by the
+// JSON fixtures under testdata/, so a regression surfaces here before
+// it reaches the broader exif/json test suites.
 func TestGpsToDecimal_RegressionAgainstExistingFixtures(t *testing.T) {
 	cases := []struct {
 		name, input string
