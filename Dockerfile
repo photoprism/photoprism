@@ -26,6 +26,8 @@ WORKDIR "${WORKING_DIR}"
 
 # Copy source to image.
 COPY . .
+
+# Update scripts in image.
 COPY --chown=root:root ./scripts/dist/ /scripts/
 
 # Re-install the dev "mariadb" client config so a custom MARIADB_PORT in .env
