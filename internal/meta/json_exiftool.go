@@ -380,6 +380,13 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		data.InstanceID = rnd.SanitizeUUID(data.InstanceID)
 	}
 
+	// Promote GPano-style markers to equirectangular when ProjectionType is absent.
+	if data.Projection == "" {
+		if data.json["UsePanoramaViewer"] == "true" || data.json["IsPhotosphere"] == "true" {
+			data.Projection = projection.Equirectangular.String()
+		}
+	}
+
 	if projection.Equirectangular.Equal(data.Projection) {
 		data.AddKeywords(KeywordPanorama)
 	}

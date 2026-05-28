@@ -94,7 +94,7 @@ type Photo struct {
 	FileMime         string        `json:"-" select:"files.file_mime"`
 	FileSize         int64         `json:"-" select:"files.file_size"`
 	FileOrientation  int           `json:"-" select:"files.file_orientation"`
-	FileProjection   string        `json:"-" select:"files.file_projection"`
+	FileProjection   string        `json:"Projection,omitempty" select:"files.file_projection"`
 	FileAspectRatio  float32       `json:"-" select:"files.file_aspect_ratio"`
 	FileColors       string        `json:"-" select:"files.file_colors"`
 	FileDiff         int           `json:"-" select:"files.file_diff"`

@@ -18,7 +18,7 @@ Directory Map (src)
 - `src/app.js` — app bootstrap: creates Vue app, installs Vuetify + plugins, configures router, mounts to `#app`
 - `src/app/routes.js` — all route definitions (guards, titles, meta)
 - `src/app/session.js` — `$config` and `$session` singletons wired from server-provided `window.__CONFIG__` and storage
-- `src/common/*` — framework-agnostic helpers: `$api` (Axios), `$notify`, `$view`, `$event` (PubSub), i18n (`gettext`), util, fullscreen, map utils, websocket
+- `src/common/*` — framework-agnostic helpers: `$api` (Axios), `$notify`, `$view`, `$event` (PubSub), i18n (`gettext`), util, fullscreen, map utils, websocket, `sphere.js` (lazy-loaded 360° viewer wrapper)
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)
 - `src/model/*` — REST models; base `Rest` class (`model/rest.js`) wraps Axios CRUD for collections and entities

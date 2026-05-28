@@ -1216,4 +1216,52 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       evictSpy.mockRestore();
     });
   });
+
+  // getItemData dispatch: equirectangular media must route to the sphere viewer,
+  // while a regular photo with no projection must stay on the flat lightbox path.
+  describe("getItemData sphere dispatch", () => {
+    const baseThumbs = {
+      fit_720: { src: "/thumb-720.jpg", w: 720, h: 360 },
+      fit_1280: { src: "/thumb-1280.jpg", w: 1280, h: 640 },
+      fit_2048: { src: "/thumb-2048.jpg", w: 2048, h: 1024 },
+      fit_2560: { src: "/thumb-2560.jpg", w: 2560, h: 1280 },
+      fit_3840: { src: "/thumb-3840.jpg", w: 3840, h: 1920 },
+      fit_4096: { src: "/thumb-4096.jpg", w: 4096, h: 2048 },
+      fit_7680: { src: "/thumb-7680.jpg", w: 7680, h: 3840 },
+    };
+
+    it("returns sphere data for an equirectangular photo", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "abc", Projection: "equirectangular", Type: "image", Thumbs: baseThumbs, Title: "Pano" };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.type).toBe("html");
+      expect(slide.isSphere).toBe(true);
+      expect(slide.isVideo).toBe(false);
+      expect(slide.src).toBeTruthy();
+    });
+
+    it("returns sphere data with isVideo=true for an equirectangular video", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "vid", Projection: "equirectangular", Type: "video", Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.type).toBe("html");
+      expect(slide.isSphere).toBe(true);
+      expect(slide.isVideo).toBe(true);
+    });
+
+    it("returns flat image data for a non-equirectangular photo (regression)", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "xyz", Projection: "", Type: "image", Thumbs: baseThumbs, Title: "Regular" };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.type).toBeUndefined();
+      expect(slide.isSphere).toBeUndefined();
+      expect(slide.src).toBeTruthy();
+    });
+  });
 });

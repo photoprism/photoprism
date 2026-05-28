@@ -128,6 +128,7 @@ import * as media from "common/media";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
 import { $faceMarkers } from "common/face-markers";
+import { createSphereViewer, destroySphereViewer, findSphereVideoElement } from "common/sphere";
 
 const VIDEO_EVENT_TYPES = [
   "loadstart",
@@ -659,6 +660,28 @@ export default {
         loading: false,
       };
 
+      // Route equirectangular 360° media to the lazy-loaded sphere viewer before the video branch,
+      // since panoramic videos are also Playable and would otherwise fall through.
+      // For videos the primary file is often a sidecar JPEG poster whose row carries no
+      // projection metadata, so accept the Panorama flag as equivalent for video/animated types.
+      const isEquirect =
+        model?.Projection === "equirectangular" ||
+        (model?.Panorama === true && (model?.Type === media.Video || model?.Type === media.Animated));
+      if (isEquirect && model?.Hash) {
+        const isVideo = model?.Type === media.Video || model?.Type === media.Animated;
+        const src = isVideo ? this.$util.videoUrl(model.Hash, model?.Codec, model?.Mime) : this.$util.thumb(model.Thumbs, 8192, 4096).src;
+        return {
+          type: "html",
+          html: `<div class="pswp__html"></div>`,
+          model: model,
+          isSphere: true,
+          isVideo: isVideo,
+          src: src,
+          msrc: img.src,
+          loading: true,
+        };
+      }
+
       // Check if content is playable and return the data needed to render it in "contentLoad".
       if (model?.Playable && model?.Hash) {
         /*
@@ -694,6 +717,9 @@ export default {
       return img;
     },
     isContentZoomable(isContentZoomable, content) {
+      if (content.data?.isSphere) {
+        return false;
+      }
       if (content.data?.model?.Type === media.Live) {
         isContentZoomable = true;
       }
@@ -702,6 +728,79 @@ export default {
     },
     onContentLoad(ev) {
       const { content } = ev;
+      if (content.data?.isSphere) {
+        ev.preventDefault();
+
+        try {
+          const sphereEl = document.createElement("div");
+          sphereEl.setAttribute("class", "pswp__media pswp__media--sphere");
+          sphereEl.style.width = "100%";
+          sphereEl.style.height = "100%";
+          sphereEl.style.touchAction = "none";
+          // Trap pointer + wheel events so PhotoSwipe's swipe/zoom gesture
+          // detection does not run while the user interacts with the sphere.
+          // UI buttons (close, prev/next, sidebar) live on the PhotoSwipe
+          // wrapper outside this container and stay clickable.
+          const stop = (e) => e.stopPropagation();
+          ["pointerdown", "pointermove", "pointerup", "pointercancel", "wheel", "touchstart", "touchmove", "touchend"].forEach((type) => {
+            sphereEl.addEventListener(type, stop, { capture: false });
+          });
+
+          content.element = sphereEl;
+          content.state = "loading";
+          content.data.loading = false;
+          content.onLoaded();
+
+          createSphereViewer(sphereEl, content.data.src, { isVideo: content.data.isVideo, muted: this.muted })
+            .then((viewer) => {
+              content.data.sphereViewer = viewer;
+              // For 360° videos, expose the underlying <video> element so the
+              // existing PhotoPrism lightbox video controls (play/pause/seek/cast)
+              // operate on it. Without this the slide has no HTMLMediaElement to
+              // drive — the PSV navbar is intentionally disabled.
+              if (content.data.isVideo) {
+                // The adapter creates the <video> element but never inserts it
+                // into the DOM (it's only a WebGL texture source). The shared
+                // setVideo() reaches for `video.parentElement.classList`, so we
+                // attach the element to a hidden host inside the slide before
+                // wiring it up. PSV keeps using the same reference for texture
+                // sampling either way.
+                const attempts = 30;
+                let tries = 0;
+                const bindWhenReady = () => {
+                  const videoEl = findSphereVideoElement(viewer);
+                  if (videoEl) {
+                    if (!videoEl.parentElement) {
+                      const host = document.createElement("div");
+                      host.className = "pswp__sphere-video-host";
+                      host.style.position = "absolute";
+                      host.style.width = "1px";
+                      host.style.height = "1px";
+                      host.style.overflow = "hidden";
+                      host.style.opacity = "0";
+                      host.style.pointerEvents = "none";
+                      host.appendChild(videoEl);
+                      sphereEl.appendChild(host);
+                    }
+                    content.data.sphereVideoEl = videoEl;
+                    this.bindSphereVideoControls(content, videoEl);
+                  } else if (++tries < attempts) {
+                    setTimeout(bindWhenReady, 100);
+                  }
+                };
+                bindWhenReady();
+              }
+            })
+            .catch((err) => {
+              this.log("failed to load sphere viewer", err);
+            });
+        } catch (err) {
+          this.log("failed to mount sphere", err);
+        }
+
+        return;
+      }
+
       if (content.data?.type === "html") {
         // Prevent default loading behavior.
         ev.preventDefault();
@@ -738,6 +837,11 @@ export default {
       }
     },
     onContentDestroy(ev) {
+      if (ev?.content?.data?.sphereViewer) {
+        destroySphereViewer(ev.content.data.sphereViewer);
+        ev.content.data.sphereViewer = null;
+      }
+
       if (typeof ev?.content?.data?.events === "object") {
         const data = ev.content.data;
 
@@ -2325,12 +2429,40 @@ export default {
 
       result.data = typeof result.content.data === "object" ? result.content.data : {};
 
-      // Get <video> element, if any.
-      if (result.content.element && result.content.element.firstElementChild instanceof HTMLMediaElement) {
+      // Get <video> element, if any. For 360° video slides, the HTMLMediaElement
+      // is owned by Photo Sphere Viewer and cached on the slide data.
+      if (result.data.sphereVideoEl instanceof HTMLMediaElement) {
+        result.video = result.data.sphereVideoEl;
+      } else if (result.content.element && result.content.element.firstElementChild instanceof HTMLMediaElement) {
         result.video = result.content.element.firstElementChild;
       }
 
       return result;
+    },
+    // bindSphereVideoControls wires the PhotoPrism lightbox video controls
+    // (play/pause/seek/duration/cast) to the HTMLMediaElement owned by Photo
+    // Sphere Viewer. Mirrors the event wiring that createVideoElement performs
+    // for the flat video path so that the existing reactive `video` state and
+    // the <p-lightbox__controls> template work without changes.
+    bindSphereVideoControls(content, videoEl) {
+      const data = content.data;
+      const ctrl = new AbortController();
+      data.events?.abort();
+      data.events = ctrl;
+
+      VIDEO_EVENT_TYPES.forEach((type) => {
+        videoEl.addEventListener(type, this.videoEventListener, { signal: ctrl.signal });
+      });
+
+      this.video.controls = true;
+      this.video.error = "";
+      this.video.errorCode = 0;
+      this.video.duration = Number.isFinite(videoEl.duration) ? videoEl.duration : 0;
+      this.video.time = videoEl.currentTime || 0;
+      this.video.seekable = videoEl.seekable && videoEl.seekable.length > 0;
+      this.video.playing = !videoEl.paused;
+      this.video.paused = videoEl.paused;
+      this.video.ended = videoEl.ended;
     },
     // Stops playback on the specified video element, if any.
     pauseVideo(video) {

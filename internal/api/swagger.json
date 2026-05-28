@@ -3998,6 +3998,12 @@
                 "Lng": {
                     "type": "number"
                 },
+                "Panorama": {
+                    "type": "boolean"
+                },
+                "Projection": {
+                    "type": "string"
+                },
                 "TakenAt": {
                     "type": "string"
                 },
@@ -4258,6 +4264,9 @@
                 },
                 "Private": {
                     "type": "boolean"
+                },
+                "Projection": {
+                    "type": "string"
                 },
                 "Quality": {
                     "type": "integer"
@@ -4577,8 +4586,14 @@
                 "Mime": {
                     "type": "string"
                 },
+                "Panorama": {
+                    "type": "boolean"
+                },
                 "Playable": {
                     "type": "boolean"
+                },
+                "Projection": {
+                    "type": "string"
                 },
                 "TakenAtLocal": {
                     "type": "string"

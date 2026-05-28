@@ -1,0 +1,76 @@
+import "../fixtures";
+import { expect, describe, it, vi, beforeEach } from "vitest";
+
+const { viewerCtor, destroySpy } = vi.hoisted(() => ({
+  viewerCtor: vi.fn(),
+  destroySpy: vi.fn(),
+}));
+
+vi.mock("@photo-sphere-viewer/core", () => ({
+  Viewer: function Viewer(cfg) {
+    viewerCtor(cfg);
+    this.destroy = destroySpy;
+  },
+}));
+
+vi.mock("@photo-sphere-viewer/video-plugin", () => ({
+  VideoPlugin: function VideoPlugin() {},
+}));
+
+vi.mock("@photo-sphere-viewer/equirectangular-video-adapter", () => ({
+  EquirectangularVideoAdapter: function EquirectangularVideoAdapter() {},
+}));
+
+vi.mock("@photo-sphere-viewer/core/index.css", () => ({}));
+vi.mock("@photo-sphere-viewer/video-plugin/index.css", () => ({}));
+
+import { createSphereViewer, destroySphereViewer } from "common/sphere";
+
+describe("common/sphere", () => {
+  beforeEach(() => {
+    viewerCtor.mockClear();
+    destroySpy.mockClear();
+  });
+
+  it("photo path constructs Viewer with panorama option", async () => {
+    const container = document.createElement("div");
+    const viewer = await createSphereViewer(container, "/photo.jpg");
+    expect(viewerCtor).toHaveBeenCalledOnce();
+    expect(viewerCtor.mock.calls[0][0]).toMatchObject({
+      container,
+      panorama: "/photo.jpg",
+      keyboard: "always",
+      defaultYaw: 0,
+      defaultPitch: 0,
+    });
+    expect(viewer).toBeDefined();
+  });
+
+  it("video path wires VideoPlugin and equirectangular adapter", async () => {
+    const container = document.createElement("div");
+    await createSphereViewer(container, "/video.mp4", { isVideo: true });
+    expect(viewerCtor).toHaveBeenCalledOnce();
+    const cfg = viewerCtor.mock.calls[0][0];
+    expect(cfg.panorama).toEqual({ source: "/video.mp4" });
+    expect(cfg.plugins).toHaveLength(1);
+    expect(cfg.adapter).toHaveLength(2);
+  });
+
+  it("destroySphereViewer calls viewer.destroy exactly once", async () => {
+    const container = document.createElement("div");
+    const viewer = await createSphereViewer(container, "/photo.jpg");
+    destroySphereViewer(viewer);
+    expect(destroySpy).toHaveBeenCalledOnce();
+  });
+
+  it("destroySphereViewer is safe on null", () => {
+    expect(() => destroySphereViewer(null)).not.toThrow();
+    expect(() => destroySphereViewer(undefined)).not.toThrow();
+    expect(destroySpy).not.toHaveBeenCalled();
+  });
+
+  it("destroySphereViewer is safe on viewer without destroy method", () => {
+    expect(() => destroySphereViewer({})).not.toThrow();
+    expect(destroySpy).not.toHaveBeenCalled();
+  });
+});

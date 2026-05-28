@@ -18,6 +18,8 @@ type Result struct {
 	TimeZone     string        `json:"TimeZone,omitempty"`
 	Favorite     bool          `json:"Favorite"`
 	Playable     bool          `json:"Playable"`
+	Panorama     bool          `json:"Panorama,omitempty"`
+	Projection   string        `json:"Projection,omitempty"`
 	Duration     time.Duration `json:"Duration,omitempty"`
 	Width        int           `json:"Width"`
 	Height       int           `json:"Height"`
