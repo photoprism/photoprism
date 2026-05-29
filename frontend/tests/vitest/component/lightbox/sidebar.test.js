@@ -3567,6 +3567,39 @@ describe("PLightboxSidebar component", () => {
       expect(w.vm.fileTypeName).toBe("live");
       expect(w.vm.fileIcon).toBe("mdi-play-circle-outline");
     });
+    it("fileIcon is the panorama icon for an equirectangular 360° photo", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "image", Projection: "equirectangular" },
+          photo: { ...mockPhoto, Type: "image", Projection: "equirectangular" },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(true);
+      expect(w.vm.fileIcon).toBe("mdi-panorama-variant-outline");
+    });
+    it("fileIcon is the panorama icon for a 360° video flagged as panorama", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "video", Panorama: true },
+          photo: { ...mockPhoto, Type: "video", Panorama: true, getVideoInfo: vi.fn().mockReturnValue("") },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(true);
+      expect(w.vm.fileIcon).toBe("mdi-panorama-variant-outline");
+    });
+    it("fileIcon stays the standard image icon for a regular photo", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "image" },
+          photo: { ...mockPhoto, Type: "image" },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(false);
+      expect(w.vm.fileIcon).toBe("mdi-image-outline");
+    });
   });
 
   // Exhaustive matrix: against a fully-populated photo and a photo

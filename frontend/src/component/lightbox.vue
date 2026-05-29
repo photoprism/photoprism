@@ -726,6 +726,16 @@ export default {
 
       return isContentZoomable;
     },
+    // slideZoomable reports whether a slide supports the flat zoom button and
+    // pinch/click-to-zoom. 360° sphere slides own their zoom/pan, and videos and
+    // animations are never flatly zoomable; the result drives the `.is-zoomable`
+    // class that shows or hides the PhotoSwipe zoom button.
+    slideZoomable(data) {
+      if (data?.isSphere) {
+        return false;
+      }
+      return data?.model?.Type !== media.Video && data?.model?.Type !== media.Animated;
+    },
     onContentLoad(ev) {
       const { content } = ev;
       if (content.data?.isSphere) {
@@ -1312,19 +1322,16 @@ export default {
           return;
         }
 
-        switch (data.model?.Type) {
-          case media.Video:
-          case media.Animated:
-            this.isZoomable = false;
-            break;
-          default:
-            this.isZoomable = true;
-        }
+        this.isZoomable = this.slideZoomable(data);
 
         let video;
 
-        // Get <video> element, if any.
-        if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
+        // Get <video> element, if any. For 360° video slides the HTMLMediaElement is
+        // owned by Photo Sphere Viewer and cached on the slide data rather than being
+        // the slide element's first child.
+        if (content?.data?.sphereVideoEl instanceof HTMLMediaElement) {
+          video = content.data.sphereVideoEl;
+        } else if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
           video = content.element.firstElementChild;
         } else {
           video = false;
@@ -1336,7 +1343,7 @@ export default {
         // a slideshow is active, or it's an animation or live photo.
         if (video) {
           if (data.loop || this.slideshow.active || firstPicture) {
-            this.playVideo(content.element.firstElementChild, data.loop);
+            this.playVideo(video, data.loop);
           }
         }
 
@@ -1351,8 +1358,11 @@ export default {
       this.lightbox.on("contentDeactivate", (ev) => {
         const { content } = ev;
 
-        // Stop any video currently playing on this slide.
-        if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
+        // Stop any video currently playing on this slide. For 360° video slides the
+        // element is owned by Photo Sphere Viewer and cached on the slide data.
+        if (content?.data?.sphereVideoEl instanceof HTMLMediaElement) {
+          this.pauseVideo(content.data.sphereVideoEl);
+        } else if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
           this.pauseVideo(content.element.firstElementChild);
         }
       });
@@ -2453,6 +2463,16 @@ export default {
       VIDEO_EVENT_TYPES.forEach((type) => {
         videoEl.addEventListener(type, this.videoEventListener, { signal: ctrl.signal });
       });
+
+      // Only push playback state into the shared reactive `video` singleton when this
+      // slide is the active one. PhotoSwipe preloads neighbors (preload: [1, 1]) and
+      // sphere binding resolves asynchronously, so a 360° video loaded next to the
+      // current photo would otherwise flip the controls bar on for that photo. When
+      // this slide is activated later, contentActivate re-resolves the cached element
+      // (data.sphereVideoEl) and sets the playback state then.
+      if (this.pswp()?.currSlide?.content !== content) {
+        return;
+      }
 
       this.video.controls = true;
       this.video.error = "";

@@ -1264,4 +1264,80 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(slide.src).toBeTruthy();
     });
   });
+
+  // bindSphereVideoControls writes to the single shared `video` reactive state.
+  // PhotoSwipe preloads neighbors and sphere binding is async, so the controls
+  // bar must only turn on for the active slide — otherwise a preloaded 360° video
+  // flips the bar on while a plain photo is on screen.
+  describe("bindSphereVideoControls active-slide gating", () => {
+    const makeVideoState = () => ({
+      controls: false,
+      error: "",
+      errorCode: 0,
+      duration: 0,
+      time: 0,
+      seekable: false,
+      playing: false,
+      paused: false,
+      ended: false,
+    });
+
+    it("turns controls on when its slide is the active one", () => {
+      const wrapper = mountLightbox();
+      const videoEl = document.createElement("video");
+      const content = { data: {} };
+      const ctx = { video: makeVideoState(), videoEventListener: () => {}, pswp: () => ({ currSlide: { content } }) };
+
+      wrapper.vm.$options.methods.bindSphereVideoControls.call(ctx, content, videoEl);
+      expect(ctx.video.controls).toBe(true);
+      expect(content.data.events).toBeInstanceOf(AbortController);
+    });
+
+    it("leaves controls off for a preloaded (non-active) neighbor but still binds listeners", () => {
+      const wrapper = mountLightbox();
+      const videoEl = document.createElement("video");
+      const content = { data: {} };
+      const activeContent = { data: {} };
+      const ctx = { video: makeVideoState(), videoEventListener: () => {}, pswp: () => ({ currSlide: { content: activeContent } }) };
+
+      wrapper.vm.$options.methods.bindSphereVideoControls.call(ctx, content, videoEl);
+      expect(ctx.video.controls).toBe(false);
+      expect(content.data.events).toBeInstanceOf(AbortController);
+    });
+
+    it("leaves controls off when there is no PhotoSwipe instance", () => {
+      const wrapper = mountLightbox();
+      const videoEl = document.createElement("video");
+      const content = { data: {} };
+      const ctx = { video: makeVideoState(), videoEventListener: () => {}, pswp: () => null };
+
+      wrapper.vm.$options.methods.bindSphereVideoControls.call(ctx, content, videoEl);
+      expect(ctx.video.controls).toBe(false);
+    });
+  });
+
+  // slideZoomable drives the `.is-zoomable` class that shows/hides the zoom
+  // button. 360° slides must report false so the flat zoom button is hidden.
+  describe("slideZoomable", () => {
+    const slideZoomable = (data) => {
+      const wrapper = mountLightbox();
+      return wrapper.vm.$options.methods.slideZoomable.call(wrapper.vm, data);
+    };
+
+    it("returns false for a 360° sphere slide", () => {
+      expect(slideZoomable({ isSphere: true, model: { Type: "image" } })).toBe(false);
+    });
+    it("returns false for video and animation slides", () => {
+      expect(slideZoomable({ model: { Type: "video" } })).toBe(false);
+      expect(slideZoomable({ model: { Type: "animated" } })).toBe(false);
+    });
+    it("returns true for a regular image and a live photo", () => {
+      expect(slideZoomable({ model: { Type: "image" } })).toBe(true);
+      expect(slideZoomable({ model: { Type: "live" } })).toBe(true);
+    });
+    it("defaults to true when data or model is missing", () => {
+      expect(slideZoomable({})).toBe(true);
+      expect(slideZoomable(undefined)).toBe(true);
+    });
+  });
 });
