@@ -133,7 +133,24 @@ func TestXMP(t *testing.T) {
 		// resolver preserves it because TakenAt.Nanosecond() != 0 short-circuits
 		// the TakenNs re-application.
 		assert.Equal(t, 123456000, data.TakenAt.Nanosecond())
-		assert.Equal(t, "2026-05-06 15:42:18", data.TakenAt.Format("2006-01-02 15:04:05"))
+		// The +02:00 offset is applied to the offset-less capture timestamp, so
+		// the wall-clock 15:42:18 local resolves to 13:42:18 UTC.
+		assert.Equal(t, "2026-05-06 13:42:18", data.TakenAt.UTC().Format("2006-01-02 15:04:05"))
+		assert.Equal(t, "2026-05-06 15:42:18", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
+	})
+	t.Run("SyntheticDateCreatedPriority", func(t *testing.T) {
+		// photoshop:DateCreated (capture time) must win over a later, disagreeing
+		// xmp:CreateDate (file write). No GPS, so nothing re-derives TakenAt — a
+		// regression guard for CreatedAt clobbering the higher-priority capture
+		// instant in the shared resolver.
+		data, err := XMP("testdata/xmp/synthetic/datecreated-priority.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2026-01-15 10:00:00", data.TakenAt.Format("2006-01-02 15:04:05"))
+		assert.Equal(t, "2026-01-15 10:00:00", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
 	})
 	t.Run("SyntheticGpsTimeCombined", func(t *testing.T) {
 		// GPS coordinates + combined GPS timestamp ("2026-05-06T15:42:18Z"), no
@@ -202,5 +219,27 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "HDR sunset", data.Caption)
 		assert.Contains(t, data.Keywords.String(), "hdr")
 		assert.Equal(t, ImageTypeHDR, data.ImageType)
+	})
+}
+
+func TestApplyTimeOffset(t *testing.T) {
+	base := time.Date(2026, 5, 6, 15, 42, 18, 123456000, time.UTC)
+
+	t.Run("PositiveOffset", func(t *testing.T) {
+		got := applyTimeOffset(base, "+02:00")
+		assert.Equal(t, "2026-05-06 15:42:18", got.Format("2006-01-02 15:04:05"))
+		assert.Equal(t, "2026-05-06 13:42:18", got.UTC().Format("2006-01-02 15:04:05"))
+		assert.Equal(t, 123456000, got.Nanosecond())
+	})
+
+	t.Run("NegativeOffset", func(t *testing.T) {
+		got := applyTimeOffset(base, "-05:30")
+		assert.Equal(t, "2026-05-06 15:42:18", got.Format("2006-01-02 15:04:05"))
+		assert.Equal(t, "2026-05-06 21:12:18", got.UTC().Format("2006-01-02 15:04:05"))
+	})
+
+	t.Run("InvalidOffsetReturnsInput", func(t *testing.T) {
+		got := applyTimeOffset(base, "not-an-offset")
+		assert.Equal(t, base, got)
 	})
 }

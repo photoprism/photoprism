@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime/debug"
+	"time"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -15,6 +16,21 @@ func XMP(fileName string) (data Data, err error) {
 	err = data.XMP(fileName)
 
 	return data, err
+}
+
+// applyTimeOffset reinterprets t's wall-clock components as local time in the
+// fixed zone described by an EXIF OffsetTime string ("+02:00", "-05:30").
+// Returns t unchanged if the offset cannot be parsed.
+func applyTimeOffset(t time.Time, offset string) time.Time {
+	z, err := time.Parse("-07:00", offset)
+	if err != nil {
+		return t
+	}
+
+	_, secs := z.Zone()
+	loc := time.FixedZone(offset, secs)
+
+	return time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), loc)
 }
 
 // XMP parses an XMP file and returns a Data struct.
@@ -137,11 +153,30 @@ func (data *Data) XMP(fileName string) (err error) {
 	if v := doc.TakenNs(); v > 0 {
 		data.TakenNs = v
 	}
-	if v := doc.CreatedAt(data.TimeZone); !v.IsZero() {
-		data.CreatedAt = v.UTC()
+	// CreatedAt only serves as a capture-time fallback for video/audio
+	// sidecars (xmpDM:CreationDate), where TakenAt has no source tag. When
+	// TakenAt is already set from photoshop:DateCreated, leaving CreatedAt
+	// empty stops the shared resolver from overwriting the higher-priority
+	// capture instant with the less-specific xmp:CreateDate.
+	if data.TakenAt.IsZero() {
+		if v := doc.CreatedAt(data.TimeZone); !v.IsZero() {
+			data.CreatedAt = v.UTC()
+		}
 	}
 	if v := doc.TimeOffset(); v != "" {
 		data.TimeOffset = v
+	}
+
+	// XMP capture-time tags carry no inline UTC offset, whereas the EXIF 2.31
+	// OffsetTime* value lives in a separate tag. Attach it to TakenAt and
+	// TakenAtLocal so the shared resolver — which assumes TakenAtLocal knows
+	// its own zone — can derive the correct UTC instant. Skip when the parsed
+	// timestamp already carries an offset (non-UTC zone).
+	if data.TimeOffset != "" && !data.TakenAt.IsZero() {
+		if _, off := data.TakenAt.Zone(); off == 0 {
+			data.TakenAt = applyTimeOffset(data.TakenAt, data.TimeOffset)
+			data.TakenAtLocal = data.TakenAt
+		}
 	}
 
 	if v := doc.Keywords(); len(v) != 0 {
