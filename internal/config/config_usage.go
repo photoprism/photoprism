@@ -2,27 +2,27 @@ package config
 
 import (
 	"math"
-	"os"
+	"sync/atomic"
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/fs/duf"
-	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// StorageLowThresholdPct is the percentage of total capacity below which the
-// storage folder is considered critically low on free space.
-const StorageLowThresholdPct = 1.0
+// DisableStorageCheck turns off the free storage probe by StorageLow. Init sets it from the
+// configured threshold (StorageFree <= 0), and StorageLow latches it true after a probe error
+// so a storage path whose free space cannot be read is not probed repeatedly. Exported so
+// tests with synthetic storage paths can reset it; atomic because StorageLow is called
+// concurrently by indexing workers, API handlers, and client config builds.
+var DisableStorageCheck atomic.Bool
 
-// skipStorageCheck disables the free-disk probe in StorageLow when set via
-// PHOTOPRISM_STORAGE_SKIP_CHECK, e.g. on filesystems where duf cannot read free space.
-var skipStorageCheck = txt.Bool(os.Getenv(EnvVar("STORAGE_SKIP_CHECK")))
-
+// usageCache is the disk usage information cache.
 var usageCache = gc.New(5*time.Minute, 5*time.Minute)
 
 // FlushUsageCache resets the usage information cache.
@@ -35,7 +35,10 @@ func FlushUsageCache() {
 // derive their values from the ratio helpers to align with Prometheus
 // conventions and avoid rounding artifacts.
 type Usage struct {
-	// File storage usage and quota (total).
+	// Indicates if free storage is below threshold.
+	StorageLow bool `json:"storageLow"`
+
+	// Originals volume usage and quota information.
 	FilesUsed    uint64 `json:"filesUsed"`
 	FilesUsedPct int    `json:"filesUsedPct"`
 	FilesFree    uint64 `json:"filesFree"`
@@ -79,10 +82,12 @@ func (info *Usage) UsersUsedRatio() float64 {
 }
 
 // Usage returns the used, free and total storage size in bytes and caches the result.
-func (c *Config) Usage() Usage {
-	// Return nil if feature is not enabled.
+func (c *Config) Usage() (info Usage) {
+	// When detailed usage info is disabled, still report the low-storage flag
+	// but skip the quota and database accounting below.
 	if !c.UsageInfo() {
-		return Usage{}
+		_, info.StorageLow, _ = c.StorageLow()
+		return info
 	}
 
 	originalsPath := c.OriginalsPath()
@@ -91,7 +96,7 @@ func (c *Config) Usage() Usage {
 		return cached.(Usage)
 	}
 
-	info := Usage{}
+	_, info.StorageLow, _ = c.StorageLow()
 
 	if err := c.Db().Unscoped().
 		Table("files").
@@ -193,11 +198,18 @@ func (c *Config) UsersQuotaReached(role acl.Role) bool {
 
 // StorageLow reports whether the storage folder is critically low on free disk space for safe indexing writes.
 func (c *Config) StorageLow() (free uint64, low bool, err error) {
-	if skipStorageCheck {
+	if DisableStorageCheck.Load() {
 		return 0, false, nil
 	}
 
-	return disk.StorageLow(c.StoragePath(), StorageLowThresholdPct)
+	free, low, err = disk.StorageLow(c.StoragePath())
+
+	if err != nil {
+		DisableStorageCheck.Store(true)
+		log.Debugf("storage: failed to detect free disk space (%s)", clean.Error(err))
+	}
+
+	return free, low, err
 }
 
 // InsufficientStorage reports whether new file writes should be rejected due to quota or low free disk space.

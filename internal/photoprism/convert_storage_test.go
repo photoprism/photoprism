@@ -17,10 +17,14 @@ func TestConvert_InsufficientStorage(t *testing.T) {
 	convert := NewConvert(cfg)
 	require.NotNil(t, convert)
 
+	// Reset the storage-check latch, which an earlier test may have tripped by probing a
+	// temp path that duf cannot resolve to a mount point.
+	config.DisableStorageCheck.Store(false)
+
 	t.Run("Healthy", func(t *testing.T) {
 		disk.FlushFree()
 		t.Cleanup(disk.FlushFree)
-		disk.SetFree(cfg.StoragePath(), 999, 1000)
+		disk.SetFree(cfg.StoragePath(), 999*disk.MB, 1000*disk.MB)
 		cfg.Options().FilesQuota = 0
 
 		assert.False(t, convert.insufficientStorage())
@@ -28,7 +32,7 @@ func TestConvert_InsufficientStorage(t *testing.T) {
 	t.Run("StorageLow", func(t *testing.T) {
 		disk.FlushFree()
 		t.Cleanup(disk.FlushFree)
-		disk.SetFree(cfg.StoragePath(), 1, 1000)
+		disk.SetFree(cfg.StoragePath(), 1*disk.MB, 1000*disk.MB)
 		cfg.Options().FilesQuota = 0
 
 		assert.True(t, convert.insufficientStorage())
@@ -46,7 +50,8 @@ func TestConvert_ToImage_InsufficientStorage(t *testing.T) {
 
 	disk.FlushFree()
 	t.Cleanup(disk.FlushFree)
-	disk.SetFree(cfg.StoragePath(), 1, 1000)
+	disk.SetFree(cfg.StoragePath(), 1*disk.MB, 1000*disk.MB)
+	config.DisableStorageCheck.Store(false)
 
 	_, err = convert.ToImage(mf, false)
 
@@ -63,7 +68,8 @@ func TestConvert_ToAvc_InsufficientStorage(t *testing.T) {
 
 	disk.FlushFree()
 	t.Cleanup(disk.FlushFree)
-	disk.SetFree(cfg.StoragePath(), 1, 1000)
+	disk.SetFree(cfg.StoragePath(), 1*disk.MB, 1000*disk.MB)
+	config.DisableStorageCheck.Store(false)
 
 	_, err = convert.ToAvc(mf, cfg.FFmpegEncoder(), false, false)
 

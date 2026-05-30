@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -217,6 +218,19 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("PARTNER_ID"),
 		}}, {
 		Flag: &cli.PathFlag{
+			Name:      "storage-path",
+			Aliases:   []string{"s"},
+			Usage:     "writable storage `PATH` for sidecar, cache, and database files",
+			EnvVars:   EnvVars("STORAGE_PATH"),
+			TakesFile: true,
+		}}, {
+		Flag: &cli.Float64Flag{
+			Name:    "storage-free",
+			Usage:   "`PERCENT` of free storage required for indexing, importing, and uploads (-1 disables check)",
+			Value:   disk.StorageLowPct,
+			EnvVars: EnvVars("STORAGE_FREE"),
+		}}, {
+		Flag: &cli.PathFlag{
 			Name:      "config-path",
 			Aliases:   []string{"config", "c"},
 			Usage:     "config storage `PATH` or options.yml filename, values in this file override CLI flags and environment variables if present",
@@ -261,13 +275,6 @@ var Flags = CliFlags{
 			Usage:   "relative `PATH` to create base and upload subdirectories for users",
 			Value:   fs.UsersDir,
 			EnvVars: EnvVars("USERS_PATH"),
-		}}, {
-		Flag: &cli.PathFlag{
-			Name:      "storage-path",
-			Aliases:   []string{"s"},
-			Usage:     "writable storage `PATH` for sidecar, cache, and database files",
-			EnvVars:   EnvVars("STORAGE_PATH"),
-			TakesFile: true,
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "import-path",

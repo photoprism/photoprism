@@ -52,7 +52,7 @@ func parseAcceptEncoding(header string) map[string]float64 {
 	if header == "" {
 		return result
 	}
-	for _, part := range strings.Split(header, ",") {
+	for part := range strings.SplitSeq(header, ",") {
 		part = strings.TrimSpace(part)
 		if part == "" {
 			continue
@@ -61,7 +61,7 @@ func parseAcceptEncoding(header string) map[string]float64 {
 		q := 1.0
 		if i := strings.IndexByte(part, ';'); i >= 0 {
 			token = strings.TrimSpace(part[:i])
-			for _, p := range strings.Split(part[i+1:], ";") {
+			for p := range strings.SplitSeq(part[i+1:], ";") {
 				p = strings.TrimSpace(p)
 				if !strings.HasPrefix(strings.ToLower(p), "q=") {
 					continue

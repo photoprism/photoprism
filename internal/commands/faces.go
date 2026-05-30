@@ -10,7 +10,6 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -126,13 +125,12 @@ func facesStatsAction(ctx *cli.Context) error {
 func facesAuditAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	get.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
@@ -171,13 +169,12 @@ func facesResetAction(ctx *cli.Context) error {
 
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	get.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
@@ -217,13 +214,12 @@ func facesResetAllAction(ctx *cli.Context) error {
 
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	get.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
@@ -245,13 +241,12 @@ func facesResetAllAction(ctx *cli.Context) error {
 func facesIndexAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	get.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
@@ -316,13 +311,12 @@ func facesIndexAction(ctx *cli.Context) error {
 func facesUpdateAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	get.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 
@@ -350,13 +344,12 @@ func facesUpdateAction(ctx *cli.Context) error {
 func facesOptimizeAction(ctx *cli.Context) error {
 	start := time.Now()
 
-	conf := config.NewConfig(ctx)
-	get.SetConfig(conf)
+	conf, err := InitConfig(ctx)
 
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := conf.Init(); err != nil {
+	if err != nil {
 		return err
 	}
 

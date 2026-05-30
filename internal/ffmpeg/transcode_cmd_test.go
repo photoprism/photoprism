@@ -74,7 +74,7 @@ func TestTranscodeCmd(t *testing.T) {
 		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -hwaccel vaapi -i SRC -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=nv12,hwupload -c:v h264_vaapi -map 0:v:0 -map 0:a:0? -ignore_unknown -qp 25 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -init_hw_device vaapi=va -hwaccel vaapi -hwaccel_device va -filter_hw_device va -i SRC -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=nv12,hwupload -c:v h264_vaapi -map 0:v:0 -map 0:a:0? -ignore_unknown -qp 25 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
 
 		// This transcoding test requires a supported hardware device that is properly configured:
 		if os.Getenv("PHOTOPRISM_FFMPEG_ENCODER") == "vaapi" {

@@ -280,8 +280,7 @@ dep-list-all:
 	go list -u -m -json all | go-mod-outdated
 vuln: audit
 audit: audit-frontend audit-backend
-audit-frontend:
-	npm audit --ignore-scripts --no-fund --no-audit --no-update-notifier
+audit-frontend: npm-audit
 audit-backend: dep-vuln
 dep-audit: dep-vuln
 dep-vuln:
@@ -299,12 +298,22 @@ npm-version:
 dep-npm:
 	@echo "Installing NPM package manager..."
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "npm@latest"; \
         else \
-	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "npm@latest"; \
         fi
-dep-js:
-	npm ci --ignore-scripts --no-update-notifier --no-audit
+dep-js: npm-ci
+npm-ci:
+	$(info Clean install of NPM dependencies...)
+	npm ci --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-install:
+	$(info Installing NPM dependencies...)
+	npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-update:
+	$(info Updating NPM dependencies in package.json and package-lock.json...)
+	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-audit:
+	npm audit --ignore-scripts --no-fund --no-update-notifier
 tools: gh claude codex
 codex: dep-codex codex-version codex-skills
 codex-version:
@@ -313,9 +322,9 @@ dep-codex:
 	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "@openai/codex@latest"; \
 	else \
-	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "@openai/codex@latest"; \
 	fi
 skills: agents-skills claude-skills
 agents-skills: codex-skills

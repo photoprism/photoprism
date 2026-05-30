@@ -2,7 +2,6 @@ package commands
 
 import (
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,11 +24,12 @@ func TestVideoBuildRemuxPlans(t *testing.T) {
 		ffmpeg.SetExclude(video.NewFormats("avi"))
 		t.Cleanup(func() { ffmpeg.SetExclude(saved) })
 
-		relPath := "videos/remux-excluded.avi"
-		absPath := filepath.Join(conf.OriginalsPath(), filepath.FromSlash(relPath))
-		require.NoError(t, os.MkdirAll(filepath.Dir(absPath), fs.ModeDir))
+		relPath := "testdata/remux-excluded.avi"
+		absPath := fs.Abs(relPath)
 		require.NoError(t, os.WriteFile(absPath, []byte("test"), fs.ModeFile))
-		t.Cleanup(func() { _ = os.Remove(absPath) })
+		t.Cleanup(func() {
+			_ = os.Remove(absPath)
+		})
 
 		results := []search.Photo{{
 			PhotoUID: "ptest-remux-excluded",

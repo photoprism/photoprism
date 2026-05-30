@@ -65,6 +65,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/checksum"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -267,6 +268,10 @@ func (c *Config) Init() error {
 
 	// Initialize thumbnail package.
 	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbLibrary())
+
+	// Set minimum free storage space in percent.
+	disk.StorageLowPct = c.StorageFree()
+	DisableStorageCheck.Store(disk.StorageLowPct <= 0)
 
 	// Load optional vision package configuration.
 	if visionYaml := c.VisionYaml(); !fs.FileExistsNotEmpty(visionYaml) {

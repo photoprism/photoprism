@@ -15,12 +15,16 @@ func TestIndex_StorageLow(t *testing.T) {
 	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
 	require.NotNil(t, ind)
 
+	// Reset the storage-check latch, which an earlier test may have tripped by probing a
+	// temp path that duf cannot resolve to a mount point.
+	config.DisableStorageCheck.Store(false)
+
 	// Seeding the cache keeps the verdict independent of the host filesystem and of
 	// duf's ability to resolve the temp directory to a mount point.
 	t.Run("Healthy", func(t *testing.T) {
 		disk.FlushFree()
 		t.Cleanup(disk.FlushFree)
-		disk.SetFree(cfg.StoragePath(), 999, 1000)
+		disk.SetFree(cfg.StoragePath(), 999*disk.MB, 1000*disk.MB)
 
 		assert.False(t, ind.storageLow())
 	})
@@ -28,7 +32,7 @@ func TestIndex_StorageLow(t *testing.T) {
 	t.Run("Low", func(t *testing.T) {
 		disk.FlushFree()
 		t.Cleanup(disk.FlushFree)
-		disk.SetFree(cfg.StoragePath(), 1, 1000)
+		disk.SetFree(cfg.StoragePath(), 1*disk.MB, 1000*disk.MB)
 
 		assert.True(t, ind.storageLow())
 	})

@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 
 	"github.com/stretchr/testify/assert"
@@ -28,6 +29,17 @@ func TestGetAlbum(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/albums/999000")
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Album not found", val.String())
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("GuestDeniedNotShared", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		GetAlbum(router)
+		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		// An album outside the guest's shared scope is reported as not found.
+		r := AuthenticatedRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8", sessId)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

@@ -30,7 +30,7 @@ import (
 //	@Produce		video/mp4
 //	@Tags			Files, Videos
 //	@Failure		403		{object}	i18n.Response
-//	@Param			thumb	path		string	true	"SHA1 video file hash"
+//	@Param			hash	path		string	true	"SHA1 video file hash"
 //	@Param			token	path		string	true	"user-specific security token provided with session"
 //	@Param			format	path		string	true	"video format, e.g. mp4"
 //	@Router			/api/v1/videos/{hash}/{token}/{format} [get]

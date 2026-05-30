@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dustin/go-humanize"
 	"github.com/karrick/godirwalk"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -67,18 +66,14 @@ func (ind *Index) Cancel() {
 
 // storageLow reports whether the storage path is too full to start or continue an index run.
 func (ind *Index) storageLow() bool {
-	free, low, err := ind.conf.StorageLow()
+	_, low, err := ind.conf.StorageLow()
 
-	if err != nil {
-		log.Warnf("index: %s (check disk space)", clean.Error(err))
+	if err != nil || !low {
 		return false
 	}
 
-	if !low {
-		return false
-	}
-
-	log.Errorf("index: only %s free, below %.1f%% threshold", humanize.Bytes(free), config.StorageLowThresholdPct)
+	// Do not leak server internals like the size of the storage volume.
+	log.Errorf("index: available storage is below the minimum threshold")
 	event.ErrorMsg(i18n.ErrInsufficientStorage)
 	return true
 }

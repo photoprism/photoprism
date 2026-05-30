@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -604,5 +605,44 @@ func TestDefaultsYamlResolution(t *testing.T) {
 		require.NoError(t, ctx.Set("defaults-yaml", filepath.Join(t.TempDir(), "missing.yml")))
 		require.NoError(t, ctx.Set("config-path", t.TempDir()))
 		require.Equal(t, "", defaultsYaml(ctx))
+	})
+}
+
+func TestConfig_StorageFree(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Pin the shared default so the "use default" cases are deterministic, and
+	// restore both the option and the package-level threshold afterwards.
+	origOpt := c.options.StorageFree
+	origPct := disk.StorageLowPct
+	disk.StorageLowPct = 1.0
+	t.Cleanup(func() {
+		c.options.StorageFree = origOpt
+		disk.StorageLowPct = origPct
+	})
+
+	t.Run("Disabled", func(t *testing.T) {
+		c.options.StorageFree = -1
+		assert.Equal(t, float64(-1), c.StorageFree())
+	})
+	t.Run("NegativeDisables", func(t *testing.T) {
+		c.options.StorageFree = -12.5
+		assert.Equal(t, float64(-1), c.StorageFree())
+	})
+	t.Run("ZeroUsesDefault", func(t *testing.T) {
+		c.options.StorageFree = 0
+		assert.Equal(t, 1.0, c.StorageFree())
+	})
+	t.Run("HundredOrMoreUsesDefault", func(t *testing.T) {
+		c.options.StorageFree = 100
+		assert.Equal(t, 1.0, c.StorageFree())
+		c.options.StorageFree = 250
+		assert.Equal(t, 1.0, c.StorageFree())
+	})
+	t.Run("CustomThreshold", func(t *testing.T) {
+		c.options.StorageFree = 5
+		assert.Equal(t, 5.0, c.StorageFree())
+		c.options.StorageFree = 99
+		assert.Equal(t, 99.0, c.StorageFree())
 	})
 }

@@ -47,6 +47,13 @@ func TestMain(m *testing.M) {
 		return c, c.Init()
 	}
 
+	// Init core config (no database) using the shared test config so commands
+	// like "show config" and "faces config" don't fall back to a storage path
+	// derived from the real originals directory.
+	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
+		return c, c.InitCore()
+	}
+
 	// Run unit tests.
 	code := m.Run()
 
@@ -128,9 +135,19 @@ func RunWithTestContext(cmd *cli.Command, args []string) (output string, err err
 	//       a nil pointer panic in the "github.com/urfave/cli/v2" package.
 	cmd.HideHelp = true
 
-	// Ensure DB connection is open for each command run (some commands call Shutdown).
-	if c := get.Config(); c != nil {
-		c.RegisterDb() // (re)register provider
+	// Snapshot the database connection settings before running the command. A
+	// command that rewrites them (e.g. cluster register persisting provisioned
+	// MySQL credentials) would otherwise make the post-command RegisterDb() below
+	// block in connectDb's 60s retry loop reaching for a server that isn't there.
+	c := get.Config()
+	var o *config.Options
+	var driver, dsn, name, server, user, password string
+	if c != nil {
+		o = c.Options()
+		driver, dsn, name = o.DatabaseDriver, o.DatabaseDSN, o.DatabaseName
+		server, user, password = o.DatabaseServer, o.DatabaseUser, o.DatabasePassword
+		// Ensure DB connection is open for each command run (some commands call Shutdown).
+		c.RegisterDb()
 	}
 
 	// Run command via cli.Command.Run but neutralize os.Exit so ExitCoder
@@ -142,9 +159,12 @@ func RunWithTestContext(cmd *cli.Command, args []string) (output string, err err
 		err = cmd.Run(ctx, args...)
 	})
 
-	// Re-open the database after the command completed so follow-up checks
-	// (potentially issued by the test itself) have an active connection.
-	if c := get.Config(); c != nil {
+	// Restore the original connection settings, then re-open so follow-up checks
+	// (potentially issued by the test itself) reconnect to the per-suite SQLite
+	// test DB rather than whatever server the command may have configured.
+	if c != nil {
+		o.DatabaseDriver, o.DatabaseDSN, o.DatabaseName = driver, dsn, name
+		o.DatabaseServer, o.DatabaseUser, o.DatabasePassword = server, user, password
 		c.RegisterDb()
 	}
 

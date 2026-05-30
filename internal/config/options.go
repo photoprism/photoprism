@@ -63,6 +63,8 @@ type Options struct {
 	Unsafe                    bool          `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                      bool          `yaml:"-" json:"-" flag:"demo"`
 	Sponsor                   bool          `yaml:"-" json:"-" flag:"sponsor"`
+	StoragePath               string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
+	StorageFree               float64       `yaml:"StorageFree" json:"-" flag:"storage-free"`
 	ConfigPath                string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	OptionsYaml               string        `json:"-" yaml:"-" flag:"-"`
 	DefaultsYaml              string        `json:"-" yaml:"-" flag:"defaults-yaml"`
@@ -70,7 +72,6 @@ type Options struct {
 	OriginalsLimit            int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit           int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	UsersPath                 string        `yaml:"UsersPath" json:"-" flag:"users-path"`
-	StoragePath               string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	ImportPath                string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	ImportDest                string        `yaml:"ImportDest" json:"-" flag:"import-dest"`
 	ImportAllow               string        `yaml:"ImportAllow" json:"ImportAllow" flag:"import-allow"`

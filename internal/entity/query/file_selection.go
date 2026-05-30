@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -86,6 +87,18 @@ func ShareSelection(originals bool) FileSelection {
 
 // SelectedFiles finds files based on the given selection form, e.g. for downloading or sharing.
 func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, err error) {
+	return selectedFiles(frm, o, nil)
+}
+
+// SelectedFilesForSession works like SelectedFiles but limits the result to the session's shared
+// scope. Full library and admin sessions are not limited, so this adds no overhead for them.
+func SelectedFilesForSession(frm form.Selection, o FileSelection, sess *entity.Session) (results entity.Files, err error) {
+	return selectedFiles(frm, o, sess)
+}
+
+// selectedFiles finds files based on the given selection form, optionally limited to the content
+// the session may access when sess is not nil.
+func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (results entity.Files, err error) {
 	if frm.Empty() {
 		return results, errors.New("no items selected")
 	}
@@ -176,6 +189,11 @@ func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, e
 	// Exclude archived photos?
 	if !o.Archived {
 		s = s.Where("photos.deleted_at IS NULL")
+	}
+
+	// Limit the selection to the session's shared scope (no-op for full-access sessions).
+	if sess != nil {
+		s = search.ScopeVisiblePhotos(s, sess)
 	}
 
 	// Find and return.

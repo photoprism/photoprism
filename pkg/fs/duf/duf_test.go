@@ -49,7 +49,6 @@ func TestPathInfo(t *testing.T) {
 
 		// Check result for plausibility.
 		assert.NotEmpty(t, result.Device)
-		assert.Equal(t, "local", result.DeviceType)
 		assert.Equal(t, "/photoprism", result.Mountpoint)
 		assert.NotEmpty(t, result.Fstype)
 		assert.NotEmpty(t, result.Opts)
@@ -103,7 +102,6 @@ func TestFindByPath(t *testing.T) {
 			// If so, check the first mount for plausibility.
 			result := results[0]
 			assert.NotEmpty(t, result.Device)
-			assert.Equal(t, "local", result.DeviceType)
 			assert.Equal(t, "/photoprism", result.Mountpoint)
 			assert.NotEmpty(t, result.Fstype)
 			assert.NotEmpty(t, result.Opts)

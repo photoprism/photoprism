@@ -24,7 +24,7 @@ func TestAlbums_InsufficientStorage(t *testing.T) {
 	conf := get.Config()
 	disk.FlushFree()
 	t.Cleanup(disk.FlushFree)
-	disk.SetFree(conf.StoragePath(), 1, 1000)
+	disk.SetFree(conf.StoragePath(), 1*disk.MB, 1000*disk.MB)
 
 	count, err := Albums(backupPath, true)
 
@@ -42,7 +42,7 @@ func TestDatabase_InsufficientStorage(t *testing.T) {
 	conf := get.Config()
 	disk.FlushFree()
 	t.Cleanup(disk.FlushFree)
-	disk.SetFree(conf.StoragePath(), 1, 1000)
+	disk.SetFree(conf.StoragePath(), 1*disk.MB, 1000*disk.MB)
 
 	err = Database(backupPath, "", false, true, 2)
 
@@ -53,7 +53,7 @@ func TestDatabase_StdoutBypassesStorageGate(t *testing.T) {
 	conf := get.Config()
 	disk.FlushFree()
 	t.Cleanup(disk.FlushFree)
-	disk.SetFree(conf.StoragePath(), 1, 1000)
+	disk.SetFree(conf.StoragePath(), 1*disk.MB, 1000*disk.MB)
 
 	// Stdout dumps must not be blocked by the storage gate so an operator can
 	// still offload a backup (for example over ssh) when the local volume is

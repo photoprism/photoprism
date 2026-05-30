@@ -53,15 +53,13 @@ const mountLightbox = () =>
     },
   });
 
-// allowAllConfig stubs the ACL gates that the lightbox now reads
-// through this.$config.deny("photos", "access_library"). Vue's
-// globalProperties (`$config`, `$session`) are not own properties of
-// `wrapper.vm`, so a `{ ...wrapper.vm, ... }` spread does NOT carry
-// them onto the synthetic test ctx — tests that drive methods like
-// fetchPhoto / preloadNextPhoto via $options.methods.<X>.call(ctx)
-// must add $config (or $session) explicitly. This helper is the
-// "library member" default; suites that exercise the denied path
-// override deny / allow inline.
+// allowAllConfig stubs the ACL gates some lightbox methods read via
+// this.$config.allow/deny. Vue's globalProperties (`$config`,
+// `$session`) are not own properties of `wrapper.vm`, so a
+// `{ ...wrapper.vm, ... }` spread does NOT carry them onto a synthetic
+// test ctx — methods driven via $options.methods.<X>.call(ctx) that
+// read $config must add it explicitly. This is the permissive default;
+// suites that exercise a denied path override deny / allow inline.
 const allowAllConfig = { allow: () => true, deny: () => false };
 
 describe("PLightbox (low-mock, jsdom-friendly)", () => {
@@ -765,8 +763,13 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     expect(caption).not.toContain("<img");
   });
 
-  it("fetchPhoto skips Photo.findCached when ACL denies photos:access_library", () => {
-    const spy = vi.spyOn(Photo, "findCached");
+  it("fetchPhoto loads reduced metadata even when ACL denies photos:access_library", async () => {
+    // The /photos/:uid endpoint now reduces detail server-side for
+    // shared-only sessions, so the sidebar preloads for every session and
+    // the previous slide's (stale) photo IS replaced by the loaded metadata;
+    // the sidebar's per-section ACL gates decide what renders.
+    const loaded = new Photo({ UID: "ps6sg6be2lvl0yh7", Title: "Shared" });
+    const spy = vi.spyOn(Photo, "findCached").mockResolvedValue(loaded);
     const wrapper = mountLightbox();
     const ctx = {
       ...wrapper.vm,
@@ -776,9 +779,28 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     };
 
     wrapper.vm.$options.methods.fetchPhoto.call(ctx, "ps6sg6be2lvl0yh7");
+    await Promise.resolve();
+    await Promise.resolve();
 
-    // Sessions without library access get an empty Photo (not null) so
-    // the sidebar can read this.view.photo.X without nullable chains.
+    expect(spy).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
+    expect(ctx.photo).toBe(loaded);
+    spy.mockRestore();
+  });
+
+  it("fetchPhoto resets to an empty Photo when the uid is missing", () => {
+    const spy = vi.spyOn(Photo, "findCached");
+    const wrapper = mountLightbox();
+    const ctx = {
+      ...wrapper.vm,
+      photo: new Photo({ UID: "stale" }),
+      model: new Thumb({ UID: "" }),
+      $config: allowAllConfig,
+    };
+
+    wrapper.vm.$options.methods.fetchPhoto.call(ctx, "");
+
+    // No uid → empty Photo (not null) so the sidebar can read
+    // this.view.photo.X without nullable chains, and no fetch is issued.
     expect(ctx.photo).toBeInstanceOf(Photo);
     expect(ctx.photo.UID).toBe("");
     expect(spy).not.toHaveBeenCalled();
@@ -801,25 +823,24 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     spy.mockRestore();
   });
 
-  // Symmetric to the fetchPhoto bypass above: prefetch must also skip
-  // network for sessions without library access, otherwise share-link
-  // visitors and other restricted sessions would issue extra
-  // GET /photos/:uid calls for slides whose long-form fields they aren't
-  // allowed to see anyway.
-  it("preloadNextPhoto skips Photo.prefetchAround when ACL denies photos:access_library", () => {
-    const spy = vi.spyOn(Photo, "prefetchAround");
+  // Symmetric to fetchPhoto: prefetch also runs for shared-only sessions
+  // now that /photos/:uid reduces detail server-side. Gating remains on
+  // sidebar visibility, not on library access.
+  it("preloadNextPhoto prefetches even when ACL denies photos:access_library", () => {
+    const spy = vi.spyOn(Photo, "prefetchAround").mockReturnValue(Promise.resolve([]));
     const wrapper = mountLightbox();
+    const models = [{ UID: "uid-curr" }, { UID: "uid-next" }];
     const ctx = {
       ...wrapper.vm,
       sidebarVisible: true,
-      models: [{ UID: "uid-curr" }, { UID: "uid-next" }],
+      models,
       index: 0,
       $config: { ...wrapper.vm.$config, deny: () => true, allow: () => false },
     };
 
     wrapper.vm.$options.methods.preloadNextPhoto.call(ctx);
 
-    expect(spy).not.toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith(models, 0, { before: 0, after: 1 });
     spy.mockRestore();
   });
 

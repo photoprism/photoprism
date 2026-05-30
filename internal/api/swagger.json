@@ -12528,7 +12528,7 @@
                     {
                         "description": "SHA1 video file hash",
                         "in": "path",
-                        "name": "thumb",
+                        "name": "hash",
                         "required": true,
                         "type": "string"
                     },
