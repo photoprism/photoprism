@@ -155,7 +155,8 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 		return fmt.Errorf("photo is nil")
 	}
 
-	locChanged := m.PhotoLat != form.PhotoLat || m.PhotoLng != form.PhotoLng || m.PhotoCountry != form.PhotoCountry
+	coordinatesChanged := m.PhotoLat != form.PhotoLat || m.PhotoLng != form.PhotoLng
+	countryChanged := m.PhotoCountry != form.PhotoCountry
 
 	if err := deepcopier.Copy(m).From(form); err != nil {
 		return err
@@ -190,8 +191,12 @@ func SavePhotoForm(m *Photo, form form.Photo) error {
 		details.Keywords = strings.Join(txt.UniqueWords(txt.Words(details.Keywords)), ", ")
 	}
 
-	if locChanged && (m.PlaceSrc == SrcManual || m.PlaceSrc == SrcBatch) {
+	if coordinatesChanged && (m.PlaceSrc == SrcManual || m.PlaceSrc == SrcBatch) {
 		locKeywords, labels := m.UpdateLocation()
+
+		if countryChanged {
+			m.PhotoCountry = form.PhotoCountry
+		}
 
 		m.AddLabels(labels)
 

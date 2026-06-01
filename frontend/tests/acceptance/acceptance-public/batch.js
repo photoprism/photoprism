@@ -117,7 +117,7 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
   await t.click(photoedit.locationAction);
   await t.typeText(photoedit.locationSearch, "Brandenburger Tor Berlin").wait(5000).pressKey("enter");
   await t.click(photoedit.locationConfirm);
-  await t.expect(photoedit.country.hasAttribute("readonly")).ok();
+  await t.expect(photoedit.country.hasAttribute("readonly")).notOk();
   await t.expect(photoedit.countryValue.innerText).eql("Germany");
   await t.click(Selector(".input-labels input"));
 

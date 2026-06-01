@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { shallowMount, config as VTUConfig } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import PPhotoBatchEdit from "component/photo/batch-edit.vue";
 import * as contexts from "options/contexts";
@@ -580,7 +580,7 @@ describe("component/photo/batch-edit", () => {
 
     it("should clamp invalid index to first photo", () => {
       const thumbMock = [{ UID: "uid1" }];
-      const spy = vi.spyOn(Thumb, "fromPhotos").mockReturnValue(thumbMock);
+      vi.spyOn(Thumb, "fromPhotos").mockReturnValue(thumbMock);
 
       const ctx = wrapper.vm.getLightboxContext(5);
 
@@ -636,28 +636,28 @@ describe("component/photo/batch-edit", () => {
     });
   });
 
-  describe("Country field read-only when coordinates are set", () => {
+  describe("Country field editable when coordinates are set", () => {
     beforeEach(() => {
       wrapper.vm.values = { ...mockValues };
       wrapper.vm.setFormData();
     });
 
-    it("is not read-only when both Lat/Lng are zero", () => {
+    it("stays editable when both Lat/Lng are zero", () => {
       wrapper.vm.formData.Lat.value = 0;
       wrapper.vm.formData.Lng.value = 0;
       expect(wrapper.vm.isCountryReadOnly).toBe(false);
     });
 
-    it("is read-only when Lat is non-zero", () => {
+    it("stays editable when Lat is non-zero", () => {
       wrapper.vm.formData.Lat.value = 37.5;
       wrapper.vm.formData.Lng.value = 0;
-      expect(wrapper.vm.isCountryReadOnly).toBe(true);
+      expect(wrapper.vm.isCountryReadOnly).toBe(false);
     });
 
-    it("is read-only when Lng is non-zero", () => {
+    it("stays editable when Lng is non-zero", () => {
       wrapper.vm.formData.Lat.value = 0;
       wrapper.vm.formData.Lng.value = -122.4;
-      expect(wrapper.vm.isCountryReadOnly).toBe(true);
+      expect(wrapper.vm.isCountryReadOnly).toBe(false);
     });
   });
 
