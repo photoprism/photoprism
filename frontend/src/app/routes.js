@@ -153,6 +153,11 @@ export default [
       if ($session.hasLoginRedirectUrl()) {
         $session.followLoginRedirectUrl();
         next(false);
+      } else if ($session.getDefaultRoute() === loginRoute) {
+        // Some editions (e.g. the Portal for non-admin users) keep the login
+        // page as the default route to render an instance selector; proceed
+        // instead of self-redirecting into a loop.
+        next();
       } else {
         next({ name: $session.getDefaultRoute() });
       }
