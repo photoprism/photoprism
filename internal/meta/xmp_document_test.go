@@ -9,6 +9,8 @@ import (
 	"github.com/antchfx/xmlquery"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // parseXMPString parses an in-memory XMP string and returns the root
@@ -41,7 +43,7 @@ func loadXmp(t *testing.T, path string) *XmpDocument {
 func loadXmpString(t *testing.T, body string) *XmpDocument {
 	t.Helper()
 	tmp := filepath.Join(t.TempDir(), "synthetic.xmp")
-	if err := os.WriteFile(tmp, []byte(body), 0o600); err != nil {
+	if err := os.WriteFile(tmp, []byte(body), fs.ModeFile); err != nil {
 		t.Fatalf("write temp xmp: %v", err)
 	}
 	return loadXmp(t, tmp)
@@ -204,11 +206,11 @@ func TestXmpDocument_Load(t *testing.T) {
 	})
 }
 
-// writeFile writes content to path with mode 0600. Returns the
+// writeFile writes content to path with mode fs.ModeFile. Returns the
 // underlying error so tests can assert on it.
 func writeFile(t *testing.T, path, content string) error {
 	t.Helper()
-	return os.WriteFile(path, []byte(content), 0o600)
+	return os.WriteFile(path, []byte(content), fs.ModeFile)
 }
 
 func TestXmpDocument_TitleAltLanguageFallback(t *testing.T) {
@@ -262,6 +264,55 @@ func TestXmpDocument_KeywordsBagAndSeq(t *testing.T) {
 	t.Run("EmptyForMissingSubject", func(t *testing.T) {
 		doc := loadXmp(t, "testdata/fstop-favorite.xmp")
 		assert.Equal(t, "", doc.Keywords())
+	})
+}
+
+func TestXmpDocument_Subject(t *testing.T) {
+	t.Run("MirrorsKeywordsFromDcSubject", func(t *testing.T) {
+		// dc:subject is first in the ExifTool Subject cascade and present in
+		// most tagged files, so Subject equals the keyword list.
+		doc := loadXmp(t, "testdata/xmp/darktable/aurora.jpg.xmp")
+		assert.Equal(t, doc.Keywords(), doc.Subject())
+		assert.Contains(t, doc.Subject(), "Aurora")
+	})
+	t.Run("PersonInImageFallback", func(t *testing.T) {
+		// No dc:subject → Subject falls back to Iptc4xmpExt:PersonInImage.
+		doc := loadXmpString(t, `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about="" xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/">
+   <Iptc4xmpExt:PersonInImage>
+    <rdf:Bag>
+     <rdf:li>Alice</rdf:li>
+     <rdf:li>Bob</rdf:li>
+    </rdf:Bag>
+   </Iptc4xmpExt:PersonInImage>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>`)
+		assert.Equal(t, "", doc.Keywords())
+		assert.Equal(t, "Alice, Bob", doc.Subject())
+	})
+	t.Run("HierarchicalSubjectFallback", func(t *testing.T) {
+		// No dc:subject, no PersonInImage → lr:hierarchicalSubject.
+		doc := loadXmpString(t, `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about="" xmlns:lr="http://ns.adobe.com/lightroom/1.0/">
+   <lr:hierarchicalSubject>
+    <rdf:Bag>
+     <rdf:li>Nature|Animals</rdf:li>
+     <rdf:li>Places</rdf:li>
+    </rdf:Bag>
+   </lr:hierarchicalSubject>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>`)
+		assert.Equal(t, "Nature|Animals, Places", doc.Subject())
+	})
+	t.Run("EmptyWhenNoSource", func(t *testing.T) {
+		doc := loadXmp(t, "testdata/fstop-favorite.xmp")
+		assert.Equal(t, "", doc.Subject())
 	})
 }
 
@@ -788,7 +839,6 @@ func TestXmpDocument_DarktableFixture(t *testing.T) {
 		assert.Equal(t, "PhotoPrism", doc.Artist())
 		assert.Equal(t, "CC-BY-SA 4.0", doc.Copyright())
 	})
-
 	t.Run("BagFormKeywords", func(t *testing.T) {
 		// Darktable writes <dc:subject><rdf:Bag>. The old reader
 		// dropped this entirely (it only handled <rdf:Seq>); the new
@@ -798,7 +848,6 @@ func TestXmpDocument_DarktableFixture(t *testing.T) {
 		assert.Contains(t, got, "Iceland")
 		assert.Contains(t, got, "Nature")
 	})
-
 	t.Run("TwoComponentGPSForm", func(t *testing.T) {
 		// The fixture carries lat="87,21.291962N" / lng="179,59.546814W" —
 		// the canonical regression case for the GpsToDecimal extension.
@@ -808,7 +857,6 @@ func TestXmpDocument_DarktableFixture(t *testing.T) {
 		assert.Less(t, doc.Lng(), 0.0)
 		assert.InDelta(t, -179.9924, doc.Lng(), 0.001)
 	})
-
 	t.Run("OutOfScopeTagsIgnored", func(t *testing.T) {
 		// xmp:Rating is gap-analysis section 2 (rating/triage feature
 		// epic). The reader has no accessor for it, so no assertion is

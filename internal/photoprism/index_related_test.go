@@ -237,6 +237,68 @@ func TestIndexRelated(t *testing.T) {
 		// Camera serial from XMP wiring.
 		assert.Equal(t, "BODY-XMP-9001", photo.CameraSerial)
 	})
+	t.Run("XmpMirrorsIdentityToPrimaryFile", func(t *testing.T) {
+		// InstanceID and Software from an XMP sidecar must reach the primary
+		// JPEG file row (per-file UI fields render the primary) — the IsXMP
+		// branch writes only the changed columns instead of a full File.Save().
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-primary-mirror")
+
+		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-primary-mirror"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		xmpContent := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/">
+   <xmp:CreatorTool>SyntheticEditor 3.2</xmp:CreatorTool>
+   <xmpMM:InstanceID>xmp.iid:INSTANCE-XMP-7777</xmpMM:InstanceID>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(xmpContent), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+		assert.False(t, result.Failed())
+		assert.True(t, result.Success())
+
+		primary, primaryErr := entity.PrimaryFile(result.PhotoUID)
+		if primaryErr != nil {
+			t.Fatal(primaryErr)
+		}
+		assert.Equal(t, "xmp.iid:INSTANCE-XMP-7777", primary.InstanceID)
+		assert.Equal(t, "SyntheticEditor 3.2", primary.FileSoftware)
+	})
 	t.Run("XmpSidecarTimezoneFromGps", func(t *testing.T) {
 		// Apple sidecar timestamp "2021-03-24T13:07:29+01:00" with Berlin GPS
 		// (52.525, 13.369) must reach the entity as Europe/Berlin time zone

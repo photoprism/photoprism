@@ -24,7 +24,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 
 		assert.Equal(t, created, data.TakenAt)
 	})
-
 	t.Run("GpsUtcFallback", func(t *testing.T) {
 		// No TakenAt / TakenAtLocal, but GPSDateTime is present — the
 		// resolver promotes the GPS UTC timestamp and clears any stale
@@ -38,7 +37,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 		assert.Equal(t, "UTC", data.TimeZone)
 		assert.True(t, data.TakenAtLocal.IsZero() || data.TakenAtLocal.Equal(gps))
 	})
-
 	t.Run("PlausibilityCheckFork", func(t *testing.T) {
 		// Local and UTC time differ by >27h → the resolver assumes the
 		// local timestamp is bogus and forces it to mirror the UTC value.
@@ -50,7 +48,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 
 		assert.Equal(t, data.TakenAt.UTC(), data.TakenAtLocal.UTC())
 	})
-
 	t.Run("Mp4DefaultsToUtc", func(t *testing.T) {
 		// MP4 containers conventionally store UTC timestamps with no
 		// explicit zone, so the resolver flips to UTC when MimeType
@@ -62,7 +59,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 
 		assert.Equal(t, "UTC", data.TimeZone)
 	})
-
 	t.Run("QuicktimeDefaultsToUtc", func(t *testing.T) {
 		taken := time.Date(2024, 6, 15, 12, 0, 0, 0, time.UTC)
 		data := Data{TakenAt: taken, MimeType: MimeQuicktime}
@@ -71,7 +67,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 
 		assert.Equal(t, "UTC", data.TimeZone)
 	})
-
 	t.Run("GpsResolvesZoneAndLocal", func(t *testing.T) {
 		// Berlin GPS + Berlin wall-clock. Resolver picks the IANA zone
 		// from coordinates and derives the UTC instant from the local
@@ -91,7 +86,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 		assert.Equal(t, time.Date(2024, 1, 15, 16, 28, 25, 0, time.UTC), data.TakenAt.UTC())
 		assert.Equal(t, "2024-01-15 17:28:25", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
 	})
-
 	t.Run("OffsetResolvesZone", func(t *testing.T) {
 		// No GPS, no wall-clock zone — the resolver falls back to the
 		// TimeOffset string ("+02:00") to derive a fixed-offset zone.
@@ -106,7 +100,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 
 		assert.Equal(t, "UTC+2", data.TimeZone)
 	})
-
 	t.Run("FallbackLocalFromUtc", func(t *testing.T) {
 		// TakenAtLocal zero, TakenAt set, no GPS/offset — resolver fills
 		// in TakenAtLocal so downstream consumers always see a value.
@@ -117,7 +110,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 
 		assert.False(t, data.TakenAtLocal.IsZero())
 	})
-
 	t.Run("NanosAppliedToBoth", func(t *testing.T) {
 		// Sub-second precision lives in TakenNs (mirroring SubSecTimeOriginal).
 		// The resolver applies it to both TakenAt and TakenAtLocal when the
@@ -135,7 +127,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 		assert.Equal(t, 123456789, data.TakenAt.Nanosecond())
 		assert.Equal(t, 123456789, data.TakenAtLocal.Nanosecond())
 	})
-
 	t.Run("NoopOnEmpty", func(t *testing.T) {
 		// All time fields zero — the resolver must not panic and must
 		// leave the receiver in a coherent (still empty) state.
@@ -146,7 +137,6 @@ func TestData_ResolveTimeZone(t *testing.T) {
 		assert.True(t, data.TakenAt.IsZero())
 		assert.True(t, data.TakenAtLocal.IsZero())
 	})
-
 	t.Run("PreservesTakenAtIfNonZero", func(t *testing.T) {
 		// CreatedAt empty, TakenAt populated — the resolver must not blank
 		// out a non-zero TakenAt just because CreatedAt is missing.

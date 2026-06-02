@@ -182,14 +182,21 @@ func (data *Data) XMP(fileName string) (err error) {
 	if v := doc.Keywords(); len(v) != 0 {
 		data.AddKeywords(v)
 	}
+	// Subject mirrors the ExifTool Subject cascade (dc:subject usually wins,
+	// so Subject normally equals the keyword list) so XMP-sidecar photos get
+	// the same details.Subject the embedded/ExifTool JSON path would produce.
+	if v := doc.Subject(); v != "" {
+		data.Subject = SanitizeMeta(v)
+	}
 
 	data.Favorite = doc.Favorite()
 
 	// Auto-derive keywords from projection and caption text so XMP-only
 	// photos surface in the same searches as EXIF-indexed photos. Mirrors
-	// the EXIF and ExifTool JSON flows (exif.go:321-328,
-	// json_exiftool.go:282-289). AutoAddKeywords also sets data.ImageType
-	// to ImageTypeHDR when the caption mentions "hdr".
+	// the EXIF and ExifTool JSON flows (exif.go's ProjectionType/ImageDescription
+	// keyword block, json_exiftool.go's panorama/caption keyword block).
+	// AutoAddKeywords also sets data.ImageType to ImageTypeHDR when the
+	// caption mentions "hdr".
 	if projection.Equirectangular.Equal(data.Projection) {
 		data.AddKeywords(KeywordPanorama)
 	}

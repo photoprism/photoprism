@@ -511,14 +511,31 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// UI surfaces it (per-file fields render the primary JPEG/HEIC).
 			// ColorProfile and Projection are not mirrored — they describe
 			// physical container properties, not user-supplied metadata.
+			// Only the changed columns are written: a full Save() would also
+			// re-resolve the primary flag and regenerate the search index,
+			// which neither InstanceID nor Software affects, and would issue
+			// those writes on every re-index pass even when nothing changed.
 			if primary, primaryErr := photo.PrimaryFile(); primaryErr == nil && primary != nil {
+				prevInstanceID, prevSoftware := primary.InstanceID, primary.FileSoftware
+
 				if data.InstanceID != "" {
-					log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 					primary.InstanceID = data.InstanceID
 				}
 				primary.SetSoftware(data.Software)
-				if saveErr := primary.Save(); saveErr != nil {
-					log.Warnf("index: %s could not save primary file metadata (%s)", logName, saveErr)
+
+				values := entity.Values{}
+				if primary.InstanceID != prevInstanceID {
+					log.Infof("index: %s has instance_id %s", logName, clean.Log(primary.InstanceID))
+					values["instance_id"] = primary.InstanceID
+				}
+				if primary.FileSoftware != prevSoftware {
+					values["file_software"] = primary.FileSoftware
+				}
+				if len(values) > 0 {
+					values["updated_at"] = entity.Now()
+					if saveErr := primary.Updates(values); saveErr != nil {
+						log.Warnf("index: %s could not save primary file metadata (%s)", logName, saveErr)
+					}
 				}
 			}
 

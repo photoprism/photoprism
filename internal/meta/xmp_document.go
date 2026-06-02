@@ -52,6 +52,7 @@ var xmpNamespaces = map[string]string{
 	"GPano":        "http://ns.google.com/photos/1.0/panorama/",
 	"Iptc4xmpCore": "http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/",
 	"Iptc4xmpExt":  "http://iptc.org/std/Iptc4xmpExt/2008-02-29/",
+	"lr":           "http://ns.adobe.com/lightroom/1.0/",
 	"fstop":        "http://www.fstopapp.com/xmp/",
 }
 
@@ -268,6 +269,16 @@ var (
 	// reader emit Seq.
 	xmpKeywordsBag = mustCompile("//dc:subject/rdf:Bag/rdf:li")
 	xmpKeywordsSeq = mustCompile("//dc:subject/rdf:Seq/rdf:li")
+
+	// xmpPersonBag / xmpPersonSeq: Iptc4xmpExt:PersonInImage containers
+	// (names of people depicted) — a Subject cascade fallback.
+	xmpPersonBag = mustCompile("//Iptc4xmpExt:PersonInImage/rdf:Bag/rdf:li")
+	xmpPersonSeq = mustCompile("//Iptc4xmpExt:PersonInImage/rdf:Seq/rdf:li")
+
+	// xmpHierarchicalBag / xmpHierarchicalSeq: lr:hierarchicalSubject
+	// containers (Lightroom "Nature|Animals" paths) — a Subject fallback.
+	xmpHierarchicalBag = mustCompile("//lr:hierarchicalSubject/rdf:Bag/rdf:li")
+	xmpHierarchicalSeq = mustCompile("//lr:hierarchicalSubject/rdf:Seq/rdf:li")
 
 	// xmpFavoriteAttr: F-Stop favorite attribute on rdf:Description.
 	xmpFavoriteAttr = mustCompile("//rdf:Description/@fstop:favorite")
@@ -536,14 +547,36 @@ func (doc *XmpDocument) Notes() string {
 	return SanitizeString(xmpNotesChain.firstNonEmpty(doc.doc))
 }
 
+// joinBagOrSeq joins an rdf:Bag container's entries (Adobe/Darktable/digiKam)
+// or, when no Bag is present, the rdf:Seq entries (Apple, older writers) with
+// ", ". Bag wins when both are present.
+func (doc *XmpDocument) joinBagOrSeq(bag, seq *xpath.Expr) string {
+	if v := queryAll(doc.doc, bag); len(v) > 0 {
+		return strings.Join(v, ", ")
+	}
+	return strings.Join(queryAll(doc.doc, seq), ", ")
+}
+
 // Keywords returns dc:subject entries joined with ", ".
 // Priority: dc:subject/rdf:Bag (Adobe/Darktable/digiKam) → dc:subject/rdf:Seq
 // (Apple, older writers). Bag wins when both are present.
 func (doc *XmpDocument) Keywords() string {
-	if bag := queryAll(doc.doc, xmpKeywordsBag); len(bag) > 0 {
-		return strings.Join(bag, ", ")
+	return doc.joinBagOrSeq(xmpKeywordsBag, xmpKeywordsSeq)
+}
+
+// Subject returns descriptive subject text, mirroring the ExifTool Subject
+// cascade so the XMP sidecar path fills meta.Data.Subject identically to the
+// embedded/ExifTool JSON path. Priority: dc:subject (same source as Keywords,
+// present in virtually all tagged files) → Iptc4xmpExt:PersonInImage →
+// lr:hierarchicalSubject. The first non-empty container wins.
+func (doc *XmpDocument) Subject() string {
+	if v := doc.Keywords(); v != "" {
+		return v
 	}
-	return strings.Join(queryAll(doc.doc, xmpKeywordsSeq), ", ")
+	if v := doc.joinBagOrSeq(xmpPersonBag, xmpPersonSeq); v != "" {
+		return v
+	}
+	return doc.joinBagOrSeq(xmpHierarchicalBag, xmpHierarchicalSeq)
 }
 
 // Favorite reports the F-Stop custom-namespace favorite flag.

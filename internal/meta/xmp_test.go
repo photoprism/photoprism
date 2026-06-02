@@ -50,6 +50,9 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Michael Mayer", data.Artist)
 		assert.Equal(t, "Example file for development", data.Caption)
 		assert.Equal(t, "This is an (edited) legal notice", data.Copyright)
+		// dc:subject mirrors into Subject for ExifTool parity (the cascade's
+		// first source), so XMP-sidecar photos get the same details.Subject.
+		assert.Equal(t, "desk, coffee, computer", data.Subject)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
 		assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)
