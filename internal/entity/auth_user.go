@@ -777,6 +777,12 @@ func (m *User) AclRole() acl.Role {
 
 	switch {
 	case m.SuperAdmin:
+		// Super admins resolve to the configured owner role (Admin.UserRole —
+		// cluster_admin on the Portal, admin on CE), so the flag acts as lockout
+		// insurance: an owner keeps full access even if their stored role drifts.
+		if r := acl.Role(Admin.UserRole); acl.IsAdminRole(r) {
+			return r
+		}
 		return acl.RoleAdmin
 	case role == "":
 		return acl.RoleNone
@@ -884,7 +890,13 @@ func (m *User) IsAdmin() bool {
 		return false
 	}
 
-	return m.IsSuperAdmin() || m.IsRegistered() && m.AclRole() == acl.RoleAdmin
+	if m.IsSuperAdmin() {
+		return true
+	} else if !m.IsRegistered() {
+		return false
+	}
+
+	return acl.IsAdminRole(m.AclRole())
 }
 
 // IsSuperAdmin checks if the user is a super admin.
@@ -1328,8 +1340,8 @@ func (m *User) PrivilegeLevelChange(frm form.User) bool {
 func (m *User) SaveForm(frm form.User, u *User) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be modified")
-	} else if (m.ID == 1 || frm.SuperAdmin) && acl.RoleAdmin.NotEqual(frm.Role()) {
-		return fmt.Errorf("super admin must not have a non-admin role")
+	} else if (m.ID == 1 || frm.SuperAdmin) && !acl.IsAdminRole(acl.Role(frm.Role())) {
+		return fmt.Errorf("super admin must have an administrator role")
 	} else if frm.BasePath != "" && clean.UserPath(frm.BasePath) == "" {
 		return fmt.Errorf("invalid base folder")
 	} else if frm.UploadPath != "" && clean.UserPath(frm.UploadPath) == "" {
@@ -1372,9 +1384,10 @@ func (m *User) SaveForm(frm form.User, u *User) error {
 			m.DeletedAt = nil
 		}
 
-		// Prevent admins from locking themselves out.
+		// Prevent admins from changing their own role or locking themselves out:
+		// keep the current (admin-tier) role and login enabled rather than forcing
+		// the plain admin role, so a cluster_admin owner is not downgraded.
 		if u.Equal(m) {
-			m.SetRole(acl.RoleAdmin.String())
 			m.CanLogin = true
 		} else {
 			m.SetRole(frm.Role())
@@ -1402,14 +1415,20 @@ func (m *User) SaveForm(frm form.User, u *User) error {
 		m.SetUploadPath(frm.UploadPath)
 	}
 
-	// Ensure super admins never have a non-admin role.
-	if m.SuperAdmin {
-		m.SetRole(acl.RoleAdmin.String())
+	// Super admins hold the configured owner role (Admin.UserRole — cluster_admin
+	// on the Portal, admin on CE); restore it if a super admin's stored role has
+	// drifted, so the stored role and the SuperAdmin flag stay consistent.
+	if m.SuperAdmin && acl.Role(m.UserRole) != acl.Role(Admin.UserRole) {
+		m.SetRole(Admin.UserRole)
 	}
 
-	// Make sure that the initial admin user cannot lock itself out.
-	if m.ID == Admin.ID && (m.AclRole() != acl.RoleAdmin || !m.SuperAdmin || !m.CanLogin) {
-		m.SetRole(acl.RoleAdmin.String())
+	// Make sure that the initial admin user cannot lock itself out, restoring the
+	// configured default role (Admin.UserRole — cluster_admin on the Portal) rather
+	// than a hardcoded admin role, so a cluster_admin owner is not downgraded.
+	if m.ID == Admin.ID && (!acl.IsAdminRole(m.AclRole()) || !m.SuperAdmin || !m.CanLogin) {
+		if !acl.IsAdminRole(m.AclRole()) {
+			m.SetRole(Admin.UserRole)
+		}
 		m.SuperAdmin = true
 		m.CanLogin = true
 	}

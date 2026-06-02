@@ -8,18 +8,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRoleStrings_Strings_SortedAndNoEmpty(t *testing.T) {
+func TestRoleStrings_Strings_SortedAndExcludesNonAssignable(t *testing.T) {
 	m := RoleStrings{
-		"visitor": RoleVisitor,
-		"":        RoleNone,
-		"guest":   RoleGuest,
-		"admin":   RoleAdmin,
+		"visitor":     RoleVisitor,
+		"":            RoleNone,
+		RoleAliasNone: RoleNone,
+		"app":         RoleInstance,
+		"guest":       RoleGuest,
+		"admin":       RoleAdmin,
 	}
 
 	got := m.Strings()
 
-	// Expect deterministic, sorted output and no empty entries.
-	assert.Equal(t, []string{"admin", "guest", "visitor"}, got)
+	// Expect deterministic, sorted output; the empty string, the "none" alias,
+	// the "app" alias, and the "visitor" share-link role are all excluded.
+	assert.Equal(t, []string{"admin", "guest"}, got)
 	assert.True(t, sort.StringsAreSorted(got))
 }
 
@@ -47,8 +50,13 @@ func TestRoleStrings_CliUsageString(t *testing.T) {
 		assert.Equal(t, "admin, or guest", m.CliUsageString())
 	})
 	t.Run("Three", func(t *testing.T) {
-		m := RoleStrings{"visitor": RoleVisitor, "guest": RoleGuest, "admin": RoleAdmin}
-		assert.Equal(t, "admin, guest, or visitor", m.CliUsageString())
+		m := RoleStrings{"user": RoleUser, "guest": RoleGuest, "admin": RoleAdmin}
+		assert.Equal(t, "admin, guest, or user", m.CliUsageString())
+	})
+	t.Run("ExcludesNonAssignable", func(t *testing.T) {
+		// The "visitor" role and the "none" alias are never listed for assignment.
+		m := RoleStrings{"visitor": RoleVisitor, RoleAliasNone: RoleNone, "admin": RoleAdmin}
+		assert.Equal(t, "admin", m.CliUsageString())
 	})
 }
 
@@ -84,36 +92,43 @@ func TestRoles_Allow(t *testing.T) {
 }
 
 func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
-	t.Run("ClientRolesStringsIncludeAliasNoneExcludeEmpty", func(t *testing.T) {
+	t.Run("ClientRolesStringsExcludeNoneAndEmpty", func(t *testing.T) {
 		got := ClientRoles.Strings()
-		// Contains exactly the expected elements, order not enforced.
-		assert.ElementsMatch(t, []string{"admin", "instance", "client", "none", "portal", "service"}, got)
-		// Does not include empty string
+		// Contains exactly the assignable roles, order not enforced; the empty
+		// string and the "none" alias are excluded.
+		assert.ElementsMatch(t, []string{"admin", "instance", "client", "portal", "service"}, got)
 		for _, s := range got {
 			assert.NotEqual(t, "", s)
+			assert.NotEqual(t, "none", s)
 		}
 	})
-	t.Run("UserRolesStringsIncludeAliasNoneExcludeEmpty", func(t *testing.T) {
+	t.Run("UserRolesStringsExcludeNoneVisitorAndEmpty", func(t *testing.T) {
 		got := UserRoles.Strings()
-		assert.ElementsMatch(t, []string{"admin", "guest", "none", "visitor"}, got)
+		// The "none" alias and the "visitor" share-link role are both excluded.
+		assert.ElementsMatch(t, []string{"admin", "guest"}, got)
 		for _, s := range got {
 			assert.NotEqual(t, "", s)
+			assert.NotEqual(t, "none", s)
+			assert.NotEqual(t, "visitor", s)
 		}
 	})
-	t.Run("ClientRolesCliUsageStringIncludesNoneAndOrBeforeLast", func(t *testing.T) {
+	t.Run("ClientRolesCliUsageStringExcludesNone", func(t *testing.T) {
 		u := ClientRoles.CliUsageString()
-		// Should list known roles and end with "or none" (alias present).
-		for _, s := range []string{"admin", "client", "instance", "portal", "service", "none"} {
+		// Lists the assignable roles and ends with "or service" (last alphabetically).
+		for _, s := range []string{"admin", "client", "instance", "portal", "service"} {
 			assert.Contains(t, u, s)
 		}
-		assert.Regexp(t, `, or none$`, u)
+		assert.NotContains(t, u, "none")
+		assert.Regexp(t, `, or service$`, u)
 	})
-	t.Run("UserRolesCliUsageStringIncludesNoneAndOrBeforeLast", func(t *testing.T) {
+	t.Run("UserRolesCliUsageStringExcludesNoneAndVisitor", func(t *testing.T) {
 		u := UserRoles.CliUsageString()
-		for _, s := range []string{"admin", "guest", "visitor", "none"} {
+		for _, s := range []string{"admin", "guest"} {
 			assert.Contains(t, u, s)
 		}
-		assert.Regexp(t, `, or none$`, u)
+		assert.NotContains(t, u, "none")
+		assert.NotContains(t, u, "visitor")
+		assert.Equal(t, "admin, or guest", u)
 	})
 	t.Run("AliasNoneMapsToRoleNone", func(t *testing.T) {
 		assert.Equal(t, RoleNone, ClientRoles[RoleAliasNone])
@@ -176,4 +191,40 @@ func TestResourceNames_ContainsCore(t *testing.T) {
 		found := slices.Contains(ResourceNames, w)
 		assert.Truef(t, found, "resource %s not found in ResourceNames", w)
 	}
+}
+
+func TestIsAdminRole(t *testing.T) {
+	t.Run("AdminTier", func(t *testing.T) {
+		assert.True(t, IsAdminRole(RoleAdmin))
+		assert.True(t, IsAdminRole(RoleClusterAdmin))
+	})
+	t.Run("NonAdmin", func(t *testing.T) {
+		for _, r := range []Role{RoleUser, RoleViewer, RoleGuest, RoleVisitor, RoleInstance, RoleService, RolePortal, RoleClient, RoleNone} {
+			assert.Falsef(t, IsAdminRole(r), "role %s must not be admin-tier", r)
+		}
+	})
+}
+
+func TestIsFederatedUserRole(t *testing.T) {
+	t.Run("Federatable", func(t *testing.T) {
+		// admin and guest are present in this package's UserRoles map (CE) and may
+		// be assigned from an external IdP/directory.
+		assert.True(t, IsFederatedUserRole(RoleAdmin))
+		assert.True(t, IsFederatedUserRole(RoleGuest))
+	})
+	t.Run("NeverFederatable", func(t *testing.T) {
+		// visitor is in UserRoles yet must still be rejected, so the switch has to
+		// override map membership; cluster_admin and none are rejected too.
+		for _, r := range []Role{RoleClusterAdmin, RoleVisitor, RoleNone} {
+			assert.Falsef(t, IsFederatedUserRole(r), "role %s must never be federatable", r)
+		}
+	})
+	t.Run("MachineRoles", func(t *testing.T) {
+		for _, r := range []Role{RoleInstance, RoleService, RolePortal, RoleClient} {
+			assert.Falsef(t, IsFederatedUserRole(r), "machine role %s must not be federatable", r)
+		}
+	})
+	t.Run("UnknownRole", func(t *testing.T) {
+		assert.False(t, IsFederatedUserRole(Role("does-not-exist")))
+	})
 }

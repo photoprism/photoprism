@@ -7,31 +7,28 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func TestClientRoleFlagUsage_IncludesNoneAlias(t *testing.T) {
-	t.Run("AddCommandRoleFlagIncludesNone", func(t *testing.T) {
+func TestClientRoleFlagUsage_ListsAssignableRoles(t *testing.T) {
+	assertRoleFlagUsage := func(t *testing.T, cmd *cli.Command, owner string) {
 		var roleFlag *cli.StringFlag
-		for _, f := range ClientsAddCommand.Flags {
+		for _, f := range cmd.Flags {
 			if rf, ok := f.(*cli.StringFlag); ok && rf.Name == "role" {
 				roleFlag = rf
 				break
 			}
 		}
 		if roleFlag == nil {
-			t.Fatal("role flag not found on ClientsAddCommand")
+			t.Fatalf("role flag not found on %s", owner)
 		}
-		assert.Contains(t, roleFlag.Usage, "none")
+		// Lists the assignable client roles; the "none" alias is excluded from CLI help.
+		for _, role := range []string{"admin", "client", "instance", "portal", "service"} {
+			assert.Contains(t, roleFlag.Usage, role)
+		}
+		assert.NotContains(t, roleFlag.Usage, "none")
+	}
+	t.Run("AddCommandRoleFlag", func(t *testing.T) {
+		assertRoleFlagUsage(t, ClientsAddCommand, "ClientsAddCommand")
 	})
-	t.Run("ModCommandRoleFlagIncludesNone", func(t *testing.T) {
-		var roleFlag *cli.StringFlag
-		for _, f := range ClientsModCommand.Flags {
-			if rf, ok := f.(*cli.StringFlag); ok && rf.Name == "role" {
-				roleFlag = rf
-				break
-			}
-		}
-		if roleFlag == nil {
-			t.Fatal("role flag not found on ClientsModCommand")
-		}
-		assert.Contains(t, roleFlag.Usage, "none")
+	t.Run("ModCommandRoleFlag", func(t *testing.T) {
+		assertRoleFlagUsage(t, ClientsModCommand, "ClientsModCommand")
 	})
 }

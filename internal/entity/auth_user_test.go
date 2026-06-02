@@ -902,6 +902,20 @@ func TestUser_AclRole(t *testing.T) {
 		assert.True(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
 	})
+	t.Run("ClusterAdminSuperAdminFallback", func(t *testing.T) {
+		// cluster_admin is not registered in CE/Pro acl.UserRoles, so a SuperAdmin
+		// owner account falls back to RoleAdmin; the Portal resolves it to RoleClusterAdmin.
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: acl.RoleClusterAdmin.String()}
+		assert.Equal(t, acl.RoleAdmin, p.AclRole())
+		assert.True(t, p.IsAdmin())
+		assert.False(t, p.IsVisitor())
+	})
+	t.Run("ClusterAdminUnrecognizedOutsidePortal", func(t *testing.T) {
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleClusterAdmin.String()}
+		assert.Equal(t, acl.RoleNone, p.AclRole())
+		assert.False(t, p.IsAdmin())
+		assert.False(t, p.IsVisitor())
+	})
 	t.Run("NoName", func(t *testing.T) {
 		p := User{ID: 8, UserUID: "u000000000000008", UserName: "", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Equal(t, acl.RoleVisitor, p.AclRole())
@@ -1622,7 +1636,7 @@ func TestUser_SaveForm(t *testing.T) {
 		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"))
 
 		assert.Error(t, err)
-		assert.Equal(t, "super admin must not have a non-admin role", err.Error())
+		assert.Equal(t, "super admin must have an administrator role", err.Error())
 
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "admin", m.UserRole)
