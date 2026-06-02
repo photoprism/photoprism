@@ -180,7 +180,10 @@ func (c *Config) OIDCGroupRoles() map[string]acl.Role {
 		group := normalizeGroupID(entry[:sep])
 		role := acl.ParseRole(entry[sep+1:])
 
-		if group == "" || role == acl.RoleNone {
+		// Skip roles that may not be assigned via federation (cluster_admin,
+		// visitor, none), so a group mapping can never grant Portal Admin UI
+		// access even if the IdP is compromised.
+		if group == "" || !acl.IsFederatedUserRole(role) {
 			continue
 		}
 
@@ -203,7 +206,10 @@ func (c *Config) OIDCRole() acl.Role {
 
 	role := acl.UserRoles[clean.Role(c.options.OIDCRole)]
 
-	if role != acl.RoleNone {
+	// Only federatable roles may become the default for new OIDC users, so a
+	// misconfigured cluster_admin/visitor default falls back to RoleNone instead
+	// of provisioning Admin UI access from federation.
+	if acl.IsFederatedUserRole(role) {
 		return role
 	}
 

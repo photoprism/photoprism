@@ -160,12 +160,16 @@ func TestConfig_OIDCGroupRoles(t *testing.T) {
 		"def-456:guest",
 		"invalid",
 		"=none",
+		// Non-federatable roles must be dropped so a group mapping can never grant
+		// them, even if the entry is present in config.
+		"ghi-789=visitor",
 	}
 
 	roles := c.OIDCGroupRoles()
 
 	assert.Equal(t, acl.RoleAdmin, roles["abc-123"])
 	assert.Equal(t, acl.RoleGuest, roles["def-456"])
+	assert.NotContains(t, roles, "ghi-789")
 	assert.Len(t, roles, 2)
 }
 
@@ -205,6 +209,11 @@ func TestConfig_OIDCRole(t *testing.T) {
 	c.options.OIDCRole = "admin"
 
 	assert.Equal(t, acl.RoleAdmin, c.OIDCRole())
+
+	// Non-federatable roles are rejected as the default for new OIDC users.
+	c.options.OIDCRole = "visitor"
+
+	assert.Equal(t, acl.RoleNone, c.OIDCRole())
 }
 
 func TestConfig_OIDCWebDAV(t *testing.T) {

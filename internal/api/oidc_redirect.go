@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -260,7 +261,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			if hasMappedRole && !user.HasRole(mappedRole) {
+			// Role sync never overrides a non-federatable account role (e.g. the
+			// Portal cluster_admin), so federation can neither grant nor revoke
+			// Portal Admin UI access — see acl.IsFederatedUserRole. mappedRole is
+			// already filtered to federatable roles by OIDCGroupRoles().
+			if hasMappedRole && acl.IsFederatedUserRole(user.AclRole()) && !user.HasRole(mappedRole) {
 				user.SetRole(mappedRole.String())
 			}
 
