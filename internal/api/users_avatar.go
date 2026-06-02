@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb/avatar"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -40,17 +41,18 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			return
 		}
 
+		// Require user management or own-account access.
 		s := AuthAny(c, acl.ResourceUsers, acl.Permissions{acl.ActionManage, acl.AccessOwn})
 
 		if s.Abort(c) {
 			return
 		}
 
-		// Check if the session user is has user management privileges.
+		// Check whether the role can manage all user accounts.
 		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		uid := clean.UID(c.Param("uid"))
 
-		// Users may only change their own avatar.
+		// Non-admin users may only change their own avatar.
 		if !isAdmin && s.GetUser().UserUID != uid {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "user does not match"}, s.RefID)
 			AbortForbidden(c)
@@ -140,6 +142,14 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 
 		// Save avatar image.
 		if err = c.SaveUploadedFile(file, filePath); err != nil {
+			// Report a disk-full write failure as insufficient storage so the cause is clear.
+			if disk.IsNoSpace(err) {
+				disk.FlushFree()
+				event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", status.InsufficientStorage}, s.RefID)
+				Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+				return
+			}
+
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "failed to save %s"}, s.RefID, clean.Log(filePath))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return

@@ -56,6 +56,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/service/hub"
@@ -64,6 +65,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/checksum"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -267,6 +269,10 @@ func (c *Config) Init() error {
 	// Initialize thumbnail package.
 	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbLibrary())
 
+	// Set minimum free storage space in percent.
+	disk.StorageLowPct = c.StorageFree()
+	DisableStorageCheck.Store(disk.StorageLowPct <= 0)
+
 	// Load optional vision package configuration.
 	if visionYaml := c.VisionYaml(); !fs.FileExistsNotEmpty(visionYaml) {
 		// Do nothing.
@@ -378,6 +384,9 @@ func (c *Config) Propagate() {
 	thumb.SamplesPath = c.SamplesPath()
 	thumb.IccProfilesPath = c.IccProfilesPath()
 	initThumbs()
+
+	// Configure FFmpeg package.
+	ffmpeg.SetExclude(c.FFmpegExclude())
 
 	// Configure video download package.
 	dl.YtDlpBin = c.YtDlpBin()

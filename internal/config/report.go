@@ -38,6 +38,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"debug", fmt.Sprintf("%t", c.Debug())},
 		{"trace", fmt.Sprintf("%t", c.Trace())},
 
+		// Storage.
+		{"storage-path", c.StoragePath()},
+		{"storage-free", fmt.Sprintf("%.0f", c.StorageFree())},
+
 		// Config.
 		{"config-path", c.ConfigPath()},
 		{"certificates-path", c.CertificatesPath()},
@@ -57,12 +61,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"originals-path", c.OriginalsPath()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
-		{"users-path", c.UsersPath()},
-		{"users-originals-path", c.UsersOriginalsPath()},
 
-		// Storage.
-		{"storage-path", c.StoragePath()},
+		// Other Paths.
+		{"users-path", c.UsersPath()},
 		{"users-storage-path", c.UsersStoragePath()},
+		{"users-originals-path", c.UsersOriginalsPath()},
 		{"import-path", c.ImportPath()},
 		{"import-dest", c.ImportDest()},
 		{"import-allow", c.ImportAllow().String()},
@@ -286,6 +289,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-device", c.FFmpegDevice()},
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
+		{"ffmpeg-exclude", c.FFmpegExclude().String()},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},

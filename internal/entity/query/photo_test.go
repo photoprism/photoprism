@@ -152,7 +152,6 @@ func TestOrphanPhotos(t *testing.T) {
 	assert.IsType(t, entity.Photos{}, result)
 }
 
-// TODO How to verify?
 // TestFixPrimaries validates photo query behavior.
 func TestFixPrimaries(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
@@ -160,6 +159,66 @@ func TestFixPrimaries(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+	})
+	t.Run("PromotesPresentFileWhenPrimaryDeleted", func(t *testing.T) {
+		taken := time.Date(2017, 5, 5, 12, 0, 0, 0, time.UTC)
+		p := entity.Photo{
+			PhotoUID:        rnd.GenerateUID(entity.PhotoUID),
+			PhotoType:       entity.MediaImage,
+			TakenAt:         taken,
+			TakenAtLocal:    taken,
+			TakenSrc:        entity.SrcMeta,
+			PhotoName:       "fixprim-" + rnd.GenerateUID(entity.PhotoUID),
+			PhotoQuality:    -1,
+			PhotoResolution: 3,
+		}
+		if err := Db().Create(&p).Error; err != nil {
+			t.Fatal(err)
+		}
+		// Primary file that has since been soft-deleted but still carries the primary flag.
+		deletedPrimary := entity.File{
+			PhotoID:     p.ID,
+			PhotoUID:    p.PhotoUID,
+			FileUID:     rnd.GenerateUID(entity.FileUID),
+			FileName:    "fixprim/" + p.PhotoUID + "-old.jpg",
+			FileRoot:    entity.RootOriginals,
+			FileHash:    rnd.GenerateUID(entity.FileUID),
+			FilePrimary: true,
+			FileType:    "jpg",
+			DeletedAt:   entity.TimeStamp(),
+		}
+		if err := Db().Create(&deletedPrimary).Error; err != nil {
+			t.Fatal(err)
+		}
+		// Present preview file that is not yet flagged primary.
+		present := entity.File{
+			PhotoID:  p.ID,
+			PhotoUID: p.PhotoUID,
+			FileUID:  rnd.GenerateUID(entity.FileUID),
+			FileName: "fixprim/" + p.PhotoUID + ".jpg",
+			FileRoot: entity.RootOriginals,
+			FileHash: rnd.GenerateUID(entity.FileUID),
+			FileType: "jpg",
+		}
+		if err := Db().Create(&present).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		if err := FixPrimaries(); err != nil {
+			t.Fatal(err)
+		}
+
+		var gotFile entity.File
+		if err := Db().Where("file_uid = ?", present.FileUID).First(&gotFile).Error; err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, gotFile.FilePrimary, "present file must be promoted to primary")
+
+		var gotPhoto entity.Photo
+		if err := UnscopedDb().Select("photo_quality").Where("photo_uid = ?", p.PhotoUID).First(&gotPhoto).Error; err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, gotPhoto.PhotoQuality, -1, "photo must recover once a valid primary is set")
 	})
 }
 

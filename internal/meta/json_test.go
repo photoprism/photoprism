@@ -12,6 +12,29 @@ import (
 )
 
 func TestJSON(t *testing.T) {
+	t.Run("AviVideoCodec", func(t *testing.T) {
+		data, err := JSON("testdata/avi-magicyuv.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// The codec is read from the AVI VideoCodec tag (no CompressorID/VideoCodecID
+		// is present) and normalized to its canonical name.
+		assert.Equal(t, video.CodecMagicYUV, data.Codec)
+		assert.Equal(t, 160, data.Width)
+		assert.Equal(t, 120, data.Height)
+	})
+	t.Run("MkvVfwWrapper", func(t *testing.T) {
+		data, err := JSON("testdata/mkv-vfw.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// The Matroska VFW wrapper codec ID normalizes to the canonical VFW name.
+		assert.Equal(t, video.CodecVFW, data.Codec)
+	})
 	t.Run("MovJson", func(t *testing.T) {
 		data, err := JSON("testdata/mov.json", "")
 

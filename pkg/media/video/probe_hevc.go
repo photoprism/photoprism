@@ -7,28 +7,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// HevcChunks lists the ISO BMFF sample entry codes that identify an HEVC
-// (H.265) video stream, including Dolby Vision wrappers built on top of HEVC.
-var HevcChunks = Chunks{
-	ChunkHVC1, ChunkHVC2, ChunkHVC3, ChunkDVH1,
-	ChunkHEV1, ChunkHEV2, ChunkHEV3, ChunkDVHE,
-}
-
-// HevcHeadScanLimit caps how far HEVC chunk scans read into the file. The
-// HEVC sample entry sits in the stsd box inside moov; faststart videos place
-// moov at the head, and Motion Photos put it just past the JPEG (a few MB
-// at most), so 16 MiB comfortably covers both layouts.
-const HevcHeadScanLimit = 16 * 1024 * 1024
-
 // IsHEVC reports whether the reader contains an HEVC video stream by scanning
-// the head of the file (up to HevcHeadScanLimit) for any HEVC sample entry
-// code in a single pass. Returns false on read errors or empty input.
+// the head of the file (up to HeadScanLimit) for a valid HEVC sample entry in
+// a single pass. Candidates are validated as real visual sample entries so a
+// four-byte code colliding with random payload bytes is not mistaken for HEVC.
+// Returns false on read errors or empty input.
 func IsHEVC(file io.ReadSeeker) bool {
 	if file == nil {
 		return false
 	}
 
-	pos, _, err := HevcChunks.DataOffset(file, 0, HevcHeadScanLimit)
+	pos, _, err := HevcChunks.SampleEntryOffset(file, HeadScanLimit)
 
 	return err == nil && pos > 0
 }

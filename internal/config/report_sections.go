@@ -17,7 +17,7 @@ We recommend that only advanced users change these parameters:`
 var OptionsReportSections = []ReportSection{
 	{Start: "PHOTOPRISM_AUTH_MODE", Title: "Authentication"},
 	{Start: "PHOTOPRISM_LOG_LEVEL", Title: "Logging"},
-	{Start: "PHOTOPRISM_CONFIG_PATH", Title: "Storage"},
+	{Start: "PHOTOPRISM_STORAGE_PATH", Title: "Storage"},
 	{Start: "PHOTOPRISM_SIDECAR_PATH", Title: "Sidecar Files"},
 	{Start: "PHOTOPRISM_USAGE_INFO", Title: "Usage"},
 	{Start: "PHOTOPRISM_BACKUP_PATH", Title: "Backup"},
@@ -44,7 +44,7 @@ var OptionsReportSections = []ReportSection{
 var YamlReportSections = []ReportSection{
 	{Start: "AuthMode", Title: "Authentication"},
 	{Start: "LogLevel", Title: "Logging"},
-	{Start: "ConfigPath", Title: "Storage"},
+	{Start: "StoragePath", Title: "Storage"},
 	{Start: "SidecarPath", Title: "Sidecar Files"},
 	{Start: "UsageInfo", Title: "Usage"},
 	{Start: "BackupPath", Title: "Backup"},

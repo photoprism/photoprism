@@ -239,6 +239,9 @@ func hasOriginalsFolderPath(rootPath string) bool {
 
 // hasOriginalsFolderAlbumSlugCollision reports whether rootPath collides with another
 // active folder album that shares the same slug but stores a different non-empty path.
+// The "different path" check runs in Go because MariaDB's utf8mb4_unicode_ci collation
+// collapses most emoji, so an SQL "album_path <> ?" would wrongly exclude an emoji
+// sibling (e.g. "ins/🪞" treated as equal to "ins/🍷") and miss the collision.
 func hasOriginalsFolderAlbumSlugCollision(rootPath string) bool {
 	albumSlugs := folderAlbumSlugCandidates(rootPath)
 
@@ -246,16 +249,22 @@ func hasOriginalsFolderAlbumSlugCollision(rootPath string) bool {
 		return false
 	}
 
-	var collisions int
+	var albums Albums
 
-	if err := Db().Model(&Album{}).
-		Where("album_type = ? AND album_slug IN (?) AND album_path <> '' AND album_path <> ?", AlbumFolder, albumSlugs, rootPath).
-		Count(&collisions).Error; err != nil {
+	if err := Db().
+		Where("album_type = ? AND album_slug IN (?) AND album_path <> ''", AlbumFolder, albumSlugs).
+		Find(&albums).Error; err != nil {
 		log.Debugf("folder: %s (check album slug collision for %s)", err, clean.LogQuote(rootPath))
 		return false
 	}
 
-	return collisions > 0
+	for i := range albums {
+		if albums[i].AlbumPath != rootPath {
+			return true
+		}
+	}
+
+	return false
 }
 
 // syncOriginalsAlbum ensures an originals folder has a matching folder album.

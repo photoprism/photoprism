@@ -43,7 +43,7 @@ func DeleteSession(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the session user is allowed to manage all accounts or update his/her own account.
+		// Require session management or delete access.
 		s := AuthAny(c, acl.ResourceSessions, acl.Permissions{acl.ActionManage, acl.ActionDelete})
 
 		if s.Abort(c) {
@@ -55,7 +55,7 @@ func DeleteSession(router *gin.RouterGroup) {
 		// Get client IP and auth token from request headers.
 		clientIp := ClientIP(c)
 
-		// Only admins may delete other sessions by ref id.
+		// Only full session managers may delete sessions by ref ID.
 		if rnd.IsRefID(id) {
 			if !acl.Rules.AllowAll(acl.ResourceSessions, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", status.Denied}, s.RefID, acl.ResourceSessions.String(), s.GetUserRole())

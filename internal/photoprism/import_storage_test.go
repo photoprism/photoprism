@@ -18,11 +18,15 @@ func TestImport_InsufficientStorage(t *testing.T) {
 	imp := NewImport(cfg, ind, convert)
 	require.NotNil(t, imp)
 
+	// Reset the storage-check latch, which an earlier test may have tripped by probing a
+	// temp path that duf cannot resolve to a mount point.
+	config.DisableStorageCheck.Store(false)
+
 	// Seed the disk cache so the verdict is deterministic on any host filesystem.
 	t.Run("Healthy", func(t *testing.T) {
 		disk.FlushFree()
 		t.Cleanup(disk.FlushFree)
-		disk.SetFree(cfg.StoragePath(), 999, 1000)
+		disk.SetFree(cfg.StoragePath(), 999*disk.MB, 1000*disk.MB)
 		cfg.Options().FilesQuota = 0
 
 		assert.False(t, imp.insufficientStorage())
@@ -31,7 +35,7 @@ func TestImport_InsufficientStorage(t *testing.T) {
 	t.Run("StorageLow", func(t *testing.T) {
 		disk.FlushFree()
 		t.Cleanup(disk.FlushFree)
-		disk.SetFree(cfg.StoragePath(), 1, 1000)
+		disk.SetFree(cfg.StoragePath(), 1*disk.MB, 1000*disk.MB)
 		cfg.Options().FilesQuota = 0
 
 		assert.True(t, imp.insufficientStorage())

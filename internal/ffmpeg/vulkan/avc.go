@@ -15,8 +15,10 @@ func TranscodeToAvcCmd(srcName, destName string, opt encode.Options) *exec.Cmd {
 		hwDevice = "vulkan=vk:" + opt.Device
 	}
 
-	// Scale + format conversion happens in system memory, then hwupload moves frames into the Vulkan device.
-	videoFilter := opt.VideoFilter(encode.FormatNV12) + ",hwupload"
+	// Scale and NV12 conversion happen in system memory, then hwupload moves the frames onto the
+	// Vulkan device referenced by -filter_hw_device. The hwupload step is already part of
+	// encode.FormatNV12, so it must not be appended a second time.
+	videoFilter := opt.VideoFilter(encode.FormatNV12)
 
 	// #nosec G204 -- command arguments are built from validated options and paths.
 	return exec.Command(

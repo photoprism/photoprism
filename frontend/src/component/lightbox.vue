@@ -1801,13 +1801,12 @@ export default {
     },
     // Fetches the full Photo model for the given UID using the LRU
     // cache, delegated to the Thumb model so the photo-fetch policy
-    // lives on the slide that owns it (Thumb.loadPhoto). Sessions
-    // without library access (share-link visitors, guests, etc.) skip
-    // the extra API call and let the sidebar work with the viewer
-    // data (Thumb model) — the long-form sidebar fields they would
-    // render are gated by the same ACL anyway.
+    // lives on the slide that owns it (Thumb.loadPhoto). All sessions
+    // preload here: the /photos/:uid endpoint reduces detail server-side
+    // for shared-only sessions, and the sidebar's per-section ACL gates
+    // decide what actually renders.
     fetchPhoto(uid) {
-      if (!uid || this.$config.deny("photos", "access_library")) {
+      if (!uid) {
         this.photo = new Photo();
         return;
       }
@@ -2035,11 +2034,11 @@ export default {
     // Preloads the next photo's full metadata when the sidebar is visible.
     // Navigation policy lives on Photo so the lightbox only decides "when"
     // to prefetch; "what to prefetch" is owned by the model. See
-    // Photo.prefetchAround in model/photo.js. Mirrors the fetchPhoto gate
-    // so sessions without library access don't issue prefetch GETs for
-    // long-form sidebar fields they aren't allowed to see anyway.
+    // Photo.prefetchAround in model/photo.js. Runs for all sessions — the
+    // /photos/:uid endpoint reduces detail server-side for shared-only
+    // sessions, so prefetch never exposes more than the viewer may see.
     preloadNextPhoto() {
-      if (!this.sidebarVisible || !this.models.length || this.$config.deny("photos", "access_library")) {
+      if (!this.sidebarVisible || !this.models.length) {
         return;
       }
       Photo.prefetchAround(this.models, this.index, { before: 0, after: 1 });

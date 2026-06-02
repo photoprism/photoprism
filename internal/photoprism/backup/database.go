@@ -35,6 +35,11 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	// Get configuration.
 	c := get.Config()
 
+	// Storage-gate the on-disk path only: when toStdOut is true the dump
+	// streams to stdout and does not consume the local storage volume, so an
+	// operator can still offload a backup over ssh or similar when the disk
+	// is full. Path validation and the InsufficientStorage check therefore
+	// run inside this branch only.
 	if !toStdOut {
 		if backupPath == "" {
 			backupPath = c.BackupDatabasePath()

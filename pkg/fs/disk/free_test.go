@@ -14,7 +14,9 @@ func reset(t *testing.T) {
 	t.Helper()
 	FlushFree()
 	t.Cleanup(func() {
-		CacheTTL = time.Minute
+		CacheTTL = DefaultCacheTTL
+		StorageLowPct = DefaultStorageLowPct
+		StorageLowBytes = DefaultStorageLowBytes
 		FlushFree()
 	})
 }
@@ -28,7 +30,6 @@ func TestFree(t *testing.T) {
 		assert.NotZero(t, total)
 		assert.LessOrEqual(t, free, total)
 	})
-
 	t.Run("Cached", func(t *testing.T) {
 		reset(t)
 
@@ -48,7 +49,6 @@ func TestFree(t *testing.T) {
 		freeMu.RUnlock()
 		assert.True(t, hit, "expected cache entry for /")
 	})
-
 	t.Run("Expires", func(t *testing.T) {
 		reset(t)
 		CacheTTL = time.Nanosecond
@@ -76,7 +76,6 @@ func TestFree(t *testing.T) {
 		assert.True(t, refreshed.expiresAt.After(stale.expiresAt), "cached entry should have been refreshed")
 		assert.True(t, time.Now().Before(refreshed.expiresAt), "refreshed entry must expire in the future")
 	})
-
 	t.Run("InvalidPath", func(t *testing.T) {
 		reset(t)
 
@@ -107,107 +106,22 @@ func TestFlushFree(t *testing.T) {
 	freeMu.RUnlock()
 }
 
-func TestStorageLow(t *testing.T) {
-	t.Run("AboveThreshold", func(t *testing.T) {
-		reset(t)
-
-		// A 0.0001% threshold on a real filesystem is effectively never low.
-		free, low, err := StorageLow("/", 0.0001)
-		require.NoError(t, err)
-		assert.False(t, low)
-		assert.NotZero(t, free)
-	})
-
-	t.Run("BelowThreshold", func(t *testing.T) {
-		reset(t)
-
-		// Seed the cache so the verdict does not depend on the host filesystem's actual fill level.
-		freeMu.Lock()
-		freeCache["/below"] = freeEntry{free: 5, total: 1000, expiresAt: time.Now().Add(time.Hour)}
-		freeMu.Unlock()
-
-		free, low, err := StorageLow("/below", 1.0)
-		require.NoError(t, err)
-		assert.True(t, low)
-		assert.Equal(t, uint64(5), free)
-	})
-
-	t.Run("ExactlyAtThreshold", func(t *testing.T) {
-		reset(t)
-
-		// Seed the cache with a known free / total split so the threshold math is deterministic.
-		freeMu.Lock()
-		freeCache["/synthetic"] = freeEntry{free: 10, total: 1000, expiresAt: time.Now().Add(time.Hour)}
-		freeMu.Unlock()
-
-		// free*100 == minPct*total is the boundary and must not count as low (strict less-than).
-		_, low, err := StorageLow("/synthetic", 1.0)
-		require.NoError(t, err)
-		assert.False(t, low, "boundary value must not be flagged as low")
-
-		// One byte less than the boundary must flip the verdict.
-		freeMu.Lock()
-		freeCache["/synthetic"] = freeEntry{free: 9, total: 1000, expiresAt: time.Now().Add(time.Hour)}
-		freeMu.Unlock()
-
-		_, low, err = StorageLow("/synthetic", 1.0)
-		require.NoError(t, err)
-		assert.True(t, low)
-	})
-
-	t.Run("ZeroTotal", func(t *testing.T) {
-		reset(t)
-
-		// A zero-total filesystem must never be reported as low so unmounted or unreadable
-		// paths do not trigger a spurious abort.
-		freeMu.Lock()
-		freeCache["/empty"] = freeEntry{free: 0, total: 0, expiresAt: time.Now().Add(time.Hour)}
-		freeMu.Unlock()
-
-		_, low, err := StorageLow("/empty", 50)
-		require.NoError(t, err)
-		assert.False(t, low)
-	})
-
-	t.Run("ThresholdOutOfRange", func(t *testing.T) {
-		reset(t)
-
-		freeMu.Lock()
-		freeCache["/out"] = freeEntry{free: 1, total: 1000, expiresAt: time.Now().Add(time.Hour)}
-		freeMu.Unlock()
-
-		for _, pct := range []float64{-1, 0, 100, 250} {
-			_, low, err := StorageLow("/out", pct)
-			require.NoError(t, err)
-			assert.False(t, low, "out-of-range threshold %v must never be low", pct)
-		}
-	})
-
-	t.Run("InvalidPath", func(t *testing.T) {
-		reset(t)
-
-		_, low, err := StorageLow("", 1)
-		assert.Error(t, err)
-		assert.False(t, low)
-	})
-}
-
 func TestSetFree(t *testing.T) {
 	reset(t)
 
-	SetFree("/seeded", 42, 100)
+	SetFree("/seeded", 42*MB, 100*MB)
 
 	free, total, err := Free("/seeded")
 	require.NoError(t, err)
-	assert.Equal(t, uint64(42), free)
-	assert.Equal(t, uint64(100), total)
+	assert.Equal(t, 42*MB, free)
+	assert.Equal(t, 100*MB, total)
 
 	// Subsequent SetFree calls must overwrite the prior entry.
-	SetFree("/seeded", 7, 100)
+	SetFree("/seeded", 7*MB, 100*MB)
 
 	free, _, err = Free("/seeded")
 	require.NoError(t, err)
-	assert.Equal(t, uint64(7), free)
+	assert.Equal(t, 7*MB, free)
 }
 
 func TestFree_Concurrent(t *testing.T) {

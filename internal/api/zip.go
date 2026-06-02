@@ -76,8 +76,9 @@ func ZipCreate(router *gin.RouterGroup) {
 			selection = query.DownloadSelection(settings.MediaRaw, settings.MediaSidecar, settings.Originals)
 		}
 
-		// Find files to download.
-		files, err := query.SelectedFiles(frm, selection)
+		// Find files to download within the session's shared scope, consistent with how photo
+		// search filters results.
+		files, err := query.SelectedFilesForSession(frm, selection, s)
 
 		if err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrZipFailed)

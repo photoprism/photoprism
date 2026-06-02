@@ -5,7 +5,7 @@
         <span v-if="fileName" class="text-break">{{ $gettext(`Importing %{s}…`, { s: fileName }) }}</span>
         <span v-else-if="busy">{{ $gettext(`Importing files to originals…`) }}</span>
         <span v-else-if="completed">{{ $gettext(`Done.`) }}</span>
-        <span v-else-if="$config.filesQuotaReached()"
+        <span v-else-if="$config.insufficientStorage()"
           >{{ $gettext(`Insufficient storage.`) }} {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
         >
         <span v-else>{{ $gettext(`Select a source folder to import files…`) }}</span>
@@ -16,7 +16,7 @@
             v-model="settings.import.path"
             :items="dirs"
             :loading="loading"
-            :disabled="busy || !ready || $config.filesQuotaReached()"
+            :disabled="busy || !ready || $config.insufficientStorage()"
             color="surface-variant"
             class="input-import-folder"
             variant="solo-filled"
@@ -62,7 +62,7 @@
           </v-btn>
           <v-btn
             v-if="!$config.values.readonly && $config.feature('upload')"
-            :disabled="busy || !ready || $config.filesQuotaReached()"
+            :disabled="busy || !ready || $config.insufficientStorage()"
             variant="flat"
             color="highlight"
             class="hidden-xs action-upload"
@@ -71,7 +71,7 @@
             {{ $gettext(`Upload`) }}
             <v-icon end>mdi-cloud-upload</v-icon>
           </v-btn>
-          <v-btn :disabled="busy || !ready || $config.filesQuotaReached()" variant="flat" color="highlight" class="action-import" @click.stop="startImport()">
+          <v-btn :disabled="busy || !ready || $config.insufficientStorage()" variant="flat" color="highlight" class="action-import" @click.stop="startImport()">
             {{ $gettext(`Import`) }}
             <v-icon end>mdi-plus</v-icon>
           </v-btn>

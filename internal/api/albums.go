@@ -90,9 +90,10 @@ func GetAlbum(router *gin.RouterGroup) {
 		// Get sanitized album UID from request path.
 		uid := clean.UID(c.Param("uid"))
 
-		// Visitors can only access shared content.
+		// Limit access to albums within the session's shared scope; albums outside it are reported
+		// as not found, consistent with how photos and files are read.
 		if (s.NotRegistered()) && !s.HasShare(uid) {
-			AbortForbidden(c)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -106,7 +107,7 @@ func GetAlbum(router *gin.RouterGroup) {
 
 		// Other restricted users can only access their own or shared content.
 		if s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(uid) {
-			AbortForbidden(c)
+			AbortAlbumNotFound(c)
 			return
 		}
 

@@ -32,7 +32,7 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
 		conf := get.Config()
 
-		// You cannot change any passwords without authentication and settings enabled.
+		// Password changes require authentication and enabled settings.
 		if conf.Public() || conf.DisableSettings() {
 			Abort(c, http.StatusForbidden, i18n.ErrPublic)
 			return
@@ -56,14 +56,14 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the current user has management privileges.
+		// Check whether the role can manage all user accounts.
 		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		isSuperAdmin := isAdmin && s.GetUser().IsSuperAdmin()
 		uid := clean.UID(c.Param("uid"))
 
 		var u *entity.User
 
-		// Regular users may only change their own password.
+		// Non-admin users may only change their own password.
 		if !isAdmin && s.GetUser().UserUID != uid {
 			AbortForbidden(c)
 			return

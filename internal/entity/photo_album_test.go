@@ -38,9 +38,8 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
 		}
 	})
-	//TODO fails on mariadb
 	t.Run("NotYetExistingAlbum", func(t *testing.T) {
-		model := &PhotoAlbum{}
+		model := &PhotoAlbum{PhotoUID: "ps6sg6be2lvl0y14", AlbumUID: "as6sg6bipotaab29"}
 		result := FirstOrCreatePhotoAlbum(model)
 
 		if result == nil {
@@ -57,10 +56,9 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 	})
 }
 
-// TODO fails on mariadb
 func TestPhotoAlbum_Save(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		p := PhotoAlbum{}
+		p := PhotoAlbum{PhotoUID: "ps6sg6be2lvl0y14", AlbumUID: "as6sg6bipogaab11"}
 
 		err := p.Create()
 

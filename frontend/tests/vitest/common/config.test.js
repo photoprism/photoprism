@@ -512,4 +512,32 @@ describe("common/config", () => {
       }
     });
   });
+
+  describe("storage availability", () => {
+    const make = (usage) => new Config(new StorageShim(), { ...window.__CONFIG__, usage });
+
+    it("filesQuotaReached returns true only when the files quota is reached or exceeded", () => {
+      expect(make({ filesUsedPct: 99 }).filesQuotaReached()).toBe(false);
+      expect(make({ filesUsedPct: 100 }).filesQuotaReached()).toBe(true);
+      expect(make({ filesUsedPct: 101 }).filesQuotaReached()).toBe(true);
+    });
+    it("storageLow mirrors the usage.storageLow flag as a Boolean", () => {
+      expect(make({ storageLow: true }).storageLow()).toBe(true);
+      expect(make({ storageLow: false }).storageLow()).toBe(false);
+      expect(make({}).storageLow()).toBe(false);
+    });
+    it("insufficientStorage is true when either the quota is reached or storage is low", () => {
+      expect(make({ filesUsedPct: 50, storageLow: false }).insufficientStorage()).toBe(false);
+      expect(make({ filesUsedPct: 100, storageLow: false }).insufficientStorage()).toBe(true);
+      expect(make({ filesUsedPct: 50, storageLow: true }).insufficientStorage()).toBe(true);
+    });
+    it("return Boolean false when usage info is missing", () => {
+      const cfg = new Config(new StorageShim(), null);
+      for (const fn of ["filesQuotaReached", "storageLow", "insufficientStorage"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
+  });
 });

@@ -58,6 +58,28 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
   }, refID)
   ```
 
+### User-Visible Notifications vs Audit Log
+
+`event.AuditInfo` / `AuditWarn` / `AuditErr` write to the audit log and broadcast on `audit.log.<level>` — the toast component on the frontend does NOT subscribe to that channel, so an audit entry alone produces no UI feedback. To raise a red or green toast in the browser, publish on the `notify.*` channel via `event.Error(msg)` / `event.ErrorMsg(id, …)` (red) or `event.Success(msg)` (green).
+
+The two helpers have distinct subscribers; choose based on who the message is for:
+
+- **Short endpoints whose response the frontend reads** (single-shot CRUD, login, settings updates). The calling component renders the response, so `AuditErr` plus an HTTP error is enough — the UI gets the error string from the response body.
+- **Long-running endpoints that the UI drives via the event hub** (`POST /api/v1/index`, `POST /api/v1/import/*path`, and similar). The frontend cancels the in-flight HTTP request on the first `index.*` / `import.*` wire event, so the response body is invisible in normal operation. In-flight failures that need a specific toast MUST be published via `event.ErrorMsg(...)` on `notify.error`; an HTTP error alone produces only the frontend's generic fallback toast (or nothing, if the cancel has already fired).
+- **Forensic events that don't need UI surfacing** (rate limiting, ACL denials, internal aborts whose user-visible signal comes from a sibling channel). `AuditErr` alone is the right call.
+
+When in doubt, ask: "after this handler returns, what does the user see?" If the answer is "the frontend will read the response", `AuditErr` covers it. If the answer is "the page is already subscribed to wire events and the response is discarded", publish on `notify.*` as well.
+
+```go
+// Forensic audit only — frontend will read the response body and render the error.
+event.AuditErr([]string{ClientIP(c), "session %s", "delete album", status.Failed}, s.RefID)
+AbortBadRequest(c, err)
+
+// Forensic audit + specific red toast — needed when the request was already canceled by the wire.
+event.AuditErr([]string{ClientIP(c), "session %s", "index files", status.Failed}, s.RefID)
+event.ErrorMsg(i18n.ErrIndexingFailed)
+```
+
 ### Swagger Documentation
 
 - Annotate handlers with Swagger comments that include full `/api/v1/...` paths, request/response schemas, and security definitions. Only annotate routes that are externally accessible.

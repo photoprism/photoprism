@@ -7,6 +7,11 @@ import (
 )
 
 func TestShowConfigCommand(t *testing.T) {
+	// "show config" calls InitCore, which creates storage dirs and an index database at the
+	// configured path; without a storage path it defaults to ".photoprism" under the working
+	// directory. Run from a temp dir so the test does not leave files in the repository.
+	t.Chdir(t.TempDir())
+
 	// Run command with test context.
 	output, err := RunWithTestContext(ShowConfigCommand, []string{})
 

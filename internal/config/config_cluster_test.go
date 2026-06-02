@@ -25,13 +25,11 @@ func TestConfig_PortalOIDCIssuer(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Equal(t, c.SiteUrl(), c.PortalOIDCIssuer())
 	})
-
 	t.Run("FollowsSiteUrlOverride", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.SiteUrl = "https://portal.example.com/"
 		assert.Equal(t, "https://portal.example.com/", c.PortalOIDCIssuer())
 	})
-
 	t.Run("ExplicitOverrideWins", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.SiteUrl = "https://site.example.com/"

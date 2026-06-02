@@ -7,7 +7,7 @@ import (
 
 // isHiddenPath reports whether any segment of a WebDAV path starts with a dot.
 func isHiddenPath(dir string) bool {
-	for _, segment := range strings.Split(trimPath(dir), "/") {
+	for segment := range strings.SplitSeq(trimPath(dir), "/") {
 		if strings.HasPrefix(segment, ".") {
 			return true
 		}

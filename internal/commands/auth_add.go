@@ -51,14 +51,14 @@ func authAddAction(ctx *cli.Context) error {
 		// Reject flags placed after the username; the stdlib flag parser
 		// would silently drop them and create the token with the defaults.
 		if err := RejectTrailingFlags(ctx); err != nil {
-			return err
+			return cli.Exit(err, 2)
 		}
 
 		// Find user account.
 		user := entity.FindUserByName(userName)
 
 		if user == nil && userName != "" {
-			return fmt.Errorf("user %s not found", clean.LogQuote(userName))
+			return cli.Exit(fmt.Errorf("user %s not found", clean.LogQuote(userName)), 3)
 		}
 
 		// Get client name from command flag or ask for it.
@@ -73,7 +73,7 @@ func authAddAction(ctx *cli.Context) error {
 			res, err := prompt.Run()
 
 			if err != nil {
-				return err
+				return cli.Exit(err, 1)
 			}
 
 			clientName = clean.Name(res)
@@ -91,7 +91,7 @@ func authAddAction(ctx *cli.Context) error {
 			res, err := prompt.Run()
 
 			if err != nil {
-				return err
+				return cli.Exit(err, 1)
 			}
 
 			authScope = clean.Scope(res)
@@ -101,19 +101,18 @@ func authAddAction(ctx *cli.Context) error {
 		sess, err := entity.AddClientSession(clientName, ctx.Int64("expires"), authScope, authn.GrantCLI, user)
 
 		if err != nil {
-			return fmt.Errorf("failed to create authentication secret: %s", err)
-		} else {
-			// Show client authentication credentials.
-			if sess.UserUID == "" {
-				fmt.Printf("\nPLEASE COPY THE FOLLOWING RANDOMLY GENERATED ACCESS TOKEN AND KEEP IT IN A SAFE PLACE, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
-				fmt.Printf("\n%s\n", report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope()))
-			} else {
-				fmt.Printf("\nPLEASE COPY THE FOLLOWING RANDOMLY GENERATED APP PASSWORD AND KEEP IT IN A SAFE PLACE, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
-				fmt.Printf("\n%s\n", report.Credentials("App Password", sess.AuthToken(), "Authorization Scope", sess.Scope()))
-			}
-
+			return cli.Exit(fmt.Errorf("failed to create authentication secret: %s", err), 1)
 		}
 
-		return err
+		// Show client authentication credentials.
+		if sess.UserUID == "" {
+			fmt.Printf("\nPLEASE COPY THE FOLLOWING RANDOMLY GENERATED ACCESS TOKEN AND KEEP IT IN A SAFE PLACE, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+			fmt.Printf("\n%s\n", report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope()))
+		} else {
+			fmt.Printf("\nPLEASE COPY THE FOLLOWING RANDOMLY GENERATED APP PASSWORD AND KEEP IT IN A SAFE PLACE, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+			fmt.Printf("\n%s\n", report.Credentials("App Password", sess.AuthToken(), "Authorization Scope", sess.Scope()))
+		}
+
+		return nil
 	})
 }

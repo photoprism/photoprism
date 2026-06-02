@@ -47,7 +47,29 @@ var (
 	ChunkMP42 = Chunk{'m', 'p', '4', '2'}
 	ChunkMP71 = Chunk{'m', 'p', '7', '1'}
 	ChunkHEIC = Chunk{'h', 'e', 'i', 'c'}
+	ChunkM8RG = Chunk{'M', '8', 'R', 'G'} // MagicYUV RGB
+	ChunkM8RA = Chunk{'M', '8', 'R', 'A'} // MagicYUV RGBA
+	ChunkM8RB = Chunk{'M', '8', 'R', 'B'} // MagicYUV RGB (alt)
+	ChunkM8Y0 = Chunk{'M', '8', 'Y', '0'} // MagicYUV YUV 4:2:0
+	ChunkM8Y2 = Chunk{'M', '8', 'Y', '2'} // MagicYUV YUV 4:2:2
+	ChunkM8Y4 = Chunk{'M', '8', 'Y', '4'} // MagicYUV YUV 4:4:4
+	ChunkM8YA = Chunk{'M', '8', 'Y', 'A'} // MagicYUV YUVA 4:4:4:4
+	ChunkM8G0 = Chunk{'M', '8', 'G', '0'} // MagicYUV Grayscale
 )
+
+// HevcChunks lists the ISO BMFF sample entry codes that identify an HEVC
+// (H.265) video stream, including Dolby Vision wrappers built on top of HEVC.
+var HevcChunks = Chunks{
+	ChunkHVC1, ChunkHVC2, ChunkHVC3, ChunkDVH1,
+	ChunkHEV1, ChunkHEV2, ChunkHEV3, ChunkDVHE,
+}
+
+// MagicYuvChunks lists the ISO BMFF sample entry codes that identify a MagicYUV
+// video stream, one per supported pixel format.
+var MagicYuvChunks = Chunks{
+	ChunkM8RG, ChunkM8RA, ChunkM8RB, ChunkM8Y0,
+	ChunkM8Y2, ChunkM8Y4, ChunkM8YA, ChunkM8G0,
+}
 
 // CompatibleBrands contains compatible subtypes chunks:
 // https://mp4ra.org/registered-types/codecs
