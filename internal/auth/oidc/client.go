@@ -72,6 +72,10 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	clientOpt := []rp.Option{
 		rp.WithHTTPClient(httpClient),
 		rp.WithCookieHandler(cookieHandler),
+		// Honor the provider's advertised id_token_signing_alg_values_supported
+		// instead of the library default (RS256 only), so EdDSA-signed ID tokens
+		// from a PhotoPrism Portal OP are accepted as well as RS256 from Keycloak/Entra.
+		rp.WithSigningAlgsFromDiscovery(),
 		rp.WithVerifierOpts(
 			rp.WithIssuedAtOffset(5 * time.Second),
 		),

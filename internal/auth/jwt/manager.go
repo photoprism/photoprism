@@ -116,6 +116,8 @@ func (m *Manager) JWKS() *JWKS {
 			Crv: curveEd25519,
 			Kid: k.Kid,
 			X:   base64.RawURLEncoding.EncodeToString(k.PublicKey),
+			Alg: algEdDSA,
+			Use: useSignature,
 		})
 	}
 

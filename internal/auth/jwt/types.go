@@ -9,14 +9,19 @@ import (
 const (
 	keyTypeOKP   = "OKP"
 	curveEd25519 = "Ed25519"
+	algEdDSA     = "EdDSA"
+	useSignature = "sig"
 )
 
-// PublicJWK represents the public portion of an Ed25519 key in JWK form.
+// PublicJWK represents the public portion of an Ed25519 key in JWK form. Alg and
+// Use are advertised (RFC 7517) so relying parties select EdDSA verification.
 type PublicJWK struct {
 	Kty string `json:"kty"`
 	Crv string `json:"crv"`
 	Kid string `json:"kid"`
 	X   string `json:"x"`
+	Alg string `json:"alg,omitempty"`
+	Use string `json:"use,omitempty"`
 }
 
 // JWKS represents a JSON Web Key Set.
