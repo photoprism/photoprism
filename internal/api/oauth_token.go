@@ -26,7 +26,7 @@ import (
 //	@Tags		Authentication
 //	@Accept		json
 //	@Produce	json
-//	@Param		request		body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
+//	@Param		request		body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, session, or authorization_code grant)"
 //	@Success	200			{object}	gin.H
 //	@Failure	400,401,429	{object}	i18n.Response
 //	@Router		/api/v1/oauth/token [post]
@@ -52,6 +52,14 @@ func OAuthToken(router *gin.RouterGroup) {
 
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
+
+		// On Portal builds, a cluster authorization-code redemption is served by
+		// the OIDC OP flow (EdDSA id_token). Every other grant — including
+		// instance client_credentials and general authorization codes — falls
+		// through to the opaque, DB-backed token path below.
+		if OAuthClusterToken != nil && OAuthClusterToken(c) {
+			return
+		}
 
 		// Token create request form.
 		var frm form.OAuthCreateToken
@@ -177,6 +185,82 @@ func OAuthToken(router *gin.RouterGroup) {
 
 			// Return the reserved request rate limit tokens after successful authentication.
 			r.Success()
+		case authn.GrantAuthorizationCode:
+			// Public clients authenticate with PKCE, not a secret; look up the
+			// client only to confirm it exists and OAuth2 is enabled for it.
+			codeClient := entity.FindClientByUID(frm.ClientID)
+			if codeClient == nil {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientID.Error()})
+				oauthAbortInvalidGrant(c)
+				return
+			} else if !codeClient.AuthEnabled {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrAuthenticationDisabled.Error()})
+				oauthAbortInvalidGrant(c)
+				return
+			}
+
+			// Look up the single-use authorization code.
+			authCode, findErr := entity.FindOAuthCode(frm.Code)
+			if findErr != nil {
+				event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(findErr)})
+				AbortUnexpectedError(c)
+				return
+			} else if authCode == nil {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "authorization code", status.NotFound})
+				oauthAbortInvalidGrant(c)
+				return
+			}
+
+			// Consume the code before validating so it can be redeemed at most
+			// once, even on concurrent attempts and even if validation fails.
+			if consumed, delErr := authCode.Consume(); delErr != nil {
+				event.AuditErr([]string{clientIp, "oauth2", actor, action, status.Error(delErr)})
+				AbortUnexpectedError(c)
+				return
+			} else if !consumed {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "authorization code", status.Denied})
+				oauthAbortInvalidGrant(c)
+				return
+			}
+
+			// Validate the code against the request: it must be unexpired and
+			// bound to this client, redirect_uri, and PKCE verifier. A mismatch
+			// maps to invalid_grant without disclosing which check failed.
+			if authCode.IsExpired() ||
+				authCode.ClientUID != codeClient.GetUID() ||
+				authCode.RedirectURI != frm.RedirectURI ||
+				!authn.VerifyPKCE(frm.CodeVerifier, authCode.CodeChallenge, authCode.CodeChallengeMethod) {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "authorization code", status.Denied})
+				oauthAbortInvalidGrant(c)
+				return
+			}
+
+			// Resolve the account the code was issued to.
+			user := entity.FindUserByUID(authCode.UserUID)
+			if user == nil || user.IsUnknown() || user.IsDisabled() || !user.IsRegistered() {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidUser.Error()})
+				oauthAbortInvalidGrant(c)
+				return
+			}
+
+			actor = fmt.Sprintf("user %s", clean.Log(user.Username()))
+
+			// Bound the token lifetime to the client's configured expiry. A
+			// public client redeems the code, so it must not be able to request
+			// a longer-lived token than the client is configured for; a shorter
+			// requested expires_in is honored.
+			expiresIn := codeClient.AuthExpires
+			if frm.ExpiresIn > 0 && frm.ExpiresIn < expiresIn {
+				expiresIn = frm.ExpiresIn
+			}
+
+			// Mint a general-purpose user session for the authorized app. It is
+			// not linked to the client (no client-session token-limit pruning),
+			// matching the password/session grants.
+			sess = entity.NewClientSession(codeClient.Name(), expiresIn, authCode.Scope, authn.GrantAuthorizationCode, user)
+
+			// Return the reserved request rate limit tokens after success.
+			r.Success()
 		default:
 			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()})
 			AbortInvalidCredentials(c)
@@ -216,5 +300,16 @@ func OAuthToken(router *gin.RouterGroup) {
 		}
 
 		c.JSON(http.StatusOK, response)
+	})
+}
+
+// oauthAbortInvalidGrant writes the OAuth2 invalid_grant error per RFC 6749
+// §5.2 and stops the handler chain. Used by the authorization_code grant for an
+// authorization code that is unknown, expired, already used, or mismatched, so
+// the client cannot distinguish those cases.
+func oauthAbortInvalidGrant(c *gin.Context) {
+	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+		"error":             "invalid_grant",
+		"error_description": "authorization code is invalid, expired, or already used",
 	})
 }

@@ -26,8 +26,8 @@ import (
 //	@Id			OAuthUserinfo
 //	@Tags		Authentication
 //	@Produce	json
-//	@Success	200			{object}	oidc.UserInfo
-//	@Failure	401,403		{object}	i18n.Response
+//	@Success	200		{object}	oidc.UserInfo
+//	@Failure	401,403	{object}	i18n.Response
 //	@Router		/api/v1/oauth/userinfo [get]
 //	@Router		/api/v1/oauth/userinfo [post]
 func OAuthUserinfo(router *gin.RouterGroup) {
@@ -49,6 +49,12 @@ func OAuthUserinfo(router *gin.RouterGroup) {
 		if get.Config().Public() {
 			event.AuditErr([]string{clientIp, "oauth2", "unknown client", action, authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
+			return
+		}
+
+		// On Portal builds, a cluster OP access token is served by the OIDC OP
+		// userinfo handler; regular session tokens fall through to CE.
+		if OAuthClusterUserinfo != nil && OAuthClusterUserinfo(c) {
 			return
 		}
 

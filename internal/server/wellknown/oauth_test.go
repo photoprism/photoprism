@@ -18,5 +18,10 @@ func TestOAuthAuthorizationServer(t *testing.T) {
 		assert.Equal(t, "http://localhost:2342/api/v1/oauth/revoke", result.RevocationEndpoint)
 		assert.Equal(t, OAuthResponseTypes, result.ResponseTypesSupported)
 		assert.Equal(t, OAuthRevocationEndpointAuthMethods, result.RevocationEndpointAuthMethodsSupported)
+		assert.Equal(t, "http://localhost:2342/api/v1/oauth/authorize", result.AuthorizationEndpoint)
+		assert.Equal(t, OAuthGrantTypes, result.GrantTypesSupported)
+		assert.Equal(t, OAuthCodeChallengeMethods, result.CodeChallengeMethodsSupported)
+		assert.Contains(t, result.GrantTypesSupported, "authorization_code")
+		assert.Contains(t, result.CodeChallengeMethodsSupported, "S256")
 	})
 }

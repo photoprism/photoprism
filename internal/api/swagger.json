@@ -3693,6 +3693,97 @@
             },
             "type": "object"
         },
+        "oidc.Locale": {
+            "type": "object"
+        },
+        "oidc.UserInfo": {
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/oidc.UserInfoAddress"
+                },
+                "birthdate": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "email_verified": {
+                    "type": "boolean"
+                },
+                "family_name": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "given_name": {
+                    "type": "string"
+                },
+                "locale": {
+                    "$ref": "#/definitions/oidc.Locale"
+                },
+                "middle_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "phone_number_verified": {
+                    "type": "boolean"
+                },
+                "picture": {
+                    "type": "string"
+                },
+                "preferred_username": {
+                    "type": "string"
+                },
+                "profile": {
+                    "type": "string"
+                },
+                "sub": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "website": {
+                    "type": "string"
+                },
+                "zoneinfo": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "oidc.UserInfoAddress": {
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "formatted": {
+                    "type": "string"
+                },
+                "locality": {
+                    "type": "string"
+                },
+                "postal_code": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "street_address": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "places.Location": {
             "properties": {
                 "category": {
@@ -8804,18 +8895,188 @@
         "/api/v1/oauth/authorize": {
             "get": {
                 "operationId": "OAuthAuthorize",
+                "parameters": [
+                    {
+                        "description": "must be code",
+                        "in": "query",
+                        "name": "response_type",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "registered client UID",
+                        "in": "query",
+                        "name": "client_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "exact registered redirect URI",
+                        "in": "query",
+                        "name": "redirect_uri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "requested scope",
+                        "in": "query",
+                        "name": "scope",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "opaque CSRF state",
+                        "in": "query",
+                        "name": "state",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "PKCE code challenge",
+                        "in": "query",
+                        "name": "code_challenge",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "must be S256",
+                        "in": "query",
+                        "name": "code_challenge_method",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "produces": [
+                    "text/html",
                     "application/json"
                 ],
                 "responses": {
-                    "405": {
-                        "description": "Method Not Allowed",
+                    "200": {
+                        "description": "consent page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
-                "summary": "OAuth2 authorization endpoint (not implemented)",
+                "summary": "OAuth2 authorization endpoint (authorization code flow with PKCE)",
+                "tags": [
+                    "Authentication"
+                ]
+            },
+            "post": {
+                "operationId": "OAuthAuthorize",
+                "parameters": [
+                    {
+                        "description": "must be code",
+                        "in": "query",
+                        "name": "response_type",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "registered client UID",
+                        "in": "query",
+                        "name": "client_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "exact registered redirect URI",
+                        "in": "query",
+                        "name": "redirect_uri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "requested scope",
+                        "in": "query",
+                        "name": "scope",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "opaque CSRF state",
+                        "in": "query",
+                        "name": "state",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "PKCE code challenge",
+                        "in": "query",
+                        "name": "code_challenge",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "must be S256",
+                        "in": "query",
+                        "name": "code_challenge_method",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "text/html",
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "consent page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2 authorization endpoint (authorization code flow with PKCE)",
                 "tags": [
                     "Authentication"
                 ]
@@ -8893,7 +9154,7 @@
                 "operationId": "OAuthToken",
                 "parameters": [
                     {
-                        "description": "token request (supports client_credentials, password, or session grant)",
+                        "description": "token request (supports client_credentials, password, session, or authorization_code grant)",
                         "in": "body",
                         "name": "request",
                         "required": true,
@@ -8944,14 +9205,56 @@
                     "application/json"
                 ],
                 "responses": {
-                    "405": {
-                        "description": "Method Not Allowed",
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/oidc.UserInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
                     }
                 },
-                "summary": "OAuth2 userinfo endpoint (not implemented)",
+                "summary": "returns information about the authenticated user",
+                "tags": [
+                    "Authentication"
+                ]
+            },
+            "post": {
+                "operationId": "OAuthUserinfo",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/oidc.UserInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "returns information about the authenticated user",
                 "tags": [
                     "Authentication"
                 ]

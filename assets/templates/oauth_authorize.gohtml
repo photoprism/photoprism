@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{ .config.Name }}</title>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0d1b2a;
+      color: #e8edf2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #16263a;
+      border-radius: 12px;
+      padding: 32px 28px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+    .brand { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #8aa1b8; margin-bottom: 18px; }
+    h1 { font-size: 20px; margin: 0 0 8px; font-weight: 600; }
+    p { margin: 0 0 16px; line-height: 1.5; color: #c4d0dc; }
+    .client { font-weight: 600; color: #ffffff; }
+    .scopes { list-style: none; margin: 0 0 24px; padding: 0; }
+    .scopes li {
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background: #1f3550;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      word-break: break-all;
+    }
+    .actions { display: flex; gap: 12px; margin-top: 8px; }
+    button {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; cursor: default; }
+    .btn-allow { background: #4a9eff; color: #06121f; }
+    .btn-deny { background: transparent; color: #c4d0dc; border: 1px solid #34516f; }
+    .status { margin-top: 16px; min-height: 18px; color: #ff8a8a; font-size: 14px; }
+    .signin { display: none; }
+    .signin a { color: #4a9eff; text-decoration: none; font-weight: 600; }
+    .error-title { color: #ff8a8a; }
+    .muted { color: #8aa1b8; font-size: 13px; }
+  </style>
+</head>
+<body>
+{{ if .error }}
+  <div class="card">
+    <div class="brand">{{ .config.Name }}</div>
+    <h1 class="error-title">Authorization Error</h1>
+    <p>{{ .errorDescription }}</p>
+    <p class="muted">Error code: {{ .error }}</p>
+  </div>
+{{ else }}
+  <div class="card"
+       id="oauth-consent"
+       data-namespace="{{ .storageNamespace }}"
+       data-login-uri="{{ .loginUri }}"
+       data-deny-redirect="{{ .denyRedirect }}">
+    <div class="brand">{{ .config.Name }}</div>
+    <h1>Authorize Access</h1>
+    <p><span class="client">{{ .clientName }}</span> is requesting access to your account with the following scope:</p>
+    <ul class="scopes">
+      {{ range .scopes }}<li>{{ . }}</li>{{ else }}<li>(default)</li>{{ end }}
+    </ul>
+    <div class="actions" id="consent-actions">
+      <button type="button" class="btn-deny" id="btn-deny">Deny</button>
+      <button type="button" class="btn-allow" id="btn-allow">Allow</button>
+    </div>
+    <p class="signin" id="signin-prompt">You need to sign in to continue. <a href="#">Sign in to continue</a></p>
+    <div class="status" id="status-msg" role="alert"></div>
+  </div>
+  <script>
+    (function () {
+      var el = document.getElementById("oauth-consent");
+      if (!el) {
+        return;
+      }
+
+      var rawNs = el.dataset.namespace || "";
+      var ns = rawNs && rawNs !== "null" && rawNs !== "undefined" ? rawNs : "root";
+      var loginUri = el.dataset.loginUri || "";
+      var denyRedirect = el.dataset.denyRedirect || "";
+
+      // Read the existing browser session token from this app's namespaced
+      // storage, falling back to the un-scoped "root" namespace. Mirrors
+      // frontend/src/common/session.js / storage.js key conventions.
+      function readToken() {
+        var stores = [window.localStorage, window.sessionStorage];
+        var keys = ["pp:" + ns + ":session.token", "pp:root:session.token"];
+        for (var s = 0; s < stores.length; s++) {
+          if (!stores[s]) {
+            continue;
+          }
+          for (var k = 0; k < keys.length; k++) {
+            try {
+              var v = stores[s].getItem(keys[k]);
+              if (v) {
+                return v;
+              }
+            } catch (e) {
+              /* storage access may throw in restricted contexts */
+            }
+          }
+        }
+        return "";
+      }
+
+      var token = readToken();
+      var consent = document.getElementById("consent-actions");
+      var signin = document.getElementById("signin-prompt");
+      var statusEl = document.getElementById("status-msg");
+
+      // No live session: offer a sign-in link that returns to this page.
+      if (!token) {
+        if (consent) {
+          consent.style.display = "none";
+        }
+        if (signin) {
+          var sep = loginUri.indexOf("?") === -1 ? "?" : "&";
+          var link = signin.querySelector("a");
+          if (link) {
+            link.href = loginUri + sep + "return_to=" + encodeURIComponent(window.location.href);
+          }
+          signin.style.display = "block";
+        }
+        return;
+      }
+
+      var allowBtn = document.getElementById("btn-allow");
+      var denyBtn = document.getElementById("btn-deny");
+
+      // Deny navigates to the server-validated access_denied redirect.
+      if (denyBtn) {
+        denyBtn.addEventListener("click", function () {
+          if (denyRedirect) {
+            window.location.href = denyRedirect;
+          }
+        });
+      }
+
+      // Allow re-POSTs the same authorize URL with the session token; the
+      // server mints the code and returns the redirect target.
+      if (allowBtn) {
+        allowBtn.addEventListener("click", function () {
+          allowBtn.disabled = true;
+          if (denyBtn) {
+            denyBtn.disabled = true;
+          }
+          if (statusEl) {
+            statusEl.textContent = "";
+          }
+
+          fetch(window.location.pathname + window.location.search, {
+            method: "POST",
+            headers: { "X-Auth-Token": token, "Accept": "application/json" },
+            credentials: "same-origin",
+          })
+            .then(function (resp) {
+              return resp.json().then(function (data) {
+                return { ok: resp.ok, data: data };
+              });
+            })
+            .then(function (res) {
+              if (res.ok && res.data && res.data.redirect) {
+                window.location.href = res.data.redirect;
+                return;
+              }
+              allowBtn.disabled = false;
+              if (denyBtn) {
+                denyBtn.disabled = false;
+              }
+              if (statusEl) {
+                statusEl.textContent =
+                  (res.data && (res.data.error_description || res.data.error)) || "Authorization failed.";
+              }
+            })
+            .catch(function () {
+              allowBtn.disabled = false;
+              if (denyBtn) {
+                denyBtn.disabled = false;
+              }
+              if (statusEl) {
+                statusEl.textContent = "Authorization failed.";
+              }
+            });
+        });
+      }
+    })();
+  </script>
+{{ end }}
+</body>
+</html>

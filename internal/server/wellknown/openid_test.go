@@ -19,5 +19,10 @@ func TestOpenIDConfiguration(t *testing.T) {
 		assert.Equal(t, "http://localhost:2342/.well-known/jwks.json", result.JwksUri)
 		assert.Equal(t, OAuthResponseTypes, result.ResponseTypesSupported)
 		assert.Equal(t, OAuthRevocationEndpointAuthMethods, result.RevocationEndpointAuthMethodsSupported)
+		assert.Equal(t, "http://localhost:2342/api/v1/oauth/authorize", result.AuthorizationEndpoint)
+		assert.Equal(t, "http://localhost:2342/api/v1/oauth/userinfo", result.UserinfoEndpoint)
+		assert.Equal(t, OAuthGrantTypes, result.GrantTypesSupported)
+		assert.Equal(t, OAuthCodeChallengeMethods, result.CodeChallengeMethodsSupported)
+		assert.Contains(t, result.CodeChallengeMethodsSupported, "S256")
 	})
 }

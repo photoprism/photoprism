@@ -9,8 +9,9 @@ import (
 
 // OAuth metadata published via the well-known discovery endpoints.
 var (
-	OAuthResponseTypes                 = []string{"token"}
-	OAuthGrantTypes                    = []string{"client_credentials"}
+	OAuthResponseTypes                 = []string{"code"}
+	OAuthGrantTypes                    = []string{"authorization_code", "client_credentials", "password"}
+	OAuthCodeChallengeMethods          = []string{"S256"}
 	OAuthTokenEndpointAuthMethods      = []string{"client_secret_basic", "client_secret_post"}
 	OAuthRevocationEndpointAuthMethods = []string{"none"}
 )
@@ -53,7 +54,7 @@ func NewOAuthAuthorizationServer(conf *config.Config) *OAuthAuthorizationServer 
 		ResponseModesSupported:                    []string{},
 		SubjectTypesSupported:                     []string{},
 		ClaimsSupported:                           []string{},
-		CodeChallengeMethodsSupported:             []string{},
+		CodeChallengeMethodsSupported:             OAuthCodeChallengeMethods,
 		IntrospectionEndpointAuthMethodsSupported: []string{},
 		RevocationEndpoint:                        fmt.Sprintf("%sapi/v1/oauth/revoke", conf.SiteUrl()),
 		RevocationEndpointAuthMethodsSupported:    OAuthRevocationEndpointAuthMethods,

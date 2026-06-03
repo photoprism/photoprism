@@ -194,6 +194,59 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.Error(t, m.Validate())
 	})
+	t.Run("GrantTypeAuthorizationCodeSuccess", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:    authn.GrantAuthorizationCode,
+			Code:         "authcode1234567890",
+			CodeVerifier: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+			RedirectURI:  "https://app.example.com/callback",
+			ClientID:     "cs5gfen1bgxz7s9i",
+		}
+
+		assert.NoError(t, m.Validate())
+	})
+	t.Run("GrantTypeAuthorizationCodeCodeRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:    authn.GrantAuthorizationCode,
+			Code:         "",
+			CodeVerifier: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+			RedirectURI:  "https://app.example.com/callback",
+			ClientID:     "cs5gfen1bgxz7s9i",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("GrantTypeAuthorizationCodeVerifierRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:   authn.GrantAuthorizationCode,
+			Code:        "authcode1234567890",
+			RedirectURI: "https://app.example.com/callback",
+			ClientID:    "cs5gfen1bgxz7s9i",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("GrantTypeAuthorizationCodeRedirectRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:    authn.GrantAuthorizationCode,
+			Code:         "authcode1234567890",
+			CodeVerifier: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+			ClientID:     "cs5gfen1bgxz7s9i",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("GrantTypeAuthorizationCodeInvalidClientID", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:    authn.GrantAuthorizationCode,
+			Code:         "authcode1234567890",
+			CodeVerifier: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+			RedirectURI:  "https://app.example.com/callback",
+			ClientID:     "not-a-client-uid",
+		}
+
+		assert.Error(t, m.Validate())
+	})
 	t.Run("InvalidGrantType", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  "invalid",

@@ -65,6 +65,34 @@ func TestFindOAuthCode(t *testing.T) {
 	})
 }
 
+func TestOAuthCodeConsume(t *testing.T) {
+	t.Run("DeletesOnce", func(t *testing.T) {
+		raw, m, err := NewOAuthCode(OAuthCodeSpec{ClientUID: "cs5gfen1bgxz7s9i", UserUID: "us5gfen1bgxz7s9i", RedirectURI: "photoprism://cb"})
+		require.NoError(t, err)
+		deleted, err := m.Consume()
+		require.NoError(t, err)
+		assert.True(t, deleted, "first consume must report the row as deleted")
+		gone, err := FindOAuthCode(raw)
+		require.NoError(t, err)
+		assert.Nil(t, gone, "consumed code must not be found again")
+	})
+	t.Run("SecondConsumeReportsNotDeleted", func(t *testing.T) {
+		_, m, err := NewOAuthCode(OAuthCodeSpec{ClientUID: "cs5gfen1bgxz7s9i", UserUID: "us5gfen1bgxz7s9i", RedirectURI: "photoprism://cb"})
+		require.NoError(t, err)
+		deleted, err := m.Consume()
+		require.NoError(t, err)
+		require.True(t, deleted)
+		deleted, err = m.Consume()
+		require.NoError(t, err)
+		assert.False(t, deleted, "second consume of the same row must report not deleted")
+	})
+	t.Run("ZeroID", func(t *testing.T) {
+		deleted, err := (&OAuthCode{}).Consume()
+		assert.Error(t, err)
+		assert.False(t, deleted)
+	})
+}
+
 func TestHashOAuthCode(t *testing.T) {
 	h := HashOAuthCode("abc")
 	assert.Len(t, h, 64)

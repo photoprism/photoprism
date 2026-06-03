@@ -150,6 +150,22 @@ func (m *OAuthCode) Delete() error {
 	return Db().Delete(m).Error
 }
 
+// Consume atomically deletes the auth-code row and reports whether this call
+// actually removed it. The delete targets the primary key, so two concurrent
+// redemptions of the same code race on the row and only the winner sees
+// deleted=true; the loser (deleted=false) must reject the request. This closes
+// the replay window that a separate find-then-delete leaves open.
+func (m *OAuthCode) Consume() (deleted bool, err error) {
+	if m == nil || m.ID == 0 {
+		return false, fmt.Errorf("oauth: auth code id is zero")
+	}
+	tx := Db().Delete(m)
+	if tx.Error != nil {
+		return false, tx.Error
+	}
+	return tx.RowsAffected == 1, nil
+}
+
 // PurgeExpiredOAuthCodes hard-deletes every auth-code row whose ExpiresAt is in
 // the past. Safe to call repeatedly; returns the number of rows removed.
 func PurgeExpiredOAuthCodes() (int64, error) {

@@ -40,6 +40,8 @@ var (
 	ErrAuthProviderIsNotOIDC        = errors.New("auth provider is not oidc")
 	ErrAuthIDRequired               = errors.New("auth id required")
 	ErrAuthCodeRequired             = errors.New("auth code required")
+	ErrCodeVerifierRequired         = errors.New("code verifier required")
+	ErrRedirectURIRequired          = errors.New("redirect uri required")
 	ErrClientIDRequired             = errors.New("client id required")
 	ErrInvalidClientSecret          = errors.New("invalid client secret")
 	ErrClientSecretRequired         = errors.New("client secret required")

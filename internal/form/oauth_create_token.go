@@ -71,6 +71,22 @@ func (f OAuthCreateToken) Validate() error {
 		case f.Scope == "":
 			return authn.ErrScopeRequired
 		}
+	case authn.GrantAuthorizationCode:
+		// Validate the authorization-code redemption parameters. Public clients
+		// authenticate with PKCE instead of a client secret, so the secret is
+		// intentionally not required here.
+		switch {
+		case f.Code == "":
+			return authn.ErrAuthCodeRequired
+		case f.CodeVerifier == "":
+			return authn.ErrCodeVerifierRequired
+		case f.RedirectURI == "":
+			return authn.ErrRedirectURIRequired
+		case f.ClientID == "":
+			return authn.ErrClientIDRequired
+		case rnd.InvalidUID(f.ClientID, 'c'):
+			return authn.ErrInvalidCredentials
+		}
 	default:
 		// Reject requests with unsupported grant types.
 		return authn.ErrInvalidGrantType

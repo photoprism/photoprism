@@ -59,7 +59,7 @@ func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 		ScopesSupported:                           acl.Rules.Resources(),
 		TokenEndpointAuthMethodsSupported:         OAuthTokenEndpointAuthMethods,
 		ClaimsSupported:                           []string{},
-		CodeChallengeMethodsSupported:             []string{},
+		CodeChallengeMethodsSupported:             OAuthCodeChallengeMethods,
 		IntrospectionEndpoint:                     "",
 		IntrospectionEndpointAuthMethodsSupported: []string{},
 		RevocationEndpoint:                        fmt.Sprintf("%sapi/v1/oauth/revoke", conf.SiteUrl()),
