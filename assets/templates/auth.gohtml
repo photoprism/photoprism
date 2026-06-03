@@ -32,16 +32,20 @@
       "session.error",
     ];
     const storages = [localStorage, sessionStorage].filter(Boolean);
+    // Read the storage-mode preference only from this app's namespace. On a
+    // shared-domain cluster every instance and the Portal share one origin, so
+    // the legacy un-namespaced "session" flag must NOT be consulted here — it
+    // belongs to a different app's storage scope.
     const preferredStorage =
-      localStorage &&
-      (localStorage.getItem(namespacedKey("session")) === "true" || localStorage.getItem("session") === "true")
+      localStorage && localStorage.getItem(namespacedKey("session")) === "true"
         ? sessionStorage || localStorage
         : localStorage;
     const clearSessionData = () => {
       storages.forEach((storage) => {
-        // Preserve the storage-mode preference so the login page keeps using
-        // sessionStorage when "Stay signed in on this device" is disabled.
-        sessionDataKeys.forEach((key) => storage.removeItem(key));
+        // Clear ONLY this app's namespaced session keys. Removing the legacy
+        // un-namespaced keys here would be a global clear that wipes the session
+        // state of sibling instances and the Portal on the same shared-domain
+        // origin (the storage-mode preference is namespaced and left intact).
         sessionDataKeys.forEach((key) => storage.removeItem(namespacedKey(key)));
       });
     };
