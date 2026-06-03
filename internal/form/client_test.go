@@ -136,6 +136,19 @@ func TestModClientFromCli(t *testing.T) {
 	})
 }
 
+func TestCleanRedirectURIs(t *testing.T) {
+	assert.Nil(t, cleanRedirectURIs(nil))
+	assert.Nil(t, cleanRedirectURIs([]string{"", "   "}))
+	assert.Equal(t, []string{"https://a/cb"}, cleanRedirectURIs([]string{" https://a/cb ", "https://a/cb"}))
+	assert.Equal(t, []string{"a://cb", "b://cb"}, cleanRedirectURIs([]string{"a://cb", "", "b://cb", "a://cb"}))
+}
+
+func TestClient_IsPublic(t *testing.T) {
+	assert.True(t, (&Client{ClientType: authn.ClientPublic}).IsPublic())
+	assert.False(t, (&Client{ClientType: authn.ClientConfidential}).IsPublic())
+	assert.False(t, (&Client{}).IsPublic())
+}
+
 func TestClient_Expires(t *testing.T) {
 	t.Run("ToSmall", func(t *testing.T) {
 		c := Client{AuthExpires: -1}

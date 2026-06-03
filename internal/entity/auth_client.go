@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -593,6 +594,18 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 	m.SetTokens(frm.Tokens())
 	m.SetExpires(frm.Expires())
 
+	// Set the client type (public clients authenticate with PKCE, not a secret).
+	if frm.ClientType != "" {
+		m.ClientType = frm.ClientType
+	}
+
+	// Register OAuth2 redirect URIs allowed for the authorization code flow.
+	if len(frm.RedirectURIs) > 0 {
+		data := m.GetData()
+		data.RedirectURIs = frm.RedirectURIs
+		m.SetData(data)
+	}
+
 	// Enable authentication?
 	if frm.AuthEnabled {
 		m.AuthEnabled = true
@@ -642,6 +655,14 @@ func (m *Client) Validate() (err error) {
 	// Empty authorization scope?
 	if m.AuthScope == "" {
 		return errors.New("authorization scope must not be empty")
+	}
+
+	// Registered redirect URIs must be absolute (scheme present) so the
+	// authorization-code flow's exact-match check has a well-formed target.
+	for _, uri := range m.GetData().RedirectURIs {
+		if u, uErr := url.Parse(uri); uErr != nil || u.Scheme == "" {
+			return fmt.Errorf("invalid redirect uri %s", clean.LogQuote(uri))
+		}
 	}
 
 	return nil

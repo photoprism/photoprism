@@ -20,6 +20,8 @@ const (
 	ClientAuthMethod       = "client authentication `METHOD`"
 	ClientAuthExpires      = "access token `LIFETIME` in seconds, after which a new token must be requested"
 	ClientAuthTokens       = "maximum `NUMBER` of access tokens that the client can request (-1 to disable the limit)"
+	ClientRedirectURI      = "OAuth2 redirect `URI` allowed for the authorization code flow (repeat for multiple)"
+	ClientPublic           = "register a public client that authenticates with PKCE instead of a secret"
 	ClientRegenerateSecret = "set a new randomly generated client secret"
 	ClientEnable           = "enable client authentication if disabled"
 	ClientDisable          = "disable client authentication"
@@ -91,6 +93,14 @@ var ClientAddFlags = []cli.Flag{
 		Usage:   ClientAuthTokens,
 		Value:   10,
 	},
+	&cli.StringSliceFlag{
+		Name:  "redirect-uri",
+		Usage: ClientRedirectURI,
+	},
+	&cli.BoolFlag{
+		Name:  "public",
+		Usage: ClientPublic,
+	},
 	&cli.StringFlag{
 		Name:   "secret",
 		Usage:  ClientSecretUsage,
@@ -137,6 +147,14 @@ var ClientModFlags = []cli.Flag{
 		Aliases: []string{"t"},
 		Usage:   ClientAuthTokens,
 		Value:   10,
+	},
+	&cli.StringSliceFlag{
+		Name:  "redirect-uri",
+		Usage: ClientRedirectURI,
+	},
+	&cli.BoolFlag{
+		Name:  "public",
+		Usage: ClientPublic,
 	},
 	&cli.StringFlag{
 		Name:   "secret",

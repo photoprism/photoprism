@@ -33,3 +33,26 @@ func TestClientsAddCommand_AddWithRoleAndUser(t *testing.T) {
 		assert.Contains(t, output, "Client Secret")
 	})
 }
+
+func TestClientsAddCommand_PublicClient(t *testing.T) {
+	t.Run("PublicWithRedirectURIs", func(t *testing.T) {
+		output, err := RunWithTestContext(ClientsAddCommand, []string{
+			"add", "--name=Native App", "--scope=photos", "--public",
+			"--redirect-uri=photoprism://callback", "--redirect-uri=https://app.example.com/cb",
+		})
+
+		assert.NoError(t, err)
+		assert.Contains(t, output, "Native App")
+		assert.Contains(t, output, "photoprism://callback")
+		assert.Contains(t, output, "https://app.example.com/cb")
+		// Public clients use PKCE and are not issued a secret.
+		assert.Contains(t, output, "public client")
+		assert.NotContains(t, output, "Client Secret")
+	})
+	t.Run("InvalidRedirectURIRejected", func(t *testing.T) {
+		_, err := RunWithTestContext(ClientsAddCommand, []string{
+			"add", "--name=Bad App", "--scope=photos", "--redirect-uri=not-a-uri",
+		})
+		assert.Error(t, err)
+	})
+}

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/manifoldco/promptui"
@@ -120,9 +121,20 @@ func clientsAddAction(ctx *cli.Context) error {
 			if result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx)); err == nil {
 				fmt.Printf("\n%s", result)
 			}
+
+			// Show the registered redirect URIs, if any.
+			if uris := client.GetData().RedirectURIs; len(uris) > 0 {
+				fmt.Printf("\nRedirect URIs: %s\n", strings.Join(uris, ", "))
+			}
 		}
 
-		// Se a random secret or the secret specified in the command flags, if any.
+		// Public clients authenticate with PKCE and are not issued a secret.
+		if frm.IsPublic() {
+			fmt.Println("\nThis is a public client that authenticates with PKCE; no client secret is issued.")
+			return nil
+		}
+
+		// Set a random secret or the secret specified in the command flags, if any.
 		var secret, message string
 		var err error
 

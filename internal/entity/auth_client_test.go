@@ -642,6 +642,30 @@ func TestClient_SetFormValues(t *testing.T) {
 		assert.Equal(t, int64(2147483647), c.AuthTokens)
 		assert.Equal(t, true, c.AuthEnabled)
 	})
+	t.Run("PublicWithRedirectURIs", func(t *testing.T) {
+		m := NewClient()
+		values := form.Client{
+			ClientName:   "Native App",
+			ClientType:   authn.ClientPublic,
+			AuthScope:    "photos",
+			RedirectURIs: []string{"photoprism://callback", "https://app.example.com/cb"},
+		}
+
+		c := m.SetFormValues(values)
+
+		assert.Equal(t, authn.ClientPublic, c.ClientType)
+		assert.Equal(t, []string{"photoprism://callback", "https://app.example.com/cb"}, c.GetData().RedirectURIs)
+		assert.NoError(t, c.Validate())
+	})
+	t.Run("InvalidRedirectURIRejected", func(t *testing.T) {
+		m := NewClient()
+		c := m.SetFormValues(form.Client{
+			ClientName:   "Bad App",
+			AuthScope:    "photos",
+			RedirectURIs: []string{"not-a-uri"},
+		})
+		assert.Error(t, c.Validate())
+	})
 	t.Run("UseDefaults", func(t *testing.T) {
 		var m = Client{ClientName: "Default", ClientUID: "cs5cpu17n6gj7y5r"}
 

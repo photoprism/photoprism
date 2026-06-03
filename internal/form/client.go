@@ -1,6 +1,8 @@
 package form
 
 import (
+	"strings"
+
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -12,18 +14,45 @@ import (
 
 // Client represents client application settings.
 type Client struct {
-	UserUID      string `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
-	UserName     string `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
-	ClientID     string `json:"ClientID,omitempty" yaml:"ClientID,omitempty"`
-	ClientSecret string `json:"ClientSecret,omitempty" yaml:"ClientSecret,omitempty"` //nolint:gosec // G117: Expected credential field.
-	ClientName   string `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
-	ClientRole   string `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
-	AuthProvider string `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
-	AuthMethod   string `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
-	AuthScope    string `json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
-	AuthExpires  int64  `json:"AuthExpires,omitempty" yaml:"AuthExpires,omitempty"`
-	AuthTokens   int64  `json:"AuthTokens,omitempty" yaml:"AuthTokens,omitempty"`
-	AuthEnabled  bool   `json:"AuthEnabled,omitempty" yaml:"AuthEnabled,omitempty"`
+	UserUID      string   `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
+	UserName     string   `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
+	ClientID     string   `json:"ClientID,omitempty" yaml:"ClientID,omitempty"`
+	ClientSecret string   `json:"ClientSecret,omitempty" yaml:"ClientSecret,omitempty"` //nolint:gosec // G117: Expected credential field.
+	ClientName   string   `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
+	ClientRole   string   `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
+	ClientType   string   `json:"ClientType,omitempty" yaml:"ClientType,omitempty"`
+	AuthProvider string   `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string   `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
+	AuthScope    string   `json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
+	AuthExpires  int64    `json:"AuthExpires,omitempty" yaml:"AuthExpires,omitempty"`
+	AuthTokens   int64    `json:"AuthTokens,omitempty" yaml:"AuthTokens,omitempty"`
+	AuthEnabled  bool     `json:"AuthEnabled,omitempty" yaml:"AuthEnabled,omitempty"`
+	RedirectURIs []string `json:"RedirectURIs,omitempty" yaml:"RedirectURIs,omitempty"`
+}
+
+// cleanRedirectURIs trims, de-duplicates, and drops empty redirect URI entries,
+// returning nil when none remain so callers can tell "not provided" from "set".
+func cleanRedirectURIs(values []string) []string {
+	if len(values) == 0 {
+		return nil
+	}
+	seen := make(map[string]struct{}, len(values))
+	out := make([]string, 0, len(values))
+	for _, v := range values {
+		s := strings.TrimSpace(v)
+		if s == "" {
+			continue
+		}
+		if _, dup := seen[s]; dup {
+			continue
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
 }
 
 // NewClient creates new client application settings.
@@ -97,6 +126,12 @@ func AddClientFromCli(ctx *cli.Context) Client {
 	f.AuthExpires = ctx.Int64("expires")
 	f.AuthTokens = ctx.Int64("tokens")
 
+	f.RedirectURIs = cleanRedirectURIs(ctx.StringSlice("redirect-uri"))
+
+	if ctx.Bool("public") {
+		f.ClientType = authn.ClientPublic
+	}
+
 	return f
 }
 
@@ -144,6 +179,18 @@ func ModClientFromCli(ctx *cli.Context) Client {
 		f.AuthEnabled = false
 	}
 
+	if ctx.IsSet("redirect-uri") {
+		f.RedirectURIs = cleanRedirectURIs(ctx.StringSlice("redirect-uri"))
+	}
+
+	if ctx.IsSet("public") {
+		if ctx.Bool("public") {
+			f.ClientType = authn.ClientPublic
+		} else {
+			f.ClientType = authn.ClientConfidential
+		}
+	}
+
 	return f
 }
 
@@ -168,6 +215,12 @@ func (f *Client) Secret() string {
 // Name returns the sanitized client name.
 func (f *Client) Name() string {
 	return clean.Name(f.ClientName)
+}
+
+// IsPublic reports whether the client is registered as a public client that
+// authenticates with PKCE instead of a secret.
+func (f *Client) IsPublic() bool {
+	return f.ClientType == authn.ClientPublic
 }
 
 // Role returns the sanitized client role.
