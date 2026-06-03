@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import StorageShim from "node-storage-shim";
 import { buildNamespace, createNamespacedStorage } from "common/storage";
-import { persistInstanceIdentity, listReachableInstances, InstanceIdentityKeys } from "common/instances";
+import { persistInstanceIdentity, listReachableInstances, instanceLabel, InstanceIdentityKeys } from "common/instances";
 
 // seedInstance writes a peer instance's session token and identity into a shared store.
 const seedInstance = (store, namespace, { token = "tok", url, title } = {}) => {
@@ -50,6 +50,23 @@ describe("common/instances", () => {
     });
   });
 
+  describe("instanceLabel", () => {
+    it("prefers the last base-path segment", () => {
+      expect(instanceLabel("https://app.example.com/i/pro-1/", "PhotoPrism")).toBe("pro-1");
+      expect(instanceLabel("https://app.example.com/instance/foo", "PhotoPrism")).toBe("foo");
+    });
+    it("falls back to the title for root-pathed URLs", () => {
+      expect(instanceLabel("https://pro-1.example.com/", "Pro One")).toBe("Pro One");
+    });
+    it("falls back to the url when no title and no path segment", () => {
+      expect(instanceLabel("https://pro-1.example.com/", "")).toBe("https://pro-1.example.com/");
+    });
+    it("returns empty for invalid input", () => {
+      expect(instanceLabel("", "")).toBe("");
+      expect(instanceLabel(null, null)).toBe("");
+    });
+  });
+
   describe("listReachableInstances", () => {
     it("returns peer instances excluding the current namespace", () => {
       const store = new StorageShim();
@@ -65,6 +82,14 @@ describe("common/instances", () => {
       seedInstance(store, "ns-pro-2", { url: "https://pro-2.example.com/" });
       const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
       expect(result[0].title).toBe("https://pro-2.example.com/");
+    });
+    it("labels same-origin path-based instances by their distinctive base-path segment", () => {
+      // Both share the generic title "PhotoPrism"; the path segment disambiguates.
+      const store = new StorageShim();
+      seedInstance(store, "ns-pro-1", { url: "https://app.example.com/i/pro-1/", title: "PhotoPrism" });
+      seedInstance(store, "ns-pro-2", { url: "https://app.example.com/i/pro-2/", title: "PhotoPrism" });
+      const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
+      expect(result[0]).toMatchObject({ url: "https://app.example.com/i/pro-2/", title: "pro-2" });
     });
     it("ignores namespaces that have a session but no recorded identity", () => {
       const store = new StorageShim();

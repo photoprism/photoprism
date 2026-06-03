@@ -39,6 +39,31 @@ export const InstanceIdentityKeys = [InstanceUrlKey, InstanceTitleKey];
 // safeWindow returns the browser window if available, else null.
 const safeWindow = () => (typeof window === "undefined" ? null : window);
 
+// basePathSegment returns the last non-empty path segment of a URL (e.g.
+// "https://app.example.com/i/pro-1/" -> "pro-1"), or "" when the URL is invalid
+// or root-pathed.
+function basePathSegment(url) {
+  if (typeof url !== "string" || url === "") {
+    return "";
+  }
+  let pathname;
+  try {
+    pathname = new URL(url, safeWindow()?.location?.origin || "http://localhost/").pathname;
+  } catch {
+    return "";
+  }
+  const segments = pathname.split("/").filter((s) => s !== "");
+  return segments.length ? segments[segments.length - 1] : "";
+}
+
+// instanceLabel derives a distinctive switcher label for an instance: its base
+// path segment when present (same-origin instances differ only by path and
+// commonly share a generic title like "PhotoPrism"), else the recorded title,
+// else the URL.
+export function instanceLabel(url, title) {
+  return basePathSegment(url) || title || url || "";
+}
+
 // persistInstanceIdentity records this instance's SiteUrl and display title in
 // the given (namespaced) store, so other instances on the same origin can list
 // it in the navigation instance switcher. No-op without a URL or usable store.
@@ -105,7 +130,7 @@ export function listReachableInstances(options) {
       instances.push({
         namespace,
         url,
-        title: store.getItem(prefix + InstanceTitleKey) || url,
+        title: instanceLabel(url, store.getItem(prefix + InstanceTitleKey)),
       });
     });
   });
