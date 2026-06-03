@@ -62,8 +62,14 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 		return nil, err
 	}
 
-	// Create cookie handler.
-	cookieHandler := utils.NewCookieHandler(hashKey, encryptKey, utils.WithUnsecure())
+	// Create cookie handler. The short-lived OAuth state (CSRF defense) and PKCE
+	// code_verifier cookies keep the Secure attribute on HTTPS deployments; it is
+	// dropped only when running insecurely (HTTP issuer / relaxed TLS).
+	var cookieOpts []utils.CookieHandlerOpt
+	if insecure {
+		cookieOpts = append(cookieOpts, utils.WithUnsecure())
+	}
+	cookieHandler := utils.NewCookieHandler(hashKey, encryptKey, cookieOpts...)
 
 	// Create HTTP client.
 	httpClient := HttpClient(insecure)
