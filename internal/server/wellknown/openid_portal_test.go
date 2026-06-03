@@ -1,6 +1,7 @@
 package wellknown
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,5 +47,24 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		assert.NotContains(t, result.AuthorizationEndpoint, "//api/v1")
 		assert.NotContains(t, result.TokenEndpoint, "//api/v1")
 		assert.NotContains(t, result.UserinfoEndpoint, "//api/v1")
+	})
+
+	t.Run("BasePathDeployment", func(t *testing.T) {
+		// For a sub-path Portal (SiteUrl carries a base path), every advertised
+		// URL must contain the base path exactly once — the issuer already carries
+		// it, so the appended paths must be bare. Guards against the JwksUri
+		// base-path doubling regression.
+		c := config.NewConfig(config.CliTestContext())
+		c.Options().SiteUrl = "http://foo:2342/foo/"
+		result := NewPortalOpenIDConfiguration(c)
+
+		for _, u := range []string{result.Issuer, result.AuthorizationEndpoint, result.TokenEndpoint, result.UserinfoEndpoint, result.JwksUri} {
+			assert.Equal(t, 1, strings.Count(u, "/foo/"), "base path must appear exactly once in %s", u)
+			assert.NotContains(t, u, "/foo/foo/", "base path must not be doubled in %s", u)
+		}
+		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/authorize", result.AuthorizationEndpoint)
+		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/token", result.TokenEndpoint)
+		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/userinfo", result.UserinfoEndpoint)
+		assert.Equal(t, "http://foo:2342/foo/.well-known/jwks.json", result.JwksUri)
 	})
 }
