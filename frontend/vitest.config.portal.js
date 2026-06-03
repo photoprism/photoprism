@@ -26,6 +26,18 @@ export default defineConfig({
         replacement: path.resolve(__dirname, "../portal/frontend/component/cluster/instance-access.vue"),
       },
       {
+        find: "component/cluster/node/dialog.vue",
+        replacement: path.resolve(__dirname, "../portal/frontend/component/cluster/node/dialog.vue"),
+      },
+      {
+        find: "component/cluster/node/overview.vue",
+        replacement: path.resolve(__dirname, "../portal/frontend/component/cluster/node/overview.vue"),
+      },
+      {
+        find: "component/cluster/node/users.vue",
+        replacement: path.resolve(__dirname, "../portal/frontend/component/cluster/node/users.vue"),
+      },
+      {
         find: "component/user/add/dialog.vue",
         replacement: path.resolve(__dirname, "../portal/frontend/component/user/add/dialog.vue"),
       },
@@ -44,6 +56,10 @@ export default defineConfig({
       {
         find: "model/cluster-node",
         replacement: path.resolve(__dirname, "../portal/frontend/model/cluster-node.js"),
+      },
+      {
+        find: "model/chooser-instance",
+        replacement: path.resolve(__dirname, "../portal/frontend/model/chooser-instance.js"),
       },
       { find: "app", replacement: path.resolve(__dirname, "./src/app") },
       { find: "common", replacement: path.resolve(__dirname, "./src/common") },
