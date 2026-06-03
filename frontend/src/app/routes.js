@@ -80,6 +80,26 @@ export function safeReturnTo(value) {
   return "";
 }
 
+// isOidcAuthorizeUrl reports whether a recorded deep-link target is a Portal
+// OIDC OP authorize request. Such links must be resumed in-app over a
+// token-carrying XHR (the login page's resumeOidcAuthorize), not a header-less
+// top-level navigation: the authorize endpoint authenticates from the
+// X-Auth-Token header, which a hard navigation cannot carry, so following it
+// would bounce back to /login and loop once the OP session-signal cookie
+// expires. Mirrors the path check in the Portal login page's oidcAuthorizeParams.
+export function isOidcAuthorizeUrl(target) {
+  if (typeof target !== "string" || target === "") {
+    return false;
+  }
+  try {
+    const here = typeof window !== "undefined" ? window.location?.origin : "";
+    const url = new URL(target, here || "http://localhost/");
+    return url.pathname.replace(/\/+$/, "").endsWith("/api/v1/oauth/authorize");
+  } catch {
+    return false;
+  }
+}
+
 export default [
   {
     name: "home",
@@ -151,8 +171,25 @@ export default [
       // hard-navigate to the deep link the router guard recorded so the
       // stored absolute path (incl. frontend base) is honored verbatim.
       if ($session.hasLoginRedirectUrl()) {
-        $session.followLoginRedirectUrl();
-        next(false);
+        if (isOidcAuthorizeUrl($session.getLoginRedirectUrl())) {
+          // An OIDC OP authorize deep link cannot be hard-followed (a top-level
+          // navigation drops the X-Auth-Token header the endpoint needs, so it
+          // would bounce back here and loop). Enter the login component, which
+          // resumes it over a token-carrying XHR.
+          next();
+        } else if ($session.loginRedirectLooping()) {
+          // Defense in depth for any other deep link: we hard-followed this
+          // redirect moments ago and bounced straight back, so the target
+          // couldn't authenticate the navigation. Drop it and fall through to
+          // the default route instead of looping.
+          $session.clearLoginRedirectAttempt();
+          $session.clearLoginRedirectUrl();
+          next({ name: $session.getDefaultRoute() });
+        } else {
+          $session.markLoginRedirectAttempt();
+          $session.followLoginRedirectUrl();
+          next(false);
+        }
       } else if ($session.getDefaultRoute() === loginRoute) {
         // Some editions (e.g. the Portal for non-admin users) keep the login
         // page as the default route to render an instance selector; proceed

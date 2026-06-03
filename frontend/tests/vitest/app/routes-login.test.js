@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
-import routes, { safeReturnTo } from "app/routes";
+import routes, { safeReturnTo, isOidcAuthorizeUrl } from "app/routes";
 import { $config, $session } from "app/session";
 
 // Find the /login route's beforeEnter so it can be invoked directly with
@@ -200,6 +200,52 @@ describe("app/routes /login guard", () => {
     expect(next).toHaveBeenCalledWith(false);
   });
 
+  // Defense in depth: if a (non-authorize) deep link keeps bouncing the
+  // authenticated user straight back to /login, the guard must drop the target
+  // and fall through to the default route instead of looping forever.
+  it("breaks the redirect loop when a non-authorize deep link keeps bouncing back", () => {
+    $session.user = { hasId: () => true };
+    $session.authToken = "999900000000000000000000000000000000000000000000";
+    $session.id = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+    $session.auth = true;
+    $session.setLoginRedirectUrl("/library/albums/xyz/view");
+    $session.markLoginRedirectAttempt(); // simulate having just followed it
+    const followLogin = vi.spyOn($session, "followLoginRedirectUrl").mockImplementation(() => {});
+    const getDefault = vi.spyOn($session, "getDefaultRoute").mockReturnValue("browse");
+    const next = vi.fn();
+
+    loginGuard({}, {}, next);
+
+    expect(followLogin).not.toHaveBeenCalled();
+    expect(getDefault).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith({ name: "browse" });
+    expect($session.hasLoginRedirectUrl()).toBe(false);
+  });
+
+  // An authenticated user whose recorded deep link is the Portal OIDC OP
+  // authorize endpoint must enter the login component (which resumes over a
+  // token-carrying XHR) rather than be hard-followed: a top-level navigation
+  // drops the X-Auth-Token header the authorize endpoint needs, so it would
+  // 302 back to /login and loop once the OP session-signal cookie expires.
+  it("enters the login component for an OIDC authorize deep link instead of hard-following it", () => {
+    $session.user = { hasId: () => true };
+    $session.authToken = "999900000000000000000000000000000000000000000000";
+    $session.id = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+    $session.auth = true;
+    $session.setLoginRedirectUrl(
+      "/api/v1/oauth/authorize?client_id=cid&redirect_uri=https%3A%2F%2Fapp.example.com%2Fi%2Fpro-1%2Fapi%2Fv1%2Foidc%2Fredirect&scope=openid&state=st&code_challenge=cc&code_challenge_method=S256"
+    );
+    const followLogin = vi.spyOn($session, "followLoginRedirectUrl").mockImplementation(() => {});
+    const next = vi.fn();
+
+    loginGuard({}, {}, next);
+
+    expect(followLogin).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith();
+    // The deep link is preserved so the login component can read and resume it.
+    expect($session.hasLoginRedirectUrl()).toBe(true);
+  });
+
   it("falls back to the default route when the user is authenticated and no deep link is recorded", () => {
     $session.user = { hasId: () => true };
     $session.authToken = "999900000000000000000000000000000000000000000000";
@@ -266,5 +312,28 @@ describe("app/routes safeReturnTo", () => {
     expect(safeReturnTo(undefined)).toBe("");
     expect(safeReturnTo(null)).toBe("");
     expect(safeReturnTo(42)).toBe("");
+  });
+});
+
+describe("app/routes isOidcAuthorizeUrl", () => {
+  it("matches the OIDC OP authorize endpoint with or without query and trailing slash", () => {
+    expect(isOidcAuthorizeUrl("/api/v1/oauth/authorize?client_id=x&state=y")).toBe(true);
+    expect(isOidcAuthorizeUrl("/api/v1/oauth/authorize")).toBe(true);
+    expect(isOidcAuthorizeUrl("/api/v1/oauth/authorize/")).toBe(true);
+    const here = window.location?.origin;
+    if (here) {
+      expect(isOidcAuthorizeUrl(here + "/api/v1/oauth/authorize?client_id=x")).toBe(true);
+    }
+  });
+  it("does not match other deep links", () => {
+    expect(isOidcAuthorizeUrl("/library/albums/xyz/view")).toBe(false);
+    expect(isOidcAuthorizeUrl("/cluster/nodes")).toBe(false);
+    expect(isOidcAuthorizeUrl("/api/v1/oauth/token")).toBe(false);
+  });
+  it("rejects empty or non-string inputs", () => {
+    expect(isOidcAuthorizeUrl("")).toBe(false);
+    expect(isOidcAuthorizeUrl(undefined)).toBe(false);
+    expect(isOidcAuthorizeUrl(null)).toBe(false);
+    expect(isOidcAuthorizeUrl(42)).toBe(false);
   });
 });

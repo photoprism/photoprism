@@ -32,6 +32,30 @@ describe("common/session", () => {
     expect(session.authToken).toBe(null);
   });
 
+  it("marks, detects, and clears the login-redirect loop guard", () => {
+    const storage = new StorageShim();
+    const session = new Session(storage, $config);
+    expect(session.loginRedirectLooping()).toBe(false);
+    session.markLoginRedirectAttempt();
+    expect(session.loginRedirectLooping()).toBe(true);
+    session.clearLoginRedirectAttempt();
+    expect(session.loginRedirectLooping()).toBe(false);
+  });
+
+  it("stops reporting a login-redirect loop after the loop window elapses", () => {
+    vi.useFakeTimers();
+    try {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+      session.markLoginRedirectAttempt();
+      expect(session.loginRedirectLooping()).toBe(true);
+      vi.advanceTimersByTime(7000); // exceeds the 6s loop window
+      expect(session.loginRedirectLooping()).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should set, get and delete token", () => {
     const storage = new StorageShim();
     const session = new Session(storage, $config);

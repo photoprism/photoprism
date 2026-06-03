@@ -43,6 +43,13 @@ const LogoutSignalKey = "login.logout";
 // in sessionStorage so a closed tab clears it, and so a failed/abandoned OIDC
 // roundtrip can fall back to the local login form instead of looping.
 const OidcAttemptKey = "login.oidc.attempt";
+// Loop guard for the post-login redirect (login.next): the timestamp of the last
+// hard follow, and the window within which a re-entry counts as a bounce-back
+// loop. A defense-in-depth backstop for any deep link that bounces back to
+// /login without authenticating the navigation; the OIDC OP authorize deep link
+// is handled separately by the in-component XHR resume.
+const LoginRedirectAttemptKey = "login.next.at";
+const LoginRedirectLoopWindow = 6000;
 
 const resolveStorageNamespace = (config) => {
   if (typeof config?.storageNamespace === "string" && config.storageNamespace !== "") {
@@ -827,6 +834,27 @@ export default class Session {
       this.sessionStorage.removeItem(OidcAttemptKey);
     }
     return raised;
+  }
+
+  // Records the time we last hard-followed the post-login redirect, so a fast
+  // bounce-back can be recognized as a loop. Stored per browser tab.
+  markLoginRedirectAttempt() {
+    this.sessionStorage?.setItem(LoginRedirectAttemptKey, String(Date.now()));
+    return this;
+  }
+
+  // loginRedirectLooping reports whether the post-login redirect was followed
+  // within the last LoginRedirectLoopWindow ms, i.e. the target bounced straight
+  // back without authenticating the navigation — used to break redirect loops.
+  loginRedirectLooping() {
+    const at = parseInt(this.sessionStorage?.getItem(LoginRedirectAttemptKey) || "0", 10);
+    return at > 0 && Date.now() - at < LoginRedirectLoopWindow;
+  }
+
+  // Clears the post-login redirect loop guard.
+  clearLoginRedirectAttempt() {
+    this.sessionStorage?.removeItem(LoginRedirectAttemptKey);
+    return this;
   }
 
   logout(noRedirect) {
