@@ -826,4 +826,45 @@ describe("common/session", () => {
       session.deleteData();
     });
   });
+
+  // recordInstanceIdentity backs the navigation instance switcher: each instance
+  // persists its SiteUrl + title so peers on a shared domain can offer a switch
+  // entry. Verify it fires on login and clears on logout.
+  describe("recordInstanceIdentity", () => {
+    // configWithSite clones the shared config and pins a known SiteUrl/title, with
+    // name cleared so the title falls back to the SiteUrl when no title is set.
+    const configWithSite = (siteUrl, siteTitle) => {
+      const config = createConfig("/", "app.example.com");
+      config.values = { ...config.values, siteUrl, siteTitle, name: "" };
+      return config;
+    };
+    it("records the instance url and title when a user is set", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, configWithSite("https://app.example.com/", "App Example"));
+      session.setUser({ ID: 5, Name: "foo", DisplayName: "Foo", Role: "admin" });
+      expect(storage.getItem("instance.url")).toBe("https://app.example.com/");
+      expect(storage.getItem("instance.title")).toBe("App Example");
+    });
+    it("falls back to the site url when no title is configured", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, configWithSite("https://app.example.com/", ""));
+      session.recordInstanceIdentity();
+      expect(storage.getItem("instance.url")).toBe("https://app.example.com/");
+      expect(storage.getItem("instance.title")).toBe("https://app.example.com/");
+    });
+    it("is a no-op when the site url is unknown", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, configWithSite("", ""));
+      session.setUser({ ID: 5, Name: "foo" });
+      expect(storage.getItem("instance.url")).toBeNull();
+    });
+    it("clears the recorded identity on logout/reset", () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, configWithSite("https://app.example.com/", "App Example"));
+      session.setUser({ ID: 5, Name: "foo" });
+      expect(storage.getItem("instance.url")).toBe("https://app.example.com/");
+      session.deleteUser();
+      expect(storage.getItem("instance.url")).toBeNull();
+    });
+  });
 });

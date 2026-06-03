@@ -641,18 +641,15 @@
 
           <div v-show="auth && !isPublic && !disconnected" class="nav-info user-info">
             <div class="nav-info__underlay"></div>
-            <div class="nav-user-avatar text-center my-1 mx-2 clickable" @click.stop="showAccountSettings">
-              <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
-            </div>
-            <div v-if="!isMini" class="text-start mt-1 flex-grow-1 clickable" @click.stop="showAccountSettings">
-              <p class="text-body-2">{{ displayName }}</p>
-              <p class="text-caption opacity-70">{{ accountInfo }}</p>
-            </div>
-            <div class="text-center">
-              <v-btn icon variant="text" :elevation="0" @click.stop.prevent="onLogout">
-                <v-icon>mdi-power</v-icon>
-              </v-btn>
-            </div>
+            <p-user-menu @settings="showAccountSettings" @logout="onLogout">
+              <div class="nav-user-avatar text-center my-1 mx-2">
+                <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
+              </div>
+              <div v-if="!isMini" class="nav-user-text text-start mt-1 flex-grow-1">
+                <p class="text-body-2">{{ displayName }}</p>
+                <p class="text-caption opacity-70">{{ accountInfo }}</p>
+              </div>
+            </p-user-menu>
           </div>
         </div>
       </v-navigation-drawer>
@@ -770,11 +767,15 @@
 <script>
 import links from "common/links";
 import { getAppStorage } from "common/storage";
+import PUserMenu from "component/navigation/user-menu.vue";
 
 const appStorage = getAppStorage();
 
 export default {
   name: "PNavigation",
+  components: {
+    PUserMenu,
+  },
   data() {
     const appName = this.$config.getName();
 

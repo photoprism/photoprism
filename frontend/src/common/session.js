@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 import $api from "common/api";
 import $event from "common/event";
 import { createNamespacedStorage } from "common/storage";
+import { persistInstanceIdentity, InstanceIdentityKeys } from "common/instances";
 import { $view } from "common/view";
 import User from "model/user";
 import Socket from "websocket.js";
@@ -147,6 +148,11 @@ export default class Session {
 
     // Authenticated?
     this.auth = this.isUser();
+
+    // Record this instance's identity so peers on a shared domain can switch to it.
+    if (this.auth) {
+      this.recordInstanceIdentity();
+    }
 
     // Subscribe to session events.
     $event.subscribe("session.logout", () => {
@@ -438,6 +444,26 @@ export default class Session {
     this.user = new User(user);
     this.storage.setItem(this.storageKey + ".user", JSON.stringify(user));
     this.auth = this.isUser();
+
+    if (this.auth) {
+      this.recordInstanceIdentity();
+    }
+  }
+
+  // recordInstanceIdentity stores this instance's SiteUrl and display title under
+  // the active namespace so other instances on the same origin can offer a switch
+  // entry. No-op when the site URL is unknown or storage is unavailable.
+  recordInstanceIdentity() {
+    const values = this.config?.values;
+
+    if (!values || !values.siteUrl) {
+      return;
+    }
+
+    persistInstanceIdentity(this.storage, {
+      url: values.siteUrl,
+      title: values.siteTitle || values.name || values.siteUrl,
+    });
   }
 
   getUser() {
@@ -609,6 +635,9 @@ export default class Session {
     this.clearNamespacedKey(this.storageKey + ".user");
     this.clearLegacyKey("user");
     this.clearLegacyKey("session.user");
+    // Drop this instance's switcher identity so a logged-out instance is no
+    // longer offered as a switch target by peers on the same shared domain.
+    InstanceIdentityKeys.forEach((key) => this.clearNamespacedKey(key));
   }
 
   deleteClipboard() {
