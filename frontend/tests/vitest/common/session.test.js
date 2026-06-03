@@ -588,7 +588,7 @@ describe("common/session", () => {
 
       // Direct helper checks: accepted inputs.
       expect(session.invalidRedirectUrl("/library/photos")).toBe(false);
-      expect(session.invalidRedirectUrl("/oauth/authorize?client_id=x")).toBe(false);
+      expect(session.invalidRedirectUrl("/api/v1/oauth/authorize?client_id=x")).toBe(false);
 
       // setLoginRedirectUrl gates on the helper.
       session.setLoginRedirectUrl("/portal/admin/login");

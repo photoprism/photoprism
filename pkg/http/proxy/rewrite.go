@@ -34,8 +34,14 @@ func ForwardedProto(req *http.Request) string {
 // instance-to-Portal redirects (for example the Pro OIDC RP redirecting to
 // the Portal's authorize endpoint), and the per-instance path prefix must
 // not be added to them.
+//
+// The Portal OIDC OP is served by /api/v1/oauth/*; an instance only ever emits
+// a Location to that prefix when its RP redirects the browser to the Portal OP
+// authorize endpoint (instances redirect their own authorize flow to external
+// redirect_uris, and the token/userinfo endpoints never redirect), so leaving
+// it un-rescoped is safe.
 var portalRootPathPrefixes = []string{
-	"/oauth/",
+	"/api/v1/oauth/",
 	"/.well-known/",
 	"/portal/",
 }

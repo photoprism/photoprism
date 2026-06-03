@@ -34,9 +34,9 @@ func NewPortalOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 
 	return &OpenIDConfiguration{
 		Issuer:                                    issuer + "/",
-		AuthorizationEndpoint:                     issuer + "/oauth/authorize",
-		TokenEndpoint:                             issuer + "/oauth/token",
-		UserinfoEndpoint:                          issuer + "/oauth/userinfo",
+		AuthorizationEndpoint:                     issuer + "/api/v1/oauth/authorize",
+		TokenEndpoint:                             issuer + "/api/v1/oauth/token",
+		UserinfoEndpoint:                          issuer + "/api/v1/oauth/userinfo",
 		JwksUri:                                   issuer + jwksPath,
 		ResponseTypesSupported:                    PortalOIDCResponseTypes,
 		GrantTypesSupported:                       PortalOIDCGrantTypes,

@@ -114,7 +114,7 @@ export default [
     beforeEnter: (to, from, next) => {
       // Honor an inbound `return_to` query param so cross-frontend hand-offs
       // (e.g. the Portal OIDC OP redirecting an unauthenticated user from
-      // /oauth/authorize) can land back on the originally-requested URL
+      // /api/v1/oauth/authorize) can land back on the originally-requested URL
       // after a successful login. The value is recorded the same way the
       // global router guard records internal deep links, so the rest of
       // the flow (followLoginRedirectUrl on success) needs no further

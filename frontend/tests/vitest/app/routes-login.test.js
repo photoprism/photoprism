@@ -222,10 +222,10 @@ describe("app/routes /login guard", () => {
   it("records a safe return_to query param as the post-login deep link", () => {
     const next = vi.fn();
 
-    loginGuard({ query: { return_to: "/oauth/authorize?client_id=abc&state=x" } }, {}, next);
+    loginGuard({ query: { return_to: "/api/v1/oauth/authorize?client_id=abc&state=x" } }, {}, next);
 
     expect($session.hasLoginRedirectUrl()).toBe(true);
-    expect($session.getLoginRedirectUrl()).toBe("/oauth/authorize?client_id=abc&state=x");
+    expect($session.getLoginRedirectUrl()).toBe("/api/v1/oauth/authorize?client_id=abc&state=x");
     expect(next).toHaveBeenCalledWith();
   });
 
@@ -242,7 +242,7 @@ describe("app/routes /login guard", () => {
 describe("app/routes safeReturnTo", () => {
   it("accepts root-relative paths", () => {
     expect(safeReturnTo("/library/photos")).toBe("/library/photos");
-    expect(safeReturnTo("/oauth/authorize?client_id=x&state=y")).toBe("/oauth/authorize?client_id=x&state=y");
+    expect(safeReturnTo("/api/v1/oauth/authorize?client_id=x&state=y")).toBe("/api/v1/oauth/authorize?client_id=x&state=y");
   });
   it("accepts absolute URLs on the same origin and returns the path+query+hash", () => {
     const here = window.location?.origin;
@@ -250,7 +250,7 @@ describe("app/routes safeReturnTo", () => {
       return;
     }
     expect(safeReturnTo(here + "/portal/admin/cluster")).toBe("/portal/admin/cluster");
-    expect(safeReturnTo(here + "/oauth/authorize?client_id=x#frag")).toBe("/oauth/authorize?client_id=x#frag");
+    expect(safeReturnTo(here + "/api/v1/oauth/authorize?client_id=x#frag")).toBe("/api/v1/oauth/authorize?client_id=x#frag");
   });
   it("rejects cross-origin absolutes", () => {
     expect(safeReturnTo("https://attacker.example/steal")).toBe("");

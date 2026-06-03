@@ -16,11 +16,11 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		result := NewPortalOpenIDConfiguration(conf)
 		require.IsType(t, &OpenIDConfiguration{}, result)
 
-		// Endpoints follow the Portal OIDC OP path scheme (no /api/v1/ prefix).
+		// The OP is served by the shared /api/v1/oauth/* handlers.
 		assert.Equal(t, "http://localhost:2342/", result.Issuer)
-		assert.Equal(t, "http://localhost:2342/oauth/authorize", result.AuthorizationEndpoint)
-		assert.Equal(t, "http://localhost:2342/oauth/token", result.TokenEndpoint)
-		assert.Equal(t, "http://localhost:2342/oauth/userinfo", result.UserinfoEndpoint)
+		assert.Equal(t, "http://localhost:2342/api/v1/oauth/authorize", result.AuthorizationEndpoint)
+		assert.Equal(t, "http://localhost:2342/api/v1/oauth/token", result.TokenEndpoint)
+		assert.Equal(t, "http://localhost:2342/api/v1/oauth/userinfo", result.UserinfoEndpoint)
 		assert.Equal(t, "http://localhost:2342/.well-known/jwks.json", result.JwksUri)
 	})
 
@@ -43,8 +43,8 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		// includes a trailing slash; the generator must not double it.
 		result := NewPortalOpenIDConfiguration(conf)
 		assert.Equal(t, "http://localhost:2342/", result.Issuer, "issuer must end with exactly one slash")
-		assert.NotContains(t, result.AuthorizationEndpoint, "//oauth")
-		assert.NotContains(t, result.TokenEndpoint, "//oauth")
-		assert.NotContains(t, result.UserinfoEndpoint, "//oauth")
+		assert.NotContains(t, result.AuthorizationEndpoint, "//api/v1")
+		assert.NotContains(t, result.TokenEndpoint, "//api/v1")
+		assert.NotContains(t, result.UserinfoEndpoint, "//api/v1")
 	})
 }
