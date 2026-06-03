@@ -5,6 +5,14 @@
     user-select: none;
 }
 
+/* The avatar menu / instance switcher (PUserMenu) is teleported to
+   .v-overlay-container, where its stack z-index can land below the navigation
+   drawer (z-index ~1004) and be covered by it. Keep the overlay above the
+   drawer so the menu stays usable in both the Portal and instance navigation. */
+.v-overlay.nav-user-menu {
+    z-index: 2400 !important;
+}
+
 #p-navigation ::-webkit-scrollbar {
     /* Hides scrollbar in sidebar navigation to save space */
     /* see https://css-tricks.com/custom-scrollbars-in-webkit/#aa-the-different-pieces */

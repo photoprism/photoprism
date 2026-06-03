@@ -4,6 +4,7 @@
     location="top"
     offset="6"
     :min-width="240"
+    :z-index="2400"
     class="nav-user-menu"
     @update:model-value="onToggle"
   >
