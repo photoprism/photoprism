@@ -64,11 +64,13 @@ func IsFederatedUserRole(role Role) bool {
 }
 
 // Strings returns the roles as string slice for display, e.g. CLI help.
+// Alias keys ("app" for instance, "uploader" for contributor) and the
+// non-assignable none/visitor roles are omitted so the list stays canonical.
 func (m RoleStrings) Strings() []string {
 	result := make([]string, 0, len(m))
 
 	for r := range m {
-		if r == "" || r == RoleAliasNone || r == "app" || r == RoleVisitor.String() {
+		if r == "" || r == RoleAliasNone || r == "app" || r == "uploader" || r == RoleVisitor.String() {
 			continue
 		}
 
