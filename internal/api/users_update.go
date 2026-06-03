@@ -45,8 +45,15 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
+		// A verified Portal cluster JWT (GrantJwtBearer) with users-manage scope is
+		// a trusted service principal — the Portal syncing cluster user state — with
+		// no end-user identity, so authorize it for user management like an admin
+		// instead of applying the per-user owner check below (which a user-less
+		// service token can never satisfy).
+		isClusterJWT := s.GrantType == authn.GrantJwtBearer.String() && s.ValidateScope(acl.ResourceUsers, acl.Permissions{acl.ActionManage})
+
 		// Check whether the role can manage all user accounts.
-		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := isClusterJWT || acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		uid := clean.UID(c.Param("uid"))
 
 		// Non-admin users may only update their own profile.
@@ -61,6 +68,13 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)
+			return
+		}
+
+		// System accounts (Unknown id=-1, Visitor id=-2) must not be modified.
+		if m.ID < 0 {
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", clean.Log(uid), "update", status.Denied}, s.RefID)
+			AbortForbidden(c)
 			return
 		}
 
@@ -97,6 +111,15 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		// Get user from session.
 		u := s.GetUser()
+
+		// Prevent users from changing their own account role, which could lock
+		// an operator out of the admin UI (e.g. a cluster_admin demoting
+		// themselves). Other own-profile fields remain editable.
+		if u != nil && u.UserUID == m.UserUID && f.UserRole != "" && clean.Role(f.UserRole) != clean.Role(m.UserRole) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update own role", status.Denied}, s.RefID)
+			AbortForbidden(c)
+			return
+		}
 
 		// Persist form values.
 		if err = m.SaveForm(f, u); err != nil {

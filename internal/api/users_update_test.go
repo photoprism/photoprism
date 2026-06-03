@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 func TestUpdateUser(t *testing.T) {
@@ -200,5 +201,41 @@ func TestUpdateUser(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", body, sessId)
 
 		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
+	})
+}
+
+func TestUpdateUser_Guards(t *testing.T) {
+	t.Run("SelfRoleChangeForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		body, _ := json.Marshal(form.User{UserName: "alice", UserRole: "user"})
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", string(body), sessId)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("SystemAccountForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		body, _ := json.Marshal(form.User{DisplayName: "Hacked"})
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.UnknownUser.UserUID, string(body), sessId)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("ClusterJWTManagesUsers", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		// A Portal cluster JWT (GrantJwtBearer) with users scope is a user-less
+		// service principal that must be authorized to manage instance users.
+		sess, err := entity.AddClientSession("portal-sync", conf.SessionMaxAge(), "users", authn.GrantJwtBearer, nil)
+		assert.NoError(t, err)
+		body, _ := json.Marshal(form.User{DisplayName: "Renamed by Portal"})
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", string(body), sess.AuthToken())
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
