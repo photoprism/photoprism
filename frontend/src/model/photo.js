@@ -53,6 +53,7 @@ export class Photo extends RestModel {
       TypeSrc: "",
       Stack: 0,
       Favorite: false,
+      Rating: 0,
       Private: false,
       Scan: false,
       Panorama: false,

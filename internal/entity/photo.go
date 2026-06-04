@@ -64,6 +64,7 @@ type Photo struct {
 	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoStack       int8          `json:"Stack" yaml:"Stack,omitempty"`
 	PhotoFavorite    bool          `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoRating      int8          `gorm:"type:SMALLINT;default:0" json:"Rating" yaml:"Rating,omitempty"`
 	PhotoPrivate     bool          `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool          `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool          `json:"Panorama" yaml:"Panorama,omitempty"`
@@ -1283,6 +1284,36 @@ func (m *Photo) SetFavorite(favorite bool) error {
 			})
 		} else {
 			event.Publish("count.favorites", event.Data{
+				"count": -1,
+			})
+		}
+	}
+
+	return nil
+}
+
+// SetRating updates the photo rating (0-5 stars) and refreshes the quality score.
+func (m *Photo) SetRating(rating int8) error {
+	if rating < 0 || rating > 5 {
+		return fmt.Errorf("rating must be between 0 and 5, got %d", rating)
+	}
+
+	changed := m.PhotoRating != rating
+	m.PhotoRating = rating
+	m.PhotoQuality = m.QualityScore()
+
+	if err := m.Updates(Values{"photo_rating": m.PhotoRating, "photo_quality": m.PhotoQuality}); err != nil {
+		return err
+	}
+
+	// Update rated counter if changed and not deleted.
+	if changed && m.PhotoPrivate == false && m.DeletedAt == nil {
+		if rating > 0 {
+			event.Publish("count.rated", event.Data{
+				"count": 1,
+			})
+		} else {
+			event.Publish("count.rated", event.Data{
 				"count": -1,
 			})
 		}

@@ -51,6 +51,8 @@ type SearchPhotos struct {
 	Error       bool      `form:"error" notes:"Finds content with errors"`
 	Hidden      bool      `form:"hidden" notes:"Finds hidden content (broken or unsupported)"`
 	Favorite    string    `form:"favorite" example:"favorite:true favorite:false" notes:"Finds favorite content"`
+	Rating      int       `form:"rating" example:"rating:3" notes:"Finds content with the specified star rating (1-5), or 0 for unrated"`
+	Rated       bool      `form:"rated" example:"rated:true" notes:"Finds rated content only (rating > 0)"`
 	Unsorted    bool      `form:"unsorted" notes:"Finds content that is not in an album"`
 	Near        string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
 	S2          string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"Position, specified as S2 Cell ID"`

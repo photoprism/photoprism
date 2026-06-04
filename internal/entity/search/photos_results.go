@@ -38,6 +38,7 @@ type Photo struct {
 	PhotoCountry     string        `json:"Country" select:"photos.photo_country"`
 	PhotoStack       int8          `json:"Stack" select:"photos.photo_stack"`
 	PhotoFavorite    bool          `json:"Favorite" select:"photos.photo_favorite"`
+	PhotoRating      int8          `json:"Rating" select:"photos.photo_rating"`
 	PhotoPrivate     bool          `json:"Private" select:"photos.photo_private"`
 	PhotoIso         int           `json:"Iso" select:"photos.photo_iso"`
 	PhotoFocalLength int           `json:"FocalLength" select:"photos.photo_focal_length"`

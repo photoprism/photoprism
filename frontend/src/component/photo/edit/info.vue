@@ -167,6 +167,23 @@
                 ></v-switch>
               </td>
             </tr>
+            <tr>
+              <td>
+                {{ $gettext(`Rating`) }}
+              </td>
+              <td>
+                <v-rating
+                  v-model="view.model.Rating"
+                  :length="5"
+                  size="small"
+                  density="compact"
+                  color="amber"
+                  active-color="amber"
+                  hover
+                  @update:model-value="save"
+                ></v-rating>
+              </td>
+            </tr>
             <tr v-if="$config.feature('private')">
               <td>
                 {{ $gettext(`Private`) }}

@@ -43,6 +43,7 @@ type Photo struct {
 	Details          Details   `json:"Details"`
 	PhotoStack       int8      `json:"Stack"`
 	PhotoFavorite    bool      `json:"Favorite"`
+	PhotoRating      int8      `json:"Rating"`
 	PhotoPrivate     bool      `json:"Private"`
 	PhotoScan        bool      `json:"Scan"`
 	PhotoPanorama    bool      `json:"Panorama"`

@@ -165,6 +165,7 @@ type ClientCounts struct {
 	Hidden         int `json:"hidden"`
 	Archived       int `json:"archived"`
 	Favorites      int `json:"favorites"`
+	Rated          int `json:"rated"`
 	Review         int `json:"review"`
 	Stories        int `json:"stories"`
 	Private        int `json:"private"`
@@ -597,6 +598,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 				"SUM(photo_type NOT IN ('animated','video','live','audio','document') AND photo_quality > -1 AND photo_private = 0) AS photos, " +
 				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
+				"SUM(photo_rating > 0 AND photo_private = 0 AND photo_quality > -1) AS rated, " +
 				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
 			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 			Where("deleted_at IS NULL").
@@ -613,6 +615,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 				"SUM(photo_type NOT IN ('animated','video','live','audio','document') AND photo_quality > -1) AS photos, " +
 				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, " +
+				"SUM(photo_rating > 0 AND photo_quality > -1) AS rated, " +
 				"0 AS private").
 			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 			Where("deleted_at IS NULL").

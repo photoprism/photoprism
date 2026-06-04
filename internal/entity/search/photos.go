@@ -596,6 +596,13 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
+	// Filter by star rating.
+	if frm.Rating > 0 && frm.Rating <= 5 {
+		s = s.Where("photos.photo_rating = ?", frm.Rating)
+	} else if frm.Rated {
+		s = s.Where("photos.photo_rating > 0")
+	}
+
 	// Filter by scan flag.
 	if txt.No(frm.Scan) {
 		s = s.Where("photos.photo_scan = 0")

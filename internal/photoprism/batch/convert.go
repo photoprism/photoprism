@@ -119,6 +119,9 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 	if v.PhotoFavorite.Action == ActionUpdate {
 		photoForm.PhotoFavorite = v.PhotoFavorite.Value
 	}
+	if v.PhotoRating.Action == ActionUpdate {
+		photoForm.PhotoRating = int8(v.PhotoRating.Value) //nolint:gosec // Ratings bounded 0-5; ARMv7 deprecated
+	}
 	if v.PhotoPrivate.Action == ActionUpdate {
 		photoForm.PhotoPrivate = v.PhotoPrivate.Value
 	}

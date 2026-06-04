@@ -237,4 +237,10 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"DROP INDEX IF EXISTS idx_albums_album_path ON albums;", "ALTER TABLE albums MODIFY album_path VARBINARY(1024);", "CREATE OR REPLACE INDEX idx_albums_album_path ON albums (album_path(512));"},
 	},
+	{
+		ID:         "20260604-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE photos ADD COLUMN IF NOT EXISTS photo_rating SMALLINT DEFAULT 0 AFTER photo_favorite;"},
+	},
 }
