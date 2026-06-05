@@ -2,7 +2,12 @@
   <div class="p-tab p-tab-import">
     <v-form ref="form" class="p-form p-photo-import" validate-on="invalid-input" @submit.prevent="submit">
       <div class="form-header">
-        <span v-if="fileName" class="text-break">{{ $gettext(`Importing %{s}…`, { s: fileName }) }}</span>
+        <span v-if="fileName" class="text-break">
+          {{ $gettext(`Importing %{s}…`, { s: fileName }) }}
+          <span v-if="fileCount" class="text-nowrap opacity-80">{{
+            fileCount === 1 ? $gettext(`One file processed`) : $gettext(`%{n} files processed`, { n: fileCount })
+          }}</span>
+        </span>
         <span v-else-if="busy">{{ $gettext(`Importing files to originals…`) }}</span>
         <span v-else-if="completed">{{ $gettext(`Done.`) }}</span>
         <span v-else-if="$config.insufficientStorage()"
@@ -102,6 +107,7 @@ export default {
       completed: 0,
       subscriptionId: "",
       fileName: "",
+      fileCount: 0,
       eta: "",
       source: null,
       root: root,
@@ -181,6 +187,7 @@ export default {
       this.busy = true;
       this.completed = 0;
       this.fileName = "";
+      this.fileCount = 0;
 
       const ctx = this;
       $notify.blockUI("busy");
@@ -192,6 +199,7 @@ export default {
           ctx.busy = false;
           ctx.completed = 100;
           ctx.fileName = "";
+          ctx.fileCount = 0;
         })
         .catch(function (e) {
           $notify.unblockUI();
@@ -206,6 +214,7 @@ export default {
           ctx.busy = false;
           ctx.completed = 0;
           ctx.fileName = "";
+          ctx.fileCount = 0;
         });
     },
     handleEvent(ev, data) {
@@ -222,11 +231,13 @@ export default {
           this.busy = true;
           this.completed = 0;
           this.fileName = data.baseName;
+          this.fileCount += 1;
           break;
         case "completed":
           this.busy = false;
           this.completed = 100;
           this.fileName = "";
+          this.fileCount = 0;
           break;
         default:
           console.log(data);

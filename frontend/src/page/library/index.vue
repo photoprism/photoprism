@@ -2,7 +2,12 @@
   <div class="p-tab p-tab-index">
     <v-form ref="form" class="p-form p-photo-index" validate-on="invalid-input" @submit.prevent="submit">
       <div class="form-header">
-        <span v-if="fileName" class="text-break">{{ action }} {{ fileName }}…</span>
+        <span v-if="fileName" class="text-break">
+          {{ action }} {{ fileName }}…
+          <span v-if="fileCount" class="text-nowrap opacity-80">{{
+            fileCount === 1 ? $gettext(`One file processed`) : $gettext(`%{n} files processed`, { n: fileCount })
+          }}</span>
+        </span>
         <span v-else-if="action">{{ action }}…</span>
         <span v-else-if="busy">{{ $gettext(`Indexing media and sidecar files…`) }}</span>
         <span v-else-if="completed">{{ $gettext(`Done.`) }}</span>
@@ -103,6 +108,7 @@ export default {
       subscriptionId: "",
       action: "",
       fileName: "",
+      fileCount: 0,
       eta: "",
       cleanup: false,
       source: null,
@@ -180,6 +186,7 @@ export default {
       this.busy = true;
       this.completed = 0;
       this.fileName = "";
+      this.fileCount = 0;
 
       const ctx = this;
       $notify.blockUI("busy");
@@ -199,6 +206,7 @@ export default {
           ctx.busy = false;
           ctx.completed = 100;
           ctx.fileName = "";
+          ctx.fileCount = 0;
         })
         .catch(function (e) {
           $notify.unblockUI();
@@ -213,6 +221,7 @@ export default {
           ctx.busy = false;
           ctx.completed = 0;
           ctx.fileName = "";
+          ctx.fileCount = 0;
         });
     },
     handleEvent(ev, data) {
@@ -236,6 +245,7 @@ export default {
           this.busy = true;
           this.completed = 0;
           this.fileName = data.fileName;
+          this.fileCount += 1;
           break;
         case "updating":
           if (data.step === "stacks") {
@@ -273,6 +283,7 @@ export default {
           this.busy = false;
           this.completed = 100;
           this.fileName = "";
+          this.fileCount = 0;
           break;
         default:
           console.log(data);
