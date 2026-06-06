@@ -1361,4 +1361,91 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(slideZoomable(undefined)).toBe(true);
     });
   });
+
+  // trapSphereGestures must swallow PhotoSwipe's pointer + wheel gestures on the
+  // sphere container, but must NOT trap touch events — Photo Sphere Viewer pans
+  // from touchmove/touchend listeners bound on `window`, so trapping touch here
+  // would break 360° panning on touch devices. A short press without a pan must
+  // toggle the lightbox controls so the prev/next arrows stay reachable on mobile.
+  describe("trapSphereGestures", () => {
+    const trap = () => {
+      const wrapper = mountLightbox();
+      wrapper.vm.toggleControls = vi.fn();
+      const registered = [];
+      const el = { addEventListener: (type, handler, opts) => registered.push({ type, handler, opts }) };
+      wrapper.vm.$options.methods.trapSphereGestures.call(wrapper.vm, el);
+      const fire = (type, props = {}) => registered.filter((r) => r.type === type).forEach((r) => r.handler({ stopPropagation: () => {}, ...props }));
+      return { vm: wrapper.vm, registered, fire };
+    };
+
+    it("traps pointer and wheel events", () => {
+      const types = trap().registered.map((r) => r.type);
+      expect(types).toEqual(expect.arrayContaining(["pointerdown", "pointermove", "pointerup", "pointercancel", "wheel"]));
+    });
+    it("does NOT trap touch events so PSV panning works on mobile", () => {
+      const types = trap().registered.map((r) => r.type);
+      expect(types).not.toContain("touchstart");
+      expect(types).not.toContain("touchmove");
+      expect(types).not.toContain("touchend");
+    });
+    it("registers listeners in the bubble phase and stops propagation", () => {
+      const { registered } = trap();
+      expect(registered.every((r) => r.opts && r.opts.capture === false)).toBe(true);
+      const ev = { stopPropagation: vi.fn() };
+      registered[0].handler(ev);
+      expect(ev.stopPropagation).toHaveBeenCalledTimes(1);
+    });
+    it("toggles controls on a touch tap without a pan", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "touch", clientX: 103, clientY: 102 });
+      expect(vm.toggleControls).toHaveBeenCalledTimes(1);
+    });
+    it("does NOT toggle controls when the touch is a pan", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "touch", clientX: 180, clientY: 100 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+    it("does NOT toggle controls for a mouse press so desktop is unchanged", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "mouse", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "mouse", clientX: 100, clientY: 100 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+    it("does NOT toggle controls when a tap is canceled", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointercancel", { pointerType: "touch" });
+      fire("pointerup", { pointerType: "touch", clientX: 100, clientY: 100 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+  });
+
+  // setSphereClass marks the PhotoSwipe root so CSS can keep the prev/next arrows
+  // reachable on touch devices for 360° slides (PhotoSwipe hides them on touch).
+  describe("setSphereClass", () => {
+    const run = (enabled, hasEl = true) => {
+      const wrapper = mountLightbox();
+      const el = document.createElement("div");
+      wrapper.vm.pswp = () => (hasEl ? { element: el } : {});
+      wrapper.vm.$options.methods.setSphereClass.call(wrapper.vm, enabled);
+      return el;
+    };
+
+    it("adds pswp--sphere for a sphere slide", () => {
+      expect(run(true).classList.contains("pswp--sphere")).toBe(true);
+    });
+    it("removes pswp--sphere for a non-sphere slide", () => {
+      const wrapper = mountLightbox();
+      const el = document.createElement("div");
+      el.classList.add("pswp--sphere");
+      wrapper.vm.pswp = () => ({ element: el });
+      wrapper.vm.$options.methods.setSphereClass.call(wrapper.vm, false);
+      expect(el.classList.contains("pswp--sphere")).toBe(false);
+    });
+    it("is a no-op when the PhotoSwipe element is missing", () => {
+      expect(() => run(true, false)).not.toThrow();
+    });
+  });
 });

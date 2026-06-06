@@ -904,3 +904,14 @@
 .p-lightbox__container > .p-lightbox__content > .pswp--touch .pswp__button--arrow .pswp__icn {
     display: none;
 }
+
+/* On 360° sphere slides, swipe is captured for panning the sphere instead of switching
+   photos, so the navigation arrows must stay visible on touch devices — where PhotoSwipe
+   hides them with `visibility: hidden` because a swipe normally navigates. The
+   `pswp--sphere` marker is set on the PhotoSwipe root only while a 360° slide is active.
+   Only `visibility` is overridden (not `display`) so disabled arrows at the first/last
+   photo stay hidden via PhotoSwipe's `:disabled { display: none }` rule. */
+
+.pswp--touch.pswp--sphere .pswp__button--arrow {
+    visibility: visible;
+}

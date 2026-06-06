@@ -151,6 +151,10 @@ const VIDEO_EVENT_TYPES = [
 
 const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 
+// Max pointer travel (px) for a press on a 360° sphere to still count as a tap
+// rather than a pan, used to toggle the lightbox controls on touch devices.
+const SPHERE_TAP_SLOP = 10;
+
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PLightboxSidebar from "component/lightbox/sidebar.vue";
 import { Marker } from "model/marker";
@@ -736,6 +740,70 @@ export default {
       }
       return data?.model?.Type !== media.Video && data?.model?.Type !== media.Animated;
     },
+    // trapSphereGestures stops PhotoSwipe's swipe/zoom gesture detection from running
+    // while the user interacts with a 360° sphere. It swallows pointer + wheel events
+    // on the sphere container during the bubble phase, before they reach PhotoSwipe's
+    // listeners on the scroll wrapper above it.
+    //
+    // Touch events are deliberately NOT trapped: PhotoSwipe binds pointer events on our
+    // browser baseline (it only falls back to touch when PointerEvent is unavailable),
+    // while Photo Sphere Viewer drives panning from touchmove/touchend listeners bound on
+    // `window`. A bubble-phase stopPropagation here would keep those events from reaching
+    // PSV and break 360° panning on touch devices. UI buttons (close, prev/next, sidebar)
+    // live on the PhotoSwipe wrapper outside this container and stay clickable.
+    //
+    // Trapping the pointer events also swallows PhotoSwipe's tap detection, which is what
+    // reveals the prev/next arrows and top bar on touch devices. To restore that, a short
+    // press without a pan toggles the controls here. Only touch/pen taps do so — mouse
+    // users still get the controls via mousemove, so desktop behavior is unchanged.
+    trapSphereGestures(el) {
+      const stop = (e) => e.stopPropagation();
+      let tapX = 0;
+      let tapY = 0;
+      let tapping = false;
+      el.addEventListener(
+        "pointerdown",
+        (e) => {
+          e.stopPropagation();
+          tapping = e.pointerType !== "mouse";
+          tapX = e.clientX;
+          tapY = e.clientY;
+        },
+        { capture: false }
+      );
+      el.addEventListener(
+        "pointerup",
+        (e) => {
+          e.stopPropagation();
+          if (tapping && Math.abs(e.clientX - tapX) < SPHERE_TAP_SLOP && Math.abs(e.clientY - tapY) < SPHERE_TAP_SLOP) {
+            this.toggleControls();
+          }
+          tapping = false;
+        },
+        { capture: false }
+      );
+      el.addEventListener(
+        "pointercancel",
+        (e) => {
+          e.stopPropagation();
+          tapping = false;
+        },
+        { capture: false }
+      );
+      ["pointermove", "wheel"].forEach((type) => {
+        el.addEventListener(type, stop, { capture: false });
+      });
+    },
+    // setSphereClass toggles the `pswp--sphere` marker on the PhotoSwipe root element so
+    // CSS can keep the prev/next arrows reachable on touch devices for 360° slides, where
+    // swipe is captured for panning instead of navigation. PhotoSwipe hides the arrows on
+    // touch by default, leaving such slides with no way to switch photos otherwise.
+    setSphereClass(enabled) {
+      const el = this.pswp()?.element;
+      if (el?.classList) {
+        el.classList.toggle("pswp--sphere", enabled);
+      }
+    },
     onContentLoad(ev) {
       const { content } = ev;
       if (content.data?.isSphere) {
@@ -747,14 +815,7 @@ export default {
           sphereEl.style.width = "100%";
           sphereEl.style.height = "100%";
           sphereEl.style.touchAction = "none";
-          // Trap pointer + wheel events so PhotoSwipe's swipe/zoom gesture
-          // detection does not run while the user interacts with the sphere.
-          // UI buttons (close, prev/next, sidebar) live on the PhotoSwipe
-          // wrapper outside this container and stay clickable.
-          const stop = (e) => e.stopPropagation();
-          ["pointerdown", "pointermove", "pointerup", "pointercancel", "wheel", "touchstart", "touchmove", "touchend"].forEach((type) => {
-            sphereEl.addEventListener(type, stop, { capture: false });
-          });
+          this.trapSphereGestures(sphereEl);
 
           content.element = sphereEl;
           content.state = "loading";
@@ -1323,6 +1384,7 @@ export default {
         }
 
         this.isZoomable = this.slideZoomable(data);
+        this.setSphereClass(data?.isSphere === true);
 
         let video;
 
