@@ -112,6 +112,7 @@ export default {
     const lens = query["lens"] ? parseInt(query["lens"]) : 0;
     const year = query["year"] ? parseInt(query["year"]) : 0;
     const month = query["month"] ? parseInt(query["month"]) : 0;
+    const day = query["day"] ? parseInt(query["day"]) : 0;
     const color = query["color"] ? query["color"] : "";
     const label = query["label"] ? query["label"] : "";
     const latlng = query["latlng"] ? query["latlng"] : "";
@@ -125,6 +126,7 @@ export default {
       latlng: latlng,
       year: year,
       month: month,
+      day: day,
       color: color,
       order: order,
       reverse: this.sortReverse(),
@@ -214,6 +216,7 @@ export default {
       this.filter.lens = query["lens"] ? parseInt(query["lens"]) : 0;
       this.filter.year = query["year"] ? parseInt(query["year"]) : 0;
       this.filter.month = query["month"] ? parseInt(query["month"]) : 0;
+      this.filter.day = query["day"] ? parseInt(query["day"]) : 0;
       this.filter.color = query["color"] ? query["color"] : "";
       this.filter.label = query["label"] ? query["label"] : "";
       this.filter.latlng = query["latlng"] ? query["latlng"] : "";

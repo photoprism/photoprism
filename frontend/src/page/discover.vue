@@ -27,7 +27,7 @@
         </v-tabs-window-item>
 
         <v-tabs-window-item>
-          <p-tab-discover-todo></p-tab-discover-todo>
+          <p-tab-discover-season></p-tab-discover-season>
         </v-tabs-window-item>
 
         <v-tabs-window-item>
@@ -40,12 +40,14 @@
 
 <script>
 import tabColors from "page/discover/colors.vue";
+import tabSeason from "page/discover/season.vue";
 import tabTodo from "page/discover/todo.vue";
 
 export default {
   name: "PPageDiscover",
   components: {
     "p-tab-discover-colors": tabColors,
+    "p-tab-discover-season": tabSeason,
     "p-tab-discover-todo": tabTodo,
   },
   props: {

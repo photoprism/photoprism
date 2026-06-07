@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import * as contexts from "options/contexts";
@@ -13,6 +13,7 @@ function mountToolbar({
     camera: 0,
     year: 0,
     month: 0,
+    day: 0,
     color: "",
     label: "",
     order: "newest",
@@ -255,6 +256,19 @@ describe("component/photo/toolbar", () => {
     });
   });
 
+  describe("date options", () => {
+    it("provides all days for the day filter", () => {
+      const { wrapper } = mountToolbar();
+
+      const days = wrapper.vm.dayOptions();
+
+      expect(days[0]).toEqual({ value: 0, text: "All Days" });
+      expect(days[1]).toEqual({ value: 1, text: "01" });
+      expect(days[31]).toEqual({ value: 31, text: "31" });
+      expect(days[32]).toEqual({ value: -1, text: "Unknown" });
+    });
+  });
+
   describe("delete actions", () => {
     it("deleteAll opens confirmation dialog only when delete is allowed", () => {
       const allowAll = vi.fn(() => true);
@@ -342,5 +356,4 @@ describe("component/photo/toolbar", () => {
     });
   });
 });
-
 

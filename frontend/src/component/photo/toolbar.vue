@@ -212,6 +212,25 @@
                 >
                 </v-select>
               </v-col>
+              <v-col cols="12" sm="6" md="3" class="p-day-select">
+                <v-select
+                  :model-value="filter.day"
+                  :label="$gettext('Day')"
+                  :menu-props="{ maxHeight: 346 }"
+                  single-line
+                  variant="solo-filled"
+                  :density="density"
+                  :items="dayOptions()"
+                  item-title="text"
+                  item-value="value"
+                  @update:model-value="
+                    (v) => {
+                      onUpdate({ day: v });
+                    }
+                  "
+                >
+                </v-select>
+              </v-col>
               <!-- v-col cols="12" sm="6" md="3" class="p-lens-select">
                 <v-select @change="dropdownChange"
                           :label="labels.lens"
@@ -361,6 +380,7 @@ export default {
         colors: [{ Slug: "", Name: this.$gettext("All Colors") }],
         categories: [{ Slug: "", Name: this.$gettext("All Categories") }],
         months: [{ value: 0, text: this.$gettext("All Months") }],
+        days: [{ value: 0, text: this.$gettext("All Days") }],
         years: [{ value: 0, text: this.$gettext("All Years") }],
       },
       dialog: {
@@ -494,6 +514,9 @@ export default {
     },
     monthOptions() {
       return this.all.months.concat(options.Months());
+    },
+    dayOptions() {
+      return this.all.days.concat(options.Days());
     },
     yearOptions() {
       return this.all.years.concat(options.IndexedYears());
