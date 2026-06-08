@@ -1448,4 +1448,50 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(() => run(true, false)).not.toThrow();
     });
   });
+
+  // A 360° sphere slide owns horizontal drag for panning, so PhotoSwipe's swipe-to-
+  // navigate must be suppressed at its source. The per-element gesture trap can be
+  // outrun by a fast swipe that leaves the sphere container (seen on touch-capable
+  // Windows), so onLightboxPointerEvent also default-prevents the dispatched pointer
+  // event whenever the active slide is a sphere. UI controls stay excluded.
+  describe("sphere swipe navigation block", () => {
+    const methods = () => mountLightbox().vm.$options.methods;
+    const makeCtx = (isSphere) => {
+      const m = methods();
+      const ctx = { debug: false, pswp: () => ({ currSlide: { content: { data: { isSphere } } } }) };
+      ctx.pswpControl = (ev) => m.pswpControl.call(ctx, ev);
+      ctx.activeSlideIsSphere = () => m.activeSlideIsSphere.call(ctx);
+      ctx.onLightboxPointerEvent = (ev) => m.onLightboxPointerEvent.call(ctx, ev);
+      return ctx;
+    };
+    const makeEv = (target = document.createElement("div")) => ({
+      type: "pointerDown",
+      originalEvent: { target },
+      preventDefault: vi.fn(),
+    });
+
+    it("activeSlideIsSphere reflects the current slide content flag", () => {
+      const m = methods();
+      expect(m.activeSlideIsSphere.call({ pswp: () => ({ currSlide: { content: { data: { isSphere: true } } } }) })).toBe(true);
+      expect(m.activeSlideIsSphere.call({ pswp: () => ({ currSlide: { content: { data: {} } } }) })).toBe(false);
+      expect(m.activeSlideIsSphere.call({ pswp: () => null })).toBe(false);
+    });
+    it("prevents PhotoSwipe navigation for a pointer on a 360° sphere slide", () => {
+      const ev = makeEv();
+      makeCtx(true).onLightboxPointerEvent(ev);
+      expect(ev.preventDefault).toHaveBeenCalledTimes(1);
+    });
+    it("does NOT prevent navigation on a regular slide", () => {
+      const ev = makeEv();
+      makeCtx(false).onLightboxPointerEvent(ev);
+      expect(ev.preventDefault).not.toHaveBeenCalled();
+    });
+    it("does NOT block a press on a UI control so buttons and arrows still navigate", () => {
+      const arrow = document.createElement("button");
+      arrow.className = "pswp__button pswp__button--arrow";
+      const ev = makeEv(arrow);
+      makeCtx(true).onLightboxPointerEvent(ev);
+      expect(ev.preventDefault).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -2281,6 +2281,12 @@ export default {
 
       return false;
     },
+    // activeSlideIsSphere reports whether the slide currently shown in PhotoSwipe is a
+    // 360° sphere, used to suppress swipe-to-navigate so a horizontal drag pans the
+    // sphere instead of switching photos.
+    activeSlideIsSphere() {
+      return this.pswp()?.currSlide?.content?.data?.isSphere === true;
+    },
     // Called when the lightbox receives a pointer down or up event.
     // Move events are ignored for now.
     onLightboxPointerEvent(ev, action) {
@@ -2301,6 +2307,19 @@ export default {
           ev.preventDefault();
           this.close();
         }
+        return;
+      }
+
+      // Suppress PhotoSwipe's swipe/drag navigation while a 360° sphere slide is active so
+      // the drag pans the sphere instead of switching photos. The per-element gesture trap
+      // (trapSphereGestures) relies on bubble-phase stopPropagation and is outrun by a fast
+      // swipe whose pointer leaves the sphere container before reaching PhotoSwipe's
+      // window-level pointer listeners — seen on touch-capable Windows. Marking the dispatched
+      // pointer event as default-prevented makes PhotoSwipe's gesture handler bail out at its
+      // source, independent of DOM propagation. UI controls navigate via their own click
+      // handlers and are excluded so buttons and the prev/next arrows stay usable.
+      if (!pswpControl && this.activeSlideIsSphere()) {
+        ev.preventDefault();
         return;
       }
 
