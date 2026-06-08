@@ -1,7 +1,7 @@
 package search
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -47,7 +47,7 @@ func ScopePhotosForSession(stmt *gorm.DB, sess *entity.Session) *gorm.DB {
 	}
 
 	user := sess.GetUser()
-	sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?)) OR "
+	sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = FALSE AND missing = FALSE AND album_uid IN (?)) OR "
 
 	if sess.IsVisitor() || sess.NotRegistered() {
 		return stmt.Where(sharedAlbums+"photos.published_at > ?", sess.SharedUIDs(), entity.Now())
@@ -72,7 +72,7 @@ func ScopeVisiblePhotos(stmt *gorm.DB, sess *entity.Session) *gorm.DB {
 
 	// Exclude private pictures unless the role may access them.
 	if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
-		stmt = stmt.Where("photos.photo_private = 0")
+		stmt = stmt.Where("photos.photo_private = FALSE")
 	}
 
 	// Exclude archived (soft-deleted) pictures unless the role may access them.
@@ -98,7 +98,7 @@ func PhotoVisibleToSession(photoUID string, sess *entity.Session) (bool, error) 
 	// matching GetPhoto / searchPhotos.
 	stmt := ScopeVisiblePhotos(UnscopedDb().Table("photos").Where("photos.photo_uid = ?", photoUID), sess)
 
-	var count int
+	var count int64
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
 	}
@@ -124,7 +124,7 @@ func FileVisibleToSession(fileHash string, sess *entity.Session) (bool, error) {
 		sess,
 	)
 
-	var count int
+	var count int64
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
 	}
