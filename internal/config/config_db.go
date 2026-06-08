@@ -8,7 +8,6 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"golang.org/x/mod/semver"
@@ -26,8 +25,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var postgresSupportWarnOnce sync.Once
-
 // Auto requests automatic detection of an implementation-defined default
 // (e.g. the database driver). The canonical SQL driver identifiers live in
 // pkg/dsn (dsn.DriverMySQL, dsn.DriverSQLite3, …).
@@ -40,12 +37,6 @@ func (c *Config) DatabaseDriver() string {
 	switch dsn.ParseDriver(c.options.DatabaseDriver) {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		c.options.DatabaseDriver = dsn.DriverMySQL
-	case dsn.DriverPostgres:
-		// See issue #47 and <https://github.com/photoprism/photoprism/pull/4831>.
-		postgresSupportWarnOnce.Do(func() {
-			log.Warnf("config: support for PostgreSQL is not yet available in this version")
-		})
-		c.options.DatabaseDriver = dsn.DriverPostgres
 	case dsn.DriverSQLite3, dsn.DriverNone, dsn.DriverAuto:
 		c.options.DatabaseDriver = dsn.DriverSQLite3
 	case dsn.DriverPostgreSQL, dsn.DriverPostgres:
@@ -599,20 +590,6 @@ func (c *Config) checkDb(db *gorm.DB) error {
 			return fmt.Errorf("MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		case !c.IsDatabaseVersion("v10.5.12"):
 			return fmt.Errorf("MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
-		}
-	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
-		var versions []string
-		err := db.Raw("SELECT VERSION() AS Value").Pluck("value", &versions).Error
-		// Version query not supported.
-		if err != nil {
-			log.Tracef("config: failed to detect database version (%s)", err)
-			return nil
-		}
-
-		c.dbVersion = clean.Version(versions[0])
-
-		if c.dbVersion == "" {
-			log.Warnf("config: unknown database server version")
 		}
 	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
 		var versions []string
