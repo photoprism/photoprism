@@ -23,6 +23,36 @@ Additional information can be found in our Developer Guide:
 
 */
 
+import * as media from "common/media";
+
+// EQUIRECTANGULAR_RATIO_TOLERANCE bounds how far a video frame may deviate from the
+// 2:1 equirectangular aspect ratio and still be treated as 360° media.
+const EQUIRECTANGULAR_RATIO_TOLERANCE = 0.15;
+
+// is360Equirectangular reports whether a slide/thumb model is equirectangular 360°
+// content that should open in the sphere viewer. An explicit "equirectangular"
+// projection is authoritative and any other non-empty projection (cubemap, …) is
+// never 360°. Many 360° videos carry no projection tag PhotoPrism can read, so a
+// panorama-flagged video with no projection falls back to equirectangular's defining
+// 2:1 frame — this keeps genuine spherical videos opening while cubemap (4:3, 6:1)
+// and ultrawide (~2.35:1) clips stay in the flat player.
+export function is360Equirectangular(model) {
+  const projection = (model?.Projection || "").toLowerCase();
+  if (projection === "equirectangular") {
+    return true;
+  }
+  if (projection) {
+    return false;
+  }
+  const isVideo = model?.Type === media.Video || model?.Type === media.Animated;
+  if (!isVideo || model?.Panorama !== true) {
+    return false;
+  }
+  const w = Number(model?.Width);
+  const h = Number(model?.Height);
+  return w > 0 && h > 0 && Math.abs(w / h - 2) <= EQUIRECTANGULAR_RATIO_TOLERANCE;
+}
+
 // createSphereViewer mounts a Photo Sphere Viewer instance for an equirectangular photo or video.
 // The renderer (and its ThreeJS dependency) is dynamic-imported on first call so the base bundle
 // is unaffected when no 360° media is opened.

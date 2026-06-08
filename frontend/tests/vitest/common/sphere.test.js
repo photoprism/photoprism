@@ -24,7 +24,36 @@ vi.mock("@photo-sphere-viewer/equirectangular-video-adapter", () => ({
 vi.mock("@photo-sphere-viewer/core/index.css", () => ({}));
 vi.mock("@photo-sphere-viewer/video-plugin/index.css", () => ({}));
 
-import { createSphereViewer, destroySphereViewer } from "common/sphere";
+import { createSphereViewer, destroySphereViewer, is360Equirectangular } from "common/sphere";
+
+describe("common/sphere is360Equirectangular", () => {
+  it("is true for an explicit equirectangular projection", () => {
+    expect(is360Equirectangular({ Type: "image", Projection: "equirectangular" })).toBe(true);
+    expect(is360Equirectangular({ Type: "video", Projection: "equirectangular" })).toBe(true);
+  });
+  it("is false for any other non-empty projection", () => {
+    expect(is360Equirectangular({ Type: "video", Projection: "cubemap", Panorama: true, Width: 3840, Height: 1920 })).toBe(false);
+    expect(is360Equirectangular({ Type: "image", Projection: "cubestrip" })).toBe(false);
+  });
+  it("falls back to the 2:1 frame for a panorama video without a projection tag", () => {
+    expect(is360Equirectangular({ Type: "video", Panorama: true, Width: 3840, Height: 1920 })).toBe(true);
+    expect(is360Equirectangular({ Type: "video", Panorama: true, Width: 4096, Height: 2048 })).toBe(true);
+  });
+  it("is false for a wide non-2:1 video (ultrawide) even when panorama-flagged", () => {
+    expect(is360Equirectangular({ Type: "video", Panorama: true, Width: 3840, Height: 1632 })).toBe(false);
+  });
+  it("is false for a 2:1 video that is not panorama-flagged", () => {
+    expect(is360Equirectangular({ Type: "video", Panorama: false, Width: 3840, Height: 1920 })).toBe(false);
+  });
+  it("does not apply the 2:1 fallback to photos (projection only)", () => {
+    expect(is360Equirectangular({ Type: "image", Panorama: true, Width: 3840, Height: 1920 })).toBe(false);
+  });
+  it("is false for empty, null, or dimensionless input", () => {
+    expect(is360Equirectangular(null)).toBe(false);
+    expect(is360Equirectangular({})).toBe(false);
+    expect(is360Equirectangular({ Type: "video", Panorama: true })).toBe(false);
+  });
+});
 
 describe("common/sphere", () => {
   beforeEach(() => {

@@ -1292,13 +1292,22 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
       expect(slide.isSphere).toBeUndefined();
     });
-    it("does NOT mount the sphere for a wide non-360 video flagged as panorama", () => {
+    it("does NOT mount the sphere for an ultrawide (non-2:1) video flagged as panorama", () => {
       const wrapper = mountLightbox();
-      const model = { Hash: "wide", Projection: "", Panorama: true, Type: "video", Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const model = { Hash: "wide", Projection: "", Panorama: true, Type: "video", Width: 3840, Height: 1632, Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
       const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
 
       const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
       expect(slide.isSphere).toBeUndefined();
+    });
+    it("mounts the sphere for a 2:1 panorama video that carries no projection tag", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "vr", Projection: "", Panorama: true, Type: "video", Width: 3840, Height: 1920, Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.isSphere).toBe(true);
+      expect(slide.isVideo).toBe(true);
     });
   });
 
