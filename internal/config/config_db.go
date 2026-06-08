@@ -8,6 +8,7 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/mod/semver"
@@ -25,6 +26,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+var postgresSupportWarnOnce sync.Once
+
 // Auto requests automatic detection of an implementation-defined default
 // (e.g. the database driver). The canonical SQL driver identifiers live in
 // pkg/dsn (dsn.DriverMySQL, dsn.DriverSQLite3, …).
@@ -37,6 +40,12 @@ func (c *Config) DatabaseDriver() string {
 	switch dsn.ParseDriver(c.options.DatabaseDriver) {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		c.options.DatabaseDriver = dsn.DriverMySQL
+	case dsn.DriverPostgres:
+		// See issue #47 and <https://github.com/photoprism/photoprism/pull/4831>.
+		postgresSupportWarnOnce.Do(func() {
+			log.Warnf("config: support for PostgreSQL is not yet available in this version")
+		})
+		c.options.DatabaseDriver = dsn.DriverPostgres
 	case dsn.DriverSQLite3, dsn.DriverNone, dsn.DriverAuto:
 		c.options.DatabaseDriver = dsn.DriverSQLite3
 	case dsn.DriverPostgreSQL, dsn.DriverPostgres:
@@ -491,7 +500,9 @@ func (c *Config) SetDbOptions() {
 // sets the database options and connection provider.
 func (c *Config) RegisterDb() {
 	if err := c.connectDb(); err != nil {
-		log.Errorf("config: %s (register db)")
+		// Report via the system log, not the database-persisted logger, so a
+		// connection failure cannot trigger a follow-up error writing to the DB.
+		event.SystemError([]string{"config", "database", "register", "%s"}, err)
 		return
 	}
 
@@ -585,9 +596,23 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		case c.dbVersion == "":
 			log.Warnf("config: unknown database server version")
 		case !c.IsDatabaseVersion("v10.0.0"):
-			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
+			return fmt.Errorf("MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		case !c.IsDatabaseVersion("v10.5.12"):
-			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
+			return fmt.Errorf("MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
+		}
+	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
+		var versions []string
+		err := db.Raw("SELECT VERSION() AS Value").Pluck("value", &versions).Error
+		// Version query not supported.
+		if err != nil {
+			log.Tracef("config: failed to detect database version (%s)", err)
+			return nil
+		}
+
+		c.dbVersion = clean.Version(versions[0])
+
+		if c.dbVersion == "" {
+			log.Warnf("config: unknown database server version")
 		}
 	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
 		var versions []string
@@ -664,11 +689,11 @@ func (c *Config) connectDb() error {
 	dbDSN := c.DatabaseDSN()
 
 	if dbDriver == "" {
-		return errors.New("config: database driver not specified")
+		return errors.New("driver not specified")
 	}
 
 	if dbDSN == "" {
-		return errors.New("config: database DSN not specified")
+		return errors.New("DSN not specified")
 	}
 
 	if c.IsDbOpen() {
@@ -725,7 +750,9 @@ func (c *Config) connectDb() error {
 		// Check database server version.
 		if err = c.checkDb(db); err != nil {
 			if c.Unsafe() {
-				log.Error(err)
+				// Report via the system log so a database problem is not written to
+				// the database-persisted error log.
+				event.SystemError([]string{"config", "database", "check", "%s"}, err)
 			} else {
 				return err
 			}

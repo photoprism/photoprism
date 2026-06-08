@@ -156,7 +156,6 @@ func TestCliFlag_DefaultStringDefault(t *testing.T) {
 
 		assert.Equal(t, "", f.Default())
 	})
-
 	t.Run("Literal", func(t *testing.T) {
 		f := CliFlag{
 			Flag: &cli.StringFlag{
@@ -215,7 +214,6 @@ func TestCliFlag_DefaultSecret(t *testing.T) {
 
 		assert.Equal(t, "", f.Default())
 	})
-
 	t.Run("DocDefaultPlaceholder", func(t *testing.T) {
 		f := CliFlag{Flag: flag, Secret: true, DocDefault: "[redacted]"}
 

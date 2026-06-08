@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
@@ -26,7 +27,10 @@ var DefaultPortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
 var DefaultNodeRole = cluster.RoleInstance
 
 // DefaultJWTAllowedScopes lists default OAuth scopes for cluster-issued JWTs.
-var DefaultJWTAllowedScopes = "config cluster vision metrics mcp"
+// Includes "users" so the Portal-side user-management proxy
+// (POST/PUT/DELETE /api/v1/cluster/nodes/{uuid}/users[/{uid}]) and the
+// lifecycle sync push are accepted by the instance JWT scope allowlist.
+var DefaultJWTAllowedScopes = "config cluster vision metrics mcp users"
 
 // SaveClusterOptionsUpdate persists a cluster options update to options.yml,
 // reloads in-memory options, and returns true when values changed.
@@ -113,11 +117,65 @@ func (c *Config) Portal() bool {
 }
 
 // PortalOIDCIssuer returns the issuer URL advertised by the Portal's OIDC OP
-// (discovery doc, ID tokens, userinfo). Defaults to SiteUrl; a future env
-// override (PHOTOPRISM_PORTAL_OIDC_ISSUER) will let operators advertise a
-// different URL when the Portal is fronted by a path-rewriting proxy.
+// (discovery doc, ID tokens, userinfo). Falls back to SiteUrl when the
+// `PHOTOPRISM_PORTAL_OIDC_ISSUER` override is unset.
 func (c *Config) PortalOIDCIssuer() string {
+	if iss := strings.TrimSpace(c.options.PortalOIDCIssuer); iss != "" {
+		return iss
+	}
 	return c.SiteUrl()
+}
+
+// portalOIDCTTLBounds are the configurable lower / upper bounds for the
+// Portal OIDC OP token and code TTLs. Going below the floor would push
+// past the recommended single-request window for an interactive login;
+// going above the ceiling weakens the security posture of the OP.
+const (
+	portalOIDCTTLMin     = 60
+	portalOIDCTTLMax     = 900
+	portalOIDCCodeTTLMin = 30
+	portalOIDCCodeTTLMax = 300
+)
+
+// PortalOIDCTTL returns the configured access-token / ID-token lifetime for
+// the Portal OIDC OP, clamped to a safe range. Defaults to 300 seconds and
+// caps at 900.
+func (c *Config) PortalOIDCTTL() time.Duration {
+	return clampDurationSeconds(c.options.PortalOIDCTTL, portalOIDCTTLMin, portalOIDCTTLMax, 300)
+}
+
+// PortalOIDCCodeTTL returns the authorization-code lifetime for the Portal
+// OIDC OP. Defaults to 60 seconds and caps at 300.
+func (c *Config) PortalOIDCCodeTTL() time.Duration {
+	return clampDurationSeconds(c.options.PortalOIDCCodeTTL, portalOIDCCodeTTLMin, portalOIDCCodeTTLMax, 60)
+}
+
+// PortalOIDCDefaultPolicyChooser reports whether the Portal OIDC OP should
+// route multi-instance logins through the chooser (default), as opposed to
+// `direct` which always honors the requested client_id without prompting.
+func (c *Config) PortalOIDCDefaultPolicyChooser() bool {
+	switch strings.ToLower(strings.TrimSpace(c.options.PortalOIDCDefaultPolicy)) {
+	case "direct":
+		return false
+	default:
+		return true
+	}
+}
+
+// clampDurationSeconds returns the configured value clamped to [min, max].
+// A zero or negative configured value falls back to `def`.
+func clampDurationSeconds(value, minSec, maxSec, defSec int) time.Duration {
+	v := value
+	if v <= 0 {
+		v = defSec
+	}
+	if v < minSec {
+		v = minSec
+	}
+	if v > maxSec {
+		v = maxSec
+	}
+	return time.Duration(v) * time.Second
 }
 
 // PortalUrl returns the URL of the cluster management portal server, if configured.

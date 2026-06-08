@@ -589,7 +589,7 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	// Update photo path and name if possible.
 	if p := m.RelatedPhoto(); p != nil {
 		return p.Updates(Values{
-			"PhotoPath": filePath,
+			"PhotoPath": ClipPath(filePath),
 			"PhotoName": fileBase,
 		})
 	}
@@ -719,7 +719,7 @@ func (m *File) IsAnimated() bool {
 
 // ColorProfile returns the ICC color profile name if any.
 func (m *File) ColorProfile() string {
-	return SanitizeStringType(m.FileColorProfile)
+	return ClipType(m.FileColorProfile)
 }
 
 // HasColorProfile tests if the file has a matching color profile.
@@ -729,8 +729,8 @@ func (m *File) HasColorProfile(profile colors.Profile) bool {
 
 // SetColorProfile sets the ICC color profile name such as "Display P3".
 func (m *File) SetColorProfile(name string) {
-	if name = SanitizeStringType(name); name != "" {
-		m.FileColorProfile = SanitizeStringType(name)
+	if name = ClipType(name); name != "" {
+		m.FileColorProfile = ClipType(name)
 	}
 }
 
@@ -741,7 +741,7 @@ func (m *File) ResetColorProfile() {
 
 // SetSoftware sets the software name.
 func (m *File) SetSoftware(name string) {
-	if name = SanitizeStringType(name); name != "" {
+	if name = ClipType(name); name != "" {
 		m.FileSoftware = name
 	}
 }

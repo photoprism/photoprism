@@ -69,6 +69,13 @@ func testMain(m *testing.M) (code int) {
 		return c, c.Init()
 	}
 
+	// Init core config (no database) using the shared test config so commands
+	// like "show config" and "faces config" don't fall back to a storage path
+	// derived from the real originals directory.
+	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
+		return c, c.InitCore()
+	}
+
 	// Run unit tests.
 	beforeTimestamp := time.Now().UTC()
 	code = m.Run()
@@ -121,7 +128,7 @@ func NewTestContext(args []string) *cli.Context {
 	app.Usage = "PhotoPrism®"
 	app.Description = ""
 	app.Version = "test"
-	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
+	app.Copyright = "(c) 2018-2026 PhotoPrism UG. All rights reserved."
 	app.Flags = config.Flags.Cli()
 	app.Commands = PhotoPrism
 	app.HelpName = app.Name

@@ -16,6 +16,7 @@ const (
 	Joined              = "joined"
 	Confirmed           = "confirmed"
 	Skipped             = "skipped"
+	Canceled            = "canceled"
 	NotFound            = "not found"
 	Unsupported         = "not supported"
 	RateLimited         = "rate limit exceeded"

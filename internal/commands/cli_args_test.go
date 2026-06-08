@@ -42,7 +42,6 @@ func TestRejectTrailingFlags(t *testing.T) {
 		ctx := cli.NewContext(nil, set, nil)
 		assert.NoError(t, RejectTrailingFlags(ctx))
 	})
-
 	t.Run("TrailingFlagReturnsError", func(t *testing.T) {
 		set := flag.NewFlagSet("test", flag.ContinueOnError)
 		_ = set.Parse([]string{"alice", "--name", "Alicia"})

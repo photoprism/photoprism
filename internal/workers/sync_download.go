@@ -106,7 +106,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	done := make(map[string]bool)
 
 	for _, files := range relatedFiles {
-		if w.conf.FilesQuotaReached() {
+		if w.conf.InsufficientStorage() {
 			log.Warnf("sync: skipped downloading files from %s due to insufficient storage", clean.Log(a.AccName))
 			return false, nil
 		}

@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -139,46 +140,32 @@ func TestConfig_YtDlpBin(t *testing.T) {
 func TestConfig_TempPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	d0 := c.tempPath()
+	// Reset the cached TempPath() so the result does not depend on execution order.
+	tempPath = ""
+	t.Cleanup(func() { tempPath = "" })
 
-	t.Logf("c.options.TempPath: '%s'", c.options.TempPath)
-	t.Logf("c.tempPath(): '%s'", d0)
+	// With TempPath configured (default test config), it is returned unchanged.
+	want := ProjectRoot + "/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/temp"
+	assert.Equal(t, want, c.tempPath())
 
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/temp", c.tempPath())
-
+	// TempPath() caches the first resolved value and keeps returning it even after
+	// the configured option is cleared.
+	assert.Equal(t, want, c.TempPath())
 	c.options.TempPath = ""
+	assert.Equal(t, want, c.TempPath(), "cached TempPath() should not change")
+
+	// Without a configured option, tempPath() falls back to a "photoprism_" subdirectory
+	// of the OS temp dir, which is not necessarily "/tmp" (e.g. when TMPDIR is set).
+	wantPrefix := filepath.Join(os.TempDir(), "photoprism_")
 
 	d1 := c.tempPath()
-
 	if d1 == "" {
 		t.Fatal("temp path is empty")
 	}
+	assert.True(t, strings.HasPrefix(d1, wantPrefix), "want prefix %q, got %q", wantPrefix, d1)
 
-	if !strings.HasPrefix(d1, "/tmp/photoprism_") {
-		t.Fatalf("unexpected temp path: %s", d1)
-	}
-
-	d2 := c.tempPath()
-
-	if d2 == "" {
-		t.Fatal("temp path is empty")
-	}
-
-	if !strings.HasPrefix(d2, "/tmp/photoprism_") {
-		t.Fatalf("unexpected temp path: %s", d2)
-	}
-
-	if d1 != d2 {
-		t.Fatalf("temp paths should match: '%s' <=> '%s'", d1, d2)
-	} else {
-		t.Logf("temp paths match: '%s' == '%s'", d1, d2)
-	}
-
-	if d4 := c.TempPath(); d4 != d0 {
-		t.Fatalf("temp paths should match: '%s' <=> '%s'", d4, d0)
-	} else {
-		t.Logf("temp paths match: '%s' == '%s'", d4, d0)
-	}
+	// The fallback must be stable across repeated calls.
+	assert.Equal(t, d1, c.tempPath(), "fallback temp paths should match")
 }
 
 func TestConfig_CmdCachePath(t *testing.T) {
@@ -605,5 +592,44 @@ func TestDefaultsYamlResolution(t *testing.T) {
 		require.NoError(t, ctx.Set("defaults-yaml", filepath.Join(t.TempDir(), "missing.yml")))
 		require.NoError(t, ctx.Set("config-path", t.TempDir()))
 		require.Equal(t, "", defaultsYaml(ctx))
+	})
+}
+
+func TestConfig_StorageFree(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Pin the shared default so the "use default" cases are deterministic, and
+	// restore both the option and the package-level threshold afterwards.
+	origOpt := c.options.StorageFree
+	origPct := disk.StorageLowPct
+	disk.StorageLowPct = 1.0
+	t.Cleanup(func() {
+		c.options.StorageFree = origOpt
+		disk.StorageLowPct = origPct
+	})
+
+	t.Run("Disabled", func(t *testing.T) {
+		c.options.StorageFree = -1
+		assert.Equal(t, float64(-1), c.StorageFree())
+	})
+	t.Run("NegativeDisables", func(t *testing.T) {
+		c.options.StorageFree = -12.5
+		assert.Equal(t, float64(-1), c.StorageFree())
+	})
+	t.Run("ZeroUsesDefault", func(t *testing.T) {
+		c.options.StorageFree = 0
+		assert.Equal(t, 1.0, c.StorageFree())
+	})
+	t.Run("HundredOrMoreUsesDefault", func(t *testing.T) {
+		c.options.StorageFree = 100
+		assert.Equal(t, 1.0, c.StorageFree())
+		c.options.StorageFree = 250
+		assert.Equal(t, 1.0, c.StorageFree())
+	})
+	t.Run("CustomThreshold", func(t *testing.T) {
+		c.options.StorageFree = 5
+		assert.Equal(t, 5.0, c.StorageFree())
+		c.options.StorageFree = 99
+		assert.Equal(t, 99.0, c.StorageFree())
 	})
 }

@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-// struct denoting start and end indices of database portion to be scanned for nearest neighbors by workers in DBSCAN and OPTICS
+// struct denoting start and end indices of database portion to be scanned for nearest neighbors by workers in DBSCAN
 type rangeJob struct {
 	a, b int
 }

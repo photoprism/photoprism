@@ -305,14 +305,27 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 	return results, nil
 }
 
-// RemoveDuplicateMoments deletes generated albums with duplicate slug or filter.
+// duplicateMomentsFrom is the shared FROM/WHERE that pairs a generated album (a)
+// with an earlier same-type sibling (b) it duplicates. It binds three parameters
+// in order: the album type to skip (manual), then the folder type twice.
+//
+// Folder album slugs are not unique identities: long nested paths are truncated to
+// ClipSlug runes and slug.Make drops emoji, so distinct sibling folders can share one
+// album_slug. Folder albums are therefore deduplicated by album_filter (the serialized
+// path) alone; only non-folder albums treat a matching album_slug as a duplicate.
+const duplicateMomentsFrom = `albums a JOIN albums b ON a.album_type <> ?
+		AND a.album_type = b.album_type AND a.id > b.id
+		WHERE ((a.album_type = ? AND a.album_filter = b.album_filter)
+			OR (a.album_type <> ? AND (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)))
+		GROUP BY a.album_uid`
+
+// RemoveDuplicateMoments deletes generated albums with a duplicate filter, or a
+// duplicate slug for non-folder album types.
 func RemoveDuplicateMoments() (removed int, err error) {
 	removed = 0
-	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid 
-		IN (SELECT a.album_uid FROM albums a JOIN albums b ON a.album_type <> ?
-			AND a.album_type = b.album_type AND a.id > b.id
-			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter))`,
-		entity.AlbumManual); res.Error != nil {
+	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid IN (
+		SELECT a.album_uid FROM `+duplicateMomentsFrom+`)`,
+		entity.AlbumManual, entity.AlbumFolder, entity.AlbumFolder); res.Error != nil {
 		return removed, res.Error
 	} else {
 		removed += int(res.RowsAffected)
@@ -332,11 +345,9 @@ func RemoveDuplicateMoments() (removed int, err error) {
 		removed += int(res.RowsAffected)
 	}
 
-	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id 
-		IN (SELECT a.id FROM albums a JOIN albums b ON a.album_type <> ?
-			AND a.album_type = b.album_type  AND a.id > b.id
-			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter))`,
-		entity.AlbumManual); res.Error != nil {
+	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id IN (
+		SELECT a.id FROM `+duplicateMomentsFrom+`)`,
+		entity.AlbumManual, entity.AlbumFolder, entity.AlbumFolder); res.Error != nil {
 		return removed, res.Error
 	} else if res.RowsAffected > 0 {
 		removed += int(res.RowsAffected)

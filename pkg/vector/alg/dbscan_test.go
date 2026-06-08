@@ -72,6 +72,47 @@ func TestDBSCANCluster(t *testing.T) {
 	}
 }
 
+func TestPartitionSize(t *testing.T) {
+	tests := []struct {
+		Points   int
+		Workers  int
+		Expected int
+	}{
+		{Points: 1000, Workers: 10, Expected: 100},
+		{Points: 10, Workers: 2, Expected: 5},
+		{Points: 5, Workers: 1, Expected: 5},
+		{Points: 3, Workers: 64, Expected: 1},
+		{Points: 1, Workers: 1, Expected: 1},
+		{Points: 0, Workers: 1, Expected: 1},
+		{Points: 4, Workers: 0, Expected: 4},
+		{Points: 4, Workers: -3, Expected: 4},
+	}
+	for _, test := range tests {
+		if got := partitionSize(test.Points, test.Workers); got != test.Expected {
+			t.Errorf("partitionSize(%d, %d) = %d, want %d", test.Points, test.Workers, got, test.Expected)
+		}
+	}
+}
+
+func TestDBSCANMoreWorkersThanPoints(t *testing.T) {
+	// Requesting far more workers than data points must still terminate and
+	// cluster correctly; the partition size is floored at 1.
+	c, err := DBSCAN(1, 1, 64, EuclideanDist)
+	if err != nil {
+		t.Fatalf("unexpected constructor error: %s", err)
+	}
+
+	points := [][]float64{{1}, {1.5}, {5}}
+
+	if err = c.Learn(points); err != nil {
+		t.Fatalf("unexpected learn error: %s", err)
+	}
+
+	if expected := []int{1, 1, 2}; !reflect.DeepEqual(c.Guesses(), expected) {
+		t.Errorf("guesses do not match: %d vs %d", c.Guesses(), expected)
+	}
+}
+
 func TestDBSCANWithProgress(t *testing.T) {
 	progress := make([][2]int, 0)
 

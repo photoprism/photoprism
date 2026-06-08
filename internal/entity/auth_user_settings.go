@@ -53,9 +53,7 @@ func CreateUserSettings(user *User) error {
 		return fmt.Errorf("empty user uid")
 	}
 
-	user.UserSettings = &UserSettings{
-		UserUID: user.UserUID,
-	}
+	user.UserSettings = NewUserSettings(user.GetUID())
 
 	if err := Db().Where("user_uid = ?", user.GetUID()).First(user.UserSettings).Error; err == nil {
 		return nil

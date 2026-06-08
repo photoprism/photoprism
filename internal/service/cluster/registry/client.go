@@ -68,6 +68,9 @@ func toNode(c *entity.Client) *Node {
 		}
 		n.RotatedAt = data.RotatedAt
 		n.Theme = data.Theme
+		if len(data.RedirectURIs) > 0 {
+			n.RedirectURIs = append([]string(nil), data.RedirectURIs...)
+		}
 	}
 
 	return n
@@ -155,6 +158,11 @@ func (r *ClientRegistry) Put(n *Node) error {
 		m.NodeUUID = n.UUID
 	}
 
+	// nil = no change so callers that don't touch the field can't clear it; non-nil replaces.
+	if n.RedirectURIs != nil {
+		data.RedirectURIs = append([]string(nil), n.RedirectURIs...)
+	}
+
 	data.RotatedAt = n.RotatedAt
 
 	if theme := clean.TypeUnicode(n.Theme); theme != "" {
@@ -210,6 +218,11 @@ func (r *ClientRegistry) Put(n *Node) error {
 		}
 		n.RotatedAt = d.RotatedAt
 		n.Theme = d.Theme
+		if len(d.RedirectURIs) > 0 {
+			n.RedirectURIs = append([]string(nil), d.RedirectURIs...)
+		} else {
+			n.RedirectURIs = nil
+		}
 	}
 
 	// Set initial secret if provided on create/update.

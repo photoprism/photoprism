@@ -31,7 +31,7 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	}
 
 	// Use FFmpeg to extract video stills from videos, e.g. to use them as cover images.
-	if f.IsAnimated() && !f.IsWebp() && w.conf.FFmpegEnabled() {
+	if f.IsAnimated() && !f.IsWebp() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		// Use "ffmpeg" to extract a PNG still image from the video.
 		result = append(result, NewConvertCmd(
 			ffmpeg.ExtractPngImageCmd(f.FileName(), pngName, encode.NewPreviewImageOptions(w.conf.FFmpegBin(), f.Duration()))),
@@ -91,6 +91,9 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 
 	// No suitable converter found?
 	if len(result) == 0 {
+		if f.IsAnimated() && w.conf.FFmpegEnabled() && !w.FFmpegAllowed(f) {
+			return result, useMutex, fmt.Errorf("format %s is on the FFmpeg exclude list", w.ffmpegExclude.Match(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String()))
+		}
 		return result, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
 	}
 

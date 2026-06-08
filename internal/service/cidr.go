@@ -21,7 +21,7 @@ func ParseCIDRs(raw string) (result []*net.IPNet, err error) {
 		return result, nil
 	}
 
-	for _, token := range strings.Split(raw, ",") {
+	for token := range strings.SplitSeq(raw, ",") {
 		token = strings.TrimSpace(token)
 
 		if token == "" {

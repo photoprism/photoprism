@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
-import routes from "app/routes";
+import routes, { safeReturnTo } from "app/routes";
 import { $config, $session } from "app/session";
 
 // Find the /login route's beforeEnter so it can be invoked directly with
@@ -134,6 +134,53 @@ describe("app/routes /login guard", () => {
     expect(next).toHaveBeenCalledWith();
   });
 
+  // One-shot guard: the first deep-link arrival auto-redirects to OIDC and
+  // marks the attempt; a second arrival within the same tab (typical of a
+  // failed/abandoned IdP roundtrip) consumes the flag and shows the form
+  // instead of looping back to OIDC.
+  it("auto-redirects only once per tab so a failed OIDC roundtrip falls back to the form", () => {
+    $config.values = {
+      ...$config.values,
+      ext: { oidc: { enabled: true, redirect: true, loginUri: "/api/v1/oidc/login" } },
+    };
+    $session.setLoginRedirectUrl("/library/people");
+    const followRedirect = vi.spyOn($session, "followRedirect").mockImplementation(() => {});
+    const firstNext = vi.fn();
+    const secondNext = vi.fn();
+
+    loginGuard({}, {}, firstNext);
+    expect(followRedirect).toHaveBeenCalledTimes(1);
+    expect(firstNext).toHaveBeenCalledWith(false);
+
+    // Simulate the user dismissing the IdP and arriving back at /login. The
+    // deep-link target is still in localStorage; the attempt flag in
+    // sessionStorage breaks the loop.
+    loginGuard({}, {}, secondNext);
+    expect(followRedirect).toHaveBeenCalledTimes(1);
+    expect(secondNext).toHaveBeenCalledWith();
+  });
+
+  it("re-arms the OIDC auto-redirect after a successful login or explicit logout", () => {
+    $config.values = {
+      ...$config.values,
+      ext: { oidc: { enabled: true, redirect: true, loginUri: "/api/v1/oidc/login" } },
+    };
+    $session.setLoginRedirectUrl("/library/people");
+    const followRedirect = vi.spyOn($session, "followRedirect").mockImplementation(() => {});
+
+    loginGuard({}, {}, vi.fn());
+    expect(followRedirect).toHaveBeenCalledTimes(1);
+
+    // Successful login (or onLogout) clears both the deep-link target and
+    // the attempt flag via clearLoginRedirectUrl. A fresh deep-link arrival
+    // should be allowed to auto-redirect again.
+    $session.clearLoginRedirectUrl();
+    $session.setLoginRedirectUrl("/library/albums/new/view");
+
+    loginGuard({}, {}, vi.fn());
+    expect(followRedirect).toHaveBeenCalledTimes(2);
+  });
+
   // Post-OIDC roundtrip: auth.gohtml writes the new session and reloads
   // /library/login. The guard must consume the stored deep-link URL and
   // hard-navigate back to it instead of falling through to the default
@@ -165,5 +212,59 @@ describe("app/routes /login guard", () => {
 
     expect(getDefault).toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith({ name: "browse" });
+  });
+
+  // The Portal OIDC OP redirects unauthenticated users to
+  // /portal/admin/login?return_to=<authorize URL> via a top-level browser
+  // navigation, so the global router guard never gets to record the deep
+  // link via setLoginRedirectUrl(). The login route reads the inbound
+  // `return_to` query parameter directly to bridge the hand-off.
+  it("records a safe return_to query param as the post-login deep link", () => {
+    const next = vi.fn();
+
+    loginGuard({ query: { return_to: "/oauth/authorize?client_id=abc&state=x" } }, {}, next);
+
+    expect($session.hasLoginRedirectUrl()).toBe(true);
+    expect($session.getLoginRedirectUrl()).toBe("/oauth/authorize?client_id=abc&state=x");
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it("ignores an unsafe return_to that escapes the current origin", () => {
+    const next = vi.fn();
+
+    loginGuard({ query: { return_to: "https://attacker.example/steal" } }, {}, next);
+
+    expect($session.hasLoginRedirectUrl()).toBe(false);
+    expect(next).toHaveBeenCalledWith();
+  });
+});
+
+describe("app/routes safeReturnTo", () => {
+  it("accepts root-relative paths", () => {
+    expect(safeReturnTo("/library/photos")).toBe("/library/photos");
+    expect(safeReturnTo("/oauth/authorize?client_id=x&state=y")).toBe("/oauth/authorize?client_id=x&state=y");
+  });
+  it("accepts absolute URLs on the same origin and returns the path+query+hash", () => {
+    const here = window.location?.origin;
+    if (!here) {
+      return;
+    }
+    expect(safeReturnTo(here + "/portal/admin/cluster")).toBe("/portal/admin/cluster");
+    expect(safeReturnTo(here + "/oauth/authorize?client_id=x#frag")).toBe("/oauth/authorize?client_id=x#frag");
+  });
+  it("rejects cross-origin absolutes", () => {
+    expect(safeReturnTo("https://attacker.example/steal")).toBe("");
+    expect(safeReturnTo("http://attacker.example/steal")).toBe("");
+  });
+  it("rejects protocol-relative and backslash-prefixed values that some browsers misparse", () => {
+    expect(safeReturnTo("//attacker.example/")).toBe("");
+    expect(safeReturnTo("\\\\attacker.example\\path")).toBe("");
+  });
+  it("rejects empty, whitespace, or non-string inputs", () => {
+    expect(safeReturnTo("")).toBe("");
+    expect(safeReturnTo("   ")).toBe("");
+    expect(safeReturnTo(undefined)).toBe("");
+    expect(safeReturnTo(null)).toBe("");
+    expect(safeReturnTo(42)).toBe("");
   });
 });

@@ -106,7 +106,6 @@ func TestPhotoLabel_Save(t *testing.T) {
 		UnscopedDb().Delete(newLabel)
 		UnscopedDb().Delete(newPhoto)
 	})
-
 	t.Run("PhotoNotNilAndLabelNotNil", func(t *testing.T) {
 		newLabel := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
 		Db().Create(newLabel) // Foreign keys require the data to be saved.
@@ -116,7 +115,10 @@ func TestPhotoLabel_Save(t *testing.T) {
 		assert.NotEqual(t, 0, newPhoto.ID)
 		assert.NotEqual(t, 0, newLabel.ID)
 
-		photoLabel := PhotoLabel{Photo: newPhoto, Label: newLabel}
+		label := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
+		photo := &Photo{}
+
+		photoLabel := PhotoLabel{PhotoID: 900000003, LabelID: 900000004, Photo: photo, Label: label}
 		err := photoLabel.Save()
 		if err != nil {
 			t.Fatal(err)

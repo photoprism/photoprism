@@ -239,7 +239,7 @@ func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 
 // NewFolderAlbum creates a new album representing a filesystem folder.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
-	albumSlug := txt.Slug(albumPath)
+	albumSlug := txt.SlugUnique(albumPath)
 
 	if albumTitle == "" || albumSlug == "" || albumPath == "" || albumFilter == "" {
 		return nil
@@ -251,7 +251,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 		AlbumOrder:  DefaultOrderFolder,
 		AlbumType:   AlbumFolder,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
-		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
+		AlbumPath:   ClipPath(albumPath),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -408,22 +408,45 @@ func FindFolderAlbum(albumPath string) *Album {
 		return nil
 	}
 
-	m := Album{}
-
-	// Prefer exact path matches so emoji child folders do not collide with parent
+	// Prefer an exact path match so emoji child folders do not collide with parent
 	// slugs (e.g. "ins/🍷" and "ins" both normalize to "ins").
-	stmt := UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, albumPath)
+	if m := findFolderAlbumByPath(albumPath); m != nil {
+		return m
+	}
+
+	// Fallback for legacy rows created before album_path was persisted.
+	m := Album{}
+	stmt := UnscopedDb().Where("album_type = ? AND album_slug IN (?)", AlbumFolder, albumSlugs).
+		Where("(album_path IS NULL OR album_path = '')")
 
 	if stmt.First(&m).Error == nil {
 		return &m
 	}
 
-	// Fallback for legacy rows created before album_path was persisted.
-	stmt = UnscopedDb().Where("album_type = ? AND album_slug IN (?)", AlbumFolder, albumSlugs).
-		Where("(album_path IS NULL OR album_path = '')")
+	return nil
+}
 
-	if stmt.First(&m).Error == nil {
-		return &m
+// findFolderAlbumByPath returns the folder album whose path matches byte-exact.
+// MariaDB's utf8mb4_unicode_ci collation gives most emoji the same weight, so the
+// "album_path = ?" query can also return a sibling folder that differs only by
+// emoji; each candidate row is therefore re-checked in Go before it is accepted.
+func findFolderAlbumByPath(albumPath string) *Album {
+	if albumPath == "" {
+		return nil
+	}
+
+	var matches Albums
+
+	if err := UnscopedDb().
+		Where("album_type = ? AND album_path = ?", AlbumFolder, albumPath).
+		Find(&matches).Error; err != nil {
+		return nil
+	}
+
+	for i := range matches {
+		if matches[i].AlbumPath == albumPath {
+			return &matches[i]
+		}
 	}
 
 	return nil
@@ -827,8 +850,8 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 		return fmt.Errorf("album does not exist")
 	}
 
-	albumPath = clean.SlashPath(albumPath)
-	albumSlug := txt.Slug(albumPath)
+	albumPath = ClipPath(clean.SlashPath(albumPath))
+	albumSlug := txt.SlugUnique(albumPath)
 	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath, m.AlbumFilter)
 
 	if albumSlug == "" || albumPath == "" || albumFilter == "" || !m.HasID() {
@@ -851,11 +874,43 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 
 	if err := m.Updates(values); err != nil {
 		return err
-	} else if err = UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_type = ? AND album_path = ? AND id <> ?", AlbumFolder, albumPath, m.ID).Error; err != nil {
+	} else if err = clearDuplicateFolderAlbumPaths(albumPath, m.ID); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// clearDuplicateFolderAlbumPaths nulls album_path on other folder albums that share
+// the exact same path so a single album owns it. The candidate query is collation-
+// fuzzy on MariaDB (see findFolderAlbumByPath), so each row is re-checked byte-exact
+// before its path is cleared to avoid wiping an emoji sibling's path.
+func clearDuplicateFolderAlbumPaths(albumPath string, keepID uint) error {
+	if albumPath == "" {
+		return nil
+	}
+
+	var matches Albums
+
+	if err := UnscopedDb().
+		Where("album_type = ? AND album_path = ? AND id <> ?", AlbumFolder, albumPath, keepID).
+		Find(&matches).Error; err != nil {
+		return err
+	}
+
+	duplicateIDs := make([]uint, 0, len(matches))
+
+	for i := range matches {
+		if matches[i].AlbumPath == albumPath {
+			duplicateIDs = append(duplicateIDs, matches[i].ID)
+		}
+	}
+
+	if len(duplicateIDs) == 0 {
+		return nil
+	}
+
+	return UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE id IN (?)", duplicateIDs).Error
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.

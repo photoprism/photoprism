@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -48,6 +48,38 @@ const c = window.__CONFIG__;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 const loginRoute = "login";
 
+// safeReturnTo validates the `return_to` query parameter so callers can route
+// the user back to a same-origin destination without enabling an open-redirect
+// vector. Accepts root-relative paths or absolute URLs whose origin matches
+// the browser's; rejects protocol-relative URLs and cross-origin absolutes.
+export function safeReturnTo(value) {
+  if (!value || typeof value !== "string") {
+    return "";
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+  // Protocol-relative URLs (//evil.example) and backslash-prefixed paths
+  // (\\evil.example) can be misparsed by old browsers — reject up front.
+  if (trimmed.startsWith("//") || trimmed.startsWith("\\")) {
+    return "";
+  }
+  if (trimmed.startsWith("/")) {
+    return trimmed;
+  }
+  try {
+    const here = typeof window !== "undefined" ? window.location?.origin : "";
+    const parsed = new URL(trimmed, here || "http://localhost/");
+    if (here && parsed.origin === here) {
+      return parsed.pathname + parsed.search + parsed.hash;
+    }
+  } catch {
+    // Fall through to reject.
+  }
+  return "";
+}
+
 export default [
   {
     name: "home",
@@ -80,18 +112,34 @@ export default [
     component: Login,
     meta: { title: siteTitle, requiresAuth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
+      // Honor an inbound `return_to` query param so cross-frontend hand-offs
+      // (e.g. the Portal OIDC OP redirecting an unauthenticated user from
+      // /oauth/authorize) can land back on the originally-requested URL
+      // after a successful login. The value is recorded the same way the
+      // global router guard records internal deep links, so the rest of
+      // the flow (followLoginRedirectUrl on success) needs no further
+      // changes.
+      const returnTo = safeReturnTo(to.query?.return_to);
+      if (returnTo) {
+        $session.setLoginRedirectUrl(returnTo);
+      }
+
       if ($session.loginRequired()) {
-        // Auto-OIDC fires only for deep-link arrivals — the global router
-        // guard records the originally-requested URL via
-        // setLoginRedirectUrl() before sending the user here. A direct
-        // visit to /library/login leaves hasLoginRedirectUrl() false so
-        // the form stays visible and local/LDAP/AD credentials still work,
-        // even when PHOTOPRISM_OIDC_REDIRECT is enabled (the flag opts
-        // deep links into IdP SSO, it does not make OIDC the only path).
-        // The one-shot logout signal suppresses one auto-bounce so users
-        // can re-authenticate locally immediately after signing out.
+        // Auto-OIDC fires only for deep-link arrivals (loginRedirectUrl set
+        // by the global router guard), and only once per browser tab: a prior
+        // attempt flag set on the way out clears here so a failed/abandoned
+        // IdP roundtrip falls back to the local form instead of looping.
         const oidc = $config.values?.ext?.oidc;
-        if (oidc?.enabled && oidc?.redirect && oidc?.loginUri && $session.hasLoginRedirectUrl() && !$session.consumeLogoutSignal()) {
+        const oidcInFlight = $session.consumeOidcAttempt();
+        if (
+          oidc?.enabled &&
+          oidc?.redirect &&
+          oidc?.loginUri &&
+          $session.hasLoginRedirectUrl() &&
+          !$session.consumeLogoutSignal() &&
+          !oidcInFlight
+        ) {
+          $session.markOidcAttempt();
           $session.followRedirect(oidc.loginUri);
           next(false);
           return;
@@ -155,9 +203,12 @@ export default [
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
         next({ name: loginRoute });
-      } else if ($config.deny("cluster", "access_all")) {
-        next({ name: $session.getDefaultRoute() });
       } else {
+        // Any logged-in user may enter /cluster — the page filters which
+        // tabs are visible based on per-resource grants (Nodes / Activity
+        // gate on `cluster.access_all` and `cluster.audit`; the My
+        // Instances chooser is visible to everyone). When no tabs remain,
+        // cluster.vue redirects to the user's default route in `created()`.
         next();
       }
     },

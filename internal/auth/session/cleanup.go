@@ -34,7 +34,7 @@ func Cleanup(interval time.Duration) {
 				ticker.Stop()
 				return
 			case <-ticker.C:
-				CleanupAction()
+				event.Safe(CleanupAction)
 			}
 		}
 	}()

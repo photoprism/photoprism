@@ -14,6 +14,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -23,6 +24,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 const (
@@ -885,6 +887,65 @@ func (m *Photo) PreloadMany() *Photo {
 	return m
 }
 
+// RedactForSession trims fields a shared-only session should not see when it accesses a picture
+// through sharing: the album list is limited to the albums shared with the session, and people,
+// labels, owner/storage metadata, and identifying metadata (camera serial, the XMP DocumentID, and
+// per-file InstanceID) are removed. Sessions with full library or admin access (and nil sessions)
+// are returned unchanged.
+func (m *Photo) RedactForSession(sess *Session) *Photo {
+	if m == nil || sess == nil {
+		return m
+	}
+
+	// Only sessions limited to shared content are redacted.
+	if !sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+		return m
+	}
+
+	// Limit album membership to the albums shared with the session.
+	if len(m.Albums) > 0 {
+		shared := sess.SharedUIDs()
+
+		if len(shared) == 0 {
+			m.Albums = nil
+		} else {
+			allowed := make(map[string]struct{}, len(shared))
+			for _, uid := range shared {
+				allowed[uid] = struct{}{}
+			}
+
+			kept := m.Albums[:0]
+			for _, a := range m.Albums {
+				if _, ok := allowed[a.AlbumUID]; ok {
+					kept = append(kept, a)
+				}
+			}
+
+			m.Albums = kept
+		}
+	}
+
+	// Remove labels and people, plus the per-file XMP InstanceID (marker identity is omitted
+	// defensively in case markers are loaded).
+	m.Labels = nil
+	for i := range m.Files {
+		m.Files[i].OmitMarkers = true
+		m.Files[i].InstanceID = ""
+	}
+
+	// Remove owner, storage, and identifying metadata. CameraSerial is a device fingerprint that
+	// can link a photographer's pictures, and the XMP DocumentID is a content-provenance identifier;
+	// neither is needed by a shared-only viewer (navigation uses PhotoUID/FileUID).
+	m.CreatedBy = ""
+	m.PhotoPath = ""
+	m.OriginalName = ""
+	m.UUID = ""
+	m.CameraSerial = ""
+	m.Details = nil
+
+	return m
+}
+
 // NormalizeValues updates the model values with the values from deprecated fields, if any.
 func (m *Photo) NormalizeValues() (normalized bool) {
 	if m.PhotoCaption == "" && m.PhotoDescription != "" {
@@ -1424,7 +1485,8 @@ func (m *Photo) MapKey() string {
 
 // SetCameraSerial updates the camera serial number.
 func (m *Photo) SetCameraSerial(s string) {
-	if s = txt.Clip(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
+	// camera_serial is VARBINARY(160), so clip by bytes on a rune boundary.
+	if s = clip.Bytes(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
 		m.CameraSerial = s
 	}
 }

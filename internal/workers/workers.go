@@ -1,7 +1,7 @@
 /*
 Package workers provides index, sync, and metadata optimization background workers.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -97,9 +97,11 @@ func Start(conf *config.Config) {
 				mutex.SyncWorker.Cancel()
 				return
 			case <-ticker.C:
-				RunMeta(conf)
-				RunShare(conf)
-				RunSync(conf)
+				event.Safe(func() {
+					RunMeta(conf)
+					RunShare(conf)
+					RunSync(conf)
+				})
 			}
 		}
 	}()

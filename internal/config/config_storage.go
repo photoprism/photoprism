@@ -14,8 +14,14 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+// DefaultStorageFree is the default value of the "storage-free" option. It is negative so the
+// runtime free-space probe is disabled by default, as the probe can misreport on some network
+// mounts, fuse layers, and container overlays; operators opt in with a 1-99 percentage.
+const DefaultStorageFree = -1.0
 
 // binPaths stores known executable paths.
 var (
@@ -234,6 +240,58 @@ func (c *Config) CreateDirectories() error {
 	}
 
 	return nil
+}
+
+// StoragePath returns the path for generated files like cache and index.
+func (c *Config) StoragePath() string {
+	if c.options.StoragePath == "" {
+		// Default directories.
+		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, fs.StorageDir))
+		storageDir := fs.Abs(fs.StorageDir)
+
+		// Find existing directories.
+		if fs.PathWritable(originalsDir) && !c.ReadOnly() {
+			return originalsDir
+		} else if fs.PathWritable(storageDir) && c.ReadOnly() {
+			return storageDir
+		}
+
+		// Fallback to backup storage path.
+		if fs.PathWritable(c.options.BackupPath) {
+			return fs.Abs(filepath.Join(c.options.BackupPath, fs.StorageDir))
+		}
+
+		// Use .photoprism in home directory?
+		if usr, _ := user.Current(); usr.HomeDir != "" {
+			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, fs.StorageDir))
+
+			if fs.PathWritable(p) || c.ReadOnly() {
+				return p
+			}
+		}
+
+		// Fallback directory in case nothing else works.
+		if c.ReadOnly() {
+			return fs.Abs(filepath.Join(fs.PPHiddenPathname, fs.StorageDir))
+		}
+
+		// Store cache and index in "originals/.photoprism/storage".
+		return originalsDir
+	}
+
+	return fs.Abs(c.options.StoragePath)
+}
+
+// StorageFree returns the percentage of total storage space below which it is considered critically low.
+// A negative value disables the check (the default); 0 or values >= 100 fall back to the disk package default.
+func (c *Config) StorageFree() float64 {
+	if c.options.StorageFree < 0 {
+		return -1
+	} else if c.options.StorageFree == 0 || c.options.StorageFree >= 100 {
+		return disk.StorageLowPct
+	}
+
+	return c.options.StorageFree
 }
 
 // ConfigPath returns the config path.
@@ -593,46 +651,6 @@ func (c *Config) MediaFileCachePath(hash string) string {
 // ThumbCachePath returns the thumbnail storage path.
 func (c *Config) ThumbCachePath() string {
 	return filepath.Join(c.CachePath(), fs.ThumbnailsDir)
-}
-
-// StoragePath returns the path for generated files like cache and index.
-func (c *Config) StoragePath() string {
-	if c.options.StoragePath == "" {
-		// Default directories.
-		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, fs.StorageDir))
-		storageDir := fs.Abs(fs.StorageDir)
-
-		// Find existing directories.
-		if fs.PathWritable(originalsDir) && !c.ReadOnly() {
-			return originalsDir
-		} else if fs.PathWritable(storageDir) && c.ReadOnly() {
-			return storageDir
-		}
-
-		// Fallback to backup storage path.
-		if fs.PathWritable(c.options.BackupPath) {
-			return fs.Abs(filepath.Join(c.options.BackupPath, fs.StorageDir))
-		}
-
-		// Use .photoprism in home directory?
-		if usr, _ := user.Current(); usr.HomeDir != "" {
-			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, fs.StorageDir))
-
-			if fs.PathWritable(p) || c.ReadOnly() {
-				return p
-			}
-		}
-
-		// Fallback directory in case nothing else works.
-		if c.ReadOnly() {
-			return fs.Abs(filepath.Join(fs.PPHiddenPathname, fs.StorageDir))
-		}
-
-		// Store cache and index in "originals/.photoprism/storage".
-		return originalsDir
-	}
-
-	return fs.Abs(c.options.StoragePath)
 }
 
 // AssetsPath returns the path to static assets for models and templates.

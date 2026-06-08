@@ -4,8 +4,8 @@ type: application
 description: >-
   Deploys PhotoPrism® on Kubernetes with optional portal integration,
   persistent storage, and configurable authentication backends.
-version: "1.1.0"
-appVersion: "260305"
+version: "1.1.1"
+appVersion: "260601"
 home: https://www.photoprism.app/
 icon: https://dl.photoprism.app/icons/logo/256.png
 maintainers:

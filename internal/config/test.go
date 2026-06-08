@@ -152,7 +152,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	opts := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
-		Copyright:       "(c) 2018-2025 PhotoPrism UG. All rights reserved.",
+		Copyright:       "(c) 2018-2026 PhotoPrism UG. All rights reserved.",
 		Public:          true,
 		Sponsor:         true,
 		AuthMode:        "",
@@ -384,7 +384,7 @@ func NewTestContext(args []string) *cli.Context {
 	app := cli.NewApp()
 	app.Usage = "PhotoPrism®"
 	app.Version = "test"
-	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
+	app.Copyright = "(c) 2018-2026 PhotoPrism UG. All rights reserved."
 	app.EnableBashCompletion = true
 	app.Flags = Flags.Cli()
 	app.Metadata = Values{
@@ -429,6 +429,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("darktable-exclude", config.DarktableExclude, "doc")
 	globalSet.String("sips-exclude", config.SipsExclude, "doc")
+	globalSet.String("ffmpeg-exclude", config.FFmpegExclude, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("vision-api", config.VisionApi, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
@@ -465,6 +466,7 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("darktable-cli", config.DarktableBin))
 	LogErr(c.Set("darktable-exclude", "raf, cr3"))
 	LogErr(c.Set("sips-exclude", "avif, avifs, thm"))
+	LogErr(c.Set("ffmpeg-exclude", "magicyuv"))
 	LogErr(c.Set("wakeup-interval", "1h34m9s"))
 	LogErr(c.Set("vision-api", "true"))
 	LogErr(c.Set("detect-nsfw", "true"))

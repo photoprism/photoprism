@@ -6,7 +6,7 @@ used wherever PhotoPrism needs to preserve the exact order of user selections
 while still addressing elements directly by key (for example, batch photo
 editing and ordered REST responses).
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):

@@ -154,5 +154,9 @@ func (m *Album) LoadFromYaml(fileName string) error {
 		}
 	}
 
+	// Clip the restored path to the album_path column's byte budget so a backup
+	// with a long multi-byte path cannot overflow the column on save.
+	m.AlbumPath = ClipPath(m.AlbumPath)
+
 	return nil
 }

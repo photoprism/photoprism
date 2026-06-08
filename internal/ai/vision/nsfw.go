@@ -84,7 +84,9 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 				}
 
 				if err != nil {
-					log.Errorf("nsfw: %s", err)
+					// Non-JPEG uploads return "not a jpeg file" by design; real
+					// model failures still surface via len(labels) < 1 at the caller.
+					log.Debugf("nsfw: %s", err)
 				}
 
 				result[i] = labels

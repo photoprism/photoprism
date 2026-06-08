@@ -15,7 +15,7 @@ func TestCreateUserSettings(t *testing.T) {
 		assert.Nil(t, m.UserSettings)
 	})
 	t.Run("Success", func(t *testing.T) {
-		m := &User{UserUID: "1234"}
+		m := &User{UserUID: "usg73p55zwgr1gbq"}
 		Db().Create(m) // Have to create a user BEFORE adding settings to it.
 		err := CreateUserSettings(m)
 

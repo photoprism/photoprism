@@ -319,7 +319,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Update photo path and name based on the main filename.
 	if !fileStacked && (file.FilePrimary || photo.PhotoName == "") {
-		photo.PhotoPath = filePath
+		// Clip to the shared path byte budget so photo_path stays byte-exact
+		// with album_path for folder-album matching.
+		photo.PhotoPath = entity.ClipPath(filePath)
 
 		if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
 			photo.PhotoName = fullBase
@@ -406,7 +408,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Update color information, if available.
 		if color, colorErr := m.Colors(Config().ThumbCachePath()); colorErr != nil {
 			log.Debugf("%s while detecting colors", colorErr.Error())
-			file.FileError = clip.Chars(colorErr.Error(), txt.ClipError)
+			file.FileError = clip.Bytes(colorErr.Error(), txt.ClipError)
 			file.FilePrimary = false
 		} else {
 			file.FileMainColor = color.MainColor.Name()
@@ -512,7 +514,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		} else {
 			log.Warn(dataErr.Error())
-			file.FileError = clip.Chars(dataErr.Error(), txt.ClipError)
+			file.FileError = clip.Bytes(dataErr.Error(), txt.ClipError)
 		}
 	case m.IsRaw(), m.IsImage():
 		if data := m.MetaData(); data.Error == nil {

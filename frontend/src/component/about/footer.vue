@@ -13,7 +13,7 @@
       <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE" target="_blank" rel="noopener" class="text-link"
         >3rd-party software packages</a
       >
-      <a href="https://www.photoprism.app/about/team/" target="_blank" rel="noopener" class="body-link">© 2018-2025 PhotoPrism UG</a>
+      <a href="https://www.photoprism.app/about/team/" target="_blank" rel="noopener" class="body-link">© 2018-2026 PhotoPrism UG</a>
     </div>
   </footer>
 </template>

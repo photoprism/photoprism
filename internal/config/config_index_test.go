@@ -79,7 +79,6 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 		assert.Equal(t, 1, got)
 		assert.Equal(t, "low-memory", reason)
 	})
-
 	t.Run("SqliteAutoLargeHost", func(t *testing.T) {
 		if cpus < 8 {
 			t.Skipf("requires at least 8 CPUs (have %d)", cpus)
@@ -92,7 +91,6 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 		assert.Equal(t, 4, got)
 		assert.Equal(t, "sqlite-cap", reason)
 	})
-
 	t.Run("SqliteOverrideAboveCap", func(t *testing.T) {
 		TotalMem = originalMem
 		c.options.DatabaseDriver = dsn.DriverSQLite3
@@ -102,7 +100,6 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 		assert.Equal(t, 4, got)
 		assert.Equal(t, "sqlite-cap", reason)
 	})
-
 	t.Run("SqliteOverrideAtOrBelowCap", func(t *testing.T) {
 		TotalMem = originalMem
 		c.options.DatabaseDriver = dsn.DriverSQLite3
@@ -112,7 +109,6 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 		assert.Equal(t, 3, got)
 		assert.Equal(t, "configured", reason)
 	})
-
 	t.Run("MysqlAuto", func(t *testing.T) {
 		TotalMem = originalMem
 		c.options.DatabaseDriver = dsn.DriverMySQL
@@ -128,7 +124,6 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 			assert.Equal(t, "single-cpu", reason)
 		}
 	})
-
 	t.Run("MysqlConfiguredWithinBudget", func(t *testing.T) {
 		TotalMem = originalMem
 		c.options.DatabaseDriver = dsn.DriverMySQL
@@ -138,7 +133,6 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 		assert.Equal(t, 2, got)
 		assert.Equal(t, "configured", reason)
 	})
-
 	t.Run("MysqlConfiguredAboveCpus", func(t *testing.T) {
 		TotalMem = originalMem
 		c.options.DatabaseDriver = dsn.DriverMySQL
@@ -148,7 +142,6 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 		assert.Equal(t, cpus, got)
 		assert.Equal(t, "configured-clamped", reason)
 	})
-
 	t.Run("ReportGetterMatchesHelper", func(t *testing.T) {
 		TotalMem = originalMem
 		c.options.DatabaseDriver = dsn.DriverMySQL

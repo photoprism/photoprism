@@ -3,7 +3,7 @@ Package jwt provides helpers for managing Ed25519 signing keys and issuing or
 verifying short-lived JWTs used for secure communication between the Portal and
 cluster instances and services.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):

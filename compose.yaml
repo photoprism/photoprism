@@ -178,6 +178,14 @@ services:
     stop_grace_period: 15s
     security_opt:
       - no-new-privileges:true
+    command:
+      - --api.dashboard=false
+      - --global.checknewversion=false
+      - --global.sendanonymoususage=false
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
     ## Publish Traefik's HTTP and HTTPS entrypoints on the host (bound to every interface
     ## by default; override TRAEFIK_BIND_HOST, TRAEFIK_HTTP_PORT, or TRAEFIK_HTTPS_PORT):
     ports:

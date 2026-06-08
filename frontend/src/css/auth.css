@@ -16,44 +16,16 @@ main .auth-login {
 
 /* Auth Form Colors */
 
-main .auth-login .accent {
-    background-color: #05dde1 !important;
-}
-
-main .auth-login .accent--text {
-    caret-color: #05dde1 !important;
-    color: #05dde1 !important;
-}
-
-main .auth-login .primary {
-    background-color: #00a6a9 !important;
-}
-
-main .auth-login .primary--text {
-    caret-color: #00a6a9 !important;
-    color: #00a6a9 !important;
-}
-
-main .auth-login .secondary {
-    background-color: #505050 !important;
-}
-
-main .auth-login .secondary--text {
-    caret-color: #505050 !important;
-    color: #505050 !important;
-}
-
-main .auth-login .link {
-    background-color: #c8e3e7 !important;
-}
-
-main .auth-login .link--text {
-    caret-color: #c8e3e7 !important;
-    color: #c8e3e7 !important;
-}
-
 main .auth-actions .auth-links {
     min-height: 24px;
+}
+
+main .auth-actions__options {
+    opacity: .95;
+    padding-bottom: 4px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 main .auth-login a,

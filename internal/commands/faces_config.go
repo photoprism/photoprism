@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -32,11 +30,9 @@ var FacesConfigReports = []Report{
 
 // facesConfigAction prints face-related config option names and values.
 func facesConfigAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
-	conf.SetLogLevel(logrus.FatalLevel)
-	hub.Disable()
+	conf, err := InitCoreConfig(ctx, true)
 
-	if err := conf.InitCore(); err != nil {
+	if err != nil {
 		log.Debug(err)
 	}
 

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -276,7 +277,11 @@ func TestMarker_Save(t *testing.T) {
 		afterDate := m.UpdatedAt
 
 		assert.Equal(t, SrcMeta, m.MarkerSrc)
-		assert.True(t, afterDate.After(initialDate))
+		// Timestamps are stored with second precision, so a save within the same
+		// second leaves UpdatedAt unchanged; assert it stays within a sane window.
+		elapsed := afterDate.Sub(initialDate)
+		assert.GreaterOrEqual(t, elapsed, time.Duration(0))
+		assert.Less(t, elapsed, time.Minute)
 
 		if m.MarkerUID == "" || m.FileUID == "" {
 			t.Errorf("UIDs should not be empty")

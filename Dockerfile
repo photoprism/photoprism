@@ -1,5 +1,5 @@
 # Ubuntu 26.04 LTS (Resolute Raccoon)
-FROM photoprism/develop:260520-resolute
+FROM photoprism/develop:260603-resolute
 
 # Harden npm usage by default (applies to npm ci / install in dev container)
 ENV NPM_CONFIG_IGNORE_SCRIPTS=true
@@ -26,6 +26,8 @@ WORKDIR "${WORKING_DIR}"
 
 # Copy source to image.
 COPY . .
+
+# Update scripts in image.
 COPY --chown=root:root ./scripts/dist/ /scripts/
 
 # Re-install the dev "mariadb" client config so a custom MARIADB_PORT in .env

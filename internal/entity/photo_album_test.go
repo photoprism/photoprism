@@ -38,14 +38,8 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
 		}
 	})
-
-	t.Run("NotYetExistingPhotoAlbum", func(t *testing.T) {
-		newPhoto := &Photo{ID: 56789} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
-		newAlbum := &Album{ID: 56789} // Can't add details if there isn't a photo in the database.
-		Db().Create(newAlbum)
-
-		model := &PhotoAlbum{PhotoUID: newPhoto.PhotoUID, AlbumUID: newAlbum.AlbumUID}
+	t.Run("NotYetExistingAlbum", func(t *testing.T) {
+		model := &PhotoAlbum{PhotoUID: "ps6sg6be2lvl0y14", AlbumUID: "as6sg6bipotaab29"}
 		result := FirstOrCreatePhotoAlbum(model)
 
 		if result == nil {
@@ -67,12 +61,7 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 
 func TestPhotoAlbum_Save(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		newPhoto := &Photo{ID: 56786} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
-		newAlbum := &Album{ID: 56783}
-		Db().Create(newAlbum)
-
-		p := PhotoAlbum{PhotoUID: newPhoto.PhotoUID, AlbumUID: newAlbum.AlbumUID} // Prevent Unique Constraint violation.
+		p := PhotoAlbum{PhotoUID: "ps6sg6be2lvl0y14", AlbumUID: "as6sg6bipogaab11"}
 
 		err := p.Create()
 

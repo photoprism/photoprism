@@ -27,6 +27,8 @@ func vipsConvertImportParams() *vips.ImportParams {
 func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err error) {
 	VipsInit()
 
+	logName := clean.Log(filepath.Base(dstFile))
+
 	img, err := vips.LoadImageFromFile(srcFile, vipsConvertImportParams())
 	if err != nil {
 		return nil, err
@@ -50,7 +52,17 @@ func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err e
 	switch fs.FileType(dstFile) {
 	case fs.ImagePng:
 		params := VipsPngExportParams(width, height)
+		// Try to export PNG image.
 		imageBytes, _, err = img.ExportPng(params)
+		// If that fails, try again without the ICC profile, since libpng may reject an invalid ICCP chunk (e.g. malformed profile length).
+		if err != nil && img.HasICCProfile() {
+			log.Tracef("vips: %s in %s (export png with icc)", err, logName)
+			if iccErr := img.RemoveICCProfile(); iccErr != nil {
+				log.Debugf("vips: %s in %s (remove icc profile)", iccErr, logName)
+			} else if imageBytes, _, err = img.ExportPng(params); err != nil {
+				log.Debugf("vips: %s in %s (export png without icc)", err, logName)
+			}
+		}
 	default:
 		params := VipsJpegExportParams(width, height)
 		imageBytes, _, err = img.ExportJpeg(params)
@@ -65,8 +77,9 @@ func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err e
 	}
 
 	decoded, _, err := fs.DecodeImageData(imageBytes)
+
 	if err != nil {
-		return nil, fmt.Errorf("vips: %s in %s (decode exported image)", err, clean.Log(filepath.Base(dstFile)))
+		return nil, fmt.Errorf("vips: %s in %s (decode exported image)", err, logName)
 	}
 
 	return decoded, nil

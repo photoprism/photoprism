@@ -1,6 +1,8 @@
 package video
 
 import (
+	"bytes"
+	"encoding/binary"
 	"io"
 	"testing"
 
@@ -9,6 +11,24 @@ import (
 
 	"github.com/sunfish-shogi/bufseekio"
 )
+
+// sampleEntryHeader returns a valid 16-byte ISO BMFF visual sample entry header
+// (box size, coding name, six reserved zero bytes, data_reference_index = 1) for
+// use in SampleEntryOffset tests.
+func sampleEntryHeader(code Chunk) []byte {
+	b := make([]byte, sampleEntryHeaderLen)
+	binary.BigEndian.PutUint32(b[0:4], minVisualSampleEntrySize)
+	copy(b[4:8], code.Bytes())
+	binary.BigEndian.PutUint16(b[14:16], 1)
+	return b
+}
+
+// placeSampleEntry writes a valid visual sample entry into buf so that the
+// coding name begins at codingNameOffset, mirroring the on-disk layout where
+// the four-byte box size precedes the coding name.
+func placeSampleEntry(buf []byte, codingNameOffset int, code Chunk) {
+	copy(buf[codingNameOffset-4:], sampleEntryHeader(code))
+}
 
 func TestChunk_TypeCast(t *testing.T) {
 	t.Run("String", func(t *testing.T) {
@@ -153,6 +173,120 @@ func TestChunks_DataOffset(t *testing.T) {
 	})
 	t.Run("NilFile", func(t *testing.T) {
 		pos, hit, err := Chunks{ChunkHVC1}.DataOffset(nil, 0, -1)
+		require.Error(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+}
+
+func TestIsVisualSampleEntry(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		assert.True(t, isVisualSampleEntry(sampleEntryHeader(ChunkM8RG)))
+	})
+	t.Run("TooShort", func(t *testing.T) {
+		assert.False(t, isVisualSampleEntry(sampleEntryHeader(ChunkM8RG)[:15]))
+	})
+	t.Run("SizeTooSmall", func(t *testing.T) {
+		b := sampleEntryHeader(ChunkM8RG)
+		binary.BigEndian.PutUint32(b[0:4], minVisualSampleEntrySize-1)
+		assert.False(t, isVisualSampleEntry(b))
+	})
+	t.Run("SizeTooLarge", func(t *testing.T) {
+		b := sampleEntryHeader(ChunkM8RG)
+		binary.BigEndian.PutUint32(b[0:4], maxVisualSampleEntrySize+1)
+		assert.False(t, isVisualSampleEntry(b))
+	})
+	t.Run("ReservedNotZero", func(t *testing.T) {
+		b := sampleEntryHeader(ChunkM8RG)
+		b[10] = 0x01 // One of the six reserved bytes is nonzero.
+		assert.False(t, isVisualSampleEntry(b))
+	})
+	t.Run("ZeroDataReferenceIndex", func(t *testing.T) {
+		b := sampleEntryHeader(ChunkM8RG)
+		binary.BigEndian.PutUint16(b[14:16], 0)
+		assert.False(t, isVisualSampleEntry(b))
+	})
+}
+
+func TestChunks_SampleEntryOffset(t *testing.T) {
+	t.Run("RealMagicYuvFile", func(t *testing.T) {
+		f := openTestFile(t, "testdata/magicyuv.mov")
+		pos, hit, err := MagicYuvChunks.SampleEntryOffset(f, HeadScanLimit)
+		require.NoError(t, err)
+		assert.Equal(t, 3537, pos)
+		assert.Equal(t, ChunkM8RG, hit)
+	})
+	t.Run("RealHevcFile", func(t *testing.T) {
+		f := openTestFile(t, "testdata/quicktime-hvc1.mov")
+		pos, hit, err := HevcChunks.SampleEntryOffset(f, HeadScanLimit)
+		require.NoError(t, err)
+		assert.Greater(t, pos, 0)
+		assert.Equal(t, ChunkHVC1, hit)
+	})
+	t.Run("RejectsStrayCollision", func(t *testing.T) {
+		// A four-byte MagicYUV code embedded in raw payload bytes, not framed as
+		// a sample entry, must not be reported as a codec (issue #5617).
+		buf := bytes.Repeat([]byte{0xAA}, 4096)
+		copy(buf[1000:], ChunkM8Y4.Bytes())
+		pos, hit, err := MagicYuvChunks.SampleEntryOffset(bytes.NewReader(buf), HeadScanLimit)
+		require.NoError(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+	t.Run("AcceptsFramedEntry", func(t *testing.T) {
+		buf := bytes.Repeat([]byte{0xAA}, 4096)
+		placeSampleEntry(buf, 2000, ChunkM8Y2)
+		pos, hit, err := MagicYuvChunks.SampleEntryOffset(bytes.NewReader(buf), HeadScanLimit)
+		require.NoError(t, err)
+		assert.Equal(t, 2000, pos)
+		assert.Equal(t, ChunkM8Y2, hit)
+	})
+	t.Run("StrayBeforeRealEntry", func(t *testing.T) {
+		// An earlier stray collision must not shadow a later valid sample entry;
+		// the scan continues past invalid candidates.
+		buf := bytes.Repeat([]byte{0xAA}, 4096)
+		copy(buf[500:], ChunkM8Y4.Bytes())
+		placeSampleEntry(buf, 2000, ChunkM8RG)
+		pos, hit, err := MagicYuvChunks.SampleEntryOffset(bytes.NewReader(buf), HeadScanLimit)
+		require.NoError(t, err)
+		assert.Equal(t, 2000, pos)
+		assert.Equal(t, ChunkM8RG, hit)
+	})
+	t.Run("BoundarySpanning", func(t *testing.T) {
+		// A valid entry whose coding name straddles the internal 128 KiB block
+		// boundary must still be found via the carry-over between reads.
+		const codingNameOffset = 128*1024 - 1
+		buf := bytes.Repeat([]byte{0xAA}, 200000)
+		placeSampleEntry(buf, codingNameOffset, ChunkM8YA)
+		pos, hit, err := MagicYuvChunks.SampleEntryOffset(bytes.NewReader(buf), HeadScanLimit)
+		require.NoError(t, err)
+		assert.Equal(t, codingNameOffset, pos)
+		assert.Equal(t, ChunkM8YA, hit)
+	})
+	t.Run("MaxOffsetCapsScan", func(t *testing.T) {
+		buf := bytes.Repeat([]byte{0xAA}, 200000)
+		placeSampleEntry(buf, 150000, ChunkM8RG)
+		pos, hit, err := MagicYuvChunks.SampleEntryOffset(bytes.NewReader(buf), 64*1024)
+		require.NoError(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		f := openTestFile(t, "testdata/mp4v-avc1.mp4")
+		pos, hit, err := HevcChunks.SampleEntryOffset(f, HeadScanLimit)
+		require.NoError(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		f := openTestFile(t, "testdata/mp4v-avc1.mp4")
+		pos, hit, err := Chunks{}.SampleEntryOffset(f, HeadScanLimit)
+		require.NoError(t, err)
+		assert.Equal(t, -1, pos)
+		assert.Equal(t, Chunk{}, hit)
+	})
+	t.Run("NilFile", func(t *testing.T) {
+		pos, hit, err := MagicYuvChunks.SampleEntryOffset(nil, HeadScanLimit)
 		require.Error(t, err)
 		assert.Equal(t, -1, pos)
 		assert.Equal(t, Chunk{}, hit)

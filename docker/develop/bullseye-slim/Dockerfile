@@ -77,7 +77,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       exiftool \
       rawtherapee \
       imagemagick \
-      libvips-dev \
+      libvips42 \
       ffmpeg \
       libavcodec-extra \
       x264 \

@@ -148,11 +148,11 @@
                         <v-icon :icon="$config.isRtl() ? 'mdi-chevron-left' : 'mdi-chevron-right'" end></v-icon>
                       </v-btn>
                     </div>
-                    <div class="pb-1 d-flex align-center justify-center opacity-90">
+                    <div class="auth-actions__options">
                       <v-checkbox
                         v-model="staySignedIn"
                         :disabled="loading"
-                        density="compact"
+                        color="highlight"
                         hide-details
                         class="ma-0 pa-0 input-stay-signed-in text-secondary"
                         :label="$gettext('Stay signed in on this device')"

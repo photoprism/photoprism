@@ -45,6 +45,45 @@ func TestSlug(t *testing.T) {
 		assert.Equal(t, ClipSlug, utf8.RuneCountInString(slugA))
 		assert.Equal(t, ClipSlug, utf8.RuneCountInString(slugB))
 	})
+	t.Run("LongAsciiInputCollides", func(t *testing.T) {
+		base := "pictures/Ferie 2008 Mellomeuropa/Galleri-konvertert/bilder/ferie 2008 mellomeuropa/galleri/"
+		slugA := Slug(base + "01 Praha, Dresden, Wroclaw")
+		slugB := Slug(base + "02 Wroclaw, Auschwitz")
+
+		assert.Equal(t, slugA, slugB)
+		assert.Equal(t, ClipSlug, utf8.RuneCountInString(slugA))
+	})
+}
+
+func TestSlugUnique(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", SlugUnique(""))
+	})
+	t.Run("ShortMatchesSlug", func(t *testing.T) {
+		assert.Equal(t, Slug("William Henry Gates III"), SlugUnique("William Henry Gates III"))
+		assert.Equal(t, Slug("PhotoPrism 💎"), SlugUnique("PhotoPrism 💎"))
+	})
+	t.Run("EmojiMatchesSlug", func(t *testing.T) {
+		assert.Equal(t, Slug("ins/🍷"), SlugUnique("ins/🍷"))
+	})
+	t.Run("LongAsciiInputUsesHashSuffix", func(t *testing.T) {
+		base := "pictures/Ferie 2008 Mellomeuropa/Galleri-konvertert/bilder/ferie 2008 mellomeuropa/galleri/"
+		slugA := SlugUnique(base + "01 Praha, Dresden, Wroclaw")
+		slugB := SlugUnique(base + "02 Wroclaw, Auschwitz")
+
+		assert.NotEqual(t, slugA, slugB)
+		assert.Equal(t, ClipSlug, utf8.RuneCountInString(slugA))
+		assert.Equal(t, ClipSlug, utf8.RuneCountInString(slugB))
+	})
+	t.Run("LongUnicodeInputUsesHashSuffix", func(t *testing.T) {
+		base := strings.Repeat("Very Long Prefix 💎 ", 8)
+		slugA := SlugUnique(base + "Alpha")
+		slugB := SlugUnique(base + "Beta")
+
+		assert.NotEqual(t, slugA, slugB)
+		assert.Equal(t, ClipSlug, utf8.RuneCountInString(slugA))
+		assert.Equal(t, ClipSlug, utf8.RuneCountInString(slugB))
+	})
 }
 
 func TestSlugToTitle(t *testing.T) {

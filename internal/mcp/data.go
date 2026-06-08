@@ -79,7 +79,7 @@ func buildConfigOptions() []ConfigOption {
 	sectionStarts := make(map[string]string)
 
 	for _, section := range config.OptionsReportSections {
-		for _, key := range strings.Split(section.Start, ", ") {
+		for key := range strings.SplitSeq(section.Start, ", ") {
 			sectionStarts[key] = section.Title
 		}
 	}

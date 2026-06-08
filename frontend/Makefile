@@ -42,31 +42,33 @@ notice:
 	license-report --only=prod --config=.report.json > NOTICE
 install-npm:
 	# Split global installs and disable package scripts for safety.
-	sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm@latest
-	sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
+	sudo npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier npm@latest
+	sudo npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier npm-check-updates@latest license-report@latest
 install-testcafe:
-	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@latest
+	npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier testcafe@latest
 install-eslint:
-	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
+	npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
 upgrade:
 	$(info Securely upgrading NPM dependencies...)
-	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
-npm-install:
-	$(info Installing NPM dependencies...)
-	(cd .. && npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier)
+	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
+ci: npm-ci
+npm-ci:
+	@$(MAKE) -C .. --no-print-directory npm-ci
 install: npm-install
-npm-update:
-	$(info Updating NPM dependencies in package-lock.json...)
-	(cd .. && npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier)
+npm-install:
+	@$(MAKE) -C .. --no-print-directory npm-install
 update: npm-update npm-install
+npm-update:
+	@$(MAKE) -C .. --no-print-directory npm-update
+audit: npm-audit
+npm-audit:
+	@$(MAKE) -C .. --no-print-directory npm-audit
 security-check: # Scan for missing --ignore-scripts and unsafe v-html
 	npm run -s security:scan
 watch:
 	npm run watch
 build:
 	npm run build
-audit:
-	npm audit --ignore-scripts --no-fund --no-audit --no-update-notifier
 lint:
 	npm run lint || true
 fmt:

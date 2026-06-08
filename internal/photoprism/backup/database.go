@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Database creates a database backup dump with the specified file and path name.
@@ -34,6 +35,11 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	// Get configuration.
 	c := get.Config()
 
+	// Storage-gate the on-disk path only: when toStdOut is true the dump
+	// streams to stdout and does not consume the local storage volume, so an
+	// operator can still offload a backup over ssh or similar when the disk
+	// is full. Path validation and the InsufficientStorage check therefore
+	// run inside this branch only.
 	if !toStdOut {
 		if backupPath == "" {
 			backupPath = c.BackupDatabasePath()
@@ -60,6 +66,11 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			return fmt.Errorf("%s already exists", clean.Log(filepath.Base(fileName)))
 		} else if err == nil {
 			backupAction = "replacing"
+		}
+
+		// Refuse to write a new database dump if storage is over quota or critically low on free disk space.
+		if c.InsufficientStorage() {
+			return status.ErrInsufficientStorage
 		}
 
 		// Create backup path if not exists.

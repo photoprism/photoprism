@@ -76,3 +76,40 @@ func normalizeBaseURL(s string) string {
 
 	return u.String()
 }
+
+// ResolveAdvertiseURL returns the normalized base URL the Portal should
+// use to reach a PhotoPrism instance, using siteURL's path as the source
+// of truth. The result always carries a trailing slash so callers can
+// concatenate an API path directly (e.g. `result + "api/v1/users/" + uid`).
+func ResolveAdvertiseURL(advertiseURL, siteURL string) string {
+	advertiseURL = NormalizeBaseURL(advertiseURL)
+	siteURL = NormalizeBaseURL(siteURL)
+
+	if advertiseURL == "" && siteURL == "" {
+		return ""
+	}
+
+	if advertiseURL == "" || advertiseURL == siteURL {
+		return siteURL
+	}
+
+	// If paths diverge, use the SiteURL's path as the authoritative source.
+	var sitePath string
+	if siteURL != "" {
+		if s, err := url.Parse(siteURL); err == nil {
+			sitePath = strings.TrimRight(s.Path, "/")
+		}
+	}
+
+	a, err := url.Parse(advertiseURL)
+	if err != nil || a.Host == "" {
+		return advertiseURL
+	}
+
+	if sitePath != "" {
+		a.Path = sitePath + "/"
+		a.RawPath = ""
+	}
+
+	return a.String()
+}
