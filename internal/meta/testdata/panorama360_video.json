@@ -1,0 +1,15 @@
+[{
+  "SourceFile": "panorama360_video.mp4",
+  "ExifToolVersion": 12.40,
+  "FileName": "panorama360_video.mp4",
+  "Directory": ".",
+  "FileSize": "12 MB",
+  "FileType": "MP4",
+  "FileTypeExtension": "mp4",
+  "MIMEType": "video/mp4",
+  "ImageWidth": 3840,
+  "ImageHeight": 1920,
+  "ProjectionType": "equirectangular",
+  "CompressorID": "avc1",
+  "Duration": "10.00 s"
+}]

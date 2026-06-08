@@ -36,13 +36,14 @@ func TestPhoto_ViewerResult(t *testing.T) {
 		FileHeight:    600,
 		Files: []entity.File{
 			{
-				FileVideo:  true,
-				MediaType:  entity.MediaVideo,
-				FileHash:   videoHash,
-				FileCodec:  "avc1",
-				FileMime:   header.ContentTypeMp4AvcMain,
-				FileWidth:  1920,
-				FileHeight: 1080,
+				FileVideo:      true,
+				MediaType:      entity.MediaVideo,
+				FileHash:       videoHash,
+				FileCodec:      "avc1",
+				FileMime:       header.ContentTypeMp4AvcMain,
+				FileWidth:      1920,
+				FileHeight:     1080,
+				FileProjection: "equirectangular",
 			},
 		},
 	}
@@ -65,6 +66,7 @@ func TestPhoto_ViewerResult(t *testing.T) {
 	assert.Equal(t, header.ContentTypeMp4AvcMain, result.Mime)
 	assert.Equal(t, 1920, result.Width)
 	assert.Equal(t, 1080, result.Height)
+	assert.Equal(t, "equirectangular", result.Projection)
 	if assert.NotNil(t, result.Thumbs) {
 		assert.NotNil(t, result.Thumbs.Fit720)
 	}

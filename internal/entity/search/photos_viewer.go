@@ -43,7 +43,7 @@ func (m *Photo) ViewerResult(contentUri, apiUri, previewToken, downloadToken str
 		Favorite:     m.PhotoFavorite,
 		Playable:     m.IsPlayable(),
 		Panorama:     m.PhotoPanorama,
-		Projection:   m.FileProjection,
+		Projection:   m.MediaProjection(),
 		Duration:     m.PhotoDuration,
 		Width:        width,
 		Height:       height,

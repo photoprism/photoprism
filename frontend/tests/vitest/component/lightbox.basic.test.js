@@ -1284,6 +1284,22 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(slide.isSphere).toBeUndefined();
       expect(slide.src).toBeTruthy();
     });
+    it("does NOT mount the sphere for a cubemap video even when Panorama is flagged", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "cube", Projection: "cubemap", Panorama: true, Type: "video", Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.isSphere).toBeUndefined();
+    });
+    it("does NOT mount the sphere for a wide non-360 video flagged as panorama", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "wide", Projection: "", Panorama: true, Type: "video", Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.isSphere).toBeUndefined();
+    });
   });
 
   // bindSphereVideoControls writes to the single shared `video` reactive state.

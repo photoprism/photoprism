@@ -665,12 +665,13 @@ export default {
       };
 
       // Route equirectangular 360° media to the lazy-loaded sphere viewer before the video branch,
-      // since panoramic videos are also Playable and would otherwise fall through.
-      // For videos the primary file is often a sidecar JPEG poster whose row carries no
-      // projection metadata, so accept the Panorama flag as equivalent for video/animated types.
-      const isEquirect =
-        model?.Projection === "equirectangular" ||
-        (model?.Panorama === true && (model?.Type === media.Video || model?.Type === media.Animated));
+      // since panoramic videos are also Playable and would otherwise fall through. Routing is
+      // strict on the equirectangular projection for both photos and videos: only the four
+      // detection markers (GPano, ProjectionType, UsePanoramaViewer, IsPhotosphere) set
+      // file_projection=equirectangular, so cubemap and merely-wide (non-360) videos open flat.
+      // A video's projection reaches model.Projection via the thumb mapping's file.Projection
+      // fallback (Thumb.fromPhoto), which reads the video file rather than the poster JPEG.
+      const isEquirect = model?.Projection === "equirectangular";
       if (isEquirect && model?.Hash) {
         const isVideo = model?.Type === media.Video || model?.Type === media.Animated;
         const src = isVideo ? this.$util.videoUrl(model.Hash, model?.Codec, model?.Mime) : this.$util.thumb(model.Thumbs, 8192, 4096).src;

@@ -226,6 +226,36 @@ func TestPhoto_IsPlayable(t *testing.T) {
 	})
 }
 
+func TestPhoto_MediaProjection(t *testing.T) {
+	t.Run("VideoUsesVideoFileProjection", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "video",
+			FileProjection: "",
+			Files: []entity.File{
+				{FileVideo: true, MediaType: media.Video.String(), FileHash: "v", FileProjection: "equirectangular"},
+			},
+		}
+		assert.Equal(t, "equirectangular", r.MediaProjection())
+	})
+	t.Run("VideoFallsBackToPrimaryProjection", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "video",
+			FileProjection: "cubemap",
+			Files: []entity.File{
+				{FileVideo: true, MediaType: media.Video.String(), FileHash: "v", FileProjection: ""},
+			},
+		}
+		assert.Equal(t, "cubemap", r.MediaProjection())
+	})
+	t.Run("ImageUsesPrimaryProjection", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "image",
+			FileProjection: "equirectangular",
+		}
+		assert.Equal(t, "equirectangular", r.MediaProjection())
+	})
+}
+
 func TestPhoto_MediaInfo(t *testing.T) {
 	t.Run("LiveCodecAVC", func(t *testing.T) {
 		r := Photo{

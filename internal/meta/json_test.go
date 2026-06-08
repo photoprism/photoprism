@@ -607,6 +607,16 @@ func TestJSON(t *testing.T) {
 		assert.NotEqual(t, projection.Equirectangular.String(), data.Projection)
 		assert.NotContains(t, data.Keywords.String(), "panorama")
 	})
+	t.Run("PanoramaVideoMp4", func(t *testing.T) {
+		data, err := JSON("testdata/panorama360_video.json", "panorama360_video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
+		assert.Contains(t, data.Keywords.String(), "panorama")
+	})
 	t.Run("PNum7250006Json", func(t *testing.T) {
 		data, err := JSON("testdata/P7250006.json", "P7250006.MOV")
 

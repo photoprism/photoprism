@@ -260,6 +260,24 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 	return m.FileHash, "", m.FileMime, m.FileWidth, m.FileHeight
 }
 
+// MediaProjection returns the projection of the photo's playable media file,
+// falling back to the primary file's projection. For videos the primary search
+// row is usually a poster JPEG that carries no projection metadata, so the video
+// file's projection (which the indexer sets) is used instead — this keeps the
+// 360° equirectangular flag accurate in the viewer DTO.
+func (m *Photo) MediaProjection() string {
+	switch m.PhotoType {
+	case entity.MediaVideo, entity.MediaLive:
+		for _, f := range m.Files {
+			if f.FileVideo && f.FileProjection != "" {
+				return f.FileProjection
+			}
+		}
+	}
+
+	return m.FileProjection
+}
+
 // ShareBase returns a deterministic, human friendly file name stem for sharing
 // downloads generated from the photo's timestamp and title.
 func (m *Photo) ShareBase(seq int) string {

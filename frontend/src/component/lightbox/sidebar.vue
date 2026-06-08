@@ -1054,17 +1054,12 @@ export default {
       }
       return this.model?.Type || "";
     },
-    // mediaIs360 reports whether the active media is equirectangular 360°
-    // content: a sphere photo, or a panorama video/animation whose poster row
-    // often carries no projection metadata. Mirrors the lightbox slide-routing
-    // check so the file icon matches what opens in the sphere viewer.
+    // mediaIs360 reports whether the active media is equirectangular 360° content.
+    // Mirrors the lightbox slide-routing check (strict on the equirectangular
+    // projection for both photos and videos) so the file icon matches what opens
+    // in the sphere viewer; cubemap and merely-wide media are not 360.
     mediaIs360() {
-      const projection = this.model?.Projection || this.photo?.Projection || "";
-      if (projection === "equirectangular") {
-        return true;
-      }
-      const panorama = this.model?.Panorama === true || this.photo?.Panorama === true;
-      return panorama && (this.mediaType === media.Video || this.mediaType === media.Animated);
+      return (this.model?.Projection || this.photo?.Projection || "") === "equirectangular";
     },
     fileIcon() {
       if (this.mediaIs360) {

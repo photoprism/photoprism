@@ -3578,16 +3578,27 @@ describe("PLightboxSidebar component", () => {
       expect(w.vm.mediaIs360).toBe(true);
       expect(w.vm.fileIcon).toBe("mdi-panorama-variant-outline");
     });
-    it("fileIcon is the panorama icon for a 360° video flagged as panorama", () => {
+    it("fileIcon is the panorama icon for an equirectangular 360° video", () => {
       const w = mountSidebar({
         props: {
-          modelValue: { ...mockModel, Type: "video", Panorama: true },
-          photo: { ...mockPhoto, Type: "video", Panorama: true, getVideoInfo: vi.fn().mockReturnValue("") },
+          modelValue: { ...mockModel, Type: "video", Projection: "equirectangular" },
+          photo: { ...mockPhoto, Type: "video", Projection: "equirectangular", getVideoInfo: vi.fn().mockReturnValue("") },
           context: contexts.Photos,
         },
       });
       expect(w.vm.mediaIs360).toBe(true);
       expect(w.vm.fileIcon).toBe("mdi-panorama-variant-outline");
+    });
+    it("fileIcon stays the standard video icon for a panorama-flagged non-equirectangular video", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "video", Panorama: true, Projection: "" },
+          photo: { ...mockPhoto, Type: "video", Panorama: true, Projection: "", getVideoInfo: vi.fn().mockReturnValue("") },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(false);
+      expect(w.vm.fileIcon).toBe("mdi-video");
     });
     it("fileIcon stays the standard image icon for a regular photo", () => {
       const w = mountSidebar({
