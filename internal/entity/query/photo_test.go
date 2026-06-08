@@ -186,7 +186,7 @@ func TestFixPrimaries(t *testing.T) {
 			FileHash:    rnd.GenerateUID(entity.FileUID),
 			FilePrimary: true,
 			FileType:    "jpg",
-			DeletedAt:   entity.TimeStamp(),
+			DeletedAt:   gorm.DeletedAt{Time: entity.Now(), Valid: true},
 		}
 		if err := Db().Create(&deletedPrimary).Error; err != nil {
 			t.Fatal(err)

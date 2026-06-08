@@ -12,7 +12,7 @@ import (
 )
 
 func TestIndex_StorageLow(t *testing.T) {
-	cfg := config.NewMinimalTestConfig(t.TempDir())
+	cfg := config.NewMinimalTestConfig("photoprism", t.TempDir())
 	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
 	require.NotNil(t, ind)
 
@@ -40,7 +40,7 @@ func TestIndex_StorageLow(t *testing.T) {
 }
 
 func TestIndex_abortInsufficientStorage(t *testing.T) {
-	cfg := config.NewMinimalTestConfig(t.TempDir())
+	cfg := config.NewMinimalTestConfig("photoprism", t.TempDir())
 	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
 	require.NotNil(t, ind)
 

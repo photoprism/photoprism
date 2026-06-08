@@ -110,7 +110,6 @@ func TestUserShare_Create(t *testing.T) {
 		t.Fatal(err)
 	}
 	UnscopedDb().Delete(m)
-	UnscopedDb().Delete(newUser)
 }
 
 func TestUserShare_UpdateLink(t *testing.T) {

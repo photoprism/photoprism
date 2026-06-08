@@ -75,7 +75,6 @@ func TestConfig_DatabaseDriverName(t *testing.T) {
 		assert.Equal(t, "MariaDB", c.DatabaseDriverName())
 	})
 	t.Run("PostgresReportsAsPostgreSQL", func(t *testing.T) {
-	t.Run("PostgresReportsAsPostgreSQL", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		resetDatabaseOptions(c)
 		c.options.DatabaseDriver = dsn.DriverPostgres
@@ -380,7 +379,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		assert.Equal(t, dsn.DriverSQLite3, driver)
 		c.options.DatabaseDriver = "Postgres"
 		c.options.DatabasePassword = "spec[char@$2&"
-		assert.Equal(t, "postgresql://photoprism:spec%5Bchar%40$2&@localhost/photoprism?connect_timeout=15&sslmode=disable&TimeZone=UTC&lock_timeout=5000", c.DatabaseDSN())
+		assert.Equal(t, "postgresql://photoprism:spec%5Bchar%40$2&@localhost/photoprism?connect_timeout=15&sslmode=disable&TimeZone=UTC&lock_timeout=5000", c.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
 	})
 
 	t.Run("CustomServer", func(t *testing.T) {
@@ -394,7 +393,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 42
 
-		want := "instance:secret@tcp(proxy.internal:6032)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=42s"
+		want := "instance:secret@tcp(proxy.internal:6032)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=42s" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -410,7 +409,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 21
 
-		want := "instance:secret@unix(/var/run/mysql.sock)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=21s"
+		want := "instance:secret@unix(/var/run/mysql.sock)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=21s" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -425,7 +424,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 12
 
-		want := "user=instance password=secret dbname=instancedb host=localhost port=5432 connect_timeout=12 sslmode=disable TimeZone=UTC"
+		want := "postgresql://instance:secret@localhost/instancedb?connect_timeout=12&sslmode=disable&TimeZone=UTC&lock_timeout=5000" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -444,7 +443,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 9
 
-		want := "user=instance password=secret dbname=instancedb host=postgres.internal port=5433 connect_timeout=9 sslmode=disable TimeZone=UTC"
+		want := "postgresql://instance:secret@postgres.internal:5433/instancedb?connect_timeout=9&sslmode=disable&TimeZone=UTC&lock_timeout=5000" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -471,7 +470,7 @@ func TestConfig_DatabaseDSNFlags(t *testing.T) {
 
 		assert.False(t, conf.NoDatabaseDSN())
 		assert.True(t, conf.HasDatabaseDSN())
-		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", conf.DatabaseDSN())
+		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", conf.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
 		assert.Empty(t, conf.options.Deprecated.DatabaseDsn)
 	})
 }
@@ -487,7 +486,7 @@ func TestConfig_ReportDatabaseDSN(t *testing.T) {
 	conf.options.DatabaseDSN = ""
 	assert.False(t, conf.ReportDatabaseDSN())
 
-	conf.options.DatabaseDSN = "user:pass@tcp(db.internal:3306)/photoprism"
+	conf.options.DatabaseDSN = "user:pass@tcp(db.internal:3306)/photoprism" //nolint:gosec // This is a mock value used strictly for unit testing
 	assert.True(t, conf.ReportDatabaseDSN())
 }
 

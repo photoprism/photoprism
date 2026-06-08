@@ -54,8 +54,6 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
 		}
 		UnscopedDb().Delete(model)
-		UnscopedDb().Delete(newAlbum)
-		UnscopedDb().Delete(newPhoto)
 	})
 }
 
@@ -71,7 +69,5 @@ func TestPhotoAlbum_Save(t *testing.T) {
 		// Cleanup
 		result := UnscopedDb().Model(&PhotoAlbum{}).Delete(&p)
 		assert.Equal(t, int64(1), result.RowsAffected)
-		UnscopedDb().Delete(newAlbum)
-		UnscopedDb().Delete(newPhoto)
 	})
 }

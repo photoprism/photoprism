@@ -156,7 +156,10 @@ func TestDetails_Create(t *testing.T) {
 		assert.Error(t, details.Create())
 	})
 	t.Run("Success", func(t *testing.T) {
-		details := Details{PhotoID: 900000001}
+		newPhoto := &Photo{ID: 1236799955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
+		details := Details{PhotoID: newPhoto.ID}
 
 		err := details.Create()
 		if err != nil {
@@ -165,13 +168,15 @@ func TestDetails_Create(t *testing.T) {
 			UnscopedDb().Delete(&details)
 		}
 		UnscopedDb().Delete(newPhoto)
-
 	})
 }
 
 func TestDetails_Save(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		details := Details{PhotoID: 900000002, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
+		newPhoto := &Photo{ID: 123678955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
+		details := Details{PhotoID: newPhoto.ID, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
 		initialDate := details.UpdatedAt
 
 		err := details.Save()

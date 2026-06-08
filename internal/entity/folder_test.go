@@ -693,13 +693,13 @@ func TestFolder_Create(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
-			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathEmoji, pathPumpkin, pathLink, pathFish}).Delete(Folder{}).Error
-			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathEmoji, pathPumpkin, pathLink, pathFish}).Delete(Album{}).Error
+			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathEmoji, pathPumpkin, pathLink, pathFish}).Delete(&Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathEmoji, pathPumpkin, pathLink, pathFish}).Delete(&Album{}).Error
 		})
 
 		// Start from a stale collision state where a deep emoji-only folder has
 		// overwritten a sibling album outside its immediate parent subtree.
-		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathFish}).Delete(Album{}).Error
+		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathFish}).Delete(&Album{}).Error
 
 		stale := &Album{
 			AlbumType:   AlbumFolder,

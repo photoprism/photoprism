@@ -25,6 +25,10 @@ func init() {
 }
 
 func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
+
+func testMain(m *testing.M) (code int) {
 	_ = os.Setenv("PHOTOPRISM_TEST", "true")
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
@@ -43,7 +47,7 @@ func TestMain(m *testing.M) {
 	c := TestConfig()
 
 	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
+	code = m.Run()
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
@@ -55,7 +59,7 @@ func TestMain(m *testing.M) {
 
 	fs.PurgeTestDbFiles(".", false)
 
-	os.Exit(code)
+	return code
 }
 
 func TestNewConfig(t *testing.T) {

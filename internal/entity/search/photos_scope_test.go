@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -41,34 +42,50 @@ func TestPhotoSessionSeesEverything(t *testing.T) {
 
 func TestScopePhotosForSession(t *testing.T) {
 	t.Run("NilUnchanged", func(t *testing.T) {
-		base := UnscopedDb().Table("photos")
-		assert.Same(t, base, ScopePhotosForSession(base, nil))
+		baseSQL := UnscopedDb().ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Table("photos").First(&Photo{})
+		})
+		scopeSQL := UnscopedDb().ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return ScopePhotosForSession(tx.Table("photos"), nil).First(&Photo{})
+		})
+		assert.Equal(t, baseSQL, scopeSQL)
 	})
 	t.Run("AdminUnchanged", func(t *testing.T) {
-		base := UnscopedDb().Table("photos")
-		assert.Same(t, base, ScopePhotosForSession(base, scopeSession("alice")))
+		baseSQL := UnscopedDb().ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Table("photos").First(&Photo{})
+		})
+		scopeSQL := UnscopedDb().ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return ScopePhotosForSession(tx.Table("photos"), scopeSession("alice")).First(&Photo{})
+		})
+		assert.Equal(t, baseSQL, scopeSQL)
 	})
 	t.Run("GuestScoped", func(t *testing.T) {
+		baseSQL := UnscopedDb().ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return tx.Table("photos").First(&Photo{})
+		})
+		scopeSQL := UnscopedDb().ToSQL(func(tx *gorm.DB) *gorm.DB {
+			return ScopePhotosForSession(tx.Table("photos"), scopeSession("guest")).First(&Photo{})
+		})
+		assert.NotEqual(t, baseSQL, scopeSQL)
 		base := UnscopedDb().Table("photos")
 		scoped := ScopePhotosForSession(base, scopeSession("guest"))
-		assert.NotSame(t, base, scoped)
-		var count int
+		var count int64
 		assert.NoError(t, scoped.Count(&count).Error)
 	})
 }
 
 func TestScopeVisiblePhotos(t *testing.T) {
 	t.Run("AdminSeesPrivate", func(t *testing.T) {
-		var count int
+		var count int64
 		err := ScopeVisiblePhotos(UnscopedDb().Table("photos").Where("photos.photo_uid = ?", scopePrivatePhotoUID), scopeSession("alice")).Count(&count).Error
 		assert.NoError(t, err)
-		assert.Equal(t, 1, count)
+		assert.Equal(t, int64(1), count)
 	})
 	t.Run("GuestDeniedPrivate", func(t *testing.T) {
-		var count int
+		var count int64
 		err := ScopeVisiblePhotos(UnscopedDb().Table("photos").Where("photos.photo_uid = ?", scopePrivatePhotoUID), scopeSession("guest")).Count(&count).Error
 		assert.NoError(t, err)
-		assert.Equal(t, 0, count)
+		assert.Equal(t, int64(0), count)
 	})
 }
 

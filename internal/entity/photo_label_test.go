@@ -115,10 +115,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 		assert.NotEqual(t, 0, newPhoto.ID)
 		assert.NotEqual(t, 0, newLabel.ID)
 
-		label := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
-		photo := &Photo{}
-
-		photoLabel := PhotoLabel{PhotoID: 900000003, LabelID: 900000004, Photo: photo, Label: label}
+		photoLabel := PhotoLabel{PhotoID: newPhoto.ID, LabelID: newLabel.ID, Photo: newPhoto, Label: newLabel}
 		err := photoLabel.Save()
 		if err != nil {
 			t.Fatal(err)
