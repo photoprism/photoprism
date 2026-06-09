@@ -138,7 +138,9 @@ test.meta("testID", "states-003").meta({ mode: "public" })("Common: Create/delet
   const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
   await menu.openPage("states");
   await album.selectAlbumFromUID(FirstStateUid);
-  await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForState", "Holiday"]);
+  await contextmenu.triggerContextMenuAction("clone", ["Holiday", "NotYetExistingAlbumForState"]); // NotYetExistingAlbumForState happens to be long enough to be the middle of the text box (which causes it to be removed when Holiday is added), so put it second.
+
+
   await menu.openPage("albums");
   const AlbumCountAfterCreation = await album.getAlbumCount("all");
 
