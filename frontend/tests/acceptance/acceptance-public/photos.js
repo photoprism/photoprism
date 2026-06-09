@@ -8,11 +8,22 @@ import Photo from "../page-model/photo";
 import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
 import PhotoEdit from "../page-model/photo-edit";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach, logTime, logTimeEnd, logMessage } from "../page-model/helpers";
 
 const scroll = ClientFunction((x, y) => window.scrollTo(x, y));
 const getcurrentPosition = ClientFunction(() => window.scrollY);
 
-fixture`Test photos`.page`${testcafeconfig.url}`;
+fixture`Test photos`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const toolbar = new Toolbar();

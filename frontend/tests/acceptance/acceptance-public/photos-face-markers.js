@@ -1,7 +1,18 @@
 import testcafeconfig from "../../testcafeconfig.json";
 import PhotoViewer from "../page-model/photoviewer";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test face markers in the photo viewer`.page`${testcafeconfig.url}`;
+fixture`Test face markers in the photo viewer`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const photoviewer = new PhotoViewer();
 

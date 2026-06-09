@@ -4,8 +4,19 @@ import PhotoViewer from "../page-model/photoviewer";
 import Menu from "../page-model/menu";
 import Label from "../page-model/label";
 import Album from "../page-model/album";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test lightbox sidebar inline editing`.page`${testcafeconfig.url}`;
+fixture`Test lightbox sidebar inline editing`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const photoviewer = new PhotoViewer();
 const menu = new Menu();

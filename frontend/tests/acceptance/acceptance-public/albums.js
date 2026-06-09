@@ -10,8 +10,19 @@ import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
 import PhotoEdit from "../page-model/photo-edit";
 import Notifies from "../page-model/notifications";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach, logTime, logTimeEnd } from "../page-model/helpers";
 
-fixture`Test albums`.page`${testcafeconfig.url}`;
+fixture`Test albums`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const album = new Album();
