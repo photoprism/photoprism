@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/maps"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -313,43 +315,52 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 // ClipSlug runes and slug.Make drops emoji, so distinct sibling folders can share one
 // album_slug. Folder albums are therefore deduplicated by album_filter (the serialized
 // path) alone; only non-folder albums treat a matching album_slug as a duplicate.
-const duplicateMomentsFrom = `albums a JOIN albums b ON a.album_type <> ?
-		AND a.album_type = b.album_type AND a.id > b.id
-		WHERE ((a.album_type = ? AND a.album_filter = b.album_filter)
-			OR (a.album_type <> ? AND (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)))
-		GROUP BY a.album_uid`
+func duplicateMomentsFrom(db *gorm.DB, selectgroupfield string) *gorm.DB {
+	return db.
+		Table("albums AS a").
+		Joins("JOIN albums AS b ON a.album_type <> ? AND a.album_type = b.album_type AND a.id > b.id", entity.AlbumManual).
+		Where(
+			db.Where("a.album_type = ? AND a.album_filter = b.album_filter", entity.AlbumFolder).
+				Or(
+					db.Where("a.album_type <> ?", entity.AlbumFolder).Where("a.album_slug = b.album_slug OR a.album_filter = b.album_filter"),
+				),
+		).
+		Group(selectgroupfield).
+		Select(selectgroupfield).
+		Find(&entity.Albums{})
+}
 
 // RemoveDuplicateMoments deletes generated albums with a duplicate filter, or a
 // duplicate slug for non-folder album types.
 func RemoveDuplicateMoments() (removed int, err error) {
-	removed = 0
-	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid IN (
-		SELECT a.album_uid FROM `+duplicateMomentsFrom+`)`,
-		entity.AlbumManual, entity.AlbumFolder, entity.AlbumFolder); res.Error != nil {
+	queryDB := UnscopedDb().Session(&gorm.Session{})
+	sqAlbumUID := duplicateMomentsFrom(queryDB, "a.album_uid")
+	if res := queryDB.
+		Model(&entity.Link{}).
+		Where("share_uid IN (?)", sqAlbumUID).
+		Delete(&entity.Link{}); res.Error != nil {
 		return removed, res.Error
 	} else {
 		removed += int(res.RowsAffected)
 	}
 
 	// Remove the child records to prevent foreign key violations
-	if res := UnscopedDb().Model(&entity.PhotoAlbum{}).
-		Where("album_uid IN (?)", UnscopedDb().Table("albums AS a").Select("a.album_uid").
-			Joins("JOIN albums as b ON a.album_type = b.album_type AND a.id > b.id").
-			Where("a.album_type <> ?", entity.AlbumManual).
-			Where("a.album_slug = b.album_slug OR a.album_filter = b.album_filter").
-			Order("a.id").
-			Find(&entity.Albums{})).
+	if res := queryDB.
+		Model(&entity.PhotoAlbum{}).
+		Where("album_uid IN (?)", sqAlbumUID).
 		Delete(&entity.PhotoAlbum{}); res.Error != nil {
 		return removed, res.Error
 	} else {
 		removed += int(res.RowsAffected)
 	}
 
-	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id IN (
-		SELECT a.id FROM `+duplicateMomentsFrom+`)`,
-		entity.AlbumManual, entity.AlbumFolder, entity.AlbumFolder); res.Error != nil {
+	sqAlbumID := duplicateMomentsFrom(queryDB, "a.id")
+	if res := queryDB.
+		Model(&entity.Album{}).
+		Where("id IN (?)", sqAlbumID).
+		Delete(&entity.Album{}); res.Error != nil {
 		return removed, res.Error
-	} else if res.RowsAffected > 0 {
+	} else {
 		removed += int(res.RowsAffected)
 	}
 
