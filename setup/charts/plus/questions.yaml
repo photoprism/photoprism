@@ -1,0 +1,413 @@
+questions:
+  - variable: image.tag
+    group: "Customization"
+    label: "Image Tag"
+    description: "Override the container tag; leave empty to use the chart appVersion."
+    type: string
+  - variable: config.PHOTOPRISM_SITE_TITLE
+    group: "Customization"
+    label: "Site Title"
+    description: "Displayed title in the PhotoPrism UI. Example: Photo Library."
+    type: string
+  - variable: config.PHOTOPRISM_SITE_CAPTION
+    group: "Customization"
+    label: "Site Caption"
+    description: "Optional tagline shown beneath the title. Example: Explore Your Media."
+    type: string
+  - variable: config.PHOTOPRISM_SITE_DESCRIPTION
+    group: "Customization"
+    label: "Site Description"
+    description: "Short description used in metadata and link previews. Example: Private family archive."
+    type: string
+  - variable: config.PHOTOPRISM_SITE_AUTHOR
+    group: "Customization"
+    label: "Site Author"
+    description: "Owner or copyright notice displayed in metadata. Example: © 2025 The Smith Family."
+    type: string
+  - variable: config.PHOTOPRISM_SITE_FAVICON
+    group: "Customization"
+    label: "Site Favicon"
+    description: "Filename or URL of the favicon asset. Example: /photoprism/assets/favicon.ico."
+    type: string
+  - variable: config.PHOTOPRISM_SITE_PREVIEW
+    group: "Customization"
+    label: "Sharing Preview URL"
+    description: "Image URL used for social previews. Example: https://example.com/preview.jpg."
+    type: string
+  - variable: config.PHOTOPRISM_CDN_URL
+    group: "Customization"
+    label: "CDN URL"
+    description: "Base URL for serving static assets via CDN. Example: https://cdn.example.com."
+    type: string
+  - variable: config.PHOTOPRISM_CDN_VIDEO
+    group: "Customization"
+    label: "CDN Video URL"
+    description: "Optional CDN endpoint for streaming videos. Example: https://videos.example.com."
+    type: string
+  - variable: config.PHOTOPRISM_CORS_ORIGIN
+    group: "Customization"
+    label: "CORS Allowed Origin"
+    description: "Origin allowed to issue cross-origin requests. Example: https://app.example.com."
+    type: string
+  - variable: config.PHOTOPRISM_CORS_HEADERS
+    group: "Customization"
+    label: "CORS Headers"
+    description: "Comma-separated headers exposed for cross-origin requests."
+    type: string
+    default: "Accept, Accept-Ranges, Content-Disposition, Content-Encoding, Content-Range, Location"
+  - variable: config.PHOTOPRISM_CORS_METHODS
+    group: "Customization"
+    label: "CORS Methods"
+    description: "Allowed HTTP methods for cross-origin requests."
+    type: string
+    default: "GET, HEAD, OPTIONS"
+  - variable: config.PHOTOPRISM_APP_NAME
+    group: "Customization"
+    label: "App Name"
+    description: "Display name when PhotoPrism is installed as a PWA."
+    type: string
+  - variable: config.PHOTOPRISM_APP_ICON
+    group: "Customization"
+    label: "App Icon"
+    description: "Icon style for the PWA shortcut (logo, app, mint, square, etc.). Example: logo."
+    type: string
+  - variable: config.PHOTOPRISM_APP_COLOR
+    group: "Customization"
+    label: "App Color"
+    description: "Hex colour used for the PWA splash screen and tint. Example: #1d1d1e."
+    type: string
+    default: "#1d1d1e"
+  - variable: config.PHOTOPRISM_DEFAULT_TIMEZONE
+    group: "Customization"
+    label: "Default Timezone"
+    description: "Timezone name used for scheduling (e.g. Europe/Berlin)."
+    type: string
+  - variable: config.PHOTOPRISM_PLACES_LOCALE
+    group: "Customization"
+    label: "Places Locale"
+    description: "Language code for location details (en, de, local, etc.)."
+    type: string
+    default: "local"
+  - variable: config.PHOTOPRISM_DEFAULT_THEME
+    group: "Customization"
+    label: "Default Theme"
+    description: "Theme name applied to new users (leave blank for PhotoPrism default)."
+    type: string
+  - variable: config.PHOTOPRISM_DEFAULT_LOCALE
+    group: "Customization"
+    label: "Default Locale"
+    description: "Language code assigned to new users. Example: en or de."
+    type: string
+    default: "en"
+  - variable: config.PHOTOPRISM_AUTH_MODE
+    group: "Authentication"
+    label: "Authentication Mode"
+    description: "Select password-protected or public access."
+    type: enum
+    options:
+      - "password"
+      - "public"
+    default: "password"
+  - variable: config.PHOTOPRISM_LOG_LEVEL
+    group: "Customization"
+    label: "Log Level"
+    description: "Application log verbosity. Example: info."
+    type: enum
+    options:
+      - "trace"
+      - "debug"
+      - "info"
+      - "warning"
+      - "error"
+    default: "info"
+  - variable: adminUser
+    group: "Administration"
+    label: "Admin Username"
+    description: "Initial administrator account."
+    type: string
+    default: "admin"
+    required: true
+  - variable: adminPassword
+    group: "Administration"
+    label: "Admin Password"
+    description: "Leave empty to auto-generate and store the password in a secret."
+    type: string
+  - variable: config.PHOTOPRISM_PASSWORD_LENGTH
+    group: "Authentication"
+    label: "Minimum Password Length"
+    description: "Enforce a minimum password length for local users."
+    type: int
+    default: "8"
+  - variable: config.PHOTOPRISM_SESSION_MAXAGE
+    group: "Authentication"
+    label: "Session Max Age (Seconds)"
+    description: "Maximum session lifetime; doubled when 2FA is enabled."
+    type: int
+    default: "1209600"
+  - variable: config.PHOTOPRISM_SESSION_TIMEOUT
+    group: "Authentication"
+    label: "Session Idle Timeout (Seconds)"
+    description: "Maximum idle time before users are signed out."
+    type: int
+    default: "604800"
+  - variable: config.PHOTOPRISM_SESSION_CACHE
+    group: "Authentication"
+    label: "Session Cache TTL (Seconds)"
+    description: "Duration session data is cached in memory (60-3600)."
+    type: int
+    default: "900"
+  - variable: config.PHOTOPRISM_LOGIN_INFO
+    group: "Authentication"
+    label: "Login Footer Text"
+    description: "Optional message displayed below the login form."
+    type: string
+  - variable: config.PHOTOPRISM_LEGAL_INFO
+    group: "Customization"
+    label: "Legal Notice Text"
+    description: "Text displayed in the footer for legal notices."
+    type: string
+  - variable: config.PHOTOPRISM_LEGAL_URL
+    group: "Customization"
+    label: "Legal Notice URL"
+    description: "Link to full legal information."
+    type: string
+  - variable: config.PHOTOPRISM_WALLPAPER_URI
+    group: "Customization"
+    label: "Wallpaper URI"
+    description: "Background image URL for the login screen."
+    type: string
+  - variable: oidc.PHOTOPRISM_DISABLE_OIDC
+    group: "Authentication"
+    label: "Disable OpenID Connect"
+    description: "Set to false to enable OpenID Connect login with the settings below."
+    type: boolean
+    default: true
+    show_subquestion_if: false
+    subquestions:
+      - variable: oidc.PHOTOPRISM_OIDC_URI
+        label: "OIDC Issuer URI"
+        description: "Identity provider issuer URL."
+        type: string
+      - variable: oidc.PHOTOPRISM_OIDC_CLIENT
+        label: "OIDC Client ID"
+        description: "Client identifier issued by the identity provider. Example: photoprism-plus."
+        type: string
+      - variable: oidc.PHOTOPRISM_OIDC_SECRET
+        label: "OIDC Client Secret"
+        description: "Client secret stored in a Kubernetes Secret. Example: s3cr3t."
+        type: string
+      - variable: oidc.PHOTOPRISM_OIDC_SCOPES
+        label: "OIDC Scopes"
+        description: "Space-delimited scopes requested from the provider."
+        type: string
+        default: "openid email profile"
+      - variable: oidc.PHOTOPRISM_OIDC_REGISTER
+        label: "Auto Register Users"
+        description: "Automatically create PhotoPrism accounts after successful OIDC login."
+        type: boolean
+        default: true
+      - variable: oidc.PHOTOPRISM_OIDC_REDIRECT
+        label: "Force OIDC Redirect"
+        description: "Always redirect to the OIDC provider instead of showing the local login form."
+        type: boolean
+        default: false
+      - variable: oidc.PHOTOPRISM_OIDC_USERNAME
+        label: "OIDC Username Claim"
+        description: "Claim name used as the PhotoPrism username. Example: email."
+        type: string
+        default: "email"
+      - variable: oidc.PHOTOPRISM_OIDC_PROVIDER
+        label: "OIDC Provider Name"
+        description: "Label displayed on the login button."
+        type: string
+      - variable: oidc.PHOTOPRISM_OIDC_ICON
+        label: "OIDC Provider Icon"
+        description: "Optional icon URL for the login button."
+        type: string
+      - variable: oidc.PHOTOPRISM_OIDC_WEBDAV
+        label: "Enable OIDC WebDAV"
+        description: "Allow OIDC users to authenticate against WebDAV endpoints."
+        type: boolean
+        default: false
+  - variable: database.driver
+    group: "Database"
+    label: "Driver"
+    description: "Set to mysql when connecting to MariaDB/MySQL."
+    type: enum
+    options:
+      - "sqlite"
+      - "mysql"
+    default: "sqlite"
+  - variable: database.server
+    group: "Database"
+    label: "Server"
+    description: "Host:port or socket path for the database server."
+    type: string
+  - variable: database.name
+    group: "Database"
+    label: "Database Name"
+    description: "Schema name when using MariaDB/MySQL."
+    type: string
+  - variable: database.user
+    group: "Database"
+    label: "Database Username"
+    description: "User account for the schema."
+    type: string
+  - variable: database.password
+    group: "Database"
+    label: "Database Password"
+    description: "Optional password stored in the chart-managed secret."
+    type: string
+  - variable: database.timeout
+    group: "Database"
+    label: "Connection Timeout (Seconds)"
+    description: "Timeout when establishing a database connection."
+    type: int
+    default: "15"
+  - variable: database.conns
+    group: "Database"
+    label: "Max Open Connections"
+    description: "Maximum number of open connections (0 lets PhotoPrism decide)."
+    type: int
+    default: "0"
+  - variable: database.connsIdle
+    group: "Database"
+    label: "Max Idle Connections"
+    description: "Maximum number of idle connections (0 lets PhotoPrism decide)."
+    type: int
+    default: "0"
+  - variable: persistence.storage.size
+    group: "Storage"
+    label: "Storage Volume Size"
+    description: "PVC size for /photoprism/storage (can be expanded later)."
+    type: string
+    default: "5Gi"
+  - variable: config.PHOTOPRISM_FILES_QUOTA
+    group: "Storage"
+    label: "Total File Quota (GB)"
+    description: "Limit the total size of indexed originals (0 for unlimited)."
+    type: int
+    default: "0"
+  - variable: config.PHOTOPRISM_ORIGINALS_LIMIT
+    group: "Storage"
+    label: "Maximum Original Size (MB)"
+    description: "Largest allowed original file size."
+    type: int
+    default: "5000"
+  - variable: config.PHOTOPRISM_UPLOAD_LIMIT
+    group: "Storage"
+    label: "Maximum Upload Size (MB)"
+    description: "Largest allowed upload size."
+    type: int
+    default: "5000"
+  - variable: config.PHOTOPRISM_UPLOAD_ALLOW
+    group: "Storage"
+    label: "Allowed Upload Types"
+    description: "Comma-separated list of permitted upload extensions."
+    type: string
+    default: "zip,jpeg,jpg,png,gif,bmp,avif,webp,heic,heif,tiff,pdf,ai,svg,xmp"
+  - variable: config.PHOTOPRISM_IMPORT_ALLOW
+    group: "Storage"
+    label: "Allowed Import Types"
+    description: "Comma-separated list of permitted import extensions."
+    type: string
+    default: "zip,jpeg,jpg,png,gif,bmp,avif,webp,heic,heif,tiff,pdf,ai,svg,xmp"
+  - variable: persistence.originals.enabled
+    group: "Storage"
+    label: "Enable Originals PVC"
+    description: "Provision a PVC for originals; disable when mounting NFS manually."
+    type: boolean
+    default: true
+    show_subquestion_if: true
+    subquestions:
+      - variable: persistence.originals.size
+        label: "Originals Volume Size"
+        description: "PVC size for /photoprism/originals (can be expanded later)."
+        type: string
+        default: "10Gi"
+      - variable: persistence.originals.nfs.enabled
+        label: "Mount Originals via NFS"
+        description: "Use an existing NFS export instead of a dynamically provisioned PVC."
+        type: boolean
+        default: false
+        show_subquestion_if: true
+        subquestions:
+          - variable: persistence.originals.nfs.server
+            label: "NFS Server"
+            description: "Hostname or IP of the NFS server. Example: nfs.internal.local."
+            type: string
+            required: true
+          - variable: persistence.originals.nfs.path
+            label: "NFS Export Path"
+            description: "Export path on the NFS server. Example: /exports/photos."
+            type: string
+            required: true
+  - variable: config.PHOTOPRISM_BACKUP_SCHEDULE
+    group: "Backup"
+    label: "Backup Schedule"
+    description: "Cron schedule or keyword (daily/weekly) controlling automated backups. Example: 0 3 * * *."
+    type: string
+    default: "daily"
+  - variable: config.PHOTOPRISM_BACKUP_RETAIN
+    group: "Backup"
+    label: "Backups to Keep"
+    description: "Number of backup archives to retain (-1 keeps all). Example: 3."
+    type: int
+    default: "3"
+  - variable: config.PHOTOPRISM_BACKUP_PATH
+    group: "Backup"
+    label: "Backup Path"
+    description: "Custom base directory for backups. Example: /photoprism/backups."
+    type: string
+  - variable: config.PHOTOPRISM_BACKUP_DATABASE
+    group: "Backup"
+    label: "Backup Database"
+    description: "Enable scheduled database backups."
+    type: boolean
+    default: true
+  - variable: config.PHOTOPRISM_BACKUP_ALBUMS
+    group: "Backup"
+    label: "Backup Albums"
+    description: "Include YAML album metadata in backups."
+    type: boolean
+    default: true
+  - variable: cluster.integration.enabled
+    group: "Cluster Integration"
+    label: "Enable Portal Integration"
+    description: "Set to true when a PhotoPrism Portal is available."
+    type: boolean
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: cluster.integration.secretName
+        label: "Portal Secret Name"
+        description: "Secret containing PHOTOPRISM_CLUSTER_* values (defaults to photoprism-cluster-secrets)."
+        type: string
+      - variable: cluster.integration.domain
+        label: "Cluster Domain Override"
+        description: "Optional domain suffix when not using the shared secret."
+        type: string
+      - variable: cluster.integration.portalURL
+        label: "Portal URL"
+        description: "Portal base URL if no secret is provided."
+        type: string
+      - variable: cluster.integration.joinToken
+        label: "Join Token"
+        description: "Portal-issued token used to register this node. Example: node_abc123."
+        type: string
+      - variable: cluster.integration.uuid
+        label: "Cluster UUID"
+        description: "Unique cluster identifier provided by the portal."
+        type: string
+      - variable: cluster.integration.cidr
+        label: "Cluster CIDR"
+        description: "Allowed IP range for trusted cluster traffic. Example: 10.42.0.0/16."
+        type: string
+      - variable: cluster.integration.trustedProxy
+        label: "Trusted Proxy"
+        description: "Reverse proxy address forwarded in X-Forwarded-For headers."
+        type: string
+      - variable: cluster.integration.jwtScope
+        label: "JWT Scope"
+        description: "Scope names allowed for issued cluster tokens."
+        type: string

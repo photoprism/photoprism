@@ -1,6 +1,8 @@
 package migrate
 
 import (
+	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -28,9 +30,14 @@ func TestDialectMysql(t *testing.T) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
+	port := os.Getenv("MARIADB_PORT")
+	if port == "" {
+		port = "4001"
+	}
+
 	db, err := gorm.Open(
 		"mysql",
-		"migrate:migrate@tcp(mariadb:4001)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		fmt.Sprintf("migrate:migrate@tcp(mariadb:%s)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", port),
 	)
 
 	if err != nil || db == nil {

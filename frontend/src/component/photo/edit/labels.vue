@@ -291,6 +291,14 @@ export default {
         return;
       }
 
+      // Block the create path when the typed name exceeds the backend cap —
+      // otherwise the backend clips the name and returns success, leaving the
+      // user with a green "added X" toast against a truncated label.
+      if (typed.length > LabelMaxLength.Name) {
+        this.$notify.error(this.$gettext("%{s} is too long", { s: this.$gettext("Name") }));
+        return;
+      }
+
       // Apply the same canonical-match dedup the sidebar uses for L3:
       // typing `Hello Cat` resolves to an existing `hello-cat` label so
       // the backend isn't asked to create a near-duplicate. normalizeTitle

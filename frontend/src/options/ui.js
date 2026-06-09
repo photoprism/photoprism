@@ -25,7 +25,8 @@ export const colorsDark = {
   "success": "#4db6ac", // Successful-outcome notification color (saved toast, completed-job indicator).
   "warning": "#bc9714", // Caution / recoverable-concern notification color (warning banners, paused indicators).
   "favorite": "#FFD600", // Favorite-star color.
-  "remove": "#da4e4c", // Destructive "remove from collection" action color (distinct from `error`, which is a fault state).
+  "add": "#50a9b1", // User-initiated "add to collection" action color (paired with `remove`; distinct from `download` and `success`).
+  "remove": "#aa504f", // Destructive "remove from collection" action color (distinct from `error`, which is a fault state).
   "restore": "#00d48a", // Restore-from-trash / undo-remove action color.
   "album": "#ed9e00", // Album identity color (album icons, chips, thumbnail accents).
   "on-album": "#ffffff", // Text/icon color on album-tinted backgrounds.
@@ -91,7 +92,9 @@ export const colorsLight = {
   "success": "#8FBCBB",
   "warning": "#f0d8a8",
   "favorite": "#EBCB8B",
-  "remove": "#BF616A",
+  "add": "#a7cac1",
+  "remove": "#cfa0a4",
+  "on-remove": "#1e1e1f",
   "restore": "#81A1C1",
   "album": "#EBCB8B",
   "download": "#8FBCBB",

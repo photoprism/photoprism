@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -29,7 +30,16 @@ func GetFile(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.FileByHash(clean.Token(c.Param("hash")))
+		hash := clean.Token(c.Param("hash"))
+
+		// Limit results to files within the session's shared scope, consistent with how photo
+		// search filters results. Files outside the scope are reported as not found.
+		if visible, err := search.FileVisibleToSession(hash, s); err != nil || !visible {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		p, err := query.FileByHash(hash)
 
 		if err != nil {
 			AbortEntityNotFound(c)

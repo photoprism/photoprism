@@ -105,6 +105,16 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, false, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
 	})
+	t.Run("MagicYuvMov", func(t *testing.T) {
+		fileName := "testdata/magicyuv.mov"
+		info, err := ProbeFile(fileName)
+		require.NoError(t, err)
+		require.NotNil(t, info)
+
+		// The MagicYUV sample entry is recognized by the head scan.
+		assert.Equal(t, fs.VideoMov, info.FileType)
+		assert.Equal(t, CodecMagicYUV, info.VideoCodec)
+	})
 	t.Run("QuicktimeJpegMov", func(t *testing.T) {
 		fileName := "testdata/quicktime-jpeg.mov"
 		info, err := ProbeFile(fileName)

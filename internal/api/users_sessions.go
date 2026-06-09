@@ -31,7 +31,7 @@ import (
 //	@Router		/api/v1/users/{uid}/sessions [get]
 func FindUserSessions(router *gin.RouterGroup) {
 	router.GET("/users/:uid/sessions", func(c *gin.Context) {
-		// Check if the session user is has user management privileges.
+		// Require own-session management access.
 		s := Auth(c, acl.ResourceSessions, acl.ActionManageOwn)
 
 		if s.Abort(c) {
@@ -60,7 +60,7 @@ func FindUserSessions(router *gin.RouterGroup) {
 			return
 		}
 
-		// Find applications that belong to the current user and sort them by name.
+		// Find application sessions for the current user and sort them by client name.
 		frm.UID = s.UserUID
 		frm.Order = sortby.ClientName
 		frm.Provider = authn.ProviderApplication.String()

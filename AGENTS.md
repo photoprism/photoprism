@@ -155,7 +155,7 @@ Formatting and test entry points:
 - Full suite: `make test`, `make lint`
 - Go-specific lint, format, and package-test rules live in [`internal/AGENTS.md`](internal/AGENTS.md).
 - Frontend lint, Vitest, acceptance, and Playwright rules live in [`frontend/AGENTS.md`](frontend/AGENTS.md).
-- Go tests live next to their sources; use PascalCase `t.Run(...)` names for related subtests.
+- Go tests live next to their sources; use PascalCase `t.Run(...)` names for related subtests. Keep consecutive subtests inside the same `Test*` function back-to-back without blank lines so the cases read as a compact table; reserve blank lines for separating distinct setup blocks.
 - Do not run multiple test commands in parallel; suites share fixtures, assets, and database state.
 - Prefer focused test runs such as `go test ./path/to/pkg -run Name -count=1` while iterating.
 - Use `mariadb -D photoprism` inside the dev shell when you need to inspect MariaDB state directly.

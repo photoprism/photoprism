@@ -142,25 +142,20 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			frm.Hidden = false
 		}
 
-		// Visitors and other restricted users can only access shared content.
+		// Visitors and other restricted users can only access shared content. A non-empty Scope
+		// bypasses the personal ScopePhotosForSession filter below, so it is gated here instead:
+		// a restricted session may scope only to an album it owns or has shared. "Restricted" means
+		// shared-only or unregistered; this assumes any view-capable role lacking library/all access
+		// also holds access_shared (else HasSharedAccessOnly would not flag it).
 		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
 			frm.Scope == "" && acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
 			return PhotoResults{}, 0, ErrForbidden
 		}
 
-		// Limit results for external users.
-		if frm.Scope == "" && acl.Rules.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?)) OR "
-
-			if sess.IsVisitor() || sess.NotRegistered() {
-				s = s.Where(sharedAlbums+"photos.published_at > ?", sess.SharedUIDs(), entity.Now())
-			} else if basePath := user.GetBasePath(); basePath == "" {
-				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
-			} else {
-				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
-					sess.SharedUIDs(), user.UserUID, entity.Now(), basePath, basePath+"/%")
-			}
+		// Limit results to the content this session may access.
+		if frm.Scope == "" {
+			s = ScopePhotosForSession(s, sess)
 		}
 	}
 

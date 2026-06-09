@@ -97,8 +97,8 @@ test.meta("testID", "folders-002").meta({ mode: "public" })("Common: Update fold
   await t
     .typeText(albumdialog.title, "Kanada", { replace: true })
     .click(albumdialog.category)
+    .click(albumdialog.category)
     .pressKey("ctrl+a delete")
-    .pressKey("enter")
     .click(albumdialog.description)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
@@ -112,10 +112,15 @@ test.meta("testID", "folders-002").meta({ mode: "public" })("Common: Update fold
   await t
     .expect(page.cardTitle.nth(0).innerText)
     .contains("Kanada")
-    .expect(page.cardDescription.nth(0).innerText)
-    .notContains("We went to ski")
-    .expect(Selector("button.meta-location").nth(0).innerText)
-    .notContains("United States");
+    .expect(page.cardDescription.exists)
+    .notOk();
+
+  // Card-level checks aren't sufficient for these fields: the location button can render
+  // via the album's Country/State fallback, and the category never had a card affordance.
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+  await t.expect(albumdialog.location.value).eql("").expect(albumdialog.category.value).eql("");
+  await t.click(albumdialog.dialogCancel);
 });
 
 test.meta("testID", "folders-003").meta({ mode: "public" })("Common: Create, Edit, delete sharing link", async (t) => {

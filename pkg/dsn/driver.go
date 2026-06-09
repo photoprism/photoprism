@@ -4,6 +4,8 @@ import "strings"
 
 // SQL database drivers.
 const (
+	DriverNone     = ""         // Unknown or unsupported database driver.
+	DriverAuto     = "auto"     // Automatic database driver selection.
 	DriverMySQL    = "mysql"    // GORM dialect for MySQL/MariaDB; the canonical driver name PhotoPrism stores.
 	DriverMariaDB  = "mariadb"  // Accepted as user input; ParseDriver collapses it to DriverMySQL since the dialect is shared.
 	DriverPostgres = "postgres" // Reserved identifier; PostgreSQL is not a supported runtime target yet (requires a GORM upgrade).
@@ -18,22 +20,21 @@ const (
 	SQLiteMemoryShared = ":memory:?cache=shared" // In-memory DSN with shared page cache; multiple connections share one database.
 )
 
-// ParseDriver canonicalizes a user-supplied driver identifier to one of the
-// DriverMySQL/DriverPostgres/DriverSQLite3/DriverTiDB constants (case- and
-// whitespace-insensitive). Aliases: "mariadb" → MySQL (shared GORM dialect),
-// "postgresql" → Postgres, "sqlite"/"test"/"file"/"" → SQLite3; unknown → "".
+// ParseDriver canonicalizes a user-supplied driver identifier.
 func ParseDriver(s string) string {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case DriverMySQL, DriverMariaDB:
 		return DriverMySQL
 	case DriverPostgres, "postgresql":
 		return DriverPostgres
-	case DriverSQLite3, "sqlite", "test", "file", "":
+	case DriverSQLite3, "sqlite", "test", "file":
 		return DriverSQLite3
 	case DriverTiDB:
 		return DriverTiDB
+	case DriverAuto:
+		return DriverAuto
 	default:
-		return ""
+		return DriverNone
 	}
 }
 

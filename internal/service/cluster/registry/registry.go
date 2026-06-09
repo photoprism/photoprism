@@ -6,7 +6,7 @@ and exposes CRUD-style operations to create, lookup, list, delete, and rotate
 secrets for nodes. Helper mappers convert internal Node records to API/CLI
 response DTOs while redacting sensitive fields.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):

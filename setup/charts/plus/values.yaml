@@ -1,0 +1,160 @@
+# Default values for the PhotoPrism® Helm chart.
+# These defaults are tuned for home labs and small teams; enable the optional
+# portal integration block only if a PhotoPrism Portal is available in your cluster.
+
+replicaCount: 1
+
+image:
+  repository: docker.io/photoprism/photoprism
+  tag: ""
+  pullPolicy: IfNotPresent
+
+command: []
+args: []
+
+securityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+  runAsUser: 1000
+  runAsGroup: 1000
+
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+
+nameOverride: ""
+fullnameOverride: ""
+
+adminUser: "admin"
+adminPassword: ""
+
+cluster:
+  integration:
+    enabled: false
+    secretName: ""
+    domain: ""
+    portalURL: ""
+    uuid: ""
+    cidr: ""
+    trustedProxy: ""
+    joinToken: ""
+    jwtScope: ""
+
+persistence:
+  storageClassName: ""
+  originals:
+    enabled: true
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    mountPath: /photoprism/originals
+    nfs:
+      enabled: false
+      server: ""
+      path: ""
+  storage:
+    enabled: true
+    size: 5Gi
+    accessModes:
+      - ReadWriteOnce
+    mountPath: /photoprism/storage
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 2342
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  tls: []
+
+resources:
+  limits:
+    cpu: 4000m
+    memory: 6Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+oidc:
+  PHOTOPRISM_DISABLE_OIDC: true
+  PHOTOPRISM_OIDC_URI: ""
+  PHOTOPRISM_OIDC_CLIENT: ""
+  PHOTOPRISM_OIDC_SECRET: ""
+  PHOTOPRISM_OIDC_SCOPES: "openid email profile"
+  PHOTOPRISM_OIDC_REGISTER: true
+  PHOTOPRISM_OIDC_REDIRECT: false
+  PHOTOPRISM_OIDC_USERNAME: "email"
+  PHOTOPRISM_OIDC_PROVIDER: ""
+  PHOTOPRISM_OIDC_ICON: ""
+  PHOTOPRISM_OIDC_WEBDAV: false
+
+config:
+  PHOTOPRISM_SITE_URL: ""
+  PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+  PHOTOPRISM_SITE_CAPTION: ""
+  PHOTOPRISM_SITE_DESCRIPTION: ""
+  PHOTOPRISM_SITE_AUTHOR: ""
+  PHOTOPRISM_SITE_FAVICON: ""
+  PHOTOPRISM_SITE_PREVIEW: ""
+  PHOTOPRISM_APP_NAME: "PhotoPrism"
+  PHOTOPRISM_APP_ICON: ""
+  PHOTOPRISM_APP_COLOR: "#1d1d1e"
+  PHOTOPRISM_DEFAULT_THEME: ""
+  PHOTOPRISM_DEFAULT_LOCALE: "en"
+  PHOTOPRISM_DEFAULT_TIMEZONE: ""
+  PHOTOPRISM_PLACES_LOCALE: "local"
+  PHOTOPRISM_AUTH_MODE: "password"
+  PHOTOPRISM_PASSWORD_LENGTH: 8
+  PHOTOPRISM_SESSION_MAXAGE: 1209600
+  PHOTOPRISM_SESSION_TIMEOUT: 604800
+  PHOTOPRISM_SESSION_CACHE: 900
+  PHOTOPRISM_LOGIN_INFO: ""
+  PHOTOPRISM_LOG_LEVEL: "info"
+  PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"
+  PHOTOPRISM_CDN_URL: ""
+  PHOTOPRISM_CDN_VIDEO: ""
+  PHOTOPRISM_CORS_ORIGIN: ""
+  PHOTOPRISM_CORS_HEADERS: "Accept, Accept-Ranges, Content-Disposition, Content-Encoding, Content-Range, Location"
+  PHOTOPRISM_CORS_METHODS: "GET, HEAD, OPTIONS"
+  PHOTOPRISM_LEGAL_INFO: ""
+  PHOTOPRISM_LEGAL_URL: ""
+  PHOTOPRISM_BACKUP_SCHEDULE: "daily"
+  PHOTOPRISM_BACKUP_RETAIN: "3"
+  PHOTOPRISM_BACKUP_DATABASE: true
+  PHOTOPRISM_BACKUP_ALBUMS: true
+  PHOTOPRISM_BACKUP_PATH: ""
+  PHOTOPRISM_FILES_QUOTA: 0
+  PHOTOPRISM_ORIGINALS_LIMIT: 5000
+  PHOTOPRISM_UPLOAD_LIMIT: 5000
+  PHOTOPRISM_UPLOAD_ALLOW: "zip,jpeg,jpg,png,gif,bmp,avif,webp,heic,heif,tiff,pdf,ai,svg,xmp"
+  PHOTOPRISM_IMPORT_ALLOW: "zip,jpeg,jpg,png,gif,bmp,avif,webp,heic,heif,tiff,pdf,ai,svg,xmp"
+  PHOTOPRISM_UPLOAD_ARCHIVES: true
+  PHOTOPRISM_UPLOAD_NSFW: true
+  PHOTOPRISM_DISABLE_TLS: true
+  PHOTOPRISM_DISABLE_STS: true
+  PHOTOPRISM_DISABLE_MCP: false
+  PHOTOPRISM_WALLPAPER_URI: ""
+
+# Database connection overrides (blank defaults keep PhotoPrism's internal sqlite)
+database:
+  driver: "sqlite"
+  server: ""
+  name: "photoprism"
+  user: "photoprism"
+  password: ""
+  timeout: 15
+  conns: 0
+  connsIdle: 0

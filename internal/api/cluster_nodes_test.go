@@ -142,6 +142,169 @@ func TestClusterUpdateNode_UUIDValidation(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, r.Code)
 }
 
+// TestClusterUpdateNode_RedirectURIs_Apply exercises the v1 path where the
+// Portal admin writes a fresh RedirectURIs set to a registered node. After
+// the PATCH lands, GET must echo the persisted set so the OIDC OP authorize
+// handler can find them via client.GetData().RedirectURIs.
+func TestClusterUpdateNode_RedirectURIs_Apply(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterGetNode(router)
+	ClusterUpdateNode(router)
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-redirects", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	assert.NoError(t, regy.Put(n))
+	n, err = regy.FindByName("pp-node-redirects")
+	assert.NoError(t, err)
+
+	body := `{"RedirectURIs":["https://photos.example.com/api/v1/oidc/redirect","http://127.0.0.1:2342/api/v1/oidc/redirect"]}`
+	r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, body)
+	assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+
+	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
+	assert.Equal(t, http.StatusOK, r.Code)
+	assert.Contains(t, r.Body.String(), `"https://photos.example.com/api/v1/oidc/redirect"`)
+	assert.Contains(t, r.Body.String(), `"http://127.0.0.1:2342/api/v1/oidc/redirect"`)
+}
+
+// TestClusterUpdateNode_RedirectURIs_Replace_And_Clear confirms that a
+// non-nil slice replaces the persisted set (including the cleared case
+// where the slice is empty).
+func TestClusterUpdateNode_RedirectURIs_Replace_And_Clear(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterGetNode(router)
+	ClusterUpdateNode(router)
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-replace", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	assert.NoError(t, regy.Put(n))
+	n, err = regy.FindByName("pp-node-replace")
+	assert.NoError(t, err)
+
+	// Seed two redirect URIs.
+	r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID,
+		`{"RedirectURIs":["https://a.example.com/cb","https://b.example.com/cb"]}`)
+	assert.Equal(t, http.StatusOK, r.Code)
+
+	// Replace with a single entry — the old ones must be gone.
+	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID,
+		`{"RedirectURIs":["https://c.example.com/cb"]}`)
+	assert.Equal(t, http.StatusOK, r.Code)
+
+	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
+	assert.Equal(t, http.StatusOK, r.Code)
+	assert.Contains(t, r.Body.String(), `"https://c.example.com/cb"`)
+	assert.NotContains(t, r.Body.String(), `"https://a.example.com/cb"`)
+	assert.NotContains(t, r.Body.String(), `"https://b.example.com/cb"`)
+
+	// Clear via empty slice. Non-nil, zero length means "remove all".
+	r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID,
+		`{"RedirectURIs":[]}`)
+	assert.Equal(t, http.StatusOK, r.Code)
+
+	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
+	assert.Equal(t, http.StatusOK, r.Code)
+	assert.NotContains(t, r.Body.String(), `"RedirectURIs"`, "empty slice must drop the field via omitempty")
+}
+
+// TestClusterUpdateNode_RedirectURIs_Invalid rejects malformed entries with
+// 400. Validation policy mirrors validateSiteURL: HTTPS always, HTTP only
+// on loopback / cluster-internal hosts, no fragment.
+func TestClusterUpdateNode_RedirectURIs_Invalid(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterUpdateNode(router)
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-invalid", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	assert.NoError(t, regy.Put(n))
+	n, _ = regy.FindByName("pp-node-invalid")
+
+	cases := []struct {
+		name string
+		body string
+	}{
+		{"NotAbsolute", `{"RedirectURIs":["/relative/cb"]}`},
+		{"FtpScheme", `{"RedirectURIs":["ftp://example.com/cb"]}`},
+		{"HttpNonLoopback", `{"RedirectURIs":["http://photos.example.com/cb"]}`},
+		{"WithFragment", `{"RedirectURIs":["https://example.com/cb#frag"]}`},
+		{"NoHost", `{"RedirectURIs":["https://"]}`},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, tc.body)
+			assert.Equal(t, http.StatusBadRequest, r.Code, "body=%s", r.Body.String())
+		})
+	}
+}
+
+func TestNormalizeRedirectURIs(t *testing.T) {
+	t.Run("NilInputNoChange", func(t *testing.T) {
+		out, err := normalizeRedirectURIs(nil)
+		assert.NoError(t, err)
+		assert.Nil(t, out)
+	})
+	t.Run("EmptyInputReturnsEmpty", func(t *testing.T) {
+		out, err := normalizeRedirectURIs([]string{})
+		assert.NoError(t, err)
+		assert.NotNil(t, out)
+		assert.Len(t, out, 0)
+	})
+	t.Run("WhitespaceTrimmed", func(t *testing.T) {
+		out, err := normalizeRedirectURIs([]string{"  https://example.com/cb  "})
+		assert.NoError(t, err)
+		assert.Equal(t, []string{"https://example.com/cb"}, out)
+	})
+	t.Run("DropsDuplicates", func(t *testing.T) {
+		out, err := normalizeRedirectURIs([]string{
+			"https://example.com/cb",
+			"https://example.com/cb",
+		})
+		assert.NoError(t, err)
+		assert.Equal(t, []string{"https://example.com/cb"}, out)
+	})
+	t.Run("AllowsLoopbackHTTP", func(t *testing.T) {
+		out, err := normalizeRedirectURIs([]string{"http://127.0.0.1:2342/cb"})
+		assert.NoError(t, err)
+		assert.Equal(t, []string{"http://127.0.0.1:2342/cb"}, out)
+	})
+	t.Run("AllowsClusterInternalHTTP", func(t *testing.T) {
+		out, err := normalizeRedirectURIs([]string{"http://photoprism.svc.cluster.local/cb"})
+		assert.NoError(t, err)
+		assert.Equal(t, []string{"http://photoprism.svc.cluster.local/cb"}, out)
+	})
+}
+
+func TestValidateRedirectURI(t *testing.T) {
+	cases := []struct {
+		uri string
+		ok  bool
+	}{
+		{"https://example.com/cb", true},
+		{"http://localhost:2342/cb", true},
+		{"http://127.0.0.1/cb", true},
+		{"http://photoprism.svc/cb", true},
+		{"http://example.com/cb", false},
+		{"https://example.com/cb#frag", false},
+		{"ftp://example.com/cb", false},
+		{"/relative", false},
+		{"", false},
+	}
+	for _, tc := range cases {
+		assert.Equal(t, tc.ok, validateRedirectURI(tc.uri), "uri=%q", tc.uri)
+	}
+}
+
 func TestClusterUpdateNode_RequestTooLarge(t *testing.T) {
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)

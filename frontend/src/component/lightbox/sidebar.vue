@@ -63,7 +63,7 @@
             @blur="onInlineFieldBlur"
           ></v-textarea>
           <!-- eslint-disable-next-line vue/no-v-html -- captionHtml is encode-then-sanitized via $util.sanitizeHtml($util.encodeHTML(raw)); see captionHtml() computed -->
-          <div v-else-if="model.Caption" class="text-body-2 meta-caption meta-scrollable" v-html="captionHtml"></div>
+          <div v-else-if="model.Caption" class="text-body-2 meta-caption meta-scrollable text-html" v-html="captionHtml"></div>
           <div v-else class="meta-add-prompt" @click.stop="startEditing('caption')">{{ $gettext("Add a Caption") }}</div>
           <template v-if="isEditable" #append>
             <p-lightbox-sidebar-toolbar
@@ -185,13 +185,13 @@
               -->
               <v-btn
                 v-if="isEditable"
-                :icon="addingMarker ? 'mdi-pencil-off-outline' : 'mdi-pencil-outline'"
+                :icon="markersEdit ? 'mdi-pencil-off-outline' : 'mdi-pencil-outline'"
                 density="compact"
                 variant="plain"
                 size="x-small"
-                class="meta-faces-edit"
-                :class="{ 'is-active': addingMarker }"
-                :title="addingMarker ? $gettext('Done') : $gettext('Edit')"
+                class="meta-markers-toggle meta-faces-edit"
+                :class="{ 'is-active': markersEdit }"
+                :title="markersEdit ? $gettext('Done') : $gettext('Edit')"
                 :disabled="markersBusy"
                 @mousedown.prevent
                 @click.stop="onToggleFaceMarkerEdit"
@@ -202,7 +202,7 @@
                 density="compact"
                 variant="plain"
                 size="x-small"
-                class="meta-markers-toggle"
+                class="meta-markers-toggle meta-faces-display"
                 :class="{ 'is-active': markersVisible }"
                 :title="markersVisible ? $gettext('Hide face markers') : $gettext('Show face markers')"
                 :disabled="markersBusy"
@@ -259,7 +259,7 @@
               @blur="confirmMarkerName(m, 'blur')"
               @click.stop
             >
-              <template v-if="m.SubjUID" #append-inner>
+              <template v-if="m.SubjUID && markersEdit" #append-inner>
                 <v-btn
                   :disabled="markersBusy"
                   :title="$gettext('Unassign')"
@@ -267,9 +267,9 @@
                   density="compact"
                   variant="plain"
                   size="x-small"
-                  class="meta-marker-eject"
+                  class="meta-marker-clear-subject"
                   @mousedown.prevent
-                  @click.stop="onEjectMarker(m)"
+                  @click.stop="onClearSubject(m)"
                 ></v-btn>
               </template>
             </v-combobox>
@@ -429,7 +429,7 @@
                 @blur="onInlineFieldBlur"
               ></v-textarea>
               <!-- eslint-disable-next-line vue/no-v-html -- f.htmlValue points at a sanitized computed (e.g. notesHtml) which runs $util.sanitizeHtml($util.encodeHTML(raw)). -->
-              <div v-else-if="f.display === 'html' && fieldHtml(f)" class="text-body-2 meta-scrollable" :class="`meta-${f.key}`" v-html="fieldHtml(f)"></div>
+              <div v-else-if="f.display === 'html' && fieldHtml(f)" class="text-body-2 meta-scrollable text-html" :class="`meta-${f.key}`" v-html="fieldHtml(f)"></div>
               <div v-else-if="f.display !== 'html' && f.read(photo)" class="text-body-2 meta-scrollable" :class="`meta-${f.key}`">{{ f.read(photo) }}</div>
               <div v-else class="meta-add-prompt" @click.stop="startEditing(f.key)">{{ f.placeholder ? f.placeholder : f.label }}</div>
               <template v-if="isEditable" #append>
@@ -512,7 +512,7 @@ export default {
       default: "",
     },
   },
-  emits: ["close", "toggle-face-marker-mode", "toggle-face-marker-edit", "eject-marker", "reload-markers", "naming-started"],
+  emits: ["close", "toggle-face-marker-mode", "toggle-face-marker-edit", "clear-subject", "reload-markers", "naming-started"],
   data() {
     return {
       // Reactive handle to the parent lightbox's $data via `$view.getData()`.
@@ -520,7 +520,7 @@ export default {
       view: this.$view.getData(),
       // Shared face-marker state singleton. The lightbox owns policy
       // (transitions, API writes); the sidebar emits `toggle-face-marker-*`
-      // / `eject-marker` / `reload-markers`.
+      // / `clear-subject` / `reload-markers`.
       faceMarkers: $faceMarkers,
       actions: [],
       featPeople: this.$config.feature("people"),
@@ -603,7 +603,7 @@ export default {
     markersVisible() {
       return this.faceMarkers.active;
     },
-    addingMarker() {
+    markersEdit() {
       return this.faceMarkers.isEdit;
     },
     markersBusy() {
@@ -1258,7 +1258,7 @@ export default {
       }
       this.$emit("toggle-face-marker-edit");
     },
-    onEjectMarker(marker) {
+    onClearSubject(marker) {
       if (!this.isEditable || this.markersBusy || !marker || !marker.SubjUID) {
         return;
       }
@@ -1266,7 +1266,7 @@ export default {
       // re-render after clearSubject would commit the typed name the
       // user just rejected. confirmMarkerName checks it and bails.
       this._lastDestructiveMarkerActionAt = Date.now();
-      this.$emit("eject-marker", marker);
+      this.$emit("clear-subject", marker);
     },
     // Combobox can bind either the typed string or the selected subject object.
     unwrapMarkerName(value) {

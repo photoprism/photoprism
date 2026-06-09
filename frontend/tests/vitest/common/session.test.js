@@ -535,11 +535,72 @@ describe("common/session", () => {
       expect(session.getLoginRedirectUrl(null)).toBeNull();
     });
 
+    // hasLoginRedirectUrl() is the deep-link arrival signal the /login
+    // route guard uses to decide whether to auto-bounce through OIDC. A
+    // stored URL means the global router guard sent the user here from a
+    // protected page; no URL means the user opened /login directly.
+    it("hasLoginRedirectUrl() reports the deep-link arrival signal across the OIDC roundtrip", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-has";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      session.setLoginRedirectUrl("/library/albums/at1sqs7gr75pl5r7/view");
+      expect(session.hasLoginRedirectUrl()).toBe(true);
+
+      // A brand-new Session (the post-OIDC reboot) still sees the signal
+      // from namespaced storage even though in-memory state is fresh.
+      const reborn = new Session(storage, createConfig("/library", namespaceKey));
+      expect(reborn.hasLoginRedirectUrl()).toBe(true);
+
+      reborn.clearLoginRedirectUrl();
+      expect(reborn.hasLoginRedirectUrl()).toBe(false);
+    });
+
     it("returns the default URL when no redirect is recorded", () => {
       const storage = new StorageShim();
       const session = new Session(storage, $config);
       expect(session.getLoginRedirectUrl("/")).toBe("/");
       expect(session.getLoginRedirectUrl(null)).toBeNull();
+    });
+
+    // Defends against null/undefined/whitespace inputs and crafted
+    // ?return_to=/login URLs. Storing a login page as the deep-link target
+    // would either no-op the post-login redirect (same-URL guard in
+    // view.redirect) or re-trigger auto-OIDC forever.
+    it("rejects invalid post-login redirect URLs via invalidRedirectUrl", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-valid-guard";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      // Direct helper checks: rejected inputs.
+      expect(session.invalidRedirectUrl(null)).toBe(true);
+      expect(session.invalidRedirectUrl(undefined)).toBe(true);
+      expect(session.invalidRedirectUrl("")).toBe(true);
+      expect(session.invalidRedirectUrl("   ")).toBe(true);
+      expect(session.invalidRedirectUrl(42)).toBe(true);
+      expect(session.invalidRedirectUrl("/portal/admin/login")).toBe(true);
+      expect(session.invalidRedirectUrl("/library/login?return_to=evil")).toBe(true);
+      expect(session.invalidRedirectUrl("/library/login/")).toBe(true);
+
+      // Direct helper checks: accepted inputs.
+      expect(session.invalidRedirectUrl("/library/photos")).toBe(false);
+      expect(session.invalidRedirectUrl("/oauth/authorize?client_id=x")).toBe(false);
+
+      // setLoginRedirectUrl gates on the helper.
+      session.setLoginRedirectUrl("/portal/admin/login");
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+      session.setLoginRedirectUrl("   ");
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+      session.setLoginRedirectUrl(null);
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      // Non-login deep links still record normally.
+      session.setLoginRedirectUrl("/library/photos");
+      expect(session.getLoginRedirectUrl(null)).toBe("/library/photos");
     });
 
     it("clears any stale redirect on logout so a fresh session does not return to the previous deep link", () => {
@@ -605,6 +666,68 @@ describe("common/session", () => {
       expect(session.consumeLogoutSignal()).toBe(true);
       expect(session.consumeLogoutSignal()).toBe(false);
       expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.logout")).toBeNull();
+    });
+  });
+
+  describe("OIDC attempt one-shot", () => {
+    // The /login route guard uses markOidcAttempt + consumeOidcAttempt to cap
+    // auto-OIDC at one attempt per browser tab. Without it, a deep-link target
+    // persisted to localStorage during a failed/abandoned OIDC roundtrip would
+    // re-trigger the redirect on every subsequent /login visit, locking the
+    // user out of the local form indefinitely.
+    it("markOidcAttempt sets a one-shot flag in namespaced sessionStorage", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-set";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.markOidcAttempt();
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBe("1");
+    });
+
+    it("consumeOidcAttempt returns true once then false", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-consume";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      expect(session.consumeOidcAttempt()).toBe(false);
+
+      session.markOidcAttempt();
+      expect(session.consumeOidcAttempt()).toBe(true);
+      expect(session.consumeOidcAttempt()).toBe(false);
+
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBeNull();
+    });
+
+    it("clearLoginRedirectUrl also clears the OIDC attempt so the next deep link can retry", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-paired";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.setLoginRedirectUrl("/library/people");
+      session.markOidcAttempt();
+      session.clearLoginRedirectUrl();
+
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBeNull();
+      expect(session.consumeOidcAttempt()).toBe(false);
+    });
+
+    it("onLogout clears the OIDC attempt alongside the deep link target", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-oidc-attempt-logout";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.markOidcAttempt();
+      session.onLogout(true);
+
+      const key = buildNamespace(namespaceKey) + "login.oidc.attempt";
+      expect(window.sessionStorage.getItem(key)).toBeNull();
     });
   });
 

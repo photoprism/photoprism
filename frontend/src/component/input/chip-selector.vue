@@ -22,7 +22,7 @@
               <v-icon v-if="getChipIcon(item)" class="chip__icon">
                 {{ getChipIcon(item) }}
               </v-icon>
-              <span class="chip__text">{{ item.title }}</span>
+              <span class="chip__text text-truncate">{{ item.title }}</span>
             </div>
           </div>
         </template>
@@ -105,6 +105,10 @@ export default {
       type: Function,
       default: null,
     },
+    maxLength: {
+      type: Number,
+      default: 0,
+    },
   },
   emits: ["update:items"],
   data() {
@@ -156,13 +160,13 @@ export default {
       }
 
       if (item.action === "add") {
-        classes.push(item.mixed ? `${baseClass}--green-light` : `${baseClass}--green`);
+        classes.push(item.mixed ? `${baseClass}--add-mixed` : `${baseClass}--add`);
       } else if (item.action === "remove") {
-        classes.push(item.mixed ? `${baseClass}--red-light` : `${baseClass}--red`);
+        classes.push(item.mixed ? `${baseClass}--remove-mixed` : `${baseClass}--remove`);
       } else if (item.mixed) {
-        classes.push(`${baseClass}--gray-light`);
+        classes.push(`${baseClass}--default-mixed`);
       } else {
-        classes.push(`${baseClass}--gray`);
+        classes.push(`${baseClass}--default`);
       }
 
       return classes;
@@ -263,6 +267,14 @@ export default {
       }
 
       if (!title) {
+        return;
+      }
+
+      // Block the create path when the typed title exceeds the configured cap —
+      // otherwise the backend setter clips with an ellipsis and the user is
+      // shown a green success against a renamed entity they didn't intend.
+      if (this.maxLength > 0 && title.length > this.maxLength) {
+        this.$notify.error(this.$gettext("%{s} is too long", { s: this.$gettext("Name") }));
         return;
       }
 

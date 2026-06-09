@@ -1,7 +1,6 @@
 package workers
 
 import (
-	"errors"
 	"fmt"
 	"runtime/debug"
 	"time"
@@ -11,6 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Backup represents a background backup worker.
@@ -44,6 +45,13 @@ func (w *Backup) Start(database, albums bool, force bool, retain int) (err error
 		return nil
 	}
 
+	// Reset the cached disk usage so a freshly freed disk is detected immediately.
+	disk.FlushFree()
+
+	if w.conf.InsufficientStorage() {
+		return status.ErrInsufficientStorage
+	}
+
 	// Return error if backup worker is already running.
 	if err = mutex.BackupWorker.Start(); err != nil {
 		return err
@@ -64,7 +72,7 @@ func (w *Backup) Start(database, albums bool, force bool, retain int) (err error
 	}
 
 	if mutex.BackupWorker.Canceled() {
-		return errors.New("canceled")
+		return status.ErrCanceled
 	}
 
 	// Create albums backup.

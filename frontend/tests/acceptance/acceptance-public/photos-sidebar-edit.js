@@ -67,6 +67,72 @@ test.meta("testID", "sidebar-edit-002").meta({ mode: "public" })("Common: Adds a
   await t.expect(Selector("div.is-photo").withAttribute("data-uid", uid).exists).ok();
 });
 
+test.meta("testID", "sidebar-edit-004").meta({ mode: "public" })(
+  "Common: Removes a label and an album inline, undoes before save, and keeps them on the photo",
+  async (t) => {
+    const uid = await photoviewer.openSidebarOnFirstPhoto();
+
+    const stamp = Date.now();
+    const labelTitle = `SidebarEditLabelUndo-${stamp}`;
+    const albumTitle = `SidebarEditAlbumUndo-${stamp}`;
+
+    await photoviewer.typeAndConfirmInlineChip("Labels", labelTitle);
+    await photoviewer.typeAndConfirmInlineChip("Albums", albumTitle);
+
+    const labelChip = photoviewer.chipByTitle("Labels", labelTitle);
+    const albumChip = photoviewer.chipByTitle("Albums", albumTitle);
+
+    await photoviewer.removeInlineChip("Labels", labelTitle);
+    await t.expect(labelChip.exists).notOk();
+    await photoviewer.removeInlineChip("Albums", albumTitle);
+    await t.expect(albumChip.exists).notOk();
+
+    await photoviewer.undoChipRemovals("Labels");
+    await t.expect(labelChip.exists).ok();
+    await photoviewer.undoChipRemovals("Albums");
+    await t.expect(albumChip.exists).ok();
+
+    // Close + reopen rehydrates the sidebar from the API; both chips must
+    // still be there because Undo never reached the backend.
+    await photoviewer.triggerPhotoViewerAction("close-button");
+    await photoviewer.openSidebarOnPhoto(uid);
+
+    await t.expect(photoviewer.chipByTitle("Labels", labelTitle).exists).ok();
+    await t.expect(photoviewer.chipByTitle("Albums", albumTitle).exists).ok();
+  }
+);
+
+test.meta("testID", "sidebar-edit-005").meta({ mode: "public" })(
+  "Common: Removes a label and an album inline, saves the removal, and detaches them from the photo",
+  async (t) => {
+    const uid = await photoviewer.openSidebarOnFirstPhoto();
+
+    const stamp = Date.now();
+    const labelTitle = `SidebarEditLabelSave-${stamp}`;
+    const albumTitle = `SidebarEditAlbumSave-${stamp}`;
+
+    await photoviewer.typeAndConfirmInlineChip("Labels", labelTitle);
+    await photoviewer.typeAndConfirmInlineChip("Albums", albumTitle);
+
+    await photoviewer.removeInlineChip("Labels", labelTitle);
+    await photoviewer.removeInlineChip("Albums", albumTitle);
+
+    await photoviewer.confirmChipRemovals("Labels");
+    await photoviewer.confirmChipRemovals("Albums");
+
+    await t.expect(photoviewer.chipByTitle("Labels", labelTitle).exists).notOk();
+    await t.expect(photoviewer.chipByTitle("Albums", albumTitle).exists).notOk();
+
+    // Close + reopen confirms the removal persisted past the round-trip;
+    // the saved photo no longer references either chip.
+    await photoviewer.triggerPhotoViewerAction("close-button");
+    await photoviewer.openSidebarOnPhoto(uid);
+
+    await t.expect(photoviewer.chipByTitle("Labels", labelTitle).exists).notOk();
+    await t.expect(photoviewer.chipByTitle("Albums", albumTitle).exists).notOk();
+  }
+);
+
 test.meta("testID", "sidebar-edit-003").meta({ mode: "public" })(
   "Common: Edits every taken-at, camera, and location field and confirms persistence",
   async (t) => {

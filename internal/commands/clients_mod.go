@@ -34,6 +34,12 @@ func clientsModAction(ctx *cli.Context) error {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
+		// Reject flags placed after the client id; the stdlib flag parser
+		// would silently drop them and report "client updated" with no changes.
+		if err := RejectTrailingFlags(ctx); err != nil {
+			return err
+		}
+
 		// Find client record.
 		client := entity.FindClientByUID(frm.ID())
 

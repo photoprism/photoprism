@@ -30,7 +30,7 @@
               </span>
               <span v-else-if="indexing">{{ $gettext(`Upload complete. Indexing…`) }}</span>
               <span v-else-if="completedTotal === 100">{{ $gettext(`Done.`) }}</span>
-              <span v-else-if="filesQuotaReached"
+              <span v-else-if="insufficientStorage"
                 >{{ $gettext(`Insufficient storage.`) }} {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
               >
               <span v-else-if="$vuetify.display.mdAndDown">{{ $gettext(`Select the files to upload…`) }}</span>
@@ -41,7 +41,7 @@
                 <v-file-upload
                   :model-value="selected"
                   :filter-by-type="accept"
-                  :disabled="busy || filesQuotaReached"
+                  :disabled="busy || insufficientStorage"
                   :multiple="true"
                   :title="$vuetify.display.mdAndDown ? $gettext('Browse') : ''"
                   :density="$vuetify.display.mdAndDown ? 'compact' : 'comfortable'"
@@ -55,7 +55,7 @@
                 <v-combobox
                   v-model="selectedAlbums"
                   v-model:menu="albumsMenu"
-                  :disabled="busy || loading || total > 0 || filesQuotaReached"
+                  :disabled="busy || loading || total > 0 || insufficientStorage"
                   :placeholder="$gettext('Select or create albums')"
                   :items="albums"
                   item-title="Title"
@@ -119,7 +119,7 @@
             {{ $gettext(`Close`) }}
           </v-btn>
           <v-btn
-            :disabled="busy || filesQuotaReached || !hasFiles"
+            :disabled="busy || insufficientStorage || !hasFiles"
             variant="flat"
             color="highlight"
             class="action-select action-upload"
@@ -166,7 +166,7 @@ export default {
       loading: false,
       indexing: false,
       failed: false,
-      filesQuotaReached: this.$config.filesQuotaReached(),
+      insufficientStorage: this.$config.insufficientStorage(),
       current: 0,
       total: 0,
       totalSize: 0,

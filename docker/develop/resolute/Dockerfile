@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 26.04 LTS (Resolute Raccoon)
 FROM ubuntu:resolute
 
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -69,6 +69,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
+    rm -f /usr/bin/pebble && rm -rf /var/lib/pebble && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
         libc6 libbsd-dev ca-certificates bash sudo nano tzdata gpg make zip unzip wget curl rsync \
@@ -76,7 +77,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
-        libheif-examples libheif-plugin-libde265 libheif-plugin-x265 libheif-plugin-aomdec libheif-plugin-aomenc libheif-plugin-dav1d \
         va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
     && \
     apt-get -qq install \
@@ -102,6 +102,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
+    /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     mkdir -p /etc/skel/.config/go/telemetry && \

@@ -273,6 +273,57 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 	})
 }
 
+func TestConfig_FaceReport(t *testing.T) {
+	m := NewConfig(CliTestContext())
+	rows, cols := m.FaceReport()
+
+	assert.Equal(t, []string{"Name", "Value"}, cols)
+	assert.GreaterOrEqual(t, len(rows), 1)
+
+	values := make(map[string]string, len(rows))
+	for _, row := range rows {
+		if len(row) < 2 {
+			continue
+		}
+		values[row[0]] = row[1]
+	}
+
+	// Spot-check that the core face-related options are present.
+	expected := []string{
+		"disable-faces",
+		"vision-yaml",
+		"face-engine",
+		"face-engine-run",
+		"face-engine-threads",
+		"facenet-model-path",
+		"face-size",
+		"face-score",
+		"face-overlap",
+		"face-cluster-size",
+		"face-cluster-score",
+		"face-cluster-core",
+		"face-cluster-dist",
+		"face-cluster-radius",
+		"face-collision-dist",
+		"face-epsilon-dist",
+		"face-match-dist",
+		"face-skip-children",
+		"face-allow-background",
+	}
+
+	for _, name := range expected {
+		_, ok := values[name]
+		assert.True(t, ok, "FaceReport missing %q", name)
+	}
+
+	// Non-face options must not leak into the focused report.
+	unexpected := []string{"originals-path", "auth-mode", "ffmpeg-bin", "site-url"}
+	for _, name := range unexpected {
+		_, ok := values[name]
+		assert.False(t, ok, "FaceReport unexpectedly includes %q", name)
+	}
+}
+
 func TestConfig_ReportURIRedaction(t *testing.T) {
 	collect := func(rows [][]string) map[string]string {
 		result := make(map[string]string, len(rows))

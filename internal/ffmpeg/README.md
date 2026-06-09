@@ -61,7 +61,8 @@
 ### Testing
 
 - Run unit tests: `go test ./internal/ffmpeg/...`
-- Hardware-specific tests assume the encoder is available; keep runs gated via config when adding new cases.
+- By default the transcode tests only assert the generated command strings. To additionally run a real hardware transcode, set `PHOTOPRISM_FFMPEG_TEST_ENCODER` to the encoder under test (e.g. `vaapi`, `intel`, or `nvidia`) on a host with the matching device. The runtime `PHOTOPRISM_FFMPEG_ENCODER` is intentionally ignored so a development-environment value can't trigger hardware runs by accident.
+- Hardware-specific tests assume the encoder is available; keep runs gated via this opt-in variable when adding new cases.
 
 ### Operational Tips
 

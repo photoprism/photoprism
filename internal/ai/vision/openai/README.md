@@ -1,6 +1,6 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** November 14, 2025
+**Last Updated:** May 21, 2026
 
 ### Overview
 
@@ -28,7 +28,7 @@ This package contains PhotoPrism’s adapter for the OpenAI Responses API. It en
 ### Prompt, Model, & Schema Guidance
 
 - **Models:** The adapter targets GPT‑5 vision tiers (e.g. `gpt-5-nano`, `gpt-5-mini`). These models support image inputs, structured outputs, and deterministic settings. Set `Name` to the exact provider identifier so defaults are applied correctly. Caption models share the same configuration surface and run through the same adapter.
-- **Prompts:** Defaults live in `defaults.go`. Captions use a single-sentence instruction; labels use `LabelPromptDefault` (or `LabelPromptNSFW` when PhotoPrism requests NSFW metadata). Custom prompts should retain schema reminders so structured outputs stay valid.
+- **Prompts:** Defaults live in `defaults.go`. Captions use a single-sentence instruction; labels use `LabelPromptDefault` (or `LabelPromptNSFW` when the package-level `vision.DetectNSFWLabels` global is true, which requires both `PHOTOPRISM_DETECT_NSFW=true` and `PHOTOPRISM_EXPERIMENTAL=true`). Custom prompts should retain schema reminders so structured outputs stay valid.
 - **Schemas:** Labels use the JSON schema returned by `schema.LabelsJsonSchema(nsfw)`; the response format name is derived via `schema.JsonSchemaName` (e.g. `photoprism_vision_labels_v1`). Captions omit schemas unless operators explicitly request a structured format.
 - **When to keep defaults:** For most deployments, leaving `System`, `Prompt`, `Schema`, and `Options` unset yields stable output with minimal configuration. Override them only when domain-specific language or custom scoring is necessary, and add regression tests alongside.
 

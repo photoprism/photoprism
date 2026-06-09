@@ -10,14 +10,14 @@ test.meta("testID", "face-markers-001").meta({ mode: "public" })("Common: Show/h
   await photoviewer.openSidebarOnFirstPhoto("faces:1");
 
   // Public mode = editable, so only the pencil renders.
-  await t.expect(photoviewer.markerAddButton.visible).ok();
+  await t.expect(photoviewer.markersEditToggle.visible).ok();
   await t.expect(photoviewer.faceMarkerOverlay.exists).notOk();
 
-  await t.click(photoviewer.markerAddButton);
+  await t.click(photoviewer.markersEditToggle);
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await t.expect(photoviewer.faceMarkerRect.count).gte(1);
 
-  await t.click(photoviewer.markerAddButton);
+  await t.click(photoviewer.markersEditToggle);
   await t.expect(photoviewer.faceMarkerOverlay.exists).notOk();
 });
 
@@ -27,7 +27,7 @@ test.meta("testID", "face-markers-002").meta({ mode: "public" })(
     // `faces:no` excludes photos with detected faces
     await photoviewer.openSidebarOnFirstPhoto("faces:no");
     await t.expect(photoviewer.peopleHeader.visible).ok();
-    await t.expect(photoviewer.markerAddButton.visible).ok();
+    await t.expect(photoviewer.markersEditToggle.visible).ok();
   }
 );
 
@@ -37,7 +37,7 @@ test.meta("testID", "face-markers-003").meta({ mode: "public" })("Common: Drawin
 
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -55,7 +55,7 @@ test.meta("testID", "face-markers-004").meta({ mode: "public" })("Common: Cancel
 
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerCancelButton.visible).ok();
@@ -70,7 +70,7 @@ test.meta("testID", "face-markers-005").meta({ mode: "public" })(
     await photoviewer.openSidebarOnFirstPhoto("faces:no");
 
     // Add an unnamed marker so the removal flow is deterministic and self-undoing.
-    await photoviewer.startAddingMarker();
+    await photoviewer.startMarkersEdit();
     await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
     await photoviewer.drawMarkerInCenter();
     await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -92,24 +92,24 @@ test.meta("testID", "face-markers-005").meta({ mode: "public" })(
   }
 );
 
-test.meta("testID", "face-markers-006").meta({ mode: "public" })("Common: Named markers expose only the eject (unassign) icon", async (t) => {
+test.meta("testID", "face-markers-006").meta({ mode: "public" })("Common: Named markers expose only the Unassign icon in edit mode", async (t) => {
   await photoviewer.openSidebarOnFirstPhoto("faces:no");
 
   // Create a named marker we control so the assertion is non-vacuous.
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
   await photoviewer.confirmMarkerDraft();
   const unnamed = photoviewer.unnamedPersonRows.nth(-1);
-  await t.typeText(unnamed.find(".meta-inline-marker input"), "EjectIconTest").pressKey("enter");
+  await t.typeText(unnamed.find(".meta-inline-marker input"), "UnassignIconTest").pressKey("enter");
 
-  const named = photoviewer.namedPersonRows.withText("EjectIconTest");
+  const named = photoviewer.namedPersonRows.withText("UnassignIconTest");
   await t.expect(named.visible).ok();
-  await t.expect(named.find(".meta-marker-eject").exists).ok();
+  await t.expect(named.find(".meta-marker-clear-subject").exists).ok();
 
-  // Undo: eject clears the subject link, then remove the now-unnamed marker.
-  await photoviewer.ejectMarker(named);
+  // Undo: clearing the subject unlinks the name, then remove the now-unnamed marker.
+  await photoviewer.clearMarkerSubject(named);
   await photoviewer.removeLastUnnamedMarker();
   await t.expect(photoviewer.personRow.count).eql(0);
 });
@@ -118,7 +118,7 @@ test.meta("testID", "face-markers-007").meta({ mode: "public" })("Common: Newly 
   const uid = await photoviewer.openSidebarOnFirstPhoto("faces:no");
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -126,7 +126,7 @@ test.meta("testID", "face-markers-007").meta({ mode: "public" })("Common: Newly 
   await t.expect(photoviewer.personRow.count).eql(beforeRows + 1);
 
   // Toggle add-mode off before closing — its full-viewer hit area otherwise blocks the close button.
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(photoviewer.viewer.visible).notOk();
 
@@ -142,7 +142,7 @@ test.meta("testID", "face-markers-008").meta({ mode: "public" })("Common: Naming
   await photoviewer.openSidebarOnFirstPhoto("faces:no");
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   // Center-relative size keeps the draft inside the rendered photo across viewports.
   await photoviewer.drawMarkerInCenter();
@@ -158,8 +158,8 @@ test.meta("testID", "face-markers-008").meta({ mode: "public" })("Common: Naming
   const namedRow = photoviewer.namedPersonRows.withText("SidebarFaceTestPerson");
   await t.expect(namedRow.visible).ok();
 
-  // Undo: eject clears the subject link, then remove the now-unnamed marker.
-  await photoviewer.ejectMarker(namedRow);
+  // Undo: clearing the subject unlinks the name, then remove the now-unnamed marker.
+  await photoviewer.clearMarkerSubject(namedRow);
   await photoviewer.removeLastUnnamedMarker();
   await t.expect(photoviewer.personRow.count).eql(beforeRows);
 });
@@ -168,7 +168,7 @@ test.meta("testID", "face-markers-010").meta({ mode: "public" })("Common: Blurri
   await photoviewer.openSidebarOnFirstPhoto("faces:no");
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -193,26 +193,26 @@ test.meta("testID", "face-markers-010").meta({ mode: "public" })("Common: Blurri
   await t.expect(photoviewer.personRow.count).eql(beforeRows);
 });
 
-test.meta("testID", "face-markers-009").meta({ mode: "public" })("Common: Ejecting a named marker removes the subject link but keeps the marker", async (t) => {
+test.meta("testID", "face-markers-009").meta({ mode: "public" })("Common: Unassigning a named marker removes the subject link but keeps the marker", async (t) => {
   await photoviewer.openSidebarOnFirstPhoto("faces:no");
   const beforeRows = await photoviewer.getPersonRowCount();
 
   // Draw + name a marker we control so the test is deterministic.
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
   await photoviewer.confirmMarkerDraft();
   const unnamed = photoviewer.unnamedPersonRows.nth(-1);
-  await t.typeText(unnamed.find(".meta-inline-marker input"), "SidebarEjectTest").pressKey("enter");
+  await t.typeText(unnamed.find(".meta-inline-marker input"), "SidebarClearSubjectTest").pressKey("enter");
 
-  const namedRow = photoviewer.namedPersonRows.withText("SidebarEjectTest");
+  const namedRow = photoviewer.namedPersonRows.withText("SidebarClearSubjectTest");
   await t.expect(namedRow.visible).ok();
   const totalAfterName = await photoviewer.personRow.count;
 
-  await photoviewer.ejectMarker(namedRow);
+  await photoviewer.clearMarkerSubject(namedRow);
 
-  // Eject clears the subject link without removing the marker — total rows stay, the named row goes away.
+  // Clearing the subject unlinks the name without removing the marker — total rows stay, the named row goes away.
   await t.expect(photoviewer.personRow.count).eql(totalAfterName);
   await t.expect(namedRow.exists).notOk();
 

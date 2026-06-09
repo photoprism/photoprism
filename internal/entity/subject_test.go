@@ -302,11 +302,11 @@ func TestSubject_Updates(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := m.Updates(Subject{SubjName: "UpdatedName", SubjType: "UpdatedType"}); err != nil {
+		if err := m.Updates(Subject{SubjName: "UpdatedName", SubjType: "newtype"}); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, "UpdatedName", m.SubjName)
-			assert.Equal(t, "UpdatedType", m.SubjType)
+			assert.Equal(t, "newtype", m.SubjType)
 		}
 	})
 

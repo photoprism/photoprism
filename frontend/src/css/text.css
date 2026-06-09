@@ -153,13 +153,38 @@ code,
 .text-link,
 p a.text-link {
     color: rgb(var(--v-theme-primary, #ffffff));
-    text-decoration: none;
 }
 
+.text-html a,
+.pswp__dynamic-caption a,
 .p-page a,
 .p-page footer .text-link,
 .p-page footer .body-link {
     color: rgb(var(--v-theme-on-surface, #ffffff));
+}
+
+.text-html a,
+.pswp__dynamic-caption a {
+    text-decoration-thickness: 1px;
+    text-decoration: underline;
+    word-break: break-all;
+    white-space: normal;
+    overflow-wrap: normal;
+    word-wrap: normal;
+    text-align: start;
+    text-overflow: ellipsis;
+    hyphens: auto;
+    pointer-events: auto;
+    touch-action: auto;
+}
+
+.text-html a:hover,
+.pswp__dynamic-caption a:hover,
+.text-link,
+p a.text-link,
+.p-page a,
+.p-page footer .text-link,
+.p-page footer .body-link {
     text-decoration: none;
 }
 

@@ -97,7 +97,7 @@
           @close="hideSidebar"
           @toggle-face-marker-mode="toggleFaceMarkerMode"
           @toggle-face-marker-edit="toggleFaceMarkerEdit"
-          @eject-marker="onEjectFaceMarker"
+          @clear-subject="onClearMarkerSubject"
           @reload-markers="onReloadFaceMarkers"
           @naming-started="faceMarkers.setPendingNameMarkerUid('')"
         ></p-lightbox-sidebar>
@@ -188,7 +188,6 @@ export default {
       sidebarVisible: shouldShowSidebar(),
       hideCaption: shouldHideCaption() || shouldShowSidebar(),
       menuElement: null,
-      menuBgColor: "#252525",
       menuVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
@@ -1802,13 +1801,12 @@ export default {
     },
     // Fetches the full Photo model for the given UID using the LRU
     // cache, delegated to the Thumb model so the photo-fetch policy
-    // lives on the slide that owns it (Thumb.loadPhoto). Sessions
-    // without library access (share-link visitors, guests, etc.) skip
-    // the extra API call and let the sidebar work with the viewer
-    // data (Thumb model) — the long-form sidebar fields they would
-    // render are gated by the same ACL anyway.
+    // lives on the slide that owns it (Thumb.loadPhoto). All sessions
+    // preload here: the /photos/:uid endpoint reduces detail server-side
+    // for shared-only sessions, and the sidebar's per-section ACL gates
+    // decide what actually renders.
     fetchPhoto(uid) {
-      if (!uid || this.$config.deny("photos", "access_library")) {
+      if (!uid) {
         this.photo = new Photo();
         return;
       }
@@ -1938,13 +1936,13 @@ export default {
           this.faceMarkers.setBusy(false);
         });
     },
-    // Handles the sidebar's `eject-marker` emit (⏏ button on a named
+    // Handles the sidebar's `clear-subject` emit (⏏ button on a named
     // marker). Clears the marker's subject assignment via the backend,
     // syncs the file's marker entry with fresh server values, and
     // evicts the Photo cache. The overlay re-renders via the `markers`
     // computed, which re-reads `photo.getMarkers(true)` whenever the
     // underlying `file.Markers` array is mutated.
-    onEjectFaceMarker(marker) {
+    onClearMarkerSubject(marker) {
       if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) {
         return;
       }
@@ -2036,11 +2034,11 @@ export default {
     // Preloads the next photo's full metadata when the sidebar is visible.
     // Navigation policy lives on Photo so the lightbox only decides "when"
     // to prefetch; "what to prefetch" is owned by the model. See
-    // Photo.prefetchAround in model/photo.js. Mirrors the fetchPhoto gate
-    // so sessions without library access don't issue prefetch GETs for
-    // long-form sidebar fields they aren't allowed to see anyway.
+    // Photo.prefetchAround in model/photo.js. Runs for all sessions — the
+    // /photos/:uid endpoint reduces detail server-side for shared-only
+    // sessions, so prefetch never exposes more than the viewer may see.
     preloadNextPhoto() {
-      if (!this.sidebarVisible || !this.models.length || this.$config.deny("photos", "access_library")) {
+      if (!this.sidebarVisible || !this.models.length) {
         return;
       }
       Photo.prefetchAround(this.models, this.index, { before: 0, after: 1 });

@@ -186,6 +186,54 @@ func TestToNode_Mapping(t *testing.T) {
 	}
 }
 
+// TestClientRegistry_RedirectURIs_RoundTrip confirms RedirectURIs flow
+// through Put → reload → toNode unchanged, that a nil slice on update
+// means "no change" (preserves the previous set), and that a non-nil
+// slice (even empty) replaces it.
+func TestClientRegistry_RedirectURIs_RoundTrip(t *testing.T) {
+	c := newRegistryTestConfig(t, "cluster-registry-redirecturis")
+	assert.NoError(t, c.Init())
+	r, _ := NewClientRegistryWithConfig(c)
+
+	uri1 := "https://photos.example.com/api/v1/oidc/redirect"
+	uri2 := "http://127.0.0.1:2342/api/v1/oidc/redirect"
+
+	n := &Node{Node: cluster.Node{
+		Name:         "pp-redir",
+		Role:         cluster.RoleInstance,
+		UUID:         rnd.UUIDv7(),
+		RedirectURIs: []string{uri1, uri2},
+	}}
+	assert.NoError(t, r.Put(n))
+
+	reloaded, err := r.FindByNodeUUID(n.UUID)
+	assert.NoError(t, err)
+	if assert.NotNil(t, reloaded) {
+		assert.Equal(t, []string{uri1, uri2}, reloaded.RedirectURIs)
+	}
+
+	// nil on a subsequent Put preserves the previously persisted set.
+	reloaded.RedirectURIs = nil
+	reloaded.Name = "pp-redir-renamed"
+	assert.NoError(t, r.Put(reloaded))
+
+	again, err := r.FindByNodeUUID(n.UUID)
+	assert.NoError(t, err)
+	if assert.NotNil(t, again) {
+		assert.Equal(t, []string{uri1, uri2}, again.RedirectURIs, "nil slice must not clear persisted redirect uris")
+	}
+
+	// Empty non-nil slice replaces (clears) the persisted set.
+	again.RedirectURIs = []string{}
+	assert.NoError(t, r.Put(again))
+
+	cleared, err := r.FindByNodeUUID(n.UUID)
+	assert.NoError(t, err)
+	if assert.NotNil(t, cleared) {
+		assert.Empty(t, cleared.RedirectURIs, "empty slice must clear the persisted set")
+	}
+}
+
 func TestClientRegistry_GetClusterNodeByUUID(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-getbyuuid")
 	assert.NoError(t, c.Init())
