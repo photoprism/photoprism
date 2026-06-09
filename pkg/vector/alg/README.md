@@ -4,7 +4,6 @@ Implements the following clustering algorithms:
 
 - k-means++
 - DBSCAN
-- OPTICS
 
 It was forked from the following repositories, which don't seem to be maintained anymore:
 
@@ -54,7 +53,7 @@ for index, number := range c.Guesses() {
 }
 ```
 
-Algorithms currently supported are KMeans++, DBSCAN and OPTICS.
+Algorithms currently supported are KMeans++ and DBSCAN.
 
 Algorithms which support online learning can be trained this way using Online() function, which relies on channel communication to coordinate the process:
 

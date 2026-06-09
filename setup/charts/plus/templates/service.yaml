@@ -1,0 +1,20 @@
+{{- if hasKey .Values.service "enable" -}}
+{{- fail "service.enable has been renamed to service.enabled — please update your values overrides." -}}
+{{- end -}}
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "photoprism-plus.fullname" . }}
+  labels:
+    {{- include "photoprism-plus.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app.kubernetes.io/name: {{ include "photoprism-plus.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: 2342
+{{- end }}

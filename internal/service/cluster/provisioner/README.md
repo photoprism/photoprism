@@ -6,7 +6,7 @@ The provisioner package manages per-instance MariaDB schemas and users for clust
 
 ### Development Workflow
 
-- Configuration lives in `database.go`. The admin connection string is `ProvisionDSN` (default `root:photoprism@tcp(mariadb:4001)/photoprism`). Query parameters are optional when configuring the portal flag/env (`database-provision-dsn`), for example `charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s`.
+- Configuration lives in `database.go`. The admin connection string is `ProvisionDSN`; the default targets the dev MariaDB service (`root:photoprism@tcp(mariadb:<port>)/photoprism`) using the port from the `MARIADB_PORT` environment variable (falls back to `4001`). Query parameters are optional when configuring the portal flag/env (`database-provision-dsn`), for example `charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s`.
 - `EnsureCredentials` accepts the technical node UUID/name identifiers, creates the schema if needed, and returns credentials plus rotation metadata. `DropCredentials` revokes grants, drops the user, and removes the schema. Both functions require a context; prefer `context.WithTimeout` in callers.
 - Identifier generation is centralized in `GenerateCredentials`. Call it instead of handcrafting database or user names so tests, CLI, and API stay aligned. The resulting identifiers follow `<prefix>d<hmac11>` for schemas and `<prefix>u<hmac11>` for users. Portal deployments may override the prefix via the `database-provision-prefix` flag; defaults are `cluster_d…` / `cluster_u…`.
 
@@ -28,7 +28,7 @@ The provisioner package manages per-instance MariaDB schemas and users for clust
 
 ### MariaDB Troubleshooting
 
-- Connect from the dev container using `mariadb` (already configured to reach `mariadb:4001`). Common snippets:
+- Connect from the dev container using `mariadb` (configured via `.my.cnf` to reach the dev MariaDB service; the default port is `4001` unless `MARIADB_PORT` overrides it in `.env`). Common snippets:
   ```bash
   cat <<'SQL' | mariadb
   SHOW DATABASES LIKE 'cluster_d%'; -- adjust prefix if database-provision-prefix overrides the default

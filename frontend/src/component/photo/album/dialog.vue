@@ -72,7 +72,7 @@
   </v-dialog>
 </template>
 <script>
-import Album from "model/album";
+import Album, { MaxLength as AlbumMaxLength } from "model/album";
 import { createAlbumSelectionWatcher } from "common/albums";
 
 // TODO: Handle cases where users have more than 10000 albums.
@@ -135,6 +135,14 @@ export default {
           namesToCreate.push(a);
         }
       });
+
+      // Block the create path when any typed name exceeds the backend cap —
+      // otherwise Album.SetTitle silently truncates with an ellipsis and the
+      // dialog reports success against a renamed album the user didn't intend.
+      if (namesToCreate.some((title) => (title || "").trim().length > AlbumMaxLength.Title)) {
+        this.$notify.error(this.$gettext("%{s} is too long", { s: this.$gettext("Name") }));
+        return;
+      }
 
       // Deduplicate existing UIDs
       const uniqueExistingUids = [...new Set(existingUids)];

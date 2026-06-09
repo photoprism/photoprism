@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/hub/places"
@@ -216,6 +217,19 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("PARTNER_ID"),
 		}}, {
 		Flag: &cli.PathFlag{
+			Name:      "storage-path",
+			Aliases:   []string{"s"},
+			Usage:     "writable storage `PATH` for sidecar, cache, and database files",
+			EnvVars:   EnvVars("STORAGE_PATH"),
+			TakesFile: true,
+		}}, {
+		Flag: &cli.Float64Flag{
+			Name:    "storage-free",
+			Usage:   "minimum `PERCENT` (1-99) of free storage required for indexing, importing, and uploads, -1 disables the check",
+			Value:   DefaultStorageFree,
+			EnvVars: EnvVars("STORAGE_FREE"),
+		}}, {
+		Flag: &cli.PathFlag{
 			Name:      "config-path",
 			Aliases:   []string{"config", "c"},
 			Usage:     "config storage `PATH` or options.yml filename, values in this file override CLI flags and environment variables if present",
@@ -262,13 +276,6 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("USERS_PATH"),
 		}}, {
 		Flag: &cli.PathFlag{
-			Name:      "storage-path",
-			Aliases:   []string{"s"},
-			Usage:     "writable storage `PATH` for sidecar, cache, and database files",
-			EnvVars:   EnvVars("STORAGE_PATH"),
-			TakesFile: true,
-		}}, {
-		Flag: &cli.PathFlag{
 			Name:      "import-path",
 			Aliases:   []string{"im"},
 			Usage:     "base `PATH` from which files can be imported to originals *optional*",
@@ -289,7 +296,7 @@ var Flags = CliFlags{
 		Flag: &cli.BoolFlag{
 			Name:    "upload-nsfw",
 			Aliases: []string{"n"},
-			Usage:   "allows uploads that might be offensive (detecting unsafe content requires TensorFlow)",
+			Usage:   "allows uploads that might be offensive (when disabled, files flagged by the NSFW model are rejected before indexing)",
 			EnvVars: EnvVars("UPLOAD_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -774,6 +781,29 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("JWT_LEEWAY"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-issuer",
+			Usage:   "Portal OIDC OP issuer `URL` advertised in discovery and ID tokens (defaults to site-url)",
+			EnvVars: EnvVars("PORTAL_OIDC_ISSUER"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-ttl",
+			Usage:   "Portal OIDC OP access/ID-token lifetime in `SECONDS` (default 300, max 900)",
+			Value:   300,
+			EnvVars: EnvVars("PORTAL_OIDC_TTL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-code-ttl",
+			Usage:   "Portal OIDC OP authorization-code lifetime in `SECONDS` (default 60, max 300)",
+			Value:   60,
+			EnvVars: EnvVars("PORTAL_OIDC_CODE_TTL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-default-policy",
+			Usage:   "Portal OIDC OP routing policy when a user has access to multiple instances (`chooser` or `direct`)",
+			Value:   "chooser",
+			EnvVars: EnvVars("PORTAL_OIDC_DEFAULT_POLICY"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "advertise-url",
 			Usage:   "advertised `URL` for intra-cluster calls (scheme://host[:port])",
 			Value:   "",
@@ -1048,6 +1078,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("FFMPEG_MAP_AUDIO"),
 		}, DocDefault: fmt.Sprintf("`%s`", encode.DefaultMapAudio)}, {
 		Flag: &cli.StringFlag{
+			Name:    "ffmpeg-exclude",
+			Usage:   "container and codec `FORMATS` not to be processed by FFmpeg, separated by commas",
+			Value:   ffmpeg.DefaultExclude,
+			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
 			Value:   "exiftool",
@@ -1225,7 +1261,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
-			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",
+			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{

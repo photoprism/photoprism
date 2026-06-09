@@ -59,6 +59,11 @@ amd: update install-amd
 install-amd:
 	@echo "Installing AMD VA-API GPU Drivers..."
 	apt-get -qq install mesa-va-drivers vainfo libva2
+vulkan: update install-vulkan
+vulkan-drivers: vulkan
+install-vulkan:
+	@echo "Installing Mesa Vulkan Drivers and Tools..."
+	apt-get -qq install mesa-vulkan-drivers vulkan-tools libvulkan1
 clitools: update install-clitools
 cli-tools: clitools
 nano: clitools

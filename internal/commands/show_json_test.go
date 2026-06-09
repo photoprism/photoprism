@@ -97,6 +97,11 @@ func TestShowMetadata_JSON(t *testing.T) {
 }
 
 func TestShowConfig_JSON(t *testing.T) {
+	// "show config" calls InitCore, which creates storage dirs and an index database under
+	// ".photoprism" in the working directory when no storage path is set; run from a temp
+	// dir so the test does not leave files in the repository.
+	t.Chdir(t.TempDir())
+
 	out, err := RunWithTestContext(ShowConfigCommand, []string{"config", "--json"})
 
 	if err != nil {

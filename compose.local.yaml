@@ -14,7 +14,7 @@ services:
       - "2345:2342" # HTTP port (host:container)
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.latest.loadbalancer.server.port=2342"
       - "traefik.http.routers.latest.entrypoints=websecure"
       - "traefik.http.routers.latest.rule=Host(`local.localssl.dev`)"
@@ -39,7 +39,7 @@ services:
       PHOTOPRISM_HTTP_PORT: 2342
       PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"             # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
       PHOTOPRISM_DATABASE_NAME: "local"
       PHOTOPRISM_DATABASE_USER: "local"
       PHOTOPRISM_DATABASE_PASSWORD: "local"
@@ -76,5 +76,5 @@ services:
 ## Join shared "photoprism" network
 networks:
   default:
-    name: photoprism
+    name: ${COMPOSE_NETWORK_NAME:-photoprism}
     external: true

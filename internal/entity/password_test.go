@@ -103,7 +103,7 @@ func TestPassword_Invalid(t *testing.T) {
 
 func TestPassword_Create(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		p := Password{}
+		p := Password{UID: "uriku0138hqql4bz"}
 
 		err := p.Create()
 

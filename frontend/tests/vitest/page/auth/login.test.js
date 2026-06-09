@@ -139,42 +139,29 @@ describe("page/auth/login", () => {
     expect(session.followRedirect).toHaveBeenCalledWith("/api/v1/oidc/login");
   });
 
-  describe("automatic OIDC redirect", () => {
-    // PHOTOPRISM_OIDC_REDIRECT used to only fire for the root path; deep links
-    // under /library/* served the SPA bootstrap, which boots into the login
-    // page. The login page now opts unauthenticated visitors into OIDC on
-    // mount so the deep-link flow matches the root-path behavior.
-    it("auto-redirects to the OIDC provider when oidc.redirect is enabled and the user is unauthenticated", () => {
+  // Auto-OIDC redirect for unauthenticated visitors now lives in the
+  // /login route guard (see frontend/tests/vitest/app/routes.test.js).
+  // Mounting the component must NEVER bounce the user — manual visits
+  // to /library/login have to keep working when PHOTOPRISM_OIDC_REDIRECT
+  // is on, so users can still authenticate with local or LDAP/AD
+  // credentials.
+  describe("does not auto-redirect on mount", () => {
+    it("never calls followRedirect when oidc.redirect is enabled and the user is unauthenticated", () => {
       const { session } = mountLogin({ oidcEnabled: true, oidcRedirect: true });
 
-      expect(session.followRedirect).toHaveBeenCalledWith("/api/v1/oidc/login");
+      expect(session.followRedirect).not.toHaveBeenCalled();
     });
 
-    it("does not auto-redirect when oidc.redirect is disabled", () => {
+    it("never calls followRedirect when oidc.redirect is disabled", () => {
       const { session } = mountLogin({ oidcEnabled: true, oidcRedirect: false });
 
       expect(session.followRedirect).not.toHaveBeenCalled();
     });
 
-    it("does not auto-redirect when the user is already authenticated", () => {
-      const { session } = mountLogin({
-        oidcEnabled: true,
-        oidcRedirect: true,
-        sessionOverrides: { isAuthenticated: vi.fn(() => true) },
-      });
+    it("never reads the logout signal during mount (route guard owns it)", () => {
+      const { session } = mountLogin({ oidcEnabled: true, oidcRedirect: true });
 
-      expect(session.followRedirect).not.toHaveBeenCalled();
-    });
-
-    it("skips a single auto-redirect after an explicit logout", () => {
-      const { session } = mountLogin({
-        oidcEnabled: true,
-        oidcRedirect: true,
-        sessionOverrides: { consumeLogoutSignal: vi.fn(() => true) },
-      });
-
-      expect(session.consumeLogoutSignal).toHaveBeenCalledTimes(1);
-      expect(session.followRedirect).not.toHaveBeenCalled();
+      expect(session.consumeLogoutSignal).not.toHaveBeenCalled();
     });
   });
 });

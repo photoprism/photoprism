@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 23.10 (Mantic Minotaur)
 FROM ubuntu:mantic
 
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -59,7 +59,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 \
-        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync imagemagick libvips-dev rawtherapee \
+        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync imagemagick libvips42 rawtherapee \
         ffmpeg libffmpeg-nvenc-dev libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra \
         x264 x265 libde265-dev libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev \
     && \

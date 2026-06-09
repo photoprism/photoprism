@@ -83,8 +83,8 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
   await t
     .typeText(albumdialog.title, "British Columbia", { replace: true })
     .click(albumdialog.category)
+    .click(albumdialog.category)
     .pressKey("ctrl+a delete")
-    .pressKey("enter")
     .click(albumdialog.description)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
@@ -96,10 +96,15 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
   await t
     .expect(page.cardTitle.nth(0).innerText)
     .contains("British Columbia")
-    .expect(page.cardDescription.innerText)
-    .notContains("We love earth")
+    .expect(page.cardDescription.exists)
+    .notOk()
     .expect(Selector("button.meta-location").innerText)
     .notContains("Earth");
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+  await t.expect(albumdialog.category.value).eql("");
+  await t.click(albumdialog.dialogCancel);
 });
 
 test.meta("testID", "states-002").meta({ mode: "public" })("Common: Create, Edit, delete sharing link for state", async (t) => {

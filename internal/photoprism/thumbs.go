@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"errors"
 	"fmt"
 	"path/filepath"
 	"runtime/debug"
@@ -14,6 +13,9 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
+	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Thumbs represents a thumbnail image generator.
@@ -24,6 +26,19 @@ type Thumbs struct {
 // NewThumbs returns a new thumbnails generator and expects the config as argument.
 func NewThumbs(conf *config.Config) *Thumbs {
 	return &Thumbs{conf: conf}
+}
+
+// insufficientStorage reports whether thumbnail generation must abort because the
+// configured files quota is reached or the storage path is critically low on free disk space.
+func (w *Thumbs) insufficientStorage() bool {
+	if !w.conf.InsufficientStorage() {
+		return false
+	}
+
+	// Do not leak server internals like the size of the storage volume.
+	log.Errorf("thumbs: aborting due to insufficient storage")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	return true
 }
 
 // Start creates thumbnails for files in the originals and sidecar folders.
@@ -47,6 +62,13 @@ func (w *Thumbs) Start(dir string, force, originalsOnly bool) (err error) {
 
 	// Scan sidecar folder?
 	originalsOnly = originalsOnly || sidecarPath == "" || sidecarPath == originalsPath || !fs.PathExists(sidecarDir)
+
+	// Reset the cached disk usage so a freshly freed disk is detected immediately.
+	disk.FlushFree()
+
+	if w.insufficientStorage() {
+		return status.ErrInsufficientStorage
+	}
 
 	// Start creating thumbnails.
 	if _, err = w.Dir(originalsDir, force); err != nil || originalsOnly {
@@ -97,7 +119,13 @@ func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
 		}()
 
 		if mutex.IndexWorker.Canceled() {
-			return errors.New("canceled")
+			return status.ErrCanceled
+		}
+
+		// Stop the walk if storage drops below the threshold mid-scan.
+		if w.insufficientStorage() {
+			mutex.IndexWorker.Cancel()
+			return status.ErrInsufficientStorage
 		}
 
 		isDir, _ := info.IsDirOrSymlinkToDir()

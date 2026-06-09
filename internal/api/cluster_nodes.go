@@ -189,7 +189,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 //	@Accept		json
 //	@Produce	json
 //	@Param		uuid				path		string	true	"node uuid"
-//	@Param		node				body		object	true	"properties to update (Role, Labels, AdvertiseUrl, SiteUrl)"
+//	@Param		node				body		object	true	"properties to update (Role, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)"
 //	@Success	200					{object}	cluster.StatusResponse
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/{uuid} [patch]
@@ -221,6 +221,7 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			Labels       map[string]string `json:"Labels"`
 			AdvertiseUrl *string           `json:"AdvertiseUrl"`
 			SiteUrl      *string           `json:"SiteUrl"`
+			RedirectURIs *[]string         `json:"RedirectURIs"`
 		}
 
 		LimitRequestBodyBytes(c, MaxClusterRegisterBytes)
@@ -292,6 +293,16 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 
 				n.SiteUrl = normalizeSiteURL(siteUrl)
 			}
+		}
+
+		if req.RedirectURIs != nil {
+			normalized, err := normalizeRedirectURIs(*req.RedirectURIs)
+			if err != nil {
+				AbortBadRequest(c, err)
+				return
+			}
+			// Non-nil slice (even empty) replaces the persisted set; nil is "no change".
+			n.RedirectURIs = normalized
 		}
 
 		n.UpdatedAt = time.Now().UTC().Format(time.RFC3339)

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -38,6 +38,10 @@ const LoginPage = "login";
 // login.* keys survive auth.gohtml's session.* wipe after the OIDC roundtrip.
 const LoginRedirectKey = "login.next";
 const LogoutSignalKey = "login.logout";
+// One-shot flag (per browser tab) for the OIDC auto-redirect attempt. Stored
+// in sessionStorage so a closed tab clears it, and so a failed/abandoned OIDC
+// roundtrip can fall back to the local login form instead of looping.
+const OidcAttemptKey = "login.oidc.attempt";
 
 const resolveStorageNamespace = (config) => {
   if (typeof config?.storageNamespace === "string" && config.storageNamespace !== "") {
@@ -492,16 +496,31 @@ export default class Session {
     return defaultUrl === undefined ? "/" : defaultUrl;
   }
 
+  // Reports whether a deep-link redirect target is recorded. The /login
+  // route guard uses this as the deep-link arrival signal: a stored URL
+  // means the global router guard bounced the user here from a protected
+  // page, while a missing one means the user opened /login directly.
+  hasLoginRedirectUrl() {
+    if (this.loginRedirect) {
+      return true;
+    }
+    return !!this.localStorage?.getItem(LoginRedirectKey);
+  }
+
   clearLoginRedirectUrl() {
     this.loginRedirect = false;
     this.localStorage?.removeItem(LoginRedirectKey);
+    // The OIDC attempt flag is paired with the deep-link target: clearing
+    // the target (after successful login or logout) frees the next deep-link
+    // arrival to trigger a fresh OIDC roundtrip.
+    this.sessionStorage?.removeItem(OidcAttemptKey);
 
     return this;
   }
 
   // Records the post-login target. Persisted so it survives the OIDC roundtrip.
   setLoginRedirectUrl(url) {
-    if (!url) {
+    if (this.invalidRedirectUrl(url)) {
       return this.clearLoginRedirectUrl();
     }
 
@@ -509,6 +528,37 @@ export default class Session {
     this.localStorage?.setItem(LoginRedirectKey, url);
 
     return this;
+  }
+
+  // invalidRedirectUrl reports whether url is unsafe to record as the
+  // post-login deep-link target. Rejects null/undefined, non-string,
+  // whitespace-only, and login-page URLs (a recorded login URL would either
+  // no-op the post-login redirect or re-trigger auto-OIDC indefinitely on a
+  // crafted `?return_to=/login`).
+  invalidRedirectUrl(url) {
+    if (typeof url !== "string") {
+      return true;
+    }
+    const trimmed = url.trim();
+    if (trimmed === "") {
+      return true;
+    }
+    let path = trimmed;
+    try {
+      const origin = (typeof window !== "undefined" && window.location?.origin) || "http://localhost";
+      path = new URL(trimmed, origin).pathname;
+    } catch {
+      path = trimmed.split("?")[0].split("#")[0];
+    }
+    path = path.replace(/\/+$/, "");
+    if (!path) {
+      return true;
+    }
+    const loginUri = (this.config?.loginUri || "").replace(/\/+$/, "");
+    if (loginUri && path === loginUri) {
+      return true;
+    }
+    return path.endsWith("/login");
   }
 
   // isUser returns true when the current session has a fully-loaded user record.
@@ -726,6 +776,26 @@ export default class Session {
     const raised = this.localStorage.getItem(LogoutSignalKey) === "1";
     if (raised) {
       this.localStorage.removeItem(LogoutSignalKey);
+    }
+    return raised;
+  }
+
+  // Marks that an OIDC auto-redirect attempt is in flight for this tab.
+  markOidcAttempt() {
+    this.sessionStorage?.setItem(OidcAttemptKey, "1");
+    return this;
+  }
+
+  // Reads and clears the OIDC attempt flag. Returns true once per tab between
+  // markOidcAttempt() calls, so /login can fall back to the form when an OIDC
+  // roundtrip fails or is abandoned instead of looping back to the IdP.
+  consumeOidcAttempt() {
+    if (!this.sessionStorage) {
+      return false;
+    }
+    const raised = this.sessionStorage.getItem(OidcAttemptKey) === "1";
+    if (raised) {
+      this.sessionStorage.removeItem(OidcAttemptKey);
     }
     return raised;
   }

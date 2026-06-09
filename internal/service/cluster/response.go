@@ -22,6 +22,7 @@ type Node struct {
 	SiteUrl      string            `json:"SiteUrl,omitempty"`
 	AdvertiseUrl string            `json:"AdvertiseUrl,omitempty"`
 	Labels       map[string]string `json:"Labels,omitempty"`
+	RedirectURIs []string          `json:"RedirectURIs,omitempty"`
 	CreatedAt    string            `json:"CreatedAt"`
 	UpdatedAt    string            `json:"UpdatedAt"`
 	Database     *NodeDatabase     `json:"Database,omitempty"`

@@ -7,6 +7,16 @@ import (
 )
 
 func TestParseDriver(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		// Empty defaults to SQLite, matching the legacy config switch.
+		assert.Equal(t, DriverNone, ParseDriver(""))
+		assert.Equal(t, DriverNone, ParseDriver("   "))
+	})
+	t.Run("Auto", func(t *testing.T) {
+		// Empty defaults to SQLite, matching the legacy config switch.
+		assert.Equal(t, DriverAuto, ParseDriver("auto"))
+		assert.Equal(t, DriverAuto, ParseDriver("  AUTO "))
+	})
 	t.Run("MySQL", func(t *testing.T) {
 		assert.Equal(t, DriverMySQL, ParseDriver("mysql"))
 		assert.Equal(t, DriverMySQL, ParseDriver("MySQL"))
@@ -33,11 +43,6 @@ func TestParseDriver(t *testing.T) {
 		assert.Equal(t, DriverSQLite3, ParseDriver("sqlite"))
 		assert.Equal(t, DriverSQLite3, ParseDriver("test"))
 		assert.Equal(t, DriverSQLite3, ParseDriver("file"))
-	})
-	t.Run("Empty", func(t *testing.T) {
-		// Empty defaults to SQLite, matching the legacy config switch.
-		assert.Equal(t, DriverSQLite3, ParseDriver(""))
-		assert.Equal(t, DriverSQLite3, ParseDriver("   "))
 	})
 	t.Run("TiDB", func(t *testing.T) {
 		// Recognized so callers can treat it as deprecated; not a supported driver.

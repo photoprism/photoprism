@@ -43,6 +43,25 @@ func TestRewriteLocation(t *testing.T) {
 	assert.Equal(t, "/i/acme/", RewriteLocation("/", prefix, host))
 	assert.Equal(t, "https://portal.example.com/i/acme/library", RewriteLocation("https://portal.example.com/library", prefix, host))
 	assert.Equal(t, "https://other.example.com/library", RewriteLocation("https://other.example.com/library", prefix, host))
+
+	// Portal-root paths are owned by the Portal itself (OIDC OP, discovery,
+	// admin UI). Instances that redirect to them — for example the Pro RP
+	// pointing at the Portal's authorize endpoint — must not be re-scoped
+	// under the instance path prefix.
+	assert.Equal(t, "/oauth/authorize", RewriteLocation("/oauth/authorize", prefix, host))
+	assert.Equal(t, "/.well-known/openid-configuration", RewriteLocation("/.well-known/openid-configuration", prefix, host))
+	assert.Equal(t, "/portal/admin/login", RewriteLocation("/portal/admin/login", prefix, host))
+	assert.Equal(t, "https://portal.example.com/oauth/authorize?x=1", RewriteLocation("https://portal.example.com/oauth/authorize?x=1", prefix, host))
+}
+
+func TestIsPortalRootPath(t *testing.T) {
+	assert.True(t, isPortalRootPath("/oauth/authorize"))
+	assert.True(t, isPortalRootPath("/.well-known/openid-configuration"))
+	assert.True(t, isPortalRootPath("/portal/admin/login"))
+	assert.True(t, isPortalRootPath("oauth/authorize"))
+	assert.False(t, isPortalRootPath("/library"))
+	assert.False(t, isPortalRootPath("/api/v1/photos"))
+	assert.False(t, isPortalRootPath(""))
 }
 
 func TestRewriteSetCookiePath(t *testing.T) {

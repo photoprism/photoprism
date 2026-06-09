@@ -110,13 +110,11 @@ func TestMCPDisabledExit(t *testing.T) {
 		require.Equal(t, 1, coder.ExitCode())
 		require.Contains(t, err.Error(), "--disable-mcp=false")
 	})
-
 	t.Run("DisableMCPFalse_Allows", func(t *testing.T) {
 		conf.Options().DisableMCP = false
 
 		require.NoError(t, mcpDisabledExit(conf))
 	})
-
 	t.Run("NilConfig_Allows", func(t *testing.T) {
 		require.NoError(t, mcpDisabledExit(nil))
 	})

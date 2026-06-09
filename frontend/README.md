@@ -54,7 +54,6 @@ Some major upgrades are blocked by config-file module style. The configs referen
 |-------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `postcss-preset-env` 11.x     | ESM    | `frontend/postcss.config.js` is CommonJS (`module.exports = { plugins: [require("postcss-preset-env"), ...] }`).                                       |
 | `webpack-manifest-plugin` 6.x | ESM    | `frontend/webpack.config.js` is CommonJS (`require("webpack-manifest-plugin")`). Webpack accepts ESM configs, but the migration is non-trivial.        |
-| `escape-string-regexp` 5.x    | ESM    | v5 is ESM-only; verify every consumer (including transitive build-time tooling) before bumping.                                                        |
 | `vuetify` 4.x                 | —      | See the `vuetify` row in [Currently Pinned Packages](#currently-pinned-packages); also a separate v3 → v4 migration project.                           |
 | `vue-router` 5.x              | —      | Major release with breaking changes across `frontend/src/app/routes.js` and dynamic imports. Needs its own evaluation pass with TestCafe verification. |
 

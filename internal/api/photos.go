@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -56,12 +57,25 @@ func GetPhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, consistent with how photo
+		// search filters results. Pictures outside the scope are reported as not found.
+		if visible, err := search.PhotoVisibleToSession(uid, s); err != nil || !visible {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
+
+		// Limit the response to what the session is entitled to see; shared-only sessions get a
+		// reduced view (full-access sessions are unaffected).
+		p.RedactForSession(s)
 
 		c.IndentedJSON(http.StatusOK, p)
 	})
@@ -88,6 +102,17 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
+
+		// Restricted sessions may only modify pictures within their shared scope, mirroring album
+		// updates. This runs before the lookup and form binding so out-of-scope requests have no
+		// side effects.
+		if s.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) || s.NotRegistered() {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
@@ -201,7 +226,15 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, consistent with photo search.
+		if visible, err := search.PhotoVisibleToSession(uid, s); err != nil || !visible {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusNotFound)

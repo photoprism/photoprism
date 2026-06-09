@@ -70,6 +70,27 @@ func TestGetPhoto(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/photos/xxx")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	t.Run("GuestDeniedPrivate", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		GetPhoto(router)
+		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		// A private picture outside the guest's shared scope is reported as not found.
+		r := AuthenticatedRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y13", sessId)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("AdminSeesPrivate", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		GetPhoto(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		r := AuthenticatedRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y13", sessId)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
 }
 
 func TestUpdatePhoto(t *testing.T) {

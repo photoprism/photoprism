@@ -25,7 +25,7 @@ uses the Admin DSN and skips automatically if the DSN cannot be opened/pinged.
 Historically, behavior was also validated via Docker Compose and broader repo
 targets such as "make run-test-mariadb".
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):

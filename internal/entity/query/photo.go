@@ -191,9 +191,10 @@ func FixPrimaries() error {
 
 	var photos entity.Photos
 
-	// Remove primary file flag from broken or missing files.
+	// Remove primary file flag from broken, missing, or deleted files so a photo whose primary is no
+	// longer valid is treated as having none and gets a present file promoted below.
 	if err := UnscopedDb().Table(entity.File{}.TableName()).
-		Where("(file_error <> '' OR file_missing = 1) AND file_primary <> 0").
+		Where("(file_error <> '' OR file_missing = 1 OR deleted_at IS NOT NULL) AND file_primary <> 0").
 		UpdateColumn("file_primary", 0).Error; err != nil {
 		return err
 	}

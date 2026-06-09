@@ -1,4 +1,4 @@
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -39,6 +39,7 @@ BUILD_ARCH ?= $(shell ./scripts/dist/arch.sh)
 export BUILD_ARCH
 JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
 TF_VERSION ?= 2.18.0
+WORKING_DIR ?= /go/src/github.com/photoprism/photoprism
 
 # Install parameters.
 INSTALL_PATH ?= $(BUILD_PATH)/photoprism-ce_$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
@@ -127,7 +128,8 @@ devtools: install-go dep-npm
 .SILENT: help;
 logs:
 	$(DOCKER_COMPOSE) logs -f
-down:
+down: docker-down
+docker-down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
 docs: swag
 swag: swag-json
@@ -162,10 +164,10 @@ notice:
 fix-permissions:
 	$(info Updating filesystem permissions...)
 	@if [ $(UID) != 0 ]; then\
-		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
-		sudo chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism || true;\
-		echo "Running \"chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
-		sudo chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
+		sudo chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
+		sudo chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism || true;\
 		echo "Done."; \
 	else\
 		echo "Running as root. Nothing to do."; \
@@ -276,9 +278,9 @@ dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
+vuln: audit
 audit: audit-frontend audit-backend
-audit-frontend:
-	$(MAKE) -C frontend audit
+audit-frontend: npm-audit
 audit-backend: dep-vuln
 dep-audit: dep-vuln
 dep-vuln:
@@ -296,12 +298,23 @@ npm-version:
 dep-npm:
 	@echo "Installing NPM package manager..."
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "npm@latest"; \
         else \
-	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "npm@latest"; \
         fi
-dep-js:
-	npm ci --ignore-scripts --no-update-notifier --no-audit
+dep-js: npm-ci
+npm-ci:
+	$(info Clean install of NPM dependencies...)
+	npm ci --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-install:
+	$(info Installing NPM dependencies...)
+	npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-update:
+	$(info Updating NPM dependencies in package.json and package-lock.json...)
+	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-audit:
+	npm audit --ignore-scripts --no-fund --no-update-notifier
+tools: gh claude codex
 codex: dep-codex codex-version codex-skills
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
@@ -309,9 +322,9 @@ dep-codex:
 	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "@openai/codex@latest"; \
 	else \
-	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "@openai/codex@latest"; \
 	fi
 skills: agents-skills claude-skills
 agents-skills: codex-skills
@@ -423,32 +436,41 @@ build-static:
 	scripts/build.sh static $(BINARY_NAME)
 build-libheif: build-libheif-amd64 build-libheif-arm64 build-libheif-armv7
 build-libheif-amd64:
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.21.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.22.2
 build-libheif-arm64:
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.21.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.21.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.22.2
 build-libheif-armv7:
-	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.21.2
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.22.2
 build-libheif-latest: build-libheif-amd64-latest build-libheif-arm64-latest build-libheif-armv7-latest
 build-libheif-amd64-latest:
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh
 build-libheif-arm64-latest:
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh
 build-libheif-armv7-latest:
 	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh
+build-libheif-deb: build-libheif-deb-amd64 build-libheif-deb-arm64
+build-libheif-deb-amd64:
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.22.2
+build-libheif-deb-arm64:
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.22.2
 build-tensorflow: docker-tensorflow-amd64
 docker-tensorflow: docker-tensorflow-amd64
 docker-tensorflow-amd64:
@@ -526,7 +548,7 @@ run-test-hub:
 	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
 	$(info Running all Go tests on MariaDB...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/...

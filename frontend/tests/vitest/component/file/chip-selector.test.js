@@ -69,9 +69,9 @@ describe("component/file/chip-selector", () => {
 
   describe("Chip Icons", () => {
     it.each([
-      { idx: 0, expectedClass: "chip--gray", expectedIcon: null },
-      { idx: 1, expectedClass: "chip--green-light", expectedIcon: "mdi-plus" },
-      { idx: 2, expectedClass: "chip--red", expectedIcon: "mdi-minus" },
+      { idx: 0, expectedClass: "chip--default", expectedIcon: null },
+      { idx: 1, expectedClass: "chip--add-mixed", expectedIcon: "mdi-plus" },
+      { idx: 2, expectedClass: "chip--remove", expectedIcon: "mdi-minus" },
     ])("should render expected style/icon for chip at index $idx", ({ idx, expectedClass, expectedIcon }) => {
       const chips = wrapper.findAll(".chip");
       const chip = chips[idx];

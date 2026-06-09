@@ -11,6 +11,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// --- devDatabasePort ---------------------------------------------------------
+
+func TestDevDatabasePort(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		t.Setenv("MARIADB_PORT", "")
+		assert.Equal(t, 4001, devDatabasePort())
+	})
+	t.Run("Override", func(t *testing.T) {
+		t.Setenv("MARIADB_PORT", "4002")
+		assert.Equal(t, 4002, devDatabasePort())
+	})
+	t.Run("InvalidNonNumeric", func(t *testing.T) {
+		t.Setenv("MARIADB_PORT", "not-a-port")
+		assert.Equal(t, 4001, devDatabasePort())
+	})
+	t.Run("InvalidOutOfRange", func(t *testing.T) {
+		t.Setenv("MARIADB_PORT", "0")
+		assert.Equal(t, 4001, devDatabasePort())
+		t.Setenv("MARIADB_PORT", "70000")
+		assert.Equal(t, 4001, devDatabasePort())
+	})
+}
+
 // --- Quoting helpers ---------------------------------------------------------
 
 func TestQuoteIdent_Valid(t *testing.T) {

@@ -132,7 +132,7 @@ body > .v-overlay-container .v-overlay__scrim {
     overflow-y: auto;
 }
 
-.v-file-upload input[type=file] {
+.v-file-upload input[type="file"] {
     max-width: 100%;
 }
 
@@ -180,7 +180,7 @@ body > .v-overlay-container .v-overlay__scrim {
     margin-bottom: 6px;
 }
 
-.v-dialog--upload .v-file-upload  .v-file-upload-icon .v-icon--size-default {
+.v-dialog--upload .v-file-upload .v-file-upload-icon .v-icon--size-default {
     font-size: 1em;
 }
 
@@ -510,7 +510,7 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     font-size: 0.75rem;
 }
 
-body .v-table>.v-table__wrapper>table {
+body .v-table > .v-table__wrapper > table {
     border-spacing: 0;
 }
 

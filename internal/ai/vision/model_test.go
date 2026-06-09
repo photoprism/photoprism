@@ -139,9 +139,19 @@ func TestModel_GetModel(t *testing.T) {
 				Model:  "CUSTOM-MODEL",
 				Engine: ollama.EngineName,
 			},
-			wantModel:   "custom-model:latest",
-			wantName:    "custom-model",
+			wantModel:   "CUSTOM-MODEL:latest",
+			wantName:    "CUSTOM-MODEL",
 			wantVersion: "latest",
+		},
+		{
+			name: "OpenAIPreservesHuggingFaceCase",
+			model: &Model{
+				Engine:  openai.EngineName,
+				Service: Service{Model: "QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ"},
+			},
+			wantModel:   "QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ",
+			wantName:    "QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ",
+			wantVersion: "",
 		},
 		{
 			name: "ServiceOverrideWithVersion",

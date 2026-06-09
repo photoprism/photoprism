@@ -49,6 +49,18 @@ func TestConfig_DatabaseDriverName(t *testing.T) {
 		resetDatabaseOptions(c)
 		assert.Equal(t, "SQLite", c.DatabaseDriverName())
 	})
+	t.Run("Whitespace", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = "   "
+		assert.Equal(t, "SQLite", c.DatabaseDriverName())
+	})
+	t.Run("Auto", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = " AUTO "
+		assert.Equal(t, "SQLite", c.DatabaseDriverName())
+	})
 	t.Run("MySQLReportsAsMariaDB", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		resetDatabaseOptions(c)
@@ -61,6 +73,12 @@ func TestConfig_DatabaseDriverName(t *testing.T) {
 		resetDatabaseOptions(c)
 		c.options.DatabaseDriver = dsn.DriverMariaDB
 		assert.Equal(t, "MariaDB", c.DatabaseDriverName())
+	})
+	t.Run("PostgresReportsAsPostgreSQL", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverPostgres
+		assert.Equal(t, "PostgreSQL", c.DatabaseDriverName())
 	})
 	t.Run("DeprecatedTiDBReportsAsSQLite", func(t *testing.T) {
 		// DatabaseDriver() warns and rewrites "tidb" to SQLite3 before this runs.
@@ -184,15 +202,45 @@ func TestConfig_DatabaseServer(t *testing.T) {
 }
 
 func TestConfig_DatabaseHost(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	resetDatabaseOptions(c)
-	assert.Equal(t, "", c.DatabaseHost())
+	t.Run("SQLite", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		assert.Equal(t, "", c.DatabaseHost())
+	})
+	t.Run("PostgresDefaultsToLocalhost", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverPostgres
+		assert.Equal(t, "localhost", c.DatabaseHost())
+	})
+	t.Run("PostgresUsesConfiguredHost", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverPostgres
+		c.options.DatabaseServer = "postgres.internal:5433"
+		assert.Equal(t, "postgres.internal", c.DatabaseHost())
+	})
 }
 
 func TestConfig_DatabasePort(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	resetDatabaseOptions(c)
-	assert.Equal(t, 0, c.DatabasePort())
+	t.Run("SQLite", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		assert.Equal(t, 0, c.DatabasePort())
+	})
+	t.Run("PostgresDefaultsTo5432", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverPostgres
+		assert.Equal(t, 5432, c.DatabasePort())
+	})
+	t.Run("PostgresUsesConfiguredPort", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverPostgres
+		c.options.DatabaseServer = "postgres.internal:5433"
+		assert.Equal(t, 5433, c.DatabasePort())
+	})
 }
 
 func TestConfig_DatabasePortString(t *testing.T) {
@@ -282,7 +330,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 	c.options.DatabaseDriver = "tidb"
 	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
 	c.options.DatabaseDriver = "Postgres"
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
+	assert.Equal(t, "user=photoprism password= dbname=photoprism host=localhost port=5432 connect_timeout=15 sslmode=disable TimeZone=UTC", c.DatabaseDSN())
 	c.options.DatabaseDriver = "SQLite"
 	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
 	c.options.DatabaseDriver = ""
@@ -319,6 +367,43 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
+	})
+	t.Run("PostgresDefaults", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgres
+		conf.options.DatabaseName = "instancedb"
+		conf.options.DatabaseUser = "instance"
+		conf.options.DatabasePassword = "secret"
+		conf.options.DatabaseTimeout = 12
+
+		want := "user=instance password=secret dbname=instancedb host=localhost port=5432 connect_timeout=12 sslmode=disable TimeZone=UTC"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+
+		assert.Equal(t, "localhost", conf.DatabaseHost())
+		assert.Equal(t, 5432, conf.DatabasePort())
+	})
+	t.Run("PostgresCustomServer", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgres
+		conf.options.DatabaseServer = "postgres.internal:5433"
+		conf.options.DatabaseName = "instancedb"
+		conf.options.DatabaseUser = "instance"
+		conf.options.DatabasePassword = "secret"
+		conf.options.DatabaseTimeout = 9
+
+		want := "user=instance password=secret dbname=instancedb host=postgres.internal port=5433 connect_timeout=9 sslmode=disable TimeZone=UTC"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+
+		assert.Equal(t, "postgres.internal", conf.DatabaseHost())
+		assert.Equal(t, 5433, conf.DatabasePort())
 	})
 }
 

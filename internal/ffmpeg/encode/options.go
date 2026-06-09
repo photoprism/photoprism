@@ -22,7 +22,8 @@ type Options struct {
 	SeekOffset  string        // See https://trac.ffmpeg.org/wiki/Seeking and https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax
 	TimeOffset  string        // See https://trac.ffmpeg.org/wiki/Seeking and https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax
 	Duration    time.Duration // See https://ffmpeg.org/ffmpeg.html#Main-options
-	MovFlags    string
+	MovFlags    string        // FFmpeg "-movflags" value for the MP4 muxer (e.g. "use_metadata_tags+faststart"). See https://ffmpeg.org/ffmpeg-formats.html#Options-12
+	VideoTag    string        // FFmpeg "-tag:v" override (e.g. "hvc1" for HEVC in MP4/MOV containers)
 	Title       string
 	Description string
 	Comment     string

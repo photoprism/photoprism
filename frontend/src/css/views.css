@@ -297,8 +297,8 @@
 }
 
 .search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result .preview,
-.search-results.list-view .v-table>.v-table__wrapper>table>tbody>tr>td.result .preview,
-.edit-batch.list-view .v-table>table>tbody>tr>td.result .preview {
+.search-results.list-view .v-table > .v-table__wrapper > table > tbody > tr > td.result .preview,
+.edit-batch.list-view .v-table > table > tbody > tr > td.result .preview {
     width: 50px;
     height: 50px;
 }

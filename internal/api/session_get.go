@@ -41,10 +41,10 @@ func GetSession(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		// Check if the session user is allowed to manage all accounts or update his/her own account.
+		// Require session management or view access.
 		s := AuthAny(c, acl.ResourceSessions, acl.Permissions{acl.ActionManage, acl.ActionView})
 
-		// Check if session is valid.
+		// Validate the resolved session.
 		switch {
 		case s.Abort(c):
 			return

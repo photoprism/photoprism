@@ -128,6 +128,11 @@ test.meta("testID", "albums-003").meta({ type: "short", mode: "public" })("Commo
   await menu.openPage("albums");
 
   await t.expect(Selector("div").withText("Holiday").visible).ok().expect(Selector("div").withText("Animals").exists).notOk();
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+  await t.expect(albumdialog.category.value).eql("");
+  await t.click(albumdialog.dialogCancel);
 });
 
 test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })("Common: Add/Remove Photos to/from multiple albums", async (t) => {

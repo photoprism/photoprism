@@ -38,6 +38,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"debug", fmt.Sprintf("%t", c.Debug())},
 		{"trace", fmt.Sprintf("%t", c.Trace())},
 
+		// Storage.
+		{"storage-path", c.StoragePath()},
+		{"storage-free", fmt.Sprintf("%.0f", c.StorageFree())},
+
 		// Config.
 		{"config-path", c.ConfigPath()},
 		{"certificates-path", c.CertificatesPath()},
@@ -57,12 +61,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"originals-path", c.OriginalsPath()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
-		{"users-path", c.UsersPath()},
-		{"users-originals-path", c.UsersOriginalsPath()},
 
-		// Storage.
-		{"storage-path", c.StoragePath()},
+		// Other Paths.
+		{"users-path", c.UsersPath()},
 		{"users-storage-path", c.UsersStoragePath()},
+		{"users-originals-path", c.UsersOriginalsPath()},
 		{"import-path", c.ImportPath()},
 		{"import-dest", c.ImportDest()},
 		{"import-allow", c.ImportAllow().String()},
@@ -286,6 +289,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-device", c.FFmpegDevice()},
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
+		{"ffmpeg-exclude", c.FFmpegExclude().String()},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},
@@ -359,6 +363,37 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 	if v := c.CustomStaticUri(); v != "" {
 		rows = append(rows, []string{"custom-static-uri", v})
+	}
+
+	return rows, cols
+}
+
+// FaceReport returns the face-detection and face-recognition config values as
+// a table for reporting. It mirrors the values used by Report() so output stays
+// consistent between `photoprism config` and `photoprism faces config`.
+func (c *Config) FaceReport() (rows [][]string, cols []string) {
+	cols = []string{"Name", "Value"}
+
+	rows = [][]string{
+		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
+		{"vision-yaml", c.VisionYaml()},
+		{"face-engine", c.FaceEngine()},
+		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
+		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"facenet-model-path", c.FacenetModelPath()},
+		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
+		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
+		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
+		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
+		{"face-cluster-dist", fmt.Sprintf("%f", c.FaceClusterDist())},
+		{"face-cluster-radius", fmt.Sprintf("%f", c.FaceClusterRadius())},
+		{"face-collision-dist", fmt.Sprintf("%f", c.FaceCollisionDist())},
+		{"face-epsilon-dist", fmt.Sprintf("%f", c.FaceEpsilonDist())},
+		{"face-match-dist", fmt.Sprintf("%f", c.FaceMatchDist())},
+		{"face-skip-children", fmt.Sprintf("%t", c.FaceSkipChildren())},
+		{"face-allow-background", fmt.Sprintf("%t", c.FaceAllowBackground())},
 	}
 
 	return rows, cols

@@ -1,7 +1,7 @@
 /*
 Package auto provides workers for background indexing and import operations.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -51,19 +51,21 @@ func Start(conf *config.Config) {
 				ticker.Stop()
 				return
 			case <-ticker.C:
-				if mustIndex(conf.AutoIndex()) {
-					log.Debugf("auto-index: starting")
-					ResetIndex()
-					if err := Index(); err != nil {
-						log.Errorf("auto-index: %s", err)
+				event.Safe(func() {
+					if mustIndex(conf.AutoIndex()) {
+						log.Debugf("auto-index: starting")
+						ResetIndex()
+						if err := Index(); err != nil {
+							log.Errorf("auto-index: %s", err)
+						}
+					} else if mustImport(conf.AutoImport()) {
+						log.Debugf("auto-import: starting")
+						ResetImport()
+						if err := Import(); err != nil {
+							log.Errorf("auto-import: %s", err)
+						}
 					}
-				} else if mustImport(conf.AutoImport()) {
-					log.Debugf("auto-import: starting")
-					ResetImport()
-					if err := Import(); err != nil {
-						log.Errorf("auto-import: %s", err)
-					}
-				}
+				})
 			}
 		}
 	}()

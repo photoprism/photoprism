@@ -39,12 +39,12 @@ func importAction(ctx *cli.Context) error {
 	defer cancel()
 
 	if err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	// very if copy directory exist and is writable
 	if conf.ReadOnly() {
-		return config.ErrReadOnly
+		return cli.Exit(config.ErrReadOnly, 2)
 	}
 
 	conf.InitDb()
@@ -56,10 +56,10 @@ func importAction(ctx *cli.Context) error {
 	if sourcePath == "" {
 		sourcePath = conf.ImportPath()
 	} else {
-		abs, err := filepath.Abs(sourcePath)
+		abs, pathErr := filepath.Abs(sourcePath)
 
-		if err != nil {
-			return err
+		if pathErr != nil {
+			return cli.Exit(pathErr, 2)
 		}
 
 		sourcePath = abs
@@ -74,7 +74,7 @@ func importAction(ctx *cli.Context) error {
 	if ctx.IsSet("dest") {
 		destFolder, err = sanitizeDestinationArg(ctx.String("dest"))
 		if err != nil {
-			return err
+			return cli.Exit(err, 2)
 		}
 	} else {
 		destFolder = conf.ImportDest()

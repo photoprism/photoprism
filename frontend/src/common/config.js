@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -798,7 +798,17 @@ export default class Config {
 
   // filesQuotaReached returns true if the filesystem quota is reached or exceeded.
   filesQuotaReached() {
-    return this.values?.usage?.filesUsedPct >= 100;
+    return Boolean(this.values?.usage?.filesUsedPct >= 100);
+  }
+
+  // storageLow returns true if the storage folder is almost full.
+  storageLow() {
+    return Boolean(this.values?.usage?.storageLow);
+  }
+
+  // insufficientStorage returns true if the filesystem quota is reached or the storage folder is almost full.
+  insufficientStorage() {
+    return this.storageLow() || this.filesQuotaReached();
   }
 
   // setTokens sets the security tokens required to load thumbnails and download files from the server.

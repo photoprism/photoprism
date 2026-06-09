@@ -50,7 +50,7 @@ func TestUpdate(t *testing.T) {
 	})
 	t.Run("NotUpdated", func(t *testing.T) {
 		uid := rnd.GenerateUID(PhotoUID)
-		m := &Photo{ID: missingPhotoID(), PhotoUID: uid, UpdatedAt: time.Now(), CreatedAt: Now(), PhotoTitle: "Foo"}
+		m := &Photo{ID: missingPhotoID(), PhotoUID: uid, UpdatedAt: Now().Add(-time.Hour), CreatedAt: Now(), PhotoTitle: "Foo"}
 		updatedAt := m.UpdatedAt
 
 		err := Update(m, "ID", "PhotoUID")

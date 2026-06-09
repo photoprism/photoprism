@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/sha256"
 	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -194,6 +195,32 @@ func TestConfig_SitePreview(t *testing.T) {
 	assert.Equal(t, "http://localhost:2342/foo/preview123.jpg", c.SitePreview())
 	c.options.SitePreview = "/foo/preview123.jpg"
 	assert.Equal(t, "http://localhost:2342/foo/preview123.jpg", c.SitePreview())
+}
+
+func TestConfig_SitePreview_StripsDefaultPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	tmp := t.TempDir()
+	c.SetThemePath(tmp)
+	previewFile := filepath.Join(c.ThemePath(), "preview.jpg")
+	if err := os.WriteFile(previewFile, []byte("test"), fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	c.options.SiteUrl = "https://host:443/"
+	c.options.SitePreview = "preview.jpg"
+	assert.Equal(t, "https://host/_theme/preview.jpg", c.SitePreview())
+}
+
+func TestConfig_DownloadUrl_StripsDefaultPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.SiteUrl = "https://host:443/"
+	assert.Equal(t, "https://host"+DownloadUri, c.DownloadUrl())
+	c.options.SiteUrl = "http://host:80/"
+	assert.Equal(t, "http://host"+DownloadUri, c.DownloadUrl())
+	c.options.SiteUrl = "https://host:8443/"
+	assert.Equal(t, "https://host:8443"+DownloadUri, c.DownloadUrl())
 }
 
 func TestConfig_SiteAuthor(t *testing.T) {
