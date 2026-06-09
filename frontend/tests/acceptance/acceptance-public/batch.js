@@ -139,12 +139,12 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
   await t.typeText(Selector(".input-labels input"), "P", { replace: true });
 
   await t
-    .expect(page.selectOption.withText("Cat").visible)
-    .notOk()
     .expect(page.selectOption.withText("Portrait").visible)
     .ok()
     .expect(page.selectOption.withText("P").visible)
-    .ok();
+    .ok()
+    .expect(page.selectOption.withText("Cat").exists) // visible.notOk takes 15 seconds
+    .notOk();
 
   await t
     .pressKey("ctrl+a delete")
@@ -158,12 +158,12 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
   await t.typeText(Selector(".input-albums input"), "C", { replace: true });
 
   await t
-    .expect(page.selectOption.withText("Holiday").visible)
-    .notOk()
     .expect(page.selectOption.withText("Christmas").visible)
     .ok()
     .expect(page.selectOption.withText("C").visible)
-    .ok();
+    .ok()
+    .expect(page.selectOption.withText("Holiday").exists) // visible.notOk takes 15 seconds
+    .notOk();
   await t.click(photoedit.batchDialogCloseAction);
   await t.expect(photoedit.batchDialog.visible).notOk();
   await contextmenu.clearSelection();

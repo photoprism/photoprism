@@ -1,5 +1,6 @@
 import testcafeconfig from "../../testcafeconfig.json";
 import PhotoViewer from "../page-model/photoviewer";
+import Menu from "../page-model/menu";
 import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
 fixture`Test face markers in the photo viewer`
@@ -15,6 +16,7 @@ fixture`Test face markers in the photo viewer`
 });
 
 const photoviewer = new PhotoViewer();
+const menu = new Menu();
 
 test.meta("testID", "face-markers-001").meta({ mode: "public" })("Common: Show/hide markers toggle reveals and hides marker overlays", async (t) => {
   // `faces:1` guarantees the photo carries at least one face marker so the rect assertions are non-vacuous.
@@ -139,7 +141,9 @@ test.meta("testID", "face-markers-007").meta({ mode: "public" })("Common: Newly 
   // Toggle add-mode off before closing — its full-viewer hit area otherwise blocks the close button.
   await photoviewer.startMarkersEdit();
   await photoviewer.triggerPhotoViewerAction("close-button");
-  await t.expect(photoviewer.viewer.visible).notOk();
+  await t
+    .expect(menu.navDrawer.visible).ok() // confirm that the base page is loaded
+    .expect(photoviewer.viewer.exists).notOk(); // visible takes 15 seconds.
 
   // Clear the `faces:no` filter (the photo now has 1 face and would be excluded) and reopen by UID.
   await photoviewer.openSidebarOnPhoto(uid);

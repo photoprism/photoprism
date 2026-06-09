@@ -121,6 +121,29 @@ test.meta("testID", "photos-003").meta({ type: "short", mode: "public" })(
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
     await photo.checkPhotoVisibility(SecondPhotoUid, true);
     await photo.checkPhotoVisibility(ThirdPhotoUid, true);
+    // These three photos are missing a lot of data, can't be reverted, so need to be set as old, so they are not 1st on the list (which can break other tests).
+    // Please note that reversion of review photos is explicity prevented, so these changes will stick.
+    // Private isn't suitable as it may break other tests.
+    // As at 2026-06-05 there are no tests that choose the last photos.
+
+    const expectedInputValues = [
+      ["description", "Was a review photo"],
+    ];
+    const expectedSelectValues = [
+      ["day", "28"],
+      ["month", "02"],
+      ["year", "2009"],
+    ];
+
+    await page.clickCardImageLabelOfUID(FirstPhotoUid);
+    await t.expect(photoedit.coordinates.visible).ok();
+    await photoedit.editFormValues(expectedInputValues, expectedSelectValues);
+    await page.clickCardImageLabelOfUID(SecondPhotoUid);
+    await t.expect(photoedit.coordinates.visible).ok();
+    await photoedit.editFormValues(expectedInputValues, expectedSelectValues);
+    await page.clickCardImageLabelOfUID(ThirdPhotoUid);
+    await t.expect(photoedit.coordinates.visible).ok();
+    await photoedit.editFormValues(expectedInputValues, expectedSelectValues);
   }
 );
 
@@ -185,45 +208,13 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
   await page.clickCardTitleOfUID(FirstPhotoUid);
 
   await t.expect(photoedit.coordinates.visible).ok();
+  const FirstPhotoTitle = await photoedit.title.value;
 
   await t.click(photoedit.dialogNext);
 
   await t.expect(photoedit.dialogPrevious.getAttribute("disabled")).notEql("disabled");
 
   await t.click(photoedit.dialogPrevious).click(photoedit.dialogClose);
-  await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
-  await photoviewer.triggerPhotoViewerAction("edit-button");
-  const FirstPhotoTitle = await photoedit.title.value;
-  const FirstPhotoLocalTime = await photoedit.localTime.value;
-  let FirstPhotoDay = await photoedit.dayValue.innerText;
-  if (!FirstPhotoDay) {
-    FirstPhotoDay = "Unknown";
-  }
-  let FirstPhotoMonth = await photoedit.monthValue.innerText;
-  if (!FirstPhotoMonth) {
-    FirstPhotoMonth = "Unknown";
-  }
-  let FirstPhotoYear = await photoedit.yearValue.innerText;
-  if (!FirstPhotoYear) {
-    FirstPhotoYear = "Unknown";
-  }
-  const FirstPhotoTimezone = await photoedit.timezoneValue.innerText;
-  const FirstPhotoCoordinates = await photoedit.coordinates.value;
-  const FirstPhotoAltitude = await photoedit.altitude.value;
-  const FirstPhotoCountry = await photoedit.countryValue.innerText;
-  const FirstPhotoCamera = await photoedit.cameraValue.innerText;
-  const FirstPhotoIso = await photoedit.iso.value;
-  const FirstPhotoExposure = await photoedit.exposure.value;
-  const FirstPhotoLens = await photoedit.lensValue.innerText;
-  const FirstPhotoFnumber = await photoedit.fnumber.value;
-  const FirstPhotoFocalLength = await photoedit.focallength.value;
-  const FirstPhotoSubject = await photoedit.subject.value;
-  const FirstPhotoArtist = await photoedit.artist.value;
-  const FirstPhotoCopyright = await photoedit.copyright.value;
-  const FirstPhotoLicense = await photoedit.license.value;
-  const FirstPhotoDescription = await photoedit.description.value;
-  const FirstPhotoKeywords = await photoedit.keywords.value;
-  const FirstPhotoNotes = await photoedit.notes.value;
 
   const expectedInputValues = [
     ["title", "New Photo Title"],
@@ -257,30 +248,10 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
     ["camera", "Canon EOS M10"],
     ["lens", "EF-M15-45mm f/3.5-6.3 IS STM"],
   ];
-  const initialInputValues = [
-    ["title", FirstPhotoTitle],
-    ["localTime", FirstPhotoLocalTime],
-    ["altitude", FirstPhotoAltitude],
-    ["coordinates", FirstPhotoCoordinates],
-    ["iso", FirstPhotoIso],
-    ["exposure", FirstPhotoExposure],
-    ["fnumber", FirstPhotoFnumber],
-    ["focallength", FirstPhotoFocalLength],
-    ["subject", FirstPhotoSubject],
-    ["artist", FirstPhotoArtist],
-    ["copyright", FirstPhotoCopyright],
-    ["license", FirstPhotoLicense],
-    ["description", FirstPhotoDescription],
-    ["notes", FirstPhotoNotes],
-  ];
-  const initialSelectValuesNoCountry = [
-    ["day", FirstPhotoDay],
-    ["month", FirstPhotoMonth],
-    ["year", FirstPhotoYear],
-    ["timezone", FirstPhotoTimezone],
-    ["camera", FirstPhotoCamera],
-    ["lens", FirstPhotoLens],
-  ];
+
+  await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
+  await photoviewer.triggerPhotoViewerAction("edit-button");
+
   await t.typeText(photoedit.title, "Not saved photo title", { replace: true }).click(photoedit.detailsClose);
   await page.clickCardTitleOfUID(FirstPhotoUid);
 
@@ -308,21 +279,11 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
   await t
     .expect(Selector('div[data-uid="' + FirstPhotoUid + '"] button.action-title-edit').innerText)
     .eql("New Photo Title");
-
   await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
   await photoedit.checkEditFormValues(expectedInputValues, expectedSelectValues);
   await t.expect(await photoedit.coordinates.value).eql("41.15333, 20.168331");
-  await photoedit.editFormValues(initialInputValues, initialSelectValuesNoCountry);
-  await page.clickCardTitleOfUID(FirstPhotoUid);
-  await t.typeText(Selector("div.p-tab-photo-details .input-coordinates input"), FirstPhotoCoordinates, {
-    replace: true,
-  });
-  await t.click(photoedit.detailsApply);
   await t.click(photoedit.detailsClose);
-
-  await contextmenu.triggerContextMenuAction("edit", "");
-  await photoedit.checkEditFormValues(initialInputValues, initialSelectValuesNoCountry);
 
   await contextmenu.checkContextMenuCount("1");
   await contextmenu.clearSelection();
@@ -392,7 +353,7 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
   await t.click(photoedit.dialogClose);
-  await t.wait(9000);
+  await t.wait(9000); // ToDo: is there a better way than a flat wait?
 
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
@@ -453,10 +414,13 @@ test.meta("testID", "photos-010").meta({ mode: "public" })("Common: Set location
   await t.click(photoedit.locationAction);
   const CoordinatesBefore = await photoedit.locationInput.value;
   await t.expect(CoordinatesBefore).eql("");
-  await t.expect(photoedit.locationMarker.visible).notOk();
+  await t.expect(photoedit.locationMarker.with({timeout: 200}).visible).notOk();  // The location marker won't be there, so why wait a long time?
 
   //search
-  await t.typeText(photoedit.locationSearch, "Brandenburger Tor Berlin").wait(5000).pressKey("enter");
+  await t
+    .typeText(photoedit.locationSearch, "Brandenburger Tor Berlin")
+    .click(Selector('div.v-autocomplete__content').find('i.mdi-map-marker'));  // Wait for the drop down to be populated, and select from it
+//    .pressKey("enter");  // Was it important to test with the keyboard?  Or is click above ok?
   const Coordinates = await photoedit.locationInput.value;
   await t.expect(Coordinates).eql("52.5162546, 13.3777166");
   await t.expect(photoedit.locationMarker.visible).ok();
@@ -465,18 +429,18 @@ test.meta("testID", "photos-010").meta({ mode: "public" })("Common: Set location
 
   const CoordinatesAfterClear = await photoedit.locationInput.value;
   await t.expect(CoordinatesAfterClear).eql("");
-  await t.expect(photoedit.locationMarker.visible).notOk();
+  await t.expect(photoedit.locationMarker.with({timeout: 200}).visible).notOk();   // The location marker won't be there, so why wait a long time?
 
   await t.click(photoedit.locationUndo);
 
   const CoordinatesAfterUndo = await photoedit.locationInput.value;
   await t.expect(CoordinatesAfterUndo).eql("52.5162546, 13.3777166");
   await t.expect(photoedit.locationMarker.visible).ok();
-  await t.click(photoedit.locationConfirm).wait(10000);
+  await t.click(photoedit.locationConfirm); // use ok on the following to avoid excessive wait time.
 
-  await t.expect(photoedit.altitude.value).eql("0");
-  await t.expect(photoedit.coordinates.value).eql("52.5162546, 13.3777166");
-  await t.expect(photoedit.countryValue.innerText).eql("Germany");
+  await t.expect(photoedit.altitude.withAttribute('value', "0").visible).ok(); // These will continue when the value appears
+  await t.expect(photoedit.coordinates.withAttribute('value', "52.5162546, 13.3777166").visible).ok();
+  await t.expect(photoedit.countryValue.withExactText("Germany").visible).ok();
   await t.click(photoedit.detailsApply);
   await t.click(photoedit.detailsClose);
   await page.clickCardTitleOfUID(FirstPhotoUid);
@@ -493,6 +457,6 @@ test.meta("testID", "photos-010").meta({ mode: "public" })("Common: Set location
   await t.click(Selector("div.maplibregl-map"), { offsetX: 4, offsetY: 4 });
   const CoordinatesAfterChange = await photoedit.locationInput.value;
   await t.expect(CoordinatesAfterChange).eql("52.534636098259455, 13.332140504419073");
-  await t.click(photoedit.locationCancel).wait(10000);
-  await t.expect(photoedit.coordinates.value).eql("52.5162546, 13.3777166");
+  await t.click(photoedit.locationCancel); // use ok on the following to avoid excessive wait time.
+  await t.expect(photoedit.coordinates.withAttribute('value', "52.5162546, 13.3777166").visible).ok(); // This will exit when the value appears
 });

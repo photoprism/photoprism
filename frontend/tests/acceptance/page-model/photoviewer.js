@@ -4,6 +4,7 @@ import Photo from "./photo";
 import DateTimeDialog from "./dialog/date-time";
 import CameraDialog from "./dialog/camera";
 import LocationDialog from "./dialog/location";
+import { clickIfVisible } from "./helpers";
 
 export default class Page {
   constructor() {
@@ -369,11 +370,12 @@ export default class Page {
   // removeLastUnnamedMarker deletes the most recently drawn unnamed marker via the overlay confirm pill.
   // Used by tests that draw a marker for setup and want to undo before exit so the fixture stays clean.
   async removeLastUnnamedMarker() {
-    if (!(await this.faceMarkerOverlay.visible)) {
+    await t.expect(this.sidebar.visible).ok();
+    if (await this.markersEditToggle.find('i.mdi-pencil-outline').exists) {
       await this.startMarkersEdit();
       await t.expect(this.faceMarkerOverlay.visible).ok();
     }
-    await t.click(this.faceMarkerUnnamedRect.nth(-1));
+    await clickIfVisible(t, this.faceMarkerUnnamedRect.nth(-1));
     await t.expect(this.faceMarkerRemoveConfirm.visible).ok();
     await t.click(this.faceMarkerRemoveButton);
   }
