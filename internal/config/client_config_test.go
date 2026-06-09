@@ -73,6 +73,27 @@ func TestConfig_ClientConfig(t *testing.T) {
 	})
 }
 
+func TestConfig_ClientConfigDisableMCP(t *testing.T) {
+	// ClientPublic, ClientShare, and ClientUser must all propagate the MCP
+	// disable flag so the frontend can hide any MCP-related controls when
+	// the endpoint is turned off via --disable-mcp / PHOTOPRISM_DISABLE_MCP.
+	c := NewMinimalTestConfigWithDb("client-mcp", t.TempDir())
+	c.SetAuthMode(AuthModePasswd)
+
+	original := c.Options().DisableMCP
+	t.Cleanup(func() { c.Options().DisableMCP = original })
+
+	c.Options().DisableMCP = false
+	assert.False(t, c.ClientPublic().Disable.MCP)
+	assert.False(t, c.ClientShare().Disable.MCP)
+	assert.False(t, c.ClientUser(true).Disable.MCP)
+
+	c.Options().DisableMCP = true
+	assert.True(t, c.ClientPublic().Disable.MCP)
+	assert.True(t, c.ClientShare().Disable.MCP)
+	assert.True(t, c.ClientUser(true).Disable.MCP)
+}
+
 func TestConfig_ClientShareConfig(t *testing.T) {
 	config := TestConfig()
 	result := config.ClientShare()

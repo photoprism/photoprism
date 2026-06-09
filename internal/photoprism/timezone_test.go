@@ -12,7 +12,7 @@ func TestMediaFile_TimeZone(t *testing.T) {
 	t.Run("ElephantsJpg", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		img, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		img, err := NewMediaFile(conf.SamplesPath() + "/elephants.jpg")
 
 		assert.Nil(t, err)
 

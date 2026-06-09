@@ -32,7 +32,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	}
 
 	// Use FFmpeg to extract video stills from videos, e.g. to use them as cover images.
-	if f.IsAnimated() && !f.IsWebp() && w.conf.FFmpegEnabled() {
+	if f.IsAnimated() && !f.IsWebp() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		result = append(result, NewConvertCmd(
 			ffmpeg.ExtractJpegImageCmd(f.FileName(), jpegName, encode.NewPreviewImageOptions(w.conf.FFmpegBin(), f.Duration()))),
 		)
@@ -142,8 +142,20 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		}
 	}
 
+	// Use ExifTool to extract embedded Photoshop thumbnails as a lightweight fallback
+	// when full rasterization of TIFF/PSD previews is unavailable or fails.
+	if (f.IsTiff() || f.IsPsd()) && w.conf.ExifToolEnabled() {
+		result = append(result, NewConvertCmd(
+			// #nosec G204 -- arguments are built from validated config and file paths.
+			exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PhotoshopThumbnail", f.FileName())),
+		)
+	}
+
 	// No suitable converter found?
 	if len(result) == 0 {
+		if f.IsAnimated() && w.conf.FFmpegEnabled() && !w.FFmpegAllowed(f) {
+			return result, useMutex, fmt.Errorf("format %s is on the FFmpeg exclude list", w.ffmpegExclude.Match(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String()))
+		}
 		return result, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
 	}
 

@@ -12,7 +12,7 @@ func (m *Passcode) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		UID          string     `json:"UID"`
 		Type         string     `json:"Type"`
-		Secret       string     `json:"Secret"`
+		Secret       string     `json:"Secret"` //nolint:gosec // G117: Expected passcode secret response field.
 		QRCode       string     `json:"QRCode"`
 		RecoveryCode string     `json:"RecoveryCode"`
 		CreatedAt    time.Time  `json:"CreatedAt"`

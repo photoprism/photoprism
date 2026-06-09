@@ -8,7 +8,7 @@ AuthMode: "password"
 DatabaseDriver: "sqlite"
 HttpHost: "127.0.0.1"
 HttpPort: 2342
-HttpCompression: "gzip"
+HttpCompression: "zstd,gzip"
 DisableTLS: false
 DefaultTLS: true
 Experimental: false

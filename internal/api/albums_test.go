@@ -2,8 +2,10 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 
 	"github.com/stretchr/testify/assert"
@@ -29,6 +31,17 @@ func TestGetAlbum(t *testing.T) {
 		assert.Equal(t, "Album not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	t.Run("GuestDeniedNotShared", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		GetAlbum(router)
+		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		// An album outside the guest's shared scope is reported as not found.
+		r := AuthenticatedRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8", sessId)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
 }
 
 func TestCreateAlbum(t *testing.T) {
@@ -50,6 +63,13 @@ func TestCreateAlbum(t *testing.T) {
 		CreateAlbum(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		CreateAlbum(router)
+		body := `{"Title":"` + strings.Repeat("a", 300*1024) + `"}`
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums", body)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }
 func TestUpdateAlbum(t *testing.T) {
@@ -76,6 +96,13 @@ func TestUpdateAlbum(t *testing.T) {
 		UpdateAlbum(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums"+uid, `{"Title": 333, "Description": "Created via unit test", "Notes": "", "Favorite": true}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbum(router)
+		body := `{"Title":"` + strings.Repeat("a", 300*1024) + `"}`
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/"+uid, body)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()

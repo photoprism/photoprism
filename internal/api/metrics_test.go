@@ -117,7 +117,7 @@ func TestGetMetrics(t *testing.T) {
 	})
 	t.Run("ExposeClusterMetricsForPortal", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().NodeRole = cluster.RolePortal
+		enablePortalAPIs(t, conf)
 
 		GetMetrics(router)
 

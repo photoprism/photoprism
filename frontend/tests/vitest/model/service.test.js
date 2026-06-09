@@ -56,4 +56,46 @@ describe("model/service", () => {
     const result = Service.getModelName();
     expect(result).toBe("Account");
   });
+
+  describe("write-only credentials", () => {
+    it("tracks AccPass/AccKey even when the API response omits them", () => {
+      // The backend tags AccPass/AccKey with `json:"-"`, so responses never
+      // carry them. The Service constructor must still seed __originalValues
+      // so a user edit in the dialog reaches getValues(true).
+      const service = new Service({ ID: 1, AccName: "Nextcloud", AccURL: "https://nc.example/" });
+      expect(service.AccPass).toBe("");
+      expect(service.AccKey).toBe("");
+      expect(service.__originalValues.AccPass).toBe("");
+      expect(service.__originalValues.AccKey).toBe("");
+    });
+
+    it("includes AccPass/AccKey in the change diff after a dialog edit", () => {
+      const service = new Service({ ID: 1, AccName: "Nextcloud", AccURL: "https://nc.example/" });
+      service.AccPass = "new-secret";
+      service.AccKey = "new-key";
+      const diff = service.getValues(true);
+      expect(diff.AccPass).toBe("new-secret");
+      expect(diff.AccKey).toBe("new-key");
+    });
+
+    it("does not include AccPass/AccKey when the user leaves them blank", () => {
+      const service = new Service({ ID: 1, AccName: "Nextcloud", AccURL: "https://nc.example/" });
+      service.AccName = "Renamed";
+      const diff = service.getValues(true);
+      expect(diff.AccName).toBe("Renamed");
+      expect(diff).not.toHaveProperty("AccPass");
+      expect(diff).not.toHaveProperty("AccKey");
+    });
+
+    it("preserves credentials when the constructor receives them via clone()", () => {
+      // clone() routes through getValues() → new Service(); AccPass that was
+      // typed into the original must survive the round-trip on __originalValues
+      // so subsequent edits keep flowing through the diff.
+      const original = new Service({ ID: 1, AccName: "Nextcloud" });
+      original.AccPass = "typed";
+      const copy = new Service(original.getValues());
+      expect(copy.AccPass).toBe("typed");
+      expect(copy.__originalValues.AccPass).toBe("typed");
+    });
+  });
 });

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Installs NodeJS, NPM and TestCafe on Linux.
+# Installs NodeJS, NPM, TestCafe, Vitest, Mermaid CLI and ESLint on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-nodejs.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
@@ -12,6 +12,9 @@ set -e
 
 # NodeJS major version to be installed (armhf still requires 22.x).
 NODE_MAJOR=24
+NPM_VERSION=latest
+TESTCAFE_VERSION=3.7.4
+MERMAID_VERSION=latest
 
 if [ "$(dpkg --print-architecture)" = "armhf" ]; then
   NODE_MAJOR=22
@@ -45,13 +48,17 @@ fi
 
 # Upgrade NPM and install development dependencies.
 echo "Configuring NPM..."
-sudo npm config set cache ~/.cache/npm
+sudo npm config set cache /root/.cache/npm
 echo "Updating NPM..."
-sudo npm install -g --no-fund npm@latest n@latest
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@$NPM_VERSION" n@latest
 echo "Installing npm-check-updates and license-report..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 echo "Installing TestCafe..."
-sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error testcafe@3.7.4
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error "testcafe@$TESTCAFE_VERSION"
+# Installs Mermaid CLI for rendering diagrams; --ignore-scripts skips puppeteer's
+# Chromium download since the dev image already ships system chromium via apt.
+echo "Installing Mermaid CLI..."
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error "@mermaid-js/mermaid-cli@$MERMAID_VERSION"
 echo "Installing Vitest..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier vitest @vitest/browser @vitest/coverage-v8 @vitest/ui
 echo "Installing ESLint..."

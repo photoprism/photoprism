@@ -15,11 +15,12 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Database creates a database backup dump with the specified file and path name.
@@ -34,6 +35,11 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	// Get configuration.
 	c := get.Config()
 
+	// Storage-gate the on-disk path only: when toStdOut is true the dump
+	// streams to stdout and does not consume the local storage volume, so an
+	// operator can still offload a backup over ssh or similar when the disk
+	// is full. Path validation and the InsufficientStorage check therefore
+	// run inside this branch only.
 	if !toStdOut {
 		if backupPath == "" {
 			backupPath = c.BackupDatabasePath()
@@ -62,6 +68,11 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			backupAction = "replacing"
 		}
 
+		// Refuse to write a new database dump if storage is over quota or critically low on free disk space.
+		if c.InsufficientStorage() {
+			return status.ErrInsufficientStorage
+		}
+
 		// Create backup path if not exists.
 		if dir := filepath.Dir(fileName); dir != "." {
 			if err = fs.MkdirAll(dir); err != nil {
@@ -73,7 +84,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	var cmd *exec.Cmd
 
 	switch c.DatabaseDriver() {
-	case config.MySQL, config.MariaDB:
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// Connect via Unix Domain Socket?
 		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
 			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
@@ -112,7 +123,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 				c.DatabaseName(),
 			)
 		}
-	case config.SQLite3:
+	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
 		}
@@ -254,7 +265,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	var cmd *exec.Cmd
 
 	switch c.DatabaseDriver() {
-	case config.MySQL, config.MariaDB:
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// Connect via Unix Domain Socket?
 		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
 			cmd = exec.Command( // #nosec G204 database connection parameters from config
@@ -296,7 +307,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				c.DatabaseName(),
 			)
 		}
-	case config.SQLite3:
+	case dsn.DriverSQLite3:
 		log.Infoln("restore: dropping existing sqlite database tables")
 		tables.Drop(c.Db())
 		cmd = exec.Command( // #nosec G204 sqlite restore uses configured binary and db path

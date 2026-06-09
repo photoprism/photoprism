@@ -87,6 +87,7 @@ export default {
       default: null,
     },
   },
+  emits: ["close", "confirm"],
   data() {
     return {
       isDemo: this.$config.get("demo"),

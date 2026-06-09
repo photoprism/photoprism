@@ -20,6 +20,7 @@ func TestNewSessionFromJWT(t *testing.T) {
 	issuedAt := time.Date(2025, time.October, 28, 9, 0, 0, 0, time.UTC)
 	notBefore := issuedAt.Add(15 * time.Second)
 	expiresAt := issuedAt.Add(5 * time.Minute)
+	//nolint:gosec // G101: Static JWT fixture is intentional for parser/session tests.
 	claims := &JWT{
 		Token:     "eyJhbGciOiJFZERTQSIsImtpZCI6Imp3dDVjcHUxN242Z2oyIn0.eyJpc3MiOiJwb3J0YWw6Y2JhYTAyNzYtMDdkMy00M2FjLWI0MjAtMjVlMjYwMWIwYWQ0Iiwic3ViIjoicG9ydGFsOmNzNWNwdTE3bjZnajJxbzUiLCJzY29wZSI6ImNsdXN0ZXIgdmlzaW9uIiwianRpIjoiand0NWNwdTE3bjZnajIifQ.64yKsi6ixGmE3j_BL_WckqHQzXHp7018mCVDciGHXxyXcDL4kZPVJg4hKWdAl95IcC-fL5sTl9p2TBQnpSGeDg",
 		ID:        "jwt5cpu17n6gj2",

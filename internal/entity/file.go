@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/colors"
@@ -129,7 +130,7 @@ func (m File) RegenerateIndex() {
 	}
 
 	switch DbDialect() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files JOIN ? p ON p.id = files.photo_id SET files.photo_taken_at = p.taken_at_local WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)
@@ -141,7 +142,7 @@ func (m File) RegenerateIndex() {
 		Log("files", "regenerate time_index",
 			Db().Exec("UPDATE files SET time_index = CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) ELSE NULL END WHERE ?",
 				updateWhere).Error)
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files SET photo_taken_at = (SELECT p.taken_at_local FROM ? p WHERE p.id = photo_id) WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)
@@ -547,7 +548,7 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	// Update photo path and name if possible.
 	if p := m.RelatedPhoto(); p != nil {
 		return p.Updates(Values{
-			"PhotoPath": filePath,
+			"PhotoPath": ClipPath(filePath),
 			"PhotoName": fileBase,
 		})
 	}
@@ -674,7 +675,7 @@ func (m *File) IsAnimated() bool {
 
 // ColorProfile returns the ICC color profile name if any.
 func (m *File) ColorProfile() string {
-	return SanitizeStringType(m.FileColorProfile)
+	return ClipType(m.FileColorProfile)
 }
 
 // HasColorProfile tests if the file has a matching color profile.
@@ -684,8 +685,8 @@ func (m *File) HasColorProfile(profile colors.Profile) bool {
 
 // SetColorProfile sets the ICC color profile name such as "Display P3".
 func (m *File) SetColorProfile(name string) {
-	if name = SanitizeStringType(name); name != "" {
-		m.FileColorProfile = SanitizeStringType(name)
+	if name = ClipType(name); name != "" {
+		m.FileColorProfile = ClipType(name)
 	}
 }
 
@@ -696,7 +697,7 @@ func (m *File) ResetColorProfile() {
 
 // SetSoftware sets the software name.
 func (m *File) SetSoftware(name string) {
-	if name = SanitizeStringType(name); name != "" {
+	if name = ClipType(name); name != "" {
 		m.FileSoftware = name
 	}
 }

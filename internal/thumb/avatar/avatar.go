@@ -1,7 +1,7 @@
 /*
 Package avatar provides helper functions to download and update avatar images.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -30,7 +30,6 @@ import (
 	_ "image/png"  // register png decoder
 
 	_ "golang.org/x/image/bmp"  // register bmp decoder
-	_ "golang.org/x/image/tiff" // register tiff decoder
 	_ "golang.org/x/image/webp" // register webp decoder
 
 	"github.com/photoprism/photoprism/internal/event"

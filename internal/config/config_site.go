@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 //go:embed robots.txt
@@ -92,7 +93,7 @@ func (c *Config) ContentUri() string {
 
 // DownloadUrl returns the download URL based on the SiteUrl and the DownloadUri.
 func (c *Config) DownloadUrl() string {
-	return strings.TrimRight(c.options.SiteUrl, "/") + DownloadUri
+	return strings.TrimRight(c.SiteUrl(), "/") + DownloadUri
 }
 
 // VideoUri returns the video streaming URI.
@@ -114,13 +115,14 @@ func (c *Config) StaticAssetUri(res string) string {
 	return c.StaticUri() + "/" + res
 }
 
-// SiteUrl returns the public server URL (default is "http://localhost:2342/").
+// SiteUrl returns the normalized public base URL (default "http://localhost:2342/").
+// Strips default ports, query strings, and fragments so absolute URLs stay stable.
 func (c *Config) SiteUrl() string {
-	if c.options.SiteUrl == "" {
-		return "http://localhost:2342/"
+	if siteUrl := scheme.NormalizeBaseURL(c.options.SiteUrl); siteUrl != "" {
+		return siteUrl
 	}
 
-	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
+	return "http://localhost:2342/"
 }
 
 // SiteHttps checks if the site URL uses HTTPS.
@@ -200,7 +202,7 @@ func (c *Config) SitePreview() string {
 			return c.options.SitePreview
 
 		} else if fileName := filepath.Join(c.ThemePath(), c.options.SitePreview); fs.FileExistsNotEmpty(fileName) {
-			return strings.TrimRight(c.options.SiteUrl, "/") + path.Join(ThemeUri, c.options.SitePreview)
+			return strings.TrimRight(c.SiteUrl(), "/") + path.Join(ThemeUri, c.options.SitePreview)
 		}
 
 		return c.SiteUrl() + strings.TrimPrefix(c.options.SitePreview, "/")

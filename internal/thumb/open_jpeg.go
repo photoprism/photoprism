@@ -3,11 +3,11 @@ package thumb
 import (
 	"fmt"
 	"image"
+	"image/jpeg"
 	"io"
 	"os"
 	"path/filepath"
 
-	"github.com/disintegration/imaging"
 	"github.com/mandykoh/prism/meta"
 	"github.com/mandykoh/prism/meta/autometa"
 
@@ -21,7 +21,7 @@ func decodeImage(reader io.ReadSeeker, logName string) (metaData *meta.Data, img
 	metaData, imgReader, err := autometa.Load(reader)
 
 	if err == nil {
-		img, err = imaging.Decode(imgReader)
+		img, err = jpeg.Decode(imgReader)
 		return metaData, img, err
 	}
 
@@ -35,7 +35,7 @@ func decodeImage(reader io.ReadSeeker, logName string) (metaData *meta.Data, img
 	}
 
 	// Decode image file.
-	img, err = imaging.Decode(reader)
+	img, err = jpeg.Decode(reader)
 
 	return metaData, img, err
 }

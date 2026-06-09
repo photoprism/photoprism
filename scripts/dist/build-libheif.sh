@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# This builds the heif-convert, heif-enc, heif-info and heif-thumbnailer binaries from source.
+# This builds the heif-dec, heif-enc, and heif-info binaries from source.
+# On libheif 1.21+, heif-convert is a symlink to heif-dec and heif-thumbnailer is no longer shipped.
 #
 # To create ARMv7 binaries with Docker on Ubuntu 22.04 LTS, you can e.g. run the following:
 #
@@ -66,7 +67,7 @@ echo "--------------------------------------------------------------------------
 echo "Installing build dependencies..."
 
 sudo apt-get -qq update
-sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libde265-dev libaom-dev libavcodec-dev
+sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libde265-dev libaom-dev aom-tools libyuv-dev libavcodec-dev
 
 if [[ $VERSION_CODENAME == "noble" ]]; then
   sudo apt-get -qq install libsharpyuv-dev librav1e-dev
@@ -78,10 +79,19 @@ rm -rf "/tmp/libheif"
 echo "Cloning git repository..."
 git clone -c advice.detachedHead=false -b "$LIBHEIF_VERSION" --depth 1 https://github.com/strukturag/libheif.git libheif
 cd libheif || exit
-(mkdir build && cd build && cmake --preset=release ..)
-make -C build
 
-# Install heif-convert, heif-enc, heif-info, and heif-thumbnailer in "/usr/local".
+EXTRA_CMAKE=()
+if [[ $VERSION_CODENAME == "jammy" ]]; then
+  # Ubuntu 22.04 (Jammy) ships libdav1d 0.9.x, which predates the Dav1dSettings::n_threads
+  # field that libheif 1.21+ writes. Skip the dav1d plugin on Jammy; AV1 decode still works
+  # via the aomdec plugin.
+  EXTRA_CMAKE+=("-DWITH_DAV1D=OFF")
+fi
+
+(mkdir build && cd build && cmake --preset=release "${EXTRA_CMAKE[@]}" ..) || exit 1
+make -C build || exit 1
+
+# Install heif-dec, heif-enc, and heif-info in "/usr/local" (heif-convert is a symlink to heif-dec on 1.21+).
 echo "Installing binaries..."
 DESTDIR=$DESTDIR make -C build install
 cd "$CURRENT_DIR" || exit

@@ -15,6 +15,8 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // ToAvc converts a single video file to MPEG-4 AVC.
@@ -34,6 +36,13 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 		return nil, fmt.Errorf("convert: %s is empty", logFileName)
 	}
 
+	// Skip files whose codec or container is on the FFmpeg exclude list.
+	if !w.FFmpegAllowed(f) {
+		format := clean.Log(w.ffmpegExclude.Match(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String()))
+		log.Warnf("convert: skipping %s because format %s is on the FFmpeg exclude list", logFileName, format)
+		return nil, fmt.Errorf("convert: format %s is excluded from FFmpeg processing", format)
+	}
+
 	// AVC video filename.
 	var avcName string
 
@@ -42,7 +51,7 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 		avcName = fs.VideoMp4.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 	} else {
 		// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers.
-		if f.IsM2TS() && w.conf.SidecarWritable() {
+		if f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
 			if mp4Name, mp4Err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4); mp4Err != nil {
 				return nil, fmt.Errorf("convert: %s in %s (remux)", mp4Err, clean.Log(f.RootRelName()))
 			} else if mp4Err = ffmpeg.RemuxFile(f.FileName(), mp4Name, encode.NewRemuxOptions(conf.FFmpegBin(), fs.VideoMp4, false)); mp4Err != nil {
@@ -75,6 +84,8 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	// Check if the sidecar path is writable, otherwise no new AVC file can be created.
 	if !w.conf.SidecarWritable() {
 		return nil, fmt.Errorf("convert: cannot transcode %s because the sidecar path is not writable", logFileName)
+	} else if w.conf.InsufficientStorage() {
+		return nil, status.ErrInsufficientStorage
 	}
 
 	// Get relative filename for logging.
@@ -158,10 +169,14 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), err)
 		}
 
-		// Try again using software encoder.
-		if encoder != encode.SoftwareAvc {
+		switch {
+		case disk.IsNoSpace(err):
+			// Do not retry on a full disk; surface the cause so the worker can abort the run.
+			return nil, disk.AsInsufficientStorage(err)
+		case encoder != encode.SoftwareAvc:
+			// Try again using software encoder.
 			return w.ToAvc(f, encode.SoftwareAvc, true, false)
-		} else {
+		default:
 			return nil, err
 		}
 	}

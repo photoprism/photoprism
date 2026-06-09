@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // GetConfigOptions returns backend config options.
@@ -58,7 +59,14 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 
 		v := make(entity.Values)
 
+		LimitRequestBodyBytes(c, MaxSettingsRequestBytes)
+
 		if err := c.BindJSON(&v); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

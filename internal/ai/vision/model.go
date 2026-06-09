@@ -3,6 +3,7 @@ package vision
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -68,9 +69,11 @@ func (m *Model) GetModel() (model, name, version string) {
 		return "", "", ""
 	}
 
-	// Normalise the configured values.
-	name = clean.TypeLower(m.Name)
-	version = clean.TypeLowerDash(m.Version)
+	// Sanitize the configured values without lowercasing: upstream catalogs
+	// (Ollama tags, Hugging Face IDs served by OpenAI-compatible endpoints)
+	// match identifiers verbatim, so case must round-trip from vision.yml.
+	name = clean.Type(m.Name)
+	version = clean.Type(m.Version)
 
 	// Build a base name from the highest-priority override:
 	// 1) Service-specific override (expanded for env vars)
@@ -81,7 +84,7 @@ func (m *Model) GetModel() (model, name, version string) {
 	case serviceModel != "":
 		name = serviceModel
 	case strings.TrimSpace(m.Model) != "":
-		name = clean.TypeLower(m.Model)
+		name = clean.Type(m.Model)
 	}
 
 	// Return if no model is configured.
@@ -519,15 +522,10 @@ func (m *Model) SchemaTemplate() string {
 
 		if m.Type == ModelTypeLabels {
 			if envFile := strings.TrimSpace(os.Getenv(labelSchemaEnvVar)); envFile != "" {
-				path := fs.Abs(envFile)
-				if path == "" {
-					path = envFile
-				}
-				// #nosec G304 path comes from validated config/env
-				if data, err := os.ReadFile(path); err != nil {
-					log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(path), err)
+				if schemaFromFile, err := readSchemaFile(envFile); err != nil {
+					log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(envFile), err)
 				} else {
-					schemaText = string(data)
+					schemaText = schemaFromFile
 				}
 			}
 		}
@@ -537,15 +535,10 @@ func (m *Model) SchemaTemplate() string {
 		}
 
 		if schemaText == "" && strings.TrimSpace(m.SchemaFile) != "" {
-			path := fs.Abs(m.SchemaFile)
-			if path == "" {
-				path = m.SchemaFile
-			}
-			// #nosec G304 schema file path provided via config
-			if data, err := os.ReadFile(path); err != nil {
-				log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(path), err)
+			if schemaFromFile, err := readSchemaFile(m.SchemaFile); err != nil {
+				log.Warnf("vision: failed to read schema from %s (%s)", clean.Log(m.SchemaFile), err)
 			} else {
-				schemaText = string(data)
+				schemaText = schemaFromFile
 			}
 		}
 
@@ -563,6 +556,32 @@ func (m *Model) SchemaTemplate() string {
 	})
 
 	return m.schema
+}
+
+// readSchemaFile resolves and reads a schema file path from config or env.
+func readSchemaFile(filePath string) (string, error) {
+	path := fs.Abs(filePath)
+	if path == "" {
+		path = filePath
+	}
+
+	path = filepath.Clean(path)
+
+	if path == "" {
+		return "", fmt.Errorf("schema path is empty")
+	}
+
+	if _, err := fs.StatFile(path); err != nil {
+		return "", err
+	}
+
+	// #nosec G304,G703 schema path is validated with Clean + fs.StatFile and comes from trusted config/env.
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
 }
 
 func (m *Model) engineDefaults() EngineDefaults {

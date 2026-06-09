@@ -129,6 +129,7 @@ type Years []int
 type ClientDisable struct {
 	Restart        bool `json:"restart"`
 	WebDAV         bool `json:"webdav"`
+	MCP            bool `json:"mcp"`
 	Settings       bool `json:"settings"`
 	Places         bool `json:"places"`
 	Backups        bool `json:"backups"`
@@ -262,6 +263,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Disable: ClientDisable{
 			Restart:        true,
 			WebDAV:         true,
+			MCP:            c.DisableMCP(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
 			Backups:        true,
@@ -360,6 +362,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		Disable: ClientDisable{
 			Restart:        true,
 			WebDAV:         c.DisableWebDAV(),
+			MCP:            c.DisableMCP(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
 			Backups:        true,
@@ -467,6 +470,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 			Backups:        c.DisableBackups(),
 			Restart:        c.DisableRestart(),
 			WebDAV:         c.DisableWebDAV(),
+			MCP:            c.DisableMCP(),
 			Places:         c.DisablePlaces(),
 			TensorFlow:     c.DisableTensorFlow(),
 			Faces:          c.DisableFaces(),

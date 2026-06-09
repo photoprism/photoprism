@@ -20,6 +20,83 @@ import (
 
 const shortTestJoinToken = "short-token"
 
+func TestConfig_PortalOIDCIssuer(t *testing.T) {
+	t.Run("DefaultsToSiteUrl", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, c.SiteUrl(), c.PortalOIDCIssuer())
+	})
+	t.Run("FollowsSiteUrlOverride", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://portal.example.com/"
+		assert.Equal(t, "https://portal.example.com/", c.PortalOIDCIssuer())
+	})
+	t.Run("ExplicitOverrideWins", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://site.example.com/"
+		c.options.PortalOIDCIssuer = "https://portal-issuer.example.com/"
+		assert.Equal(t, "https://portal-issuer.example.com/", c.PortalOIDCIssuer())
+	})
+}
+
+func TestConfig_PortalOIDCTTL(t *testing.T) {
+	t.Run("DefaultsToFiveMinutes", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 0
+		assert.Equal(t, 300*time.Second, c.PortalOIDCTTL())
+	})
+	t.Run("ClampsToMin", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 10
+		assert.Equal(t, 60*time.Second, c.PortalOIDCTTL())
+	})
+	t.Run("ClampsToMax", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 99999
+		assert.Equal(t, 900*time.Second, c.PortalOIDCTTL())
+	})
+	t.Run("HonorsExplicit", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 600
+		assert.Equal(t, 600*time.Second, c.PortalOIDCTTL())
+	})
+}
+
+func TestConfig_PortalOIDCCodeTTL(t *testing.T) {
+	t.Run("DefaultsToSixtySeconds", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCCodeTTL = 0
+		assert.Equal(t, 60*time.Second, c.PortalOIDCCodeTTL())
+	})
+	t.Run("ClampsToMin", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCCodeTTL = 5
+		assert.Equal(t, 30*time.Second, c.PortalOIDCCodeTTL())
+	})
+	t.Run("ClampsToMax", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCCodeTTL = 1000
+		assert.Equal(t, 300*time.Second, c.PortalOIDCCodeTTL())
+	})
+}
+
+func TestConfig_PortalOIDCDefaultPolicyChooser(t *testing.T) {
+	t.Run("DefaultIsChooser", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCDefaultPolicy = ""
+		assert.True(t, c.PortalOIDCDefaultPolicyChooser())
+	})
+	t.Run("Direct", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCDefaultPolicy = "direct"
+		assert.False(t, c.PortalOIDCDefaultPolicyChooser())
+	})
+	t.Run("UnknownValueDefaultsToChooser", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCDefaultPolicy = "garbage"
+		assert.True(t, c.PortalOIDCDefaultPolicyChooser())
+	})
+}
+
 func TestConfig_PortalUrl(t *testing.T) {
 	t.Run("Unset", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -38,6 +115,7 @@ func TestConfig_PortalUrl(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
+		c.options.Edition = Portal
 		c.options.NodeRole = cluster.RolePortal
 		c.options.JoinToken = ""
 
@@ -51,8 +129,20 @@ func TestConfig_PortalUrl(t *testing.T) {
 		assert.FileExists(t, secretFile)
 		info, err := os.Stat(secretFile)
 		assert.NoError(t, err)
-		assert.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
+		if err == nil {
+			assert.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
+		}
 		assert.Equal(t, token, c.JoinToken())
+	})
+	t.Run("RegularInstallCannotEnablePortalRole", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.Edition = Community
+		c.options.NodeRole = cluster.RolePortal
+		c.options.JoinToken = ""
+
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
+		assert.False(t, c.Portal())
+		assert.Equal(t, "", c.JoinToken())
 	})
 	t.Run("Default", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -99,8 +189,12 @@ func TestConfig_Cluster(t *testing.T) {
 		// Defaults
 		assert.False(t, c.Portal())
 
-		// Toggle values
+		// Regular installations cannot enable portal mode through the role flag.
 		c.Options().NodeRole = string(cluster.RolePortal)
+		assert.False(t, c.Portal())
+
+		// Portal edition is always treated as a portal node.
+		c.Options().Edition = Portal
 		assert.True(t, c.Portal())
 		c.Options().NodeRole = ""
 	})
@@ -111,21 +205,24 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.False(t, c.PortalProxy())
 
 		c.options.NodeRole = string(cluster.RolePortal)
+		assert.False(t, c.PortalProxy())
+
+		c.options.Edition = Portal
 		assert.True(t, c.PortalProxy())
 
 		c.options.PortalProxy = false
 		assert.False(t, c.PortalProxy())
 	})
-	t.Run("PortalProxyPrefix", func(t *testing.T) {
+	t.Run("PortalProxyUri", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
-		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
+		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyUri())
 
-		c.options.PortalProxyPrefix = "/instance"
-		assert.Equal(t, "/instance", c.PortalProxyPrefix())
+		c.options.PortalProxyUri = "/instance"
+		assert.Equal(t, "/instance", c.PortalProxyUri())
 
-		c.options.PortalProxyPrefix = "  "
-		assert.Equal(t, proxy.DefaultPathPrefix, c.PortalProxyPrefix())
+		c.options.PortalProxyUri = "https://proxy.example.com/instance/"
+		assert.Equal(t, "https://proxy.example.com/instance/", c.PortalProxyUri())
 	})
 	t.Run("JWKSUrlSetter", func(t *testing.T) {
 		const existing = "https://existing.example/.well-known/jwks.json"
@@ -205,7 +302,7 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.JWTScope = "cluster vision"
 		assert.Equal(t, list.ParseAttr("cluster vision"), c.JWTAllowedScopes())
 		c.options.JWTScope = ""
-		assert.Equal(t, list.ParseAttr("config cluster vision metrics"), c.JWTAllowedScopes())
+		assert.Equal(t, list.ParseAttr("config cluster vision metrics mcp users"), c.JWTAllowedScopes())
 	})
 	t.Run("Paths", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -311,6 +408,7 @@ func TestConfig_Cluster(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
+		c.options.Edition = Portal
 		c.options.NodeRole = cluster.RolePortal
 
 		c.options.JoinToken = "onwnOVt-MZCCkA0z-YJXHnzJ"
@@ -497,6 +595,7 @@ func TestConfig_Cluster(t *testing.T) {
 		ctx := CliTestContext()
 		assert.NoError(t, ctx.Set("config-path", tempCfg))
 		c := NewConfig(ctx)
+		c.options.Edition = Portal
 		c.options.NodeRole = cluster.RolePortal
 
 		expected := filepath.Join(c.PortalConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
@@ -620,9 +719,18 @@ func TestConfig_Cluster(t *testing.T) {
 		c.options.NodeRole = "app"
 		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 		c.options.NodeRole = string(cluster.RolePortal)
-		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
+		assert.Equal(t, string(cluster.RoleInstance), c.NodeRole())
 		c.options.NodeRole = string(cluster.RoleService)
 		assert.Equal(t, string(cluster.RoleService), c.NodeRole())
+
+		// Portal edition always resolves to portal.
+		c.options.Edition = Portal
+		c.options.NodeRole = string(cluster.RoleInstance)
+		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
+		c.options.NodeRole = string(cluster.RoleService)
+		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
+		c.options.NodeRole = string(cluster.RolePortal)
+		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
 	})
 	t.Run("SecretsFromFiles", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

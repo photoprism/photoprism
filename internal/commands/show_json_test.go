@@ -97,6 +97,11 @@ func TestShowMetadata_JSON(t *testing.T) {
 }
 
 func TestShowConfig_JSON(t *testing.T) {
+	// "show config" calls InitCore, which creates storage dirs and an index database under
+	// ".photoprism" in the working directory when no storage path is set; run from a temp
+	// dir so the test does not leave files in the repository.
+	t.Chdir(t.TempDir())
+
 	out, err := RunWithTestContext(ShowConfigCommand, []string{"config", "--json"})
 
 	if err != nil {
@@ -181,6 +186,138 @@ func TestShowConfigOptions_MarkdownSections(t *testing.T) {
 	}
 	if !strings.Contains(out, "### Authentication") {
 		t.Fatalf("expected Markdown section heading '### Authentication' in output\n%s", out[:min(400, len(out))])
+	}
+}
+
+func TestShowConfigOptions_MarkdownServicesCIDRSectionOrder(t *testing.T) {
+	out, err := RunWithTestContext(ShowConfigOptionsCommand, []string{"config-options", "--md"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	networkingHeading := strings.Index(out, "### Networking")
+	proxyProtoHTTPS := strings.Index(out, "PHOTOPRISM_PROXY_PROTO_HTTPS")
+	servicesCIDR := strings.Index(out, "PHOTOPRISM_SERVICES_CIDR")
+	disableTLS := strings.Index(out, "PHOTOPRISM_DISABLE_TLS")
+
+	if networkingHeading < 0 || proxyProtoHTTPS < 0 || servicesCIDR < 0 || disableTLS < 0 {
+		t.Fatalf("expected networking heading and related rows in output")
+	}
+
+	if servicesCIDR < networkingHeading {
+		t.Fatalf("expected services-cidr row to appear in Networking section")
+	}
+
+	if servicesCIDR < proxyProtoHTTPS {
+		t.Fatalf("expected services-cidr row to appear after proxy-proto-https")
+	}
+
+	if servicesCIDR > disableTLS {
+		t.Fatalf("expected services-cidr row to appear before disable-tls")
+	}
+}
+
+func TestShowConfigYaml_MarkdownServicesCIDRSectionOrder(t *testing.T) {
+	out, err := RunWithTestContext(ShowConfigYamlCommand, []string{"config-yaml", "--md"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	networkingHeading := strings.Index(out, "### Networking")
+	proxyProtoHTTPS := strings.Index(out, "ProxyProtoHttps")
+	servicesCIDR := strings.Index(out, "ServicesCIDR")
+	disableTLS := strings.Index(out, "DisableTLS")
+
+	if networkingHeading < 0 || proxyProtoHTTPS < 0 || servicesCIDR < 0 || disableTLS < 0 {
+		t.Fatalf("expected networking heading and related rows in output")
+	}
+
+	if servicesCIDR < networkingHeading {
+		t.Fatalf("expected ServicesCIDR row to appear in Networking section")
+	}
+
+	if servicesCIDR < proxyProtoHTTPS {
+		t.Fatalf("expected ServicesCIDR row to appear after ProxyProtoHttps")
+	}
+
+	if servicesCIDR > disableTLS {
+		t.Fatalf("expected ServicesCIDR row to appear before DisableTLS")
+	}
+}
+
+func TestShowConfigOptions_MarkdownHttpHeaderSettingsOrder(t *testing.T) {
+	out, err := RunWithTestContext(ShowConfigOptionsCommand, []string{"config-options", "--md"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	webServerHeading := strings.Index(out, "### Web Server")
+	httpCompression := strings.Index(out, "PHOTOPRISM_HTTP_COMPRESSION")
+	httpHeaderTimeout := strings.Index(out, "PHOTOPRISM_HTTP_HEADER_TIMEOUT")
+	httpHeaderBytes := strings.Index(out, "PHOTOPRISM_HTTP_HEADER_BYTES")
+	httpIdleTimeout := strings.Index(out, "PHOTOPRISM_HTTP_IDLE_TIMEOUT")
+	httpCachePublic := strings.Index(out, "PHOTOPRISM_HTTP_CACHE_PUBLIC")
+
+	if webServerHeading < 0 || httpCompression < 0 || httpHeaderTimeout < 0 || httpHeaderBytes < 0 || httpIdleTimeout < 0 || httpCachePublic < 0 {
+		t.Fatalf("expected web server heading and related rows in output")
+	}
+
+	if httpHeaderTimeout < webServerHeading {
+		t.Fatalf("expected http-header-timeout row to appear in Web Server section")
+	}
+
+	if httpHeaderTimeout < httpCompression {
+		t.Fatalf("expected http-header-timeout row to appear after http-compression")
+	}
+
+	if httpHeaderBytes < httpHeaderTimeout {
+		t.Fatalf("expected http-header-bytes row to appear after http-header-timeout")
+	}
+
+	if httpIdleTimeout < httpHeaderBytes {
+		t.Fatalf("expected http-idle-timeout row to appear after http-header-bytes")
+	}
+
+	if httpIdleTimeout > httpCachePublic {
+		t.Fatalf("expected http-idle-timeout row to appear before http-cache-public")
+	}
+}
+
+func TestShowConfigYaml_MarkdownHttpHeaderSettingsOrder(t *testing.T) {
+	out, err := RunWithTestContext(ShowConfigYamlCommand, []string{"config-yaml", "--md"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	webServerHeading := strings.Index(out, "### Web Server")
+	httpCompression := strings.Index(out, "HttpCompression")
+	httpHeaderTimeout := strings.Index(out, "HttpHeaderTimeout")
+	httpHeaderBytes := strings.Index(out, "HttpHeaderBytes")
+	httpIdleTimeout := strings.Index(out, "HttpIdleTimeout")
+	httpCachePublic := strings.Index(out, "HttpCachePublic")
+
+	if webServerHeading < 0 || httpCompression < 0 || httpHeaderTimeout < 0 || httpHeaderBytes < 0 || httpIdleTimeout < 0 || httpCachePublic < 0 {
+		t.Fatalf("expected web server heading and related rows in output")
+	}
+
+	if httpHeaderTimeout < webServerHeading {
+		t.Fatalf("expected HttpHeaderTimeout row to appear in Web Server section")
+	}
+
+	if httpHeaderTimeout < httpCompression {
+		t.Fatalf("expected HttpHeaderTimeout row to appear after HttpCompression")
+	}
+
+	if httpHeaderBytes < httpHeaderTimeout {
+		t.Fatalf("expected HttpHeaderBytes row to appear after HttpHeaderTimeout")
+	}
+
+	if httpIdleTimeout < httpHeaderBytes {
+		t.Fatalf("expected HttpIdleTimeout row to appear after HttpHeaderBytes")
+	}
+
+	if httpIdleTimeout > httpCachePublic {
+		t.Fatalf("expected HttpIdleTimeout row to appear before HttpCachePublic")
 	}
 }
 

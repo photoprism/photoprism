@@ -1,10 +1,15 @@
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
 
 export GO111MODULE=on
 export NPM_CONFIG_IGNORE_SCRIPTS ?= true
+
+ifneq (,$(wildcard .telemetry))
+include .telemetry
+export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' .telemetry)
+endif
 
 -include .semver
 -include .env
@@ -34,6 +39,7 @@ BUILD_ARCH ?= $(shell ./scripts/dist/arch.sh)
 export BUILD_ARCH
 JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
 TF_VERSION ?= 2.18.0
+WORKING_DIR ?= /go/src/github.com/photoprism/photoprism
 
 # Install parameters.
 INSTALL_PATH ?= $(BUILD_PATH)/photoprism-ce_$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
@@ -100,6 +106,7 @@ show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
+format: format-tables fmt-go fmt-swag
 format-tables: # Format Markdown tables in README.md, AGENTS.md, and CODEMAP.md files.
 	@set -eu; \
 	tmp="$$(mktemp)"; \
@@ -121,7 +128,8 @@ devtools: install-go dep-npm
 .SILENT: help;
 logs:
 	$(DOCKER_COMPOSE) logs -f
-down:
+down: docker-down
+docker-down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
 docs: swag
 swag: swag-json
@@ -156,10 +164,10 @@ notice:
 fix-permissions:
 	$(info Updating filesystem permissions...)
 	@if [ $(UID) != 0 ]; then\
-		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
-		sudo chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism || true;\
-		echo "Running \"chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
-		sudo chmod --preserve-root -Rcf u+rwX /go/src/github.com/photoprism/photoprism/* /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
+		sudo chown --preserve-root -Rcf $(UID):$(GID) /go $(WORKING_DIR) /photoprism /opt/photoprism /tmp/photoprism || true;\
+		echo "Running \"chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism\". Please wait.";\
+		sudo chmod --preserve-root -Rcf u+rwX $(WORKING_DIR)/* /photoprism /opt/photoprism /tmp/photoprism || true;\
 		echo "Done."; \
 	else\
 		echo "Running as root. Nothing to do."; \
@@ -216,7 +224,7 @@ install-onnx:
 	sudo scripts/dist/install-onnx.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
-acceptance-sqlite-restart:
+acceptance-sqlite-restart: acceptance-sqlite-stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	rm -rf storage/acceptance/sidecar/2020
@@ -229,7 +237,7 @@ acceptance-sqlite-restart:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" start -d
 acceptance-sqlite-stop:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
-acceptance-auth-sqlite-restart:
+acceptance-auth-sqlite-restart: acceptance-auth-sqlite-stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" start -d
@@ -270,9 +278,9 @@ dep-list:
 	go list -u -m -json all | go-mod-outdated -direct
 dep-list-all:
 	go list -u -m -json all | go-mod-outdated
+vuln: audit
 audit: audit-frontend audit-backend
-audit-frontend:
-	$(MAKE) -C frontend audit
+audit-frontend: npm-audit
 audit-backend: dep-vuln
 dep-audit: dep-vuln
 dep-vuln:
@@ -290,44 +298,101 @@ npm-version:
 dep-npm:
 	@echo "Installing NPM package manager..."
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "npm@latest"; \
         else \
-	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "npm@latest"; \
         fi
-dep-js:
-	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
-codex: dep-codex codex-version
+dep-js: npm-ci
+npm-ci:
+	$(info Clean install of NPM dependencies...)
+	npm ci --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-install:
+	$(info Installing NPM dependencies...)
+	npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-update:
+	$(info Updating NPM dependencies in package.json and package-lock.json...)
+	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-audit:
+	npm audit --ignore-scripts --no-fund --no-update-notifier
+tools: gh claude codex
+codex: dep-codex codex-version codex-skills
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
 dep-codex:
 	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "@openai/codex@latest"; \
 	else \
-	  npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-audit --no-fund --no-update-notifier "@openai/codex@latest"; \
 	fi
-claude:
-	@echo "Installing Claude Code..."
-	@[ -n "$(HOME)" ] && [ "$(HOME)" != "/" ] || (echo "ERROR: Unsafe HOME path '$(HOME)'"; exit 1)
-	@if [ -e "$(HOME)/.cache" ] && [ ! -w "$(HOME)/.cache" ]; then \
-	  echo "Fixing ownership of \"$(HOME)/.cache\"..."; \
+skills: agents-skills claude-skills
+agents-skills: codex-skills
+codex-skills:
+	@if [ -d "specs/.agents/skills" ]; then \
+	  echo "Linking Codex skills from specs/.agents/skills..."; \
+	  install -d -m 755 -- ".agents/skills"; \
+	  for src in specs/.agents/skills/*/; do \
+	    [ -d "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".agents/skills/$$name"; \
+	    target="../../specs/.agents/skills/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.agents/skills directory found, skipping."; \
+	fi
+gh: dep-gh gh-version
+gh-version:
+	@echo "🐙 Installed $$(gh --version | head -n 1)."
+dep-gh:
+	@echo "Installing GitHub CLI..."
+	@if command -v apt-get >/dev/null 2>&1; then \
+	  ./scripts/dist/install-gh.sh; \
+	elif command -v dnf >/dev/null 2>&1; then \
 	  if command -v sudo >/dev/null 2>&1; then \
-	    sudo chown "$(UID):$(GID)" "$(HOME)/.cache"; \
+	    sudo dnf install -y gh; \
 	  else \
-	    chown "$(UID):$(GID)" "$(HOME)/.cache"; \
+	    dnf install -y gh; \
 	  fi; \
+	elif command -v brew >/dev/null 2>&1; then \
+	  brew install gh; \
+	else \
+	  echo "ERROR: Could not install gh automatically. See https://cli.github.com/"; \
+	  exit 1; \
 	fi
-	@if [ -e "$(HOME)/.cache/claude" ] && [ ! -w "$(HOME)/.cache/claude" ]; then \
-	  echo "Fixing ownership of \"$(HOME)/.cache/claude\"..."; \
-	  if command -v sudo >/dev/null 2>&1; then \
-	    sudo chown -R "$(UID):$(GID)" "$(HOME)/.cache/claude"; \
-	  else \
-	    chown -R "$(UID):$(GID)" "$(HOME)/.cache/claude"; \
-	  fi; \
+claude: claude-skills
+	@[ -n "$(HOME)" ] && [ "$(HOME)" != "/" ] && install -d -m 755 -- "$(HOME)/.local/bin" || true
+	@[ -n "$(CLAUDE_CONFIG_DIR)" ] && [ "$(CLAUDE_CONFIG_DIR)" != "/" ] && install -d -m 755 -- "$(CLAUDE_CONFIG_DIR)" || true
+	@if command -v claude >/dev/null 2>&1; then \
+	  echo "Updating Claude Code..."; \
+	  claude update; \
+	else \
+	  echo "Installing Claude Code..."; \
+	  curl -fsSL https://claude.ai/install.sh | bash; \
 	fi
-	install -d -m 700 -- "$(HOME)/.cache/claude"
-	curl -fsSL https://claude.ai/install.sh | bash
+claude-skills:
+	@if [ -d "specs/.claude/skills" ]; then \
+	  echo "Linking Claude Code skills from specs/.claude/skills..."; \
+	  install -d -m 755 -- ".claude/skills"; \
+	  for src in specs/.claude/skills/*/; do \
+	    [ -d "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".claude/skills/$$name"; \
+	    target="../../specs/.claude/skills/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/skills directory found, skipping."; \
+	fi
 dep-go:
 	go build -v ./...
 dep-upgrade:
@@ -352,6 +417,7 @@ zip-nsfw:
 	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
 	(cd frontend &&	env BUILD_ENV=production NODE_ENV=production npm run build)
+	(cd frontend && node scripts/precompress.js)
 build-go: build-develop
 build-develop:
 	rm -f $(BINARY_NAME)
@@ -370,32 +436,41 @@ build-static:
 	scripts/build.sh static $(BINARY_NAME)
 build-libheif: build-libheif-amd64 build-libheif-arm64 build-libheif-armv7
 build-libheif-amd64:
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.20.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.22.2
 build-libheif-arm64:
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.20.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.20.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.22.2
 build-libheif-armv7:
-	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.20.2
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.22.2
 build-libheif-latest: build-libheif-amd64-latest build-libheif-arm64-latest build-libheif-armv7-latest
 build-libheif-amd64-latest:
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh
 build-libheif-arm64-latest:
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh
 build-libheif-armv7-latest:
 	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh
+build-libheif-deb: build-libheif-deb-amd64 build-libheif-deb-arm64
+build-libheif-deb-amd64:
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.22.2
+build-libheif-deb-arm64:
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.22.2
 build-tensorflow: docker-tensorflow-amd64
 docker-tensorflow: docker-tensorflow-amd64
 docker-tensorflow-amd64:
@@ -414,6 +489,7 @@ build-setup: build-setup-nas-raspberry-pi
 build-setup-nas-raspberry-pi:
 	./scripts/setup/nas/raspberry-pi/build.sh
 watch-js:
+	(cd frontend && node scripts/precompress.js --clean)
 	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
 test-js:
 	$(info Running JS unit tests...)
@@ -472,7 +548,7 @@ run-test-hub:
 	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
 	$(info Running all Go tests on MariaDB...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/...
@@ -553,7 +629,8 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-questing docker-develop-questing-slim
+docker-develop-ubuntu: docker-develop-resolute docker-develop-resolute-slim
+docker-develop-legacy: docker-develop-jammy docker-develop-jammy-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
@@ -564,6 +641,14 @@ docker-develop-bookworm-slim:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm-slim /bookworm-slim
+docker-develop-trixie:
+	docker pull --platform=amd64 debian:trixie-slim
+	docker pull --platform=arm64 debian:trixie-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 trixie /trixie
+docker-develop-trixie-slim:
+	docker pull --platform=amd64 debian:trixie-slim
+	docker pull --platform=arm64 debian:trixie-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 trixie-slim /trixie-slim
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:1-bullseye
 	docker pull --platform=arm64 golang:1-bullseye
@@ -636,11 +721,19 @@ docker-develop-plucky-slim:
 docker-develop-questing:
 	docker pull --platform=amd64 ubuntu:questing
 	docker pull --platform=arm64 ubuntu:questing
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 questing /questing "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 questing /questing
 docker-develop-questing-slim:
 	docker pull --platform=amd64 ubuntu:questing
 	docker pull --platform=arm64 ubuntu:questing
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 questing-slim /questing-slim
+docker-develop-resolute:
+	docker pull --platform=amd64 ubuntu:resolute
+	docker pull --platform=arm64 ubuntu:resolute
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute /resolute "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+docker-develop-resolute-slim:
+	docker pull --platform=amd64 ubuntu:resolute
+	docker pull --platform=arm64 ubuntu:resolute
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 resolute-slim /resolute-slim
 unstable: docker-unstable
 docker-unstable: docker-unstable-mantic
 docker-unstable-jammy:
@@ -658,10 +751,10 @@ docker-unstable-mantic:
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-ce: docker-preview-questing
+docker-preview-ce: docker-preview-resolute
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-questing
+docker-preview-ubuntu: docker-preview-resolute
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
@@ -737,13 +830,19 @@ docker-preview-questing:
 	docker pull --platform=amd64 photoprism/develop:questing-slim
 	docker pull --platform=arm64 photoprism/develop:questing
 	docker pull --platform=arm64 photoprism/develop:questing-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /questing
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-questing /questing
+docker-preview-resolute:
+	docker pull --platform=amd64 photoprism/develop:resolute
+	docker pull --platform=amd64 photoprism/develop:resolute-slim
+	docker pull --platform=arm64 photoprism/develop:resolute
+	docker pull --platform=arm64 photoprism/develop:resolute-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /resolute
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-questing
+docker-release-ubuntu: docker-release-resolute
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
@@ -819,7 +918,13 @@ docker-release-questing:
 	docker pull --platform=amd64 photoprism/develop:questing-slim
 	docker pull --platform=arm64 photoprism/develop:questing
 	docker pull --platform=arm64 photoprism/develop:questing-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /questing
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-questing /questing
+docker-release-resolute:
+	docker pull --platform=amd64 photoprism/develop:resolute
+	docker pull --platform=amd64 photoprism/develop:resolute-slim
+	docker pull --platform=arm64 photoprism/develop:resolute
+	docker pull --platform=arm64 photoprism/develop:resolute-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /resolute
 start-traefik:
 	$(DOCKER_COMPOSE) up -d --wait traefik
 stop-traefik:
@@ -866,16 +971,20 @@ terminal-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml exec photoprism-preview bash
 logs-preview:
 	$(DOCKER_COMPOSE) -f compose.preview.yaml logs -f photoprism-preview
-docker-local: docker-local-questing
+docker-local: docker-local-resolute
 docker-local-up:
 	$(DOCKER_COMPOSE) -f compose.local.yaml up --force-recreate
 docker-local-down:
 	$(DOCKER_COMPOSE) -f compose.local.yaml down --remove-orphans
-docker-local-all: docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
+docker-local-all: docker-local-resolute docker-local-questing docker-local-plucky docker-local-oracular docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
 	scripts/docker/build.sh photoprism ce-bookworm /bookworm "-t photoprism/photoprism:local"
+docker-local-trixie:
+	docker pull photoprism/develop:trixie
+	docker pull debian:trixie-slim
+	scripts/docker/build.sh photoprism ce-trixie /trixie "-t photoprism/photoprism:local"
 docker-local-bullseye:
 	docker pull photoprism/develop:bullseye
 	docker pull photoprism/develop:bullseye-slim
@@ -916,12 +1025,19 @@ docker-local-plucky:
 	docker pull photoprism/develop:plucky
 	docker pull ubuntu:plucky
 	scripts/docker/build.sh photoprism ce-plucky /plucky "-t photoprism/photoprism:local"
+docker-local-resolute:
+	docker pull photoprism/develop:resolute
+	docker pull ubuntu:resolute
+	scripts/docker/build.sh photoprism ce-resolute /resolute "-t photoprism/photoprism:local"
 local-develop: docker-local-develop
-docker-local-develop: docker-local-develop-questing
-docker-local-develop-all: docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop: docker-local-develop-resolute
+docker-local-develop-all: docker-local-develop-resolute docker-local-develop-questing docker-local-develop-oracular docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
+docker-local-develop-trixie:
+	docker pull debian:trixie-slim
+	scripts/docker/build.sh develop trixie /trixie
 docker-local-develop-bullseye:
 	docker pull golang:1-bullseye
 	scripts/docker/build.sh develop bullseye /bullseye
@@ -952,6 +1068,9 @@ docker-local-develop-questing:
 docker-local-develop-plucky:
 	docker pull ubuntu:plucky
 	scripts/docker/build.sh develop plucky /plucky
+docker-local-develop-resolute:
+	docker pull ubuntu:resolute
+	scripts/docker/build.sh develop resolute /resolute
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
@@ -992,13 +1111,16 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./setup/docker/cloud && packer build digitalocean.json)
-lint: lint-js lint-go
+lint: lint-js lint-go check-api-request-limits
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
 lint-go:
 	$(info Linting Go code...)
 	golangci-lint run --issues-exit-code 0 ./pkg/... ./internal/... ./.../internal/...
+check-api-request-limits:
+	$(info Checking API request-body limits...)
+	bash ./scripts/check-api-request-limits.sh
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:

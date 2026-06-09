@@ -51,7 +51,7 @@ func indexAction(ctx *cli.Context) error {
 	defer cancel()
 
 	if err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	conf.InitDb()
@@ -61,7 +61,7 @@ func indexAction(ctx *cli.Context) error {
 	subPath, err := sanitizeSubfolderArg(ctx.Args().First())
 
 	if err != nil {
-		return err
+		return cli.Exit(err, 2)
 	}
 
 	if subPath == "" {
@@ -118,8 +118,8 @@ func indexAction(ctx *cli.Context) error {
 
 		// Start index and cache cleanup.
 		cleanupStart := time.Now()
-		if thumbnails, _, sidecars, err := w.Start(opt); err != nil {
-			return err
+		if thumbnails, _, sidecars, cleanupErr := w.Start(opt); cleanupErr != nil {
+			return cli.Exit(cleanupErr, 1)
 		} else if total := thumbnails + sidecars; total > 0 {
 			log.Infof("cleanup: deleted %s in total [%s]", english.Plural(total, "file", "files"), time.Since(cleanupStart))
 		}

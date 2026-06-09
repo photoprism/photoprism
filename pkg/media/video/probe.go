@@ -5,6 +5,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/abema/go-mp4"
@@ -13,6 +14,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 )
+
+// HeadScanLimit caps how far sample-entry chunk scans read into the file.
+// The sample entry sits in the stsd box inside moov; faststart videos place
+// moov at the head, and Motion Photos put it just past the JPEG (a few MB
+// at most), so 16 MiB comfortably covers both layouts.
+const HeadScanLimit = 16 * 1024 * 1024
+
+// HeadScanChunks lists every video sample-entry code searched for in a single
+// pass over the file head when go-mp4 does not report the codec directly.
+var HeadScanChunks = append(append(Chunks{}, HevcChunks...), MagicYuvChunks...)
 
 // ProbeFile returns information for the given filename.
 func ProbeFile(fileName string) (info Info, err error) {
@@ -150,11 +161,15 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 		}
 	}
 
-	// If no AVC video was found, search the video data for High Efficiency Video Coding (HEVC) chunks,
-	// see https://stackoverflow.com/questions/63468587/what-hevc-codec-tag-to-use-with-fmp4-hvc1-or-hev1.
+	// If no AVC video was found, search the file head for other recognizable sample-entry
+	// codes (HEVC, see https://stackoverflow.com/questions/63468587, and MagicYUV) in a single
+	// pass. Each hit is validated as a real visual sample entry so a four-byte code colliding
+	// with raw payload bytes (e.g. DV streams in a QuickTime container) is not misread as a
+	// codec. The Codecs lookup normalizes each hit, e.g. HVC1/HVC2/HVC3/DVH1 → CodecHvc1 and
+	// M8RG/M8Y2/… → CodecMagicYUV; the lookup is lowercased because MagicYUV codes are uppercase.
 	if info.VideoCodec == "" {
-		if fileOffset, fileErr := ChunkHVC1.DataOffset(file, 0, -1); fileOffset > 0 && fileErr == nil {
-			info.VideoCodec = CodecHvc1
+		if pos, hit, fileErr := HeadScanChunks.SampleEntryOffset(file, HeadScanLimit); pos > 0 && fileErr == nil {
+			info.VideoCodec = Codecs[strings.ToLower(hit.String())]
 		}
 	}
 

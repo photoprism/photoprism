@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -156,7 +157,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		if themeVersion, err := theme.DetectVersion(conf.ThemePath()); err == nil && themeVersion != "" {
 			payload.Theme = themeVersion
 		}
-		b, _ := json.Marshal(payload)
+		b := marshalRegisterRequest(payload)
 
 		// In dry-run, we allow empty portalURL (will print derived/empty values).
 		if ctx.Bool("dry-run") {
@@ -329,12 +330,13 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 	// backoff: 500ms -> max ~8s, 6 attempts with jitter
 	delay := 500 * time.Millisecond
 	for range 6 {
-		req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload))
+		// url is a register endpoint derived from the configured portal URL for this CLI command.
+		req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload)) //nolint:gosec
 		header.SetAuthorization(req, token)
 		req.Header.Set(header.ContentType, "application/json")
 
 		client := &http.Client{Timeout: cluster.BootstrapRegisterTimeout}
-		resp, err := client.Do(req)
+		resp, err := client.Do(req) //nolint:gosec
 		if err != nil {
 			return err
 		}
@@ -468,7 +470,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 	if resp.Database.Name != "" && resp.Database.User != "" {
 		driver := strings.TrimSpace(resp.Database.Driver)
 		if driver == "" {
-			driver = config.MySQL
+			driver = dsn.DriverMySQL
 		}
 		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)

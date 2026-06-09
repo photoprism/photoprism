@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -135,7 +134,7 @@ func SharePreview(router *gin.RouterGroup) {
 				continue
 			}
 
-			img, imgErr := imaging.Open(thumbnail)
+			img, _, imgErr := fs.DecodeImageFile(thumbnail)
 
 			if imgErr != nil {
 				log.Warn(imgErr)
@@ -154,10 +153,10 @@ func SharePreview(router *gin.RouterGroup) {
 		}
 
 		// Downsize from 1600x900 to 1200x675.
-		preview = imaging.Resize(preview, 1200, 0, imaging.Lanczos)
+		preview = thumb.Resample(preview, 1200, 675, thumb.ResampleResize)
 
 		// Save the resulting album preview as JPEG.
-		err = imaging.Save(preview, previewFilename, thumb.JpegQualitySmall().EncodeOption())
+		err = thumb.Save(preview, previewFilename, thumb.JpegQualitySmall())
 
 		if err != nil {
 			log.Error(err)

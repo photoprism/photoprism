@@ -1,7 +1,7 @@
 /*
 Package query provides frequently used database queries for use in commands and API.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -29,15 +29,10 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 var log = event.Log
-
-// Supported database dialect identifiers.
-const (
-	MySQL   = "mysql"
-	SQLite3 = "sqlite3"
-)
 
 // Cols represents a list of database columns.
 type Cols []string
@@ -79,7 +74,7 @@ func DbDialect() string {
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
 	switch DbDialect() {
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		return 333
 	default:
 		return 1000

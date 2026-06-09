@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 24.10 (Oracular Oriole)
 FROM ubuntu:oracular
 
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -21,7 +21,19 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
-ENV PHOTOPRISM_ARCH=$TARGETARCH \
+ENV DO_NOT_TRACK=true \
+    GH_TELEMETRY=false \
+    DISABLE_TELEMETRY=1 \
+    DISABLE_ERROR_REPORTING=1 \
+    DISABLE_FEEDBACK_COMMAND=1 \
+    CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1 \
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
+    DISABLE_AUTOUPDATER=1 \
+    NO_UPDATE_NOTIFIER=true \
+    NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_FUND=false \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
     PS1="\u@$BUILD_TAG:\w\$ " \
@@ -51,7 +63,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         libc6 ca-certificates bash sudo nano tzdata gpg make zip unzip wget curl rsync \
         xz-utils avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 postgresql-client \
-        ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
+        ffmpeg imagemagick libvips42t64 rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
         iputils-ping dnsutils \

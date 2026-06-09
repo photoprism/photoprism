@@ -16,7 +16,7 @@ var CleanupAction = func() {
 	if n := entity.DeleteExpiredSessions(); n > 0 {
 		event.AuditInfo([]string{"deleted %s"}, english.Plural(n, "expired session", "expired sessions"))
 	} else {
-		event.AuditDebug([]string{"found no expired sessions"})
+		event.AuditTrace([]string{"found no expired sessions"})
 	}
 }
 
@@ -34,7 +34,7 @@ func Cleanup(interval time.Duration) {
 				ticker.Stop()
 				return
 			case <-ticker.C:
-				CleanupAction()
+				event.Safe(CleanupAction)
 			}
 		}
 	}()

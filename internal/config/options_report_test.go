@@ -14,6 +14,19 @@ func TestOptions_Report(t *testing.T) {
 	assert.GreaterOrEqual(t, len(r), 1)
 }
 
+func TestOptions_ReportSkipsInlineAndNonFlags(t *testing.T) {
+	rows, _ := Options{}.Report()
+
+	for _, row := range rows {
+		if len(row) < 3 {
+			t.Fatalf("expected report row with 3 columns, got %v", row)
+		}
+
+		assert.NotEqual(t, ",inline,omitempty", row[0])
+		assert.NotEqual(t, "---", row[2])
+	}
+}
+
 func TestOptions_ReportFrontendUriVisibility(t *testing.T) {
 	hasFrontendUri := func(rows [][]string) bool {
 		for _, row := range rows {

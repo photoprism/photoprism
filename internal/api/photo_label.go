@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -47,7 +48,14 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		frm := &form.Label{}
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err = c.BindJSON(frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		} else if err = frm.Validate(); err != nil {
@@ -231,7 +239,14 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err = c.BindJSON(label); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

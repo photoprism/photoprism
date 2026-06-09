@@ -144,9 +144,14 @@ func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 	// Try to find and return an existing label. Otherwise, create a new one and return it.
 	if result, err := FindPhotoLabel(m.PhotoID, m.LabelID, true); err == nil {
 		return result
-	} else if createErr := m.Create(); createErr == nil {
+	}
+
+	// Drop stale negative cache entries before retrying through the database.
+	FlushCachedPhotoLabel(m)
+
+	if createErr := m.Create(); createErr == nil {
 		return m
-	} else if result, err = FindPhotoLabel(m.PhotoID, m.LabelID, false); err == nil {
+	} else if result, err := FindPhotoLabel(m.PhotoID, m.LabelID, false); err == nil {
 		return result
 	} else {
 		log.Errorf("photo-label: %s (find or create)", createErr)

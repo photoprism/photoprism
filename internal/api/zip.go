@@ -50,7 +50,14 @@ func ZipCreate(router *gin.RouterGroup) {
 		start := time.Now()
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -69,14 +76,21 @@ func ZipCreate(router *gin.RouterGroup) {
 			selection = query.DownloadSelection(settings.MediaRaw, settings.MediaSidecar, settings.Originals)
 		}
 
-		// Find files to download.
-		files, err := query.SelectedFiles(frm, selection)
+		// Find files to download within the session's shared scope, consistent with how photo
+		// search filters results.
+		files, err := query.SelectedFilesForSession(frm, selection, s)
 
 		if err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrZipFailed)
 			return
 		} else if len(files) == 0 {
 			Abort(c, http.StatusNotFound, i18n.ErrNoFilesForDownload)
+			return
+		}
+
+		// Refuse to assemble a new download zip if storage is over quota or critically low.
+		if conf.InsufficientStorage() {
+			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
 		}
 

@@ -74,7 +74,7 @@ type SearchPhotosGeo struct {
 	People      string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject names, combinable with & or |"`
 	Subjects    string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"` // Alias for People
 	Keywords    string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords, combinable with & or |"`
-	Label       string    `form:"label" example:"label:cat|dog" notes:"Label names, separated by |"`
+	Label       string    `form:"label" example:"label:\"cat|dog&!blurry\"" notes:"Label names: | is OR within a group, & is AND between groups (every positive group must match), leading ! negates a group (e.g. !rejected). Category expansion applies to both positive and negative terms. Escape a literal &, |, or leading ! with \\"`
 	Category    string    `form:"category" example:"category:airport" notes:"Location category type"`
 	Album       string    `form:"album" example:"album:berlin" notes:"Album UID or name, supports * wildcards"`
 	Albums      string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album names, combinable with & or |"`

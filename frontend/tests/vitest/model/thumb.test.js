@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import "../fixtures";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { Mock } from "../fixtures";
 import Thumb from "model/thumb";
 import Photo from "model/photo";
 import File from "model/file";
@@ -320,5 +320,188 @@ describe("model/thumb", () => {
     const result4 = Thumb.calculateSize(file3, 900, 950);
     expect(result4.width).toBe(750);
     expect(result4.height).toBe(850);
+  });
+
+  describe("loadPhoto", () => {
+    it("delegates to Photo.findCached for thumbs with a UID", async () => {
+      const result = new Photo({ UID: "abc123", Title: "Loaded" });
+      const spy = vi.spyOn(Photo, "findCached").mockResolvedValue(result);
+      const thumb = new Thumb({ UID: "abc123" });
+      const photo = await thumb.loadPhoto();
+      expect(spy).toHaveBeenCalledWith("abc123");
+      expect(photo).toBe(result);
+      spy.mockRestore();
+    });
+
+    it("resolves to an empty Photo placeholder when the thumb has no UID", async () => {
+      const spy = vi.spyOn(Photo, "findCached");
+      const thumb = new Thumb({ UID: "" });
+      const photo = await thumb.loadPhoto();
+      // Returns a Photo (not null/undefined) so consumers can read
+      // .X without nullable chains; UID stays empty as a "not loaded"
+      // signal. findCached must NOT be called for an empty UID.
+      expect(photo).toBeInstanceOf(Photo);
+      expect(photo.UID).toBe("");
+      expect(spy).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
+
+    it("propagates ModelCacheStaleFetchError so callers' .catch handlers fire", async () => {
+      const err = new Error("ModelCache: discarded stale fetch after clear()");
+      err.name = "ModelCacheStaleFetchError";
+      const spy = vi.spyOn(Photo, "findCached").mockRejectedValue(err);
+      const thumb = new Thumb({ UID: "abc123" });
+      await expect(thumb.loadPhoto()).rejects.toBe(err);
+      spy.mockRestore();
+    });
+  });
+
+  describe("evictPhoto", () => {
+    it("calls Photo.evictCache with the thumb UID", () => {
+      const spy = vi.spyOn(Photo, "evictCache");
+      const thumb = new Thumb({ UID: "abc123" });
+      thumb.evictPhoto();
+      expect(spy).toHaveBeenCalledWith("abc123");
+      spy.mockRestore();
+    });
+
+    it("is a no-op when the thumb has no UID", () => {
+      const spy = vi.spyOn(Photo, "evictCache");
+      const thumb = new Thumb({ UID: "" });
+      thumb.evictPhoto();
+      expect(spy).not.toHaveBeenCalled();
+      spy.mockRestore();
+    });
+  });
+
+  // archive / restore / removeFromAlbum drive the lightbox menu
+  // visibility (this.model?.Archived / this.model?.Removed checks
+  // around lightbox.vue:1437). The tests below pin two contracts:
+  // 1. Right URL + payload shape — verified through the global Mock
+  //    in fixtures.js plus Mock.history for the request log.
+  // 2. Optimistic-flip + restore-previous-value rollback — a
+  //    literal `false`/`true` rollback would silently promote an
+  //    undefined tri-state field, and an already-archived re-archive
+  //    must not flip back to "not archived" on failure.
+  //
+  // Rapid-fire prevention is intentionally a UI concern (see
+  // $notify.blockUI("busy") in lightbox.vue onArchive / onRestore /
+  // onRemoveFromAlbum) — the model stays stateless.
+  //
+  // Rejection tests use `vi.spyOn($api, ...).mockRejectedValueOnce`
+  // because axios-mock-adapter matches handlers in registration
+  // order (see node_modules/axios-mock-adapter/src/utils.js#find);
+  // a `replyOnce(500)` registered after the persistent `reply(200)`
+  // in fixtures.js never wins, so it can't simulate a one-off
+  // failure for an endpoint that has a global success mock.
+  describe("archive", () => {
+    beforeEach(() => {
+      Mock.history.post.length = 0;
+    });
+
+    it("flips Archived to true, posts to batch/photos/archive, and resolves on success", async () => {
+      const thumb = new Thumb({ UID: "abc123" });
+      // Pre-condition: Archived is undefined (not in defaults — see
+      // the explicit-tri-state checks at lightbox.vue:1437).
+      expect(thumb.Archived).toBeUndefined();
+      const response = await thumb.archive();
+      expect(response.status).toBe(200);
+      expect(thumb.Archived).toBe(true);
+      const calls = Mock.history.post.filter((r) => r.url === "batch/photos/archive");
+      expect(calls).toHaveLength(1);
+      expect(JSON.parse(calls[0].data)).toEqual({ photos: ["abc123"] });
+    });
+
+    it("restores the pre-call Archived value on rejection (was undefined)", async () => {
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const spy = vi.spyOn($api, "post").mockRejectedValueOnce(err);
+      const thumb = new Thumb({ UID: "abc123" });
+      // Pre-state is undefined (default, since Archived isn't in
+      // getDefaults()). A literal `false` rollback would silently
+      // promote the field to a boolean — capturing prev preserves
+      // the tri-state semantics the menu logic depends on.
+      await expect(thumb.archive()).rejects.toBe(err);
+      expect(thumb.Archived).toBeUndefined();
+      spy.mockRestore();
+    });
+
+    it("preserves Archived on rejection when called on an already-archived thumb", async () => {
+      // No-op archive of an already-archived photo: backend may
+      // succeed or 4xx, but a literal `false` rollback would flip a
+      // truthful "archived" UI to "not archived" on failure.
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const spy = vi.spyOn($api, "post").mockRejectedValueOnce(err);
+      const thumb = new Thumb({ UID: "abc123", Archived: true });
+      await expect(thumb.archive()).rejects.toBe(err);
+      expect(thumb.Archived).toBe(true);
+      spy.mockRestore();
+    });
+  });
+
+  describe("restore", () => {
+    beforeEach(() => {
+      Mock.history.post.length = 0;
+    });
+
+    it("flips Archived to false, posts to batch/photos/restore, and resolves on success", async () => {
+      const thumb = new Thumb({ UID: "abc123", Archived: true });
+      const response = await thumb.restore();
+      expect(response.status).toBe(200);
+      expect(thumb.Archived).toBe(false);
+      const calls = Mock.history.post.filter((r) => r.url === "batch/photos/restore");
+      expect(calls).toHaveLength(1);
+      expect(JSON.parse(calls[0].data)).toEqual({ photos: ["abc123"] });
+    });
+
+    it("restores the pre-call Archived value on rejection (was true)", async () => {
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const spy = vi.spyOn($api, "post").mockRejectedValueOnce(err);
+      const thumb = new Thumb({ UID: "abc123", Archived: true });
+      await expect(thumb.restore()).rejects.toBe(err);
+      expect(thumb.Archived).toBe(true);
+      spy.mockRestore();
+    });
+
+    it("preserves Archived on rejection when called on an already-restored thumb", async () => {
+      // No-op restore of a non-archived photo: capturing prev
+      // ensures we don't silently flip undefined → true on failure.
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const spy = vi.spyOn($api, "post").mockRejectedValueOnce(err);
+      const thumb = new Thumb({ UID: "abc123" });
+      await expect(thumb.restore()).rejects.toBe(err);
+      expect(thumb.Archived).toBeUndefined();
+      spy.mockRestore();
+    });
+  });
+
+  describe("removeFromAlbum", () => {
+    beforeEach(() => {
+      Mock.history.delete.length = 0;
+    });
+
+    it("flips Removed to true, DELETEs albums/:albumUID/photos, and resolves on success", async () => {
+      const thumb = new Thumb({ UID: "abc123" });
+      expect(thumb.Removed).toBeUndefined();
+      const response = await thumb.removeFromAlbum("album-1");
+      expect(response.status).toBe(200);
+      expect(thumb.Removed).toBe(true);
+      const calls = Mock.history.delete.filter((r) => r.url === "albums/album-1/photos");
+      expect(calls).toHaveLength(1);
+      expect(JSON.parse(calls[0].data)).toEqual({ photos: ["abc123"] });
+    });
+
+    it("restores the pre-call Removed value on rejection (was undefined)", async () => {
+      const $api = (await import("common/api")).default;
+      const err = new Error("offline");
+      const spy = vi.spyOn($api, "delete").mockRejectedValueOnce(err);
+      const thumb = new Thumb({ UID: "abc123" });
+      await expect(thumb.removeFromAlbum("album-1")).rejects.toBe(err);
+      expect(thumb.Removed).toBeUndefined();
+      spy.mockRestore();
+    });
   });
 });

@@ -1,10 +1,12 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // IndexMain indexes the main file from a group of related files and returns the result.
@@ -43,6 +45,14 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 	if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
 		if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
+			// Stop the run instead of masking a full disk as a generic preview error.
+			if errors.Is(imgErr, status.ErrInsufficientStorage) {
+				ind.abortInsufficientStorage()
+				result.Err = imgErr
+				result.Status = IndexFailed
+				return result
+			}
+
 			result.Err = fmt.Errorf("index: could not create preview image for %s", clean.Log(f.RootRelName()))
 			log.Error(result.Err)
 			result.Status = IndexFailed
@@ -57,6 +67,14 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 			log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
 			if imgErr = img.GenerateThumbnails(ind.thumbPath(), false); imgErr != nil {
+				// Stop the run instead of masking a full disk as a generic thumbnail error.
+				if errors.Is(imgErr, status.ErrInsufficientStorage) {
+					ind.abortInsufficientStorage()
+					result.Err = imgErr
+					result.Status = IndexFailed
+					return result
+				}
+
 				result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), imgErr.Error())
 				result.Status = IndexFailed
 				return result

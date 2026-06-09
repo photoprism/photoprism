@@ -91,7 +91,7 @@ func NewLabel(name string, priority int) *Label {
 		labelName = "Unknown"
 	}
 
-	labelName = txt.Title(labelName)
+	labelName = normalizeLabelName(labelName)
 	labelSlug := txt.Slug(labelName)
 
 	result := &Label{
@@ -109,6 +109,10 @@ func NewLabel(name string, priority int) *Label {
 func (m *Label) Save() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()
+
+	if err := ensureUniqueLabelSlugs(m); err != nil {
+		return err
+	}
 
 	return Db().Save(m).Error
 }
@@ -129,6 +133,10 @@ func (m *Label) SaveForm(f *form.Label) error {
 	}
 
 	if m.SetName(f.LabelName) {
+		if err := ensureUniqueLabelSlugs(m); err != nil {
+			return err
+		}
+
 		return Db().Save(m).Error
 	} else {
 		return ErrInvalidName
@@ -139,6 +147,10 @@ func (m *Label) SaveForm(f *form.Label) error {
 func (m *Label) Create() error {
 	labelMutex.Lock()
 	defer labelMutex.Unlock()
+
+	if err := ensureUniqueLabelSlugs(m); err != nil {
+		return err
+	}
 
 	return UnscopedDb().Create(m).Error
 }
@@ -230,13 +242,16 @@ func FirstOrCreateLabel(m *Label) *Label {
 		return nil
 	}
 
-	result := &Label{}
-
-	if err := UnscopedDb().
-		Where("(custom_slug <> '' AND custom_slug = ? OR label_slug <> '' AND label_slug = ?)", m.CustomSlug, m.LabelSlug).
-		First(result).Error; err == nil {
+	if result := findLabelByExactName(m.LabelName); result != nil {
 		return result
-	} else if createErr := m.Create(); createErr == nil {
+	}
+
+	if err := ensureUniqueLabelSlugs(m); err != nil {
+		log.Errorf("label: %s (prepare %s)", err, clean.Log(m.LabelName))
+		return nil
+	}
+
+	if createErr := m.Create(); createErr == nil {
 		if m.LabelPriority >= 0 {
 			event.EntitiesCreated("labels", []*Label{m})
 
@@ -246,9 +261,9 @@ func FirstOrCreateLabel(m *Label) *Label {
 		}
 
 		return m
-	} else if err = UnscopedDb().
-		Where("(custom_slug <> '' AND custom_slug = ? OR label_slug <> '' AND label_slug = ?)", m.CustomSlug, m.LabelSlug).
-		First(result).Error; err == nil {
+	} else if result := findLabelByExactName(m.LabelName); result != nil {
+		return result
+	} else if result := findLabelBySlugValue(m.CustomSlug, 0); result != nil && sameLabelName(result.LabelName, m.LabelName) {
 		return result
 	} else {
 		log.Errorf("label: %s (find or create %s)", createErr, m.LabelSlug)
@@ -259,7 +274,7 @@ func FirstOrCreateLabel(m *Label) *Label {
 
 // SetName changes the label name.
 func (m *Label) SetName(name string) bool {
-	labelName := txt.Clip(clean.NameCapitalized(name), txt.ClipName)
+	labelName := normalizeLabelName(name)
 
 	if labelName == "" {
 		return false
@@ -283,7 +298,7 @@ func (m *Label) SetName(name string) bool {
 
 // InvalidName checks if the label name is invalid.
 func (m *Label) InvalidName() bool {
-	labelName := txt.Clip(clean.NameCapitalized(m.LabelName), txt.ClipName)
+	labelName := normalizeLabelName(m.LabelName)
 
 	if labelName == "" {
 		return true

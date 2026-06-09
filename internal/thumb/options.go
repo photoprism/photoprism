@@ -16,6 +16,7 @@ const (
 	ResampleNearestNeighbor
 	ResampleDefault
 	ResamplePng
+	ResampleStripICC
 )
 
 // ResampleMethods maps resample options to their string identifiers.

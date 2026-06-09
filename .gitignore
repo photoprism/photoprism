@@ -28,10 +28,13 @@ __pycache__
 venv
 .venv
 .env*
+!.env.example
 .tmp
 .nv
 .eslintcache
 .gocache
+.gitconfig
+.system
 /pro/
 /portal/
 /plus/
@@ -39,6 +42,7 @@ venv
 /internal/tmp/
 /test/
 *-lock.json
+!/package-lock.json
 /node_modules/
 /frontend/node_modules/
 /frontend/tests/*.html
@@ -48,12 +52,14 @@ venv
 /frontend/tests_output/
 frontend/coverage/
 **/__screenshots__/
+/.playwright-mcp/
 /photoprism
 /photoprism-*
 /photos/originals/*
 /photos/import/*
 /storage/
 /build/
+/setup/Makefile
 /assets/docs/
 /assets/facenet/
 /assets/nasnet/
@@ -68,7 +74,6 @@ frontend/coverage/
 *.override.md
 /AGENTS_*
 /REPOS.md
-/CLAUDE.md
 /TODO.md
 join_token
 client_secret
@@ -85,9 +90,10 @@ Thumbs.db
 .glide
 .idea
 .codex
-.claude
 .config
 .local
+*.local.json
+*.local.yaml
 .project
 .vscode
 *.tmproj

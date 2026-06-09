@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -52,13 +52,7 @@ module.exports = (config) => {
     customLaunchers: {
       LocalChrome: {
         base: "ChromeHeadless",
-        flags: [
-          "--disable-translate",
-          "--disable-extensions",
-          "--no-sandbox",
-          "--disable-web-security",
-          "--disable-dev-shm-usage",
-        ],
+        flags: ["--disable-translate", "--disable-extensions", "--no-sandbox", "--disable-web-security", "--disable-dev-shm-usage"],
       },
     },
 
@@ -136,11 +130,7 @@ module.exports = (config) => {
         fallback: {
           util: require.resolve("util"),
         },
-        modules: [
-          path.join(__dirname, "src"),
-          path.join(__dirname, "node_modules"),
-          path.join(__dirname, "tests/unit"),
-        ],
+        modules: [path.join(__dirname, "src"), path.join(__dirname, "node_modules"), path.join(__dirname, "tests/unit")],
         preferRelative: true,
         alias: {
           vue$: "vue/dist/vue.runtime.esm-bundler.js",

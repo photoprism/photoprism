@@ -26,7 +26,7 @@ type User struct {
 	UserAttr     string       `json:"Attr,omitempty" yaml:"Attr,omitempty"`
 	BasePath     string       `json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
 	UploadPath   string       `json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
-	Password     string       `json:"Password,omitempty" yaml:"Password,omitempty"`
+	Password     string       `json:"Password,omitempty" yaml:"Password,omitempty"` //nolint:gosec // G117: Expected user credential field.
 	DeletedAt    *time.Time   `json:"DeletedAt,omitempty" yaml:"DeletedAt,omitempty"`
 	UserDetails  *UserDetails `json:"Details,omitempty"`
 }

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-02-23 16:05+0000\n"
+"PO-Revision-Date: 2026-05-16 14:47+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16\n"
+"X-Generator: Weblate 5.17.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -46,7 +46,7 @@ msgstr "{0}-{1} af {2}"
 msgid "%{n} albums found"
 msgstr "%{n} album fundet"
 
-#: src/component/service/upload.vue:176
+#: src/component/service/upload.vue:177
 msgid "%{n} files uploaded"
 msgstr "%{n} filer uploadet"
 
@@ -54,7 +54,7 @@ msgstr "%{n} filer uploadet"
 msgid "%{n} folders found"
 msgstr "%{n} mapper fundet"
 
-#: src/component/navigation.vue:646
+#: src/component/navigation.vue:632
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB af %{q} GB brugt"
 
@@ -62,21 +62,22 @@ msgstr "%{n} GB af %{q} GB brugt"
 msgid "%{n} labels found"
 msgstr "%{n} etiketter fundet"
 
-#: src/page/people/new.vue:467 src/page/people/new.vue:573
+#: src/page/people/new.vue:449 src/page/people/new.vue:555
 #: src/page/people/recognized.vue:696
 msgid "%{n} people found"
 msgstr "%{n} personer fundet"
 
-#: src/page/album/photos.vue:380 src/page/album/photos.vue:571
-#: src/page/photos.vue:513 src/page/photos.vue:708
+#: src/page/album/photos.vue:381 src/page/album/photos.vue:572
+#: src/page/photos.vue:514 src/page/photos.vue:709
 msgid "%{n} pictures found"
 msgstr "%{n} billeder fundet"
 
-#: src/common/form.js:282 src/common/form.js:287
+#: src/common/form.js:286 src/common/form.js:291
+#: src/component/lightbox/sidebar.vue:1637
 msgid "%{s} is too long"
 msgstr "%{s} er for lang"
 
-#: src/common/form.js:281 src/common/form.js:286
+#: src/common/form.js:285 src/common/form.js:290
 msgid "%{s} is too short"
 msgstr "%{s} er for kort"
 
@@ -88,14 +89,14 @@ msgstr "1 time"
 msgid "12 hours"
 msgstr "12 timer"
 
-#: src/component/user/edit/dialog.vue:289
-#: src/component/user/edit/dialog.vue:304 src/page/settings/account.vue:168
+#: src/component/user/edit/dialog.vue:293
+#: src/component/user/edit/dialog.vue:308 src/page/settings/account.vue:168
 #: src/component/settings/passcode.vue:18 src/page/settings/account.vue:152
 msgid "2-Factor Authentication"
 msgstr "2-faktor-godkendelse"
 
-#: src/component/user/edit/dialog.vue:288
-#: src/component/user/edit/dialog.vue:303 src/options/auth.js:47
+#: src/component/user/edit/dialog.vue:292
+#: src/component/user/edit/dialog.vue:307 src/options/auth.js:47
 msgid "2FA"
 msgstr "2FA"
 
@@ -111,14 +112,14 @@ msgstr "Et klik kopierer det til dit udklipsholder."
 msgid "A new version of %{s} is available:"
 msgstr "En ny version af %{s} er tilgængelig:"
 
-#: src/component/user/edit/dialog.vue:135
-#: src/component/user/edit/dialog.vue:136 src/page/about/about.vue:18
+#: src/component/user/edit/dialog.vue:139
+#: src/component/user/edit/dialog.vue:140 src/page/about/about.vue:18
 #: src/page/settings/account.vue:139 src/page/settings/account.vue:140
-#: src/page/about/about.vue:19 src/app/routes.js:64
-#: src/component/navigation.vue:422 src/component/navigation.vue:423
-#: src/component/navigation.vue:435 src/component/navigation.vue:444
-#: src/component/navigation.vue:557 src/component/navigation.vue:565
-#: src/component/navigation.vue:589 src/page/people/recognized.vue:132
+#: src/page/about/about.vue:19 src/app/routes.js:63
+#: src/component/navigation.vue:416 src/component/navigation.vue:417
+#: src/component/navigation.vue:429 src/component/navigation.vue:438
+#: src/component/navigation.vue:551 src/component/navigation.vue:559
+#: src/component/navigation.vue:575 src/page/people/recognized.vue:132
 #: src/page/settings/account.vue:123 src/page/settings/account.vue:124
 msgid "About"
 msgstr "Om"
@@ -127,19 +128,19 @@ msgstr "Om"
 msgid "Access Token"
 msgstr "Adgangstoken"
 
-#: src/component/navigation.vue:543 src/component/navigation.vue:690
-#: src/component/navigation.vue:876 src/component/service/upload.vue:25
-#: src/locales.js:335 src/model/service.js:70 src/model/user.js:151
+#: src/component/navigation.vue:543 src/component/navigation.vue:676
+#: src/component/navigation.vue:860 src/component/service/upload.vue:25
+#: src/locales.js:335 src/model/service.js:80 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:334
 msgid "Account"
 msgstr "Konto"
 
-#: src/component/user/add/dialog.vue:258 src/component/user/add/dialog.vue:280
-#: src/component/service/add.vue:130
+#: src/component/user/add/dialog.vue:262 src/component/user/add/dialog.vue:284
+#: src/component/service/add.vue:131
 msgid "Account created"
 msgstr "Konto oprettet"
 
-#: src/component/user/remove/dialog.vue:61 src/component/service/remove.vue:73
+#: src/component/user/remove/dialog.vue:61 src/component/service/remove.vue:74
 msgid "Account deleted"
 msgstr "Konto slettet"
 
@@ -157,7 +158,7 @@ msgstr "Konti"
 msgid "Accuracy"
 msgstr "Nøjagtighed"
 
-#: src/component/photo/edit/labels.vue:188
+#: src/component/photo/edit/labels.vue:247
 #: src/component/photo/edit/labels.vue:38
 msgid "Action"
 msgstr "Handling"
@@ -199,17 +200,24 @@ msgstr "Aktiveringskode"
 msgid "Activity"
 msgstr "Aktivitet"
 
-#: src/component/user/add/dialog.vue:191 src/page/admin/users.vue:107
-#: src/component/user/add/dialog.vue:204 src/page/admin/users.vue:36
+#: src/component/user/add/dialog.vue:195 src/page/admin/users.vue:107
+#: src/component/user/add/dialog.vue:208 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:125 src/component/settings/apps.vue:126
 #: src/component/settings/apps.vue:135 src/component/settings/apps.vue:194
 #: src/component/settings/apps.vue:212
 msgid "Add"
 msgstr "Tilføj"
 
-#: src/component/photo/edit/people.vue:96 src/page/people/new.vue:99
+#: src/component/lightbox/sidebar.vue:468
+#: src/component/photo/edit/people.vue:96
 msgid "Add %{s}?"
 msgstr "Tilføj %{s}?"
+
+#: src/component/lightbox/sidebar.vue:23 src/component/lightbox/sidebar.vue:24
+#: src/component/lightbox/sidebar.vue:27 src/component/lightbox/sidebar.vue:50
+#: src/component/lightbox/sidebar.vue:67
+msgid "Add a Caption"
+msgstr "Tilføj en billedtekst"
 
 #: src/component/user/add/dialog.vue:16 src/component/service/add.vue:17
 msgid "Add Account"
@@ -223,9 +231,13 @@ msgstr "Tilføj album"
 msgid "Add Link"
 msgstr "Tilføj link"
 
-#: src/component/photo/edit/people.vue:132
-#: src/component/photo/edit/people.vue:96 src/page/people/new.vue:164
-#: src/page/people/new.vue:99
+#: src/component/lightbox/sidebar.vue:876
+msgid "Add Notes"
+msgstr "Tilføj noter"
+
+#: src/component/lightbox/sidebar.vue:468
+#: src/component/photo/edit/people.vue:135
+#: src/component/photo/edit/people.vue:96
 msgid "Add person?"
 msgstr "Tilføj person?"
 
@@ -237,15 +249,15 @@ msgstr "Tilføj billeder fra søgeresultater ved at vælge dem."
 #: src/component/album/clipboard.vue:57 src/component/file/clipboard.vue:36
 #: src/component/label/clipboard.vue:24 src/component/people/clipboard.vue:34
 #: src/component/photo/album/dialog.vue:16
-#: src/component/photo/album/dialog.vue:95 src/component/photo/clipboard.vue:96
+#: src/component/photo/album/dialog.vue:99 src/component/photo/clipboard.vue:96
 msgid "Add to album"
 msgstr "Føj til albummet"
 
-#: src/component/input/chip-selector.vue:182
+#: src/component/input/chip-selector.vue:186
 msgid "Add to all"
 msgstr "Tilføj til alle"
 
-#: src/component/input/chip-selector.vue:182
+#: src/component/input/chip-selector.vue:186
 msgid "Add to all selected photos"
 msgstr "Tilføj til alle valgte fotos"
 
@@ -256,13 +268,21 @@ msgstr "Tilføj til alle valgte fotos"
 msgid "Added"
 msgstr "Tilføjet"
 
-#: src/component/location/dialog.vue:21 src/component/location/dialog.vue:26
-#: src/component/photo/batch-edit.vue:275
-#: src/component/photo/edit/details.vue:146
+#: src/component/meta/camera/dialog.vue:18
+msgid "Adjust Camera Info"
+msgstr "Juster kamerainfo"
+
+#: src/component/meta/datetime/dialog.vue:18
+msgid "Adjust Date & Time"
+msgstr "Juster dato og tid"
+
+#: src/component/meta/location/dialog.vue:18
+#: src/component/photo/batch-edit.vue:274
+#: src/component/photo/edit/details.vue:145
 msgid "Adjust Location"
 msgstr "Juster placering"
 
-#: src/options/admin.js:6 src/model/cluster-node.js:5 src/common/util.js:813
+#: src/options/admin.js:6 src/model/cluster-node.js:5 src/common/util.js:903
 #: src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
@@ -307,11 +327,11 @@ msgstr "Efter to måneder"
 msgid "After two weeks"
 msgstr "Efter tre uger"
 
-#: src/model/album.js:205
+#: src/model/album.js:220
 msgid "Album"
 msgstr "Album"
 
-#: src/page/settings/advanced.vue:183
+#: src/page/settings/advanced.vue:199
 msgid "Album Backups"
 msgstr "Sikkerhedskopier af album"
 
@@ -319,14 +339,15 @@ msgstr "Sikkerhedskopier af album"
 msgid "Album created"
 msgstr "Album oprettet"
 
-#: src/page/album/photos.vue:655
+#: src/page/album/photos.vue:656
 msgid "Album deleted"
 msgstr "Albummet er slettet"
 
-#: src/app/routes.js:205 src/component/album/toolbar.vue:118
-#: src/component/navigation.vue:191 src/component/navigation.vue:726
-#: src/component/photo/batch-edit.vue:432 src/component/photo/edit/info.vue:79
-#: src/component/photo/edit/info.vue:80 src/options/options.js:257
+#: src/app/routes.js:219 src/component/album/toolbar.vue:118
+#: src/component/lightbox/sidebar.vue:284 src/component/navigation.vue:191
+#: src/component/navigation.vue:712 src/component/photo/batch-edit.vue:414
+#: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
+#: src/options/options.js:257
 msgid "Albums"
 msgstr "Album"
 
@@ -350,36 +371,32 @@ msgstr "Alle %{n} etiketter er indlæst"
 msgid "All %{n} people loaded"
 msgstr "Alle %{n} personer indlæst"
 
-#: src/component/photo/toolbar.vue:358
+#: src/component/photo/toolbar.vue:359
 msgid "All Cameras"
 msgstr "Alle kameraer"
 
-#: src/component/photo/toolbar.vue:361 src/page/albums.vue:1262
-#: src/page/albums.vue:329 src/page/albums.vue:542
+#: src/component/photo/toolbar.vue:362 src/page/albums.vue:1262
+#: src/page/albums.vue:330 src/page/albums.vue:542
 msgid "All Categories"
 msgstr "Alle kategorier"
 
-#: src/component/photo/toolbar.vue:360
+#: src/component/photo/toolbar.vue:361
 msgid "All Colors"
 msgstr "Alle farver"
 
-#: src/component/photo/toolbar.vue:357
+#: src/component/photo/toolbar.vue:358
 msgid "All Countries"
 msgstr "Alle lande"
-
-#: src/page/about/feedback.vue:154 src/page/about/feedback.vue:137
-msgid "All fields are required"
-msgstr "Alle felter skal udfyldes"
 
 #: src/page/library/import.vue:94
 msgid "All files from import folder"
 msgstr "Alle filer fra importmappen"
 
-#: src/component/photo/toolbar.vue:359
+#: src/component/photo/toolbar.vue:360
 msgid "All Lenses"
 msgstr "Alle linser"
 
-#: src/component/photo/toolbar.vue:362
+#: src/component/photo/toolbar.vue:363
 msgid "All Months"
 msgstr "Alle måneder"
 
@@ -387,7 +404,7 @@ msgstr "Alle måneder"
 msgid "All originals"
 msgstr "Alle originaler"
 
-#: src/component/photo/toolbar.vue:363 src/page/albums.vue:384
+#: src/component/photo/toolbar.vue:364 src/page/albums.vue:384
 msgid "All Years"
 msgstr "Alle år"
 
@@ -431,8 +448,8 @@ msgstr "Alternativt kan du uploade filer direkte til WebDAV-servere såsom Nextc
 msgid "Altitude"
 msgstr "Højde"
 
-#: src/component/photo/batch-edit.vue:314
-#: src/component/photo/edit/details.vue:183
+#: src/component/photo/batch-edit.vue:313
+#: src/component/photo/edit/details.vue:180
 msgid "Altitude (m)"
 msgstr "Højde (m)"
 
@@ -440,8 +457,9 @@ msgstr "Højde (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:286 src/component/photo/batch-edit.vue:128
-#: src/component/photo/batch-edit.vue:69 src/component/photo/edit/files.vue:132
+#: src/app/routes.js:300 src/common/util.js:845
+#: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
+#: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
 #: src/component/photo/edit/files.vue:139
 #: src/component/photo/edit/files.vue:147
@@ -479,12 +497,12 @@ msgid "Applications"
 msgstr "Anvendelser"
 
 #: src/component/photo/clipboard.vue:36
-#: src/component/photo/edit/details.vue:406
+#: src/component/photo/edit/details.vue:395
 #: src/component/photo/view/cards.vue:177
 msgid "Approve"
 msgstr "Godkend"
 
-#: src/component/photo/edit/details.vue:402
+#: src/component/photo/edit/details.vue:391
 msgid "Approve and save changes"
 msgstr "Godkend og gem ændringer"
 
@@ -493,7 +511,7 @@ msgstr "Godkend og gem ændringer"
 msgid "Apps and Devices"
 msgstr "Apps og enheder"
 
-#: src/component/lightbox.vue:2331 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:2906 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Arkiveret"
@@ -532,8 +550,11 @@ msgstr "Er du sikker på, at du vil slette denne fil permanent?"
 msgid "Are you sure?"
 msgstr "Er du sikker?"
 
-#: src/component/photo/batch-edit.vue:385
-#: src/component/photo/edit/details.vue:331
+#: src/component/lightbox/sidebar.vue:833
+#: src/component/photo/batch-edit.vue:382
+#: src/component/photo/batch-edit.vue:384
+#: src/component/photo/edit/details.vue:319
+#: src/component/photo/edit/details.vue:321
 msgid "Artist"
 msgstr "Kunstner"
 
@@ -548,10 +569,10 @@ msgstr "Billedformat"
 msgid "Attributes"
 msgstr "Egenskaber"
 
-#: src/app/routes.js:279 src/component/navigation.vue:198
-#: src/component/navigation.vue:199 src/component/navigation.vue:211
-#: src/component/navigation.vue:220 src/component/navigation.vue:248
-#: src/options/options.js:358
+#: src/app/routes.js:293 src/common/util.js:843
+#: src/component/navigation.vue:198 src/component/navigation.vue:199
+#: src/component/navigation.vue:211 src/component/navigation.vue:220
+#: src/component/navigation.vue:248 src/options/options.js:358
 msgid "Audio"
 msgstr "Lyd"
 
@@ -559,21 +580,22 @@ msgstr "Lyd"
 msgid "Audit Log"
 msgstr "Lyd"
 
-#: src/component/user/add/dialog.vue:102 src/component/user/edit/dialog.vue:182
+#: src/component/user/add/dialog.vue:106 src/component/user/edit/dialog.vue:186
 #: src/page/admin/sessions.vue:112 src/page/admin/sessions.vue:222
-#: src/page/admin/users.vue:179 src/component/user/add/dialog.vue:108
-#: src/component/user/edit/dialog.vue:184 src/page/admin/sessions.vue:152
+#: src/page/admin/users.vue:179 src/component/user/add/dialog.vue:112
+#: src/component/user/edit/dialog.vue:188 src/page/admin/sessions.vue:152
 #: src/page/admin/sessions.vue:295 src/page/admin/users.vue:273
 #: src/page/admin/sessions.vue:293 src/page/admin/users.vue:271
 #: src/locales.js:337
 msgid "Authentication"
 msgstr "Godkendelse"
 
-#: src/common/util.js:775
+#: src/common/util.js:865
 msgid "Auto"
 msgstr "Auto"
 
-#: src/component/settings/apps.vue:50
+#: src/component/meta/face/markers.vue:94
+#: src/component/meta/face/markers.vue:95 src/component/settings/apps.vue:50
 msgid "Back"
 msgstr "Tilbage"
 
@@ -581,7 +603,7 @@ msgstr "Tilbage"
 msgid "Back to top"
 msgstr "Tilbage til toppen"
 
-#: src/page/settings/advanced.vue:155
+#: src/page/settings/advanced.vue:171
 msgid "Backup"
 msgstr "Backup"
 
@@ -589,12 +611,12 @@ msgstr "Backup"
 msgid "Badge"
 msgstr "Badge"
 
-#: src/component/user/edit/dialog.vue:245
-#: src/component/user/edit/dialog.vue:246
+#: src/component/user/edit/dialog.vue:249
+#: src/component/user/edit/dialog.vue:250
 msgid "Base Path"
 msgstr "Basis sti"
 
-#: src/common/util.js:807
+#: src/common/util.js:897
 msgid "Batch"
 msgstr "Batch"
 
@@ -612,9 +634,9 @@ msgstr "Bliv medlem i dag, støt vores mission og få glæde af vores medlemsfor
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Da vi er 100 % selvfinansierede og uafhængige, kan vi love dig, at vi aldrig vil sælge dine data, og at vi altid vil være gennemsigtige med hensyn til vores software og tjenester."
 
-#: src/component/user/edit/dialog.vue:151
-#: src/component/user/edit/dialog.vue:152
-#: src/component/user/edit/dialog.vue:153 src/page/settings/account.vue:123
+#: src/component/user/edit/dialog.vue:155
+#: src/component/user/edit/dialog.vue:156
+#: src/component/user/edit/dialog.vue:157 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124 src/page/settings/account.vue:107
 #: src/page/settings/account.vue:108
 msgid "Bio"
@@ -628,10 +650,6 @@ msgstr "Fødselsdato"
 msgid "Black"
 msgstr "Sort"
 
-#: src/options/options.js:486
-msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos-ændring, færre ringende artefakter"
-
 #: src/options/options.js:454
 msgid "Blue"
 msgstr "Blå"
@@ -642,9 +660,7 @@ msgstr "Brun"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:46
 msgid "Browse"
 msgstr "Gennemse"
 
@@ -652,11 +668,11 @@ msgstr "Gennemse"
 msgid "Browse Files"
 msgstr "Gennemse filer"
 
-#: src/component/photo/edit/people.vue:222
+#: src/component/photo/edit/people.vue:220
 msgid "Browse Pictures"
 msgstr "Gennemse billeder"
 
-#: src/page/about/feedback.vue:112 src/options/options.js:464
+#: src/options/options.js:464
 msgid "Bug Report"
 msgstr "Fejlrapport"
 
@@ -668,12 +684,14 @@ msgstr "Optaget, vent venligst …"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Ved at bruge den software og de tjenester, vi tilbyder, accepterer du vores servicevilkår, privatlivspolitik og adfærdskodeks."
 
-#: src/app/routes.js:218 src/component/navigation.vue:390
+#: src/app/routes.js:232 src/component/navigation.vue:390
 #: src/options/options.js:263 src/page/settings/general.vue:96
 msgid "Calendar"
 msgstr "Kalender"
 
-#: src/component/photo/edit/details.vue:198 src/component/photo/toolbar.vue:121
+#: src/component/lightbox/sidebar.vue:118
+#: src/component/meta/camera/dialog.vue:30
+#: src/component/photo/edit/details.vue:195 src/component/photo/toolbar.vue:121
 #: src/component/photo/view/cards.vue:204 src/component/photo/view/list.vue:40
 msgid "Camera"
 msgstr "Kamera"
@@ -682,58 +700,66 @@ msgstr "Kamera"
 msgid "Camera Serial"
 msgstr "Kamera serienummer"
 
-#: src/page/auth/login.vue:131 src/page/auth/login.vue:152
-#: src/page/auth/login.vue:46 src/page/auth/login.vue:47
-#: src/page/auth/login.vue:61
+#: src/page/auth/login.vue:134 src/page/auth/login.vue:162
+#: src/page/auth/login.vue:49 src/page/auth/login.vue:50
+#: src/page/auth/login.vue:64
 msgid "Can't access your authenticator app or device?"
 msgstr "Kan du ikke få adgang til din authenticator-app eller -enhed?"
 
-#: src/page/album/photos.vue:388 src/page/photos.vue:521
+#: src/page/album/photos.vue:389 src/page/photos.vue:522
 msgid "Can't load more, limit reached"
 msgstr "Kan ikke indlæse mere, grænsen nået"
 
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1200 src/page/albums.vue:1216 src/page/labels.vue:638
 #: src/page/labels.vue:658 src/page/library/browse.vue:321
-#: src/page/library/browse.vue:337 src/page/people/new.vue:395
-#: src/page/people/new.vue:411 src/page/people/recognized.vue:461
+#: src/page/library/browse.vue:337 src/page/people/new.vue:377
+#: src/page/people/new.vue:393 src/page/people/recognized.vue:461
 #: src/page/people/recognized.vue:477
 msgid "Can't select more items"
 msgstr "Kan ikke vælge flere elementer"
 
 #: src/component/session/remove/dialog.vue:19
-#: src/component/user/add/dialog.vue:190 src/component/user/edit/dialog.vue:297
+#: src/component/user/add/dialog.vue:194 src/component/user/edit/dialog.vue:301
 #: src/component/user/remove/dialog.vue:19
-#: src/component/user/add/dialog.vue:203 src/component/user/edit/dialog.vue:312
+#: src/component/user/add/dialog.vue:207 src/component/user/edit/dialog.vue:316
 #: src/page/connect.vue:39 src/page/connect.vue:46
 #: src/component/album/delete/dialog.vue:19
-#: src/component/album/edit/dialog.vue:85 src/component/confirm/dialog.vue:23
+#: src/component/album/edit/dialog.vue:86 src/component/confirm/dialog.vue:23
 #: src/component/file/delete/dialog.vue:19
 #: src/component/label/delete/dialog.vue:19
-#: src/component/label/edit/dialog.vue:40 src/component/location/dialog.vue:118
-#: src/component/people/edit/dialog.vue:43
-#: src/component/photo/album/dialog.vue:60 src/component/service/add.vue:96
+#: src/component/label/edit/dialog.vue:43
+#: src/component/meta/camera/dialog.vue:118
+#: src/component/meta/datetime/dialog.vue:120
+#: src/component/meta/face/markers.vue:66
+#: src/component/meta/face/markers.vue:85
+#: src/component/meta/location/dialog.vue:115
+#: src/component/people/edit/dialog.vue:46
+#: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:160
+#: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Annullere"
 
-#: src/common/util.js:980 src/common/util.js:987
+#: src/common/util.js:1070 src/common/util.js:1077
 msgid "Cannot copy to clipboard"
 msgstr "Kan ikke kopiere til udklipsholder"
 
-#: src/common/util.js:795 src/component/photo/batch-edit.vue:177
-#: src/component/photo/edit/details.vue:32
-#: src/component/photo/view/cards.vue:194 src/component/sidebar/info.vue:21
+#: src/common/util.js:885 src/component/lightbox/sidebar.vue:792
+#: src/component/photo/batch-edit.vue:173
+#: src/component/photo/batch-edit.vue:176
+#: src/component/photo/edit/details.vue:28
+#: src/component/photo/edit/details.vue:31
+#: src/component/photo/view/cards.vue:194
 msgid "Caption"
 msgstr "Billedtekst"
 
-#: src/component/photo/toolbar.vue:387 src/component/photo/toolbar.vue:393
+#: src/component/photo/toolbar.vue:388 src/component/photo/toolbar.vue:394
 msgid "Cards"
 msgstr "Kort"
 
@@ -741,14 +767,12 @@ msgstr "Kort"
 msgid "Carousel slide {0} of {1}"
 msgstr "Karrusel-slide {0} af {1}."
 
-#: src/page/about/feedback.vue:34 src/page/about/feedback.vue:35
-#: src/component/album/edit/dialog.vue:58 src/component/photo/toolbar.vue:252
-#: src/page/about/feedback.vue:26 src/page/about/feedback.vue:27
+#: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
 msgid "Category"
 msgstr "Kategori"
 
-#: src/component/user/edit/dialog.vue:102 src/page/settings/account.vue:107
+#: src/component/user/edit/dialog.vue:106 src/page/settings/account.vue:107
 #: src/page/settings/account.vue:91
 msgid "Change Avatar"
 msgstr "Ændre Avatar"
@@ -762,26 +786,28 @@ msgstr "Ændre adgangskode"
 msgid "Change private flag"
 msgstr "Ændre privat flag"
 
-#: src/component/user/add/dialog.vue:265 src/component/user/add/dialog.vue:270
-#: src/component/user/edit/dialog.vue:396
-#: src/component/user/edit/dialog.vue:401 src/component/user/add/dialog.vue:287
-#: src/component/user/add/dialog.vue:292 src/component/user/edit/dialog.vue:421
-#: src/component/user/edit/dialog.vue:426 src/page/settings/account.vue:539
-#: src/page/settings/account.vue:544 src/page/settings/account.vue:447
+#: src/component/user/add/dialog.vue:269 src/component/user/add/dialog.vue:274
+#: src/component/user/edit/dialog.vue:400
+#: src/component/user/edit/dialog.vue:405 src/component/user/add/dialog.vue:291
+#: src/component/user/add/dialog.vue:296 src/component/user/edit/dialog.vue:425
+#: src/component/user/edit/dialog.vue:430 src/page/settings/account.vue:539
+#: src/page/settings/account.vue:544 src/component/meta/camera/dialog.vue:214
+#: src/component/photo/batch-edit.vue:1434
+#: src/component/photo/edit/details.vue:636 src/page/settings/account.vue:447
 #: src/page/settings/account.vue:452
 msgid "Changes could not be saved"
 msgstr "Ændringer kunne ikke gemmes"
 
-#: src/component/user/edit/dialog.vue:389
-#: src/component/user/edit/dialog.vue:490
-#: src/component/user/edit/dialog.vue:414
-#: src/component/album/edit/dialog.vue:168
-#: src/component/label/edit/dialog.vue:96 src/component/lightbox.vue:2290
-#: src/component/photo/batch-edit.vue:1370
-#: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:332
-#: src/component/share/dialog.vue:224 src/component/share/dialog.vue:243
+#: src/component/user/edit/dialog.vue:393
+#: src/component/user/edit/dialog.vue:494
+#: src/component/user/edit/dialog.vue:418
+#: src/component/album/edit/dialog.vue:172
+#: src/component/label/edit/dialog.vue:102 src/component/lightbox.vue:2858
+#: src/component/photo/batch-edit.vue:1466
+#: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
+#: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
 #: src/page/albums.vue:1193 src/page/people/recognized.vue:275
-#: src/page/settings/advanced.vue:490 src/page/settings/content.vue:284
+#: src/page/settings/advanced.vue:491 src/page/settings/content.vue:284
 #: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Ændringer gemt med succes"
@@ -809,11 +835,16 @@ msgstr "Oprydning af indeks og cache"
 msgid "Cleanup"
 msgstr "Oprydning"
 
+#: src/component/meta/location/input.vue:49
+#: src/component/meta/location/input.vue:67
+msgid "Clear"
+msgstr "Klar"
+
 #: src/locales.js:270
 msgid "Clear {0}"
 msgstr "Ryd {0}"
 
-#: src/model/cluster-node.js:11 src/options/auth.js:12 src/options/auth.js:24
+#: src/model/cluster-node.js:10 src/options/auth.js:12 src/options/auth.js:24
 #: src/options/auth.js:44
 msgid "Client"
 msgstr "Kunde"
@@ -822,12 +853,20 @@ msgstr "Kunde"
 msgid "Client Credentials"
 msgstr "Kundens legitimationsoplysninger"
 
-#: src/page/admin/sessions.vue:184 src/component/user/edit/dialog.vue:312
+#: src/component/user/add/dialog.vue:18 src/component/user/edit/dialog.vue:25
+#: src/page/admin/sessions.vue:184 src/component/user/edit/dialog.vue:316
 #: src/page/admin/sessions.vue:224 src/page/cluster/nodes.vue:188
-#: src/component/lightbox.vue:1200 src/component/lightbox.vue:1201
-#: src/component/lightbox.vue:390 src/component/photo/batch-edit.vue:472
-#: src/component/photo/edit/details.vue:391
-#: src/component/photo/edit/details.vue:396 src/component/photo/toolbar.vue:86
+#: src/component/album/edit/dialog.vue:19
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1292
+#: src/component/lightbox.vue:1293 src/component/lightbox.vue:468
+#: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
+#: src/component/meta/datetime/dialog.vue:20
+#: src/component/meta/location/dialog.vue:20
+#: src/component/people/edit/dialog.vue:20
+#: src/component/photo/album/dialog.vue:18
+#: src/component/photo/batch-edit.vue:21 src/component/photo/batch-edit.vue:471
+#: src/component/photo/edit/details.vue:380
+#: src/component/photo/edit/details.vue:385 src/component/photo/toolbar.vue:86
 #: src/component/settings/apps.vue:209 src/component/settings/apps.vue:85
 #: src/component/settings/passcode.vue:128
 #: src/component/settings/passcode.vue:129
@@ -838,17 +877,17 @@ msgstr "Kundens legitimationsoplysninger"
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
-#: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/update.vue:25 src/component/upload/dialog.vue:119
+#: src/component/upload/dialog.vue:20 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Luk"
 
-#: src/app/routes.js:122
+#: src/app/routes.js:136
 msgid "Cluster"
 msgstr "Klynge"
 
-#: src/model/cluster-node.js:80
+#: src/model/cluster-node.js:79
 msgid "Cluster Node"
 msgstr "Klyngeknudepunkt"
 
@@ -884,17 +923,21 @@ msgstr "Sammenlign udgaver"
 msgid "Complete Rescan"
 msgstr "Komplet scanning"
 
-#: src/component/photo/edit/labels.vue:182
+#: src/component/photo/edit/labels.vue:241
 #: src/component/photo/edit/labels.vue:33
 msgid "Confidence"
 msgstr "Tillid"
 
-#: src/component/location/dialog.vue:121 src/component/location/dialog.vue:62
-#: src/component/location/dialog.vue:63 src/component/location/dialog.vue:75
-#: src/component/location/dialog.vue:82 src/component/photo/album/dialog.vue:29
-#: src/component/photo/album/dialog.vue:30
-#: src/component/photo/album/dialog.vue:39
-#: src/component/photo/album/dialog.vue:63
+#: src/component/meta/face/markers.vue:59
+#: src/component/meta/location/dialog.vue:118
+#: src/component/meta/location/dialog.vue:58
+#: src/component/meta/location/dialog.vue:59
+#: src/component/meta/location/dialog.vue:71
+#: src/component/meta/location/dialog.vue:78
+#: src/component/photo/album/dialog.vue:33
+#: src/component/photo/album/dialog.vue:34
+#: src/component/photo/album/dialog.vue:43
+#: src/component/photo/album/dialog.vue:67
 #: src/component/settings/passcode.vue:104
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
@@ -903,14 +946,16 @@ msgstr "Tillid"
 msgid "Confirm"
 msgstr "Bekræft"
 
-#: src/component/service/add.vue:97 src/page/settings/services.vue:51
+#: src/component/service/add.vue:98 src/page/settings/services.vue:51
 #: src/page/settings/services.vue:52 src/page/settings/services.vue:79
 #: src/page/settings/services.vue:87
 msgid "Connect"
 msgstr "Opret forbindelse"
 
-#: src/page/settings/account.vue:196 src/component/settings/webdav.vue:15
-#: src/page/settings/account.vue:180 src/page/settings/services.vue:74
+#: src/page/settings/account.vue:182 src/page/settings/account.vue:76
+#: src/page/settings/account.vue:77 src/page/settings/account.vue:196
+#: src/component/settings/webdav.vue:15 src/page/settings/account.vue:180
+#: src/page/settings/services.vue:74
 msgid "Connect via WebDAV"
 msgstr "Opret forbindelse via WebDAV"
 
@@ -922,9 +967,7 @@ msgstr "Tilsluttet"
 msgid "Contact Details"
 msgstr "Kontaktoplysninger"
 
-#: src/page/about/feedback.vue:10 src/page/connect.vue:42
-#: src/page/connect.vue:49 src/page/about/feedback.vue:5
-#: src/page/connect.vue:39
+#: src/page/connect.vue:42 src/page/connect.vue:49 src/page/connect.vue:39
 msgid "Contact Us"
 msgstr "Kontakt os"
 
@@ -961,7 +1004,7 @@ msgstr "Bidragyder"
 msgid "Converting"
 msgstr "Konverterer"
 
-#: src/common/util.js:973
+#: src/common/util.js:1063
 msgid "Copied to clipboard"
 msgstr "Kopieret til udklipsholderen"
 
@@ -975,12 +1018,15 @@ msgstr "Kopieret til udklipsholderen"
 msgid "Copy"
 msgstr "Kopier"
 
-#: src/component/photo/batch-edit.vue:370
-#: src/component/photo/edit/details.vue:317
+#: src/component/lightbox/sidebar.vue:819
+#: src/component/photo/batch-edit.vue:367
+#: src/component/photo/batch-edit.vue:369
+#: src/component/photo/edit/details.vue:306
+#: src/component/photo/edit/details.vue:308
 msgid "Copyright"
 msgstr "Ophavsret"
 
-#: src/component/photo/edit/people.vue:308
+#: src/component/photo/edit/people.vue:306
 msgid "Could not update person cover"
 msgstr "Kunne ikke opdatere personcover"
 
@@ -988,8 +1034,8 @@ msgstr "Kunne ikke opdatere personcover"
 msgid "Couldn't find anything."
 msgstr "Kunne ikke finde noget."
 
-#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:290
-#: src/component/photo/edit/details.vue:160 src/component/photo/toolbar.vue:100
+#: src/page/settings/account.vue:369 src/component/photo/batch-edit.vue:289
+#: src/component/photo/edit/details.vue:159 src/component/photo/toolbar.vue:100
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "Land"
@@ -998,19 +1044,19 @@ msgstr "Land"
 msgid "Create Account"
 msgstr "Opret konto"
 
-#: src/component/photo/album/dialog.vue:96
+#: src/component/photo/album/dialog.vue:100
 msgid "Create album"
 msgstr "Opret album"
 
-#: src/page/settings/advanced.vue:168
+#: src/page/settings/advanced.vue:184
 msgid "Create regular backups based on the configured schedule."
 msgstr "Opret sikkerhedskopier af indeks baseret på den konfigurerede tidsplan."
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:200
 msgid "Create YAML files to back up album metadata."
 msgstr "Opret YAML-filer til sikkerhedskopiering af albummet."
 
-#: src/page/settings/advanced.vue:200
+#: src/page/settings/advanced.vue:216
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Opret YAML-sidevognsfiler til sikkerhedskopiering af billedmetadata."
 
@@ -1024,15 +1070,11 @@ msgstr "Oprettet"
 msgid "Creating thumbnails for"
 msgstr "Opretter miniaturer til"
 
-#: src/options/options.js:488
-msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: Moderat Kvalitet, God Ydeevne"
-
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Nuværende kodeord"
 
-#: src/options/themes.js:1002 src/options/themes.js:1012
+#: src/options/themes.js:1010 src/options/themes.js:1020
 msgid "Custom"
 msgstr "Brugerdefineret"
 
@@ -1048,7 +1090,7 @@ msgstr "Dagligt"
 msgid "Database"
 msgstr "Database"
 
-#: src/page/settings/advanced.vue:167
+#: src/page/settings/advanced.vue:183
 msgid "Database Backups"
 msgstr "Sikkerhedskopiering af databaser"
 
@@ -1056,12 +1098,13 @@ msgstr "Sikkerhedskopiering af databaser"
 msgid "Databases"
 msgstr "Databaser"
 
-#: src/component/photo/batch-edit.vue:191
+#: src/component/photo/batch-edit.vue:190
 msgid "Date & Time"
 msgstr "Dato og tid"
 
-#: src/page/settings/account.vue:220 src/component/photo/batch-edit.vue:195
-#: src/component/photo/edit/details.vue:46 src/page/settings/account.vue:204
+#: src/page/settings/account.vue:220 src/component/meta/datetime/dialog.vue:30
+#: src/component/photo/batch-edit.vue:194
+#: src/component/photo/edit/details.vue:45 src/page/settings/account.vue:204
 msgid "Day"
 msgstr "Dag"
 
@@ -1077,11 +1120,11 @@ msgstr "Fejlfindingslog"
 #: src/page/admin/users.vue:231 src/options/admin.js:35
 #: src/page/admin/sessions.vue:371 src/page/admin/users.vue:374
 #: src/page/admin/sessions.vue:369 src/page/admin/users.vue:372
-#: src/common/util.js:777 src/model/session.js:42 src/model/user.js:244
+#: src/common/util.js:867 src/model/session.js:42 src/model/user.js:244
 #: src/options/auth.js:21 src/options/auth.js:22 src/options/auth.js:40
 #: src/options/auth.js:41 src/options/options.js:252 src/options/options.js:255
 #: src/options/options.js:293 src/options/options.js:377
-#: src/options/themes.js:844
+#: src/options/themes.js:852
 msgid "Default"
 msgstr "Standard"
 
@@ -1102,7 +1145,7 @@ msgstr "Standardmappe"
 msgid "Delete"
 msgstr "Slet"
 
-#: src/component/album/toolbar.vue:196
+#: src/component/album/toolbar.vue:195
 msgid "Delete Album"
 msgstr "Slet album"
 
@@ -1122,8 +1165,8 @@ msgstr "Slet forældreløse indeksposter, sidevognsfiler og miniaturebilleder."
 msgid "deleted"
 msgstr "slettet"
 
-#: src/component/album/edit/dialog.vue:45
-#: src/component/photo/batch-edit.vue:156 src/page/albums.vue:235
+#: src/component/album/edit/dialog.vue:46
+#: src/component/photo/batch-edit.vue:155 src/page/albums.vue:235
 msgid "Description"
 msgstr "Beskrivelse"
 
@@ -1140,7 +1183,7 @@ msgstr "Detaljer"
 msgid "Dimensions"
 msgstr "Dimensioner"
 
-#: src/page/settings/advanced.vue:111
+#: src/page/settings/advanced.vue:127
 msgid "Disable all face detection and recognition features."
 msgstr "Deaktiver alle funktioner til ansigtsregistrering og -genkendelse."
 
@@ -1148,15 +1191,15 @@ msgstr "Deaktiver alle funktioner til ansigtsregistrering og -genkendelse."
 msgid "Disable Backups"
 msgstr "Deaktiver sikkerhedskopier"
 
-#: src/page/settings/advanced.vue:323
+#: src/page/settings/advanced.vue:324
 msgid "Disable Darktable"
 msgstr "Deaktivere Darktable"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
 msgstr "Deaktiver ExifTool"
 
-#: src/page/settings/advanced.vue:110
+#: src/page/settings/advanced.vue:126
 msgid "Disable Faces"
 msgstr "Deaktiver ansigter"
 
@@ -1164,27 +1207,35 @@ msgstr "Deaktiver ansigter"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Deaktiver funktioner, der kræver skrivetilladelse til originalmappen."
 
-#: src/page/settings/advanced.vue:387
+#: src/page/settings/advanced.vue:388
 msgid "Disable FFmpeg"
 msgstr "Deaktiver FFmpeg"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:372
 msgid "Disable ImageMagick"
 msgstr "Deaktiver ImageMagick"
 
-#: src/page/settings/advanced.vue:127
+#: src/page/settings/advanced.vue:143
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Deaktiver interaktive verdenskort og omvendt geokodning."
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:110
+msgid "Disable MCP"
+msgstr "Slå MCP fra"
+
+#: src/page/settings/advanced.vue:142
 msgid "Disable Places"
 msgstr "Deaktiver steder"
 
-#: src/page/settings/advanced.vue:339
+#: src/page/settings/advanced.vue:340
 msgid "Disable RawTherapee"
 msgstr "Deaktivere RawTherapee"
 
-#: src/page/settings/advanced.vue:403
+#: src/page/settings/advanced.vue:111
+msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
+msgstr "Deaktiver API-slutpunktet MCP (Model Context Protocol) for AI-agentintegrationer."
+
+#: src/page/settings/advanced.vue:404
 msgid "Disable Vectors"
 msgstr "Deaktivere vektorer"
 
@@ -1192,29 +1243,38 @@ msgstr "Deaktivere vektorer"
 msgid "Disable WebDAV"
 msgstr "Deaktiver WebDAV"
 
-#: src/component/photo/clipboard.vue:416
+#: src/component/photo/clipboard.vue:423
 msgid "Disabled"
 msgstr "Deaktiveret"
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:405
 msgid "Disables vector graphics support."
 msgstr "Deaktiverer understøttelse af vektorgrafik."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:389
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Deaktiverer video-omkodning og dannelse af miniaturebilleder."
 
-#: src/component/photo/batch-edit.vue:471
-#: src/component/photo/edit/details.vue:395
+#: src/component/lightbox/sidebar.vue:460
+#: src/component/photo/batch-edit.vue:470
+#: src/component/photo/edit/details.vue:384
 msgid "Discard"
 msgstr "Kassér"
 
-#: src/component/photo/edit/details.vue:391
+#: src/component/photo/edit/details.vue:380
 msgid "Discard changes and close"
 msgstr "Kassér ændringer og luk"
 
-#: src/app/routes.js:590 src/app/routes.js:597 src/app/routes.js:604
-#: src/app/routes.js:611
+#: src/component/lightbox/sidebar.vue:915
+msgid "Discard invalid changes?"
+msgstr "Kassere ugyldige ændringer?"
+
+#: src/component/lightbox/sidebar.vue:917
+msgid "Discard unsaved changes?"
+msgstr "Kassere ikke-gemte ændringer?"
+
+#: src/app/routes.js:604 src/app/routes.js:611 src/app/routes.js:618
+#: src/app/routes.js:625
 msgid "Discover"
 msgstr "Opdag"
 
@@ -1222,10 +1282,10 @@ msgstr "Opdag"
 msgid "Dismiss"
 msgstr "Afslå"
 
-#: src/component/user/add/dialog.vue:61 src/component/user/add/dialog.vue:62
-#: src/component/user/edit/dialog.vue:85 src/component/user/edit/dialog.vue:86
-#: src/page/admin/users.vue:176 src/component/user/add/dialog.vue:67
-#: src/component/user/add/dialog.vue:68 src/page/admin/users.vue:270
+#: src/component/user/add/dialog.vue:65 src/component/user/add/dialog.vue:66
+#: src/component/user/edit/dialog.vue:89 src/component/user/edit/dialog.vue:90
+#: src/page/admin/users.vue:176 src/component/user/add/dialog.vue:71
+#: src/component/user/add/dialog.vue:72 src/page/admin/users.vue:270
 #: src/page/settings/account.vue:76 src/page/settings/account.vue:78
 #: src/page/admin/users.vue:268 src/locales.js:325
 #: src/page/settings/account.vue:64 src/page/settings/account.vue:66
@@ -1240,9 +1300,9 @@ msgstr "Vis billedtekster i søgeresultater."
 msgid "Display picture titles in search results."
 msgstr "Vis billedtitler i søgeresultater."
 
-#: src/component/photo/view/cards.vue:115
+#: src/common/util.js:849 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
-#: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:152
+#: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:245
 #: src/options/options.js:370
 msgid "Document"
 msgstr "Dokument"
@@ -1254,31 +1314,32 @@ msgstr "Dokument"
 msgid "Documents"
 msgstr "Dokumenter"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:325
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Du må ikke bruge Darktable til at konvertere RAW-filer."
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:373
 msgid "Don't use ImageMagick to convert images."
 msgstr "Brug ikke ImageMagick til at konvertere billeder."
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:341
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Du må ikke bruge RawTherapee til at konvertere RAW-filer."
 
-#: src/component/settings/apps.vue:51 src/component/settings/apps.vue:52
-#: src/component/settings/apps.vue:61 src/component/settings/apps.vue:77
-#: src/component/settings/apps.vue:88 src/component/share/dialog.vue:161
+#: src/component/lightbox/sidebar.vue:194 src/component/settings/apps.vue:51
+#: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
+#: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
+#: src/component/share/dialog.vue:162
 msgid "Done"
 msgstr "Færdig"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:32 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Udført."
 
-#: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:186
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1427
+#: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1519
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/content.vue:169
 #: src/page/settings/general.vue:170
@@ -1293,18 +1354,14 @@ msgstr "Download kun originale mediefiler, uden automatisk genererede filer."
 msgid "Download remote files"
 msgstr "Download fjernfiler"
 
-#: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:235
+#: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:2370 src/component/people/clipboard.vue:125
-#: src/component/photo/clipboard.vue:407 src/component/photo/edit/files.vue:509
+#: src/component/lightbox.vue:2946 src/component/people/clipboard.vue:125
+#: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:227
 msgid "Downloading…"
 msgstr "Downloader…"
-
-#: src/page/settings/advanced.vue:222
-msgid "Downscaling Filter"
-msgstr "Nedskaleringsfilter"
 
 #: src/locales.js:280
 msgid "Drag and drop files here"
@@ -1313,10 +1370,6 @@ msgstr "Træk og slip filer her"
 #: src/page/cluster/nodes.vue:177 src/locales.js:348
 msgid "Driver"
 msgstr "Chauffør"
-
-#: src/page/about/feedback.vue:22 src/page/about/feedback.vue:17
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "På grund af den store mængde e-mails, vi modtager, kan det være, at vores team ikke kan svare dig med det samme."
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
@@ -1329,25 +1382,26 @@ msgstr "Duplikater springes over og vises kun én gang."
 msgid "Duration"
 msgstr "Varighed"
 
-#: src/page/settings/advanced.vue:266
+#: src/page/settings/advanced.vue:267
 msgid "Dynamic Previews"
 msgstr "Dynamiske miniaturebilleder"
 
-#: src/page/settings/advanced.vue:242
+#: src/page/settings/advanced.vue:243
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Grænse for dynamisk størrelse: %{n}px"
 
-#: src/page/about/feedback.vue:80 src/page/about/feedback.vue:70
-msgid "E-Mail"
-msgstr "E-mail"
-
-#: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:157
-#: src/component/lightbox.vue:1331 src/component/lightbox.vue:1332
+#: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
+#: src/component/lightbox.vue:1423 src/component/lightbox.vue:1424
+#: src/component/lightbox/sidebar.vue:110
+#: src/component/lightbox/sidebar.vue:131
+#: src/component/lightbox/sidebar.vue:164
+#: src/component/lightbox/sidebar.vue:194
+#: src/component/lightbox/sidebar/toolbar.vue:32
 #: src/component/photo/clipboard.vue:60 src/page/settings/general.vue:200
 msgid "Edit"
 msgstr "Redigere"
 
-#: src/component/album/edit/dialog.vue:18
+#: src/component/album/edit/dialog.vue:17
 #: src/component/label/edit/dialog.vue:18
 #: src/component/people/edit/dialog.vue:18
 msgid "Edit %{s}"
@@ -1357,11 +1411,11 @@ msgstr "Rediger %{s}"
 msgid "Edit Account"
 msgstr "Rediger konto"
 
-#: src/component/photo/edit/dialog.vue:169
+#: src/component/photo/edit/dialog.vue:170
 msgid "Edit Photo"
 msgstr "Rediger Billede"
 
-#: src/component/photo/batch-edit.vue:619
+#: src/component/photo/batch-edit.vue:629
 msgid "Edit Photos (%{n})"
 msgstr "Rediger fotos (%{n})"
 
@@ -1369,8 +1423,8 @@ msgstr "Rediger fotos (%{n})"
 msgid "Edited"
 msgstr "Redigeret"
 
-#: src/component/user/add/dialog.vue:75 src/component/user/edit/dialog.vue:119
-#: src/component/user/add/dialog.vue:81 src/page/settings/account.vue:320
+#: src/component/user/add/dialog.vue:79 src/component/user/edit/dialog.vue:123
+#: src/component/user/add/dialog.vue:85 src/page/settings/account.vue:320
 #: src/page/settings/account.vue:91 src/page/settings/account.vue:79
 msgid "Email"
 msgstr "E-mail"
@@ -1395,7 +1449,7 @@ msgstr "Aktivér nye funktioner, der kan være ufuldstændige eller ustabile."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Aktivér filbrowseren for at navigere i mappestrukturen for originaler."
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:357
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverer RAW-konverteringsindstillinger. Kan reducere ydeevnen."
 
@@ -1415,7 +1469,7 @@ msgstr "Indtast dato"
 msgid "Enter dates"
 msgstr "Indtast datoer"
 
-#: src/component/input/chip-selector.vue:129
+#: src/component/input/chip-selector.vue:127
 msgid "Enter item name..."
 msgstr "Indtast varens navn..."
 
@@ -1431,18 +1485,18 @@ msgstr "Indtast verifikations kode"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Indtast din adgangskode for at bekræfte handlingen og fortsæt:"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:394
-#: src/page/library/errors.vue:359
+#: src/page/connect.vue:14 src/component/lightbox.vue:472
+#: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Fejl"
 
-#: src/app/routes.js:406 src/component/navigation.vue:370
+#: src/app/routes.js:420 src/component/navigation.vue:370
 #: src/component/navigation.vue:371 src/component/navigation.vue:383
 #: src/component/navigation.vue:392 src/component/navigation.vue:505
 msgid "Errors"
 msgstr "Fejl"
 
-#: src/common/util.js:779
+#: src/common/util.js:869
 msgid "Estimate"
 msgstr "Skøn"
 
@@ -1462,7 +1516,7 @@ msgstr "Hver anden dag"
 msgid "Exclude hidden"
 msgstr "Udelukke skjulte"
 
-#: src/page/settings/advanced.vue:143
+#: src/page/settings/advanced.vue:159
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Metadataudtræk med ExifTool er påkrævet for fuld understøttelse af video, livefoto og XMP."
 
@@ -1473,12 +1527,15 @@ msgstr "Eksperimentelle funktioner"
 #: src/page/admin/sessions.vue:163 src/page/admin/sessions.vue:226
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
-#: src/component/settings/apps.vue:138 src/component/settings/apps.vue:294
-#: src/component/share/dialog.vue:194
+#: src/component/settings/apps.vue:138 src/component/settings/apps.vue:295
+#: src/component/share/dialog.vue:195
 msgid "Expires"
 msgstr "Udløber"
 
-#: src/component/photo/edit/details.vue:235
+#: src/component/meta/camera/dialog.vue:79
+#: src/component/meta/camera/dialog.vue:83
+#: src/component/photo/edit/details.vue:230
+#: src/component/photo/edit/details.vue:234
 msgid "Exposure"
 msgstr "Eksponering"
 
@@ -1486,11 +1543,12 @@ msgstr "Eksponering"
 msgid "Extract still images and generate thumbnails while indexing."
 msgstr "Udtræk stillbilleder og generer thumbnails under indeksering."
 
-#: src/component/photo/edit/details.vue:269
+#: src/component/meta/camera/dialog.vue:93
+#: src/component/photo/edit/details.vue:263
 msgid "F Number"
 msgstr "F-nummer"
 
-#: src/model/face.js:139
+#: src/model/face.js:143
 msgid "Face"
 msgstr "Ansigt"
 
@@ -1498,7 +1556,7 @@ msgstr "Ansigt"
 msgid "Faces"
 msgstr "Ansigter"
 
-#: src/component/share/dialog.vue:234
+#: src/component/share/dialog.vue:235
 msgid "Failed removing link"
 msgstr "Linket kunne ikke fjernes"
 
@@ -1506,15 +1564,39 @@ msgstr "Linket kunne ikke fjernes"
 msgid "Failed to connect account."
 msgstr "Kunne ikke oprette forbindelse til konto."
 
-#: src/component/photo/batch-edit.vue:1377
+#: src/component/lightbox.vue:2027
+msgid "Failed to remove face marker"
+msgstr "Kunne ikke fjerne ansigtsmarkøren"
+
+#: src/component/lightbox.vue:1960
+msgid "Failed to remove name"
+msgstr "Kunne ikke fjerne navn"
+
+#: src/component/lightbox/sidebar.vue:1661
+#: src/component/lightbox/sidebar.vue:1894
+#: src/component/lightbox/sidebar.vue:1935
+#: src/component/lightbox/sidebar.vue:1993
+#: src/component/lightbox/sidebar.vue:2013
+#: src/component/lightbox/sidebar.vue:2120
+#: src/component/lightbox/sidebar.vue:2143
+#: src/component/lightbox/sidebar.vue:2173
+#: src/component/photo/batch-edit.vue:1473
 msgid "Failed to save changes"
 msgstr "Kunne ikke gemme ændringer"
 
-#: src/component/share/dialog.vue:215
+#: src/component/lightbox.vue:1932
+msgid "Failed to save face marker"
+msgstr "Kunne ikke redde ansigtsmarkør"
+
+#: src/component/lightbox/sidebar.vue:1416
+msgid "Failed to save name"
+msgstr "Kunne ikke gemme navn"
+
+#: src/component/share/dialog.vue:216
 msgid "Failed updating link"
 msgstr "Linket kunne ikke opdateres"
 
-#: src/component/user/edit/dialog.vue:69 src/component/user/edit/dialog.vue:70
+#: src/component/user/edit/dialog.vue:73 src/component/user/edit/dialog.vue:74
 #: src/page/settings/account.vue:62 src/page/settings/account.vue:64
 #: src/page/settings/account.vue:50 src/page/settings/account.vue:52
 msgid "Family Name"
@@ -1524,57 +1606,50 @@ msgstr "Efternavn"
 msgid "Fast"
 msgstr "Hurtig"
 
-#: src/component/album/edit/dialog.vue:76
-#: src/component/label/edit/dialog.vue:34
-#: src/component/people/edit/dialog.vue:34
-#: src/component/photo/batch-edit.vue:1432
+#: src/component/album/edit/dialog.vue:77
+#: src/component/label/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:37
+#: src/component/photo/batch-edit.vue:1528
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
 msgstr "Favorit"
 
-#: src/app/routes.js:251 src/component/navigation.vue:310
+#: src/app/routes.js:265 src/component/navigation.vue:310
 #: src/options/options.js:261 src/page/albums.vue:388
 msgid "Favorites"
 msgstr "Favoritter"
 
-#: src/page/about/feedback.vue:111 src/options/options.js:463
+#: src/options/options.js:463
 msgid "Feature Request"
 msgstr "Funktionsanmodning"
 
-#: src/component/navigation.vue:404 src/component/navigation.vue:405
-#: src/component/navigation.vue:417 src/component/navigation.vue:426
-#: src/component/navigation.vue:539 src/component/navigation.vue:547
-#: src/component/navigation.vue:555 src/component/navigation.vue:563
-msgid "Feedback"
-msgstr "Tilbagemelding"
-
-#: src/options/options.js:494
+#: src/options/options.js:487
 msgid "Female"
 msgstr "Kvinde"
 
-#: src/common/util.js:781 src/component/photo/edit/info.vue:94
-#: src/model/file.js:262
+#: src/common/util.js:871 src/component/lightbox/sidebar.vue:1068
+#: src/component/photo/edit/info.vue:94 src/model/file.js:270
 msgid "File"
 msgstr "Fil"
 
-#: src/app/routes.js:375
+#: src/app/routes.js:389
 msgid "File Browser"
 msgstr "Filbrowser"
 
-#: src/page/settings/advanced.vue:311
+#: src/page/settings/advanced.vue:312
 msgid "File Conversion"
 msgstr "Konvertering af filer"
 
-#: src/component/album/edit/dialog.vue:123
-#: src/component/photo/batch-edit.vue:590
-#: src/component/photo/batch-edit.vue:610 src/component/photo/toolbar.vue:406
-#: src/component/photo/toolbar.vue:417 src/component/photo/toolbar.vue:428
+#: src/component/album/edit/dialog.vue:126
+#: src/component/photo/batch-edit.vue:600
+#: src/component/photo/batch-edit.vue:620 src/component/photo/toolbar.vue:407
+#: src/component/photo/toolbar.vue:418 src/component/photo/toolbar.vue:429
 #: src/component/photo/view/list.vue:34
 msgid "File Name"
 msgstr "Filnavn"
 
-#: src/component/album/edit/dialog.vue:124 src/component/photo/toolbar.vue:407
-#: src/component/photo/toolbar.vue:418 src/component/photo/toolbar.vue:429
+#: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
+#: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
 msgid "File Size"
 msgstr "Filstørrelse"
 
@@ -1583,7 +1658,7 @@ msgstr "Filstørrelse"
 msgid "Filename"
 msgstr "Filnavn"
 
-#: src/component/navigation.vue:744 src/component/photo/edit/dialog.vue:55
+#: src/component/navigation.vue:730 src/component/photo/edit/dialog.vue:55
 #: src/component/photo/edit/dialog.vue:56
 #: src/component/photo/edit/dialog.vue:68
 #: src/component/photo/edit/dialog.vue:70
@@ -1599,14 +1674,15 @@ msgstr "Filer med sekventielle navne som ‘IMG_1234 (2)’ og ‘IMG_1234 (3)�
 msgid "First page"
 msgstr "Første side"
 
-#: src/component/photo/edit/details.vue:283
+#: src/component/meta/camera/dialog.vue:105
+#: src/component/photo/edit/details.vue:276
 msgid "Focal Length"
 msgstr "Brændvidde"
 
 #: src/component/photo/edit/info.vue:28 src/component/photo/edit/info.vue:29
 #: src/component/service/edit.vue:44 src/component/service/edit.vue:86
 #: src/component/service/edit.vue:91 src/component/service/upload.vue:42
-#: src/component/service/upload.vue:48 src/model/folder.js:175
+#: src/component/service/upload.vue:48 src/model/folder.js:181
 #: src/page/library/browse.vue:77
 msgid "Folder"
 msgstr "Mappe"
@@ -1619,12 +1695,12 @@ msgstr "Mappen indeholder %{n} filer"
 msgid "Folder is empty"
 msgstr "Mappen er tom"
 
-#: src/app/routes.js:231 src/component/navigation.vue:457
+#: src/app/routes.js:245 src/component/navigation.vue:457
 #: src/options/options.js:266
 msgid "Folders"
 msgstr "Mapper"
 
-#: src/page/auth/login.vue:162
+#: src/page/auth/login.vue:172
 msgid "Forgot password?"
 msgstr "Glemt adgangskode?"
 
@@ -1646,7 +1722,7 @@ msgstr "Rammer"
 msgid "Full Access"
 msgstr "Fuld adgang"
 
-#: src/component/lightbox.vue:1277 src/component/lightbox.vue:1278
+#: src/component/lightbox.vue:1369 src/component/lightbox.vue:1370
 msgid "Fullscreen"
 msgstr "Fuld skærm"
 
@@ -1668,11 +1744,11 @@ msgstr "Generer forhåndsvisninger"
 msgid "Generated"
 msgstr "Genereret"
 
-#: src/component/photo/toolbar.vue:476
+#: src/component/photo/toolbar.vue:477
 msgid "Get Started"
 msgstr "Kom godt i gang"
 
-#: src/component/user/edit/dialog.vue:53 src/component/user/edit/dialog.vue:54
+#: src/component/user/edit/dialog.vue:57 src/component/user/edit/dialog.vue:58
 #: src/page/settings/account.vue:47 src/page/settings/account.vue:49
 #: src/page/settings/account.vue:35 src/page/settings/account.vue:37
 msgid "Given Name"
@@ -1711,23 +1787,31 @@ msgstr "Hash"
 msgid "Help"
 msgstr "Hjælp"
 
-#: src/app/routes.js:76 src/app/routes.js:82
+#: src/app/routes.js:75
 msgid "Help & Support"
 msgstr "Hjælp og Support"
 
 #: src/component/navigation.vue:363 src/component/navigation.vue:364
 #: src/component/navigation.vue:376 src/component/navigation.vue:385
-#: src/component/navigation.vue:498 src/component/people/edit/dialog.vue:37
+#: src/component/navigation.vue:498 src/component/people/edit/dialog.vue:40
 msgid "Hidden"
 msgstr "Skjult"
 
-#: src/app/routes.js:390
+#: src/app/routes.js:404
 msgid "Hidden Files"
 msgstr "Skjulte filer"
 
 #: src/page/people/new.vue:43 src/page/people/recognized.vue:91
 msgid "Hide"
 msgstr "Skjul"
+
+#: src/component/lightbox.vue:1541
+msgid "Hide Caption"
+msgstr "Skjul billedtekst"
+
+#: src/component/lightbox/sidebar.vue:207
+msgid "Hide face markers"
+msgstr "Skjul ansigtsmarkører"
 
 #: src/page/settings/general.vue:141
 msgid "Hide private content from global views while keeping it accessible in the Private section."
@@ -1744,10 +1828,6 @@ msgstr "Høj"
 msgid "High Dynamic Range (HDR)"
 msgstr "Høj dynamisk rækkevidde (HDR)"
 
-#: src/page/about/feedback.vue:52 src/page/about/feedback.vue:44
-msgid "How can we help?"
-msgstr "Hvordan kan vi hjælpe?"
-
 #: src/options/options.js:304
 msgid "Hybrid"
 msgstr "Hybrid"
@@ -1756,12 +1836,13 @@ msgstr "Hybrid"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Hvis du mister adgangen til din godkendelsesapp eller enhed, kan du bruge din gendannelseskode til at få adgang til din konto igen."
 
-#: src/common/util.js:785 src/component/photo/view/cards.vue:246
-#: src/model/file.js:190 src/options/options.js:342
+#: src/common/util.js:835 src/common/util.js:875
+#: src/component/photo/view/cards.vue:246 src/model/file.js:198
+#: src/options/options.js:342
 msgid "Image"
 msgstr "Billede"
 
-#: src/page/settings/advanced.vue:282
+#: src/page/settings/advanced.vue:283
 msgid "Image Quality"
 msgstr "Billedkvalitet"
 
@@ -1808,11 +1889,11 @@ msgstr "Medtag RAW-billedfiler, når du downloader stakke og arkiver."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Medtag sidecar-filer, når du downloader stakke og arkiver."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "Øg lagerstørrelsen eller slet filer for at fortsætte."
 
-#: src/component/navigation.vue:750 src/page/library.vue:56
+#: src/component/navigation.vue:736 src/page/library.vue:56
 #: src/page/settings/content.vue:6
 msgid "Index"
 msgstr "Indeks"
@@ -1825,13 +1906,12 @@ msgstr "Indeksering"
 msgid "Indexing media and sidecar files…"
 msgstr "Indekserer medie- og sidecar filer…"
 
-#: src/component/lightbox.vue:1225 src/component/lightbox.vue:1226
-#: src/component/sidebar/info.vue:5
+#: src/component/lightbox.vue:1317 src/component/lightbox.vue:1318
+#: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Information"
 
-#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
-#: src/model/cluster-node.js:9 src/locales.js:364
+#: src/model/cluster-node.js:7 src/model/cluster-node.js:8 src/locales.js:364
 msgid "Instance"
 msgstr "Forekomst"
 
@@ -1844,7 +1924,7 @@ msgstr "Instans-id"
 msgid "Instances"
 msgstr "Forekomster"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Utilstrækkelig opbevaring."
 
@@ -1852,23 +1932,23 @@ msgstr "Utilstrækkelig opbevaring."
 msgid "Interval"
 msgstr "Interval"
 
-#: src/common/form.js:230 src/common/form.js:232 src/common/form.js:239
-#: src/common/form.js:241 src/common/form.js:310 src/common/form.js:313
-#: src/common/form.js:324 src/common/form.js:327 src/common/form.js:353
-#: src/common/form.js:355 src/common/form.js:362 src/common/form.js:364
-#: src/common/form.js:379 src/common/form.js:381
+#: src/common/form.js:234 src/common/form.js:236 src/common/form.js:243
+#: src/common/form.js:245 src/common/form.js:314 src/common/form.js:317
+#: src/common/form.js:328 src/common/form.js:331 src/common/form.js:357
+#: src/common/form.js:359 src/common/form.js:366 src/common/form.js:368
+#: src/common/form.js:383 src/common/form.js:385
 msgid "Invalid"
 msgstr "Ugyldig"
 
-#: src/common/form.js:257 src/common/form.js:259
+#: src/common/form.js:261 src/common/form.js:263
 msgid "Invalid address"
 msgstr "Ugyldig adresse"
 
-#: src/common/form.js:342 src/common/form.js:343 src/common/form.js:346
+#: src/common/form.js:346 src/common/form.js:347 src/common/form.js:350
 msgid "Invalid country"
 msgstr "Ugyldigt land"
 
-#: src/component/photo/edit/details.vue:623
+#: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
 msgstr "Ugyldig dato"
 
@@ -1877,15 +1957,15 @@ msgstr "Ugyldig dato"
 msgid "Invalid parameters"
 msgstr "Ugyldige parametre"
 
-#: src/component/photo/edit/dialog.vue:285 src/model/thumb.js:175
+#: src/component/photo/edit/dialog.vue:286 src/model/thumb.js:270
 msgid "Invalid photo selected"
 msgstr "Ugyldigt foto valgt"
 
-#: src/common/form.js:248 src/common/form.js:250
+#: src/common/form.js:252 src/common/form.js:254
 msgid "Invalid time"
 msgstr "Ugyldig tid"
 
-#: src/common/form.js:266 src/common/form.js:268
+#: src/common/form.js:270 src/common/form.js:272
 msgid "Invalid URL"
 msgstr "Ugyldig URL"
 
@@ -1899,7 +1979,7 @@ msgstr "IP-adresse"
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr "Det er en engangskode, der vil deaktivere tofaktorgodkendelse for din konto, når du bruger den."
 
-#: src/model/rest.js:149
+#: src/model/rest.js:232
 msgid "Item"
 msgstr "Element"
 
@@ -1907,11 +1987,11 @@ msgstr "Element"
 msgid "Items per page:"
 msgstr "Elementer pr. side:"
 
-#: src/page/settings/advanced.vue:289
+#: src/page/settings/advanced.vue:290
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-kvalitet: %{n}"
 
-#: src/page/settings/advanced.vue:296
+#: src/page/settings/advanced.vue:297
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG maks størrelse: %{n}px"
 
@@ -1919,21 +1999,24 @@ msgstr "JPEG maks størrelse: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG’er og miniaturer gengives automatisk efter behov."
 
-#: src/common/util.js:797
+#: src/common/util.js:887
 msgid "Keyword"
 msgstr "Nøgleord"
 
-#: src/component/photo/edit/details.vue:361
+#: src/component/lightbox/sidebar.vue:861
+#: src/component/photo/edit/details.vue:347
+#: src/component/photo/edit/details.vue:350
 msgid "Keywords"
 msgstr "Nøgleord"
 
-#: src/component/photo/edit/labels.vue:170
-#: src/component/photo/edit/labels.vue:23 src/model/label.js:102
+#: src/component/photo/edit/labels.vue:229
+#: src/component/photo/edit/labels.vue:23 src/model/label.js:114
 msgid "Label"
 msgstr "Etiket"
 
-#: src/page/cluster/nodes.vue:155 src/app/routes.js:421
-#: src/component/navigation.vue:430 src/component/photo/batch-edit.vue:415
+#: src/page/cluster/nodes.vue:155 src/app/routes.js:435
+#: src/component/lightbox/sidebar.vue:344 src/component/navigation.vue:430
+#: src/component/photo/batch-edit.vue:429
 #: src/component/photo/edit/dialog.vue:37
 #: src/component/photo/edit/dialog.vue:38
 #: src/component/photo/edit/dialog.vue:50
@@ -1946,10 +2029,6 @@ msgstr "Etiketter"
 #: src/component/label/clipboard.vue:131
 msgid "Labels deleted"
 msgstr "Etiketter slettet"
-
-#: src/options/options.js:487
-msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "Lanczos: Bevaring af detaljer, minimale artefakter"
 
 #: src/page/settings/general.vue:32
 msgid "Language"
@@ -1974,7 +2053,7 @@ msgstr "Sidste side"
 msgid "Last Sync"
 msgstr "Seneste synkronisering"
 
-#: src/component/settings/apps.vue:285
+#: src/component/settings/apps.vue:286
 msgid "Last Used"
 msgstr "Sidst brugt"
 
@@ -1998,30 +2077,35 @@ msgstr "Få mere at vide"
 msgid "Learn More"
 msgstr "Få mere at vide"
 
-#: src/component/navigation.vue:458 src/component/navigation.vue:775
+#: src/component/navigation.vue:458 src/component/navigation.vue:761
 msgid "Legal Information"
 msgstr "Juridiske oplysninger"
 
-#: src/component/photo/edit/details.vue:248
+#: src/component/lightbox/sidebar.vue:139
+#: src/component/meta/camera/dialog.vue:46
+#: src/component/photo/edit/details.vue:243
 #: src/component/photo/view/cards.vue:213
 msgid "Lens"
 msgstr "Linse"
 
-#: src/app/routes.js:475 src/app/routes.js:491 src/app/routes.js:507
+#: src/app/routes.js:489 src/app/routes.js:505 src/app/routes.js:521
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
 msgid "Library"
 msgstr "Bibliotek"
 
-#: src/page/connect.vue:5 src/app/routes.js:70 src/component/navigation.vue:410
-#: src/component/navigation.vue:411 src/component/navigation.vue:423
-#: src/component/navigation.vue:432 src/component/navigation.vue:545
-#: src/component/navigation.vue:553 src/component/navigation.vue:569
-#: src/component/photo/batch-edit.vue:401
-#: src/component/photo/edit/details.vue:346 src/page/about/license.vue:5
+#: src/page/connect.vue:5 src/app/routes.js:69
+#: src/component/lightbox/sidebar.vue:847 src/component/navigation.vue:404
+#: src/component/navigation.vue:405 src/component/navigation.vue:417
+#: src/component/navigation.vue:426 src/component/navigation.vue:539
+#: src/component/navigation.vue:547 src/component/navigation.vue:555
+#: src/component/photo/batch-edit.vue:397
+#: src/component/photo/batch-edit.vue:400
+#: src/component/photo/edit/details.vue:332
+#: src/component/photo/edit/details.vue:335 src/page/about/license.vue:5
 msgid "License"
 msgstr "Licens"
 
-#: src/component/lightbox.vue:1295 src/component/lightbox.vue:1296
+#: src/component/lightbox.vue:1387 src/component/lightbox.vue:1388
 msgid "Like"
 msgstr "Synes godt om"
 
@@ -2033,15 +2117,11 @@ msgstr "Lime"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Grænse nået, viser de første %{n} filer"
 
-#: src/options/options.js:489
-msgid "Linear: Very Smooth, Best Performance"
-msgstr "Lineær: Meget glat, bedste ydeevne"
-
 #: src/model/link.js:93 src/options/auth.js:31 src/options/auth.js:32
 msgid "Link"
 msgstr "Link"
 
-#: src/component/photo/toolbar.vue:388
+#: src/component/photo/toolbar.vue:389
 msgid "List"
 msgstr "Liste"
 
@@ -2049,14 +2129,14 @@ msgstr "Liste"
 msgid "List View"
 msgstr "Listevisning"
 
-#: src/component/photo/batch-edit.vue:125 src/component/photo/batch-edit.vue:66
-#: src/component/photo/view/cards.vue:112
+#: src/common/util.js:839 src/component/photo/batch-edit.vue:124
+#: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:350
 msgid "Live"
 msgstr "Direkte"
 
-#: src/app/routes.js:265 src/component/navigation.vue:191
+#: src/app/routes.js:279 src/component/navigation.vue:191
 #: src/component/navigation.vue:192 src/component/navigation.vue:204
 #: src/component/navigation.vue:213 src/component/navigation.vue:241
 msgid "Live Photos"
@@ -2080,20 +2160,22 @@ msgstr "Indlæser..."
 msgid "Local"
 msgstr "Lokal"
 
-#: src/component/photo/edit/details.vue:110
+#: src/component/meta/datetime/dialog.vue:165
+#: src/component/photo/edit/details.vue:109
 msgid "Local Time"
 msgstr "Lokal tid"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:787 src/component/album/edit/dialog.vue:37
-#: src/component/photo/batch-edit.vue:264
-#: src/component/photo/batch-edit.vue:570
-#: src/component/photo/edit/details.vue:459
-#: src/component/photo/edit/details.vue:570
-#: src/component/photo/edit/details.vue:664
+#: src/common/util.js:877 src/component/album/edit/dialog.vue:38
+#: src/component/lightbox/sidebar.vue:149
+#: src/component/photo/batch-edit.vue:263
+#: src/component/photo/batch-edit.vue:575
+#: src/component/photo/edit/details.vue:450
+#: src/component/photo/edit/details.vue:574
+#: src/component/photo/edit/details.vue:678
 #: src/component/photo/view/cards.vue:255 src/component/photo/view/list.vue:43
-#: src/component/sidebar/info.vue:46 src/page/albums.vue:390
-#: src/page/settings/account.vue:276 src/page/settings/account.vue:278
+#: src/page/albums.vue:390 src/page/settings/account.vue:276
+#: src/page/settings/account.vue:278
 msgid "Location"
 msgstr "Sted"
 
@@ -2101,16 +2183,16 @@ msgstr "Sted"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Logbeskeder vises her, når PhotoPrism kommer på tværs af ødelagte filer, eller der er andre potentielle problemer."
 
-#: src/component/navigation.vue:320 src/component/navigation.vue:599
-#: src/component/navigation.vue:712
+#: src/component/navigation.vue:320 src/component/navigation.vue:585
+#: src/component/navigation.vue:698
 msgid "Login"
 msgstr "Log på"
 
-#: src/component/navigation.vue:396 src/component/navigation.vue:681
+#: src/component/navigation.vue:396 src/component/navigation.vue:667
 msgid "Logout"
 msgstr "Log ud"
 
-#: src/component/navigation.vue:756 src/page/library.vue:79
+#: src/component/navigation.vue:742 src/page/library.vue:79
 #: src/page/settings/general.vue:319
 msgid "Logs"
 msgstr "Logfiler"
@@ -2119,7 +2201,7 @@ msgstr "Logfiler"
 msgid "Longitude"
 msgstr "Længdegrad"
 
-#: src/component/navigation.vue:629
+#: src/component/navigation.vue:615
 msgid "Lost server connection"
 msgstr "Mistet serverforbindelse"
 
@@ -2138,7 +2220,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Hovedfarve"
 
-#: src/options/options.js:493
+#: src/options/options.js:486
 msgid "Male"
 msgstr "Mand"
 
@@ -2152,7 +2234,7 @@ msgstr "Administrer konto"
 msgid "Manager"
 msgstr "Leder"
 
-#: src/common/util.js:809
+#: src/common/util.js:899
 msgid "Manual"
 msgstr "Manuel"
 
@@ -2164,15 +2246,15 @@ msgstr "Manuel upload"
 msgid "Maps"
 msgstr "Kort"
 
-#: src/common/util.js:789 src/model/marker.js:118
+#: src/common/util.js:879 src/model/marker.js:124
 msgid "Marker"
 msgstr "Markør"
 
-#: src/component/user/add/dialog.vue:21
+#: src/component/user/add/dialog.vue:25
 msgid "Maximum number of accounts has been reached."
 msgstr "Det maksimale antal konti er nået."
 
-#: src/app/routes.js:258 src/component/navigation.vue:219
+#: src/app/routes.js:272 src/component/navigation.vue:219
 #: src/options/options.js:258
 msgid "Media"
 msgstr "Medier"
@@ -2189,17 +2271,12 @@ msgstr "Medlemskab"
 msgid "Merge %{a} with %{b}?"
 msgstr "Sammenlægning af %{a} med %{b}?"
 
-#: src/page/about/feedback.vue:51 src/page/cluster/activity.vue:129
-#: src/page/admin/activity.vue:128 src/locales.js:356
-#: src/page/about/feedback.vue:43
+#: src/page/cluster/activity.vue:129 src/page/admin/activity.vue:128
+#: src/locales.js:356
 msgid "Message"
 msgstr "Besked"
 
-#: src/page/about/feedback.vue:150 src/page/about/feedback.vue:133
-msgid "Message sent"
-msgstr "Besked sendt"
-
-#: src/common/util.js:799
+#: src/common/util.js:889
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -2218,7 +2295,7 @@ msgstr "Minimer"
 msgid "Missing"
 msgstr "Mangler"
 
-#: src/page/auth/login.vue:330
+#: src/page/auth/login.vue:388
 msgid "Missing or invalid configuration"
 msgstr "Manglende eller ugyldig konfiguration"
 
@@ -2226,7 +2303,7 @@ msgstr "Manglende eller ugyldig konfiguration"
 msgid "mixed"
 msgstr "blandet"
 
-#: src/app/routes.js:192 src/component/navigation.vue:417
+#: src/app/routes.js:206 src/component/navigation.vue:417
 #: src/options/options.js:264 src/page/settings/general.vue:111
 msgid "Moments"
 msgstr "Øjeblikke"
@@ -2237,21 +2314,22 @@ msgstr "Øjeblikke"
 msgid "Monochrome"
 msgstr "Monokrom"
 
-#: src/page/settings/account.vue:240 src/component/photo/batch-edit.vue:214
-#: src/component/photo/edit/details.vue:68 src/component/photo/toolbar.vue:199
+#: src/page/settings/account.vue:240 src/component/meta/datetime/dialog.vue:50
+#: src/component/photo/batch-edit.vue:213
+#: src/component/photo/edit/details.vue:67 src/component/photo/toolbar.vue:199
 #: src/page/settings/account.vue:224
 msgid "Month"
 msgstr "Måned"
 
-#: src/component/lightbox.vue:1350
+#: src/component/lightbox.vue:1442
 msgid "More options"
 msgstr "Flere muligheder"
 
-#: src/component/photo/toolbar.vue:386 src/component/photo/toolbar.vue:392
+#: src/component/photo/toolbar.vue:387 src/component/photo/toolbar.vue:393
 msgid "Mosaic"
 msgstr "Mosaik"
 
-#: src/component/album/edit/dialog.vue:126 src/component/photo/toolbar.vue:432
+#: src/component/album/edit/dialog.vue:129 src/component/photo/toolbar.vue:433
 msgid "Most Relevant"
 msgstr "Mest relevante"
 
@@ -2263,34 +2341,34 @@ msgstr "Flyt filer"
 msgid "Must have at least %{n} characters."
 msgstr "Skal indeholde mindst %{n} tegn."
 
-#: src/component/lightbox.vue:1244 src/component/lightbox.vue:1245
+#: src/component/lightbox.vue:1336 src/component/lightbox.vue:1337
 msgid "Mute"
 msgstr "Dæmpet"
 
-#: src/page/about/feedback.vue:65 src/page/about/feedback.vue:66
 #: src/page/cluster/nodes.vue:117 src/page/cluster/nodes.vue:173
-#: src/page/cluster/nodes.vue:244 src/common/util.js:783
+#: src/page/cluster/nodes.vue:244 src/common/util.js:873
 #: src/component/album/edit/dialog.vue:30
-#: src/component/label/edit/dialog.vue:28
-#: src/component/people/edit/dialog.vue:28
+#: src/component/album/edit/dialog.vue:31
+#: src/component/label/edit/dialog.vue:30
+#: src/component/label/edit/dialog.vue:31
+#: src/component/lightbox/sidebar.vue:238
+#: src/component/lightbox/sidebar.vue:242
+#: src/component/people/edit/dialog.vue:30
+#: src/component/people/edit/dialog.vue:31
 #: src/component/photo/edit/files.vue:417 src/component/photo/edit/info.vue:36
-#: src/component/photo/edit/info.vue:37 src/component/photo/edit/people.vue:153
-#: src/component/photo/view/list.vue:43 src/component/service/edit.vue:155
-#: src/component/settings/apps.vue:112 src/component/settings/apps.vue:274
-#: src/locales.js:323 src/page/about/feedback.vue:56
-#: src/page/about/feedback.vue:57 src/page/albums.vue:389
-#: src/page/auth/login.vue:80 src/page/people/new.vue:185
-#: src/page/settings/services.vue:145
+#: src/component/photo/edit/info.vue:37 src/component/photo/edit/labels.vue:135
+#: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
+#: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
+#: src/component/settings/apps.vue:275 src/locales.js:323
+#: src/page/albums.vue:389 src/page/auth/login.vue:80
+#: src/page/people/new.vue:51 src/page/settings/services.vue:145
 msgid "Name"
 msgstr "Navn"
 
-#: src/component/album/edit/dialog.vue:130 src/component/album/toolbar.vue:128
-#: src/component/label/edit/dialog.vue:69
-#: src/component/people/edit/dialog.vue:72
-#: src/component/photo/edit/labels.vue:194
-#: src/component/photo/edit/people.vue:156 src/page/labels.vue:192
-#: src/page/library/browse.vue:134 src/page/people/new.vue:158
-#: src/page/people/recognized.vue:202
+#: src/component/lightbox/sidebar.vue:1870
+#: src/component/lightbox/sidebar.vue:1919
+#: src/component/lightbox/sidebar.vue:1968
+#: src/component/lightbox/sidebar.vue:2035
 msgid "Name too long"
 msgstr "Navn for langt"
 
@@ -2308,13 +2386,13 @@ msgstr "Nyt"
 msgid "New Password"
 msgstr "Nyt kodeord"
 
-#: src/component/album/edit/dialog.vue:119 src/component/photo/toolbar.vue:401
-#: src/component/photo/toolbar.vue:413 src/component/photo/toolbar.vue:423
+#: src/component/album/edit/dialog.vue:122 src/component/photo/toolbar.vue:402
+#: src/component/photo/toolbar.vue:414 src/component/photo/toolbar.vue:424
 #: src/page/albums.vue:391
 msgid "Newest First"
 msgstr "Nyeste først"
 
-#: src/component/lightbox.vue:393 src/locales.js:301
+#: src/component/lightbox.vue:471 src/locales.js:301
 msgid "Next"
 msgstr "Næste"
 
@@ -2328,14 +2406,14 @@ msgstr "Næste billede"
 
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
-#: src/component/photo/batch-edit.vue:1036
+#: src/component/photo/batch-edit.vue:1114
 #: src/component/photo/edit/info.vue:151 src/component/photo/edit/info.vue:165
 #: src/component/photo/edit/info.vue:179 src/component/photo/edit/info.vue:193
 #: src/component/photo/edit/info.vue:207
 msgid "No"
 msgstr "Nej"
 
-#: src/component/photo/batch-edit.vue:438
+#: src/component/photo/batch-edit.vue:420
 msgid "No albums assigned"
 msgstr "Ingen album tildelt"
 
@@ -2347,7 +2425,7 @@ msgstr "Ingen album fundet"
 msgid "No data available"
 msgstr "Ingen tilgængelige data"
 
-#: src/component/photo/batch-edit.vue:423
+#: src/component/photo/batch-edit.vue:437
 msgid "No labels assigned"
 msgstr "Ingen etiketter tildelt"
 
@@ -2364,14 +2442,14 @@ msgid "No more"
 msgstr "Ikke mere"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:463 src/page/people/new.vue:569
+#: src/page/people/new.vue:445 src/page/people/new.vue:551
 #: src/page/people/recognized.vue:55 src/page/people/recognized.vue:692
 msgid "No people found"
 msgstr "Ingen personer fundet"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
-#: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:567
-#: src/page/library/browse.vue:31 src/page/photos.vue:704
+#: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:568
+#: src/page/library/browse.vue:31 src/page/photos.vue:705
 #: src/page/places.vue:767 src/page/places.vue:888
 msgid "No pictures found"
 msgstr "Ingen billeder fundet"
@@ -2381,7 +2459,7 @@ msgstr "Ingen billeder fundet"
 msgid "No recently edited pictures"
 msgstr "Ingen nyligt redigerede billeder"
 
-#: src/component/location/dialog.vue:87
+#: src/component/meta/location/dialog.vue:84
 msgid "No results"
 msgstr "Ingen resultater"
 
@@ -2389,7 +2467,7 @@ msgstr "Ingen resultater"
 msgid "No server connection"
 msgstr "Ingen serverforbindelse"
 
-#: src/component/service/upload.vue:160
+#: src/component/service/upload.vue:161
 msgid "No servers configured."
 msgstr "Ingen servere konfigureret."
 
@@ -2415,7 +2493,7 @@ msgstr "Knudepunkter"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:111
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Ikke-fotografiske billeder af lav kvalitet kræver en gennemgang, før de vises i søgeresultaterne."
 
@@ -2424,12 +2502,12 @@ msgstr "Ikke-fotografiske billeder af lav kvalitet kræver en gennemgang, før d
 msgid "None"
 msgstr "Ingen"
 
-#: src/component/lightbox.vue:806 src/component/service/upload.vue:145
-#: src/component/service/upload.vue:157
+#: src/component/lightbox.vue:884 src/component/service/upload.vue:146
+#: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Ikke tilladt"
 
-#: src/component/lightbox.vue:803
+#: src/component/lightbox.vue:881
 msgid "Not found"
 msgstr "Ikke fundet"
 
@@ -2437,7 +2515,7 @@ msgstr "Ikke fundet"
 msgid "Not sorted."
 msgstr "Ikke sorteret."
 
-#: src/component/lightbox.vue:800 src/component/lightbox.vue:914
+#: src/component/lightbox.vue:878 src/component/lightbox.vue:992
 msgid "Not supported"
 msgstr "Ikke understøttet"
 
@@ -2453,7 +2531,9 @@ msgstr "Bemærk:"
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "Bemærk: Kun WebDAV-servere, som Nextcloud eller PhotoPrism, kan konfigureres som fjerntjeneste til sikkerhedskopiering og upload af filer."
 
-#: src/component/photo/edit/details.vue:376
+#: src/component/lightbox/sidebar.vue:875
+#: src/component/photo/edit/details.vue:362
+#: src/component/photo/edit/details.vue:365
 msgid "Notes"
 msgstr "Bemærkninger"
 
@@ -2480,8 +2560,8 @@ msgstr "OIDC"
 msgid "OK"
 msgstr "OK"
 
-#: src/component/album/edit/dialog.vue:120 src/component/photo/toolbar.vue:402
-#: src/component/photo/toolbar.vue:414 src/component/photo/toolbar.vue:424
+#: src/component/album/edit/dialog.vue:123 src/component/photo/toolbar.vue:403
+#: src/component/photo/toolbar.vue:415 src/component/photo/toolbar.vue:425
 #: src/page/albums.vue:392
 msgid "Oldest First"
 msgstr "Ældste først"
@@ -2491,7 +2571,7 @@ msgstr "Ældste først"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "På Windows skal du indtaste følgende ressource i forbindelsesdialogboksen:"
 
-#: src/page/settings/advanced.vue:268
+#: src/page/settings/advanced.vue:269
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generering af miniaturebilleder efter behov kan medføre et højt CPU- og hukommelsesforbrug. Det anbefales ikke til ressourcebegrænsede servere og NAS-enheder."
 
@@ -2507,7 +2587,7 @@ msgstr "Et album fundet"
 msgid "One file found"
 msgstr "En fil fundet"
 
-#: src/component/service/upload.vue:174
+#: src/component/service/upload.vue:175
 msgid "One file uploaded"
 msgstr "En fil uploadet"
 
@@ -2519,12 +2599,12 @@ msgstr "En mappe fundet"
 msgid "One label found"
 msgstr "En etiket fundet"
 
-#: src/page/people/new.vue:465 src/page/people/new.vue:571
+#: src/page/people/new.vue:447 src/page/people/new.vue:553
 #: src/page/people/recognized.vue:694
 msgid "One person found"
 msgstr "En person fandt"
 
-#: src/page/album/photos.vue:569 src/page/photos.vue:706
+#: src/page/album/photos.vue:570 src/page/photos.vue:707
 msgid "One picture found"
 msgstr "Et billede fundet"
 
@@ -2574,14 +2654,13 @@ msgstr "Oprindeligt navn"
 
 #: src/component/navigation.vue:356 src/component/navigation.vue:357
 #: src/component/navigation.vue:369 src/component/navigation.vue:378
-#: src/component/navigation.vue:491 src/model/file.js:172
+#: src/component/navigation.vue:491 src/model/file.js:180
 #: src/options/options.js:474 src/page/library/browse.vue:7
 #: src/page/settings/content.vue:179 src/page/settings/general.vue:304
 msgid "Originals"
 msgstr "Originaler"
 
-#: src/page/about/feedback.vue:113 src/options/options.js:465
-#: src/options/options.js:495
+#: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
 msgstr "Andre"
 
@@ -2601,7 +2680,7 @@ msgstr "Side {0}, aktuel side"
 #: src/component/photo/edit/files.vue:120
 #: src/component/photo/edit/files.vue:121
 #: src/component/photo/edit/files.vue:127
-#: src/component/photo/edit/files.vue:135 src/model/photo.js:881
+#: src/component/photo/edit/files.vue:135 src/model/photo.js:933
 msgid "Pages"
 msgstr "Sider"
 
@@ -2609,7 +2688,7 @@ msgstr "Sider"
 msgid "Pagination Navigation"
 msgstr "Paginering af navigation"
 
-#: src/component/photo/batch-edit.vue:1434
+#: src/component/photo/batch-edit.vue:1530
 #: src/component/photo/edit/info.vue:145 src/component/photo/edit/info.vue:146
 msgid "Panorama"
 msgstr "Panorama"
@@ -2620,29 +2699,30 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panoramaer"
 
-#: src/component/input/chip-selector.vue:188
+#: src/component/input/chip-selector.vue:192
 msgid "Part of all selected photos"
 msgstr "En del af alle udvalgte fotos"
 
-#: src/component/input/chip-selector.vue:186
+#: src/component/input/chip-selector.vue:190
 msgid "Part of some selected photos"
 msgstr "En del af nogle udvalgte fotos"
 
-#: src/component/user/add/dialog.vue:47 src/component/user/add/dialog.vue:48
-#: src/component/user/add/dialog.vue:53 src/component/user/add/dialog.vue:54
+#: src/component/user/add/dialog.vue:51 src/component/user/add/dialog.vue:52
+#: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:168
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
-#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:159
+#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:160
 #: src/options/auth.js:92 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Adgangskode"
 
-#: src/component/settings/password.vue:160
+#: src/component/settings/password.vue:161
 msgid "Password changed"
 msgstr "Adgangskode ændret"
 
-#: src/app/routes.js:436 src/app/routes.js:460 src/component/navigation.vue:283
-#: src/component/navigation.vue:732 src/component/photo/edit/dialog.vue:46
+#: src/app/routes.js:450 src/app/routes.js:474
+#: src/component/lightbox/sidebar.vue:177 src/component/navigation.vue:283
+#: src/component/navigation.vue:718 src/component/photo/edit/dialog.vue:46
 #: src/component/photo/edit/dialog.vue:47
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
@@ -2655,20 +2735,20 @@ msgstr "Mennesker"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Personer, som du deler et link med, kan se offentligt indhold."
 
-#: src/component/photo/clipboard.vue:301 src/component/photo/toolbar.vue:549
+#: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:550
 msgid "Permanently deleted"
 msgstr "Permanent slettet"
 
-#: src/model/subject.js:134
+#: src/model/subject.js:150
 msgid "Person"
 msgstr "Person"
 
-#: src/component/photo/edit/people.vue:303
+#: src/component/photo/edit/people.vue:301
 msgid "Person cover updated"
 msgstr "Personcover opdateret"
 
-#: src/component/photo/edit/people.vue:253
-#: src/component/photo/edit/people.vue:288
+#: src/component/photo/edit/people.vue:251
+#: src/component/photo/edit/people.vue:286
 msgid "Person not found"
 msgstr "Person ikke fundet"
 
@@ -2676,7 +2756,7 @@ msgstr "Person ikke fundet"
 msgid "Personal"
 msgstr "Personlig"
 
-#: src/model/photo.js:1264
+#: src/model/photo.js:1367
 msgid "Photo"
 msgstr "Foto"
 
@@ -2688,17 +2768,17 @@ msgstr "PhotoPrism er 100 % selvfinansieret og uafhængig."
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+-medlemskab"
 
-#: src/app/routes.js:185
+#: src/app/routes.js:199
 msgid "Photos"
 msgstr "Fotos"
 
-#: src/component/photo/batch-edit.vue:584
-#: src/component/photo/batch-edit.vue:604
+#: src/component/photo/batch-edit.vue:594
+#: src/component/photo/batch-edit.vue:614
 msgid "Picture"
 msgstr "Billede"
 
-#: src/component/album/edit/dialog.vue:122 src/component/photo/toolbar.vue:405
-#: src/component/photo/toolbar.vue:416 src/component/photo/toolbar.vue:427
+#: src/component/album/edit/dialog.vue:125 src/component/photo/toolbar.vue:406
+#: src/component/photo/toolbar.vue:417 src/component/photo/toolbar.vue:428
 msgid "Picture Title"
 msgstr "Billedets titel"
 
@@ -2714,9 +2794,9 @@ msgstr "Sted"
 msgid "Place & Time"
 msgstr "Sted og tid"
 
-#: src/app/routes.js:335 src/app/routes.js:341 src/app/routes.js:347
-#: src/app/routes.js:362 src/component/navigation.vue:346
-#: src/component/navigation.vue:738 src/options/options.js:262
+#: src/app/routes.js:349 src/app/routes.js:355 src/app/routes.js:361
+#: src/app/routes.js:376 src/component/navigation.vue:346
+#: src/component/navigation.vue:724 src/options/options.js:262
 #: src/page/places.vue:7 src/page/settings/general.vue:349
 #: src/page/settings/general.vue:363
 msgid "Places"
@@ -2730,11 +2810,11 @@ msgstr "Bekræft din nye adgangskode."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Kopier venligst følgende tilfældigt genererede app-adgangskode og opbevar det et sikkert sted, da du ikke får muligheden for at se den igen:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:104
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Upload venligst ikke private, ulovlige eller stødende billeder."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:107
 msgid "Please don't upload photos containing offensive content."
 msgstr "Upload ikke billeder, der indeholder stødende indhold."
 
@@ -2758,7 +2838,7 @@ msgstr "Vent venligst…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:304
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG maks størrelse: %{n}px"
 
@@ -2777,11 +2857,11 @@ msgstr "Portræt"
 msgid "Preserve filenames"
 msgstr "Bevar filnavne"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:45 src/component/upload/dialog.vue:75
 msgid "Press enter to create a new album."
 msgstr "Tryk på enter for at oprette et nyt album."
 
-#: src/component/input/chip-selector.vue:61
+#: src/component/input/chip-selector.vue:59
 msgid "Press enter to create new item"
 msgstr "Tryk enter for at oprette et nyt element"
 
@@ -2797,11 +2877,11 @@ msgstr "Afvis andre apps adgang til PhotoPrism som et delt netværksdrev."
 msgid "Preview"
 msgstr "Forhåndsvisning"
 
-#: src/page/settings/advanced.vue:212
+#: src/page/settings/advanced.vue:228
 msgid "Preview Images"
 msgstr "Forhåndsvis billeder"
 
-#: src/component/lightbox.vue:392 src/locales.js:302
+#: src/component/lightbox.vue:470 src/locales.js:302
 msgid "Previous"
 msgstr "Tidligere"
 
@@ -2822,17 +2902,17 @@ msgstr "Tidligere visuel"
 msgid "Primary"
 msgstr "Primær"
 
-#: src/app/routes.js:300 src/component/album/edit/dialog.vue:79
+#: src/app/routes.js:314 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:120 src/component/navigation.vue:121
 #: src/component/navigation.vue:133 src/component/navigation.vue:142
 #: src/component/navigation.vue:150 src/component/navigation.vue:170
-#: src/component/photo/batch-edit.vue:1433
+#: src/component/photo/batch-edit.vue:1529
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:140
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/about/feedback.vue:110 src/options/options.js:462
+#: src/options/options.js:462
 msgid "Product Feedback"
 msgstr "Produktfeedback"
 
@@ -2863,7 +2943,7 @@ msgstr "Tilfældig"
 msgid "Rating {0} of {1}"
 msgstr "Bedømmelse {0} af {1}"
 
-#: src/options/options.js:346
+#: src/common/util.js:837 src/options/options.js:346
 msgid "Raw"
 msgstr "Raw"
 
@@ -2880,17 +2960,17 @@ msgstr "Indeksér alle originaler igen, inklusiv allerede indekserede og uændre
 msgid "Read-Only Mode"
 msgstr "Skrivebeskyttet tilstand"
 
-#: src/component/album/edit/dialog.vue:121 src/component/photo/toolbar.vue:403
-#: src/component/photo/toolbar.vue:415 src/component/photo/toolbar.vue:425
+#: src/component/album/edit/dialog.vue:124 src/component/photo/toolbar.vue:404
+#: src/component/photo/toolbar.vue:416 src/component/photo/toolbar.vue:426
 #: src/page/albums.vue:393
 msgid "Recently Added"
 msgstr "Senest tilføjet"
 
-#: src/component/photo/toolbar.vue:404
+#: src/component/photo/toolbar.vue:405
 msgid "Recently Archived"
 msgstr "Arkiveret for nylig"
 
-#: src/component/photo/toolbar.vue:426 src/page/albums.vue:394
+#: src/component/photo/toolbar.vue:427 src/page/albums.vue:394
 msgid "Recently Edited"
 msgstr "Senest redigeret"
 
@@ -2914,15 +2994,15 @@ msgstr "Rød"
 #: src/page/admin/sessions.vue:336 src/page/admin/users.vue:324
 #: src/page/cluster/activity.vue:42 src/page/cluster/nodes.vue:26
 #: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:334
-#: src/page/admin/users.vue:322 src/component/album/toolbar.vue:147
-#: src/component/photo/toolbar.vue:456 src/locales.js:320
+#: src/page/admin/users.vue:322 src/component/album/toolbar.vue:146
+#: src/component/photo/toolbar.vue:457 src/locales.js:320
 #: src/page/albums.vue:475 src/page/labels.vue:266
 #: src/page/library/browse.vue:16 src/page/library/errors.vue:194
 #: src/page/people/new.vue:7 src/page/people/recognized.vue:35
 msgid "Refresh"
 msgstr "Opdatering"
 
-#: src/app/routes.js:369 src/component/navigation.vue:275
+#: src/app/routes.js:383 src/component/navigation.vue:275
 #: src/component/navigation.vue:276 src/component/navigation.vue:288
 #: src/component/navigation.vue:297 src/component/navigation.vue:324
 #: src/component/navigation.vue:353 src/component/navigation.vue:361
@@ -2937,12 +3017,12 @@ msgstr "Regioner"
 msgid "Register"
 msgstr "Registrer"
 
-#: src/component/navigation.vue:404 src/component/navigation.vue:684
+#: src/component/navigation.vue:404 src/component/navigation.vue:670
 #: src/component/update.vue:28
 msgid "Reload"
 msgstr "Genindlæs"
 
-#: src/component/navigation.vue:564 src/component/navigation.vue:897
+#: src/component/navigation.vue:564 src/component/navigation.vue:881
 #: src/component/update.vue:62 src/page/settings/general.vue:511
 msgid "Reloading…"
 msgstr "Genindlæser…"
@@ -2951,23 +3031,26 @@ msgstr "Genindlæser…"
 msgid "Remote Sync"
 msgstr "Fjernsynkronisering"
 
-#: src/component/photo/edit/people.vue:25
+#: src/component/lightbox/sidebar.vue:306
+#: src/component/lightbox/sidebar.vue:366
+#: src/component/meta/face/markers.vue:78
+#: src/component/photo/edit/people.vue:20
 msgid "Remove"
 msgstr "Fjern"
 
-#: src/component/photo/clipboard.vue:353
+#: src/component/photo/clipboard.vue:359
 msgid "remove failed: unknown album"
 msgstr "fjern mislykkedes: ukendt album"
 
-#: src/component/lightbox.vue:1382 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1474 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Fjern fra albummet"
 
-#: src/component/input/chip-selector.vue:184
+#: src/component/input/chip-selector.vue:188
 msgid "Remove from all"
 msgstr "Fjern fra alle"
 
-#: src/component/input/chip-selector.vue:184
+#: src/component/input/chip-selector.vue:188
 msgid "Remove from all selected photos"
 msgstr "Fjern fra alle valgte fotos"
 
@@ -2988,7 +3071,7 @@ msgstr "Fjernet"
 msgid "Repeated"
 msgstr "Gentaget"
 
-#: src/common/api.js:103 src/component/lightbox.vue:910
+#: src/common/api.js:103 src/component/lightbox.vue:988
 msgid "Request failed - are you offline?"
 msgstr "Anmodning mislykkedes - er du offline?"
 
@@ -3006,20 +3089,24 @@ msgstr "Opløsning"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:417
+#: src/page/settings/advanced.vue:418
 msgid "Restart"
 msgstr "Genstart"
 
-#: src/component/user/edit/dialog.vue:106
-#: src/component/user/edit/dialog.vue:107
-#: src/component/user/edit/dialog.vue:116
-#: src/component/user/edit/dialog.vue:122
-#: src/component/user/edit/dialog.vue:315 src/component/lightbox.vue:1412
+#: src/component/user/edit/dialog.vue:117
+#: src/component/user/edit/dialog.vue:118
+#: src/component/user/edit/dialog.vue:127
+#: src/component/user/edit/dialog.vue:133
+#: src/component/user/edit/dialog.vue:319
+#: src/component/user/edit/dialog.vue:110
+#: src/component/user/edit/dialog.vue:111
+#: src/component/user/edit/dialog.vue:120
+#: src/component/user/edit/dialog.vue:126 src/component/lightbox.vue:1504
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Gendan"
 
-#: src/component/lightbox.vue:2349
+#: src/component/lightbox.vue:2925
 msgid "Restored"
 msgstr "Genoprettet"
 
@@ -3031,16 +3118,16 @@ msgstr "Grænse for gentagelse"
 msgid "Retype Password"
 msgstr "Indtast adgangskoden igen"
 
-#: src/app/routes.js:293 src/component/navigation.vue:113
+#: src/app/routes.js:307 src/component/navigation.vue:113
 #: src/component/navigation.vue:114 src/component/navigation.vue:126
 #: src/component/navigation.vue:135 src/component/navigation.vue:143
 #: src/component/navigation.vue:163
 msgid "Review"
 msgstr "Gennemgang"
 
-#: src/component/user/add/dialog.vue:88 src/component/user/edit/dialog.vue:166
+#: src/component/user/add/dialog.vue:92 src/component/user/edit/dialog.vue:170
 #: src/page/admin/sessions.vue:105 src/page/admin/users.vue:177
-#: src/component/user/add/dialog.vue:94 src/component/user/edit/dialog.vue:167
+#: src/component/user/add/dialog.vue:98 src/component/user/edit/dialog.vue:171
 #: src/page/admin/sessions.vue:145 src/page/admin/users.vue:271
 #: src/page/admin/users.vue:269 src/locales.js:340
 msgid "Role"
@@ -3062,30 +3149,42 @@ msgstr "Rækker pr. side:"
 msgid "Satellite"
 msgstr "Satellit"
 
-#: src/component/user/edit/dialog.vue:104
-#: src/component/user/edit/dialog.vue:105
-#: src/component/user/edit/dialog.vue:114
+#: src/component/user/edit/dialog.vue:108
+#: src/component/user/edit/dialog.vue:109
+#: src/component/user/edit/dialog.vue:118
+#: src/component/user/edit/dialog.vue:124
+#: src/component/user/edit/dialog.vue:304
+#: src/component/user/edit/dialog.vue:117
+#: src/component/user/edit/dialog.vue:127
+#: src/component/user/edit/dialog.vue:133
+#: src/component/user/edit/dialog.vue:319
+#: src/component/user/edit/dialog.vue:110
+#: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
-#: src/component/user/edit/dialog.vue:300
-#: src/component/user/edit/dialog.vue:106
-#: src/component/user/edit/dialog.vue:107
-#: src/component/user/edit/dialog.vue:116
-#: src/component/user/edit/dialog.vue:122
-#: src/component/user/edit/dialog.vue:315
-#: src/component/album/edit/dialog.vue:41
-#: src/component/album/edit/dialog.vue:42
-#: src/component/album/edit/dialog.vue:52
-#: src/component/album/edit/dialog.vue:88
-#: src/component/label/edit/dialog.vue:23
-#: src/component/label/edit/dialog.vue:24
-#: src/component/label/edit/dialog.vue:35
-#: src/component/label/edit/dialog.vue:43
-#: src/component/people/edit/dialog.vue:26
-#: src/component/people/edit/dialog.vue:27
-#: src/component/people/edit/dialog.vue:38
-#: src/component/people/edit/dialog.vue:46
-#: src/component/photo/batch-edit.vue:482
-#: src/component/photo/edit/details.vue:407 src/component/service/edit.vue:103
+#: src/component/user/edit/dialog.vue:126
+#: src/component/album/edit/dialog.vue:43
+#: src/component/album/edit/dialog.vue:44
+#: src/component/album/edit/dialog.vue:54
+#: src/component/album/edit/dialog.vue:89
+#: src/component/label/edit/dialog.vue:27
+#: src/component/label/edit/dialog.vue:28
+#: src/component/label/edit/dialog.vue:39
+#: src/component/label/edit/dialog.vue:46
+#: src/component/lightbox/sidebar/toolbar.vue:22
+#: src/component/meta/camera/dialog.vue:121
+#: src/component/meta/camera/dialog.vue:42
+#: src/component/meta/camera/dialog.vue:43
+#: src/component/meta/camera/dialog.vue:55
+#: src/component/meta/datetime/dialog.vue:123
+#: src/component/meta/datetime/dialog.vue:38
+#: src/component/meta/datetime/dialog.vue:39
+#: src/component/meta/datetime/dialog.vue:51
+#: src/component/people/edit/dialog.vue:30
+#: src/component/people/edit/dialog.vue:31
+#: src/component/people/edit/dialog.vue:42
+#: src/component/people/edit/dialog.vue:49
+#: src/component/photo/batch-edit.vue:481
+#: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
 #: src/component/service/edit.vue:94 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
@@ -3096,11 +3195,13 @@ msgstr "Satellit"
 msgid "Save"
 msgstr "Gem"
 
-#: src/component/photo/edit/details.vue:402
+#: src/component/meta/camera/dialog.vue:120
+#: src/component/meta/datetime/dialog.vue:122
+#: src/component/photo/edit/details.vue:391
 msgid "Save changes"
 msgstr "Gem ændringer"
 
-#: src/component/photo/batch-edit.vue:1431
+#: src/component/photo/batch-edit.vue:1527
 #: src/component/photo/edit/info.vue:137 src/component/photo/edit/info.vue:138
 msgid "Scan"
 msgstr "Scan"
@@ -3118,7 +3219,7 @@ msgstr "Scanninger"
 #: src/page/admin/sessions.vue:139 src/page/admin/sessions.vue:223
 #: src/page/admin/sessions.vue:179 src/page/admin/sessions.vue:296
 #: src/page/admin/sessions.vue:294 src/component/settings/apps.vue:129
-#: src/component/settings/apps.vue:276 src/locales.js:343
+#: src/component/settings/apps.vue:277 src/locales.js:343
 msgid "Scope"
 msgstr "Omfang"
 
@@ -3128,8 +3229,8 @@ msgstr "Kikkertundersøgelser"
 
 #: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
 #: src/page/cluster/activity.vue:13 src/page/cluster/nodes.vue:13
-#: src/page/admin/activity.vue:13 src/component/location/dialog.vue:64
-#: src/component/navigation.vue:720 src/component/navigation.vue:91
+#: src/page/admin/activity.vue:13 src/component/meta/location/dialog.vue:60
+#: src/component/navigation.vue:706 src/component/navigation.vue:91
 #: src/component/photo/toolbar.vue:34 src/locales.js:319
 #: src/options/options.js:256 src/page/albums.vue:20 src/page/labels.vue:15
 #: src/page/library/errors.vue:18 src/page/people/recognized.vue:14
@@ -3149,7 +3250,7 @@ msgstr "Hemmelighed"
 msgid "Security and Access"
 msgstr "Sikkerhed og adgang"
 
-#: src/component/lightbox.vue:1313 src/component/lightbox.vue:1314
+#: src/component/lightbox.vue:1405 src/component/lightbox.vue:1406
 msgid "Select"
 msgstr "Vælg"
 
@@ -3165,16 +3266,22 @@ msgstr "Vælg dato"
 msgid "Select dates"
 msgstr "Vælg datoer"
 
-#: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/lightbox/sidebar.vue:321
+#: src/component/photo/album/dialog.vue:38
+#: src/component/photo/batch-edit.vue:419 src/component/upload/dialog.vue:59
 msgid "Select or create albums"
 msgstr "Vælg eller opret album"
 
-#: src/component/photo/batch-edit.vue:422
+#: src/component/lightbox/sidebar.vue:381
+#: src/component/photo/batch-edit.vue:436
 msgid "Select or create labels"
 msgstr "Vælg eller opret etiketter"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:37
+msgid "Select or drop files to upload…"
+msgstr "Vælg eller slip filer, der skal uploades…"
+
+#: src/component/upload/dialog.vue:36
 msgid "Select the files to upload…"
 msgstr "Vælg de filer, der skal uploades…"
 
@@ -3186,7 +3293,7 @@ msgstr "Vælg den mappe, der skal indekseres…"
 msgid "Select Time"
 msgstr "Vælg tid"
 
-#: src/component/photo/batch-edit.vue:90
+#: src/component/photo/batch-edit.vue:89
 msgid "Selection"
 msgstr "Udvælgelse"
 
@@ -3194,11 +3301,11 @@ msgstr "Udvælgelse"
 msgid "Selection approved"
 msgstr "Udvælgelse godkendt"
 
-#: src/component/photo/clipboard.vue:281
+#: src/component/photo/clipboard.vue:282
 msgid "Selection archived"
 msgstr "Udvælgelse arkiveret"
 
-#: src/component/photo/clipboard.vue:314
+#: src/component/photo/clipboard.vue:318
 msgid "Selection restored"
 msgstr "Udvalgte gendannet"
 
@@ -3206,12 +3313,12 @@ msgstr "Udvalgte gendannet"
 msgid "Sequential Name"
 msgstr "Sekventielt navn"
 
-#: src/model/cluster-node.js:10 src/locales.js:362
+#: src/model/cluster-node.js:9 src/locales.js:362
 msgid "Service"
 msgstr "Service"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:158
-#: src/component/share/dialog.vue:157
+#: src/component/share/dialog.vue:158
 msgid "Service URL"
 msgstr "Service-URL"
 
@@ -3236,19 +3343,19 @@ msgstr "Sessions-ID"
 msgid "Sessions"
 msgstr "Sessioner"
 
-#: src/component/lightbox.vue:1372
+#: src/component/lightbox.vue:1464
 msgid "Set as Album Cover"
 msgstr "Set som albumcover"
 
-#: src/component/photo/edit/people.vue:230
+#: src/component/photo/edit/people.vue:228
 msgid "Set as Cover Image"
 msgstr "Indstil som forsidebillede"
 
-#: src/component/navigation.vue:279 src/component/navigation.vue:421
+#: src/component/navigation.vue:280 src/component/navigation.vue:421
 #: src/component/navigation.vue:464 src/component/navigation.vue:467
-#: src/app/routes.js:102 src/app/routes.js:524 src/app/routes.js:536
-#: src/app/routes.js:553 src/app/routes.js:566 src/app/routes.js:579
-#: src/component/navigation.vue:527 src/component/navigation.vue:698
+#: src/app/routes.js:116 src/app/routes.js:538 src/app/routes.js:550
+#: src/app/routes.js:567 src/app/routes.js:580 src/app/routes.js:593
+#: src/component/navigation.vue:527 src/component/navigation.vue:684
 #: src/options/options.js:267
 msgid "Settings"
 msgstr "Indstillinger"
@@ -3272,7 +3379,7 @@ msgstr "Opsætning"
 msgid "Severity"
 msgstr "Alvorlighed"
 
-#: src/component/album/clipboard.vue:24 src/component/album/toolbar.vue:166
+#: src/component/album/clipboard.vue:24 src/component/album/toolbar.vue:165
 #: src/component/photo/clipboard.vue:24 src/page/settings/general.vue:230
 msgid "Share"
 msgstr "Del"
@@ -3293,9 +3400,17 @@ msgstr "Vis alle etiketter"
 msgid "Show all new faces"
 msgstr "Vis alle nye ansigter"
 
+#: src/component/lightbox.vue:1530
+msgid "Show Caption"
+msgstr "Vis billedtekst"
+
 #: src/page/settings/content.vue:155
 msgid "Show Captions"
 msgstr "Vis billedtekster"
+
+#: src/component/lightbox/sidebar.vue:207
+msgid "Show face markers"
+msgstr "Vis ansigtsmarkører"
 
 #: src/page/people/new.vue:9 src/page/people/recognized.vue:38
 msgid "Show hidden"
@@ -3337,11 +3452,12 @@ msgstr "Vis Places-visningen med interaktive kort, så du kan gennemse fotos eft
 msgid "Show Titles"
 msgstr "Vis titler"
 
-#: src/model/file.js:186 src/page/settings/content.vue:207
+#: src/common/util.js:851 src/model/file.js:194
+#: src/page/settings/content.vue:207
 msgid "Sidecar"
 msgstr "Sidevogn"
 
-#: src/page/settings/advanced.vue:199
+#: src/page/settings/advanced.vue:215
 msgid "Sidecar Files"
 msgstr "Sidevognsfiler"
 
@@ -3363,11 +3479,10 @@ msgstr "Webstedets URL"
 #: src/component/photo/edit/files.vue:119
 #: src/component/photo/edit/files.vue:127
 #: src/component/photo/edit/files.vue:431 src/component/service/edit.vue:58
-#: src/component/sidebar/info.vue:41
 msgid "Size"
 msgstr "Størrelse"
 
-#: src/component/lightbox.vue:1260 src/component/lightbox.vue:1261
+#: src/component/lightbox.vue:1352 src/component/lightbox.vue:1353
 msgid "Slideshow"
 msgstr "Diasshow"
 
@@ -3390,16 +3505,16 @@ msgstr "Opdatering af software"
 msgid "Some albums could not be copied"
 msgstr "Nogle albums kunne ikke kopieres"
 
-#: src/component/photo/album/dialog.vue:188
+#: src/component/photo/album/dialog.vue:192
 msgid "Some albums could not be created. Please edit the names and try again."
 msgstr "Nogle albums kunne ikke oprettes. Rediger venligst navnene, og prøv igen."
 
 #: src/component/file/clipboard.vue:124 src/component/label/clipboard.vue:115
-#: src/component/people/clipboard.vue:113 src/component/photo/clipboard.vue:342
+#: src/component/people/clipboard.vue:113 src/component/photo/clipboard.vue:347
 msgid "Some albums could not be updated"
 msgstr "Nogle albums kunne ikke opdateres"
 
-#: src/component/lightbox.vue:907
+#: src/component/lightbox.vue:985
 msgid "Something went wrong, try again"
 msgstr "Noget gik galt, prøv igen"
 
@@ -3419,7 +3534,7 @@ msgstr "Sorter efter antal fotos"
 msgid "Sort by Relevance"
 msgstr "Sorter efter relevans"
 
-#: src/component/album/edit/dialog.vue:66 src/component/photo/toolbar.vue:161
+#: src/component/album/edit/dialog.vue:67 src/component/photo/toolbar.vue:161
 #: src/page/albums.vue:98
 msgid "Sort Order"
 msgstr "Sorteringsrækkefølge"
@@ -3432,7 +3547,7 @@ msgstr "Sorteret i stigende rækkefølge."
 msgid "Sorted descending."
 msgstr "Sorteret i faldende rækkefølge."
 
-#: src/component/photo/edit/labels.vue:176
+#: src/component/photo/edit/labels.vue:235
 #: src/component/photo/edit/labels.vue:28
 msgid "Source"
 msgstr "Kilde"
@@ -3469,13 +3584,17 @@ msgstr "Start"
 msgid "Start Page"
 msgstr "Startside"
 
-#: src/page/settings/advanced.vue:234
+#: src/page/settings/advanced.vue:235
 msgid "Static Size Limit: %{n}px"
 msgstr "Grænse for statisk størrelse: %{n}px"
 
 #: src/component/photo/edit/files.vue:445
 msgid "Status"
 msgstr "Status"
+
+#: src/page/auth/login.vue:158
+msgid "Stay signed in on this device"
+msgstr "Bliv ved med at være logget ind på denne enhed"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
@@ -3486,14 +3605,13 @@ msgstr "Diskplads"
 msgid "Streets"
 msgstr "Gader"
 
-#: src/common/util.js:801 src/component/photo/batch-edit.vue:335
-#: src/component/photo/edit/details.vue:302
+#: src/common/util.js:891 src/component/lightbox/sidebar.vue:805
+#: src/component/photo/batch-edit.vue:331
+#: src/component/photo/batch-edit.vue:334
+#: src/component/photo/edit/details.vue:291
+#: src/component/photo/edit/details.vue:294
 msgid "Subject"
 msgstr "Emne"
-
-#: src/page/about/feedback.vue:92 src/page/about/feedback.vue:83
-msgid "Submit"
-msgstr "Indsend"
 
 #: src/component/settings/passcode.vue:351
 msgid "Successfully activated"
@@ -3504,7 +3622,7 @@ msgid "Successfully Connected"
 msgstr "Succesfuldt tilsluttet"
 
 #: src/component/session/remove/dialog.vue:60
-#: src/component/settings/apps.vue:443
+#: src/component/settings/apps.vue:444
 msgid "Successfully deleted"
 msgstr "Sletning lykkedes"
 
@@ -3512,8 +3630,8 @@ msgstr "Sletning lykkedes"
 msgid "Successfully verified"
 msgstr "Verifikation lykkedes"
 
-#: src/component/user/edit/dialog.vue:256 src/page/admin/users.vue:218
-#: src/component/user/edit/dialog.vue:271 src/page/admin/users.vue:361
+#: src/component/user/edit/dialog.vue:260 src/page/admin/users.vue:218
+#: src/component/user/edit/dialog.vue:275 src/page/admin/users.vue:361
 #: src/page/admin/users.vue:359
 msgid "Super Admin"
 msgstr "Super Admin"
@@ -3522,7 +3640,7 @@ msgstr "Super Admin"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Support til yderligere tjenester, som f.eks. Google Drev, tilføjes over tid."
 
-#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:617
+#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:603
 msgid "Support Our Mission"
 msgstr "Støt vores mission"
 
@@ -3534,9 +3652,9 @@ msgstr "Synkronisere"
 msgid "Sync raw and video files"
 msgstr "Synkroniser raw og videofiler"
 
-#: src/component/photo/edit/info.vue:91 src/component/photo/view/cards.vue:199
-#: src/component/photo/view/cards.vue:36 src/component/photo/view/list.vue:37
-#: src/component/sidebar/info.vue:35
+#: src/component/lightbox/sidebar.vue:97 src/component/photo/edit/info.vue:91
+#: src/component/photo/view/cards.vue:199 src/component/photo/view/cards.vue:36
+#: src/component/photo/view/list.vue:37
 msgid "Taken"
 msgstr "Taget"
 
@@ -3548,13 +3666,9 @@ msgstr "Krikand"
 msgid "Terrain"
 msgstr "Terræn"
 
-#: src/common/form.js:275
+#: src/common/form.js:279
 msgid "Text"
 msgstr "Tekst"
-
-#: src/component/photo/edit/details.vue:461 src/page/people/new.vue:188
-msgid "Text too long"
-msgstr "Teksten er for lang"
 
 #: src/page/about/about.vue:80 src/page/about/about.vue:63
 msgid "Thank You for Your Support!"
@@ -3578,10 +3692,10 @@ msgstr "Deres format understøttes muligvis ikke, de er ikke konverteret til JPE
 msgid "Theme"
 msgstr "Tema"
 
-#: src/common/form.js:230 src/common/form.js:239 src/common/form.js:248
-#: src/common/form.js:257 src/common/form.js:266 src/common/form.js:280
-#: src/common/form.js:331 src/common/form.js:341 src/common/form.js:353
-#: src/common/form.js:362 src/common/form.js:379
+#: src/common/form.js:234 src/common/form.js:243 src/common/form.js:252
+#: src/common/form.js:261 src/common/form.js:270 src/common/form.js:284
+#: src/common/form.js:335 src/common/form.js:345 src/common/form.js:357
+#: src/common/form.js:366 src/common/form.js:383
 msgid "This field is required"
 msgstr "Dette felt er påkrævet"
 
@@ -3598,12 +3712,14 @@ msgstr "Dette sætter originalmappen som et netværksdrev og giver dig mulighed 
 msgid "Time"
 msgstr "Tid"
 
-#: src/component/photo/edit/details.vue:110
+#: src/component/meta/datetime/dialog.vue:163
+#: src/component/photo/edit/details.vue:109
 msgid "Time UTC"
 msgstr "Tid UTC"
 
-#: src/component/photo/batch-edit.vue:252
-#: src/component/photo/edit/details.vue:127 src/page/settings/general.vue:47
+#: src/component/meta/datetime/dialog.vue:106
+#: src/component/photo/batch-edit.vue:251
+#: src/component/photo/edit/details.vue:126 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "Tidszone"
 
@@ -3611,17 +3727,13 @@ msgstr "Tidszone"
 msgid "Timeout"
 msgstr "Timeout"
 
-#: src/common/util.js:803 src/component/photo/view/list.vue:34
+#: src/common/util.js:893 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Titel"
 
 #: src/page/settings/account.vue:291 src/page/settings/account.vue:293
 msgid "Title / Position"
 msgstr "Titel / stilling"
-
-#: src/page/albums.vue:369
-msgid "Title too long"
-msgstr "Titlen er for lang"
 
 #: src/locales.js:243
 msgid "to"
@@ -3655,7 +3767,7 @@ msgstr "Skift visning"
 msgid "Token"
 msgstr "Token"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:384
 msgid "Too many files selected"
 msgstr "For mange filer valgt"
 
@@ -3663,7 +3775,7 @@ msgstr "For mange filer valgt"
 msgid "Too many requests"
 msgstr "For mange anmodninger"
 
-#: src/component/photo/toolbar.vue:484 src/page/library/errors.vue:204
+#: src/component/photo/toolbar.vue:485 src/page/library/errors.vue:204
 msgid "Troubleshooting"
 msgstr "Fejlfinding"
 
@@ -3678,7 +3790,7 @@ msgstr "Prøv igen ved hjælp af andre filtre eller nøgleord."
 msgid "Two-factor authentication has been enabled for your account."
 msgstr "To-faktor-godkendelse er blevet aktiveret for din konto."
 
-#: src/component/photo/batch-edit.vue:350
+#: src/component/photo/batch-edit.vue:349
 #: src/component/photo/edit/files.vue:104
 #: src/component/photo/edit/files.vue:105
 #: src/component/photo/edit/files.vue:111
@@ -3688,14 +3800,21 @@ msgstr "To-faktor-godkendelse er blevet aktiveret for din konto."
 msgid "Type"
 msgstr "Type"
 
-#: src/component/album/toolbar.vue:241
+#: src/component/album/toolbar.vue:240
 msgid "Unable to delete"
 msgstr "Kan ikke slette"
+
+#: src/component/lightbox/sidebar.vue:265
+msgid "Unassign"
+msgstr "Fjern tildelingen"
 
 #: src/options/auth.js:14
 msgid "Unauthorized"
 msgstr "Uautoriseret"
 
+#: src/component/lightbox/sidebar/toolbar.vue:11
+#: src/component/meta/location/input.vue:40
+#: src/component/meta/location/input.vue:58
 #: src/component/photo/edit/people.vue:43
 msgid "Undo"
 msgstr "Fortryd"
@@ -3704,31 +3823,40 @@ msgstr "Fortryd"
 msgid "Unique ID"
 msgstr "Unikt ID"
 
-#: src/model/cluster-node.js:43 src/page/settings/account.vue:221
+#: src/model/cluster-node.js:42 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:547 src/component/photo/edit/details.vue:448
-#: src/component/photo/edit/details.vue:47
-#: src/component/photo/edit/details.vue:69
-#: src/component/photo/edit/details.vue:90 src/component/sidebar/info.vue:105
-#: src/model/album.js:155 src/model/photo.js:1007 src/model/photo.js:1029
-#: src/model/photo.js:1066 src/model/photo.js:1079 src/model/photo.js:301
-#: src/model/photo.js:806 src/model/photo.js:831 src/model/photo.js:854
-#: src/model/photo.js:872 src/model/photo.js:917 src/model/photo.js:925
-#: src/model/user.js:137 src/options/options.js:106 src/options/options.js:124
+#: src/common/util.js:608 src/component/lightbox/sidebar.vue:119
+#: src/component/lightbox/sidebar.vue:1701
+#: src/component/lightbox/sidebar.vue:277
+#: src/component/lightbox/sidebar.vue:679
+#: src/component/lightbox/sidebar.vue:691
+#: src/component/lightbox/sidebar.vue:978
+#: src/component/meta/datetime/dialog.vue:31
+#: src/component/meta/datetime/dialog.vue:51
+#: src/component/meta/datetime/dialog.vue:71
+#: src/component/photo/edit/details.vue:438
+#: src/component/photo/edit/details.vue:46
+#: src/component/photo/edit/details.vue:68
+#: src/component/photo/edit/details.vue:89 src/model/album.js:170
+#: src/model/photo.js:1059 src/model/photo.js:1081 src/model/photo.js:1118
+#: src/model/photo.js:1148 src/model/photo.js:329 src/model/photo.js:842
+#: src/model/photo.js:867 src/model/photo.js:890 src/model/photo.js:897
+#: src/model/photo.js:969 src/model/photo.js:977 src/model/user.js:137
+#: src/options/options.js:106 src/options/options.js:124
 #: src/options/options.js:141 src/options/options.js:155
-#: src/options/options.js:167 src/page/library/errors.vue:368
-#: src/page/library/errors.vue:375 src/page/settings/account.vue:205
+#: src/options/options.js:167 src/page/library/errors.vue:370
+#: src/page/library/errors.vue:377 src/page/settings/account.vue:205
 #: src/page/settings/account.vue:225 src/page/settings/account.vue:245
 msgid "Unknown"
 msgstr "Ukendt"
 
 #: src/component/navigation.vue:532 src/page/settings/account.vue:467
-#: src/page/settings/account.vue:475 src/component/navigation.vue:865
+#: src/page/settings/account.vue:475 src/component/navigation.vue:849
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
 msgid "Unregistered"
 msgstr "Uregistreret"
 
-#: src/app/routes.js:244 src/component/navigation.vue:206
+#: src/app/routes.js:258 src/component/navigation.vue:206
 msgid "Unsorted"
 msgstr "Usorteret"
 
@@ -3758,7 +3886,7 @@ msgstr "Opdaterer indeks"
 msgid "Updating moments"
 msgstr "Opdaterer øjeblikke"
 
-#: src/component/user/edit/dialog.vue:485
+#: src/component/user/edit/dialog.vue:489
 msgid "Updating picture…"
 msgstr "Opdatering af billede…"
 
@@ -3771,11 +3899,11 @@ msgid "Updating stacks"
 msgstr "Opdatering af samlinger"
 
 #: src/component/navigation.vue:306 src/page/connect.vue:20
-#: src/component/navigation.vue:416 src/component/navigation.vue:417
-#: src/component/navigation.vue:429 src/component/navigation.vue:438
-#: src/component/navigation.vue:551 src/component/navigation.vue:559
-#: src/component/navigation.vue:575 src/component/navigation.vue:583
-#: src/component/navigation.vue:611 src/component/navigation.vue:769
+#: src/component/navigation.vue:410 src/component/navigation.vue:411
+#: src/component/navigation.vue:423 src/component/navigation.vue:432
+#: src/component/navigation.vue:545 src/component/navigation.vue:553
+#: src/component/navigation.vue:561 src/component/navigation.vue:569
+#: src/component/navigation.vue:597 src/component/navigation.vue:755
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Opgradering"
@@ -3788,21 +3916,23 @@ msgstr "Opgradering"
 msgid "Upgrade Now"
 msgstr "Opgrader nu"
 
-#: src/component/album/toolbar.vue:176 src/component/navigation.vue:706
-#: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
+#: src/component/album/toolbar.vue:175 src/component/navigation.vue:692
+#: src/component/photo/toolbar.vue:467 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:122
+#: src/component/upload/dialog.vue:189 src/component/upload/dialog.vue:67
+#: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "Upload"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:31
 msgid "Upload complete. Indexing…"
 msgstr "Upload fuldført. Indekserer…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:464
 msgid "Upload failed"
 msgstr "Upload mislykkedes"
 
@@ -3810,19 +3940,19 @@ msgstr "Upload mislykkedes"
 msgid "Upload local files"
 msgstr "Upload lokale filer"
 
-#: src/component/user/edit/dialog.vue:245
-#: src/component/user/edit/dialog.vue:246
-#: src/component/user/edit/dialog.vue:260
-#: src/component/user/edit/dialog.vue:261
+#: src/component/user/edit/dialog.vue:249
+#: src/component/user/edit/dialog.vue:250
+#: src/component/user/edit/dialog.vue:264
+#: src/component/user/edit/dialog.vue:265
 msgid "Upload Path"
 msgstr "Upload sti"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"
 msgstr "Uploader %{n} af %{t}…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:273 src/component/upload/dialog.vue:281
+#: src/component/upload/dialog.vue:416
 msgid "Uploading photos…"
 msgstr "Uploader fotos…"
 
@@ -3830,7 +3960,7 @@ msgstr "Uploader fotos…"
 msgid "Uploading…"
 msgstr "Overførsel af…"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:108
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Uploads, der kan indeholde sådanne billeder, afvises automatisk."
 
@@ -3838,7 +3968,7 @@ msgstr "Uploads, der kan indeholde sådanne billeder, afvises automatisk."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:355
+#: src/page/settings/advanced.vue:356
 msgid "Use Presets"
 msgstr "Brug forudindstillinger"
 
@@ -3846,9 +3976,9 @@ msgstr "Brug forudindstillinger"
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
 msgstr "Brug følgende gendannelseskode til at få adgang til din konto, når du ikke er i stand til at generere en gyldig bekræftelseskode med din godkendelsesapp:"
 
-#: src/page/auth/login.vue:132 src/page/auth/login.vue:153
-#: src/page/auth/login.vue:47 src/page/auth/login.vue:48
-#: src/page/auth/login.vue:62
+#: src/page/auth/login.vue:135 src/page/auth/login.vue:163
+#: src/page/auth/login.vue:50 src/page/auth/login.vue:51
+#: src/page/auth/login.vue:65
 msgid "Use your recovery code or contact an administrator for help."
 msgstr "Brug din gendannelseskode, eller kontakt en administrator for at få hjælp."
 
@@ -3860,7 +3990,7 @@ msgstr "Brug din gendannelseskode, eller kontakt en administrator for at få hj�
 msgid "User"
 msgstr "Bruger"
 
-#: src/component/navigation.vue:762
+#: src/component/navigation.vue:748
 msgid "User Guide"
 msgstr "Brugervejledning"
 
@@ -3868,12 +3998,12 @@ msgstr "Brugervejledning"
 msgid "User Interface"
 msgstr "Brugergrænseflade"
 
-#: src/component/user/add/dialog.vue:28 src/component/user/add/dialog.vue:29
+#: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:175
-#: src/component/user/add/dialog.vue:34 src/component/user/add/dialog.vue:35
+#: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:269
 #: src/page/admin/users.vue:267 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:158
+#: src/component/service/edit.vue:161 src/component/share/dialog.vue:159
 #: src/locales.js:324
 msgid "Username"
 msgstr "Brugernavn"
@@ -3889,7 +4019,7 @@ msgstr "Brugere"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/component/photo/view/cards.vue:114
+#: src/common/util.js:847 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:366
 msgid "Vector"
@@ -3910,20 +4040,20 @@ msgstr "Verifikationskode"
 msgid "Version"
 msgstr "Version"
 
-#: src/component/photo/batch-edit.vue:129 src/component/photo/batch-edit.vue:70
-#: src/component/photo/view/cards.vue:122
+#: src/common/util.js:841 src/component/photo/batch-edit.vue:128
+#: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
-#: src/component/photo/view/mosaic.vue:77 src/model/file.js:193
-#: src/model/photo.js:941 src/model/photo.js:959 src/options/options.js:354
+#: src/component/photo/view/mosaic.vue:77 src/model/file.js:201
+#: src/model/photo.js:1011 src/model/photo.js:993 src/options/options.js:354
 msgid "Video"
 msgstr "Video"
 
-#: src/component/album/edit/dialog.vue:125 src/component/photo/toolbar.vue:408
-#: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
+#: src/component/album/edit/dialog.vue:128 src/component/photo/toolbar.vue:409
+#: src/component/photo/toolbar.vue:420 src/component/photo/toolbar.vue:431
 msgid "Video Duration"
 msgstr "Videoens varighed"
 
-#: src/app/routes.js:272 src/component/navigation.vue:184
+#: src/app/routes.js:286 src/component/navigation.vue:184
 #: src/component/navigation.vue:185 src/component/navigation.vue:197
 #: src/component/navigation.vue:206 src/component/navigation.vue:234
 #: src/options/options.js:259
@@ -3943,7 +4073,7 @@ msgstr "Se søgeresultater som en liste."
 msgid "Viewer"
 msgstr "Seer"
 
-#: src/common/util.js:811
+#: src/common/util.js:901
 msgid "Vision"
 msgstr "Vision"
 
@@ -3952,34 +4082,25 @@ msgstr "Vision"
 msgid "Visitor"
 msgstr "Besøgende"
 
-#: src/component/photo/toolbar.vue:431
+#: src/component/photo/toolbar.vue:432
 msgid "Visual Similarity"
 msgstr "Visuel lighed"
 
-#: src/page/library/errors.vue:361
+#: src/page/library/errors.vue:363
 msgid "Warning"
 msgstr "Advarsel"
 
-#: src/page/about/feedback.vue:18 src/page/about/feedback.vue:14
-msgid "We appreciate your feedback!"
-msgstr "Vi sætter pris på din feedback!"
-
-#: src/page/about/feedback.vue:26 src/page/about/feedback.vue:18
-msgid "We do our best to respond within five business days or less."
-msgstr "Vi gør vores bedste for at svare inden for fem arbejdsdage eller mindre."
-
-#: src/component/user/add/dialog.vue:136 src/component/user/edit/dialog.vue:266
-#: src/page/admin/users.vue:184 src/component/user/add/dialog.vue:142
-#: src/component/user/edit/dialog.vue:281 src/page/admin/users.vue:278
+#: src/component/user/add/dialog.vue:140 src/component/user/edit/dialog.vue:270
+#: src/page/admin/users.vue:184 src/component/user/add/dialog.vue:146
+#: src/component/user/edit/dialog.vue:285 src/page/admin/users.vue:278
 #: src/page/admin/users.vue:276 src/locales.js:338
 msgid "Web Login"
 msgstr "Web-login"
 
-#: src/component/user/add/dialog.vue:145 src/component/user/edit/dialog.vue:276
-#: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:151
-#: src/component/user/edit/dialog.vue:291 src/page/admin/users.vue:280
-#: src/page/admin/users.vue:278 src/options/auth.js:56 src/options/auth.js:69
-#: src/options/options.js:505
+#: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:280
+#: src/page/admin/users.vue:186 src/component/user/add/dialog.vue:155
+#: src/component/user/edit/dialog.vue:295 src/page/admin/users.vue:278
+#: src/options/auth.js:56 src/options/auth.js:69 src/options/options.js:498
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4012,8 +4133,9 @@ msgstr "Hvid"
 msgid "Work Details"
 msgstr "Detaljer om arbejdet"
 
-#: src/page/settings/account.vue:260 src/component/photo/batch-edit.vue:233
-#: src/component/photo/edit/details.vue:89 src/component/photo/toolbar.vue:180
+#: src/page/settings/account.vue:260 src/component/meta/datetime/dialog.vue:70
+#: src/component/photo/batch-edit.vue:232
+#: src/component/photo/edit/details.vue:88 src/component/photo/toolbar.vue:180
 #: src/page/albums.vue:57 src/page/settings/account.vue:244
 msgid "Year"
 msgstr "År"
@@ -4025,7 +4147,7 @@ msgstr "Gul"
 #: src/component/confirm/dialog.vue:12 src/component/confirm/dialog.vue:13
 #: src/component/confirm/dialog.vue:26 src/component/people/merge/dialog.vue:22
 #: src/component/photo/archive/dialog.vue:22
-#: src/component/photo/batch-edit.vue:1035
+#: src/component/photo/batch-edit.vue:1113
 #: src/component/photo/clipboard.vue:156 src/component/photo/edit/files.vue:135
 #: src/component/photo/edit/files.vue:136
 #: src/component/photo/edit/files.vue:142
@@ -4063,11 +4185,11 @@ msgstr "Du kan kun downloade et album"
 msgid "You can only download one label"
 msgstr "Du kan kun downloade en etiket"
 
-#: src/component/location/dialog.vue:100
+#: src/component/meta/location/dialog.vue:97
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Du kan søge efter et sted eller flytte markøren på kortet for at ændre positionen:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:103
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Du kan uploade op til %{n} filer til testformål."
 
@@ -4098,23 +4220,23 @@ msgstr "Din fortsatte støtte hjælper os med at levere regelmæssige opdatering
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med særlige øjeblikke, rejser og steder."
 
-#: src/component/lightbox.vue:391
+#: src/component/lightbox.vue:469
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
 
-#: src/component/user/edit/dialog.vue:38 src/component/user/edit/dialog.vue:39
+#: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/page/settings/account.vue:32 src/page/settings/account.vue:34
 #: src/page/settings/account.vue:20 src/page/settings/account.vue:22
 msgctxt "Account"
 msgid "Title"
 msgstr "Titel"
 
-#: src/component/photo/batch-edit.vue:329
+#: src/component/photo/batch-edit.vue:328
 msgctxt "Edit"
 msgid "Content"
 msgstr "Indhold"
 
-#: src/app/routes.js:317 src/component/navigation.vue:127
+#: src/app/routes.js:331 src/component/navigation.vue:127
 #: src/component/navigation.vue:128 src/component/navigation.vue:140
 #: src/component/navigation.vue:149 src/component/navigation.vue:157
 #: src/component/navigation.vue:177 src/page/settings/general.vue:260
@@ -4122,18 +4244,97 @@ msgctxt "Noun"
 msgid "Archive"
 msgstr "Arkiver"
 
-#: src/component/photo/batch-edit.vue:160
-#: src/component/photo/edit/details.vue:19 src/component/photo/edit/info.vue:79
-#: src/component/sidebar/info.vue:10
+#: src/component/lightbox/sidebar.vue:16 src/component/lightbox/sidebar.vue:32
+msgctxt "Photo"
+msgid "Add a Title"
+msgstr "Tilføj en titel"
+
+#: src/component/lightbox/sidebar.vue:780
+#: src/component/photo/batch-edit.vue:158
+#: src/component/photo/batch-edit.vue:159
+#: src/component/photo/edit/details.vue:17
+#: src/component/photo/edit/details.vue:18 src/component/photo/edit/info.vue:79
 msgctxt "Photo"
 msgid "Title"
 msgstr "Titel"
 
-#: src/component/lightbox.vue:1397 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1489 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkiver"
+
+#~ msgid "Text too long"
+#~ msgstr "Teksten er for lang"
+
+#~ msgid "Remove Face"
+#~ msgstr "Fjern ansigtet"
+
+#~ msgid "Add face"
+#~ msgstr "Tilføj ansigt"
+
+#~ msgid "Remove Name"
+#~ msgstr "Fjern navn"
+
+#~ msgid "Title too long"
+#~ msgstr "Titlen er for lang"
+
+#~ msgid "Add label"
+#~ msgstr "Tilføj etiket"
+
+#~ msgid "Coordinates"
+#~ msgstr "Koordinater"
+
+#~ msgid "Edit Camera Details"
+#~ msgstr "Rediger kameradetaljer"
+
+#~ msgid "Edit Date & Time"
+#~ msgstr "Rediger dato og tid"
+
+#~ msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
+#~ msgstr "Blackman: Lanczos-ændring, færre ringende artefakter"
+
+#~ msgid "Cubic: Moderate Quality, Good Performance"
+#~ msgstr "Cubic: Moderat Kvalitet, God Ydeevne"
+
+#~ msgid "Downscaling Filter"
+#~ msgstr "Nedskaleringsfilter"
+
+#~ msgid "Lanczos: Detail Preservation, Minimal Artifacts"
+#~ msgstr "Lanczos: Bevaring af detaljer, minimale artefakter"
+
+#~ msgid "Linear: Very Smooth, Best Performance"
+#~ msgstr "Lineær: Meget glat, bedste ydeevne"
+
+#~ msgid "Drop files here"
+#~ msgstr "Læg filer her"
+
+#~ msgid "All fields are required"
+#~ msgstr "Alle felter skal udfyldes"
+
+#~ msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
+#~ msgstr "På grund af den store mængde e-mails, vi modtager, kan det være, at vores team ikke kan svare dig med det samme."
+
+#~ msgid "E-Mail"
+#~ msgstr "E-mail"
+
+#~ msgid "Feedback"
+#~ msgstr "Tilbagemelding"
+
+#~ msgid "How can we help?"
+#~ msgstr "Hvordan kan vi hjælpe?"
+
+#~ msgid "Message sent"
+#~ msgstr "Besked sendt"
+
+#~ msgid "Submit"
+#~ msgstr "Indsend"
+
+#~ msgid "We appreciate your feedback!"
+#~ msgstr "Vi sætter pris på din feedback!"
+
+#~ msgid "We do our best to respond within five business days or less."
+#~ msgstr "Vi gør vores bedste for at svare inden for fem arbejdsdage eller mindre."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Føj filer til dit bibliotek via Web Upload."

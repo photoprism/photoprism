@@ -2,7 +2,7 @@
 
 **By using the software and services we provide, you agree to our [Terms of Service](https://www.photoprism.app/terms), including our [Privacy Policy](https://www.photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with our team and other community members.**
 
-*This Code of Conduct was last updated on May 6, 2024. A German translation is available at [photoprism.app/de/code-of-conduct](https://www.photoprism.app/de/code-of-conduct).*
+*This Code of Conduct was last updated on May 30, 2026. A German translation is available at [photoprism.app/de/code-of-conduct](https://www.photoprism.app/de/code-of-conduct).*
 
 ## Rules
 
@@ -34,12 +34,8 @@ We encourage all community members to resolve problems on their own whenever pos
 
 ## Enforcement
 
-Our community standards will be enforced as necessary to protect everyone's well-being and to ensure that our discussion forums, chat rooms, and other infrastructure can be used as intended.
+Our community standards will be enforced as necessary to protect everyone's well-being and ensure our discussion forums, chat rooms, and other infrastructure, such as GitHub, can be used as intended.
 
-Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky), especially if you seem reckless or [surprisingly harsh](https://github.com/photoprism/photoprism/issues/281#issuecomment-1207233135). In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertising from our community forums.
+In cases where violations may be unintentional and improvement seems possible, we aim to issue warnings before taking further action.
 
-Getting a simple **\*plonk\***[^1] in response finally signals that we have lost hope and you're being ignored according to **Rule &#35;3**. This old tradition from Usenet days is as time-saving as it is clear. It is not meant in a disrespectful way.
-
-In addition, we may use technical measures to temporarily or permanently restrict your access to our infrastructure, including forums and chats.
-
-[^1]: \*plonk\* including variants such as "Plonk." stands for the metaphorical sound of a user hitting the bottom of the kill file. It was first used in [Usenet forums](https://en.everybodywiki.com/Plonk_(Usenet)), a worldwide distributed discussion system and precursor to the Web.
+In serious cases, we may use technical measures to restrict your access to our infrastructure, including GitHub, forums, and chats, either temporarily or permanently. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertisements. If you believe we made a mistake, you may [email us](https://www.photoprism.app/contact) to request an appeal.

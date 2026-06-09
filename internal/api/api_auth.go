@@ -123,3 +123,16 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 func AuthToken(c *gin.Context) string {
 	return header.AuthToken(c)
 }
+
+// SessionRefID returns the current session ref ID for audit logs, or "unknown" if unavailable.
+func SessionRefID(c *gin.Context) string {
+	if c == nil {
+		return "unknown"
+	}
+
+	if s := Session(ClientIP(c), AuthToken(c)); s != nil && s.RefID != "" {
+		return s.RefID
+	}
+
+	return "unknown"
+}

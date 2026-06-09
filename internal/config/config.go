@@ -1,7 +1,7 @@
 /*
 Package config provides global options, command-line flags, and user settings.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -33,7 +33,6 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
-	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -57,6 +56,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/service/hub"
@@ -65,6 +65,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/checksum"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -268,6 +269,10 @@ func (c *Config) Init() error {
 	// Initialize thumbnail package.
 	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbLibrary())
 
+	// Set minimum free storage space in percent.
+	disk.StorageLowPct = c.StorageFree()
+	DisableStorageCheck.Store(disk.StorageLowPct <= 0)
+
 	// Load optional vision package configuration.
 	if visionYaml := c.VisionYaml(); !fs.FileExistsNotEmpty(visionYaml) {
 		// Do nothing.
@@ -376,9 +381,12 @@ func (c *Config) Propagate() {
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
 	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
-	thumb.ExamplesPath = c.ExamplesPath()
+	thumb.SamplesPath = c.SamplesPath()
 	thumb.IccProfilesPath = c.IccProfilesPath()
 	initThumbs()
+
+	// Configure FFmpeg package.
+	ffmpeg.SetExclude(c.FFmpegExclude())
 
 	// Configure video download package.
 	dl.YtDlpBin = c.YtDlpBin()
@@ -437,7 +445,6 @@ func (c *Config) Propagate() {
 	face.MatchDist = c.FaceMatchDist()
 	face.SkipChildren = c.FaceSkipChildren()
 	face.IgnoreBackground = !c.FaceAllowBackground()
-	face.DetectionAngles = c.FaceAngles()
 	if err := face.ConfigureEngine(face.EngineSettings{
 		Name: c.FaceEngine(),
 		ONNX: face.ONNXOptions{
@@ -839,129 +846,6 @@ func (c *Config) Shutdown() {
 	} else {
 		log.Debug("closed database connection")
 	}
-}
-
-// IndexWorkers returns the number of indexing workers.
-func (c *Config) IndexWorkers() int {
-	// Use one worker on systems with less than the recommended amount of memory.
-	if TotalMem < RecommendedMem {
-		return 1
-	}
-
-	// NumCPU returns the number of logical CPU cores.
-	cores := min(
-		// Limit to physical cores to avoid high load on HT capable CPUs.
-		runtime.NumCPU(), cpuid.CPU.PhysicalCores)
-
-	// Limit number of workers when using SQLite3 to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.IndexWorkers <= 0 || c.options.IndexWorkers > 4) {
-		return 4
-	}
-
-	// Return explicit value if set and not too large.
-	if c.options.IndexWorkers > runtime.NumCPU() {
-		return runtime.NumCPU()
-	} else if c.options.IndexWorkers > 0 {
-		return c.options.IndexWorkers
-	}
-
-	// Use half the available cores by default.
-	if cores > 1 {
-		return cores / 2
-	}
-
-	return 1
-}
-
-// IndexSchedule returns the indexing schedule in cron format, e.g. "0 */3 * * *" to start indexing every 3 hours.
-func (c *Config) IndexSchedule() string {
-	return Schedule(c.options.IndexSchedule)
-}
-
-// WakeupInterval returns the duration between background worker runs
-// required for face recognition and index maintenance (1-86400s).
-func (c *Config) WakeupInterval() time.Duration {
-	if c.options.WakeupInterval <= 0 {
-		if c.Unsafe() {
-			// Worker can be disabled only in unsafe mode.
-			return time.Duration(0)
-		} else {
-			// Default to 15 minutes if no interval is set.
-			return DefaultWakeupInterval
-		}
-	}
-
-	// Do not run more than once per minute.
-	if c.options.WakeupInterval < MinWakeupInterval/time.Second {
-		return MinWakeupInterval
-	} else if c.options.WakeupInterval < MinWakeupInterval {
-		c.options.WakeupInterval *= time.Second
-	}
-
-	// Do not run less than once per day.
-	if c.options.WakeupInterval > MaxWakeupInterval {
-		return MaxWakeupInterval
-	}
-
-	return c.options.WakeupInterval
-}
-
-// AutoIndex returns the auto index delay duration.
-func (c *Config) AutoIndex() time.Duration {
-	if c.options.AutoIndex < 0 {
-		return -1 * time.Second
-	} else if c.options.AutoIndex == 0 || c.options.AutoIndex > 604800 {
-		return DefaultAutoIndexDelay * time.Second
-	}
-
-	return time.Duration(c.options.AutoIndex) * time.Second
-}
-
-// AutoImport returns the auto import delay duration.
-func (c *Config) AutoImport() time.Duration {
-	if c.options.AutoImport < 0 || c.ReadOnly() {
-		return -1 * time.Second
-	} else if c.options.AutoImport == 0 || c.options.AutoImport > 604800 {
-		return DefaultAutoImportDelay * time.Second
-	}
-
-	return time.Duration(c.options.AutoImport) * time.Second
-}
-
-// OriginalsLimit returns the maximum size of originals in MB.
-func (c *Config) OriginalsLimit() int {
-	if c.options.OriginalsLimit <= 0 || c.options.OriginalsLimit > 100000 {
-		return -1
-	}
-
-	return c.options.OriginalsLimit
-}
-
-// OriginalsLimitBytes returns the maximum size of originals in bytes.
-func (c *Config) OriginalsLimitBytes() int64 {
-	if result := c.OriginalsLimit(); result <= 0 {
-		return -1
-	} else {
-		return int64(result) * 1024 * 1024
-	}
-}
-
-// ResolutionLimit returns the maximum resolution of originals in megapixels (width x height).
-func (c *Config) ResolutionLimit() int {
-	result := c.options.ResolutionLimit
-
-	// Disabling or increasing the limit is at your own risk.
-	// Only sponsors receive support in case of problems.
-	switch {
-	case result == 0:
-		return DefaultResolutionLimit
-	case result < 0:
-		return -1
-	case result > 900:
-		result = 900
-	}
-
-	return result
 }
 
 // RenewApiKeys renews the api credentials for maps and places.

@@ -15,7 +15,7 @@ type RegisterRequest struct {
 	AdvertiseUrl   string            `json:"AdvertiseUrl,omitempty"`
 	SiteUrl        string            `json:"SiteUrl,omitempty"`
 	ClientID       string            `json:"ClientID,omitempty"`
-	ClientSecret   string            `json:"ClientSecret,omitempty"`
+	ClientSecret   string            `json:"ClientSecret,omitempty"` //nolint:gosec // G117: Rotated OAuth client secret payload.
 	RotateDatabase bool              `json:"RotateDatabase,omitempty"`
 	RotateSecret   bool              `json:"RotateSecret,omitempty"`
 }

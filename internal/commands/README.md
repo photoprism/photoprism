@@ -20,6 +20,42 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 - When integrating configuration options, call the accessors on `*config.Config` (for example, `conf.ClusterUUID()`) rather than mutating option structs directly.
 - For HTTP interactions, depend on the safe download helpers in `pkg/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
 
+### Positional Arguments & Flag Order
+
+`urfave/cli` v2 delegates flag parsing to the Go stdlib `flag` package, which **stops parsing at the first non-flag token**. For any subcommand that takes a positional argument (for example `photoprism users mod USERNAME --role guest`), flags placed **after** the positional are not parsed — they are returned as additional positionals and `ctx.IsSet(...)` reports `false` for each of them.
+
+Without guarding for this, an action that conditionally applies values via `if ctx.IsSet("role") { ... }` will silently no-op while still logging success.
+
+#### Mitigation Helper
+
+Call `commands.RejectTrailingFlags(ctx)` near the top of every leaf action whose CLI shape is `Action <positional> [--flags...]`. The helper returns a clear `flag "--name" must appear before positional arguments` error when it detects a flag-like token in `ctx.Args().Tail()`, so the user is told to re-order rather than seeing a silent no-op. Pair it with `commands.TrailingFlagToken(ctx)` when the action needs to inspect the offending token before deciding what to do.
+
+Helper behavior:
+
+- Single-dash `-` and the `--` terminator are treated as positionals, not flags, so commands like `photoprism backup -` (write to stdout) and `photoprism foo bar -- --literal` keep working.
+- Unknown flags placed before the positional are not the helper's concern — `urfave/cli` raises its own "flag provided but not defined" error in that path.
+- For commands that use a flag-based identifier instead of a positional, still call the helper after the existence check so trailing flags surface as a usage error rather than a silent ignore.
+
+The underlying parser limitation is tracked as a known issue for a broader fix; until a global arg-reorder pass lands, all new leaf actions that accept a positional MUST call `RejectTrailingFlags` before applying flag values.
+
+### Exit Codes
+
+Wrap errors in `cli.Exit(err, <code>)` so the binary terminates with a non-zero status. A plain `return err` is logged but exits `0`, which hides failures from CI and shell scripts. Pick the code from the table below; cluster, JWT, and Portal commands set the precedent.
+
+| Code | Meaning                                  | Typical Use                                                                       |
+|------|------------------------------------------|-----------------------------------------------------------------------------------|
+| `0`  | Success, or user-initiated cancel        | normal completion; `ErrCanceled` from a long-running operation                    |
+| `1`  | Runtime/execution failure                | DB or I/O error, backup/restore failure, indexing failure, `InitConfig` error     |
+| `2`  | Input validation or precondition failure | missing/invalid flag, `RejectTrailingFlags`, read-only mode, malformed identifier |
+| `3`  | Resource not found                       | user, node, theme, or other named entity does not exist                           |
+| `4`  | Authentication or authorization failure  | Portal returned `401` to the CLI                                                  |
+| `5`  | Forbidden / conflict                     | Portal returned `403` or `409` to the CLI                                         |
+| `6`  | Rate limited                             | Portal returned `429` to the CLI                                                  |
+
+`urfave/cli`'s default `ExitErrHandler` calls `os.Exit(c.ExitCode())` only for values that implement `cli.ExitCoder`. A bare `error` flows up to `main()`, which logs it and returns normally — that is, exits `0`. Use `cli.Exit(...)` whenever a non-zero status matters; reserve plain `return err` for helpers that propagate to a caller which itself wraps the result.
+
+For long-running operations (indexing, importing, backup) that may be canceled by the user, return the underlying `status.ErrCanceled` (or a wrapper) without `cli.Exit` so the CLI exits `0`, and use `cli.Exit(err, 1)` for `status.ErrInsufficientStorage` and other runtime failures so scripts and CI can detect them.
+
 ### Configuration & Flags Integration
 
 - Define new options in `internal/config/options.go` with the appropriate struct tags (`yaml`, `json`, `flag`) so they propagate to YAML, CLI, and API layers consistently.

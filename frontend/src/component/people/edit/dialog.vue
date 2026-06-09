@@ -13,18 +13,21 @@
   >
     <v-form ref="form" validate-on="invalid-input" class="form-person-edit" accept-charset="UTF-8" tabindex="-1" @submit.prevent="confirm">
       <v-card>
-        <v-card-title class="d-flex justify-start align-center ga-3">
-          <v-icon size="28" color="primary">mdi-account</v-icon>
-          <h6 class="text-h6">{{ $gettext(`Edit %{s}`, { s: model.modelName() }) }}</h6>
-        </v-card-title>
+        <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
+          <v-toolbar-title>
+            {{ $gettext(`Edit %{s}`, { s: model.modelName() }) }}
+          </v-toolbar-title>
+          <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
         <v-card-text class="dense">
           <v-row align="center" dense>
             <v-col cols="12">
               <v-text-field
                 v-model="model.Name"
-                hide-details
                 autofocus
-                :rules="[titleRule]"
+                :rules="rules.text(false, 0, SubjectMaxLength.Name, $gettext('Name'))"
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
@@ -51,7 +54,8 @@
   </v-dialog>
 </template>
 <script>
-import Subject from "model/subject";
+import Subject, { MaxLength as SubjectMaxLength } from "model/subject";
+import { rules } from "common/form";
 
 export default {
   name: "PPeopleEditDialog",
@@ -65,11 +69,13 @@ export default {
       default: () => {},
     },
   },
+  emits: ["close", "confirm"],
   data() {
     return {
       disabled: !this.$config.allow("people", "manage"),
       model: new Subject(),
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
+      rules,
+      SubjectMaxLength,
     };
   },
   watch: {
@@ -82,6 +88,8 @@ export default {
   methods: {
     afterEnter() {
       this.$view.enter(this);
+      // Seed validation so pre-filled overlong input surfaces the inline error on first render.
+      this.$refs.form?.validate?.();
     },
     afterLeave() {
       this.$view.leave(this);
@@ -95,7 +103,19 @@ export default {
         return;
       }
 
-      this.$emit("confirm", this.model);
+      // Form-level gate: :rules alone only renders the inline error.
+      const form = this.$refs.form;
+      const validate = typeof form?.validate === "function" ? form.validate() : Promise.resolve({ valid: true });
+
+      return Promise.resolve(validate).then((result) => {
+        if (result && result.valid === false) {
+          this.$notify.error(this.$gettext("Changes could not be saved"));
+          return;
+        }
+
+        // Trim runs in Subject.update() at the model boundary (parent emits-then-saves).
+        this.$emit("confirm", this.model);
+      });
     },
   },
 };

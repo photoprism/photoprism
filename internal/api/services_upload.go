@@ -48,7 +48,14 @@ func UploadToService(router *gin.RouterGroup) {
 		var frm form.SyncUpload
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err = c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

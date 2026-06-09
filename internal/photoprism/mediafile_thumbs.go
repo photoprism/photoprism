@@ -10,13 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/disintegration/imaging"
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 )
 
 // Bounds returns the media dimensions as image.Rectangle.
@@ -58,7 +58,9 @@ func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image,
 		return nil, err
 	}
 
-	return imaging.Open(thumbName)
+	img, _, err = fs.DecodeImageFile(thumbName)
+
+	return img, err
 }
 
 // SkipThumbnailSize tests if the thumbnail size can be skipped,
@@ -77,6 +79,12 @@ func (m *MediaFile) GenerateThumbnails(thumbPath string, force bool) (err error)
 
 	count := 0
 	start := time.Now()
+
+	// Surface a disk-full write failure as the shared insufficient-storage sentinel,
+	// so the indexer and thumbs worker can abort the run instead of failing every file.
+	defer func() {
+		err = disk.AsInsufficientStorage(err)
+	}()
 
 	defer func() {
 		switch count {

@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"image"
 
-	"github.com/disintegration/imaging"
-
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Open loads an image from disk, rotates it, and converts the color profile if necessary.
+// Open loads a natively supported image file from disk, rotates it, and converts the color profile if necessary.
 func Open(fileName string, orientation int) (result image.Image, err error) {
 	// Filename missing?
 	if fileName == "" {
@@ -26,8 +24,8 @@ func Open(fileName string, orientation int) (result image.Image, err error) {
 		return OpenJpeg(fileName, orientation)
 	}
 
-	// Open file with imaging function.
-	img, err := imaging.Open(fileName)
+	// Open file with a reader bounded to the actual file size.
+	img, _, err := fs.DecodeImageFile(fileName)
 
 	if err != nil {
 		return result, err

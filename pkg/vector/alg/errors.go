@@ -9,6 +9,5 @@ var (
 	errZeroEpsilon    = errors.New("epsilon cannot be 0")
 	errZeroMinpts     = errors.New("minpts cannot be 0")
 	errZeroWorkers    = errors.New("number of workers cannot be less than 0")
-	errZeroXi         = errors.New("xi cannot be 0")
 	errInvalidRange   = errors.New("range is invalid")
 )

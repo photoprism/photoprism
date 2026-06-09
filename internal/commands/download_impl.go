@@ -165,6 +165,12 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 				continue
 			}
 
+			if matched := ffmpeg.Exclude().Match(result.Info.VCodec, result.Info.Ext, result.Info.Container); matched != "" {
+				log.Warnf("skipping %s because format %s is on the FFmpeg exclude list", clean.Log(u.String()), clean.Log(matched))
+				failures++
+				continue
+			}
+
 			// Best-effort creation time for file method when not remuxing locally.
 			if ytRemux {
 				if created := dl.CreatedFromInfo(result.Info); !created.IsZero() {
@@ -236,6 +242,10 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 				})
 				if err != nil {
 					log.Errorf("download failed: %v", err)
+					if len(files) == 0 {
+						failures++
+						continue
+					}
 				}
 				if fileRemux != "skip" {
 					for _, fp := range files {
@@ -261,8 +271,8 @@ func runDownload(conf *config.Config, opts DownloadOpts, inputURLs []string) err
 
 	elapsed := time.Since(start)
 	if failures > 0 {
-		log.Warnf("completed with %d error(s) in %s", failures, elapsed)
-		return fmt.Errorf("some downloads failed: %d", failures)
+		log.Warnf("completed with %s in %s", formatCount(failures, "error", "errors"), elapsed)
+		return fmt.Errorf("%s", formatFailedCount(failures, "download", "downloads"))
 	}
 	log.Infof("completed in %s", elapsed)
 	return nil

@@ -7,8 +7,11 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	onnxruntime "github.com/yalue/onnxruntime_go"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // TestONNXSharedLibraryCandidates_Defaults verifies default search ordering when no explicit path is provided.
@@ -75,4 +78,17 @@ func TestONNXEngineBuildBlob(t *testing.T) {
 	require.InDelta(t, (255-onnxInputMean)/onnxInputStd, blob[0], 1e-3)
 	require.InDelta(t, (0-onnxInputMean)/onnxInputStd, blob[16], 1e-3)
 	require.Equal(t, float32(4), scale)
+}
+
+func TestONNXEngineDetect(t *testing.T) {
+	t.Run("MalformedTiffIfdOffset", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "evil.tiff")
+		require.NoError(t, os.WriteFile(fileName, []byte{0x49, 0x49, 0x2a, 0x00, 0xff, 0xff, 0xff, 0xff}, fs.ModeFile))
+
+		faces, err := (&onnxEngine{}).Detect(fileName, 20)
+
+		assert.Empty(t, faces)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid TIFF: IFD offset")
+	})
 }

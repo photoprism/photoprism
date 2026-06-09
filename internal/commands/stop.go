@@ -8,9 +8,6 @@ import (
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli/v2"
 
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -24,11 +21,9 @@ var StopCommand = &cli.Command{
 
 // stopAction stops the daemon if it is running.
 func stopAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
-	get.SetConfig(conf)
-	hub.Disable()
+	conf, err := InitCoreConfig(ctx, false)
 
-	if err := conf.InitCore(); err != nil {
+	if err != nil {
 		log.Debug(err)
 	}
 

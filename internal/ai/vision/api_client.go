@@ -14,12 +14,15 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // PerformApiRequest performs a Vision API request and returns the result.
 func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResponse *ApiResponse, err error) {
 	if apiRequest == nil {
 		return apiResponse, errors.New("api request is nil")
+	} else if err = validateApiRequestURL(uri); err != nil {
+		return apiResponse, err
 	}
 
 	data, jsonErr := apiRequest.JSON()
@@ -51,6 +54,7 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	}
 
 	// Perform API request.
+	// #nosec G704 URI is validated by validateApiRequestURL before issuing the request.
 	clientResp, clientErr := client.Do(req)
 
 	if clientErr != nil {
@@ -100,6 +104,12 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	}
 
 	return apiResponse, nil
+}
+
+// validateApiRequestURL checks that outbound API requests only use HTTP(S) URLs with a host.
+func validateApiRequestURL(rawURL string) error {
+	_, err := safe.URL(rawURL)
+	return err
 }
 
 func decodeOllamaResponse(data []byte) (*ollama.Response, error) {

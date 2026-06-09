@@ -1,6 +1,7 @@
 package service
 
 import (
+	"net"
 	"net/url"
 	"slices"
 	"strings"
@@ -47,21 +48,21 @@ func (h Heuristic) MatchDomain(match string) bool {
 }
 
 // Discover returns the first matching endpoint URL for the heuristic.
-func (h Heuristic) Discover(rawUrl, user string) *url.URL {
+func (h Heuristic) Discover(rawUrl, user string, allowedCIDRs []*net.IPNet) *url.URL {
 	u, err := url.Parse(rawUrl)
 
 	if err != nil {
 		return nil
 	}
 
-	if h.TestRequest(h.Method, u.String()) {
+	if h.TestRequest(h.Method, u.String(), allowedCIDRs) {
 		return u
 	}
 
 	for _, p := range h.Paths {
 		u.Path = strings.ReplaceAll(p, "{user}", user)
 
-		if h.TestRequest(h.Method, u.String()) {
+		if h.TestRequest(h.Method, u.String(), allowedCIDRs) {
 			return u
 		}
 	}

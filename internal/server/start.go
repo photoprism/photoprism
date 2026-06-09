@@ -7,13 +7,14 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/api"
@@ -48,14 +49,8 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Create new router engine without standard middleware.
 	router := gin.New()
 
-	// Set proxy from which headers related to the client and protocol can be trusted?
-	if trustedProxies := conf.TrustedProxies(); len(trustedProxies) > 0 {
-		if err := router.SetTrustedProxies(trustedProxies); err != nil {
-			log.Warnf("server: %s", err)
-		}
-
-		router.RemoteIPHeaders = conf.ProxyClientHeaders()
-	}
+	// Configure trusted proxy ranges and forwarded client IP headers.
+	configureTrustedProxySettings(router, conf)
 
 	// Set trusted platform client IP address header name?
 	if trustedPlatform := conf.TrustedPlatform(); trustedPlatform != "" {
@@ -73,17 +68,15 @@ func Start(ctx context.Context, conf *config.Config) {
 		router.Use(Logger())
 	}
 
+	// Warn once per unsupported compression token so operator typos are visible.
+	for _, token := range conf.HttpCompressionUnknown() {
+		log.Warnf("server: ignored unsupported http-compression value %q", token)
+	}
+
 	// Register compression middleware if enabled in the configuration.
-	switch conf.HttpCompression() {
-	case "br", "brotli":
-		log.Infof("server: brotli compression is currently not supported")
-	case "gzip":
-		// Use a custom compression predicate for fast, targeted exclusions.
-		router.Use(gzip.Gzip(
-			gzip.DefaultCompression,
-			gzip.WithCustomShouldCompressFn(NewGzipShouldCompressFn(conf)),
-		))
-		log.Infof("server: enabled gzip compression")
+	if prefs := conf.HttpCompressionPreferences(); len(prefs) > 0 {
+		router.Use(NewCompressMiddleware(conf))
+		log.Infof("server: enabled http compression (%s)", strings.Join(prefs, " > "))
 	}
 
 	// Register security middleware.
@@ -123,17 +116,9 @@ func Start(ctx context.Context, conf *config.Config) {
 	}
 	router.Any(conf.BaseUri("/readyz"), isReady)
 
-	// Create a new HTTP server instance with no read or write timeout, except for reading the headers:
-	// https://pkg.go.dev/net/http#Server
-	server := &http.Server{
-		ReadHeaderTimeout: time.Minute,
-		ReadTimeout:       -1,
-		WriteTimeout:      -1,
-		Handler:           router,
-	}
-
 	var tlsErr error
 	var tlsManager *autocert.Manager
+	var server *http.Server
 
 	// Listen on a Unix domain socket instead of a TCP port?
 	if unixSocket := conf.HttpSocket(); unixSocket != nil {
@@ -146,7 +131,7 @@ func Start(ctx context.Context, conf *config.Config) {
 			if !txt.Bool(unixSocket.Query().Get("force")) {
 				Fail("server: %s socket %s already exists", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
 				return
-			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil {
+			} else if removeErr := os.Remove(unixSocket.Path); removeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
 				Fail("server: %s socket %s already exists and cannot be deleted", clean.Log(unixSocket.Scheme), clean.Log(unixSocket.Path))
 				return
 			}
@@ -163,7 +148,7 @@ func Start(ctx context.Context, conf *config.Config) {
 			// Update socket permissions?
 			if mode := unixSocket.Query().Get("mode"); mode == "" {
 				// Skip, no socket mode was specified.
-			} else if modeErr := os.Chmod(unixSocket.Path, fs.ParseMode(mode, fs.ModeSocket)); modeErr != nil {
+			} else if modeErr := os.Chmod(unixSocket.Path, fs.ParseMode(mode, fs.ModeSocket)); modeErr != nil { //nolint:gosec // unixSocket.Path is parsed/validated in config.HttpSocket().
 				log.Warnf(
 					"server: failed to change permissions of %s socket %s (%s)",
 					clean.Log(unixSocket.Scheme),
@@ -174,6 +159,7 @@ func Start(ctx context.Context, conf *config.Config) {
 
 			// Listen on Unix socket, which should be automatically closed and removed after use:
 			// https://pkg.go.dev/net#UnixListener.SetUnlinkOnClose.
+			server = newHTTPServer(router, conf)
 			server.Addr = listener.Addr().String()
 
 			log.Infof("server: listening on %s [%s]", unixSocket.Path, time.Since(start))
@@ -187,6 +173,8 @@ func Start(ctx context.Context, conf *config.Config) {
 		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
 		tlsConfig := tlsManager.TLSConfig()
 		tlsConfig.MinVersion = tls.VersionTLS12
+
+		server = newHTTPServer(router, conf)
 
 		// Listen on HTTPS socket.
 		server.Addr = tlsSocket
@@ -203,6 +191,8 @@ func Start(ctx context.Context, conf *config.Config) {
 		tlsConfig := &tls.Config{
 			MinVersion: tls.VersionTLS12,
 		}
+
+		server = newHTTPServer(router, conf)
 
 		// Listen on HTTPS socket.
 		server.Addr = tlsSocket
@@ -222,6 +212,7 @@ func Start(ctx context.Context, conf *config.Config) {
 			return
 		} else {
 			// Listen on HTTP socket.
+			server = newHTTPServer(router, conf)
 			server.Addr = tcpSocket
 
 			log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
@@ -237,6 +228,26 @@ func Start(ctx context.Context, conf *config.Config) {
 	err := server.Close()
 	if err != nil {
 		log.Errorf("server: shutdown failed (%s)", err)
+	}
+}
+
+// configureTrustedProxySettings configures trusted proxy ranges for client IP resolution.
+func configureTrustedProxySettings(router *gin.Engine, conf *config.Config) {
+	if router == nil || conf == nil {
+		return
+	}
+
+	if trustedProxies := conf.TrustedProxies(); len(trustedProxies) > 0 {
+		if err := router.SetTrustedProxies(trustedProxies); err != nil {
+			log.Warnf("server: %s (trusted proxy), falling back to direct client IP", err)
+			if fallbackErr := router.SetTrustedProxies(nil); fallbackErr != nil {
+				log.Warnf("server: %s (trusted proxy fallback)", fallbackErr)
+			}
+		} else {
+			router.RemoteIPHeaders = conf.ProxyClientHeaders()
+		}
+	} else if err := router.SetTrustedProxies(nil); err != nil {
+		log.Warnf("server: %s", err)
 	}
 }
 
@@ -267,13 +278,10 @@ func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 	var g errgroup.Group
 
 	g.Go(func() error {
-		redirectSrv := &http.Server{
-			Addr:              fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-			Handler:           m.HTTPHandler(http.HandlerFunc(redirect)),
-			ReadHeaderTimeout: time.Minute,
-			ReadTimeout:       5 * time.Second,
-			WriteTimeout:      10 * time.Second,
-		}
+		redirectSrv := newHTTPServer(m.HTTPHandler(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			redirect(w, req, conf)
+		})), conf)
+		redirectSrv.Addr = fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
 
 		return redirectSrv.ListenAndServe()
 	})
@@ -291,8 +299,73 @@ func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 	}
 }
 
-func redirect(w http.ResponseWriter, req *http.Request) {
-	target := "https://" + req.Host + req.RequestURI
+// redirect sends HTTP requests to the configured HTTPS site host.
+func redirect(w http.ResponseWriter, req *http.Request, conf *config.Config) {
+	target := canonicalRedirectTarget(req, conf)
 
 	http.Redirect(w, req, target, httpsRedirect)
+}
+
+// canonicalRedirectTarget returns the HTTPS redirect target using the configured public site host.
+func canonicalRedirectTarget(req *http.Request, conf *config.Config) string {
+	targetHost := ""
+
+	if req != nil {
+		targetHost = req.Host
+	}
+
+	if conf != nil {
+		if host := conf.SiteHost(); host != "" {
+			targetHost = host
+		}
+	}
+
+	return HTTPSRedirectTarget(req, targetHost)
+}
+
+// HTTPSRedirectTarget returns the HTTPS redirect target for the provided request and host.
+func HTTPSRedirectTarget(req *http.Request, host string) string {
+	target := &url.URL{
+		Scheme:   "https",
+		Host:     host,
+		Path:     "/",
+		RawPath:  "",
+		RawQuery: "",
+	}
+
+	if req != nil && req.URL != nil {
+		target.Path = req.URL.Path
+		target.RawPath = req.URL.RawPath
+		target.RawQuery = req.URL.RawQuery
+	} else if req != nil && req.RequestURI != "" {
+		if u, err := url.ParseRequestURI(req.RequestURI); err == nil {
+			target.Path = u.Path
+			target.RawPath = u.RawPath
+			target.RawQuery = u.RawQuery
+		}
+	}
+
+	return target.String()
+}
+
+// newHTTPServer creates an HTTP server with hardened header and idle settings.
+func newHTTPServer(handler http.Handler, conf *config.Config) *http.Server {
+	headerTimeout := config.DefaultHttpHeaderTimeout
+	headerBytes := config.DefaultHttpHeaderBytes
+	idleTimeout := config.DefaultHttpIdleTimeout
+
+	if conf != nil {
+		headerTimeout = conf.HttpHeaderTimeout()
+		headerBytes = conf.HttpHeaderBytes()
+		idleTimeout = conf.HttpIdleTimeout()
+	}
+
+	return &http.Server{
+		ReadHeaderTimeout: headerTimeout,
+		ReadTimeout:       0,
+		WriteTimeout:      0,
+		IdleTimeout:       idleTimeout,
+		MaxHeaderBytes:    headerBytes,
+		Handler:           handler,
+	}
 }

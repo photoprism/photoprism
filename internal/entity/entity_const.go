@@ -33,7 +33,7 @@ const (
 const (
 	RootUnknown   = ""
 	RootOriginals = "/"
-	RootExamples  = "examples"
+	RootSamples   = "samples"
 	RootSidecar   = "sidecar"
 	RootImport    = "import"
 	RootPath      = "/"

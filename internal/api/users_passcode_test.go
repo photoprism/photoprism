@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -86,6 +87,18 @@ func TestCreateUserPasscode(t *testing.T) {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", string(pcStr), sessId)
 			assert.Equal(t, http.StatusForbidden, r.Code)
 		}
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		CreateUserPasscode(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
+		body := `{"Type":"totp","Password":"` + strings.Repeat("a", int(MaxAuthRequestBytes)) + `"}`
+		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", body, sessId)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 	t.Run("AliceSuccess", func(t *testing.T) {
 		app, router, conf := NewApiTest()

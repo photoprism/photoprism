@@ -102,6 +102,22 @@
 
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
+                v-model="settings.DisableMCP"
+                :disabled="isDemo"
+                class="ma-0 pa-0 input-disable-mcp"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Disable MCP')"
+                :hint="$gettext('Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations.')"
+                prepend-icon="mdi-robot-off"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3">
+              <v-checkbox
                 v-model="settings.DisableFaces"
                 :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-faces"
@@ -214,21 +230,6 @@
 
         <v-card-actions class="grid">
           <v-row align="start">
-            <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="py-2">
-              <v-select
-                v-model="settings.ThumbFilter"
-                :disabled="isDemo"
-                :items="options.ThumbFilters()"
-                :label="$gettext('Downscaling Filter')"
-                density="compact"
-                color="surface-variant"
-                bg-color="secondary-light"
-                hide-details
-                variant="solo"
-                @update:model-value="onChange"
-              ></v-select>
-            </v-col>
-
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: parseInt(settings.ThumbSize) }) }}

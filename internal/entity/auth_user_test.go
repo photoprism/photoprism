@@ -70,6 +70,25 @@ func TestOidcUser(t *testing.T) {
 		assert.Equal(t, "jane.doe", m.UserName)
 		assert.Equal(t, "Jane Doe", m.DisplayName)
 	})
+	t.Run("LongNumberAsSubject", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "Jane Doe"
+		info.GivenName = "Jane"
+		info.FamilyName = "Doe"
+		info.Email = "jane@doe.com"
+		info.EmailVerified = true
+		info.Subject = "12345678901234567890"
+		info.PreferredUsername = "Jane Doe"
+
+		m := OidcUser(info, "", "jane.doe")
+
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "", m.AuthIssuer)
+		assert.Equal(t, "12345678901234567890", m.AuthID)
+		assert.Equal(t, "jane@doe.com", m.UserEmail)
+		assert.Equal(t, "jane.doe", m.UserName)
+		assert.Equal(t, "Jane Doe", m.DisplayName)
+	})
 	t.Run("NoUsername", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"
@@ -305,6 +324,32 @@ func TestUser_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("LongNumericAuthID", func(t *testing.T) {
+		useruid := rnd.GenerateUID(UserUID)
+		var m = User{
+			UserUID:      useruid,
+			UserName:     "examplelong",
+			UserRole:     string(acl.RoleGuest),
+			DisplayName:  "Example Long",
+			SuperAdmin:   false,
+			CanLogin:     true,
+			AuthID:       "012345678901234567890",
+			AuthProvider: string(authn.ProviderOIDC),
+		}
+
+		if err := m.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			assert.NoError(t, m.Delete())
+			UnscopedDb().Delete(m)
+		})
+
+		assert.Equal(t, "examplelong", m.Username())
+		assert.Equal(t, "examplelong", m.UserName)
+		assert.Equal(t, "012345678901234567890", m.AuthID)
+	})
 }
 
 func TestUser_UpdateUsername(t *testing.T) {
@@ -532,6 +577,14 @@ func TestFindUser(t *testing.T) {
 		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "jane.doe", m.UserName)
 		assert.Equal(t, "oidc", m.AuthProvider)
+
+		n := FindUser(User{AuthProvider: authn.ProviderOIDC.String(), AuthID: info.Subject})
+
+		require.NotNil(t, n)
+
+		assert.NotEmpty(t, n.UserUID)
+		assert.Equal(t, "jane.doe", n.UserName)
+		assert.Equal(t, "oidc", n.AuthProvider)
 	})
 	t.Run("UserName", func(t *testing.T) {
 		m := FindUser(User{UserName: "admin"})
@@ -1803,11 +1856,43 @@ func TestUser_SetAuthID(t *testing.T) {
 		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
 	})
+	t.Run("DupeAuthProviderAndID", func(t *testing.T) {
+		m := UserFixtures.Get("guest")
+		n := NewUser()
+		n.UserName = "guest2"
+		n.DisplayName = "Guest User2"
+		n.UserEmail = "guest2@example.com"
+		n.UserRole = acl.RoleGuest.String()
+		n.AuthProvider = authn.ProviderOIDC.String()
+		n.AuthMethod = authn.MethodDefault.String()
+		n.SuperAdmin = false
+		n.CanLogin = true
+		n.SetAuthID(uuid, issuer)
+		assert.NoError(t, n.Save())
+
+		t.Cleanup(func() {
+			assert.NoError(t, n.Delete())
+			UnscopedDb().Delete(n)
+		})
+
+		newUserUID := n.UserUID
+		m.SetAuthID(uuid, issuer)
+		assert.Equal(t, uuid, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+
+		n = FindUserByUID(newUserUID)
+		require.NotNil(t, n)
+
+		assert.Equal(t, "guest2", n.UserName)
+		assert.Equal(t, "", n.AuthID)
+		assert.Equal(t, authn.ProviderNone.String(), n.AuthProvider)
+	})
 }
 
 func TestUser_UpdateAuthID(t *testing.T) {
 	uuid := rnd.UUID()
 	issuer := "http://dummy-oidc:9998"
+	longnumber := "12345678901234567890"
 
 	t.Run("UUID", func(t *testing.T) {
 		m := UserFixtures.Get("friend")
@@ -1832,6 +1917,20 @@ func TestUser_UpdateAuthID(t *testing.T) {
 		assert.Equal(t, issuer, m.AuthIssuer)
 		err := m.UpdateAuthID(uuid, "")
 		assert.Error(t, err)
+	})
+	t.Run("LongNumber", func(t *testing.T) {
+		m := UserFixtures.Get("friend")
+
+		m.SetAuthID("", issuer)
+		assert.Equal(t, "", m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
+		m.SetAuthID(longnumber, issuer)
+		assert.Equal(t, longnumber, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+		err := m.UpdateAuthID(longnumber, "")
+		assert.NoError(t, err)
+		assert.Equal(t, longnumber, m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
 	})
 }
 
@@ -2284,14 +2383,12 @@ func TestUser_ScopeHelpers(t *testing.T) {
 		assert.False(t, u.HasScope())
 		assert.True(t, u.NoScope())
 	})
-
 	t.Run("AnyScope", func(t *testing.T) {
 		u := &User{UserScope: list.Any}
 		assert.Equal(t, "*", u.Scope())
 		assert.False(t, u.HasScope())
 		assert.True(t, u.NoScope())
 	})
-
 	t.Run("RestrictedScope", func(t *testing.T) {
 		u := &User{UserScope: "Photos:View"}
 		assert.Equal(t, "photos:view", u.Scope())
@@ -2355,4 +2452,24 @@ func TestUser_SetValuesFromCliScope(t *testing.T) {
 	ctx := cli.NewContext(app, set, nil)
 	require.NoError(t, user.SetValuesFromCli(ctx))
 	assert.Equal(t, "videos:view", user.UserScope)
+}
+
+func TestUser_AuthIDSQLite(t *testing.T) {
+	user := FindLocalUser("alice")
+	require.NotNil(t, user)
+
+	original := user.AuthID
+	t.Cleanup(func() {
+		user.AuthID = original
+		assert.NoError(t, user.Save())
+	})
+
+	expected := "012345678901234567890123456789"
+	user.AuthID = expected
+	assert.NoError(t, user.Save())
+
+	user2 := FindLocalUser("alice")
+	require.NotNil(t, user2)
+
+	assert.Equal(t, expected, user2.AuthID)
 }

@@ -12,20 +12,15 @@
     @keydown.esc.exact="onClose"
   >
     <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="-1" @submit.prevent="onSubmit">
-      <input ref="upload" type="file" multiple :accept="accept" class="d-none input-upload" @change.stop="onUpload()" />
       <v-card :tile="$vuetify.display.mdAndDown">
-        <v-toolbar v-if="$vuetify.display.mdAndDown" flat color="navigation" class="mb-4" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
-          <v-btn icon @click.stop="onClose">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+        <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
           <v-toolbar-title>
             {{ title }}
           </v-toolbar-title>
+          <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="onClose">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
         </v-toolbar>
-        <v-card-title v-else class="d-flex justify-start align-center ga-3">
-          <v-icon size="28" color="primary">mdi-cloud-upload</v-icon>
-          <h6 class="text-h6">{{ title }}</h6>
-        </v-card-title>
         <v-card-text class="flex-grow-0">
           <div class="form-container">
             <div class="form-header">
@@ -35,27 +30,42 @@
               </span>
               <span v-else-if="indexing">{{ $gettext(`Upload complete. Indexing…`) }}</span>
               <span v-else-if="completedTotal === 100">{{ $gettext(`Done.`) }}</span>
-              <span v-else-if="filesQuotaReached"
+              <span v-else-if="insufficientStorage"
                 >{{ $gettext(`Insufficient storage.`) }} {{ $gettext(`Increase storage size or delete files to continue.`) }}</span
               >
-              <span v-else>{{ $gettext(`Select the files to upload…`) }}</span>
+              <span v-else-if="$vuetify.display.mdAndDown">{{ $gettext(`Select the files to upload…`) }}</span>
+              <span v-else>{{ $gettext(`Select or drop files to upload…`) }}</span>
             </div>
             <div class="form-body">
               <div class="form-controls">
+                <v-file-upload
+                  :model-value="selected"
+                  :filter-by-type="accept"
+                  :disabled="busy || insufficientStorage"
+                  :multiple="true"
+                  :title="$vuetify.display.mdAndDown ? $gettext('Browse') : ''"
+                  :density="$vuetify.display.mdAndDown ? 'compact' : 'comfortable'"
+                  :icon="$vuetify.display.mdAndDown ? 'mdi-cloud-upload' : 'mdi-cloud-upload'"
+                  hide-details
+                  show-size
+                  clearable
+                  class="mt-1 mb-0 pb-0 input-file-upload"
+                  @update:model-value="onFilesSelected"
+                />
                 <v-combobox
                   v-model="selectedAlbums"
                   v-model:menu="albumsMenu"
-                  :disabled="busy || loading || total > 0 || filesQuotaReached"
+                  :disabled="busy || loading || total > 0 || insufficientStorage"
+                  :placeholder="$gettext('Select or create albums')"
+                  :items="albums"
+                  item-title="Title"
+                  item-value="UID"
                   hide-details
                   chips
                   closable-chips
                   return-object
                   multiple
                   class="input-albums"
-                  :items="albums"
-                  item-title="Title"
-                  item-value="UID"
-                  :placeholder="$gettext('Select or create albums')"
                   @update:menu="onAlbumsMenuUpdate"
                   @keydown.enter.stop="onAlbumsEnter"
                 >
@@ -108,8 +118,14 @@
           <v-btn :disabled="busy" variant="flat" color="button" class="action-close" @click.stop="onClose">
             {{ $gettext(`Close`) }}
           </v-btn>
-          <v-btn :disabled="busy || filesQuotaReached" variant="flat" color="highlight" class="action-select action-upload" @click.stop="onUploadDialog()">
-            {{ $gettext(`Browse`) }}
+          <v-btn
+            :disabled="busy || insufficientStorage || !hasFiles"
+            variant="flat"
+            color="highlight"
+            class="action-select action-upload"
+            @click.stop="onUpload()"
+          >
+            {{ $gettext(`Upload`) }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -150,7 +166,7 @@ export default {
       loading: false,
       indexing: false,
       failed: false,
-      filesQuotaReached: this.$config.filesQuotaReached(),
+      insufficientStorage: this.$config.insufficientStorage(),
       current: 0,
       total: 0,
       totalSize: 0,
@@ -171,6 +187,9 @@ export default {
   computed: {
     title() {
       return this.$gettext(`Upload`);
+    },
+    hasFiles() {
+      return Array.isArray(this.selected) && this.selected.length > 0;
     },
   },
   watch: {
@@ -287,8 +306,33 @@ export default {
       this.albumsMenu = false;
       this.suppressAlbumsMenuOpen = false;
     },
-    onUploadDialog() {
-      this.$refs.upload.click();
+    onFilesSelected(newFiles) {
+      const newArr = Array.isArray(newFiles) ? newFiles : newFiles ? [newFiles] : [];
+      const existing = Array.isArray(this.selected) ? this.selected : [];
+
+      // Clear: empty array from the clearable button or a reset.
+      if (newArr.length === 0) {
+        this.selected = [];
+        return;
+      }
+
+      // Remove: every file in the new set is already present by reference →
+      // this is a single-item removal emitted by VFileUploadItem's × button.
+      if (newArr.every((f) => existing.includes(f))) {
+        this.selected = newArr;
+        return;
+      }
+
+      // Browse / drop: merge with existing selection, skip duplicates
+      // identified by name + size + lastModified so re-selecting the same
+      // file on a second browse pass does not add a second entry.
+      const merged = [...existing];
+      for (const f of newArr) {
+        if (!merged.some((e) => e.name === f.name && e.size === f.size && e.lastModified === f.lastModified)) {
+          merged.push(f);
+        }
+      }
+      this.selected = merged;
     },
     onUploadProgress(ev) {
       if (!ev || !ev.loaded || !ev.total) {
@@ -335,25 +379,19 @@ export default {
         return;
       }
 
-      const files = this.$refs.upload.files;
-
       // Too many files selected for upload?
-      if (this.isDemo && files && files.length > this.fileLimit) {
+      if (this.isDemo && this.selected && this.selected.length > this.fileLimit) {
         $notify.error(this.$gettext("Too many files selected"));
         return;
       }
 
-      this.selected = files;
-      this.total = files.length;
-
       // No files selected?
-      if (!this.selected || this.total < 1) {
+      if (!this.selected || this.selected.length < 1) {
         return;
       }
 
       this.uploads = [];
       this.token = this.$util.generateToken();
-      this.selected = this.$refs.upload.files;
       this.busy = true;
       this.indexing = false;
       this.failed = false;

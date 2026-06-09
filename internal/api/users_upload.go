@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -68,7 +69,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		}
 
 		// Abort if there is not enough free storage to upload new files.
-		if conf.FilesQuotaReached() {
+		if conf.InsufficientStorage() {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
 			Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
 			return
@@ -77,9 +78,19 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		start := time.Now()
 		token := clean.Token(c.Param("token"))
 
+		if totalSizeLimit := conf.UploadLimitBytes(); totalSizeLimit > 0 {
+			LimitRequestBodyBytes(c, totalSizeLimit+MaxMultipartOverheadBytes)
+		}
+
 		f, err := c.MultipartForm()
 
 		if err != nil {
+			if IsRequestBodyTooLarge(err) {
+				log.Errorf("upload: %s", err)
+				AbortRequestTooLarge(c, i18n.ErrFileTooLarge)
+				return
+			}
+
 			log.Errorf("upload: %s", err)
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
@@ -132,6 +143,15 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			// Save uploaded file in the user upload path.
 			if err = c.SaveUploadedFile(file, destName); err != nil {
 				log.Debugf("upload: %s in %s", clean.Error(err), clean.Log(baseName))
+
+				// Report a disk-full write failure as insufficient storage so the cause is clear.
+				if disk.IsNoSpace(err) {
+					disk.FlushFree()
+					event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
+					Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+					return
+				}
+
 				log.Errorf("upload: failed to save %s", clean.Log(baseName))
 				Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 				return
@@ -305,7 +325,14 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		var frm form.UploadOptions
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxUploadOptionsRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}

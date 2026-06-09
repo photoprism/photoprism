@@ -310,7 +310,9 @@ export default {
       this.loadMore();
     },
     loadMore() {
-      if (this.scrollDisabled) return;
+      if (this.scrollDisabled) {
+        return;
+      }
 
       if (this.offset === 0) {
         this.loading = true;

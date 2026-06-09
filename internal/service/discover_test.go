@@ -8,7 +8,7 @@ import (
 
 func TestDiscover(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		r, err := Discover("", "", "")
+		r, err := Discover("", "", "", "")
 
 		assert.Equal(t, err.Error(), "service URL is empty")
 		assert.Equal(t, "", r.AccName)
@@ -18,7 +18,7 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "", r.AccPass)
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		r, err := Discover("xxx", "", "")
+		r, err := Discover("xxx", "", "", "")
 
 		assert.Equal(t, err.Error(), "could not connect")
 		assert.Equal(t, "", r.AccName)
@@ -27,8 +27,28 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "", r.AccUser)
 		assert.Equal(t, "", r.AccPass)
 	})
+	t.Run("UnsupportedScheme", func(t *testing.T) {
+		r, err := Discover("ftp://example.com/", "", "", "")
+
+		assert.Equal(t, err.Error(), "unsupported service URL scheme")
+		assert.Equal(t, "", r.AccName)
+		assert.Equal(t, "", r.AccType)
+		assert.Equal(t, "", r.AccURL)
+		assert.Equal(t, "", r.AccUser)
+		assert.Equal(t, "", r.AccPass)
+	})
+	t.Run("InvalidServicesCIDR", func(t *testing.T) {
+		r, err := Discover("http://dummy-webdav/", "", "", "not-a-cidr")
+
+		assert.Error(t, err)
+		assert.Equal(t, "", r.AccName)
+		assert.Equal(t, "", r.AccType)
+		assert.Equal(t, "", r.AccURL)
+		assert.Equal(t, "", r.AccUser)
+		assert.Equal(t, "", r.AccPass)
+	})
 	t.Run("WebDAV", func(t *testing.T) {
-		r, err := Discover("http://admin:photoprism@dummy-webdav/", "", "")
+		r, err := Discover("http://admin:photoprism@dummy-webdav/", "", "", "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -41,7 +61,7 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "photoprism", r.AccPass)
 	})
 	t.Run("WebDAVWithPort", func(t *testing.T) {
-		r, err := Discover("http://admin:photoprism@dummy-webdav:80/", "", "")
+		r, err := Discover("http://admin:photoprism@dummy-webdav:80/", "", "", "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -54,7 +74,7 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "photoprism", r.AccPass)
 	})
 	t.Run("WebDAVWithPath", func(t *testing.T) {
-		r, err := Discover("http://dummy-webdav:80/Photos/", "admin", "photoprism")
+		r, err := Discover("http://dummy-webdav:80/Photos/", "admin", "photoprism", "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -67,7 +87,7 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "photoprism", r.AccPass)
 	})
 	t.Run("WebDAVNoPassword", func(t *testing.T) {
-		r, err := Discover("http://admin@dummy-webdav/", "", "photoprism")
+		r, err := Discover("http://admin@dummy-webdav/", "", "photoprism", "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -80,7 +100,7 @@ func TestDiscover(t *testing.T) {
 		assert.Equal(t, "photoprism", r.AccPass)
 	})
 	t.Run("Facebook", func(t *testing.T) {
-		r, err := Discover("https://www.facebook.com/terms", "test", "")
+		r, err := Discover("https://www.facebook.com/terms", "test", "", "")
 
 		if err != nil {
 			t.Fatal(err)

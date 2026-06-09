@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -136,7 +137,7 @@ func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 	require.NotNil(t, originalDb)
 
 	tempConn := &entity.DbConn{
-		Driver: entity.SQLite3,
+		Driver: dsn.DriverSQLite3,
 		Dsn:    filepath.Join(t.TempDir(), "match-face-markers-error.db"),
 	}
 

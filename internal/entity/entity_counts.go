@@ -3,6 +3,7 @@ package entity
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -11,11 +12,41 @@ import (
 
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
 // countsBusy indicates whether count refresh jobs are currently running.
 var countsBusy = atomic.Bool{}
+
+// asyncWG tracks in-flight goroutines spawned by entity package async
+// helpers (UpdateCountsAsync and the cover-update goroutine in
+// internal/entity/query). Callers that intend to tear down the database
+// connection — most importantly config.CloseDb during test shutdown —
+// should invoke WaitForAsyncJobs first to avoid a nil-DB race in the
+// running goroutines.
+var asyncWG sync.WaitGroup
+
+// AsyncJobAdd registers a new in-flight async job spawned by the entity
+// package or its sub-packages. It must be paired with AsyncJobDone in a
+// deferred call so the WaitForAsyncJobs helper can drain reliably.
+func AsyncJobAdd() {
+	asyncWG.Add(1)
+}
+
+// AsyncJobDone marks an in-flight async job as finished. Always pair it
+// with a preceding AsyncJobAdd via defer so panics in the goroutine still
+// release the WaitGroup.
+func AsyncJobDone() {
+	asyncWG.Done()
+}
+
+// WaitForAsyncJobs blocks until every async job started via the package's
+// async helpers has finished. Callers that need to safely tear down the
+// database connection should invoke this before nilling the provider.
+func WaitForAsyncJobs() {
+	asyncWG.Wait()
+}
 
 type LabelPhotoCount struct {
 	LabelID    int
@@ -103,7 +134,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 	condition := gorm.Expr("subj_type = ?", SubjPerson)
 
 	switch DbDialect() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		res = Db().Exec(`UPDATE ? LEFT JOIN (
 		SELECT m.subj_uid, COUNT(DISTINCT f.id) AS subj_files, COUNT(DISTINCT f.photo_id) AS subj_photos
 			FROM files f
@@ -114,7 +145,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 		SET subjects.file_count = CASE WHEN b.subj_files IS NULL THEN 0 ELSE b.subj_files END, 
 			subjects.photo_count = CASE WHEN b.subj_photos IS NULL THEN 0 ELSE b.subj_photos END
 		WHERE ?`, gorm.Expr(subjTable), photosJoin, condition)
-	case SQLite3:
+	case dsn.DriverSQLite3:
 		// Update files count.
 		res = Db().Table(subjTable).
 			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id)"+
@@ -187,7 +218,7 @@ func UpdateLabelCounts() (err error) {
 
 	start := time.Now()
 	var res *gorm.DB
-	if IsDialect(MySQL) {
+	if IsDialect(dsn.DriverMySQL) {
 		res = Db().Exec(`UPDATE labels LEFT JOIN (
 		SELECT p2.label_id, COUNT(DISTINCT photo_id) AS label_photos FROM (
 			SELECT pl.label_id as label_id, p.id AS photo_id FROM photos p
@@ -201,7 +232,7 @@ func UpdateLabelCounts() (err error) {
 			) p2 GROUP BY p2.label_id
 		) b ON b.label_id = labels.id
 		SET photo_count = CASE WHEN b.label_photos IS NULL THEN 0 ELSE b.label_photos END`)
-	} else if IsDialect(SQLite3) {
+	} else if IsDialect(dsn.DriverSQLite3) {
 		res = Db().
 			Table("labels").
 			UpdateColumn("photo_count",
@@ -236,17 +267,32 @@ func UpdateLabelCounts() (err error) {
 	return nil
 }
 
-// UpdateCountsAsync runs UpdateCounts in a go routine
-// and logs the returned error, if any, as a warning.
+// UpdateCountsAsync runs UpdateCounts in a goroutine and logs the
+// returned error, if any, as a warning. The launched goroutine is
+// registered with the package WaitGroup (via AsyncJobAdd / AsyncJobDone)
+// so config.CloseDb can drain in-flight work via WaitForAsyncJobs before
+// tearing down the database connection. A deferred recover guards against
+// any future shutdown race producing a process-killing panic instead of
+// a clean log line.
 func UpdateCountsAsync() {
+	AsyncJobAdd()
 	go func() {
+		defer AsyncJobDone()
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("index: recovered from panic in UpdateCountsAsync (%v)", r)
+			}
+		}()
 		if err := UpdateCounts(); err != nil {
 			log.Warnf("index: %s (update counts)", clean.Error(err))
 		}
 	}()
 }
 
-// UpdateCounts updates precalculated photo and file counts.
+// UpdateCounts updates precalculated photo and file counts. It returns
+// nil without doing any work when the entity database provider has been
+// torn down (e.g. during test shutdown), so a stray async invocation
+// after CloseDb does not panic on a nil dialect lookup.
 func UpdateCounts() (err error) {
 	if !countsBusy.CompareAndSwap(false, true) {
 		log.Debugf("index: skipped updating counts because it is already in progress")
@@ -254,6 +300,11 @@ func UpdateCounts() (err error) {
 	}
 
 	defer countsBusy.Store(false)
+
+	if Db() == nil {
+		log.Debugf("index: skipped updating counts because database is not connected")
+		return nil
+	}
 
 	log.Debug("index: updating counts")
 

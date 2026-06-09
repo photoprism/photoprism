@@ -27,7 +27,7 @@ downloading. Secrets are not logged; header values are redacted in traces.
 The package exposes convenience constructors around yt-dlp invocation as
 well as small utilities for safer logging and remux metadata preparation.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):

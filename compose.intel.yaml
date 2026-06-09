@@ -1,7 +1,10 @@
 services:
   ## PhotoPrism (Development Environment for Intel QSV hardware transcoding)
   photoprism:
-    build: .
+    build:
+      context: .
+      args:
+        WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     image: photoprism/photoprism:develop
     depends_on:
       - mariadb
@@ -28,7 +31,7 @@ services:
       - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
@@ -37,6 +40,12 @@ services:
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
+    ## Override variables with optional env file, see https://docs.docker.com/reference/compose-file/services/#required
+    env_file:
+      - path: ".telemetry"
+        required: false
+      - path: ".env"
+        required: false
     ## Configure development environment
     environment:
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
@@ -87,22 +96,26 @@ services:
       PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"       # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
+      MYSQL_TCP_PORT: "${MARIADB_PORT:-4001}"        # default MariaDB database port used by the "mariadb" client (see .my.cnf)
+      PGPORT: "${POSTGRES_PORT:-4002}"               # default PostgreSQL database port used by "psql"
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
-      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
-      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
-      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
+      PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
+      PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/originals"
       PHOTOPRISM_ORIGINALS_LIMIT: 128000             # sets originals file size limit to 128 GB
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      PHOTOPRISM_IMPORT_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_MCP: "false"                # disables Model Context Protocol (MCP) API endpoint for AI agent integrations
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
       PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
@@ -113,25 +126,27 @@ services:
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
       PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
-      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
-      PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
+      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, vips)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       ## Intel Quick Sync Video (QSV) (https://docs.photoprism.app/getting-started/advanced/transcoding/#intel-quick-sync):
-      PHOTOPRISM_FFMPEG_ENCODER: "intel"             # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      PHOTOPRISM_FFMPEG_ENCODER: "intel"             # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
       PHOTOPRISM_INIT: "https intel tensorflow"
-      ## External dependencies and tools:
+      ## Additional dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
-      GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
-      CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
+      GOCACHE: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gocache"
+      CODEX_HOME: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/codex"
+      CLAUDE_CONFIG_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/claude"
+      GH_REPO: "photoprism/photoprism"
+      GH_CONFIG_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gh"
     ## Share hardware devices with FFmpeg for hardware video transcoding:
     devices:
       - "/dev/dri:/dev/dri"
-    working_dir: "/go/src/github.com/photoprism/photoprism"
+    working_dir: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     volumes:
-      - ".:/go/src/github.com/photoprism/photoprism"
+      - ".:${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
       - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
 
@@ -186,5 +201,5 @@ volumes:
 ## Create shared "photoprism" network for connecting with services in other compose.yaml files
 networks:
   default:
-    name: photoprism
+    name: ${COMPOSE_NETWORK_NAME:-photoprism}
     driver: bridge

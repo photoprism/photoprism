@@ -241,6 +241,7 @@ export default {
       default: () => new User(null),
     },
   },
+  emits: ["close"],
   data() {
     return {
       auth,

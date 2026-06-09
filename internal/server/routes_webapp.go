@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 	"regexp"
 
@@ -51,8 +52,11 @@ func registerWebAppRoutes(router *gin.Engine, conf *config.Config) {
 	// Serve the user interface manifest file.
 	manifest := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.ContentType, header.ContentTypeJsonUtf8)
-		c.IndentedJSON(200, conf.AppManifest())
+		if body, err := json.MarshalIndent(conf.AppManifest(), "", "    "); err != nil {
+			api.Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
+		} else {
+			c.Data(http.StatusOK, header.ContentTypeManifest, body)
+		}
 	}
 
 	// Web App Manifest (served at /manifest.json under the base URI).

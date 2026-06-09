@@ -115,5 +115,33 @@ func TestUpdateSubjectCovers(t *testing.T) {
 func TestUpdateCovers(t *testing.T) {
 	// coversBusy.Store(true)
 	UpdateCoversAsync()
+	// Drain the async goroutine so it doesn't race the next test that
+	// might temporarily swap out the entity DB provider.
+	entity.WaitForAsyncJobs()
 	assert.NoError(t, UpdateCovers())
+}
+
+func TestUpdateCovers_NilDbReturnsCleanly(t *testing.T) {
+	// Mirrors TestUpdateCounts_NilDbReturnsCleanly: after CloseDb has
+	// nilled the entity DB provider, UpdateCovers must return nil instead
+	// of panicking on a nil dialect lookup so a stray UpdateCoversAsync
+	// goroutine does not crash the process during shutdown.
+	prev := swapDbProvider(nil)
+	defer swapDbProvider(prev)
+
+	assert.NoError(t, UpdateCovers())
+}
+
+// swapDbProvider replaces the package-level entity DB provider with the
+// supplied value and returns a snapshot of the previous one wrapped in
+// staticDbProvider so callers can restore the original *gorm.DB. The
+// query package's staticDbProvider helper is reused to mirror existing
+// override patterns in faces_test.go.
+func swapDbProvider(p entity.Gorm) entity.Gorm {
+	var prev entity.Gorm
+	if currentDb := entity.Db(); currentDb != nil {
+		prev = staticDbProvider{db: currentDb}
+	}
+	entity.SetDbProvider(p)
+	return prev
 }

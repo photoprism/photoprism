@@ -5,8 +5,6 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/disintegration/imaging"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -18,7 +16,7 @@ func Collage(t Type, images []image.Image) (collage image.Image, err error) {
 	width := 1600
 	height := 900
 
-	collage = imaging.New(width, height, CollageBackground)
+	collage = newCanvas(width, height, CollageBackground)
 
 	if len(images) == 0 {
 		return collage, nil
@@ -42,13 +40,13 @@ func polaroidCollage(collage image.Image, images []image.Image) (image.Image, er
 		if framed, err := polaroid(images[0], RandomAngle(20)); err != nil {
 			return collage, err
 		} else {
-			collage = imaging.Overlay(collage, framed, image.Pt(50, -80), 1)
+			collage = overlayImage(collage, framed, image.Pt(50, -80))
 		}
 
 		if framed, err := polaroid(images[1], RandomAngle(20)); err != nil {
 			return collage, err
 		} else {
-			collage = imaging.Overlay(collage, framed, image.Pt(500, -30), 1)
+			collage = overlayImage(collage, framed, image.Pt(500, -30))
 		}
 	} else {
 		dl := 1500 / n
@@ -63,13 +61,13 @@ func polaroidCollage(collage image.Image, images []image.Image) (image.Image, er
 				return collage, err
 			}
 
-			collage = imaging.Overlay(collage, framed, RandomPoint(850-i*dl, -150-((i%2)*50), 950-i*dr, 125-((i%2)*125)), 1)
+			collage = overlayImage(collage, framed, RandomPoint(850-i*dl, -150-((i%2)*50), 950-i*dr, 125-((i%2)*125)))
 		}
 
 		if framed, err := polaroid(images[0], RandomAngle(15)); err != nil {
 			return collage, err
 		} else {
-			collage = imaging.Overlay(collage, framed, image.Pt(275, -50), 1)
+			collage = overlayImage(collage, framed, image.Pt(275, -50))
 		}
 	}
 

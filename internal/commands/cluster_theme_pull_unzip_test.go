@@ -16,7 +16,7 @@ func writeThemeZip(t *testing.T, entries map[string]string) string {
 	t.Helper()
 
 	zipPath := filepath.Join(t.TempDir(), "theme.zip")
-	file, err := os.Create(zipPath)
+	file, err := os.Create(zipPath) //nolint:gosec // zipPath points to a test temp directory path.
 	if err != nil {
 		t.Fatalf("create zip: %v", err)
 	}

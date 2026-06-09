@@ -1,0 +1,13 @@
+[{
+  "SourceFile": "/tmp/sample_magic.avi",
+  "ExifToolVersion": 12.56,
+  "FileName": "sample_magic.avi",
+  "FileType": "AVI",
+  "FileTypeExtension": "AVI",
+  "MIMEType": "video/x-msvideo",
+  "ImageWidth": 160,
+  "ImageHeight": 120,
+  "VideoFrameRate": 5,
+  "Compression": "M8RG",
+  "VideoCodec": "M8RG"
+}]

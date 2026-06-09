@@ -12,6 +12,7 @@ const (
 	ContentLanguage    = "Content-Language"
 	ContentLength      = "Content-Length"
 	ContentRange       = "Content-Range"
+	Range              = "Range"
 	Location           = "Location"
 	Origin             = "Origin"
 	Vary               = "Vary"

@@ -3,13 +3,13 @@ package config
 import (
 	"fmt"
 
-	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/hub/places"
@@ -39,7 +39,7 @@ var Flags = CliFlags{
 			Usage:   "secret `KEY` for signing authentication tokens",
 			EnvVars: EnvVars("AUTH_SECRET"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.BoolFlag{
 			Name:    "public",
 			Aliases: []string{"p"},
@@ -59,7 +59,7 @@ var Flags = CliFlags{
 			Aliases: []string{"pw"},
 			Usage:   fmt.Sprintf("initial `PASSWORD` of the superadmin account (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVars: EnvVars("ADMIN_PASSWORD"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.IntFlag{
 			Name:    "password-length",
 			Usage:   "minimum password `LENGTH` in characters",
@@ -83,7 +83,7 @@ var Flags = CliFlags{
 			Usage:   "client `SECRET` for single sign-on via OpenID Connect",
 			Value:   "",
 			EnvVars: EnvVars("OIDC_SECRET"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "oidc-scopes",
 			Usage:   "client authorization `SCOPES` for single sign-on via OpenID Connect",
@@ -217,6 +217,19 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("PARTNER_ID"),
 		}}, {
 		Flag: &cli.PathFlag{
+			Name:      "storage-path",
+			Aliases:   []string{"s"},
+			Usage:     "writable storage `PATH` for sidecar, cache, and database files",
+			EnvVars:   EnvVars("STORAGE_PATH"),
+			TakesFile: true,
+		}}, {
+		Flag: &cli.Float64Flag{
+			Name:    "storage-free",
+			Usage:   "minimum `PERCENT` (1-99) of free storage required for indexing, importing, and uploads, -1 disables the check",
+			Value:   DefaultStorageFree,
+			EnvVars: EnvVars("STORAGE_FREE"),
+		}}, {
+		Flag: &cli.PathFlag{
 			Name:      "config-path",
 			Aliases:   []string{"config", "c"},
 			Usage:     "config storage `PATH` or options.yml filename, values in this file override CLI flags and environment variables if present",
@@ -263,13 +276,6 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("USERS_PATH"),
 		}}, {
 		Flag: &cli.PathFlag{
-			Name:      "storage-path",
-			Aliases:   []string{"s"},
-			Usage:     "writable storage `PATH` for sidecar, cache, and database files",
-			EnvVars:   EnvVars("STORAGE_PATH"),
-			TakesFile: true,
-		}}, {
-		Flag: &cli.PathFlag{
 			Name:      "import-path",
 			Aliases:   []string{"im"},
 			Usage:     "base `PATH` from which files can be imported to originals *optional*",
@@ -290,7 +296,7 @@ var Flags = CliFlags{
 		Flag: &cli.BoolFlag{
 			Name:    "upload-nsfw",
 			Aliases: []string{"n"},
-			Usage:   "allows uploads that might be offensive (detecting unsafe content requires TensorFlow)",
+			Usage:   "allows uploads that might be offensive (when disabled, files flagged by the NSFW model are rejected before indexing)",
 			EnvVars: EnvVars("UPLOAD_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -393,13 +399,13 @@ var Flags = CliFlags{
 			Usage:   "enables the use of YAML files for backing up album metadata",
 			EnvVars: EnvVars("BACKUP_ALBUMS"),
 		}, DocDefault: "true"}, {
-		Flag: &cli.IntFlag{
+		Flag: &cli.StringFlag{
 			Name:    "index-workers",
 			Aliases: []string{"workers"},
-			Usage:   "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",
-			Value:   cpuid.CPU.PhysicalCores / 2,
+			Usage:   "maximum `NUMBER` of indexing workers, or 'auto' to derive from the available CPU cores",
+			Value:   IndexWorkersAuto,
 			EnvVars: EnvVars("INDEX_WORKERS", "WORKERS"),
-		}, DocDefault: " "}, {
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "index-schedule",
 			Usage:   "indexing `SCHEDULE` in cron format (e.g. \"@every 3h\" for every 3 hours; \"\" to disable)",
@@ -463,6 +469,11 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("DISABLE_WEBDAV"),
 		}}, {
 		Flag: &cli.BoolFlag{
+			Name:    "disable-mcp",
+			Usage:   "disables the Model Context Protocol (MCP) API endpoint for AI agent integrations",
+			EnvVars: EnvVars("DISABLE_MCP"),
+		}}, {
+		Flag: &cli.BoolFlag{
 			Name:    "disable-places",
 			Usage:   "disables interactive world maps and reverse geocoding",
 			EnvVars: EnvVars("DISABLE_PLACES"),
@@ -491,11 +502,6 @@ var Flags = CliFlags{
 			Name:    "disable-exiftool",
 			Usage:   "disables metadata extraction with ExifTool (required for full Video, Live Photo, and XMP support)",
 			EnvVars: EnvVars("DISABLE_EXIFTOOL"),
-		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "disable-vips",
-			Usage:   "disables image processing and conversion with libvips",
-			EnvVars: EnvVars("DISABLE_VIPS"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-sips",
@@ -702,7 +708,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
-			Usage:   "cluster `CIDR` (e.g., 10.0.0.0/8) for IP-based authorization",
+			Usage:   "cluster `CIDR` for IP-based authorization, e.g. 10.0.0.0/8",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
 			Hidden:  true,
 		}}, {
@@ -722,7 +728,7 @@ var Flags = CliFlags{
 			Name:    "join-token",
 			Usage:   "secret `TOKEN` required to join a cluster; min 24 chars",
 			EnvVars: EnvVars("JOIN_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "node-name",
 			Usage:   "node `NAME` (unique in cluster domain; [a-z0-9-]{1,32})",
@@ -750,7 +756,7 @@ var Flags = CliFlags{
 			Usage:   "node OAuth client `SECRET` (auto-assigned via join token)",
 			EnvVars: EnvVars("NODE_CLIENT_SECRET"),
 			Hidden:  true,
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "jwks-url",
 			Usage:   "JWKS endpoint `URL` provided by the cluster portal for JWT verification",
@@ -773,6 +779,29 @@ var Flags = CliFlags{
 			Usage:   "JWT clock skew allowance in `SECONDS` (default 60, max 300)",
 			Value:   60,
 			EnvVars: EnvVars("JWT_LEEWAY"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-issuer",
+			Usage:   "Portal OIDC OP issuer `URL` advertised in discovery and ID tokens (defaults to site-url)",
+			EnvVars: EnvVars("PORTAL_OIDC_ISSUER"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-ttl",
+			Usage:   "Portal OIDC OP access/ID-token lifetime in `SECONDS` (default 300, max 900)",
+			Value:   300,
+			EnvVars: EnvVars("PORTAL_OIDC_TTL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-code-ttl",
+			Usage:   "Portal OIDC OP authorization-code lifetime in `SECONDS` (default 60, max 300)",
+			Value:   60,
+			EnvVars: EnvVars("PORTAL_OIDC_CODE_TTL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-default-policy",
+			Usage:   "Portal OIDC OP routing policy when a user has access to multiple instances (`chooser` or `direct`)",
+			Value:   "chooser",
+			EnvVars: EnvVars("PORTAL_OIDC_DEFAULT_POLICY"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "advertise-url",
@@ -820,6 +849,11 @@ var Flags = CliFlags{
 			Value:   cli.NewStringSlice(scheme.Https),
 			EnvVars: EnvVars("PROXY_PROTO_HTTPS"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "services-cidr",
+			Usage:   "comma-separated `CIDR` ranges or IPs allowed for outbound service connections, e.g. 172.18.0.0/16",
+			EnvVars: EnvVars("SERVICES_CIDR"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-tls",
 			Usage:   "disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available",
@@ -855,8 +889,26 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "http-compression",
 			Aliases: []string{"z"},
-			Usage:   "Web server compression `METHOD` (gzip, none)",
+			Usage:   "Web server compression `METHODS` as a comma-separated preference list (e.g. \"zstd,gzip\"; supported: gzip, zstd, none)",
 			EnvVars: EnvVars("HTTP_COMPRESSION"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "http-header-timeout",
+			Usage:   "timeout for reading request headers as `DURATION`",
+			Value:   DefaultHttpHeaderTimeout.String(),
+			EnvVars: EnvVars("HTTP_HEADER_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "http-header-bytes",
+			Usage:   "maximum request header size in `BYTES`",
+			Value:   DefaultHttpHeaderBytes,
+			EnvVars: EnvVars("HTTP_HEADER_BYTES"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "http-idle-timeout",
+			Usage:   "timeout for idle keep-alive connections as `DURATION`",
+			Value:   DefaultHttpIdleTimeout.String(),
+			EnvVars: EnvVars("HTTP_IDLE_TIMEOUT"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "http-cache-public",
@@ -927,7 +979,8 @@ var Flags = CliFlags{
 			Aliases: []string{"db-pass"},
 			Usage:   "database user `PASSWORD`",
 			EnvVars: EnvVars("DATABASE_PASSWORD"),
-		}}, {
+		},
+		Secret: true}, {
 		Flag: &cli.IntFlag{
 			Name:    "database-timeout",
 			Usage:   "timeout in `SECONDS` for establishing a database connection (1-60)",
@@ -1025,6 +1078,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("FFMPEG_MAP_AUDIO"),
 		}, DocDefault: fmt.Sprintf("`%s`", encode.DefaultMapAudio)}, {
 		Flag: &cli.StringFlag{
+			Name:    "ffmpeg-exclude",
+			Usage:   "container and codec `FORMATS` not to be processed by FFmpeg, separated by commas",
+			Value:   ffmpeg.DefaultExclude,
+			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
 			Value:   "exiftool",
@@ -1109,16 +1168,16 @@ var Flags = CliFlags{
 			Name:    "download-token",
 			Usage:   "`DEFAULT` download URL token for originals (leave blank for a random value)",
 			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "preview-token",
 			Usage:   "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
 			EnvVars: EnvVars("PREVIEW_TOKEN"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
-			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
+			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, vips)",
 			Value:   Auto,
 			EnvVars: EnvVars("THUMB_LIBRARY"),
 		}}, {
@@ -1127,13 +1186,6 @@ var Flags = CliFlags{
 			Usage:   "standard color `PROFILE` for thumbnails (auto, preserve, srgb, none)",
 			Value:   thumb.ColorAuto,
 			EnvVars: EnvVars("THUMB_COLOR"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "thumb-filter",
-			Aliases: []string{"filter"},
-			Usage:   "downscaling filter `NAME` (imaging best to worst: blackman, lanczos, cubic, linear, nearest)",
-			Value:   thumb.ResampleAuto.String(),
-			EnvVars: EnvVars("THUMB_FILTER"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size",
@@ -1195,7 +1247,7 @@ var Flags = CliFlags{
 			Usage:   "vision service access `TOKEN` *optional*",
 			Value:   "",
 			EnvVars: EnvVars("VISION_KEY"),
-		}}, {
+		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "vision-schedule",
 			Usage:   "vision worker `SCHEDULE` for background processing (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
@@ -1209,12 +1261,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
-			Usage:   "flags newly added pictures as private if they might be offensive (requires TensorFlow)",
+			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-engine",
-			Usage:   "face detection engine `NAME` (auto, pigo, onnx)",
+			Usage:   "face detection engine `NAME` (auto, onnx)",
 			Value:   face.EngineAuto,
 			EnvVars: EnvVars("FACE_ENGINE"),
 		}}, {
@@ -1234,12 +1286,6 @@ var Flags = CliFlags{
 			Usage:   "minimum face `QUALITY` score (1-100)",
 			Value:   face.ScoreThreshold,
 			EnvVars: EnvVars("FACE_SCORE"),
-		}}, {
-		Flag: &cli.Float64SliceFlag{
-			Name:    "face-angle",
-			Usage:   "face detection `ANGLE` in radians (repeatable)",
-			Value:   cli.NewFloat64Slice(face.DefaultAngles...),
-			EnvVars: EnvVars("FACE_ANGLE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",

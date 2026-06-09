@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -47,7 +47,6 @@ import { createApp } from "vue";
 import { createVuetify } from "vuetify";
 import Vue3Sanitize from "vue-3-sanitize";
 import VueSanitize from "vue-sanitize-directive";
-import FloatingVue from "floating-vue";
 import VueLuxon from "vue-luxon";
 import { passiveSupport } from "passive-events-support/src/utils";
 import * as themes from "options/themes";
@@ -55,6 +54,7 @@ import Hls from "hls.js";
 import { createGettext, T } from "common/gettext";
 import { Locale } from "locales";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
+import { VFileUpload } from "vuetify/labs/VFileUpload";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 import "css/app.css";
@@ -117,6 +117,7 @@ $config.update().finally(() => {
 
   // Create Vuetify 3 instance.
   const vuetify = createVuetify({
+    components: { VFileUpload },
     defaults,
     icons: {
       defaultSet: "mdi",
@@ -146,11 +147,6 @@ $config.update().finally(() => {
     allowedAttributes: { b: ["dir"], strong: ["dir"], span: ["dir"] },
   });
   app.use(VueSanitize);
-
-  // FloatingVue is a library to easily add tooltips to the UI:
-  // https://floating-vue.starpad.dev/guide/installation
-  FloatingVue.options.themes.tooltip.placement = "top";
-  app.use(FloatingVue);
 
   // TODO: check it
   // debugger;

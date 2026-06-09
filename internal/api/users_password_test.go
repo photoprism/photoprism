@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -48,6 +49,18 @@ func TestChangePassword(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2/password",
 			"{OldPassword: old}", sessId)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUserPassword(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
+		body := `{"OldPassword":"Alice123!","NewPassword":"` + strings.Repeat("a", int(MaxAuthRequestBytes)) + `"}`
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2/password", body, sessId)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 	t.Run("AliceProvidesWrongPassword", func(t *testing.T) {
 		app, router, conf := NewApiTest()

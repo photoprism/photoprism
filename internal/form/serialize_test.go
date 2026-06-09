@@ -114,3 +114,21 @@ func TestUnserialize(t *testing.T) {
 
 	assert.Equal(t, 0, form.Count)
 }
+
+func TestUnserializeUnsignedValidation(t *testing.T) {
+	t.Run("RejectNegativeUnsigned", func(t *testing.T) {
+		form := &TestForm{}
+
+		if err := Unserialize(form, "dist:-1"); err == nil {
+			t.Fatal("expected error for negative unsigned value")
+		}
+	})
+	t.Run("RejectOverflowUnsigned", func(t *testing.T) {
+		form := &TestForm{}
+
+		// uint32 max + 1 should fail for Diff.
+		if err := Unserialize(form, "diff:4294967296"); err == nil {
+			t.Fatal("expected overflow error for uint32 field")
+		}
+	})
+}

@@ -24,10 +24,13 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 ### Security & Middleware
 
 - Authenticate requests using the standard middleware (`AuthRequired`) and check roles via helpers in `internal/auth/acl` (`acl.ParseRole`, `acl.ScopePermits`, `acl.ScopeAttrPermits`).
+- Bound request bodies before parsing JSON or multipart payloads. Use `LimitRequestBodyBytes(...)` with a route-appropriate cap before `BindJSON(...)` / `ShouldBindJSON(...)`, detect `IsRequestBodyTooLarge(err)`, and return `413 Request Entity Too Large` via `AbortRequestTooLarge(...)`.
+- Keep new JSON binding sites on the shared request-limit path by running `make check-api-request-limits` (also included in `make lint`) after adding or refactoring API handlers in the root repo or private overlays.
 - Never log secrets or tokens. Prefer structured logging through `event.Log` and redact sensitive values before logging.
 - Enforce rate limiting with the shared limiters (`limiter.Auth`, `limiter.Login`) and respond with `limiter.AbortJSON` to maintain consistent 429 JSON payloads.
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
+- **Upload-time NSFW screening (`users_upload.go`)** — when `PHOTOPRISM_UPLOAD_NSFW=false`, the upload handler runs `vision.DetectNSFW` against every accepted file and deletes any file flagged above the NSFW threshold before it reaches `originals/`. The check is skipped entirely when `UPLOAD_NSFW=true` (default). See [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md) for the full NSFW call-graph and flag matrix.
 
 ### Audit Logging
 
@@ -54,7 +57,28 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
       status.Error(err),
   }, refID)
   ```
-- See `specs/common/audit-logs.md` for the full conventions and additional examples that agents should follow.
+
+### User-Visible Notifications vs Audit Log
+
+`event.AuditInfo` / `AuditWarn` / `AuditErr` write to the audit log and broadcast on `audit.log.<level>` — the toast component on the frontend does NOT subscribe to that channel, so an audit entry alone produces no UI feedback. To raise a red or green toast in the browser, publish on the `notify.*` channel via `event.Error(msg)` / `event.ErrorMsg(id, …)` (red) or `event.Success(msg)` (green).
+
+The two helpers have distinct subscribers; choose based on who the message is for:
+
+- **Short endpoints whose response the frontend reads** (single-shot CRUD, login, settings updates). The calling component renders the response, so `AuditErr` plus an HTTP error is enough — the UI gets the error string from the response body.
+- **Long-running endpoints that the UI drives via the event hub** (`POST /api/v1/index`, `POST /api/v1/import/*path`, and similar). The frontend cancels the in-flight HTTP request on the first `index.*` / `import.*` wire event, so the response body is invisible in normal operation. In-flight failures that need a specific toast MUST be published via `event.ErrorMsg(...)` on `notify.error`; an HTTP error alone produces only the frontend's generic fallback toast (or nothing, if the cancel has already fired).
+- **Forensic events that don't need UI surfacing** (rate limiting, ACL denials, internal aborts whose user-visible signal comes from a sibling channel). `AuditErr` alone is the right call.
+
+When in doubt, ask: "after this handler returns, what does the user see?" If the answer is "the frontend will read the response", `AuditErr` covers it. If the answer is "the page is already subscribed to wire events and the response is discarded", publish on `notify.*` as well.
+
+```go
+// Forensic audit only — frontend will read the response body and render the error.
+event.AuditErr([]string{ClientIP(c), "session %s", "delete album", status.Failed}, s.RefID)
+AbortBadRequest(c, err)
+
+// Forensic audit + specific red toast — needed when the request was already canceled by the wire.
+event.AuditErr([]string{ClientIP(c), "session %s", "index files", status.Failed}, s.RefID)
+event.ErrorMsg(i18n.ErrIndexingFailed)
+```
 
 ### Swagger Documentation
 
@@ -70,6 +94,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - When handlers interact with the database, initialize fixtures through config helpers such as `config.NewTestConfig("api")` or `config.NewMinimalTestConfigWithDb("api", t.TempDir())` depending on fixture needs.
 - Stub external dependencies (`httptest.Server`) for remote calls and set `AllowPrivate=true` explicitly when the test server binds to loopback addresses.
 - Structure tests with table-driven subtests (`t.Run("CaseName", ...)`) and use PascalCase names. Provide cleanup functions (`t.Cleanup`) to remove temporary files or databases created during tests.
+- Do not run `internal/api` tests in parallel. These suites share fixture files, temporary assets, and database state, so parallel `go test` invocations can cause false failures and readonly/fixture-conflict errors.
 
 ### Focused Test Runs
 
@@ -77,6 +102,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Cluster endpoints: `go test ./internal/api -run 'Cluster' -count=1`
 - Downloads and zip streaming: `go test ./internal/api -run 'Download|Archive' -count=1`
 - Combined CLI and API validation: pair `go test ./internal/commands -run 'Cluster' -count=1` with the matching API suite to ensure DTOs remain compatible.
+- Keep focused `internal/api` runs sequential. Do not launch multiple `go test ./internal/api ...` commands at the same time.
 
 ### Preflight Checklist
 

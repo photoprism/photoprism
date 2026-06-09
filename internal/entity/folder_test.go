@@ -549,11 +549,15 @@ func TestFolder_Create(t *testing.T) {
 		// - title/filter point to pathWine
 		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
 
-		stale := NewFolderAlbum(folderWine.Title(), pathMirror, `path:"`+pathWine+`" public:true`)
-
-		if stale == nil {
-			t.Fatal("expected stale folder album")
+		stale := &Album{
+			AlbumType:   AlbumFolder,
+			AlbumSlug:   legacyFolderAlbumSlug(pathMirror),
+			AlbumPath:   pathMirror,
+			AlbumFilter: `path:"` + pathWine + `" public:true`,
+			CreatedAt:   Now(),
+			UpdatedAt:   Now(),
 		}
+		stale.SetTitle(folderWine.Title())
 
 		if err := stale.Create(); err != nil {
 			t.Fatal(err)
@@ -608,11 +612,15 @@ func TestFolder_Create(t *testing.T) {
 		// exists and points to the wrong folder metadata.
 		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathWine}).Delete(Album{}).Error
 
-		stale := NewFolderAlbum(folderWine.Title(), pathMirror, `path:"`+pathWine+`" public:true`)
-
-		if stale == nil {
-			t.Fatal("expected stale folder album")
+		stale := &Album{
+			AlbumType:   AlbumFolder,
+			AlbumSlug:   legacyFolderAlbumSlug(pathMirror),
+			AlbumPath:   pathMirror,
+			AlbumFilter: `path:"` + pathWine + `" public:true`,
+			CreatedAt:   Now(),
+			UpdatedAt:   Now(),
 		}
+		stale.SetTitle(folderWine.Title())
 
 		if err := stale.Create(); err != nil {
 			t.Fatal(err)
@@ -643,5 +651,73 @@ func TestFolder_Create(t *testing.T) {
 		assert.Equal(t, folderWine.Title(), wineAlbum.AlbumTitle)
 		assert.Equal(t, pathMirror, mirrorAlbum.AlbumPath)
 		assert.Equal(t, pathWine, wineAlbum.AlbumPath)
+	})
+	t.Run("SingleDeepFolderRescanRepairsAncestorCollisionScope", func(t *testing.T) {
+		parentPath := "ins-deep-" + txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		pathMirror := parentPath + "/🍷"
+		pathEmoji := parentPath + "/🪞"
+		pathPumpkin := pathEmoji + "/🎃"
+		pathLink := pathPumpkin + "/🔗"
+		pathFish := pathLink + "/🐠"
+
+		folderMirror := NewFolder(RootOriginals, pathMirror, time.Now().UTC())
+		folderEmoji := NewFolder(RootOriginals, pathEmoji, time.Now().UTC())
+		folderPumpkin := NewFolder(RootOriginals, pathPumpkin, time.Now().UTC())
+		folderLink := NewFolder(RootOriginals, pathLink, time.Now().UTC())
+		folderFish := NewFolder(RootOriginals, pathFish, time.Now().UTC())
+
+		for _, folder := range []*Folder{&folderMirror, &folderEmoji, &folderPumpkin, &folderLink, &folderFish} {
+			if err := folder.Create(); err != nil {
+				t.Fatal(err)
+			}
+		}
+
+		t.Cleanup(func() {
+			_ = UnscopedDb().Where("root = ? AND path IN (?)", RootOriginals, []string{pathMirror, pathEmoji, pathPumpkin, pathLink, pathFish}).Delete(Folder{}).Error
+			_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathEmoji, pathPumpkin, pathLink, pathFish}).Delete(Album{}).Error
+		})
+
+		// Start from a stale collision state where a deep emoji-only folder has
+		// overwritten a sibling album outside its immediate parent subtree.
+		_ = UnscopedDb().Where("album_type = ? AND album_path IN (?)", AlbumFolder, []string{pathMirror, pathFish}).Delete(Album{}).Error
+
+		stale := &Album{
+			AlbumType:   AlbumFolder,
+			AlbumSlug:   legacyFolderAlbumSlug(pathMirror),
+			AlbumPath:   pathMirror,
+			AlbumFilter: `path:"` + pathFish + `" public:true`,
+			CreatedAt:   Now(),
+			UpdatedAt:   Now(),
+		}
+		stale.SetTitle(folderFish.Title())
+
+		if err := stale.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		reconciled, err := ReconcileOriginalsFolderAlbums(pathFish)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 5, reconciled)
+
+		mirrorAlbum := FindFolderAlbum(pathMirror)
+
+		if mirrorAlbum == nil {
+			t.Fatal("expected mirror folder album")
+		}
+
+		fishAlbum := FindFolderAlbum(pathFish)
+
+		if fishAlbum == nil {
+			t.Fatal("expected fish folder album")
+		}
+
+		assert.Equal(t, folderMirror.Title(), mirrorAlbum.AlbumTitle)
+		assert.Equal(t, folderFish.Title(), fishAlbum.AlbumTitle)
+		assert.Equal(t, pathMirror, mirrorAlbum.AlbumPath)
+		assert.Equal(t, pathFish, fishAlbum.AlbumPath)
 	})
 }

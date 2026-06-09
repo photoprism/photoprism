@@ -3,8 +3,6 @@ package server
 import (
 	"net/http"
 	"path"
-	"path/filepath"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -13,10 +11,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	httpsec "github.com/photoprism/photoprism/pkg/http/security"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 const (
+	// IndexHtml is the default frontend entrypoint file name.
 	IndexHtml = "index.html"
 )
 
@@ -65,38 +65,38 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 				return
 			}
 
-			// Sanitize and normalize path from request URL.
-			absPath := clean.UserPath(c.Request.URL.Path)
-			webPath := absPath
+			requestPath := c.Request.URL.Path
+			escapedPath := c.Request.URL.EscapedPath()
 
-			switch {
-			case webBase != "" && absPath == webBase:
-				// Request targets the base path itself (e.g. "/i/acme"), so map it to index.
-				webPath = ""
-			case webBase != "" && strings.HasPrefix(absPath, webBase+"/"):
-				// Request is under the configured base path; strip the prefix for web storage lookup.
-				webPath = strings.TrimPrefix(absPath, webBase+"/")
-			case webBase != "":
-				// Ignore requests outside the configured base path when a base path is enforced.
+			// Reject ambiguous path variants that could bypass expected access checks.
+			if httpsec.OverlayHasAmbiguousPath(requestPath, escapedPath) {
 				return
-			case absPath == "" && c.Request.URL.Path != "/":
-				// Reject paths sanitized to empty values, but keep "/" valid so it can resolve to index.
+			}
+
+			// Resolve request path to an overlay-relative path (if in scope).
+			webPath, ok := httpsec.OverlayRelativePath(requestPath, webBase)
+			if !ok {
 				return
 			}
 
 			if webPath == "" {
 				webPath = IndexHtml
 			} else if path.Ext(webPath) == "" {
-				webPath += "/" + IndexHtml
+				webPath = path.Join(webPath, IndexHtml)
 			}
 
-			// Compose absolute file path in web storage directory.
-			webFile := filepath.Join(webDir, webPath)
+			// Block hidden/special paths and sensitive file names from direct access.
+			if httpsec.OverlayPathBlocked(webPath) {
+				log.Tracef("web: blocked overlay path %s", clean.Log(webPath))
+				return
+			}
+
+			webFile, hasFile := httpsec.OverlayResolveFile(webDir, webPath)
 
 			// Resolve unmatched requests by serving an overlay file, redirecting root,
 			// or falling through so the next NoRoute handler can return 404.
 			switch {
-			case fs.FileExists(webFile):
+			case hasFile:
 				// Serve the matched overlay file and stop the NoRoute handler chain.
 				log.Debugf("web: serving %s", clean.Log(webFile))
 				c.Abort()
@@ -124,20 +124,23 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	// Serves static favicon.
 	router.StaticFile(conf.BaseUri("/favicon.ico"), conf.SiteFavicon())
 
-	// Serves bundled assets like JS, CSS, and fonts.
+	// Serves bundled assets like JS, CSS, and fonts. Prefers precompressed
+	// .zst / .gz siblings emitted by frontend/scripts/precompress.js when the
+	// client's Accept-Encoding allows; see static_precompressed.go for the
+	// negotiation rules and Range/Vary handling.
 	if dir := conf.StaticPath(); dir != "" {
 		group := router.Group(conf.BaseUri(config.StaticUri), Static(conf))
-		{
-			group.Static("", dir)
-		}
+		handler := PrecompressedStatic(conf, dir)
+		group.GET("/*filepath", handler)
+		group.HEAD("/*filepath", handler)
 	}
 
 	// Serves custom assets, e.g. bundled with extensions.
 	if dir := conf.CustomStaticPath(); dir != "" {
 		group := router.Group(conf.BaseUri(config.CustomStaticUri), Static(conf))
-		{
-			group.Static("", dir)
-		}
+		handler := PrecompressedStatic(conf, dir)
+		group.GET("/*filepath", handler)
+		group.HEAD("/*filepath", handler)
 	}
 
 	// Serves rainbow test page.

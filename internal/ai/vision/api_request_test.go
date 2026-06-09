@@ -97,7 +97,6 @@ func TestApiRequestJSONThinkOmitempty(t *testing.T) {
 			t.Fatalf("expected think field to be omitted, payload: %s", string(data))
 		}
 	})
-
 	t.Run("IncludeWhenSet", func(t *testing.T) {
 		req := &ApiRequest{
 			Model:          "gpt-oss:20b",
@@ -119,7 +118,6 @@ func TestApiRequestJSONThinkOmitempty(t *testing.T) {
 			t.Fatalf("expected think=low, got %#v", payload["think"])
 		}
 	})
-
 	t.Run("StringFalseSerializedAsBool", func(t *testing.T) {
 		req := &ApiRequest{
 			Model:          "qwen3-vl:4b",
@@ -141,7 +139,6 @@ func TestApiRequestJSONThinkOmitempty(t *testing.T) {
 			t.Fatalf("expected think=false bool, got %#v", payload["think"])
 		}
 	})
-
 	t.Run("StringTrueSerializedAsBool", func(t *testing.T) {
 		req := &ApiRequest{
 			Model:          "qwen3-vl:4b",

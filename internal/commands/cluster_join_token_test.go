@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -33,9 +34,12 @@ func TestClusterJoinToken_PrintOnly(t *testing.T) {
 
 func TestClusterJoinToken_Save(t *testing.T) {
 	conf := get.Config()
+	prevEdition := conf.Options().Edition
 	prevRole := conf.Options().NodeRole
+	conf.Options().Edition = config.Portal
 	conf.Options().NodeRole = cluster.RolePortal
 	t.Cleanup(func() {
+		conf.Options().Edition = prevEdition
 		conf.Options().NodeRole = prevRole
 	})
 	targetFile := conf.PortalJoinTokenFile()

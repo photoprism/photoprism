@@ -18,11 +18,11 @@ import (
 // Application code should retrieve option values via getter functions since they provide
 // validation and return defaults if a value is empty.
 type Options struct {
-	Name                      string        `json:"-"`
-	About                     string        `json:"-"`
-	Edition                   string        `json:"-"`
-	Version                   string        `json:"-"`
-	Copyright                 string        `json:"-"`
+	Name                      string        `yaml:"-" json:"-"`
+	About                     string        `yaml:"-" json:"-"`
+	Edition                   string        `yaml:"-" json:"-"`
+	Version                   string        `yaml:"-" json:"-"`
+	Copyright                 string        `yaml:"-" json:"-"`
 	PartnerID                 string        `yaml:"-" json:"-" flag:"partner-id"`
 	AuthMode                  string        `yaml:"AuthMode" json:"-" flag:"auth-mode"`
 	AuthSecret                string        `yaml:"-" json:"-" flag:"auth-secret"`
@@ -63,6 +63,8 @@ type Options struct {
 	Unsafe                    bool          `yaml:"-" json:"-" flag:"unsafe"`
 	Demo                      bool          `yaml:"-" json:"-" flag:"demo"`
 	Sponsor                   bool          `yaml:"-" json:"-" flag:"sponsor"`
+	StoragePath               string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
+	StorageFree               float64       `yaml:"StorageFree" json:"-" flag:"storage-free"`
 	ConfigPath                string        `yaml:"ConfigPath" json:"-" flag:"config-path"`
 	OptionsYaml               string        `json:"-" yaml:"-" flag:"-"`
 	DefaultsYaml              string        `json:"-" yaml:"-" flag:"defaults-yaml"`
@@ -70,7 +72,6 @@ type Options struct {
 	OriginalsLimit            int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit           int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	UsersPath                 string        `yaml:"UsersPath" json:"-" flag:"users-path"`
-	StoragePath               string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	ImportPath                string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	ImportDest                string        `yaml:"ImportDest" json:"-" flag:"import-dest"`
 	ImportAllow               string        `yaml:"ImportAllow" json:"ImportAllow" flag:"import-allow"`
@@ -94,7 +95,7 @@ type Options struct {
 	BackupRetain              int           `yaml:"BackupRetain" json:"BackupRetain" flag:"backup-retain"`
 	BackupDatabase            bool          `yaml:"BackupDatabase" json:"BackupDatabase" flag:"backup-database" default:"true"`
 	BackupAlbums              bool          `yaml:"BackupAlbums" json:"BackupAlbums" flag:"backup-albums" default:"true"`
-	IndexWorkers              int           `yaml:"IndexWorkers" json:"IndexWorkers" flag:"index-workers"`
+	IndexWorkers              string        `yaml:"IndexWorkers" json:"IndexWorkers" flag:"index-workers"`
 	IndexSchedule             string        `yaml:"IndexSchedule" json:"IndexSchedule" flag:"index-schedule"`
 	WakeupInterval            time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex                 int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
@@ -106,13 +107,13 @@ type Options struct {
 	DisableBackups            bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
 	DisableRestart            bool          `yaml:"DisableRestart" json:"-" flag:"disable-restart"`
 	DisableWebDAV             bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
+	DisableMCP                bool          `yaml:"DisableMCP" json:"DisableMCP" flag:"disable-mcp"`
 	DisablePlaces             bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableTensorFlow         bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
 	DisableFaces              bool          `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`
 	DisableClassification     bool          `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DisableFFmpeg             bool          `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
 	DisableExifTool           bool          `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
-	DisableVips               bool          `yaml:"DisableVips" json:"DisableVips" flag:"disable-vips"`
 	DisableSips               bool          `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
 	DisableDarktable          bool          `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
 	DisableRawTherapee        bool          `yaml:"DisableRawTherapee" json:"DisableRawTherapee" flag:"disable-rawtherapee"`
@@ -153,7 +154,7 @@ type Options struct {
 	ClusterUUID               string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
 	PortalUrl                 string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
 	PortalProxy               bool          `yaml:"PortalProxy" json:"-" flag:"portal-proxy"`
-	PortalProxyPrefix         string        `yaml:"PortalProxyPrefix" json:"-" flag:"portal-proxy-prefix"`
+	PortalProxyUri            string        `yaml:"PortalProxyUri" json:"-" flag:"portal-proxy-uri"`
 	JoinToken                 string        `yaml:"JoinToken" json:"-" flag:"join-token"`
 	NodeName                  string        `yaml:"NodeName" json:"-" flag:"node-name"`
 	NodeUUID                  string        `yaml:"NodeUUID" json:"-" flag:"node-uuid"`
@@ -164,6 +165,10 @@ type Options struct {
 	JWKSCacheTTL              int           `yaml:"JWKSCacheTTL" json:"-" flag:"jwks-cache-ttl"`
 	JWTScope                  string        `yaml:"JWTScope" json:"-" flag:"jwt-scope"`
 	JWTLeeway                 int           `yaml:"JWTLeeway" json:"-" flag:"jwt-leeway"`
+	PortalOIDCIssuer          string        `yaml:"PortalOIDCIssuer" json:"-" flag:"portal-oidc-issuer"`
+	PortalOIDCTTL             int           `yaml:"PortalOIDCTTL" json:"-" flag:"portal-oidc-ttl"`
+	PortalOIDCCodeTTL         int           `yaml:"PortalOIDCCodeTTL" json:"-" flag:"portal-oidc-code-ttl"`
+	PortalOIDCDefaultPolicy   string        `yaml:"PortalOIDCDefaultPolicy" json:"-" flag:"portal-oidc-default-policy"`
 	AdvertiseUrl              string        `yaml:"AdvertiseUrl" json:"-" flag:"advertise-url"`
 	HttpsProxy                string        `yaml:"HttpsProxy" json:"HttpsProxy" flag:"https-proxy"`
 	HttpsProxyInsecure        bool          `yaml:"HttpsProxyInsecure" json:"HttpsProxyInsecure" flag:"https-proxy-insecure"`
@@ -172,6 +177,7 @@ type Options struct {
 	ProxyClientHeaders        []string      `yaml:"ProxyClientHeaders" json:"-" flag:"proxy-client-header"`
 	ProxyProtoHeaders         []string      `yaml:"ProxyProtoHeaders" json:"-" flag:"proxy-proto-header"`
 	ProxyProtoHttps           []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
+	ServicesCIDR              string        `yaml:"ServicesCIDR" json:"-" flag:"services-cidr"`
 	DisableTLS                bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
 	DefaultTLS                bool          `yaml:"DefaultTLS" json:"DefaultTLS" flag:"default-tls"`
 	TLSEmail                  string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"`
@@ -179,6 +185,9 @@ type Options struct {
 	TLSKey                    string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	HttpMode                  string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression           string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	HttpHeaderTimeout         time.Duration `yaml:"HttpHeaderTimeout" json:"-" flag:"http-header-timeout"`
+	HttpHeaderBytes           int           `yaml:"HttpHeaderBytes" json:"-" flag:"http-header-bytes"`
+	HttpIdleTimeout           time.Duration `yaml:"HttpIdleTimeout" json:"-" flag:"http-idle-timeout"`
 	HttpCachePublic           bool          `yaml:"HttpCachePublic" json:"HttpCachePublic" flag:"http-cache-public"`
 	HttpCacheMaxAge           int           `yaml:"HttpCacheMaxAge" json:"HttpCacheMaxAge" flag:"http-cache-maxage"`
 	HttpVideoMaxAge           int           `yaml:"HttpVideoMaxAge" json:"HttpVideoMaxAge" flag:"http-video-maxage"`
@@ -207,6 +216,7 @@ type Options struct {
 	FFmpegDevice              string        `yaml:"FFmpegDevice" json:"-" flag:"ffmpeg-device"`
 	FFmpegMapVideo            string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`
 	FFmpegMapAudio            string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
+	FFmpegExclude             string        `yaml:"FFmpegExclude" json:"-" flag:"ffmpeg-exclude"`
 	ExifToolBin               string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	SipsBin                   string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
 	SipsExclude               string        `yaml:"SipsExclude" json:"-" flag:"sips-exclude"`
@@ -225,7 +235,6 @@ type Options struct {
 	PreviewToken              string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbLibrary              string        `yaml:"ThumbLibrary" json:"ThumbLibrary" flag:"thumb-library"`
 	ThumbColor                string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
-	ThumbFilter               string        `yaml:"ThumbFilter" json:"ThumbFilter" flag:"thumb-filter"`
 	ThumbSize                 int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached         int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
 	ThumbUncached             bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
@@ -240,11 +249,9 @@ type Options struct {
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
-	FaceEngineRetry           bool          `yaml:"-" json:"-" flag:"-"`
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore                 float64       `yaml:"-" json:"-" flag:"face-score"`
-	FaceAngles                []float64     `yaml:"-" json:"-" flag:"face-angle"`
 	FaceOverlap               int           `yaml:"-" json:"-" flag:"face-overlap"`
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`

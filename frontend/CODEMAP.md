@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** February 23, 2026
+**Last Updated:** May 5, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
@@ -35,10 +35,14 @@ Startup Templates & Splash Screen
 
 Runtime & Plugins
 - Vue 3 + Vuetify 3 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
-- Router: Vue Router 4, history base at `$config.frontendUri` (default `/library`)
+- **Vuetify version pin:** `vuetify` is pinned to **`3.12.2` exactly** (no caret); see [`frontend/README.md`](README.md#currently-pinned-packages) for the canonical rationale. The TL;DR is that 3.12.3+ introduced a `VAutocomplete`/`VSelect`/`VCombobox` `onFocusout` handler that closes long dropdowns on open (#5538), unfixed in 3.12.5. The sibling-menu gate in `src/common/view.js` cooperates with the pin but is not a substitute for it.
+  - **Known caveats at 3.12.2:**
+    - Vuetify upstream issue #22828 — `v-select`'s `@blur` fires when the menu opens (introduced by the 3.12.2 screenreader navigation fix). PhotoPrism is not affected because we only bind `@blur` on `v-text-field`, `v-textarea`, and `v-combobox`; if you ever attach `@blur` to a `v-select`, expect spurious calls until that upstream bug is fixed.
+    - The `.v-field--focused` CSS class can linger on a previously-focused `v-autocomplete` input after the user clicks into another autocomplete (`document.activeElement` is correct, but Vuetify's internal `isFocused` is under-aggressive about clearing in 3.12.2). This is the inverse symptom of Vuetify #22697 — fixing it overshot in 3.12.3 and caused #5538. Functionally harmless in the photo edit dialog because the affected fields are not on screen together.
+- Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal/admin` for Portal)
 - I18n: `vue3-gettext` via `common/gettext.js`; canonical extraction via root `make gettext-extract` (scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`), compile with `npm run gettext-compile`
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
-- Tooltips: `floating-vue`
+- Tooltips: Vuetify `<v-tooltip>` component + `v-tooltip` directive (auto-imported per SFC by `webpack-plugin-vuetify`)
 - Video: HLS.js assigned to `window.Hls`
 - PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/i/<name>/`. Instance clients under `/i/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `frontend/webpack.config.js` (see the `GenerateSW` plugin); locale chunks and non-woff2 font variants are excluded there so we don’t force every user to download those assets on first visit.
 - Service worker cleanup: `frontend/src/sw-scope-cleanup.js` provides strict same-scope precache cleanup. `cleanupOutdatedCaches` is disabled in `GenerateSW` to avoid broad cross-scope cache deletion on shared origins.
@@ -54,13 +58,16 @@ HTTP Client
 - Axios instance: `src/common/api.js`
   - Base URL: `window.__CONFIG__.apiUri` (or `/api/v1` in tests)
   - Adds `X-Auth-Token`, `X-Client-Uri`, `X-Client-Version`
+  - Bootstraps `X-Auth-Token` from app-local namespaced storage (`getAppStorage().getItem("session.token")`)
   - Interceptors drive global progress notifications and token refresh via headers `X-Preview-Token`/`X-Download-Token`
 
 Auth, Session, and Config
-- `$session`: `src/common/session.js` — stores `X-Auth-Token` and `session.id` in storage; provides guards and default routes
+- `$session`: `src/common/session.js` — restores and persists namespaced browser session state (`session.token`, `session.id`, user/provider/scope/data), selects `localStorage` vs `sessionStorage` from the namespaced `session` preference flag, resolves `storageNamespace` from the actual client config payload, and provides guards/default routes
+- Browser storage helper: `src/common/storage.js` — applies the `pp:<storageNamespace>:` prefix, supports legacy key migration, and exposes app-local wrappers for `localStorage` and `sessionStorage`
 - `$config`: `src/common/config.js` — reactive view of server config and user settings; sets theme, language, limits; exposes `deny()` for feature flags
 - Route guards live in `src/app.js` (router `beforeEach`/`afterEach`) and use `$session` + `$config`
 - `$view`: `src/common/view.js` — manages focus/scroll helpers; use `saveWindowScrollPos()` / `restoreWindowScrollPos()` when navigating so infinite-scroll pages land back where users left them; behaviour is covered by `tests/vitest/common/view.test.js`
+- Login page: `src/page/auth/login.vue` — password + OIDC entrypoint; the `Stay signed in on this device` toggle maps to persistent namespaced `localStorage` when checked and ephemeral namespaced `sessionStorage` when unchecked, initializing from the current session storage mode
 
 Models (REST)
 - Base class: `src/model/rest.js` provides `search`, `find`, `save`, `update`, `remove` for concrete models (`photo`, `album`, `label`, `subject`, etc.)
@@ -89,6 +96,7 @@ Testing
 - Run: `cd frontend && npm run test` (or `make test-js` from repo root)
 - Acceptance: TestCafe configs in `frontend/tests/acceptance`; run against a live server
 - Detailed test/lint guide (humans + agents): `frontend/tests/README.md`
+- Session/auth storage regressions: when testing `src/common/session.js`, cover both direct `config.storageNamespace` access and the real `Config` shape where the namespace is supplied via `config.values.storageNamespace`
 
 Build & Tooling
 - Webpack is used for bundling; scripts in `frontend/package.json`:

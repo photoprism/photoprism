@@ -22,7 +22,14 @@ func registerWellknownRoutes(router *gin.Engine, conf *config.Config) {
 	})
 
 	// Registers the "/.well-known/openid-configuration" service discovery endpoint for OpenID Connect clients.
+	// Portal builds advertise the Portal OIDC OP shape (EdDSA ID tokens, authorization-code + PKCE);
+	// other builds advertise the instance's OAuth2 server.
 	router.Any(conf.BaseUri("/.well-known/openid-configuration"), func(c *gin.Context) {
+		c.Header(header.CacheControl, "max-age=300, public")
+		if conf.Portal() {
+			c.JSON(http.StatusOK, wellknown.NewPortalOpenIDConfiguration(conf))
+			return
+		}
 		c.JSON(http.StatusOK, wellknown.NewOpenIDConfiguration(conf))
 	})
 

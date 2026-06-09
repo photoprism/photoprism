@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 // RemuxFile changes the file format to the specified container as needed.
@@ -30,6 +31,14 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 	// Use MP4 as default container format.
 	if opt.Container == "" {
 		opt.Container = fs.ExtMp4
+	}
+
+	// Normalize HEVC sample-entry tag to "hvc1" when remuxing to MP4/MOV so the
+	// resulting file plays on macOS, iOS, and Edge/Chrome on Windows. Without
+	// this override, "-codec copy" preserves a source "hev1" tag, which those
+	// players reject. Skip when the caller already set VideoTag explicitly.
+	if opt.VideoTag == "" && (opt.Container == fs.VideoMp4 || opt.Container == fs.VideoMov) && video.IsHEVCFile(videoFilePath) {
+		opt.VideoTag = "hvc1"
 	}
 
 	videoBaseName := filepath.Base(videoFilePath)
@@ -77,7 +86,7 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())
 
-	// Transcode source media file to AVC.
+	// Run the remux command.
 	start := time.Now()
 	if err = cmd.Run(); err != nil {
 		if stderr.String() != "" {
@@ -89,8 +98,8 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 			log.Debug(err)
 		}
 
-		// Log filename and transcoding time.
-		log.Warnf("ffmpeg: failed to convert %s [%s]", clean.Log(videoBaseName), time.Since(start))
+		// Log filename and remux time.
+		log.Warnf("ffmpeg: failed to remux %s [%s]", clean.Log(videoBaseName), time.Since(start))
 
 		// Remove broken video file.
 		if !fs.FileExists(tempFilePath) {
@@ -162,6 +171,13 @@ func RemuxCmd(srcName, destName string, opt encode.Options) (cmd *exec.Cmd, err 
 		"-ignore_unknown",
 		"-codec", "copy",
 		"-f", opt.Container.String(),
+	}
+
+	// Override the output video sample-entry tag when requested (e.g. "hvc1" for
+	// HEVC in MP4/MOV containers). Applied before the container-specific block
+	// so it covers both MP4 and MOV outputs.
+	if opt.VideoTag != "" {
+		flags = append(flags, "-tag:v", opt.VideoTag)
 	}
 
 	// Append format specific "ffmpeg" command flags.

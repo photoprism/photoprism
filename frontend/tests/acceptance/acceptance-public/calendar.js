@@ -81,8 +81,8 @@ test.meta("testID", "calendar-002").meta({ mode: "public" })("Common: Update cal
 
   await t
     .click(albumdialog.category)
+    .click(albumdialog.category)
     .pressKey("ctrl+a delete")
-    .pressKey("enter")
     .click(albumdialog.description)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
@@ -94,10 +94,15 @@ test.meta("testID", "calendar-002").meta({ mode: "public" })("Common: Update cal
   await toolbar.search("March 2014");
 
   await t
-    .expect(page.cardDescription.innerText)
-    .notContains("We went to ski")
+    .expect(page.cardDescription.exists)
+    .notOk()
     .expect(Selector("button.meta-location").exists)
     .notOk();
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+  await t.expect(albumdialog.category.value).eql("");
+  await t.click(albumdialog.dialogCancel);
 });
 
 test.meta("testID", "calendar-003").meta({ mode: "public" })(

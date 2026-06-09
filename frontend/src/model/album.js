@@ -7,6 +7,14 @@ import Collection from "model/collection";
 
 export let BatchSize = 180;
 
+// MaxLength mirrors the backend setter clips in internal/entity/album.go.
+export const MaxLength = Object.freeze({
+  Title: 160,
+  Location: 160,
+  Caption: 1024,
+  Description: 2048,
+});
+
 // Album models server-managed photo collections, including manual albums and moments.
 export class Album extends Collection {
   getDefaults() {
@@ -51,15 +59,30 @@ export class Album extends Collection {
   classes(selected) {
     let classes = ["is-album", "uid-" + this.UID, "type-" + this.Type];
 
-    if (this.Favorite) classes.push("is-favorite");
-    if (this.Private) classes.push("is-private");
-    if (selected) classes.push("is-selected");
+    if (this.Favorite) {
+      classes.push("is-favorite");
+    }
+    if (this.Private) {
+      classes.push("is-private");
+    }
+    if (selected) {
+      classes.push("is-selected");
+    }
 
     return classes;
   }
 
   getEntityName() {
     return this.Slug;
+  }
+
+  // trimInputs strips whitespace from MaxLength string fields before save.
+  trimInputs() {
+    for (const key of Object.keys(MaxLength)) {
+      if (typeof this[key] === "string") {
+        this[key] = this[key].trim();
+      }
+    }
   }
 
   getTitle() {

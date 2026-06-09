@@ -12,4 +12,7 @@ func TestShowConfigOptionsCommand(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Contains(t, output, "PHOTOPRISM_IMPORT_PATH")
+	assert.Contains(t, output, "PHOTOPRISM_HTTP_HEADER_TIMEOUT")
+	assert.Contains(t, output, "PHOTOPRISM_HTTP_HEADER_BYTES")
+	assert.Contains(t, output, "PHOTOPRISM_HTTP_IDLE_TIMEOUT")
 }

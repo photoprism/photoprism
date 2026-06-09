@@ -22,7 +22,7 @@ import (
 
 // WebDAVHandler wraps the http request handler so that it can be customized.
 var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Handler) {
-	srv.ServeHTTP(c.Writer, c.Request)
+	ServeWebDAV(c.Writer, c.Request, srv)
 }
 
 // WebDAVWriteMethod returns true for methods that modify WebDAV state.
@@ -112,7 +112,7 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 		// is not enough free storage to upload new files.
 		switch c.Request.Method {
 		case header.MethodPut, header.MethodCopy:
-			if conf.FilesQuotaReached() {
+			if conf.InsufficientStorage() {
 				c.AbortWithStatus(http.StatusInsufficientStorage)
 				return
 			}

@@ -17,8 +17,8 @@ func FileName(fileRoot, fileName string) string {
 		return path.Join(Config().SidecarPath(), fileName)
 	case entity.RootImport:
 		return path.Join(Config().ImportPath(), fileName)
-	case entity.RootExamples:
-		return path.Join(Config().ExamplesPath(), fileName)
+	case entity.RootSamples:
+		return path.Join(Config().SamplesPath(), fileName)
 	default:
 		return path.Join(Config().OriginalsPath(), fileName)
 	}
@@ -63,8 +63,8 @@ func RootPath(fileName string) string {
 		return Config().SidecarPath()
 	case entity.RootImport:
 		return Config().ImportPath()
-	case entity.RootExamples:
-		return Config().ExamplesPath()
+	case entity.RootSamples:
+		return Config().SamplesPath()
 	default:
 		return Config().OriginalsPath()
 	}
@@ -90,10 +90,10 @@ func Root(fileName string) string {
 		return entity.RootSidecar
 	}
 
-	examplesPath := Config().ExamplesPath()
+	samplesPath := Config().SamplesPath()
 
-	if examplesPath != "" && strings.HasPrefix(fileName, examplesPath) {
-		return entity.RootExamples
+	if samplesPath != "" && strings.HasPrefix(fileName, samplesPath) {
+		return entity.RootSamples
 	}
 
 	return entity.RootUnknown

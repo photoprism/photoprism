@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
-	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -187,7 +189,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 //	@Accept		json
 //	@Produce	json
 //	@Param		uuid				path		string	true	"node uuid"
-//	@Param		node				body		object	true	"properties to update (Role, Labels, AdvertiseUrl, SiteUrl)"
+//	@Param		node				body		object	true	"properties to update (Role, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)"
 //	@Success	200					{object}	cluster.StatusResponse
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/{uuid} [patch]
@@ -208,14 +210,28 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 
 		uuid := c.Param("uuid")
 
-		var req struct {
-			Role         string            `json:"Role"`
-			Labels       map[string]string `json:"Labels"`
-			AdvertiseUrl string            `json:"AdvertiseUrl"`
-			SiteUrl      string            `json:"SiteUrl"`
+		// Validate id to avoid path traversal and unexpected file access.
+		if !isSafeNodeID(uuid) {
+			AbortEntityNotFound(c)
+			return
 		}
 
+		var req struct {
+			Role         *string           `json:"Role"`
+			Labels       map[string]string `json:"Labels"`
+			AdvertiseUrl *string           `json:"AdvertiseUrl"`
+			SiteUrl      *string           `json:"SiteUrl"`
+			RedirectURIs *[]string         `json:"RedirectURIs"`
+		}
+
+		LimitRequestBodyBytes(c, MaxClusterRegisterBytes)
+
 		if err := c.ShouldBindJSON(&req); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -234,20 +250,59 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			return
 		}
 
-		if req.Role != "" {
-			n.Role = clean.TypeLowerDash(req.Role)
+		if req.Role != nil {
+			role := cluster.NormalizeNodeRole(*req.Role)
+
+			if role != cluster.RoleInstance && role != cluster.RoleService {
+				AbortBadRequest(c, fmt.Errorf("invalid role"))
+				return
+			}
+
+			n.Role = role
 		}
 
 		if req.Labels != nil {
 			n.Labels = req.Labels
 		}
 
-		if req.AdvertiseUrl != "" {
-			n.AdvertiseUrl = req.AdvertiseUrl
+		if req.AdvertiseUrl != nil {
+			advertise := strings.TrimSpace(*req.AdvertiseUrl)
+
+			if advertise == "" {
+				n.AdvertiseUrl = ""
+			} else {
+				if !validateAdvertiseURL(advertise) {
+					AbortBadRequest(c, fmt.Errorf("invalid advertise url"))
+					return
+				}
+
+				n.AdvertiseUrl = normalizeSiteURL(advertise)
+			}
 		}
 
-		if u := normalizeSiteURL(req.SiteUrl); u != "" {
-			n.SiteUrl = u
+		if req.SiteUrl != nil {
+			siteUrl := strings.TrimSpace(*req.SiteUrl)
+
+			if siteUrl == "" {
+				n.SiteUrl = ""
+			} else {
+				if !validateSiteURL(siteUrl) {
+					AbortBadRequest(c, fmt.Errorf("invalid site url"))
+					return
+				}
+
+				n.SiteUrl = normalizeSiteURL(siteUrl)
+			}
+		}
+
+		if req.RedirectURIs != nil {
+			normalized, err := normalizeRedirectURIs(*req.RedirectURIs)
+			if err != nil {
+				AbortBadRequest(c, err)
+				return
+			}
+			// Non-nil slice (even empty) replaces the persisted set; nil is "no change".
+			n.RedirectURIs = normalized
 		}
 
 		n.UpdatedAt = time.Now().UTC().Format(time.RFC3339)

@@ -124,6 +124,70 @@ body > .v-overlay-container .v-overlay__scrim {
     max-width: 620px;
 }
 
+/* Constrain the file list rendered below the drop zone so it scrolls
+   independently; the dialog carries scrollable which makes v-card-text
+   overflow-y: auto once flex-grow-0 is removed from v-card-text. */
+.v-dialog--upload .v-file-upload-items {
+    max-height: 25vh;
+    overflow-y: auto;
+}
+
+.v-file-upload input[type="file"] {
+    max-width: 100%;
+}
+
+.v-dialog--upload .v-file-upload .v-file-upload-dropzone.v-sheet {
+    border-color: rgb(var(--v-theme-background));
+}
+
+.v-dialog--upload .v-file-upload.v-file-upload--density-default {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 8px 16px 16px;
+}
+
+.v-dialog--upload .v-file-upload-dropzone.v-file-upload-dropzone--density-comfortable,
+.v-dialog--upload .v-file-upload-dropzone.v-file-upload-dropzone--density-default {
+    padding: 8px 0;
+}
+
+.v-dialog--upload .v-file-upload-dropzone.v-file-upload-dropzone--density-compact {
+    padding: 6px 0;
+}
+
+.v-dialog--upload .v-file-upload-dropzone .v-file-upload-divider {
+    margin: 12px 0;
+}
+
+.v-dialog--upload .v-file-upload .v-file-upload-list {
+    margin: 0;
+    padding: 0;
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+.v-dialog--upload .v-file-upload .v-file-upload-list .v-file-upload-item {
+    margin: 0;
+}
+
+.v-dialog--upload .v-file-upload.v-file-upload--density-compact {
+    max-height: 30vh;
+    overflow-y: auto;
+    padding: 8px 12px 8px;
+}
+
+.v-dialog--upload .v-file-upload .v-file-upload-icon {
+    margin-bottom: 6px;
+}
+
+.v-dialog--upload .v-file-upload .v-file-upload-icon .v-icon--size-default {
+    font-size: 1em;
+}
+
+.v-dialog--upload .v-file-upload .v-file-upload-divider {
+    margin: 8px 0;
+}
+
 .v-overlay.v-dialog.v-dialog--sidepanel:not(.v-dialog--fullscreen) .v-overlay__content {
     height: 100vh;
     min-width: 940px;
@@ -446,7 +510,7 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     font-size: 0.75rem;
 }
 
-body .v-table>.v-table__wrapper>table {
+body .v-table > .v-table__wrapper > table {
     border-spacing: 0;
 }
 

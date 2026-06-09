@@ -5,7 +5,7 @@ import (
 )
 
 // Reserved token names used for configuration and public access.
-const TokenConfig = "__config__"
+const TokenConfig = "__config__" //nolint:gosec // G101: Reserved token keyword, not a credential.
 const TokenPublic = "public"
 
 var PreviewToken = NewStringMap(Strings{})

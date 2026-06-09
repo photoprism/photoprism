@@ -8,8 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/disintegration/imaging"
-
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -70,7 +68,8 @@ func TestThumbs_DirHonorsPPIgnore(t *testing.T) {
 	}
 
 	imageName := filepath.Join(dir, "ignored.jpg")
-	if err = os.WriteFile(imageName, jpgData, fs.ModeFile); err != nil {
+	// The destination is a fixed test filename under t.TempDir().
+	if err = os.WriteFile(imageName, jpgData, fs.ModeFile); err != nil { //nolint:gosec
 		t.Fatal(err)
 	}
 
@@ -152,7 +151,7 @@ func TestThumb_FromFile(t *testing.T) {
 
 	t.Run("ValidParameter", func(t *testing.T) {
 		file := &entity.File{
-			FileName: c.ExamplesPath() + "/elephants.jpg",
+			FileName: c.SamplesPath() + "/elephants.jpg",
 			FileHash: "1234568889",
 		}
 
@@ -162,7 +161,7 @@ func TestThumb_FromFile(t *testing.T) {
 	})
 	t.Run("HashTooShort", func(t *testing.T) {
 		file := &entity.File{
-			FileName: c.ExamplesPath() + "/elephants.jpg",
+			FileName: c.SamplesPath() + "/elephants.jpg",
 			FileHash: "123",
 		}
 
@@ -233,7 +232,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)
@@ -260,7 +259,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)
@@ -285,7 +284,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, _, err := fs.DecodeImageFile(conf.SamplesPath() + "/elephants.jpg")
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)

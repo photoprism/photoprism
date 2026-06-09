@@ -15,7 +15,9 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -69,8 +71,11 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 	}
 
+	// Refuse to write a new file if storage is read-only or insufficient.
 	if !w.conf.SidecarWritable() {
 		return nil, fmt.Errorf("convert: disabled in read-only mode (%s)", clean.Log(f.RootRelName()))
+	} else if w.conf.InsufficientStorage() {
+		return nil, status.ErrInsufficientStorage
 	}
 
 	fileName := f.RelName(w.conf.OriginalsPath())
@@ -87,7 +92,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 	start := time.Now()
 
-	// PNG, GIF, BMP, TIFF, and WebP can be handled natively.
+	// PNG, GIF, BMP, TIFF, HEIC/HEIF, AVIF, and WebP can be handled natively.
 	if f.IsImageOther() {
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), f.FileType())
 
@@ -105,10 +110,12 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		if err == nil {
 			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), f.FileType())
 			return NewMediaFile(imageName)
-		} else if !f.IsTiff() && !f.IsWebp() {
+		} else if !f.IsTiff() && !f.IsWebp() && !f.IsHeic() && !f.IsAvif() {
 			// See https://github.com/photoprism/photoprism/issues/1612
-			// for TIFF file format compatibility.
-			return nil, err
+			// for TIFF file format compatibility. HEIC/HEIF and AVIF keep the
+			// external conversion fallback until we can rely on native libvips
+			// support in every supported runtime.
+			return nil, disk.AsInsufficientStorage(err)
 		}
 	}
 
@@ -190,7 +197,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 	// Ok?
 	if err != nil {
-		return nil, err
+		return nil, disk.AsInsufficientStorage(err)
 	}
 
 	// Create a MediaFile instance from the generated file.

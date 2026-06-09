@@ -1,6 +1,8 @@
 package api
 
 import (
+	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,5 +44,14 @@ func TestConnect(t *testing.T) {
 		Connect(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/connect/hub/", `{"Token": "foobar123"}`)
 		assert.NotEqual(t, 200, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		Connect(router)
+
+		body := `{"Token":"` + strings.Repeat("a", int(MaxAuthRequestBytes)) + `"}`
+		r := PerformRequestWithBody(app, http.MethodPut, "/api/v1/connect/hub", body)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }

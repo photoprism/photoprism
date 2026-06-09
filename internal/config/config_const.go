@@ -27,6 +27,12 @@ const CustomStaticUri = "/c/static"
 // ThemeUri defines the optional theme URI path for serving theme assets.
 const ThemeUri = "/_theme"
 
+// IndexWorkersAuto is the sentinel value of the index-workers option that
+// asks IndexWorkers() to derive the worker count from the available CPU
+// cores and database driver. Operators can keep "auto" or set a positive
+// numeric string to pin the worker count explicitly.
+const IndexWorkersAuto = "auto"
+
 // DefaultIndexSchedule defines the default indexing schedule in cron format.
 const DefaultIndexSchedule = "" // e.g. "0 */3 * * *" for every 3 hours
 
@@ -43,6 +49,15 @@ const MaxWakeupInterval = time.Hour * 24 // 1 Day
 const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 // DefaultWakeupInterval is the default worker interval as a duration.
 const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
+
+// DefaultHttpHeaderTimeout is the default timeout for reading request headers.
+const DefaultHttpHeaderTimeout = 15 * time.Second
+
+// DefaultHttpHeaderBytes is the default limit for HTTP request header size.
+const DefaultHttpHeaderBytes = 1 << 20 // 1 MiB
+
+// DefaultHttpIdleTimeout is the default timeout for idle keep-alive connections.
+const DefaultHttpIdleTimeout = 180 * time.Second
 
 // MegaByte defines a megabyte in bytes.
 const MegaByte = 1000 * 1000 // 1,000,000 Bytes

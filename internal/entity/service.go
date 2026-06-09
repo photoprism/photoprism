@@ -91,7 +91,7 @@ func (m *Service) LogErr(err error) error {
 	}
 
 	// Update error message and increase count.
-	m.AccError = clip.Chars(err.Error(), txt.ClipError)
+	m.AccError = clip.Bytes(err.Error(), txt.ClipError)
 	m.AccErrors++
 
 	// Disable sharing when retry limit is reached.
@@ -192,10 +192,10 @@ func (m *Service) Delete() error {
 }
 
 // Directories returns a list of directories or albums in an account.
-func (m *Service) Directories() (result fs.FileInfos, err error) {
+func (m *Service) Directories(servicesCIDR string) (result fs.FileInfos, err error) {
 	if m.AccType == service.WebDAV {
 		var client *webdav.Client
-		if client, err = webdav.NewClient(m.AccURL, m.AccUser, m.AccPass, webdav.Timeout(m.AccTimeout)); err != nil {
+		if client, err = webdav.NewClient(m.AccURL, m.AccUser, m.AccPass, webdav.Timeout(m.AccTimeout), servicesCIDR); err != nil {
 			return result, err
 		}
 

@@ -105,6 +105,7 @@ export default {
       default: () => new User(null),
     },
   },
+  emits: ["close", "after-leave"],
   data() {
     return {
       busy: false,
@@ -141,6 +142,7 @@ export default {
     },
     afterLeave() {
       this.$view.leave(this);
+      this.$emit("after-leave");
     },
     isDisabled() {
       return (

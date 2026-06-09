@@ -2,9 +2,12 @@
 ## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
-  ## PhotoPrism (Development Environment)
+  ## PhotoPrism Build & Test Environment
   photoprism:
-    build: .
+    build:
+      context: .
+      args:
+        WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     image: photoprism/photoprism:develop
     depends_on:
       - mariadb
@@ -14,12 +17,13 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    ## Expose HTTP and debug ports
+    ## Publish the dev environment's HTTP, TLS, and debugger ports on the host
+    ## (bound to 127.0.0.1 by default; override SERVICES_BIND_HOST to change):
     ports:
-      - "2342:2342"   # Default HTTP port (host:container)
-      - "2443:2443"   # Default TLS port (host:container)
-      - "2343:2343"   # Acceptance Test HTTP port (host:container)
-      - "40000:40000" # Go Debugger (host:container)
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:2342:2342"   # HTTP (default)
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:2443:2443"   # TLS (default)
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:2343:2343"   # HTTP (acceptance tests)
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:40000:40000" # Go debugger
     shm_size: "2gb"
     ## Set links and labels for use with Traefik reverse proxy
     links:
@@ -32,7 +36,7 @@ services:
       - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
@@ -43,6 +47,8 @@ services:
       - "traefik.http.routers.photoprism.tls=true"
     ## Override variables with optional env file, see https://docs.docker.com/reference/compose-file/services/#required
     env_file:
+      - path: ".telemetry"
+        required: false
       - path: ".env"
         required: false
     ## Configure development environment
@@ -87,7 +93,7 @@ services:
       PHOTOPRISM_DISABLE_TLS: "true"
       PHOTOPRISM_DEFAULT_TLS: "true"
       ## Site Information:
-      PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
+      PHOTOPRISM_SITE_URL: "${PHOTOPRISM_SITE_URL:-https://app.localssl.dev/}" # "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
@@ -97,22 +103,26 @@ services:
       PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"       # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
+      MYSQL_TCP_PORT: "${MARIADB_PORT:-4001}"        # default MariaDB database port used by the "mariadb" client (see .my.cnf)
+      PGPORT: "${POSTGRES_PORT:-4002}"               # default PostgreSQL database port used by "psql"
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
-      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
-      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
-      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
+      PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
+      PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/originals"
       PHOTOPRISM_ORIGINALS_LIMIT: 128000             # sets originals file size limit to 128 GB
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      PHOTOPRISM_IMPORT_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_MCP: "false"                # disables Model Context Protocol (MCP) API endpoint for AI agent integrations
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
       PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
@@ -123,11 +133,10 @@ services:
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
       PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
-      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
-      PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
+      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, vips)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
-      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
@@ -139,34 +148,73 @@ services:
       PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
       OLLAMA_BASE_URL: "http://ollama:11434"         # use "https://ollama.com" for Ollama Cloud
       OLLAMA_API_KEY: ""                             # API key required to access Ollama (optional)
-      ## External dependencies and tools:
+      ## Additional dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
-      GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
-      CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
+      GOCACHE: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gocache"
+      CODEX_HOME: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/codex"
+      CLAUDE_CONFIG_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/claude"
+      GH_REPO: "photoprism/photoprism"
+      GH_CONFIG_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gh"
     ## Shared devices for video hardware transcoding (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding
     #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
-    working_dir: "/go/src/github.com/photoprism/photoprism"
+    working_dir: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     volumes:
-      - ".:/go/src/github.com/photoprism/photoprism"
+      - ".:${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
       - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
+
+  ## Traefik v3 (Reverse Proxy)
+  ## includes "*.localssl.dev" SSL certificate for test environments
+  ## Docs: https://doc.traefik.io/traefik/
+  traefik:
+    image: photoprism/traefik:latest
+    stop_grace_period: 15s
+    security_opt:
+      - no-new-privileges:true
+    command:
+      - --api.dashboard=false
+      - --global.checknewversion=false
+      - --global.sendanonymoususage=false
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    ## Publish Traefik's HTTP and HTTPS entrypoints on the host (bound to every interface
+    ## by default; override TRAEFIK_BIND_HOST, TRAEFIK_HTTP_PORT, or TRAEFIK_HTTPS_PORT):
+    ports:
+      - "${TRAEFIK_BIND_HOST:-0.0.0.0}:${TRAEFIK_HTTP_PORT:-80}:80"    # HTTP (redirects to HTTPS)
+      - "${TRAEFIK_BIND_HOST:-0.0.0.0}:${TRAEFIK_HTTPS_PORT:-443}:443" # HTTPS (required)
+    labels:
+      - "traefik.enable=true"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
   ## MariaDB (Database Server)
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
     image: mariadb:11
-    stop_grace_period: 10s
+    stop_grace_period: 15s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command:
+      - "--port=${MARIADB_PORT:-4001}"
+      - --innodb-strict-mode=1
+      - --innodb-buffer-pool-size=256M
+      - --transaction-isolation=READ-COMMITTED
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max-connections=512
+      - --innodb-rollback-on-timeout=OFF
+      - --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # 3306 isn't used intentionally to avoid conflicts and confuse port scanners
+      - "${MARIADB_PORT:-4001}" # does not default to 3306 in order to avoid conflicts and confuse port scanners
+    ## Publish the MariaDB port on the host for direct access from the host:
     ports:
-      - "4001:4001" # MariaDB port (host:container)
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${MARIADB_PORT:-4001}:${MARIADB_PORT:-4001}" # MariaDB
     volumes:
       - "mariadb:/var/lib/mysql"
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -183,11 +231,15 @@ services:
   ## Release Notes: https://www.postgresql.org/docs/release/
   postgres:
     image: postgres:18-alpine
+    ## Only starts if the "all" or "postgres" profile is specified:
+    ## docker compose --profile postgres up -d
+    profiles: [ "all", "postgres" ]
+    stop_grace_period: 15s
     expose:
-      - "5432"
-    ## Only map port 5432 to a host port if necessary:
-    # ports:
-    #  - "5432:5432" # PostgreSQL port (host:container)
+      - "${POSTGRES_PORT:-4002}"
+    ## Publish the PostgreSQL port on the host for direct access from the host:
+    ports:
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${POSTGRES_PORT:-4002}:${POSTGRES_PORT:-4002}" # PostgreSQL
     volumes:
       - "postgres:/var/lib/postgresql"
       - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -195,6 +247,7 @@ services:
       POSTGRES_DB: photoprism
       POSTGRES_USER: photoprism
       POSTGRES_PASSWORD: photoprism
+      PGPORT: "${POSTGRES_PORT:-4002}"
       PGDATA: /var/lib/postgresql/18/docker
 
   ## Qdrant (Vector Database)
@@ -203,6 +256,8 @@ services:
   ## Web UI: https://qdrant.localssl.dev/dashboard
   qdrant:
     image: qdrant/qdrant:latest
+    ## Only starts if the "all" or "qdrant" profile is specified:
+    ## docker compose --profile qdrant up -d
     profiles: [ "all", "qdrant" ]
     stop_grace_period: 10s
     links:
@@ -211,6 +266,7 @@ services:
       - "traefik:vision.localssl.dev"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.qdrant.loadbalancer.server.port=6333"
       - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
       - "traefik.http.routers.qdrant.entrypoints=websecure"
@@ -233,17 +289,16 @@ services:
   ## docker compose exec ollama ollama pull gemma3:latest
   ollama:
     image: ollama/ollama:latest
-    stop_grace_period: 10s
-    ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
+    ## Only starts if the "all", "ollama", or "vision" profile is specified:
     ## docker compose --profile ollama up -d
     profiles: [ "all", "ollama", "vision" ]
-    ## Insecurely exposes the Ollama service on port 11434
-    ## without authentication (for private networks only):
+    stop_grace_period: 10s
+    ## Optionally publish the Ollama API on the host (no built-in auth — private/internal networks only):
     # ports:
-    #  - "11434:11434"
+    #   - "${SERVICES_BIND_HOST:-127.0.0.1}:11434:11434" # Ollama API
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.ollama.loadbalancer.server.port=11434"
       - "traefik.http.routers.ollama.rule=Host(`ollama.localssl.dev`)"
       - "traefik.http.routers.ollama.entrypoints=websecure"
@@ -261,12 +316,15 @@ services:
       OLLAMA_MULTIUSER_CACHE: "false"  # optimize prompt caching for multi-user scenarios
       OLLAMA_NOPRUNE: "false"          # disables pruning of model blobs at startup
       OLLAMA_NOHISTORY: "true"         # disables readline history
-      OLLAMA_FLASH_ATTENTION: "false"  # enables the experimental flash attention feature
-      OLLAMA_KV_CACHE_TYPE: "f16"      # cache quantization (f16, q8_0, or q4_0)
+      OLLAMA_FLASH_ATTENTION: "true"   # required for OLLAMA_KV_CACHE_TYPE quantization
+      OLLAMA_KV_CACHE_TYPE: "f16"      # cache precision: f16 (default), q8_0, q4_0
       OLLAMA_SCHED_SPREAD: "false"     # allows scheduling models across all GPUs.
-      OLLAMA_NEW_ENGINE: "true"        # enables the new Ollama engine
       # OLLAMA_DEBUG: "true"             # shows additional debug information
       # OLLAMA_INTEL_GPU: "true"         # enables experimental Intel GPU detection
+      ## Telemetry / privacy opt-outs (containers do not inherit /etc/environment):
+      DO_NOT_TRACK: "true"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      # OLLAMA_NO_CLOUD: "1"           # uncomment to disable Ollama Cloud models/features
       ## NVIDIA GPU Hardware Acceleration (optional):
       # NVIDIA_VISIBLE_DEVICES: "all"
       # NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
@@ -285,16 +343,16 @@ services:
   ## see https://github.com/open-webui/open-webui
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
-    stop_grace_period: 10s
-    ## Only starts this service if the "all", "ollama", "open-webui", or "vision" profile is specified::
-    ## docker compose --profile ollama up -d
+    ## Only starts if the "all", "ollama", "open-webui", or "vision" profile is specified:
+    ## docker compose --profile open-webui up -d
     profiles: [ "all", "ollama", "open-webui", "vision" ]
-    ## Exposes Open WebUI at http://localhost:8080 (use https://chat.localssl.dev/ to access it through Traefik):
+    stop_grace_period: 10s
+    ## Publish Open WebUI on the host (default access is via https://chat.localssl.dev/ through Traefik):
     ports:
-      - "127.0.0.1:8080:8080"
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:8080:8080" # Open WebUI
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.open-webui.loadbalancer.server.port=8080"
       - "traefik.http.routers.open-webui.rule=Host(`chat.localssl.dev`) || Host(`open-webui.localssl.dev`) || Host(`ollama-ui.localssl.dev`)"
       - "traefik.http.routers.open-webui.entrypoints=websecure"
@@ -313,10 +371,10 @@ services:
   ## see https://github.com/photoprism/photoprism-vision
   photoprism-vision:
     image: photoprism/vision:latest
-    stop_grace_period: 15s
-    ## Only starts this service if the "all" or "vision" profile is specified::
+    ## Only starts if the "all" or "vision" profile is specified:
     ## docker compose --profile vision up -d
     profiles: [ "all", "vision" ]
+    stop_grace_period: 15s
     working_dir: "/app"
     links:
       - "traefik:localssl.dev"
@@ -324,14 +382,15 @@ services:
       - "traefik:qdrant.localssl.dev"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.qdrant.loadbalancer.server.port=5000"
-      - "traefik.http.services.qdrant.loadbalancer.server.scheme=http"
-      - "traefik.http.routers.qdrant.entrypoints=websecure"
-      - "traefik.http.routers.qdrant.rule=Host(`vision.localssl.dev`)"
-      - "traefik.http.routers.qdrant.priority=3"
-      - "traefik.http.routers.qdrant.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.qdrant.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.qdrant.tls=true"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
+      - "traefik.http.services.vision.loadbalancer.server.port=5000"
+      - "traefik.http.services.vision.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.vision.entrypoints=websecure"
+      - "traefik.http.routers.vision.rule=Host(`vision.localssl.dev`)"
+      - "traefik.http.routers.vision.priority=3"
+      - "traefik.http.routers.vision.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.vision.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.vision.tls=true"
     expose:
       - 5000
     environment:
@@ -339,22 +398,6 @@ services:
       ## Ollama client configuration (for the service, see below):
       OLLAMA_ENABLED: "true"
       OLLAMA_HOST: "http://ollama:11434"
-
-  ## Traefik v3 (Reverse Proxy)
-  ## includes "*.localssl.dev" SSL certificate for test environments
-  ## Docs: https://doc.traefik.io/traefik/
-  traefik:
-    image: photoprism/traefik:latest
-    stop_grace_period: 15s
-    security_opt:
-      - no-new-privileges:true
-    ports:
-      - "80:80" # HTTP (redirects to HTTPS)
-      - "443:443" # HTTPS (required)
-    labels:
-      - "traefik.enable=true"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
   ## Dummy WebDAV Server
   dummy-webdav:
@@ -365,6 +408,7 @@ services:
       WEBDAV_PASSWORD: photoprism
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.dummy-webdav.loadbalancer.server.port=80"
       - "traefik.http.routers.dummy-webdav.entrypoints=websecure"
       - "traefik.http.routers.dummy-webdav.rule=Host(`dummy-webdav.localssl.dev`)"
@@ -375,10 +419,11 @@ services:
 
   ## Dummy OIDC Identity Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:251210
+    image: photoprism/dummy-oidc:260427
     stop_grace_period: 5s
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
       - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
       - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.localssl.dev`)"
@@ -392,11 +437,13 @@ services:
   dummy-ldap:
     image: glauth/glauth-plugins:latest
     stop_grace_period: 5s
+    ## Publish the dummy-ldap port on the host (default access is via "dummy-ldap:389" within the compose network):
     ports:
-      - "127.0.0.1:389:389"
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:389:389" # LDAP
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.ldap.loadbalancer.server.port=5555"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
+      - "traefik.http.services.dummy-ldap.loadbalancer.server.port=5555"
       - "traefik.http.routers.dummy-ldap.entrypoints=websecure"
       - "traefik.http.routers.dummy-ldap.rule=Host(`dummy-ldap.localssl.dev`)"
       - "traefik.http.routers.dummy-ldap.priority=3"
@@ -411,14 +458,17 @@ services:
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
-    stop_grace_period: 10s
+    ## Only starts if the "all", "auth", or "keycloak" profile is specified:
+    ## docker compose --profile keycloak up -d
     profiles: [ "all", "auth", "keycloak" ]
+    stop_grace_period: 10s
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
       - "traefik.http.routers.keycloak.rule=Host(`keycloak.localssl.dev`)"
@@ -434,7 +484,7 @@ services:
       KC_HOSTNAME_STRICT: "false"
       KC_PROXY: "edge"
       KC_DB: "mariadb"
-      KC_DB_URL: "jdbc:mariadb://mariadb:4001/keycloak"
+      KC_DB_URL: "jdbc:mariadb://mariadb:${MARIADB_PORT:-4001}/keycloak"
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
 
@@ -444,10 +494,13 @@ services:
   ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
   prometheus:
     image: prom/prometheus:latest
-    stop_grace_period: 10s
+    ## Only starts if the "all", "auth", or "prometheus" profile is specified:
+    ## docker compose --profile prometheus up -d
     profiles: [ "all", "auth", "prometheus" ]
+    stop_grace_period: 10s
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
       - "traefik.http.routers.prometheus.entrypoints=websecure"
       - "traefik.http.routers.prometheus.rule=Host(`prometheus.localssl.dev`)"
@@ -467,8 +520,9 @@ volumes:
   postgres:
     driver: local
 
-## Create shared "photoprism" network for connecting with services in other compose.yaml files
+## Create a shared bridge network for connecting with services in other compose.yaml files.
+## Override COMPOSE_NETWORK_NAME to run multiple parallel environments without colliding on the default name.
 networks:
   default:
-    name: photoprism
+    name: ${COMPOSE_NETWORK_NAME:-photoprism}
     driver: bridge

@@ -29,11 +29,14 @@ func TestClientRegistry_ListExcludesNodeRoleWithoutUUID(t *testing.T) {
 	list, err := r.List()
 	assert.NoError(t, err)
 
-	// Only the UUID-backed record should be present
-	if assert.Equal(t, 1, len(list)) {
-		assert.Equal(t, "pp-good", list[0].Name)
-		assert.NotEmpty(t, list[0].UUID)
-		assert.NotEqual(t, "pp-bad1", list[0].Name)
-		assert.NotEqual(t, "pp-bad2", list[0].Name)
+	// The MariaDB test database is shared across tests (unlike the per-test SQLite
+	// file), so List() also returns nodes created elsewhere. Assert on membership
+	// rather than the exact count: the UUID-backed node is listed and the node-role
+	// records without a NodeUUID are not.
+	if found := listNodeByName(list, "pp-good"); assert.NotNil(t, found, "UUID-backed node should be listed") {
+		assert.NotEmpty(t, found.UUID)
 	}
+
+	assert.Nil(t, listNodeByName(list, "pp-bad1"), "node role without UUID must be excluded")
+	assert.Nil(t, listNodeByName(list, "pp-bad2"), "node role without UUID must be excluded")
 }

@@ -122,12 +122,17 @@ test.meta("testID", "albums-003").meta({ type: "short", mode: "public" })("Commo
   await t.expect(albumdialog.description.value).eql("All my animals").expect(albumdialog.category.value).eql("Pets");
 
   await t.click(albumdialog.description).pressKey("ctrl+a delete");
-  await t.click(albumdialog.category).click(albumdialog.category).pressKey("ctrl+a delete").click(Selector("form.form-album-edit i.mdi-bookmark"));
+  await t.click(albumdialog.category).click(albumdialog.category).pressKey("ctrl+a delete").click(Selector("form.form-album-edit div.v-toolbar-title"));
   await t.expect(albumdialog.category.value).eql("");
   await t.click(albumdialog.dialogSave);
   await menu.openPage("albums");
 
   await t.expect(Selector("div").withText("Holiday").visible).ok().expect(Selector("div").withText("Animals").exists).notOk();
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+  await t.expect(albumdialog.category.value).eql("");
+  await t.click(albumdialog.dialogCancel);
 });
 
 test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })("Common: Add/Remove Photos to/from multiple albums", async (t) => {

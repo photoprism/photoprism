@@ -6,7 +6,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -39,6 +38,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"debug", fmt.Sprintf("%t", c.Debug())},
 		{"trace", fmt.Sprintf("%t", c.Trace())},
 
+		// Storage.
+		{"storage-path", c.StoragePath()},
+		{"storage-free", fmt.Sprintf("%.0f", c.StorageFree())},
+
 		// Config.
 		{"config-path", c.ConfigPath()},
 		{"certificates-path", c.CertificatesPath()},
@@ -58,12 +61,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"originals-path", c.OriginalsPath()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
-		{"users-path", c.UsersPath()},
-		{"users-originals-path", c.UsersOriginalsPath()},
 
-		// Storage.
-		{"storage-path", c.StoragePath()},
+		// Other Paths.
+		{"users-path", c.UsersPath()},
 		{"users-storage-path", c.UsersStoragePath()},
+		{"users-originals-path", c.UsersOriginalsPath()},
 		{"import-path", c.ImportPath()},
 		{"import-dest", c.ImportDest()},
 		{"import-allow", c.ImportAllow().String()},
@@ -102,7 +104,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"backup-albums-path", c.BackupAlbumsPath()},
 
 		// Indexing.
-		{"index-workers", fmt.Sprintf("%d", c.IndexWorkers())},
+		{"index-workers", fmt.Sprintf("%d (%s)", c.IndexWorkers(), c.IndexWorkersReason())},
 		{"index-schedule", c.IndexSchedule()},
 		{"wakeup-interval", c.WakeupInterval().String()},
 		{"auto-index", fmt.Sprintf("%d", c.AutoIndex()/time.Second)},
@@ -117,13 +119,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-backups", fmt.Sprintf("%t", c.DisableBackups())},
 		{"disable-restart", fmt.Sprintf("%t", c.DisableRestart())},
 		{"disable-webdav", fmt.Sprintf("%t", c.DisableWebDAV())},
+		{"disable-mcp", fmt.Sprintf("%t", c.DisableMCP())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
 		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},
 		{"disable-ffmpeg", fmt.Sprintf("%t", c.DisableFFmpeg())},
 		{"disable-exiftool", fmt.Sprintf("%t", c.DisableExifTool())},
-		{"disable-vips", fmt.Sprintf("%t", c.DisableVips())},
 		{"disable-sips", fmt.Sprintf("%t", c.DisableSips())},
 		{"disable-darktable", fmt.Sprintf("%t", c.DisableDarktable())},
 		{"disable-rawtherapee", fmt.Sprintf("%t", c.DisableRawTherapee())},
@@ -196,7 +198,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	if c.Portal() {
 		rows = append(rows, [][]string{
 			{"portal-proxy", fmt.Sprintf("%t", c.PortalProxy())},
-			{"portal-proxy-prefix", c.PortalProxyPrefix()},
+			{"portal-proxy-uri", c.PortalProxyUri()},
 			{"portal-config-path", c.PortalConfigPath()},
 			{"portal-theme-path", c.PortalThemePath()},
 		}...)
@@ -215,7 +217,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
 		{"advertise-url", clean.UriRedacted(c.AdvertiseUrl())},
 
-		// Proxy Servers.
+		// Networking.
 		{"https-proxy", clean.UriRedacted(c.HttpsProxy())},
 		{"https-proxy-insecure", fmt.Sprintf("%t", c.HttpsProxyInsecure())},
 		{"trusted-platform", c.TrustedPlatform()},
@@ -223,6 +225,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"proxy-client-header", c.ProxyClientHeader()},
 		{"proxy-proto-header", strings.Join(c.ProxyProtoHeader(), ", ")},
 		{"proxy-proto-https", strings.Join(c.ProxyProtoHttps(), ", ")},
+		{"services-cidr", c.ServicesCIDR()},
 
 		// Web Server.
 		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
@@ -232,6 +235,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-key", c.TLSKey()},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
+		{"http-header-timeout", c.HttpHeaderTimeout().String()},
+		{"http-header-bytes", fmt.Sprintf("%d", c.HttpHeaderBytes())},
+		{"http-idle-timeout", c.HttpIdleTimeout().String()},
 		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-cache-maxage", fmt.Sprintf("%d", c.HttpCacheMaxAge())},
 		{"http-video-maxage", fmt.Sprintf("%d", c.HttpVideoMaxAge())},
@@ -283,6 +289,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-device", c.FFmpegDevice()},
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
+		{"ffmpeg-exclude", c.FFmpegExclude().String()},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},
@@ -304,7 +311,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"preview-token", c.PreviewToken()},
 		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},
-		{"thumb-filter", c.ThumbFilter().String()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
 		{"thumb-size-uncached", fmt.Sprintf("%d", c.ThumbSizeUncached())},
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},
@@ -327,27 +333,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 	}...)
 
-	switch faceEngine {
-	case face.EngineONNX:
-		rows = append(rows, [][]string{
-			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-		}...)
-	case face.EnginePigo:
-		rows = append(rows, [][]string{
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
-		}...)
-	default:
-		rows = append(rows, [][]string{
-			{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
-			{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-			{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-			{"face-angle", fmt.Sprintf("%v", c.FaceAngles())},
-		}...)
-	}
+	rows = append(rows, [][]string{
+		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+	}...)
 
 	rows = append(rows, [][]string{
 		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
@@ -373,6 +363,37 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 	if v := c.CustomStaticUri(); v != "" {
 		rows = append(rows, []string{"custom-static-uri", v})
+	}
+
+	return rows, cols
+}
+
+// FaceReport returns the face-detection and face-recognition config values as
+// a table for reporting. It mirrors the values used by Report() so output stays
+// consistent between `photoprism config` and `photoprism faces config`.
+func (c *Config) FaceReport() (rows [][]string, cols []string) {
+	cols = []string{"Name", "Value"}
+
+	rows = [][]string{
+		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
+		{"vision-yaml", c.VisionYaml()},
+		{"face-engine", c.FaceEngine()},
+		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
+		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"facenet-model-path", c.FacenetModelPath()},
+		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
+		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
+		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
+		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
+		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
+		{"face-cluster-dist", fmt.Sprintf("%f", c.FaceClusterDist())},
+		{"face-cluster-radius", fmt.Sprintf("%f", c.FaceClusterRadius())},
+		{"face-collision-dist", fmt.Sprintf("%f", c.FaceCollisionDist())},
+		{"face-epsilon-dist", fmt.Sprintf("%f", c.FaceEpsilonDist())},
+		{"face-match-dist", fmt.Sprintf("%f", c.FaceMatchDist())},
+		{"face-skip-children", fmt.Sprintf("%t", c.FaceSkipChildren())},
+		{"face-allow-background", fmt.Sprintf("%t", c.FaceAllowBackground())},
 	}
 
 	return rows, cols

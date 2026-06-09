@@ -157,6 +157,7 @@ import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
 import { getAppStorage } from "common/storage";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import PLoading from "component/loading.vue";
 
 const appStorage = getAppStorage();
@@ -199,7 +200,6 @@ export default {
       filter: { q, hidden, order },
       lastFilter: {},
       routeName: routeName,
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
       merge: {
@@ -271,7 +271,7 @@ export default {
       if (!existing || existing.UID === m.UID) {
         this.busy = true;
         m.update()
-          .then((m) => {
+          .then(() => {
             this.$notify.success(this.$gettext("Changes successfully saved"));
             this.dialog.edit = false;
           })
@@ -725,7 +725,7 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
+        case ACTION_UPDATED:
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -739,7 +739,7 @@ export default {
             }
           }
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -754,7 +754,7 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
           break;
         default:

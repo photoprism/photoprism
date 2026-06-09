@@ -124,7 +124,13 @@ func (m *Album) LoadFromYaml(fileName string) error {
 		return fmt.Errorf("yaml filename is empty")
 	}
 
-	data, err := os.ReadFile(fileName)
+	filePath := filepath.Clean(fileName)
+	if _, err := fs.StatFile(filePath); err != nil {
+		return err
+	}
+
+	//nolint:gosec // G304: Path is normalized and validated above with fs.StatFile.
+	data, err := os.ReadFile(filePath)
 
 	if err != nil {
 		return err
@@ -133,6 +139,10 @@ func (m *Album) LoadFromYaml(fileName string) error {
 	if err = yaml.Unmarshal(data, m); err != nil {
 		return err
 	}
+
+	// Clip the restored path to the album_path column's byte budget so a backup
+	// with a long multi-byte path cannot overflow the column on save.
+	m.AlbumPath = ClipPath(m.AlbumPath)
 
 	return nil
 }

@@ -18,7 +18,7 @@ services:
       - "2343:2343" # Acceptance Test HTTP port (host:container)
     shm_size: "2gb"
     environment:
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # The initial admin password (min 4 characters)
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"        # The initial admin password (8-72 characters)
       PHOTOPRISM_UID: ${UID:-1000}
       PHOTOPRISM_GID: ${GID:-1000}
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"
@@ -28,27 +28,30 @@ services:
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_PUBLIC: "true"
+      PHOTOPRISM_AUTH_MODE: "public"
       PHOTOPRISM_EXPERIMENTAL: "true"
-      PHOTOPRISM_SERVER_MODE: "debug"
+      PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # Improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"       # Improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
+      MYSQL_TCP_PORT: "${MARIADB_PORT:-4001}"        # default port used by the "mariadb" client (see .my.cnf)
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
       PHOTOPRISM_TEST_DSN: ".test.db"
-      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
-      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
-      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
+      PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
+      PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/originals"
+      PHOTOPRISM_IMPORT_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # Disables storage permission updates on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # Don't backup photo and album metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # Disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_MCP: "false"                # Disables Model Context Protocol (MCP) API endpoint for AI agent integrations
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # Disables Settings in Web UI
       PHOTOPRISM_DISABLE_PLACES: "false"             # Disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # Don't create ExifTool JSON files for improved metadata extraction
@@ -57,8 +60,7 @@ services:
       PHOTOPRISM_UPLOAD_NSFW: "false"                # Allows uploads that may be offensive
       PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
       PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
-      PHOTOPRISM_DARKTABLE_PRESETS: "false"          # Enables Darktable presets and disables concurrent RAW conversion
-      PHOTOPRISM_THUMB_FILTER: "lanczos"             # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_RAW_PRESETS: "false"                # Enables custom user presets when converting RAW images
       PHOTOPRISM_THUMB_UNCACHED: "true"              # Enables on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 1920                    # Pre-rendered thumbnail size limit (default 1920, min 720, max 7680)
       # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
@@ -68,7 +70,6 @@ services:
       ## Enable TensorFlow AVX2 support for modern Intel CPUs (requires starting the container as root):
       # PHOTOPRISM_INIT: "tensorflow-amd64-avx2"
       ## Hardware video transcoding config (optional):
-      # PHOTOPRISM_FFMPEG_BUFFERS: "64"              # FFmpeg capture buffers (default: 32)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbps (default: 60)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_v4l2m2m"    # Use Video4Linux for AVC transcoding (default: libx264)
       # PHOTOPRISM_FFMPEG_ENCODER: "h264_qsv"        # Use Intel Quick Sync Video for AVC transcoding (default: libx264)
@@ -79,9 +80,9 @@ services:
     #  - "/dev/video11:/dev/video11" # Video4Linux (h264_v4l2m2m)
     #  - "/dev/dri/renderD128:/dev/dri/renderD128" # Intel GPU
     #  - "/dev/dri/card0:/dev/dri/card0"
-    working_dir: "/go/src/github.com/photoprism/photoprism"
+    working_dir: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     volumes:
-      - ".:/go/src/github.com/photoprism/photoprism"
+      - ".:${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
       - "go-mod:/go/pkg/mod"
 
   ## MariaDB Database Server
@@ -93,11 +94,11 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001"
+      - "${MARIADB_PORT:-4001}"
     ports:
-      - "4001:4001" # database port (host:container)
+      - "${MARIADB_PORT:-4001}:${MARIADB_PORT:-4001}" # database port (host:container)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -125,5 +126,5 @@ volumes:
 ## Create shared "photoprism" network for connecting with services in other compose.yaml files
 networks:
   default:
-    name: photoprism
+    name: ${COMPOSE_NETWORK_NAME:-photoprism}
     driver: bridge

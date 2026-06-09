@@ -1,0 +1,36 @@
+PhotoPrism® has been deployed as release "{{ .Release.Name }}" in namespace "{{ .Release.Namespace }}".
+
+1. Retrieve the admin password (auto-generated on first install unless adminPassword was set):
+
+   kubectl --namespace {{ .Release.Namespace }} get secret \
+     {{ include "photoprism-plus.fullname" . }}-secrets \
+     -o jsonpath="{.data.PHOTOPRISM_ADMIN_PASSWORD}" | base64 -d ; echo
+
+   Sign in as "{{ .Values.adminUser }}" with that password.
+
+2. Access PhotoPrism:
+
+{{- if .Values.ingress.enabled }}
+   An Ingress was created. Once your controller assigns an address, browse to one of the configured hosts:
+   {{- range .Values.ingress.hosts }}
+     - http(s)://{{ .host }}{{ (index .paths 0).path }}
+   {{- else }}
+     - http(s)://{{ include "photoprism-plus.name" $ }}/
+   {{- end }}
+{{- else if eq .Values.service.type "LoadBalancer" }}
+   The service is type LoadBalancer; once an external IP is assigned, browse to it on port {{ .Values.service.port }}:
+
+   kubectl --namespace {{ .Release.Namespace }} get svc {{ include "photoprism-plus.fullname" . }}
+{{- else }}
+   Forward the service port to your workstation:
+
+   kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "photoprism-plus.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+   Then open http://localhost:{{ .Values.service.port }}/ in your browser.
+{{- end }}
+
+3. Documentation:
+
+   - User Guide: https://docs.photoprism.app/user-guide/
+   - Knowledge Base: https://www.photoprism.app/kb
+   - Support: https://www.photoprism.app/kb/getting-support

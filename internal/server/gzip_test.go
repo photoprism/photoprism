@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,18 +16,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/proxy"
 )
 
-func TestGzipMiddleware(t *testing.T) {
+func TestNewCompressMiddleware_Gzip(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	// Enable gzip for this test router.
 	conf := config.TestConfig()
 	conf.Options().HttpCompression = "gzip"
 
 	r := gin.New()
-	r.Use(gzip.Gzip(
-		gzip.DefaultCompression,
-		gzip.WithCustomShouldCompressFn(NewGzipShouldCompressFn(conf)),
-	))
+	r.Use(NewCompressMiddleware(conf))
 
 	r.GET("/ok", func(c *gin.Context) {
 		c.String(http.StatusOK, "hello world")
@@ -69,6 +64,10 @@ func TestGzipMiddleware(t *testing.T) {
 		c.String(http.StatusOK, "theme")
 	})
 
+	r.NoRoute(func(c *gin.Context) {
+		c.String(http.StatusNotFound, "404 page not found")
+	})
+
 	sharePreviewRoute := conf.BaseUri("/s/:token/:shared/preview")
 	r.GET(sharePreviewRoute, func(c *gin.Context) {
 		c.String(http.StatusOK, "preview")
@@ -89,6 +88,7 @@ func TestGzipMiddleware(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, "gzip", w.Header().Get("Content-Encoding"))
+		assert.Contains(t, w.Header().Get("Vary"), "Accept-Encoding")
 
 		zr, err := stdgzip.NewReader(bytes.NewReader(w.Body.Bytes()))
 		require.NoError(t, err)
@@ -105,6 +105,7 @@ func TestGzipMiddleware(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
+		assert.Empty(t, w.Header().Get("Vary"))
 		assert.Equal(t, "download", w.Body.String())
 	})
 	t.Run("DoesNotCompressExcludedExtensions", func(t *testing.T) {
@@ -144,7 +145,7 @@ func TestGzipMiddleware(t *testing.T) {
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
 		assert.Equal(t, "preview", w.Body.String())
 	})
-	t.Run("DoesNotCompressPortalProxyPrefix", func(t *testing.T) {
+	t.Run("DoesNotCompressPortalProxyURI", func(t *testing.T) {
 		proxyPath := conf.BaseUri(proxy.PathPrefix + "test/ok")
 		r.GET(proxyPath, func(c *gin.Context) {
 			c.String(http.StatusOK, "proxy")
@@ -161,13 +162,19 @@ func TestGzipMiddleware(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, w.Code)
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
+		// Vary still set so caches don't serve compressed bytes to clients that won't accept them.
+		assert.Contains(t, w.Header().Get("Vary"), "Accept-Encoding")
 		assert.Equal(t, "hello world", w.Body.String())
 	})
-	t.Run("DoesNotCompressNotFound", func(t *testing.T) {
+	t.Run("BypassesCompressionFor404", func(t *testing.T) {
 		w := doRequest("/missing", true)
 
+		// 404 falls through NoRoute; error responses bypass the encoder so the
+		// raw body lands on the wire, even though the predicate would have
+		// allowed compression for this path.
 		require.Equal(t, http.StatusNotFound, w.Code)
 		assert.Empty(t, w.Header().Get("Content-Encoding"))
+		assert.Contains(t, w.Header().Get("Vary"), "Accept-Encoding")
 		assert.Contains(t, w.Body.String(), "404")
 	})
 }

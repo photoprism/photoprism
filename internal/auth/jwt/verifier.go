@@ -433,6 +433,7 @@ func (v *Verifier) fetchJWKS(ctx context.Context, url, etag string) (*jwksFetchR
 		req.Header.Set("If-None-Match", etag)
 	}
 
+	// #nosec G704 JWKS URL is validated via config.SetJWKSUrl and verifier call paths.
 	resp, err := v.httpClient.Do(req)
 
 	if err != nil {

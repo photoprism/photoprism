@@ -1,7 +1,6 @@
 package node
 
 import (
-	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -28,6 +27,8 @@ import (
 )
 
 var log = event.Log
+
+const bootstrapOAuthScope = "cluster"
 
 // init registers the cluster node bootstrap extension so it runs before the
 // database connection is established.
@@ -72,14 +73,6 @@ func InitConfig(c *config.Config) error {
 	if cluster.BootstrapAutoJoinEnabled {
 		if registerResp, err = registerWithPortal(c, u, joinToken); err != nil {
 			log.Warnf("config: failed to join the configured cluster (%s)", clean.Error(err))
-			if isAuthError(err) {
-				log.Infof("cluster: refreshing credentials after authentication failure")
-			}
-			if isAuthError(err) && refreshNodeCredentials(c, u) {
-				if registerResp, err = registerWithPortal(c, u, joinToken); err != nil {
-					log.Warnf("cluster: retry join attempt failed (%s)", clean.Error(err))
-				}
-			}
 		}
 	}
 
@@ -126,27 +119,27 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 
 	payload := buildRegisterPayload(c)
 
-	// Include client credentials when present so the Portal can verify re-registration
-	// and authorize UUID/name changes.
-	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
-		payload.ClientID = id
-		payload.ClientSecret = secret
-	}
-
 	if wantRotateDatabase {
 		// Align with API: request database rotation/creation on (re)register.
 		payload.RotateDatabase = true
+	}
+
+	authToken, err := registerAuthToken(c, portal, token)
+
+	if err != nil {
+		return nil, err
 	}
 
 	bodyBytes, _ := json.Marshal(payload)
 
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
 		req, _ := http.NewRequest(http.MethodPost, endpoint.String(), strings.NewReader(string(bodyBytes)))
-		req.Header.Set("Authorization", "Bearer "+token)
+		req.Header.Set("Authorization", "Bearer "+authToken)
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Accept", "application/json")
 
-		resp, err := newHTTPClient(timeout).Do(req)
+		// Endpoint is derived from the configured Portal URL.
+		resp, err := newHTTPClient(timeout).Do(req) //nolint:gosec
 		if err != nil {
 			if attempt < maxAttempts {
 				log.Debugf("cluster: join attempt %d/%d failed with %s", attempt, maxAttempts, clean.Error(err))
@@ -213,6 +206,30 @@ func registerWithPortal(c *config.Config, portal *url.URL, token string) (*clust
 		}
 	}
 	return nil, nil
+}
+
+// registerAuthToken returns the bearer token used for register requests.
+// Existing-node mutations use an OAuth access token, while first-time joins
+// use the configured join token when no node credentials exist yet.
+func registerAuthToken(c *config.Config, portal *url.URL, joinToken string) (string, error) {
+	if c == nil || portal == nil {
+		return "", fmt.Errorf("invalid cluster bootstrap config")
+	}
+
+	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
+		token, err := oauthAccessToken(portal, id, secret, bootstrapOAuthScope)
+		if err != nil {
+			return "", fmt.Errorf("portal access token request failed: %w", err)
+		}
+
+		return token, nil
+	}
+
+	if token := strings.TrimSpace(joinToken); token != "" {
+		return token, nil
+	}
+
+	return "", fmt.Errorf("missing join token and node client credentials")
 }
 
 // defaultClusterDomain returns the configured cluster domain or, if absent,
@@ -458,7 +475,7 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	bearer := ""
 	var tokenErr error
 	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
-		if t, err := oauthAccessToken(portal, id, secret); err != nil {
+		if t, err := oauthAccessToken(portal, id, secret, bootstrapOAuthScope); err != nil {
 			tokenErr = err
 			log.Infof("config: portal access token request failed (%s)", clean.Error(err))
 		} else {
@@ -467,24 +484,8 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	}
 
 	if bearer == "" {
-		shouldRefresh := false
-		if tokenErr != nil && isAuthError(tokenErr) {
-			shouldRefresh = true
-		} else if registerResp != nil && (strings.TrimSpace(c.NodeClientID()) == "" || strings.TrimSpace(c.NodeClientSecret()) == "") {
-			shouldRefresh = true
-		}
-
-		if shouldRefresh {
-			log.Infof("config: refreshing instance credentials for portal theme download")
-		}
-		if shouldRefresh && refreshNodeCredentials(c, portal) {
-			if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
-				if t, err := oauthAccessToken(portal, id, secret); err == nil {
-					bearer = t
-				} else {
-					log.Infof("config: portal access token retry failed (%s)", clean.Error(err))
-				}
-			}
+		if tokenErr != nil {
+			log.Infof("theme: sync skipped because portal access token request failed (%s)", clean.Error(tokenErr))
 		}
 	}
 
@@ -500,10 +501,13 @@ func syncNodeTheme(c *config.Config, portal *url.URL, registerResp *cluster.Regi
 	req.Header.Set("Authorization", "Bearer "+bearer)
 	req.Header.Set("Accept", "application/zip")
 
-	resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req)
+	// Endpoint is derived from the configured Portal URL.
+	resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req) //nolint:gosec
+
 	if err != nil {
 		return err
 	}
+
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {
 			log.Debugf("theme: %s (close theme response body)", clean.Error(closeErr))
@@ -580,7 +584,7 @@ func activateNodeThemeIfPresent(c *config.Config) {
 }
 
 // oauthAccessToken requests an OAuth access token via client_credentials using Basic auth.
-func oauthAccessToken(portal *url.URL, clientID, clientSecret string) (string, error) {
+func oauthAccessToken(portal *url.URL, clientID, clientSecret, scope string) (string, error) {
 	if portal == nil {
 		return "", fmt.Errorf("invalid portal url")
 	}
@@ -590,6 +594,7 @@ func oauthAccessToken(portal *url.URL, clientID, clientSecret string) (string, e
 
 	form := url.Values{}
 	form.Set("grant_type", "client_credentials")
+	form.Set("scope", clean.Scope(scope))
 
 	req, _ := http.NewRequest(http.MethodPost, tokenURL.String(), strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -599,7 +604,8 @@ func oauthAccessToken(portal *url.URL, clientID, clientSecret string) (string, e
 	basic := base64.StdEncoding.EncodeToString([]byte(clientID + ":" + clientSecret))
 	req.Header.Set("Authorization", "Basic "+basic)
 
-	resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req)
+	// Endpoint is derived from the configured Portal URL.
+	resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req) //nolint:gosec
 
 	if err != nil {
 		return "", err
@@ -615,11 +621,7 @@ func oauthAccessToken(portal *url.URL, clientID, clientSecret string) (string, e
 		return "", fmt.Errorf("%s", resp.Status)
 	}
 
-	var tok struct {
-		AccessToken string `json:"access_token"`
-		TokenType   string `json:"token_type"`
-		Scope       string `json:"scope"`
-	}
+	var tok map[string]any
 
 	dec := json.NewDecoder(resp.Body)
 
@@ -627,180 +629,11 @@ func oauthAccessToken(portal *url.URL, clientID, clientSecret string) (string, e
 		return "", err
 	}
 
-	if tok.AccessToken == "" {
+	accessToken, _ := tok["access_token"].(string)
+
+	if accessToken == "" {
 		return "", fmt.Errorf("empty access_token")
 	}
 
-	return tok.AccessToken, nil
-}
-
-// refreshNodeCredentials rotates the node OAuth client secret using the join token
-// and persists the new client ID / secret pair. It returns true when credentials
-// were refreshed successfully.
-func refreshNodeCredentials(c *config.Config, portal *url.URL) bool {
-	if c == nil || portal == nil {
-		return false
-	}
-
-	joinToken := strings.TrimSpace(c.JoinToken())
-	if joinToken == "" {
-		log.Infof("cluster: cannot refresh credentials without a join token")
-		return false
-	}
-
-	id, secret, nodeUUID, err := obtainNodeCredentialsViaRegister(c, portal, joinToken)
-
-	if err != nil {
-		log.Infof("cluster: failed to refresh credentials (%s)", clean.Error(err))
-		return false
-	}
-
-	if _, err = c.SaveNodeClientSecret(secret); err != nil {
-		log.Warnf("cluster: failed to persist client secret (%s)", clean.Error(err))
-		return false
-	}
-
-	// Always prefer the refreshed secret from file over potentially stale inline config.
-	c.Options().NodeClientSecret = ""
-	c.Options().NodeClientID = id
-
-	if rnd.IsUUID(nodeUUID) {
-		c.Options().NodeUUID = nodeUUID
-	}
-
-	updates := cluster.OptionsUpdate{}
-
-	if id != "" {
-		updates.SetNodeClientID(id)
-	}
-
-	if rnd.IsUUID(nodeUUID) {
-		updates.SetNodeUUID(nodeUUID)
-	}
-
-	if _, err := c.SaveClusterOptionsUpdate(updates); err != nil {
-		log.Warnf("cluster: failed to persist refreshed credentials (%s)", clean.Error(err))
-	}
-
-	// Keep inline secret empty so NodeClientSecret() always prefers the secret file.
-	c.Options().NodeClientSecret = ""
-
-	return true
-}
-
-// isAuthError reports whether the error indicates an authentication failure
-// (HTTP 401 or 403) so callers can decide when to refresh credentials.
-func isAuthError(err error) bool {
-	if err == nil {
-		return false
-	}
-
-	msg := err.Error()
-	return strings.Contains(msg, "401") || strings.Contains(msg, "403")
-}
-
-// obtainNodeCredentialsViaRegister calls the portal registration endpoint to
-// rotate the node secret and returns the new client ID, secret, and node UUID.
-func obtainNodeCredentialsViaRegister(c *config.Config, portal *url.URL, joinToken string) (string, string, string, error) {
-	if portal == nil {
-		return "", "", "", fmt.Errorf("invalid portal url")
-	}
-
-	endpoint := *portal
-	endpoint.Path = strings.TrimRight(endpoint.Path, "/") + "/api/v1/cluster/nodes/register"
-
-	payload := buildRegisterPayload(c)
-	payload.RotateSecret = true
-
-	for attempt := 0; attempt < 2; attempt++ {
-		body, _ := json.Marshal(payload)
-		req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(body))
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "application/json")
-		req.Header.Set("Authorization", "Bearer "+joinToken)
-
-		resp, err := newHTTPClient(cluster.BootstrapRegisterTimeout).Do(req)
-
-		if err != nil {
-			return "", "", "", err
-		}
-
-		status := resp.Status
-		statusCode := resp.StatusCode
-
-		closeRespBody := func() {
-			if closeErr := resp.Body.Close(); closeErr != nil {
-				log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
-			}
-		}
-
-		switch statusCode {
-		case http.StatusOK, http.StatusCreated:
-			var regResp cluster.RegisterResponse
-
-			if err = json.NewDecoder(resp.Body).Decode(&regResp); err != nil {
-				closeRespBody()
-				return "", "", "", err
-			}
-
-			closeRespBody()
-
-			id := regResp.Node.ClientID
-			secret := ""
-
-			if regResp.Secrets != nil {
-				secret = regResp.Secrets.ClientSecret
-			}
-
-			if id == "" || secret == "" {
-				return "", "", "", fmt.Errorf("missing client credentials in response")
-			}
-
-			return id, secret, rnd.SanitizeUUID(regResp.Node.UUID), nil
-		case http.StatusConflict:
-			errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
-			closeRespBody()
-
-			// A stale local NodeUUID can trigger a conflict when no client credentials are
-			// available. Retry once without NodeUUID so the existing node can rotate secret.
-			if payload.NodeUUID != "" && attempt == 0 {
-				log.Infof("cluster: refresh conflict for node %s with UUID %s; retrying without node UUID", clean.Log(payload.NodeName), clean.Log(payload.NodeUUID))
-				payload.NodeUUID = ""
-				continue
-			}
-
-			return "", "", "", registerStatusError(status, errBody)
-		case http.StatusUnauthorized, http.StatusForbidden:
-			errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
-			closeRespBody()
-			return "", "", "", registerStatusError(status, errBody)
-		default:
-			errBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
-			closeRespBody()
-			return "", "", "", registerStatusError(status, errBody)
-		}
-	}
-
-	return "", "", "", fmt.Errorf("credential refresh request failed")
-}
-
-// registerStatusError formats a readable status error with optional API detail text.
-func registerStatusError(status string, body []byte) error {
-	msg := strings.TrimSpace(string(body))
-
-	if msg == "" {
-		return fmt.Errorf("%s", status)
-	}
-
-	var payload struct {
-		Error string `json:"error"`
-	}
-
-	if err := json.Unmarshal(body, &payload); err == nil {
-		if s := strings.TrimSpace(payload.Error); s != "" {
-			return fmt.Errorf("%s: %s", status, s)
-		}
-	}
-
-	return fmt.Errorf("%s: %s", status, msg)
+	return accessToken, nil
 }

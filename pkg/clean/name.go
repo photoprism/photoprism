@@ -6,16 +6,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// Name sanitizes a name string.
+// Name sanitizes a name string and clips it to at most txt.ClipDefault
+// runes; injection patterns (`${`, `ldap://`) drop the value entirely.
+// The cap is character-counted — callers that store the result in a
+// byte-counted column must apply their own byte clip.
 func Name(name string) string {
-	// Empty or too long?
-	if name == "" || reject(name, txt.ClipDefault) {
+	if name == "" || reject(name, 0) {
 		return ""
 	}
 
 	var prev rune
 
-	// Remove unwanted characters.
 	name = strings.Map(func(r rune) rune {
 		if r == ' ' && (prev == 0 || prev == ' ') {
 			return -1
@@ -34,12 +35,6 @@ func Name(name string) string {
 		return r
 	}, name)
 
-	// OK?
-	if name = strings.TrimSpace(name); name == "" {
-		return ""
-	}
-
-	// Make sure name isn't too long.
 	return txt.Clip(name, txt.ClipDefault)
 }
 

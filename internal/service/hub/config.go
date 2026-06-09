@@ -42,7 +42,7 @@ type Config struct {
 	Version   string     `json:"version" yaml:"-"`
 	FileName  string     `json:"-" yaml:"-"`
 	Key       string     `json:"key" yaml:"Key"`
-	Secret    string     `json:"secret" yaml:"Secret"`
+	Secret    string     `json:"secret" yaml:"Secret"` //nolint:gosec // G117: Encrypted Hub secret persisted in config.
 	Session   string     `json:"session" yaml:"Session"`
 	session   *Session   `yaml:"-"`
 	sessionMu sync.Mutex `yaml:"-"`
@@ -232,6 +232,8 @@ func (c *Config) ReSync(token string) (err error) {
 	if endpointUrl == "" {
 		log.Debugf("config: unable to obtain key for maps and places (service disabled)")
 		return nil
+	} else if err = ValidateServiceURL(endpointUrl); err != nil {
+		return err
 	}
 
 	var method string
@@ -268,6 +270,7 @@ func (c *Config) ReSync(token string) (err error) {
 
 	// Send request.
 	for range 3 {
+		// #nosec G704 endpointUrl is validated with ValidateServiceURL.
 		r, err = client.Do(req)
 
 		if err == nil {

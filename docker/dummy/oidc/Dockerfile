@@ -11,7 +11,8 @@ RUN go mod download
 RUN go build -o server .
 
 # Allow HTTP scheme
-ENV CAOS_OIDC_DEV="true" \
+ENV DO_NOT_TRACK=true \
+    CAOS_OIDC_DEV="true" \
     ZITADEL_OIDC_DEV="true"
 
 # Expose HTTP port

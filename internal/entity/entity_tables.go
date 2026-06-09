@@ -122,6 +122,25 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 
 	// Run ORM auto migrations.
 	if opt.AutoMigrate {
+		// Check if the DBMS AuthID fix has been applied?
+		version := migrate.FirstOrCreateVersion(db, migrate.NewVersion("DBMS AuthID Fix", "Any Editions"))
+		if version.NeedsMigration() {
+			if err := migrate.ConvertDBMSAuthIDDataTypes(db); err != nil {
+				log.Errorf("migrate: could not apply dbms auth_id fix : %v", err)
+				version.Error = err.Error()
+				if saveErr := version.Save(db); saveErr != nil {
+					log.Errorf("migrate: could not save dbms auth_id fix status: %v", saveErr)
+				}
+			} else {
+				if migratedErr := version.Migrated(db); migratedErr != nil {
+					log.Errorf("migrate: could not persist dbms auth_id fix status: %v", migratedErr)
+				}
+				log.Debug("migrate: DBMS AuthID fix migrated")
+			}
+		} else {
+			log.Debug("migrate: DBMS AuthID fix skipped")
+		}
+
 		for name, entity = range list {
 			if err := db.AutoMigrate(entity).Error; err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())

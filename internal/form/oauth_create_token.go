@@ -12,10 +12,10 @@ type OAuthCreateToken struct {
 	GrantType    authn.GrantType `form:"grant_type" json:"grant_type,omitempty"`
 	ClientID     string          `form:"client_id" json:"client_id,omitempty"`
 	ClientName   string          `form:"client_name" json:"client_name,omitempty"`
-	ClientSecret string          `form:"client_secret" json:" client_secret,omitempty"`
+	ClientSecret string          `form:"client_secret" json:" client_secret,omitempty"` //nolint:gosec // G117: OAuth client secret input.
 	Username     string          `form:"username" json:"username,omitempty"`
-	Password     string          `form:"password" json:"password,omitempty"`
-	RefreshToken string          `form:"refresh_token" json:"refresh_token,omitempty"`
+	Password     string          `form:"password" json:"password,omitempty"`           //nolint:gosec // G117: Password grant credential input.
+	RefreshToken string          `form:"refresh_token" json:"refresh_token,omitempty"` //nolint:gosec // G117: OAuth refresh token input.
 	Code         string          `form:"code" json:"code,omitempty"`
 	CodeVerifier string          `form:"code_verifier" json:"code_verifier,omitempty"`
 	RedirectURI  string          `form:"redirect_uri" json:"redirect_uri,omitempty"`

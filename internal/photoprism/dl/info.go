@@ -11,6 +11,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/http/safe"
 )
 
 // Info youtube-dl info
@@ -256,14 +258,14 @@ func infoFromURL(
 		return Info{}, nil, fmt.Errorf("unknown error")
 	}
 
-	get := func(url string) (*http.Response, error) {
+	get := func(rawURL string) (*http.Response, error) {
 		c := http.DefaultClient
 
 		if options.HttpClient != nil {
 			c = options.HttpClient
 		}
 
-		r, httpErr := http.NewRequest(http.MethodGet, url, nil)
+		r, httpErr := newExternalGetRequest(rawURL)
 
 		if httpErr != nil {
 			return nil, httpErr
@@ -273,7 +275,7 @@ func infoFromURL(
 			r.Header.Set(k, v)
 		}
 
-		return c.Do(r)
+		return c.Do(r) // #nosec G704 URL is parsed and scheme-validated in newExternalGetRequest.
 	}
 
 	if options.DownloadThumbnail && info.Thumbnail != "" {
@@ -304,16 +306,8 @@ func infoFromURL(
 		}
 	}
 
-	// as we ignore errors for playlists some entries might show up as null
-	//
-	// note: instead of doing full recursion, we assume entries in
-	// playlists and channels are at most 2 levels deep, and we just
-	// collect entries from both levels.
-	//
-	// the following cases have not been tested:
-	//
-	// - entries that are more than 2 levels deep (will be missed)
-	// - the ability to restrict entries to a single level (we include both levels)
+	// Flatten up to two levels of playlist/channel nesting; deeper entries
+	// are not collected and per-level filtering is not supported.
 	if options.Type == TypePlaylist || options.Type == TypeChannel {
 		var filteredEntries []Info
 		for _, e := range info.Entries {
@@ -346,4 +340,14 @@ func infoFromURL(
 	}
 
 	return info, stdoutBuf.Bytes(), nil
+}
+
+// newExternalGetRequest creates a GET request for an externally provided URL after basic validation.
+func newExternalGetRequest(rawURL string) (*http.Request, error) {
+	u, err := safe.URL(rawURL)
+	if err != nil {
+		return nil, err
+	}
+
+	return http.NewRequest(http.MethodGet, u.String(), nil)
 }

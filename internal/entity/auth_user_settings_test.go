@@ -15,7 +15,7 @@ func TestCreateUserSettings(t *testing.T) {
 		assert.Nil(t, m.UserSettings)
 	})
 	t.Run("Success", func(t *testing.T) {
-		m := &User{UserUID: "1234"}
+		m := &User{UserUID: "usg73p55zwgr1gbq"}
 		err := CreateUserSettings(m)
 
 		if err != nil {
@@ -39,7 +39,7 @@ func TestUserSettings_Updates(t *testing.T) {
 			UILanguage: "de",
 		}}
 
-	m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"})
+	assert.NoError(t, m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
 	assert.Equal(t, "vanta", m.UserSettings.UITheme)
 	assert.Equal(t, "en", m.UserSettings.UILanguage)
 }

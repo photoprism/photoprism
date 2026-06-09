@@ -17,7 +17,7 @@ import (
 // Verifies redaction differences between admin and non-admin on list endpoint.
 func TestClusterListNodes_Redaction(t *testing.T) {
 	app, router, conf := NewApiTest()
-	conf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, conf)
 
 	ClusterListNodes(router)
 
@@ -49,7 +49,7 @@ func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
 	// lifecycle and session fixtures are simplified.
 	t.Skip("todo: client-scope redaction behavior needs dedicated harness setup")
 	app, router, conf := NewApiTest()
-	conf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, conf)
 
 	ClusterListNodes(router)
 

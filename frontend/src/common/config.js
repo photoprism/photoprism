@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import $api from "common/api";
-import $event from "common/event";
+import $event, { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import * as themes from "options/themes";
 import * as options from "options/options";
 import { Photo } from "model/photo";
@@ -246,10 +246,10 @@ export default class Config {
     }
 
     switch (type) {
-      case "created":
+      case ACTION_CREATED:
         this.values.people.unshift(...data.entities);
         break;
-      case "updated":
+      case ACTION_UPDATED:
         for (let i = 0; i < data.entities.length; i++) {
           const values = data.entities[i];
 
@@ -264,7 +264,7 @@ export default class Config {
             });
         }
         break;
-      case "deleted":
+      case ACTION_DELETED:
         for (let i = 0; i < data.entities.length; i++) {
           const index = this.values.people.findIndex((m) => m.UID === data.entities[i]);
 
@@ -402,7 +402,9 @@ export default class Config {
     const perms = ["update", "search", "manage", "share", "delete"];
 
     perms.forEach((perm) => {
-      if (this.deny(resource, perm)) result.push(`disable-${perm}`);
+      if (this.deny(resource, perm)) {
+        result.push(`disable-${perm}`);
+      }
     });
 
     return result;
@@ -796,7 +798,17 @@ export default class Config {
 
   // filesQuotaReached returns true if the filesystem quota is reached or exceeded.
   filesQuotaReached() {
-    return this.values?.usage?.filesUsedPct >= 100;
+    return Boolean(this.values?.usage?.filesUsedPct >= 100);
+  }
+
+  // storageLow returns true if the storage folder is almost full.
+  storageLow() {
+    return Boolean(this.values?.usage?.storageLow);
+  }
+
+  // insufficientStorage returns true if the filesystem quota is reached or the storage folder is almost full.
+  insufficientStorage() {
+    return this.storageLow() || this.filesQuotaReached();
   }
 
   // setTokens sets the security tokens required to load thumbnails and download files from the server.
@@ -839,17 +851,17 @@ export default class Config {
 
   // isPublic returns true if the instance is running in public mode, i.e. without authentication.
   isPublic() {
-    return this.values && this.values.public;
+    return !!this.values?.public;
   }
 
   // isDemo returns true if the instance is running in demo mode for public or private testing.
   isDemo() {
-    return this.values && this.values.demo;
+    return !!this.values?.demo;
   }
 
   // isPortal returns true if this is a cluster portal server.
   isPortal() {
-    return this.values && this.values.portal;
+    return !!this.values?.portal;
   }
 
   // isPro returns true if this is team version.

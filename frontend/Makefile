@@ -1,4 +1,4 @@
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -6,19 +6,25 @@
 UID := $(shell id -u)
 GID := $(shell id -g)
 PWD := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+REPO_ROOT := $(abspath $(PWD)/..)
 NODE_IMAGE ?= node:lts
+export NPM_CONFIG_IGNORE_SCRIPTS ?= true
+
+ifneq (,$(wildcard $(REPO_ROOT)/.telemetry))
+include $(REPO_ROOT)/.telemetry
+export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' $(REPO_ROOT)/.telemetry)
+endif
 
 define DOCKER_NPM
 docker run --rm -it \
-  -v "$(PWD)":/app \
+  -v "$(REPO_ROOT)":/app \
   -w /app \
   --user "$(UID):$(GID)" \
   --read-only --tmpfs /tmp \
   -v ~/.cache/npm:/npm-cache \
+  --env-file "$(REPO_ROOT)/.telemetry" \
   -e NPM_CONFIG_CACHE=/npm-cache \
-  -e NPM_CONFIG_AUDIT=false \
-  -e NPM_CONFIG_FUND=false \
-  -e NO_UPDATE_NOTIFIER=true \
+  -e NPM_CONFIG_IGNORE_SCRIPTS=true \
   --cap-drop ALL --security-opt no-new-privileges --pids-limit 256 \
   $(NODE_IMAGE) sh -lc
 endef
@@ -35,32 +41,34 @@ notice:
 	@echo "Creating license report for frontend dependencies..."
 	license-report --only=prod --config=.report.json > NOTICE
 install-npm:
-	# Keep scripts enabled for npm itself; split other globals and disable scripts for safety
-	sudo npm install -g npm@latest
-	sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
+	# Split global installs and disable package scripts for safety.
+	sudo npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier npm@latest
+	sudo npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier npm-check-updates@latest license-report@latest
 install-testcafe:
-	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@latest
+	npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier testcafe@latest
 install-eslint:
-	npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
+	npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-vue eslint-webpack-plugin vue-eslint-parser prettier
 upgrade:
 	$(info Securely upgrading NPM dependencies...)
-	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-fund --no-audit --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
-npm-install:
-	$(info Installing NPM dependencies...)
-	npm install --save --ignore-scripts --no-audit --no-fund --no-update-notifier
+	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
+ci: npm-ci
+npm-ci:
+	@$(MAKE) -C .. --no-print-directory npm-ci
 install: npm-install
-npm-update:
-	$(info Updating NPM dependencies in package.lock and package-lock.json...)
-	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
+npm-install:
+	@$(MAKE) -C .. --no-print-directory npm-install
 update: npm-update npm-install
+npm-update:
+	@$(MAKE) -C .. --no-print-directory npm-update
+audit: npm-audit
+npm-audit:
+	@$(MAKE) -C .. --no-print-directory npm-audit
 security-check: # Scan for missing --ignore-scripts and unsafe v-html
 	npm run -s security:scan
 watch:
 	npm run watch
 build:
 	npm run build
-audit:
-	npm audit --ignore-scripts --no-update-notifier
 lint:
 	npm run lint || true
 fmt:

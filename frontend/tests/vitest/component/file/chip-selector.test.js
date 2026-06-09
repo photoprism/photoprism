@@ -69,9 +69,9 @@ describe("component/file/chip-selector", () => {
 
   describe("Chip Icons", () => {
     it.each([
-      { idx: 0, expectedClass: "chip--gray", expectedIcon: null },
-      { idx: 1, expectedClass: "chip--green-light", expectedIcon: "mdi-plus" },
-      { idx: 2, expectedClass: "chip--red", expectedIcon: "mdi-minus" },
+      { idx: 0, expectedClass: "chip--default", expectedIcon: null },
+      { idx: 1, expectedClass: "chip--add-mixed", expectedIcon: "mdi-plus" },
+      { idx: 2, expectedClass: "chip--remove", expectedIcon: "mdi-minus" },
     ])("should render expected style/icon for chip at index $idx", ({ idx, expectedClass, expectedIcon }) => {
       const chips = wrapper.findAll(".chip");
       const chip = chips[idx];
@@ -231,6 +231,32 @@ describe("component/file/chip-selector", () => {
       await combobox.trigger("keydown.enter");
 
       expect(wrapper.emitted("update:items")).toBeFalsy();
+    });
+
+    // Regression pin for the user-reported ArrowDown bug: previously
+    // pressing ↓ shifted DOM focus to the first v-list-item in the
+    // dropdown menu and the input's @blur handler treated that focus
+    // shift as "commit pending text", silently turning typed prefixes
+    // (e.g. `ca`) into a brand-new chip before the user could highlight
+    // `Camping` and press Enter. The fix is to drop the @blur handler
+    // entirely: commits only happen on Enter (`onEnter`) or on the
+    // combobox emitting a real item-object selection
+    // (`onComboboxChange`). Tabbing or clicking elsewhere with pending
+    // text simply discards it. This test pins both halves of that
+    // contract — Enter still commits, ArrowDown does not.
+    it("commits typed text on Enter but not on ArrowDown", async () => {
+      const combobox = wrapper.findComponent({ name: "VCombobox" });
+
+      wrapper.vm.newItemTitle = "ca";
+      await combobox.trigger("keydown.down");
+
+      expect(wrapper.emitted("update:items")).toBeFalsy();
+
+      await combobox.trigger("keydown.enter");
+
+      const emitted = wrapper.emitted("update:items");
+      expect(emitted).toBeTruthy();
+      expect(emitted[0][0]).toEqual(expect.arrayContaining([expect.objectContaining({ title: "ca", action: "add", isNew: true })]));
     });
   });
 

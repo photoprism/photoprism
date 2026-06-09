@@ -4,9 +4,9 @@ import { style, colors, variables } from "ui";
 /* Theme Color Variations */
 
 export const variations = {
-  colors: ["primary", "highlight", "secondary", "surface", "surface-variant", "table", "navigation"],
+  colors: ["primary", "highlight", "secondary", "surface", "surface-variant", "table", "navigation", "add", "remove"],
   lighten: 2,
-  darken: 1,
+  darken: 2,
 };
 
 /* User Interface Themes */
@@ -18,49 +18,177 @@ let themes = {
     title: "Default",
     name: "default",
     colors: {
-      "background": "#19191a",
-      "on-background": "#f9fafb",
-      "surface": "#262628",
-      "on-surface": "#f9fafb",
-      "surface-bright": "#333333",
-      "surface-variant": "#7852cd",
-      "on-surface-variant": "#f6f7e8",
-      "primary": "#9E7BEA",
-      "secondary": "#19191a",
-      "secondary-light": "#202022",
-      "accent": "#303136",
-      "card": "#27272a",
-      "selected": "#5e319b",
-      "highlight": "#5e319b",
-      "switch": "#101112",
-      "button": "#262628",
-      "table": "#202021",
-      "on-table": "#f9fafb",
+      "background": "#19191a", // Page canvas; the lowest elevation level (cards and data tables fall back to this).
+      "on-background": "#f9fafb", // Text and icon color readable against `background`.
+      "surface": "#262628", // Default container surface for sheets, dialogs, and list items (sits above `background`).
+      "on-surface": "#f9fafb", // Body text and icon color on `surface`, `surface-bright`, and `surface-light`.
+      "surface-bright": "#333333", // Lifted variant of `surface`; raised tiles, hover states, inline editors.
+      "surface-variant": "#7852cd", // Muted brand-purple foreground tone consumed by Vuetify defaults for active dropdown rows, focus rings, and `color="surface-variant"` props.
+      "on-surface-variant": "#f6f7e8", // Text/icon color that contrasts with `surface-variant` when used as a background.
+      "primary": "#9E7BEA", // Brand/identity accent (icons, active-tab text, chip focus ring).
+      "secondary": "#19191a", // Background for secondary panels (tab strips, expansion-panel headers, nav drawer sections).
+      "secondary-light": "#202022", // Lifted variant of `secondary`; used for raised surfaces inside secondary panels.
+      "accent": "#303136", // Small-decoration tint for hover/focus subtleties; not a primary action color.
+      "card": "#27272a", // Dedicated card-container background; a third tier between `surface` and `background`.
+      "selected": "#5e319b", // Active list-item background; pairs with `on-selected` for text inside the row.
+      "highlight": "#5e319b", // Primary call-to-action accent (Confirm/Save/Apply buttons, chips, active toggle).
+      "switch": "#101112", // VSwitch track background when off.
+      "button": "#262628", // Secondary button color (Cancel, dismiss) — the neutral companion to `highlight`.
+      "table": "#202021", // VDataTable row and header background.
+      "on-table": "#f9fafb", // Text and icon color on `table` rows.
+      "error": "#e57373", // Error state for banners, validation errors, and error toasts.
+      "info": "#00acc1", // Informational notification color (snackbars, info-level log icons, neutral badges).
+      "success": "#4db6ac", // Successful-outcome notification color (saved toast, completed-job indicator).
+      "warning": "#bc9714", // Caution / recoverable-concern notification color (warning banners, paused indicators).
+      "favorite": "#FFD600", // Favorite-star color.
+      "add": "#00897B", // User-initiated "add to collection" action color (paired with `remove`; distinct from `download` and `success`).
+      "remove": "#d35150", // Destructive "remove from collection" action color (distinct from `error`, which is a fault state).
+      "restore": "#00d48a", // Restore-from-trash / undo-remove action color.
+      "album": "#ed9e00", // Album identity color (album icons, chips, thumbnail accents).
+      "on-album": "#ffffff", // Text/icon color on album-tinted backgrounds.
+      "download": "#00bfa5", // Download affordance (buttons, progress).
+      "private": "#00b8d4", // Private badge / lock indicator.
+      "edit": "#2196F3", // Edit affordance (usually muted; rarely tinted).
+      "share": "#3F51B5", // Share affordance (share links, share dialog accents).
+      "love": "#ef5350", // Love / heart indicator (emotional emphasis only).
+      "terminal": "#282730", // Background for terminal / code blocks (log views, code samples).
+      "navigation": "#19191a", // App bar / top toolbar background; matches `background` for a flat look in this theme.
+      "navigation-home": "#19191a", // "Home" navigation-state background; matches `navigation` in this theme.
+    },
+    variables: {
+      "border-color": "#363636", // Divider and outlined-variant border color.
+      "border-opacity": 0.46, // Alpha applied to `border-color`.
+      "fill-opacity": 0, // Background fill alpha for `solo-filled` inputs (0 = no fill in this theme).
+      "hover-opacity": 0.03, // Hover-overlay alpha on list items, buttons, and rows.
+      "disabled-opacity": 0.65, // Alpha applied to disabled controls.
+      "focus-opacity": 0.05, // Keyboard-focus overlay alpha on inputs and rows.
+    },
+  },
+
+  /* Special theme used for the photo/video viewer */
+  lightbox: {
+    dark: true,
+    title: "Lightbox",
+    name: "lightbox",
+    colors: {
+      "background": "#0c0d0d", // Page canvas; near-black so the photo dominates. Also painted onto `navigation` rows.
+      "on-background": "#ffffff", // Text and icon color readable against `background`.
+      "surface": "#181818", // Default container surface (sidebar, dropdown menus, dialog v-card); one step above `background`.
+      "on-surface": "#f9fafb", // Body text and icon color on `surface`, `surface-bright`, `surface-light`, and `card`.
+      "surface-bright": "#1c1c1c", // Lifted variant of `surface`; raised tiles, hover backgrounds.
+      "surface-variant": "#A19D9F", // Mid-grey foreground consumed by Vuetify defaults for active dropdown rows, focus rings, and `color="surface-variant"` props.
+      "on-surface-variant": "#1c1c1c", // Text/icon color that contrasts with `surface-variant` when used as a background.
+      "card": "#171717", // Dedicated card-container background; raised dialog v-cards inherit this via the VCard default.
+      "selected": "#3d3f40", // Active list-item background; neutral grey one step above `highlight`.
+      "table": "#242424", // VDataTable row and header background.
+      "button": "#242424", // Secondary button color (e.g. dialog "Cancel"); the neutral companion to `highlight`.
+      "highlight": "#3c3c3c", // Primary button color (Save / Confirm); muted dark grey to keep the action calm.
+      "switch": "#101112", // VSwitch track background when off.
+      "primary": "#9E8FC9", // Brand/identity accent and base color for face-marker `__rect--named` / `__handle` strokes; muted purple chosen to match the lightbox aesthetic.
+      "secondary": "#191919", // Background for secondary panels (tab strips, expansion-panel headers, nav drawer sections).
+      "secondary-light": "#1e1e1e", // Lifted variant of `secondary`; backs `.meta-chip` and the chip-selector chips.
+      "accent": "#BDAFE4", // Light-lavender accent; consumed by face-marker `__rect--draft` (drag-to-create state).
+      "error": "#e57373", // Error state for banners, validation errors, and error toasts.
+      "info": "#9E7BEA", // Informational notification color (info toasts); purple matches the `primary` family.
+      "success": "#8763d5", // Successful-outcome notification color (matches the `info` purple cast).
+      "warning": "#ecc434", // Caution / recoverable-concern notification color.
+      "favorite": "#FFD600", // Favorite-star color.
+      "remove": "#cd4645", // Destructive "remove from collection" action color (also consumed by face-marker `__rect--removing` and the Remove pill; distinct from `error`, a fault state).
+      "restore": "#00d48a", // Restore-from-trash / undo-remove action color.
+      "album": "#ed9e00", // Album identity color (album icons, chips, thumbnail accents).
+      "on-album": "#ffffff", // Text/icon color on album-tinted backgrounds.
+      "download": "#00bfa5", // Download affordance (buttons, progress).
+      "private": "#00b8d4", // Private badge / lock indicator.
+      "edit": "#2196F3", // Edit affordance (usually muted; rarely tinted).
+      "share": "#3F51B5", // Share affordance (share links, share dialog accents).
+      "love": "#ef5350", // Love / heart indicator (emotional emphasis only).
+      "terminal": "#4A464F", // Background for terminal / code blocks (log views, code samples).
+      "navigation": "#0c0d0d", // App bar / top toolbar background; matches `background` for a flat lightbox look.
+      "navigation-home": "#0c0d0d", // "Home" navigation-state background; matches `navigation` / `background` in this theme.
+    },
+    variables: {
+      "border-color": "#ffffff", // Divider and outlined-variant border color (rendered against `border-opacity`).
+      "border-opacity": 0.1, // Alpha on `border-color`; reads as a barely-there divider against the near-black canvas.
+      "hover-opacity": 0.08, // Hover-overlay alpha; bumped above the Vuetify dark default (~0.04) to read on near-black.
+      "focus-opacity": 0.06, // Keyboard-focus overlay alpha; intentionally below `hover-opacity` so hover+focus don't compound.
+      "fill-opacity": 0.04, // Background-fill alpha for `solo-filled` inputs (the project-wide default; see `defaults.js`).
+      "overlay-color": "#141417", // v-overlay scrim color behind v-dialog / v-menu modals.
+      "overlay-opacity": 0.6, // Alpha on `overlay-color`; the photo stays visible but dimmed behind sidebar dialogs.
+      "theme-overlay-multiplier": 0.16, // Vuetify elevation-overlay multiplier; kept low to keep raised surfaces near-black.
+      "high-emphasis-opacity": 0.96, // Body-text alpha on `surface`; under 1.0 so pure-white doesn't read as harsh.
+      "medium-emphasis-opacity": 0.88, // Secondary-text alpha (captions, helpers); above the 0.7 dark default for legibility.
+      "label-opacity": 0.67, // Floating-label and helper-text alpha on inputs.
+      "disabled-opacity": 0.75, // Alpha applied to disabled controls.
+    },
+  },
+
+  /* Special theme used on the login page */
+  login: {
+    dark: false,
+    title: "Login",
+    name: "login",
+    colors: {
+      "background": "#2f3031",
+      "surface": "#fafafa",
+      "on-surface": "#333333",
+      "surface-bright": "#fafafa",
+      "surface-variant": "#00a6a9",
+      "on-surface-variant": "#c8e3e7",
+      "card": "#505050",
+      "table": "#505050",
+      "button": "#c8e3e7",
+      "primary": "#05dde1",
+      "highlight": "#00a6a9",
+      "secondary": "#c8e3e7",
+      "secondary-light": "#2a2b2c",
+      "accent": "#05dde1",
       "error": "#e57373",
       "info": "#00acc1",
       "success": "#4db6ac",
       "warning": "#bc9714",
-      "favorite": "#FFD600",
-      "remove": "#da4e4c",
-      "restore": "#00d48a",
-      "album": "#ed9e00",
-      "on-album": "#ffffff",
+      "remove": "#DF5353",
+      "restore": "#3EA2F4",
+      "album": "#ffab00",
       "download": "#00bfa5",
       "private": "#00b8d4",
-      "edit": "#2196F3",
-      "share": "#3F51B5",
+      "edit": "#0AA9FF",
+      "share": "#9575cd",
       "love": "#ef5350",
-      "terminal": "#282730",
-      "navigation": "#19191a",
-      "navigation-home": "#19191a",
+      "terminal": "#4A464F",
+      "navigation": "#141417",
+      "navigation-home": "#0e0f10",
     },
     variables: {
-      "border-color": "#363636",
-      "border-opacity": 0.46,
-      "fill-opacity": 0,
-      "hover-opacity": 0.03,
-      "disabled-opacity": 0.65,
-      "focus-opacity": 0.05,
+      "border-color": "#ffffff",
+      "border-opacity": 0.08,
+      "high-emphasis-opacity": 0.96,
+      "medium-emphasis-opacity": 0.7,
+      "hover-opacity": 0.08,
+      "focus-opacity": 0.1,
+    },
+  },
+
+  /* Special light theme, e.g. used for map controls in Places */
+  light: {
+    dark: false,
+    title: "Light",
+    name: "light",
+    colors: {
+      "background": "#ffffff",
+      "surface": "#ffffff",
+      "on-surface": "#000000",
+      "surface-bright": "#FFFFFF",
+      "surface-light": "#EEEEEE",
+      "surface-variant": "#1e1e1f",
+      "on-surface-variant": "#EEEEEE",
+    },
+    variables: {
+      "border-color": "#1e1e1f",
+      "high-emphasis-opacity": 1.0,
+      "medium-emphasis-opacity": 0.8,
+      "label-opacity": 0.96,
+      "focus-opacity": 0.0,
+      "hover-opacity": 0.05,
     },
   },
 
@@ -294,7 +422,9 @@ let themes = {
       "info": "#7887df",
       "success": "#26A69A",
       "warning": "#bfa965",
-      "remove": "#e57373",
+      "add": "#94d5c4",
+      "remove": "#e45d6a",
+      "on-remove": "#F3F3F5",
       "restore": "#64b5f6",
       "album": "#ffab00",
       "download": "#00bfa5",
@@ -466,12 +596,15 @@ let themes = {
       "danger": "#9f2727",
       "info": "#4aa2bc",
       "on-info": "#323742",
-      "success": "#1ac5c1",
+      "success": "#89d1cf",
       "on-success": "#323742",
       "warning": "#d88a0b",
       "on-warning": "#b87d16",
       "favorite": "#EBCB8B",
-      "remove": "#BF616A",
+      "add": "#b2ddd2",
+      "on-add": "#323742",
+      "remove": "#e49ca4",
+      "on-remove": "#323742",
       "restore": "#81A1C1",
       "album": "#EBCB8B",
       "download": "#8FBCBB",
@@ -717,122 +850,6 @@ let themes = {
       "border-opacity": 0.35,
       "disabled-opacity": 0.65,
       "hover-opacity": 0.06,
-    },
-  },
-
-  /* Special theme used for the photo/video viewer */
-  lightbox: {
-    dark: true,
-    title: "Lightbox",
-    name: "lightbox",
-    colors: {
-      "background": "#040709",
-      "surface": "#040709",
-      "on-surface": "#ffffff",
-      "surface-bright": "#141417",
-      "surface-variant": "#242628",
-      "on-surface-variant": "#f6f6f6",
-      "card": "#171717",
-      "selected": "#9c9c9c",
-      "table": "#242424", // Variations: 242628, 212325, 1E2022, 1C1D1F, 191A1C, 161718, 131415, 111112
-      "button": "#1D1E1F",
-      "switch": "#101112",
-      "primary": "#ebebeb",
-      "highlight": "#9c9c9c",
-      "secondary": "#191919",
-      "secondary-light": "#1e1e1e",
-      "accent": "#2D2E2E",
-      "error": "#e57373",
-      "info": "#9E7BEA",
-      "success": "#8763d5",
-      "warning": "#ecc434",
-      "favorite": "#FFD600",
-      "remove": "#da4e4c",
-      "restore": "#00d48a",
-      "album": "#ed9e00",
-      "on-album": "#ffffff",
-      "download": "#00bfa5",
-      "private": "#00b8d4",
-      "edit": "#2196F3",
-      "share": "#3F51B5",
-      "love": "#ef5350",
-      "terminal": "#4A464F",
-      "navigation": "#040709",
-      "navigation-home": "#040709",
-    },
-    variables: {
-      "border-color": "#ffffff",
-      "border-opacity": 0.1,
-    },
-  },
-
-  /* Special theme used on the login page */
-  login: {
-    dark: false,
-    title: "Login",
-    name: "login",
-    colors: {
-      "background": "#2f3031",
-      "surface": "#fafafa",
-      "on-surface": "#333333",
-      "surface-bright": "#fafafa",
-      "surface-variant": "#00a6a9",
-      "on-surface-variant": "#c8e3e7",
-      "card": "#505050",
-      "table": "#505050",
-      "button": "#c8e3e7",
-      "primary": "#05dde1",
-      "highlight": "#00a6a9",
-      "secondary": "#c8e3e7",
-      "secondary-light": "#2a2b2c",
-      "accent": "#05dde1",
-      "error": "#e57373",
-      "info": "#00acc1",
-      "success": "#4db6ac",
-      "warning": "#bc9714",
-      "remove": "#DF5353",
-      "restore": "#3EA2F4",
-      "album": "#ffab00",
-      "download": "#00bfa5",
-      "private": "#00b8d4",
-      "edit": "#0AA9FF",
-      "share": "#9575cd",
-      "love": "#ef5350",
-      "terminal": "#4A464F",
-      "navigation": "#141417",
-      "navigation-home": "#0e0f10",
-    },
-    variables: {
-      "border-color": "#ffffff",
-      "border-opacity": 0.08,
-      "high-emphasis-opacity": 0.96,
-      "medium-emphasis-opacity": 0.7,
-      "hover-opacity": 0.08,
-      "focus-opacity": 0.1,
-    },
-  },
-
-  /* Special light theme, e.g. used for map controls in Places */
-  light: {
-    dark: false,
-    title: "Light",
-    name: "light",
-    colors: {
-      "background": "#ffffff",
-      "surface": "#ffffff",
-      "on-surface": "#000000",
-      "surface-bright": "#FFFFFF",
-      "surface-light": "#EEEEEE",
-      "surface-variant": "#1e1e1f",
-      "on-surface-variant": "#EEEEEE",
-    },
-    variables: {
-      "border-color": "#1e1e1f",
-      "high-emphasis-opacity": 1.0,
-      "medium-emphasis-opacity": 0.8,
-      "label-opacity": 0.96,
-      "focus-opacity": 0.0,
-      "hover-opacity": 0.05,
     },
   },
 };

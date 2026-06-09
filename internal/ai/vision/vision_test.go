@@ -13,7 +13,7 @@ import (
 )
 
 var assetsPath = fs.Abs("../../../assets")
-var examplesPath = filepath.Join(assetsPath, "examples")
+var samplesPath = filepath.Join(assetsPath, "samples")
 
 func TestMain(m *testing.M) {
 	// Init test logger.

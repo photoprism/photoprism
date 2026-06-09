@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
 FROM ubuntu:jammy
 
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -21,7 +21,19 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
-ENV PHOTOPRISM_ARCH=$TARGETARCH \
+ENV DO_NOT_TRACK=true \
+    GH_TELEMETRY=false \
+    DISABLE_TELEMETRY=1 \
+    DISABLE_ERROR_REPORTING=1 \
+    DISABLE_FEEDBACK_COMMAND=1 \
+    CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1 \
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
+    DISABLE_AUTOUPDATER=1 \
+    NO_UPDATE_NOTIFIER=true \
+    NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_FUND=false \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
     PS1="\u@$BUILD_TAG:\w\$ " \
@@ -51,13 +63,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
         xz-utils exiftool sqlite3 postgresql-client tzdata gpg make zip unzip wget curl rsync \
-        imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
+        imagemagick rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
         libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
         va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
+    /scripts/install-libvips.sh && \
     /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \

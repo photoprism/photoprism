@@ -43,6 +43,7 @@ const (
 	ActionReact     Permission = "react"
 	ActionPublish   Permission = "publish"
 	ActionSubscribe Permission = "subscribe"
+	ActionAudit     Permission = "audit"
 	ActionManage    Permission = "manage"
 	ActionManageOwn Permission = "manage_own"
 )
@@ -76,6 +77,7 @@ const (
 	ResourceVision    Resource = "vision"
 	ResourceCluster   Resource = "cluster"
 	ResourceFeedback  Resource = "feedback"
+	ResourceMCP       Resource = "mcp"
 	ResourceDefault   Resource = "default"
 )
 

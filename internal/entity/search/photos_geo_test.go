@@ -1194,4 +1194,33 @@ func TestGeo(t *testing.T) {
 			assert.Empty(t, r.PhotoTitle)
 		}
 	})
+	t.Run("QueryMatchesHomophoneLabel", func(t *testing.T) {
+		first, _, photoA, photoB := createHomophoneSearchFixtures(t)
+
+		var f form.SearchPhotosGeo
+
+		f.Query = first.LabelName
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(photos) == 0 {
+			t.Fatal("expected results")
+		}
+
+		foundRight := false
+
+		for _, photo := range photos {
+			assert.NotEqual(t, photoB.PhotoUID, photo.PhotoUID)
+
+			if photo.PhotoUID == photoA.PhotoUID {
+				foundRight = true
+			}
+		}
+
+		assert.True(t, foundRight)
+	})
 }

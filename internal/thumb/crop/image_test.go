@@ -1,10 +1,14 @@
 package crop
 
 import (
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestThumbFileName(t *testing.T) {
@@ -112,5 +116,34 @@ func TestFindIdealThumbFileName(t *testing.T) {
 	t.Run("WidthNum60", func(t *testing.T) {
 		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 60, "./testdata/b/c/c")
 		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
+	})
+}
+
+func TestImageFromThumb(t *testing.T) {
+	t.Run("Layered16BitTiffThumbnail", func(t *testing.T) {
+		prevLibrary := thumb.Library
+		thumb.Library = thumb.LibVips
+		t.Cleanup(func() {
+			thumb.Library = prevLibrary
+		})
+
+		cachePath := t.TempDir()
+		src := fs.Abs("../../../assets/samples/layered-16bit-small.tif")
+		fit720 := thumb.Sizes[thumb.Fit720]
+
+		thumbName, err := thumb.FromFile(src, "bccfeaa526a36e19b555fd4ca5e8f767d5604289", cachePath, fit720.Width, fit720.Height, thumb.OrientationNormal, fit720.Options...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		img, cropName, err := ImageFromThumb(thumbName, NewArea("crop", 0, 0, 1, 1), Sizes[Tile50], false)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotEmpty(t, cropName)
+		assert.Equal(t, filepath.Join(filepath.Dir(thumbName), "bccfeaa526a36e19b555fd4ca5e8f767d5604289_50x50_crop_0000003e83e8.jpg"), cropName)
+		assert.Equal(t, 50, img.Bounds().Dx())
+		assert.Equal(t, 50, img.Bounds().Dy())
 	})
 }
