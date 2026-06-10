@@ -19,6 +19,8 @@ func ClientConfig(c *config.Config, t config.ClientType) config.Values {
 		"register": c.OIDCRegister(),
 		"redirect": c.OIDCRedirect(),
 		"loginUri": c.OIDCLoginUri(),
+		// cluster lets the frontend route a cluster-OIDC sign-out to the Portal login.
+		"cluster": c.ClusterOIDC(),
 	}
 
 	return result

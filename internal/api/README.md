@@ -20,6 +20,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Query and persist data through the corresponding services or repositories; avoid ad-hoc SQL or GORM usage in handlers when dedicated functions exist elsewhere.
 - Surface pagination consistently with `count`, `offset`, and `limit` following the defaults (100 max 1000). Validate `offset >= 0` and clamp `count` to the allowed range.
 - When responses need role-specific fields, build DTOs that redact sensitive data for non-admin roles so the handler stays deterministic.
+- **JSON field casing:** use **TitleCase** field names (`UUID`, `Name`, `SiteUrl`, `CreatedAt`) for request/response bodies that correspond to a database entity (mirroring the entity/model, e.g. the cluster `Node` and `ClusterInstance` DTOs), and **camelCase** (`storageNamespace`, `redirectUri`) for generated or artificial payloads that do not map to a specific entity — client config, session responses, and action/RPC bodies. A filtered or computed projection of an entity stays TitleCase; an action payload that operates on an entity stays camelCase but MAY TitleCase the single identity field that mirrors the entity (e.g. a `UUID`).
 
 ### Security & Middleware
 

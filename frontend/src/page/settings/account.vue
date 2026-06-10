@@ -162,7 +162,7 @@
                   <v-icon v-else end>mdi-shield-alert</v-icon>
                 </v-btn>
               </v-col>
-              <v-col cols="12" sm="6">
+              <v-col v-if="$config.featAppPasswords()" cols="12" sm="6">
                 <v-btn
                   block
                   variant="flat"

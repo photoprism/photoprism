@@ -200,6 +200,28 @@ func FindUserByName(userName string) *User {
 	return FindUser(User{UserName: userName})
 }
 
+// UserEmailAvailable reports whether email is unused or only held by the account
+// with exceptUID. The email field is informational — not verified, and not unique
+// as an identity — so external (OIDC/LDAP) provisioning skips a colliding email
+// instead of letting Validate reject the account and block the login.
+func UserEmailAvailable(email, exceptUID string) bool {
+	if email = clean.Email(email); email == "" {
+		return false
+	}
+
+	found := FindUser(User{UserEmail: email})
+
+	return found == nil || found.UserUID == exceptUID
+}
+
+// EmailVerified reports whether the account's email address has been verified,
+// i.e. VerifiedAt is set to a non-zero time. PhotoPrism does not verify emails,
+// so this is false for operator-managed accounts and true only when an upstream
+// IdP asserted it.
+func (m *User) EmailVerified() bool {
+	return clean.TimeSet(m.VerifiedAt)
+}
+
 // FindLocalUser returns the matching local user or nil if it was not found.
 func FindLocalUser(userName string) *User {
 	name := clean.Username(userName)
@@ -777,6 +799,12 @@ func (m *User) AclRole() acl.Role {
 
 	switch {
 	case m.SuperAdmin:
+		// SuperAdmins map to the strongest operator role available. On Portal
+		// builds that is cluster_admin (registered in acl.UserRoles); CE/Pro
+		// leave it unregistered, so super admins resolve to RoleAdmin there.
+		if r, ok := acl.UserRoles[acl.RoleClusterAdmin.String()]; ok {
+			return r
+		}
 		return acl.RoleAdmin
 	case role == "":
 		return acl.RoleNone
@@ -878,13 +906,23 @@ func (m *User) Equal(u *User) bool {
 	return m.UserUID == u.UserUID
 }
 
-// IsAdmin checks if the user is an admin with username.
+// IsAdmin checks if the user is an admin with username. The Portal-only
+// cluster_admin operator role counts as an admin so account-management logic
+// (e.g. SaveForm role changes) treats it like a regular admin.
 func (m *User) IsAdmin() bool {
 	if m == nil {
 		return false
 	}
 
-	return m.IsSuperAdmin() || m.IsRegistered() && m.AclRole() == acl.RoleAdmin
+	if !m.IsSuperAdmin() && !m.IsRegistered() {
+		return false
+	}
+
+	if m.IsSuperAdmin() {
+		return true
+	}
+
+	return acl.IsAdminRole(m.AclRole())
 }
 
 // IsSuperAdmin checks if the user is a super admin.
@@ -1325,10 +1363,16 @@ func (m *User) PrivilegeLevelChange(frm form.User) bool {
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *User) SaveForm(frm form.User, u *User) error {
+// Privilege-level fields (role, login, WebDAV, paths) are applied only when
+// byAdmin is true. The caller decides this: a regular admin actor, or a trusted
+// cluster service principal that has no end-user identity of its own and so
+// cannot satisfy u.IsAdmin() despite being authorized for user management.
+func (m *User) SaveForm(frm form.User, u *User, byAdmin bool) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be modified")
-	} else if (m.ID == 1 || frm.SuperAdmin) && acl.RoleAdmin.NotEqual(frm.Role()) {
+	} else if frm.SuperAdmin && !acl.IsAdminRole(acl.Role(frm.Role())) {
+		// Super admins must keep an admin-level role. cluster_admin is the
+		// Portal operator role and counts as admin-level (it is unused on CE/Pro).
 		return fmt.Errorf("super admin must not have a non-admin role")
 	} else if frm.BasePath != "" && clean.UserPath(frm.BasePath) == "" {
 		return fmt.Errorf("invalid base folder")
@@ -1363,18 +1407,21 @@ func (m *User) SaveForm(frm form.User, u *User) error {
 		m.VerifyToken = GenerateToken()
 	}
 
-	// Change user privileges only if allowed.
-	if u == nil {
-		// Do nothing.
-	} else if u.IsAdmin() {
+	// Apply privilege-level changes only when the caller is authorized as an
+	// admin. A trusted cluster service principal has no end-user identity, so
+	// the handler passes byAdmin explicitly instead of relying on u.IsAdmin(),
+	// which a user-less token can never satisfy.
+	if u != nil && byAdmin {
 		// Restore account.
 		if frm.DeletedAt == nil {
 			m.DeletedAt = nil
 		}
 
-		// Prevent admins from locking themselves out.
+		// Prevent admins from locking themselves out: keep their current role
+		// and keep login enabled on a self-save. Forcing RoleAdmin here would
+		// silently demote a Portal cluster_admin; an explicit self role change
+		// is already rejected by the update handler.
 		if u.Equal(m) {
-			m.SetRole(acl.RoleAdmin.String())
 			m.CanLogin = true
 		} else {
 			m.SetRole(frm.Role())
@@ -1402,16 +1449,12 @@ func (m *User) SaveForm(frm form.User, u *User) error {
 		m.SetUploadPath(frm.UploadPath)
 	}
 
-	// Ensure super admins never have a non-admin role.
-	if m.SuperAdmin {
-		m.SetRole(acl.RoleAdmin.String())
-	}
-
-	// Make sure that the initial admin user cannot lock itself out.
-	if m.ID == Admin.ID && (m.AclRole() != acl.RoleAdmin || !m.SuperAdmin || !m.CanLogin) {
-		m.SetRole(acl.RoleAdmin.String())
-		m.SuperAdmin = true
-		m.CanLogin = true
+	// Ensure super admins keep an admin-level role (admin, or cluster_admin on
+	// the Portal). Anything else is normalized to the configured default admin
+	// role, derived from Admin.UserRole (admin on CE/Pro, cluster_admin on the
+	// Portal).
+	if m.SuperAdmin && !acl.IsAdminRole(acl.Role(m.UserRole)) {
+		m.SetRole(Admin.UserRole)
 	}
 
 	return m.Save()

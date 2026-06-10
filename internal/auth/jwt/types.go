@@ -9,11 +9,17 @@ import (
 const (
 	keyTypeOKP   = "OKP"
 	curveEd25519 = "Ed25519"
+	algEdDSA     = "EdDSA"
+	keyUseSig    = "sig"
 )
 
 // PublicJWK represents the public portion of an Ed25519 key in JWK form.
+// `use` and `alg` are advertised so relying parties (e.g. the zitadel/oidc RP
+// on instances) can select the EdDSA signature verifier for ID-token validation.
 type PublicJWK struct {
 	Kty string `json:"kty"`
+	Use string `json:"use"`
+	Alg string `json:"alg"`
 	Crv string `json:"crv"`
 	Kid string `json:"kid"`
 	X   string `json:"x"`

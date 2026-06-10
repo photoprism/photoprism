@@ -366,6 +366,9 @@
                 "Database": {
                     "$ref": "#/definitions/cluster.NodeDatabase"
                 },
+                "DisplayName": {
+                    "type": "string"
+                },
                 "Labels": {
                     "additionalProperties": {
                         "type": "string"
@@ -880,6 +883,9 @@
                 "albums": {
                     "type": "boolean"
                 },
+                "appPasswords": {
+                    "type": "boolean"
+                },
                 "archive": {
                     "type": "boolean"
                 },
@@ -1095,6 +1101,9 @@
             "properties": {
                 "language": {
                     "type": "string"
+                },
+                "openOnHover": {
+                    "type": "boolean"
                 },
                 "scrollbar": {
                     "type": "boolean"
@@ -7039,7 +7048,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to update (Role, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)",
+                        "description": "properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)",
                         "in": "body",
                         "name": "node",
                         "required": true,
@@ -8900,6 +8909,18 @@
                     "application/json"
                 ],
                 "responses": {
+                    "302": {
+                        "description": "redirect to the client redirect_uri with an authorization code",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
@@ -8907,7 +8928,7 @@
                         }
                     }
                 },
-                "summary": "OAuth2 authorization endpoint (not implemented)",
+                "summary": "OAuth2/OIDC authorization endpoint",
                 "tags": [
                     "Authentication"
                 ]
@@ -9016,6 +9037,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -9036,6 +9063,18 @@
                     "application/json"
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
@@ -9043,7 +9082,37 @@
                         }
                     }
                 },
-                "summary": "OAuth2 userinfo endpoint (not implemented)",
+                "summary": "OAuth2/OIDC userinfo endpoint",
+                "tags": [
+                    "Authentication"
+                ]
+            },
+            "post": {
+                "operationId": "OAuthUserinfo",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2/OIDC userinfo endpoint",
                 "tags": [
                     "Authentication"
                 ]

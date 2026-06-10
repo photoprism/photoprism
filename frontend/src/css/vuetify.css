@@ -610,6 +610,13 @@ body .v-table > .v-table__wrapper > table {
     font-size: 0.8125rem !important;
 }
 
+/* The instance-access Role select menu is teleported to <body>, so the in-table
+   font-size cannot cascade to it. menu-props.contentClass tags only this menu's
+   overlay, scoping the smaller font to this select instead of every menu. */
+.instance-role-menu .v-list-item-title {
+    font-size: 0.8125rem;
+}
+
 .v-form .v-table:not(.tile),
 .v-container .v-table:not(.tile) {
     border-radius: 6px;

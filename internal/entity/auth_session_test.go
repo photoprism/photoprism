@@ -934,6 +934,34 @@ func TestSession_IsSuperAdmin(t *testing.T) {
 
 }
 
+func TestSession_IsApplication(t *testing.T) {
+	user := FindUserByName("alice")
+	assert.NotNil(t, user)
+
+	// Every user-bound client session is an app password, regardless of the grant
+	// type used to mint it (password for local users, session for OIDC-only users,
+	// cli for the "auth add" command). A client session without a user is a plain
+	// access token, not an app password.
+	cases := []struct {
+		name  string
+		grant authn.GrantType
+		user  *User
+		want  bool
+	}{
+		{"PasswordGrant", authn.GrantPassword, user, true},
+		{"SessionGrant", authn.GrantSession, user, true},
+		{"CliGrant", authn.GrantCLI, user, true},
+		{"ClientCredentialsNoUser", authn.GrantClientCredentials, nil, false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			s := NewClientSession("test-app-"+tc.name, 3600, "*", tc.grant, tc.user)
+			assert.Equal(t, tc.want, s.IsApplication())
+		})
+	}
+}
+
 func TestSession_NotRegistered(t *testing.T) {
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()

@@ -148,6 +148,28 @@ func TestWebDAVAuth(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
 		assert.Equal(t, BasicAuthRealm, c.Writer.Header().Get("WWW-Authenticate"))
 	})
+	t.Run("AppPasswordsDisabled", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{
+			Header: make(http.Header),
+		}
+
+		// A real app-password session (OIDC-only user, session grant) read from fixtures
+		// so the gate's provider check is exercised without a database write.
+		sess := entity.SessionFixtures.Get("alice_app_password")
+		assert.True(t, sess.IsApplication())
+		header.SetAuthorization(c.Request, sess.AuthToken())
+
+		conf.Settings().Features.AppPasswords = false
+		defer func() { conf.Settings().Features.AppPasswords = true }()
+
+		webdavAuthCache.Flush()
+		webdavHandler(c)
+
+		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+		assert.Equal(t, BasicAuthRealm, c.Writer.Header().Get("WWW-Authenticate"))
+	})
 }
 
 func TestWebDAVAuthSession(t *testing.T) {

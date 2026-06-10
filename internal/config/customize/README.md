@@ -1,6 +1,6 @@
 ## PhotoPrism — Customize Package
 
-**Last Updated:** November 21, 2025
+**Last Updated:** June 9, 2026
 
 ### Overview
 
@@ -16,6 +16,12 @@ The `customize` package defines user-facing configuration defaults for PhotoPris
 - Set `PHOTOPRISM_DISABLE_FEATURES` to disable specific features at startup.  
 - The value may be comma- or space-separated (case-insensitive); hyphens/underscores are ignored.  
 - Tokens are inflected so singular/plural variants match (for example, `albums`, `album`, or `Album` all disable the Albums flag).
+
+### Per-Role & Per-Scope Gating
+
+- `Settings.ApplyACL(rules, role)` and `Settings.ApplyScope(scope)` return a per-session copy of the feature flags, switching off features the session may not use. A flag is enabled only when both the global default and the relevant permission/scope allow it.
+- The `Account` and `AppPasswords` flags require permission (and scope) to update the password (`ResourcePassword`/`ActionUpdate`), so a share-token visitor without an account does not see the account or app-password affordances.
+- This per-session gating shapes only the client config the Web UI reads; server-side enforcement of disabled app passwords uses the global `AppPasswords` flag via `Config.DisableAppPasswords()`.
 
 ### Settings Lifecycle
 

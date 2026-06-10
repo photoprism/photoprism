@@ -235,6 +235,10 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			if s := normalizeSiteURL(req.SiteUrl); s != "" {
 				node.SiteUrl = s
 			}
+			if dn := clean.TypeUnicode(req.DisplayName); dn != "" {
+				// Instance-reported name; NameSrc defaults to SrcAuto ("").
+				node.DisplayName = dn
+			}
 			if appName != "" {
 				node.AppName = appName
 			}
@@ -388,6 +392,11 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		if s := normalizeSiteURL(req.SiteUrl); s != "" {
 			n.SiteUrl = s
+		}
+
+		if dn := clean.TypeUnicode(req.DisplayName); dn != "" {
+			// Instance-reported name; NameSrc defaults to SrcAuto ("").
+			n.DisplayName = dn
 		}
 
 		// Generate node secret (must satisfy client secret format for entity.Client).

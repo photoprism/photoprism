@@ -190,6 +190,17 @@ describe("common/config", () => {
     expect(defaultConfig.feature("download")).toBe(true);
   });
 
+  it("featAppPasswords mirrors the appPasswords feature flag", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.features = { ...settings.features, appPasswords: true };
+    cfg.set("settings", settings);
+    expect(cfg.featAppPasswords()).toBe(true);
+    settings.features = { ...settings.features, appPasswords: false };
+    cfg.set("settings", settings);
+    expect(cfg.featAppPasswords()).toBe(false);
+  });
+
   it("returns albums when library access is restricted", () => {
     const cfg = createTestConfig();
     const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
@@ -510,6 +521,23 @@ describe("common/config", () => {
         expect(typeof result, fn).toBe("boolean");
         expect(result, fn).toBe(false);
       }
+    });
+  });
+
+  describe("cluster OIDC accessors", () => {
+    const make = (oidc) => new Config(new StorageShim(), { ...window.__CONFIG__, ext: { oidc } });
+
+    it("isClusterOidc reflects the ext.oidc.cluster flag as a Boolean", () => {
+      expect(make({ cluster: true }).isClusterOidc()).toBe(true);
+      expect(make({ cluster: false }).isClusterOidc()).toBe(false);
+      expect(make(undefined).isClusterOidc()).toBe(false);
+      expect(new Config(new StorageShim(), null).isClusterOidc()).toBe(false);
+    });
+
+    it("oidcLoginUri returns the ext.oidc.loginUri or an empty string", () => {
+      expect(make({ loginUri: "/library/api/v1/oidc/login" }).oidcLoginUri()).toBe("/library/api/v1/oidc/login");
+      expect(make({}).oidcLoginUri()).toBe("");
+      expect(new Config(new StorageShim(), null).oidcLoginUri()).toBe("");
     });
   });
 

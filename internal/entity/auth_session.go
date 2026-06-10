@@ -390,6 +390,14 @@ func (m *Session) IsClient() bool {
 	return authn.Provider(m.AuthProvider).IsClient()
 }
 
+// IsApplication checks whether this session has been authenticated using an app password.
+// The application provider is set only for user-bound app passwords, regardless of the grant
+// type that minted them (password for local users, session for OIDC-only users, cli for the
+// "auth add" command), so the provider alone identifies an app password.
+func (m *Session) IsApplication() bool {
+	return authn.Provider(m.AuthProvider).IsApplication()
+}
+
 // clientRole resolves the client role for this session. When resolve is true it
 // may perform a one-time lookup via FindClientByUID; callers that already
 // depend on GetClientRole must pass resolve=false to avoid the recursive loop

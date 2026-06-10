@@ -43,6 +43,7 @@ func toNode(c *entity.Client) *Node {
 		UUID:         c.NodeUUID,
 		Name:         c.ClientName,
 		Role:         role,
+		DisplayName:  c.DisplayName,
 		ClientID:     c.ClientUID,
 		AdvertiseUrl: c.ClientURL,
 		AppName:      c.AppName,
@@ -154,6 +155,11 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if n.SiteUrl != "" {
 		data.SiteURL = n.SiteUrl
 	}
+
+	// DisplayName follows the same source-priority rule as User.SetDisplayName:
+	// an admin override (SrcManual) pins the value so later instance
+	// registrations (SrcAuto) can't overwrite it, and clearing it un-pins.
+	m.SetDisplayName(n.DisplayName, n.NameSrc)
 	if n.UUID != "" {
 		m.NodeUUID = n.UUID
 	}
@@ -198,6 +204,7 @@ func (r *ClientRegistry) Put(n *Node) error {
 	n.ClientID = m.ClientUID
 	n.Name = m.ClientName
 	n.Role = m.ClientRole
+	n.DisplayName = m.DisplayName
 	n.AdvertiseUrl = m.ClientURL
 	n.AppName = m.AppName
 	n.AppVersion = m.AppVersion

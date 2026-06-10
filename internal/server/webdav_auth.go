@@ -114,6 +114,16 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			event.AuditErr([]string{clientIp, "webdav", "client %s", "session %s", "access without user account", status.Denied}, clean.Log(sess.GetClientInfo()), sess.RefID)
 			WebDAVAbortUnauthorized(c)
 			return
+		} else if sess.IsApplication() && conf.DisableAppPasswords() {
+			// Reject app passwords when the feature is disabled, so tokens minted before
+			// the flag was turned off stop working. Identified by the session's auth
+			// provider (IsApplication). A previously-authorized app password may persist
+			// until its WebDAV auth-cache entry expires (~5 min). The 401 (vs the REST
+			// path's 403) is the standard WebDAV re-auth response.
+			limiter.Auth.Reserve(clientIp)
+			event.AuditWarn([]string{clientIp, "webdav", "access with app passwords disabled", status.Denied})
+			WebDAVAbortUnauthorized(c)
+			return
 		} else if sess.IsClient() && sess.InsufficientScope(acl.ResourceWebDAV, nil) {
 			// Log error if the client is allowed to access webdav based on its scope.
 			message := authn.ErrInsufficientScope.Error()

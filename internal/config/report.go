@@ -192,6 +192,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"cluster-domain", c.ClusterDomain()},
 		{"cluster-cidr", c.ClusterCIDR()},
 		{"cluster-uuid", c.ClusterUUID()},
+		{"cluster-oidc", fmt.Sprintf("%t", c.ClusterOIDC())},
 		{"portal-url", clean.UriRedacted(c.PortalUrl())},
 	}...)
 

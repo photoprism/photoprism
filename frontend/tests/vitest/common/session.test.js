@@ -44,6 +44,30 @@ describe("common/session", () => {
     expect(session.authToken).toBe(null);
   });
 
+  it("marks, detects, and clears the login-redirect loop guard", () => {
+    const storage = new StorageShim();
+    const session = new Session(storage, $config);
+    expect(session.loginRedirectLooping()).toBe(false);
+    session.markLoginRedirectAttempt();
+    expect(session.loginRedirectLooping()).toBe(true);
+    session.clearLoginRedirectAttempt();
+    expect(session.loginRedirectLooping()).toBe(false);
+  });
+
+  it("stops reporting a login-redirect loop after the loop window elapses", () => {
+    vi.useFakeTimers();
+    try {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+      session.markLoginRedirectAttempt();
+      expect(session.loginRedirectLooping()).toBe(true);
+      vi.advanceTimersByTime(7000); // exceeds the 6s loop window
+      expect(session.loginRedirectLooping()).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should set, get and delete user", () => {
     const storage = new StorageShim();
     const session = new Session(storage, $config);
@@ -588,7 +612,7 @@ describe("common/session", () => {
 
       // Direct helper checks: accepted inputs.
       expect(session.invalidRedirectUrl("/library/photos")).toBe(false);
-      expect(session.invalidRedirectUrl("/oauth/authorize?client_id=x")).toBe(false);
+      expect(session.invalidRedirectUrl("/api/v1/oauth/authorize?client_id=x")).toBe(false);
 
       // setLoginRedirectUrl gates on the helper.
       session.setLoginRedirectUrl("/portal/admin/login");
@@ -613,6 +637,76 @@ describe("common/session", () => {
       session.onLogout(true);
 
       expect(rawStorage.getItem(buildNamespace(namespaceKey) + "login.next")).toBeNull();
+    });
+  });
+
+  describe("logout redirect target", () => {
+    // A cluster-OIDC sign-out lands on the OIDC login (which bounces to the Portal
+    // login) so the user re-auths with their cluster account; everyone else stays
+    // on the local form.
+    const oidcLoginUri = "/library/api/v1/oidc/login";
+
+    // clusterOidcConfig builds a config whose ext.oidc advertises cluster OIDC.
+    const clusterOidcConfig = (namespaceKey, { cluster = true, loginUri = oidcLoginUri } = {}) => {
+      const config = createConfig("/library", namespaceKey);
+      config.loginUri = "/library/login";
+      config.values.ext = { ...(config.values.ext || {}), oidc: { enabled: true, redirect: true, cluster, loginUri } };
+      return config;
+    };
+
+    it("redirects a cluster-OIDC session to the OIDC login", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-logout-cluster-oidc";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, clusterOidcConfig(namespaceKey));
+      session.provider = "oidc";
+      const spy = vi.spyOn(session, "followRedirect").mockImplementation(() => {});
+
+      session.onLogout();
+
+      expect(spy).toHaveBeenCalledWith(oidcLoginUri);
+    });
+
+    it("captures the provider before reset() clears it", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-logout-provider-captured";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, clusterOidcConfig(namespaceKey));
+      session.provider = "oidc";
+      const spy = vi.spyOn(session, "followRedirect").mockImplementation(() => {});
+
+      session.onLogout();
+
+      // reset() runs inside onLogout and clears the provider, yet the redirect
+      // still targets the OIDC login because the target was resolved first.
+      expect(session.provider).toBe("");
+      expect(spy).toHaveBeenCalledWith(oidcLoginUri);
+    });
+
+    it("redirects a local session to the local login page", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-logout-local";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, clusterOidcConfig(namespaceKey));
+      session.provider = "local";
+      const spy = vi.spyOn(session, "followRedirect").mockImplementation(() => {});
+
+      session.onLogout();
+
+      expect(spy).toHaveBeenCalledWith("/library/login");
+    });
+
+    it("redirects an external-IdP OIDC session to the local login page", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-logout-external-oidc";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, clusterOidcConfig(namespaceKey, { cluster: false }));
+      session.provider = "oidc";
+      const spy = vi.spyOn(session, "followRedirect").mockImplementation(() => {});
+
+      session.onLogout();
+
+      expect(spy).toHaveBeenCalledWith("/library/login");
     });
   });
 
@@ -824,6 +918,92 @@ describe("common/session", () => {
       expect(typeof session.isSuperAdmin()).toBe("boolean");
       expect(session.isSuperAdmin()).toBe(false);
       session.deleteData();
+    });
+  });
+
+  describe("logoutEverywhere", () => {
+    it("revokes each peer session server-side, clears their storage, then signs out locally", async () => {
+      // Mirror the app: Session is constructed with a NamespacedStorage wrapper
+      // (getAppStorage), so logoutEverywhere must unwrap to the raw backend.
+      const raw = new StorageShim();
+      const appStorage = createNamespacedStorage(raw, "ns-current");
+      const session = new Session(appStorage, createConfig("/", "ns-current"));
+
+      // Seed two peer sessions directly in the raw backend, as the app stores them.
+      const pro2 = buildNamespace("ns-pro-2");
+      const portal = buildNamespace("ns-portal");
+      raw.setItem(pro2 + "session.token", "tok2");
+      raw.setItem(pro2 + "instance.url", "https://app.example.com/i/pro-2/");
+      raw.setItem(portal + "session.token", "tokp");
+      raw.setItem(portal + "instance.url", "https://app.example.com/");
+
+      const fetchCalls = [];
+      const originalFetch = window.fetch;
+      window.fetch = (url, opts) => {
+        fetchCalls.push({ url, token: opts?.headers?.["X-Auth-Token"], method: opts?.method });
+        return Promise.resolve({ ok: true });
+      };
+      const logoutSpy = vi.spyOn(session, "logout").mockResolvedValue(undefined);
+
+      try {
+        await session.logoutEverywhere(true);
+      } finally {
+        window.fetch = originalFetch;
+      }
+
+      // Both peers were revoked with their own token via DELETE.
+      expect(fetchCalls).toHaveLength(2);
+      expect(fetchCalls.every((c) => c.method === "DELETE")).toBe(true);
+      expect(fetchCalls.map((c) => c.url).sort()).toEqual([
+        "https://app.example.com/api/v1/session",
+        "https://app.example.com/i/pro-2/api/v1/session",
+      ]);
+      expect(fetchCalls.find((c) => c.url.includes("pro-2")).token).toBe("tok2");
+      // Peer storage was cleared from the raw backend (no double-prefixed leftovers).
+      expect(raw.getItem(pro2 + "session.token")).toBeNull();
+      expect(raw.getItem(portal + "session.token")).toBeNull();
+      expect(raw.getItem(pro2 + "instance.url")).toBeNull();
+      expect(logoutSpy).toHaveBeenCalledWith(true);
+    });
+
+    it("still signs out locally on a standalone deployment with no peers", async () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, createConfig("/", "ns-current"));
+      const logoutSpy = vi.spyOn(session, "logout").mockResolvedValue(undefined);
+      await session.logoutEverywhere();
+      expect(logoutSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("signOut revokes peers and clears their storage for the /logout route guard", () => {
+      // The /logout route guard calls signOut() synchronously; it must still fan
+      // out the cluster-wide revocation, not just drop the current session.
+      const raw = new StorageShim();
+      const appStorage = createNamespacedStorage(raw, "ns-current");
+      const session = new Session(appStorage, createConfig("/", "ns-current"));
+
+      const pro2 = buildNamespace("ns-pro-2");
+      raw.setItem(pro2 + "session.token", "tok2");
+      raw.setItem(pro2 + "instance.url", "https://app.example.com/i/pro-2/");
+
+      const fetchCalls = [];
+      const originalFetch = window.fetch;
+      window.fetch = (url, opts) => {
+        fetchCalls.push({ url, method: opts?.method, token: opts?.headers?.["X-Auth-Token"] });
+        return Promise.resolve({ ok: true });
+      };
+      const onLogoutSpy = vi.spyOn(session, "onLogout").mockReturnValue(Promise.resolve());
+
+      try {
+        // Synchronous: returns this so the route guard can proceed immediately.
+        expect(session.signOut()).toBe(session);
+      } finally {
+        window.fetch = originalFetch;
+      }
+
+      // The peer was revoked server-side and its storage cleared synchronously.
+      expect(fetchCalls).toEqual([{ url: "https://app.example.com/i/pro-2/api/v1/session", method: "DELETE", token: "tok2" }]);
+      expect(raw.getItem(pro2 + "session.token")).toBeNull();
+      expect(onLogoutSpy).toHaveBeenCalledWith(true);
     });
   });
 });

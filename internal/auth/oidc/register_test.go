@@ -9,7 +9,17 @@ import (
 )
 
 func TestClientConfig(t *testing.T) {
-	c := config.NewConfig(config.CliTestContext())
-	result := ClientConfig(c, config.ClientPublic)
-	assert.IsType(t, config.Values{}, result)
+	t.Run("Default", func(t *testing.T) {
+		c := config.NewConfig(config.CliTestContext())
+		result := ClientConfig(c, config.ClientPublic)
+		assert.IsType(t, config.Values{}, result)
+		assert.Equal(t, c.ClusterOIDC(), result["cluster"])
+		assert.Equal(t, false, result["cluster"])
+	})
+	t.Run("ClusterOIDC", func(t *testing.T) {
+		c := config.NewConfig(config.CliTestContext())
+		c.Options().ClusterOIDC = true
+		result := ClientConfig(c, config.ClientPublic)
+		assert.Equal(t, true, result["cluster"])
+	})
 }

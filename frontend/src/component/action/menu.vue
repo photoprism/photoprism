@@ -54,7 +54,7 @@ export default {
     },
     buttonIcon: {
       type: String,
-      default: "mdi-dots-vertical",
+      default: "mdi-dots-horizontal",
     },
   },
   emits: ["show", "hide"],
@@ -63,7 +63,7 @@ export default {
     return {
       visible: false,
       actions: [],
-      openOnHover: !this.$util.hasTouch(),
+      openOnHover: this.$util.shouldOpenOnHover(),
     };
   },
   methods: {

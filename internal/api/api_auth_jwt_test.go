@@ -441,3 +441,40 @@ func TestVerifyTokenFromPortal(t *testing.T) {
 	nilClaims := verifyTokenFromPortal(context.Background(), token, expected, []string{"wrong"})
 	assert.Nil(t, nilClaims)
 }
+
+func TestAuthAnyJWT_UsersManageScope(t *testing.T) {
+	// A Portal cluster JWT scoped for user management authenticates as a service
+	// principal with no end-user identity. UpdateUser authorizes exactly this
+	// condition (GrantJwtBearer + users-manage scope) so the Portal can sync
+	// cluster user state, bypassing the per-user owner check a user-less token
+	// can never satisfy.
+	fx := newPortalJWTFixture(t, "users-jwt-manage")
+	spec := fx.defaultClaimsSpec()
+	spec.Scope = []string{"cluster", "users"}
+	token := fx.issue(t, spec)
+
+	origScope := fx.nodeConf.Options().JWTScope
+	fx.nodeConf.Options().JWTScope = "cluster vision metrics users"
+	get.SetConfig(fx.nodeConf)
+	t.Cleanup(func() {
+		fx.nodeConf.Options().JWTScope = origScope
+		get.SetConfig(fx.nodeConf)
+	})
+
+	gin.SetMode(gin.TestMode)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	req, _ := http.NewRequest(http.MethodPut, "/api/v1/users/uqxetse3cy5eo9z2", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.RemoteAddr = "192.0.2.10:12345"
+	c.Request = req
+
+	s := authAnyJWT(c, "192.0.2.10", token, acl.ResourceUsers, acl.Permissions{acl.ActionManage, acl.AccessOwn, acl.ActionUpdate, acl.ActionUpdateOwn})
+	require.NotNil(t, s)
+	assert.Equal(t, http.StatusOK, s.HttpStatus())
+	// No end-user identity (the per-user owner check in UpdateUser would 403)...
+	assert.True(t, s.GetUser().IsUnknown())
+	// ...but it is a manage-scoped cluster JWT, so UpdateUser treats it as admin.
+	assert.Equal(t, authn.GrantJwtBearer.String(), s.GrantType)
+	assert.True(t, s.ValidateScope(acl.ResourceUsers, acl.Permissions{acl.ActionManage}))
+}
