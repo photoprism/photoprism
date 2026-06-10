@@ -283,13 +283,18 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.LessOrEqual(t, 1, len(photos))
-		count := 0
+		privateCount := 0
+		publicCount := 0
 		for _, photo := range photos {
+			assert.LessOrEqual(t, 3, photo.PhotoQuality, "PhotoUID "+photo.PhotoUID)
 			if photo.PhotoPrivate {
-				count++
+				privateCount++
+			} else {
+				publicCount++
 			}
 		}
-		assert.LessOrEqual(t, 1, count, "No private photos returned")
+		assert.LessOrEqual(t, 1, privateCount, "No private photos returned")
+		assert.Equal(t, 0, publicCount, "Public photos returned")
 	})
 	t.Run("SearchForPublic", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -305,6 +310,17 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.LessOrEqual(t, 3, len(photos))
+		privateCount := 0
+		publicCount := 0
+		for _, photo := range photos {
+			if photo.PhotoPrivate {
+				privateCount++
+			} else {
+				publicCount++
+			}
+		}
+		assert.Equal(t, 0, privateCount, "Private photos returned")
+		assert.LessOrEqual(t, 3, publicCount, "No public photos returned")
 	})
 	t.Run("SearchForPublicAndPrivate", func(t *testing.T) {
 		var f form.SearchPhotos
