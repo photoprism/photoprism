@@ -612,15 +612,15 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 		if frm.Review {
 			s = s.Where("photos.photo_quality < 3")
-		} else if frm.Quality != 0 && frm.Private == false {
+		} else if frm.Quality != 0 {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
 	}
 
 	// Filter private pictures.
-	if frm.Public {
+	if frm.Public && !frm.Private {
 		s = s.Where("photos.photo_private = 0")
-	} else if frm.Private {
+	} else if !frm.Public && frm.Private {
 		s = s.Where("photos.photo_private = 1")
 	}
 
