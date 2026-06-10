@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -290,6 +291,7 @@ func TestGetSession(t *testing.T) {
 		id := gjson.Get(r.Body.String(), "session_id").String()
 		assert.Equal(t, rnd.SessionID(authToken), id)
 		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, header.CacheControlNoStore, r.Header().Get(header.CacheControl), "session responses must not be cached")
 	})
 	t.Run("AdminAuthenticatedRequestWithID", func(t *testing.T) {
 		app, router, conf := NewApiTest()

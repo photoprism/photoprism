@@ -796,6 +796,11 @@ export default class Config {
     return this.values.settings.features[name] === true;
   }
 
+  // featAppPasswords checks if app passwords (app-specific passwords) are enabled.
+  featAppPasswords() {
+    return this.feature("appPasswords");
+  }
+
   // filesQuotaReached returns true if the filesystem quota is reached or exceeded.
   filesQuotaReached() {
     return Boolean(this.values?.usage?.filesUsedPct >= 100);
@@ -862,6 +867,16 @@ export default class Config {
   // isPortal returns true if this is a cluster portal server.
   isPortal() {
     return !!this.values?.portal;
+  }
+
+  // isClusterOidc returns true when the OIDC provider is the cluster Portal (not an external IdP).
+  isClusterOidc() {
+    return !!this.values?.ext?.oidc?.cluster;
+  }
+
+  // oidcLoginUri returns the OIDC login endpoint that starts the provider roundtrip, or "" when off.
+  oidcLoginUri() {
+    return this.values?.ext?.oidc?.loginUri || "";
   }
 
   // isPro returns true if this is team version.

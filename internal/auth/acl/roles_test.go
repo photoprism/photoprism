@@ -18,8 +18,10 @@ func TestRoleStrings_Strings_SortedAndNoEmpty(t *testing.T) {
 
 	got := m.Strings()
 
-	// Expect deterministic, sorted output and no empty entries.
-	assert.Equal(t, []string{"admin", "guest", "visitor"}, got)
+	// Expect deterministic, sorted output, no empty entries, and visitor
+	// excluded (reserved for anonymous/link-share access, never offered).
+	assert.Equal(t, []string{"admin", "guest"}, got)
+	assert.NotContains(t, got, "visitor")
 	assert.True(t, sort.StringsAreSorted(got))
 }
 
@@ -47,8 +49,12 @@ func TestRoleStrings_CliUsageString(t *testing.T) {
 		assert.Equal(t, "admin, or guest", m.CliUsageString())
 	})
 	t.Run("Three", func(t *testing.T) {
+		m := RoleStrings{"user": RoleUser, "guest": RoleGuest, "admin": RoleAdmin}
+		assert.Equal(t, "admin, guest, or user", m.CliUsageString())
+	})
+	t.Run("ExcludesVisitor", func(t *testing.T) {
 		m := RoleStrings{"visitor": RoleVisitor, "guest": RoleGuest, "admin": RoleAdmin}
-		assert.Equal(t, "admin, guest, or visitor", m.CliUsageString())
+		assert.Equal(t, "admin, or guest", m.CliUsageString())
 	})
 }
 
@@ -84,36 +90,43 @@ func TestRoles_Allow(t *testing.T) {
 }
 
 func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
-	t.Run("ClientRolesStringsIncludeAliasNoneExcludeEmpty", func(t *testing.T) {
+	t.Run("ClientRolesStringsExcludeAliasNoneAndEmpty", func(t *testing.T) {
 		got := ClientRoles.Strings()
-		// Contains exactly the expected elements, order not enforced.
-		assert.ElementsMatch(t, []string{"admin", "instance", "client", "none", "portal", "service"}, got)
-		// Does not include empty string
+		// Contains exactly the expected elements, order not enforced; the "none"
+		// alias and the empty role are excluded from display.
+		assert.ElementsMatch(t, []string{"admin", "instance", "client", "portal", "service"}, got)
+		assert.NotContains(t, got, "none")
+		// Does not include empty string.
 		for _, s := range got {
 			assert.NotEqual(t, "", s)
 		}
 	})
-	t.Run("UserRolesStringsIncludeAliasNoneExcludeEmpty", func(t *testing.T) {
+	t.Run("UserRolesStringsExcludeAliasNoneEmptyAndVisitor", func(t *testing.T) {
 		got := UserRoles.Strings()
-		assert.ElementsMatch(t, []string{"admin", "guest", "none", "visitor"}, got)
+		assert.ElementsMatch(t, []string{"admin", "guest"}, got)
+		assert.NotContains(t, got, "none")
+		assert.NotContains(t, got, "visitor")
 		for _, s := range got {
 			assert.NotEqual(t, "", s)
 		}
 	})
-	t.Run("ClientRolesCliUsageStringIncludesNoneAndOrBeforeLast", func(t *testing.T) {
+	t.Run("ClientRolesCliUsageStringExcludesNoneAndOrBeforeLast", func(t *testing.T) {
 		u := ClientRoles.CliUsageString()
-		// Should list known roles and end with "or none" (alias present).
-		for _, s := range []string{"admin", "client", "instance", "portal", "service", "none"} {
+		// Should list known roles and end with "or service"; the "none" alias is excluded.
+		for _, s := range []string{"admin", "client", "instance", "portal", "service"} {
 			assert.Contains(t, u, s)
 		}
-		assert.Regexp(t, `, or none$`, u)
+		assert.NotContains(t, u, "none")
+		assert.Regexp(t, `, or service$`, u)
 	})
-	t.Run("UserRolesCliUsageStringIncludesNoneAndOrBeforeLast", func(t *testing.T) {
+	t.Run("UserRolesCliUsageStringExcludesNoneVisitorAndOrBeforeLast", func(t *testing.T) {
 		u := UserRoles.CliUsageString()
-		for _, s := range []string{"admin", "guest", "visitor", "none"} {
+		for _, s := range []string{"admin", "guest"} {
 			assert.Contains(t, u, s)
 		}
-		assert.Regexp(t, `, or none$`, u)
+		assert.NotContains(t, u, "none")
+		assert.NotContains(t, u, "visitor")
+		assert.Regexp(t, `, or guest$`, u)
 	})
 	t.Run("AliasNoneMapsToRoleNone", func(t *testing.T) {
 		assert.Equal(t, RoleNone, ClientRoles[RoleAliasNone])
@@ -176,4 +189,62 @@ func TestResourceNames_ContainsCore(t *testing.T) {
 		found := slices.Contains(ResourceNames, w)
 		assert.Truef(t, found, "resource %s not found in ResourceNames", w)
 	}
+}
+
+func TestIsAdminRole(t *testing.T) {
+	assert.True(t, IsAdminRole(RoleAdmin))
+	assert.True(t, IsAdminRole(RoleClusterAdmin))
+	assert.False(t, IsAdminRole(RoleUser))
+	assert.False(t, IsAdminRole(RoleViewer))
+	assert.False(t, IsAdminRole(RoleGuest))
+	assert.False(t, IsAdminRole(RoleVisitor))
+	assert.False(t, IsAdminRole(RoleNone))
+	assert.False(t, IsAdminRole(Role("manager")))
+}
+
+func TestIsFederatedRole(t *testing.T) {
+	t.Run("Federatable", func(t *testing.T) {
+		assert.True(t, IsFederatedRole(RoleAdmin))
+		assert.True(t, IsFederatedRole(RoleUser))
+		assert.True(t, IsFederatedRole(RoleViewer))
+		assert.True(t, IsFederatedRole(RoleGuest))
+		assert.True(t, IsFederatedRole(Role("manager")))
+		assert.True(t, IsFederatedRole(Role("contributor")))
+	})
+	t.Run("NotFederatable", func(t *testing.T) {
+		// cluster_admin is the Portal operator role and visitor is anonymous;
+		// neither may be granted or revoked via an external IdP/AD, and an empty
+		// role must never be applied by a sync.
+		assert.False(t, IsFederatedRole(RoleClusterAdmin))
+		assert.False(t, IsFederatedRole(RoleVisitor))
+		assert.False(t, IsFederatedRole(RoleNone))
+	})
+}
+
+func TestFederatedRoleUpdate(t *testing.T) {
+	t.Run("AppliesChangedFederatableRole", func(t *testing.T) {
+		role, ok := FederatedRoleUpdate(RoleUser, RoleViewer)
+		assert.True(t, ok)
+		assert.Equal(t, RoleViewer, role)
+	})
+	t.Run("UnchangedRoleNotApplied", func(t *testing.T) {
+		_, ok := FederatedRoleUpdate(RoleUser, RoleUser)
+		assert.False(t, ok)
+	})
+	t.Run("NeverDowngradesClusterAdmin", func(t *testing.T) {
+		// An existing cluster_admin/visitor account must not be touched.
+		_, ok := FederatedRoleUpdate(RoleClusterAdmin, RoleAdmin)
+		assert.False(t, ok)
+		_, ok = FederatedRoleUpdate(RoleVisitor, RoleGuest)
+		assert.False(t, ok)
+	})
+	t.Run("NeverEscalatesToNonFederatable", func(t *testing.T) {
+		// The directory must not promote to cluster_admin/visitor.
+		_, ok := FederatedRoleUpdate(RoleUser, RoleClusterAdmin)
+		assert.False(t, ok)
+		_, ok = FederatedRoleUpdate(RoleAdmin, RoleVisitor)
+		assert.False(t, ok)
+		_, ok = FederatedRoleUpdate(RoleUser, RoleNone)
+		assert.False(t, ok)
+	})
 }

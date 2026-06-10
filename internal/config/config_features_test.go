@@ -77,6 +77,19 @@ func TestConfig_DisableMCP(t *testing.T) {
 	assert.False(t, c.DisableMCP())
 }
 
+func TestConfig_DisableAppPasswords(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Backed by the AppPasswords feature flag, which defaults to enabled.
+	assert.False(t, c.DisableAppPasswords())
+
+	c.Settings().Features.AppPasswords = false
+	assert.True(t, c.DisableAppPasswords())
+
+	c.Settings().Features.AppPasswords = true
+	assert.False(t, c.DisableAppPasswords())
+}
+
 func TestConfig_DisableExifTool(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.False(t, c.DisableExifTool())

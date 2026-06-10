@@ -57,8 +57,11 @@ func authAddAction(ctx *cli.Context) error {
 		// Find user account.
 		user := entity.FindUserByName(userName)
 
+		// Reject creating an app password if the user is unknown or the feature is disabled.
 		if user == nil && userName != "" {
 			return cli.Exit(fmt.Errorf("user %s not found", clean.LogQuote(userName)), 3)
+		} else if user != nil && conf.DisableAppPasswords() {
+			return cli.Exit(fmt.Errorf("app passwords are disabled"), 1)
 		}
 
 		// Get client name from command flag or ask for it.

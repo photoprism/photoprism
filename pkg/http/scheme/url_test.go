@@ -133,6 +133,30 @@ func TestResolveAdvertiseURL(t *testing.T) {
 	}
 }
 
+func TestOriginURL(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{"SharedDomainSubPath", "https://app.localssl.dev/i/pro-1/", "https://app.localssl.dev/"},
+		{"DropsPathQueryFragment", "https://app.localssl.dev/i/pro-1/library?x=1#top", "https://app.localssl.dev/"},
+		{"StripsDefaultHttpsPort", "https://app.localssl.dev:443/i/pro-1/", "https://app.localssl.dev/"},
+		{"PreservesNonStandardPort", "https://app.localssl.dev:8443/i/pro-1/", "https://app.localssl.dev:8443/"},
+		{"PreservesHttpDevPort", "http://localhost:2342/", "http://localhost:2342/"},
+		{"DropsUserinfo", "https://user:pass@app.localssl.dev/i/pro-1/", "https://app.localssl.dev/"},
+		{"RootAlreadyOrigin", "https://app.localssl.dev/", "https://app.localssl.dev/"},
+		{"Empty", "", ""},
+		{"Whitespace", "   ", ""},
+		{"NoScheme", "app.localssl.dev/i/pro-1/", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.want, OriginURL(tc.in))
+		})
+	}
+}
+
 func TestNormalizeBaseURL_ConcurrentReaders(t *testing.T) {
 	in := "https://concurrent.example.com:443/path/"
 	want := "https://concurrent.example.com/path/"

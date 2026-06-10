@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -23,6 +24,22 @@ import (
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// oidcRedirectErrorMessage maps a standard OAuth/OIDC error code received on the
+// RP callback to a branded, translatable message shown to the user.
+func oidcRedirectErrorMessage(code string) i18n.Message {
+	switch code {
+	case "access_denied":
+		return i18n.ErrForbidden
+	case "login_required":
+		return i18n.ErrUnauthorized
+	case "server_error", "temporarily_unavailable":
+		// Provider-side failures are operational, not credential problems.
+		return i18n.ErrUnexpected
+	default:
+		return i18n.ErrInvalidCredentials
+	}
+}
 
 // OIDCRedirect completes the OIDC flow, creates a session, and renders a page that stores the token client-side.
 //
@@ -74,6 +91,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			return
 		}
 
+		// The provider may redirect back with an OAuth error instead of a code (e.g.
+		// access_denied). Surface it in the instance's branded UI, not a silent bounce.
+		if oauthErr := c.Query("error"); oauthErr != "" {
+			event.AuditWarn([]string{clientIp, "create session", "oidc", "provider returned error", clean.Log(oauthErr), clean.Log(c.Query("error_description"))})
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(oidcRedirectErrorMessage(oauthErr))))
+			return
+		}
+
 		// Check if the required request parameters are present.
 		if c.Query("state") == "" || c.Query("code") == "" {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthCodeRequired.Error()})
@@ -94,7 +119,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		userInfo, tokens, claimErr := provider.CodeExchangeUserInfo(c)
 
 		if claimErr != nil {
+			// The code exchange failed (e.g. a missing/expired state cookie). Render a
+			// branded page that returns the user to login instead of leaving them on a
+			// raw, dead-end error with no way forward.
 			event.AuditErr([]string{clientIp, "create session", "oidc", claimErr.Error()})
+			event.LoginError(clientIp, "oidc", userName, userAgent, claimErr.Error())
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrUnexpected)))
 			return
 		}
 
@@ -141,6 +171,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		mappedRole, hasMappedRole := oidc.MapGroupsToRole(groups, conf.OIDCGroupRoles())
 		defaultRole := conf.OIDCRole()
+
+		// A PhotoPrism Portal OP grants the instance login role via the pp_role
+		// claim (gated by pp_issuer_kind); prefer the verified ID token, then user
+		// info. It takes precedence over the group mapping below.
+		portalRole, hasPortalRole := oidc.PortalGrantedRole(idTokenClaims)
+		if !hasPortalRole {
+			portalRole, hasPortalRole = oidc.PortalGrantedRole(userInfo.Claims)
+		}
 
 		// Step 1: Create user account if it does not exist yet.
 		var user *entity.User
@@ -254,14 +292,27 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Update email, if verified.
-			if userInfo.EmailVerified {
+			// Update email only when the IdP marks it verified and no other account
+			// holds it. The email is informational, so a clash never blocks login; the
+			// Portal OP forwards real verification state, so unverified cluster emails
+			// are simply not stored.
+			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
 				user.UserEmail = clean.Email(userInfo.Email)
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			if hasMappedRole && !user.HasRole(mappedRole) {
-				user.SetRole(mappedRole.String())
+			// Apply a federated role only when federation may set it: an existing
+			// cluster_admin/visitor account is never touched, and the IdP can never
+			// escalate to a non-federatable role. A Portal-granted pp_role takes
+			// precedence over the group mapping.
+			if hasPortalRole {
+				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), portalRole); ok {
+					user.SetRole(role.String())
+				}
+			} else if hasMappedRole {
+				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), mappedRole); ok {
+					user.SetRole(role.String())
+				}
 			}
 
 			// Update Subject ID and Issuer URI.
@@ -335,14 +386,21 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Set email, if verified.
-			if userInfo.EmailVerified {
+			// Set email only when the IdP marks it verified and no other account
+			// holds it. The email is informational (not an auth identifier), so a
+			// clash never blocks provisioning; the Portal OP forwards real
+			// verification state, so unverified cluster emails are simply not stored.
+			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
 				user.UserEmail = clean.Email(userInfo.Email)
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Set user role and permissions.
-			if hasMappedRole {
+			// Set user role and permissions. A Portal-granted pp_role wins, then a
+			// group-mapped role when federation may set it, else the configured
+			// default; all are filtered to federatable roles (no cluster_admin/visitor).
+			if hasPortalRole {
+				user.SetRole(portalRole.String())
+			} else if hasMappedRole && acl.IsFederatedRole(mappedRole) {
 				user.SetRole(mappedRole.String())
 			} else {
 				user.SetRole(defaultRole.String())

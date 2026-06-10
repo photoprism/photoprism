@@ -149,6 +149,43 @@ func TestClient_SetRole(t *testing.T) {
 	assert.True(t, c.HasRole("admin"))
 }
 
+func TestClient_SetDisplayName(t *testing.T) {
+	t.Run("InstanceReportSets", func(t *testing.T) {
+		c := Client{}
+		c.SetDisplayName("Reported", SrcAuto)
+		assert.Equal(t, "Reported", c.DisplayName)
+		assert.Equal(t, SrcAuto, c.NameSrc)
+	})
+	t.Run("InstanceUpdatesOwnValue", func(t *testing.T) {
+		c := Client{DisplayName: "Old", NameSrc: SrcAuto}
+		c.SetDisplayName("New", SrcAuto)
+		assert.Equal(t, "New", c.DisplayName)
+	})
+	t.Run("ManualPinsOverAuto", func(t *testing.T) {
+		c := Client{DisplayName: "Reported", NameSrc: SrcAuto}
+		c.SetDisplayName("Pinned", SrcManual)
+		assert.Equal(t, "Pinned", c.DisplayName)
+		assert.Equal(t, SrcManual, c.NameSrc)
+	})
+	t.Run("AutoCannotOverrideManual", func(t *testing.T) {
+		c := Client{DisplayName: "Pinned", NameSrc: SrcManual}
+		c.SetDisplayName("Reported", SrcAuto)
+		assert.Equal(t, "Pinned", c.DisplayName)
+		assert.Equal(t, SrcManual, c.NameSrc)
+	})
+	t.Run("ManualClearUnpins", func(t *testing.T) {
+		c := Client{DisplayName: "Pinned", NameSrc: SrcManual}
+		c.SetDisplayName("", SrcManual)
+		assert.Equal(t, "", c.DisplayName)
+		assert.Equal(t, SrcAuto, c.NameSrc)
+	})
+	t.Run("AutoEmptyIgnored", func(t *testing.T) {
+		c := Client{DisplayName: "Reported", NameSrc: SrcAuto}
+		c.SetDisplayName("", SrcAuto)
+		assert.Equal(t, "Reported", c.DisplayName)
+	})
+}
+
 func TestClient_User(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		alice := ClientFixtures.Get("alice")

@@ -10,6 +10,11 @@ type Node struct {
 	ClientSecret string `json:"-"`                   // plaintext only when newly created/rotated in-memory
 	RotatedAt    string `json:"RotatedAt,omitempty"` // secret rotation timestamp
 	AuthEnabled  bool   `json:"-"`                   // auth client is enabled
+	// NameSrc carries the DisplayName provenance for this write (entity.SrcAuto
+	// for instance registrations, entity.SrcManual for admin overrides) so Put
+	// can apply the same source-priority rule as User.SetDisplayName. It is a
+	// write-control field, not serialized.
+	NameSrc string `json:"-"`
 }
 
 // ensureDatabase returns a writable NodeDatabase, creating one if missing.

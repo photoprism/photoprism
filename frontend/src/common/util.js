@@ -470,6 +470,12 @@ export default class $util {
     return navigator.maxTouchPoints > 0;
   }
 
+  // shouldOpenOnHover reports whether menus should open on hover: the user's UI
+  // preference (default on) gated by the device having no touch input.
+  static shouldOpenOnHover() {
+    return ($config.getSettings()?.ui?.openOnHover ?? true) && !$util.hasTouch();
+  }
+
   // isMobile returns true when the current user agent or touch capability indicates a mobile device.
   // The `> 2` touch check covers iPads in desktop mode, where the user agent omits the mobile hint.
   static isMobile() {

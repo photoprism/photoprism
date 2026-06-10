@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func TestOIDCRedirect(t *testing.T) {
@@ -74,6 +75,45 @@ func TestOIDCRedirect(t *testing.T) {
 		assert.NotContains(t, sessionDataKeys, `"session"`)
 		assert.Contains(t, body, `localStorage.getItem(namespacedKey("session")) === "true"`)
 	})
+}
+
+func TestOIDCRedirectErrorMessage(t *testing.T) {
+	assert.Equal(t, i18n.ErrForbidden, oidcRedirectErrorMessage("access_denied"))
+	assert.Equal(t, i18n.ErrUnauthorized, oidcRedirectErrorMessage("login_required"))
+	assert.Equal(t, i18n.ErrUnexpected, oidcRedirectErrorMessage("server_error"))
+	assert.Equal(t, i18n.ErrUnexpected, oidcRedirectErrorMessage("temporarily_unavailable"))
+	assert.Equal(t, i18n.ErrInvalidCredentials, oidcRedirectErrorMessage(""))
+}
+
+// TestOIDCRedirect_ProviderError covers the RP callback receiving an OAuth error
+// (no code) from the OP — it must render the instance's branded error page, not
+// silently bounce to the login form.
+func TestOIDCRedirect_ProviderError(t *testing.T) {
+	_, _, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	conf.Options().OIDCUri = "https://dummy-oidc.example.com/"
+	conf.Options().SiteUrl = "https://app.localssl.dev/"
+	conf.Options().OIDCClient = "photoprism-develop"
+	conf.Options().OIDCSecret = "9d8351a0-ca01-4556-9c37-85eb634869b9"
+	t.Cleanup(func() {
+		conf.SetAuthMode(config.AuthModePublic)
+		conf.Options().OIDCUri = ""
+		conf.Options().OIDCClient = ""
+		conf.Options().OIDCSecret = ""
+	})
+	require.True(t, conf.OIDCEnabled())
+
+	app := gin.New()
+	app.LoadHTMLFiles(conf.TemplateFiles()...)
+	router := app.Group("/api/v1")
+	OIDCRedirect(router)
+
+	r := PerformRequest(app, http.MethodGet, "/api/v1/oidc/redirect?error=access_denied&error_description=no+access+to+the+requested+instance&state=s1")
+	require.Equal(t, http.StatusUnauthorized, r.Code, "an OAuth error redirect must render the branded error page; body=%s", r.Body.String())
+	body := r.Body.String()
+	// auth.gohtml renders the failed-status branch and stores the branded message.
+	assert.Contains(t, body, `setItem("session.error"`)
+	assert.Contains(t, body, i18n.Error(i18n.ErrForbidden).Error())
 }
 
 // extractTemplateList returns the template source between the provided markers.

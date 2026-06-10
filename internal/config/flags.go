@@ -718,6 +718,11 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("CLUSTER_UUID"),
 			Hidden:  true,
 		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "cluster-oidc",
+			Usage:   "use the cluster Portal as this instance's OIDC login provider",
+			EnvVars: EnvVars("CLUSTER_OIDC"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-url",
 			Usage:   "base `URL` of the cluster management portal",

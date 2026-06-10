@@ -1443,7 +1443,7 @@ export default {
             isButton: true,
             html: {
               isCustomSVG: true,
-              inner: `<path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" id="pswp__icn-menu-button" />`,
+              inner: `<path d="M4.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" id="pswp__icn-menu-button" />`,
               outlineID: "pswp__icn-menu-button", // Add this to the <path> in the inner property.
               size: 16, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },

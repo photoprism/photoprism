@@ -9,10 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -189,7 +191,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 //	@Accept		json
 //	@Produce	json
 //	@Param		uuid				path		string	true	"node uuid"
-//	@Param		node				body		object	true	"properties to update (Role, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)"
+//	@Param		node				body		object	true	"properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)"
 //	@Success	200					{object}	cluster.StatusResponse
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/{uuid} [patch]
@@ -218,6 +220,7 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 
 		var req struct {
 			Role         *string           `json:"Role"`
+			DisplayName  *string           `json:"DisplayName"`
 			Labels       map[string]string `json:"Labels"`
 			AdvertiseUrl *string           `json:"AdvertiseUrl"`
 			SiteUrl      *string           `json:"SiteUrl"`
@@ -259,6 +262,14 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			}
 
 			n.Role = role
+		}
+
+		// An admin-set DisplayName (SrcManual) pins the value so it survives
+		// later instance registrations; an empty value un-pins and falls back to
+		// the instance-reported name.
+		if req.DisplayName != nil {
+			n.DisplayName = clean.TypeUnicode(strings.TrimSpace(*req.DisplayName))
+			n.NameSrc = entity.SrcManual
 		}
 
 		if req.Labels != nil {

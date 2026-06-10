@@ -82,6 +82,15 @@ func DeleteSession(router *gin.RouterGroup) {
 			event.AuditDebug([]string{clientIp, "session %s", "deleted"}, s.RefID)
 		}
 
+		// Clear the OP session cookie on the caller's own logout (not a manager
+		// deleting another session by ref id), so a cluster-wide Sign-Out stops silent
+		// re-SSO no matter which node is hit. OIDCSessionCookieClearPath picks the path.
+		if conf := get.Config(); !rnd.IsRefID(id) {
+			if clearPath := OIDCSessionCookieClearPath(conf); clearPath != "" {
+				ClearOIDCSessionCookie(c, clearPath, conf.SiteHttps())
+			}
+		}
+
 		// Return JSON response for confirmation.
 		c.JSON(http.StatusOK, DeleteSessionResponse(s.ID))
 	}
