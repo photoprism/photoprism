@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-16 14:47+0000\n"
+"PO-Revision-Date: 2026-06-10 03:22+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
@@ -138,11 +138,11 @@ msgstr "Om"
 #: src/component/cluster/instance-access.vue:208
 #: src/component/cluster/instance-access.vue:210
 msgid "Access granted."
-msgstr ""
+msgstr "Tilgang innvilget."
 
 #: src/component/cluster/instance-access.vue:184
 msgid "Access revoked."
-msgstr ""
+msgstr "Tilgangen er opphevet."
 
 #: src/options/auth.js:39 src/options/auth.js:67
 msgid "Access Token"
@@ -875,7 +875,7 @@ msgstr "Krysset av"
 
 #: src/page/instances.vue:38
 msgid "Choose an instance to continue:"
-msgstr ""
+msgstr "Velg en forekomst for å fortsette:"
 
 #: src/component/photo/edit/files.vue:243
 #: src/component/photo/edit/files.vue:244
@@ -950,7 +950,7 @@ msgstr "Klynge"
 #: src/component/user/edit/dialog.vue:284 src/page/admin/users.vue:424
 #: src/options/auth.js:7
 msgid "Cluster Admin"
-msgstr ""
+msgstr "Klyngeadministrator"
 
 #: src/model/cluster-node.js:103
 msgid "Cluster Node"
@@ -1639,7 +1639,7 @@ msgstr "Kunne ikke koble til konto."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
-msgstr ""
+msgstr "Det gikk ikke å laste inn brukere."
 
 #: src/component/lightbox.vue:2028
 msgid "Failed to remove face marker"
@@ -1996,7 +1996,7 @@ msgstr "Informasjon"
 
 #: src/options/admin.js:25
 msgid "Inherit"
-msgstr ""
+msgstr "Arve"
 
 #: src/model/cluster-node.js:8 src/model/cluster-node.js:9 src/locales.js:364
 msgid "Instance"
@@ -2008,7 +2008,7 @@ msgstr "Instans-ID"
 
 #: src/component/cluster/node/users.vue:270
 msgid "Instance unreachable. Try again once it's back online."
-msgstr ""
+msgstr "Tjenesten er utilgjengelig. Prøv igjen når den er tilbake på nettet."
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:421
 #: src/component/navigation.vue:424 src/component/user/edit/dialog.vue:27
@@ -2509,7 +2509,7 @@ msgstr "Nei"
 
 #: src/options/admin.js:23
 msgid "No Access"
-msgstr ""
+msgstr "Ingen tilgang"
 
 #: src/component/photo/batch-edit.vue:420
 msgid "No albums assigned"
@@ -2559,7 +2559,7 @@ msgstr "Ingen nylig redigerte bilder"
 
 #: src/component/cluster/instance-access.vue:48
 msgid "No registered instances."
-msgstr ""
+msgstr "Ingen registrerte forekomster."
 
 #: src/component/meta/location/dialog.vue:84
 msgid "No results"
@@ -2583,7 +2583,7 @@ msgstr "Nei takk"
 
 #: src/component/cluster/node/users.vue:47
 msgid "No users on this instance."
-msgstr ""
+msgstr "Det er ingen brukere på denne instansen."
 
 #: src/page/library/errors.vue:71
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
@@ -3583,7 +3583,7 @@ msgstr "Logg inn"
 #: src/component/navigation.vue:386 src/page/instances.vue:61
 #: src/component/auth/menu.vue:42 src/component/navigation.vue:669
 msgid "Sign Out"
-msgstr ""
+msgstr "Logg ut"
 
 #: src/page/discover.vue:8 src/page/discover.vue:9
 msgid "Similar"
@@ -3804,11 +3804,11 @@ msgstr "Indeksen inneholder %{n} skjulte filer."
 
 #: src/component/cluster/node/users.vue:265
 msgid "The instance rejected the cluster credentials."
-msgstr ""
+msgstr "Instansen avviste påloggingsopplysningene for klyngen."
 
 #: src/component/cluster/node/users.vue:268
 msgid "The instance returned an unexpected redirect."
-msgstr ""
+msgstr "Instansen returnerte en uventet omdirigering."
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -3821,7 +3821,7 @@ msgstr "Tema"
 
 #: src/component/cluster/instance-access.vue:133
 msgid "This account is missing an ID and can't be edited."
-msgstr ""
+msgstr "Denne kontoen mangler en ID og kan ikke redigeres."
 
 #: src/common/form.js:234 src/common/form.js:243 src/common/form.js:252
 #: src/common/form.js:261 src/common/form.js:270 src/common/form.js:289
@@ -3832,7 +3832,7 @@ msgstr "Dette feltet er obligatorisk"
 
 #: src/page/instances.vue:173
 msgid "This instance has no site URL configured."
-msgstr ""
+msgstr "Det er ikke konfigurert noen nettadresse for denne instansen."
 
 #: src/component/settings/webdav.vue:58
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -4340,11 +4340,11 @@ msgstr "Du kan laste opp opptil %{n} filer for testformål."
 
 #: src/component/user/edit/dialog.vue:175
 msgid "You cannot change your own role."
-msgstr ""
+msgstr "Du kan ikke endre din egen rolle."
 
 #: src/page/instances.vue:34
 msgid "You do not have access to any instances."
-msgstr ""
+msgstr "Du har ikke tilgang til noen forekomster."
 
 #: src/component/album/clipboard.vue:139 src/component/album/clipboard.vue:150
 msgid "You may only select one item"

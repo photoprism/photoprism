@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-16 14:47+0000\n"
+"PO-Revision-Date: 2026-06-10 03:23+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -138,11 +138,11 @@ msgstr "درباره"
 #: src/component/cluster/instance-access.vue:208
 #: src/component/cluster/instance-access.vue:210
 msgid "Access granted."
-msgstr ""
+msgstr "دسترسی مجاز شد."
 
 #: src/component/cluster/instance-access.vue:184
 msgid "Access revoked."
-msgstr ""
+msgstr "دسترسی لغو شد."
 
 #: src/options/auth.js:39 src/options/auth.js:67
 msgid "Access Token"
@@ -875,7 +875,7 @@ msgstr "بررسی شده"
 
 #: src/page/instances.vue:38
 msgid "Choose an instance to continue:"
-msgstr ""
+msgstr "برای ادامه، یک نمونه را انتخاب کنید:"
 
 #: src/component/photo/edit/files.vue:243
 #: src/component/photo/edit/files.vue:244
@@ -950,7 +950,7 @@ msgstr "خوشه"
 #: src/component/user/edit/dialog.vue:284 src/page/admin/users.vue:424
 #: src/options/auth.js:7
 msgid "Cluster Admin"
-msgstr ""
+msgstr "مدیر خوشه"
 
 #: src/model/cluster-node.js:103
 msgid "Cluster Node"
@@ -1639,7 +1639,7 @@ msgstr "اتصال حساب انجام نشد."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
-msgstr ""
+msgstr "بارگذاری کاربران ناموفق بود."
 
 #: src/component/lightbox.vue:2028
 msgid "Failed to remove face marker"
@@ -1996,7 +1996,7 @@ msgstr "اطلاعات"
 
 #: src/options/admin.js:25
 msgid "Inherit"
-msgstr ""
+msgstr "میراث بری"
 
 #: src/model/cluster-node.js:8 src/model/cluster-node.js:9 src/locales.js:364
 msgid "Instance"
@@ -2008,7 +2008,7 @@ msgstr "ID نمونه"
 
 #: src/component/cluster/node/users.vue:270
 msgid "Instance unreachable. Try again once it's back online."
-msgstr ""
+msgstr "دستگاه قابل دسترسی نیست. پس از بازگشت به آنلاین دوباره تلاش کنید."
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:421
 #: src/component/navigation.vue:424 src/component/user/edit/dialog.vue:27
@@ -2509,7 +2509,7 @@ msgstr "خیر"
 
 #: src/options/admin.js:23
 msgid "No Access"
-msgstr ""
+msgstr "دسترسی وجود ندارد"
 
 #: src/component/photo/batch-edit.vue:420
 msgid "No albums assigned"
@@ -2559,7 +2559,7 @@ msgstr "هیچ عکسی اخیراً ویرایش نشده"
 
 #: src/component/cluster/instance-access.vue:48
 msgid "No registered instances."
-msgstr ""
+msgstr "هیچ نمونه ثبت‌شده‌ای وجود ندارد."
 
 #: src/component/meta/location/dialog.vue:84
 msgid "No results"
@@ -2583,7 +2583,7 @@ msgstr "نه، ممنون"
 
 #: src/component/cluster/node/users.vue:47
 msgid "No users on this instance."
-msgstr ""
+msgstr "در این نمونه هیچ کاربری وجود ندارد."
 
 #: src/page/library/errors.vue:71
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
@@ -3583,7 +3583,7 @@ msgstr "ورود"
 #: src/component/navigation.vue:386 src/page/instances.vue:61
 #: src/component/auth/menu.vue:42 src/component/navigation.vue:669
 msgid "Sign Out"
-msgstr ""
+msgstr "خروج"
 
 #: src/page/discover.vue:8 src/page/discover.vue:9
 msgid "Similar"
@@ -3804,11 +3804,11 @@ msgstr "این فهرست در حال حاضر حاوی %{n} فایل پنهان
 
 #: src/component/cluster/node/users.vue:265
 msgid "The instance rejected the cluster credentials."
-msgstr ""
+msgstr "اینstance اعتبارنامه‌های خوشه را رد کرد."
 
 #: src/component/cluster/node/users.vue:268
 msgid "The instance returned an unexpected redirect."
-msgstr ""
+msgstr "اینstance یک redirect غیرمنتظره بازگرداند."
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -3821,7 +3821,7 @@ msgstr "قالب"
 
 #: src/component/cluster/instance-access.vue:133
 msgid "This account is missing an ID and can't be edited."
-msgstr ""
+msgstr "این حساب شناسه ندارد و قابل ویرایش نیست."
 
 #: src/common/form.js:234 src/common/form.js:243 src/common/form.js:252
 #: src/common/form.js:261 src/common/form.js:270 src/common/form.js:289
@@ -3832,7 +3832,7 @@ msgstr "این فیلد الزامی است"
 
 #: src/page/instances.vue:173
 msgid "This instance has no site URL configured."
-msgstr ""
+msgstr "این نمونه هیچ نشانی سایتی پیکربندی نشده است."
 
 #: src/component/settings/webdav.vue:58
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -4342,11 +4342,11 @@ msgstr "می توانید حداکثر %{n} فایل را برای اهداف آ
 
 #: src/component/user/edit/dialog.vue:175
 msgid "You cannot change your own role."
-msgstr ""
+msgstr "شما نمی‌توانید نقش خود را تغییر دهید."
 
 #: src/page/instances.vue:34
 msgid "You do not have access to any instances."
-msgstr ""
+msgstr "شما به هیچ نمونه‌ای دسترسی ندارید."
 
 #: src/component/album/clipboard.vue:139 src/component/album/clipboard.vue:150
 msgid "You may only select one item"

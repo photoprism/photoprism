@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-16 14:47+0000\n"
+"PO-Revision-Date: 2026-06-10 03:23+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
@@ -138,11 +138,11 @@ msgstr "О нас"
 #: src/component/cluster/instance-access.vue:208
 #: src/component/cluster/instance-access.vue:210
 msgid "Access granted."
-msgstr ""
+msgstr "Доступ предоставлен."
 
 #: src/component/cluster/instance-access.vue:184
 msgid "Access revoked."
-msgstr ""
+msgstr "Доступ отменен."
 
 #: src/options/auth.js:39 src/options/auth.js:67
 msgid "Access Token"
@@ -875,7 +875,7 @@ msgstr "Проверено"
 
 #: src/page/instances.vue:38
 msgid "Choose an instance to continue:"
-msgstr ""
+msgstr "Выбери экземпляр, чтобы продолжить:"
 
 #: src/component/photo/edit/files.vue:243
 #: src/component/photo/edit/files.vue:244
@@ -950,7 +950,7 @@ msgstr "Кластер"
 #: src/component/user/edit/dialog.vue:284 src/page/admin/users.vue:424
 #: src/options/auth.js:7
 msgid "Cluster Admin"
-msgstr ""
+msgstr "Администратор кластера"
 
 #: src/model/cluster-node.js:103
 msgid "Cluster Node"
@@ -1639,7 +1639,7 @@ msgstr "Не удалось подключить аккаунт."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
-msgstr ""
+msgstr "Не удалось загрузить пользователей."
 
 #: src/component/lightbox.vue:2028
 msgid "Failed to remove face marker"
@@ -1996,7 +1996,7 @@ msgstr "Информация"
 
 #: src/options/admin.js:25
 msgid "Inherit"
-msgstr ""
+msgstr "Наследовать"
 
 #: src/model/cluster-node.js:8 src/model/cluster-node.js:9 src/locales.js:364
 msgid "Instance"
@@ -2008,7 +2008,7 @@ msgstr "Идентификатор узла"
 
 #: src/component/cluster/node/users.vue:270
 msgid "Instance unreachable. Try again once it's back online."
-msgstr ""
+msgstr "Сервер недоступен. Попробуй позже, когда он снова заработает."
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:421
 #: src/component/navigation.vue:424 src/component/user/edit/dialog.vue:27
@@ -2509,7 +2509,7 @@ msgstr "Нет"
 
 #: src/options/admin.js:23
 msgid "No Access"
-msgstr ""
+msgstr "Доступ запрещен"
 
 #: src/component/photo/batch-edit.vue:420
 msgid "No albums assigned"
@@ -2559,7 +2559,7 @@ msgstr "Нет недавно отредактированных фотогра�
 
 #: src/component/cluster/instance-access.vue:48
 msgid "No registered instances."
-msgstr ""
+msgstr "Нет зарегистрированных экземпляров."
 
 #: src/component/meta/location/dialog.vue:84
 msgid "No results"
@@ -2583,7 +2583,7 @@ msgstr "Нет, спасибо"
 
 #: src/component/cluster/node/users.vue:47
 msgid "No users on this instance."
-msgstr ""
+msgstr "В этом экземпляре нет пользователей."
 
 #: src/page/library/errors.vue:71
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
@@ -3583,7 +3583,7 @@ msgstr "Войти"
 #: src/component/navigation.vue:386 src/page/instances.vue:61
 #: src/component/auth/menu.vue:42 src/component/navigation.vue:669
 msgid "Sign Out"
-msgstr ""
+msgstr "Выйти"
 
 #: src/page/discover.vue:8 src/page/discover.vue:9
 msgid "Similar"
@@ -3804,11 +3804,11 @@ msgstr "Индекс на данный момент содержит %{n} скр
 
 #: src/component/cluster/node/users.vue:265
 msgid "The instance rejected the cluster credentials."
-msgstr ""
+msgstr "Экземпляр отклонил учетные данные кластера."
 
 #: src/component/cluster/node/users.vue:268
 msgid "The instance returned an unexpected redirect."
-msgstr ""
+msgstr "Объект вернул неожиданное перенаправление."
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -3821,7 +3821,7 @@ msgstr "Тема"
 
 #: src/component/cluster/instance-access.vue:133
 msgid "This account is missing an ID and can't be edited."
-msgstr ""
+msgstr "У этой учетной записи нет идентификатора, поэтому её нельзя редактировать."
 
 #: src/common/form.js:234 src/common/form.js:243 src/common/form.js:252
 #: src/common/form.js:261 src/common/form.js:270 src/common/form.js:289
@@ -3832,7 +3832,7 @@ msgstr "Это поле обязательно для заполнения"
 
 #: src/page/instances.vue:173
 msgid "This instance has no site URL configured."
-msgstr ""
+msgstr "Для этого экземпляра не указан URL сайта."
 
 #: src/component/settings/webdav.vue:58
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -4340,11 +4340,11 @@ msgstr "Для тестирования можно загрузить до %{n} 
 
 #: src/component/user/edit/dialog.vue:175
 msgid "You cannot change your own role."
-msgstr ""
+msgstr "Ты не можешь изменить свою роль."
 
 #: src/page/instances.vue:34
 msgid "You do not have access to any instances."
-msgstr ""
+msgstr "У тебя нет доступа ни к одному экземпляру."
 
 #: src/component/album/clipboard.vue:139 src/component/album/clipboard.vue:150
 msgid "You may only select one item"
