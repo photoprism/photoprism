@@ -40,7 +40,7 @@ type Client struct {
 	AppVersion   string          `gorm:"size:64;" json:"AppVersion" yaml:"AppVersion,omitempty"`
 	ClientName   string          `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
 	DisplayName  string          `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
-	NameSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"NameSrc,omitempty" yaml:"NameSrc,omitempty"`
+	NameSrc      string          `gorm:"type:bytes;size:8;default:'';" json:"NameSrc,omitempty" yaml:"NameSrc,omitempty"`
 	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
 	ClientType   string          `gorm:"type:bytes;size:16" json:"ClientType" yaml:"ClientType,omitempty"`
 	ClientURL    string          `gorm:"type:bytes;size:255;default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
