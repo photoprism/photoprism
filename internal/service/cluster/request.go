@@ -8,6 +8,7 @@ type RegisterRequest struct {
 	NodeName       string            `json:"NodeName"`
 	NodeUUID       string            `json:"NodeUUID,omitempty"`
 	NodeRole       string            `json:"NodeRole,omitempty"`
+	DisplayName    string            `json:"DisplayName,omitempty"`
 	Labels         map[string]string `json:"Labels,omitempty"`
 	AppName        string            `json:"AppName,omitempty"`
 	AppVersion     string            `json:"AppVersion,omitempty"`

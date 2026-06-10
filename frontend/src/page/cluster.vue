@@ -1,17 +1,13 @@
 <template>
-  <p-page-about></p-page-about>
+  <div class="p-page p-page-cluster"></div>
 </template>
-
 <script>
-import PPageAbout from "./about/about.vue";
-
+// PPageCluster is a Community Edition stub: the cluster UI only exists as a
+// Portal overlay, so in CE/Plus/Pro it redirects to the user's default route.
 export default {
   name: "PPageCluster",
-  components: { PPageAbout },
-  data() {
-    return {
-      rtl: this.$isRtl,
-    };
+  created() {
+    this.$router.replace({ name: this.$session.getDefaultRoute() });
   },
   mounted() {
     this.$view.enter(this);

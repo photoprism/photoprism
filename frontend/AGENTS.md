@@ -46,7 +46,7 @@
 
 ## Playwright MCP Usage
 
-- Default endpoint is `http://localhost:2342/`; default login routes are `/library/login` for CE, Plus, and Pro, and `/portal/admin/login` for Portal.
+- Default endpoint is `http://localhost:2342/`; default login routes are `/library/login` for CE, Plus, and Pro, and `/portal/login` for Portal.
 - Use the local compose admin credentials; if login fails, inspect the active compose environment.
 - Desktop sessions default to `1280x900`; mobile sessions should use the mobile Playwright server with `375x667`.
 - Close the browser tab after scripted interactions.
@@ -56,4 +56,4 @@
 
 ## Frontend Test Gotchas
 
-- Hidden-route UI checks under `/library/hidden` or `/portal/admin/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.
+- Hidden-route UI checks under `/library/hidden` or `/portal/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.

@@ -113,6 +113,8 @@ func (m *Manager) JWKS() *JWKS {
 		}
 		keys = append(keys, PublicJWK{
 			Kty: keyTypeOKP,
+			Use: keyUseSig,
+			Alg: algEdDSA,
 			Crv: curveEd25519,
 			Kid: k.Kid,
 			X:   base64.RawURLEncoding.EncodeToString(k.PublicKey),

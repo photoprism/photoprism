@@ -53,12 +53,13 @@ func NewSettings(theme, language, timeZone string) *Settings {
 
 	return &Settings{
 		UI: UISettings{
-			Scrollbar: true,
-			Zoom:      false,
-			Theme:     theme,
-			Language:  language,
-			TimeZone:  timeZone,
-			StartPage: DefaultStartPage,
+			Scrollbar:   true,
+			Zoom:        false,
+			OpenOnHover: true,
+			Theme:       theme,
+			Language:    language,
+			TimeZone:    timeZone,
+			StartPage:   DefaultStartPage,
 		},
 		Search: SearchSettings{
 			BatchSize:    -1,

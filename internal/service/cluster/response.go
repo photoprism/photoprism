@@ -15,6 +15,7 @@ type Node struct {
 	UUID         string            `json:"UUID"` // NodeUUID
 	Name         string            `json:"Name"` // NodeName
 	Role         string            `json:"Role"` // NodeRole
+	DisplayName  string            `json:"DisplayName,omitempty"`
 	ClientID     string            `json:"ClientID,omitempty"`
 	AppName      string            `json:"AppName,omitempty"`
 	AppVersion   string            `json:"AppVersion,omitempty"`

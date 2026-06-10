@@ -60,7 +60,9 @@
 ## Frontend Translations
 
 - Never hardcode locale strings in templates or scripts — every user-visible string MUST go through `$gettext` / `T` so it appears in `frontend/src/locales/translations.pot`.
-- Extraction source of truth: root `make gettext-extract` (via `scripts/gettext-extract.sh`), which scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, `portal/frontend`.
+- **Exception — standardized technical identifiers stay untranslated.** Render protocol/acronym/identifier field labels and option values as literal strings, not via `$gettext`: e.g. `Client ID`, `Client Credentials`, `OIDC`, `UUID`, `Node UUID`. Translating them adds catalog noise and risks ambiguous renderings (e.g. "Client" → German "Kunde"). Common English field names like `Site URL` or `Advertise URL` stay translated.
+- **Share role/provider labels, not the selectable lists.** Display names live once in `frontend/src/options/auth.js` (`Roles()` / `Providers()` maps, with `RoleOptions(keys, labelKey)` / `ProviderOptions(keys, labelKey)` builders). Private editions (`plus`/`pro`/`portal`) import these and pass their own key list — the selectable sets legitimately differ per edition (cluster_admin, LDAP/AD, reduced Plus set) but the labels must not be re-listed.
+- Extraction source of truth: root `make gettext-extract` (via `scripts/gettext-extract.sh`), which scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, `portal/frontend`. Feature PRs do **not** commit the resulting `.pot`/`.po` churn — Weblate re-extracts on its refresh cycle (see `specs/frontend/translations.md`); a dedicated "Regenerate translation catalogs" commit is the exception.
 - Avoid punctuation-only gettext keys (e.g. `$gettext("—")`) — they clutter `frontend/src/locales/translations.pot`.
 
 ## Web Templates & Shared Assets

@@ -21,7 +21,7 @@ main .auth-actions .auth-links {
 }
 
 main .auth-actions__options {
-    opacity: .95;
+    opacity: 0.95;
     padding-bottom: 4px;
     align-items: center;
     justify-content: center;
@@ -146,6 +146,45 @@ main .auth-login .text-subtitle-2,
 #photoprism main .auth-login footer p {
     padding: 0;
     margin: 0;
+}
+
+/* Instance Chooser */
+
+main .auth-login .instance-results.v-table {
+    background: transparent;
+}
+
+main .auth-login .instance-results .v-table__wrapper > table > thead > tr > th {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+main .auth-login .instance-results .v-table__wrapper > table > tbody > tr > td {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff;
+}
+
+main .auth-login .instance-results .v-table__wrapper > table > tbody > tr:last-child > td {
+    border-bottom: none !important;
+}
+
+main .auth-login .instance-chooser-row {
+    cursor: pointer;
+}
+
+main .auth-login .instance-results .action-open-instance {
+    font-weight: 500;
+    color: rgb(var(--v-theme-secondary, #c8e3e7));
+    cursor: pointer;
+}
+
+main .auth-login .instance-results .instance-url {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 /* Account Page */

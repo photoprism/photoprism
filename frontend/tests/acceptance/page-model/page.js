@@ -61,7 +61,13 @@ export default class Page {
 
   async logout() {
     await menu.openNav();
-    await t.click(Selector("button i.mdi-power"));
+    await t.click(Selector("div.nav-user-avatar"));
+    await t.click(Selector(".nav-user-menu__list .action-logout"));
+  }
+
+  async openAccount() {
+    await t.click(Selector("div.nav-user-avatar"));
+    await t.click(Selector(".nav-user-menu__list .action-settings"));
   }
 
   async clickCardTitleOfUID(uid) {

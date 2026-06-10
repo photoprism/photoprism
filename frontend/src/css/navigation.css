@@ -54,6 +54,33 @@ nav .v-list__item__title.title {
     margin-right: auto;
 }
 
+#p-navigation .nav-user-activator {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    gap: 8px;
+    min-width: 0;
+    padding: 2px 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#p-navigation .nav-user-activator .nav-user-text {
+    min-width: 0;
+    overflow: hidden;
+}
+
+#p-navigation .nav-user-activator .nav-user-text p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-sidebar.v-navigation-drawer--rail .nav-container > .nav-info > .nav-user-activator {
+    flex-grow: 0;
+    justify-content: center;
+}
+
 #p-navigation .nav-sidebar .nav-logo {
     width: 40px;
     text-align: inherit;

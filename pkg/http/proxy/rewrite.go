@@ -33,9 +33,10 @@ func ForwardedProto(req *http.Request) string {
 // not by any proxied instance. Locations under these prefixes are deliberate
 // instance-to-Portal redirects (for example the Pro OIDC RP redirecting to
 // the Portal's authorize endpoint), and the per-instance path prefix must
-// not be added to them.
+// not be added to them. The OIDC OP endpoints live under "/api/v1/oauth/"
+// specifically (not all of "/api/v1/", which is an instance surface too).
 var portalRootPathPrefixes = []string{
-	"/oauth/",
+	"/api/v1/oauth/",
 	"/.well-known/",
 	"/portal/",
 }
