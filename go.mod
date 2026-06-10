@@ -136,7 +136,7 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.9.1
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
@@ -194,11 +194,7 @@ require (
 	golang.org/x/arch v0.27.0 // indirect
 )
 
-require (
-	github.com/emersion/go-webdav v0.7.0
-	github.com/mattn/go-runewidth v0.0.23 // indirect
-	github.com/tidwall/pretty v1.2.1 // indirect
-)
+require github.com/emersion/go-webdav v0.7.0
 
 go 1.25.0
 
