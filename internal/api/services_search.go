@@ -20,6 +20,9 @@ import (
 //	@Tags		Services
 //	@Produce	json
 //	@Success	200				{object}	entity.Services
+//	@Header		200				{number}	X-Count		"The actual number of services returned"
+//	@Header		200				{number}	X-Limit		"The limit of the number of services to be returned"
+//	@Header		200				{number}	X-Offset	"The offset that was used"
 //	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Param		count			query		int	true	"maximum number of results"	minimum(1)	maximum(100000)
 //	@Router		/api/v1/services [get]
@@ -54,7 +57,7 @@ func SearchServices(router *gin.RouterGroup) {
 			return
 		}
 
-		// TODO c.Header("X-Count", strconv.Itoa(count))
+		AddCountHeader(c, len(result))
 		AddLimitHeader(c, frm.Count)
 		AddOffsetHeader(c, frm.Offset)
 
