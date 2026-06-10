@@ -260,8 +260,6 @@ test.meta("testID", "cleanup-005").meta({ type: "short", mode: "api" })("Common:
     });
     await t.expect(labelApiResponse.status).eql(200);
 
-    console.log(JSON.stringify(labelApiResponse.body));
-
     await helperAfterEach(t);
 
     const afterPhotoResponse = await t.request(`${testcafeconfig.api}photos/${photoUID}`);
@@ -289,10 +287,9 @@ test.meta("testID", "cleanup-005").meta({ type: "short", mode: "api" })("Common:
 
 // This test will leave a junk label behind if it fails, as it's testing that manual labels are reverted correctly.
 // This test is no longer possible due to beforeFixture caching state before this test initiates.
-test.meta("testID", "cleanup-006").meta({ type: "short", mode: "api" })("Common: Cleanup Photo revert manual deleted Label", async (t) => {
+test.meta("testID", "cleanup-006").meta({ type: "short", mode: "api" }).skip("Common: Cleanup Photo revert manual deleted Label", async (t) => {
   // This test is not possible as there is no manual labels in the acceptance database.
   // This prevents the required conditions from being there when beforeFixture runs.
-  return;
     await helperBeforeEach(t);
     const stamp = Date.now();
     const labelTitle = `CleanupLabel-${stamp}`;

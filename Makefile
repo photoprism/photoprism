@@ -89,16 +89,15 @@ test-commands: run-test-commands
 test-photoprism: run-test-photoprism
 test-short: run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
-acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance acceptance-sqlite-stop
-acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance-short acceptance-sqlite-stop
-acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth acceptance-auth-sqlite-stop
-acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart wait acceptance acceptance-sqlite-stop
+acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
+acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
+acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth acceptance-auth-sqlite-stop
+acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance acceptance-sqlite-stop-1
+acceptance-api-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1
 help: list
 list:
 	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
-wait:
-	sleep 20
-wait-2:
+wait-%:
 	sleep 20
 show-rev:
 	@git rev-parse HEAD
@@ -224,7 +223,7 @@ install-onnx:
 	sudo scripts/dist/install-onnx.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
-acceptance-sqlite-restart: acceptance-sqlite-stop
+acceptance-sqlite-restart-%: acceptance-sqlite-stop-%
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	rm -rf storage/acceptance/sidecar/2020
@@ -235,7 +234,7 @@ acceptance-sqlite-restart: acceptance-sqlite-stop
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" start -d
-acceptance-sqlite-stop:
+acceptance-sqlite-stop-%:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 acceptance-auth-sqlite-restart: acceptance-auth-sqlite-stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
@@ -510,6 +509,9 @@ acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
 	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
 	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs "tests/acceptance")
+acceptance-api:
+	$(info Running JS acceptance-api tests in Chrome...)
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-meta mode=api --config-file ./.testcaferc.cjs "tests/acceptance")
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
 	(cd frontend && npm run test-watch)
