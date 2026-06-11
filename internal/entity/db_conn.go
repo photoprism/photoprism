@@ -1,13 +1,19 @@
 package entity
 
 import (
+	"database/sql"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/maruel/natural"
+	"github.com/mattn/go-sqlite3"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // dbConn is the global gorm.DB connection provider.
@@ -40,12 +46,29 @@ func (g *DbConn) Db() *gorm.DB {
 
 // Open creates a new gorm db connection.
 func (g *DbConn) Open() {
-	db, err := gorm.Open(g.Driver, g.Dsn)
+	gDriver := g.Driver
+	if g.Driver == dsn.DriverSQLite3 {
+		if !slices.Contains(sql.Drivers(), "sqlite_natural_sort") {
+			sql.Register("sqlite_natural_sort", &sqlite3.SQLiteDriver{
+				ConnectHook: func(conn *sqlite3.SQLiteConn) error {
+					return conn.RegisterCollation("CUSTOM_NATURAL_SORT", natural.Compare)
+				},
+			})
+		}
+		gDriver = "sqlite_natural_sort"
+		sqliteDialect, ok := gorm.GetDialect("sqlite3")
+		if !ok {
+			log.Fatal("Unable to get gorm sqlite3 dialect")
+		}
+		gorm.RegisterDialect("sqlite_natural_sort", sqliteDialect)
+	}
+
+	db, err := gorm.Open(gDriver, g.Dsn)
 
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
-			fmt.Printf("gorm.Open(%s, %s) %d\n", g.Driver, g.Dsn, i)
-			db, err = gorm.Open(g.Driver, g.Dsn)
+			fmt.Printf("gorm.Open(%s, %s) %d\n", gDriver, g.Dsn, i)
+			db, err = gorm.Open(gDriver, g.Dsn)
 
 			if db != nil && err == nil {
 				break
