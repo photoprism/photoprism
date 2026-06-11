@@ -35,14 +35,11 @@ test.meta("testID", "sphere-002").meta({ mode: "public" })("Common: Standard pho
 
 test.meta("testID", "sphere-003").meta({ mode: "public" })("Common: Opens 360° video in sphere viewer", async (t) => {
   await menu.openPage("panoramas");
+  // The acceptance fixture set must include a 360° equirectangular video; fail clearly if it is missing.
+  await t.expect(Selector("div.type-video").exists).ok({ timeout: 5000 });
   const uid = await photo.getNthPhotoUid("video", 0);
-
-  if (!uid) {
-    // No 360° video present in current fixture set — skip silently.
-    return;
-  }
 
   await photoviewer.openPhotoViewer("uid", uid);
   await t.expect(Selector("div.pswp__media--sphere").exists).ok({ timeout: 5000 });
-  await t.expect(Selector("div.psv-container video").exists).ok({ timeout: 10000 });
+  await t.expect(Selector("div.pswp__media--sphere video").exists).ok({ timeout: 10000 });
 });
