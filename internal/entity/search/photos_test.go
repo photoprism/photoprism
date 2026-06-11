@@ -1,6 +1,7 @@
 package search
 
 import (
+	"slices"
 	"strconv"
 	"testing"
 	"time"
@@ -14,7 +15,32 @@ import (
 )
 
 func TestPhotos(t *testing.T) {
-	t.Run("SortByTile", func(t *testing.T) {
+	t.Run("SortByName", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Order = sortby.Name
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, PhotoResults{}, photos)
+
+		idx1 := slices.IndexFunc(photos, func(p Photo) bool {
+			return p.ID == 1000012 // PhotoPath 2016/01, PhotoName Photo12
+		})
+		idx2 := slices.IndexFunc(photos, func(p Photo) bool {
+			return p.ID == 1000013 // PhotoPath 2016/06, PhotoName Photo13
+		})
+		idx3 := slices.IndexFunc(photos, func(p Photo) bool {
+			return p.ID == 1000006 // PhotoPath 2016/11, PhotoName Photo06
+		})
+
+		assert.Greater(t, idx3, idx2)
+		assert.Greater(t, idx2, idx1)
+	})
+	t.Run("SortByTitle", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Order = sortby.Title
 
@@ -25,6 +51,18 @@ func TestPhotos(t *testing.T) {
 		}
 
 		assert.IsType(t, PhotoResults{}, photos)
+		idx1 := slices.IndexFunc(photos, func(p Photo) bool {
+			return p.ID == 1000009 // PhotoTitle Title, PhotoName Photo9
+		})
+		idx2 := slices.IndexFunc(photos, func(p Photo) bool {
+			return p.ID == 1000011 // PhotoTitle Title, PhotoName Photo11
+		})
+		idx3 := slices.IndexFunc(photos, func(p Photo) bool {
+			return p.ID == 1000012 // PhotoTitle Title, PhotoName Photo12
+		})
+
+		assert.Greater(t, idx3, idx2)
+		assert.Greater(t, idx2, idx1)
 	})
 	t.Run("OrderDuration", func(t *testing.T) {
 		var frm form.SearchPhotos
