@@ -261,8 +261,8 @@ func downloadAction(ctx *cli.Context) error {
 				continue
 			}
 
-			if ffmpeg.Exclude().Contains(result.Info.VCodec, result.Info.Ext, result.Info.Container) {
-				log.Warnf("skipping %s because format %s is on the FFmpeg exclude list", clean.Log(u.String()), clean.Log(result.Info.VCodec))
+			if matched := ffmpeg.Exclude().Match(result.Info.VCodec, result.Info.Ext, result.Info.Container); matched != "" {
+				log.Warnf("skipping %s because format %s is on the FFmpeg exclude list", clean.Log(u.String()), clean.Log(matched))
 				failures++
 				continue
 			}

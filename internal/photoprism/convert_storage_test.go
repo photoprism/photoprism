@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
@@ -36,6 +37,30 @@ func TestConvert_InsufficientStorage(t *testing.T) {
 		cfg.Options().FilesQuota = 0
 
 		assert.True(t, convert.insufficientStorage())
+	})
+}
+
+func TestConvert_cancelInsufficientStorage(t *testing.T) {
+	cfg := config.NewMinimalTestConfig(t.TempDir())
+	convert := NewConvert(cfg)
+	require.NotNil(t, convert)
+
+	t.Run("CancelsRunningWorker", func(t *testing.T) {
+		require.NoError(t, mutex.IndexWorker.Start())
+		defer mutex.IndexWorker.Stop()
+		require.False(t, mutex.IndexWorker.Canceled())
+
+		convert.cancelInsufficientStorage()
+		assert.True(t, mutex.IndexWorker.Canceled())
+	})
+	t.Run("IdempotentWhenAlreadyCanceled", func(t *testing.T) {
+		require.NoError(t, mutex.IndexWorker.Start())
+		defer mutex.IndexWorker.Stop()
+		mutex.IndexWorker.Cancel()
+		require.True(t, mutex.IndexWorker.Canceled())
+
+		convert.cancelInsufficientStorage()
+		assert.True(t, mutex.IndexWorker.Canceled())
 	})
 }
 

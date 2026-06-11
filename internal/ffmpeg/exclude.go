@@ -16,7 +16,7 @@ var excludePtr atomic.Pointer[video.Formats]
 var DefaultExclude string
 
 func init() {
-	f := video.NewFormats(video.CodecMagicYUV)
+	f := video.NewFormats(video.CodecMagicYUV, video.CodecVFW)
 	excludePtr.Store(&f)
 	DefaultExclude = f.String()
 }

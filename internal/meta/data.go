@@ -34,7 +34,7 @@ type Data struct {
 	FPS              float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
 	Frames           int           `meta:"FrameCount,AnimationFrames"`
 	Pages            int           `meta:"PageCount,NPages,Pages"`
-	Codec            string        `meta:"CompressorID,VideoCodecID,CodecID,OtherFormat,FileType"`
+	Codec            string        `meta:"CompressorID,VideoCodecID,CodecID,OtherFormat,VideoCodec,FileType"`
 	Title            string        `meta:"Title,Headline" xmp:"dc:title" dc:"title,title.Alt"`
 	Caption          string        `meta:"Description,ImageDescription,Caption,Caption-Abstract" xmp:"Description,Description.Alt"`
 	Subject          string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`

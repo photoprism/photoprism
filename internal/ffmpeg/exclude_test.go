@@ -14,6 +14,8 @@ func TestDefaultExclude(t *testing.T) {
 		assert.NotEmpty(t, DefaultExclude)
 		def := video.NewFormats(DefaultExclude)
 		assert.True(t, def.Contains(video.CodecMagicYUV))
+		assert.True(t, def.Contains(video.CodecVFW))
+		assert.True(t, def.Contains("V_MS/VFW/FOURCC"))
 	})
 	t.Run("RoundTrips", func(t *testing.T) {
 		// DefaultExclude must round-trip through NewFormats.String() so that

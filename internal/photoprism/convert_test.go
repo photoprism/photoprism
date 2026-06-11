@@ -113,6 +113,11 @@ func TestConvert_FFmpegAllowed(t *testing.T) {
 	t.Run("AllowedContainer", func(t *testing.T) {
 		assert.True(t, convert.FFmpegAllowed(fakeMediaFile("", "/tmp/clip.mp4")))
 	})
+	t.Run("ExcludedByVideoInfo", func(t *testing.T) {
+		// The metadata codec is unknown, but the built-in video probe identifies it.
+		mf := &MediaFile{fileName: "/tmp/clip.mov", videoInfo: video.Info{VideoCodec: video.CodecMagicYUV}}
+		assert.False(t, convert.FFmpegAllowed(mf))
+	})
 	t.Run("EmptyExcludeList", func(t *testing.T) {
 		convert.ffmpegExclude = video.NewFormats("")
 		assert.True(t, convert.FFmpegAllowed(fakeMediaFile("magicyuv", "/tmp/clip.avi")))

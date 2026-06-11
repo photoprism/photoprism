@@ -153,6 +153,9 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 
 	// No suitable converter found?
 	if len(result) == 0 {
+		if f.IsAnimated() && w.conf.FFmpegEnabled() && !w.FFmpegAllowed(f) {
+			return result, useMutex, fmt.Errorf("format %s is on the FFmpeg exclude list", w.ffmpegExclude.Match(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String()))
+		}
 		return result, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
 	}
 

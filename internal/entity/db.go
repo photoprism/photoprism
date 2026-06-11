@@ -1,16 +1,15 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/jinzhu/gorm"
 )
 
-// Set UTC as the default for created and updated timestamps.
+// Set UTC, truncated to whole seconds, as the default for created and updated
+// timestamps. The schema stores these as DATETIME without fractional seconds, so
+// generating second-precision values keeps in-memory and persisted times in sync
+// and makes timestamp comparisons behave the same on SQLite and MariaDB.
 func init() {
-	gorm.NowFunc = func() time.Time {
-		return UTC()
-	}
+	gorm.NowFunc = Now
 }
 
 // Db returns the default *gorm.DB connection.

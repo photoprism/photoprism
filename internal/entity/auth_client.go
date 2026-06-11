@@ -39,6 +39,8 @@ type Client struct {
 	AppName      string          `gorm:"size:64;" json:"AppName" yaml:"AppName,omitempty"`
 	AppVersion   string          `gorm:"size:64;" json:"AppVersion" yaml:"AppVersion,omitempty"`
 	ClientName   string          `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
+	DisplayName  string          `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
+	NameSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"NameSrc,omitempty" yaml:"NameSrc,omitempty"`
 	ClientRole   string          `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
 	ClientType   string          `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
 	ClientURL    string          `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
@@ -189,6 +191,31 @@ func (m *Client) SetName(s string) *Client {
 	if s = clean.Name(s); s != "" {
 		m.ClientName = s
 	}
+
+	return m
+}
+
+// SetDisplayName sets the human-friendly DisplayName when src has at least the
+// priority of the current NameSrc, mirroring User.SetDisplayName. An empty name
+// from a manual (admin) source clears the override so the next instance
+// registration can repopulate it; an empty name from any other source is ignored.
+func (m *Client) SetDisplayName(name, src string) *Client {
+	name = clean.TypeUnicode(name)
+
+	if SrcPriority[src] < SrcPriority[m.NameSrc] {
+		return m
+	}
+
+	if name == "" {
+		if src == SrcManual {
+			m.DisplayName = ""
+			m.NameSrc = SrcAuto
+		}
+		return m
+	}
+
+	m.DisplayName = name
+	m.NameSrc = src
 
 	return m
 }

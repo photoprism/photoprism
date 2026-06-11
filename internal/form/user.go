@@ -37,6 +37,7 @@ func NewUserFromCli(ctx *cli.Context) User {
 		UserName:     clean.Username(ctx.Args().First()),
 		AuthProvider: clean.TypeLower(ctx.String("auth")),
 		AuthID:       clean.Auth(ctx.String("auth-id")),
+		AuthIssuer:   clean.Uri(ctx.String("auth-issuer")),
 		UserEmail:    clean.Email(ctx.String("email")),
 		DisplayName:  clean.Name(ctx.String("name")),
 		UserRole:     clean.Role(ctx.String("role")),

@@ -9,6 +9,44 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 )
 
+func TestSelectedPhotoUIDsForSession(t *testing.T) {
+	const (
+		normalUID  = "ps6sg6be2lvl0yh7" // not private, not archived, not shared with guests
+		privateUID = "ps6sg6be2lvl0y13" // "Photo06", private
+	)
+	uids := []string{normalUID, privateUID}
+
+	t.Run("AdminSeesAll", func(t *testing.T) {
+		scoped, err := SelectedPhotoUIDsForSession(uids, aclSession("alice"))
+		assert.NoError(t, err)
+		assert.ElementsMatch(t, uids, scoped)
+	})
+	t.Run("GuestExcludesPrivateAndUnshared", func(t *testing.T) {
+		scoped, err := SelectedPhotoUIDsForSession(uids, aclSession("guest"))
+		assert.NoError(t, err)
+		assert.NotContains(t, scoped, privateUID)
+		assert.NotContains(t, scoped, normalUID)
+	})
+	t.Run("NilSessionUnchanged", func(t *testing.T) {
+		scoped, err := SelectedPhotoUIDsForSession(uids, nil)
+		assert.NoError(t, err)
+		assert.ElementsMatch(t, uids, scoped)
+	})
+	t.Run("AdminShortCircuitSkipsQuery", func(t *testing.T) {
+		// Full-access sessions return the input verbatim without a scope query, so even an unknown
+		// UID passes through (existence is checked by the caller's own lookup).
+		in := []string{normalUID, "ps000000000unknown"}
+		scoped, err := SelectedPhotoUIDsForSession(in, aclSession("alice"))
+		assert.NoError(t, err)
+		assert.Equal(t, in, scoped)
+	})
+	t.Run("EmptyInput", func(t *testing.T) {
+		scoped, err := SelectedPhotoUIDsForSession(nil, aclSession("guest"))
+		assert.NoError(t, err)
+		assert.Empty(t, scoped)
+	})
+}
+
 func TestPhotoSelection(t *testing.T) {
 	albums := form.Selection{Albums: []string{"as6sg6bxpogaaba9", "as6sg6bitoga0004", "as6sg6bxpogaaba8", "as6sg6bxpogaaba7"}}
 

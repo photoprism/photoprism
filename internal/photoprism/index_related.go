@@ -1,12 +1,14 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // IndexRelated indexes a group of related files and returns the result.
@@ -74,6 +76,14 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
 			// Try to create a preview image; if this fails, log and continue without failing the whole group.
 			if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
+				// Stop the run instead of masking a full disk as a generic preview error.
+				if errors.Is(imgErr, status.ErrInsufficientStorage) {
+					ind.abortInsufficientStorage()
+					result.Err = imgErr
+					result.Status = IndexFailed
+					return result
+				}
+
 				log.Warnf("index: could not create preview image for %s (%s)", clean.Log(f.RootRelName()), imgErr)
 				// Continue indexing other related files without changing the overall success status.
 				continue
@@ -84,6 +94,14 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 				// Skip with warning if thumbs could not be created.
 				if thumbsErr := img.GenerateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
+					// Stop the run instead of masking a full disk as a generic thumbnail error.
+					if errors.Is(thumbsErr, status.ErrInsufficientStorage) {
+						ind.abortInsufficientStorage()
+						result.Err = thumbsErr
+						result.Status = IndexFailed
+						return result
+					}
+
 					log.Warnf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
 					// Continue indexing; preview image exists and other related files may still succeed.
 					continue

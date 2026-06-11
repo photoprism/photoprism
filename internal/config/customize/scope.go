@@ -49,6 +49,7 @@ func (s *Settings) ApplyScope(scope string) *Settings {
 
 	// Settings.
 	m.Features.Account = s.Features.Account && scopes.Contains(acl.ResourcePassword.String())
+	m.Features.AppPasswords = s.Features.AppPasswords && scopes.Contains(acl.ResourcePassword.String())
 	m.Features.Settings = s.Features.Settings && scopes.Contains(acl.ResourceSettings.String())
 	m.Features.Services = s.Features.Services && scopes.Contains(acl.ResourceServices.String())
 

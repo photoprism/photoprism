@@ -594,6 +594,167 @@ func TestFindFolderAlbum(t *testing.T) {
 	})
 }
 
+// TestFindFolderAlbumByPath exercises the byte-exact folder album path lookup.
+func TestFindFolderAlbumByPath(t *testing.T) {
+	unique := func() string { return txt.Slug(time.Now().UTC().Format(time.RFC3339Nano)) }
+	t.Run("EmptyPath", func(t *testing.T) {
+		assert.Nil(t, findFolderAlbumByPath(""))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.Nil(t, findFolderAlbumByPath("missing-"+unique()+"/🪞"))
+	})
+	t.Run("Success", func(t *testing.T) {
+		albumPath := "byte-exact-" + unique() + "/🪞"
+		album := NewFolderAlbum("🪞", albumPath, `path:"`+albumPath+`" public:true`)
+
+		if album == nil {
+			t.Fatal("expected album")
+		}
+
+		if err := album.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() { _ = album.DeletePermanently() })
+
+		found := findFolderAlbumByPath(albumPath)
+
+		if found == nil {
+			t.Fatal("expected folder album to resolve")
+		}
+
+		assert.Equal(t, album.ID, found.ID)
+		assert.Equal(t, albumPath, found.AlbumPath)
+	})
+	t.Run("EmojiSiblingsDoNotCollide", func(t *testing.T) {
+		// On MariaDB (utf8mb4_unicode_ci) two emoji sibling paths collate equal,
+		// so the byte-exact re-check must keep them apart; SQLite passes trivially.
+		base := "emoji-sibling-" + unique() + "/"
+		pathMirror := base + "🪞"
+		pathPumpkin := base + "🎃"
+
+		mirror := NewFolderAlbum("🪞", pathMirror, `path:"`+pathMirror+`" public:true`)
+		pumpkin := NewFolderAlbum("🎃", pathPumpkin, `path:"`+pathPumpkin+`" public:true`)
+
+		if mirror == nil || pumpkin == nil {
+			t.Fatal("expected both albums")
+		}
+
+		if err := mirror.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := pumpkin.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = mirror.DeletePermanently()
+			_ = pumpkin.DeletePermanently()
+		})
+
+		foundMirror := findFolderAlbumByPath(pathMirror)
+		foundPumpkin := findFolderAlbumByPath(pathPumpkin)
+
+		if foundMirror == nil || foundPumpkin == nil {
+			t.Fatalf("expected both folder albums to resolve, got mirror=%v pumpkin=%v", foundMirror, foundPumpkin)
+		}
+
+		assert.Equal(t, mirror.ID, foundMirror.ID)
+		assert.Equal(t, pumpkin.ID, foundPumpkin.ID)
+		assert.Equal(t, pathMirror, foundMirror.AlbumPath)
+		assert.Equal(t, pathPumpkin, foundPumpkin.AlbumPath)
+	})
+}
+
+// TestClearDuplicateFolderAlbumPaths exercises byte-exact folder album path dedup.
+func TestClearDuplicateFolderAlbumPaths(t *testing.T) {
+	unique := func() string { return txt.Slug(time.Now().UTC().Format(time.RFC3339Nano)) }
+	t.Run("EmptyPath", func(t *testing.T) {
+		assert.NoError(t, clearDuplicateFolderAlbumPaths("", 0))
+	})
+	t.Run("ClearsByteExactDuplicate", func(t *testing.T) {
+		albumPath := "dup-" + unique() + "/🪞"
+		filter := `path:"` + albumPath + `" public:true`
+
+		keep := NewFolderAlbum("🪞 keep", albumPath, filter)
+
+		if keep == nil {
+			t.Fatal("expected album")
+		}
+
+		if err := keep.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		dupe := &Album{AlbumType: AlbumFolder, AlbumSlug: keep.AlbumSlug + "x", AlbumPath: albumPath, AlbumFilter: filter, CreatedAt: Now(), UpdatedAt: Now()}
+		dupe.SetTitle("🪞 dupe")
+
+		if err := dupe.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = keep.DeletePermanently()
+			_ = dupe.DeletePermanently()
+		})
+
+		if err := clearDuplicateFolderAlbumPaths(albumPath, keep.ID); err != nil {
+			t.Fatal(err)
+		}
+
+		if kept := FindAlbum(Album{AlbumUID: keep.AlbumUID}); kept != nil {
+			assert.Equal(t, albumPath, kept.AlbumPath)
+		}
+
+		cleared := FindAlbum(Album{AlbumUID: dupe.AlbumUID})
+
+		if cleared == nil {
+			t.Fatal("expected duplicate album to still exist")
+		}
+
+		assert.Empty(t, cleared.AlbumPath)
+	})
+	t.Run("PreservesEmojiSibling", func(t *testing.T) {
+		base := "dup-sibling-" + unique() + "/"
+		pathMirror := base + "🪞"
+		pathPumpkin := base + "🎃"
+
+		mirror := NewFolderAlbum("🪞", pathMirror, `path:"`+pathMirror+`" public:true`)
+		pumpkin := NewFolderAlbum("🎃", pathPumpkin, `path:"`+pathPumpkin+`" public:true`)
+
+		if mirror == nil || pumpkin == nil {
+			t.Fatal("expected both albums")
+		}
+
+		if err := mirror.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := pumpkin.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = mirror.DeletePermanently()
+			_ = pumpkin.DeletePermanently()
+		})
+
+		// Clearing duplicates of the pumpkin path must not wipe the mirror sibling.
+		if err := clearDuplicateFolderAlbumPaths(pathPumpkin, pumpkin.ID); err != nil {
+			t.Fatal(err)
+		}
+
+		preserved := findFolderAlbumByPath(pathMirror)
+
+		if preserved == nil {
+			t.Fatal("expected mirror folder album to be preserved")
+		}
+
+		assert.Equal(t, pathMirror, preserved.AlbumPath)
+	})
+}
+
 // TestFindAlbum exercises the related album behavior.
 func TestFindAlbum(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {

@@ -51,19 +51,21 @@ func Start(conf *config.Config) {
 				ticker.Stop()
 				return
 			case <-ticker.C:
-				if mustIndex(conf.AutoIndex()) {
-					log.Debugf("auto-index: starting")
-					ResetIndex()
-					if err := Index(); err != nil {
-						log.Errorf("auto-index: %s", err)
+				event.Safe(func() {
+					if mustIndex(conf.AutoIndex()) {
+						log.Debugf("auto-index: starting")
+						ResetIndex()
+						if err := Index(); err != nil {
+							log.Errorf("auto-index: %s", err)
+						}
+					} else if mustImport(conf.AutoImport()) {
+						log.Debugf("auto-import: starting")
+						ResetImport()
+						if err := Import(); err != nil {
+							log.Errorf("auto-import: %s", err)
+						}
 					}
-				} else if mustImport(conf.AutoImport()) {
-					log.Debugf("auto-import: starting")
-					ResetImport()
-					if err := Import(); err != nil {
-						log.Errorf("auto-import: %s", err)
-					}
-				}
+				})
 			}
 		}
 	}()

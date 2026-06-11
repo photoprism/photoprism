@@ -26,6 +26,14 @@ Additional information can be found in our Developer Guide:
 import $api from "common/api";
 import $event from "common/event";
 import { createNamespacedStorage } from "common/storage";
+import {
+  persistInstanceIdentity,
+  InstanceIdentityKeys,
+  instanceTitle,
+  listLogoutTargets,
+  signOutInstances,
+  clearInstanceStorage,
+} from "common/instances";
 import { $view } from "common/view";
 import User from "model/user";
 import Socket from "websocket.js";
@@ -42,6 +50,12 @@ const LogoutSignalKey = "login.logout";
 // in sessionStorage so a closed tab clears it, and so a failed/abandoned OIDC
 // roundtrip can fall back to the local login form instead of looping.
 const OidcAttemptKey = "login.oidc.attempt";
+// Loop guard for the post-login redirect (login.next): the timestamp of the last
+// follow, and the window within which a re-entry counts as a bounce-back loop.
+// Lets /login fall back to the default route instead of looping when the redirect
+// target (e.g. the OIDC OP /api/v1/oauth/authorize) can't authenticate the navigation.
+const LoginRedirectAttemptKey = "login.next.at";
+const LoginRedirectLoopWindow = 6000;
 
 const resolveStorageNamespace = (config) => {
   if (typeof config?.storageNamespace === "string" && config.storageNamespace !== "") {
@@ -147,6 +161,11 @@ export default class Session {
 
     // Authenticated?
     this.auth = this.isUser();
+
+    // Record this instance's identity so peers on a shared domain can switch to it.
+    if (this.auth) {
+      this.recordInstanceIdentity();
+    }
 
     // Subscribe to session events.
     $event.subscribe("session.logout", () => {
@@ -438,6 +457,33 @@ export default class Session {
     this.user = new User(user);
     this.storage.setItem(this.storageKey + ".user", JSON.stringify(user));
     this.auth = this.isUser();
+
+    if (this.auth) {
+      this.recordInstanceIdentity();
+    }
+  }
+
+  // recordInstanceIdentity stores this instance's SiteUrl, display title, and app
+  // icon under the active namespace so other instances on the same origin can offer
+  // a switch entry. The title prefers the configured site name (see instanceTitle)
+  // and falls back to the distinctive base-path segment for unbranded instances;
+  // the icon is the root-relative app icon, which resolves on the shared origin from
+  // any peer. No-op when the site URL is unknown or storage is unavailable.
+  recordInstanceIdentity() {
+    const values = this.config?.values;
+
+    if (!values || !values.siteUrl) {
+      return;
+    }
+
+    persistInstanceIdentity(this.storage, {
+      url: values.siteUrl,
+      // Frontend URI (e.g. "/portal" or "/i/pro-1/library") so peers open the
+      // app entry point rather than a web-overlay landing page at the site root.
+      route: this.config?.frontendUri,
+      title: instanceTitle(values),
+      icon: this.config.getIcon(),
+    });
   }
 
   getUser() {
@@ -609,6 +655,9 @@ export default class Session {
     this.clearNamespacedKey(this.storageKey + ".user");
     this.clearLegacyKey("user");
     this.clearLegacyKey("session.user");
+    // Drop this instance's switcher identity so a logged-out instance is no
+    // longer offered as a switch target by peers on the same shared domain.
+    InstanceIdentityKeys.forEach((key) => this.clearNamespacedKey(key));
   }
 
   deleteClipboard() {
@@ -753,7 +802,24 @@ export default class Session {
     $view.redirect(url, delay, true);
   }
 
+  // logoutRedirectUri returns the post-sign-out landing URL: a cluster-OIDC session
+  // goes to the OIDC login (which bounces to the Portal login) to re-auth with the
+  // cluster account, everyone else to the local login. Read provider before reset().
+  logoutRedirectUri() {
+    if (this.getProvider() === "oidc" && this.config?.isClusterOidc?.()) {
+      const oidcLoginUri = this.config.oidcLoginUri();
+      if (oidcLoginUri) {
+        return oidcLoginUri;
+      }
+    }
+
+    return this.config.loginUri;
+  }
+
   onLogout(noRedirect) {
+    // Capture the redirect target before reset() clears the auth provider.
+    const redirectUri = this.logoutRedirectUri();
+
     this.reset();
 
     // Drop stale deep-link redirects; raise one-shot flag so /login skips
@@ -762,7 +828,7 @@ export default class Session {
     this.localStorage?.setItem(LogoutSignalKey, "1");
 
     if (noRedirect !== true && !this.isLogin()) {
-      this.followRedirect(this.config.loginUri);
+      this.followRedirect(redirectUri);
     }
 
     return Promise.resolve();
@@ -800,6 +866,27 @@ export default class Session {
     return raised;
   }
 
+  // Records the time we last followed the post-login redirect, so a fast
+  // bounce-back can be recognized as a loop. Stored per browser tab.
+  markLoginRedirectAttempt() {
+    this.sessionStorage?.setItem(LoginRedirectAttemptKey, String(Date.now()));
+    return this;
+  }
+
+  // loginRedirectLooping reports whether the post-login redirect was followed
+  // within the last LoginRedirectLoopWindow ms, i.e. the target bounced straight
+  // back without authenticating the navigation — used to break redirect loops.
+  loginRedirectLooping() {
+    const at = parseInt(this.sessionStorage?.getItem(LoginRedirectAttemptKey) || "0", 10);
+    return at > 0 && Date.now() - at < LoginRedirectLoopWindow;
+  }
+
+  // Clears the post-login redirect loop guard.
+  clearLoginRedirectAttempt() {
+    this.sessionStorage?.removeItem(LoginRedirectAttemptKey);
+    return this;
+  }
+
   logout(noRedirect) {
     if (this.isAuthenticated()) {
       return $api
@@ -815,10 +902,48 @@ export default class Session {
     }
   }
 
-  // Synchronous logout for SPA route guards (/logout): fires server DELETE
-  // with the captured token first (avoiding a 401 echo that would re-raise
-  // the logout flag), then resets client state.
+  // revokePeerSessions best-effort revokes every reachable peer instance's session
+  // server-side and clears their namespaced keys from local storage. The peer keys
+  // are cleared synchronously (the DELETEs hold their own tokens), so a route guard
+  // can fire-and-forget while the async revocation settles. Returns the fan-out
+  // promise. Shared by logoutEverywhere (awaits) and signOut (fire-and-forget).
+  //
+  // Unwraps to the raw underlying store first: this.localStorage / this.sessionStorage
+  // are NamespacedStorage wrappers (getAppStorage), so enumerating or clearing a
+  // cross-namespace key through one double-prefixes it (pp:a:pp:b:…) and misses it.
+  revokePeerSessions() {
+    const rawStore = (s) => (s && s.storage ? s.storage : s);
+    const stores = [rawStore(this.localStorage), rawStore(this.sessionStorage)];
+
+    let targets = [];
+    try {
+      targets = listLogoutTargets({ currentNamespace: this.storageNamespace, stores });
+    } catch {
+      targets = [];
+    }
+
+    const revoked = signOutInstances(targets).catch(() => {});
+    clearInstanceStorage(
+      targets.map((t) => t.namespace),
+      stores
+    );
+    return revoked;
+  }
+
+  // logoutEverywhere performs a cluster-wide Sign-Out (Tier 2): best-effort revokes
+  // every reachable peer instance's session server-side, drops their local tokens,
+  // then signs out the current instance (clearing the OP cookie) and redirects.
+  // Shared-domain (same-origin) clusters only; always resolves.
+  logoutEverywhere(noRedirect) {
+    return this.revokePeerSessions().then(() => this.logout(noRedirect));
+  }
+
+  // Synchronous cluster-wide logout for SPA route guards (/logout): revokes every
+  // reachable peer session and the current one (best-effort, in the background),
+  // clears shared storage, then resets client state. Firing the current DELETE with
+  // the captured token avoids a 401 echo that would re-raise the logout flag.
   signOut() {
+    this.revokePeerSessions();
     const token = this.getAuthToken();
     if (token) {
       $api.delete("session", { headers: { [RequestHeader]: token } }).catch(() => {});

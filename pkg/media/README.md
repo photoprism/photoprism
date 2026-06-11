@@ -1,6 +1,6 @@
 ## PhotoPrism — Media Package
 
-**Last Updated:** February 14, 2026
+**Last Updated:** June 1, 2026
 
 ### Apple iPhone & iPad
 
@@ -10,9 +10,11 @@ We recommend [using an app like PhotoSync](https://docs.photoprism.app/user-guid
 
 ### Android Devices
 
-Some Samsung and Google Android devices support taking "Motion Photos" with the included Camera app. Motion Photos are JPEG/HEIC image with a short MP4 video embedded after the image data.
+Some Samsung and Google Android devices support taking "Motion Photos" with the included Camera app. A Motion Photo is a JPEG/HEIC image with a short MP4 video embedded after the image data.
 
 The image part of these files can be opened in any image viewer that supports JPEG/HEIC, but the video part cannot. However, since the MP4 video is simply appended at the end of the image file, it can be easily read by our software and streamed through the API as needed.
+
+How PhotoPrism locates the embedded video offset and detects its codec is described in the [`video` subpackage documentation](https://github.com/photoprism/photoprism/blob/develop/pkg/media/video/README.md#codec-detection).
 
 ### Introductory Tutorials
 
@@ -27,16 +29,16 @@ The image part of these files can be opened in any image viewer that supports JP
 
 ### Software Libraries & References
 
-| Title                                                | URL                                                                     |
-|:-----------------------------------------------------|:------------------------------------------------------------------------|
-| Web Video Codec Guide                                | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs |
-| Media Container Formats                              | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Containers   |
-| MP4 Signature Format                                 | https://www.file-recovery.com/mp4-signature-format.htm                  |
-| List of file signatures (Wikipedia)                  | https://en.wikipedia.org/wiki/List_of_file_signatures                   |
-| Go library for reading and writing MP4 files         | https://github.com/abema/go-mp4                                         |
-| Go library for buffered I/O with io.Seeker interface | https://github.com/sunfish-shogi/bufseekio                              |
-| How to use the io.Reader interface                   | https://yourbasic.org/golang/io-reader-interface-explained/             |
-| AV1 Codec ISO Media File Format                      | https://aomediacodec.github.io/av1-isobmff                              |
+| Title                                                | URL                                                                            |
+|:-----------------------------------------------------|:-------------------------------------------------------------------------------|
+| Web Video Codec Guide                                | https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Video_codecs |
+| Media Container Formats                              | https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Containers   |
+| MP4 Signature Format                                 | https://www.file-recovery.com/mp4-signature-format.htm                         |
+| List of file signatures (Wikipedia)                  | https://en.wikipedia.org/wiki/List_of_file_signatures                          |
+| Go library for reading and writing MP4 files         | https://github.com/abema/go-mp4                                                |
+| Go library for buffered I/O with io.Seeker interface | https://github.com/sunfish-shogi/bufseekio                                     |
+| How to use the io.Reader interface                   | https://yourbasic.org/golang/io-reader-interface-explained/                    |
+| AV1 Codec ISO Media File Format                      | https://aomediacodec.github.io/av1-isobmff                                     |
 
 ### Related GitHub Issues
 

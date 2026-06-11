@@ -1074,9 +1074,6 @@ docker-local-develop-resolute:
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
-docker-goproxy:
-	docker pull golang:alpine
-	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(BUILD_DATE)
 demo: docker-demo
 docker-demo: docker-demo-latest
 docker-demo-all: docker-demo-latest docker-demo-debian

@@ -23,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -40,10 +41,6 @@ func init() {
 // InitConfig performs node bootstrap: optional registration with the Portal
 // and theme installation. Runs early during config.Init().
 func InitConfig(c *config.Config) error {
-	if !cluster.BootstrapAutoJoinEnabled && !cluster.BootstrapAutoThemeEnabled {
-		return nil
-	}
-
 	role := c.NodeRole()
 
 	// Skip on portal nodes and unknown node types.
@@ -52,12 +49,34 @@ func InitConfig(c *config.Config) error {
 		return nil
 	}
 
+	// Auto-join the cluster and sync the theme when enabled and configured.
+	if cluster.BootstrapAutoJoinEnabled || cluster.BootstrapAutoThemeEnabled {
+		bootstrapClusterNode(c)
+	}
+
+	// Derive the OIDC RP credentials from the node client (PHOTOPRISM_CLUSTER_OIDC),
+	// independent of the auto-join/theme toggles, so a registered instance re-wires
+	// the OIDC RP on every restart.
+	resolveNodeOIDCClient(c)
+
+	// Log cluster UUID.
+	if uuid := c.ClusterUUID(); uuid != "" {
+		log.Infof("cluster: UUID %s", clean.Log(uuid))
+	}
+
+	return nil
+}
+
+// bootstrapClusterNode registers the node with the configured Portal and installs
+// its theme, honoring the auto-join/theme toggles. All failures are non-fatal so
+// the node still boots; it is a no-op when no Portal URL or join token is set.
+func bootstrapClusterNode(c *config.Config) {
 	portalURL := strings.TrimSpace(c.PortalUrl())
 	joinToken := strings.TrimSpace(c.JoinToken())
 
 	if portalURL == "" || joinToken == "" {
 		log.Debugf("cluster: no bootstrap configuration found")
-		return nil
+		return
 	}
 
 	log.Debugf("config: attempting to join the configured cluster")
@@ -65,7 +84,7 @@ func InitConfig(c *config.Config) error {
 	u, err := url.Parse(portalURL)
 	if err != nil || u.Scheme == "" || u.Host == "" {
 		log.Warnf("cluster: invalid portal URL %s", clean.Log(portalURL))
-		return nil
+		return
 	}
 
 	// Register with retry policy.
@@ -84,13 +103,50 @@ func InitConfig(c *config.Config) error {
 		}
 		activateNodeThemeIfPresent(c)
 	}
+}
 
-	// Log cluster UUID.
-	if uuid := c.ClusterUUID(); uuid != "" {
-		log.Infof("cluster: UUID %s", clean.Log(uuid))
+// resolveNodeOIDCClient derives the instance's OIDC RP credentials from the node
+// client credentials when PHOTOPRISM_CLUSTER_OIDC is enabled, so a Portal-fronted
+// instance logs in on first boot without injecting PHOTOPRISM_OIDC_*. An explicit
+// OIDC client id wins; the issuer defaults to the instance's own origin when unset;
+// the secret is read file-first so a rotation propagates on the next start.
+func resolveNodeOIDCClient(c *config.Config) {
+	if c == nil || !c.ClusterOIDC() {
+		return
 	}
 
-	return nil
+	// Explicit OIDC client credentials (a different IdP, or a hand-issued client)
+	// win unchanged.
+	if strings.TrimSpace(c.OIDCClient()) != "" {
+		return
+	}
+
+	if c.NodeRole() != cluster.RoleInstance {
+		log.Warnf("cluster: ignoring cluster OIDC because this node is not an instance")
+		return
+	}
+
+	id := strings.TrimSpace(c.NodeClientID())
+	secret := strings.TrimSpace(c.NodeClientSecret())
+
+	if id == "" || secret == "" {
+		log.Warnf("cluster: cannot derive the OIDC client from node credentials yet (node not registered)")
+		return
+	}
+
+	// Default the OIDC issuer to the instance's own origin root (the shared-domain
+	// Portal OP) when unset, so enabling cluster OIDC is the only configuration an
+	// instance needs. An explicit PHOTOPRISM_OIDC_URI (e.g. a subdomain-isolated
+	// Portal) is respected.
+	if c.OIDCUri().Host == "" {
+		if issuer := scheme.OriginURL(c.SiteUrl()); issuer != "" {
+			c.SetOIDCUri(issuer)
+		}
+	}
+
+	c.SetOIDCClient(id)
+	c.SetOIDCSecret(secret)
+	log.Infof("cluster: OIDC login configured via the Portal using node client %s", clean.Log(id))
 }
 
 // newHTTPClient returns a short-lived HTTP client configured with the provided
@@ -304,6 +360,14 @@ func buildRegisterPayload(c *config.Config) cluster.RegisterRequest {
 		AppVersion:   clean.TypeUnicode(c.Version()),
 		Theme:        clean.TypeUnicode(c.NodeThemeVersion()),
 	}
+
+	// Report a human-friendly DisplayName from the operator's configured branding via
+	// Config.SiteName (SITE_NAME, then the raw AppName, then SiteTitle). It is empty
+	// for an unbranded instance, so the Portal falls back to the node Name slug, and
+	// it ignores the product Name default so an unbranded Pro node does not look
+	// configured. SiteCaption is intentionally excluded: Plus/Pro default it to the
+	// shared marketing description, so it is not a per-instance label.
+	payload.DisplayName = c.SiteName()
 
 	// Auto-derive Advertise/Site URLs from node name and cluster domain when not configured.
 	if domain := strings.TrimSpace(defaultClusterDomain(c)); domain != "" {

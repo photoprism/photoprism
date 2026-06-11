@@ -796,6 +796,11 @@ export default class Config {
     return this.values.settings.features[name] === true;
   }
 
+  // featAppPasswords checks if app passwords (app-specific passwords) are enabled.
+  featAppPasswords() {
+    return this.feature("appPasswords");
+  }
+
   // filesQuotaReached returns true if the filesystem quota is reached or exceeded.
   filesQuotaReached() {
     return Boolean(this.values?.usage?.filesUsedPct >= 100);
@@ -862,6 +867,16 @@ export default class Config {
   // isPortal returns true if this is a cluster portal server.
   isPortal() {
     return !!this.values?.portal;
+  }
+
+  // isClusterOidc returns true when the OIDC provider is the cluster Portal (not an external IdP).
+  isClusterOidc() {
+    return !!this.values?.ext?.oidc?.cluster;
+  }
+
+  // oidcLoginUri returns the OIDC login endpoint that starts the provider roundtrip, or "" when off.
+  oidcLoginUri() {
+    return this.values?.ext?.oidc?.loginUri || "";
   }
 
   // isPro returns true if this is team version.
@@ -943,9 +958,23 @@ export default class Config {
     return s;
   }
 
+  // themeAssetUri resolves a theme-relative asset path (e.g. "/_theme/logo.svg")
+  // against the configured base URI so it loads on path-prefixed deployments;
+  // absolute URLs, protocol-relative and data/blob URIs, and already-prefixed
+  // paths pass through unchanged.
+  themeAssetUri(uri) {
+    if (typeof uri !== "string" || !uri.startsWith("/") || uri.startsWith("//")) {
+      return uri;
+    } else if (this.baseUri && uri.startsWith(`${this.baseUri}/`)) {
+      return uri;
+    }
+
+    return `${this.baseUri || ""}${uri}`;
+  }
+
   getIcon() {
     if (this.theme?.variables?.icon) {
-      return this.theme.variables.icon;
+      return this.themeAssetUri(this.theme.variables.icon);
     }
 
     switch (this.get("appIcon")) {
@@ -961,7 +990,7 @@ export default class Config {
   getLoginIcon() {
     const loginTheme = themes.Get("login", false);
     if (loginTheme?.variables?.icon) {
-      return loginTheme?.variables?.icon;
+      return this.themeAssetUri(loginTheme?.variables?.icon);
     }
 
     return this.getIcon();

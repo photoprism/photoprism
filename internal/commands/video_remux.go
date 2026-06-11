@@ -160,8 +160,8 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			}
 		}
 
-		if ffmpeg.Exclude().Contains(videoFile.FileCodec, fs.FileType(srcPath).String()) {
-			log.Warnf("remux: skipping %s because format %s is on the FFmpeg exclude list", clean.Log(videoFile.FileName), clean.Log(videoFile.FileCodec))
+		if matched := ffmpeg.Exclude().Match(videoFile.FileCodec, fs.FileType(srcPath).String()); matched != "" {
+			log.Warnf("remux: skipping %s because format %s is on the FFmpeg exclude list", clean.Log(videoFile.FileName), clean.Log(matched))
 			skipped++
 			continue
 		}

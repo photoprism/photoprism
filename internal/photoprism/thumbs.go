@@ -28,16 +28,15 @@ func NewThumbs(conf *config.Config) *Thumbs {
 	return &Thumbs{conf: conf}
 }
 
-// storageLow reports whether the storage path is too full to start or continue generating thumbnails.
-func (w *Thumbs) storageLow() bool {
-	_, low, err := w.conf.StorageLow()
-
-	if err != nil || !low {
+// insufficientStorage reports whether thumbnail generation must abort because the
+// configured files quota is reached or the storage path is critically low on free disk space.
+func (w *Thumbs) insufficientStorage() bool {
+	if !w.conf.InsufficientStorage() {
 		return false
 	}
 
 	// Do not leak server internals like the size of the storage volume.
-	log.Errorf("thumbs: available storage is below the minimum threshold")
+	log.Errorf("thumbs: aborting due to insufficient storage")
 	event.ErrorMsg(i18n.ErrInsufficientStorage)
 	return true
 }
@@ -67,7 +66,7 @@ func (w *Thumbs) Start(dir string, force, originalsOnly bool) (err error) {
 	// Reset the cached disk usage so a freshly freed disk is detected immediately.
 	disk.FlushFree()
 
-	if w.storageLow() {
+	if w.insufficientStorage() {
 		return status.ErrInsufficientStorage
 	}
 
@@ -124,7 +123,7 @@ func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
 		}
 
 		// Stop the walk if storage drops below the threshold mid-scan.
-		if w.storageLow() {
+		if w.insufficientStorage() {
 			mutex.IndexWorker.Cancel()
 			return status.ErrInsufficientStorage
 		}

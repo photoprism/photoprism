@@ -113,6 +113,35 @@ describe("common/config", () => {
     expect(config.loginUri).toBe("/portal/library/login");
   });
 
+  it("themeAssetUri prefixes a root-relative theme path with the base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
+  it("themeAssetUri returns the path unchanged without a base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo" });
+    expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/_theme/logo.svg");
+  });
+
+  it("themeAssetUri leaves absolute, protocol-relative, already-prefixed, and empty paths alone", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("https://cdn.example.com/logo.svg")).toBe("https://cdn.example.com/logo.svg");
+    expect(config.themeAssetUri("//cdn.example.com/logo.svg")).toBe("//cdn.example.com/logo.svg");
+    expect(config.themeAssetUri("/i/pro-1/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+    expect(config.themeAssetUri("")).toBe("");
+  });
+
+  it("getIcon prefixes a theme-provided icon with the base uri on path-prefixed deployments", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      settings: { ui: { theme: "branded" } },
+    });
+    themes.Set("branded", { name: "branded", title: "Branded", colors: {}, variables: { icon: "/_theme/logo.svg" } });
+    config.setTheme("branded");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
   it("should store values", () => {
     const storage = new StorageShim();
     const values = { siteTitle: "Foo", country: "Germany", city: "Hamburg" };
@@ -188,6 +217,17 @@ describe("common/config", () => {
   it("should return feature", () => {
     expect(defaultConfig.feature("places")).toBe(true);
     expect(defaultConfig.feature("download")).toBe(true);
+  });
+
+  it("featAppPasswords mirrors the appPasswords feature flag", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.features = { ...settings.features, appPasswords: true };
+    cfg.set("settings", settings);
+    expect(cfg.featAppPasswords()).toBe(true);
+    settings.features = { ...settings.features, appPasswords: false };
+    cfg.set("settings", settings);
+    expect(cfg.featAppPasswords()).toBe(false);
   });
 
   it("returns albums when library access is restricted", () => {
@@ -510,6 +550,23 @@ describe("common/config", () => {
         expect(typeof result, fn).toBe("boolean");
         expect(result, fn).toBe(false);
       }
+    });
+  });
+
+  describe("cluster OIDC accessors", () => {
+    const make = (oidc) => new Config(new StorageShim(), { ...window.__CONFIG__, ext: { oidc } });
+
+    it("isClusterOidc reflects the ext.oidc.cluster flag as a Boolean", () => {
+      expect(make({ cluster: true }).isClusterOidc()).toBe(true);
+      expect(make({ cluster: false }).isClusterOidc()).toBe(false);
+      expect(make(undefined).isClusterOidc()).toBe(false);
+      expect(new Config(new StorageShim(), null).isClusterOidc()).toBe(false);
+    });
+
+    it("oidcLoginUri returns the ext.oidc.loginUri or an empty string", () => {
+      expect(make({ loginUri: "/library/api/v1/oidc/login" }).oidcLoginUri()).toBe("/library/api/v1/oidc/login");
+      expect(make({}).oidcLoginUri()).toBe("");
+      expect(new Config(new StorageShim(), null).oidcLoginUri()).toBe("");
     });
   });
 

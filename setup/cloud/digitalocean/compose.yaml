@@ -123,9 +123,10 @@ services:
     environment:
       ## !! CHANGE site url if your server has a public domain name e.g. "https://photos.yourdomain.com/" !!
       PHOTOPRISM_SITE_URL: "https://_public_ip_/"
-      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      PHOTOPRISM_SITE_DESCRIPTION: ""                  # meta site description
-      PHOTOPRISM_SITE_AUTHOR: ""                       # meta site author
+      PHOTOPRISM_SITE_NAME: ""                         # short name for identifying this instance within a cluster
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"  # short caption or tagline shown alongside the title
+      PHOTOPRISM_SITE_DESCRIPTION: ""                  # longer description shown in SEO and social meta tags
+      PHOTOPRISM_SITE_AUTHOR: ""                       # site owner shown in the author meta tag
       PHOTOPRISM_ADMIN_PASSWORD: "_admin_password_"    # YOUR INITIAL "admin" PASSWORD
       PHOTOPRISM_AUTH_MODE: "password"                 # authentication mode (public, password)
       PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"         # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")

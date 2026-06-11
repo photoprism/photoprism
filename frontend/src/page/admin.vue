@@ -1,17 +1,13 @@
 <template>
-  <p-page-about></p-page-about>
+  <div class="p-page p-page-admin"></div>
 </template>
-
 <script>
-import PPageAbout from "./about/about.vue";
-
+// PPageAdmin is a Community Edition stub: the admin area only exists as a
+// Plus/Pro/Portal overlay, so in CE it redirects to the user's default route.
 export default {
   name: "PPageAdmin",
-  components: { PPageAbout },
-  data() {
-    return {
-      rtl: this.$isRtl,
-    };
+  created() {
+    this.$router.replace({ name: this.$session.getDefaultRoute() });
   },
   mounted() {
     this.$view.enter(this);

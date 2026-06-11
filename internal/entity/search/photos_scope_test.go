@@ -5,9 +5,56 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
+
+func TestSessionGrantsPhotos(t *testing.T) {
+	t.Run("NilUnrestricted", func(t *testing.T) {
+		assert.True(t, sessionGrantsPhotos(nil, acl.AccessPrivate))
+		assert.True(t, sessionGrantsPhotos(nil, acl.ActionDelete))
+	})
+	t.Run("AdminGranted", func(t *testing.T) {
+		s := scopeSession("alice")
+		assert.True(t, sessionGrantsPhotos(s, acl.AccessPrivate))
+		assert.True(t, sessionGrantsPhotos(s, acl.ActionDelete))
+		assert.True(t, sessionGrantsPhotos(s, acl.AccessLibrary))
+	})
+	t.Run("GuestDeniedPrivate", func(t *testing.T) {
+		s := scopeSession("guest")
+		assert.False(t, sessionGrantsPhotos(s, acl.AccessPrivate))
+		assert.False(t, sessionGrantsPhotos(s, acl.ActionDelete))
+	})
+	t.Run("ClientRoleLimitsPrivilegedUser", func(t *testing.T) {
+		// A restricted client role limits access even when a privileged user is attached, so a
+		// client cannot inherit a library user's whole-library reach (the client and user roles
+		// are intersected).
+		client := &entity.Client{ClientRole: acl.RoleInstance.String(), AuthProvider: authn.ProviderClient.String()}
+		s := &entity.Session{}
+		s.SetClient(client)
+		s.SetUser(entity.UserFixtures.Pointer("alice")) // admin user
+		assert.True(t, s.IsClient())
+		assert.Equal(t, acl.RoleInstance, s.GetClientRole())
+		// RoleInstance (GrantSearchShared) lacks AccessPrivate, so the intersection denies it even
+		// though the admin user alone would grant it.
+		assert.False(t, sessionGrantsPhotos(s, acl.AccessPrivate))
+		assert.False(t, sessionGrantsAnyPhotos(s, acl.Permissions{acl.AccessAll, acl.AccessLibrary}))
+	})
+}
+
+func TestSessionGrantsAnyPhotos(t *testing.T) {
+	t.Run("NilTrue", func(t *testing.T) {
+		assert.True(t, sessionGrantsAnyPhotos(nil, acl.Permissions{acl.AccessAll, acl.AccessLibrary}))
+	})
+	t.Run("AdminLibrary", func(t *testing.T) {
+		assert.True(t, sessionGrantsAnyPhotos(scopeSession("alice"), acl.Permissions{acl.AccessAll, acl.AccessLibrary}))
+	})
+	t.Run("GuestNoLibrary", func(t *testing.T) {
+		assert.False(t, sessionGrantsAnyPhotos(scopeSession("guest"), acl.Permissions{acl.AccessAll, acl.AccessLibrary}))
+	})
+}
 
 // Fixture identifiers used by the scope tests. In the public repo only the admin,
 // guest, and visitor roles are available, so these tests cover the admin (full access)
@@ -29,13 +76,13 @@ func scopeSession(name string) *entity.Session {
 
 func TestPhotoSessionSeesEverything(t *testing.T) {
 	t.Run("NilSession", func(t *testing.T) {
-		assert.True(t, photoSessionSeesEverything(nil))
+		assert.True(t, PhotoSessionSeesEverything(nil))
 	})
 	t.Run("Admin", func(t *testing.T) {
-		assert.True(t, photoSessionSeesEverything(scopeSession("alice")))
+		assert.True(t, PhotoSessionSeesEverything(scopeSession("alice")))
 	})
 	t.Run("Guest", func(t *testing.T) {
-		assert.False(t, photoSessionSeesEverything(scopeSession("guest")))
+		assert.False(t, PhotoSessionSeesEverything(scopeSession("guest")))
 	})
 }
 

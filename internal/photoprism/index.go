@@ -78,6 +78,19 @@ func (ind *Index) storageLow() bool {
 	return true
 }
 
+// abortInsufficientStorage logs the insufficient-storage cause once and cancels the run so the
+// directory walk stops, instead of failing every remaining file with a generic preview error.
+// It is called from worker goroutines when a write leaf reports status.ErrInsufficientStorage.
+func (ind *Index) abortInsufficientStorage() {
+	if mutex.IndexWorker.Canceled() {
+		return
+	}
+
+	log.Errorf("index: available storage is below the minimum threshold")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	ind.Cancel()
+}
+
 // Start indexes media files in the originals folder according to the provided options.
 // It streams work to worker goroutines, updates duplicate caches, and returns both
 // the set of processed paths and the number of files that were changed.

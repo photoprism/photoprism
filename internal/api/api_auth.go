@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -54,9 +55,16 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// Set client IP.
 	s.SetClientIP(clientIp)
 
-	// If the request is from a client application, check its authorization based
-	// on the allowed scope, the ACL, and the user account it belongs to (if any).
-	if s.IsClient() {
+	// Reject app passwords when the feature is disabled, so tokens minted before the
+	// flag was turned off stop working. Identified by the session's auth provider
+	// (IsApplication), which covers every grant type used to mint one.
+	if s.IsApplication() && get.Config().DisableAppPasswords() {
+		event.AuditWarn([]string{clientIp, "session %s", "%s %s with app passwords disabled", status.Denied}, s.RefID, perms.String(), string(resource))
+		return entity.SessionStatusForbidden()
+	} else if s.IsClient() {
+		// If the request is from a client application, check its authorization based
+		// on the allowed scope, the ACL, and the user account it belongs to (if any).
+
 		// Check the resource and required permissions against the session scope.
 		if s.InsufficientScope(resource, perms) {
 			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", status.Error(authn.ErrInsufficientScope)}, clean.Log(s.GetClientInfo()), s.RefID, string(resource))

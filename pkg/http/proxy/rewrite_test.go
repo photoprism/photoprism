@@ -48,17 +48,24 @@ func TestRewriteLocation(t *testing.T) {
 	// admin UI). Instances that redirect to them — for example the Pro RP
 	// pointing at the Portal's authorize endpoint — must not be re-scoped
 	// under the instance path prefix.
-	assert.Equal(t, "/oauth/authorize", RewriteLocation("/oauth/authorize", prefix, host))
+	assert.Equal(t, "/api/v1/oauth/authorize", RewriteLocation("/api/v1/oauth/authorize", prefix, host))
 	assert.Equal(t, "/.well-known/openid-configuration", RewriteLocation("/.well-known/openid-configuration", prefix, host))
 	assert.Equal(t, "/portal/admin/login", RewriteLocation("/portal/admin/login", prefix, host))
-	assert.Equal(t, "https://portal.example.com/oauth/authorize?x=1", RewriteLocation("https://portal.example.com/oauth/authorize?x=1", prefix, host))
+	assert.Equal(t, "https://portal.example.com/api/v1/oauth/authorize?x=1", RewriteLocation("https://portal.example.com/api/v1/oauth/authorize?x=1", prefix, host))
+
+	// Instance-owned API paths (everything under /api/v1/ that is not the OP)
+	// must still be re-scoped under the per-instance prefix.
+	assert.Equal(t, "/i/acme/api/v1/photos", RewriteLocation("/api/v1/photos", prefix, host))
 }
 
 func TestIsPortalRootPath(t *testing.T) {
-	assert.True(t, isPortalRootPath("/oauth/authorize"))
+	assert.True(t, isPortalRootPath("/api/v1/oauth/authorize"))
+	assert.True(t, isPortalRootPath("/api/v1/oauth/token"))
+	assert.True(t, isPortalRootPath("/api/v1/oauth/userinfo"))
 	assert.True(t, isPortalRootPath("/.well-known/openid-configuration"))
 	assert.True(t, isPortalRootPath("/portal/admin/login"))
-	assert.True(t, isPortalRootPath("oauth/authorize"))
+	assert.True(t, isPortalRootPath("api/v1/oauth/authorize"))
+	assert.False(t, isPortalRootPath("/oauth/authorize"))
 	assert.False(t, isPortalRootPath("/library"))
 	assert.False(t, isPortalRootPath("/api/v1/photos"))
 	assert.False(t, isPortalRootPath(""))

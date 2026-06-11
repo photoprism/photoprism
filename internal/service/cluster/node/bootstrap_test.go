@@ -52,6 +52,45 @@ func TestInitConfig_ServiceRole(t *testing.T) {
 	assert.NoError(t, InitConfig(c))
 }
 
+func TestInitConfig_ClusterOIDCWithoutBootstrap(t *testing.T) {
+	// A registered instance must wire its OIDC RP from the persisted node credentials
+	// even when both bootstrap toggles are disabled, since OIDC derivation is not a
+	// bootstrap-policy concern.
+	origJoin, origTheme := cluster.BootstrapAutoJoinEnabled, cluster.BootstrapAutoThemeEnabled
+	cluster.BootstrapAutoJoinEnabled = false
+	cluster.BootstrapAutoThemeEnabled = false
+	t.Cleanup(func() {
+		cluster.BootstrapAutoJoinEnabled = origJoin
+		cluster.BootstrapAutoThemeEnabled = origTheme
+	})
+
+	c := newBootstrapTestConfig(t, "init-cluster-oidc")
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().ClusterOIDC = true
+	c.Options().SiteUrl = "https://app.localssl.dev/i/pro-1/"
+	c.Options().NodeClientID = cluster.ExampleClientID
+	c.Options().NodeClientSecret = cluster.ExampleClientSecret
+
+	assert.NoError(t, InitConfig(c))
+	assert.Equal(t, cluster.ExampleClientID, c.OIDCClient())
+	assert.Equal(t, cluster.ExampleClientSecret, c.OIDCSecret())
+	assert.Equal(t, "https://app.localssl.dev/", c.OIDCUri().String())
+}
+
+func TestBootstrapClusterNode(t *testing.T) {
+	t.Run("NoConfig", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-node-noconfig")
+		// No Portal URL / join token configured → no-op, no panic.
+		assert.NotPanics(t, func() { bootstrapClusterNode(c) })
+	})
+	t.Run("InvalidPortalURL", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-node-badurl")
+		c.Options().PortalUrl = "://nope"
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		assert.NotPanics(t, func() { bootstrapClusterNode(c) })
+	})
+}
+
 func TestRegister_PersistSecretAndDB(t *testing.T) {
 	// Fake Portal server.
 	var jwksURL string
@@ -137,6 +176,67 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	if statErr == nil {
 		assert.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
 	}
+}
+
+func TestResolveNodeOIDCClient(t *testing.T) {
+	// portalInstance returns a config with cluster OIDC enabled, a shared-domain
+	// SiteUrl, and the node registered (client credentials persisted).
+	portalInstance := func(t *testing.T, name string) *config.Config {
+		c := newBootstrapTestConfig(t, name)
+		c.Options().NodeRole = cluster.RoleInstance
+		c.Options().ClusterOIDC = true
+		c.Options().SiteUrl = "https://app.localssl.dev/i/pro-1/"
+		c.Options().NodeClientID = cluster.ExampleClientID
+		c.Options().NodeClientSecret = cluster.ExampleClientSecret
+		return c
+	}
+
+	t.Run("DerivesFromNodeCredentialsAndDefaultsIssuer", func(t *testing.T) {
+		c := portalInstance(t, "oidc-node-derive")
+		resolveNodeOIDCClient(c)
+		assert.Equal(t, cluster.ExampleClientID, c.OIDCClient())
+		assert.Equal(t, cluster.ExampleClientSecret, c.OIDCSecret())
+		// The issuer defaults to the instance's own origin root (the shared-domain
+		// Portal OP), so a single flag suffices.
+		assert.Equal(t, "https://app.localssl.dev/", c.OIDCUri().String())
+	})
+	t.Run("HonorsExplicitIssuer", func(t *testing.T) {
+		c := portalInstance(t, "oidc-node-issuer")
+		c.Options().OIDCUri = "https://portal.example.com/"
+		resolveNodeOIDCClient(c)
+		assert.Equal(t, cluster.ExampleClientID, c.OIDCClient())
+		assert.Equal(t, "https://portal.example.com/", c.OIDCUri().String(), "an explicit issuer must be respected")
+	})
+	t.Run("DisabledIsNoOp", func(t *testing.T) {
+		c := portalInstance(t, "oidc-node-disabled")
+		c.Options().ClusterOIDC = false
+		resolveNodeOIDCClient(c)
+		assert.Equal(t, "", c.OIDCClient())
+		assert.Equal(t, "", c.OIDCSecret())
+	})
+	t.Run("ExplicitClientWins", func(t *testing.T) {
+		c := portalInstance(t, "oidc-node-explicit")
+		c.Options().OIDCClient = "cs5cpu17n6gj2qo5"
+		c.Options().OIDCSecret = "explicit-secret"
+		c.Options().OIDCUri = "https://keycloak.example.com/realms/main"
+		resolveNodeOIDCClient(c)
+		assert.Equal(t, "cs5cpu17n6gj2qo5", c.OIDCClient(), "an explicit client id must not be overwritten")
+		assert.Equal(t, "explicit-secret", c.OIDCSecret())
+	})
+	t.Run("NotRegisteredLeavesClientEmpty", func(t *testing.T) {
+		c := portalInstance(t, "oidc-node-unregistered")
+		c.Options().NodeClientID = ""
+		c.Options().NodeClientSecret = ""
+		resolveNodeOIDCClient(c)
+		assert.Equal(t, "", c.OIDCClient(), "without node credentials nothing is derived")
+		assert.Equal(t, "", c.OIDCSecret())
+	})
+	t.Run("ServiceRoleNotDerived", func(t *testing.T) {
+		c := portalInstance(t, "oidc-node-service")
+		c.Options().NodeRole = cluster.RoleService
+		resolveNodeOIDCClient(c)
+		assert.Equal(t, "", c.OIDCClient())
+	})
 }
 
 func TestRegisterAuthToken_UsesJoinTokenWithoutNodeCredentials(t *testing.T) {
@@ -512,6 +612,55 @@ func TestDefaultNodeURL(t *testing.T) {
 	assert.Equal(t, "", defaultNodeURL("", "photoprism.example"))
 	assert.Equal(t, "", defaultNodeURL("node1", ""))
 	assert.Equal(t, "https://node-1.photoprism.example", defaultNodeURL("NODE_1", "photoprism.example"))
+}
+
+func TestBuildRegisterPayload_DisplayName(t *testing.T) {
+	c := newBootstrapTestConfig(t, "node-displayname")
+	reset := func() {
+		c.Options().SiteName = ""
+		c.Options().AppName = ""
+		c.Options().SiteTitle = ""
+		c.Options().SiteCaption = ""
+		c.Options().Name = ""
+	}
+	t.Run("PrefersSiteName", func(t *testing.T) {
+		reset()
+		c.Options().SiteName = "Acme Media"
+		c.Options().AppName = "Family Photos"
+		c.Options().SiteTitle = "Our Trip"
+		assert.Equal(t, "Acme Media", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("PrefersAppName", func(t *testing.T) {
+		reset()
+		c.Options().AppName = "Family Photos"
+		c.Options().SiteTitle = "Our Trip"
+		c.Options().SiteCaption = "Tagline"
+		assert.Equal(t, "Family Photos", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("FallsBackToSiteTitle", func(t *testing.T) {
+		reset()
+		c.Options().SiteTitle = "Our Trip"
+		assert.Equal(t, "Our Trip", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("IgnoresSiteCaption", func(t *testing.T) {
+		// SiteCaption is excluded: Plus/Pro default it to the shared marketing
+		// description, so it is not a distinctive per-instance label.
+		reset()
+		c.Options().SiteCaption = "Browse Your Life"
+		assert.Equal(t, "", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("EmptyWhenUnbranded", func(t *testing.T) {
+		reset()
+		assert.Equal(t, "", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("AppNameSurvivesNameAliasing", func(t *testing.T) {
+		// The Pro edition aliases Name to AppName; reading the raw AppName option
+		// means DisplayName still reports it instead of treating it as a default.
+		reset()
+		c.Options().AppName = "Studio One"
+		c.Options().Name = "Studio One"
+		assert.Equal(t, "Studio One", buildRegisterPayload(c).DisplayName)
+	})
 }
 
 func TestRegister_404_NoRetry(t *testing.T) {

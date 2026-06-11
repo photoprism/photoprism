@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/react"
@@ -32,6 +33,14 @@ func LikePhoto(router *gin.RouterGroup) {
 		}
 
 		id := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, consistent with GetPhoto.
+		// Pictures outside the scope are reported as not found.
+		if visible, vErr := search.PhotoVisibleToSession(id, s); vErr != nil || !visible {
+			AbortEntityNotFound(c)
+			return
+		}
+
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
@@ -55,6 +64,10 @@ func LikePhoto(router *gin.RouterGroup) {
 			SaveSidecarYaml(&m)
 			PublishPhotoEvent(StatusUpdated, id, c)
 		}
+
+		// Reduce the response to what the session is entitled to see; shared-only sessions get a
+		// reduced view (full-access sessions are unaffected).
+		m.RedactForSession(s)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -80,6 +93,14 @@ func DislikePhoto(router *gin.RouterGroup) {
 		}
 
 		id := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, consistent with GetPhoto.
+		// Pictures outside the scope are reported as not found.
+		if visible, vErr := search.PhotoVisibleToSession(id, s); vErr != nil || !visible {
+			AbortEntityNotFound(c)
+			return
+		}
+
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
@@ -103,6 +124,10 @@ func DislikePhoto(router *gin.RouterGroup) {
 			SaveSidecarYaml(&m)
 			PublishPhotoEvent(StatusUpdated, id, c)
 		}
+
+		// Reduce the response to what the session is entitled to see; shared-only sessions get a
+		// reduced view (full-access sessions are unaffected).
+		m.RedactForSession(s)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})

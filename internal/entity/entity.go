@@ -49,3 +49,12 @@ func FlushCaches() {
 	FlushPhotoLabelCache()
 	FlushSessionCache()
 }
+
+// TypeString returns an entity type string for logging, defaulting to "unknown".
+func TypeString(entityType string) string {
+	if entityType == "" {
+		return "unknown"
+	}
+
+	return entityType
+}

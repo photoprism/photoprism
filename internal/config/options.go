@@ -139,6 +139,7 @@ type Options struct {
 	SiteUrl                   string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	FrontendUri               string        `yaml:"FrontendUri" json:"-" flag:"frontend-uri" tags:"portal,pro"`
 	SiteAuthor                string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
+	SiteName                  string        `yaml:"SiteName" json:"SiteName" flag:"site-name"`
 	SiteTitle                 string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
 	SiteCaption               string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription           string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
@@ -152,6 +153,7 @@ type Options struct {
 	ClusterDomain             string        `yaml:"ClusterDomain" json:"-" flag:"cluster-domain"`
 	ClusterCIDR               string        `yaml:"ClusterCIDR" json:"-" flag:"cluster-cidr"`
 	ClusterUUID               string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
+	ClusterOIDC               bool          `yaml:"ClusterOIDC" json:"-" flag:"cluster-oidc"`
 	PortalUrl                 string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
 	PortalProxy               bool          `yaml:"PortalProxy" json:"-" flag:"portal-proxy"`
 	PortalProxyUri            string        `yaml:"PortalProxyUri" json:"-" flag:"portal-proxy-uri"`

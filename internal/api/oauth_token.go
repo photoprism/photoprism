@@ -26,9 +26,9 @@ import (
 //	@Tags		Authentication
 //	@Accept		json
 //	@Produce	json
-//	@Param		request		body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
-//	@Success	200			{object}	gin.H
-//	@Failure	400,401,429	{object}	i18n.Response
+//	@Param		request			body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
+//	@Success	200				{object}	gin.H
+//	@Failure	400,401,403,429	{object}	i18n.Response
 //	@Router		/api/v1/oauth/token [post]
 func OAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
@@ -52,6 +52,30 @@ func OAuthToken(router *gin.RouterGroup) {
 
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
+
+		// The OIDC authorization_code grant is handled by the Portal OIDC OP, which
+		// parses and validates the request itself. Delegating here keeps a single
+		// OIDC-compliant token_endpoint while the client_credentials, password, and
+		// session grants below stay unchanged and DB-backed. The check runs before
+		// the form binding because form.OAuthCreateToken.Validate rejects this grant
+		// and a client_secret_basic request would otherwise be read as
+		// client_credentials. It is gated on a form content type so that peeking at
+		// the body here does not consume it in a way that masks the missing-body
+		// error the binding below relies on, and because per RFC 6749 the token
+		// endpoint is always form-encoded. Builds without the OP report the grant as
+		// unsupported.
+		if c.ContentType() == header.ContentTypeForm && authn.Grant(c.PostForm("grant_type")) == authn.GrantAuthorizationCode {
+			if OAuthAuthorizationCodeHandler != nil {
+				OAuthAuthorizationCodeHandler(c)
+				return
+			}
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":             "unsupported_grant_type",
+				"error_description": "grant_type is not supported",
+			})
+			return
+		}
 
 		// Token create request form.
 		var frm form.OAuthCreateToken
@@ -129,6 +153,13 @@ func OAuthToken(router *gin.RouterGroup) {
 			// Create new client session.
 			sess = client.NewSession(c, authn.GrantClientCredentials)
 		case authn.GrantPassword, authn.GrantSession:
+			// Reject minting app passwords when the feature is disabled.
+			if get.Config().DisableAppPasswords() {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "app passwords disabled", status.Denied})
+				AbortFeatureDisabled(c)
+				return
+			}
+
 			// Generate an app password for a user account and check the password for confirmation.
 			s := Session(clientIp, AuthToken(c))
 

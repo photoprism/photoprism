@@ -102,11 +102,16 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	r, _ := NewClientRegistryWithConfig(c)
 	list, err := r.List()
 	assert.NoError(t, err)
-	// Only the NodeUUID-backed record should be present
-	if assert.Equal(t, 1, len(list)) {
-		assert.Equal(t, "pp-node", list[0].Name)
-		assert.NotEmpty(t, list[0].UUID)
+
+	// The MariaDB test database is shared across tests (unlike the per-test SQLite
+	// file), so List() also returns nodes created elsewhere. Assert on membership
+	// rather than the exact count: the NodeUUID-backed record is listed and the
+	// non-node client is not.
+	if found := listNodeByName(list, "pp-node"); assert.NotNil(t, found, "node should be listed") {
+		assert.NotEmpty(t, found.UUID)
 	}
+
+	assert.Nil(t, listNodeByName(list, "webapp"), "non-node client must be excluded")
 }
 
 // Put should prefer UUID over ClientID when both are provided, avoiding cross-attachment.

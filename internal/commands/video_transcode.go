@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -151,6 +152,11 @@ func videoBuildTranscodePlans(conf *config.Config, results []search.Photo, force
 		srcPath := photoprism.FileName(videoFile.FileRoot, videoFile.FileName)
 		if !fs.FileExistsNotEmpty(srcPath) {
 			log.Warnf("transcode: missing file %s", clean.Log(srcPath))
+			continue
+		}
+
+		if matched := ffmpeg.Exclude().Match(videoFile.FileCodec, fs.FileType(srcPath).String()); matched != "" {
+			log.Warnf("transcode: skipping %s because format %s is on the FFmpeg exclude list", clean.Log(videoFile.FileName), clean.Log(matched))
 			continue
 		}
 

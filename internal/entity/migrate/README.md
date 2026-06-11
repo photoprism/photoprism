@@ -1,10 +1,16 @@
 # Database Migrations
 
-**Last Updated:** May 25, 2026
+**Last Updated:** June 1, 2026
 
 This package contains the dialect-specific SQL migrations that complement GORM's schema auto-migration during database initialization. The SQL source files live in [`mysql/`](mysql/) and [`sqlite3/`](sqlite3/), and [`generate.go`](generate.go) embeds them into the generated [`dialect_mysql.go`](dialect_mysql.go) and [`dialect_sqlite3.go`](dialect_sqlite3.go) files.
 
 Files ending in `.pre.sql` run in the `pre` stage before ORM auto-migration. All other migration files run in the `main` stage afterward.
+
+## Index Prefix Limits (VARBINARY Columns)
+
+InnoDB caps an index key **prefix** at **767 bytes** on the `COMPACT`/`REDUNDANT` row formats, and only allows up to 3072 bytes on `DYNAMIC`/`COMPRESSED`. On a `VARBINARY` column the prefix is measured in **bytes** (on a `utf8mb4` column it is measured in characters, i.e. up to 4 bytes each), so a `CREATE INDEX … (col(N))` with `N > 767` fails with *"Specified key was too long; max key length is 767 bytes"* on older or non-`DYNAMIC` installs.
+
+When a migration converts a long text column to `VARBINARY` and re-creates its prefix index, keep the prefix at **≤ 767 bytes** — the project convention is **512** (see `mysql/20220329-040000.sql` for `album_filter(512)` and `mysql/20260601-000001.sql` for `album_path(512)`). A prefix index only narrows candidate rows; the full-column comparison is still exact, so a shorter prefix has no correctness cost. SQLite has no equivalent limit and is not migrated for `VARBINARY` type changes (its `TEXT` comparisons are already byte-exact).
 
 ## When Migrations Run
 

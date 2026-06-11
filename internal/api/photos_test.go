@@ -8,6 +8,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -160,6 +161,39 @@ func TestLikePhoto(t *testing.T) {
 		r := PerformRequest(app, "POST", "/api/v1/photos/xxx/like")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	t.Run("GuestDeniedOutOfScope", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		LikePhoto(router)
+		// A guest holds ActionReact and so passes the route ACL, but a picture outside its shared
+		// scope must be reported as not found rather than returning the (unredacted) photo record.
+		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		r := AuthenticatedRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0y13/like", sessId)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("GuestInScopeRedacted", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		// A guest session that has redeemed a share to an album containing a non-private picture
+		// reaches the redaction branch: the picture is returned, but identifying metadata is stripped.
+		sess := entity.NewSession(conf.SessionMaxAge(), 0)
+		sess.SetUser(entity.FindUserByName("guest"))
+		sess.RedeemToken("1jxf3jfn2k")
+		if err := sess.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		LikePhoto(router)
+		r := AuthenticatedRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/like", sess.AuthToken())
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "ps6sg6be2lvl0yh7", gjson.Get(r.Body.String(), "photo.UID").String())
+		assert.Empty(t, gjson.Get(r.Body.String(), "photo.Path").String())
+		assert.Empty(t, gjson.Get(r.Body.String(), "photo.OriginalName").String())
+	})
 }
 
 func TestDislikePhoto(t *testing.T) {
@@ -177,6 +211,16 @@ func TestDislikePhoto(t *testing.T) {
 		app, router, _ := NewApiTest()
 		DislikePhoto(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/photos/xxx/like")
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("GuestDeniedOutOfScope", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DislikePhoto(router)
+		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		r := AuthenticatedRequest(app, "DELETE", "/api/v1/photos/ps6sg6be2lvl0y13/like", sessId)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

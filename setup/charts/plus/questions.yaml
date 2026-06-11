@@ -4,6 +4,11 @@ questions:
     label: "Image Tag"
     description: "Override the container tag; leave empty to use the chart appVersion."
     type: string
+  - variable: config.PHOTOPRISM_SITE_NAME
+    group: "Customization"
+    label: "Site Name"
+    description: "Optional short name identifying this instance in cluster switchers and selectors. Example: Acme Media."
+    type: string
   - variable: config.PHOTOPRISM_SITE_TITLE
     group: "Customization"
     label: "Site Title"

@@ -26,7 +26,11 @@ func TestUTC(t *testing.T) {
 
 		t.Logf("NOW: %s, %s", utc.String(), utcGorm.String())
 
-		assert.True(t, utcGorm.After(utc))
+		// gorm.NowFunc truncates to whole seconds, so it can trail the sub-second
+		// UTC() reading by up to a second; assert they stay within a sane window.
+		delta := utcGorm.Sub(utc)
+		assert.Greater(t, delta, -time.Second)
+		assert.Less(t, delta, time.Second)
 
 		if zone, offset := utcGorm.Zone(); zone != tz.UTC {
 			t.Error("gorm time should be UTC")

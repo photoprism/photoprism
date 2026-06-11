@@ -1,0 +1,12 @@
+[{
+  "SourceFile": "/tmp/sample_vfw.mkv",
+  "ExifToolVersion": 12.56,
+  "FileName": "sample_vfw.mkv",
+  "FileType": "MKV",
+  "FileTypeExtension": "MKV",
+  "MIMEType": "video/x-matroska",
+  "ImageWidth": 128,
+  "ImageHeight": 96,
+  "VideoFrameRate": 5,
+  "VideoCodecID": "V_MS/VFW/FOURCC"
+}]

@@ -97,9 +97,11 @@ func Start(conf *config.Config) {
 				mutex.SyncWorker.Cancel()
 				return
 			case <-ticker.C:
-				RunMeta(conf)
-				RunShare(conf)
-				RunSync(conf)
+				event.Safe(func() {
+					RunMeta(conf)
+					RunShare(conf)
+					RunSync(conf)
+				})
 			}
 		}
 	}()

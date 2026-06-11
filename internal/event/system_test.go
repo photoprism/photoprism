@@ -74,8 +74,8 @@ func TestSystemLoggingFunctions(t *testing.T) {
 			SystemLog = logger
 			t.Cleanup(func() { SystemLog = orig })
 
-			events := []string{"cleanup %s", "finished"}
-			args := []any{"cache"}
+			events := []string{"config", "database", "register %s"}
+			args := []any{"failed"}
 			expectedMessage := Format(events, args...)
 			topic := "system.log." + tt.level.String()
 
@@ -103,7 +103,37 @@ func TestSystemLoggingFunctions(t *testing.T) {
 			require.True(t, ok)
 			assert.Equal(t, tt.level, entry.level)
 			require.Len(t, entry.args, 1)
-			assert.Equal(t, SystemPrefix+expectedMessage, entry.args[0])
+			// The first segment becomes the log prefix; args fill the rest.
+			assert.Equal(t, "config: "+Format(events[1:], args...), entry.args[0])
+		})
+	}
+}
+
+func TestSystemLogPrefix(t *testing.T) {
+	tests := []struct {
+		name     string
+		events   []string
+		args     []any
+		expected string
+	}{
+		{name: "SingleSegment", events: []string{"something happened"}, expected: SystemPrefix + "something happened"},
+		{name: "MultipleSegments", events: []string{"config", "database", "connect"}, expected: "config: database › connect"},
+		{name: "MultipleSegmentsWithArgs", events: []string{"config", "database", "register", "%s"}, args: []any{"boom"}, expected: "config: database › register › boom"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			logger := newSystemTestLogger()
+			orig := SystemLog
+			SystemLog = logger
+			t.Cleanup(func() { SystemLog = orig })
+
+			SystemInfo(tt.events, tt.args...)
+
+			entry, ok := logger.lastEntry()
+			require.True(t, ok)
+			require.Len(t, entry.args, 1)
+			assert.Equal(t, tt.expected, entry.args[0])
 		})
 	}
 }

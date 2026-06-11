@@ -146,11 +146,11 @@ func TestConfig_FFmpegMapAudio(t *testing.T) {
 
 func TestConfig_FFmpegExclude(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "magicyuv", c.FFmpegExclude().String())
+	assert.Equal(t, "magy", c.FFmpegExclude().String())
 
-	// String() returns formats sorted alphabetically.
+	// String() returns formats sorted alphabetically; codec names are canonicalized.
 	c.options.FFmpegExclude = "magicyuv, hap"
-	assert.Equal(t, "hap, magicyuv", c.FFmpegExclude().String())
+	assert.Equal(t, "hap, magy", c.FFmpegExclude().String())
 
 	excluded := c.FFmpegExclude()
 	assert.True(t, excluded.Contains("magicyuv"))

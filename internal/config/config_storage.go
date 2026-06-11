@@ -18,6 +18,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// DefaultStorageFree is the default value of the "storage-free" option. It is negative so the
+// runtime free-space probe is disabled by default, as the probe can misreport on some network
+// mounts, fuse layers, and container overlays; operators opt in with a 1-99 percentage.
+const DefaultStorageFree = -1.0
+
 // binPaths stores known executable paths.
 var (
 	binPaths = make(map[string]string, 8)
@@ -277,7 +282,8 @@ func (c *Config) StoragePath() string {
 	return fs.Abs(c.options.StoragePath)
 }
 
-// StorageFree returns the percentage of total storage space below which it is considered critically low (<1 means disabled).
+// StorageFree returns the percentage of total storage space below which it is considered critically low.
+// A negative value disables the check (the default); 0 or values >= 100 fall back to the disk package default.
 func (c *Config) StorageFree() float64 {
 	if c.options.StorageFree < 0 {
 		return -1

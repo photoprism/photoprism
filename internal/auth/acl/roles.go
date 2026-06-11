@@ -29,28 +29,59 @@ var ClientRoles = RoleStrings{
 	RoleAliasNone:        RoleNone,
 }
 
-// Strings returns the roles as string slice.
+// AdminRoles maps the roles that grant administrative privileges. The
+// Portal-only cluster_admin is treated as an admin-tier role everywhere admin
+// privileges are checked (e.g. user-management self-lockout protection), so a
+// cluster_admin owner is not forced or downgraded to the plain admin role.
+var AdminRoles = RoleStrings{
+	string(RoleAdmin):        RoleAdmin,
+	string(RoleClusterAdmin): RoleClusterAdmin,
+}
+
+// IsAdminRole reports whether role is an administrative role (admin or cluster_admin).
+func IsAdminRole(role Role) bool {
+	_, ok := AdminRoles[string(role)]
+	return ok
+}
+
+// IsFederatedRole reports whether role may be assigned to a user account through
+// an external identity provider (OIDC/LDAP). cluster_admin, visitor, and the empty
+// role are never federatable, so a compromised IdP can neither escalate an account
+// to operator access nor clear its role.
+func IsFederatedRole(role Role) bool {
+	switch role {
+	case RoleNone, RoleClusterAdmin, RoleVisitor:
+		return false
+	default:
+		return true
+	}
+}
+
+// FederatedRoleUpdate reports the account role an external identity provider may
+// apply to an existing user, and whether to apply it. Returns ok=false when the
+// current or mapped role is non-federatable, or when the role is unchanged, so a
+// directory sync can neither escalate nor clear a non-federatable role.
+func FederatedRoleUpdate(current, mapped Role) (Role, bool) {
+	if !IsFederatedRole(current) || !IsFederatedRole(mapped) || current == mapped {
+		return RoleNone, false
+	}
+
+	return mapped, true
+}
+
+// Strings returns the roles as string slice for display, e.g. CLI help.
 func (m RoleStrings) Strings() []string {
 	result := make([]string, 0, len(m))
-	includesNone := false
 
 	for r := range m {
-		if r == "app" {
+		if r == "" || r == RoleAliasNone || r == "app" || r == RoleVisitor.String() {
 			continue
 		}
 
-		if r == RoleAliasNone {
-			includesNone = true
-		} else if r != string(RoleNone) {
-			result = append(result, r)
-		}
+		result = append(result, r)
 	}
 
 	sort.Strings(result)
-
-	if includesNone {
-		result = append(result, RoleAliasNone)
-	}
 
 	return result
 }

@@ -11,8 +11,32 @@ import (
 
 func TestConfig_AppName(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
 	assert.Equal(t, "PhotoPrism", c.AppName())
+	t.Run("ExplicitAppNameWins", func(t *testing.T) {
+		c.options.AppName = "My App"
+		c.options.SiteName = "Acme Media"
+		c.options.SiteTitle = "Our Trip"
+		assert.Equal(t, "My App", c.AppName())
+	})
+	t.Run("PrefersSiteNameOverSiteTitle", func(t *testing.T) {
+		c.options.AppName = ""
+		c.options.SiteName = "Acme Media"
+		c.options.SiteTitle = "Our Trip"
+		assert.Equal(t, "Acme Media", c.AppName())
+	})
+	t.Run("FallsBackToSiteTitle", func(t *testing.T) {
+		c.options.AppName = ""
+		c.options.SiteName = ""
+		c.options.SiteTitle = "Our Trip"
+		assert.Equal(t, "Our Trip", c.AppName())
+	})
+	t.Run("StripsQuotesAndClips", func(t *testing.T) {
+		c.options.AppName = `A'B"C`
+		assert.Equal(t, "ABC", c.AppName())
+	})
+	c.options.AppName = ""
+	c.options.SiteName = ""
+	c.options.SiteTitle = ""
 }
 
 func TestConfig_AppMode(t *testing.T) {

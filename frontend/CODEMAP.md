@@ -39,7 +39,7 @@ Runtime & Plugins
   - **Known caveats at 3.12.2:**
     - Vuetify upstream issue #22828 — `v-select`'s `@blur` fires when the menu opens (introduced by the 3.12.2 screenreader navigation fix). PhotoPrism is not affected because we only bind `@blur` on `v-text-field`, `v-textarea`, and `v-combobox`; if you ever attach `@blur` to a `v-select`, expect spurious calls until that upstream bug is fixed.
     - The `.v-field--focused` CSS class can linger on a previously-focused `v-autocomplete` input after the user clicks into another autocomplete (`document.activeElement` is correct, but Vuetify's internal `isFocused` is under-aggressive about clearing in 3.12.2). This is the inverse symptom of Vuetify #22697 — fixing it overshot in 3.12.3 and caused #5538. Functionally harmless in the photo edit dialog because the affected fields are not on screen together.
-- Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal/admin` for Portal)
+- Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal` for Portal)
 - I18n: `vue3-gettext` via `common/gettext.js`; canonical extraction via root `make gettext-extract` (scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`), compile with `npm run gettext-compile`
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
 - Tooltips: Vuetify `<v-tooltip>` component + `v-tooltip` directive (auto-imported per SFC by `webpack-plugin-vuetify`)

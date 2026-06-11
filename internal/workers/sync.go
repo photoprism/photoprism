@@ -126,7 +126,7 @@ func (w *Sync) Start() (err error) {
 		case entity.SyncStatusUpload:
 			if complete, uploadErr := w.upload(a); uploadErr != nil {
 				accErrors++
-				accError = clip.Chars(uploadErr.Error(), txt.ClipError)
+				accError = clip.Bytes(uploadErr.Error(), txt.ClipError)
 				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				synced = true

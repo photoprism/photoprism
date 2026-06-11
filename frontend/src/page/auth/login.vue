@@ -25,6 +25,16 @@
               <v-card-text>
                 <p-auth-header></p-auth-header>
                 <v-spacer></v-spacer>
+                <v-alert
+                  v-if="loginError"
+                  type="error"
+                  variant="tonal"
+                  density="compact"
+                  closable
+                  class="auth-error mb-3"
+                  @click:close="loginError = ''"
+                  >{{ loginError }}</v-alert
+                >
                 <v-row align="start" dense>
                   <template v-if="enterCode">
                     <v-col cols="12" class="text-body-2 text-center pb-1">
@@ -218,6 +228,7 @@ export default {
       useRecoveryCode: false,
       code: "",
       enterCode: false,
+      loginError: "",
       sponsor: this.$config.isSponsor(),
       config: this.$config.values,
       siteDescription: this.$config.getSiteDescription(),
@@ -267,9 +278,12 @@ export default {
   created() {
     this.staySignedIn = this.currentStaySignedInState();
 
+    // Surface an OIDC sign-in failure (e.g. "no access to this instance")
+    // as a persistent, dismissible alert on the form rather than a transient
+    // toast the user can miss and retry into a denial loop.
     const authError = getAppStorage().getItem("session.error");
     if (authError) {
-      this.$notify.error(authError);
+      this.loginError = authError;
       getAppStorage().removeItem("session.error");
     }
   },
@@ -377,6 +391,11 @@ export default {
       if (this.config.ext?.oidc?.loginUri) {
         this.applySessionPersistence();
         this.loading = true;
+        // Arm the per-tab OIDC attempt guard (not the post-login redirect loop
+        // guard): a failed or abandoned roundtrip then falls back to the form via
+        // consumeOidcAttempt instead of auto-redirecting again, while a stored deep
+        // link or Portal return_to survives for the authenticated return trip.
+        this.$session.markOidcAttempt();
         this.$session.followRedirect(this.config.ext.oidc.loginUri);
       } else {
         this.$notify.warn(this.$gettext("Missing or invalid configuration"));

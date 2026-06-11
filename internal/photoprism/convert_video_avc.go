@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
@@ -37,10 +38,7 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 
 	// Skip files whose codec or container is on the FFmpeg exclude list.
 	if !w.FFmpegAllowed(f) {
-		format := clean.Log(f.MetaData().Codec)
-		if format == "" {
-			format = clean.Log(f.FileType().String())
-		}
+		format := clean.Log(w.ffmpegExclude.Match(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String()))
 		log.Warnf("convert: skipping %s because format %s is on the FFmpeg exclude list", logFileName, format)
 		return nil, fmt.Errorf("convert: format %s is excluded from FFmpeg processing", format)
 	}
@@ -171,10 +169,14 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), err)
 		}
 
-		// Try again using software encoder.
-		if encoder != encode.SoftwareAvc {
+		switch {
+		case disk.IsNoSpace(err):
+			// Do not retry on a full disk; surface the cause so the worker can abort the run.
+			return nil, disk.AsInsufficientStorage(err)
+		case encoder != encode.SoftwareAvc:
+			// Try again using software encoder.
 			return w.ToAvc(f, encode.SoftwareAvc, true, false)
-		} else {
+		default:
 			return nil, err
 		}
 	}

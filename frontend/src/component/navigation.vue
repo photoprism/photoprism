@@ -10,7 +10,7 @@
             <span :class="{ clickable: auth }" @click.stop.prevent.self="toggleDrawer">{{ page.title }}</span>
           </v-toolbar-title>
           <v-btn
-            icon="mdi-dots-vertical"
+            icon="mdi-dots-horizontal"
             variant="text"
             class="nav-mobile-menu-trigger elevation-0"
             :ripple="false"
@@ -27,7 +27,7 @@
             {{ page.title }}
           </v-toolbar-title>
           <v-btn
-            icon="mdi-dots-vertical"
+            icon="mdi-dots-horizontal"
             variant="text"
             class="nav-mobile-menu-trigger elevation-0"
             :ripple="false"
@@ -641,18 +641,20 @@
 
           <div v-show="auth && !isPublic && !disconnected" class="nav-info user-info">
             <div class="nav-info__underlay"></div>
-            <div class="nav-user-avatar text-center my-1 mx-2 clickable" @click.stop="showAccountSettings">
-              <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
-            </div>
-            <div v-if="!isMini" class="text-start mt-1 flex-grow-1 clickable" @click.stop="showAccountSettings">
-              <p class="text-body-2">{{ displayName }}</p>
-              <p class="text-caption opacity-70">{{ accountInfo }}</p>
-            </div>
-            <div class="text-center">
-              <v-btn icon variant="text" :elevation="0" @click.stop.prevent="onLogout">
-                <v-icon>mdi-power</v-icon>
-              </v-btn>
-            </div>
+            <p-auth-menu @account="onAccount" @logout="onLogout">
+              <div class="nav-user-avatar text-center my-1 mx-2">
+                <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
+              </div>
+              <template v-if="!isMini">
+                <div class="nav-user-text text-start mt-1 flex-grow-1">
+                  <p class="text-body-2">{{ displayName }}</p>
+                  <p class="text-caption opacity-70">{{ accountInfo }}</p>
+                </div>
+                <div class="text-center">
+                  <v-btn icon="mdi-dots-horizontal" variant="text" :elevation="0"></v-btn>
+                </div>
+              </template>
+            </p-auth-menu>
           </div>
         </div>
       </v-navigation-drawer>
@@ -664,7 +666,7 @@
     <div id="mobile-menu" :class="{ active: speedDial }" @click.stop="speedDial = false">
       <div class="menu-content grow-top-end">
         <div class="menu-icons">
-          <a v-if="auth && !isPublic" href="#" :title="$gettext('Logout')" class="menu-action navigation-logout" @click.prevent="onLogout">
+          <a v-if="auth && !isPublic" href="#" :title="$gettext('Sign Out')" class="menu-action navigation-logout" @click.prevent="onLogout">
             <v-icon>mdi-power</v-icon>
           </a>
           <a href="#" :title="$gettext('Reload')" class="menu-action nav-reload" @click.prevent="reloadApp">
@@ -770,11 +772,15 @@
 <script>
 import links from "common/links";
 import { getAppStorage } from "common/storage";
+import PAuthMenu from "component/auth/menu.vue";
 
 const appStorage = getAppStorage();
 
 export default {
   name: "PNavigation",
+  components: {
+    PAuthMenu,
+  },
   data() {
     const appName = this.$config.getName();
 
@@ -930,13 +936,6 @@ export default {
       this.isMini = !this.isMini;
       appStorage.setItem("navigation.mode", `${this.isMini}`);
     },
-    showAccountSettings() {
-      if (this.$config.feature("account")) {
-        this.$router.push({ name: "settings_account" });
-      } else {
-        this.$router.push({ name: "settings" });
-      }
-    },
     showUsageInfo() {
       this.$router.push({ path: "/index/files" });
     },
@@ -950,8 +949,13 @@ export default {
         this.$router.push({ name: "about" });
       }
     },
+    // onAccount opens the account settings tab, falling back to general settings
+    // when the account feature is unavailable.
+    onAccount() {
+      this.$router.push({ name: this.$config.feature("account") ? "settings_account" : "settings" });
+    },
     onLogout() {
-      this.$session.logout();
+      this.$session.logoutEverywhere();
     },
     onIndex(ev) {
       if (!ev) {

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark" class="loading">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>{{ .error }} – {{if and .config.SiteCaption .config.Sponsor }}{{ .config.SiteCaption }}{{else}}{{ .config.Name }}{{end}}</title>
+
+{{template "favicons.gohtml" .}}
+{{template "styles.gohtml" .}}
+
+  <style>
+    .oauth-error { max-width: 30rem; margin: 0 auto; padding: 2rem; text-align: center; }
+    .oauth-error h1 { font-size: 1.25rem; font-weight: 500; margin: 0 0 0.75rem; }
+    .oauth-error p { margin: 0 0 1.5rem; opacity: 0.7; }
+    .oauth-error code { font-size: 0.85rem; opacity: 0.6; }
+    .oauth-error a { display: inline-block; padding: 0.5rem 1.25rem; border: 1px solid currentColor; border-radius: 0.25rem; text-decoration: none; }
+  </style>
+</head>
+<body class="{{ .config.Flags }} nojs">
+<div id="app">
+  <div id="photoprism" class="container splash-screen">
+    <div class="fullscreen">
+      <div class="oauth-error" role="alert">
+        <h1>{{ .error_description }}</h1>
+        <p><code>{{ .error }}</code></p>
+        <a href="{{ .config.LoginUri }}">Continue</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
