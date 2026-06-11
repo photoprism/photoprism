@@ -98,6 +98,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Try to find existing file by hash. Skip this for sidecar files, and files outside the originals folder.
 	if !fileExists && !m.IsSidecar() && m.Root() == entity.RootOriginals {
 		fileHash = m.Hash()
+
+		// Hold a per-hash lock until indexing is complete, so concurrent workers
+		// cannot miss the lookup below and index byte-identical files twice.
+		if fileHash != "" {
+			defer lockFileHash(fileHash)()
+		}
+
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
 
 		indFileName := ""
