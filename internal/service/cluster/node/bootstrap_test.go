@@ -669,11 +669,19 @@ func TestDefaultNodeURL(t *testing.T) {
 func TestBuildRegisterPayload_DisplayName(t *testing.T) {
 	c := newBootstrapTestConfig(t, "node-displayname")
 	reset := func() {
+		c.Options().SiteName = ""
 		c.Options().AppName = ""
 		c.Options().SiteTitle = ""
 		c.Options().SiteCaption = ""
 		c.Options().Name = ""
 	}
+	t.Run("PrefersSiteName", func(t *testing.T) {
+		reset()
+		c.Options().SiteName = "Acme Media"
+		c.Options().AppName = "Family Photos"
+		c.Options().SiteTitle = "Our Trip"
+		assert.Equal(t, "Acme Media", buildRegisterPayload(c).DisplayName)
+	})
 	t.Run("PrefersAppName", func(t *testing.T) {
 		reset()
 		c.Options().AppName = "Family Photos"

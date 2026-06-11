@@ -754,6 +754,9 @@
                 "SiteFavicon": {
                     "type": "string"
                 },
+                "SiteName": {
+                    "type": "string"
+                },
                 "SitePreview": {
                     "type": "string"
                 },

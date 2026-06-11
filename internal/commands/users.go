@@ -11,15 +11,16 @@ import (
 
 // Usage hints for the user management subcommands.
 const (
-	UserNameUsage     = "full `NAME` for display in the interface"
-	UserEmailUsage    = "unique `EMAIL` address of the user"
-	UserPasswordUsage = "`PASSWORD` for local authentication (8-72 characters)"
-	UserAuthUsage     = "authentication `PROVIDER` (default, local, oidc or none)"
-	UserAuthIDUsage   = "authentication `ID`, e.g. Subject ID or Distinguished Name (DN)"
-	UserAdminUsage    = "makes user super admin with full access"
-	UserNoLoginUsage  = "disables login on the web interface"
-	UserWebDAVUsage   = "allows to sync files via WebDAV"
-	UserDisable2FA    = "deactivates two-factor authentication"
+	UserNameUsage       = "full `NAME` for display in the interface"
+	UserEmailUsage      = "unique `EMAIL` address of the user"
+	UserPasswordUsage   = "`PASSWORD` for local authentication (8-72 characters)"
+	UserAuthUsage       = "authentication `PROVIDER` (default, local, oidc or none)"
+	UserAuthIDUsage     = "authentication `ID`, e.g. Subject ID or Distinguished Name (DN)"
+	UserAuthIssuerUsage = "authentication `ISSUER` URL, e.g. the Portal base URL for OIDC accounts"
+	UserAdminUsage      = "makes user super admin with full access"
+	UserNoLoginUsage    = "disables login on the web interface"
+	UserWebDAVUsage     = "allows to sync files via WebDAV"
+	UserDisable2FA      = "deactivates two-factor authentication"
 )
 
 var (
@@ -75,6 +76,11 @@ var UserFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:  "auth-id",
 		Usage: UserAuthIDUsage,
+		Value: "",
+	},
+	&cli.StringFlag{
+		Name:  "auth-issuer",
+		Usage: UserAuthIssuerUsage,
 		Value: "",
 	},
 	SuperAdminFlag(UserAdminUsage),

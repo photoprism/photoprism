@@ -14,6 +14,7 @@ const clientConfig = {
   contentUri: "/api/v1",
   siteUrl: "http://localhost:2342/",
   sitePreview: "http://localhost:2342/static/img/preview.jpg",
+  siteName: "Acme Media",
   siteTitle: "PhotoPrism",
   siteCaption: "AI-Powered Photos App",
   siteDescription: "Open-Source Photo Management",

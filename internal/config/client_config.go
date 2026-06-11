@@ -46,6 +46,7 @@ type ClientConfig struct {
 	SiteUrl          string              `json:"siteUrl"`
 	SiteDomain       string              `json:"siteDomain"`
 	SiteAuthor       string              `json:"siteAuthor"`
+	SiteName         string              `json:"siteName"`
 	SiteTitle        string              `json:"siteTitle"`
 	SiteCaption      string              `json:"siteCaption"`
 	SiteDescription  string              `json:"siteDescription"`
@@ -299,6 +300,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
+		SiteName:         c.SiteName(),
 		SiteTitle:        c.SiteTitle(),
 		SiteCaption:      c.SiteCaption(),
 		SiteDescription:  c.SiteDescription(),
@@ -398,6 +400,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
+		SiteName:         c.SiteName(),
 		SiteTitle:        c.SiteTitle(),
 		SiteCaption:      c.SiteCaption(),
 		SiteDescription:  c.SiteDescription(),
@@ -505,6 +508,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
+		SiteName:         c.SiteName(),
 		SiteTitle:        c.SiteTitle(),
 		SiteCaption:      c.SiteCaption(),
 		SiteDescription:  c.SiteDescription(),

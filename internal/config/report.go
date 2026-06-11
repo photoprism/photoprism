@@ -167,6 +167,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
 		{"site-author", c.SiteAuthor()},
+		{"site-name", c.SiteName()},
 		{"site-title", c.SiteTitle()},
 		{"site-caption", c.SiteCaption()},
 		{"site-description", c.SiteDescription()},

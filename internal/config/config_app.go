@@ -14,9 +14,14 @@ import (
 // DefaultAppColor specifies the default app background and splash screen color.
 var DefaultAppColor = "#19191a"
 
-// AppName returns the app name when installed on a device.
+// AppName returns the app name shown when installed as a PWA, preferring an explicit
+// AppName, then the distinctive SiteName (SITE_NAME), then the SiteTitle.
 func (c *Config) AppName() string {
 	name := strings.TrimSpace(c.options.AppName)
+
+	if name == "" {
+		name = c.SiteName()
+	}
 
 	if name == "" {
 		name = c.SiteTitle()

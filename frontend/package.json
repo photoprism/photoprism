@@ -56,7 +56,7 @@
     "@vue/language-server": "^3.3.4",
     "@vue/test-utils": "^2.4.11",
     "@vvo/tzdb": "^6.198.0",
-    "axios": "1.16.1",
+    "axios": "1.17.0",
     "axios-mock-adapter": "^2.1.0",
     "babel-loader": "^10.1.1",
     "babel-plugin-istanbul": "^7.0.1",

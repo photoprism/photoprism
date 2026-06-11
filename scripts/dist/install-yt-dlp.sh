@@ -167,6 +167,7 @@ fi
 TAG_NAME=""
 ASSET_NAME=""
 ASSET_URL=""
+CHECKSUM_URL=""
 
 while IFS= read -r release; do
   tag=$(echo "$release" | jq -r '.tag_name // empty')
@@ -178,6 +179,8 @@ while IFS= read -r release; do
       TAG_NAME=$tag
       ASSET_NAME=$candidate
       ASSET_URL=$url
+      # yt-dlp publishes one SHA2-256SUMS manifest per release listing every asset.
+      CHECKSUM_URL=$(echo "$release" | jq -r '.assets[]? | select(.name == "SHA2-256SUMS") | .browser_download_url' | head -n1)
       break 2
     fi
   done
@@ -205,10 +208,37 @@ echo "DESTBIN : ${DESTBIN}"
 echo "--------------------------------------------------------------------------------"
 
 echo "Downloading the yt-dlp binary to \"${DESTBIN}\"..."
-mkdir -p "${DESTDIR}"
-curl --fail --silent --show-error --location "${GITHUB_URL}" -o "${DESTBIN}"
+mkdir -p "${DESTDIR}/bin"
+tmp_bin=$(mktemp)
+trap 'rm -f "${tmp_bin}" "${tmp_bin}.sums"' EXIT
+curl --fail --silent --show-error --location "${GITHUB_URL}" -o "${tmp_bin}"
 
-echo "Changing permissions of \"${DESTBIN}\" to 755..."
-chmod 755 "${DESTBIN}"
+# Verify the binary against the release SHA2-256SUMS manifest before installing.
+# Soft-fail when no manifest is published so older pinned tags still install.
+if [[ -n ${CHECKSUM_URL} && ${CHECKSUM_URL} != "null" ]] &&
+  curl --fail --silent --show-error --location "${CHECKSUM_URL}" -o "${tmp_bin}.sums" 2>/dev/null; then
+  expected=$(awk -v n="${ASSET_NAME}" '$2 == n {print $1}' "${tmp_bin}.sums")
+  if [[ -z ${expected} ]]; then
+    echo "Error: ${ASSET_NAME} not listed in SHA2-256SUMS; refusing to install." 1>&2
+    exit 1
+  fi
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual=$(sha256sum "${tmp_bin}" | awk '{print $1}')
+  else
+    actual=$(shasum -a 256 "${tmp_bin}" | awk '{print $1}')
+  fi
+  if [[ ${expected} != "${actual}" ]]; then
+    echo "Error: SHA-256 mismatch for yt-dlp (${ASSET_NAME})." 1>&2
+    echo "  expected: ${expected}" 1>&2
+    echo "  actual:   ${actual}" 1>&2
+    exit 1
+  fi
+  echo "Checksum OK (${actual})."
+else
+  echo "Warning: no published checksum for ${ASSET_NAME}; skipping verification." 1>&2
+fi
+
+echo "Installing yt-dlp to \"${DESTBIN}\" with permissions 755..."
+install -m 755 "${tmp_bin}" "${DESTBIN}"
 
 echo "Done."

@@ -37,7 +37,7 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
 	golang.org/x/crypto v0.53.0
-	golang.org/x/net v0.55.0
+	golang.org/x/net v0.56.0
 	gonum.org/v1/gonum v0.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -198,4 +198,4 @@ require github.com/emersion/go-webdav v0.7.0
 
 go 1.25.0
 
-toolchain go1.26.3
+toolchain go1.26.4

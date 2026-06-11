@@ -161,13 +161,37 @@ func (c *Config) SiteAuthor() string {
 	return c.options.SiteAuthor
 }
 
-// SiteTitle returns the main site title (default is application name).
-func (c *Config) SiteTitle() string {
-	if c.options.SiteTitle == "" {
-		return c.Name()
+// SiteName returns a short, distinctive label for this instance, used by the
+// navigation instance switcher and the Portal instance selector. It returns the
+// first configured value among SiteName, AppName, and SiteTitle, or "" when none
+// is set. Unlike SiteTitle and AppName it does not fall back to the product Name,
+// so callers can fall back to the instance's base-path segment for unbranded peers.
+func (c *Config) SiteName() string {
+	for _, name := range []string{c.options.SiteName, c.options.AppName, c.options.SiteTitle} {
+		if s := clean.TypeUnicode(name); s != "" {
+			return s
+		}
 	}
 
-	return c.options.SiteTitle
+	return ""
+}
+
+// SiteTitle returns the main site title (default is application name).
+func (c *Config) SiteTitle() string {
+	if c.options.SiteTitle != "" {
+		return c.options.SiteTitle
+	}
+
+	// With no SiteTitle and no AppName configured, fall back to the distinctive
+	// SiteName (SITE_NAME) before the product Name so an instance branded only via
+	// SITE_NAME shows that name as its title.
+	if c.options.AppName == "" {
+		if name := clean.TypeUnicode(c.options.SiteName); name != "" {
+			return name
+		}
+	}
+
+	return c.Name()
 }
 
 // SiteCaption returns a short site caption.

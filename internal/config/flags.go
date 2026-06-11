@@ -642,29 +642,35 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-author",
-			Usage:   "site `OWNER`, copyright, or artist",
+			Usage:   "site `OWNER` shown in the author meta tag",
 			EnvVars: EnvVars("SITE_AUTHOR"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "site-name",
+			Usage:   "short `NAME` for identifying this instance within a cluster *optional*",
+			Value:   "",
+			EnvVars: EnvVars("SITE_NAME"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "site-title",
-			Usage:   "site `TITLE`",
+			Usage:   "main `TITLE` shown in the web interface and meta tags",
 			Value:   "",
 			EnvVars: EnvVars("SITE_TITLE"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-caption",
-			Usage:   "site `CAPTION`",
+			Usage:   "short `CAPTION` or tagline shown alongside the title",
 			Value:   "AI-Powered Photos App",
 			EnvVars: EnvVars("SITE_CAPTION"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-description",
-			Usage:   "site `DESCRIPTION` *optional*",
+			Usage:   "longer `DESCRIPTION` shown in SEO and social meta tags *optional*",
 			EnvVars: EnvVars("SITE_DESCRIPTION"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "site-favicon",
-			Usage:     "site favicon `FILENAME` *optional*",
+			Usage:     "custom favicon `FILENAME` for web browsers *optional*",
 			EnvVars:   EnvVars("SITE_FAVICON"),
 			TakesFile: true,
 		}}, {

@@ -22,6 +22,24 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
+// restrictPhotoSelection narrows frm.Photos to the pictures the session may access, so a batch
+// action stays within the session's shared scope, mirroring the single-photo and album update
+// gates. SelectedPhotoUIDsForSession is client and user role aware and returns the input without a
+// query for full-access sessions, so admins incur no overhead. It returns false and reports the
+// selection as not found when the scoped selection is empty or the lookup fails.
+func restrictPhotoSelection(c *gin.Context, s *entity.Session, frm *form.Selection) bool {
+	scoped, err := query.SelectedPhotoUIDsForSession(frm.Photos, s)
+
+	if err != nil || len(scoped) == 0 {
+		AbortEntityNotFound(c)
+		return false
+	}
+
+	frm.Photos = scoped
+
+	return true
+}
+
 // BatchPhotosArchive moves multiple photos to the archive.
 //
 //	@Summary	moves multiple photos to the archive
@@ -58,6 +76,11 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 
 		if len(frm.Photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 
@@ -139,6 +162,11 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 			return
 		}
 
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
+			return
+		}
+
 		log.Infof("photos: restoring %s", clean.Log(frm.String()))
 
 		if get.Config().SidecarYaml() {
@@ -216,6 +244,11 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 			return
 		}
 
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
+			return
+		}
+
 		log.Infof("photos: approving %s", clean.Log(frm.String()))
 
 		// Fetch selection from index.
@@ -280,6 +313,11 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 		if len(frm.Photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 
@@ -360,6 +398,11 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		// Abort if user wants to delete all but does not have sufficient privileges.
 		if frm.All && !acl.Rules.AllowAll(acl.ResourcePhotos, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 			AbortForbidden(c)
+			return
+		}
+
+		// Restrict an explicit selection to the session's shared scope.
+		if !frm.All && len(frm.Photos) > 0 && !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 

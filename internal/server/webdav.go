@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/webdav"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/workers/auto"
@@ -118,6 +119,15 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
+		// Bound an uploaded file to the configured originals size limit (when set) so a single
+		// PUT cannot stream an unbounded body to disk; the free-storage check above only catches
+		// the next request. No-op when no originals limit is configured.
+		if c.Request.Method == header.MethodPut {
+			if limit := conf.OriginalsLimitBytes(); limit > 0 {
+				api.LimitRequestBodyBytes(c, limit)
+			}
+		}
+
 		// Invoke handler callback.
 		WebDAVHandler(c, router, srv)
 	}
@@ -210,23 +220,40 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 }
 
 // joinUnderBase joins a base directory with a relative name and ensures
-// that the resulting path stays within the base directory. Absolute
-// paths and Windows-style volume names are rejected.
+// that the resulting path stays within the base directory. Absolute paths,
+// Windows-style volume names, and drive-letter prefixes are rejected, and
+// containment is verified with filepath.Rel rather than a string prefix.
+// This mirrors the hardened safe-join used for archive extraction in pkg/fs.
 func joinUnderBase(baseDir, rel string) (string, error) {
 	if rel == "" {
 		return "", fmt.Errorf("invalid path")
 	}
+
+	// Normalize separators so mixed '/' and '\\' are handled consistently.
+	rel = strings.ReplaceAll(rel, "\\", "/")
+
+	// Reject Windows-style drive-letter prefixes even on non-Windows platforms.
+	if len(rel) >= 2 && rel[1] == ':' && ((rel[0] >= 'A' && rel[0] <= 'Z') || (rel[0] >= 'a' && rel[0] <= 'z')) {
+		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
+	}
+
 	// Reject absolute or volume paths.
 	if filepath.IsAbs(rel) || filepath.VolumeName(rel) != "" {
 		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
 	}
+
 	cleaned := filepath.Clean(rel)
-	// Compose destination and verify it stays inside base.
-	dest := filepath.Join(baseDir, cleaned)
 	base := filepath.Clean(baseDir)
-	if dest != base && !strings.HasPrefix(dest, base+string(os.PathSeparator)) {
+
+	// Compose destination and verify it stays inside base using filepath.Rel.
+	dest := filepath.Join(base, cleaned)
+	relToBase, err := filepath.Rel(base, dest)
+	if err != nil {
+		return "", fmt.Errorf("invalid path: %w", err)
+	} else if relToBase == ".." || strings.HasPrefix(relToBase, ".."+string(os.PathSeparator)) {
 		return "", fmt.Errorf("invalid path: outside base directory")
 	}
+
 	return dest, nil
 }
 

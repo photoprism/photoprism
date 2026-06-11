@@ -958,9 +958,23 @@ export default class Config {
     return s;
   }
 
+  // themeAssetUri resolves a theme-relative asset path (e.g. "/_theme/logo.svg")
+  // against the configured base URI so it loads on path-prefixed deployments;
+  // absolute URLs, protocol-relative and data/blob URIs, and already-prefixed
+  // paths pass through unchanged.
+  themeAssetUri(uri) {
+    if (typeof uri !== "string" || !uri.startsWith("/") || uri.startsWith("//")) {
+      return uri;
+    } else if (this.baseUri && uri.startsWith(`${this.baseUri}/`)) {
+      return uri;
+    }
+
+    return `${this.baseUri || ""}${uri}`;
+  }
+
   getIcon() {
     if (this.theme?.variables?.icon) {
-      return this.theme.variables.icon;
+      return this.themeAssetUri(this.theme.variables.icon);
     }
 
     switch (this.get("appIcon")) {
@@ -976,7 +990,7 @@ export default class Config {
   getLoginIcon() {
     const loginTheme = themes.Get("login", false);
     if (loginTheme?.variables?.icon) {
-      return loginTheme?.variables?.icon;
+      return this.themeAssetUri(loginTheme?.variables?.icon);
     }
 
     return this.getIcon();

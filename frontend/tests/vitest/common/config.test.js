@@ -113,6 +113,35 @@ describe("common/config", () => {
     expect(config.loginUri).toBe("/portal/library/login");
   });
 
+  it("themeAssetUri prefixes a root-relative theme path with the base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
+  it("themeAssetUri returns the path unchanged without a base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo" });
+    expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/_theme/logo.svg");
+  });
+
+  it("themeAssetUri leaves absolute, protocol-relative, already-prefixed, and empty paths alone", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("https://cdn.example.com/logo.svg")).toBe("https://cdn.example.com/logo.svg");
+    expect(config.themeAssetUri("//cdn.example.com/logo.svg")).toBe("//cdn.example.com/logo.svg");
+    expect(config.themeAssetUri("/i/pro-1/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+    expect(config.themeAssetUri("")).toBe("");
+  });
+
+  it("getIcon prefixes a theme-provided icon with the base uri on path-prefixed deployments", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      settings: { ui: { theme: "branded" } },
+    });
+    themes.Set("branded", { name: "branded", title: "Branded", colors: {}, variables: { icon: "/_theme/logo.svg" } });
+    config.setTheme("branded");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
   it("should store values", () => {
     const storage = new StorageShim();
     const values = { siteTitle: "Foo", country: "Germany", city: "Hamburg" };

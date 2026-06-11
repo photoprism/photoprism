@@ -18,16 +18,58 @@ import (
 
 func TestJoinUnderBase(t *testing.T) {
 	base := t.TempDir()
-	// Normal join
-	out, err := joinUnderBase(base, "a/b/c.txt")
-	assert.NoError(t, err)
-	assert.Equal(t, filepath.Join(base, "a/b/c.txt"), out)
-	// Absolute rejected
-	_, err = joinUnderBase(base, "/etc/passwd")
-	assert.Error(t, err)
-	// Parent traversal rejected
-	_, err = joinUnderBase(base, "../../etc/passwd")
-	assert.Error(t, err)
+	t.Run("NormalJoin", func(t *testing.T) {
+		out, err := joinUnderBase(base, "a/b/c.txt")
+		assert.NoError(t, err)
+		assert.Equal(t, filepath.Join(base, "a/b/c.txt"), out)
+	})
+	t.Run("BackslashNormalized", func(t *testing.T) {
+		out, err := joinUnderBase(base, "a\\b\\c.txt")
+		assert.NoError(t, err)
+		assert.Equal(t, filepath.Join(base, "a/b/c.txt"), out)
+	})
+	t.Run("CleansInsideBase", func(t *testing.T) {
+		out, err := joinUnderBase(base, "dir/../evil.txt")
+		assert.NoError(t, err)
+		assert.Equal(t, filepath.Join(base, "evil.txt"), out)
+	})
+	t.Run("EmptyRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "")
+		assert.Error(t, err)
+	})
+	t.Run("AbsoluteRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "/etc/passwd")
+		assert.Error(t, err)
+	})
+	t.Run("RootedBackslashRejected", func(t *testing.T) {
+		// "\rooted\path.txt" normalizes to "/rooted/path.txt", caught as absolute.
+		_, err := joinUnderBase(base, "\\rooted\\path.txt")
+		assert.Error(t, err)
+	})
+	t.Run("ParentTraversalRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "../../etc/passwd")
+		assert.Error(t, err)
+	})
+	t.Run("BackslashTraversalRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "..\\..\\etc\\passwd")
+		assert.Error(t, err)
+	})
+	t.Run("DriveLetterForwardSlashRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "C:/drive.txt")
+		assert.Error(t, err)
+	})
+	t.Run("DriveLetterBackslashRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "C:\\drive.txt")
+		assert.Error(t, err)
+	})
+	t.Run("LowercaseDriveLetterRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "c:/drive.txt")
+		assert.Error(t, err)
+	})
+	t.Run("VolumeNameOnlyRejected", func(t *testing.T) {
+		_, err := joinUnderBase(base, "C:")
+		assert.Error(t, err)
+	})
 }
 
 func TestWebDAVFileName_PathTraversalRejected(t *testing.T) {
@@ -53,6 +95,17 @@ func TestWebDAVFileName_PathTraversalRejected(t *testing.T) {
 	req2.URL = &url.URL{Path: conf.BaseUri(WebDAVOriginals) + "/ok.txt"}
 	got = WebDAVFileName(req2, grp, conf)
 	assert.Equal(t, insideFile, got)
+}
+
+func TestWebDAVFileName_DriveLetterRejected(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	r := gin.New()
+	grp := r.Group(conf.BaseUri(WebDAVOriginals))
+	// A Windows drive-letter prefix must not resolve to an in-tree name.
+	req := &http.Request{Method: header.MethodPut}
+	req.URL = &url.URL{Path: conf.BaseUri(WebDAVOriginals) + "/C:/drive.txt"}
+	got := WebDAVFileName(req, grp, conf)
+	assert.Equal(t, "", got, "should reject drive-letter path")
 }
 
 func TestWebDAVFileName_MethodNotPut(t *testing.T) {

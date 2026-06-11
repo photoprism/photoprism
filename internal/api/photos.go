@@ -103,10 +103,11 @@ func UpdatePhoto(router *gin.RouterGroup) {
 
 		uid := clean.UID(c.Param("uid"))
 
-		// Restricted sessions may only modify pictures within their shared scope, mirroring album
-		// updates. This runs before the lookup and form binding so out-of-scope requests have no
-		// side effects.
-		if s.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) || s.NotRegistered() {
+		// Limit access to pictures within the session's shared scope, mirroring album updates. This
+		// runs before the lookup and form binding so out-of-scope requests have no side effects.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the per-photo check and restricted sessions stay within their shared scope.
+		if !search.PhotoSessionSeesEverything(s) {
 			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
 				AbortForbidden(c)
 				return
@@ -276,6 +277,17 @@ func ApprovePhoto(router *gin.RouterGroup) {
 		}
 
 		id := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, mirroring photo and album
+		// updates. The query-free PhotoSessionSeesEverything check lets full-access sessions skip the
+		// per-photo lookup; restricted sessions (client and user role aware) stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(id, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
@@ -319,6 +331,16 @@ func PhotoPrimary(router *gin.RouterGroup) {
 
 		uid := clean.UID(c.Param("uid"))
 		fileUid := clean.UID(c.Param("file_uid"))
+
+		// Limit access to pictures within the session's shared scope. Full-access sessions skip the
+		// query-free PhotoSessionSeesEverything check; restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		err := query.SetPhotoPrimary(uid, fileUid)
 
 		if err != nil {

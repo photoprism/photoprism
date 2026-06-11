@@ -241,6 +241,34 @@ func TestConfig_SiteTitle(t *testing.T) {
 	assert.Equal(t, "Cats", c.SiteTitle())
 	c.options.SiteTitle = "PhotoPrism"
 	assert.Equal(t, "PhotoPrism", c.SiteTitle())
+	// With no SiteTitle and no AppName, the distinctive SiteName is used as the title.
+	c.options.SiteTitle = ""
+	c.options.SiteName = "Acme Media"
+	assert.Equal(t, "Acme Media", c.SiteTitle())
+	// A configured AppName suppresses the SiteName-as-title fallback.
+	c.options.AppName = "My App"
+	assert.Equal(t, "PhotoPrism", c.SiteTitle())
+	c.options.AppName = ""
+	c.options.SiteName = ""
+}
+
+func TestConfig_SiteName(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Falls back through AppName and SiteTitle when SiteName is unset.
+	assert.Equal(t, "", c.SiteName())
+	c.options.SiteTitle = "Cats"
+	assert.Equal(t, "Cats", c.SiteName())
+	c.options.AppName = "Kitten"
+	assert.Equal(t, "Kitten", c.SiteName())
+	// SiteName takes precedence when explicitly configured.
+	c.options.SiteName = "Acme Media"
+	assert.Equal(t, "Acme Media", c.SiteName())
+	// Empty when nothing distinctive is configured (no product Name fallback).
+	c.options.SiteName = ""
+	c.options.AppName = ""
+	c.options.SiteTitle = ""
+	assert.Equal(t, "", c.SiteName())
 }
 
 func TestConfig_SiteCaption(t *testing.T) {

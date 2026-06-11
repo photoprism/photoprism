@@ -13,6 +13,21 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
+func TestOidcReconcileHint(t *testing.T) {
+	t.Run("LocalProvider", func(t *testing.T) {
+		hint := oidcReconcileHint("alice", "local", "us12345")
+		assert.Contains(t, hint, "account 'alice'")
+		assert.Contains(t, hint, "'local' authentication")
+		assert.Contains(t, hint, "photoprism users mod alice --auth oidc --auth-id us12345")
+		assert.Contains(t, hint, "sign in locally")
+	})
+	t.Run("EmptyProviderDefaults", func(t *testing.T) {
+		hint := oidcReconcileHint("admin", "", "us67890")
+		assert.Contains(t, hint, "'default' authentication")
+		assert.Contains(t, hint, "photoprism users mod admin --auth oidc --auth-id us67890")
+	})
+}
+
 func TestOIDCRedirect(t *testing.T) {
 	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()

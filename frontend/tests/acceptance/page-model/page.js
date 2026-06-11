@@ -61,13 +61,13 @@ export default class Page {
 
   async logout() {
     await menu.openNav();
-    await t.click(Selector("div.nav-user-avatar"));
-    await t.click(Selector(".nav-user-menu__list .action-logout"));
+    await t.hover(Selector("div.nav-user-avatar"));
+    await t.click(Selector(".nav-user-menu__content .action-logout"));
   }
 
   async openAccount() {
-    await t.click(Selector("div.nav-user-avatar"));
-    await t.click(Selector(".nav-user-menu__list .action-settings"));
+    await t.hover(Selector("div.nav-user-avatar"));
+    await t.click(Selector(".nav-user-menu__content .action-account"));
   }
 
   async clickCardTitleOfUID(uid) {

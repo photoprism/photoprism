@@ -360,12 +360,12 @@ function checkFirewall {
     elif [[ $OS == "CentOS Linux" ]] || [[ $OS == "CentOS Stream" ]] || [[ $OS == "Rocky Linux" ]] || [[ $OS == "AlmaLinux" ]]; then
       if [ -f /usr/lib/systemd/system/csf.service ]; then
         fw="csf"
-        if [[ $(systemctl status $fw >/dev/null 2>&1) ]]; then
+        if systemctl is-active --quiet "$fw"; then
 
         FW_VER="\e[32m[PASS]\e[0m Firewall service (${fw}) is active\n"
         ((PASS++))
         elif cmdExists "firewall-cmd"; then
-          if [[ $(systemctl is-active firewalld >/dev/null 2>&1 && echo 1 || echo 0) ]]; then
+          if systemctl is-active --quiet firewalld; then
            FW_VER="\e[32m[PASS]\e[0m Firewall service (${fw}) is active\n"
           ((PASS++))
           else
@@ -378,7 +378,7 @@ function checkFirewall {
         fi
       else
         fw="firewalld"
-        if [[ $(systemctl is-active firewalld >/dev/null 2>&1 && echo 1 || echo 0) ]]; then
+        if systemctl is-active --quiet "$fw"; then
           FW_VER="\e[32m[PASS]\e[0m Firewall service (${fw}) is active\n"
         ((PASS++))
         else
@@ -401,7 +401,7 @@ function checkFirewall {
       fi
       elif cmdExists "firewall-cmd"; then
         fw="firewalld"
-        if [[ $(systemctl is-active --quiet $fw) ]]; then
+        if systemctl is-active --quiet "$fw"; then
           FW_VER="\e[32m[PASS]\e[0m Firewall service (${fw}) is active\n"
         ((PASS++))
         else

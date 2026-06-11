@@ -139,6 +139,7 @@ type Options struct {
 	SiteUrl                   string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	FrontendUri               string        `yaml:"FrontendUri" json:"-" flag:"frontend-uri" tags:"portal,pro"`
 	SiteAuthor                string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
+	SiteName                  string        `yaml:"SiteName" json:"SiteName" flag:"site-name"`
 	SiteTitle                 string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
 	SiteCaption               string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription           string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`

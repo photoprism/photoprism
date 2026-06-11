@@ -361,19 +361,13 @@ func buildRegisterPayload(c *config.Config) cluster.RegisterRequest {
 		Theme:        clean.TypeUnicode(c.NodeThemeVersion()),
 	}
 
-	// Report a human-friendly DisplayName from the operator's configured branding,
-	// preferring the per-instance AppName (the PWA home-screen name) then SiteTitle.
-	// Read the raw options so an unbranded instance reports nothing (the Portal then
-	// falls back to the node Name slug), and so the Pro edition's "Name = AppName"
-	// aliasing doesn't make a default look configured. SiteCaption is intentionally
-	// excluded: Plus/Pro default it to the shared marketing description, so it is not
-	// a per-instance label.
-	opt := c.Options()
-	if name := clean.TypeUnicode(opt.AppName); name != "" {
-		payload.DisplayName = name
-	} else if name = clean.TypeUnicode(opt.SiteTitle); name != "" {
-		payload.DisplayName = name
-	}
+	// Report a human-friendly DisplayName from the operator's configured branding via
+	// Config.SiteName (SITE_NAME, then the raw AppName, then SiteTitle). It is empty
+	// for an unbranded instance, so the Portal falls back to the node Name slug, and
+	// it ignores the product Name default so an unbranded Pro node does not look
+	// configured. SiteCaption is intentionally excluded: Plus/Pro default it to the
+	// shared marketing description, so it is not a per-instance label.
+	payload.DisplayName = c.SiteName()
 
 	// Auto-derive Advertise/Site URLs from node name and cluster domain when not configured.
 	if domain := strings.TrimSpace(defaultClusterDomain(c)); domain != "" {

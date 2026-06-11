@@ -53,10 +53,11 @@ services:
       PHOTOPRISM_DEFAULT_LOCALE: "en"                # default user interface language, e.g. "en" or "de"
       PHOTOPRISM_PLACES_LOCALE: "local"              # location details language, e.g. "local", "en", or "de"
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
-      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
-      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
-      PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
+      PHOTOPRISM_SITE_NAME: ""                       # short name for identifying this instance within a cluster
+      PHOTOPRISM_SITE_TITLE: "PhotoPrism"            # main title shown in the web interface and meta tags
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"  # short caption or tagline shown alongside the title
+      PHOTOPRISM_SITE_DESCRIPTION: ""                # longer description shown in SEO and social meta tags
+      PHOTOPRISM_SITE_AUTHOR: ""                     # site owner shown in the author meta tag
       PHOTOPRISM_LOG_LEVEL: "info"                   # log level: trace, debug, info, warning, or error
       PHOTOPRISM_READONLY: "false"                   # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"               # enables experimental features

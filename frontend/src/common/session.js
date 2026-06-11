@@ -29,7 +29,7 @@ import { createNamespacedStorage } from "common/storage";
 import {
   persistInstanceIdentity,
   InstanceIdentityKeys,
-  instanceLabel,
+  instanceTitle,
   listLogoutTargets,
   signOutInstances,
   clearInstanceStorage,
@@ -465,11 +465,10 @@ export default class Session {
 
   // recordInstanceIdentity stores this instance's SiteUrl, display title, and app
   // icon under the active namespace so other instances on the same origin can offer
-  // a switch entry. The title prefers the distinctive base-path segment
-  // (instanceLabel) so co-located instances that share a generic caption stay
-  // distinguishable; the icon is the root-relative app icon, which resolves on the
-  // shared origin from any peer. No-op when the site URL is unknown or storage is
-  // unavailable.
+  // a switch entry. The title prefers the configured site name (see instanceTitle)
+  // and falls back to the distinctive base-path segment for unbranded instances;
+  // the icon is the root-relative app icon, which resolves on the shared origin from
+  // any peer. No-op when the site URL is unknown or storage is unavailable.
   recordInstanceIdentity() {
     const values = this.config?.values;
 
@@ -482,7 +481,7 @@ export default class Session {
       // Frontend URI (e.g. "/portal" or "/i/pro-1/library") so peers open the
       // app entry point rather than a web-overlay landing page at the site root.
       route: this.config?.frontendUri,
-      title: instanceLabel(values.siteUrl) || values.siteTitle || values.name || values.siteUrl,
+      title: instanceTitle(values),
       icon: this.config.getIcon(),
     });
   }

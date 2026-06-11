@@ -31,6 +31,13 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.Equal(t, AuthModePasswd, result2.AuthMode)
 		assert.Equal(t, false, result2.Public)
 	})
+	t.Run("SiteName", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteName = "Acme Media"
+		cfg := c.ClientPublic()
+		assert.IsType(t, &ClientConfig{}, cfg)
+		assert.Equal(t, "Acme Media", cfg.SiteName)
+	})
 	t.Run("Values", func(t *testing.T) {
 		c := TestConfig()
 
