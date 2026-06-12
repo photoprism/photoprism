@@ -49,7 +49,19 @@ var LensFixtures = LensMap{
 		UpdatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		DeletedAt:       nil,
 	},
-}
+	"4-37": {
+		ID:              1000002,
+		LensSlug:        "4-37",
+		LensName:        "4 37",
+		LensMake:        "",
+		LensModel:       "4 37",
+		LensType:        "",
+		LensDescription: "",
+		LensNotes:       "",
+		CreatedAt:       time.Date(2026, 06, 12, 10, 0, 0, 0, time.UTC),
+		UpdatedAt:       time.Date(2026, 06, 12, 10, 0, 0, 0, time.UTC),
+		DeletedAt:       nil,
+	}}
 
 // CreateLensFixtures inserts known entities into the database for testing.
 func CreateLensFixtures() {

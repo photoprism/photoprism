@@ -86,3 +86,24 @@ func TestFirstOrCreateLens(t *testing.T) {
 		assert.GreaterOrEqual(t, result.ID, uint(1))
 	})
 }
+
+func TestLensUpdateMakeModel(t *testing.T) {
+	t.Run("ExistingLens", func(t *testing.T) {
+		setup := NewLens("", "4 38")
+		lens := FirstOrCreateLens(setup)
+		defer assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", lens.ID).Error)
+		make := "Pentax"
+		model := "smc PENTAX-FA 28-105mm F3.2-4.5 AL[IF]"
+		err := lens.UpdateMakeModel(make, model)
+		assert.NoError(t, err)
+		assert.Equal(t, CameraMakes[make], lens.LensMake)
+		assert.Equal(t, model, lens.LensModel)
+		assert.Equal(t, "4-38", lens.LensSlug)
+		assert.Equal(t, "PENTAX smc PENTAX-FA 28-105mm F3.2-4.5 AL[IF]", lens.LensName)
+	})
+	t.Run("NotExistingLens", func(t *testing.T) {
+		lens := NewLens("", "4 39")
+		err := lens.UpdateMakeModel("Pentax", "smc PENTAX-FA 31mm F1.8 AL Limited")
+		assert.Error(t, err)
+	})
+}

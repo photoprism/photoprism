@@ -1,11 +1,15 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/ulule/deepcopier"
+
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -152,4 +156,48 @@ func (m *Lens) String() string {
 // Unknown returns true if the lens is not a known make or model.
 func (m *Lens) Unknown() bool {
 	return m.LensSlug == "" || m.LensSlug == UnknownLens.LensSlug
+}
+
+// UpdateMakeModel updates the make and model for an existing lens.  Primarily intended for Pentax lens.
+func (m *Lens) UpdateMakeModel(makeName, modelName string) error {
+	if m.ID == 0 {
+		return fmt.Errorf("empty id")
+	}
+
+	l := NewLens(makeName, modelName)
+	// Override the changeable fields
+	m.LensMake = l.LensMake
+	m.LensModel = l.LensModel
+	m.LensName = l.LensName
+
+	lensMutex.Lock()
+	defer lensMutex.Unlock()
+	if err := Db().Save(&m).Error; err != nil {
+		return err
+	} else {
+		if !m.Unknown() {
+			event.EntitiesUpdated("lenses", []*Lens{m})
+
+			event.Publish("count.lenses", event.Data{
+				"count": 1,
+			})
+		}
+		lensCache.SetDefault(m.LensSlug, m)
+	}
+	return nil
+}
+
+// SaveForm copies validated form data into the label and persists it.
+func (m *Lens) SaveForm(f *form.Lens) error {
+	if f == nil {
+		return fmt.Errorf("form is nil")
+	} else if f.LensMake == "" || txt.Slug(f.LensModel) == "" {
+		return fmt.Errorf("make and model must not be empty")
+	}
+
+	if err := deepcopier.Copy(m).From(f); err != nil {
+		return err
+	}
+
+	return m.UpdateMakeModel(f.LensMake, f.LensModel)
 }
