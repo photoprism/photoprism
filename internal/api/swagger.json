@@ -925,6 +925,9 @@
                 "labels": {
                     "type": "boolean"
                 },
+                "lenses": {
+                    "type": "boolean"
+                },
                 "library": {
                     "type": "boolean"
                 },
@@ -2792,6 +2795,17 @@
             },
             "type": "object"
         },
+        "form.Lens": {
+            "properties": {
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "form.Link": {
             "properties": {
                 "CanComment": {
@@ -4079,6 +4093,44 @@
                     "type": "string"
                 },
                 "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "search.Lens": {
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Type": {
                     "type": "string"
                 },
                 "UpdatedAt": {
@@ -8527,6 +8579,149 @@
                 "tags": [
                     "Images",
                     "Labels"
+                ]
+            }
+        },
+        "/api/v1/lenses": {
+            "get": {
+                "operationId": "SearchLenses",
+                "parameters": [
+                    {
+                        "description": "maximum number of results",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "name": "count",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "description": "search result offset",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "name": "offset",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "show where make is blank",
+                        "in": "query",
+                        "name": "nomake",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "search query",
+                        "in": "query",
+                        "name": "q",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/search.Lens"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "finds and returns lenses as JSON",
+                "tags": [
+                    "Lenses"
+                ]
+            }
+        },
+        "/api/v1/lenses/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "UpdateLens",
+                "parameters": [
+                    {
+                        "description": "Lens ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Properties to be updated, only Make and Model supported",
+                        "in": "body",
+                        "name": "lens",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Lens"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Lens"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "updates lens name",
+                "tags": [
+                    "Lenses"
                 ]
             }
         },

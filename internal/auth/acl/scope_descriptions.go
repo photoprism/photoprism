@@ -17,6 +17,7 @@ var ScopeDescriptions = map[string]string{
 	ResourcePeople.String():    "Manage people records and face assignments.",
 	ResourcePlaces.String():    "Access maps, locations, and place clusters.",
 	ResourceLabels.String():    "Manage subject labels and keywords.",
+	ResourceLenses.String():    "Manage camera lense make and model values.",
 	ResourceConfig.String():    "Read configuration reports and summaries.",
 	ResourceSettings.String():  "Read and update application settings.",
 	ResourcePasscode.String():  "Manage app passcodes and guest access codes.",

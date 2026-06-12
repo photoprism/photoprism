@@ -21,7 +21,7 @@ func TestInitDefaultFeatures_DisableList(t *testing.T) {
 		DefaultFeatures = initDefaultFeatures()
 	})
 
-	_ = os.Setenv("PHOTOPRISM_DISABLE_FEATURES", "Upload, videos share batch-edit labels")
+	_ = os.Setenv("PHOTOPRISM_DISABLE_FEATURES", "Upload, videos share batch-edit labels lenses")
 	DefaultFeatures = initDefaultFeatures()
 
 	assert.False(t, DefaultFeatures.Upload)
@@ -29,6 +29,7 @@ func TestInitDefaultFeatures_DisableList(t *testing.T) {
 	assert.False(t, DefaultFeatures.Share)
 	assert.False(t, DefaultFeatures.BatchEdit)
 	assert.False(t, DefaultFeatures.Labels)
+	assert.False(t, DefaultFeatures.Lenses)
 
 	// unaffected feature stays enabled
 	assert.True(t, DefaultFeatures.Favorites)
