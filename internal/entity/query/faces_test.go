@@ -1,7 +1,9 @@
 package query
 
 import (
+	"bytes"
 	"errors"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -357,5 +359,22 @@ func TestProcessMatchMarkersAsync(t *testing.T) {
 	t.Run("NilFaceID", func(t *testing.T) {
 		require.Nil(t, ProcessMatchMarkersAsync(entity.FindFace(entity.FaceFixtures.Get("john-doe").ID), nil))
 		time.Sleep(time.Second)
+	})
+	t.Run("Mutex", func(t *testing.T) {
+		// Setup and capture Logging output
+		log.Debug("TestProcessMatchMarkersAsync/Mutex Commencing")
+		buffer := bytes.Buffer{}
+		log.SetOutput(&buffer)
+		MatchMarkersMutex.Lock()
+		require.Nil(t, ProcessMatchMarkersAsync(entity.FindFace(entity.FaceFixtures.Get("john-doe").ID), entity.Faceless))
+		log.Debug("TestProcessMatchMarkersAsync/Mutex Waiting 1s")
+		time.Sleep(time.Second)
+		assert.NotContains(t, buffer.String(), "faces: async matching commenced for")
+		MatchMarkersMutex.Unlock()
+		time.Sleep(2 * time.Second)
+		assert.Contains(t, buffer.String(), "faces: async matching commenced for")
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		log.Debug(buffer.String())
 	})
 }

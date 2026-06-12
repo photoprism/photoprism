@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -28,6 +29,9 @@ var ErrRetainedManualClusters = errors.New("faces: retained manual clusters afte
 
 // MergeMaxRetry limits how often the optimizer retries stubborn manual clusters (0 = unlimited).
 var MergeMaxRetry = 1
+
+// MatchMarkersMutex guards concurrent MatchMarkers updates running.
+var MatchMarkersMutex = &sync.Mutex{}
 
 func init() {
 	if v := os.Getenv("PHOTOPRISM_FACE_MERGE_MAX_RETRY"); v != "" {
@@ -280,6 +284,8 @@ func ProcessMatchMarkersAsync(m *entity.Face, faceIDs []string) error {
 	}
 
 	go func() {
+		MatchMarkersMutex.Lock()
+		defer MatchMarkersMutex.Unlock()
 		log.Debugf("faces: async matching commenced for %s", m.ID)
 		if err := m.MatchMarkersAsync(faceIDs); err != nil {
 			log.Warnf("faces: %s (match markers)", clean.Error(err))
