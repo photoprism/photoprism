@@ -36,6 +36,7 @@
           'slideshow-active': slideshow.active,
           'is-fullscreen': isFullscreen(),
           'is-zoomable': isZoomable,
+          'is-pdf': isPdfSlide,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
           'is-video': model?.Type === 'video',
@@ -56,6 +57,16 @@
           @cancel="exitFaceMarkerMode"
           @remove="onRemoveFaceMarker"
         ></p-meta-face-markers>
+        <p-pdf-viewer
+          v-if="isPdfSlide && pdfSrc && pswp()"
+          ref="pdfViewer"
+          :key="model.Hash"
+          class="p-lightbox__pdf"
+          :src="pdfSrc"
+          :pages="model.Pages || 0"
+          @media-prev="pdfMediaPrev"
+          @media-next="pdfMediaNext"
+        ></p-pdf-viewer>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
@@ -125,6 +136,7 @@ import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
 import * as media from "common/media";
+import { isPdfDocument } from "common/pdf";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
 import { $faceMarkers } from "common/face-markers";
@@ -278,6 +290,17 @@ export default {
         return [];
       }
       return this.photo.getMarkers(true);
+    },
+    // isPdfSlide reports whether the current slide is a PDF document, so the
+    // interactive viewer overlay replaces the static first-page cover.
+    isPdfSlide() {
+      return this.visible && !!this.model && isPdfDocument(this.model);
+    },
+    // pdfSrc is the inline-PDF URL for the current document slide. The slide's
+    // hash is the document's cover image; the backend resolves it to the
+    // original PDF for the same photo (see the GetPDF handler).
+    pdfSrc() {
+      return this.model?.Hash ? this.$util.pdfUrl(this.model.Hash) : "";
     },
   },
   watch: {
@@ -1211,6 +1234,8 @@ export default {
         switch (data.model?.Type) {
           case media.Video:
           case media.Animated:
+          case media.Document:
+            // Documents own zoom via the PDF viewer; hide the default zoom button.
             this.isZoomable = false;
             break;
           default:
@@ -2550,6 +2575,19 @@ export default {
             this.toggleControls();
           }
           break;
+      }
+    },
+    // pdfMediaPrev / pdfMediaNext move between media items from inside the PDF
+    // viewer (which captures Left/Right itself and emits these), mirroring the
+    // arrow-key navigation used for other slides.
+    pdfMediaPrev() {
+      if (this.index > 0) {
+        this.pswp().prev();
+      }
+    },
+    pdfMediaNext() {
+      if (this.models.length > this.index + 1) {
+        this.pswp().next();
       }
     },
     // Returns true when the given KeyboardEvent.code names a shortcut

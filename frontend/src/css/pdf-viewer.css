@@ -1,0 +1,137 @@
+/* Multi-page PDF viewer component styles. Class-prefixed so they can live in the
+   global CSS bundle (the webpack CSS rule only loads stylesheets from src/css). */
+
+.p-pdf-viewer {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.p-pdf-viewer__thumbs {
+    flex: 0 0 auto;
+    width: 132px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.p-pdf-viewer__thumb {
+    position: relative;
+    display: block;
+    width: 100%;
+    border: 2px solid transparent;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+}
+
+.p-pdf-viewer__thumb.is-active {
+    border-color: rgb(var(--v-theme-primary));
+}
+
+.p-pdf-viewer__thumb canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.p-pdf-viewer__thumb-label {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    padding: 0 4px;
+    font-size: 11px;
+    line-height: 16px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 2px;
+}
+
+.p-pdf-viewer__pages {
+    flex: 1 1 auto;
+    height: 100%;
+    overflow-y: auto;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+}
+
+.p-pdf-viewer__page {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 50vh;
+}
+
+.p-pdf-viewer__page canvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    background: #fff;
+}
+
+.p-pdf-viewer__spinner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.p-pdf-viewer__controls {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 24px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+}
+
+.p-pdf-viewer__pageinfo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.p-pdf-viewer__pageinput {
+    width: 40px;
+    text-align: center;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+}
+
+.p-pdf-viewer__sep {
+    width: 1px;
+    height: 20px;
+    margin: 0 4px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.p-pdf-viewer__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+}

@@ -92,6 +92,9 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Video Streaming.
 	api.GetVideo(APIv1)
 
+	// PDF Documents.
+	api.GetPDF(APIv1)
+
 	// Downloads.
 	api.GetDownload(APIv1)
 	api.ZipCreate(APIv1)

@@ -9121,6 +9121,61 @@
                 ]
             }
         },
+        "/api/v1/pdf/{hash}/{token}": {
+            "get": {
+                "operationId": "GetPDF",
+                "parameters": [
+                    {
+                        "description": "SHA1 file hash",
+                        "in": "path",
+                        "name": "hash",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "user-specific security token provided with session or 'public' when running PhotoPrism in public mode",
+                        "in": "path",
+                        "name": "token",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/pdf"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "415": {
+                        "description": "Unsupported Media Type",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "streams a PDF document for inline viewing",
+                "tags": [
+                    "Files",
+                    "Documents"
+                ]
+            }
+        },
         "/api/v1/photos": {
             "get": {
                 "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
