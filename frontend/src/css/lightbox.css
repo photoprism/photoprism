@@ -97,6 +97,15 @@
     display: none;
 }
 
+/* Hide the PhotoSwipe caption and counter for document slides: the viewer
+   overlay is transparent, so the caption would show through the page margins
+   while being covered by the pages themselves (half in front, half behind).
+   The document title remains available in the info sidebar. */
+.p-lightbox__content.is-pdf .pswp__dynamic-caption,
+.p-lightbox__content.is-pdf .pswp__counter {
+    display: none;
+}
+
 /* Lightbox Tooltips */
 
 .v-tooltip.v-theme--lightbox > .v-overlay__content {

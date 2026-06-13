@@ -1,7 +1,7 @@
 <template>
   <div
     class="p-pdf-viewer"
-    :class="{ 'is-loading': loading, 'is-error': !!errorMessage }"
+    :class="{ 'is-loading': loading, 'is-error': !!errorMessage, 'is-thumbs-hidden': !thumbsVisible }"
     @wheel.stop
     @pointerdown.stop
     @touchstart.stop
@@ -30,6 +30,7 @@
         ref="scroll"
         class="p-pdf-viewer__pages"
         tabindex="0"
+        @scroll="onScroll"
         @keydown.left.exact.prevent="$emit('media-prev')"
         @keydown.right.exact.prevent="$emit('media-next')"
       >
@@ -41,6 +42,14 @@
         </div>
       </div>
       <div class="p-pdf-viewer__controls">
+        <v-btn
+          :icon="thumbsVisible ? 'mdi-view-grid' : 'mdi-view-grid-outline'"
+          variant="text"
+          density="comfortable"
+          :aria-label="$gettext('Toggle thumbnails')"
+          @click="toggleThumbs"
+        ></v-btn>
+        <span class="p-pdf-viewer__sep"></span>
         <v-btn
           icon="mdi-chevron-left"
           variant="text"
@@ -131,6 +140,7 @@ export default {
       scaleStep: 0.25,
       loading: false,
       errorMessage: "",
+      thumbsVisible: true,
     };
   },
   watch: {
@@ -157,8 +167,14 @@ export default {
     this.thumbTasks = {};
     this.renderedPages = {};
     this.renderedThumbs = {};
-    this.visibleRatios = {};
+    this.intersecting = {};
+    this.scrollPending = false;
     this.destroyed = false;
+    // Hide the thumbnail strip by default on small screens, where it would take
+    // most of the width; it can be toggled back on from the controls.
+    if (this.$vuetify && this.$vuetify.display && this.$vuetify.display.smAndDown) {
+      this.thumbsVisible = false;
+    }
   },
   mounted() {
     if (this.active && this.src) {
@@ -224,7 +240,7 @@ export default {
       this.thumbTasks = {};
       this.renderedPages = {};
       this.renderedThumbs = {};
-      this.visibleRatios = {};
+      this.intersecting = {};
 
       if (this.pageObserver) {
         this.pageObserver.disconnect();
@@ -262,26 +278,58 @@ export default {
     onPagesIntersect(entries) {
       for (const entry of entries) {
         const n = Number(entry.target.dataset.page);
-        this.visibleRatios[n] = entry.isIntersecting ? entry.intersectionRatio : 0;
+        this.intersecting[n] = entry.isIntersecting;
 
         if (entry.isIntersecting) {
           this.renderPage(n);
         }
       }
 
-      let best = 0;
-      let bestRatio = 0;
+      this.updateCurrentPage();
+    },
+    // updateCurrentPage sets the current page to the one occupying the most of
+    // the actual viewport, computed from geometry. The observer's
+    // intersectionRatio cannot be used here: the render-ahead rootMargin makes
+    // several pages report a full ratio at once, so the lowest-numbered one
+    // would always win and the indicator would lag a page behind.
+    updateCurrentPage() {
+      const scroll = this.$refs.scroll;
 
-      for (const key in this.visibleRatios) {
-        if (this.visibleRatios[key] > bestRatio) {
-          bestRatio = this.visibleRatios[key];
-          best = Number(key);
+      if (!scroll || !this.pageCount) {
+        return;
+      }
+
+      const view = scroll.getBoundingClientRect();
+      const pages = this.$refs.page || [];
+      let best = 0;
+      let bestVisible = 0;
+
+      for (let i = 0; i < pages.length; i++) {
+        const r = pages[i].getBoundingClientRect();
+        const visible = Math.min(r.bottom, view.bottom) - Math.max(r.top, view.top);
+
+        if (visible > bestVisible) {
+          bestVisible = visible;
+          best = i + 1;
         }
       }
 
       if (best > 0) {
         this.setCurrentPage(best);
       }
+    },
+    // onScroll keeps the current page in sync while scrolling, throttled to one
+    // computation per animation frame.
+    onScroll() {
+      if (this.scrollPending) {
+        return;
+      }
+
+      this.scrollPending = true;
+      requestAnimationFrame(() => {
+        this.scrollPending = false;
+        this.updateCurrentPage();
+      });
     },
     // onThumbsIntersect lazily renders thumbnails as they scroll into view.
     onThumbsIntersect(entries) {
@@ -343,20 +391,19 @@ export default {
         delete this.thumbTasks[n];
       }
     },
-    // rerenderVisible re-renders the currently visible pages at the active scale,
-    // cancelling any in-flight renders first (used after a zoom change).
+    // rerenderVisible re-renders pages at the active scale after a zoom change.
+    // Zoom applies to every page, so all rendered pages are invalidated — the
+    // currently visible ones re-render now, and off-screen ones re-render when
+    // scrolled into view. Re-rendering only the visible pages would leave the
+    // rest sized at the previous scale, so pages would not scale uniformly.
     rerenderVisible() {
-      for (const key in this.visibleRatios) {
-        const n = Number(key);
+      Object.values(this.renderTasks).forEach((t) => t && t.cancel());
+      this.renderTasks = {};
+      this.renderedPages = {};
 
-        if (this.visibleRatios[key] > 0) {
-          if (this.renderTasks[n]) {
-            this.renderTasks[n].cancel();
-            delete this.renderTasks[n];
-          }
-
-          this.renderedPages[n] = false;
-          this.renderPage(n);
+      for (const key in this.intersecting) {
+        if (this.intersecting[key]) {
+          this.renderPage(Number(key));
         }
       }
     },
@@ -422,6 +469,11 @@ export default {
       if (clamped !== this.scale) {
         this.scale = clamped;
       }
+    },
+    // toggleThumbs shows or hides the page-thumbnail strip (closed by default on
+    // small screens). Thumbnails render lazily, so the strip catches up when shown.
+    toggleThumbs() {
+      this.thumbsVisible = !this.thumbsVisible;
     },
     // scrollActiveThumbIntoView keeps the highlighted thumbnail visible in the strip.
     scrollActiveThumbIntoView() {

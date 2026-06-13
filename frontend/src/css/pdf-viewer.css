@@ -21,6 +21,10 @@
     background: rgba(0, 0, 0, 0.35);
 }
 
+.p-pdf-viewer.is-thumbs-hidden .p-pdf-viewer__thumbs {
+    display: none;
+}
+
 .p-pdf-viewer__thumb {
     position: relative;
     display: block;
@@ -134,4 +138,26 @@
     width: 100%;
     height: 100%;
     color: #fff;
+}
+
+/* On small screens, widen the bottom controls to span most of the width and
+   spread the items out so the page navigation and number get more room instead
+   of being cramped into a narrow centered pill. */
+@media (max-width: 960px) {
+    .p-pdf-viewer__controls {
+        left: 8px;
+        right: 8px;
+        transform: none;
+        justify-content: space-evenly;
+        gap: 4px;
+        padding: 4px 8px;
+    }
+
+    .p-pdf-viewer__controls .p-pdf-viewer__sep {
+        display: none;
+    }
+
+    .p-pdf-viewer__pageinput {
+        width: 48px;
+    }
 }

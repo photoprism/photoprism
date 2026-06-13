@@ -100,7 +100,17 @@ describe("component/pdf-viewer", () => {
   });
   it("tracks the page in view on scroll and syncs the indicator and thumbnail highlight", async () => {
     const wrapper = await mountViewer();
-    ioInstances[0].cb([pageEntry(1, 0.2), pageEntry(3, 0.9)]);
+    // Stub geometry: viewport 0..840; page 3 fills it, pages 1-2 are above.
+    wrapper.vm.$refs.scroll.getBoundingClientRect = () => ({ top: 0, bottom: 840 });
+    const rects = [
+      { top: -1700, bottom: -860 },
+      { top: -850, bottom: -10 },
+      { top: 0, bottom: 840 },
+    ];
+    wrapper.vm.$refs.page.forEach((el, i) => {
+      el.getBoundingClientRect = () => rects[i];
+    });
+    wrapper.vm.updateCurrentPage();
     await flushPromises();
     expect(wrapper.vm.currentPage).toBe(3);
     expect(wrapper.find(".p-pdf-viewer__pageinput").element.value).toBe("3");
