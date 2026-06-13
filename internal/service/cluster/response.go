@@ -24,9 +24,16 @@ type Node struct {
 	AdvertiseUrl string            `json:"AdvertiseUrl,omitempty"`
 	Labels       map[string]string `json:"Labels,omitempty"`
 	RedirectURIs []string          `json:"RedirectURIs,omitempty"`
-	CreatedAt    string            `json:"CreatedAt"`
-	UpdatedAt    string            `json:"UpdatedAt"`
-	Database     *NodeDatabase     `json:"Database,omitempty"`
+	// Group-based admission config (redacted for non-admin sessions):
+	// AllowGroups admits matching login-time groups, AllowGroupRoles
+	// optionally overrides the default role per group, and GroupsFullView
+	// opts the node into receiving the user's full group set.
+	AllowGroups     []string          `json:"AllowGroups,omitempty"`
+	AllowGroupRoles map[string]string `json:"AllowGroupRoles,omitempty"`
+	GroupsFullView  *bool             `json:"GroupsFullView,omitempty"`
+	CreatedAt       string            `json:"CreatedAt"`
+	UpdatedAt       string            `json:"UpdatedAt"`
+	Database        *NodeDatabase     `json:"Database,omitempty"`
 }
 
 // DatabaseInfo provides basic database connection metadata for summary endpoints.
@@ -86,6 +93,7 @@ type RegisterResponse struct {
 	Database           RegisterDatabase `json:"Database"`
 	Secrets            *RegisterSecrets `json:"Secrets,omitempty"`
 	JWKSUrl            string           `json:"JWKSUrl,omitempty"`
+	PortalLoginUrl     string           `json:"PortalLoginUrl,omitempty"`
 	AlreadyRegistered  bool             `json:"AlreadyRegistered"`
 	AlreadyProvisioned bool             `json:"AlreadyProvisioned"`
 	Theme              string           `json:"Theme,omitempty"`

@@ -23,12 +23,25 @@ import (
 
 // Client represents a webdav client.
 type Client struct {
-	client   *webdav.Client
-	ctx      context.Context
-	endpoint *url.URL
-	timeout  time.Duration
-	mkdir    map[string]bool
-	cidrs    []*net.IPNet
+	client        *webdav.Client
+	ctx           context.Context
+	endpoint      *url.URL
+	timeout       time.Duration
+	mkdir         map[string]bool
+	cidrs         []*net.IPNet
+	downloadLimit int64
+}
+
+// SetDownloadLimit bounds the size of a single downloaded file in bytes; a value
+// of zero or less leaves downloads unbounded. The remote endpoint is a separate
+// trust domain, so this caps how much one response can write to local storage —
+// files above the configured originals limit are rejected by the indexer anyway.
+func (c *Client) SetDownloadLimit(maxBytes int64) {
+	if c == nil {
+		return
+	}
+
+	c.downloadLimit = maxBytes
 }
 
 // clientUrl returns the validated server url including username and password, if specified.
@@ -466,7 +479,21 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 		return fmt.Errorf("webdav: failed to create %s", clean.Log(path.Base(dest)))
 	}
 
-	if _, err = f.ReadFrom(reader); err != nil {
+	if c.downloadLimit > 0 {
+		// Read one byte past the limit so an exact-size overflow is detected
+		// instead of being silently truncated into a corrupt local file.
+		if n, copyErr := io.Copy(f, io.LimitReader(reader, c.downloadLimit+1)); copyErr != nil {
+			err = copyErr
+		} else if n > c.downloadLimit {
+			_ = f.Close()
+			_ = os.Remove(dest)
+			return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.Log(path.Base(dest)), c.downloadLimit)
+		}
+	} else {
+		_, err = f.ReadFrom(reader)
+	}
+
+	if err != nil {
 		_ = f.Close()
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed writing to %s", clean.Log(path.Base(dest)))

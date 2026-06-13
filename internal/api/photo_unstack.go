@@ -206,8 +206,8 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		// Notify clients by publishing events.
-		PublishPhotoEvent(StatusCreated, newPhoto.PhotoUID, c)
-		PublishPhotoEvent(StatusUpdated, stackPhoto.PhotoUID, c)
+		PublishPhotoEvent(StatusCreated, newPhoto.PhotoUID)
+		PublishPhotoEvent(StatusUpdated, stackPhoto.PhotoUID)
 
 		event.SuccessMsg(i18n.MsgFileUnstacked)
 

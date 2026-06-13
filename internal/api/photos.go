@@ -150,7 +150,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			FlushCoverCache()
 		}
 
-		PublishPhotoEvent(StatusUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
@@ -303,7 +303,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 		SaveSidecarYaml(&m)
 
-		PublishPhotoEvent(StatusUpdated, id, c)
+		PublishPhotoEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -348,7 +348,7 @@ func PhotoPrimary(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 

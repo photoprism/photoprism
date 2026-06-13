@@ -168,7 +168,7 @@ func CreateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Publish updated photo entity.
-			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID)
 		}
 
 		// Display success message.
@@ -275,7 +275,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID)
 		}
 
 		// Display success message.
@@ -337,7 +337,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID)
 		}
 
 		event.SuccessMsg(i18n.MsgChangesSaved)

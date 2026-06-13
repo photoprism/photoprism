@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -214,4 +215,41 @@ func TestBackoffDuration(t *testing.T) {
 			t.Errorf("%s: expected %s, got %s", tt.name, tt.expect, got)
 		}
 	}
+}
+
+func TestVerifierRejectsOversizedJWKS(t *testing.T) {
+	portalCfg := newTestConfig(t)
+	clusterUUID := rnd.UUIDv7()
+	portalCfg.Options().ClusterUUID = clusterUUID
+
+	mgr, err := NewManager(portalCfg)
+	require.NoError(t, err)
+	mgr.now = func() time.Time { return time.Date(2025, 9, 24, 10, 30, 0, 0, time.UTC) }
+	_, err = mgr.EnsureActiveKey()
+	require.NoError(t, err)
+
+	jwksBytes, err := json.Marshal(mgr.JWKS())
+	require.NoError(t, err)
+	require.Greater(t, len(jwksBytes), 2)
+
+	// Build a JSON-valid but oversized JWKS by appending a large ignored field, so
+	// a successful decode would require reading past maxJWKSResponseBytes. With the
+	// cap in place the response is truncated mid-value and the decode fails.
+	pad := strings.Repeat("a", maxJWKSResponseBytes)
+	oversized := string(jwksBytes[:len(jwksBytes)-1]) + `,"pad":"` + pad + `"}`
+	require.Greater(t, len(oversized), maxJWKSResponseBytes)
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(oversized))
+	}))
+	defer server.Close()
+
+	nodeCfg := newTestConfig(t)
+	nodeCfg.SetJWKSUrl(server.URL + "/.well-known/jwks.json")
+	nodeCfg.Options().ClusterUUID = clusterUUID
+
+	verifier := NewVerifier(nodeCfg)
+	err = verifier.Prime(context.Background(), nodeCfg.JWKSUrl())
+	require.Error(t, err)
 }

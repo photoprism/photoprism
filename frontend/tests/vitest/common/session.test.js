@@ -606,7 +606,7 @@ describe("common/session", () => {
       expect(session.invalidRedirectUrl("")).toBe(true);
       expect(session.invalidRedirectUrl("   ")).toBe(true);
       expect(session.invalidRedirectUrl(42)).toBe(true);
-      expect(session.invalidRedirectUrl("/portal/admin/login")).toBe(true);
+      expect(session.invalidRedirectUrl("/portal/login")).toBe(true);
       expect(session.invalidRedirectUrl("/library/login?return_to=evil")).toBe(true);
       expect(session.invalidRedirectUrl("/library/login/")).toBe(true);
 
@@ -615,7 +615,7 @@ describe("common/session", () => {
       expect(session.invalidRedirectUrl("/api/v1/oauth/authorize?client_id=x")).toBe(false);
 
       // setLoginRedirectUrl gates on the helper.
-      session.setLoginRedirectUrl("/portal/admin/login");
+      session.setLoginRedirectUrl("/portal/login");
       expect(session.hasLoginRedirectUrl()).toBe(false);
       session.setLoginRedirectUrl("   ");
       expect(session.hasLoginRedirectUrl()).toBe(false);
@@ -641,20 +641,21 @@ describe("common/session", () => {
   });
 
   describe("logout redirect target", () => {
-    // A cluster-OIDC sign-out lands on the OIDC login (which bounces to the Portal
-    // login) so the user re-auths with their cluster account; everyone else stays
-    // on the local form.
+    // A cluster-OIDC sign-out lands directly on the Portal login page (re-auth →
+    // instance chooser) so the just-left instance is never pinned as return_to;
+    // everyone else stays on the local form.
     const oidcLoginUri = "/library/api/v1/oidc/login";
+    const portalLoginUri = "https://app.example.com/portal/login";
 
     // clusterOidcConfig builds a config whose ext.oidc advertises cluster OIDC.
-    const clusterOidcConfig = (namespaceKey, { cluster = true, loginUri = oidcLoginUri } = {}) => {
+    const clusterOidcConfig = (namespaceKey, { cluster = true, loginUri = oidcLoginUri, portalUri = portalLoginUri } = {}) => {
       const config = createConfig("/library", namespaceKey);
       config.loginUri = "/library/login";
-      config.values.ext = { ...(config.values.ext || {}), oidc: { enabled: true, redirect: true, cluster, loginUri } };
+      config.values.ext = { ...(config.values.ext || {}), oidc: { enabled: true, redirect: true, cluster, loginUri, portalLoginUri: portalUri } };
       return config;
     };
 
-    it("redirects a cluster-OIDC session to the OIDC login", () => {
+    it("redirects a cluster-OIDC session to the Portal login page", () => {
       const rawStorage = new StorageShim();
       const namespaceKey = "ns-logout-cluster-oidc";
       const storage = createNamespacedStorage(rawStorage, namespaceKey);
@@ -664,7 +665,22 @@ describe("common/session", () => {
 
       session.onLogout();
 
-      expect(spy).toHaveBeenCalledWith(oidcLoginUri);
+      expect(spy).toHaveBeenCalledWith(portalLoginUri);
+    });
+
+    it("falls back to the local login when the Portal login page is unknown", () => {
+      // The instance OIDC roundtrip must never be re-initiated on sign-out —
+      // it would pin the Portal login's return_to to the just-left instance.
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-logout-cluster-oidc-fallback";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, clusterOidcConfig(namespaceKey, { portalUri: "" }));
+      session.provider = "oidc";
+      const spy = vi.spyOn(session, "followRedirect").mockImplementation(() => {});
+
+      session.onLogout();
+
+      expect(spy).toHaveBeenCalledWith("/library/login");
     });
 
     it("captures the provider before reset() clears it", () => {
@@ -678,9 +694,9 @@ describe("common/session", () => {
       session.onLogout();
 
       // reset() runs inside onLogout and clears the provider, yet the redirect
-      // still targets the OIDC login because the target was resolved first.
+      // still targets the Portal login because the target was resolved first.
       expect(session.provider).toBe("");
-      expect(spy).toHaveBeenCalledWith(oidcLoginUri);
+      expect(spy).toHaveBeenCalledWith(portalLoginUri);
     });
 
     it("redirects a local session to the local login page", () => {

@@ -640,3 +640,55 @@ func TestClient_DownloadDir(t *testing.T) {
 		}
 	})
 }
+
+func TestClient_DownloadLimit(t *testing.T) {
+	const bodySize = 2048
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		//nolint:gosec // test fixture writes a locally generated payload only
+		_, _ = w.Write(make([]byte, bodySize))
+	}))
+	t.Cleanup(server.Close)
+
+	newClient := func(t *testing.T) *Client {
+		t.Helper()
+		c, err := NewClient(server.URL+"/", "", "", TimeoutLow, "")
+		require.NoError(t, err)
+		return c
+	}
+
+	t.Run("OverLimitRejected", func(t *testing.T) {
+		client := newClient(t)
+		client.SetDownloadLimit(1024)
+		dest := filepath.Join(t.TempDir(), "big.bin")
+		err := client.Download("/big.bin", dest, false)
+		require.Error(t, err)
+		// The oversized partial file must not be left behind.
+		assert.False(t, fs.FileExists(dest))
+	})
+	t.Run("UnderLimitAccepted", func(t *testing.T) {
+		client := newClient(t)
+		client.SetDownloadLimit(4096)
+		dest := filepath.Join(t.TempDir(), "ok.bin")
+		err := client.Download("/ok.bin", dest, false)
+		require.NoError(t, err)
+		info, statErr := os.Stat(dest)
+		require.NoError(t, statErr)
+		assert.Equal(t, int64(bodySize), info.Size())
+	})
+	t.Run("ZeroLimitUnbounded", func(t *testing.T) {
+		client := newClient(t)
+		client.SetDownloadLimit(-1)
+		dest := filepath.Join(t.TempDir(), "unbounded.bin")
+		err := client.Download("/unbounded.bin", dest, false)
+		require.NoError(t, err)
+		info, statErr := os.Stat(dest)
+		require.NoError(t, statErr)
+		assert.Equal(t, int64(bodySize), info.Size())
+	})
+}

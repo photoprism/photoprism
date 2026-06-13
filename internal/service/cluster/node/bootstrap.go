@@ -391,6 +391,13 @@ func buildRegisterPayload(c *config.Config) cluster.RegisterRequest {
 		payload.SiteUrl = su
 	}
 
+	// Declare the instance's group-based admission config so it takes effect on
+	// first boot and every re-registration; an admin override on the Portal
+	// still wins (see the registry's group-config source precedence).
+	payload.AllowGroups = c.ClusterAllowGroups()
+	payload.AllowGroupRoles = c.ClusterAllowGroupRoles()
+	payload.GroupsFullView = c.ClusterGroupsFullView()
+
 	return payload
 }
 
@@ -423,6 +430,15 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 	if jwksUrl := strings.TrimSpace(r.JWKSUrl); jwksUrl != "" {
 		updates.SetJWKSUrl(jwksUrl)
 		c.SetJWKSUrl(jwksUrl)
+	}
+
+	// Apply the validating setter first and persist only what it accepted, so
+	// a malformed URL from a misbehaving Portal is never written to options.yml.
+	if loginUrl := strings.TrimSpace(r.PortalLoginUrl); loginUrl != "" {
+		c.SetPortalLoginUrl(loginUrl)
+		if v := c.PortalLoginUrl(); v != "" {
+			updates.SetPortalLoginUrl(v)
+		}
 	}
 
 	// Persist NodeUUID from portal response if provided and not set locally.

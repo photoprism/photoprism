@@ -729,11 +729,35 @@ var Flags = CliFlags{
 			Usage:   "use the cluster Portal as this instance's OIDC login provider",
 			EnvVars: EnvVars("CLUSTER_OIDC"),
 		}}, {
+		Flag: &cli.StringSliceFlag{
+			Name:    "cluster-allow-groups",
+			Usage:   "admit group `ID` to this instance via the Portal (repeatable)",
+			EnvVars: EnvVars("CLUSTER_ALLOW_GROUPS"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringSliceFlag{
+			Name:    "cluster-allow-group-roles",
+			Usage:   "map `GROUP=ROLE` for Portal admission (roles: " + acl.UserRoles.CliUsageString() + ")",
+			EnvVars: EnvVars("CLUSTER_ALLOW_GROUP_ROLES"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "cluster-groups-full-view",
+			Usage:   "send the user's full group set to this instance",
+			EnvVars: EnvVars("CLUSTER_GROUPS_FULL_VIEW"),
+			Hidden:  true,
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-url",
 			Usage:   "base `URL` of the cluster management portal",
 			Value:   DefaultPortalUrl,
 			EnvVars: EnvVars("PORTAL_URL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-login-url",
+			Usage:   "browser-facing `URL` of the Portal login page",
+			EnvVars: EnvVars("PORTAL_LOGIN_URL"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "join-token",

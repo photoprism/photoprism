@@ -250,14 +250,14 @@ describe("typeaheadCache.evict / clear", () => {
 });
 
 // Forward-compat coverage for the subscribeEntityActions refactor:
-// future entity-mutation verbs published by the backend (e.g.
-// labels.edited / albums.edited via event.EntitiesEdited) flow
-// through the namespace-level subscriber and evict without any
-// per-channel wiring in this module. Non-mutation actions stay
-// no-ops so an unrelated future event under the same namespace
-// can't pull the cache out from under live consumers.
+// every entity-mutation verb in ENTITY_MUTATIONS — including ones the
+// backend does not currently emit on these channels — flows through
+// the namespace-level subscriber and evicts without any per-channel
+// wiring in this module. Non-mutation actions stay no-ops so an
+// unrelated future event under the same namespace can't pull the
+// cache out from under live consumers.
 describe("subscribeEntityActions integration", () => {
-  it("re-fetches after labels.edited (future mutation verb under ENTITY_MUTATIONS)", async () => {
+  it("re-fetches after labels.restored (mutation verb without a current emitter)", async () => {
     const first = [{ Name: "A", UID: "1" }];
     const second = [{ Name: "B", UID: "2" }];
     const spy = vi
@@ -266,12 +266,12 @@ describe("subscribeEntityActions integration", () => {
       .mockResolvedValueOnce({ models: second });
 
     await typeaheadCache.getLabels();
-    $event.publishSync("labels.edited", { entities: ["1"] });
+    $event.publishSync("labels.restored", { entities: ["1"] });
     expect(await typeaheadCache.getLabels()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it("re-fetches after albums.edited", async () => {
+  it("re-fetches after albums.archived", async () => {
     const first = [{ Title: "First", UID: "alb-1" }];
     const second = [{ Title: "Second", UID: "alb-2" }];
     const spy = vi
@@ -280,7 +280,7 @@ describe("subscribeEntityActions integration", () => {
       .mockResolvedValueOnce({ models: second });
 
     await typeaheadCache.getAlbums();
-    $event.publishSync("albums.edited", { entities: ["alb-1"] });
+    $event.publishSync("albums.archived", { entities: ["alb-1"] });
     expect(await typeaheadCache.getAlbums()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });

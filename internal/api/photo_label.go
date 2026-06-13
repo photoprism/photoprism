@@ -103,7 +103,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, c.Param("uid"), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
 		event.Success("label updated")
 
@@ -182,7 +182,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
 		event.Success("label removed")
 
@@ -273,7 +273,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
 		event.Success("label saved")
 

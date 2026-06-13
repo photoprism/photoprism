@@ -162,6 +162,10 @@ import PLoading from "component/loading.vue";
 
 const appStorage = getAppStorage();
 
+// Maximum number of affected entities reloaded in place per event;
+// larger batches set the dirty flag and are refetched lazily instead.
+const maxLiveRefetch = 50;
+
 export default {
   name: "PPageSubjects",
   components: { PLoading },
@@ -713,6 +717,59 @@ export default {
           this.listen = true;
         });
     },
+    // refetchResults reloads the affected entries through the scoped
+    // search API and patches the loaded results in place, so a single
+    // edit costs one uid-filtered query instead of re-running the full
+    // result query. Larger batches fall back to the dirty flag and are
+    // refetched lazily on the next return-to-view.
+    refetchResults(uids) {
+      const affected = uids.filter((uid) => this.results.some((m) => m.UID === uid));
+
+      if (affected.length === 0) {
+        return;
+      }
+
+      if (affected.length > maxLiveRefetch) {
+        this.dirty = true;
+        return;
+      }
+
+      Subject.search({ uid: affected.join("|"), count: affected.length })
+        .then((resp) => {
+          const found = new Set();
+
+          resp.models.forEach((values) => {
+            found.add(values.UID);
+
+            const model = this.results.find((m) => m.UID === values.UID);
+
+            if (model) {
+              for (let key in values) {
+                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                  model[key] = values[key];
+                }
+              }
+            }
+          });
+
+          // Rows the scoped search no longer returns are not visible to
+          // this session anymore — drop them like a full refresh would.
+          affected
+            .filter((uid) => !found.has(uid))
+            .forEach((uid) => {
+              const index = this.results.findIndex((m) => m.UID === uid);
+
+              if (index >= 0) {
+                this.results.splice(index, 1);
+              }
+
+              this.removeSelection(uid);
+            });
+        })
+        .catch(() => {
+          this.dirty = true;
+        });
+    },
     onUpdate(ev, data) {
       if (!this.listen) {
         return;
@@ -726,18 +783,11 @@ export default {
 
       switch (type) {
         case ACTION_UPDATED:
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            const model = this.results.find((m) => m.UID === values.UID);
+          // subjects.updated is a lightweight UID-only signal that carries
+          // no entity fields; affected entries are reloaded through the
+          // scoped search API and patched in place.
+          this.refetchResults(data.entities);
 
-            if (model) {
-              for (let key in values) {
-                if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                  model[key] = values[key];
-                }
-              }
-            }
-          }
           break;
         case ACTION_DELETED:
           this.dirty = true;

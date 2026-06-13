@@ -30,6 +30,7 @@ import * as options from "options/options";
 import { Photo } from "model/photo";
 import { onInit, onSetTheme } from "common/hooks";
 import { ref, reactive } from "vue";
+import memoizeOne from "memoize-one";
 
 onInit();
 
@@ -47,6 +48,9 @@ const frontendLoginUri = (frontendUri) => {
   return `${frontendUri.replace(/\/+$/, "")}/login`;
 };
 
+// schemeUriRegExp matches a leading URI scheme ("https:", "data:") so absolute references are left untouched.
+const schemeUriRegExp = /^[a-z][a-z0-9+.-]*:/i;
+
 export default class Config {
   /**
    * @param {Storage} storage
@@ -59,6 +63,7 @@ export default class Config {
     this.previewToken = "";
     this.downloadToken = "";
     this.updating = false;
+    this.peopleUpdateTimer = null;
 
     this.$vuetify = null;
     this.translations = {};
@@ -230,6 +235,19 @@ export default class Config {
     }
   }
 
+  // schedulePeopleUpdate coalesces bursts of people.* events (e.g. while
+  // face recognition adds new people) into a single client-config refetch.
+  schedulePeopleUpdate() {
+    if (this.peopleUpdateTimer) {
+      clearTimeout(this.peopleUpdateTimer);
+    }
+
+    this.peopleUpdateTimer = setTimeout(() => {
+      this.peopleUpdateTimer = null;
+      this.update();
+    }, 500);
+  }
+
   onPeople(ev, data) {
     const type = ev.split(".")[1];
 
@@ -247,22 +265,10 @@ export default class Config {
 
     switch (type) {
       case ACTION_CREATED:
-        this.values.people.unshift(...data.entities);
-        break;
       case ACTION_UPDATED:
-        for (let i = 0; i < data.entities.length; i++) {
-          const values = data.entities[i];
-
-          this.values.people
-            .filter((m) => m.UID === values.UID)
-            .forEach((m) => {
-              for (let key in values) {
-                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                  m[key] = values[key];
-                }
-              }
-            });
-        }
+        // people.created and people.updated carry only UIDs, so the people
+        // list must be reloaded through the scoped REST API.
+        this.schedulePeopleUpdate();
         break;
       case ACTION_DELETED:
         for (let i = 0; i < data.entities.length; i++) {
@@ -879,6 +885,11 @@ export default class Config {
     return this.values?.ext?.oidc?.loginUri || "";
   }
 
+  // portalLoginUri returns the cluster Portal's browser-facing login page, or "" when unknown.
+  portalLoginUri() {
+    return this.values?.ext?.oidc?.portalLoginUri || "";
+  }
+
   // isPro returns true if this is team version.
   isPro() {
     return !!this.values?.ext["pro"];
@@ -958,19 +969,22 @@ export default class Config {
     return s;
   }
 
-  // themeAssetUri resolves a theme-relative asset path (e.g. "/_theme/logo.svg")
-  // against the configured base URI so it loads on path-prefixed deployments;
-  // absolute URLs, protocol-relative and data/blob URIs, and already-prefixed
-  // paths pass through unchanged.
-  themeAssetUri(uri) {
-    if (typeof uri !== "string" || !uri.startsWith("/") || uri.startsWith("//")) {
+  // themeAssetUri resolves a theme asset reference against the base URI (e.g.
+  // "logo.svg" → "{baseUri}/_theme/logo.svg"); memoized since the base URI is
+  // fixed once the config is loaded.
+  themeAssetUri = memoizeOne((uri) => {
+    if (typeof uri !== "string" || uri === "") {
       return uri;
+    } else if (schemeUriRegExp.test(uri) || uri.startsWith("//")) {
+      return uri; // absolute, data:/blob:, or protocol-relative
+    } else if (!uri.startsWith("/")) {
+      return `${this.baseUri || ""}/_theme/${uri}`; // bare name → theme dir
     } else if (this.baseUri && uri.startsWith(`${this.baseUri}/`)) {
-      return uri;
+      return uri; // already prefixed
     }
 
-    return `${this.baseUri || ""}${uri}`;
-  }
+    return `${this.baseUri || ""}${uri}`; // other root path → add prefix
+  });
 
   getIcon() {
     if (this.theme?.variables?.icon) {

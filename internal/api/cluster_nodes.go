@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -191,7 +192,7 @@ func ClusterGetNode(router *gin.RouterGroup) {
 //	@Accept		json
 //	@Produce	json
 //	@Param		uuid				path		string	true	"node uuid"
-//	@Param		node				body		object	true	"properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)"
+//	@Param		node				body		object	true	"properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs, AllowGroups, AllowGroupRoles, GroupsFullView)"
 //	@Success	200					{object}	cluster.StatusResponse
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/{uuid} [patch]
@@ -219,12 +220,15 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 		}
 
 		var req struct {
-			Role         *string           `json:"Role"`
-			DisplayName  *string           `json:"DisplayName"`
-			Labels       map[string]string `json:"Labels"`
-			AdvertiseUrl *string           `json:"AdvertiseUrl"`
-			SiteUrl      *string           `json:"SiteUrl"`
-			RedirectURIs *[]string         `json:"RedirectURIs"`
+			Role            *string            `json:"Role"`
+			DisplayName     *string            `json:"DisplayName"`
+			Labels          map[string]string  `json:"Labels"`
+			AdvertiseUrl    *string            `json:"AdvertiseUrl"`
+			SiteUrl         *string            `json:"SiteUrl"`
+			RedirectURIs    *[]string          `json:"RedirectURIs"`
+			AllowGroups     *[]string          `json:"AllowGroups"`
+			AllowGroupRoles *map[string]string `json:"AllowGroupRoles"`
+			GroupsFullView  *bool              `json:"GroupsFullView"`
 		}
 
 		LimitRequestBodyBytes(c, MaxClusterRegisterBytes)
@@ -316,6 +320,35 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			n.RedirectURIs = normalized
 		}
 
+		if req.AllowGroups != nil {
+			// Non-nil slice (even empty) replaces the persisted set; nil is "no change".
+			normalized := oidc.MergeGroups(*req.AllowGroups)
+			if normalized == nil {
+				normalized = []string{}
+			}
+			n.AllowGroups = normalized
+		}
+
+		if req.AllowGroupRoles != nil {
+			normalized, err := normalizeAllowGroupRoles(*req.AllowGroupRoles)
+			if err != nil {
+				AbortBadRequest(c, err)
+				return
+			}
+			// Non-nil map (even empty) replaces the persisted mapping; nil is "no change".
+			n.AllowGroupRoles = normalized
+		}
+
+		if req.GroupsFullView != nil {
+			n.GroupsFullView = req.GroupsFullView
+		}
+
+		// An admin edit pins the group config so instance registrations can't
+		// revert it; clearing all of it un-pins (see registry.applyGroupConfig).
+		if req.AllowGroups != nil || req.AllowGroupRoles != nil || req.GroupsFullView != nil {
+			n.GroupsSrc = entity.ClientGroupsSrcManual
+		}
+
 		n.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
 
 		if err = regy.Put(n); err != nil {
@@ -331,6 +364,33 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 
 		c.JSON(http.StatusOK, cluster.StatusResponse{Status: "ok"})
 	})
+}
+
+// normalizeAllowGroupRoles validates a group → role mapping for node updates:
+// keys normalize via oidc.NormalizeGroupID (empty keys are dropped) and role
+// values must parse to federatable instance roles, so cluster_admin, visitor,
+// and unknown roles are rejected up front instead of being silently ignored at
+// resolution time.
+func normalizeAllowGroupRoles(in map[string]string) (map[string]string, error) {
+	out := make(map[string]string, len(in))
+
+	for group, roleName := range in {
+		g := oidc.NormalizeGroupID(group)
+
+		if g == "" {
+			continue
+		}
+
+		role := acl.ParseRole(roleName)
+
+		if !acl.IsFederatedRole(role) {
+			return nil, fmt.Errorf("invalid role %s for group %s", clean.LogQuote(roleName), clean.LogQuote(group))
+		}
+
+		out[g] = role.String()
+	}
+
+	return out, nil
 }
 
 // ClusterDeleteNode removes a node entry from the registry.

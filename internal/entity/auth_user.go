@@ -463,6 +463,15 @@ func (m *User) UpdateLoginTime() *time.Time {
 		return nil
 	}
 
+	// Align a super admin's stored role with the running edition on login so a
+	// leftover out-of-edition role (e.g. a Portal cluster_admin on a Plus
+	// instance) does not surface in the admin UI. No-op for regular accounts.
+	if m.NormalizeAdminRole() {
+		if err := Db().Model(m).UpdateColumn("UserRole", m.UserRole).Error; err == nil {
+			event.AuditInfo([]string{"users", "%s", "role normalized to %s", status.Succeeded}, clean.Log(m.UserName), m.UserRole)
+		}
+	}
+
 	timeStamp := TimeStamp()
 
 	if err := Db().Model(m).UpdateColumn("LoginAt", timeStamp).Error; err != nil {
@@ -821,6 +830,38 @@ func (m *User) AclRole() acl.Role {
 	default:
 		return acl.UserRoles[role]
 	}
+}
+
+// NormalizeAdminRole aligns a super admin's stored role with the running
+// edition. A SuperAdmin's effective role is fixed by the edition — cluster_admin
+// when the edition registers it (the Portal), otherwise admin — which is exactly
+// what AclRole resolves at runtime. Persisting that target means a stored role
+// which differs from it (most often a leftover Portal cluster_admin on a Plus/Pro
+// instance, but also any non-admin-tier role) is rewritten so the stored and
+// effective roles agree and the value no longer surfaces as a disabled,
+// out-of-edition role in the admin UI. The target is derived from the edition's
+// registered roles, not from entity.Admin, because CreateDefaultUsers overwrites
+// Admin with the stored seed-admin row at bootstrap. It only ever touches super
+// admins, so it cannot grant or revoke privileges for a regular account. Returns
+// true if the role was changed; the caller persists the result.
+func (m *User) NormalizeAdminRole() bool {
+	if m == nil || !m.SuperAdmin {
+		return false
+	}
+
+	// The edition's super-admin role (mirrors AclRole's SuperAdmin branch).
+	target := acl.RoleAdmin.String()
+	if _, ok := acl.UserRoles[acl.RoleClusterAdmin.String()]; ok {
+		target = acl.RoleClusterAdmin.String()
+	}
+
+	if clean.Role(m.UserRole) == target {
+		return false
+	}
+
+	m.SetRole(target)
+
+	return true
 }
 
 // Settings returns the user settings and initializes them if necessary.
@@ -1457,13 +1498,9 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin bool) error {
 		m.SetUploadPath(frm.UploadPath)
 	}
 
-	// Ensure super admins keep an admin-level role (admin, or cluster_admin on
-	// the Portal). Anything else is normalized to the configured default admin
-	// role, derived from Admin.UserRole (admin on CE/Pro, cluster_admin on the
-	// Portal).
-	if m.SuperAdmin && !acl.IsAdminRole(acl.Role(m.UserRole)) {
-		m.SetRole(Admin.UserRole)
-	}
+	// Ensure super admins keep an admin-tier role that the running edition
+	// actually registers; see NormalizeAdminRole.
+	m.NormalizeAdminRole()
 
 	return m.Save()
 }

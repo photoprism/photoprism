@@ -177,10 +177,10 @@ func (m *Subject) Restore() error {
 
 		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
-		event.EntitiesCreated("subjects", []*Subject{m})
+		event.EntitiesCreated("subjects", []string{m.SubjUID})
 
 		if m.IsPerson() {
-			event.EntitiesCreated("people", []*Person{m.Person()})
+			event.EntitiesCreated("people", []string{m.SubjUID})
 			event.Publish("count.people", event.Data{
 				"count": 1,
 			})
@@ -215,10 +215,10 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if err := m.Create(); err == nil {
 		log.Infof("subject: added %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
-		event.EntitiesCreated("subjects", []*Subject{m})
+		event.EntitiesCreated("subjects", []string{m.SubjUID})
 
 		if m.IsPerson() {
-			event.EntitiesCreated("people", []*Person{m.Person()})
+			event.EntitiesCreated("people", []string{m.SubjUID})
 			event.Publish("count.people", event.Data{
 				"count": 1,
 			})
@@ -397,10 +397,10 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		}
 
 		if updateErr := m.Updates(values); updateErr == nil {
-			event.EntitiesUpdated("subjects", []*Subject{m})
+			event.EntitiesUpdated("subjects", []string{m.SubjUID})
 
 			if m.IsPerson() {
-				event.EntitiesUpdated("people", []*Person{m.Person()})
+				event.EntitiesUpdated("people", []string{m.SubjUID})
 			}
 
 			return true, nil
@@ -454,10 +454,10 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	// Log result.
 	log.Infof("subject: renamed %s to %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
-	event.EntitiesUpdated("subjects", []*Subject{m})
+	event.EntitiesUpdated("subjects", []string{m.SubjUID})
 
 	if m.IsPerson() {
-		event.EntitiesUpdated("people", []*Person{m.Person()})
+		event.EntitiesUpdated("people", []string{m.SubjUID})
 	}
 
 	return m, m.UpdateMarkerNames()

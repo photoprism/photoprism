@@ -13,7 +13,6 @@ import $event, {
   ACTION_DELETED,
   ACTION_ARCHIVED,
   ACTION_RESTORED,
-  ACTION_EDITED,
 } from "common/event";
 
 // Force pubsub-js to flush synchronously for the duration of one test.
@@ -26,17 +25,17 @@ async function flushEvents() {
 
 describe("common/event.js", () => {
   describe("ENTITY_MUTATIONS", () => {
-    it("contains the six verbs that match the backend constants", () => {
+    it("contains the five verbs that match the backend constants", () => {
       // Mirrors internal/event/publish_entities.go EntityUpdated /
-      // EntityCreated / EntityDeleted / EntityArchived / EntityRestored
-      // / EntityEdited. Adding a verb here MUST also land a matching
-      // constant on the Go side.
+      // EntityCreated / EntityDeleted / EntityArchived / EntityRestored.
+      // Adding a verb here MUST also land a matching constant on the
+      // Go side.
       expect([...ENTITY_MUTATIONS].sort()).toEqual(
-        [ACTION_ARCHIVED, ACTION_CREATED, ACTION_DELETED, ACTION_EDITED, ACTION_RESTORED, ACTION_UPDATED].sort()
+        [ACTION_ARCHIVED, ACTION_CREATED, ACTION_DELETED, ACTION_RESTORED, ACTION_UPDATED].sort()
       );
     });
 
-    it("exports the six action verbs as individual string constants", () => {
+    it("exports the five action verbs as individual string constants", () => {
       // Switch cases in page-level onUpdate handlers reference these
       // symbols so IDE find-references / grep locates every event-
       // handling site without false positives from prose, Vue
@@ -46,7 +45,6 @@ describe("common/event.js", () => {
       expect(ACTION_DELETED).toBe("deleted");
       expect(ACTION_ARCHIVED).toBe("archived");
       expect(ACTION_RESTORED).toBe("restored");
-      expect(ACTION_EDITED).toBe("edited");
     });
 
     it("is frozen so call sites cannot mutate the shared default", () => {
@@ -68,17 +66,17 @@ describe("common/event.js", () => {
       const handler = vi.fn();
       token = subscribeEntityActions("test_ns_default", handler);
 
-      for (const action of ["created", "updated", "deleted", "archived", "restored", "edited"]) {
+      for (const action of ["created", "updated", "deleted", "archived", "restored"]) {
         $event.publish(`test_ns_default.${action}`, { entities: [`uid-${action}`] });
       }
       await flushEvents();
 
-      expect(handler).toHaveBeenCalledTimes(6);
+      expect(handler).toHaveBeenCalledTimes(5);
       // Third argument is the parsed action — verifies the helper
       // extracts it correctly for downstream callers that want to
       // branch (e.g. future per-action logic).
       const actions = handler.mock.calls.map(([, , action]) => action);
-      expect(actions.sort()).toEqual(["archived", "created", "deleted", "edited", "restored", "updated"]);
+      expect(actions.sort()).toEqual(["archived", "created", "deleted", "restored", "updated"]);
     });
 
     it("ignores unknown actions on the subscribed namespace", async () => {

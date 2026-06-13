@@ -918,7 +918,7 @@ func (m *Album) Save() error {
 	if err := Db().Save(m).Error; err != nil {
 		return err
 	} else {
-		event.PublishUserEntities("albums", event.EntityUpdated, []*Album{m}, m.CreatedBy)
+		event.PublishUserEntities("albums", event.EntityUpdated, []string{m.AlbumUID}, m.CreatedBy)
 		return nil
 	}
 }
@@ -930,7 +930,7 @@ func (m *Album) Create() error {
 	}
 
 	m.PublishCountChange(1)
-	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
+	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)
 
 	return nil
 }
@@ -1019,7 +1019,7 @@ func (m *Album) Restore() error {
 	m.DeletedAt = gorm.DeletedAt{}
 
 	m.PublishCountChange(1)
-	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
+	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)
 
 	return nil
 }

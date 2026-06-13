@@ -351,6 +351,19 @@
                 "AdvertiseUrl": {
                     "type": "string"
                 },
+                "AllowGroupRoles": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "type": "object"
+                },
+                "AllowGroups": {
+                    "description": "Group-based admission config (redacted for non-admin sessions):\nAllowGroups admits matching login-time groups, AllowGroupRoles\noptionally overrides the default role per group, and GroupsFullView\nopts the node into receiving the user's full group set.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "AppName": {
                     "type": "string"
                 },
@@ -368,6 +381,9 @@
                 },
                 "DisplayName": {
                     "type": "string"
+                },
+                "GroupsFullView": {
+                    "type": "boolean"
                 },
                 "Labels": {
                     "additionalProperties": {
@@ -470,6 +486,9 @@
                 },
                 "Node": {
                     "$ref": "#/definitions/cluster.Node"
+                },
+                "PortalLoginUrl": {
+                    "type": "string"
                 },
                 "Secrets": {
                     "$ref": "#/definitions/cluster.RegisterSecrets"
@@ -7037,7 +7056,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)",
+                        "description": "properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs, AllowGroups, AllowGroupRoles, GroupsFullView)",
                         "in": "body",
                         "name": "node",
                         "required": true,

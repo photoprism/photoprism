@@ -9,13 +9,15 @@ import (
 type NodeOpts struct {
 	IncludeAdvertiseUrl bool
 	IncludeDatabase     bool
+	IncludeAccessRules  bool
 }
 
 // NodeOptsForSession returns the default exposure policy for a session.
-// Admin users see AdvertiseUrl and DB metadata; others get a redacted view.
+// Admin users see AdvertiseUrl, DB metadata, and group-based access rules;
+// others get a redacted view.
 func NodeOptsForSession(s *entity.Session) NodeOpts {
 	if s != nil && s.GetUser() != nil && s.GetUser().IsAdmin() {
-		return NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true}
+		return NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true, IncludeAccessRules: true}
 	}
 
 	return NodeOpts{}
@@ -31,6 +33,12 @@ func BuildClusterNode(n Node, opts NodeOpts) cluster.Node {
 
 	if !opts.IncludeDatabase {
 		out.Database = nil
+	}
+
+	if !opts.IncludeAccessRules {
+		out.AllowGroups = nil
+		out.AllowGroupRoles = nil
+		out.GroupsFullView = nil
 	}
 
 	return out

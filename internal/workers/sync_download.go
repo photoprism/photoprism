@@ -95,6 +95,10 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		return false, err
 	}
 
+	// Bound each download to the originals size limit so a remote sync target
+	// cannot overrun local storage with a single oversized file.
+	client.SetDownloadLimit(w.conf.OriginalsLimitBytes())
+
 	var baseDir string
 
 	if a.SyncFilenames {

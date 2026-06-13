@@ -94,6 +94,7 @@ func TestBootstrapClusterNode(t *testing.T) {
 func TestRegister_PersistSecretAndDB(t *testing.T) {
 	// Fake Portal server.
 	var jwksURL string
+	var portalLoginURL string
 	expectedSite := "https://public.example.test/"
 	var expectedAppName string
 	var expectedAppVersion string
@@ -109,11 +110,12 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			resp := cluster.RegisterResponse{
-				Node:        cluster.Node{Name: "pp-node-01"},
-				UUID:        rnd.UUID(),
-				ClusterCIDR: "192.0.2.0/24",
-				Secrets:     &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
-				JWKSUrl:     jwksURL,
+				Node:           cluster.Node{Name: "pp-node-01"},
+				UUID:           rnd.UUID(),
+				ClusterCIDR:    "192.0.2.0/24",
+				Secrets:        &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+				JWKSUrl:        jwksURL,
+				PortalLoginUrl: portalLoginURL,
 				Database: cluster.RegisterDatabase{
 					Driver:   dsn.DriverMySQL,
 					Host:     "db.local",
@@ -133,6 +135,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 		}
 	}))
 	jwksURL = srv.URL + "/.well-known/jwks.json"
+	portalLoginURL = srv.URL + "/portal/login"
 	defer srv.Close()
 
 	c := newBootstrapTestConfig(t, "bootstrap-reg")
@@ -160,6 +163,7 @@ func TestRegister_PersistSecretAndDB(t *testing.T) {
 	assert.Contains(t, c.Options().DatabaseDSN, "@tcp(db.local:3306)/pp_db")
 	assert.Equal(t, dsn.DriverMySQL, c.Options().DatabaseDriver)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
+	assert.Equal(t, srv.URL+"/portal/login", c.PortalLoginUrl())
 	assert.Equal(t, "192.0.2.0/24", c.ClusterCIDR())
 
 	// Secret must be stored in the secret file, not written inline to options.yml.
@@ -712,6 +716,33 @@ func TestBuildRegisterPayload_DisplayName(t *testing.T) {
 		c.Options().AppName = "Studio One"
 		c.Options().Name = "Studio One"
 		assert.Equal(t, "Studio One", buildRegisterPayload(c).DisplayName)
+	})
+}
+
+func TestBuildRegisterPayload_GroupConfig(t *testing.T) {
+	c := newBootstrapTestConfig(t, "node-groupconfig")
+
+	t.Run("Default", func(t *testing.T) {
+		payload := buildRegisterPayload(c)
+		assert.Nil(t, payload.AllowGroups)
+		assert.Nil(t, payload.AllowGroupRoles)
+		assert.False(t, payload.GroupsFullView)
+	})
+	t.Run("DeclaresConfiguredPolicy", func(t *testing.T) {
+		c.Options().ClusterAllowGroups = []string{"Media-Acme-Viewer"}
+		c.Options().ClusterAllowGroupRoles = []string{"Media-Acme-Admin=admin"}
+		c.Options().ClusterGroupsFullView = true
+		defer func() {
+			c.Options().ClusterAllowGroups = nil
+			c.Options().ClusterAllowGroupRoles = nil
+			c.Options().ClusterGroupsFullView = false
+		}()
+
+		payload := buildRegisterPayload(c)
+		assert.Equal(t, []string{"media-acme-viewer", "media-acme-admin"}, payload.AllowGroups,
+			"role-map keys must be admitted too")
+		assert.Equal(t, map[string]string{"media-acme-admin": "admin"}, payload.AllowGroupRoles)
+		assert.True(t, payload.GroupsFullView)
 	})
 }
 

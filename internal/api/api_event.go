@@ -1,12 +1,8 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-
-	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/log/status"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Event represents an api event type.
@@ -26,41 +22,32 @@ func (ev Event) String() string {
 	return string(ev)
 }
 
-// PublishPhotoEvent publishes updated photo data after changes have been made.
-func PublishPhotoEvent(ev Event, uid string, c *gin.Context) {
-	if result, _, err := search.Photos(form.SearchPhotos{UID: uid, Merged: true}); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s photo %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
-	} else {
-		event.PublishEntities("photos", string(ev), result)
+// publishEntityEvent notifies subscribed clients that entity data has changed.
+// Only the affected UID is broadcast; clients refetch entity details through
+// the REST API, which scopes and filters results per session.
+func publishEntityEvent(channel string, ev Event, uid string) {
+	if rnd.InvalidUID(uid, 0) {
+		return
 	}
+	event.PublishEntities(channel, ev.String(), []string{uid})
 }
 
-// PublishAlbumEvent publishes updated album data after changes have been made.
-func PublishAlbumEvent(ev Event, uid string, c *gin.Context) {
-	f := form.SearchAlbums{UID: uid}
-	if result, err := search.Albums(f); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s album %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
-	} else {
-		event.PublishEntities("albums", string(ev), result)
-	}
+// PublishPhotoEvent notifies subscribed clients that photo data has changed.
+func PublishPhotoEvent(ev Event, uid string) {
+	publishEntityEvent("photos", ev, uid)
 }
 
-// PublishLabelEvent publishes updated label data after changes have been made.
-func PublishLabelEvent(ev Event, uid string, c *gin.Context) {
-	f := form.SearchLabels{UID: uid}
-	if result, err := search.Labels(f); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s label %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
-	} else {
-		event.PublishEntities("labels", string(ev), result)
-	}
+// PublishAlbumEvent notifies subscribed clients that album data has changed.
+func PublishAlbumEvent(ev Event, uid string) {
+	publishEntityEvent("albums", ev, uid)
 }
 
-// PublishSubjectEvent publishes updated subject data after changes have been made.
-func PublishSubjectEvent(ev Event, uid string, c *gin.Context) {
-	f := form.SearchSubjects{UID: uid}
-	if result, err := search.Subjects(f); err != nil {
-		event.AuditErr([]string{ClientIP(c), "session %s", "%s subject %s", status.Error(err)}, SessionRefID(c), string(ev), uid)
-	} else {
-		event.PublishEntities("subjects", string(ev), result)
-	}
+// PublishLabelEvent notifies subscribed clients that label data has changed.
+func PublishLabelEvent(ev Event, uid string) {
+	publishEntityEvent("labels", ev, uid)
+}
+
+// PublishSubjectEvent notifies subscribed clients that subject data has changed.
+func PublishSubjectEvent(ev Event, uid string) {
+	publishEntityEvent("subjects", ev, uid)
 }

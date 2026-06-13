@@ -72,9 +72,81 @@ func toNode(c *entity.Client) *Node {
 		if len(data.RedirectURIs) > 0 {
 			n.RedirectURIs = append([]string(nil), data.RedirectURIs...)
 		}
+		if len(data.AllowGroups) > 0 {
+			n.AllowGroups = append([]string(nil), data.AllowGroups...)
+		}
+		if len(data.AllowGroupRoles) > 0 {
+			n.AllowGroupRoles = maps.Clone(data.AllowGroupRoles)
+		}
+		if data.GroupsFullView {
+			v := true
+			n.GroupsFullView = &v
+		}
 	}
 
 	return n
+}
+
+// applyGroupConfig applies the node's group-based admission config to data,
+// honoring source priority per n.GroupsSrc: an admin-pinned (manual) config is
+// never replaced by an instance-declared (node) one, an instance declaration
+// replaces the config wholesale and clears values it previously declared, and
+// callers that don't manage group config (empty GroupsSrc) get plain
+// nil-means-no-change semantics without provenance updates.
+func applyGroupConfig(data *entity.ClientData, n *Node) {
+	switch n.GroupsSrc {
+	case entity.ClientGroupsSrcManual:
+		changed := false
+		if n.AllowGroups != nil {
+			data.AllowGroups = append([]string(nil), n.AllowGroups...)
+			changed = true
+		}
+		if n.AllowGroupRoles != nil {
+			data.AllowGroupRoles = maps.Clone(n.AllowGroupRoles)
+			changed = true
+		}
+		if n.GroupsFullView != nil {
+			data.GroupsFullView = *n.GroupsFullView
+			changed = true
+		}
+		if !changed {
+			return
+		}
+		// A fully cleared config un-pins the override so a declared instance
+		// config can repopulate it on the next registration.
+		if len(data.AllowGroups) == 0 && len(data.AllowGroupRoles) == 0 && !data.GroupsFullView {
+			data.GroupsSrc = ""
+		} else {
+			data.GroupsSrc = entity.ClientGroupsSrcManual
+		}
+	case entity.ClientGroupsSrcNode:
+		if data.GroupsSrc == entity.ClientGroupsSrcManual {
+			return
+		}
+		if len(n.AllowGroups) > 0 || len(n.AllowGroupRoles) > 0 || (n.GroupsFullView != nil && *n.GroupsFullView) {
+			data.AllowGroups = append([]string(nil), n.AllowGroups...)
+			data.AllowGroupRoles = maps.Clone(n.AllowGroupRoles)
+			data.GroupsFullView = n.GroupsFullView != nil && *n.GroupsFullView
+			data.GroupsSrc = entity.ClientGroupsSrcNode
+		} else if data.GroupsSrc == entity.ClientGroupsSrcNode {
+			// The instance stopped declaring a config; clear only values it
+			// previously declared, never unmanaged or admin-set ones.
+			data.AllowGroups = nil
+			data.AllowGroupRoles = nil
+			data.GroupsFullView = false
+			data.GroupsSrc = ""
+		}
+	default:
+		if n.AllowGroups != nil {
+			data.AllowGroups = append([]string(nil), n.AllowGroups...)
+		}
+		if n.AllowGroupRoles != nil {
+			data.AllowGroupRoles = maps.Clone(n.AllowGroupRoles)
+		}
+		if n.GroupsFullView != nil {
+			data.GroupsFullView = *n.GroupsFullView
+		}
+	}
 }
 
 // Put creates or updates a node record, preferring NodeUUID as the primary key
@@ -169,6 +241,8 @@ func (r *ClientRegistry) Put(n *Node) error {
 		data.RedirectURIs = append([]string(nil), n.RedirectURIs...)
 	}
 
+	applyGroupConfig(data, n)
+
 	data.RotatedAt = n.RotatedAt
 
 	if theme := clean.TypeUnicode(n.Theme); theme != "" {
@@ -229,6 +303,22 @@ func (r *ClientRegistry) Put(n *Node) error {
 			n.RedirectURIs = append([]string(nil), d.RedirectURIs...)
 		} else {
 			n.RedirectURIs = nil
+		}
+		if len(d.AllowGroups) > 0 {
+			n.AllowGroups = append([]string(nil), d.AllowGroups...)
+		} else {
+			n.AllowGroups = nil
+		}
+		if len(d.AllowGroupRoles) > 0 {
+			n.AllowGroupRoles = maps.Clone(d.AllowGroupRoles)
+		} else {
+			n.AllowGroupRoles = nil
+		}
+		if d.GroupsFullView {
+			v := true
+			n.GroupsFullView = &v
+		} else {
+			n.GroupsFullView = nil
 		}
 	}
 

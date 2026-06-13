@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"math/rand/v2"
 	"net/http"
 	"os"
@@ -24,6 +25,10 @@ import (
 var (
 	errKeyNotFound = errors.New("jwt: key not found")
 )
+
+// maxJWKSResponseBytes bounds how much of a JWKS response is read so a malicious
+// or compromised IdP endpoint cannot exhaust memory; real key sets are a few KB.
+const maxJWKSResponseBytes = 1 << 20 // 1 MiB
 
 // VerifierStatus captures diagnostic information about a verifier's JWKS cache state.
 type VerifierStatus struct {
@@ -455,7 +460,7 @@ func (v *Verifier) fetchJWKS(ctx context.Context, url, etag string) (*jwksFetchR
 		}, nil
 	case http.StatusOK:
 		var body JWKS
-		if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		if err := json.NewDecoder(io.LimitReader(resp.Body, maxJWKSResponseBytes)).Decode(&body); err != nil {
 			return nil, err
 		}
 		if len(body.Keys) == 0 {

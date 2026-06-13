@@ -149,7 +149,7 @@ func LikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(StatusUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -186,7 +186,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(StatusUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

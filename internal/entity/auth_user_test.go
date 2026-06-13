@@ -1321,6 +1321,64 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 		u.DeletedAt = deleted
 		assert.Nil(t, u.UpdateLoginTime())
 	})
+	t.Run("NormalizesOutOfEditionSuperAdminRole", func(t *testing.T) {
+		u := NewUser()
+		u.UserName = "normalize-login"
+		u.DisplayName = "Normalize Login"
+		u.SuperAdmin = true
+		u.UserRole = acl.RoleAdmin.String()
+		u.CanLogin = true
+
+		if err := u.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Simulate a leftover out-of-edition role written outside this edition's
+		// validation (e.g. a Portal cluster_admin row on a Plus instance).
+		if err := Db().Model(u).UpdateColumn("UserRole", acl.RoleClusterAdmin.String()).Error; err != nil {
+			t.Fatal(err)
+		}
+		u.UserRole = acl.RoleClusterAdmin.String()
+
+		// Logging in normalizes the stored role back to the edition's admin role.
+		// CE/Plus/Pro register only admin (not cluster_admin), so the target is admin.
+		u.UpdateLoginTime()
+		assert.Equal(t, acl.RoleAdmin.String(), u.UserRole)
+
+		m := FindUser(User{UserUID: u.UserUID})
+		if m == nil {
+			t.Fatal("result must not be nil")
+		}
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+}
+
+func TestUser_NormalizeAdminRole(t *testing.T) {
+	// CE registers admin but not cluster_admin, so the edition target is admin.
+	t.Run("ForeignSuperAdminRoleReset", func(t *testing.T) {
+		m := &User{UserName: "norm-foreign", SuperAdmin: true, UserRole: acl.RoleClusterAdmin.String()}
+		assert.True(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+	t.Run("RegisteredAdminRoleKept", func(t *testing.T) {
+		m := &User{UserName: "norm-admin", SuperAdmin: true, UserRole: acl.RoleAdmin.String()}
+		assert.False(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+	t.Run("NonAdminTierSuperAdminRoleReset", func(t *testing.T) {
+		m := &User{UserName: "norm-guest", SuperAdmin: true, UserRole: acl.RoleGuest.String()}
+		assert.True(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+	t.Run("RegularAccountUntouched", func(t *testing.T) {
+		m := &User{UserName: "norm-regular", SuperAdmin: false, UserRole: acl.RoleClusterAdmin.String()}
+		assert.False(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleClusterAdmin.String(), m.UserRole)
+	})
+	t.Run("NilUser", func(t *testing.T) {
+		var m *User
+		assert.False(t, m.NormalizeAdminRole())
+	})
 }
 
 func TestUser_CanLogIn(t *testing.T) {

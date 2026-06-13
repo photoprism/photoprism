@@ -969,7 +969,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			})
 		}
 
-		event.EntitiesCreated("photos", []entity.Photo{photo})
+		event.EntitiesCreated("photos", []string{photo.PhotoUID})
 	}
 
 	photo.AddLabels(labels)

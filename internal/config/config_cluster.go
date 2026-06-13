@@ -6,9 +6,12 @@ import (
 	urlpkg "net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
+	"unicode"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -48,6 +51,7 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 	setOptionString(patch, "ClusterCIDR", update.ClusterCIDR)
 	setOptionString(patch, "NodeClientID", update.NodeClientID)
 	setOptionString(patch, "JWKSUrl", update.JWKSUrl)
+	setOptionString(patch, "PortalLoginUrl", update.PortalLoginUrl)
 	setOptionString(patch, "NodeUUID", update.NodeUUID)
 	setOptionString(patch, "DatabaseDriver", update.DatabaseDriver)
 	setOptionString(patch, "DatabaseDSN", update.DatabaseDSN)
@@ -114,6 +118,104 @@ func (c *Config) ClusterUUID() string {
 // Portal returns true if the configured node type is "portal".
 func (c *Config) Portal() bool {
 	return c.NodeRole() == cluster.RolePortal
+}
+
+// ClusterAllowGroups returns the normalized group identifiers admitted to this
+// instance for Portal cluster admission, including the keys of
+// ClusterAllowGroupRoles so a role mapping alone admits its groups.
+func (c *Config) ClusterAllowGroups() []string {
+	seen := make(map[string]struct{})
+	result := make([]string, 0, len(c.options.ClusterAllowGroups))
+
+	add := func(id string) {
+		if n := normalizeGroupID(id); n != "" {
+			if _, dup := seen[n]; !dup {
+				seen[n] = struct{}{}
+				result = append(result, n)
+			}
+		}
+	}
+
+	for _, entry := range c.options.ClusterAllowGroups {
+		for _, id := range splitGroupList(entry) {
+			add(id)
+		}
+	}
+
+	// Role-map keys join the admitted set in sorted order for stable output.
+	roles := c.ClusterAllowGroupRoles()
+	keys := make([]string, 0, len(roles))
+
+	for group := range roles {
+		keys = append(keys, group)
+	}
+
+	sort.Strings(keys)
+
+	for _, group := range keys {
+		add(group)
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	return result
+}
+
+// ClusterAllowGroupRoles maps normalized group identifiers to the instance
+// role granted on Portal cluster admission. Entries parse as GROUP=ROLE pairs
+// like OIDCGroupRoles; non-federatable roles (cluster_admin, visitor) and
+// malformed pairs are dropped.
+func (c *Config) ClusterAllowGroupRoles() map[string]string {
+	if len(c.options.ClusterAllowGroupRoles) == 0 {
+		return nil
+	}
+
+	result := make(map[string]string, len(c.options.ClusterAllowGroupRoles))
+
+	for _, entry := range c.options.ClusterAllowGroupRoles {
+		entry = strings.TrimSpace(entry)
+
+		if entry == "" {
+			continue
+		}
+
+		sep := strings.IndexAny(entry, "=:")
+
+		if sep < 1 || sep >= len(entry)-1 {
+			continue
+		}
+
+		group := normalizeGroupID(entry[:sep])
+		role := acl.ParseRole(entry[sep+1:])
+
+		if group == "" || !acl.IsFederatedRole(role) {
+			continue
+		}
+
+		result[group] = role.String()
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	return result
+}
+
+// ClusterGroupsFullView reports whether the Portal should send the user's full
+// group set to this instance instead of only the contributing groups.
+func (c *Config) ClusterGroupsFullView() bool {
+	return c.options.ClusterGroupsFullView
+}
+
+// splitGroupList splits a raw option entry into group identifiers, accepting
+// comma- and whitespace-separated lists.
+func splitGroupList(s string) []string {
+	return strings.FieldsFunc(s, func(r rune) bool {
+		return r == ',' || unicode.IsSpace(r)
+	})
 }
 
 // PortalOIDCIssuer returns the issuer URL advertised by the Portal's OIDC OP
@@ -549,41 +651,75 @@ func (c *Config) JWKSUrl() string {
 	return strings.TrimSpace(c.options.JWKSUrl)
 }
 
-// SetJWKSUrl updates the configured JWKS endpoint for portal-issued JWTs.
+// validClusterURL returns the trimmed URL and true when it is an absolute
+// HTTPS URL, or an HTTP URL on a loopback host; an empty input is valid and
+// returns the empty string.
+func validClusterURL(url string) (string, bool) {
+	trimmed := strings.TrimSpace(url)
+	if trimmed == "" {
+		return "", true
+	}
+
+	parsed, err := urlpkg.Parse(trimmed)
+	if err != nil || parsed == nil || parsed.Scheme == "" || parsed.Host == "" {
+		return trimmed, false
+	}
+
+	switch strings.ToLower(parsed.Scheme) {
+	case "https":
+		return trimmed, true
+	case "http":
+		return trimmed, dns.IsLoopbackHost(parsed.Hostname())
+	default:
+		return trimmed, false
+	}
+}
+
+// SetJWKSUrl updates the configured JWKS endpoint for portal-issued JWTs
+// (HTTPS, or HTTP for loopback hosts only).
 func (c *Config) SetJWKSUrl(url string) {
 	if c == nil || c.options == nil {
 		return
 	}
 
-	trimmed := strings.TrimSpace(url)
-	if trimmed == "" {
-		c.options.JWKSUrl = ""
-		return
-	}
-
-	parsed, err := urlpkg.Parse(trimmed)
-	if err != nil || parsed == nil || parsed.Scheme == "" || parsed.Host == "" {
-		log.Warnf("config: ignoring JWKS URL %q (%v)", trimmed, err)
-		return
-	}
-
-	scheme := strings.ToLower(parsed.Scheme)
-	host := parsed.Hostname()
-
-	switch scheme {
-	case "https":
-		// Always allowed.
-	case "http":
-		if !dns.IsLoopbackHost(host) {
-			log.Warnf("config: rejecting JWKS URL %q (http only allowed for localhost/loopback)", trimmed)
-			return
-		}
-	default:
-		log.Warnf("config: rejecting JWKS URL %q (unsupported scheme)", trimmed)
+	trimmed, ok := validClusterURL(url)
+	if !ok {
+		log.Warnf("config: rejecting JWKS URL %s (must be https, or http on loopback)", clean.Log(trimmed))
 		return
 	}
 
 	c.options.JWKSUrl = trimmed
+}
+
+// PortalLoginUrl returns the browser-facing Portal login page URL. Nodes
+// persist it from the Portal's register response, which derives it from the
+// Portal's SiteUrl and login route; the frontend uses it to land cluster
+// sign-outs on the Portal login instead of re-initiating the instance OIDC
+// roundtrip with a pinned return_to. Stored values are re-validated on read,
+// so an invalid or stale URL (e.g. from a hand-edited options.yml or env)
+// never becomes a browser redirect target.
+func (c *Config) PortalLoginUrl() string {
+	if v, ok := validClusterURL(c.options.PortalLoginUrl); ok {
+		return v
+	}
+
+	return ""
+}
+
+// SetPortalLoginUrl updates the browser-facing Portal login page URL
+// (HTTPS, or HTTP for loopback hosts only).
+func (c *Config) SetPortalLoginUrl(url string) {
+	if c == nil || c.options == nil {
+		return
+	}
+
+	trimmed, ok := validClusterURL(url)
+	if !ok {
+		log.Warnf("config: rejecting portal login URL %s (must be https, or http on loopback)", clean.Log(trimmed))
+		return
+	}
+
+	c.options.PortalLoginUrl = trimmed
 }
 
 // JWKSCacheTTL returns the JWKS cache lifetime in seconds (default 300, max 3600).

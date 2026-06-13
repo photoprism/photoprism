@@ -213,11 +213,18 @@ export default {
 
       switch (type) {
         case ACTION_UPDATED:
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            if (values.UID && values.Title && this.model.UID === values.UID) {
-              this.model.setValues({ Title: values.Title, Caption: values.Caption }, true);
-            }
+          // photos.updated carries only UIDs; refetch the open photo through
+          // the scoped REST API to mirror Title/Caption edits made by other
+          // clients into the form.
+          if (data.entities.includes(this.model.UID)) {
+            this.model
+              .find(this.model.UID)
+              .then((values) => {
+                if (values.Title) {
+                  this.model.setValues({ Title: values.Title, Caption: values.Caption }, true);
+                }
+              })
+              .catch(() => {});
           }
           break;
       }

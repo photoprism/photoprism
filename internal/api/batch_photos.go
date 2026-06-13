@@ -272,7 +272,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		event.EntitiesUpdated("photos", approved)
+		event.EntitiesUpdated("photos", approved.UIDs())
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionApproved))
 	})
@@ -339,7 +339,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 				SaveSidecarYaml(p)
 			}
 
-			event.EntitiesUpdated("photos", photos)
+			event.EntitiesUpdated("photos", photos.UIDs())
 		}
 
 		UpdateClientConfig()

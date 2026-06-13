@@ -970,12 +970,12 @@ func TestBatchPhotosEdit(t *testing.T) {
 			t.Fatalf("removed label reappeared unexpectedly (src=%s uncertainty=%d)", re.LabelSrc, re.Uncertainty)
 		}
 	})
-	t.Run("EmitsPhotosEditedAfterSave", func(t *testing.T) {
+	t.Run("EmitsPhotosUpdatedAfterSave", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosEdit(router)
 
-		// Subscribe to photos.edited before mutating; drain on cleanup.
-		sub := event.Subscribe("photos.edited")
+		// Subscribe to photos.updated before mutating; drain on cleanup.
+		sub := event.Subscribe("photos.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })
 
 		photoUIDs := `["pqkm36fjqvset9uy", "pqkm36fjqvset9uz"]`
@@ -987,27 +987,27 @@ func TestBatchPhotosEdit(t *testing.T) {
 		// One event for the whole batch with the full UID list — never per UID.
 		select {
 		case msg := <-sub.Receiver:
-			assert.Equal(t, "photos.edited", msg.Name)
+			assert.Equal(t, "photos.updated", msg.Name)
 			uids, ok := msg.Fields["entities"].([]string)
 			assert.True(t, ok, "entities payload should be []string, got %T", msg.Fields["entities"])
 			assert.ElementsMatch(t, []string{"pqkm36fjqvset9uy", "pqkm36fjqvset9uz"}, uids)
 		case <-time.After(2 * time.Second):
-			t.Fatal("expected one photos.edited event after batch save")
+			t.Fatal("expected one photos.updated event after batch save")
 		}
 
 		// No further events for this batch — pin the one-event-per-batch contract.
 		select {
 		case extra := <-sub.Receiver:
-			t.Fatalf("unexpected extra photos.edited event: %s %v", extra.Name, extra.Fields)
+			t.Fatalf("unexpected extra photos.updated event: %s %v", extra.Name, extra.Fields)
 		case <-time.After(200 * time.Millisecond):
 			// expected: queue drained.
 		}
 	})
-	t.Run("NoEditedEventWhenNothingSaved", func(t *testing.T) {
+	t.Run("NoUpdatedEventWhenNothingSaved", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosEdit(router)
 
-		sub := event.Subscribe("photos.edited")
+		sub := event.Subscribe("photos.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })
 
 		// SuccessNoChange path: photos selected but no Values supplied,
@@ -1018,7 +1018,7 @@ func TestBatchPhotosEdit(t *testing.T) {
 
 		select {
 		case msg := <-sub.Receiver:
-			t.Fatalf("unexpected photos.edited on no-change request: %s %v", msg.Name, msg.Fields)
+			t.Fatalf("unexpected photos.updated on no-change request: %s %v", msg.Name, msg.Fields)
 		case <-time.After(200 * time.Millisecond):
 			// expected: nothing saved, nothing published.
 		}

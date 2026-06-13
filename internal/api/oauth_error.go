@@ -24,6 +24,14 @@ func oauthWantsHTML(c *gin.Context) bool {
 	return strings.Contains(strings.ToLower(c.GetHeader(header.Accept)), gin.MIMEHTML)
 }
 
+// OAuthWantsHTML reports whether the request is a top-level browser navigation
+// that should receive an HTML response instead of JSON, so OP handlers in
+// extension builds can apply the same content negotiation as the shared
+// OAuth/OIDC error helpers.
+func OAuthWantsHTML(c *gin.Context) bool {
+	return oauthWantsHTML(c)
+}
+
 // RenderOAuthError responds to a non-redirectable OAuth/OIDC error with a branded
 // HTML page for browsers or the standard JSON body for API clients. Use it only
 // when there is no trusted redirect_uri (RFC 6749 §4.1.2.1 forbids redirecting to

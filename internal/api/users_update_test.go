@@ -216,6 +216,41 @@ func TestUpdateUser_Guards(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", string(body), sessId)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
+	t.Run("SelfSuperAdminDisableForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateAdmin(app, router)
+		// Raw JSON so the explicit false survives marshaling (the form tags
+		// use omitempty, mirroring what the web UI sends).
+		body := `{"UserName":"admin","SuperAdmin":false}`
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.Admin.UserUID, body, sessId)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+		assert.True(t, entity.FindUserByUID(entity.Admin.UserUID).SuperAdmin, "own super admin status must remain enabled")
+	})
+	t.Run("SelfWebLoginDisableForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateAdmin(app, router)
+		body := `{"UserName":"admin","CanLogin":false}`
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.Admin.UserUID, body, sessId)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+		assert.True(t, entity.FindUserByUID(entity.Admin.UserUID).CanLogin, "own web login must remain enabled")
+	})
+	t.Run("SelfProfileEditStillAllowed", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateAdmin(app, router)
+		admin := entity.FindUserByUID(entity.Admin.UserUID)
+		body := `{"UserName":"admin","SuperAdmin":true,"CanLogin":true,"DisplayName":"` + admin.DisplayName + `"}`
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.Admin.UserUID, body, sessId)
+		assert.Equal(t, http.StatusOK, r.Code, "unchanged privilege flags must not block own-profile edits; body=%s", r.Body.String())
+	})
 	t.Run("SystemAccountForbidden", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)

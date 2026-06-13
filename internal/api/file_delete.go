@@ -93,7 +93,7 @@ func DeleteFile(router *gin.RouterGroup) {
 		}
 
 		// Notify clients by publishing events.
-		PublishPhotoEvent(StatusUpdated, photoUid, c)
+		PublishPhotoEvent(StatusUpdated, photoUid)
 
 		// Show translated success message.
 		event.SuccessMsg(i18n.MsgFileDeleted)

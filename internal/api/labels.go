@@ -80,7 +80,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 
 		event.SuccessMsg(i18n.MsgLabelSaved)
 
-		PublishLabelEvent(StatusUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -123,7 +123,7 @@ func LikeLabel(router *gin.RouterGroup) {
 			})
 		}
 
-		PublishLabelEvent(StatusUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -166,7 +166,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 			})
 		}
 
-		PublishLabelEvent(StatusUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

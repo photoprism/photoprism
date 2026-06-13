@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -213,6 +214,100 @@ func TestClusterUpdateNode_RedirectURIs_Replace_And_Clear(t *testing.T) {
 	r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
 	assert.Equal(t, http.StatusOK, r.Code)
 	assert.NotContains(t, r.Body.String(), `"RedirectURIs"`, "empty slice must drop the field via omitempty")
+}
+
+// TestNormalizeAllowGroupRoles validates the PATCH-time group → role mapping
+// helper: keys are normalized, empty keys dropped, and role values must be
+// federatable instance roles.
+func TestNormalizeAllowGroupRoles(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		// The role table is edition-aware: acl.UserRoles in CE covers
+		// admin/guest; Pro and Portal builds register the full set.
+		out, err := normalizeAllowGroupRoles(map[string]string{
+			"Media-Acme-Admin": "admin",
+			"Media-Acme-Guest": "guest",
+			"   ":              "admin",
+		})
+		assert.NoError(t, err)
+		assert.Equal(t, map[string]string{"media-acme-admin": "admin", "media-acme-guest": "guest"}, out)
+	})
+	t.Run("InvalidRole", func(t *testing.T) {
+		for _, role := range []string{"cluster_admin", "visitor", "none", "bogus", ""} {
+			_, err := normalizeAllowGroupRoles(map[string]string{"media-acme-x": role})
+			assert.Error(t, err, "role %q must be rejected", role)
+		}
+	})
+}
+
+// TestClusterUpdateNode_GroupRules covers the group-based admission config on
+// PATCH: AllowGroups apply/replace/clear with normalization, AllowGroupRoles
+// role validation, and the GroupsFullView opt-in round-trip.
+func TestClusterUpdateNode_GroupRules(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+
+	ClusterGetNode(router)
+	ClusterUpdateNode(router)
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+
+	n := &reg.Node{Node: cluster.Node{Name: "pp-node-groups", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	assert.NoError(t, regy.Put(n))
+	n, err = regy.FindByName("pp-node-groups")
+	assert.NoError(t, err)
+
+	t.Run("Apply", func(t *testing.T) {
+		body := `{"AllowGroups":["Media-Acme-Admin","Media-Acme-Viewer"],"AllowGroupRoles":{"Media-Acme-Admin":"admin"},"GroupsFullView":true}`
+		r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, body)
+		assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+
+		client := entity.FindClientByNodeUUID(n.UUID)
+		assert.NotNil(t, client)
+		data := client.GetData()
+		assert.Equal(t, []string{"media-acme-admin", "media-acme-viewer"}, data.AllowGroups, "stored groups must be normalized")
+		assert.Equal(t, map[string]string{"media-acme-admin": "admin"}, data.AllowGroupRoles)
+		assert.True(t, data.GroupsFullView)
+
+		r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Contains(t, r.Body.String(), `"media-acme-admin"`)
+		assert.Contains(t, r.Body.String(), `"GroupsFullView":true`)
+	})
+	t.Run("OmittedFieldsUnchanged", func(t *testing.T) {
+		r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"DisplayName":"Groups Node"}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		data := entity.FindClientByNodeUUID(n.UUID).GetData()
+		assert.Equal(t, []string{"media-acme-admin", "media-acme-viewer"}, data.AllowGroups)
+		assert.True(t, data.GroupsFullView)
+	})
+	t.Run("ReplaceAndClear", func(t *testing.T) {
+		r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID,
+			`{"AllowGroups":["Media-Acme-User"],"AllowGroupRoles":{},"GroupsFullView":false}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		data := entity.FindClientByNodeUUID(n.UUID).GetData()
+		assert.Equal(t, []string{"media-acme-user"}, data.AllowGroups)
+		assert.Empty(t, data.AllowGroupRoles)
+		assert.False(t, data.GroupsFullView)
+
+		r = PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID, `{"AllowGroups":[]}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		data = entity.FindClientByNodeUUID(n.UUID).GetData()
+		assert.Empty(t, data.AllowGroups, "empty slice must clear the persisted set")
+
+		r = PerformRequest(app, http.MethodGet, "/api/v1/cluster/nodes/"+n.UUID)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.NotContains(t, r.Body.String(), `"AllowGroups"`, "cleared set must drop the field via omitempty")
+		assert.NotContains(t, r.Body.String(), `"GroupsFullView"`, "false opt-in must drop the field via omitempty")
+	})
+	t.Run("InvalidRole", func(t *testing.T) {
+		r := PerformRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID,
+			`{"AllowGroupRoles":{"Media-Acme-Operators":"cluster_admin"}}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code, "body=%s", r.Body.String())
+	})
 }
 
 // TestClusterUpdateNode_RedirectURIs_Invalid rejects malformed entries with
