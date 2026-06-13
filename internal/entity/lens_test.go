@@ -67,12 +67,34 @@ func TestLens_String(t *testing.T) {
 
 func TestFirstOrCreateLens(t *testing.T) {
 	t.Run("ExistingLens", func(t *testing.T) {
-		lens := NewLens("Apple", "iPhone SE")
+		fixture := "4.15mm-f/2.2"
+		lens := NewLens(LensFixtures.Get(fixture).LensMake, "iPhone SE back camera 4.15mm f/2.2") // Use value that comes back from exiftool
 
 		result := FirstOrCreateLens(lens)
 
-		if result == nil {
-			t.Fatal("result must not be nil")
+		assert.NotNil(t, result)
+		if result != nil {
+			assert.Equal(t, LensFixtures.Get(fixture).ID, result.ID)
+			assert.Equal(t, LensFixtures.Get(fixture).LensMake, result.LensMake)
+			assert.Equal(t, LensFixtures.Get(fixture).LensModel, result.LensModel)
+			assert.Equal(t, LensFixtures.Get(fixture).LensSlug, result.LensSlug)
+			assert.Equal(t, LensFixtures.Get(fixture).LensName, result.LensName)
+		}
+	})
+	t.Run("ExistingLensWithOnlyModel", func(t *testing.T) {
+		// This tests the Pentax lens situation
+		fixture := "4-37"
+		lens := NewLens(LensFixtures.Get(fixture).LensMake, LensFixtures.Get(fixture).LensModel)
+
+		result := FirstOrCreateLens(lens)
+
+		assert.NotNil(t, result)
+		if result != nil {
+			assert.Equal(t, LensFixtures.Get(fixture).ID, result.ID)
+			assert.Equal(t, LensFixtures.Get(fixture).LensMake, result.LensMake)
+			assert.Equal(t, LensFixtures.Get(fixture).LensModel, result.LensModel)
+			assert.Equal(t, LensFixtures.Get(fixture).LensSlug, result.LensSlug)
+			assert.Equal(t, LensFixtures.Get(fixture).LensName, result.LensName)
 		}
 	})
 	t.Run("NotExistingLens", func(t *testing.T) {
@@ -89,6 +111,23 @@ func TestFirstOrCreateLens(t *testing.T) {
 
 func TestLensUpdateMakeModel(t *testing.T) {
 	t.Run("ExistingLens", func(t *testing.T) {
+		fixture := "4-37"
+		lens := NewLens(LensFixtures.Get(fixture).LensMake, LensFixtures.Get(fixture).LensModel)
+
+		result := FirstOrCreateLens(lens)
+
+		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error)
+		make := "Tamron"
+		model := "Tamron SP AF 24-135mm F3.5-5.6 AD AL (190D)"
+		err := result.UpdateMakeModel(make, model)
+		assert.NoError(t, err)
+		assert.Equal(t, LensFixtures.Get(fixture).ID, result.ID)
+		assert.Equal(t, make, result.LensMake)
+		assert.Equal(t, "SP AF 24-135mm F3.5-5.6 AD AL (190D)", result.LensModel) // NewLens strips Tamron from model to prevent double up in name
+		assert.Equal(t, LensFixtures.Get(fixture).LensSlug, result.LensSlug)
+		assert.Equal(t, model, result.LensName) // NewLens prevents Tamron Tamron ... as name
+	})
+	t.Run("NewLens", func(t *testing.T) {
 		setup := NewLens("", "4 38")
 		lens := FirstOrCreateLens(setup)
 		defer assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", lens.ID).Error)

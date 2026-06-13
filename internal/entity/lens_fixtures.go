@@ -22,6 +22,7 @@ func (m LensMap) Pointer(name string) *Lens {
 	return NewLens("", name)
 }
 
+// LensFixtures holds the set of test fixtures for Lenses
 var LensFixtures = LensMap{
 	"lens-f-380": {
 		ID:              1000000,
@@ -38,10 +39,10 @@ var LensFixtures = LensMap{
 	},
 	"4.15mm-f/2.2": {
 		ID:              1000001,
-		LensSlug:        "4.15mm-f/2.2",
-		LensName:        "Apple iPhone SE back camera 4.15mm f/2.2",
+		LensSlug:        "apple-iphone-se-4-15mm-f-2-2",
+		LensName:        "Apple iPhone SE 4.15mm f/2.2",
 		LensMake:        "Apple",
-		LensModel:       "iPhone SE back camera 4.15mm f/2.2",
+		LensModel:       "iPhone SE 4.15mm f/2.2",
 		LensType:        "",
 		LensDescription: "",
 		LensNotes:       "Notes",

@@ -39,8 +39,8 @@ func TestLenses(t *testing.T) {
 			}
 		}
 	})
-	t.Run("SearchForCamera", func(t *testing.T) {
-		query := form.NewLensSearch("Q:camera")
+	t.Run("SearchForString", func(t *testing.T) {
+		query := form.NewLensSearch("Q:4.15mm")
 		query.Count = 1005
 		result, err := Lenses(query)
 
@@ -91,6 +91,7 @@ func TestLenses(t *testing.T) {
 		}
 	})
 	t.Run("SearchWithEmptyQuery", func(t *testing.T) {
+		fixture := "4-37"
 		query := form.NewLensSearch("")
 		result, err := Lenses(query)
 
@@ -98,9 +99,10 @@ func TestLenses(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.LessOrEqual(t, 3, len(result))
-		assert.Equal(t, "4-37", result[0].LensSlug)
+		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
 	t.Run("SearchWithReverse", func(t *testing.T) {
+		fixture := "4.15mm-f/2.2"
 		query := form.NewLensSearch("")
 		query.Reverse = true
 		result, err := Lenses(query)
@@ -109,7 +111,7 @@ func TestLenses(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.LessOrEqual(t, 3, len(result))
-		assert.Equal(t, "4.15mm-f/2.2", result[0].LensSlug)
+		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
 	t.Run("SearchForNoMakeAndQueryNoResults", func(t *testing.T) {
 		query := form.NewLensSearch("Apple")
