@@ -97,14 +97,19 @@ spec:
             - name: PHOTOPRISM_DATABASE_USER
               value: {{ $dbUser | quote }}
             {{- end }}
-            {{- $dbPassword := trim (default "" .Values.database.password) -}}
-            {{- if ne $dbPassword "" }}
+            {{- if .Values.database.passwordSecretName }}
+            - name: PHOTOPRISM_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.passwordSecretName | quote }}
+                  key: {{ (default "PHOTOPRISM_DATABASE_PASSWORD" .Values.database.passwordSecretKey) | quote }}
+            {{- else if ne (trim (default "" .Values.database.password)) "" }}
             - name: PHOTOPRISM_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ printf "%s-secrets" (include "photoprism-plus.fullname" .) }}
                   key: PHOTOPRISM_DATABASE_PASSWORD
-            {{- end }}
+            {{- end}}
             - name: PHOTOPRISM_DATABASE_TIMEOUT
               value: {{ printf "%v" .Values.database.timeout | quote }}
             - name: PHOTOPRISM_DATABASE_CONNS
