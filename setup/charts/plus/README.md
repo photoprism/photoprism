@@ -72,6 +72,27 @@ ingress:
 
 Because TLS typically terminates at the ingress or proxy layer, the chart keeps `PHOTOPRISM_DISABLE_TLS` set to `true`. Only enable PhotoPrism’s internal TLS if your cluster design requires end-to-end encryption and you manage the certificates yourself.
 
+## Database Password
+
+You can provide the database password in two ways:
+
+1. **External secret** – set `database.passwordSecretName` to reference a pre-existing Kubernetes Secret. By default the
+   chart looks for a `PHOTOPRISM_DATABASE_PASSWORD` key; set `database.passwordSecretKey` to use a different key name:
+   ```yaml
+   database:
+     passwordSecretName: my-db-credentials
+     # passwordSecretKey: DB_PASSWORD  # optional, defaults to PHOTOPRISM_DATABASE_PASSWORD
+   ```
+2. **Inline** – set `database.password` directly (the chart stores it in its managed Secret and references it via
+   `secretKeyRef`):
+   ```yaml
+   database:
+     password: "changeme"
+   ```
+
+If both are set, `database.passwordSecretName` takes precedence. If neither is set, no password env var is injected (
+suitable for SQLite).
+
 ## Security Tips
 
 - When `adminPassword` is left blank, a random password is generated and stored in `secret/<release>-photoprism-secrets`.
