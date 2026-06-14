@@ -62,7 +62,7 @@ type Service struct {
 	SyncRaw       bool           `json:"SyncRaw"`
 	CreatedAt     time.Time      `deepcopier:"skip" json:"CreatedAt"`
 	UpdatedAt     time.Time      `deepcopier:"skip" json:"UpdatedAt"`
-	DeletedAt     gorm.DeletedAt `deepcopier:"skip" sql:"index" json:"DeletedAt"`
+	DeletedAt     gorm.DeletedAt `deepcopier:"skip" gorm:"index" json:"DeletedAt"`
 }
 
 // TableName returns the entity table name.

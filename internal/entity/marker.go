@@ -51,7 +51,7 @@ type Marker struct {
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
 	Score          int             `gorm:"type:int;size:16;" json:"Score" yaml:"Score,omitempty"`
 	Thumb          string          `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
+	MatchedAt      *time.Time      `gorm:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }

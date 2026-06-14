@@ -67,7 +67,7 @@ type UserShare struct {
 	UserUID   string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"UserUID"`
 	ShareUID  string     `gorm:"type:bytes;size:42;primaryKey;index;" json:"ShareUID" yaml:"ShareUID"`
 	LinkUID   string     `gorm:"type:bytes;size:42;" json:"LinkUID,omitempty" yaml:"LinkUID,omitempty"`
-	ExpiresAt *time.Time `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
+	ExpiresAt *time.Time `gorm:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	Comment   string     `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm      uint       `json:"Perm,omitempty" yaml:"Perm,omitempty"`
 	RefID     string     `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`

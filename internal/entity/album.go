@@ -61,7 +61,7 @@ type Album struct {
 	AlbumCaption     string         `gorm:"size:1024;" json:"Caption" yaml:"Caption,omitempty"`
 	AlbumDescription string         `gorm:"size:2048;" json:"Description" yaml:"Description,omitempty"`
 	AlbumNotes       string         `gorm:"size:1024;" json:"Notes" yaml:"Notes,omitempty"`
-	AlbumFilter      string         `gorm:"type:bytes;size:2048;" json:"Filter" yaml:"Filter,omitempty"`
+	AlbumFilter      string         `gorm:"type:bytes;size:2048;index;default:''" json:"Filter" yaml:"Filter,omitempty"`
 	AlbumOrder       string         `gorm:"type:bytes;size:32;" json:"Order" yaml:"Order,omitempty"`
 	AlbumTemplate    string         `gorm:"type:bytes;size:255;" json:"Template" yaml:"Template,omitempty"`
 	AlbumState       string         `gorm:"size:100;index;" json:"State" yaml:"State,omitempty"`
@@ -76,8 +76,8 @@ type Album struct {
 	CreatedBy        string         `gorm:"type:bytes;size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time      `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time      `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
-	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
+	PublishedAt      *time.Time     `gorm:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt        gorm.DeletedAt `gorm:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
 	Photos           []PhotoAlbum   `gorm:"foreignkey:AlbumUID;references:AlbumUID" json:"-" yaml:"Photos,omitempty"`
 }
 

@@ -39,7 +39,7 @@ type Subject struct {
 	ThumbSrc     string         `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt    time.Time      `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time      `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
+	DeletedAt    gorm.DeletedAt `gorm:"index;" json:"DeletedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.

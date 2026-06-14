@@ -15,7 +15,7 @@ type Reaction struct {
 	UserUID   string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
 	Reaction  string     `gorm:"type:bytes;size:64;primaryKey;autoIncrement:false" json:"Reaction,omitempty" yaml:"Reaction,omitempty"`
 	Reacted   int        `json:"Reacted,omitempty" yaml:"Reacted,omitempty"`
-	ReactedAt *time.Time `sql:"index" json:"ReactedAt,omitempty" yaml:"ReactedAt,omitempty"`
+	ReactedAt *time.Time `gorm:"index" json:"ReactedAt,omitempty" yaml:"ReactedAt,omitempty"`
 }
 
 // TableName returns the entity table name.

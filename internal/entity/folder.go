@@ -42,8 +42,8 @@ type Folder struct {
 	CreatedAt         time.Time      `json:"-" yaml:"-"`
 	UpdatedAt         time.Time      `json:"-" yaml:"-"`
 	ModifiedAt        time.Time      `json:"ModifiedAt" yaml:"-"`
-	PublishedAt       *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt         gorm.DeletedAt `sql:"index" json:"-" yaml:"DeletedAt,omitempty"`
+	PublishedAt       *time.Time     `gorm:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt         gorm.DeletedAt `gorm:"index" json:"-" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.

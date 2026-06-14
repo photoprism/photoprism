@@ -87,7 +87,7 @@ type Photo struct {
 	PhotoFaces       int            `json:"Faces,omitempty" yaml:"Faces,omitempty"`
 	PhotoResolution  int            `gorm:"type:int;size:16;" json:"Resolution" yaml:"-"`
 	PhotoDuration    time.Duration  `json:"Duration,omitempty" yaml:"Duration,omitempty"`
-	PhotoColor       int16          `json:"Color" yaml:"-"`
+	PhotoColor       int16          `gorm:"default:-1;" json:"Color" yaml:"-"`
 	CameraID         uint           `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
 	CameraSerial     string         `gorm:"type:bytes;size:160;" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string         `gorm:"type:bytes;size:8;" json:"CameraSrc" yaml:"-"`
@@ -105,11 +105,11 @@ type Photo struct {
 	CreatedAt        time.Time      `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time      `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time     `json:"EditedAt,omitempty" yaml:"EditedAt,omitempty"`
-	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	PublishedAt      *time.Time     `gorm:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	IndexedAt        *time.Time     `json:"IndexedAt,omitempty" yaml:"-"`
-	CheckedAt        *time.Time     `sql:"index" json:"CheckedAt,omitempty" yaml:"-"`
+	CheckedAt        *time.Time     `gorm:"index" json:"CheckedAt,omitempty" yaml:"-"`
 	EstimatedAt      *time.Time     `json:"EstimatedAt,omitempty" yaml:"-"`
-	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
+	DeletedAt        gorm.DeletedAt `gorm:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.

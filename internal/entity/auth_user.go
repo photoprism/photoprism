@@ -63,7 +63,7 @@ type User struct {
 	SuperAdmin    bool           `json:"SuperAdmin" yaml:"SuperAdmin,omitempty"`
 	CanLogin      bool           `json:"CanLogin" yaml:"CanLogin,omitempty"`
 	LoginAt       *time.Time     `json:"LoginAt" yaml:"LoginAt,omitempty"`
-	ExpiresAt     *time.Time     `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
+	ExpiresAt     *time.Time     `gorm:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	WebDAV        bool           `gorm:"column:webdav;" json:"WebDAV" yaml:"WebDAV,omitempty"`
 	BasePath      string         `gorm:"type:bytes;size:1024;" json:"BasePath" yaml:"BasePath,omitempty"`
 	UploadPath    string         `gorm:"type:bytes;size:1024;" json:"UploadPath" yaml:"UploadPath,omitempty"`
@@ -73,7 +73,7 @@ type User struct {
 	VerifyToken   string         `gorm:"type:bytes;size:64;" json:"-" yaml:"-"`
 	VerifiedAt    *time.Time     `json:"VerifiedAt,omitempty" yaml:"VerifiedAt,omitempty"`
 	ConsentAt     *time.Time     `json:"ConsentAt,omitempty" yaml:"ConsentAt,omitempty"`
-	BornAt        *time.Time     `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
+	BornAt        *time.Time     `gorm:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
 	UserDetails   *UserDetails   `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Details,omitempty" yaml:"Details,omitempty"`
 	UserSettings  *UserSettings  `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Settings,omitempty" yaml:"Settings,omitempty"`
 	UserShares    []UserShare    `gorm:"foreignKey:UserUID;references:UserUID" json:"Shares,omitempty" yaml:"Shares,omitempty"`
@@ -85,7 +85,7 @@ type User struct {
 	RefID         string         `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
 	CreatedAt     time.Time      `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time      `json:"UpdatedAt" yaml:"-"`
-	DeletedAt     gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
+	DeletedAt     gorm.DeletedAt `gorm:"index" json:"DeletedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.

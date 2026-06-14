@@ -479,7 +479,7 @@ func (c *Config) IsDbOpen() bool {
 func (c *Config) SetDbOptions() {
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
+		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC")
 	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
 		// Ignore for now.
 	case dsn.DriverSQLite3:

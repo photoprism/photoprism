@@ -67,7 +67,7 @@ type User struct {
 	LoginAt        *time.Time     `json:"-" yaml:"-"`
 	CreatedAt      time.Time      `json:"CreatedAt" yaml:"-"`
 	UpdatedAt      time.Time      `json:"UpdatedAt" yaml:"-"`
-	DeletedAt      gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
+	DeletedAt      gorm.DeletedAt `gorm:"index" json:"DeletedAt" yaml:"-"`
 }
 
 // TableName returns the entity database table name.

@@ -30,7 +30,7 @@ type Camera struct {
 	CameraNotes       string         `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CreatedAt         time.Time      `json:"-" yaml:"-"`
 	UpdatedAt         time.Time      `json:"-" yaml:"-"`
-	DeletedAt         gorm.DeletedAt `sql:"index" json:"-" yaml:"-"`
+	DeletedAt         gorm.DeletedAt `gorm:"index" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.

@@ -116,11 +116,17 @@ func (g *DbConn) Open() {
 	}
 	log.Info("DB connection established successfully")
 
-	if g.Driver != dsn.DriverPostgres && g.Driver != dsn.DriverPostgreSQL {
+	switch g.Driver {
+	case dsn.DriverMySQL, dsn.DriverMariaDB:
+		db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC")
+		fallthrough
+	case dsn.DriverSQLite3:
 		sqlDB, _ := db.DB()
 
 		sqlDB.SetMaxIdleConns(4)   // in config_db it uses c.DatabaseConnsIdle(), but we don't have the c here.
 		sqlDB.SetMaxOpenConns(256) // in config_db it uses c.DatabaseConns(), but we don't have the c here.
+	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
+		// No settings required
 	}
 
 	g.db = db

@@ -46,13 +46,13 @@ type File struct {
 	PhotoID            uint           `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
 	PhotoUID           string         `gorm:"type:bytes;size:42;index;" json:"PhotoUID" yaml:"PhotoUID"`
 	PhotoTakenAt       time.Time      `gorm:"index;" json:"TakenAt" yaml:"TakenAt"`
-	TimeIndex          *string        `gorm:"type:bytes;size:64;" json:"TimeIndex" yaml:"TimeIndex"`
-	MediaID            *string        `gorm:"type:bytes;size:32;" json:"MediaID" yaml:"MediaID"`
+	TimeIndex          *string        `gorm:"type:bytes;size:64;uniqueIndex:idx_files_search_timeline;" json:"TimeIndex" yaml:"TimeIndex"`
+	MediaID            *string        `gorm:"type:bytes;size:32;uniqueIndex:idx_files_search_media;" json:"MediaID" yaml:"MediaID"`
 	MediaUTC           int64          `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
 	InstanceID         string         `gorm:"type:bytes;size:64;index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID            string         `gorm:"type:bytes;size:42;uniqueIndex;" json:"UID" yaml:"UID"`
 	FileName           string         `gorm:"type:bytes;size:1024;uniqueIndex:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot           string         `gorm:"type:bytes;size:16;default:'/';uniqueIndex:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	FileRoot           string         `gorm:"type:bytes;size:16;default:'/';uniqueIndex:idx_files_name_root;index:idx_files_missing_root,priority:2;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName       string         `gorm:"type:bytes;size:755;" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash           string         `gorm:"type:bytes;size:128;index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize           int64          `json:"Size" yaml:"Size,omitempty"`
@@ -62,7 +62,7 @@ type File struct {
 	FileMime           string         `gorm:"type:bytes;size:64" json:"Mime" yaml:"Mime,omitempty"`
 	FilePrimary        bool           `gorm:"index:idx_files_photo_id;" json:"Primary" yaml:"Primary,omitempty"`
 	FileSidecar        bool           `json:"Sidecar" yaml:"Sidecar,omitempty"`
-	FileMissing        bool           `json:"Missing" yaml:"Missing,omitempty"`
+	FileMissing        bool           `gorm:"index:idx_files_missing_root,priority:1;" json:"Missing" yaml:"Missing,omitempty"`
 	FilePortrait       bool           `json:"Portrait" yaml:"Portrait,omitempty"`
 	FileVideo          bool           `json:"Video" yaml:"Video,omitempty"`
 	FileDuration       time.Duration  `json:"Duration" yaml:"Duration,omitempty"`
@@ -81,8 +81,8 @@ type File struct {
 	FileMainColor      string         `gorm:"type:bytes;size:16;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors         string         `gorm:"type:bytes;size:18;" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance      string         `gorm:"type:bytes;size:18;" json:"Luminance" yaml:"Luminance,omitempty"`
-	FileDiff           int            `json:"Diff" yaml:"Diff,omitempty"`
-	FileChroma         int16          `json:"Chroma" yaml:"Chroma,omitempty"`
+	FileDiff           int            `gorm:"default:-1;" json:"Diff" yaml:"Diff,omitempty"`
+	FileChroma         int16          `gorm:"default:-1;" json:"Chroma" yaml:"Chroma,omitempty"`
 	FileSoftware       string         `gorm:"size:64" json:"Software" yaml:"Software,omitempty"`
 	FileError          string         `gorm:"type:bytes;size:512;index;" json:"Error" yaml:"Error,omitempty"`
 	ModTime            int64          `json:"ModTime" yaml:"-"`
@@ -90,8 +90,8 @@ type File struct {
 	CreatedIn          int64          `json:"CreatedIn" yaml:"-"`
 	UpdatedAt          time.Time      `json:"UpdatedAt" yaml:"-"`
 	UpdatedIn          int64          `json:"UpdatedIn" yaml:"-"`
-	PublishedAt        *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt          gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
+	PublishedAt        *time.Time     `gorm:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt          gorm.DeletedAt `gorm:"index" json:"DeletedAt" yaml:"-"`
 	Share              []FileShare    `gorm:"foreignKey:FileID" json:"-" yaml:"-"`
 	Sync               []FileSync     `gorm:"foreignKey:FileID" json:"-" yaml:"-"`
 	OmitMarkers        bool           `gorm:"-" sql:"-" json:"-" yaml:"-"`

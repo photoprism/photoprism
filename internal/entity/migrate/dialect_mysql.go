@@ -285,4 +285,10 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE auth_sessions MODIFY data_json VARBINARY(16384);"},
 	},
+	{
+		ID:         "20260614-000001",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE IF EXISTS albums ROW_FORMAT=DYNAMIC;"},
+	},
 }

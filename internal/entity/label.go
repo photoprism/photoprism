@@ -45,8 +45,8 @@ type Label struct {
 	ThumbSrc         string         `gorm:"type:bytes;size:8;default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt        time.Time      `json:"CreatedAt" yaml:"-"`
 	UpdatedAt        time.Time      `json:"UpdatedAt" yaml:"-"`
-	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt" yaml:"-"`
+	PublishedAt      *time.Time     `gorm:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt        gorm.DeletedAt `gorm:"index" json:"DeletedAt" yaml:"-"`
 	New              bool           `gorm:"-" json:"-" yaml:"-"`
 }
 
