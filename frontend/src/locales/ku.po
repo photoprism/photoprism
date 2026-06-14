@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-10 03:21+0000\n"
+"PO-Revision-Date: 2026-06-14 14:12+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
@@ -167,7 +167,7 @@ msgstr "هەژمارەکە سڕایەوە"
 
 #: src/component/cluster/node/groups.vue:4 src/page/admin/groups.vue:4
 msgid "Account Group Mappings"
-msgstr ""
+msgstr "Nexşeyên Koma Hesaban"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -1866,7 +1866,7 @@ msgstr "ڕەساسی"
 #: src/component/cluster/node/dialog.vue:33 src/component/navigation.vue:224
 #: src/component/navigation.vue:467 src/component/navigation.vue:470
 msgid "Groups"
-msgstr ""
+msgstr "Grûp"
 
 #: src/model/cluster-instance.js:38 src/options/auth.js:12
 msgid "Guest"
@@ -2901,7 +2901,7 @@ msgstr "پەمەی"
 
 #: src/component/cluster/node/groups.vue:148
 msgid "Pinned"
-msgstr ""
+msgstr "Pinkirî"
 
 #: src/component/photo/edit/info.vue:153 src/component/photo/edit/info.vue:154
 msgid "Place"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-06-10 03:23+0000\n"
+"PO-Revision-Date: 2026-06-14 14:12+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -164,7 +164,7 @@ msgstr "Račun je izbrisan"
 
 #: src/component/cluster/node/groups.vue:4 src/page/admin/groups.vue:4
 msgid "Account Group Mappings"
-msgstr ""
+msgstr "Povezave med računskimi skupinami"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -1863,7 +1863,7 @@ msgstr "Siva"
 #: src/component/cluster/node/dialog.vue:33 src/component/navigation.vue:224
 #: src/component/navigation.vue:467 src/component/navigation.vue:470
 msgid "Groups"
-msgstr ""
+msgstr "Skupine"
 
 #: src/model/cluster-instance.js:38 src/options/auth.js:12
 msgid "Guest"
@@ -2898,7 +2898,7 @@ msgstr "Roza"
 
 #: src/component/cluster/node/groups.vue:148
 msgid "Pinned"
-msgstr ""
+msgstr "Pripeto"
 
 #: src/component/photo/edit/info.vue:153 src/component/photo/edit/info.vue:154
 msgid "Place"
