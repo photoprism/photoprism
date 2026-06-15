@@ -238,7 +238,9 @@ func TestLens_SaveForm(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		lens := Lens{}
 		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get("lens-f-380").ID).Error)
-		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+		defer func() {
+			assert.NoError(t, UnscopedDb().Model(&Lens{ID: LensFixtures.Get("lens-f-380").ID}).UpdateColumns(LensFixtures.Pointer("lens-f-380")).Error)
+		}()
 		err := lens.SaveForm(&form.Lens{LensMake: "Sigma", LensModel: "85mm F1.4"})
 		assert.NoError(t, err)
 		assert.Equal(t, CameraMakes["Sigma"], lens.LensMake) // NewLens normalizes the make.

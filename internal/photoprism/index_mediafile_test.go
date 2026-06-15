@@ -266,7 +266,7 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 	indexOpt := IndexOptionsSingle(cfg)
 
 	// The test database is seeded with entity fixtures, so all row counts are compared as deltas.
-	var basePhotos, baseFiles, baseDuplicates int
+	var basePhotos, baseFiles, baseDuplicates int64
 
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Count(&basePhotos).Error)
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Count(&baseFiles).Error)
@@ -313,7 +313,7 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 	assert.Equal(t, 1, added)
 	assert.Equal(t, numCopies-1, duplicates)
 
-	var photoCount, fileCount, duplicateCount int
+	var photoCount, fileCount, duplicateCount int64
 
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Count(&photoCount).Error)
 	assert.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Count(&fileCount).Error)
