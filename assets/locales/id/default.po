@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-15 09:18+0000\n"
-"PO-Revision-Date: 2025-10-22 08:25+0000\n"
+"PO-Revision-Date: 2026-06-15 09:28+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Indonesian <https://translate.photoprism.app/projects/"
 "photoprism/backend/id/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.13.3\n"
+"X-Generator: Weblate 5.17.1\n"
 
 #: messages.go:110
 msgid "Something went wrong, try again"
@@ -85,11 +85,11 @@ msgstr "Label tidak ditemukan"
 
 #: messages.go:127
 msgid "Camera not found"
-msgstr ""
+msgstr "Kamera tidak ditemukan"
 
 #: messages.go:128
 msgid "Lens not found"
-msgstr ""
+msgstr "Lensa tidak ditemukan"
 
 #: messages.go:129
 msgid "Album not found"

@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-15 09:18+0000\n"
-"PO-Revision-Date: 2025-10-22 08:25+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-15 09:28+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -12,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.13.3\n"
+"X-Generator: Weblate 5.17.1\n"
 
 #: messages.go:110
 msgid "Something went wrong, try again"
@@ -85,11 +86,11 @@ msgstr "未找到标签"
 
 #: messages.go:127
 msgid "Camera not found"
-msgstr ""
+msgstr "未找到摄像头"
 
 #: messages.go:128
 msgid "Lens not found"
-msgstr ""
+msgstr "未找到镜头"
 
 #: messages.go:129
 msgid "Album not found"

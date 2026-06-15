@@ -6,19 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-15 09:18+0000\n"
-"PO-Revision-Date: 2025-10-22 08:25+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"PO-Revision-Date: 2026-06-15 09:28+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: ga\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :"
-"(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 5.13.3\n"
+"Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :(n>"
+"6 && n<11) ? 3 : 4;\n"
+"X-Generator: Weblate 5.17.1\n"
 
 #: messages.go:110
 msgid "Something went wrong, try again"
@@ -91,11 +90,11 @@ msgstr "Níor aimsíodh an lipéad"
 
 #: messages.go:127
 msgid "Camera not found"
-msgstr ""
+msgstr "Níor aimsíodh an ceamara"
 
 #: messages.go:128
 msgid "Lens not found"
-msgstr ""
+msgstr "Níor aimsíodh an lionsa"
 
 #: messages.go:129
 msgid "Album not found"
