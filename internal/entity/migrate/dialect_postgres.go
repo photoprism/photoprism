@@ -27,4 +27,10 @@ var DialectPostgres = Migrations{
 		Stage:      "post",
 		Statements: []string{"CREATE COLLATION IF NOT EXISTS caseinsensitive (provider = icu, locale = 'und', deterministic = false);"},
 	},
+	{
+		ID:         "20260615-000001",
+		Dialect:    "postgres",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE files ALTER COLUMN file_diff SET DEFAULT -1;", "ALTER TABLE files ALTER COLUMN file_chroma SET DEFAULT 0;"},
+	},
 }
