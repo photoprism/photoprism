@@ -58,12 +58,17 @@ func TestClientRegistry_GetAndDelete(t *testing.T) {
 		t.Fatalf("expected error for invalid uuid")
 	}
 
-	// Create node
+	// Create node with an instance-declared group policy (write-control
+	// GroupsSrc marks this write's provenance).
 	n := &Node{Node: cluster.Node{Name: "pp-del", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	n.AllowGroups = []string{"g-ops"}
+	n.GroupsSrc = entity.ClientGroupsSrcNode
 	assert.NoError(t, r.Put(n))
 	assert.NotEmpty(t, n.ClientID)
 	assert.True(t, rnd.IsUID(n.ClientID, entity.ClientUID))
 	assert.True(t, rnd.IsUUID(n.UUID))
+	// Put reflects the persisted provenance into the read DTO field.
+	assert.Equal(t, entity.ClientGroupsSrcNode, n.Node.GroupsSrc)
 
 	// Get by UUID
 	got, err := r.Get(n.UUID)
@@ -73,6 +78,10 @@ func TestClientRegistry_GetAndDelete(t *testing.T) {
 		assert.Equal(t, "pp-del", got.Name)
 		assert.True(t, rnd.IsUUID(got.UUID))
 		assert.True(t, rnd.IsUID(got.ClientID, entity.ClientUID))
+		assert.Equal(t, []string{"g-ops"}, got.AllowGroups)
+		// toNode maps ClientData.GroupsSrc onto the read DTO field; got.GroupsSrc
+		// (registry.Node) is the separate write-control field, hence the qualifier.
+		assert.Equal(t, entity.ClientGroupsSrcNode, got.Node.GroupsSrc)
 	}
 
 	// Delete by UUID
@@ -137,6 +146,8 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	n.AllowGroups = []string{"media-acme-admin"}
 	n.AllowGroupRoles = map[string]string{"media-acme-admin": "admin"}
 	n.GroupsFullView = &fullView
+	// Set the read DTO field, not the registry.Node write-control GroupsSrc.
+	n.Node.GroupsSrc = entity.ClientGroupsSrcNode
 
 	// Non-admin (default opts): redact advertise/database and access rules
 	out := BuildClusterNode(n, NodeOpts{})
@@ -145,6 +156,7 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	assert.Nil(t, out.AllowGroups)
 	assert.Nil(t, out.AllowGroupRoles)
 	assert.Nil(t, out.GroupsFullView)
+	assert.Empty(t, out.GroupsSrc)
 
 	// Include advertise only
 	out2 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true})
@@ -166,6 +178,7 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	if assert.NotNil(t, out4.GroupsFullView) {
 		assert.True(t, *out4.GroupsFullView)
 	}
+	assert.Equal(t, entity.ClientGroupsSrcNode, out4.GroupsSrc)
 
 	// BuildClusterNodes on empty input returns empty slice (not nil)
 	list := BuildClusterNodes(nil, NodeOpts{})

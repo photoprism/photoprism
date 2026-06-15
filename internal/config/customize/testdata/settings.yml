@@ -27,6 +27,8 @@ Features:
   Folders: true
   Import: true
   Labels: true
+  Cameras: true
+  Lenses: true
   Library: true
   Logs: true
   Calendar: true

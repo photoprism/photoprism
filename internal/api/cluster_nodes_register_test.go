@@ -595,9 +595,15 @@ func TestBuildPortalLoginURL(t *testing.T) {
 // TestSanitizeAllowGroupRoles validates the lenient registration-time mapping
 // sanitizer: malformed keys and non-federatable roles are dropped, not errors.
 func TestSanitizeAllowGroupRoles(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		out := sanitizeAllowGroupRoles(map[string]string{"Media-Acme-Admin": "admin", "Media-Acme-Guests": "guest"})
-		assert.Equal(t, map[string]string{"media-acme-admin": "admin", "media-acme-guests": "guest"}, out)
+	t.Run("AcceptsAllInstanceRoles", func(t *testing.T) {
+		out := sanitizeAllowGroupRoles(map[string]string{
+			"g-admin": "admin", "g-manager": "manager", "g-user": "user",
+			"g-contributor": "contributor", "g-viewer": "viewer", "g-guest": "guest",
+		})
+		assert.Equal(t, map[string]string{
+			"g-admin": "admin", "g-manager": "manager", "g-user": "user",
+			"g-contributor": "contributor", "g-viewer": "viewer", "g-guest": "guest",
+		}, out)
 	})
 	t.Run("DropsInvalidEntries", func(t *testing.T) {
 		out := sanitizeAllowGroupRoles(map[string]string{"a": "cluster_admin", "b": "visitor", "c": "bogus", "   ": "admin"})

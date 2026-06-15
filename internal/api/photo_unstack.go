@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -45,6 +46,15 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			log.Errorf("photo: %s (unstack)", err)
 			AbortEntityNotFound(c)
 			return
+		}
+
+		// Limit the edit to the file's photo within the session's shared scope. Gating on the file's
+		// own PhotoUID (not the path :uid) prevents pairing an in-scope :uid with an out-of-scope file.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
 		}
 
 		switch {

@@ -220,16 +220,17 @@ func TestClusterUpdateNode_RedirectURIs_Replace_And_Clear(t *testing.T) {
 // helper: keys are normalized, empty keys dropped, and role values must be
 // federatable instance roles.
 func TestNormalizeAllowGroupRoles(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		// The role table is edition-aware: acl.UserRoles in CE covers
-		// admin/guest; Pro and Portal builds register the full set.
+	t.Run("AcceptsAllInstanceRoles", func(t *testing.T) {
 		out, err := normalizeAllowGroupRoles(map[string]string{
-			"Media-Acme-Admin": "admin",
-			"Media-Acme-Guest": "guest",
-			"   ":              "admin",
+			"Media-Acme-Admin": "admin", "Media-Acme-Manager": "manager", "Media-Acme-User": "user",
+			"Media-Acme-Contributor": "contributor", "Media-Acme-Viewer": "viewer", "Media-Acme-Guest": "guest",
+			"   ": "admin",
 		})
 		assert.NoError(t, err)
-		assert.Equal(t, map[string]string{"media-acme-admin": "admin", "media-acme-guest": "guest"}, out)
+		assert.Equal(t, map[string]string{
+			"media-acme-admin": "admin", "media-acme-manager": "manager", "media-acme-user": "user",
+			"media-acme-contributor": "contributor", "media-acme-viewer": "viewer", "media-acme-guest": "guest",
+		}, out)
 	})
 	t.Run("InvalidRole", func(t *testing.T) {
 		for _, role := range []string{"cluster_admin", "visitor", "none", "bogus", ""} {

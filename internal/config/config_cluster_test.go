@@ -43,15 +43,30 @@ func TestConfig_ClusterAllowGroupRoles(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Nil(t, c.ClusterAllowGroupRoles())
 	})
-	t.Run("ParsesPairs", func(t *testing.T) {
+	t.Run("AcceptsAllInstanceRoles", func(t *testing.T) {
+		// Roles must validate independently of the registered edition role
+		// table, since this is read during early bootstrap before activation.
 		c := NewConfig(CliTestContext())
-		c.options.ClusterAllowGroupRoles = []string{"Media-Acme-Admin=admin", "Media-Acme-Guests:guest"}
-		assert.Equal(t, map[string]string{"media-acme-admin": "admin", "media-acme-guests": "guest"}, c.ClusterAllowGroupRoles())
+		c.options.ClusterAllowGroupRoles = []string{
+			"g-admin=admin", "g-manager=manager", "g-user=user",
+			"g-contributor=contributor", "g-viewer:viewer", "g-guest=guest",
+		}
+		assert.Equal(t, map[string]string{
+			"g-admin": "admin", "g-manager": "manager", "g-user": "user",
+			"g-contributor": "contributor", "g-viewer": "viewer", "g-guest": "guest",
+		}, c.ClusterAllowGroupRoles())
+	})
+	t.Run("ToleratesWhitespaceSeparatedPairs", func(t *testing.T) {
+		// A StringSlice env splits on commas, so a space-separated value arrives
+		// as a single element; it must still resolve to all its pairs.
+		c := NewConfig(CliTestContext())
+		c.options.ClusterAllowGroupRoles = []string{"g-admin=admin g-viewer=viewer"}
+		assert.Equal(t, map[string]string{"g-admin": "admin", "g-viewer": "viewer"}, c.ClusterAllowGroupRoles())
 	})
 	t.Run("DropsInvalidEntries", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ClusterAllowGroupRoles = []string{"a=cluster_admin", "b=visitor", "c=bogus", "=admin", "noseparator", ""}
-		assert.Nil(t, c.ClusterAllowGroupRoles(), "non-federatable roles and malformed pairs must be dropped")
+		assert.Nil(t, c.ClusterAllowGroupRoles(), "non-instance roles and malformed pairs must be dropped")
 	})
 }
 

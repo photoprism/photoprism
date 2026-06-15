@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 	"testing"
 
 	"github.com/tidwall/gjson"
@@ -20,6 +21,11 @@ func TestSearchServices(t *testing.T) {
 		assert.LessOrEqual(t, int64(1), count.Int())
 		assert.Equal(t, "http://dummy-webdav/", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
+		result := r.Result()
+		xCount, err := strconv.Atoi(result.Header.Get("X-Count"))
+		assert.NoError(t, err, "strconv for X-Count failed")
+		assert.LessOrEqual(t, 1, xCount)
+
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()

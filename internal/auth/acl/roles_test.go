@@ -221,6 +221,23 @@ func TestIsFederatedRole(t *testing.T) {
 	})
 }
 
+func TestClusterInstanceRole(t *testing.T) {
+	t.Run("Assignable", func(t *testing.T) {
+		for _, s := range []string{"admin", "manager", "user", "contributor", "viewer", "guest", "  Admin  ", "VIEWER"} {
+			role, ok := ClusterInstanceRole(s)
+			assert.True(t, ok, "role %q must be assignable", s)
+			assert.True(t, IsClusterInstanceRole(role))
+		}
+	})
+	t.Run("Rejected", func(t *testing.T) {
+		for _, s := range []string{"cluster_admin", "visitor", "instance", "service", "portal", "client", "none", "", "bogus"} {
+			role, ok := ClusterInstanceRole(s)
+			assert.False(t, ok, "role %q must be rejected", s)
+			assert.Equal(t, RoleNone, role)
+		}
+	})
+}
+
 func TestFederatedRoleUpdate(t *testing.T) {
 	t.Run("AppliesChangedFederatableRole", func(t *testing.T) {
 		role, ok := FederatedRoleUpdate(RoleUser, RoleViewer)

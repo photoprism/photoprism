@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -38,6 +40,7 @@ func (Camera) TableName() string {
 	return "cameras"
 }
 
+// UnknownCamera is the placeholder used when no camera make or model is known.
 var UnknownCamera = Camera{
 	CameraSlug:  UnknownID,
 	CameraName:  "Unknown",
@@ -128,7 +131,8 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 		return &result
 	} else if err := m.Create(); err == nil {
 		if !m.Unknown() {
-			event.EntitiesCreated("cameras", []*Camera{m})
+			// Content channels carry only stable identities, never entity fields; publish the slug.
+			event.EntitiesCreated("cameras", []string{m.CameraSlug})
 
 			event.Publish("count.cameras", event.Data{
 				"count": 1,
@@ -184,6 +188,57 @@ func (m *Camera) Mobile() bool {
 // Unknown returns true if the camera is not a known make or model.
 func (m *Camera) Unknown() bool {
 	return m.CameraSlug == "" || m.CameraSlug == UnknownCamera.CameraSlug
+}
+
+// UpdateMakeModel updates the make and model of an existing camera, e.g. to fix entries that
+// ExifTool decodes with a missing or garbled make.
+// The camera slug is intentionally left unchanged so existing photo references and the unique slug
+// index are preserved across renames.
+func (m *Camera) UpdateMakeModel(makeName, modelName string) error {
+	if m.ID == 0 {
+		return fmt.Errorf("empty id")
+	}
+
+	makeName = strings.TrimSpace(makeName)
+	modelName = strings.TrimSpace(modelName)
+
+	if makeName == "" || modelName == "" {
+		return fmt.Errorf("make and model must not be empty")
+	}
+
+	cam := NewCamera(makeName, modelName)
+	// Override the changeable fields.
+	m.CameraMake = cam.CameraMake
+	m.CameraModel = cam.CameraModel
+	m.CameraName = cam.CameraName
+	m.CameraType = cam.CameraType
+
+	cameraMutex.Lock()
+	defer cameraMutex.Unlock()
+	if err := Db().Save(m).Error; err != nil {
+		return err
+	} else {
+		if !m.Unknown() {
+			event.EntitiesUpdated("cameras", []string{m.CameraSlug})
+		}
+		cameraCache.SetDefault(m.CameraSlug, m)
+	}
+	return nil
+}
+
+// SaveForm validates the form, copies its data into the camera, and persists it.
+func (m *Camera) SaveForm(f *form.Camera) error {
+	if f == nil {
+		return fmt.Errorf("form is nil")
+	} else if err := f.Validate(); err != nil {
+		return err
+	}
+
+	if err := deepcopier.Copy(m).From(f); err != nil {
+		return err
+	}
+
+	return m.UpdateMakeModel(f.CameraMake, f.CameraModel)
 }
 
 // ScopedSearchFirstCamera populates camera with the results of a Where(query, values) excluding soft delete records

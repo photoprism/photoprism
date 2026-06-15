@@ -212,29 +212,26 @@ func (c *Config) OIDCGroupRoles() map[string]acl.Role {
 	result := make(map[string]acl.Role, len(c.options.OIDCGroupRole))
 
 	for _, entry := range c.options.OIDCGroupRole {
-		entry = strings.TrimSpace(entry)
+		// splitGroupList tolerates comma- and whitespace-separated pairs, so a
+		// single env value with several pairs resolves the same either way.
+		for _, pair := range splitGroupList(entry) {
+			group, roleName, ok := parseGroupRolePair(pair)
 
-		if entry == "" {
-			continue
+			if !ok {
+				continue
+			}
+
+			role := acl.ParseRole(roleName)
+
+			// Skip a mapping to a non-federatable role: the Portal operator role
+			// cluster_admin and the anonymous visitor role must not be assignable
+			// through the IdP group mechanism, even if the directory is compromised.
+			if !acl.IsFederatedRole(role) {
+				continue
+			}
+
+			result[group] = role
 		}
-
-		sep := strings.IndexAny(entry, "=:")
-
-		if sep < 1 || sep >= len(entry)-1 {
-			continue
-		}
-
-		group := normalizeGroupID(entry[:sep])
-		role := acl.ParseRole(entry[sep+1:])
-
-		// Skip a mapping to a non-federatable role: the Portal operator role
-		// cluster_admin and the anonymous visitor role must not be assignable
-		// through the IdP group mechanism, even if the directory is compromised.
-		if group == "" || !acl.IsFederatedRole(role) {
-			continue
-		}
-
-		result[group] = role
 	}
 
 	return result

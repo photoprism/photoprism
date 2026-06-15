@@ -318,6 +318,84 @@ func TestRegisterAuthToken_OAuthFailure(t *testing.T) {
 	}
 }
 
+// TestBootstrapClusterNode_ReRegistersWithNodeCredentials verifies an
+// already-joined node (OAuth credentials, no join token) re-registers via OAuth
+// on boot, propagating its declared group config without rotating credentials.
+func TestBootstrapClusterNode_ReRegistersWithNodeCredentials(t *testing.T) {
+	prevTheme := cluster.BootstrapAutoThemeEnabled
+	cluster.BootstrapAutoThemeEnabled = false
+	t.Cleanup(func() { cluster.BootstrapAutoThemeEnabled = prevTheme })
+
+	var tokenCalls, registerCalls int
+	var gotAuth string
+	var gotPayload cluster.RegisterRequest
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/v1/oauth/token":
+			tokenCalls++
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`{"access_token":"oauth-node-token","token_type":"Bearer"}`))
+		case "/api/v1/cluster/nodes/register":
+			registerCalls++
+			gotAuth = r.Header.Get("Authorization")
+			_ = json.NewDecoder(r.Body).Decode(&gotPayload)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{Node: cluster.Node{Name: "pp-node-01"}})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-refresh-creds")
+	c.Options().PortalUrl = srv.URL
+	c.Options().NodeName = "pp-node-01"
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().SiteUrl = "https://media.example.com/"
+	// Already joined: node OAuth credentials present, join token removed.
+	c.Options().JoinToken = ""
+	c.Options().NodeClientID = cluster.ExampleClientID
+	c.Options().NodeClientSecret = cluster.ExampleClientSecret
+	// Declarative group config that must reach the Portal on this restart.
+	c.Options().ClusterAllowGroupRoles = []string{"photoprism-admins=admin"}
+
+	bootstrapClusterNode(c)
+
+	assert.Equal(t, 1, tokenCalls, "must authenticate the re-registration via OAuth")
+	assert.Equal(t, 1, registerCalls, "an already-joined node must re-register on boot")
+	assert.Equal(t, "Bearer oauth-node-token", gotAuth, "re-registration must use the node OAuth token, not a join token")
+	assert.Equal(t, map[string]string{"photoprism-admins": "admin"}, gotPayload.AllowGroupRoles,
+		"the declared group config must be reported on the boot re-registration")
+	// The refresh must not rotate credentials.
+	assert.False(t, gotPayload.RotateSecret, "a boot refresh must never request a client-secret rotation")
+	assert.False(t, gotPayload.RotateDatabase, "a boot refresh must never request a database rotation when credentials exist")
+	assert.Equal(t, cluster.ExampleClientID, c.NodeClientID(), "the client ID must be unchanged")
+	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret(), "the client secret must be unchanged")
+}
+
+// TestBootstrapClusterNode_NoCredsNoToken confirms bootstrap is a no-op when a
+// node has neither a join token nor OAuth credentials to authenticate with.
+func TestBootstrapClusterNode_NoCredsNoToken(t *testing.T) {
+	var hits int
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		hits++
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-no-creds")
+	c.Options().PortalUrl = srv.URL
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().JoinToken = ""
+	c.Options().NodeClientID = ""
+	c.Options().NodeClientSecret = ""
+
+	bootstrapClusterNode(c)
+	assert.Equal(t, 0, hits, "without credentials or a join token, bootstrap must not contact the Portal")
+}
+
 func TestInitConfig_DoesNotRetryWithJoinTokenAfterOAuthFailure(t *testing.T) {
 	var tokenCalls int
 	var registerCalls int

@@ -581,7 +581,7 @@ func applyRequestGroupConfig(n *reg.Node, req *cluster.RegisterRequest) {
 }
 
 // sanitizeAllowGroupRoles normalizes an instance-declared group → role mapping,
-// dropping malformed keys and non-federatable roles instead of failing the
+// dropping malformed keys and non-instance roles instead of failing the
 // registration — declarative env config must not turn a typo into a boot loop.
 func sanitizeAllowGroupRoles(in map[string]string) map[string]string {
 	if len(in) == 0 {
@@ -597,9 +597,9 @@ func sanitizeAllowGroupRoles(in map[string]string) map[string]string {
 			continue
 		}
 
-		role := acl.ParseRole(roleName)
+		role, ok := acl.ClusterInstanceRole(roleName)
 
-		if !acl.IsFederatedRole(role) {
+		if !ok {
 			continue
 		}
 

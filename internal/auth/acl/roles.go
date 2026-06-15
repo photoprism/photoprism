@@ -3,6 +3,8 @@ package acl
 import (
 	"sort"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // RoleStrings represents user role names mapped to roles.
@@ -55,6 +57,33 @@ func IsFederatedRole(role Role) bool {
 	default:
 		return true
 	}
+}
+
+// clusterInstanceRoles is the shared source of truth for the roles a cluster
+// group→role mapping or grant may assign as an instance login role, used by the
+// Portal resolver and the CE-shared node handlers. It excludes cluster_admin and visitor.
+var clusterInstanceRoles = map[Role]struct{}{
+	RoleAdmin:       {},
+	RoleManager:     {},
+	RoleUser:        {},
+	RoleContributor: {},
+	RoleViewer:      {},
+	RoleGuest:       {},
+}
+
+// IsClusterInstanceRole reports whether role may be assigned to a user on a cluster instance.
+func IsClusterInstanceRole(role Role) bool {
+	_, ok := clusterInstanceRoles[role]
+	return ok
+}
+
+// ClusterInstanceRole normalizes s and returns the matching cluster instance role, or false.
+func ClusterInstanceRole(s string) (Role, bool) {
+	role := Role(clean.Role(s))
+	if IsClusterInstanceRole(role) {
+		return role, true
+	}
+	return RoleNone, false
 }
 
 // FederatedRoleUpdate reports the account role an external identity provider may

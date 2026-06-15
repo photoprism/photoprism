@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
 import Config from "common/config";
+import { Subject } from "model/subject";
 import StorageShim from "node-storage-shim";
 import * as themes from "options/themes";
 
@@ -344,38 +345,76 @@ describe("common/config", () => {
     expect(result3.UID).toBe("jr0jgyx2viicdn88");
   });
 
-  it("should refetch on created/updated people and delete in place", () => {
+  it("should surgically refetch affected people and delete in place", async () => {
     const storage = new StorageShim();
     const values = { Debug: true, siteTitle: "Foo", country: "Germany", city: "Hamburg" };
 
     const cfg = new Config(storage, values);
-    let updates = 0;
-    cfg.update = () => {
-      updates++;
-      return Promise.resolve(cfg);
-    };
+    cfg.values.people = [{ UID: "ps000", Name: "Existing", Favorite: false }];
 
-    vi.useFakeTimers();
+    // Affected people are reloaded only by UID through the scoped Subject model.
+    const searchSpy = vi.spyOn(Subject, "search").mockResolvedValue({
+      models: [
+        { UID: "ps000", Name: "Renamed", Favorite: true },
+        { UID: "ps111", Name: "New Person" },
+      ],
+    });
+    const scheduleSpy = vi.spyOn(cfg, "schedulePeopleUpdate");
 
-    try {
-      cfg.onPeople("people.created", { entities: {} });
-      expect(cfg.values.people).toEqual([]);
-      expect(cfg.peopleUpdateTimer).toBeNull();
+    // Invalid payloads are ignored without a request and without scheduling a coalesced reload.
+    cfg.onPeople("people.created", { entities: {} });
+    expect(searchSpy).not.toHaveBeenCalled();
+    expect(scheduleSpy).not.toHaveBeenCalled();
 
-      // people.created and people.updated carry only UIDs; bursts must
-      // coalesce into a single client-config refetch.
-      cfg.onPeople("people.created", { entities: ["abc123"] });
-      cfg.onPeople("people.updated", { entities: ["abc123"] });
-      vi.runAllTimers();
-      expect(updates).toBe(1);
-      expect(cfg.peopleUpdateTimer).toBeNull();
+    // ps000 is patched in place, ps111 is inserted, ps222 (not returned) is dropped.
+    await cfg.refetchPeople(["ps000", "ps111", "ps222"]);
+    expect(searchSpy).toHaveBeenCalledWith({ uid: "ps000|ps111|ps222", count: 3 });
+    expect(cfg.values.people.find((m) => m.UID === "ps000").Name).toBe("Renamed");
+    expect(cfg.values.people.find((m) => m.UID === "ps000").Favorite).toBe(true);
+    expect(cfg.values.people.some((m) => m.UID === "ps111")).toBe(true);
+    expect(cfg.values.people.some((m) => m.UID === "ps222")).toBe(false);
 
-      cfg.values.people = [{ UID: "abc123", Name: "Test Name" }];
-      cfg.onPeople("people.deleted", { entities: ["abc123"] });
-      expect(cfg.values.people).toEqual([]);
-    } finally {
-      vi.useRealTimers();
-    }
+    // people.deleted removes by UID without a request.
+    searchSpy.mockClear();
+    cfg.onPeople("people.deleted", { entities: ["ps000"] });
+    expect(cfg.values.people.some((m) => m.UID === "ps000")).toBe(false);
+    expect(searchSpy).not.toHaveBeenCalled();
+
+    searchSpy.mockRestore();
+    scheduleSpy.mockRestore();
+  });
+
+  it("should fall back to a coalesced reload for large people bursts", async () => {
+    const storage = new StorageShim();
+    const values = { Debug: true };
+
+    const cfg = new Config(storage, values);
+    const searchSpy = vi.spyOn(Subject, "search").mockResolvedValue({ models: [] });
+    const scheduleSpy = vi.spyOn(cfg, "schedulePeopleUpdate").mockImplementation(() => {});
+
+    // More than maxLivePeopleRefetch (50) affected UIDs skip the targeted refetch.
+    const many = Array.from({ length: 51 }, (_, i) => `ps${i}`);
+    await cfg.refetchPeople(many);
+
+    expect(searchSpy).not.toHaveBeenCalled();
+    expect(scheduleSpy).toHaveBeenCalledTimes(1);
+
+    searchSpy.mockRestore();
+    scheduleSpy.mockRestore();
+  });
+
+  it("should fall back to a coalesced reload when the people refetch fails", async () => {
+    const storage = new StorageShim();
+    const cfg = new Config(storage, { Debug: true });
+    const searchSpy = vi.spyOn(Subject, "search").mockRejectedValue(new Error("network"));
+    const scheduleSpy = vi.spyOn(cfg, "schedulePeopleUpdate").mockImplementation(() => {});
+
+    await cfg.refetchPeople(["ps000"]);
+
+    expect(scheduleSpy).toHaveBeenCalledTimes(1);
+
+    searchSpy.mockRestore();
+    scheduleSpy.mockRestore();
   });
 
   it("should return language locale", () => {

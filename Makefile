@@ -101,22 +101,26 @@ acceptance-run-chromium: storage/acceptance storage/sqlite acceptance-exec-chrom
 acceptance-run-chromium-short: storage/acceptance storage/sqlite acceptance-exec-chromium-short
 acceptance-auth-run-chromium: storage/acceptance storage/sqlite acceptance-auth-exec-chromium
 acceptance-public-run-chromium: storage/acceptance storage/sqlite acceptance-public-exec-chromium
+acceptance-api-run-chromium: storage/acceptance storage/sqlite acceptance-api-exec-chromium
 # MariaDB acceptance tests - These setup, configure and then call the actual tests.
 acceptance-mariadb-run-chromium: storage/acceptance storage/mariadb acceptance-exec-chromium
 acceptance-mariadb-run-chromium-short: storage/acceptance storage/mariadb acceptance-exec-chromium-short
 acceptance-mariadb-auth-run-chromium: storage/acceptance storage/mariadb acceptance-auth-exec-chromium
 acceptance-mariadb-public-run-chromium: storage/acceptance storage/mariadb acceptance-public-exec-chromium
+acceptance-mariadb-api-run-chromium: storage/acceptance storage/mariadb acceptance-api-exec-chromium
 # PostgreSQL acceptance tests - These setup, configure and then call the actual tests.
 acceptance-postgres-run-chromium: storage/acceptance storage/postgres acceptance-exec-chromium
 acceptance-postgres-run-chromium-short: storage/acceptance storage/postgres acceptance-exec-chromium-short
 acceptance-postgres-auth-run-chromium: storage/acceptance storage/postgres acceptance-auth-exec-chromium
 acceptance-postgres-public-run-chromium: storage/acceptance storage/postgres acceptance-public-exec-chromium
+acceptance-postgres-api-run-chromium: storage/acceptance storage/postgres acceptance-api-exec-chromium
 
 # The actual tests that are called for acceptance tests.  Don't call these directly, use the ones with run in the name.
-acceptance-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-stop-auth acceptance-database-reset-2 acceptance-public-start wait-2 acceptance acceptance-stop-public
+acceptance-exec-chromium: acceptance-file-reset acceptance-database-reset-api acceptance-public-start-api wait-api acceptance-api acceptance-stop-api acceptance-database-reset-auth acceptance-auth-start wait-auth acceptance-auth acceptance-stop-auth acceptance-database-reset-public acceptance-public-start wait-public acceptance acceptance-stop-public
 acceptance-exec-chromium-short: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth-short acceptance-stop-auth acceptance-database-reset-2 acceptance-public-start wait-2 acceptance-short acceptance-stop-public
 acceptance-auth-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-stop-auth
 acceptance-public-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-public-start wait-1 acceptance acceptance-stop-public
+acceptance-api-exec-chromium: acceptance-file-reset acceptance-database-reset-api acceptance-public-start-api wait-api acceptance-api acceptance-stop-api
 help: list
 list:
 	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
@@ -276,9 +280,9 @@ acceptance-database-reset-%: acceptance-stop-%
 		./photoprism --database-driver sqlite --database-dsn "storage/acceptance/index.db?_busy_timeout=5000&_foreign_keys=on" --transfer-driver postgres --transfer-dsn "$(subst testdb,acceptance,$(PHOTOPRISM_TEST_DSN_POSTGRES))" migrations transfer -force; \
 		cp -f storage/acceptance/config-active/settingsBackup.yml storage/acceptance/config-active/settings.yml; \
 	fi
-acceptance-public-start:
+acceptance-public-start%:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-active" start -d
-acceptance-auth-start:
+acceptance-auth-start%:
 	./photoprism --auth-mode="password" -c "./storage/acceptance/config-active" start -d
 acceptance-stop-%:
 	./photoprism -c "./storage/acceptance/config-active" stop
@@ -559,20 +563,23 @@ test-js:
 	(cd frontend && npm run test)
 acceptance:
 	$(info Running public-mode tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public --config-file ./testcaferc.json $(TCVIDEO) --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json $(TCVIDEO) "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public --config-file ./.testcaferc.cjs $(TCVIDEO) --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./.testcaferc.cjs $(TCVIDEO) "tests/acceptance")
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./testcaferc.json $(TCVIDEO) --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json $(TCVIDEO) "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./.testcaferc.cjs $(TCVIDEO) --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./.testcaferc.cjs $(TCVIDEO) "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth --config-file ./testcaferc.json $(TCVIDEO) --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json $(TCVIDEO) "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth --config-file ./.testcaferc.cjs $(TCVIDEO) --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./.testcaferc.cjs $(TCVIDEO) "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
 	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./testcaferc.json $(TCVIDEO) --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json $(TCVIDEO) "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs $(TCVIDEO) "tests/acceptance")
+acceptance-api:
+	$(info Running JS acceptance-api tests in Chrome...)
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-meta mode=api --config-file ./.testcaferc.cjs "tests/acceptance")
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
 	(cd frontend && npm run test-watch)

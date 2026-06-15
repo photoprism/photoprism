@@ -366,11 +366,9 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 	})
 }
 
-// normalizeAllowGroupRoles validates a group → role mapping for node updates:
-// keys normalize via oidc.NormalizeGroupID (empty keys are dropped) and role
-// values must parse to federatable instance roles, so cluster_admin, visitor,
-// and unknown roles are rejected up front instead of being silently ignored at
-// resolution time.
+// normalizeAllowGroupRoles validates a group → role mapping for an admin node
+// PATCH: keys normalize via oidc.NormalizeGroupID (empty dropped) and roles must
+// be cluster instance roles, so cluster_admin/visitor/unknown are rejected with an error.
 func normalizeAllowGroupRoles(in map[string]string) (map[string]string, error) {
 	out := make(map[string]string, len(in))
 
@@ -381,9 +379,9 @@ func normalizeAllowGroupRoles(in map[string]string) (map[string]string, error) {
 			continue
 		}
 
-		role := acl.ParseRole(roleName)
+		role, ok := acl.ClusterInstanceRole(roleName)
 
-		if !acl.IsFederatedRole(role) {
+		if !ok {
 			return nil, fmt.Errorf("invalid role %s for group %s", clean.LogQuote(roleName), clean.LogQuote(group))
 		}
 

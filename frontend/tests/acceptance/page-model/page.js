@@ -74,6 +74,10 @@ export default class Page {
     await t.click(Selector('div[data-uid="' + uid + '"] button.action-title-edit'));
   }
 
+  async clickCardImageLabelOfUID(uid) {
+    await t.click(Selector('div[data-uid="' + uid + '"] button.meta-image'));
+  }
+
   async testCreateEditDeleteSharingLink(type) {
     await menu.openPage(type);
     const FirstAlbum = await album.getNthAlbumUid("all", 0);

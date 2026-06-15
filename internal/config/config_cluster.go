@@ -163,10 +163,10 @@ func (c *Config) ClusterAllowGroups() []string {
 	return result
 }
 
-// ClusterAllowGroupRoles maps normalized group identifiers to the instance
-// role granted on Portal cluster admission. Entries parse as GROUP=ROLE pairs
-// like OIDCGroupRoles; non-federatable roles (cluster_admin, visitor) and
-// malformed pairs are dropped.
+// ClusterAllowGroupRoles maps normalized group identifiers to the instance role
+// granted on Portal cluster admission, from comma- or whitespace-separated
+// GROUP=ROLE pairs. acl.ClusterInstanceRole validation does not depend on the
+// edition role table, so it resolves correctly during early bootstrap too.
 func (c *Config) ClusterAllowGroupRoles() map[string]string {
 	if len(c.options.ClusterAllowGroupRoles) == 0 {
 		return nil
@@ -175,26 +175,21 @@ func (c *Config) ClusterAllowGroupRoles() map[string]string {
 	result := make(map[string]string, len(c.options.ClusterAllowGroupRoles))
 
 	for _, entry := range c.options.ClusterAllowGroupRoles {
-		entry = strings.TrimSpace(entry)
+		for _, pair := range splitGroupList(entry) {
+			group, roleName, ok := parseGroupRolePair(pair)
 
-		if entry == "" {
-			continue
+			if !ok {
+				continue
+			}
+
+			role, valid := acl.ClusterInstanceRole(roleName)
+
+			if !valid {
+				continue
+			}
+
+			result[group] = role.String()
 		}
-
-		sep := strings.IndexAny(entry, "=:")
-
-		if sep < 1 || sep >= len(entry)-1 {
-			continue
-		}
-
-		group := normalizeGroupID(entry[:sep])
-		role := acl.ParseRole(entry[sep+1:])
-
-		if group == "" || !acl.IsFederatedRole(role) {
-			continue
-		}
-
-		result[group] = role.String()
 	}
 
 	if len(result) == 0 {
@@ -216,6 +211,19 @@ func splitGroupList(s string) []string {
 	return strings.FieldsFunc(s, func(r rune) bool {
 		return r == ',' || unicode.IsSpace(r)
 	})
+}
+
+// parseGroupRolePair splits a single GROUP=ROLE (or GROUP:ROLE) pair, returning
+// the normalized group id and the raw role string. ok is false for a malformed
+// pair (missing separator, empty group, or empty role).
+func parseGroupRolePair(pair string) (group, role string, ok bool) {
+	sep := strings.IndexAny(pair, "=:")
+	if sep < 1 || sep >= len(pair)-1 {
+		return "", "", false
+	}
+	group = normalizeGroupID(pair[:sep])
+	role = strings.TrimSpace(pair[sep+1:])
+	return group, role, group != "" && role != ""
 }
 
 // PortalOIDCIssuer returns the issuer URL advertised by the Portal's OIDC OP

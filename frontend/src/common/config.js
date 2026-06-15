@@ -28,11 +28,16 @@ import $event, { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/e
 import * as themes from "options/themes";
 import * as options from "options/options";
 import { Photo } from "model/photo";
+import { Subject } from "model/subject";
 import { onInit, onSetTheme } from "common/hooks";
 import { ref, reactive } from "vue";
 import memoizeOne from "memoize-one";
 
 onInit();
+
+// maxLivePeopleRefetch caps how many affected people are reloaded in place per
+// people.* event; larger bursts fall back to a coalesced full client-config reload.
+const maxLivePeopleRefetch = 50;
 
 // normalizeFrontendUri returns a normalized frontend base URI with a leading slash.
 const normalizeFrontendUri = (baseUri, frontendUri) => {
@@ -237,6 +242,7 @@ export default class Config {
 
   // schedulePeopleUpdate coalesces bursts of people.* events (e.g. while
   // face recognition adds new people) into a single client-config refetch.
+  // Used as the fallback when a targeted refetch is too large or fails.
   schedulePeopleUpdate() {
     if (this.peopleUpdateTimer) {
       clearTimeout(this.peopleUpdateTimer);
@@ -246,6 +252,70 @@ export default class Config {
       this.peopleUpdateTimer = null;
       this.update();
     }, 500);
+  }
+
+  // refetchPeople reloads only the people affected by a people.* event through
+  // the scoped Subject model and upserts them into the people list in place, so a
+  // rename or new person updates without forcing a full client-config reload.
+  // Always returns a promise (for awaiting in tests) that resolves once the
+  // in-place upsert completes; the no-op and overflow-fallback branches resolve
+  // immediately — they do NOT wait for the coalesced client-config reload.
+  refetchPeople(uids) {
+    if (!Array.isArray(uids)) {
+      return Promise.resolve();
+    }
+
+    const affected = uids.filter((uid) => typeof uid === "string" && uid);
+
+    if (affected.length === 0) {
+      return Promise.resolve();
+    }
+
+    // Fall back to a coalesced full reload when too many people change at once.
+    if (affected.length > maxLivePeopleRefetch) {
+      this.schedulePeopleUpdate();
+      return Promise.resolve();
+    }
+
+    return Subject.search({ uid: affected.join("|"), count: affected.length })
+      .then((resp) => {
+        const found = new Set();
+
+        (resp.models || []).forEach((s) => {
+          if (!s || !s.UID) {
+            return;
+          }
+
+          found.add(s.UID);
+
+          const person = { UID: s.UID, Name: s.Name, Alias: s.Alias, Favorite: s.Favorite, Hidden: s.Hidden };
+          const index = this.values.people.findIndex((m) => m.UID === s.UID);
+
+          if (index >= 0) {
+            Object.assign(this.values.people[index], person);
+          } else {
+            this.values.people.push(person);
+          }
+        });
+
+        // Drop affected people the scoped search no longer returns (deleted or not visible).
+        affected
+          .filter((uid) => !found.has(uid))
+          .forEach((uid) => {
+            const index = this.values.people.findIndex((m) => m.UID === uid);
+
+            if (index >= 0) {
+              this.values.people.splice(index, 1);
+            }
+          });
+
+        // Keep the list ordered by name, matching the backend People() query.
+        this.values.people.sort((a, b) => (a.Name || "").localeCompare(b.Name || ""));
+      })
+      .catch(() => {
+        // Fall back to a full reload if the targeted refetch fails.
+        this.schedulePeopleUpdate();
+      });
   }
 
   onPeople(ev, data) {
@@ -266,9 +336,9 @@ export default class Config {
     switch (type) {
       case ACTION_CREATED:
       case ACTION_UPDATED:
-        // people.created and people.updated carry only UIDs, so the people
-        // list must be reloaded through the scoped REST API.
-        this.schedulePeopleUpdate();
+        // people.created and people.updated carry only UIDs; reload just the
+        // affected people through the scoped REST API and patch them in place.
+        this.refetchPeople(data.entities);
         break;
       case ACTION_DELETED:
         for (let i = 0; i < data.entities.length; i++) {
@@ -880,6 +950,16 @@ export default class Config {
     return !!this.values?.ext?.oidc?.cluster;
   }
 
+  // oidcEnabled returns true when OIDC single sign-on is configured.
+  oidcEnabled() {
+    return !!this.values?.ext?.oidc?.enabled;
+  }
+
+  // ldapEnabled returns true when LDAP/AD directory authentication is configured.
+  ldapEnabled() {
+    return !!this.values?.ext?.ldap?.enabled;
+  }
+
   // oidcLoginUri returns the OIDC login endpoint that starts the provider roundtrip, or "" when off.
   oidcLoginUri() {
     return this.values?.ext?.oidc?.loginUri || "";
@@ -995,6 +1075,10 @@ export default class Config {
       case "crisp":
       case "mint":
       case "bold":
+      case "bloom":
+      case "flower":
+      case "ring":
+      case "shutter":
         return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
       default:
         return `${this.staticUri}/icons/logo.svg`;

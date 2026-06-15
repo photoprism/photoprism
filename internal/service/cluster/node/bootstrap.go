@@ -74,7 +74,13 @@ func bootstrapClusterNode(c *config.Config) {
 	portalURL := strings.TrimSpace(c.PortalUrl())
 	joinToken := strings.TrimSpace(c.JoinToken())
 
-	if portalURL == "" || joinToken == "" {
+	// Proceed with either a join token (first join) or the node's own OAuth
+	// credentials (already joined). The credential-only case lets a plain restart
+	// re-send the idempotent registration so a changed declarative config reaches
+	// the Portal after the join token has been removed from the environment.
+	hasNodeCreds := strings.TrimSpace(c.NodeClientID()) != "" && strings.TrimSpace(c.NodeClientSecret()) != ""
+
+	if portalURL == "" || (joinToken == "" && !hasNodeCreds) {
 		log.Debugf("cluster: no bootstrap configuration found")
 		return
 	}

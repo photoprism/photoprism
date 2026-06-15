@@ -89,7 +89,8 @@ func FirstOrCreateCountry(m *Country) *Country {
 		return &result
 	} else if createErr := m.Create(); createErr == nil {
 		if !m.Unknown() {
-			event.EntitiesCreated("countries", []*Country{m})
+			// Content channels carry only stable identities, never entity fields; publish the country code.
+			event.EntitiesCreated("countries", []string{m.ID})
 
 			event.Publish("count.countries", event.Data{
 				"count": 1,

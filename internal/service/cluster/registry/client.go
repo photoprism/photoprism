@@ -82,6 +82,9 @@ func toNode(c *entity.Client) *Node {
 			v := true
 			n.GroupsFullView = &v
 		}
+		// n.Node.GroupsSrc is the read DTO field; n.GroupsSrc (registry.Node) is
+		// the separate write-control input, so this assignment is qualified.
+		n.Node.GroupsSrc = data.GroupsSrc
 	}
 
 	return n
@@ -320,6 +323,9 @@ func (r *ClientRegistry) Put(n *Node) error {
 		} else {
 			n.GroupsFullView = nil
 		}
+		// Reflect the persisted provenance back into the read DTO field
+		// (qualified to bypass the registry.Node write-control GroupsSrc).
+		n.Node.GroupsSrc = d.GroupsSrc
 	}
 
 	// Set initial secret if provided on create/update.

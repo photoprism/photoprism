@@ -171,6 +171,8 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Folders:      true,
 			Import:       true,
 			Labels:       true,
+			Cameras:      true,
+			Lenses:       true,
 			Library:      true,
 			Logs:         true,
 			Calendar:     true,
@@ -212,6 +214,8 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Folders:      true,
 			Import:       false,
 			Labels:       false,
+			Cameras:      false,
+			Lenses:       false,
 			Library:      false,
 			Logs:         false,
 			Calendar:     true,
@@ -253,6 +257,8 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Folders:      true,
 			Import:       false,
 			Labels:       false,
+			Cameras:      false,
+			Lenses:       false,
 			Library:      false,
 			Logs:         false,
 			Calendar:     true,
@@ -286,6 +292,8 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Calendar)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -330,6 +338,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
+		assert.True(t, f.Cameras)
+		assert.True(t, f.Lenses)
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -362,6 +372,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
+		assert.True(t, f.Cameras)
+		assert.True(t, f.Lenses)
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -393,6 +405,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Albums)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -426,6 +440,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Moments)
 		assert.True(t, f.Folders)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -459,6 +475,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Moments)
 		assert.True(t, f.Folders)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -491,6 +509,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Albums)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -521,6 +541,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
+		assert.True(t, f.Cameras)
+		assert.True(t, f.Lenses)
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -553,6 +575,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Moments)
 		assert.False(t, f.Folders)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -584,6 +608,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Calendar)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.True(t, f.Settings)
 		assert.False(t, f.Edit)

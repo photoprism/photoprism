@@ -1,4 +1,5 @@
 import { Selector, t } from "testcafe";
+import { clickIfVisible } from "./helpers";
 
 export default class Page {
   constructor() {
@@ -71,8 +72,8 @@ export default class Page {
     this.license = Selector(".input-license textarea", { timeout: 15000 });
     this.description = Selector(".input-caption textarea", { timeout: 15000 });
     this.notes = Selector(".input-notes textarea", { timeout: 15000 });
-    this.camera = Selector(".input-camera input", { timeout: 15000 });
-    this.lens = Selector(".input-lens input", { timeout: 15000 });
+    this.camera = Selector(".input-camera input", { timeout: 15000 }).parent('div[class="v-field__input"]');
+    this.lens = Selector(".input-lens input", { timeout: 15000 }).parent('div[class="v-field__input"]');
     this.cameraValue = Selector(".input-camera .v-select__selection-text", { timeout: 15000 });
     this.lensValue = Selector(".input-lens .v-select__selection-text", { timeout: 15000 });
 
@@ -280,6 +281,7 @@ export default class Page {
 
     await t.click(Selector("button.action-approve"));
     await t.expect(this.coordinates.visible, { timeout: 5000 }).ok();
-    await t.click(this.detailsApply).click(Selector("button.action-close"));
+    await clickIfVisible(t, this.detailsApply);
+    await t.click(Selector("button.action-discard"));
   }
 }

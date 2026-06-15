@@ -11,8 +11,19 @@ import Originals from "../page-model/originals";
 import Album from "../page-model/album";
 import Library from "../page-model/library";
 import Notifies from "../page-model/notifications";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test photos upload and delete`.page`${testcafeconfig.url}`;
+fixture`Test photos upload and delete`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const album = new Album();

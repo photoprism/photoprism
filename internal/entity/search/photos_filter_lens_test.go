@@ -1,10 +1,12 @@
 package search
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -23,9 +25,10 @@ func TestPhotosFilterLens(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 46)
 	})
 	t.Run("AppleIPhoneSeBackCameraFourFifteenMmFTwoTwo", func(t *testing.T) {
+		fixture := "4.15mm-f/2.2"
 		var f form.SearchPhotos
 
-		f.Lens = "Apple iPhone SE back camera 4.15mm f/2.2"
+		f.Lens = entity.LensFixtures.Get(fixture).LensName
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -303,9 +306,10 @@ func TestPhotosQueryLens(t *testing.T) {
 		assert.GreaterOrEqual(t, len(photos), 46)
 	})
 	t.Run("AppleIPhoneSeBackCameraFourFifteenMmFTwoTwo", func(t *testing.T) {
+		fixture := "4.15mm-f/2.2"
 		var f form.SearchPhotos
 
-		f.Query = "lens:\"Apple iPhone SE back camera 4.15mm f/2.2\""
+		f.Query = fmt.Sprintf(`lens:"%s"`, entity.LensFixtures.Get(fixture).LensModel)
 		f.Merged = true
 
 		photos, _, err := Photos(f)

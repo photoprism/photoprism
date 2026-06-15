@@ -34,12 +34,8 @@ func PurgeOrphans() error {
 		return err
 	}
 
-	// Remove unused camera lenses.
-	if err := PurgeOrphanLenses(); err != nil {
-		return err
-	}
-
-	return nil
+	// Remove unused lenses.
+	return PurgeOrphanLenses()
 }
 
 // PurgeOrphanFiles removes files without a photo from the index.

@@ -1,5 +1,6 @@
 package entity
 
+// Camera make name constants used for normalization and device-type detection.
 const (
 	MakeNone           = ""
 	MakeAcer           = "Acer"

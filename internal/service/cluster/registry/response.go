@@ -39,6 +39,7 @@ func BuildClusterNode(n Node, opts NodeOpts) cluster.Node {
 		out.AllowGroups = nil
 		out.AllowGroupRoles = nil
 		out.GroupsFullView = nil
+		out.GroupsSrc = ""
 	}
 
 	return out

@@ -7,8 +7,19 @@ import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test moments`.page`${testcafeconfig.url}`;
+fixture`Test moments`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const album = new Album();
@@ -138,7 +149,7 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
     const SeventhPhotoUid = await photo.getNthPhotoUid("image", 6);
     await menu.openPage("moments");
     await album.selectAlbumFromUID(SecondMomentUid);
-    await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForMoment", "Holiday"]);
+    await contextmenu.triggerContextMenuAction("clone", ["Holiday", "NotYetExistingAlbumForMoment"]); // NotYetExistingAlbumForMoment happens to be long enough to be the middle of the text box (which causes it to be removed when Holiday is added), so put it second.
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
 

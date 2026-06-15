@@ -26,11 +26,14 @@ type Node struct {
 	RedirectURIs []string          `json:"RedirectURIs,omitempty"`
 	// Group-based admission config (redacted for non-admin sessions):
 	// AllowGroups admits matching login-time groups, AllowGroupRoles
-	// optionally overrides the default role per group, and GroupsFullView
-	// opts the node into receiving the user's full group set.
+	// optionally overrides the default role per group, GroupsFullView opts the
+	// node into receiving the user's full group set, and GroupsSrc is the
+	// AllowGroups provenance ("node" = instance-declared via env, "manual" =
+	// admin-pinned; empty = unmanaged).
 	AllowGroups     []string          `json:"AllowGroups,omitempty"`
 	AllowGroupRoles map[string]string `json:"AllowGroupRoles,omitempty"`
 	GroupsFullView  *bool             `json:"GroupsFullView,omitempty"`
+	GroupsSrc       string            `json:"GroupsSrc,omitempty"`
 	CreatedAt       string            `json:"CreatedAt"`
 	UpdatedAt       string            `json:"UpdatedAt"`
 	Database        *NodeDatabase     `json:"Database,omitempty"`
