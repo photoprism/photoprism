@@ -63,7 +63,7 @@ var LensFixtures = LensMap{
 		LensNotes:       "",
 		CreatedAt:       time.Date(2026, 06, 12, 10, 0, 0, 0, time.UTC),
 		UpdatedAt:       time.Date(2026, 06, 12, 10, 0, 0, 0, time.UTC),
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	}}
 
 // CreateLensFixtures inserts known entities into the database for testing.
