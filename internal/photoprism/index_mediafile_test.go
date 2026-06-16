@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -344,4 +345,76 @@ func TestIndexResult_Skipped(t *testing.T) {
 		r := &IndexResult{IndexAdded, nil, 5, "", 5, ""}
 		assert.False(t, r.Skipped())
 	})
+}
+
+// TestIndex_IndexedFileOriginalName verifies that files placed directly in
+// originals/ and indexed (never imported) are not assigned an OriginalName,
+// so the displayed card name keeps following the current file name after a
+// rename and re-index.
+func TestIndex_IndexedFileOriginalName(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one
+	// shared SQLite file; the database and storage must be isolated so the
+	// flash.jpg content does not collide by hash with a row another test
+	// indexed with an explicit original name.
+	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-original-name.db"))
+
+	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
+
+	// MediaFile.Root() and the ExifTool cache resolve against the package-level
+	// config, so it must point to the test config for this run.
+	oldCfg := Config()
+	SetConfig(cfg)
+
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+	opt := IndexOptionsSingle(cfg)
+
+	srcFile, err := NewMediaFile("testdata/flash.jpg")
+	require.NoError(t, err)
+
+	first := filepath.Join(cfg.OriginalsPath(), "indexed-original-name", "indexed-photo.jpg")
+	require.NoError(t, srcFile.Copy(first, false))
+
+	mf1, err := NewMediaFile(first)
+	require.NoError(t, err)
+	hash := mf1.Hash()
+
+	// The ExifTool JSON cache is keyed by content hash and records the current
+	// file name; index_main.go creates it before indexing the media file.
+	require.NoError(t, mf1.CreateExifToolJson(convert))
+
+	// Plain index: callers pass an empty originalName for indexed files.
+	res1 := ind.MediaFile(mf1, opt, "", "")
+	require.True(t, res1.Success())
+
+	var file1 entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file1, "file_hash = ?", hash).Error)
+	assert.Empty(t, file1.OriginalName, "freshly indexed file must not carry an OriginalName")
+
+	// Rename the file in originals/. The content (and therefore the hash and
+	// the cached ExifTool JSON, which still records the old name) is unchanged,
+	// which is what previously leaked a stale name into OriginalName.
+	renamed := filepath.Join(cfg.OriginalsPath(), "indexed-original-name", "renamed-photo.jpg")
+	require.NoError(t, fs.Move(first, renamed, false))
+
+	mf2, err := NewMediaFile(renamed)
+	require.NoError(t, err)
+	require.NoError(t, mf2.CreateExifToolJson(convert))
+
+	res2 := ind.MediaFile(mf2, opt, "", "")
+	require.True(t, res2.Success())
+
+	var file2 entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file2, "file_hash = ?", hash).Error)
+	assert.Equal(t, "indexed-original-name/renamed-photo.jpg", file2.FileName)
+	assert.Empty(t, file2.OriginalName, "re-indexed renamed file must not pick up a stale OriginalName")
 }
