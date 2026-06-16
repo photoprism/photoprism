@@ -32,6 +32,21 @@ func TestGroupsFromClaimsOverage(t *testing.T) {
 	assert.Nil(t, groups)
 }
 
+func TestMergeGroups(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		merged := MergeGroups([]string{"ABC-123", "def-456"}, []string{"def-456", "GHI-789"})
+		assert.Equal(t, []string{"abc-123", "def-456", "ghi-789"}, merged)
+	})
+	t.Run("DropsEmptyEntries", func(t *testing.T) {
+		merged := MergeGroups([]string{"", "abc-123"}, []string{"   "})
+		assert.Equal(t, []string{"abc-123"}, merged)
+	})
+	t.Run("NoSources", func(t *testing.T) {
+		assert.Nil(t, MergeGroups())
+		assert.Nil(t, MergeGroups(nil, []string{}))
+	})
+}
+
 func TestMapGroupsToRole(t *testing.T) {
 	mapping := map[string]acl.Role{
 		"abc-123": acl.RoleAdmin,
@@ -50,4 +65,72 @@ func TestHasAnyGroup(t *testing.T) {
 	assert.True(t, HasAnyGroup([]string{"ABC-123"}, required))
 	assert.False(t, HasAnyGroup([]string{"zzz"}, required))
 	assert.True(t, HasAnyGroup([]string{"zzz"}, nil))
+}
+
+func TestPortalGrantedRole(t *testing.T) {
+	portal := func(role any) map[string]any {
+		return map[string]any{"pp_issuer_kind": "portal", "pp_role": role}
+	}
+	t.Run("Admin", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal("admin"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleAdmin, role)
+	})
+	t.Run("Guest", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal("guest"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleGuest, role)
+	})
+	t.Run("RuntimeRegisteredInstanceRole", func(t *testing.T) {
+		// Pro/portal builds register extra instance roles (e.g. viewer) into
+		// acl.UserRoles at startup; the helper must honor whatever is registered.
+		key := acl.RoleViewer.String()
+		if _, had := acl.UserRoles[key]; !had {
+			acl.UserRoles[key] = acl.RoleViewer
+			defer delete(acl.UserRoles, key)
+		}
+		role, ok := PortalGrantedRole(portal("viewer"))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleViewer, role)
+	})
+	t.Run("WhitespaceTrimmed", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal("  admin  "))
+		assert.True(t, ok)
+		assert.Equal(t, acl.RoleAdmin, role)
+	})
+	t.Run("ClusterAdminRejected", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal("cluster_admin"))
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
+	t.Run("VisitorRejected", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal("visitor"))
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
+	t.Run("EmptyRole", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal(""))
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
+	t.Run("UnknownRole", func(t *testing.T) {
+		role, ok := PortalGrantedRole(portal("wizard"))
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
+	t.Run("NonPortalIssuerKind", func(t *testing.T) {
+		role, ok := PortalGrantedRole(map[string]any{"pp_issuer_kind": "upstream", "pp_role": "admin"})
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
+	t.Run("MissingIssuerKind", func(t *testing.T) {
+		role, ok := PortalGrantedRole(map[string]any{"pp_role": "admin"})
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
+	t.Run("EmptyClaims", func(t *testing.T) {
+		role, ok := PortalGrantedRole(nil)
+		assert.False(t, ok)
+		assert.Equal(t, acl.RoleNone, role)
+	})
 }

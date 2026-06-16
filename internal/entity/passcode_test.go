@@ -381,6 +381,21 @@ func TestPasscode_Verify(t *testing.T) {
 		assert.True(t, recoveryCode)
 		assert.Nil(t, m.VerifiedAt)
 	})
+	t.Run("EmptyRecoveryCodeNeverMatches", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "",
+		}
+		// An unset recovery code must not match any submitted code (constant-time
+		// compare returns 0 on a length mismatch, but the guard makes intent explicit).
+		valid, recoveryCode, err := m.Valid("123456")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, valid)
+		assert.False(t, recoveryCode)
+	})
 	t.Run("ErrPasscodeRequired", func(t *testing.T) {
 		m := &Passcode{
 			UID:          "uqxc08w3d0ej2283",

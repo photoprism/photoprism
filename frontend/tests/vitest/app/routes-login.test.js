@@ -214,18 +214,41 @@ describe("app/routes /login guard", () => {
     expect(next).toHaveBeenCalledWith({ name: "browse" });
   });
 
+  // Defense in depth: if the recorded deep link keeps bouncing the authenticated
+  // user straight back to /login (e.g. the OIDC OP can't authenticate the
+  // navigation), the guard must drop the target and fall through to the default
+  // route instead of looping forever.
+  it("breaks the redirect loop when the recorded deep link keeps bouncing back", () => {
+    $session.user = { hasId: () => true };
+    $session.authToken = "999900000000000000000000000000000000000000000000";
+    $session.id = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+    $session.auth = true;
+    $session.setLoginRedirectUrl("/api/v1/oauth/authorize?client_id=abc&state=x");
+    $session.markLoginRedirectAttempt(); // simulate having just followed it
+    const followLogin = vi.spyOn($session, "followLoginRedirectUrl").mockImplementation(() => {});
+    const getDefault = vi.spyOn($session, "getDefaultRoute").mockReturnValue("browse");
+    const next = vi.fn();
+
+    loginGuard({}, {}, next);
+
+    expect(followLogin).not.toHaveBeenCalled();
+    expect(getDefault).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith({ name: "browse" });
+    expect($session.hasLoginRedirectUrl()).toBe(false);
+  });
+
   // The Portal OIDC OP redirects unauthenticated users to
-  // /portal/admin/login?return_to=<authorize URL> via a top-level browser
+  // /portal/login?return_to=<authorize URL> via a top-level browser
   // navigation, so the global router guard never gets to record the deep
   // link via setLoginRedirectUrl(). The login route reads the inbound
   // `return_to` query parameter directly to bridge the hand-off.
   it("records a safe return_to query param as the post-login deep link", () => {
     const next = vi.fn();
 
-    loginGuard({ query: { return_to: "/oauth/authorize?client_id=abc&state=x" } }, {}, next);
+    loginGuard({ query: { return_to: "/api/v1/oauth/authorize?client_id=abc&state=x" } }, {}, next);
 
     expect($session.hasLoginRedirectUrl()).toBe(true);
-    expect($session.getLoginRedirectUrl()).toBe("/oauth/authorize?client_id=abc&state=x");
+    expect($session.getLoginRedirectUrl()).toBe("/api/v1/oauth/authorize?client_id=abc&state=x");
     expect(next).toHaveBeenCalledWith();
   });
 
@@ -239,18 +262,109 @@ describe("app/routes /login guard", () => {
   });
 });
 
+describe("app/routes /logout guard", () => {
+  const logoutGuard = routes.find((r) => r.name === "logout").beforeEnter;
+  let restore;
+
+  beforeEach(() => {
+    const configValues = $config.values;
+    const provider = $session.provider;
+    restore = () => {
+      $config.values = configValues;
+      $session.provider = provider;
+    };
+  });
+
+  afterEach(() => {
+    restore?.();
+    vi.restoreAllMocks();
+  });
+
+  // A cluster-OIDC user who hits /logout directly is bounced to the Portal login
+  // page so they re-auth with their cluster account and pick an instance there.
+  // The redirect must wait for the cluster-wide sign-out (which clears the Portal OP
+  // cookie) so the Portal shows its login form instead of silently re-issuing a session.
+  it("bounces a cluster-OIDC sign-out to the Portal login after clearing the OP cookie", async () => {
+    $config.values = {
+      ...$config.values,
+      ext: {
+        oidc: {
+          enabled: true,
+          redirect: true,
+          cluster: true,
+          loginUri: "/api/v1/oidc/login",
+          portalLoginUri: "https://app.example.com/portal/login",
+        },
+      },
+    };
+    $session.provider = "oidc";
+    const logoutEverywhere = vi.spyOn($session, "logoutEverywhere").mockResolvedValue($session);
+    const followRedirect = vi.spyOn($session, "followRedirect").mockImplementation(() => {});
+    const next = vi.fn();
+
+    logoutGuard({}, {}, next);
+
+    // The SPA navigation is cancelled immediately, but the redirect is deferred
+    // until the cluster-wide sign-out resolves.
+    expect(next).toHaveBeenCalledWith(false);
+    expect(logoutEverywhere).toHaveBeenCalledWith(true);
+    expect(followRedirect).not.toHaveBeenCalled();
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(followRedirect).toHaveBeenCalledWith("https://app.example.com/portal/login");
+  });
+
+  // A node that has not (re-)registered against a current Portal has no Portal
+  // login URL yet — the cluster-wide sign-out and OP-cookie clearing must still
+  // run, with the local login form as the fallback landing.
+  it("still signs out cluster-wide when the Portal login URL is unknown", async () => {
+    $config.values = {
+      ...$config.values,
+      ext: { oidc: { enabled: true, redirect: true, cluster: true, loginUri: "/api/v1/oidc/login" } },
+    };
+    $session.provider = "oidc";
+    const logoutEverywhere = vi.spyOn($session, "logoutEverywhere").mockResolvedValue($session);
+    const followRedirect = vi.spyOn($session, "followRedirect").mockImplementation(() => {});
+    const next = vi.fn();
+
+    logoutGuard({}, {}, next);
+
+    expect(next).toHaveBeenCalledWith(false);
+    expect(logoutEverywhere).toHaveBeenCalledWith(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(followRedirect).toHaveBeenCalledWith($config.loginUri);
+  });
+
+  it("sends a local sign-out to the login route", () => {
+    $config.values = {
+      ...$config.values,
+      ext: { oidc: { enabled: false, redirect: false, cluster: false, loginUri: "" } },
+    };
+    $session.provider = "local";
+    vi.spyOn($session, "signOut").mockReturnValue($session);
+    const followRedirect = vi.spyOn($session, "followRedirect").mockImplementation(() => {});
+    const next = vi.fn();
+
+    logoutGuard({}, {}, next);
+
+    expect(followRedirect).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith({ name: "login" });
+  });
+});
+
 describe("app/routes safeReturnTo", () => {
   it("accepts root-relative paths", () => {
     expect(safeReturnTo("/library/photos")).toBe("/library/photos");
-    expect(safeReturnTo("/oauth/authorize?client_id=x&state=y")).toBe("/oauth/authorize?client_id=x&state=y");
+    expect(safeReturnTo("/api/v1/oauth/authorize?client_id=x&state=y")).toBe("/api/v1/oauth/authorize?client_id=x&state=y");
   });
   it("accepts absolute URLs on the same origin and returns the path+query+hash", () => {
     const here = window.location?.origin;
     if (!here) {
       return;
     }
-    expect(safeReturnTo(here + "/portal/admin/cluster")).toBe("/portal/admin/cluster");
-    expect(safeReturnTo(here + "/oauth/authorize?client_id=x#frag")).toBe("/oauth/authorize?client_id=x#frag");
+    expect(safeReturnTo(here + "/portal/cluster")).toBe("/portal/cluster");
+    expect(safeReturnTo(here + "/api/v1/oauth/authorize?client_id=x#frag")).toBe("/api/v1/oauth/authorize?client_id=x#frag");
   });
   it("rejects cross-origin absolutes", () => {
     expect(safeReturnTo("https://attacker.example/steal")).toBe("");

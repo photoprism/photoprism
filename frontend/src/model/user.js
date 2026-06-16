@@ -5,7 +5,7 @@ import $util from "common/util";
 import $api from "common/api";
 import { T, $gettext } from "common/gettext";
 import { Form } from "common/form";
-import { $config } from "app/session";
+import { $config, $session } from "app/session";
 
 export let BatchSize = 99999;
 export let WebDavRoles = ["admin", "manager", "user", "contributor"];
@@ -212,8 +212,40 @@ export class User extends RestModel {
     return this.AuthProvider === "ldap";
   }
 
+  // isAdmin returns true when the account holds an admin-tier role (admin or
+  // cluster_admin), mirroring the backend acl.IsAdminRole set. Role-based only
+  // (it ignores SuperAdmin) so it can gate controls such as the Super Admin toggle.
+  isAdmin() {
+    return this.Role === "admin" || this.Role === "cluster_admin";
+  }
+
+  // isClusterAdmin returns true when the account holds the Portal operator role.
+  isClusterAdmin() {
+    return this.Role === "cluster_admin";
+  }
+
+  // isCurrentUser returns true when this account belongs to the signed-in user.
+  // The admin UI uses it to lock fields that would otherwise let an operator
+  // lock themselves out (own role, web login, and authentication provider); the
+  // backend rejects these self-changes regardless.
+  isCurrentUser() {
+    const current = $session.getUser();
+    return !!(current && current.UID && this.UID && current.UID === this.UID);
+  }
+
   requiresPassword() {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
+  }
+
+  // canHavePassword reports whether a local password can be set and used for this account.
+  // Excludes system users, role-less accounts, visitors, deactivated accounts (provider
+  // "none"), and remote accounts (LDAP), whose credentials are managed externally.
+  canHavePassword() {
+    if (this.ID < 1 || !this.Name || this.AuthProvider === "none" || this.isRemote()) {
+      return false;
+    }
+
+    return !!this.Role && this.Role !== "visitor";
   }
 
   // hasWebDAV returns true when WebDAV access is enabled for this user and the role permits it.

@@ -24,8 +24,18 @@ type ClientData struct {
 	ServiceFeatures []string          `json:"serviceFeatures,omitempty"`
 	AllowGroups     []string          `json:"allowGroups,omitempty"`
 	AllowGroupRoles map[string]string `json:"allowGroupRoles,omitempty"`
+	GroupsFullView  bool              `json:"groupsFullView,omitempty"`
+	GroupsSrc       string            `json:"groupsSrc,omitempty"`
 	RedirectURIs    []string          `json:"redirectUris,omitempty"`
 }
+
+// Recognized ClientData.GroupsSrc provenance values. An admin-pinned config
+// (manual) is never replaced by an instance-declared one (node); an empty
+// value marks unmanaged group config.
+const (
+	ClientGroupsSrcNode   = "node"
+	ClientGroupsSrcManual = "manual"
+)
 
 // NewClientData creates a new client data struct and returns a pointer to it.
 func NewClientData() *ClientData {

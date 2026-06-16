@@ -256,6 +256,12 @@ table td > .action-buttons {
     padding: 8px;
 }
 
+.nav-user-menu__icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
 .v-menu.action-menu .action-menu__list .action-menu__shortcut {
     margin-inline-start: 0.75rem;
     opacity: 0.5;
@@ -280,4 +286,16 @@ table .table-actions {
     table .table-actions {
         gap: 12px;
     }
+}
+
+/* Portal Cluster Access: the label-less in-table role selector. Pin it to the
+   standard label-less input height (it would otherwise collapse to the text
+   line) and inset the selected value so it is not flush against the cell edge. */
+
+.instance-role-select .v-field {
+    min-height: 40px;
+}
+
+.instance-role-select .v-field__input {
+    padding-inline-start: 12px !important;
 }

@@ -6,7 +6,10 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/form"
@@ -219,6 +222,27 @@ func TestFirstOrCreateLabel(t *testing.T) {
 		assert.NotEqual(t, first.LabelSlug, second.LabelSlug)
 		assert.Equal(t, first.LabelSlug, first.CustomSlug)
 		assert.Equal(t, second.LabelSlug, second.CustomSlug)
+	})
+	t.Run("PublishesUidOnlyCreatedEvent", func(t *testing.T) {
+		sub := event.Subscribe("labels.created")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+
+		result := FirstOrCreateLabel(NewLabel("UidOnlyEventLabel", 0))
+		require.NotNil(t, result)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(result).Error
+			FlushLabelCache()
+		})
+
+		select {
+		case msg := <-sub.Receiver:
+			uids, ok := msg.Fields["entities"].([]string)
+			assert.True(t, ok, "entities payload should be []string, got %T", msg.Fields["entities"])
+			assert.Equal(t, []string{result.LabelUID}, uids)
+		case <-time.After(2 * time.Second):
+			t.Fatal("expected one labels.created event")
+		}
 	})
 	t.Run("ReusesRenamedLabelByPreviousName", func(t *testing.T) {
 		original := FirstOrCreateLabel(NewLabel("RenameCat", 0))

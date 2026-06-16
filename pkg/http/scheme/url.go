@@ -77,6 +77,21 @@ func normalizeBaseURL(s string) string {
 	return u.String()
 }
 
+// OriginURL returns the scheme://host/ origin of s (trailing slash; no path,
+// query, fragment, or userinfo). A non-default port is preserved; the scheme's
+// default port is stripped so the result matches a NormalizeBaseURL'd issuer.
+// Returns "" when s is empty or has no scheme/host.
+func OriginURL(s string) string {
+	u, err := url.Parse(strings.TrimSpace(s))
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return ""
+	}
+
+	StripDefaultPort(u)
+
+	return u.Scheme + "://" + u.Host + "/"
+}
+
 // ResolveAdvertiseURL returns the normalized base URL the Portal should
 // use to reach a PhotoPrism instance, using siteURL's path as the source
 // of truth. The result always carries a trailing slash so callers can

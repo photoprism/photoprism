@@ -27,17 +27,17 @@ var (
 func NewPortalOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 	issuer := strings.TrimRight(conf.PortalOIDCIssuer(), "/")
 
-	jwksPath := conf.BaseUri("/.well-known/jwks.json")
-	if jwksPath == "" {
-		jwksPath = "/.well-known/jwks.json"
-	}
-
 	return &OpenIDConfiguration{
-		Issuer:                                    issuer + "/",
-		AuthorizationEndpoint:                     issuer + "/oauth/authorize",
-		TokenEndpoint:                             issuer + "/oauth/token",
-		UserinfoEndpoint:                          issuer + "/oauth/userinfo",
-		JwksUri:                                   issuer + jwksPath,
+		Issuer: issuer + "/",
+		// The OP authorize/token/userinfo endpoints live under the APIv1 path, and
+		// the JWKS under /.well-known. The bare paths are correct here (not
+		// conf.ApiUri() / conf.BaseUri(...)): the issuer already carries any
+		// deployment base path, so prefixing with the already-base-pathed accessor
+		// would double it for sub-path deployments.
+		AuthorizationEndpoint:                     issuer + config.ApiUri + "/oauth/authorize",
+		TokenEndpoint:                             issuer + config.ApiUri + "/oauth/token",
+		UserinfoEndpoint:                          issuer + config.ApiUri + "/oauth/userinfo",
+		JwksUri:                                   issuer + "/.well-known/jwks.json",
 		ResponseTypesSupported:                    PortalOIDCResponseTypes,
 		GrantTypesSupported:                       PortalOIDCGrantTypes,
 		SubjectTypesSupported:                     PortalOIDCSubjectTypes,

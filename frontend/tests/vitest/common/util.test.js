@@ -2,6 +2,7 @@ import { describe, it, expect, afterEach } from "vitest";
 import "../fixtures";
 import $util from "common/util";
 import { tokenRegexp, tokenLength } from "common/util";
+import { $config } from "app/session";
 import * as can from "common/can";
 import { ContentTypeMp4AvcMain, ContentTypeMp4HvcMain } from "common/media";
 
@@ -367,6 +368,38 @@ describe("common/util", () => {
     it("returns false when maxTouchPoints is 2 or less", () => {
       stub("Mozilla/5.0 (X11; Linux x86_64)", 2);
       expect($util.isMobile()).toBe(false);
+    });
+  });
+
+  describe("shouldOpenOnHover", () => {
+    const maxTouchPoints = navigator.maxTouchPoints;
+    const settings = $config.getSettings();
+    const openOnHover = settings.ui.openOnHover;
+    const stubTouch = (touch) => Object.defineProperty(navigator, "maxTouchPoints", { value: touch, configurable: true });
+    afterEach(() => {
+      stubTouch(maxTouchPoints);
+      settings.ui.openOnHover = openOnHover;
+    });
+
+    it("returns true when enabled and the device has no touch", () => {
+      stubTouch(0);
+      settings.ui.openOnHover = true;
+      expect($util.shouldOpenOnHover()).toBe(true);
+    });
+    it("returns false when the setting is disabled", () => {
+      stubTouch(0);
+      settings.ui.openOnHover = false;
+      expect($util.shouldOpenOnHover()).toBe(false);
+    });
+    it("defaults to true when the setting is absent", () => {
+      stubTouch(0);
+      delete settings.ui.openOnHover;
+      expect($util.shouldOpenOnHover()).toBe(true);
+    });
+    it("returns false on a touch device regardless of the setting", () => {
+      stubTouch(5);
+      settings.ui.openOnHover = true;
+      expect($util.shouldOpenOnHover()).toBe(false);
     });
   });
 });

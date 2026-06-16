@@ -38,6 +38,46 @@ func TestClientRegistry_DuplicateNamePrefersLatest(t *testing.T) {
 	}
 }
 
+// DisplayName: instance-reported names update freely until an admin pins one;
+// an admin override is sticky across registrations, and clearing it un-pins.
+func TestClientRegistry_DisplayNameOverride(t *testing.T) {
+	c := newRegistryTestConfig(t, "cluster-registry-displayname")
+	r, _ := NewClientRegistryWithConfig(c)
+
+	// Instance reports a display name on first registration.
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{Name: "pp-dn", Role: cluster.RoleInstance, DisplayName: "First Title"}}))
+	got, err := r.FindByName("pp-dn")
+	assert.NoError(t, err)
+	if !assert.NotNil(t, got) {
+		return
+	}
+	assert.Equal(t, "First Title", got.DisplayName)
+
+	// A later instance registration updates the reported name (no admin pin yet).
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, DisplayName: "Second Title"}}))
+	got, _ = r.FindByName("pp-dn")
+	assert.Equal(t, "Second Title", got.DisplayName)
+
+	// Admin override (SrcManual) pins the value.
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, DisplayName: "Admin Pinned"}, NameSrc: entity.SrcManual}))
+	got, _ = r.FindByName("pp-dn")
+	assert.Equal(t, "Admin Pinned", got.DisplayName)
+
+	// A subsequent instance registration must NOT overwrite the admin override.
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, DisplayName: "Instance Again"}}))
+	got, _ = r.FindByName("pp-dn")
+	assert.Equal(t, "Admin Pinned", got.DisplayName)
+
+	// Admin clears the override (empty + SrcManual): un-pins and falls back, then
+	// the next instance registration repopulates it.
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, DisplayName: ""}, NameSrc: entity.SrcManual}))
+	got, _ = r.FindByName("pp-dn")
+	assert.Equal(t, "", got.DisplayName)
+	assert.NoError(t, r.Put(&Node{Node: cluster.Node{ClientID: got.ClientID, Name: got.Name, DisplayName: "After Clear"}}))
+	got, _ = r.FindByName("pp-dn")
+	assert.Equal(t, "After Clear", got.DisplayName)
+}
+
 // Role change path: Put should update ClientRole via mapping.
 func TestClientRegistry_RoleChange(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-role")

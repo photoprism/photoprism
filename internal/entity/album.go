@@ -250,7 +250,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 		AlbumOrder:  DefaultOrderFolder,
 		AlbumType:   AlbumFolder,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
-		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
+		AlbumPath:   ClipPath(albumPath),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -839,7 +839,7 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 		return fmt.Errorf("album does not exist")
 	}
 
-	albumPath = clean.SlashPath(albumPath)
+	albumPath = ClipPath(clean.SlashPath(albumPath))
 	albumSlug := txt.SlugUnique(albumPath)
 	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath, m.AlbumFilter)
 
@@ -907,7 +907,7 @@ func (m *Album) Save() error {
 	if err := Db().Save(m).Error; err != nil {
 		return err
 	} else {
-		event.PublishUserEntities("albums", event.EntityUpdated, []*Album{m}, m.CreatedBy)
+		event.PublishUserEntities("albums", event.EntityUpdated, []string{m.AlbumUID}, m.CreatedBy)
 		return nil
 	}
 }
@@ -919,7 +919,7 @@ func (m *Album) Create() error {
 	}
 
 	m.PublishCountChange(1)
-	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
+	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)
 
 	return nil
 }
@@ -1012,7 +1012,7 @@ func (m *Album) Restore() error {
 	m.DeletedAt = nil
 
 	m.PublishCountChange(1)
-	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
+	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)
 
 	return nil
 }

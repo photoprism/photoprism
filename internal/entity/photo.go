@@ -24,6 +24,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 const (
@@ -1405,7 +1406,8 @@ func (m *Photo) MapKey() string {
 
 // SetCameraSerial updates the camera serial number.
 func (m *Photo) SetCameraSerial(s string) {
-	if s = txt.Clip(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
+	// camera_serial is VARBINARY(160), so clip by bytes on a rune boundary.
+	if s = clip.Bytes(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
 		m.CameraSerial = s
 	}
 }

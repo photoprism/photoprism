@@ -7,8 +7,31 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 )
+
+// SelectedPhotoUIDsForSession returns the subset of the given photo UIDs that the session is
+// allowed to access, applying the same shared-scope, private, and archived rules as photo search,
+// so restricted callers can only act on pictures within their shared scope. Full library or admin
+// sessions (client and user role intersection) see every picture, so the input is returned without
+// a database query; it is therefore safe and cheap to call for any session.
+func SelectedPhotoUIDsForSession(photoUIDs []string, sess *entity.Session) (scoped []string, err error) {
+	if len(photoUIDs) == 0 || search.PhotoSessionSeesEverything(sess) {
+		return photoUIDs, nil
+	}
+
+	stmt := search.ScopeVisiblePhotos(
+		UnscopedDb().Table("photos").Where("photos.photo_uid IN (?)", photoUIDs),
+		sess,
+	)
+
+	if err = stmt.Pluck("photos.photo_uid", &scoped).Error; err != nil {
+		return nil, err
+	}
+
+	return scoped, nil
+}
 
 // SelectedPhotos finds photos based on the given selection form, e.g. for adding them to an album.
 func SelectedPhotos(frm form.Selection) (results entity.Photos, err error) {

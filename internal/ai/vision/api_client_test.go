@@ -199,3 +199,30 @@ func TestValidateApiRequestURL(t *testing.T) {
 		assert.Error(t, validateApiRequestURL("https:///v1"))
 	})
 }
+
+func TestPerformApiRequestResponseLimit(t *testing.T) {
+	// Shrink the cap so the test does not allocate the 32 MiB default.
+	prev := MaxResponseBytes
+	MaxResponseBytes = 1024
+	t.Cleanup(func() { MaxResponseBytes = prev })
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		//nolint:gosec // test fixture writes a locally generated payload only
+		_, _ = w.Write(make([]byte, int(MaxResponseBytes)+512))
+	}))
+	defer server.Close()
+
+	apiRequest := &ApiRequest{
+		Id:             "toolarge",
+		Model:          "qwen2.5vl:latest",
+		Format:         FormatJSON,
+		Images:         []string{"data:image/jpeg;base64,AA=="},
+		ResponseFormat: ApiFormatOllama,
+	}
+
+	resp, err := PerformApiRequest(apiRequest, server.URL, http.MethodPost, "")
+	assert.Error(t, err)
+	assert.Nil(t, resp)
+	assert.Contains(t, err.Error(), "exceeds the maximum size")
+}

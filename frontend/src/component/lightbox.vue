@@ -1758,11 +1758,13 @@ export default {
       // Ensure that content is focused.
       this.focusContent();
     },
-    // Mirrors Title/Caption mutations from photos.updated WS events onto the
-    // in-memory slide models so the dynamic caption (and any other model-bound
-    // UI) reflects edits made by other clients. The lightbox stays mounted in
-    // the background after close, so skip work unless it is actually visible
-    // with a live PhotoSwipe instance.
+    // Mirrors Title/Caption mutations reported by photos.updated WS events
+    // onto the in-memory slide models so the dynamic caption (and any other
+    // model-bound UI) reflects edits made by other clients. The event carries
+    // only UIDs, so the values are refetched through the scoped REST API for
+    // the current slide and its preloaded neighbors. The lightbox stays
+    // mounted in the background after close, so skip work unless it is
+    // actually visible with a live PhotoSwipe instance.
     onPhotosUpdated(ev, data) {
       if (!this.visible || !this.lightbox || !this.models.length) {
         return;
@@ -1770,33 +1772,28 @@ export default {
       if (!data || !Array.isArray(data.entities)) {
         return;
       }
-      if (ev.split(".")[1] !== "updated") {
-        return;
-      }
 
-      let currentChanged = false;
-      for (const values of data.entities) {
-        if (!values || typeof values !== "object" || !values.UID) {
-          continue;
-        }
-        const idx = this.models.findIndex((m) => m && m.UID === values.UID);
-        if (idx < 0) {
-          continue;
-        }
+      for (let idx = this.index - 1; idx <= this.index + 1; idx++) {
         const model = this.models[idx];
-        if (typeof values.Title === "string") {
-          model.Title = values.Title;
-        }
-        if (typeof values.Caption === "string") {
-          model.Caption = values.Caption;
-        }
-        if (idx === this.index) {
-          currentChanged = true;
-        }
-      }
 
-      if (currentChanged) {
-        this.captionPlugin?.refreshCurrentCaption();
+        if (!model || !model.UID || !data.entities.includes(model.UID)) {
+          continue;
+        }
+
+        new Photo()
+          .find(model.UID)
+          .then((values) => {
+            if (typeof values.Title === "string") {
+              model.Title = values.Title;
+            }
+            if (typeof values.Caption === "string") {
+              model.Caption = values.Caption;
+            }
+            if (idx === this.index) {
+              this.captionPlugin?.refreshCurrentCaption();
+            }
+          })
+          .catch(() => {});
       }
     },
     // Fetches the full Photo model for the given UID using the LRU

@@ -98,6 +98,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Try to find existing file by hash. Skip this for sidecar files, and files outside the originals folder.
 	if !fileExists && !m.IsSidecar() && m.Root() == entity.RootOriginals {
 		fileHash = m.Hash()
+
+		// Hold a per-hash lock until indexing is complete, so concurrent workers
+		// cannot miss the lookup below and index byte-identical files twice.
+		if fileHash != "" {
+			unlock := lockFileHash(fileHash)
+			defer unlock()
+		}
+
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
 
 		indFileName := ""
@@ -304,7 +312,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Update photo path and name based on the main filename.
 	if !fileStacked && (file.FilePrimary || photo.PhotoName == "") {
-		photo.PhotoPath = filePath
+		// Clip to the shared path byte budget so photo_path stays byte-exact
+		// with album_path for folder-album matching.
+		photo.PhotoPath = entity.ClipPath(filePath)
 
 		if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
 			photo.PhotoName = fullBase
@@ -391,7 +401,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Update color information, if available.
 		if color, colorErr := m.Colors(Config().ThumbCachePath()); colorErr != nil {
 			log.Debugf("%s while detecting colors", colorErr.Error())
-			file.FileError = clip.Chars(colorErr.Error(), txt.ClipError)
+			file.FileError = clip.Bytes(colorErr.Error(), txt.ClipError)
 			file.FilePrimary = false
 		} else {
 			file.FileMainColor = color.MainColor.Name()
@@ -447,13 +457,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 				// Set photo media type to "live".
 				photo.SetMediaType(media.Live, entity.SrcFile)
-			}
-
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
 			}
 
 			if data.HasInstanceID() {
@@ -545,7 +548,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		} else {
 			log.Warn(dataErr.Error())
-			file.FileError = clip.Chars(dataErr.Error(), txt.ClipError)
+			file.FileError = clip.Bytes(dataErr.Error(), txt.ClipError)
 		}
 	case m.IsRaw(), m.IsImage():
 		if data := m.MetaData(); data.Error == nil {
@@ -575,13 +578,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
 				file.InstanceID = data.InstanceID
-			}
-
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
 			}
 
 			file.FileCodec = data.Codec
@@ -673,13 +669,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
@@ -727,13 +716,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
@@ -779,13 +761,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
 				file.InstanceID = data.InstanceID
-			}
-
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
 			}
 
 			file.FileCodec = data.Codec
@@ -1000,7 +975,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			})
 		}
 
-		event.EntitiesCreated("photos", []entity.Photo{photo})
+		event.EntitiesCreated("photos", []string{photo.PhotoUID})
 	}
 
 	photo.AddLabels(labels)

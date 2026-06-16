@@ -28,6 +28,21 @@ func TestUsersModCommand(t *testing.T) {
 		assert.Error(t, err)
 		assert.Empty(t, output)
 	})
+	t.Run("AdoptOidcIdentityWithIssuer", func(t *testing.T) {
+		// Create a fresh local account, then adopt it into an OIDC identity with a
+		// pinned issuer — the documented reconcile path for a pre-existing account.
+		_, err := RunWithTestContext(UsersAddCommand, []string{"add", "--name=Adopt Me", "--email=adopt@example.com", "--password=test1234", "--role=admin", "adoptme"})
+		require.NoError(t, err)
+
+		_, err = RunWithTestContext(UsersModCommand, []string{"mod", "--auth=oidc", "--auth-id=us9k2lqd8m3n7abc", "--auth-issuer=https://portal.example.com/", "adoptme"})
+		require.NoError(t, err)
+
+		m := entity.FindUserByName("adoptme")
+		require.NotNil(t, m)
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "us9k2lqd8m3n7abc", m.AuthID)
+		assert.Equal(t, "https://portal.example.com/", m.AuthIssuer)
+	})
 	t.Run("RejectFlagsAfterPositional", func(t *testing.T) {
 		// Run with the broken arg order QA reported (positional first, then flags).
 		// The stdlib flag parser stops at "alice", so --name / --role would

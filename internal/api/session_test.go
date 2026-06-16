@@ -9,8 +9,10 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -61,6 +63,19 @@ func TestGetSessionResponse(t *testing.T) {
 		assert.Equal(t, sess.GetUser(), result["user"])
 		assert.Equal(t, sess.GetData(), result["data"])
 		assert.Equal(t, conf, result["config"])
+	})
+	t.Run("RedactsGroups", func(t *testing.T) {
+		sess := get.Session().Public()
+		sess.SetData(sess.GetData().SetGroups([]string{"media-acme-admin"}))
+		defer func() { sess.SetData(sess.GetData().SetGroups(nil)) }()
+		conf := get.Config().ClientSession(sess)
+
+		result := GetSessionResponse(sess.AuthToken(), sess, conf)
+
+		if data, ok := result["data"].(*entity.SessionData); assert.True(t, ok) {
+			assert.Nil(t, data.Groups, "session responses must not disclose the login-time group set")
+		}
+		assert.NotEmpty(t, sess.GetData().Groups, "the stored session data keeps the groups")
 	})
 }
 
@@ -290,6 +305,7 @@ func TestGetSession(t *testing.T) {
 		id := gjson.Get(r.Body.String(), "session_id").String()
 		assert.Equal(t, rnd.SessionID(authToken), id)
 		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, header.CacheControlNoStore, r.Header().Get(header.CacheControl), "session responses must not be cached")
 	})
 	t.Run("AdminAuthenticatedRequestWithID", func(t *testing.T) {
 		app, router, conf := NewApiTest()

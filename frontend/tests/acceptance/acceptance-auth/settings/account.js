@@ -94,6 +94,7 @@ test.meta("testID", "account-003").meta({ type: "short", mode: "auth" })(
       .expect(Selector('tr[data-name="john-full"] td').nth(2).innerText)
       .notContains("20")
       .click(account.close);
+    await t.expect(account.close.exists).notOk();
     await page.logout();
 
     await page.login("john", "Zx78HJ-YFZMjS-aOyR6l-Bz8D2b");
@@ -107,6 +108,7 @@ test.meta("testID", "account-003").meta({ type: "short", mode: "auth" })(
       .expect(Selector("td").withText("john-full").visible)
       .notOk()
       .click(account.close);
+    await t.expect(account.close.exists).notOk();
     await page.logout();
 
     await page.login("john", "photoprism");
@@ -118,7 +120,9 @@ test.meta("testID", "account-003").meta({ type: "short", mode: "auth" })(
       .expect(Selector('tr[data-name="john-full"] td').nth(2).innerText)
       .contains("20")
       .expect(Selector('tr[data-name="john-full"] td').nth(2).innerText)
-      .notContains("–");
+      .notContains("–")
+      .click(account.close);
+    await t.expect(account.close.exists).notOk();
     await page.logout();
   }
 );
@@ -184,7 +188,9 @@ test.meta("testID", "account-006").meta({ type: "short", mode: "auth" })(
       .typeText(account.passcode, "123456", { replace: true })
       .click(account.confirm)
       .expect(account.qrcode.visible)
-      .ok();
+      .ok()
+      .click(account.cancel);
+    await t.expect(account.cancel.exists).notOk();
     await page.logout();
   }
 );

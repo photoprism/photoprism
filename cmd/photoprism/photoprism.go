@@ -23,6 +23,7 @@ Additional information can be found in our Developer Guide:
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -33,7 +34,6 @@ import (
 )
 
 var version = "development"
-var log = event.Log
 
 const appName = "PhotoPrism"
 const appAbout = "PhotoPrism®"
@@ -55,6 +55,7 @@ var Metadata = map[string]any{
 func main() {
 	defer func() {
 		if r := recover(); r != nil {
+			event.LogPanic(r)
 			os.Exit(1)
 		}
 	}()
@@ -69,7 +70,10 @@ func main() {
 	app.Commands = commands.PhotoPrism
 	app.Metadata = Metadata
 
+	// urfave/cli prints and exits with the code of any cli.Exit(...) error
+	// before returning here, so only plain errors reach this point; report
+	// them on stderr without forcing a specific exit code.
 	if err := app.Run(os.Args); err != nil {
-		log.Error(err)
+		_, _ = fmt.Fprintln(os.Stderr, err)
 	}
 }

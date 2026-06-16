@@ -1,11 +1,11 @@
 # Frontend Guidelines
 
-**Last Updated:** May 5, 2026
+**Last Updated:** June 10, 2026
 
 ## Dependencies & Pins
 
 - [`frontend/README.md`](README.md) is the canonical doc for dependency pin rationale, the `overrides` layer, ESM-only upgrade blockers, and the orphan-audit pattern.
-- **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.16.1"`, `"vuetify": "3.12.2"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
+- **Pins are intentional.** When a version has no caret (e.g., `"axios": "1.17.0"`, `"vuetify": "3.12.2"`), check `frontend/README.md` and `git log -p -S "<pkg>" -- frontend/package.json` for the reason before changing it.
 - npm is a workspace; run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the **repo root** (not `frontend/`) so the root `package-lock.json` updates.
 - After dep changes run `make audit`, `make build-js`, `make test-js`, and `make notice`.
 - Before adding a new dep — and especially before declaring an existing one "unused" — verify with `rg -nF "<pkg>" frontend …` plus `npm ls <pkg> --all` that no consumer or peer-dep needs it.
@@ -46,7 +46,7 @@
 
 ## Playwright MCP Usage
 
-- Default endpoint is `http://localhost:2342/`; default login routes are `/library/login` for CE, Plus, and Pro, and `/portal/admin/login` for Portal.
+- Default endpoint is `http://localhost:2342/`; default login routes are `/library/login` for CE, Plus, and Pro, and `/portal/login` for Portal.
 - Use the local compose admin credentials; if login fails, inspect the active compose environment.
 - Desktop sessions default to `1280x900`; mobile sessions should use the mobile Playwright server with `375x667`.
 - Close the browser tab after scripted interactions.
@@ -56,4 +56,4 @@
 
 ## Frontend Test Gotchas
 
-- Hidden-route UI checks under `/library/hidden` or `/portal/admin/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.
+- Hidden-route UI checks under `/library/hidden` or `/portal/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.

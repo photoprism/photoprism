@@ -266,15 +266,19 @@ export default {
   },
   created() {
     this.staySignedIn = this.currentStaySignedInState();
-
-    const authError = getAppStorage().getItem("session.error");
-    if (authError) {
-      this.$notify.error(authError);
-      getAppStorage().removeItem("session.error");
-    }
   },
   mounted() {
     this.$view.enter(this, this.$refs?.form, 'input[value=""], button.action-confirm');
+
+    // Surface an OIDC sign-in failure (e.g. "no access to this instance")
+    // stashed by the auth bridge before its full-page redirect. In mounted() so
+    // the notification component has already subscribed (its created() runs
+    // before any mounted()).
+    const authError = getAppStorage().getItem("session.error");
+    if (authError) {
+      getAppStorage().removeItem("session.error");
+      this.$notify.error(authError);
+    }
   },
   unmounted() {
     this.$view.leave(this);
@@ -377,6 +381,11 @@ export default {
       if (this.config.ext?.oidc?.loginUri) {
         this.applySessionPersistence();
         this.loading = true;
+        // Arm the per-tab OIDC attempt guard (not the post-login redirect loop
+        // guard): a failed or abandoned roundtrip then falls back to the form via
+        // consumeOidcAttempt instead of auto-redirecting again, while a stored deep
+        // link or Portal return_to survives for the authenticated return trip.
+        this.$session.markOidcAttempt();
         this.$session.followRedirect(this.config.ext.oidc.loginUri);
       } else {
         this.$notify.warn(this.$gettext("Missing or invalid configuration"));

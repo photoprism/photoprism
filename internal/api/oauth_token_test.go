@@ -7,12 +7,108 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
+
+// TestOAuthToken_AuthorizationCode covers the authorization_code grant branch
+// that OAuthToken delegates to OAuthAuthorizationCodeHandler (the Portal OIDC OP
+// token handler in production). The branch runs before the CE form binding, so
+// it must also work with client_secret_basic credentials.
+func TestOAuthToken_AuthorizationCode(t *testing.T) {
+	t.Run("UnsupportedWhenNoHook", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		prev := OAuthAuthorizationCodeHandler
+		OAuthAuthorizationCodeHandler = nil
+		defer func() { OAuthAuthorizationCodeHandler = prev }()
+
+		OAuthToken(router)
+
+		data := url.Values{
+			"grant_type":    {authn.GrantAuthorizationCode.String()},
+			"code":          {"raw-code"},
+			"redirect_uri":  {"https://photos.example.com/cb"},
+			"code_verifier": {"verifier"},
+			"client_id":     {"cs5cpu17n6gj2qo5"},
+		}
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Set(header.ContentType, header.ContentTypeForm)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Contains(t, w.Body.String(), "unsupported_grant_type")
+	})
+	t.Run("DelegatesToHook", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		prev := OAuthAuthorizationCodeHandler
+		OAuthAuthorizationCodeHandler = func(c *gin.Context) {
+			c.String(http.StatusOK, "delegated:"+c.PostForm("grant_type"))
+		}
+		defer func() { OAuthAuthorizationCodeHandler = prev }()
+
+		OAuthToken(router)
+
+		data := url.Values{
+			"grant_type": {authn.GrantAuthorizationCode.String()},
+			"code":       {"raw-code"},
+		}
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Set(header.ContentType, header.ContentTypeForm)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "delegated:authorization_code", w.Body.String())
+	})
+	t.Run("DelegatesWithBasicAuthCredentials", func(t *testing.T) {
+		// client_secret_basic puts the credentials in the Authorization header
+		// while grant_type stays in the body. The delegation must trigger off the
+		// body grant_type (not be hijacked into the client_credentials path) and
+		// leave the Basic credentials readable by the delegated handler.
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		var gotID, gotSecret string
+		var gotBasic bool
+		prev := OAuthAuthorizationCodeHandler
+		OAuthAuthorizationCodeHandler = func(c *gin.Context) {
+			gotID, gotSecret, gotBasic = c.Request.BasicAuth()
+			c.String(http.StatusOK, "ok")
+		}
+		defer func() { OAuthAuthorizationCodeHandler = prev }()
+
+		OAuthToken(router)
+
+		data := url.Values{
+			"grant_type":    {authn.GrantAuthorizationCode.String()},
+			"code":          {"raw-code"},
+			"code_verifier": {"verifier"},
+			"redirect_uri":  {"https://photos.example.com/cb"},
+		}
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Set(header.ContentType, header.ContentTypeForm)
+		req.SetBasicAuth("cs5cpu17n6gj2qo5", "client-secret")
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.True(t, gotBasic, "BasicAuth must stay readable by the delegated handler")
+		assert.Equal(t, "cs5cpu17n6gj2qo5", gotID)
+		assert.Equal(t, "client-secret", gotSecret)
+	})
+}
 
 func TestOAuthToken(t *testing.T) {
 	t.Run("ClientSuccess", func(t *testing.T) {
@@ -258,6 +354,36 @@ func TestOAuthToken(t *testing.T) {
 		t.Logf("Header: %s", w.Header())
 		t.Logf("BODY: %s", w.Body.String())
 		assert.Equal(t, http.StatusOK, w.Code)
+	})
+	t.Run("AppPasswordsDisabled", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
+		conf.Settings().Features.AppPasswords = false
+		defer func() { conf.Settings().Features.AppPasswords = true }()
+
+		OAuthToken(router)
+
+		data := url.Values{
+			"grant_type":  {authn.GrantPassword.String()},
+			"client_name": {"AppPasswordAlice"},
+			"username":    {"alice"},
+			"password":    {"Alice123!"},
+			"scope":       {"*"},
+		}
+
+		req, _ := http.NewRequest("POST", "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Add(header.ContentType, header.ContentTypeForm)
+		req.Header.Add(header.XAuthToken, sessId)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		t.Logf("BODY: %s", w.Body.String())
+		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
 	t.Run("UnregisteredUser", func(t *testing.T) {
 		app, router, conf := NewApiTest()

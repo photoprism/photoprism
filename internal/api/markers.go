@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -69,6 +70,15 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 		return file, marker, fmt.Errorf("file %s %s", marker.FileUID, err)
 	}
 
+	// Limit the edit to the file's photo within the session's shared scope. PhotoSessionSeesEverything
+	// is query-free and client and user role aware, so full-access sessions skip the check.
+	if !search.PhotoSessionSeesEverything(s) {
+		if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
+			AbortForbidden(c)
+			return file, marker, errors.New("forbidden")
+		}
+	}
+
 	return file, marker, nil
 }
 
@@ -120,6 +130,15 @@ func CreateMarker(router *gin.RouterGroup) {
 			return
 		}
 
+		// Limit the edit to the file's photo within the session's shared scope. PhotoSessionSeesEverything
+		// is query-free and client and user role aware, so full-access sessions skip the check.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		// Validate form values.
 		if err = frm.Validate(); err != nil {
 			AbortBadRequest(c, err)
@@ -168,7 +187,7 @@ func CreateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Publish updated photo entity.
-			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID)
 		}
 
 		// Display success message.
@@ -275,7 +294,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID)
 		}
 
 		// Display success message.
@@ -337,7 +356,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID)
 		}
 
 		event.SuccessMsg(i18n.MsgChangesSaved)

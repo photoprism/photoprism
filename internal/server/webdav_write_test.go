@@ -64,6 +64,37 @@ func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
 	assert.Equal(t, "hello", string(b))
 }
 
+func TestWebDAVWrite_PUT_OriginalsLimit(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	conf.Options().OriginalsLimit = 1 // cap uploaded files at 1 MB
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	r := setupWebDAVRouter(conf)
+
+	t.Run("UnderLimitAccepted", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/small.bin", bytes.NewReader(make([]byte, 512*1024)))
+		authBearer(req)
+		r.ServeHTTP(w, req)
+		assert.InDelta(t, 201, w.Code, 1)
+	})
+	t.Run("OverLimitRejected", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/big.bin", bytes.NewReader(make([]byte, 2*1024*1024)))
+		authBearer(req)
+		r.ServeHTTP(w, req)
+		// The oversized PUT must not be accepted, and the bytes written to disk must not
+		// exceed the configured originals limit (the body cap stops io.Copy mid-stream).
+		assert.NotEqual(t, http.StatusCreated, w.Code)
+		path := filepath.Join(conf.OriginalsPath(), "big.bin")
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		if info, err := os.Stat(path); err == nil {
+			assert.LessOrEqual(t, info.Size(), conf.OriginalsLimitBytes())
+		}
+	})
+}
+
 func TestWebDAV_NoTrailingSlashRedirectOnBasePath(t *testing.T) {
 	testCases := []struct {
 		name    string

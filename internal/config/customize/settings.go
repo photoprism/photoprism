@@ -53,12 +53,13 @@ func NewSettings(theme, language, timeZone string) *Settings {
 
 	return &Settings{
 		UI: UISettings{
-			Scrollbar: true,
-			Zoom:      false,
-			Theme:     theme,
-			Language:  language,
-			TimeZone:  timeZone,
-			StartPage: DefaultStartPage,
+			Scrollbar:   true,
+			Zoom:        false,
+			OpenOnHover: true,
+			Theme:       theme,
+			Language:    language,
+			TimeZone:    timeZone,
+			StartPage:   DefaultStartPage,
 		},
 		Search: SearchSettings{
 			BatchSize:    -1,
@@ -113,6 +114,12 @@ func (s *Settings) Propagate() {
 
 	if s.Maps.Style == "" {
 		s.Maps.Style = DefaultMapsStyle
+	}
+
+	// Reset the import destination pattern unless it is already a normalized, valid value,
+	// so GetDest can stay side-effect free for concurrent import workers.
+	if s.Import.Dest != "" && s.Import.GetDest() != s.Import.Dest {
+		s.Import.Dest = ""
 	}
 
 	i18n.SetLocale(s.UI.Language)

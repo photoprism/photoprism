@@ -358,7 +358,7 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="settings.features.places && !config.disable.places" flat tile class="mt-0 px-1 bg-background">
+      <v-card v-if="!isPortal && settings.features.places && !config.disable.places" flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-2 text-subtitle-2">
           {{ $gettext(`Places`) }}
         </v-card-title>

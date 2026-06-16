@@ -22,6 +22,8 @@ function mountLogin({ oidcEnabled = false, oidcRedirect = false, sessionOverride
     getDefaultRoute: vi.fn(() => "browse"),
     isAuthenticated: vi.fn(() => false),
     consumeLogoutSignal: vi.fn(() => false),
+    markLoginRedirectAttempt: vi.fn(),
+    markOidcAttempt: vi.fn(),
     ...baseSession,
     ...sessionOverrides,
   };
@@ -137,6 +139,43 @@ describe("page/auth/login", () => {
     expect(session.useSessionStorage).toHaveBeenCalledTimes(1);
     expect(session.useLocalStorage).not.toHaveBeenCalled();
     expect(session.followRedirect).toHaveBeenCalledWith("/api/v1/oidc/login");
+    // The manual OIDC button arms the per-tab OIDC attempt guard, like the
+    // auto-redirect in the /login route guard does. It must NOT arm the
+    // post-login redirect-loop guard, or an authenticated return within the
+    // loop window would discard the stored deep link / Portal return_to.
+    expect(session.markOidcAttempt).toHaveBeenCalledTimes(1);
+    expect(session.markLoginRedirectAttempt).not.toHaveBeenCalled();
+  });
+
+  it("reset clears the inputs and code-entry state", () => {
+    const { wrapper } = mountLogin();
+
+    Object.assign(wrapper.vm, {
+      username: "x",
+      password: "y",
+      showPassword: true,
+      useRecoveryCode: true,
+      code: "123456",
+      enterCode: true,
+    });
+    wrapper.vm.reset();
+
+    expect(wrapper.vm.username).toBe("");
+    expect(wrapper.vm.password).toBe("");
+    expect(wrapper.vm.showPassword).toBe(false);
+    expect(wrapper.vm.useRecoveryCode).toBe(false);
+    expect(wrapper.vm.code).toBe("");
+    expect(wrapper.vm.enterCode).toBe(false);
+  });
+
+  it("surfaces a stored OIDC sign-in error via the notification toast and consumes it", () => {
+    window.localStorage.setItem(`${storagePrefix}session.error`, "You do not have access to this instance.");
+
+    const { wrapper } = mountLogin({ oidcEnabled: true });
+
+    // Consumed on mount so it does not reappear on the next reload.
+    expect(window.localStorage.getItem(`${storagePrefix}session.error`)).toBeNull();
+    expect(wrapper.vm.$notify.error).toHaveBeenCalledWith("You do not have access to this instance.");
   });
 
   // Auto-OIDC redirect for unauthenticated visitors now lives in the

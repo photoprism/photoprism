@@ -19,6 +19,9 @@ import (
 //	@Tags		Faces
 //	@Produce	json
 //	@Success	200					{object}	search.FaceResults
+//	@Header		200					{number}	X-Count		"The actual number of faces returned"
+//	@Header		200					{number}	X-Limit		"The limit of the number of faces to be returned"
+//	@Header		200					{number}	X-Offset	"The offset that was used"
 //	@Failure	400,401,403,429,404	{object}	i18n.Response
 //	@Param		count				query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
 //	@Param		offset				query		int		false	"search result offset"		minimum(0)	maximum(100000)

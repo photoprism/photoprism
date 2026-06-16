@@ -13,7 +13,6 @@ const (
 	EntityDeleted  = "deleted"
 	EntityArchived = "archived"
 	EntityRestored = "restored"
-	EntityEdited   = "edited"
 )
 
 // PublishEntities publishes updated entity data.
@@ -46,7 +45,10 @@ func PublishUserEntities(channel, ev string, entities any, userUid string) {
 	})
 }
 
-// EntitiesUpdated publishes an update notification for the given channel.
+// EntitiesUpdated publishes an update notification for the given channel,
+// with the affected entity UIDs as the payload. Receivers refetch entity
+// details through the REST API, so batch mutations emit one event with
+// the full UID list instead of one event per entity.
 func EntitiesUpdated(channel string, entities any) {
 	PublishEntities(channel, EntityUpdated, entities)
 }
@@ -69,13 +71,4 @@ func EntitiesArchived(channel string, entities any) {
 // EntitiesRestored publishes a restore notification for the given channel.
 func EntitiesRestored(channel string, entities any) {
 	PublishEntities(channel, EntityRestored, entities)
-}
-
-// EntitiesEdited publishes a batch-edit notification for the given channel
-// with bare entity UIDs as the payload (in contrast to EntitiesUpdated,
-// which carries full entity bodies). Used by batch-mutation paths where
-// emitting one heavy *.updated event per affected UID would be excessive;
-// the receiver is expected to refetch lazily on next access.
-func EntitiesEdited(channel string, entities any) {
-	PublishEntities(channel, EntityEdited, entities)
 }

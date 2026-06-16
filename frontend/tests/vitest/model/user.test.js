@@ -4,6 +4,7 @@ import User from "model/user";
 import File from "model/file";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
+import { $session } from "app/session";
 
 const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
@@ -355,6 +356,77 @@ describe("model/user", () => {
       const result = user.hasWebDAV();
       expect(typeof result).toBe("boolean");
       expect(result).toBe(true);
+    });
+  });
+
+  // canHavePassword gates the admin "change password" action: visitors, system
+  // users, and accounts with authentication disabled cannot have a local password,
+  // mirroring the backend, which only allows passwords for registered accounts.
+  describe("canHavePassword", () => {
+    it("returns true for a registered local user", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "local" }).canHavePassword()).toBe(true);
+    });
+    it("returns true for a registered user without an explicit provider", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "admin" }).canHavePassword()).toBe(true);
+    });
+    it("returns false for a visitor, even when named guest", () => {
+      expect(new User({ ID: 1, Name: "guest", Role: "visitor", AuthProvider: "link" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for an account without a role", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "", AuthProvider: "local" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for a remote LDAP account (credentials managed by the directory)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "ldap" }).canHavePassword()).toBe(false);
+    });
+    it("returns true for an OIDC account (a local password remains usable)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "oidc" }).canHavePassword()).toBe(true);
+    });
+    it("returns false when authentication is disabled (provider none)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "none" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for a system user with ID below 1", () => {
+      expect(new User({ ID: 0, Name: "max", Role: "user" }).canHavePassword()).toBe(false);
+    });
+    it("returns false without a username", () => {
+      expect(new User({ ID: 1, Name: "", Role: "user" }).canHavePassword()).toBe(false);
+    });
+  });
+
+  // isCurrentUser drives the admin-UI self-lockout guards: the table login
+  // toggle and the dialog role/auth/login fields lock for the signed-in user so
+  // an operator cannot lock themselves out. See specs/portal/cluster-admin-ui.md.
+  describe("isCurrentUser", () => {
+    it("returns true for the signed-in user and false for others", () => {
+      $session.setUser({ ID: 5, UID: "us1234567890self", Name: "max", Role: "admin" });
+
+      const me = new User({ ID: 5, UID: "us1234567890self", Name: "max", Role: "admin" });
+      expect(me.isCurrentUser()).toBe(true);
+
+      const other = new User({ ID: 6, UID: "us1234567890othr", Name: "alice", Role: "user" });
+      expect(other.isCurrentUser()).toBe(false);
+    });
+    it("returns Boolean false when the account has no UID", () => {
+      $session.setUser({ ID: 5, UID: "us1234567890self", Name: "max", Role: "admin" });
+
+      const blank = new User({ ID: 0, Name: "" });
+      expect(typeof blank.isCurrentUser()).toBe("boolean");
+      expect(blank.isCurrentUser()).toBe(false);
+    });
+  });
+
+  // isAdmin / isClusterAdmin replace hardcoded role-string checks in the admin
+  // dialogs (e.g. the Super Admin toggle); isAdmin mirrors the backend admin-tier
+  // set {admin, cluster_admin}, isClusterAdmin matches only the Portal operator role.
+  describe("isAdmin / isClusterAdmin", () => {
+    it("isAdmin is true for admin and cluster_admin, false otherwise", () => {
+      expect(new User({ ID: 1, Name: "a", Role: "admin" }).isAdmin()).toBe(true);
+      expect(new User({ ID: 2, Name: "b", Role: "cluster_admin" }).isAdmin()).toBe(true);
+      expect(new User({ ID: 3, Name: "c", Role: "user" }).isAdmin()).toBe(false);
+      expect(new User({ ID: 4, Name: "d", Role: "" }).isAdmin()).toBe(false);
+    });
+    it("isClusterAdmin is true only for cluster_admin", () => {
+      expect(new User({ ID: 2, Name: "b", Role: "cluster_admin" }).isClusterAdmin()).toBe(true);
+      expect(new User({ ID: 1, Name: "a", Role: "admin" }).isClusterAdmin()).toBe(false);
     });
   });
 });

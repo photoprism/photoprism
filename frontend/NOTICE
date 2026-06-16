@@ -11,9 +11,7 @@ Package                          License        Copyright
 @mdi/font                        Apache-2.0     Austin Andrews
 @testing-library/jest-dom        MIT            Ernesto Garcia <gnapse@gmail.com> (http://gnapse.github.io)
 @vitejs/plugin-vue               MIT            Evan You
-@vitest/browser                  MIT            n/a
 @vitest/coverage-v8              MIT            Anthony Fu <anthonyfu117@hotmail.com>
-@vitest/ui                       MIT            n/a
 @vue/compiler-sfc                MIT            Evan You
 @vue/language-server             MIT            n/a
 @vue/test-utils                  MIT            Lachlan Miller lachlan.miller.1990@outlook.com
@@ -71,6 +69,7 @@ svg-url-loader                   MIT            Hovhannes Babayan
 tar                              BlueOak-1.0.0  Isaac Z. Schlueter
 url-loader                       MIT            Tobias Koppers @sokra
 util                             MIT            Joyent http://www.joyent.com
+vite                             MIT            Evan You
 vitest                           MIT            Anthony Fu <anthonyfu117@hotmail.com>
 vue                              MIT            Evan You
 vue-3-sanitize                   MIT            Vannsl, Vanessa Otto <mail@vannsl.io>

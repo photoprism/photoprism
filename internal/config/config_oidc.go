@@ -27,6 +27,13 @@ const (
 	OidcRedirectUri = ApiUri + "/oidc/redirect"
 )
 
+// ClusterOIDC reports whether a cluster instance should use the Portal as its OIDC
+// login provider, deriving the OIDC RP credentials from the node client
+// (PHOTOPRISM_CLUSTER_OIDC). Explicit PHOTOPRISM_OIDC_CLIENT / _SECRET win.
+func (c *Config) ClusterOIDC() bool {
+	return c.options.ClusterOIDC
+}
+
 // OIDCEnabled checks if sign-on via OpenID Connect (OIDC) is fully configured and enabled.
 func (c *Config) OIDCEnabled() bool {
 	switch {
@@ -77,6 +84,46 @@ func (c *Config) OIDCSecret() string {
 	} else {
 		return clean.Password(string(b))
 	}
+}
+
+// SetOIDCUri sets the OIDC provider URI in memory, e.g. when a cluster instance
+// defaults it to the Portal issuer during bootstrap.
+func (c *Config) SetOIDCUri(value string) {
+	if c == nil || c.options == nil {
+		return
+	}
+	c.options.OIDCUri = strings.TrimSpace(value)
+}
+
+// SetOIDCClient sets the OIDC RP Client ID in memory, e.g. when a cluster
+// instance derives it from the node client credentials during bootstrap.
+func (c *Config) SetOIDCClient(value string) {
+	if c == nil || c.options == nil {
+		return
+	}
+	c.options.OIDCClient = strings.TrimSpace(value)
+}
+
+// SetOIDCSecret sets the OIDC RP Client Secret in memory, e.g. when a cluster
+// instance derives it from the node client credentials during bootstrap.
+func (c *Config) SetOIDCSecret(value string) {
+	if c == nil || c.options == nil {
+		return
+	}
+	c.options.OIDCSecret = value
+}
+
+// OIDCIssuerOnSiteDomain reports whether the configured OIDC issuer is served from
+// this node's own site host (a shared-domain Portal OP). The OP session cookie is
+// host-only to that domain, so this gates whether an instance can clear it on
+// logout. It compares the site host, not PortalUrl (which may be a loopback).
+func (c *Config) OIDCIssuerOnSiteDomain() bool {
+	issuer := c.OIDCUri()
+	if issuer == nil || issuer.Hostname() == "" {
+		return false
+	}
+
+	return strings.EqualFold(issuer.Hostname(), c.SiteDomain())
 }
 
 // OIDCScopes returns the user information scopes for single sign-on via OIDC.
@@ -165,26 +212,26 @@ func (c *Config) OIDCGroupRoles() map[string]acl.Role {
 	result := make(map[string]acl.Role, len(c.options.OIDCGroupRole))
 
 	for _, entry := range c.options.OIDCGroupRole {
-		entry = strings.TrimSpace(entry)
+		// splitGroupList tolerates comma- and whitespace-separated pairs, so a
+		// single env value with several pairs resolves the same either way.
+		for _, pair := range splitGroupList(entry) {
+			group, roleName, ok := parseGroupRolePair(pair)
 
-		if entry == "" {
-			continue
+			if !ok {
+				continue
+			}
+
+			role := acl.ParseRole(roleName)
+
+			// Skip a mapping to a non-federatable role: the Portal operator role
+			// cluster_admin and the anonymous visitor role must not be assignable
+			// through the IdP group mechanism, even if the directory is compromised.
+			if !acl.IsFederatedRole(role) {
+				continue
+			}
+
+			result[group] = role
 		}
-
-		sep := strings.IndexAny(entry, "=:")
-
-		if sep < 1 || sep >= len(entry)-1 {
-			continue
-		}
-
-		group := normalizeGroupID(entry[:sep])
-		role := acl.ParseRole(entry[sep+1:])
-
-		if group == "" || role == acl.RoleNone {
-			continue
-		}
-
-		result[group] = role
 	}
 
 	return result
@@ -201,9 +248,10 @@ func (c *Config) OIDCRole() acl.Role {
 		return acl.RoleGuest
 	}
 
-	role := acl.UserRoles[clean.Role(c.options.OIDCRole)]
-
-	if role != acl.RoleNone {
+	// Ignore a configured default role that cannot be federated (cluster_admin /
+	// visitor): new OIDC accounts must never be provisioned as a Portal operator
+	// or an anonymous visitor.
+	if role := acl.UserRoles[clean.Role(c.options.OIDCRole)]; acl.IsFederatedRole(role) {
 		return role
 	}
 

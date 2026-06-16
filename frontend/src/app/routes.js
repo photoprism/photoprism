@@ -36,6 +36,7 @@ import Settings from "page/settings.vue";
 import Admin from "page/admin.vue";
 import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
+import Instances from "page/auth/instances.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
 import License from "page/about/license.vue";
@@ -114,7 +115,7 @@ export default [
     beforeEnter: (to, from, next) => {
       // Honor an inbound `return_to` query param so cross-frontend hand-offs
       // (e.g. the Portal OIDC OP redirecting an unauthenticated user from
-      // /oauth/authorize) can land back on the originally-requested URL
+      // /api/v1/oauth/authorize) can land back on the originally-requested URL
       // after a successful login. The value is recorded the same way the
       // global router guard records internal deep links, so the rest of
       // the flow (followLoginRedirectUrl on success) needs no further
@@ -151,8 +152,18 @@ export default [
       // hard-navigate to the deep link the router guard recorded so the
       // stored absolute path (incl. frontend base) is honored verbatim.
       if ($session.hasLoginRedirectUrl()) {
-        $session.followLoginRedirectUrl();
-        next(false);
+        if ($session.loginRedirectLooping()) {
+          // We followed this redirect moments ago and bounced straight back — the
+          // target couldn't authenticate the navigation. Drop it and fall through
+          // to the default route instead of looping.
+          $session.clearLoginRedirectAttempt();
+          $session.clearLoginRedirectUrl();
+          next({ name: $session.getDefaultRoute() });
+        } else {
+          $session.markLoginRedirectAttempt();
+          $session.followLoginRedirectUrl();
+          next(false);
+        }
       } else {
         next({ name: $session.getDefaultRoute() });
       }
@@ -163,11 +174,26 @@ export default [
     path: "/logout",
     meta: { title: siteTitle, requiresAuth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
-      // signOut() resets client state synchronously so /login sees an
-      // unauthenticated user; the one-shot logout flag suppresses the next
-      // auto-OIDC bounce. Server DELETE runs best-effort in the background.
-      $session.signOut();
-      next({ name: loginRoute });
+      // Resolve the session kind and landing before sign-out clears the provider:
+      // a cluster-OIDC user returns to the Portal login (or the local form when the
+      // Portal login URL is unknown), everyone else to the local form. The cluster
+      // decision must not depend on the redirect target, or a node without a
+      // persisted Portal login URL would silently skip the cluster-wide sign-out.
+      const isClusterSession = $session.isClusterSession();
+      const redirectUri = $session.logoutRedirectUri();
+      if (isClusterSession) {
+        // Cluster-OIDC: await the cluster-wide sign-out (which clears the Portal OP
+        // cookie) BEFORE redirecting, so the Portal shows its login form instead of
+        // silently re-issuing a session from a still-valid OP cookie.
+        next(false);
+        $session.logoutEverywhere(true).finally(() => $session.followRedirect(redirectUri));
+      } else {
+        // Local: signOut() resets client state synchronously so /login sees an
+        // unauthenticated user; the one-shot logout flag suppresses the next auto-OIDC
+        // bounce, and the DELETE fan-out (current + peers) runs best-effort.
+        $session.signOut();
+        next({ name: loginRoute });
+      }
     },
   },
   {
@@ -209,6 +235,28 @@ export default [
         // gate on `cluster.access_all` and `cluster.audit`; the My
         // Instances chooser is visible to everyone). When no tabs remain,
         // cluster.vue redirects to the user's default route in `created()`.
+        next();
+      }
+    },
+  },
+  {
+    name: "instances",
+    path: "/instances",
+    component: Instances,
+    meta: {
+      title: $gettext("Instances"),
+      requiresAuth: true,
+      hideNav: true,
+      settings: false,
+      background: "background",
+    },
+    beforeEnter: (to, from, next) => {
+      // The instance selector is the durable landing page for non-operators;
+      // any signed-in user may enter, and unauthenticated requests fall through
+      // to login (the global guard records the return_to deep link).
+      if ($session.loginRequired()) {
+        next({ name: loginRoute });
+      } else {
         next();
       }
     },

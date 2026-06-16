@@ -1460,9 +1460,9 @@ export class Photo extends RestModel {
 }
 
 // evictCachedFromEntities drops cached entries from a WS payload, accepting
-// both bare-UID arrays and search.Photos result objects. Treat photos.updated
-// as evict-only — its flattened search-result shape would collapse Photo.Details
-// on hydrate; the next read goes back through /photos/:uid for the full record.
+// both bare-UID arrays and legacy entity-object payloads. Events are
+// evict-only signals; the next read goes back through /photos/:uid for the
+// full record.
 function evictCachedFromEntities(data) {
   if (!data || !Array.isArray(data.entities)) {
     return;

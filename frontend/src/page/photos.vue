@@ -64,7 +64,7 @@
 <script>
 import { Photo } from "model/photo";
 import Thumb from "model/thumb";
-import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED, ACTION_EDITED } from "common/event";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED } from "common/event";
 import * as contexts from "options/contexts";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
@@ -76,6 +76,10 @@ import PScroll from "component/scroll.vue";
 import { getAppStorage } from "common/storage";
 
 const appStorage = getAppStorage();
+
+// Maximum number of affected entities reloaded in place per event;
+// larger batches set the dirty flag and are refetched lazily instead.
+const maxLiveRefetch = 50;
 
 export default {
   name: "PPagePhotos",
@@ -733,6 +737,16 @@ export default {
 
       this.loadMore(true);
     },
+    removeResult(results, uid) {
+      const index = results.findIndex((m) => m.UID === uid);
+
+      if (index >= 0) {
+        results.splice(index, 1);
+      }
+    },
+    // updateResults patches the scalar fields of all loaded copies of
+    // the given photo, so an edit reflects in the open view without
+    // re-running the full result query.
     updateResults(entity) {
       this.results
         .filter((m) => m.UID === entity.UID)
@@ -754,12 +768,54 @@ export default {
           }
         });
     },
-    removeResult(results, uid) {
-      const index = results.findIndex((m) => m.UID === uid);
+    // refetchResults reloads the affected photos through the scoped
+    // search API and patches the loaded results in place, so a single
+    // edit costs one uid-filtered query instead of re-running the full
+    // result query. Larger batches fall back to the dirty flag and are
+    // refetched lazily on the next return-to-view.
+    refetchResults(uids) {
+      const affected = uids.filter((uid) => this.results.some((m) => m.UID === uid) || this.lightbox.results.some((m) => m.UID === uid));
 
-      if (index >= 0) {
-        results.splice(index, 1);
+      if (affected.length === 0) {
+        return;
       }
+
+      if (affected.length > maxLiveRefetch) {
+        this.dirty = true;
+        this.complete = false;
+        return;
+      }
+
+      Photo.search({ uid: affected.join("|"), merged: true, count: affected.length })
+        .then((resp) => {
+          const found = new Set();
+
+          resp.models.forEach((values) => {
+            found.add(values.UID);
+
+            if (this.context === contexts.Review && values.Quality >= 3) {
+              this.removeResult(this.results, values.UID);
+              this.removeResult(this.lightbox.results, values.UID);
+              this.$clipboard.removeId(values.UID);
+            } else {
+              this.updateResults(values);
+            }
+          });
+
+          // Rows the scoped search no longer returns are not visible to
+          // this session anymore — drop them like a full refresh would.
+          affected
+            .filter((uid) => !found.has(uid))
+            .forEach((uid) => {
+              this.removeResult(this.results, uid);
+              this.removeResult(this.lightbox.results, uid);
+              this.$clipboard.removeId(uid);
+            });
+        })
+        .catch(() => {
+          this.dirty = true;
+          this.complete = false;
+        });
     },
     onUpdate(ev, data) {
       if (!this.listen) {
@@ -773,19 +829,6 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case ACTION_UPDATED:
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-
-            if (this.context === contexts.Review && values.Quality >= 3) {
-              this.removeResult(this.results, values.UID);
-              this.removeResult(this.lightbox.results, values.UID);
-              this.$clipboard.removeId(values.UID);
-            } else {
-              this.updateResults(values);
-            }
-          }
-          break;
         case ACTION_RESTORED:
           this.dirty = true;
           this.complete = false;
@@ -838,15 +881,13 @@ export default {
           this.complete = false;
 
           break;
-        case ACTION_EDITED:
-          // photos.edited is a lightweight UID-only batch signal
-          // (event.EntitiesEdited). The cards list may now show stale
-          // labels/albums/title for the affected UIDs; mark dirty so
-          // the next return-to-view refetches from the server. The
-          // model-layer subscriber in model/photo.js handles the
-          // lightbox-cache eviction independently.
-          this.dirty = true;
-          this.complete = false;
+        case ACTION_UPDATED:
+          // photos.updated is a lightweight UID-only signal that carries
+          // no entity fields; affected photos are reloaded through the
+          // scoped search API and patched in place. The model-layer
+          // subscriber in model/photo.js handles the lightbox-cache
+          // eviction independently.
+          this.refetchResults(data.entities);
 
           break;
         default:

@@ -45,8 +45,15 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
+		// A verified Portal cluster JWT (GrantJwtBearer) with users-manage scope is
+		// a trusted service principal — the Portal syncing cluster user state — with
+		// no end-user identity, so authorize it for user management like an admin
+		// instead of applying the per-user owner check below (which a user-less
+		// service token can never satisfy).
+		isClusterJWT := s.GrantType == authn.GrantJwtBearer.String() && s.ValidateScope(acl.ResourceUsers, acl.Permissions{acl.ActionManage})
+
 		// Check whether the role can manage all user accounts.
-		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := isClusterJWT || acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		uid := clean.UID(c.Param("uid"))
 
 		// Non-admin users may only update their own profile.
@@ -61,6 +68,13 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)
+			return
+		}
+
+		// System accounts (Unknown id=-1, Visitor id=-2) must not be modified.
+		if m.ID < 0 {
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", clean.Log(uid), "update", status.Denied}, s.RefID)
+			AbortForbidden(c)
 			return
 		}
 
@@ -98,8 +112,32 @@ func UpdateUser(router *gin.RouterGroup) {
 		// Get user from session.
 		u := s.GetUser()
 
-		// Persist form values.
-		if err = m.SaveForm(f, u); err != nil {
+		// Prevent users from changing their own account role, disabling their
+		// own super admin status, or revoking their own web login — any of
+		// which could lock an operator out of the admin UI (e.g. a super admin
+		// demoting themselves). Other own-profile fields remain editable.
+		if u != nil && u.UserUID == m.UserUID {
+			switch {
+			case f.UserRole != "" && clean.Role(f.UserRole) != clean.Role(m.UserRole):
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update own role", status.Denied}, s.RefID)
+				AbortForbidden(c)
+				return
+			case m.SuperAdmin && !f.SuperAdmin:
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable own super admin status", status.Denied}, s.RefID)
+				AbortForbidden(c)
+				return
+			case m.CanLogin && !f.CanLogin:
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable own web login", status.Denied}, s.RefID)
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		// Persist form values. SaveForm gates privilege-level fields on admin
+		// authorization; the cluster JWT is a user-less service principal that
+		// u.IsAdmin() rejects, so pass that decision explicitly or its login and
+		// role sync would be silently dropped.
+		if err = m.SaveForm(f, u, u.IsAdmin() || isClusterJWT); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", err.Error()}, s.RefID)
 			AbortSaveFailed(c)
 			return
@@ -108,14 +146,12 @@ func UpdateUser(router *gin.RouterGroup) {
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "updated"}, s.RefID)
 
-		// Delete user sessions after a privilege level change.
-		// see https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#renew-the-session-id-after-any-privilege-level-change
+		// Revoke other user sessions after a privilege level change,
+		// except for app passwords and client access tokens.
 		if privilegeLevelChange {
-			// Prevent the current session from being deleted.
-			deleted := m.DeleteSessions([]string{s.ID})
-			// Delete active user sessions.
-			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "invalidated %s"}, s.RefID,
-				english.Plural(deleted, "session", "sessions"))
+			revoked := m.RevokeDerivedSessions([]string{s.ID})
+			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "revoked %s"}, s.RefID,
+				english.Plural(revoked, "session", "sessions"))
 		}
 
 		// Flush session cache.

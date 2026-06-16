@@ -70,6 +70,10 @@ func NewFolder(root, dir string, modTime time.Time) Folder {
 		dir = ""
 	}
 
+	// Clip to the shared path byte budget so folders.path stays byte-exact with
+	// album_path and photo_path.
+	dir = ClipPath(dir)
+
 	year := 0
 	month := 0
 

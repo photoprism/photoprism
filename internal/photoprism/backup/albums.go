@@ -1,12 +1,14 @@
 package backup
 
 import (
+	"fmt"
 	"path/filepath"
 	"regexp"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -84,6 +86,14 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 	// Make sure only one backup/restore operation is running at a time.
 	backupAlbumsMutex.Lock()
 	defer backupAlbumsMutex.Unlock()
+
+	// Recover from panics so a corrupt backup file cannot abort server startup.
+	defer func() {
+		if r := recover(); r != nil {
+			event.LogPanic(r)
+			result = fmt.Errorf("recovered from panic while restoring album backups")
+		}
+	}()
 
 	c := get.Config()
 
