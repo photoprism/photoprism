@@ -157,7 +157,7 @@ func (m File) RegenerateIndex() {
 				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
-			Db().Exec("UPDATE files SET time_index = convert_to(CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - to_number(to_char(photo_taken_at, 'YYYYMMDDHHMISS'),'99999999999999'), '-', convert_from(media_id,'UTF8')) ELSE NULL END, 'UTF8') WHERE ?",
+			Db().Exec("UPDATE files SET time_index = convert_to(CASE WHEN media_id IS NOT NULL AND photo_taken_at IS NOT NULL THEN CONCAT(100000000000000 - to_number(to_char(photo_taken_at, 'YYYYMMDDHH24MISS'),'99999999999999'), '-', convert_from(media_id,'UTF8')) ELSE NULL END, 'UTF8') WHERE ?",
 				updateWhere).Error)
 
 	case dsn.DialectMySQL:

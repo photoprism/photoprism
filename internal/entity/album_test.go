@@ -1477,6 +1477,13 @@ func TestAlbum_DeletePermanently(t *testing.T) {
 			t.Fatal("should find album")
 		}
 
+		photo1 := PhotoFixtures.Get("19800101_000002_D640C559")
+		photo2 := PhotoFixtures.Get("Photo01")
+		photos := Photos{&photo1, &photo2}
+		added := album.AddPhotos(photos)
+
+		assert.Len(t, added, 2)
+
 		if err := album.DeletePermanently(); err != nil {
 			t.Fatal(err)
 		}

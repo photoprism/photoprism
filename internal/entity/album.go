@@ -985,7 +985,7 @@ func (m *Album) DeletePermanently() error {
 
 	wasDeleted := m.Deleted()
 
-	if err := UnscopedDb().Delete(m).Error; err != nil {
+	if err := UnscopedDb().Select("Photos").Delete(m).Error; err != nil { // Remove the records from the PhotoAlbums table as well
 		return err
 	}
 
