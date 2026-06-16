@@ -169,6 +169,9 @@ export default {
     this.renderedThumbs = {};
     this.intersecting = {};
     this.scrollPending = false;
+    // Target page of an in-flight programmatic alignment (0 when idle); set so
+    // updateCurrentPage defers to the requested page until the jump converges.
+    this.scrollingTo = 0;
     this.destroyed = false;
     // Hide the thumbnail strip by default on small screens, where it would take
     // most of the width; it can be toggled back on from the controls.
@@ -295,7 +298,7 @@ export default {
     updateCurrentPage() {
       const scroll = this.$refs.scroll;
 
-      if (!scroll || !this.pageCount) {
+      if (!scroll || !this.pageCount || this.scrollingTo) {
         return;
       }
 
@@ -419,25 +422,70 @@ export default {
       this.scrollActiveThumbIntoView();
     },
     // goToPage scrolls to and renders the target page, clamped to valid bounds.
+    // Adjacent hops scroll smoothly; longer jumps re-align via alignToPage,
+    // because lazy rendering grows pages from their placeholder height as they
+    // enter the viewport and shifts the target's offset — a single scroll would
+    // land on a nearby page on large documents.
     goToPage(n) {
       const target = Math.min(Math.max(1, Math.floor(n) || 1), this.pageCount || 1);
       const changed = target !== this.currentPage;
+      const stepwise = Math.abs(target - this.currentPage) <= 1;
 
       this.currentPage = target;
       this.pageInput = String(target);
+      this.renderPage(target);
+      this.scrollActiveThumbIntoView();
 
       const el = (this.$refs.page || [])[target - 1];
 
-      if (el && typeof el.scrollIntoView === "function") {
+      if (stepwise && el && typeof el.scrollIntoView === "function") {
+        // Cancel any in-flight alignment so it does not fight the smooth scroll.
+        this.scrollingTo = 0;
         el.scrollIntoView({ block: "start", behavior: "smooth" });
+      } else if (el) {
+        this.alignToPage(target);
       }
-
-      this.renderPage(target);
-      this.scrollActiveThumbIntoView();
 
       if (changed) {
         this.$emit("page-changed", target);
       }
+    },
+    // alignToPage scrolls the target page to the top, correcting until it
+    // settles. Pages render lazily and grow from their placeholder height as
+    // they enter the viewport, which shifts the target's offset after the first
+    // scroll; on large documents a single jump lands on a nearby page. The
+    // scrollingTo guard makes updateCurrentPage defer to the requested page
+    // until alignment converges or the attempt budget runs out.
+    alignToPage(target) {
+      const scroll = this.$refs.scroll;
+      const el = (this.$refs.page || [])[target - 1];
+
+      if (!scroll || !el) {
+        return;
+      }
+
+      this.scrollingTo = target;
+      let attempts = 0;
+
+      const align = () => {
+        if (this.destroyed || this.scrollingTo !== target) {
+          return;
+        }
+
+        const delta = el.getBoundingClientRect().top - scroll.getBoundingClientRect().top;
+
+        if (Math.abs(delta) <= 1 || attempts >= 16) {
+          this.scrollingTo = 0;
+          this.updateCurrentPage();
+          return;
+        }
+
+        attempts += 1;
+        scroll.scrollTop += delta;
+        requestAnimationFrame(align);
+      };
+
+      align();
     },
     prevPage() {
       this.goToPage(this.currentPage - 1);

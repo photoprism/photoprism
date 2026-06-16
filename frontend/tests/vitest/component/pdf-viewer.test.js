@@ -78,6 +78,44 @@ describe("component/pdf-viewer", () => {
     wrapper.vm.goToPage(0);
     expect(wrapper.vm.currentPage).toBe(1);
   });
+  it("re-aligns to the exact target on a large jump despite lazy-render layout shift", async () => {
+    h.loadPdfDocument.mockResolvedValue({ pdf: h.pdf, pageCount: 50 });
+    const wrapper = await mountViewer({ pages: 50 });
+    // Run the alignment loop synchronously so it converges within the test.
+    vi.stubGlobal("requestAnimationFrame", (cb) => {
+      cb();
+      return 0;
+    });
+    const scroll = wrapper.vm.$refs.scroll;
+    scroll.getBoundingClientRect = () => ({ top: 0, bottom: 800 });
+    let scrollTop = 0;
+    Object.defineProperty(scroll, "scrollTop", {
+      configurable: true,
+      get: () => scrollTop,
+      set: (v) => {
+        scrollTop = v;
+      },
+    });
+    // Page 40 sits at offset 12000; on the first correction lazy rendering above
+    // it grows the layout by 300px (placeholder→rendered), shifting it down so a
+    // single scroll would undershoot. The loop must keep correcting until it
+    // lands exactly on the target rather than a nearby page.
+    const target = 40;
+    let grew = false;
+    wrapper.vm.$refs.page[target - 1].getBoundingClientRect = () => {
+      let top = 12000 - scrollTop;
+      if (!grew && scrollTop > 0) {
+        top += 300;
+        grew = true;
+      }
+      return { top, bottom: top + 800 };
+    };
+    wrapper.vm.goToPage(target);
+    expect(wrapper.vm.currentPage).toBe(target);
+    expect(wrapper.vm.scrollingTo).toBe(0);
+    expect(scrollTop).toBeGreaterThan(11000);
+    vi.unstubAllGlobals();
+  });
   it("zooms within bounds and re-renders the visible pages", async () => {
     const wrapper = await mountViewer();
     ioInstances[0].cb([pageEntry(1, 1)]);
