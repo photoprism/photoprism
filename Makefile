@@ -131,6 +131,8 @@ show-rev:
 	@git rev-parse HEAD
 show-build:
 	@echo "$(BUILD_TAG)"
+tag-release:
+	scripts/tag-release.sh $(EDITION) $(TAG_ARGS)
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
 format: format-tables fmt-go fmt-swag

@@ -42,7 +42,7 @@
       <div ref="map" class="map-container" :class="{ 'map-loaded': loaded }"></div>
       <div v-if="showCluster" class="cluster-control">
         <v-card class="cluster-control-container">
-          <p-page-photos ref="cluster" :static-filter="cluster" :on-close="closeCluster" :embedded="true" />
+          <p-page-photos ref="cluster" :key="cluster.latlng" :static-filter="cluster" :on-close="closeCluster" :embedded="true" />
         </v-card>
       </div>
     </div>
@@ -53,7 +53,7 @@
 import $api from "common/api";
 import $fullscreen from "common/fullscreen";
 import * as sky from "common/sky";
-import * as map from "common/map";
+import * as maps from "common/map";
 import { getAppStorage } from "common/storage";
 import * as options from "options/options";
 import Thumb from "model/thumb";
@@ -174,7 +174,7 @@ export default {
   mounted() {
     this.$view.enter(this);
 
-    map.load().then((m) => {
+    maps.load().then((m) => {
       maplibregl = m;
       this.initMap()
         .then(() => {
@@ -692,6 +692,8 @@ export default {
       this.openCluster(cluster);
     },
     selectClusterByCoords: function (latNorth, lngEast, latSouth, lngWest) {
+      // The :key on the embedded photo list (bound to latlng) remounts it for the new
+      // location, so an already-open panel re-runs its search instead of going stale.
       this.openCluster({
         q: this.filter.q,
         s: this.filter.s,
@@ -699,10 +701,6 @@ export default {
       });
     },
     selectClusterById: function (clusterId) {
-      if (this.showCluster) {
-        this.showCluster = false;
-      }
-
       this.getClusterFeatures(clusterId, -1, (clusterFeatures) => {
         let latNorth, lngEast, latSouth, lngWest;
 
@@ -1044,6 +1042,89 @@ export default {
       }
       return value;
     },
+    // Renders a single photo marker that opens the picture and its surroundings in the viewer.
+    renderPhotoMarker(feature, token, newMarkers, map) {
+      const id = feature.id;
+      const props = feature.properties;
+      const coords = feature.geometry.coordinates;
+
+      let marker = this.markers[id];
+      if (!marker) {
+        const el = document.createElement("div");
+        el.className = "marker";
+        el.title = props.Title;
+        el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
+        el.style.width = "50px";
+        el.style.height = "50px";
+
+        marker = this.markers[id] = new maplibregl.Marker({
+          element: el,
+        }).setLngLat(coords);
+      } else {
+        marker.setLngLat(coords);
+      }
+
+      const photoUid = props.UID;
+      this.ensureMarkerClick(id, marker, photoUid, () => () => this.openPhoto(photoUid));
+
+      newMarkers[id] = marker;
+
+      if (!this.markersOnScreen[id]) {
+        marker.addTo(map);
+      }
+    },
+    // Renders a stack marker for pictures sharing the same location and opens them as a
+    // group when clicked, so coincident photos no longer hide each other once zoomed in.
+    renderStackMarker(group, token, newMarkers, map) {
+      const id = `s${group.key}`;
+      const coords = group.coords;
+      const count = group.features.length;
+
+      let marker = this.markers[id];
+      if (!marker) {
+        const size = this.getClusterSizeFromItemCount(count);
+        const el = document.createElement("div");
+
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+
+        const imageContainer = document.createElement("div");
+        imageContainer.className = "marker cluster-marker";
+
+        const previewImageCount = count >= 4 ? 4 : count > 1 ? 2 : 1;
+        const images = Array(previewImageCount)
+          .fill(null)
+          .map((a, i) => {
+            const feature = group.features[Math.floor((count * i) / previewImageCount)];
+            const image = document.createElement("div");
+            image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
+            return image;
+          });
+
+        imageContainer.append(...images);
+
+        const counterBubble = document.createElement("div");
+        counterBubble.className = "badge";
+        counterBubble.innerText = this.abbreviateCount(count);
+
+        el.append(imageContainer);
+        el.append(counterBubble);
+        marker = this.markers[id] = new maplibregl.Marker({
+          element: el,
+        }).setLngLat(coords);
+      } else {
+        marker.setLngLat(coords);
+      }
+
+      const [lng, lat] = coords;
+      this.ensureMarkerClick(id, marker, `${group.key}:${count}`, () => () => this.selectClusterByCoords(lat, lng, lat, lng));
+
+      newMarkers[id] = marker;
+
+      if (!this.markersOnScreen[id]) {
+        marker.addTo(map);
+      }
+    },
     updateMarkers() {
       // Busy loading data from the server?
       if (this.loading) {
@@ -1071,7 +1152,11 @@ export default {
       // Get API token required to show thumbnails.
       let token = this.$config.previewToken;
 
-      // Loop through photos and clusters.
+      // Collect un-clustered photo features so that pictures at the same location can be
+      // grouped into a single stack marker below.
+      const photoFeatures = [];
+
+      // Loop through clusters and collect photos for grouping.
       for (let i = 0; i < features.length; i++) {
         let coords = features[i].geometry.coordinates;
         let props = features[i].properties;
@@ -1136,33 +1221,17 @@ export default {
             marker.addTo(map);
           }
         } else {
-          // Update photo marker.
-          const id = features[i].id;
+          photoFeatures.push(features[i]);
+        }
+      }
 
-          let marker = this.markers[id];
-          if (!marker) {
-            const el = document.createElement("div");
-            el.className = "marker";
-            el.title = props.Title;
-            el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
-            el.style.width = "50px";
-            el.style.height = "50px";
-
-            marker = this.markers[id] = new maplibregl.Marker({
-              element: el,
-            }).setLngLat(coords);
-          } else {
-            marker.setLngLat(coords);
-          }
-
-          const photoUid = props.UID;
-          this.ensureMarkerClick(id, marker, photoUid, () => () => this.openPhoto(photoUid));
-
-          newMarkers[id] = marker;
-
-          if (!this.markersOnScreen[id]) {
-            marker.addTo(map);
-          }
+      // Group un-clustered photos by exact location and render each group as a single
+      // marker, using a stack marker with a counter when several pictures share a spot.
+      for (const group of maps.groupGeoFeatures(photoFeatures)) {
+        if (group.features.length > 1) {
+          this.renderStackMarker(group, token, newMarkers, map);
+        } else {
+          this.renderPhotoMarker(group.features[0], token, newMarkers, map);
         }
       }
 

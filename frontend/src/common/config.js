@@ -24,20 +24,15 @@ Additional information can be found in our Developer Guide:
 */
 
 import $api from "common/api";
-import $event, { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
+import $event from "common/event";
 import * as themes from "options/themes";
 import * as options from "options/options";
 import { Photo } from "model/photo";
-import { Subject } from "model/subject";
 import { onInit, onSetTheme } from "common/hooks";
 import { ref, reactive } from "vue";
 import memoizeOne from "memoize-one";
 
 onInit();
-
-// maxLivePeopleRefetch caps how many affected people are reloaded in place per
-// people.* event; larger bursts fall back to a coalesced full client-config reload.
-const maxLivePeopleRefetch = 50;
 
 // normalizeFrontendUri returns a normalized frontend base URI with a leading slash.
 const normalizeFrontendUri = (baseUri, frontendUri) => {
@@ -68,7 +63,6 @@ export default class Config {
     this.previewToken = "";
     this.downloadToken = "";
     this.updating = false;
-    this.peopleUpdateTimer = null;
 
     this.$vuetify = null;
     this.translations = {};
@@ -149,7 +143,6 @@ export default class Config {
     $event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
     $event.subscribe("config.tokens", (ev, data) => this.setTokens(data));
     $event.subscribe("count", (ev, data) => this.onCount(ev, data));
-    $event.subscribe("people", (ev, data) => this.onPeople(ev, data));
 
     if (this.has("settings")) {
       this.setTheme(this.get("settings").ui.theme);
@@ -237,138 +230,6 @@ export default class Config {
 
     if (settings?.search?.batchSize > 0) {
       Photo.setBatchSize(settings.search.batchSize);
-    }
-  }
-
-  // schedulePeopleUpdate coalesces bursts of people.* events (e.g. while
-  // face recognition adds new people) into a single client-config refetch.
-  // Used as the fallback when a targeted refetch is too large or fails.
-  schedulePeopleUpdate() {
-    if (this.peopleUpdateTimer) {
-      clearTimeout(this.peopleUpdateTimer);
-    }
-
-    this.peopleUpdateTimer = setTimeout(() => {
-      this.peopleUpdateTimer = null;
-      this.update();
-    }, 500);
-  }
-
-  // refetchPeople reloads only the people affected by a people.* event through
-  // the scoped Subject model and upserts them into the people list in place, so a
-  // rename or new person updates without forcing a full client-config reload.
-  // Always returns a promise (for awaiting in tests) that resolves once the
-  // in-place upsert completes; the no-op and overflow-fallback branches resolve
-  // immediately — they do NOT wait for the coalesced client-config reload.
-  refetchPeople(uids) {
-    if (!Array.isArray(uids)) {
-      return Promise.resolve();
-    }
-
-    const affected = uids.filter((uid) => typeof uid === "string" && uid);
-
-    if (affected.length === 0) {
-      return Promise.resolve();
-    }
-
-    // Fall back to a coalesced full reload when too many people change at once.
-    if (affected.length > maxLivePeopleRefetch) {
-      this.schedulePeopleUpdate();
-      return Promise.resolve();
-    }
-
-    return Subject.search({ uid: affected.join("|"), count: affected.length })
-      .then((resp) => {
-        const found = new Set();
-
-        (resp.models || []).forEach((s) => {
-          if (!s || !s.UID) {
-            return;
-          }
-
-          found.add(s.UID);
-
-          const person = { UID: s.UID, Name: s.Name, Alias: s.Alias, Favorite: s.Favorite, Hidden: s.Hidden };
-          const index = this.values.people.findIndex((m) => m.UID === s.UID);
-
-          if (index >= 0) {
-            Object.assign(this.values.people[index], person);
-          } else {
-            this.values.people.push(person);
-          }
-        });
-
-        // Drop affected people the scoped search no longer returns (deleted or not visible).
-        affected
-          .filter((uid) => !found.has(uid))
-          .forEach((uid) => {
-            const index = this.values.people.findIndex((m) => m.UID === uid);
-
-            if (index >= 0) {
-              this.values.people.splice(index, 1);
-            }
-          });
-
-        // Keep the list ordered by name, matching the backend People() query.
-        this.values.people.sort((a, b) => (a.Name || "").localeCompare(b.Name || ""));
-      })
-      .catch(() => {
-        // Fall back to a full reload if the targeted refetch fails.
-        this.schedulePeopleUpdate();
-      });
-  }
-
-  onPeople(ev, data) {
-    const type = ev.split(".")[1];
-
-    if (this.debug) {
-      console.log(ev, data);
-    }
-
-    if (!this.values.people) {
-      this.values.people = [];
-    }
-
-    if (!data || !data.entities || !Array.isArray(data.entities)) {
-      return;
-    }
-
-    switch (type) {
-      case ACTION_CREATED:
-      case ACTION_UPDATED:
-        // people.created and people.updated carry only UIDs; reload just the
-        // affected people through the scoped REST API and patch them in place.
-        this.refetchPeople(data.entities);
-        break;
-      case ACTION_DELETED:
-        for (let i = 0; i < data.entities.length; i++) {
-          const index = this.values.people.findIndex((m) => m.UID === data.entities[i]);
-
-          if (index >= 0) {
-            this.values.people.splice(index, 1);
-          }
-        }
-        break;
-    }
-  }
-
-  // getPerson returns the details of a person by name
-  // (case-insensitive), or null if it does not exist.
-  getPerson(name) {
-    name = name.toLowerCase();
-
-    const result = this.values.people.filter((m) => m.Name.toLowerCase() === name);
-    const l = result ? result.length : 0;
-
-    if (l === 0) {
-      return null;
-    } else if (l === 1) {
-      return result[0];
-    } else {
-      if (this.debug) {
-        console.warn("more than one person having the same name", result);
-      }
-      return result[0];
     }
   }
 

@@ -21,3 +21,23 @@ func TestJoinAnd(t *testing.T) {
 		}
 	}
 }
+
+func TestJoinOr(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  []string
+		expect string
+	}{
+		{"empty", []string{}, ""},
+		{"single", []string{"admin"}, "admin"},
+		{"two", []string{"admin", "guest"}, "admin or guest"},
+		{"three", []string{"admin", "guest", "user"}, "admin, guest, or user"},
+		{"many", []string{"admin", "manager", "user", "viewer"}, "admin, manager, user, or viewer"},
+	}
+
+	for _, tc := range tests {
+		if got := JoinOr(tc.input); got != tc.expect {
+			t.Fatalf("%s: expected %q, got %q", tc.name, tc.expect, got)
+		}
+	}
+}

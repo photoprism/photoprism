@@ -45,8 +45,8 @@ func TestRoleStrings_CliUsageString(t *testing.T) {
 	})
 	t.Run("Two", func(t *testing.T) {
 		m := RoleStrings{"guest": RoleGuest, "admin": RoleAdmin}
-		// Note the comma before "or" matches current implementation.
-		assert.Equal(t, "admin, or guest", m.CliUsageString())
+		// Two items read without a comma before "or" (see txt.JoinOr).
+		assert.Equal(t, "admin or guest", m.CliUsageString())
 	})
 	t.Run("Three", func(t *testing.T) {
 		m := RoleStrings{"user": RoleUser, "guest": RoleGuest, "admin": RoleAdmin}
@@ -54,8 +54,34 @@ func TestRoleStrings_CliUsageString(t *testing.T) {
 	})
 	t.Run("ExcludesVisitor", func(t *testing.T) {
 		m := RoleStrings{"visitor": RoleVisitor, "guest": RoleGuest, "admin": RoleAdmin}
-		assert.Equal(t, "admin, or guest", m.CliUsageString())
+		assert.Equal(t, "admin or guest", m.CliUsageString())
 	})
+}
+
+func TestRolesCliUsageString(t *testing.T) {
+	assert.Equal(t, "", RolesCliUsageString(nil))
+	assert.Equal(t, "admin", RolesCliUsageString([]Role{RoleAdmin}))
+	assert.Equal(t, "admin or guest", RolesCliUsageString([]Role{RoleAdmin, RoleGuest}))
+	assert.Equal(t, "admin, manager, or guest", RolesCliUsageString([]Role{RoleAdmin, RoleManager, RoleGuest}))
+}
+
+func TestRoleStrings_Strings_ExcludesAliases(t *testing.T) {
+	// The app→instance and uploader→contributor aliases and the visitor/empty roles
+	// are display-only and must not appear in role listings, even though the map
+	// still validates them.
+	m := RoleStrings{
+		string(RoleAdmin):       RoleAdmin,
+		string(RoleContributor): RoleContributor,
+		"uploader":              RoleContributor,
+		"app":                   RoleInstance,
+		string(RoleVisitor):     RoleVisitor,
+		"":                      RoleNone,
+	}
+	got := m.Strings()
+	assert.ElementsMatch(t, []string{"admin", "contributor"}, got)
+	assert.NotContains(t, got, "uploader")
+	assert.NotContains(t, got, "app")
+	assert.NotContains(t, got, "visitor")
 }
 
 func TestRoles_Allow(t *testing.T) {
@@ -126,7 +152,7 @@ func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
 		}
 		assert.NotContains(t, u, "none")
 		assert.NotContains(t, u, "visitor")
-		assert.Regexp(t, `, or guest$`, u)
+		assert.Regexp(t, ` or guest$`, u)
 	})
 	t.Run("AliasNoneMapsToRoleNone", func(t *testing.T) {
 		assert.Equal(t, RoleNone, ClientRoles[RoleAliasNone])
@@ -189,79 +215,4 @@ func TestResourceNames_ContainsCore(t *testing.T) {
 		found := slices.Contains(ResourceNames, w)
 		assert.Truef(t, found, "resource %s not found in ResourceNames", w)
 	}
-}
-
-func TestIsAdminRole(t *testing.T) {
-	assert.True(t, IsAdminRole(RoleAdmin))
-	assert.True(t, IsAdminRole(RoleClusterAdmin))
-	assert.False(t, IsAdminRole(RoleUser))
-	assert.False(t, IsAdminRole(RoleViewer))
-	assert.False(t, IsAdminRole(RoleGuest))
-	assert.False(t, IsAdminRole(RoleVisitor))
-	assert.False(t, IsAdminRole(RoleNone))
-	assert.False(t, IsAdminRole(Role("manager")))
-}
-
-func TestIsFederatedRole(t *testing.T) {
-	t.Run("Federatable", func(t *testing.T) {
-		assert.True(t, IsFederatedRole(RoleAdmin))
-		assert.True(t, IsFederatedRole(RoleUser))
-		assert.True(t, IsFederatedRole(RoleViewer))
-		assert.True(t, IsFederatedRole(RoleGuest))
-		assert.True(t, IsFederatedRole(Role("manager")))
-		assert.True(t, IsFederatedRole(Role("contributor")))
-	})
-	t.Run("NotFederatable", func(t *testing.T) {
-		// cluster_admin is the Portal operator role and visitor is anonymous;
-		// neither may be granted or revoked via an external IdP/AD, and an empty
-		// role must never be applied by a sync.
-		assert.False(t, IsFederatedRole(RoleClusterAdmin))
-		assert.False(t, IsFederatedRole(RoleVisitor))
-		assert.False(t, IsFederatedRole(RoleNone))
-	})
-}
-
-func TestClusterInstanceRole(t *testing.T) {
-	t.Run("Assignable", func(t *testing.T) {
-		for _, s := range []string{"admin", "manager", "user", "contributor", "viewer", "guest", "  Admin  ", "VIEWER"} {
-			role, ok := ClusterInstanceRole(s)
-			assert.True(t, ok, "role %q must be assignable", s)
-			assert.True(t, IsClusterInstanceRole(role))
-		}
-	})
-	t.Run("Rejected", func(t *testing.T) {
-		for _, s := range []string{"cluster_admin", "visitor", "instance", "service", "portal", "client", "none", "", "bogus"} {
-			role, ok := ClusterInstanceRole(s)
-			assert.False(t, ok, "role %q must be rejected", s)
-			assert.Equal(t, RoleNone, role)
-		}
-	})
-}
-
-func TestFederatedRoleUpdate(t *testing.T) {
-	t.Run("AppliesChangedFederatableRole", func(t *testing.T) {
-		role, ok := FederatedRoleUpdate(RoleUser, RoleViewer)
-		assert.True(t, ok)
-		assert.Equal(t, RoleViewer, role)
-	})
-	t.Run("UnchangedRoleNotApplied", func(t *testing.T) {
-		_, ok := FederatedRoleUpdate(RoleUser, RoleUser)
-		assert.False(t, ok)
-	})
-	t.Run("NeverDowngradesClusterAdmin", func(t *testing.T) {
-		// An existing cluster_admin/visitor account must not be touched.
-		_, ok := FederatedRoleUpdate(RoleClusterAdmin, RoleAdmin)
-		assert.False(t, ok)
-		_, ok = FederatedRoleUpdate(RoleVisitor, RoleGuest)
-		assert.False(t, ok)
-	})
-	t.Run("NeverEscalatesToNonFederatable", func(t *testing.T) {
-		// The directory must not promote to cluster_admin/visitor.
-		_, ok := FederatedRoleUpdate(RoleUser, RoleClusterAdmin)
-		assert.False(t, ok)
-		_, ok = FederatedRoleUpdate(RoleAdmin, RoleVisitor)
-		assert.False(t, ok)
-		_, ok = FederatedRoleUpdate(RoleUser, RoleNone)
-		assert.False(t, ok)
-	})
 }

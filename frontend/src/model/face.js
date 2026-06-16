@@ -5,6 +5,7 @@ import { $config } from "app/session";
 import { $gettext } from "common/gettext";
 import * as src from "common/src";
 import $api from "common/api";
+import typeaheadCache from "common/typeahead-cache";
 
 export let BatchSize = 60;
 
@@ -108,6 +109,10 @@ export class Face extends RestModel {
     const payload = { SubjSrc: this.SubjSrc, Name: newName };
 
     return $api.put(Marker.getCollectionResource() + "/" + this.MarkerUID, payload).then((resp) => {
+      // A returned Name signals the save applied; adopt the server's canonical
+      // values, then seed the people typeahead cache from them so the saved name
+      // is suggestible immediately, before the subjects WS event (which can lag a
+      // quick re-entry).
       if (resp && resp.data && resp.data.Name) {
         const data = resp.data;
         this.setValues({
@@ -118,6 +123,7 @@ export class Face extends RestModel {
           Invalid: data.Invalid,
           Thumb: data.Thumb,
         });
+        typeaheadCache.upsertPerson({ UID: this.SubjUID, Name: this.Name });
       }
 
       return Promise.resolve(this);

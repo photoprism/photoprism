@@ -526,6 +526,15 @@ export async function helperAfterEach(t) {
     throw new Error(result);
   }
 
+  // Detect album changes before reverting photos so the photo loop can skip albums
+  // that revertAlbums will restore: re-adding a photo to a soft-deleted album 404s
+  // and pushes revertAlbums onto its re-create-under-a-new-UID branch.
+  result = await determineChangedAlbums(t);
+  if (result !== ""){
+    throw new Error(result);
+  }
+  const albumsHandledByRevert = new Set(t.ctx.testChanges.revertAlbums.map(a => a.uid));
+
   // Revert Photos state
   // this can not fully restore labels to a photo.
   // if the label has been fully removed, and it matches a keyword, then it will 
@@ -670,6 +679,15 @@ export async function helperAfterEach(t) {
       }
       // Add
       for (const album of revertPhoto.data.Albums) {
+        // Skip albums that revertAlbums will restore below — it recreates the album
+        // (possibly under a new UID) and reconnects its snapshot photos. POSTing here
+        // would target a soft-deleted UID, 404, and leave the album orphaned.
+        if (albumsHandledByRevert.has(album.UID)) {
+          continue;
+        }
+        // Re-add only when the photo is not already in this still-live album. The
+        // condition is !exists (mirror of the Remove loop's set difference): a test
+        // that removed the photo leaves the album absent from the current set.
         const exists = apiResponse.body.Albums.some(slug => slug.UID === album.UID);
         if (!exists) {
           const albumApiResponse = await t.request({
@@ -679,7 +697,11 @@ export async function helperAfterEach(t) {
               "photos": [ revertPhoto.uid ]
             }
           });
-          if (albumApiResponse.status !== 200 || albumApiResponse.status === null) { // Ignore Ok
+          // Ignore Ok and 404: a snapshot album owned by another user is recreated
+          // under a new UID by revertAlbums, so the photo's snapshot still references
+          // a now-dead UID. Membership can't be restored there and revertAlbums has
+          // already reconnected what it can under the new UID — so 404 is expected.
+          if ((albumApiResponse.status !== 200 && albumApiResponse.status !== 404) || albumApiResponse.status === null) {
             const msg = `helperAfterEach add to album ${album.UID} ${JSON.stringify(albumApiResponse)}`;
             logMessage(msg);
             helperFailures.push(msg);
@@ -836,13 +858,11 @@ export async function helperAfterEach(t) {
     helperFailures.push(`removePhoto threw ${errorText}`);
   }
 
-  result = await determineChangedAlbums(t);
-  if (result !== ""){
-    throw new Error(result);
-  }
-
   // Revert Albums state
   // This MAY result in a different UID if the album has been deleted, and it wasn't created by the current user.
+  // This step owns membership restoration for every reverted album (see the reconnect
+  // below) — the photo-revert loop deliberately skips these albums so it never POSTs to
+  // one that is still soft-deleted here.
   try {
     for (let revertAlbum of t.ctx.testChanges.revertAlbums) {
       let apiResponse = await t.request({
@@ -883,7 +903,9 @@ export async function helperAfterEach(t) {
           helperFailures.push(msg);
         }
       }
-      // Restore the photos connections
+      // Restore the photos connections for this album, now that it is live again.
+      // This is why the photo-revert loop skips reverted albums: their membership is
+      // re-added here against the correct (possibly recreated) UID.
       const albumPhotoApiResponse = await t.request(`${testcafeconfig.api}photos?count=50&offset=0&s=${revertAlbum.uid}`);
 
       let photos = [];

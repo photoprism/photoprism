@@ -153,6 +153,7 @@
 <script>
 import Subject from "model/subject";
 import RestModel from "model/rest";
+import typeaheadCache from "common/typeahead-cache";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
@@ -266,29 +267,49 @@ export default {
       this.dialog.edit = true;
     },
     onSave(m) {
-      if (!this.canManage || !m.Name || m.Name.trim() === "") {
-        // Refuse to save empty name.
+      if (this.busy || !this.canManage || !m.Name || m.Name.trim() === "") {
+        // Refuse to save an empty name or re-enter while a save is in flight.
         return;
       }
 
-      const existing = this.$config.getPerson(m.Name);
-      if (!existing || existing.UID === m.UID) {
-        this.busy = true;
-        m.update()
-          .then(() => {
-            this.$notify.success(this.$gettext("Changes successfully saved"));
-            this.dialog.edit = false;
-          })
-          .finally(() => {
+      // Mark busy before the async lookup so the dialog cannot be re-submitted
+      // while the people cache resolves (cold cache / mid-flight eviction).
+      this.busy = true;
+
+      // Look up an existing person with the same name through the shared people
+      // cache to detect a merge (a different subject already owns the name).
+      const name = m.Name.toLowerCase();
+      typeaheadCache
+        .getPeople()
+        .then((people) => {
+          const existing = people.find((p) => p.Name && p.Name.toLowerCase() === name) || null;
+          if (!existing || existing.UID === m.UID) {
+            m.update()
+              .then(() => {
+                // Seed the shared people cache with the renamed person so
+                // suggestion consumers reflect it without waiting for the WS
+                // event. This rename seed lives here, not in Subject.update(),
+                // because update() also backs hide()/show() — seeding there
+                // would re-add hidden people to the suggestion list. m.UID and
+                // m.Name are populated (the merge check above already uses them).
+                typeaheadCache.upsertPerson({ UID: m.UID, Name: m.Name });
+                this.$notify.success(this.$gettext("Changes successfully saved"));
+              })
+              .finally(() => {
+                this.busy = false;
+                this.dialog.edit = false;
+              });
+          } else {
             this.busy = false;
+            this.merge.subj1 = m;
+            this.merge.subj2 = existing;
             this.dialog.edit = false;
-          });
-      } else {
-        this.merge.subj1 = m;
-        this.merge.subj2 = existing;
-        this.dialog.edit = false;
-        this.merge.visible = true;
-      }
+            this.merge.visible = true;
+          }
+        })
+        .catch(() => {
+          this.busy = false;
+        });
     },
     onCancelMerge() {
       this.merge.visible = false;

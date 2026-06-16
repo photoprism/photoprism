@@ -359,6 +359,39 @@ describe("model/user", () => {
     });
   });
 
+  // canHavePassword gates the admin "change password" action: visitors, system
+  // users, and accounts with authentication disabled cannot have a local password,
+  // mirroring the backend, which only allows passwords for registered accounts.
+  describe("canHavePassword", () => {
+    it("returns true for a registered local user", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "local" }).canHavePassword()).toBe(true);
+    });
+    it("returns true for a registered user without an explicit provider", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "admin" }).canHavePassword()).toBe(true);
+    });
+    it("returns false for a visitor, even when named guest", () => {
+      expect(new User({ ID: 1, Name: "guest", Role: "visitor", AuthProvider: "link" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for an account without a role", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "", AuthProvider: "local" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for a remote LDAP account (credentials managed by the directory)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "ldap" }).canHavePassword()).toBe(false);
+    });
+    it("returns true for an OIDC account (a local password remains usable)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "oidc" }).canHavePassword()).toBe(true);
+    });
+    it("returns false when authentication is disabled (provider none)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "none" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for a system user with ID below 1", () => {
+      expect(new User({ ID: 0, Name: "max", Role: "user" }).canHavePassword()).toBe(false);
+    });
+    it("returns false without a username", () => {
+      expect(new User({ ID: 1, Name: "", Role: "user" }).canHavePassword()).toBe(false);
+    });
+  });
+
   // isCurrentUser drives the admin-UI self-lockout guards: the table login
   // toggle and the dialog role/auth/login fields lock for the signed-in user so
   // an operator cannot lock themselves out. See specs/portal/cluster-admin-ui.md.

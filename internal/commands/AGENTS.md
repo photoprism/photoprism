@@ -1,11 +1,11 @@
 # Command-Line Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** June 16, 2026
 
 ## CLI Conventions
 
 - Prefer shared helpers such as `DryRunFlag(...)` and `YesFlag()` when adding command flags.
-- Build CLI role help from `Roles.CliUsageString()` such as `acl.ClientRoles.CliUsageString()`; never hand-maintain role lists.
+- Build CLI role help from the registered role map (never hand-maintained literals) so each edition lists exactly the roles it accepts: `commands.UserRoleUsageFor(<map>)` / `RoleStrings.CliUsageString()`, passing CE `acl.UserRoles` or an edition's own static `auth.UserRoles` (Portal's includes `cluster_admin`; editions reference their own map, not the runtime-reassigned `acl.UserRoles`, to dodge the init-order problem). For federatable or cluster-instance contexts (LDAP `--ldap-role`, OIDC group→role, cluster grants) use `acl.ClusterInstanceRolesCliUsageString()`, which lists the instance-login roles and excludes `cluster_admin`/`visitor`.
 - Prefer `--json` for automation. `photoprism show commands --json [--nested]` exposes the command tree; add `--all` for hidden entries.
 - Use `internal/commands/catalog` to inspect commands and flags without running the binary; when validating large JSON docs, marshal DTOs with `catalog.BuildFlat` or `catalog.BuildNode`.
 - Expect `show` commands to return arrays of snake_case rows, except `photoprism show config`, which returns `{ sections: [...] }`, and `config-options` or `config-yaml`, which flatten to a top-level array.

@@ -237,6 +237,17 @@ export class User extends RestModel {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
+  // canHavePassword reports whether a local password can be set and used for this account.
+  // Excludes system users, role-less accounts, visitors, deactivated accounts (provider
+  // "none"), and remote accounts (LDAP), whose credentials are managed externally.
+  canHavePassword() {
+    if (this.ID < 1 || !this.Name || this.AuthProvider === "none" || this.isRemote()) {
+      return false;
+    }
+
+    return !!this.Role && this.Role !== "visitor";
+  }
+
   // hasWebDAV returns true when WebDAV access is enabled for this user and the role permits it.
   hasWebDAV() {
     return !!this.WebDAV && this.canEnableWebDAV();

@@ -252,6 +252,7 @@
               autocomplete="off"
               class="meta-inline-edit meta-inline-marker"
               :class="{ 'meta-inline-marker--named': m.SubjUID }"
+              @focus="loadChipOptions('people')"
               @update:model-value="(v) => onPickPerson(m, v)"
               @update:search="(v) => setMarkerInputValue(m.UID, v)"
               @keydown.enter.stop.prevent="confirmMarkerName(m, 'enter')"
@@ -546,6 +547,9 @@ export default {
       chipState: {
         labels: { input: null, search: "", key: 0, options: [], removals: [] },
         albums: { input: null, search: "", key: 0, options: [], removals: [] },
+        // People is read-only suggestions (no removals/typed-text editing); the
+        // full shape keeps the chipState iterations (pending-edit checks) uniform.
+        people: { input: null, search: "", key: 0, options: [], removals: [] },
       },
       markerDrafts: {},
       markerMenuProps: {
@@ -704,18 +708,11 @@ export default {
       }
       return this.photo.getMarkers(true);
     },
-    // Sorted, locale-aware copy of `$config.values.people` for the marker
-    // combobox. Reading from `$config` keeps the list reactive to WS
-    // `people.{created,updated,deleted}` events.
+    // Name suggestions for the marker combobox, loaded from the shared people
+    // cache via loadChipOptions("people") and sorted there; the cache evicts on
+    // people.* / subjects.* WS events so the list stays current.
     knownPeople() {
-      const values = this.$config && this.$config.values;
-      if (!values || !Array.isArray(values.people)) {
-        return [];
-      }
-      return values.people
-        .filter((p) => p && p.Name)
-        .slice()
-        .sort((a, b) => (a.Name || "").localeCompare(b.Name || "", undefined, { sensitivity: "base", numeric: true }));
+      return this.chipState.people.options;
     },
     labels() {
       if (!this.photo?.Labels) {
@@ -1102,6 +1099,9 @@ export default {
       }
       if (this.canViewAlbums) {
         this.loadChipOptions("albums");
+      }
+      if (this.canViewPeople) {
+        this.loadChipOptions("people");
       }
     }
   },
@@ -1781,6 +1781,17 @@ export default {
             // reactive metadata breaks v-combobox input handling.
             // Mirrors the labels mapping above.
             this.chipState.albums.options = models.map((a) => ({ Title: a.Title, UID: a.UID })).sort(collator("Title"));
+          })
+          .catch(() => {});
+      } else if (field === "people") {
+        typeaheadCache
+          .getPeople()
+          .then((models) => {
+            // Plain {Name, UID} objects, mirroring the labels mapping.
+            this.chipState.people.options = models
+              .filter((p) => p && p.Name)
+              .map((p) => ({ Name: p.Name, UID: p.UID }))
+              .sort(collator("Name"));
           })
           .catch(() => {});
       }

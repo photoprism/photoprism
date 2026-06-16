@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { mount } from "@vue/test-utils";
+import { mount, flushPromises } from "@vue/test-utils";
 import PeopleTab from "component/photo/edit/people.vue";
 import Subject from "model/subject";
+import typeaheadCache from "common/typeahead-cache";
 import { Marker } from "model/marker";
 
 describe("PTabPhotoPeople face actions", () => {
@@ -21,12 +22,17 @@ describe("PTabPhotoPeople face actions", () => {
     },
   ];
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setCoverSpy = vi.spyOn(Subject.prototype, "setCover").mockImplementation(function (thumb) {
       this.Thumb = thumb;
       this.ThumbSrc = "manual";
       return Promise.resolve(this);
     });
+
+    // created() loads name suggestions from the people cache; resolve it
+    // deterministically so findPerson() sees the seeded people.
+    typeaheadCache.clear();
+    vi.spyOn(typeaheadCache, "getPeople").mockResolvedValue(mockPeople);
 
     openUrlSpy = vi.fn();
 
@@ -74,6 +80,9 @@ describe("PTabPhotoPeople face actions", () => {
           },
           $util: {
             openUrl: openUrlSpy,
+            // PActionMenu reads this in data(); keep the $util mock complete so
+            // the suite does not depend on PActionMenu being stubbed to hide it.
+            shouldOpenOnHover: vi.fn(() => false),
           },
           $view: {
             getData: vi.fn(() => ({
@@ -98,6 +107,9 @@ describe("PTabPhotoPeople face actions", () => {
       };
       return subject;
     });
+
+    // Let created()'s loadPeople() resolve so wrapper.vm.people === mockPeople.
+    await flushPromises();
   });
 
   afterEach(() => {
@@ -155,8 +167,6 @@ describe("PTabPhotoPeople face actions", () => {
 
     expect(wrapper.vm.$notify.blockUI).toHaveBeenCalledWith("busy");
     expect(setCoverSpy).toHaveBeenCalledWith("hash-1234");
-    expect(wrapper.vm.$config.values.people[0].Thumb).toBe("hash-1234");
-    expect(wrapper.vm.$config.values.people[0].ThumbSrc).toBe("manual");
     expect(wrapper.vm.$notify.success).toHaveBeenCalledWith("Person cover updated");
     expect(wrapper.vm.busy).toBe(false);
   });
@@ -210,7 +220,7 @@ describe("PTabPhotoPeople face actions", () => {
       expect(actionMenu.exists()).toBe(true);
 
       // Check props
-      expect(actionMenu.props("buttonIcon")).toBe("mdi-dots-horizontal");
+      expect(actionMenu.props("buttonIcon")).toBe("mdi-dots-vertical");
       expect(actionMenu.props("buttonClass")).toBe("input-menu");
       expect(actionMenu.props("items")).toBeInstanceOf(Function);
 

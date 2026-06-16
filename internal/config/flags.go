@@ -133,7 +133,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringSliceFlag{
 			Name:    "oidc-group-role",
-			Usage:   "map `GROUP=ROLE`; repeat to add more (roles: " + acl.UserRoles.CliUsageString() + ")",
+			Usage:   "map `GROUP=ROLE`; repeat to add more (roles: " + acl.ClusterInstanceRolesCliUsageString() + ")",
 			EnvVars: EnvVars("OIDC_GROUP_ROLE"),
 			Hidden:  true,
 		}}, {
@@ -737,7 +737,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringSliceFlag{
 			Name:    "cluster-allow-group-roles",
-			Usage:   "map `GROUP=ROLE` for Portal admission (roles: " + acl.UserRoles.CliUsageString() + ")",
+			Usage:   "map `GROUP=ROLE` for Portal admission (roles: " + acl.ClusterInstanceRolesCliUsageString() + ")",
 			EnvVars: EnvVars("CLUSTER_ALLOW_GROUP_ROLES"),
 			Hidden:  true,
 		}}, {

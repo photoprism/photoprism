@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import { $config } from "app/session";
 import { $gettext } from "common/gettext";
 import * as src from "common/src";
+import typeaheadCache from "common/typeahead-cache";
 
 export let BatchSize = 60;
 
@@ -98,7 +99,14 @@ export class Marker extends RestModel {
 
     const payload = { SubjSrc: this.SubjSrc, Name: this.Name };
 
-    return $api.put(this.getEntityResource(), payload).then((resp) => Promise.resolve(this.setValues(resp.data)));
+    return $api.put(this.getEntityResource(), payload).then((resp) => {
+      this.setValues(resp.data);
+      // Seed the shared people typeahead cache so the saved name is suggestible
+      // immediately, before the subjects WS event (which can lag a quick re-entry
+      // into the next face's name field).
+      typeaheadCache.upsertPerson({ UID: this.SubjUID, Name: this.Name });
+      return Promise.resolve(this);
+    });
   }
 
   clearSubject() {
