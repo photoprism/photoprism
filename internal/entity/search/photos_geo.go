@@ -43,25 +43,6 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		return GeoResults{}, ErrBadRequest
 	}
 
-	// Find photos near another?
-	if txt.NotEmpty(frm.Near) {
-		photo := Photo{}
-
-		// Find a nearby picture using the UID or return an empty result otherwise.
-		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
-			log.Debugf("search: %s (find nearby)", err)
-			return GeoResults{}, ErrNotFound
-		}
-
-		// Set the S2 Cell ID to search for.
-		frm.S2 = photo.CellID
-
-		// Set the search distance if unspecified.
-		if frm.Dist <= 0 {
-			frm.Dist = geo.DefaultDist
-		}
-	}
-
 	// Set default search distance.
 	if frm.Dist <= 0 {
 		frm.Dist = geo.DefaultDist
@@ -161,7 +142,20 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Order("taken_at, photos.photo_uid")
 	} else {
 		// Sort by distance to UID.
-		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", frm.Near, frm.Lat, frm.Lng))
+		sq := ""
+		var values []interface{}
+		for item, value := range SplitOr(frm.Near) {
+			if item == 0 {
+				sq = "(photos.photo_uid IN (?"
+			} else {
+				sq = sq + ", ?"
+			}
+			values = append(values, value)
+		}
+		sq = sq + ")) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)"
+		values = append(values, frm.Lat)
+		values = append(values, frm.Lng)
+		s = s.Order(gorm.Expr(sq, values...))
 	}
 
 	// Find specific UIDs only.
@@ -624,8 +618,21 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Where("photos.photo_private = 1")
 	}
 
-	// Filter by location code.
-	if txt.NotEmpty(frm.S2) {
+	// Filter private pictures.
+	if frm.Public {
+		s = s.Where("photos.photo_private = 0")
+	} else if frm.Private {
+		s = s.Where("photos.photo_private = 1")
+	}
+
+	// Find photos near another?
+	if txt.NotEmpty(frm.Near) {
+		if qs, values, err := nearSQLCreator(frm.Near, frm.Dist); err != nil {
+			return GeoResults{}, ErrNotFound
+		} else {
+			s = s.Where(qs, values...)
+		}
+	} else if txt.NotEmpty(frm.S2) { // Filter by location code.
 		// S2 Cell ID.
 		s2Min, s2Max := s2.PrefixedRange(frm.S2, s2.Level(frm.Dist))
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)

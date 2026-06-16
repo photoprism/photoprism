@@ -52,7 +52,7 @@ type SearchPhotosGeo struct {
 	Quality     int       `form:"quality" notes:"Minimum quality score (1-7)"`
 	Face        string    `form:"face" notes:"Find pictures with a specific face ID, you can also specify yes, no, new, or a face type"`
 	Faces       string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of detected faces (yes means 1)"` // Find or exclude faces if detected.
-	Near        string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
+	Near        string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID), separated by |"`
 	S2          string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"Position, specified as S2 Cell ID"`
 	Olc         string    `form:"olc" example:"olc:8FWCHX7W+" notes:"Open Location Code (OLC)"`
 	Lat         float64   `form:"lat" example:"lat:41.894043" notes:"Position latitude (-90.0 to 90.0 deg)"`

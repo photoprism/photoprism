@@ -59,20 +59,6 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		return PhotoResults{}, 0, ErrBadRequest
 	}
 
-	// Find photos near another?
-	if txt.NotEmpty(frm.Near) {
-		photo := Photo{}
-
-		// Find a nearby picture using the UID or return an empty result otherwise.
-		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
-			log.Debugf("search: %s (find nearby)", err)
-			return PhotoResults{}, 0, ErrNotFound
-		}
-
-		// Set the S2 Cell ID to search for.
-		frm.S2 = photo.CellID
-	}
-
 	// Set default search distance.
 	if frm.Dist <= 0 {
 		frm.Dist = geo.DefaultDist
@@ -737,8 +723,14 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		s = s.Where("files.file_hash IN (?)", SplitOr(strings.ToLower(frm.Hash)))
 	}
 
-	// Filter by location code.
-	if txt.NotEmpty(frm.S2) {
+	// Find photos near another?
+	if txt.NotEmpty(frm.Near) {
+		if qs, values, err := nearSQLCreator(frm.Near, frm.Dist); err != nil {
+			return PhotoResults{}, 0, ErrNotFound
+		} else {
+			s = s.Where(qs, values...)
+		}
+	} else if txt.NotEmpty(frm.S2) { // Filter by location code.
 		// S2 Cell ID.
 		s2Min, s2Max := s2.PrefixedRange(frm.S2, s2.Level(frm.Dist))
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)

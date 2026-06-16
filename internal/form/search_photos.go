@@ -52,7 +52,7 @@ type SearchPhotos struct {
 	Hidden      bool      `form:"hidden" notes:"Finds hidden content (broken or unsupported)"`
 	Favorite    string    `form:"favorite" example:"favorite:true favorite:false" notes:"Finds favorite content"`
 	Unsorted    bool      `form:"unsorted" notes:"Finds content that is not in an album"`
-	Near        string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
+	Near        string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID), separated by |"`
 	S2          string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"Position, specified as S2 Cell ID"`
 	Olc         string    `form:"olc" example:"olc:8FWCHX7W+" notes:"Open Location Code (OLC)"`
 	Lat         float64   `form:"lat" example:"lat:41.894043" notes:"Position latitude (-90.0 to 90.0 deg)"`
