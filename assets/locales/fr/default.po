@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-15 09:18+0000\n"
-"PO-Revision-Date: 2026-06-15 09:28+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-17 07:05+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -85,11 +85,11 @@ msgstr "Étiquette non trouvée"
 
 #: messages.go:127
 msgid "Camera not found"
-msgstr "Caméra introuvable"
+msgstr "Caméra non trouvée"
 
 #: messages.go:128
 msgid "Lens not found"
-msgstr "Objectif introuvable"
+msgstr "Objectif non trouvé"
 
 #: messages.go:129
 msgid "Album not found"
