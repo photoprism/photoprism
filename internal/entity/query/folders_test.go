@@ -58,12 +58,19 @@ func TestAlbumFolders(t *testing.T) {
 	t.Run("Root", func(t *testing.T) {
 		folders, err := AlbumFolders(1)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.GreaterOrEqual(t, len(folders), 1)
+		if assert.Nil(t, err) {
+			assert.GreaterOrEqual(t, len(folders), 1)
 
-		t.Logf("folders: %+v", folders)
+			t.Logf("folders: %+v", folders)
+		}
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		folders, err := AlbumFolders(9999999)
+
+		if assert.Nil(t, err) {
+			assert.NotNil(t, folders)
+			assert.Len(t, folders, 0)
+		}
 	})
 }
 

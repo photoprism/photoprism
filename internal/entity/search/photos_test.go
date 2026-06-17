@@ -2482,4 +2482,18 @@ func TestPhotos(t *testing.T) {
 			assert.NotEmpty(t, p.ID)
 		}
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Album = "as6sg6bipotaajfa"
+		f.Count = 100
+		f.Offset = 999999
+
+		photos, _, err := Photos(f)
+
+		if assert.Nil(t, err) {
+			assert.Len(t, photos, 0)
+			assert.NotNil(t, photos)
+		}
+	})
 }

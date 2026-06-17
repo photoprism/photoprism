@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
@@ -128,4 +130,26 @@ func TestWaitForAsyncJobs_DrainsRegisteredWork(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatalf("WaitForAsyncJobs did not return after all workers finished")
 	}
+}
+
+func TestLabelPhotoCounts(t *testing.T) {
+	t.Run("NilTesting", func(t *testing.T) {
+		t.Cleanup(func() {
+			Entities.Truncate(Db())
+			CreateDefaultFixtures()
+			CreateTestFixtures()
+			File{}.RegenerateIndex()
+		})
+		// Clean the database as if it's brand new
+		Entities.Truncate(Db())
+		CreateDefaultFixtures()
+		File{}.RegenerateIndex()
+
+		result := LabelCounts()
+
+		log.Debugf("result := %#v", result)
+
+		assert.NotNil(t, result)
+		assert.Len(t, result, 0)
+	})
 }

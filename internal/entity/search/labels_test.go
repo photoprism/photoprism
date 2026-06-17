@@ -216,4 +216,18 @@ func TestLabels(t *testing.T) {
 		assert.Equal(t, second.ID, result[0].ID)
 		assert.Equal(t, "吻", result[0].LabelName)
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		f := form.SearchLabels{
+			Query:  "landscape",
+			Count:  100,
+			Offset: 999999,
+		}
+
+		result, err := Labels(f)
+
+		if assert.Nil(t, err) {
+			assert.NotNil(t, result)
+			assert.Len(t, result, 0)
+		}
+	})
 }

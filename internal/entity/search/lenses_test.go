@@ -16,26 +16,24 @@ func TestLenses(t *testing.T) {
 		query.Count = 1005
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 2, len(result))
 
-		assert.LessOrEqual(t, 2, len(result))
+			for _, r := range result {
+				assert.IsType(t, Lens{}, r)
+				assert.NotEmpty(t, r.ID)
+				assert.NotEmpty(t, r.LensName)
+				assert.NotEmpty(t, r.LensSlug)
+				assert.NotEmpty(t, r.LensModel)
+				assert.NotEmpty(t, r.LensMake)
+				assert.True(t, strings.Contains(strings.ToLower(r.LensName), "a") || strings.Contains(strings.ToLower(r.LensMake), "a") || strings.Contains(strings.ToLower(r.LensModel), "a"))
 
-		for _, r := range result {
-			assert.IsType(t, Lens{}, r)
-			assert.NotEmpty(t, r.ID)
-			assert.NotEmpty(t, r.LensName)
-			assert.NotEmpty(t, r.LensSlug)
-			assert.NotEmpty(t, r.LensModel)
-			assert.NotEmpty(t, r.LensMake)
-			assert.True(t, strings.Contains(strings.ToLower(r.LensName), "a") || strings.Contains(strings.ToLower(r.LensMake), "a") || strings.Contains(strings.ToLower(r.LensModel), "a"))
-
-			if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
-				assert.Equal(t, fix.LensName, r.LensName)
-				assert.Equal(t, fix.LensSlug, r.LensSlug)
-				assert.Equal(t, fix.LensMake, r.LensMake)
-				assert.Equal(t, fix.LensModel, r.LensModel)
+				if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
+					assert.Equal(t, fix.LensName, r.LensName)
+					assert.Equal(t, fix.LensSlug, r.LensSlug)
+					assert.Equal(t, fix.LensMake, r.LensMake)
+					assert.Equal(t, fix.LensModel, r.LensModel)
+				}
 			}
 		}
 	})
@@ -44,24 +42,22 @@ func TestLenses(t *testing.T) {
 		query.Count = 1005
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 1, len(result))
 
-		assert.LessOrEqual(t, 1, len(result))
+			for _, r := range result {
+				assert.IsType(t, Lens{}, r)
+				assert.NotEmpty(t, r.ID)
+				assert.NotEmpty(t, r.LensName)
+				assert.NotEmpty(t, r.LensSlug)
+				assert.NotEmpty(t, r.LensModel)
 
-		for _, r := range result {
-			assert.IsType(t, Lens{}, r)
-			assert.NotEmpty(t, r.ID)
-			assert.NotEmpty(t, r.LensName)
-			assert.NotEmpty(t, r.LensSlug)
-			assert.NotEmpty(t, r.LensModel)
-
-			if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
-				assert.Equal(t, fix.LensName, r.LensName)
-				assert.Equal(t, fix.LensSlug, r.LensSlug)
-				assert.Equal(t, fix.LensMake, r.LensMake)
-				assert.Equal(t, fix.LensModel, r.LensModel)
+				if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
+					assert.Equal(t, fix.LensName, r.LensName)
+					assert.Equal(t, fix.LensSlug, r.LensSlug)
+					assert.Equal(t, fix.LensMake, r.LensMake)
+					assert.Equal(t, fix.LensModel, r.LensModel)
+				}
 			}
 		}
 	})
@@ -70,23 +66,21 @@ func TestLenses(t *testing.T) {
 		query.Count = 15
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 1, len(result))
 
-		assert.LessOrEqual(t, 1, len(result))
+			for _, r := range result {
+				assert.IsType(t, Lens{}, r)
+				assert.NotEmpty(t, r.ID)
+				assert.NotEmpty(t, r.LensName)
+				assert.NotEmpty(t, r.LensSlug)
+				assert.Empty(t, r.LensMake)
 
-		for _, r := range result {
-			assert.IsType(t, Lens{}, r)
-			assert.NotEmpty(t, r.ID)
-			assert.NotEmpty(t, r.LensName)
-			assert.NotEmpty(t, r.LensSlug)
-			assert.Empty(t, r.LensMake)
-
-			if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
-				assert.Equal(t, fix.LensName, r.LensName)
-				assert.Equal(t, fix.LensSlug, r.LensSlug)
-				assert.Equal(t, fix.LensModel, r.LensModel)
+				if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
+					assert.Equal(t, fix.LensName, r.LensName)
+					assert.Equal(t, fix.LensSlug, r.LensSlug)
+					assert.Equal(t, fix.LensModel, r.LensModel)
+				}
 			}
 		}
 	})
@@ -95,11 +89,10 @@ func TestLenses(t *testing.T) {
 		query := form.NewLensSearch("")
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 3, len(result))
+			assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 		}
-		assert.LessOrEqual(t, 3, len(result))
-		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
 	t.Run("SearchWithReverse", func(t *testing.T) {
 		fixture := "4.15mm-f/2.2"
@@ -107,19 +100,20 @@ func TestLenses(t *testing.T) {
 		query.Reverse = true
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 3, len(result))
+			assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 		}
-		assert.LessOrEqual(t, 3, len(result))
-		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
 	t.Run("SearchForNoMakeAndQueryNoResults", func(t *testing.T) {
 		query := form.NewLensSearch("Apple")
 		query.NoMake = true
 		result, err := Lenses(query)
 
-		assert.NoError(t, err)
-		assert.Empty(t, result)
+		if assert.NoError(t, err) {
+			assert.Empty(t, result)
+			assert.NotNil(t, result)
+		}
 	})
 	t.Run("SearchWithInvalidQueryString", func(t *testing.T) {
 		query := form.NewLensSearch("xxx:bla")
@@ -142,10 +136,29 @@ func TestLenses(t *testing.T) {
 
 		result, err := Lenses(f)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			if assert.Len(t, result, 2) {
+				assert.Equal(t, "4-37", result[0].LensSlug)
+			}
 		}
-		assert.Len(t, result, 2)
-		assert.Equal(t, "4-37", result[0].LensSlug)
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		f := form.SearchLenses{
+			Query:   "",
+			ID:      "1000002|1000000",
+			Slug:    "",
+			Name:    "",
+			NoMake:  false,
+			Count:   100,
+			Offset:  999999,
+			Reverse: false,
+		}
+
+		result, err := Lenses(f)
+
+		if assert.Nil(t, err) {
+			assert.Len(t, result, 0)
+			assert.NotNil(t, result)
+		}
 	})
 }

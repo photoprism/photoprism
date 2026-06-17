@@ -1238,4 +1238,18 @@ func TestGeo(t *testing.T) {
 		log.Infof("result = %v", result)
 		assert.GreaterOrEqual(t, len(result), 1)
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		f := form.SearchPhotosGeo{
+			Label:  "COW",
+			Count:  100,
+			Offset: 999999,
+		}
+
+		result, err := PhotosGeo(f)
+		if assert.Nil(t, err) {
+			assert.IsType(t, GeoResults{}, result)
+			assert.Len(t, result, 0)
+			assert.NotNil(t, result)
+		}
+	})
 }

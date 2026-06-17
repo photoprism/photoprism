@@ -90,11 +90,18 @@ func TestSubjects(t *testing.T) {
 	})
 	t.Run("SearchForId", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, UID: "js6sg6b2h8njw0sx"})
-		assert.NoError(t, err)
+		if assert.NoError(t, err) {
+			if assert.Len(t, results, 1) {
+				assert.Equal(t, "Joe Biden", results[0].SubjName)
+			}
+		}
 		//t.Logf("Subjects: %#v", results)
-		assert.Len(t, results, 1)
-		if len(results) > 0 {
-			assert.Equal(t, "Joe Biden", results[0].SubjName)
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, UID: "jszzzzzzzzzzzzzz"})
+		if assert.NoError(t, err) {
+			assert.Len(t, results, 0)
+			assert.NotNil(t, results)
 		}
 	})
 }

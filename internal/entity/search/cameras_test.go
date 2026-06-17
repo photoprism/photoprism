@@ -16,24 +16,22 @@ func TestCameras(t *testing.T) {
 		query.Count = 1005
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 2, len(result))
 
-		assert.LessOrEqual(t, 2, len(result))
+			for _, r := range result {
+				assert.IsType(t, Camera{}, r)
+				assert.NotEmpty(t, r.ID)
+				assert.NotEmpty(t, r.CameraName)
+				assert.NotEmpty(t, r.CameraSlug)
+				assert.True(t, strings.Contains(strings.ToLower(r.CameraName), "canon") || strings.Contains(strings.ToLower(r.CameraMake), "canon") || strings.Contains(strings.ToLower(r.CameraModel), "canon"))
 
-		for _, r := range result {
-			assert.IsType(t, Camera{}, r)
-			assert.NotEmpty(t, r.ID)
-			assert.NotEmpty(t, r.CameraName)
-			assert.NotEmpty(t, r.CameraSlug)
-			assert.True(t, strings.Contains(strings.ToLower(r.CameraName), "canon") || strings.Contains(strings.ToLower(r.CameraMake), "canon") || strings.Contains(strings.ToLower(r.CameraModel), "canon"))
-
-			if fix, ok := entity.CameraFixtures[r.CameraSlug]; ok {
-				assert.Equal(t, fix.CameraName, r.CameraName)
-				assert.Equal(t, fix.CameraSlug, r.CameraSlug)
-				assert.Equal(t, fix.CameraMake, r.CameraMake)
-				assert.Equal(t, fix.CameraModel, r.CameraModel)
+				if fix, ok := entity.CameraFixtures[r.CameraSlug]; ok {
+					assert.Equal(t, fix.CameraName, r.CameraName)
+					assert.Equal(t, fix.CameraSlug, r.CameraSlug)
+					assert.Equal(t, fix.CameraMake, r.CameraMake)
+					assert.Equal(t, fix.CameraModel, r.CameraModel)
+				}
 			}
 		}
 	})
@@ -42,18 +40,16 @@ func TestCameras(t *testing.T) {
 		query.Count = 1005
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 1, len(result))
 
-		assert.LessOrEqual(t, 1, len(result))
-
-		for _, r := range result {
-			assert.IsType(t, Camera{}, r)
-			assert.NotEmpty(t, r.ID)
-			assert.NotEmpty(t, r.CameraName)
-			assert.NotEmpty(t, r.CameraSlug)
-			assert.NotEmpty(t, r.CameraModel)
+			for _, r := range result {
+				assert.IsType(t, Camera{}, r)
+				assert.NotEmpty(t, r.ID)
+				assert.NotEmpty(t, r.CameraName)
+				assert.NotEmpty(t, r.CameraSlug)
+				assert.NotEmpty(t, r.CameraModel)
+			}
 		}
 	})
 	t.Run("SearchForNoMake", func(t *testing.T) {
@@ -61,46 +57,44 @@ func TestCameras(t *testing.T) {
 		query.Count = 15
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 1, len(result))
 
-		assert.LessOrEqual(t, 1, len(result))
-
-		for _, r := range result {
-			assert.IsType(t, Camera{}, r)
-			assert.NotEmpty(t, r.ID)
-			assert.NotEmpty(t, r.CameraName)
-			assert.NotEmpty(t, r.CameraSlug)
-			assert.Empty(t, r.CameraMake)
+			for _, r := range result {
+				assert.IsType(t, Camera{}, r)
+				assert.NotEmpty(t, r.ID)
+				assert.NotEmpty(t, r.CameraName)
+				assert.NotEmpty(t, r.CameraSlug)
+				assert.Empty(t, r.CameraMake)
+			}
 		}
 	})
 	t.Run("SearchWithEmptyQuery", func(t *testing.T) {
 		query := form.NewCameraSearch("")
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 6, len(result))
 		}
-		assert.LessOrEqual(t, 6, len(result))
 	})
 	t.Run("SearchWithReverse", func(t *testing.T) {
 		query := form.NewCameraSearch("")
 		query.Reverse = true
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 6, len(result))
 		}
-		assert.LessOrEqual(t, 6, len(result))
 	})
 	t.Run("SearchForNoMakeAndQueryNoResults", func(t *testing.T) {
 		query := form.NewCameraSearch("Canon")
 		query.NoMake = true
 		result, err := Cameras(query)
 
-		assert.NoError(t, err)
-		assert.Empty(t, result)
+		if assert.NoError(t, err) {
+			assert.Empty(t, result)
+			assert.NotNil(t, result)
+		}
 	})
 	t.Run("SearchWithInvalidQueryString", func(t *testing.T) {
 		query := form.NewCameraSearch("xxx:bla")
@@ -117,9 +111,8 @@ func TestCameras(t *testing.T) {
 
 		result, err := Cameras(f)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Len(t, result, 2)
 		}
-		assert.Len(t, result, 2)
 	})
 }

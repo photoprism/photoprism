@@ -30,30 +30,28 @@ func TestUserAlbums(t *testing.T) {
 		query.Type = entity.AlbumManual
 		result, err := UserAlbums(query, entity.SessionFixtures.Pointer("alice"))
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
 		}
-
-		assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
 	})
 	t.Run("Visitor", func(t *testing.T) {
 		query := form.NewAlbumSearch("christmas")
 		query.Type = entity.AlbumFolder
 		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("unauthorized"))
 
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "Permission denied")
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "Permission denied")
+		}
 	})
 	t.Run("GuestAppPassword", func(t *testing.T) {
 		query := form.NewAlbumSearch("france")
 		query.Type = entity.AlbumMoment
 		result, err := UserAlbums(query, entity.SessionFixtures.Pointer("gandalf_app_password_full_access"))
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 0, len(result))
+			assert.NotNil(t, result)
 		}
-
-		assert.Equal(t, 0, len(result))
 	})
 }
 

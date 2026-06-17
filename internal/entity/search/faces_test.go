@@ -37,4 +37,12 @@ func TestFaces(t *testing.T) {
 		t.Logf("Faces: %#v", results)
 		assert.LessOrEqual(t, 0, len(results))
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		results, err := Faces(form.SearchFaces{Unknown: "no", Hidden: "yes", Order: "samples", Markers: true, Count: 100, Offset: 999999})
+		if assert.NoError(t, err) {
+			t.Logf("Faces: %#v", results)
+			assert.NotNil(t, results)
+			assert.Len(t, results, 0)
+		}
+	})
 }

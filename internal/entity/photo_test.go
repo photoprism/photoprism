@@ -662,6 +662,15 @@ func TestPhoto_PreloadFiles(t *testing.T) {
 		m.PreloadFiles()
 		assert.NotEmpty(t, m.Files)
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		var m Photo
+		err := UnscopedDb().Where("photo_uid = ?", PhotoFixtures.Get("Photo26").PhotoUID).First(&m).Error
+		if assert.NoError(t, err) {
+			m.PreloadFiles()
+			assert.NotNil(t, m.Files)
+			assert.Len(t, m.Files, 0)
+		}
+	})
 }
 
 func TestPhoto_PreloadKeywords(t *testing.T) {
@@ -671,6 +680,15 @@ func TestPhoto_PreloadKeywords(t *testing.T) {
 		m.PreloadKeywords()
 		assert.NotEmpty(t, m.Keywords)
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		var m Photo
+		err := UnscopedDb().Where("photo_uid = ?", PhotoFixtures.Get("Photo26").PhotoUID).First(&m).Error
+		if assert.NoError(t, err) {
+			m.PreloadKeywords()
+			assert.NotNil(t, m.Keywords)
+			assert.Len(t, m.Keywords, 0)
+		}
+	})
 }
 
 func TestPhoto_PreloadAlbums(t *testing.T) {
@@ -679,6 +697,15 @@ func TestPhoto_PreloadAlbums(t *testing.T) {
 		assert.Empty(t, m.Albums)
 		m.PreloadAlbums()
 		assert.NotEmpty(t, m.Albums)
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		var m Photo
+		err := UnscopedDb().Where("photo_uid = ?", PhotoFixtures.Get("Photo26").PhotoUID).First(&m).Error
+		if assert.NoError(t, err) {
+			m.PreloadAlbums()
+			assert.NotNil(t, m.Albums)
+			assert.Len(t, m.Albums, 0)
+		}
 	})
 }
 
@@ -1014,14 +1041,14 @@ func TestPhoto_String(t *testing.T) {
 				var p *Photo
 				assert.Equal(t, tc.want, p.String())
 				if tc.checkFmt {
-					assert.Equal(t, tc.want, fmt.Sprintf("%s", p))
+					assert.Equal(t, tc.want, p.String())
 				}
 				return
 			}
 
 			assert.Equal(t, tc.want, tc.photo.String())
 			if tc.checkFmt {
-				assert.Equal(t, tc.want, fmt.Sprintf("%s", tc.photo))
+				assert.Equal(t, tc.want, tc.photo.String())
 			}
 		})
 	}

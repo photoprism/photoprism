@@ -9,12 +9,32 @@ import (
 )
 
 func TestPeople(t *testing.T) {
-	if results, err := People(); err != nil {
-		t.Fatal(err)
-	} else {
-		assert.LessOrEqual(t, 3, len(results))
-		t.Logf("people: %#v", results)
-	}
+	t.Run("Ok", func(t *testing.T) {
+		results, err := People()
+		if assert.Nil(t, err) {
+			assert.LessOrEqual(t, 3, len(results))
+			t.Logf("people: %#v", results)
+		}
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		t.Cleanup(func() {
+			entity.Entities.Truncate(entity.Db())
+			entity.CreateDefaultFixtures()
+			entity.CreateTestFixtures()
+			entity.File{}.RegenerateIndex()
+		})
+		// Clean the database as if it's brand new
+		entity.Entities.Truncate(entity.Db())
+		entity.CreateDefaultFixtures()
+		entity.File{}.RegenerateIndex()
+
+		results, err := People()
+
+		if assert.Nil(t, err) {
+			assert.NotNil(t, results)
+			assert.Len(t, results, 0)
+		}
+	})
 }
 
 func TestPeopleCount(t *testing.T) {
