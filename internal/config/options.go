@@ -154,7 +154,11 @@ type Options struct {
 	ClusterCIDR               string        `yaml:"ClusterCIDR" json:"-" flag:"cluster-cidr"`
 	ClusterUUID               string        `yaml:"ClusterUUID" json:"-" flag:"cluster-uuid"`
 	ClusterOIDC               bool          `yaml:"ClusterOIDC" json:"-" flag:"cluster-oidc"`
+	ClusterAllowGroups        []string      `yaml:"ClusterAllowGroups" json:"-" flag:"cluster-allow-groups"`
+	ClusterAllowGroupRoles    []string      `yaml:"ClusterAllowGroupRoles" json:"-" flag:"cluster-allow-group-roles"`
+	ClusterGroupsFullView     bool          `yaml:"ClusterGroupsFullView" json:"-" flag:"cluster-groups-full-view"`
 	PortalUrl                 string        `yaml:"PortalUrl" json:"-" flag:"portal-url"`
+	PortalLoginUrl            string        `yaml:"PortalLoginUrl" json:"-" flag:"portal-login-url"`
 	PortalProxy               bool          `yaml:"PortalProxy" json:"-" flag:"portal-proxy"`
 	PortalProxyUri            string        `yaml:"PortalProxyUri" json:"-" flag:"portal-proxy-uri"`
 	JoinToken                 string        `yaml:"JoinToken" json:"-" flag:"join-token"`

@@ -50,7 +50,7 @@ func TestRewriteLocation(t *testing.T) {
 	// under the instance path prefix.
 	assert.Equal(t, "/api/v1/oauth/authorize", RewriteLocation("/api/v1/oauth/authorize", prefix, host))
 	assert.Equal(t, "/.well-known/openid-configuration", RewriteLocation("/.well-known/openid-configuration", prefix, host))
-	assert.Equal(t, "/portal/admin/login", RewriteLocation("/portal/admin/login", prefix, host))
+	assert.Equal(t, "/portal/login", RewriteLocation("/portal/login", prefix, host))
 	assert.Equal(t, "https://portal.example.com/api/v1/oauth/authorize?x=1", RewriteLocation("https://portal.example.com/api/v1/oauth/authorize?x=1", prefix, host))
 
 	// Instance-owned API paths (everything under /api/v1/ that is not the OP)
@@ -63,7 +63,7 @@ func TestIsPortalRootPath(t *testing.T) {
 	assert.True(t, isPortalRootPath("/api/v1/oauth/token"))
 	assert.True(t, isPortalRootPath("/api/v1/oauth/userinfo"))
 	assert.True(t, isPortalRootPath("/.well-known/openid-configuration"))
-	assert.True(t, isPortalRootPath("/portal/admin/login"))
+	assert.True(t, isPortalRootPath("/portal/login"))
 	assert.True(t, isPortalRootPath("api/v1/oauth/authorize"))
 	assert.False(t, isPortalRootPath("/oauth/authorize"))
 	assert.False(t, isPortalRootPath("/library"))

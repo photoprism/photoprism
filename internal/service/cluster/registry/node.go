@@ -15,6 +15,11 @@ type Node struct {
 	// can apply the same source-priority rule as User.SetDisplayName. It is a
 	// write-control field, not serialized.
 	NameSrc string `json:"-"`
+	// GroupsSrc carries the group-config provenance for this write
+	// (entity.ClientGroupsSrcNode for instance registrations,
+	// entity.ClientGroupsSrcManual for admin edits); callers that don't manage
+	// group config leave it empty. It is a write-control field, not serialized.
+	GroupsSrc string `json:"-"`
 }
 
 // ensureDatabase returns a writable NodeDatabase, creating one if missing.

@@ -65,9 +65,11 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 		_ = clientResp.Body.Close()
 	}()
 
-	body, apiErr := io.ReadAll(clientResp.Body)
+	body, apiErr := io.ReadAll(io.LimitReader(clientResp.Body, MaxResponseBytes+1))
 	if apiErr != nil {
 		return nil, apiErr
+	} else if int64(len(body)) > MaxResponseBytes {
+		return nil, fmt.Errorf("vision: response exceeds the maximum size of %d bytes", MaxResponseBytes)
 	}
 
 	format := apiRequest.GetResponseFormat()

@@ -32,11 +32,10 @@ func (s *ImportSettings) GetPath() string {
 }
 
 // GetDest returns the default file import destination, or a custom pattern if set and valid.
+// It does not modify the receiver, so parallel import workers can call it concurrently;
+// invalid stored patterns are normalized once in Settings.Propagate, not on read.
 func (s *ImportSettings) GetDest() string {
-	if dest := strings.Trim(clean.Path(s.Dest), "/."); dest == "" || dest != s.Dest {
-		s.Dest = ""
-	} else if ImportDestRegexp.MatchString(dest) {
-		s.Dest = dest
+	if dest := strings.Trim(clean.Path(s.Dest), "/."); dest != "" && dest == s.Dest && ImportDestRegexp.MatchString(dest) {
 		return dest
 	}
 

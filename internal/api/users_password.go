@@ -117,10 +117,10 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "password", "changed"}, s.RefID)
 
-		// Invalidate any other user sessions to protect the account:
-		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "invalidated %s"}, s.RefID,
-			english.Plural(u.DeleteSessions([]string{s.ID}), "session", "sessions"))
+		// Revoke other user sessions after a privilege level change,
+		// except for app passwords and client access tokens.
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "revoked %s"}, s.RefID,
+			english.Plural(u.RevokeDerivedSessions([]string{s.ID}), "session", "sessions"))
 
 		AddTokenHeaders(c, s)
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPasswordChanged))

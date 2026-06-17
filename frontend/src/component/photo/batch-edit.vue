@@ -1558,8 +1558,8 @@ export default {
     },
     // Reads from the shared typeahead cache (common/typeahead-cache.js)
     // so opening this dialog while the lightbox sidebar is also editable
-    // costs zero extra round-trips. The cache invalidates on
-    // labels.updated / albums.updated / config.updated so a label or
+    // costs zero extra round-trips. The cache invalidates on any
+    // labels.* / albums.* mutation event so a label or
     // album created in another tab shows up in the dropdowns next time
     // the dialog opens. Stored on the raw cached* refs; the
     // availableLabelOptions / availableAlbumOptions computeds filter

@@ -802,15 +802,22 @@ export default class Session {
     $view.redirect(url, delay, true);
   }
 
+  // isClusterSession reports whether the current session was signed in through the
+  // cluster Portal OIDC provider, so sign-out runs the cluster-wide fan-out and
+  // clears the Portal OP cookie. Read before reset()/signOut() clears the provider.
+  isClusterSession() {
+    return this.getProvider() === "oidc" && !!this.config?.isClusterOidc?.();
+  }
+
   // logoutRedirectUri returns the post-sign-out landing URL: a cluster-OIDC session
-  // goes to the OIDC login (which bounces to the Portal login) to re-auth with the
-  // cluster account, everyone else to the local login. Read provider before reset().
+  // goes directly to the Portal login page (re-auth → instance chooser), everyone
+  // else to the local login. The instance OIDC roundtrip is never re-initiated on
+  // sign-out, since that would pin the Portal login's return_to to the just-left
+  // instance and dead-end accounts without a grant there; when the Portal login URL
+  // is unknown, the local form is the fallback landing. Read provider before reset().
   logoutRedirectUri() {
-    if (this.getProvider() === "oidc" && this.config?.isClusterOidc?.()) {
-      const oidcLoginUri = this.config.oidcLoginUri();
-      if (oidcLoginUri) {
-        return oidcLoginUri;
-      }
+    if (this.isClusterSession()) {
+      return this.config.portalLoginUri() || this.config.loginUri;
     }
 
     return this.config.loginUri;

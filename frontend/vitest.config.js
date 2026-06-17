@@ -35,18 +35,6 @@ export default defineConfig({
     testTimeout: 10000,
     watch: false,
     silent: true,
-    browser: {
-      enabled: false,
-      provider: "playwright",
-      headless: true,
-      isolate: false,
-      instances: [
-        {
-          browser: "chromium",
-          headless: true,
-        },
-      ],
-    },
 
     coverage: {
       provider: "v8",

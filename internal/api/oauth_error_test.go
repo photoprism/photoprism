@@ -40,6 +40,10 @@ func TestOAuthWantsHTML(t *testing.T) {
 	t.Run("NilContext", func(t *testing.T) {
 		assert.False(t, oauthWantsHTML(nil))
 	})
+	t.Run("ExportedWrapper", func(t *testing.T) {
+		assert.True(t, OAuthWantsHTML(newCtx(map[string]string{header.FetchMode: "navigate"})))
+		assert.False(t, OAuthWantsHTML(nil))
+	})
 }
 
 func TestRenderOAuthError(t *testing.T) {

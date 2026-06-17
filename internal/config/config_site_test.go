@@ -68,10 +68,10 @@ func TestConfig_FrontendUri(t *testing.T) {
 	assert.Equal(t, "/foo/library/", c.FrontendUri("/"))
 	assert.Equal(t, "/foo/library/browse", c.FrontendUri("/browse"))
 
-	c.options.FrontendUri = "/portal/admin/"
-	assert.Equal(t, "/foo/portal/admin", c.FrontendUri(""))
-	assert.Equal(t, "/foo/portal/admin/", c.FrontendUri("/"))
-	assert.Equal(t, "/foo/portal/admin/browse", c.FrontendUri("/browse"))
+	c.options.FrontendUri = "/portal/"
+	assert.Equal(t, "/foo/portal", c.FrontendUri(""))
+	assert.Equal(t, "/foo/portal/", c.FrontendUri("/"))
+	assert.Equal(t, "/foo/portal/browse", c.FrontendUri("/browse"))
 
 	c.options.FrontendUri = "  "
 	assert.Equal(t, "/foo/library", c.FrontendUri(""))
@@ -81,7 +81,7 @@ func TestNormalizeFrontendPath(t *testing.T) {
 	assert.Equal(t, "", normalizeFrontendPath(""))
 	assert.Equal(t, "", normalizeFrontendPath(" "))
 	assert.Equal(t, "/library", normalizeFrontendPath("/library"))
-	assert.Equal(t, "/portal/admin", normalizeFrontendPath("portal/admin/"))
+	assert.Equal(t, "/portal", normalizeFrontendPath("portal/"))
 	assert.Equal(t, "", normalizeFrontendPath("../admin"))
 }
 

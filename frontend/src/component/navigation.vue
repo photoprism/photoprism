@@ -10,7 +10,7 @@
             <span :class="{ clickable: auth }" @click.stop.prevent.self="toggleDrawer">{{ page.title }}</span>
           </v-toolbar-title>
           <v-btn
-            icon="mdi-dots-horizontal"
+            icon="mdi-dots-vertical"
             variant="text"
             class="nav-mobile-menu-trigger elevation-0"
             :ripple="false"
@@ -27,7 +27,7 @@
             {{ page.title }}
           </v-toolbar-title>
           <v-btn
-            icon="mdi-dots-horizontal"
+            icon="mdi-dots-vertical"
             variant="text"
             class="nav-mobile-menu-trigger elevation-0"
             :ripple="false"
@@ -651,7 +651,7 @@
                   <p class="text-caption opacity-70">{{ accountInfo }}</p>
                 </div>
                 <div class="text-center">
-                  <v-btn icon="mdi-dots-horizontal" variant="text" :elevation="0"></v-btn>
+                  <v-btn icon="mdi-dots-vertical" variant="text" :elevation="0"></v-btn>
                 </div>
               </template>
             </p-auth-menu>

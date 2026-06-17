@@ -116,6 +116,12 @@ func (s *Settings) Propagate() {
 		s.Maps.Style = DefaultMapsStyle
 	}
 
+	// Reset the import destination pattern unless it is already a normalized, valid value,
+	// so GetDest can stay side-effect free for concurrent import workers.
+	if s.Import.Dest != "" && s.Import.GetDest() != s.Import.Dest {
+		s.Import.Dest = ""
+	}
+
 	i18n.SetLocale(s.UI.Language)
 }
 

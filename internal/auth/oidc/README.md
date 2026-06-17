@@ -60,6 +60,7 @@ The following features are supported by the current implementation:
 - Group-to-role mapping: `--oidc-group-role` (`GROUP=ROLE`, repeatable) assigns the first matching role; falls back to `--oidc-role` (default `guest`) when no mapping matches.
 - Keeps app/directory roles (`roles`, `wids`) separate from security groups to avoid accidental privilege escalation.
 - Claim name is configurable via `--oidc-group-claim` (default `groups`).
+- On Portal builds, persists the merged, normalized group set from the ID token and userinfo on the login session (`entity.SessionData.Groups`), so the Portal can evaluate group-based cluster access at authorize time without another IdP round-trip. Instance and CE sessions never store groups, and the session API responses redact the field (`SessionData.Redacted`), so group membership is not exposed to clients.
 
 #### Configuration Options
 

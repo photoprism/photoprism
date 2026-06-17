@@ -9,8 +9,19 @@ import PhotoEdit from "../page-model/photo-edit";
 import Album from "../page-model/album";
 import Subject from "../page-model/subject";
 import Label from "../page-model/label";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test photos archive and private functionalities`.page`${testcafeconfig.url}`;
+fixture`Test photos archive and private functionalities`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const toolbar = new Toolbar();

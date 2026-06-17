@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-# Installs libvips from a Jammy backport PPA.
+# Installs libvips-dev, preferring the distribution package and only falling
+# back to a backport PPA when the distribution's own libvips is too old
+# (originally Ubuntu 22.04 "jammy", which ships 8.12.x). Newer releases already
+# provide a current libvips, so adding the PPA there is unnecessary and breaks
+# "apt-get update" with a 404 because the PPA has no build for that codename.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libvips.sh)
 
 set -Eeuo pipefail
@@ -44,10 +48,31 @@ PPA_CODENAME="${VERSION_CODENAME:-jammy}"
 KEYRING_PATH="/etc/apt/keyrings/libvips-archive-keyring.gpg"
 SOURCES_PATH="/etc/apt/sources.list.d/libvips-ppa.list"
 
+LIBVIPS_MIN_VERSION="${LIBVIPS_MIN_VERSION:-8.13}"
+
 export DEBIAN_FRONTEND="noninteractive"
 
+# Prefer the distribution's own libvips-dev when it is recent enough; only the
+# old releases that ship a pre-8.13 libvips need the backport PPA. This avoids
+# adding a PPA for a codename it was never built for, which would 404 on the
+# Release file and break every subsequent "apt-get update".
+${SUDO} apt-get update
+
+distro_candidate="$(apt-cache policy libvips-dev 2>/dev/null | awk '/Candidate:/ { print $2 }')"
+
+if [[ -n "${distro_candidate}" && "${distro_candidate}" != "(none)" ]] &&
+   dpkg --compare-versions "${distro_candidate}" ge "${LIBVIPS_MIN_VERSION}"; then
+  echo "Installing distribution libvips-dev ${distro_candidate} (>= ${LIBVIPS_MIN_VERSION}); skipping the backport PPA."
+  ${SUDO} apt-get install -y libvips-dev
+  if command -v vips >/dev/null 2>&1; then
+    vips --version
+  fi
+  exit 0
+fi
+
+echo "Distribution libvips-dev (${distro_candidate:-not available}) is older than ${LIBVIPS_MIN_VERSION}; using the ${PPA_USER}/${PPA_NAME} backport PPA."
+
 if ! command -v curl >/dev/null 2>&1 || ! command -v gpg >/dev/null 2>&1; then
-  ${SUDO} apt-get update
   ${SUDO} apt-get install -y curl gnupg ca-certificates
 fi
 

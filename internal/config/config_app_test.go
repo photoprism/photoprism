@@ -59,6 +59,14 @@ func TestConfig_AppIcon(t *testing.T) {
 	assert.Equal(t, "mint", c.AppIcon())
 	c.options.AppIcon = "bold"
 	assert.Equal(t, "bold", c.AppIcon())
+	c.options.AppIcon = "bloom"
+	assert.Equal(t, "bloom", c.AppIcon())
+	c.options.AppIcon = "flower"
+	assert.Equal(t, "flower", c.AppIcon())
+	c.options.AppIcon = "ring"
+	assert.Equal(t, "ring", c.AppIcon())
+	c.options.AppIcon = "shutter"
+	assert.Equal(t, "shutter", c.AppIcon())
 	c.options.AppIcon = "logo"
 	assert.Equal(t, "logo", c.AppIcon())
 }

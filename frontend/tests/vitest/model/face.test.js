@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
 import { Face, BatchSize } from "model/face";
+import typeaheadCache from "common/typeahead-cache";
 
 describe("model/face", () => {
   let originalBatchSize;
@@ -150,6 +151,23 @@ describe("model/face", () => {
 
     const response2 = await face.setName("");
     expect(response2.Name).toBe("testname");
+  });
+
+  it("should seed the people typeahead cache after saving a name", async () => {
+    const spy = vi.spyOn(typeaheadCache, "upsertPerson");
+    const face = new Face({ ID: "f123ghytrfggd", Samples: 5, MarkerUID: "mDC123ghytr", Name: "Jane" });
+    await face.setName("testname");
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0]).toMatchObject({ Name: "testname" });
+    spy.mockRestore();
+  });
+
+  it("should not seed the cache when the name is empty", async () => {
+    const spy = vi.spyOn(typeaheadCache, "upsertPerson");
+    const face = new Face({ ID: "f123ghytrfggd", Samples: 5, MarkerUID: "mDC123ghytr", Name: "Jane" });
+    await face.setName("");
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   it("should return batch size", () => {

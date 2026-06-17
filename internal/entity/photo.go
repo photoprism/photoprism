@@ -46,7 +46,7 @@ func MapKey(takenAt time.Time, cellId string) string {
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint          `gorm:"primary_key" yaml:"-"`
-	UUID             string        `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
+	UUID             string        `gorm:"type:VARBINARY(255);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time     `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" json:"TakenAtLocal" yaml:"TakenAtLocal"`
 	TakenSrc         string        `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`

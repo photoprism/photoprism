@@ -402,7 +402,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		PublishAlbumEvent(StatusUpdated, uid, c)
+		PublishAlbumEvent(StatusUpdated, uid)
 
 		// Update album YAML backup.
 		SaveAlbumYaml(&album)
@@ -453,7 +453,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		PublishAlbumEvent(StatusUpdated, uid, c)
+		PublishAlbumEvent(StatusUpdated, uid)
 
 		// Update album YAML backup.
 		SaveAlbumYaml(&album)
@@ -537,7 +537,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		if len(added) > 0 {
 			event.SuccessMsg(i18n.MsgSelectionAddedTo, clean.Log(album.Title()))
 
-			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID)
 
 			// Update album YAML backup.
 			SaveAlbumYaml(&album)
@@ -624,7 +624,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 			RemoveFromAlbumCoverCache(album.AlbumUID)
 
-			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID)
 
 			// Update album YAML backup.
 			SaveAlbumYaml(&album)
@@ -653,7 +653,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 				if len(approved) > 0 {
 					UpdateClientConfig()
 
-					event.EntitiesUpdated("photos", approved)
+					event.EntitiesUpdated("photos", approved.UIDs())
 				}
 			}
 		}
@@ -733,7 +733,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 			RemoveFromAlbumCoverCache(album.AlbumUID)
 
-			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID)
 
 			// Update album YAML backup.
 			SaveAlbumYaml(&album)

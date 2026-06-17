@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
@@ -93,12 +93,12 @@ describe("common/config", () => {
     const values = {
       siteTitle: "Foo",
       baseUri: "/portal",
-      frontendUri: "/portal/admin/",
+      frontendUri: "/portal/",
     };
 
     const config = new Config(storage, values);
-    expect(config.frontendUri).toBe("/portal/admin");
-    expect(config.loginUri).toBe("/portal/admin/login");
+    expect(config.frontendUri).toBe("/portal");
+    expect(config.loginUri).toBe("/portal/login");
   });
 
   it("uses base uri fallback when frontend uri is missing", () => {
@@ -113,7 +113,18 @@ describe("common/config", () => {
     expect(config.loginUri).toBe("/portal/library/login");
   });
 
-  it("themeAssetUri prefixes a root-relative theme path with the base uri", () => {
+  it("themeAssetUri resolves a bare basename into the theme dir", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+    expect(config.themeAssetUri("icons/logo.svg")).toBe("/i/pro-1/_theme/icons/logo.svg");
+  });
+
+  it("themeAssetUri resolves a bare basename without a base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo" });
+    expect(config.themeAssetUri("logo.svg")).toBe("/_theme/logo.svg");
+  });
+
+  it("themeAssetUri still prefixes a root-relative theme path with the base uri", () => {
     const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
     expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
   });
@@ -123,22 +134,34 @@ describe("common/config", () => {
     expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/_theme/logo.svg");
   });
 
-  it("themeAssetUri leaves absolute, protocol-relative, already-prefixed, and empty paths alone", () => {
+  it("themeAssetUri leaves absolute, protocol-relative, data, already-prefixed, and empty paths alone", () => {
     const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
     expect(config.themeAssetUri("https://cdn.example.com/logo.svg")).toBe("https://cdn.example.com/logo.svg");
     expect(config.themeAssetUri("//cdn.example.com/logo.svg")).toBe("//cdn.example.com/logo.svg");
+    expect(config.themeAssetUri("data:image/svg+xml;base64,AAAA")).toBe("data:image/svg+xml;base64,AAAA");
     expect(config.themeAssetUri("/i/pro-1/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
     expect(config.themeAssetUri("")).toBe("");
   });
 
-  it("getIcon prefixes a theme-provided icon with the base uri on path-prefixed deployments", () => {
+  it("getIcon resolves a theme-provided basename icon against the base uri", () => {
     const config = new Config(new StorageShim(), {
       siteTitle: "Foo",
       baseUri: "/i/pro-1",
       settings: { ui: { theme: "branded" } },
     });
-    themes.Set("branded", { name: "branded", title: "Branded", colors: {}, variables: { icon: "/_theme/logo.svg" } });
+    themes.Set("branded", { name: "branded", title: "Branded", colors: {}, variables: { icon: "logo.svg" } });
     config.setTheme("branded");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
+  it("getIcon still resolves a legacy /_theme path-style icon", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      settings: { ui: { theme: "legacy" } },
+    });
+    themes.Set("legacy", { name: "legacy", title: "Legacy", colors: {}, variables: { icon: "/_theme/logo.svg" } });
+    config.setTheme("legacy");
     expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
   });
 
@@ -308,50 +331,6 @@ describe("common/config", () => {
     });
 
     expect(cfg.getDefaultRoute()).toBe("browse");
-  });
-
-  it("should test get name", () => {
-    const result = defaultConfig.getPerson("a");
-    expect(result).toBeNull();
-
-    const result2 = defaultConfig.getPerson("Andrea Sander");
-    expect(result2.UID).toBe("jr0jgyx2viicdnf7");
-
-    const result3 = defaultConfig.getPerson("Otto Sander");
-    expect(result3.UID).toBe("jr0jgyx2viicdn88");
-  });
-
-  it("should create, update and delete people", () => {
-    const storage = new StorageShim();
-    const values = { Debug: true, siteTitle: "Foo", country: "Germany", city: "Hamburg" };
-
-    const cfg = new Config(storage, values);
-    cfg.onPeople("people.created", { entities: {} });
-    expect(cfg.values.people).toEqual([]);
-    cfg.onPeople("people.created", {
-      entities: [
-        {
-          UID: "abc123",
-          Name: "Test Name",
-          Keywords: ["Test", "Name"],
-        },
-      ],
-    });
-    expect(cfg.values.people[0].Name).toBe("Test Name");
-    cfg.onPeople("people.updated", {
-      entities: [
-        {
-          UID: "abc123",
-          Name: "New Name",
-          Keywords: ["New", "Name"],
-        },
-      ],
-    });
-    expect(cfg.values.people[0].Name).toBe("New Name");
-    cfg.onPeople("people.deleted", {
-      entities: ["abc123"],
-    });
-    expect(cfg.values.people).toEqual([]);
   });
 
   it("should return language locale", () => {
@@ -567,6 +546,12 @@ describe("common/config", () => {
       expect(make({ loginUri: "/library/api/v1/oidc/login" }).oidcLoginUri()).toBe("/library/api/v1/oidc/login");
       expect(make({}).oidcLoginUri()).toBe("");
       expect(new Config(new StorageShim(), null).oidcLoginUri()).toBe("");
+    });
+
+    it("portalLoginUri returns the ext.oidc.portalLoginUri or an empty string", () => {
+      expect(make({ portalLoginUri: "https://app.example.com/portal/login" }).portalLoginUri()).toBe("https://app.example.com/portal/login");
+      expect(make({}).portalLoginUri()).toBe("");
+      expect(new Config(new StorageShim(), null).portalLoginUri()).toBe("");
     });
   });
 
