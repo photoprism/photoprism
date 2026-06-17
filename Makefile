@@ -71,7 +71,7 @@ endif
 
 # Testcafe video settings will be enabled if TC_USE_VIDEO is set in the environment.
 ifdef TC_USE_VIDEO
-	TCVIDEO="--video tests/acceptance/videos/ --video-options singleFile=false,failedOnly=true"
+	TCVIDEO=--video tests/acceptance/videos/ --video-options singleFile=false,failedOnly=true
 endif
 
 # Declare "make" targets.
@@ -96,31 +96,37 @@ test-short: run-test-short
 test-mariadb: reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
 test-postgres: reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
 test-sqlite: reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
-# SQLite acceptance tests - These setup, configure and then call the actual tests.
-acceptance-run-chromium: storage/acceptance storage/sqlite acceptance-exec-chromium
-acceptance-run-chromium-short: storage/acceptance storage/sqlite acceptance-exec-chromium-short
-acceptance-auth-run-chromium: storage/acceptance storage/sqlite acceptance-auth-exec-chromium
-acceptance-public-run-chromium: storage/acceptance storage/sqlite acceptance-public-exec-chromium
-acceptance-api-run-chromium: storage/acceptance storage/sqlite acceptance-api-exec-chromium
-# MariaDB acceptance tests - These setup, configure and then call the actual tests.
-acceptance-mariadb-run-chromium: storage/acceptance storage/mariadb acceptance-exec-chromium
-acceptance-mariadb-run-chromium-short: storage/acceptance storage/mariadb acceptance-exec-chromium-short
-acceptance-mariadb-auth-run-chromium: storage/acceptance storage/mariadb acceptance-auth-exec-chromium
-acceptance-mariadb-public-run-chromium: storage/acceptance storage/mariadb acceptance-public-exec-chromium
-acceptance-mariadb-api-run-chromium: storage/acceptance storage/mariadb acceptance-api-exec-chromium
-# PostgreSQL acceptance tests - These setup, configure and then call the actual tests.
-acceptance-postgres-run-chromium: storage/acceptance storage/postgres acceptance-exec-chromium
-acceptance-postgres-run-chromium-short: storage/acceptance storage/postgres acceptance-exec-chromium-short
-acceptance-postgres-auth-run-chromium: storage/acceptance storage/postgres acceptance-auth-exec-chromium
-acceptance-postgres-public-run-chromium: storage/acceptance storage/postgres acceptance-public-exec-chromium
-acceptance-postgres-api-run-chromium: storage/acceptance storage/postgres acceptance-api-exec-chromium
 
-# The actual tests that are called for acceptance tests.  Don't call these directly, use the ones with run in the name.
-acceptance-exec-chromium: acceptance-file-reset acceptance-database-reset-api acceptance-public-start-api wait-api acceptance-api acceptance-stop-api acceptance-database-reset-auth acceptance-auth-start wait-auth acceptance-auth acceptance-stop-auth acceptance-database-reset-public acceptance-public-start wait-public acceptance acceptance-stop-public
-acceptance-exec-chromium-short: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth-short acceptance-stop-auth acceptance-database-reset-2 acceptance-public-start wait-2 acceptance-short acceptance-stop-public
-acceptance-auth-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-auth-start wait-1 acceptance-auth acceptance-stop-auth
-acceptance-public-exec-chromium: acceptance-file-reset acceptance-database-reset-1 acceptance-public-start wait-1 acceptance acceptance-stop-public
-acceptance-api-exec-chromium: acceptance-file-reset acceptance-database-reset-api acceptance-public-start-api wait-api acceptance-api acceptance-stop-api
+# Backward compatible SQLite acceptance tests - These call the new dbms generic targets that do the testing
+acceptance-run-chromium: acceptance-run-long-chromium-sqlite
+acceptance-run-chromium-short: acceptance-run-short-chromium-sqlite
+acceptance-auth-run-chromium: acceptance-run-auth-chromium-sqlite
+acceptance-public-run-chromium: acceptance-run-public-chromium-sqlite
+acceptance-api-run-chromium: acceptance-run-api-chromium-sqlite
+
+# Acceptance Tests
+# call using the DBMS instead of the % shown.  Options are :- mariadb postgres sqlite
+# For example to run the long acceptance tests against postgres use the following
+# make acceptance-run-long-chromium-postgres
+# Please note that these start another instance of make so that the parameter is passed through correctly.
+acceptance-run-long-chromium-%:
+	$(MAKE) storage/acceptance storage/$* acceptance-file-reset acceptance-exec-api acceptance-exec-auth acceptance-exec-public
+acceptance-run-short-chromium-%:
+	$(MAKE) storage/acceptance storage/$* acceptance-file-reset acceptance-exec-auth-short acceptance-exec-public-short
+acceptance-run-api-chromium-%:
+	$(MAKE) storage/acceptance storage/$* acceptance-file-reset acceptance-exec-api
+acceptance-run-auth-chromium-%:
+	$(MAKE) storage/acceptance storage/$* acceptance-file-reset acceptance-exec-auth
+acceptance-run-public-chromium-%:
+	$(MAKE) storage/acceptance storage/$* acceptance-file-reset acceptance-exec-public
+
+# The actual tests that are called for acceptance tests.  Don't call these directly, use the ones with run in the name above.
+acceptance-exec-api: acceptance-database-reset-api acceptance-public-start-api wait-api acceptance-api acceptance-stop-apiend
+acceptance-exec-auth: acceptance-database-reset-auth acceptance-auth-start wait-auth acceptance-auth acceptance-stop-authend
+acceptance-exec-auth-short: acceptance-database-reset-auth acceptance-auth-start wait-auth acceptance-auth-short acceptance-stop-authend
+acceptance-exec-public: acceptance-database-reset-public acceptance-public-start-public wait-public acceptance acceptance-stop-publicend
+acceptance-exec-public-short: acceptance-database-reset-public acceptance-public-start-public wait-public acceptance-short acceptance-stop-publicend
+
 help: list
 list:
 	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
@@ -284,7 +290,7 @@ acceptance-database-reset-%: acceptance-stop-%
 	fi
 acceptance-public-start%:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-active" start -d
-acceptance-auth-start%:
+acceptance-auth-start:
 	./photoprism --auth-mode="password" -c "./storage/acceptance/config-active" start -d
 acceptance-stop-%:
 	./photoprism -c "./storage/acceptance/config-active" stop
