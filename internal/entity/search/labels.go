@@ -16,6 +16,7 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 		return results, err
 	}
 
+	results = make([]Label, 0)
 	s := UnscopedDb()
 	// s.LogMode(true)
 

@@ -17,6 +17,7 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 	}
 
 	facesTable := entity.Face{}.TableName()
+	results = make(FaceResults, 0)
 
 	// Base query.
 	s := UnscopedDb().Table(facesTable)

@@ -198,6 +198,7 @@ type Moments []Moment
 
 // MomentsTime counts photos by month and year.
 func MomentsTime(threshold int, public bool) (results Moments, err error) {
+	results = make(Moments, 0)
 	stmt := UnscopedDb().Table("photos").
 		Select("photos.photo_year AS year, photos.photo_month AS month, COUNT(*) AS photo_count").
 		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photos.photo_year > 0 AND photos.photo_month > 0")
@@ -220,6 +221,7 @@ func MomentsTime(threshold int, public bool) (results Moments, err error) {
 
 // MomentsCountries returns the most popular countries by year.
 func MomentsCountries(threshold int, public bool) (results Moments, err error) {
+	results = make(Moments, 0)
 	stmt := UnscopedDb().Table("photos").
 		Select("photo_year AS year, photo_country AS country, COUNT(*) AS photo_count").
 		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_country <> 'zz' AND photo_year > 0")
@@ -241,6 +243,7 @@ func MomentsCountries(threshold int, public bool) (results Moments, err error) {
 
 // MomentsStates returns the most popular states and countries by year.
 func MomentsStates(threshold int, public bool) (results Moments, err error) {
+	results = make(Moments, 0)
 	stmt := UnscopedDb().Table("photos").
 		Select("p.place_country AS country, p.place_state AS state, COUNT(*) AS photo_count").
 		Joins("JOIN places p ON p.id = photos.place_id").
@@ -269,6 +272,7 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 		labelSlugs = append(labelSlugs, labelSlug)
 	}
 
+	results = make(Moments, 0)
 	m := Moments{}
 
 	stmt := UnscopedDb().Table("photos").

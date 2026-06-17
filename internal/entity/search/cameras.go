@@ -15,6 +15,7 @@ func Cameras(frm form.SearchCameras) (results []Camera, err error) {
 		return results, err
 	}
 
+	results = make([]Camera, 0)
 	s := Db()
 
 	// Base query.

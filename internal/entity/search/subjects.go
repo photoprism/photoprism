@@ -19,6 +19,7 @@ func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
 		return results, err
 	}
 
+	results = make(SubjectResults, 0)
 	subjTable := entity.Subject{}.TableName()
 
 	// Base query.

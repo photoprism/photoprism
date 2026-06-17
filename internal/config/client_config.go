@@ -546,6 +546,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
 		Colors:           colors.All.List(),
+		Categories:       make(CategoryLabels, 0),
 		Thumbs:           Thumbs,
 		Tier:             c.Hub().Tier(),
 		Membership:       c.Hub().Membership(),

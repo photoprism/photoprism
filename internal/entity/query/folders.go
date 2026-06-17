@@ -56,6 +56,7 @@ func FolderCoverByUID(uid string) (file entity.File, err error) {
 
 // AlbumFolders returns folders that should be added as album.
 func AlbumFolders(threshold int) (folders entity.Folders, err error) {
+	folders = make(entity.Folders, 0)
 	db := UnscopedDb().Table("folders").
 		Select("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month, COUNT(photos.id) AS photo_count").
 		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3 AND photos.photo_private = FALSE").

@@ -103,6 +103,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 		return results, errors.New("no items selected")
 	}
 
+	results = make(entity.Files, 0)
 	// Resolve photos in smart albums.
 	if photoIds, err := AlbumsPhotoUIDs(frm.Albums, false, o.Private); err != nil {
 		log.Warnf("query: %s", err.Error())

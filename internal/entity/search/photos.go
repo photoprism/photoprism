@@ -60,6 +60,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		return PhotoResults{}, 0, ErrBadRequest
 	}
 
+	results = make(PhotoResults, 0)
 	// Find photos near another?
 	if txt.NotEmpty(frm.Near) {
 		photo := Photo{}

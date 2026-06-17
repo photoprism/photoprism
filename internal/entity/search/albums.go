@@ -29,6 +29,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		log.Debugf("albums: %s", err)
 		return AlbumResults{}, err
 	}
+	results = make(AlbumResults, 0)
 
 	// Base query.
 	s := UnscopedDb().Table("albums").

@@ -38,6 +38,7 @@ func SelectedPhotos(frm form.Selection) (results entity.Photos, err error) {
 	if frm.Empty() {
 		return results, errors.New("no items selected")
 	}
+	results = make(entity.Photos, 0)
 
 	// Resolve photos in smart albums.
 	if photoIds, err := AlbumsPhotoUIDs(frm.Albums, false, false); err != nil {

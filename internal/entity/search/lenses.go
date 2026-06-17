@@ -15,6 +15,7 @@ func Lenses(frm form.SearchLenses) (results []Lens, err error) {
 		return results, err
 	}
 
+	results = make([]Lens, 0)
 	s := Db()
 	// s.LogMode(true)
 

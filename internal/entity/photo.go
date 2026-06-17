@@ -824,6 +824,7 @@ func (m *Photo) IndexKeywords() error {
 
 // PreloadFiles loads the non-deleted file records associated with the photo.
 func (m *Photo) PreloadFiles() *Photo {
+	m.Files = make([]File, 0)
 	q := Db().
 		Table("files").
 		Select("files.*").
@@ -837,6 +838,7 @@ func (m *Photo) PreloadFiles() *Photo {
 
 // PreloadKeywords loads keyword entities linked to the photo.
 func (m *Photo) PreloadKeywords() *Photo {
+	m.Keywords = make([]Keyword, 0)
 	q := Db().
 		Table("keywords").
 		Select(`keywords.*`).
@@ -850,6 +852,7 @@ func (m *Photo) PreloadKeywords() *Photo {
 
 // PreloadAlbums loads albums related to the photo using the standard visibility filters.
 func (m *Photo) PreloadAlbums() *Photo {
+	m.Albums = make([]Album, 0)
 	q := Db().
 		Table("albums").
 		Select(`albums.*`).

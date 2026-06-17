@@ -10,6 +10,7 @@ import (
 
 // People returns the sorted names of the first 2000 people.
 func People() (people entity.People, err error) {
+	people = make(entity.People, 0)
 	err = UnscopedDb().
 		Table(entity.Subject{}.TableName()).
 		Select("subj_uid, subj_name, subj_alias, subj_favorite, subj_hidden").

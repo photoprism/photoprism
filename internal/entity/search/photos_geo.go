@@ -45,6 +45,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		return GeoResults{}, ErrBadRequest
 	}
 
+	results = make(GeoResults, 0)
 	// Find photos near another?
 	if txt.NotEmpty(frm.Near) {
 		photo := Photo{}
