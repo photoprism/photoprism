@@ -2551,8 +2551,8 @@ var PhotoFixtures = PhotoMap{
 	"photo39*": { //JPG, Geo from metadata, indexed
 		ID:               1000040,
 		PhotoUID:         "ps6sg6byk7wrbk32",
-		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
-		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
+		TakenAt:          time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC), // ensure 24h time_index on the file (Postgres regression test)
+		TakenAtLocal:     time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
 		PhotoType:        "image",
 		TypeSrc:          "",

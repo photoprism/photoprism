@@ -50,12 +50,12 @@ func TestFile_RegenerateIndex(t *testing.T) {
 		assert.NotNil(t, result.PhotoTakenAt)
 		assert.NotNil(t, result.MediaID)
 		assert.NotNil(t, result.TimeIndex)
-		assert.Equal(t, time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC), result.PhotoTakenAt)
+		assert.Equal(t, time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC), result.PhotoTakenAt)
 		if result.MediaID != nil {
 			assert.Equal(t, "9998999960-0-fs6sg6bw15bnl342", *result.MediaID)
 		}
 		if result.TimeIndex != nil {
-			assert.Equal(t, "79798888909282-9998999960-0-fs6sg6bw15bnl342", *result.TimeIndex)
+			assert.Equal(t, "79798888849282-9998999960-0-fs6sg6bw15bnl342", *result.TimeIndex)
 		}
 	})
 	t.Run("FirstFileByHash", func(t *testing.T) {
