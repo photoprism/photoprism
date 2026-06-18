@@ -74,7 +74,13 @@ func bootstrapClusterNode(c *config.Config) {
 	portalURL := strings.TrimSpace(c.PortalUrl())
 	joinToken := strings.TrimSpace(c.JoinToken())
 
-	if portalURL == "" || joinToken == "" {
+	// Proceed with either a join token (first join) or the node's own OAuth
+	// credentials (already joined). The credential-only case lets a plain restart
+	// re-send the idempotent registration so a changed declarative config reaches
+	// the Portal after the join token has been removed from the environment.
+	hasNodeCreds := strings.TrimSpace(c.NodeClientID()) != "" && strings.TrimSpace(c.NodeClientSecret()) != ""
+
+	if portalURL == "" || (joinToken == "" && !hasNodeCreds) {
 		log.Debugf("cluster: no bootstrap configuration found")
 		return
 	}
@@ -391,6 +397,13 @@ func buildRegisterPayload(c *config.Config) cluster.RegisterRequest {
 		payload.SiteUrl = su
 	}
 
+	// Declare the instance's group-based admission config so it takes effect on
+	// first boot and every re-registration; an admin override on the Portal
+	// still wins (see the registry's group-config source precedence).
+	payload.AllowGroups = c.ClusterAllowGroups()
+	payload.AllowGroupRoles = c.ClusterAllowGroupRoles()
+	payload.GroupsFullView = c.ClusterGroupsFullView()
+
 	return payload
 }
 
@@ -423,6 +436,15 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 	if jwksUrl := strings.TrimSpace(r.JWKSUrl); jwksUrl != "" {
 		updates.SetJWKSUrl(jwksUrl)
 		c.SetJWKSUrl(jwksUrl)
+	}
+
+	// Apply the validating setter first and persist only what it accepted, so
+	// a malformed URL from a misbehaving Portal is never written to options.yml.
+	if loginUrl := strings.TrimSpace(r.PortalLoginUrl); loginUrl != "" {
+		c.SetPortalLoginUrl(loginUrl)
+		if v := c.PortalLoginUrl(); v != "" {
+			updates.SetPortalLoginUrl(v)
+		}
 	}
 
 	// Persist NodeUUID from portal response if provided and not set locally.

@@ -174,13 +174,17 @@ export default [
     path: "/logout",
     meta: { title: siteTitle, requiresAuth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
-      // Resolve the landing before sign-out clears the provider: a cluster-OIDC user
-      // returns to the Portal login (re-auth via OIDC), everyone else to the local form.
+      // Resolve the session kind and landing before sign-out clears the provider:
+      // a cluster-OIDC user returns to the Portal login (or the local form when the
+      // Portal login URL is unknown), everyone else to the local form. The cluster
+      // decision must not depend on the redirect target, or a node without a
+      // persisted Portal login URL would silently skip the cluster-wide sign-out.
+      const isClusterSession = $session.isClusterSession();
       const redirectUri = $session.logoutRedirectUri();
-      if (redirectUri && redirectUri !== $config.loginUri) {
+      if (isClusterSession) {
         // Cluster-OIDC: await the cluster-wide sign-out (which clears the Portal OP
-        // cookie) BEFORE bouncing to the OIDC login, so the Portal shows its login form
-        // instead of silently re-issuing a session from a still-valid OP cookie.
+        // cookie) BEFORE redirecting, so the Portal shows its login form instead of
+        // silently re-issuing a session from a still-valid OP cookie.
         next(false);
         $session.logoutEverywhere(true).finally(() => $session.followRedirect(redirectUri));
       } else {

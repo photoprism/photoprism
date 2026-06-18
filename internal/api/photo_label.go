@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -38,7 +39,19 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit by-UID edits to pictures within the session's shared scope, mirroring UpdatePhoto.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the check and restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -131,7 +144,19 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit by-UID edits to pictures within the session's shared scope, mirroring UpdatePhoto.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the check and restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -213,7 +238,19 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 
 		// TODO: Clean up and simplify this.
 
-		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit by-UID edits to pictures within the session's shared scope, mirroring UpdatePhoto.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the check and restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)

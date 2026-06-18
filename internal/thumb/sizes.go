@@ -71,7 +71,8 @@ var (
 	SizeFit3840  = Size{Fit3840, Fit4096, "4K Ultra HD", 3840, 2400, false, true, true, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit4096  = Size{Fit4096, "", "DCI 4K, Retina 4K", 4096, 4096, true, true, false, false, Options{ResampleFit, ResampleDefault}}
 	SizeFit5120  = Size{Fit5120, "", "Retina 5K", 5120, 5120, true, true, false, false, Options{ResampleFit, ResampleDefault}}
-	SizeFit7680  = Size{Fit7680, "", "8K Ultra HD 2", 7680, 4320, true, true, false, false, Options{ResampleFit, ResampleDefault}}
+	SizeFit7680  = Size{Fit7680, Fit15360, "8K Ultra HD 2", 7680, 4320, true, true, false, false, Options{ResampleFit, ResampleDefault}}
+	SizeFit15360 = Size{Fit15360, "", "16K UHD", 15360, 8640, true, true, false, false, Options{ResampleFit, ResampleDefault}}
 )
 
 // Sizes contains the properties of all thumbnail sizes.
@@ -100,6 +101,7 @@ var Sizes = SizeMap{
 	Fit4096:  SizeFit4096,
 	Fit5120:  SizeFit5120,
 	Fit7680:  SizeFit7680,
+	Fit15360: SizeFit15360, // On-demand only by default; for 8K+ 360° media.
 }
 
 // All contains all thumbnail sizes sorted by width.

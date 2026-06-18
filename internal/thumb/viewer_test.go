@@ -31,5 +31,8 @@ func TestViewerThumbs(t *testing.T) {
 		assert.Equal(t, 2000, result.Fit7680.W)
 		assert.Equal(t, 1500, result.Fit7680.H)
 		assert.Equal(t, "https://example.com/t/011df944f313a05f89d170a561fad09ce6cef44e/12345678/fit_2560", result.Fit7680.Src)
+		assert.Equal(t, 2000, result.Fit15360.W)
+		assert.Equal(t, 1500, result.Fit15360.H)
+		assert.Equal(t, "https://example.com/t/011df944f313a05f89d170a561fad09ce6cef44e/12345678/fit_2560", result.Fit15360.Src)
 	})
 }

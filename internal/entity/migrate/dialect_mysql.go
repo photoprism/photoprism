@@ -237,4 +237,16 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"DROP INDEX IF EXISTS idx_albums_album_path ON albums;", "ALTER TABLE albums MODIFY album_path VARBINARY(1024);", "CREATE OR REPLACE INDEX idx_albums_album_path ON albums (album_path(512));"},
 	},
+	{
+		ID:         "20260602-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE photos MODIFY uuid VARBINARY(255);"},
+	},
+	{
+		ID:         "20260612-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE auth_sessions MODIFY data_json VARBINARY(16384);"},
+	},
 }

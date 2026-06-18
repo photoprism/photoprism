@@ -48,20 +48,36 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 			event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 			return s
 		}
-		event.AuditWarn([]string{clientIp, "%s %s without authentication", status.Denied}, perms.String(), string(resource))
+
+		// Log routine anonymous requests at debug level; warn only on a rejected token.
+		if authToken == "" {
+			event.AuditDebug([]string{clientIp, "%s %s without authentication", status.Denied}, perms.String(), string(resource))
+		} else {
+			event.AuditWarn([]string{clientIp, "%s %s with invalid authentication", status.Denied}, perms.String(), string(resource))
+		}
+
 		return entity.SessionStatusUnauthorized()
 	}
 
 	// Set client IP.
 	s.SetClientIP(clientIp)
 
-	// Reject app passwords when the feature is disabled, so tokens minted before the
-	// flag was turned off stop working. Identified by the session's auth provider
-	// (IsApplication), which covers every grant type used to mint one.
-	if s.IsApplication() && get.Config().DisableAppPasswords() {
-		event.AuditWarn([]string{clientIp, "session %s", "%s %s with app passwords disabled", status.Denied}, s.RefID, perms.String(), string(resource))
-		return entity.SessionStatusForbidden()
-	} else if s.IsClient() {
+	// Enforce restrictions for app password sessions, identified by the "application" auth provider.
+	if s.IsApplication() {
+		// Reject app passwords when the feature is disabled.
+		if get.Config().DisableAppPasswords() {
+			event.AuditWarn([]string{clientIp, "session %s", "%s %s with app password", status.Disabled}, s.RefID, perms.String(), string(resource))
+			return entity.SessionStatusForbidden()
+		}
+
+		// Reject app passwords when the user is denied access to the Web UI/API.
+		if u := s.GetUser(); u.DenyLogIn() {
+			event.AuditWarn([]string{clientIp, "session %s", "%s %s with app password", status.Denied}, s.RefID, perms.String(), string(resource))
+			return entity.SessionStatusForbidden()
+		}
+	}
+
+	if s.IsClient() {
 		// If the request is from a client application, check its authorization based
 		// on the allowed scope, the ACL, and the user account it belongs to (if any).
 

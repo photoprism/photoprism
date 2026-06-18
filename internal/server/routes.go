@@ -188,6 +188,14 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.GetFace(APIv1)
 	api.UpdateFace(APIv1)
 
+	// Cameras.
+	api.SearchCameras(APIv1)
+	api.UpdateCamera(APIv1)
+
+	// Lenses.
+	api.SearchLenses(APIv1)
+	api.UpdateLens(APIv1)
+
 	// Batch Operations.
 	api.BatchAlbumsDelete(APIv1)
 	api.BatchLabelsDelete(APIv1)

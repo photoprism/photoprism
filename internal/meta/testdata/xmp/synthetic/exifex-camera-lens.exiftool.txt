@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+
+<rdf:Description rdf:about='internal/meta/testdata/xmp/synthetic/exifex-camera-lens.xmp'
+  xmlns:et='http://ns.exiftool.org/1.0/' et:toolkit='Image::ExifTool 13.25'
+  xmlns:ExifTool='http://ns.exiftool.org/ExifTool/1.0/'
+  xmlns:System='http://ns.exiftool.org/File/System/1.0/'
+  xmlns:File='http://ns.exiftool.org/File/1.0/'
+  xmlns:XMP-x='http://ns.exiftool.org/XMP/XMP-x/1.0/'
+  xmlns:XMP-tiff='http://ns.exiftool.org/XMP/XMP-tiff/1.0/'
+  xmlns:XMP-exifEX='http://ns.exiftool.org/XMP/XMP-exifEX/1.0/'
+  xmlns:Composite='http://ns.exiftool.org/Composite/1.0/'>
+ <ExifTool:ExifToolVersion>13.25</ExifTool:ExifToolVersion>
+ <System:FileName>exifex-camera-lens.xmp</System:FileName>
+ <System:Directory>internal/meta/testdata/xmp/synthetic</System:Directory>
+ <System:FileSize>871 bytes</System:FileSize>
+ <System:FileModifyDate>2026:05:06 07:32:31+00:00</System:FileModifyDate>
+ <System:FileAccessDate>2026:05:06 07:32:31+00:00</System:FileAccessDate>
+ <System:FileInodeChangeDate>2026:05:06 07:32:31+00:00</System:FileInodeChangeDate>
+ <System:FilePermissions>-rw-r--r--</System:FilePermissions>
+ <File:FileType>XMP</File:FileType>
+ <File:FileTypeExtension>xmp</File:FileTypeExtension>
+ <File:MIMEType>application/rdf+xml</File:MIMEType>
+ <XMP-x:XMPToolkit>PhotoPrism Synthetic Fixture</XMP-x:XMPToolkit>
+ <XMP-tiff:Make>SyntheticCam</XMP-tiff:Make>
+ <XMP-tiff:Model>SC-1 Mark II</XMP-tiff:Model>
+ <XMP-exifEX:LensMake>SyntheticLens Co.</XMP-exifEX:LensMake>
+ <XMP-exifEX:LensModel>SL 50mm f/1.4</XMP-exifEX:LensModel>
+ <XMP-exifEX:LensSerialNumber>SL-50-987654</XMP-exifEX:LensSerialNumber>
+ <XMP-exifEX:SerialNumber>SC1-BODY-123456</XMP-exifEX:SerialNumber>
+ <XMP-exifEX:PhotographicSensitivity>800</XMP-exifEX:PhotographicSensitivity>
+ <XMP-exifEX:SensitivityType>Recommended Exposure Index</XMP-exifEX:SensitivityType>
+ <XMP-exifEX:RecommendedExposureIndex>800</XMP-exifEX:RecommendedExposureIndex>
+ <Composite:LensID>SL 50mm f/1.4</Composite:LensID>
+</rdf:Description>
+</rdf:RDF>

@@ -468,6 +468,18 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		sess.SetUser(user)
 		sess.SetGrantType(authn.GrantAuthorizationCode)
 
+		// On Portal builds, persist the normalized login-time group set on the
+		// session so group-based instance access resolves at authorize time
+		// without a second IdP round-trip. Overage with no groups stores an
+		// empty set, so group-based grants deny rather than admit blindly.
+		// Instance/CE sessions don't store groups — they have no resolver and
+		// the session API must not become a group-membership side channel.
+		if conf.Portal() {
+			if merged := oidc.MergeGroups(groups); len(merged) > 0 {
+				sess.SetData(sess.GetData().SetGroups(merged))
+			}
+		}
+
 		// Ensure that the ID token fits into the existing
 		// database column; otherwise, truncate it.
 		if n := len(tokens.IDToken); n > 2048 {

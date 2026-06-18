@@ -59,6 +59,7 @@
             hide-details="auto"
             autocomplete="off"
             class="meta-inline-edit meta-inline-caption"
+            @keydown.enter.stop
             @keydown.escape.stop.prevent="cancelEditing"
             @blur="onInlineFieldBlur"
           ></v-textarea>
@@ -252,6 +253,7 @@
               autocomplete="off"
               class="meta-inline-edit meta-inline-marker"
               :class="{ 'meta-inline-marker--named': m.SubjUID }"
+              @focus="loadChipOptions('people')"
               @update:model-value="(v) => onPickPerson(m, v)"
               @update:search="(v) => setMarkerInputValue(m.UID, v)"
               @keydown.enter.stop.prevent="confirmMarkerName(m, 'enter')"
@@ -299,14 +301,18 @@
                 @keydown.delete.stop.prevent="onChipDelete('albums', a)"
               >
                 <span class="meta-chip__label text-truncate">{{ a.Title }}</span>
-                <v-icon
+                <button
                   v-if="isEditable"
-                  icon="mdi-close-circle"
-                  size="x-small"
-                  class="ml-1 meta-chip__remove"
+                  type="button"
+                  tabindex="-1"
+                  class="ms-1 meta-chip__remove meta-icon-btn"
                   :title="$gettext('Remove')"
+                  :aria-label="$gettext('Remove')"
+                  @mousedown.prevent
                   @click.stop.prevent="onChipDelete('albums', a)"
-                ></v-icon>
+                >
+                  <v-icon icon="mdi-close-circle" size="x-small"></v-icon>
+                </button>
               </span>
             </div>
           </v-list-item>
@@ -360,14 +366,18 @@
                 @keydown.delete.stop.prevent="onChipDelete('labels', l)"
               >
                 <span class="meta-chip__label text-truncate">{{ l.Label.Name }}</span>
-                <v-icon
+                <button
                   v-if="isEditable"
-                  icon="mdi-close-circle"
-                  size="x-small"
-                  class="ml-1 meta-chip__remove"
+                  type="button"
+                  tabindex="-1"
+                  class="ms-1 meta-chip__remove meta-icon-btn"
                   :title="$gettext('Remove')"
+                  :aria-label="$gettext('Remove')"
+                  @mousedown.prevent
                   @click.stop.prevent="onChipDelete('labels', l)"
-                ></v-icon>
+                >
+                  <v-icon icon="mdi-close-circle" size="x-small"></v-icon>
+                </button>
               </span>
             </div>
           </v-list-item>
@@ -424,7 +434,7 @@
                 class="meta-inline-edit"
                 :class="`meta-inline-${f.key}`"
                 @update:model-value="(v) => f.write(photo, v)"
-                @keydown.enter="(ev) => onInlineEnter(ev, f)"
+                @keydown.enter.stop="(ev) => onInlineEnter(ev, f)"
                 @keydown.escape.stop.prevent="cancelEditing"
                 @blur="onInlineFieldBlur"
               ></v-textarea>
@@ -480,6 +490,7 @@ import * as formats from "options/formats";
 import { $faceMarkers } from "common/face-markers";
 
 import * as media from "common/media";
+import { is360Equirectangular } from "common/sphere";
 import typeaheadCache from "common/typeahead-cache";
 import { rules } from "common/form";
 import { Album, MaxLength as AlbumMaxLength } from "model/album";
@@ -546,6 +557,9 @@ export default {
       chipState: {
         labels: { input: null, search: "", key: 0, options: [], removals: [] },
         albums: { input: null, search: "", key: 0, options: [], removals: [] },
+        // People is read-only suggestions (no removals/typed-text editing); the
+        // full shape keeps the chipState iterations (pending-edit checks) uniform.
+        people: { input: null, search: "", key: 0, options: [], removals: [] },
       },
       markerDrafts: {},
       markerMenuProps: {
@@ -704,18 +718,11 @@ export default {
       }
       return this.photo.getMarkers(true);
     },
-    // Sorted, locale-aware copy of `$config.values.people` for the marker
-    // combobox. Reading from `$config` keeps the list reactive to WS
-    // `people.{created,updated,deleted}` events.
+    // Name suggestions for the marker combobox, loaded from the shared people
+    // cache via loadChipOptions("people") and sorted there; the cache evicts on
+    // people.* / subjects.* WS events so the list stays current.
     knownPeople() {
-      const values = this.$config && this.$config.values;
-      if (!values || !Array.isArray(values.people)) {
-        return [];
-      }
-      return values.people
-        .filter((p) => p && p.Name)
-        .slice()
-        .sort((a, b) => (a.Name || "").localeCompare(b.Name || "", undefined, { sensitivity: "base", numeric: true }));
+      return this.chipState.people.options;
     },
     labels() {
       if (!this.photo?.Labels) {
@@ -1054,7 +1061,17 @@ export default {
       }
       return this.model?.Type || "";
     },
+    // mediaIs360 reports whether the active media is equirectangular 360° content,
+    // reusing the lightbox slide-routing discriminator (is360Equirectangular) so the
+    // file icon matches what opens in the sphere viewer. Checks both the thumb model
+    // and the photo since either may carry the projection / dimensions.
+    mediaIs360() {
+      return is360Equirectangular(this.model) || is360Equirectangular(this.photo);
+    },
     fileIcon() {
+      if (this.mediaIs360) {
+        return "mdi-panorama-variant-outline";
+      }
       switch (this.mediaType) {
         case media.Raw:
           return "mdi-raw";
@@ -1102,6 +1119,9 @@ export default {
       }
       if (this.canViewAlbums) {
         this.loadChipOptions("albums");
+      }
+      if (this.canViewPeople) {
+        this.loadChipOptions("people");
       }
     }
   },
@@ -1207,13 +1227,14 @@ export default {
     },
     // Plain Enter commits when the field opts in via `commitOnEnter`
     // (single-line fields); otherwise it falls through to insert a
-    // newline. Shift+Enter always inserts a newline.
+    // newline. Shift+Enter always inserts a newline. Propagation is
+    // stopped by the `.stop` modifier on the binding, so the keystroke
+    // never reaches the dialog's Enter handler in either branch.
     onInlineEnter(ev, f) {
       if (!f?.commitOnEnter || ev.shiftKey) {
         return;
       }
       ev.preventDefault();
-      ev.stopPropagation();
       this.confirmField();
     },
     // Reverts the active inline editor to editOriginal without exiting
@@ -1781,6 +1802,17 @@ export default {
             // reactive metadata breaks v-combobox input handling.
             // Mirrors the labels mapping above.
             this.chipState.albums.options = models.map((a) => ({ Title: a.Title, UID: a.UID })).sort(collator("Title"));
+          })
+          .catch(() => {});
+      } else if (field === "people") {
+        typeaheadCache
+          .getPeople()
+          .then((models) => {
+            // Plain {Name, UID} objects, mirroring the labels mapping.
+            this.chipState.people.options = models
+              .filter((p) => p && p.Name)
+              .map((p) => ({ Name: p.Name, UID: p.UID }))
+              .sort(collator("Name"));
           })
           .catch(() => {});
       }

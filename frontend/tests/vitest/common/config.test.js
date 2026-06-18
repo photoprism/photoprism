@@ -93,12 +93,12 @@ describe("common/config", () => {
     const values = {
       siteTitle: "Foo",
       baseUri: "/portal",
-      frontendUri: "/portal/admin/",
+      frontendUri: "/portal/",
     };
 
     const config = new Config(storage, values);
-    expect(config.frontendUri).toBe("/portal/admin");
-    expect(config.loginUri).toBe("/portal/admin/login");
+    expect(config.frontendUri).toBe("/portal");
+    expect(config.loginUri).toBe("/portal/login");
   });
 
   it("uses base uri fallback when frontend uri is missing", () => {
@@ -333,51 +333,6 @@ describe("common/config", () => {
     expect(cfg.getDefaultRoute()).toBe("browse");
   });
 
-  it("should test get name", () => {
-    const result = defaultConfig.getPerson("a");
-    expect(result).toBeNull();
-
-    const result2 = defaultConfig.getPerson("Andrea Sander");
-    expect(result2.UID).toBe("jr0jgyx2viicdnf7");
-
-    const result3 = defaultConfig.getPerson("Otto Sander");
-    expect(result3.UID).toBe("jr0jgyx2viicdn88");
-  });
-
-  it("should refetch on created/updated people and delete in place", () => {
-    const storage = new StorageShim();
-    const values = { Debug: true, siteTitle: "Foo", country: "Germany", city: "Hamburg" };
-
-    const cfg = new Config(storage, values);
-    let updates = 0;
-    cfg.update = () => {
-      updates++;
-      return Promise.resolve(cfg);
-    };
-
-    vi.useFakeTimers();
-
-    try {
-      cfg.onPeople("people.created", { entities: {} });
-      expect(cfg.values.people).toEqual([]);
-      expect(cfg.peopleUpdateTimer).toBeNull();
-
-      // people.created and people.updated carry only UIDs; bursts must
-      // coalesce into a single client-config refetch.
-      cfg.onPeople("people.created", { entities: ["abc123"] });
-      cfg.onPeople("people.updated", { entities: ["abc123"] });
-      vi.runAllTimers();
-      expect(updates).toBe(1);
-      expect(cfg.peopleUpdateTimer).toBeNull();
-
-      cfg.values.people = [{ UID: "abc123", Name: "Test Name" }];
-      cfg.onPeople("people.deleted", { entities: ["abc123"] });
-      expect(cfg.values.people).toEqual([]);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
   it("should return language locale", () => {
     const cfg = new Config(new StorageShim(), Object.assign({}, window.__CONFIG__));
     expect(cfg.getLanguageLocale()).toBe("en");
@@ -591,6 +546,12 @@ describe("common/config", () => {
       expect(make({ loginUri: "/library/api/v1/oidc/login" }).oidcLoginUri()).toBe("/library/api/v1/oidc/login");
       expect(make({}).oidcLoginUri()).toBe("");
       expect(new Config(new StorageShim(), null).oidcLoginUri()).toBe("");
+    });
+
+    it("portalLoginUri returns the ext.oidc.portalLoginUri or an empty string", () => {
+      expect(make({ portalLoginUri: "https://app.example.com/portal/login" }).portalLoginUri()).toBe("https://app.example.com/portal/login");
+      expect(make({}).portalLoginUri()).toBe("");
+      expect(new Config(new StorageShim(), null).portalLoginUri()).toBe("");
     });
   });
 

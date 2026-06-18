@@ -34,10 +34,10 @@ hook := event.NewHook(event.SharedHub())
 log.AddHook(hook)
 ```
 
-Entity events:
+Entity events (content-channel payloads carry only identity strings — UIDs/slugs — never entity bodies):
 ```go
-event.EntitiesUpdated("photos", updatedPhotos)
-event.EntitiesDeleted("files", deletedFiles)
+event.EntitiesUpdated("photos", []string{photo.PhotoUID})
+event.EntitiesDeleted("labels", []string{label.LabelUID})
 ```
 
 ### Package Layout (Code Map)

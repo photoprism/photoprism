@@ -7,6 +7,7 @@ type OptionsUpdate struct {
 	ClusterCIDR      *string
 	NodeClientID     *string
 	JWKSUrl          *string
+	PortalLoginUrl   *string
 	NodeUUID         *string
 	DatabaseDriver   *string
 	DatabaseDSN      *string
@@ -22,6 +23,7 @@ func (u OptionsUpdate) IsZero() bool {
 		u.ClusterCIDR == nil &&
 		u.NodeClientID == nil &&
 		u.JWKSUrl == nil &&
+		u.PortalLoginUrl == nil &&
 		u.NodeUUID == nil &&
 		u.DatabaseDriver == nil &&
 		u.DatabaseDSN == nil &&
@@ -61,6 +63,11 @@ func (u *OptionsUpdate) SetNodeClientID(value string) {
 // SetJWKSUrl sets the JWKS URL.
 func (u *OptionsUpdate) SetJWKSUrl(value string) {
 	u.JWKSUrl = stringPtr(value)
+}
+
+// SetPortalLoginUrl sets the browser-facing Portal login page URL.
+func (u *OptionsUpdate) SetPortalLoginUrl(value string) {
+	u.PortalLoginUrl = stringPtr(value)
 }
 
 // SetNodeUUID sets the node UUID.
@@ -111,6 +118,9 @@ func (u OptionsUpdate) Visit(fn func(string, any)) {
 	}
 	if u.JWKSUrl != nil {
 		fn("JWKSUrl", *u.JWKSUrl)
+	}
+	if u.PortalLoginUrl != nil {
+		fn("PortalLoginUrl", *u.PortalLoginUrl)
 	}
 	if u.NodeUUID != nil {
 		fn("NodeUUID", *u.NodeUUID)

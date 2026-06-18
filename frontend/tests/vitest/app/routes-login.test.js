@@ -238,7 +238,7 @@ describe("app/routes /login guard", () => {
   });
 
   // The Portal OIDC OP redirects unauthenticated users to
-  // /portal/admin/login?return_to=<authorize URL> via a top-level browser
+  // /portal/login?return_to=<authorize URL> via a top-level browser
   // navigation, so the global router guard never gets to record the deep
   // link via setLoginRedirectUrl(). The login route reads the inbound
   // `return_to` query parameter directly to bridge the hand-off.
@@ -280,14 +280,22 @@ describe("app/routes /logout guard", () => {
     vi.restoreAllMocks();
   });
 
-  // A cluster-OIDC user who hits /logout directly is bounced to the OIDC login
-  // (which lands on the Portal login) so they re-auth with their cluster account.
+  // A cluster-OIDC user who hits /logout directly is bounced to the Portal login
+  // page so they re-auth with their cluster account and pick an instance there.
   // The redirect must wait for the cluster-wide sign-out (which clears the Portal OP
   // cookie) so the Portal shows its login form instead of silently re-issuing a session.
-  it("bounces a cluster-OIDC sign-out to the OIDC login after clearing the OP cookie", async () => {
+  it("bounces a cluster-OIDC sign-out to the Portal login after clearing the OP cookie", async () => {
     $config.values = {
       ...$config.values,
-      ext: { oidc: { enabled: true, redirect: true, cluster: true, loginUri: "/api/v1/oidc/login" } },
+      ext: {
+        oidc: {
+          enabled: true,
+          redirect: true,
+          cluster: true,
+          loginUri: "/api/v1/oidc/login",
+          portalLoginUri: "https://app.example.com/portal/login",
+        },
+      },
     };
     $session.provider = "oidc";
     const logoutEverywhere = vi.spyOn($session, "logoutEverywhere").mockResolvedValue($session);
@@ -303,7 +311,29 @@ describe("app/routes /logout guard", () => {
     expect(followRedirect).not.toHaveBeenCalled();
 
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(followRedirect).toHaveBeenCalledWith("/api/v1/oidc/login");
+    expect(followRedirect).toHaveBeenCalledWith("https://app.example.com/portal/login");
+  });
+
+  // A node that has not (re-)registered against a current Portal has no Portal
+  // login URL yet — the cluster-wide sign-out and OP-cookie clearing must still
+  // run, with the local login form as the fallback landing.
+  it("still signs out cluster-wide when the Portal login URL is unknown", async () => {
+    $config.values = {
+      ...$config.values,
+      ext: { oidc: { enabled: true, redirect: true, cluster: true, loginUri: "/api/v1/oidc/login" } },
+    };
+    $session.provider = "oidc";
+    const logoutEverywhere = vi.spyOn($session, "logoutEverywhere").mockResolvedValue($session);
+    const followRedirect = vi.spyOn($session, "followRedirect").mockImplementation(() => {});
+    const next = vi.fn();
+
+    logoutGuard({}, {}, next);
+
+    expect(next).toHaveBeenCalledWith(false);
+    expect(logoutEverywhere).toHaveBeenCalledWith(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(followRedirect).toHaveBeenCalledWith($config.loginUri);
   });
 
   it("sends a local sign-out to the login route", () => {
@@ -333,7 +363,7 @@ describe("app/routes safeReturnTo", () => {
     if (!here) {
       return;
     }
-    expect(safeReturnTo(here + "/portal/admin/cluster")).toBe("/portal/admin/cluster");
+    expect(safeReturnTo(here + "/portal/cluster")).toBe("/portal/cluster");
     expect(safeReturnTo(here + "/api/v1/oauth/authorize?client_id=x#frag")).toBe("/api/v1/oauth/authorize?client_id=x#frag");
   });
   it("rejects cross-origin absolutes", () => {

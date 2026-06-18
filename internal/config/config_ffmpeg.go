@@ -46,7 +46,7 @@ func (c *Config) FFmpegEncoder() encode.Encoder {
 	return encode.FindEncoder(c.options.FFmpegEncoder)
 }
 
-// FFmpegSize returns the maximum ffmpeg video encoding size in pixels (720-7680).
+// FFmpegSize returns the maximum ffmpeg video encoding size in pixels (720-15360).
 func (c *Config) FFmpegSize() int {
 	return thumb.VideoSize(c.options.FFmpegSize).Width
 }

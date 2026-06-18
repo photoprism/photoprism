@@ -1,0 +1,33 @@
+package api
+
+import (
+	"net/http"
+	"strconv"
+	"testing"
+
+	"github.com/tidwall/gjson"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestSearchCameras(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SearchCameras(router)
+		r := PerformRequest(app, "GET", "/api/v1/cameras?count=15")
+		count := gjson.Get(r.Body.String(), "#")
+		assert.Greater(t, count.Int(), int64(0))
+		assert.Equal(t, http.StatusOK, r.Code)
+		result := r.Result()
+		xCount, err := strconv.Atoi(result.Header.Get("X-Count"))
+		assert.NoError(t, err, "strconv for X-Count failed")
+		// X-Count must equal the number of records in the body.
+		assert.Equal(t, int(count.Int()), xCount)
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SearchCameras(router)
+		r := PerformRequest(app, "GET", "/api/v1/cameras?xxx=15")
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+}

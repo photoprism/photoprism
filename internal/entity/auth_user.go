@@ -272,6 +272,15 @@ func (m *User) InvalidUID() bool {
 	return !m.HasUID()
 }
 
+// IsSystemOrInvalid checks whether the user is a system user or has an invalid ID.
+func (m *User) IsSystemOrInvalid() bool {
+	if m == nil {
+		return true
+	}
+
+	return m.ID <= 0 || m.InvalidUID()
+}
+
 // SameUID checks if the given uid matches the own uid.
 func (m *User) SameUID(uid string) bool {
 	if m == nil {
@@ -283,14 +292,17 @@ func (m *User) SameUID(uid string) bool {
 	return m.UserUID == uid
 }
 
-// InitAccount sets the name and password of the initial admin account.
+// InitAccount sets the name and password of the initial super admin account.
 func (m *User) InitAccount(initName, initPasswd, scope string) (updated bool) {
 	// User must exist and the password must not be empty.
 	initPasswd = strings.TrimSpace(initPasswd)
-	if rnd.InvalidUID(m.UserUID, UserUID) || initPasswd == "" {
+	if m.InvalidUID() || initPasswd == "" {
+		return false
+	} else if m.IsDeleted() || m.HasProvider(authn.ProviderNone) {
+		event.SystemDebug([]string{"config", "init", "admin account", status.Disabled})
 		return false
 	} else if !m.CanLogIn() {
-		log.Warnf("users: %s account is not allowed to log in", m.String())
+		event.SystemWarn([]string{"config", "init", "admin account", status.Disabled})
 	}
 
 	// Abort if user has a password.
@@ -352,7 +364,7 @@ func (m *User) Save() (err error) {
 
 // Delete marks the entity as deleted.
 func (m *User) Delete() (err error) {
-	if m.ID <= 1 {
+	if m.IsSystemOrInvalid() {
 		return fmt.Errorf("cannot delete system user")
 	} else if m.UserUID == "" {
 		return fmt.Errorf("uid is required to delete user")
@@ -371,7 +383,9 @@ func (m *User) Delete() (err error) {
 
 // IsDeleted checks if the user account has been deleted.
 func (m *User) IsDeleted() bool {
-	if m.DeletedAt == nil {
+	if m == nil {
+		return true
+	} else if m.DeletedAt == nil {
 		return false
 	}
 
@@ -475,13 +489,13 @@ func (m *User) UpdateLoginTime() *time.Time {
 	return timeStamp
 }
 
-// CanLogIn checks if the user is allowed to log in and use the web UI.
+// CanLogIn checks if the user is allowed to log in and use the Web UI/API.
 func (m *User) CanLogIn() bool {
 	if m == nil {
 		return false
-	} else if m.IsDeleted() || m.HasProvider(authn.ProviderNone) {
+	} else if m.IsSystemOrInvalid() || m.IsDeleted() || m.HasProvider(authn.ProviderNone) {
 		return false
-	} else if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
+	} else if !m.CanLogin && !m.SuperAdmin || m.UserName == "" {
 		return false
 	} else if m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() {
 		return false
@@ -490,12 +504,17 @@ func (m *User) CanLogIn() bool {
 	}
 }
 
+// DenyLogIn checks if the user should be denied access to the web UI/API
+func (m *User) DenyLogIn() bool {
+	return !m.CanLogIn()
+}
+
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
 func (m *User) CanUseWebDAV() bool {
 	if m == nil {
 		// Abort check if user is nil for any reason.
 		return false
-	} else if !m.WebDAV || m.ID <= 0 || m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() || m.HasProvider(authn.ProviderNone) {
+	} else if !m.WebDAV || m.IsSystemOrInvalid() || m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() || m.HasProvider(authn.ProviderNone) {
 		// Deny WebDAV access if WebDAV is disabled, the user does not have a
 		// regular, registered account, or the account has been deactivated.
 		return false
@@ -998,26 +1017,39 @@ func (m *User) IsUnknown() bool {
 	return m.InvalidUID() || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleNone)
 }
 
-// DeleteSessions deletes all active user sessions except those passed as argument.
-func (m *User) DeleteSessions(omit []string) (deleted int) {
+// RevokeDerivedSessions deletes user login sessions, including those created using app passwords.
+func (m *User) RevokeDerivedSessions(omit []string) (deleted int) {
+	return m.RevokeSessions(omit, authn.RevokeDerivedSessions)
+}
+
+// RevokeSessions deletes all user sessions depending on the scope, except for the ones specified to omit.
+func (m *User) RevokeSessions(omit []string, scope authn.SessionScope) (deleted int) {
 	if m.UserUID == "" {
 		return 0
 	}
 
-	// Compose update statement.
-	stmt := Db()
+	// Limit deletion to the user's own sessions, excluding the ids passed as argument.
+	stmt := Db().Where("user_uid = ?", m.UserUID)
 
-	// Find all user sessions except the session ids passed as argument.
-	if len(omit) == 0 {
-		stmt = stmt.Where("user_uid = ?", m.UserUID)
-	} else {
-		stmt = stmt.Where("user_uid = ? AND id NOT IN (?)", m.UserUID, omit)
+	if len(omit) > 0 {
+		stmt = stmt.Where("id NOT IN (?)", omit)
 	}
 
-	// Exclude client access tokens.
-	stmt = stmt.Where("auth_provider NOT IN (?)", authn.ClientProviders)
+	// Restrict the session types removed based on the revocation scope.
+	switch scope {
+	case authn.RevokeLoginSessions:
+		// Keep app passwords, client access tokens, and sessions derived from app passwords.
+		stmt = stmt.Where("auth_provider NOT IN (?)", authn.ClientProviders)
+	case authn.RevokeDerivedSessions:
+		// Keep app passwords and client access tokens, but delete regular
+		// login sessions and those derived from app passwords.
+		stmt = stmt.Where("auth_provider NOT IN (?) OR auth_method = ?",
+			authn.ClientProviders, authn.MethodSession.String())
+	case authn.RevokeAllSessions:
+		// Remove all sessions, including app passwords, client access tokens, and derived sessions.
+	}
 
-	// Fetch sessions from database.
+	// Fetch matching sessions from the database.
 	sess := Sessions{}
 
 	if err := stmt.Find(&sess).Error; err != nil {
@@ -1409,7 +1441,7 @@ func (m *User) PrivilegeLevelChange(frm form.User) bool {
 // cluster service principal that has no end-user identity of its own and so
 // cannot satisfy u.IsAdmin() despite being authorized for user management.
 func (m *User) SaveForm(frm form.User, u *User, byAdmin bool) error {
-	if m.UserName == "" || m.ID <= 0 {
+	if m.UserName == "" || m.IsSystemOrInvalid() {
 		return fmt.Errorf("system users cannot be modified")
 	} else if frm.SuperAdmin && !acl.IsAdminRole(acl.Role(frm.Role())) {
 		// Super admins must keep an admin-level role. cluster_admin is the
@@ -1552,7 +1584,7 @@ func (m *User) HasAvatar() bool {
 
 // SetAvatar updates the user avatar image.
 func (m *User) SetAvatar(thumb, thumbSrc string) error {
-	if m.UserName == "" || m.ID <= 0 {
+	if m.UserName == "" || m.IsSystemOrInvalid() {
 		return fmt.Errorf("system user avatars cannot be changed")
 	}
 

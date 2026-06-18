@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import $api from "common/api";
-import $event, { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
+import $event from "common/event";
 import * as themes from "options/themes";
 import * as options from "options/options";
 import { Photo } from "model/photo";
@@ -63,7 +63,6 @@ export default class Config {
     this.previewToken = "";
     this.downloadToken = "";
     this.updating = false;
-    this.peopleUpdateTimer = null;
 
     this.$vuetify = null;
     this.translations = {};
@@ -144,7 +143,6 @@ export default class Config {
     $event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
     $event.subscribe("config.tokens", (ev, data) => this.setTokens(data));
     $event.subscribe("count", (ev, data) => this.onCount(ev, data));
-    $event.subscribe("people", (ev, data) => this.onPeople(ev, data));
 
     if (this.has("settings")) {
       this.setTheme(this.get("settings").ui.theme);
@@ -232,73 +230,6 @@ export default class Config {
 
     if (settings?.search?.batchSize > 0) {
       Photo.setBatchSize(settings.search.batchSize);
-    }
-  }
-
-  // schedulePeopleUpdate coalesces bursts of people.* events (e.g. while
-  // face recognition adds new people) into a single client-config refetch.
-  schedulePeopleUpdate() {
-    if (this.peopleUpdateTimer) {
-      clearTimeout(this.peopleUpdateTimer);
-    }
-
-    this.peopleUpdateTimer = setTimeout(() => {
-      this.peopleUpdateTimer = null;
-      this.update();
-    }, 500);
-  }
-
-  onPeople(ev, data) {
-    const type = ev.split(".")[1];
-
-    if (this.debug) {
-      console.log(ev, data);
-    }
-
-    if (!this.values.people) {
-      this.values.people = [];
-    }
-
-    if (!data || !data.entities || !Array.isArray(data.entities)) {
-      return;
-    }
-
-    switch (type) {
-      case ACTION_CREATED:
-      case ACTION_UPDATED:
-        // people.created and people.updated carry only UIDs, so the people
-        // list must be reloaded through the scoped REST API.
-        this.schedulePeopleUpdate();
-        break;
-      case ACTION_DELETED:
-        for (let i = 0; i < data.entities.length; i++) {
-          const index = this.values.people.findIndex((m) => m.UID === data.entities[i]);
-
-          if (index >= 0) {
-            this.values.people.splice(index, 1);
-          }
-        }
-        break;
-    }
-  }
-
-  // getPerson returns the details of a person by name
-  // (case-insensitive), or null if it does not exist.
-  getPerson(name) {
-    name = name.toLowerCase();
-
-    const result = this.values.people.filter((m) => m.Name.toLowerCase() === name);
-    const l = result ? result.length : 0;
-
-    if (l === 0) {
-      return null;
-    } else if (l === 1) {
-      return result[0];
-    } else {
-      if (this.debug) {
-        console.warn("more than one person having the same name", result);
-      }
-      return result[0];
     }
   }
 
@@ -880,9 +811,24 @@ export default class Config {
     return !!this.values?.ext?.oidc?.cluster;
   }
 
+  // oidcEnabled returns true when OIDC single sign-on is configured.
+  oidcEnabled() {
+    return !!this.values?.ext?.oidc?.enabled;
+  }
+
+  // ldapEnabled returns true when LDAP/AD directory authentication is configured.
+  ldapEnabled() {
+    return !!this.values?.ext?.ldap?.enabled;
+  }
+
   // oidcLoginUri returns the OIDC login endpoint that starts the provider roundtrip, or "" when off.
   oidcLoginUri() {
     return this.values?.ext?.oidc?.loginUri || "";
+  }
+
+  // portalLoginUri returns the cluster Portal's browser-facing login page, or "" when unknown.
+  portalLoginUri() {
+    return this.values?.ext?.oidc?.portalLoginUri || "";
   }
 
   // isPro returns true if this is team version.
@@ -990,6 +936,10 @@ export default class Config {
       case "crisp":
       case "mint":
       case "bold":
+      case "bloom":
+      case "flower":
+      case "ring":
+      case "shutter":
         return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
       default:
         return `${this.staticUri}/icons/logo.svg`;

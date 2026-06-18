@@ -6,13 +6,14 @@ import (
 
 // Viewer represents thumbnail URLs for the photo/video viewer.
 type Viewer struct {
-	Fit720  *Thumb `json:"fit_720"`
-	Fit1280 *Thumb `json:"fit_1280"`
-	Fit1920 *Thumb `json:"fit_1920"`
-	Fit2560 *Thumb `json:"fit_2560"`
-	Fit4096 *Thumb `json:"fit_4096"`
-	Fit5120 *Thumb `json:"fit_5120"`
-	Fit7680 *Thumb `json:"fit_7680"`
+	Fit720   *Thumb `json:"fit_720"`
+	Fit1280  *Thumb `json:"fit_1280"`
+	Fit1920  *Thumb `json:"fit_1920"`
+	Fit2560  *Thumb `json:"fit_2560"`
+	Fit4096  *Thumb `json:"fit_4096"`
+	Fit5120  *Thumb `json:"fit_5120"`
+	Fit7680  *Thumb `json:"fit_7680"`
+	Fit15360 *Thumb `json:"fit_15360"`
 }
 
 // ViewerThumbs creates and returns a Viewer struct pointer with the required thumbnail URLs for the photo/video viewer.

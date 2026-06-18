@@ -35,7 +35,7 @@ func GetSessionResponse(authToken string, sess *entity.Session, conf *config.Cli
 			"provider":   sess.GetProvider().String(),
 			"scope":      sess.Scope(),
 			"user":       sess.GetUser(),
-			"data":       sess.GetData(),
+			"data":       sess.GetData().Redacted(),
 			"config":     conf,
 		}
 	} else {
@@ -51,7 +51,7 @@ func GetSessionResponse(authToken string, sess *entity.Session, conf *config.Cli
 			"provider":     sess.GetProvider().String(),
 			"scope":        sess.Scope(),
 			"user":         sess.GetUser(),
-			"data":         sess.GetData(),
+			"data":         sess.GetData().Redacted(),
 			"config":       conf,
 		}
 	}

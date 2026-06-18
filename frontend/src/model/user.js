@@ -237,6 +237,24 @@ export class User extends RestModel {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
+  // canEnableLogin reports whether web/API login can be enabled for this account.
+  // System users, role-less accounts, visitors, and deactivated accounts (provider
+  // "none") cannot log in regardless of the toggle. LDAP and OIDC accounts can.
+  canEnableLogin() {
+    if (this.ID < 1 || !this.Name || this.AuthProvider === "none") {
+      return false;
+    }
+
+    return !!this.Role && this.Role !== "visitor";
+  }
+
+  // canHavePassword reports whether a local password can be set and used for this account.
+  // Requires login eligibility plus a local provider — remote accounts (LDAP) have their
+  // credentials managed externally, so a local password would be inert.
+  canHavePassword() {
+    return this.canEnableLogin() && !this.isRemote();
+  }
+
   // hasWebDAV returns true when WebDAV access is enabled for this user and the role permits it.
   hasWebDAV() {
     return !!this.WebDAV && this.canEnableWebDAV();

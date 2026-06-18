@@ -10,7 +10,7 @@ var (
 	Color              = ColorAuto         // Color sets the standard color profile for thumbnails.
 	Filter             = ResampleLanczos   // Filter specifies the default downscaling filter.
 	SizeCached         = SizeFit1920.Width // Pre-generated thumbnail size limit.
-	SizeOnDemand       = SizeFit5120.Width // On-demand thumbnail size limit.
+	SizeOnDemand       = SizeFit7680.Width // On-demand thumbnail size limit.
 	JpegQualityDefault = QualityMedium     // JpegQualityDefault sets the compression level of newly created JPEGs.
 	CachePublic        = false             // Specifies if static content may be cached by a CDN or caching proxy.
 	SamplesPath        = fs.Abs("../../assets/samples")

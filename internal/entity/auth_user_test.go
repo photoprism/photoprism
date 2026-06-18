@@ -868,9 +868,9 @@ func TestUser_SetPassword(t *testing.T) {
 
 func TestUser_InitAccount(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		p := User{UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", CanLogin: true}
+		p := User{ID: 9, UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String(), AuthProvider: authn.ProviderLocal.String(), CanLogin: true}
 		assert.Nil(t, FindPassword("u000000000000009"))
-		assert.True(t, p.InitAccount("admin", "insecure", ""))
+		assert.True(t, p.InitAccount("Hanna", "insecure", ""))
 		m := FindPassword("u000000000000009")
 
 		if m == nil {
@@ -1335,6 +1335,14 @@ func TestUser_CanUseWebDAV(t *testing.T) {
 
 	assert.False(t, UserFixtures.Pointer("deleted").CanUseWebDAV())
 	assert.False(t, UserFixtures.Pointer("friend").CanUseWebDAV())
+
+	// Disabling web login must not affect WebDAV access: the API gate denies app
+	// passwords when CanLogin is off, while WebDAV stays governed by CanUseWebDAV.
+	// bob is a non-super-admin with WebDAV enabled (super admins always keep login).
+	webdavUser := UserFixtures.Get("bob")
+	webdavUser.CanLogin = false
+	assert.False(t, webdavUser.CanLogIn())
+	assert.True(t, webdavUser.CanUseWebDAV())
 }
 
 func TestUser_CanUpload(t *testing.T) {
@@ -2390,7 +2398,7 @@ func TestUser_Equal(t *testing.T) {
 	assert.False(t, Admin.Equal(&Visitor))
 }
 
-func TestUser_DeleteSessions(t *testing.T) {
+func TestUser_RevokeDerivedSessions(t *testing.T) {
 	t.Run("EmptyUid", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
@@ -2399,13 +2407,115 @@ func TestUser_DeleteSessions(t *testing.T) {
 			UserRole: "user",
 		}
 
-		assert.Equal(t, 0, u.DeleteSessions([]string{}))
+		assert.Equal(t, 0, u.RevokeDerivedSessions([]string{}))
 	})
 	t.Run("Alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 
-		assert.Equal(t, 0, m.DeleteSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))
-		assert.Equal(t, 1, m.DeleteSessions([]string{}))
+		assert.Equal(t, 0, m.RevokeDerivedSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))
+		assert.Equal(t, 1, m.RevokeDerivedSessions([]string{}))
+	})
+}
+
+// revokeTestSession creates a persisted session of the given type for a synthetic user.
+func revokeTestSession(t *testing.T, uid string, provider authn.ProviderType, method authn.MethodType, authID string) *Session {
+	s := NewSession(86400, 0)
+	s.UserUID = uid
+	s.UserName = "revoke-test"
+	s.SetProvider(provider)
+	s.SetMethod(method)
+	if authID != "" {
+		s.SetAuthID(authID, uid)
+	}
+	require.NoError(t, s.Create())
+	return s
+}
+
+// countUserSessions returns the number of sessions stored for the given user uid.
+func countUserSessions(t *testing.T, uid string) int {
+	var sess Sessions
+	require.NoError(t, Db().Where("user_uid = ?", uid).Find(&sess).Error)
+	return len(sess)
+}
+
+// newRevokeTestUser creates a synthetic user with one regular login, a parent app
+// password, a derived child app session, and a client access token.
+func newRevokeTestUser(t *testing.T) *User {
+	uid := rnd.GenerateUID(UserUID)
+	revokeTestSession(t, uid, authn.ProviderLocal, authn.MethodDefault, "")
+	parent := revokeTestSession(t, uid, authn.ProviderApplication, authn.MethodDefault, "")
+	revokeTestSession(t, uid, authn.ProviderApplication, authn.MethodSession, parent.ID)
+	revokeTestSession(t, uid, authn.ProviderClient, authn.MethodOAuth2, "")
+	return &User{ID: 100, UserUID: uid, UserName: "revoke-test", UserRole: "admin", AuthProvider: authn.ProviderLocal.String(), RefID: "usrevoke0001"}
+}
+
+func TestUser_RevokeSessions(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
+		u := &User{ID: 1234567, UserUID: "", UserName: "test", UserRole: "user"}
+		assert.Equal(t, 0, u.RevokeSessions(nil, authn.RevokeAllSessions))
+	})
+	t.Run("LoginSessions", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		assert.Equal(t, 4, countUserSessions(t, u.UserUID))
+		assert.Equal(t, 1, u.RevokeSessions(nil, authn.RevokeLoginSessions))
+		assert.Equal(t, 3, countUserSessions(t, u.UserUID))
+	})
+	t.Run("DerivedSessions", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		assert.Equal(t, 2, u.RevokeSessions(nil, authn.RevokeDerivedSessions))
+		assert.Equal(t, 2, countUserSessions(t, u.UserUID))
+	})
+	t.Run("AllSessions", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		assert.Equal(t, 4, u.RevokeSessions(nil, authn.RevokeAllSessions))
+		assert.Equal(t, 0, countUserSessions(t, u.UserUID))
+	})
+	t.Run("OmitKeepsSession", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		var login Sessions
+		require.NoError(t, Db().Where("user_uid = ? AND auth_provider = ?", u.UserUID, authn.ProviderLocal.String()).Find(&login).Error)
+		require.Len(t, login, 1)
+		assert.Equal(t, 0, u.RevokeSessions([]string{login[0].ID}, authn.RevokeLoginSessions))
+		assert.Equal(t, 4, countUserSessions(t, u.UserUID))
+	})
+	t.Run("CrossUserIsolation", func(t *testing.T) {
+		// The `auth_method = 'session'` clause must stay scoped to the target user, so
+		// revoking one user's derived sessions must never touch another user's sessions.
+		uidA := rnd.GenerateUID(UserUID)
+		uidB := rnd.GenerateUID(UserUID)
+		parentA := revokeTestSession(t, uidA, authn.ProviderApplication, authn.MethodDefault, "")
+		revokeTestSession(t, uidA, authn.ProviderApplication, authn.MethodSession, parentA.ID)
+		parentB := revokeTestSession(t, uidB, authn.ProviderApplication, authn.MethodDefault, "")
+		derivedB := revokeTestSession(t, uidB, authn.ProviderApplication, authn.MethodSession, parentB.ID)
+
+		uA := &User{ID: 101, UserUID: uidA, UserName: "iso-a", RefID: "usiso0000a01"}
+		assert.Equal(t, 1, uA.RevokeDerivedSessions(nil))
+		assert.Equal(t, 1, countUserSessions(t, uidA)) // parent A kept
+		assert.Equal(t, 2, countUserSessions(t, uidB)) // user B untouched
+
+		sB, err := FindSession(derivedB.ID)
+		require.NoError(t, err)
+		require.NotNil(t, sB)
+	})
+}
+
+func TestUser_DenyLogIn(t *testing.T) {
+	t.Run("Active", func(t *testing.T) {
+		assert.False(t, UserFixtures.Pointer("alice").DenyLogIn())
+	})
+	t.Run("ProviderNone", func(t *testing.T) {
+		u := UserFixtures.Get("bob")
+		u.SetProvider(authn.ProviderNone)
+		assert.True(t, u.DenyLogIn())
+	})
+	t.Run("WebLoginDisabled", func(t *testing.T) {
+		u := UserFixtures.Get("bob")
+		u.CanLogin = false
+		assert.True(t, u.DenyLogIn())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var u *User
+		assert.True(t, u.DenyLogIn())
 	})
 }
 

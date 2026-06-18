@@ -45,10 +45,12 @@ const (
 	Fit4096  Name = "fit_4096"
 	Fit5120  Name = "fit_5120"
 	Fit7680  Name = "fit_7680"
+	Fit15360 Name = "fit_15360"
 )
 
 // Names contains all default size names.
 var Names = []Name{
+	Fit15360,
 	Fit7680,
 	Fit5120,
 	Fit4096,

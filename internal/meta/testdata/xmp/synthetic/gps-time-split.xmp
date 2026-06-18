@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/">
+   <exif:GPSVersionID>2.2.0.0</exif:GPSVersionID>
+   <exif:GPSLatitude>52,30.4567N</exif:GPSLatitude>
+   <exif:GPSLongitude>13,24.5678E</exif:GPSLongitude>
+   <exif:GPSAltitudeRef>0</exif:GPSAltitudeRef>
+   <exif:GPSAltitude>3450/100</exif:GPSAltitude>
+   <exif:GPSDateStamp>2026:05:06</exif:GPSDateStamp>
+   <exif:GPSTimeStamp>15:42:18</exif:GPSTimeStamp>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

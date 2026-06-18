@@ -168,14 +168,14 @@ describe("page/auth/login", () => {
     expect(wrapper.vm.enterCode).toBe(false);
   });
 
-  it("surfaces a stored OIDC sign-in error as a persistent login error and consumes it", () => {
+  it("surfaces a stored OIDC sign-in error via the notification toast and consumes it", () => {
     window.localStorage.setItem(`${storagePrefix}session.error`, "You do not have access to this instance.");
 
     const { wrapper } = mountLogin({ oidcEnabled: true });
 
-    expect(wrapper.vm.loginError).toBe("You do not have access to this instance.");
-    // Consumed so it does not reappear on the next reload.
+    // Consumed on mount so it does not reappear on the next reload.
     expect(window.localStorage.getItem(`${storagePrefix}session.error`)).toBeNull();
+    expect(wrapper.vm.$notify.error).toHaveBeenCalledWith("You do not have access to this instance.");
   });
 
   // Auto-OIDC redirect for unauthenticated visitors now lives in the
