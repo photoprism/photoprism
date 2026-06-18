@@ -757,11 +757,17 @@ export default {
     // reveals the prev/next arrows and top bar on touch devices. To restore that, a short
     // press without a pan toggles the controls here. Only touch/pen taps do so — mouse
     // users still get the controls via mousemove, so desktop behavior is unchanged.
+    //
+    // Grabbing or wheel-zooming the sphere also stops a running slideshow, matching flat
+    // slides (whose pointer events reach captureDialogPointerDown — this container swallows
+    // them first). When a tap is what paused it, the tap-toggle is skipped so the controls
+    // revealed by the pause stay visible and the user lands on the paused view.
     trapSphereGestures(el) {
       const stop = (e) => e.stopPropagation();
       let tapX = 0;
       let tapY = 0;
       let tapping = false;
+      let pausedByGesture = false;
       el.addEventListener(
         "pointerdown",
         (e) => {
@@ -769,6 +775,10 @@ export default {
           tapping = e.pointerType !== "mouse";
           tapX = e.clientX;
           tapY = e.clientY;
+          pausedByGesture = this.slideshow.active;
+          if (pausedByGesture) {
+            this.pauseSlideshow();
+          }
         },
         { capture: false }
       );
@@ -776,10 +786,11 @@ export default {
         "pointerup",
         (e) => {
           e.stopPropagation();
-          if (tapping && Math.abs(e.clientX - tapX) < SPHERE_TAP_SLOP && Math.abs(e.clientY - tapY) < SPHERE_TAP_SLOP) {
+          if (tapping && !pausedByGesture && Math.abs(e.clientX - tapX) < SPHERE_TAP_SLOP && Math.abs(e.clientY - tapY) < SPHERE_TAP_SLOP) {
             this.toggleControls();
           }
           tapping = false;
+          pausedByGesture = false;
         },
         { capture: false }
       );
@@ -788,12 +799,21 @@ export default {
         (e) => {
           e.stopPropagation();
           tapping = false;
+          pausedByGesture = false;
         },
         { capture: false }
       );
-      ["pointermove", "wheel"].forEach((type) => {
-        el.addEventListener(type, stop, { capture: false });
-      });
+      el.addEventListener("pointermove", stop, { capture: false });
+      el.addEventListener(
+        "wheel",
+        (e) => {
+          e.stopPropagation();
+          if (this.slideshow.active) {
+            this.pauseSlideshow();
+          }
+        },
+        { capture: false }
+      );
     },
     // setSphereClass toggles the `pswp--sphere` marker on the PhotoSwipe root element so
     // CSS can keep the prev/next arrows reachable on touch devices for 360° slides, where

@@ -1404,6 +1404,8 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const trap = () => {
       const wrapper = mountLightbox();
       wrapper.vm.toggleControls = vi.fn();
+      wrapper.vm.pauseSlideshow = vi.fn();
+      wrapper.vm.slideshow = { active: false };
       const registered = [];
       const el = { addEventListener: (type, handler, opts) => registered.push({ type, handler, opts }) };
       wrapper.vm.$options.methods.trapSphereGestures.call(wrapper.vm, el);
@@ -1451,6 +1453,31 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
       fire("pointercancel", { pointerType: "touch" });
       fire("pointerup", { pointerType: "touch", clientX: 100, clientY: 100 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+    it("pauses an active slideshow when the sphere is grabbed", () => {
+      const { vm, fire } = trap();
+      vm.slideshow.active = true;
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      expect(vm.pauseSlideshow).toHaveBeenCalledTimes(1);
+    });
+    it("does NOT pause when no slideshow is running", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "mouse", clientX: 100, clientY: 100 });
+      expect(vm.pauseSlideshow).not.toHaveBeenCalled();
+    });
+    it("pauses an active slideshow when zooming the sphere with the wheel", () => {
+      const { vm, fire } = trap();
+      vm.slideshow.active = true;
+      fire("wheel", {});
+      expect(vm.pauseSlideshow).toHaveBeenCalledTimes(1);
+    });
+    it("keeps the controls shown when a touch tap pauses the slideshow", () => {
+      const { vm, fire } = trap();
+      vm.slideshow.active = true;
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "touch", clientX: 102, clientY: 101 });
+      expect(vm.pauseSlideshow).toHaveBeenCalledTimes(1);
       expect(vm.toggleControls).not.toHaveBeenCalled();
     });
   });
