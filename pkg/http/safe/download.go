@@ -191,7 +191,13 @@ func isPrivateOrDisallowedIP(ip net.IP) bool {
 		return true
 	}
 	if v4 := ip.To4(); v4 != nil {
+		if v4[0] == 0 { // 0.0.0.0/8 "this network"
+			return true
+		}
 		if v4[0] == 10 {
+			return true
+		}
+		if v4[0] == 100 && v4[1] >= 64 && v4[1] <= 127 { // 100.64.0.0/10 CGNAT (RFC 6598)
 			return true
 		}
 		if v4[0] == 172 && v4[1] >= 16 && v4[1] <= 31 {

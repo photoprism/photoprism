@@ -58,6 +58,9 @@ func searchPhotosForm(c *gin.Context) (frm form.SearchPhotos, s *entity.Session,
 //	@Tags			Photos
 //	@Produce		json
 //	@Success		200				{object}	search.PhotoResults
+//	@Header			200				{number}	X-Count		"The actual number of files returned"
+//	@Header			200				{number}	X-Limit		"The limit of the number of files to be returned"
+//	@Header			200				{number}	X-Offset	"The offset that was used"
 //	@Failure		400,401,403,404	{object}	i18n.Response
 //	@Param			count			query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
 //	@Param			offset			query		int		false	"file offset"				minimum(0)	maximum(100000)
@@ -111,6 +114,9 @@ func SearchPhotos(router *gin.RouterGroup) {
 //	@Tags			Photos
 //	@Produce		json
 //	@Success		200				{object}	viewer.Results
+//	@Header			200				{number}	X-Count		"The actual number of files returned"
+//	@Header			200				{number}	X-Limit		"The limit of the number of files to be returned"
+//	@Header			200				{number}	X-Offset	"The offset that was used"
 //	@Failure		400,401,403,404	{object}	i18n.Response
 //	@Param			count			query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
 //	@Param			offset			query		int		false	"file offset"				minimum(0)	maximum(100000)

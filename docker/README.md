@@ -30,7 +30,6 @@ A virtual machine with a dedicated operating system environment provides even mo
 | `demo/`       | Build context for the public [demo site](https://demo.photoprism.app/), including Traefik and job configuration.                             |
 | `ddns/`       | Minimal image for the Dynamic DNS updater used by our hosted services.                                                                       |
 | `dummy/`      | Test doubles for OIDC and WebDAV used by acceptance tests and local development.                                                             |
-| `goproxy/`    | Caching Go module proxy used to speed up CI and local builds.                                                                                |
 
 ### Which Image Should I Use?
 

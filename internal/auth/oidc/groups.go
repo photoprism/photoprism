@@ -37,6 +37,31 @@ func GroupsFromClaims(claims map[string]any, claimName string) (groups []string,
 	return uniqueGroups(groups), overage
 }
 
+// MergeGroups returns a deduplicated, normalized list of group identifiers
+// drawn from one or more source slices (typically the ID token and userinfo
+// groups claims, plus any LDAP-derived virtual groups). Empty entries are
+// dropped; remaining entries keep first-occurrence order after normalization
+// through NormalizeGroupID. Returns nil when no groups remain.
+func MergeGroups(sources ...[]string) []string {
+	total := 0
+
+	for _, src := range sources {
+		total += len(src)
+	}
+
+	if total == 0 {
+		return nil
+	}
+
+	merged := make([]string, 0, total)
+
+	for _, src := range sources {
+		merged = append(merged, src...)
+	}
+
+	return uniqueGroups(merged)
+}
+
 // MapGroupsToRole returns the first matching role for the provided groups using the supplied mapping.
 func MapGroupsToRole(groups []string, mapping map[string]acl.Role) (acl.Role, bool) {
 	if len(groups) == 0 || len(mapping) == 0 {

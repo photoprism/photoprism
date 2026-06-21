@@ -188,8 +188,12 @@ describe("component/photo/batch-edit", () => {
     mockBatchInstance.getLengthOfAllSelected.mockReturnValue(3);
     mockBatchInstance.isSelected.mockReturnValue(true);
 
-    // Mock the Batch constructor to return our mock instance
-    vi.mocked(Batch).mockImplementation(() => mockBatchInstance);
+    // Mock the Batch constructor to return our mock instance. Vitest 4 invokes
+    // the mock as a constructor via `new`, so the implementation must be a
+    // regular function (an arrow function is not constructable).
+    vi.mocked(Batch).mockImplementation(function () {
+      return mockBatchInstance;
+    });
 
     wrapper = shallowMount(PPhotoBatchEdit, {
       props: {

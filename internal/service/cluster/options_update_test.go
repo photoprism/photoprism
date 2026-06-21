@@ -44,6 +44,7 @@ func TestOptionsUpdate_Apply(t *testing.T) {
 	update.SetClusterCIDR("192.0.2.0/24")
 	update.SetDatabaseName("cluster_database")
 	update.SetDatabaseUser("cluster_user")
+	update.SetPortalLoginUrl("https://portal.example.com/portal/login")
 
 	written, err := conf.SaveClusterOptionsUpdate(update)
 	require.NoError(t, err)
@@ -60,6 +61,7 @@ func TestOptionsUpdate_Apply(t *testing.T) {
 	assert.Equal(t, "192.0.2.0/24", merged["ClusterCIDR"])
 	assert.Equal(t, "cluster_database", merged["DatabaseName"])
 	assert.Equal(t, "cluster_user", merged["DatabaseUser"])
+	assert.Equal(t, "https://portal.example.com/portal/login", merged["PortalLoginUrl"])
 
 	// Applying an empty update should be a no-op.
 	empty := cluster.OptionsUpdate{}

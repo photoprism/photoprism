@@ -22,12 +22,13 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 sudo apt-get update
 
 # "cgroupfs-mount" was retired upstream once systemd took over cgroup v2 setup
-# and is no longer shipped on Ubuntu 26.04 (resolute) / Debian trixie+. Only
-# include the package when the active apt index actually lists it; otherwise
-# the install line aborts with "E: Package 'cgroupfs-mount' has no installation
-# candidate" before Docker itself is installed.
+# and is no longer shipped on Ubuntu 26.04 (resolute) / Debian trixie+. Include
+# it only when apt has an installation candidate; "apt-cache show" is not enough
+# because a phantom package record can linger with no installable version (seen
+# on resolute), which makes the install line abort with "E: Package
+# 'cgroupfs-mount' has no installation candidate" before Docker is installed.
 EXTRA_PKGS=""
-if apt-cache show cgroupfs-mount >/dev/null 2>&1; then
+if apt-cache policy cgroupfs-mount 2>/dev/null | grep -q 'Candidate: [^(]'; then
   EXTRA_PKGS="cgroupfs-mount"
 fi
 

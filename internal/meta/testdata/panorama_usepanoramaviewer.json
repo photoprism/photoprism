@@ -1,0 +1,17 @@
+[{
+  "SourceFile": "panorama_usepanoramaviewer.jpg",
+  "ExifToolVersion": 12.40,
+  "FileName": "panorama_usepanoramaviewer.jpg",
+  "Directory": ".",
+  "FileSize": "1.0 MB",
+  "FileType": "JPEG",
+  "FileTypeExtension": "jpg",
+  "MIMEType": "image/jpeg",
+  "ImageWidth": 7200,
+  "ImageHeight": 3600,
+  "UsePanoramaViewer": true,
+  "CaptureSoftware": "Generic Panorama Stitcher",
+  "EncodingProcess": "Baseline DCT, Huffman coding",
+  "BitsPerSample": 8,
+  "ColorComponents": 3
+}]

@@ -133,7 +133,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringSliceFlag{
 			Name:    "oidc-group-role",
-			Usage:   "map `GROUP=ROLE`; repeat to add more (roles: " + acl.UserRoles.CliUsageString() + ")",
+			Usage:   "map `GROUP=ROLE`; repeat to add more (roles: " + acl.ClusterInstanceRolesCliUsageString() + ")",
 			EnvVars: EnvVars("OIDC_GROUP_ROLE"),
 			Hidden:  true,
 		}}, {
@@ -593,7 +593,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-icon",
-			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square)",
+			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square, bloom, flower, ring, shutter)",
 			EnvVars: EnvVars("APP_ICON"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -642,29 +642,35 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-author",
-			Usage:   "site `OWNER`, copyright, or artist",
+			Usage:   "site `OWNER` shown in the author meta tag",
 			EnvVars: EnvVars("SITE_AUTHOR"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "site-name",
+			Usage:   "short `NAME` for identifying this instance within a cluster *optional*",
+			Value:   "",
+			EnvVars: EnvVars("SITE_NAME"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "site-title",
-			Usage:   "site `TITLE`",
+			Usage:   "main `TITLE` shown in the web interface and meta tags",
 			Value:   "",
 			EnvVars: EnvVars("SITE_TITLE"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-caption",
-			Usage:   "site `CAPTION`",
+			Usage:   "short `CAPTION` or tagline shown alongside the title",
 			Value:   "AI-Powered Photos App",
 			EnvVars: EnvVars("SITE_CAPTION"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "site-description",
-			Usage:   "site `DESCRIPTION` *optional*",
+			Usage:   "longer `DESCRIPTION` shown in SEO and social meta tags *optional*",
 			EnvVars: EnvVars("SITE_DESCRIPTION"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "site-favicon",
-			Usage:     "site favicon `FILENAME` *optional*",
+			Usage:     "custom favicon `FILENAME` for web browsers *optional*",
 			EnvVars:   EnvVars("SITE_FAVICON"),
 			TakesFile: true,
 		}}, {
@@ -723,11 +729,35 @@ var Flags = CliFlags{
 			Usage:   "use the cluster Portal as this instance's OIDC login provider",
 			EnvVars: EnvVars("CLUSTER_OIDC"),
 		}}, {
+		Flag: &cli.StringSliceFlag{
+			Name:    "cluster-allow-groups",
+			Usage:   "admit group `ID` to this instance via the Portal (repeatable)",
+			EnvVars: EnvVars("CLUSTER_ALLOW_GROUPS"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringSliceFlag{
+			Name:    "cluster-allow-group-roles",
+			Usage:   "map `GROUP=ROLE` for Portal admission (roles: " + acl.ClusterInstanceRolesCliUsageString() + ")",
+			EnvVars: EnvVars("CLUSTER_ALLOW_GROUP_ROLES"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "cluster-groups-full-view",
+			Usage:   "send the user's full group set to this instance",
+			EnvVars: EnvVars("CLUSTER_GROUPS_FULL_VIEW"),
+			Hidden:  true,
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-url",
 			Usage:   "base `URL` of the cluster management portal",
 			Value:   DefaultPortalUrl,
 			EnvVars: EnvVars("PORTAL_URL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-login-url",
+			Usage:   "browser-facing `URL` of the Portal login page",
+			EnvVars: EnvVars("PORTAL_LOGIN_URL"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "join-token",
@@ -1043,7 +1073,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "ffmpeg-size",
-			Usage:   "encoding resolution limit in `PIXELS` (720-7680)",
+			Usage:   "encoding resolution limit in `PIXELS` (720-15360)",
 			Value:   thumb.Sizes[thumb.Fit4096].Width,
 			EnvVars: EnvVars("FFMPEG_SIZE"),
 		}}, {
@@ -1194,13 +1224,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size",
-			Usage:   "maximum size of pre-generated thumbnails in `PIXELS` (720-7680)",
+			Usage:   "maximum size of pre-generated thumbnails in `PIXELS` (720-15360)",
 			Value:   thumb.SizeCached,
 			EnvVars: EnvVars("THUMB_SIZE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size-uncached",
-			Usage:   "maximum size of thumbnails generated on demand in `PIXELS` (720-7680)",
+			Usage:   "maximum size of thumbnails generated on demand in `PIXELS` (720-15360)",
 			Value:   thumb.SizeOnDemand,
 			EnvVars: EnvVars("THUMB_SIZE_UNCACHED"),
 		}}, {
@@ -1220,13 +1250,13 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "jpeg-size",
 			Usage:   "maximum size of generated JPEG images in `PIXELS` (720-30000)",
-			Value:   7680,
+			Value:   15360,
 			EnvVars: EnvVars("JPEG_SIZE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "png-size",
 			Usage:   "maximum size of generated PNG images in `PIXELS` (720-30000)",
-			Value:   7680,
+			Value:   15360,
 			EnvVars: EnvVars("PNG_SIZE"),
 		}}, {
 		Flag: &cli.StringFlag{

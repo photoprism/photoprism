@@ -562,6 +562,158 @@ func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.R
 	return gjson.Get(w.Body.String(), "access_token").String()
 }
 
+// TestBuildPortalLoginURL covers the browser-facing Portal login URL reported
+// to nodes at registration: SiteUrl origin + login route, with an absolute
+// custom LoginUri returned as-is.
+func TestBuildPortalLoginURL(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		_, _, conf := NewApiTest()
+		prevSite, prevLogin := conf.Options().SiteUrl, conf.Options().LoginUri
+		t.Cleanup(func() { conf.Options().SiteUrl, conf.Options().LoginUri = prevSite, prevLogin })
+
+		conf.Options().SiteUrl = "https://app.example.com/"
+		conf.Options().LoginUri = ""
+		assert.Equal(t, "https://app.example.com"+conf.LoginUri(), buildPortalLoginURL(conf))
+	})
+	t.Run("AbsoluteLoginUri", func(t *testing.T) {
+		_, _, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		prevLogin := conf.Options().LoginUri
+		t.Cleanup(func() {
+			conf.Options().LoginUri = prevLogin
+			conf.SetAuthMode(config.AuthModePublic)
+		})
+
+		conf.Options().LoginUri = "https://sso.example.com/login"
+		assert.Equal(t, "https://sso.example.com/login", buildPortalLoginURL(conf))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", buildPortalLoginURL(nil))
+	})
+}
+
+// TestSanitizeAllowGroupRoles validates the lenient registration-time mapping
+// sanitizer: malformed keys and non-federatable roles are dropped, not errors.
+func TestSanitizeAllowGroupRoles(t *testing.T) {
+	t.Run("AcceptsAllInstanceRoles", func(t *testing.T) {
+		out := sanitizeAllowGroupRoles(map[string]string{
+			"g-admin": "admin", "g-manager": "manager", "g-user": "user",
+			"g-contributor": "contributor", "g-viewer": "viewer", "g-guest": "guest",
+		})
+		assert.Equal(t, map[string]string{
+			"g-admin": "admin", "g-manager": "manager", "g-user": "user",
+			"g-contributor": "contributor", "g-viewer": "viewer", "g-guest": "guest",
+		}, out)
+	})
+	t.Run("DropsInvalidEntries", func(t *testing.T) {
+		out := sanitizeAllowGroupRoles(map[string]string{"a": "cluster_admin", "b": "visitor", "c": "bogus", "   ": "admin"})
+		assert.Nil(t, out)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Nil(t, sanitizeAllowGroupRoles(nil))
+	})
+}
+
+// TestClusterNodesRegister_GroupConfig covers the declarative per-node group
+// config: a registration declares the policy, an admin PATCH pins it against
+// re-registration, and clearing the admin override lets the declared config
+// repopulate on the next registration.
+func TestClusterNodesRegister_GroupConfig(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+	conf.Options().JoinToken = cluster.ExampleJoinToken
+	ClusterNodesRegister(router)
+	ClusterUpdateNode(router)
+
+	groupData := func(uuid string) *entity.ClientData {
+		client := entity.FindClientByNodeUUID(uuid)
+		if client == nil {
+			t.Fatalf("client for node %s not found", uuid)
+		}
+		return client.GetData()
+	}
+
+	// A new node declares its group config at join; invalid roles are dropped.
+	body := `{"NodeName":"pp-groups","AllowGroups":["Media-Acme-Viewer"],"AllowGroupRoles":{"Media-Acme-Admin":"admin","Bad":"cluster_admin"},"GroupsFullView":true}`
+	r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+	assert.Equal(t, http.StatusCreated, r.Code, "body=%s", r.Body.String())
+	cleanupRegisterProvisioning(t, conf, r)
+
+	regy, err := reg.NewClientRegistryWithConfig(conf)
+	assert.NoError(t, err)
+	n, err := regy.FindByName("pp-groups")
+	assert.NoError(t, err)
+
+	t.Run("DeclaredAtJoin", func(t *testing.T) {
+		data := groupData(n.UUID)
+		assert.Equal(t, []string{"media-acme-viewer"}, data.AllowGroups)
+		assert.Equal(t, map[string]string{"media-acme-admin": "admin"}, data.AllowGroupRoles, "non-federatable roles must be dropped")
+		assert.True(t, data.GroupsFullView)
+		assert.Equal(t, entity.ClientGroupsSrcNode, data.GroupsSrc)
+	})
+
+	// Subsequent registrations need the node's own OAuth credentials, and the
+	// admin PATCH calls need a session since the token helper switches the
+	// test config to password-auth mode.
+	nr, err := regy.RotateSecret(n.UUID)
+	assert.NoError(t, err)
+	token := oauthNodeAccessToken(t, app, router, conf, nr.ClientID, nr.ClientSecret)
+	adminToken := AuthenticateAdmin(app, router)
+
+	t.Run("RedeclaredOnReRegister", func(t *testing.T) {
+		body := `{"NodeName":"pp-groups","AllowGroups":["Media-Acme-User"]}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
+		assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		cleanupRegisterProvisioning(t, conf, r)
+
+		data := groupData(n.UUID)
+		assert.Equal(t, []string{"media-acme-user"}, data.AllowGroups)
+		assert.Empty(t, data.AllowGroupRoles, "a declaration replaces the config wholesale")
+		assert.False(t, data.GroupsFullView)
+	})
+	t.Run("AdminOverrideSurvivesReRegister", func(t *testing.T) {
+		r := AuthenticatedRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID,
+			`{"AllowGroups":["media-acme-pinned"],"AllowGroupRoles":{"media-acme-pinned":"guest"}}`, adminToken)
+		assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+
+		body := `{"NodeName":"pp-groups","AllowGroups":["Media-Acme-User"],"GroupsFullView":true}`
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
+		assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		cleanupRegisterProvisioning(t, conf, r)
+
+		data := groupData(n.UUID)
+		assert.Equal(t, []string{"media-acme-pinned"}, data.AllowGroups, "re-registration must not clobber an admin override")
+		assert.Equal(t, map[string]string{"media-acme-pinned": "guest"}, data.AllowGroupRoles)
+		assert.False(t, data.GroupsFullView)
+		assert.Equal(t, entity.ClientGroupsSrcManual, data.GroupsSrc)
+	})
+	t.Run("ClearedOverrideRepopulates", func(t *testing.T) {
+		r := AuthenticatedRequestWithBody(app, http.MethodPatch, "/api/v1/cluster/nodes/"+n.UUID,
+			`{"AllowGroups":[],"AllowGroupRoles":{},"GroupsFullView":false}`, adminToken)
+		assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		assert.Equal(t, "", groupData(n.UUID).GroupsSrc, "a fully cleared manual config must un-pin")
+
+		body := `{"NodeName":"pp-groups","AllowGroups":["Media-Acme-User"]}`
+		r = AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
+		assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		cleanupRegisterProvisioning(t, conf, r)
+
+		data := groupData(n.UUID)
+		assert.Equal(t, []string{"media-acme-user"}, data.AllowGroups)
+		assert.Equal(t, entity.ClientGroupsSrcNode, data.GroupsSrc)
+	})
+	t.Run("EmptyDeclarationClears", func(t *testing.T) {
+		body := `{"NodeName":"pp-groups"}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
+		assert.Equal(t, http.StatusOK, r.Code, "body=%s", r.Body.String())
+		cleanupRegisterProvisioning(t, conf, r)
+
+		data := groupData(n.UUID)
+		assert.Empty(t, data.AllowGroups, "an instance that stops declaring a config clears it")
+		assert.Equal(t, "", data.GroupsSrc)
+	})
+}
+
 // TestValidateAdvertiseURL ensures the validator accepts HTTP and HTTPS for advertise URLs.
 func TestValidateAdvertiseURL(t *testing.T) {
 	cases := []struct {

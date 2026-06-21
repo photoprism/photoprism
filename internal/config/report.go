@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -167,6 +168,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
 		{"site-author", c.SiteAuthor()},
+		{"site-name", c.SiteName()},
 		{"site-title", c.SiteTitle()},
 		{"site-caption", c.SiteCaption()},
 		{"site-description", c.SiteDescription()},
@@ -193,7 +195,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"cluster-cidr", c.ClusterCIDR()},
 		{"cluster-uuid", c.ClusterUUID()},
 		{"cluster-oidc", fmt.Sprintf("%t", c.ClusterOIDC())},
+		{"cluster-allow-groups", strings.Join(c.ClusterAllowGroups(), ", ")},
+		{"cluster-allow-group-roles", reportGroupRoles(c.ClusterAllowGroupRoles())},
+		{"cluster-groups-full-view", fmt.Sprintf("%t", c.ClusterGroupsFullView())},
 		{"portal-url", clean.UriRedacted(c.PortalUrl())},
+		{"portal-login-url", clean.UriRedacted(c.PortalLoginUrl())},
 	}...)
 
 	if c.Portal() {
@@ -398,4 +404,22 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 	}
 
 	return rows, cols
+}
+
+// reportGroupRoles renders a group → role mapping as sorted "group=role" pairs
+// for the config report.
+func reportGroupRoles(roles map[string]string) string {
+	if len(roles) == 0 {
+		return ""
+	}
+
+	pairs := make([]string, 0, len(roles))
+
+	for group, role := range roles {
+		pairs = append(pairs, group+"="+role)
+	}
+
+	sort.Strings(pairs)
+
+	return strings.Join(pairs, ", ")
 }

@@ -11,26 +11,28 @@ import (
 
 // GeoResult represents a photo geo search result.
 type GeoResult struct {
-	ID            string        `json:"-" select:"photos.id"`
-	PhotoUID      string        `json:"UID" select:"photos.photo_uid"`
-	PhotoType     string        `json:"Type,omitempty" select:"photos.photo_type"`
-	PhotoTitle    string        `json:"Title" select:"photos.photo_title"`
-	PhotoCaption  string        `json:"Caption,omitempty" select:"photos.photo_caption"`
-	PhotoLat      float64       `json:"Lat" select:"photos.photo_lat"`
-	PhotoLng      float64       `json:"Lng" select:"photos.photo_lng"`
-	TakenAt       time.Time     `json:"TakenAt" select:"photos.taken_at"`
-	TakenAtLocal  time.Time     `json:"TakenAtLocal" select:"photos.taken_at_local"`
-	TimeZone      string        `json:"TimeZone" select:"photos.time_zone"`
-	PhotoFavorite bool          `json:"Favorite,omitempty" select:"photos.photo_favorite"`
-	PhotoDuration time.Duration `json:"Duration,omitempty" select:"photos.photo_duration"`
-	FileID        uint          `json:"-" select:"files.id AS file_id"` // File
-	FileWidth     int           `json:"Width" select:"files.file_width"`
-	FileHeight    int           `json:"Height" select:"files.file_height"`
-	FileHash      string        `json:"Hash" select:"files.file_hash"`
-	FileCodec     string        `json:"-" select:"files.file_codec"`
-	FileMime      string        `json:"-" select:"files.file_mime"`
-	FileVideo     bool          `json:"-" select:"files.file_video"`
-	MediaType     string        `json:"-" select:"files.media_type"`
+	ID             string        `json:"-" select:"photos.id"`
+	PhotoUID       string        `json:"UID" select:"photos.photo_uid"`
+	PhotoType      string        `json:"Type,omitempty" select:"photos.photo_type"`
+	PhotoTitle     string        `json:"Title" select:"photos.photo_title"`
+	PhotoCaption   string        `json:"Caption,omitempty" select:"photos.photo_caption"`
+	PhotoLat       float64       `json:"Lat" select:"photos.photo_lat"`
+	PhotoLng       float64       `json:"Lng" select:"photos.photo_lng"`
+	TakenAt        time.Time     `json:"TakenAt" select:"photos.taken_at"`
+	TakenAtLocal   time.Time     `json:"TakenAtLocal" select:"photos.taken_at_local"`
+	TimeZone       string        `json:"TimeZone" select:"photos.time_zone"`
+	PhotoFavorite  bool          `json:"Favorite,omitempty" select:"photos.photo_favorite"`
+	PhotoPanorama  bool          `json:"Panorama,omitempty" select:"photos.photo_panorama"`
+	PhotoDuration  time.Duration `json:"Duration,omitempty" select:"photos.photo_duration"`
+	FileID         uint          `json:"-" select:"files.id AS file_id"` // File
+	FileWidth      int           `json:"Width" select:"files.file_width"`
+	FileHeight     int           `json:"Height" select:"files.file_height"`
+	FileHash       string        `json:"Hash" select:"files.file_hash"`
+	FileProjection string        `json:"Projection,omitempty" select:"files.file_projection"`
+	FileCodec      string        `json:"-" select:"files.file_codec"`
+	FileMime       string        `json:"-" select:"files.file_mime"`
+	FileVideo      bool          `json:"-" select:"files.file_video"`
+	MediaType      string        `json:"-" select:"files.media_type"`
 }
 
 // Lat returns the position latitude.

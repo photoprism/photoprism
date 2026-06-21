@@ -89,21 +89,22 @@ test-commands: run-test-commands
 test-photoprism: run-test-photoprism
 test-short: run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
-acceptance-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance acceptance-sqlite-stop
-acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart wait-2 acceptance-short acceptance-sqlite-stop
-acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait acceptance-auth acceptance-auth-sqlite-stop
-acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart wait acceptance acceptance-sqlite-stop
+acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
+acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
+acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth acceptance-auth-sqlite-stop
+acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance acceptance-sqlite-stop-1
+acceptance-api-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1
 help: list
 list:
 	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
-wait:
-	sleep 20
-wait-2:
+wait-%:
 	sleep 20
 show-rev:
 	@git rev-parse HEAD
 show-build:
 	@echo "$(BUILD_TAG)"
+tag-release:
+	scripts/tag-release.sh $(EDITION) $(TAG_ARGS)
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
 format: format-tables fmt-go fmt-swag
@@ -224,7 +225,7 @@ install-onnx:
 	sudo scripts/dist/install-onnx.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
-acceptance-sqlite-restart: acceptance-sqlite-stop
+acceptance-sqlite-restart-%: acceptance-sqlite-stop-%
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	rm -rf storage/acceptance/sidecar/2020
@@ -235,7 +236,7 @@ acceptance-sqlite-restart: acceptance-sqlite-stop
 	rm -rf storage/acceptance/originals/2013
 	rm -rf storage/acceptance/originals/2017
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" start -d
-acceptance-sqlite-stop:
+acceptance-sqlite-stop-%:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 acceptance-auth-sqlite-restart: acceptance-auth-sqlite-stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
@@ -436,21 +437,23 @@ build-static:
 	scripts/build.sh static $(BINARY_NAME)
 build-libheif: build-libheif-amd64 build-libheif-arm64 build-libheif-armv7
 build-libheif-amd64:
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:trixie ./scripts/dist/build-libheif.sh v1.23.0
 build-libheif-arm64:
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.22.2
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:questing ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:plucky ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:noble ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:bookworm ./scripts/dist/build-libheif.sh v1.23.0
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:trixie ./scripts/dist/build-libheif.sh v1.23.0
 build-libheif-armv7:
-	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.23.0
 build-libheif-latest: build-libheif-amd64-latest build-libheif-arm64-latest build-libheif-armv7-latest
 build-libheif-amd64-latest:
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif.sh
@@ -468,9 +471,9 @@ build-libheif-armv7-latest:
 	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm photoprism/develop:armv7 ./scripts/dist/build-libheif.sh
 build-libheif-deb: build-libheif-deb-amd64 build-libheif-deb-arm64
 build-libheif-deb-amd64:
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.22.2
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.23.0
 build-libheif-deb-arm64:
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.22.2
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 photoprism/develop:resolute ./scripts/dist/build-libheif-deb.sh v1.23.0
 build-tensorflow: docker-tensorflow-amd64
 docker-tensorflow: docker-tensorflow-amd64
 docker-tensorflow-amd64:
@@ -496,20 +499,23 @@ test-js:
 	(cd frontend && npm run test)
 acceptance:
 	$(info Running public-mode tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./.testcaferc.cjs "tests/acceptance")
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"auth[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=public,type=short --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
+	(cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./.testcaferc.cjs "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./.testcaferc.cjs "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./testcaferc.json --test "testname" "tests/acceptance"')
-	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	find ./tests/acceptance -type f -name "*.js" | xargs -i perl -0777 -ne 'while(/(?:mode: \"public[^,]*\,)|(Multi-Window\:[A-Za-z 0-9\-_]*)/g){print "$$1\n" if ($$1);}' {} | xargs -I testname bash -c 'npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --experimental-multiple-windows --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs --test "testname" "tests/acceptance"')
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./.testcaferc.cjs "tests/acceptance")
+acceptance-api:
+	$(info Running JS acceptance-api tests in Chrome...)
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --test-meta mode=api --config-file ./.testcaferc.cjs "tests/acceptance")
 vitest-watch:
 	$(info Running Vitest unit tests in watch mode...)
 	(cd frontend && npm run test-watch)
@@ -1074,9 +1080,6 @@ docker-local-develop-resolute:
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
-docker-goproxy:
-	docker pull golang:alpine
-	scripts/docker/buildx-multi.sh goproxy linux/amd64,linux/arm64 $(BUILD_DATE)
 demo: docker-demo
 docker-demo: docker-demo-latest
 docker-demo-all: docker-demo-latest docker-demo-debian

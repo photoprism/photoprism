@@ -57,6 +57,16 @@ var Rules = ACL{
 		RoleAdmin:  GrantFullAccess,
 		RoleClient: GrantFullAccess,
 	},
+	ResourceCameras: Roles{
+		RoleAdmin:   GrantFullAccess,
+		RoleService: GrantFullAccess,
+		RoleClient:  GrantFullAccess,
+	},
+	ResourceLenses: Roles{
+		RoleAdmin:   GrantFullAccess,
+		RoleService: GrantFullAccess,
+		RoleClient:  GrantFullAccess,
+	},
 	ResourceConfig: Roles{
 		RoleAdmin:   GrantFullAccess,
 		RolePortal:  GrantFullAccess,

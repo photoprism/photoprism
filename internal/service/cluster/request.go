@@ -5,18 +5,21 @@ package cluster
 //
 // swagger:model RegisterRequest
 type RegisterRequest struct {
-	NodeName       string            `json:"NodeName"`
-	NodeUUID       string            `json:"NodeUUID,omitempty"`
-	NodeRole       string            `json:"NodeRole,omitempty"`
-	DisplayName    string            `json:"DisplayName,omitempty"`
-	Labels         map[string]string `json:"Labels,omitempty"`
-	AppName        string            `json:"AppName,omitempty"`
-	AppVersion     string            `json:"AppVersion,omitempty"`
-	Theme          string            `json:"Theme,omitempty"`
-	AdvertiseUrl   string            `json:"AdvertiseUrl,omitempty"`
-	SiteUrl        string            `json:"SiteUrl,omitempty"`
-	ClientID       string            `json:"ClientID,omitempty"`
-	ClientSecret   string            `json:"ClientSecret,omitempty"` //nolint:gosec // G117: Rotated OAuth client secret payload.
-	RotateDatabase bool              `json:"RotateDatabase,omitempty"`
-	RotateSecret   bool              `json:"RotateSecret,omitempty"`
+	NodeName        string            `json:"NodeName"`
+	NodeUUID        string            `json:"NodeUUID,omitempty"`
+	NodeRole        string            `json:"NodeRole,omitempty"`
+	DisplayName     string            `json:"DisplayName,omitempty"`
+	Labels          map[string]string `json:"Labels,omitempty"`
+	AppName         string            `json:"AppName,omitempty"`
+	AppVersion      string            `json:"AppVersion,omitempty"`
+	Theme           string            `json:"Theme,omitempty"`
+	AdvertiseUrl    string            `json:"AdvertiseUrl,omitempty"`
+	SiteUrl         string            `json:"SiteUrl,omitempty"`
+	AllowGroups     []string          `json:"AllowGroups,omitempty"`
+	AllowGroupRoles map[string]string `json:"AllowGroupRoles,omitempty"`
+	GroupsFullView  bool              `json:"GroupsFullView,omitempty"`
+	ClientID        string            `json:"ClientID,omitempty"`
+	ClientSecret    string            `json:"ClientSecret,omitempty"` //nolint:gosec // G117: Rotated OAuth client secret payload.
+	RotateDatabase  bool              `json:"RotateDatabase,omitempty"`
+	RotateSecret    bool              `json:"RotateSecret,omitempty"`
 }

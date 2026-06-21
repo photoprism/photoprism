@@ -161,8 +161,8 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 
 		// Signal frontend caches (Photo._cache LRU and any future per-UID
 		// consumers) to drop the affected entries; emitting one event for
-		// the whole batch avoids the per-UID payload storm that
-		// PublishPhotoEvent would otherwise produce. Fires whenever any
+		// the whole batch avoids the per-UID event storm that calling
+		// PublishPhotoEvent for each photo would produce. Fires whenever any
 		// mutation landed — including label/album-only changes that leave
 		// SaveBatchResult.Results[i] false but still alter visible state.
 		if mutated && len(saveRequests) > 0 {
@@ -174,7 +174,7 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 			}
 
 			if len(affectedUIDs) > 0 {
-				event.EntitiesEdited("photos", affectedUIDs)
+				event.EntitiesUpdated("photos", affectedUIDs)
 			}
 		}
 

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import Album from "model/album";
 import Label from "model/label";
+import Subject from "model/subject";
 import $event from "common/event";
 import { typeaheadCache, CAP } from "common/typeahead-cache";
 
@@ -195,6 +196,214 @@ describe("typeaheadCache.getAlbums", () => {
   });
 });
 
+describe("typeaheadCache.getPeople", () => {
+  it("fetches people on first call and caches the result", async () => {
+    const models = [{ Name: "Jane Doe", UID: "ps-1" }];
+    const spy = vi.spyOn(Subject, "search").mockResolvedValueOnce({ models });
+
+    const first = await typeaheadCache.getPeople();
+    const second = await typeaheadCache.getPeople();
+
+    expect(first).toEqual(models);
+    expect(second).toEqual(models);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ count: CAP, order: "name", type: "person" });
+  });
+
+  it("dedupes concurrent in-flight calls into one network request", async () => {
+    let resolveFn;
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockImplementationOnce(() => new Promise((resolve) => (resolveFn = resolve)));
+
+    const p1 = typeaheadCache.getPeople();
+    const p2 = typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    const models = [{ Name: "John Roe", UID: "ps-2" }];
+    resolveFn({ models });
+    await expect(p1).resolves.toEqual(models);
+    await expect(p2).resolves.toEqual(models);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("re-fetches after people.updated WS event evicts the cache", async () => {
+    const first = [{ Name: "First", UID: "ps-1" }];
+    const second = [{ Name: "Second", UID: "ps-1" }];
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    expect(await typeaheadCache.getPeople()).toEqual(first);
+    $event.publishSync("people.updated", { entities: ["ps-1"] });
+    expect(await typeaheadCache.getPeople()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("re-fetches after subjects.updated WS event evicts the cache", async () => {
+    const first = [{ Name: "First", UID: "ps-1" }];
+    const second = [{ Name: "Renamed", UID: "ps-1" }];
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    expect(await typeaheadCache.getPeople()).toEqual(first);
+    $event.publishSync("subjects.updated", { entities: ["ps-1"] });
+    expect(await typeaheadCache.getPeople()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("tolerates an empty or missing models payload", async () => {
+    vi.spyOn(Subject, "search").mockResolvedValueOnce({});
+    expect(await typeaheadCache.getPeople()).toEqual([]);
+  });
+});
+
+describe("typeaheadCache in-flight eviction (epoch guard)", () => {
+  // A fetch that is still in flight when the slot is evicted must NOT populate
+  // the cache when it later resolves; otherwise a websocket eviction landing
+  // mid-request is silently undone and the next read serves stale data.
+  it("discards a people fetch that resolves after an eviction", async () => {
+    let resolveStale;
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockImplementationOnce(() => new Promise((resolve) => (resolveStale = resolve)))
+      .mockResolvedValueOnce({ models: [{ Name: "Fresh", UID: "ps-2" }] });
+
+    const inFlight = typeaheadCache.getPeople();
+    typeaheadCache.evictPeople();
+    resolveStale({ models: [{ Name: "Stale", UID: "ps-1" }] });
+    await inFlight;
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Fresh", UID: "ps-2" }]);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("discards a fetch evicted by a WS event before it resolves", async () => {
+    let resolveStale;
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockImplementationOnce(() => new Promise((resolve) => (resolveStale = resolve)))
+      .mockResolvedValueOnce({ models: [{ Name: "Renamed", UID: "ps-1" }] });
+
+    const inFlight = typeaheadCache.getPeople();
+    $event.publishSync("subjects.updated", { entities: ["ps-1"] });
+    resolveStale({ models: [{ Name: "Original", UID: "ps-1" }] });
+    await inFlight;
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Renamed", UID: "ps-1" }]);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("typeaheadCache.upsertPerson", () => {
+  it("adds a saved name to a loaded cache without refetching", async () => {
+    const spy = vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] });
+
+    await typeaheadCache.getPeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+
+    expect(await typeaheadCache.getPeople()).toEqual([
+      { Name: "Alpha", UID: "ps-1" },
+      { UID: "ps-2", Name: "Beta" },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("updates an existing person in place by UID", async () => {
+    vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Old", UID: "ps-1" }] });
+
+    await typeaheadCache.getPeople();
+    typeaheadCache.upsertPerson({ UID: "ps-1", Name: "New" });
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "New", UID: "ps-1" }]);
+  });
+
+  it("de-duplicates by case-insensitive name when no UID is given", async () => {
+    vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] });
+
+    await typeaheadCache.getPeople();
+    typeaheadCache.upsertPerson({ Name: "alpha" });
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "alpha", UID: "ps-1" }]);
+  });
+
+  it("leaves the slot untouched when re-saving an unchanged name (idempotent)", async () => {
+    vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] });
+
+    const before = await typeaheadCache.getPeople();
+    typeaheadCache.upsertPerson({ UID: "ps-1", Name: "Alpha" });
+    const after = await typeaheadCache.getPeople();
+
+    // Same array reference proves the slot was not replaced and the epoch was
+    // not bumped, so a redundant save cannot invalidate a pending fetch.
+    expect(after).toBe(before);
+  });
+
+  it("replaces the slot when a save actually changes the list", async () => {
+    vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] });
+
+    const before = await typeaheadCache.getPeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    const after = await typeaheadCache.getPeople();
+
+    expect(after).not.toBe(before);
+    expect(after).toContainEqual({ UID: "ps-2", Name: "Beta" });
+  });
+
+  it("is a no-op when the people cache is cold", async () => {
+    const spy = vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] });
+
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Alpha", UID: "ps-1" }]);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores entries without a usable name", async () => {
+    vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] });
+
+    await typeaheadCache.getPeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "   " });
+    typeaheadCache.upsertPerson(null);
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Alpha", UID: "ps-1" }]);
+  });
+
+  // The reported bug: two names saved in quick succession. The optimistic seed
+  // keeps the second name visible before its WS event arrives, and the eventual
+  // event still refreshes from server truth.
+  it("keeps a quick second save visible before the WS eviction lands", async () => {
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] })
+      .mockResolvedValueOnce({
+        models: [
+          { Name: "Alpha", UID: "ps-1" },
+          { Name: "Beta", UID: "ps-2" },
+        ],
+      });
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Alpha", UID: "ps-1" }]);
+
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    expect(await typeaheadCache.getPeople()).toEqual([
+      { Name: "Alpha", UID: "ps-1" },
+      { UID: "ps-2", Name: "Beta" },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    $event.publishSync("subjects.created", { entities: [{ UID: "ps-2", Name: "Beta" }] });
+    expect(await typeaheadCache.getPeople()).toEqual([
+      { Name: "Alpha", UID: "ps-1" },
+      { Name: "Beta", UID: "ps-2" },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe("typeaheadCache.evict / clear", () => {
   it("evictLabels forces a fresh fetch on the next read", async () => {
     const spy = vi
@@ -208,7 +417,7 @@ describe("typeaheadCache.evict / clear", () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it("clear empties both lists", async () => {
+  it("clear empties all lists", async () => {
     const labelSpy = vi
       .spyOn(Label, "search")
       .mockResolvedValueOnce({ models: [{ Name: "L1", UID: "1" }] })
@@ -217,18 +426,25 @@ describe("typeaheadCache.evict / clear", () => {
       .spyOn(Album, "search")
       .mockResolvedValueOnce({ models: [{ Title: "A1", UID: "a1" }] })
       .mockResolvedValueOnce({ models: [{ Title: "A2", UID: "a2" }] });
+    const personSpy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: [{ Name: "P1", UID: "p1" }] })
+      .mockResolvedValueOnce({ models: [{ Name: "P2", UID: "p2" }] });
 
     await typeaheadCache.getLabels();
     await typeaheadCache.getAlbums();
+    await typeaheadCache.getPeople();
     typeaheadCache.clear();
 
     expect(await typeaheadCache.getLabels()).toEqual([{ Name: "L2", UID: "2" }]);
     expect(await typeaheadCache.getAlbums()).toEqual([{ Title: "A2", UID: "a2" }]);
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "P2", UID: "p2" }]);
     expect(labelSpy).toHaveBeenCalledTimes(2);
     expect(albumSpy).toHaveBeenCalledTimes(2);
+    expect(personSpy).toHaveBeenCalledTimes(2);
   });
 
-  it("session.logout clears both lists", async () => {
+  it("session.logout clears all lists", async () => {
     const labelSpy = vi
       .spyOn(Label, "search")
       .mockResolvedValueOnce({ models: [{ Name: "L1", UID: "1" }] })
@@ -237,27 +453,34 @@ describe("typeaheadCache.evict / clear", () => {
       .spyOn(Album, "search")
       .mockResolvedValueOnce({ models: [{ Title: "A1", UID: "a1" }] })
       .mockResolvedValueOnce({ models: [{ Title: "A2", UID: "a2" }] });
+    const personSpy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: [{ Name: "P1", UID: "p1" }] })
+      .mockResolvedValueOnce({ models: [{ Name: "P2", UID: "p2" }] });
 
     await typeaheadCache.getLabels();
     await typeaheadCache.getAlbums();
+    await typeaheadCache.getPeople();
     $event.publishSync("session.logout", {});
 
     expect(await typeaheadCache.getLabels()).toEqual([{ Name: "L2", UID: "2" }]);
     expect(await typeaheadCache.getAlbums()).toEqual([{ Title: "A2", UID: "a2" }]);
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "P2", UID: "p2" }]);
     expect(labelSpy).toHaveBeenCalledTimes(2);
     expect(albumSpy).toHaveBeenCalledTimes(2);
+    expect(personSpy).toHaveBeenCalledTimes(2);
   });
 });
 
 // Forward-compat coverage for the subscribeEntityActions refactor:
-// future entity-mutation verbs published by the backend (e.g.
-// labels.edited / albums.edited via event.EntitiesEdited) flow
-// through the namespace-level subscriber and evict without any
-// per-channel wiring in this module. Non-mutation actions stay
-// no-ops so an unrelated future event under the same namespace
-// can't pull the cache out from under live consumers.
+// every entity-mutation verb in ENTITY_MUTATIONS — including ones the
+// backend does not currently emit on these channels — flows through
+// the namespace-level subscriber and evicts without any per-channel
+// wiring in this module. Non-mutation actions stay no-ops so an
+// unrelated future event under the same namespace can't pull the
+// cache out from under live consumers.
 describe("subscribeEntityActions integration", () => {
-  it("re-fetches after labels.edited (future mutation verb under ENTITY_MUTATIONS)", async () => {
+  it("re-fetches after labels.restored (mutation verb without a current emitter)", async () => {
     const first = [{ Name: "A", UID: "1" }];
     const second = [{ Name: "B", UID: "2" }];
     const spy = vi
@@ -266,12 +489,12 @@ describe("subscribeEntityActions integration", () => {
       .mockResolvedValueOnce({ models: second });
 
     await typeaheadCache.getLabels();
-    $event.publishSync("labels.edited", { entities: ["1"] });
+    $event.publishSync("labels.restored", { entities: ["1"] });
     expect(await typeaheadCache.getLabels()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it("re-fetches after albums.edited", async () => {
+  it("re-fetches after albums.archived", async () => {
     const first = [{ Title: "First", UID: "alb-1" }];
     const second = [{ Title: "Second", UID: "alb-2" }];
     const spy = vi
@@ -280,7 +503,7 @@ describe("subscribeEntityActions integration", () => {
       .mockResolvedValueOnce({ models: second });
 
     await typeaheadCache.getAlbums();
-    $event.publishSync("albums.edited", { entities: ["alb-1"] });
+    $event.publishSync("albums.archived", { entities: ["alb-1"] });
     expect(await typeaheadCache.getAlbums()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });

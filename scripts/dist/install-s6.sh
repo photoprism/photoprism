@@ -77,11 +77,46 @@ echo "--------------------------------------------------------------------------
 # Create the destination directory if it does not already exist.
 mkdir -p "${S6_OVERLAY_DESTDIR}"
 
-# Download and install the s6-overlay release from GitHub.
-echo "Extracting \"$S6_NOARCH_URL\" to \"$S6_OVERLAY_DESTDIR\"..."
-curl -fsSL "$S6_NOARCH_URL" | tar -C "${S6_OVERLAY_DESTDIR}" -Jxp
+# Stage downloads in a temporary directory that is removed on exit.
+S6_TMPDIR=$(mktemp -d)
+trap 'rm -rf "${S6_TMPDIR}"' EXIT
 
-echo "Extracting \"$S6_BINARY_URL\" to \"$S6_OVERLAY_DESTDIR\"..."
-curl -fsSL "$S6_BINARY_URL" | tar -C "${S6_OVERLAY_DESTDIR}" -Jxp
+# verify_sha256 checks a file against the SHA-256 published next to the release
+# asset (<url>.sha256), aborting on mismatch. It soft-fails when no checksum is
+# published so pinned older tags without a manifest still install.
+verify_sha256() {
+  local url="$1" file="$2" sumfile="$3" expected actual
+  if ! curl -fsSL "${url}.sha256" -o "${sumfile}" 2>/dev/null; then
+    echo "Warning: no published checksum at ${url}.sha256; skipping verification." 1>&2
+    return 0
+  fi
+  expected=$(awk '{print $1}' "${sumfile}")
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual=$(sha256sum "${file}" | awk '{print $1}')
+  else
+    actual=$(shasum -a 256 "${file}" | awk '{print $1}')
+  fi
+  if [[ ${expected} != "${actual}" ]]; then
+    echo "Error: SHA-256 mismatch for $(basename "${file}")." 1>&2
+    echo "  expected: ${expected}" 1>&2
+    echo "  actual:   ${actual}" 1>&2
+    exit 1
+  fi
+  echo "Checksum OK ($(basename "${file}"): ${actual})."
+}
+
+# download_and_extract fetches a release tarball, verifies it, then extracts it.
+download_and_extract() {
+  local url="$1" name="$2" archive="${S6_TMPDIR}/${2}"
+  echo "Downloading \"${url}\"..."
+  curl -fsSL "${url}" -o "${archive}"
+  verify_sha256 "${url}" "${archive}" "${archive}.sha256"
+  echo "Extracting \"${name}\" to \"${S6_OVERLAY_DESTDIR}\"..."
+  tar -C "${S6_OVERLAY_DESTDIR}" -Jxp -f "${archive}"
+}
+
+# Download, verify, and install the s6-overlay release from GitHub.
+download_and_extract "$S6_NOARCH_URL" "$ARCHIVE_NOARCH"
+download_and_extract "$S6_BINARY_URL" "$ARCHIVE_BINARY"
 
 echo "Done."

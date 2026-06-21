@@ -94,7 +94,7 @@ type Photo struct {
 	FileMime         string        `json:"-" select:"files.file_mime"`
 	FileSize         int64         `json:"-" select:"files.file_size"`
 	FileOrientation  int           `json:"-" select:"files.file_orientation"`
-	FileProjection   string        `json:"-" select:"files.file_projection"`
+	FileProjection   string        `json:"Projection,omitempty" select:"files.file_projection"`
 	FileAspectRatio  float32       `json:"-" select:"files.file_aspect_ratio"`
 	FileColors       string        `json:"-" select:"files.file_colors"`
 	FileDiff         int           `json:"-" select:"files.file_diff"`
@@ -258,6 +258,24 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 	}
 
 	return m.FileHash, "", m.FileMime, m.FileWidth, m.FileHeight
+}
+
+// MediaProjection returns the projection of the photo's playable media file,
+// falling back to the primary file's projection. For videos the primary search
+// row is usually a poster JPEG that carries no projection metadata, so the video
+// file's projection (which the indexer sets) is used instead — this keeps the
+// 360° equirectangular flag accurate in the viewer DTO.
+func (m *Photo) MediaProjection() string {
+	switch m.PhotoType {
+	case entity.MediaVideo, entity.MediaLive:
+		for _, f := range m.Files {
+			if f.FileVideo && f.FileProjection != "" {
+				return f.FileProjection
+			}
+		}
+	}
+
+	return m.FileProjection
 }
 
 // ShareBase returns a deterministic, human friendly file name stem for sharing

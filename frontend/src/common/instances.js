@@ -75,6 +75,20 @@ export function instanceLabel(siteUrl) {
   }
 }
 
+// instanceTitle derives the switcher label from an instance's client config values,
+// preferring the operator-configured site name so a distinctively branded instance
+// shows its real name (e.g. "ACME") instead of the lowercase base-path slug. The
+// backend siteName (Config.SiteName) resolves SITE_NAME → AppName → SiteTitle and is
+// empty for an unbranded instance, so we then fall back to the distinctive base-path
+// segment (instanceLabel) — which the menu still shows as a subtitle to keep peers
+// that share a generic name distinguishable. Returns "" only when no field is usable.
+export function instanceTitle(values) {
+  if (!values || typeof values !== "object") {
+    return "";
+  }
+  return values.siteName || instanceLabel(values.siteUrl) || values.siteTitle || values.name || values.siteUrl || "";
+}
+
 // instancePath returns the base path of a SiteUrl (e.g. "/i/pro-1") so the
 // switcher can show how same-origin peers differ without repeating the shared
 // origin. Returns "/" for a root install and "" for an unparseable URL.
@@ -127,8 +141,9 @@ export function persistInstanceIdentity(store, identity) {
 // for the navigation instance switcher. Both localStorage (persistent sessions)
 // and sessionStorage (ephemeral sessions, shared across same-tab navigations) are
 // scanned, since recordInstanceIdentity writes to whichever the instance uses.
-// Returns an empty array on standalone or subdomain-isolated deployments where no
-// peer sessions are discoverable.
+// Results are ordered so the Portal (origin root path) leads, then co-located peers
+// by ascending base-path. Returns an empty array on standalone or subdomain-isolated
+// deployments where no peer sessions are discoverable.
 export function listReachableInstances(options) {
   const opts = options || {};
 
@@ -192,6 +207,15 @@ export function listReachableInstances(options) {
         icon: store.getItem(prefix + InstanceIconKey) || "",
       });
     });
+  });
+
+  // Order the switcher so the Portal (origin root path "/") leads, then peers by
+  // ascending base-path length: co-located instances live under distinct base paths
+  // (e.g. "/i/pro-1"), so the shortest path is always the Portal at the origin root.
+  instances.sort((a, b) => {
+    const pa = instancePath(a.url) || "/";
+    const pb = instancePath(b.url) || "/";
+    return pa.length - pb.length || pa.localeCompare(pb);
   });
 
   return instances;

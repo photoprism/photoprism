@@ -1,0 +1,1 @@
+ALTER TABLE photos MODIFY uuid VARBINARY(255);

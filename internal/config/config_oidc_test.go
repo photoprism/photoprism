@@ -229,6 +229,14 @@ func TestConfig_OIDCGroupRoles(t *testing.T) {
 	// dropped so a compromised IdP cannot assign it via group membership.
 	assert.NotContains(t, roles, "ghi-789")
 	assert.Len(t, roles, 2)
+
+	// A single env value with whitespace-separated pairs (StringSlice env only
+	// splits on commas) must still resolve every pair.
+	c.options.OIDCGroupRole = []string{"abc-123=admin def-456=guest"}
+	roles = c.OIDCGroupRoles()
+	assert.Equal(t, acl.RoleAdmin, roles["abc-123"])
+	assert.Equal(t, acl.RoleGuest, roles["def-456"])
+	assert.Len(t, roles, 2)
 }
 
 func TestConfig_OIDCDomain(t *testing.T) {

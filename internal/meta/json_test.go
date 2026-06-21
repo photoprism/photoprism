@@ -600,6 +600,46 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
 	})
+	t.Run("PanoramaUsePanoramaViewer", func(t *testing.T) {
+		data, err := JSON("testdata/panorama_usepanoramaviewer.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
+		assert.Contains(t, data.Keywords.String(), "panorama")
+	})
+	t.Run("PanoramaIsPhotosphere", func(t *testing.T) {
+		data, err := JSON("testdata/panorama_isphotosphere.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
+		assert.Contains(t, data.Keywords.String(), "panorama")
+	})
+	t.Run("PanoramaCubemap", func(t *testing.T) {
+		data, err := JSON("testdata/panorama_cubemap.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotEqual(t, projection.Equirectangular.String(), data.Projection)
+		assert.NotContains(t, data.Keywords.String(), "panorama")
+	})
+	t.Run("PanoramaVideoMp4", func(t *testing.T) {
+		data, err := JSON("testdata/panorama360_video.json", "panorama360_video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, projection.Equirectangular.String(), data.Projection)
+		assert.Contains(t, data.Keywords.String(), "panorama")
+	})
 	t.Run("PNum7250006Json", func(t *testing.T) {
 		data, err := JSON("testdata/P7250006.json", "P7250006.MOV")
 

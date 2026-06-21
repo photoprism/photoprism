@@ -21,6 +21,8 @@ const (
 	ErrAccountNotFound
 	ErrUserNotFound
 	ErrLabelNotFound
+	ErrCameraNotFound
+	ErrLensNotFound
 	ErrAlbumNotFound
 	ErrSubjectNotFound
 	ErrPersonNotFound
@@ -122,6 +124,8 @@ var Messages = MessageMap{
 	ErrAccountNotFound:     gettext("Account not found"),
 	ErrUserNotFound:        gettext("User not found"),
 	ErrLabelNotFound:       gettext("Label not found"),
+	ErrCameraNotFound:      gettext("Camera not found"),
+	ErrLensNotFound:        gettext("Lens not found"),
 	ErrAlbumNotFound:       gettext("Album not found"),
 	ErrSubjectNotFound:     gettext("Subject not found"),
 	ErrPersonNotFound:      gettext("Person not found"),

@@ -253,7 +253,7 @@ func FirstOrCreateLabel(m *Label) *Label {
 
 	if createErr := m.Create(); createErr == nil {
 		if m.LabelPriority >= 0 {
-			event.EntitiesCreated("labels", []*Label{m})
+			event.EntitiesCreated("labels", []string{m.LabelUID})
 
 			event.Publish("count.labels", event.Data{
 				"count": 1,

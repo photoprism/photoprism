@@ -37,12 +37,17 @@ func TestClientRegistry_GetAndDelete(t *testing.T) {
 		t.Fatalf("expected error for invalid uuid")
 	}
 
-	// Create node
+	// Create node with an instance-declared group policy (write-control
+	// GroupsSrc marks this write's provenance).
 	n := &Node{Node: cluster.Node{Name: "pp-del", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+	n.AllowGroups = []string{"g-ops"}
+	n.GroupsSrc = entity.ClientGroupsSrcNode
 	assert.NoError(t, r.Put(n))
 	assert.NotEmpty(t, n.ClientID)
 	assert.True(t, rnd.IsUID(n.ClientID, entity.ClientUID))
 	assert.True(t, rnd.IsUUID(n.UUID))
+	// Put reflects the persisted provenance into the read DTO field.
+	assert.Equal(t, entity.ClientGroupsSrcNode, n.Node.GroupsSrc)
 
 	// Get by UUID
 	got, err := r.Get(n.UUID)
@@ -52,6 +57,10 @@ func TestClientRegistry_GetAndDelete(t *testing.T) {
 		assert.Equal(t, "pp-del", got.Name)
 		assert.True(t, rnd.IsUUID(got.UUID))
 		assert.True(t, rnd.IsUID(got.ClientID, entity.ClientUID))
+		assert.Equal(t, []string{"g-ops"}, got.AllowGroups)
+		// toNode maps ClientData.GroupsSrc onto the read DTO field; got.GroupsSrc
+		// (registry.Node) is the separate write-control field, hence the qualifier.
+		assert.Equal(t, entity.ClientGroupsSrcNode, got.Node.GroupsSrc)
 	}
 
 	// Delete by UUID
@@ -112,11 +121,21 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	dbInfo.Name = "dbn"
 	dbInfo.User = "dbu"
 	dbInfo.RotatedAt = time.Now().UTC().Format(time.RFC3339)
+	fullView := true
+	n.AllowGroups = []string{"media-acme-admin"}
+	n.AllowGroupRoles = map[string]string{"media-acme-admin": "admin"}
+	n.GroupsFullView = &fullView
+	// Set the read DTO field, not the registry.Node write-control GroupsSrc.
+	n.Node.GroupsSrc = entity.ClientGroupsSrcNode
 
-	// Non-admin (default opts): redact advertise/database
+	// Non-admin (default opts): redact advertise/database and access rules
 	out := BuildClusterNode(n, NodeOpts{})
 	assert.Equal(t, "", out.AdvertiseUrl)
 	assert.Nil(t, out.Database)
+	assert.Nil(t, out.AllowGroups)
+	assert.Nil(t, out.AllowGroupRoles)
+	assert.Nil(t, out.GroupsFullView)
+	assert.Empty(t, out.GroupsSrc)
 
 	// Include advertise only
 	out2 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true})
@@ -129,11 +148,93 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 		assert.Equal(t, "dbn", out3.Database.Name)
 		assert.Equal(t, "dbu", out3.Database.User)
 	}
+	assert.Nil(t, out3.AllowGroups, "access rules require IncludeAccessRules")
+
+	// Include access rules (full admin view)
+	out4 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true, IncludeAccessRules: true})
+	assert.Equal(t, []string{"media-acme-admin"}, out4.AllowGroups)
+	assert.Equal(t, map[string]string{"media-acme-admin": "admin"}, out4.AllowGroupRoles)
+	if assert.NotNil(t, out4.GroupsFullView) {
+		assert.True(t, *out4.GroupsFullView)
+	}
+	assert.Equal(t, entity.ClientGroupsSrcNode, out4.GroupsSrc)
 
 	// BuildClusterNodes on empty input returns empty slice (not nil)
 	list := BuildClusterNodes(nil, NodeOpts{})
 	assert.NotNil(t, list)
 	assert.Equal(t, 0, len(list))
+}
+
+func TestApplyGroupConfig(t *testing.T) {
+	boolPtr := func(v bool) *bool { return &v }
+	declared := func(groups []string, roles map[string]string, fullView bool) *Node {
+		n := &Node{GroupsSrc: entity.ClientGroupsSrcNode}
+		n.AllowGroups = groups
+		n.AllowGroupRoles = roles
+		if fullView {
+			n.GroupsFullView = boolPtr(true)
+		}
+		return n
+	}
+
+	t.Run("NodeDeclares", func(t *testing.T) {
+		data := &entity.ClientData{}
+		applyGroupConfig(data, declared([]string{"g1"}, map[string]string{"g1": "admin"}, true))
+		assert.Equal(t, []string{"g1"}, data.AllowGroups)
+		assert.Equal(t, map[string]string{"g1": "admin"}, data.AllowGroupRoles)
+		assert.True(t, data.GroupsFullView)
+		assert.Equal(t, entity.ClientGroupsSrcNode, data.GroupsSrc)
+	})
+	t.Run("NodeNeverClobbersManual", func(t *testing.T) {
+		data := &entity.ClientData{AllowGroups: []string{"pinned"}, GroupsSrc: entity.ClientGroupsSrcManual}
+		applyGroupConfig(data, declared([]string{"g1"}, nil, false))
+		assert.Equal(t, []string{"pinned"}, data.AllowGroups)
+		assert.Equal(t, entity.ClientGroupsSrcManual, data.GroupsSrc)
+	})
+	t.Run("EmptyDeclarationClearsNodeValues", func(t *testing.T) {
+		data := &entity.ClientData{AllowGroups: []string{"g1"}, GroupsFullView: true, GroupsSrc: entity.ClientGroupsSrcNode}
+		applyGroupConfig(data, declared(nil, nil, false))
+		assert.Empty(t, data.AllowGroups)
+		assert.False(t, data.GroupsFullView)
+		assert.Equal(t, "", data.GroupsSrc)
+	})
+	t.Run("EmptyDeclarationKeepsUnmanagedValues", func(t *testing.T) {
+		data := &entity.ClientData{AllowGroups: []string{"legacy"}}
+		applyGroupConfig(data, declared(nil, nil, false))
+		assert.Equal(t, []string{"legacy"}, data.AllowGroups, "values without provenance must not be cleared")
+	})
+	t.Run("ManualEditPins", func(t *testing.T) {
+		data := &entity.ClientData{AllowGroups: []string{"g1"}, GroupsSrc: entity.ClientGroupsSrcNode}
+		n := &Node{GroupsSrc: entity.ClientGroupsSrcManual}
+		n.AllowGroups = []string{"g2"}
+		applyGroupConfig(data, n)
+		assert.Equal(t, []string{"g2"}, data.AllowGroups)
+		assert.Equal(t, entity.ClientGroupsSrcManual, data.GroupsSrc)
+	})
+	t.Run("ManualClearAllUnpins", func(t *testing.T) {
+		data := &entity.ClientData{AllowGroups: []string{"g1"}, GroupsFullView: true, GroupsSrc: entity.ClientGroupsSrcManual}
+		n := &Node{GroupsSrc: entity.ClientGroupsSrcManual}
+		n.AllowGroups = []string{}
+		n.AllowGroupRoles = map[string]string{}
+		n.GroupsFullView = boolPtr(false)
+		applyGroupConfig(data, n)
+		assert.Empty(t, data.AllowGroups)
+		assert.Equal(t, "", data.GroupsSrc, "a fully cleared manual config must un-pin")
+	})
+	t.Run("ManualNoFieldsNoChange", func(t *testing.T) {
+		data := &entity.ClientData{AllowGroups: []string{"g1"}, GroupsSrc: entity.ClientGroupsSrcNode}
+		applyGroupConfig(data, &Node{GroupsSrc: entity.ClientGroupsSrcManual})
+		assert.Equal(t, []string{"g1"}, data.AllowGroups)
+		assert.Equal(t, entity.ClientGroupsSrcNode, data.GroupsSrc)
+	})
+	t.Run("UnmanagedCallerLegacySemantics", func(t *testing.T) {
+		data := &entity.ClientData{AllowGroups: []string{"g1"}, GroupsSrc: entity.ClientGroupsSrcNode}
+		n := &Node{}
+		n.AllowGroups = []string{"g2"}
+		applyGroupConfig(data, n)
+		assert.Equal(t, []string{"g2"}, data.AllowGroups)
+		assert.Equal(t, entity.ClientGroupsSrcNode, data.GroupsSrc, "no provenance update without a source")
+	})
 }
 
 func TestNodeOptsForSession_AdminVsNonAdmin(t *testing.T) {

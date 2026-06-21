@@ -27,7 +27,7 @@ const (
 )
 
 var (
-	// ClientRoleUsage describes allowed client roles for CLI help.
+	// ClientRoleUsage describes the assignable client roles for CLI help.
 	ClientRoleUsage = fmt.Sprintf("client authorization `ROLE`, e.g. %s", acl.ClientRoles.CliUsageString())
 )
 

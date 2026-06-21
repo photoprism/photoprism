@@ -39,11 +39,11 @@
 
 ## Frontend Test Gotchas
 
-- Hidden-route UI checks under `/library/hidden` or `/portal/admin/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.
+- Hidden-route UI checks under `/library/hidden` or `/portal/hidden` require both `files.file_error` and `photos.photo_quality = -1`; `file_error` alone will not surface the row.
 
 ## Playwright MCP Usage
 
-- Endpoint `http://localhost:2342/`; logins at `/library/login` (CE/Plus/Pro) and `/portal/admin/login` (Portal). Use local compose admin credentials; if login fails, inspect the active compose env.
+- Endpoint `http://localhost:2342/`; logins at `/library/login` (CE/Plus/Pro) and `/portal/login` (Portal). Use local compose admin credentials; if login fails, inspect the active compose env.
 - Viewports: desktop `1280x900`; mobile uses the mobile Playwright server at `375x667`. Close the browser tab after scripted interactions.
 - Prefer waits over sleeps; click only visible/enabled elements; use role/label/text selectors (not XPath).
 - Screenshots: small and reproducible — JPEG, visible viewport, deterministic `.local/screenshots/<case>/<step>__<viewport>.jpg` names, no large inline screenshots.

@@ -4,6 +4,7 @@ import Photo from "./photo";
 import DateTimeDialog from "./dialog/date-time";
 import CameraDialog from "./dialog/camera";
 import LocationDialog from "./dialog/location";
+import { clickIfVisible } from "./helpers";
 
 export default class Page {
   constructor() {
@@ -47,6 +48,7 @@ export default class Page {
     this.sidebarKeywords = Selector(".p-lightbox-sidebar .meta-keywords", { timeout: 15000 });
     this.sidebarNotes = Selector(".p-lightbox-sidebar .meta-notes", { timeout: 15000 });
     this.sidebarChips = Selector(".p-lightbox-sidebar .meta-chip", { timeout: 15000 });
+    this.sidebarLabels = Selector(".p-lightbox-sidebar .v-list-item.meta-labels", { timeout: 15000 });
     this.faceMarkerClearSubjectButton = Selector(".metadata__person-row .meta-marker-clear-subject", { timeout: 15000 });
     this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
     this.peopleHeader = Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People");
@@ -369,11 +371,12 @@ export default class Page {
   // removeLastUnnamedMarker deletes the most recently drawn unnamed marker via the overlay confirm pill.
   // Used by tests that draw a marker for setup and want to undo before exit so the fixture stays clean.
   async removeLastUnnamedMarker() {
-    if (!(await this.faceMarkerOverlay.visible)) {
+    await t.expect(this.sidebar.visible).ok();
+    if (await this.markersEditToggle.find('i.mdi-pencil-outline').exists) {
       await this.startMarkersEdit();
       await t.expect(this.faceMarkerOverlay.visible).ok();
     }
-    await t.click(this.faceMarkerUnnamedRect.nth(-1));
+    await clickIfVisible(t, this.faceMarkerUnnamedRect.nth(-1));
     await t.expect(this.faceMarkerRemoveConfirm.visible).ok();
     await t.click(this.faceMarkerRemoveButton);
   }

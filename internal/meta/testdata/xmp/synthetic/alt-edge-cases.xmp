@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">
+   <dc:title>
+    <rdf:Alt>
+     <rdf:li xml:lang="de">Sonnenuntergang</rdf:li>
+     <rdf:li xml:lang="en">Sunset</rdf:li>
+    </rdf:Alt>
+   </dc:title>
+   <dc:description>
+    <rdf:Alt>
+     <rdf:li>No xml:lang attribute on this li</rdf:li>
+    </rdf:Alt>
+   </dc:description>
+   <dc:rights>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">First x-default rights</rdf:li>
+     <rdf:li xml:lang="x-default">Second x-default rights (duplicate, should be ignored)</rdf:li>
+     <rdf:li xml:lang="en">English rights</rdf:li>
+    </rdf:Alt>
+   </dc:rights>
+   <photoshop:Headline>Photoshop Headline Fallback</photoshop:Headline>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

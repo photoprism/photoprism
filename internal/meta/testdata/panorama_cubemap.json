@@ -1,0 +1,16 @@
+[{
+  "SourceFile": "panorama_cubemap.jpg",
+  "ExifToolVersion": 12.40,
+  "FileName": "panorama_cubemap.jpg",
+  "Directory": ".",
+  "FileSize": "1.0 MB",
+  "FileType": "JPEG",
+  "FileTypeExtension": "jpg",
+  "MIMEType": "image/jpeg",
+  "ImageWidth": 6000,
+  "ImageHeight": 4500,
+  "ProjectionType": "cubemap",
+  "EncodingProcess": "Baseline DCT, Huffman coding",
+  "BitsPerSample": 8,
+  "ColorComponents": 3
+}]

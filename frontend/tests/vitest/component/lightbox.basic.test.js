@@ -1237,4 +1237,378 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       evictSpy.mockRestore();
     });
   });
+
+  // getItemData dispatch: equirectangular media must route to the sphere viewer,
+  // while a regular photo with no projection must stay on the flat lightbox path.
+  describe("getItemData sphere dispatch", () => {
+    const baseThumbs = {
+      fit_720: { src: "/thumb-720.jpg", w: 720, h: 360 },
+      fit_1280: { src: "/thumb-1280.jpg", w: 1280, h: 640 },
+      fit_2048: { src: "/thumb-2048.jpg", w: 2048, h: 1024 },
+      fit_2560: { src: "/thumb-2560.jpg", w: 2560, h: 1280 },
+      fit_3840: { src: "/thumb-3840.jpg", w: 3840, h: 1920 },
+      fit_4096: { src: "/thumb-4096.jpg", w: 4096, h: 2048 },
+      fit_7680: { src: "/thumb-7680.jpg", w: 7680, h: 3840 },
+    };
+
+    it("returns sphere data for an equirectangular photo", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "abc", Projection: "equirectangular", Type: "image", Thumbs: baseThumbs, Title: "Pano" };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.type).toBe("html");
+      expect(slide.isSphere).toBe(true);
+      expect(slide.isVideo).toBe(false);
+      expect(slide.src).toBeTruthy();
+    });
+
+    it("returns sphere data with isVideo=true for an equirectangular video", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "vid", Projection: "equirectangular", Type: "video", Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.type).toBe("html");
+      expect(slide.isSphere).toBe(true);
+      expect(slide.isVideo).toBe(true);
+    });
+
+    it("returns flat image data for a non-equirectangular photo (regression)", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "xyz", Projection: "", Type: "image", Thumbs: baseThumbs, Title: "Regular" };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.type).toBeUndefined();
+      expect(slide.isSphere).toBeUndefined();
+      expect(slide.src).toBeTruthy();
+    });
+    it("does NOT mount the sphere for an equirectangular-tagged photo that is not 2:1 (partial panorama)", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "strip", Projection: "equirectangular", Type: "image", Width: 8192, Height: 1024, Thumbs: baseThumbs, Title: "Wide" };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.isSphere).toBeUndefined();
+    });
+    it("does NOT mount the sphere for a cubemap video even when Panorama is flagged", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "cube", Projection: "cubemap", Panorama: true, Type: "video", Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.isSphere).toBeUndefined();
+    });
+    it("does NOT mount the sphere for an ultrawide (non-2:1) video flagged as panorama", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "wide", Projection: "", Panorama: true, Type: "video", Width: 3840, Height: 1632, Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.isSphere).toBeUndefined();
+    });
+    it("mounts the sphere for a 2:1 panorama video that carries no projection tag", () => {
+      const wrapper = mountLightbox();
+      const model = { Hash: "vr", Projection: "", Panorama: true, Type: "video", Width: 3840, Height: 1920, Thumbs: baseThumbs, Codec: "avc1", Mime: "video/mp4", Playable: true };
+      const ctx = { ...wrapper.vm, models: [model], $util, getSlidePixels: () => ({ width: 2048, height: 1024 }) };
+
+      const slide = wrapper.vm.$options.methods.getItemData.call(ctx, null, 0);
+      expect(slide.isSphere).toBe(true);
+      expect(slide.isVideo).toBe(true);
+    });
+  });
+
+  // bindSphereVideoControls writes to the single shared `video` reactive state.
+  // PhotoSwipe preloads neighbors and sphere binding is async, so the controls
+  // bar must only turn on for the active slide — otherwise a preloaded 360° video
+  // flips the bar on while a plain photo is on screen.
+  describe("bindSphereVideoControls active-slide gating", () => {
+    const makeVideoState = () => ({
+      controls: false,
+      error: "",
+      errorCode: 0,
+      duration: 0,
+      time: 0,
+      seekable: false,
+      playing: false,
+      paused: false,
+      ended: false,
+    });
+
+    it("turns controls on when its slide is the active one", () => {
+      const wrapper = mountLightbox();
+      const videoEl = document.createElement("video");
+      const content = { data: {} };
+      const ctx = { video: makeVideoState(), videoEventListener: () => {}, pswp: () => ({ currSlide: { content } }) };
+
+      wrapper.vm.$options.methods.bindSphereVideoControls.call(ctx, content, videoEl);
+      expect(ctx.video.controls).toBe(true);
+      expect(content.data.events).toBeInstanceOf(AbortController);
+    });
+
+    it("leaves controls off for a preloaded (non-active) neighbor but still binds listeners", () => {
+      const wrapper = mountLightbox();
+      const videoEl = document.createElement("video");
+      const content = { data: {} };
+      const activeContent = { data: {} };
+      const ctx = { video: makeVideoState(), videoEventListener: () => {}, pswp: () => ({ currSlide: { content: activeContent } }) };
+
+      wrapper.vm.$options.methods.bindSphereVideoControls.call(ctx, content, videoEl);
+      expect(ctx.video.controls).toBe(false);
+      expect(content.data.events).toBeInstanceOf(AbortController);
+    });
+
+    it("leaves controls off when there is no PhotoSwipe instance", () => {
+      const wrapper = mountLightbox();
+      const videoEl = document.createElement("video");
+      const content = { data: {} };
+      const ctx = { video: makeVideoState(), videoEventListener: () => {}, pswp: () => null };
+
+      wrapper.vm.$options.methods.bindSphereVideoControls.call(ctx, content, videoEl);
+      expect(ctx.video.controls).toBe(false);
+    });
+  });
+
+  // slideZoomable drives the `.is-zoomable` class that shows/hides the zoom
+  // button. 360° slides must report false so the flat zoom button is hidden.
+  describe("slideZoomable", () => {
+    const slideZoomable = (data) => {
+      const wrapper = mountLightbox();
+      return wrapper.vm.$options.methods.slideZoomable.call(wrapper.vm, data);
+    };
+
+    it("returns false for a 360° sphere slide", () => {
+      expect(slideZoomable({ isSphere: true, model: { Type: "image" } })).toBe(false);
+    });
+    it("returns false for video and animation slides", () => {
+      expect(slideZoomable({ model: { Type: "video" } })).toBe(false);
+      expect(slideZoomable({ model: { Type: "animated" } })).toBe(false);
+    });
+    it("returns true for a regular image and a live photo", () => {
+      expect(slideZoomable({ model: { Type: "image" } })).toBe(true);
+      expect(slideZoomable({ model: { Type: "live" } })).toBe(true);
+    });
+    it("defaults to true when data or model is missing", () => {
+      expect(slideZoomable({})).toBe(true);
+      expect(slideZoomable(undefined)).toBe(true);
+    });
+  });
+
+  // trapSphereGestures must swallow PhotoSwipe's pointer + wheel gestures on the
+  // sphere container, but must NOT trap touch events — Photo Sphere Viewer pans
+  // from touchmove/touchend listeners bound on `window`, so trapping touch here
+  // would break 360° panning on touch devices. A short press without a pan must
+  // toggle the lightbox controls so the prev/next arrows stay reachable on mobile.
+  describe("trapSphereGestures", () => {
+    const trap = () => {
+      const wrapper = mountLightbox();
+      wrapper.vm.toggleControls = vi.fn();
+      const registered = [];
+      const el = { addEventListener: (type, handler, opts) => registered.push({ type, handler, opts }) };
+      wrapper.vm.$options.methods.trapSphereGestures.call(wrapper.vm, el);
+      const fire = (type, props = {}) => registered.filter((r) => r.type === type).forEach((r) => r.handler({ stopPropagation: () => {}, ...props }));
+      return { vm: wrapper.vm, registered, fire };
+    };
+
+    it("traps pointer and wheel events", () => {
+      const types = trap().registered.map((r) => r.type);
+      expect(types).toEqual(expect.arrayContaining(["pointerdown", "pointermove", "pointerup", "pointercancel", "wheel"]));
+    });
+    it("does NOT trap touch events so PSV panning works on mobile", () => {
+      const types = trap().registered.map((r) => r.type);
+      expect(types).not.toContain("touchstart");
+      expect(types).not.toContain("touchmove");
+      expect(types).not.toContain("touchend");
+    });
+    it("registers listeners in the bubble phase and stops propagation", () => {
+      const { registered } = trap();
+      expect(registered.every((r) => r.opts && r.opts.capture === false)).toBe(true);
+      const ev = { stopPropagation: vi.fn() };
+      registered[0].handler(ev);
+      expect(ev.stopPropagation).toHaveBeenCalledTimes(1);
+    });
+    it("toggles controls on a touch tap without a pan", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "touch", clientX: 103, clientY: 102 });
+      expect(vm.toggleControls).toHaveBeenCalledTimes(1);
+    });
+    it("does NOT toggle controls when the touch is a pan", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "touch", clientX: 180, clientY: 100 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+    it("does NOT toggle controls for a mouse press so desktop is unchanged", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "mouse", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "mouse", clientX: 100, clientY: 100 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+    it("does NOT toggle controls when a tap is canceled", () => {
+      const { vm, fire } = trap();
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointercancel", { pointerType: "touch" });
+      fire("pointerup", { pointerType: "touch", clientX: 100, clientY: 100 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+    it("does NOT toggle controls when the dialog capture handler paused on this pointer", () => {
+      const { vm, fire } = trap();
+      // captureDialogPointerDown sets this flag when its pause revealed the controls; the
+      // tap-toggle must then leave them visible instead of toggling them away again.
+      vm._slideshowPausedByPointer = true;
+      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
+      fire("pointerup", { pointerType: "touch", clientX: 102, clientY: 101 });
+      expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+  });
+
+  // The slideshow pauses on ANY interaction with the slide content — not just sphere
+  // gestures. The dialog's capture-phase handlers own this for every slide type, gated on
+  // pswpControl so a press on the chrome (close / arrows / top bar) does not pause.
+  describe("slideshow pause on content interaction", () => {
+    const methods = () => mountLightbox().vm.$options.methods;
+    const makeCtx = (active = true) => {
+      const m = methods();
+      const ctx = {
+        debug: false,
+        hasTouch: false,
+        slideshow: { active },
+        pauseSlideshow: vi.fn(function () {
+          this.slideshow.active = false;
+        }),
+        clearIdleTimeout: vi.fn(),
+        toggleVideo: vi.fn(),
+      };
+      ctx.pswpControl = (ev) => m.pswpControl.call(ctx, ev);
+      ctx.captureDialogPointerDown = (ev) => m.captureDialogPointerDown.call(ctx, ev);
+      ctx.captureDialogWheel = (ev) => m.captureDialogWheel.call(ctx, ev);
+      return ctx;
+    };
+    const evOn = (target) => ({ target, stopPropagation: vi.fn(), preventDefault: vi.fn() });
+    const control = () => {
+      const btn = document.createElement("button");
+      btn.className = "pswp__button";
+      return btn;
+    };
+
+    it("pointerdown on slide content pauses a running slideshow", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogPointerDown(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+      expect(ctx._slideshowPausedByPointer).toBe(true);
+    });
+    it("pointerdown on a control does NOT pause so buttons keep working", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogPointerDown(evOn(control()));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+      expect(ctx._slideshowPausedByPointer).toBe(false);
+    });
+    it("pointerdown does not pause when no slideshow is running", () => {
+      const ctx = makeCtx(false);
+      ctx.captureDialogPointerDown(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+      expect(ctx._slideshowPausedByPointer).toBe(false);
+    });
+    it("pauses before toggling video so a media tap also stops the slideshow", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogPointerDown(evOn(document.createElement("video")));
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+      expect(ctx.toggleVideo).toHaveBeenCalledTimes(1);
+    });
+    it("wheel-zoom on slide content pauses a running slideshow", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogWheel(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+    });
+    it("wheel-zoom on a control does NOT pause", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogWheel(evOn(control()));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+    });
+    it("wheel-zoom does nothing when no slideshow is running", () => {
+      const ctx = makeCtx(false);
+      ctx.captureDialogWheel(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+    });
+    it("ignores a missing wheel event", () => {
+      const ctx = makeCtx(true);
+      expect(() => ctx.captureDialogWheel(undefined)).not.toThrow();
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+    });
+  });
+
+  // setSphereClass marks the PhotoSwipe root so CSS can keep the prev/next arrows
+  // reachable on touch devices for 360° slides (PhotoSwipe hides them on touch).
+  describe("setSphereClass", () => {
+    const run = (enabled, hasEl = true) => {
+      const wrapper = mountLightbox();
+      const el = document.createElement("div");
+      wrapper.vm.pswp = () => (hasEl ? { element: el } : {});
+      wrapper.vm.$options.methods.setSphereClass.call(wrapper.vm, enabled);
+      return el;
+    };
+
+    it("adds pswp--sphere for a sphere slide", () => {
+      expect(run(true).classList.contains("pswp--sphere")).toBe(true);
+    });
+    it("removes pswp--sphere for a non-sphere slide", () => {
+      const wrapper = mountLightbox();
+      const el = document.createElement("div");
+      el.classList.add("pswp--sphere");
+      wrapper.vm.pswp = () => ({ element: el });
+      wrapper.vm.$options.methods.setSphereClass.call(wrapper.vm, false);
+      expect(el.classList.contains("pswp--sphere")).toBe(false);
+    });
+    it("is a no-op when the PhotoSwipe element is missing", () => {
+      expect(() => run(true, false)).not.toThrow();
+    });
+  });
+
+  // A 360° sphere slide owns horizontal drag for panning, so PhotoSwipe's swipe-to-
+  // navigate must be suppressed at its source. The per-element gesture trap can be
+  // outrun by a fast swipe that leaves the sphere container (seen on touch-capable
+  // Windows), so onLightboxPointerEvent also default-prevents the dispatched pointer
+  // event whenever the active slide is a sphere. UI controls stay excluded.
+  describe("sphere swipe navigation block", () => {
+    const methods = () => mountLightbox().vm.$options.methods;
+    const makeCtx = (isSphere) => {
+      const m = methods();
+      const ctx = { debug: false, pswp: () => ({ currSlide: { content: { data: { isSphere } } } }) };
+      ctx.pswpControl = (ev) => m.pswpControl.call(ctx, ev);
+      ctx.activeSlideIsSphere = () => m.activeSlideIsSphere.call(ctx);
+      ctx.onLightboxPointerEvent = (ev) => m.onLightboxPointerEvent.call(ctx, ev);
+      return ctx;
+    };
+    const makeEv = (target = document.createElement("div")) => ({
+      type: "pointerDown",
+      originalEvent: { target },
+      preventDefault: vi.fn(),
+    });
+
+    it("activeSlideIsSphere reflects the current slide content flag", () => {
+      const m = methods();
+      expect(m.activeSlideIsSphere.call({ pswp: () => ({ currSlide: { content: { data: { isSphere: true } } } }) })).toBe(true);
+      expect(m.activeSlideIsSphere.call({ pswp: () => ({ currSlide: { content: { data: {} } } }) })).toBe(false);
+      expect(m.activeSlideIsSphere.call({ pswp: () => null })).toBe(false);
+    });
+    it("prevents PhotoSwipe navigation for a pointer on a 360° sphere slide", () => {
+      const ev = makeEv();
+      makeCtx(true).onLightboxPointerEvent(ev);
+      expect(ev.preventDefault).toHaveBeenCalledTimes(1);
+    });
+    it("does NOT prevent navigation on a regular slide", () => {
+      const ev = makeEv();
+      makeCtx(false).onLightboxPointerEvent(ev);
+      expect(ev.preventDefault).not.toHaveBeenCalled();
+    });
+    it("does NOT block a press on a UI control so buttons and arrows still navigate", () => {
+      const arrow = document.createElement("button");
+      arrow.className = "pswp__button pswp__button--arrow";
+      const ev = makeEv(arrow);
+      makeCtx(true).onLightboxPointerEvent(ev);
+      expect(ev.preventDefault).not.toHaveBeenCalled();
+    });
+  });
 });

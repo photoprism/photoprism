@@ -24,7 +24,7 @@ fi
 DESTDIR=$(realpath "${1:-/usr/local}")
 
 # In addition, you can specify a custom version to be installed as the second argument.
-LIBHEIF_VERSION=${2:-v1.22.2}
+LIBHEIF_VERSION=${2:-v1.23.0}
 
 # Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then

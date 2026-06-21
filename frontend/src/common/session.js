@@ -29,7 +29,7 @@ import { createNamespacedStorage } from "common/storage";
 import {
   persistInstanceIdentity,
   InstanceIdentityKeys,
-  instanceLabel,
+  instanceTitle,
   listLogoutTargets,
   signOutInstances,
   clearInstanceStorage,
@@ -465,11 +465,10 @@ export default class Session {
 
   // recordInstanceIdentity stores this instance's SiteUrl, display title, and app
   // icon under the active namespace so other instances on the same origin can offer
-  // a switch entry. The title prefers the distinctive base-path segment
-  // (instanceLabel) so co-located instances that share a generic caption stay
-  // distinguishable; the icon is the root-relative app icon, which resolves on the
-  // shared origin from any peer. No-op when the site URL is unknown or storage is
-  // unavailable.
+  // a switch entry. The title prefers the configured site name (see instanceTitle)
+  // and falls back to the distinctive base-path segment for unbranded instances;
+  // the icon is the root-relative app icon, which resolves on the shared origin from
+  // any peer. No-op when the site URL is unknown or storage is unavailable.
   recordInstanceIdentity() {
     const values = this.config?.values;
 
@@ -482,7 +481,7 @@ export default class Session {
       // Frontend URI (e.g. "/portal" or "/i/pro-1/library") so peers open the
       // app entry point rather than a web-overlay landing page at the site root.
       route: this.config?.frontendUri,
-      title: instanceLabel(values.siteUrl) || values.siteTitle || values.name || values.siteUrl,
+      title: instanceTitle(values),
       icon: this.config.getIcon(),
     });
   }
@@ -803,15 +802,22 @@ export default class Session {
     $view.redirect(url, delay, true);
   }
 
+  // isClusterSession reports whether the current session was signed in through the
+  // cluster Portal OIDC provider, so sign-out runs the cluster-wide fan-out and
+  // clears the Portal OP cookie. Read before reset()/signOut() clears the provider.
+  isClusterSession() {
+    return this.getProvider() === "oidc" && !!this.config?.isClusterOidc?.();
+  }
+
   // logoutRedirectUri returns the post-sign-out landing URL: a cluster-OIDC session
-  // goes to the OIDC login (which bounces to the Portal login) to re-auth with the
-  // cluster account, everyone else to the local login. Read provider before reset().
+  // goes directly to the Portal login page (re-auth → instance chooser), everyone
+  // else to the local login. The instance OIDC roundtrip is never re-initiated on
+  // sign-out, since that would pin the Portal login's return_to to the just-left
+  // instance and dead-end accounts without a grant there; when the Portal login URL
+  // is unknown, the local form is the fallback landing. Read provider before reset().
   logoutRedirectUri() {
-    if (this.getProvider() === "oidc" && this.config?.isClusterOidc?.()) {
-      const oidcLoginUri = this.config.oidcLoginUri();
-      if (oidcLoginUri) {
-        return oidcLoginUri;
-      }
+    if (this.isClusterSession()) {
+      return this.config.portalLoginUri() || this.config.loginUri;
     }
 
     return this.config.loginUri;

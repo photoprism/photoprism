@@ -20,12 +20,15 @@ import (
 //	@Tags		Labels
 //	@Produce	json
 //	@Success	200				{array}		search.Label
+//	@Header		200				{number}	X-Count		"The actual number of labels returned"
+//	@Header		200				{number}	X-Limit		"The limit of the number of labels to be returned"
+//	@Header		200				{number}	X-Offset	"The offset that was used"
 //	@Failure	401,429,403,400	{object}	i18n.Response
 //	@Param		count			query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
 //	@Param		offset			query		int		false	"search result offset"		minimum(0)	maximum(100000)
 //	@Param		all				query		bool	false	"show all"
 //	@Param		q				query		string	false	"search query"
-//	@Router		/api/v1/labels [get]
+//	@Router		/api/v1/labels  [get]
 func SearchLabels(router *gin.RouterGroup) {
 	router.GET("/labels", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionSearch)
@@ -61,7 +64,7 @@ func SearchLabels(router *gin.RouterGroup) {
 			return
 		}
 
-		// TODO c.Header("X-Count", strconv.Itoa(count))
+		AddCountHeader(c, len(result))
 		AddLimitHeader(c, frm.Count)
 		AddOffsetHeader(c, frm.Offset)
 		AddTokenHeaders(c, s)

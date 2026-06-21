@@ -85,6 +85,24 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 			)
 		}
 
+		// Extract the largest embedded JPEG preview with ExifTool as a fallback before
+		// RawTherapee. The camera-rendered preview always has correct colors, unlike a
+		// generic demosaic of a sensor the RAW decoder cannot identify (e.g. very recent
+		// Canon CR3 bodies, which otherwise come out magenta). It only wins when Darktable
+		// is unavailable or fails, so supported cameras keep their full RAW rendering.
+		// JpgFromRaw is the full-resolution image and PreviewImage the smaller fallback;
+		// listed largest-first so the convert loop prefers the bigger one.
+		if w.conf.ExifToolEnabled() {
+			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
+				exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-JpgFromRaw", f.FileName())),
+			)
+			result = append(result, NewConvertCmd(
+				// #nosec G204 -- arguments are built from validated config and file paths.
+				exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName())),
+			)
+		}
+
 		if w.conf.RawTherapeeEnabled() && w.rawTherapeeExclude.Allow(fileExt) {
 			jpegQuality := fmt.Sprintf("-j%d", w.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")

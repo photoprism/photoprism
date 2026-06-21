@@ -64,7 +64,10 @@ func GpsToLatLng(s string) (lat, lng float64) {
 	return latDeg.Decimal(), lngDeg.Decimal()
 }
 
-// GpsToDecimal returns the GPS latitude or longitude as decimal float point number.
+// GpsToDecimal returns the GPS latitude or longitude as a decimal
+// floating-point number. Accepted forms: pure decimal ("47.6754"),
+// 3-component DMS ("51 deg 15' 17.47\" N"), and 2-component
+// degrees+decimal-minutes ("52,30.4567N", as Adobe XMP commonly writes).
 func GpsToDecimal(s string) float64 {
 	// Empty?
 	if s == "" {
@@ -80,18 +83,34 @@ func GpsToDecimal(s string) float64 {
 	co := GpsCoordsRegexp.FindAllString(s, -1)
 	re := GpsRefRegexp.FindAllString(s, -1)
 
-	if len(co) != 3 || len(re) != 1 {
+	if len(re) != 1 {
 		return 0
 	}
 
-	latDeg := exif.GpsDegrees{
-		Orientation: re[0][0],
-		Degrees:     ParseFloat(co[0]),
-		Minutes:     ParseFloat(co[1]),
-		Seconds:     ParseFloat(co[2]),
+	switch len(co) {
+	case 2:
+		// Adobe XMP 2-component form: degrees, decimal-minutes, cardinal
+		// direction. Seconds are folded into the minutes value already.
+		deg := exif.GpsDegrees{
+			Orientation: re[0][0],
+			Degrees:     ParseFloat(co[0]),
+			Minutes:     ParseFloat(co[1]),
+			Seconds:     0,
+		}
+		return deg.Decimal()
+	case 3:
+		// ExifTool / EXIF 3-component DMS form: degrees, minutes,
+		// seconds, cardinal direction.
+		deg := exif.GpsDegrees{
+			Orientation: re[0][0],
+			Degrees:     ParseFloat(co[0]),
+			Minutes:     ParseFloat(co[1]),
+			Seconds:     ParseFloat(co[2]),
+		}
+		return deg.Decimal()
+	default:
+		return 0
 	}
-
-	return latDeg.Decimal()
 }
 
 // ParseFloat returns a single GPS coordinate value as floating point number (degree, minute or second).
@@ -113,7 +132,7 @@ func ParseFloat(s string) float64 {
 // NormalizeGPS normalizes the longitude and latitude of the GPS position to a generally valid range.
 func NormalizeGPS(lat, lng float64) (float64, float64) {
 	if lat < LatMax || lat > LatMax || lng < LngMax || lng > LngMax {
-		// Clip the latitude. Normalise the longitude.
+		// Clip the latitude. Normalize the longitude.
 		lat, lng = clipLat(lat), normalizeLng(lng)
 	}
 

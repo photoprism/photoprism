@@ -30,6 +30,9 @@ var (
 	ServiceKey = ""
 	// ServiceTimeout sets the maximum duration for service API requests.
 	ServiceTimeout = 10 * time.Minute
+	// MaxResponseBytes bounds how much of a service response is read so a
+	// malicious or compromised endpoint cannot exhaust memory.
+	MaxResponseBytes int64 = 32 * 1024 * 1024
 	// ServiceMethod defines the HTTP verb used when calling the vision service.
 	ServiceMethod = http.MethodPost
 	// ServiceFileScheme specifies how local files are encoded when sent to the service.

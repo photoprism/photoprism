@@ -4,6 +4,7 @@ package status
 const (
 	Failed              = "failed"
 	Denied              = "denied"
+	Disabled            = "disabled"
 	Granted             = "granted"
 	Added               = "added"
 	Updated             = "updated"

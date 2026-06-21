@@ -41,6 +41,19 @@ func oidcRedirectErrorMessage(code string) i18n.Message {
 	}
 }
 
+// oidcReconcileHint returns an operator-facing message explaining how to adopt a
+// pre-existing account into the OIDC identity it collided with at login. Linking
+// stays manual on purpose: auto-binding an OIDC subject onto an existing local or
+// 2FA account would be an account-takeover vector.
+func oidcReconcileHint(userName, provider, subject string) string {
+	if provider == "" {
+		provider = authn.ProviderDefault.String()
+	}
+
+	return fmt.Sprintf("account %s uses %s authentication and must be linked before it can sign in via oidc; adopt it with 'photoprism users mod %s --auth oidc --auth-id %s' or sign in locally",
+		clean.LogQuote(userName), clean.LogQuote(provider), userName, clean.Log(subject))
+}
+
 // OIDCRedirect completes the OIDC flow, creates a session, and renders a page that stores the token client-side.
 //
 //	@Summary	complete OIDC login (callback)
@@ -233,8 +246,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			case authn.ProviderOIDC.NotEqual(user.AuthProvider):
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAuthProviderIsNotOIDC.Error()})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
+				// Claimable collision: a non-OIDC account matched the login. Log the
+				// specific remedy so the denial is actionable instead of a bare
+				// "provider is not oidc"; the user-facing message stays generic to
+				// avoid disclosing the account exists.
+				hint := oidcReconcileHint(userName, user.AuthProvider, oidcUser.AuthID)
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAuthProviderIsNotOIDC.Error(), hint})
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error()+": "+hint)
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			case user.AuthID == "" || oidcUser.AuthID == "" || user.AuthID != oidcUser.AuthID:
@@ -449,6 +467,18 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		sess.SetAuthID(user.AuthID, provider.Issuer())
 		sess.SetUser(user)
 		sess.SetGrantType(authn.GrantAuthorizationCode)
+
+		// On Portal builds, persist the normalized login-time group set on the
+		// session so group-based instance access resolves at authorize time
+		// without a second IdP round-trip. Overage with no groups stores an
+		// empty set, so group-based grants deny rather than admit blindly.
+		// Instance/CE sessions don't store groups — they have no resolver and
+		// the session API must not become a group-membership side channel.
+		if conf.Portal() {
+			if merged := oidc.MergeGroups(groups); len(merged) > 0 {
+				sess.SetData(sess.GetData().SetGroups(merged))
+			}
+		}
 
 		// Ensure that the ID token fits into the existing
 		// database column; otherwise, truncate it.

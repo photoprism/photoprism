@@ -248,6 +248,41 @@
     opacity: 1;
 }
 
+/* Lightweight native icon buttons (B1: clickable controls are real buttons
+   for keyboard activation + focus ring + button role) used inside bespoke
+   chrome where Vuetify's <v-btn> box model would fight the compact layout. */
+.p-lightbox__container .meta-icon-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 0;
+    cursor: pointer;
+}
+
+.p-lightbox__container .meta-icon-btn:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 50%;
+}
+
+.p-lightbox__container .meta-icon-btn:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.p-lightbox__container > .p-lightbox__sidebar .meta-chip__remove:hover .v-icon {
+    opacity: 1;
+}
+
 /* Person row in sidebar */
 .p-lightbox__container > .p-lightbox__sidebar .metadata__person-row {
     min-height: 44px;
@@ -784,6 +819,11 @@
     padding-inline-end: 8px;
 }
 
+.p-lightbox__controls .video-btn:hover,
+.p-lightbox__controls .video-btn:focus-visible {
+    color: #ffffff;
+}
+
 .p-lightbox__controls .v-slider .v-slider-thumb {
     color: #ffffff;
 }
@@ -903,4 +943,15 @@
 
 .p-lightbox__container > .p-lightbox__content > .pswp--touch .pswp__button--arrow .pswp__icn {
     display: none;
+}
+
+/* On 360° sphere slides, swipe is captured for panning the sphere instead of switching
+   photos, so the navigation arrows must stay visible on touch devices — where PhotoSwipe
+   hides them with `visibility: hidden` because a swipe normally navigates. The
+   `pswp--sphere` marker is set on the PhotoSwipe root only while a 360° slide is active.
+   Only `visibility` is overridden (not `display`) so disabled arrows at the first/last
+   photo stay hidden via PhotoSwipe's `:disabled { display: none }` rule. */
+
+.pswp--touch.pswp--sphere .pswp__button--arrow {
+    visibility: visible;
 }

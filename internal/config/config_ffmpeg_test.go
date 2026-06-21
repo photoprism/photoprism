@@ -59,7 +59,7 @@ func TestConfig_FFmpegSize(t *testing.T) {
 	assert.Equal(t, 4096, c.FFmpegSize())
 
 	c.options.FFmpegSize = -1
-	assert.Equal(t, 7680, c.FFmpegSize())
+	assert.Equal(t, 15360, c.FFmpegSize())
 
 	c.options.FFmpegSize = 10
 	assert.Equal(t, 720, c.FFmpegSize())
@@ -75,6 +75,9 @@ func TestConfig_FFmpegSize(t *testing.T) {
 
 	c.options.FFmpegSize = 8640
 	assert.Equal(t, thumb.Sizes[thumb.Fit7680].Width, c.FFmpegSize())
+
+	c.options.FFmpegSize = 15360
+	assert.Equal(t, thumb.Sizes[thumb.Fit15360].Width, c.FFmpegSize())
 }
 
 func TestConfig_FFmpegQuality(t *testing.T) {
