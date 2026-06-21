@@ -36,6 +36,21 @@ func TestSearchPhotos(t *testing.T) {
 		result := PerformRequest(app, "GET", "/api/v1/photos?xxx=10")
 		assert.Equal(t, http.StatusBadRequest, result.Code)
 	})
+	t.Run("PrivateQualityQueryTo4", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		SearchPhotos(router)
+		r := PerformRequest(app, "GET", "/api/v1/photos?count=156&offset=0&merged=true&country=&camera=0&lens=0&label=&latlng=&year=0&month=0&color=&order=added&reverse=false&q=quality:4&public=&quality=3&private=true")
+		body := r.Body.String()
+
+		count := gjson.Get(body, "#")
+		assert.LessOrEqual(t, int64(1), count.Int())
+		assert.Equal(t, http.StatusOK, r.Code)
+		qualities := gjson.Get(body, "#.Quality")
+		assert.GreaterOrEqual(t, len(qualities.Array()), 1)
+		for _, quality := range qualities.Array() {
+			assert.GreaterOrEqual(t, quality.Int(), int64(4))
+		}
+	})
 }
 
 func TestSearchPhotosView(t *testing.T) {

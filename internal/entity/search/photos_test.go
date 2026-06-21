@@ -322,7 +322,8 @@ func TestPhotos(t *testing.T) {
 		assert.Equal(t, 0, privateCount, "Private photos returned")
 		assert.LessOrEqual(t, 3, publicCount, "No public photos returned")
 	})
-	t.Run("SearchForPublicAndPrivate", func(t *testing.T) {
+	t.Run("SearchForPublicAndPrivateNonReview", func(t *testing.T) {
+		// This test is to confirm that it is possible to retrieve all the non-review photos in a single request
 		var f form.SearchPhotos
 
 		f.Query = ""
@@ -330,6 +331,7 @@ func TestPhotos(t *testing.T) {
 		f.Offset = 0
 		f.Public = true
 		f.Private = true
+		f.Quality = 3
 
 		photos, _, err := Photos(f)
 
@@ -337,15 +339,53 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.LessOrEqual(t, 3, len(photos))
-		count := 0
+		privateCount, publicCount, qualityLessThan3 := 0, 0, 0
 		for _, photo := range photos {
 			if photo.PhotoPrivate {
-				count++
+				privateCount++
+			} else {
+				publicCount++
+			}
+			if photo.PhotoQuality < 3 {
+				qualityLessThan3++
 			}
 		}
-		assert.LessOrEqual(t, 1, count, "No private photos returned")
+		assert.LessOrEqual(t, 1, privateCount, "No private photos returned")
+		assert.LessOrEqual(t, 1, publicCount, "No public photos returned")
+		assert.Equal(t, 0, qualityLessThan3)
 	})
+	t.Run("SearchForPublicAndPrivateReview", func(t *testing.T) {
+		// This test is to confirm that it is possible to retrieve all the photos in a single request (review or otherwise)
+		var f form.SearchPhotos
 
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Public = true
+		f.Private = true
+		f.Quality = 0
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 3, len(photos))
+		privateCount, publicCount, qualityLessThan3 := 0, 0, 0
+		for _, photo := range photos {
+			if photo.PhotoPrivate {
+				privateCount++
+			} else {
+				publicCount++
+			}
+			if photo.PhotoQuality < 3 {
+				qualityLessThan3++
+			}
+		}
+		assert.LessOrEqual(t, 1, privateCount, "No private photos returned")
+		assert.LessOrEqual(t, 1, publicCount, "No public photos returned")
+		assert.LessOrEqual(t, 1, qualityLessThan3, "No review photos returned")
+	})
 	t.Run("SearchForReview", func(t *testing.T) {
 		var f form.SearchPhotos
 
@@ -383,7 +423,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("SearchForPrivateQuality", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = ""
+		f.Query = "quality:4"
 		f.Count = 5000
 		f.Offset = 0
 		f.Quality = 3
@@ -398,7 +438,7 @@ func TestPhotos(t *testing.T) {
 		privateCount := 0
 		publicCount := 0
 		for _, photo := range photos {
-			assert.LessOrEqual(t, 3, photo.PhotoQuality, "PhotoUID "+photo.PhotoUID)
+			assert.GreaterOrEqual(t, photo.PhotoQuality, 4, "PhotoUID "+photo.PhotoUID)
 			if photo.PhotoPrivate {
 				privateCount++
 			} else {
@@ -407,6 +447,85 @@ func TestPhotos(t *testing.T) {
 		}
 		assert.LessOrEqual(t, 1, privateCount, "No private photos returned")
 		assert.Equal(t, 0, publicCount, "Public photos returned")
+	})
+	t.Run("NonManagerPrivateQuality", func(t *testing.T) {
+		// Can not test this via API as there is no ACL that supports Private that is not Admin.
+		// This tests if a User who is not a Manager or Admin level role
+		// can request a list of private photos with a Quality score.
+		// This is not permitted, as it prevents non manager/admins from
+		// seeing their private non reviewed photos.
+		// See https://github.com/photoprism/photoprism/pull/5651#issuecomment-4705854230
+		var f form.SearchPhotos
+
+		f.Query = "quality:4"
+		f.Count = 5000
+		f.Offset = 0
+		f.Quality = 3 // pushed in from API via searchPhotosForm
+		f.Private = true
+		f.Public = false
+		f.NonManager = true // pushed in from API via searchPhotosForm
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+		privateCount := 0
+		publicCount := 0
+		qualityLessThan4 := 0
+		for _, photo := range photos {
+			if photo.PhotoQuality < 4 {
+				qualityLessThan4++
+			}
+			if photo.PhotoPrivate {
+				privateCount++
+			} else {
+				publicCount++
+			}
+		}
+		assert.GreaterOrEqual(t, qualityLessThan4, 1) // Make sure that the Quality is IGNORED
+		assert.LessOrEqual(t, 1, privateCount, "No private photos returned")
+		assert.Equal(t, 0, publicCount, "Public photos returned")
+	})
+	t.Run("NonManagerPublicQuality", func(t *testing.T) {
+		// Can not test this via API as there is no ACL that supports Private that is not Admin.
+		// This tests if a User who is not a Manager or Admin level role
+		// can request a list of public photos with a Quality score.
+		// This is permitted.
+		// See https://github.com/photoprism/photoprism/pull/5651#issuecomment-4705854230
+		var f form.SearchPhotos
+
+		f.Query = "quality:4" // Should override the Parameter
+		f.Count = 5000
+		f.Offset = 0
+		f.Quality = 3 // pushed in from API via searchPhotosForm
+		f.Private = false
+		f.Public = true
+		f.NonManager = true // pushed in from API via searchPhotosForm
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.LessOrEqual(t, 1, len(photos))
+		privateCount := 0
+		publicCount := 0
+		qualityLessThan4 := 0
+		for _, photo := range photos {
+			if photo.PhotoQuality < 4 {
+				qualityLessThan4++
+			}
+			if photo.PhotoPrivate {
+				privateCount++
+			} else {
+				publicCount++
+			}
+		}
+		assert.Equal(t, 0, qualityLessThan4) // Make sure that the Quality is NOT ignored
+		assert.Equal(t, 0, privateCount, "Private photos returned")
+		assert.LessOrEqual(t, 30, publicCount, "Public photos returned")
 	})
 	t.Run("SearchForFileError", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -2494,7 +2613,7 @@ func TestPhotos(t *testing.T) {
 			assert.NotEmpty(t, p.PhotoName)
 		}
 	})
-	t.Run("NamePhotoNum41", func(t *testing.T) {
+	t.Run("QueryNamePhotoNum41", func(t *testing.T) {
 		var f form.SearchPhotos
 
 		f.Query = "name:photo\\|41"
