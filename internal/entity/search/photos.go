@@ -486,7 +486,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 		if frm.Review {
 			s = s.Where("photos.photo_quality < 3")
-		} else if frm.Quality != 0 {
+		} else if frm.Quality != 0 && ((frm.NonManager && !frm.Private) || !frm.NonManager) {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
 	}

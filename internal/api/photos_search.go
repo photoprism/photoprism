@@ -39,11 +39,12 @@ func searchPhotosForm(c *gin.Context) (frm form.SearchPhotos, s *entity.Session,
 		frm.Public = false
 	}
 
-	// Ignore private flag if feature is disabled.
+	// Force Review off for non manager/admin users via Quality
 	if frm.Scope == "" &&
 		settings.Features.Review &&
 		acl.Rules.Deny(acl.ResourcePhotos, s.GetUserRole(), acl.ActionManage) {
 		frm.Quality = 3
+		frm.NonManager = true // Note that a non manager was encountered to enable restricted users to see all their Private including review level photos.
 	}
 
 	return frm, s, nil
