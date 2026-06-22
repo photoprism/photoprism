@@ -950,4 +950,290 @@ describe("PMetaFaceMarkers", () => {
       expect(wrapper.vm.removingMarker).toBeNull();
     });
   });
+
+  // The hover and pointer-down hit-tests reuse the `markerRects` computed
+  // instead of recomputing every marker's pixel rect per pointer event.
+  describe("performance — precomputed marker hit-testing", () => {
+    const unnamed = { UID: "u1", Name: "", X: 0.2, Y: 0.2, W: 0.2, H: 0.2 };
+    const named = { UID: "n1", Name: "Jane", SubjUID: "subj1", X: 0.6, Y: 0.6, W: 0.2, H: 0.2 };
+
+    it("markerRects precomputes pixel rects for unnamed markers only", () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed, named] });
+      const rects = wrapper.vm.markerRects;
+      expect(rects).toHaveLength(1);
+      expect(rects[0].marker.UID).toBe("u1");
+      expect(rects[0]).toMatchObject({
+        x: unnamed.X * IMAGE_RECT.width,
+        y: unnamed.Y * IMAGE_RECT.height,
+        w: unnamed.W * IMAGE_RECT.width,
+        h: unnamed.H * IMAGE_RECT.height,
+      });
+    });
+
+    it("findMarkerAt returns the unnamed marker inside its rect and null elsewhere", () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed, named] });
+      const inside = {
+        x: (unnamed.X + unnamed.W / 2) * IMAGE_RECT.width,
+        y: (unnamed.Y + unnamed.H / 2) * IMAGE_RECT.height,
+      };
+      expect(wrapper.vm.findMarkerAt(inside)?.UID).toBe("u1");
+      // Named markers are skipped — they are not removable via the overlay.
+      const namedCentre = {
+        x: (named.X + named.W / 2) * IMAGE_RECT.width,
+        y: (named.Y + named.H / 2) * IMAGE_RECT.height,
+      };
+      expect(wrapper.vm.findMarkerAt(namedCentre)).toBeNull();
+      expect(wrapper.vm.findMarkerAt({ x: IMAGE_RECT.width - 1, y: IMAGE_RECT.height - 1 })).toBeNull();
+    });
+
+    it("markerRects is empty and findMarkerAt null when bounds are unavailable", () => {
+      const { wrapper } = mountOverlay({ mode: FaceMarkerEdit, markers: [unnamed] });
+      wrapper.vm.bounds = null;
+      expect(wrapper.vm.markerRects).toEqual([]);
+      expect(wrapper.vm.findMarkerAt({ x: 10, y: 10 })).toBeNull();
+    });
+  });
+
+  // Pointer-move draft/pending writes are coalesced through requestAnimationFrame
+  // so multiple moves per frame collapse into a single SVG re-render; pointer up
+  // flushes synchronously so the committed rect reflects the final position.
+  describe("performance — drag coalescing through requestAnimationFrame", () => {
+    function stubDeferredRaf() {
+      const frames = [];
+      vi.stubGlobal("requestAnimationFrame", (cb) => {
+        frames.push(cb);
+        return frames.length;
+      });
+      vi.stubGlobal("cancelAnimationFrame", (id) => {
+        if (id >= 1 && id <= frames.length) {
+          frames[id - 1] = null;
+        }
+      });
+      return frames;
+    }
+    function startDraw(wrapper, pointerId) {
+      wrapper.vm.onPointerDown({
+        button: 0,
+        pointerId,
+        clientX: 150,
+        clientY: 100,
+        stopPropagation: () => {},
+        preventDefault: () => {},
+      });
+    }
+
+    it("defers draft writes to the next frame, applying only the latest queued rect", () => {
+      const frames = stubDeferredRaf();
+      const { wrapper } = mountOverlay();
+      startDraw(wrapper, 1);
+      // pointerdown seeds a zero-size draft synchronously.
+      expect(wrapper.vm.draft).toMatchObject({ x: 50, y: 50, w: 0, h: 0 });
+      // Two moves in the same frame both queue without touching reactive draft.
+      wrapper.vm.onPointerMove({ pointerId: 1, clientX: 280, clientY: 180 });
+      wrapper.vm.onPointerMove({ pointerId: 1, clientX: 250, clientY: 150 });
+      expect(wrapper.vm.draft).toMatchObject({ w: 0, h: 0 });
+      // Running the scheduled frames applies only the latest queued rect.
+      frames.forEach((cb) => cb && cb());
+      expect(wrapper.vm.draft).toMatchObject({ x: 50, y: 50, w: 100, h: 100 });
+    });
+
+    it("flushes the queued rect on pointer up and promotes it to pending", () => {
+      stubDeferredRaf();
+      const { wrapper } = mountOverlay();
+      startDraw(wrapper, 2);
+      wrapper.vm.onPointerMove({ pointerId: 2, clientX: 280, clientY: 180 });
+      // Still the seeded draft — the move is queued, not yet applied.
+      expect(wrapper.vm.draft).toMatchObject({ w: 0, h: 0 });
+      wrapper.vm.onPointerUp({ pointerId: 2 });
+      expect(wrapper.vm.draft).toBeNull();
+      expect(wrapper.vm.pending).toMatchObject({ x: 50, y: 50, w: 130, h: 130 });
+    });
+
+    it("escape during draw cancels the queued frame so the draft stays cleared", () => {
+      const frames = stubDeferredRaf();
+      const { wrapper } = mountOverlay();
+      startDraw(wrapper, 3);
+      wrapper.vm.onPointerMove({ pointerId: 3, clientX: 280, clientY: 180 });
+      expect(wrapper.vm.handleEscape()).toBe(true);
+      expect(wrapper.vm.draft).toBeNull();
+      // A leftover frame must not resurrect the cancelled draft.
+      frames.forEach((cb) => cb && cb());
+      expect(wrapper.vm.draft).toBeNull();
+    });
+  });
+
+  // The overlay-root rect is cached across pinch-zoom frames (where only the
+  // image transform changes) and re-read on layout-changing events.
+  describe("performance — overlay-root rect caching", () => {
+    it("reads the root rect once, reuses it, and re-reads after invalidation", () => {
+      const { wrapper } = mountOverlay();
+      const spy = vi.fn(() => ROOT_RECT);
+      wrapper.vm.$refs.root.getBoundingClientRect = spy;
+      // Prime the cache with a single read.
+      wrapper.vm._parentRectFresh = false;
+      wrapper.vm.updateBounds();
+      expect(spy).toHaveBeenCalledTimes(1);
+      // Further recomputes reuse the cache — no extra layout reads.
+      wrapper.vm.updateBounds();
+      wrapper.vm.updateBounds();
+      expect(spy).toHaveBeenCalledTimes(1);
+      // Invalidation forces one fresh read.
+      wrapper.vm._parentRectFresh = false;
+      wrapper.vm.updateBounds();
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it("zoomPanUpdate keeps the cache; resize/change invalidate it", () => {
+      const { wrapper, pswp } = mountOverlay();
+      wrapper.vm._parentRectFresh = true;
+      pswp._listeners.zoomPanUpdate();
+      expect(wrapper.vm._parentRectFresh).toBe(true);
+      pswp._listeners.resize();
+      expect(wrapper.vm._parentRectFresh).toBe(false);
+    });
+  });
+
+  // A brand-new unsaved marker has no UID/CropID (both default to ""), so the
+  // key must come from the rect geometry to stay stable and unique.
+  describe("correctness — stable marker keys", () => {
+    it("markerKey uses the marker UID when present", () => {
+      const { wrapper } = mountOverlay();
+      expect(wrapper.vm.markerKey({ UID: "mabc", X: 0.1, Y: 0.1, W: 0.1, H: 0.1 })).toBe("mabc");
+    });
+
+    it("markerKey derives a stable, non-empty geometry key for UID-less markers", () => {
+      const { wrapper } = mountOverlay();
+      const m = { UID: "", CropID: "", X: 0.2, Y: 0.3, W: 0.1, H: 0.1 };
+      const k1 = wrapper.vm.markerKey(m);
+      // A different object with the same geometry yields the same key (getMarkers
+      // returns fresh instances each render, so the key can't rely on identity).
+      const k2 = wrapper.vm.markerKey({ ...m });
+      expect(k1).toBe(k2);
+      expect(k1).not.toBe("");
+      expect(k1).not.toBeUndefined();
+    });
+
+    it("markerKey gives distinct keys to distinct UID-less markers", () => {
+      const { wrapper } = mountOverlay();
+      const a = wrapper.vm.markerKey({ UID: "", X: 0.1, Y: 0.1, W: 0.1, H: 0.1 });
+      const b = wrapper.vm.markerKey({ UID: "", X: 0.5, Y: 0.5, W: 0.1, H: 0.1 });
+      expect(a).not.toBe(b);
+    });
+
+    it("renders distinct rows for two UID-less markers (no key collapse)", async () => {
+      const markers = [
+        { UID: "", Name: "", X: 0.1, Y: 0.1, W: 0.1, H: 0.1 },
+        { UID: "", Name: "", X: 0.5, Y: 0.5, W: 0.1, H: 0.1 },
+      ];
+      const { wrapper } = mountOverlay({ markers });
+      await nextTick();
+      await flushPromises();
+      const rects = wrapper.element.querySelectorAll("rect.p-meta-face-markers__rect");
+      expect(rects.length).toBe(2);
+    });
+  });
+
+  // The parent's `busy` lock propagates asynchronously, so a synchronous in-flight
+  // guard keeps confirm idempotent across rapid double-clicks / ✓ + Enter.
+  describe("correctness — idempotent confirm", () => {
+    it("emits create at most once on a rapid double confirm", () => {
+      const onCreate = vi.fn();
+      const { wrapper } = mountOverlay({}, { onCreate });
+      wrapper.vm.pending = { x: 50, y: 50, w: 130, h: 130 };
+      wrapper.vm.onConfirmPending();
+      // Second confirm fires before the parent's busy prop propagates back.
+      wrapper.vm.onConfirmPending();
+      expect(onCreate).toHaveBeenCalledTimes(1);
+    });
+
+    it("re-enables confirm after the busy cycle settles (failed-save retry)", async () => {
+      const onCreate = vi.fn();
+      const { wrapper } = mountOverlay({}, { onCreate });
+      wrapper.vm.pending = { x: 50, y: 50, w: 130, h: 130 };
+      wrapper.vm.onConfirmPending();
+      expect(onCreate).toHaveBeenCalledTimes(1);
+      // Parent toggles busy true→false (e.g. save failed, rect kept for retry).
+      await wrapper.setProps({ busy: true });
+      await wrapper.setProps({ busy: false });
+      wrapper.vm.onConfirmPending();
+      expect(onCreate).toHaveBeenCalledTimes(2);
+    });
+
+    it("allows confirming a new pending after cancel without a busy cycle", () => {
+      const onCreate = vi.fn();
+      const { wrapper } = mountOverlay({}, { onCreate });
+      wrapper.vm.pending = { x: 50, y: 50, w: 130, h: 130 };
+      wrapper.vm.onConfirmPending();
+      expect(onCreate).toHaveBeenCalledTimes(1);
+      wrapper.vm.onCancelPending();
+      wrapper.vm.pending = { x: 20, y: 20, w: 60, h: 60 };
+      wrapper.vm.onConfirmPending();
+      expect(onCreate).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  // A cached image is already complete when the overlay attaches its load
+  // listener, so that listener never fires; bounds must initialize anyway.
+  describe("correctness — cached-image bounds", () => {
+    it("initializes bounds for an already-complete image without a load event", () => {
+      const { wrapper, pswp } = mountOverlay();
+      Object.defineProperty(pswp.img, "complete", { value: true, configurable: true });
+      Object.defineProperty(pswp.img, "naturalWidth", { value: 480, configurable: true });
+      Object.defineProperty(pswp.img, "naturalHeight", { value: 360, configurable: true });
+      // Force a re-attach and clear state (mount already attached once). The
+      // synchronous rAF stub leaves rafHandle truthy, which would dedup the
+      // scheduled update — reset it so updateBounds actually runs.
+      wrapper.vm._loadListenedImg = null;
+      wrapper.vm.rafHandle = null;
+      wrapper.vm.bounds = null;
+      wrapper.vm.attachImageLoadListener();
+      // No load event was dispatched, yet bounds were recomputed.
+      expect(wrapper.vm.bounds).not.toBeNull();
+    });
+  });
+
+  // Corner handles use a larger grab radius on coarse pointers so they are
+  // easier to grab on touch, while the mouse radius is unchanged.
+  describe("ux — touch-friendly resize handles", () => {
+    it("uses a larger corner hit radius for coarse (touch/pen) pointers", () => {
+      const { wrapper } = mountOverlay();
+      expect(wrapper.vm.handleHitRadius({ pointerType: "mouse" })).toBe(14);
+      expect(wrapper.vm.handleHitRadius({ pointerType: "touch" })).toBe(22);
+      expect(wrapper.vm.handleHitRadius({ pointerType: "pen" })).toBe(22);
+      expect(wrapper.vm.handleHitRadius(undefined)).toBe(14);
+    });
+
+    it("grabs a corner on touch from just outside the mouse hit radius", () => {
+      const { wrapper } = mountOverlay();
+      wrapper.vm.pending = { x: 100, y: 100, w: 100, h: 100 };
+      // br corner is local (200, 200); click 18 px below → local (200, 218) →
+      // client (300, 268). 18 px is outside 14 (mouse) but inside 22 (touch).
+      wrapper.vm.onPointerDown({
+        button: 0,
+        pointerId: 7,
+        pointerType: "touch",
+        clientX: 300,
+        clientY: 268,
+        stopPropagation: () => {},
+        preventDefault: () => {},
+      });
+      expect(wrapper.vm.interaction).toBe("resize");
+      expect(wrapper.vm.resizeCorner).toBe("br");
+    });
+
+    it("does not grab the corner on mouse from outside the 14 px radius", () => {
+      const { wrapper } = mountOverlay();
+      wrapper.vm.pending = { x: 100, y: 100, w: 100, h: 100 };
+      wrapper.vm.onPointerDown({
+        button: 0,
+        pointerId: 8,
+        pointerType: "mouse",
+        clientX: 300,
+        clientY: 268,
+        stopPropagation: () => {},
+        preventDefault: () => {},
+      });
+      expect(wrapper.vm.interaction).not.toBe("resize");
+    });
+  });
 });
