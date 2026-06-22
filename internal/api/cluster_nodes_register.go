@@ -11,7 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
@@ -21,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -249,6 +252,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				node.Theme = nodeTheme
 			}
 
+			applyRequestGroupConfig(node, &req)
+
 			if requestedUUID != "" {
 				oldUUID := node.UUID
 				if oldUUID != requestedUUID {
@@ -331,6 +336,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				Node:               reg.BuildClusterNode(*node, reg.NodeOptsForSession(nil)),
 				Secrets:            respSecret,
 				JWKSUrl:            buildJWKSURL(conf),
+				PortalLoginUrl:     buildPortalLoginURL(conf),
 				AlreadyRegistered:  true,
 				AlreadyProvisioned: node.Database != nil && node.Database.Name != "",
 			}
@@ -399,6 +405,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			n.DisplayName = dn
 		}
 
+		applyRequestGroupConfig(n, &req)
+
 		// Generate node secret (must satisfy client secret format for entity.Client).
 		n.ClientSecret = rnd.ClientSecret()
 		n.RotatedAt = nowRFC3339()
@@ -434,6 +442,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			Node:               reg.BuildClusterNode(*n, reg.NodeOptsForSession(nil)),
 			Secrets:            &cluster.RegisterSecrets{ClientSecret: n.ClientSecret, RotatedAt: n.RotatedAt},
 			JWKSUrl:            buildJWKSURL(conf),
+			PortalLoginUrl:     buildPortalLoginURL(conf),
 			AlreadyRegistered:  false,
 			AlreadyProvisioned: shouldProvisionDB,
 		}
@@ -550,6 +559,86 @@ func validateSiteURL(u string) bool {
 	}
 
 	return false
+}
+
+// applyRequestGroupConfig copies the instance-declared group admission config
+// from the registration request onto the node, normalizing identifiers and
+// dropping non-federatable roles. GroupsSrc is set to ClientGroupsSrcNode so
+// the registry applies admin-override-wins source precedence, and an instance
+// that declares nothing clears only values it previously declared.
+func applyRequestGroupConfig(n *reg.Node, req *cluster.RegisterRequest) {
+	n.AllowGroups = oidc.MergeGroups(req.AllowGroups)
+	n.AllowGroupRoles = sanitizeAllowGroupRoles(req.AllowGroupRoles)
+
+	if req.GroupsFullView {
+		v := true
+		n.GroupsFullView = &v
+	} else {
+		n.GroupsFullView = nil
+	}
+
+	n.GroupsSrc = entity.ClientGroupsSrcNode
+}
+
+// sanitizeAllowGroupRoles normalizes an instance-declared group → role mapping,
+// dropping malformed keys and non-instance roles instead of failing the
+// registration — declarative env config must not turn a typo into a boot loop.
+func sanitizeAllowGroupRoles(in map[string]string) map[string]string {
+	if len(in) == 0 {
+		return nil
+	}
+
+	out := make(map[string]string, len(in))
+
+	for group, roleName := range in {
+		g := oidc.NormalizeGroupID(group)
+
+		if g == "" {
+			continue
+		}
+
+		role, ok := acl.ClusterInstanceRole(roleName)
+
+		if !ok {
+			continue
+		}
+
+		out[g] = role.String()
+	}
+
+	if len(out) == 0 {
+		return nil
+	}
+
+	return out
+}
+
+// buildPortalLoginURL returns the Portal's browser-facing login page URL
+// (SiteUrl origin + login route) reported to nodes at registration, so an
+// instance can land cluster sign-outs on the Portal login without pinning a
+// return_to. A custom absolute LoginUri is returned as-is.
+func buildPortalLoginURL(conf *config.Config) string {
+	if conf == nil {
+		return ""
+	}
+
+	path := conf.LoginUri()
+
+	if strings.Contains(path, "://") {
+		return path
+	}
+
+	origin := scheme.OriginURL(conf.SiteUrl())
+
+	if origin == "" {
+		return ""
+	}
+
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+
+	return strings.TrimRight(origin, "/") + path
 }
 
 // normalizeRedirectURIs validates each entry and returns a deduplicated slice.

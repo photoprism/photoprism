@@ -22,6 +22,7 @@ var thumbFileNames = []string{
 	"%s_4096x4096_fit.jpg",
 	"%s_5120x5120_fit.jpg",
 	"%s_7680x4320_fit.jpg",
+	"%s_15360x8640_fit.jpg",
 }
 
 // Suitable thumb file sizes.
@@ -33,6 +34,7 @@ var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit4096],
 	thumb.Sizes[thumb.Fit5120],
 	thumb.Sizes[thumb.Fit7680],
+	thumb.Sizes[thumb.Fit15360],
 }
 
 // ImageFromThumb returns a cropped area from an existing thumbnail image.

@@ -2250,18 +2250,17 @@ describe("model/photo", () => {
         expect(Photo._cache.has("uid-ws-res")).toBe(false);
       });
 
-      // event.EntitiesEdited("photos", savedUIDs) in
+      // event.EntitiesUpdated("photos", savedUIDs) in
       // internal/api/batch_photos_edit.go — one event per batch save,
       // payload is the full UID list (always []string, not entity
-      // objects). This is the lightweight signal that closes the
-      // stale-cache bug after batch edits where PublishPhotoEvent
-      // would have emitted N heavy payloads.
-      it("evicts every cached entry when photos.edited arrives with the batch UID list", async () => {
+      // objects), so the cache stays fresh after batch edits without
+      // per-UID events.
+      it("evicts every cached entry when photos.updated arrives with the batch UID list", async () => {
         seedCache("uid-edited-1", { Title: "Stale 1" });
         seedCache("uid-edited-2", { Title: "Stale 2" });
         seedCache("uid-edited-keep", { Title: "Untouched" });
 
-        $event.publish("photos.edited", {
+        $event.publish("photos.updated", {
           entities: ["uid-edited-1", "uid-edited-2"],
         });
         await flushEvents();
@@ -2328,7 +2327,7 @@ describe("model/photo", () => {
 
         // Each subscribed channel runs the same guard, so malformed
         // payloads on any of them must leave the cache untouched.
-        ["photos.updated", "photos.deleted", "photos.archived", "photos.restored", "photos.edited"].forEach((ev) => {
+        ["photos.created", "photos.updated", "photos.deleted", "photos.archived", "photos.restored"].forEach((ev) => {
           $event.publish(ev, null);
           $event.publish(ev, {});
           $event.publish(ev, { entities: "not-an-array" });

@@ -6,8 +6,19 @@ import Toolbar from "../page-model/toolbar";
 import ContextMenu from "../page-model/context-menu";
 import Album from "../page-model/album";
 import Originals from "../page-model/originals";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test files`.page`${testcafeconfig.url}`;
+fixture`Test files`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const photo = new Photo();

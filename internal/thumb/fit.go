@@ -5,6 +5,7 @@ import "image"
 // FitSizes contains "fit" cropped thumbnail sizes from largest to smallest.
 // Best for the viewer as proportional resizing maintains the aspect ratio.
 var FitSizes = SizeList{
+	Sizes[Fit15360],
 	Sizes[Fit7680],
 	Sizes[Fit5120],
 	Sizes[Fit4096],

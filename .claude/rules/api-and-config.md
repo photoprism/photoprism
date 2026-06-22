@@ -38,5 +38,5 @@ When renaming or adding fields:
 
 - Map roles via the shared tables: users through `acl.ParseRole(s)` / `acl.UserRoles[...]`, clients through `acl.ClientRoles[...]`.
 - Treat `RoleAliasNone` ("none") and an empty string as `RoleNone`; default unknown client roles to `RoleClient`.
-- Build CLI role help from `Roles.CliUsageString()` (e.g. `acl.ClientRoles.CliUsageString()`) — never hand-maintain role lists.
+- Build CLI role help from the registered role map (never hand-maintained literals) so each edition lists exactly the roles it accepts: `commands.UserRoleUsageFor(<map>)` / `Roles.CliUsageString()`, passing CE `acl.UserRoles` or an edition's own static `auth.UserRoles` (reference the edition map directly, not the runtime-reassigned `acl.UserRoles`, to avoid the init-order trap; Portal's map includes `cluster_admin`). For federatable / cluster-instance contexts (LDAP, OIDC group→role, cluster grants) use `acl.ClusterInstanceRolesCliUsageString()` — it excludes `cluster_admin`/`visitor`. `pkg/txt.JoinOr` renders the "a, b, or c" style.
 - For JWT/client scope checks, use the shared helpers (`acl.ScopePermits` / `acl.ScopeAttrPermits`).

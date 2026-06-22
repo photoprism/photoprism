@@ -1,6 +1,5 @@
 import { Selector, t } from "testcafe";
-
-const showLogs = process.env.SHOW_LOGS == "true";
+import { getTopElement, logTime, logTimeEnd } from "./helpers";
 
 export default class Page {
   constructor() {
@@ -12,7 +11,6 @@ export default class Page {
   }
 
   async openNav() {
-    showLogs && console.time("openNav");
     if (await this.navActive.visible) { // Make sure that the nav has been rendered
       if (await this.navInRail.exists) { // fail fast looking for a minimized nav
         if (await this.expandButton.exists) {
@@ -22,7 +20,6 @@ export default class Page {
         }
       }
     }
-    showLogs && console.timeEnd("openNav");
   }
 
   async openPage(page) {

@@ -180,6 +180,9 @@ func TestLikePhoto(t *testing.T) {
 
 		// A guest session that has redeemed a share to an album containing a non-private picture
 		// reaches the redaction branch: the picture is returned, but identifying metadata is stripped.
+		// Photo "ps6sg6be2lvl0y21" is shared via album "as6sg6bxpogaaba8" (token "1jxf3jfn2k") and is
+		// not touched by any mutation test, so a combined "-run" filter that archives/privatizes a
+		// shared picture before this subtest cannot push it out of scope and flip the result to 404.
 		sess := entity.NewSession(conf.SessionMaxAge(), 0)
 		sess.SetUser(entity.FindUserByName("guest"))
 		sess.RedeemToken("1jxf3jfn2k")
@@ -188,11 +191,13 @@ func TestLikePhoto(t *testing.T) {
 		}
 
 		LikePhoto(router)
-		r := AuthenticatedRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/like", sess.AuthToken())
+		r := AuthenticatedRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0y21/like", sess.AuthToken())
 		assert.Equal(t, http.StatusOK, r.Code)
-		assert.Equal(t, "ps6sg6be2lvl0yh7", gjson.Get(r.Body.String(), "photo.UID").String())
+		assert.Equal(t, "ps6sg6be2lvl0y21", gjson.Get(r.Body.String(), "photo.UID").String())
+		// A non-redacted field stays present (the genuine record is returned), while the identifying
+		// storage path is stripped — the fixture sets PhotoPath, so the empty result proves redaction.
+		assert.Equal(t, "Title", gjson.Get(r.Body.String(), "photo.Title").String())
 		assert.Empty(t, gjson.Get(r.Body.String(), "photo.Path").String())
-		assert.Empty(t, gjson.Get(r.Body.String(), "photo.OriginalName").String())
 	})
 }
 

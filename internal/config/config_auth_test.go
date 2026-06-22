@@ -118,8 +118,8 @@ func TestConfig_RegisterUri(t *testing.T) {
 func TestConfig_LoginUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "/library/login", c.LoginUri())
-	c.options.FrontendUri = "/portal/admin/"
-	assert.Equal(t, "/portal/admin/login", c.LoginUri())
+	c.options.FrontendUri = "/portal/"
+	assert.Equal(t, "/portal/login", c.LoginUri())
 }
 
 func TestConfig_LoginInfo(t *testing.T) {

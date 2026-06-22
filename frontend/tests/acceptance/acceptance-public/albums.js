@@ -10,8 +10,19 @@ import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
 import PhotoEdit from "../page-model/photo-edit";
 import Notifies from "../page-model/notifications";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach, logTime, logTimeEnd } from "../page-model/helpers";
 
-fixture`Test albums`.page`${testcafeconfig.url}`;
+fixture`Test albums`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const album = new Album();
@@ -52,9 +63,11 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })("Commo
 
   await t
     .click(photoedit.infoTab)
-    .expect(Selector("td").withText("Albums").visible)
+    .expect(Selector("td").withText("Favorite").visible) // make sure the UI is there
+    .ok()
+    .expect(Selector("td").withText("Albums").exists)
     .notOk()
-    .expect(Selector("td").withText("NotYetExistingAlbum").visible)
+    .expect(Selector("td").withText("NotYetExistingAlbum").exists)
     .notOk()
     .click(photoedit.dialogClose);
 
@@ -93,9 +106,11 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })("Commo
 
   await t
     .click(photoedit.infoTab)
-    .expect(Selector("td").withText("Albums").visible)
+    .expect(Selector("td").withText("Favorite").visible) // make sure the UI is there
+    .ok()
+    .expect(Selector("td").withText("Albums").exists)
     .notOk()
-    .expect(Selector("td").withText("NotYetExistingAlbum").visible)
+    .expect(Selector("td").withText("NotYetExistingAlbum").exists)
     .notOk()
     .click(photoedit.dialogClose);
 });
@@ -157,16 +172,20 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })("Commo
 
   // Verify photos are not in any albums initially
   await page.clickCardTitleOfUID(FirstPhotoUid);
+  logTime('infoTab');
   await t
     .click(photoedit.infoTab)
-    .expect(Selector("td").withText("Albums").visible)
+    .expect(Selector("td").withText("Favorite").visible) // make sure the UI is there
+    .ok()
+    .expect(Selector("td").withText("Albums").exists) // visible.notOk takes 5 seconds 
     .notOk()
-    .expect(Selector("td").withText("Holiday").visible)
+    .expect(Selector("td").withText("Holiday").exists) // visible.notOk takes 5 seconds
     .notOk()
-    .expect(Selector("td").withText("Christmas").visible)
+    .expect(Selector("td").withText("Christmas").exists) // visible.notOk takes 5 seconds
     .notOk()
     .click(photoedit.dialogClose);
 
+  logTimeEnd('infoTab');
   // Select both photos and add to multiple albums simultaneously
   await photo.selectPhotoFromUID(SecondPhotoUid);
   await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
@@ -223,9 +242,9 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })("Commo
   await page.clickCardTitleOfUID(FirstPhotoUid);
   await t
     .click(photoedit.infoTab)
-    .expect(Selector("td").withText("Albums").visible)
+    .expect(Selector("td").withText("Albums").visible)  // We now know the UI is there
     .ok()
-    .expect(Selector("td").withText("Holiday").visible)
+    .expect(Selector("td").withText("Holiday").exists)  // visible.notOk takes 5 seconds
     .notOk()
     .expect(Selector("td").withText("Christmas").visible)
     .ok()
@@ -253,13 +272,15 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })("Commo
   await page.clickCardTitleOfUID(FirstPhotoUid);
   await t
     .click(photoedit.infoTab)
-    .expect(Selector("td").withText("Albums").visible)
+    .expect(Selector("td").withText("Favorite").visible) // make sure the UI is there
+    .ok()
+    .expect(Selector("td").withText("Albums").exists)// visible.notOk takes 5 seconds
     .notOk()
-    .expect(Selector("td").withText("Food").visible)
+    .expect(Selector("td").withText("Food").exists) // visible.notOk takes 5 seconds
     .notOk()
-    .expect(Selector("td").withText("Holiday").visible)
+    .expect(Selector("td").withText("Holiday").exists) // visible.notOk takes 5 seconds
     .notOk()
-    .expect(Selector("td").withText("Christmas").visible)
+    .expect(Selector("td").withText("Christmas").exists) // visible.notOk takes 5 seconds
     .notOk()
     .click(photoedit.dialogClose);
 });

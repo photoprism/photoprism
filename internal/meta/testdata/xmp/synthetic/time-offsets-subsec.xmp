@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
+    xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/">
+   <photoshop:DateCreated>2026-05-06T15:42:18.123456</photoshop:DateCreated>
+   <exif:DateTimeOriginal>2026-05-06T15:42:18</exif:DateTimeOriginal>
+   <xmp:CreateDate>2026-05-06T15:42:18</xmp:CreateDate>
+   <exif:SubSecTimeOriginal>123456</exif:SubSecTimeOriginal>
+   <exif:OffsetTimeOriginal>+02:00</exif:OffsetTimeOriginal>
+   <exif:OffsetTime>+02:00</exif:OffsetTime>
+   <exif:OffsetTimeDigitized>+02:00</exif:OffsetTimeDigitized>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

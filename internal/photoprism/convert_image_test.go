@@ -283,6 +283,57 @@ func TestConvert_JpegConvertCmds(t *testing.T) {
 	assert.True(t, found)
 }
 
+// TestConvert_JpegConvertCmds_RawEmbeddedPreview verifies that RAW inputs emit
+// ExifTool embedded-preview extraction commands (largest-first) ordered after
+// Darktable and before RawTherapee, so an unsupported camera falls back to the
+// camera-rendered JPEG instead of a wrong-color demosaic.
+func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+	}
+
+	convert := NewConvert(cnf)
+	rawFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng")
+	jpegFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng.jpg")
+
+	mediaFile, err := NewMediaFile(rawFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmds, _, err := convert.JpegConvertCmds(mediaFile, jpegFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, cmds)
+
+	// Record the first occurrence of each command; DNG inputs additionally emit a
+	// trailing -PreviewImage extraction, which is not the priority position.
+	jpgFromRaw, previewImage, rawTherapee := -1, -1, -1
+	for i, cmd := range cmds {
+		s := cmd.String()
+		switch {
+		case jpgFromRaw < 0 && strings.Contains(s, "-JpgFromRaw"):
+			jpgFromRaw = i
+		case previewImage < 0 && strings.Contains(s, "-PreviewImage"):
+			previewImage = i
+		case rawTherapee < 0 && strings.Contains(s, filepath.Base(cnf.RawTherapeeBin())):
+			rawTherapee = i
+		}
+	}
+
+	assert.GreaterOrEqual(t, jpgFromRaw, 0, "expected a -JpgFromRaw extraction command")
+	assert.GreaterOrEqual(t, previewImage, 0, "expected a -PreviewImage extraction command")
+	assert.Less(t, jpgFromRaw, previewImage, "JpgFromRaw must be tried before PreviewImage")
+	if cnf.RawTherapeeEnabled() {
+		assert.GreaterOrEqual(t, rawTherapee, 0, "expected a RawTherapee command")
+		assert.Less(t, previewImage, rawTherapee, "embedded preview must be tried before RawTherapee")
+	}
+}
+
 // TestConvert_JpegConvertCmds_HeifFallback verifies that the documented external
 // fallback command is emitted for HEIC and AVIF inputs when libheif tooling
 // (heif-dec / heif-convert) is available — see issue #5509.

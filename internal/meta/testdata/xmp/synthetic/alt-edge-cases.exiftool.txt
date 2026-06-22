@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+
+<rdf:Description rdf:about='internal/meta/testdata/xmp/synthetic/alt-edge-cases.xmp'
+  xmlns:et='http://ns.exiftool.org/1.0/' et:toolkit='Image::ExifTool 13.25'
+  xmlns:ExifTool='http://ns.exiftool.org/ExifTool/1.0/'
+  xmlns:System='http://ns.exiftool.org/File/System/1.0/'
+  xmlns:File='http://ns.exiftool.org/File/1.0/'
+  xmlns:XMP-x='http://ns.exiftool.org/XMP/XMP-x/1.0/'
+  xmlns:XMP-dc='http://ns.exiftool.org/XMP/XMP-dc/1.0/'
+  xmlns:XMP-photoshop='http://ns.exiftool.org/XMP/XMP-photoshop/1.0/'>
+ <ExifTool:ExifToolVersion>13.25</ExifTool:ExifToolVersion>
+ <System:FileName>alt-edge-cases.xmp</System:FileName>
+ <System:Directory>internal/meta/testdata/xmp/synthetic</System:Directory>
+ <System:FileSize>991 bytes</System:FileSize>
+ <System:FileModifyDate>2026:05:06 07:32:31+00:00</System:FileModifyDate>
+ <System:FileAccessDate>2026:05:06 07:32:31+00:00</System:FileAccessDate>
+ <System:FileInodeChangeDate>2026:05:06 07:32:31+00:00</System:FileInodeChangeDate>
+ <System:FilePermissions>-rw-r--r--</System:FilePermissions>
+ <File:FileType>XMP</File:FileType>
+ <File:FileTypeExtension>xmp</File:FileTypeExtension>
+ <File:MIMEType>application/rdf+xml</File:MIMEType>
+ <XMP-x:XMPToolkit>PhotoPrism Synthetic Fixture</XMP-x:XMPToolkit>
+ <XMP-dc:Title-de>Sonnenuntergang</XMP-dc:Title-de>
+ <XMP-dc:Title-en>Sunset</XMP-dc:Title-en>
+ <XMP-dc:Description>No xml:lang attribute on this li</XMP-dc:Description>
+ <XMP-dc:Rights>First x-default rights</XMP-dc:Rights>
+ <XMP-dc:Rights>Second x-default rights (duplicate, should be ignored)</XMP-dc:Rights>
+ <XMP-dc:Rights-en>English rights</XMP-dc:Rights-en>
+ <XMP-photoshop:Headline>Photoshop Headline Fallback</XMP-photoshop:Headline>
+</rdf:Description>
+</rdf:RDF>

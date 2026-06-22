@@ -62,7 +62,7 @@ func LikePhoto(router *gin.RouterGroup) {
 			}
 
 			SaveSidecarYaml(&m)
-			PublishPhotoEvent(StatusUpdated, id, c)
+			PublishPhotoEvent(StatusUpdated, id)
 		}
 
 		// Reduce the response to what the session is entitled to see; shared-only sessions get a
@@ -122,7 +122,7 @@ func DislikePhoto(router *gin.RouterGroup) {
 			}
 
 			SaveSidecarYaml(&m)
-			PublishPhotoEvent(StatusUpdated, id, c)
+			PublishPhotoEvent(StatusUpdated, id)
 		}
 
 		// Reduce the response to what the session is entitled to see; shared-only sessions get a

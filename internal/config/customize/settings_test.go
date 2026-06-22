@@ -38,6 +38,18 @@ func TestNewSettings(t *testing.T) {
 		assert.Equal(t, DefaultStartPage, s.UI.StartPage)
 		assert.Equal(t, DefaultMapsStyle, s.Maps.Style)
 	})
+	t.Run("ImportDest", func(t *testing.T) {
+		s := NewDefaultSettings()
+		// A normalized, valid pattern is preserved.
+		s.Import.Dest = "2006/01/20060102_150405_82F63B78.jpg"
+		s.Propagate()
+		assert.Equal(t, "2006/01/20060102_150405_82F63B78.jpg", s.Import.Dest)
+		// An invalid or denormalized pattern is reset so GetDest falls back to the default.
+		s.Import.Dest = "/1/2/20060102_150405_82F63B78.jpg"
+		s.Propagate()
+		assert.Equal(t, "", s.Import.Dest)
+		assert.Equal(t, DefaultImportDest, s.Import.GetDest())
+	})
 }
 
 func TestSettings_Load(t *testing.T) {

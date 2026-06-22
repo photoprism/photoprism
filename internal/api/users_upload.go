@@ -408,7 +408,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		for _, album := range opt.Albums {
 			if a := entity.FindAlbum(entity.AlbumSearch(album, album, entity.AlbumManual)); a != nil {
 				SaveAlbumYaml(a)
-				PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
+				PublishAlbumEvent(StatusUpdated, a.AlbumUID)
 			}
 		}
 

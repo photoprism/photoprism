@@ -98,6 +98,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Try to find existing file by hash. Skip this for sidecar files, and files outside the originals folder.
 	if !fileExists && !m.IsSidecar() && m.Root() == entity.RootOriginals {
 		fileHash = m.Hash()
+
+		// Hold a per-hash lock until indexing is complete, so concurrent workers
+		// cannot miss the lookup below and index byte-identical files twice.
+		if fileHash != "" {
+			unlock := lockFileHash(fileHash)
+			defer unlock()
+		}
+
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)
 
 		indFileName := ""
@@ -451,13 +459,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.SetMediaType(media.Live, entity.SrcFile)
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
@@ -483,6 +484,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetCaption(data.Caption, entity.SrcXmp)
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcXmp)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcXmp)
+			photo.SetCameraSerial(data.CameraSerial)
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcXmp)
@@ -492,6 +494,53 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetCopyright(data.Copyright, entity.SrcXmp)
 			details.SetLicense(data.License, entity.SrcXmp)
 			details.SetSoftware(data.Software, entity.SrcXmp)
+
+			// Adopt the XMP DocumentID as the photo UUID. SrcXmp wins
+			// over an auto-generated UUID assigned in the SrcMeta branch.
+			// Real-world XMP DocumentIDs are often non-canonical (no dashes,
+			// `adobe:docid:` or `xmp.did:` prefixes), so the strict UUID
+			// check from data.HasDocumentID() is too narrow here.
+			if data.DocumentID != "" {
+				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
+				photo.UUID = data.DocumentID
+			}
+
+			// Update camera, lens, and exposure from the sidecar.
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(data.CameraMake, data.CameraModel)), entity.SrcXmp)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(data.LensMake, data.LensModel)), entity.SrcXmp)
+			photo.SetExposure(data.FocalLength, data.FNumber, data.Iso, data.Exposure, entity.SrcXmp)
+
+			// Mirror file-level identity metadata to the primary file so the
+			// UI surfaces it (per-file fields render the primary JPEG/HEIC).
+			// ColorProfile and Projection are not mirrored — they describe
+			// physical container properties, not user-supplied metadata.
+			// Only the changed columns are written: a full Save() would also
+			// re-resolve the primary flag and regenerate the search index,
+			// which neither InstanceID nor Software affects, and would issue
+			// those writes on every re-index pass even when nothing changed.
+			if primary, primaryErr := photo.PrimaryFile(); primaryErr == nil && primary != nil {
+				prevInstanceID, prevSoftware := primary.InstanceID, primary.FileSoftware
+
+				if data.InstanceID != "" {
+					primary.InstanceID = data.InstanceID
+				}
+				primary.SetSoftware(data.Software)
+
+				values := entity.Values{}
+				if primary.InstanceID != prevInstanceID {
+					log.Infof("index: %s has instance_id %s", logName, clean.Log(primary.InstanceID))
+					values["instance_id"] = primary.InstanceID
+				}
+				if primary.FileSoftware != prevSoftware {
+					values["file_software"] = primary.FileSoftware
+				}
+				if len(values) > 0 {
+					values["updated_at"] = entity.Now()
+					if saveErr := primary.Updates(values); saveErr != nil {
+						log.Warnf("index: %s could not save primary file metadata (%s)", logName, saveErr)
+					}
+				}
+			}
 
 			// Update externally marked as favorite.
 			if data.Favorite {
@@ -529,13 +578,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
 				file.InstanceID = data.InstanceID
-			}
-
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
 			}
 
 			file.FileCodec = data.Codec
@@ -627,13 +669,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
@@ -681,13 +716,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
@@ -733,13 +761,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
 				file.InstanceID = data.InstanceID
-			}
-
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
 			}
 
 			file.FileCodec = data.Codec
@@ -954,7 +975,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			})
 		}
 
-		event.EntitiesCreated("photos", []entity.Photo{photo})
+		event.EntitiesCreated("photos", []string{photo.PhotoUID})
 	}
 
 	photo.AddLabels(labels)

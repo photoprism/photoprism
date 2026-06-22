@@ -25,8 +25,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Use auth cache to improve WebDAV performance. It has a standard expiration time of about 5 minutes.
-var webdavAuthExpiration = 5 * time.Minute
+// Use auth cache to improve WebDAV performance. The short expiration time bounds how long
+// a credential keeps working after the account is changed or its WebDAV access is revoked.
+var webdavAuthExpiration = 1 * time.Minute
 var webdavAuthCache = gc.New(webdavAuthExpiration, webdavAuthExpiration)
 var webdavAuthMutex = sync.Mutex{}
 

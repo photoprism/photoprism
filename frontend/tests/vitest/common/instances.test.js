@@ -150,9 +150,9 @@ describe("common/instances", () => {
     it("resolves a Portal route at the origin root", () => {
       const store = new StorageShim();
       seedInstance(store, "ns-pro-1", { url: "https://app.example.com/i/pro-1/" });
-      seedInstance(store, "ns-portal", { url: "https://app.example.com/", route: "/portal/admin" });
+      seedInstance(store, "ns-portal", { url: "https://app.example.com/", route: "/portal" });
       const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
-      expect(result[0].route).toBe("https://app.example.com/portal/admin");
+      expect(result[0].route).toBe("https://app.example.com/portal");
     });
     it("defaults route to the SiteUrl when none is recorded", () => {
       const store = new StorageShim();

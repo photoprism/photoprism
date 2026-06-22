@@ -294,6 +294,10 @@ import PActionMenu from "component/action/menu.vue";
 
 const appStorage = getAppStorage();
 
+// Maximum number of affected entities reloaded in place per event;
+// larger batches set the dirty flag and are refetched lazily instead.
+const maxLiveRefetch = 50;
+
 export default {
   name: "PPageAlbums",
   components: {
@@ -1233,6 +1237,76 @@ export default {
       this.selection.splice(0, this.selection.length);
       this.lastId = "";
     },
+    // refetchResults reloads the affected albums through the scoped
+    // search API and patches the loaded results in place, so a single
+    // edit costs one uid-filtered query instead of re-running the full
+    // album query. Larger batches fall back to the dirty flag and are
+    // refetched lazily on the next return-to-view.
+    refetchResults(uids) {
+      const affected = uids.filter((uid) => this.results.some((m) => m.UID === uid));
+
+      if (affected.length === 0) {
+        return;
+      }
+
+      if (affected.length > maxLiveRefetch) {
+        this.dirty = true;
+        return;
+      }
+
+      Album.search({ uid: affected.join("|"), count: affected.length })
+        .then((resp) => {
+          const found = new Set();
+
+          resp.models.forEach((values) => {
+            found.add(values.UID);
+
+            const model = this.results.find((m) => m.UID === values.UID);
+
+            if (model) {
+              for (let key in values) {
+                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                  model[key] = values[key];
+                }
+              }
+            }
+          });
+
+          // Rows the scoped search no longer returns are not visible to
+          // this session anymore — drop them like a full refresh would.
+          affected
+            .filter((uid) => !found.has(uid))
+            .forEach((uid) => {
+              const index = this.results.findIndex((m) => m.UID === uid);
+
+              if (index >= 0) {
+                this.results.splice(index, 1);
+              }
+
+              this.removeSelection(uid);
+            });
+        })
+        .catch(() => {
+          this.dirty = true;
+        });
+    },
+    // insertCreated fetches newly created albums with a uid-filtered
+    // query and prepends those that match the current view type.
+    insertCreated(uids) {
+      if (uids.length === 0 || uids.length > maxLiveRefetch) {
+        return;
+      }
+
+      Album.search({ uid: uids.join("|"), count: uids.length, type: this.staticFilter.type })
+        .then((resp) => {
+          resp.models.forEach((m) => {
+            if (!this.results.some((existing) => existing.UID === m.UID)) {
+              this.results.unshift(m);
+            }
+          });
+        })
+        .catch(() => {});
+    },
     onUpdate(ev, data) {
       if (!this.listen) {
         console.log("albums.onUpdate currently not listening", ev, data);
@@ -1246,30 +1320,10 @@ export default {
 
       switch (type) {
         case ACTION_UPDATED:
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            const model = this.results.find((m) => m.UID === values.UID);
-
-            if (model) {
-              for (let key in values) {
-                if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                  model[key] = values[key];
-                }
-              }
-            }
-          }
-
-          let categories = [{ value: "", text: this.$gettext("All Categories") }];
-
-          if (this.$config.albumCategories().length > 0) {
-            categories = categories.concat(
-              this.$config.albumCategories().map((cat) => {
-                return { value: cat, text: cat };
-              })
-            );
-          }
-
-          this.categories = categories;
+          // albums.updated is a lightweight UID-only signal that carries
+          // no entity fields; affected albums are reloaded through the
+          // scoped search API and patched in place.
+          this.refetchResults(data.entities);
 
           break;
         case ACTION_DELETED:
@@ -1288,16 +1342,13 @@ export default {
 
           break;
         case ACTION_CREATED:
+          // albums.created carries only UIDs; fetch the new albums with a
+          // uid-filtered query and insert those matching the current view,
+          // so creation costs one small request instead of re-running the
+          // full album query.
           this.dirty = true;
+          this.insertCreated(data.entities);
 
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            const index = this.results.findIndex((m) => m.UID === values.UID);
-
-            if (index === -1 && this.staticFilter.type === values.Type) {
-              this.results.unshift(new Album(values));
-            }
-          }
           break;
         default:
           console.warn("unexpected event type", ev);

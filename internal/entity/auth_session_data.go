@@ -20,9 +20,17 @@ func (u UIDs) Join(s string) string {
 
 // SessionData represents User Session data.
 type SessionData struct {
-	Tokens []string `json:"tokens"` // Share Tokens.
-	Shares UIDs     `json:"shares"` // Share UIDs.
+	Tokens []string `json:"tokens"`           // Share Tokens.
+	Shares UIDs     `json:"shares"`           // Share UIDs.
+	Groups []string `json:"groups,omitempty"` // Normalized login-time group identifiers (OIDC/LDAP).
 }
+
+// SessionGroupsByteLimit caps the serialized size of SessionData.Groups so the
+// session data always fits its 16384-byte database column with room to spare
+// for share tokens redeemed later in the session's lifetime. The budget holds
+// roughly 300 GUID-sized identifiers — beyond Entra's 200-group overage
+// threshold, where the IdP stops emitting groups in tokens altogether.
+const SessionGroupsByteLimit = 12288
 
 // NewSessionData creates a new session data struct and returns a pointer to it.
 func NewSessionData() *SessionData {
@@ -69,6 +77,44 @@ func (data *SessionData) RedeemToken(token string) (n int) {
 	}
 
 	return n
+}
+
+// SetGroups stores the user's normalized login-time group identifiers,
+// dropping trailing entries once their serialized size would exceed
+// SessionGroupsByteLimit so the session data cannot outgrow its column.
+func (data *SessionData) SetGroups(groups []string) *SessionData {
+	size := 0
+
+	for i, g := range groups {
+		// Each entry serializes as a quoted string plus a separator.
+		if size += len(g) + 3; size > SessionGroupsByteLimit {
+			log.Warnf("auth: session group set truncated to %d of %d entries", i, len(groups))
+			groups = groups[:i]
+			break
+		}
+	}
+
+	if len(groups) == 0 {
+		data.Groups = nil
+	} else {
+		data.Groups = groups
+	}
+
+	return data
+}
+
+// Redacted returns a copy of the session data without server-side fields (the
+// login-time group set), so API session responses never disclose the user's
+// upstream group memberships to clients.
+func (data *SessionData) Redacted() *SessionData {
+	if data == nil {
+		return nil
+	}
+
+	redacted := *data
+	redacted.Groups = nil
+
+	return &redacted
 }
 
 // NoShares checks if the session has no shares yet.

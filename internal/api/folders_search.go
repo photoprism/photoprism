@@ -47,6 +47,11 @@ func SearchFoldersOriginals(router *gin.RouterGroup) {
 //	@Tags		Folders
 //	@Produce	json
 //	@Success	200		{object}	api.FoldersResponse
+//	@Header		200		{number}	X-Folders	"The actual number of folders returned.  Do not use for determining if all the results have been returned."
+//	@Header		200		{number}	X-Files		"The actual number of files returned.  Use this for comparing to X-Limit to determine if all the results have been returned."
+//	@Header		200		{number}	X-Count		"The actual number of files and folders returned.  Do not use for determining if all the results have been returned."
+//	@Header		200		{number}	X-Limit		"The limit of the number of files to be returned"
+//	@Header		200		{number}	X-Offset	"The offset that was used"
 //	@Failure	401,403	{object}	i18n.Response
 //	@Router		/api/v1/folders/import [get]
 func SearchFoldersImport(router *gin.RouterGroup) {

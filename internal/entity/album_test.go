@@ -8,6 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/event"
+
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -1372,6 +1374,25 @@ func TestAlbum_Save(t *testing.T) {
 		afterDate := album.UpdatedAt
 
 		assert.True(t, afterDate.After(initialDate))
+	})
+	t.Run("PublishesUidOnlyUpdatedEvent", func(t *testing.T) {
+		album := AlbumFixtures.Get("christmas2030")
+
+		sub := event.Subscribe("albums.updated", "user.*.albums.updated")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+
+		if err := album.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		select {
+		case msg := <-sub.Receiver:
+			uids, ok := msg.Fields["entities"].([]string)
+			assert.True(t, ok, "entities payload should be []string, got %T", msg.Fields["entities"])
+			assert.Equal(t, []string{album.AlbumUID}, uids)
+		case <-time.After(2 * time.Second):
+			t.Fatal("expected one albums.updated event")
+		}
 	})
 }
 

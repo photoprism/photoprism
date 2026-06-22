@@ -12,7 +12,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gin-contrib/gzip v1.2.6 // indirect
 	github.com/gin-gonic/gin v1.12.0
-	github.com/golang/geo v0.0.0-20260605061815-58f45aa500f1
+	github.com/golang/geo v0.0.0-20260612074446-f1a45663b0f3
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -55,6 +55,7 @@ require github.com/google/uuid v1.6.0
 
 require (
 	github.com/chzyer/readline v1.5.1 // indirect
+	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/maruel/natural v1.3.0 // indirect
 )
 
@@ -78,6 +79,8 @@ require golang.org/x/text v0.38.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
+	github.com/antchfx/xmlquery v1.5.1
+	github.com/antchfx/xpath v1.3.6
 	github.com/davidbyttow/govips/v2 v2.18.0
 	github.com/go-co-op/gocron/v2 v2.21.2
 	github.com/go-sql-driver/mysql v1.10.0
@@ -181,7 +184,7 @@ require (
 )
 
 require (
-	github.com/abema/go-mp4 v1.6.0
+	github.com/abema/go-mp4 v1.7.1
 	github.com/bytedance/sonic v1.15.1 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-playground/validator/v10 v10.30.2 // indirect

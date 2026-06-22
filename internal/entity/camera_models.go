@@ -1,5 +1,6 @@
 package entity
 
+// Camera model name constants used for normalization and device-type detection.
 const (
 	ModelNone         = ""
 	ModelUnknown      = "Unknown"

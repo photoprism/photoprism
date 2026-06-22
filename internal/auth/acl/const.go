@@ -8,13 +8,12 @@ const RoleAliasNone = "none"
 
 // Roles that can be granted Permissions to use a Resource.
 const (
-	RoleDefault Role = "default"
-	RoleAdmin   Role = "admin"
-	// RoleClusterAdmin is a Portal-only operator role for the cluster admin UI.
-	// It is registered (and thus assignable and granted permissions) only on
-	// Portal builds; CE/Pro leave it absent from acl.UserRoles and acl.Rules.
+	RoleDefault      Role = "default"
 	RoleClusterAdmin Role = "cluster_admin"
+	RoleAdmin        Role = "admin"
+	RoleManager      Role = "manager"
 	RoleUser         Role = "user"
+	RoleContributor  Role = "contributor"
 	RoleViewer       Role = "viewer"
 	RoleGuest        Role = "guest"
 	RoleVisitor      Role = "visitor"
@@ -66,6 +65,8 @@ const (
 	ResourcePeople    Resource = "people"
 	ResourcePlaces    Resource = "places"
 	ResourceLabels    Resource = "labels"
+	ResourceCameras   Resource = "cameras"
+	ResourceLenses    Resource = "lenses"
 	ResourceConfig    Resource = "config"
 	ResourceSettings  Resource = "settings"
 	ResourcePasscode  Resource = "passcode"

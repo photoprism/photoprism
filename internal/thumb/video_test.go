@@ -17,6 +17,9 @@ func TestVideoSize(t *testing.T) {
 	assert.Equal(t, Sizes[Fit2560], VideoSize(3000))
 	assert.Equal(t, Sizes[Fit3840], VideoSize(4000))
 	assert.Equal(t, Sizes[Fit4096], VideoSize(0))
+	assert.Equal(t, Sizes[Fit5120], VideoSize(5120))
 	assert.Equal(t, Sizes[Fit7680], VideoSize(8000))
-	assert.Equal(t, Sizes[Fit7680], VideoSize(-1))
+	assert.Equal(t, Sizes[Fit15360], VideoSize(15360))
+	assert.Equal(t, Sizes[Fit15360], VideoSize(20000))
+	assert.Equal(t, Sizes[Fit15360], VideoSize(-1))
 }

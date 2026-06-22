@@ -16,6 +16,7 @@ export default class Page {
     this.cardsViewAction = Selector("button.action-view-cards");
     this.mosaicViewAction = Selector("button.action-view-mosaic");
     this.listViewAction = Selector("button.action-view-list");
+    this.searchClearAction = Selector("div.input-search .v-field__clearable", { timeout: 7000 });
   }
 
   async checkToolbarActionAvailability(action, visible) {

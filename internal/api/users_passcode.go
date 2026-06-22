@@ -175,10 +175,10 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Activated}, s.RefID)
 
-		// Invalidate any other user sessions to protect the account:
-		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, "invalidated %s"}, s.RefID,
-			english.Plural(user.DeleteSessions([]string{s.ID}), authn.Session, authn.Sessions))
+		// Revoke other user sessions after a privilege level change,
+		// except for app passwords and client access tokens.
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, "revoked %s"}, s.RefID,
+			english.Plural(user.RevokeDerivedSessions([]string{s.ID}), authn.Session, authn.Sessions))
 
 		// Clear session cache.
 		s.ClearCache()

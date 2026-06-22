@@ -184,7 +184,8 @@ export default {
     ripple: false,
   },
   VDataTable: {
-    color: "background",
+    // Forwarded to the footer only as the "items per page" select's active-item color (not the table).
+    color: "surface-variant",
     itemsPerPage: -1,
     hover: true,
   },

@@ -20,6 +20,10 @@ nav .v-list__item__title.title {
     color: #ffffff77;
 }
 
+.v-avatar.nav-logo {
+    border-radius: 0;
+}
+
 #p-navigation .nav-logo a,
 #p-navigation .nav-toolbar-title a,
 #p-navigation .navigation-home a {

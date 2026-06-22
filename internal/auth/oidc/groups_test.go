@@ -32,6 +32,21 @@ func TestGroupsFromClaimsOverage(t *testing.T) {
 	assert.Nil(t, groups)
 }
 
+func TestMergeGroups(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		merged := MergeGroups([]string{"ABC-123", "def-456"}, []string{"def-456", "GHI-789"})
+		assert.Equal(t, []string{"abc-123", "def-456", "ghi-789"}, merged)
+	})
+	t.Run("DropsEmptyEntries", func(t *testing.T) {
+		merged := MergeGroups([]string{"", "abc-123"}, []string{"   "})
+		assert.Equal(t, []string{"abc-123"}, merged)
+	})
+	t.Run("NoSources", func(t *testing.T) {
+		assert.Nil(t, MergeGroups())
+		assert.Nil(t, MergeGroups(nil, []string{}))
+	})
+}
+
 func TestMapGroupsToRole(t *testing.T) {
 	mapping := map[string]acl.Role{
 		"abc-123": acl.RoleAdmin,

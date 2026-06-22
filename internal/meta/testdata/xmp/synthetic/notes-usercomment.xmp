@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/">
+   <exif:UserComment>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">Synthetic note for the Notes accessor — exif:UserComment as lang-alt</rdf:li>
+     <rdf:li xml:lang="en">Synthetic note for the Notes accessor — exif:UserComment as lang-alt</rdf:li>
+     <rdf:li xml:lang="de">Synthetische Notiz für den Notes-Accessor — exif:UserComment als lang-alt</rdf:li>
+    </rdf:Alt>
+   </exif:UserComment>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

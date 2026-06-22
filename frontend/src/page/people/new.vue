@@ -60,7 +60,7 @@
                 <v-combobox
                   v-else
                   v-model:search="m.Name"
-                  :items="$config.values.people"
+                  :items="people"
                   item-title="Name"
                   item-value="Name"
                   :readonly="readonly"
@@ -76,6 +76,7 @@
                   autocomplete="off"
                   density="comfortable"
                   class="input-name pa-0 ma-0 text-selectable"
+                  @focus="loadPeople"
                   @update:model-value="(person) => onSetPerson(m, person)"
                   @blur="() => onSetName(m)"
                   @keyup.enter="() => onSetName(m)"
@@ -99,6 +100,7 @@
 import Face from "model/face";
 import RestModel from "model/rest";
 import { MaxLength as SubjectMaxLength } from "model/subject";
+import typeaheadCache from "common/typeahead-cache";
 import { rules } from "common/form";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
@@ -131,6 +133,7 @@ export default {
     return {
       view: "all",
       config: this.$config.values,
+      people: [],
       rules,
       SubjectMaxLength,
       subscriptions: [],
@@ -196,7 +199,12 @@ export default {
   },
   created() {
     this.search();
+    this.loadPeople();
 
+    // No code currently publishes faces.* events — neither the frontend ($event bus) nor
+    // the backend (and "faces" is not in the WebsocketTopics forward allowlist), so this
+    // subscription is dormant. If wired up, it must emit UID-only payloads and onUpdate's
+    // `updated` branch needs converting to a by-UID refetch (it still assumes a full entity).
     this.subscriptions.push(this.$event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
     this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
   },
@@ -206,6 +214,16 @@ export default {
     }
   },
   methods: {
+    // loadPeople populates the name suggestions from the shared people cache;
+    // a denied or failed fetch leaves the list empty rather than throwing.
+    loadPeople() {
+      return typeaheadCache
+        .getPeople()
+        .then((models) => {
+          this.people = Array.isArray(models) ? models : [];
+        })
+        .catch(() => {});
+    },
     searchCount() {
       return this.batchSize;
     },
@@ -623,10 +641,10 @@ export default {
         return;
       }
 
-      const people = this.$config.values?.people;
+      const people = this.people;
 
-      if (people) {
-        const found = people.find((person) => person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+      if (Array.isArray(people)) {
+        const found = people.find((person) => person.Name && person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
         if (found) {
           model.Name = found.Name;
           model.SubjUID = found.UID;
@@ -652,6 +670,8 @@ export default {
       this.busy = true;
       this.$notify.blockUI("busy");
 
+      // Face.setName() seeds the shared people cache, and the name combobox
+      // reloads suggestions on focus, so no explicit refresh is needed here.
       return model.setName(trimmed).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;

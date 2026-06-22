@@ -7,6 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/event"
+
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -494,6 +496,34 @@ func TestSubject_UpdateName(t *testing.T) {
 			assert.Equal(t, "new-new", m.SubjSlug)
 			assert.Equal(t, "New New", s.SubjName)
 			assert.Equal(t, "new-new", s.SubjSlug)
+		}
+	})
+	t.Run("PublishesUidOnlyUpdatedEvents", func(t *testing.T) {
+		m := NewSubject("Uid Only Person", SubjPerson, SrcAuto)
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		sub := event.Subscribe("subjects.updated", "people.updated")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+
+		if _, err := m.UpdateName("Uid Only Renamed"); err != nil {
+			t.Fatal(err)
+		}
+
+		// A rename publishes one subjects.updated and one people.updated event,
+		// both carrying only the subject UID.
+		for _, expected := range []string{"subjects.updated", "people.updated"} {
+			select {
+			case msg := <-sub.Receiver:
+				assert.Equal(t, expected, msg.Name)
+				uids, ok := msg.Fields["entities"].([]string)
+				assert.True(t, ok, "entities payload should be []string, got %T", msg.Fields["entities"])
+				assert.Equal(t, []string{m.SubjUID}, uids)
+			case <-time.After(2 * time.Second):
+				t.Fatalf("expected one %s event", expected)
+			}
 		}
 	})
 	t.Run("SubjNameEmpty", func(t *testing.T) {
