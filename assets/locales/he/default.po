@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-15 09:18+0000\n"
-"PO-Revision-Date: 2026-06-15 09:28+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-22 07:07+0000\n"
+"Last-Translator: Avi Markovitz <avi.markovitz@gmail.com>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
 "backend/he/>\n"
 "Language: he\n"
@@ -17,11 +17,11 @@ msgstr ""
 
 #: messages.go:110
 msgid "Something went wrong, try again"
-msgstr "קרתה תקלה נסה שוב"
+msgstr "משהו השתבש נא לנסות שוב"
 
 #: messages.go:111
 msgid "Unable to do that"
-msgstr "לא מסוגל לעשות את זה"
+msgstr "לא ניתן לבצע זאת"
 
 #: messages.go:112
 msgid "Changes could not be saved"
@@ -42,7 +42,7 @@ msgstr "לא נמצא"
 
 #: messages.go:116
 msgid "File not found"
-msgstr "הקובץ לא נמצא"
+msgstr "קובץ לא נמצא"
 
 #: messages.go:117
 msgid "File too large"
@@ -50,7 +50,7 @@ msgstr "קובץ גדול מדי"
 
 #: messages.go:118
 msgid "Unsupported"
-msgstr "אינו נתמך"
+msgstr "לא נתמך"
 
 #: messages.go:119
 msgid "Unsupported type"
@@ -58,11 +58,11 @@ msgstr "סוג לא נתמך"
 
 #: messages.go:120
 msgid "Unsupported format"
-msgstr "פורמט לא נתמך"
+msgstr "תסדיר לא נתמך"
 
 #: messages.go:121
 msgid "Originals folder is empty"
-msgstr "תיקיית המקור ריקה"
+msgstr "תיקיית מקור ריקה"
 
 #: messages.go:122
 msgid "Selection not found"
@@ -134,7 +134,7 @@ msgstr "ההעלאה עשויה להיות פוגענית"
 
 #: messages.go:139
 msgid "Upload failed"
-msgstr "העלאה נכשלה"
+msgstr "העלאה כשלה"
 
 #: messages.go:140
 msgid "No items selected"
@@ -227,7 +227,7 @@ msgstr "השינויים נשמרו בהצלחה"
 
 #: messages.go:164
 msgid "Album created"
-msgstr "האלבום נוצר"
+msgstr "אלבום נוצר"
 
 #: messages.go:165
 msgid "Album saved"
@@ -277,7 +277,7 @@ msgstr "%d רשומות הוסרו מ-%s"
 
 #: messages.go:175
 msgid "Account created"
-msgstr "החשבון נוצר"
+msgstr "חשבון נוצר"
 
 #: messages.go:176
 msgid "Account saved"
@@ -285,7 +285,7 @@ msgstr "החשבון נשמר"
 
 #: messages.go:177
 msgid "Account deleted"
-msgstr "החשבון נמחק"
+msgstr "חשבון נמחק"
 
 #: messages.go:178
 msgid "Settings saved"
@@ -401,7 +401,7 @@ msgstr "אלבומים נמחקו"
 #: messages.go:204
 #, c-format
 msgid "Zip created in %d s"
-msgstr "ה-ZIP נוצר תוך %d שניות"
+msgstr "קובץ Zip נוצר תוך %d שניות"
 
 #: messages.go:205
 msgid "Permanently deleted"
