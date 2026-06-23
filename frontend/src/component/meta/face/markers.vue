@@ -10,7 +10,7 @@
     @wheel="onWheel"
   >
     <svg v-if="bounds" class="p-meta-face-markers__svg" :style="svgStyle" :viewBox="`0 0 ${bounds.width} ${bounds.height}`">
-      <g v-for="m in markers" :key="m.UID || m.CropID">
+      <g v-for="m in markers" :key="markerKey(m)">
         <rect
           class="p-meta-face-markers__rect"
           :class="{
@@ -173,6 +173,7 @@ export default {
     isEditMode() {
       return this.mode === FaceMarkerEdit;
     },
+    // svgStyle positions the absolute SVG overlay over the letterboxed image area.
     svgStyle() {
       if (!this.bounds) {
         return { display: "none" };
@@ -191,6 +192,7 @@ export default {
     rootStyle() {
       return this.hoverCursor ? { cursor: this.hoverCursor } : {};
     },
+    // confirmStyle positions the confirm pill centered below the pending rect.
     confirmStyle() {
       if (!this.pending || !this.bounds) {
         return { display: "none" };
@@ -219,6 +221,7 @@ export default {
         h: m.H * this.bounds.height,
       };
     },
+    // removeConfirmStyle positions the remove-confirm pill centered below the targeted marker.
     removeConfirmStyle() {
       const r = this.removingMarkerRect;
       if (!r || !this.bounds) {
@@ -233,16 +236,60 @@ export default {
         transform: "translate(-50%, 8px)",
       };
     },
+    // markerRects precomputes unnamed-marker pixel rects from the current
+    // bounds so hover and pointer-down hit-testing reuse them instead of
+    // recomputing every marker's rect on each pointer event. Vue caches it on
+    // `bounds` + `markers`, so it only recomputes when those change. Named
+    // markers are excluded — they are not removable via this overlay.
+    markerRects() {
+      if (!this.bounds || !Array.isArray(this.markers)) {
+        return [];
+      }
+      const rects = [];
+      for (const m of this.markers) {
+        if (!m || m.SubjUID) {
+          continue;
+        }
+        rects.push({
+          marker: m,
+          x: m.X * this.bounds.width,
+          y: m.Y * this.bounds.height,
+          w: m.W * this.bounds.width,
+          h: m.H * this.bounds.height,
+        });
+      }
+      return rects;
+    },
   },
   watch: {
+    // mode cancels any active draft and pending remove when leaving edit mode.
     mode(newVal) {
       if (newVal !== FaceMarkerEdit) {
         this.cancelActiveDraft();
         this.removingMarker = null;
       }
     },
+    // busy clears the synchronous confirm lock once the parent's save settles —
+    // success clears the pending; a failed save keeps it so retry must re-enable.
+    busy(newVal) {
+      if (!newVal) {
+        this._confirming = false;
+      }
+    },
   },
   mounted() {
+    // Non-reactive scratch state for rAF-batched drag flushing and the cached
+    // overlay-root rect (kept off `data()` so intermediate rects don't render).
+    this._dragRect = null;
+    this._dragTarget = null;
+    this._dragRaf = null;
+    this._dragScheduled = false;
+    this._cachedParentRect = null;
+    this._parentRectFresh = false;
+    // Synchronous in-flight guard so a rapid second confirm cannot emit `create`
+    // again before the parent's async `busy` lock propagates back as a prop.
+    this._confirming = false;
+
     this.attachPswpListeners();
     this.attachImageLoadListener();
     this.scheduleUpdate();
@@ -270,12 +317,15 @@ export default {
       this.rafHandle = null;
     }
 
+    this.cancelQueuedDrag();
+
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
     }
   },
   methods: {
+    // imageElement returns the current PhotoSwipe slide's <img> element, or null if none.
     imageElement() {
       const el = this.pswp?.currSlide?.content?.element;
       if (el instanceof HTMLImageElement) {
@@ -304,7 +354,13 @@ export default {
       this._loadListenedImg = img;
       this._onImgLoad = () => this.scheduleUpdate();
       img.addEventListener("load", this._onImgLoad);
+      // A cached image is already complete when we attach, so its `load` event
+      // will never fire; trigger a bounds update now so markers initialize.
+      if (img.complete && img.naturalWidth > 0) {
+        this.scheduleUpdate();
+      }
     },
+    // detachImageLoadListener removes the image load listener and clears its refs.
     detachImageLoadListener() {
       if (this._loadListenedImg && this._onImgLoad) {
         this._loadListenedImg.removeEventListener("load", this._onImgLoad);
@@ -312,11 +368,12 @@ export default {
       this._loadListenedImg = null;
       this._onImgLoad = null;
     },
+    // attachPswpListeners subscribes to PhotoSwipe zoom/change/resize events to keep bounds in sync.
     attachPswpListeners() {
       if (!this.pswp || typeof this.pswp.on !== "function") {
         return;
       }
-      this._onZoomPan = () => this.scheduleUpdate();
+      this._onZoomPan = () => this.scheduleUpdate(false);
       this._onChange = () => {
         this.attachImageLoadListener();
         this.scheduleUpdate();
@@ -327,6 +384,7 @@ export default {
       this.pswp.on("resize", this._onResize);
       this.pswp.on("imageClickAction", this._onChange);
     },
+    // detachPswpListeners unsubscribes the PhotoSwipe event handlers.
     detachPswpListeners() {
       if (!this.pswp || typeof this.pswp.off !== "function") {
         return;
@@ -342,7 +400,15 @@ export default {
         this.pswp.off("resize", this._onResize);
       }
     },
-    scheduleUpdate() {
+    // scheduleUpdate batches a bounds recompute into the next animation frame.
+    // `invalidateParent` (default true) marks the cached overlay-root rect
+    // stale; the zoom path passes false since the container doesn't move during
+    // pinch-zoom. The flag is set before the rafHandle dedup so dirtiness still
+    // accumulates when a frame is coalesced.
+    scheduleUpdate(invalidateParent = true) {
+      if (invalidateParent) {
+        this._parentRectFresh = false;
+      }
       if (this.rafHandle) {
         return;
       }
@@ -351,6 +417,17 @@ export default {
         this.updateBounds();
       });
     },
+    // parentRect returns the overlay-root rect, cached across pinch-zoom frames
+    // where only the image transform (not the container) changes; layout
+    // events invalidate it via scheduleUpdate(true).
+    parentRect() {
+      if (!this._parentRectFresh || !this._cachedParentRect) {
+        this._cachedParentRect = this.$refs.root.getBoundingClientRect();
+        this._parentRectFresh = true;
+      }
+      return this._cachedParentRect;
+    },
+    // updateBounds recomputes the overlay pixel bounds from the image rect, insetting for letterboxed (object-fit: contain) slides.
     updateBounds() {
       const img = this.imageElement();
       if (!img || !this.$refs.root) {
@@ -360,7 +437,7 @@ export default {
         return;
       }
       const imgRect = img.getBoundingClientRect();
-      const parentRect = this.$refs.root.getBoundingClientRect();
+      const parentRect = this.parentRect();
       if (imgRect.width <= 0 || imgRect.height <= 0) {
         if (this.bounds !== null) {
           this.bounds = null;
@@ -403,12 +480,14 @@ export default {
       }
       this.bounds = { left, top, width, height };
     },
+    // onPointerDown begins a resize, move, remove-click, or new draft depending on what the pointer lands on (edit mode only).
     onPointerDown(ev) {
       if (!this.isEditMode) {
         return;
       }
 
       if (!this.bounds) {
+        this._parentRectFresh = false;
         this.updateBounds();
         if (!this.bounds) {
           return;
@@ -425,7 +504,7 @@ export default {
       }
 
       if (this.pending) {
-        const corner = this.hitTestCorner(local, this.pending);
+        const corner = this.hitTestCorner(local, this.pending, this.handleHitRadius(ev));
         if (corner) {
           this.beginResize(corner, ev);
           return;
@@ -462,27 +541,85 @@ export default {
 
       this.attachWindowPointerListeners();
     },
-    // Returns the first unnamed marker whose pixel rect contains the
-    // given local point, or null if none. Named markers are skipped.
-    findMarkerAt(local) {
-      if (!this.bounds || !Array.isArray(this.markers)) {
-        return null;
+    // markerKey returns a stable, unique :key for a marker row. Saved markers
+    // use their UID (CropID kept as a legacy fallback); brand-new unsaved
+    // markers have no UID yet, so derive a key from the rect geometry — stable
+    // across the fresh Marker instances getMarkers() returns each render, and
+    // unique per rect, so Vue never collapses keyless rows or reuses/misorders
+    // their DOM nodes.
+    markerKey(m) {
+      if (!m) {
+        return "marker-nil";
       }
-      for (const m of this.markers) {
-        if (!m || m.SubjUID) {
-          continue;
-        }
-        const rect = {
-          x: m.X * this.bounds.width,
-          y: m.Y * this.bounds.height,
-          w: m.W * this.bounds.width,
-          h: m.H * this.bounds.height,
-        };
-        if (this.insidePending(local, rect)) {
-          return m;
+      if (m.UID) {
+        return m.UID;
+      }
+      if (m.CropID) {
+        return m.CropID;
+      }
+      return `marker-tmp-${m.X}-${m.Y}-${m.W}-${m.H}`;
+    },
+    // Returns the first unnamed marker whose pixel rect contains the
+    // given local point, or null if none. Reuses the precomputed
+    // `markerRects` so hit-testing stays O(n) reads, not O(n) multiplies.
+    findMarkerAt(local) {
+      for (const r of this.markerRects) {
+        if (this.insidePending(local, r)) {
+          return r.marker;
         }
       }
       return null;
+    },
+    // queueDrag stores the latest draft/pending rect and flushes it to reactive
+    // state at most once per animation frame, collapsing multiple pointermoves
+    // per frame into a single SVG re-render. `target` is "draft" or "pending".
+    // The boolean guard is set before scheduling so the synchronous rAF stub
+    // used in tests still flushes immediately and leaves the guard reset.
+    queueDrag(target, rect) {
+      this._dragTarget = target;
+      this._dragRect = rect;
+      if (this._dragScheduled) {
+        return;
+      }
+      this._dragScheduled = true;
+      this._dragRaf = requestAnimationFrame(() => {
+        this._dragRaf = null;
+        this._dragScheduled = false;
+        this.applyQueuedDrag();
+      });
+    },
+    // applyQueuedDrag writes the held rect to the reactive draft/pending field.
+    applyQueuedDrag() {
+      if (!this._dragRect) {
+        return;
+      }
+      if (this._dragTarget === "pending") {
+        this.pending = this._dragRect;
+      } else {
+        this.draft = this._dragRect;
+      }
+      this._dragRect = null;
+    },
+    // flushQueuedDrag applies any rAF-batched rect immediately, e.g. on pointer
+    // up so the committed rect reflects the final pointer position.
+    flushQueuedDrag() {
+      if (this._dragRaf) {
+        cancelAnimationFrame(this._dragRaf);
+        this._dragRaf = null;
+      }
+      this._dragScheduled = false;
+      this.applyQueuedDrag();
+    },
+    // cancelQueuedDrag drops any queued rect without applying it (cancel,
+    // escape, unmount) so a late flush cannot overwrite restored state.
+    cancelQueuedDrag() {
+      if (this._dragRaf) {
+        cancelAnimationFrame(this._dragRaf);
+        this._dragRaf = null;
+      }
+      this._dragScheduled = false;
+      this._dragRect = null;
+      this._dragTarget = null;
     },
     // ✓ in the remove-confirm pill. Emits `remove` with the marker so
     // the lightbox can call marker.reject() and re-derive the overlay
@@ -499,6 +636,7 @@ export default {
     onCancelRemove() {
       this.removingMarker = null;
     },
+    // onPointerMove updates the active draft/move/resize rect from the pointer, keeping it square and inside bounds.
     onPointerMove(ev) {
       if (!this.interaction || !this.dragStart || !this.bounds) {
         return;
@@ -532,7 +670,7 @@ export default {
         if (ny + origin.h > this.bounds.height) {
           ny = this.bounds.height - origin.h;
         }
-        this.pending = { x: nx, y: ny, w: origin.w, h: origin.h };
+        this.queueDrag("pending", { x: nx, y: ny, w: origin.w, h: origin.h });
         return;
       }
 
@@ -591,11 +729,12 @@ export default {
       }
 
       if (this.interaction === InteractionResize) {
-        this.pending = { x: sx, y: sy, w: sw, h: sh };
+        this.queueDrag("pending", { x: sx, y: sy, w: sw, h: sh });
       } else {
-        this.draft = { x: sx, y: sy, w: sw, h: sh };
+        this.queueDrag("draft", { x: sx, y: sy, w: sw, h: sh });
       }
     },
+    // onPointerUp ends the gesture, promoting a large-enough draw draft into a confirmable pending rect.
     onPointerUp(ev) {
       if (!this.interaction) {
         return;
@@ -605,6 +744,9 @@ export default {
       }
 
       this.detachWindowPointerListeners();
+      // Apply any rAF-batched move so the committed rect reflects the final
+      // pointer position even if the frame flush hasn't fired yet.
+      this.flushQueuedDrag();
 
       const wasInteraction = this.interaction;
       const draft = this.draft;
@@ -625,10 +767,13 @@ export default {
         return;
       }
 
+      // A freshly promoted pending is a new marker — allow it to be confirmed.
+      this._confirming = false;
       this.pending = draft;
     },
+    // onConfirmPending emits the normalized pending rect as a create event once, guarded against double-confirm.
     onConfirmPending() {
-      if (this.busy) {
+      if (this.busy || this._confirming) {
         return;
       }
 
@@ -637,6 +782,8 @@ export default {
       if (!pending || !bounds) {
         return;
       }
+
+      this._confirming = true;
 
       const nx = pending.x / bounds.width;
       const ny = pending.y / bounds.height;
@@ -650,9 +797,11 @@ export default {
         H: this.clamp01(nh),
       });
     },
+    // onCancelPending discards the pending rect without exiting draw mode.
     onCancelPending() {
       this.pending = null;
       this.hoverCursor = null;
+      this._confirming = false;
     },
     // Back-button click. Signals the parent lightbox to exit face-marker
     // mode entirely (display or draw). Uses the existing `cancel` emit
@@ -668,11 +817,14 @@ export default {
     clearPending() {
       this.pending = null;
       this.hoverCursor = null;
+      this._confirming = false;
     },
+    // cancelActiveDraft tears down any in-progress gesture and clears draft/pending state.
     cancelActiveDraft() {
       if (this.interaction) {
         this.detachWindowPointerListeners();
       }
+      this.cancelQueuedDrag();
       this.interaction = null;
       this.resizeCorner = null;
       this.pointerId = null;
@@ -680,6 +832,7 @@ export default {
       this.draft = null;
       this.pending = null;
       this.hoverCursor = null;
+      this._confirming = false;
     },
     // handleEnter mirrors a ✓ click; no-op during draft / drag / remove-confirm.
     handleEnter() {
@@ -692,6 +845,7 @@ export default {
     // rect without exiting draw mode; returns true when the overlay consumed it.
     handleEscape() {
       if (this.interaction === InteractionDraw) {
+        this.cancelQueuedDrag();
         this.interaction = null;
         this.pointerId = null;
         this.dragStart = null;
@@ -700,6 +854,7 @@ export default {
         return true;
       }
       if (this.interaction === InteractionMove || this.interaction === InteractionResize) {
+        this.cancelQueuedDrag();
         const snapshot = this.dragStart && this.dragStart.pending;
         if (snapshot) {
           this.pending = { ...snapshot };
@@ -713,6 +868,7 @@ export default {
       }
       if (this.pending) {
         this.pending = null;
+        this._confirming = false;
         return true;
       }
       if (this.removingMarker) {
@@ -721,6 +877,7 @@ export default {
       }
       return false;
     },
+    // stopEventFromPswp stops propagation and default so PhotoSwipe doesn't treat the gesture as a pan/zoom.
     stopEventFromPswp(ev) {
       if (typeof ev.stopPropagation === "function") {
         ev.stopPropagation();
@@ -729,18 +886,28 @@ export default {
         ev.preventDefault();
       }
     },
+    // attachWindowPointerListeners tracks pointer move/up/cancel on window for the duration of a drag.
     attachWindowPointerListeners() {
       window.addEventListener("pointermove", this.onPointerMove);
       window.addEventListener("pointerup", this.onPointerUp);
       window.addEventListener("pointercancel", this.onPointerUp);
     },
+    // detachWindowPointerListeners removes the window-level drag pointer listeners.
     detachWindowPointerListeners() {
       window.removeEventListener("pointermove", this.onPointerMove);
       window.removeEventListener("pointerup", this.onPointerUp);
       window.removeEventListener("pointercancel", this.onPointerUp);
     },
-    hitTestCorner(p, rect) {
-      const r = 14;
+    // handleHitRadius returns the corner grab radius for the event's pointer
+    // type: larger for touch/pen (coarse) pointers, where the visible handle is
+    // hard to hit; the mouse radius is unchanged so existing behavior holds.
+    handleHitRadius(ev) {
+      const coarse = !!ev && (ev.pointerType === "touch" || ev.pointerType === "pen");
+      return coarse ? 22 : 14;
+    },
+    // hitTestCorner returns the resize-handle corner key within the given radius of point p, or null.
+    hitTestCorner(p, rect, radius = 14) {
+      const r = radius;
       const corners = {
         tl: { x: rect.x, y: rect.y },
         tr: { x: rect.x + rect.w, y: rect.y },
@@ -755,6 +922,7 @@ export default {
       }
       return null;
     },
+    // insidePending reports whether point p lies within the given rect.
     insidePending(p, rect) {
       return p.x >= rect.x && p.y >= rect.y && p.x <= rect.x + rect.w && p.y <= rect.y + rect.h;
     },
@@ -788,6 +956,7 @@ export default {
       };
       this.attachWindowPointerListeners();
     },
+    // onHoverMove sets the cursor to reflect the resize/move/remove affordance under the pointer (edit mode only).
     onHoverMove(ev) {
       if (!this.isEditMode || this.interaction) {
         return;
@@ -806,7 +975,7 @@ export default {
         return;
       }
       if (this.pending) {
-        const corner = this.hitTestCorner(local, this.pending);
+        const corner = this.hitTestCorner(local, this.pending, this.handleHitRadius(ev));
         if (corner) {
           const c = corner === "tl" || corner === "br" ? "nwse-resize" : "nesw-resize";
           if (this.hoverCursor !== c) {
@@ -833,6 +1002,7 @@ export default {
         this.hoverCursor = null;
       }
     },
+    // onHoverLeave clears the hover cursor when the pointer leaves the overlay.
     onHoverLeave() {
       if (this.hoverCursor !== null) {
         this.hoverCursor = null;
@@ -868,6 +1038,7 @@ export default {
         })
       );
     },
+    // beginMove starts dragging the whole pending rect from the given local anchor point.
     beginMove(local, ev) {
       const p = this.pending;
       if (!p) {
@@ -885,6 +1056,7 @@ export default {
       };
       this.attachWindowPointerListeners();
     },
+    // toLocal converts client coordinates to the overlay's image-local coordinate space.
     toLocal(clientX, clientY) {
       if (!this.bounds || !this.$refs.root) {
         return { x: 0, y: 0 };
@@ -895,9 +1067,11 @@ export default {
         y: clientY - rect.top - this.bounds.top,
       };
     },
+    // insideBounds reports whether local point p lies within the image bounds.
     insideBounds(p) {
       return this.bounds && p.x >= 0 && p.y >= 0 && p.x <= this.bounds.width && p.y <= this.bounds.height;
     },
+    // clamp01 clamps a normalized coordinate to [0, 1), capping at 0.999999 to stay below 1.
     clamp01(v) {
       if (v < 0) {
         return 0;
