@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-23 07:41+0000\n"
+"PO-Revision-Date: 2026-06-23 08:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
@@ -327,7 +327,7 @@ msgstr "Lagt til"
 
 #: src/component/photo/edit/labels.vue:334
 msgid "Added %{name}"
-msgstr ""
+msgstr "%{name} er lagt til"
 
 #: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
@@ -1749,7 +1749,7 @@ msgstr "Kunne ikke fjerne navn"
 
 #: src/common/server.js:79 src/common/server.js:85
 msgid "Failed to restart server"
-msgstr ""
+msgstr "Det gikk ikke an å starte serveren på nytt"
 
 #: src/component/lightbox/sidebar.vue:1696
 #: src/component/lightbox/sidebar.vue:1940
@@ -3457,7 +3457,7 @@ msgstr "Fjernet"
 
 #: src/component/photo/edit/labels.vue:286
 msgid "Removed %{name}"
-msgstr ""
+msgstr "%{name} er fjernet"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
@@ -4321,7 +4321,7 @@ msgstr "Ukjent"
 
 #: src/page/photos.vue:445
 msgid "Unknown location"
-msgstr ""
+msgstr "Ukjent sted"
 
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:855

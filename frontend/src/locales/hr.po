@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-23 07:41+0000\n"
+"PO-Revision-Date: 2026-06-23 08:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: hr\n"
@@ -327,7 +327,7 @@ msgstr "Dodano"
 
 #: src/component/photo/edit/labels.vue:334
 msgid "Added %{name}"
-msgstr ""
+msgstr "Dodano %{name}"
 
 #: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
@@ -1749,7 +1749,7 @@ msgstr "Nije uspjelo ukloniti ime"
 
 #: src/common/server.js:79 src/common/server.js:85
 msgid "Failed to restart server"
-msgstr ""
+msgstr "Ponovno pokretanje poslužitelja nije uspjelo"
 
 #: src/component/lightbox/sidebar.vue:1696
 #: src/component/lightbox/sidebar.vue:1940
@@ -3457,7 +3457,7 @@ msgstr "Uklonjeno"
 
 #: src/component/photo/edit/labels.vue:286
 msgid "Removed %{name}"
-msgstr ""
+msgstr "Uklonjeno %{name}"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
@@ -4321,7 +4321,7 @@ msgstr "Nepoznato"
 
 #: src/page/photos.vue:445
 msgid "Unknown location"
-msgstr ""
+msgstr "Nepoznata lokacija"
 
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:855
