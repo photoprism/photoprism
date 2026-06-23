@@ -18,6 +18,20 @@
           </v-btn>
         </template>
 
+        <v-btn-toggle v-if="selection.length > 1" v-model="searchMode" mandatory density="compact" rounded="pill" variant="elevated" class="action-search-mode">
+          <v-btn value="or" density="compact" class="action-search-or">OR</v-btn>
+          <v-btn value="and" density="compact" class="action-search-and">AND</v-btn>
+        </v-btn-toggle>
+        <v-btn
+          key="action-search"
+          :title="$gettext('Search')"
+          icon="mdi-magnify"
+          color="primary"
+          density="comfortable"
+          class="action-search"
+          :disabled="!canSearch || selection.length === 0"
+          @click.stop="search()"
+        ></v-btn>
         <v-btn
           key="action-download"
           :title="$gettext('Download')"
@@ -73,10 +87,12 @@ export default {
   data() {
     return {
       canManage: this.$config.allow("people", "manage"),
+      canSearch: this.$config.allow("photos", "search") && this.$config.feature("search"),
       canDownload: this.$config.allow("people", "download") && this.$config.feature("download"),
       canAddAlbums: this.$config.allow("albums", "create") && this.$config.feature("albums"),
       features: this.$config.getSettings().features,
       expanded: false,
+      searchMode: "or",
       dialog: {
         delete: false,
         album: false,
@@ -89,6 +105,21 @@ export default {
     clearClipboard() {
       this.clearSelection();
       this.expanded = false;
+    },
+    // search opens selected people in photo search with the selected operator.
+    search() {
+      if (!this.canSearch || this.selection.length === 0) {
+        return;
+      }
+
+      const subjects = this.selection.filter((uid) => uid).join(this.searchMode === "and" ? "&" : "|");
+
+      if (!subjects) {
+        return;
+      }
+
+      this.$router.push({ name: "all", query: { q: `subject:${subjects}` } });
+      this.clearClipboard();
     },
     addToAlbum(ppidOrList) {
       if (!ppidOrList) {
