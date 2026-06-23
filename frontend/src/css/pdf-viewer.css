@@ -11,7 +11,9 @@
 
 .p-pdf-viewer__thumbs {
     flex: 0 0 auto;
-    width: 132px;
+    /* In the lightbox this inherits --pdf-strip-width so the prev nav arrow lines
+       up with the strip; the fallback applies when the viewer is used elsewhere. */
+    width: var(--pdf-strip-width, 132px);
     height: 100%;
     overflow-y: auto;
     padding: 8px;

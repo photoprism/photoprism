@@ -127,7 +127,7 @@ export default {
       default: 0,
     },
   },
-  emits: ["loaded", "page-changed", "error", "media-prev", "media-next"],
+  emits: ["loaded", "page-changed", "error", "media-prev", "media-next", "thumbs-visible"],
   data() {
     return {
       pdf: null,
@@ -180,6 +180,11 @@ export default {
     }
   },
   mounted() {
+    // Publish the initial strip visibility so the lightbox can place the prev
+    // navigation arrow to the right of the thumbnail strip (or at the far edge
+    // when the strip is hidden).
+    this.$emit("thumbs-visible", this.thumbsVisible);
+
     if (this.active && this.src) {
       this.open();
     }
@@ -264,7 +269,7 @@ export default {
       this.pageObserver = new IntersectionObserver((entries) => this.onPagesIntersect(entries), {
         root: this.$refs.scroll,
         rootMargin: "100% 0px",
-        threshold: [0, 0.25, 0.5, 0.75, 1],
+        threshold: 0,
       });
       (this.$refs.page || []).forEach((el) => this.pageObserver.observe(el));
 
@@ -294,7 +299,9 @@ export default {
     // the actual viewport, computed from geometry. The observer's
     // intersectionRatio cannot be used here: the render-ahead rootMargin makes
     // several pages report a full ratio at once, so the lowest-numbered one
-    // would always win and the indicator would lag a page behind.
+    // would always win and the indicator would lag a page behind. Only the pages
+    // the observer currently reports as intersecting can be in view, so the scan
+    // stays O(visible) instead of measuring every page on each scroll frame.
     updateCurrentPage() {
       const scroll = this.$refs.scroll;
 
@@ -307,13 +314,23 @@ export default {
       let best = 0;
       let bestVisible = 0;
 
-      for (let i = 0; i < pages.length; i++) {
-        const r = pages[i].getBoundingClientRect();
+      for (const key in this.intersecting) {
+        if (!this.intersecting[key]) {
+          continue;
+        }
+
+        const el = pages[Number(key) - 1];
+
+        if (!el) {
+          continue;
+        }
+
+        const r = el.getBoundingClientRect();
         const visible = Math.min(r.bottom, view.bottom) - Math.max(r.top, view.top);
 
         if (visible > bestVisible) {
           bestVisible = visible;
-          best = i + 1;
+          best = Number(key);
         }
       }
 
@@ -522,6 +539,7 @@ export default {
     // small screens). Thumbnails render lazily, so the strip catches up when shown.
     toggleThumbs() {
       this.thumbsVisible = !this.thumbsVisible;
+      this.$emit("thumbs-visible", this.thumbsVisible);
     },
     // scrollActiveThumbIntoView keeps the highlighted thumbnail visible in the strip.
     scrollActiveThumbIntoView() {

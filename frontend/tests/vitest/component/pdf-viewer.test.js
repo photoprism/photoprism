@@ -148,6 +148,8 @@ describe("component/pdf-viewer", () => {
     wrapper.vm.$refs.page.forEach((el, i) => {
       el.getBoundingClientRect = () => rects[i];
     });
+    // updateCurrentPage only measures pages the observer reports as intersecting.
+    wrapper.vm.intersecting = { 1: true, 2: true, 3: true };
     wrapper.vm.updateCurrentPage();
     await flushPromises();
     expect(wrapper.vm.currentPage).toBe(3);

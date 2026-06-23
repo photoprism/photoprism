@@ -38,6 +38,7 @@
           'is-fullscreen': isFullscreen(),
           'is-zoomable': isZoomable,
           'is-pdf': isPdfSlide,
+          'is-pdf-thumbs': isPdfSlide && pdfThumbsVisible,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
           'is-video': model?.Type === 'video',
@@ -67,6 +68,7 @@
           :pages="model.Pages || 0"
           @media-prev="pdfMediaPrev"
           @media-next="pdfMediaNext"
+          @thumbs-visible="pdfThumbsVisible = $event"
         ></p-pdf-viewer>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
@@ -244,6 +246,7 @@ export default {
       busy: false,
       closing: false,
       visible: false,
+      pdfThumbsVisible: true, // Tracks the PDF viewer's thumbnail strip so the prev arrow sits beside it.
       sidebarVisible: shouldShowSidebar(),
       hideCaption: shouldHideCaption() || shouldShowSidebar(),
       menuElement: null,
