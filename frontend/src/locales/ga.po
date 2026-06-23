@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-06-14 14:12+0000\n"
+"PO-Revision-Date: 2026-06-23 07:41+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -83,23 +83,23 @@ msgstr "Tá %{s} ró-ghearr"
 
 #: src/locales.js:434
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d iontráil curtha le %s"
 
 #: src/locales.js:436
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d iontráil bainte de %s"
 
 #: src/locales.js:458
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d comhaid uaslódáilte i %d s"
 
 #: src/locales.js:378
 msgid "%s already exists"
-msgstr ""
+msgstr "%s ann cheana"
 
 #: src/locales.js:468
 msgid "%s has been restored"
-msgstr ""
+msgstr "%s athchóirithe"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -190,7 +190,7 @@ msgstr "Mapálacha Grúpa Cuntas"
 
 #: src/locales.js:388
 msgid "Account not found"
-msgstr ""
+msgstr "Cuntas gan aimsiú"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -198,7 +198,7 @@ msgstr "Cuntas athchóirithe"
 
 #: src/locales.js:438
 msgid "Account saved"
-msgstr ""
+msgstr "Cuntas sábháilte"
 
 #: src/page/admin.vue:55 src/component/cluster/node/dialog.vue:18
 #: src/component/cluster/node/dialog.vue:19
@@ -391,7 +391,7 @@ msgstr "Albam"
 
 #: src/locales.js:428
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Albam %s scriosta"
 
 #: src/page/settings/advanced.vue:199
 msgid "Album Backups"
@@ -399,7 +399,7 @@ msgstr "Cúltaca Albam"
 
 #: src/locales.js:429
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Clónáilte ábhar albam"
 
 #: src/locales.js:426 src/page/albums.vue:1194
 msgid "Album created"
@@ -411,11 +411,11 @@ msgstr "Scriosadh an t-albam"
 
 #: src/locales.js:393
 msgid "Album not found"
-msgstr ""
+msgstr "Albam gan aimsiú"
 
 #: src/locales.js:427
 msgid "Album saved"
-msgstr ""
+msgstr "Sábháilte albam"
 
 #: src/app/routes.js:332 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
@@ -758,7 +758,7 @@ msgstr "Tuairisc ar Fhabht"
 
 #: src/locales.js:419
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Gnóthach, bain triail eile as ar ball"
 
 #: src/page/connect.vue:8 src/common/notify.js:119
 msgid "Busy, please wait…"
@@ -782,7 +782,7 @@ msgstr "Ceamara"
 
 #: src/locales.js:391
 msgid "Camera not found"
-msgstr ""
+msgstr "Níor aimsíodh an ceamara"
 
 #: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
 msgid "Camera Serial"
@@ -862,7 +862,7 @@ msgstr "Sleamhnán timpealláin {0} de {1}"
 
 #: src/component/lightbox.vue:125 src/component/lightbox.vue:126
 msgid "Cast"
-msgstr ""
+msgstr "Foireann aisteoirí"
 
 #: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
@@ -1144,7 +1144,7 @@ msgstr "Cóip"
 
 #: src/locales.js:450
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Comhaid á gcóipeáil ó %s"
 
 #: src/component/lightbox/sidebar.vue:828
 #: src/component/photo/batch-edit.vue:367
@@ -1156,11 +1156,11 @@ msgstr "Cóipcheart"
 
 #: src/locales.js:377
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Níorbh fhéidir a scriosadh"
 
 #: src/locales.js:407
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Níorbh fhéidir ceangal a dhéanamh, bain triail eile as"
 
 #: src/component/photo/edit/people.vue:301
 msgid "Could not update person cover"
@@ -1631,7 +1631,7 @@ msgstr "Cuir isteach do phasfhocal chun an gníomh a dhearbhú agus lean ar agha
 
 #: src/locales.js:387
 msgid "Entity not found"
-msgstr ""
+msgstr "Aonán gan aimsiú"
 
 #: src/page/connect.vue:14 src/component/lightbox.vue:522
 #: src/page/library/errors.vue:361
@@ -1702,7 +1702,7 @@ msgstr "Aghaidh"
 
 #: src/locales.js:396
 msgid "Face not found"
-msgstr ""
+msgstr "Aghaidh gan aimsiú"
 
 #: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
 msgid "Faces"
@@ -1710,11 +1710,11 @@ msgstr "Aghaidheanna"
 
 #: src/locales.js:405
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Theip ar chruthú an chomhaid, seiceáil na ceadanna"
 
 #: src/locales.js:406
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Theip ar chruthú fillteán, seiceáil na ceadanna"
 
 #: src/component/share/dialog.vue:235
 msgid "Failed removing link"
@@ -1726,7 +1726,7 @@ msgstr "Theip ar an gcuntas a nascadh."
 
 #: src/locales.js:415
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Theip ar chruthú an chomhaid zip"
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1792,7 +1792,7 @@ msgstr "Ceanáin"
 
 #: src/locales.js:411
 msgid "Feature disabled"
-msgstr ""
+msgstr "Gné díchumasaithe"
 
 #: src/options/options.js:463
 msgid "Feature Request"
@@ -1817,7 +1817,7 @@ msgstr "Tiontú Comhad"
 
 #: src/locales.js:431
 msgid "File deleted"
-msgstr ""
+msgstr "Scriosadh an comhad"
 
 #: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
@@ -1829,11 +1829,11 @@ msgstr "Ainm an Chomhaid"
 
 #: src/locales.js:380
 msgid "File not found"
-msgstr ""
+msgstr "Comhad gan aimsiú"
 
 #: src/locales.js:430
 msgid "File removed from stack"
-msgstr ""
+msgstr "Baineadh an comhad den chruach"
 
 #: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
 #: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
@@ -1842,11 +1842,11 @@ msgstr "Méid an Chomhaid"
 
 #: src/locales.js:381
 msgid "File too large"
-msgstr ""
+msgstr "Comhad ró-mhór"
 
 #: src/locales.js:457
 msgid "File uploaded"
-msgstr ""
+msgstr "Comhad uaslódáilte"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
 #: src/component/photo/edit/files.vue:97
@@ -2059,11 +2059,11 @@ msgstr "Iompórtáil"
 
 #: src/locales.js:443
 msgid "Import canceled"
-msgstr ""
+msgstr "Cealaíodh an iompórtáil"
 
 #: src/locales.js:442
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Iompórtáil críochnaithe i %d s"
 
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
@@ -2117,15 +2117,15 @@ msgstr "Innéacsú"
 
 #: src/locales.js:447
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Innéacsú cealaithe"
 
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Innéacsú curtha i gcrích in %d s"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Comhaid á innéacsú in %s"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
@@ -2133,7 +2133,7 @@ msgstr "Meáin agus comhaid taobhcharr á innéacsú…"
 
 #: src/locales.js:445
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Buntéacs á innéacsú..."
 
 #: src/component/lightbox.vue:1542 src/component/lightbox.vue:1543
 #: src/component/lightbox/sidebar.vue:8
@@ -2165,7 +2165,7 @@ msgstr "Cásanna"
 
 #: src/locales.js:423
 msgid "Insufficient storage"
-msgstr ""
+msgstr "Stóráil neamhleor"
 
 #: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2193,7 +2193,7 @@ msgstr "Tír neamhbhailí"
 
 #: src/locales.js:416
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Dintiúir neamhbhailí"
 
 #: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
@@ -2201,11 +2201,11 @@ msgstr "Dáta neamhbhailí"
 
 #: src/locales.js:417
 msgid "Invalid link"
-msgstr ""
+msgstr "Nasc neamhbhailí"
 
 #: src/locales.js:418
 msgid "Invalid name"
-msgstr ""
+msgstr "Ainm neamhbhailí"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
@@ -2214,7 +2214,7 @@ msgstr "Paraiméadair neamhbhailí"
 
 #: src/locales.js:410
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Pasfhocal neamhbhailí, bain triail eile as"
 
 #: src/component/photo/edit/dialog.vue:293 src/model/thumb.js:272
 msgid "Invalid photo selected"
@@ -2230,7 +2230,7 @@ msgstr "URL neamhbhailí"
 
 #: src/locales.js:409
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Cód fíoraithe neamhbhailí, bain triail eile as"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
 #: src/locales.js:354
@@ -2279,11 +2279,11 @@ msgstr "Lipéad"
 
 #: src/locales.js:390
 msgid "Label not found"
-msgstr ""
+msgstr "Níor aimsíodh an lipéad"
 
 #: src/locales.js:452
 msgid "Label saved"
-msgstr ""
+msgstr "Lipéad sábháilte"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:548
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
@@ -2361,7 +2361,7 @@ msgstr "Lionsa"
 
 #: src/locales.js:392
 msgid "Lens not found"
-msgstr ""
+msgstr "Níor aimsíodh an lionsa"
 
 #: src/app/routes.js:602 src/app/routes.js:618 src/app/routes.js:634
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
@@ -2610,7 +2610,7 @@ msgstr "Bog Comhaid"
 
 #: src/locales.js:449
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Comhaid á mbogadh ó %s"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
@@ -2707,7 +2707,7 @@ msgstr "Níor aimsíodh albam"
 
 #: src/locales.js:413
 msgid "No albums selected"
-msgstr ""
+msgstr "Níor roghnaíodh aon albam"
 
 #: src/locales.js:257
 msgid "No data available"
@@ -2715,11 +2715,11 @@ msgstr "Níl aon sonraí ar fáil"
 
 #: src/locales.js:414
 msgid "No files available for download"
-msgstr ""
+msgstr "Níl aon chomhaid ar fáil le híoslódáil"
 
 #: src/locales.js:404
 msgid "No items selected"
-msgstr ""
+msgstr "Níl aon mhír roghnaithe"
 
 #: src/component/photo/batch-edit.vue:438
 msgid "No labels assigned"
@@ -2731,7 +2731,7 @@ msgstr "Níor aimsíodh aon lipéid"
 
 #: src/locales.js:412
 msgid "No labels selected"
-msgstr ""
+msgstr "Níor roghnaíodh aon lipéid"
 
 #: src/locales.js:217
 msgid "No matching records found"
@@ -2816,11 +2816,11 @@ msgstr "Ní cheadaítear"
 
 #: src/locales.js:397
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Níl sé ar fáil i mód poiblí"
 
 #: src/locales.js:398
 msgid "Not available in read-only mode"
-msgstr ""
+msgstr "Níl sé ar fáil i mód inléite amháin"
 
 #: src/component/lightbox.vue:1109 src/locales.js:379
 msgid "Not found"
@@ -2897,11 +2897,11 @@ msgstr "Aimsíodh albam amháin"
 
 #: src/locales.js:433
 msgid "One entry added to %s"
-msgstr ""
+msgstr "Cuireadh iontráil amháin le %s"
 
 #: src/locales.js:435
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "Baineadh iontráil amháin de %s"
 
 #: src/page/library/browse.vue:458
 msgid "One file found"
@@ -2982,7 +2982,7 @@ msgstr "Bunábhair"
 
 #: src/locales.js:385
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Tá fillteán bunghnéithe folamh"
 
 #: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
@@ -3046,11 +3046,11 @@ msgstr "Athraíodh an pasfhocal"
 
 #: src/component/lightbox.vue:68 src/component/lightbox.vue:69
 msgid "Pause"
-msgstr ""
+msgstr "Fionraí"
 
 #: src/locales.js:401
 msgid "Payment required"
-msgstr ""
+msgstr "Íocaíocht ag teastáil"
 
 #: src/app/routes.js:563 src/app/routes.js:587
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
@@ -3074,7 +3074,7 @@ msgstr "Scriosta go buan"
 
 #: src/locales.js:400
 msgid "Permission denied"
-msgstr ""
+msgstr "Cead diúltaithe"
 
 #: src/model/subject.js:158
 msgid "Person"
@@ -3086,7 +3086,7 @@ msgstr "Clúdach duine nuashonraithe"
 
 #: src/locales.js:456
 msgid "Person deleted"
-msgstr ""
+msgstr "Scriosadh an duine"
 
 #: src/component/photo/edit/people.vue:248
 #: src/component/photo/edit/people.vue:282 src/locales.js:395
@@ -3095,7 +3095,7 @@ msgstr "Ní bhfuarthas an duine"
 
 #: src/locales.js:455
 msgid "Person saved"
-msgstr ""
+msgstr "Sábháladh an duine"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -3153,7 +3153,7 @@ msgstr "Áiteanna"
 
 #: src/component/lightbox.vue:79 src/component/lightbox.vue:80
 msgid "Play"
-msgstr ""
+msgstr "Seinn"
 
 #: src/component/settings/password.vue:68
 msgid "Please confirm your new password."
@@ -3177,7 +3177,7 @@ msgstr "Cuir isteach carachtar OTP {0}"
 
 #: src/locales.js:399
 msgid "Please log in to your account"
-msgstr ""
+msgstr "Logáil isteach i do chuntas le do thoil"
 
 #: src/component/settings/password.vue:21
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -3272,7 +3272,7 @@ msgstr "Príobháideach"
 
 #: src/locales.js:459
 msgid "Processing upload..."
-msgstr ""
+msgstr "Uaslódáil á phróiseáil..."
 
 #: src/options/options.js:462
 msgid "Product Feedback"
@@ -3299,7 +3299,7 @@ msgstr "Scór Cáilíochta"
 
 #: src/locales.js:424
 msgid "Quota exceeded"
-msgstr ""
+msgstr "Sáraíodh an cuóta"
 
 #: src/page/discover.vue:16 src/page/discover.vue:17
 msgid "Random"
@@ -3438,7 +3438,7 @@ msgstr "Bainte"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "Baineadh %d comhaid agus %d grianghraif"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
 #: src/locales.js:357
@@ -3686,7 +3686,7 @@ msgstr "Rogha"
 
 #: src/locales.js:432
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Cuireadh an rogha le %s"
 
 #: src/component/photo/clipboard.vue:251 src/locales.js:461
 msgid "Selection approved"
@@ -3698,11 +3698,11 @@ msgstr "Roghnaithe sa chartlann"
 
 #: src/locales.js:464
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Roghnú marcáilte mar phríobháideach"
 
 #: src/locales.js:386
 msgid "Selection not found"
-msgstr ""
+msgstr "Níor aimsíodh an rogha"
 
 #: src/component/photo/clipboard.vue:318 src/locales.js:463
 msgid "Selection restored"
@@ -4004,7 +4004,7 @@ msgstr "Fan logáilte isteach ar an bhfeiste seo"
 
 #: src/component/lightbox.vue:113 src/component/lightbox.vue:114
 msgid "Stop Casting"
-msgstr ""
+msgstr "Stad ag caitheamh"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
@@ -4025,15 +4025,15 @@ msgstr "Ábhar"
 
 #: src/locales.js:454
 msgid "Subject deleted"
-msgstr ""
+msgstr "Scriosadh an t-ábhar"
 
 #: src/locales.js:394
 msgid "Subject not found"
-msgstr ""
+msgstr "Ní bhfuarthas an t-ábhar"
 
 #: src/locales.js:453
 msgid "Subject saved"
-msgstr ""
+msgstr "Ábhar sábháilte"
 
 #: src/component/settings/passcode.vue:351 src/locales.js:470
 msgid "Successfully activated"
@@ -4115,7 +4115,7 @@ msgstr "D'fhill an t-eiseamláir atreorú gan choinne."
 
 #: src/locales.js:420
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Is é %s an t-eatramh múscail, ach caithfidh sé a bheith 1h nó níos lú"
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -4248,7 +4248,7 @@ msgstr "Ní féidir scriosadh"
 
 #: src/locales.js:375
 msgid "Unable to do that"
-msgstr ""
+msgstr "Ní féidir é sin a dhéanamh"
 
 #: src/component/lightbox/sidebar.vue:267
 msgid "Unassign"
@@ -4313,15 +4313,15 @@ msgstr "Díscrios"
 
 #: src/locales.js:382
 msgid "Unsupported"
-msgstr ""
+msgstr "Gan tacaíocht"
 
 #: src/locales.js:384
 msgid "Unsupported format"
-msgstr ""
+msgstr "Formáid nach dtacaítear léi"
 
 #: src/locales.js:383
 msgid "Unsupported type"
-msgstr ""
+msgstr "Cineál nach dtacaítear leis"
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:168
 #: src/component/photo/edit/files.vue:269
@@ -4398,7 +4398,7 @@ msgstr "Theip ar an uaslódáil"
 
 #: src/locales.js:460
 msgid "Upload has been processed"
-msgstr ""
+msgstr "Próiseáladh an t-uaslódáil"
 
 #: src/component/service/edit.vue:129
 msgid "Upload local files"
@@ -4406,7 +4406,7 @@ msgstr "Íoslódáil comhaid áitiúla"
 
 #: src/locales.js:402
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "D'fhéadfadh uaslódáil a bheith maslach"
 
 #: src/component/user/edit/dialog.vue:252
 #: src/component/user/edit/dialog.vue:253
@@ -4472,7 +4472,7 @@ msgstr "Comhéadan Úsáideora"
 
 #: src/locales.js:389
 msgid "User not found"
-msgstr ""
+msgstr "Úsáideoir gan aimsiú"
 
 #: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:177
@@ -4694,7 +4694,7 @@ msgstr "Is féidir leat do leabharlann a athscanadh chun aghaidheanna breise a f
 
 #: src/locales.js:421
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Níorbh fhéidir do chuntas a nascadh"
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4716,7 +4716,7 @@ msgstr "Déantar anailís leanúnach ar do leabharlann chun albam chuimhneachái
 
 #: src/locales.js:466
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "Zip cruthaithe i %d s"
 
 #: src/component/lightbox.vue:519
 msgid "Zoom in/out"

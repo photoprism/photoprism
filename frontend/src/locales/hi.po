@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-14 14:12+0000\n"
+"PO-Revision-Date: 2026-06-23 07:41+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -86,23 +86,23 @@ msgstr "%{s} बहुत छोटा है"
 
 #: src/locales.js:434
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d प्रविष्टियों को %s में जोड़ा गया"
 
 #: src/locales.js:436
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d प्रविष्टियों को %s से हटा दिया गया"
 
 #: src/locales.js:458
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d फाइलों को %d में अपलोड किया गया"
 
 #: src/locales.js:378
 msgid "%s already exists"
-msgstr ""
+msgstr "%s पहले से मौजूद है"
 
 #: src/locales.js:468
 msgid "%s has been restored"
-msgstr ""
+msgstr "%s बहाल कर दिया गया है"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -193,7 +193,7 @@ msgstr "खाता समूह मैपिंग्स"
 
 #: src/locales.js:388
 msgid "Account not found"
-msgstr ""
+msgstr "खता नहीं मिला"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -201,7 +201,7 @@ msgstr "खाता बहाल किया गया"
 
 #: src/locales.js:438
 msgid "Account saved"
-msgstr ""
+msgstr "खाता सहेजा गया"
 
 #: src/page/admin.vue:55 src/component/cluster/node/dialog.vue:18
 #: src/component/cluster/node/dialog.vue:19
@@ -394,7 +394,7 @@ msgstr "एल्बम"
 
 #: src/locales.js:428
 msgid "Album %s deleted"
-msgstr ""
+msgstr "एल्बम %s हटाया गया"
 
 #: src/page/settings/advanced.vue:199
 msgid "Album Backups"
@@ -402,7 +402,7 @@ msgstr "एल्बम बैकअप"
 
 #: src/locales.js:429
 msgid "Album contents cloned"
-msgstr ""
+msgstr "एल्बम सामग्री को क्लोन किया गया"
 
 #: src/locales.js:426 src/page/albums.vue:1194
 msgid "Album created"
@@ -414,11 +414,11 @@ msgstr "एल्बम हटा दिया गया"
 
 #: src/locales.js:393
 msgid "Album not found"
-msgstr ""
+msgstr "एल्बम नहीं मिला"
 
 #: src/locales.js:427
 msgid "Album saved"
-msgstr ""
+msgstr "एल्बम सहेजा गया"
 
 #: src/app/routes.js:332 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
@@ -761,7 +761,7 @@ msgstr "बग रिपोर्ट"
 
 #: src/locales.js:419
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "व्यस्त, कृपया बाद में पुन: प्रयास करें"
 
 #: src/page/connect.vue:8 src/common/notify.js:119
 msgid "Busy, please wait…"
@@ -785,7 +785,7 @@ msgstr "कैमरा"
 
 #: src/locales.js:391
 msgid "Camera not found"
-msgstr ""
+msgstr "कैमरा नहीं मिला"
 
 #: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
 msgid "Camera Serial"
@@ -865,7 +865,7 @@ msgstr "{1} में से {0} कैरोसेल स्लाइड"
 
 #: src/component/lightbox.vue:125 src/component/lightbox.vue:126
 msgid "Cast"
-msgstr ""
+msgstr "कलाकार"
 
 #: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
@@ -1147,7 +1147,7 @@ msgstr "प्रतिलिपि"
 
 #: src/locales.js:450
 msgid "Copying files from %s"
-msgstr ""
+msgstr "%s से फाइल कॉपी कर रहा है"
 
 #: src/component/lightbox/sidebar.vue:828
 #: src/component/photo/batch-edit.vue:367
@@ -1159,11 +1159,11 @@ msgstr "कॉपीराइट"
 
 #: src/locales.js:377
 msgid "Could not be deleted"
-msgstr ""
+msgstr "हटाया नहीं जा सका"
 
 #: src/locales.js:407
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "कनेक्ट नहीं हो सका, कृपया पुनः प्रयास करें"
 
 #: src/component/photo/edit/people.vue:301
 msgid "Could not update person cover"
@@ -1634,7 +1634,7 @@ msgstr "कार्रवाई की पुष्टि करने और �
 
 #: src/locales.js:387
 msgid "Entity not found"
-msgstr ""
+msgstr "इकाई नहीं मिली"
 
 #: src/page/connect.vue:14 src/component/lightbox.vue:522
 #: src/page/library/errors.vue:361
@@ -1705,7 +1705,7 @@ msgstr "चेहरा"
 
 #: src/locales.js:396
 msgid "Face not found"
-msgstr ""
+msgstr "चेहरा नहीं मिला"
 
 #: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
 msgid "Faces"
@@ -1713,11 +1713,11 @@ msgstr "चेहरे के"
 
 #: src/locales.js:405
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "फ़ाइल बनाने में विफल, कृपया अनुमतियों की जाँच करें"
 
 #: src/locales.js:406
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "फ़ोल्डर बनाने में विफल, कृपया अनुमतियों की जाँच करें"
 
 #: src/component/share/dialog.vue:235
 msgid "Failed removing link"
@@ -1729,7 +1729,7 @@ msgstr "खाता कनेक्ट करने में विफल।"
 
 #: src/locales.js:415
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "ज़िप फ़ाइल बनाने में विफल"
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1795,7 +1795,7 @@ msgstr "पसंदीदा"
 
 #: src/locales.js:411
 msgid "Feature disabled"
-msgstr ""
+msgstr "सुविधा अक्षम है"
 
 #: src/options/options.js:463
 msgid "Feature Request"
@@ -1820,7 +1820,7 @@ msgstr "फ़ाइल रूपांतरण"
 
 #: src/locales.js:431
 msgid "File deleted"
-msgstr ""
+msgstr "फ़ाइल हटा दी गई"
 
 #: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
@@ -1832,11 +1832,11 @@ msgstr "फ़ाइल का नाम"
 
 #: src/locales.js:380
 msgid "File not found"
-msgstr ""
+msgstr "फाइल नहीं मिली"
 
 #: src/locales.js:430
 msgid "File removed from stack"
-msgstr ""
+msgstr "स्टैक से फ़ाइल को निकाला गया"
 
 #: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
 #: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
@@ -1845,11 +1845,11 @@ msgstr "फ़ाइल का साइज़"
 
 #: src/locales.js:381
 msgid "File too large"
-msgstr ""
+msgstr "बहुत बड़ी फाइल"
 
 #: src/locales.js:457
 msgid "File uploaded"
-msgstr ""
+msgstr "फ़ाइल अपलोड की गई"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
 #: src/component/photo/edit/files.vue:97
@@ -2062,11 +2062,11 @@ msgstr "आयात"
 
 #: src/locales.js:443
 msgid "Import canceled"
-msgstr ""
+msgstr "आयात रद्द कर दिया गया"
 
 #: src/locales.js:442
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "%d s में आयात पूरा हुआ"
 
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
@@ -2120,15 +2120,15 @@ msgstr "इंडेक्सिंग"
 
 #: src/locales.js:447
 msgid "Indexing canceled"
-msgstr ""
+msgstr "अनुक्रमण रद्द किया गया"
 
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "%d s में अनुक्रमण पूरा हुआ"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "%s में फाइलों को अनुक्रमित करना"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
@@ -2136,7 +2136,7 @@ msgstr "मीडिया और साइडकार फ़ाइलों �
 
 #: src/locales.js:445
 msgid "Indexing originals..."
-msgstr ""
+msgstr "अनुक्रमण मूल ..।"
 
 #: src/component/lightbox.vue:1542 src/component/lightbox.vue:1543
 #: src/component/lightbox/sidebar.vue:8
@@ -2168,7 +2168,7 @@ msgstr "उदाहरण"
 
 #: src/locales.js:423
 msgid "Insufficient storage"
-msgstr ""
+msgstr "अपर्याप्त भंडारण"
 
 #: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2196,7 +2196,7 @@ msgstr "अमान्य देश"
 
 #: src/locales.js:416
 msgid "Invalid credentials"
-msgstr ""
+msgstr "अवैध प्रत्यय पत्र"
 
 #: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
@@ -2204,11 +2204,11 @@ msgstr "अमान्य तिथि"
 
 #: src/locales.js:417
 msgid "Invalid link"
-msgstr ""
+msgstr "अमान्य लिंक"
 
 #: src/locales.js:418
 msgid "Invalid name"
-msgstr ""
+msgstr "अमान्य नाम"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
@@ -2217,7 +2217,7 @@ msgstr "अमान्य मापदण्ड"
 
 #: src/locales.js:410
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "अमान्य पासवर्ड, कृपया पुनः प्रयास करें"
 
 #: src/component/photo/edit/dialog.vue:293 src/model/thumb.js:272
 msgid "Invalid photo selected"
@@ -2233,7 +2233,7 @@ msgstr "असामान्य यूआरएल"
 
 #: src/locales.js:409
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "सत्यापन कोड अमान्य है, कृपया पुनः प्रयास करें"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
 #: src/locales.js:354
@@ -2282,11 +2282,11 @@ msgstr "लेबल"
 
 #: src/locales.js:390
 msgid "Label not found"
-msgstr ""
+msgstr "लेबल नहीं मिला"
 
 #: src/locales.js:452
 msgid "Label saved"
-msgstr ""
+msgstr "लेबल सहेजा गया"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:548
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
@@ -2364,7 +2364,7 @@ msgstr "लेंस"
 
 #: src/locales.js:392
 msgid "Lens not found"
-msgstr ""
+msgstr "लेंस नहीं मिला"
 
 #: src/app/routes.js:602 src/app/routes.js:618 src/app/routes.js:634
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
@@ -2613,7 +2613,7 @@ msgstr "फ़ाइलें ले जाएँ"
 
 #: src/locales.js:449
 msgid "Moving files from %s"
-msgstr ""
+msgstr "%s से फाइल चल रही है"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
@@ -2710,7 +2710,7 @@ msgstr "कोई एल्बम नहीं मिला"
 
 #: src/locales.js:413
 msgid "No albums selected"
-msgstr ""
+msgstr "कोई एल्बम नहीं चुना गया"
 
 #: src/locales.js:257
 msgid "No data available"
@@ -2718,11 +2718,11 @@ msgstr "कोई डेटा मौजूद नहीं"
 
 #: src/locales.js:414
 msgid "No files available for download"
-msgstr ""
+msgstr "डाउनलोड के लिए कोई फाइल उपलब्ध नहीं है"
 
 #: src/locales.js:404
 msgid "No items selected"
-msgstr ""
+msgstr "कोई आइटम नहीं चुना गया"
 
 #: src/component/photo/batch-edit.vue:438
 msgid "No labels assigned"
@@ -2734,7 +2734,7 @@ msgstr "कोई लेबल नहीं मिला"
 
 #: src/locales.js:412
 msgid "No labels selected"
-msgstr ""
+msgstr "कोई लेबल नहीं चुना गया"
 
 #: src/locales.js:217
 msgid "No matching records found"
@@ -2819,11 +2819,11 @@ msgstr "अनुमति नहीं"
 
 #: src/locales.js:397
 msgid "Not available in public mode"
-msgstr ""
+msgstr "सार्वजनिक मोड में उपलब्ध नहीं है"
 
 #: src/locales.js:398
 msgid "Not available in read-only mode"
-msgstr ""
+msgstr "रीड ओनली मोड में उपलब्ध नहीं है"
 
 #: src/component/lightbox.vue:1109 src/locales.js:379
 msgid "Not found"
@@ -2900,11 +2900,11 @@ msgstr "एक एल्बम मिला"
 
 #: src/locales.js:433
 msgid "One entry added to %s"
-msgstr ""
+msgstr "एक प्रविष्टि %s में जोड़ी गई"
 
 #: src/locales.js:435
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "%s से एक प्रविष्टि को हटाया गया"
 
 #: src/page/library/browse.vue:458
 msgid "One file found"
@@ -2985,7 +2985,7 @@ msgstr "मूल"
 
 #: src/locales.js:385
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "मूल फ़ोल्डर खाली है"
 
 #: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
@@ -3049,11 +3049,11 @@ msgstr "पासवर्ड बदला गया"
 
 #: src/component/lightbox.vue:68 src/component/lightbox.vue:69
 msgid "Pause"
-msgstr ""
+msgstr "रुकें"
 
 #: src/locales.js:401
 msgid "Payment required"
-msgstr ""
+msgstr "भुगतान आवश्यक है"
 
 #: src/app/routes.js:563 src/app/routes.js:587
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
@@ -3077,7 +3077,7 @@ msgstr "स्थायी रूप से हटा दिया गया"
 
 #: src/locales.js:400
 msgid "Permission denied"
-msgstr ""
+msgstr "अनुमति नहीं मिली"
 
 #: src/model/subject.js:158
 msgid "Person"
@@ -3089,7 +3089,7 @@ msgstr "व्यक्ति कवर अपडेट किया गया"
 
 #: src/locales.js:456
 msgid "Person deleted"
-msgstr ""
+msgstr "व्यक्ति हटाया गया"
 
 #: src/component/photo/edit/people.vue:248
 #: src/component/photo/edit/people.vue:282 src/locales.js:395
@@ -3098,7 +3098,7 @@ msgstr "व्यक्ति नहीं मिला"
 
 #: src/locales.js:455
 msgid "Person saved"
-msgstr ""
+msgstr "व्यक्ति बचाया"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -3180,7 +3180,7 @@ msgstr "कृपया OTP वर्ण {0} दर्ज करें"
 
 #: src/locales.js:399
 msgid "Please log in to your account"
-msgstr ""
+msgstr "कृपया अपने खाते लॉग इन करें"
 
 #: src/component/settings/password.vue:21
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -3275,7 +3275,7 @@ msgstr "निजी"
 
 #: src/locales.js:459
 msgid "Processing upload..."
-msgstr ""
+msgstr "अपलोड संसाधित किया जा रहा है..।"
 
 #: src/options/options.js:462
 msgid "Product Feedback"
@@ -3302,7 +3302,7 @@ msgstr "गुणवत्ता स्कोर"
 
 #: src/locales.js:424
 msgid "Quota exceeded"
-msgstr ""
+msgstr "कोटा पूरा हो गया"
 
 #: src/page/discover.vue:16 src/page/discover.vue:17
 msgid "Random"
@@ -3441,7 +3441,7 @@ msgstr "निकाला गया"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "%d फ़ाइलों और %d फ़ोटो को हटा दिया गया"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
 #: src/locales.js:357
@@ -3689,7 +3689,7 @@ msgstr "चयन"
 
 #: src/locales.js:432
 msgid "Selection added to %s"
-msgstr ""
+msgstr "चयन %s में जोड़ा गया"
 
 #: src/component/photo/clipboard.vue:251 src/locales.js:461
 msgid "Selection approved"
@@ -3701,11 +3701,11 @@ msgstr "चयन को संग्रहीत किया गया"
 
 #: src/locales.js:464
 msgid "Selection marked as private"
-msgstr ""
+msgstr "चयन निजी के रूप में चिह्नित"
 
 #: src/locales.js:386
 msgid "Selection not found"
-msgstr ""
+msgstr "चयन नहीं मिला"
 
 #: src/component/photo/clipboard.vue:318 src/locales.js:463
 msgid "Selection restored"
@@ -4007,7 +4007,7 @@ msgstr "इस डिवाइस पर साइन इन रहें"
 
 #: src/component/lightbox.vue:113 src/component/lightbox.vue:114
 msgid "Stop Casting"
-msgstr ""
+msgstr "कास्ट करना बंद करो"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
@@ -4028,15 +4028,15 @@ msgstr "विषय"
 
 #: src/locales.js:454
 msgid "Subject deleted"
-msgstr ""
+msgstr "विषय हटा दिया गया"
 
 #: src/locales.js:394
 msgid "Subject not found"
-msgstr ""
+msgstr "विषय नहीं मिला"
 
 #: src/locales.js:453
 msgid "Subject saved"
-msgstr ""
+msgstr "विषय सहेजा गया"
 
 #: src/component/settings/passcode.vue:351 src/locales.js:470
 msgid "Successfully activated"
@@ -4118,7 +4118,7 @@ msgstr "उदाहरण ने एक अप्रत्याशित र�
 
 #: src/locales.js:420
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "वेकअप अंतराल %s है, लेकिन 1h या उससे कम होना चाहिए"
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -4251,7 +4251,7 @@ msgstr "हटाने में असमर्थ"
 
 #: src/locales.js:375
 msgid "Unable to do that"
-msgstr ""
+msgstr "ऐसा करने में असमर्थ"
 
 #: src/component/lightbox/sidebar.vue:267
 msgid "Unassign"
@@ -4316,15 +4316,15 @@ msgstr "अनस्टैक"
 
 #: src/locales.js:382
 msgid "Unsupported"
-msgstr ""
+msgstr "असमर्थित"
 
 #: src/locales.js:384
 msgid "Unsupported format"
-msgstr ""
+msgstr "असमर्थित प्रारूप"
 
 #: src/locales.js:383
 msgid "Unsupported type"
-msgstr ""
+msgstr "असमर्थित प्रकार"
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:168
 #: src/component/photo/edit/files.vue:269
@@ -4401,7 +4401,7 @@ msgstr "अपलोड विफल"
 
 #: src/locales.js:460
 msgid "Upload has been processed"
-msgstr ""
+msgstr "अपलोड संसाधित हो गया है"
 
 #: src/component/service/edit.vue:129
 msgid "Upload local files"
@@ -4409,7 +4409,7 @@ msgstr "स्थानीय फ़ाइलें अपलोड करें
 
 #: src/locales.js:402
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "अपलोड आपत्तिजनक हो सकता है"
 
 #: src/component/user/edit/dialog.vue:252
 #: src/component/user/edit/dialog.vue:253
@@ -4475,7 +4475,7 @@ msgstr "प्रयोक्ता इंटरफ़ेस"
 
 #: src/locales.js:389
 msgid "User not found"
-msgstr ""
+msgstr "उपयोगकर्ता नहीं मिला"
 
 #: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:177
@@ -4697,7 +4697,7 @@ msgstr "अतिरिक्त चेहरों को खोजने क�
 
 #: src/locales.js:421
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "आपका खाता कनेक्ट नहीं किया जा सका"
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4719,7 +4719,7 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 
 #: src/locales.js:466
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "%d s में बनाया गया ज़िप"
 
 #: src/component/lightbox.vue:519
 msgid "Zoom in/out"

@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-06-14 14:12+0000\n"
+"PO-Revision-Date: 2026-06-23 07:41+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -83,23 +83,23 @@ msgstr "%{s} je prekratek"
 
 #: src/locales.js:434
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d vnosi dodani v %s"
 
 #: src/locales.js:436
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d vnosi odstranjeni iz %s"
 
 #: src/locales.js:458
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d datoteke, naložene v %d s"
 
 #: src/locales.js:378
 msgid "%s already exists"
-msgstr ""
+msgstr "%s že obstaja"
 
 #: src/locales.js:468
 msgid "%s has been restored"
-msgstr ""
+msgstr "%s je bil obnovljen"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -190,7 +190,7 @@ msgstr "Povezave med računskimi skupinami"
 
 #: src/locales.js:388
 msgid "Account not found"
-msgstr ""
+msgstr "Račun ni najden"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -198,7 +198,7 @@ msgstr "Obnovljen račun"
 
 #: src/locales.js:438
 msgid "Account saved"
-msgstr ""
+msgstr "Shranjen račun"
 
 #: src/page/admin.vue:55 src/component/cluster/node/dialog.vue:18
 #: src/component/cluster/node/dialog.vue:19
@@ -391,7 +391,7 @@ msgstr "Album"
 
 #: src/locales.js:428
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Album %s izbrisano"
 
 #: src/page/settings/advanced.vue:199
 msgid "Album Backups"
@@ -399,7 +399,7 @@ msgstr "Varnostne kopije albumov"
 
 #: src/locales.js:429
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Vsebina albuma klonirana"
 
 #: src/locales.js:426 src/page/albums.vue:1194
 msgid "Album created"
@@ -411,11 +411,11 @@ msgstr "Izbrisan album"
 
 #: src/locales.js:393
 msgid "Album not found"
-msgstr ""
+msgstr "Album ni najden"
 
 #: src/locales.js:427
 msgid "Album saved"
-msgstr ""
+msgstr "Shranjen album"
 
 #: src/app/routes.js:332 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
@@ -758,7 +758,7 @@ msgstr "Poročilo o napaki"
 
 #: src/locales.js:419
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Zaseden, poskusite znova pozneje"
 
 #: src/page/connect.vue:8 src/common/notify.js:119
 msgid "Busy, please wait…"
@@ -782,7 +782,7 @@ msgstr "Fotoaparat"
 
 #: src/locales.js:391
 msgid "Camera not found"
-msgstr ""
+msgstr "Kamera ni bila najdena"
 
 #: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
 msgid "Camera Serial"
@@ -862,7 +862,7 @@ msgstr "Vrtiljak drsnik {0} od {1}"
 
 #: src/component/lightbox.vue:125 src/component/lightbox.vue:126
 msgid "Cast"
-msgstr ""
+msgstr "Igralska zasedba"
 
 #: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
@@ -1144,7 +1144,7 @@ msgstr "Kopirati"
 
 #: src/locales.js:450
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Kopiranje datotek iz %s"
 
 #: src/component/lightbox/sidebar.vue:828
 #: src/component/photo/batch-edit.vue:367
@@ -1156,11 +1156,11 @@ msgstr "Avtorske pravice"
 
 #: src/locales.js:377
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Ni bilo mogoče izbrisati"
 
 #: src/locales.js:407
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Ne morem vzpostaviti povezave, poskusite znova"
 
 #: src/component/photo/edit/people.vue:301
 msgid "Could not update person cover"
@@ -1631,7 +1631,7 @@ msgstr "Vnesite geslo za potrditev dejanja in nadaljujte:"
 
 #: src/locales.js:387
 msgid "Entity not found"
-msgstr ""
+msgstr "Entiteta ni bila najdena"
 
 #: src/page/connect.vue:14 src/component/lightbox.vue:522
 #: src/page/library/errors.vue:361
@@ -1702,7 +1702,7 @@ msgstr "Obraz"
 
 #: src/locales.js:396
 msgid "Face not found"
-msgstr ""
+msgstr "Obraza ni mogoče najti"
 
 #: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
 msgid "Faces"
@@ -1710,11 +1710,11 @@ msgstr "Obrazi"
 
 #: src/locales.js:405
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Neuspešno ustvarjanje datoteke, preverite dovoljenja"
 
 #: src/locales.js:406
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Neuspešno ustvarjanje mape, preverite dovoljenja"
 
 #: src/component/share/dialog.vue:235
 msgid "Failed removing link"
@@ -1726,7 +1726,7 @@ msgstr "Ni uspelo povezati računa."
 
 #: src/locales.js:415
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Ni uspelo ustvariti datoteke zip"
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1792,7 +1792,7 @@ msgstr "Priljubljeno"
 
 #: src/locales.js:411
 msgid "Feature disabled"
-msgstr ""
+msgstr "Funkcija je onemogočena"
 
 #: src/options/options.js:463
 msgid "Feature Request"
@@ -1817,7 +1817,7 @@ msgstr "Pretvarjanje datotek"
 
 #: src/locales.js:431
 msgid "File deleted"
-msgstr ""
+msgstr "Izbrisana datoteka"
 
 #: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
@@ -1829,11 +1829,11 @@ msgstr "Ime datoteke"
 
 #: src/locales.js:380
 msgid "File not found"
-msgstr ""
+msgstr "Datoteka ni najdena"
 
 #: src/locales.js:430
 msgid "File removed from stack"
-msgstr ""
+msgstr "Datoteka odstranjena iz sklada"
 
 #: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
 #: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
@@ -1842,11 +1842,11 @@ msgstr "Datoteka"
 
 #: src/locales.js:381
 msgid "File too large"
-msgstr ""
+msgstr "Prevelika datoteka"
 
 #: src/locales.js:457
 msgid "File uploaded"
-msgstr ""
+msgstr "Prenesena datoteka"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
 #: src/component/photo/edit/files.vue:97
@@ -2059,11 +2059,11 @@ msgstr "Uvoz"
 
 #: src/locales.js:443
 msgid "Import canceled"
-msgstr ""
+msgstr "Uvoz preklican"
 
 #: src/locales.js:442
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Uvoz se zaključi v %d s"
 
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
@@ -2117,15 +2117,15 @@ msgstr "Indeksiranje"
 
 #: src/locales.js:447
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Indeksiranje preklicano"
 
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Indeksiranje je končano v %d s"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Indeksiranje datotek v %s"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
@@ -2133,7 +2133,7 @@ msgstr "Indeksiranje medijskih in stranskih datotek…"
 
 #: src/locales.js:445
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Indeksiranje izvirnikov..."
 
 #: src/component/lightbox.vue:1542 src/component/lightbox.vue:1543
 #: src/component/lightbox/sidebar.vue:8
@@ -2165,7 +2165,7 @@ msgstr "Primerki"
 
 #: src/locales.js:423
 msgid "Insufficient storage"
-msgstr ""
+msgstr "Nezadostno skladiščenje"
 
 #: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2193,7 +2193,7 @@ msgstr "Neveljavna država"
 
 #: src/locales.js:416
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Neveljavne poverilnice"
 
 #: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
@@ -2201,11 +2201,11 @@ msgstr "Nepravilen datum"
 
 #: src/locales.js:417
 msgid "Invalid link"
-msgstr ""
+msgstr "Neveljavna povezava"
 
 #: src/locales.js:418
 msgid "Invalid name"
-msgstr ""
+msgstr "Neveljavno ime"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
@@ -2214,7 +2214,7 @@ msgstr "Neveljavni parametri"
 
 #: src/locales.js:410
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Nepravilno geslo, poskusite znova"
 
 #: src/component/photo/edit/dialog.vue:293 src/model/thumb.js:272
 msgid "Invalid photo selected"
@@ -2230,7 +2230,7 @@ msgstr "Nepravilen URL"
 
 #: src/locales.js:409
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Neveljavna koda za preverjanje, poskusite znova"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
 #: src/locales.js:354
@@ -2279,11 +2279,11 @@ msgstr "Značka"
 
 #: src/locales.js:390
 msgid "Label not found"
-msgstr ""
+msgstr "Oznaka ni bila najdena"
 
 #: src/locales.js:452
 msgid "Label saved"
-msgstr ""
+msgstr "Shranjena nalepka"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:548
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
@@ -2361,7 +2361,7 @@ msgstr "Objektiv"
 
 #: src/locales.js:392
 msgid "Lens not found"
-msgstr ""
+msgstr "Objektiv ni bil najden"
 
 #: src/app/routes.js:602 src/app/routes.js:618 src/app/routes.js:634
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
@@ -2610,7 +2610,7 @@ msgstr "Premikanje datotek"
 
 #: src/locales.js:449
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Premikanje datotek iz %s"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
@@ -2707,7 +2707,7 @@ msgstr "Ni najdenih albumov"
 
 #: src/locales.js:413
 msgid "No albums selected"
-msgstr ""
+msgstr "Ni izbranih albumov"
 
 #: src/locales.js:257
 msgid "No data available"
@@ -2715,11 +2715,11 @@ msgstr "Podatki niso na voljo"
 
 #: src/locales.js:414
 msgid "No files available for download"
-msgstr ""
+msgstr "Za prenos ni na voljo nobenih datotek"
 
 #: src/locales.js:404
 msgid "No items selected"
-msgstr ""
+msgstr "Ni izbranih elementov"
 
 #: src/component/photo/batch-edit.vue:438
 msgid "No labels assigned"
@@ -2731,7 +2731,7 @@ msgstr "Ni najdenih nalepk"
 
 #: src/locales.js:412
 msgid "No labels selected"
-msgstr ""
+msgstr "Ni izbranih nalepk"
 
 #: src/locales.js:217
 msgid "No matching records found"
@@ -2816,11 +2816,11 @@ msgstr "Ni dovoljeno"
 
 #: src/locales.js:397
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Ni na voljo v javnem načinu"
 
 #: src/locales.js:398
 msgid "Not available in read-only mode"
-msgstr ""
+msgstr "Ni na voljo v načinu samo za branje"
 
 #: src/component/lightbox.vue:1109 src/locales.js:379
 msgid "Not found"
@@ -2897,11 +2897,11 @@ msgstr "Najden je bil en album"
 
 #: src/locales.js:433
 msgid "One entry added to %s"
-msgstr ""
+msgstr "En vnos dodan v %s"
 
 #: src/locales.js:435
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "En vnos odstranjen iz %s"
 
 #: src/page/library/browse.vue:458
 msgid "One file found"
@@ -2982,7 +2982,7 @@ msgstr "Izvirniki"
 
 #: src/locales.js:385
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Mapa Originali je prazna"
 
 #: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
@@ -3046,11 +3046,11 @@ msgstr "Spremenjeno geslo"
 
 #: src/component/lightbox.vue:68 src/component/lightbox.vue:69
 msgid "Pause"
-msgstr ""
+msgstr "Premor"
 
 #: src/locales.js:401
 msgid "Payment required"
-msgstr ""
+msgstr "Potrebno je plačilo"
 
 #: src/app/routes.js:563 src/app/routes.js:587
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
@@ -3074,7 +3074,7 @@ msgstr "Trajno izbrisano"
 
 #: src/locales.js:400
 msgid "Permission denied"
-msgstr ""
+msgstr "Dovoljenje Zavrnjeno"
 
 #: src/model/subject.js:158
 msgid "Person"
@@ -3086,7 +3086,7 @@ msgstr "Posodobljeno pokrivalo osebe"
 
 #: src/locales.js:456
 msgid "Person deleted"
-msgstr ""
+msgstr "Izbrisana oseba"
 
 #: src/component/photo/edit/people.vue:248
 #: src/component/photo/edit/people.vue:282 src/locales.js:395
@@ -3095,7 +3095,7 @@ msgstr "Oseba ni bila najdena"
 
 #: src/locales.js:455
 msgid "Person saved"
-msgstr ""
+msgstr "Rešena oseba"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -3153,7 +3153,7 @@ msgstr "Kraji"
 
 #: src/component/lightbox.vue:79 src/component/lightbox.vue:80
 msgid "Play"
-msgstr ""
+msgstr "Igraj"
 
 #: src/component/settings/password.vue:68
 msgid "Please confirm your new password."
@@ -3177,7 +3177,7 @@ msgstr "Vnesite znak OTP {0}"
 
 #: src/locales.js:399
 msgid "Please log in to your account"
-msgstr ""
+msgstr "Prijavite se v svoj račun"
 
 #: src/component/settings/password.vue:21
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -3272,7 +3272,7 @@ msgstr "Zasebno"
 
 #: src/locales.js:459
 msgid "Processing upload..."
-msgstr ""
+msgstr "Obdelava nalaganja..."
 
 #: src/options/options.js:462
 msgid "Product Feedback"
@@ -3299,7 +3299,7 @@ msgstr "Ocena kakovosti"
 
 #: src/locales.js:424
 msgid "Quota exceeded"
-msgstr ""
+msgstr "Kvota je presežena"
 
 #: src/page/discover.vue:16 src/page/discover.vue:17
 msgid "Random"
@@ -3438,7 +3438,7 @@ msgstr "Odstranjeno"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "Odstranjene %d datoteke in %d fotografije"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
 #: src/locales.js:357
@@ -3686,7 +3686,7 @@ msgstr "Izbor"
 
 #: src/locales.js:432
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Izbor dodan v %s"
 
 #: src/component/photo/clipboard.vue:251 src/locales.js:461
 msgid "Selection approved"
@@ -3698,11 +3698,11 @@ msgstr "Arhiviran izbor"
 
 #: src/locales.js:464
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Izbor označen kot zasebni"
 
 #: src/locales.js:386
 msgid "Selection not found"
-msgstr ""
+msgstr "Izbor ni najden"
 
 #: src/component/photo/clipboard.vue:318 src/locales.js:463
 msgid "Selection restored"
@@ -4004,7 +4004,7 @@ msgstr "Ostanite prijavljeni v tej napravi"
 
 #: src/component/lightbox.vue:113 src/component/lightbox.vue:114
 msgid "Stop Casting"
-msgstr ""
+msgstr "Prenehaj z metanjem"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
@@ -4025,15 +4025,15 @@ msgstr "Zadeva"
 
 #: src/locales.js:454
 msgid "Subject deleted"
-msgstr ""
+msgstr "Predmet izbrisanih"
 
 #: src/locales.js:394
 msgid "Subject not found"
-msgstr ""
+msgstr "Zadeva ni bila najdena"
 
 #: src/locales.js:453
 msgid "Subject saved"
-msgstr ""
+msgstr "Zadeva je shranjena"
 
 #: src/component/settings/passcode.vue:351 src/locales.js:470
 msgid "Successfully activated"
@@ -4115,7 +4115,7 @@ msgstr "Primer je vrnil nepričakovano preusmeritev."
 
 #: src/locales.js:420
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Interval prebujanja je %s, vendar mora biti 1h ali manj"
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -4248,7 +4248,7 @@ msgstr "Ni mogoče izbrisati"
 
 #: src/locales.js:375
 msgid "Unable to do that"
-msgstr ""
+msgstr "Tega ni mogoče storiti"
 
 #: src/component/lightbox/sidebar.vue:267
 msgid "Unassign"
@@ -4313,15 +4313,15 @@ msgstr "Odstranjevanje"
 
 #: src/locales.js:382
 msgid "Unsupported"
-msgstr ""
+msgstr "Nepodprto"
 
 #: src/locales.js:384
 msgid "Unsupported format"
-msgstr ""
+msgstr "Nepodprt format"
 
 #: src/locales.js:383
 msgid "Unsupported type"
-msgstr ""
+msgstr "Nepodprta vrsta"
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:168
 #: src/component/photo/edit/files.vue:269
@@ -4398,7 +4398,7 @@ msgstr "Nalaganje ni uspelo"
 
 #: src/locales.js:460
 msgid "Upload has been processed"
-msgstr ""
+msgstr "Prenos je bil obdelan"
 
 #: src/component/service/edit.vue:129
 msgid "Upload local files"
@@ -4406,7 +4406,7 @@ msgstr "Prenos lokalnih datotek"
 
 #: src/locales.js:402
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "Nalaganje je lahko žaljivo"
 
 #: src/component/user/edit/dialog.vue:252
 #: src/component/user/edit/dialog.vue:253
@@ -4472,7 +4472,7 @@ msgstr "Uporabniški vmesnik"
 
 #: src/locales.js:389
 msgid "User not found"
-msgstr ""
+msgstr "Uporabnik ne obstaja"
 
 #: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:177
@@ -4694,7 +4694,7 @@ msgstr "Če želite najti dodatne obraze, lahko knjižnico ponovno preiščete."
 
 #: src/locales.js:421
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Vašega računa ni bilo mogoče povezati"
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4716,7 +4716,7 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 
 #: src/locales.js:466
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "Zip, ustvarjen v %d s"
 
 #: src/component/lightbox.vue:519
 msgid "Zoom in/out"

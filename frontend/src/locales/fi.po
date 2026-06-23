@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-06-14 14:12+0000\n"
+"PO-Revision-Date: 2026-06-23 07:41+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -83,23 +83,23 @@ msgstr "%{s} on liian lyhyt"
 
 #: src/locales.js:434
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d merkintöjä lisätty %s"
 
 #: src/locales.js:436
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d merkinnät poistettu %s"
 
 #: src/locales.js:458
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d tiedostoa ladattu %d s aikana"
 
 #: src/locales.js:378
 msgid "%s already exists"
-msgstr ""
+msgstr "%s on jo olemassa"
 
 #: src/locales.js:468
 msgid "%s has been restored"
-msgstr ""
+msgstr "%s on palautettu"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -190,7 +190,7 @@ msgstr "Tiliryhmien vastaavuudet"
 
 #: src/locales.js:388
 msgid "Account not found"
-msgstr ""
+msgstr "Tiliä ei löydy"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -198,7 +198,7 @@ msgstr "Tili palautettu"
 
 #: src/locales.js:438
 msgid "Account saved"
-msgstr ""
+msgstr "Tallennettu tili"
 
 #: src/page/admin.vue:55 src/component/cluster/node/dialog.vue:18
 #: src/component/cluster/node/dialog.vue:19
@@ -391,7 +391,7 @@ msgstr "Albumi"
 
 #: src/locales.js:428
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Albumi %s poistettu"
 
 #: src/page/settings/advanced.vue:199
 msgid "Album Backups"
@@ -399,7 +399,7 @@ msgstr "Albumin varmuuskopiot"
 
 #: src/locales.js:429
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Albumin sisältö kloonattu"
 
 #: src/locales.js:426 src/page/albums.vue:1194
 msgid "Album created"
@@ -411,11 +411,11 @@ msgstr "Albumi poistettu"
 
 #: src/locales.js:393
 msgid "Album not found"
-msgstr ""
+msgstr "Albumia ei löydy"
 
 #: src/locales.js:427
 msgid "Album saved"
-msgstr ""
+msgstr "Albumi tallennettu"
 
 #: src/app/routes.js:332 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
@@ -758,7 +758,7 @@ msgstr "Ilmoita virheestä"
 
 #: src/locales.js:419
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Varattu, yritä myöhemmin uudelleen"
 
 #: src/page/connect.vue:8 src/common/notify.js:119
 msgid "Busy, please wait…"
@@ -782,7 +782,7 @@ msgstr "Kamera"
 
 #: src/locales.js:391
 msgid "Camera not found"
-msgstr ""
+msgstr "Kameraa ei löydy"
 
 #: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
 msgid "Camera Serial"
@@ -862,7 +862,7 @@ msgstr "Karusellin slide {0} of {1}"
 
 #: src/component/lightbox.vue:125 src/component/lightbox.vue:126
 msgid "Cast"
-msgstr ""
+msgstr "Näyttelijät"
 
 #: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
@@ -1144,7 +1144,7 @@ msgstr "Kopio"
 
 #: src/locales.js:450
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Tiedostojen kopiointi %s"
 
 #: src/component/lightbox/sidebar.vue:828
 #: src/component/photo/batch-edit.vue:367
@@ -1156,11 +1156,11 @@ msgstr "Tekijänoikeus"
 
 #: src/locales.js:377
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Ei voitu poistaa"
 
 #: src/locales.js:407
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Yhteyttä ei saatu muodostettua, yritä uudelleen"
 
 #: src/component/photo/edit/people.vue:301
 msgid "Could not update person cover"
@@ -1631,7 +1631,7 @@ msgstr "Vahvista toiminto antamalla salasanasi ja jatka:"
 
 #: src/locales.js:387
 msgid "Entity not found"
-msgstr ""
+msgstr "Entiteettiä ei löydy"
 
 #: src/page/connect.vue:14 src/component/lightbox.vue:522
 #: src/page/library/errors.vue:361
@@ -1702,7 +1702,7 @@ msgstr "Kasvot"
 
 #: src/locales.js:396
 msgid "Face not found"
-msgstr ""
+msgstr "Kasvoja ei löydy"
 
 #: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
 msgid "Faces"
@@ -1710,11 +1710,11 @@ msgstr "Kasvot"
 
 #: src/locales.js:405
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Tiedoston luominen epäonnistui, tarkista käyttöoikeudet"
 
 #: src/locales.js:406
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Kansion luominen epäonnistui, tarkista käyttöoikeudet"
 
 #: src/component/share/dialog.vue:235
 msgid "Failed removing link"
@@ -1726,7 +1726,7 @@ msgstr "Tilin yhdistäminen epäonnistui."
 
 #: src/locales.js:415
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Zip-tiedoston luominen epäonnistui"
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1792,7 +1792,7 @@ msgstr "Suosikit"
 
 #: src/locales.js:411
 msgid "Feature disabled"
-msgstr ""
+msgstr "Ominaisuus poistettu käytöstä"
 
 #: src/options/options.js:463
 msgid "Feature Request"
@@ -1817,7 +1817,7 @@ msgstr "Tiedoston muuntaminen"
 
 #: src/locales.js:431
 msgid "File deleted"
-msgstr ""
+msgstr "Tiedosto poistettu"
 
 #: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
@@ -1829,11 +1829,11 @@ msgstr "Tiedoston nimi"
 
 #: src/locales.js:380
 msgid "File not found"
-msgstr ""
+msgstr "Tiedostoa ei löydy"
 
 #: src/locales.js:430
 msgid "File removed from stack"
-msgstr ""
+msgstr "Tiedosto poistettu pinosta"
 
 #: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
 #: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
@@ -1842,11 +1842,11 @@ msgstr "Tiedosto"
 
 #: src/locales.js:381
 msgid "File too large"
-msgstr ""
+msgstr "Tiedosto liian suuri"
 
 #: src/locales.js:457
 msgid "File uploaded"
-msgstr ""
+msgstr "Ladattu tiedosto"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
 #: src/component/photo/edit/files.vue:97
@@ -2059,11 +2059,11 @@ msgstr "Tuo"
 
 #: src/locales.js:443
 msgid "Import canceled"
-msgstr ""
+msgstr "Tuonti peruutettu"
 
 #: src/locales.js:442
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Tuonti valmis %d s"
 
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
@@ -2117,15 +2117,15 @@ msgstr "Indeksointi"
 
 #: src/locales.js:447
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Indeksointi peruutettu"
 
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Indeksointi valmis %d s"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Tiedostojen indeksointi osoitteessa %s"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
@@ -2133,7 +2133,7 @@ msgstr "Indeksoidaan media- ja sivutiedostoja…"
 
 #: src/locales.js:445
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Alkuperäiskappaleiden indeksointi..."
 
 #: src/component/lightbox.vue:1542 src/component/lightbox.vue:1543
 #: src/component/lightbox/sidebar.vue:8
@@ -2165,7 +2165,7 @@ msgstr "Instanssit"
 
 #: src/locales.js:423
 msgid "Insufficient storage"
-msgstr ""
+msgstr "Riittämätön varastointi"
 
 #: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2193,7 +2193,7 @@ msgstr "Virheellinen maa"
 
 #: src/locales.js:416
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Virheelliset valtakirjat"
 
 #: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
@@ -2201,11 +2201,11 @@ msgstr "Virheellinen päivämäärä"
 
 #: src/locales.js:417
 msgid "Invalid link"
-msgstr ""
+msgstr "Virheellinen linkki"
 
 #: src/locales.js:418
 msgid "Invalid name"
-msgstr ""
+msgstr "Virheellinen nimi"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
@@ -2214,7 +2214,7 @@ msgstr "Virheellinen päivämäärä"
 
 #: src/locales.js:410
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Väärä salasana, yritä uudelleen"
 
 #: src/component/photo/edit/dialog.vue:293 src/model/thumb.js:272
 msgid "Invalid photo selected"
@@ -2230,7 +2230,7 @@ msgstr "Virheellinen URL-osoite"
 
 #: src/locales.js:409
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Virheellinen vahvistuskoodi, yritä uudelleen"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
 #: src/locales.js:354
@@ -2279,11 +2279,11 @@ msgstr "Tunniste"
 
 #: src/locales.js:390
 msgid "Label not found"
-msgstr ""
+msgstr "Tarraa ei löydy"
 
 #: src/locales.js:452
 msgid "Label saved"
-msgstr ""
+msgstr "Tarra tallennettu"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:548
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
@@ -2361,7 +2361,7 @@ msgstr "Objektiivi"
 
 #: src/locales.js:392
 msgid "Lens not found"
-msgstr ""
+msgstr "Objektiivia ei löydy"
 
 #: src/app/routes.js:602 src/app/routes.js:618 src/app/routes.js:634
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
@@ -2610,7 +2610,7 @@ msgstr "Siirrä tiedostoja"
 
 #: src/locales.js:449
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Tiedostojen siirtäminen %s"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
@@ -2707,7 +2707,7 @@ msgstr "Albumeja ei löytynyt"
 
 #: src/locales.js:413
 msgid "No albums selected"
-msgstr ""
+msgstr "Ei valittuja albumeita"
 
 #: src/locales.js:257
 msgid "No data available"
@@ -2715,11 +2715,11 @@ msgstr "Tietoja ei ole saatavilla"
 
 #: src/locales.js:414
 msgid "No files available for download"
-msgstr ""
+msgstr "Tiedostoja ei ole ladattavissa"
 
 #: src/locales.js:404
 msgid "No items selected"
-msgstr ""
+msgstr "Kohdetta ei ole valittu"
 
 #: src/component/photo/batch-edit.vue:438
 msgid "No labels assigned"
@@ -2731,7 +2731,7 @@ msgstr "Tunnisteita ei löytynyt"
 
 #: src/locales.js:412
 msgid "No labels selected"
-msgstr ""
+msgstr "Ei valittuja tarroja"
 
 #: src/locales.js:217
 msgid "No matching records found"
@@ -2816,11 +2816,11 @@ msgstr "Ei sallittu"
 
 #: src/locales.js:397
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Ei käytettävissä julkisessa tilassa"
 
 #: src/locales.js:398
 msgid "Not available in read-only mode"
-msgstr ""
+msgstr "Ei käytettävissä vain luku-tilassa"
 
 #: src/component/lightbox.vue:1109 src/locales.js:379
 msgid "Not found"
@@ -2897,11 +2897,11 @@ msgstr "Yksi albumi löytyi"
 
 #: src/locales.js:433
 msgid "One entry added to %s"
-msgstr ""
+msgstr "Yksi merkintä lisätty kohtaan %s"
 
 #: src/locales.js:435
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "Yksi merkintä poistettu kohdasta %s"
 
 #: src/page/library/browse.vue:458
 msgid "One file found"
@@ -2982,7 +2982,7 @@ msgstr "Alkuperäiset"
 
 #: src/locales.js:385
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Originaalit-kansio on tyhjä"
 
 #: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
@@ -3046,11 +3046,11 @@ msgstr "Salasana vaihdettu"
 
 #: src/component/lightbox.vue:68 src/component/lightbox.vue:69
 msgid "Pause"
-msgstr ""
+msgstr "Tauko"
 
 #: src/locales.js:401
 msgid "Payment required"
-msgstr ""
+msgstr "Maksu vaaditaan"
 
 #: src/app/routes.js:563 src/app/routes.js:587
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
@@ -3074,7 +3074,7 @@ msgstr "Poistettu pysyvästi"
 
 #: src/locales.js:400
 msgid "Permission denied"
-msgstr ""
+msgstr "Lupa evätty"
 
 #: src/model/subject.js:158
 msgid "Person"
@@ -3086,7 +3086,7 @@ msgstr "Henkilön kansi päivitetty"
 
 #: src/locales.js:456
 msgid "Person deleted"
-msgstr ""
+msgstr "Henkilö poistettu"
 
 #: src/component/photo/edit/people.vue:248
 #: src/component/photo/edit/people.vue:282 src/locales.js:395
@@ -3095,7 +3095,7 @@ msgstr "Henkilöä ei löydy"
 
 #: src/locales.js:455
 msgid "Person saved"
-msgstr ""
+msgstr "Tallennettu henkilö"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -3153,7 +3153,7 @@ msgstr "Paikat"
 
 #: src/component/lightbox.vue:79 src/component/lightbox.vue:80
 msgid "Play"
-msgstr ""
+msgstr "Toista"
 
 #: src/component/settings/password.vue:68
 msgid "Please confirm your new password."
@@ -3177,7 +3177,7 @@ msgstr "Syötä OTP-merkki {0}"
 
 #: src/locales.js:399
 msgid "Please log in to your account"
-msgstr ""
+msgstr "Kirjaudu sisään tilillesi"
 
 #: src/component/settings/password.vue:21
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -3272,7 +3272,7 @@ msgstr "Yksityinen"
 
 #: src/locales.js:459
 msgid "Processing upload..."
-msgstr ""
+msgstr "Käsittelen latausta..."
 
 #: src/options/options.js:462
 msgid "Product Feedback"
@@ -3299,7 +3299,7 @@ msgstr "Laatupisteet"
 
 #: src/locales.js:424
 msgid "Quota exceeded"
-msgstr ""
+msgstr "Kiintiö ylitetty"
 
 #: src/page/discover.vue:16 src/page/discover.vue:17
 msgid "Random"
@@ -3438,7 +3438,7 @@ msgstr "Poistettu"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "Poistettiin %d tiedostoa ja %d valokuvaa"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
 #: src/locales.js:357
@@ -3686,7 +3686,7 @@ msgstr "Valinta"
 
 #: src/locales.js:432
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Valinta lisätty %s"
 
 #: src/component/photo/clipboard.vue:251 src/locales.js:461
 msgid "Selection approved"
@@ -3698,11 +3698,11 @@ msgstr "Valinta arkistoitu"
 
 #: src/locales.js:464
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Valinta merkitty yksityiseksi"
 
 #: src/locales.js:386
 msgid "Selection not found"
-msgstr ""
+msgstr "Valintaa ei löydy"
 
 #: src/component/photo/clipboard.vue:318 src/locales.js:463
 msgid "Selection restored"
@@ -4004,7 +4004,7 @@ msgstr "Pysy kirjautuneena sisään tällä laitteella"
 
 #: src/component/lightbox.vue:113 src/component/lightbox.vue:114
 msgid "Stop Casting"
-msgstr ""
+msgstr "Lopeta valaminen"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
@@ -4025,15 +4025,15 @@ msgstr "Aihe"
 
 #: src/locales.js:454
 msgid "Subject deleted"
-msgstr ""
+msgstr "Aihe poistettu"
 
 #: src/locales.js:394
 msgid "Subject not found"
-msgstr ""
+msgstr "Aihetta ei löydy"
 
 #: src/locales.js:453
 msgid "Subject saved"
-msgstr ""
+msgstr "Aihe tallennettu"
 
 #: src/component/settings/passcode.vue:351 src/locales.js:470
 msgid "Successfully activated"
@@ -4115,7 +4115,7 @@ msgstr "Instanssi palautti odottamattoman uudelleenohjauksen."
 
 #: src/locales.js:420
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Heräämisväli on %s, mutta sen on oltava enintään 1h"
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -4248,7 +4248,7 @@ msgstr "Poistaminen ei onnistu"
 
 #: src/locales.js:375
 msgid "Unable to do that"
-msgstr ""
+msgstr "En pysty siihen"
 
 #: src/component/lightbox/sidebar.vue:267
 msgid "Unassign"
@@ -4313,15 +4313,15 @@ msgstr "Pura pino"
 
 #: src/locales.js:382
 msgid "Unsupported"
-msgstr ""
+msgstr "Ei tuettu"
 
 #: src/locales.js:384
 msgid "Unsupported format"
-msgstr ""
+msgstr "Ei tuettu muoto"
 
 #: src/locales.js:383
 msgid "Unsupported type"
-msgstr ""
+msgstr "Tyyppiä ei tueta"
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:168
 #: src/component/photo/edit/files.vue:269
@@ -4398,7 +4398,7 @@ msgstr "Lähetys epäonnistui"
 
 #: src/locales.js:460
 msgid "Upload has been processed"
-msgstr ""
+msgstr "Lataus on käsitelty"
 
 #: src/component/service/edit.vue:129
 msgid "Upload local files"
@@ -4406,7 +4406,7 @@ msgstr "Lähetä paikallisia tiedostoja"
 
 #: src/locales.js:402
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "Upload saattaa olla loukkaava"
 
 #: src/component/user/edit/dialog.vue:252
 #: src/component/user/edit/dialog.vue:253
@@ -4472,7 +4472,7 @@ msgstr "Käyttöliittymä"
 
 #: src/locales.js:389
 msgid "User not found"
-msgstr ""
+msgstr "Käyttäjää ei löydy"
 
 #: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:177
@@ -4694,7 +4694,7 @@ msgstr "Voit skannata kirjastosi uudelleen löytääksesi lisää kasvoja."
 
 #: src/locales.js:421
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Tiliäsi ei voitu yhdistää"
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4716,7 +4716,7 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 
 #: src/locales.js:466
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "Zip luotu %d s"
 
 #: src/component/lightbox.vue:519
 msgid "Zoom in/out"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-14 14:12+0000\n"
+"PO-Revision-Date: 2026-06-23 07:41+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -86,23 +86,23 @@ msgstr "%{s} este prea scurt"
 
 #: src/locales.js:434
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d intrări adăugate la %s"
 
 #: src/locales.js:436
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "%d intrări eliminate din %s"
 
 #: src/locales.js:458
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d fișiere încărcate în %d s"
 
 #: src/locales.js:378
 msgid "%s already exists"
-msgstr ""
+msgstr "%s deja există"
 
 #: src/locales.js:468
 msgid "%s has been restored"
-msgstr ""
+msgstr "%s a fost restaurat"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -193,7 +193,7 @@ msgstr "Corelări între grupuri de conturi"
 
 #: src/locales.js:388
 msgid "Account not found"
-msgstr ""
+msgstr "Contul nu a fost găsit"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -201,7 +201,7 @@ msgstr "Cont restaurat"
 
 #: src/locales.js:438
 msgid "Account saved"
-msgstr ""
+msgstr "Cont salvat"
 
 #: src/page/admin.vue:55 src/component/cluster/node/dialog.vue:18
 #: src/component/cluster/node/dialog.vue:19
@@ -394,7 +394,7 @@ msgstr "Album"
 
 #: src/locales.js:428
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Album %s șters"
 
 #: src/page/settings/advanced.vue:199
 msgid "Album Backups"
@@ -402,7 +402,7 @@ msgstr "Copii de rezervă ale albumelor"
 
 #: src/locales.js:429
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Conținutul albumului clonat"
 
 #: src/locales.js:426 src/page/albums.vue:1194
 msgid "Album created"
@@ -414,11 +414,11 @@ msgstr "Album șters"
 
 #: src/locales.js:393
 msgid "Album not found"
-msgstr ""
+msgstr "Album nedescoperit"
 
 #: src/locales.js:427
 msgid "Album saved"
-msgstr ""
+msgstr "Album salvat"
 
 #: src/app/routes.js:332 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
@@ -761,7 +761,7 @@ msgstr "Raport de eroare"
 
 #: src/locales.js:419
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Ocupat, vă rugăm să încercați din nou mai târziu"
 
 #: src/page/connect.vue:8 src/common/notify.js:119
 msgid "Busy, please wait…"
@@ -785,7 +785,7 @@ msgstr "Cameră"
 
 #: src/locales.js:391
 msgid "Camera not found"
-msgstr ""
+msgstr "Nu s-a găsit camera"
 
 #: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
 msgid "Camera Serial"
@@ -865,7 +865,7 @@ msgstr "Diapozitiv carusel {0} de {1}"
 
 #: src/component/lightbox.vue:125 src/component/lightbox.vue:126
 msgid "Cast"
-msgstr ""
+msgstr "Distribuție"
 
 #: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
@@ -1147,7 +1147,7 @@ msgstr "Copie"
 
 #: src/locales.js:450
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Copierea fișierelor din %s"
 
 #: src/component/lightbox/sidebar.vue:828
 #: src/component/photo/batch-edit.vue:367
@@ -1159,11 +1159,11 @@ msgstr "Drepturi de autor"
 
 #: src/locales.js:377
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Nu a putut fi șters"
 
 #: src/locales.js:407
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Nu s-a putut conecta, vă rugăm să încercați din nou"
 
 #: src/component/photo/edit/people.vue:301
 msgid "Could not update person cover"
@@ -1634,7 +1634,7 @@ msgstr "Introduceți parola pentru a confirma acțiunea și continuați:"
 
 #: src/locales.js:387
 msgid "Entity not found"
-msgstr ""
+msgstr "Entitatea nu a fost găsită"
 
 #: src/page/connect.vue:14 src/component/lightbox.vue:522
 #: src/page/library/errors.vue:361
@@ -1705,7 +1705,7 @@ msgstr "Față"
 
 #: src/locales.js:396
 msgid "Face not found"
-msgstr ""
+msgstr "Fața nu a fost găsită"
 
 #: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
 msgid "Faces"
@@ -1713,11 +1713,11 @@ msgstr "Fețe"
 
 #: src/locales.js:405
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Nu a reușit să creeze fișierul, vă rugăm să verificați permisiunile"
 
 #: src/locales.js:406
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Nu s-a reușit crearea dosarului, vă rugăm să verificați permisiunile"
 
 #: src/component/share/dialog.vue:235
 msgid "Failed removing link"
@@ -1729,7 +1729,7 @@ msgstr "A eșuat conectarea contului."
 
 #: src/locales.js:415
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Nu a reușit să creeze fișierul zip"
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1795,7 +1795,7 @@ msgstr "Favorite"
 
 #: src/locales.js:411
 msgid "Feature disabled"
-msgstr ""
+msgstr "Caracteristică dezactivată"
 
 #: src/options/options.js:463
 msgid "Feature Request"
@@ -1820,7 +1820,7 @@ msgstr "Conversia fișierelor"
 
 #: src/locales.js:431
 msgid "File deleted"
-msgstr ""
+msgstr "Fișier șters"
 
 #: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
@@ -1832,11 +1832,11 @@ msgstr "Numele fișierului"
 
 #: src/locales.js:380
 msgid "File not found"
-msgstr ""
+msgstr "Fișier nedescoperit"
 
 #: src/locales.js:430
 msgid "File removed from stack"
-msgstr ""
+msgstr "Fișier eliminat din stivă"
 
 #: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
 #: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
@@ -1845,11 +1845,11 @@ msgstr "Dimensiunea fișierului"
 
 #: src/locales.js:381
 msgid "File too large"
-msgstr ""
+msgstr "Fișier prea mare"
 
 #: src/locales.js:457
 msgid "File uploaded"
-msgstr ""
+msgstr "Fișier încărcat"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
 #: src/component/photo/edit/files.vue:97
@@ -2062,11 +2062,11 @@ msgstr "Import"
 
 #: src/locales.js:443
 msgid "Import canceled"
-msgstr ""
+msgstr "Importul a fost anulat"
 
 #: src/locales.js:442
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Import finalizat în %d s"
 
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
@@ -2120,15 +2120,15 @@ msgstr "Indexare"
 
 #: src/locales.js:447
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Indexare anulată"
 
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Indexare finalizată în %d s"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Indexarea fișierelor în %s"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
@@ -2136,7 +2136,7 @@ msgstr "Indexarea fișierelor media și a fișierelor sidecar…"
 
 #: src/locales.js:445
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Indexarea originalelor..."
 
 #: src/component/lightbox.vue:1542 src/component/lightbox.vue:1543
 #: src/component/lightbox/sidebar.vue:8
@@ -2168,7 +2168,7 @@ msgstr "Instanțe"
 
 #: src/locales.js:423
 msgid "Insufficient storage"
-msgstr ""
+msgstr "Depozitare insuficientă"
 
 #: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2196,7 +2196,7 @@ msgstr "Țară invalidă"
 
 #: src/locales.js:416
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Acreditări nevalabile"
 
 #: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
@@ -2204,11 +2204,11 @@ msgstr "Dată invalidă"
 
 #: src/locales.js:417
 msgid "Invalid link"
-msgstr ""
+msgstr "Legătură invalidă"
 
 #: src/locales.js:418
 msgid "Invalid name"
-msgstr ""
+msgstr "Nume invalid"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
@@ -2217,7 +2217,7 @@ msgstr "Parametrii nevalabili"
 
 #: src/locales.js:410
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Parolă invalidă, vă rugăm să încercați din nou"
 
 #: src/component/photo/edit/dialog.vue:293 src/model/thumb.js:272
 msgid "Invalid photo selected"
@@ -2233,7 +2233,7 @@ msgstr "URL invalid"
 
 #: src/locales.js:409
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Cod de verificare nevalid, încercați din nou"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
 #: src/locales.js:354
@@ -2282,11 +2282,11 @@ msgstr "Etichetă"
 
 #: src/locales.js:390
 msgid "Label not found"
-msgstr ""
+msgstr "Eticheta nu a fost găsită"
 
 #: src/locales.js:452
 msgid "Label saved"
-msgstr ""
+msgstr "Etichetă salvată"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:548
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
@@ -2364,7 +2364,7 @@ msgstr "Obiectiv"
 
 #: src/locales.js:392
 msgid "Lens not found"
-msgstr ""
+msgstr "Obiectivul nu a fost găsit"
 
 #: src/app/routes.js:602 src/app/routes.js:618 src/app/routes.js:634
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
@@ -2613,7 +2613,7 @@ msgstr "Muta fișierele"
 
 #: src/locales.js:449
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Mutarea fișierelor din %s"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
@@ -2710,7 +2710,7 @@ msgstr "Nu s-au găsit albume"
 
 #: src/locales.js:413
 msgid "No albums selected"
-msgstr ""
+msgstr "Nu sunt selectate albume"
 
 #: src/locales.js:257
 msgid "No data available"
@@ -2718,11 +2718,11 @@ msgstr "Nu există date disponibile"
 
 #: src/locales.js:414
 msgid "No files available for download"
-msgstr ""
+msgstr "Nu există fișiere disponibile pentru descărcare"
 
 #: src/locales.js:404
 msgid "No items selected"
-msgstr ""
+msgstr "Niciun element selectat"
 
 #: src/component/photo/batch-edit.vue:438
 msgid "No labels assigned"
@@ -2734,7 +2734,7 @@ msgstr "Nu s-au găsit etichete"
 
 #: src/locales.js:412
 msgid "No labels selected"
-msgstr ""
+msgstr "Nu sunt selectate etichete"
 
 #: src/locales.js:217
 msgid "No matching records found"
@@ -2819,11 +2819,11 @@ msgstr "Nu este permis"
 
 #: src/locales.js:397
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Nu este disponibil în modul public"
 
 #: src/locales.js:398
 msgid "Not available in read-only mode"
-msgstr ""
+msgstr "Nu este disponibil în modul doar pentru citire"
 
 #: src/component/lightbox.vue:1109 src/locales.js:379
 msgid "Not found"
@@ -2900,11 +2900,11 @@ msgstr "Un album găsit"
 
 #: src/locales.js:433
 msgid "One entry added to %s"
-msgstr ""
+msgstr "O intrare adăugată la %s"
 
 #: src/locales.js:435
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "O intrare eliminată din %s"
 
 #: src/page/library/browse.vue:458
 msgid "One file found"
@@ -2985,7 +2985,7 @@ msgstr "Originale"
 
 #: src/locales.js:385
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Dosarul Originals este gol"
 
 #: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
@@ -3049,11 +3049,11 @@ msgstr "Parola a fost schimbată"
 
 #: src/component/lightbox.vue:68 src/component/lightbox.vue:69
 msgid "Pause"
-msgstr ""
+msgstr "Pauză"
 
 #: src/locales.js:401
 msgid "Payment required"
-msgstr ""
+msgstr "Este necesară efectuarea plății"
 
 #: src/app/routes.js:563 src/app/routes.js:587
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
@@ -3077,7 +3077,7 @@ msgstr "Șterse definitiv"
 
 #: src/locales.js:400
 msgid "Permission denied"
-msgstr ""
+msgstr "Permisiune refuzată"
 
 #: src/model/subject.js:158
 msgid "Person"
@@ -3089,7 +3089,7 @@ msgstr "Coperta persoanei actualizată"
 
 #: src/locales.js:456
 msgid "Person deleted"
-msgstr ""
+msgstr "Persoană eliminată"
 
 #: src/component/photo/edit/people.vue:248
 #: src/component/photo/edit/people.vue:282 src/locales.js:395
@@ -3098,7 +3098,7 @@ msgstr "Persoana nu a fost găsită"
 
 #: src/locales.js:455
 msgid "Person saved"
-msgstr ""
+msgstr "Persoană salvată"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -3180,7 +3180,7 @@ msgstr "Vă rugăm să introduceți caracterul OTP {0}"
 
 #: src/locales.js:399
 msgid "Please log in to your account"
-msgstr ""
+msgstr "Vă rugăm să vă conectați la contul dvs"
 
 #: src/component/settings/password.vue:21
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -3275,7 +3275,7 @@ msgstr "Privat"
 
 #: src/locales.js:459
 msgid "Processing upload..."
-msgstr ""
+msgstr "Procesarea încărcării..."
 
 #: src/options/options.js:462
 msgid "Product Feedback"
@@ -3302,7 +3302,7 @@ msgstr "Scorul de calitate"
 
 #: src/locales.js:424
 msgid "Quota exceeded"
-msgstr ""
+msgstr "Cota depășită"
 
 #: src/page/discover.vue:16 src/page/discover.vue:17
 msgid "Random"
@@ -3441,7 +3441,7 @@ msgstr "Eliminat"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "Sau eliminat %d fișiere și %d fotografii"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
 #: src/locales.js:357
@@ -3689,7 +3689,7 @@ msgstr "Selecție"
 
 #: src/locales.js:432
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Selecție adăugată la %s"
 
 #: src/component/photo/clipboard.vue:251 src/locales.js:461
 msgid "Selection approved"
@@ -3701,11 +3701,11 @@ msgstr "Selecție arhivată"
 
 #: src/locales.js:464
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Selecție marcată ca fiind privată"
 
 #: src/locales.js:386
 msgid "Selection not found"
-msgstr ""
+msgstr "Selecția nu a fost găsită"
 
 #: src/component/photo/clipboard.vue:318 src/locales.js:463
 msgid "Selection restored"
@@ -4007,7 +4007,7 @@ msgstr "Rămâneți conectat pe acest dispozitiv"
 
 #: src/component/lightbox.vue:113 src/component/lightbox.vue:114
 msgid "Stop Casting"
-msgstr ""
+msgstr "Opriți turnarea"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
@@ -4028,15 +4028,15 @@ msgstr "Subiect"
 
 #: src/locales.js:454
 msgid "Subject deleted"
-msgstr ""
+msgstr "Subiect eliminat"
 
 #: src/locales.js:394
 msgid "Subject not found"
-msgstr ""
+msgstr "Subiectul nu a fost găsit"
 
 #: src/locales.js:453
 msgid "Subject saved"
-msgstr ""
+msgstr "Subiect salvat"
 
 #: src/component/settings/passcode.vue:351 src/locales.js:470
 msgid "Successfully activated"
@@ -4118,7 +4118,7 @@ msgstr "Instanța a generat o redirecționare neașteptată."
 
 #: src/locales.js:420
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Intervalul de trezire este %s, dar trebuie să fie de 1h sau mai puțin"
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -4251,7 +4251,7 @@ msgstr "Nu se poate șterge"
 
 #: src/locales.js:375
 msgid "Unable to do that"
-msgstr ""
+msgstr "Nu pot face asta"
 
 #: src/component/lightbox/sidebar.vue:267
 msgid "Unassign"
@@ -4316,15 +4316,15 @@ msgstr "Despachetare"
 
 #: src/locales.js:382
 msgid "Unsupported"
-msgstr ""
+msgstr "Neacceptat"
 
 #: src/locales.js:384
 msgid "Unsupported format"
-msgstr ""
+msgstr "Format neacceptat"
 
 #: src/locales.js:383
 msgid "Unsupported type"
-msgstr ""
+msgstr "Tip neacceptat"
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:168
 #: src/component/photo/edit/files.vue:269
@@ -4401,7 +4401,7 @@ msgstr "Încărcarea a eșuat"
 
 #: src/locales.js:460
 msgid "Upload has been processed"
-msgstr ""
+msgstr "Încărcarea a fost procesată"
 
 #: src/component/service/edit.vue:129
 msgid "Upload local files"
@@ -4409,7 +4409,7 @@ msgstr "Încărcați fișiere locale"
 
 #: src/locales.js:402
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "Încărcarea poate fi ofensatoare"
 
 #: src/component/user/edit/dialog.vue:252
 #: src/component/user/edit/dialog.vue:253
@@ -4475,7 +4475,7 @@ msgstr "Interfața utilizatorului"
 
 #: src/locales.js:389
 msgid "User not found"
-msgstr ""
+msgstr "Utilizatorul nu a fost găsit"
 
 #: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:177
@@ -4697,7 +4697,7 @@ msgstr "Puteți să scanați din nou biblioteca dumneavoastră pentru a găsi al
 
 #: src/locales.js:421
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Contul dvs. nu a putut fi conectat"
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4719,7 +4719,7 @@ msgstr "Biblioteca dvs. este analizată în permanență pentru a crea automat a
 
 #: src/locales.js:466
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "Fișierul Zip creat în %d s"
 
 #: src/component/lightbox.vue:519
 msgid "Zoom in/out"

@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-06-14 14:12+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-23 07:41+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= 19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 
 #: src/locales.js:272
 msgid "{0} appended action"
@@ -82,23 +82,23 @@ msgstr "%{s} ir pārāk īss"
 
 #: src/locales.js:434
 msgid "%d entries added to %s"
-msgstr ""
+msgstr "%d ieraksti pievienoti %s"
 
 #: src/locales.js:436
 msgid "%d entries removed from %s"
-msgstr ""
+msgstr "No %s tika izdzēsti %d ieraksti"
 
 #: src/locales.js:458
 msgid "%d files uploaded in %d s"
-msgstr ""
+msgstr "%d faili augšupielādēti %d sekundēs"
 
 #: src/locales.js:378
 msgid "%s already exists"
-msgstr ""
+msgstr "%s jau pastāv"
 
 #: src/locales.js:468
 msgid "%s has been restored"
-msgstr ""
+msgstr "%s ir atjaunots"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -189,7 +189,7 @@ msgstr "Konta grupu saistījumi"
 
 #: src/locales.js:388
 msgid "Account not found"
-msgstr ""
+msgstr "Konts nav atrasts"
 
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
@@ -197,7 +197,7 @@ msgstr "Konts ir atjaunots"
 
 #: src/locales.js:438
 msgid "Account saved"
-msgstr ""
+msgstr "Konts saglabāts"
 
 #: src/page/admin.vue:55 src/component/cluster/node/dialog.vue:18
 #: src/component/cluster/node/dialog.vue:19
@@ -390,7 +390,7 @@ msgstr "Albums"
 
 #: src/locales.js:428
 msgid "Album %s deleted"
-msgstr ""
+msgstr "Albums %s ir izdzēsts"
 
 #: src/page/settings/advanced.vue:199
 msgid "Album Backups"
@@ -398,7 +398,7 @@ msgstr "Albuma dublējumkopijas"
 
 #: src/locales.js:429
 msgid "Album contents cloned"
-msgstr ""
+msgstr "Albuma saturs ir dublēts"
 
 #: src/locales.js:426 src/page/albums.vue:1194
 msgid "Album created"
@@ -410,11 +410,11 @@ msgstr "Albums ir izdzēsts"
 
 #: src/locales.js:393
 msgid "Album not found"
-msgstr ""
+msgstr "Albums nav atrasts"
 
 #: src/locales.js:427
 msgid "Album saved"
-msgstr ""
+msgstr "Albums saglabāts"
 
 #: src/app/routes.js:332 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
@@ -757,7 +757,7 @@ msgstr "Kļūdas ziņojums"
 
 #: src/locales.js:419
 msgid "Busy, please try again later"
-msgstr ""
+msgstr "Sistēma ir noslogota, lūdzu, mēģiniet vēlāk"
 
 #: src/page/connect.vue:8 src/common/notify.js:119
 msgid "Busy, please wait…"
@@ -781,7 +781,7 @@ msgstr "Kamera"
 
 #: src/locales.js:391
 msgid "Camera not found"
-msgstr ""
+msgstr "Kamera nav atrasta"
 
 #: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
 msgid "Camera Serial"
@@ -861,7 +861,7 @@ msgstr "Karuseļa slaids {0} no {1}"
 
 #: src/component/lightbox.vue:125 src/component/lightbox.vue:126
 msgid "Cast"
-msgstr ""
+msgstr "Aktieri"
 
 #: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
@@ -1143,7 +1143,7 @@ msgstr "Kopēt"
 
 #: src/locales.js:450
 msgid "Copying files from %s"
-msgstr ""
+msgstr "Failu kopēšana no %s"
 
 #: src/component/lightbox/sidebar.vue:828
 #: src/component/photo/batch-edit.vue:367
@@ -1155,11 +1155,11 @@ msgstr "Autortiesības"
 
 #: src/locales.js:377
 msgid "Could not be deleted"
-msgstr ""
+msgstr "Neizdevās izdzēst"
 
 #: src/locales.js:407
 msgid "Could not connect, please try again"
-msgstr ""
+msgstr "Nevarēja izveidot savienojumu, lūdzu, mēģiniet vēlreiz"
 
 #: src/component/photo/edit/people.vue:301
 msgid "Could not update person cover"
@@ -1630,7 +1630,7 @@ msgstr "Ievadiet paroli, lai apstiprinātu darbību un turpinātu:"
 
 #: src/locales.js:387
 msgid "Entity not found"
-msgstr ""
+msgstr "Objekts nav atrasts"
 
 #: src/page/connect.vue:14 src/component/lightbox.vue:522
 #: src/page/library/errors.vue:361
@@ -1701,7 +1701,7 @@ msgstr "Seja"
 
 #: src/locales.js:396
 msgid "Face not found"
-msgstr ""
+msgstr "Seja nav atrasta"
 
 #: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
 msgid "Faces"
@@ -1709,11 +1709,11 @@ msgstr "Sejas"
 
 #: src/locales.js:405
 msgid "Failed creating file, please check permissions"
-msgstr ""
+msgstr "Neizdevās izveidot failu, lūdzu, pārbaudiet atļaujas"
 
 #: src/locales.js:406
 msgid "Failed creating folder, please check permissions"
-msgstr ""
+msgstr "Neizdevās izveidot mapi, lūdzu, pārbaudiet atļaujas"
 
 #: src/component/share/dialog.vue:235
 msgid "Failed removing link"
@@ -1725,7 +1725,7 @@ msgstr "Neizdevās savienot kontu."
 
 #: src/locales.js:415
 msgid "Failed to create zip file"
-msgstr ""
+msgstr "Neizdevās izveidot ZIP failu"
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1791,7 +1791,7 @@ msgstr "Favorīti"
 
 #: src/locales.js:411
 msgid "Feature disabled"
-msgstr ""
+msgstr "Funkcionalitāte ir izslēgta"
 
 #: src/options/options.js:463
 msgid "Feature Request"
@@ -1816,7 +1816,7 @@ msgstr "Failu konvertēšana"
 
 #: src/locales.js:431
 msgid "File deleted"
-msgstr ""
+msgstr "Fails izdzēsts"
 
 #: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
@@ -1828,11 +1828,11 @@ msgstr "Faila nosaukums"
 
 #: src/locales.js:380
 msgid "File not found"
-msgstr ""
+msgstr "Fails nav atrasts"
 
 #: src/locales.js:430
 msgid "File removed from stack"
-msgstr ""
+msgstr "Fails izņemts no saraksta"
 
 #: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
 #: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
@@ -1841,11 +1841,11 @@ msgstr "Faila izmērs"
 
 #: src/locales.js:381
 msgid "File too large"
-msgstr ""
+msgstr "Fails ir pārāk liels"
 
 #: src/locales.js:457
 msgid "File uploaded"
-msgstr ""
+msgstr "Fails augšupielādēts"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
 #: src/component/photo/edit/files.vue:97
@@ -2058,11 +2058,11 @@ msgstr "Importēt"
 
 #: src/locales.js:443
 msgid "Import canceled"
-msgstr ""
+msgstr "Importēšana atcelta"
 
 #: src/locales.js:442
 msgid "Import completed in %d s"
-msgstr ""
+msgstr "Importēšana pabeigta pēc %d s"
 
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
@@ -2116,15 +2116,15 @@ msgstr "Indeksēšana"
 
 #: src/locales.js:447
 msgid "Indexing canceled"
-msgstr ""
+msgstr "Indeksēšana atcelta"
 
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
-msgstr ""
+msgstr "Indeksēšana pabeigta %d sekundēs"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
-msgstr ""
+msgstr "Notiek failu indeksēšana %s"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
@@ -2132,7 +2132,7 @@ msgstr "Notiek multivides un blakusfailu indeksēšana…"
 
 #: src/locales.js:445
 msgid "Indexing originals..."
-msgstr ""
+msgstr "Notiek oriģinālu indeksēšana..."
 
 #: src/component/lightbox.vue:1542 src/component/lightbox.vue:1543
 #: src/component/lightbox/sidebar.vue:8
@@ -2164,7 +2164,7 @@ msgstr "Instances"
 
 #: src/locales.js:423
 msgid "Insufficient storage"
-msgstr ""
+msgstr "Nepietiek brīvas vietas"
 
 #: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
@@ -2192,7 +2192,7 @@ msgstr "Nederīga valsts"
 
 #: src/locales.js:416
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Nederīgs lietotājvārds vai parole"
 
 #: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
@@ -2200,11 +2200,11 @@ msgstr "Nederīgs datums"
 
 #: src/locales.js:417
 msgid "Invalid link"
-msgstr ""
+msgstr "Nederīga saite"
 
 #: src/locales.js:418
 msgid "Invalid name"
-msgstr ""
+msgstr "Nepareizs nosaukums"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
@@ -2213,7 +2213,7 @@ msgstr "Nederīgi parametri"
 
 #: src/locales.js:410
 msgid "Invalid password, please try again"
-msgstr ""
+msgstr "Nepareiza parole, lūdzu, mēģiniet vēlreiz"
 
 #: src/component/photo/edit/dialog.vue:293 src/model/thumb.js:272
 msgid "Invalid photo selected"
@@ -2229,7 +2229,7 @@ msgstr "Nederīgs URL"
 
 #: src/locales.js:409
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Nepareizs apstiprinājuma kods, lūdzu, mēģiniet vēlreiz"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
 #: src/locales.js:354
@@ -2278,11 +2278,11 @@ msgstr "Birka"
 
 #: src/locales.js:390
 msgid "Label not found"
-msgstr ""
+msgstr "Birka nav atrasta"
 
 #: src/locales.js:452
 msgid "Label saved"
-msgstr ""
+msgstr "Birka saglabāta"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:548
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
@@ -2360,7 +2360,7 @@ msgstr "Objektīvs"
 
 #: src/locales.js:392
 msgid "Lens not found"
-msgstr ""
+msgstr "Objektīvs nav atrasts"
 
 #: src/app/routes.js:602 src/app/routes.js:618 src/app/routes.js:634
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
@@ -2609,7 +2609,7 @@ msgstr "Pārvietot failus"
 
 #: src/locales.js:449
 msgid "Moving files from %s"
-msgstr ""
+msgstr "Failu pārvietošana no %s"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
@@ -2706,7 +2706,7 @@ msgstr "Nav atrasts neviens albums"
 
 #: src/locales.js:413
 msgid "No albums selected"
-msgstr ""
+msgstr "Nav izvēlēti albumi"
 
 #: src/locales.js:257
 msgid "No data available"
@@ -2714,11 +2714,11 @@ msgstr "Dati nav pieejami"
 
 #: src/locales.js:414
 msgid "No files available for download"
-msgstr ""
+msgstr "Nav pieejamu failu lejupielādei"
 
 #: src/locales.js:404
 msgid "No items selected"
-msgstr ""
+msgstr "Nav izvēlēts neviens ieraksts"
 
 #: src/component/photo/batch-edit.vue:438
 msgid "No labels assigned"
@@ -2730,7 +2730,7 @@ msgstr "Nav atrastas etiķetes"
 
 #: src/locales.js:412
 msgid "No labels selected"
-msgstr ""
+msgstr "Nav atlasītas nevienas birkas"
 
 #: src/locales.js:217
 msgid "No matching records found"
@@ -2815,11 +2815,11 @@ msgstr "Nav atļauts"
 
 #: src/locales.js:397
 msgid "Not available in public mode"
-msgstr ""
+msgstr "Nav pieejams publiskajā režīmā"
 
 #: src/locales.js:398
 msgid "Not available in read-only mode"
-msgstr ""
+msgstr "Nav pieejams lasīšanas režīmā"
 
 #: src/component/lightbox.vue:1109 src/locales.js:379
 msgid "Not found"
@@ -2896,11 +2896,11 @@ msgstr "Atrasts viens albums"
 
 #: src/locales.js:433
 msgid "One entry added to %s"
-msgstr ""
+msgstr "%s tika pievienots viens ieraksts"
 
 #: src/locales.js:435
 msgid "One entry removed from %s"
-msgstr ""
+msgstr "No %s tika izdzēsts viens ieraksts"
 
 #: src/page/library/browse.vue:458
 msgid "One file found"
@@ -2981,7 +2981,7 @@ msgstr "Oriģināli"
 
 #: src/locales.js:385
 msgid "Originals folder is empty"
-msgstr ""
+msgstr "Mapes „Originals“ saturs ir tukšs"
 
 #: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
@@ -3045,11 +3045,11 @@ msgstr "Parole nomainīta"
 
 #: src/component/lightbox.vue:68 src/component/lightbox.vue:69
 msgid "Pause"
-msgstr ""
+msgstr "Pauze"
 
 #: src/locales.js:401
 msgid "Payment required"
-msgstr ""
+msgstr "Nepieciešams veikt maksājumu"
 
 #: src/app/routes.js:563 src/app/routes.js:587
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
@@ -3073,7 +3073,7 @@ msgstr "Neatgriezeniski dzēsts"
 
 #: src/locales.js:400
 msgid "Permission denied"
-msgstr ""
+msgstr "Atļauja atteikta"
 
 #: src/model/subject.js:158
 msgid "Person"
@@ -3085,7 +3085,7 @@ msgstr "Personas vāks atjaunināts"
 
 #: src/locales.js:456
 msgid "Person deleted"
-msgstr ""
+msgstr "Persona dzēsta"
 
 #: src/component/photo/edit/people.vue:248
 #: src/component/photo/edit/people.vue:282 src/locales.js:395
@@ -3094,7 +3094,7 @@ msgstr "Persona nav atrasta"
 
 #: src/locales.js:455
 msgid "Person saved"
-msgstr ""
+msgstr "Glābta persona"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -3152,7 +3152,7 @@ msgstr "Vietas"
 
 #: src/component/lightbox.vue:79 src/component/lightbox.vue:80
 msgid "Play"
-msgstr ""
+msgstr "Spēlēt"
 
 #: src/component/settings/password.vue:68
 msgid "Please confirm your new password."
@@ -3176,7 +3176,7 @@ msgstr "Lūdzu, ievadiet vienreizējās paroles rakstzīmi {0}"
 
 #: src/locales.js:399
 msgid "Please log in to your account"
-msgstr ""
+msgstr "Lūdzu, piesakieties savā kontā"
 
 #: src/component/settings/password.vue:21
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -3271,7 +3271,7 @@ msgstr "Privāts"
 
 #: src/locales.js:459
 msgid "Processing upload..."
-msgstr ""
+msgstr "Notiek augšupielādes apstrāde..."
 
 #: src/options/options.js:462
 msgid "Product Feedback"
@@ -3298,7 +3298,7 @@ msgstr "Kvalitātes rādītājs"
 
 #: src/locales.js:424
 msgid "Quota exceeded"
-msgstr ""
+msgstr "Kvota pārsniegta"
 
 #: src/page/discover.vue:16 src/page/discover.vue:17
 msgid "Random"
@@ -3437,7 +3437,7 @@ msgstr "Noņemts"
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
-msgstr ""
+msgstr "Tika izdzēsti %d faili un %d fotogrāfijas"
 
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
 #: src/locales.js:357
@@ -3685,7 +3685,7 @@ msgstr "Atlase"
 
 #: src/locales.js:432
 msgid "Selection added to %s"
-msgstr ""
+msgstr "Izvēle pievienota %s"
 
 #: src/component/photo/clipboard.vue:251 src/locales.js:461
 msgid "Selection approved"
@@ -3697,11 +3697,11 @@ msgstr "Atlase arhivēta"
 
 #: src/locales.js:464
 msgid "Selection marked as private"
-msgstr ""
+msgstr "Atlase ir atzīmēta kā privāta"
 
 #: src/locales.js:386
 msgid "Selection not found"
-msgstr ""
+msgstr "Izvēle nav atrasta"
 
 #: src/component/photo/clipboard.vue:318 src/locales.js:463
 msgid "Selection restored"
@@ -4003,7 +4003,7 @@ msgstr "Palieciet pierakstījušies šajā ierīcē"
 
 #: src/component/lightbox.vue:113 src/component/lightbox.vue:114
 msgid "Stop Casting"
-msgstr ""
+msgstr "Pārtraukt liešanu"
 
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
@@ -4024,15 +4024,15 @@ msgstr "Tēma"
 
 #: src/locales.js:454
 msgid "Subject deleted"
-msgstr ""
+msgstr "Tēma dzēsta"
 
 #: src/locales.js:394
 msgid "Subject not found"
-msgstr ""
+msgstr "Tēma nav atrasta"
 
 #: src/locales.js:453
 msgid "Subject saved"
-msgstr ""
+msgstr "Tēma saglabāta"
 
 #: src/component/settings/passcode.vue:351 src/locales.js:470
 msgid "Successfully activated"
@@ -4114,7 +4114,7 @@ msgstr "Instance atgriezusi negaidītu pāradresāciju."
 
 #: src/locales.js:420
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
+msgstr "Pamošanās intervāls ir %s, bet tam jābūt 1 h vai mazākam"
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -4247,7 +4247,7 @@ msgstr "Nevar izdzēst"
 
 #: src/locales.js:375
 msgid "Unable to do that"
-msgstr ""
+msgstr "To nevar izdarīt"
 
 #: src/component/lightbox/sidebar.vue:267
 msgid "Unassign"
@@ -4312,15 +4312,15 @@ msgstr "Atdalīt"
 
 #: src/locales.js:382
 msgid "Unsupported"
-msgstr ""
+msgstr "Nav atbalstīts"
 
 #: src/locales.js:384
 msgid "Unsupported format"
-msgstr ""
+msgstr "Nepiedāvāts formāts"
 
 #: src/locales.js:383
 msgid "Unsupported type"
-msgstr ""
+msgstr "Nepiedāvāts tips"
 
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:168
 #: src/component/photo/edit/files.vue:269
@@ -4397,7 +4397,7 @@ msgstr "Augšupielāde neizdevās"
 
 #: src/locales.js:460
 msgid "Upload has been processed"
-msgstr ""
+msgstr "Augšupielāde ir apstrādāta"
 
 #: src/component/service/edit.vue:129
 msgid "Upload local files"
@@ -4405,7 +4405,7 @@ msgstr "Augšupielādēt lokālos failus"
 
 #: src/locales.js:402
 msgid "Upload might be offensive"
-msgstr ""
+msgstr "Augšupielāde var būt aizskaroša"
 
 #: src/component/user/edit/dialog.vue:252
 #: src/component/user/edit/dialog.vue:253
@@ -4471,7 +4471,7 @@ msgstr "Lietotāja saskarne"
 
 #: src/locales.js:389
 msgid "User not found"
-msgstr ""
+msgstr "Lietotājs nav atrasts"
 
 #: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:177
@@ -4693,7 +4693,7 @@ msgstr "Varat atkārtoti skenēt savu bibliotēku, lai atrastu papildu sejas."
 
 #: src/locales.js:421
 msgid "Your account could not be connected"
-msgstr ""
+msgstr "Jūsu kontu neizdevās savienot"
 
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
@@ -4715,7 +4715,7 @@ msgstr "Jūsu bibliotēka tiek nepārtraukti analizēta, lai automātiski izveid
 
 #: src/locales.js:466
 msgid "Zip created in %d s"
-msgstr ""
+msgstr "Arhīvs izveidots %d sekundēs"
 
 #: src/component/lightbox.vue:519
 msgid "Zoom in/out"
