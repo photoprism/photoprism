@@ -241,8 +241,8 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
-			// Skip already indexed?
-			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
+			// Skip already indexed, unless an XMP sidecar was updated since its last parse.
+			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) && !ind.xmpSidecarChanged(mf, o) {
 				return nil
 			}
 

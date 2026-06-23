@@ -58,4 +58,5 @@
 - Exec calls to external tools are parameterized by config paths/binaries (`config.Config`).
 - Stacking rules honor document IDs, time/place proximity, and configuration (`StackUUID`, `StackMeta`).
 - Forced rescans (`IndexOptions.Rescan=true`) run folder album reconciliation at the end of indexing via `entity.ReconcileOriginalsFolderAlbums(...)`; normal incremental runs skip this pass.
+- Updated XMP sidecars are re-read on normal incremental passes: `Index.xmpSidecarChanged` compares each sidecar's on-disk modification time against the recorded `files.mod_time` (its last-parsed value), so external edits (darktable, digiKam) merge with `SrcXmp` priority without a forced rescan, while manual edits (`SrcManual`) are preserved. A sidecar that fails to parse keeps its previous `mod_time` so a fixed file is retried on a later pass.
 - Folder create/index conflict lookup uses unscoped folder reads in `internal/entity/folder.go` so soft-deleted rows are detectable for troubleshooting instead of causing repeated create/find mismatches.

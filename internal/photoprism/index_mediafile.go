@@ -78,6 +78,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	fileRenamed := false
 	fileExists := false
 	fileStacked := false
+	xmpParseFailed := false
 
 	photoExists := false
 
@@ -549,6 +550,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		} else {
 			log.Warn(dataErr.Error())
 			file.FileError = clip.Bytes(dataErr.Error(), txt.ClipError)
+			xmpParseFailed = true
 		}
 	case m.IsRaw(), m.IsImage():
 		if data := m.MetaData(); data.Error == nil {
@@ -918,7 +920,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file.FileType = m.FileType().String()
 	file.FileMime = m.ContentType()
 	file.SetOrientation(m.Orientation(), entity.SrcMeta)
-	file.ModTime = modTime.UTC().Truncate(time.Second).Unix()
+
+	// Preserve the previously recorded mtime when an XMP sidecar fails to parse, so a fixed
+	// sidecar is re-read on a future pass instead of being permanently silenced by one error.
+	if !xmpParseFailed {
+		file.ModTime = modTime.UTC().Truncate(time.Second).Unix()
+	}
 
 	// Detect ICC color profile for JPEGs if still unknown at this point.
 	if file.FileColorProfile == "" && fs.ImageJpeg.Equal(file.FileType) {
