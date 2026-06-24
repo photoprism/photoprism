@@ -246,7 +246,10 @@ export default {
       busy: false,
       closing: false,
       visible: false,
-      pdfThumbsVisible: true, // Tracks the PDF viewer's thumbnail strip so the prev arrow sits beside it.
+      // Tracks the PDF viewer's thumbnail strip so the prev arrow sits beside it. Seeded from the
+      // same small-screen breakpoint the viewer uses so the arrow does not flicker on open; the
+      // viewer keeps it in sync afterwards via @thumbs-visible.
+      pdfThumbsVisible: !this.$vuetify?.display?.smAndDown,
       sidebarVisible: shouldShowSidebar(),
       hideCaption: shouldHideCaption() || shouldShowSidebar(),
       menuElement: null,

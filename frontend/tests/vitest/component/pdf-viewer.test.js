@@ -29,7 +29,7 @@ function pageEntry(n, ratio) {
 
 async function mountViewer(props = {}) {
   const wrapper = mount(PPdfViewer, {
-    props: { src: "/api/v1/pdf/abc/public", active: true, pages: 3, ...props },
+    props: { src: "/api/v1/files/abc.pdf", pages: 3, ...props },
   });
   await flushPromises();
   return wrapper;
@@ -57,7 +57,7 @@ describe("component/pdf-viewer", () => {
   });
   it("loads the document and renders the page-count placeholders and thumbnails", async () => {
     const wrapper = await mountViewer();
-    expect(h.loadPdfDocument).toHaveBeenCalledWith("/api/v1/pdf/abc/public");
+    expect(h.loadPdfDocument).toHaveBeenCalledWith("/api/v1/files/abc.pdf");
     expect(wrapper.vm.pageCount).toBe(3);
     expect(wrapper.findAll(".p-pdf-viewer__page")).toHaveLength(3);
     expect(wrapper.findAll(".p-pdf-viewer__thumb")).toHaveLength(3);
@@ -156,10 +156,10 @@ describe("component/pdf-viewer", () => {
     expect(wrapper.find(".p-pdf-viewer__pageinput").element.value).toBe("3");
     expect(wrapper.findAll(".p-pdf-viewer__thumb")[2].classes()).toContain("is-active");
   });
-  it("releases resources when deactivated", async () => {
+  it("releases resources when unmounted", async () => {
     const wrapper = await mountViewer();
     const pageObserver = ioInstances[0];
-    await wrapper.setProps({ active: false });
+    wrapper.unmount();
     expect(h.destroyPdfDocument).toHaveBeenCalledWith(h.pdf);
     expect(pageObserver.disconnected).toBe(true);
   });

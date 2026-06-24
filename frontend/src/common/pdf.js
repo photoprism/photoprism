@@ -24,6 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import * as media from "common/media";
+import { getAppStorage } from "common/storage";
 
 // Cached pdfjs library and shared worker. The library is dynamic-imported on
 // first use so the base bundle stays unaffected when no PDF is opened (mirrors
@@ -50,6 +51,8 @@ export function isPdfDocument(model) {
 // separate asset). Passing this PDFWorker to every getDocument call keeps it
 // alive across documents — pdfjs only terminates workers it created itself, so
 // destroying one document no longer kills the worker the next document needs.
+// The worker is intentionally never terminated; it is module-scoped and reused
+// for the whole app session.
 function getPdfWorker(lib) {
   if (pdfWorker !== null) {
     return pdfWorker;
@@ -88,6 +91,15 @@ export async function loadPdfDocument(src) {
 
   if (worker) {
     params.worker = worker;
+  }
+
+  // Authenticate the request the way common/api.js does, so the session-scoped /files
+  // endpoint sees the token. pdf.js is fetch/XHR-based and can send a header an
+  // <img>/<video> cannot. Public mode still works — no token means a public session.
+  const token = getAppStorage().getItem("session.token");
+
+  if (token) {
+    params.httpHeaders = { ...(params.httpHeaders || {}), "X-Auth-Token": token };
   }
 
   const pdf = await lib.getDocument(params).promise;

@@ -1010,14 +1010,15 @@ export default class $util {
     return this.videoFormatUrl(hash, this.videoFormat(codec, mime));
   }
 
-  // pdfUrl builds the inline PDF URL for a file hash, gated by the preview token.
-  // The token is part of the path so the URL can be used directly as a PDF.js source.
+  // pdfUrl builds the inline PDF URL for a file hash. The bytes are served by the
+  // session-scoped /files/<hash>.pdf endpoint; pdf.js authenticates the request via the
+  // X-Auth-Token header (see loadPdfDocument), so no token is needed in the path.
   static pdfUrl(hash) {
     if (!hash) {
       return "";
     }
 
-    return `${$config.apiUri}/pdf/${hash}/${$config.previewToken}`;
+    return `${$config.apiUri}/files/${hash}.pdf`;
   }
 
   // videoContentType returns the HTTP content type matching the chosen video format.

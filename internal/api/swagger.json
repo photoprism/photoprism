@@ -8067,7 +8067,7 @@
                 "operationId": "GetFile",
                 "parameters": [
                     {
-                        "description": "hash (string) SHA-1 hash of the file",
+                        "description": "SHA-1 hash of the file, optionally suffixed with '.pdf' to stream the document",
                         "in": "path",
                         "name": "hash",
                         "required": true,
@@ -8075,7 +8075,8 @@
                     }
                 ],
                 "produces": [
-                    "application/json"
+                    "application/json",
+                    "application/pdf"
                 ],
                 "responses": {
                     "200": {
@@ -8102,6 +8103,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "415": {
+                        "description": "Unsupported Media Type",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -8109,7 +8116,7 @@
                         }
                     }
                 },
-                "summary": "returns file details as JSON",
+                "summary": "returns file details as JSON, or the document bytes for a \".pdf\" request",
                 "tags": [
                     "Files"
                 ]
@@ -9668,61 +9675,6 @@
                 "summary": "complete OIDC login (callback)",
                 "tags": [
                     "Authentication"
-                ]
-            }
-        },
-        "/api/v1/pdf/{hash}/{token}": {
-            "get": {
-                "operationId": "GetPDF",
-                "parameters": [
-                    {
-                        "description": "SHA1 file hash",
-                        "in": "path",
-                        "name": "hash",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "description": "user-specific security token provided with session or 'public' when running PhotoPrism in public mode",
-                        "in": "path",
-                        "name": "token",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "produces": [
-                    "application/pdf"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "file"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "415": {
-                        "description": "Unsupported Media Type",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    }
-                },
-                "summary": "streams a PDF document for inline viewing",
-                "tags": [
-                    "Files",
-                    "Documents"
                 ]
             }
         },

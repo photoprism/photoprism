@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { isPdfDocument, loadPdfDocument, renderPdfPage, destroyPdfDocument, isRenderCancelled } from "common/pdf";
+import { getAppStorage } from "common/storage";
 
 // Shared pdfjs stubs, hoisted so the vi.mock factory can reference them.
 const h = vi.hoisted(() => {
@@ -69,14 +70,24 @@ describe("common/pdf", () => {
     });
   });
   describe("loadPdfDocument", () => {
-    it("loads a document, reports the page count, and configures the worker once", async () => {
-      const first = await loadPdfDocument("/api/v1/pdf/abc/public");
-      const second = await loadPdfDocument("/api/v1/pdf/abc/public");
+    it("loads a document, reports the page count, configures the worker once, and sends the auth token", async () => {
+      getAppStorage().setItem("session.token", "sessabc123");
+      const first = await loadPdfDocument("/api/v1/files/abc.pdf");
+      const second = await loadPdfDocument("/api/v1/files/abc.pdf");
       expect(first.pageCount).toBe(3);
       expect(second.pageCount).toBe(3);
       expect(h.getDocument).toHaveBeenCalledTimes(2);
       expect(h.workerCtor).toHaveBeenCalledTimes(1);
       expect(h.pdfWorkerCtor).toHaveBeenCalledTimes(1);
+      // pdf.js authenticates the request via the session token header, like common/api.js.
+      expect(h.getDocument.mock.calls[0][0].url).toBe("/api/v1/files/abc.pdf");
+      expect(h.getDocument.mock.calls[0][0].httpHeaders["X-Auth-Token"]).toBe("sessabc123");
+      getAppStorage().removeItem("session.token");
+    });
+    it("omits the auth header when no session token is present", async () => {
+      getAppStorage().removeItem("session.token");
+      await loadPdfDocument("/api/v1/files/abc.pdf");
+      expect(h.getDocument.mock.calls[0][0].httpHeaders).toBeUndefined();
     });
   });
   describe("renderPdfPage", () => {

@@ -46,6 +46,7 @@
           :icon="thumbsVisible ? 'mdi-view-grid' : 'mdi-view-grid-outline'"
           variant="text"
           density="comfortable"
+          :title="$gettext('Toggle thumbnails')"
           :aria-label="$gettext('Toggle thumbnails')"
           @click="toggleThumbs"
         ></v-btn>
@@ -55,6 +56,7 @@
           variant="text"
           density="comfortable"
           :disabled="currentPage <= 1"
+          :title="$gettext('Previous page')"
           :aria-label="$gettext('Previous page')"
           @click="prevPage"
         ></v-btn>
@@ -76,6 +78,7 @@
           variant="text"
           density="comfortable"
           :disabled="currentPage >= pageCount"
+          :title="$gettext('Next page')"
           :aria-label="$gettext('Next page')"
           @click="nextPage"
         ></v-btn>
@@ -85,6 +88,7 @@
           variant="text"
           density="comfortable"
           :disabled="scale <= minScale"
+          :title="$gettext('Zoom out')"
           :aria-label="$gettext('Zoom out')"
           @click="zoomOut"
         ></v-btn>
@@ -93,6 +97,7 @@
           variant="text"
           density="comfortable"
           :disabled="scale >= maxScale"
+          :title="$gettext('Zoom in')"
           :aria-label="$gettext('Zoom in')"
           @click="zoomIn"
         ></v-btn>
@@ -115,11 +120,6 @@ export default {
     src: {
       type: String,
       default: "",
-    },
-    // active gates loading and rendering so preloaded-but-hidden slides stay idle.
-    active: {
-      type: Boolean,
-      default: true,
     },
     // pages is an optional page-count hint; the loaded document is authoritative.
     pages: {
@@ -144,16 +144,6 @@ export default {
     };
   },
   watch: {
-    active(value) {
-      if (value) {
-        this.open();
-      } else {
-        this.teardown();
-      }
-    },
-    src() {
-      this.reopen();
-    },
     scale() {
       this.rerenderVisible();
     },
@@ -185,7 +175,7 @@ export default {
     // when the strip is hidden).
     this.$emit("thumbs-visible", this.thumbsVisible);
 
-    if (this.active && this.src) {
+    if (this.src) {
       this.open();
     }
   },
@@ -197,7 +187,7 @@ export default {
     // open loads the document, sizes the page placeholders, and starts observing
     // pages and thumbnails for lazy, progressive rendering.
     async open() {
-      if (!this.active || !this.src || this.pdf || this.loading) {
+      if (!this.src || this.pdf || this.loading) {
         return;
       }
 
@@ -207,7 +197,7 @@ export default {
       try {
         const { pdf, pageCount } = await loadPdfDocument(this.src);
 
-        if (this.destroyed || !this.active) {
+        if (this.destroyed) {
           destroyPdfDocument(pdf);
           return;
         }
@@ -231,16 +221,8 @@ export default {
         this.loading = false;
       }
     },
-    // reopen tears down and reloads after the source changes.
-    reopen() {
-      this.teardown();
-
-      if (this.active && this.src) {
-        this.$nextTick(() => this.open());
-      }
-    },
     // teardown cancels in-flight renders, disconnects observers, and releases the
-    // document so an inactive or unmounted slide holds no resources.
+    // document so an unmounted slide holds no resources.
     teardown() {
       Object.values(this.renderTasks).forEach((t) => t && t.cancel());
       Object.values(this.thumbTasks).forEach((t) => t && t.cancel());
@@ -510,11 +492,13 @@ export default {
     nextPage() {
       this.goToPage(this.currentPage + 1);
     },
-    // submitPageInput jumps to the page typed into the jump-to-page field.
+    // submitPageInput jumps to the page typed into the jump-to-page field. Enter and
+    // the blur it triggers both fire this, so it no-ops once the field already shows
+    // the current page to avoid a redundant second jump.
     submitPageInput() {
       const n = parseInt(this.pageInput, 10);
 
-      if (isNaN(n)) {
+      if (isNaN(n) || n === this.currentPage) {
         this.pageInput = String(this.currentPage);
         return;
       }
