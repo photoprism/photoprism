@@ -69,6 +69,11 @@
     align-items: center;
     gap: 16px;
     padding: 16px;
+    scrollbar-width: none; /* Firefox */
+}
+
+.p-pdf-viewer__pages::-webkit-scrollbar {
+    display: none; /* WebKit (Chrome, Safari) */
 }
 
 .p-pdf-viewer__page {
