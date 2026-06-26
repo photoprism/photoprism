@@ -15,13 +15,17 @@ type Icons []Icon
 
 // Icon represents an app icon.
 type Icon struct {
-	Src   string `json:"src"`
-	Sizes string `json:"sizes,omitempty"`
-	Type  string `json:"type,omitempty"`
+	Src     string `json:"src"`
+	Sizes   string `json:"sizes,omitempty"`
+	Type    string `json:"type,omitempty"`
+	Purpose string `json:"purpose,omitempty"`
 }
 
 // IconSizes represents standard app icon sizes.
 var IconSizes = []int{16, 32, 76, 114, 128, 144, 152, 160, 167, 180, 192, 196, 256, 400, 512}
+
+// MaskableIconSizes represents the safe-zone-padded icon sizes emitted with purpose "maskable".
+var MaskableIconSizes = []int{192, 512}
 
 // NewIcons creates new app icons in the default sizes based on the parameters provided.
 func NewIcons(c Config) Icons {
@@ -73,14 +77,25 @@ func NewIcons(c Config) Icons {
 		}}
 	}
 
-	icons := make(Icons, len(IconSizes))
+	icons := make(Icons, 0, len(IconSizes)+len(MaskableIconSizes))
 
-	for i, d := range IconSizes {
-		icons[i] = Icon{
+	for _, d := range IconSizes {
+		icons = append(icons, Icon{
 			Src:   fmt.Sprintf("%s/icons/%s/%d.png", staticUri, appIcon, d),
 			Sizes: fmt.Sprintf("%dx%d", d, d),
 			Type:  "image/png",
-		}
+		})
+	}
+
+	// Adaptive launcher icons generated from a safe-zone-padded source so Android
+	// fills the home-screen mask shape instead of letterboxing the default icon.
+	for _, d := range MaskableIconSizes {
+		icons = append(icons, Icon{
+			Src:     fmt.Sprintf("%s/icons/%s/maskable/%d.png", staticUri, appIcon, d),
+			Sizes:   fmt.Sprintf("%dx%d", d, d),
+			Type:    "image/png",
+			Purpose: "maskable",
+		})
 	}
 
 	return icons
