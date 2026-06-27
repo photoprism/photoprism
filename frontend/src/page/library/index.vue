@@ -82,6 +82,7 @@
 import $api from "common/api";
 import Axios from "axios";
 import $notify from "common/notify";
+import { $gettext } from "common/gettext";
 import Settings from "model/settings";
 import { Folder, RootOriginals } from "model/folder";
 
@@ -208,7 +209,7 @@ export default {
             return;
           }
 
-          $notify.error(ctx.$gettext("Indexing failed"));
+          $notify.error($gettext("Indexing failed"));
 
           ctx.busy = false;
           ctx.completed = 0;

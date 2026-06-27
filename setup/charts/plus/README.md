@@ -1,6 +1,6 @@
 ## Introduction
 
-This chart provides an easy way to run [PhotoPrism®](https://www.photoprism.app/editions#compare) on a home lab or small business Kubernetes cluster while maintaining an approachable configuration.
+This chart provides an easy way to run [PhotoPrism®](https://www.photoprism.app/editions/#compare) on a home lab or small business Kubernetes cluster while maintaining an approachable configuration.
 
 ## Highlights
 
@@ -72,6 +72,27 @@ ingress:
 
 Because TLS typically terminates at the ingress or proxy layer, the chart keeps `PHOTOPRISM_DISABLE_TLS` set to `true`. Only enable PhotoPrism’s internal TLS if your cluster design requires end-to-end encryption and you manage the certificates yourself.
 
+## Database Password
+
+You can provide the database password in two ways:
+
+1. **External secret** – set `database.passwordSecretName` to reference a pre-existing Kubernetes Secret. By default the
+   chart looks for a `PHOTOPRISM_DATABASE_PASSWORD` key; set `database.passwordSecretKey` to use a different key name:
+   ```yaml
+   database:
+     passwordSecretName: my-db-credentials
+     # passwordSecretKey: DB_PASSWORD  # optional, defaults to PHOTOPRISM_DATABASE_PASSWORD
+   ```
+2. **Inline** – set `database.password` directly (the chart stores it in its managed Secret and references it via
+   `secretKeyRef`):
+   ```yaml
+   database:
+     password: "changeme"
+   ```
+
+If both are set, `database.passwordSecretName` takes precedence and the inline `database.password` is ignored (it is not
+copied into the managed Secret). If neither is set, no password env var is injected (suitable for SQLite).
+
 ## Security Tips
 
 - When `adminPassword` is left blank, a random password is generated and stored in `secret/<release>-photoprism-secrets`.
@@ -82,12 +103,12 @@ Because TLS typically terminates at the ingress or proxy layer, the chart keeps 
 
 Commercial support is available with our Starter, Business, and Enterprise team plans:
 
-- https://www.photoprism.app/teams#compare
-- https://www.photoprism.app/kb/getting-support
+- https://www.photoprism.app/teams/#compare
+- https://www.photoprism.app/kb/getting-support/
 
 ## PhotoPrism® Documentation
 
 For more information on specific features, services and related resources, please refer to the other documentation available in our Knowledge Base and User Guide:
 
 - [PhotoPrism® User Guide](https://docs.photoprism.app/user-guide/)
-- [PhotoPrism® Knowledge Base](https://www.photoprism.app/kb)
+- [PhotoPrism® Knowledge Base](https://www.photoprism.app/kb/)

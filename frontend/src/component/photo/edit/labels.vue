@@ -175,6 +175,7 @@
 
 <script>
 import Thumb from "model/thumb";
+import { $gettext } from "common/gettext";
 import { MaxLength as LabelMaxLength } from "model/label";
 import { rules } from "common/form";
 import typeaheadCache from "common/typeahead-cache";
@@ -282,7 +283,7 @@ export default {
       const name = label.Name;
 
       this.view.model.removeLabel(label.ID).then(() => {
-        this.$notify.success("removed " + name);
+        this.$notify.success($gettext("Removed %{name}", { name }));
       });
     },
     addLabel() {
@@ -330,7 +331,7 @@ export default {
       }
 
       this.view.model.addLabel(finalName).then(() => {
-        this.$notify.success("added " + finalName);
+        this.$notify.success($gettext("Added %{name}", { name: finalName }));
         this.resetInput();
       });
     },

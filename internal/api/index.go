@@ -195,7 +195,7 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
 	})
 }
 

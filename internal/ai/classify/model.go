@@ -32,7 +32,7 @@ type Model struct {
 	labels            []string
 	disabled          bool
 	meta              *tensorflow.ModelInfo
-	builder           *tensorflow.ImageTensorBuilder
+	builderPool       sync.Pool
 	mutex             sync.Mutex
 }
 
@@ -249,9 +249,21 @@ func (m *Model) loadModel() (err error) {
 		}
 	}
 
-	m.builder, err = tensorflow.NewImageTensorBuilder(m.meta.Input)
-	if err != nil {
+	// Validate the input shape up front and pool per-call tensor builders.
+	// A single shared builder corrupts results when indexing workers
+	// classify the same model in parallel.
+	if _, err = tensorflow.NewImageTensorBuilder(m.meta.Input); err != nil {
 		return fmt.Errorf("classify: could not create the tensor builder (%s)", clean.Error(err))
+	}
+
+	input := m.meta.Input
+	m.builderPool.New = func() any {
+		builder, builderErr := tensorflow.NewImageTensorBuilder(input)
+		if builderErr != nil {
+			log.Errorf("classify: %s (create tensor builder)", clean.Error(builderErr))
+			return nil
+		}
+		return builder
 	}
 
 	return m.loadLabels(modelPath)
@@ -330,5 +342,13 @@ func (m *Model) createTensor(data []byte) (*tf.Tensor, error) {
 		}
 	}
 
-	return tensorflow.Image(img, m.meta.Input, m.builder)
+	// Use a per-call tensor builder so concurrent indexing workers never share
+	// the same pixel buffer, which would corrupt classification results.
+	builder, ok := m.builderPool.Get().(*tensorflow.ImageTensorBuilder)
+	if !ok || builder == nil {
+		return nil, fmt.Errorf("classify: tensor builder unavailable")
+	}
+	defer m.builderPool.Put(builder)
+
+	return tensorflow.Image(img, m.meta.Input, builder)
 }

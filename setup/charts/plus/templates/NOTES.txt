@@ -32,5 +32,5 @@ PhotoPrism® has been deployed as release "{{ .Release.Name }}" in namespace "{{
 3. Documentation:
 
    - User Guide: https://docs.photoprism.app/user-guide/
-   - Knowledge Base: https://www.photoprism.app/kb
-   - Support: https://www.photoprism.app/kb/getting-support
+   - Knowledge Base: https://www.photoprism.app/kb/
+   - Support: https://www.photoprism.app/kb/getting-support/

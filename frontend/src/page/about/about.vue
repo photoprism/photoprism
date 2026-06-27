@@ -83,7 +83,7 @@
           <a :href="links.firstSteps" class="text-link" target="_blank" rel="noopener">First Steps 👣</a>
           tutorial to learn how to navigate the user interface and ensure your library is indexed according to your individual preferences. Additional help and
           product-specific information can be found in our
-          <a href="https://www.photoprism.app/plus/kb" class="text-link" target="_blank" rel="noopener">Knowledge Base</a>.
+          <a href="https://www.photoprism.app/plus/kb/" class="text-link" target="_blank" rel="noopener">Knowledge Base</a>.
         </p>
 
         <h3>User Guide</h3>
@@ -141,22 +141,22 @@
         <h3>Terms &amp; Privacy</h3>
         <p>
           Visit
-          <a href="https://www.photoprism.app/terms" class="text-link" target="_blank" rel="noopener"><strong>photoprism.app/terms</strong></a>
+          <a href="https://www.photoprism.app/terms/" class="text-link" target="_blank" rel="noopener"><strong>photoprism.app/terms</strong></a>
           to learn how we work, what you can expect from us, and what we expect from you. What information we collect, how we use it, and under what
           circumstances we share it is explained in our
-          <a href="https://www.photoprism.app/privacy" class="text-link" target="_blank" rel="noopener">Privacy Policy</a>.
+          <a href="https://www.photoprism.app/privacy/" class="text-link" target="_blank" rel="noopener">Privacy Policy</a>.
         </p>
 
         <p>
           Read our
-          <a href="https://www.photoprism.app/privacy/gdpr" class="text-link" target="_blank" rel="noopener">GDPR Compliance Statement</a>
+          <a href="https://www.photoprism.app/privacy/gdpr/" class="text-link" target="_blank" rel="noopener">GDPR Compliance Statement</a>
           to learn more about the rights you have as a resident of the European Economic Area ("EEA"), our ongoing commitment to user privacy, and the General
           Data Protection Regulation ("GDPR").
         </p>
 
         <p>
           Our
-          <a href="https://www.photoprism.app/trademark" class="text-link" target="_blank" rel="noopener">Trademark and Brand Guidelines</a>, which may be
+          <a href="https://www.photoprism.app/trademark/" class="text-link" target="_blank" rel="noopener">Trademark and Brand Guidelines</a>, which may be
           updated from time to time, describe how our brand assets may be used. It is important to us that any permitted use of our brand assets is fair and
           meets the highest standards.
         </p>
@@ -164,10 +164,10 @@
 
       <p class="text-caption mt-6 mb-0 text-center text-ltr">
         PhotoPrism® is a
-        <a href="https://www.photoprism.app/trademark" target="_blank" rel="noopener" class="text-link">registered trademark</a>. By using the software and
-        services we provide, you agree to our <a href="https://www.photoprism.app/terms" target="_blank" rel="noopener" class="text-link">Terms of Service</a>,
-        <a href="https://www.photoprism.app/privacy" target="_blank" rel="noopener" class="text-link">Privacy Policy</a>, and
-        <a href="https://www.photoprism.app/code-of-conduct" target="_blank" rel="noopener" class="text-link">Code of Conduct</a>.
+        <a href="https://www.photoprism.app/trademark/" target="_blank" rel="noopener" class="text-link">registered trademark</a>. By using the software and
+        services we provide, you agree to our <a href="https://www.photoprism.app/terms/" target="_blank" rel="noopener" class="text-link">Terms of Service</a>,
+        <a href="https://www.photoprism.app/privacy/" target="_blank" rel="noopener" class="text-link">Privacy Policy</a>, and
+        <a href="https://www.photoprism.app/code-of-conduct/" target="_blank" rel="noopener" class="text-link">Code of Conduct</a>.
       </p>
     </div>
     <p-about-footer></p-about-footer>

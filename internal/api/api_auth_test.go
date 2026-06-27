@@ -142,6 +142,37 @@ func TestAuthAny_AppPasswordsDisabled(t *testing.T) {
 			assert.Equal(t, http.StatusForbidden, s2.HttpStatus())
 		})
 	}
+
+	// Negative control: the gate keys on IsApplication(), so a non-application
+	// session (here a client-credentials grant) must keep authorizing whether or
+	// not app passwords are disabled, proving the flag does not over-reject.
+	t.Run("NonApplicationSessionUnaffected", func(t *testing.T) {
+		sess, err := entity.AddClientSession("alice-client-cred", conf.SessionMaxAge(), "*", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		require.False(t, sess.IsApplication())
+		token := sess.AuthToken()
+
+		authPhotos := func() *entity.Session {
+			gin.SetMode(gin.TestMode)
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			req, _ := http.NewRequest(http.MethodGet, "/api/v1/photos", nil)
+			header.SetAuthorization(req, token)
+			req.RemoteAddr = "10.9.8.7:4321"
+			c.Request = req
+			return AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView})
+		}
+
+		conf.Settings().Features.AppPasswords = true
+		s := authPhotos()
+		require.NotNil(t, s)
+		assert.Equal(t, http.StatusOK, s.HttpStatus())
+
+		conf.Settings().Features.AppPasswords = false
+		s2 := authPhotos()
+		require.NotNil(t, s2)
+		assert.Equal(t, http.StatusOK, s2.HttpStatus(), "disabling app passwords must not reject non-application sessions")
+	})
 }
 
 func TestAuthAny_AppPasswordWebLoginDisabled(t *testing.T) {

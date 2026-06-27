@@ -730,6 +730,9 @@
                 "OIDCIcon": {
                     "type": "string"
                 },
+                "OIDCLogout": {
+                    "type": "boolean"
+                },
                 "OIDCProvider": {
                     "type": "string"
                 },
@@ -3437,6 +3440,13 @@
                 },
                 "message": {
                     "type": "string"
+                },
+                "messageId": {
+                    "type": "string"
+                },
+                "messageParams": {
+                    "items": {},
+                    "type": "array"
                 }
             },
             "type": "object"
@@ -9395,6 +9405,68 @@
                 ]
             }
         },
+        "/api/v1/oauth/logout": {
+            "get": {
+                "operationId": "OAuthLogout",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "302": {
+                        "description": "redirect to post_logout_redirect_uri",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2/OIDC end-session endpoint (RP-initiated logout)",
+                "tags": [
+                    "Authentication"
+                ]
+            },
+            "post": {
+                "operationId": "OAuthLogout",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "302": {
+                        "description": "redirect to post_logout_redirect_uri",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2/OIDC end-session endpoint (RP-initiated logout)",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
         "/api/v1/oauth/revoke": {
             "post": {
                 "consumes": [
@@ -11008,9 +11080,9 @@
                         }
                     },
                     "400": {
-                        "description": "Missing search query",
+                        "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     },
                     "401": {

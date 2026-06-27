@@ -108,7 +108,7 @@ func LikeLabel(router *gin.RouterGroup) {
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -151,7 +151,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 

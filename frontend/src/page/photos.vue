@@ -63,6 +63,7 @@
 
 <script>
 import { Photo } from "model/photo";
+import { $gettext } from "common/gettext";
 import Thumb from "model/thumb";
 import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED } from "common/event";
 import * as contexts from "options/contexts";
@@ -441,7 +442,7 @@ export default {
       } else if (photo.Country && photo.Country !== "zz") {
         this.$router.push({ name: "places", query: { q: "country:" + photo.Country } });
       } else {
-        this.$notify.warn("unknown location");
+        this.$notify.warn($gettext("Unknown location"));
       }
     },
     editPhoto(index, tab) {

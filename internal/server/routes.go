@@ -50,6 +50,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.OAuthUserinfo(APIv1)
 	api.OAuthToken(APIv1)
 	api.OAuthRevoke(APIv1)
+	api.OAuthLogout(APIv1)
 
 	// OIDC Client Endpoints.
 	api.OIDCLogin(APIv1)

@@ -1,8 +1,8 @@
 # PhotoPrism® Code of Conduct
 
-**By using the software and services we provide, you agree to our [Terms of Service](https://www.photoprism.app/terms), including our [Privacy Policy](https://www.photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with our team and other community members.**
+**By using the software and services we provide, you agree to our [Terms of Service](https://www.photoprism.app/terms/), including our [Privacy Policy](https://www.photoprism.app/privacy/) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with our team and other community members.**
 
-*This Code of Conduct was last updated on May 30, 2026. A German translation is available at [photoprism.app/de/code-of-conduct](https://www.photoprism.app/de/code-of-conduct).*
+*This Code of Conduct was last updated on May 30, 2026. A German translation is available at [photoprism.app/de/code-of-conduct](https://www.photoprism.app/de/code-of-conduct/).*
 
 ## Rules
 
@@ -30,7 +30,7 @@ We have found that many of the issues that new users get upset about when they r
 
 ## Reporting
 
-We encourage all community members to resolve problems on their own whenever possible. Serious and persistent violations, such as disrespectful, abusive, harassing, or otherwise unacceptable behavior, [may be reported](https://www.photoprism.app/contact) to us.
+We encourage all community members to resolve problems on their own whenever possible. Serious and persistent violations, such as disrespectful, abusive, harassing, or otherwise unacceptable behavior, [may be reported](https://www.photoprism.app/contact/) to us.
 
 ## Enforcement
 
@@ -38,4 +38,4 @@ Our community standards will be enforced as necessary to protect everyone's well
 
 In cases where violations may be unintentional and improvement seems possible, we aim to issue warnings before taking further action.
 
-In serious cases, we may use technical measures to restrict your access to our infrastructure, including GitHub, forums, and chats, either temporarily or permanently. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertisements. If you believe we made a mistake, you may [email us](https://www.photoprism.app/contact) to request an appeal.
+In serious cases, we may use technical measures to restrict your access to our infrastructure, including GitHub, forums, and chats, either temporarily or permanently. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertisements. If you believe we made a mistake, you may [email us](https://www.photoprism.app/contact/) to request an appeal.

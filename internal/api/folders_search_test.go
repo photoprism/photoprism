@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"net/http"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -92,6 +94,32 @@ func TestGetFoldersOriginals(t *testing.T) {
 			assert.Equal(t, false, folder.FolderWatch)
 		}
 	})
+}
+
+func TestSearchFolders_Headers(t *testing.T) {
+	app, router, conf := NewApiTest()
+	_ = conf.CreateDirectories()
+	SearchFoldersOriginals(router)
+
+	// Request uncached results so the count headers are always written
+	// (a cache hit returns early before the headers are added).
+	r := PerformRequest(app, "GET", "/api/v1/folders/originals?uncached=true")
+	assert.Equal(t, http.StatusOK, r.Code)
+	result := r.Result()
+
+	xFiles, err := strconv.Atoi(result.Header.Get("X-Files"))
+	assert.NoError(t, err, "X-Files header should be an integer")
+	xFolders, err := strconv.Atoi(result.Header.Get("X-Folders"))
+	assert.NoError(t, err, "X-Folders header should be an integer")
+	xCount, err := strconv.Atoi(result.Header.Get("X-Count"))
+	assert.NoError(t, err, "X-Count header should be an integer")
+
+	// X-Count is the combined number of files and folders returned.
+	assert.Equal(t, xFiles+xFolders, xCount)
+
+	// An unpaginated request reports the form's zero-value count and offset.
+	assert.Equal(t, "0", result.Header.Get("X-Limit"))
+	assert.Equal(t, "0", result.Header.Get("X-Offset"))
 }
 
 func TestGetFoldersImport(t *testing.T) {

@@ -216,7 +216,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 		}
 
 		assert.True(t, resp.Success())
-		assert.Equal(t, i18n.Msg(i18n.MsgLabelsDeleted), resp.Msg)
+		assert.Equal(t, i18n.Msg(i18n.MsgLabelsDeleted), resp.Message)
 		assert.Equal(t, i18n.Msg(i18n.MsgLabelsDeleted), resp.String())
 		assert.Equal(t, http.StatusOK, r2.Code)
 		assert.Equal(t, http.StatusOK, resp.Code)

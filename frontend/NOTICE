@@ -22,7 +22,6 @@ Package                                             License        Copyright
 axios                                               MIT            Matt Zabriskie
 axios-mock-adapter                                  MIT            Colin Timmermans <colintimmermans@gmail.com>
 babel-loader                                        MIT            Luis Couto <hello@luiscouto.pt>
-babel-plugin-istanbul                               BSD-3-Clause   Thai Pangsakulyanont @dtinth
 babel-plugin-polyfill-corejs3                       MIT            n/a
 browserslist                                        MIT            Andrey Sitnik <andrey@sitnik.es>
 core-js                                             MIT            Denis Pushkarev zloirock@zloirock.ru http://zloirock.ru
