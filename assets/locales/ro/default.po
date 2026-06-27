@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-27 09:13+0000\n"
-"PO-Revision-Date: 2026-06-15 09:28+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-27 10:28+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/backend/ro/>\n"
 "Language: ro\n"
@@ -13,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 
 #: messages.go:112
 msgid "Something went wrong, try again"
@@ -223,11 +224,11 @@ msgstr "Cota depășită"
 
 #: messages.go:163
 msgid "Registration disabled"
-msgstr ""
+msgstr "Înregistrare dezactivată"
 
 #: messages.go:164
 msgid "Verified email required"
-msgstr ""
+msgstr "Adresă de e-mail verificată necesară"
 
 #: messages.go:167
 msgid "Changes successfully saved"

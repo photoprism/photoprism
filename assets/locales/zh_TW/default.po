@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-27 09:13+0000\n"
-"PO-Revision-Date: 2026-06-15 09:28+0000\n"
+"PO-Revision-Date: 2026-06-27 10:28+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
 "translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 
 #: messages.go:112
 msgid "Something went wrong, try again"
@@ -223,11 +223,11 @@ msgstr "超過配額"
 
 #: messages.go:163
 msgid "Registration disabled"
-msgstr ""
+msgstr "註冊已停用"
 
 #: messages.go:164
 msgid "Verified email required"
-msgstr ""
+msgstr "需要已驗證的電子郵件地址"
 
 #: messages.go:167
 msgid "Changes successfully saved"
