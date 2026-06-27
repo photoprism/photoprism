@@ -15,6 +15,9 @@ It's source code can be obtained on [GitHub](https://github.com/vslavik/poedit).
 
 Only asynchronous notifications and certain API responses need translation to provide a 
 consistent user experience.
+Asynchronous notifications and user-facing API error responses are additionally rendered by the web 
+frontend in each user's current UI language (using the message identifier); the `default.po` translation 
+here serves as a fallback and for non-browser consumers such as the CLI.
 Technical log messages should be in English to avoid ambiguities and (even slightly) wrong translations. 
 
 `default.po` files in subdirectories contain localized messages for each 
@@ -29,7 +32,7 @@ the language. Now you can start translating.
 When done, create a new directory (using the locale as name) and save your translation there as `default.po`.
 
 The POT file `/assets/locales/messages.pot` will be automatically updated when 
-running `go generate` in `/internal/i18n` or `make generate` in the main project directory.
+running `go generate` in `/pkg/i18n` or `make generate` in the main project directory.
 Note that this will only work when you have gettext installed on your system.
 We recommend using our latest development image as described in the Developer Guide.
 

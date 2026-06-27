@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+
+<rdf:Description rdf:about='internal/meta/testdata/xmp/adobe/bridge.xmp'
+  xmlns:et='http://ns.exiftool.org/1.0/' et:toolkit='Image::ExifTool 13.25'
+  xmlns:ExifTool='http://ns.exiftool.org/ExifTool/1.0/'
+  xmlns:System='http://ns.exiftool.org/File/System/1.0/'
+  xmlns:File='http://ns.exiftool.org/File/1.0/'
+  xmlns:XMP-x='http://ns.exiftool.org/XMP/XMP-x/1.0/'
+  xmlns:XMP-xmp='http://ns.exiftool.org/XMP/XMP-xmp/1.0/'
+  xmlns:XMP-tiff='http://ns.exiftool.org/XMP/XMP-tiff/1.0/'
+  xmlns:XMP-exif='http://ns.exiftool.org/XMP/XMP-exif/1.0/'
+  xmlns:XMP-dc='http://ns.exiftool.org/XMP/XMP-dc/1.0/'
+  xmlns:XMP-aux='http://ns.exiftool.org/XMP/XMP-aux/1.0/'
+  xmlns:XMP-exifEX='http://ns.exiftool.org/XMP/XMP-exifEX/1.0/'
+  xmlns:XMP-photoshop='http://ns.exiftool.org/XMP/XMP-photoshop/1.0/'
+  xmlns:XMP-xmpMM='http://ns.exiftool.org/XMP/XMP-xmpMM/1.0/'
+  xmlns:XMP-crd='http://ns.exiftool.org/XMP/XMP-crd/1.0/'
+  xmlns:Composite='http://ns.exiftool.org/Composite/1.0/'>
+ <ExifTool:ExifToolVersion>13.25</ExifTool:ExifToolVersion>
+ <System:FileName>bridge.xmp</System:FileName>
+ <System:Directory>internal/meta/testdata/xmp/adobe</System:Directory>
+ <System:FileSize>8.1 kB</System:FileSize>
+ <System:FileModifyDate>2026:05:06 06:39:32+00:00</System:FileModifyDate>
+ <System:FileAccessDate>2026:05:06 06:42:01+00:00</System:FileAccessDate>
+ <System:FileInodeChangeDate>2026:05:06 06:42:06+00:00</System:FileInodeChangeDate>
+ <System:FilePermissions>-rw-r--r--</System:FilePermissions>
+ <File:FileType>XMP</File:FileType>
+ <File:FileTypeExtension>xmp</File:FileTypeExtension>
+ <File:MIMEType>application/rdf+xml</File:MIMEType>
+ <XMP-x:XMPToolkit>Adobe XMP Core 9.1-c002 165.59ab891, 2024/09/18-09:57:10        </XMP-x:XMPToolkit>
+ <XMP-xmp:Rating>0</XMP-xmp:Rating>
+ <XMP-xmp:ModifyDate>2026:03:22 16:32:42.55</XMP-xmp:ModifyDate>
+ <XMP-xmp:CreateDate>2026:03:22 16:32:42.55</XMP-xmp:CreateDate>
+ <XMP-xmp:MetadataDate>2026:04:28 12:02:29+02:00</XMP-xmp:MetadataDate>
+ <XMP-tiff:Make>Canon</XMP-tiff:Make>
+ <XMP-tiff:Model>Canon EOS M6</XMP-tiff:Model>
+ <XMP-tiff:Orientation>Horizontal (normal)</XMP-tiff:Orientation>
+ <XMP-tiff:ImageWidth>6000</XMP-tiff:ImageWidth>
+ <XMP-tiff:ImageHeight>4000</XMP-tiff:ImageHeight>
+ <XMP-tiff:PhotometricInterpretation>RGB</XMP-tiff:PhotometricInterpretation>
+ <XMP-tiff:SamplesPerPixel>3</XMP-tiff:SamplesPerPixel>
+ <XMP-tiff:BitsPerSample>
+  <rdf:Bag>
+   <rdf:li>16</rdf:li>
+   <rdf:li>16</rdf:li>
+   <rdf:li>16</rdf:li>
+  </rdf:Bag>
+ </XMP-tiff:BitsPerSample>
+ <XMP-exif:ExifVersion>0230</XMP-exif:ExifVersion>
+ <XMP-exif:ExposureTime>1/100</XMP-exif:ExposureTime>
+ <XMP-exif:ShutterSpeedValue>1/100</XMP-exif:ShutterSpeedValue>
+ <XMP-exif:FNumber>8.0</XMP-exif:FNumber>
+ <XMP-exif:ApertureValue>8.0</XMP-exif:ApertureValue>
+ <XMP-exif:ExposureProgram>Program AE</XMP-exif:ExposureProgram>
+ <XMP-exif:SensitivityType>2</XMP-exif:SensitivityType>
+ <XMP-exif:RecommendedExposureIndex>100</XMP-exif:RecommendedExposureIndex>
+ <XMP-exif:ExposureCompensation>0</XMP-exif:ExposureCompensation>
+ <XMP-exif:MaxApertureValue>6.3</XMP-exif:MaxApertureValue>
+ <XMP-exif:MeteringMode>Multi-segment</XMP-exif:MeteringMode>
+ <XMP-exif:FocalLength>45.0 mm</XMP-exif:FocalLength>
+ <XMP-exif:SensingMethod>One-chip color area</XMP-exif:SensingMethod>
+ <XMP-exif:FileSource>Digital Camera</XMP-exif:FileSource>
+ <XMP-exif:CustomRendered>Normal</XMP-exif:CustomRendered>
+ <XMP-exif:ExposureMode>Auto</XMP-exif:ExposureMode>
+ <XMP-exif:WhiteBalance>Auto</XMP-exif:WhiteBalance>
+ <XMP-exif:SceneCaptureType>Standard</XMP-exif:SceneCaptureType>
+ <XMP-exif:DigitalZoomRatio>1</XMP-exif:DigitalZoomRatio>
+ <XMP-exif:FocalPlaneXResolution>2688.72659301758</XMP-exif:FocalPlaneXResolution>
+ <XMP-exif:FocalPlaneYResolution>2688.72659301758</XMP-exif:FocalPlaneYResolution>
+ <XMP-exif:FocalPlaneResolutionUnit>cm</XMP-exif:FocalPlaneResolutionUnit>
+ <XMP-exif:DateTimeOriginal>2026:03:22 16:32:42.55</XMP-exif:DateTimeOriginal>
+ <XMP-exif:ISO>100</XMP-exif:ISO>
+ <XMP-exif:FlashFired>False</XMP-exif:FlashFired>
+ <XMP-exif:FlashReturn>No return detection</XMP-exif:FlashReturn>
+ <XMP-exif:FlashMode>Off</XMP-exif:FlashMode>
+ <XMP-exif:FlashFunction>False</XMP-exif:FlashFunction>
+ <XMP-exif:FlashRedEyeMode>False</XMP-exif:FlashRedEyeMode>
+ <XMP-exif:ExifImageWidth>6000</XMP-exif:ExifImageWidth>
+ <XMP-exif:ExifImageHeight>4000</XMP-exif:ExifImageHeight>
+ <XMP-exif:GPSLatitude>27 deg 20&#39; 25.58&quot; S</XMP-exif:GPSLatitude>
+ <XMP-exif:GPSProcessingMethod>MANUAL</XMP-exif:GPSProcessingMethod>
+ <XMP-exif:GPSLongitude>31 deg 53&#39; 33.17&quot; E</XMP-exif:GPSLongitude>
+ <XMP-exif:GPSAltitudeRef>Above Sea Level</XMP-exif:GPSAltitudeRef>
+ <XMP-exif:GPSAltitude>13300 m</XMP-exif:GPSAltitude>
+ <XMP-dc:Creator>John Doe</XMP-dc:Creator>
+ <XMP-dc:Rights>Attribution 4.0 International (CC BY 4.0)</XMP-dc:Rights>
+ <XMP-dc:Format>image/x-canon-cr2</XMP-dc:Format>
+ <XMP-aux:SerialNumber>453051001355</XMP-aux:SerialNumber>
+ <XMP-aux:LensInfo>15-45mm f/?</XMP-aux:LensInfo>
+ <XMP-aux:Lens>EF-M15-45mm f/3.5-6.3 IS STM</XMP-aux:Lens>
+ <XMP-aux:LensID>4153</XMP-aux:LensID>
+ <XMP-aux:LensSerialNumber>0000027443</XMP-aux:LensSerialNumber>
+ <XMP-aux:ImageNumber>0</XMP-aux:ImageNumber>
+ <XMP-aux:ApproximateFocusDistance>infinity</XMP-aux:ApproximateFocusDistance>
+ <XMP-aux:FlashCompensation>0</XMP-aux:FlashCompensation>
+ <XMP-aux:Firmware>1.00</XMP-aux:Firmware>
+ <XMP-exifEX:LensModel>EF-M15-45mm f/3.5-6.3 IS STM</XMP-exifEX:LensModel>
+ <XMP-photoshop:DateCreated>2026:03:22 16:32:42.55</XMP-photoshop:DateCreated>
+ <XMP-photoshop:ColorMode>RGB</XMP-photoshop:ColorMode>
+ <XMP-photoshop:ICCProfileName></XMP-photoshop:ICCProfileName>
+ <XMP-xmpMM:DocumentID>804D95FE1D9E0CAB7430688EB0347B77</XMP-xmpMM:DocumentID>
+ <XMP-xmpMM:OriginalDocumentID>804D95FE1D9E0CAB7430688EB0347B77</XMP-xmpMM:OriginalDocumentID>
+ <XMP-xmpMM:InstanceID>xmp.iid:327258bf-032d-4acd-9a2b-aa12611d3dfb</XMP-xmpMM:InstanceID>
+ <XMP-xmpMM:HistoryAction>saved</XMP-xmpMM:HistoryAction>
+ <XMP-xmpMM:HistoryInstanceID>xmp.iid:327258bf-032d-4acd-9a2b-aa12611d3dfb</XMP-xmpMM:HistoryInstanceID>
+ <XMP-xmpMM:HistoryWhen>2026:04:28 12:02:29+02:00</XMP-xmpMM:HistoryWhen>
+ <XMP-xmpMM:HistorySoftwareAgent>Adobe Photoshop Camera Raw 17.4</XMP-xmpMM:HistorySoftwareAgent>
+ <XMP-xmpMM:HistoryChanged>/metadata</XMP-xmpMM:HistoryChanged>
+ <XMP-crd:CameraProfile>Camera Auto</XMP-crd:CameraProfile>
+ <XMP-crd:LookName></XMP-crd:LookName>
+ <Composite:Aperture>8.0</Composite:Aperture>
+ <Composite:ImageSize>6000x4000</Composite:ImageSize>
+ <Composite:Megapixels>24.0</Composite:Megapixels>
+ <Composite:ScaleFactor35efl>1.6</Composite:ScaleFactor35efl>
+ <Composite:ShutterSpeed>1/100</Composite:ShutterSpeed>
+ <Composite:GPSAltitude>13300 m Above Sea Level</Composite:GPSAltitude>
+ <Composite:Flash>Off, Did not fire</Composite:Flash>
+ <Composite:GPSLatitudeRef>South</Composite:GPSLatitudeRef>
+ <Composite:GPSLongitudeRef>East</Composite:GPSLongitudeRef>
+ <Composite:CircleOfConfusion>0.019 mm</Composite:CircleOfConfusion>
+ <Composite:DOF>inf (13.59 m - inf)</Composite:DOF>
+ <Composite:FOV>27.9 deg</Composite:FOV>
+ <Composite:FocalLength35efl>45.0 mm (35 mm equivalent: 72.6 mm)</Composite:FocalLength35efl>
+ <Composite:GPSPosition>27 deg 20&#39; 25.58&quot; S, 31 deg 53&#39; 33.17&quot; E</Composite:GPSPosition>
+ <Composite:HyperfocalDistance>13.59 m</Composite:HyperfocalDistance>
+ <Composite:LightValue>12.6</Composite:LightValue>
+ <Composite:LensID>Canon EF-M 15-45mm f/3.5-6.3 IS STM</Composite:LensID>
+</rdf:Description>
+</rdf:RDF>

@@ -273,6 +273,9 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
 );
 
 test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" })("Common: Disable people and labels", async (t) => {
+  //Use photo with all kinds of metadata
+  await toolbar.search("filename:Images/albums-002_3.jpg");
+  await notifies.waitForSearchToFinish(7000);
   await t.click(toolbar.cardsViewAction);
   await t.click(page.cardTitle.nth(0));
   await t.click(photoedit.labelsTab);
@@ -297,9 +300,12 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   // `.meta-faces-edit` (edit-mode discriminator); `markersEditToggle` is the
   // compound selector that only matches the pencil variant.
   await t.expect(photoviewer.markersEditToggle.exists).ok();
+  await t.expect(photoviewer.sidebarLabels.exists).ok();
   await photoviewer.triggerPhotoViewerAction("close-button");
 
   await photo.toggleSelectNthPhoto(0, "image");
+  await t.click(toolbar.searchClearAction);
+  await notifies.waitForSearchToFinish(7000);
   await photo.toggleSelectNthPhoto(1, "image");
   await contextmenu.triggerContextMenuAction("edit");
 
@@ -315,6 +321,9 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   await t.click(settings.peopleCheckbox).click(settings.labelsCheckbox);
   await t.eval(() => location.reload());
   await menu.openPage("browse");
+  //Use photo with all kinds of metadata
+  await toolbar.search("filename:Images/albums-002_3.jpg");
+  await notifies.waitForSearchToFinish(7000);
   await t.click(toolbar.cardsViewAction);
   await t.click(page.cardTitle.nth(0));
   await t.click(photoedit.labelsTab);
@@ -335,9 +344,12 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
   await t.expect(photoviewer.markersEditToggle.exists).notOk();
+  await t.expect(photoviewer.sidebarLabels.exists).notOk();
   await photoviewer.triggerPhotoViewerAction("close-button");
 
   await photo.toggleSelectNthPhoto(0, "image");
+  await t.click(toolbar.searchClearAction);
+  await notifies.waitForSearchToFinish(7000);
   await photo.toggleSelectNthPhoto(1, "image");
   await contextmenu.triggerContextMenuAction("edit");
 
@@ -474,7 +486,9 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await t.click(photoedit.dialogClose);
 
   await contextmenu.clearSelection();
-  await toolbar.search("photo:true");
+  //Use photo with all kinds of metadata
+  await toolbar.search("filename:Images/albums-002_3.jpg");
+  await notifies.waitForSearchToFinish(7000);
   await photoviewer.openPhotoViewer("nth", 0);
 
   await photoviewer.checkPhotoViewerActionAvailability("download", true);
@@ -571,7 +585,9 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await contextmenu.clearSelection();
   await t.click(toolbar.cardsViewAction);
 
-  await toolbar.search("photo:true");
+  //Use photo with all kinds of metadata
+  await toolbar.search("filename:Images/albums-002_3.jpg");
+  await notifies.waitForSearchToFinish(7000);
   await photoviewer.openPhotoViewer("nth", 0);
   await photoviewer.checkPhotoViewerActionAvailability("download", false);
   await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
@@ -579,7 +595,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.openSidebar();
   // The first non-stacked photo has Title + Labels + Albums but no Caption or People;
   // the Filmpreis-anchored block below covers the People positive case.
-  await photoviewer.assertSidebarIsReadOnly({ expectCaption: false, expectPeople: false });
+  await photoviewer.assertSidebarIsReadOnly();
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 

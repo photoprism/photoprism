@@ -1,6 +1,8 @@
 package search
 
 import (
+	"fmt"
+	"math"
 	"testing"
 	"time"
 
@@ -25,6 +27,47 @@ func TestGeo(t *testing.T) {
 			t.Logf("RESULT: %#v", result)
 			assert.LessOrEqual(t, 4, len(result))
 		}
+	})
+	t.Run("NearSortsByDistanceToReferencedPhoto", func(t *testing.T) {
+		// ps6sg6be2lvl0y15 sits far from the (0,0) origin and shares its location with other
+		// pictures in the same cell, so a correct "near" sort must place those coincident
+		// pictures right after it. Sorting by distance from the origin (the bug) would instead
+		// surface the cell's pictures nearest to (0,0) first.
+		const nearUID = "ps6sg6be2lvl0y15"
+
+		query := form.NewSearchPhotosGeo("near:" + nearUID)
+
+		if err := query.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		result, err := PhotosGeo(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// The referenced picture must come first, with several neighbors at varying distances.
+		assert.LessOrEqual(t, 4, len(result))
+		assert.Equal(t, nearUID, result[0].PhotoUID)
+
+		nearLat, nearLng := result[0].PhotoLat, result[0].PhotoLng
+
+		dist := func(r GeoResult) float64 {
+			return math.Abs(nearLat-r.PhotoLat) + math.Abs(nearLng-r.PhotoLng)
+		}
+
+		// Results must be ordered by non-decreasing distance to the referenced picture, and the
+		// set must actually span more than one location so the assertion is not vacuous.
+		coords := map[string]bool{}
+		prev := -1.0
+		for _, r := range result {
+			d := dist(r)
+			assert.GreaterOrEqualf(t, d, prev, "results not sorted by distance to %s at %s", nearUID, r.PhotoUID)
+			prev = d
+			coords[fmt.Sprintf("%f,%f", r.PhotoLat, r.PhotoLng)] = true
+		}
+		assert.Greater(t, len(coords), 1, "expected neighbors at more than one location")
 	})
 	t.Run("UnknownFaces", func(t *testing.T) {
 		query := form.NewSearchPhotosGeo("face:none")

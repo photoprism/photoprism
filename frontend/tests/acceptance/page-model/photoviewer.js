@@ -48,6 +48,7 @@ export default class Page {
     this.sidebarKeywords = Selector(".p-lightbox-sidebar .meta-keywords", { timeout: 15000 });
     this.sidebarNotes = Selector(".p-lightbox-sidebar .meta-notes", { timeout: 15000 });
     this.sidebarChips = Selector(".p-lightbox-sidebar .meta-chip", { timeout: 15000 });
+    this.sidebarLabels = Selector(".p-lightbox-sidebar .v-list-item.meta-labels", { timeout: 15000 });
     this.faceMarkerClearSubjectButton = Selector(".metadata__person-row .meta-marker-clear-subject", { timeout: 15000 });
     this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
     this.peopleHeader = Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People");

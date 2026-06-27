@@ -10,16 +10,16 @@ import AlbumDialog from "../page-model/dialog-album";
 import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
 fixture`Test moments`
-.page`${testcafeconfig.url}`
-.beforeEach(async t => {
-  await helperBeforeEach(t);
-})
-.afterEach(async t => {
-  await helperAfterEach(t);
-})
-.before(async ctx => {
-  await helperBeforeFixture(ctx);
-});
+  .page`${testcafeconfig.url}`
+  .beforeEach(async t => {
+    await helperBeforeEach(t);
+  })
+  .afterEach(async t => {
+    await helperAfterEach(t);
+  })
+  .before(async ctx => {
+    await helperBeforeFixture(ctx);
+  });
 
 const menu = new Menu();
 const album = new Album();

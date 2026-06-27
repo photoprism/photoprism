@@ -27,6 +27,7 @@ When integrating third-party clients such as native mobile apps that embed the P
 - In the standard login UI, this preference is exposed through the `Stay signed in on this device` toggle. Checked means persistent namespaced `localStorage`; unchecked means ephemeral namespaced `sessionStorage`.
 - The login page initializes that toggle from the current session storage mode when available, and otherwise falls back to the stored namespaced `session` preference flag.
 - Logout and session reset clear the current app namespace from both `localStorage` and `sessionStorage`, and also remove deprecated raw legacy auth keys from both stores, without touching other namespaced instances on the same origin.
+- When `PHOTOPRISM_OIDC_LOGOUT` is enabled, `DELETE /api/v1/session` returns a `providerLogoutUri`; `logout()` passes it to `onLogout()`, which redirects the browser to the provider's end-session endpoint (RP-initiated logout) instead of the local login page, so the provider's SSO session is ended too. `onLogout()` also resolves to that landing URL, so callers that pass `noRedirect` and navigate themselves — the `/logout` route guard and the Portal instance-chooser Sign-Out — follow the same provider URL rather than discarding it. Without the flag, sign-out lands on the local/Portal login page as before.
 - Regression tests for session restore should exercise both preferred `sessionStorage` and a real `Config`-shaped object so namespace resolution bugs cannot silently fall back to `pp:root:`.
 
 Preferred integration contract for new native or web view clients:

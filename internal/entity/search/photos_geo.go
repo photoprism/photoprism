@@ -45,6 +45,8 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		return GeoResults{}, ErrBadRequest
 	}
 
+	// Position of the picture referenced by "near", used to sort results by distance to it.
+	var nearLat, nearLng float64
 	results = make(GeoResults, 0)
 	// Find photos near another?
 	if txt.NotEmpty(frm.Near) {
@@ -58,6 +60,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 		// Set the S2 Cell ID to search for.
 		frm.S2 = photo.CellID
+
+		// Remember the picture's position so results can be ordered by distance to it.
+		nearLat, nearLng = photo.PhotoLat, photo.PhotoLng
 
 		// Set the search distance if unspecified.
 		if frm.Dist <= 0 {
@@ -160,15 +165,17 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		}
 	}
 
-	// Set sort order.
-	if frm.Near == "" {
+	// Sort results by time, unless the "Near" filter is used together with "nearLat" and "nearLng".
+	if frm.Near == "" || nearLat == 0 || nearLng == 0 {
 		s = s.Order("taken_at, photos.photo_uid")
 	} else {
-		// Sort by distance to UID.
+		// Sort by distance to the picture referenced by "near", placing it first. Its position
+		// is used here rather than frm.Lat/Lng (which the near lookup leaves unset) so the order
+		// reflects proximity to that picture instead of distance from the (0,0) origin.
 		s = s.
 			Clauses(clause.OrderBy{Expression: clause.Expr{
 				SQL:                "(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)",
-				Vars:               []any{frm.Near, frm.Lat, frm.Lng},
+				Vars:               []any{frm.Near, nearLat, nearLng},
 				WithoutParentheses: true}})
 	}
 

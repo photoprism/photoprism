@@ -1076,9 +1076,14 @@ export default {
     // Renders a stack marker for pictures sharing the same location and opens them as a
     // group when clicked, so coincident photos no longer hide each other once zoomed in.
     renderStackMarker(group, token, newMarkers, map) {
-      const id = `s${group.key}`;
-      const coords = group.coords;
       const count = group.features.length;
+      // Include the count in the cached marker id so a group whose size changes (pictures
+      // separating or merging as the map zooms) gets a fresh badge instead of a stale one.
+      const id = `s${group.key}:${count}`;
+      const bounds = group.bounds;
+      // Center the marker on the group's bounding box so a stack of near-coincident photos
+      // sits between them rather than on whichever picture happened to anchor the group.
+      const coords = [(bounds.lngW + bounds.lngE) / 2, (bounds.latS + bounds.latN) / 2];
 
       let marker = this.markers[id];
       if (!marker) {
@@ -1116,8 +1121,9 @@ export default {
         marker.setLngLat(coords);
       }
 
-      const [lng, lat] = coords;
-      this.ensureMarkerClick(id, marker, `${group.key}:${count}`, () => () => this.selectClusterByCoords(lat, lng, lat, lng));
+      // Open the stack by its bounding box (padded server-side) so the panel lists every
+      // picture in the group, not just the one at the anchor coordinate.
+      this.ensureMarkerClick(id, marker, `${group.key}:${count}`, () => () => this.selectClusterByCoords(bounds.latN, bounds.lngE, bounds.latS, bounds.lngW));
 
       newMarkers[id] = marker;
 
@@ -1225,9 +1231,12 @@ export default {
         }
       }
 
-      // Group un-clustered photos by exact location and render each group as a single
-      // marker, using a stack marker with a counter when several pictures share a spot.
-      for (const group of maps.groupGeoFeatures(photoFeatures)) {
+      // Group un-clustered photos by on-screen proximity and render each group as a single
+      // marker, using a stack marker with a counter when several pictures share a spot. The
+      // projection keeps grouping zoom-aware so nearby pictures separate as the map zooms in.
+      const project = typeof map.project === "function" ? (coords) => map.project(coords) : null;
+
+      for (const group of maps.groupGeoFeatures(photoFeatures, project)) {
         if (group.features.length > 1) {
           this.renderStackMarker(group, token, newMarkers, map);
         } else {

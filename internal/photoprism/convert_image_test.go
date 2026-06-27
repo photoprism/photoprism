@@ -172,6 +172,30 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = imageFile.Remove()
 	})
+	t.Run("JpegXL", func(t *testing.T) {
+		if !cnf.JpegXLEnabled() {
+			t.Skip("JPEG XL support requires libvips or djxl")
+		}
+
+		jxlFile := filepath.Join(samplesPath, "dice.jxl")
+
+		mediaFile, err := NewMediaFile(jxlFile)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, fs.FileExists(imageFile.FileName()))
+		assert.Equal(t, fs.ImageJpeg, imageFile.FileType())
+		assert.Greater(t, imageFile.Width(), 0)
+		assert.Greater(t, imageFile.Height(), 0)
+
+		_ = imageFile.Remove()
+	})
 	t.Run("Layered16BitTiff", func(t *testing.T) {
 		tiffFile := filepath.Join(samplesPath, "layered-16bit-small.tif")
 
@@ -283,6 +307,57 @@ func TestConvert_JpegConvertCmds(t *testing.T) {
 	assert.True(t, found)
 }
 
+// TestConvert_JpegConvertCmds_RawEmbeddedPreview verifies that RAW inputs emit
+// ExifTool embedded-preview extraction commands (largest-first) ordered after
+// Darktable and before RawTherapee, so an unsupported camera falls back to the
+// camera-rendered JPEG instead of a wrong-color demosaic.
+func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+	}
+
+	convert := NewConvert(cnf)
+	rawFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng")
+	jpegFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng.jpg")
+
+	mediaFile, err := NewMediaFile(rawFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmds, _, err := convert.JpegConvertCmds(mediaFile, jpegFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, cmds)
+
+	// Record the first occurrence of each command; DNG inputs additionally emit a
+	// trailing -PreviewImage extraction, which is not the priority position.
+	jpgFromRaw, previewImage, rawTherapee := -1, -1, -1
+	for i, cmd := range cmds {
+		s := cmd.String()
+		switch {
+		case jpgFromRaw < 0 && strings.Contains(s, "-JpgFromRaw"):
+			jpgFromRaw = i
+		case previewImage < 0 && strings.Contains(s, "-PreviewImage"):
+			previewImage = i
+		case rawTherapee < 0 && strings.Contains(s, filepath.Base(cnf.RawTherapeeBin())):
+			rawTherapee = i
+		}
+	}
+
+	assert.GreaterOrEqual(t, jpgFromRaw, 0, "expected a -JpgFromRaw extraction command")
+	assert.GreaterOrEqual(t, previewImage, 0, "expected a -PreviewImage extraction command")
+	assert.Less(t, jpgFromRaw, previewImage, "JpgFromRaw must be tried before PreviewImage")
+	if cnf.RawTherapeeEnabled() {
+		assert.GreaterOrEqual(t, rawTherapee, 0, "expected a RawTherapee command")
+		assert.Less(t, previewImage, rawTherapee, "embedded preview must be tried before RawTherapee")
+	}
+}
+
 // TestConvert_JpegConvertCmds_HeifFallback verifies that the documented external
 // fallback command is emitted for HEIC and AVIF inputs when libheif tooling
 // (heif-dec / heif-convert) is available — see issue #5509.
@@ -333,6 +408,50 @@ func TestConvert_JpegConvertCmds_HeifFallback(t *testing.T) {
 			assert.True(t, found, "expected a %s fallback command for %s", heifBin, tc.src)
 		})
 	}
+}
+
+// TestConvert_JpegConvertCmds_JpegXLFallback verifies that the external "djxl"
+// fallback command is emitted for JPEG XL inputs when the decoder is available,
+// so runtimes whose libvips lacks JPEG XL support can still convert these files.
+func TestConvert_JpegConvertCmds_JpegXLFallback(t *testing.T) {
+	cnf := config.TestConfig()
+	convert := NewConvert(cnf)
+
+	if cnf.JpegXLDecoderBin() == "" {
+		t.Skip("djxl must be available for the JPEG XL fallback path")
+	}
+
+	srcFile := filepath.Join(cnf.SamplesPath(), "dice.jxl")
+	dstFile := filepath.Join(t.TempDir(), "dice.jxl.jpg")
+
+	mediaFile, err := NewMediaFile(srcFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !mediaFile.IsJpegXL() {
+		t.Fatalf("%s not recognized as JPEG XL", srcFile)
+	}
+
+	cmds, useMutex, err := convert.JpegConvertCmds(mediaFile, dstFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.False(t, useMutex)
+	assert.NotEmpty(t, cmds)
+
+	djxlBin := filepath.Base(cnf.JpegXLDecoderBin())
+	found := false
+	for _, cmd := range cmds {
+		s := cmd.String()
+		if strings.Contains(s, djxlBin) && strings.Contains(s, srcFile) && strings.Contains(s, dstFile) {
+			found = true
+			break
+		}
+	}
+
+	assert.True(t, found, "expected a djxl fallback command for %s", srcFile)
 }
 
 func TestConvert_PngConvertCmds(t *testing.T) {

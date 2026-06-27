@@ -54,6 +54,10 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 - Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
 - Follow with behavior, rationale, technical considerations, and constraints.
 - End with `- [ ]` checklist items for the acceptance criteria, each using `MUST`, `SHOULD`, or `MAY`.
+  - Keep the checklist current: once the work for a criterion is implemented **and verified**, mark it done (`- [x]`).
+  - Leave items that are unverified, not yet implemented, or skipped optional (`MAY`) enhancements unchecked.
+  - An issue is complete only when every `MUST` is checked; never tick a box on the strength of a plan alone or an unrun test.
+  - When referencing an issue from a commit that fulfills some of its criteria, update the matching boxes first.
 - Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
 
 ### Specifications & Documentation

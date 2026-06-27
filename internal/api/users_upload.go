@@ -259,7 +259,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		log.Info(msg)
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
 	})
 }
 
@@ -420,6 +420,6 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			log.Warnf("upload: %s (update covers)", coversErr)
 		}
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
 	})
 }

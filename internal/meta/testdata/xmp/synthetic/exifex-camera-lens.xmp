@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:exifEX="http://cipa.jp/exif/1.0/"
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/">
+   <tiff:Make>SyntheticCam</tiff:Make>
+   <tiff:Model>SC-1 Mark II</tiff:Model>
+   <exifEX:LensMake>SyntheticLens Co.</exifEX:LensMake>
+   <exifEX:LensModel>SL 50mm f/1.4</exifEX:LensModel>
+   <exifEX:LensSerialNumber>SL-50-987654</exifEX:LensSerialNumber>
+   <exifEX:SerialNumber>SC1-BODY-123456</exifEX:SerialNumber>
+   <exifEX:PhotographicSensitivity>800</exifEX:PhotographicSensitivity>
+   <exifEX:SensitivityType>2</exifEX:SensitivityType>
+   <exifEX:RecommendedExposureIndex>800</exifEX:RecommendedExposureIndex>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

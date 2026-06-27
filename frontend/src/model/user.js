@@ -237,15 +237,73 @@ export class User extends RestModel {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
-  // canHavePassword reports whether a local password can be set and used for this account.
-  // Excludes system users, role-less accounts, visitors, deactivated accounts (provider
-  // "none"), and remote accounts (LDAP), whose credentials are managed externally.
-  canHavePassword() {
-    if (this.ID < 1 || !this.Name || this.AuthProvider === "none" || this.isRemote()) {
+  // showsPasswordField reports whether the local password input is shown.
+  // OIDC may keep a local password as a fallback; LDAP replaces it; "none" disables auth.
+  showsPasswordField() {
+    return ["default", "local", "oidc"].includes(this.AuthProvider);
+  }
+
+  // passwordIsRequired reports whether a local password must be set to create the account.
+  // "default" needs one unless an external identity can be supplied instead (OIDC/LDAP configured).
+  passwordIsRequired() {
+    if (this.AuthProvider === "local") {
+      return true;
+    }
+    if (this.AuthProvider === "default") {
+      return !this.showsAuthIdField();
+    }
+    return false;
+  }
+
+  // showsAuthIdField reports whether the external identity input (OIDC Subject ID or LDAP DN) is shown.
+  // "default" offers it only when OIDC or LDAP is configured, to pre-provision external accounts.
+  showsAuthIdField() {
+    const p = this.AuthProvider;
+    return p === "oidc" || p === "ldap" || (p === "default" && ($config.oidcEnabled() || $config.ldapEnabled()));
+  }
+
+  // authIdIsRequired reports whether the external identity must be set; only OIDC requires it up front.
+  authIdIsRequired() {
+    return this.AuthProvider === "oidc";
+  }
+
+  // authIdIsDn reports whether the external identity is an LDAP DN rather than an OIDC Subject ID.
+  authIdIsDn() {
+    const p = this.AuthProvider;
+    return p === "ldap" || (p === "default" && $config.ldapEnabled() && !$config.oidcEnabled());
+  }
+
+  // authIdFieldLabel returns the label for the external identity input.
+  authIdFieldLabel() {
+    return this.authIdIsDn() ? "Distinguished Name (DN)" : "Subject ID";
+  }
+
+  // hasLoginCredential reports whether enough is set for the new account to authenticate.
+  // Covers the gap per-field rules miss: "default" with external auth configured needs a
+  // password, an LDAP directory (username resolves it), or an OIDC Subject ID — else it is inert.
+  hasLoginCredential() {
+    if (this.AuthProvider !== "default" || !this.showsAuthIdField()) {
+      return true;
+    }
+    return !!this.Password || $config.ldapEnabled() || !!this.AuthID;
+  }
+
+  // canEnableLogin reports whether web/API login can be enabled for this account.
+  // System users, role-less accounts, visitors, and deactivated accounts (provider
+  // "none") cannot log in regardless of the toggle. LDAP and OIDC accounts can.
+  canEnableLogin() {
+    if (this.ID < 1 || !this.Name || this.AuthProvider === "none") {
       return false;
     }
 
     return !!this.Role && this.Role !== "visitor";
+  }
+
+  // canHavePassword reports whether a local password can be set and used for this account.
+  // Requires login eligibility plus a local provider — remote accounts (LDAP) have their
+  // credentials managed externally, so a local password would be inert.
+  canHavePassword() {
+    return this.canEnableLogin() && !this.isRemote();
   }
 
   // hasWebDAV returns true when WebDAV access is enabled for this user and the role permits it.

@@ -263,6 +263,16 @@ func TestConfig_OIDCRegister(t *testing.T) {
 	assert.False(t, c.OIDCRegister())
 }
 
+func TestConfig_OIDCLogout(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.OIDCLogout())
+
+	c.options.OIDCLogout = true
+
+	assert.True(t, c.OIDCLogout())
+}
+
 func TestConfig_OIDCRole(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

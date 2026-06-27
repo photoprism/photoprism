@@ -85,6 +85,7 @@
 import $api from "common/api";
 import Axios from "axios";
 import $notify from "common/notify";
+import { $gettext } from "common/gettext";
 import Settings from "model/settings";
 import { Folder, RootImport } from "model/folder";
 
@@ -201,7 +202,7 @@ export default {
             return;
           }
 
-          $notify.error(ctx.$gettext("Import failed"));
+          $notify.error($gettext("Import failed"));
 
           ctx.busy = false;
           ctx.completed = 0;

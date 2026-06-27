@@ -55,7 +55,9 @@ func TestConfig_ThumbSize(t *testing.T) {
 
 	assert.Equal(t, 720, c.ThumbSizePrecached())
 	c.options.ThumbSize = 7681
-	assert.Equal(t, 7680, c.ThumbSizePrecached())
+	assert.Equal(t, 7681, c.ThumbSizePrecached())
+	c.options.ThumbSize = 15361
+	assert.Equal(t, 15360, c.ThumbSizePrecached())
 }
 
 func TestConfig_ThumbSizeUncached2(t *testing.T) {
@@ -63,10 +65,43 @@ func TestConfig_ThumbSizeUncached2(t *testing.T) {
 
 	assert.Equal(t, 720, c.ThumbSizeUncached())
 	c.options.ThumbSizeUncached = 7681
-	assert.Equal(t, 7680, c.ThumbSizeUncached())
+	assert.Equal(t, 7681, c.ThumbSizeUncached())
+	c.options.ThumbSizeUncached = 15361
+	assert.Equal(t, 15360, c.ThumbSizeUncached())
 	c.options.ThumbSizeUncached = 800
 	c.options.ThumbSize = 900
 	assert.Equal(t, int(900), c.ThumbSizeUncached())
+}
+
+func TestInitThumbs_AdvertisesLargeSizes(t *testing.T) {
+	origCached := thumb.SizeCached
+	origOnDemand := thumb.SizeOnDemand
+	defer func() {
+		thumb.SizeCached = origCached
+		thumb.SizeOnDemand = origOnDemand
+		initThumbs()
+	}()
+
+	names := func() []string {
+		out := make([]string, 0, len(Thumbs))
+		for _, s := range Thumbs {
+			out = append(out, s.Size)
+		}
+		return out
+	}
+
+	// A high on-demand limit exposes the 8K and 16K sizes to client apps.
+	thumb.SizeCached = 1920
+	thumb.SizeOnDemand = 15360
+	initThumbs()
+	assert.Contains(t, names(), "fit_15360")
+	assert.Contains(t, names(), "fit_7680")
+
+	// A low limit keeps the large on-demand sizes out of the advertised list.
+	thumb.SizeOnDemand = 2560
+	initThumbs()
+	assert.NotContains(t, names(), "fit_15360")
+	assert.NotContains(t, names(), "fit_7680")
 }
 
 func TestConfig_PngSize(t *testing.T) {

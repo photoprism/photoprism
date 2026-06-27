@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:aux="http://ns.adobe.com/exif/1.0/aux/">
+   <aux:OwnerName>Synthetic Photographer</aux:OwnerName>
+   <aux:Lens>50.0 mm f/1.4</aux:Lens>
+   <aux:LensID>123</aux:LensID>
+   <aux:LensSerialNumber>LENS-SN-987654</aux:LensSerialNumber>
+   <aux:SerialNumber>BODY-SN-123456</aux:SerialNumber>
+   <aux:Firmware>Firmware 2.10</aux:Firmware>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

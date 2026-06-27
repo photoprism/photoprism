@@ -15,6 +15,11 @@ const (
 )
 
 // Data represents image metadata.
+//
+// Note: the meta:"…", xmp:"…", and dc:"…" struct tags below are read by
+// internal/meta/report.go via reflection to render the metadata-source
+// columns of `photoprism show metadata-fields`. Do not delete them as
+// "vestigial" — they are documentation that ships in the CLI report.
 type Data struct {
 	FileName         string        `meta:"FileName"`
 	MimeType         string        `meta:"MIMEType" report:"-"`

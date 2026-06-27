@@ -24,6 +24,8 @@
   </teleport>
 </template>
 <script>
+import { Tp } from "common/gettext";
+
 export default {
   name: "PNotify",
   data() {
@@ -59,8 +61,9 @@ export default {
     onNotify(ev, data) {
       const type = ev.split(".")[1];
 
-      // Get the message.
-      let m = data.message;
+      // Render in the current UI language when the backend sent a message id (the English source
+      // string); otherwise fall back to the pre-rendered message string as-is.
+      let m = data.messageId ? Tp(data.messageId, data.messageParams) : data.message;
 
       // Skip empty messages.
       if (!m || !m.length) {

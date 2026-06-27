@@ -200,22 +200,21 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })("Multi-
 
 test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common: Lightbox sidebar shows only restricted metadata on share links", async (t) => {
   await t.useRole(Role.anonymous());
-  await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
-  await t.expect(toolbar.toolbarSecondTitle.withText("British Columbia").visible).ok();
+  await t.navigateTo("http://localhost:2343/s/2t6124pb6d/holiday");
+  await t.expect(toolbar.toolbarSecondTitle.withText("Holiday").visible).ok();
 
-  await photoviewer.openPhotoViewer("nth", 0);
+  await photoviewer.openPhotoViewer("nth", 1);
   await photoviewer.openSidebar();
 
   await t.expect(photoviewer.sidebarRow("mdi-calendar").exists).ok();
 
-  // The visitor share-link photo carries a Title but no Caption.
-  await photoviewer.assertSidebarIsReadOnly({ restricted: true, expectCaption: false });
+  await photoviewer.assertSidebarIsReadOnly({ restricted: true});
   // Merged file row renders for restricted sessions (type + size as
   // the title) but the filename subtitle must be suppressed.
   await t.expect(Selector(".p-lightbox-sidebar .meta-file .v-list-item-subtitle").exists).notOk();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Labels").exists).notOk();
-  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Albums").exists).notOk();
+  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Albums").exists).ok();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Keywords").exists).notOk();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Notes").exists).notOk();
 

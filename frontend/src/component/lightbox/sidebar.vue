@@ -59,6 +59,7 @@
             hide-details="auto"
             autocomplete="off"
             class="meta-inline-edit meta-inline-caption"
+            @keydown.enter.stop
             @keydown.escape.stop.prevent="cancelEditing"
             @blur="onInlineFieldBlur"
           ></v-textarea>
@@ -300,14 +301,18 @@
                 @keydown.delete.stop.prevent="onChipDelete('albums', a)"
               >
                 <span class="meta-chip__label text-truncate">{{ a.Title }}</span>
-                <v-icon
+                <button
                   v-if="isEditable"
-                  icon="mdi-close-circle"
-                  size="x-small"
-                  class="ml-1 meta-chip__remove"
+                  type="button"
+                  tabindex="-1"
+                  class="ms-1 meta-chip__remove meta-icon-btn"
                   :title="$gettext('Remove')"
+                  :aria-label="$gettext('Remove')"
+                  @mousedown.prevent
                   @click.stop.prevent="onChipDelete('albums', a)"
-                ></v-icon>
+                >
+                  <v-icon icon="mdi-close-circle" size="x-small"></v-icon>
+                </button>
               </span>
             </div>
           </v-list-item>
@@ -361,14 +366,18 @@
                 @keydown.delete.stop.prevent="onChipDelete('labels', l)"
               >
                 <span class="meta-chip__label text-truncate">{{ l.Label.Name }}</span>
-                <v-icon
+                <button
                   v-if="isEditable"
-                  icon="mdi-close-circle"
-                  size="x-small"
-                  class="ml-1 meta-chip__remove"
+                  type="button"
+                  tabindex="-1"
+                  class="ms-1 meta-chip__remove meta-icon-btn"
                   :title="$gettext('Remove')"
+                  :aria-label="$gettext('Remove')"
+                  @mousedown.prevent
                   @click.stop.prevent="onChipDelete('labels', l)"
-                ></v-icon>
+                >
+                  <v-icon icon="mdi-close-circle" size="x-small"></v-icon>
+                </button>
               </span>
             </div>
           </v-list-item>
@@ -425,7 +434,7 @@
                 class="meta-inline-edit"
                 :class="`meta-inline-${f.key}`"
                 @update:model-value="(v) => f.write(photo, v)"
-                @keydown.enter="(ev) => onInlineEnter(ev, f)"
+                @keydown.enter.stop="(ev) => onInlineEnter(ev, f)"
                 @keydown.escape.stop.prevent="cancelEditing"
                 @blur="onInlineFieldBlur"
               ></v-textarea>
@@ -481,6 +490,7 @@ import * as formats from "options/formats";
 import { $faceMarkers } from "common/face-markers";
 
 import * as media from "common/media";
+import { is360Equirectangular } from "common/sphere";
 import typeaheadCache from "common/typeahead-cache";
 import { rules } from "common/form";
 import { Album, MaxLength as AlbumMaxLength } from "model/album";
@@ -1051,7 +1061,17 @@ export default {
       }
       return this.model?.Type || "";
     },
+    // mediaIs360 reports whether the active media is equirectangular 360° content,
+    // reusing the lightbox slide-routing discriminator (is360Equirectangular) so the
+    // file icon matches what opens in the sphere viewer. Checks both the thumb model
+    // and the photo since either may carry the projection / dimensions.
+    mediaIs360() {
+      return is360Equirectangular(this.model) || is360Equirectangular(this.photo);
+    },
     fileIcon() {
+      if (this.mediaIs360) {
+        return "mdi-panorama-variant-outline";
+      }
       switch (this.mediaType) {
         case media.Raw:
           return "mdi-raw";
@@ -1207,13 +1227,14 @@ export default {
     },
     // Plain Enter commits when the field opts in via `commitOnEnter`
     // (single-line fields); otherwise it falls through to insert a
-    // newline. Shift+Enter always inserts a newline.
+    // newline. Shift+Enter always inserts a newline. Propagation is
+    // stopped by the `.stop` modifier on the binding, so the keystroke
+    // never reaches the dialog's Enter handler in either branch.
     onInlineEnter(ev, f) {
       if (!f?.commitOnEnter || ev.shiftKey) {
         return;
       }
       ev.preventDefault();
-      ev.stopPropagation();
       this.confirmField();
     },
     // Reverts the active inline editor to editOriginal without exiting

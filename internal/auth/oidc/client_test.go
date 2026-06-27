@@ -131,6 +131,38 @@ func TestCodeExchangeRecorder(t *testing.T) {
 	})
 }
 
+func TestClient_AuthURLHandler_SendsNonce(t *testing.T) {
+	uri, err := url.Parse("http://dummy-oidc:9998")
+	require.NoError(t, err)
+	client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "https://app.localssl.dev/", true)
+	require.NoError(t, err)
+	require.NotNil(t, client)
+
+	gin.SetMode(gin.TestMode)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request, _ = http.NewRequest(http.MethodGet, "/api/v1/oidc/login", nil)
+
+	client.AuthURLHandler(c)
+
+	// Redirects to the provider with a nonce on the authorization request.
+	assert.Equal(t, http.StatusFound, w.Code)
+	loc, locErr := url.Parse(w.Header().Get("Location"))
+	require.NoError(t, locErr)
+	sentNonce := loc.Query().Get("nonce")
+	assert.NotEmpty(t, sentNonce)
+
+	// Stores the nonce in a cookie so it survives to the callback.
+	var nonceCookie bool
+	for _, ck := range w.Result().Cookies() {
+		if ck.Name == NonceCookie {
+			nonceCookie = true
+			assert.NotEmpty(t, ck.Value)
+		}
+	}
+	assert.True(t, nonceCookie)
+}
+
 func TestClient_CodeExchangeUserInfo_NoStateCookie(t *testing.T) {
 	// A redirect callback without the RP state cookie (e.g. an expired/interrupted
 	// login) must return an error AND leave the real response untouched, so the

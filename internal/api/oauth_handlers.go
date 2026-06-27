@@ -17,6 +17,11 @@ var OAuthAuthorizeHandler gin.HandlerFunc = defaultOAuthAuthorize
 // a 405 placeholder; Portal builds set it to the OIDC OP userinfo handler.
 var OAuthUserinfoHandler gin.HandlerFunc = defaultOAuthUserinfo
 
+// OAuthLogoutHandler handles GET and POST /api/v1/oauth/logout (OIDC RP-initiated
+// logout end-session endpoint). Defaults to a 405 placeholder; Portal builds set it
+// to the OIDC OP end-session handler.
+var OAuthLogoutHandler gin.HandlerFunc = defaultOAuthLogout
+
 // OAuthAuthorizationCodeHandler handles the authorization_code grant on the
 // shared POST /api/v1/oauth/token endpoint. Nil on CE/Pro builds (the grant is
 // then reported as unsupported); Portal builds set it to the OIDC OP token

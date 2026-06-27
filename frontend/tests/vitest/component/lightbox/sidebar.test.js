@@ -1446,7 +1446,9 @@ describe("PLightboxSidebar component", () => {
   // onInlineEnter — Enter commits on single-line fields (commitOnEnter:
   // true) and falls through (no preventDefault) for free-form fields
   // like Notes / Caption so the textarea can insert a newline. Shift+
-  // Enter always falls through, even on commitOnEnter fields.
+  // Enter always falls through, even on commitOnEnter fields. Propagation
+  // is contained by the `.stop` modifier on the @keydown.enter binding, not
+  // by the method, so the keystroke never reaches the dialog's Enter handler.
   describe("onInlineEnter (commit-on-Enter for single-line fields)", () => {
     let w;
     beforeEach(() => {
@@ -1472,7 +1474,8 @@ describe("PLightboxSidebar component", () => {
       const confirmSpy = vi.spyOn(w.vm, "confirmField").mockImplementation(() => {});
       w.vm.onInlineEnter(ev, subject);
       expect(ev.preventDefault).toHaveBeenCalledTimes(1);
-      expect(ev.stopPropagation).toHaveBeenCalledTimes(1);
+      // Propagation is stopped by the binding's `.stop` modifier, not the method.
+      expect(ev.stopPropagation).not.toHaveBeenCalled();
       expect(confirmSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -3582,6 +3585,61 @@ describe("PLightboxSidebar component", () => {
       expect(w.vm.mediaType).toBe("live");
       expect(w.vm.fileTypeName).toBe("live");
       expect(w.vm.fileIcon).toBe("mdi-play-circle-outline");
+    });
+    it("fileIcon is the panorama icon for an equirectangular 360° photo", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "image", Projection: "equirectangular" },
+          photo: { ...mockPhoto, Type: "image", Projection: "equirectangular" },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(true);
+      expect(w.vm.fileIcon).toBe("mdi-panorama-variant-outline");
+    });
+    it("fileIcon is the panorama icon for an equirectangular 360° video", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "video", Projection: "equirectangular" },
+          photo: { ...mockPhoto, Type: "video", Projection: "equirectangular", getVideoInfo: vi.fn().mockReturnValue("") },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(true);
+      expect(w.vm.fileIcon).toBe("mdi-panorama-variant-outline");
+    });
+    it("fileIcon is the panorama icon for a 2:1 panorama video without a projection tag", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "video", Panorama: true, Projection: "", Width: 3840, Height: 1920 },
+          photo: { ...mockPhoto, Type: "video", Panorama: true, Projection: "", Width: 3840, Height: 1920, getVideoInfo: vi.fn().mockReturnValue("") },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(true);
+      expect(w.vm.fileIcon).toBe("mdi-panorama-variant-outline");
+    });
+    it("fileIcon stays the standard video icon for an ultrawide (non-2:1) panorama video", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "video", Panorama: true, Projection: "", Width: 3840, Height: 1632 },
+          photo: { ...mockPhoto, Type: "video", Panorama: true, Projection: "", Width: 3840, Height: 1632, getVideoInfo: vi.fn().mockReturnValue("") },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(false);
+      expect(w.vm.fileIcon).toBe("mdi-video");
+    });
+    it("fileIcon stays the standard image icon for a regular photo", () => {
+      const w = mountSidebar({
+        props: {
+          modelValue: { ...mockModel, Type: "image" },
+          photo: { ...mockPhoto, Type: "image" },
+          context: contexts.Photos,
+        },
+      });
+      expect(w.vm.mediaIs360).toBe(false);
+      expect(w.vm.fileIcon).toBe("mdi-image-outline");
     });
   });
 

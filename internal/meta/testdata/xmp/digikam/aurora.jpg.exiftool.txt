@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+
+<rdf:Description rdf:about='internal/meta/testdata/xmp/digikam/aurora.jpg.xmp'
+  xmlns:et='http://ns.exiftool.org/1.0/' et:toolkit='Image::ExifTool 13.25'
+  xmlns:ExifTool='http://ns.exiftool.org/ExifTool/1.0/'
+  xmlns:System='http://ns.exiftool.org/File/System/1.0/'
+  xmlns:File='http://ns.exiftool.org/File/1.0/'
+  xmlns:XMP-x='http://ns.exiftool.org/XMP/XMP-x/1.0/'
+  xmlns:XMP-xmpMM='http://ns.exiftool.org/XMP/XMP-xmpMM/1.0/'
+  xmlns:XMP-dc='http://ns.exiftool.org/XMP/XMP-dc/1.0/'
+  xmlns:XMP-photoshop='http://ns.exiftool.org/XMP/XMP-photoshop/1.0/'
+  xmlns:XMP-xmp='http://ns.exiftool.org/XMP/XMP-xmp/1.0/'
+  xmlns:XMP-exif='http://ns.exiftool.org/XMP/XMP-exif/1.0/'
+  xmlns:XMP-tiff='http://ns.exiftool.org/XMP/XMP-tiff/1.0/'
+  xmlns:XMP-digiKam='http://ns.exiftool.org/XMP/XMP-digiKam/1.0/'
+  xmlns:XMP-acdsee='http://ns.exiftool.org/XMP/XMP-acdsee/1.0/'
+  xmlns:XMP-microsoft='http://ns.exiftool.org/XMP/XMP-microsoft/1.0/'
+  xmlns:XMP-lr='http://ns.exiftool.org/XMP/XMP-lr/1.0/'
+  xmlns:XMP-mediapro='http://ns.exiftool.org/XMP/XMP-mediapro/1.0/'
+  xmlns:XMP-xmpRights='http://ns.exiftool.org/XMP/XMP-xmpRights/1.0/'
+  xmlns:Composite='http://ns.exiftool.org/Composite/1.0/'>
+ <ExifTool:ExifToolVersion>13.25</ExifTool:ExifToolVersion>
+ <ExifTool:Warning>[minor] Fixed incorrect URI for xmlns:MicrosoftPhoto</ExifTool:Warning>
+ <System:FileName>aurora.jpg.xmp</System:FileName>
+ <System:Directory>internal/meta/testdata/xmp/digikam</System:Directory>
+ <System:FileSize>5.5 kB</System:FileSize>
+ <System:FileModifyDate>2026:05:06 07:18:19+00:00</System:FileModifyDate>
+ <System:FileAccessDate>2026:05:06 07:18:22+00:00</System:FileAccessDate>
+ <System:FileInodeChangeDate>2026:05:06 07:18:25+00:00</System:FileInodeChangeDate>
+ <System:FilePermissions>-rw-r--r--</System:FilePermissions>
+ <File:FileType>XMP</File:FileType>
+ <File:FileTypeExtension>xmp</File:FileTypeExtension>
+ <File:MIMEType>application/rdf+xml</File:MIMEType>
+ <XMP-x:XMPToolkit>XMP Core 4.4.0-Exiv2</XMP-x:XMPToolkit>
+ <XMP-xmpMM:DocumentID>adobe:docid:photoshop:7d592d87-eb1e-1040-809a-e16c6b85b3fd</XMP-xmpMM:DocumentID>
+ <XMP-xmpMM:InstanceID>xmp.iid:de0fb44d-bdc8-4cc3-aa50-9aefe4992b34</XMP-xmpMM:InstanceID>
+ <XMP-xmpMM:OriginalDocumentID>254738CA43CD69C01101874D65B006B4</XMP-xmpMM:OriginalDocumentID>
+ <XMP-xmpMM:HistoryAction>
+  <rdf:Bag>
+   <rdf:li>saved</rdf:li>
+   <rdf:li>saved</rdf:li>
+  </rdf:Bag>
+ </XMP-xmpMM:HistoryAction>
+ <XMP-xmpMM:HistoryInstanceID>
+  <rdf:Bag>
+   <rdf:li>xmp.iid:380d6b1a-8ce6-4774-b1c0-f41dfa325e41</rdf:li>
+   <rdf:li>xmp.iid:de0fb44d-bdc8-4cc3-aa50-9aefe4992b34</rdf:li>
+  </rdf:Bag>
+ </XMP-xmpMM:HistoryInstanceID>
+ <XMP-xmpMM:HistoryWhen>
+  <rdf:Bag>
+   <rdf:li>2021:10:29 13:42+02:00</rdf:li>
+   <rdf:li>2021:10:29 13:42+02:00</rdf:li>
+  </rdf:Bag>
+ </XMP-xmpMM:HistoryWhen>
+ <XMP-xmpMM:HistorySoftwareAgent>
+  <rdf:Bag>
+   <rdf:li>Adobe Photoshop 22.3 (Macintosh)</rdf:li>
+   <rdf:li>Adobe Photoshop 22.3 (Macintosh)</rdf:li>
+  </rdf:Bag>
+ </XMP-xmpMM:HistorySoftwareAgent>
+ <XMP-xmpMM:HistoryChanged>
+  <rdf:Bag>
+   <rdf:li>/</rdf:li>
+   <rdf:li>/</rdf:li>
+  </rdf:Bag>
+ </XMP-xmpMM:HistoryChanged>
+ <XMP-dc:Format>image/jpeg</XMP-dc:Format>
+ <XMP-dc:Title>XMP Test - Aurora</XMP-dc:Title>
+ <XMP-dc:Subject>
+  <rdf:Bag>
+   <rdf:li>Nature</rdf:li>
+   <rdf:li>Places</rdf:li>
+   <rdf:li>Reykjavik</rdf:li>
+   <rdf:li>Iceland</rdf:li>
+   <rdf:li>Aurora</rdf:li>
+  </rdf:Bag>
+ </XMP-dc:Subject>
+ <XMP-dc:Rights>(C) 2026 PhotoPrism — Test fixture</XMP-dc:Rights>
+ <XMP-dc:Description>Test fixture for digiKam XMP sidecar </XMP-dc:Description>
+ <XMP-photoshop:ColorMode>RGB</XMP-photoshop:ColorMode>
+ <XMP-photoshop:ICCProfileName>sRGB IEC61966-2.1</XMP-photoshop:ICCProfileName>
+ <XMP-photoshop:Urgency>0 (reserved)</XMP-photoshop:Urgency>
+ <XMP-photoshop:DateCreated>2021:10:27 10:43:46</XMP-photoshop:DateCreated>
+ <XMP-photoshop:AuthorsPosition>PhotoPrism</XMP-photoshop:AuthorsPosition>
+ <XMP-photoshop:Credit>PhotoPrism</XMP-photoshop:Credit>
+ <XMP-xmp:CreateDate>2021:10:27 10:43:46</XMP-xmp:CreateDate>
+ <XMP-xmp:MetadataDate>2021:10:27 10:43:46</XMP-xmp:MetadataDate>
+ <XMP-xmp:Label>NoColor</XMP-xmp:Label>
+ <XMP-xmp:ModifyDate>2021:10:27 10:43:46</XMP-xmp:ModifyDate>
+ <XMP-exif:DateTimeOriginal>2021:10:27 10:43:46</XMP-exif:DateTimeOriginal>
+ <XMP-exif:ExifVersion>0231</XMP-exif:ExifVersion>
+ <XMP-exif:ColorSpace>sRGB</XMP-exif:ColorSpace>
+ <XMP-exif:ExifImageWidth>2560</XMP-exif:ExifImageWidth>
+ <XMP-exif:ExifImageHeight>868</XMP-exif:ExifImageHeight>
+ <XMP-exif:UserComment>Test fixture for digiKam XMP sidecar </XMP-exif:UserComment>
+ <XMP-tiff:DateTime>2021:10:27 10:43:46</XMP-tiff:DateTime>
+ <XMP-tiff:ImageWidth>4774</XMP-tiff:ImageWidth>
+ <XMP-tiff:ImageHeight>2889</XMP-tiff:ImageHeight>
+ <XMP-tiff:Orientation>Horizontal (normal)</XMP-tiff:Orientation>
+ <XMP-tiff:SamplesPerPixel>3</XMP-tiff:SamplesPerPixel>
+ <XMP-tiff:XResolution>72</XMP-tiff:XResolution>
+ <XMP-tiff:YResolution>72</XMP-tiff:YResolution>
+ <XMP-tiff:ResolutionUnit>inches</XMP-tiff:ResolutionUnit>
+ <XMP-tiff:Software>Adobe Photoshop 22.3 (Macintosh)</XMP-tiff:Software>
+ <XMP-tiff:ImageDescription>Test fixture for digiKam XMP sidecar </XMP-tiff:ImageDescription>
+ <XMP-tiff:Copyright>(C) 2026 PhotoPrism — Test fixture</XMP-tiff:Copyright>
+ <XMP-tiff:BitsPerSample>8 8 8</XMP-tiff:BitsPerSample>
+ <XMP-digiKam:ColorLabel>0</XMP-digiKam:ColorLabel>
+ <XMP-digiKam:TagsList>
+  <rdf:Bag>
+   <rdf:li>Nature</rdf:li>
+   <rdf:li>Places</rdf:li>
+   <rdf:li>Reykjavik</rdf:li>
+   <rdf:li>Iceland</rdf:li>
+   <rdf:li>Aurora</rdf:li>
+  </rdf:Bag>
+ </XMP-digiKam:TagsList>
+ <XMP-digiKam:CaptionsDateTimeStamps>2026-05-06T09:07:11</XMP-digiKam:CaptionsDateTimeStamps>
+ <XMP-acdsee:Caption>XMP Test - Aurora</XMP-acdsee:Caption>
+ <XMP-acdsee:Notes>Test fixture for digiKam XMP sidecar </XMP-acdsee:Notes>
+ <XMP-acdsee:Categories>&lt;Categories&gt;&lt;Category Assigned=&quot;1&quot;&gt;Nature&lt;/Category&gt;&lt;Category Assigned=&quot;1&quot;&gt;Places&lt;/Category&gt;&lt;Category Assigned=&quot;1&quot;&gt;Reykjavik&lt;/Category&gt;&lt;Category Assigned=&quot;1&quot;&gt;Iceland&lt;/Category&gt;&lt;Category Assigned=&quot;1&quot;&gt;Aurora&lt;/Category&gt;&lt;/Categories&gt;</XMP-acdsee:Categories>
+ <XMP-microsoft:LastKeywordXMP>
+  <rdf:Bag>
+   <rdf:li>Nature</rdf:li>
+   <rdf:li>Places</rdf:li>
+   <rdf:li>Reykjavik</rdf:li>
+   <rdf:li>Iceland</rdf:li>
+   <rdf:li>Aurora</rdf:li>
+  </rdf:Bag>
+ </XMP-microsoft:LastKeywordXMP>
+ <XMP-lr:HierarchicalSubject>
+  <rdf:Bag>
+   <rdf:li>Nature</rdf:li>
+   <rdf:li>Places</rdf:li>
+   <rdf:li>Reykjavik</rdf:li>
+   <rdf:li>Iceland</rdf:li>
+   <rdf:li>Aurora</rdf:li>
+  </rdf:Bag>
+ </XMP-lr:HierarchicalSubject>
+ <XMP-mediapro:CatalogSets>
+  <rdf:Bag>
+   <rdf:li>Nature</rdf:li>
+   <rdf:li>Places</rdf:li>
+   <rdf:li>Reykjavik</rdf:li>
+   <rdf:li>Iceland</rdf:li>
+   <rdf:li>Aurora</rdf:li>
+  </rdf:Bag>
+ </XMP-mediapro:CatalogSets>
+ <XMP-xmpRights:UsageTerms>CC-BY-SA 4.0</XMP-xmpRights:UsageTerms>
+ <Composite:ImageSize>4774x2889</Composite:ImageSize>
+ <Composite:Megapixels>13.8</Composite:Megapixels>
+</rdf:Description>
+</rdf:RDF>

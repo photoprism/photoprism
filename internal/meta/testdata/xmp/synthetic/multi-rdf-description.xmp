@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+   <dc:title>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">Multi-Description Fixture</rdf:li>
+    </rdf:Alt>
+   </dc:title>
+   <dc:creator>
+    <rdf:Seq>
+     <rdf:li>PhotoPrism</rdf:li>
+    </rdf:Seq>
+   </dc:creator>
+  </rdf:Description>
+  <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/">
+   <exif:GPSLatitude>52,30.4567N</exif:GPSLatitude>
+   <exif:GPSLongitude>13,24.5678E</exif:GPSLongitude>
+   <exif:GPSAltitudeRef>0</exif:GPSAltitudeRef>
+   <exif:GPSAltitude>3450/100</exif:GPSAltitude>
+  </rdf:Description>
+  <rdf:Description rdf:about=""
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/">
+   <tiff:Make>SyntheticCam</tiff:Make>
+   <tiff:Model>SC-1 Mark II</tiff:Model>
+  </rdf:Description>
+  <rdf:Description rdf:about=""
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/">
+   <xmpMM:DocumentID>xmp.did:11111111-2222-3333-4444-555555555555</xmpMM:DocumentID>
+   <xmpMM:InstanceID>xmp.iid:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee</xmpMM:InstanceID>
+   <xmpMM:OriginalDocumentID>00000000-0000-0000-0000-000000000000</xmpMM:OriginalDocumentID>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

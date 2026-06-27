@@ -44,6 +44,7 @@ type Options struct {
 	OIDCIcon                  string        `yaml:"OIDCIcon" json:"OIDCIcon" flag:"oidc-icon"`
 	OIDCRedirect              bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
 	OIDCRegister              bool          `yaml:"OIDCRegister" json:"OIDCRegister" flag:"oidc-register"`
+	OIDCLogout                bool          `yaml:"OIDCLogout" json:"OIDCLogout" flag:"oidc-logout"`
 	OIDCUsername              string        `yaml:"OIDCUsername" json:"-" flag:"oidc-username"`
 	OIDCGroupClaim            string        `yaml:"OIDCGroupClaim" json:"-" flag:"oidc-group-claim" tags:"portal,pro"`
 	OIDCGroup                 []string      `yaml:"OIDCGroup" json:"-" flag:"oidc-group" tags:"portal,pro"`
