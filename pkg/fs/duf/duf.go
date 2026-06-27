@@ -14,7 +14,7 @@ Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	The AGPL is supplemented by our Trademark and Brand Guidelines,
 	which describe how our Brand Assets may be used:
-	<https://www.photoprism.app/trademark>
+	<https://www.photoprism.app/trademark/>
 
 This code is copied and modified in part from:
 
@@ -64,22 +64,22 @@ func FindByPath(dir string) (m []Mount, warnings []string, err error) {
 		return m, warnings, fmt.Errorf("empty path name")
 	}
 
-	folders := strings.Split(dir, "/")
-
-	filter := FilterOptions{}
-
-	if len(folders) <= 1 {
-		filter.OnlyMountPoints = NewFilterValues("/")
-	} else if parent := strings.TrimSpace(folders[1]); parent != "" {
-		filter.OnlyMountPoints = NewFilterValues("/", "/"+parent+"*")
-	} else if len(folders) > 2 {
-		filter.OnlyMountPoints = NewFilterValues("/")
+	// Resolve the filesystem that contains dir by longest-prefix match against all mounts,
+	// including any hidden from the df-style listing (e.g. an overlay root), so callers such as
+	// Free and StorageLow get the actual containing filesystem for any path.
+	allMounts, warnings, err := mounts()
+	if err != nil {
+		return nil, warnings, err
 	}
 
-	m, warnings, err = Find(filter)
+	m, err = findMounts(allMounts, dir)
+	if err != nil {
+		return nil, warnings, err
+	}
 
+	// Order the closest (longest mountpoint) match first so m[0] is the containing filesystem.
 	sort.SliceStable(m, func(i, j int) bool {
-		return strings.Compare(m[i].Mountpoint, m[j].Mountpoint) >= 0
+		return len(m[i].Mountpoint) > len(m[j].Mountpoint)
 	})
 
 	return m, warnings, err

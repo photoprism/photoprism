@@ -86,3 +86,18 @@ func TestLower(t *testing.T) {
 		assert.Equal(t, "permission denied", msg)
 	})
 }
+
+func TestSource(t *testing.T) {
+	t.Run("WithPlaceholder", func(t *testing.T) {
+		assert.Equal(t, "%s already exists", Source(ErrAlreadyExists))
+	})
+	t.Run("WithoutPlaceholder", func(t *testing.T) {
+		assert.Equal(t, "Permission denied", Source(ErrForbidden))
+	})
+	t.Run("UntranslatedAfterSetLocale", func(t *testing.T) {
+		SetLocale("de")
+		assert.Equal(t, "%s already exists", Source(ErrAlreadyExists))
+		SetLocale("")
+		assert.Equal(t, "%s already exists", Source(ErrAlreadyExists))
+	})
+}

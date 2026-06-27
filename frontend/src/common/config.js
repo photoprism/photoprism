@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
+    <https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -824,6 +824,11 @@ export default class Config {
   // oidcLoginUri returns the OIDC login endpoint that starts the provider roundtrip, or "" when off.
   oidcLoginUri() {
     return this.values?.ext?.oidc?.loginUri || "";
+  }
+
+  // oidcLogout returns true when sign-out should perform RP-initiated logout against the provider.
+  oidcLogout() {
+    return !!this.values?.ext?.oidc?.logout;
   }
 
   // portalLoginUri returns the cluster Portal's browser-facing login page, or "" when unknown.

@@ -137,6 +137,7 @@ import $api from "common/api";
 import $notify from "common/notify";
 import Album from "model/album";
 import { createAlbumSelectionWatcher } from "common/albums";
+import { $gettext } from "common/gettext";
 import { Duration } from "luxon";
 
 export default {
@@ -475,12 +476,12 @@ export default {
           })
           .then(() => {
             ctx.reset();
-            $notify.success(ctx.$gettext("Upload complete"));
+            $notify.success($gettext("Upload complete"));
             ctx.$emit("confirm");
           })
           .catch(() => {
             ctx.reset();
-            $notify.error(ctx.$gettext("Upload failed"));
+            $notify.error($gettext("Upload failed"));
           });
       });
     },

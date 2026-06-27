@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-14 14:12+0000\n"
+"PO-Revision-Date: 2026-06-23 08:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -68,21 +68,41 @@ msgid "%{n} people found"
 msgstr "تم العثور على %{n} من الأشخاص"
 
 #: src/page/album/photos.vue:385 src/page/album/photos.vue:576
-#: src/page/photos.vue:518 src/page/photos.vue:713
+#: src/page/photos.vue:519 src/page/photos.vue:714
 msgid "%{n} pictures found"
 msgstr "تم العثور على %{n} من الصور"
 
 #: src/common/form.js:291 src/common/form.js:296
 #: src/component/input/chip-selector.vue:277
-#: src/component/lightbox/sidebar.vue:1661
+#: src/component/lightbox/sidebar.vue:1671
 #: src/component/photo/album/dialog.vue:143
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 msgid "%{s} is too long"
 msgstr "%{s} طويل جدًا"
 
 #: src/common/form.js:290 src/common/form.js:295
 msgid "%{s} is too short"
 msgstr "%{s} قصير جدًا"
+
+#: src/locales.js:434
+msgid "%d entries added to %s"
+msgstr "تمت إضافة %d مدخلات إلى %s"
+
+#: src/locales.js:436
+msgid "%d entries removed from %s"
+msgstr "تمت إزالة %d مدخلات من %s"
+
+#: src/locales.js:458
+msgid "%d files uploaded in %d s"
+msgstr "تم تحميل %d ملف في %d ثانية"
+
+#: src/locales.js:378
+msgid "%s already exists"
+msgstr "%s موجود بالفعل"
+
+#: src/locales.js:468
+msgid "%s has been restored"
+msgstr "تمت استعادة %s"
 
 #: src/options/options.js:423
 msgid "1 hour"
@@ -158,10 +178,12 @@ msgstr "الحساب"
 
 #: src/component/user/add/dialog.vue:262 src/component/user/add/dialog.vue:314
 #: src/component/user/add/dialog.vue:313 src/component/service/add.vue:131
+#: src/locales.js:437
 msgid "Account created"
 msgstr "تم إنشاء الحساب"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
+#: src/locales.js:439
 msgid "Account deleted"
 msgstr "تم حذف الحساب"
 
@@ -169,9 +191,17 @@ msgstr "تم حذف الحساب"
 msgid "Account Group Mappings"
 msgstr "تعيينات مجموعات الحسابات"
 
+#: src/locales.js:388
+msgid "Account not found"
+msgstr "لا يمكن العثور على الحساب"
+
 #: src/page/admin/users.vue:589 src/page/admin/users.vue:532
 msgid "Account restored"
 msgstr "تم استعادة الحساب"
+
+#: src/locales.js:438
+msgid "Account saved"
+msgstr "تم حفظ الحساب"
 
 #: src/page/admin.vue:55 src/component/cluster/node/dialog.vue:18
 #: src/component/cluster/node/dialog.vue:19
@@ -185,7 +215,7 @@ msgstr "الحسابات"
 msgid "Accuracy"
 msgstr "دقة"
 
-#: src/component/photo/edit/labels.vue:247
+#: src/component/photo/edit/labels.vue:248
 #: src/component/photo/edit/labels.vue:38
 msgid "Action"
 msgstr "إجراء"
@@ -235,14 +265,14 @@ msgstr "النشاط"
 msgid "Add"
 msgstr "إضافة"
 
-#: src/component/lightbox/sidebar.vue:471
+#: src/component/lightbox/sidebar.vue:480
 #: src/component/photo/edit/people.vue:97
 msgid "Add %{s}?"
 msgstr "إضافة %{s}؟"
 
 #: src/component/lightbox/sidebar.vue:23 src/component/lightbox/sidebar.vue:24
 #: src/component/lightbox/sidebar.vue:27 src/component/lightbox/sidebar.vue:50
-#: src/component/lightbox/sidebar.vue:67
+#: src/component/lightbox/sidebar.vue:68
 msgid "Add a Caption"
 msgstr "إضافة تسمية توضيحية"
 
@@ -258,11 +288,11 @@ msgstr "أضف ألبوم"
 msgid "Add Link"
 msgstr "إضافة رابط"
 
-#: src/component/lightbox/sidebar.vue:876
+#: src/component/lightbox/sidebar.vue:885
 msgid "Add Notes"
 msgstr "إضافة ملاحظات"
 
-#: src/component/lightbox/sidebar.vue:471
+#: src/component/lightbox/sidebar.vue:480
 #: src/component/photo/edit/people.vue:138
 #: src/component/photo/edit/people.vue:97
 msgid "Add person?"
@@ -294,6 +324,10 @@ msgstr "إضافة إلى جميع الصور المحددة"
 #: src/component/photo/edit/files.vue:274
 msgid "Added"
 msgstr "مضاف"
+
+#: src/component/photo/edit/labels.vue:334
+msgid "Added %{name}"
+msgstr "تمت إضافة %{name}"
 
 #: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
@@ -362,11 +396,19 @@ msgstr "بعد أسبوعين"
 msgid "Album"
 msgstr "ألبوم"
 
+#: src/locales.js:428
+msgid "Album %s deleted"
+msgstr "تم حذف الألبوم %s"
+
 #: src/page/settings/advanced.vue:199
 msgid "Album Backups"
 msgstr "النسخ الاحتياطية للألبوم"
 
-#: src/page/albums.vue:1194
+#: src/locales.js:429
+msgid "Album contents cloned"
+msgstr "تم نسخ محتويات الألبوم"
+
+#: src/locales.js:426 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "تم إنشاء الألبوم"
 
@@ -374,15 +416,23 @@ msgstr "تم إنشاء الألبوم"
 msgid "Album deleted"
 msgstr "تم حذف الألبوم"
 
+#: src/locales.js:393
+msgid "Album not found"
+msgstr "لا يمكن العثور على الألبوم"
+
+#: src/locales.js:427
+msgid "Album saved"
+msgstr "تم حفظ الألبوم"
+
 #: src/app/routes.js:332 src/component/album/toolbar.vue:118
-#: src/component/lightbox/sidebar.vue:285 src/component/navigation.vue:191
+#: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
 #: src/component/navigation.vue:714 src/component/photo/batch-edit.vue:414
 #: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
 #: src/options/options.js:257
 msgid "Albums"
 msgstr "ألبومات"
 
-#: src/component/album/clipboard.vue:194
+#: src/component/album/clipboard.vue:194 src/locales.js:465
 msgid "Albums deleted"
 msgstr "تم حذف الألبومات"
 
@@ -419,7 +469,7 @@ msgstr "جميع الالوان"
 msgid "All Countries"
 msgstr "كل البلدان"
 
-#: src/page/library/import.vue:94
+#: src/page/library/import.vue:95
 msgid "All files from import folder"
 msgstr "جميع الملفات من مجلد الاستيراد"
 
@@ -431,7 +481,7 @@ msgstr "جميع العدسات"
 msgid "All Months"
 msgstr "كل الشهور"
 
-#: src/page/library/index.vue:91
+#: src/page/library/index.vue:92
 msgid "All originals"
 msgstr "جميع النسخ الأصلية"
 
@@ -542,7 +592,7 @@ msgstr "اعتماد التغييرات وحفظها"
 msgid "Apps and Devices"
 msgstr "التطبيقات والأجهزة"
 
-#: src/component/lightbox.vue:3162 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3203 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "مؤرشف"
@@ -581,7 +631,7 @@ msgstr "هل أنت متأكد أنك تريد حذف هذا الملف نهائ
 msgid "Are you sure?"
 msgstr "هل أنت متأكد؟"
 
-#: src/component/lightbox/sidebar.vue:833
+#: src/component/lightbox/sidebar.vue:842
 #: src/component/photo/batch-edit.vue:382
 #: src/component/photo/batch-edit.vue:384
 #: src/component/photo/edit/details.vue:319
@@ -713,6 +763,10 @@ msgstr "تصفح الصور"
 msgid "Bug Report"
 msgstr "تقرير المشاكل"
 
+#: src/locales.js:419
+msgid "Busy, please try again later"
+msgstr "مشغول، يرجى المحاولة مرة أخرى في وقت لاحق"
+
 #: src/page/connect.vue:8 src/common/notify.js:119
 msgid "Busy, please wait…"
 msgstr "يتم العمل، الرجاء الانتظار …"
@@ -726,12 +780,16 @@ msgstr "باستخدام البرامج والخدمات التي نقدمها �
 msgid "Calendar"
 msgstr "تقويم"
 
-#: src/component/lightbox/sidebar.vue:118
+#: src/component/lightbox/sidebar.vue:119
 #: src/component/meta/camera/dialog.vue:30
 #: src/component/photo/edit/details.vue:195 src/component/photo/toolbar.vue:121
 #: src/component/photo/view/cards.vue:204 src/component/photo/view/list.vue:40
 msgid "Camera"
 msgstr "آلة تصوير"
+
+#: src/locales.js:391
+msgid "Camera not found"
+msgstr "لم يتم العثور على الكاميرا"
 
 #: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
 msgid "Camera Serial"
@@ -743,7 +801,7 @@ msgstr "المسلسل الكاميرا"
 msgid "Can't access your authenticator app or device?"
 msgstr "لا يمكنك الوصول إلى تطبيق أو جهاز المصادقة الخاص بك؟"
 
-#: src/page/album/photos.vue:393 src/page/photos.vue:526
+#: src/page/album/photos.vue:393 src/page/photos.vue:527
 msgid "Can't load more, limit reached"
 msgstr "لا يمكن تحميل المزيد ، تم الوصول إلى الحد الأقصى"
 
@@ -792,7 +850,7 @@ msgstr "إلغاء"
 msgid "Cannot copy to clipboard"
 msgstr "لا يمكن النسخ إلى الحافظة"
 
-#: src/common/util.js:889 src/component/lightbox/sidebar.vue:792
+#: src/common/util.js:889 src/component/lightbox/sidebar.vue:801
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -808,6 +866,10 @@ msgstr "البطاقات"
 #: src/locales.js:262
 msgid "Carousel slide {0} of {1}"
 msgstr "شريحة دائرية {0} من {1}"
+
+#: src/component/lightbox.vue:125 src/component/lightbox.vue:126
+msgid "Cast"
+msgstr "طاقم العمل"
 
 #: src/component/album/edit/dialog.vue:59 src/component/photo/toolbar.vue:252
 #: src/page/albums.vue:78
@@ -846,8 +908,8 @@ msgstr "تغيير العلم الخاص"
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:112
 #: src/component/photo/batch-edit.vue:1440
-#: src/component/photo/edit/details.vue:636 src/page/settings/account.vue:447
-#: src/page/settings/account.vue:452
+#: src/component/photo/edit/details.vue:636 src/locales.js:376
+#: src/page/settings/account.vue:447 src/page/settings/account.vue:452
 msgid "Changes could not be saved"
 msgstr "لا يمكن حفظ التغييرات"
 
@@ -859,13 +921,13 @@ msgstr "لا يمكن حفظ التغييرات"
 #: src/component/user/edit/dialog.vue:591
 #: src/component/user/edit/dialog.vue:431
 #: src/component/album/edit/dialog.vue:185
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3114
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3155
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/page/albums.vue:1197 src/page/people/recognized.vue:296
-#: src/page/settings/advanced.vue:491 src/page/settings/content.vue:284
-#: src/page/settings/general.vue:515
+#: src/locales.js:425 src/page/albums.vue:1197
+#: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:491
+#: src/page/settings/content.vue:284 src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "تم حفظ التغييرات بنجاح"
 
@@ -888,7 +950,7 @@ msgstr "اختر مثيلًا للمتابعة:"
 msgid "Chroma"
 msgstr "كروما"
 
-#: src/page/library/index.vue:250
+#: src/page/library/index.vue:251
 msgid "Cleaning index and cache"
 msgstr "تنظيف الفهرس وذاكرة التخزين المؤقت"
 
@@ -921,8 +983,8 @@ msgstr "العميل"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1476
-#: src/component/lightbox.vue:1477 src/component/lightbox.vue:477
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1517
+#: src/component/lightbox.vue:1518 src/component/lightbox.vue:518
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -992,7 +1054,7 @@ msgstr "قارن الإصدارات"
 msgid "Complete Rescan"
 msgstr "إعادة تفحص كاملة"
 
-#: src/component/photo/edit/labels.vue:241
+#: src/component/photo/edit/labels.vue:242
 #: src/component/photo/edit/labels.vue:33
 msgid "Confidence"
 msgstr "الثقة"
@@ -1069,7 +1131,7 @@ msgstr "المتابعة"
 msgid "Contributor"
 msgstr "مساهم"
 
-#: src/page/library/index.vue:260
+#: src/page/library/index.vue:261
 msgid "Converting"
 msgstr "التحويل"
 
@@ -1087,13 +1149,25 @@ msgstr "نسخ إلى الحافظة"
 msgid "Copy"
 msgstr "نسخ"
 
-#: src/component/lightbox/sidebar.vue:819
+#: src/locales.js:450
+msgid "Copying files from %s"
+msgstr "نسخ ملفات من %s"
+
+#: src/component/lightbox/sidebar.vue:828
 #: src/component/photo/batch-edit.vue:367
 #: src/component/photo/batch-edit.vue:369
 #: src/component/photo/edit/details.vue:306
 #: src/component/photo/edit/details.vue:308
 msgid "Copyright"
 msgstr "حقوق النشر"
+
+#: src/locales.js:377
+msgid "Could not be deleted"
+msgstr "لا يمكن حذفه"
+
+#: src/locales.js:407
+msgid "Could not connect, please try again"
+msgstr "تعذر الاتصال ، يرجى المحاولة مرة أخرى"
 
 #: src/component/photo/edit/people.vue:301
 msgid "Could not update person cover"
@@ -1135,7 +1209,7 @@ msgstr "قم بإنشاء ملفات YAML الجانبية لعمل نسخة ا�
 msgid "Created"
 msgstr "تم إنشاءه"
 
-#: src/page/library/index.vue:266
+#: src/page/library/index.vue:267
 msgid "Creating thumbnails for"
 msgstr "إنشاء صور مصغرة لـ"
 
@@ -1324,7 +1398,7 @@ msgstr "تعطيل دعم رسومات ااتجاهات."
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "تعطيل تحويل ترميز الفيديو واستخراج الصور المصغرة."
 
-#: src/component/lightbox/sidebar.vue:463
+#: src/component/lightbox/sidebar.vue:472
 #: src/component/photo/batch-edit.vue:472
 #: src/component/photo/edit/details.vue:384
 msgid "Discard"
@@ -1334,11 +1408,11 @@ msgstr "تجاهل"
 msgid "Discard changes and close"
 msgstr "تجاهل التغييرات والإغلاق"
 
-#: src/component/lightbox/sidebar.vue:915
+#: src/component/lightbox/sidebar.vue:924
 msgid "Discard invalid changes?"
 msgstr "تجاهل التغييرات غير الصالحة؟"
 
-#: src/component/lightbox/sidebar.vue:917
+#: src/component/lightbox/sidebar.vue:926
 msgid "Discard unsaved changes?"
 msgstr "تجاهل التغييرات غير المحفوظة؟"
 
@@ -1399,7 +1473,7 @@ msgstr "لا تستخدم ImageMagick لتحويل الصور."
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "لا تستخدم RawTherapee لتحويل ملفات RAW."
 
-#: src/component/lightbox/sidebar.vue:194 src/component/settings/apps.vue:51
+#: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
 #: src/component/share/dialog.vue:162
@@ -1412,7 +1486,7 @@ msgid "Done."
 msgstr "تم الإنجاز."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1703
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1744
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/content.vue:169
 #: src/page/settings/general.vue:170
@@ -1429,7 +1503,7 @@ msgstr "تنزيل الملفات البعيدة"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3202 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3243 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1464,11 +1538,11 @@ msgid "Dynamic Size Limit: %{n}px"
 msgstr "حد الحجم الديناميكي:%{n} بكسل"
 
 #: src/component/cluster/node/users.vue:85 src/component/album/clipboard.vue:35
-#: src/component/album/toolbar.vue:156 src/component/lightbox.vue:1607
-#: src/component/lightbox.vue:1608 src/component/lightbox/sidebar.vue:110
-#: src/component/lightbox/sidebar.vue:131
-#: src/component/lightbox/sidebar.vue:164
-#: src/component/lightbox/sidebar.vue:194
+#: src/component/album/toolbar.vue:156 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1649 src/component/lightbox/sidebar.vue:111
+#: src/component/lightbox/sidebar.vue:132
+#: src/component/lightbox/sidebar.vue:165
+#: src/component/lightbox/sidebar.vue:195
 #: src/component/lightbox/sidebar/toolbar.vue:32
 #: src/component/photo/clipboard.vue:60 src/page/settings/general.vue:200
 msgid "Edit"
@@ -1554,7 +1628,7 @@ msgstr "أدخل اسم العنصر..."
 msgid "Enter the code generated by your authenticator app:"
 msgstr "أدخل الرمز الذي تم إنشاؤه بواسطة تطبيق المصادقة الخاص بك:"
 
-#: src/common/api.js:123
+#: src/common/api.js:123 src/locales.js:408
 msgid "Enter verification code"
 msgstr "أدخل رمز التحقق"
 
@@ -1562,7 +1636,11 @@ msgstr "أدخل رمز التحقق"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "أدخل كلمة المرور الخاصة بك لتأكيد الإجراء والمتابعة:"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:481
+#: src/locales.js:387
+msgid "Entity not found"
+msgstr "الكيان غير موجود"
+
+#: src/page/connect.vue:14 src/component/lightbox.vue:522
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "خطأ"
@@ -1629,9 +1707,21 @@ msgstr "رقم F"
 msgid "Face"
 msgstr "وجه"
 
+#: src/locales.js:396
+msgid "Face not found"
+msgstr "الوجه غير موجود"
+
 #: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
 msgid "Faces"
 msgstr "وجوه"
+
+#: src/locales.js:405
+msgid "Failed creating file, please check permissions"
+msgstr "فشل إنشاء الملف ، يرجى التحقق من الصلاحيات"
+
+#: src/locales.js:406
+msgid "Failed creating folder, please check permissions"
+msgstr "لم يتم إنشاء المجلد ، يرجى التحقق من الصلاحيات"
 
 #: src/component/share/dialog.vue:235
 msgid "Failed removing link"
@@ -1641,35 +1731,43 @@ msgstr "فشل إزالة الارتباط"
 msgid "Failed to connect account."
 msgstr "فشل في ربط الحساب."
 
+#: src/locales.js:415
+msgid "Failed to create zip file"
+msgstr "فشل في إنشاء ملف مضغوط"
+
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
 msgstr "فشل تحميل المستخدمين."
 
-#: src/component/lightbox.vue:2210
+#: src/component/lightbox.vue:2251
 msgid "Failed to remove face marker"
 msgstr "فشل في إزالة علامة الوجه"
 
-#: src/component/lightbox.vue:2143
+#: src/component/lightbox.vue:2184
 msgid "Failed to remove name"
 msgstr "فشل في إزالة الاسم"
 
-#: src/component/lightbox/sidebar.vue:1686
-#: src/component/lightbox/sidebar.vue:1930
-#: src/component/lightbox/sidebar.vue:1971
-#: src/component/lightbox/sidebar.vue:2029
-#: src/component/lightbox/sidebar.vue:2049
-#: src/component/lightbox/sidebar.vue:2156
-#: src/component/lightbox/sidebar.vue:2179
-#: src/component/lightbox/sidebar.vue:2209
+#: src/common/server.js:79 src/common/server.js:85
+msgid "Failed to restart server"
+msgstr "فشل إعادة تشغيل الخادم"
+
+#: src/component/lightbox/sidebar.vue:1696
+#: src/component/lightbox/sidebar.vue:1940
+#: src/component/lightbox/sidebar.vue:1981
+#: src/component/lightbox/sidebar.vue:2039
+#: src/component/lightbox/sidebar.vue:2059
+#: src/component/lightbox/sidebar.vue:2166
+#: src/component/lightbox/sidebar.vue:2189
+#: src/component/lightbox/sidebar.vue:2219
 #: src/component/photo/batch-edit.vue:1479
 msgid "Failed to save changes"
 msgstr "فشل في حفظ التغييرات"
 
-#: src/component/lightbox.vue:2115
+#: src/component/lightbox.vue:2156
 msgid "Failed to save face marker"
 msgstr "فشل علامة حفظ ماء الوجه"
 
-#: src/component/lightbox/sidebar.vue:1437
+#: src/component/lightbox/sidebar.vue:1447
 msgid "Failed to save name"
 msgstr "فشل في حفظ الاسم"
 
@@ -1703,6 +1801,10 @@ msgstr "مفضل"
 msgid "Favorites"
 msgstr "المفضلة"
 
+#: src/locales.js:411
+msgid "Feature disabled"
+msgstr "الخاصية غير مفعلة"
+
 #: src/options/options.js:463
 msgid "Feature Request"
 msgstr "طلب المواصفات"
@@ -1711,7 +1813,7 @@ msgstr "طلب المواصفات"
 msgid "Female"
 msgstr "أنثى"
 
-#: src/common/util.js:875 src/component/lightbox/sidebar.vue:1086
+#: src/common/util.js:875 src/component/lightbox/sidebar.vue:1095
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "ملف"
@@ -1724,6 +1826,10 @@ msgstr "متصفح الملفات"
 msgid "File Conversion"
 msgstr "تحويل الملف"
 
+#: src/locales.js:431
+msgid "File deleted"
+msgstr "تم حذف الملف"
+
 #: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
 #: src/component/photo/batch-edit.vue:626 src/component/photo/toolbar.vue:407
@@ -1732,10 +1838,26 @@ msgstr "تحويل الملف"
 msgid "File Name"
 msgstr "اسم الملف"
 
+#: src/locales.js:380
+msgid "File not found"
+msgstr "لم يتم العثور على الملف"
+
+#: src/locales.js:430
+msgid "File removed from stack"
+msgstr "تمت إزالة الملف من المكدس"
+
 #: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
 #: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
 msgid "File Size"
 msgstr "حجم الملف"
+
+#: src/locales.js:381
+msgid "File too large"
+msgstr "الملف كبير جدًا"
+
+#: src/locales.js:457
+msgid "File uploaded"
+msgstr "تم تحميل الملف"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
 #: src/component/photo/edit/files.vue:97
@@ -1806,7 +1928,7 @@ msgstr "الإطارات"
 msgid "Full Access"
 msgstr "الوصول الكامل"
 
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:1554
+#: src/component/lightbox.vue:1594 src/component/lightbox.vue:1595
 msgid "Fullscreen"
 msgstr "شاشة كاملة"
 
@@ -1899,11 +2021,11 @@ msgstr "الملفات المخفية"
 msgid "Hide"
 msgstr "يخفي"
 
-#: src/component/lightbox.vue:1725
+#: src/component/lightbox.vue:1766
 msgid "Hide Caption"
 msgstr "إخفاء التسمية التوضيحية"
 
-#: src/component/lightbox/sidebar.vue:207
+#: src/component/lightbox/sidebar.vue:208
 msgid "Hide face markers"
 msgstr "إخفاء علامات الوجه"
 
@@ -1945,6 +2067,18 @@ msgstr "جودة الصورة"
 #: src/page/library/import.vue:75 src/page/settings/general.vue:185
 msgid "Import"
 msgstr "يستورد"
+
+#: src/locales.js:443
+msgid "Import canceled"
+msgstr "تم إلغاء الاستيراد"
+
+#: src/locales.js:442
+msgid "Import completed in %d s"
+msgstr "اكتمل الاستيراد في %d ثانية"
+
+#: src/page/library/import.vue:205
+msgid "Import failed"
+msgstr "فشل الاستيراد"
 
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
@@ -1992,15 +2126,35 @@ msgstr "قم بزيادة حجم التخزين أو حذف الملفات لل�
 msgid "Index"
 msgstr "فِهرِس"
 
-#: src/page/library/index.vue:229 src/page/library/index.vue:235
+#: src/page/library/index.vue:230 src/page/library/index.vue:236
 msgid "Indexing"
 msgstr "الفهرسة"
+
+#: src/locales.js:447
+msgid "Indexing canceled"
+msgstr "تم إلغاء الفهرسة"
+
+#: src/locales.js:444
+msgid "Indexing completed in %d s"
+msgstr "اكتملت الفهرسة في %d ثانية"
+
+#: src/page/library/index.vue:212
+msgid "Indexing failed"
+msgstr "فشلت الفهرسة"
+
+#: src/locales.js:446
+msgid "Indexing files in %s"
+msgstr "فهرسة الملفات في %s"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
 msgstr "جارٍ فهرسة الوسائط والملفات الجانبية …"
 
-#: src/component/lightbox.vue:1501 src/component/lightbox.vue:1502
+#: src/locales.js:445
+msgid "Indexing originals..."
+msgstr "تتم فهرسة الصور الأصلية ..."
+
+#: src/component/lightbox.vue:1542 src/component/lightbox.vue:1543
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "المعلومات"
@@ -2028,6 +2182,10 @@ msgstr "لا يمكن الوصول إلى المثيل. حاول مرة أخرى
 msgid "Instances"
 msgstr "المثيلات"
 
+#: src/locales.js:423
+msgid "Insufficient storage"
+msgstr "مساحة تخزين غير كافية"
+
 #: src/component/upload/dialog.vue:33 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "مساحة تخزين غير كافية."
@@ -2052,14 +2210,30 @@ msgstr "عنوان غير صالح"
 msgid "Invalid country"
 msgstr "بلد غير صالح"
 
+#: src/locales.js:416
+msgid "Invalid credentials"
+msgstr "بيانات الاعتماد غير صالحة"
+
 #: src/component/photo/edit/details.vue:627
 msgid "Invalid date"
 msgstr "تاريخ غير صالح"
+
+#: src/locales.js:417
+msgid "Invalid link"
+msgstr "رابط غير صالح"
+
+#: src/locales.js:418
+msgid "Invalid name"
+msgstr "اسم غير صحيح"
 
 #: src/page/connect.vue:276 src/page/connect.vue:283 src/page/connect.vue:294
 #: src/page/connect.vue:301 src/page/connect.vue:256 src/page/connect.vue:263
 msgid "Invalid parameters"
 msgstr "معلمات غير صالحة"
+
+#: src/locales.js:410
+msgid "Invalid password, please try again"
+msgstr "كلمة السر غير مطابقة، يرجى المحاولة مرة أخرى"
 
 #: src/component/photo/edit/dialog.vue:293 src/model/thumb.js:272
 msgid "Invalid photo selected"
@@ -2072,6 +2246,10 @@ msgstr "الوقت غير صالح"
 #: src/common/form.js:270 src/common/form.js:272
 msgid "Invalid URL"
 msgstr "عنوان URL غير صالح"
+
+#: src/locales.js:409
+msgid "Invalid verification code, please try again"
+msgstr "رمز التحقق غير صالح، يرجى المحاولة مرة أخرى"
 
 #: src/page/cluster/activity.vue:128 src/page/admin/activity.vue:127
 #: src/locales.js:354
@@ -2107,19 +2285,27 @@ msgstr "يتم تقديم ملفات JPEG والصور المصغرة تلقائ
 msgid "Keyword"
 msgstr "الكلمة الرئيسية"
 
-#: src/component/lightbox/sidebar.vue:861
+#: src/component/lightbox/sidebar.vue:870
 #: src/component/photo/edit/details.vue:347
 #: src/component/photo/edit/details.vue:350
 msgid "Keywords"
 msgstr "الكلمات الدالة"
 
-#: src/component/photo/edit/labels.vue:229
-#: src/component/photo/edit/labels.vue:23 src/model/label.js:122
+#: src/component/photo/edit/labels.vue:23
+#: src/component/photo/edit/labels.vue:230 src/model/label.js:122
 msgid "Label"
 msgstr "مُلصَق"
 
+#: src/locales.js:390
+msgid "Label not found"
+msgstr "لا يمكن العثور على التصنيف"
+
+#: src/locales.js:452
+msgid "Label saved"
+msgstr "تم حفظ التصنيف"
+
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:548
-#: src/component/lightbox/sidebar.vue:346 src/component/navigation.vue:430
+#: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
 #: src/component/photo/batch-edit.vue:430
 #: src/component/photo/edit/dialog.vue:37
 #: src/component/photo/edit/dialog.vue:38
@@ -2130,7 +2316,7 @@ msgstr "مُلصَق"
 msgid "Labels"
 msgstr "ملصقات"
 
-#: src/component/label/clipboard.vue:131
+#: src/component/label/clipboard.vue:131 src/locales.js:451
 msgid "Labels deleted"
 msgstr "تم حذف التصنيفات"
 
@@ -2185,12 +2371,16 @@ msgstr "اعرف المزيد"
 msgid "Legal Information"
 msgstr "المعلومات القانونية"
 
-#: src/component/lightbox/sidebar.vue:139
+#: src/component/lightbox/sidebar.vue:140
 #: src/component/meta/camera/dialog.vue:46
 #: src/component/photo/edit/details.vue:243
 #: src/component/photo/view/cards.vue:213
 msgid "Lens"
 msgstr "عدسة"
+
+#: src/locales.js:392
+msgid "Lens not found"
+msgstr "لم يتم العثور على العدسة"
 
 #: src/app/routes.js:602 src/app/routes.js:618 src/app/routes.js:634
 #: src/component/navigation.vue:477 src/page/settings/general.vue:289
@@ -2198,7 +2388,7 @@ msgid "Library"
 msgstr "مكتبة"
 
 #: src/page/connect.vue:5 src/app/routes.js:102
-#: src/component/lightbox/sidebar.vue:847 src/component/navigation.vue:404
+#: src/component/lightbox/sidebar.vue:856 src/component/navigation.vue:404
 #: src/component/navigation.vue:405 src/component/navigation.vue:417
 #: src/component/navigation.vue:426 src/component/navigation.vue:539
 #: src/component/navigation.vue:547 src/component/navigation.vue:555
@@ -2209,7 +2399,7 @@ msgstr "مكتبة"
 msgid "License"
 msgstr "رخصة"
 
-#: src/component/lightbox.vue:1571 src/component/lightbox.vue:1572
+#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
 msgid "Like"
 msgstr "المفضلة"
 
@@ -2270,7 +2460,7 @@ msgstr "التوقيت المحلي"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
 #: src/common/util.js:881 src/component/album/edit/dialog.vue:38
-#: src/component/lightbox/sidebar.vue:149
+#: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
 #: src/component/photo/edit/details.vue:450
@@ -2421,7 +2611,7 @@ msgstr "أحادي اللون"
 msgid "Month"
 msgstr "شهر"
 
-#: src/component/lightbox.vue:1626
+#: src/component/lightbox.vue:1667
 msgid "More options"
 msgstr "مزيد من الخيارات"
 
@@ -2437,11 +2627,15 @@ msgstr "الأكثر صلة"
 msgid "Move Files"
 msgstr "نقل الملفات"
 
+#: src/locales.js:449
+msgid "Moving files from %s"
+msgstr "نقل الملفات من %s"
+
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
 msgstr "يجب أن يحتوي على %{n} أحرف على الأقل."
 
-#: src/component/lightbox.vue:1520 src/component/lightbox.vue:1521
+#: src/component/lightbox.vue:1561 src/component/lightbox.vue:1562
 msgid "Mute"
 msgstr "صامت"
 
@@ -2454,14 +2648,14 @@ msgstr "صامت"
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
 #: src/component/label/edit/dialog.vue:31
-#: src/component/lightbox/sidebar.vue:238
-#: src/component/lightbox/sidebar.vue:242
+#: src/component/lightbox/sidebar.vue:239
+#: src/component/lightbox/sidebar.vue:243
 #: src/component/people/edit/dialog.vue:30
 #: src/component/people/edit/dialog.vue:31
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/files.vue:417 src/component/photo/edit/info.vue:36
 #: src/component/photo/edit/info.vue:37 src/component/photo/edit/labels.vue:135
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
@@ -2470,10 +2664,10 @@ msgstr "صامت"
 msgid "Name"
 msgstr "اسم"
 
-#: src/component/lightbox/sidebar.vue:1906
-#: src/component/lightbox/sidebar.vue:1955
-#: src/component/lightbox/sidebar.vue:2004
-#: src/component/lightbox/sidebar.vue:2071
+#: src/component/lightbox/sidebar.vue:1916
+#: src/component/lightbox/sidebar.vue:1965
+#: src/component/lightbox/sidebar.vue:2014
+#: src/component/lightbox/sidebar.vue:2081
 msgid "Name too long"
 msgstr "الاسم طويل جدًا"
 
@@ -2497,7 +2691,7 @@ msgstr "كلمة السر الجديدة"
 msgid "Newest First"
 msgstr "الاحدث اولا"
 
-#: src/component/lightbox.vue:480 src/locales.js:301
+#: src/component/lightbox.vue:521 src/locales.js:301
 msgid "Next"
 msgstr "التالي"
 
@@ -2530,9 +2724,21 @@ msgstr "لا توجد ألبومات مخصصة"
 msgid "No albums found"
 msgstr "لم يتم العثور على ألبومات"
 
+#: src/locales.js:413
+msgid "No albums selected"
+msgstr "لم يتم تحديد ألبومات"
+
 #: src/locales.js:257
 msgid "No data available"
 msgstr "لا توجد بيانات متاحة"
+
+#: src/locales.js:414
+msgid "No files available for download"
+msgstr "لا توجد ملفات متاحة للتنزيل"
+
+#: src/locales.js:404
+msgid "No items selected"
+msgstr "لم يتم اختيار المحتوى"
 
 #: src/component/photo/batch-edit.vue:438
 msgid "No labels assigned"
@@ -2541,6 +2747,10 @@ msgstr "لم يتم تعيين أي تسميات"
 #: src/page/labels.vue:50 src/page/labels.vue:937
 msgid "No labels found"
 msgstr "لم يتم العثور على تسميات"
+
+#: src/locales.js:412
+msgid "No labels selected"
+msgstr "لم يتم تحديد المعرفات"
 
 #: src/locales.js:217
 msgid "No matching records found"
@@ -2558,7 +2768,7 @@ msgstr "لم يتم العثور على أشخاص"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:572
-#: src/page/library/browse.vue:31 src/page/photos.vue:709
+#: src/page/library/browse.vue:31 src/page/photos.vue:710
 #: src/page/places.vue:765 src/page/places.vue:886
 msgid "No pictures found"
 msgstr "لم يتم العثور على صور"
@@ -2618,12 +2828,20 @@ msgstr "تتطلب الصور غير الفوتوغرافية وذات الجو�
 msgid "None"
 msgstr "لا أحد"
 
-#: src/component/lightbox.vue:1071 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1112 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "غير مسموح به"
 
-#: src/component/lightbox.vue:1068
+#: src/locales.js:397
+msgid "Not available in public mode"
+msgstr "غير متاح في الوضع العام"
+
+#: src/locales.js:398
+msgid "Not available in read-only mode"
+msgstr "غير متوفر في وضع القراءة فقط"
+
+#: src/component/lightbox.vue:1109 src/locales.js:379
 msgid "Not found"
 msgstr "لم يتم العثور"
 
@@ -2631,7 +2849,7 @@ msgstr "لم يتم العثور"
 msgid "Not sorted."
 msgstr "غير مرتب."
 
-#: src/component/lightbox.vue:1065 src/component/lightbox.vue:1179
+#: src/component/lightbox.vue:1106 src/component/lightbox.vue:1220
 msgid "Not supported"
 msgstr "غير مدعوم"
 
@@ -2647,7 +2865,7 @@ msgstr "ملحوظة:"
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "ملاحظة: يمكن تكوين خوادم WebDAV فقط ، مثل Nextcloud أو PhotoPrism ، كخدمة عن بُعد للنسخ الاحتياطي وتحميل الملفات."
 
-#: src/component/lightbox/sidebar.vue:875
+#: src/component/lightbox/sidebar.vue:884
 #: src/component/photo/edit/details.vue:362
 #: src/component/photo/edit/details.vue:365
 msgid "Notes"
@@ -2696,6 +2914,14 @@ msgstr "مرة في الأسبوع"
 msgid "One album found"
 msgstr "تم العثور على ألبوم واحد"
 
+#: src/locales.js:433
+msgid "One entry added to %s"
+msgstr "تمت إضافة إدخال واحد إلى %s"
+
+#: src/locales.js:435
+msgid "One entry removed from %s"
+msgstr "تمت إزالة إدخال واحد من %s"
+
 #: src/page/library/browse.vue:458
 msgid "One file found"
 msgstr "تم العثور على ملف واحد"
@@ -2717,7 +2943,7 @@ msgstr "تم العثور على تسمية واحدة"
 msgid "One person found"
 msgstr "تم العثور على شخص واحد"
 
-#: src/page/album/photos.vue:574 src/page/photos.vue:711
+#: src/page/album/photos.vue:574 src/page/photos.vue:712
 msgid "One picture found"
 msgstr "تم العثور على صورة واحدة"
 
@@ -2772,6 +2998,10 @@ msgstr "الاسم الاصلي"
 #: src/page/settings/content.vue:179 src/page/settings/general.vue:304
 msgid "Originals"
 msgstr "أصول"
+
+#: src/locales.js:385
+msgid "Originals folder is empty"
+msgstr "مجلد النسخ الأصلية فارغ"
 
 #: src/options/options.js:465 src/options/options.js:488
 msgid "Other"
@@ -2829,12 +3059,20 @@ msgstr "جزء من بعض الصور المختارة"
 msgid "Password"
 msgstr "كلمة المرور"
 
-#: src/component/settings/password.vue:162
+#: src/component/settings/password.vue:162 src/locales.js:441
 msgid "Password changed"
 msgstr "تم تغيير كلمة السر"
 
+#: src/component/lightbox.vue:68 src/component/lightbox.vue:69
+msgid "Pause"
+msgstr "توقف مؤقت"
+
+#: src/locales.js:401
+msgid "Payment required"
+msgstr "يلزم الدفع"
+
 #: src/app/routes.js:563 src/app/routes.js:587
-#: src/component/lightbox/sidebar.vue:177 src/component/navigation.vue:283
+#: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
 #: src/component/navigation.vue:720 src/component/photo/edit/dialog.vue:46
 #: src/component/photo/edit/dialog.vue:47
 #: src/component/photo/edit/dialog.vue:59
@@ -2849,8 +3087,13 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "سيتمكن الأشخاص الذين تشارك الرابط معهم من عرض المحتويات العامة."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:550
+#: src/locales.js:467
 msgid "Permanently deleted"
 msgstr "تم الحذف بشكل نهائي"
+
+#: src/locales.js:400
+msgid "Permission denied"
+msgstr "طلب الاذن مرفوض"
 
 #: src/model/subject.js:158
 msgid "Person"
@@ -2860,10 +3103,18 @@ msgstr "شخص"
 msgid "Person cover updated"
 msgstr "تم تحديث غطاء الشخص"
 
+#: src/locales.js:456
+msgid "Person deleted"
+msgstr "تم حذف الشخص"
+
 #: src/component/photo/edit/people.vue:248
-#: src/component/photo/edit/people.vue:282
+#: src/component/photo/edit/people.vue:282 src/locales.js:395
 msgid "Person not found"
 msgstr "لم يتم العثور على الشخص"
+
+#: src/locales.js:455
+msgid "Person saved"
+msgstr "حفظ الشخص"
 
 #: src/options/auth.js:72
 msgid "Personal"
@@ -2919,6 +3170,10 @@ msgstr "المكان والزمان"
 msgid "Places"
 msgstr "أماكن"
 
+#: src/component/lightbox.vue:79 src/component/lightbox.vue:80
+msgid "Play"
+msgstr "لعب"
+
 #: src/component/settings/password.vue:68
 msgid "Please confirm your new password."
 msgstr "يرجى تأكيد كلمة المرور الجديدة الخاصة بك."
@@ -2938,6 +3193,10 @@ msgstr "الرجاء عدم تحميل الصور التي تحتوي على م�
 #: src/locales.js:273
 msgid "Please enter OTP character {0}"
 msgstr "الرجاء إدخال حرف OTP {0}"
+
+#: src/locales.js:399
+msgid "Please log in to your account"
+msgstr "يرجى تسجيل الدخول إلى حسابك"
 
 #: src/component/settings/password.vue:21
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2999,7 +3258,7 @@ msgstr "معاينة"
 msgid "Preview Images"
 msgstr "معاينة الصور"
 
-#: src/component/lightbox.vue:479 src/locales.js:302
+#: src/component/lightbox.vue:520 src/locales.js:302
 msgid "Previous"
 msgstr "سابق"
 
@@ -3030,6 +3289,10 @@ msgstr "الأولية"
 msgid "Private"
 msgstr "خاص"
 
+#: src/locales.js:459
+msgid "Processing upload..."
+msgstr "جارٍ معالجة التحميل ..."
+
 #: src/options/options.js:462
 msgid "Product Feedback"
 msgstr "ملاحظات المنتج"
@@ -3052,6 +3315,10 @@ msgstr "مرشح الجودة"
 #: src/component/photo/edit/info.vue:87 src/component/photo/edit/info.vue:88
 msgid "Quality Score"
 msgstr "نقاط الجودة"
+
+#: src/locales.js:424
+msgid "Quota exceeded"
+msgstr "تم تجاوز المساحة المخصصة"
 
 #: src/page/discover.vue:16 src/page/discover.vue:17
 msgid "Random"
@@ -3151,8 +3418,10 @@ msgstr "جارٍ إعادة التحميل…"
 msgid "Remote Sync"
 msgstr "مزامنة عن بعد"
 
-#: src/component/lightbox/sidebar.vue:308
-#: src/component/lightbox/sidebar.vue:369
+#: src/component/lightbox/sidebar.vue:309
+#: src/component/lightbox/sidebar.vue:310
+#: src/component/lightbox/sidebar.vue:374
+#: src/component/lightbox/sidebar.vue:375
 #: src/component/meta/face/markers.vue:83
 #: src/component/photo/edit/people.vue:20
 msgid "Remove"
@@ -3162,7 +3431,7 @@ msgstr "إزالة"
 msgid "remove failed: unknown album"
 msgstr "فشل الإزالة: ألبوم غير معروف"
 
-#: src/component/lightbox.vue:1658 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1699 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "إزالة من الألبوم"
 
@@ -3186,12 +3455,20 @@ msgstr "إزالة المثيل المحدد من سجل المجموعة؟"
 msgid "Removed"
 msgstr "تمت الإزالة"
 
+#: src/component/photo/edit/labels.vue:286
+msgid "Removed %{name}"
+msgstr "تم حذف %{name}"
+
+#: src/locales.js:448
+msgid "Removed %d files and %d photos"
+msgstr "تمت إزالة %d ملفات و %d صورة"
+
 #: src/page/cluster/activity.vue:131 src/page/admin/activity.vue:130
 #: src/locales.js:357
 msgid "Repeated"
 msgstr "متكرر"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1175
+#: src/common/api.js:103 src/component/lightbox.vue:1216
 msgid "Request failed - are you offline?"
 msgstr "فشل الطلب - هل أنت غير متصل؟"
 
@@ -3222,12 +3499,12 @@ msgstr "إعادة التشغيل"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1688
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1729
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "استرجاع"
 
-#: src/component/lightbox.vue:3181
+#: src/component/lightbox.vue:3222
 msgid "Restored"
 msgstr "تم الاسترجاع"
 
@@ -3383,7 +3660,7 @@ msgstr "سر"
 msgid "Security and Access"
 msgstr "الأمن والوصول"
 
-#: src/component/lightbox.vue:1589 src/component/lightbox.vue:1590
+#: src/component/lightbox.vue:1630 src/component/lightbox.vue:1631
 msgid "Select"
 msgstr "اختار"
 
@@ -3399,13 +3676,13 @@ msgstr "حدد التاريخ"
 msgid "Select dates"
 msgstr "حدد التواريخ"
 
-#: src/component/lightbox/sidebar.vue:323
+#: src/component/lightbox/sidebar.vue:328
 #: src/component/photo/album/dialog.vue:38
 #: src/component/photo/batch-edit.vue:419 src/component/upload/dialog.vue:59
 msgid "Select or create albums"
 msgstr "تحديد ألبومات أو إنشاء ألبومات"
 
-#: src/component/lightbox/sidebar.vue:384
+#: src/component/lightbox/sidebar.vue:393
 #: src/component/photo/batch-edit.vue:437
 msgid "Select or create labels"
 msgstr "تحديد التسميات أو إنشاؤها"
@@ -3430,15 +3707,27 @@ msgstr "حدد الوقت"
 msgid "Selection"
 msgstr "الاختيار"
 
-#: src/component/photo/clipboard.vue:251
+#: src/locales.js:432
+msgid "Selection added to %s"
+msgstr "تمت إضافة التحديد إلى %s"
+
+#: src/component/photo/clipboard.vue:251 src/locales.js:461
 msgid "Selection approved"
 msgstr "تمت الموافقة على الاختيار"
 
-#: src/component/photo/clipboard.vue:282
+#: src/component/photo/clipboard.vue:282 src/locales.js:462
 msgid "Selection archived"
 msgstr "تمت أرشفة المحتوى المحدد"
 
-#: src/component/photo/clipboard.vue:318
+#: src/locales.js:464
+msgid "Selection marked as private"
+msgstr "تم تحديد الاختيار على أنه خاص"
+
+#: src/locales.js:386
+msgid "Selection not found"
+msgstr "الاختيار غير موجود"
+
+#: src/component/photo/clipboard.vue:318 src/locales.js:463
 msgid "Selection restored"
 msgstr "تم استعادة المحتوى المحدد"
 
@@ -3476,7 +3765,7 @@ msgstr "معرف جلسة العمل"
 msgid "Sessions"
 msgstr "الجلسات"
 
-#: src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1689
 msgid "Set as Album Cover"
 msgstr "تعيين كغلاف للألبوم"
 
@@ -3494,8 +3783,8 @@ msgid "Settings"
 msgstr "الإعدادات"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/page/settings/account.vue:441
-#: src/page/settings/account.vue:470
+#: src/component/settings/passcode.vue:366 src/locales.js:440
+#: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "تم حفظ الإعدادات"
 
@@ -3533,7 +3822,7 @@ msgstr "إظهار كافة التسميات"
 msgid "Show all new faces"
 msgstr "عرض كل الوجوه الجديدة"
 
-#: src/component/lightbox.vue:1714
+#: src/component/lightbox.vue:1755
 msgid "Show Caption"
 msgstr "إظهار التسمية التوضيحية"
 
@@ -3541,7 +3830,7 @@ msgstr "إظهار التسمية التوضيحية"
 msgid "Show Captions"
 msgstr "إظهار التسميات التوضيحية"
 
-#: src/component/lightbox/sidebar.vue:207
+#: src/component/lightbox/sidebar.vue:208
 msgid "Show face markers"
 msgstr "إظهار علامات الوجه"
 
@@ -3621,7 +3910,7 @@ msgstr "عنوان URL للموقع"
 msgid "Size"
 msgstr "بحجم"
 
-#: src/component/lightbox.vue:1536 src/component/lightbox.vue:1537
+#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
 msgid "Slideshow"
 msgstr "عرض الشرائح"
 
@@ -3653,7 +3942,7 @@ msgstr "تعذر إنشاء بعض الألبومات. يرجى تعديل ال�
 msgid "Some albums could not be updated"
 msgstr "تعذر تحديث بعض الألبومات"
 
-#: src/component/lightbox.vue:1172
+#: src/component/lightbox.vue:1213 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "حدث خطأ ما، حاول مرة أخرى"
 
@@ -3687,7 +3976,7 @@ msgid "Sorted descending."
 msgstr "مرتبة تنازليا."
 
 #: src/component/cluster/node/groups.vue:78
-#: src/component/photo/edit/labels.vue:235
+#: src/component/photo/edit/labels.vue:236
 #: src/component/photo/edit/labels.vue:28
 msgid "Source"
 msgstr "مصدر"
@@ -3736,6 +4025,10 @@ msgstr "الحالة"
 msgid "Stay signed in on this device"
 msgstr "ابق مسجلاً الدخول على هذا الجهاز"
 
+#: src/component/lightbox.vue:113 src/component/lightbox.vue:114
+msgid "Stop Casting"
+msgstr "إيقاف الصب"
+
 #: src/component/photo/edit/files.vue:105 src/component/photo/edit/files.vue:90
 #: src/component/photo/edit/files.vue:91 src/component/photo/edit/files.vue:97
 msgid "Storage"
@@ -3745,7 +4038,7 @@ msgstr "المساحة"
 msgid "Streets"
 msgstr "الشوارع"
 
-#: src/common/util.js:895 src/component/lightbox/sidebar.vue:805
+#: src/common/util.js:895 src/component/lightbox/sidebar.vue:814
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -3753,7 +4046,19 @@ msgstr "الشوارع"
 msgid "Subject"
 msgstr "المواضيع"
 
-#: src/component/settings/passcode.vue:351
+#: src/locales.js:454
+msgid "Subject deleted"
+msgstr "تم حذف الموضوع"
+
+#: src/locales.js:394
+msgid "Subject not found"
+msgstr "لا يمكن العثور على الموضوع"
+
+#: src/locales.js:453
+msgid "Subject saved"
+msgstr "تم حفظ الموضوع"
+
+#: src/component/settings/passcode.vue:351 src/locales.js:470
 msgid "Successfully activated"
 msgstr "تم التفعيل بنجاح"
 
@@ -3766,7 +4071,7 @@ msgstr "تم الاتصال بنجاح"
 msgid "Successfully deleted"
 msgstr "تم الحذف بنجاح"
 
-#: src/component/settings/passcode.vue:323
+#: src/component/settings/passcode.vue:323 src/locales.js:469
 msgid "Successfully verified"
 msgstr "تم التحقق بنجاح"
 
@@ -3792,7 +4097,7 @@ msgstr "مزامنة"
 msgid "Sync raw and video files"
 msgstr "مزامنة ملفات الفيديو الخام"
 
-#: src/component/lightbox/sidebar.vue:97 src/component/photo/edit/info.vue:91
+#: src/component/lightbox/sidebar.vue:98 src/component/photo/edit/info.vue:91
 #: src/component/photo/view/cards.vue:199 src/component/photo/view/cards.vue:36
 #: src/component/photo/view/list.vue:37
 msgid "Taken"
@@ -3830,6 +4135,10 @@ msgstr "رفضت المثيل بيانات اعتماد المجموعة."
 #: src/component/cluster/node/users.vue:268
 msgid "The instance returned an unexpected redirect."
 msgstr "أرجعت الحالة إعادة توجيه غير متوقعة."
+
+#: src/locales.js:420
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "فترة التنبيه هي %s ، لكن يجب أن تكون ساعة واحدة أو أقل"
 
 #: src/page/library/index.vue:73
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
@@ -3923,11 +4232,11 @@ msgstr "نظرة قوية"
 msgid "Token"
 msgstr "رمز"
 
-#: src/component/upload/dialog.vue:384
+#: src/component/upload/dialog.vue:385
 msgid "Too many files selected"
 msgstr "تم تحديد عدد كبير جدًا من الملفات"
 
-#: src/common/api.js:125
+#: src/common/api.js:125 src/locales.js:422
 msgid "Too many requests"
 msgstr "طلبات كثيرة جدا"
 
@@ -3960,7 +4269,11 @@ msgstr "يكتب"
 msgid "Unable to delete"
 msgstr "تعذر الحذف"
 
-#: src/component/lightbox/sidebar.vue:266
+#: src/locales.js:375
+msgid "Unable to do that"
+msgstr "لا يمكنني القيام بذلك"
+
+#: src/component/lightbox/sidebar.vue:267
 msgid "Unassign"
 msgstr "إلغاء التعيين"
 
@@ -3981,12 +4294,12 @@ msgstr "معرف مميز"
 
 #: src/model/cluster-node.js:52 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:612 src/component/lightbox/sidebar.vue:119
-#: src/component/lightbox/sidebar.vue:1726
-#: src/component/lightbox/sidebar.vue:278
-#: src/component/lightbox/sidebar.vue:686
-#: src/component/lightbox/sidebar.vue:698
-#: src/component/lightbox/sidebar.vue:978
+#: src/common/util.js:612 src/component/lightbox/sidebar.vue:120
+#: src/component/lightbox/sidebar.vue:1736
+#: src/component/lightbox/sidebar.vue:279
+#: src/component/lightbox/sidebar.vue:695
+#: src/component/lightbox/sidebar.vue:707
+#: src/component/lightbox/sidebar.vue:987
 #: src/component/meta/datetime/dialog.vue:31
 #: src/component/meta/datetime/dialog.vue:51
 #: src/component/meta/datetime/dialog.vue:71
@@ -4006,6 +4319,10 @@ msgstr "معرف مميز"
 msgid "Unknown"
 msgstr "مجهول"
 
+#: src/page/photos.vue:445
+msgid "Unknown location"
+msgstr "موقع غير معروف"
+
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:855
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
@@ -4021,6 +4338,18 @@ msgstr "غير مصنف"
 msgid "Unstack"
 msgstr "فصل المحتوى"
 
+#: src/locales.js:382
+msgid "Unsupported"
+msgstr "غير مدعوم"
+
+#: src/locales.js:384
+msgid "Unsupported format"
+msgstr "صيغة غير مدعومة"
+
+#: src/locales.js:383
+msgid "Unsupported type"
+msgstr "نوع غير معتمد"
+
 #: src/component/cluster/node/overview.vue:57 src/page/cluster/nodes.vue:168
 #: src/component/photo/edit/files.vue:269
 #: src/component/photo/edit/files.vue:270
@@ -4030,15 +4359,15 @@ msgstr "فصل المحتوى"
 msgid "Updated"
 msgstr "محدث"
 
-#: src/page/library/index.vue:246
+#: src/page/library/index.vue:247
 msgid "Updating faces"
 msgstr "تحديث الوجوه"
 
-#: src/page/library/index.vue:252
+#: src/page/library/index.vue:253
 msgid "Updating index"
 msgstr "تحديث الفهرس"
 
-#: src/page/library/index.vue:244
+#: src/page/library/index.vue:245
 msgid "Updating moments"
 msgstr "تحديث اللحظات"
 
@@ -4047,11 +4376,11 @@ msgstr "تحديث اللحظات"
 msgid "Updating picture…"
 msgstr "جارٍ تحديث الصورة ..."
 
-#: src/page/library/index.vue:248
+#: src/page/library/index.vue:249
 msgid "Updating previews"
 msgstr "تحديث المعاينات"
 
-#: src/page/library/index.vue:242
+#: src/page/library/index.vue:243
 msgid "Updating stacks"
 msgstr "تحديث المداخن"
 
@@ -4077,7 +4406,7 @@ msgstr "تحديث الآن"
 #: src/component/photo/toolbar.vue:467 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/upload/dialog.vue:122
-#: src/component/upload/dialog.vue:189 src/component/upload/dialog.vue:67
+#: src/component/upload/dialog.vue:190 src/component/upload/dialog.vue:67
 #: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:489 src/page/labels.vue:325
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
@@ -4085,17 +4414,30 @@ msgstr "تحديث الآن"
 msgid "Upload"
 msgstr "تحميل"
 
+#: src/component/upload/dialog.vue:479
+msgid "Upload complete"
+msgstr "اكتمل التحميل"
+
 #: src/component/upload/dialog.vue:31
 msgid "Upload complete. Indexing…"
 msgstr "اكتمل التحميل. جارٍ الفهرسة …"
 
-#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:464
+#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
+#: src/component/upload/dialog.vue:484 src/locales.js:403
 msgid "Upload failed"
 msgstr "فشل التحميل"
+
+#: src/locales.js:460
+msgid "Upload has been processed"
+msgstr "تمت معالجة التحميل"
 
 #: src/component/service/edit.vue:129
 msgid "Upload local files"
 msgstr "تحميل الملفات المحلية"
+
+#: src/locales.js:402
+msgid "Upload might be offensive"
+msgstr "المحتوى المرفوع قد يكون مسيئا"
 
 #: src/component/user/edit/dialog.vue:252
 #: src/component/user/edit/dialog.vue:253
@@ -4112,8 +4454,8 @@ msgstr "تحميل المسار"
 msgid "Uploading %{n} of %{t}…"
 msgstr "جارٍ تحميل %{n} من %{t}…"
 
-#: src/component/upload/dialog.vue:273 src/component/upload/dialog.vue:281
-#: src/component/upload/dialog.vue:416
+#: src/component/upload/dialog.vue:274 src/component/upload/dialog.vue:282
+#: src/component/upload/dialog.vue:417
 msgid "Uploading photos…"
 msgstr "جارٍ تحميل الصور …"
 
@@ -4158,6 +4500,10 @@ msgstr "دليل المستخدم"
 #: src/page/settings/general.vue:6
 msgid "User Interface"
 msgstr "واجهة المستخدم"
+
+#: src/locales.js:389
+msgid "User not found"
+msgstr "المستخدم ليس موجود"
 
 #: src/component/user/add/dialog.vue:32 src/component/user/add/dialog.vue:33
 #: src/page/admin/sessions.vue:91 src/page/admin/users.vue:177
@@ -4377,6 +4723,10 @@ msgstr "يمكنك اختيار عنصر واحد فقط"
 msgid "You may rescan your library to find additional faces."
 msgstr "يمكنك إعادة فحص مكتبتك للعثور على وجوه إضافية."
 
+#: src/locales.js:421
+msgid "Your account could not be connected"
+msgstr "لا يمكن ربط حسابك"
+
 #: src/page/connect.vue:55 src/page/connect.vue:63 src/page/connect.vue:45
 msgid "Your account has been successfully connected."
 msgstr "تم ربط حسابك بنجاح."
@@ -4395,7 +4745,11 @@ msgstr "يساعدنا دعمك المستمر في توفير تحديثات م
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات الحظات الخاصة والرحلات والأماكن تلقائيًا."
 
-#: src/component/lightbox.vue:478
+#: src/locales.js:466
+msgid "Zip created in %d s"
+msgstr "تم إنشاء الملف المضغوط خلال %d ثوانٍ"
+
+#: src/component/lightbox.vue:519
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
 
@@ -4427,7 +4781,7 @@ msgctxt "Photo"
 msgid "Add a Title"
 msgstr "إضافة عنوان"
 
-#: src/component/lightbox/sidebar.vue:780
+#: src/component/lightbox/sidebar.vue:789
 #: src/component/photo/batch-edit.vue:158
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:17
@@ -4436,7 +4790,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "عنوان"
 
-#: src/component/lightbox.vue:1673 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1714 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
@@ -4598,17 +4952,8 @@ msgstr "الأرشيف"
 #~ msgid "Continue with %{provider}"
 #~ msgstr "المتابعة مع %{provider}"
 
-#~ msgid "Import failed"
-#~ msgstr "فشل الاستيراد"
-
-#~ msgid "Indexing failed"
-#~ msgstr "فشلت الفهرسة"
-
 #~ msgid "r"
 #~ msgstr "ص"
-
-#~ msgid "Upload complete"
-#~ msgstr "اكتمل التحميل"
 
 #~ msgid "Some albums could not be cloned"
 #~ msgstr "تعذر استنساخ بعض الألبومات"
@@ -5191,9 +5536,6 @@ msgstr "الأرشيف"
 
 #~ msgid "Note: Updating the password will not revoke access from already authenticated users."
 #~ msgstr "ملاحظة: لن يؤدي تحديث كلمة المرور إلى إبطال الوصول من المستخدمين المصادق عليهم بالفعل."
-
-#~ msgid "Play"
-#~ msgstr "لعب"
 
 #~ msgid "Server"
 #~ msgstr "الخادم"

@@ -22,6 +22,7 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		assert.Equal(t, "http://localhost:2342/api/v1/oauth/authorize", result.AuthorizationEndpoint)
 		assert.Equal(t, "http://localhost:2342/api/v1/oauth/token", result.TokenEndpoint)
 		assert.Equal(t, "http://localhost:2342/api/v1/oauth/userinfo", result.UserinfoEndpoint)
+		assert.Equal(t, "http://localhost:2342/api/v1/oauth/logout", result.EndSessionEndpoint)
 		assert.Equal(t, "http://localhost:2342/.well-known/jwks.json", result.JwksUri)
 	})
 	t.Run("Capabilities", func(t *testing.T) {
@@ -46,13 +47,14 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		c.Options().SiteUrl = "http://foo:2342/foo/"
 		result := NewPortalOpenIDConfiguration(c)
 
-		for _, u := range []string{result.Issuer, result.AuthorizationEndpoint, result.TokenEndpoint, result.UserinfoEndpoint, result.JwksUri} {
+		for _, u := range []string{result.Issuer, result.AuthorizationEndpoint, result.TokenEndpoint, result.UserinfoEndpoint, result.EndSessionEndpoint, result.JwksUri} {
 			assert.Equal(t, 1, strings.Count(u, "/foo/"), "base path must appear exactly once in %s", u)
 			assert.NotContains(t, u, "/foo/foo/", "base path must not be doubled in %s", u)
 		}
 		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/authorize", result.AuthorizationEndpoint)
 		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/token", result.TokenEndpoint)
 		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/userinfo", result.UserinfoEndpoint)
+		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/logout", result.EndSessionEndpoint)
 		assert.Equal(t, "http://foo:2342/foo/.well-known/jwks.json", result.JwksUri)
 	})
 	t.Run("IssuerWithTrailingSlashIsNormalized", func(t *testing.T) {

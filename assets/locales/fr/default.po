@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-15 09:18+0000\n"
-"PO-Revision-Date: 2026-06-17 07:05+0000\n"
+"PO-Revision-Date: 2026-06-25 07:07+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.5\n"
 
 #: messages.go:110
 msgid "Something went wrong, try again"
@@ -20,7 +20,7 @@ msgstr "Quelque chose s'est mal passé, réessayez"
 
 #: messages.go:111
 msgid "Unable to do that"
-msgstr "Impossible de faire cela"
+msgstr "Impossible d'effectuer cela"
 
 #: messages.go:112
 msgid "Changes could not be saved"
@@ -117,11 +117,11 @@ msgstr "Non disponible en mode lecture seule"
 
 #: messages.go:135
 msgid "Please log in to your account"
-msgstr "Veuillez vous connecter avec votre compte"
+msgstr "Veuillez vous connecter à votre compte"
 
 #: messages.go:136
 msgid "Permission denied"
-msgstr "Permission refusée"
+msgstr "Autorisation refusée"
 
 #: messages.go:137
 msgid "Payment required"
@@ -129,7 +129,7 @@ msgstr "Paiement requis"
 
 #: messages.go:138
 msgid "Upload might be offensive"
-msgstr "Le contenu chargé peut être choquant"
+msgstr "Le contenu chargé pourrait être de nature offensante"
 
 #: messages.go:139
 msgid "Upload failed"
@@ -177,7 +177,7 @@ msgstr "Aucun album sélectionné"
 
 #: messages.go:150
 msgid "No files available for download"
-msgstr "Aucun fichier disponible au téléchargement"
+msgstr "Aucun fichier à télécharger"
 
 #: messages.go:151
 msgid "Failed to create zip file"
@@ -202,7 +202,9 @@ msgstr "Occupé, veuillez réessayer plus tard"
 #: messages.go:156
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr "L'intervalle de réveil est %s, mais doit être inférieur ou égal à 1h"
+msgstr ""
+"L'intervalle entre les tâches est de %s, mais il doit être inférieur ou égal "
+"à 1 h"
 
 #: messages.go:157
 msgid "Your account could not be connected"
@@ -267,7 +269,7 @@ msgstr "%d entrées ont été ajoutées à %s"
 #: messages.go:173
 #, c-format
 msgid "One entry removed from %s"
-msgstr "Une entrée a été supprimée de %s"
+msgstr "Une entrée a été supprimée dans %s"
 
 #: messages.go:174
 #, c-format
@@ -371,11 +373,11 @@ msgstr "%d fichiers chargés en %d s"
 
 #: messages.go:197
 msgid "Processing upload..."
-msgstr "Traitement du téléchargement..."
+msgstr "Chargement en cours…"
 
 #: messages.go:198
 msgid "Upload has been processed"
-msgstr "Le téléchargement a été traité"
+msgstr "Le chargement a été effectué"
 
 #: messages.go:199
 msgid "Selection approved"

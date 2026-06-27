@@ -114,6 +114,30 @@ func TestConfig_DisableJpegXL(t *testing.T) {
 	c.options.DisableJpegXL = false
 }
 
+func TestJpegXLDisabled(t *testing.T) {
+	yes := func() bool { return true }
+	no := func() bool { return false }
+	t.Run("ExplicitlyDisabled", func(t *testing.T) {
+		assert.True(t, jpegXLDisabled(true, true, yes))
+	})
+	t.Run("DecoderAvailable", func(t *testing.T) {
+		assert.False(t, jpegXLDisabled(false, true, no))
+	})
+	t.Run("NativeOnly", func(t *testing.T) {
+		assert.False(t, jpegXLDisabled(false, false, yes))
+	})
+	t.Run("NeitherAvailable", func(t *testing.T) {
+		assert.True(t, jpegXLDisabled(false, false, no))
+	})
+	t.Run("DecoderShortCircuitsProbe", func(t *testing.T) {
+		// The libvips probe must not run when an external decoder is available, so
+		// config introspection on standard installs does not start libvips.
+		probed := false
+		assert.False(t, jpegXLDisabled(false, true, func() bool { probed = true; return false }))
+		assert.False(t, probed)
+	})
+}
+
 func TestConfig_Import(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

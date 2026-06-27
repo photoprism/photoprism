@@ -15,7 +15,7 @@ import {
 } from "common/instances";
 
 // seedInstance writes a peer instance's session token and identity into a shared store.
-const seedInstance = (store, namespace, { token = "tok", url, title, icon, route } = {}) => {
+const seedInstance = (store, namespace, { token = "tok", url, title, icon, route, portal } = {}) => {
   const prefix = buildNamespace(namespace);
   if (token) {
     store.setItem(prefix + "session.token", token);
@@ -31,6 +31,9 @@ const seedInstance = (store, namespace, { token = "tok", url, title, icon, route
   }
   if (route) {
     store.setItem(prefix + "instance.route", route);
+  }
+  if (portal) {
+    store.setItem(prefix + "instance.portal", "true");
   }
 };
 
@@ -103,6 +106,15 @@ describe("common/instances", () => {
       expect(store.getItem(prefix + "instance.title")).toBeNull();
       expect(store.getItem(prefix + "instance.icon")).toBeNull();
       expect(store.getItem(prefix + "instance.route")).toBeNull();
+    });
+    it("writes and clears the portal flag", () => {
+      const store = new StorageShim();
+      const ns = createNamespacedStorage(store, "ns-portal");
+      const prefix = buildNamespace("ns-portal");
+      persistInstanceIdentity(ns, { url: "https://app.example.com/", portal: true });
+      expect(store.getItem(prefix + "instance.portal")).toBe("true");
+      persistInstanceIdentity(ns, { url: "https://app.example.com/" });
+      expect(store.getItem(prefix + "instance.portal")).toBeNull();
     });
     it("is a no-op without a url", () => {
       const store = new StorageShim();
@@ -254,13 +266,13 @@ describe("common/instances", () => {
       const store = new StorageShim();
       seedInstance(store, "ns-pro-1", { token: "tok1", url: "https://app.example.com/i/pro-1/" });
       seedInstance(store, "ns-pro-2", { token: "tok2", url: "https://app.example.com/i/pro-2/" });
-      seedInstance(store, "ns-portal", { token: "tokp", url: "https://app.example.com/" });
+      seedInstance(store, "ns-portal", { token: "tokp", url: "https://app.example.com/", portal: true });
       const targets = listLogoutTargets({ currentNamespace: "ns-pro-1", storage: store });
       expect(targets).toHaveLength(2);
       expect(targets).toEqual(
         expect.arrayContaining([
-          { namespace: "ns-pro-2", authToken: "tok2", url: "https://app.example.com/i/pro-2/api/v1/session" },
-          { namespace: "ns-portal", authToken: "tokp", url: "https://app.example.com/api/v1/session" },
+          { namespace: "ns-pro-2", authToken: "tok2", url: "https://app.example.com/i/pro-2/api/v1/session", portal: false },
+          { namespace: "ns-portal", authToken: "tokp", url: "https://app.example.com/api/v1/session", portal: true },
         ])
       );
     });
@@ -269,7 +281,7 @@ describe("common/instances", () => {
       seedInstance(store, "ns-pro-1", { token: "tok1", url: "https://app.example.com/i/pro-1/" });
       seedInstance(store, "ns-pro-2", { token: "tok2" }); // session only, no recorded url
       const targets = listLogoutTargets({ currentNamespace: "ns-pro-1", storage: store });
-      expect(targets).toEqual([{ namespace: "ns-pro-2", authToken: "tok2", url: "" }]);
+      expect(targets).toEqual([{ namespace: "ns-pro-2", authToken: "tok2", url: "", portal: false }]);
     });
     it("skips namespaces without a token", () => {
       const store = new StorageShim();

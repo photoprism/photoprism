@@ -112,6 +112,11 @@ var Flags = CliFlags{
 			Usage:   "allows new users to create an account when they sign in with OpenID Connect",
 			EnvVars: EnvVars("OIDC_REGISTER"),
 		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "oidc-logout",
+			Usage:   "ends the provider session on sign-out via OpenID Connect RP-initiated logout",
+			EnvVars: EnvVars("OIDC_LOGOUT"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "oidc-username",
 			Usage:   "preferred username `CLAIM` for new OpenID Connect users (preferred_username, name, nickname, email)",

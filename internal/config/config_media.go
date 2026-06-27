@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -34,7 +35,8 @@ func (c *Config) ImageMagickEnabled() bool {
 	return !c.DisableImageMagick()
 }
 
-// JpegXLDecoderBin returns the JPEG XL decoder executable file name.
+// JpegXLDecoderBin returns the external JPEG XL decoder executable file name,
+// which is used as a fallback when libvips lacks native JPEG XL support.
 func (c *Config) JpegXLDecoderBin() string {
 	return FindBin("", "djxl")
 }
@@ -44,15 +46,30 @@ func (c *Config) JpegXLEnabled() bool {
 	return !c.DisableJpegXL()
 }
 
-// DisableJpegXL checks if JPEG XL file format support is disabled.
+// DisableJpegXL checks if JPEG XL file format support is disabled. It stays enabled
+// as long as the external "djxl" decoder is available or libvips can decode JPEG XL
+// natively, so the format only turns off when neither option exists.
 func (c *Config) DisableJpegXL() bool {
-	if c.options.DisableJpegXL {
-		return true
-	} else if c.JpegXLDecoderBin() == "" {
+	if jpegXLDisabled(c.options.DisableJpegXL, c.JpegXLDecoderBin() != "", thumb.JpegXLSupported) {
 		c.options.DisableJpegXL = true
 	}
 
 	return c.options.DisableJpegXL
+}
+
+// jpegXLDisabled reports whether JPEG XL support is unavailable, given the explicit
+// disable option and external decoder availability. nativeSupported is a thunk so the
+// libvips capability probe runs only when no external decoder is present, keeping
+// config introspection on standard installs (which ship "djxl") free of a libvips start.
+func jpegXLDisabled(explicit, decoderAvailable bool, nativeSupported func() bool) bool {
+	switch {
+	case explicit:
+		return true
+	case decoderAvailable:
+		return false
+	default:
+		return !nativeSupported()
+	}
 }
 
 // HeifConvertBin returns the name of the "heif-dec" executable ("heif-convert" in earlier libheif versions).

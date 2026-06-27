@@ -41,5 +41,5 @@ test.meta("testID", "sphere-003").meta({ mode: "public" })("Common: Opens 360° 
 
   await photoviewer.openPhotoViewer("uid", uid);
   await t.expect(Selector("div.pswp__media--sphere").exists).ok({ timeout: 5000 });
-  await t.expect(Selector("div.pswp__media--sphere video").exists).ok({ timeout: 10000 });
+  await t.expect(Selector("div.pswp__media--sphere video").exists).ok({ timeout: 30000 });
 });

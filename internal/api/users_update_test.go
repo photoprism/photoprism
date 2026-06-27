@@ -261,6 +261,9 @@ func TestUpdateUser_Guards(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.UnknownUser.UserUID, string(body), sessId)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
+	// The super-admin-protection guard only takes effect in full-access editions where
+	// admins manage all accounts; CE grants own-account management only, so it is
+	// unreachable here and covered by the edition suites with cross-account management.
 }
 
 func TestUpdateUser_ClusterJWT(t *testing.T) {

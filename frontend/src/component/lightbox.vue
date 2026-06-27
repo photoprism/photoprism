@@ -217,6 +217,11 @@ const shouldHideCaption = () => {
   return appStorage.getItem("lightbox.caption") === "false";
 };
 
+// Most recent Escape KeyboardEvent handled by onEscapeKey; comparing identity
+// collapses the press's duplicate dispatch (see onEscapeKey) into one unwind.
+// Module-scoped rather than instance state — PLightbox is mounted once per session.
+let _lastEscapeEvent = null;
+
 export default {
   name: "PLightbox",
   components: [PLightboxMenu, PLightboxSidebar],
@@ -2737,7 +2742,7 @@ export default {
 
       switch (ev.code) {
         case "Escape":
-          this.onEscapeKey();
+          this.onEscapeKey(ev);
           return true;
         case "Period":
           if (!this.contextAllowsSelect) {
@@ -2875,7 +2880,18 @@ export default {
     // Escape priority: overlay's in-flight draft → exit face-marker
     // mode → close lightbox. Shared by the v-dialog binding and the
     // `$view.onShortCut` forwarder.
-    onEscapeKey() {
+    onEscapeKey(ev) {
+      // A single Escape press reaches this handler twice — once via the
+      // v-dialog `@keydown.esc` binding and once via the `$view` window
+      // forwarder (onShortCut) — and both receive the same KeyboardEvent.
+      // Dedupe on its identity so one press unwinds a single level; without
+      // this the second call exits face-marker mode (or closes the lightbox)
+      // right after the first already consumed the in-progress draft.
+      if (ev && ev === _lastEscapeEvent) {
+        return;
+      }
+      _lastEscapeEvent = ev || null;
+
       const overlay = this.$refs.faceMarkerOverlay;
       if (overlay && typeof overlay.handleEscape === "function" && overlay.handleEscape()) {
         return;

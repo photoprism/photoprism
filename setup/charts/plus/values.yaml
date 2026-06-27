@@ -156,6 +156,8 @@ database:
   name: "photoprism"
   user: "photoprism"
   password: ""
+  passwordSecretName: ""
+  passwordSecretKey: ""
   timeout: 15
   conns: 0
   connsIdle: 0

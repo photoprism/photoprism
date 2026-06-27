@@ -90,6 +90,10 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 			// algorithms; the verifier otherwise rejects EdDSA-signed ID tokens
 			// with "signature algorithm not supported".
 			rp.WithSupportedSigningAlgorithms("RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512", "EdDSA"),
+			// Disable the library's strict nonce check: its default expects an empty
+			// nonce and would reject every value we echo. PhotoPrism validates the
+			// nonce itself on the callback (see CheckNonce and README "Nonce Handling").
+			rp.WithNonce(nil),
 		),
 		rp.WithErrorHandler(func(w http.ResponseWriter, r *http.Request, errorType string, errorDesc string, state string) {
 			event.AuditErr([]string{"oidc", "%s", "%s (state %s)"}, errorType, errorDesc, state)
@@ -146,7 +150,21 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 
 // AuthURLHandler redirects a browser to the login page of the configured OIDC identity provider.
 func (c *Client) AuthURLHandler(ctx *gin.Context) {
-	handle := rp.AuthURLHandler(rnd.State, c)
+	// Send a per-request nonce (stored in a signed, encrypted cookie) so the
+	// provider reflects it back in the ID token; see README "Nonce Handling" for
+	// the Cognito rationale. On generation or cookie failure, fall back to a
+	// nonce-less redirect.
+	var urlParams []rp.URLParamOpt
+
+	if nonce, nonceErr := Nonce(); nonceErr != nil {
+		event.AuditWarn([]string{"oidc", "nonce", status.Error(nonceErr)})
+	} else if cookieErr := c.CookieHandler().SetCookie(ctx.Writer, NonceCookie, nonce); cookieErr != nil {
+		event.AuditWarn([]string{"oidc", "nonce cookie", status.Error(cookieErr)})
+	} else {
+		urlParams = append(urlParams, rp.WithURLParam(nonceParam, nonce))
+	}
+
+	handle := rp.AuthURLHandler(rnd.State, c, urlParams...)
 	handle(ctx.Writer, ctx.Request)
 }
 
@@ -175,6 +193,11 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo
 		tokens = t
 	}
 
+	// Read and clear the per-request nonce cookie set on the authorization redirect
+	// so the ID token's nonce claim can be validated once the exchange succeeds.
+	expectedNonce, _ := c.CookieHandler().CheckCookie(ctx.Request, NonceCookie)
+	c.CookieHandler().DeleteCookie(ctx.Writer, NonceCookie)
+
 	// It would also be possible to directly get the user info from the oidc.IDTokenClaims
 	// without performing a request to the userinfo endpoint of the OIDC identity provider.
 	handle := rp.CodeExchangeHandler(rp.UserinfoCallback(getInfo), c)
@@ -194,6 +217,14 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo
 		event.SystemError([]string{"oidc", "code exchange", "status %d", "%s"}, sc, err.Error())
 
 		return userInfo, tokens, err
+	}
+
+	// Validate the ID token's nonce against the value sent for this request,
+	// tolerating a provider that omits the nonce on a session-resumed token.
+	if err = CheckNonce(expectedNonce, tokens); err != nil {
+		event.SystemError([]string{"oidc", "code exchange", "%s"}, err.Error())
+
+		return nil, nil, err
 	}
 
 	// Propagate any cookies the handler set on success (e.g. clearing the

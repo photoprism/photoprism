@@ -172,6 +172,30 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = imageFile.Remove()
 	})
+	t.Run("JpegXL", func(t *testing.T) {
+		if !cnf.JpegXLEnabled() {
+			t.Skip("JPEG XL support requires libvips or djxl")
+		}
+
+		jxlFile := filepath.Join(samplesPath, "dice.jxl")
+
+		mediaFile, err := NewMediaFile(jxlFile)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, fs.FileExists(imageFile.FileName()))
+		assert.Equal(t, fs.ImageJpeg, imageFile.FileType())
+		assert.Greater(t, imageFile.Width(), 0)
+		assert.Greater(t, imageFile.Height(), 0)
+
+		_ = imageFile.Remove()
+	})
 	t.Run("Layered16BitTiff", func(t *testing.T) {
 		tiffFile := filepath.Join(samplesPath, "layered-16bit-small.tif")
 
@@ -384,6 +408,50 @@ func TestConvert_JpegConvertCmds_HeifFallback(t *testing.T) {
 			assert.True(t, found, "expected a %s fallback command for %s", heifBin, tc.src)
 		})
 	}
+}
+
+// TestConvert_JpegConvertCmds_JpegXLFallback verifies that the external "djxl"
+// fallback command is emitted for JPEG XL inputs when the decoder is available,
+// so runtimes whose libvips lacks JPEG XL support can still convert these files.
+func TestConvert_JpegConvertCmds_JpegXLFallback(t *testing.T) {
+	cnf := config.TestConfig()
+	convert := NewConvert(cnf)
+
+	if cnf.JpegXLDecoderBin() == "" {
+		t.Skip("djxl must be available for the JPEG XL fallback path")
+	}
+
+	srcFile := filepath.Join(cnf.SamplesPath(), "dice.jxl")
+	dstFile := filepath.Join(t.TempDir(), "dice.jxl.jpg")
+
+	mediaFile, err := NewMediaFile(srcFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !mediaFile.IsJpegXL() {
+		t.Fatalf("%s not recognized as JPEG XL", srcFile)
+	}
+
+	cmds, useMutex, err := convert.JpegConvertCmds(mediaFile, dstFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.False(t, useMutex)
+	assert.NotEmpty(t, cmds)
+
+	djxlBin := filepath.Base(cnf.JpegXLDecoderBin())
+	found := false
+	for _, cmd := range cmds {
+		s := cmd.String()
+		if strings.Contains(s, djxlBin) && strings.Contains(s, srcFile) && strings.Contains(s, dstFile) {
+			found = true
+			break
+		}
+	}
+
+	assert.True(t, found, "expected a djxl fallback command for %s", srcFile)
 }
 
 func TestConvert_PngConvertCmds(t *testing.T) {

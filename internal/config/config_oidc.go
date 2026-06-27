@@ -167,6 +167,12 @@ func (c *Config) OIDCRegister() bool {
 	return c.options.OIDCRegister
 }
 
+// OIDCLogout checks if signing out should also end the provider session via OpenID
+// Connect RP-initiated logout (redirect to the discovered end_session_endpoint).
+func (c *Config) OIDCLogout() bool {
+	return c.options.OIDCLogout
+}
+
 // OIDCUsername returns the preferred username claim for new users signing up via OIDC.
 func (c *Config) OIDCUsername() string {
 	switch c.options.OIDCUsername {
@@ -291,6 +297,7 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 		{"oidc-icon", c.OIDCIcon()},
 		{"oidc-redirect", fmt.Sprintf("%t", c.OIDCRedirect())},
 		{"oidc-register", fmt.Sprintf("%t", c.OIDCRegister())},
+		{"oidc-logout", fmt.Sprintf("%t", c.OIDCLogout())},
 		{"oidc-username", c.OIDCUsername()},
 	}
 

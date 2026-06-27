@@ -261,7 +261,17 @@ questions:
   - variable: database.password
     group: "Database"
     label: "Database Password"
-    description: "Optional password stored in the chart-managed secret."
+    description: "Optional password stored in the chart-managed secret. Ignored when an external secret is referenced."
+    type: string
+  - variable: database.passwordSecretName
+    group: "Database"
+    label: "Password Secret Name"
+    description: "Reference an existing Kubernetes Secret for the password instead of the chart-managed secret."
+    type: string
+  - variable: database.passwordSecretKey
+    group: "Database"
+    label: "Password Secret Key"
+    description: "Key within the referenced secret (defaults to PHOTOPRISM_DATABASE_PASSWORD)."
     type: string
   - variable: database.timeout
     group: "Database"

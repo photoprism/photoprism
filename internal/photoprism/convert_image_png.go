@@ -47,8 +47,8 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 		)
 	}
 
-	// Use "djxl" to convert JPEG XL images if installed and enabled.
-	if f.IsJpegXL() && w.conf.JpegXLEnabled() {
+	// Use "djxl" to convert JPEG XL images as a fallback when libvips lacks native support.
+	if f.IsJpegXL() && w.conf.JpegXLEnabled() && w.conf.JpegXLDecoderBin() != "" {
 		result = append(result, NewConvertCmd(
 			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.JpegXLDecoderBin(), f.FileName(), pngName)),

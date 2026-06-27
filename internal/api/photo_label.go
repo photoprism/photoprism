@@ -12,7 +12,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -118,8 +117,6 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
-		event.Success("label updated")
-
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -166,7 +163,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		labelId, err := strconv.Atoi(clean.Token(c.Param("id")))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -178,7 +175,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -208,8 +205,6 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
-
-		event.Success("label removed")
 
 		c.JSON(http.StatusOK, p)
 	})
@@ -260,7 +255,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		labelId, err := strconv.Atoi(clean.Token(c.Param("id")))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -272,7 +267,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -311,8 +306,6 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
-
-		event.Success("label saved")
 
 		c.JSON(http.StatusOK, p)
 	})
