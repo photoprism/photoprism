@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-06-23 08:17+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-27 10:28+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -3404,7 +3404,7 @@ msgstr "Zarejestruj się"
 
 #: src/locales.js:425
 msgid "Registration disabled"
-msgstr ""
+msgstr "Rejestracja wyłączona"
 
 #: src/component/navigation.vue:422 src/component/navigation.vue:672
 #: src/component/update.vue:28
@@ -4548,7 +4548,7 @@ msgstr "Kod weryfikacyjny"
 
 #: src/locales.js:426
 msgid "Verified email required"
-msgstr ""
+msgstr "Wymagany zweryfikowany adres e-mail"
 
 #: src/component/cluster/node/overview.vue:29 src/locales.js:326
 msgid "Version"

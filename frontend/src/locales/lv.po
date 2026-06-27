@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-06-23 08:17+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-27 10:28+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3401,7 +3401,7 @@ msgstr "Reģistrēties"
 
 #: src/locales.js:425
 msgid "Registration disabled"
-msgstr ""
+msgstr "Reģistrācija atspējota"
 
 #: src/component/navigation.vue:422 src/component/navigation.vue:672
 #: src/component/update.vue:28
@@ -4545,7 +4545,7 @@ msgstr "Verifikācijas kods"
 
 #: src/locales.js:426
 msgid "Verified email required"
-msgstr ""
+msgstr "Nepieciešama verificēta e-pasta adrese"
 
 #: src/component/cluster/node/overview.vue:29 src/locales.js:326
 msgid "Version"
