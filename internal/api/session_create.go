@@ -110,13 +110,15 @@ func CreateSession(router *gin.RouterGroup) {
 		if err = sess.LogIn(frm, c); err != nil {
 			switch {
 			case sess.GetMethod().IsNot(authn.Method2FA):
-				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				Abort(c, sess.HttpStatus(), i18n.ErrInvalidCredentials)
 			case errors.Is(err, authn.ErrPasscodeRequired):
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": 32, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
+				// Code 32 asks the client to enter a 2FA passcode (a continuation request,
+				// not a failure), so the text goes in "message" (code < 400) with messageId.
+				c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(32, i18n.ErrPasscodeRequired))
 				// Return the reserved request rate limit tokens if password is correct, even if the verification code is missing.
 				r.Success()
 			default:
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": http.StatusUnauthorized, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
+				Abort(c, http.StatusUnauthorized, i18n.ErrInvalidPasscode)
 			}
 			return
 		}
@@ -131,10 +133,10 @@ func CreateSession(router *gin.RouterGroup) {
 		switch saved, saveErr := get.Session().Save(sess); {
 		case saveErr != nil:
 			event.AuditErr([]string{clientIp, status.Error(saveErr)})
-			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			Abort(c, sess.HttpStatus(), i18n.ErrInvalidCredentials)
 			return
 		case saved == nil:
-			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrUnexpected)})
+			Abort(c, sess.HttpStatus(), i18n.ErrUnexpected)
 			return
 		case isNew:
 			event.AuditInfo([]string{clientIp, "session %s", "created"}, saved.RefID)

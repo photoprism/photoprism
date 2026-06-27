@@ -55,7 +55,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 
 		// Abort if failure rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
-			c.HTML(http.StatusTooManyRequests, "auth.gohtml", CreateSessionError(http.StatusTooManyRequests, i18n.Error(i18n.ErrTooManyRequests)))
+			c.HTML(http.StatusTooManyRequests, "auth.gohtml", CreateSessionError(http.StatusTooManyRequests, i18n.ErrTooManyRequests))
 			return
 		}
 
@@ -64,7 +64,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 
 		if provider == nil {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrInvalidProviderConfiguration.Error()})
-			c.HTML(http.StatusInternalServerError, "auth.gohtml", CreateSessionError(http.StatusInternalServerError, i18n.Error(i18n.ErrConnectionFailed)))
+			c.HTML(http.StatusInternalServerError, "auth.gohtml", CreateSessionError(http.StatusInternalServerError, i18n.ErrConnectionFailed))
 			return
 		}
 

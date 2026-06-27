@@ -30,6 +30,8 @@
       "session.provider",
       "session.scope",
       "session.error",
+      "session.messageId",
+      "session.messageParams",
     ];
     const storages = [localStorage, sessionStorage].filter(Boolean);
     const preferredStorage =
@@ -48,27 +50,23 @@
     const setItem = (key, value) => {
       preferredStorage.setItem(namespacedKey(key), value);
     };
-    const removeItem = (key) => {
-      storages.forEach((storage) => storage.removeItem(namespacedKey(key)));
-    };
 
+    {{/* clearSessionData() removes every session.* key (including session.error,
+         session.messageId, and session.messageParams), so each branch only sets
+         the keys it wants to persist. */}}
     {{ if eq .status "success" }}
     clearSessionData();
     setItem("session.id", {{ .session_id }});
     setItem("session.token", {{ .access_token }});
     setItem("session.provider", {{ .provider }});
     setItem("session.user", JSON.stringify({{ .user }}));
-    removeItem("session.error");
     {{ else if eq .status "failed" }}
     clearSessionData();
     setItem("session.error", {{ .error }});
+    {{ if .messageId }}setItem("session.messageId", {{ .messageId }});{{ end }}
+    {{ if .messageParams }}setItem("session.messageParams", JSON.stringify({{ .messageParams }}));{{ end }}
     {{ else }}
     clearSessionData();
-    removeItem("session.id");
-    removeItem("session.token");
-    removeItem("session.provider");
-    removeItem("session.user");
-    removeItem("session.error");
     {{ end }}
   })();
   window.location.href = {{ .config.LoginUri }};

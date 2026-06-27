@@ -173,9 +173,25 @@ describe("page/auth/login", () => {
 
     const { wrapper } = mountLogin({ oidcEnabled: true });
 
-    // Consumed on mount so it does not reappear on the next reload.
+    // Consumed on mount so it does not reappear on the next reload. With no
+    // messageId, the server-rendered fallback string is surfaced as-is.
     expect(window.localStorage.getItem(`${storagePrefix}session.error`)).toBeNull();
-    expect(wrapper.vm.$notify.error).toHaveBeenCalledWith("You do not have access to this instance.");
+    expect(wrapper.vm.$notify.error).toHaveBeenCalledWith("You do not have access to this instance.", null, []);
+  });
+
+  it("forwards a stored OIDC error by message key so it renders in the current UI locale", () => {
+    window.localStorage.setItem(`${storagePrefix}session.error`, "Registration disabled");
+    window.localStorage.setItem(`${storagePrefix}session.messageId`, "Registration disabled");
+    window.localStorage.setItem(`${storagePrefix}session.messageParams`, JSON.stringify([]));
+
+    const { wrapper } = mountLogin({ oidcEnabled: true });
+
+    // All three keys are consumed on mount so the toast does not reappear.
+    expect(window.localStorage.getItem(`${storagePrefix}session.error`)).toBeNull();
+    expect(window.localStorage.getItem(`${storagePrefix}session.messageId`)).toBeNull();
+    expect(window.localStorage.getItem(`${storagePrefix}session.messageParams`)).toBeNull();
+    // The message key is forwarded so notify.vue translates it via Tp.
+    expect(wrapper.vm.$notify.error).toHaveBeenCalledWith("Registration disabled", "Registration disabled", []);
   });
 
   // Auto-OIDC redirect for unauthenticated visitors now lives in the

@@ -351,6 +351,8 @@ export default class Session {
     this.clearLegacyKey("session.scope");
     this.clearLegacyKey("authError");
     this.clearLegacyKey("session.error");
+    this.clearLegacyKey("session.messageId");
+    this.clearLegacyKey("session.messageParams");
 
     delete $api.defaults.headers.common[RequestHeader];
   }

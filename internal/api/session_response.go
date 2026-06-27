@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // CreateSessionResponse returns the authentication response data for POST requests
@@ -14,13 +15,18 @@ func CreateSessionResponse(authToken string, sess *entity.Session, conf *config.
 	return GetSessionResponse(authToken, sess, conf)
 }
 
-// CreateSessionError returns an authentication error response.
-func CreateSessionError(code int, err error) gin.H {
+// CreateSessionError returns an authentication error response. "error" is the
+// instance-locale fallback; "messageId" (the English source) and "messageParams"
+// let the Web UI render the message in the current UI locale.
+func CreateSessionError(code int, id i18n.Message, params ...any) gin.H {
+	resp := i18n.NewResponse(code, id, params...)
 	return gin.H{
-		"status": StatusFailed,
-		"code":   code,
-		"error":  err.Error(),
-		"config": get.Config().ClientPublic(),
+		"status":        StatusFailed,
+		"code":          resp.Code,
+		"error":         resp.Error,
+		"messageId":     resp.MessageID,
+		"messageParams": resp.MessageParams,
+		"config":        get.Config().ClientPublic(),
 	}
 }
 
