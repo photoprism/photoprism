@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-27 09:13+0000\n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-06-28 15:07+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -93,7 +93,7 @@ msgstr "Objectif non trouvé"
 
 #: messages.go:131
 msgid "Album not found"
-msgstr "Album introuvable"
+msgstr "Album non trouvé"
 
 #: messages.go:132
 msgid "Subject not found"
@@ -104,6 +104,7 @@ msgid "Person not found"
 msgstr "Personne non trouvée"
 
 #: messages.go:134
+#, fuzzy
 msgid "Face not found"
 msgstr "Visage non trouvé"
 
@@ -157,11 +158,11 @@ msgstr "Entrer le code de vérification"
 
 #: messages.go:147
 msgid "Invalid verification code, please try again"
-msgstr "Code de vérification invalide, veuillez réessayer"
+msgstr "Code de vérification incorrect, veuillez réessayer"
 
 #: messages.go:148
 msgid "Invalid password, please try again"
-msgstr "Mot de passe invalide, veuillez réessayer"
+msgstr "Mot de passe incorrect, veuillez réessayer"
 
 #: messages.go:149
 msgid "Feature disabled"
@@ -185,15 +186,15 @@ msgstr "Échec de la création du fichier zip"
 
 #: messages.go:154
 msgid "Invalid credentials"
-msgstr "Les informations d'identification sont invalides"
+msgstr "Les informations d'identification ne sont pas valables"
 
 #: messages.go:155
 msgid "Invalid link"
-msgstr "Lien invalide"
+msgstr "Lien incorrect"
 
 #: messages.go:156
 msgid "Invalid name"
-msgstr "Nom invalide"
+msgstr "Nom incorrect"
 
 #: messages.go:157
 msgid "Busy, please try again later"
@@ -223,12 +224,13 @@ msgid "Quota exceeded"
 msgstr "Quota dépassé"
 
 #: messages.go:163
+#, fuzzy
 msgid "Registration disabled"
 msgstr "Inscription désactivée"
 
 #: messages.go:164
 msgid "Verified email required"
-msgstr "Une adresse e-mail vérifiée est requise"
+msgstr "Adresse de courriel vérifiée requise"
 
 #: messages.go:167
 msgid "Changes successfully saved"
@@ -253,7 +255,7 @@ msgstr "Le contenu de l'album a été copié"
 
 #: messages.go:172
 msgid "File removed from stack"
-msgstr "Le fichier a été retiré du groupe"
+msgstr "Le fichier a été retiré de la pile"
 
 #: messages.go:173
 msgid "File deleted"
@@ -325,7 +327,7 @@ msgstr "Indexage des originaux…"
 #: messages.go:188
 #, c-format
 msgid "Indexing files in %s"
-msgstr "Indexation des fichiers de %s"
+msgstr "Indexation des fichiers en %s"
 
 #: messages.go:189
 msgid "Indexing canceled"
@@ -352,7 +354,7 @@ msgstr "Étiquettes supprimées"
 
 #: messages.go:194
 msgid "Label saved"
-msgstr "Étiquettes sauvegardées"
+msgstr "Étiquette sauvegardée"
 
 #: messages.go:195
 msgid "Subject saved"
@@ -372,7 +374,7 @@ msgstr "Personne supprimée"
 
 #: messages.go:199
 msgid "File uploaded"
-msgstr "Fichier téléchargé"
+msgstr "Fichier chargé"
 
 #: messages.go:200
 #, c-format
