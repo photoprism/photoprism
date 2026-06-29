@@ -29,7 +29,7 @@ function pageEntry(n, ratio) {
 
 async function mountViewer(props = {}) {
   const wrapper = mount(PPdfViewer, {
-    props: { src: "/api/v1/files/abc.pdf", pages: 3, ...props },
+    props: { src: "/api/v1/files/abc/file.pdf", pages: 3, ...props },
   });
   await flushPromises();
   return wrapper;
@@ -57,7 +57,7 @@ describe("component/pdf-viewer", () => {
   });
   it("loads the document and renders the page-count placeholders and thumbnails", async () => {
     const wrapper = await mountViewer();
-    expect(h.loadPdfDocument).toHaveBeenCalledWith("/api/v1/files/abc.pdf");
+    expect(h.loadPdfDocument).toHaveBeenCalledWith("/api/v1/files/abc/file.pdf");
     expect(wrapper.vm.pageCount).toBe(3);
     expect(wrapper.findAll(".p-pdf-viewer__page")).toHaveLength(3);
     expect(wrapper.findAll(".p-pdf-viewer__thumb")).toHaveLength(3);

@@ -31,8 +31,8 @@
         class="p-pdf-viewer__pages"
         tabindex="0"
         @scroll="onScroll"
-        @keydown.left.exact.prevent="$emit('media-prev')"
-        @keydown.right.exact.prevent="$emit('media-next')"
+        @keydown.left.exact.prevent.stop="$emit('media-prev')"
+        @keydown.right.exact.prevent.stop="$emit('media-next')"
       >
         <div v-for="n in pageCount" :key="'page-' + n" ref="page" class="p-pdf-viewer__page" :data-page="n">
           <canvas ref="canvas"></canvas>
@@ -486,9 +486,11 @@ export default {
 
       align();
     },
+    // prevPage scrolls to the previous page.
     prevPage() {
       this.goToPage(this.currentPage - 1);
     },
+    // nextPage scrolls to the next page.
     nextPage() {
       this.goToPage(this.currentPage + 1);
     },
@@ -505,9 +507,11 @@ export default {
 
       this.goToPage(n);
     },
+    // zoomIn increases the zoom level by one step.
     zoomIn() {
       this.setScale(this.scale + this.scaleStep);
     },
+    // zoomOut decreases the zoom level by one step.
     zoomOut() {
       this.setScale(this.scale - this.scaleStep);
     },

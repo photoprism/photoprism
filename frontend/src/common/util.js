@@ -1011,14 +1011,14 @@ export default class $util {
   }
 
   // pdfUrl builds the inline PDF URL for a file hash. The bytes are served by the
-  // session-scoped /files/<hash>.pdf endpoint; pdf.js authenticates the request via the
+  // session-scoped /files/<hash>/file.pdf endpoint; pdf.js authenticates the request via the
   // X-Auth-Token header (see loadPdfDocument), so no token is needed in the path.
   static pdfUrl(hash) {
     if (!hash) {
       return "";
     }
 
-    return `${$config.apiUri}/files/${hash}.pdf`;
+    return `${$config.apiUri}/files/${hash}/file.pdf`;
   }
 
   // videoContentType returns the HTTP content type matching the chosen video format.

@@ -9698,7 +9698,6 @@ mini-css-extract-plugin                             MIT            Tobias Kopper
 minimist                                            MIT            James Halliday mail@substack.net http://substack.net
 node-storage-shim                                   ISC            Michael Nahkies
 passive-events-support                              MIT            Ignas Damunskis <ignas3run@gmail.com>
-pdfjs-dist                                          Apache-2.0     n/a
 photoswipe                                          MIT            Dmytro Semenov (https://dimsemenov.com)
 playwright                                          Apache-2.0     Microsoft Corporation
 postcss                                             MIT            Andrey Sitnik <andrey@sitnik.es>

@@ -8067,7 +8067,7 @@
                 "operationId": "GetFile",
                 "parameters": [
                     {
-                        "description": "SHA-1 hash of the file, optionally suffixed with '.pdf' to stream the document",
+                        "description": "SHA-1 hash of the file",
                         "in": "path",
                         "name": "hash",
                         "required": true,
@@ -8075,14 +8075,73 @@
                     }
                 ],
                 "produces": [
-                    "application/json",
-                    "application/pdf"
+                    "application/json"
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/entity.File"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "returns file details as JSON",
+                "tags": [
+                    "Files"
+                ]
+            }
+        },
+        "/api/v1/files/{hash}/{name}": {
+            "get": {
+                "operationId": "GetFileBytes",
+                "parameters": [
+                    {
+                        "description": "SHA-1 hash of the file",
+                        "in": "path",
+                        "name": "hash",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "file name whose extension selects the served type (e.g. 'file.pdf')",
+                        "in": "path",
+                        "name": "name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/pdf"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
                         }
                     },
                     "401": {
@@ -8116,7 +8175,7 @@
                         }
                     }
                 },
-                "summary": "returns file details as JSON, or the document bytes for a \".pdf\" request",
+                "summary": "streams the original file bytes for inline viewing (e.g. \".pdf\")",
                 "tags": [
                     "Files"
                 ]
