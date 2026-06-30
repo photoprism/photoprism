@@ -264,11 +264,12 @@ var (
 		mustCompile("//exif:UserComment[not(rdf:Alt)]"),
 	}
 
-	// xmpKeywordsBag / xmpKeywordsSeq: dc:subject containers. Adobe,
-	// Darktable and digiKam emit Bag; Apple Photos and the previous
-	// reader emit Seq.
-	xmpKeywordsBag = mustCompile("//dc:subject/rdf:Bag/rdf:li")
-	xmpKeywordsSeq = mustCompile("//dc:subject/rdf:Seq/rdf:li")
+	// xmpSubjectBag / xmpSubjectSeq: dc:subject containers. dc:subject is
+	// Adobe's "Keywords" panel, but PhotoPrism maps it to the descriptive
+	// Details.Subject field, not the keyword list. Adobe, Darktable and
+	// digiKam emit Bag; Apple Photos and the previous reader emit Seq.
+	xmpSubjectBag = mustCompile("//dc:subject/rdf:Bag/rdf:li")
+	xmpSubjectSeq = mustCompile("//dc:subject/rdf:Seq/rdf:li")
 
 	// xmpPersonBag / xmpPersonSeq: Iptc4xmpExt:PersonInImage containers
 	// (names of people depicted) — a Subject cascade fallback.
@@ -557,20 +558,18 @@ func (doc *XmpDocument) joinBagOrSeq(bag, seq *xpath.Expr) string {
 	return strings.Join(queryAll(doc.doc, seq), ", ")
 }
 
-// Keywords returns dc:subject entries joined with ", ".
-// Priority: dc:subject/rdf:Bag (Adobe/Darktable/digiKam) → dc:subject/rdf:Seq
-// (Apple, older writers). Bag wins when both are present.
-func (doc *XmpDocument) Keywords() string {
-	return doc.joinBagOrSeq(xmpKeywordsBag, xmpKeywordsSeq)
-}
-
-// Subject returns descriptive subject text, mirroring the ExifTool Subject
-// cascade so the XMP sidecar path fills meta.Data.Subject identically to the
-// embedded/ExifTool JSON path. Priority: dc:subject (same source as Keywords,
-// present in virtually all tagged files) → Iptc4xmpExt:PersonInImage →
-// lr:hierarchicalSubject. The first non-empty container wins.
+// Subject returns descriptive subject text for the Details.Subject field,
+// matching the ExifTool Subject cascade so the XMP and embedded/ExifTool JSON
+// paths fill meta.Data.Subject identically. Priority: dc:subject (Adobe's
+// "Keywords" panel, present in virtually all tagged files) →
+// Iptc4xmpExt:PersonInImage → lr:hierarchicalSubject. The first non-empty
+// container wins, joined with ", "; entries keep their spaces.
+//
+// The PersonInImage and hierarchicalSubject fallbacks are interim sources for
+// the free-text Subject field; advanced parsing will route them to dedicated
+// meta.Data.Subjects (people) and meta.Data.Labels containers.
 func (doc *XmpDocument) Subject() string {
-	if v := doc.Keywords(); v != "" {
+	if v := doc.joinBagOrSeq(xmpSubjectBag, xmpSubjectSeq); v != "" {
 		return v
 	}
 	if v := doc.joinBagOrSeq(xmpPersonBag, xmpPersonSeq); v != "" {

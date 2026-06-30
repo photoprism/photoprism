@@ -8,9 +8,7 @@ PhotoPrism: Browse Your Life in Pictures
 [![Bluesky Social](https://dl.photoprism.app/img/badges/badge-bluesky.svg)](https://bsky.app/profile/photoprism.app)
 [![Mastodon](https://dl.photoprism.app/img/badges/badge-floss-social.svg)](https://floss.social/@photoprism)
 
-PhotoPrism® is an AI-powered, self-hosted platform for privately browsing, organizing, and sharing your photos and videos.
-It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
-You can run it at home, on a private server, or in the cloud.
+PhotoPrism® is an AI-powered, privacy-first app for browsing, organizing, and sharing photos and videos. It helps tag, search, and rediscover media without getting in your way, whether self-hosted or in the cloud.
 
 ![](https://dl.photoprism.app/img/ui/2025/desktop-search.jpg)
 

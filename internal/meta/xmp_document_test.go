@@ -246,12 +246,12 @@ func TestXmpDocument_TitleAltLanguageFallback(t *testing.T) {
 	})
 }
 
-func TestXmpDocument_KeywordsBagAndSeq(t *testing.T) {
+func TestXmpDocument_SubjectBagAndSeq(t *testing.T) {
 	t.Run("BagForm", func(t *testing.T) {
 		// digikam fixture writes dc:subject as <rdf:Bag>, which the old
-		// reader silently dropped. Keywords() must now read it.
+		// reader silently dropped. Subject() must now read it.
 		doc := loadXmp(t, "testdata/xmp/digikam/aurora.jpg.xmp")
-		got := doc.Keywords()
+		got := doc.Subject()
 		assert.Contains(t, got, "Nature")
 		assert.Contains(t, got, "Iceland")
 		assert.Contains(t, got, "Aurora")
@@ -259,20 +259,19 @@ func TestXmpDocument_KeywordsBagAndSeq(t *testing.T) {
 	t.Run("SeqForm", func(t *testing.T) {
 		// Synthetic Seq fixture confirms the legacy form still works.
 		doc := loadXmp(t, "testdata/xmp/synthetic/subject-seq.xmp")
-		assert.Equal(t, "Sequenced, Keywords, Should, Also, Parse", doc.Keywords())
+		assert.Equal(t, "Sequenced, Keywords, Should, Also, Parse", doc.Subject())
 	})
 	t.Run("EmptyForMissingSubject", func(t *testing.T) {
 		doc := loadXmp(t, "testdata/fstop-favorite.xmp")
-		assert.Equal(t, "", doc.Keywords())
+		assert.Equal(t, "", doc.Subject())
 	})
 }
 
 func TestXmpDocument_Subject(t *testing.T) {
-	t.Run("MirrorsKeywordsFromDcSubject", func(t *testing.T) {
-		// dc:subject is first in the ExifTool Subject cascade and present in
-		// most tagged files, so Subject equals the keyword list.
+	t.Run("ReadsDcSubject", func(t *testing.T) {
+		// dc:subject is the primary Subject source and present in most tagged
+		// files. It feeds Details.Subject, not the keyword list.
 		doc := loadXmp(t, "testdata/xmp/darktable/aurora.jpg.xmp")
-		assert.Equal(t, doc.Keywords(), doc.Subject())
 		assert.Contains(t, doc.Subject(), "Aurora")
 	})
 	t.Run("PersonInImageFallback", func(t *testing.T) {
@@ -290,7 +289,6 @@ func TestXmpDocument_Subject(t *testing.T) {
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>`)
-		assert.Equal(t, "", doc.Keywords())
 		assert.Equal(t, "Alice, Bob", doc.Subject())
 	})
 	t.Run("HierarchicalSubjectFallback", func(t *testing.T) {
@@ -839,11 +837,11 @@ func TestXmpDocument_DarktableFixture(t *testing.T) {
 		assert.Equal(t, "PhotoPrism", doc.Artist())
 		assert.Equal(t, "CC-BY-SA 4.0", doc.Copyright())
 	})
-	t.Run("BagFormKeywords", func(t *testing.T) {
+	t.Run("BagFormSubject", func(t *testing.T) {
 		// Darktable writes <dc:subject><rdf:Bag>. The old reader
 		// dropped this entirely (it only handled <rdf:Seq>); the new
-		// reader must produce a non-empty list.
-		got := doc.Keywords()
+		// reader must produce a non-empty Subject list.
+		got := doc.Subject()
 		assert.Contains(t, got, "Aurora")
 		assert.Contains(t, got, "Iceland")
 		assert.Contains(t, got, "Nature")

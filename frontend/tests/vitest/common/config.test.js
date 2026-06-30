@@ -165,6 +165,35 @@ describe("common/config", () => {
     expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
   });
 
+  it("getIcon resolves a built-in appIcon name against the static uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1", appIcon: "bloom" });
+    expect(config.getIcon()).toBe("/i/pro-1/static/icons/bloom.svg");
+  });
+
+  it("getIcon resolves each selectable app-icon variant to its static svg", () => {
+    ["crisp", "mint", "bold", "bloom", "flower", "ring", "shutter"].forEach((name) => {
+      const config = new Config(new StorageShim(), { siteTitle: "Foo", appIcon: name });
+      expect(config.getIcon()).toBe(`/static/icons/${name}.svg`);
+    });
+  });
+
+  it("getIcon falls back to the logo for an unknown or empty app-icon name", () => {
+    expect(new Config(new StorageShim(), { siteTitle: "Foo", appIcon: "does-not-exist" }).getIcon()).toBe("/static/icons/logo.svg");
+    expect(new Config(new StorageShim(), { siteTitle: "Foo" }).getIcon()).toBe("/static/icons/logo.svg");
+  });
+
+  it("getIcon prefers a theme-provided icon over the appIcon setting", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      appIcon: "bloom",
+      settings: { ui: { theme: "branded-icon" } },
+    });
+    themes.Set("branded-icon", { name: "branded-icon", title: "Branded", colors: {}, variables: { icon: "logo.svg" } });
+    config.setTheme("branded-icon");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
   it("should store values", () => {
     const storage = new StorageShim();
     const values = { siteTitle: "Foo", country: "Germany", city: "Hamburg" };

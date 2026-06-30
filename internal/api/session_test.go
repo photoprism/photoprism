@@ -191,6 +191,7 @@ func TestCreateSession(t *testing.T) {
 
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
+		assert.Equal(t, i18n.Source(i18n.ErrInvalidCredentials), gjson.Get(r.Body.String(), "messageId").String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("AliceSuccess", func(t *testing.T) {
@@ -231,6 +232,7 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "bob", "password": "helloworld"}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
+		assert.Equal(t, i18n.Source(i18n.ErrInvalidCredentials), gjson.Get(r.Body.String(), "messageId").String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("TwoFaPasscodeRequired", func(t *testing.T) {
@@ -246,6 +248,11 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userEmail.String())
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		// Code 32 is a continuation request, not an error: the text is in "message", not "error".
+		assert.Equal(t, int64(32), gjson.Get(r.Body.String(), "code").Int())
+		assert.Equal(t, i18n.Msg(i18n.ErrPasscodeRequired), gjson.Get(r.Body.String(), "message").String())
+		assert.Empty(t, gjson.Get(r.Body.String(), "error").String())
+		assert.Equal(t, i18n.Source(i18n.ErrPasscodeRequired), gjson.Get(r.Body.String(), "messageId").String())
 	})
 	t.Run("TwoFaInvalidPasscode", func(t *testing.T) {
 		app, router, conf := NewApiTest()

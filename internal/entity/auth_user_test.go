@@ -1506,7 +1506,7 @@ func TestUser_SaveForm(t *testing.T) {
 		frm, err := UnknownUser.Form()
 		assert.NoError(t, err)
 
-		err = UnknownUser.SaveForm(frm, UserFixtures.Pointer("guest"), false)
+		err = UnknownUser.SaveForm(frm, UserFixtures.Pointer("guest"), false, false)
 		assert.Error(t, err)
 	})
 	t.Run("Admin", func(t *testing.T) {
@@ -1524,7 +1524,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"), false)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"), false, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
@@ -1549,7 +1549,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
@@ -1573,7 +1573,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.DisplayName = "New Name"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "New Name", Admin.DisplayName)
@@ -1598,7 +1598,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.CanLogin = false
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
 
 		assert.NoError(t, err)
 		assert.False(t, Admin.CanLogin)
@@ -1632,7 +1632,7 @@ func TestUser_SaveForm(t *testing.T) {
 		frm.UserRole = acl.RoleGuest.String()
 		frm.SuperAdmin = false
 		frm.CanLogin = false
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
 
 		assert.NoError(t, err)
 		assert.False(t, Admin.SuperAdmin)
@@ -1666,7 +1666,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.CanLogin = false
-		err = Admin.SaveForm(frm, &Admin, true)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, true, Admin.CanLogin)
@@ -1688,7 +1688,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.AuthProvider = authn.ProviderNone.String()
-		err = Admin.SaveForm(frm, &Admin, true)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "local", Admin.AuthProvider)
@@ -1712,7 +1712,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.AuthProvider = authn.ProviderNone.String()
-		err = alice.SaveForm(frm, &alice, true)
+		err = alice.SaveForm(frm, &alice, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "local", alice.AuthProvider)
@@ -1746,7 +1746,7 @@ func TestUser_SaveForm(t *testing.T) {
 		frm.SuperAdmin = false
 		frm.CanLogin = false
 
-		err = user.SaveForm(frm, &user, true)
+		err = user.SaveForm(frm, &user, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin", m.UserRole)
@@ -1767,7 +1767,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.UserRole = "user"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"), false)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"), false, false)
 
 		assert.Error(t, err)
 		assert.Equal(t, "super admin must not have a non-admin role", err.Error())
@@ -1789,7 +1789,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.BasePath = "//*?"
-		err = Admin.SaveForm(frm, &Admin, true)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid base folder", err.Error())
@@ -1811,7 +1811,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.UploadPath = "//*?"
-		err = Admin.SaveForm(frm, &Admin, true)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid upload folder", err.Error())
@@ -1835,7 +1835,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.CanLogin = false
-		err = u.SaveForm(frm, &User{}, true)
+		err = u.SaveForm(frm, &User{}, true, false)
 
 		assert.NoError(t, err)
 		assert.False(t, u.CanLogin)
@@ -1857,13 +1857,56 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.CanLogin = false
-		err = u.SaveForm(frm, &User{}, false)
+		err = u.SaveForm(frm, &User{}, false, false)
 
 		assert.NoError(t, err)
 		assert.True(t, u.CanLogin)
 
 		m := FindUserByUID(u.UserUID)
 		assert.True(t, m.CanLogin)
+	})
+	t.Run("ClusterServicePrincipalDisables2FA", func(t *testing.T) {
+		// Disabling 2FA is super-admin-level; the cluster principal isn't a super admin, so
+		// without bySuperAdmin the auth method change would be dropped.
+		u := &User{UserName: "cluster-2fa-off", UserRole: acl.RoleUser.String(), CanLogin: true, AuthMethod: authn.Method2FA.String()}
+		if err := u.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		frm, err := u.Form()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.AuthMethod = authn.MethodDefault.String()
+		err = u.SaveForm(frm, &User{}, true, true)
+
+		assert.NoError(t, err)
+		assert.False(t, u.Method().Is(authn.Method2FA))
+
+		m := FindUserByUID(u.UserUID)
+		assert.False(t, m.Method().Is(authn.Method2FA))
+	})
+	t.Run("UnprivilegedAdminKeeps2FA", func(t *testing.T) {
+		// A regular admin (byAdmin, not super-admin-level) must not disable another user's 2FA.
+		u := &User{UserName: "admin-2fa-keep", UserRole: acl.RoleUser.String(), CanLogin: true, AuthMethod: authn.Method2FA.String()}
+		if err := u.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		frm, err := u.Form()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.AuthMethod = authn.MethodDefault.String()
+		err = u.SaveForm(frm, &User{}, true, false)
+
+		assert.NoError(t, err)
+		assert.True(t, u.Method().Is(authn.Method2FA))
+
+		m := FindUserByUID(u.UserUID)
+		assert.True(t, m.Method().Is(authn.Method2FA))
 	})
 }
 

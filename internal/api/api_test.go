@@ -33,8 +33,10 @@ func TestMain(m *testing.M) {
 	c := config.TestConfig()
 	get.SetConfig(c)
 
-	// Increase login rate limit for testing.
+	// Increase the login and authentication rate limits for testing so the many
+	// failed-auth cases across the suite don't exhaust the shared per-IP buckets.
 	limiter.Login = limiter.NewLimit(1, 10000)
+	limiter.Auth = limiter.NewLimit(1, 10000)
 
 	// Run unit tests.
 	code := m.Run()

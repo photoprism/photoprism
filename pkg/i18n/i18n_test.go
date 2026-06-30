@@ -94,6 +94,10 @@ func TestSource(t *testing.T) {
 	t.Run("WithoutPlaceholder", func(t *testing.T) {
 		assert.Equal(t, "Permission denied", Source(ErrForbidden))
 	})
+	t.Run("AuthErrorMessages", func(t *testing.T) {
+		assert.Equal(t, "Registration disabled", Source(ErrRegistrationDisabled))
+		assert.Equal(t, "Verified email required", Source(ErrVerifiedEmailRequired))
+	})
 	t.Run("UntranslatedAfterSetLocale", func(t *testing.T) {
 		SetLocale("de")
 		assert.Equal(t, "%s already exists", Source(ErrAlreadyExists))

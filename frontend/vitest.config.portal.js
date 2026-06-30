@@ -34,6 +34,7 @@ export default defineConfig({
       { find: "model/cluster-node", replacement: path.resolve(__dirname, "../portal/frontend/model/cluster-node.js") },
       { find: "common/instance-grants", replacement: path.resolve(__dirname, "../portal/frontend/common/instance-grants.js") },
       { find: "common/user-format", replacement: path.resolve(__dirname, "../portal/frontend/common/user-format.js") },
+      { find: "app.vue", replacement: path.resolve(__dirname, "./src/app.vue") },
       { find: "app", replacement: path.resolve(__dirname, "./src/app") },
       { find: "common", replacement: path.resolve(__dirname, "./src/common") },
       { find: "component", replacement: path.resolve(__dirname, "./src/component") },

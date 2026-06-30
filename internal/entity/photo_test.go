@@ -2,8 +2,10 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -1645,10 +1647,21 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 }
 
 func TestPhoto_SetCameraSerial(t *testing.T) {
-	m := &Photo{}
-	assert.Empty(t, m.CameraSerial)
-	m.SetCameraSerial("abcCamera")
-	assert.Equal(t, "abcCamera", m.CameraSerial)
+	t.Run("Success", func(t *testing.T) {
+		m := &Photo{}
+		assert.Empty(t, m.CameraSerial)
+		m.SetCameraSerial("abcCamera")
+		assert.Equal(t, "abcCamera", m.CameraSerial)
+	})
+	t.Run("MultiByteClippedOnRuneBoundary", func(t *testing.T) {
+		// camera_serial is VARBINARY(160), so a long multi-byte value must be byte-clipped
+		// without splitting a rune, keeping the stored value within budget and valid UTF-8.
+		m := &Photo{}
+		m.SetCameraSerial(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
+		assert.NotEmpty(t, m.CameraSerial)
+		assert.LessOrEqual(t, len(m.CameraSerial), txt.ClipDefault)
+		assert.True(t, utf8.ValidString(m.CameraSerial))
+	})
 }
 
 func TestPhoto_MapKey(t *testing.T) {

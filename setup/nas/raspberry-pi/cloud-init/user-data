@@ -291,7 +291,7 @@ write_files:
 
         mariadb:
           restart: always
-          image: mariadb:11
+          image: mariadb:12.3
           security_opt:
             - seccomp=unconfined
             - apparmor=unconfined

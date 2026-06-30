@@ -23,6 +23,15 @@ func TimeStamp() *time.Time {
 	return &t
 }
 
+// TimePointer returns a reference to the specified time, or nil if it is the zero value.
+func TimePointer(t time.Time) *time.Time {
+	if t.IsZero() {
+		return nil
+	}
+
+	return &t
+}
+
 // Time returns a reference to the specified time in UTC, truncated to seconds, or nil if it is invalid.
 func Time(s string) *time.Time {
 	if t, err := time.Parse(time.RFC3339, s); err == nil {

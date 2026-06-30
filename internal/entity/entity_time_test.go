@@ -137,6 +137,20 @@ func TestTimeStamp(t *testing.T) {
 	}
 }
 
+func TestTimePointer(t *testing.T) {
+	t.Run("NonZero", func(t *testing.T) {
+		now := Now()
+		result := TimePointer(now)
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+		assert.Equal(t, now, *result)
+	})
+	t.Run("Zero", func(t *testing.T) {
+		assert.Nil(t, TimePointer(time.Time{}))
+	})
+}
+
 func TestTime(t *testing.T) {
 	result := Time("2022-01-02T13:04:05+01:00")
 

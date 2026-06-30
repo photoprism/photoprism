@@ -422,6 +422,8 @@ export const BackendMessages = () => {
   $gettext("Too many requests");
   $gettext("Insufficient storage");
   $gettext("Quota exceeded");
+  $gettext("Registration disabled");
+  $gettext("Verified email required");
   $gettext("Changes successfully saved");
   $gettext("Album created");
   $gettext("Album saved");

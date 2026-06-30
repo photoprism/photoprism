@@ -91,6 +91,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("OIDC_SCOPES"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "oidc-prompt",
+			Usage:   "authorization `PROMPT` for single sign-on via OpenID Connect (login, select_account, consent)",
+			Value:   "",
+			EnvVars: EnvVars("OIDC_PROMPT"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "oidc-provider",
 			Usage:   "custom identity provider `NAME`, e.g. Google",
 			Value:   "",
