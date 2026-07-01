@@ -53,6 +53,21 @@
               >
               </v-checkbox>
             </v-col>
+
+            <v-col cols="12" sm="4">
+              <v-checkbox
+                v-model="settings.index.faces"
+                class="ma-0 pa-0 input-faces"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Import Face Tags from XMP')"
+                :hint="$gettext('Read face regions and names from XMP metadata to create people markers.')"
+                prepend-icon="mdi-account-box-outline"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
           </v-row>
         </v-card-actions>
       </v-card>

@@ -1,0 +1,164 @@
+package entity
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/rnd"
+)
+
+func TestMarkers_Overlapping(t *testing.T) {
+	file := File{FileHash: "a6c46e43b83fc02309b1c49e1ed7273f1f414610"}
+	// The existing marker (cropArea2) fully covers the smaller XMP probe (cropArea1).
+	existing := *NewMarker(file, cropArea2, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	probe := *NewMarker(file, cropArea1, "", SrcXmp, MarkerFace, 50, 50)
+
+	t.Run("Found", func(t *testing.T) {
+		markers := Markers{existing}
+		got := markers.Overlapping(probe)
+		if assert.NotNil(t, got) {
+			assert.Equal(t, "ls6sg6b1wowuy1c1", got.SubjUID)
+		}
+	})
+	t.Run("NoOverlap", func(t *testing.T) {
+		m3 := *NewMarker(file, cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+		markers := Markers{m3}
+		assert.Nil(t, markers.Overlapping(probe))
+	})
+	t.Run("SkipsInvalid", func(t *testing.T) {
+		invalid := existing
+		invalid.MarkerInvalid = true
+		markers := Markers{invalid}
+		assert.Nil(t, markers.Overlapping(probe))
+	})
+}
+
+func TestMarkers_OverlapsInvalid(t *testing.T) {
+	file := File{FileHash: "a6c46e43b83fc02309b1c49e1ed7273f1f414610"}
+	probe := *NewMarker(file, cropArea1, "", SrcXmp, MarkerFace, 50, 50)
+
+	t.Run("TrueWhenRejectedOverlaps", func(t *testing.T) {
+		invalid := *NewMarker(file, cropArea2, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+		invalid.MarkerInvalid = true
+		markers := Markers{invalid}
+		assert.True(t, markers.OverlapsInvalid(probe))
+	})
+	t.Run("FalseWhenValidOverlaps", func(t *testing.T) {
+		valid := *NewMarker(file, cropArea2, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+		markers := Markers{valid}
+		assert.False(t, markers.OverlapsInvalid(probe))
+	})
+	t.Run("FalseWhenNoOverlap", func(t *testing.T) {
+		invalid := *NewMarker(file, cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+		invalid.MarkerInvalid = true
+		markers := Markers{invalid}
+		assert.False(t, markers.OverlapsInvalid(probe))
+	})
+}
+
+func TestSubjSrcSharesFace(t *testing.T) {
+	assert.False(t, subjSrcSharesFace(SrcAuto))
+	assert.False(t, subjSrcSharesFace(SrcXmp))
+	assert.True(t, subjSrcSharesFace(SrcManual))
+	assert.True(t, subjSrcSharesFace(SrcImage))
+	assert.True(t, subjSrcSharesFace(SrcMeta))
+}
+
+func TestMarker_SetSubjectLink(t *testing.T) {
+	t.Run("Link", func(t *testing.T) {
+		m := &Marker{}
+		subj := &Subject{SubjUID: "js6sg6b1wowuy3c5", SubjName: "Alice"}
+		m.SetSubjectLink(subj)
+		assert.Equal(t, "js6sg6b1wowuy3c5", m.SubjUID)
+		assert.Same(t, subj, m.subject)
+	})
+	t.Run("Detach", func(t *testing.T) {
+		m := &Marker{SubjUID: "js6sg6b1wowuy3c5"}
+		m.SetSubjectLink(nil)
+		assert.Equal(t, "", m.SubjUID)
+		assert.Nil(t, m.subject)
+	})
+}
+
+// ensure the crop import stays referenced if the shared areas ever move.
+var _ = crop.Area{}
+
+func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
+	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface", PhotoType: MediaImage}
+	require.NoError(t, photo.Save())
+	file := &File{
+		PhotoID:     photo.ID,
+		PhotoUID:    photo.PhotoUID,
+		FileUID:     rnd.GenerateUID('f'),
+		FileHash:    "adface00000000000000000000000000000000a1",
+		FileName:    "xmp-addface/a1.jpg",
+		FileRoot:    RootOriginals,
+		FilePrimary: true,
+		FileType:    "jpg",
+	}
+	require.NoError(t, file.Create())
+
+	// Persist an embedding-less XMP marker (as a prior pass would have).
+	xmpMarker := NewMarker(*file, cropArea1, "", SrcXmp, MarkerFace, 100, 30)
+	require.NotNil(t, xmpMarker)
+	xmpMarker.MarkerName = "Alice"
+	xmpMarker.SubjSrc = SrcXmp
+	require.NoError(t, xmpMarker.Create())
+	require.Empty(t, xmpMarker.EmbeddingsJSON)
+
+	// A later detection pass finds a real face overlapping the XMP marker.
+	f := face.Face{
+		Rows: 1000, Cols: 1000, Score: 100,
+		Area:       face.Area{Name: "face", Row: 385, Col: 486, Scale: 356},
+		Embeddings: face.Embeddings{testEmbeddings[0]},
+	}
+
+	file.markers = nil // force reload from DB
+	file.AddFace(f, "")
+
+	saved, err := FindMarkers(file.FileUID)
+	require.NoError(t, err)
+	require.Len(t, saved, 1, "must upgrade in place, not create a duplicate")
+	assert.NotEmpty(t, saved[0].EmbeddingsJSON, "embedding-less XMP marker must gain the detected embedding")
+	assert.Equal(t, "Alice", saved[0].MarkerName, "XMP name must be preserved")
+}
+
+func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
+	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface2", PhotoType: MediaImage}
+	require.NoError(t, photo.Save())
+	file := &File{
+		PhotoID:     photo.ID,
+		PhotoUID:    photo.PhotoUID,
+		FileUID:     rnd.GenerateUID('f'),
+		FileHash:    "adface00000000000000000000000000000000b2",
+		FileName:    "xmp-addface/b2.jpg",
+		FileRoot:    RootOriginals,
+		FilePrimary: true,
+		FileType:    "jpg",
+	}
+	require.NoError(t, file.Create())
+
+	rejected := NewMarker(*file, cropArea1, "", SrcImage, MarkerFace, 100, 30)
+	require.NotNil(t, rejected)
+	rejected.MarkerInvalid = true
+	require.NoError(t, rejected.Create())
+
+	f := face.Face{
+		Rows: 1000, Cols: 1000, Score: 100,
+		Area:       face.Area{Name: "face", Row: 385, Col: 486, Scale: 356},
+		Embeddings: face.Embeddings{testEmbeddings[0]},
+	}
+
+	file.markers = nil
+	file.AddFace(f, "")
+
+	saved, err := FindMarkers(file.FileUID)
+	require.NoError(t, err)
+	require.Len(t, saved, 1, "a detected face over a rejected marker must not add a new marker")
+	assert.True(t, saved[0].MarkerInvalid, "rejected marker stays rejected")
+	assert.Empty(t, saved[0].EmbeddingsJSON, "rejected marker must not be upgraded")
+}

@@ -29,6 +29,7 @@ export default class Page {
     this.libraryTab = Selector("#tab-settings_content");
     this.reviewCheckbox = Selector(".input-review div.v-selection-control__input");
     this.convertCheckbox = Selector(".input-convert div.v-selection-control__input");
+    this.facesCheckbox = Selector(".input-faces div.v-selection-control__input");
     this.estimatesCheckbox = Selector(".input-estimates div.v-selection-control__input");
     this.dateTimeStacksCheckbox = Selector(".input-stack-meta div.v-selection-control__input");
     this.uuidStacksCheckbox = Selector(".input-stack-uuid div.v-selection-control__input");

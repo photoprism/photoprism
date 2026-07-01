@@ -367,6 +367,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.AddFaces(faces)
 			}
 
+			// Import face regions and names from XMP metadata onto the markers.
+			if o.ImportFaceTags && file.FileHash != "" {
+				if n := reconcileXmpFaces(collectXmpFaces(m), &file, markers); n > 0 {
+					log.Debugf("index: imported %d xmp face region(s) for %s", n, logName)
+				}
+			}
+
 			// Skip when indexing faces only and no new markers were found.
 			if !file.UnsavedMarkers() && o.FacesOnly {
 				result.Status = IndexSkipped

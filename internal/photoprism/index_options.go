@@ -18,6 +18,7 @@ type IndexOptions struct {
 	DetectFaces     bool // Detect primary-file faces during indexing.
 	DetectNsfw      bool // Flag sensitive content while importing/updating photos.
 	GenerateLabels  bool // Generate automatic vision labels for newly indexed files.
+	ImportFaceTags  bool // Import face regions and names from XMP metadata.
 	SkipArchived    bool
 	ByteLimit       int64
 	ResolutionLimit int
@@ -51,6 +52,8 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 		result.DetectFaces = c.VisionModelShouldRun(vision.ModelTypeFace, facesRunType)
 		result.DetectNsfw = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex)
 		result.GenerateLabels = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex)
+
+		result.ImportFaceTags = c.Settings().Index.Faces
 
 		result.ByteLimit = c.OriginalsLimitBytes()
 		result.ResolutionLimit = c.ResolutionLimit()

@@ -56,17 +56,30 @@ func DetectFaces(jpeg *MediaFile, expected int) (face.Faces, error) {
 	return faces, err
 }
 
-// ApplyDetectedFaces persists detected faces on the given file and updates face counts.
-func ApplyDetectedFaces(file *entity.File, faces face.Faces) (saved bool, count int, err error) {
+// ApplyDetectedFaces persists detected faces on the given file and updates face
+// counts. When XMP face-tag import is enabled and a media file is provided, it
+// also reconciles XMP face regions onto the markers so deferred face detection
+// (vision/metadata workers) imports XMP names the same way indexing does.
+// file and m MUST be the photo's primary file: XMP regions attach to the
+// primary file only, and m is used to read its embedded XMP and .xmp sidecar.
+func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (saved bool, count int, err error) {
 	if file == nil {
 		return false, 0, fmt.Errorf("faces: file is nil")
 	}
 
-	if len(faces) == 0 {
+	importXmp := m != nil && Config().Settings().Index.Faces
+
+	if len(faces) == 0 && !importXmp {
 		return false, 0, nil
 	}
 
-	file.AddFaces(faces)
+	if len(faces) > 0 {
+		file.AddFaces(faces)
+	}
+
+	if importXmp && file.FileHash != "" {
+		reconcileXmpFaces(collectXmpFaces(m), file, file.Markers())
+	}
 
 	savedMarkers, saveErr := file.SaveMarkers()
 

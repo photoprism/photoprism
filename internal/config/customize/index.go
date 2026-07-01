@@ -6,4 +6,5 @@ type IndexSettings struct {
 	Convert      bool   `json:"convert" yaml:"Convert"`
 	Rescan       bool   `json:"rescan" yaml:"Rescan"`
 	SkipArchived bool   `json:"skipArchived" yaml:"SkipArchived"`
+	Faces        bool   `json:"faces" yaml:"Faces"`
 }

@@ -26,6 +26,72 @@ const (
 	MimeQuicktime = "video/quicktime"
 )
 
+// jsonAt returns the array element at index i, or an empty result when out of
+// range. ExifTool emits a single region as scalars and multiple regions as
+// index-parallel arrays; gjson's Array() returns a one-element slice for a
+// scalar, so callers can zip both shapes uniformly.
+func jsonAt(a []gjson.Result, i int) gjson.Result {
+	if i >= 0 && i < len(a) {
+		return a[i]
+	}
+	return gjson.Result{}
+}
+
+// parseExiftoolFaces extracts MWG-RS and Microsoft MP:RegionInfo face regions
+// from the flattened ExifTool result and returns them as displayed-orientation
+// normalized Faces. It handles both the single-region (scalar) and multi-region
+// (parallel array) shapes ExifTool emits with PhotoPrism's "-n -m -j" arguments.
+func parseExiftoolFaces(j gjson.Result, orientation int) []Face {
+	var faces []Face
+
+	// MWG-RS regions (XMP-mwg-rs): parallel arrays keyed by index.
+	names := j.Get("RegionName").Array()
+	types := j.Get("RegionType").Array()
+	xs := j.Get("RegionAreaX").Array()
+	ys := j.Get("RegionAreaY").Array()
+	ws := j.Get("RegionAreaW").Array()
+	hs := j.Get("RegionAreaH").Array()
+	units := j.Get("RegionAreaUnit").Array()
+
+	appliedW := int(j.Get("RegionAppliedToDimensionsW").Int())
+	appliedH := int(j.Get("RegionAppliedToDimensionsH").Int())
+
+	// The coordinate arrays define how many regions exist; a missing name is
+	// allowed (unnamed region), so it does not bound the count.
+	n := len(xs)
+	for _, l := range []int{len(ys), len(ws), len(hs)} {
+		if l < n {
+			n = l
+		}
+	}
+
+	for i := 0; i < n; i++ {
+		if t := jsonAt(types, i).String(); t != "" && !strings.EqualFold(t, "Face") {
+			continue
+		}
+		if f, ok := normalizeRegionMWG(
+			jsonAt(names, i).String(),
+			float32(jsonAt(xs, i).Float()), float32(jsonAt(ys, i).Float()),
+			float32(jsonAt(ws, i).Float()), float32(jsonAt(hs, i).Float()),
+			jsonAt(units, i).String(), appliedW, appliedH, orientation,
+		); ok {
+			faces = append(faces, f)
+		}
+	}
+
+	// Microsoft MP:RegionInfo (XMP-MP): rectangle string + display name.
+	mpNames := j.Get("RegionPersonDisplayName").Array()
+	mpRects := j.Get("RegionRectangle").Array()
+
+	for i := 0; i < len(mpRects); i++ {
+		if f, ok := normalizeRegionMP(jsonAt(mpNames, i).String(), jsonAt(mpRects, i).String(), orientation); ok {
+			faces = append(faces, f)
+		}
+	}
+
+	return DedupFaces(faces)
+}
+
 // Exiftool parses JSON sidecar data as created by Exiftool.
 func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	defer func() {
@@ -257,6 +323,12 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 		case -90, 270:
 			data.Orientation = 8
 		}
+	}
+
+	// Parse MWG-RS and Microsoft MP:RegionInfo face regions (people markers)
+	// from the embedded XMP so the indexer can reconcile them onto markers.
+	if faces := parseExiftoolFaces(j, data.Orientation); len(faces) > 0 {
+		data.Faces = faces
 	}
 
 	// Normalize codec name.

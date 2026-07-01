@@ -218,7 +218,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 				faces, detectErr := photoprism.DetectFaces(file, expected)
 				if detectErr != nil {
 					log.Debugf("vision: %s in %s (detect faces)", detectErr, clean.Log(file.BaseName()))
-				} else if saved, faceCount, applyErr := photoprism.ApplyDetectedFaces(primaryFile, faces); applyErr != nil {
+				} else if saved, faceCount, applyErr := photoprism.ApplyDetectedFaces(file, primaryFile, faces); applyErr != nil {
 					log.Warnf("vision: %s in %s (save faces)", clean.Error(applyErr), logName)
 				} else if saved {
 					m.PhotoFaces = faceCount
