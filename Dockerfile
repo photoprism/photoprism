@@ -1,5 +1,5 @@
 # Ubuntu 26.04 LTS (Resolute Raccoon)
-FROM photoprism/develop:260611-resolute
+FROM photoprism/develop:260629-resolute
 
 # Harden npm usage by default (applies to npm ci / install in dev container)
 ENV NPM_CONFIG_IGNORE_SCRIPTS=true
