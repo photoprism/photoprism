@@ -34,6 +34,17 @@
                 density="comfortable"
                 class="input-caption"
               ></v-textarea>
+              <v-rating
+                v-model="view.model.Rating"
+                :disabled="disabled"
+                :aria-label="$pgettext('Photo', 'Rating')"
+                clearable
+                hover
+                density="comfortable"
+                size="small"
+                active-color="amber"
+                class="input-rating"
+              ></v-rating>
             </v-col>
           </v-row>
           <v-row dense>
