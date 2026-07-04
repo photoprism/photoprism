@@ -486,6 +486,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcXmp)
 			photo.SetCameraSerial(data.CameraSerial)
 
+			// Update the star rating if the sidecar carries one.
+			if data.Rating > 0 {
+				photo.SetRating(data.Rating, entity.SrcXmp)
+			}
+
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcXmp)
 			details.SetNotes(data.Notes, entity.SrcXmp)
@@ -558,6 +563,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
+
+			// Update the star rating from embedded metadata.
+			if data.Rating > 0 {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -742,6 +752,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
 
+			// Update the star rating from embedded metadata.
+			if data.Rating > 0 {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
+
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
 			details.SetNotes(data.Notes, entity.SrcMeta)
@@ -869,6 +884,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
+
+			// Update the star rating from embedded metadata.
+			if data.Rating > 0 {
+				photo.SetRating(data.Rating, entity.SrcMeta)
+			}
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
