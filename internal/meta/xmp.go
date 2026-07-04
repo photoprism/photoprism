@@ -190,6 +190,12 @@ func (data *Data) XMP(fileName string) (err error) {
 
 	data.Favorite = doc.Favorite()
 
+	// Star rating from xmp:Rating; 0 means the sidecar carries no rating,
+	// so the embedded value (if any) is kept.
+	if v := doc.Rating(); v != 0 {
+		data.Rating = v
+	}
+
 	// Auto-derive keywords from projection and caption text so XMP-only
 	// photos surface in the same searches as EXIF-indexed photos. Mirrors
 	// the EXIF and ExifTool JSON flows (exif.go's ProjectionType/ImageDescription
