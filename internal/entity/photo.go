@@ -64,6 +64,8 @@ type Photo struct {
 	OriginalName     string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	PhotoStack       int8          `json:"Stack" yaml:"Stack,omitempty"`
 	PhotoFavorite    bool          `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoRating      int           `gorm:"type:SMALLINT" json:"Rating" yaml:"Rating,omitempty"`
+	RatingSrc        string        `gorm:"type:VARBINARY(8);" json:"RatingSrc" yaml:"RatingSrc,omitempty"`
 	PhotoPrivate     bool          `json:"Private" yaml:"Private,omitempty"`
 	PhotoScan        bool          `json:"Scan" yaml:"Scan,omitempty"`
 	PhotoPanorama    bool          `json:"Panorama" yaml:"Panorama,omitempty"`
@@ -879,6 +881,15 @@ func (m *Photo) NormalizeValues() (normalized bool) {
 
 	if timeZone := tz.Name(m.TimeZone); timeZone != m.TimeZone {
 		m.TimeZone = timeZone
+		normalized = true
+	}
+
+	// Keep the star rating within the supported range of 0 to 5.
+	if m.PhotoRating < RatingMin {
+		m.PhotoRating = RatingMin
+		normalized = true
+	} else if m.PhotoRating > RatingMax {
+		m.PhotoRating = RatingMax
 		normalized = true
 	}
 
