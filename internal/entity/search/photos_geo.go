@@ -494,6 +494,11 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
+	// Filter by minimum star rating.
+	if frm.Rating > 0 {
+		s = s.Where("photos.photo_rating >= ?", frm.Rating)
+	}
+
 	// Filter by scan flag.
 	if txt.No(frm.Scan) {
 		s = s.Where("photos.photo_scan = 0")
