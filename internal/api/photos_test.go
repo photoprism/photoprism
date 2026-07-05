@@ -121,6 +121,46 @@ func TestUpdatePhoto(t *testing.T) {
 	})
 }
 
+func TestUpdatePhotoRating(t *testing.T) {
+	t.Run("SetAndClear", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdatePhoto(router)
+
+		// Set a manual 4-star rating.
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0y13", `{"Rating": 4, "RatingSrc": "manual"}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, int64(4), gjson.Get(r.Body.String(), "Rating").Int())
+		assert.Equal(t, "manual", gjson.Get(r.Body.String(), "RatingSrc").String())
+
+		// Verify the rating was persisted and outranks metadata imports.
+		m := entity.FindPhoto(entity.Photo{PhotoUID: "ps6sg6be2lvl0y13"})
+		assert.Equal(t, 4, m.PhotoRating)
+		assert.Equal(t, entity.SrcManual, m.RatingSrc)
+		m.SetRating(2, entity.SrcMeta)
+		assert.Equal(t, 4, m.PhotoRating)
+
+		// Clear the rating so the photo counts as never rated again.
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0y13", `{"Rating": 0, "RatingSrc": ""}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, int64(0), gjson.Get(r.Body.String(), "Rating").Int())
+
+		// A cleared source lets metadata ratings be imported again.
+		m = entity.FindPhoto(entity.Photo{PhotoUID: "ps6sg6be2lvl0y13"})
+		assert.Equal(t, 0, m.PhotoRating)
+		assert.Equal(t, "", m.RatingSrc)
+		m.SetRating(3, entity.SrcMeta)
+		assert.Equal(t, 3, m.PhotoRating)
+		assert.Equal(t, entity.SrcMeta, m.RatingSrc)
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdatePhoto(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/photos/ps6sg6be2lvl0y13", `{"Rating": 9}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, int64(5), gjson.Get(r.Body.String(), "Rating").Int())
+	})
+}
+
 func TestGetPhotoDownload(t *testing.T) {
 	t.Run("OriginalMissing", func(t *testing.T) {
 		app, router, conf := NewApiTest()
