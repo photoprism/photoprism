@@ -287,3 +287,71 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	assert.Equal(t, "indexed-original-name/renamed-photo.jpg", file2.FileName)
 	assert.Empty(t, file2.OriginalName, "re-indexed renamed file must not pick up a stale OriginalName")
 }
+
+func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// indexSidecar indexes the "Cara" sidecar fixture in an isolated database and
+	// storage with the given face flags, then returns the file's markers. The
+	// isolation mirrors TestIndex_MediaFile_OriginalName so the fixture hash does
+	// not collide with rows another test indexed.
+	indexSidecar := func(t *testing.T, detectFaces, importFaceTags bool) entity.Markers {
+		t.Helper()
+
+		t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "import-face-tags.db"))
+		cfg := config.NewMinimalTestConfigWithDb("import-face-tags", filepath.Join(t.TempDir(), "storage"))
+
+		// collectXmpFaces resolves the sidecar via the package-level config.
+		oldCfg := Config()
+		SetConfig(cfg)
+		t.Cleanup(func() {
+			SetConfig(oldCfg)
+			oldCfg.RegisterDb()
+		})
+
+		// Copy the JPEG and its .xmp sidecar into originals so collectXmpFaces
+		// finds the "Cara" region next to the primary file.
+		dstDir := filepath.Join(cfg.OriginalsPath(), "xmp-faces")
+		jpg := filepath.Join(dstDir, "sidecar.jpg")
+		src, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
+		require.NoError(t, err)
+		require.NoError(t, src.Copy(jpg, false))
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", filepath.Join(dstDir, "sidecar.jpg.xmp"), false))
+
+		ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+		opt := IndexOptionsSingle(cfg)
+		opt.DetectFaces = detectFaces
+		opt.ImportFaceTags = importFaceTags
+
+		mf, err := NewMediaFile(jpg)
+		require.NoError(t, err)
+
+		result := ind.MediaFile(mf, opt, "", "")
+		require.True(t, result.Success(), "index must succeed: %v", result.Err)
+		require.NotEmpty(t, result.FileUID)
+
+		markers, err := entity.FindMarkers(result.FileUID)
+		require.NoError(t, err)
+		return markers
+	}
+
+	hasXmpName := func(markers entity.Markers, name string) bool {
+		for i := range markers {
+			if markers[i].MarkerSrc == entity.SrcXmp && markers[i].MarkerName == name {
+				return true
+			}
+		}
+		return false
+	}
+
+	t.Run("ImportsWhenDetectionDisabled", func(t *testing.T) {
+		markers := indexSidecar(t, false, true)
+		assert.True(t, hasXmpName(markers, "Cara"), "XMP face tag must import with AI detection off, got %+v", markers)
+	})
+	t.Run("SkipsWhenToggleOff", func(t *testing.T) {
+		markers := indexSidecar(t, false, false)
+		assert.False(t, hasXmpName(markers, "Cara"), "no XMP marker may be created when the import toggle is off")
+	})
+}

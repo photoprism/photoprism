@@ -53,6 +53,12 @@ func applyXmpName(m *entity.Marker, rawName string) bool {
 		return false
 	}
 
+	// Remember the prior link so a stale or empty SubjUID is repaired and
+	// persisted even when the marker name string stays the same: SetName
+	// short-circuits on an identical name and reports no change.
+	prevSubjUID := m.SubjUID
+	prevSubjSrc := m.SubjSrc
+
 	if subj := entity.FindSubjectByName(name, false); subj != nil {
 		m.SetSubjectLink(subj)
 		name = subj.SubjName
@@ -60,11 +66,26 @@ func applyXmpName(m *entity.Marker, rawName string) bool {
 		m.SetSubjectLink(nil)
 	}
 
-	changed, err := m.SetName(name, entity.SrcXmp)
+	nameChanged, err := m.SetName(name, entity.SrcXmp)
 	if err != nil {
 		log.Warnf("index: %s while importing xmp face name %s", err, clean.Log(name))
 		return false
 	}
+
+	// Resolve or create the Person when the name did not change and no existing
+	// subject was found: SetName's identical-name short-circuit skips SyncSubject,
+	// so without this the marker would keep an empty SubjUID (or, worse, we would
+	// persist a detached link). Marker.Subject reuses the same fresh-import path
+	// (NewSubject + FirstOrCreateSubject) and, for SrcXmp, never renames the Person
+	// globally. Claiming SubjSrc for XMP first satisfies Subject's non-auto guard;
+	// the source priority check above already ran, so this never downgrades.
+	if m.SubjUID == "" && m.MarkerName != "" {
+		m.SubjSrc = entity.SrcXmp
+		m.Subject()
+	}
+
+	// The marker changed if its name, linked subject, or subject source changed.
+	changed := nameChanged || m.SubjUID != prevSubjUID || m.SubjSrc != prevSubjSrc
 
 	// Persist column changes on an already-saved marker; Markers.Save inserts
 	// new markers but does not re-persist existing ones. Report the change as

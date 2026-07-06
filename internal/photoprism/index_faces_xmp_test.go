@@ -228,6 +228,45 @@ func TestReconcileXmpFaces(t *testing.T) {
 		assert.Empty(t, markers[0].EmbeddingsJSON, "XMP marker must carry no embedding")
 		assert.Empty(t, markers[0].FaceID, "XMP marker must not seed a shared face")
 	})
+
+	t.Run("StaleLink_RepairedAndPersisted", func(t *testing.T) {
+		file := newXmpFile(t)
+
+		// A Person named "AliceRepair" exists independently of the marker.
+		alice := newXmpSubject(t, "AliceRepair", entity.SrcMarker)
+
+		// A prior import left the marker named but unlinked (empty SubjUID), so
+		// the marker->Person link is broken in the database.
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, "", "AliceRepair", false)
+		require.Empty(t, stale.SubjUID, "precondition: marker starts unlinked")
+
+		runReconcile(t, file, []meta.Face{region("AliceRepair", xmpArea)})
+
+		// Re-query from the DB: the in-memory repair must be durably persisted.
+		saved := entity.FindMarker(stale.MarkerUID)
+		require.NotNil(t, saved)
+		assert.Equal(t, "AliceRepair", saved.MarkerName)
+		assert.Equal(t, alice.SubjUID, saved.SubjUID, "stale marker must be relinked to the existing Person and persisted")
+		assert.Equal(t, entity.SrcXmp, saved.SubjSrc)
+	})
+
+	t.Run("StaleLink_MissingPerson_CreatesRatherThanDetaches", func(t *testing.T) {
+		file := newXmpFile(t)
+
+		// The marker is named but unlinked and no matching Person exists yet.
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, "", "BobRepair", false)
+		require.Empty(t, stale.SubjUID, "precondition: marker starts unlinked")
+		require.Nil(t, entity.FindSubjectByName("BobRepair", false), "precondition: no Person yet")
+
+		runReconcile(t, file, []meta.Face{region("BobRepair", xmpArea)})
+
+		// The repair must create the Person and persist the link, not blank it.
+		saved := entity.FindMarker(stale.MarkerUID)
+		require.NotNil(t, saved)
+		assert.NotEmpty(t, saved.SubjUID, "marker must be linked to a freshly created Person")
+		assert.Equal(t, entity.SrcXmp, saved.SubjSrc)
+		require.NotNil(t, entity.FindSubjectByName("BobRepair", false), "the XMP import must create the Person")
+	})
 }
 
 func TestCollectXmpFaces(t *testing.T) {
