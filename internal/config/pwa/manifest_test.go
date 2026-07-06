@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestNewManifest(t *testing.T) {
 	c := Config{
-		Icon:          "logo",
+		Icon:          "test",
 		Color:         "#aaaaaa",
 		Name:          "TestPrism+",
 		Description:   "App's Description",
@@ -17,6 +19,7 @@ func TestNewManifest(t *testing.T) {
 		BaseUri:       "/",
 		FrontendUri:   "/library",
 		StaticUri:     "/static",
+		StaticPath:    fs.Abs("./testdata"),
 	}
 
 	t.Run("Standard", func(t *testing.T) {
