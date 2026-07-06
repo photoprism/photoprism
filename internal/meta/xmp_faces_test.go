@@ -319,6 +319,51 @@ func TestXMP_Faces_RotatedSidecar(t *testing.T) {
 	}
 }
 
+func TestXMP_Faces_SidecarFixtures(t *testing.T) {
+	// Exercises the real .xmp sidecar fixtures end-to-end through meta.XMP, one
+	// per supported writer/schema, so the Adobe/Lightroom, digiKam, and Microsoft
+	// region formats are each covered by an actual file (not only inline XMP).
+	// The expected values are displayed-orientation top-left rectangles.
+	cases := []struct {
+		name string
+		path string
+		want Face
+	}{
+		{
+			// center (0.4,0.35) size (0.12,0.16) -> top-left (0.34,0.27).
+			name: "AdobeLightroomMWG",
+			path: "testdata/faces/adobe-mwg.xmp",
+			want: Face{Name: "Diana", X: 0.34, Y: 0.27, W: 0.12, H: 0.16},
+		},
+		{
+			// center (0.6,0.5) size (0.1,0.15) -> top-left (0.55,0.425).
+			name: "DigikamMWG",
+			path: "testdata/faces/digikam-mwg.xmp",
+			want: Face{Name: "Carl", X: 0.55, Y: 0.425, W: 0.1, H: 0.15},
+		},
+		{
+			name: "MicrosoftMP",
+			path: "testdata/faces/microsoft-mp.xmp",
+			want: Face{Name: "Cara", X: 0.3, Y: 0.2, W: 0.1, H: 0.15},
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			data, err := XMP(tc.path)
+			if err != nil {
+				t.Fatalf("XMP(%s): %v", tc.path, err)
+			}
+			if len(data.Faces) != 1 {
+				t.Fatalf("want 1 face, got %d (%+v)", len(data.Faces), data.Faces)
+			}
+			f := data.Faces[0]
+			if f.Name != tc.want.Name || !almost(f.X, tc.want.X) || !almost(f.Y, tc.want.Y) || !almost(f.W, tc.want.W) || !almost(f.H, tc.want.H) {
+				t.Errorf("got %+v, want %+v", f, tc.want)
+			}
+		})
+	}
+}
+
 func TestParseFloat32(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		v, ok := parseFloat32(" 0.5 ")

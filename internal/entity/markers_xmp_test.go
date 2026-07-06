@@ -162,3 +162,55 @@ func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
 	assert.True(t, saved[0].MarkerInvalid, "rejected marker stays rejected")
 	assert.Empty(t, saved[0].EmbeddingsJSON, "rejected marker must not be upgraded")
 }
+
+func TestMarker_SetFace_XmpNotShared(t *testing.T) {
+	// SetFace propagates a marker's subject onto the shared Face (via
+	// Face.SetSubjectUID) for clustering name sources such as SrcManual, but must
+	// NOT for SrcXmp: an imported XMP name labels only its own marker, so there is
+	// no XMP-driven clustering in v1. SetSubjectUID mutates the passed Face's
+	// SubjUID in memory, so an unchanged f.SubjUID proves propagation was gated.
+	setup := func(t *testing.T, subjSrc, hash, person string) (*Marker, *Face, string) {
+		photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-setface-" + subjSrc, PhotoType: MediaImage}
+		require.NoError(t, photo.Save())
+		file := File{
+			PhotoID:     photo.ID,
+			PhotoUID:    photo.PhotoUID,
+			FileUID:     rnd.GenerateUID('f'),
+			FileHash:    hash,
+			FileName:    "xmp-setface/" + subjSrc + ".jpg",
+			FileRoot:    RootOriginals,
+			FilePrimary: true,
+			FileType:    "jpg",
+		}
+		require.NoError(t, file.Create())
+
+		subj := FirstOrCreateSubject(NewSubject(person, SubjPerson, SrcManual))
+		require.NotNil(t, subj)
+
+		// Model a detected AI marker (MarkerSrc = SrcImage) that has since gained a
+		// name from the given source, so SetFace exercises the box-vs-name split.
+		m := NewMarker(file, cropArea1, subj.SubjUID, SrcImage, MarkerFace, 100, 100)
+		require.NotNil(t, m)
+		m.SubjSrc = subjSrc
+		m.SetEmbeddings(face.Embeddings{testEmbeddings[0]})
+		require.NoError(t, m.Create())
+
+		// A subjectless shared face to observe whether the marker's subject is
+		// pushed onto it; a unique id keeps the manual-case DB write local.
+		return m, &Face{ID: "XMPSETFACE" + rnd.GenerateUID('f'), SubjUID: ""}, subj.SubjUID
+	}
+	t.Run("XmpDoesNotPropagate", func(t *testing.T) {
+		m, f, subjUID := setup(t, SrcXmp, "5eface00000000000000000000000000000000a1", "Xmp Setface Person")
+		_, err := m.SetFace(f, 0.5)
+		require.NoError(t, err)
+		assert.Empty(t, f.SubjUID, "XMP name must not propagate onto the shared face")
+		assert.Equal(t, subjUID, m.SubjUID, "marker keeps its own XMP subject")
+		assert.Equal(t, SrcXmp, m.SubjSrc, "marker subject source stays SrcXmp")
+	})
+	t.Run("ManualDoesPropagate", func(t *testing.T) {
+		m, f, subjUID := setup(t, SrcManual, "5eface00000000000000000000000000000000b2", "Manual Setface Person")
+		_, err := m.SetFace(f, 0.5)
+		require.NoError(t, err)
+		assert.Equal(t, subjUID, f.SubjUID, "manual name must propagate onto the shared face")
+	})
+}
