@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-06-27
+Date generated: 2026-07-07
 
 ================================================================================
 
@@ -2433,8 +2433,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20260625163123-7c0e84413537
-License: Apache-2.0 (https://github.com/golang/geo/blob/7c0e84413537/LICENSE)
+Version: v0.0.0-20260706204034-7a8d33c78269
+License: Apache-2.0 (https://github.com/golang/geo/blob/7a8d33c78269/LICENSE)
 
 
                                  Apache License
@@ -4060,8 +4060,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress
-Version: v1.18.6
-License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.18.6/LICENSE)
+Version: v1.19.0
+License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.19.0/LICENSE)
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 Copyright (c) 2019 Klaus Post. All rights reserved.
@@ -4371,8 +4371,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/internal/snapref
-Version: v1.18.6
-License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.18.6/internal/snapref/LICENSE)
+Version: v1.19.0
+License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.19.0/internal/snapref/LICENSE)
 
 Copyright (c) 2011 The Snappy-Go Authors. All rights reserved.
 
@@ -4405,8 +4405,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/zstd/internal/xxhash
-Version: v1.18.6
-License: MIT (https://github.com/klauspost/compress/blob/v1.18.6/zstd/internal/xxhash/LICENSE.txt)
+Version: v1.19.0
+License: MIT (https://github.com/klauspost/compress/blob/v1.19.0/zstd/internal/xxhash/LICENSE.txt)
 
 Copyright (c) 2016 Caleb Spare
 
@@ -4434,8 +4434,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/cpuid/v2
-Version: v2.3.0
-License: MIT (https://github.com/klauspost/cpuid/blob/v2.3.0/LICENSE)
+Version: v2.4.0
+License: MIT (https://github.com/klauspost/cpuid/blob/v2.4.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -9299,8 +9299,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/text
-Version: v0.38.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.38.0:LICENSE)
+Version: v0.39.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.39.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 

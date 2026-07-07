@@ -12,7 +12,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gin-contrib/gzip v1.2.6 // indirect
 	github.com/gin-gonic/gin v1.12.0
-	github.com/golang/geo v0.0.0-20260625163123-7c0e84413537
+	github.com/golang/geo v0.0.0-20260706204034-7a8d33c78269
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -20,7 +20,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/cpuid/v2 v2.3.0
+	github.com/klauspost/cpuid/v2 v2.4.0
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.7.2
 	github.com/lib/pq v1.12.1 // indirect
@@ -74,7 +74,7 @@ require (
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
 
-require golang.org/x/text v0.38.0
+require golang.org/x/text v0.39.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
@@ -84,7 +84,7 @@ require (
 	github.com/go-co-op/gocron/v2 v2.21.2
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/klauspost/compress v1.18.6
+	github.com/klauspost/compress v1.19.0
 	github.com/pquerna/otp v1.5.0
 	github.com/prometheus/client_model v0.6.2
 	github.com/robfig/cron/v3 v3.0.1
@@ -178,7 +178,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/oauth2 v0.36.0
-	golang.org/x/tools v0.45.0 // indirect
+	golang.org/x/tools v0.47.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
