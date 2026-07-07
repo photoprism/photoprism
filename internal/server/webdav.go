@@ -277,13 +277,15 @@ func WebDAVSetFavoriteFlag(fileName string) {
 
 	// Make sure directory exists.
 	if err := fs.MkdirAll(filepath.Dir(yamlName)); err != nil {
-		log.Errorf("webdav: %s", err.Error())
+		// Console-only: the error embeds the absolute sidecar path (see loggerFunc).
+		event.SystemError([]string{"webdav", "%s"}, clean.Error(err))
 		return
 	}
 
 	// Write YAML data to file.
 	if err := fs.WriteFile(yamlName, []byte("Favorite: true\n"), fs.ModeConfigFile); err != nil {
-		log.Errorf("webdav: %s", err.Error())
+		// Console-only: the error embeds the absolute sidecar path (see loggerFunc).
+		event.SystemError([]string{"webdav", "%s"}, clean.Error(err))
 		return
 	}
 
