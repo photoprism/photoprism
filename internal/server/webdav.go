@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -55,13 +57,19 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	// Request logger function.
 	loggerFunc := func(request *http.Request, err error) {
 		if err != nil {
-			switch request.Method {
-			case header.MethodPut, header.MethodMkcol, header.MethodDelete, header.MethodMove, header.MethodCopy, header.MethodProppatch, header.MethodLock, header.MethodUnlock:
-				log.Errorf("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
-			case header.MethodPropfind:
-				log.Tracef("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
+			// Route WebDAV request errors to the console-only system log, not log.*.
+			// x/net/webdav embeds absolute originals/import paths in its messages,
+			// which must stay out of the browser log viewer and the persisted errors
+			// table; operators still see full detail in the server console.
+			switch {
+			case request.Method == header.MethodMkcol && errors.Is(err, os.ErrExist):
+				// MKCOL on an existing collection is a benign probe: sync clients such as
+				// PhotoSync test for a directory before creating it — expected, not a failure.
+				event.SystemDebug([]string{"webdav", "collection %s already exists"}, clean.Log(request.URL.String()))
+			case WebDAVWriteMethod(request.Method):
+				event.SystemError([]string{"webdav", "%s in %s %s"}, clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
 			default:
-				log.Debugf("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
+				event.SystemDebug([]string{"webdav", "%s in %s %s"}, clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
 			}
 		} else {
 			// Determine the filename if it is an uploaded file and process custom request headers, if any.
