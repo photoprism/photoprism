@@ -363,9 +363,38 @@ func TestXmpDocument_Software(t *testing.T) {
 		doc := loadXmp(t, "testdata/xmp/synthetic/software-only.xmp")
 		assert.Equal(t, "PhotoPrism Synthetic Fixture 1.0.0", doc.Software())
 	})
+	t.Run("FallsBackToTiffSoftware", func(t *testing.T) {
+		// tiff-fields.xmp carries only tiff:Software (no xmp:CreatorTool).
+		doc := loadXmp(t, "testdata/xmp/synthetic/tiff-fields.xmp")
+		assert.Equal(t, "TiffSoftware 1.0", doc.Software())
+	})
 	t.Run("EmptyWhenAbsent", func(t *testing.T) {
 		doc := loadXmp(t, "testdata/fstop-favorite.xmp")
 		assert.Equal(t, "", doc.Software())
+	})
+}
+
+func TestXmpDocument_Description(t *testing.T) {
+	t.Run("FallsBackToTiffImageDescription", func(t *testing.T) {
+		// tiff-fields.xmp carries only tiff:ImageDescription (no dc:description).
+		doc := loadXmp(t, "testdata/xmp/synthetic/tiff-fields.xmp")
+		assert.Equal(t, "A tiff image description", doc.Description())
+	})
+	t.Run("EmptyWhenAbsent", func(t *testing.T) {
+		doc := loadXmp(t, "testdata/xmp/synthetic/software-only.xmp")
+		assert.Equal(t, "", doc.Description())
+	})
+}
+
+func TestXmpDocument_Copyright(t *testing.T) {
+	t.Run("FallsBackToTiffCopyright", func(t *testing.T) {
+		// tiff-fields.xmp carries only tiff:Copyright (no dc:rights).
+		doc := loadXmp(t, "testdata/xmp/synthetic/tiff-fields.xmp")
+		assert.Equal(t, "Copyright 2026 Example Org", doc.Copyright())
+	})
+	t.Run("EmptyWhenAbsent", func(t *testing.T) {
+		doc := loadXmp(t, "testdata/xmp/synthetic/software-only.xmp")
+		assert.Equal(t, "", doc.Copyright())
 	})
 }
 
@@ -592,14 +621,20 @@ func TestApexToSeconds(t *testing.T) {
 }
 
 func TestXmpDocument_CameraSerial(t *testing.T) {
-	t.Run("PrefersExifEXSerialNumber", func(t *testing.T) {
-		// Synthetic exifEX fixture writes both exifEX:SerialNumber and
-		// (no aux:SerialNumber). Modern fallback wins.
+	t.Run("PrefersExifEXBodySerialNumber", func(t *testing.T) {
+		// Synthetic exifEX fixture writes exifEX:BodySerialNumber and no
+		// aux:SerialNumber. Modern property wins.
 		doc := loadXmp(t, "testdata/xmp/synthetic/exifex-camera-lens.xmp")
 		assert.Equal(t, "SC1-BODY-123456", doc.CameraSerial())
 	})
+	t.Run("ReadsRealExifToolBodySerialNumber", func(t *testing.T) {
+		// canon_eos_6d.xmp is an ExifTool-written sidecar carrying the
+		// standard exifEX:BodySerialNumber property.
+		doc := loadXmp(t, "testdata/canon_eos_6d.xmp")
+		assert.Equal(t, "033024001432", doc.CameraSerial())
+	})
 	t.Run("FallsBackToAuxSerialNumber", func(t *testing.T) {
-		// canon_eos_6d has aux:SerialNumber but no exifEX:SerialNumber.
+		// aux-only.xmp has aux:SerialNumber but no exifEX:BodySerialNumber.
 		doc := loadXmp(t, "testdata/xmp/synthetic/aux-only.xmp")
 		assert.Equal(t, "BODY-SN-123456", doc.CameraSerial())
 	})

@@ -120,20 +120,29 @@ var (
 		mustCompile("//photoshop:Headline"),
 	}
 
-	// xmpDescriptionChain: dc:description Alt-language fallback.
+	// xmpDescriptionChain: dc:description → tiff:ImageDescription, each with
+	// the lang-alt fallback. tiff:ImageDescription is the deprecated TIFF-schema
+	// equivalent still emitted by some writers.
 	xmpDescriptionChain = chainXPath{
 		mustCompile("//dc:description/rdf:Alt/rdf:li[@xml:lang='x-default']"),
 		mustCompile("(//dc:description/rdf:Alt/rdf:li)[1]"),
 		mustCompile("//dc:description[not(rdf:Alt)]"),
+		mustCompile("//tiff:ImageDescription/rdf:Alt/rdf:li[@xml:lang='x-default']"),
+		mustCompile("(//tiff:ImageDescription/rdf:Alt/rdf:li)[1]"),
+		mustCompile("//tiff:ImageDescription[not(rdf:Alt)]"),
 	}
 
-	// xmpRightsChain: dc:rights Alt-language → xmpRights:WebStatement.
-	// WebStatement is a URL, not free text, but the embedded path uses
-	// the same fallback.
+	// xmpRightsChain: dc:rights Alt-language → tiff:Copyright Alt-language →
+	// xmpRights:WebStatement. tiff:Copyright is the deprecated TIFF-schema
+	// copyright text; WebStatement is a URL, not free text, but the embedded
+	// path uses the same fallback.
 	xmpRightsChain = chainXPath{
 		mustCompile("//dc:rights/rdf:Alt/rdf:li[@xml:lang='x-default']"),
 		mustCompile("(//dc:rights/rdf:Alt/rdf:li)[1]"),
 		mustCompile("//dc:rights[not(rdf:Alt)]"),
+		mustCompile("//tiff:Copyright/rdf:Alt/rdf:li[@xml:lang='x-default']"),
+		mustCompile("(//tiff:Copyright/rdf:Alt/rdf:li)[1]"),
+		mustCompile("//tiff:Copyright[not(rdf:Alt)]"),
 		mustCompile("//xmpRights:WebStatement"),
 	}
 
@@ -144,8 +153,12 @@ var (
 		mustCompile("//xmpRights:UsageTerms[not(rdf:Alt)]"),
 	}
 
-	// xmpSoftwareChain: xmp:CreatorTool.
-	xmpSoftwareChain = chainXPath{elemOrAttr("xmp:CreatorTool")}
+	// xmpSoftwareChain: xmp:CreatorTool → tiff:Software (deprecated TIFF-schema
+	// equivalent still emitted by some writers).
+	xmpSoftwareChain = chainXPath{
+		elemOrAttr("xmp:CreatorTool"),
+		elemOrAttr("tiff:Software"),
+	}
 
 	// xmpDocumentIDChain: xmpMM:OriginalDocumentID (asset-stable) →
 	// xmpMM:DocumentID (per-derivative) → dc:identifier (legacy).
@@ -203,10 +216,10 @@ var (
 		elemOrAttr("xmpDM:CreationDate"),
 	}
 
-	// xmpCameraSerialChain: exifEX:SerialNumber (= EXIF
-	// BodySerialNumber) → aux:SerialNumber.
+	// xmpCameraSerialChain: exifEX:BodySerialNumber (EXIF 0xA431, the property
+	// ExifTool and Adobe emit) → aux:SerialNumber (legacy Adobe).
 	xmpCameraSerialChain = chainXPath{
-		elemOrAttr("exifEX:SerialNumber"),
+		elemOrAttr("exifEX:BodySerialNumber"),
 		elemOrAttr("aux:SerialNumber"),
 	}
 
@@ -366,13 +379,13 @@ func (doc *XmpDocument) Title() string {
 }
 
 // Description returns the caption / image description.
-// Priority: dc:description (Alt/x-default → first rdf:Alt entry → bare text).
+// Priority: dc:description (Alt/x-default → first rdf:Alt entry → bare text) → tiff:ImageDescription.
 func (doc *XmpDocument) Description() string {
 	return SanitizeCaption(xmpDescriptionChain.firstNonEmpty(doc.doc))
 }
 
 // Copyright returns the rights statement.
-// Priority: dc:rights (Alt/x-default → first rdf:Alt entry → bare text) → xmpRights:WebStatement.
+// Priority: dc:rights (Alt/x-default → first rdf:Alt entry → bare text) → tiff:Copyright → xmpRights:WebStatement.
 // WebStatement is a URL approximation of the rights text but matches the embedded path's behavior.
 func (doc *XmpDocument) Copyright() string {
 	return SanitizeString(xmpRightsChain.firstNonEmpty(doc.doc))
@@ -456,7 +469,7 @@ func (doc *XmpDocument) TimeOffset() string {
 }
 
 // CameraSerial returns the camera body serial number.
-// Priority: exifEX:SerialNumber (= EXIF BodySerialNumber 0xA431) →
+// Priority: exifEX:BodySerialNumber (EXIF 0xA431) →
 // aux:SerialNumber (legacy Adobe, still emitted by Lightroom).
 func (doc *XmpDocument) CameraSerial() string {
 	return SanitizeString(xmpCameraSerialChain.firstNonEmpty(doc.doc))
@@ -597,7 +610,7 @@ func (doc *XmpDocument) License() string {
 }
 
 // Software returns the application that wrote the file.
-// Priority: xmp:CreatorTool (single-link).
+// Priority: xmp:CreatorTool → tiff:Software.
 func (doc *XmpDocument) Software() string {
 	return SanitizeString(xmpSoftwareChain.firstNonEmpty(doc.doc))
 }
