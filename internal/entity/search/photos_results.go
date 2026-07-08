@@ -302,6 +302,14 @@ func sphereProjection(proj string) string {
 	return proj
 }
 
+// fisheyePhotoFilter restricts the query to photos that have a live fisheye-family original file.
+// The primary file is the equirectangular dewarp derivative, so the subquery scans all files; it
+// mirrors the base query's `media_id IS NOT NULL` scope to exclude missing/soft-deleted files.
+func fisheyePhotoFilter(s *gorm.DB) *gorm.DB {
+	return s.Where("photos.id IN (SELECT photo_id FROM files WHERE media_id IS NOT NULL AND file_projection IN (?))",
+		[]string{projection.Fisheye.String(), projection.DualFisheye.String()})
+}
+
 // ShareBase returns a deterministic, human friendly file name stem for sharing
 // downloads generated from the photo's timestamp and title.
 func (m *Photo) ShareBase(seq int) string {

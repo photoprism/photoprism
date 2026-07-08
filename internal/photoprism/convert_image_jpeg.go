@@ -27,9 +27,10 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 
 	// Dewarp Insta360 dual-fisheye originals to an equirectangular JPEG via the FFmpeg v360 filter,
 	// so thumbnails and the sphere viewer show corrected pixels. This covers .insp photos as well as
-	// the cover/poster frame extracted from .insv videos. The derivative is tagged equirectangular
-	// and becomes the primary preview; if the dewarp fails, the loop falls back to a normal render.
-	if f.DualFisheye() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+	// the cover/poster frame extracted from .insv videos. Gated on a side-by-side ~2:1 layout so
+	// X3/X4 per-lens and single-lens sources are left as normal renders; if the dewarp fails, the
+	// loop falls back to a normal render too.
+	if f.DualFisheye() && f.DualFisheyeLayout() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		result = append(result, NewConvertCmd(
 			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), &encode.Options{Bin: w.conf.FFmpegBin()})).
 			WithImageVerification().

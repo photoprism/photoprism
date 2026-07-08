@@ -21,7 +21,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -463,10 +462,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		s = s.Where("photos.photo_panorama = 1")
 	}
 
-	// Find fisheye 360° originals only (subquery so it matches non-primary fisheye files).
+	// Find fisheye 360° originals only.
 	if frm.Fisheye {
-		s = s.Where("photos.id IN (SELECT photo_id FROM files WHERE file_projection IN (?))",
-			[]string{projection.Fisheye.String(), projection.DualFisheye.String()})
+		s = fisheyePhotoFilter(s)
 	}
 
 	// Find portrait/landscape/square pictures only.

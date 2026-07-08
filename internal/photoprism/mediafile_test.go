@@ -1102,40 +1102,23 @@ func TestMediaFile_DualFisheye(t *testing.T) {
 	})
 }
 
-func TestMediaFile_DewarpedPreview(t *testing.T) {
-	t.Run("InspPreview", func(t *testing.T) {
-		f, err := NewMediaFile("testdata/insta360.insp.jpg")
-		assert.NoError(t, err)
-		assert.True(t, f.DewarpedPreview())
-	})
-	t.Run("InsvPreview", func(t *testing.T) {
-		f, err := NewMediaFile("testdata/insta360.insv.jpg")
-		assert.NoError(t, err)
-		assert.True(t, f.DewarpedPreview())
-	})
-	t.Run("OrdinaryJpeg", func(t *testing.T) {
-		f, err := NewMediaFile("testdata/flash.jpg")
-		assert.NoError(t, err)
-		assert.False(t, f.DewarpedPreview())
-	})
-	t.Run("InspOriginalNotPreview", func(t *testing.T) {
-		f, err := NewMediaFile("testdata/insta360.insp")
-		assert.NoError(t, err)
-		assert.False(t, f.DewarpedPreview())
-	})
-	t.Run("FisheyeDngPreview", func(t *testing.T) {
+func TestMediaFile_DualFisheyeLayout(t *testing.T) {
+	t.Run("KnownTwoToOne", func(t *testing.T) {
+		// insta360.insp is 1024x512; copied to a .jpg it is decoded natively so the aspect is known.
 		dir := t.TempDir()
-		dngFixture(t, dir, "insta360.dng", true)
-		f, err := NewMediaFile(copyFixture(t, dir, "insta360.dng.jpg", "testdata/flash.jpg"))
+		f, err := NewMediaFile(copyFixture(t, dir, "wide.jpg", "testdata/insta360.insp"))
 		assert.NoError(t, err)
-		assert.True(t, f.DewarpedPreview())
+		assert.True(t, f.DualFisheyeLayout())
 	})
-	t.Run("OrdinaryDngPreview", func(t *testing.T) {
-		dir := t.TempDir()
-		dngFixture(t, dir, "canon.dng", false)
-		f, err := NewMediaFile(copyFixture(t, dir, "canon.dng.jpg", "testdata/flash.jpg"))
+	t.Run("KnownSquare", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg") // 500x500 native → known, not 2:1.
 		assert.NoError(t, err)
-		assert.False(t, f.DewarpedPreview())
+		assert.False(t, f.DualFisheyeLayout())
+	})
+	t.Run("UnknownProceeds", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insp") // no metadata → unknown aspect → proceed.
+		assert.NoError(t, err)
+		assert.True(t, f.DualFisheyeLayout())
 	})
 }
 
@@ -1148,6 +1131,21 @@ func TestMediaFile_FisheyeDng(t *testing.T) {
 	})
 	t.Run("OrdinaryDng", func(t *testing.T) {
 		f, err := NewMediaFile(dngFixture(t, dir, "canon.dng", false))
+		assert.NoError(t, err)
+		assert.False(t, f.FisheyeDng())
+	})
+	t.Run("Model360NotFisheye", func(t *testing.T) {
+		// A non-360 camera whose model merely contains "360" must not be treated as fisheye.
+		cnf := config.TestConfig()
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool is required to build the model fixture")
+		}
+		dst := copyFixture(t, dir, "sx360.dng", filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng"))
+		// #nosec G204 -- arguments are the configured ExifTool binary and a temp file path.
+		if err := exec.Command(cnf.ExifToolBin(), "-q", "-overwrite_original", "-Model=PowerShot SX360", dst).Run(); err != nil {
+			t.Fatal(err)
+		}
+		f, err := NewMediaFile(dst)
 		assert.NoError(t, err)
 		assert.False(t, f.FisheyeDng())
 	})

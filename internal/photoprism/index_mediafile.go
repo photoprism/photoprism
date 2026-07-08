@@ -471,13 +471,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		// A dewarped equirectangular preview of a dual-fisheye original carries no readable
-		// projection metadata, so infer it from the source. Set outside the metadata block above
-		// because these previews often have no EXIF, which leaves data.Error non-nil.
-		if m.DewarpedPreview() {
-			file.SetProjection(projection.Equirectangular.String())
-		}
-
 		// If the file contains multiple images for an animation,
 		// change the media type to "animated".
 		if photo.HasMediaType(media.Image) && m.IsAnimatedImage() {
@@ -600,6 +593,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
 
+			// Fisheye 360° DNGs are dual-fisheye; detection reads make/model/lens/projection, so it
+			// runs inside this metadata-ok block to avoid an extra MetaData() call and a projection
+			// tag on a file whose EXIF failed (leaving 0x0 dimensions).
+			if m.FisheyeDng() {
+				file.SetProjection(projection.DualFisheye.String())
+			}
+
 			// Get video metadata from embedded file?
 			if !m.IsHeic() || !data.HasVideoEmbedded {
 				file.SetDuration(data.Duration)
@@ -652,8 +652,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 		// Insta360 .insp originals store dual-fisheye 360° content; record the projection regardless
 		// of metadata errors (these files often lack EXIF) so the dewarped derivative routes correctly.
-		// Fisheye 360° DNGs are dual-fisheye too, but detected by metadata rather than extension.
-		if m.DualFisheye() || m.FisheyeDng() {
+		if m.DualFisheye() {
 			file.SetProjection(projection.DualFisheye.String())
 		}
 	case m.IsVector():

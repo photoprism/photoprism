@@ -207,9 +207,13 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 		return exec.Command(w.conf.ImageMagickBin(), f.FileName(), avcName), false, nil
 	}
 
-	// Dewarp Insta360 dual-fisheye video to equirectangular with the software v360 filter. It runs
-	// on the CPU and needs frames in system memory, so the hardware encoders are bypassed for these.
-	if f.IsInsv() {
+	// Dewarp Insta360 dual-fisheye video only when the frame is a side-by-side ~2:1 layout — X3/X4
+	// per-lens streams and single-lens .insv are not, and applying the dual-fisheye filter to them
+	// would corrupt the transcode. The v360 filter runs on the CPU and needs frames in system
+	// memory, so the hardware encoders are bypassed for these.
+	dewarp := f.IsInsv() && f.DualFisheyeLayout()
+
+	if dewarp {
 		encoder = encode.SoftwareAvc
 	}
 
@@ -219,7 +223,7 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 		return nil, false, fmt.Errorf("convert: failed to transcode %s (%s)", clean.Log(f.BaseName()), err)
 	}
 
-	if f.IsInsv() {
+	if dewarp {
 		opt.V360 = ffmpeg.V360DualFisheyeToEquirect(w.fisheyeFov(f))
 	}
 

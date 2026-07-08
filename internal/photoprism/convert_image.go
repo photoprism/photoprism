@@ -242,9 +242,10 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	}
 
 	// Fisheye 360° DNGs were developed to a dual-fisheye JPEG above; dewarp that JPEG to
-	// equirectangular now, since FFmpeg cannot develop RAW itself. On success the GPano block below
-	// tags it. Best effort: a failure leaves the developed (non-dewarped) JPEG usable.
-	if f.FisheyeDng() {
+	// equirectangular now, since FFmpeg cannot develop RAW itself. Gated on the developed frame being
+	// a ~2:1 dual-fisheye layout so a misdetected or single-fisheye DNG is left untouched. Best
+	// effort: a failure leaves the developed (non-dewarped) JPEG usable.
+	if f.FisheyeDng() && result.IsJpeg() && result.DualFisheyeLayout() {
 		if dewarpErr := w.dewarpFileInPlace(result.FileName(), w.fisheyeFov(f)); dewarpErr != nil {
 			log.Warnf("convert: %s in %s (dewarp)", clean.Error(dewarpErr), clean.Log(result.RootRelName()))
 		} else {
@@ -252,14 +253,21 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 	}
 
-	// Embed GPano metadata so a dewarped equirectangular derivative is self-describing to external
-	// tools. The indexer records the projection separately (preview derivatives get no metadata
-	// extraction), so this is best effort: a failure leaves the file usable, just untagged.
+	// Tag a dewarped equirectangular derivative with GPano metadata and record its projection in an
+	// ExifTool JSON sidecar, so the indexer reads the real projection through the normal metadata
+	// pipeline (only files that were actually dewarped are tagged). The dewarp/GPano writes changed
+	// the file, so reload it to refresh the cached size/hash regardless of the GPano write outcome.
 	if fileProjection.Equal(projection.Equirectangular.String()) {
 		if projErr := w.writeEquirectangularProjection(result.FileName()); projErr != nil {
 			log.Warnf("convert: %s in %s (write projection)", clean.Error(projErr), clean.Log(result.RootRelName()))
-		} else if reloaded, reloadErr := NewMediaFile(result.FileName()); reloadErr == nil {
+		}
+
+		if reloaded, reloadErr := NewMediaFile(result.FileName()); reloadErr == nil {
 			result = reloaded
+		}
+
+		if _, jsonErr := w.ToJson(result, false); jsonErr != nil {
+			log.Warnf("convert: %s in %s (create json)", clean.Error(jsonErr), clean.Log(result.RootRelName()))
 		}
 	}
 
@@ -305,6 +313,10 @@ func (w *Convert) dewarpFileInPlace(fileName string, fov int) error {
 
 	tmpName := fileName + ".dewarp.jpg"
 
+	// Always clean up the temp file: it is renamed over fileName on success (making this a no-op),
+	// and removed on any error path so no stray "<name>.dewarp.jpg" is left to be indexed.
+	defer func() { _ = os.Remove(tmpName) }()
+
 	cmd := ffmpeg.DewarpDualFisheyeToJpegCmd(fileName, tmpName, fov, &encode.Options{Bin: w.conf.FFmpegBin()})
 	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()))
 
@@ -312,7 +324,6 @@ func (w *Convert) dewarpFileInPlace(fileName string, fov int) error {
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		_ = os.Remove(tmpName)
 		if s := strings.TrimSpace(stderr.String()); s != "" {
 			return errors.New(s)
 		}

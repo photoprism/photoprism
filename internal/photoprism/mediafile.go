@@ -952,55 +952,21 @@ func (m *MediaFile) FisheyeDng() bool {
 		return true
 	}
 
-	if model := strings.ToLower(m.CameraModel()); strings.Contains(model, "theta") || strings.Contains(model, "360") {
-		return true
-	}
-
-	return strings.Contains(strings.ToLower(m.LensModel()), "fisheye")
+	// Ricoh Theta is the other common 360 rig that stores dual-fisheye DNGs. A bare "360" or a
+	// single-lens "fisheye" lens name is deliberately not matched: those are not side-by-side
+	// dual-fisheye and would be corrupted by the dual-fisheye dewarp.
+	return strings.Contains(strings.ToLower(m.CameraModel()), "theta")
 }
 
-// DewarpedPreview reports whether this file is the equirectangular preview generated from a
-// dual-fisheye original. Such previews are named "<original>.jpg" (e.g. "clip.insv.jpg"), so the
-// inner extension identifies the source. This is filename-based on purpose: preview derivatives in
-// the sidecar path get no metadata extraction during indexing, so their projection cannot be read
-// from the file and is instead inferred from the source they were dewarped from.
-func (m *MediaFile) DewarpedPreview() bool {
-	if !m.IsPreviewImage() {
-		return false
-	}
+// DualFisheyeLayout reports whether the frame is compatible with the side-by-side dual-fisheye
+// input the FFmpeg "v360=input=dfisheye" dewarp expects. A known aspect ratio must be close to 2:1;
+// an unknown aspect (0) is treated as compatible so the extension-authoritative .insp/.insv path
+// still dewarps. This rejects Insta360 X3/X4 per-lens streams and single-lens/rectilinear sources
+// (whose real dimensions are known and clearly not 2:1) rather than distorting them.
+func (m *MediaFile) DualFisheyeLayout() bool {
+	r := float64(m.AspectRatio())
 
-	srcName := fs.StripExt(m.FileName())
-
-	switch fs.FileType(srcName) {
-	case fs.ImageInsp, fs.VideoInsv:
-		// Insta360 originals are always dual-fisheye, so the preview is always dewarped.
-		return true
-	case fs.ImageDng:
-		// A .dng preview is dewarped only when its source DNG is a fisheye 360 capture.
-		if src := m.dewarpSource(srcName); src != nil {
-			return src.FisheyeDng()
-		}
-	}
-
-	return false
-}
-
-// dewarpSource resolves the original a preview was generated from, mapping the sidecar path back to
-// the originals path when the preview is a sidecar file, and returns nil if it cannot be resolved.
-func (m *MediaFile) dewarpSource(srcName string) *MediaFile {
-	if fs.FileExists(srcName) {
-		if src, err := NewMediaFile(srcName); err == nil {
-			return src
-		}
-	}
-
-	if rel, err := filepath.Rel(Config().SidecarPath(), srcName); err == nil && !strings.HasPrefix(rel, "..") {
-		if src, err := NewMediaFile(filepath.Join(Config().OriginalsPath(), rel)); err == nil && src.Ok() {
-			return src
-		}
-	}
-
-	return nil
+	return r <= 0 || math.Abs(r-2.0) <= 0.2
 }
 
 // IsHeif checks if the file is a High Efficiency Image File Format (HEIF) container with a supported file type extension.

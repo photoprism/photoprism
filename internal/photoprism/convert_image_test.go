@@ -394,6 +394,62 @@ func TestConvert_writeEquirectangularProjection(t *testing.T) {
 	out, err := exec.Command(cnf.ExifToolBin(), "-s3", "-XMP-GPano:ProjectionType", dst).Output()
 	require.NoError(t, err)
 	assert.Equal(t, "equirectangular", strings.TrimSpace(string(out)))
+
+	t.Run("ExifToolDisabled", func(t *testing.T) {
+		cnf.Options().DisableExifTool = true
+		t.Cleanup(func() { cnf.Options().DisableExifTool = false })
+		// Returns nil (no-op) when ExifTool is unavailable, leaving the file untagged.
+		assert.NoError(t, NewConvert(cnf).writeEquirectangularProjection(filepath.Join(t.TempDir(), "x.jpg")))
+	})
+}
+
+func TestConvert_dewarpFileInPlace(t *testing.T) {
+	cnf := config.TestConfig()
+	convert := NewConvert(cnf)
+
+	t.Run("Success", func(t *testing.T) {
+		if !cnf.FFmpegEnabled() {
+			t.Skip("FFmpeg must be available to dewarp")
+		}
+		dir := t.TempDir()
+		dst := copyFixture(t, dir, "df.jpg", "testdata/insta360.insp") // 2:1 dual-fisheye JPEG.
+		require.NoError(t, convert.dewarpFileInPlace(dst, 204))
+		assert.False(t, fs.FileExists(dst+".dewarp.jpg"), "temp file must not leak")
+		out, err := NewMediaFile(dst)
+		require.NoError(t, err)
+		assert.InDelta(t, 2.0, float64(out.AspectRatio()), 0.2) // equirectangular output is ~2:1.
+	})
+	t.Run("FFmpegDisabled", func(t *testing.T) {
+		cnf.Options().DisableFFmpeg = true
+		t.Cleanup(func() { cnf.Options().DisableFFmpeg = false })
+		err := NewConvert(cnf).dewarpFileInPlace(filepath.Join(t.TempDir(), "x.jpg"), 204)
+		assert.Error(t, err)
+	})
+}
+
+func TestConvert_fisheyeFov(t *testing.T) {
+	cnf := config.TestConfig()
+	cnf.Options().FFmpegFisheyeFov = 190
+	t.Cleanup(func() { cnf.Options().FFmpegFisheyeFov = 0 })
+	convert := NewConvert(cnf)
+
+	t.Run("NilFallsBackToConfig", func(t *testing.T) {
+		assert.Equal(t, 190, convert.fisheyeFov(nil))
+	})
+	t.Run("NoCameraFallsBackToConfig", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		assert.Equal(t, 190, convert.fisheyeFov(f))
+	})
+	t.Run("PerCamera", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available")
+		}
+		dir := t.TempDir()
+		f, err := NewMediaFile(dngFixture(t, dir, "insta360.dng", true)) // Make=Insta360, Model=Insta360 X4.
+		require.NoError(t, err)
+		assert.Equal(t, 204, convert.fisheyeFov(f))
+	})
 }
 
 // TestConvert_JpegConvertCmds_RawEmbeddedPreview verifies that RAW inputs emit
