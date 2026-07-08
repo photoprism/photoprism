@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -170,7 +170,7 @@ msgstr "アクセストークン"
 
 #: src/page/settings/general.vue:423
 msgid "Accessibility"
-msgstr ""
+msgstr "アクセシビリティ"
 
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:692
@@ -515,7 +515,7 @@ msgstr "ファイルを完全に削除して、ストレージスペースを空
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
-msgstr ""
+msgstr "ページのズームを許可する"
 
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
@@ -531,7 +531,7 @@ msgstr "ユーザーがウェブ・インターフェイスを通じて新しい
 
 #: src/page/settings/general.vue:480
 msgid "Allow zooming with pinch gestures on mobile devices."
-msgstr ""
+msgstr "モバイル端末でピンチジェスチャーによるズームを可能にする。"
 
 #: src/component/share/dialog.vue:118
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1044,7 +1044,7 @@ msgstr "コーデック"
 
 #: src/page/settings.vue:86
 msgid "Collections"
-msgstr ""
+msgstr "コレクション"
 
 #: src/component/photo/toolbar.vue:232
 msgid "Color"
@@ -1231,7 +1231,7 @@ msgstr "次の項目のサムネイルを作成しています"
 
 #: src/options/options.js:501
 msgid "Current Name"
-msgstr ""
+msgstr "現在の名前"
 
 #: src/component/settings/password.vue:31
 msgid "Current Password"
@@ -1360,7 +1360,7 @@ msgstr "Darktable を無効化"
 
 #: src/page/settings/collections.vue:17
 msgid "Disable Downloads"
-msgstr ""
+msgstr "ダウンロードを無効にする"
 
 #: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
@@ -1837,7 +1837,7 @@ msgstr "機能のリクエスト"
 
 #: src/page/settings/collections.vue:6
 msgid "Features"
-msgstr ""
+msgstr "特徴"
 
 #: src/options/options.js:487
 msgid "Female"
@@ -2064,11 +2064,11 @@ msgstr "グローバルビューからプライベートアイテムを非表示
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
-msgstr ""
+msgstr "スクロールバーを非表示にする"
 
 #: src/page/settings/general.vue:465
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
-msgstr ""
+msgstr "一部のデスクトップブラウザに表示される固定スクロールバーを非表示にする。"
 
 #: src/options/options.js:381
 msgid "High"
@@ -2993,11 +2993,11 @@ msgstr "オープン"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr ""
+msgstr "デスクトップブラウザを使用する場合、クリックではなくホバー時にメニューを開く。"
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
-msgstr ""
+msgstr "ホバー時に開く"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
@@ -3286,7 +3286,7 @@ msgstr "エンターキーを押して新規項目を作成する"
 
 #: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
-msgstr ""
+msgstr "コレクションがzipアーカイブとしてダウンロードされるのを防ぐ。"
 
 #: src/page/settings/advanced.vue:79
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
@@ -3423,11 +3423,11 @@ msgstr "赤"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr ""
+msgstr "インターフェースのアニメーションや動きの効果を減らす。"
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
-msgstr ""
+msgstr "動きを抑える"
 
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
@@ -3873,7 +3873,7 @@ msgstr "%{s} を共有"
 
 #: src/options/options.js:503
 msgid "Share Friendly"
-msgstr ""
+msgstr "シェアしやすい"
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
 msgid "Show"
@@ -3921,7 +3921,7 @@ msgstr "ユーザーがプロフィールとセキュリティ設定を管理で
 
 #: src/page/settings/general.vue:82
 msgid "Show the Albums section to manually browse and organize pictures."
-msgstr ""
+msgstr "「アルバム」セクションを表示して、手動で写真を閲覧・整理する。"
 
 #: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."
@@ -3929,11 +3929,11 @@ msgstr "カレンダービューを表示し、ライブラリーを年月でブ
 
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
-msgstr ""
+msgstr "「お気に入り」セクションを表示して、スターを付けた写真にすばやくアクセスする。"
 
 #: src/page/settings/general.vue:112
 msgid "Show the Folders section to browse pictures by directory structure."
-msgstr ""
+msgstr "「フォルダ」セクションを表示して、ディレクトリ構造ごとに画像を閲覧する。"
 
 #: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
@@ -3945,7 +3945,7 @@ msgstr "メディア・ライブラリーのインデックス、管理、監視
 
 #: src/page/settings/general.vue:127
 msgid "Show the Media section to browse videos, live photos, and animations."
-msgstr ""
+msgstr "「メディア」セクションを表示して、動画、ライブフォト、アニメーションを閲覧する。"
 
 #: src/page/settings/general.vue:410
 msgid "Show the Places view with interactive maps so you can browse photos by location."

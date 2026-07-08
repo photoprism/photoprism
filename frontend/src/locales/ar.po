@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -170,7 +170,7 @@ msgstr "رمز الوصول"
 
 #: src/page/settings/general.vue:423
 msgid "Accessibility"
-msgstr ""
+msgstr "إمكانية الوصول"
 
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:692
@@ -515,7 +515,7 @@ msgstr "السماح بحذف الملفات بشكل دائم لتحرير مس
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
-msgstr ""
+msgstr "السماح بتكبير الصفحة"
 
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
@@ -531,7 +531,7 @@ msgstr "السماح للمستخدمين بتحميل صور ومقاطع في�
 
 #: src/page/settings/general.vue:480
 msgid "Allow zooming with pinch gestures on mobile devices."
-msgstr ""
+msgstr "السماح بالتكبير والتصغير باستخدام إيماءات الضغط بالأصابع على الأجهزة المحمولة."
 
 #: src/component/share/dialog.vue:118
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1044,7 +1044,7 @@ msgstr "ترميز"
 
 #: src/page/settings.vue:86
 msgid "Collections"
-msgstr ""
+msgstr "المجموعات"
 
 #: src/component/photo/toolbar.vue:232
 msgid "Color"
@@ -1231,7 +1231,7 @@ msgstr "إنشاء صور مصغرة لـ"
 
 #: src/options/options.js:501
 msgid "Current Name"
-msgstr ""
+msgstr "الاسم الحالي"
 
 #: src/component/settings/password.vue:31
 msgid "Current Password"
@@ -1360,7 +1360,7 @@ msgstr "تعطيل Darktable"
 
 #: src/page/settings/collections.vue:17
 msgid "Disable Downloads"
-msgstr ""
+msgstr "تعطيل التنزيلات"
 
 #: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
@@ -1837,7 +1837,7 @@ msgstr "طلب المواصفات"
 
 #: src/page/settings/collections.vue:6
 msgid "Features"
-msgstr ""
+msgstr "الميزات"
 
 #: src/options/options.js:487
 msgid "Female"
@@ -2064,11 +2064,11 @@ msgstr "إخفاء العناصر الخاصة من طرق العرض العام
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
-msgstr ""
+msgstr "إخفاء شريط التمرير"
 
 #: src/page/settings/general.vue:465
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
-msgstr ""
+msgstr "إخفاء شريط التمرير الدائم الذي تعرضه بعض متصفحات سطح المكتب."
 
 #: src/options/options.js:381
 msgid "High"
@@ -2993,11 +2993,11 @@ msgstr "يفتح"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr ""
+msgstr "فتح القوائم عند تمرير المؤشر فوقها بدلاً من النقر عليها عند استخدام متصفح سطح المكتب."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
-msgstr ""
+msgstr "فتح عند تمرير المؤشر"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
@@ -3286,7 +3286,7 @@ msgstr "اضغط على Enter لإنشاء عنصر جديد"
 
 #: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
-msgstr ""
+msgstr "منع تنزيل المجموعات كملفات مضغوطة بتنسيق zip."
 
 #: src/page/settings/advanced.vue:79
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
@@ -3423,11 +3423,11 @@ msgstr "أحمر"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr ""
+msgstr "قلل من الرسوم المتحركة وتأثيرات الحركة في الواجهة."
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
-msgstr ""
+msgstr "تقليل الحركة"
 
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
@@ -3873,7 +3873,7 @@ msgstr "مشاركة %{s}"
 
 #: src/options/options.js:503
 msgid "Share Friendly"
-msgstr ""
+msgstr "مشاركة سهلة"
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
 msgid "Show"
@@ -3921,7 +3921,7 @@ msgstr "إظهار صفحة الحساب حتى يتمكن المستخدمون 
 
 #: src/page/settings/general.vue:82
 msgid "Show the Albums section to manually browse and organize pictures."
-msgstr ""
+msgstr "اعرض قسم «الألبومات» لتصفح الصور وتنظيمها يدويًّا."
 
 #: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."
@@ -3929,11 +3929,11 @@ msgstr "اعرض عرض التقويم لتصفح المكتبة حسب السن
 
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
-msgstr ""
+msgstr "اعرض قسم «المفضلة» للوصول بسرعة إلى الصور التي وضعت عليها علامة نجمة."
 
 #: src/page/settings/general.vue:112
 msgid "Show the Folders section to browse pictures by directory structure."
-msgstr ""
+msgstr "اعرض قسم «المجلدات» لتصفح الصور وفقًا لهيكل المجلدات."
 
 #: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
@@ -3945,7 +3945,7 @@ msgstr "عرض قسم المكتبة لفهرسة مكتبة الوسائط وإ
 
 #: src/page/settings/general.vue:127
 msgid "Show the Media section to browse videos, live photos, and animations."
-msgstr ""
+msgstr "اعرض قسم «الوسائط» لتصفح مقاطع الفيديو والصور الحية والرسوم المتحركة."
 
 #: src/page/settings/general.vue:410
 msgid "Show the Places view with interactive maps so you can browse photos by location."

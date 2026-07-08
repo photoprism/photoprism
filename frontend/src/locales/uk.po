@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -170,7 +170,7 @@ msgstr "Токен доступу"
 
 #: src/page/settings/general.vue:423
 msgid "Accessibility"
-msgstr ""
+msgstr "Доступність"
 
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:692
@@ -515,7 +515,7 @@ msgstr "Дозволяє безповоротно видаляти файли, �
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
-msgstr ""
+msgstr "Дозволити масштабування сторінки"
 
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
@@ -531,7 +531,7 @@ msgstr "Дозвольте користувачам завантажувати �
 
 #: src/page/settings/general.vue:480
 msgid "Allow zooming with pinch gestures on mobile devices."
-msgstr ""
+msgstr "Увімкнути масштабування за допомогою жестів «розведення пальців» на мобільних пристроях."
 
 #: src/component/share/dialog.vue:118
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1044,7 +1044,7 @@ msgstr "Кодек"
 
 #: src/page/settings.vue:86
 msgid "Collections"
-msgstr ""
+msgstr "Колекції"
 
 #: src/component/photo/toolbar.vue:232
 msgid "Color"
@@ -1231,7 +1231,7 @@ msgstr "Створюю мініатюри для"
 
 #: src/options/options.js:501
 msgid "Current Name"
-msgstr ""
+msgstr "Поточна назва"
 
 #: src/component/settings/password.vue:31
 msgid "Current Password"
@@ -1360,7 +1360,7 @@ msgstr "Вимкнути Darktable"
 
 #: src/page/settings/collections.vue:17
 msgid "Disable Downloads"
-msgstr ""
+msgstr "Вимкнути завантаження"
 
 #: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
@@ -1837,7 +1837,7 @@ msgstr "Запит можливостей"
 
 #: src/page/settings/collections.vue:6
 msgid "Features"
-msgstr ""
+msgstr "Особливості"
 
 #: src/options/options.js:487
 msgid "Female"
@@ -2064,11 +2064,11 @@ msgstr "Приховуйте приватні елементи від загал
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
-msgstr ""
+msgstr "Приховати смугу прокрутки"
 
 #: src/page/settings/general.vue:465
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
-msgstr ""
+msgstr "Приховати постійну смугу прокрутки, яка відображається в деяких настільних браузерах."
 
 #: src/options/options.js:381
 msgid "High"
@@ -2993,11 +2993,11 @@ msgstr "Відкрито"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr ""
+msgstr "При використанні настільного браузера відкривати меню при наведенні курсору, а не при натисканні."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
-msgstr ""
+msgstr "Відкрити при наведенні курсору"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
@@ -3286,7 +3286,7 @@ msgstr "Натисніть enter, щоб створити новий елеме�
 
 #: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
-msgstr ""
+msgstr "Запобігати завантаженню колекцій у вигляді ZIP-архівів."
 
 #: src/page/settings/advanced.vue:79
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
@@ -3423,11 +3423,11 @@ msgstr "Червоний"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr ""
+msgstr "Зменшіть кількість анімацій інтерфейсу та ефектів руху."
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
-msgstr ""
+msgstr "Зменшити рух"
 
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
@@ -3873,7 +3873,7 @@ msgstr "Поділитися %{s}"
 
 #: src/options/options.js:503
 msgid "Share Friendly"
-msgstr ""
+msgstr "Поділитися"
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
 msgid "Show"
@@ -3921,7 +3921,7 @@ msgstr "Покажіть сторінку облікового запису, щ�
 
 #: src/page/settings/general.vue:82
 msgid "Show the Albums section to manually browse and organize pictures."
-msgstr ""
+msgstr "Відкрийте розділ «Альбоми», щоб вручну переглядати та упорядковувати фотографії."
 
 #: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."
@@ -3929,11 +3929,11 @@ msgstr "Покажіть подання \"Календар\", щоб перег�
 
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
-msgstr ""
+msgstr "Відкрийте розділ «Вибране», щоб швидко отримати доступ до своїх фотографій, позначених зірочкою."
 
 #: src/page/settings/general.vue:112
 msgid "Show the Folders section to browse pictures by directory structure."
-msgstr ""
+msgstr "Відкрийте розділ «Папки», щоб переглядати зображення за структурою каталогів."
 
 #: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
@@ -3945,7 +3945,7 @@ msgstr "Покажіть розділ Бібліотека, щоб індекс�
 
 #: src/page/settings/general.vue:127
 msgid "Show the Media section to browse videos, live photos, and animations."
-msgstr ""
+msgstr "Відкрийте розділ «Медіа», щоб переглянути відео, фотографії з ефектом «Live Photo» та анімації."
 
 #: src/page/settings/general.vue:410
 msgid "Show the Places view with interactive maps so you can browse photos by location."
