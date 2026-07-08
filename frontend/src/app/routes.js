@@ -33,6 +33,7 @@ import Labels from "page/labels.vue";
 import People from "page/people.vue";
 import Library from "page/library.vue";
 import Settings from "page/settings.vue";
+import Services from "page/services.vue";
 import Admin from "page/admin.vue";
 import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
@@ -677,6 +678,19 @@ export default [
     props: { tab: "settings_content" },
   },
   {
+    name: "settings_collections",
+    path: "/settings/collections",
+    component: Settings,
+    meta: {
+      title: $gettext("Settings"),
+      requiresAuth: true,
+      admin: true,
+      settings: true,
+      background: "background",
+    },
+    props: { tab: "settings_collections" },
+  },
+  {
     name: "settings_media",
     path: "/settings/media",
     redirect: "/settings/content",
@@ -697,7 +711,7 @@ export default [
   {
     name: "settings_services",
     path: "/settings/services",
-    component: Settings,
+    component: Services,
     meta: {
       title: $gettext("Settings"),
       requiresAuth: true,
@@ -705,7 +719,15 @@ export default [
       settings: true,
       background: "background",
     },
-    props: { tab: "settings_services" },
+    beforeEnter: (to, from, next) => {
+      if ($session.loginRequired()) {
+        next({ name: loginRoute });
+      } else if (!$config.feature("services") || $config.deny("services", "manage")) {
+        next({ name: $session.getDefaultRoute() });
+      } else {
+        next();
+      }
+    },
   },
   {
     name: "settings_account",

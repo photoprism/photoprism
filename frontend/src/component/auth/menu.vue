@@ -60,9 +60,15 @@ export default {
   data() {
     return {
       open: false,
-      openOnHover: this.$util.shouldOpenOnHover(),
       instances: [],
     };
+  },
+  computed: {
+    // openOnHover reactively reflects the user's menu open-on-hover preference so a settings
+    // change applies without a page reload (persistent menus keep no mount-time snapshot).
+    openOnHover() {
+      return this.$util.shouldOpenOnHover();
+    },
   },
   mounted() {
     this.refresh();

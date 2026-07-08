@@ -51,7 +51,7 @@ msgstr "%{n} tệp đã được tải lên"
 msgid "%{n} folders found"
 msgstr "Đã tìm thấy %{n} thư mục"
 
-#: src/component/navigation.vue:632
+#: src/component/navigation.vue:646
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB trong số %{q} GB đã sử dụng"
 
@@ -143,10 +143,10 @@ msgstr "Phiên bản mới của %{s} đã có sẵn:"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:96 src/component/navigation.vue:416
-#: src/component/navigation.vue:417 src/component/navigation.vue:429
-#: src/component/navigation.vue:438 src/component/navigation.vue:551
-#: src/component/navigation.vue:559 src/component/navigation.vue:575
+#: src/app/routes.js:97 src/component/navigation.vue:422
+#: src/component/navigation.vue:423 src/component/navigation.vue:435
+#: src/component/navigation.vue:444 src/component/navigation.vue:557
+#: src/component/navigation.vue:565 src/component/navigation.vue:589
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -165,15 +165,19 @@ msgstr "Quyền truy cập đã bị thu hồi."
 msgid "Access Token"
 msgstr "Truy cập thẻ"
 
+#: src/page/settings/general.vue:423
+msgid "Accessibility"
+msgstr ""
+
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
-#: src/component/auth/menu.vue:14 src/component/navigation.vue:678
-#: src/component/navigation.vue:866 src/component/service/upload.vue:25
+#: src/component/auth/menu.vue:14 src/component/navigation.vue:692
+#: src/component/navigation.vue:881 src/component/service/upload.vue:25
 #: src/locales.js:335 src/model/service.js:80 src/model/user.js:151
-#: src/page/settings.vue:112 src/page/settings/general.vue:334
+#: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "Tài khoản"
 
-#: src/component/user/add/dialog.vue:262 src/component/user/add/dialog.vue:277
+#: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
 #: src/component/service/add.vue:131 src/locales.js:439
 msgid "Account created"
 msgstr "Tài khoản đã được tạo"
@@ -253,7 +257,7 @@ msgstr "Mã kích hoạt"
 msgid "Activity"
 msgstr "Hoạt động"
 
-#: src/component/user/add/dialog.vue:195 src/page/admin/users.vue:107
+#: src/component/user/add/dialog.vue:194 src/page/admin/users.vue:107
 #: src/component/user/add/dialog.vue:201 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:125 src/component/settings/apps.vue:126
 #: src/component/settings/apps.vue:135 src/component/settings/apps.vue:194
@@ -340,11 +344,11 @@ msgid "Adjust Location"
 msgstr "Điều chỉnh vị trí"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:907 src/options/auth.js:6
+#: src/common/util.js:922 src/options/auth.js:6
 msgid "Admin"
 msgstr "Quản trị viên"
 
-#: src/page/settings.vue:86
+#: src/page/settings.vue:99
 msgid "Advanced"
 msgstr "Trình độ cao"
 
@@ -420,11 +424,12 @@ msgstr "Không tìm thấy album"
 msgid "Album saved"
 msgstr "Đã lưu album"
 
-#: src/app/routes.js:341 src/component/album/toolbar.vue:118
+#: src/app/routes.js:342 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
-#: src/component/navigation.vue:714 src/component/photo/batch-edit.vue:414
+#: src/component/navigation.vue:728 src/component/photo/batch-edit.vue:414
 #: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
-#: src/options/options.js:257
+#: src/options/options.js:257 src/page/settings/collections.vue:113
+#: src/page/settings/general.vue:81
 msgid "Albums"
 msgstr "Tập ảnh"
 
@@ -485,37 +490,45 @@ msgstr "Tất cả bản gốc"
 msgid "All Years"
 msgstr "Mọi năm"
 
-#: src/page/settings/general.vue:246
+#: src/page/settings/general.vue:306
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
 msgstr "Cho phép cấu hình và sử dụng các ứng dụng và dịch vụ kết nối để tải lên từ xa và đồng bộ hóa."
 
-#: src/page/settings/general.vue:201
+#: src/page/settings/general.vue:261
 msgid "Allow editing of metadata such as title, description, date, and location."
 msgstr "Cho phép chỉnh sửa metadata như tiêu đề, mô tả, ngày tháng và vị trí."
 
-#: src/page/settings/general.vue:216
+#: src/page/settings/general.vue:276
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Cho phép chỉnh sửa metadata, nhãn và album của nhiều hình ảnh cùng một lúc."
 
-#: src/page/settings/general.vue:186
+#: src/page/settings/general.vue:246
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
 msgstr "Bật công cụ Nhập để sao chép hoặc di chuyển tệp từ thư mục Nhập sang thư mục Gốc."
 
-#: src/page/settings/general.vue:276
+#: src/page/settings/general.vue:336
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Cho phép xóa vĩnh viễn các tệp để giải phóng không gian lưu trữ."
 
-#: src/page/settings/general.vue:261
+#: src/page/settings/general.vue:479
+msgid "Allow Page Zoom"
+msgstr ""
+
+#: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
 msgstr "Cho phép cậu lưu trữ ảnh và video để chúng được ẩn đi mà không bị xóa."
 
-#: src/page/settings/general.vue:231
+#: src/page/settings/general.vue:291
 msgid "Allow users to create and share links, and enable sharing with connected services."
 msgstr "Cho phép cậu tạo và chia sẻ liên kết, đồng thời cho phép chia sẻ với các dịch vụ kết nối."
 
-#: src/page/settings/general.vue:156
+#: src/page/settings/general.vue:216
 msgid "Allow users to upload new photos and videos through the web interface."
 msgstr "Cho phép cậu tải lên hình ảnh và video mới thông qua giao diện web."
+
+#: src/page/settings/general.vue:480
+msgid "Allow zooming with pinch gestures on mobile devices."
+msgstr ""
 
 #: src/component/share/dialog.vue:118
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -534,7 +547,7 @@ msgstr "Độ cao (m)"
 msgid "AM"
 msgstr "LÀ"
 
-#: src/app/routes.js:422 src/common/util.js:849
+#: src/app/routes.js:423 src/common/util.js:864
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -546,7 +559,7 @@ msgstr "LÀ"
 msgid "Animated"
 msgstr "hoạt hình"
 
-#: src/page/settings/general.vue:391
+#: src/page/settings/general.vue:521
 msgid "Animation"
 msgstr "Hoạt hình"
 
@@ -646,7 +659,7 @@ msgstr "Tỷ lệ khung hình"
 msgid "Attributes"
 msgstr "Thuộc tính"
 
-#: src/app/routes.js:415 src/common/util.js:847
+#: src/app/routes.js:416 src/common/util.js:862
 #: src/component/navigation.vue:198 src/component/navigation.vue:199
 #: src/component/navigation.vue:211 src/component/navigation.vue:220
 #: src/component/navigation.vue:248 src/options/options.js:358
@@ -668,7 +681,7 @@ msgstr "Âm thanh"
 msgid "Authentication"
 msgstr "Xác thực"
 
-#: src/common/util.js:869
+#: src/common/util.js:884
 msgid "Auto"
 msgstr "Tự động"
 
@@ -698,11 +711,11 @@ msgstr "Huy hiệu"
 msgid "Base Path"
 msgstr "Đường dẫn cơ sở"
 
-#: src/common/util.js:901
+#: src/common/util.js:916
 msgid "Batch"
 msgstr "Lô"
 
-#: src/page/settings/general.vue:215
+#: src/page/settings/general.vue:275
 msgid "Batch Edit"
 msgstr "Chỉnh sửa hàng loạt"
 
@@ -763,7 +776,7 @@ msgstr "Báo cáo lỗi"
 msgid "Busy, please try again later"
 msgstr "Đang bận, vui lòng thử lại sau"
 
-#: src/page/connect.vue:8 src/common/notify.js:122
+#: src/page/connect.vue:8 src/common/notify.js:133
 msgid "Busy, please wait…"
 msgstr "Đang bận, vui lòng đợi…"
 
@@ -771,8 +784,9 @@ msgstr "Đang bận, vui lòng đợi…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Bằng cách sử dụng phần mềm và dịch vụ chúng tôi cung cấp, bạn đồng ý với các điều khoản dịch vụ, chính sách quyền riêng tư và quy tắc ứng xử của chúng tôi."
 
-#: src/app/routes.js:354 src/component/navigation.vue:390
-#: src/options/options.js:263 src/page/settings/general.vue:96
+#: src/app/routes.js:355 src/component/navigation.vue:390
+#: src/options/options.js:263 src/page/settings/collections.vue:173
+#: src/page/settings/general.vue:156
 msgid "Calendar"
 msgstr "Lịch"
 
@@ -811,7 +825,7 @@ msgid "Can't select more items"
 msgstr "Không thể chọn thêm mục"
 
 #: src/component/session/remove/dialog.vue:19
-#: src/component/user/add/dialog.vue:194 src/component/user/edit/dialog.vue:304
+#: src/component/user/add/dialog.vue:193 src/component/user/edit/dialog.vue:304
 #: src/component/user/remove/dialog.vue:19
 #: src/component/cluster/node/user-edit.vue:253
 #: src/component/user/add/dialog.vue:200 src/component/user/edit/dialog.vue:126
@@ -842,11 +856,11 @@ msgstr "Không thể chọn thêm mục"
 msgid "Cancel"
 msgstr "Hủy bỏ"
 
-#: src/common/util.js:1074 src/common/util.js:1081
+#: src/common/util.js:1089 src/common/util.js:1096
 msgid "Cannot copy to clipboard"
 msgstr "Không thể sao chép vào clipboard"
 
-#: src/common/util.js:889 src/component/lightbox/sidebar.vue:801
+#: src/common/util.js:904 src/component/lightbox/sidebar.vue:801
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -887,18 +901,18 @@ msgstr "Đổi mật khẩu"
 msgid "Change private flag"
 msgstr "Thay đổi cờ riêng tư"
 
-#: src/component/user/add/dialog.vue:269 src/component/user/add/dialog.vue:274
-#: src/component/user/edit/dialog.vue:413
+#: src/component/user/add/dialog.vue:268 src/component/user/add/dialog.vue:273
 #: src/component/user/edit/dialog.vue:418
+#: src/component/user/edit/dialog.vue:423
 #: src/component/cluster/node/overview.vue:141
 #: src/component/cluster/node/user-edit.vue:362
 #: src/component/cluster/node/user-edit.vue:367
 #: src/component/user/add/dialog.vue:284 src/component/user/add/dialog.vue:289
-#: src/component/user/edit/dialog.vue:512
-#: src/component/user/edit/dialog.vue:517 src/page/settings/account.vue:539
-#: src/page/settings/account.vue:544 src/component/user/edit/dialog.vue:438
-#: src/component/user/edit/dialog.vue:443
-#: src/component/album/edit/dialog.vue:179
+#: src/component/user/edit/dialog.vue:517
+#: src/component/user/edit/dialog.vue:522 src/page/settings/account.vue:539
+#: src/page/settings/account.vue:544 src/component/user/edit/dialog.vue:443
+#: src/component/user/edit/dialog.vue:448
+#: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
 #: src/component/people/edit/dialog.vue:112
@@ -908,21 +922,22 @@ msgstr "Thay đổi cờ riêng tư"
 msgid "Changes could not be saved"
 msgstr "Không thể lưu các thay đổi"
 
-#: src/component/user/edit/dialog.vue:406
-#: src/component/user/edit/dialog.vue:507
+#: src/component/user/edit/dialog.vue:411
+#: src/component/user/edit/dialog.vue:512
 #: src/component/cluster/node/overview.vue:140
 #: src/component/cluster/node/user-edit.vue:355
-#: src/component/user/edit/dialog.vue:505
-#: src/component/user/edit/dialog.vue:591
-#: src/component/user/edit/dialog.vue:431
-#: src/component/album/edit/dialog.vue:185
+#: src/component/user/edit/dialog.vue:510
+#: src/component/user/edit/dialog.vue:596
+#: src/component/user/edit/dialog.vue:436
+#: src/component/album/edit/dialog.vue:177
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3171
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
 #: src/locales.js:427 src/page/albums.vue:1197
 #: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:491
-#: src/page/settings/content.vue:284 src/page/settings/general.vue:515
+#: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
+#: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
 msgstr "Đã lưu thay đổi thành công"
 
@@ -1004,7 +1019,7 @@ msgstr "Khách hàng"
 msgid "Close"
 msgstr "Đóng"
 
-#: src/app/routes.js:233
+#: src/app/routes.js:234
 msgid "Cluster"
 msgstr "Cụm"
 
@@ -1023,6 +1038,10 @@ msgstr "Nút cụm"
 #: src/component/photo/edit/files.vue:155
 msgid "Codec"
 msgstr "Bộ giải mã"
+
+#: src/page/settings.vue:86
+msgid "Collections"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:232
 msgid "Color"
@@ -1072,16 +1091,15 @@ msgstr "Sự tự tin"
 msgid "Confirm"
 msgstr "Xác nhận"
 
-#: src/component/service/add.vue:98 src/page/settings/services.vue:51
-#: src/page/settings/services.vue:52 src/page/settings/services.vue:79
-#: src/page/settings/services.vue:87
+#: src/component/service/add.vue:98 src/page/services.vue:106
+#: src/page/services.vue:114 src/page/services.vue:59 src/page/services.vue:60
 msgid "Connect"
 msgstr "Kết nối"
 
 #: src/page/settings/account.vue:182 src/page/settings/account.vue:76
 #: src/page/settings/account.vue:77 src/page/settings/account.vue:196
-#: src/component/settings/webdav.vue:15 src/page/settings/account.vue:180
-#: src/page/settings/services.vue:74
+#: src/component/settings/webdav.vue:15 src/page/services.vue:101
+#: src/page/settings/account.vue:180
 msgid "Connect via WebDAV"
 msgstr "Kết nối qua WebDAV"
 
@@ -1130,7 +1148,7 @@ msgstr "Người đóng góp"
 msgid "Converting"
 msgstr "Chuyển đổi"
 
-#: src/common/util.js:1067
+#: src/common/util.js:1082
 msgid "Copied to clipboard"
 msgstr "Sao chép vào clipboard"
 
@@ -1208,6 +1226,10 @@ msgstr "Tạo"
 msgid "Creating thumbnails for"
 msgstr "Tạo hình thu nhỏ cho"
 
+#: src/options/options.js:501
+msgid "Current Name"
+msgstr ""
+
 #: src/component/settings/password.vue:31
 msgid "Current Password"
 msgstr "Mật khẩu hiện tại"
@@ -1257,8 +1279,8 @@ msgstr "Nhật ký gỡ lỗi"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:871 src/model/session.js:42
-#: src/model/user.js:335 src/options/auth.js:40 src/options/auth.js:41
+#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
+#: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:293
 #: src/options/options.js:377 src/options/themes.js:861
@@ -1278,7 +1300,7 @@ msgstr "Thư mục mặc định"
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
 #: src/component/service/remove.vue:22 src/component/share/dialog.vue:98
-#: src/locales.js:321 src/page/settings/general.vue:275
+#: src/locales.js:321 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "Xóa bỏ"
 
@@ -1332,6 +1354,10 @@ msgstr "Tắt sao lưu"
 #: src/page/settings/advanced.vue:324
 msgid "Disable Darktable"
 msgstr "Tắt bảng tối"
+
+#: src/page/settings/collections.vue:17
+msgid "Disable Downloads"
+msgstr ""
 
 #: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
@@ -1411,8 +1437,8 @@ msgstr "Bỏ qua những thay đổi không hợp lệ nhé?"
 msgid "Discard unsaved changes?"
 msgstr "Bỏ qua những thay đổi chưa được lưu nhé?"
 
-#: src/app/routes.js:726 src/app/routes.js:733 src/app/routes.js:740
-#: src/app/routes.js:747
+#: src/app/routes.js:748 src/app/routes.js:755 src/app/routes.js:762
+#: src/app/routes.js:769
 msgid "Discover"
 msgstr "Phát hiện"
 
@@ -1442,7 +1468,7 @@ msgstr "Hiển thị chú thích hình ảnh trong kết quả tìm kiếm."
 msgid "Display picture titles in search results."
 msgstr "Hiển thị tiêu đề hình ảnh trong kết quả tìm kiếm."
 
-#: src/common/util.js:853 src/component/photo/view/cards.vue:115
+#: src/common/util.js:868 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:370
@@ -1483,12 +1509,12 @@ msgstr "Xong."
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
 #: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1749
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
-#: src/component/photo/edit/files.vue:59 src/page/settings/content.vue:169
-#: src/page/settings/general.vue:170
+#: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
+#: src/page/settings/content.vue:174 src/page/settings/general.vue:230
 msgid "Download"
 msgstr "Tải xuống"
 
-#: src/page/settings/content.vue:180
+#: src/page/settings/collections.vue:43 src/page/settings/content.vue:186
 msgid "Download only original media files, without any automatically generated files."
 msgstr "Chỉ tải xuống các tệp phương tiện gốc mà không có bất kỳ tệp nào được tạo tự động."
 
@@ -1540,7 +1566,7 @@ msgstr "Giới hạn kích thước động: %{n}px"
 #: src/component/lightbox/sidebar.vue:165
 #: src/component/lightbox/sidebar.vue:195
 #: src/component/lightbox/sidebar/toolbar.vue:32
-#: src/component/photo/clipboard.vue:60 src/page/settings/general.vue:200
+#: src/component/photo/clipboard.vue:60 src/page/settings/general.vue:260
 msgid "Edit"
 msgstr "Biên tập"
 
@@ -1580,11 +1606,11 @@ msgstr "E-mail"
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
 msgstr "Bật chế độ gỡ lỗi để hiển thị nhật ký bổ sung và trợ giúp khắc phục sự cố."
 
-#: src/page/settings/general.vue:171
+#: src/page/settings/general.vue:231
 msgid "Enable downloading of original and sidecar files from the web interface."
 msgstr "Cho phép tải xuống các tệp gốc và tệp phụ từ giao diện web."
 
-#: src/page/settings/general.vue:82
+#: src/page/settings/general.vue:142
 msgid "Enable face recognition and the People view to easily find people you know."
 msgstr "Bật tính năng nhận diện khuôn mặt và chế độ xem Người để dễ dàng tìm kiếm những người cậu quen biết."
 
@@ -1592,7 +1618,7 @@ msgstr "Bật tính năng nhận diện khuôn mặt và chế độ xem Ngườ
 msgid "Enable new features that may be incomplete or unstable."
 msgstr "Kích hoạt các tính năng mới có thể chưa đầy đủ hoặc không ổn định."
 
-#: src/page/settings/general.vue:305
+#: src/page/settings/general.vue:365
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Kích hoạt trình duyệt tệp để điều hướng cấu trúc thư mục Originals."
 
@@ -1641,13 +1667,13 @@ msgstr "Không tìm thấy thực thể"
 msgid "Error"
 msgstr "Lỗi"
 
-#: src/app/routes.js:542 src/component/navigation.vue:370
+#: src/app/routes.js:543 src/component/navigation.vue:370
 #: src/component/navigation.vue:371 src/component/navigation.vue:383
 #: src/component/navigation.vue:392 src/component/navigation.vue:505
 msgid "Errors"
 msgstr "Lỗi"
 
-#: src/common/util.js:873
+#: src/common/util.js:888
 msgid "Estimate"
 msgstr "Ước lượng"
 
@@ -1792,8 +1818,9 @@ msgstr "Nhanh"
 msgid "Favorite"
 msgstr "Yêu thích"
 
-#: src/app/routes.js:387 src/component/navigation.vue:310
+#: src/app/routes.js:388 src/component/navigation.vue:310
 #: src/options/options.js:261 src/page/albums.vue:392
+#: src/page/settings/general.vue:96
 msgid "Favorites"
 msgstr "Yêu thích"
 
@@ -1805,16 +1832,20 @@ msgstr "Tính năng bị tắt"
 msgid "Feature Request"
 msgstr "Yêu cầu tính năng"
 
+#: src/page/settings/collections.vue:6
+msgid "Features"
+msgstr ""
+
 #: src/options/options.js:487
 msgid "Female"
 msgstr "Nữ giới"
 
-#: src/common/util.js:875 src/component/lightbox/sidebar.vue:1095
+#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1095
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "Tài liệu"
 
-#: src/app/routes.js:511
+#: src/app/routes.js:512
 msgid "File Browser"
 msgstr "Trình duyệt tệp"
 
@@ -1826,11 +1857,9 @@ msgstr "Chuyển đổi tập tin"
 msgid "File deleted"
 msgstr "Đã xóa tệp"
 
-#: src/component/album/edit/dialog.vue:126
 #: src/component/photo/batch-edit.vue:606
-#: src/component/photo/batch-edit.vue:626 src/component/photo/toolbar.vue:407
-#: src/component/photo/toolbar.vue:418 src/component/photo/toolbar.vue:429
-#: src/component/photo/view/list.vue:34
+#: src/component/photo/batch-edit.vue:626 src/component/photo/view/list.vue:34
+#: src/options/options.js:514
 msgid "File Name"
 msgstr "Tên tệp"
 
@@ -1842,8 +1871,7 @@ msgstr "Không tìm thấy tập tin"
 msgid "File removed from stack"
 msgstr "Đã xóa tệp khỏi ngăn xếp"
 
-#: src/component/album/edit/dialog.vue:127 src/component/photo/toolbar.vue:408
-#: src/component/photo/toolbar.vue:419 src/component/photo/toolbar.vue:430
+#: src/options/options.js:515
 msgid "File Size"
 msgstr "Kích thước tập tin"
 
@@ -1856,11 +1884,12 @@ msgid "File uploaded"
 msgstr "File đã được tải lên"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
-#: src/component/photo/edit/files.vue:97
+#: src/component/photo/edit/files.vue:97 src/page/settings/collections.vue:86
+#: src/page/settings/content.vue:229
 msgid "Filename"
 msgstr "Tên tệp"
 
-#: src/component/navigation.vue:732 src/component/photo/edit/dialog.vue:55
+#: src/component/navigation.vue:746 src/component/photo/edit/dialog.vue:55
 #: src/component/photo/edit/dialog.vue:56
 #: src/component/photo/edit/dialog.vue:68
 #: src/component/photo/edit/dialog.vue:70
@@ -1897,8 +1926,9 @@ msgstr "Thư mục chứa tệp %{n}"
 msgid "Folder is empty"
 msgstr "Tệp này rỗng"
 
-#: src/app/routes.js:367 src/component/navigation.vue:457
-#: src/options/options.js:266
+#: src/app/routes.js:368 src/component/navigation.vue:457
+#: src/options/options.js:266 src/page/settings/collections.vue:128
+#: src/page/settings/general.vue:111
 msgid "Folders"
 msgstr "Thư mục"
 
@@ -1946,7 +1976,7 @@ msgstr "Tạo bản xem trước"
 msgid "Generated"
 msgstr "Đã tạo ra"
 
-#: src/component/photo/toolbar.vue:477
+#: src/component/photo/toolbar.vue:449
 msgid "Get Started"
 msgstr "Bắt đầu"
 
@@ -1999,7 +2029,7 @@ msgstr "Băm"
 msgid "Help"
 msgstr "Giúp đỡ"
 
-#: src/app/routes.js:108
+#: src/app/routes.js:109
 msgid "Help & Support"
 msgstr "Trợ giúp & Hỗ trợ"
 
@@ -2009,7 +2039,7 @@ msgstr "Trợ giúp & Hỗ trợ"
 msgid "Hidden"
 msgstr "Ẩn giấu"
 
-#: src/app/routes.js:526
+#: src/app/routes.js:527
 msgid "Hidden Files"
 msgstr "Các tệp ẩn"
 
@@ -2025,9 +2055,17 @@ msgstr "Ẩn chú thích"
 msgid "Hide face markers"
 msgstr "Ẩn các điểm đánh dấu trên khuôn mặt"
 
-#: src/page/settings/general.vue:141
+#: src/page/settings/general.vue:201
 msgid "Hide private content from global views while keeping it accessible in the Private section."
 msgstr "Ẩn các mục riêng tư khỏi các chế độ xem chung trong khi vẫn giữ chúng có thể truy cập được trong phần Riêng tư."
+
+#: src/page/settings/general.vue:464
+msgid "Hide Scrollbar"
+msgstr ""
+
+#: src/page/settings/general.vue:465
+msgid "Hide the permanent scrollbar shown by some desktop browsers."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -2048,7 +2086,7 @@ msgstr "lai"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Nếu mất quyền truy cập vào ứng dụng hoặc thiết bị xác thực, bạn có thể sử dụng mã khôi phục để lấy lại quyền truy cập vào tài khoản của mình."
 
-#: src/common/util.js:839 src/common/util.js:879
+#: src/common/util.js:854 src/common/util.js:894
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:342
 msgid "Image"
@@ -2060,7 +2098,7 @@ msgstr "Chất lượng hình ảnh"
 
 #: src/page/library.vue:66 src/page/library/import.vue:39
 #: src/page/library/import.vue:40 src/page/library/import.vue:68
-#: src/page/library/import.vue:75 src/page/settings/general.vue:185
+#: src/page/library/import.vue:75 src/page/settings/general.vue:245
 msgid "Import"
 msgstr "Nhập khẩu"
 
@@ -2105,11 +2143,11 @@ msgstr "TRONG"
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Trong trường hợp hình ảnh bạn mong đợi bị thiếu, vui lòng quét lại thư viện của bạn và đợi cho đến khi quá trình lập chỉ mục hoàn tất."
 
-#: src/page/settings/content.vue:194
+#: src/page/settings/collections.vue:58 src/page/settings/content.vue:201
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "Bao gồm các tệp hình ảnh RAW khi tải xuống các ngăn xếp và kho lưu trữ."
 
-#: src/page/settings/content.vue:208
+#: src/page/settings/collections.vue:73 src/page/settings/content.vue:216
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Bao gồm các tệp sidecar khi tải xuống ngăn xếp và kho lưu trữ."
 
@@ -2117,7 +2155,7 @@ msgstr "Bao gồm các tệp sidecar khi tải xuống ngăn xếp và kho lưu 
 msgid "Increase storage size or delete files to continue."
 msgstr "Tăng dung lượng lưu trữ hoặc xóa tệp để tiếp tục."
 
-#: src/component/navigation.vue:738 src/page/library.vue:56
+#: src/component/navigation.vue:752 src/page/library.vue:56
 #: src/page/settings/content.vue:6
 msgid "Index"
 msgstr "Mục lục"
@@ -2174,7 +2212,7 @@ msgstr "Không thể kết nối với máy chủ. Hãy thử lại khi máy ch�
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:449
 #: src/component/navigation.vue:452 src/component/user/edit/dialog.vue:27
-#: src/page/admin/users.vue:286 src/app/routes.js:256 src/locales.js:365
+#: src/page/admin/users.vue:286 src/app/routes.js:257 src/locales.js:365
 msgid "Instances"
 msgstr "Các trường hợp"
 
@@ -2277,7 +2315,7 @@ msgstr "Giới hạn kích thước JPEG: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG và hình thu nhỏ được tự động hiển thị khi cần."
 
-#: src/common/util.js:891
+#: src/common/util.js:906
 msgid "Keyword"
 msgstr "Từ khóa"
 
@@ -2300,7 +2338,7 @@ msgstr "Không tìm thấy nhãn"
 msgid "Label saved"
 msgstr "Đã lưu nhãn"
 
-#: src/component/cluster/node/overview.vue:63 src/app/routes.js:557
+#: src/component/cluster/node/overview.vue:63 src/app/routes.js:558
 #: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
 #: src/component/photo/batch-edit.vue:430
 #: src/component/photo/edit/dialog.vue:37
@@ -2308,7 +2346,7 @@ msgstr "Đã lưu nhãn"
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:329
-#: src/options/options.js:265 src/page/settings/general.vue:126
+#: src/options/options.js:265 src/page/settings/general.vue:186
 msgid "Labels"
 msgstr "Nhãn"
 
@@ -2335,7 +2373,7 @@ msgstr "Lân đăng nhập cuôi"
 msgid "Last page"
 msgstr "Trang cuối"
 
-#: src/page/settings/services.vue:149
+#: src/page/services.vue:181
 msgid "Last Sync"
 msgstr "Đồng bộ hóa lần cuối"
 
@@ -2359,11 +2397,11 @@ msgstr "Tìm hiểu thêm"
 
 #: src/page/admin/sessions.vue:345 src/page/admin/users.vue:404
 #: src/page/admin/sessions.vue:343 src/page/admin/users.vue:333
-#: src/page/labels.vue:335
+#: src/page/labels.vue:335 src/page/services.vue:237
 msgid "Learn More"
 msgstr "Tìm hiểu thêm"
 
-#: src/component/navigation.vue:485 src/component/navigation.vue:763
+#: src/component/navigation.vue:485 src/component/navigation.vue:777
 msgid "Legal Information"
 msgstr "Thông tin hợp pháp"
 
@@ -2378,16 +2416,16 @@ msgstr "Ống kính"
 msgid "Lens not found"
 msgstr "Không tìm thấy ống kính"
 
-#: src/app/routes.js:611 src/app/routes.js:627 src/app/routes.js:643
-#: src/component/navigation.vue:477 src/page/settings/general.vue:289
+#: src/app/routes.js:612 src/app/routes.js:628 src/app/routes.js:644
+#: src/component/navigation.vue:477 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "Thư viện"
 
-#: src/page/connect.vue:5 src/app/routes.js:102
-#: src/component/lightbox/sidebar.vue:856 src/component/navigation.vue:404
-#: src/component/navigation.vue:405 src/component/navigation.vue:417
-#: src/component/navigation.vue:426 src/component/navigation.vue:539
-#: src/component/navigation.vue:547 src/component/navigation.vue:555
+#: src/page/connect.vue:5 src/app/routes.js:103
+#: src/component/lightbox/sidebar.vue:856 src/component/navigation.vue:410
+#: src/component/navigation.vue:411 src/component/navigation.vue:423
+#: src/component/navigation.vue:432 src/component/navigation.vue:545
+#: src/component/navigation.vue:553 src/component/navigation.vue:569
 #: src/component/photo/batch-edit.vue:397
 #: src/component/photo/batch-edit.vue:400
 #: src/component/photo/edit/details.vue:332
@@ -2419,14 +2457,14 @@ msgstr "Danh sách"
 msgid "List View"
 msgstr "Xem danh sách"
 
-#: src/common/util.js:843 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:350
 msgid "Live"
 msgstr "Sống"
 
-#: src/app/routes.js:401 src/component/navigation.vue:191
+#: src/app/routes.js:402 src/component/navigation.vue:191
 #: src/component/navigation.vue:192 src/component/navigation.vue:204
 #: src/component/navigation.vue:213 src/component/navigation.vue:241
 msgid "Live Photos"
@@ -2455,7 +2493,7 @@ msgid "Local Time"
 msgstr "Giờ địa phương"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:881 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2472,13 +2510,13 @@ msgstr "Vị trí"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Thông báo nhật ký xuất hiện ở đây bất cứ khi nào PhotoPrism gặp phải các tệp bị hỏng hoặc có các sự cố tiềm ẩn khác."
 
-#: src/component/navigation.vue:348 src/component/navigation.vue:585
-#: src/component/navigation.vue:700
+#: src/component/navigation.vue:348 src/component/navigation.vue:599
+#: src/component/navigation.vue:714
 msgid "Login"
 msgstr "Đăng nhập"
 
-#: src/component/navigation.vue:744 src/page/library.vue:79
-#: src/page/settings/general.vue:319
+#: src/component/navigation.vue:758 src/page/library.vue:79
+#: src/page/settings/general.vue:379
 msgid "Logs"
 msgstr "Nhật ký"
 
@@ -2486,7 +2524,7 @@ msgstr "Nhật ký"
 msgid "Longitude"
 msgstr "Kinh độ"
 
-#: src/component/navigation.vue:615
+#: src/component/navigation.vue:629
 msgid "Lost server connection"
 msgstr "Mất kết nối máy chủ"
 
@@ -2520,7 +2558,7 @@ msgstr "Quản lý tài khoản"
 msgid "Manager"
 msgstr "Giám đốc"
 
-#: src/common/util.js:903
+#: src/common/util.js:918
 msgid "Manual"
 msgstr "Thủ công"
 
@@ -2528,11 +2566,11 @@ msgstr "Thủ công"
 msgid "Manual Upload"
 msgstr "Tải lên thủ công"
 
-#: src/page/settings/general.vue:375
+#: src/page/settings/general.vue:505
 msgid "Maps"
 msgstr "Bản đồ"
 
-#: src/common/util.js:883 src/model/marker.js:132
+#: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Đánh dấu"
 
@@ -2540,8 +2578,8 @@ msgstr "Đánh dấu"
 msgid "Maximum number of accounts has been reached."
 msgstr "Đã đạt đến số lượng tài khoản tối đa."
 
-#: src/app/routes.js:394 src/component/navigation.vue:219
-#: src/options/options.js:258
+#: src/app/routes.js:395 src/component/navigation.vue:219
+#: src/options/options.js:258 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "Media"
 
@@ -2562,7 +2600,7 @@ msgstr "Hợp nhất %{a} với %{b}?"
 msgid "Message"
 msgstr "Tin nhắn"
 
-#: src/common/util.js:893
+#: src/common/util.js:908
 msgid "Metadata"
 msgstr "metadata"
 
@@ -2589,8 +2627,9 @@ msgstr "Cấu hình bị thiếu hoặc không hợp lệ"
 msgid "mixed"
 msgstr "hỗn hợp"
 
-#: src/app/routes.js:328 src/component/navigation.vue:417
-#: src/options/options.js:264 src/page/settings/general.vue:111
+#: src/app/routes.js:329 src/component/navigation.vue:417
+#: src/options/options.js:264 src/page/settings/collections.vue:143
+#: src/page/settings/general.vue:171
 msgid "Moments"
 msgstr "Khoảnh khắc"
 
@@ -2615,7 +2654,7 @@ msgstr "Thêm tùy chọn"
 msgid "Mosaic"
 msgstr "Khảm"
 
-#: src/component/album/edit/dialog.vue:129 src/component/photo/toolbar.vue:433
+#: src/options/options.js:518
 msgid "Most Relevant"
 msgstr "Liên quan nhất"
 
@@ -2639,7 +2678,7 @@ msgstr "Tắt tiếng"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:877 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2656,7 +2695,7 @@ msgstr "Tắt tiếng"
 #: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
 #: src/page/albums.vue:393 src/page/auth/login.vue:80
-#: src/page/people/new.vue:51 src/page/settings/services.vue:145
+#: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
 msgstr "Tên"
 
@@ -2669,7 +2708,7 @@ msgstr "Tên quá dài"
 
 #: src/page/admin/users.vue:261 src/page/admin/users.vue:458
 #: src/page/admin/users.vue:402 src/options/options.js:422
-#: src/options/options.js:432 src/page/settings/services.vue:183
+#: src/options/options.js:432 src/page/services.vue:251
 msgid "Never"
 msgstr "Không bao giờ"
 
@@ -2681,9 +2720,7 @@ msgstr "Mới"
 msgid "New Password"
 msgstr "mật khẩu mới"
 
-#: src/component/album/edit/dialog.vue:122 src/component/photo/toolbar.vue:402
-#: src/component/photo/toolbar.vue:414 src/component/photo/toolbar.vue:424
-#: src/page/albums.vue:395
+#: src/options/options.js:508 src/page/albums.vue:395
 msgid "Newest First"
 msgstr "Mới nhất đầu tiên"
 
@@ -2790,7 +2827,7 @@ msgstr "Không có kết nối máy chủ"
 msgid "No servers configured."
 msgstr "Không có máy chủ nào được cấu hình."
 
-#: src/page/settings/services.vue:11
+#: src/page/services.vue:38
 msgid "No services configured."
 msgstr "Không có dịch vụ nào được cấu hình."
 
@@ -2853,7 +2890,7 @@ msgstr "Không được hỗ trợ"
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "Lưu ý rằng bạn có thể quản lý thư mục gốc của mình theo cách thủ công và việc nhập là tùy chọn."
 
-#: src/page/settings/services.vue:62
+#: src/page/services.vue:89
 msgid "Note:"
 msgstr "Ghi chú:"
 
@@ -2887,9 +2924,7 @@ msgstr "Ngoại tuyến"
 msgid "OK"
 msgstr "ĐƯỢC RỒI"
 
-#: src/component/album/edit/dialog.vue:123 src/component/photo/toolbar.vue:403
-#: src/component/photo/toolbar.vue:415 src/component/photo/toolbar.vue:425
-#: src/page/albums.vue:396
+#: src/options/options.js:509 src/page/albums.vue:396
 msgid "Oldest First"
 msgstr "Cũ nhất đầu tiên"
 
@@ -2953,6 +2988,14 @@ msgstr "Chỉ những tài khoản được quản lý cục bộ mới có th�
 msgid "Open"
 msgstr "Mở"
 
+#: src/page/settings/general.vue:435
+msgid "Open menus on hover instead of on click when using a desktop browser."
+msgstr ""
+
+#: src/page/settings/general.vue:434
+msgid "Open on Hover"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "không bắt buộc"
@@ -2983,7 +3026,7 @@ msgstr "Tên tập tin gốc sẽ được lưu trữ và lập chỉ mục."
 #: src/component/photo/edit/files.vue:103
 #: src/component/photo/edit/files.vue:111 src/component/photo/edit/files.vue:96
 #: src/component/photo/edit/files.vue:97 src/component/photo/edit/info.vue:44
-#: src/component/photo/edit/info.vue:45
+#: src/component/photo/edit/info.vue:45 src/options/options.js:502
 msgid "Original Name"
 msgstr "Tên khai sinh"
 
@@ -2991,7 +3034,8 @@ msgstr "Tên khai sinh"
 #: src/component/navigation.vue:369 src/component/navigation.vue:378
 #: src/component/navigation.vue:491 src/model/file.js:180
 #: src/options/options.js:474 src/page/library/browse.vue:7
-#: src/page/settings/content.vue:179 src/page/settings/general.vue:304
+#: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
+#: src/page/settings/general.vue:364
 msgid "Originals"
 msgstr "Bản gốc"
 
@@ -3067,14 +3111,14 @@ msgstr "Tạm dừng"
 msgid "Payment required"
 msgstr "Cần thanh toán"
 
-#: src/app/routes.js:572 src/app/routes.js:596
+#: src/app/routes.js:573 src/app/routes.js:597
 #: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
-#: src/component/navigation.vue:720 src/component/photo/edit/dialog.vue:46
+#: src/component/navigation.vue:734 src/component/photo/edit/dialog.vue:46
 #: src/component/photo/edit/dialog.vue:47
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:260
-#: src/page/settings/general.vue:81
+#: src/page/settings/general.vue:141
 msgid "People"
 msgstr "Mọi người"
 
@@ -3082,7 +3126,7 @@ msgstr "Mọi người"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Những người được bạn chia sẻ liên kết sẽ có thể xem nội dung công khai."
 
-#: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:550
+#: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
 #: src/locales.js:469
 msgid "Permanently deleted"
 msgstr "Đã xóa vĩnh viễn"
@@ -3128,7 +3172,7 @@ msgstr "PhotoPrism được tự tài trợ 100% và độc lập."
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ Tư cách thành viên"
 
-#: src/app/routes.js:321
+#: src/app/routes.js:322
 msgid "Photos"
 msgstr "Ảnh"
 
@@ -3137,8 +3181,7 @@ msgstr "Ảnh"
 msgid "Picture"
 msgstr "Hình ảnh"
 
-#: src/component/album/edit/dialog.vue:125 src/component/photo/toolbar.vue:406
-#: src/component/photo/toolbar.vue:417 src/component/photo/toolbar.vue:428
+#: src/options/options.js:513
 msgid "Picture Title"
 msgstr "Tiêu đề ảnh"
 
@@ -3158,11 +3201,11 @@ msgstr "Địa điểm"
 msgid "Place & Time"
 msgstr "Địa điểm & Thời gian"
 
-#: src/app/routes.js:471 src/app/routes.js:477 src/app/routes.js:483
-#: src/app/routes.js:498 src/component/navigation.vue:346
-#: src/component/navigation.vue:726 src/options/options.js:262
-#: src/page/places.vue:7 src/page/settings/general.vue:349
-#: src/page/settings/general.vue:363
+#: src/app/routes.js:472 src/app/routes.js:478 src/app/routes.js:484
+#: src/app/routes.js:499 src/component/navigation.vue:346
+#: src/component/navigation.vue:740 src/options/options.js:262
+#: src/page/places.vue:7 src/page/settings/collections.vue:158
+#: src/page/settings/general.vue:409 src/page/settings/general.vue:493
 msgid "Places"
 msgstr "Địa điểm"
 
@@ -3202,7 +3245,7 @@ msgstr "Xin lưu ý rằng việc thay đổi mật khẩu sẽ khiến bạn đ
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Vui lòng khởi động lại phiên bản của bạn để những thay đổi có hiệu lực."
 
-#: src/common/notify.js:119
+#: src/common/notify.js:129
 msgid "Please wait…"
 msgstr "Vui lòng chờ…"
 
@@ -3237,6 +3280,10 @@ msgstr "Nhấn enter để tạo album mới."
 #: src/component/input/chip-selector.vue:59
 msgid "Press enter to create new item"
 msgstr "Nhấn Enter để tạo mục mới"
+
+#: src/page/settings/collections.vue:18
+msgid "Prevent collections from being downloaded as zip archives."
+msgstr ""
 
 #: src/page/settings/advanced.vue:79
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
@@ -3275,13 +3322,13 @@ msgstr "Hình ảnh trước đó"
 msgid "Primary"
 msgstr "Sơ đẳng"
 
-#: src/app/routes.js:436 src/component/album/edit/dialog.vue:80
+#: src/app/routes.js:437 src/component/album/edit/dialog.vue:80
 #: src/component/navigation.vue:120 src/component/navigation.vue:121
 #: src/component/navigation.vue:133 src/component/navigation.vue:142
 #: src/component/navigation.vue:150 src/component/navigation.vue:170
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
-#: src/page/settings/general.vue:140
+#: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Riêng tư"
 
@@ -3324,12 +3371,13 @@ msgstr "Ngẫu nhiên"
 msgid "Rating {0} of {1}"
 msgstr "Xếp hạng {0} của {1}"
 
-#: src/common/util.js:841 src/options/options.js:346
+#: src/common/util.js:856 src/options/options.js:346
 msgid "Raw"
 msgstr "thô"
 
 #: src/component/photo/view/cards.vue:111
-#: src/component/photo/view/mosaic.vue:66 src/page/settings/content.vue:193
+#: src/component/photo/view/mosaic.vue:66 src/page/settings/collections.vue:57
+#: src/page/settings/content.vue:200
 msgid "RAW"
 msgstr "NGUYÊN"
 
@@ -3341,17 +3389,15 @@ msgstr "Lập chỉ mục lại tất cả các bản gốc, bao gồm các tệ
 msgid "Read-Only Mode"
 msgstr "Chế độ chỉ đọc"
 
-#: src/component/album/edit/dialog.vue:124 src/component/photo/toolbar.vue:404
-#: src/component/photo/toolbar.vue:416 src/component/photo/toolbar.vue:426
-#: src/page/albums.vue:397
+#: src/options/options.js:510 src/page/albums.vue:397
 msgid "Recently Added"
 msgstr "Đã thêm gần đây"
 
-#: src/component/photo/toolbar.vue:405
+#: src/options/options.js:511
 msgid "Recently Archived"
 msgstr "Lưu trữ gần đây"
 
-#: src/component/photo/toolbar.vue:427 src/page/albums.vue:398
+#: src/options/options.js:512 src/page/albums.vue:398
 msgid "Recently Edited"
 msgstr "Đã chỉnh sửa gần đây"
 
@@ -3372,20 +3418,28 @@ msgstr "Mã phục hồi"
 msgid "Red"
 msgstr "Màu đỏ"
 
+#: src/page/settings/general.vue:450
+msgid "Reduce interface animations and motion effects."
+msgstr ""
+
+#: src/page/settings/general.vue:449
+msgid "Reduce Motion"
+msgstr ""
+
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
 #: src/page/admin/sessions.vue:336 src/page/admin/users.vue:395
 #: src/page/cluster/activity.vue:42 src/page/cluster/nodes.vue:26
 #: src/page/admin/activity.vue:42 src/page/admin/sessions.vue:334
 #: src/page/admin/users.vue:324 src/component/album/toolbar.vue:146
-#: src/component/photo/toolbar.vue:457 src/locales.js:320
+#: src/component/photo/toolbar.vue:429 src/locales.js:320
 #: src/page/albums.vue:479 src/page/labels.vue:270
 #: src/page/library/browse.vue:16 src/page/library/errors.vue:194
 #: src/page/people/new.vue:7 src/page/people/recognized.vue:35
 msgid "Refresh"
 msgstr "Làm cho khỏe lại"
 
-#: src/app/routes.js:505 src/component/navigation.vue:275
+#: src/app/routes.js:506 src/component/navigation.vue:275
 #: src/component/navigation.vue:276 src/component/navigation.vue:288
 #: src/component/navigation.vue:297 src/component/navigation.vue:324
 #: src/component/navigation.vue:353 src/component/navigation.vue:361
@@ -3404,13 +3458,14 @@ msgstr "Đăng ký"
 msgid "Registration disabled"
 msgstr "Đăng ký bị vô hiệu hóa"
 
-#: src/component/navigation.vue:422 src/component/navigation.vue:672
-#: src/component/update.vue:28
+#: src/component/navigation.vue:422 src/component/navigation.vue:686
+#: src/component/update.vue:28 src/page/services.vue:228
 msgid "Reload"
 msgstr "Tải lại"
 
-#: src/component/navigation.vue:599 src/component/navigation.vue:887
-#: src/component/update.vue:62 src/page/settings/general.vue:511
+#: src/component/navigation.vue:599 src/component/navigation.vue:902
+#: src/component/update.vue:62 src/page/settings/general.vue:642
+#: src/page/settings/general.vue:659
 msgid "Reloading…"
 msgstr "Đang tải lại…"
 
@@ -3516,7 +3571,7 @@ msgstr "Giới hạn thử lại"
 msgid "Retype Password"
 msgstr "Gõ lại mật khẩu"
 
-#: src/app/routes.js:429 src/component/navigation.vue:113
+#: src/app/routes.js:430 src/component/navigation.vue:113
 #: src/component/navigation.vue:114 src/component/navigation.vue:126
 #: src/component/navigation.vue:135 src/component/navigation.vue:143
 #: src/component/navigation.vue:163
@@ -3639,12 +3694,12 @@ msgstr "Phạm vi"
 #: src/component/cluster/node/users.vue:11 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/page/cluster/activity.vue:13
 #: src/page/cluster/nodes.vue:13 src/page/admin/activity.vue:13
-#: src/component/meta/location/dialog.vue:60 src/component/navigation.vue:708
+#: src/component/meta/location/dialog.vue:60 src/component/navigation.vue:722
 #: src/component/navigation.vue:91 src/component/photo/toolbar.vue:34
 #: src/locales.js:319 src/options/options.js:256 src/page/albums.vue:20
 #: src/page/labels.vue:15 src/page/library/errors.vue:18
 #: src/page/people/recognized.vue:14 src/page/places.vue:22
-#: src/page/settings/content.vue:117
+#: src/page/services.vue:15 src/page/settings/content.vue:117
 msgid "Search"
 msgstr "Tìm kiếm"
 
@@ -3744,8 +3799,11 @@ msgstr "Dịch vụ"
 msgid "Service URL"
 msgstr "URL dịch vụ"
 
-#: src/locales.js:363 src/page/settings.vue:99
-#: src/page/settings/general.vue:245
+#: src/component/navigation.vue:404 src/component/navigation.vue:405
+#: src/component/navigation.vue:417 src/component/navigation.vue:426
+#: src/component/navigation.vue:539 src/component/navigation.vue:547
+#: src/component/navigation.vue:555 src/component/navigation.vue:563
+#: src/locales.js:363 src/page/settings/general.vue:305
 msgid "Services"
 msgstr "Dịch vụ"
 
@@ -3775,10 +3833,10 @@ msgstr "Đặt làm Ảnh bìa"
 
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
 #: src/component/navigation.vue:491 src/component/navigation.vue:494
-#: src/app/routes.js:213 src/app/routes.js:660 src/app/routes.js:672
-#: src/app/routes.js:689 src/app/routes.js:702 src/app/routes.js:715
-#: src/component/navigation.vue:527 src/component/navigation.vue:686
-#: src/options/options.js:267
+#: src/app/routes.js:214 src/app/routes.js:661 src/app/routes.js:673
+#: src/app/routes.js:685 src/app/routes.js:703 src/app/routes.js:716
+#: src/app/routes.js:737 src/component/navigation.vue:527
+#: src/component/navigation.vue:700 src/options/options.js:267
 msgid "Settings"
 msgstr "Cài đặt"
 
@@ -3802,13 +3860,17 @@ msgid "Severity"
 msgstr "Mức độ nghiêm trọng"
 
 #: src/component/album/clipboard.vue:24 src/component/album/toolbar.vue:165
-#: src/component/photo/clipboard.vue:24 src/page/settings/general.vue:230
+#: src/component/photo/clipboard.vue:24 src/page/settings/general.vue:290
 msgid "Share"
 msgstr "Chia sẻ"
 
 #: src/component/share/dialog.vue:14
 msgid "Share %{s}"
 msgstr "Chia sẻ %{s}"
+
+#: src/options/options.js:503
+msgid "Share Friendly"
+msgstr ""
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
 msgid "Show"
@@ -3842,31 +3904,47 @@ msgstr "Hiển thị ẩn"
 msgid "Show Important Only"
 msgstr "Chỉ hiển thị quan trọng"
 
-#: src/page/settings/general.vue:320
+#: src/page/settings/general.vue:380
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
 msgstr "Hiển thị nhật ký trong giao diện web để theo dõi hoạt động và khắc phục sự cố."
 
-#: src/page/settings/general.vue:112
+#: src/page/settings/general.vue:172
 msgid "Show smart albums that group pictures by occasion, trip, or location."
 msgstr "Hiển thị các album thông minh nhóm ảnh theo sự kiện, chuyến đi hoặc vị trí."
 
-#: src/page/settings/general.vue:335
+#: src/page/settings/general.vue:395
 msgid "Show the Account page so users can manage their profile and security settings."
 msgstr "Hiển thị trang Tài khoản để cậu có thể quản lý hồ sơ và cài đặt bảo mật của mình."
 
-#: src/page/settings/general.vue:97
+#: src/page/settings/general.vue:82
+msgid "Show the Albums section to manually browse and organize pictures."
+msgstr ""
+
+#: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "Hiển thị chế độ xem Lịch để duyệt thư viện theo năm và tháng."
 
-#: src/page/settings/general.vue:127
+#: src/page/settings/general.vue:97
+msgid "Show the Favorites section to quickly access your starred pictures."
+msgstr ""
+
+#: src/page/settings/general.vue:112
+msgid "Show the Folders section to browse pictures by directory structure."
+msgstr ""
+
+#: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
 msgstr "Hiển thị phần Nhãn để xem và quản lý các nhãn do AI tạo ra."
 
-#: src/page/settings/general.vue:290
+#: src/page/settings/general.vue:350
 msgid "Show the Library section to index, manage, and monitor the media library."
 msgstr "Hiển thị phần Thư viện để lập chỉ mục, quản lý và theo dõi thư viện phương tiện."
 
-#: src/page/settings/general.vue:350
+#: src/page/settings/general.vue:127
+msgid "Show the Media section to browse videos, live photos, and animations."
+msgstr ""
+
+#: src/page/settings/general.vue:410
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Hiển thị chế độ xem Địa điểm với bản đồ tương tác để cậu có thể duyệt ảnh theo vị trí."
 
@@ -3874,8 +3952,8 @@ msgstr "Hiển thị chế độ xem Địa điểm với bản đồ tương t�
 msgid "Show Titles"
 msgstr "Hiển thị tiêu đề"
 
-#: src/common/util.js:855 src/model/file.js:195
-#: src/page/settings/content.vue:207
+#: src/common/util.js:870 src/model/file.js:195
+#: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "xe sidecar"
 
@@ -3890,7 +3968,7 @@ msgstr "Đăng nhập"
 
 #: src/component/navigation.vue:414 src/page/auth/instances.vue:64
 #: src/page/auth/instances.vue:71 src/component/auth/menu.vue:42
-#: src/component/navigation.vue:669
+#: src/component/navigation.vue:683
 msgid "Sign Out"
 msgstr "Đăng xuất"
 
@@ -3963,7 +4041,7 @@ msgid "Sort by Relevance"
 msgstr "Sắp xếp theo mức độ liên quan"
 
 #: src/component/album/edit/dialog.vue:67 src/component/photo/toolbar.vue:161
-#: src/page/albums.vue:98
+#: src/page/albums.vue:98 src/page/settings/collections.vue:101
 msgid "Sort Order"
 msgstr "Thứ tự sắp xếp"
 
@@ -4038,7 +4116,7 @@ msgstr "Kho"
 msgid "Streets"
 msgstr "Đường phố"
 
-#: src/common/util.js:895 src/component/lightbox/sidebar.vue:814
+#: src/common/util.js:910 src/component/lightbox/sidebar.vue:814
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4085,11 +4163,11 @@ msgstr "Quản trị viên cấp cao"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Hỗ trợ cho các dịch vụ bổ sung, như Google Drive, sẽ được bổ sung theo thời gian."
 
-#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:603
+#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:617
 msgid "Support Our Mission"
 msgstr "Hỗ trợ sứ mệnh của chúng tôi"
 
-#: src/page/settings/services.vue:147
+#: src/page/services.vue:179
 msgid "Sync"
 msgstr "Đồng bộ hóa"
 
@@ -4168,7 +4246,7 @@ msgstr "Phiên bản này chưa được cấu hình URL trang web."
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn như thể chúng là cục bộ."
 
-#: src/page/settings/services.vue:65
+#: src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn như thể chúng là cục bộ."
 
@@ -4192,7 +4270,7 @@ msgstr "Múi giờ"
 msgid "Timeout"
 msgstr "Hết giờ"
 
-#: src/common/util.js:897 src/component/photo/view/list.vue:34
+#: src/common/util.js:912 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Tiêu đề"
 
@@ -4240,7 +4318,7 @@ msgstr "Đã chọn quá nhiều tệp"
 msgid "Too many requests"
 msgstr "quá nhiều yêu cầu"
 
-#: src/component/photo/toolbar.vue:485 src/page/library/errors.vue:204
+#: src/component/photo/toolbar.vue:457 src/page/library/errors.vue:204
 msgid "Troubleshooting"
 msgstr "Xử lý sự cố"
 
@@ -4294,7 +4372,7 @@ msgstr "ID duy nhất"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:612 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1736
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:695
@@ -4324,12 +4402,12 @@ msgid "Unknown location"
 msgstr "Vị trí không rõ"
 
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
-#: src/page/settings/account.vue:475 src/component/navigation.vue:855
+#: src/page/settings/account.vue:475 src/component/navigation.vue:870
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
 msgid "Unregistered"
 msgstr "Chưa đăng ký"
 
-#: src/app/routes.js:380 src/component/navigation.vue:206
+#: src/app/routes.js:381 src/component/navigation.vue:206
 msgid "Unsorted"
 msgstr "Chưa sắp xếp"
 
@@ -4371,8 +4449,8 @@ msgstr "Đang cập nhật chỉ mục"
 msgid "Updating moments"
 msgstr "Cập nhật khoảnh khắc"
 
-#: src/component/user/edit/dialog.vue:502
-#: src/component/user/edit/dialog.vue:586
+#: src/component/user/edit/dialog.vue:507
+#: src/component/user/edit/dialog.vue:591
 msgid "Updating picture…"
 msgstr "Đang cập nhật hình ảnh…"
 
@@ -4385,11 +4463,11 @@ msgid "Updating stacks"
 msgstr "Cập nhật ngăn xếp"
 
 #: src/component/navigation.vue:334 src/page/connect.vue:20
-#: src/component/navigation.vue:410 src/component/navigation.vue:411
-#: src/component/navigation.vue:423 src/component/navigation.vue:432
-#: src/component/navigation.vue:545 src/component/navigation.vue:553
-#: src/component/navigation.vue:561 src/component/navigation.vue:569
-#: src/component/navigation.vue:597 src/component/navigation.vue:757
+#: src/component/navigation.vue:416 src/component/navigation.vue:417
+#: src/component/navigation.vue:429 src/component/navigation.vue:438
+#: src/component/navigation.vue:551 src/component/navigation.vue:559
+#: src/component/navigation.vue:575 src/component/navigation.vue:583
+#: src/component/navigation.vue:611 src/component/navigation.vue:771
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Nâng cấp"
@@ -4402,15 +4480,15 @@ msgstr "Nâng cấp"
 msgid "Upgrade Now"
 msgstr "Nâng cấp ngay bây giờ"
 
-#: src/component/album/toolbar.vue:175 src/component/navigation.vue:694
-#: src/component/photo/toolbar.vue:467 src/component/service/upload.vue:28
+#: src/component/album/toolbar.vue:175 src/component/navigation.vue:708
+#: src/component/photo/toolbar.vue:439 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/upload/dialog.vue:122
 #: src/component/upload/dialog.vue:190 src/component/upload/dialog.vue:67
 #: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:489 src/page/labels.vue:325
-#: src/page/library/import.vue:64 src/page/settings/general.vue:155
-#: src/page/settings/services.vue:146
+#: src/page/library/import.vue:64 src/page/services.vue:178
+#: src/page/settings/general.vue:215
 msgid "Upload"
 msgstr "Tải lên"
 
@@ -4488,12 +4566,12 @@ msgstr "Sử dụng mã khôi phục của bạn hoặc liên hệ với quản 
 #: src/page/admin/sessions.vue:221 src/page/admin/sessions.vue:98
 #: src/component/cluster/node/overview.vue:77 src/model/cluster-instance.js:32
 #: src/page/admin/sessions.vue:138 src/page/admin/sessions.vue:294
-#: src/page/admin/sessions.vue:292 src/locales.js:333 src/model/user.js:450
+#: src/page/admin/sessions.vue:292 src/locales.js:333 src/model/user.js:458
 #: src/options/auth.js:9
 msgid "User"
 msgstr "Người dùng"
 
-#: src/component/navigation.vue:750
+#: src/component/navigation.vue:764
 msgid "User Guide"
 msgstr "Hướng dẫn sử dụng"
 
@@ -4527,7 +4605,7 @@ msgstr "Người dùng"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:851 src/component/photo/view/cards.vue:114
+#: src/common/util.js:866 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:366
 msgid "Vector"
@@ -4552,7 +4630,7 @@ msgstr "Cần có email đã được xác minh."
 msgid "Version"
 msgstr "Phiên bản"
 
-#: src/common/util.js:845 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4560,12 +4638,11 @@ msgstr "Phiên bản"
 msgid "Video"
 msgstr "Băng hình"
 
-#: src/component/album/edit/dialog.vue:128 src/component/photo/toolbar.vue:409
-#: src/component/photo/toolbar.vue:420 src/component/photo/toolbar.vue:431
+#: src/options/options.js:516
 msgid "Video Duration"
 msgstr "Thời lượng video"
 
-#: src/app/routes.js:408 src/component/navigation.vue:184
+#: src/app/routes.js:409 src/component/navigation.vue:184
 #: src/component/navigation.vue:185 src/component/navigation.vue:197
 #: src/component/navigation.vue:206 src/component/navigation.vue:234
 #: src/options/options.js:259
@@ -4585,7 +4662,7 @@ msgstr "Xem kết quả tìm kiếm dưới dạng danh sách."
 msgid "Viewer"
 msgstr "Người xem"
 
-#: src/common/util.js:905
+#: src/common/util.js:920
 msgid "Vision"
 msgstr "Tầm nhìn"
 
@@ -4594,7 +4671,7 @@ msgstr "Tầm nhìn"
 msgid "Visitor"
 msgstr "Khách thăm quan"
 
-#: src/component/photo/toolbar.vue:432
+#: src/options/options.js:517
 msgid "Visual Similarity"
 msgstr "Sự tương đồng về hình ảnh"
 
@@ -4602,7 +4679,7 @@ msgstr "Sự tương đồng về hình ảnh"
 msgid "Warning"
 msgstr "Cảnh báo"
 
-#: src/component/user/add/dialog.vue:140 src/component/user/edit/dialog.vue:272
+#: src/component/user/add/dialog.vue:133 src/component/user/edit/dialog.vue:272
 #: src/page/admin/users.vue:186 src/component/cluster/node/user-edit.vue:222
 #: src/component/cluster/node/users.vue:155
 #: src/component/user/add/dialog.vue:139 src/component/user/edit/dialog.vue:295
@@ -4611,7 +4688,7 @@ msgstr "Cảnh báo"
 msgid "Web Login"
 msgstr "Đăng nhập web"
 
-#: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:282
+#: src/component/user/add/dialog.vue:142 src/component/user/edit/dialog.vue:282
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
 #: src/component/user/add/dialog.vue:148 src/component/user/edit/dialog.vue:298
 #: src/page/admin/users.vue:280 src/options/auth.js:85 src/options/auth.js:98
@@ -4623,7 +4700,7 @@ msgstr "WebDAV"
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "Máy khách WebDAV có thể kết nối với PhotoPrism bằng URL sau:"
 
-#: src/page/settings/services.vue:63
+#: src/page/services.vue:90
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
 msgstr ""
 "Các máy khách WebDAV, như Windows Explorer của Microsoft hoặc Finder của Apple, có thể kết nối trực tiếp với\n"
@@ -4774,10 +4851,10 @@ msgctxt "Edit"
 msgid "Content"
 msgstr "Nội dung"
 
-#: src/app/routes.js:453 src/component/navigation.vue:127
+#: src/app/routes.js:454 src/component/navigation.vue:127
 #: src/component/navigation.vue:128 src/component/navigation.vue:140
 #: src/component/navigation.vue:149 src/component/navigation.vue:157
-#: src/component/navigation.vue:177 src/page/settings/general.vue:260
+#: src/component/navigation.vue:177 src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
 msgstr "Lưu trữ"
