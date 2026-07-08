@@ -92,6 +92,7 @@ import $notify from "common/notify";
 import { MaxItems } from "common/clipboard";
 import download from "common/download";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import PLoading from "component/loading.vue";
 
 export default {
@@ -131,7 +132,6 @@ export default {
         limit: 999,
         offset: 0,
       },
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
       breadcrumbs: [],
@@ -166,6 +166,10 @@ export default {
 
     this.search();
 
+    // No code currently publishes folders.* events — neither the frontend ($event bus) nor
+    // the backend (and "folders" is not in the WebsocketTopics forward allowlist), so this
+    // subscription is dormant. If wired up, it must emit UID-only payloads and onUpdate's
+    // `updated` branch needs converting to a by-UID refetch (it still assumes a full entity).
     this.subscriptions.push(this.$event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
     this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
   },
@@ -483,7 +487,7 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
+        case ACTION_UPDATED:
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -495,7 +499,7 @@ export default {
             }
           }
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -510,7 +514,7 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
           break;
         default:

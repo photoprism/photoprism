@@ -11,10 +11,14 @@
   >
     <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent="confirm">
       <v-card>
-        <v-card-title class="d-flex justify-start align-center ga-3">
-          <v-icon icon="mdi-bookmark" size="28" color="primary"></v-icon>
-          <h6 class="text-h6">{{ $gettext(`Add to album`) }}</h6>
-        </v-card-title>
+        <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
+          <v-toolbar-title>
+            {{ $gettext(`Add to album`) }}
+          </v-toolbar-title>
+          <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
         <v-card-text>
           <v-combobox
             ref="input"
@@ -68,7 +72,7 @@
   </v-dialog>
 </template>
 <script>
-import Album from "model/album";
+import Album, { MaxLength as AlbumMaxLength } from "model/album";
 import { createAlbumSelectionWatcher } from "common/albums";
 
 // TODO: Handle cases where users have more than 10000 albums.
@@ -131,6 +135,14 @@ export default {
           namesToCreate.push(a);
         }
       });
+
+      // Block the create path when any typed name exceeds the backend cap —
+      // otherwise Album.SetTitle silently truncates with an ellipsis and the
+      // dialog reports success against a renamed album the user didn't intend.
+      if (namesToCreate.some((title) => (title || "").trim().length > AlbumMaxLength.Title)) {
+        this.$notify.error(this.$gettext("%{s} is too long", { s: this.$gettext("Name") }));
+        return;
+      }
 
       // Deduplicate existing UIDs
       const uniqueExistingUids = [...new Set(existingUids)];

@@ -126,7 +126,7 @@ func TestUniform(t *testing.T) {
 		}
 	)
 
-	for i := 0; i < l; i++ {
+	for range l {
 		u := uniform(d)
 		if u < 0 || u > 10 {
 			t.Error("Unformly distributed variable out of bounds")

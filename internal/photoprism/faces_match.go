@@ -238,11 +238,12 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		return result, nil
 	}
 
-	max := query.CountMarkers(entity.MarkerFace)
-	processed := make(map[string]struct{}, max)
+	maxMarkers := query.CountMarkers(entity.MarkerFace)
+	processed := make(map[string]struct{}, maxMarkers)
 	totalProcessed := 0
 
 	offset := 0
+	start := time.Now()
 
 	for {
 		var markers entity.Markers
@@ -263,8 +264,8 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 
 		if force {
 			offset += len(markers)
-			if offset >= max {
-				offset = max
+			if offset >= maxMarkers {
+				offset = maxMarkers
 			}
 		}
 
@@ -350,7 +351,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 				result.Updated++
 			}
 
-			if selFace != nil && dist >= 0 {
+			if dist >= 0 {
 				stat := stats[selFace]
 				if stat == nil {
 					stat = &faceMatchStats{}
@@ -376,9 +377,14 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			break
 		}
 
-		log.Debugf("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
+		if time.Since(start) > time.Duration(time.Minute*15) {
+			log.Infof("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
+			start = time.Now()
+		} else {
+			log.Debugf("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
+		}
 
-		if totalProcessed >= max {
+		if totalProcessed >= maxMarkers {
 			break
 		}
 
@@ -411,16 +417,11 @@ func minMarkerDistance(faceEmb face.Embedding, embeddings face.Embeddings) float
 func embeddingSignHash(values []float64) uint32 {
 	var hash uint32
 
-	limit := faceIndexHashDims
-
-	if limit > len(values) {
-		limit = len(values)
-	}
+	limit := min(min(len(values), faceIndexHashDims), 32)
 
 	for i := 0; i < limit; i++ {
-		if values[i] >= 0 && i < 32 {
-			//nolint:gosec // shift count bounded by 32 bits.
-			hash |= 1 << uint32(i)
+		if values[i] >= 0 {
+			hash |= uint32(1) << i
 		}
 	}
 
@@ -434,11 +435,7 @@ func embeddingSignHashFromEmbeddings(embeddings face.Embeddings) uint32 {
 		return 0
 	}
 
-	dims := faceIndexHashDims
-
-	if dims > len(embeddings[0]) {
-		dims = len(embeddings[0])
-	}
+	dims := min(faceIndexHashDims, len(embeddings[0]))
 
 	var sums [faceIndexHashDims]float64
 

@@ -16,7 +16,7 @@ func TestClientRegistry_FindByClientID(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-find-clientid")
 
 	r, _ := NewClientRegistryWithConfig(c)
-	n := &Node{Node: cluster.Node{Name: "pp-find-client", Role: cluster.RoleApp, UUID: rnd.UUIDv7()}}
+	n := &Node{Node: cluster.Node{Name: "pp-find-client", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
 	assert.NoError(t, r.Put(n))
 
 	got, err := r.FindByClientID(n.ClientID)
@@ -35,7 +35,7 @@ func TestClientRegistry_ClientIDChangedAfterRestore(t *testing.T) {
 
 	uuid := rnd.UUIDv7()
 	// Original row
-	a := entity.NewClient().SetName("pp-restore").SetRole(cluster.RoleApp)
+	a := entity.NewClient().SetName("pp-restore").SetRole(cluster.RoleInstance)
 	a.NodeUUID = uuid
 	assert.NoError(t, a.Create())
 	oldID := a.ClientUID
@@ -43,7 +43,7 @@ func TestClientRegistry_ClientIDChangedAfterRestore(t *testing.T) {
 	// Simulate restore: remove old row, create new row for same node UUID with new UID
 	assert.NoError(t, a.Delete())
 	time.Sleep(1100 * time.Millisecond)
-	b := entity.NewClient().SetName("pp-restore").SetRole(cluster.RoleApp)
+	b := entity.NewClient().SetName("pp-restore").SetRole(cluster.RoleInstance)
 	b.NodeUUID = uuid
 	assert.NoError(t, b.Create())
 
@@ -69,7 +69,7 @@ func TestClientRegistry_SwapNames_UUIDAuthoritative(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-swap-names")
 
 	r, _ := NewClientRegistryWithConfig(c)
-	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: cluster.RoleApp}}
+	a := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: cluster.RoleInstance}}
 	b := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-b", Role: "service"}}
 	assert.NoError(t, r.Put(a))
 	assert.NoError(t, r.Put(b))
@@ -113,7 +113,7 @@ func TestClientRegistry_DBDriverAndFields(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-dbdriver")
 
 	r, _ := NewClientRegistryWithConfig(c)
-	n := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-db", Role: cluster.RoleApp}}
+	n := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-db", Role: cluster.RoleInstance}}
 	db := n.ensureDatabase()
 	db.Name = "cluster_d123"
 	db.User = "cluster_u123"

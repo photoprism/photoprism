@@ -33,6 +33,7 @@ type ClientConfig struct {
 	Copyright        string              `json:"copyright"`
 	Flags            string              `json:"flags"`
 	BaseUri          string              `json:"baseUri"`
+	FrontendUri      string              `json:"frontendUri"`
 	StorageNamespace string              `json:"storageNamespace"`
 	StaticUri        string              `json:"staticUri"`
 	ClientAssets     *ClientAssets       `json:"-"`
@@ -45,6 +46,7 @@ type ClientConfig struct {
 	SiteUrl          string              `json:"siteUrl"`
 	SiteDomain       string              `json:"siteDomain"`
 	SiteAuthor       string              `json:"siteAuthor"`
+	SiteName         string              `json:"siteName"`
 	SiteTitle        string              `json:"siteTitle"`
 	SiteCaption      string              `json:"siteCaption"`
 	SiteDescription  string              `json:"siteDescription"`
@@ -83,7 +85,6 @@ type ClientConfig struct {
 	Cameras          entity.Cameras      `json:"cameras"`
 	Lenses           entity.Lenses       `json:"lenses"`
 	Countries        entity.Countries    `json:"countries"`
-	People           entity.People       `json:"people"`
 	Thumbs           ThumbSizes          `json:"thumbs"`
 	Tier             int                 `json:"tier"`
 	Membership       string              `json:"membership"`
@@ -128,6 +129,7 @@ type Years []int
 type ClientDisable struct {
 	Restart        bool `json:"restart"`
 	WebDAV         bool `json:"webdav"`
+	MCP            bool `json:"mcp"`
 	Settings       bool `json:"settings"`
 	Places         bool `json:"places"`
 	Backups        bool `json:"backups"`
@@ -261,6 +263,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Disable: ClientDisable{
 			Restart:        true,
 			WebDAV:         true,
+			MCP:            c.DisableMCP(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
 			Backups:        true,
@@ -284,6 +287,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		About:            c.About(),
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
+		FrontendUri:      c.FrontendUri(""),
 		StorageNamespace: c.StorageNamespace(),
 		StaticUri:        c.StaticUri(),
 		ClientAssets:     a,
@@ -295,6 +299,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
+		SiteName:         c.SiteName(),
 		SiteTitle:        c.SiteTitle(),
 		SiteCaption:      c.SiteCaption(),
 		SiteDescription:  c.SiteDescription(),
@@ -331,7 +336,6 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
-		People:           entity.People{},
 		Tier:             c.Hub().Tier(),
 		Membership:       c.Hub().Membership(),
 		Customer:         "",
@@ -358,6 +362,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		Disable: ClientDisable{
 			Restart:        true,
 			WebDAV:         c.DisableWebDAV(),
+			MCP:            c.DisableMCP(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
 			Backups:        true,
@@ -381,6 +386,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		About:            c.About(),
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
+		FrontendUri:      c.FrontendUri(""),
 		StorageNamespace: c.StorageNamespace(),
 		StaticUri:        c.StaticUri(),
 		ClientAssets:     a,
@@ -392,6 +398,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
+		SiteName:         c.SiteName(),
 		SiteTitle:        c.SiteTitle(),
 		SiteCaption:      c.SiteCaption(),
 		SiteDescription:  c.SiteDescription(),
@@ -430,7 +437,6 @@ func (c *Config) ClientShare() *ClientConfig {
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
-		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
 		Tier:             c.Hub().Tier(),
@@ -464,6 +470,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 			Backups:        c.DisableBackups(),
 			Restart:        c.DisableRestart(),
 			WebDAV:         c.DisableWebDAV(),
+			MCP:            c.DisableMCP(),
 			Places:         c.DisablePlaces(),
 			TensorFlow:     c.DisableTensorFlow(),
 			Faces:          c.DisableFaces(),
@@ -486,6 +493,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		About:            c.About(),
 		Edition:          c.Edition(),
 		BaseUri:          c.BaseUri(""),
+		FrontendUri:      c.FrontendUri(""),
 		StorageNamespace: c.StorageNamespace(),
 		StaticUri:        c.StaticUri(),
 		ClientAssets:     a,
@@ -497,6 +505,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
+		SiteName:         c.SiteName(),
 		SiteTitle:        c.SiteTitle(),
 		SiteCaption:      c.SiteCaption(),
 		SiteDescription:  c.SiteDescription(),
@@ -536,7 +545,6 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
-		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
 		Tier:             c.Hub().Tier(),
@@ -690,7 +698,6 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 
 	// People are subjects with type person.
 	cfg.Count.People, _ = query.PeopleCount()
-	cfg.People, _ = query.People()
 
 	c.Db().
 		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality > -1 OR photos.deleted_at IS NULL)").

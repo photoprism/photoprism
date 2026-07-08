@@ -81,3 +81,18 @@ func TestEntitiesRestored(t *testing.T) {
 
 	Unsubscribe(s)
 }
+
+func TestEntitiesUpdatedUIDs(t *testing.T) {
+	s := Subscribe("test.updated")
+
+	assert.IsType(t, hub.Subscription{}, s)
+
+	entities := []string{"a", "b"}
+	EntitiesUpdated("test", entities)
+	msg := <-s.Receiver
+
+	assert.Equal(t, "test.updated", msg.Name)
+	assert.Equal(t, Data{"entities": []string{"a", "b"}}, msg.Fields)
+
+	Unsubscribe(s)
+}

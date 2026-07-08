@@ -8,6 +8,7 @@ import (
 // Login represents a login form.
 type Login struct {
 	Username string `json:"username,omitempty"` // The local Username or LDAP user principal name (UPN).
+	//nolint:gosec // G117: Expected user-supplied credential field.
 	Password string `json:"password,omitempty"` // The user's Password.
 	Code     string `json:"code,omitempty"`     // 2FA Verification Code (Passcodes).
 	Token    string `json:"token,omitempty"`    // Share Token.

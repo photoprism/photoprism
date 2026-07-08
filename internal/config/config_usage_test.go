@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/fs/duf"
 )
 
@@ -116,6 +117,110 @@ func TestConfig_FilesQuotaReached(t *testing.T) {
 	assert.False(t, c.FilesQuotaReached())
 
 	c.options.FilesQuota = uint64(0)
+}
+
+func TestConfig_StorageLow(t *testing.T) {
+	c := TestConfig()
+
+	free, low, err := c.StorageLow()
+	assert.NoError(t, err)
+	assert.False(t, low, "test storage filesystem must not be reported as low")
+	assert.NotZero(t, free)
+}
+
+func TestConfig_StorageLow_SkipCheck(t *testing.T) {
+	c := TestConfig()
+
+	// Seed a low entry so the check would normally return low=true.
+	disk.SetFree(c.StoragePath(), 1*disk.MB, 1000*disk.MB)
+	t.Cleanup(disk.FlushFree)
+
+	// Toggling DisableStorageCheck mirrors what PHOTOPRISM_STORAGE_FREE="-1" does at startup.
+	prev := DisableStorageCheck.Load()
+	DisableStorageCheck.Store(true)
+	t.Cleanup(func() { DisableStorageCheck.Store(prev) })
+
+	free, low, err := c.StorageLow()
+	assert.NoError(t, err)
+	assert.False(t, low, "skip flag must bypass the disk probe")
+	assert.Zero(t, free)
+}
+
+func TestConfig_InsufficientStorage(t *testing.T) {
+	c := TestConfig()
+
+	// Drive the disk side from the cache so the verdict is independent of the host filesystem.
+	disk.SetFree(c.StoragePath(), 999*disk.MB, 1000*disk.MB)
+	t.Cleanup(disk.FlushFree)
+
+	t.Run("Neither", func(t *testing.T) {
+		c.options.FilesQuota = 0
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 950*disk.MB, 1000*disk.MB)
+
+		assert.False(t, c.InsufficientStorage())
+	})
+	t.Run("QuotaOnly", func(t *testing.T) {
+		c.options.FilesQuota = 1
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 999*disk.MB, 1000*disk.MB)
+
+		assert.True(t, c.InsufficientStorage())
+	})
+	t.Run("StorageLowOnly", func(t *testing.T) {
+		c.options.FilesQuota = 0
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 1*disk.MB, 1000*disk.MB)
+
+		assert.True(t, c.InsufficientStorage())
+	})
+	t.Run("Both", func(t *testing.T) {
+		c.options.FilesQuota = 1
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 1*disk.MB, 1000*disk.MB)
+
+		assert.True(t, c.InsufficientStorage())
+	})
+
+	c.options.FilesQuota = 0
+}
+
+func TestConfig_Usage_StorageLow(t *testing.T) {
+	c := TestConfig()
+
+	// Make the verdict independent of host state and prior tests: enable the probe,
+	// pin the threshold, and drive free space from the cache.
+	prevDisable := DisableStorageCheck.Load()
+	prevPct := disk.StorageLowPct
+	DisableStorageCheck.Store(false)
+	disk.StorageLowPct = 1.0
+	disk.FlushFree()
+	t.Cleanup(func() {
+		DisableStorageCheck.Store(prevDisable)
+		disk.StorageLowPct = prevPct
+		disk.FlushFree()
+		FlushUsageCache()
+		c.options.UsageInfo = false
+	})
+
+	t.Run("ReportedWhenUsageInfoDisabled", func(t *testing.T) {
+		c.options.UsageInfo = false
+		c.options.FilesQuota = 0
+		c.options.UsersQuota = 0
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 1*disk.MB, 1000*disk.MB)
+
+		u := c.Usage()
+		assert.True(t, u.StorageLow, "storageLow must be reported even when usage info is disabled")
+		assert.Zero(t, u.FilesUsed, "detailed usage must stay unset when usage info is disabled")
+	})
+	t.Run("HealthyWhenUsageInfoEnabled", func(t *testing.T) {
+		c.options.UsageInfo = true
+		FlushUsageCache()
+		disk.SetFree(c.StoragePath(), 950*disk.MB, 1000*disk.MB)
+
+		assert.False(t, c.Usage().StorageLow)
+	})
 }
 
 func TestConfig_UsersQuotaReached(t *testing.T) {

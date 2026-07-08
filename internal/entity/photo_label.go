@@ -42,7 +42,7 @@ func NewPhotoLabel(photoID, labelID uint, uncertainty int, source string) *Photo
 }
 
 // Updates mutates multiple columns in the database and clears cached copies.
-func (m *PhotoLabel) Updates(values interface{}) error {
+func (m *PhotoLabel) Updates(values any) error {
 	if m == nil {
 		return errors.New("photo label must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -58,7 +58,7 @@ func (m *PhotoLabel) Updates(values interface{}) error {
 }
 
 // Update mutates a single column in the database and clears cached copies.
-func (m *PhotoLabel) Update(attr string, value interface{}) error {
+func (m *PhotoLabel) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("photo label must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -144,9 +144,14 @@ func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 	// Try to find and return an existing label. Otherwise, create a new one and return it.
 	if result, err := FindPhotoLabel(m.PhotoID, m.LabelID, true); err == nil {
 		return result
-	} else if createErr := m.Create(); createErr == nil {
+	}
+
+	// Drop stale negative cache entries before retrying through the database.
+	FlushCachedPhotoLabel(m)
+
+	if createErr := m.Create(); createErr == nil {
 		return m
-	} else if result, err = FindPhotoLabel(m.PhotoID, m.LabelID, false); err == nil {
+	} else if result, err := FindPhotoLabel(m.PhotoID, m.LabelID, false); err == nil {
 		return result
 	} else {
 		log.Errorf("photo-label: %s (find or create)", createErr)

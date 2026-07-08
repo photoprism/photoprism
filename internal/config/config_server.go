@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/server/limiter"
@@ -98,9 +99,88 @@ func (c *Config) HttpMode() string {
 	return c.options.HttpMode
 }
 
-// HttpCompression returns the http compression method (gzip, or none).
+// HttpCompression returns the raw, lowercased and trimmed value of the
+// HttpCompression option as configured by the operator. The string may be
+// a single token ("gzip", "zstd", "none", "") or a comma-separated
+// preference list (e.g. "zstd,gzip"); use HttpCompressionPreferences for
+// the parsed and validated form.
 func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
+}
+
+// HttpCompressionPreferences returns the operator's ordered, deduplicated
+// list of supported response content-encodings ("gzip", "zstd"). Empty,
+// "none", and "identity" tokens disable compression and yield a nil
+// result. Unknown tokens are dropped silently here and surfaced via
+// HttpCompressionUnknown so the caller can log them once at startup.
+func (c *Config) HttpCompressionPreferences() []string {
+	parts := strings.Split(c.HttpCompression(), ",")
+	prefs := make([]string, 0, len(parts))
+	seen := make(map[string]struct{}, len(parts))
+	for _, p := range parts {
+		t := strings.TrimSpace(p)
+		switch t {
+		case "", "none", "identity":
+			continue
+		case "gzip", "zstd":
+			if _, dup := seen[t]; dup {
+				continue
+			}
+			seen[t] = struct{}{}
+			prefs = append(prefs, t)
+		}
+	}
+	return prefs
+}
+
+// HttpCompressionUnknown returns the unique, ordered list of compression
+// tokens from the HttpCompression option that are neither supported
+// encodings nor recognized off-switches. Operators learn about typos this
+// way without breaking startup.
+func (c *Config) HttpCompressionUnknown() []string {
+	parts := strings.Split(c.HttpCompression(), ",")
+	unknown := make([]string, 0, len(parts))
+	seen := make(map[string]struct{}, len(parts))
+	for _, p := range parts {
+		t := strings.TrimSpace(p)
+		switch t {
+		case "", "none", "identity", "gzip", "zstd":
+			continue
+		}
+		if _, dup := seen[t]; dup {
+			continue
+		}
+		seen[t] = struct{}{}
+		unknown = append(unknown, t)
+	}
+	return unknown
+}
+
+// HttpHeaderTimeout returns the timeout for reading HTTP request headers.
+func (c *Config) HttpHeaderTimeout() time.Duration {
+	if c.options.HttpHeaderTimeout <= 0 {
+		return DefaultHttpHeaderTimeout
+	}
+
+	return c.options.HttpHeaderTimeout
+}
+
+// HttpHeaderBytes returns the maximum size of HTTP request headers in bytes.
+func (c *Config) HttpHeaderBytes() int {
+	if c.options.HttpHeaderBytes <= 0 {
+		return DefaultHttpHeaderBytes
+	}
+
+	return c.options.HttpHeaderBytes
+}
+
+// HttpIdleTimeout returns the timeout for idle keep-alive connections.
+func (c *Config) HttpIdleTimeout() time.Duration {
+	if c.options.HttpIdleTimeout <= 0 {
+		return DefaultHttpIdleTimeout
+	}
+
+	return c.options.HttpIdleTimeout
 }
 
 // HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.

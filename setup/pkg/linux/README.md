@@ -2,9 +2,9 @@
 
 As an alternative to our [Docker images](https://docs.photoprism.app/getting-started/docker-compose/), you can use the packages available at [**dl.photoprism.app/pkg/linux/**](https://dl.photoprism.app/pkg/linux/) to install PhotoPrism on compatible Linux distributions without [building it from source](https://docs.photoprism.app/getting-started/faq/#building-from-source).
 
-These [binary installation packages](https://dl.photoprism.app/pkg/linux/) are intended for **experienced users** and **maintainers of third-party integrations** only, as they [require manual configuration](#configuration) and [do not include tested system dependencies](#dependencies). Since we are unable to [provide support](https://www.photoprism.app/kb/getting-support) for custom installations, we recommend using [one of our Docker images](https://docs.photoprism.app/getting-started/docker-compose/) to run PhotoPrism on a private server or NAS device.
+These [binary installation packages](https://dl.photoprism.app/pkg/linux/) are intended for **experienced users** and **maintainers of third-party integrations** only, as they [require manual configuration](#configuration) and [do not include tested system dependencies](#dependencies). Since we are unable to [provide support](https://www.photoprism.app/kb/getting-support/) for custom installations, we recommend using [one of our Docker images](https://docs.photoprism.app/getting-started/docker-compose/) to run PhotoPrism on a private server or NAS device.
 
-Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work, but older Linux distributions may not be compatible.
+Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work, but older Linux distributions may not be compatible. Current package builds also require **libvips 8.14+** for thumbnail processing.
 
 ### Usage
 
@@ -74,19 +74,35 @@ If you have used a *.deb* package for installation, you may need to remove the c
 
 ### Dependencies
 
-PhotoPrism packages bundle TensorFlow 2.18.0 and, starting with the December 2025 builds, ONNX Runtime 1.23.2 as described in [`ai/face/README.md`](https://github.com/photoprism/photoprism/blob/develop/internal/ai/face/README.md). The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to switch `PHOTOPRISM_FACE_ENGINE` to `onnx`. The binaries still rely on glibc ≥ 2.35 and the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
+PhotoPrism packages bundle TensorFlow 2.18.0 and, starting with the December 2025 builds, ONNX Runtime 1.25.0 (1.23.2 in earlier builds) as described in [`ai/face/README.md`](https://github.com/photoprism/photoprism/blob/develop/internal/ai/face/README.md). The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to switch `PHOTOPRISM_FACE_ENGINE` to `onnx`. The binaries still rely on glibc ≥ 2.35 and the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
 
 #### Required Runtime Packages
 
 Install the following packages **before** running PhotoPrism so that thumbnailing, metadata extraction, and the SQLite fallback database work out of the box:
 
-| Distribution family          | Command                                                                                                                                              |
-|------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Debian / Ubuntu              | `sudo apt install libvips42t64 libimage-exiftool-perl ffmpeg sqlite3 tzdata`<br/>Use `libvips42` or, as a fallback, `libvips-dev` on older releases. |
-| Fedora / RHEL / Alma / Rocky | `sudo dnf install vips perl-Image-ExifTool ffmpeg sqlite tzdata`                                                                                     |
-| openSUSE                     | `sudo zypper install vips perl-Image-ExifTool ffmpeg sqlite3 tzdata`                                                                                 |
+| Distribution family          | Command                                                                                                                                                                                |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Debian / Ubuntu              | `sudo apt install libvips42t64 libimage-exiftool-perl ffmpeg sqlite3 tzdata`<br/>Use `libvips42` on releases without `libvips42t64`, but make sure the installed version is **8.14+**. |
+| Fedora / RHEL / Alma / Rocky | `sudo dnf install vips perl-Image-ExifTool ffmpeg sqlite tzdata`                                                                                                                       |
+| openSUSE                     | `sudo zypper install vips perl-Image-ExifTool ffmpeg sqlite3 tzdata`                                                                                                                   |
 
 These packages pull in the full libvips stack (GLib, libjpeg/libtiff/libwebp, archive/zstd, etc.) that the PhotoPrism binary links against. Run `ldd /opt/photoprism/bin/photoprism` if you need to diagnose missing libraries on custom distributions.
+
+#### Installing Newer libvips on Ubuntu 22.04 (Jammy)
+
+Ubuntu 22.04 ships libvips 8.12 by default, which is too old for current package builds. In that case, install a newer backport package first:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libvips.sh)
+vips --version
+```
+
+If you already have this repository checked out locally, you can run the same installer script directly:
+
+```bash
+sudo bash scripts/dist/install-libvips.sh
+vips --version
+```
 
 #### Recommended Extras
 
@@ -95,6 +111,7 @@ For extended RAW processing, HEIF/HEIC support, and database scalability we reco
 - MariaDB or MariaDB Server (external database)
 - Darktable and/or RawTherapee (RAW converters)
 - ImageMagick (CLI utilities)
+- libvips 8.14+ (required; Ubuntu 22.04 users should install a backport with `scripts/dist/install-libvips.sh` if distro packages are too old)
 - libheif (prefer the up-to-date binaries from [dl.photoprism.app/dist/libheif/](https://dl.photoprism.app/dist/libheif/); install with `bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libheif.sh)` when distro packages are outdated)
 - librsvg2-bin or librsvg2-tools (SVG conversion helpers)
 
@@ -102,7 +119,7 @@ Use `sudo apt install`, `sudo dnf install`, or `sudo zypper install` with the pa
 
 We publish the same libheif builds that ship in our Docker images. They include fixes for rotation metadata and newer iOS HEIC variants that are often missing from distribution packages. Advanced users can regenerate them via `make build-libheif-*`, which calls `scripts/dist/build-libheif.sh` for each supported base image and architecture before uploading the archives to `dl.photoprism.app`.
 
-Keep in mind that even if all dependencies are installed, it is possible that you are using a version that is not fully compatible with your pictures, phone, or camera. Our team cannot [provide support](https://www.photoprism.app/kb/getting-support) in these cases if the same issue does not occur with our [official Docker images](https://docs.photoprism.app/getting-started/docker-compose/). Details on the packages and package versions we use can be found in the Dockerfiles available in our [public project repository](https://github.com/photoprism/photoprism/tree/develop/docker).
+Keep in mind that even if all dependencies are installed, it is possible that you are using a version that is not fully compatible with your pictures, phone, or camera. Our team cannot [provide support](https://www.photoprism.app/kb/getting-support/) in these cases if the same issue does not occur with our [official Docker images](https://docs.photoprism.app/getting-started/docker-compose/). Details on the packages and package versions we use can be found in the Dockerfiles available in our [public project repository](https://github.com/photoprism/photoprism/tree/develop/docker).
 
 ### Configuration
 
@@ -168,14 +185,14 @@ Tip: when running PhotoPrism as a systemd service, export environment variables 
 
 ### Documentation
 
-For detailed information on specific features and related resources, see our [Knowledge Base](https://www.photoprism.app/kb), or check the [User Guide](https://docs.photoprism.app/user-guide/) for help [navigating the user interface](https://docs.photoprism.app/user-guide/navigate/), a [complete list of config options](https://docs.photoprism.app/getting-started/config-options/), and [other installation methods](https://docs.photoprism.app/getting-started/):
+For detailed information on specific features and related resources, see our [Knowledge Base](https://www.photoprism.app/kb/), or check the [User Guide](https://docs.photoprism.app/user-guide/) for help [navigating the user interface](https://docs.photoprism.app/user-guide/navigate/), a [complete list of config options](https://docs.photoprism.app/getting-started/config-options/), and [other installation methods](https://docs.photoprism.app/getting-started/):
 
 - [PhotoPrism® User Guide](https://docs.photoprism.app/user-guide/)
 - [PhotoPrism® Developer Guide](https://docs.photoprism.app/developer-guide/)
-- [PhotoPrism® Knowledge Base](https://www.photoprism.app/kb)
+- [PhotoPrism® Knowledge Base](https://www.photoprism.app/kb/)
 
 ### Getting Support
 
 If you need help installing our software at home, you are welcome to post your question in [GitHub Discussions](https://link.photoprism.app/discussions) or ask in our [Community Chat](https://link.photoprism.app/chat). Common problems can be quickly diagnosed and solved using our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/). [Silver, Gold, and Platinum](https://link.photoprism.app/membership) members are also welcome to email us for technical support and advice.
 
-[View Support Options ›](https://www.photoprism.app/kb/getting-support)
+[View Support Options ›](https://www.photoprism.app/kb/getting-support/)

@@ -38,11 +38,10 @@ type OpenIDConfiguration struct {
 
 // NewOpenIDConfiguration creates a service discovery endpoint response based on the config provided.
 func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
-	jwksPath := conf.BaseUri("/.well-known/jwks.json")
-	if jwksPath == "" {
-		jwksPath = "/.well-known/jwks.json"
-	}
-	jwksURL := strings.TrimRight(conf.SiteUrl(), "/") + jwksPath
+	// SiteUrl already carries any deployment base path, so append the bare
+	// well-known path (mirrors the endpoint construction below). Using
+	// conf.BaseUri here would double the base path for sub-path deployments.
+	jwksURL := strings.TrimRight(conf.SiteUrl(), "/") + "/.well-known/jwks.json"
 
 	return &OpenIDConfiguration{
 		Issuer:                                    conf.SiteUrl(),

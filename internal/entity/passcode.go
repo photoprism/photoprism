@@ -2,6 +2,7 @@ package entity
 
 import (
 	"bytes"
+	"crypto/subtle"
 	"errors"
 	"fmt"
 	"image"
@@ -105,7 +106,7 @@ func (m *Passcode) Delete() (err error) {
 }
 
 // Updates multiple properties in the database.
-func (m *Passcode) Updates(values interface{}) error {
+func (m *Passcode) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
@@ -254,8 +255,9 @@ func (m *Passcode) Valid(code string) (valid bool, recovery bool, err error) {
 		return false, false, authn.ErrInvalidPasscodeKey
 	}
 
-	// Check if recovery code has been used.
-	if m.RecoveryCode == code {
+	// Check if recovery code has been used, comparing in constant time so the
+	// stored secret does not leak through response timing.
+	if m.RecoveryCode != "" && subtle.ConstantTimeCompare([]byte(m.RecoveryCode), []byte(code)) == 1 {
 		return true, true, nil
 	}
 

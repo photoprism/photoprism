@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** February 12, 2026
+**Last Updated:** May 5, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -35,19 +35,26 @@ High-Level Package Map (Go)
 - `internal/server` — HTTP server, middleware, routing, static/ui/webdav
 - `internal/config` — configuration, flags/env/options, client config, DB init/migrate
 - `internal/entity` — GORM v1 models, queries, search helpers, migrations
+  - Label lookup helpers now live in `internal/entity/label*.go`; reuse `FindLabels(...)`, `FindLabelIDs(...)`, and `LabelSlugs(...)` for homophone-aware exact-name/slug resolution instead of duplicating slug SQL in callers.
 - `internal/photoprism` — core domain logic (indexing, import, faces, thumbnails, cleanup)
 - `internal/ai/vision` — multi-engine computer vision pipeline (models, adapters, schema). Adapter docs: [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md) and [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md).
 - `internal/workers` — background schedulers (index, vision, sync, meta, backup)
 - `internal/auth` — ACL, sessions, OIDC
 - `internal/service` — cluster/portal, maps, hub, webdav
+  - WebDAV client docs: `internal/service/webdav/README.md`
+  - Key WebDAV client behavior:
+    - Recursive directory discovery prefers `PROPFIND Depth: infinity` and falls back to iterative `Depth: 1` traversal for incompatible servers.
+    - Hidden dotfiles and entries inside hidden dot-directories are excluded from listings and fallback traversal because they often represent lock files, partial uploads, or provider metadata.
+    - Service timeouts apply to control operations (`Files`, `Directories`, `Mkdir`, `Delete`), while `Upload` and `Download` avoid total request deadlines and instead use connection-level safeguards.
 - `internal/event` — logging, pub/sub, audit; canonical outcome tokens live in `pkg/log/status` (use helpers like `status.Error(err)` when the sanitized message should be the outcome). Docs: `internal/event/README.md`.
 - `internal/ffmpeg`, `internal/thumb`, `internal/meta`, `internal/form`, `internal/mutex` — media, thumbs, metadata, forms, coordination. Docs: `internal/ffmpeg/README.md`, `internal/meta/README.md`.
 - `pkg/*` — reusable utilities (must never import from `internal/*`), e.g. `pkg/clean`, `pkg/enum`, `pkg/fs`, `pkg/txt`, `pkg/http/header`
 
 Templates & Static Assets
 - Entry HTML lives in `assets/templates/index.gohtml`, which includes the splash markup from `app.gohtml` and the SPA loader from `app.js.gohtml`.
+- OIDC login completion for the SPA is bridged through `assets/templates/auth.gohtml`, which clears legacy/namespaced session keys and writes the session into the preferred namespaced browser store selected by the login UI toggle in `frontend/src/page/auth/login.vue`.
 - The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs.
-- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml` and `plus/assets/templates/index.gohtml`, because those editions import the same partial.
+- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`, and `portal/assets/templates/index.gohtml`, because those editions import the same partial.
 - Keep the script tag order unchanged so the browser check executes before the main bundle.
 - `splash.gohtml` renders the loading screen text while the bundle loads; styles are in `frontend/src/css/splash.css`.
 - When adjusting browser support messaging, update both the loader partial and splash styles so the warning message stays consistent across editions.
@@ -63,7 +70,7 @@ HTTP API
   - `make swag-json` runs a stabilization step (`swaggerfix`) removing duplicated enums for `time.Duration`; API uses integer nanoseconds for durations.
 - `/api/v1/metrics` (see `internal/api/metrics.go`) exposes Prometheus metrics, including cached filesystem/account usage derived from `config.Usage()`, registered user/guest totals, and portal cluster node counts when `NodeRole=portal`; the handler returns the standard Prometheus exposition content type (`text/plain; version=0.0.4`).
 - Common groups in `routes.go`: sessions, OAuth/OIDC, config, users, services, thumbnails, video, downloads/zip, index/import, photos/files/labels/subjects/faces, batch ops, cluster, technical (metrics, status, echo).
-- Hidden search behavior (used by `/library/hidden`) is implemented in `internal/entity/search/photos.go`:
+- Hidden search behavior (used by the hidden route under the configured frontend URI, default `/library/hidden` for CE/Plus/Pro and `/portal/hidden` for Portal) is implemented in `internal/entity/search/photos.go`:
   - `frm.Hidden` enforces `photos.photo_quality = -1` and `photos.deleted_at IS NULL`.
   - Non-hidden searches exclude errored files by default (`files.file_error = ''`) unless `frm.Error` is explicitly set.
 - Search DTOs in `internal/entity/search/photos_results.go` expose `FileError` (`files.file_error`) so clients can render hidden reasons without loading full file details first.
@@ -79,6 +86,9 @@ Configuration & Flags
   - Report current values: `internal/config/report.go` → surfaced by `photoprism show config` (alias `photoprism config --md`).
   - CLI commands catalog: `internal/commands/show_commands.go` → surfaced by `photoprism show commands` (Markdown by default; `--json` alternative; `--nested` optional tree; `--all` includes hidden commands/flags; nested `help` subcommands omitted).
 - Precedence: `defaults.yml` < CLI/env < `options.yml` (global options rule). See Agent Tips in `AGENTS.md`.
+- Config-owned persistence helpers:
+  - `Config.SaveOptionsPatch(...)` in `internal/config/config.go` for generic `options.yml` merge/write/reload.
+  - `Config.SaveClusterOptionsUpdate(...)` in `internal/config/config_cluster.go` for cluster metadata updates (`ClusterUUID`, `NodeUUID`, `NodeClientID`, DB fields, etc.).
 - Getters are grouped by topic, e.g. DB in `internal/config/config_db.go`, server in `config_server.go`, TLS in `config_tls.go`, etc.
 - Client Config (read-only)
   - Endpoint: GET `/api/v1/config` (see `internal/api/api_client_config.go`).
@@ -110,20 +120,22 @@ Media Processing
 - Metadata: `internal/meta/*`.
 - FFmpeg integration: `internal/ffmpeg/*`.
 - HEIF tooling: distribution binaries live under `scripts/dist/install-libheif.sh`; regenerate archives with `make build-libheif-*` (wraps `scripts/dist/build-libheif.sh` for each supported distro/arch) before publishing to `dl.photoprism.app/dist/libheif/`.
+- Folder album consistency:
+  - `internal/entity/folder.go` keeps `FindFolder(...)` unscoped for create/index conflict handling, so a soft-deleted row cannot cause repeated insert/fail/not-found loops.
+  - `internal/photoprism/index.go` runs `entity.ReconcileOriginalsFolderAlbums(...)` only on forced rescans, after the file walk, so regular indexing stays lightweight while complete rescans repair stale/missing folder albums.
 
 Background Workers
 - Scheduler and workers: `internal/workers/*.go` (index, vision, meta, sync, backup, share); started from `internal/commands/start.go`.
 - Auto indexer: `internal/workers/auto/*`.
 
 Cluster / Portal
-- Node types: `internal/service/cluster/const.go` (`cluster.RoleApp`, `cluster.RolePortal`, `cluster.RoleService`).
+- Node types: `internal/service/cluster/const.go` (`cluster.RoleInstance`, `cluster.RolePortal`, `cluster.RoleService`).
 - Node bootstrap & registration: `internal/service/cluster/node/*` (HTTP to Portal; do not import Portal internals).
   - Registration now retries once on 401/403 by rotating the node client secret with the join token and persists the new credentials (falling back to in-memory storage if the secrets directory is read-only).
   - Theme sync logs explicitly when refresh/rotation occurs so operators can trace credential churn in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
-- Portal-only extensions: `pro/internal/portal` (Portal defaults, flags, provisioning options, `/p/*` proxy router).
-- See specs cheat sheet: `specs/portal/README.md`.
+- Portal-only extensions: `portal/internal/portal` (Portal defaults, flags, provisioning options, `/i/*` proxy router).
 
 Logging & Events
 - Logger and event hub: `internal/event/*`; `event.Log` is the shared logger.
@@ -155,7 +167,7 @@ Common How‑Tos
   - Register CLI flag/env in `internal/config/flags.go` via `EnvVars(...)`
   - Expose a getter (e.g., in `config_server.go` or topic file)
   - Append to `rows` in `*config.Report()` after the same option as in `options.go`
-  - If value must persist, write back to `options.yml` and reload into memory
+  - If value must persist, write back to `options.yml` and reload into memory (prefer `Config.SaveOptionsPatch(...)` and related config-owned helpers over ad-hoc YAML logic).
   - When you need the path to defaults/options/settings files, call `pkg/fs.ConfigFilePath` so `.yml` and `.yaml` stay interchangeable.
   - Tests: cover CLI/env/file precedence (see `internal/config/test.go` helpers)
 
@@ -230,8 +242,8 @@ Cluster Registry & Provisioner Cheatsheet
   - Registration returns `Secrets.ClientSecret`; the CLI persists it under config `NodeClientSecret`.
   - Admin responses may include `AdvertiseUrl` and `Database`; non-admin responses are redacted by default.
 - Cluster CLI highlights:
-  - `photoprism cluster register` supports `--site-url` and `--advertise-url`. Both values are always forwarded to the Portal; `SiteUrl` no longer depends on being different from the advertised URL.
-  - Automatic MariaDB credential rotation logic now lives in `config.ShouldAutoRotateDatabase()` and is shared by both the CLI and node bootstrap.
+  - `photoprism cluster register` supports `--site-url` and `--advertise-url`. Both values are always forwarded to the Portal regardless of whether they differ.
+  - Automatic MariaDB credential rotation logic lives in `config.ShouldAutoRotateDatabase()` and is shared by both the CLI and node bootstrap.
 
 Frequently Touched Files (by topic)
 - CLI wiring: `cmd/photoprism/photoprism.go`, `internal/commands/commands.go`
@@ -276,7 +288,6 @@ Useful Make Targets (selection)
 See Also
 - AGENTS.md (repository rules and tips for agents)
 - Developer Guide (Setup/Tests/API) — links in AGENTS.md → Sources of Truth
-- Specs: `specs/dev/backend-testing.md`, `specs/dev/api-docs-swagger.md`, `specs/portal/README.md`
 
 Go Internal Import Rule
 - Keep temporary Go helpers inside `internal/...`; the Go toolchain blocks importing `internal/` packages from directories such as `/tmp`, so use a disposable path like `internal/tmp/` when you need scratch space.

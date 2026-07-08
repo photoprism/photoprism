@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -47,16 +48,39 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 			event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 			return s
 		}
-		event.AuditWarn([]string{clientIp, "%s %s without authentication", status.Denied}, perms.String(), string(resource))
+
+		// Log routine anonymous requests at debug level; warn only on a rejected token.
+		if authToken == "" {
+			event.AuditDebug([]string{clientIp, "%s %s without authentication", status.Denied}, perms.String(), string(resource))
+		} else {
+			event.AuditWarn([]string{clientIp, "%s %s with invalid authentication", status.Denied}, perms.String(), string(resource))
+		}
+
 		return entity.SessionStatusUnauthorized()
 	}
 
 	// Set client IP.
 	s.SetClientIP(clientIp)
 
-	// If the request is from a client application, check its authorization based
-	// on the allowed scope, the ACL, and the user account it belongs to (if any).
+	// Enforce restrictions for app password sessions, identified by the "application" auth provider.
+	if s.IsApplication() {
+		// Reject app passwords when the feature is disabled.
+		if get.Config().DisableAppPasswords() {
+			event.AuditWarn([]string{clientIp, "session %s", "%s %s with app password", status.Disabled}, s.RefID, perms.String(), string(resource))
+			return entity.SessionStatusForbidden()
+		}
+
+		// Reject app passwords when the user is denied access to the Web UI/API.
+		if u := s.GetUser(); u.DenyLogIn() {
+			event.AuditWarn([]string{clientIp, "session %s", "%s %s with app password", status.Denied}, s.RefID, perms.String(), string(resource))
+			return entity.SessionStatusForbidden()
+		}
+	}
+
 	if s.IsClient() {
+		// If the request is from a client application, check its authorization based
+		// on the allowed scope, the ACL, and the user account it belongs to (if any).
+
 		// Check the resource and required permissions against the session scope.
 		if s.InsufficientScope(resource, perms) {
 			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", status.Error(authn.ErrInsufficientScope)}, clean.Log(s.GetClientInfo()), s.RefID, string(resource))
@@ -122,4 +146,17 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 // or an empty string if no supported request header value was provided.
 func AuthToken(c *gin.Context) string {
 	return header.AuthToken(c)
+}
+
+// SessionRefID returns the current session ref ID for audit logs, or "unknown" if unavailable.
+func SessionRefID(c *gin.Context) string {
+	if c == nil {
+		return "unknown"
+	}
+
+	if s := Session(ClientIP(c), AuthToken(c)); s != nil && s.RefID != "" {
+		return s.RefID
+	}
+
+	return "unknown"
 }

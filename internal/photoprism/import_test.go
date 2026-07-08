@@ -1,16 +1,11 @@
 package photoprism
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestNewImport(t *testing.T) {
@@ -81,56 +76,4 @@ func TestImport_Start(t *testing.T) {
 	opt := ImportOptionsMove(cfg.ImportPath(), "")
 
 	imp.Start(opt)
-}
-
-func TestImport_StartIgnoredMainFromRelatedFiles(t *testing.T) {
-	cfg := config.NewMinimalTestConfigWithDb("import-ppignore-related", t.TempDir())
-
-	oldCfg := Config()
-	SetConfig(cfg)
-
-	t.Cleanup(func() {
-		_ = cfg.CloseDb()
-
-		SetConfig(oldCfg)
-		if oldCfg != nil {
-			oldCfg.RegisterDb()
-		}
-	})
-
-	ignoreName := filepath.Join(cfg.ImportPath(), fs.PPIgnoreFilename)
-	if err := os.WriteFile(ignoreName, []byte("*.png\n"), fs.ModeFile); err != nil {
-		t.Fatal(err)
-	}
-
-	pngData, err := os.ReadFile("testdata/photoprism.png")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err = os.WriteFile(filepath.Join(cfg.ImportPath(), "sample.png"), pngData, fs.ModeFile); err != nil {
-		t.Fatal(err)
-	}
-
-	jpgData, err := os.ReadFile("testdata/2018-04-12 19_24_49.jpg")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err = os.WriteFile(filepath.Join(cfg.ImportPath(), "sample.png.jpg"), jpgData, fs.ModeFile); err != nil {
-		t.Fatal(err)
-	}
-
-	convert := NewConvert(cfg)
-	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
-	imp := NewImport(cfg, ind, convert)
-
-	_ = imp.Start(ImportOptionsMove(cfg.ImportPath(), ""))
-
-	var file entity.File
-	err = entity.UnscopedDb().
-		First(&file, "file_root = ? AND file_name = ?", entity.RootOriginals, "sample.png").
-		Error
-	assert.ErrorIs(t, err, gorm.ErrRecordNotFound)
-
-	assert.True(t, fs.FileExists(filepath.Join(cfg.ImportPath(), "sample.png")))
-	assert.True(t, fs.FileExists(filepath.Join(cfg.ImportPath(), "sample.png.jpg")))
 }

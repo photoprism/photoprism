@@ -92,7 +92,6 @@ func TestPhotoPreloadByUIDs(t *testing.T) {
 		}
 		assert.Greater(t, len(second.Labels), 0)
 	})
-
 	t.Run("Empty", func(t *testing.T) {
 		photos, err := PhotoPreloadByUIDs(nil)
 		if err != nil {
@@ -153,7 +152,6 @@ func TestOrphanPhotos(t *testing.T) {
 	assert.IsType(t, entity.Photos{}, result)
 }
 
-// TODO How to verify?
 // TestFixPrimaries validates photo query behavior.
 func TestFixPrimaries(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
@@ -161,6 +159,66 @@ func TestFixPrimaries(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+	})
+	t.Run("PromotesPresentFileWhenPrimaryDeleted", func(t *testing.T) {
+		taken := time.Date(2017, 5, 5, 12, 0, 0, 0, time.UTC)
+		p := entity.Photo{
+			PhotoUID:        rnd.GenerateUID(entity.PhotoUID),
+			PhotoType:       entity.MediaImage,
+			TakenAt:         taken,
+			TakenAtLocal:    taken,
+			TakenSrc:        entity.SrcMeta,
+			PhotoName:       "fixprim-" + rnd.GenerateUID(entity.PhotoUID),
+			PhotoQuality:    -1,
+			PhotoResolution: 3,
+		}
+		if err := Db().Create(&p).Error; err != nil {
+			t.Fatal(err)
+		}
+		// Primary file that has since been soft-deleted but still carries the primary flag.
+		deletedPrimary := entity.File{
+			PhotoID:     p.ID,
+			PhotoUID:    p.PhotoUID,
+			FileUID:     rnd.GenerateUID(entity.FileUID),
+			FileName:    "fixprim/" + p.PhotoUID + "-old.jpg",
+			FileRoot:    entity.RootOriginals,
+			FileHash:    rnd.GenerateUID(entity.FileUID),
+			FilePrimary: true,
+			FileType:    "jpg",
+			DeletedAt:   entity.TimeStamp(),
+		}
+		if err := Db().Create(&deletedPrimary).Error; err != nil {
+			t.Fatal(err)
+		}
+		// Present preview file that is not yet flagged primary.
+		present := entity.File{
+			PhotoID:  p.ID,
+			PhotoUID: p.PhotoUID,
+			FileUID:  rnd.GenerateUID(entity.FileUID),
+			FileName: "fixprim/" + p.PhotoUID + ".jpg",
+			FileRoot: entity.RootOriginals,
+			FileHash: rnd.GenerateUID(entity.FileUID),
+			FileType: "jpg",
+		}
+		if err := Db().Create(&present).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		if err := FixPrimaries(); err != nil {
+			t.Fatal(err)
+		}
+
+		var gotFile entity.File
+		if err := Db().Where("file_uid = ?", present.FileUID).First(&gotFile).Error; err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, gotFile.FilePrimary, "present file must be promoted to primary")
+
+		var gotPhoto entity.Photo
+		if err := UnscopedDb().Select("photo_quality").Where("photo_uid = ?", p.PhotoUID).First(&gotPhoto).Error; err != nil {
+			t.Fatal(err)
+		}
+		assert.Greater(t, gotPhoto.PhotoQuality, -1, "photo must recover once a valid primary is set")
 	})
 }
 
@@ -175,7 +233,7 @@ func TestFlagHiddenPhotos(t *testing.T) {
 	t.Run("SuccessWith1000", func(t *testing.T) {
 		var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 		// Load 1000 photos that need to be hidden
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			newPhoto := entity.Photo{ //JPG, Geo from metadata, indexed
 				//ID:               1000049,
 				PhotoUID:         rnd.GenerateUID(entity.PhotoUID),

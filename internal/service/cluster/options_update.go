@@ -6,8 +6,8 @@ type OptionsUpdate struct {
 	ClusterUUID      *string
 	ClusterCIDR      *string
 	NodeClientID     *string
-	NodeClientSecret *string
 	JWKSUrl          *string
+	PortalLoginUrl   *string
 	NodeUUID         *string
 	DatabaseDriver   *string
 	DatabaseDSN      *string
@@ -22,8 +22,8 @@ func (u OptionsUpdate) IsZero() bool {
 	return u.ClusterUUID == nil &&
 		u.ClusterCIDR == nil &&
 		u.NodeClientID == nil &&
-		u.NodeClientSecret == nil &&
 		u.JWKSUrl == nil &&
+		u.PortalLoginUrl == nil &&
 		u.NodeUUID == nil &&
 		u.DatabaseDriver == nil &&
 		u.DatabaseDSN == nil &&
@@ -60,14 +60,14 @@ func (u *OptionsUpdate) SetNodeClientID(value string) {
 	u.NodeClientID = stringPtr(value)
 }
 
-// SetNodeClientSecret sets the node client secret.
-func (u *OptionsUpdate) SetNodeClientSecret(value string) {
-	u.NodeClientSecret = stringPtr(value)
-}
-
 // SetJWKSUrl sets the JWKS URL.
 func (u *OptionsUpdate) SetJWKSUrl(value string) {
 	u.JWKSUrl = stringPtr(value)
+}
+
+// SetPortalLoginUrl sets the browser-facing Portal login page URL.
+func (u *OptionsUpdate) SetPortalLoginUrl(value string) {
+	u.PortalLoginUrl = stringPtr(value)
 }
 
 // SetNodeUUID sets the node UUID.
@@ -116,11 +116,11 @@ func (u OptionsUpdate) Visit(fn func(string, any)) {
 	if u.NodeClientID != nil {
 		fn("NodeClientID", *u.NodeClientID)
 	}
-	if u.NodeClientSecret != nil {
-		fn("NodeClientSecret", *u.NodeClientSecret)
-	}
 	if u.JWKSUrl != nil {
 		fn("JWKSUrl", *u.JWKSUrl)
+	}
+	if u.PortalLoginUrl != nil {
+		fn("PortalLoginUrl", *u.PortalLoginUrl)
 	}
 	if u.NodeUUID != nil {
 		fn("NodeUUID", *u.NodeUUID)

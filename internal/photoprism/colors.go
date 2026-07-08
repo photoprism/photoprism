@@ -45,6 +45,8 @@ func (m *MediaFile) Colors(thumbPath string) (perception colors.ColorPerception,
 
 	colorCount := make(map[colors.Color]uint16)
 	var mainColorCount uint16
+	perception.Colors = make(colors.Colors, 0, width*height)
+	perception.Luminance = make(colors.LightMap, 0, width*height)
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
+    <https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -30,8 +30,26 @@ import * as options from "options/options";
 import { Photo } from "model/photo";
 import { onInit, onSetTheme } from "common/hooks";
 import { ref, reactive } from "vue";
+import memoizeOne from "memoize-one";
 
 onInit();
+
+// normalizeFrontendUri returns a normalized frontend base URI with a leading slash.
+const normalizeFrontendUri = (baseUri, frontendUri) => {
+  const fallbackUri = `${baseUri || ""}/library`;
+  const rawUri = typeof frontendUri === "string" && frontendUri.trim() !== "" ? frontendUri : fallbackUri;
+  const prefixedUri = rawUri.startsWith("/") ? rawUri : `/${rawUri}`;
+
+  return prefixedUri.replace(/\/+$/, "");
+};
+
+// frontendLoginUri returns the default login URI below the frontend base URI.
+const frontendLoginUri = (frontendUri) => {
+  return `${frontendUri.replace(/\/+$/, "")}/login`;
+};
+
+// schemeUriRegExp matches a leading URI scheme ("https:", "data:") so absolute references are left untouched.
+const schemeUriRegExp = /^[a-z][a-z0-9+.-]*:/i;
 
 export default class Config {
   /**
@@ -65,8 +83,9 @@ export default class Config {
       this.theme = themes.Get("default");
       this.themeName = "";
       this.baseUri = "";
+      this.frontendUri = "/library";
       this.staticUri = "/static";
-      this.loginUri = "/library/login";
+      this.loginUri = frontendLoginUri(this.frontendUri);
       this.apiUri = "/api/v1";
       this.contentUri = this.apiUri;
       this.videoUri = this.apiUri;
@@ -81,8 +100,9 @@ export default class Config {
       return;
     } else {
       this.baseUri = values.baseUri ? values.baseUri : "";
+      this.frontendUri = normalizeFrontendUri(this.baseUri, values.frontendUri);
       this.staticUri = values.staticUri ? values.staticUri : this.baseUri + "/static";
-      this.loginUri = values.loginUri ? values.loginUri : this.baseUri + "/library/login";
+      this.loginUri = values.loginUri ? values.loginUri : frontendLoginUri(this.frontendUri);
       this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
       this.videoUri = values.videoUri ? values.videoUri : this.apiUri;
@@ -123,7 +143,6 @@ export default class Config {
     $event.subscribe("config.updated", (ev, data) => this.setValues(data.config));
     $event.subscribe("config.tokens", (ev, data) => this.setTokens(data));
     $event.subscribe("count", (ev, data) => this.onCount(ev, data));
-    $event.subscribe("people", (ev, data) => this.onPeople(ev, data));
 
     if (this.has("settings")) {
       this.setTheme(this.get("settings").ui.theme);
@@ -211,72 +230,6 @@ export default class Config {
 
     if (settings?.search?.batchSize > 0) {
       Photo.setBatchSize(settings.search.batchSize);
-    }
-  }
-
-  onPeople(ev, data) {
-    const type = ev.split(".")[1];
-
-    if (this.debug) {
-      console.log(ev, data);
-    }
-
-    if (!this.values.people) {
-      this.values.people = [];
-    }
-
-    if (!data || !data.entities || !Array.isArray(data.entities)) {
-      return;
-    }
-
-    switch (type) {
-      case "created":
-        this.values.people.unshift(...data.entities);
-        break;
-      case "updated":
-        for (let i = 0; i < data.entities.length; i++) {
-          const values = data.entities[i];
-
-          this.values.people
-            .filter((m) => m.UID === values.UID)
-            .forEach((m) => {
-              for (let key in values) {
-                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                  m[key] = values[key];
-                }
-              }
-            });
-        }
-        break;
-      case "deleted":
-        for (let i = 0; i < data.entities.length; i++) {
-          const index = this.values.people.findIndex((m) => m.UID === data.entities[i]);
-
-          if (index >= 0) {
-            this.values.people.splice(index, 1);
-          }
-        }
-        break;
-    }
-  }
-
-  // getPerson returns the details of a person by name
-  // (case-insensitive), or null if it does not exist.
-  getPerson(name) {
-    name = name.toLowerCase();
-
-    const result = this.values.people.filter((m) => m.Name.toLowerCase() === name);
-    const l = result ? result.length : 0;
-
-    if (l === 0) {
-      return null;
-    } else if (l === 1) {
-      return result[0];
-    } else {
-      if (this.debug) {
-        console.warn("more than one person having the same name", result);
-      }
-      return result[0];
     }
   }
 
@@ -386,7 +339,9 @@ export default class Config {
     const perms = ["update", "search", "manage", "share", "delete"];
 
     perms.forEach((perm) => {
-      if (this.deny(resource, perm)) result.push(`disable-${perm}`);
+      if (this.deny(resource, perm)) {
+        result.push(`disable-${perm}`);
+      }
     });
 
     return result;
@@ -778,9 +733,24 @@ export default class Config {
     return this.values.settings.features[name] === true;
   }
 
+  // featAppPasswords checks if app passwords (app-specific passwords) are enabled.
+  featAppPasswords() {
+    return this.feature("appPasswords");
+  }
+
   // filesQuotaReached returns true if the filesystem quota is reached or exceeded.
   filesQuotaReached() {
-    return this.values?.usage?.filesUsedPct >= 100;
+    return Boolean(this.values?.usage?.filesUsedPct >= 100);
+  }
+
+  // storageLow returns true if the storage folder is almost full.
+  storageLow() {
+    return Boolean(this.values?.usage?.storageLow);
+  }
+
+  // insufficientStorage returns true if the filesystem quota is reached or the storage folder is almost full.
+  insufficientStorage() {
+    return this.storageLow() || this.filesQuotaReached();
   }
 
   // setTokens sets the security tokens required to load thumbnails and download files from the server.
@@ -823,17 +793,47 @@ export default class Config {
 
   // isPublic returns true if the instance is running in public mode, i.e. without authentication.
   isPublic() {
-    return this.values && this.values.public;
+    return !!this.values?.public;
   }
 
   // isDemo returns true if the instance is running in demo mode for public or private testing.
   isDemo() {
-    return this.values && this.values.demo;
+    return !!this.values?.demo;
   }
 
   // isPortal returns true if this is a cluster portal server.
   isPortal() {
-    return this.values && this.values.portal;
+    return !!this.values?.portal;
+  }
+
+  // isClusterOidc returns true when the OIDC provider is the cluster Portal (not an external IdP).
+  isClusterOidc() {
+    return !!this.values?.ext?.oidc?.cluster;
+  }
+
+  // oidcEnabled returns true when OIDC single sign-on is configured.
+  oidcEnabled() {
+    return !!this.values?.ext?.oidc?.enabled;
+  }
+
+  // ldapEnabled returns true when LDAP/AD directory authentication is configured.
+  ldapEnabled() {
+    return !!this.values?.ext?.ldap?.enabled;
+  }
+
+  // oidcLoginUri returns the OIDC login endpoint that starts the provider roundtrip, or "" when off.
+  oidcLoginUri() {
+    return this.values?.ext?.oidc?.loginUri || "";
+  }
+
+  // oidcLogout returns true when sign-out should perform RP-initiated logout against the provider.
+  oidcLogout() {
+    return !!this.values?.ext?.oidc?.logout;
+  }
+
+  // portalLoginUri returns the cluster Portal's browser-facing login page, or "" when unknown.
+  portalLoginUri() {
+    return this.values?.ext?.oidc?.portalLoginUri || "";
   }
 
   // isPro returns true if this is team version.
@@ -915,15 +915,36 @@ export default class Config {
     return s;
   }
 
+  // themeAssetUri resolves a theme asset reference against the base URI (e.g.
+  // "logo.svg" → "{baseUri}/_theme/logo.svg"); memoized since the base URI is
+  // fixed once the config is loaded.
+  themeAssetUri = memoizeOne((uri) => {
+    if (typeof uri !== "string" || uri === "") {
+      return uri;
+    } else if (schemeUriRegExp.test(uri) || uri.startsWith("//")) {
+      return uri; // absolute, data:/blob:, or protocol-relative
+    } else if (!uri.startsWith("/")) {
+      return `${this.baseUri || ""}/_theme/${uri}`; // bare name → theme dir
+    } else if (this.baseUri && uri.startsWith(`${this.baseUri}/`)) {
+      return uri; // already prefixed
+    }
+
+    return `${this.baseUri || ""}${uri}`; // other root path → add prefix
+  });
+
   getIcon() {
     if (this.theme?.variables?.icon) {
-      return this.theme.variables.icon;
+      return this.themeAssetUri(this.theme.variables.icon);
     }
 
     switch (this.get("appIcon")) {
       case "crisp":
       case "mint":
       case "bold":
+      case "bloom":
+      case "flower":
+      case "ring":
+      case "shutter":
         return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
       default:
         return `${this.staticUri}/icons/logo.svg`;
@@ -933,7 +954,7 @@ export default class Config {
   getLoginIcon() {
     const loginTheme = themes.Get("login", false);
     if (loginTheme?.variables?.icon) {
-      return loginTheme?.variables?.icon;
+      return this.themeAssetUri(loginTheme?.variables?.icon);
     }
 
     return this.getIcon();

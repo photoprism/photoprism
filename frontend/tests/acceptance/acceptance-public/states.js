@@ -7,8 +7,19 @@ import ContextMenu from "../page-model/context-menu";
 import Photo from "../page-model/photo";
 import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test states`.page`${testcafeconfig.url}`;
+fixture`Test states`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const album = new Album();
@@ -83,8 +94,8 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
   await t
     .typeText(albumdialog.title, "British Columbia", { replace: true })
     .click(albumdialog.category)
+    .click(albumdialog.category)
     .pressKey("ctrl+a delete")
-    .pressKey("enter")
     .click(albumdialog.description)
     .pressKey("ctrl+a delete")
     .pressKey("enter")
@@ -96,10 +107,15 @@ test.meta("testID", "states-001").meta({ mode: "public" })("Common: Update state
   await t
     .expect(page.cardTitle.nth(0).innerText)
     .contains("British Columbia")
-    .expect(page.cardDescription.innerText)
-    .notContains("We love earth")
+    .expect(page.cardDescription.exists)
+    .notOk()
     .expect(Selector("button.meta-location").innerText)
     .notContains("Earth");
+
+  await album.openAlbumWithUid(AlbumUid);
+  await toolbar.triggerToolbarAction("edit");
+  await t.expect(albumdialog.category.value).eql("");
+  await t.click(albumdialog.dialogCancel);
 });
 
 test.meta("testID", "states-002").meta({ mode: "public" })("Common: Create, Edit, delete sharing link for state", async (t) => {
@@ -122,7 +138,9 @@ test.meta("testID", "states-003").meta({ mode: "public" })("Common: Create/delet
   const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
   await menu.openPage("states");
   await album.selectAlbumFromUID(FirstStateUid);
-  await contextmenu.triggerContextMenuAction("clone", ["NotYetExistingAlbumForState", "Holiday"]);
+  await contextmenu.triggerContextMenuAction("clone", ["Holiday", "NotYetExistingAlbumForState"]); // NotYetExistingAlbumForState happens to be long enough to be the middle of the text box (which causes it to be removed when Holiday is added), so put it second.
+
+
   await menu.openPage("albums");
   const AlbumCountAfterCreation = await album.getAlbumCount("all");
 

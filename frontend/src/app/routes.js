@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
+    <https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -36,9 +36,9 @@ import Settings from "page/settings.vue";
 import Admin from "page/admin.vue";
 import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
+import Instances from "page/auth/instances.vue";
 import Discover from "page/discover.vue";
 import About from "page/about/about.vue";
-import Feedback from "page/about/feedback.vue";
 import License from "page/about/license.vue";
 import Help from "page/help.vue";
 import Connect from "page/connect.vue";
@@ -48,6 +48,38 @@ import { $config, $session } from "./session";
 const c = window.__CONFIG__;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
 const loginRoute = "login";
+
+// safeReturnTo validates the `return_to` query parameter so callers can route
+// the user back to a same-origin destination without enabling an open-redirect
+// vector. Accepts root-relative paths or absolute URLs whose origin matches
+// the browser's; rejects protocol-relative URLs and cross-origin absolutes.
+export function safeReturnTo(value) {
+  if (!value || typeof value !== "string") {
+    return "";
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+  // Protocol-relative URLs (//evil.example) and backslash-prefixed paths
+  // (\\evil.example) can be misparsed by old browsers — reject up front.
+  if (trimmed.startsWith("//") || trimmed.startsWith("\\")) {
+    return "";
+  }
+  if (trimmed.startsWith("/")) {
+    return trimmed;
+  }
+  try {
+    const here = typeof window !== "undefined" ? window.location?.origin : "";
+    const parsed = new URL(trimmed, here || "http://localhost/");
+    if (here && parsed.origin === here) {
+      return parsed.pathname + parsed.search + parsed.hash;
+    }
+  } catch {
+    // Fall through to reject.
+  }
+  return "";
+}
 
 export default [
   {
@@ -70,12 +102,6 @@ export default [
     meta: { title: $gettext("License"), requiresAuth: false },
   },
   {
-    name: "feedback",
-    path: "/feedback",
-    component: Feedback,
-    meta: { title: $gettext("Help & Support"), requiresAuth: true },
-  },
-  {
     name: "help",
     path: "/help/:pathMatch(.*)*",
     component: Help,
@@ -87,10 +113,95 @@ export default [
     component: Login,
     meta: { title: siteTitle, requiresAuth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
+      // Honor an inbound `return_to` query param so cross-frontend hand-offs
+      // (e.g. the Portal OIDC OP redirecting an unauthenticated user from
+      // /api/v1/oauth/authorize) can land back on the originally-requested URL
+      // after a successful login. The value is recorded the same way the
+      // global router guard records internal deep links, so the rest of
+      // the flow (followLoginRedirectUrl on success) needs no further
+      // changes.
+      const returnTo = safeReturnTo(to.query?.return_to);
+      if (returnTo) {
+        $session.setLoginRedirectUrl(returnTo);
+      }
+
       if ($session.loginRequired()) {
+        // Auto-OIDC fires only for deep-link arrivals (loginRedirectUrl set
+        // by the global router guard), and only once per browser tab: a prior
+        // attempt flag set on the way out clears here so a failed/abandoned
+        // IdP roundtrip falls back to the local form instead of looping.
+        const oidc = $config.values?.ext?.oidc;
+        const oidcInFlight = $session.consumeOidcAttempt();
+        if (
+          oidc?.enabled &&
+          oidc?.redirect &&
+          oidc?.loginUri &&
+          $session.hasLoginRedirectUrl() &&
+          !$session.consumeLogoutSignal() &&
+          !oidcInFlight
+        ) {
+          $session.markOidcAttempt();
+          $session.followRedirect(oidc.loginUri);
+          next(false);
+          return;
+        }
         next();
+        return;
+      }
+      // Already authenticated (typically returning from the OIDC roundtrip):
+      // hard-navigate to the deep link the router guard recorded so the
+      // stored absolute path (incl. frontend base) is honored verbatim.
+      if ($session.hasLoginRedirectUrl()) {
+        if ($session.loginRedirectLooping()) {
+          // We followed this redirect moments ago and bounced straight back — the
+          // target couldn't authenticate the navigation. Drop it and fall through
+          // to the default route instead of looping.
+          $session.clearLoginRedirectAttempt();
+          $session.clearLoginRedirectUrl();
+          next({ name: $session.getDefaultRoute() });
+        } else {
+          $session.markLoginRedirectAttempt();
+          $session.followLoginRedirectUrl();
+          next(false);
+        }
       } else {
         next({ name: $session.getDefaultRoute() });
+      }
+    },
+  },
+  {
+    name: "logout",
+    path: "/logout",
+    meta: { title: siteTitle, requiresAuth: false, hideNav: true },
+    beforeEnter: (to, from, next) => {
+      // Resolve the session kind and landing before sign-out clears the provider:
+      // a cluster-OIDC user returns to the Portal login (or the local form when the
+      // Portal login URL is unknown), everyone else to the local form. The cluster
+      // decision must not depend on the redirect target, or a node without a
+      // persisted Portal login URL would silently skip the cluster-wide sign-out.
+      const isClusterSession = $session.isClusterSession();
+      // RP-initiated logout (OIDC + PHOTOPRISM_OIDC_LOGOUT) returns a provider logout URL
+      // that must be followed AFTER the async DELETE resolves; an OIDC node that is not a
+      // cluster session still needs this so direct /logout entry ends the upstream session,
+      // matching the nav-menu Sign-Out.
+      const rpInitiated = $session.getProvider() === "oidc" && $config.oidcLogout();
+      const redirectUri = $session.logoutRedirectUri();
+      if (isClusterSession || rpInitiated) {
+        // Await the cluster-wide sign-out (peer fan-out + Portal OP cookie clear) BEFORE
+        // redirecting; logoutEverywhere resolves to the provider logout URL when present (it
+        // ends the upstream session), else fall back to the local landing. A standalone OIDC
+        // node has no peers, so the fan-out is a no-op and only the RP-logout follow applies.
+        next(false);
+        $session
+          .logoutEverywhere(true)
+          .then((uri) => $session.followRedirect(uri || redirectUri))
+          .catch(() => $session.followRedirect(redirectUri));
+      } else {
+        // Local: signOut() resets client state synchronously so /login sees an
+        // unauthenticated user; the one-shot logout flag suppresses the next auto-OIDC
+        // bounce, and the DELETE fan-out (current + peers) runs best-effort.
+        $session.signOut();
+        next({ name: loginRoute });
       }
     },
   },
@@ -127,8 +238,33 @@ export default [
     beforeEnter: (to, from, next) => {
       if ($session.loginRequired()) {
         next({ name: loginRoute });
-      } else if ($config.deny("cluster", "access_all")) {
-        next({ name: $session.getDefaultRoute() });
+      } else {
+        // Any logged-in user may enter /cluster — the page filters which
+        // tabs are visible based on per-resource grants (Nodes / Activity
+        // gate on `cluster.access_all` and `cluster.audit`; the My
+        // Instances chooser is visible to everyone). When no tabs remain,
+        // cluster.vue redirects to the user's default route in `created()`.
+        next();
+      }
+    },
+  },
+  {
+    name: "instances",
+    path: "/instances",
+    component: Instances,
+    meta: {
+      title: $gettext("Instances"),
+      requiresAuth: true,
+      hideNav: true,
+      settings: false,
+      background: "background",
+    },
+    beforeEnter: (to, from, next) => {
+      // The instance selector is the durable landing page for non-operators;
+      // any signed-in user may enter, and unauthenticated requests fall through
+      // to login (the global guard records the return_to deep link).
+      if ($session.loginRequired()) {
+        next({ name: loginRoute });
       } else {
         next();
       }

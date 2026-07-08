@@ -86,10 +86,11 @@ func ApplyLabels(photo *entity.Photo, labels Items) (errs []error) {
 			}
 
 			if labelEntity == nil && it.Title != "" {
-				// Create or find by title.
-				if labelEntity, err = entity.FindLabel(it.Title, true); err != nil || labelEntity == nil {
-					labelEntity = entity.FirstOrCreateLabel(entity.NewLabel(it.Title, 0))
-				}
+				// Resolve via FirstOrCreateLabel rather than FindLabel: the
+				// former routes through findLabelByExactName, which is
+				// homophone-safe (a query for `吻` does not collapse onto
+				// the existing `问` with the same pinyin slug `wen`).
+				labelEntity = entity.FirstOrCreateLabel(entity.NewLabel(it.Title, 0))
 			}
 
 			if labelEntity == nil {
@@ -379,7 +380,7 @@ func deletePhotoLabel(pl *entity.PhotoLabel) error {
 // withDeadlockRetry executes fn and retries a few times if the database reports
 // a deadlock, helping batch edits succeed without surfacing errors to users.
 func withDeadlockRetry(action string, fn func() error) (err error) {
-	for attempt := 0; attempt < deadlockRetryAttempts; attempt++ {
+	for attempt := range deadlockRetryAttempts {
 		err = fn()
 		if err == nil {
 			return nil

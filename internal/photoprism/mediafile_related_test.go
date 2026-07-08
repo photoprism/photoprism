@@ -12,7 +12,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 	c := config.TestConfig()
 
 	t.Run("ExampleTif", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/example.tif")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/example.tif")
 
 		if err != nil {
 			t.Fatal(err)
@@ -42,7 +42,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 				t.Fatalf("extension should be longer: %s", extension)
 			}
 
-			relativePath := result.RelPath(c.ExamplesPath())
+			relativePath := result.RelPath(c.SamplesPath())
 
 			if len(relativePath) > 0 {
 				t.Fatalf("relative path should be empty: %s", relativePath)
@@ -50,13 +50,13 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 	})
 	t.Run("CanonEosSixDDng", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/canon_eos_6d.dng")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/canon_eos_6d.dng")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		expectedBaseFilename := c.ExamplesPath() + "/canon_eos_6d"
+		expectedBaseFilename := c.SamplesPath() + "/canon_eos_6d"
 
 		related, err := mediaFile.RelatedFiles(true)
 
@@ -80,13 +80,13 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 	})
 	t.Run("IphoneSevenHeic", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/iphone_7.heic")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		expectedBaseFilename := c.ExamplesPath() + "/iphone_7"
+		expectedBaseFilename := c.SamplesPath() + "/iphone_7"
 
 		related, err := mediaFile.RelatedFiles(true)
 
@@ -104,20 +104,20 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			baseFilename := filename[0 : len(filename)-len(extension)]
 
 			if result.IsJpeg() {
-				assert.Contains(t, expectedBaseFilename, "examples/iphone_7")
+				assert.Contains(t, expectedBaseFilename, "samples/iphone_7")
 			} else {
 				assert.Equal(t, expectedBaseFilename, baseFilename)
 			}
 		}
 	})
 	t.Run("IphoneFifteenProHeic", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/iphone_15_pro.heic")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		expectedBaseFilename := c.ExamplesPath() + "/iphone_15_pro"
+		expectedBaseFilename := c.SamplesPath() + "/iphone_15_pro"
 
 		related, err := mediaFile.RelatedFiles(true)
 
@@ -135,7 +135,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			baseFilename := filename[0 : len(filename)-len(extension)]
 
 			if result.IsJpeg() {
-				assert.Contains(t, expectedBaseFilename, "examples/iphone_15_pro")
+				assert.Contains(t, expectedBaseFilename, "samples/iphone_15_pro")
 			} else {
 				assert.Equal(t, expectedBaseFilename, baseFilename)
 			}
@@ -225,7 +225,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Equal(t, "2015-02-04.jpg(1).json", related.Files[3].BaseName())
 	})
 	t.Run("Ordering", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/IMG_4120.JPG")
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/IMG_4120.JPG")
 
 		if err != nil {
 			t.Fatal(err)
@@ -239,8 +239,8 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 
 		assert.Len(t, related.Files, 5)
 
-		assert.Equal(t, c.ExamplesPath()+"/IMG_4120.AAE", related.Files[0].FileName())
-		assert.Equal(t, c.ExamplesPath()+"/IMG_4120.JPG", related.Files[1].FileName())
+		assert.Equal(t, c.SamplesPath()+"/IMG_4120.AAE", related.Files[0].FileName())
+		assert.Equal(t, c.SamplesPath()+"/IMG_4120.JPG", related.Files[1].FileName())
 
 		for _, result := range related.Files {
 			filename := result.FileName()

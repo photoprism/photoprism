@@ -1,0 +1,10 @@
+{
+  "name": "photoprism",
+  "private": true,
+  "overrides": {
+    "serialize-javascript": "^7.0.5"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}

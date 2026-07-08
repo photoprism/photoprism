@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Installs NodeJS, NPM and TestCafe on Linux.
+# Installs NodeJS, NPM, TestCafe, Vitest, Mermaid CLI and ESLint on Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-nodejs.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
@@ -10,8 +10,15 @@ set -e
 # shellcheck source=/dev/null
 . /etc/os-release
 
-# NodeJS version to be installed.
-NODE_MAJOR=22
+# NodeJS major version to be installed (armhf still requires 22.x).
+NODE_MAJOR=24
+NPM_VERSION=latest
+TESTCAFE_VERSION=3.7.4
+MERMAID_VERSION=latest
+
+if [ "$(dpkg --print-architecture)" = "armhf" ]; then
+  NODE_MAJOR=22
+fi
 
 # Check if NodeJS is installed.
 if which node > /dev/null
@@ -41,18 +48,22 @@ fi
 
 # Upgrade NPM and install development dependencies.
 echo "Configuring NPM..."
-sudo npm config set cache ~/.cache/npm
+sudo npm config set cache /root/.cache/npm
 echo "Updating NPM..."
-sudo npm install -g --no-fund npm@latest n@latest
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@$NPM_VERSION" n@latest
 echo "Installing npm-check-updates and license-report..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier npm-check-updates@latest license-report@latest
 echo "Installing TestCafe..."
-sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier testcafe@3.7.2
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error "testcafe@$TESTCAFE_VERSION"
+# Installs Mermaid CLI for rendering diagrams; --ignore-scripts skips puppeteer's
+# Chromium download since the dev image already ships system chromium via apt.
+echo "Installing Mermaid CLI..."
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error "@mermaid-js/mermaid-cli@$MERMAID_VERSION"
 echo "Installing Vitest..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier vitest @vitest/browser @vitest/coverage-v8 @vitest/ui
 echo "Installing ESLint..."
-sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint prettier globals \
-  @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty \
+sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint@9 prettier globals \
+  @eslint/eslintrc @eslint/js@9 eslint-config-prettier eslint-formatter-pretty \
   eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier \
   eslint-plugin-vue eslint-plugin-vuetify eslint-webpack-plugin
 echo "Installing Vue Language Server..."

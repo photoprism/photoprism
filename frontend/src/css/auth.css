@@ -16,44 +16,16 @@ main .auth-login {
 
 /* Auth Form Colors */
 
-main .auth-login .accent {
-    background-color: #05dde1 !important;
-}
-
-main .auth-login .accent--text {
-    caret-color: #05dde1 !important;
-    color: #05dde1 !important;
-}
-
-main .auth-login .primary {
-    background-color: #00a6a9 !important;
-}
-
-main .auth-login .primary--text {
-    caret-color: #00a6a9 !important;
-    color: #00a6a9 !important;
-}
-
-main .auth-login .secondary {
-    background-color: #505050 !important;
-}
-
-main .auth-login .secondary--text {
-    caret-color: #505050 !important;
-    color: #505050 !important;
-}
-
-main .auth-login .link {
-    background-color: #c8e3e7 !important;
-}
-
-main .auth-login .link--text {
-    caret-color: #c8e3e7 !important;
-    color: #c8e3e7 !important;
-}
-
 main .auth-actions .auth-links {
     min-height: 24px;
+}
+
+main .auth-actions__options {
+    opacity: 0.95;
+    padding-bottom: 4px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 main .auth-login a,
@@ -174,6 +146,45 @@ main .auth-login .text-subtitle-2,
 #photoprism main .auth-login footer p {
     padding: 0;
     margin: 0;
+}
+
+/* Instance Chooser */
+
+main .auth-login .instance-results.v-table {
+    background: transparent;
+}
+
+main .auth-login .instance-results .v-table__wrapper > table > thead > tr > th {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+main .auth-login .instance-results .v-table__wrapper > table > tbody > tr > td {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff;
+}
+
+main .auth-login .instance-results .v-table__wrapper > table > tbody > tr:last-child > td {
+    border-bottom: none !important;
+}
+
+main .auth-login .instance-chooser-row {
+    cursor: pointer;
+}
+
+main .auth-login .instance-results .action-open-instance {
+    font-weight: 500;
+    color: rgb(var(--v-theme-secondary, #c8e3e7));
+    cursor: pointer;
+}
+
+main .auth-login .instance-results .instance-url {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 /* Account Page */

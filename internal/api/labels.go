@@ -54,7 +54,14 @@ func UpdateLabel(router *gin.RouterGroup) {
 		}
 
 		// Set form values from request.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if frmErr = c.BindJSON(frm); frmErr != nil {
+			if IsRequestBodyTooLarge(frmErr) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, frmErr)
 			return
 		} else if frmErr = frm.Validate(); frmErr != nil {
@@ -73,7 +80,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 
 		event.SuccessMsg(i18n.MsgLabelSaved)
 
-		PublishLabelEvent(StatusUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -101,7 +108,7 @@ func LikeLabel(router *gin.RouterGroup) {
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -116,7 +123,7 @@ func LikeLabel(router *gin.RouterGroup) {
 			})
 		}
 
-		PublishLabelEvent(StatusUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -144,7 +151,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 		label, err := query.LabelByUID(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -159,7 +166,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 			})
 		}
 
-		PublishLabelEvent(StatusUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

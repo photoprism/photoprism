@@ -8,8 +8,19 @@ import Photo from "../page-model/photo";
 import Page from "../page-model/page";
 import Label from "../page-model/label";
 import PhotoEdit from "../page-model/photo-edit";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test labels`.page`${testcafeconfig.url}`;
+fixture`Test labels`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const album = new Album();
@@ -124,7 +135,7 @@ test.meta("testID", "labels-003").meta({ mode: "public" })("Common: Rename Label
   await t.expect(Selector("div.no-results").visible).ok();
 });
 
-test.meta("testID", "labels-003").meta({ mode: "public" })("Common: Add label to albums", async (t) => {
+test.meta("testID", "labels-004").meta({ mode: "public" })("Common: Add label to albums", async (t) => {
   await menu.openPage("albums");
   await toolbar.search("Christmas");
   const ChristmasAlbumUid = await album.getNthAlbumUid("all", 0);
@@ -179,7 +190,7 @@ test.meta("testID", "labels-003").meta({ mode: "public" })("Common: Add label to
   await t.expect(PhotoCountHolidayAfterDelete).eql(InitialPhotoCountHoliday);
 });
 
-test.meta("testID", "labels-004").meta({ mode: "public" })("Common: Delete label", async (t) => {
+test.meta("testID", "labels-005").meta({ mode: "public" })("Common: Delete label", async (t) => {
   await menu.openPage("labels");
   await toolbar.search("dome");
   const LabelDomeUid = await label.getNthLabeltUid(0);
@@ -208,7 +219,7 @@ test.meta("testID", "labels-004").meta({ mode: "public" })("Common: Delete label
   await t.expect(Selector("td").withText("Dome").visible).ok();
 });
 
-test.meta("testID", "labels-005").meta({ mode: "public" })("Common: Test mark label as favorite", async (t) => {
+test.meta("testID", "labels-006").meta({ mode: "public" })("Common: Test mark label as favorite", async (t) => {
   await menu.openPage("labels");
   const FirstLabelUid = await label.getNthLabeltUid(0);
   const SecondLabelUid = await label.getNthLabeltUid(1);

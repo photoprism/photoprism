@@ -8,10 +8,10 @@ import (
 	"runtime/debug"
 	"sync"
 
-	"github.com/disintegration/imaging"
 	tf "github.com/wamuir/graft/tensorflow"
 
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -52,7 +52,7 @@ func NewModel(modelPath, cachePath string, resolution int, meta *tensorflow.Mode
 
 // Detect runs the detection and facenet algorithms over the provided source image.
 func (m *Model) Detect(fileName string, minSize int, cacheCrop bool, expected int) (faces Faces, err error) {
-	faces, err = Detect(fileName, false, minSize)
+	faces, err = Detect(fileName, minSize)
 
 	if err != nil {
 		return faces, err
@@ -182,17 +182,17 @@ func imageToTensor(img image.Image, resolution int) (tfTensor *tf.Tensor, err er
 
 	// Resize the image only if its resolution does not match the model.
 	if img.Bounds().Dx() != resolution || img.Bounds().Dy() != resolution {
-		img = imaging.Fill(img, resolution, resolution, imaging.Center, imaging.Lanczos)
+		img = thumb.Resample(img, resolution, resolution, thumb.ResampleFillCenter)
 	}
 
 	var tfImage [1][][][3]float32
 
-	for j := 0; j < resolution; j++ {
+	for range resolution {
 		tfImage[0] = append(tfImage[0], make([][3]float32, resolution))
 	}
 
-	for i := 0; i < resolution; i++ {
-		for j := 0; j < resolution; j++ {
+	for i := range resolution {
+		for j := range resolution {
 			r, g, b, _ := img.At(i, j).RGBA()
 			tfImage[0][j][i][0] = convertValue(r)
 			tfImage[0][j][i][1] = convertValue(g)

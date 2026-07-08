@@ -194,7 +194,6 @@ func TestApplyLabels(t *testing.T) {
 			t.Errorf("expected label source %s, got %s", entity.SrcBatch, blocked.LabelSrc)
 		}
 	})
-
 	t.Run("RemoveVisionLabelBlocksRelation", func(t *testing.T) {
 		photo := entity.PhotoFixtures.Pointer("Photo15")
 		label := entity.LabelFixtures.Get("landscape")
@@ -232,7 +231,6 @@ func TestApplyLabels(t *testing.T) {
 			t.Errorf("expected label source %s, got %s", entity.SrcBatch, updated.LabelSrc)
 		}
 	})
-
 	t.Run("KeepHigherPriorityLabel", func(t *testing.T) {
 		photo := entity.PhotoFixtures.Pointer("Photo16")
 		label := entity.LabelFixtures.Get("flower")
@@ -1119,7 +1117,6 @@ func TestApplyLabels(t *testing.T) {
 			t.Errorf("expected label source %s, got %s", entity.SrcBatch, updatedLabel.LabelSrc)
 		}
 	})
-
 	t.Run("InvalidPhotoReturnsError", func(t *testing.T) {
 		labels := Items{
 			Items: []Item{
@@ -1354,7 +1351,6 @@ func TestDetermineLabelRemovalAction(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
@@ -1390,7 +1386,6 @@ func TestLabelRemovalActionString(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()

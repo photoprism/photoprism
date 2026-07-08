@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "additionalDirectories": ["/go", "/tmp", "/home"],
+    "allow": [
+      "Bash(make:*)",
+      "Bash(go:*)",
+      "Bash(npx --yes markdown-table-formatter:*)",
+      "Read",
+      "Write",
+      "Edit",
+      "Grep",
+      "Glob",
+      "WebSearch",
+      "mcp__playwright__*"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "awaySummaryEnabled": false
+}

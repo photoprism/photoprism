@@ -5,7 +5,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestWebDAVSetFavoriteFlag_CreatesYamlOnce(t *testing.T) {
@@ -24,6 +27,31 @@ func TestWebDAVSetFavoriteFlag_CreatesYamlOnce(t *testing.T) {
 	// #nosec G304 -- test reads file created in a temp directory.
 	now, _ := os.ReadFile(yml)
 	assert.Equal(t, string(orig), string(now))
+}
+
+func TestWebDAVSetFavoriteFlag_WriteErrorGoesToSystemLog(t *testing.T) {
+	dir := t.TempDir()
+	// A regular file where a directory is expected makes MkdirAll fail with an
+	// error that embeds the absolute path; that must not reach the UI log stream.
+	blocker := filepath.Join(dir, "blocker")
+	assert.NoError(t, os.WriteFile(blocker, []byte("x"), 0o600))
+	file := filepath.Join(blocker, "img.jpg")
+
+	hook := &logCapture{}
+	event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+	event.SystemLog.AddHook(hook)
+	defer event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+
+	WebDAVSetFavoriteFlag(file)
+
+	var found bool
+	for _, e := range hook.entries {
+		if e.Level == logrus.ErrorLevel {
+			found = true
+		}
+	}
+	assert.True(t, found, "sidecar write failure must be logged on the system log")
+	assert.NoFileExists(t, filepath.Join(blocker, "img.yml"))
 }
 
 func TestWebDAVSetFileMtime_NoFuture(t *testing.T) {

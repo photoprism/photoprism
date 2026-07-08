@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 //go:embed robots.txt
@@ -25,13 +26,22 @@ func (c *Config) BaseUri(res string) string {
 		return res
 	}
 
+	return c.BasePath() + res
+}
+
+// BasePath returns the site's base path name.
+func (c *Config) BasePath() string {
+	if c.SiteUrl() == "" {
+		return ""
+	}
+
 	u, err := url.Parse(c.SiteUrl())
 
 	if err != nil {
-		return res
+		return ""
 	}
 
-	return strings.TrimRight(u.EscapedPath(), "/") + res
+	return strings.TrimRight(u.EscapedPath(), "/")
 }
 
 // StorageNamespace returns a hashed namespace key for client-side storage.
@@ -45,9 +55,35 @@ func (c *Config) ApiUri() string {
 	return c.BaseUri(ApiUri)
 }
 
-// LibraryUri returns the user interface URI for the given resource.
-func (c *Config) LibraryUri(res string) string {
-	return c.BaseUri(LibraryUri + res)
+// FrontendPath returns the normalized frontend base path without a trailing slash.
+func (c *Config) FrontendPath() string {
+	frontendPath := normalizeFrontendPath(c.options.FrontendUri)
+
+	if frontendPath != "" {
+		return frontendPath
+	}
+
+	frontendPath = normalizeFrontendPath(FrontendUri)
+
+	if frontendPath != "" {
+		return frontendPath
+	}
+
+	return DefaultFrontendUri
+}
+
+// normalizeFrontendPath sanitizes and normalizes a configured frontend base path.
+func normalizeFrontendPath(value string) string {
+	if value = clean.UserPath(value); value == "" {
+		return ""
+	}
+
+	return "/" + value
+}
+
+// FrontendUri returns the user interface URI for the given resource.
+func (c *Config) FrontendUri(res string) string {
+	return c.BaseUri(c.FrontendPath() + res)
 }
 
 // ContentUri returns the content delivery URI based on the CdnUrl and the ApiUri.
@@ -57,7 +93,7 @@ func (c *Config) ContentUri() string {
 
 // DownloadUrl returns the download URL based on the SiteUrl and the DownloadUri.
 func (c *Config) DownloadUrl() string {
-	return strings.TrimRight(c.options.SiteUrl, "/") + DownloadUri
+	return strings.TrimRight(c.SiteUrl(), "/") + DownloadUri
 }
 
 // VideoUri returns the video streaming URI.
@@ -79,13 +115,14 @@ func (c *Config) StaticAssetUri(res string) string {
 	return c.StaticUri() + "/" + res
 }
 
-// SiteUrl returns the public server URL (default is "http://localhost:2342/").
+// SiteUrl returns the normalized public base URL (default "http://localhost:2342/").
+// Strips default ports, query strings, and fragments so absolute URLs stay stable.
 func (c *Config) SiteUrl() string {
-	if c.options.SiteUrl == "" {
-		return "http://localhost:2342/"
+	if siteUrl := scheme.NormalizeBaseURL(c.options.SiteUrl); siteUrl != "" {
+		return siteUrl
 	}
 
-	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
+	return "http://localhost:2342/"
 }
 
 // SiteHttps checks if the site URL uses HTTPS.
@@ -124,13 +161,37 @@ func (c *Config) SiteAuthor() string {
 	return c.options.SiteAuthor
 }
 
-// SiteTitle returns the main site title (default is application name).
-func (c *Config) SiteTitle() string {
-	if c.options.SiteTitle == "" {
-		return c.Name()
+// SiteName returns a short, distinctive label for this instance, used by the
+// navigation instance switcher and the Portal instance selector. It returns the
+// first configured value among SiteName, AppName, and SiteTitle, or "" when none
+// is set. Unlike SiteTitle and AppName it does not fall back to the product Name,
+// so callers can fall back to the instance's base-path segment for unbranded peers.
+func (c *Config) SiteName() string {
+	for _, name := range []string{c.options.SiteName, c.options.AppName, c.options.SiteTitle} {
+		if s := clean.TypeUnicode(name); s != "" {
+			return s
+		}
 	}
 
-	return c.options.SiteTitle
+	return ""
+}
+
+// SiteTitle returns the main site title (default is application name).
+func (c *Config) SiteTitle() string {
+	if c.options.SiteTitle != "" {
+		return c.options.SiteTitle
+	}
+
+	// With no SiteTitle and no AppName configured, fall back to the distinctive
+	// SiteName (SITE_NAME) before the product Name so an instance branded only via
+	// SITE_NAME shows that name as its title.
+	if c.options.AppName == "" {
+		if name := clean.TypeUnicode(c.options.SiteName); name != "" {
+			return name
+		}
+	}
+
+	return c.Name()
 }
 
 // SiteCaption returns a short site caption.
@@ -165,7 +226,7 @@ func (c *Config) SitePreview() string {
 			return c.options.SitePreview
 
 		} else if fileName := filepath.Join(c.ThemePath(), c.options.SitePreview); fs.FileExistsNotEmpty(fileName) {
-			return strings.TrimRight(c.options.SiteUrl, "/") + path.Join(ThemeUri, c.options.SitePreview)
+			return strings.TrimRight(c.SiteUrl(), "/") + path.Join(ThemeUri, c.options.SitePreview)
 		}
 
 		return c.SiteUrl() + strings.TrimPrefix(c.options.SitePreview, "/")
@@ -199,7 +260,11 @@ func (c *Config) LegalUrl() string {
 func (c *Config) RobotsTxt() ([]byte, error) {
 	if c.Demo() && c.Public() {
 		// Allow public demo instances to be indexed.
-		return []byte(fmt.Sprintf("User-agent: *\nDisallow: /\nAllow: %s/\nAllow: %s/\nAllow: .js\nAllow: .css", LibraryUri, StaticUri)), nil
+		return fmt.Appendf(nil,
+			"User-agent: *\nDisallow: /\nAllow: %s/\nAllow: %s/\nAllow: .js\nAllow: .css",
+			c.BaseUri(c.FrontendPath()),
+			c.BaseUri(StaticUri),
+		), nil
 	} else if c.Public() {
 		// Do not allow other instances to be indexed when public mode is enabled.
 		return robotsTxt, nil

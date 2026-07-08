@@ -89,11 +89,15 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	// Display log message.
 	log.Infof("sync: downloading from %s", a.AccName)
 
-	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
 
 	if err != nil {
 		return false, err
 	}
+
+	// Bound each download to the originals size limit so a remote sync target
+	// cannot overrun local storage with a single oversized file.
+	client.SetDownloadLimit(w.conf.OriginalsLimitBytes())
 
 	var baseDir string
 
@@ -106,7 +110,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	done := make(map[string]bool)
 
 	for _, files := range relatedFiles {
-		if w.conf.FilesQuotaReached() {
+		if w.conf.InsufficientStorage() {
 			log.Warnf("sync: skipped downloading files from %s due to insufficient storage", clean.Log(a.AccName))
 			return false, nil
 		}

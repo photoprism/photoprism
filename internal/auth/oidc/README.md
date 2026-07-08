@@ -1,6 +1,6 @@
 ## PhotoPrism — OIDC Integration
 
-**Last Updated:** November 27, 2025
+**Last Updated:** June 25, 2026
 
 ### Overview
 
@@ -30,6 +30,8 @@
 
 - `oidc.go` — package doc + logger.
 - `client.go` — RP construction (`NewClient`), PKCE detection, auth redirect, code exchange + userinfo retrieval.
+- `nonce.go` — per-request `Nonce` generation and tolerant `CheckNonce` ID-token validation; tests in `nonce_test.go`.
+- `logout.go` — `(*Client).EndSessionURL` builds the RP-initiated logout URL (id_token_hint, post_logout_redirect_uri, client_id, state) for a browser redirect; tests in `logout_test.go`.
 - `http_client.go` — shared HTTP client with TLS toggle and timeouts; helpers for tests in `http_client_test.go`.
 - `redirect_url.go` — builds the redirect/callback URL from site config.
 - `register.go` — provider registration glue; tests in `register_test.go`.
@@ -40,7 +42,7 @@
 
 - `internal/server/routes.go` registers the OIDC auth and callback endpoints.
 - `pkg/authn` defines required scopes and shared auth helpers.
-- `internal/auth/acl` and (Pro) `pro/internal/auth/ldap` handle role/group mapping; the planned OIDC group parsing will mirror this logic.
+- `internal/auth/acl` and private extension LDAP packages (`pro/internal/auth/ldap`, `portal/internal/auth/ldap`) handle role/group mapping; the planned OIDC group parsing will mirror this logic.
 - `internal/config` provides OIDC options/flags (issuer, client ID/secret, scopes, insecure).
 - `internal/event` supplies the logger used for audit and error reporting.
 
@@ -51,6 +53,19 @@
 - Audit every provider/redirect/token error with sanitized messages; avoid logging secrets.
 - Prefer explicit scopes from configuration; defaults request only the minimal set.
 
+#### Nonce Handling
+
+- `AuthURLHandler` generates a unique `nonce` per authorization request, stores it in the signed and encrypted RP cookie (same scope as `state`/PKCE), and sends it on the authorization request so the provider reflects it back in the ID token.
+- `CodeExchangeUserInfo` validates the ID token's `nonce` claim against the cookie value via `CheckNonce`. Validation is tolerant: a token that echoes the nonce must match, but a provider that omits the nonce on a session-resumed token (e.g. AWS Cognito) is accepted so logins do not regress.
+- The library's strict nonce verifier is disabled with `rp.WithNonce(nil)` because its default expects an empty nonce and would reject every echoed value; PhotoPrism owns the check instead.
+- Without an explicit nonce, Cognito auto-generates one on the first interactive login from a fresh browser, which the default verifier rejects with `nonce does not match`; sending our own nonce makes the round-trip spec-clean.
+
+#### RP-Initiated Logout
+
+- The provider's `end_session_endpoint` is captured automatically from discovery by the wrapped `zitadel/oidc` RP and read via `GetEndSessionEndpoint()`; no separate config is needed.
+- `(*Client).EndSessionURL` constructs the redirect URL for the browser (it does not call the endpoint server-side, unlike `rp.EndSession`, because only the browser carries the provider's SSO cookie). It returns an empty string when the provider advertises no end-session endpoint, so callers fall back to a local-only logout.
+- The behavior is gated by `PHOTOPRISM_OIDC_LOGOUT` (default off) and enforced at sign-out in `internal/api/session_delete.go`.
+
 ### Security Group Extension for Entra ID
 
 The following features are supported by the current implementation:
@@ -60,6 +75,7 @@ The following features are supported by the current implementation:
 - Group-to-role mapping: `--oidc-group-role` (`GROUP=ROLE`, repeatable) assigns the first matching role; falls back to `--oidc-role` (default `guest`) when no mapping matches.
 - Keeps app/directory roles (`roles`, `wids`) separate from security groups to avoid accidental privilege escalation.
 - Claim name is configurable via `--oidc-group-claim` (default `groups`).
+- On Portal builds, persists the merged, normalized group set from the ID token and userinfo on the login session (`entity.SessionData.Groups`), so the Portal can evaluate group-based cluster access at authorize time without another IdP round-trip. Instance and CE sessions never store groups, and the session API responses redact the field (`SessionData.Redacted`), so group membership is not exposed to clients.
 
 #### Configuration Options
 
@@ -70,7 +86,7 @@ The following features are supported by the current implementation:
 
 #### Integration Guide for Entra ID
 
-1. Register an app in Microsoft Entra ID (v2) or reuse your existing PhotoPrism registration. Note the tenant ID and the application (client) ID.
+1. Register an app in Microsoft Entra ID (v2) or reuse your existing PhotoPrism registration. Note the instance ID and the application (client) ID.
 2. Redirect URI: add [`https://{hostname}/api/v1/oidc/redirect`](https://docs.photoprism.app/getting-started/advanced/openid-connect/#redirect-url).
 3. Token configuration → **Add optional claim** → **Token type** = ID (and Access if you prefer) → **Groups** → choose **Security groups**.
 4. Under “Emit groups as”, pick **Group name** (cloud-only) or **sAMAccountName** / **DNSDomainName\sAMAccountName** for synced AD; this makes tokens carry human-friendly names instead of GUIDs.
@@ -93,7 +109,7 @@ The following features are supported by the current implementation:
 Please note:
 
 - Entra ID security groups are only supported in PhotoPrism® Pro.
-- If tokens still contain GUIDs, revisit Token configuration → Groups and change “Emit groups as” to a name format; reissue tokens by signing out/in. Names must be unique in your tenant for deterministic mapping.
+- If tokens still contain GUIDs, revisit Token configuration → Groups and change “Emit groups as” to a name format; reissue tokens by signing out/in. Names must be unique in your instance for deterministic mapping.
 - Overage: when the `_claim_names.groups` marker is present and no groups are in the token, PhotoPrism cannot validate membership and will block login if `oidc-group` is set. (Graph-based resolution is described in the next section but is not yet implemented.)
 - For mixed environments, you can supply both names and GUIDs in `oidc-group` / `oidc-group-role`; all entries are normalized and deduplicated.
 
@@ -118,7 +134,7 @@ Implementation outline:
 
 - Config: add flags/options such as `oidc-graph-lookup` (enable), `oidc-graph-timeout` (default ~3–5s), `oidc-graph-mode` (`client` for Client Credentials, `obo` for On-Behalf-Of), and optional scope override (default `https://graph.microsoft.com/.default`). Surface in flags, reports, and `options.yml`.
 - Token acquisition:
-  - Client Credentials flow using the existing OIDC client ID/secret against the tenant token endpoint with Graph scope; requires admin-consented Application permission `Group.Read.All`.
+  - Client Credentials flow using the existing OIDC client ID/secret against the instance token endpoint with Graph scope; requires admin-consented Application permission `Group.Read.All`.
   - On-Behalf-Of flow exchanging the user access token plus the same secret; requires Delegated `Group.Read.All` consent.
 - Graph calls:
   - Prefer a single batch or `/v1.0/me/transitiveMemberOf?$select=id,displayName` to retrieve security groups; filter to `@odata.type` that ends with `group`.

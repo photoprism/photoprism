@@ -189,7 +189,7 @@ func TestUnzip_EntryLimit(t *testing.T) {
 	zipPath := filepath.Join(dir, "limit.zip")
 
 	entries := map[string][]byte{}
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		entries[fmt.Sprintf("f%d.txt", i)] = []byte("x")
 	}
 	writeZip(t, zipPath, entries)

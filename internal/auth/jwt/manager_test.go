@@ -37,10 +37,15 @@ func TestManagerEnsureActiveKey(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, key.Kid, next.Kid)
 
-	// JWKS should expose the key.
+	// JWKS should expose the key with the signature use and EdDSA algorithm so
+	// relying parties can select the verifier.
 	jwks := m.JWKS()
 	require.Len(t, jwks.Keys, 1)
 	require.Equal(t, key.Kid, jwks.Keys[0].Kid)
+	require.Equal(t, "OKP", jwks.Keys[0].Kty)
+	require.Equal(t, "Ed25519", jwks.Keys[0].Crv)
+	require.Equal(t, "sig", jwks.Keys[0].Use)
+	require.Equal(t, "EdDSA", jwks.Keys[0].Alg)
 
 	// Reload manager from disk.
 	m2, err := NewManager(c)

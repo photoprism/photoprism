@@ -3,7 +3,6 @@ package entity
 import (
 	"errors"
 	"fmt"
-	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -53,7 +52,7 @@ type Album struct {
 	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
 	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
-	AlbumPath        string      `gorm:"type:VARCHAR(1024);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
+	AlbumPath        string      `gorm:"type:VARBINARY(1024);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string      `gorm:"type:VARBINARY(8);default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string      `gorm:"type:VARCHAR(160);index;" json:"Title" yaml:"Title"`
 	AlbumLocation    string      `gorm:"type:VARCHAR(160);" json:"Location" yaml:"Location,omitempty"`
@@ -99,7 +98,7 @@ func (Album) TableName() string {
 }
 
 // UpdateAlbum updates album attributes directly in the database by UID.
-func UpdateAlbum(albumUID string, values interface{}) (err error) {
+func UpdateAlbum(albumUID string, values any) (err error) {
 	if rnd.InvalidUID(albumUID, AlbumUID) {
 		return fmt.Errorf("album: invalid uid %s", clean.Log(albumUID))
 	} else if err = Db().Model(Album{}).Where("album_uid = ?", albumUID).UpdateColumns(values).Error; err != nil {
@@ -239,7 +238,7 @@ func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 
 // NewFolderAlbum creates a new album representing a filesystem folder.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
-	albumSlug := txt.Slug(albumPath)
+	albumSlug := txt.SlugUnique(albumPath)
 
 	if albumTitle == "" || albumSlug == "" || albumPath == "" || albumFilter == "" {
 		return nil
@@ -251,7 +250,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 		AlbumOrder:  DefaultOrderFolder,
 		AlbumType:   AlbumFolder,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
-		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
+		AlbumPath:   ClipPath(albumPath),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -401,29 +400,52 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 
 // FindFolderAlbum looks up a folder album by its canonical path or slug.
 func FindFolderAlbum(albumPath string) *Album {
-	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
-	albumSlug := txt.Slug(albumPath)
+	albumPath = clean.SlashPath(albumPath)
+	albumSlugs := folderAlbumSlugCandidates(albumPath)
 
-	if albumSlug == "" {
+	if len(albumSlugs) == 0 {
 		return nil
 	}
 
-	m := Album{}
-
-	// Prefer exact path matches so emoji child folders do not collide with parent
+	// Prefer an exact path match so emoji child folders do not collide with parent
 	// slugs (e.g. "ins/🍷" and "ins" both normalize to "ins").
-	stmt := UnscopedDb().Where("album_type = ? AND album_path = ?", AlbumFolder, albumPath)
-
-	if stmt.First(&m).Error == nil {
-		return &m
+	if m := findFolderAlbumByPath(albumPath); m != nil {
+		return m
 	}
 
 	// Fallback for legacy rows created before album_path was persisted.
-	stmt = UnscopedDb().Where("album_type = ? AND album_slug = ?", AlbumFolder, albumSlug).
+	m := Album{}
+	stmt := UnscopedDb().Where("album_type = ? AND album_slug IN (?)", AlbumFolder, albumSlugs).
 		Where("(album_path IS NULL OR album_path = '')")
 
 	if stmt.First(&m).Error == nil {
 		return &m
+	}
+
+	return nil
+}
+
+// findFolderAlbumByPath returns the folder album whose path matches byte-exact.
+// MariaDB's utf8mb4_unicode_ci collation gives most emoji the same weight, so the
+// "album_path = ?" query can also return a sibling folder that differs only by
+// emoji; each candidate row is therefore re-checked in Go before it is accepted.
+func findFolderAlbumByPath(albumPath string) *Album {
+	if albumPath == "" {
+		return nil
+	}
+
+	var matches Albums
+
+	if err := UnscopedDb().
+		Where("album_type = ? AND album_path = ?", AlbumFolder, albumPath).
+		Find(&matches).Error; err != nil {
+		return nil
+	}
+
+	for i := range matches {
+		if matches[i].AlbumPath == albumPath {
+			return &matches[i]
+		}
 	}
 
 	return nil
@@ -727,7 +749,7 @@ func (m *Album) SaveForm(f *form.Album) error {
 }
 
 // Update sets a new value for a database column.
-func (m *Album) Update(attr string, value interface{}) error {
+func (m *Album) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("album must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -738,7 +760,7 @@ func (m *Album) Update(attr string, value interface{}) error {
 }
 
 // Updates multiple columns in the database.
-func (m *Album) Updates(values interface{}) error {
+func (m *Album) Updates(values any) error {
 	if m == nil {
 		return errors.New("album must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -748,9 +770,25 @@ func (m *Album) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
+// extractAlbumFilterPath extracts a normalized path value from a serialized search filter.
+func extractAlbumFilterPath(albumFilter string) string {
+	if strings.TrimSpace(albumFilter) == "" {
+		return ""
+	}
+
+	frm := form.SearchPhotos{Query: albumFilter}
+
+	if err := frm.ParseQueryString(); err != nil || frm.Path == "" {
+		return ""
+	}
+
+	return clean.SlashPath(frm.Path)
+}
+
 // shouldRepairFolderAlbumTitle reports whether a folder album title likely
-// still reflects a parent-path collision and should be repaired.
-func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) bool {
+// still reflects a collision state and should be repaired.
+func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath, albumFilter string) bool {
+	albumPath = clean.SlashPath(albumPath)
 	folderTitle = strings.TrimSpace(folderTitle)
 	currentTitle = strings.TrimSpace(currentTitle)
 
@@ -762,11 +800,13 @@ func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) b
 		return false
 	}
 
-	parentPath := strings.Trim(path.Dir(albumPath), string(os.PathSeparator))
+	parentPath := path.Dir(albumPath)
 
-	if parentPath == "" || parentPath == "." {
+	if parentPath == "" || parentPath == "." || parentPath == "/" {
 		return false
 	}
+
+	parentPath = clean.SlashPath(parentPath)
 
 	parentTitle := txt.Title(path.Base(parentPath))
 
@@ -774,7 +814,23 @@ func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath string) b
 		return false
 	}
 
-	return strings.EqualFold(currentTitle, parentTitle) && !strings.EqualFold(folderTitle, parentTitle)
+	if strings.EqualFold(currentTitle, parentTitle) && !strings.EqualFold(folderTitle, parentTitle) {
+		return true
+	}
+
+	filterPath := extractAlbumFilterPath(albumFilter)
+
+	if filterPath == "" || filterPath == albumPath {
+		return false
+	}
+
+	filterTitle := txt.Title(path.Base(filterPath))
+
+	if filterTitle == "" {
+		return false
+	}
+
+	return strings.EqualFold(currentTitle, filterTitle) && !strings.EqualFold(folderTitle, filterTitle)
 }
 
 // UpdateFolder updates the path, filter, slug, and repairable title for a folder album.
@@ -783,9 +839,9 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 		return fmt.Errorf("album does not exist")
 	}
 
-	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
-	albumSlug := txt.Slug(albumPath)
-	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath)
+	albumPath = ClipPath(clean.SlashPath(albumPath))
+	albumSlug := txt.SlugUnique(albumPath)
+	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath, m.AlbumFilter)
 
 	if albumSlug == "" || albumPath == "" || albumFilter == "" || !m.HasID() {
 		return fmt.Errorf("folder album must have a path and filter")
@@ -807,11 +863,43 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 
 	if err := m.Updates(values); err != nil {
 		return err
-	} else if err = UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_type = ? AND album_path = ? AND id <> ?", AlbumFolder, albumPath, m.ID).Error; err != nil {
+	} else if err = clearDuplicateFolderAlbumPaths(albumPath, m.ID); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// clearDuplicateFolderAlbumPaths nulls album_path on other folder albums that share
+// the exact same path so a single album owns it. The candidate query is collation-
+// fuzzy on MariaDB (see findFolderAlbumByPath), so each row is re-checked byte-exact
+// before its path is cleared to avoid wiping an emoji sibling's path.
+func clearDuplicateFolderAlbumPaths(albumPath string, keepID uint) error {
+	if albumPath == "" {
+		return nil
+	}
+
+	var matches Albums
+
+	if err := UnscopedDb().
+		Where("album_type = ? AND album_path = ? AND id <> ?", AlbumFolder, albumPath, keepID).
+		Find(&matches).Error; err != nil {
+		return err
+	}
+
+	duplicateIDs := make([]uint, 0, len(matches))
+
+	for i := range matches {
+		if matches[i].AlbumPath == albumPath {
+			duplicateIDs = append(duplicateIDs, matches[i].ID)
+		}
+	}
+
+	if len(duplicateIDs) == 0 {
+		return nil
+	}
+
+	return UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE id IN (?)", duplicateIDs).Error
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
@@ -819,7 +907,7 @@ func (m *Album) Save() error {
 	if err := Db().Save(m).Error; err != nil {
 		return err
 	} else {
-		event.PublishUserEntities("albums", event.EntityUpdated, []*Album{m}, m.CreatedBy)
+		event.PublishUserEntities("albums", event.EntityUpdated, []string{m.AlbumUID}, m.CreatedBy)
 		return nil
 	}
 }
@@ -831,7 +919,7 @@ func (m *Album) Create() error {
 	}
 
 	m.PublishCountChange(1)
-	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
+	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)
 
 	return nil
 }
@@ -924,7 +1012,7 @@ func (m *Album) Restore() error {
 	m.DeletedAt = nil
 
 	m.PublishCountChange(1)
-	event.PublishUserEntities("albums", event.EntityCreated, []*Album{m}, m.CreatedBy)
+	event.PublishUserEntities("albums", event.EntityCreated, []string{m.AlbumUID}, m.CreatedBy)
 
 	return nil
 }

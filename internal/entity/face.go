@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec // G505: Stable non-cryptographic face identifier hash.
 	"encoding/base32"
 	"encoding/json"
 	"fmt"
@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -100,6 +101,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 		return err
 	}
 
+	//nolint:gosec // G401: Stable identifier hash; not used for security decisions.
 	s := sha1.Sum(m.EmbeddingJSON)
 
 	// Update Face ID, Kind, and reset match timestamp,
@@ -268,7 +270,14 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 		return err
 	}
 
-	for _, marker := range markers {
+	start := time.Now()
+	resultLen := len(markers)
+
+	for i, marker := range markers {
+		if time.Since(start) > time.Duration(time.Minute*15) {
+			log.Infof("faces: matching %d of %d markers", i, resultLen)
+			start = time.Now()
+		}
 		if ok, dist := m.Match(marker.Embeddings()); !ok {
 			// Ignore.
 		} else if _, err = marker.SetFace(m, dist); err != nil {
@@ -340,7 +349,7 @@ func (m *Face) RefreshPhotos() error {
 
 	var err error
 	switch DbDialect() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		update := fmt.Sprintf(`UPDATE photos p JOIN files f ON f.photo_id = p.id JOIN %s m ON m.file_uid = f.file_uid
 			SET p.checked_at = NULL WHERE m.face_id = ?`, Marker{}.TableName())
 		err = UnscopedDb().Exec(update, m.ID).Error
@@ -396,7 +405,7 @@ func (m *Face) Delete() error {
 }
 
 // Update a face property in the database.
-func (m *Face) Update(attr string, value interface{}) error {
+func (m *Face) Update(attr string, value any) error {
 	if m.ID == "" {
 		return fmt.Errorf("empty id")
 	}
@@ -407,7 +416,7 @@ func (m *Face) Update(attr string, value interface{}) error {
 }
 
 // Updates face properties in the database.
-func (m *Face) Updates(values interface{}) error {
+func (m *Face) Updates(values any) error {
 	if m.ID == "" {
 		return fmt.Errorf("empty id")
 	}

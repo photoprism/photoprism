@@ -1,6 +1,7 @@
 package acl
 
 import (
+	"slices"
 	"sort"
 	"testing"
 
@@ -17,8 +18,10 @@ func TestRoleStrings_Strings_SortedAndNoEmpty(t *testing.T) {
 
 	got := m.Strings()
 
-	// Expect deterministic, sorted output and no empty entries.
-	assert.Equal(t, []string{"admin", "guest", "visitor"}, got)
+	// Expect deterministic, sorted output, no empty entries, and visitor
+	// excluded (reserved for anonymous/link-share access, never offered).
+	assert.Equal(t, []string{"admin", "guest"}, got)
+	assert.NotContains(t, got, "visitor")
 	assert.True(t, sort.StringsAreSorted(got))
 }
 
@@ -42,13 +45,43 @@ func TestRoleStrings_CliUsageString(t *testing.T) {
 	})
 	t.Run("Two", func(t *testing.T) {
 		m := RoleStrings{"guest": RoleGuest, "admin": RoleAdmin}
-		// Note the comma before "or" matches current implementation.
-		assert.Equal(t, "admin, or guest", m.CliUsageString())
+		// Two items read without a comma before "or" (see txt.JoinOr).
+		assert.Equal(t, "admin or guest", m.CliUsageString())
 	})
 	t.Run("Three", func(t *testing.T) {
-		m := RoleStrings{"visitor": RoleVisitor, "guest": RoleGuest, "admin": RoleAdmin}
-		assert.Equal(t, "admin, guest, or visitor", m.CliUsageString())
+		m := RoleStrings{"user": RoleUser, "guest": RoleGuest, "admin": RoleAdmin}
+		assert.Equal(t, "admin, guest, or user", m.CliUsageString())
 	})
+	t.Run("ExcludesVisitor", func(t *testing.T) {
+		m := RoleStrings{"visitor": RoleVisitor, "guest": RoleGuest, "admin": RoleAdmin}
+		assert.Equal(t, "admin or guest", m.CliUsageString())
+	})
+}
+
+func TestRolesCliUsageString(t *testing.T) {
+	assert.Equal(t, "", RolesCliUsageString(nil))
+	assert.Equal(t, "admin", RolesCliUsageString([]Role{RoleAdmin}))
+	assert.Equal(t, "admin or guest", RolesCliUsageString([]Role{RoleAdmin, RoleGuest}))
+	assert.Equal(t, "admin, manager, or guest", RolesCliUsageString([]Role{RoleAdmin, RoleManager, RoleGuest}))
+}
+
+func TestRoleStrings_Strings_ExcludesAliases(t *testing.T) {
+	// The app→instance and uploader→contributor aliases and the visitor/empty roles
+	// are display-only and must not appear in role listings, even though the map
+	// still validates them.
+	m := RoleStrings{
+		string(RoleAdmin):       RoleAdmin,
+		string(RoleContributor): RoleContributor,
+		"uploader":              RoleContributor,
+		"app":                   RoleInstance,
+		string(RoleVisitor):     RoleVisitor,
+		"":                      RoleNone,
+	}
+	got := m.Strings()
+	assert.ElementsMatch(t, []string{"admin", "contributor"}, got)
+	assert.NotContains(t, got, "uploader")
+	assert.NotContains(t, got, "app")
+	assert.NotContains(t, got, "visitor")
 }
 
 func TestRoles_Allow(t *testing.T) {
@@ -83,36 +116,43 @@ func TestRoles_Allow(t *testing.T) {
 }
 
 func TestRoleStrings_GlobalMaps_AliasNoneAndUsage(t *testing.T) {
-	t.Run("ClientRolesStringsIncludeAliasNoneExcludeEmpty", func(t *testing.T) {
+	t.Run("ClientRolesStringsExcludeAliasNoneAndEmpty", func(t *testing.T) {
 		got := ClientRoles.Strings()
-		// Contains exactly the expected elements, order not enforced.
-		assert.ElementsMatch(t, []string{"admin", "app", "client", "none", "portal", "service"}, got)
-		// Does not include empty string
+		// Contains exactly the expected elements, order not enforced; the "none"
+		// alias and the empty role are excluded from display.
+		assert.ElementsMatch(t, []string{"admin", "instance", "client", "portal", "service"}, got)
+		assert.NotContains(t, got, "none")
+		// Does not include empty string.
 		for _, s := range got {
 			assert.NotEqual(t, "", s)
 		}
 	})
-	t.Run("UserRolesStringsIncludeAliasNoneExcludeEmpty", func(t *testing.T) {
+	t.Run("UserRolesStringsExcludeAliasNoneEmptyAndVisitor", func(t *testing.T) {
 		got := UserRoles.Strings()
-		assert.ElementsMatch(t, []string{"admin", "guest", "none", "visitor"}, got)
+		assert.ElementsMatch(t, []string{"admin", "guest"}, got)
+		assert.NotContains(t, got, "none")
+		assert.NotContains(t, got, "visitor")
 		for _, s := range got {
 			assert.NotEqual(t, "", s)
 		}
 	})
-	t.Run("ClientRolesCliUsageStringIncludesNoneAndOrBeforeLast", func(t *testing.T) {
+	t.Run("ClientRolesCliUsageStringExcludesNoneAndOrBeforeLast", func(t *testing.T) {
 		u := ClientRoles.CliUsageString()
-		// Should list known roles and end with "or none" (alias present).
-		for _, s := range []string{"admin", "client", "app", "portal", "service", "none"} {
+		// Should list known roles and end with "or service"; the "none" alias is excluded.
+		for _, s := range []string{"admin", "client", "instance", "portal", "service"} {
 			assert.Contains(t, u, s)
 		}
-		assert.Regexp(t, `, or none$`, u)
+		assert.NotContains(t, u, "none")
+		assert.Regexp(t, `, or service$`, u)
 	})
-	t.Run("UserRolesCliUsageStringIncludesNoneAndOrBeforeLast", func(t *testing.T) {
+	t.Run("UserRolesCliUsageStringExcludesNoneVisitorAndOrBeforeLast", func(t *testing.T) {
 		u := UserRoles.CliUsageString()
-		for _, s := range []string{"admin", "guest", "visitor", "none"} {
+		for _, s := range []string{"admin", "guest"} {
 			assert.Contains(t, u, s)
 		}
-		assert.Regexp(t, `, or none$`, u)
+		assert.NotContains(t, u, "none")
+		assert.NotContains(t, u, "visitor")
+		assert.Regexp(t, ` or guest$`, u)
 	})
 	t.Run("AliasNoneMapsToRoleNone", func(t *testing.T) {
 		assert.Equal(t, RoleNone, ClientRoles[RoleAliasNone])
@@ -172,13 +212,7 @@ func TestResource_Default_String_And_Compare(t *testing.T) {
 func TestResourceNames_ContainsCore(t *testing.T) {
 	want := []Resource{ResourceDefault, ResourcePhotos, ResourceAlbums, ResourceWebDAV, ResourceApi}
 	for _, w := range want {
-		found := false
-		for _, have := range ResourceNames {
-			if have == w {
-				found = true
-				break
-			}
-		}
+		found := slices.Contains(ResourceNames, w)
 		assert.Truef(t, found, "resource %s not found in ResourceNames", w)
 	}
 }

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math/bits"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -58,8 +59,35 @@ func TestConfig_DisableWebDAV(t *testing.T) {
 
 	assert.False(t, c.DisableWebDAV())
 
+	c.options.Edition = Portal
 	c.options.NodeRole = cluster.RolePortal
 	assert.True(t, c.DisableWebDAV())
+}
+
+func TestConfig_DisableMCP(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Option defaults to false so the MCP endpoint is registered.
+	assert.False(t, c.DisableMCP())
+
+	c.options.DisableMCP = true
+	assert.True(t, c.DisableMCP())
+
+	c.options.DisableMCP = false
+	assert.False(t, c.DisableMCP())
+}
+
+func TestConfig_DisableAppPasswords(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Backed by the AppPasswords feature flag, which defaults to enabled.
+	assert.False(t, c.DisableAppPasswords())
+
+	c.Settings().Features.AppPasswords = false
+	assert.True(t, c.DisableAppPasswords())
+
+	c.Settings().Features.AppPasswords = true
+	assert.False(t, c.DisableAppPasswords())
 }
 
 func TestConfig_DisableExifTool(t *testing.T) {
@@ -150,11 +178,7 @@ func TestConfig_DisableImageMagick(t *testing.T) {
 func TestConfig_DisableVips(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, false, c.DisableVips())
-	c.options.DisableVips = true
-	assert.True(t, c.DisableVips())
-	c.options.DisableVips = false
-	assert.Equal(t, false, c.DisableVips())
+	assert.Equal(t, bits.UintSize < 64, c.DisableVips())
 }
 
 func TestConfig_DisableSips(t *testing.T) {

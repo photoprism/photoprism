@@ -59,7 +59,7 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		basicAuth := []byte(fmt.Sprintf("alice:%s", sess.AuthToken()))
+		basicAuth := fmt.Appendf(nil, "alice:%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
 		webdavAuthCache.Flush()
@@ -76,7 +76,7 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		basicAuth := []byte(fmt.Sprintf("bob:%s", sess.AuthToken()))
+		basicAuth := fmt.Appendf(nil, "bob:%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
 		webdavAuthCache.Flush()
@@ -93,7 +93,7 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		basicAuth := []byte(fmt.Sprintf(":%s", sess.AuthToken()))
+		basicAuth := fmt.Appendf(nil, ":%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
 		webdavAuthCache.Flush()
@@ -141,6 +141,28 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		header.SetAuthorization(c.Request, rnd.AppPassword())
+
+		webdavAuthCache.Flush()
+		webdavHandler(c)
+
+		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+		assert.Equal(t, BasicAuthRealm, c.Writer.Header().Get("WWW-Authenticate"))
+	})
+	t.Run("AppPasswordsDisabled", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{
+			Header: make(http.Header),
+		}
+
+		// A real app-password session (OIDC-only user, session grant) read from fixtures
+		// so the gate's provider check is exercised without a database write.
+		sess := entity.SessionFixtures.Get("alice_app_password")
+		assert.True(t, sess.IsApplication())
+		header.SetAuthorization(c.Request, sess.AuthToken())
+
+		conf.Settings().Features.AppPasswords = false
+		defer func() { conf.Settings().Features.AppPasswords = true }()
 
 		webdavAuthCache.Flush()
 		webdavHandler(c)

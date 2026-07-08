@@ -11,8 +11,32 @@ import (
 
 func TestConfig_AppName(t *testing.T) {
 	c := NewConfig(CliTestContext())
-
 	assert.Equal(t, "PhotoPrism", c.AppName())
+	t.Run("ExplicitAppNameWins", func(t *testing.T) {
+		c.options.AppName = "My App"
+		c.options.SiteName = "Acme Media"
+		c.options.SiteTitle = "Our Trip"
+		assert.Equal(t, "My App", c.AppName())
+	})
+	t.Run("PrefersSiteNameOverSiteTitle", func(t *testing.T) {
+		c.options.AppName = ""
+		c.options.SiteName = "Acme Media"
+		c.options.SiteTitle = "Our Trip"
+		assert.Equal(t, "Acme Media", c.AppName())
+	})
+	t.Run("FallsBackToSiteTitle", func(t *testing.T) {
+		c.options.AppName = ""
+		c.options.SiteName = ""
+		c.options.SiteTitle = "Our Trip"
+		assert.Equal(t, "Our Trip", c.AppName())
+	})
+	t.Run("StripsQuotesAndClips", func(t *testing.T) {
+		c.options.AppName = `A'B"C`
+		assert.Equal(t, "ABC", c.AppName())
+	})
+	c.options.AppName = ""
+	c.options.SiteName = ""
+	c.options.SiteTitle = ""
 }
 
 func TestConfig_AppMode(t *testing.T) {
@@ -35,6 +59,14 @@ func TestConfig_AppIcon(t *testing.T) {
 	assert.Equal(t, "mint", c.AppIcon())
 	c.options.AppIcon = "bold"
 	assert.Equal(t, "bold", c.AppIcon())
+	c.options.AppIcon = "bloom"
+	assert.Equal(t, "bloom", c.AppIcon())
+	c.options.AppIcon = "flower"
+	assert.Equal(t, "flower", c.AppIcon())
+	c.options.AppIcon = "ring"
+	assert.Equal(t, "ring", c.AppIcon())
+	c.options.AppIcon = "shutter"
+	assert.Equal(t, "shutter", c.AppIcon())
 	c.options.AppIcon = "logo"
 	assert.Equal(t, "logo", c.AppIcon())
 }
@@ -76,6 +108,7 @@ func TestConfig_AppConfig(t *testing.T) {
 	assert.Equal(t, c.AppIcon(), result.Icon)
 	assert.Equal(t, c.SiteDescription(), result.Description)
 	assert.Equal(t, c.BaseUri("/"), result.BaseUri)
+	assert.Equal(t, c.FrontendUri(""), result.FrontendUri)
 	assert.Equal(t, c.StaticUri(), result.StaticUri)
 }
 
@@ -92,10 +125,13 @@ func TestConfig_AppManifest(t *testing.T) {
 		assert.Equal(t, appConf.Name, result.ShortName)
 		assert.Equal(t, appConf.Description, result.Description)
 		assert.Equal(t, appConf.BaseUri, result.Scope)
-		assert.Equal(t, appConf.BaseUri+"library/", result.StartUrl)
-		assert.Len(t, result.Icons, len(pwa.IconSizes))
+		assert.Equal(t, pwa.StartUrl(appConf.BaseUri, appConf.FrontendUri), result.StartUrl)
+		assert.Len(t, result.Icons, len(pwa.IconSizes)+len(pwa.MaskableIconSizes))
 		assert.Len(t, result.Categories, len(pwa.Categories))
 		assert.Len(t, result.Permissions, len(pwa.Permissions))
+		assert.NotEmpty(t, result.Lang)
+		assert.NotEmpty(t, result.Dir)
+		assert.Len(t, result.Screenshots, 2)
 
 		cached := c.AppManifest()
 		assert.NotEmpty(t, cached)
@@ -103,8 +139,8 @@ func TestConfig_AppManifest(t *testing.T) {
 		assert.Equal(t, appConf.Name, cached.ShortName)
 		assert.Equal(t, appConf.Description, cached.Description)
 		assert.Equal(t, appConf.BaseUri, cached.Scope)
-		assert.Equal(t, appConf.BaseUri+"library/", cached.StartUrl)
-		assert.Len(t, cached.Icons, len(pwa.IconSizes))
+		assert.Equal(t, pwa.StartUrl(appConf.BaseUri, appConf.FrontendUri), cached.StartUrl)
+		assert.Len(t, cached.Icons, len(pwa.IconSizes)+len(pwa.MaskableIconSizes))
 		assert.Len(t, cached.Categories, len(pwa.Categories))
 		assert.Len(t, cached.Permissions, len(pwa.Permissions))
 	})

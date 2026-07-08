@@ -16,6 +16,7 @@ import (
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -99,6 +100,192 @@ func TestAuthAny(t *testing.T) {
 	})
 }
 
+func TestAuthAny_AppPasswordsDisabled(t *testing.T) {
+	conf := config.TestConfig()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	defer func() { conf.Settings().Features.AppPasswords = true }()
+
+	user := entity.FindUserByName("alice")
+	require.NotNil(t, user)
+
+	// App passwords are minted with different grant types (password for local users,
+	// session for OIDC-only users, cli for "auth add"); the gate must reject all of them.
+	for _, grant := range []authn.GrantType{authn.GrantPassword, authn.GrantSession, authn.GrantCLI} {
+		t.Run(grant.String(), func(t *testing.T) {
+			sess, err := entity.AddClientSession("alice-app-"+grant.String(), conf.SessionMaxAge(), "*", grant, user)
+			require.NoError(t, err)
+			require.True(t, sess.IsApplication())
+			token := sess.AuthToken()
+
+			authPhotos := func() *entity.Session {
+				gin.SetMode(gin.TestMode)
+				w := httptest.NewRecorder()
+				c, _ := gin.CreateTestContext(w)
+				req, _ := http.NewRequest(http.MethodGet, "/api/v1/photos", nil)
+				header.SetAuthorization(req, token)
+				req.RemoteAddr = "10.9.8.7:4321"
+				c.Request = req
+				return AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView})
+			}
+
+			// Enabled: the app password authorizes within its scope.
+			conf.Settings().Features.AppPasswords = true
+			s := authPhotos()
+			require.NotNil(t, s)
+			assert.Equal(t, http.StatusOK, s.HttpStatus())
+
+			// Disabled: the same app password is rejected before any ACL check.
+			conf.Settings().Features.AppPasswords = false
+			s2 := authPhotos()
+			require.NotNil(t, s2)
+			assert.Equal(t, http.StatusForbidden, s2.HttpStatus())
+		})
+	}
+
+	// Negative control: the gate keys on IsApplication(), so a non-application
+	// session (here a client-credentials grant) must keep authorizing whether or
+	// not app passwords are disabled, proving the flag does not over-reject.
+	t.Run("NonApplicationSessionUnaffected", func(t *testing.T) {
+		sess, err := entity.AddClientSession("alice-client-cred", conf.SessionMaxAge(), "*", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		require.False(t, sess.IsApplication())
+		token := sess.AuthToken()
+
+		authPhotos := func() *entity.Session {
+			gin.SetMode(gin.TestMode)
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			req, _ := http.NewRequest(http.MethodGet, "/api/v1/photos", nil)
+			header.SetAuthorization(req, token)
+			req.RemoteAddr = "10.9.8.7:4321"
+			c.Request = req
+			return AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView})
+		}
+
+		conf.Settings().Features.AppPasswords = true
+		s := authPhotos()
+		require.NotNil(t, s)
+		assert.Equal(t, http.StatusOK, s.HttpStatus())
+
+		conf.Settings().Features.AppPasswords = false
+		s2 := authPhotos()
+		require.NotNil(t, s2)
+		assert.Equal(t, http.StatusOK, s2.HttpStatus(), "disabling app passwords must not reject non-application sessions")
+	})
+}
+
+func TestAuthAny_AppPasswordWebLoginDisabled(t *testing.T) {
+	conf := config.TestConfig()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	// Use a non-super-admin account; super admins keep web login regardless of CanLogin.
+	user := entity.FindUserByName("bob")
+	require.NotNil(t, user)
+	require.False(t, user.SuperAdmin)
+
+	sess, err := entity.AddClientSession("bob-app-pw", conf.SessionMaxAge(), "*", authn.GrantPassword, user)
+	require.NoError(t, err)
+	require.True(t, sess.IsApplication())
+	token := sess.AuthToken()
+
+	authPhotos := func() *entity.Session {
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/photos", nil)
+		header.SetAuthorization(req, token)
+		req.RemoteAddr = "10.9.8.7:4321"
+		c.Request = req
+		return AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView})
+	}
+
+	// Restore the fixture's web login state after the test.
+	defer func() {
+		if m := entity.FindLocalUser("bob"); m != nil {
+			m.CanLogin = true
+			_ = m.Save()
+		}
+		entity.FlushSessionCache()
+	}()
+
+	// Web login enabled: the app password authorizes within its scope.
+	s := authPhotos()
+	require.NotNil(t, s)
+	assert.Equal(t, http.StatusOK, s.HttpStatus())
+
+	// Web login disabled: the same app password is rejected on the REST API. WebDAV
+	// access stays governed by CanUseWebDAV (verified in the entity tests).
+	m := entity.FindLocalUser("bob")
+	require.NotNil(t, m)
+	m.CanLogin = false
+	require.NoError(t, m.Save())
+	entity.FlushSessionCache()
+
+	s2 := authPhotos()
+	require.NotNil(t, s2)
+	assert.Equal(t, http.StatusForbidden, s2.HttpStatus())
+}
+
+func TestAuthAny_AppPasswordDeactivated(t *testing.T) {
+	conf := config.TestConfig()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	user := entity.FindUserByName("bob")
+	require.NotNil(t, user)
+
+	sess, err := entity.AddClientSession("bob-app-deact", conf.SessionMaxAge(), "*", authn.GrantPassword, user)
+	require.NoError(t, err)
+	require.True(t, sess.IsApplication())
+	token := sess.AuthToken()
+
+	authPhotos := func() *entity.Session {
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/photos", nil)
+		header.SetAuthorization(req, token)
+		req.RemoteAddr = "10.9.8.7:4321"
+		c.Request = req
+		return AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView})
+	}
+
+	// Restore the fixture's auth provider after the test.
+	defer func() {
+		if m := entity.FindLocalUser("bob"); m != nil {
+			m.SetProvider(authn.ProviderLocal)
+			m.CanLogin = true
+			_ = m.Save()
+		}
+		entity.FlushSessionCache()
+	}()
+
+	// Active account: the app password authorizes within its scope.
+	s := authPhotos()
+	require.NotNil(t, s)
+	assert.Equal(t, http.StatusOK, s.HttpStatus())
+
+	// Deactivated (auth provider set to none): the app password is rejected on the REST
+	// API by the per-request DenyLogIn gate, even though the record is not revoked.
+	m := entity.FindLocalUser("bob")
+	require.NotNil(t, m)
+	m.SetProvider(authn.ProviderNone)
+	require.NoError(t, m.Save())
+	entity.FlushSessionCache()
+
+	s2 := authPhotos()
+	require.NotNil(t, s2)
+	assert.Equal(t, http.StatusForbidden, s2.HttpStatus())
+
+	// The app password record itself is preserved, so reactivating the account restores
+	// access without reconfiguring devices.
+	rec, err := entity.FindSession(sess.ID)
+	require.NoError(t, err)
+	assert.NotNil(t, rec)
+}
+
 func TestAuthToken(t *testing.T) {
 	t.Run("None", func(t *testing.T) {
 		gin.SetMode(gin.TestMode)
@@ -145,6 +332,48 @@ func TestAuthToken(t *testing.T) {
 		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", authToken)
 		bearerToken := header.BearerToken(c)
 		assert.Equal(t, "", bearerToken)
+	})
+}
+
+func TestSessionRefID(t *testing.T) {
+	origConf := get.Config()
+	t.Cleanup(func() { get.SetConfig(origConf) })
+
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "unknown", SessionRefID(nil))
+	})
+	t.Run("UnknownWithoutSession", func(t *testing.T) {
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf.Options().Public = false
+		get.SetConfig(conf)
+
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/session", nil)
+		req.RemoteAddr = "198.51.100.25:1234"
+		c.Request = req
+
+		assert.Equal(t, "unknown", SessionRefID(c))
+	})
+	t.Run("PublicSession", func(t *testing.T) {
+		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf.Options().Public = true
+		get.SetConfig(conf)
+
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/session", nil)
+		req.RemoteAddr = "198.51.100.26:1234"
+		header.SetAuthorization(req, session.PublicAuthToken)
+		c.Request = req
+
+		expected := get.Session().Public().RefID
+		actual := SessionRefID(c)
+
+		assert.Equal(t, expected, actual)
+		assert.True(t, rnd.IsRefID(actual))
 	})
 }
 
@@ -302,7 +531,7 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 
 	nodeConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-"+suffix, t.TempDir())
 
-	nodeConf.Options().NodeRole = cluster.RoleApp
+	nodeConf.Options().NodeRole = cluster.RoleInstance
 	nodeConf.Options().Public = false
 	clusterUUID := rnd.UUID()
 	nodeConf.Options().ClusterUUID = clusterUUID
@@ -311,7 +540,7 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 
 	portalConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-issuer-"+suffix, t.TempDir())
 
-	portalConf.Options().NodeRole = cluster.RolePortal
+	enablePortalAPIs(t, portalConf)
 	portalConf.Options().ClusterUUID = clusterUUID
 
 	mgr, err := clusterjwt.NewManager(portalConf)

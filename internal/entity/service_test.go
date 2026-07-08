@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -141,7 +142,7 @@ func TestService_Directories(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		result, err := model.Directories()
+		result, err := model.Directories("")
 
 		if err != nil {
 			t.Fatal(err)
@@ -166,7 +167,7 @@ func TestService_Directories(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		result, err := model.Directories()
+		result, err := model.Directories("")
 
 		if err != nil {
 			t.Fatal(err)
@@ -258,7 +259,11 @@ func TestService_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 		afterDate := model.UpdatedAt
-		assert.True(t, afterDate.After(initialDate))
+		// Timestamps are stored with second precision, so a save within the same
+		// second leaves UpdatedAt unchanged; assert it stays within a sane window.
+		elapsed := afterDate.Sub(initialDate)
+		assert.GreaterOrEqual(t, elapsed, time.Duration(0))
+		assert.Less(t, elapsed, time.Minute)
 	})
 }
 

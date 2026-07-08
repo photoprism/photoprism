@@ -175,10 +175,10 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Activated}, s.RefID)
 
-		// Invalidate any other user sessions to protect the account:
-		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, "invalidated %s"}, s.RefID,
-			english.Plural(user.DeleteSessions([]string{s.ID}), authn.Session, authn.Sessions))
+		// Revoke other user sessions after a privilege level change,
+		// except for app passwords and client access tokens.
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, "revoked %s"}, s.RefID,
+			english.Plural(user.RevokeDerivedSessions([]string{s.ID}), authn.Session, authn.Sessions))
 
 		// Clear session cache.
 		s.ClearCache()
@@ -249,16 +249,16 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Session, *entity.User, *form.Passcode, error) {
 	conf := get.Config()
 
-	// Prevent caching of API response.
+	// Prevent API response caching.
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
-	// You cannot change any passwords without authentication and settings enabled.
+	// Passcode changes require authentication and enabled settings.
 	if conf.Public() || conf.DisableSettings() {
 		Abort(c, http.StatusForbidden, i18n.ErrPublic)
 		return nil, nil, nil, authn.ErrPasscodeNotSupported
 	}
 
-	// Check limit for failed auth requests (max. 10 per minute).
+	// Enforce the failed authentication rate limit.
 	if limiter.Login.Reject(ClientIP(c)) {
 		limiter.AbortJSON(c)
 		return nil, nil, nil, authn.ErrRateLimitExceeded
@@ -271,13 +271,13 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 		return s, nil, nil, authn.ErrUnauthorized
 	}
 
-	// Check if the current user has management privileges.
+	// Normalize the target user UID.
 	uid := clean.UID(c.Param("uid"))
 
 	// Get user from session.
 	user := s.GetUser()
 
-	// Regular users can only set up a passcode for their own account.
+	// Users may only manage passcodes for their own account.
 	if user.UserUID != uid || !user.CanLogIn() {
 		AbortForbidden(c)
 		return s, nil, nil, authn.ErrUnauthorized
@@ -292,7 +292,14 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	frm := &form.Passcode{}
 
 	// Validate request form values.
+	LimitRequestBodyBytes(c, MaxAuthRequestBytes)
+
 	if err := c.BindJSON(frm); err != nil {
+		if IsRequestBodyTooLarge(err) {
+			AbortRequestTooLarge(c, i18n.ErrInvalidPassword)
+			return s, nil, nil, authn.ErrInvalidRequest
+		}
+
 		Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 		return s, nil, nil, authn.ErrInvalidRequest
 	} else if authn.KeyTOTP.NotEqual(frm.Type) {
@@ -335,7 +342,7 @@ func checkUserPasscodePassword(c *gin.Context, user *entity.User, password strin
 			Password: password,
 		}
 
-		// Check if user login credentials are valid.
+		// Check whether user login credentials are valid.
 		authUser, provider, method, authErr := entity.Auth(f, nil, c)
 
 		switch {

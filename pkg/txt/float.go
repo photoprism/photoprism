@@ -52,19 +52,29 @@ func FloatRange(s string, min, max float64) (start float64, end float64, err err
 	valid := false
 
 	p := 0
-	v := [][]byte{make([]byte, 0, 20), make([]byte, 0, 20)}
+	startValue := make([]byte, 0, 20)
+	endValue := make([]byte, 0, 20)
 
-	for i, r := range s {
-		if r == 45 {
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == '-' {
 			if i == 0 || p == 1 {
-				v[p] = append(v[p], byte(r))
+				if p == 0 {
+					startValue = append(startValue, c)
+				} else {
+					endValue = append(endValue, c)
+				}
 			} else {
 				p = 1
 			}
 		}
-		if r == 46 || r >= 48 && r <= 57 {
+		if c == '.' || c >= '0' && c <= '9' {
 			valid = true
-			v[p] = append(v[p], byte(r)) //nolint:gosec
+			if p == 0 {
+				startValue = append(startValue, c)
+			} else {
+				endValue = append(endValue, c)
+			}
 		}
 	}
 
@@ -73,11 +83,11 @@ func FloatRange(s string, min, max float64) (start float64, end float64, err err
 	}
 
 	if p == 0 {
-		start = Float64(string(v[0]))
+		start = Float64(string(startValue))
 		end = start
 	} else {
-		start = Float64(string(v[0]))
-		end = Float64(string(v[1]))
+		start = Float64(string(startValue))
+		end = Float64(string(endValue))
 	}
 
 	if start > max {

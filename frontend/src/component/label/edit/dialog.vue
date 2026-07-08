@@ -13,18 +13,21 @@
   >
     <v-form ref="form" validate-on="invalid-input" class="form-label-edit" accept-charset="UTF-8" tabindex="-1" @submit.prevent="confirm">
       <v-card>
-        <v-card-title class="d-flex justify-start align-center ga-3">
-          <v-icon size="28" color="primary">mdi-label</v-icon>
-          <h6 class="text-h6">{{ $gettext(`Edit %{s}`, { s: model.modelName() }) }}</h6>
-        </v-card-title>
+        <v-toolbar flat color="navigation" class="mb-4" density="comfortable">
+          <v-toolbar-title>
+            {{ $gettext(`Edit %{s}`, { s: model.modelName() }) }}
+          </v-toolbar-title>
+          <v-btn icon class="action-close" :aria-label="$gettext('Close')" @click.stop="close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
         <v-card-text class="dense">
           <v-row align="center" dense>
             <v-col cols="12">
               <v-text-field
                 v-model="model.Name"
-                hide-details
                 autofocus
-                :rules="[titleRule]"
+                :rules="rules.text(false, 0, LabelMaxLength.Name, $gettext('Name'))"
                 :label="$gettext('Name')"
                 :disabled="disabled"
                 class="input-title"
@@ -48,7 +51,8 @@
   </v-dialog>
 </template>
 <script>
-import Label from "model/label";
+import Label, { MaxLength as LabelMaxLength } from "model/label";
+import { rules } from "common/form";
 
 export default {
   name: "PLabelEditDialog",
@@ -62,11 +66,13 @@ export default {
       default: () => {},
     },
   },
+  emits: ["close"],
   data() {
     return {
       disabled: !this.$config.allow("labels", "manage"),
       model: new Label(),
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
+      rules,
+      LabelMaxLength,
     };
   },
   watch: {
@@ -79,6 +85,8 @@ export default {
   methods: {
     afterEnter() {
       this.$view.enter(this);
+      // Seed validation so pre-filled overlong input surfaces the inline error on first render.
+      this.$refs.form?.validate?.();
     },
     afterLeave() {
       this.$view.leave(this);
@@ -92,9 +100,21 @@ export default {
         return;
       }
 
-      this.model.update().then((m) => {
-        this.$notify.success(this.$gettext("Changes successfully saved"));
-        this.$emit("close");
+      // Form-level gate: :rules alone only renders the inline error.
+      const form = this.$refs.form;
+      const validate = typeof form?.validate === "function" ? form.validate() : Promise.resolve({ valid: true });
+
+      return Promise.resolve(validate).then((result) => {
+        if (result && result.valid === false) {
+          this.$notify.error(this.$gettext("Changes could not be saved"));
+          return;
+        }
+
+        // Label.update() runs trimInputs() before the PUT.
+        return this.model.update().then(() => {
+          this.$notify.success(this.$gettext("Changes successfully saved"));
+          this.$emit("close");
+        });
       });
     },
   },

@@ -27,20 +27,12 @@ func videoSearchResults(query string, count int, offset int) ([]search.Photo, er
 		Order:   sortby.Name,
 	}
 
-	target := count + offset
-
-	if target < 0 {
-		target = 0
-	}
+	target := max(count+offset, 0)
 
 	collected := make([]search.Photo, 0, target)
 	index := make(map[string]int, target)
 	searchOffset := 0
-	batchSize := count
-
-	if batchSize < 200 {
-		batchSize = 200
-	}
+	batchSize := max(count, 200)
 
 	needComplete := false
 

@@ -17,7 +17,9 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -62,6 +64,33 @@ func (ind *Index) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
+// storageLow reports whether the storage path is too full to start or continue an index run.
+func (ind *Index) storageLow() bool {
+	_, low, err := ind.conf.StorageLow()
+
+	if err != nil || !low {
+		return false
+	}
+
+	// Do not leak server internals like the size of the storage volume.
+	log.Errorf("index: available storage is below the minimum threshold")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	return true
+}
+
+// abortInsufficientStorage logs the insufficient-storage cause once and cancels the run so the
+// directory walk stops, instead of failing every remaining file with a generic preview error.
+// It is called from worker goroutines when a write leaf reports status.ErrInsufficientStorage.
+func (ind *Index) abortInsufficientStorage() {
+	if mutex.IndexWorker.Canceled() {
+		return
+	}
+
+	log.Errorf("index: available storage is below the minimum threshold")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	ind.Cancel()
+}
+
 // Start indexes media files in the originals folder according to the provided options.
 // It streams work to worker goroutines, updates duplicate caches, and returns both
 // the set of processed paths and the number of files that were changed.
@@ -90,6 +119,13 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		return found, updated
 	}
 
+	// Reset the cached disk usage so a freshly freed disk is detected immediately.
+	disk.FlushFree()
+
+	if ind.storageLow() {
+		return found, updated
+	}
+
 	if err := mutex.IndexWorker.Start(); err != nil {
 		event.Warn(fmt.Sprintf("index: %s", err.Error()))
 		return found, updated
@@ -103,7 +139,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	var wg sync.WaitGroup
 	var numWorkers = ind.conf.IndexWorkers()
 	wg.Add(numWorkers)
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		go func() {
 			IndexWorker(jobs) // HLc
 			wg.Done()
@@ -146,7 +182,13 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			}()
 
 			if mutex.IndexWorker.Canceled() {
-				return errors.New("canceled")
+				return status.ErrCanceled
+			}
+
+			// Stop the walk if storage drops below the threshold mid-scan.
+			if ind.storageLow() {
+				ind.Cancel()
+				return status.ErrInsufficientStorage
 			}
 
 			isDir, _ := info.IsDirOrSymlinkToDir()
@@ -230,12 +272,6 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
-			// Skip related groups whose main file is ignored.
-			if related.Main == nil || ignore.Ignore(related.Main.FileName()) {
-				found[fileName] = fs.Processed
-				return nil
-			}
-
 			var files MediaFiles
 
 			// Main media file is required to proceed.
@@ -247,9 +283,8 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			// Check related files.
 			for _, f := range related.Files {
-				if ignore.Ignore(f.FileName()) || found[f.FileName()].Processed() {
+				if found[f.FileName()].Processed() {
 					// Ignore already processed files.
-					found[f.FileName()] = fs.Processed
 					continue
 				} else {
 					fileSize, limitErr := f.ExceedsBytes(o.ByteLimit)
@@ -301,8 +336,14 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	close(jobs)
 	wg.Wait()
 
-	if err != nil {
-		log.Error(err.Error())
+	logWalkResult("index", err)
+
+	if o.Rescan && !o.FacesOnly {
+		if reconciled, reconcileErr := entity.ReconcileOriginalsFolderAlbums(o.Path); reconcileErr != nil {
+			log.Warnf("index: %s (reconcile folder albums)", reconcileErr)
+		} else if reconciled > 0 {
+			log.Debugf("index: reconciled %d folder albums", reconciled)
+		}
 	}
 
 	if updated > 0 {

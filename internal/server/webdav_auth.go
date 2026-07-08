@@ -25,8 +25,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Use auth cache to improve WebDAV performance. It has a standard expiration time of about 5 minutes.
-var webdavAuthExpiration = 5 * time.Minute
+// Use auth cache to improve WebDAV performance. The short expiration time bounds how long
+// a credential keeps working after the account is changed or its WebDAV access is revoked.
+var webdavAuthExpiration = 1 * time.Minute
 var webdavAuthCache = gc.New(webdavAuthExpiration, webdavAuthExpiration)
 var webdavAuthMutex = sync.Mutex{}
 
@@ -112,6 +113,16 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		} else if !sess.HasUser() || user == nil {
 			// Log error if session does not belong to an authorized user account.
 			event.AuditErr([]string{clientIp, "webdav", "client %s", "session %s", "access without user account", status.Denied}, clean.Log(sess.GetClientInfo()), sess.RefID)
+			WebDAVAbortUnauthorized(c)
+			return
+		} else if sess.IsApplication() && conf.DisableAppPasswords() {
+			// Reject app passwords when the feature is disabled, so tokens minted before
+			// the flag was turned off stop working. Identified by the session's auth
+			// provider (IsApplication). A previously-authorized app password may persist
+			// until its WebDAV auth-cache entry expires (~5 min). The 401 (vs the REST
+			// path's 403) is the standard WebDAV re-auth response.
+			limiter.Auth.Reserve(clientIp)
+			event.AuditWarn([]string{clientIp, "webdav", "access with app passwords disabled", status.Denied})
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if sess.IsClient() && sess.InsufficientScope(acl.ResourceWebDAV, nil) {

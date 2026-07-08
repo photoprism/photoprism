@@ -15,7 +15,7 @@ type Client struct {
 	UserUID      string `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
 	UserName     string `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
 	ClientID     string `json:"ClientID,omitempty" yaml:"ClientID,omitempty"`
-	ClientSecret string `json:"ClientSecret,omitempty" yaml:"ClientSecret,omitempty"`
+	ClientSecret string `json:"ClientSecret,omitempty" yaml:"ClientSecret,omitempty"` //nolint:gosec // G117: Expected credential field.
 	ClientName   string `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
 	ClientRole   string `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
 	AuthProvider string `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`

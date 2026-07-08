@@ -32,6 +32,7 @@ func TestOAuthRevokeToken_Empty(t *testing.T) {
 	})
 }
 
+//nolint:gosec // G101: Validation tests intentionally use inline token fixtures.
 func TestOAuthRevokeToken_Validate(t *testing.T) {
 	t.Run("AuthTokenEmpty", func(t *testing.T) {
 		m := OAuthRevokeToken{

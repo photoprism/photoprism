@@ -11,9 +11,10 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -37,7 +38,19 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit by-UID edits to pictures within the session's shared scope, mirroring UpdatePhoto.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the check and restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -47,7 +60,14 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		frm := &form.Label{}
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err = c.BindJSON(frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		} else if err = frm.Validate(); err != nil {
@@ -95,9 +115,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, c.Param("uid"), c)
-
-		event.Success("label updated")
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
 		c.JSON(http.StatusOK, p)
 	})
@@ -123,7 +141,19 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit by-UID edits to pictures within the session's shared scope, mirroring UpdatePhoto.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the check and restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -133,7 +163,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		labelId, err := strconv.Atoi(clean.Token(c.Param("id")))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -145,7 +175,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -174,9 +204,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
-
-		event.Success("label removed")
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
 		c.JSON(http.StatusOK, p)
 	})
@@ -205,7 +233,19 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 
 		// TODO: Clean up and simplify this.
 
-		m, err := query.PhotoByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit by-UID edits to pictures within the session's shared scope, mirroring UpdatePhoto.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the check and restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -215,7 +255,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		labelId, err := strconv.Atoi(clean.Token(c.Param("id")))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
@@ -227,11 +267,18 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		label, err := query.PhotoLabel(m.ID, uint(labelId))
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": txt.UpperFirst(err.Error())})
+			Abort(c, http.StatusNotFound, i18n.ErrLabelNotFound)
 			return
 		}
 
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err = c.BindJSON(label); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -258,9 +305,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
-
-		event.Success("label saved")
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
 		c.JSON(http.StatusOK, p)
 	})

@@ -21,7 +21,6 @@ import {
   RetryLimits,
   SetDefaultLocale,
   StartPages,
-  ThumbFilters,
   ThumbSizes,
   Timeouts,
 } from "options/options";
@@ -247,10 +246,6 @@ describe("options/options", () => {
 
   it("should return thumb sizes", () => {
     expect(ThumbSizes()[1].value).toBe("fit_720");
-  });
-
-  it("should return thumb filters", () => {
-    expect(ThumbFilters()[0].value).toBe("blackman");
   });
 
   it("should return gender", () => {

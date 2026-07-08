@@ -48,6 +48,14 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		privilegeLevelChange = true
 	}
 
+	// Authentication Issuer URL, e.g. the Portal base URL when adopting an
+	// account into a cluster OIDC identity. Pinning it scopes the link to that
+	// issuer instead of matching any provider that asserts the same subject.
+	if ctx.IsSet("auth-issuer") {
+		m.AuthIssuer = frm.AuthIssuer
+		privilegeLevelChange = true
+	}
+
 	// Super-admin status.
 	if ctx.IsSet("superadmin") {
 		m.SuperAdmin = frm.SuperAdmin
@@ -101,8 +109,9 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 		// Invalid.
 		return err
 	} else if privilegeLevelChange {
-		// Delete sessions after privilege level change.
-		m.DeleteSessions(nil)
+		// Revoke all user sessions after a privilege level change,
+		// except for app passwords and client access tokens.
+		m.RevokeDerivedSessions(nil)
 	}
 
 	return nil

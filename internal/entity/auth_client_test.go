@@ -35,6 +35,42 @@ func TestClient_GetData(t *testing.T) {
 	assert.Equal(t, "portal", second.Theme)
 }
 
+func TestClient_GetData_OIDCFields(t *testing.T) {
+	t.Run("RoundTripThroughDataJSON", func(t *testing.T) {
+		src := NewClient()
+		src.SetData(&ClientData{
+			AllowGroups:     []string{"media-acme-admin", "media-acme-viewer"},
+			AllowGroupRoles: map[string]string{"media-acme-admin": "admin", "media-acme-viewer": "viewer"},
+			RedirectURIs:    []string{"https://photos.example.com/api/v1/oidc/redirect"},
+		})
+
+		// Read back from a fresh Client populated only via the marshaled JSON,
+		// so the test exercises the json.Unmarshal path, not the m.data cache.
+		dst := &Client{DataJSON: src.DataJSON}
+		got := dst.GetData()
+
+		assert.Equal(t, []string{"media-acme-admin", "media-acme-viewer"}, got.AllowGroups)
+		assert.Equal(t, "admin", got.AllowGroupRoles["media-acme-admin"])
+		assert.Equal(t, "viewer", got.AllowGroupRoles["media-acme-viewer"])
+		assert.Equal(t, []string{"https://photos.example.com/api/v1/oidc/redirect"}, got.RedirectURIs)
+	})
+
+	t.Run("OmitEmpty", func(t *testing.T) {
+		c := NewClient()
+		c.SetData(&ClientData{Theme: "portal"})
+
+		// Older rows without the OIDC fields must round-trip cleanly and report zero values.
+		assert.NotContains(t, string(c.DataJSON), "allowGroups")
+		assert.NotContains(t, string(c.DataJSON), "allowGroupRoles")
+		assert.NotContains(t, string(c.DataJSON), "redirectUris")
+
+		got := (&Client{DataJSON: c.DataJSON}).GetData()
+		assert.Nil(t, got.AllowGroups)
+		assert.Nil(t, got.AllowGroupRoles)
+		assert.Nil(t, got.RedirectURIs)
+	})
+}
+
 func TestFindClient(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
@@ -111,6 +147,43 @@ func TestClient_SetRole(t *testing.T) {
 	assert.False(t, c.HasRole("admin"))
 	c.SetRole("admin")
 	assert.True(t, c.HasRole("admin"))
+}
+
+func TestClient_SetDisplayName(t *testing.T) {
+	t.Run("InstanceReportSets", func(t *testing.T) {
+		c := Client{}
+		c.SetDisplayName("Reported", SrcAuto)
+		assert.Equal(t, "Reported", c.DisplayName)
+		assert.Equal(t, SrcAuto, c.NameSrc)
+	})
+	t.Run("InstanceUpdatesOwnValue", func(t *testing.T) {
+		c := Client{DisplayName: "Old", NameSrc: SrcAuto}
+		c.SetDisplayName("New", SrcAuto)
+		assert.Equal(t, "New", c.DisplayName)
+	})
+	t.Run("ManualPinsOverAuto", func(t *testing.T) {
+		c := Client{DisplayName: "Reported", NameSrc: SrcAuto}
+		c.SetDisplayName("Pinned", SrcManual)
+		assert.Equal(t, "Pinned", c.DisplayName)
+		assert.Equal(t, SrcManual, c.NameSrc)
+	})
+	t.Run("AutoCannotOverrideManual", func(t *testing.T) {
+		c := Client{DisplayName: "Pinned", NameSrc: SrcManual}
+		c.SetDisplayName("Reported", SrcAuto)
+		assert.Equal(t, "Pinned", c.DisplayName)
+		assert.Equal(t, SrcManual, c.NameSrc)
+	})
+	t.Run("ManualClearUnpins", func(t *testing.T) {
+		c := Client{DisplayName: "Pinned", NameSrc: SrcManual}
+		c.SetDisplayName("", SrcManual)
+		assert.Equal(t, "", c.DisplayName)
+		assert.Equal(t, SrcAuto, c.NameSrc)
+	})
+	t.Run("AutoEmptyIgnored", func(t *testing.T) {
+		c := Client{DisplayName: "Reported", NameSrc: SrcAuto}
+		c.SetDisplayName("", SrcAuto)
+		assert.Equal(t, "Reported", c.DisplayName)
+	})
 }
 
 func TestClient_User(t *testing.T) {

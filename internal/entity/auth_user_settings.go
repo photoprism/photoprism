@@ -53,7 +53,7 @@ func CreateUserSettings(user *User) error {
 		return fmt.Errorf("empty user uid")
 	}
 
-	user.UserSettings = &UserSettings{}
+	user.UserSettings = NewUserSettings(user.GetUID())
 
 	if err := Db().Where("user_uid = ?", user.GetUID()).First(user.UserSettings).Error; err == nil {
 		return nil
@@ -78,7 +78,7 @@ func (m *UserSettings) Save() error {
 }
 
 // Updates multiple properties in the database.
-func (m *UserSettings) Updates(values interface{}) error {
+func (m *UserSettings) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 

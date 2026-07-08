@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,7 +12,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/webdav"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -22,7 +25,7 @@ import (
 
 // WebDAVHandler wraps the http request handler so that it can be customized.
 var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Handler) {
-	srv.ServeHTTP(c.Writer, c.Request)
+	ServeWebDAV(c.Writer, c.Request, srv)
 }
 
 // WebDAVWriteMethod returns true for methods that modify WebDAV state.
@@ -54,13 +57,19 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	// Request logger function.
 	loggerFunc := func(request *http.Request, err error) {
 		if err != nil {
-			switch request.Method {
-			case header.MethodPut, header.MethodMkcol, header.MethodDelete, header.MethodMove, header.MethodCopy, header.MethodProppatch, header.MethodLock, header.MethodUnlock:
-				log.Errorf("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
-			case header.MethodPropfind:
-				log.Tracef("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
+			// Route WebDAV request errors to the console-only system log, not log.*.
+			// x/net/webdav embeds absolute originals/import paths in its messages,
+			// which must stay out of the browser log viewer and the persisted errors
+			// table; operators still see full detail in the server console.
+			switch {
+			case request.Method == header.MethodMkcol && errors.Is(err, os.ErrExist):
+				// MKCOL on an existing collection is a benign probe: sync clients such as
+				// PhotoSync test for a directory before creating it — expected, not a failure.
+				event.SystemDebug([]string{"webdav", "collection %s already exists"}, clean.Log(request.URL.String()))
+			case WebDAVWriteMethod(request.Method):
+				event.SystemError([]string{"webdav", "%s in %s %s"}, clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
 			default:
-				log.Debugf("webdav: %s in %s %s", clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
+				event.SystemDebug([]string{"webdav", "%s in %s %s"}, clean.Error(err), clean.Log(request.Method), clean.Log(request.URL.String()))
 			}
 		} else {
 			// Determine the filename if it is an uploaded file and process custom request headers, if any.
@@ -112,9 +121,18 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 		// is not enough free storage to upload new files.
 		switch c.Request.Method {
 		case header.MethodPut, header.MethodCopy:
-			if conf.FilesQuotaReached() {
+			if conf.InsufficientStorage() {
 				c.AbortWithStatus(http.StatusInsufficientStorage)
 				return
+			}
+		}
+
+		// Bound an uploaded file to the configured originals size limit (when set) so a single
+		// PUT cannot stream an unbounded body to disk; the free-storage check above only catches
+		// the next request. No-op when no originals limit is configured.
+		if c.Request.Method == header.MethodPut {
+			if limit := conf.OriginalsLimitBytes(); limit > 0 {
+				api.LimitRequestBodyBytes(c, limit)
 			}
 		}
 
@@ -210,23 +228,40 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 }
 
 // joinUnderBase joins a base directory with a relative name and ensures
-// that the resulting path stays within the base directory. Absolute
-// paths and Windows-style volume names are rejected.
+// that the resulting path stays within the base directory. Absolute paths,
+// Windows-style volume names, and drive-letter prefixes are rejected, and
+// containment is verified with filepath.Rel rather than a string prefix.
+// This mirrors the hardened safe-join used for archive extraction in pkg/fs.
 func joinUnderBase(baseDir, rel string) (string, error) {
 	if rel == "" {
 		return "", fmt.Errorf("invalid path")
 	}
+
+	// Normalize separators so mixed '/' and '\\' are handled consistently.
+	rel = strings.ReplaceAll(rel, "\\", "/")
+
+	// Reject Windows-style drive-letter prefixes even on non-Windows platforms.
+	if len(rel) >= 2 && rel[1] == ':' && ((rel[0] >= 'A' && rel[0] <= 'Z') || (rel[0] >= 'a' && rel[0] <= 'z')) {
+		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
+	}
+
 	// Reject absolute or volume paths.
 	if filepath.IsAbs(rel) || filepath.VolumeName(rel) != "" {
 		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
 	}
+
 	cleaned := filepath.Clean(rel)
-	// Compose destination and verify it stays inside base.
-	dest := filepath.Join(baseDir, cleaned)
 	base := filepath.Clean(baseDir)
-	if dest != base && !strings.HasPrefix(dest, base+string(os.PathSeparator)) {
+
+	// Compose destination and verify it stays inside base using filepath.Rel.
+	dest := filepath.Join(base, cleaned)
+	relToBase, err := filepath.Rel(base, dest)
+	if err != nil {
+		return "", fmt.Errorf("invalid path: %w", err)
+	} else if relToBase == ".." || strings.HasPrefix(relToBase, ".."+string(os.PathSeparator)) {
 		return "", fmt.Errorf("invalid path: outside base directory")
 	}
+
 	return dest, nil
 }
 
@@ -242,13 +277,15 @@ func WebDAVSetFavoriteFlag(fileName string) {
 
 	// Make sure directory exists.
 	if err := fs.MkdirAll(filepath.Dir(yamlName)); err != nil {
-		log.Errorf("webdav: %s", err.Error())
+		// Console-only: the error embeds the absolute sidecar path (see loggerFunc).
+		event.SystemError([]string{"webdav", "%s"}, clean.Error(err))
 		return
 	}
 
 	// Write YAML data to file.
 	if err := fs.WriteFile(yamlName, []byte("Favorite: true\n"), fs.ModeConfigFile); err != nil {
-		log.Errorf("webdav: %s", err.Error())
+		// Console-only: the error embeds the absolute sidecar path (see loggerFunc).
+		event.SystemError([]string{"webdav", "%s"}, clean.Error(err))
 		return
 	}
 

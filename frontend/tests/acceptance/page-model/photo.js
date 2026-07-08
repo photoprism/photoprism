@@ -19,7 +19,7 @@ export default class Page {
   }
 
   async getPhotoCount(type, delay = 7000) {
-    await notifies.waitForPhotosToLoad(delay, true)
+    await notifies.waitForPhotosToLoad(delay, true);
     if (type === "all") {
       const PhotoCount = await Selector("div.is-photo", { timeout: 2000 }).count;
       return PhotoCount;

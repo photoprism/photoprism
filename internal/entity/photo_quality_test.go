@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -40,6 +41,35 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 4, p.PhotoQuality)
+	})
+}
+
+func TestPhoto_QualityScorePhotographicMetadataFloor(t *testing.T) {
+	t.Run("ImageWithISO", func(t *testing.T) {
+		p := &Photo{
+			PhotoType: MediaImage,
+			PhotoIso:  200,
+			TakenAt:   time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		assert.Equal(t, 3, p.QualityScore())
+	})
+	t.Run("ImageWithExposure", func(t *testing.T) {
+		p := &Photo{
+			PhotoType:     MediaImage,
+			PhotoExposure: "1/60",
+			TakenAt:       time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		assert.Equal(t, 3, p.QualityScore())
+	})
+	t.Run("ImageWithoutPhotographicMetadata", func(t *testing.T) {
+		p := &Photo{
+			PhotoType: MediaImage,
+			TakenAt:   time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		assert.Equal(t, 1, p.QualityScore())
 	})
 }
 

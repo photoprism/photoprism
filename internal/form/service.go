@@ -32,15 +32,15 @@ type Service struct {
 }
 
 // NewService creates a new service form.
-func NewService(m interface{}) (f Service, err error) {
+func NewService(m any) (f Service, err error) {
 	err = deepcopier.Copy(m).To(&f)
 
 	return f, err
 }
 
 // Discovery performs automatic service discovery.
-func (f *Service) Discovery() error {
-	acc, err := service.Discover(f.AccURL, f.AccUser, f.AccPass)
+func (f *Service) Discovery(servicesCIDR string) error {
+	acc, err := service.Discover(f.AccURL, f.AccUser, f.AccPass, servicesCIDR)
 
 	if err != nil {
 		return err

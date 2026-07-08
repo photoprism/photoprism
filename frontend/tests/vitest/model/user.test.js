@@ -1,9 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import "../fixtures";
 import User from "model/user";
 import File from "model/file";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
+import { $config, $session } from "app/session";
 
 const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
@@ -321,5 +322,236 @@ describe("model/user", () => {
     const user = new User(values);
     const result = await user.changePassword("old", "new");
     expect(result.new_password).toBe("new");
+  });
+
+  // A10 contract: isRemote / hasWebDAV must always return a Boolean, so a
+  // `:disabled` binding to these methods never passes undefined / "" to a
+  // Vuetify Boolean prop. See specs/frontend/best-practices.md#a10.
+  describe("isRemote / hasWebDAV Boolean contract", () => {
+    it("isRemote returns Boolean false when AuthProvider is missing", () => {
+      const user = new User({ ID: 1, Name: "max" });
+      const result = user.isRemote();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("isRemote returns Boolean false when AuthProvider is empty string", () => {
+      const user = new User({ ID: 1, Name: "max", AuthProvider: "" });
+      expect(typeof user.isRemote()).toBe("boolean");
+      expect(user.isRemote()).toBe(false);
+    });
+    it("hasWebDAV returns Boolean false when WebDAV is missing", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "admin" });
+      const result = user.hasWebDAV();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("hasWebDAV returns Boolean false when WebDAV is 0", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "admin", WebDAV: 0 });
+      const result = user.hasWebDAV();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(false);
+    });
+    it("hasWebDAV returns Boolean true when WebDAV is true and role permits", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "admin", WebDAV: true });
+      const result = user.hasWebDAV();
+      expect(typeof result).toBe("boolean");
+      expect(result).toBe(true);
+    });
+  });
+
+  // canHavePassword gates the admin "change password" action: visitors, system
+  // users, and accounts with authentication disabled cannot have a local password,
+  // mirroring the backend, which only allows passwords for registered accounts.
+  describe("canHavePassword", () => {
+    it("returns true for a registered local user", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "local" }).canHavePassword()).toBe(true);
+    });
+    it("returns true for a registered user without an explicit provider", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "admin" }).canHavePassword()).toBe(true);
+    });
+    it("returns false for a visitor, even when named guest", () => {
+      expect(new User({ ID: 1, Name: "guest", Role: "visitor", AuthProvider: "link" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for an account without a role", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "", AuthProvider: "local" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for a remote LDAP account (credentials managed by the directory)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "ldap" }).canHavePassword()).toBe(false);
+    });
+    it("returns true for an OIDC account (a local password remains usable)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "oidc" }).canHavePassword()).toBe(true);
+    });
+    it("returns false when authentication is disabled (provider none)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "none" }).canHavePassword()).toBe(false);
+    });
+    it("returns false for a system user with ID below 1", () => {
+      expect(new User({ ID: 0, Name: "max", Role: "user" }).canHavePassword()).toBe(false);
+    });
+    it("returns false without a username", () => {
+      expect(new User({ ID: 1, Name: "", Role: "user" }).canHavePassword()).toBe(false);
+    });
+  });
+
+  // canEnableLogin gates the admin "Web Login" toggle: visitors, system users, role-less
+  // and deactivated accounts cannot log in, but LDAP and OIDC accounts can (unlike passwords).
+  describe("canEnableLogin", () => {
+    it("returns true for a registered local user", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "local" }).canEnableLogin()).toBe(true);
+    });
+    it("returns true for an LDAP account, unlike canHavePassword", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "ldap" });
+      expect(user.canEnableLogin()).toBe(true);
+      expect(user.canHavePassword()).toBe(false);
+    });
+    it("returns true for an OIDC account", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "oidc" }).canEnableLogin()).toBe(true);
+    });
+    it("returns false for a visitor", () => {
+      expect(new User({ ID: 1, Name: "guest", Role: "visitor", AuthProvider: "link" }).canEnableLogin()).toBe(false);
+    });
+    it("returns false for an account without a role", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "", AuthProvider: "local" }).canEnableLogin()).toBe(false);
+    });
+    it("returns false when authentication is disabled (provider none)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "none" }).canEnableLogin()).toBe(false);
+    });
+    it("returns false for a system user with ID below 1", () => {
+      expect(new User({ ID: 0, Name: "max", Role: "user" }).canEnableLogin()).toBe(false);
+    });
+  });
+
+  // isCurrentUser drives the admin-UI self-lockout guards: the table login
+  // toggle and the dialog role/auth/login fields lock for the signed-in user so
+  // an operator cannot lock themselves out. See specs/portal/cluster-admin-ui.md.
+  describe("isCurrentUser", () => {
+    it("returns true for the signed-in user and false for others", () => {
+      $session.setUser({ ID: 5, UID: "us1234567890self", Name: "max", Role: "admin" });
+
+      const me = new User({ ID: 5, UID: "us1234567890self", Name: "max", Role: "admin" });
+      expect(me.isCurrentUser()).toBe(true);
+
+      const other = new User({ ID: 6, UID: "us1234567890othr", Name: "alice", Role: "user" });
+      expect(other.isCurrentUser()).toBe(false);
+    });
+    it("returns Boolean false when the account has no UID", () => {
+      $session.setUser({ ID: 5, UID: "us1234567890self", Name: "max", Role: "admin" });
+
+      const blank = new User({ ID: 0, Name: "" });
+      expect(typeof blank.isCurrentUser()).toBe("boolean");
+      expect(blank.isCurrentUser()).toBe(false);
+    });
+  });
+
+  // isAdmin / isClusterAdmin replace hardcoded role-string checks in the admin
+  // dialogs (e.g. the Super Admin toggle); isAdmin mirrors the backend admin-tier
+  // set {admin, cluster_admin}, isClusterAdmin matches only the Portal operator role.
+  describe("isAdmin / isClusterAdmin", () => {
+    it("isAdmin is true for admin and cluster_admin, false otherwise", () => {
+      expect(new User({ ID: 1, Name: "a", Role: "admin" }).isAdmin()).toBe(true);
+      expect(new User({ ID: 2, Name: "b", Role: "cluster_admin" }).isAdmin()).toBe(true);
+      expect(new User({ ID: 3, Name: "c", Role: "user" }).isAdmin()).toBe(false);
+      expect(new User({ ID: 4, Name: "d", Role: "" }).isAdmin()).toBe(false);
+    });
+    it("isClusterAdmin is true only for cluster_admin", () => {
+      expect(new User({ ID: 2, Name: "b", Role: "cluster_admin" }).isClusterAdmin()).toBe(true);
+      expect(new User({ ID: 1, Name: "a", Role: "admin" }).isClusterAdmin()).toBe(false);
+    });
+    it("isInitialAdmin is true only for the built-in super admin (ID 1)", () => {
+      expect(new User({ ID: 1, Name: "admin", Role: "admin", SuperAdmin: true }).isInitialAdmin()).toBe(true);
+      expect(new User({ ID: 2, Name: "sven", Role: "admin", SuperAdmin: true }).isInitialAdmin()).toBe(false);
+      expect(new User({ ID: 0, Name: "" }).isInitialAdmin()).toBe(false);
+    });
+  });
+
+  // Account-dialog auth field gating shared by the Pro and Portal "Add Account"
+  // dialogs. The external-auth branches read the global $config (ext.oidc/ext.ldap),
+  // so each case sets and restores it explicitly.
+  describe("auth field gating", () => {
+    const setExt = (ext) => {
+      $config.values.ext = ext;
+    };
+    afterEach(() => {
+      setExt(undefined);
+    });
+    it("shows the password field for default, local and oidc but not ldap or none", () => {
+      expect(new User({ AuthProvider: "default" }).showsPasswordField()).toBe(true);
+      expect(new User({ AuthProvider: "local" }).showsPasswordField()).toBe(true);
+      expect(new User({ AuthProvider: "oidc" }).showsPasswordField()).toBe(true);
+      expect(new User({ AuthProvider: "ldap" }).showsPasswordField()).toBe(false);
+      expect(new User({ AuthProvider: "none" }).showsPasswordField()).toBe(false);
+    });
+    it("requires a password for local, and for default without an external identity", () => {
+      expect(new User({ AuthProvider: "local" }).passwordIsRequired()).toBe(true);
+      // "default" with no OIDC/LDAP configured must require a password (regression:
+      // previously optional, so the ADD button enabled with only a username).
+      expect(new User({ AuthProvider: "default" }).passwordIsRequired()).toBe(true);
+      expect(new User({ AuthProvider: "oidc" }).passwordIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "ldap" }).passwordIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "none" }).passwordIsRequired()).toBe(false);
+    });
+    it("makes the password optional for default when external auth can be supplied", () => {
+      setExt({ oidc: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).passwordIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "default" }).showsAuthIdField()).toBe(true);
+    });
+    it("shows the auth-id field for oidc and ldap, and for default only when configured", () => {
+      expect(new User({ AuthProvider: "oidc" }).showsAuthIdField()).toBe(true);
+      expect(new User({ AuthProvider: "ldap" }).showsAuthIdField()).toBe(true);
+      expect(new User({ AuthProvider: "default" }).showsAuthIdField()).toBe(false);
+      setExt({ ldap: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).showsAuthIdField()).toBe(true);
+      expect(new User({ AuthProvider: "local" }).showsAuthIdField()).toBe(false);
+      expect(new User({ AuthProvider: "none" }).showsAuthIdField()).toBe(false);
+    });
+    it("requires the auth-id only for an explicit oidc account", () => {
+      expect(new User({ AuthProvider: "oidc" }).authIdIsRequired()).toBe(true);
+      setExt({ oidc: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).authIdIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "ldap" }).authIdIsRequired()).toBe(false);
+    });
+    it("treats the auth-id as a DN for ldap, and for default when only LDAP is configured", () => {
+      expect(new User({ AuthProvider: "ldap" }).authIdIsDn()).toBe(true);
+      expect(new User({ AuthProvider: "oidc" }).authIdIsDn()).toBe(false);
+      setExt({ ldap: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).authIdIsDn()).toBe(true);
+      setExt({ oidc: { enabled: true }, ldap: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).authIdIsDn()).toBe(false);
+    });
+    it("labels the auth-id field from authIdIsDn", () => {
+      expect(new User({ AuthProvider: "ldap" }).authIdFieldLabel()).toBe("Distinguished Name (DN)");
+      expect(new User({ AuthProvider: "oidc" }).authIdFieldLabel()).toBe("Subject ID");
+    });
+    it("requires a local password when one is mandatory, independent of form timing", () => {
+      // "local" always needs a password, so the Add button must stay disabled until it is set.
+      expect(new User({ AuthProvider: "local" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "local", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      // "default" without external auth behaves like a local account.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+    });
+    it("requires a password or Subject ID for default with OIDC configured", () => {
+      setExt({ oidc: { enabled: true } });
+      // default + OIDC, neither password nor Subject ID → inert, blocked.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      expect(new User({ AuthProvider: "default", AuthID: "sub-123" }).hasLoginCredential()).toBe(true);
+    });
+    it("requires the AuthID (DN) for default authenticating against LDAP", () => {
+      setExt({ ldap: { enabled: true } });
+      // default + LDAP: a globally enabled directory is not enough; a DN (or password) is required.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", AuthID: "cn=jane,dc=example,dc=com" }).hasLoginCredential()).toBe(true);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      // explicit ldap: a DN is optional, so a username-only account is allowed.
+      expect(new User({ AuthProvider: "ldap" }).hasLoginCredential()).toBe(true);
+    });
+    it("requires the Subject ID for an explicit OIDC account, independent of form timing", () => {
+      expect(new User({ AuthProvider: "oidc" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "oidc", AuthID: "sub-123" }).hasLoginCredential()).toBe(true);
+    });
+    it("defers to the per-field rules for the none provider", () => {
+      setExt({ oidc: { enabled: true } });
+      expect(new User({ AuthProvider: "none" }).hasLoginCredential()).toBe(true);
+    });
   });
 });

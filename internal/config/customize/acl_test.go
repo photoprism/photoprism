@@ -15,35 +15,38 @@ func TestSettings_ApplyACL(t *testing.T) {
 		s := NewDefaultSettings()
 
 		expected := FeatureSettings{
-			Account:   true,
-			Albums:    true,
-			Archive:   true,
-			Delete:    true,
-			Download:  true,
-			Edit:      true,
-			BatchEdit: true,
-			Estimates: true,
-			Favorites: true,
-			Files:     true,
-			Folders:   true,
-			Import:    true,
-			Labels:    true,
-			Library:   true,
-			Logs:      true,
-			Calendar:  true,
-			Moments:   true,
-			People:    true,
-			Places:    true,
-			Private:   true,
-			Ratings:   true,
-			Reactions: true,
-			Review:    true,
-			Search:    true,
-			Settings:  true,
-			Share:     true,
-			Services:  true,
-			Upload:    true,
-			Videos:    true,
+			Albums:       true,
+			Archive:      true,
+			Delete:       true,
+			Download:     true,
+			Edit:         true,
+			BatchEdit:    true,
+			Estimates:    true,
+			Favorites:    true,
+			Files:        true,
+			Folders:      true,
+			Import:       true,
+			Labels:       true,
+			Cameras:      true,
+			Lenses:       true,
+			Library:      true,
+			Logs:         true,
+			Calendar:     true,
+			Moments:      true,
+			People:       true,
+			Places:       true,
+			Private:      true,
+			Ratings:      true,
+			Reactions:    true,
+			Review:       true,
+			Search:       true,
+			Account:      true,
+			AppPasswords: true,
+			Settings:     true,
+			Share:        true,
+			Services:     true,
+			Upload:       true,
+			Videos:       true,
 		}
 
 		assert.Equal(t, original, s.Features)
@@ -56,35 +59,38 @@ func TestSettings_ApplyACL(t *testing.T) {
 		s := NewDefaultSettings()
 
 		expected := FeatureSettings{
-			Account:   false,
-			Albums:    true,
-			Archive:   false,
-			Delete:    false,
-			Download:  true,
-			Edit:      false,
-			BatchEdit: false,
-			Estimates: true,
-			Favorites: false,
-			Files:     false,
-			Folders:   true,
-			Import:    false,
-			Labels:    false,
-			Library:   false,
-			Logs:      false,
-			Calendar:  true,
-			Moments:   true,
-			People:    false,
-			Places:    true,
-			Private:   false,
-			Ratings:   false,
-			Reactions: false,
-			Review:    true,
-			Search:    false,
-			Settings:  false,
-			Share:     false,
-			Services:  false,
-			Upload:    false,
-			Videos:    false,
+			Albums:       true,
+			Archive:      false,
+			Delete:       false,
+			Download:     true,
+			Edit:         false,
+			BatchEdit:    false,
+			Estimates:    true,
+			Favorites:    false,
+			Files:        false,
+			Folders:      true,
+			Import:       false,
+			Labels:       false,
+			Cameras:      false,
+			Lenses:       false,
+			Library:      false,
+			Logs:         false,
+			Calendar:     true,
+			Moments:      true,
+			People:       false,
+			Places:       true,
+			Private:      false,
+			Ratings:      false,
+			Reactions:    false,
+			Review:       true,
+			Search:       false,
+			Account:      false,
+			AppPasswords: false,
+			Settings:     false,
+			Share:        false,
+			Services:     false,
+			Upload:       false,
+			Videos:       false,
 		}
 
 		assert.Equal(t, original, s.Features)
@@ -92,12 +98,15 @@ func TestSettings_ApplyACL(t *testing.T) {
 		t.Logf("RoleVisitor: %#v", r)
 		assert.Equal(t, expected, r.Features)
 	})
-
 	t.Run("RoleClient", func(t *testing.T) {
 		s := NewDefaultSettings()
 
 		r := s.ApplyACL(acl.Rules, acl.RoleClient)
 
 		assert.True(t, r.Features.BatchEdit)
+		// AppPasswords mirrors Account: both require permission to update the
+		// password, which the client role does not have.
+		assert.Equal(t, r.Features.Account, r.Features.AppPasswords)
+		assert.False(t, r.Features.AppPasswords)
 	})
 }

@@ -1,15 +1,18 @@
 package backup
 
 import (
+	"fmt"
 	"path/filepath"
 	"regexp"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // Albums creates a YAML file backup of all albums.
@@ -25,8 +28,10 @@ func Albums(backupPath string, force bool) (count int, err error) {
 		return count, queryErr
 	}
 
+	c := get.Config()
+
 	if !fs.PathExists(backupPath) {
-		backupPath = get.Config().BackupAlbumsPath()
+		backupPath = c.BackupAlbumsPath()
 	}
 
 	log.Debugf("backup: album backups will be stored in %s", clean.Log(backupPath))
@@ -54,6 +59,13 @@ func Albums(backupPath string, force bool) (count int, err error) {
 			latest = changed
 		}
 
+		// Stop writing new backups if storage is over quota or critically low on free disk space.
+		// The disk-free cache rate-limits this to one actual probe per CacheTTL.
+		if c.InsufficientStorage() {
+			err = status.ErrInsufficientStorage
+			break
+		}
+
 		// Write album metadata to YAML backup file.
 		if saveErr := a.SaveBackupYaml(backupPath); saveErr != nil {
 			err = saveErr
@@ -74,6 +86,14 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 	// Make sure only one backup/restore operation is running at a time.
 	backupAlbumsMutex.Lock()
 	defer backupAlbumsMutex.Unlock()
+
+	// Recover from panics so a corrupt backup file cannot abort server startup.
+	defer func() {
+		if r := recover(); r != nil {
+			event.LogPanic(r)
+			result = fmt.Errorf("recovered from panic while restoring album backups")
+		}
+	}()
 
 	c := get.Config()
 

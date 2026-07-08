@@ -25,6 +25,7 @@ func (m SessionMap) Pointer(name string) *Session {
 	return &Session{}
 }
 
+//nolint:gosec // G101: Deterministic fixture tokens for tests only.
 var SessionFixtures = SessionMap{
 	"alice": {
 		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",
@@ -85,6 +86,22 @@ var SessionFixtures = SessionMap{
 		UserUID:      UserFixtures.Pointer("alice").UserUID,
 		UserName:     UserFixtures.Pointer("alice").UserName,
 	},
+	"alice_app_password": {
+		authToken:    "5f1c8a3e9d2b4c6a8e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b",
+		ID:           rnd.SessionID("5f1c8a3e9d2b4c6a8e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b"),
+		RefID:        "sessapppwa01",
+		SessTimeout:  -1,
+		SessExpires:  unix.Now() + unix.Day,
+		AuthScope:    clean.Scope("webdav"),
+		AuthProvider: authn.ProviderApplication.String(),
+		AuthMethod:   authn.MethodDefault.String(),
+		GrantType:    authn.GrantSession.String(),
+		ClientName:   "alice_app_password",
+		LastActive:   -1,
+		user:         UserFixtures.Pointer("alice"),
+		UserUID:      UserFixtures.Pointer("alice").UserUID,
+		UserName:     UserFixtures.Pointer("alice").UserName,
+	},
 	"alice_token_scope": {
 		authToken:     "778f0f7d80579a072836c65b786145d6e0127505194cc51e",
 		ID:            rnd.SessionID("778f0f7d80579a072836c65b786145d6e0127505194cc51e"),
@@ -112,7 +129,7 @@ var SessionFixtures = SessionMap{
 		user:        UserFixtures.Pointer("bob"),
 		UserUID:     UserFixtures.Pointer("bob").UserUID,
 		UserName:    UserFixtures.Pointer("bob").UserName,
-		LoginAt:     Now().Add(-24),
+		LoginAt:     TimePointer(Now().Add(-24)),
 		CreatedAt:   Now().Add(-24),
 		UpdatedAt:   Now().Add(-24),
 	},
@@ -167,7 +184,7 @@ var SessionFixtures = SessionMap{
 		user:        UserFixtures.Pointer("friend"),
 		UserUID:     UserFixtures.Pointer("friend").UserUID,
 		UserName:    UserFixtures.Pointer("friend").UserName,
-		LoginAt:     Now().Add(-12),
+		LoginAt:     TimePointer(Now().Add(-12)),
 		CreatedAt:   Now().Add(-20),
 		UpdatedAt:   Now().Add(-12),
 	},

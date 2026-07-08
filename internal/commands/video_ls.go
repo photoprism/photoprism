@@ -45,7 +45,7 @@ func videoListAction(ctx *cli.Context) error {
 		cols := videoListColumns()
 
 		if format == report.JSON {
-			rows := make([]map[string]interface{}, 0, len(results))
+			rows := make([]map[string]any, 0, len(results))
 			for _, found := range results {
 				rows = append(rows, videoListJSONRow(found))
 			}

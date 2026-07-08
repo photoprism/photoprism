@@ -31,6 +31,10 @@ func GetSession(router *gin.RouterGroup) {
 			return
 		}
 
+		// Disable caching: the response carries the auth token and, on the Portal,
+		// refreshes the OP session cookie.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+
 		id := clean.ID(c.Param("id"))
 
 		if id != "" && !rnd.IsSessionID(id) {
@@ -41,10 +45,10 @@ func GetSession(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		// Check if the session user is allowed to manage all accounts or update his/her own account.
+		// Require session management or view access.
 		s := AuthAny(c, acl.ResourceSessions, acl.Permissions{acl.ActionManage, acl.ActionView})
 
-		// Check if session is valid.
+		// Validate the resolved session.
 		switch {
 		case s.Abort(c):
 			return
@@ -58,6 +62,12 @@ func GetSession(router *gin.RouterGroup) {
 
 		// Get auth token from headers.
 		authToken := AuthToken(c)
+
+		// On the Portal (OIDC OP), refresh the narrowly-scoped session cookie so the
+		// short-lived signed session reference stays available to /api/v1/oauth/authorize.
+		if conf.Portal() && authToken != "" {
+			SetOIDCSessionCookie(c, s, OIDCSessionCookiePath(conf), conf.SiteHttps())
+		}
 
 		// Update user information.
 		s.RefreshUser()

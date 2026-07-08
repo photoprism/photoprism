@@ -1,10 +1,10 @@
 # Thank You to All Current and Past Sponsors 💎 #
 
-Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent! 💜
+Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq/#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent! 💜
 
-You are [welcome to contact us](https://www.photoprism.app/contact) for change requests, membership questions, and business partnerships.
+You are [welcome to contact us](https://www.photoprism.app/contact/) for change requests, membership questions, and business partnerships.
 
-[View Membership FAQ ›](https://www.photoprism.app/kb/membership) [Contact Us ›](https://www.photoprism.app/contact)
+[View Membership FAQ ›](https://www.photoprism.app/membership/faq/) [Contact Us ›](https://www.photoprism.app/contact/)
 
 ## Platinum Sponsors ##
 
@@ -89,6 +89,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 **Andreas Kjeldsberg Pihl** (Patreon, August 2023)
 
 [**Kevin "BentoFox" Gelking**](https://github.com/KevinGelking) (Patreon, December 2024)
+
+[**Lukaz**](https://github.com/lukazvprecisn) (Patreon, May 2025)
 
 [**Philipp Marmet**](https://github.com/fujexo) (October 2025)
 

@@ -1,7 +1,7 @@
 /*
 Package fs provides filesystem related constants and functions.
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -14,7 +14,7 @@ Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
 	The AGPL is supplemented by our Trademark and Brand Guidelines,
 	which describe how our Brand Assets may be used:
-	<https://www.photoprism.app/trademark>
+	<https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -53,6 +53,19 @@ func Stat(filePath string) (os.FileInfo, error) {
 	}
 
 	return os.Stat(filePath)
+}
+
+// StatFile returns file info for regular files and errors on directories.
+func StatFile(filePath string) (os.FileInfo, error) {
+	info, err := Stat(filePath)
+	if err != nil {
+		return nil, err
+	}
+	if info.IsDir() {
+		return nil, fmt.Errorf("%s is a directory", filePath)
+	}
+
+	return info, nil
 }
 
 // SocketExists returns true if the specified socket exists and is not a regular file or directory.

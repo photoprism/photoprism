@@ -35,7 +35,7 @@ func authListAction(ctx *cli.Context) error {
 		results, err := query.Sessions(ctx.Int("count"), 0, "", ctx.Args().First())
 
 		if err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Show log message.

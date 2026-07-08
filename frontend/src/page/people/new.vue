@@ -48,24 +48,24 @@
                 <v-text-field
                   v-if="m.SubjUID"
                   v-model="m.Name"
-                  :rules="[textRule]"
+                  :rules="rules.text(true, 0, SubjectMaxLength.Name, $gettext('Name'))"
                   :readonly="readonly"
                   autocomplete="off"
-                  hide-details
                   single-line
                   density="comfortable"
                   class="input-name pa-0 ma-0"
-                  @blur="(ev) => onSetName(m, ev)"
-                  @keyup.enter="(ev) => onSetName(m, ev)"
+                  @blur="() => onSetName(m)"
+                  @keyup.enter="() => onSetName(m)"
                 ></v-text-field>
                 <v-combobox
                   v-else
                   v-model:search="m.Name"
-                  :items="$config.values.people"
+                  :items="people"
                   item-title="Name"
                   item-value="Name"
                   :readonly="readonly"
                   :menu-props="menuProps"
+                  :menu-icon="null"
                   return-object
                   hide-no-data
                   hide-details
@@ -76,9 +76,10 @@
                   autocomplete="off"
                   density="comfortable"
                   class="input-name pa-0 ma-0 text-selectable"
+                  @focus="loadPeople"
                   @update:model-value="(person) => onSetPerson(m, person)"
-                  @blur="(ev) => onSetName(m, ev)"
-                  @keyup.enter="(ev) => onSetName(m, ev)"
+                  @blur="() => onSetName(m)"
+                  @keyup.enter="() => onSetName(m)"
                 >
                 </v-combobox>
               </v-card-actions>
@@ -92,31 +93,25 @@
         </div>
       </div>
     </div>
-    <p-confirm-dialog
-      :visible="confirm.visible"
-      icon="mdi-account-plus"
-      :icon-size="42"
-      :text="confirm?.model?.Name ? $gettext('Add %{s}?', { s: confirm.model.Name }) : $gettext('Add person?')"
-      @close="onCancelRename"
-      @confirm="onConfirmRename"
-    ></p-confirm-dialog>
   </div>
 </template>
 
 <script>
 import Face from "model/face";
 import RestModel from "model/rest";
+import { MaxLength as SubjectMaxLength } from "model/subject";
+import typeaheadCache from "common/typeahead-cache";
+import { rules } from "common/form";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
-import PConfirmDialog from "component/confirm/dialog.vue";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import PLoading from "component/loading.vue";
 
 export default {
   name: "PPageFaces",
   components: {
     PLoading,
-    PConfirmDialog,
   },
   props: {
     staticFilter: {
@@ -138,6 +133,9 @@ export default {
     return {
       view: "all",
       config: this.$config.values,
+      people: [],
+      rules,
+      SubjectMaxLength,
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -155,14 +153,8 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
-      confirm: {
-        visible: false,
-        model: new Face(),
-        text: this.$gettext("Add person?"),
-      },
       menuProps: {
         openOnClick: false,
         openOnFocus: true,
@@ -179,13 +171,6 @@ export default {
         locationStrategy: "connected",
         scrollStrategy: "reposition",
         origin: "auto",
-      },
-      textRule: (v) => {
-        if (!v || !v.length) {
-          return this.$gettext("Name");
-        }
-
-        return v.length <= this.$config.get("clip") || this.$gettext("Text too long");
       },
     };
   },
@@ -214,7 +199,12 @@ export default {
   },
   created() {
     this.search();
+    this.loadPeople();
 
+    // No code currently publishes faces.* events — neither the frontend ($event bus) nor
+    // the backend (and "faces" is not in the WebsocketTopics forward allowlist), so this
+    // subscription is dormant. If wired up, it must emit UID-only payloads and onUpdate's
+    // `updated` branch needs converting to a by-UID refetch (it still assumes a full entity).
     this.subscriptions.push(this.$event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
     this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
   },
@@ -224,6 +214,16 @@ export default {
     }
   },
   methods: {
+    // loadPeople populates the name suggestions from the shared people cache;
+    // a denied or failed fetch leaves the list empty rather than throwing.
+    loadPeople() {
+      return typeaheadCache
+        .getPeople()
+        .then((models) => {
+          this.people = Array.isArray(models) ? models : [];
+        })
+        .catch(() => {});
+    },
     searchCount() {
       return this.batchSize;
     },
@@ -334,7 +334,7 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
+        case ACTION_UPDATED:
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -348,7 +348,7 @@ export default {
             }
           }
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -363,7 +363,7 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
           break;
         default:
@@ -583,7 +583,9 @@ export default {
         });
     },
     onShow(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       model.show().finally(() => {
@@ -592,7 +594,9 @@ export default {
       });
     },
     onHide(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       model.hide().finally(() => {
@@ -601,7 +605,9 @@ export default {
       });
     },
     toggleHidden(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
 
@@ -624,29 +630,21 @@ export default {
 
       return true;
     },
-    onSetName(model, ev) {
+    onSetName(model) {
       if (this.busy || !model) {
-        return;
-      }
-
-      // If there's a pending confirmation for a different face, don't process new input
-      if (this.confirm.visible && this.confirm.model && this.confirm.model.ID !== model.ID) {
         return;
       }
 
       const name = model?.Name;
 
       if (!name) {
-        this.onCancelRename();
         return;
       }
 
-      this.confirm.model = model;
+      const people = this.people;
 
-      const people = this.$config.values?.people;
-
-      if (people) {
-        const found = people.find((person) => person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+      if (Array.isArray(people)) {
+        const found = people.find((person) => person.Name && person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
         if (found) {
           model.Name = found.Name;
           model.SubjUID = found.UID;
@@ -660,35 +658,11 @@ export default {
       model.Name = name;
       model.SubjUID = "";
 
-      if (model.Name) {
-        if (ev && ev.key === "Enter" && !ev.isComposing && !ev.repeat) {
-          this.setName(model, model.Name);
-        } else {
-          this.confirm.visible = true;
-        }
-      }
-    },
-    onConfirmRename() {
-      if (!this.confirm?.model?.Name) {
-        return;
-      }
-
-      if (this.confirm.model.wasChanged()) {
-        this.setName(this.confirm.model, this.confirm?.model?.Name);
-      } else {
-        this.confirm.model = null;
-        this.confirm.visible = false;
-      }
-    },
-    onCancelRename() {
-      if (this.confirm && this.confirm.model) {
-        this.confirm.model.Name = "";
-        this.confirm.model.SubjUID = "";
-      }
-      this.confirm.visible = false;
+      this.setName(model, model.Name);
     },
     setName(model, newName) {
-      if (this.busy || !model || !newName || newName.trim() === "") {
+      const trimmed = (newName || "").trim();
+      if (this.busy || !model || trimmed === "") {
         // Ignore if busy, refuse to save empty name.
         return;
       }
@@ -696,11 +670,11 @@ export default {
       this.busy = true;
       this.$notify.blockUI("busy");
 
-      return model.setName(newName).finally(() => {
+      // Face.setName() seeds the shared people cache, and the name combobox
+      // reloads suggestions on focus, so no explicit refresh is needed here.
+      return model.setName(trimmed).finally(() => {
         this.$notify.unblockUI();
         this.busy = false;
-        this.confirm.model = null;
-        this.confirm.visible = false;
         this.changeFaceCount(-1);
       });
     },

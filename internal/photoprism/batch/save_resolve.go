@@ -75,19 +75,15 @@ func ensureAlbumUID(title string) string {
 	return album.AlbumUID
 }
 
-// ensureLabelUID resolves or creates a label for the given title and returns its UID,
-// restoring deleted labels when necessary.
+// ensureLabelUID resolves or creates a label for the given title and returns
+// its UID, restoring deleted labels when necessary. Routes through
+// FirstOrCreateLabel (homophone-safe) so distinct names sharing a slug stay distinct.
 func ensureLabelUID(title string) string {
 	if title == "" {
 		return ""
 	}
 
-	label, err := entity.FindLabel(title, true)
-
-	if err != nil || label == nil || !label.HasUID() {
-		label = entity.FirstOrCreateLabel(entity.NewLabel(title, 0))
-		err = nil
-	}
+	label := entity.FirstOrCreateLabel(entity.NewLabel(title, 0))
 
 	if label == nil || !label.HasUID() {
 		log.Errorf("batch: failed to resolve label %s", clean.Log(title))

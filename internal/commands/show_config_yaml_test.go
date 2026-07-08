@@ -16,4 +16,6 @@ func TestShowConfigYamlCommand(t *testing.T) {
 
 	assert.Contains(t, output, "ImportPath")
 	assert.Contains(t, output, "--sidecar-path")
+	assert.NotContains(t, output, "| ,inline,omitempty |")
+	assert.NotContains(t, output, "| --- |")
 }

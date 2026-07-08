@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -23,6 +24,35 @@ import (
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// oidcRedirectErrorMessage maps a standard OAuth/OIDC error code received on the
+// RP callback to a branded, translatable message shown to the user.
+func oidcRedirectErrorMessage(code string) i18n.Message {
+	switch code {
+	case "access_denied":
+		return i18n.ErrForbidden
+	case "login_required":
+		return i18n.ErrUnauthorized
+	case "server_error", "temporarily_unavailable":
+		// Provider-side failures are operational, not credential problems.
+		return i18n.ErrUnexpected
+	default:
+		return i18n.ErrInvalidCredentials
+	}
+}
+
+// oidcReconcileHint returns an operator-facing message explaining how to adopt a
+// pre-existing account into the OIDC identity it collided with at login. Linking
+// stays manual on purpose: auto-binding an OIDC subject onto an existing local or
+// 2FA account would be an account-takeover vector.
+func oidcReconcileHint(userName, provider, subject string) string {
+	if provider == "" {
+		provider = authn.ProviderDefault.String()
+	}
+
+	return fmt.Sprintf("account %s uses %s authentication and must be linked before it can sign in via oidc; adopt it with 'photoprism users mod %s --auth oidc --auth-id %s' or sign in locally",
+		clean.LogQuote(userName), clean.LogQuote(provider), userName, clean.Log(subject))
+}
 
 // OIDCRedirect completes the OIDC flow, creates a session, and renders a page that stores the token client-side.
 //
@@ -70,7 +100,15 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Abort if failure rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
-			c.HTML(http.StatusTooManyRequests, "auth.gohtml", CreateSessionError(http.StatusTooManyRequests, i18n.Error(i18n.ErrTooManyRequests)))
+			c.HTML(http.StatusTooManyRequests, "auth.gohtml", CreateSessionError(http.StatusTooManyRequests, i18n.ErrTooManyRequests))
+			return
+		}
+
+		// The provider may redirect back with an OAuth error instead of a code (e.g.
+		// access_denied). Surface it in the instance's branded UI, not a silent bounce.
+		if oauthErr := c.Query("error"); oauthErr != "" {
+			event.AuditWarn([]string{clientIp, "create session", "oidc", "provider returned error", clean.Log(oauthErr), clean.Log(c.Query("error_description"))})
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, oidcRedirectErrorMessage(oauthErr)))
 			return
 		}
 
@@ -86,7 +124,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		if provider == nil {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrInvalidProviderConfiguration.Error()})
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		}
 
@@ -94,7 +132,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		userInfo, tokens, claimErr := provider.CodeExchangeUserInfo(c)
 
 		if claimErr != nil {
+			// The code exchange failed (e.g. a missing/expired state cookie). Render a
+			// branded page that returns the user to login instead of leaving them on a
+			// raw, dead-end error with no way forward.
 			event.AuditErr([]string{clientIp, "create session", "oidc", claimErr.Error()})
+			event.LoginError(clientIp, "oidc", userName, userAgent, claimErr.Error())
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrUnexpected))
 			return
 		}
 
@@ -128,19 +171,27 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				message := "IdP omitted some or all groups; cannot validate required groups"
 				event.AuditErr([]string{clientIp, "create session", "oidc", message})
 				event.LoginError(clientIp, "oidc", userName, userAgent, message)
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrForbidden)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrForbidden))
 				return
 			case !oidc.HasAnyGroup(groups, requiredGroups):
 				message := "missing required group membership"
 				event.AuditErr([]string{clientIp, "create session", "oidc", message})
 				event.LoginError(clientIp, "oidc", userName, userAgent, message)
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrForbidden)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrForbidden))
 				return
 			}
 		}
 
 		mappedRole, hasMappedRole := oidc.MapGroupsToRole(groups, conf.OIDCGroupRoles())
 		defaultRole := conf.OIDCRole()
+
+		// A PhotoPrism Portal OP grants the instance login role via the pp_role
+		// claim (gated by pp_issuer_kind); prefer the verified ID token, then user
+		// info. It takes precedence over the group mapping below.
+		portalRole, hasPortalRole := oidc.PortalGrantedRole(idTokenClaims)
+		if !hasPortalRole {
+			portalRole, hasPortalRole = oidc.PortalGrantedRole(userInfo.Claims)
+		}
 
 		// Step 1: Create user account if it does not exist yet.
 		var user *entity.User
@@ -154,13 +205,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		} else if _, emailDomain, _ := strings.Cut(userEmail, "@"); emailDomain == "" || !userInfo.EmailVerified {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrVerifiedEmailRequired.Error()})
 			event.LoginError(clientIp, "oidc", userEmail, userAgent, authn.ErrVerifiedEmailRequired.Error())
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrForbidden)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrVerifiedEmailRequired))
 			return
 		} else if !strings.HasSuffix("."+emailDomain, "."+domain) {
 			message := fmt.Sprintf("domain must match '%s'", domain)
 			event.AuditErr([]string{clientIp, "create session", "oidc", userEmail, message})
 			event.LoginError(clientIp, "oidc", userEmail, userAgent, message)
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrForbidden)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrForbidden))
 			return
 		}
 
@@ -168,19 +219,19 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		if oidcUser := entity.OidcUser(userInfo, provider.Issuer(), oidc.Username(userInfo, conf.OIDCUsername())); authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthProviderIsNotOIDC.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		} else if oidcUser.UserName == "" {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrUsernameRequiredToRegister.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequiredToRegister.Error())
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		} else if user = entity.FindUser(oidcUser); user != nil {
 			// Ensure user has a username.
 			if user.Username() == "" {
 				event.AuditErr([]string{clientIp, "create session", "oidc", oidcUser.UserName, authn.ErrUsernameRequired.Error()})
 				event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequired.Error())
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}
 
@@ -192,17 +243,22 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			case !user.CanLogIn():
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			case authn.ProviderOIDC.NotEqual(user.AuthProvider):
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAuthProviderIsNotOIDC.Error()})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				// Claimable collision: a non-OIDC account matched the login. Log the
+				// specific remedy so the denial is actionable instead of a bare
+				// "provider is not oidc"; the user-facing message stays generic to
+				// avoid disclosing the account exists.
+				hint := oidcReconcileHint(userName, user.AuthProvider, oidcUser.AuthID)
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAuthProviderIsNotOIDC.Error(), hint})
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error()+": "+hint)
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			case user.AuthID == "" || oidcUser.AuthID == "" || user.AuthID != oidcUser.AuthID:
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrInvalidAuthID.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidAuthID.Error())
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}
 
@@ -254,14 +310,27 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Update email, if verified.
-			if userInfo.EmailVerified {
+			// Update email only when the IdP marks it verified and no other account
+			// holds it. The email is informational, so a clash never blocks login; the
+			// Portal OP forwards real verification state, so unverified cluster emails
+			// are simply not stored.
+			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
 				user.UserEmail = clean.Email(userInfo.Email)
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			if hasMappedRole && !user.HasRole(mappedRole) {
-				user.SetRole(mappedRole.String())
+			// Apply a federated role only when federation may set it: an existing
+			// cluster_admin/visitor account is never touched, and the IdP can never
+			// escalate to a non-federatable role. A Portal-granted pp_role takes
+			// precedence over the group mapping.
+			if hasPortalRole {
+				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), portalRole); ok {
+					user.SetRole(role.String())
+				}
+			} else if hasMappedRole {
+				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), mappedRole); ok {
+					user.SetRole(role.String())
+				}
 			}
 
 			// Update Subject ID and Issuer URI.
@@ -271,7 +340,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			if err = user.Save(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}
 
@@ -285,7 +354,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			userName = oidcUser.Username()
 			event.AuditWarn([]string{clientIp, "create session", "oidc", "create user", userName, authn.ErrUsersQuotaExceeded.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrUsersQuotaExceeded.Error())
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrQuotaExceeded)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrQuotaExceeded))
 			return
 		} else if conf.OIDCRegister() {
 			// Create new user record.
@@ -335,14 +404,21 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Set email, if verified.
-			if userInfo.EmailVerified {
+			// Set email only when the IdP marks it verified and no other account
+			// holds it. The email is informational (not an auth identifier), so a
+			// clash never blocks provisioning; the Portal OP forwards real
+			// verification state, so unverified cluster emails are simply not stored.
+			if bool(userInfo.EmailVerified) && entity.UserEmailAvailable(userInfo.Email, user.UserUID) {
 				user.UserEmail = clean.Email(userInfo.Email)
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Set user role and permissions.
-			if hasMappedRole {
+			// Set user role and permissions. A Portal-granted pp_role wins, then a
+			// group-mapped role when federation may set it, else the configured
+			// default; all are filtered to federatable roles (no cluster_admin/visitor).
+			if hasPortalRole {
+				user.SetRole(portalRole.String())
+			} else if hasMappedRole && acl.IsFederatedRole(mappedRole) {
 				user.SetRole(mappedRole.String())
 			} else {
 				user.SetRole(defaultRole.String())
@@ -354,12 +430,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			if err = user.Create(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountCreateFailed.Error(), err.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+" ("+err.Error()+")")
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			} else if err = user.UpdateAuthID(userInfo.Subject, provider.Issuer()); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
-				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}
 
@@ -372,7 +448,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		} else {
 			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrRegistrationDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrRegistrationDisabled.Error())
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrRegistrationDisabled))
 			return
 		}
 
@@ -380,7 +456,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		if !user.CanLogIn() {
 			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		}
 
@@ -391,6 +467,18 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		sess.SetAuthID(user.AuthID, provider.Issuer())
 		sess.SetUser(user)
 		sess.SetGrantType(authn.GrantAuthorizationCode)
+
+		// On Portal builds, persist the normalized login-time group set on the
+		// session so group-based instance access resolves at authorize time
+		// without a second IdP round-trip. Overage with no groups stores an
+		// empty set, so group-based grants deny rather than admit blindly.
+		// Instance/CE sessions don't store groups — they have no resolver and
+		// the session API must not become a group-membership side channel.
+		if conf.Portal() {
+			if merged := oidc.MergeGroups(groups); len(merged) > 0 {
+				sess.SetData(sess.GetData().SetGroups(merged))
+			}
+		}
 
 		// Ensure that the ID token fits into the existing
 		// database column; otherwise, truncate it.
@@ -407,11 +495,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// Save session after successful authentication.
 		if sess, err = get.Session().Save(sess); err != nil {
 			event.AuditErr([]string{clientIp, "create session", "oidc", userName, status.Error(err)})
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		} else if sess == nil {
 			event.AuditErr([]string{clientIp, "create session", "oidc", userName, status.Failed})
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrUnexpected)))
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrUnexpected))
 			return
 		}
 

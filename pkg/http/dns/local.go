@@ -23,7 +23,7 @@ func IsLocalSuffix(suffix string) bool {
 
 // IsLoopbackHost reports whether host refers to a loopback address that is safe
 // to contact over plain HTTP during bootstrap. It accepts hostnames (e.g.
-// "localhost") as well as IPv4/IPv6 addresses and normalises case/whitespace.
+// "localhost") as well as IPv4/IPv6 addresses and normalizes case/whitespace.
 func IsLoopbackHost(host string) bool {
 	h := strings.TrimSpace(strings.ToLower(host))
 	if h == "" {

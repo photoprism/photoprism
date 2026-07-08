@@ -50,6 +50,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.OAuthUserinfo(APIv1)
 	api.OAuthToken(APIv1)
 	api.OAuthRevoke(APIv1)
+	api.OAuthLogout(APIv1)
 
 	// OIDC Client Endpoints.
 	api.OIDCLogin(APIv1)
@@ -105,6 +106,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Photo Search and Organization.
 	api.SearchPhotos(APIv1)
+	api.SearchPhotosView(APIv1)
 	api.SearchGeo(APIv1)
 	api.GetPlacesReverse(APIv1)
 	api.GetPlacesSearch(APIv1)
@@ -184,6 +186,14 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.GetFace(APIv1)
 	api.UpdateFace(APIv1)
 
+	// Cameras.
+	api.SearchCameras(APIv1)
+	api.UpdateCamera(APIv1)
+
+	// Lenses.
+	api.SearchLenses(APIv1)
+	api.UpdateLens(APIv1)
+
 	// Batch Operations.
 	api.BatchAlbumsDelete(APIv1)
 	api.BatchLabelsDelete(APIv1)
@@ -205,12 +215,16 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.ClusterMetrics(APIv1)
 	api.ClusterHealth(APIv1)
 
+	// Model Context Protocol (MCP). Can be disabled via --disable-mcp /
+	// PHOTOPRISM_DISABLE_MCP if the endpoint is not needed or should not
+	// be exposed (e.g. for security reasons).
+	api.ServeMCP(APIv1)
+
 	// Technical Endpoints.
 	api.GetSvg(APIv1)
 	api.GetStatus(APIv1)
 	api.GetErrors(APIv1)
 	api.DeleteErrors(APIv1)
-	api.SendFeedback(APIv1)
 	api.Connect(APIv1)
 	api.WebSocket(APIv1)
 	api.GetMetrics(APIv1)

@@ -1,7 +1,10 @@
 services:
   ## PhotoPrism (Development Environment for Nvidia)
   photoprism:
-    build: .
+    build:
+      context: .
+      args:
+        WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     image: photoprism/photoprism:develop
     runtime: nvidia
     depends_on:
@@ -31,7 +34,7 @@ services:
       - "traefik:dummy-webdav.localssl.dev"
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
@@ -40,6 +43,12 @@ services:
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.photoprism.tls=true"
+    ## Override variables with optional env file, see https://docs.docker.com/reference/compose-file/services/#required
+    env_file:
+      - path: ".telemetry"
+        required: false
+      - path: ".env"
+        required: false
     ## Configure development environment
     environment:
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
@@ -61,6 +70,7 @@ services:
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
       PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
       PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
+      PHOTOPRISM_OIDC_PROMPT: ""                            # authorization prompt: login, select_account, or consent (empty = seamless SSO)
       PHOTOPRISM_OIDC_PROVIDER: "Keycloak"
       PHOTOPRISM_OIDC_REGISTER: "true"
       PHOTOPRISM_OIDC_WEBDAV: "true"
@@ -81,31 +91,36 @@ services:
       PHOTOPRISM_DEFAULT_TLS: "true"
       ## Site Information:
       PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
-      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
-      PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
+      PHOTOPRISM_SITE_NAME: ""                            # short name for identifying this instance within a cluster
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"    # short caption or tagline shown alongside the title
+      PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"  # longer description shown in SEO and social meta tags
+      PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"           # site owner shown in the author meta tag
       PHOTOPRISM_DEBUG: "true"
       PHOTOPRISM_READONLY: "false"
       PHOTOPRISM_EXPERIMENTAL: "true"
       PHOTOPRISM_HTTP_MODE: "debug"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: 2342
-      PHOTOPRISM_HTTP_COMPRESSION: "gzip"                  # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"       # improves transfer speed and bandwidth utilization (none, gzip, zstd, or comma-separated list e.g. "zstd,gzip")
+      MYSQL_TCP_PORT: "${MARIADB_PORT:-4001}"        # default MariaDB database port used by the "mariadb" client (see .my.cnf)
+      PGPORT: "${POSTGRES_PORT:-4002}"               # default PostgreSQL database port used by "psql"
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:4001"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
-      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:4001)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
-      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
-      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
+      PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
+      PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/originals"
       PHOTOPRISM_ORIGINALS_LIMIT: 128000             # sets originals file size limit to 128 GB
-      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      PHOTOPRISM_IMPORT_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_MCP: "false"                # disables Model Context Protocol (MCP) API endpoint for AI agent integrations
       PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
       PHOTOPRISM_DISABLE_PLACES: "false"             # disables reverse geocoding and maps
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"           # disables creating JSON metadata sidecar files with ExifTool
@@ -116,8 +131,7 @@ services:
       PHOTOPRISM_UPLOAD_NSFW: "false"                # allows uploads that MAY be offensive (no effect without TensorFlow)
       PHOTOPRISM_UPLOAD_ALLOW: ""                    # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
       PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
-      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, imaging, vips)
-      PHOTOPRISM_THUMB_FILTER: "auto"                # downscaling filter (imaging best to worst: blackman, lanczos, cubic, linear, nearest)
+      PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, vips)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
       PHOTOPRISM_INIT: "https tensorflow-gpu"
@@ -128,20 +142,23 @@ services:
       ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "all"
-      PHOTOPRISM_FFMPEG_ENCODER: "nvidia"            # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      PHOTOPRISM_FFMPEG_ENCODER: "nvidia"            # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
       PHOTOPRISM_FFMPEG_BITRATE: "64"                # video bitrate limit in Mbps (default: 60)
-      ## External dependencies and tools:
+      ## Additional dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
-      GOCACHE: "/go/src/github.com/photoprism/photoprism/.local/gocache"
-      CODEX_HOME: "/go/src/github.com/photoprism/photoprism/.local/codex"
+      GOCACHE: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gocache"
+      CODEX_HOME: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/codex"
+      CLAUDE_CONFIG_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/claude"
+      GH_REPO: "photoprism/photoprism"
+      GH_CONFIG_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gh"
     ## Shared devices for video hardware transcoding (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding
     #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
-    working_dir: "/go/src/github.com/photoprism/photoprism"
+    working_dir: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     volumes:
-      - ".:/go/src/github.com/photoprism/photoprism"
+      - ".:${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
       - "./storage:/photoprism"
       - "go-mod:/go/pkg/mod"
     ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
@@ -160,7 +177,7 @@ services:
   ollama:
     image: ollama/ollama:latest
     stop_grace_period: 15s
-    ## Only starts this service if the "all", "ollama", or "vision" profile is specified::
+    ## Only starts if the "all", "ollama", or "vision" profile is specified:
     ## docker compose --profile ollama up -d
     profiles: ["all", "ollama", "vision"]
     ## Insecurely exposes the Ollama service on port 11434
@@ -169,7 +186,7 @@ services:
     #  - "11434:11434"
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=photoprism"
+      - "traefik.docker.network=${COMPOSE_NETWORK_NAME:-photoprism}"
       - "traefik.http.services.ollama.loadbalancer.server.port=11434"
       - "traefik.http.routers.ollama.rule=Host(`ollama.localssl.dev`)"
       - "traefik.http.routers.ollama.entrypoints=websecure"
@@ -187,12 +204,26 @@ services:
       OLLAMA_MULTIUSER_CACHE: "false"  # optimize prompt caching for multi-user scenarios
       OLLAMA_NOPRUNE: "false"          # disables pruning of model blobs at startup
       OLLAMA_NOHISTORY: "true"         # disables readline history
-      OLLAMA_FLASH_ATTENTION: "false"  # enables the experimental flash attention feature
-      OLLAMA_KV_CACHE_TYPE: "f16"      # cache quantization (f16, q8_0, or q4_0)
+      # OLLAMA_FLASH_ATTENTION — small speedup on supported architectures
+      # (gemma3, gptoss, mistral3, qwen3*). Silently no-op on unsupported
+      # architectures and on CPU. Required to enable OLLAMA_KV_CACHE_TYPE
+      # quantization. Set to "false" for Qwen3-2507 builds (gh#12432).
+      OLLAMA_FLASH_ATTENTION: "true"
+      # OLLAMA_KV_CACHE_TYPE — cache precision (f16 is the default):
+      #   f16  — native precision, works on every architecture
+      #   q8_0 — halves cache VRAM; clean for qwen3*/gpt-oss/mistral3;
+      #          5x slowdown on gemma3 (gh#9683/#11949); no-op for
+      #          gemma4/qwen2.5vl (not on FA allowlist — gh#13337)
+      #   q4_0 — quarters cache VRAM; usable on qwen, hurts gemma;
+      #          only reach for it when VRAM-constrained
+      OLLAMA_KV_CACHE_TYPE: "f16"      # cache precision: f16 (default), q8_0, q4_0
       OLLAMA_SCHED_SPREAD: "false"     # allows scheduling models across all GPUs.
-      OLLAMA_NEW_ENGINE: "true"        # enables the new Ollama engine
       # OLLAMA_DEBUG: "true"             # shows additional debug information
       # OLLAMA_INTEL_GPU: "true"         # enables experimental Intel GPU detection
+      ## Telemetry / privacy opt-outs (containers do not inherit /etc/environment):
+      DO_NOT_TRACK: "true"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      # OLLAMA_NO_CLOUD: "1"           # uncomment to disable Ollama Cloud models/features
       ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
@@ -258,5 +289,5 @@ volumes:
 ## Create shared "photoprism" network for connecting with services in other compose.yaml files
 networks:
   default:
-    name: photoprism
+    name: ${COMPOSE_NETWORK_NAME:-photoprism}
     driver: bridge

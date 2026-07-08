@@ -9,8 +9,19 @@ import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
 import PhotoEdit from "../page-model/photo-edit";
 import Notifies from "../page-model/notifications";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-fixture`Test batch edit`.page`${testcafeconfig.url}`;
+fixture`Test batch edit`
+.page`${testcafeconfig.url}`
+.beforeEach(async t => {
+  await helperBeforeEach(t);
+})
+.afterEach(async t => {
+  await helperAfterEach(t);
+})
+.before(async ctx => {
+  await helperBeforeFixture(ctx);
+});
 
 const menu = new Menu();
 const toolbar = new Toolbar();
@@ -121,31 +132,38 @@ test.meta("testID", "batch-003").meta({ mode: "public" })("Common: Test batch di
   await t.expect(photoedit.countryValue.innerText).eql("Germany");
   await t.click(Selector(".input-labels input"));
 
-  await t.expect(page.selectOption.withText("People").visible).ok().expect(page.selectOption.withText("Cat").visible).ok();
+  // The dropdown hides labels already assigned to any selected photo:
+  // "Cat" is a chip on photo 1, "Animal" is unassigned across all 4.
+  await t.expect(page.selectOption.withText("Cat").exists).notOk().expect(page.selectOption.withText("Animal").visible).ok();
 
   await t.typeText(Selector(".input-labels input"), "P", { replace: true });
 
   await t
-    .expect(page.selectOption.withText("Cat").visible)
-    .notOk()
     .expect(page.selectOption.withText("Portrait").visible)
     .ok()
     .expect(page.selectOption.withText("P").visible)
-    .ok();
+    .ok()
+    .expect(page.selectOption.withText("Cat").exists) // visible.notOk takes 15 seconds
+    .notOk();
+
+  await t
+    .pressKey("ctrl+a delete")
+    .pressKey("enter");
 
   await t.click(Selector(".input-albums input"));
 
-  await t.expect(page.selectOption.withText("Holiday").visible).ok().expect(page.selectOption.withText("Christmas").visible).ok();
+  // "Holiday" is on photo 3, "Christmas" is unassigned.
+  await t.expect(page.selectOption.withText("Holiday").exists).notOk().expect(page.selectOption.withText("Christmas").visible).ok();
 
   await t.typeText(Selector(".input-albums input"), "C", { replace: true });
 
   await t
-    .expect(page.selectOption.withText("Holiday").visible)
-    .notOk()
     .expect(page.selectOption.withText("Christmas").visible)
     .ok()
     .expect(page.selectOption.withText("C").visible)
-    .ok();
+    .ok()
+    .expect(page.selectOption.withText("Holiday").exists) // visible.notOk takes 15 seconds
+    .notOk();
   await t.click(photoedit.batchDialogCloseAction);
   await t.expect(photoedit.batchDialog.visible).notOk();
   await contextmenu.clearSelection();

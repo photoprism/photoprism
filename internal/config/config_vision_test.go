@@ -98,7 +98,6 @@ func TestConfig_VisionModelShouldRun(t *testing.T) {
 			t.Fatalf("expected false when classification disabled")
 		}
 	})
-
 	t.Run("DetectNSFWDisabled", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.DetectNSFW = false
@@ -107,7 +106,6 @@ func TestConfig_VisionModelShouldRun(t *testing.T) {
 			t.Fatalf("expected false when detect nsfw disabled")
 		}
 	})
-
 	t.Run("NilVisionConfig", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		withVisionConfig(t, nil)
@@ -115,7 +113,6 @@ func TestConfig_VisionModelShouldRun(t *testing.T) {
 			t.Fatalf("expected false when no vision config is loaded")
 		}
 	})
-
 	t.Run("DelegatesToVisionConfig", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		withVisionConfig(t, vision.NewConfig())
@@ -126,7 +123,6 @@ func TestConfig_VisionModelShouldRun(t *testing.T) {
 			t.Fatalf("expected labels model to run on index with defaults")
 		}
 	})
-
 	t.Run("CustomLabelsRunAfterIndex", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		defaultModel := vision.NasnetModel.Clone()

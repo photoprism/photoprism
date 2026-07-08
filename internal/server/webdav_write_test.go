@@ -11,10 +11,12 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -33,7 +35,7 @@ func authBearer(req *http.Request) {
 
 func authBasic(req *http.Request) {
 	sess := entity.SessionFixtures.Get("alice_token_webdav")
-	basic := []byte(fmt.Sprintf("alice:%s", sess.AuthToken()))
+	basic := fmt.Appendf(nil, "alice:%s", sess.AuthToken())
 	req.Header.Set(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basic)))
 }
 
@@ -64,13 +66,97 @@ func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
 	assert.Equal(t, "hello", string(b))
 }
 
+// logCapture is a logrus hook that records emitted entries for assertions.
+type logCapture struct{ entries []*logrus.Entry }
+
+// Levels reports the log levels the capture hook fires on.
+func (h *logCapture) Levels() []logrus.Level { return logrus.AllLevels }
+
+// Fire records the given log entry.
+func (h *logCapture) Fire(e *logrus.Entry) error {
+	h.entries = append(h.entries, e)
+	return nil
+}
+
+func TestWebDAVWrite_MKCOL_Exists(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	r := setupWebDAVRouter(conf)
+
+	// First MKCOL creates the collection.
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(header.MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/exists", nil)
+	authBearer(req)
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	// Capture the console-only system log while repeating the MKCOL against the
+	// existing collection. Errors from x/net/webdav are routed through
+	// event.SystemLog (never the browser log.* stream), so we hook it here.
+	hook := &logCapture{}
+	event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+	event.SystemLog.AddHook(hook)
+	defer event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+
+	w = httptest.NewRecorder()
+	req = httptest.NewRequest(header.MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/exists", nil)
+	authBearer(req)
+	r.ServeHTTP(w, req)
+	// Probing an existing collection is a client-side no-op; x/net/webdav returns 405.
+	assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
+
+	// The benign probe must not be logged as an error, and must not leak the server path.
+	var found bool
+	for _, e := range hook.entries {
+		if e.Level == logrus.DebugLevel && assert.Contains(t, e.Message, "already exists") {
+			found = true
+			assert.NotContains(t, e.Message, conf.OriginalsPath())
+		}
+		assert.NotEqual(t, logrus.ErrorLevel, e.Level, "MKCOL on existing collection must not log an error")
+	}
+	assert.True(t, found, "expected a debug entry for the existing collection")
+}
+
+func TestWebDAVWrite_PUT_OriginalsLimit(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	conf.Options().OriginalsLimit = 1 // cap uploaded files at 1 MB
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	r := setupWebDAVRouter(conf)
+
+	t.Run("UnderLimitAccepted", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/small.bin", bytes.NewReader(make([]byte, 512*1024)))
+		authBearer(req)
+		r.ServeHTTP(w, req)
+		assert.InDelta(t, 201, w.Code, 1)
+	})
+	t.Run("OverLimitRejected", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/big.bin", bytes.NewReader(make([]byte, 2*1024*1024)))
+		authBearer(req)
+		r.ServeHTTP(w, req)
+		// The oversized PUT must not be accepted, and the bytes written to disk must not
+		// exceed the configured originals limit (the body cap stops io.Copy mid-stream).
+		assert.NotEqual(t, http.StatusCreated, w.Code)
+		path := filepath.Join(conf.OriginalsPath(), "big.bin")
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		if info, err := os.Stat(path); err == nil {
+			assert.LessOrEqual(t, info.Size(), conf.OriginalsLimitBytes())
+		}
+	})
+}
+
 func TestWebDAV_NoTrailingSlashRedirectOnBasePath(t *testing.T) {
 	testCases := []struct {
 		name    string
 		siteURL string
 	}{
 		{name: "DefaultBasePath", siteURL: "http://localhost:2342/"},
-		{name: "PrefixedBasePath", siteURL: "https://app.localssl.dev/p/pro-1/"},
+		{name: "PrefixedBasePath", siteURL: "https://app.localssl.dev/i/pro-1/"},
 	}
 
 	for _, tc := range testCases {

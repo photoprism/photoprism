@@ -11,20 +11,28 @@ import (
 
 // Usage hints for the user management subcommands.
 const (
-	UserNameUsage     = "full `NAME` for display in the interface"
-	UserEmailUsage    = "unique `EMAIL` address of the user"
-	UserPasswordUsage = "`PASSWORD` for local authentication (8-72 characters)"
-	UserAuthUsage     = "authentication `PROVIDER` (default, local, oidc or none)"
-	UserAuthIDUsage   = "authentication `ID`, e.g. Subject ID or Distinguished Name (DN)"
-	UserAdminUsage    = "makes user super admin with full access"
-	UserNoLoginUsage  = "disables login on the web interface"
-	UserWebDAVUsage   = "allows to sync files via WebDAV"
-	UserDisable2FA    = "deactivates two-factor authentication"
+	UserNameUsage       = "full `NAME` for display in the interface"
+	UserEmailUsage      = "unique `EMAIL` address of the user"
+	UserPasswordUsage   = "`PASSWORD` for local authentication (8-72 characters)"
+	UserAuthUsage       = "authentication `PROVIDER` (default, local, oidc, or none)"
+	UserAuthIDUsage     = "authentication `ID`, e.g. Subject ID or Distinguished Name (DN)"
+	UserAuthIssuerUsage = "authentication `ISSUER` URL, e.g. the Portal base URL for OIDC accounts"
+	UserAdminUsage      = "makes user super admin with full access"
+	UserNoLoginUsage    = "disables login on the web interface"
+	UserWebDAVUsage     = "allows to sync files via WebDAV"
+	UserDisable2FA      = "deactivates two-factor authentication"
 )
 
+// UserRoleUsageFor builds the --role flag help from the assignable user roles in m, so
+// each edition's CLI lists exactly the roles its own registered map accepts (Portal, for
+// example, includes cluster_admin). Edition commands pass their static auth.UserRoles map.
+func UserRoleUsageFor(m acl.RoleStrings) string {
+	return fmt.Sprintf("user account `ROLE`, e.g. %s", m.CliUsageString())
+}
+
 var (
-	// UserRoleUsage describes allowed user roles for CLI help.
-	UserRoleUsage = fmt.Sprintf("user account `ROLE`, e.g. %s", acl.UserRoles.CliUsageString())
+	// UserRoleUsage describes the assignable user roles for CLI help.
+	UserRoleUsage = UserRoleUsageFor(acl.UserRoles)
 )
 
 // UsersCommands configures the user management subcommands.
@@ -75,6 +83,11 @@ var UserFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:  "auth-id",
 		Usage: UserAuthIDUsage,
+		Value: "",
+	},
+	&cli.StringFlag{
+		Name:  "auth-issuer",
+		Usage: UserAuthIssuerUsage,
 		Value: "",
 	},
 	SuperAdminFlag(UserAdminUsage),

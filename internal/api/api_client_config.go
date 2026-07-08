@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -13,8 +14,32 @@ import (
 
 // UpdateClientConfig publishes updated client configuration values over the websocket connections.
 func UpdateClientConfig() {
+	if !entity.HasDbProvider() {
+		return
+	}
+
+	conf := get.Config()
+	if conf == nil {
+		return
+	}
+
+	clientConfig := conf.ClientUser(false)
+
+	// Do not broadcast session-specific tokens via the config.updated event,
+	// as this is a global broadcast to all connected clients and may overwrite
+	// individual session tokens with the wrong values. Session tokens are
+	// updated via the X-Preview-Token and X-Download-Token response headers.
+	clientConfig.PreviewToken = ""
+	clientConfig.DownloadToken = ""
+
 	go func() {
-		event.Publish("config.updated", event.Data{"config": get.Config().ClientUser(false)})
+		defer func() {
+			if r := recover(); r != nil {
+				log.Warnf("api: failed to publish updated client config (%v)", r)
+			}
+		}()
+
+		event.Publish("config.updated", event.Data{"config": clientConfig})
 	}()
 }
 

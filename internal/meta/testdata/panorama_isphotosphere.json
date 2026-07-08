@@ -1,0 +1,18 @@
+[{
+  "SourceFile": "panorama_isphotosphere.jpg",
+  "ExifToolVersion": 12.40,
+  "FileName": "panorama_isphotosphere.jpg",
+  "Directory": ".",
+  "FileSize": "1.0 MB",
+  "FileType": "JPEG",
+  "FileTypeExtension": "jpg",
+  "MIMEType": "image/jpeg",
+  "ImageWidth": 5376,
+  "ImageHeight": 2688,
+  "IsPhotosphere": true,
+  "Make": "RICOH",
+  "Model": "RICOH THETA S",
+  "EncodingProcess": "Baseline DCT, Huffman coding",
+  "BitsPerSample": 8,
+  "ColorComponents": 3
+}]

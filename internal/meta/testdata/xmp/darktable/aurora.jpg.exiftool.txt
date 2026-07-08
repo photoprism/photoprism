@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+
+<rdf:Description rdf:about='internal/meta/testdata/xmp/darktable/aurora.jpg.xmp'
+  xmlns:et='http://ns.exiftool.org/1.0/' et:toolkit='Image::ExifTool 13.25'
+  xmlns:ExifTool='http://ns.exiftool.org/ExifTool/1.0/'
+  xmlns:System='http://ns.exiftool.org/File/System/1.0/'
+  xmlns:File='http://ns.exiftool.org/File/1.0/'
+  xmlns:XMP-x='http://ns.exiftool.org/XMP/XMP-x/1.0/'
+  xmlns:XMP-exif='http://ns.exiftool.org/XMP/XMP-exif/1.0/'
+  xmlns:XMP-xmpMM='http://ns.exiftool.org/XMP/XMP-xmpMM/1.0/'
+  xmlns:XMP-xmp='http://ns.exiftool.org/XMP/XMP-xmp/1.0/'
+  xmlns:XMP-darktable='http://ns.exiftool.org/XMP/XMP-darktable/1.0/'
+  xmlns:XMP-acdsee='http://ns.exiftool.org/XMP/XMP-acdsee/1.0/'
+  xmlns:XMP-dc='http://ns.exiftool.org/XMP/XMP-dc/1.0/'
+  xmlns:XMP-lr='http://ns.exiftool.org/XMP/XMP-lr/1.0/'
+  xmlns:Composite='http://ns.exiftool.org/Composite/1.0/'>
+ <ExifTool:ExifToolVersion>13.25</ExifTool:ExifToolVersion>
+ <System:FileName>aurora.jpg.xmp</System:FileName>
+ <System:Directory>internal/meta/testdata/xmp/darktable</System:Directory>
+ <System:FileSize>4.3 kB</System:FileSize>
+ <System:FileModifyDate>2026:05:06 06:49:32+00:00</System:FileModifyDate>
+ <System:FileAccessDate>2026:05:06 06:50:54+00:00</System:FileAccessDate>
+ <System:FileInodeChangeDate>2026:05:06 06:53:16+00:00</System:FileInodeChangeDate>
+ <System:FilePermissions>-rw-r--r--</System:FilePermissions>
+ <File:FileType>XMP</File:FileType>
+ <File:FileTypeExtension>xmp</File:FileTypeExtension>
+ <File:MIMEType>application/rdf+xml</File:MIMEType>
+ <XMP-x:XMPToolkit>XMP Core 4.4.0-Exiv2</XMP-x:XMPToolkit>
+ <XMP-exif:DateTimeOriginal></XMP-exif:DateTimeOriginal>
+ <XMP-exif:GPSVersionID>2.2.0.0</XMP-exif:GPSVersionID>
+ <XMP-exif:GPSLongitude>179 deg 59&#39; 32.81&quot; W</XMP-exif:GPSLongitude>
+ <XMP-exif:GPSLatitude>87 deg 21&#39; 17.52&quot; N</XMP-exif:GPSLatitude>
+ <XMP-xmpMM:DerivedFrom>aurora.jpg</XMP-xmpMM:DerivedFrom>
+ <XMP-xmp:Rating>1</XMP-xmp:Rating>
+ <XMP-darktable:Import_timestamp>63913646604991295</XMP-darktable:Import_timestamp>
+ <XMP-darktable:Change_timestamp>-1</XMP-darktable:Change_timestamp>
+ <XMP-darktable:Export_timestamp>63913646961369095</XMP-darktable:Export_timestamp>
+ <XMP-darktable:Print_timestamp>-1</XMP-darktable:Print_timestamp>
+ <XMP-darktable:Xmp_version>5</XMP-darktable:Xmp_version>
+ <XMP-darktable:Raw_params>0</XMP-darktable:Raw_params>
+ <XMP-darktable:Auto_presets_applied>1</XMP-darktable:Auto_presets_applied>
+ <XMP-darktable:History_end>4</XMP-darktable:History_end>
+ <XMP-darktable:Iop_order_version>5</XMP-darktable:Iop_order_version>
+ <XMP-darktable:History_basic_hash>02d4cdbda625305c5e181669466f51d2</XMP-darktable:History_basic_hash>
+ <XMP-darktable:History_current_hash>02d4cdbda625305c5e181669466f51d2</XMP-darktable:History_current_hash>
+ <XMP-darktable:Masks_history></XMP-darktable:Masks_history>
+ <XMP-darktable:HistoryNum>0</XMP-darktable:HistoryNum>
+ <XMP-darktable:HistoryOperation>colorin</XMP-darktable:HistoryOperation>
+ <XMP-darktable:HistoryEnabled>1</XMP-darktable:HistoryEnabled>
+ <XMP-darktable:HistoryModversion>7</XMP-darktable:HistoryModversion>
+ <XMP-darktable:HistoryParamsgz48eJzjZBgFowABWAbaAaNgwAEAMNgADg>
+      darktable:multi_name=</XMP-darktable:HistoryParamsgz48eJzjZBgFowABWAbaAaNgwAEAMNgADg>
+ <XMP-darktable:HistoryMulti_name_hand_edited>0</XMP-darktable:HistoryMulti_name_hand_edited>
+ <XMP-darktable:HistoryMulti_priority>0</XMP-darktable:HistoryMulti_priority>
+ <XMP-darktable:HistoryBlendop_version>14</XMP-darktable:HistoryBlendop_version>
+ <XMP-darktable:HistoryNum>1</XMP-darktable:HistoryNum>
+ <XMP-darktable:HistoryOperation>colorout</XMP-darktable:HistoryOperation>
+ <XMP-darktable:HistoryEnabled>1</XMP-darktable:HistoryEnabled>
+ <XMP-darktable:HistoryModversion>5</XMP-darktable:HistoryModversion>
+ <XMP-darktable:HistoryParams>gz35eJxjZBgFo4CBAQAEEAAC</XMP-darktable:HistoryParams>
+ <XMP-darktable:HistoryMulti_name></XMP-darktable:HistoryMulti_name>
+ <XMP-darktable:HistoryMulti_name_hand_edited>0</XMP-darktable:HistoryMulti_name_hand_edited>
+ <XMP-darktable:HistoryMulti_priority>0</XMP-darktable:HistoryMulti_priority>
+ <XMP-darktable:HistoryBlendop_version>14</XMP-darktable:HistoryBlendop_version>
+ <XMP-darktable:HistoryNum>2</XMP-darktable:HistoryNum>
+ <XMP-darktable:HistoryOperation>gamma</XMP-darktable:HistoryOperation>
+ <XMP-darktable:HistoryEnabled>1</XMP-darktable:HistoryEnabled>
+ <XMP-darktable:HistoryModversion>1</XMP-darktable:HistoryModversion>
+ <XMP-darktable:HistoryParams>0000000000000000</XMP-darktable:HistoryParams>
+ <XMP-darktable:HistoryMulti_name></XMP-darktable:HistoryMulti_name>
+ <XMP-darktable:HistoryMulti_name_hand_edited>0</XMP-darktable:HistoryMulti_name_hand_edited>
+ <XMP-darktable:HistoryMulti_priority>0</XMP-darktable:HistoryMulti_priority>
+ <XMP-darktable:HistoryBlendop_version>14</XMP-darktable:HistoryBlendop_version>
+ <XMP-darktable:HistoryNum>3</XMP-darktable:HistoryNum>
+ <XMP-darktable:HistoryOperation>flip</XMP-darktable:HistoryOperation>
+ <XMP-darktable:HistoryEnabled>1</XMP-darktable:HistoryEnabled>
+ <XMP-darktable:HistoryModversion>2</XMP-darktable:HistoryModversion>
+ <XMP-darktable:HistoryParams>ffffffff</XMP-darktable:HistoryParams>
+ <XMP-darktable:HistoryMulti_name>_builtin_auto</XMP-darktable:HistoryMulti_name>
+ <XMP-darktable:HistoryMulti_name_hand_edited>0</XMP-darktable:HistoryMulti_name_hand_edited>
+ <XMP-darktable:HistoryMulti_priority>0</XMP-darktable:HistoryMulti_priority>
+ <XMP-darktable:HistoryBlendop_version>14</XMP-darktable:HistoryBlendop_version>
+ <XMP-acdsee:Notes>This is notes</XMP-acdsee:Notes>
+ <XMP-dc:Creator>PhotoPrism</XMP-dc:Creator>
+ <XMP-dc:Publisher>PhotoPrism</XMP-dc:Publisher>
+ <XMP-dc:Title>XMP Test - Aurora</XMP-dc:Title>
+ <XMP-dc:Description>Test fixture for darktable  XMP sidecar</XMP-dc:Description>
+ <XMP-dc:Rights>CC-BY-SA 4.0</XMP-dc:Rights>
+ <XMP-dc:Subject>
+  <rdf:Bag>
+   <rdf:li>Aurora</rdf:li>
+   <rdf:li>Iceland</rdf:li>
+   <rdf:li>Nature</rdf:li>
+   <rdf:li>Places</rdf:li>
+   <rdf:li>Reykjavik</rdf:li>
+   <rdf:li>darktable</rdf:li>
+   <rdf:li>exported</rdf:li>
+   <rdf:li>format</rdf:li>
+   <rdf:li>jpg</rdf:li>
+  </rdf:Bag>
+ </XMP-dc:Subject>
+ <XMP-lr:HierarchicalSubject>
+  <rdf:Bag>
+   <rdf:li>Aurora</rdf:li>
+   <rdf:li>Iceland</rdf:li>
+   <rdf:li>Nature</rdf:li>
+   <rdf:li>Places</rdf:li>
+   <rdf:li>Reykjavik</rdf:li>
+   <rdf:li>darktable|exported</rdf:li>
+   <rdf:li>darktable|format|jpg</rdf:li>
+  </rdf:Bag>
+ </XMP-lr:HierarchicalSubject>
+ <Composite:GPSLatitudeRef>North</Composite:GPSLatitudeRef>
+ <Composite:GPSLongitudeRef>West</Composite:GPSLongitudeRef>
+ <Composite:GPSPosition>87 deg 21&#39; 17.52&quot; N, 179 deg 59&#39; 32.81&quot; W</Composite:GPSPosition>
+</rdf:Description>
+</rdf:RDF>

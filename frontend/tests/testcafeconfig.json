@@ -1,3 +1,4 @@
 {
-	"url": "http://localhost:2343/library/login"
+	"url": "http://localhost:2343/library/login",
+	"api": "http://localhost:2343/api/v1/"
 }

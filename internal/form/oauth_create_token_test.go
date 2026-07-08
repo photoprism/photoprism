@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 )
 
+//nolint:gosec // G101: Validation tests intentionally use inline OAuth credential fixtures.
 func TestOAuthCreateToken_Validate(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		m := OAuthCreateToken{

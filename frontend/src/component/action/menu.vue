@@ -63,7 +63,7 @@ export default {
     return {
       visible: false,
       actions: [],
-      openOnHover: !this.$util.hasTouch(),
+      openOnHover: this.$util.shouldOpenOnHover(),
     };
   },
   methods: {

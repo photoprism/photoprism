@@ -20,7 +20,7 @@ func TestClientRegistry_PutUpdateByUUID(t *testing.T) {
 	uuid := rnd.UUIDv7()
 
 	// Create via UUID
-	n := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-uuid", Role: cluster.RoleApp, Labels: map[string]string{"a": "1"}}}
+	n := &Node{Node: cluster.Node{UUID: uuid, Name: "pp-uuid", Role: cluster.RoleInstance, Labels: map[string]string{"a": "1"}}}
 	assert.NoError(t, r.Put(n))
 	assert.NotEmpty(t, n.ClientID)
 	assert.True(t, rnd.IsUUID(n.UUID))
@@ -49,7 +49,7 @@ func TestClientRegistry_FindByNodeUUID_PrefersLatest(t *testing.T) {
 
 	uuid := rnd.UUIDv7()
 	// Create two raw client rows with the same NodeUUID and different UpdatedAt
-	c1 := entity.NewClient().SetName("pp-dup-1").SetRole(cluster.RoleApp)
+	c1 := entity.NewClient().SetName("pp-dup-1").SetRole(cluster.RoleInstance)
 	c1.NodeUUID = uuid
 	assert.NoError(t, c1.Create())
 	time.Sleep(1100 * time.Millisecond)
@@ -74,7 +74,7 @@ func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
 
 	uuid := rnd.UUIDv7()
 	// Two rows with same UUID
-	a := entity.NewClient().SetName("pp-del-a").SetRole(cluster.RoleApp)
+	a := entity.NewClient().SetName("pp-del-a").SetRole(cluster.RoleInstance)
 	a.NodeUUID = uuid
 	assert.NoError(t, a.Create())
 	b := entity.NewClient().SetName("pp-del-b").SetRole(cluster.RoleService)
@@ -95,18 +95,23 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	// Create one client with empty NodeUUID (non-node), and one proper node
 	nonNode := entity.NewClient().SetName("webapp").SetRole(acl.RoleClient.String())
 	assert.NoError(t, nonNode.Create())
-	node := entity.NewClient().SetName("pp-node").SetRole(cluster.RoleApp)
+	node := entity.NewClient().SetName("pp-node").SetRole(cluster.RoleInstance)
 	node.NodeUUID = rnd.UUIDv7()
 	assert.NoError(t, node.Create())
 
 	r, _ := NewClientRegistryWithConfig(c)
 	list, err := r.List()
 	assert.NoError(t, err)
-	// Only the NodeUUID-backed record should be present
-	if assert.Equal(t, 1, len(list)) {
-		assert.Equal(t, "pp-node", list[0].Name)
-		assert.NotEmpty(t, list[0].UUID)
+
+	// The MariaDB test database is shared across tests (unlike the per-test SQLite
+	// file), so List() also returns nodes created elsewhere. Assert on membership
+	// rather than the exact count: the NodeUUID-backed record is listed and the
+	// non-node client is not.
+	if found := listNodeByName(list, "pp-node"); assert.NotNil(t, found, "node should be listed") {
+		assert.NotEmpty(t, found.UUID)
 	}
+
+	assert.Nil(t, listNodeByName(list, "webapp"), "non-node client must be excluded")
 }
 
 // Put should prefer UUID over ClientID when both are provided, avoiding cross-attachment.
@@ -115,7 +120,7 @@ func TestClientRegistry_PutPrefersUUIDOverClientID(t *testing.T) {
 
 	r, _ := NewClientRegistryWithConfig(c)
 	// Seed two separate records
-	n1 := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: cluster.RoleApp}}
+	n1 := &Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-a", Role: cluster.RoleInstance}}
 	assert.NoError(t, r.Put(n1))
 	n2 := &Node{Node: cluster.Node{Name: "pp-b", Role: cluster.RoleService}}
 	assert.NoError(t, r.Put(n2))

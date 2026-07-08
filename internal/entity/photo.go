@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -13,6 +14,7 @@ import (
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -22,6 +24,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 const (
@@ -43,7 +46,7 @@ func MapKey(takenAt time.Time, cellId string) string {
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
 	ID               uint          `gorm:"primary_key" yaml:"-"`
-	UUID             string        `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
+	UUID             string        `gorm:"type:VARBINARY(255);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time     `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" json:"TakenAtLocal" yaml:"TakenAtLocal"`
 	TakenSrc         string        `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
@@ -99,8 +102,8 @@ type Photo struct {
 	Files            []File        `yaml:"-"`
 	Labels           []PhotoLabel  `yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
-	CreatedAt        time.Time     `json:"CreatedAt,omitempty" yaml:"CreatedAt,omitempty"`
-	UpdatedAt        time.Time     `json:"UpdatedAt,omitempty" yaml:"UpdatedAt,omitempty"`
+	CreatedAt        time.Time     `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time     `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	EditedAt         *time.Time    `json:"EditedAt,omitempty" yaml:"EditedAt,omitempty"`
 	PublishedAt      *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	IndexedAt        *time.Time    `json:"IndexedAt,omitempty" yaml:"-"`
@@ -332,7 +335,7 @@ func (m *Photo) Save() error {
 }
 
 // Update a column in the database.
-func (m *Photo) Update(attr string, value interface{}) error {
+func (m *Photo) Update(attr string, value any) error {
 	if m == nil {
 		return errors.New("photo must not be nil - you may have found a bug")
 	} else if !m.HasID() {
@@ -343,7 +346,7 @@ func (m *Photo) Update(attr string, value interface{}) error {
 }
 
 // Updates multiple columns in the database.
-func (m *Photo) Updates(values interface{}) error {
+func (m *Photo) Updates(values any) error {
 	if values == nil {
 		return nil
 	} else if m == nil {
@@ -411,13 +414,7 @@ func (m *Photo) ResetDuration() {
 func (m *Photo) HasMediaType(types ...media.Type) bool {
 	mediaType := m.MediaType()
 
-	for _, t := range types {
-		if mediaType == t {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(types, mediaType)
 }
 
 // SetMediaType sets a new media type if its priority is higher than that of the current type.
@@ -811,6 +808,65 @@ func (m *Photo) PreloadMany() *Photo {
 	return m
 }
 
+// RedactForSession trims fields a shared-only session should not see when it accesses a picture
+// through sharing: the album list is limited to the albums shared with the session, and people,
+// labels, owner/storage metadata, and identifying metadata (camera serial, the XMP DocumentID, and
+// per-file InstanceID) are removed. Sessions with full library or admin access (and nil sessions)
+// are returned unchanged.
+func (m *Photo) RedactForSession(sess *Session) *Photo {
+	if m == nil || sess == nil {
+		return m
+	}
+
+	// Only sessions limited to shared content are redacted.
+	if !sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+		return m
+	}
+
+	// Limit album membership to the albums shared with the session.
+	if len(m.Albums) > 0 {
+		shared := sess.SharedUIDs()
+
+		if len(shared) == 0 {
+			m.Albums = nil
+		} else {
+			allowed := make(map[string]struct{}, len(shared))
+			for _, uid := range shared {
+				allowed[uid] = struct{}{}
+			}
+
+			kept := m.Albums[:0]
+			for _, a := range m.Albums {
+				if _, ok := allowed[a.AlbumUID]; ok {
+					kept = append(kept, a)
+				}
+			}
+
+			m.Albums = kept
+		}
+	}
+
+	// Remove labels and people, plus the per-file XMP InstanceID (marker identity is omitted
+	// defensively in case markers are loaded).
+	m.Labels = nil
+	for i := range m.Files {
+		m.Files[i].OmitMarkers = true
+		m.Files[i].InstanceID = ""
+	}
+
+	// Remove owner, storage, and identifying metadata. CameraSerial is a device fingerprint that
+	// can link a photographer's pictures, and the XMP DocumentID is a content-provenance identifier;
+	// neither is needed by a shared-only viewer (navigation uses PhotoUID/FileUID).
+	m.CreatedBy = ""
+	m.PhotoPath = ""
+	m.OriginalName = ""
+	m.UUID = ""
+	m.CameraSerial = ""
+	m.Details = nil
+
+	return m
+}
+
 // NormalizeValues updates the model values with the values from deprecated fields, if any.
 func (m *Photo) NormalizeValues() (normalized bool) {
 	if m.PhotoCaption == "" && m.PhotoDescription != "" {
@@ -944,11 +1000,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 
 		template := NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, labelSrc)
 		template.Topicality = classifyLabel.Topicality
-		score := 0
-
-		if classifyLabel.NSFWConfidence > 0 {
-			score = classifyLabel.NSFWConfidence
-		}
+		score := max(classifyLabel.NSFWConfidence, 0)
 
 		if classifyLabel.NSFW && score == 0 {
 			score = 100
@@ -979,10 +1031,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 			}
 
 			if classifyLabel.NSFWConfidence > 0 || classifyLabel.NSFW {
-				nsfwScore := 0
-				if classifyLabel.NSFWConfidence > 0 {
-					nsfwScore = classifyLabel.NSFWConfidence
-				}
+				nsfwScore := max(classifyLabel.NSFWConfidence, 0)
 				if classifyLabel.NSFW && nsfwScore == 0 {
 					nsfwScore = 100
 				}
@@ -1357,7 +1406,8 @@ func (m *Photo) MapKey() string {
 
 // SetCameraSerial updates the camera serial number.
 func (m *Photo) SetCameraSerial(s string) {
-	if s = txt.Clip(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
+	// camera_serial is VARBINARY(160), so clip by bytes on a rune boundary.
+	if s = clip.Bytes(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
 		m.CameraSerial = s
 	}
 }

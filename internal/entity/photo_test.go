@@ -2,14 +2,17 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
@@ -475,7 +478,6 @@ func TestPhoto_ShouldGenerateCaption(t *testing.T) {
 	}
 
 	for _, tc := range ctx {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			result := tc.photo.ShouldGenerateCaption(tc.source, tc.force)
 			assert.Equal(t, tc.expect, result)
@@ -701,6 +703,41 @@ func TestPhoto_AddLabels(t *testing.T) {
 			t.Fatalf("count after failed: %v", err)
 		}
 		assert.Equal(t, labelCountBefore, labelCountAfter)
+	})
+	t.Run("ReusesRenamedLabelFromClassifier", func(t *testing.T) {
+		// Reproduces the AI ingestion path from issue #5531: a classifier
+		// re-emitting the previous name of a renamed label must reuse the
+		// existing row instead of creating a duplicate.
+		original := FirstOrCreateLabel(NewLabel("RenameClassifyA", 0))
+		require.NotNil(t, original)
+
+		t.Cleanup(func() {
+			_ = Db().Unscoped().Delete(original).Error
+			FlushLabelCache()
+		})
+
+		require.True(t, original.SetName("RenameClassifyB"))
+		require.NoError(t, Db().Save(original).Error)
+		FlushLabelCache()
+
+		var before int
+		require.NoError(t, UnscopedDb().Model(&Label{}).
+			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
+			Count(&before).Error)
+		assert.Equal(t, 1, before)
+
+		photo := PhotoFixtures.Get("19800101_000002_D640C559")
+		photo.AddLabels(classify.Labels{{Name: "RenameClassifyA", Uncertainty: 30, Source: SrcImage, Priority: 0}})
+
+		var after int
+		require.NoError(t, UnscopedDb().Model(&Label{}).
+			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
+			Count(&after).Error)
+		assert.Equal(t, 1, after, "classifier with old name must not create a duplicate label")
+
+		joined, err := FindPhotoLabel(photo.ID, original.ID, false)
+		require.NoError(t, err)
+		assert.Equal(t, original.ID, joined.LabelID)
 	})
 	t.Run("SkipZeroProbability", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo15")
@@ -1340,7 +1377,7 @@ func TestPhoto_SetPrimary(t *testing.T) {
 	t.Run("UpdateQualityErrorIsNonFatal", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: dsn.DriverSQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "set-primary-quality-error.db"),
 		}
 
@@ -1610,10 +1647,21 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 }
 
 func TestPhoto_SetCameraSerial(t *testing.T) {
-	m := &Photo{}
-	assert.Empty(t, m.CameraSerial)
-	m.SetCameraSerial("abcCamera")
-	assert.Equal(t, "abcCamera", m.CameraSerial)
+	t.Run("Success", func(t *testing.T) {
+		m := &Photo{}
+		assert.Empty(t, m.CameraSerial)
+		m.SetCameraSerial("abcCamera")
+		assert.Equal(t, "abcCamera", m.CameraSerial)
+	})
+	t.Run("MultiByteClippedOnRuneBoundary", func(t *testing.T) {
+		// camera_serial is VARBINARY(160), so a long multi-byte value must be byte-clipped
+		// without splitting a rune, keeping the stored value within budget and valid UTF-8.
+		m := &Photo{}
+		m.SetCameraSerial(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
+		assert.NotEmpty(t, m.CameraSerial)
+		assert.LessOrEqual(t, len(m.CameraSerial), txt.ClipDefault)
+		assert.True(t, utf8.ValidString(m.CameraSerial))
+	})
 }
 
 func TestPhoto_MapKey(t *testing.T) {

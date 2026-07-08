@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 25.04 (Plucky Puffin)
 FROM ubuntu:plucky
 
-# Copyright © 2018 - 2025 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2026 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -21,7 +21,19 @@ ARG TARGETARCH
 ARG BUILD_TAG
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
-ENV PHOTOPRISM_ARCH=$TARGETARCH \
+ENV DO_NOT_TRACK=true \
+    GH_TELEMETRY=false \
+    DISABLE_TELEMETRY=1 \
+    DISABLE_ERROR_REPORTING=1 \
+    DISABLE_FEEDBACK_COMMAND=1 \
+    CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1 \
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
+    DISABLE_AUTOUPDATER=1 \
+    NO_UPDATE_NOTIFIER=true \
+    NPM_CONFIG_AUDIT=false \
+    NPM_CONFIG_FUND=false \
+    NPM_CONFIG_UPDATE_NOTIFIER=false \
+    PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
     NODE_ENV="production" \
@@ -40,7 +52,11 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PROG="photoprism" \
     S6_KEEP_ENV=1 \
     S6_VERBOSITY=0 \
-    S6_LOGGING=0
+    S6_LOGGING=0 \
+    CODEX_HOME="/go/src/github.com/photoprism/photoprism/.local/codex" \
+    CLAUDE_CONFIG_DIR="/go/src/github.com/photoprism/photoprism/.local/claude" \
+    GH_CONFIG_DIR="/go/src/github.com/photoprism/photoprism/.local/gh" \
+    GH_REPO="photoprism/photoprism"
 
 # Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
@@ -74,6 +90,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         xvfb fonts-freefont-ttf fonts-ipafont-gothic fonts-noto-color-emoji \
         fonts-tlwg-loma-otf fonts-unifont fonts-wqy-zenhei xfonts-cyrillic \
         fonts-ipafont-mincho fonts-tlwg-loma xfonts-base xfonts-scalable \
+        openssh-client bubblewrap pandoc python3-bs4 python3-pygments python3-pil python3-lxml \
     && \
     ln -sf /usr/bin/fdfind /usr/local/bin/fd && \
     ln -sf /usr/bin/batcat /usr/local/bin/bat && \
@@ -94,6 +111,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
+    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/skel/.bashrc && \
     /scripts/install-dircolors.sh && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \

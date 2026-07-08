@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
+    <https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -25,7 +25,8 @@ Additional information can be found in our Developer Guide:
 
 import $api from "common/api";
 import { $config } from "app/session";
-import $notify from "notify.js";
+import $notify from "common/notify";
+import { $gettext } from "common/gettext";
 
 function poll(interval, maxAttempts) {
   let attempts = 0;
@@ -42,8 +43,8 @@ function poll(interval, maxAttempts) {
         // console.log("response:", xhr.response);
         return resolve();
       }
-    } catch (e) {
-      // console.log("status:", e);
+    } catch {
+      // Ignore status probe failures.
     }
 
     if (maxAttempts && attempts === maxAttempts) {
@@ -75,13 +76,13 @@ export function restart(uri) {
         })
         .catch(() => {
           $notify.ajaxEnd();
-          $notify.error("Failed to restart server");
+          $notify.error($gettext("Failed to restart server"));
           $notify.unblockUI();
         });
     })
     .catch(() => {
       $notify.ajaxEnd();
-      $notify.error("Failed to restart server");
+      $notify.error($gettext("Failed to restart server"));
       $notify.unblockUI();
     });
 }

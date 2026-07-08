@@ -62,11 +62,11 @@ type Session struct {
 	RefreshToken  string          `gorm:"type:VARBINARY(2048);column:refresh_token;default:'';" json:"-" yaml:"-"`
 	IdToken       string          `gorm:"type:VARBINARY(2048);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
 	UserAgent     string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
-	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"-" yaml:"Data,omitempty"`
+	DataJSON      json.RawMessage `gorm:"type:VARBINARY(16384);" json:"-" yaml:"Data,omitempty"`
 	data          *SessionData    `gorm:"-" yaml:"-"`
 	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"ID" yaml:"-"`
 	LoginIP       string          `gorm:"size:64;column:login_ip" json:"LoginIP" yaml:"-"`
-	LoginAt       time.Time       `json:"LoginAt" yaml:"-"`
+	LoginAt       *time.Time      `json:"LoginAt" yaml:"-"`
 	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
 	Status        int             `gorm:"-" json:"Status" yaml:"-"`
@@ -272,7 +272,7 @@ func (m *Session) Delete() error {
 }
 
 // Updates multiple properties in the database.
-func (m *Session) Updates(values interface{}) error {
+func (m *Session) Updates(values any) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
@@ -388,6 +388,14 @@ func (m *Session) NoClient() bool {
 // IsClient checks if this session authenticates an API client.
 func (m *Session) IsClient() bool {
 	return authn.Provider(m.AuthProvider).IsClient()
+}
+
+// IsApplication checks whether this session has been authenticated using an app password.
+// The application provider is set only for user-bound app passwords, regardless of the grant
+// type that minted them (password for local users, session for OIDC-only users, cli for the
+// "auth add" command), so the provider alone identifies an app password.
+func (m *Session) IsApplication() bool {
+	return authn.Provider(m.AuthProvider).IsApplication()
 }
 
 // clientRole resolves the client role for this session. When resolve is true it
@@ -1045,7 +1053,7 @@ func (m *Session) SetClientIP(ip string) {
 
 	if m.LoginIP == "" {
 		m.LoginIP = ip
-		m.LoginAt = Now()
+		m.LoginAt = TimeStamp()
 	}
 
 	return

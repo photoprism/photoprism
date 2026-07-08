@@ -21,9 +21,15 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	fileExt := f.Extension()
 	maxSize := strconv.Itoa(w.conf.PngSize())
 
+	// Unlike JpegConvertCmds, this builder does not have a Darktable/RawTherapee renderer or an embedded preview
+	// fallback for converting RAW images to PNG — see internal/raw/README.md for more information.
+	if f.IsRaw() && w.conf.RawEnabled() {
+		log.Debugf("convert: PNG is not a supported target format for %s files", f.FileType().ToUpper())
+	}
+
 	// On a Mac, use the Apple Scriptable image processing system to convert images to PNG,
 	// see https://ss64.com/osx/sips.html.
-	if (f.IsRaw() || f.IsHeif()) && w.conf.SipsEnabled() && w.sipsExclude.Allow(fileExt) {
+	if f.IsHeif() && w.conf.SipsEnabled() && w.sipsExclude.Allow(fileExt) {
 		result = append(result, NewConvertCmd(
 			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.SipsBin(), "-Z", maxSize, "-s", "format", "png", "--out", pngName, f.FileName())),
@@ -31,7 +37,7 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	}
 
 	// Use FFmpeg to extract video stills from videos, e.g. to use them as cover images.
-	if f.IsAnimated() && !f.IsWebp() && w.conf.FFmpegEnabled() {
+	if f.IsAnimated() && !f.IsWebp() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		// Use "ffmpeg" to extract a PNG still image from the video.
 		result = append(result, NewConvertCmd(
 			ffmpeg.ExtractPngImageCmd(f.FileName(), pngName, encode.NewPreviewImageOptions(w.conf.FFmpegBin(), f.Duration()))),
@@ -47,8 +53,8 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 		)
 	}
 
-	// Use "djxl" to convert JPEG XL images if installed and enabled.
-	if f.IsJpegXL() && w.conf.JpegXLEnabled() {
+	// Use "djxl" to convert JPEG XL images as a fallback when libvips lacks native support.
+	if f.IsJpegXL() && w.conf.JpegXLEnabled() && w.conf.JpegXLDecoderBin() != "" {
 		result = append(result, NewConvertCmd(
 			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.JpegXLDecoderBin(), f.FileName(), pngName)),
@@ -91,6 +97,9 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 
 	// No suitable converter found?
 	if len(result) == 0 {
+		if f.IsAnimated() && w.conf.FFmpegEnabled() && !w.FFmpegAllowed(f) {
+			return result, useMutex, fmt.Errorf("format %s is on the FFmpeg exclude list", w.ffmpegExclude.Match(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String()))
+		}
 		return result, useMutex, fmt.Errorf("file type %s not supported", f.FileType())
 	}
 

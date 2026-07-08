@@ -1,6 +1,7 @@
 package customize
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -60,7 +61,9 @@ func TestImportSettings(t *testing.T) {
 		assert.Equal(t, customPath, s.GetPath())
 		assert.Equal(t, true, s.Move)
 		assert.Equal(t, DefaultImportDest, s.GetDest())
-		assert.Equal(t, "", s.Dest)
+		// GetDest must not mutate the receiver so it stays safe for concurrent import workers;
+		// invalid stored patterns are normalized once in Settings.Propagate instead.
+		assert.Equal(t, customDest, s.Dest)
 		assert.Equal(t, DefaultImportDest, s.GetDest())
 
 		pathName, fileName := s.GetDestName()
@@ -68,6 +71,33 @@ func TestImportSettings(t *testing.T) {
 		assert.Equal(t, "2006/01", pathName)
 		assert.Equal(t, "20060102_150405_", fileName)
 	})
+}
+
+// TestImportSettings_GetDestConcurrent ensures GetDest and GetDestName are safe for
+// concurrent use by parallel import workers; it fails under -race if GetDest writes
+// to the shared receiver again.
+func TestImportSettings_GetDestConcurrent(t *testing.T) {
+	s := &ImportSettings{Dest: "/1/2/20060102_150405_82F63B78.jpg"}
+
+	const workers = 16
+
+	var wg sync.WaitGroup
+
+	wg.Add(workers)
+
+	for range workers {
+		go func() {
+			defer wg.Done()
+			for range 100 {
+				_ = s.GetDest()
+				_, _ = s.GetDestName()
+			}
+		}()
+	}
+
+	wg.Wait()
+
+	assert.Equal(t, DefaultImportDest, s.GetDest())
 }
 
 func TestImportDestRegexp(t *testing.T) {

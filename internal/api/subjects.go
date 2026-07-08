@@ -85,7 +85,16 @@ func UpdateSubject(router *gin.RouterGroup) {
 			log.Errorf("subject: %s (new form)", err)
 			AbortSaveFailed(c)
 			return
-		} else if err = c.BindJSON(frm); err != nil {
+		}
+
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
+		if err = c.BindJSON(frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			log.Errorf("subject: %s (update form)", err)
 			AbortBadRequest(c, err)
 			return
@@ -140,7 +149,7 @@ func LikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(StatusUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -177,7 +186,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(StatusUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

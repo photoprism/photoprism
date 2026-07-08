@@ -24,7 +24,7 @@ func makeLargeText(distinct, repeats int) string {
 	var sb strings.Builder
 	// Rough preallocation: average word ~6 chars + space
 	sb.Grow(distinct * repeats * 8)
-	for r := 0; r < repeats; r++ {
+	for r := range repeats {
 		for i, w := range base {
 			if i%17 == 0 {
 				sb.WriteString(" ")

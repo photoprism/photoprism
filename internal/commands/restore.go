@@ -76,7 +76,7 @@ func restoreAction(ctx *cli.Context) error {
 	defer cancel()
 
 	if err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	defer conf.Shutdown()
@@ -85,7 +85,7 @@ func restoreAction(ctx *cli.Context) error {
 	if !restoreDatabase {
 		// Do nothing.
 	} else if err = backup.RestoreDatabase(databasePath, databaseFile, databaseFile == "-", force); err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	log.Infoln("restore: migrating index database schema")
@@ -106,7 +106,7 @@ func restoreAction(ctx *cli.Context) error {
 			log.Infof("restore: restoring album backups from %s", clean.Log(albumsPath))
 
 			if count, restoreErr := backup.RestoreAlbums(albumsPath, true); restoreErr != nil {
-				return restoreErr
+				return cli.Exit(restoreErr, 1)
 			} else {
 				log.Infof("restore: restored %s from YAML files", english.Plural(count, "album", "albums"))
 			}

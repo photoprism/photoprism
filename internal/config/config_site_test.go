@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/sha256"
 	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -52,20 +53,36 @@ func TestConfig_ApiUri(t *testing.T) {
 	assert.Equal(t, "/foo"+ApiUri, c.ApiUri())
 }
 
-func TestConfig_LibraryUri(t *testing.T) {
+func TestConfig_FrontendUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/library", c.LibraryUri(""))
-	assert.Equal(t, "/library/", c.LibraryUri("/"))
-	assert.Equal(t, "/library/browse", c.LibraryUri("/browse"))
+	assert.Equal(t, "/library", c.FrontendUri(""))
+	assert.Equal(t, "/library/", c.FrontendUri("/"))
+	assert.Equal(t, "/library/browse", c.FrontendUri("/browse"))
 	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "/library", c.LibraryUri(""))
-	assert.Equal(t, "/library/", c.LibraryUri("/"))
-	assert.Equal(t, "/library/browse", c.LibraryUri("/browse"))
+	assert.Equal(t, "/library", c.FrontendUri(""))
+	assert.Equal(t, "/library/", c.FrontendUri("/"))
+	assert.Equal(t, "/library/browse", c.FrontendUri("/browse"))
 	c.options.SiteUrl = "http://foo:2342/foo/"
-	assert.Equal(t, "/foo/library", c.LibraryUri(""))
-	assert.Equal(t, "/foo/library/", c.LibraryUri("/"))
-	assert.Equal(t, "/foo/library/browse", c.LibraryUri("/browse"))
+	assert.Equal(t, "/foo/library", c.FrontendUri(""))
+	assert.Equal(t, "/foo/library/", c.FrontendUri("/"))
+	assert.Equal(t, "/foo/library/browse", c.FrontendUri("/browse"))
+
+	c.options.FrontendUri = "/portal/"
+	assert.Equal(t, "/foo/portal", c.FrontendUri(""))
+	assert.Equal(t, "/foo/portal/", c.FrontendUri("/"))
+	assert.Equal(t, "/foo/portal/browse", c.FrontendUri("/browse"))
+
+	c.options.FrontendUri = "  "
+	assert.Equal(t, "/foo/library", c.FrontendUri(""))
+}
+
+func TestNormalizeFrontendPath(t *testing.T) {
+	assert.Equal(t, "", normalizeFrontendPath(""))
+	assert.Equal(t, "", normalizeFrontendPath(" "))
+	assert.Equal(t, "/library", normalizeFrontendPath("/library"))
+	assert.Equal(t, "/portal", normalizeFrontendPath("portal/"))
+	assert.Equal(t, "", normalizeFrontendPath("../admin"))
 }
 
 func TestConfig_ContentUri(t *testing.T) {
@@ -94,11 +111,44 @@ func TestConfig_VideoUri(t *testing.T) {
 func TestConfig_SiteUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost"
-	assert.Equal(t, "http://superhost/", c.SiteUrl())
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		// Baseline behavior.
+		{"Default", "", "http://localhost:2342/"},
+		{"NoTrailingSlash", "http://superhost", "http://superhost/"},
+		{"NonDefaultPort", "http://superhost:2342/", "http://superhost:2342/"},
+
+		// Default-port stripping.
+		{"HttpsDefaultPort", "https://app.localssl.dev:443/", "https://app.localssl.dev/"},
+		{"HttpDefaultPort", "http://example.com:80/sub", "http://example.com/sub/"},
+		{"NonDefaultPortPreserved", "https://example.com:8443/", "https://example.com:8443/"},
+		{"MismatchedScheme", "http://example.com:443/", "http://example.com:443/"},
+
+		// Uncommon but well-formed inputs.
+		{"IPv6DefaultPort", "https://[::1]:443/", "https://[::1]/"},
+		{"IPv6NonDefaultPort", "https://[2001:db8::1]:8443/path", "https://[2001:db8::1]:8443/path/"},
+		{"PathPreserved", "https://example.com:443/i/pro-1/", "https://example.com/i/pro-1/"},
+		{"QueryStripped", "https://example.com:443/i/pro-1/?lang=de&page=2", "https://example.com/i/pro-1/"},
+		{"ForceQueryStripped", "https://example.com/?", "https://example.com/"},
+		{"FragmentStripped", "https://example.com/library/#photo123", "https://example.com/library/"},
+		{"SurroundingWhitespace", "  https://app.example.com:443/  ", "https://app.example.com/"},
+		{"ExtraTrailingSlashes", "https://example.com:443////", "https://example.com/"},
+		{"Whitespace", "   ", "http://localhost:2342/"},
+
+		// Unix-socket schemes: port stripping must stay a no-op.
+		{"UnixScheme", "unix:///var/run/photoprism.sock", "unix:///var/run/photoprism.sock/"},
+		{"HttpUnixScheme", "http+unix:///var/run/photoprism.sock", "http+unix:///var/run/photoprism.sock/"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c.options.SiteUrl = tc.in
+			assert.Equal(t, tc.want, c.SiteUrl())
+		})
+	}
 }
 
 func TestConfig_SiteHttps(t *testing.T) {
@@ -147,6 +197,32 @@ func TestConfig_SitePreview(t *testing.T) {
 	assert.Equal(t, "http://localhost:2342/foo/preview123.jpg", c.SitePreview())
 }
 
+func TestConfig_SitePreview_StripsDefaultPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	tmp := t.TempDir()
+	c.SetThemePath(tmp)
+	previewFile := filepath.Join(c.ThemePath(), "preview.jpg")
+	if err := os.WriteFile(previewFile, []byte("test"), fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	c.options.SiteUrl = "https://host:443/"
+	c.options.SitePreview = "preview.jpg"
+	assert.Equal(t, "https://host/_theme/preview.jpg", c.SitePreview())
+}
+
+func TestConfig_DownloadUrl_StripsDefaultPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.options.SiteUrl = "https://host:443/"
+	assert.Equal(t, "https://host"+DownloadUri, c.DownloadUrl())
+	c.options.SiteUrl = "http://host:80/"
+	assert.Equal(t, "http://host"+DownloadUri, c.DownloadUrl())
+	c.options.SiteUrl = "https://host:8443/"
+	assert.Equal(t, "https://host:8443"+DownloadUri, c.DownloadUrl())
+}
+
 func TestConfig_SiteAuthor(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -165,6 +241,34 @@ func TestConfig_SiteTitle(t *testing.T) {
 	assert.Equal(t, "Cats", c.SiteTitle())
 	c.options.SiteTitle = "PhotoPrism"
 	assert.Equal(t, "PhotoPrism", c.SiteTitle())
+	// With no SiteTitle and no AppName, the distinctive SiteName is used as the title.
+	c.options.SiteTitle = ""
+	c.options.SiteName = "Acme Media"
+	assert.Equal(t, "Acme Media", c.SiteTitle())
+	// A configured AppName suppresses the SiteName-as-title fallback.
+	c.options.AppName = "My App"
+	assert.Equal(t, "PhotoPrism", c.SiteTitle())
+	c.options.AppName = ""
+	c.options.SiteName = ""
+}
+
+func TestConfig_SiteName(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Falls back through AppName and SiteTitle when SiteName is unset.
+	assert.Equal(t, "", c.SiteName())
+	c.options.SiteTitle = "Cats"
+	assert.Equal(t, "Cats", c.SiteName())
+	c.options.AppName = "Kitten"
+	assert.Equal(t, "Kitten", c.SiteName())
+	// SiteName takes precedence when explicitly configured.
+	c.options.SiteName = "Acme Media"
+	assert.Equal(t, "Acme Media", c.SiteName())
+	// Empty when nothing distinctive is configured (no product Name fallback).
+	c.options.SiteName = ""
+	c.options.AppName = ""
+	c.options.SiteTitle = ""
+	assert.Equal(t, "", c.SiteName())
 }
 
 func TestConfig_SiteCaption(t *testing.T) {

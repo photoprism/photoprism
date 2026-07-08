@@ -4,6 +4,7 @@ package status
 const (
 	Failed              = "failed"
 	Denied              = "denied"
+	Disabled            = "disabled"
 	Granted             = "granted"
 	Added               = "added"
 	Updated             = "updated"
@@ -16,6 +17,7 @@ const (
 	Joined              = "joined"
 	Confirmed           = "confirmed"
 	Skipped             = "skipped"
+	Canceled            = "canceled"
 	NotFound            = "not found"
 	Unsupported         = "not supported"
 	RateLimited         = "rate limit exceeded"

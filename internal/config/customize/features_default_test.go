@@ -21,7 +21,7 @@ func TestInitDefaultFeatures_DisableList(t *testing.T) {
 		DefaultFeatures = initDefaultFeatures()
 	})
 
-	_ = os.Setenv("PHOTOPRISM_DISABLE_FEATURES", "Upload, videos share batch-edit labels")
+	_ = os.Setenv("PHOTOPRISM_DISABLE_FEATURES", "Upload, videos share batch-edit labels cameras lenses")
 	DefaultFeatures = initDefaultFeatures()
 
 	assert.False(t, DefaultFeatures.Upload)
@@ -29,12 +29,43 @@ func TestInitDefaultFeatures_DisableList(t *testing.T) {
 	assert.False(t, DefaultFeatures.Share)
 	assert.False(t, DefaultFeatures.BatchEdit)
 	assert.False(t, DefaultFeatures.Labels)
+	assert.False(t, DefaultFeatures.Cameras)
+	assert.False(t, DefaultFeatures.Lenses)
 
 	// unaffected feature stays enabled
 	assert.True(t, DefaultFeatures.Favorites)
 
 	// ensure the defaults are not permanently changed
 	assert.NotEqual(t, origDefaults, FeatureSettings{})
+}
+
+func TestInitDefaultFeatures_AppPasswords(t *testing.T) {
+	origEnv, envSet := os.LookupEnv("PHOTOPRISM_DISABLE_FEATURES")
+	origDefaults := DefaultFeatures
+
+	t.Cleanup(func() {
+		if envSet {
+			_ = os.Setenv("PHOTOPRISM_DISABLE_FEATURES", origEnv)
+		} else {
+			_ = os.Unsetenv("PHOTOPRISM_DISABLE_FEATURES")
+		}
+
+		DefaultFeatures = origDefaults
+	})
+
+	t.Run("EnabledByDefault", func(t *testing.T) {
+		_ = os.Unsetenv("PHOTOPRISM_DISABLE_FEATURES")
+		assert.True(t, initDefaultFeatures().AppPasswords)
+	})
+	t.Run("DisabledViaEnv", func(t *testing.T) {
+		// Operators can turn app passwords off at startup via PHOTOPRISM_DISABLE_FEATURES;
+		// the name is normalized, so "app-passwords", "appPasswords", and "AppPasswords"
+		// all disable it.
+		_ = os.Setenv("PHOTOPRISM_DISABLE_FEATURES", "app-passwords")
+		features := initDefaultFeatures()
+		assert.False(t, features.AppPasswords)
+		assert.True(t, features.Albums)
+	})
 }
 
 func TestNewSettingsCopiesDefaultFeatures(t *testing.T) {

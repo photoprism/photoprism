@@ -1,9 +1,10 @@
 import { $gettext } from "common/gettext";
 
-// Providers maps account roles to their display name.
+// Roles maps account roles to their display name.
 export const Roles = () => {
   return {
     "admin": $gettext("Admin"),
+    "cluster_admin": $gettext("Cluster Admin"),
     "manager": $gettext("Manager"),
     "user": $gettext("User"),
     "viewer": $gettext("Viewer"),
@@ -15,6 +16,24 @@ export const Roles = () => {
   };
 };
 
+// RoleLabel returns the display name for an account role, or the key if unmapped.
+export const RoleLabel = (role) => {
+  const labels = Roles();
+  return Object.prototype.hasOwnProperty.call(labels, role) ? labels[role] : role;
+};
+
+// RoleOptions builds {value, [labelKey]} options for the given role keys, with
+// labels from the shared Roles() map; editions pass their own keys (labelKey is
+// "text" or "title"). A non-null `current` outside the list (a downgrade leftover
+// or the empty "" Unauthorized role) is appended labeled + disabled; null = none.
+export const RoleOptions = (roles, labelKey = "text", current = null) => {
+  const options = roles.map((role) => ({ value: role, [labelKey]: RoleLabel(role) }));
+  if (current !== null && !roles.includes(current)) {
+    options.push({ value: current, [labelKey]: RoleLabel(current), disabled: true });
+  }
+  return options;
+};
+
 // Providers maps authentication providers to their display name.
 export const Providers = () => {
   return {
@@ -22,17 +41,27 @@ export const Providers = () => {
     "default": $gettext("Default"),
     "local": $gettext("Local"),
     "client": $gettext("Client"),
-    "client_credentials": $gettext("Client Credentials"),
+    "client_credentials": "Client Credentials",
     "application": $gettext("Application"),
     "access_token": $gettext("Access Token"),
     "password": $gettext("Local"),
-    "oidc": $gettext("OIDC"),
+    "oidc": "OIDC",
     "ldap": $gettext("LDAP/AD"),
     "link": $gettext("Link"),
     "token": $gettext("Link"),
     "none": $gettext("None"),
   };
 };
+
+// ProviderLabel returns the display name for an auth provider, or the key if unmapped.
+export const ProviderLabel = (provider) => {
+  const labels = Providers();
+  return Object.prototype.hasOwnProperty.call(labels, provider) ? labels[provider] : provider;
+};
+
+// ProviderOptions builds {value, [labelKey]} options for the given provider
+// keys, with labels from the shared Providers() map. Editions pass their own keys.
+export const ProviderOptions = (providers, labelKey = "text") => providers.map((provider) => ({ value: provider, [labelKey]: ProviderLabel(provider) }));
 
 // Methods maps authentication methods to their display name.
 export const Methods = () => {

@@ -153,13 +153,19 @@
 <script>
 import Subject from "model/subject";
 import RestModel from "model/rest";
+import typeaheadCache from "common/typeahead-cache";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
 import { getAppStorage } from "common/storage";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED } from "common/event";
 import PLoading from "component/loading.vue";
 
 const appStorage = getAppStorage();
+
+// Maximum number of affected entities reloaded in place per event;
+// larger batches set the dirty flag and are refetched lazily instead.
+const maxLiveRefetch = 50;
 
 export default {
   name: "PPageSubjects",
@@ -199,7 +205,6 @@ export default {
       filter: { q, hidden, order },
       lastFilter: {},
       routeName: routeName,
-      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
       merge: {
@@ -262,29 +267,49 @@ export default {
       this.dialog.edit = true;
     },
     onSave(m) {
-      if (!this.canManage || !m.Name || m.Name.trim() === "") {
-        // Refuse to save empty name.
+      if (this.busy || !this.canManage || !m.Name || m.Name.trim() === "") {
+        // Refuse to save an empty name or re-enter while a save is in flight.
         return;
       }
 
-      const existing = this.$config.getPerson(m.Name);
-      if (!existing || existing.UID === m.UID) {
-        this.busy = true;
-        m.update()
-          .then((m) => {
-            this.$notify.success(this.$gettext("Changes successfully saved"));
-            this.dialog.edit = false;
-          })
-          .finally(() => {
+      // Mark busy before the async lookup so the dialog cannot be re-submitted
+      // while the people cache resolves (cold cache / mid-flight eviction).
+      this.busy = true;
+
+      // Look up an existing person with the same name through the shared people
+      // cache to detect a merge (a different subject already owns the name).
+      const name = m.Name.toLowerCase();
+      typeaheadCache
+        .getPeople()
+        .then((people) => {
+          const existing = people.find((p) => p.Name && p.Name.toLowerCase() === name) || null;
+          if (!existing || existing.UID === m.UID) {
+            m.update()
+              .then(() => {
+                // Seed the shared people cache with the renamed person so
+                // suggestion consumers reflect it without waiting for the WS
+                // event. This rename seed lives here, not in Subject.update(),
+                // because update() also backs hide()/show() — seeding there
+                // would re-add hidden people to the suggestion list. m.UID and
+                // m.Name are populated (the merge check above already uses them).
+                typeaheadCache.upsertPerson({ UID: m.UID, Name: m.Name });
+                this.$notify.success(this.$gettext("Changes successfully saved"));
+              })
+              .finally(() => {
+                this.busy = false;
+                this.dialog.edit = false;
+              });
+          } else {
             this.busy = false;
+            this.merge.subj1 = m;
+            this.merge.subj2 = existing;
             this.dialog.edit = false;
-          });
-      } else {
-        this.merge.subj1 = m;
-        this.merge.subj2 = existing;
-        this.dialog.edit = false;
-        this.merge.visible = true;
-      }
+            this.merge.visible = true;
+          }
+        })
+        .catch(() => {
+          this.busy = false;
+        });
     },
     onCancelMerge() {
       this.merge.visible = false;
@@ -713,6 +738,59 @@ export default {
           this.listen = true;
         });
     },
+    // refetchResults reloads the affected entries through the scoped
+    // search API and patches the loaded results in place, so a single
+    // edit costs one uid-filtered query instead of re-running the full
+    // result query. Larger batches fall back to the dirty flag and are
+    // refetched lazily on the next return-to-view.
+    refetchResults(uids) {
+      const affected = uids.filter((uid) => this.results.some((m) => m.UID === uid));
+
+      if (affected.length === 0) {
+        return;
+      }
+
+      if (affected.length > maxLiveRefetch) {
+        this.dirty = true;
+        return;
+      }
+
+      Subject.search({ uid: affected.join("|"), count: affected.length })
+        .then((resp) => {
+          const found = new Set();
+
+          resp.models.forEach((values) => {
+            found.add(values.UID);
+
+            const model = this.results.find((m) => m.UID === values.UID);
+
+            if (model) {
+              for (let key in values) {
+                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                  model[key] = values[key];
+                }
+              }
+            }
+          });
+
+          // Rows the scoped search no longer returns are not visible to
+          // this session anymore — drop them like a full refresh would.
+          affected
+            .filter((uid) => !found.has(uid))
+            .forEach((uid) => {
+              const index = this.results.findIndex((m) => m.UID === uid);
+
+              if (index >= 0) {
+                this.results.splice(index, 1);
+              }
+
+              this.removeSelection(uid);
+            });
+        })
+        .catch(() => {
+          this.dirty = true;
+        });
+    },
     onUpdate(ev, data) {
       if (!this.listen) {
         return;
@@ -725,21 +803,14 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            const model = this.results.find((m) => m.UID === values.UID);
+        case ACTION_UPDATED:
+          // subjects.updated is a lightweight UID-only signal that carries
+          // no entity fields; affected entries are reloaded through the
+          // scoped search API and patched in place.
+          this.refetchResults(data.entities);
 
-            if (model) {
-              for (let key in values) {
-                if (values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                  model[key] = values[key];
-                }
-              }
-            }
-          }
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -754,7 +825,7 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
           break;
         default:

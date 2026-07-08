@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -73,7 +74,7 @@ func GetDownload(router *gin.RouterGroup) {
 		f, err := query.FileByHash(id)
 
 		if err != nil {
-			c.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+			Abort(c, http.StatusNotFound, i18n.ErrFileNotFound)
 			return
 		}
 

@@ -24,41 +24,35 @@ func TestGet(t *testing.T) {
 		_, ok := m.Get("foo")
 		assert.False(t, ok)
 	})
-
 	t.Run("ReturnsNotOKIfNonStringKeyDoesntExist", func(t *testing.T) {
 		m := ordered.NewMap[int, string]()
 		_, ok := m.Get(123)
 		assert.False(t, ok)
 	})
-
 	t.Run("ReturnsOKIfKeyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		_, ok := m.Get("foo")
 		assert.True(t, ok)
 	})
-
 	t.Run("ReturnsValueForKey", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		value, _ := m.Get("foo")
 		assert.Equal(t, "bar", value)
 	})
-
 	t.Run("ReturnsDynamicValueForKey", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
 		value, _ := m.Get("foo")
 		assert.Equal(t, "baz", value)
 	})
-
 	t.Run("KeyDoesntExistOnNonEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
 		_, ok := m.Get("bar")
 		assert.False(t, ok)
 	})
-
 	t.Run("ValueForKeyDoesntExistOnNonEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
@@ -73,26 +67,22 @@ func TestSet(t *testing.T) {
 		ok := m.Set("foo", "bar")
 		assert.True(t, ok)
 	})
-
 	t.Run("ReturnsTrueIfNonStringKeyIsNew", func(t *testing.T) {
 		m := ordered.NewMap[int, string]()
 		ok := m.Set(123, "bar")
 		assert.True(t, ok)
 	})
-
 	t.Run("ValueCanBeNonString", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		ok := m.Set(123, true)
 		assert.True(t, ok)
 	})
-
 	t.Run("ReturnsFalseIfKeyIsNotNew", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		ok := m.Set("foo", "bar")
 		assert.False(t, ok)
 	})
-
 	t.Run("SetThreeDifferentKeys", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
@@ -107,7 +97,6 @@ func TestReplaceKey(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.False(t, m.ReplaceKey("foo", "bar"))
 	})
-
 	t.Run("ReturnsFalseIfNewKeyAlreadyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
@@ -115,7 +104,6 @@ func TestReplaceKey(t *testing.T) {
 		assert.False(t, m.ReplaceKey("foo", "baz"))
 		assert.Equal(t, []string{"foo", "baz"}, slices.Collect(m.Keys()))
 	})
-
 	t.Run("ReturnsTrueIfOnlyOriginalKeyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
@@ -136,12 +124,11 @@ func TestReplaceKey(t *testing.T) {
 		_, ok = m.Get("foo") // original key
 		assert.False(t, ok)
 	})
-
 	t.Run("KeyMaintainsOrderWhenReplaced", func(t *testing.T) {
 		count := 100
 		// Build a larger map to help validate that the order is not coincidental.
 		m := ordered.NewMap[int, int]()
-		for i := 0; i < count; i++ {
+		for i := range count {
 			m.Set(i, i)
 		}
 		// Rename the middle 50-60 elements to 100+ current
@@ -168,13 +155,11 @@ func TestLen(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.Equal(t, 0, m.Len())
 	})
-
 	t.Run("SingleElementIsLenOne", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(123, true)
 		assert.Equal(t, 1, m.Len())
 	})
-
 	t.Run("ThreeElements", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
@@ -189,13 +174,11 @@ func TestKeys(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		assert.Empty(t, slices.Collect(m.Keys()))
 	})
-
 	t.Run("OneElement", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
 		assert.Equal(t, []int{1}, slices.Collect(m.Keys()))
 	})
-
 	t.Run("RetainsOrder", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		for i := 1; i < 10; i++ {
@@ -205,7 +188,6 @@ func TestKeys(t *testing.T) {
 			[]int{1, 2, 3, 4, 5, 6, 7, 8, 9},
 			slices.Collect(m.Keys()))
 	})
-
 	t.Run("ReplacingKeyDoesntChangeOrder", func(t *testing.T) {
 		m := ordered.NewMap[string, bool]()
 		m.Set("foo", true)
@@ -215,7 +197,6 @@ func TestKeys(t *testing.T) {
 			[]string{"foo", "bar"},
 			slices.Collect(m.Keys()))
 	})
-
 	t.Run("KeysAfterDelete", func(t *testing.T) {
 		m := ordered.NewMap[string, bool]()
 		m.Set("foo", true)
@@ -230,13 +211,11 @@ func TestDelete(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.False(t, m.Delete("foo"))
 	})
-
 	t.Run("KeyDoesExist", func(t *testing.T) {
 		m := ordered.NewMap[string, any]()
 		m.Set("foo", nil)
 		assert.True(t, m.Delete("foo"))
 	})
-
 	t.Run("KeyNoLongerExists", func(t *testing.T) {
 		m := ordered.NewMap[string, any]()
 		m.Set("foo", nil)
@@ -244,7 +223,6 @@ func TestDelete(t *testing.T) {
 		_, exists := m.Get("foo")
 		assert.False(t, exists)
 	})
-
 	t.Run("KeyDeleteIsIsolated", func(t *testing.T) {
 		m := ordered.NewMap[string, any]()
 		m.Set("foo", nil)
@@ -260,7 +238,6 @@ func TestMap_Front(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		assert.Nil(t, m.Front())
 	})
-
 	t.Run("NilOnEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
@@ -273,7 +250,6 @@ func TestMap_Back(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		assert.Nil(t, m.Back())
 	})
-
 	t.Run("NilOnEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[int, bool]()
 		m.Set(1, true)
@@ -308,7 +284,6 @@ func TestGetElement(t *testing.T) {
 
 		assert.Equal(t, []any{"foo", "bar"}, results)
 	})
-
 	t.Run("ElementForKeyDoesntExistOnNonEmptyMap", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "baz")
@@ -344,7 +319,7 @@ func TestIterations(t *testing.T) {
 			m.Set(v.Key, v.Value)
 		}
 		element := m.Front()
-		for i := 0; i < len(expected); i++ {
+		for i := range expected {
 			assert.NotNil(t, element)
 			assert.Equal(t, expected[i].Key, element.Key)
 			assert.Equal(t, expected[i].Value, element.Value)
@@ -373,7 +348,6 @@ func TestIterators(t *testing.T) {
 			i++
 		}
 	})
-
 	t.Run("ReverseIterator", func(t *testing.T) {
 		i := len(expected) - 1
 		for key, value := range m.AllFromBack() {
@@ -389,13 +363,11 @@ func TestMap_Has(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		assert.False(t, m.Has("foo"))
 	})
-
 	t.Run("ReturnsTrueIfKeyExists", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
 		assert.True(t, m.Has("foo"))
 	})
-
 	t.Run("KeyDoesNotExistAfterDelete", func(t *testing.T) {
 		m := ordered.NewMap[string, string]()
 		m.Set("foo", "bar")
@@ -801,7 +773,7 @@ func BenchmarkOrderedMapString_Has(b *testing.B) {
 	benchmarkOrderedMapString_Has(1)(b)
 }
 
-func nothing(v interface{}) {
+func nothing(v any) {
 	_ = v
 }
 
@@ -809,7 +781,7 @@ func benchmarkBigMap_Set() func(b *testing.B) {
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
 			m := make(map[int]bool)
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m[i] = true
 			}
 		}
@@ -824,7 +796,7 @@ func benchmarkBigOrderedMap_Set() func(b *testing.B) {
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
 			m := ordered.NewMap[int, bool]()
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.Set(i, true)
 			}
 		}
@@ -839,7 +811,7 @@ func benchmarkBigMapWithCapacity_Set() func(b *testing.B) {
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
 			m := ordered.NewMapWithCapacity[int, bool](10000000)
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.Set(i, true)
 			}
 		}
@@ -852,13 +824,13 @@ func BenchmarkBigMapWithCapacity_Set(b *testing.B) {
 
 func benchmarkBigMap_Get() func(b *testing.B) {
 	m := make(map[int]bool)
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m[i] = true
 	}
 
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				_ = m[i]
 			}
 		}
@@ -871,13 +843,13 @@ func BenchmarkBigMap_Get(b *testing.B) {
 
 func benchmarkBigOrderedMap_Get() func(b *testing.B) {
 	m := ordered.NewMap[int, bool]()
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(i, true)
 	}
 
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.Get(i)
 			}
 		}
@@ -890,13 +862,13 @@ func BenchmarkBigOrderedMap_Get(b *testing.B) {
 
 func benchmarkBigOrderedMap_GetElement() func(b *testing.B) {
 	m := ordered.NewMap[int, bool]()
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(i, true)
 	}
 
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.GetElement(i)
 			}
 		}
@@ -909,7 +881,7 @@ func BenchmarkBigOrderedMap_GetElement(b *testing.B) {
 
 func benchmarkBigMap_Iterate() func(b *testing.B) {
 	m := make(map[int]bool)
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m[i] = true
 	}
 	return func(b *testing.B) {
@@ -927,7 +899,7 @@ func BenchmarkBigMap_Iterate(b *testing.B) {
 
 func benchmarkBigOrderedMap_Iterate() func(b *testing.B) {
 	m := ordered.NewMap[int, bool]()
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(i, true)
 	}
 
@@ -950,7 +922,7 @@ func benchmarkBigMapString_Set() func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
 			m := make(map[string]bool)
 			a := "1234567"
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m[a+strconv.Itoa(i)] = true
 			}
 		}
@@ -959,12 +931,12 @@ func benchmarkBigMapString_Set() func(b *testing.B) {
 
 func benchmarkBigMap_Has() func(b *testing.B) {
 	m := make(map[int]bool)
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m[i] = true
 	}
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				_ = m[i]
 			}
 		}
@@ -977,12 +949,12 @@ func BenchmarkBigMap_Has(b *testing.B) {
 
 func benchmarkBigOrderedMap_Has() func(b *testing.B) {
 	m := ordered.NewMap[int, bool]()
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(i, true)
 	}
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.Has(i)
 			}
 		}
@@ -1002,7 +974,7 @@ func benchmarkBigOrderedMapString_Set() func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
 			m := ordered.NewMap[string, bool]()
 			a := "1234567"
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.Set(a+strconv.Itoa(i), true)
 			}
 		}
@@ -1016,13 +988,13 @@ func BenchmarkBigOrderedMapString_Set(b *testing.B) {
 func benchmarkBigMapString_Get() func(b *testing.B) {
 	m := make(map[string]bool)
 	a := "1234567"
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m[a+strconv.Itoa(i)] = true
 	}
 
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				_ = m[a+strconv.Itoa(i)]
 			}
 		}
@@ -1036,13 +1008,13 @@ func BenchmarkBigMapString_Get(b *testing.B) {
 func benchmarkBigOrderedMapString_Get() func(b *testing.B) {
 	m := ordered.NewMap[string, bool]()
 	a := "1234567"
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(a+strconv.Itoa(i), true)
 	}
 
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.Get(a + strconv.Itoa(i))
 			}
 		}
@@ -1056,13 +1028,13 @@ func BenchmarkBigOrderedMapString_Get(b *testing.B) {
 func benchmarkBigOrderedMapString_GetElement() func(b *testing.B) {
 	m := ordered.NewMap[string, bool]()
 	a := "1234567"
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(a+strconv.Itoa(i), true)
 	}
 
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.GetElement(a + strconv.Itoa(i))
 			}
 		}
@@ -1076,7 +1048,7 @@ func BenchmarkBigOrderedMapString_GetElement(b *testing.B) {
 func benchmarkBigMapString_Iterate() func(b *testing.B) {
 	m := make(map[string]bool)
 	a := "12345678"
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m[a+strconv.Itoa(i)] = true
 	}
 	return func(b *testing.B) {
@@ -1095,7 +1067,7 @@ func BenchmarkBigMapString_Iterate(b *testing.B) {
 func benchmarkBigOrderedMapString_Iterate() func(b *testing.B) {
 	m := ordered.NewMap[string, bool]()
 	a := "12345678"
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(a+strconv.Itoa(i), true)
 	}
 
@@ -1116,12 +1088,12 @@ func BenchmarkBigOrderedMapString_Iterate(b *testing.B) {
 func benchmarkBigMapString_Has() func(b *testing.B) {
 	m := make(map[string]bool)
 	a := "12345678"
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m[a+strconv.Itoa(i)] = true
 	}
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				_ = m[a+strconv.Itoa(i)]
 			}
 		}
@@ -1135,12 +1107,12 @@ func BenchmarkBigMapString_Has(b *testing.B) {
 func benchmarkBigOrderedMapString_Has() func(b *testing.B) {
 	m := ordered.NewMap[string, bool]()
 	a := "12345678"
-	for i := 0; i < 10000000; i++ {
+	for i := range 10000000 {
 		m.Set(a+strconv.Itoa(i), true)
 	}
 	return func(b *testing.B) {
 		for j := 0; j < b.N; j++ {
-			for i := 0; i < 10000000; i++ {
+			for i := range 10000000 {
 				m.Has(a + strconv.Itoa(i))
 			}
 		}

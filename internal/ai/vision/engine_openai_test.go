@@ -23,7 +23,7 @@ func TestOpenAIBuilderBuild(t *testing.T) {
 	}
 	model.ApplyEngineDefaults()
 
-	request, err := openaiBuilder{}.Build(context.Background(), model, Files{examplesPath + "/chameleon_lime.jpg"})
+	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"})
 	require.NoError(t, err)
 	require.NotNil(t, request)
 
@@ -44,7 +44,7 @@ func TestOpenAIBuilderBuildCaptionDisablesForceJSON(t *testing.T) {
 	}
 	model.ApplyEngineDefaults()
 
-	request, err := openaiBuilder{}.Build(context.Background(), model, Files{examplesPath + "/chameleon_lime.jpg"})
+	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"})
 	require.NoError(t, err)
 	require.NotNil(t, request)
 	require.NotNil(t, request.Options)

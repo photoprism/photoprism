@@ -49,12 +49,12 @@ func videoRemuxAction(ctx *cli.Context) error {
 			return err
 		}
 
-		plans, preflight, err := videoBuildRemuxPlans(conf, results, ctx.Bool(videoForceFlag.Name))
+		plans, preflight, skipped, err := videoBuildRemuxPlans(conf, results, ctx.Bool(videoForceFlag.Name))
 		if err != nil {
 			return err
 		}
 
-		if len(plans) == 0 {
+		if len(plans) == 0 && skipped == 0 {
 			log.Infof("remux: found no matching videos")
 			return nil
 		}
@@ -76,7 +76,7 @@ func videoRemuxAction(ctx *cli.Context) error {
 			}
 		}
 
-		var processed, skipped, failed int
+		var processed, failed int
 		convert := get.Convert()
 
 		for _, plan := range plans {
@@ -95,10 +95,15 @@ func videoRemuxAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof("remux: processed %d, skipped %d, failed %d", processed, skipped, failed)
+		log.Infof(
+			"remux: processed %s, skipped %s, %s",
+			formatCount(processed, "file", "files"),
+			formatCount(skipped, "file", "files"),
+			formatFailedCount(failed, "file", "files"),
+		)
 
 		if failed > 0 {
-			return fmt.Errorf("remux: %d files failed", failed)
+			return fmt.Errorf("remux: %s", formatFailedCount(failed, "file", "files"))
 		}
 
 		return nil
@@ -115,38 +120,50 @@ type videoRemuxPlan struct {
 }
 
 // videoBuildRemuxPlans prepares remux operations and preflight size checks from search results.
-func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force bool) ([]videoRemuxPlan, []videoOutputPlan, error) {
+func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force bool) ([]videoRemuxPlan, []videoOutputPlan, int, error) {
 	plans := make([]videoRemuxPlan, 0, len(results))
 	preflight := make([]videoOutputPlan, 0, len(results))
+	skipped := 0
 
 	for _, found := range results {
 		videoFile, ok := videoPrimaryFile(found)
 		if !ok {
 			log.Warnf("remux: missing video file for %s", clean.Log(found.PhotoUID))
+			skipped++
 			continue
 		}
 
 		if videoFile.FileSidecar {
 			log.Warnf("remux: skipping sidecar file %s", clean.Log(videoFile.FileName))
+			skipped++
 			continue
 		}
 
 		if videoFile.MediaType == entity.MediaLive {
 			log.Warnf("remux: skipping live photo video %s", clean.Log(videoFile.FileName))
+			skipped++
 			continue
 		}
 
 		srcPath := photoprism.FileName(videoFile.FileRoot, videoFile.FileName)
 		if !fs.FileExistsNotEmpty(srcPath) {
 			log.Warnf("remux: missing file %s", clean.Log(srcPath))
+			skipped++
 			continue
 		}
 
 		if !videoCodecIsAvc(videoFile.FileCodec) && !force {
 			if !videoFallbackCodecAvc(srcPath) {
 				log.Warnf("remux: skipping non-AVC video %s", clean.Log(videoFile.FileName))
+				skipped++
 				continue
 			}
+		}
+
+		if matched := ffmpeg.Exclude().Match(videoFile.FileCodec, fs.FileType(srcPath).String()); matched != "" {
+			log.Warnf("remux: skipping %s because format %s is on the FFmpeg exclude list", clean.Log(videoFile.FileName), clean.Log(matched))
+			skipped++
+			continue
 		}
 
 		destPath := fs.StripKnownExt(srcPath) + fs.ExtMp4
@@ -155,7 +172,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 
 		if conf.ReadOnly() || !fs.PathWritable(filepath.Dir(srcPath)) || !fs.Writable(srcPath) {
 			if !conf.SidecarWritable() || !fs.PathWritable(conf.SidecarPath()) {
-				return nil, nil, config.ErrReadOnly
+				return nil, nil, skipped, config.ErrReadOnly
 			}
 
 			sidecarBase := videoSidecarPath(srcPath, conf.OriginalsPath(), conf.SidecarPath())
@@ -166,6 +183,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 
 		if destPath != srcPath && fs.FileExistsNotEmpty(destPath) && !force {
 			log.Warnf("remux: output already exists %s", clean.Log(destPath))
+			skipped++
 			continue
 		}
 
@@ -183,7 +201,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 		})
 	}
 
-	return plans, preflight, nil
+	return plans, preflight, skipped, nil
 }
 
 // videoRemuxFile runs ffmpeg remuxing and refreshes previews/thumbnails before reindexing.
@@ -196,6 +214,10 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 
 	opt := encode.NewRemuxOptions(conf.FFmpegBin(), fs.VideoMp4, true)
 	opt.Force = true
+
+	if ffmpeg.Exclude().Contains(fs.FileType(plan.SrcPath).String()) {
+		return fmt.Errorf("format %s is excluded from FFmpeg processing", clean.Log(fs.FileType(plan.SrcPath).String()))
+	}
 
 	if err = ffmpeg.RemuxFile(plan.SrcPath, tempPath, opt); err != nil {
 		return err

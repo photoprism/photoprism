@@ -36,6 +36,18 @@ func (c *Config) DisableWebDAV() bool {
 	return c.options.DisableWebDAV
 }
 
+// DisableAppPasswords checks if app passwords should be disabled, so they cannot be
+// created and existing ones are no longer accepted as a credential. Backed by the
+// AppPasswords feature flag (Settings UI / PHOTOPRISM_DISABLE_FEATURES).
+func (c *Config) DisableAppPasswords() bool {
+	return !c.Settings().Features.AppPasswords
+}
+
+// DisableMCP checks if the Model Context Protocol (MCP) API endpoint should be disabled.
+func (c *Config) DisableMCP() bool {
+	return c.options.DisableMCP
+}
+
 // DisablePlaces checks if geocoding and maps should be disabled.
 func (c *Config) DisablePlaces() bool {
 	return c.options.DisablePlaces || len(places.LocationServiceUrls) == 0
@@ -135,13 +147,9 @@ func (c *Config) DisableHeifConvert() bool {
 	return c.options.DisableHeifConvert
 }
 
-// DisableVips checks if the use of libvips is disabled.
+// DisableVips checks if libvips is unavailable in the current runtime.
 func (c *Config) DisableVips() bool {
-	if bits.UintSize < 64 {
-		return true
-	}
-
-	return c.options.DisableVips
+	return bits.UintSize < 64
 }
 
 // DisableSips checks if conversion of RAW images with SIPS is disabled.

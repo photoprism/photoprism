@@ -100,8 +100,14 @@ export default {
     afterLeave() {
       this.$view.leave(this);
     },
+    webdavOriginalsPath() {
+      const baseUri = typeof this.$config?.baseUri === "string" ? this.$config.baseUri.replace(/^\/+|\/+$/g, "") : "";
+      const prefix = baseUri ? `/${baseUri}` : "";
+
+      return `${prefix}/originals/`;
+    },
     webdavUrl() {
-      let baseUrl = `${window.location.protocol}//${encodeURIComponent(this.user.Name)}@${window.location.host}/originals/`;
+      let baseUrl = `${window.location.protocol}//${encodeURIComponent(this.user.Name)}@${window.location.host}${this.webdavOriginalsPath()}`;
 
       if (this.user.BasePath) {
         baseUrl = `${baseUrl}${this.user.BasePath}/`;
@@ -113,24 +119,25 @@ export default {
       // Generates a resource string for Windows users to connect via WebDAV,
       // see https://docs.photoprism.app/user-guide/sync/webdav/#microsoft-windows.
       let baseUrl = "";
+      const resourcePath = this.webdavOriginalsPath().replace(/\//g, "\\");
 
       if (this.$util.isHttps()) {
         if (window.location.port && window.location.port !== "443") {
           /*
-              \\example.com@SSL@8443\originals\
+              \\example.com@SSL@8443\instance\pro-1\originals\
           */
-          baseUrl = `\\\\${window.location.hostname}@SSL@${window.location.port}\\originals\\`;
+          baseUrl = `\\\\${window.location.hostname}@SSL@${window.location.port}${resourcePath}`;
         } else {
           /*
-              \\example.com@SSL\originals\
+              \\example.com@SSL\instance\pro-1\originals\
           */
-          baseUrl = `\\\\${window.location.hostname}@SSL\\originals\\`;
+          baseUrl = `\\\\${window.location.hostname}@SSL${resourcePath}`;
         }
       } else {
         /*
-            \\localhost:2342\originals\
+            \\localhost:2342\instance\pro-1\originals\
         */
-        baseUrl = `\\\\${window.location.host}\\originals\\`;
+        baseUrl = `\\\\${window.location.host}${resourcePath}`;
       }
 
       if (this.user.BasePath) {

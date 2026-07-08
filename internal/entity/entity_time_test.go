@@ -26,7 +26,11 @@ func TestUTC(t *testing.T) {
 
 		t.Logf("NOW: %s, %s", utc.String(), utcGorm.String())
 
-		assert.True(t, utcGorm.After(utc))
+		// gorm.NowFunc truncates to whole seconds, so it can trail the sub-second
+		// UTC() reading by up to a second; assert they stay within a sane window.
+		delta := utcGorm.Sub(utc)
+		assert.Greater(t, delta, -time.Second)
+		assert.Less(t, delta, time.Second)
 
 		if zone, offset := utcGorm.Zone(); zone != tz.UTC {
 			t.Error("gorm time should be UTC")
@@ -131,6 +135,20 @@ func TestTimeStamp(t *testing.T) {
 	if result.After(time.Now().Add(time.Second)) {
 		t.Fatal("timestamp should be in the past from now")
 	}
+}
+
+func TestTimePointer(t *testing.T) {
+	t.Run("NonZero", func(t *testing.T) {
+		now := Now()
+		result := TimePointer(now)
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+		assert.Equal(t, now, *result)
+	})
+	t.Run("Zero", func(t *testing.T) {
+		assert.Nil(t, TimePointer(time.Time{}))
+	})
 }
 
 func TestTime(t *testing.T) {

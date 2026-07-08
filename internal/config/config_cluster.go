@@ -6,10 +6,12 @@ import (
 	urlpkg "net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
+	"time"
+	"unicode"
 
-	"gopkg.in/yaml.v2"
-
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -25,10 +27,54 @@ import (
 var DefaultPortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
 
 // DefaultNodeRole is the default node role assigned when none is configured.
-var DefaultNodeRole = cluster.RoleApp
+var DefaultNodeRole = cluster.RoleInstance
 
 // DefaultJWTAllowedScopes lists default OAuth scopes for cluster-issued JWTs.
-var DefaultJWTAllowedScopes = "config cluster vision metrics"
+// Includes "users" so the Portal-side user-management proxy
+// (POST/PUT/DELETE /api/v1/cluster/nodes/{uuid}/users[/{uid}]) and the
+// lifecycle sync push are accepted by the instance JWT scope allowlist.
+var DefaultJWTAllowedScopes = "config cluster vision metrics mcp users"
+
+// SaveClusterOptionsUpdate persists a cluster options update to options.yml,
+// reloads in-memory options, and returns true when values changed.
+func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, error) {
+	if c == nil || c.options == nil || update.IsZero() {
+		return false, nil
+	}
+
+	if err := validateClusterOptionsUpdate(update); err != nil {
+		return false, err
+	}
+
+	patch := Values{}
+	setOptionString(patch, "ClusterUUID", update.ClusterUUID)
+	setOptionString(patch, "ClusterCIDR", update.ClusterCIDR)
+	setOptionString(patch, "NodeClientID", update.NodeClientID)
+	setOptionString(patch, "JWKSUrl", update.JWKSUrl)
+	setOptionString(patch, "PortalLoginUrl", update.PortalLoginUrl)
+	setOptionString(patch, "NodeUUID", update.NodeUUID)
+	setOptionString(patch, "DatabaseDriver", update.DatabaseDriver)
+	setOptionString(patch, "DatabaseDSN", update.DatabaseDSN)
+	setOptionString(patch, "DatabaseServer", update.DatabaseServer)
+	setOptionString(patch, "DatabaseName", update.DatabaseName)
+	setOptionString(patch, "DatabaseUser", update.DatabaseUser)
+	setOptionString(patch, "DatabasePassword", update.DatabasePassword)
+
+	return c.SaveOptionsPatch(patch)
+}
+
+// validateClusterOptionsUpdate validates cluster-managed option updates.
+func validateClusterOptionsUpdate(update cluster.OptionsUpdate) error {
+	if update.ClusterUUID != nil && !rnd.IsUUID(*update.ClusterUUID) {
+		return fmt.Errorf("invalid cluster UUID")
+	}
+
+	if update.NodeUUID != nil && !rnd.IsUUID(*update.NodeUUID) {
+		return fmt.Errorf("invalid node UUID")
+	}
+
+	return nil
+}
 
 // ClusterDomain returns the cluster DOMAIN (lowercase DNS name; 1–63 chars).
 func (c *Config) ClusterDomain() string {
@@ -74,6 +120,174 @@ func (c *Config) Portal() bool {
 	return c.NodeRole() == cluster.RolePortal
 }
 
+// ClusterAllowGroups returns the normalized group identifiers admitted to this
+// instance for Portal cluster admission, including the keys of
+// ClusterAllowGroupRoles so a role mapping alone admits its groups.
+func (c *Config) ClusterAllowGroups() []string {
+	seen := make(map[string]struct{})
+	result := make([]string, 0, len(c.options.ClusterAllowGroups))
+
+	add := func(id string) {
+		if n := normalizeGroupID(id); n != "" {
+			if _, dup := seen[n]; !dup {
+				seen[n] = struct{}{}
+				result = append(result, n)
+			}
+		}
+	}
+
+	for _, entry := range c.options.ClusterAllowGroups {
+		for _, id := range splitGroupList(entry) {
+			add(id)
+		}
+	}
+
+	// Role-map keys join the admitted set in sorted order for stable output.
+	roles := c.ClusterAllowGroupRoles()
+	keys := make([]string, 0, len(roles))
+
+	for group := range roles {
+		keys = append(keys, group)
+	}
+
+	sort.Strings(keys)
+
+	for _, group := range keys {
+		add(group)
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	return result
+}
+
+// ClusterAllowGroupRoles maps normalized group identifiers to the instance role
+// granted on Portal cluster admission, from comma- or whitespace-separated
+// GROUP=ROLE pairs. acl.ClusterInstanceRole validation does not depend on the
+// edition role table, so it resolves correctly during early bootstrap too.
+func (c *Config) ClusterAllowGroupRoles() map[string]string {
+	if len(c.options.ClusterAllowGroupRoles) == 0 {
+		return nil
+	}
+
+	result := make(map[string]string, len(c.options.ClusterAllowGroupRoles))
+
+	for _, entry := range c.options.ClusterAllowGroupRoles {
+		for _, pair := range splitGroupList(entry) {
+			group, roleName, ok := parseGroupRolePair(pair)
+
+			if !ok {
+				continue
+			}
+
+			role, valid := acl.ClusterInstanceRole(roleName)
+
+			if !valid {
+				continue
+			}
+
+			result[group] = role.String()
+		}
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	return result
+}
+
+// ClusterGroupsFullView reports whether the Portal should send the user's full
+// group set to this instance instead of only the contributing groups.
+func (c *Config) ClusterGroupsFullView() bool {
+	return c.options.ClusterGroupsFullView
+}
+
+// splitGroupList splits a raw option entry into group identifiers, accepting
+// comma- and whitespace-separated lists.
+func splitGroupList(s string) []string {
+	return strings.FieldsFunc(s, func(r rune) bool {
+		return r == ',' || unicode.IsSpace(r)
+	})
+}
+
+// parseGroupRolePair splits a single GROUP=ROLE (or GROUP:ROLE) pair, returning
+// the normalized group id and the raw role string. ok is false for a malformed
+// pair (missing separator, empty group, or empty role).
+func parseGroupRolePair(pair string) (group, role string, ok bool) {
+	sep := strings.IndexAny(pair, "=:")
+	if sep < 1 || sep >= len(pair)-1 {
+		return "", "", false
+	}
+	group = normalizeGroupID(pair[:sep])
+	role = strings.TrimSpace(pair[sep+1:])
+	return group, role, group != "" && role != ""
+}
+
+// PortalOIDCIssuer returns the issuer URL advertised by the Portal's OIDC OP
+// (discovery doc, ID tokens, userinfo). Falls back to SiteUrl when the
+// `PHOTOPRISM_PORTAL_OIDC_ISSUER` override is unset.
+func (c *Config) PortalOIDCIssuer() string {
+	if iss := strings.TrimSpace(c.options.PortalOIDCIssuer); iss != "" {
+		return iss
+	}
+	return c.SiteUrl()
+}
+
+// portalOIDCTTLBounds are the configurable lower / upper bounds for the
+// Portal OIDC OP token and code TTLs. Going below the floor would push
+// past the recommended single-request window for an interactive login;
+// going above the ceiling weakens the security posture of the OP.
+const (
+	portalOIDCTTLMin     = 60
+	portalOIDCTTLMax     = 900
+	portalOIDCCodeTTLMin = 30
+	portalOIDCCodeTTLMax = 300
+)
+
+// PortalOIDCTTL returns the configured access-token / ID-token lifetime for
+// the Portal OIDC OP, clamped to a safe range. Defaults to 300 seconds and
+// caps at 900.
+func (c *Config) PortalOIDCTTL() time.Duration {
+	return clampDurationSeconds(c.options.PortalOIDCTTL, portalOIDCTTLMin, portalOIDCTTLMax, 300)
+}
+
+// PortalOIDCCodeTTL returns the authorization-code lifetime for the Portal
+// OIDC OP. Defaults to 60 seconds and caps at 300.
+func (c *Config) PortalOIDCCodeTTL() time.Duration {
+	return clampDurationSeconds(c.options.PortalOIDCCodeTTL, portalOIDCCodeTTLMin, portalOIDCCodeTTLMax, 60)
+}
+
+// PortalOIDCDefaultPolicyChooser reports whether the Portal OIDC OP should
+// route multi-instance logins through the chooser (default), as opposed to
+// `direct` which always honors the requested client_id without prompting.
+func (c *Config) PortalOIDCDefaultPolicyChooser() bool {
+	switch strings.ToLower(strings.TrimSpace(c.options.PortalOIDCDefaultPolicy)) {
+	case "direct":
+		return false
+	default:
+		return true
+	}
+}
+
+// clampDurationSeconds returns the configured value clamped to [min, max].
+// A zero or negative configured value falls back to `def`.
+func clampDurationSeconds(value, minSec, maxSec, defSec int) time.Duration {
+	v := value
+	if v <= 0 {
+		v = defSec
+	}
+	if v < minSec {
+		v = minSec
+	}
+	if v > maxSec {
+		v = maxSec
+	}
+	return time.Duration(v) * time.Second
+}
+
 // PortalUrl returns the URL of the cluster management portal server, if configured.
 func (c *Config) PortalUrl() string {
 	if c.options.PortalUrl == "" {
@@ -102,10 +316,10 @@ func (c *Config) PortalProxy() bool {
 	return c.Portal() && c.options.PortalProxy
 }
 
-// PortalProxyPrefix returns the configured path prefix for portal proxy routing.
-func (c *Config) PortalProxyPrefix() string {
-	if prefix := strings.TrimSpace(c.options.PortalProxyPrefix); prefix != "" {
-		return prefix
+// PortalProxyUri returns the configured URI value for portal proxy routing.
+func (c *Config) PortalProxyUri() string {
+	if uri := strings.TrimSpace(c.options.PortalProxyUri); uri != "" {
+		return uri
 	}
 
 	return proxy.DefaultPathPrefix
@@ -280,16 +494,19 @@ func (c *Config) NodeJoinTokenFile() string {
 	return filepath.Join(c.NodeConfigPath(), fs.SecretsDir, fs.JoinTokenFile)
 }
 
-// deriveNodeNameAndDomainFromHttpHost attempts to derive cluster host and domain name from the site URL.
+// deriveNodeNameAndDomainFromHttpHost attempts to derive cluster host and
+// domain name from the site URL without overriding explicit node-name values.
 func (c *Config) deriveNodeNameAndDomainFromHttpHost() (hostName, domainName string, found bool) {
 	if fqdn := c.SiteDomain(); fqdn != "" && !header.IsIP(fqdn) {
 		hostName, domainName, found = strings.Cut(fqdn, ".")
 		if hostName = clean.DNSLabel(hostName); found && dns.IsLabel(hostName) && dns.IsDomain(domainName) {
-			c.options.NodeName = hostName
+			if clean.DNSLabel(c.options.NodeName) == "" {
+				c.options.NodeName = hostName
+			}
 			if c.options.ClusterDomain == "" {
 				c.options.ClusterDomain = strings.ToLower(domainName)
 			}
-			return c.options.NodeName, c.options.ClusterDomain, found
+			return hostName, strings.ToLower(domainName), found
 		}
 	}
 
@@ -323,16 +540,16 @@ func (c *Config) NodeName() string {
 	return "node-" + s
 }
 
-// NodeRole returns the cluster node role (portal, app, or service).
+// NodeRole returns the cluster node role (portal, instance, or service).
 func (c *Config) NodeRole() string {
 	if c.Edition() == Portal {
 		c.options.NodeRole = cluster.RolePortal
 		return c.options.NodeRole
 	}
 
-	switch c.options.NodeRole {
-	case cluster.RolePortal, cluster.RoleApp, cluster.RoleService:
-		return c.options.NodeRole
+	switch role := cluster.NormalizeNodeRole(c.options.NodeRole); role {
+	case cluster.RoleInstance, cluster.RoleService:
+		return role
 	default:
 		return DefaultNodeRole
 	}
@@ -360,37 +577,36 @@ func (c *Config) NodeClientID() string {
 	return clean.ID(c.options.NodeClientID)
 }
 
-// NodeClientSecret returns the node OAuth client secret, reading it from disk
-// when necessary. Portal registration writes this secret so nodes can obtain
-// access tokens in future runs.
+// NodeClientSecret returns the node OAuth client secret. It prefers the
+// dedicated secret file to avoid stale inline values from options.yml, and
+// falls back to inline/env/flag values when no file is available.
 func (c *Config) NodeClientSecret() string {
+	fileName := c.NodeClientSecretFile()
+
+	if fileName != "" {
+		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
+			// Do not cache the value. Always read from the disk to ensure
+			// that updates from other processes are observed.
+			return string(b)
+		}
+
+		if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
+			log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
+		}
+
+		if _, err := os.Stat(fileName); os.IsNotExist(err) {
+			log.Debugf("config: node client secret file %s not found", clean.Log(fileName))
+		} else if err != nil {
+			log.Warnf("config: failed to read node client secret from %s (%s)", clean.Log(fileName), err)
+		}
+	}
+
 	if c.options.NodeClientSecret != "" {
+		// Keep support for manual troubleshooting/failover via flags/env/options.
 		return c.options.NodeClientSecret
 	}
 
-	fileName := c.NodeClientSecretFile()
-
-	if fileName == "" {
-		return ""
-	}
-
-	if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
-		// Do not cache the value. Always read from the disk to ensure
-		// that updates from other processes are observed.
-		return string(b)
-	}
-
-	if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
-		log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
-	}
-
-	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		log.Debugf("config: node client secret file %s not found", clean.Log(fileName))
-	} else if err != nil {
-		log.Warnf("config: failed to read node client secret from %s (%s)", clean.Log(fileName), err)
-	}
-
-	return c.options.NodeClientSecret
+	return ""
 }
 
 // SaveNodeClientSecret stores a new node client secret on disk and updates the
@@ -443,41 +659,75 @@ func (c *Config) JWKSUrl() string {
 	return strings.TrimSpace(c.options.JWKSUrl)
 }
 
-// SetJWKSUrl updates the configured JWKS endpoint for portal-issued JWTs.
+// validClusterURL returns the trimmed URL and true when it is an absolute
+// HTTPS URL, or an HTTP URL on a loopback host; an empty input is valid and
+// returns the empty string.
+func validClusterURL(url string) (string, bool) {
+	trimmed := strings.TrimSpace(url)
+	if trimmed == "" {
+		return "", true
+	}
+
+	parsed, err := urlpkg.Parse(trimmed)
+	if err != nil || parsed == nil || parsed.Scheme == "" || parsed.Host == "" {
+		return trimmed, false
+	}
+
+	switch strings.ToLower(parsed.Scheme) {
+	case "https":
+		return trimmed, true
+	case "http":
+		return trimmed, dns.IsLoopbackHost(parsed.Hostname())
+	default:
+		return trimmed, false
+	}
+}
+
+// SetJWKSUrl updates the configured JWKS endpoint for portal-issued JWTs
+// (HTTPS, or HTTP for loopback hosts only).
 func (c *Config) SetJWKSUrl(url string) {
 	if c == nil || c.options == nil {
 		return
 	}
 
-	trimmed := strings.TrimSpace(url)
-	if trimmed == "" {
-		c.options.JWKSUrl = ""
-		return
-	}
-
-	parsed, err := urlpkg.Parse(trimmed)
-	if err != nil || parsed == nil || parsed.Scheme == "" || parsed.Host == "" {
-		log.Warnf("config: ignoring JWKS URL %q (%v)", trimmed, err)
-		return
-	}
-
-	scheme := strings.ToLower(parsed.Scheme)
-	host := parsed.Hostname()
-
-	switch scheme {
-	case "https":
-		// Always allowed.
-	case "http":
-		if !dns.IsLoopbackHost(host) {
-			log.Warnf("config: rejecting JWKS URL %q (http only allowed for localhost/loopback)", trimmed)
-			return
-		}
-	default:
-		log.Warnf("config: rejecting JWKS URL %q (unsupported scheme)", trimmed)
+	trimmed, ok := validClusterURL(url)
+	if !ok {
+		log.Warnf("config: rejecting JWKS URL %s (must be https, or http on loopback)", clean.Log(trimmed))
 		return
 	}
 
 	c.options.JWKSUrl = trimmed
+}
+
+// PortalLoginUrl returns the browser-facing Portal login page URL. Nodes
+// persist it from the Portal's register response, which derives it from the
+// Portal's SiteUrl and login route; the frontend uses it to land cluster
+// sign-outs on the Portal login instead of re-initiating the instance OIDC
+// roundtrip with a pinned return_to. Stored values are re-validated on read,
+// so an invalid or stale URL (e.g. from a hand-edited options.yml or env)
+// never becomes a browser redirect target.
+func (c *Config) PortalLoginUrl() string {
+	if v, ok := validClusterURL(c.options.PortalLoginUrl); ok {
+		return v
+	}
+
+	return ""
+}
+
+// SetPortalLoginUrl updates the browser-facing Portal login page URL
+// (HTTPS, or HTTP for loopback hosts only).
+func (c *Config) SetPortalLoginUrl(url string) {
+	if c == nil || c.options == nil {
+		return
+	}
+
+	trimmed, ok := validClusterURL(url)
+	if !ok {
+		log.Warnf("config: rejecting portal login URL %s (must be https, or http on loopback)", clean.Log(trimmed))
+		return
+	}
+
+	c.options.PortalLoginUrl = trimmed
 }
 
 // JWKSCacheTTL returns the JWKS cache lifetime in seconds (default 300, max 3600).
@@ -536,43 +786,11 @@ func (c *Config) SaveClusterUUID(uuid string) error {
 		return errors.New("invalid cluster UUID")
 	}
 
-	// Always resolve against the current ConfigPath and remember it explicitly
-	// so subsequent calls don't accidentally point to a previous default.
-	cfgDir := c.ConfigPath()
-	if err := fs.MkdirAll(cfgDir); err != nil {
-		return err
-	}
+	update := cluster.OptionsUpdate{}
+	update.SetClusterUUID(uuid)
 
-	fileName := c.OptionsYaml()
-
-	var m Values
-
-	if fs.FileExists(fileName) {
-		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
-			_ = yaml.Unmarshal(b, &m)
-		}
-	}
-
-	if m == nil {
-		m = Values{}
-	}
-
-	m["ClusterUUID"] = uuid
-
-	if b, err := yaml.Marshal(m); err != nil {
-		return err
-	} else if err = os.WriteFile(fileName, b, fs.ModeFile); err != nil {
-		return err
-	}
-
-	c.options.ClusterUUID = uuid
-
-	// Remember options.yml path for subsequent loads and ensure in-memory options see the value.
-	if c.options != nil {
-		_ = c.options.Load(fileName)
-	}
-
-	return nil
+	_, err := c.SaveClusterOptionsUpdate(update)
+	return err
 }
 
 // SaveNodeUUID writes or updates the NodeUUID key in options.yml without touching unrelated keys.
@@ -581,31 +799,9 @@ func (c *Config) SaveNodeUUID(uuid string) error {
 		return errors.New("invalid node UUID")
 	}
 
-	cfgDir := c.ConfigPath()
+	update := cluster.OptionsUpdate{}
+	update.SetNodeUUID(uuid)
 
-	if err := fs.MkdirAll(cfgDir); err != nil {
-		return err
-	}
-
-	fileName := c.OptionsYaml()
-
-	var m Values
-	if fs.FileExists(fileName) {
-		if b, err := os.ReadFile(fileName); err == nil && len(b) > 0 { //nolint:gosec // path derived from config directory
-			_ = yaml.Unmarshal(b, &m)
-		}
-	}
-	if m == nil {
-		m = Values{}
-	}
-	m["NodeUUID"] = uuid
-	if b, err := yaml.Marshal(m); err != nil {
-		return err
-	} else if err = os.WriteFile(fileName, b, fs.ModeFile); err != nil {
-		return err
-	}
-
-	c.options.NodeUUID = uuid
-
-	return nil
+	_, err := c.SaveClusterOptionsUpdate(update)
+	return err
 }

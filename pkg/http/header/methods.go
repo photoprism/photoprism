@@ -1,14 +1,18 @@
 package header
 
+import (
+	"net/http"
+)
+
 // Canonical HTTP and WebDAV method names.
 const (
-	MethodHead            = "HEAD"
-	MethodGet             = "GET"
-	MethodPut             = "PUT"
-	MethodPost            = "POST"
-	MethodPatch           = "PATCH"
-	MethodDelete          = "DELETE"
-	MethodOptions         = "OPTIONS"
+	MethodHead            = http.MethodHead
+	MethodGet             = http.MethodGet
+	MethodPut             = http.MethodPut
+	MethodPost            = http.MethodPost
+	MethodPatch           = http.MethodPatch
+	MethodDelete          = http.MethodDelete
+	MethodOptions         = http.MethodOptions
 	MethodMkcol           = "MKCOL"
 	MethodCopy            = "COPY"
 	MethodMove            = "MOVE"

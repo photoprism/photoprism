@@ -156,7 +156,6 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 		assert.InDelta(t, 1.01, radius, 1e-6)
 		assert.Equal(t, 4, count)
 	})
-
 	t.Run("NormalizedResult", func(t *testing.T) {
 		e := Embeddings{
 			Embedding{1, 0, 0, 0},

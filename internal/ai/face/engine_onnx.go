@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"image/draw"
 	_ "image/jpeg" // register JPEG decoder for ONNX engine input
 	"math"
 	"os"
@@ -13,8 +14,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/disintegration/imaging"
 	onnxruntime "github.com/yalue/onnxruntime_go"
+	xdraw "golang.org/x/image/draw"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // ONNXOptions configures how the ONNX runtime-backed detector is initialized.
@@ -53,7 +56,6 @@ type onnxEngine struct {
 	inputHeight    int
 	featStrides    []int
 	numAnchors     int
-	useKps         bool
 	batched        bool
 	scoreThreshold float32
 	nmsThreshold   float32
@@ -174,10 +176,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 
 	threads := opts.Threads
 	if threads == 0 {
-		threads = runtime.NumCPU() / 2
-		if threads < 1 {
-			threads = 1
-		}
+		threads = max(runtime.NumCPU()/2, 1)
 	}
 
 	if err := sessionOpts.SetIntraOpNumThreads(threads); err != nil {
@@ -225,7 +224,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		outputNames[i] = out.Name
 	}
 
-	fmc, numAnchors, useKps, batched, err := deriveONNXLayout(outputInfos)
+	fmc, numAnchors, _, batched, err := deriveONNXLayout(outputInfos)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +244,6 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		inputHeight:    height,
 		featStrides:    featStrides,
 		numAnchors:     numAnchors,
-		useKps:         useKps,
 		batched:        batched,
 		scoreThreshold: opts.ScoreThreshold,
 		nmsThreshold:   opts.NMSThreshold,
@@ -311,18 +309,8 @@ func (o *onnxEngine) Close() error {
 }
 
 // Detect identifies faces in the provided image using the ONNX runtime session.
-func (o *onnxEngine) Detect(fileName string, findLandmarks bool, minSize int) (Faces, error) {
-	file, err := os.Open(fileName) //nolint:gosec // fileName provided by caller; reading local images is required for detection
-	if err != nil {
-		return Faces{}, err
-	}
-	defer func() {
-		if closeErr := file.Close(); closeErr != nil {
-			log.Debugf("faces: %s (close image file)", closeErr)
-		}
-	}()
-
-	img, _, err := image.Decode(file)
+func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
+	img, _, err := fs.DecodeImageFile(fileName)
 	if err != nil {
 		return Faces{}, err
 	}
@@ -403,7 +391,7 @@ func (o *onnxEngine) Detect(fileName string, findLandmarks bool, minSize int) (F
 	return result, nil
 }
 
-// buildBlob normalises the input image into the tensor layout expected by SCRFD.
+// buildBlob normalizes the input image into the tensor layout expected by SCRFD.
 func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 	inputWidth := o.inputWidth
 	inputHeight := o.inputHeight
@@ -443,7 +431,7 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 		newHeight = 1
 	}
 
-	resized := imaging.Resize(img, newWidth, newHeight, imaging.Linear)
+	resized := resizeLinearImage(img, newWidth, newHeight)
 
 	planeSize := inputWidth * inputHeight
 	blob := make([]float32, planeSize*3)
@@ -468,6 +456,13 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 	detScale := float32(newHeight) / float32(height)
 
 	return blob, detScale, nil
+}
+
+// resizeLinearImage rescales an image with a lightweight linear filter for ONNX preprocessing.
+func resizeLinearImage(img image.Image, width, height int) image.Image {
+	dst := image.NewNRGBA(image.Rect(0, 0, width, height))
+	xdraw.ApproxBiLinear.Scale(dst, dst.Bounds(), img, img.Bounds(), draw.Src, nil)
+	return dst
 }
 
 // parseDetections decodes model outputs into bounding boxes in the original image space.
@@ -560,11 +555,11 @@ func (o *onnxEngine) anchorCenters(height, width, stride, anchors int) []float32
 
 	centers := make([]float32, height*width*anchors*2)
 	idx := 0
-	for y := 0; y < height; y++ {
+	for y := range height {
 		cy := float32(y * stride)
-		for x := 0; x < width; x++ {
+		for x := range width {
 			cx := float32(x * stride)
-			for a := 0; a < anchors; a++ {
+			for range anchors {
 				centers[idx] = cx
 				centers[idx+1] = cy
 				idx += 2
@@ -599,7 +594,7 @@ func nonMaxSuppression(boxes []onnxDetection, threshold float32) []onnxDetection
 	picked := make([]onnxDetection, 0, len(boxes))
 	suppressed := make([]bool, len(boxes))
 
-	for i := 0; i < len(boxes); i++ {
+	for i := range boxes {
 		if suppressed[i] {
 			continue
 		}

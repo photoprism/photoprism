@@ -1,3 +1,28 @@
+/*
+Package vector provides floating-point vector types and math, including
+distances, norms, means, and correlation.
+
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
+
+	This program is free software: you can redistribute it and/or modify
+	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+	<https://docs.photoprism.app/license/agpl>
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	The AGPL is supplemented by our Trademark and Brand Guidelines,
+	which describe how our Brand Assets may be used:
+	<https://www.photoprism.app/trademark/>
+
+Feel free to send an email to hello@photoprism.app if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+<https://docs.photoprism.app/developer-guide/>
+*/
 package vector
 
 import (
@@ -11,7 +36,7 @@ type Vector []float64
 type Vectors = []Vector
 
 // NewVector creates a new vector from the given values.
-func NewVector(values interface{}) (Vector, error) {
+func NewVector(values any) (Vector, error) {
 	switch v := values.(type) {
 	case []uint8:
 		return uint8ToVector(v), nil
@@ -36,7 +61,7 @@ func NewVector(values interface{}) (Vector, error) {
 	case []float64:
 		return float64ToVector(v), nil
 	case Vector:
-		return v, nil
+		return v.Copy(), nil
 	default:
 		return nil, fmt.Errorf("cannot create vector from type %T", values)
 	}
@@ -47,7 +72,30 @@ func NullVector(dim int) Vector {
 	return make(Vector, dim)
 }
 
-// uint8ToVector creates a new vector from a non-empty uint8 slice.
+// Copy returns a copy of the vector.
+func (v Vector) Copy() Vector {
+	y := make(Vector, len(v))
+	copy(y, v)
+	return y
+}
+
+// Dim returns the number of values (dimension).
+func (v Vector) Dim() int {
+	return len(v)
+}
+
+// Sum returns the sum of the vector values.
+func (v Vector) Sum() float64 {
+	s := 0.0
+
+	for _, f := range v {
+		s += f
+	}
+
+	return s
+}
+
+// uint8ToVector creates a new vector from a uint8 slice.
 func uint8ToVector(values []uint8) Vector {
 	v := make(Vector, len(values))
 
@@ -58,7 +106,7 @@ func uint8ToVector(values []uint8) Vector {
 	return v
 }
 
-// uint16ToVector creates a new vector from a non-empty uint16 slice.
+// uint16ToVector creates a new vector from a uint16 slice.
 func uint16ToVector(values []uint16) Vector {
 	v := make(Vector, len(values))
 
@@ -69,7 +117,7 @@ func uint16ToVector(values []uint16) Vector {
 	return v
 }
 
-// uint32ToVector creates a new vector from a non-empty uint32 slice.
+// uint32ToVector creates a new vector from a uint32 slice.
 func uint32ToVector(values []uint32) Vector {
 	v := make(Vector, len(values))
 
@@ -80,7 +128,7 @@ func uint32ToVector(values []uint32) Vector {
 	return v
 }
 
-// uint64ToVector creates a new vector from a non-empty uint64 slice.
+// uint64ToVector creates a new vector from a uint64 slice.
 func uint64ToVector(values []uint64) Vector {
 	v := make(Vector, len(values))
 
@@ -91,7 +139,7 @@ func uint64ToVector(values []uint64) Vector {
 	return v
 }
 
-// intToVector creates a new vector from a non-empty int slice.
+// intToVector creates a new vector from a int slice.
 func intToVector(values []int) Vector {
 	v := make(Vector, len(values))
 
@@ -102,7 +150,7 @@ func intToVector(values []int) Vector {
 	return v
 }
 
-// int8ToVector creates a new vector from a non-empty int8 slice.
+// int8ToVector creates a new vector from a int8 slice.
 func int8ToVector(values []int8) Vector {
 	v := make(Vector, len(values))
 
@@ -113,7 +161,7 @@ func int8ToVector(values []int8) Vector {
 	return v
 }
 
-// int16ToVector creates a new vector from a non-empty int16 slice.
+// int16ToVector creates a new vector from a int16 slice.
 func int16ToVector(values []int16) Vector {
 	v := make(Vector, len(values))
 
@@ -124,7 +172,7 @@ func int16ToVector(values []int16) Vector {
 	return v
 }
 
-// int32ToVector creates a new vector from a non-empty int32 slice.
+// int32ToVector creates a new vector from a int32 slice.
 func int32ToVector(values []int32) Vector {
 	v := make(Vector, len(values))
 
@@ -135,7 +183,7 @@ func int32ToVector(values []int32) Vector {
 	return v
 }
 
-// int64ToVector creates a new vector from a non-empty int64 slice.
+// int64ToVector creates a new vector from a int64 slice.
 func int64ToVector(values []int64) Vector {
 	v := make(Vector, len(values))
 
@@ -146,7 +194,7 @@ func int64ToVector(values []int64) Vector {
 	return v
 }
 
-// float32ToVector creates a new vector from a non-empty float32 slice.
+// float32ToVector creates a new vector from a float32 slice.
 func float32ToVector(values []float32) Vector {
 	v := make(Vector, len(values))
 
@@ -157,7 +205,11 @@ func float32ToVector(values []float32) Vector {
 	return v
 }
 
-// float64ToVector creates a new vector from a non-empty float64 slice.
+// float64ToVector creates a new vector from a float64 slice.
+// The values are copied so the result is independent of the input slice,
+// consistent with the other type-specific converters.
 func float64ToVector(values []float64) Vector {
-	return Vector(values)
+	v := make(Vector, len(values))
+	copy(v, values)
+	return v
 }

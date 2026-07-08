@@ -21,7 +21,7 @@ type Label struct {
 }
 
 // NewLabel creates a new form struct based on the interface values.
-func NewLabel(m interface{}) (*Label, error) {
+func NewLabel(m any) (*Label, error) {
 	frm := &Label{}
 	err := deepcopier.Copy(m).To(frm)
 	return frm, err

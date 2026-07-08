@@ -351,6 +351,19 @@
                 "AdvertiseUrl": {
                     "type": "string"
                 },
+                "AllowGroupRoles": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "type": "object"
+                },
+                "AllowGroups": {
+                    "description": "Group-based admission config (redacted for non-admin sessions):\nAllowGroups admits matching login-time groups, AllowGroupRoles\noptionally overrides the default role per group, GroupsFullView opts the\nnode into receiving the user's full group set, and GroupsSrc is the\nAllowGroups provenance (\"node\" = instance-declared via env, \"manual\" =\nadmin-pinned; empty = unmanaged).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "AppName": {
                     "type": "string"
                 },
@@ -366,6 +379,15 @@
                 "Database": {
                     "$ref": "#/definitions/cluster.NodeDatabase"
                 },
+                "DisplayName": {
+                    "type": "string"
+                },
+                "GroupsFullView": {
+                    "type": "boolean"
+                },
+                "GroupsSrc": {
+                    "type": "string"
+                },
                 "Labels": {
                     "additionalProperties": {
                         "type": "string"
@@ -375,6 +397,12 @@
                 "Name": {
                     "description": "NodeName",
                     "type": "string"
+                },
+                "RedirectURIs": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "Role": {
                     "description": "NodeRole",
@@ -461,6 +489,9 @@
                 },
                 "Node": {
                     "$ref": "#/definitions/cluster.Node"
+                },
+                "PortalLoginUrl": {
+                    "type": "string"
                 },
                 "Secrets": {
                     "$ref": "#/definitions/cluster.RegisterSecrets"
@@ -603,6 +634,9 @@
                 "DisableJpegXL": {
                     "type": "boolean"
                 },
+                "DisableMCP": {
+                    "type": "boolean"
+                },
                 "DisableOIDC": {
                     "type": "boolean"
                 },
@@ -625,9 +659,6 @@
                     "type": "boolean"
                 },
                 "DisableVectors": {
-                    "type": "boolean"
-                },
-                "DisableVips": {
                     "type": "boolean"
                 },
                 "DisableWebDAV": {
@@ -682,7 +713,7 @@
                     "type": "string"
                 },
                 "IndexWorkers": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "JpegQuality": {
                     "type": "integer"
@@ -698,6 +729,9 @@
                 },
                 "OIDCIcon": {
                     "type": "string"
+                },
+                "OIDCLogout": {
+                    "type": "boolean"
                 },
                 "OIDCProvider": {
                     "type": "string"
@@ -745,6 +779,9 @@
                 "SiteFavicon": {
                     "type": "string"
                 },
+                "SiteName": {
+                    "type": "string"
+                },
                 "SitePreview": {
                     "type": "string"
                 },
@@ -767,9 +804,6 @@
                     "type": "boolean"
                 },
                 "ThumbColor": {
-                    "type": "string"
-                },
-                "ThumbFilter": {
                     "type": "string"
                 },
                 "ThumbLibrary": {
@@ -877,6 +911,9 @@
                 "albums": {
                     "type": "boolean"
                 },
+                "appPasswords": {
+                    "type": "boolean"
+                },
                 "archive": {
                     "type": "boolean"
                 },
@@ -884,6 +921,9 @@
                     "type": "boolean"
                 },
                 "calendar": {
+                    "type": "boolean"
+                },
+                "cameras": {
                     "type": "boolean"
                 },
                 "delete": {
@@ -911,6 +951,9 @@
                     "type": "boolean"
                 },
                 "labels": {
+                    "type": "boolean"
+                },
+                "lenses": {
                     "type": "boolean"
                 },
                 "library": {
@@ -1092,6 +1135,9 @@
             "properties": {
                 "language": {
                     "type": "string"
+                },
+                "openOnHover": {
+                    "type": "boolean"
                 },
                 "scrollbar": {
                     "type": "boolean"
@@ -2635,6 +2681,17 @@
             },
             "type": "object"
         },
+        "form.Camera": {
+            "properties": {
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "form.ChangePassword": {
             "properties": {
                 "new": {
@@ -2709,29 +2766,6 @@
             },
             "type": "object"
         },
-        "form.Feedback": {
-            "properties": {
-                "Category": {
-                    "type": "string"
-                },
-                "Message": {
-                    "type": "string"
-                },
-                "UserAgent": {
-                    "type": "string"
-                },
-                "UserEmail": {
-                    "type": "string"
-                },
-                "UserLocales": {
-                    "type": "string"
-                },
-                "UserName": {
-                    "type": "string"
-                }
-            },
-            "type": "object"
-        },
         "form.File": {
             "properties": {
                 "Orientation": {
@@ -2796,6 +2830,17 @@
                 },
                 "Uncertainty": {
                     "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "form.Lens": {
+            "properties": {
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
                 }
             },
             "type": "object"
@@ -3395,6 +3440,13 @@
                 },
                 "message": {
                     "type": "string"
+                },
+                "messageId": {
+                    "type": "string"
+                },
+                "messageParams": {
+                    "items": {},
+                    "type": "array"
                 }
             },
             "type": "object"
@@ -3815,6 +3867,29 @@
             },
             "type": "object"
         },
+        "query.Moment": {
+            "properties": {
+                "Country": {
+                    "type": "string"
+                },
+                "Label": {
+                    "type": "string"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Year": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
         "search.Album": {
             "properties": {
                 "Caption": {
@@ -3900,6 +3975,44 @@
                 },
                 "Year": {
                     "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "search.Camera": {
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
                 }
             },
             "type": "object"
@@ -3995,6 +4108,12 @@
                 "Lng": {
                     "type": "number"
                 },
+                "Panorama": {
+                    "type": "boolean"
+                },
+                "Projection": {
+                    "type": "string"
+                },
                 "TakenAt": {
                     "type": "string"
                 },
@@ -4064,6 +4183,44 @@
                     "type": "string"
                 },
                 "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "search.Lens": {
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Type": {
                     "type": "string"
                 },
                 "UpdatedAt": {
@@ -4255,6 +4412,9 @@
                 },
                 "Private": {
                     "type": "boolean"
+                },
+                "Projection": {
+                    "type": "string"
                 },
                 "Quality": {
                     "type": "integer"
@@ -4485,6 +4645,49 @@
                 "ShapeBatch"
             ]
         },
+        "thumb.Thumb": {
+            "properties": {
+                "h": {
+                    "type": "integer"
+                },
+                "src": {
+                    "type": "string"
+                },
+                "w": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "thumb.Viewer": {
+            "properties": {
+                "fit_1280": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_15360": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_1920": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_2560": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_4096": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_5120": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_720": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_7680": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                }
+            },
+            "type": "object"
+        },
         "time.Duration": {
             "format": "int64",
             "type": "integer"
@@ -4497,6 +4700,71 @@
                 },
                 "seconds": {
                     "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -315576000000 and 315576000000 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "viewer.Result": {
+            "properties": {
+                "Caption": {
+                    "type": "string"
+                },
+                "Codec": {
+                    "type": "string"
+                },
+                "DownloadUrl": {
+                    "type": "string"
+                },
+                "Duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Hash": {
+                    "type": "string"
+                },
+                "Height": {
+                    "type": "integer"
+                },
+                "Lat": {
+                    "type": "number"
+                },
+                "Lng": {
+                    "type": "number"
+                },
+                "Mime": {
+                    "type": "string"
+                },
+                "Panorama": {
+                    "type": "boolean"
+                },
+                "Playable": {
+                    "type": "boolean"
+                },
+                "Projection": {
+                    "type": "string"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "Thumbs": {
+                    "$ref": "#/definitions/thumb.Viewer"
+                },
+                "TimeZone": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "Width": {
                     "type": "integer"
                 }
             },
@@ -4567,6 +4835,9 @@
                     "type": "string"
                 },
                 "system": {
+                    "type": "string"
+                },
+                "think": {
                     "type": "string"
                 },
                 "url": {
@@ -4960,6 +5231,10 @@
                 "responseFormat": {
                     "$ref": "#/definitions/vision.ApiFormat"
                 },
+                "think": {
+                    "description": "Optional reasoning hint for compatible engines (e.g. Ollama, GPT-OSS).",
+                    "type": "string"
+                },
                 "uri": {
                     "type": "string"
                 }
@@ -5026,6 +5301,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of albums returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of albums to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "items": {
                                 "$ref": "#/definitions/search.Album"
@@ -5557,7 +5846,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Link"
+                            "items": {
+                                "$ref": "#/definitions/entity.Link"
+                            },
+                            "type": "array"
                         }
                     },
                     "401": {
@@ -6554,6 +6846,163 @@
                 ]
             }
         },
+        "/api/v1/cameras": {
+            "get": {
+                "operationId": "SearchCameras",
+                "parameters": [
+                    {
+                        "description": "maximum number of results",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "name": "count",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "description": "search result offset",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "name": "offset",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "show where make is blank",
+                        "in": "query",
+                        "name": "nomake",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "search query",
+                        "in": "query",
+                        "name": "q",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of cameras returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of cameras to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/search.Camera"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "finds and returns cameras as JSON",
+                "tags": [
+                    "Cameras"
+                ]
+            }
+        },
+        "/api/v1/cameras/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "UpdateCamera",
+                "parameters": [
+                    {
+                        "description": "Camera ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Properties to be updated, only Make and Model supported",
+                        "in": "body",
+                        "name": "camera",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Camera"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Camera"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "updates camera name",
+                "tags": [
+                    "Cameras"
+                ]
+            }
+        },
         "/api/v1/cluster": {
             "get": {
                 "operationId": "ClusterSummary",
@@ -6734,7 +7183,7 @@
                 "operationId": "ClusterNodesRegister",
                 "parameters": [
                     {
-                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
+                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client.",
                         "in": "body",
                         "name": "request",
                         "required": true,
@@ -6913,7 +7362,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to update (Role, Labels, AdvertiseUrl, SiteUrl)",
+                        "description": "properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs, AllowGroups, AllowGroupRoles, GroupsFullView)",
                         "in": "body",
                         "name": "node",
                         "required": true,
@@ -7329,6 +7778,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of errors returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of errors to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "$ref": "#/definitions/entity.Error"
                         }
@@ -7423,6 +7886,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of faces returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of faces to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "items": {
                                 "$ref": "#/definitions/search.Face"
@@ -7595,44 +8072,6 @@
                 ]
             }
         },
-        "/api/v1/feedback": {
-            "post": {
-                "operationId": "SendFeedback",
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/form.Feedback"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    }
-                },
-                "summary": "allows members to submit a feedback message to the PhotoPrism team",
-                "tags": [
-                    "Internal"
-                ]
-            }
-        },
         "/api/v1/files/{hash}": {
             "get": {
                 "operationId": "GetFile",
@@ -7695,6 +8134,28 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of files and folders returned.  Do not use for determining if all the results have been returned.",
+                                "type": "number"
+                            },
+                            "X-Files": {
+                                "description": "The actual number of files returned.  Use this for comparing to X-Limit to determine if all the results have been returned.",
+                                "type": "number"
+                            },
+                            "X-Folders": {
+                                "description": "The actual number of folders returned.  Do not use for determining if all the results have been returned.",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of files to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "$ref": "#/definitions/api.FoldersResponse"
                         }
@@ -7894,6 +8355,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of files returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of files to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "items": {
                                 "$ref": "#/definitions/search.GeoResult"
@@ -8174,8 +8649,25 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of labels returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of labels to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
-                            "$ref": "#/definitions/search.Label"
+                            "items": {
+                                "$ref": "#/definitions/search.Label"
+                            },
+                            "type": "array"
                         }
                     },
                     "400": {
@@ -8441,6 +8933,163 @@
                 ]
             }
         },
+        "/api/v1/lenses": {
+            "get": {
+                "operationId": "SearchLenses",
+                "parameters": [
+                    {
+                        "description": "maximum number of results",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "name": "count",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "description": "search result offset",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "name": "offset",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "show where make is blank",
+                        "in": "query",
+                        "name": "nomake",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "search query",
+                        "in": "query",
+                        "name": "q",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of lenses returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of lenses to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/search.Lens"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "finds and returns lenses as JSON",
+                "tags": [
+                    "Lenses"
+                ]
+            }
+        },
+        "/api/v1/lenses/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "UpdateLens",
+                "parameters": [
+                    {
+                        "description": "Lens ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Properties to be updated, only Make and Model supported",
+                        "in": "body",
+                        "name": "lens",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Lens"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Lens"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "updates lens name",
+                "tags": [
+                    "Lenses"
+                ]
+            }
+        },
         "/api/v1/markers": {
             "post": {
                 "produces": [
@@ -8589,6 +9238,59 @@
                 ]
             }
         },
+        "/api/v1/mcp": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "ServeMCP",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JSON-RPC 2.0 response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "model context protocol endpoint",
+                "tags": [
+                    "MCP"
+                ]
+            }
+        },
         "/api/v1/metrics": {
             "get": {
                 "operationId": "GetMetrics",
@@ -8634,7 +9336,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Album"
+                            "items": {
+                                "$ref": "#/definitions/query.Moment"
+                            },
+                            "type": "array"
                         }
                     },
                     "401": {
@@ -8675,6 +9380,18 @@
                     "application/json"
                 ],
                 "responses": {
+                    "302": {
+                        "description": "redirect to the client redirect_uri with an authorization code",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
@@ -8682,7 +9399,69 @@
                         }
                     }
                 },
-                "summary": "OAuth2 authorization endpoint (not implemented)",
+                "summary": "OAuth2/OIDC authorization endpoint",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
+        "/api/v1/oauth/logout": {
+            "get": {
+                "operationId": "OAuthLogout",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "302": {
+                        "description": "redirect to post_logout_redirect_uri",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2/OIDC end-session endpoint (RP-initiated logout)",
+                "tags": [
+                    "Authentication"
+                ]
+            },
+            "post": {
+                "operationId": "OAuthLogout",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "302": {
+                        "description": "redirect to post_logout_redirect_uri",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2/OIDC end-session endpoint (RP-initiated logout)",
                 "tags": [
                     "Authentication"
                 ]
@@ -8791,6 +9570,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -8811,6 +9596,18 @@
                     "application/json"
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "405": {
                         "description": "Method Not Allowed",
                         "schema": {
@@ -8818,7 +9615,37 @@
                         }
                     }
                 },
-                "summary": "OAuth2 userinfo endpoint (not implemented)",
+                "summary": "OAuth2/OIDC userinfo endpoint",
+                "tags": [
+                    "Authentication"
+                ]
+            },
+            "post": {
+                "operationId": "OAuthUserinfo",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "OAuth2/OIDC userinfo endpoint",
                 "tags": [
                     "Authentication"
                 ]
@@ -8918,7 +9745,7 @@
         },
         "/api/v1/photos": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
                 "operationId": "SearchPhotos",
                 "parameters": [
                     {
@@ -9015,6 +9842,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of files returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of files to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "items": {
                                 "$ref": "#/definitions/search.Photo"
@@ -9048,6 +9889,157 @@
                     }
                 },
                 "summary": "finds pictures and returns them as JSON",
+                "tags": [
+                    "Photos"
+                ]
+            }
+        },
+        "/api/v1/photos/view": {
+            "get": {
+                "description": "Returns search results formatted for the photo viewer (lightbox) in the web UI,\nincluding resolved content URLs and preview/download tokens.\nFor more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
+                "operationId": "SearchPhotosView",
+                "parameters": [
+                    {
+                        "description": "maximum number of files",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "name": "count",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "description": "file offset",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "name": "offset",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "sort order",
+                        "enum": [
+                            "name",
+                            "title",
+                            "added",
+                            "edited",
+                            "newest",
+                            "oldest",
+                            "size",
+                            "random",
+                            "duration",
+                            "relevance"
+                        ],
+                        "in": "query",
+                        "name": "order",
+                        "type": "string"
+                    },
+                    {
+                        "description": "groups consecutive files that belong to the same photo",
+                        "in": "query",
+                        "name": "merged",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "excludes private pictures",
+                        "in": "query",
+                        "name": "public",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "minimum quality score (1-7)",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                        ],
+                        "in": "query",
+                        "name": "quality",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "search query",
+                        "in": "query",
+                        "name": "q",
+                        "type": "string"
+                    },
+                    {
+                        "description": "album uid",
+                        "in": "query",
+                        "name": "s",
+                        "type": "string"
+                    },
+                    {
+                        "description": "photo path",
+                        "in": "query",
+                        "name": "path",
+                        "type": "string"
+                    },
+                    {
+                        "description": "is type video",
+                        "in": "query",
+                        "name": "video",
+                        "type": "boolean"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of files returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of files to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/viewer.Result"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "finds pictures and returns a viewer-formatted JSON result for the lightbox",
                 "tags": [
                     "Photos"
                 ]
@@ -10088,9 +11080,9 @@
                         }
                     },
                     "400": {
-                        "description": "Missing search query",
+                        "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/i18n.Response"
                         }
                     },
                     "401": {
@@ -10164,6 +11156,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of services returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of services to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "items": {
                                 "$ref": "#/definitions/entity.Service"
@@ -11127,6 +12133,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of subjects returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of subjects to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "items": {
                                 "$ref": "#/definitions/search.Subject"
@@ -11455,7 +12475,7 @@
         },
         "/api/v1/t/{thumb}/{token}/{size}": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
                 "operationId": "GetThumb",
                 "parameters": [
                     {
@@ -12237,13 +13257,13 @@
         },
         "/api/v1/videos/{hash}/{token}/{format}": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
                 "operationId": "GetVideo",
                 "parameters": [
                     {
                         "description": "SHA1 video file hash",
                         "in": "path",
-                        "name": "thumb",
+                        "name": "hash",
                         "required": true,
                         "type": "string"
                     },

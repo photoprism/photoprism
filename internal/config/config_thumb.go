@@ -40,26 +40,20 @@ func (c *Config) JpegQuality() thumb.Quality {
 
 // ThumbLibrary returns the name of the image processing library to be used for generating thumbnails.
 func (c *Config) ThumbLibrary() string {
-	if c.DisableVips() {
-		return thumb.LibImaging
-	}
-
 	switch c.options.ThumbLibrary {
 	case thumb.LibVips, thumb.LibAuto:
 		return thumb.LibVips
-	case thumb.LibImaging:
-		return thumb.LibImaging
 	default:
 		c.options.ThumbLibrary = clean.TypeLowerUnderscore(c.options.ThumbLibrary)
 
 		switch c.options.ThumbLibrary {
-		case "imagine", "":
-			c.options.ThumbLibrary = thumb.LibImaging
-			return thumb.LibImaging
+		case "", thumb.LibAuto, "imaging", "imagine":
+			c.options.ThumbLibrary = thumb.LibVips
+			return thumb.LibVips
 		case "vips", "libvips":
 			c.options.ThumbLibrary = thumb.LibVips
 		default:
-			c.options.ThumbLibrary = thumb.LibAuto
+			c.options.ThumbLibrary = thumb.LibVips
 		}
 
 		return thumb.LibVips
@@ -71,9 +65,9 @@ func (c *Config) ThumbColor() thumb.ColorSpace {
 	return thumb.ParseColor(c.options.ThumbColor, c.ThumbLibrary())
 }
 
-// ThumbFilter returns the thumbnail resample filter (best to worst: blackman, lanczos, cubic or linear).
+// ThumbFilter returns the default thumbnail resample filter.
 func (c *Config) ThumbFilter() thumb.ResampleFilter {
-	return thumb.ParseFilter(c.options.ThumbFilter, c.ThumbLibrary())
+	return thumb.ParseFilter("", c.ThumbLibrary())
 }
 
 // ThumbUncached checks if on-demand thumbnail rendering is enabled (high memory and cpu usage).
@@ -81,27 +75,27 @@ func (c *Config) ThumbUncached() bool {
 	return c.options.ThumbUncached
 }
 
-// ThumbSizePrecached returns the pre-cached thumbnail size limit in pixels (720-7680).
+// ThumbSizePrecached returns the pre-cached thumbnail size limit in pixels (720-15360).
 func (c *Config) ThumbSizePrecached() int {
 	size := c.options.ThumbSize
 
 	if size < 720 {
 		size = 720 // Mobile, TV
-	} else if size > 7680 {
-		size = 7680 // 8K Ultra HD
+	} else if size > 15360 {
+		size = 15360 // 16K, e.g. for 360° media
 	}
 
 	return size
 }
 
-// ThumbSizeUncached returns the on-demand rendering size limit in pixels (720-7680).
+// ThumbSizeUncached returns the on-demand rendering size limit in pixels (720-15360).
 func (c *Config) ThumbSizeUncached() int {
 	limit := c.options.ThumbSizeUncached
 
 	if limit < 720 {
 		limit = 720 // Mobile, TV
-	} else if limit > 7680 {
-		limit = 7680 // 8K Ultra HD
+	} else if limit > 15360 {
+		limit = 15360 // 16K, e.g. for 360° media
 	}
 
 	if c.ThumbSizePrecached() > limit {

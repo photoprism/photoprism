@@ -5,7 +5,7 @@ import (
 )
 
 // Fail logs an error and then initiates a server shutdown.
-func Fail(err string, params ...interface{}) {
+func Fail(err string, params ...any) {
 	if err != "" {
 		log.Errorf(err, params...)
 	}

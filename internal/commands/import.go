@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"path/filepath"
 	"strings"
 	"time"
@@ -12,7 +11,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ImportCommand configures the command name, flags, and action.
@@ -41,12 +39,12 @@ func importAction(ctx *cli.Context) error {
 	defer cancel()
 
 	if err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	// very if copy directory exist and is writable
 	if conf.ReadOnly() {
-		return config.ErrReadOnly
+		return cli.Exit(config.ErrReadOnly, 2)
 	}
 
 	conf.InitDb()
@@ -58,22 +56,26 @@ func importAction(ctx *cli.Context) error {
 	if sourcePath == "" {
 		sourcePath = conf.ImportPath()
 	} else {
-		abs, err := filepath.Abs(sourcePath)
+		abs, pathErr := filepath.Abs(sourcePath)
 
-		if err != nil {
-			return err
+		if pathErr != nil {
+			return cli.Exit(pathErr, 2)
 		}
 
 		sourcePath = abs
 	}
 
 	if sourcePath == conf.OriginalsPath() {
-		return errors.New("import path is identical with originals")
+		return cli.Exit("source path is identical with originals", 2)
 	}
 
 	var destFolder string
+
 	if ctx.IsSet("dest") {
-		destFolder = clean.UserPath(ctx.String("dest"))
+		destFolder, err = sanitizeDestinationArg(ctx.String("dest"))
+		if err != nil {
+			return cli.Exit(err, 2)
+		}
 	} else {
 		destFolder = conf.ImportDest()
 	}

@@ -197,4 +197,23 @@ func TestLabels(t *testing.T) {
 
 		assert.Equal(t, "flower", result[0].LabelSlug)
 	})
+	t.Run("SearchForHomophoneName", func(t *testing.T) {
+		_, second, _, _ := createHomophoneSearchFixtures(t)
+
+		query := form.NewLabelSearch("Q:吻")
+		query.Count = 1005
+
+		result, err := Labels(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(result) != 1 {
+			t.Fatalf("expected one result, got %d", len(result))
+		}
+
+		assert.Equal(t, second.ID, result[0].ID)
+		assert.Equal(t, "吻", result[0].LabelName)
+	})
 }

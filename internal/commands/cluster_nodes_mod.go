@@ -9,7 +9,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -17,9 +19,10 @@ import (
 
 // flags for nodes mod
 var (
-	nodesModRoleFlag = &cli.StringFlag{Name: "role", Aliases: []string{"t"}, Usage: "node `ROLE` (portal, app, service)"}
-	nodesModInternal = &cli.StringFlag{Name: "advertise-url", Aliases: []string{"i"}, Usage: "internal service `URL`"}
-	nodesModLabel    = &cli.StringSliceFlag{Name: "label", Aliases: []string{"l"}, Usage: "`k=v` label (repeatable)"}
+	nodesModRoleFlag    = &cli.StringFlag{Name: "role", Aliases: []string{"t"}, Usage: "node `ROLE` (portal, instance, service)"}
+	nodesModInternal    = &cli.StringFlag{Name: "advertise-url", Aliases: []string{"i"}, Usage: "internal service `URL`"}
+	nodesModLabel       = &cli.StringSliceFlag{Name: "label", Aliases: []string{"l"}, Usage: "`k=v` label (repeatable)"}
+	nodesModDisplayName = &cli.StringFlag{Name: "display-name", Aliases: []string{"d"}, Usage: "human-friendly display `NAME` (admin override; empty clears it)"}
 )
 
 // ClusterNodesModCommand updates node fields.
@@ -32,6 +35,7 @@ var ClusterNodesModCommand = &cli.Command{
 		nodesModRoleFlag,
 		nodesModInternal,
 		nodesModLabel,
+		nodesModDisplayName,
 		YesFlag(),
 	},
 	Hidden: true, // Required for cluster-management only.
@@ -74,12 +78,25 @@ func clusterNodesModAction(ctx *cli.Context) error {
 		changes := make([]string, 0, 4)
 
 		if v := ctx.String("role"); v != "" {
-			n.Role = clean.TypeLowerDash(v)
+			role := cluster.NormalizeNodeRole(v)
+			switch role {
+			case cluster.RolePortal, cluster.RoleInstance, cluster.RoleService:
+				n.Role = role
+			default:
+				return cli.Exit(fmt.Errorf("invalid --role (must be portal, instance, or service)"), 2)
+			}
 			changes = append(changes, fmt.Sprintf("role=%s", clean.Log(n.Role)))
 		}
 		if v := ctx.String("advertise-url"); v != "" {
 			n.AdvertiseUrl = v
 			changes = append(changes, fmt.Sprintf("advertise-url=%s", clean.Log(n.AdvertiseUrl)))
+		}
+		// IsSet distinguishes an explicit (possibly empty) override from an absent
+		// flag: an empty value un-pins and falls back to the instance-reported name.
+		if ctx.IsSet("display-name") {
+			n.DisplayName = clean.TypeUnicode(strings.TrimSpace(ctx.String("display-name")))
+			n.NameSrc = entity.SrcManual
+			changes = append(changes, fmt.Sprintf("display-name=%s", clean.Log(n.DisplayName)))
 		}
 		if labels := ctx.StringSlice("label"); len(labels) > 0 {
 			if n.Labels == nil {
@@ -127,7 +144,7 @@ func clusterNodesModAction(ctx *cli.Context) error {
 			string(acl.ResourceCluster),
 			"update node", "%s",
 		}
-		args := []interface{}{clean.Log(nodeID)}
+		args := []any{clean.Log(nodeID)}
 
 		if changeSummary != "" {
 			segments = append(segments, "%s")

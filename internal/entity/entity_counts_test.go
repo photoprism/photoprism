@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -60,5 +61,71 @@ func TestUpdateLabelCountsIfNeeded(t *testing.T) {
 	}
 	if time.Unix(after, 0).Before(before.Add(-time.Minute)) {
 		t.Fatalf("timestamp not refreshed")
+	}
+}
+
+func TestUpdateCounts_NilDbReturnsCleanly(t *testing.T) {
+	// Simulate the post-CloseDb shutdown state where the entity DB
+	// provider has been nilled. UpdateCounts must return nil instead of
+	// panicking on a nil dialect lookup, otherwise an in-flight async
+	// goroutine spawned by UpdateCountsAsync would crash the process.
+	prev := dbConn
+	defer SetDbProvider(prev)
+	SetDbProvider(nil)
+
+	if err := UpdateCounts(); err != nil {
+		t.Fatalf("UpdateCounts on nil DB should return nil, got %v", err)
+	}
+}
+
+func TestWaitForAsyncJobs_DrainsRegisteredWork(t *testing.T) {
+	// Models the contract that config.CloseDb relies on: WaitForAsyncJobs
+	// must block until every AsyncJobAdd has a matching AsyncJobDone, so
+	// async count/cover update goroutines finish before the DB connection
+	// is torn down.
+	const workers = 8
+
+	started := make(chan struct{}, workers)
+	release := make(chan struct{})
+	var done sync.WaitGroup
+
+	done.Add(workers)
+	for range workers {
+		AsyncJobAdd()
+		go func() {
+			defer AsyncJobDone()
+			defer done.Done()
+			started <- struct{}{}
+			<-release
+		}()
+	}
+
+	// Make sure every goroutine is parked before we start the wait so the
+	// test exercises a real drain rather than a fast path on an empty WG.
+	for range workers {
+		<-started
+	}
+
+	waitDone := make(chan struct{})
+	go func() {
+		WaitForAsyncJobs()
+		close(waitDone)
+	}()
+
+	select {
+	case <-waitDone:
+		t.Fatalf("WaitForAsyncJobs returned before any worker called AsyncJobDone")
+	case <-time.After(20 * time.Millisecond):
+		// Expected — workers are still parked.
+	}
+
+	close(release)
+	done.Wait()
+
+	select {
+	case <-waitDone:
+		// Expected.
+	case <-time.After(2 * time.Second):
+		t.Fatalf("WaitForAsyncJobs did not return after all workers finished")
 	}
 }

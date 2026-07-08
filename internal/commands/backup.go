@@ -17,7 +17,9 @@ import (
 const backupDescription = `A custom filename for the database backup (or - to send the backup to stdout) can optionally be passed as argument.
 The --database flag can be omitted in this case. When using Docker, please run the docker command with the -T flag
 to prevent log messages from being sent to stdout. If nothing else is specified, the database and album backup paths
-will be automatically determined based on the current configuration.`
+will be automatically determined based on the current configuration.
+
+Backups to stdout (-), bypass the insufficient storage check, so dumps can be streamed even when the local storage is full.`
 
 // BackupCommand configures the command name, flags, and action.
 var BackupCommand = &cli.Command{
@@ -87,7 +89,7 @@ func backupAction(ctx *cli.Context) error {
 	defer cancel()
 
 	if err != nil {
-		return err
+		return cli.Exit(err, 1)
 	}
 
 	defer conf.Shutdown()
@@ -110,7 +112,7 @@ func backupAction(ctx *cli.Context) error {
 		}
 
 		if err = backup.Database(databasePath, fileName, fileName == "-", force, retain); err != nil {
-			return fmt.Errorf("failed to create database backup: %w", err)
+			return cli.Exit(fmt.Errorf("failed to create database backup: %w", err), 1)
 		}
 	}
 
@@ -124,7 +126,7 @@ func backupAction(ctx *cli.Context) error {
 		}
 
 		if count, backupErr := backup.Albums(albumsPath, true); backupErr != nil {
-			return backupErr
+			return cli.Exit(backupErr, 1)
 		} else {
 			log.Infof("backup: saved %s", english.Plural(count, "album backup", "album backups"))
 		}

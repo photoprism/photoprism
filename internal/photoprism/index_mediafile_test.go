@@ -1,12 +1,17 @@
 package photoprism
 
 import (
+	"fmt"
+	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestIndex_MediaFile(t *testing.T) {
@@ -59,7 +64,7 @@ func TestIndex_MediaFile(t *testing.T) {
 
 		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 		indexOpt := IndexOptionsAll(cfg)
-		mediaFile, err := NewMediaFile(cfg.ExamplesPath() + "/blue-go-video.mp4")
+		mediaFile, err := NewMediaFile(cfg.SamplesPath() + "/blue-go-video.mp4")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -86,6 +91,109 @@ func TestIndex_MediaFile(t *testing.T) {
 	})
 }
 
+// TestIndex_UserMediaFile_ParallelDuplicates verifies that byte-identical files indexed
+// concurrently by multiple workers result in exactly one photo and N-1 duplicate records.
+func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one shared
+	// SQLite file, so the database must be isolated for reliable row counts.
+	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-dup-race.db"))
+
+	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
+
+	// MediaFile.Root() resolves paths against the package-level config, so it
+	// must point to the test config for files to be detected as originals.
+	oldCfg := Config()
+	SetConfig(cfg)
+
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	testFile, err := NewMediaFile("testdata/flash.jpg")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	const numCopies = 3
+
+	copyNames := make([]string, numCopies)
+
+	for i := range copyNames {
+		copyNames[i] = filepath.Join(cfg.OriginalsPath(), fmt.Sprintf("folder%d", i), "flash.jpg")
+
+		if copyErr := testFile.Copy(copyNames[i], false); copyErr != nil {
+			t.Fatal(copyErr)
+		}
+	}
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	indexOpt := IndexOptionsSingle(cfg)
+
+	// The test database is seeded with entity fixtures, so all row counts are compared as deltas.
+	var basePhotos, baseFiles, baseDuplicates int
+
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Count(&basePhotos).Error)
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Count(&baseFiles).Error)
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.Duplicate{}).Count(&baseDuplicates).Error)
+
+	mediaFiles := make([]*MediaFile, numCopies)
+
+	for i, name := range copyNames {
+		if mediaFiles[i], err = NewMediaFile(name); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	results := make([]IndexResult, numCopies)
+	start := make(chan struct{})
+
+	var wg sync.WaitGroup
+
+	for i := range mediaFiles {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			<-start
+			results[i] = ind.UserMediaFile(mediaFiles[i], indexOpt, "", "", entity.OwnerUnknown)
+		}(i)
+	}
+
+	close(start)
+	wg.Wait()
+
+	added, duplicates := 0, 0
+
+	for _, result := range results {
+		switch result.Status {
+		case IndexAdded:
+			added++
+		case IndexDuplicate:
+			duplicates++
+		default:
+			t.Fatalf("unexpected index result %s (%v)", result.Status, result.Err)
+		}
+	}
+
+	assert.Equal(t, 1, added)
+	assert.Equal(t, numCopies-1, duplicates)
+
+	var photoCount, fileCount, duplicateCount int
+
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Count(&photoCount).Error)
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Count(&fileCount).Error)
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.Duplicate{}).Count(&duplicateCount).Error)
+
+	assert.Equal(t, basePhotos+1, photoCount)
+	assert.Equal(t, baseFiles+1, fileCount)
+	assert.Equal(t, baseDuplicates+numCopies-1, duplicateCount)
+}
+
 func TestIndexResult_Archived(t *testing.T) {
 	t.Run("True", func(t *testing.T) {
 		r := &IndexResult{IndexArchived, nil, 5, "", 5, ""}
@@ -106,4 +214,76 @@ func TestIndexResult_Skipped(t *testing.T) {
 		r := &IndexResult{IndexAdded, nil, 5, "", 5, ""}
 		assert.False(t, r.Skipped())
 	})
+}
+
+// TestIndex_IndexedFileOriginalName verifies that files placed directly in
+// originals/ and indexed (never imported) are not assigned an OriginalName,
+// so the displayed card name keeps following the current file name after a
+// rename and re-index.
+func TestIndex_IndexedFileOriginalName(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one
+	// shared SQLite file; the database and storage must be isolated so the
+	// flash.jpg content does not collide by hash with a row another test
+	// indexed with an explicit original name.
+	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-original-name.db"))
+
+	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
+
+	// MediaFile.Root() and the ExifTool cache resolve against the package-level
+	// config, so it must point to the test config for this run.
+	oldCfg := Config()
+	SetConfig(cfg)
+
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+	opt := IndexOptionsSingle(cfg)
+
+	srcFile, err := NewMediaFile("testdata/flash.jpg")
+	require.NoError(t, err)
+
+	first := filepath.Join(cfg.OriginalsPath(), "indexed-original-name", "indexed-photo.jpg")
+	require.NoError(t, srcFile.Copy(first, false))
+
+	mf1, err := NewMediaFile(first)
+	require.NoError(t, err)
+	hash := mf1.Hash()
+
+	// The ExifTool JSON cache is keyed by content hash and records the current
+	// file name; index_main.go creates it before indexing the media file.
+	require.NoError(t, mf1.CreateExifToolJson(convert))
+
+	// Plain index: callers pass an empty originalName for indexed files.
+	res1 := ind.MediaFile(mf1, opt, "", "")
+	require.True(t, res1.Success())
+
+	var file1 entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file1, "file_hash = ?", hash).Error)
+	assert.Empty(t, file1.OriginalName, "freshly indexed file must not carry an OriginalName")
+
+	// Rename the file in originals/. The content (and therefore the hash and
+	// the cached ExifTool JSON, which still records the old name) is unchanged,
+	// which is what previously leaked a stale name into OriginalName.
+	renamed := filepath.Join(cfg.OriginalsPath(), "indexed-original-name", "renamed-photo.jpg")
+	require.NoError(t, fs.Move(first, renamed, false))
+
+	mf2, err := NewMediaFile(renamed)
+	require.NoError(t, err)
+	require.NoError(t, mf2.CreateExifToolJson(convert))
+
+	res2 := ind.MediaFile(mf2, opt, "", "")
+	require.True(t, res2.Success())
+
+	var file2 entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file2, "file_hash = ?", hash).Error)
+	assert.Equal(t, "indexed-original-name/renamed-photo.jpg", file2.FileName)
+	assert.Empty(t, file2.OriginalName, "re-indexed renamed file must not pick up a stale OriginalName")
 }

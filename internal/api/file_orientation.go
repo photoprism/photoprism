@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -57,6 +58,15 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 			return
 		}
 
+		// Limit the edit to the file's photo within the session's shared scope. Gating on the file's
+		// own PhotoUID (not the path :uid) prevents pairing an in-scope :uid with an out-of-scope file.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(m.PhotoUID, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		// Init form with model values
 		frm, err := form.NewFile(m)
 
@@ -66,7 +76,14 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 		}
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err = c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
@@ -106,7 +123,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, m.PhotoUID, c)
+		PublishPhotoEvent(StatusUpdated, m.PhotoUID)
 
 		c.JSON(http.StatusOK, p)
 	})

@@ -28,6 +28,12 @@ func usersAddAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		conf.MigrateDb(false, nil)
 
+		// Reject flags placed after the username; the stdlib flag parser
+		// would silently drop them and create the account with the defaults.
+		if err := RejectTrailingFlags(ctx); err != nil {
+			return err
+		}
+
 		frm := form.NewUserFromCli(ctx)
 
 		interactive := true

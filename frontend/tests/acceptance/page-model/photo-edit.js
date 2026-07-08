@@ -1,4 +1,5 @@
 import { Selector, t } from "testcafe";
+import { clickIfVisible } from "./helpers";
 
 export default class Page {
   constructor() {
@@ -13,14 +14,14 @@ export default class Page {
     this.labelsTab = Selector("#tab-labels", { timeout: 15000 });
     this.peopleTab = Selector("#tab-people", { timeout: 15000 });
 
-    this.locationAction = Selector(".input-coordinates i.action-map", { timeout: 15000 });
-    this.locationSearch = Selector("div.p-location-dialog .v-autocomplete", { timeout: 15000 });
-    this.locationClear = Selector(".input-coordinates i.action-delete", { timeout: 15000 });
-    this.locationUndo = Selector("div.p-location-dialog .input-coordinates i.action-undo", { timeout: 15000 });
-    this.locationInput = Selector("div.p-location-dialog .input-coordinates input", { timeout: 15000 });
-    this.locationConfirm = Selector("div.p-location-dialog button.action-confirm", { timeout: 15000 });
-    this.locationCancel = Selector("div.p-location-dialog button.action-cancel", { timeout: 15000 });
-    this.locationMarker = Selector("div.maplibregl-marker", { timeout: 15000 });
+    this.locationAction = Selector(".input-coordinates .action-map", { timeout: 15000 });
+    this.locationSearch = Selector("div.p-meta-location-dialog .v-autocomplete", { timeout: 15000 });
+    this.locationClear = Selector(".input-coordinates .action-delete", { timeout: 15000 });
+    this.locationUndo = Selector("div.p-meta-location-dialog .input-coordinates .action-undo", { timeout: 15000 });
+    this.locationInput = Selector("div.p-meta-location-dialog .input-coordinates input", { timeout: 15000 });
+    this.locationConfirm = Selector("div.p-meta-location-dialog button.action-confirm", { timeout: 15000 });
+    this.locationCancel = Selector("div.p-meta-location-dialog button.action-cancel", { timeout: 15000 });
+    this.locationMarker = Selector("div.maplibregl-marker", { timeout: 30000 });
 
     this.batchDialog = Selector("div.v-dialog--batch-edit");
     this.batchDialogTitle = Selector("div.v-dialog--batch-edit div.v-toolbar-title");
@@ -30,6 +31,7 @@ export default class Page {
     this.batchDialogToolbarCloseAction = Selector("div.v-dialog--batch-edit header.v-toolbar button.action-close");
     this.batchToggleAllCheckbox = Selector("div.v-dialog--batch-edit .toggle-all div.v-selection-control__input");
     this.batchToggleSelectCheckbox = Selector("div.v-dialog--batch-edit .toggle-select div.v-selection-control__input");
+    this.batchLabels = Selector("div.v-dialog--batch-edit .input-labels", { timeout: 15000 });
 
     this.detailsDone = Selector(".p-form-photo-details-meta button.action-done", {
       timeout: 15000,
@@ -70,8 +72,8 @@ export default class Page {
     this.license = Selector(".input-license textarea", { timeout: 15000 });
     this.description = Selector(".input-caption textarea", { timeout: 15000 });
     this.notes = Selector(".input-notes textarea", { timeout: 15000 });
-    this.camera = Selector(".input-camera input", { timeout: 15000 });
-    this.lens = Selector(".input-lens input", { timeout: 15000 });
+    this.camera = Selector(".input-camera input", { timeout: 15000 }).parent('div[class="v-field__input"]');
+    this.lens = Selector(".input-lens input", { timeout: 15000 }).parent('div[class="v-field__input"]');
     this.cameraValue = Selector(".input-camera .v-select__selection-text", { timeout: 15000 });
     this.lensValue = Selector(".input-lens .v-select__selection-text", { timeout: 15000 });
 
@@ -279,6 +281,7 @@ export default class Page {
 
     await t.click(Selector("button.action-approve"));
     await t.expect(this.coordinates.visible, { timeout: 5000 }).ok();
-    await t.click(this.detailsApply).click(Selector("button.action-close"));
+    await clickIfVisible(t, this.detailsApply);
+    await t.click(Selector("button.action-discard"));
   }
 }

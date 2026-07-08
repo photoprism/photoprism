@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
@@ -83,7 +83,115 @@ describe("common/config", () => {
     const config = new Config(storage, values);
     expect(config.debug).toBe(true);
     expect(config.demo).toBe(false);
+    expect(config.frontendUri).toBe("/library");
+    expect(config.loginUri).toBe("/library/login");
     expect(config.apiUri).toBe("/api/v1");
+  });
+
+  it("derives login uri from configured frontend uri", () => {
+    const storage = new StorageShim();
+    const values = {
+      siteTitle: "Foo",
+      baseUri: "/portal",
+      frontendUri: "/portal/",
+    };
+
+    const config = new Config(storage, values);
+    expect(config.frontendUri).toBe("/portal");
+    expect(config.loginUri).toBe("/portal/login");
+  });
+
+  it("uses base uri fallback when frontend uri is missing", () => {
+    const storage = new StorageShim();
+    const values = {
+      siteTitle: "Foo",
+      baseUri: "/portal",
+    };
+
+    const config = new Config(storage, values);
+    expect(config.frontendUri).toBe("/portal/library");
+    expect(config.loginUri).toBe("/portal/library/login");
+  });
+
+  it("themeAssetUri resolves a bare basename into the theme dir", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+    expect(config.themeAssetUri("icons/logo.svg")).toBe("/i/pro-1/_theme/icons/logo.svg");
+  });
+
+  it("themeAssetUri resolves a bare basename without a base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo" });
+    expect(config.themeAssetUri("logo.svg")).toBe("/_theme/logo.svg");
+  });
+
+  it("themeAssetUri still prefixes a root-relative theme path with the base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
+  it("themeAssetUri returns the path unchanged without a base uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo" });
+    expect(config.themeAssetUri("/_theme/logo.svg")).toBe("/_theme/logo.svg");
+  });
+
+  it("themeAssetUri leaves absolute, protocol-relative, data, already-prefixed, and empty paths alone", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1" });
+    expect(config.themeAssetUri("https://cdn.example.com/logo.svg")).toBe("https://cdn.example.com/logo.svg");
+    expect(config.themeAssetUri("//cdn.example.com/logo.svg")).toBe("//cdn.example.com/logo.svg");
+    expect(config.themeAssetUri("data:image/svg+xml;base64,AAAA")).toBe("data:image/svg+xml;base64,AAAA");
+    expect(config.themeAssetUri("/i/pro-1/_theme/logo.svg")).toBe("/i/pro-1/_theme/logo.svg");
+    expect(config.themeAssetUri("")).toBe("");
+  });
+
+  it("getIcon resolves a theme-provided basename icon against the base uri", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      settings: { ui: { theme: "branded" } },
+    });
+    themes.Set("branded", { name: "branded", title: "Branded", colors: {}, variables: { icon: "logo.svg" } });
+    config.setTheme("branded");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
+  it("getIcon still resolves a legacy /_theme path-style icon", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      settings: { ui: { theme: "legacy" } },
+    });
+    themes.Set("legacy", { name: "legacy", title: "Legacy", colors: {}, variables: { icon: "/_theme/logo.svg" } });
+    config.setTheme("legacy");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
+  it("getIcon resolves a built-in appIcon name against the static uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1", appIcon: "bloom" });
+    expect(config.getIcon()).toBe("/i/pro-1/static/icons/bloom.svg");
+  });
+
+  it("getIcon resolves each selectable app-icon variant to its static svg", () => {
+    ["crisp", "mint", "bold", "bloom", "flower", "ring", "shutter"].forEach((name) => {
+      const config = new Config(new StorageShim(), { siteTitle: "Foo", appIcon: name });
+      expect(config.getIcon()).toBe(`/static/icons/${name}.svg`);
+    });
+  });
+
+  it("getIcon falls back to the logo for an unknown or empty app-icon name", () => {
+    expect(new Config(new StorageShim(), { siteTitle: "Foo", appIcon: "does-not-exist" }).getIcon()).toBe("/static/icons/logo.svg");
+    expect(new Config(new StorageShim(), { siteTitle: "Foo" }).getIcon()).toBe("/static/icons/logo.svg");
+  });
+
+  it("getIcon prefers a theme-provided icon over the appIcon setting", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      appIcon: "bloom",
+      settings: { ui: { theme: "branded-icon" } },
+    });
+    themes.Set("branded-icon", { name: "branded-icon", title: "Branded", colors: {}, variables: { icon: "logo.svg" } });
+    config.setTheme("branded-icon");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
   });
 
   it("should store values", () => {
@@ -161,6 +269,17 @@ describe("common/config", () => {
   it("should return feature", () => {
     expect(defaultConfig.feature("places")).toBe(true);
     expect(defaultConfig.feature("download")).toBe(true);
+  });
+
+  it("featAppPasswords mirrors the appPasswords feature flag", () => {
+    const cfg = createTestConfig();
+    const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+    settings.features = { ...settings.features, appPasswords: true };
+    cfg.set("settings", settings);
+    expect(cfg.featAppPasswords()).toBe(true);
+    settings.features = { ...settings.features, appPasswords: false };
+    cfg.set("settings", settings);
+    expect(cfg.featAppPasswords()).toBe(false);
   });
 
   it("returns albums when library access is restricted", () => {
@@ -241,50 +360,6 @@ describe("common/config", () => {
     });
 
     expect(cfg.getDefaultRoute()).toBe("browse");
-  });
-
-  it("should test get name", () => {
-    const result = defaultConfig.getPerson("a");
-    expect(result).toBeNull();
-
-    const result2 = defaultConfig.getPerson("Andrea Sander");
-    expect(result2.UID).toBe("jr0jgyx2viicdnf7");
-
-    const result3 = defaultConfig.getPerson("Otto Sander");
-    expect(result3.UID).toBe("jr0jgyx2viicdn88");
-  });
-
-  it("should create, update and delete people", () => {
-    const storage = new StorageShim();
-    const values = { Debug: true, siteTitle: "Foo", country: "Germany", city: "Hamburg" };
-
-    const cfg = new Config(storage, values);
-    cfg.onPeople("people.created", { entities: {} });
-    expect(cfg.values.people).toEqual([]);
-    cfg.onPeople("people.created", {
-      entities: [
-        {
-          UID: "abc123",
-          Name: "Test Name",
-          Keywords: ["Test", "Name"],
-        },
-      ],
-    });
-    expect(cfg.values.people[0].Name).toBe("Test Name");
-    cfg.onPeople("people.updated", {
-      entities: [
-        {
-          UID: "abc123",
-          Name: "New Name",
-          Keywords: ["New", "Name"],
-        },
-      ],
-    });
-    expect(cfg.values.people[0].Name).toBe("New Name");
-    cfg.onPeople("people.deleted", {
-      entities: ["abc123"],
-    });
-    expect(cfg.values.people).toEqual([]);
   });
 
   it("should return language locale", () => {
@@ -452,5 +527,95 @@ describe("common/config", () => {
     await cfg.setLanguage("en", true);
     expect(document.dir).toBe("ltr");
     expect(cfg.dir()).toBe("ltr");
+  });
+
+  // A10 contract: isPublic / isDemo / isPortal must return a Boolean for every
+  // input shape so that bindings like `:disabled="isDemo"` never pass undefined
+  // to a Vuetify Boolean prop. See #4966.
+  describe("isPublic / isDemo / isPortal Boolean contract", () => {
+    const make = (overrides) => new Config(new StorageShim(), { ...window.__CONFIG__, ...overrides });
+
+    it("return Boolean false when the underlying flag is missing", () => {
+      const cfg = make({ public: undefined, demo: undefined, portal: undefined });
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
+    it("return Boolean true when the underlying flag is true", () => {
+      const cfg = make({ public: true, demo: true, portal: true });
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(true);
+      }
+    });
+    it("return Boolean false when `values` itself is missing", () => {
+      const cfg = new Config(new StorageShim(), null);
+      for (const fn of ["isPublic", "isDemo", "isPortal"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
+  });
+
+  describe("cluster OIDC accessors", () => {
+    const make = (oidc) => new Config(new StorageShim(), { ...window.__CONFIG__, ext: { oidc } });
+
+    it("isClusterOidc reflects the ext.oidc.cluster flag as a Boolean", () => {
+      expect(make({ cluster: true }).isClusterOidc()).toBe(true);
+      expect(make({ cluster: false }).isClusterOidc()).toBe(false);
+      expect(make(undefined).isClusterOidc()).toBe(false);
+      expect(new Config(new StorageShim(), null).isClusterOidc()).toBe(false);
+    });
+
+    it("oidcLoginUri returns the ext.oidc.loginUri or an empty string", () => {
+      expect(make({ loginUri: "/library/api/v1/oidc/login" }).oidcLoginUri()).toBe("/library/api/v1/oidc/login");
+      expect(make({}).oidcLoginUri()).toBe("");
+      expect(new Config(new StorageShim(), null).oidcLoginUri()).toBe("");
+    });
+
+    it("portalLoginUri returns the ext.oidc.portalLoginUri or an empty string", () => {
+      expect(make({ portalLoginUri: "https://app.example.com/portal/login" }).portalLoginUri()).toBe("https://app.example.com/portal/login");
+      expect(make({}).portalLoginUri()).toBe("");
+      expect(new Config(new StorageShim(), null).portalLoginUri()).toBe("");
+    });
+
+    it("oidcLogout reflects the ext.oidc.logout flag as a Boolean", () => {
+      expect(make({ logout: true }).oidcLogout()).toBe(true);
+      expect(make({ logout: false }).oidcLogout()).toBe(false);
+      expect(make(undefined).oidcLogout()).toBe(false);
+      expect(new Config(new StorageShim(), null).oidcLogout()).toBe(false);
+    });
+  });
+
+  describe("storage availability", () => {
+    const make = (usage) => new Config(new StorageShim(), { ...window.__CONFIG__, usage });
+
+    it("filesQuotaReached returns true only when the files quota is reached or exceeded", () => {
+      expect(make({ filesUsedPct: 99 }).filesQuotaReached()).toBe(false);
+      expect(make({ filesUsedPct: 100 }).filesQuotaReached()).toBe(true);
+      expect(make({ filesUsedPct: 101 }).filesQuotaReached()).toBe(true);
+    });
+    it("storageLow mirrors the usage.storageLow flag as a Boolean", () => {
+      expect(make({ storageLow: true }).storageLow()).toBe(true);
+      expect(make({ storageLow: false }).storageLow()).toBe(false);
+      expect(make({}).storageLow()).toBe(false);
+    });
+    it("insufficientStorage is true when either the quota is reached or storage is low", () => {
+      expect(make({ filesUsedPct: 50, storageLow: false }).insufficientStorage()).toBe(false);
+      expect(make({ filesUsedPct: 100, storageLow: false }).insufficientStorage()).toBe(true);
+      expect(make({ filesUsedPct: 50, storageLow: true }).insufficientStorage()).toBe(true);
+    });
+    it("return Boolean false when usage info is missing", () => {
+      const cfg = new Config(new StorageShim(), null);
+      for (const fn of ["filesQuotaReached", "storageLow", "insufficientStorage"]) {
+        const result = cfg[fn]();
+        expect(typeof result, fn).toBe("boolean");
+        expect(result, fn).toBe(false);
+      }
+    });
   });
 });

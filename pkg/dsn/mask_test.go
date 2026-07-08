@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+//nolint:gosec // G101: DSN masking tests intentionally use inline credential samples.
 func TestMask(t *testing.T) {
 	tests := []struct {
 		name string

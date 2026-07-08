@@ -86,7 +86,7 @@
                         hide-details
                         autocorrect="off"
                         autocapitalize="none"
-                        autocomplete="username"
+                        :autocomplete="usernameAutocomplete"
                         class="input-username text-selectable"
                         prepend-inner-icon="mdi-account"
                         @keyup.enter="onLogin"
@@ -105,7 +105,7 @@
                         hide-details
                         autocorrect="off"
                         autocapitalize="none"
-                        autocomplete="current-password"
+                        :autocomplete="passwordAutocomplete"
                         class="input-password text-selectable"
                         :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                         prepend-inner-icon="mdi-lock"
@@ -115,7 +115,7 @@
                     </v-col>
                   </template>
                   <v-col cols="12" class="auth-actions">
-                    <div class="action-buttons auth-buttons pb-1 d-flex ga-3 align-center justify-center">
+                    <div class="action-buttons auth-buttons pb-2 mb-0 d-flex ga-3 align-center justify-center">
                       <v-btn
                         v-if="enterCode"
                         :block="$vuetify.display.xs"
@@ -148,16 +148,26 @@
                         <v-icon :icon="$config.isRtl() ? 'mdi-chevron-left' : 'mdi-chevron-right'" end></v-icon>
                       </v-btn>
                     </div>
+                    <div class="auth-actions__options">
+                      <v-checkbox
+                        v-model="staySignedIn"
+                        :disabled="loading"
+                        color="highlight"
+                        hide-details
+                        class="ma-0 pa-0 input-stay-signed-in text-secondary"
+                        :label="$gettext('Stay signed in on this device')"
+                      ></v-checkbox>
+                    </div>
                     <div
                       v-if="enterCode"
-                      class="auth-links text-center opacity-80"
+                      class="auth-links text-center opacity-90"
                       :class="{ clickable: !useRecoveryCode }"
                       @click.stop.prevent="onUseRecoveryCode"
                     >
                       {{ $gettext(`Can't access your authenticator app or device?`) }}
                       {{ $gettext(`Use your recovery code or contact an administrator for help.`) }}
                     </div>
-                    <div v-else-if="passwordResetUri" class="auth-links text-center opacity-80">
+                    <div v-else-if="passwordResetUri" class="auth-links text-center opacity-90">
                       <a :href="passwordResetUri" class="text-secondary">
                         {{ $gettext(`Forgot password?`) }}
                       </a>
@@ -204,6 +214,7 @@ export default {
       username: "",
       password: "",
       showPassword: false,
+      staySignedIn: true,
       useRecoveryCode: false,
       code: "",
       enterCode: false,
@@ -219,6 +230,29 @@ export default {
     };
   },
   computed: {
+    autocompleteSection() {
+      const storageNamespace = this.config?.storageNamespace;
+
+      if (typeof storageNamespace === "string" && storageNamespace.trim() !== "") {
+        const section = storageNamespace
+          .toLowerCase()
+          .replace(/[^a-z0-9-]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        if (section !== "") {
+          return `section-${section}`;
+        }
+      }
+
+      return "section-photoprism";
+    },
+    usernameAutocomplete() {
+      return `${this.autocompleteSection} username`;
+    },
+    passwordAutocomplete() {
+      return `${this.autocompleteSection} current-password`;
+    },
     loginDisabled() {
       if (this.loading) {
         return true;
@@ -231,14 +265,34 @@ export default {
     },
   },
   created() {
-    const authError = getAppStorage().getItem("session.error");
-    if (authError) {
-      this.$notify.error(authError);
-      getAppStorage().removeItem("session.error");
-    }
+    this.staySignedIn = this.currentStaySignedInState();
   },
   mounted() {
     this.$view.enter(this, this.$refs?.form, 'input[value=""], button.action-confirm');
+
+    // Surface an OIDC sign-in failure (e.g. "no access to this instance")
+    // stashed by the auth bridge before its full-page redirect. In mounted() so
+    // the notification component has already subscribed (its created() runs
+    // before any mounted()).
+    const messageId = getAppStorage().getItem("session.messageId");
+    const authError = getAppStorage().getItem("session.error");
+    if (messageId || authError) {
+      let messageParams = [];
+      const rawParams = getAppStorage().getItem("session.messageParams");
+      if (rawParams) {
+        try {
+          messageParams = JSON.parse(rawParams);
+        } catch (e) {
+          messageParams = [];
+        }
+      }
+      getAppStorage().removeItem("session.error");
+      getAppStorage().removeItem("session.messageId");
+      getAppStorage().removeItem("session.messageParams");
+      // Render in the current UI locale via the message key (notify.vue applies
+      // Tp); the server-rendered string stays as the fallback.
+      this.$notify.error(authError, messageId, messageParams);
+    }
   },
   unmounted() {
     this.$view.leave(this);
@@ -293,6 +347,20 @@ export default {
         });
       }
     },
+    currentStaySignedInState() {
+      if (typeof this.$session?.usesSessionStorage === "function") {
+        return !this.$session.usesSessionStorage();
+      }
+
+      return getAppStorage().getItem("session") !== "true";
+    },
+    applySessionPersistence() {
+      if (this.staySignedIn) {
+        this.$session.useLocalStorage();
+      } else {
+        this.$session.useSessionStorage();
+      }
+    },
     onLogin() {
       const username = this.username.trim();
       const password = this.password.trim();
@@ -302,6 +370,7 @@ export default {
         return;
       }
 
+      this.applySessionPersistence();
       this.loading = true;
       this.$session
         .login(username, password, code)
@@ -324,7 +393,13 @@ export default {
       }
 
       if (this.config.ext?.oidc?.loginUri) {
+        this.applySessionPersistence();
         this.loading = true;
+        // Arm the per-tab OIDC attempt guard (not the post-login redirect loop
+        // guard): a failed or abandoned roundtrip then falls back to the form via
+        // consumeOidcAttempt instead of auto-redirecting again, while a stored deep
+        // link or Portal return_to survives for the authenticated return trip.
+        this.$session.markOidcAttempt();
         this.$session.followRedirect(this.config.ext.oidc.loginUri);
       } else {
         this.$notify.warn(this.$gettext("Missing or invalid configuration"));

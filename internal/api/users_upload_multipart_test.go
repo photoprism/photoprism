@@ -40,7 +40,7 @@ func buildMultipart(files map[string][]byte) (body *bytes.Buffer, contentType st
 func buildMultipartTwo(name1 string, data1 []byte, name2 string, data2 []byte) (body *bytes.Buffer, contentType string, err error) {
 	body = &bytes.Buffer{}
 	mw := multipart.NewWriter(body)
-	for _, it := range [][2]interface{}{{name1, data1}, {name2, data2}} {
+	for _, it := range [][2]any{{name1, data1}, {name2, data2}} {
 		fw, cerr := mw.CreateFormFile("files", it[0].(string))
 		if cerr != nil {
 			return nil, "", cerr
@@ -321,6 +321,33 @@ func TestUploadUserFiles_Multipart_TotalLimitExceeded(t *testing.T) {
 	assert.LessOrEqual(t, len(files), 1)
 }
 
+func TestUploadUserFiles_Multipart_RequestTooLarge(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.Options().UploadAllow = "jpg"
+	conf.Options().UploadLimit = 1
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+
+	adminUid := entity.Admin.UserUID
+	defer removeUploadDirsForToken(t, filepath.Join(conf.UserStoragePath(adminUid), "upload"), "toolarge")
+
+	tooLarge := bytes.Repeat([]byte("A"), 3*1024*1024)
+	body, ctype, err := buildMultipart(map[string][]byte{"big.jpg": tooLarge})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/toolarge", body)
+	req.Header.Set("Content-Type", ctype)
+	header.SetAuthorization(req, token)
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
+	files := findUploadedFilesForToken(t, filepath.Join(conf.UserStoragePath(adminUid), "upload"), "toolarge")
+	assert.Empty(t, files)
+}
+
 func TestUploadUserFiles_Multipart_ZipPartialExtraction(t *testing.T) {
 	app, router, conf := NewApiTest()
 	conf.Options().UploadArchives = true
@@ -342,7 +369,7 @@ func TestUploadUserFiles_Multipart_ZipPartialExtraction(t *testing.T) {
 
 	var zbuf bytes.Buffer
 	zw := zip.NewWriter(&zbuf)
-	for i := 0; i < 20; i++ { // ~20 * 63 KiB ≈ 1.2 MiB
+	for i := range 20 { // ~20 * 63 KiB ≈ 1.2 MiB
 		f, _ := zw.Create(fmt.Sprintf("pic%02d.jpg", i+1))
 		_, _ = f.Write(data)
 	}
@@ -390,7 +417,7 @@ func TestUploadUserFiles_Multipart_ZipDeepNestingStress(t *testing.T) {
 
 	// Build a deeply nested path (20 levels)
 	deep := ""
-	for i := 0; i < 20; i++ {
+	for i := range 20 {
 		if i == 0 {
 			deep = "deep"
 		} else {

@@ -68,6 +68,64 @@ func TestConfig_OIDCClient(t *testing.T) {
 	assert.Equal(t, "", c.OIDCClient())
 }
 
+func TestConfig_SetOIDCClient(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.SetOIDCClient("  cs5cpu17n6gj2qo5  ")
+	assert.Equal(t, "cs5cpu17n6gj2qo5", c.OIDCClient())
+	c.SetOIDCClient("")
+	assert.Equal(t, "", c.OIDCClient())
+}
+
+func TestConfig_SetOIDCSecret(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.SetOIDCSecret("topsecret123456")
+	assert.Equal(t, "topsecret123456", c.OIDCSecret())
+	c.SetOIDCSecret("")
+	assert.Equal(t, "", c.OIDCSecret())
+}
+
+func TestConfig_SetOIDCUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.SetOIDCUri("  https://app.localssl.dev/  ")
+	assert.Equal(t, "https://app.localssl.dev/", c.OIDCUri().String())
+	c.SetOIDCUri("")
+	assert.Equal(t, "", c.OIDCUri().String())
+}
+
+func TestConfig_ClusterOIDC(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.ClusterOIDC())
+	c.options.ClusterOIDC = true
+	assert.True(t, c.ClusterOIDC())
+}
+
+func TestConfig_OIDCIssuerOnSiteDomain(t *testing.T) {
+	t.Run("SharedDomainMatch", func(t *testing.T) {
+		// Instance under /i/pro-1 with the Portal OP at the shared-domain root.
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://app.localssl.dev/i/pro-1/"
+		c.options.OIDCUri = "https://app.localssl.dev/"
+		assert.True(t, c.OIDCIssuerOnSiteDomain())
+	})
+	t.Run("SubdomainIsolatedIssuerDiffers", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://node1.example.com/"
+		c.options.OIDCUri = "https://portal.example.com/"
+		assert.False(t, c.OIDCIssuerOnSiteDomain())
+	})
+	t.Run("ExternalIdP", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://app.localssl.dev/i/pro-1/"
+		c.options.OIDCUri = "https://keycloak.example.com/realms/main"
+		assert.False(t, c.OIDCIssuerOnSiteDomain())
+	})
+	t.Run("NoIssuer", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://app.localssl.dev/i/pro-1/"
+		assert.False(t, c.OIDCIssuerOnSiteDomain())
+	})
+}
+
 func TestConfig_OIDCSecret(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -108,6 +166,16 @@ func TestConfig_OIDCRedirect(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.False(t, c.OIDCRedirect())
+}
+
+func TestConfig_OIDCPrompt(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.OIDCPrompt())
+
+	c.options.OIDCPrompt = "  select_account  "
+
+	assert.Equal(t, "select_account", c.OIDCPrompt())
 }
 
 func TestConfig_OIDCUsername(t *testing.T) {
@@ -160,10 +228,22 @@ func TestConfig_OIDCGroupRoles(t *testing.T) {
 		"def-456:guest",
 		"invalid",
 		"=none",
+		"ghi-789=visitor",
 	}
 
 	roles := c.OIDCGroupRoles()
 
+	assert.Equal(t, acl.RoleAdmin, roles["abc-123"])
+	assert.Equal(t, acl.RoleGuest, roles["def-456"])
+	// A mapping to a non-federatable role (visitor, like cluster_admin) is
+	// dropped so a compromised IdP cannot assign it via group membership.
+	assert.NotContains(t, roles, "ghi-789")
+	assert.Len(t, roles, 2)
+
+	// A single env value with whitespace-separated pairs (StringSlice env only
+	// splits on commas) must still resolve every pair.
+	c.options.OIDCGroupRole = []string{"abc-123=admin def-456=guest"}
+	roles = c.OIDCGroupRoles()
 	assert.Equal(t, acl.RoleAdmin, roles["abc-123"])
 	assert.Equal(t, acl.RoleGuest, roles["def-456"])
 	assert.Len(t, roles, 2)
@@ -193,6 +273,16 @@ func TestConfig_OIDCRegister(t *testing.T) {
 	assert.False(t, c.OIDCRegister())
 }
 
+func TestConfig_OIDCLogout(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.OIDCLogout())
+
+	c.options.OIDCLogout = true
+
+	assert.True(t, c.OIDCLogout())
+}
+
 func TestConfig_OIDCRole(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -205,6 +295,12 @@ func TestConfig_OIDCRole(t *testing.T) {
 	c.options.OIDCRole = "admin"
 
 	assert.Equal(t, acl.RoleAdmin, c.OIDCRole())
+
+	// A non-federatable default role (visitor, like cluster_admin) is ignored so
+	// new OIDC accounts are never provisioned as an operator or anonymous role.
+	c.options.OIDCRole = "visitor"
+
+	assert.Equal(t, acl.RoleNone, c.OIDCRole())
 }
 
 func TestConfig_OIDCWebDAV(t *testing.T) {

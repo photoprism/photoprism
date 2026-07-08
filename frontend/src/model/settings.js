@@ -12,7 +12,9 @@ export class Settings extends Model {
   }
 
   setValues(values, scalarOnly) {
-    if (!values) return;
+    if (!values) {
+      return;
+    }
 
     if (values.maps?.style === "basic" || values.maps?.style === "offline") {
       values.maps.style = "";

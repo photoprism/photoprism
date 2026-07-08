@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"net/url"
 	"os"
 	"slices"
@@ -14,8 +13,11 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/safe"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
+
+const imageAcceptHeader = "image/jpeg, image/png, image/webp, image/avif, image/heic, image/heif, */*;q=0.1"
 
 // DataUrl generates a data URL of the binary data from the specified io.Reader.
 func DataUrl(r io.Reader) string {
@@ -61,6 +63,19 @@ func DataBase64(r io.Reader) string {
 // fetches its data from a remote http or https URL,
 // or decodes a base64 data URL as created by DataUrl.
 func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
+	return ReadUrlWithOptions(fileUrl, schemes, nil)
+}
+
+// ReadUrlImage reads binary image data with strict remote URL safety defaults.
+func ReadUrlImage(fileUrl string, schemes []string) (data []byte, err error) {
+	return ReadUrlWithOptions(fileUrl, schemes, &safe.Options{
+		AllowPrivate: false,
+		Accept:       imageAcceptHeader,
+	})
+}
+
+// ReadUrlWithOptions reads binary data while applying optional safe HTTP options for remote URLs.
+func ReadUrlWithOptions(fileUrl string, schemes []string, opt *safe.Options) (data []byte, err error) {
 	if fileUrl == "" {
 		return data, errors.New("missing url")
 	}
@@ -81,20 +96,12 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 
 	// Fetch the file data from the specified URL, depending on its scheme.
 	switch u.Scheme {
-	case scheme.Https, scheme.Http, scheme.Unix, scheme.HttpUnix:
-		resp, httpErr := http.Get(fileUrl) //nolint:gosec // URL already validated by caller; https/http only
-
-		if httpErr != nil {
-			return data, fmt.Errorf("invalid %s url (%s)", u.Scheme, httpErr)
+	case scheme.Https, scheme.Http:
+		if data, err = readRemoteUrl(fileUrl, opt); err != nil {
+			return data, fmt.Errorf("invalid %s url (%w)", u.Scheme, err)
 		}
-
-		defer func() {
-			err = errors.Join(err, resp.Body.Close())
-		}()
-
-		if data, err = io.ReadAll(resp.Body); err != nil {
-			return data, err
-		}
+	case scheme.Unix, scheme.HttpUnix:
+		return data, fmt.Errorf("unsupported url scheme %s", clean.Log(u.Scheme))
 	case scheme.Data:
 		if _, binaryData, found := strings.Cut(u.Opaque, ";base64,"); !found || len(binaryData) == 0 {
 			return data, fmt.Errorf("invalid %s url", u.Scheme)
@@ -115,6 +122,46 @@ func ReadUrl(fileUrl string, schemes []string) (data []byte, err error) {
 	default:
 		return data, fmt.Errorf("unsupported url scheme %s", clean.Log(u.Scheme))
 	}
+
+	return data, err
+}
+
+// readRemoteUrl downloads a remote URL with safe defaults and returns the resulting bytes.
+func readRemoteUrl(rawURL string, opt *safe.Options) (data []byte, err error) {
+	tmpFile, err := os.CreateTemp("", "photoprism-read-url-*")
+	if err != nil {
+		return data, err
+	}
+
+	tmpName := tmpFile.Name()
+
+	if closeErr := tmpFile.Close(); closeErr != nil {
+		return data, closeErr
+	}
+
+	defer func() {
+		_ = os.Remove(tmpName)
+	}()
+
+	options := &safe.Options{
+		AllowPrivate: true,
+		Accept:       "*/*",
+	}
+
+	if opt != nil {
+		options = &safe.Options{
+			Timeout:      opt.Timeout,
+			MaxSizeBytes: opt.MaxSizeBytes,
+			AllowPrivate: opt.AllowPrivate,
+			Accept:       opt.Accept,
+		}
+	}
+
+	if err = safe.Download(tmpName, rawURL, options); err != nil {
+		return data, err
+	}
+
+	data, err = os.ReadFile(tmpName) //nolint:gosec // tmpName is created by os.CreateTemp
 
 	return data, err
 }

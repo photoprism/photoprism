@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
 func TestDSN_HostAndPort(t *testing.T) {
 	tests := []struct {
 		name string
@@ -83,6 +84,7 @@ func TestDSN_MaskPassword(t *testing.T) {
 	assert.Equal(t, "user@tcp(localhost:3306)/db", noPass.MaskPassword())
 }
 
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
 func TestDSN_ParsePostgres(t *testing.T) {
 	cases := []struct {
 		name string

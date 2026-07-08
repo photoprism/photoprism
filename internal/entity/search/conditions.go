@@ -10,19 +10,22 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-// Like sanitizes user input so it can be safely interpolated into SQL LIKE
-// expressions. It strips operators that we don't expect to persist in the
-// statement and lets callers provide their own surrounding wildcards.
-func Like(s string) string {
-	return strings.Trim(clean.SqlString(s), " |&*%")
+// SqlParam sanitizes user input for use as a LIKE-clause bind value. The
+// surrounding pre/post strings are concatenated verbatim so callers can add
+// SQL wildcards (e.g. "%") without exposing the underlying value to string
+// interpolation.
+func SqlParam(s, pre, post string) string {
+	return pre + strings.Trim(clean.SqlClean(s), " |&*%") + post
 }
 
 // LikeAny builds OR-chained LIKE predicates for a text column. The input string
 // may contain AND / OR separators; keywords trigger stemming and plural
 // normalization while exact mode disables wildcard suffixes.
-func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
+// The returned wheres and values are aligned 1:1; callers feed each pair into
+// gorm.Expr(wheres[i], values[i]...).
+func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]any) {
 	if s == "" {
-		return wheres
+		return wheres, values
 	}
 
 	s = txt.StripOr(clean.SearchQuery(s))
@@ -39,6 +42,7 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 
 	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
 		var orWheres []string
+		var orValues []any
 		var words []string
 
 		if keywords {
@@ -53,9 +57,11 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 
 		for _, w := range words {
 			if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", col, Like(w)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
+				orValues = append(orValues, SqlParam(w, "", "%"))
 			} else {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, Like(w)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
+				orValues = append(orValues, SqlParam(w, "", ""))
 			}
 
 			if !keywords || !txt.ContainsASCIILetters(w) {
@@ -65,35 +71,39 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string) {
 			singular := inflection.Singular(w)
 
 			if singular != w {
-				orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s'", col, Like(singular)))
+				orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", col))
+				orValues = append(orValues, SqlParam(singular, "", ""))
 			}
 		}
 
 		if len(orWheres) > 0 {
 			wheres = append(wheres, strings.Join(orWheres, " OR "))
+			values = append(values, orValues)
 		}
 	}
 
-	return wheres
+	return wheres, values
 }
 
 // LikeAnyKeyword is a keyword-optimized wrapper around LikeAny.
-func LikeAnyKeyword(col, s string) (wheres []string) {
+func LikeAnyKeyword(col, s string) (wheres []string, values [][]any) {
 	return LikeAny(col, s, true, false)
 }
 
 // LikeAnyWord matches whole words and keeps wildcard thresholds tuned for
 // free-form text search instead of keyword lists.
-func LikeAnyWord(col, s string) (wheres []string) {
+func LikeAnyWord(col, s string) (wheres []string, values [][]any) {
 	return LikeAny(col, s, false, false)
 }
 
 // LikeAll produces AND-chained LIKE predicates for every significant token in
 // the search string. When exact is false, longer words receive a suffix
 // wildcard to support prefix matches.
-func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
+// The returned wheres and values are aligned 1:1; callers feed each pair into
+// gorm.Expr(wheres[i], values[i]...).
+func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]any) {
 	if s == "" {
-		return wheres
+		return wheres, values
 	}
 
 	var words []string
@@ -108,42 +118,45 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string) {
 	}
 
 	if len(words) == 0 {
-		return wheres
+		return wheres, values
 	} else if exact {
 		wildcardThreshold = -1
 	}
 
 	for _, w := range words {
 		if wildcardThreshold > 0 && len(w) >= wildcardThreshold {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s%%'", col, Like(w)))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE ?", col))
+			values = append(values, []any{SqlParam(w, "", "%")})
 		} else {
-			wheres = append(wheres, fmt.Sprintf("%s LIKE '%s'", col, Like(w)))
+			wheres = append(wheres, fmt.Sprintf("%s LIKE ?", col))
+			values = append(values, []any{SqlParam(w, "", "")})
 		}
 	}
 
-	return wheres
+	return wheres, values
 }
 
 // LikeAllKeywords is LikeAll specialized for keyword search.
-func LikeAllKeywords(col, s string) (wheres []string) {
+func LikeAllKeywords(col, s string) (wheres []string, values [][]any) {
 	return LikeAll(col, s, true, false)
 }
 
 // LikeAllWords is LikeAll specialized for general word search.
-func LikeAllWords(col, s string) (wheres []string) {
+func LikeAllWords(col, s string) (wheres []string, values [][]any) {
 	return LikeAll(col, s, false, false)
 }
 
 // LikeAllNames splits a name query into AND-separated groups and generates
 // prefix or substring matches against each provided column, keeping multi-word
 // tokens intact so "John Doe" still matches full-name columns.
-func LikeAllNames(cols Cols, s string) (wheres []string) {
+func LikeAllNames(cols Cols, s string) (wheres []string, values [][]any) {
 	if len(cols) == 0 || len(s) < 1 {
-		return wheres
+		return wheres, values
 	}
 
 	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
 		var orWheres []string
+		var orValues []any
 
 		for _, w := range txt.UnTrimmedSplitWithEscape(k, txt.OrRune, txt.EscapeRune) {
 			w = strings.TrimSpace(w)
@@ -154,27 +167,30 @@ func LikeAllNames(cols Cols, s string) (wheres []string) {
 
 			for _, c := range cols {
 				if strings.Contains(w, txt.Space) {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%s%%'", c, Like(w)))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", c))
+					orValues = append(orValues, SqlParam(w, "", "%"))
 				} else {
-					orWheres = append(orWheres, fmt.Sprintf("%s LIKE '%%%s%%'", c, Like(w)))
+					orWheres = append(orWheres, fmt.Sprintf("%s LIKE ?", c))
+					orValues = append(orValues, SqlParam(w, "%", "%"))
 				}
 			}
 		}
 
 		if len(orWheres) > 0 {
 			wheres = append(wheres, strings.Join(orWheres, " OR "))
+			values = append(values, orValues)
 		}
 	}
 
-	return wheres
+	return wheres, values
 }
 
 // AnySlug converts human-friendly search terms into slugs and matches them
 // against the provided slug column, including the singularized variant for
 // plural words (e.g. "Cats" -> "cat").
-func AnySlug(col, search, sep string) (where string) {
+func AnySlug(col, search, sep string) (where string, values []any) {
 	if search == "" {
-		return ""
+		return "", values
 	}
 
 	if sep == "" {
@@ -184,7 +200,7 @@ func AnySlug(col, search, sep string) (where string) {
 	var wheres []string
 	var words []string
 
-	for _, w := range strings.Split(search, sep) {
+	for w := range strings.SplitSeq(search, sep) {
 		w = strings.TrimSpace(w)
 
 		words = append(words, txt.Slug(w))
@@ -201,21 +217,23 @@ func AnySlug(col, search, sep string) (where string) {
 	}
 
 	if len(words) == 0 {
-		return ""
+		return "", values
 	}
 
 	for _, w := range words {
-		wheres = append(wheres, fmt.Sprintf("%s = '%s'", col, Like(w)))
+		wheres = append(wheres, fmt.Sprintf("%s = ?", col))
+		values = append(values, SqlParam(w, "", ""))
 	}
 
-	return strings.Join(wheres, " OR ")
+	return strings.Join(wheres, " OR "), values
 }
 
 // AnyInt filters user-specified integers through an allowed range and returns
-// an OR-chained equality predicate for the values that remain.
-func AnyInt(col, numbers, sep string, min, max int) (where string) {
+// an OR-chained equality predicate for the values that remain. Named low/high
+// to avoid shadowing the predeclared min/max identifiers added in Go 1.21.
+func AnyInt(col, numbers, sep string, low, high int) (where string, values []any) {
 	if numbers == "" {
-		return ""
+		return "", values
 	}
 
 	if sep == "" {
@@ -225,10 +243,10 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 	var matches []int
 	var wheres []string
 
-	for _, n := range strings.Split(numbers, sep) {
+	for n := range strings.SplitSeq(numbers, sep) {
 		i := txt.Int(n)
 
-		if i == 0 || i < min || i > max {
+		if i == 0 || i < low || i > high {
 			continue
 		}
 
@@ -236,32 +254,33 @@ func AnyInt(col, numbers, sep string, min, max int) (where string) {
 	}
 
 	if len(matches) == 0 {
-		return ""
+		return "", values
 	}
 
 	for _, n := range matches {
-		wheres = append(wheres, fmt.Sprintf("%s = %d", col, n))
+		wheres = append(wheres, fmt.Sprintf("%s = ?", col))
+		values = append(values, n)
 	}
 
-	return strings.Join(wheres, " OR ")
+	return strings.Join(wheres, " OR "), values
 }
 
-// OrLike prepares a parameterised OR/LIKE clause for a single column. Star (* )
+// OrLike prepares a parameterized OR/LIKE clause for a single column. Star (* )
 // wildcards are mapped to SQL percent wildcards before returning the query and
 // bind values.
-func OrLike(col, s string) (where string, values []interface{}) {
+func OrLike(col, s string) (where string, values []any) {
 	if txt.Empty(col) || txt.Empty(s) {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
 	s = strings.ReplaceAll(s, "*", "%")
 	s = strings.ReplaceAll(s, "%%", "%")
 
 	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
-	values = make([]interface{}, len(terms))
+	values = make([]any, len(terms))
 
 	if l := len(terms); l == 0 {
-		return "", []interface{}{}
+		return "", []any{}
 	} else if l == 1 {
 		values[0] = terms[0]
 	} else {
@@ -279,9 +298,9 @@ func OrLike(col, s string) (where string, values []interface{}) {
 // OrLikeCols behaves like OrLike but fans out the same search terms across
 // multiple columns, preserving the order of values so callers can feed them to
 // database/sql.
-func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
+func OrLikeCols(cols []string, s string) (where string, values []any) {
 	if len(cols) == 0 || txt.Empty(s) {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
 	s = strings.ReplaceAll(s, "*", "%")
@@ -290,10 +309,10 @@ func OrLikeCols(cols []string, s string) (where string, values []interface{}) {
 	terms := txt.UnTrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 
 	if len(terms) == 0 {
-		return "", []interface{}{}
+		return "", []any{}
 	}
 
-	values = make([]interface{}, len(terms)*len(cols))
+	values = make([]any, len(terms)*len(cols))
 
 	for j := range terms {
 		for i := range cols {

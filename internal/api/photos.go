@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -56,12 +57,25 @@ func GetPhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, consistent with how photo
+		// search filters results. Pictures outside the scope are reported as not found.
+		if visible, err := search.PhotoVisibleToSession(uid, s); err != nil || !visible {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
 			AbortEntityNotFound(c)
 			return
 		}
+
+		// Limit the response to what the session is entitled to see; shared-only sessions get a
+		// reduced view (full-access sessions are unaffected).
+		p.RedactForSession(s)
 
 		c.IndentedJSON(http.StatusOK, p)
 	})
@@ -88,6 +102,18 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, mirroring album updates. This
+		// runs before the lookup and form binding so out-of-scope requests have no side effects.
+		// PhotoSessionSeesEverything is query-free and client and user role aware, so full-access
+		// sessions skip the per-photo check and restricted sessions stay within their shared scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		m, err := query.PhotoByUID(uid)
 
 		if err != nil {
@@ -104,7 +130,14 @@ func UpdatePhoto(router *gin.RouterGroup) {
 		}
 
 		// 2) Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxMutationRequestBytes)
+
 		if err = c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
@@ -117,7 +150,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			FlushCoverCache()
 		}
 
-		PublishPhotoEvent(StatusUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
@@ -194,7 +227,15 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 			return
 		}
 
-		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, consistent with photo search.
+		if visible, err := search.PhotoVisibleToSession(uid, s); err != nil || !visible {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		p, err := query.PhotoPreloadByUID(uid)
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusNotFound)
@@ -236,6 +277,17 @@ func ApprovePhoto(router *gin.RouterGroup) {
 		}
 
 		id := clean.UID(c.Param("uid"))
+
+		// Limit access to pictures within the session's shared scope, mirroring photo and album
+		// updates. The query-free PhotoSessionSeesEverything check lets full-access sessions skip the
+		// per-photo lookup; restricted sessions (client and user role aware) stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(id, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		m, err := query.PhotoByUID(id)
 
 		if err != nil {
@@ -251,7 +303,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 		SaveSidecarYaml(&m)
 
-		PublishPhotoEvent(StatusUpdated, id, c)
+		PublishPhotoEvent(StatusUpdated, id)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -279,6 +331,16 @@ func PhotoPrimary(router *gin.RouterGroup) {
 
 		uid := clean.UID(c.Param("uid"))
 		fileUid := clean.UID(c.Param("file_uid"))
+
+		// Limit access to pictures within the session's shared scope. Full-access sessions skip the
+		// query-free PhotoSessionSeesEverything check; restricted sessions stay within their scope.
+		if !search.PhotoSessionSeesEverything(s) {
+			if visible, vErr := search.PhotoVisibleToSession(uid, s); vErr != nil || !visible {
+				AbortForbidden(c)
+				return
+			}
+		}
+
 		err := query.SetPhotoPrimary(uid, fileUid)
 
 		if err != nil {
@@ -286,7 +348,7 @@ func PhotoPrimary(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(StatusUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 

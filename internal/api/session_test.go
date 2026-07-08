@@ -2,14 +2,17 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -61,6 +64,19 @@ func TestGetSessionResponse(t *testing.T) {
 		assert.Equal(t, sess.GetData(), result["data"])
 		assert.Equal(t, conf, result["config"])
 	})
+	t.Run("RedactsGroups", func(t *testing.T) {
+		sess := get.Session().Public()
+		sess.SetData(sess.GetData().SetGroups([]string{"media-acme-admin"}))
+		defer func() { sess.SetData(sess.GetData().SetGroups(nil)) }()
+		conf := get.Config().ClientSession(sess)
+
+		result := GetSessionResponse(sess.AuthToken(), sess, conf)
+
+		if data, ok := result["data"].(*entity.SessionData); assert.True(t, ok) {
+			assert.Nil(t, data.Groups, "session responses must not disclose the login-time group set")
+		}
+		assert.NotEmpty(t, sess.GetData().Groups, "the stored session data keeps the groups")
+	})
 }
 
 func TestCreateSession(t *testing.T) {
@@ -86,6 +102,17 @@ func TestCreateSession(t *testing.T) {
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": 123, "password": "xxx"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateSession(router)
+
+		body := `{"username":"` + strings.Repeat("a", 70*1024) + `","password":"photoprism"}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", body)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 	t.Run("PublicInvalidToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -164,6 +191,7 @@ func TestCreateSession(t *testing.T) {
 
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
+		assert.Equal(t, i18n.Source(i18n.ErrInvalidCredentials), gjson.Get(r.Body.String(), "messageId").String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("AliceSuccess", func(t *testing.T) {
@@ -204,6 +232,7 @@ func TestCreateSession(t *testing.T) {
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "bob", "password": "helloworld"}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
+		assert.Equal(t, i18n.Source(i18n.ErrInvalidCredentials), gjson.Get(r.Body.String(), "messageId").String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("TwoFaPasscodeRequired", func(t *testing.T) {
@@ -219,6 +248,11 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userEmail.String())
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		// Code 32 is a continuation request, not an error: the text is in "message", not "error".
+		assert.Equal(t, int64(32), gjson.Get(r.Body.String(), "code").Int())
+		assert.Equal(t, i18n.Msg(i18n.ErrPasscodeRequired), gjson.Get(r.Body.String(), "message").String())
+		assert.Empty(t, gjson.Get(r.Body.String(), "error").String())
+		assert.Equal(t, i18n.Source(i18n.ErrPasscodeRequired), gjson.Get(r.Body.String(), "messageId").String())
 	})
 	t.Run("TwoFaInvalidPasscode", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -278,6 +312,7 @@ func TestGetSession(t *testing.T) {
 		id := gjson.Get(r.Body.String(), "session_id").String()
 		assert.Equal(t, rnd.SessionID(authToken), id)
 		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, header.CacheControlNoStore, r.Header().Get(header.CacheControl), "session responses must not be cached")
 	})
 	t.Run("AdminAuthenticatedRequestWithID", func(t *testing.T) {
 		app, router, conf := NewApiTest()

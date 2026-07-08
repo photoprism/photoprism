@@ -16,7 +16,8 @@ func TestConfig_ClientConfig(t *testing.T) {
 		result := c.ClientPublic()
 		assert.IsType(t, &ClientConfig{}, result)
 		assert.Equal(t, AuthModePublic, result.AuthMode)
-		assert.Equal(t, c.LibraryUri("/"), result.LoginUri)
+		assert.Equal(t, c.FrontendUri(""), result.FrontendUri)
+		assert.Equal(t, c.LoginUri(), result.LoginUri)
 		assert.Equal(t, "", result.LoginInfo)
 		assert.Equal(t, "", result.RegisterUri)
 		assert.Equal(t, 0, result.PasswordLength)
@@ -29,6 +30,13 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, result2)
 		assert.Equal(t, AuthModePasswd, result2.AuthMode)
 		assert.Equal(t, false, result2.Public)
+	})
+	t.Run("SiteName", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteName = "Acme Media"
+		cfg := c.ClientPublic()
+		assert.IsType(t, &ClientConfig{}, cfg)
+		assert.Equal(t, "Acme Media", cfg.SiteName)
 	})
 	t.Run("Values", func(t *testing.T) {
 		c := TestConfig()
@@ -70,6 +78,27 @@ func TestConfig_ClientConfig(t *testing.T) {
 		assert.LessOrEqual(t, 1, cfg.Count.Private)
 		assert.LessOrEqual(t, 4, cfg.Count.Albums)
 	})
+}
+
+func TestConfig_ClientConfigDisableMCP(t *testing.T) {
+	// ClientPublic, ClientShare, and ClientUser must all propagate the MCP
+	// disable flag so the frontend can hide any MCP-related controls when
+	// the endpoint is turned off via --disable-mcp / PHOTOPRISM_DISABLE_MCP.
+	c := NewMinimalTestConfigWithDb("client-mcp", t.TempDir())
+	c.SetAuthMode(AuthModePasswd)
+
+	original := c.Options().DisableMCP
+	t.Cleanup(func() { c.Options().DisableMCP = original })
+
+	c.Options().DisableMCP = false
+	assert.False(t, c.ClientPublic().Disable.MCP)
+	assert.False(t, c.ClientShare().Disable.MCP)
+	assert.False(t, c.ClientUser(true).Disable.MCP)
+
+	c.Options().DisableMCP = true
+	assert.True(t, c.ClientPublic().Disable.MCP)
+	assert.True(t, c.ClientShare().Disable.MCP)
+	assert.True(t, c.ClientUser(true).Disable.MCP)
 }
 
 func TestConfig_ClientShareConfig(t *testing.T) {
@@ -130,35 +159,38 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.Equal(t, adminFeatures, f)
 
 		expected := customize.FeatureSettings{
-			Account:   true,
-			Albums:    true,
-			Archive:   true,
-			Delete:    true,
-			Download:  true,
-			Edit:      true,
-			BatchEdit: true,
-			Estimates: true,
-			Favorites: true,
-			Files:     true,
-			Folders:   true,
-			Import:    true,
-			Labels:    true,
-			Library:   true,
-			Logs:      true,
-			Calendar:  true,
-			Moments:   true,
-			People:    true,
-			Places:    true,
-			Private:   true,
-			Ratings:   true,
-			Reactions: true,
-			Review:    true,
-			Search:    true,
-			Settings:  true,
-			Share:     true,
-			Services:  true,
-			Upload:    true,
-			Videos:    true,
+			Albums:       true,
+			Archive:      true,
+			Delete:       true,
+			Download:     true,
+			Edit:         true,
+			BatchEdit:    true,
+			Estimates:    true,
+			Favorites:    true,
+			Files:        true,
+			Folders:      true,
+			Import:       true,
+			Labels:       true,
+			Cameras:      true,
+			Lenses:       true,
+			Library:      true,
+			Logs:         true,
+			Calendar:     true,
+			Moments:      true,
+			People:       true,
+			Places:       true,
+			Private:      true,
+			Ratings:      true,
+			Reactions:    true,
+			Review:       true,
+			Search:       true,
+			Account:      true,
+			AppPasswords: true,
+			Settings:     true,
+			Share:        true,
+			Services:     true,
+			Upload:       true,
+			Videos:       true,
 		}
 
 		assert.Equal(t, expected, f)
@@ -170,35 +202,38 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.NotEqual(t, adminFeatures, f)
 
 		expected := customize.FeatureSettings{
-			Account:   true,
-			Albums:    true,
-			Archive:   false,
-			Delete:    false,
-			Download:  true,
-			Edit:      false,
-			BatchEdit: false,
-			Estimates: true,
-			Favorites: false,
-			Files:     false,
-			Folders:   true,
-			Import:    false,
-			Labels:    false,
-			Library:   false,
-			Logs:      false,
-			Calendar:  true,
-			Moments:   true,
-			People:    false,
-			Places:    true,
-			Private:   false,
-			Ratings:   false,
-			Reactions: true,
-			Review:    true,
-			Search:    true,
-			Settings:  true,
-			Share:     false,
-			Services:  false,
-			Upload:    false,
-			Videos:    true,
+			Albums:       true,
+			Archive:      false,
+			Delete:       false,
+			Download:     true,
+			Edit:         false,
+			BatchEdit:    false,
+			Estimates:    true,
+			Favorites:    false,
+			Files:        false,
+			Folders:      true,
+			Import:       false,
+			Labels:       false,
+			Cameras:      false,
+			Lenses:       false,
+			Library:      false,
+			Logs:         false,
+			Calendar:     true,
+			Moments:      true,
+			People:       false,
+			Places:       true,
+			Private:      false,
+			Ratings:      false,
+			Reactions:    true,
+			Review:       true,
+			Search:       true,
+			Account:      true,
+			AppPasswords: true,
+			Settings:     true,
+			Share:        false,
+			Services:     false,
+			Upload:       false,
+			Videos:       true,
 		}
 
 		assert.Equal(t, expected, f)
@@ -210,35 +245,38 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.NotEqual(t, adminFeatures, f)
 
 		expected := customize.FeatureSettings{
-			Account:   false,
-			Albums:    true,
-			Archive:   false,
-			Delete:    false,
-			Download:  true,
-			Edit:      false,
-			BatchEdit: false,
-			Estimates: true,
-			Favorites: false,
-			Files:     false,
-			Folders:   true,
-			Import:    false,
-			Labels:    false,
-			Library:   false,
-			Logs:      false,
-			Calendar:  true,
-			Moments:   true,
-			People:    false,
-			Places:    true,
-			Private:   false,
-			Ratings:   false,
-			Reactions: false,
-			Review:    true,
-			Search:    false,
-			Settings:  false,
-			Share:     false,
-			Services:  false,
-			Upload:    false,
-			Videos:    false,
+			Albums:       true,
+			Archive:      false,
+			Delete:       false,
+			Download:     true,
+			Edit:         false,
+			BatchEdit:    false,
+			Estimates:    true,
+			Favorites:    false,
+			Files:        false,
+			Folders:      true,
+			Import:       false,
+			Labels:       false,
+			Cameras:      false,
+			Lenses:       false,
+			Library:      false,
+			Logs:         false,
+			Calendar:     true,
+			Moments:      true,
+			People:       false,
+			Places:       true,
+			Private:      false,
+			Ratings:      false,
+			Reactions:    false,
+			Review:       true,
+			Search:       false,
+			Account:      false,
+			AppPasswords: false,
+			Settings:     false,
+			Share:        false,
+			Services:     false,
+			Upload:       false,
+			Videos:       false,
 		}
 
 		assert.Equal(t, expected, f)
@@ -254,6 +292,8 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 		assert.False(t, f.Calendar)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -298,6 +338,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
+		assert.True(t, f.Cameras)
+		assert.True(t, f.Lenses)
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -330,6 +372,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
+		assert.True(t, f.Cameras)
+		assert.True(t, f.Lenses)
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -361,6 +405,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Albums)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -394,6 +440,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Moments)
 		assert.True(t, f.Folders)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -427,6 +475,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Moments)
 		assert.True(t, f.Folders)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -459,6 +509,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Albums)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -489,6 +541,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Calendar)
 		assert.True(t, f.Moments)
 		assert.True(t, f.Labels)
+		assert.True(t, f.Cameras)
+		assert.True(t, f.Lenses)
 		assert.True(t, f.People)
 		assert.True(t, f.Settings)
 		assert.True(t, f.Edit)
@@ -521,6 +575,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Moments)
 		assert.False(t, f.Folders)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.False(t, f.Settings)
 		assert.False(t, f.Edit)
@@ -552,6 +608,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Calendar)
 		assert.False(t, f.Moments)
 		assert.False(t, f.Labels)
+		assert.False(t, f.Cameras)
+		assert.False(t, f.Lenses)
 		assert.False(t, f.People)
 		assert.True(t, f.Settings)
 		assert.False(t, f.Edit)

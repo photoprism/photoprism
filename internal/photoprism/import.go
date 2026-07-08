@@ -18,6 +18,9 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
+	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -51,6 +54,17 @@ func (imp *Import) thumbPath() string {
 	return imp.conf.ThumbCachePath()
 }
 
+// insufficientStorage reports whether the import must abort due to quota or low free disk space.
+func (imp *Import) insufficientStorage() bool {
+	if !imp.conf.InsufficientStorage() {
+		return false
+	}
+
+	log.Errorf("import: aborting due to insufficient storage")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	return true
+}
+
 // Start imports media files from a directory and converts/indexes them as needed.
 func (imp *Import) Start(opt ImportOptions) fs.Done {
 	defer func() {
@@ -75,6 +89,13 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		return done
 	}
 
+	// Reset the cached disk usage so a freshly freed disk is detected immediately.
+	disk.FlushFree()
+
+	if imp.insufficientStorage() {
+		return done
+	}
+
 	// Make sure to run import only once, unless otherwise requested.
 	if !opt.NonBlocking {
 		if err := mutex.IndexWorker.Start(); err != nil {
@@ -91,7 +112,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	var wg sync.WaitGroup
 	var numWorkers = imp.conf.IndexWorkers()
 	wg.Add(numWorkers)
-	for i := 0; i < numWorkers; i++ {
+	for range numWorkers {
 		go func() {
 			ImportWorker(jobs)
 			wg.Done()
@@ -128,7 +149,13 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			}()
 
 			if mutex.IndexWorker.Canceled() {
-				return errors.New("canceled")
+				return status.ErrCanceled
+			}
+
+			// Stop the walk if storage drops below the threshold mid-import.
+			if imp.insufficientStorage() {
+				imp.Cancel()
+				return status.ErrInsufficientStorage
 			}
 
 			isDir, _ := info.IsDirOrSymlinkToDir()
@@ -201,17 +228,10 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return nil
 			}
 
-			// Skip related groups whose main file is ignored.
-			if related.Main == nil || ignore.Ignore(related.Main.FileName()) {
-				done[fileName] = fs.Processed
-				return nil
-			}
-
 			var files MediaFiles
 
 			for _, f := range related.Files {
-				if ignore.Ignore(f.FileName()) || f.FileSize() == 0 || done[f.FileName()].Processed() {
-					done[f.FileName()] = fs.Processed
+				if f.FileSize() == 0 || done[f.FileName()].Processed() {
 					continue
 				}
 
@@ -273,9 +293,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		}
 	}
 
-	if err != nil {
-		log.Error(err.Error())
-	}
+	logWalkResult("import", err)
 
 	if filesImported > 0 {
 		// Run face recognition if enabled.

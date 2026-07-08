@@ -29,7 +29,7 @@ func replaceFoldASCII(s, needle, repl string) string {
 	nl := len(needle)
 	// Precompute lower-case needle bytes.
 	nb := make([]byte, nl)
-	for i := 0; i < nl; i++ {
+	for i := range nl {
 		nb[i] = toLower(needle[i])
 	}
 
@@ -80,8 +80,8 @@ func SearchString(s string) string {
 	s = strings.ReplaceAll(s, "%", "*")
 	s = strings.ReplaceAll(s, "**", "*")
 
-	// Trim.
-	return strings.Trim(s, "|\\<>\n\r\t")
+	// Trim — keep '\' so downstream filters can honor escape sequences.
+	return strings.Trim(s, "|<>\n\r\t")
 }
 
 // SearchQuery replaces search operator with default symbols.

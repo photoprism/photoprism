@@ -104,6 +104,7 @@
 </template>
 <script>
 import Photo from "model/photo";
+import { ACTION_UPDATED } from "common/event";
 
 import PhotoDetails from "component/photo/edit/details.vue";
 import PhotoLabels from "component/photo/edit/labels.vue";
@@ -211,12 +212,19 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-            if (values.UID && values.Title && this.model.UID === values.UID) {
-              this.model.setValues({ Title: values.Title, Caption: values.Caption }, true);
-            }
+        case ACTION_UPDATED:
+          // photos.updated carries only UIDs; refetch the open photo through
+          // the scoped REST API to mirror Title/Caption edits made by other
+          // clients into the form.
+          if (data.entities.includes(this.model.UID)) {
+            this.model
+              .find(this.model.UID)
+              .then((values) => {
+                if (values.Title) {
+                  this.model.setValues({ Title: values.Title, Caption: values.Caption }, true);
+                }
+              })
+              .catch(() => {});
           }
           break;
       }
@@ -290,8 +298,7 @@ export default {
       this.selected = index;
       this.selectedId = this.selection[index];
 
-      return this.model
-        .find(this.selectedId)
+      return Photo.findCached(this.selectedId)
         .then((model) => {
           model.refreshFileAttr();
           this.model = model;

@@ -63,7 +63,9 @@
 
 <script>
 import { Photo } from "model/photo";
+import { $gettext } from "common/gettext";
 import Thumb from "model/thumb";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED } from "common/event";
 import * as contexts from "options/contexts";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
@@ -75,6 +77,10 @@ import PScroll from "component/scroll.vue";
 import { getAppStorage } from "common/storage";
 
 const appStorage = getAppStorage();
+
+// Maximum number of affected entities reloaded in place per event;
+// larger batches set the dirty flag and are refetched lazily instead.
+const maxLiveRefetch = 50;
 
 export default {
   name: "PPagePhotos",
@@ -252,12 +258,12 @@ export default {
     this.subscriptions.push(this.$event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(
-      this.$event.subscribe("lightbox.opened", (ev, data) => {
+      this.$event.subscribe("lightbox.opened", () => {
         this.lightbox.open = true;
       })
     );
     this.subscriptions.push(
-      this.$event.subscribe("lightbox.closed", (ev, data) => {
+      this.$event.subscribe("lightbox.closed", () => {
         this.lightbox.open = false;
       })
     );
@@ -436,7 +442,7 @@ export default {
       } else if (photo.Country && photo.Country !== "zz") {
         this.$router.push({ name: "places", query: { q: "country:" + photo.Country } });
       } else {
-        this.$notify.warn("unknown location");
+        this.$notify.warn($gettext("Unknown location"));
       }
     },
     editPhoto(index, tab) {
@@ -732,6 +738,16 @@ export default {
 
       this.loadMore(true);
     },
+    removeResult(results, uid) {
+      const index = results.findIndex((m) => m.UID === uid);
+
+      if (index >= 0) {
+        results.splice(index, 1);
+      }
+    },
+    // updateResults patches the scalar fields of all loaded copies of
+    // the given photo, so an edit reflects in the open view without
+    // re-running the full result query.
     updateResults(entity) {
       this.results
         .filter((m) => m.UID === entity.UID)
@@ -753,12 +769,54 @@ export default {
           }
         });
     },
-    removeResult(results, uid) {
-      const index = results.findIndex((m) => m.UID === uid);
+    // refetchResults reloads the affected photos through the scoped
+    // search API and patches the loaded results in place, so a single
+    // edit costs one uid-filtered query instead of re-running the full
+    // result query. Larger batches fall back to the dirty flag and are
+    // refetched lazily on the next return-to-view.
+    refetchResults(uids) {
+      const affected = uids.filter((uid) => this.results.some((m) => m.UID === uid) || this.lightbox.results.some((m) => m.UID === uid));
 
-      if (index >= 0) {
-        results.splice(index, 1);
+      if (affected.length === 0) {
+        return;
       }
+
+      if (affected.length > maxLiveRefetch) {
+        this.dirty = true;
+        this.complete = false;
+        return;
+      }
+
+      Photo.search({ uid: affected.join("|"), merged: true, count: affected.length })
+        .then((resp) => {
+          const found = new Set();
+
+          resp.models.forEach((values) => {
+            found.add(values.UID);
+
+            if (this.context === contexts.Review && values.Quality >= 3) {
+              this.removeResult(this.results, values.UID);
+              this.removeResult(this.lightbox.results, values.UID);
+              this.$clipboard.removeId(values.UID);
+            } else {
+              this.updateResults(values);
+            }
+          });
+
+          // Rows the scoped search no longer returns are not visible to
+          // this session anymore — drop them like a full refresh would.
+          affected
+            .filter((uid) => !found.has(uid))
+            .forEach((uid) => {
+              this.removeResult(this.results, uid);
+              this.removeResult(this.lightbox.results, uid);
+              this.$clipboard.removeId(uid);
+            });
+        })
+        .catch(() => {
+          this.dirty = true;
+          this.complete = false;
+        });
     },
     onUpdate(ev, data) {
       if (!this.listen) {
@@ -772,24 +830,13 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
-          for (let i = 0; i < data.entities.length; i++) {
-            const values = data.entities[i];
-
-            if (this.context === contexts.Review && values.Quality >= 3) {
-              this.removeResult(this.results, values.UID);
-              this.removeResult(this.lightbox.results, values.UID);
-              this.$clipboard.removeId(values.UID);
-            } else {
-              this.updateResults(values);
-            }
-          }
-          break;
-        case "restored":
+        case ACTION_RESTORED:
           this.dirty = true;
           this.complete = false;
 
-          if (this.context !== contexts.Archive) break;
+          if (this.context !== contexts.Archive) {
+            break;
+          }
 
           for (let i = 0; i < data.entities.length; i++) {
             const uid = data.entities[i];
@@ -799,7 +846,7 @@ export default {
           }
 
           break;
-        case "archived":
+        case ACTION_ARCHIVED:
           this.dirty = true;
           this.complete = false;
 
@@ -816,7 +863,7 @@ export default {
           }
 
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
           this.complete = false;
 
@@ -829,10 +876,19 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
           this.scrollDisabled = false;
           this.complete = false;
+
+          break;
+        case ACTION_UPDATED:
+          // photos.updated is a lightweight UID-only signal that carries
+          // no entity fields; affected photos are reloaded through the
+          // scoped search API and patched in place. The model-layer
+          // subscriber in model/photo.js handles the lightbox-cache
+          // eviction independently.
+          this.refetchResults(data.entities);
 
           break;
         default:

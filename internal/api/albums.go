@@ -90,9 +90,10 @@ func GetAlbum(router *gin.RouterGroup) {
 		// Get sanitized album UID from request path.
 		uid := clean.UID(c.Param("uid"))
 
-		// Visitors can only access shared content.
+		// Limit access to albums within the session's shared scope; albums outside it are reported
+		// as not found, consistent with how photos and files are read.
 		if (s.NotRegistered()) && !s.HasShare(uid) {
-			AbortForbidden(c)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -106,7 +107,7 @@ func GetAlbum(router *gin.RouterGroup) {
 
 		// Other restricted users can only access their own or shared content.
 		if s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(uid) {
-			AbortForbidden(c)
+			AbortAlbumNotFound(c)
 			return
 		}
 
@@ -138,7 +139,14 @@ func CreateAlbum(router *gin.RouterGroup) {
 		var frm form.Album
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -238,7 +246,14 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		}
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err = c.BindJSON(frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -387,7 +402,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		PublishAlbumEvent(StatusUpdated, uid, c)
+		PublishAlbumEvent(StatusUpdated, uid)
 
 		// Update album YAML backup.
 		SaveAlbumYaml(&album)
@@ -438,7 +453,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		PublishAlbumEvent(StatusUpdated, uid, c)
+		PublishAlbumEvent(StatusUpdated, uid)
 
 		// Update album YAML backup.
 		SaveAlbumYaml(&album)
@@ -487,7 +502,14 @@ func CloneAlbums(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err = c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -515,7 +537,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		if len(added) > 0 {
 			event.SuccessMsg(i18n.MsgSelectionAddedTo, clean.Log(album.Title()))
 
-			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID)
 
 			// Update album YAML backup.
 			SaveAlbumYaml(&album)
@@ -548,7 +570,14 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -595,7 +624,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 			RemoveFromAlbumCoverCache(album.AlbumUID)
 
-			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID)
 
 			// Update album YAML backup.
 			SaveAlbumYaml(&album)
@@ -624,7 +653,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 				if len(approved) > 0 {
 					UpdateClientConfig()
 
-					event.EntitiesUpdated("photos", approved)
+					event.EntitiesUpdated("photos", approved.UIDs())
 				}
 			}
 		}
@@ -656,7 +685,14 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -697,7 +733,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 			RemoveFromAlbumCoverCache(album.AlbumUID)
 
-			PublishAlbumEvent(StatusUpdated, album.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, album.AlbumUID)
 
 			// Update album YAML backup.
 			SaveAlbumYaml(&album)

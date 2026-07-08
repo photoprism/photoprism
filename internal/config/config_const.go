@@ -9,20 +9,29 @@ import (
 // ApiUri defines the standard path for handling REST requests.
 const ApiUri = "/api/v1"
 
-// DownloadUri defines the file download URI based on the ApiUri.
+// DownloadUri defines the default file download URI based on the ApiUri.
 const DownloadUri = ApiUri + "/dl"
 
-// LibraryUri defines the path for user interface routes.
-const LibraryUri = "/library"
+// DefaultFrontendUri specifies the default base path for accessing the web interface.
+const DefaultFrontendUri = "/library"
 
-// StaticUri defines the standard path for serving static content.
+// FrontendUri specifies the default base path used by FrontendPath() when no custom path is configured.
+var FrontendUri = DefaultFrontendUri
+
+// StaticUri defines the URI path for serving static content.
 const StaticUri = "/static"
 
-// CustomStaticUri defines the standard path for serving custom static content.
+// CustomStaticUri defines the URI path for serving custom static content.
 const CustomStaticUri = "/c/static"
 
 // ThemeUri defines the optional theme URI path for serving theme assets.
 const ThemeUri = "/_theme"
+
+// IndexWorkersAuto is the sentinel value of the index-workers option that
+// asks IndexWorkers() to derive the worker count from the available CPU
+// cores and database driver. Operators can keep "auto" or set a positive
+// numeric string to pin the worker count explicitly.
+const IndexWorkersAuto = "auto"
 
 // DefaultIndexSchedule defines the default indexing schedule in cron format.
 const DefaultIndexSchedule = "" // e.g. "0 */3 * * *" for every 3 hours
@@ -40,6 +49,15 @@ const MaxWakeupInterval = time.Hour * 24 // 1 Day
 const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 // DefaultWakeupInterval is the default worker interval as a duration.
 const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
+
+// DefaultHttpHeaderTimeout is the default timeout for reading request headers.
+const DefaultHttpHeaderTimeout = 15 * time.Second
+
+// DefaultHttpHeaderBytes is the default limit for HTTP request header size.
+const DefaultHttpHeaderBytes = 1 << 20 // 1 MiB
+
+// DefaultHttpIdleTimeout is the default timeout for idle keep-alive connections.
+const DefaultHttpIdleTimeout = 180 * time.Second
 
 // MegaByte defines a megabyte in bytes.
 const MegaByte = 1000 * 1000 // 1,000,000 Bytes

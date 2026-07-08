@@ -2,16 +2,27 @@ package config
 
 import (
 	"math"
+	"sync/atomic"
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/fs/duf"
 )
 
+// DisableStorageCheck turns off the free storage probe by StorageLow. Init sets it from the
+// configured threshold (StorageFree <= 0), and StorageLow latches it true after a probe error
+// so a storage path whose free space cannot be read is not probed repeatedly. Exported so
+// tests with synthetic storage paths can reset it; atomic because StorageLow is called
+// concurrently by indexing workers, API handlers, and client config builds.
+var DisableStorageCheck atomic.Bool
+
+// usageCache is the disk usage information cache.
 var usageCache = gc.New(5*time.Minute, 5*time.Minute)
 
 // FlushUsageCache resets the usage information cache.
@@ -24,7 +35,10 @@ func FlushUsageCache() {
 // derive their values from the ratio helpers to align with Prometheus
 // conventions and avoid rounding artifacts.
 type Usage struct {
-	// File storage usage and quota (total).
+	// Indicates if free storage is below threshold.
+	StorageLow bool `json:"storageLow"`
+
+	// Originals volume usage and quota information.
 	FilesUsed    uint64 `json:"filesUsed"`
 	FilesUsedPct int    `json:"filesUsedPct"`
 	FilesFree    uint64 `json:"filesFree"`
@@ -68,10 +82,12 @@ func (info *Usage) UsersUsedRatio() float64 {
 }
 
 // Usage returns the used, free and total storage size in bytes and caches the result.
-func (c *Config) Usage() Usage {
-	// Return nil if feature is not enabled.
+func (c *Config) Usage() (info Usage) {
+	// When detailed usage info is disabled, still report the low-storage flag
+	// but skip the quota and database accounting below.
 	if !c.UsageInfo() {
-		return Usage{}
+		_, info.StorageLow, _ = c.StorageLow()
+		return info
 	}
 
 	originalsPath := c.OriginalsPath()
@@ -80,7 +96,7 @@ func (c *Config) Usage() Usage {
 		return cached.(Usage)
 	}
 
-	info := Usage{}
+	_, info.StorageLow, _ = c.StorageLow()
 
 	if err := c.Db().Unscoped().
 		Table("files").
@@ -111,22 +127,14 @@ func (c *Config) Usage() Usage {
 		info.FilesUsedPct = 1
 	}
 
-	info.FilesFreePct = 100 - info.FilesUsedPct
-
-	if info.FilesFreePct < 0 {
-		info.FilesFreePct = 0
-	}
+	info.FilesFreePct = max(100-info.FilesUsedPct, 0)
 
 	info.UsersActive = query.CountUsers(true, true, nil, []string{"guest"})
 	info.GuestsActive = query.CountUsers(true, true, []string{"guest"}, nil)
 
 	if info.UsersQuota = c.UsersQuota(); info.UsersQuota > 0 {
 		info.UsersUsedPct = int(math.Floor(info.UsersUsedRatio() * 100))
-		info.UsersFreePct = 100 - info.UsersUsedPct
-
-		if info.UsersFreePct < 0 {
-			info.UsersFreePct = 0
-		}
+		info.UsersFreePct = max(100-info.UsersUsedPct, 0)
 	} else {
 		info.UsersUsedPct = 0
 		info.UsersFreePct = 0
@@ -186,6 +194,32 @@ func (c *Config) UsersQuota() int {
 // UsersQuotaReached checks whether the maximum number of user accounts has been reached or exceeded.
 func (c *Config) UsersQuotaReached(role acl.Role) bool {
 	return c.UsersQuotaExceeded(99, role)
+}
+
+// StorageLow reports whether the storage folder is critically low on free disk space for safe indexing writes.
+func (c *Config) StorageLow() (free uint64, low bool, err error) {
+	if DisableStorageCheck.Load() {
+		return 0, false, nil
+	}
+
+	free, low, err = disk.StorageLow(c.StoragePath())
+
+	if err != nil {
+		DisableStorageCheck.Store(true)
+		log.Debugf("storage: failed to detect free disk space (%s)", clean.Error(err))
+	}
+
+	return free, low, err
+}
+
+// InsufficientStorage reports whether new file writes should be rejected due to quota or low free disk space.
+func (c *Config) InsufficientStorage() bool {
+	if c.FilesQuotaReached() {
+		return true
+	}
+
+	_, low, _ := c.StorageLow()
+	return low
 }
 
 // UsersQuotaExceeded checks whether the number of user accounts specified in percent has been exceeded.

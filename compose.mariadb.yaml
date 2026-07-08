@@ -10,9 +10,9 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001"
+      - "${MARIADB_PORT:-4001}"
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -31,9 +31,9 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001"
+      - "${MARIADB_PORT:-4001}"
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -52,9 +52,9 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001"
+      - "${MARIADB_PORT:-4001}"
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -72,9 +72,9 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001"
+      - "${MARIADB_PORT:-4001}"
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -90,9 +90,9 @@ services:
   ## see https://jira.mariadb.org/browse/MDEV-25362
   mariadb-10-5-5:
     image: mariadb:10.5.5
-    command: --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # database port (internal)
+      - "${MARIADB_PORT:-4001}" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -105,9 +105,9 @@ services:
   ## Docs: https://mariadb.com/docs/reference/cs10.3/
   mariadb-10-3:
     image: mariadb:10.3
-    command: --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # database port (internal)
+      - "${MARIADB_PORT:-4001}" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -120,9 +120,9 @@ services:
   ## Docs: https://mariadb.com/docs/reference/cs10.2/
   mariadb-10-2:
     image: mariadb:10.2
-    command: --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # database port (internal)
+      - "${MARIADB_PORT:-4001}" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -134,9 +134,9 @@ services:
   ## MariaDB 10.1 Database Server
   mariadb-10-1:
     image: mariadb:10.1
-    command: --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=${MARIADB_PORT:-4001} --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
-      - "4001" # database port (internal)
+      - "${MARIADB_PORT:-4001}" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
@@ -148,5 +148,5 @@ services:
 ## Join shared "photoprism" network
 networks:
   default:
-    name: photoprism
+    name: ${COMPOSE_NETWORK_NAME:-photoprism}
     external: true

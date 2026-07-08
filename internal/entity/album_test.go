@@ -8,6 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/event"
+
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -442,6 +444,16 @@ func TestFindFolderAlbum(t *testing.T) {
 		assert.False(t, album.IsDefault())
 		assert.False(t, album.IsState())
 	})
+	t.Run("NormalizesBackslashes", func(t *testing.T) {
+		album := FindFolderAlbum(`1990\04`)
+
+		if album == nil {
+			t.Fatal("expected to find an album")
+		}
+
+		assert.Equal(t, "April 1990", album.AlbumTitle)
+		assert.Equal(t, "april-1990", album.AlbumSlug)
+	})
 	t.Run("EmptySlug", func(t *testing.T) {
 		album := FindFolderAlbum("")
 
@@ -483,7 +495,7 @@ func TestFindFolderAlbum(t *testing.T) {
 
 		legacy := &Album{
 			AlbumType:   AlbumFolder,
-			AlbumSlug:   txt.Slug(parentPath),
+			AlbumSlug:   legacyFolderAlbumSlug(parentPath),
 			AlbumPath:   "",
 			AlbumFilter: `path:"` + parentPath + `" public:true`,
 			CreatedAt:   Now(),
@@ -505,6 +517,243 @@ func TestFindFolderAlbum(t *testing.T) {
 		}
 
 		assert.Equal(t, legacy.ID, album.ID)
+	})
+	t.Run("LegacyFallbackForLongAsciiPath", func(t *testing.T) {
+		unique := txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		folderPath := "pictures/Ferie 2008 Mellomeuropa/Galleri-konvertert/bilder/" + unique + "/01 Praha, Dresden, Wroclaw"
+
+		legacy := &Album{
+			AlbumType:   AlbumFolder,
+			AlbumSlug:   legacyFolderAlbumSlug(folderPath),
+			AlbumPath:   "",
+			AlbumFilter: `path:"` + folderPath + `" public:true`,
+			CreatedAt:   Now(),
+			UpdatedAt:   Now(),
+		}
+		legacy.SetTitle("Legacy Folder")
+
+		if err := legacy.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = legacy.DeletePermanently()
+		})
+
+		album := FindFolderAlbum(folderPath)
+		if album == nil {
+			t.Fatal("expected legacy album")
+		}
+
+		assert.Equal(t, legacy.ID, album.ID)
+		assert.NotEqual(t, txt.SlugUnique(folderPath), legacy.AlbumSlug)
+	})
+	t.Run("LongAsciiSiblingsDoNotCollide", func(t *testing.T) {
+		unique := txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		base := "pictures/Ferie 2008 Mellomeuropa/Galleri-konvertert/bilder/" + unique + "/"
+		pathA := base + "01 Praha, Dresden, Wroclaw"
+		pathB := base + "02 Wroclaw, Auschwitz"
+		filterA := `path:"` + pathA + `" public:true`
+		filterB := `path:"` + pathB + `" public:true`
+
+		albumA := NewFolderAlbum("01 Praha, Dresden, Wroclaw", pathA, filterA)
+		if albumA == nil {
+			t.Fatal("expected albumA")
+		}
+
+		if err := albumA.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = albumA.DeletePermanently()
+		})
+
+		albumB := NewFolderAlbum("02 Wroclaw, Auschwitz", pathB, filterB)
+		if albumB == nil {
+			t.Fatal("expected albumB")
+		}
+
+		if err := albumB.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = albumB.DeletePermanently()
+		})
+
+		assert.NotEqual(t, albumA.AlbumSlug, albumB.AlbumSlug)
+
+		foundA := FindFolderAlbum(pathA)
+		foundB := FindFolderAlbum(pathB)
+
+		if foundA == nil || foundB == nil {
+			t.Fatalf("expected both folder albums to resolve, got A=%v B=%v", foundA, foundB)
+		}
+
+		assert.Equal(t, albumA.ID, foundA.ID)
+		assert.Equal(t, albumB.ID, foundB.ID)
+	})
+}
+
+// TestFindFolderAlbumByPath exercises the byte-exact folder album path lookup.
+func TestFindFolderAlbumByPath(t *testing.T) {
+	unique := func() string { return txt.Slug(time.Now().UTC().Format(time.RFC3339Nano)) }
+	t.Run("EmptyPath", func(t *testing.T) {
+		assert.Nil(t, findFolderAlbumByPath(""))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.Nil(t, findFolderAlbumByPath("missing-"+unique()+"/🪞"))
+	})
+	t.Run("Success", func(t *testing.T) {
+		albumPath := "byte-exact-" + unique() + "/🪞"
+		album := NewFolderAlbum("🪞", albumPath, `path:"`+albumPath+`" public:true`)
+
+		if album == nil {
+			t.Fatal("expected album")
+		}
+
+		if err := album.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() { _ = album.DeletePermanently() })
+
+		found := findFolderAlbumByPath(albumPath)
+
+		if found == nil {
+			t.Fatal("expected folder album to resolve")
+		}
+
+		assert.Equal(t, album.ID, found.ID)
+		assert.Equal(t, albumPath, found.AlbumPath)
+	})
+	t.Run("EmojiSiblingsDoNotCollide", func(t *testing.T) {
+		// On MariaDB (utf8mb4_unicode_ci) two emoji sibling paths collate equal,
+		// so the byte-exact re-check must keep them apart; SQLite passes trivially.
+		base := "emoji-sibling-" + unique() + "/"
+		pathMirror := base + "🪞"
+		pathPumpkin := base + "🎃"
+
+		mirror := NewFolderAlbum("🪞", pathMirror, `path:"`+pathMirror+`" public:true`)
+		pumpkin := NewFolderAlbum("🎃", pathPumpkin, `path:"`+pathPumpkin+`" public:true`)
+
+		if mirror == nil || pumpkin == nil {
+			t.Fatal("expected both albums")
+		}
+
+		if err := mirror.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := pumpkin.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = mirror.DeletePermanently()
+			_ = pumpkin.DeletePermanently()
+		})
+
+		foundMirror := findFolderAlbumByPath(pathMirror)
+		foundPumpkin := findFolderAlbumByPath(pathPumpkin)
+
+		if foundMirror == nil || foundPumpkin == nil {
+			t.Fatalf("expected both folder albums to resolve, got mirror=%v pumpkin=%v", foundMirror, foundPumpkin)
+		}
+
+		assert.Equal(t, mirror.ID, foundMirror.ID)
+		assert.Equal(t, pumpkin.ID, foundPumpkin.ID)
+		assert.Equal(t, pathMirror, foundMirror.AlbumPath)
+		assert.Equal(t, pathPumpkin, foundPumpkin.AlbumPath)
+	})
+}
+
+// TestClearDuplicateFolderAlbumPaths exercises byte-exact folder album path dedup.
+func TestClearDuplicateFolderAlbumPaths(t *testing.T) {
+	unique := func() string { return txt.Slug(time.Now().UTC().Format(time.RFC3339Nano)) }
+	t.Run("EmptyPath", func(t *testing.T) {
+		assert.NoError(t, clearDuplicateFolderAlbumPaths("", 0))
+	})
+	t.Run("ClearsByteExactDuplicate", func(t *testing.T) {
+		albumPath := "dup-" + unique() + "/🪞"
+		filter := `path:"` + albumPath + `" public:true`
+
+		keep := NewFolderAlbum("🪞 keep", albumPath, filter)
+
+		if keep == nil {
+			t.Fatal("expected album")
+		}
+
+		if err := keep.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		dupe := &Album{AlbumType: AlbumFolder, AlbumSlug: keep.AlbumSlug + "x", AlbumPath: albumPath, AlbumFilter: filter, CreatedAt: Now(), UpdatedAt: Now()}
+		dupe.SetTitle("🪞 dupe")
+
+		if err := dupe.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = keep.DeletePermanently()
+			_ = dupe.DeletePermanently()
+		})
+
+		if err := clearDuplicateFolderAlbumPaths(albumPath, keep.ID); err != nil {
+			t.Fatal(err)
+		}
+
+		if kept := FindAlbum(Album{AlbumUID: keep.AlbumUID}); kept != nil {
+			assert.Equal(t, albumPath, kept.AlbumPath)
+		}
+
+		cleared := FindAlbum(Album{AlbumUID: dupe.AlbumUID})
+
+		if cleared == nil {
+			t.Fatal("expected duplicate album to still exist")
+		}
+
+		assert.Empty(t, cleared.AlbumPath)
+	})
+	t.Run("PreservesEmojiSibling", func(t *testing.T) {
+		base := "dup-sibling-" + unique() + "/"
+		pathMirror := base + "🪞"
+		pathPumpkin := base + "🎃"
+
+		mirror := NewFolderAlbum("🪞", pathMirror, `path:"`+pathMirror+`" public:true`)
+		pumpkin := NewFolderAlbum("🎃", pathPumpkin, `path:"`+pathPumpkin+`" public:true`)
+
+		if mirror == nil || pumpkin == nil {
+			t.Fatal("expected both albums")
+		}
+
+		if err := mirror.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := pumpkin.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			_ = mirror.DeletePermanently()
+			_ = pumpkin.DeletePermanently()
+		})
+
+		// Clearing duplicates of the pumpkin path must not wipe the mirror sibling.
+		if err := clearDuplicateFolderAlbumPaths(pathPumpkin, pumpkin.ID); err != nil {
+			t.Fatal(err)
+		}
+
+		preserved := findFolderAlbumByPath(pathMirror)
+
+		if preserved == nil {
+			t.Fatal("expected mirror folder album to be preserved")
+		}
+
+		assert.Equal(t, pathMirror, preserved.AlbumPath)
 	})
 }
 
@@ -1007,6 +1256,20 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		assert.Equal(t, "2222/07", a.AlbumPath)
 		assert.Equal(t, "month:07", a.AlbumFilter)
 	})
+	t.Run("NormalizesBackslashes", func(t *testing.T) {
+		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxx"}
+
+		assert.Empty(t, a.AlbumPath)
+		assert.Empty(t, a.AlbumFilter)
+
+		if err := a.UpdateFolder(`2222\07`, "month:07", "July 2222"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2222/07", a.AlbumPath)
+		assert.Equal(t, "2222-07", a.AlbumSlug)
+		assert.Equal(t, "month:07", a.AlbumFilter)
+	})
 	t.Run("NoChange", func(t *testing.T) {
 		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxx", AlbumTitle: "July 2222", AlbumSlug: "2222-07", AlbumFilter: "month:07", AlbumPath: "2222/07"}
 
@@ -1111,6 +1374,25 @@ func TestAlbum_Save(t *testing.T) {
 		afterDate := album.UpdatedAt
 
 		assert.True(t, afterDate.After(initialDate))
+	})
+	t.Run("PublishesUidOnlyUpdatedEvent", func(t *testing.T) {
+		album := AlbumFixtures.Get("christmas2030")
+
+		sub := event.Subscribe("albums.updated", "user.*.albums.updated")
+		t.Cleanup(func() { event.Unsubscribe(sub) })
+
+		if err := album.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		select {
+		case msg := <-sub.Receiver:
+			uids, ok := msg.Fields["entities"].([]string)
+			assert.True(t, ok, "entities payload should be []string, got %T", msg.Fields["entities"])
+			assert.Equal(t, []string{album.AlbumUID}, uids)
+		case <-time.After(2 * time.Second):
+			t.Fatal("expected one albums.updated event")
+		}
 	})
 }
 

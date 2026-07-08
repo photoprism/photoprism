@@ -70,6 +70,25 @@ func TestOidcUser(t *testing.T) {
 		assert.Equal(t, "jane.doe", m.UserName)
 		assert.Equal(t, "Jane Doe", m.DisplayName)
 	})
+	t.Run("LongNumberAsSubject", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "Jane Doe"
+		info.GivenName = "Jane"
+		info.FamilyName = "Doe"
+		info.Email = "jane@doe.com"
+		info.EmailVerified = true
+		info.Subject = "12345678901234567890"
+		info.PreferredUsername = "Jane Doe"
+
+		m := OidcUser(info, "", "jane.doe")
+
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "", m.AuthIssuer)
+		assert.Equal(t, "12345678901234567890", m.AuthID)
+		assert.Equal(t, "jane@doe.com", m.UserEmail)
+		assert.Equal(t, "jane.doe", m.UserName)
+		assert.Equal(t, "Jane Doe", m.DisplayName)
+	})
 	t.Run("NoUsername", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"
@@ -305,6 +324,32 @@ func TestUser_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("LongNumericAuthID", func(t *testing.T) {
+		useruid := rnd.GenerateUID(UserUID)
+		var m = User{
+			UserUID:      useruid,
+			UserName:     "examplelong",
+			UserRole:     string(acl.RoleGuest),
+			DisplayName:  "Example Long",
+			SuperAdmin:   false,
+			CanLogin:     true,
+			AuthID:       "012345678901234567890",
+			AuthProvider: string(authn.ProviderOIDC),
+		}
+
+		if err := m.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			assert.NoError(t, m.Delete())
+			UnscopedDb().Delete(m)
+		})
+
+		assert.Equal(t, "examplelong", m.Username())
+		assert.Equal(t, "examplelong", m.UserName)
+		assert.Equal(t, "012345678901234567890", m.AuthID)
+	})
 }
 
 func TestUser_UpdateUsername(t *testing.T) {
@@ -466,6 +511,39 @@ func TestFirstOrCreateUser(t *testing.T) {
 	})
 }
 
+func TestUserEmailAvailable(t *testing.T) {
+	alice := FindUserByName("alice")
+	require.NotNil(t, alice)
+	require.NotEmpty(t, alice.UserEmail)
+	t.Run("UnusedEmail", func(t *testing.T) {
+		assert.True(t, UserEmailAvailable("brand-new-unused-email@example.com", ""))
+	})
+	t.Run("TakenByOtherAccount", func(t *testing.T) {
+		assert.False(t, UserEmailAvailable(alice.UserEmail, ""))
+		assert.False(t, UserEmailAvailable(alice.UserEmail, "u00000000000other"))
+	})
+	t.Run("FreeForSameAccount", func(t *testing.T) {
+		assert.True(t, UserEmailAvailable(alice.UserEmail, alice.UserUID))
+	})
+	t.Run("EmptyEmail", func(t *testing.T) {
+		assert.False(t, UserEmailAvailable("", ""))
+		assert.False(t, UserEmailAvailable("   ", ""))
+	})
+}
+
+func TestUser_EmailVerified(t *testing.T) {
+	t.Run("NilVerifiedAt", func(t *testing.T) {
+		assert.False(t, (&User{}).EmailVerified())
+	})
+	t.Run("ZeroVerifiedAt", func(t *testing.T) {
+		zero := time.Time{}
+		assert.False(t, (&User{VerifiedAt: &zero}).EmailVerified())
+	})
+	t.Run("SetVerifiedAt", func(t *testing.T) {
+		assert.True(t, (&User{VerifiedAt: TimeStamp()}).EmailVerified())
+	})
+}
+
 func TestFindUser(t *testing.T) {
 	t.Run("ID", func(t *testing.T) {
 		m := FindUser(User{ID: 1})
@@ -532,6 +610,14 @@ func TestFindUser(t *testing.T) {
 		assert.NotEmpty(t, m.UserUID)
 		assert.Equal(t, "jane.doe", m.UserName)
 		assert.Equal(t, "oidc", m.AuthProvider)
+
+		n := FindUser(User{AuthProvider: authn.ProviderOIDC.String(), AuthID: info.Subject})
+
+		require.NotNil(t, n)
+
+		assert.NotEmpty(t, n.UserUID)
+		assert.Equal(t, "jane.doe", n.UserName)
+		assert.Equal(t, "oidc", n.AuthProvider)
 	})
 	t.Run("UserName", func(t *testing.T) {
 		m := FindUser(User{UserName: "admin"})
@@ -782,9 +868,9 @@ func TestUser_SetPassword(t *testing.T) {
 
 func TestUser_InitAccount(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		p := User{UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", CanLogin: true}
+		p := User{ID: 9, UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String(), AuthProvider: authn.ProviderLocal.String(), CanLogin: true}
 		assert.Nil(t, FindPassword("u000000000000009"))
-		assert.True(t, p.InitAccount("admin", "insecure", ""))
+		assert.True(t, p.InitAccount("Hanna", "insecure", ""))
 		m := FindPassword("u000000000000009")
 
 		if m == nil {
@@ -1152,6 +1238,64 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 		u.DeletedAt = &deleted
 		assert.Nil(t, u.UpdateLoginTime())
 	})
+	t.Run("NormalizesOutOfEditionSuperAdminRole", func(t *testing.T) {
+		u := NewUser()
+		u.UserName = "normalize-login"
+		u.DisplayName = "Normalize Login"
+		u.SuperAdmin = true
+		u.UserRole = acl.RoleAdmin.String()
+		u.CanLogin = true
+
+		if err := u.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		// Simulate a leftover out-of-edition role written outside this edition's
+		// validation (e.g. a Portal cluster_admin row on a Plus instance).
+		if err := Db().Model(u).UpdateColumn("UserRole", acl.RoleClusterAdmin.String()).Error; err != nil {
+			t.Fatal(err)
+		}
+		u.UserRole = acl.RoleClusterAdmin.String()
+
+		// Logging in normalizes the stored role back to the edition's admin role.
+		// CE/Plus/Pro register only admin (not cluster_admin), so the target is admin.
+		u.UpdateLoginTime()
+		assert.Equal(t, acl.RoleAdmin.String(), u.UserRole)
+
+		m := FindUser(User{UserUID: u.UserUID})
+		if m == nil {
+			t.Fatal("result must not be nil")
+		}
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+}
+
+func TestUser_NormalizeAdminRole(t *testing.T) {
+	// CE registers admin but not cluster_admin, so the edition target is admin.
+	t.Run("ForeignSuperAdminRoleReset", func(t *testing.T) {
+		m := &User{UserName: "norm-foreign", SuperAdmin: true, UserRole: acl.RoleClusterAdmin.String()}
+		assert.True(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+	t.Run("RegisteredAdminRoleKept", func(t *testing.T) {
+		m := &User{UserName: "norm-admin", SuperAdmin: true, UserRole: acl.RoleAdmin.String()}
+		assert.False(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+	t.Run("NonAdminTierSuperAdminRoleReset", func(t *testing.T) {
+		m := &User{UserName: "norm-guest", SuperAdmin: true, UserRole: acl.RoleGuest.String()}
+		assert.True(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleAdmin.String(), m.UserRole)
+	})
+	t.Run("RegularAccountUntouched", func(t *testing.T) {
+		m := &User{UserName: "norm-regular", SuperAdmin: false, UserRole: acl.RoleClusterAdmin.String()}
+		assert.False(t, m.NormalizeAdminRole())
+		assert.Equal(t, acl.RoleClusterAdmin.String(), m.UserRole)
+	})
+	t.Run("NilUser", func(t *testing.T) {
+		var m *User
+		assert.False(t, m.NormalizeAdminRole())
+	})
 }
 
 func TestUser_CanLogIn(t *testing.T) {
@@ -1191,6 +1335,14 @@ func TestUser_CanUseWebDAV(t *testing.T) {
 
 	assert.False(t, UserFixtures.Pointer("deleted").CanUseWebDAV())
 	assert.False(t, UserFixtures.Pointer("friend").CanUseWebDAV())
+
+	// Disabling web login must not affect WebDAV access: the API gate denies app
+	// passwords when CanLogin is off, while WebDAV stays governed by CanUseWebDAV.
+	// bob is a non-super-admin with WebDAV enabled (super admins always keep login).
+	webdavUser := UserFixtures.Get("bob")
+	webdavUser.CanLogin = false
+	assert.False(t, webdavUser.CanLogIn())
+	assert.True(t, webdavUser.CanUseWebDAV())
 }
 
 func TestUser_CanUpload(t *testing.T) {
@@ -1354,7 +1506,7 @@ func TestUser_SaveForm(t *testing.T) {
 		frm, err := UnknownUser.Form()
 		assert.NoError(t, err)
 
-		err = UnknownUser.SaveForm(frm, UserFixtures.Pointer("guest"))
+		err = UnknownUser.SaveForm(frm, UserFixtures.Pointer("guest"), false, false)
 		assert.Error(t, err)
 	})
 	t.Run("Admin", func(t *testing.T) {
@@ -1372,7 +1524,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"))
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"), false, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
@@ -1397,7 +1549,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"))
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
@@ -1421,7 +1573,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.DisplayName = "New Name"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"))
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "New Name", Admin.DisplayName)
@@ -1429,7 +1581,10 @@ func TestUser_SaveForm(t *testing.T) {
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "New Name", m.DisplayName)
 	})
-	t.Run("PreventDisableLoginForInitialAdmin", func(t *testing.T) {
+	t.Run("AnotherSuperAdminCanDisableInitialAdminLogin", func(t *testing.T) {
+		// The seed admin is no longer special-cased: another super admin may
+		// disable its login (e.g. a cluster-managed instance that keeps no local
+		// super admin). The acting admin still cannot lock itself out.
 		m := FindUser(Admin)
 
 		if m == nil {
@@ -1443,13 +1598,59 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.CanLogin = false
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"))
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
 
 		assert.NoError(t, err)
-		assert.Equal(t, true, Admin.CanLogin)
+		assert.False(t, Admin.CanLogin)
 
 		m = FindUserByUID(Admin.UserUID)
-		assert.Equal(t, true, m.CanLogin)
+		assert.False(t, m.CanLogin)
+
+		// Restore the seed admin so later subtests see a login-capable account.
+		Admin.CanLogin = true
+		if err = Admin.Save(); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("AnotherSuperAdminCanDemoteInitialAdmin", func(t *testing.T) {
+		// With the hard ID-1 lock removed, a second super admin can fully demote
+		// the seed admin (clear super admin, drop to a non-admin role, disable
+		// login). The form must request SuperAdmin=false so the role normalization
+		// does not re-promote it.
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UserRole = acl.RoleGuest.String()
+		frm.SuperAdmin = false
+		frm.CanLogin = false
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true, false)
+
+		assert.NoError(t, err)
+		assert.False(t, Admin.SuperAdmin)
+		assert.Equal(t, acl.RoleGuest.String(), Admin.UserRole)
+		assert.False(t, Admin.CanLogin)
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.False(t, m.SuperAdmin)
+		assert.Equal(t, acl.RoleGuest.String(), m.UserRole)
+		assert.False(t, m.CanLogin)
+
+		// Restore the seed admin so later subtests see a usable super admin.
+		Admin.SuperAdmin = true
+		Admin.CanLogin = true
+		Admin.SetRole(acl.RoleAdmin.String())
+		if err = Admin.Save(); err != nil {
+			t.Fatal(err)
+		}
 	})
 	t.Run("PreventInitialAdminFromDisablingOwnLogin", func(t *testing.T) {
 		m := FindUser(Admin)
@@ -1465,7 +1666,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.CanLogin = false
-		err = Admin.SaveForm(frm, &Admin)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, true, Admin.CanLogin)
@@ -1487,7 +1688,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.AuthProvider = authn.ProviderNone.String()
-		err = Admin.SaveForm(frm, &Admin)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "local", Admin.AuthProvider)
@@ -1511,7 +1712,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.AuthProvider = authn.ProviderNone.String()
-		err = alice.SaveForm(frm, &alice)
+		err = alice.SaveForm(frm, &alice, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "local", alice.AuthProvider)
@@ -1545,7 +1746,7 @@ func TestUser_SaveForm(t *testing.T) {
 		frm.SuperAdmin = false
 		frm.CanLogin = false
 
-		err = user.SaveForm(frm, &user)
+		err = user.SaveForm(frm, &user, true, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin", m.UserRole)
@@ -1566,7 +1767,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.UserRole = "user"
-		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"))
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"), false, false)
 
 		assert.Error(t, err)
 		assert.Equal(t, "super admin must not have a non-admin role", err.Error())
@@ -1588,7 +1789,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.BasePath = "//*?"
-		err = Admin.SaveForm(frm, &Admin)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid base folder", err.Error())
@@ -1610,13 +1811,102 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.UploadPath = "//*?"
-		err = Admin.SaveForm(frm, &Admin)
+		err = Admin.SaveForm(frm, &Admin, true, false)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid upload folder", err.Error())
 
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "", m.UploadPath)
+	})
+	t.Run("ClusterServicePrincipalDisablesLogin", func(t *testing.T) {
+		// A trusted cluster service principal (e.g. the Portal syncing user
+		// state) has no end-user identity, so SaveForm receives an unknown
+		// actor. With byAdmin set it must still persist privilege fields such as
+		// CanLogin; otherwise the Portal login toggle is silently ignored.
+		u := &User{UserName: "cluster-login-off", UserRole: acl.RoleUser.String(), CanLogin: true}
+		if err := u.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		frm, err := u.Form()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.CanLogin = false
+		err = u.SaveForm(frm, &User{}, true, false)
+
+		assert.NoError(t, err)
+		assert.False(t, u.CanLogin)
+
+		m := FindUserByUID(u.UserUID)
+		assert.False(t, m.CanLogin)
+	})
+	t.Run("UnprivilegedActorKeepsLogin", func(t *testing.T) {
+		// Without admin authorization the privilege block is skipped, so
+		// CanLogin stays unchanged even when the form requests false.
+		u := &User{UserName: "cluster-login-keep", UserRole: acl.RoleUser.String(), CanLogin: true}
+		if err := u.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		frm, err := u.Form()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.CanLogin = false
+		err = u.SaveForm(frm, &User{}, false, false)
+
+		assert.NoError(t, err)
+		assert.True(t, u.CanLogin)
+
+		m := FindUserByUID(u.UserUID)
+		assert.True(t, m.CanLogin)
+	})
+	t.Run("ClusterServicePrincipalDisables2FA", func(t *testing.T) {
+		// Disabling 2FA is super-admin-level; the cluster principal isn't a super admin, so
+		// without bySuperAdmin the auth method change would be dropped.
+		u := &User{UserName: "cluster-2fa-off", UserRole: acl.RoleUser.String(), CanLogin: true, AuthMethod: authn.Method2FA.String()}
+		if err := u.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		frm, err := u.Form()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.AuthMethod = authn.MethodDefault.String()
+		err = u.SaveForm(frm, &User{}, true, true)
+
+		assert.NoError(t, err)
+		assert.False(t, u.Method().Is(authn.Method2FA))
+
+		m := FindUserByUID(u.UserUID)
+		assert.False(t, m.Method().Is(authn.Method2FA))
+	})
+	t.Run("UnprivilegedAdminKeeps2FA", func(t *testing.T) {
+		// A regular admin (byAdmin, not super-admin-level) must not disable another user's 2FA.
+		u := &User{UserName: "admin-2fa-keep", UserRole: acl.RoleUser.String(), CanLogin: true, AuthMethod: authn.Method2FA.String()}
+		if err := u.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		frm, err := u.Form()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.AuthMethod = authn.MethodDefault.String()
+		err = u.SaveForm(frm, &User{}, true, false)
+
+		assert.NoError(t, err)
+		assert.True(t, u.Method().Is(authn.Method2FA))
+
+		m := FindUserByUID(u.UserUID)
+		assert.True(t, m.Method().Is(authn.Method2FA))
 	})
 }
 
@@ -1803,11 +2093,43 @@ func TestUser_SetAuthID(t *testing.T) {
 		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
 	})
+	t.Run("DupeAuthProviderAndID", func(t *testing.T) {
+		m := UserFixtures.Get("guest")
+		n := NewUser()
+		n.UserName = "guest2"
+		n.DisplayName = "Guest User2"
+		n.UserEmail = "guest2@example.com"
+		n.UserRole = acl.RoleGuest.String()
+		n.AuthProvider = authn.ProviderOIDC.String()
+		n.AuthMethod = authn.MethodDefault.String()
+		n.SuperAdmin = false
+		n.CanLogin = true
+		n.SetAuthID(uuid, issuer)
+		assert.NoError(t, n.Save())
+
+		t.Cleanup(func() {
+			assert.NoError(t, n.Delete())
+			UnscopedDb().Delete(n)
+		})
+
+		newUserUID := n.UserUID
+		m.SetAuthID(uuid, issuer)
+		assert.Equal(t, uuid, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+
+		n = FindUserByUID(newUserUID)
+		require.NotNil(t, n)
+
+		assert.Equal(t, "guest2", n.UserName)
+		assert.Equal(t, "", n.AuthID)
+		assert.Equal(t, authn.ProviderNone.String(), n.AuthProvider)
+	})
 }
 
 func TestUser_UpdateAuthID(t *testing.T) {
 	uuid := rnd.UUID()
 	issuer := "http://dummy-oidc:9998"
+	longnumber := "12345678901234567890"
 
 	t.Run("UUID", func(t *testing.T) {
 		m := UserFixtures.Get("friend")
@@ -1832,6 +2154,20 @@ func TestUser_UpdateAuthID(t *testing.T) {
 		assert.Equal(t, issuer, m.AuthIssuer)
 		err := m.UpdateAuthID(uuid, "")
 		assert.Error(t, err)
+	})
+	t.Run("LongNumber", func(t *testing.T) {
+		m := UserFixtures.Get("friend")
+
+		m.SetAuthID("", issuer)
+		assert.Equal(t, "", m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
+		m.SetAuthID(longnumber, issuer)
+		assert.Equal(t, longnumber, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+		err := m.UpdateAuthID(longnumber, "")
+		assert.NoError(t, err)
+		assert.Equal(t, longnumber, m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
 	})
 }
 
@@ -2105,7 +2441,7 @@ func TestUser_Equal(t *testing.T) {
 	assert.False(t, Admin.Equal(&Visitor))
 }
 
-func TestUser_DeleteSessions(t *testing.T) {
+func TestUser_RevokeDerivedSessions(t *testing.T) {
 	t.Run("EmptyUid", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
@@ -2114,13 +2450,115 @@ func TestUser_DeleteSessions(t *testing.T) {
 			UserRole: "user",
 		}
 
-		assert.Equal(t, 0, u.DeleteSessions([]string{}))
+		assert.Equal(t, 0, u.RevokeDerivedSessions([]string{}))
 	})
 	t.Run("Alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 
-		assert.Equal(t, 0, m.DeleteSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))
-		assert.Equal(t, 1, m.DeleteSessions([]string{}))
+		assert.Equal(t, 0, m.RevokeDerivedSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))
+		assert.Equal(t, 1, m.RevokeDerivedSessions([]string{}))
+	})
+}
+
+// revokeTestSession creates a persisted session of the given type for a synthetic user.
+func revokeTestSession(t *testing.T, uid string, provider authn.ProviderType, method authn.MethodType, authID string) *Session {
+	s := NewSession(86400, 0)
+	s.UserUID = uid
+	s.UserName = "revoke-test"
+	s.SetProvider(provider)
+	s.SetMethod(method)
+	if authID != "" {
+		s.SetAuthID(authID, uid)
+	}
+	require.NoError(t, s.Create())
+	return s
+}
+
+// countUserSessions returns the number of sessions stored for the given user uid.
+func countUserSessions(t *testing.T, uid string) int {
+	var sess Sessions
+	require.NoError(t, Db().Where("user_uid = ?", uid).Find(&sess).Error)
+	return len(sess)
+}
+
+// newRevokeTestUser creates a synthetic user with one regular login, a parent app
+// password, a derived child app session, and a client access token.
+func newRevokeTestUser(t *testing.T) *User {
+	uid := rnd.GenerateUID(UserUID)
+	revokeTestSession(t, uid, authn.ProviderLocal, authn.MethodDefault, "")
+	parent := revokeTestSession(t, uid, authn.ProviderApplication, authn.MethodDefault, "")
+	revokeTestSession(t, uid, authn.ProviderApplication, authn.MethodSession, parent.ID)
+	revokeTestSession(t, uid, authn.ProviderClient, authn.MethodOAuth2, "")
+	return &User{ID: 100, UserUID: uid, UserName: "revoke-test", UserRole: "admin", AuthProvider: authn.ProviderLocal.String(), RefID: "usrevoke0001"}
+}
+
+func TestUser_RevokeSessions(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
+		u := &User{ID: 1234567, UserUID: "", UserName: "test", UserRole: "user"}
+		assert.Equal(t, 0, u.RevokeSessions(nil, authn.RevokeAllSessions))
+	})
+	t.Run("LoginSessions", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		assert.Equal(t, 4, countUserSessions(t, u.UserUID))
+		assert.Equal(t, 1, u.RevokeSessions(nil, authn.RevokeLoginSessions))
+		assert.Equal(t, 3, countUserSessions(t, u.UserUID))
+	})
+	t.Run("DerivedSessions", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		assert.Equal(t, 2, u.RevokeSessions(nil, authn.RevokeDerivedSessions))
+		assert.Equal(t, 2, countUserSessions(t, u.UserUID))
+	})
+	t.Run("AllSessions", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		assert.Equal(t, 4, u.RevokeSessions(nil, authn.RevokeAllSessions))
+		assert.Equal(t, 0, countUserSessions(t, u.UserUID))
+	})
+	t.Run("OmitKeepsSession", func(t *testing.T) {
+		u := newRevokeTestUser(t)
+		var login Sessions
+		require.NoError(t, Db().Where("user_uid = ? AND auth_provider = ?", u.UserUID, authn.ProviderLocal.String()).Find(&login).Error)
+		require.Len(t, login, 1)
+		assert.Equal(t, 0, u.RevokeSessions([]string{login[0].ID}, authn.RevokeLoginSessions))
+		assert.Equal(t, 4, countUserSessions(t, u.UserUID))
+	})
+	t.Run("CrossUserIsolation", func(t *testing.T) {
+		// The `auth_method = 'session'` clause must stay scoped to the target user, so
+		// revoking one user's derived sessions must never touch another user's sessions.
+		uidA := rnd.GenerateUID(UserUID)
+		uidB := rnd.GenerateUID(UserUID)
+		parentA := revokeTestSession(t, uidA, authn.ProviderApplication, authn.MethodDefault, "")
+		revokeTestSession(t, uidA, authn.ProviderApplication, authn.MethodSession, parentA.ID)
+		parentB := revokeTestSession(t, uidB, authn.ProviderApplication, authn.MethodDefault, "")
+		derivedB := revokeTestSession(t, uidB, authn.ProviderApplication, authn.MethodSession, parentB.ID)
+
+		uA := &User{ID: 101, UserUID: uidA, UserName: "iso-a", RefID: "usiso0000a01"}
+		assert.Equal(t, 1, uA.RevokeDerivedSessions(nil))
+		assert.Equal(t, 1, countUserSessions(t, uidA)) // parent A kept
+		assert.Equal(t, 2, countUserSessions(t, uidB)) // user B untouched
+
+		sB, err := FindSession(derivedB.ID)
+		require.NoError(t, err)
+		require.NotNil(t, sB)
+	})
+}
+
+func TestUser_DenyLogIn(t *testing.T) {
+	t.Run("Active", func(t *testing.T) {
+		assert.False(t, UserFixtures.Pointer("alice").DenyLogIn())
+	})
+	t.Run("ProviderNone", func(t *testing.T) {
+		u := UserFixtures.Get("bob")
+		u.SetProvider(authn.ProviderNone)
+		assert.True(t, u.DenyLogIn())
+	})
+	t.Run("WebLoginDisabled", func(t *testing.T) {
+		u := UserFixtures.Get("bob")
+		u.CanLogin = false
+		assert.True(t, u.DenyLogIn())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var u *User
+		assert.True(t, u.DenyLogIn())
 	})
 }
 
@@ -2284,14 +2722,12 @@ func TestUser_ScopeHelpers(t *testing.T) {
 		assert.False(t, u.HasScope())
 		assert.True(t, u.NoScope())
 	})
-
 	t.Run("AnyScope", func(t *testing.T) {
 		u := &User{UserScope: list.Any}
 		assert.Equal(t, "*", u.Scope())
 		assert.False(t, u.HasScope())
 		assert.True(t, u.NoScope())
 	})
-
 	t.Run("RestrictedScope", func(t *testing.T) {
 		u := &User{UserScope: "Photos:View"}
 		assert.Equal(t, "photos:view", u.Scope())
@@ -2355,4 +2791,24 @@ func TestUser_SetValuesFromCliScope(t *testing.T) {
 	ctx := cli.NewContext(app, set, nil)
 	require.NoError(t, user.SetValuesFromCli(ctx))
 	assert.Equal(t, "videos:view", user.UserScope)
+}
+
+func TestUser_AuthIDSQLite(t *testing.T) {
+	user := FindLocalUser("alice")
+	require.NotNil(t, user)
+
+	original := user.AuthID
+	t.Cleanup(func() {
+		user.AuthID = original
+		assert.NoError(t, user.Save())
+	})
+
+	expected := "012345678901234567890123456789"
+	user.AuthID = expected
+	assert.NoError(t, user.Save())
+
+	user2 := FindLocalUser("alice")
+	require.NotNil(t, user2)
+
+	assert.Equal(t, expected, user2.AuthID)
 }

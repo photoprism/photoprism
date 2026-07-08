@@ -22,6 +22,24 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
+// restrictPhotoSelection narrows frm.Photos to the pictures the session may access, so a batch
+// action stays within the session's shared scope, mirroring the single-photo and album update
+// gates. SelectedPhotoUIDsForSession is client and user role aware and returns the input without a
+// query for full-access sessions, so admins incur no overhead. It returns false and reports the
+// selection as not found when the scoped selection is empty or the lookup fails.
+func restrictPhotoSelection(c *gin.Context, s *entity.Session, frm *form.Selection) bool {
+	scoped, err := query.SelectedPhotoUIDsForSession(frm.Photos, s)
+
+	if err != nil || len(scoped) == 0 {
+		AbortEntityNotFound(c)
+		return false
+	}
+
+	frm.Photos = scoped
+
+	return true
+}
+
 // BatchPhotosArchive moves multiple photos to the archive.
 //
 //	@Summary	moves multiple photos to the archive
@@ -44,13 +62,25 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
 
 		if len(frm.Photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 
@@ -115,13 +145,25 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
 
 		if len(frm.Photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 
@@ -185,13 +227,25 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
 
 		if len(frm.Photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 
@@ -218,7 +272,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		event.EntitiesUpdated("photos", approved)
+		event.EntitiesUpdated("photos", approved.UIDs())
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionApproved))
 	})
@@ -245,13 +299,25 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
 
 		if len(frm.Photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		// Restrict the selection to the session's shared scope.
+		if !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 
@@ -273,7 +339,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 				SaveSidecarYaml(p)
 			}
 
-			event.EntitiesUpdated("photos", photos)
+			event.EntitiesUpdated("photos", photos.UIDs())
 		}
 
 		UpdateClientConfig()
@@ -312,7 +378,14 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 
 		var frm form.Selection
 
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
 		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			AbortBadRequest(c, err)
 			return
 		}
@@ -325,6 +398,11 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		// Abort if user wants to delete all but does not have sufficient privileges.
 		if frm.All && !acl.Rules.AllowAll(acl.ResourcePhotos, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 			AbortForbidden(c)
+			return
+		}
+
+		// Restrict an explicit selection to the session's shared scope.
+		if !frm.All && len(frm.Photos) > 0 && !restrictPhotoSelection(c, s, &frm) {
 			return
 		}
 

@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -142,13 +143,13 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 }
 
 // Updates multiple columns in the database.
-func (m *Marker) Updates(values interface{}) error {
+func (m *Marker) Updates(values any) error {
 	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update updates a column in the database.
-func (m *Marker) Update(attr string, value interface{}) error {
+func (m *Marker) Update(attr string, value any) error {
 	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
@@ -579,7 +580,7 @@ func (m *Marker) RefreshPhotos() error {
 
 	var err error
 	switch DbDialect() {
-	case MySQL:
+	case dsn.DriverMySQL:
 		err = UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
 			JOIN ? m ON m.file_uid = f.file_uid SET p.checked_at = NULL
 			WHERE m.marker_uid = ?`,

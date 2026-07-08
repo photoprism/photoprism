@@ -49,6 +49,22 @@ func TestFirstOrCreatePhotoLabel(t *testing.T) {
 		assert.Nil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(0, 1, 38, "image")))
 		assert.Nil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(1, 0, 38, "image")))
 	})
+	t.Run("ClearsStaleNotFoundCache", func(t *testing.T) {
+		FlushPhotoLabelCache()
+		relation := createTestPhotoLabel(t)
+
+		photoLabelCache.Set(relation.CacheKey(), PhotoLabel{}, labelCacheErrorExpiration)
+
+		result := FirstOrCreatePhotoLabel(NewPhotoLabel(relation.PhotoID, relation.LabelID, relation.Uncertainty, relation.LabelSrc))
+		require.NotNil(t, result)
+		assert.Equal(t, relation.PhotoID, result.PhotoID)
+		assert.Equal(t, relation.LabelID, result.LabelID)
+
+		cached, err := FindPhotoLabel(relation.PhotoID, relation.LabelID, true)
+		require.NoError(t, err)
+		assert.Equal(t, relation.PhotoID, cached.PhotoID)
+		assert.Equal(t, relation.LabelID, cached.LabelID)
+	})
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
@@ -74,12 +90,11 @@ func TestPhotoLabel_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	//TODO fails on mariadb
 	t.Run("PhotoNotNilAndLabelNotNil", func(t *testing.T) {
 		label := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
 		photo := &Photo{}
 
-		photoLabel := PhotoLabel{Photo: photo, Label: label}
+		photoLabel := PhotoLabel{PhotoID: 900000003, LabelID: 900000004, Photo: photo, Label: label}
 		err := photoLabel.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -99,13 +114,11 @@ func TestPhotoLabel_Update(t *testing.T) {
 		_, found := photoLabelCache.Get(relation.CacheKey())
 		assert.False(t, found)
 	})
-
 	t.Run("NilPhotoLabel", func(t *testing.T) {
 		var label *PhotoLabel
 		err := label.Update("uncertainty", 0)
 		assert.EqualError(t, err, "photo label must not be nil - you may have found a bug")
 	})
-
 	t.Run("MissingID", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 0, LabelID: 1}
 		err := label.Update("uncertainty", 0)
@@ -125,13 +138,11 @@ func TestPhotoLabel_Updates(t *testing.T) {
 		_, found := photoLabelCache.Get(relation.CacheKey())
 		assert.False(t, found)
 	})
-
 	t.Run("NilPhotoLabel", func(t *testing.T) {
 		var label *PhotoLabel
 		err := label.Updates(&PhotoLabel{Uncertainty: 0})
 		assert.EqualError(t, err, "photo label must not be nil - you may have found a bug")
 	})
-
 	t.Run("MissingID", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 0, LabelID: 1}
 		err := label.Updates(&PhotoLabel{Uncertainty: 0})
@@ -155,12 +166,10 @@ func TestPhotoLabel_HasID(t *testing.T) {
 		var label *PhotoLabel
 		assert.False(t, label.HasID())
 	})
-
 	t.Run("Missing", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 1}
 		assert.False(t, label.HasID())
 	})
-
 	t.Run("Complete", func(t *testing.T) {
 		label := &PhotoLabel{PhotoID: 1, LabelID: 2}
 		assert.True(t, label.HasID())

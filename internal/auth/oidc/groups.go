@@ -37,6 +37,31 @@ func GroupsFromClaims(claims map[string]any, claimName string) (groups []string,
 	return uniqueGroups(groups), overage
 }
 
+// MergeGroups returns a deduplicated, normalized list of group identifiers
+// drawn from one or more source slices (typically the ID token and userinfo
+// groups claims, plus any LDAP-derived virtual groups). Empty entries are
+// dropped; remaining entries keep first-occurrence order after normalization
+// through NormalizeGroupID. Returns nil when no groups remain.
+func MergeGroups(sources ...[]string) []string {
+	total := 0
+
+	for _, src := range sources {
+		total += len(src)
+	}
+
+	if total == 0 {
+		return nil
+	}
+
+	merged := make([]string, 0, total)
+
+	for _, src := range sources {
+		merged = append(merged, src...)
+	}
+
+	return uniqueGroups(merged)
+}
+
 // MapGroupsToRole returns the first matching role for the provided groups using the supplied mapping.
 func MapGroupsToRole(groups []string, mapping map[string]acl.Role) (acl.Role, bool) {
 	if len(groups) == 0 || len(mapping) == 0 {
@@ -50,6 +75,29 @@ func MapGroupsToRole(groups []string, mapping map[string]acl.Role) (acl.Role, bo
 	}
 
 	return acl.RoleNone, false
+}
+
+// PortalGrantedRole returns the instance login role from the pp_role claim, and
+// true only when pp_issuer_kind marks the token as Portal-issued and the role is
+// federatable. The issuer-kind gate stops a non-Portal IdP from injecting a role,
+// and the federatable check keeps a Portal operator from becoming a login identity.
+func PortalGrantedRole(claims map[string]any) (acl.Role, bool) {
+	if len(claims) == 0 {
+		return acl.RoleNone, false
+	}
+
+	if kind, _ := claims["pp_issuer_kind"].(string); kind != acl.RolePortal.String() {
+		return acl.RoleNone, false
+	}
+
+	roleName, _ := claims["pp_role"].(string)
+	role := acl.ParseRole(strings.TrimSpace(roleName))
+
+	if !acl.IsFederatedRole(role) {
+		return acl.RoleNone, false
+	}
+
+	return role, true
 }
 
 // HasAnyGroup returns true when at least one of the user's groups matches a required group.

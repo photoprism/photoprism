@@ -14,7 +14,7 @@ type Request struct {
 	ClientEnv     string `json:"ClientEnv"`
 	ClientOpt     string `json:"ClientOpt"`
 	PartnerID     string `json:"PartnerID"`
-	ApiToken      string `json:"ApiToken"`
+	ApiToken      string `json:"ApiToken"` //nolint:gosec // G117: Hub API token payload field.
 }
 
 // ClientOpt hooks let tests and extensions append optional context information

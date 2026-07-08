@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2025 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
+    <https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -30,26 +30,34 @@ let ajaxPending = 0;
 let ajaxCallbacks = [];
 
 const $notify = {
-  info: function (message) {
-    $event.publish("notify.info", { message });
+  // info publishes an info notification.
+  info: function (message, messageId, messageParams) {
+    $event.publish("notify.info", { message, messageId, messageParams });
   },
-  warn: function (message) {
-    $event.publish("notify.warning", { message });
+  // warn publishes a warning notification.
+  warn: function (message, messageId, messageParams) {
+    $event.publish("notify.warning", { message, messageId, messageParams });
   },
-  error: function (message) {
-    $event.publish("notify.error", { message });
+  // error publishes an error notification; the optional messageId/messageParams
+  // let notify.vue render it in the current UI locale via Tp.
+  error: function (message, messageId, messageParams) {
+    $event.publish("notify.error", { message, messageId, messageParams });
   },
-  success: function (message) {
-    $event.publish("notify.success", { message });
+  // success publishes a success notification.
+  success: function (message, messageId, messageParams) {
+    $event.publish("notify.success", { message, messageId, messageParams });
   },
-  logout: function (message) {
-    $event.publish("notify.error", { message });
-    $event.publish("session.logout", { message });
+  // logout publishes an error notification and triggers a session.logout event.
+  logout: function (message, messageId, messageParams) {
+    $event.publish("notify.error", { message, messageId, messageParams });
+    $event.publish("session.logout", { message, messageId, messageParams });
   },
+  // ajaxStart marks an AJAX request as started and emits ajax.start.
   ajaxStart: function () {
     ajaxPending++;
     $event.publish("ajax.start");
   },
+  // ajaxEnd marks an AJAX request as finished, emits ajax.end, and runs queued idle callbacks.
   ajaxEnd: function () {
     ajaxPending--;
     $event.publish("ajax.end");
@@ -60,6 +68,7 @@ const $notify = {
       callbacks.forEach((cb) => cb());
     }
   },
+  // ajaxBusy reports whether any AJAX requests are still pending.
   ajaxBusy: function () {
     if (ajaxPending < 0) {
       ajaxPending = 0;
@@ -67,6 +76,7 @@ const $notify = {
 
     return ajaxPending > 0;
   },
+  // ajaxWait resolves once no AJAX requests are pending or the timeout elapses.
   ajaxWait: function (idleDelay = 64, timeout = 8000) {
     return new Promise((resolve) => {
       const start = Date.now();
@@ -94,6 +104,7 @@ const $notify = {
       settle();
     });
   },
+  // blockUI shows the busy overlay, optionally setting its CSS class.
   blockUI: function (className) {
     const el = document.getElementById("busy-overlay");
 
@@ -104,6 +115,7 @@ const $notify = {
       }
     }
   },
+  // unblockUI hides the busy overlay.
   unblockUI: function () {
     const el = document.getElementById("busy-overlay");
 
@@ -112,9 +124,11 @@ const $notify = {
       el.className = "";
     }
   },
+  // wait shows a "Please wait" info notification.
   wait: function () {
     this.info($gettext("Please wait…"));
   },
+  // busy shows a "Busy, please wait" warning notification.
   busy: function () {
     this.warn($gettext("Busy, please wait…"));
   },

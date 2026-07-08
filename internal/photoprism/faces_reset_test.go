@@ -30,7 +30,7 @@ func TestFaces_ResetAndReindex_InvalidEngine(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestFaces_ResetAndReindex_Pigo(t *testing.T) {
+func TestFaces_ResetAndReindex_Auto(t *testing.T) {
 	defer func(prev func(*Index, IndexOptions) (fs.Done, int, error)) {
 		runFacesReindex = prev
 	}(runFacesReindex)
@@ -44,11 +44,12 @@ func TestFaces_ResetAndReindex_Pigo(t *testing.T) {
 	}
 
 	c := config.TestConfig()
+	c.Options().ModelsPath = t.TempDir()
 	m := NewFaces(c)
 
-	err := m.ResetAndReindex(face.EnginePigo, nil)
+	err := m.ResetAndReindex(face.EngineAuto, nil)
 	require.NoError(t, err)
 	require.True(t, called)
 	require.True(t, received.FacesOnly)
-	require.Equal(t, face.EnginePigo, c.FaceEngine())
+	require.Equal(t, face.EngineNone, c.FaceEngine())
 }

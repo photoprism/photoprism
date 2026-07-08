@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// nolint:unused // kept for potential platform-specific filesystem filtering
+// findMounts returns the mounts that contain path, closest (longest mountpoint) first.
 func findMounts(mounts []Mount, path string) ([]Mount, error) {
 	var err error
 	path, err = filepath.Abs(path)

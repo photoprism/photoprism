@@ -29,6 +29,32 @@ func ForwardedProto(req *http.Request) string {
 	return "http"
 }
 
+// portalRootPathPrefixes lists URL paths that are served by the Portal root,
+// not by any proxied instance. Locations under these prefixes are deliberate
+// instance-to-Portal redirects (for example the Pro OIDC RP redirecting to
+// the Portal's authorize endpoint), and the per-instance path prefix must
+// not be added to them. The OIDC OP endpoints live under "/api/v1/oauth/"
+// specifically (not all of "/api/v1/", which is an instance surface too).
+var portalRootPathPrefixes = []string{
+	"/api/v1/oauth/",
+	"/.well-known/",
+	"/portal/",
+}
+
+// isPortalRootPath reports whether a URL path targets a Portal-root surface.
+func isPortalRootPath(p string) bool {
+	if p == "" {
+		return false
+	}
+	scoped := "/" + strings.TrimLeft(p, "/")
+	for _, prefix := range portalRootPathPrefixes {
+		if scoped == strings.TrimSuffix(prefix, "/") || strings.HasPrefix(scoped, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
 // RewriteLocation prefixes redirect targets to keep clients within a proxy path scope.
 func RewriteLocation(location, pathPrefix, proxyHost string) string {
 	if location == "" || pathPrefix == "" {
@@ -36,7 +62,7 @@ func RewriteLocation(location, pathPrefix, proxyHost string) string {
 	}
 
 	if strings.HasPrefix(location, "/") {
-		if HasPathPrefix(location, pathPrefix) {
+		if HasPathPrefix(location, pathPrefix) || isPortalRootPath(location) {
 			return location
 		}
 		return JoinPathPrefix(pathPrefix, location)
@@ -52,7 +78,7 @@ func RewriteLocation(location, pathPrefix, proxyHost string) string {
 		return location
 	}
 
-	if HasPathPrefix(u.Path, pathPrefix) {
+	if HasPathPrefix(u.Path, pathPrefix) || isPortalRootPath(u.Path) {
 		return location
 	}
 
@@ -86,7 +112,7 @@ func JoinPathPrefix(pathPrefix, pathValue string) string {
 	return scopedPrefix + "/" + scopedPath
 }
 
-// RewriteSetCookiePath enforces cookie Path scoping for proxy-prefixed routes.
+// RewriteSetCookiePath enforces cookie Path scoping for proxy-routed requests.
 func RewriteSetCookiePath(value, pathPrefix string) string {
 	if value == "" || pathPrefix == "" {
 		return value

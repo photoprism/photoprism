@@ -26,7 +26,7 @@ type User struct {
 	UserAttr     string       `json:"Attr,omitempty" yaml:"Attr,omitempty"`
 	BasePath     string       `json:"BasePath,omitempty" yaml:"BasePath,omitempty"`
 	UploadPath   string       `json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
-	Password     string       `json:"Password,omitempty" yaml:"Password,omitempty"`
+	Password     string       `json:"Password,omitempty" yaml:"Password,omitempty"` //nolint:gosec // G117: Expected user credential field.
 	DeletedAt    *time.Time   `json:"DeletedAt,omitempty" yaml:"DeletedAt,omitempty"`
 	UserDetails  *UserDetails `json:"Details,omitempty"`
 }
@@ -37,6 +37,7 @@ func NewUserFromCli(ctx *cli.Context) User {
 		UserName:     clean.Username(ctx.Args().First()),
 		AuthProvider: clean.TypeLower(ctx.String("auth")),
 		AuthID:       clean.Auth(ctx.String("auth-id")),
+		AuthIssuer:   clean.Uri(ctx.String("auth-issuer")),
 		UserEmail:    clean.Email(ctx.String("email")),
 		DisplayName:  clean.Name(ctx.String("name")),
 		UserRole:     clean.Role(ctx.String("role")),

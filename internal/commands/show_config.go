@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -34,12 +31,9 @@ var ConfigReports = []Report{
 
 // showConfigAction displays global config option names and values.
 func showConfigAction(ctx *cli.Context) error {
-	conf := config.NewConfig(ctx)
-	conf.SetLogLevel(logrus.FatalLevel)
-	get.SetConfig(conf)
-	hub.Disable()
+	conf, err := InitCoreConfig(ctx, true)
 
-	if err := conf.InitCore(); err != nil {
+	if err != nil {
 		log.Debug(err)
 	}
 
@@ -58,7 +52,7 @@ func showConfigAction(ctx *cli.Context) error {
 			rows, cols := rep.Report(conf)
 			sections = append(sections, section{Title: rep.Title, Items: report.RowsToObjects(rows, cols)})
 		}
-		b, _ := json.Marshal(map[string]interface{}{"sections": sections})
+		b, _ := json.Marshal(map[string]any{"sections": sections})
 		fmt.Println(string(b))
 		return nil
 	}

@@ -36,6 +36,12 @@ func usersModAction(ctx *cli.Context) error {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
+		// Reject flags placed after the username; the stdlib flag parser
+		// would silently drop them and report "user updated" with no changes.
+		if err := RejectTrailingFlags(ctx); err != nil {
+			return err
+		}
+
 		// Find user record.
 		var m *entity.User
 

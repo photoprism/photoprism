@@ -1,3 +1,5 @@
+import $util from "common/util";
+
 export default {
   global: {
     ripple: false,
@@ -82,6 +84,12 @@ export default {
     itemValue: "value",
     validateOn: "invalid-input",
     hideDetails: "auto",
+  },
+  VTooltip: {
+    openDelay: 0,
+    closeDelay: 0,
+    disabled: $util.isMobile(),
+    transition: false,
   },
   VMenu: {
     origin: "auto",
@@ -176,7 +184,8 @@ export default {
     ripple: false,
   },
   VDataTable: {
-    color: "background",
+    // Forwarded to the footer only as the "items per page" select's active-item color (not the table).
+    color: "surface-variant",
     itemsPerPage: -1,
     hover: true,
   },

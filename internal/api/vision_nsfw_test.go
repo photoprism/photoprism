@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -143,5 +144,14 @@ func TestPostVisionNsfw(t *testing.T) {
 		PostVisionNsfw(router)
 		r := PerformRequest(app, http.MethodPost, "/api/v1/vision/nsfw")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("RequestTooLarge", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		PostVisionNsfw(router)
+
+		body := `{"images":["data:image/jpeg;base64,` + strings.Repeat("a", int(MaxVisionRequestBytes)) + `"]}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/vision/nsfw", body)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }

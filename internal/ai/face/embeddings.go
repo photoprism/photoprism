@@ -131,13 +131,19 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 	// Count embeddings.
 	count = len(embeddings)
 
+	var first Embedding
+	for _, emb := range embeddings {
+		first = emb
+		break
+	}
+
 	// Only one embedding?
 	if count == 1 {
 		// Return embedding if there is only one.
-		return embeddings[0], 0.0, 1
+		return first, 0.0, 1
 	}
 
-	dim := len(embeddings[0])
+	dim := len(first)
 
 	// No embedding values?
 	if dim == 0 {
@@ -157,12 +163,12 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 		normalizeEmbedding(emb)
 
-		for j := 0; j < dim; j++ {
+		for j := range dim {
 			result[j] += emb[j]
 		}
 	}
 
-	for i := 0; i < dim; i++ {
+	for i := range dim {
 		result[i] *= invCount
 	}
 
@@ -172,7 +178,7 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 	for _, emb := range embeddings {
 		var dist float64
 
-		for i := 0; i < dim; i++ {
+		for i := range dim {
 			diff := result[i] - emb[i]
 			dist += diff * diff
 		}

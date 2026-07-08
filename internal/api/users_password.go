@@ -32,7 +32,7 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
 		conf := get.Config()
 
-		// You cannot change any passwords without authentication and settings enabled.
+		// Password changes require authentication and enabled settings.
 		if conf.Public() || conf.DisableSettings() {
 			Abort(c, http.StatusForbidden, i18n.ErrPublic)
 			return
@@ -56,14 +56,14 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the current user has management privileges.
+		// Check whether the role can manage all user accounts.
 		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		isSuperAdmin := isAdmin && s.GetUser().IsSuperAdmin()
 		uid := clean.UID(c.Param("uid"))
 
 		var u *entity.User
 
-		// Regular users may only change their own password.
+		// Non-admin users may only change their own password.
 		if !isAdmin && s.GetUser().UserUID != uid {
 			AbortForbidden(c)
 			return
@@ -79,7 +79,14 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		f := form.ChangePassword{}
 
 		// Assign and validate request form values.
+		LimitRequestBodyBytes(c, MaxAuthRequestBytes)
+
 		if err := c.BindJSON(&f); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrInvalidPassword)
+				return
+			}
+
 			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 			return
 		}
@@ -110,10 +117,10 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "password", "changed"}, s.RefID)
 
-		// Invalidate any other user sessions to protect the account:
-		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "invalidated %s"}, s.RefID,
-			english.Plural(u.DeleteSessions([]string{s.ID}), "session", "sessions"))
+		// Revoke other user sessions after a privilege level change,
+		// except for app passwords and client access tokens.
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "revoked %s"}, s.RefID,
+			english.Plural(u.RevokeDerivedSessions([]string{s.ID}), "session", "sessions"))
 
 		AddTokenHeaders(c, s)
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPasswordChanged))

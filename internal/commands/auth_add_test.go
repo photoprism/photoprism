@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 func TestAuthAddCommand(t *testing.T) {
@@ -56,5 +58,20 @@ func TestAuthAddCommand(t *testing.T) {
 		// t.Logf(output)
 		assert.Error(t, err)
 		assert.Empty(t, output)
+	})
+	t.Run("AppPasswordsDisabled", func(t *testing.T) {
+		conf := get.Config()
+		conf.Settings().Features.AppPasswords = false
+		defer func() { conf.Settings().Features.AppPasswords = true }()
+
+		// Creating an app password for a user account must be rejected when disabled.
+		output, err := RunWithTestContext(AuthAddCommand, []string{"add", "--scope=metrics", "--expires=5000", "--name=alice", "alice"})
+		assert.Error(t, err)
+		assert.Empty(t, output)
+
+		// A client access token (no user) is unaffected.
+		output, err = RunWithTestContext(AuthAddCommand, []string{"add", "--scope=test", "--expires=5000", "--name=xyz"})
+		assert.NoError(t, err)
+		assert.Contains(t, output, "Access Token")
 	})
 }

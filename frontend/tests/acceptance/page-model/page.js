@@ -44,8 +44,8 @@ export default class Page {
       .click(Selector(".action-confirm"));
     if (handleTMR) {
       if (await Selector(".p-notify--error").withText("Too many requests").exists) {
-        console.log("Rate Limiting recovery in progress, test may be slowed by 1 minute")
-        let counter = 0
+        console.log("Rate Limiting recovery in progress, test may be slowed by 1 minute");
+        let counter = 0;
         while (await Selector(".p-notify--error").withText("Too many requests").exists) {
           if (counter === 62) {
             break;
@@ -61,11 +61,21 @@ export default class Page {
 
   async logout() {
     await menu.openNav();
-    await t.click(Selector("button i.mdi-power"));
+    await t.hover(Selector("div.nav-user-avatar"));
+    await t.click(Selector(".nav-user-menu__content .action-logout"));
+  }
+
+  async openAccount() {
+    await t.hover(Selector("div.nav-user-avatar"));
+    await t.click(Selector(".nav-user-menu__content .action-account"));
   }
 
   async clickCardTitleOfUID(uid) {
     await t.click(Selector('div[data-uid="' + uid + '"] button.action-title-edit'));
+  }
+
+  async clickCardImageLabelOfUID(uid) {
+    await t.click(Selector('div[data-uid="' + uid + '"] button.meta-image'));
   }
 
   async testCreateEditDeleteSharingLink(type) {

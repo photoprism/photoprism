@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
 import { Marker, BatchSize } from "model/marker";
+import typeaheadCache from "common/typeahead-cache";
 
 describe("model/marker", () => {
   let originalBatchSize;
@@ -19,6 +20,17 @@ describe("model/marker", () => {
     const result = marker.getDefaults();
     expect(result.UID).toBe("");
     expect(result.FileUID).toBe("");
+    // Frontend-instantiated markers are always manual (user-drawn) — backend
+    // markers overwrite Src via setValues() when they arrive from the API.
+    expect(result.Src).toBe("manual");
+  });
+
+  it("should default Src to 'manual' when constructed without values", () => {
+    // getDefaults is only applied when no values are passed to the
+    // constructor; manual markers in lightbox.onCreateFaceMarker pass
+    // Src explicitly, but the default guards the no-argument code path.
+    const marker = new Marker();
+    expect(marker.Src).toBe("manual");
   });
 
   it("should get route view", () => {
@@ -182,6 +194,23 @@ describe("model/marker", () => {
     expect(marker2.Name).toBe("testname");
     const response = await marker2.setName();
     expect(response.success).toBe("ok");
+  });
+
+  it("should seed the people typeahead cache after saving a name", async () => {
+    const spy = vi.spyOn(typeaheadCache, "upsertPerson");
+    const marker = new Marker({ UID: "mDC123ghytr", FileUID: "fhjouohnnmnd", Type: "face", Src: "image", Name: "testname", SubjSrc: "manual" });
+    await marker.setName();
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0]).toMatchObject({ Name: "testname" });
+    spy.mockRestore();
+  });
+
+  it("should not seed the cache when the name is empty", async () => {
+    const spy = vi.spyOn(typeaheadCache, "upsertPerson");
+    const marker = new Marker({ UID: "mDC123ghytr", FileUID: "fhjouohnnmnd", Type: "face", Src: "image", Name: "", SubjSrc: "manual" });
+    await marker.setName();
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   it("should clear subject", async () => {

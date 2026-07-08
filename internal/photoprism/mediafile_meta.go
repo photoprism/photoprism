@@ -89,7 +89,7 @@ func (m *MediaFile) ReadExifToolJson() error {
 
 // MetaData returns cached EXIF/sidecar metadata. On first access it probes the
 // underlying file, merges JSON sidecars (including ExifTool exports) and
-// normalises the time zone field.
+// normalizes the time zone field.
 func (m *MediaFile) MetaData() (result meta.Data) {
 	if !m.Ok() || !m.IsMedia() {
 		// Not a main media file.

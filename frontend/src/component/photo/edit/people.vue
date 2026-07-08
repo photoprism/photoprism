@@ -17,12 +17,12 @@
               <v-btn
                 v-if="!m.SubjUID && !m.Invalid"
                 :ripple="false"
-                class="input-reject"
+                :title="$gettext('Remove')"
                 icon
                 variant="text"
                 density="comfortable"
                 position="absolute"
-                :title="$gettext('Remove')"
+                class="input-reject"
                 @click.stop.prevent="onReject(m)"
               >
                 <v-icon class="action-reject">mdi-close</v-icon>
@@ -48,12 +48,11 @@
               <v-text-field
                 v-else-if="m.SubjUID"
                 v-model="m.Name"
-                :rules="[textRule]"
+                :rules="rules.text(true, 0, SubjectMaxLength.Name, $gettext('Name'))"
                 :disabled="busy"
                 :readonly="true"
                 autocomplete="off"
                 autocorrect="off"
-                hide-details
                 single-line
                 clearable
                 persistent-clear
@@ -65,11 +64,12 @@
               <v-combobox
                 v-else
                 v-model:search="m.Name"
-                :items="$config.values.people"
+                :items="people"
                 item-title="Name"
                 item-value="Name"
                 :disabled="busy"
                 :menu-props="menuProps"
+                :menu-icon="null"
                 return-object
                 hide-no-data
                 hide-details
@@ -79,6 +79,7 @@
                 prepend-inner-icon="mdi-account-plus"
                 density="comfortable"
                 class="input-name pa-0 ma-0 text-selectable"
+                @focus="loadPeople"
                 @update:model-value="(person) => onSetPerson(m, person)"
                 @blur="(ev) => onSetName(m, ev)"
                 @keyup.enter="(ev) => onSetName(m, ev)"
@@ -102,7 +103,9 @@
 
 <script>
 import Marker from "model/marker";
-import Subject from "model/subject";
+import Subject, { MaxLength as SubjectMaxLength } from "model/subject";
+import typeaheadCache from "common/typeahead-cache";
+import { rules } from "common/form";
 import PConfirmDialog from "component/confirm/dialog.vue";
 import PActionMenu from "component/action/menu.vue";
 
@@ -122,10 +125,13 @@ export default {
     return {
       view,
       markers: view.model.getMarkers(true),
+      people: [],
       busy: false,
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      rules,
+      SubjectMaxLength,
       confirm: {
         visible: false,
         model: new Marker(),
@@ -148,13 +154,6 @@ export default {
         scrollStrategy: "reposition",
         origin: "auto",
       },
-      textRule: (v) => {
-        if (!v || !v.length) {
-          return this.$gettext("Name");
-        }
-
-        return v.length <= this.$config.get("clip") || this.$gettext("Name too long");
-      },
     };
   },
   watch: {
@@ -162,14 +161,29 @@ export default {
       this.refresh();
     },
   },
+  created() {
+    this.loadPeople();
+  },
   methods: {
     refresh() {
       if (this.view.model) {
         this.markers = this.view.model.getMarkers(true);
       }
     },
+    // loadPeople populates the name suggestions from the shared people cache;
+    // a denied or failed fetch leaves the list empty rather than throwing.
+    loadPeople() {
+      return typeaheadCache
+        .getPeople()
+        .then((models) => {
+          this.people = Array.isArray(models) ? models : [];
+        })
+        .catch(() => {});
+    },
     onReject(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       this.$notify.blockUI("busy");
@@ -180,32 +194,13 @@ export default {
       });
     },
     findPerson(uid) {
-      const people = this.$config?.values?.people;
+      const people = this.people;
 
       if (!uid || !Array.isArray(people)) {
         return null;
       }
 
       return people.find((person) => person.UID === uid) || null;
-    },
-    updatePersonList(subject) {
-      if (!subject) {
-        return;
-      }
-
-      const people = this.$config?.values?.people;
-
-      if (!Array.isArray(people)) {
-        return;
-      }
-
-      const data = subject.getValues();
-      const index = people.findIndex((person) => person.UID === subject.UID);
-      if (index >= 0) {
-        people[index] = Object.assign({}, people[index], data);
-      } else {
-        people.push(data);
-      }
     },
     hasFaceMenu(marker) {
       return this.getFaceActions(marker).some((action) => action.visible);
@@ -249,13 +244,12 @@ export default {
       const subjectPromise = cached
         ? Promise.resolve(new Subject(cached))
         : this.loadSubject(marker.SubjUID).then((subject) => {
-            if (!subject) {
-              this.$notify.error(this.$gettext("Person not found"));
-              return null;
-            }
-            this.updatePersonList(subject);
-            return subject;
-          });
+          if (!subject) {
+            this.$notify.error(this.$gettext("Person not found"));
+            return null;
+          }
+          return subject;
+        });
 
       return subjectPromise
         .then((subject) => {
@@ -284,12 +278,12 @@ export default {
       const subjectPromise = cached
         ? Promise.resolve(new Subject(cached))
         : this.loadSubject(marker.SubjUID).then((subject) => {
-            if (!subject) {
-              this.$notify.error(this.$gettext("Person not found"));
-              return null;
-            }
-            return subject;
-          });
+          if (!subject) {
+            this.$notify.error(this.$gettext("Person not found"));
+            return null;
+          }
+          return subject;
+        });
 
       return subjectPromise
         .then((subject) => {
@@ -298,8 +292,7 @@ export default {
           }
           return subject.setCover(marker.Thumb);
         })
-        .then((updated) => {
-          this.updatePersonList(updated);
+        .then(() => {
           this.$notify.success(this.$gettext("Person cover updated"));
         })
         .catch((err) => {
@@ -314,14 +307,18 @@ export default {
         });
     },
     onApprove(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
 
       model.approve().finally(() => (this.busy = false));
     },
     onClearSubject(model) {
-      if (this.busy || !model) return;
+      if (this.busy || !model) {
+        return;
+      }
 
       this.busy = true;
       this.$notify.blockUI("busy");
@@ -359,10 +356,10 @@ export default {
 
       this.confirm.model = model;
 
-      const people = this.$config.values?.people;
+      const people = this.people;
 
-      if (people) {
-        const found = people.find((person) => person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+      if (Array.isArray(people)) {
+        const found = people.find((person) => person.Name && person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
         if (found) {
           model.Name = found.Name;
           model.SubjUID = found.UID;
@@ -404,6 +401,8 @@ export default {
       this.busy = true;
       this.$notify.blockUI("busy");
 
+      // Marker.setName() seeds the shared people cache, and the name combobox
+      // reloads suggestions on focus, so no explicit refresh is needed here.
       return model.setName().finally(() => {
         this.$notify.unblockUI();
         this.busy = false;

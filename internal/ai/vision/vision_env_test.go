@@ -60,4 +60,14 @@ func TestLoadEnvKeyFromFile(t *testing.T) {
 			t.Fatalf("expected keep-env, got %q", got)
 		}
 	})
+	t.Run("IgnoreDirectoryPath", func(t *testing.T) {
+		t.Setenv("TEST_KEY", "")
+		t.Setenv("TEST_KEY_FILE", t.TempDir())
+
+		loadEnvKeyFromFile("TEST_KEY", "TEST_KEY_FILE")
+
+		if got := os.Getenv("TEST_KEY"); got != "" {
+			t.Fatalf("expected empty key, got %q", got)
+		}
+	})
 }

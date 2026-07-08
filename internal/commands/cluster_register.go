@@ -8,8 +8,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -20,10 +18,9 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
-	clusternode "github.com/photoprism/photoprism/internal/service/cluster/node"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -33,7 +30,7 @@ import (
 // Supported cluster node register flags.
 var (
 	regNameFlag       = &cli.StringFlag{Name: "name", Usage: "node `NAME` (lowercase letters, digits, hyphens)"}
-	regRoleFlag       = &cli.StringFlag{Name: "role", Usage: "node `ROLE` (app, service)", Value: "app"}
+	regRoleFlag       = &cli.StringFlag{Name: "role", Usage: "node `ROLE` (instance, service)", Value: "instance"}
 	regIntUrlFlag     = &cli.StringFlag{Name: "advertise-url", Usage: "internal service `URL`"}
 	regSiteUrlFlag    = &cli.StringFlag{Name: "site-url", Usage: "public site `URL` (https://...)"}
 	regAppNameFlag    = &cli.StringFlag{Name: "app-name", Usage: "override app `NAME` reported to the portal"}
@@ -91,11 +88,11 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			return cli.Exit(fmt.Errorf("node name is required (use --name or set node-name)"), 2)
 		}
 
-		nodeRole := clean.TypeLowerDash(ctx.String("role"))
+		nodeRole := cluster.NormalizeNodeRole(clean.TypeLowerDash(ctx.String("role")))
 		switch nodeRole {
-		case cluster.RoleApp, cluster.RoleService:
+		case cluster.RoleInstance, cluster.RoleService:
 		default:
-			return cli.Exit(fmt.Errorf("invalid --role (must be app or service)"), 2)
+			return cli.Exit(fmt.Errorf("invalid --role (must be instance or service)"), 2)
 		}
 
 		portalURL := ctx.String("portal-url")
@@ -160,7 +157,7 @@ func clusterRegisterAction(ctx *cli.Context) error {
 		if themeVersion, err := theme.DetectVersion(conf.ThemePath()); err == nil && themeVersion != "" {
 			payload.Theme = themeVersion
 		}
-		b, _ := json.Marshal(payload)
+		b := marshalRegisterRequest(payload)
 
 		// In dry-run, we allow empty portalURL (will print derived/empty values).
 		if ctx.Bool("dry-run") {
@@ -332,13 +329,14 @@ func (e *httpError) Error() string { return fmt.Sprintf("http %d: %s", e.Status,
 func postWithBackoff(url, token string, payload []byte, out any) error {
 	// backoff: 500ms -> max ~8s, 6 attempts with jitter
 	delay := 500 * time.Millisecond
-	for attempt := 0; attempt < 6; attempt++ {
-		req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload))
+	for range 6 {
+		// url is a register endpoint derived from the configured portal URL for this CLI command.
+		req, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(payload)) //nolint:gosec
 		header.SetAuthorization(req, token)
 		req.Header.Set(header.ContentType, "application/json")
 
 		client := &http.Client{Timeout: cluster.BootstrapRegisterTimeout}
-		resp, err := client.Do(req)
+		resp, err := client.Do(req) //nolint:gosec
 		if err != nil {
 			return err
 		}
@@ -447,25 +445,34 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		updates.SetClusterCIDR(cidr)
 	}
 
-	// Node client secret file
+	if resp.Node.ClientID != "" {
+		updates.SetNodeClientID(resp.Node.ClientID)
+	}
+
+	if rnd.IsUUID(resp.Node.UUID) {
+		updates.SetNodeUUID(resp.Node.UUID)
+	}
+
+	if jwksUrl := strings.TrimSpace(resp.JWKSUrl); jwksUrl != "" {
+		updates.SetJWKSUrl(jwksUrl)
+	}
+
+	// Node client secret is persisted only via config helper.
 	if resp.Secrets != nil && resp.Secrets.ClientSecret != "" {
-		// Prefer PHOTOPRISM_NODE_CLIENT_SECRET_FILE; otherwise config cluster path
-		fileName := os.Getenv(config.FlagFileVar("NODE_CLIENT_SECRET"))
-		if fileName == "" {
-			fileName = filepath.Join(conf.PortalConfigPath(), "node-secret")
-		}
-		if err := fs.MkdirAll(filepath.Dir(fileName)); err != nil {
+		if fileName, err := conf.SaveNodeClientSecret(resp.Secrets.ClientSecret); err != nil {
 			return err
+		} else if fileName != "" {
+			log.Infof("wrote node client secret to %s", clean.Log(fileName))
 		}
-		if err := os.WriteFile(fileName, []byte(resp.Secrets.ClientSecret), 0o600); err != nil {
-			return err
-		}
-		log.Infof("wrote node client secret to %s", clean.Log(fileName))
 	}
 
 	// DB settings (MySQL/MariaDB only)
 	if resp.Database.Name != "" && resp.Database.User != "" {
-		updates.SetDatabaseDriver(config.MySQL)
+		driver := strings.TrimSpace(resp.Database.Driver)
+		if driver == "" {
+			driver = dsn.DriverMySQL
+		}
+		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)
 		updates.SetDatabaseServer(fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port))
 		updates.SetDatabaseUser(resp.Database.User)
@@ -473,7 +480,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 	}
 
 	if !updates.IsZero() {
-		if _, err := clusternode.ApplyOptionsUpdate(conf, updates); err != nil {
+		if _, err := conf.SaveClusterOptionsUpdate(updates); err != nil {
 			return err
 		}
 		log.Infof("updated options.yml with cluster registration settings for node %s", clean.LogQuote(resp.Node.Name))

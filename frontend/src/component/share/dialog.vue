@@ -144,6 +144,7 @@ export default {
       default: () => {},
     },
   },
+  emits: ["close", "upload"],
   data() {
     return {
       expanded: [0],

@@ -169,9 +169,17 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	parsedLabels := len(response.Result.Labels) > 0
 
 	// Qwen3-VL models stream their JSON payload in the "Thinking" field.
-	fallbackJSON := strings.TrimSpace(ollamaResp.Response)
+	fallbackResponse := strings.TrimSpace(ollamaResp.Response)
+	fallbackThinking := strings.TrimSpace(ollamaResp.Thinking)
+
+	fallbackJSON := fallbackResponse
 	if fallbackJSON == "" {
-		fallbackJSON = strings.TrimSpace(ollamaResp.Thinking)
+		fallbackJSON = fallbackThinking
+	}
+
+	fallbackCaption := fallbackResponse
+	if fallbackCaption == "" {
+		fallbackCaption = fallbackThinking
 	}
 
 	if !parsedLabels && fallbackJSON != "" && (req.Format == FormatJSON || strings.HasPrefix(fallbackJSON, "{")) {
@@ -208,9 +216,9 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 			filtered = append(filtered, response.Result.Labels[i])
 		}
 		response.Result.Labels = filtered
-	} else if caption := strings.TrimSpace(ollamaResp.Response); caption != "" {
+	} else if fallbackCaption != "" {
 		response.Result.Caption = &CaptionResult{
-			Text:   caption,
+			Text:   fallbackCaption,
 			Source: entity.SrcOllama,
 		}
 	}

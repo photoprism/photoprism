@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -47,8 +46,12 @@ func purgeAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	// get cli first argument
-	subPath := strings.TrimSpace(ctx.Args().First())
+	// Use first argument to limit scope if set.
+	subPath, err := sanitizeSubfolderArg(ctx.Args().First())
+
+	if err != nil {
+		return err
+	}
 
 	if subPath == "" {
 		log.Infof("purge: removing missing files in %s", clean.Log(filepath.Base(conf.OriginalsPath())))

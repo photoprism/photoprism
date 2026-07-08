@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -14,6 +15,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -21,13 +24,13 @@ import (
 // GetVideo returns a video, optionally limited to a byte range for streaming.
 //
 //	@Summary		returns a video, optionally limited to a byte range for streaming
-//	@Description	Fore more information see:
+//	@Description	For more information see:
 //	@Description	- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri
 //	@Id				GetVideo
 //	@Produce		video/mp4
 //	@Tags			Files, Videos
 //	@Failure		403		{object}	i18n.Response
-//	@Param			thumb	path		string	true	"SHA1 video file hash"
+//	@Param			hash	path		string	true	"SHA1 video file hash"
 //	@Param			token	path		string	true	"user-specific security token provided with session"
 //	@Param			format	path		string	true	"video format, e.g. mp4"
 //	@Router			/api/v1/videos/{hash}/{token}/{format} [get]
@@ -167,6 +170,10 @@ func GetVideo(router *gin.RouterGroup) {
 			if avcFile, avcErr := conv.ToAvc(mediaFile, get.Config().FFmpegEncoder(), false, false); avcFile != nil && avcErr == nil {
 				videoFileName = avcFile.FileName()
 				AddContentTypeHeader(c, header.ContentTypeMp4AvcMain)
+			} else if errors.Is(avcErr, status.ErrInsufficientStorage) {
+				log.Warnf("video: insufficient storage to transcode %s", clean.Log(f.FileName))
+				Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+				return
 			} else {
 				// Log error and default to 404.mp4
 				log.Errorf("video: failed to transcode %s", clean.Log(f.FileName))

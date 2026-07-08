@@ -3,8 +3,11 @@ package entity
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -273,7 +276,11 @@ func TestMarker_Save(t *testing.T) {
 		afterDate := m.UpdatedAt
 
 		assert.Equal(t, SrcMeta, m.MarkerSrc)
-		assert.True(t, afterDate.After(initialDate))
+		// Timestamps are stored with second precision, so a save within the same
+		// second leaves UpdatedAt unchanged; assert it stays within a sane window.
+		elapsed := afterDate.Sub(initialDate)
+		assert.GreaterOrEqual(t, elapsed, time.Duration(0))
+		assert.Less(t, elapsed, time.Minute)
 
 		if m.MarkerUID == "" || m.FileUID == "" {
 			t.Errorf("UIDs should not be empty")
@@ -406,7 +413,7 @@ func TestMarker_ClearFace(t *testing.T) {
 	t.Run("ReturnsUpdateError", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: dsn.DriverSQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "clear-face-error.db"),
 		}
 
@@ -442,7 +449,7 @@ func TestMarker_SyncSubject(t *testing.T) {
 	t.Run("UpdateKnownFaceError", func(t *testing.T) {
 		originalProvider := dbConn
 		tempConn := &DbConn{
-			Driver: SQLite3,
+			Driver: dsn.DriverSQLite3,
 			Dsn:    fmt.Sprintf("%s/%s", t.TempDir(), "sync-subject-error.db"),
 		}
 
