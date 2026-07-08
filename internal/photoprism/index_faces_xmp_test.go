@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
@@ -267,6 +268,82 @@ func TestReconcileXmpFaces(t *testing.T) {
 		assert.Equal(t, entity.SrcXmp, saved.SubjSrc)
 		require.NotNil(t, entity.FindSubjectByName("BobRepair", false), "the XMP import must create the Person")
 	})
+}
+
+// TestReconcileXmpFaces_OverwritesClusteredAiFace models the realistic flow of
+// an AI-recognized, auto-clustered person spanning two photos whose name is
+// later overwritten by a different XMP tag on one of them. The import must
+// relabel only the tagged marker: the sibling marker on the other photo, the
+// shared Face cluster, and the original person's global name must stay intact
+// (an XMP name labels only its own marker — no XMP-driven clustering in v1).
+func TestReconcileXmpFaces_OverwritesClusteredAiFace(t *testing.T) {
+	config.TestConfig()
+
+	// The AI recognized "AutoAlice" and clustered her across two photos.
+	autoPerson := newXmpSubject(t, "AutoAlice", entity.SrcAuto)
+
+	emb := make(face.Embedding, len(face.NullEmbedding))
+	emb[0], emb[1] = 2, 1
+
+	cluster := &entity.Face{
+		ID:            "XMPCLUSTER0000000000000000000000000000000A",
+		FaceSrc:       entity.SrcAuto,
+		SubjUID:       autoPerson.SubjUID,
+		EmbeddingJSON: (face.Embeddings{emb}).JSON(),
+		Samples:       2,
+	}
+	require.NoError(t, entity.Db().Create(cluster).Error)
+
+	// clustered persists a detected AI marker tied to the shared face cluster.
+	clustered := func(file *entity.File) *entity.Marker {
+		m := entity.NewMarker(*file, xmpArea, autoPerson.SubjUID, entity.SrcImage, entity.MarkerFace, 100, 100)
+		require.NotNil(t, m)
+		m.SubjSrc = entity.SrcAuto
+		m.MarkerName = "AutoAlice"
+		m.FaceID = cluster.ID
+		m.FaceDist = 0.1
+		m.SetEmbeddings(face.Embeddings{emb})
+		require.NoError(t, m.Create())
+		return m
+	}
+
+	file1 := newXmpFile(t)
+	file2 := newXmpFile(t)
+	markerA := clustered(file1)
+	markerB := clustered(file2)
+
+	// A different XMP tag lands on the first photo's face.
+	runReconcile(t, file1, []meta.Face{region("XmpBob", xmpArea)})
+
+	// Tagged marker: relabeled to the XMP person, box + detection origin kept.
+	gotA := entity.FindMarker(markerA.MarkerUID)
+	require.NotNil(t, gotA)
+	assert.Equal(t, "XmpBob", gotA.MarkerName, "tagged marker must adopt the XMP name")
+	assert.Equal(t, entity.SrcXmp, gotA.SubjSrc)
+	assert.Equal(t, entity.SrcImage, gotA.MarkerSrc, "detection box origin must stay SrcImage")
+	assert.InDelta(t, xmpArea.X, gotA.X, 0.001, "AI box must be unchanged")
+	xmpBob := entity.FindSubjectByName("XmpBob", false)
+	require.NotNil(t, xmpBob, "a fresh person must be created for the XMP name")
+	assert.Equal(t, xmpBob.SubjUID, gotA.SubjUID)
+	assert.NotEqual(t, autoPerson.SubjUID, gotA.SubjUID, "tagged marker must point to the new person")
+	// The marker keeps its cluster link (FaceID) while pointing at a different
+	// subject — a known v1 limitation: XMP renames do not re-cluster the face.
+	assert.Equal(t, cluster.ID, gotA.FaceID, "cluster link is intentionally left intact in v1")
+
+	// Sibling marker on the other photo must be completely untouched.
+	gotB := entity.FindMarker(markerB.MarkerUID)
+	require.NotNil(t, gotB)
+	assert.Equal(t, "AutoAlice", gotB.MarkerName, "sibling marker name must not change")
+	assert.Equal(t, autoPerson.SubjUID, gotB.SubjUID, "sibling marker must keep the auto person")
+	assert.Equal(t, entity.SrcAuto, gotB.SubjSrc, "sibling marker source must stay SrcAuto")
+
+	// The shared cluster and the original person's global name must be intact.
+	gotFace := entity.FindFace(cluster.ID)
+	require.NotNil(t, gotFace)
+	assert.Equal(t, autoPerson.SubjUID, gotFace.SubjUID, "shared face cluster must not be reassigned")
+	gotPerson := entity.FindSubject(autoPerson.SubjUID)
+	require.NotNil(t, gotPerson)
+	assert.Equal(t, "AutoAlice", gotPerson.SubjName, "auto person must not be globally renamed")
 }
 
 func TestCollectXmpFaces(t *testing.T) {
