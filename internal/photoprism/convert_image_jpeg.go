@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/raw"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 // JpegConvertCmds returns the supported commands for converting a MediaFile to JPEG, sorted by priority.
@@ -23,6 +24,18 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	fileExt := f.Extension()
 	maxSize := strconv.Itoa(w.conf.JpegSize())
 	rawEnabled := w.conf.RawEnabled()
+
+	// Dewarp Insta360 dual-fisheye originals to an equirectangular JPEG via the FFmpeg v360 filter,
+	// so thumbnails and the sphere viewer show corrected pixels. This covers .insp photos as well as
+	// the cover/poster frame extracted from .insv videos. The derivative is tagged equirectangular
+	// and becomes the primary preview; if the dewarp fails, the loop falls back to a normal render.
+	if f.DualFisheye() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+		result = append(result, NewConvertCmd(
+			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), &encode.Options{Bin: w.conf.FFmpegBin()})).
+			WithImageVerification().
+			WithProjection(projection.Equirectangular),
+		)
+	}
 
 	// On a Mac, use the Apple Scriptable image processing system to convert images to JPEG,
 	// see https://ss64.com/osx/sips.html.

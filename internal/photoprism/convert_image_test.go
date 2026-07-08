@@ -2,16 +2,19 @@ package photoprism
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/raw"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 func TestConvert_ToImage(t *testing.T) {
@@ -339,6 +342,58 @@ func TestConvert_JpegConvertCmds(t *testing.T) {
 	}
 
 	assert.True(t, found)
+}
+
+// TestConvert_JpegConvertCmds_Insp verifies that an Insta360 .insp photo emits the FFmpeg v360
+// dewarp as its highest-priority command and tags the equirectangular output for the sphere viewer.
+func TestConvert_JpegConvertCmds_Insp(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to dewarp .insp files")
+	}
+
+	convert := NewConvert(cnf)
+
+	mediaFile, err := NewMediaFile("testdata/insta360.insp")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmds, _, err := convert.JpegConvertCmds(mediaFile, "insta360.insp.jpg", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, cmds)
+	first := cmds[0]
+	assert.Contains(t, first.String(), "v360=input=dfisheye:output=e")
+	assert.True(t, first.Projection.Equal(projection.Equirectangular.String()))
+	assert.True(t, first.VerifyImage)
+}
+
+// TestConvert_writeEquirectangularProjection verifies that the GPano equirectangular tag is
+// written so a dewarped derivative is self-describing to external tools.
+func TestConvert_writeEquirectangularProjection(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available to write GPano metadata")
+	}
+
+	convert := NewConvert(cnf)
+
+	src, err := NewMediaFile("testdata/insta360.insp.jpg")
+	require.NoError(t, err)
+
+	dst := filepath.Join(t.TempDir(), "equirect.jpg")
+	require.NoError(t, src.Copy(dst, false))
+	require.NoError(t, convert.writeEquirectangularProjection(dst))
+
+	// #nosec G204 -- arguments are the configured ExifTool binary and a temp file path.
+	out, err := exec.Command(cnf.ExifToolBin(), "-s3", "-XMP-GPano:ProjectionType", dst).Output()
+	require.NoError(t, err)
+	assert.Equal(t, "equirectangular", strings.TrimSpace(string(out)))
 }
 
 // TestConvert_JpegConvertCmds_RawEmbeddedPreview verifies that RAW inputs emit

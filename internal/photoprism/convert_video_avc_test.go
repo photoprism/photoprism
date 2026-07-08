@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -187,5 +188,31 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		assert.Contains(t, r.Path, "convert")
 		assert.Contains(t, r.Args, webpName)
 		assert.Contains(t, r.Args, avcName)
+	})
+	t.Run("Insv", func(t *testing.T) {
+		mf, err := NewMediaFile("testdata/insta360.insv")
+		if err != nil {
+			t.Fatal(err)
+		}
+		// A hardware encoder is requested, but .insv must be forced onto the software v360 path.
+		r, _, err := convert.TranscodeToAvcCmd(mf, "insta360.avc", encode.Encoder("intel"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		args := strings.Join(r.Args, " ")
+		assert.Contains(t, r.Path, "ffmpeg")
+		assert.Contains(t, args, "v360=input=dfisheye:output=e")
+		assert.Contains(t, args, "libx264")
+	})
+	t.Run("Mp4NoV360", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, _, err := convert.TranscodeToAvcCmd(mf, "gopher.avc", encode.SoftwareAvc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.NotContains(t, strings.Join(r.Args, " "), "v360")
 	})
 }

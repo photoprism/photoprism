@@ -83,6 +83,21 @@ func (c *Config) FFmpegBitrate() int {
 	}
 }
 
+// FFmpegFisheyeFov returns the field of view in degrees used by the v360 dewarp filter for fisheye
+// 360° originals, defaulting to 204 (typical Insta360 X-series lens overlap).
+func (c *Config) FFmpegFisheyeFov() int {
+	switch {
+	case c.options.FFmpegFisheyeFov <= 0:
+		return encode.DefaultFisheyeFov
+	case c.options.FFmpegFisheyeFov < encode.MinFisheyeFov:
+		return encode.MinFisheyeFov
+	case c.options.FFmpegFisheyeFov > encode.MaxFisheyeFov:
+		return encode.MaxFisheyeFov
+	default:
+		return c.options.FFmpegFisheyeFov
+	}
+}
+
 // FFmpegBitrateExceeded tests if the ffmpeg bitrate limit in Mbps is exceeded.
 func (c *Config) FFmpegBitrateExceeded(bitrate float64) bool {
 	if bitrate <= 0 {

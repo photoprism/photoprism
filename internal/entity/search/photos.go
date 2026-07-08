@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -370,6 +371,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		case terms["panoramas"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "panoramas", "")
 			frm.Panorama = true
+		case terms["fisheye"]:
+			frm.Query = strings.ReplaceAll(frm.Query, "fisheye", "")
+			frm.Fisheye = true
 		case terms["scans"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "scans", "")
 			frm.Scan = "true"
@@ -555,6 +559,13 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	// Find panoramic pictures only.
 	if frm.Panorama {
 		s = s.Where("photos.photo_panorama = 1")
+	}
+
+	// Find fisheye 360° originals only. Matches photos that have a fisheye-family file even though
+	// their primary file is the equirectangular dewarp derivative, so a subquery over all files.
+	if frm.Fisheye {
+		s = s.Where("photos.id IN (SELECT photo_id FROM files WHERE file_projection IN (?))",
+			[]string{projection.Fisheye.String(), projection.DualFisheye.String()})
 	}
 
 	// Find portrait/landscape/square pictures only.

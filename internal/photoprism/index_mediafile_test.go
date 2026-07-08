@@ -287,3 +287,53 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	assert.Equal(t, "indexed-original-name/renamed-photo.jpg", file2.FileName)
 	assert.Empty(t, file2.OriginalName, "re-indexed renamed file must not pick up a stale OriginalName")
 }
+
+// TestIndex_MediaFile_DualFisheye verifies that an Insta360 .insp original is recognized and
+// recorded with the dual-fisheye projection, which also flags the photo as a panorama.
+func TestIndex_MediaFile_DualFisheye(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-dual-fisheye.db"))
+
+	cfg := config.NewMinimalTestConfigWithDb("index-dual-fisheye", filepath.Join(t.TempDir(), "storage"))
+
+	oldCfg := Config()
+	SetConfig(cfg)
+
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+	opt := IndexOptionsSingle(cfg)
+	opt.Convert = false // exercise original detection without the ffmpeg dewarp
+
+	srcFile, err := NewMediaFile("testdata/insta360.insp")
+	require.NoError(t, err)
+
+	dst := filepath.Join(cfg.OriginalsPath(), "insta360.insp")
+	require.NoError(t, srcFile.Copy(dst, false))
+
+	mf, err := NewMediaFile(dst)
+	require.NoError(t, err)
+	hash := mf.Hash()
+
+	// The full index flow creates the ExifTool JSON before indexing; it also supplies the JPEG
+	// dimensions the panorama flag depends on.
+	require.NoError(t, mf.CreateExifToolJson(convert))
+
+	res := ind.MediaFile(mf, opt, "", "")
+	require.True(t, res.Success())
+
+	var file entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file, "file_hash = ?", hash).Error)
+	assert.Equal(t, "dual-fisheye", file.FileProjection)
+
+	var photo entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID).Error)
+	assert.True(t, photo.PhotoPanorama)
+}

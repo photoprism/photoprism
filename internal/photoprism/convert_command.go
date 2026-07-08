@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 // ConvertCmd represents a command to be executed for converting a MediaFile.
@@ -14,6 +15,7 @@ type ConvertCmd struct {
 	Orientation  media.Orientation
 	VerifyImage  bool
 	RejectStderr []string
+	Projection   projection.Type
 }
 
 // String returns the conversion command as string e.g. for logging.
@@ -40,6 +42,13 @@ func (c *ConvertCmd) ResetOrientation() *ConvertCmd {
 // so corrupt embedded previews are rejected and the loop tries the next command.
 func (c *ConvertCmd) WithImageVerification() *ConvertCmd {
 	c.VerifyImage = true
+	return c
+}
+
+// WithProjection records the visual projection of the command's output so it can be written to
+// the generated file after a successful conversion, e.g. to tag a dewarped derivative equirectangular.
+func (c *ConvertCmd) WithProjection(p projection.Type) *ConvertCmd {
+	c.Projection = p
 	return c
 }
 

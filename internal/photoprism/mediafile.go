@@ -33,6 +33,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -903,6 +904,103 @@ func (m *MediaFile) IsDng() bool {
 	}
 
 	return m.HasMimeType(header.ContentTypeDng)
+}
+
+// IsInsp checks if the file is an Insta360 panoramic image (dual-fisheye JPEG).
+func (m *MediaFile) IsInsp() bool {
+	return fs.FileType(m.fileName) == fs.ImageInsp
+}
+
+// IsInsv checks if the file is an Insta360 video (dual-fisheye MP4 container).
+func (m *MediaFile) IsInsv() bool {
+	return fs.FileType(m.fileName) == fs.VideoInsv
+}
+
+// IsInsta360 checks if the file was recorded by an Insta360 camera, based on its maker metadata.
+// Older models (ONE, ONE X) report the vendor "Arashi Vision" with the model name carrying "Insta360",
+// while newer models report "Insta360" directly.
+func (m *MediaFile) IsInsta360() bool {
+	if m.IsInsp() || m.IsInsv() {
+		return true
+	}
+
+	switch strings.ToLower(m.CameraMake()) {
+	case "insta360", "arashi vision":
+		return true
+	}
+
+	return strings.HasPrefix(strings.ToLower(m.CameraModel()), "insta360")
+}
+
+// DualFisheye checks if the file stores dual-fisheye 360° content that must be dewarped to
+// equirectangular before it can be shown in the sphere viewer. Insta360 .insp/.insv originals
+// always do; the extension is authoritative for these proprietary formats.
+func (m *MediaFile) DualFisheye() bool {
+	return m.IsInsp() || m.IsInsv()
+}
+
+// FisheyeDng checks if the file is a fisheye 360° DNG — a dual-fisheye RAW capture from a 360 rig
+// such as Insta360 ONE/X or Ricoh Theta, which must be developed and then dewarped. Unlike
+// .insp/.insv the .dng extension does not imply fisheye, so detection is a conservative metadata
+// heuristic that leaves ordinary rectilinear DNGs untouched.
+func (m *MediaFile) FisheyeDng() bool {
+	if !m.IsDng() {
+		return false
+	}
+
+	if m.IsInsta360() || projection.New(m.MetaData().Projection).Fisheye() {
+		return true
+	}
+
+	if model := strings.ToLower(m.CameraModel()); strings.Contains(model, "theta") || strings.Contains(model, "360") {
+		return true
+	}
+
+	return strings.Contains(strings.ToLower(m.LensModel()), "fisheye")
+}
+
+// DewarpedPreview reports whether this file is the equirectangular preview generated from a
+// dual-fisheye original. Such previews are named "<original>.jpg" (e.g. "clip.insv.jpg"), so the
+// inner extension identifies the source. This is filename-based on purpose: preview derivatives in
+// the sidecar path get no metadata extraction during indexing, so their projection cannot be read
+// from the file and is instead inferred from the source they were dewarped from.
+func (m *MediaFile) DewarpedPreview() bool {
+	if !m.IsPreviewImage() {
+		return false
+	}
+
+	srcName := fs.StripExt(m.FileName())
+
+	switch fs.FileType(srcName) {
+	case fs.ImageInsp, fs.VideoInsv:
+		// Insta360 originals are always dual-fisheye, so the preview is always dewarped.
+		return true
+	case fs.ImageDng:
+		// A .dng preview is dewarped only when its source DNG is a fisheye 360 capture.
+		if src := m.dewarpSource(srcName); src != nil {
+			return src.FisheyeDng()
+		}
+	}
+
+	return false
+}
+
+// dewarpSource resolves the original a preview was generated from, mapping the sidecar path back to
+// the originals path when the preview is a sidecar file, and returns nil if it cannot be resolved.
+func (m *MediaFile) dewarpSource(srcName string) *MediaFile {
+	if fs.FileExists(srcName) {
+		if src, err := NewMediaFile(srcName); err == nil {
+			return src
+		}
+	}
+
+	if rel, err := filepath.Rel(Config().SidecarPath(), srcName); err == nil && !strings.HasPrefix(rel, "..") {
+		if src, err := NewMediaFile(filepath.Join(Config().OriginalsPath(), rel)); err == nil && src.Ok() {
+			return src
+		}
+	}
+
+	return nil
 }
 
 // IsHeif checks if the file is a High Efficiency Image File Format (HEIF) container with a supported file type extension.

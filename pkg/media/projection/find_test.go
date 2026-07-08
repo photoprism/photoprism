@@ -19,4 +19,10 @@ func TestFromName(t *testing.T) {
 		result := Find("Equirectangular ")
 		assert.Equal(t, Equirectangular, result)
 	})
+	t.Run(Fisheye.String(), func(t *testing.T) {
+		assert.Equal(t, Fisheye, Find("Fisheye"))
+	})
+	t.Run(DualFisheye.String(), func(t *testing.T) {
+		assert.Equal(t, DualFisheye, Find("dual-fisheye"))
+	})
 }

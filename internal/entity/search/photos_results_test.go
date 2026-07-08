@@ -254,6 +254,52 @@ func TestPhoto_MediaProjection(t *testing.T) {
 		}
 		assert.Equal(t, "equirectangular", r.MediaProjection())
 	})
+	t.Run("ImagePrefersEquirectDerivative", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "image",
+			FileProjection: "dual-fisheye",
+			Files: []entity.File{
+				{MediaType: media.Image.String(), FileHash: "e", FileProjection: "equirectangular"},
+			},
+		}
+		assert.Equal(t, "equirectangular", r.MediaProjection())
+	})
+	t.Run("ImageDualFisheyeWithoutDerivativeRedacted", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "image",
+			FileProjection: "dual-fisheye",
+		}
+		assert.Equal(t, "", r.MediaProjection())
+	})
+	t.Run("VideoPrefersEquirectDerivative", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "video",
+			FileProjection: "",
+			Files: []entity.File{
+				{FileVideo: true, MediaType: media.Video.String(), FileHash: "v", FileProjection: "dual-fisheye"},
+				{MediaType: media.Image.String(), FileHash: "e", FileProjection: "equirectangular"},
+			},
+		}
+		assert.Equal(t, "equirectangular", r.MediaProjection())
+	})
+	t.Run("VideoDualFisheyeWithoutDerivativeRedacted", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "video",
+			FileProjection: "dual-fisheye",
+			Files: []entity.File{
+				{FileVideo: true, MediaType: media.Video.String(), FileHash: "v", FileProjection: "dual-fisheye"},
+			},
+		}
+		assert.Equal(t, "", r.MediaProjection())
+	})
+}
+
+func TestSphereProjection(t *testing.T) {
+	assert.Equal(t, "", sphereProjection("fisheye"))
+	assert.Equal(t, "", sphereProjection("dual-fisheye"))
+	assert.Equal(t, "equirectangular", sphereProjection("equirectangular"))
+	assert.Equal(t, "cubestrip", sphereProjection("cubestrip"))
+	assert.Equal(t, "", sphereProjection(""))
 }
 
 func TestPhoto_MediaInfo(t *testing.T) {

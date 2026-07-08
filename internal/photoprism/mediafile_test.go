@@ -3,6 +3,7 @@ package photoprism
 import (
 	"image"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -1038,6 +1039,159 @@ func TestMediaFile_HasType(t *testing.T) {
 		}
 		assert.True(t, mediaFile.HasFileType("xmp"))
 	})
+}
+
+func TestMediaFile_IsInsp(t *testing.T) {
+	t.Run("Insp", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insp")
+		assert.NoError(t, err)
+		assert.True(t, f.IsInsp())
+		assert.False(t, f.IsInsv())
+		assert.True(t, f.IsImage())
+	})
+	t.Run("Jpeg", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg")
+		assert.NoError(t, err)
+		assert.False(t, f.IsInsp())
+	})
+}
+
+func TestMediaFile_IsInsv(t *testing.T) {
+	t.Run("Insv", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insv")
+		assert.NoError(t, err)
+		assert.True(t, f.IsInsv())
+		assert.False(t, f.IsInsp())
+		assert.True(t, f.IsVideo())
+	})
+}
+
+func TestMediaFile_IsInsta360(t *testing.T) {
+	t.Run("Insp", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insp")
+		assert.NoError(t, err)
+		assert.True(t, f.IsInsta360())
+	})
+	t.Run("Insv", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insv")
+		assert.NoError(t, err)
+		assert.True(t, f.IsInsta360())
+	})
+	t.Run("Jpeg", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg")
+		assert.NoError(t, err)
+		assert.False(t, f.IsInsta360())
+	})
+}
+
+func TestMediaFile_DualFisheye(t *testing.T) {
+	t.Run("Insp", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insp")
+		assert.NoError(t, err)
+		assert.True(t, f.DualFisheye())
+	})
+	t.Run("Insv", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insv")
+		assert.NoError(t, err)
+		assert.True(t, f.DualFisheye())
+	})
+	t.Run("Jpeg", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg")
+		assert.NoError(t, err)
+		assert.False(t, f.DualFisheye())
+	})
+}
+
+func TestMediaFile_DewarpedPreview(t *testing.T) {
+	t.Run("InspPreview", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insp.jpg")
+		assert.NoError(t, err)
+		assert.True(t, f.DewarpedPreview())
+	})
+	t.Run("InsvPreview", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insv.jpg")
+		assert.NoError(t, err)
+		assert.True(t, f.DewarpedPreview())
+	})
+	t.Run("OrdinaryJpeg", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg")
+		assert.NoError(t, err)
+		assert.False(t, f.DewarpedPreview())
+	})
+	t.Run("InspOriginalNotPreview", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insp")
+		assert.NoError(t, err)
+		assert.False(t, f.DewarpedPreview())
+	})
+	t.Run("FisheyeDngPreview", func(t *testing.T) {
+		dir := t.TempDir()
+		dngFixture(t, dir, "insta360.dng", true)
+		f, err := NewMediaFile(copyFixture(t, dir, "insta360.dng.jpg", "testdata/flash.jpg"))
+		assert.NoError(t, err)
+		assert.True(t, f.DewarpedPreview())
+	})
+	t.Run("OrdinaryDngPreview", func(t *testing.T) {
+		dir := t.TempDir()
+		dngFixture(t, dir, "canon.dng", false)
+		f, err := NewMediaFile(copyFixture(t, dir, "canon.dng.jpg", "testdata/flash.jpg"))
+		assert.NoError(t, err)
+		assert.False(t, f.DewarpedPreview())
+	})
+}
+
+func TestMediaFile_FisheyeDng(t *testing.T) {
+	dir := t.TempDir()
+	t.Run("Insta360Dng", func(t *testing.T) {
+		f, err := NewMediaFile(dngFixture(t, dir, "insta360.dng", true))
+		assert.NoError(t, err)
+		assert.True(t, f.FisheyeDng())
+	})
+	t.Run("OrdinaryDng", func(t *testing.T) {
+		f, err := NewMediaFile(dngFixture(t, dir, "canon.dng", false))
+		assert.NoError(t, err)
+		assert.False(t, f.FisheyeDng())
+	})
+	t.Run("NotDng", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg")
+		assert.NoError(t, err)
+		assert.False(t, f.FisheyeDng())
+	})
+}
+
+// copyFixture copies srcName into dir/name and returns the new path, so tests can assemble fixtures
+// without committing extra binaries.
+func copyFixture(t *testing.T, dir, name, srcName string) string {
+	t.Helper()
+	src, err := NewMediaFile(srcName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	dst := filepath.Join(dir, name)
+	if err = src.Copy(dst, false); err != nil {
+		t.Fatal(err)
+	}
+	return dst
+}
+
+// dngFixture builds a DNG fixture in dir by copying the repo's sample DNG. When insta360 is true it
+// rewrites the maker metadata via ExifTool so FisheyeDng() detects it (skipping if ExifTool is
+// unavailable). This avoids committing duplicate 400 KB DNG binaries just for tests.
+func dngFixture(t *testing.T, dir, name string, insta360 bool) string {
+	t.Helper()
+	cnf := config.TestConfig()
+	dst := copyFixture(t, dir, name, filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng"))
+
+	if insta360 {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool is required to build a fisheye DNG fixture")
+		}
+		// #nosec G204 -- arguments are the configured ExifTool binary and a temp file path.
+		if err := exec.Command(cnf.ExifToolBin(), "-q", "-overwrite_original", "-Make=Insta360", "-Model=Insta360 X4", dst).Run(); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	return dst
 }
 
 func TestMediaFile_IsHeic(t *testing.T) {

@@ -220,6 +220,7 @@ type Options struct {
 	FFmpegSize                int           `yaml:"FFmpegSize" json:"FFmpegSize" flag:"ffmpeg-size"`
 	FFmpegQuality             int           `yaml:"FFmpegQuality" json:"FFmpegQuality" flag:"ffmpeg-quality"`
 	FFmpegBitrate             int           `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
+	FFmpegFisheyeFov          int           `yaml:"FFmpegFisheyeFov" json:"FFmpegFisheyeFov" flag:"ffmpeg-fisheye-fov"`
 	FFmpegPreset              string        `yaml:"FFmpegPreset" json:"FFmpegPreset" flag:"ffmpeg-preset"`
 	FFmpegDevice              string        `yaml:"FFmpegDevice" json:"-" flag:"ffmpeg-device"`
 	FFmpegMapVideo            string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`

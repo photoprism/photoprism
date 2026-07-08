@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -470,6 +471,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
+		// A dewarped equirectangular preview of a dual-fisheye original carries no readable
+		// projection metadata, so infer it from the source. Set outside the metadata block above
+		// because these previews often have no EXIF, which leaves data.Error non-nil.
+		if m.DewarpedPreview() {
+			file.SetProjection(projection.Equirectangular.String())
+		}
+
 		// If the file contains multiple images for an animation,
 		// change the media type to "animated".
 		if photo.HasMediaType(media.Image) && m.IsAnimatedImage() {
@@ -641,6 +649,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.SetMediaType(media.Vector, entity.SrcAuto)
 			}
 		}
+
+		// Insta360 .insp originals store dual-fisheye 360° content; record the projection regardless
+		// of metadata errors (these files often lack EXIF) so the dewarped derivative routes correctly.
+		// Fisheye 360° DNGs are dual-fisheye too, but detected by metadata rather than extension.
+		if m.DualFisheye() || m.FisheyeDng() {
+			file.SetProjection(projection.DualFisheye.String())
+		}
 	case m.IsVector():
 		if data := m.MetaData(); data.Error == nil {
 			// Update basic metadata.
@@ -797,6 +812,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetMediaType(media.Live, entity.SrcAuto)
 		} else {
 			photo.SetMediaType(media.Video, entity.SrcAuto)
+		}
+
+		// Insta360 .insv originals store dual-fisheye 360° content; record the projection regardless
+		// of metadata errors (these files often lack EXIF) so the dewarped transcode routes correctly.
+		if m.DualFisheye() {
+			file.SetProjection(projection.DualFisheye.String())
 		}
 
 		// Set the video dimensions from the primary image if it could not be determined from the video metadata.

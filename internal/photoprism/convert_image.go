@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -12,6 +13,8 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
+	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -19,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 // ToImage converts a media file to a directly supported image file format.
@@ -80,6 +84,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 	fileName := f.RelName(w.conf.OriginalsPath())
 	fileOrientation := media.KeepOrientation
+	fileProjection := projection.Unknown
 	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
 	// Publish file conversion event.
@@ -215,6 +220,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 		log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
 		fileOrientation = c.Orientation
+		fileProjection = c.Projection
 		break
 	}
 
@@ -235,5 +241,87 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 	}
 
+	// Fisheye 360° DNGs were developed to a dual-fisheye JPEG above; dewarp that JPEG to
+	// equirectangular now, since FFmpeg cannot develop RAW itself. On success the GPano block below
+	// tags it. Best effort: a failure leaves the developed (non-dewarped) JPEG usable.
+	if f.FisheyeDng() {
+		if dewarpErr := w.dewarpFileInPlace(result.FileName(), w.fisheyeFov(f)); dewarpErr != nil {
+			log.Warnf("convert: %s in %s (dewarp)", clean.Error(dewarpErr), clean.Log(result.RootRelName()))
+		} else {
+			fileProjection = projection.Equirectangular
+		}
+	}
+
+	// Embed GPano metadata so a dewarped equirectangular derivative is self-describing to external
+	// tools. The indexer records the projection separately (preview derivatives get no metadata
+	// extraction), so this is best effort: a failure leaves the file usable, just untagged.
+	if fileProjection.Equal(projection.Equirectangular.String()) {
+		if projErr := w.writeEquirectangularProjection(result.FileName()); projErr != nil {
+			log.Warnf("convert: %s in %s (write projection)", clean.Error(projErr), clean.Log(result.RootRelName()))
+		} else if reloaded, reloadErr := NewMediaFile(result.FileName()); reloadErr == nil {
+			result = reloaded
+		}
+	}
+
 	return result, nil
+}
+
+// writeEquirectangularProjection tags the specified file as an equirectangular 360° image using
+// ExifTool GPano metadata, so the indexer records its projection and routes it to the sphere viewer.
+func (w *Convert) writeEquirectangularProjection(fileName string) error {
+	if !w.conf.ExifToolEnabled() {
+		return nil
+	}
+
+	// #nosec G204 -- arguments are built from validated config and file paths.
+	cmd := exec.Command(w.conf.ExifToolBin(),
+		"-q", "-overwrite_original",
+		"-XMP-GPano:ProjectionType=equirectangular",
+		"-XMP-GPano:UsePanoramaViewer=true",
+		fileName,
+	)
+	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()))
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	if err := cmd.Run(); err != nil {
+		if s := strings.TrimSpace(stderr.String()); s != "" {
+			return errors.New(s)
+		}
+		return err
+	}
+
+	return nil
+}
+
+// dewarpFileInPlace dewarps a dual-fisheye image to equirectangular with the FFmpeg v360 filter,
+// writing to a temporary file and renaming it over the original because FFmpeg cannot read and
+// write the same path in one pass. fov is the per-lens field of view in degrees.
+func (w *Convert) dewarpFileInPlace(fileName string, fov int) error {
+	if !w.conf.FFmpegEnabled() {
+		return errors.New("ffmpeg is disabled")
+	}
+
+	tmpName := fileName + ".dewarp.jpg"
+
+	cmd := ffmpeg.DewarpDualFisheyeToJpegCmd(fileName, tmpName, fov, &encode.Options{Bin: w.conf.FFmpegBin()})
+	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()))
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	if err := cmd.Run(); err != nil {
+		_ = os.Remove(tmpName)
+		if s := strings.TrimSpace(stderr.String()); s != "" {
+			return errors.New(s)
+		}
+		return err
+	}
+
+	if !fs.FileExistsNotEmpty(tmpName) {
+		return errors.New("no output produced")
+	}
+
+	return os.Rename(tmpName, fileName)
 }

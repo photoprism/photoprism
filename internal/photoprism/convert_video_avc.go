@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
@@ -206,13 +207,35 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 		return exec.Command(w.conf.ImageMagickBin(), f.FileName(), avcName), false, nil
 	}
 
+	// Dewarp Insta360 dual-fisheye video to equirectangular with the software v360 filter. It runs
+	// on the CPU and needs frames in system memory, so the hardware encoders are bypassed for these.
+	if f.IsInsv() {
+		encoder = encode.SoftwareAvc
+	}
+
 	// Use FFmpeg to transcode all other media files to AVC.
 	var opt encode.Options
 	if opt, err = w.conf.FFmpegOptions(encoder, w.AvcBitrate(f)); err != nil {
 		return nil, false, fmt.Errorf("convert: failed to transcode %s (%s)", clean.Log(f.BaseName()), err)
-	} else {
-		return ffmpeg.TranscodeCmd(fileName, avcName, opt)
 	}
+
+	if f.IsInsv() {
+		opt.V360 = ffmpeg.V360DualFisheyeToEquirect(w.fisheyeFov(f))
+	}
+
+	return ffmpeg.TranscodeCmd(fileName, avcName, opt)
+}
+
+// fisheyeFov returns the v360 dewarp field of view in degrees for the given fisheye 360° file,
+// preferring a per-camera default and falling back to the configured FFmpegFisheyeFov.
+func (w *Convert) fisheyeFov(f *MediaFile) int {
+	if f != nil {
+		if fov := entity.CameraFisheyeFov(f.CameraMake(), f.CameraModel()); fov > 0 {
+			return fov
+		}
+	}
+
+	return w.conf.FFmpegFisheyeFov()
 }
 
 // AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
