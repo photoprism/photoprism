@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -170,7 +170,7 @@ msgstr "액세스 토큰"
 
 #: src/page/settings/general.vue:423
 msgid "Accessibility"
-msgstr ""
+msgstr "접근성"
 
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:692
@@ -515,7 +515,7 @@ msgstr "파일을 영구 삭제하여 저장 공간을 확보할 수 있도록 �
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
-msgstr ""
+msgstr "페이지 확대/축소 허용"
 
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
@@ -531,7 +531,7 @@ msgstr "사용자가 웹 인터페이스를 통해 새 사진과 동영상을 �
 
 #: src/page/settings/general.vue:480
 msgid "Allow zooming with pinch gestures on mobile devices."
-msgstr ""
+msgstr "모바일 기기에서 핀치 제스처를 사용하여 확대/축소할 수 있도록 합니다."
 
 #: src/component/share/dialog.vue:118
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1044,7 +1044,7 @@ msgstr "코덱"
 
 #: src/page/settings.vue:86
 msgid "Collections"
-msgstr ""
+msgstr "컬렉션"
 
 #: src/component/photo/toolbar.vue:232
 msgid "Color"
@@ -1231,7 +1231,7 @@ msgstr "축소판 만들기"
 
 #: src/options/options.js:501
 msgid "Current Name"
-msgstr ""
+msgstr "현재 이름"
 
 #: src/component/settings/password.vue:31
 msgid "Current Password"
@@ -1360,7 +1360,7 @@ msgstr "다크테이블 비활성화"
 
 #: src/page/settings/collections.vue:17
 msgid "Disable Downloads"
-msgstr ""
+msgstr "다운로드 비활성화"
 
 #: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
@@ -1837,7 +1837,7 @@ msgstr "기능 요청"
 
 #: src/page/settings/collections.vue:6
 msgid "Features"
-msgstr ""
+msgstr "주요 기능"
 
 #: src/options/options.js:487
 msgid "Female"
@@ -2064,11 +2064,11 @@ msgstr "비공개 항목은 글로벌 보기에서 숨기고 비공개 섹션에
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
-msgstr ""
+msgstr "스크롤바 숨기기"
 
 #: src/page/settings/general.vue:465
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
-msgstr ""
+msgstr "일부 데스크톱 브라우저에서 표시되는 고정 스크롤바를 숨깁니다."
 
 #: src/options/options.js:381
 msgid "High"
@@ -2993,11 +2993,11 @@ msgstr "열기"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr ""
+msgstr "데스크톱 브라우저를 사용할 때, 클릭 대신 마우스를 올렸을 때 메뉴가 열리도록 합니다."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
-msgstr ""
+msgstr "마우스 오버 시 열기"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
@@ -3286,7 +3286,7 @@ msgstr "새 항목을 만들려면 Enter 키를 누릅니다."
 
 #: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
-msgstr ""
+msgstr "파일 모음이 zip 아카이브로 다운로드되는 것을 방지합니다."
 
 #: src/page/settings/advanced.vue:79
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
@@ -3423,11 +3423,11 @@ msgstr "빨간색"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr ""
+msgstr "인터페이스 애니메이션과 모션 효과를 줄이세요."
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
-msgstr ""
+msgstr "움직임 줄이기"
 
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
@@ -3873,7 +3873,7 @@ msgstr "%{s} 공유하기"
 
 #: src/options/options.js:503
 msgid "Share Friendly"
-msgstr ""
+msgstr "공유하기"
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
 msgid "Show"
@@ -3921,7 +3921,7 @@ msgstr "계정 페이지를 표시하여 사용자가 프로필 및 보안 설�
 
 #: src/page/settings/general.vue:82
 msgid "Show the Albums section to manually browse and organize pictures."
-msgstr ""
+msgstr "사진을 직접 찾아보고 정리할 수 있도록 ‘앨범’ 섹션을 표시합니다."
 
 #: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."
@@ -3929,11 +3929,11 @@ msgstr "캘린더 보기를 표시하여 연도 및 월별로 라이브러리를
 
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
-msgstr ""
+msgstr "‘즐겨찾기’ 섹션을 표시하여 별표가 표시된 사진에 빠르게 접근하세요."
 
 #: src/page/settings/general.vue:112
 msgid "Show the Folders section to browse pictures by directory structure."
-msgstr ""
+msgstr "‘폴더’ 섹션을 표시하여 디렉터리 구조별로 사진을 찾아보세요."
 
 #: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
@@ -3945,7 +3945,7 @@ msgstr "라이브러리 섹션을 표시하여 미디어 라이브러리를 색�
 
 #: src/page/settings/general.vue:127
 msgid "Show the Media section to browse videos, live photos, and animations."
-msgstr ""
+msgstr "‘미디어’ 섹션을 표시하여 동영상, 라이브 사진 및 애니메이션을 살펴보세요."
 
 #: src/page/settings/general.vue:410
 msgid "Show the Places view with interactive maps so you can browse photos by location."

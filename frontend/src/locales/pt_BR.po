@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -170,7 +170,7 @@ msgstr "Token de acesso"
 
 #: src/page/settings/general.vue:423
 msgid "Accessibility"
-msgstr ""
+msgstr "Acessibilidade"
 
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:692
@@ -515,7 +515,7 @@ msgstr "Permitir que os arquivos sejam excluídos permanentemente para liberar e
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
-msgstr ""
+msgstr "Permitir zoom na página"
 
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
@@ -531,7 +531,7 @@ msgstr "Permitir que os usuários carreguem novas fotos e vídeos por meio da in
 
 #: src/page/settings/general.vue:480
 msgid "Allow zooming with pinch gestures on mobile devices."
-msgstr ""
+msgstr "Permita o zoom com gestos de pinça em dispositivos móveis."
 
 #: src/component/share/dialog.vue:118
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1044,7 +1044,7 @@ msgstr "Codec"
 
 #: src/page/settings.vue:86
 msgid "Collections"
-msgstr ""
+msgstr "Coleções"
 
 #: src/component/photo/toolbar.vue:232
 msgid "Color"
@@ -1231,7 +1231,7 @@ msgstr "Criando miniaturas para"
 
 #: src/options/options.js:501
 msgid "Current Name"
-msgstr ""
+msgstr "Nome atual"
 
 #: src/component/settings/password.vue:31
 msgid "Current Password"
@@ -1360,7 +1360,7 @@ msgstr "Desativar Darktable"
 
 #: src/page/settings/collections.vue:17
 msgid "Disable Downloads"
-msgstr ""
+msgstr "Desativar downloads"
 
 #: src/page/settings/advanced.vue:158
 msgid "Disable ExifTool"
@@ -1837,7 +1837,7 @@ msgstr "Solicitar funcionalidade"
 
 #: src/page/settings/collections.vue:6
 msgid "Features"
-msgstr ""
+msgstr "Recursos"
 
 #: src/options/options.js:487
 msgid "Female"
@@ -2064,11 +2064,11 @@ msgstr "Oculte itens privados de exibições globais e mantenha-os acessíveis n
 
 #: src/page/settings/general.vue:464
 msgid "Hide Scrollbar"
-msgstr ""
+msgstr "Ocultar barra de rolagem"
 
 #: src/page/settings/general.vue:465
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
-msgstr ""
+msgstr "Ocultar a barra de rolagem permanente exibida por alguns navegadores para desktop."
 
 #: src/options/options.js:381
 msgid "High"
@@ -2993,11 +2993,11 @@ msgstr "Aberto"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr ""
+msgstr "Abra os menus ao passar o mouse por cima deles, em vez de clicar, quando estiver usando um navegador de desktop."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
-msgstr ""
+msgstr "Abrir ao passar o mouse"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
@@ -3286,7 +3286,7 @@ msgstr "Pressione enter para criar um novo item"
 
 #: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
-msgstr ""
+msgstr "Impedir que as coleções sejam baixadas como arquivos zip."
 
 #: src/page/settings/advanced.vue:79
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
@@ -3423,11 +3423,11 @@ msgstr "Vermelho"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr ""
+msgstr "Reduza as animações da interface e os efeitos de movimento."
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
-msgstr ""
+msgstr "Reduzir movimento"
 
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
@@ -3873,7 +3873,7 @@ msgstr "Compartilhar %{s}"
 
 #: src/options/options.js:503
 msgid "Share Friendly"
-msgstr ""
+msgstr "Compartilhe com facilidade"
 
 #: src/page/people/new.vue:42 src/page/people/recognized.vue:90
 msgid "Show"
@@ -3921,7 +3921,7 @@ msgstr "Mostre a página Account para que os usuários possam gerenciar suas con
 
 #: src/page/settings/general.vue:82
 msgid "Show the Albums section to manually browse and organize pictures."
-msgstr ""
+msgstr "Mostra a seção “Álbuns” para navegar e organizar as fotos manualmente."
 
 #: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."
@@ -3929,11 +3929,11 @@ msgstr "Mostre a visualização Calendar para navegar na biblioteca por ano e m�
 
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
-msgstr ""
+msgstr "Mostra a seção “Favoritos” para acessar rapidamente suas fotos marcadas com estrela."
 
 #: src/page/settings/general.vue:112
 msgid "Show the Folders section to browse pictures by directory structure."
-msgstr ""
+msgstr "Mostra a seção “Pastas” para navegar pelas fotos pela estrutura de diretórios."
 
 #: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
@@ -3945,7 +3945,7 @@ msgstr "Mostre a seção Biblioteca para indexar, gerenciar e monitorar a biblio
 
 #: src/page/settings/general.vue:127
 msgid "Show the Media section to browse videos, live photos, and animations."
-msgstr ""
+msgstr "Abre a seção “Mídia” para ver vídeos, fotos em movimento e animações."
 
 #: src/page/settings/general.vue:410
 msgid "Show the Places view with interactive maps so you can browse photos by location."
