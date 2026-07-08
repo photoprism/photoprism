@@ -307,7 +307,6 @@ export default {
         waitAfterVideo: 2500,
         next: -1,
       },
-      savedViewportContent: "",
       touchStartListener: (ev) => this.onTouchStartOnce(ev),
       mouseMoveListener: (ev) => this.onMouseMoveOnce(ev),
       lightboxPointerListener: (ev) => this.onLightboxPointerEvent(ev),
@@ -410,8 +409,6 @@ export default {
       this.sidebarVisible = shouldShowSidebar();
       this.hideCaption = shouldHideCaption() || this.sidebarVisible;
 
-      this.disableNativeZoom();
-
       // Publish init event.
       this.$event.publish("lightbox.init");
     },
@@ -442,8 +439,6 @@ export default {
     },
     // Triggered when the dialog has closed.
     afterLeave() {
-      this.restoreNativeZoom();
-
       // Publish enter event.
       this.visible = false;
       this.busy = false;
@@ -451,37 +446,6 @@ export default {
       this.$view.leave(this);
       this.$event.publish("lightbox.leave");
       this.$emit("leave");
-    },
-    disableNativeZoom() {
-      const viewport = document.querySelector('meta[name="viewport"]');
-
-      if (!viewport) {
-        return;
-      }
-
-      const content = viewport.getAttribute("content") || "";
-
-      if (content.includes("user-scalable=no")) {
-        this.savedViewportContent = "";
-        return;
-      }
-
-      this.savedViewportContent = content;
-      viewport.setAttribute("content", "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no");
-    },
-
-    restoreNativeZoom() {
-      if (!this.savedViewportContent) {
-        return;
-      }
-
-      const viewport = document.querySelector('meta[name="viewport"]');
-
-      if (viewport) {
-        viewport.setAttribute("content", this.savedViewportContent);
-      }
-
-      this.savedViewportContent = "";
     },
     focusContent(ev) {
       if (this.$refs.content && this.$refs.content instanceof HTMLElement && document.activeElement !== this.$refs.content) {

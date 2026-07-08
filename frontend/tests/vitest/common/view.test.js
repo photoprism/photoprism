@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { $view, preventNavigationTouchEvent } from "common/view";
 import { buildNamespace } from "common/storage";
 
@@ -318,6 +318,108 @@ describe("common/view", () => {
         preventNavigationTouchEvent(ev);
         expect(ev.preventDefault).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe("viewport zoom", () => {
+    let viewport;
+    let createdMeta;
+    let originalContent;
+
+    beforeEach(() => {
+      $view.savedViewportContent = "";
+      viewport = document.querySelector('meta[name="viewport"]');
+      createdMeta = false;
+      originalContent = null;
+      if (!viewport) {
+        viewport = document.createElement("meta");
+        viewport.setAttribute("name", "viewport");
+        document.head.appendChild(viewport);
+        createdMeta = true;
+      } else {
+        originalContent = viewport.getAttribute("content");
+      }
+      viewport.setAttribute("content", "width=device-width, initial-scale=1.0");
+    });
+
+    afterEach(() => {
+      $view.savedViewportContent = "";
+      // apply()-driven cases toggle these body classes; clear them so state doesn't leak.
+      document.body.classList.remove("hide-scrollbar", "disable-scrolling", "disable-navigation-gestures");
+      const current = document.querySelector('meta[name="viewport"]');
+      if (createdMeta) {
+        current?.remove();
+      } else {
+        if (!current) {
+          document.head.appendChild(viewport);
+        }
+        if (originalContent === null) {
+          viewport.removeAttribute("content");
+        } else {
+          viewport.setAttribute("content", originalContent);
+        }
+      }
+    });
+
+    it("disableNativeZoom saves the current content and blocks zoom", () => {
+      $view.disableNativeZoom();
+      expect($view.savedViewportContent).toBe("width=device-width, initial-scale=1.0");
+      expect(viewport.getAttribute("content")).toContain("user-scalable=no");
+    });
+
+    it("restoreNativeZoom restores the saved content", () => {
+      $view.disableNativeZoom();
+      $view.restoreNativeZoom();
+      expect(viewport.getAttribute("content")).toBe("width=device-width, initial-scale=1.0");
+      expect($view.savedViewportContent).toBe("");
+    });
+
+    it("disableNativeZoom is idempotent and keeps the first saved content", () => {
+      $view.disableNativeZoom();
+      // A second call while already locked must not overwrite the saved original.
+      $view.disableNativeZoom();
+      expect($view.savedViewportContent).toBe("width=device-width, initial-scale=1.0");
+      $view.restoreNativeZoom();
+      expect(viewport.getAttribute("content")).toBe("width=device-width, initial-scale=1.0");
+    });
+
+    it("disableNativeZoom does nothing when the base viewport already blocks zoom", () => {
+      viewport.setAttribute("content", "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no");
+      $view.disableNativeZoom();
+      expect($view.savedViewportContent).toBe("");
+      // restore is then a no-op — the base viewport is left untouched.
+      $view.restoreNativeZoom();
+      expect(viewport.getAttribute("content")).toContain("user-scalable=no");
+    });
+
+    it("restoreNativeZoom does nothing when nothing was saved", () => {
+      $view.restoreNativeZoom();
+      expect(viewport.getAttribute("content")).toBe("width=device-width, initial-scale=1.0");
+    });
+
+    it("disableNativeZoom does nothing when there is no viewport meta", () => {
+      viewport.remove();
+      expect(() => $view.disableNativeZoom()).not.toThrow();
+      expect($view.savedViewportContent).toBe("");
+    });
+
+    it("apply() locks the viewport for the lightbox and restores it for a non-overlay view", () => {
+      const fakeComponent = (name, uid) => ({
+        $: { uid },
+        $el: document.createElement("div"),
+        $options: { name },
+        $refs: {},
+      });
+
+      // A PLightbox view is flagged disableViewportZoom, so apply() locks the viewport.
+      $view.apply(fakeComponent("PLightbox", 991));
+      expect(viewport.getAttribute("content")).toContain("user-scalable=no");
+      expect($view.savedViewportContent).toBe("width=device-width, initial-scale=1.0");
+
+      // Applying a non-overlay view (no flag) restores the saved viewport.
+      $view.apply(fakeComponent("PPageAlbums", 992));
+      expect(viewport.getAttribute("content")).toBe("width=device-width, initial-scale=1.0");
+      expect($view.savedViewportContent).toBe("");
     });
   });
 });
