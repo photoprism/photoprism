@@ -165,20 +165,21 @@
       </v-card>
 
       <v-card
-        v-if="canChangeDownloads && (isSuperAdmin ? settings.features.download || settings.download.disabled : settings.features.download)"
+        v-if="canChangeDownloads && settings.features.download && !settings.download.disabled"
         flat
         tile
         class="mt-0 px-1 bg-background"
       >
         <v-card-title class="pb-0 text-subtitle-2">
-          {{ $gettext(`File Downloads`) }}
+          {{ $gettext(`Download`) }}
         </v-card-title>
 
         <v-card-actions>
           <v-row align="start" dense>
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" :md="isSuperAdmin ? 3 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"
+                :disabled="busy"
                 class="ma-0 pa-0 input-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
@@ -190,9 +191,10 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" :md="isSuperAdmin ? 3 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaRaw"
+                :disabled="busy"
                 class="ma-0 pa-0 input-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
@@ -204,9 +206,10 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" :md="isSuperAdmin ? 3 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaSidecar"
+                :disabled="busy"
                 class="ma-0 pa-0 input-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
@@ -218,192 +221,17 @@
               </v-checkbox>
             </v-col>
 
-            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="4" offset-lg="2" class="px-2 pb-2 pt-2">
+            <v-col v-if="isSuperAdmin" cols="12" md="3" class="px-2 pb-2 pt-2">
               <v-select
                 v-model="settings.download.name"
                 :disabled="busy"
                 :items="options.DownloadName()"
+                :label="$gettext('Filename')"
+                prepend-icon="mdi-file-download"
                 item-title="text"
                 item-value="value"
-                :label="$gettext('Name')"
-                :hint="$gettext('File naming convention.')"
                 :menu-props="{ maxHeight: 346 }"
-                persistent-hint
                 class="input-download-name"
-                @update:model-value="onChange"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-
-      <v-card
-        v-if="isSuperAdmin && !hasScope && (settings.features.download || settings.download.disabled)"
-        flat
-        tile
-        class="mt-0 px-1 bg-background"
-      >
-        <v-card-title class="pb-0 text-subtitle-2">
-          {{ $gettext(`Album Downloads`) }}
-        </v-card-title>
-
-        <v-card-actions>
-          <v-row align="start" dense>
-            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="2" class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.albums.download.disabled"
-                class="ma-0 pa-0 input-album-download-disabled"
-                density="compact"
-                :label="$gettext('Disabled')"
-                :hint="$gettext('Prevent downloading of album archives.')"
-                prepend-icon="mdi-cancel"
-                persistent-hint
-                @update:model-value="onChange"
-              >
-              </v-checkbox>
-            </v-col>
-
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.albums.download.originals"
-                :disabled="settings.albums.download.disabled"
-                class="ma-0 pa-0 input-album-download-originals"
-                density="compact"
-                :label="$gettext('Originals')"
-                :hint="$gettext('Download only original media files, without any automatically generated files.')"
-                prepend-icon="mdi-camera"
-                persistent-hint
-                @update:model-value="onChange"
-              >
-              </v-checkbox>
-            </v-col>
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.albums.download.mediaRaw"
-                :disabled="settings.albums.download.disabled"
-                class="ma-0 pa-0 input-album-download-raw"
-                density="compact"
-                :label="$gettext('RAW')"
-                :hint="$gettext('Include RAW image files when downloading stacks and archives.')"
-                prepend-icon="mdi-raw"
-                persistent-hint
-                @update:model-value="onChange"
-              >
-              </v-checkbox>
-            </v-col>
-
-            <v-col cols="12" sm="6" md="4" :lg="isSuperAdmin ? 2 : 4" class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.albums.download.mediaSidecar"
-                :disabled="settings.albums.download.disabled"
-                class="ma-0 pa-0 input-album-download-sidecar"
-                density="compact"
-                :label="$gettext('Sidecar')"
-                :hint="$gettext('Include sidecar files when downloading stacks and archives.')"
-                prepend-icon="mdi-paperclip"
-                persistent-hint
-                @update:model-value="onChange"
-              >
-              </v-checkbox>
-            </v-col>
-
-            <v-col v-if="isSuperAdmin" cols="12" sm="6" md="4" lg="4" class="px-2 pb-2 pt-2">
-              <v-select
-                v-model="settings.albums.download.name"
-                :disabled="busy || settings.albums.download.disabled"
-                :items="options.DownloadName()"
-                item-title="text"
-                item-value="value"
-                :label="$gettext('Name')"
-                :hint="$gettext('File naming convention.')"
-                :menu-props="{ maxHeight: 346 }"
-                persistent-hint
-                class="input-album-download-name"
-                @update:model-value="onChange"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-
-      <v-card v-if="isSuperAdmin && !hasScope" flat tile class="mt-0 px-1 bg-background">
-        <v-card-title class="pb-2 text-subtitle-2">
-          {{ $gettext(`Default Sort Order in Albums`) }}
-        </v-card-title>
-
-        <v-card-actions>
-          <v-row align="start" dense>
-            <v-col cols="12" sm="6" md="4">
-              <v-select
-                v-model="settings.albums.order.album"
-                :disabled="busy"
-                :items="options.AlbumSortOrder()"
-                item-title="text"
-                item-value="value"
-                :label="$gettext('Album')"
-                :menu-props="{ maxHeight: 346 }"
-                hide-details
-                class="input-album-order"
-                @update:model-value="onChange"
-              ></v-select>
-            </v-col>
-
-            <v-col cols="12" sm="6" md="4">
-              <v-select
-                v-model="settings.albums.order.folder"
-                :disabled="busy"
-                :items="options.AlbumSortOrder()"
-                item-title="text"
-                item-value="value"
-                :label="$gettext('Folder')"
-                :menu-props="{ maxHeight: 346 }"
-                hide-details
-                class="input-folder-order"
-                @update:model-value="onChange"
-              ></v-select>
-            </v-col>
-
-            <v-col cols="12" sm="6" md="4">
-              <v-select
-                v-model="settings.albums.order.moment"
-                :disabled="busy"
-                :items="options.AlbumSortOrder()"
-                item-title="text"
-                item-value="value"
-                :label="$gettext('Moment')"
-                :menu-props="{ maxHeight: 346 }"
-                hide-details
-                class="input-moment-order"
-                @update:model-value="onChange"
-              ></v-select>
-            </v-col>
-
-            <v-col cols="12" sm="6" md="4">
-              <v-select
-                v-model="settings.albums.order.state"
-                :disabled="busy"
-                :items="options.AlbumSortOrder()"
-                item-title="text"
-                item-value="value"
-                :label="$gettext('Places')"
-                :menu-props="{ maxHeight: 346 }"
-                hide-details
-                class="input-state-order"
-                @update:model-value="onChange"
-              ></v-select>
-            </v-col>
-
-            <v-col cols="12" sm="6" md="4">
-              <v-select
-                v-model="settings.albums.order.month"
-                :disabled="busy"
-                :items="options.AlbumSortOrder()"
-                item-title="text"
-                item-value="value"
-                :label="$gettext('Month')"
-                :menu-props="{ maxHeight: 346 }"
-                hide-details
-                class="input-month-order"
                 @update:model-value="onChange"
               ></v-select>
             </v-col>
@@ -436,7 +264,6 @@ export default {
       isDemo: this.$config.isDemo(),
       isAdmin: this.$session.isAdmin(),
       isSuperAdmin: this.$session.isSuperAdmin(),
-      hasScope: this.$session.hasScope(),
       canChangeDownloads: canChangeDownloads,
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),

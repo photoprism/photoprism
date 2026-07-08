@@ -20,6 +20,7 @@ import {
   PhotoTypes,
   RetryLimits,
   SetDefaultLocale,
+  SortOrderOptions,
   StartPages,
   ThumbSizes,
   Timeouts,
@@ -265,7 +266,7 @@ describe("options/options", () => {
     const downloadNames = DownloadName();
     expect(downloadNames).toHaveLength(3);
     expect(downloadNames[0].value).toBe("file");
-    expect(downloadNames[0].text).toBe("File Name");
+    expect(downloadNames[0].text).toBe("Current Name");
     expect(downloadNames[1].value).toBe("original");
     expect(downloadNames[1].text).toBe("Original Name");
     expect(downloadNames[2].value).toBe("share");
@@ -285,5 +286,19 @@ describe("options/options", () => {
     expect(sortOrders[5].value).toBe("size");
     expect(sortOrders[6].value).toBe("duration");
     expect(sortOrders[7].value).toBe("relevance");
+  });
+
+  it("should build sort order options for the requested keys, in order", () => {
+    const opts = SortOrderOptions(["relevance", "newest", "archived"]);
+    expect(opts).toHaveLength(3);
+    expect(opts[0]).toEqual({ value: "relevance", text: "Most Relevant" });
+    expect(opts[1]).toEqual({ value: "newest", text: "Newest First" });
+    expect(opts[2]).toEqual({ value: "archived", text: "Recently Archived" });
+  });
+
+  it("should skip unknown sort order keys", () => {
+    const opts = SortOrderOptions(["newest", "bogus", "similar"]);
+    expect(opts.map((o) => o.value)).toEqual(["newest", "similar"]);
+    expect(opts[1].text).toBe("Visual Similarity");
   });
 });

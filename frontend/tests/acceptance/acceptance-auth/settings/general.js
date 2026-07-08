@@ -152,7 +152,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
 
     await menu.openPage("settings");
 
-    await t.expect(settings.accountTab.visible).ok().expect(settings.servicesTab.visible).ok();
+    await t.expect(settings.accountTab.visible).ok();
     await menu.checkMenuItemAvailability("originals", true);
     await menu.checkMenuItemAvailability("folders", true);
     await menu.checkMenuItemAvailability("moments", true);
@@ -215,7 +215,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
 
     await menu.openPage("settings");
 
-    await t.expect(settings.accountTab.visible).notOk().expect(settings.servicesTab.visible).notOk().expect(settings.generalTab.visible).ok();
+    await t.expect(settings.accountTab.visible).notOk().expect(settings.generalTab.visible).ok();
 
     await t
       .click(settings.importCheckbox)
@@ -238,7 +238,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
     await menu.openPage("albums");
     await menu.openPage("settings");
 
-    await t.expect(settings.accountTab.visible).ok().expect(settings.servicesTab.visible).ok().expect(settings.generalTab.visible).ok();
+    await t.expect(settings.accountTab.visible).ok().expect(settings.generalTab.visible).ok();
 
     if (t.browser.platform === "mobile") {
       if (await toolbar.openMobileToolbar.visible) {
@@ -741,7 +741,7 @@ test.meta("testID", "settings-general-009").meta({ type: "short", mode: "auth" }
     await contextmenu.clearSelection();
 
     await menu.openPage("settings");
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
     await t.click(settings.albumDownloadDisabledCheckbox);
     await t.wait(500);
@@ -781,7 +781,7 @@ test.meta("testID", "settings-general-009").meta({ type: "short", mode: "auth" }
     await contextmenu.clearSelection();
 
     await menu.openPage("settings");
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
     await t.click(settings.albumDownloadDisabledCheckbox);
     await t.wait(500);
@@ -819,10 +819,10 @@ test.meta("testID", "settings-general-011").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Share");
 
     await t.click(settings.downloadNameSelect);
-    await t.click(Selector(".v-list-item").withText("File Name"));
+    await t.click(Selector(".v-list-item").withText("Current Name"));
     await t.wait(500);
 
-    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("File");
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Current");
   }
 );
 
@@ -830,7 +830,7 @@ test.meta("testID", "settings-general-012").meta({ type: "short", mode: "auth" }
   "Common: Change album download name setting and verify persistence",
   async (t) => {
     await menu.openPage("settings");
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
 
     await t.click(settings.albumDownloadNameSelect);
@@ -840,7 +840,7 @@ test.meta("testID", "settings-general-012").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Original");
 
     await t.eval(() => location.reload());
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
     await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Original");
 
@@ -851,10 +851,10 @@ test.meta("testID", "settings-general-012").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Share");
 
     await t.click(settings.albumDownloadNameSelect);
-    await t.click(Selector(".v-list-item").withText("File Name"));
+    await t.click(Selector(".v-list-item").withText("Current Name"));
     await t.wait(500);
 
-    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("File");
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Current");
   }
 );
 
@@ -862,7 +862,7 @@ test.meta("testID", "settings-general-013").meta({ type: "short", mode: "auth" }
   "Common: Default album sort order is applied to newly created albums",
   async (t) => {
     await menu.openPage("settings");
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
 
     await t.click(settings.albumOrderSelect);
@@ -897,7 +897,7 @@ test.meta("testID", "settings-general-013").meta({ type: "short", mode: "auth" }
     await t.wait(500);
 
     await menu.openPage("settings");
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
 
     await t.click(settings.albumOrderSelect);
@@ -911,7 +911,7 @@ test.meta("testID", "settings-general-014").meta({ type: "short", mode: "auth" }
   "Common: Change default album order settings and verify persistence",
   async (t) => {
     await menu.openPage("settings");
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
 
     await t.click(settings.albumOrderSelect);
@@ -925,7 +925,7 @@ test.meta("testID", "settings-general-014").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");
 
     await t.eval(() => location.reload());
-    await t.click(Selector(settings.libraryTab));
+    await t.click(Selector(settings.collectionsTab));
     await t.wait(500);
     await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
     await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");

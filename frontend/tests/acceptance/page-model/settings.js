@@ -32,6 +32,7 @@ export default class Page {
     this.zoomCheckbox = Selector(".input-zoom div.v-selection-control__input");
 
     this.libraryTab = Selector("#tab-settings_content");
+    this.collectionsTab = Selector("#tab-settings_collections");
     this.reviewCheckbox = Selector(".input-review div.v-selection-control__input");
     this.convertCheckbox = Selector(".input-convert div.v-selection-control__input");
     this.estimatesCheckbox = Selector(".input-estimates div.v-selection-control__input");
@@ -42,7 +43,6 @@ export default class Page {
     this.hideCaptionsCheckbox = Selector(".input-search-captions div.v-selection-control__input");
     this.hideListViewCheckbox = Selector(".input-search-listview div.v-selection-control__input");
 
-    this.downloadDisabledCheckbox = Selector(".input-download-disabled div.v-selection-control__input");
     this.downloadNameSelect = Selector(".input-download-name div.v-input__control");
     this.downloadOriginalsCheckbox = Selector(".input-download-originals div.v-selection-control__input");
     this.downloadRawCheckbox = Selector(".input-download-raw div.v-selection-control__input");
@@ -69,6 +69,5 @@ export default class Page {
     this.readOnlyCheckbox = Selector("label").withText("Read-Only Mode");
 
     this.accountTab = Selector("#tab-settings_account");
-    this.servicesTab = Selector("#tab-settings_services");
   }
 }
