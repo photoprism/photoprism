@@ -2671,7 +2671,7 @@ msgstr "Преместване на файлове от %s"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
-msgstr "Най-малко 6 символа."
+msgstr "Най-малко %{n} символа."
 
 #: src/component/lightbox.vue:1566 src/component/lightbox.vue:1567
 msgid "Mute"

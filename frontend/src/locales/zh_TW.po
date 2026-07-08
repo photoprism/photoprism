@@ -271,7 +271,7 @@ msgstr "新增"
 #: src/component/lightbox/sidebar.vue:480
 #: src/component/photo/edit/people.vue:97
 msgid "Add %{s}?"
-msgstr "添加%{名稱}？"
+msgstr "添加%{s}？"
 
 #: src/component/lightbox/sidebar.vue:23 src/component/lightbox/sidebar.vue:24
 #: src/component/lightbox/sidebar.vue:27 src/component/lightbox/sidebar.vue:50

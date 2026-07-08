@@ -418,7 +418,7 @@ msgstr "بە هەمیشەیی سڕاوەتەوە"
 #: messages.go:210
 #, c-format
 msgid "%s has been restored"
-msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
+msgstr "%s دووبارە کۆگاکرایەوە"
 
 #: messages.go:211
 msgid "Successfully verified"

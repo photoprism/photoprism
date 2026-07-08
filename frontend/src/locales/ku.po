@@ -2446,7 +2446,7 @@ msgstr "قسڵ"
 
 #: src/page/library/browse.vue:466
 msgid "Limit reached, showing first %{n} files"
-msgstr "سنوور گەیشتن، یەکەمین ٪{n} پەڕگە پیشان دەدات"
+msgstr "سنوور گەیشتن، یەکەمین %{n} پەڕگە پیشان دەدات"
 
 #: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
@@ -2596,7 +2596,7 @@ msgstr "Endamî"
 
 #: src/component/people/merge/dialog.vue:57
 msgid "Merge %{a} with %{b}?"
-msgstr "Bi %{b} re bi %{b} re bibe yek?"
+msgstr "Bi %{a} re bi %{b} re bibe yek?"
 
 #: src/page/cluster/activity.vue:129 src/page/admin/activity.vue:128
 #: src/locales.js:356
@@ -2671,7 +2671,7 @@ msgstr "گواستنەوەی پەڕگە لە %s"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
-msgstr "بەلایەنی کەمەوە 6 نووسە"
+msgstr "بەلایەنی کەمەوە %{n} نووسە"
 
 #: src/component/lightbox.vue:1566 src/component/lightbox.vue:1567
 msgid "Mute"

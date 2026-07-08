@@ -1591,7 +1591,7 @@ msgstr "تعديل الصورة"
 
 #: src/component/photo/batch-edit.vue:635
 msgid "Edit Photos (%{n})"
-msgstr "تحرير الصور (%{ن})"
+msgstr "تحرير الصور (%{n})"
 
 #: src/component/photo/edit/info.vue:212 src/component/photo/edit/info.vue:213
 msgid "Edited"

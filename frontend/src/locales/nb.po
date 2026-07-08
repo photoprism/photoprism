@@ -2446,7 +2446,7 @@ msgstr "Lime"
 
 #: src/page/library/browse.vue:466
 msgid "Limit reached, showing first %{n} files"
-msgstr "Grensen nådd, viser de første €{n} filene"
+msgstr "Grensen nådd, viser de første %{n} filene"
 
 #: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"

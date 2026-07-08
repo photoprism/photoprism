@@ -56,7 +56,7 @@ msgstr "%{n}개 폴더를 찾음"
 
 #: src/component/navigation.vue:646
 msgid "%{n} GB of %{q} GB used"
-msgstr "%{n} q}의 GB 사용된 GB"
+msgstr "%{n} %{q}의 GB 사용된 GB"
 
 #: src/page/labels.vue:941
 msgid "%{n} labels found"
@@ -78,11 +78,11 @@ msgstr "사진 %{n}장 찾았습니다"
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/labels.vue:299
 msgid "%{s} is too long"
-msgstr "s}가 너무 깁니다."
+msgstr "%{s}가 너무 깁니다."
 
 #: src/common/form.js:290 src/common/form.js:295
 msgid "%{s} is too short"
-msgstr "s}가 너무 짧습니다."
+msgstr "%{s}가 너무 짧습니다."
 
 #: src/locales.js:436
 msgid "%d entries added to %s"
@@ -137,7 +137,7 @@ msgstr "클릭하면 클립보드에 복사됩니다."
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
-msgstr "s}의 새 버전을 사용할 수 있습니다:"
+msgstr "%{s}의 새 버전을 사용할 수 있습니다:"
 
 #: src/component/user/edit/dialog.vue:139
 #: src/component/user/edit/dialog.vue:140 src/page/about/about.vue:18
@@ -2671,7 +2671,7 @@ msgstr "%s에서 파일 이동"
 
 #: src/component/settings/password.vue:49
 msgid "Must have at least %{n} characters."
-msgstr "8자 이상이어야 합니다."
+msgstr "%{n}자 이상이어야 합니다."
 
 #: src/component/lightbox.vue:1566 src/component/lightbox.vue:1567
 msgid "Mute"

@@ -3869,7 +3869,7 @@ msgstr "Distribuie"
 
 #: src/component/share/dialog.vue:14
 msgid "Share %{s}"
-msgstr "Distribuie %{nume}"
+msgstr "Distribuie %{s}"
 
 #: src/options/options.js:503
 msgid "Share Friendly"

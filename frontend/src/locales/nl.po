@@ -271,7 +271,7 @@ msgstr "Toevoegen"
 #: src/component/lightbox/sidebar.vue:480
 #: src/component/photo/edit/people.vue:97
 msgid "Add %{s}?"
-msgstr "%{naam} toevoegen?"
+msgstr "%{s} toevoegen?"
 
 #: src/component/lightbox/sidebar.vue:23 src/component/lightbox/sidebar.vue:24
 #: src/component/lightbox/sidebar.vue:27 src/component/lightbox/sidebar.vue:50
