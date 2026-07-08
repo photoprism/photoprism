@@ -476,6 +476,21 @@ export default class $util {
     return ($config.getSettings()?.ui?.openOnHover ?? true) && !$util.hasTouch();
   }
 
+  // mapAnimateDuration returns the map fly-to animation duration in milliseconds, forcing 0
+  // (no animation) when the Reduce Motion accessibility setting is enabled. A non-negative
+  // overrideMs takes precedence over the global Maps.Animate preference.
+  static mapAnimateDuration(settings, overrideMs = -1) {
+    if (settings?.ui?.reduceMotion) {
+      return 0;
+    }
+
+    if (overrideMs >= 0) {
+      return overrideMs;
+    }
+
+    return settings?.maps?.animate ?? 0;
+  }
+
   // isMobile returns true when the current user agent or touch capability indicates a mobile device.
   // The `> 2` touch check covers iPads in desktop mode, where the user agent omits the mobile hint.
   static isMobile() {

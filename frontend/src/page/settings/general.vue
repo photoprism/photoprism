@@ -79,7 +79,7 @@
                 class="ma-0 pa-0 input-albums"
                 density="compact"
                 :label="$gettext('Albums')"
-                :hint="$gettext('Show the Albums section to create and manage photo albums.')"
+                :hint="$gettext('Show the Albums section to manually browse and organize pictures.')"
                 prepend-icon="mdi-bookmark"
                 persistent-hint
                 @update:model-value="onChange"
@@ -94,7 +94,7 @@
                 class="ma-0 pa-0 input-favorites"
                 density="compact"
                 :label="$gettext('Favorites')"
-                :hint="$gettext('Show the Favorites section to quickly access your starred photos.')"
+                :hint="$gettext('Show the Favorites section to quickly access your starred pictures.')"
                 prepend-icon="mdi-star"
                 persistent-hint
                 @update:model-value="onChange"
@@ -414,6 +414,61 @@
               >
               </v-checkbox>
             </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+
+      <v-card v-if="!isPortal && !hasScope && (isDemo || isSuperAdmin)" flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-2 text-subtitle-2">
+          {{ $gettext(`Accessibility`) }}
+        </v-card-title>
+
+        <v-card-actions>
+          <v-row align="start" dense>
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.ui.openOnHover"
+                :disabled="busy"
+                class="ma-0 pa-0 input-open-on-hover"
+                density="compact"
+                :label="$gettext('Open on Hover')"
+                :hint="$gettext('Open menus on hover instead of on click when using a desktop browser.')"
+                prepend-icon="mdi-cursor-default-click-outline"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.ui.reduceMotion"
+                :disabled="busy"
+                class="ma-0 pa-0 input-reduce-motion"
+                density="compact"
+                :label="$gettext('Reduce Motion')"
+                :hint="$gettext('Reduce interface animations and motion effects.')"
+                prepend-icon="mdi-motion-pause-outline"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
+              <v-checkbox
+                :model-value="!settings.ui.scrollbar"
+                :disabled="busy"
+                class="ma-0 pa-0 input-hide-scrollbar"
+                density="compact"
+                :label="$gettext('Hide Scrollbar')"
+                :hint="$gettext('Hide the permanent scrollbar shown by some desktop browsers.')"
+                prepend-icon="mdi-arrow-up-down"
+                persistent-hint
+                @update:model-value="onChangeScrollbar"
+              >
+              </v-checkbox>
+            </v-col>
 
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
@@ -421,8 +476,8 @@
                 :disabled="busy"
                 class="ma-0 pa-0 input-zoom"
                 density="compact"
-                :label="$gettext('Accessibility')"
-                :hint="$gettext('Allow zooming with gestures when using the PWA on mobile devices.')"
+                :label="$gettext('Allow Page Zoom')"
+                :hint="$gettext('Allow zooming with pinch gestures on mobile devices.')"
                 prepend-icon="mdi-magnify-plus-outline"
                 persistent-hint
                 @update:model-value="onChangeZoom"
@@ -593,7 +648,9 @@ export default {
         })
         .finally(() => (this.busy = false));
     },
-    onChangeZoom() {
+    // saveAndReload persists the settings and reloads the page so changes baked into the
+    // server-rendered HTML (viewport meta for zoom, hide-scrollbar body class) take effect.
+    saveAndReload() {
       this.busy = true;
       this.settings
         .save()
@@ -604,6 +661,16 @@ export default {
           setTimeout(() => window.location.reload(), 100);
         })
         .finally(() => (this.busy = false));
+    },
+    // onChangeZoom saves the page-zoom setting and reloads to refresh the viewport meta tag.
+    onChangeZoom() {
+      this.saveAndReload();
+    },
+    // onChangeScrollbar maps the inverted "Hide Scrollbar" checkbox to the stored ui.scrollbar
+    // flag and reloads so the server-rendered hide-scrollbar body class is refreshed.
+    onChangeScrollbar(hidden) {
+      this.settings.ui.scrollbar = !hidden;
+      this.saveAndReload();
     },
   },
 };

@@ -942,3 +942,56 @@ test.meta("testID", "settings-general-014").meta({ type: "short", mode: "auth" }
     await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("Newest");
   }
 );
+
+test.meta("testID", "settings-general-015").meta({ type: "short", mode: "auth" })(
+  "Common: Toggle accessibility settings and verify persistence",
+  async (t) => {
+    const hasReduceMotionClass = ClientFunction(() => document.documentElement.classList.contains("reduce-motion"));
+    const reloadPage = ClientFunction(() => window.location.reload());
+    const setNoReloadSentinel = ClientFunction(() => {
+      window.__ppNoReload = true;
+    });
+    const noReloadSentinel = ClientFunction(() => window.__ppNoReload === true);
+
+    await menu.openPage("settings");
+    await t.click(Selector(settings.generalTab));
+    await t.wait(500);
+
+    // A window sentinel detects an unexpected full-page reload: the live toggles below
+    // (Reduce Motion, Open on Hover) must NOT reload, so the sentinel must survive them.
+    await setNoReloadSentinel();
+
+    // Reduce Motion applies a live <html> class without reloading the page.
+    await t.expect(Selector(".input-reduce-motion input").checked).notOk();
+    await t.expect(hasReduceMotionClass()).notOk();
+    await t.click(settings.reduceMotionCheckbox);
+    await t.wait(500);
+    await t.expect(Selector(".input-reduce-motion input").checked).ok();
+    await t.expect(hasReduceMotionClass()).ok();
+    await t.expect(noReloadSentinel()).ok();
+
+    // Open on Hover persists as a plain preference (unchecking the default).
+    await t.click(settings.openOnHoverCheckbox);
+    await t.wait(500);
+    await t.expect(Selector(".input-open-on-hover input").checked).notOk();
+    await t.expect(noReloadSentinel()).ok();
+
+    // An explicit reload clears the sentinel; the settings must persist across it.
+    await reloadPage();
+    await t.expect(noReloadSentinel()).notOk();
+    await t.click(Selector(settings.generalTab));
+    await t.wait(500);
+    await t.expect(Selector(".input-reduce-motion input").checked).ok();
+    await t.expect(hasReduceMotionClass()).ok();
+    await t.expect(Selector(".input-open-on-hover input").checked).notOk();
+
+    // Restore defaults so the shared fixture state is left unchanged.
+    await t.click(settings.reduceMotionCheckbox);
+    await t.wait(500);
+    await t.click(settings.openOnHoverCheckbox);
+    await t.wait(500);
+    await t.expect(Selector(".input-reduce-motion input").checked).notOk();
+    await t.expect(hasReduceMotionClass()).notOk();
+    await t.expect(Selector(".input-open-on-hover input").checked).ok();
+  }
+);

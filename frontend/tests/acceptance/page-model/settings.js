@@ -30,6 +30,9 @@ export default class Page {
     this.foldersCheckbox = Selector(".input-folders div.v-selection-control__input");
     this.videosCheckbox = Selector(".input-videos div.v-selection-control__input");
     this.zoomCheckbox = Selector(".input-zoom div.v-selection-control__input");
+    this.openOnHoverCheckbox = Selector(".input-open-on-hover div.v-selection-control__input");
+    this.hideScrollbarCheckbox = Selector(".input-hide-scrollbar div.v-selection-control__input");
+    this.reduceMotionCheckbox = Selector(".input-reduce-motion div.v-selection-control__input");
 
     this.libraryTab = Selector("#tab-settings_content");
     this.collectionsTab = Selector("#tab-settings_collections");
