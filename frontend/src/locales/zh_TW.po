@@ -168,7 +168,7 @@ msgstr "存取權限已被撤銷。"
 msgid "Access Token"
 msgstr "訪問令牌"
 
-#: src/page/settings/general.vue:424
+#: src/page/settings/general.vue:423
 msgid "Accessibility"
 msgstr ""
 
@@ -347,7 +347,7 @@ msgid "Adjust Location"
 msgstr "調整位置"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:907 src/options/auth.js:6
+#: src/common/util.js:922 src/options/auth.js:6
 msgid "Admin"
 msgstr "管理員"
 
@@ -431,7 +431,7 @@ msgstr "相簿已儲存"
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
 #: src/component/navigation.vue:728 src/component/photo/batch-edit.vue:414
 #: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
-#: src/options/options.js:257 src/page/settings/collections.vue:112
+#: src/options/options.js:257 src/page/settings/collections.vue:113
 #: src/page/settings/general.vue:81
 msgid "Albums"
 msgstr "相簿"
@@ -513,6 +513,10 @@ msgstr "啟用匯入工具，即可將檔案從匯入資料夾複製或移至原
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "允許永久刪除檔案以釋放儲存空間。"
 
+#: src/page/settings/general.vue:479
+msgid "Allow Page Zoom"
+msgstr ""
+
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
 msgstr "允許用戶將照片和影片存檔，使其隱藏而不被刪除。"
@@ -525,8 +529,8 @@ msgstr "允許用戶建立和共享鏈接，並啟用與已連接服務的共享
 msgid "Allow users to upload new photos and videos through the web interface."
 msgstr "允許用戶透過網頁介面上傳新的照片和影片。"
 
-#: src/page/settings/general.vue:425
-msgid "Allow zooming with gestures when using the PWA on mobile devices."
+#: src/page/settings/general.vue:480
+msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr ""
 
 #: src/component/share/dialog.vue:118
@@ -546,7 +550,7 @@ msgstr "高度（公尺）"
 msgid "AM"
 msgstr "是"
 
-#: src/app/routes.js:423 src/common/util.js:849
+#: src/app/routes.js:423 src/common/util.js:864
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -558,7 +562,7 @@ msgstr "是"
 msgid "Animated"
 msgstr "動態圖片"
 
-#: src/page/settings/general.vue:466
+#: src/page/settings/general.vue:521
 msgid "Animation"
 msgstr "動畫"
 
@@ -600,7 +604,7 @@ msgstr "批准並保存更改"
 msgid "Apps and Devices"
 msgstr "應用程式和裝置"
 
-#: src/component/lightbox.vue:3255 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3219 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "已封存"
@@ -658,7 +662,7 @@ msgstr "長寬比"
 msgid "Attributes"
 msgstr "屬性"
 
-#: src/app/routes.js:416 src/common/util.js:847
+#: src/app/routes.js:416 src/common/util.js:862
 #: src/component/navigation.vue:198 src/component/navigation.vue:199
 #: src/component/navigation.vue:211 src/component/navigation.vue:220
 #: src/component/navigation.vue:248 src/options/options.js:358
@@ -680,7 +684,7 @@ msgstr "聲音的"
 msgid "Authentication"
 msgstr "驗證"
 
-#: src/common/util.js:869
+#: src/common/util.js:884
 msgid "Auto"
 msgstr "汽車"
 
@@ -710,7 +714,7 @@ msgstr "徽章"
 msgid "Base Path"
 msgstr "基本路径"
 
-#: src/common/util.js:901
+#: src/common/util.js:916
 msgid "Batch"
 msgstr "批次"
 
@@ -784,7 +788,7 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "當您開始使用我們提供的軟體及服務時，即表示您同意我們的服務條款、隱私權政策和行為準則。"
 
 #: src/app/routes.js:355 src/component/navigation.vue:390
-#: src/options/options.js:263 src/page/settings/collections.vue:172
+#: src/options/options.js:263 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
 msgstr "日曆"
@@ -855,11 +859,11 @@ msgstr "無法選取更多項目"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/common/util.js:1074 src/common/util.js:1081
+#: src/common/util.js:1089 src/common/util.js:1096
 msgid "Cannot copy to clipboard"
 msgstr "無法複製到剪貼簿"
 
-#: src/common/util.js:889 src/component/lightbox/sidebar.vue:801
+#: src/common/util.js:904 src/component/lightbox/sidebar.vue:801
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -929,14 +933,14 @@ msgstr "無法儲存更改項目"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3207
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3171
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
 #: src/locales.js:427 src/page/albums.vue:1197
 #: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:491
-#: src/page/settings/collections.vue:246 src/page/settings/content.vue:313
-#: src/page/settings/general.vue:591
+#: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
+#: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
 msgstr "成功儲存變更"
 
@@ -992,8 +996,8 @@ msgstr "客户"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1558
-#: src/component/lightbox.vue:1559 src/component/lightbox.vue:559
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1522
+#: src/component/lightbox.vue:1523 src/component/lightbox.vue:523
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1090,14 +1094,14 @@ msgstr "可信度"
 msgid "Confirm"
 msgstr "確認"
 
-#: src/component/service/add.vue:98 src/page/services.vue:105
-#: src/page/services.vue:113 src/page/services.vue:59 src/page/services.vue:60
+#: src/component/service/add.vue:98 src/page/services.vue:106
+#: src/page/services.vue:114 src/page/services.vue:59 src/page/services.vue:60
 msgid "Connect"
 msgstr "連線"
 
 #: src/page/settings/account.vue:182 src/page/settings/account.vue:76
 #: src/page/settings/account.vue:77 src/page/settings/account.vue:196
-#: src/component/settings/webdav.vue:15 src/page/services.vue:100
+#: src/component/settings/webdav.vue:15 src/page/services.vue:101
 #: src/page/settings/account.vue:180
 msgid "Connect via WebDAV"
 msgstr "使用 WebDAV 連線"
@@ -1147,7 +1151,7 @@ msgstr "貢獻者"
 msgid "Converting"
 msgstr "轉換中"
 
-#: src/common/util.js:1067
+#: src/common/util.js:1082
 msgid "Copied to clipboard"
 msgstr "已複製到剪貼簿"
 
@@ -1278,7 +1282,7 @@ msgstr "除錯紀錄"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:871 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:293
@@ -1354,7 +1358,7 @@ msgstr "停用備份"
 msgid "Disable Darktable"
 msgstr "停用 Darktable"
 
-#: src/page/settings/collections.vue:16
+#: src/page/settings/collections.vue:17
 msgid "Disable Downloads"
 msgstr ""
 
@@ -1467,7 +1471,7 @@ msgstr "在搜尋結果中顯示圖片標題。"
 msgid "Display picture titles in search results."
 msgstr "在搜尋結果中顯示圖片標題。"
 
-#: src/common/util.js:853 src/component/photo/view/cards.vue:115
+#: src/common/util.js:868 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:370
@@ -1506,14 +1510,14 @@ msgid "Done."
 msgstr "完成。"
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1785
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1749
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
-#: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:30
+#: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
 msgid "Download"
 msgstr "下載"
 
-#: src/page/settings/collections.vue:42 src/page/settings/content.vue:186
+#: src/page/settings/collections.vue:43 src/page/settings/content.vue:186
 msgid "Download only original media files, without any automatically generated files."
 msgstr "只下載原始的媒體檔，不會自動產生任何的檔案。"
 
@@ -1523,7 +1527,7 @@ msgstr "下載遠端檔案"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3295 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3259 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1559,7 +1563,7 @@ msgstr "動態大小限制：%{n} px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1689 src/component/lightbox.vue:1690
+#: src/component/lightbox.vue:1653 src/component/lightbox.vue:1654
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1661,7 +1665,7 @@ msgstr "輸入您的密碼以確認操作並繼續："
 msgid "Entity not found"
 msgstr "未找到實體"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:563
+#: src/page/connect.vue:14 src/component/lightbox.vue:527
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "錯誤"
@@ -1672,7 +1676,7 @@ msgstr "錯誤"
 msgid "Errors"
 msgstr "錯誤"
 
-#: src/common/util.js:873
+#: src/common/util.js:888
 msgid "Estimate"
 msgstr "估算"
 
@@ -1760,11 +1764,11 @@ msgstr "建立 zip 檔失敗"
 msgid "Failed to load users."
 msgstr "無法載入使用者。"
 
-#: src/component/lightbox.vue:2292
+#: src/component/lightbox.vue:2256
 msgid "Failed to remove face marker"
 msgstr "未能移除臉部標記"
 
-#: src/component/lightbox.vue:2225
+#: src/component/lightbox.vue:2189
 msgid "Failed to remove name"
 msgstr "移除名稱失敗"
 
@@ -1784,7 +1788,7 @@ msgstr "無法重新啟動伺服器"
 msgid "Failed to save changes"
 msgstr "儲存變更失敗"
 
-#: src/component/lightbox.vue:2197
+#: src/component/lightbox.vue:2161
 msgid "Failed to save face marker"
 msgstr "未能保住面子的標記"
 
@@ -1839,7 +1843,7 @@ msgstr ""
 msgid "Female"
 msgstr "女性"
 
-#: src/common/util.js:875 src/component/lightbox/sidebar.vue:1095
+#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1095
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "檔案"
@@ -1883,7 +1887,7 @@ msgid "File uploaded"
 msgstr "檔案上傳成功"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
-#: src/component/photo/edit/files.vue:97 src/page/settings/collections.vue:85
+#: src/component/photo/edit/files.vue:97 src/page/settings/collections.vue:86
 #: src/page/settings/content.vue:229
 msgid "Filename"
 msgstr "檔案名稱"
@@ -1926,7 +1930,7 @@ msgid "Folder is empty"
 msgstr "資料夾是空的"
 
 #: src/app/routes.js:368 src/component/navigation.vue:457
-#: src/options/options.js:266 src/page/settings/collections.vue:127
+#: src/options/options.js:266 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
 msgstr "資料夾"
@@ -1953,7 +1957,7 @@ msgstr "框架"
 msgid "Full Access"
 msgstr "完全存取權限"
 
-#: src/component/lightbox.vue:1635 src/component/lightbox.vue:1636
+#: src/component/lightbox.vue:1599 src/component/lightbox.vue:1600
 msgid "Fullscreen"
 msgstr "全螢幕"
 
@@ -2046,7 +2050,7 @@ msgstr "隱藏的檔案"
 msgid "Hide"
 msgstr "隱藏"
 
-#: src/component/lightbox.vue:1807
+#: src/component/lightbox.vue:1771
 msgid "Hide Caption"
 msgstr "隱藏標題"
 
@@ -2057,6 +2061,14 @@ msgstr "隱藏臉部標記"
 #: src/page/settings/general.vue:201
 msgid "Hide private content from global views while keeping it accessible in the Private section."
 msgstr "將私人項目從全域視圖隱藏，同時保留其在私人部分的存取權限。"
+
+#: src/page/settings/general.vue:464
+msgid "Hide Scrollbar"
+msgstr ""
+
+#: src/page/settings/general.vue:465
+msgid "Hide the permanent scrollbar shown by some desktop browsers."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -2077,7 +2089,7 @@ msgstr "雜種"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "如果您失去了對身份驗證器應用程式或裝置的存取權限，您可以使用復原代碼來重新獲得對帳戶的存取權限。"
 
-#: src/common/util.js:839 src/common/util.js:879
+#: src/common/util.js:854 src/common/util.js:894
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:342
 msgid "Image"
@@ -2134,11 +2146,11 @@ msgstr "在"
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "如果您覺得應該會在的圖片不見了，請重新掃描您的資料庫並等待索引完成。"
 
-#: src/page/settings/collections.vue:57 src/page/settings/content.vue:201
+#: src/page/settings/collections.vue:58 src/page/settings/content.vue:201
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "在下載堆疊和封存時包含 RAW 圖像一起。"
 
-#: src/page/settings/collections.vue:72 src/page/settings/content.vue:216
+#: src/page/settings/collections.vue:73 src/page/settings/content.vue:216
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "在下載堆疊和封存時包含 sidecar 檔案一起。"
 
@@ -2179,7 +2191,7 @@ msgstr "正在建立媒體和sidecar檔案的索引…"
 msgid "Indexing originals..."
 msgstr "索引原始檔案..."
 
-#: src/component/lightbox.vue:1583 src/component/lightbox.vue:1584
+#: src/component/lightbox.vue:1547 src/component/lightbox.vue:1548
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "資訊"
@@ -2306,7 +2318,7 @@ msgstr "JPEG大小限制：%{n} px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEGs 跟 縮圖 在需要的時候會自動生成。"
 
-#: src/common/util.js:891
+#: src/common/util.js:906
 msgid "Keyword"
 msgstr "關鍵字"
 
@@ -2364,7 +2376,7 @@ msgstr "最後一次登入"
 msgid "Last page"
 msgstr "最後一頁"
 
-#: src/page/services.vue:179
+#: src/page/services.vue:181
 msgid "Last Sync"
 msgstr "上次同步"
 
@@ -2388,7 +2400,7 @@ msgstr "了解更多"
 
 #: src/page/admin/sessions.vue:345 src/page/admin/users.vue:404
 #: src/page/admin/sessions.vue:343 src/page/admin/users.vue:333
-#: src/page/labels.vue:335 src/page/services.vue:235
+#: src/page/labels.vue:335 src/page/services.vue:237
 msgid "Learn More"
 msgstr "了解更多"
 
@@ -2424,7 +2436,7 @@ msgstr "收藏庫"
 msgid "License"
 msgstr "授權"
 
-#: src/component/lightbox.vue:1653 src/component/lightbox.vue:1654
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Like"
 msgstr "喜歡"
 
@@ -2448,7 +2460,7 @@ msgstr "清單"
 msgid "List View"
 msgstr "清單視圖"
 
-#: src/common/util.js:843 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:350
@@ -2484,7 +2496,7 @@ msgid "Local Time"
 msgstr "本地時間"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:881 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2549,7 +2561,7 @@ msgstr "管理帳號"
 msgid "Manager"
 msgstr "主管"
 
-#: src/common/util.js:903
+#: src/common/util.js:918
 msgid "Manual"
 msgstr "手動的"
 
@@ -2557,11 +2569,11 @@ msgstr "手動的"
 msgid "Manual Upload"
 msgstr "手動上傳"
 
-#: src/page/settings/general.vue:450
+#: src/page/settings/general.vue:505
 msgid "Maps"
 msgstr "地圖"
 
-#: src/common/util.js:883 src/model/marker.js:132
+#: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "標記"
 
@@ -2591,7 +2603,7 @@ msgstr "將 %{a} 與 %{b} 合併？"
 msgid "Message"
 msgstr "訊息"
 
-#: src/common/util.js:893
+#: src/common/util.js:908
 msgid "Metadata"
 msgstr "元数据"
 
@@ -2619,7 +2631,7 @@ msgid "mixed"
 msgstr "混合"
 
 #: src/app/routes.js:329 src/component/navigation.vue:417
-#: src/options/options.js:264 src/page/settings/collections.vue:142
+#: src/options/options.js:264 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
 msgstr "回憶時刻"
@@ -2637,7 +2649,7 @@ msgstr "黑白"
 msgid "Month"
 msgstr "月"
 
-#: src/component/lightbox.vue:1708
+#: src/component/lightbox.vue:1672
 msgid "More options"
 msgstr "更多選項"
 
@@ -2661,7 +2673,7 @@ msgstr "正在從 %s 中移動檔案"
 msgid "Must have at least %{n} characters."
 msgstr "必須至少有 %{n} 個字元。"
 
-#: src/component/lightbox.vue:1602 src/component/lightbox.vue:1603
+#: src/component/lightbox.vue:1566 src/component/lightbox.vue:1567
 msgid "Mute"
 msgstr "沉默的"
 
@@ -2669,7 +2681,7 @@ msgstr "沉默的"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:877 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2686,7 +2698,7 @@ msgstr "沉默的"
 #: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
 #: src/page/albums.vue:393 src/page/auth/login.vue:80
-#: src/page/people/new.vue:51 src/page/services.vue:175
+#: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
 msgstr "名稱"
 
@@ -2699,7 +2711,7 @@ msgstr "名稱太長了"
 
 #: src/page/admin/users.vue:261 src/page/admin/users.vue:458
 #: src/page/admin/users.vue:402 src/options/options.js:422
-#: src/options/options.js:432 src/page/services.vue:249
+#: src/options/options.js:432 src/page/services.vue:251
 msgid "Never"
 msgstr "永不"
 
@@ -2715,7 +2727,7 @@ msgstr "新密碼"
 msgid "Newest First"
 msgstr "按最新優先"
 
-#: src/component/lightbox.vue:562 src/locales.js:301
+#: src/component/lightbox.vue:526 src/locales.js:301
 msgid "Next"
 msgstr "下一個"
 
@@ -2818,7 +2830,7 @@ msgstr "沒有伺服器連接"
 msgid "No servers configured."
 msgstr "沒有設定好的伺服器。"
 
-#: src/page/services.vue:37
+#: src/page/services.vue:38
 msgid "No services configured."
 msgstr "沒有設定服務。"
 
@@ -2852,7 +2864,7 @@ msgstr "非照片和低品質圖像需要進行手動確認，才會出現在搜
 msgid "None"
 msgstr "無"
 
-#: src/component/lightbox.vue:1153 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1117 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "不允許"
@@ -2865,7 +2877,7 @@ msgstr "不適用於公開模式"
 msgid "Not available in read-only mode"
 msgstr "不適用於唯讀模式"
 
-#: src/component/lightbox.vue:1150 src/locales.js:379
+#: src/component/lightbox.vue:1114 src/locales.js:379
 msgid "Not found"
 msgstr "未找到"
 
@@ -2873,7 +2885,7 @@ msgstr "未找到"
 msgid "Not sorted."
 msgstr "沒有排序。"
 
-#: src/component/lightbox.vue:1147 src/component/lightbox.vue:1261
+#: src/component/lightbox.vue:1111 src/component/lightbox.vue:1225
 msgid "Not supported"
 msgstr "不支援"
 
@@ -2881,7 +2893,7 @@ msgstr "不支援"
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "請注意，您可以手動管理「originals」資料夾，而匯入是選用的。"
 
-#: src/page/services.vue:88
+#: src/page/services.vue:89
 msgid "Note:"
 msgstr "注意："
 
@@ -2979,6 +2991,14 @@ msgstr "只能設定本機管理的帳戶以使用 2FA 進行身份驗證。"
 msgid "Open"
 msgstr "开放"
 
+#: src/page/settings/general.vue:435
+msgid "Open menus on hover instead of on click when using a desktop browser."
+msgstr ""
+
+#: src/page/settings/general.vue:434
+msgid "Open on Hover"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "選修的"
@@ -3017,7 +3037,7 @@ msgstr "原始名稱"
 #: src/component/navigation.vue:369 src/component/navigation.vue:378
 #: src/component/navigation.vue:491 src/model/file.js:180
 #: src/options/options.js:474 src/page/library/browse.vue:7
-#: src/page/settings/collections.vue:41 src/page/settings/content.vue:185
+#: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
 msgid "Originals"
 msgstr "來源"
@@ -3187,8 +3207,8 @@ msgstr "地點與時間"
 #: src/app/routes.js:472 src/app/routes.js:478 src/app/routes.js:484
 #: src/app/routes.js:499 src/component/navigation.vue:346
 #: src/component/navigation.vue:740 src/options/options.js:262
-#: src/page/places.vue:7 src/page/settings/collections.vue:157
-#: src/page/settings/general.vue:409 src/page/settings/general.vue:438
+#: src/page/places.vue:7 src/page/settings/collections.vue:158
+#: src/page/settings/general.vue:409 src/page/settings/general.vue:493
 msgid "Places"
 msgstr "地點"
 
@@ -3264,7 +3284,7 @@ msgstr "按下按鈕以新增相簿。"
 msgid "Press enter to create new item"
 msgstr "按回車鍵建立新項目"
 
-#: src/page/settings/collections.vue:17
+#: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
 msgstr ""
 
@@ -3284,7 +3304,7 @@ msgstr "預覽"
 msgid "Preview Images"
 msgstr "图片预览"
 
-#: src/component/lightbox.vue:561 src/locales.js:302
+#: src/component/lightbox.vue:525 src/locales.js:302
 msgid "Previous"
 msgstr "以前的"
 
@@ -3354,12 +3374,12 @@ msgstr "隨機"
 msgid "Rating {0} of {1}"
 msgstr "評分為 {0}（共 {1}）"
 
-#: src/common/util.js:841 src/options/options.js:346
+#: src/common/util.js:856 src/options/options.js:346
 msgid "Raw"
 msgstr "原始"
 
 #: src/component/photo/view/cards.vue:111
-#: src/component/photo/view/mosaic.vue:66 src/page/settings/collections.vue:56
+#: src/component/photo/view/mosaic.vue:66 src/page/settings/collections.vue:57
 #: src/page/settings/content.vue:200
 msgid "RAW"
 msgstr "RAW"
@@ -3401,6 +3421,14 @@ msgstr "恢復程式碼"
 msgid "Red"
 msgstr "紅色"
 
+#: src/page/settings/general.vue:450
+msgid "Reduce interface animations and motion effects."
+msgstr ""
+
+#: src/page/settings/general.vue:449
+msgid "Reduce Motion"
+msgstr ""
+
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
 #: src/page/admin/sessions.vue:336 src/page/admin/users.vue:395
@@ -3434,13 +3462,13 @@ msgid "Registration disabled"
 msgstr "註冊已停用"
 
 #: src/component/navigation.vue:422 src/component/navigation.vue:686
-#: src/component/update.vue:28 src/page/services.vue:226
+#: src/component/update.vue:28 src/page/services.vue:228
 msgid "Reload"
 msgstr "重新載入"
 
 #: src/component/navigation.vue:599 src/component/navigation.vue:902
-#: src/component/update.vue:62 src/page/settings/general.vue:587
-#: src/page/settings/general.vue:602
+#: src/component/update.vue:62 src/page/settings/general.vue:642
+#: src/page/settings/general.vue:659
 msgid "Reloading…"
 msgstr "重新載入中…"
 
@@ -3461,7 +3489,7 @@ msgstr "移除"
 msgid "remove failed: unknown album"
 msgstr "移除失敗：未知的相簿"
 
-#: src/component/lightbox.vue:1740 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1704 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "從相簿中刪除"
 
@@ -3498,7 +3526,7 @@ msgstr "刪除了 %d 個檔案和 %d 張照片"
 msgid "Repeated"
 msgstr "重複"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1257
+#: src/common/api.js:103 src/component/lightbox.vue:1221
 msgid "Request failed - are you offline?"
 msgstr "要求失敗－您是否處於離線狀態？"
 
@@ -3529,12 +3557,12 @@ msgstr "重新啟動"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1770
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1734
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "復原"
 
-#: src/component/lightbox.vue:3274
+#: src/component/lightbox.vue:3238
 msgid "Restored"
 msgstr "已恢復"
 
@@ -3690,7 +3718,7 @@ msgstr "秘密"
 msgid "Security and Access"
 msgstr "安全和存取"
 
-#: src/component/lightbox.vue:1671 src/component/lightbox.vue:1672
+#: src/component/lightbox.vue:1635 src/component/lightbox.vue:1636
 msgid "Select"
 msgstr "選擇"
 
@@ -3798,7 +3826,7 @@ msgstr "工作階段ID"
 msgid "Sessions"
 msgstr "工作階段"
 
-#: src/component/lightbox.vue:1730
+#: src/component/lightbox.vue:1694
 msgid "Set as Album Cover"
 msgstr "設為專輯封面"
 
@@ -3859,7 +3887,7 @@ msgstr "顯示所有標籤"
 msgid "Show all new faces"
 msgstr "顯示所有新面孔"
 
-#: src/component/lightbox.vue:1796
+#: src/component/lightbox.vue:1760
 msgid "Show Caption"
 msgstr "顯示標題"
 
@@ -3892,7 +3920,7 @@ msgid "Show the Account page so users can manage their profile and security sett
 msgstr "顯示「帳戶」頁面，以便使用者可以管理其個人資料和安全性設定。"
 
 #: src/page/settings/general.vue:82
-msgid "Show the Albums section to create and manage photo albums."
+msgid "Show the Albums section to manually browse and organize pictures."
 msgstr ""
 
 #: src/page/settings/general.vue:157
@@ -3900,7 +3928,7 @@ msgid "Show the Calendar view to browse the library by year and month."
 msgstr "顯示日曆視圖，按年和月瀏覽圖書館。"
 
 #: src/page/settings/general.vue:97
-msgid "Show the Favorites section to quickly access your starred photos."
+msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr ""
 
 #: src/page/settings/general.vue:112
@@ -3927,8 +3955,8 @@ msgstr "顯示帶有互動式地圖的地點視圖，以便您可以按位置瀏
 msgid "Show Titles"
 msgstr "顯示標題"
 
-#: src/common/util.js:855 src/model/file.js:195
-#: src/page/settings/collections.vue:71 src/page/settings/content.vue:215
+#: src/common/util.js:870 src/model/file.js:195
+#: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "Sidecar檔案"
 
@@ -3963,7 +3991,7 @@ msgstr "網站網址"
 msgid "Size"
 msgstr "尺寸"
 
-#: src/component/lightbox.vue:1618 src/component/lightbox.vue:1619
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 msgid "Slideshow"
 msgstr "幻燈片"
 
@@ -3995,7 +4023,7 @@ msgstr "無法創建某些相簿。請編輯名稱並重試。"
 msgid "Some albums could not be updated"
 msgstr "部分相簿無法更新"
 
-#: src/component/lightbox.vue:1254 src/locales.js:374
+#: src/component/lightbox.vue:1218 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "出错了，再试一次"
 
@@ -4016,7 +4044,7 @@ msgid "Sort by Relevance"
 msgstr "按相關性排序"
 
 #: src/component/album/edit/dialog.vue:67 src/component/photo/toolbar.vue:161
-#: src/page/albums.vue:98 src/page/settings/collections.vue:100
+#: src/page/albums.vue:98 src/page/settings/collections.vue:101
 msgid "Sort Order"
 msgstr "排序"
 
@@ -4091,7 +4119,7 @@ msgstr "儲存空間"
 msgid "Streets"
 msgstr "街"
 
-#: src/common/util.js:895 src/component/lightbox/sidebar.vue:814
+#: src/common/util.js:910 src/component/lightbox/sidebar.vue:814
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4142,7 +4170,7 @@ msgstr "隨著時間的推移，將增加對其他服務的支援，例如Google
 msgid "Support Our Mission"
 msgstr "支持我們的使命"
 
-#: src/page/services.vue:177
+#: src/page/services.vue:179
 msgid "Sync"
 msgstr "同步"
 
@@ -4221,7 +4249,7 @@ msgstr "此實例未設定網站網址。"
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
 
-#: src/page/services.vue:91
+#: src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
 
@@ -4245,7 +4273,7 @@ msgstr "時區"
 msgid "Timeout"
 msgstr "逾時"
 
-#: src/common/util.js:897 src/component/photo/view/list.vue:34
+#: src/common/util.js:912 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "標題"
 
@@ -4347,7 +4375,7 @@ msgstr "唯一身份"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:612 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1736
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:695
@@ -4462,7 +4490,7 @@ msgstr "立即升級"
 #: src/component/upload/dialog.vue:190 src/component/upload/dialog.vue:67
 #: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:489 src/page/labels.vue:325
-#: src/page/library/import.vue:64 src/page/services.vue:176
+#: src/page/library/import.vue:64 src/page/services.vue:178
 #: src/page/settings/general.vue:215
 msgid "Upload"
 msgstr "上傳"
@@ -4580,7 +4608,7 @@ msgstr "使用者"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:851 src/component/photo/view/cards.vue:114
+#: src/common/util.js:866 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:366
 msgid "Vector"
@@ -4605,7 +4633,7 @@ msgstr "需要已驗證的電子郵件地址"
 msgid "Version"
 msgstr "版本"
 
-#: src/common/util.js:845 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4637,7 +4665,7 @@ msgstr "以清單形式查看搜尋結果。"
 msgid "Viewer"
 msgstr "檢視者"
 
-#: src/common/util.js:905
+#: src/common/util.js:920
 msgid "Vision"
 msgstr "想像"
 
@@ -4675,7 +4703,7 @@ msgstr "WebDAV"
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
 
-#: src/page/services.vue:89
+#: src/page/services.vue:90
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
 msgstr "WebDAV客戶端（例如Microsoft的Windows資源管理器或Apple的Finder）可以直接連接到PhotoPrism。"
 
@@ -4805,7 +4833,7 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 msgid "Zip created in %d s"
 msgstr "Zip檔建立成功, 共用 %d 秒"
 
-#: src/component/lightbox.vue:560
+#: src/component/lightbox.vue:524
 msgid "Zoom in/out"
 msgstr "縮放"
 
@@ -4846,7 +4874,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "標題"
 
-#: src/component/lightbox.vue:1755 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1719 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"

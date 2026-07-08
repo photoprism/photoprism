@@ -168,7 +168,7 @@ msgstr "アクセスが取り消された。"
 msgid "Access Token"
 msgstr "アクセストークン"
 
-#: src/page/settings/general.vue:424
+#: src/page/settings/general.vue:423
 msgid "Accessibility"
 msgstr ""
 
@@ -347,7 +347,7 @@ msgid "Adjust Location"
 msgstr "場所を調整する"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:907 src/options/auth.js:6
+#: src/common/util.js:922 src/options/auth.js:6
 msgid "Admin"
 msgstr "管理者"
 
@@ -431,7 +431,7 @@ msgstr "アルバムが保存されました"
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
 #: src/component/navigation.vue:728 src/component/photo/batch-edit.vue:414
 #: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
-#: src/options/options.js:257 src/page/settings/collections.vue:112
+#: src/options/options.js:257 src/page/settings/collections.vue:113
 #: src/page/settings/general.vue:81
 msgid "Albums"
 msgstr "アルバム"
@@ -513,6 +513,10 @@ msgstr "インポートツールを有効にして、インポートフォルダ
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "ファイルを完全に削除して、ストレージスペースを空ける。"
 
+#: src/page/settings/general.vue:479
+msgid "Allow Page Zoom"
+msgstr ""
+
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
 msgstr "ユーザーが写真やビデオをアーカイブできるようにし、削除されずに隠せるようにする。"
@@ -525,8 +529,8 @@ msgstr "ユーザーがリンクを作成・共有できるようにし、接続
 msgid "Allow users to upload new photos and videos through the web interface."
 msgstr "ユーザーがウェブ・インターフェイスを通じて新しい写真やビデオをアップロードできるようにする。"
 
-#: src/page/settings/general.vue:425
-msgid "Allow zooming with gestures when using the PWA on mobile devices."
+#: src/page/settings/general.vue:480
+msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr ""
 
 #: src/component/share/dialog.vue:118
@@ -546,7 +550,7 @@ msgstr "高度 (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:849
+#: src/app/routes.js:423 src/common/util.js:864
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -558,7 +562,7 @@ msgstr "AM"
 msgid "Animated"
 msgstr "アニメーション"
 
-#: src/page/settings/general.vue:466
+#: src/page/settings/general.vue:521
 msgid "Animation"
 msgstr "アニメーション"
 
@@ -600,7 +604,7 @@ msgstr "変更を承認して保存する"
 msgid "Apps and Devices"
 msgstr "アプリとデバイス"
 
-#: src/component/lightbox.vue:3255 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3219 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "アーカイブ済み"
@@ -658,7 +662,7 @@ msgstr "アスペクト比"
 msgid "Attributes"
 msgstr "属性"
 
-#: src/app/routes.js:416 src/common/util.js:847
+#: src/app/routes.js:416 src/common/util.js:862
 #: src/component/navigation.vue:198 src/component/navigation.vue:199
 #: src/component/navigation.vue:211 src/component/navigation.vue:220
 #: src/component/navigation.vue:248 src/options/options.js:358
@@ -680,7 +684,7 @@ msgstr "オーディオ"
 msgid "Authentication"
 msgstr "認証"
 
-#: src/common/util.js:869
+#: src/common/util.js:884
 msgid "Auto"
 msgstr "自動"
 
@@ -710,7 +714,7 @@ msgstr "バッジ"
 msgid "Base Path"
 msgstr "ベースパス"
 
-#: src/common/util.js:901
+#: src/common/util.js:916
 msgid "Batch"
 msgstr "バッチ"
 
@@ -784,7 +788,7 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "当社が提供するソフトウェアおよびサービスを利用することにより、お客様は当社の利用規約、プライバシーポリシー、および行動規範に同意したものとみなされます。"
 
 #: src/app/routes.js:355 src/component/navigation.vue:390
-#: src/options/options.js:263 src/page/settings/collections.vue:172
+#: src/options/options.js:263 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
 msgstr "カレンダー"
@@ -855,11 +859,11 @@ msgstr "これ以上項目を選択することはできません"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/common/util.js:1074 src/common/util.js:1081
+#: src/common/util.js:1089 src/common/util.js:1096
 msgid "Cannot copy to clipboard"
 msgstr "クリップボードにコピーできない"
 
-#: src/common/util.js:889 src/component/lightbox/sidebar.vue:801
+#: src/common/util.js:904 src/component/lightbox/sidebar.vue:801
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -929,14 +933,14 @@ msgstr "変更を保存できませんでした"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3207
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3171
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
 #: src/locales.js:427 src/page/albums.vue:1197
 #: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:491
-#: src/page/settings/collections.vue:246 src/page/settings/content.vue:313
-#: src/page/settings/general.vue:591
+#: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
+#: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
 msgstr "変更が正常に保存されました"
 
@@ -992,8 +996,8 @@ msgstr "クライアント"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1558
-#: src/component/lightbox.vue:1559 src/component/lightbox.vue:559
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1522
+#: src/component/lightbox.vue:1523 src/component/lightbox.vue:523
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1090,14 +1094,14 @@ msgstr "信頼度"
 msgid "Confirm"
 msgstr "確認"
 
-#: src/component/service/add.vue:98 src/page/services.vue:105
-#: src/page/services.vue:113 src/page/services.vue:59 src/page/services.vue:60
+#: src/component/service/add.vue:98 src/page/services.vue:106
+#: src/page/services.vue:114 src/page/services.vue:59 src/page/services.vue:60
 msgid "Connect"
 msgstr "接続"
 
 #: src/page/settings/account.vue:182 src/page/settings/account.vue:76
 #: src/page/settings/account.vue:77 src/page/settings/account.vue:196
-#: src/component/settings/webdav.vue:15 src/page/services.vue:100
+#: src/component/settings/webdav.vue:15 src/page/services.vue:101
 #: src/page/settings/account.vue:180
 msgid "Connect via WebDAV"
 msgstr "WebDAV 経由で接続"
@@ -1147,7 +1151,7 @@ msgstr "貢献者"
 msgid "Converting"
 msgstr "変換しています"
 
-#: src/common/util.js:1067
+#: src/common/util.js:1082
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーしました"
 
@@ -1278,7 +1282,7 @@ msgstr "デバッグログ"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:871 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:293
@@ -1354,7 +1358,7 @@ msgstr "バックアップを無効化"
 msgid "Disable Darktable"
 msgstr "Darktable を無効化"
 
-#: src/page/settings/collections.vue:16
+#: src/page/settings/collections.vue:17
 msgid "Disable Downloads"
 msgstr ""
 
@@ -1467,7 +1471,7 @@ msgstr "検索結果に画像のキャプションを表示する。"
 msgid "Display picture titles in search results."
 msgstr "検索結果に画像のタイトルを表示する。"
 
-#: src/common/util.js:853 src/component/photo/view/cards.vue:115
+#: src/common/util.js:868 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:370
@@ -1506,14 +1510,14 @@ msgid "Done."
 msgstr "完了しました。"
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1785
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1749
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
-#: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:30
+#: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
 msgid "Download"
 msgstr "ダウンロード"
 
-#: src/page/settings/collections.vue:42 src/page/settings/content.vue:186
+#: src/page/settings/collections.vue:43 src/page/settings/content.vue:186
 msgid "Download only original media files, without any automatically generated files."
 msgstr "自動生成されたファイルを使用せず、オリジナルのメディアファイルのみをダウンロードするようにします。"
 
@@ -1523,7 +1527,7 @@ msgstr "リモートにあるファイルをダウンロード"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3295 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3259 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1559,7 +1563,7 @@ msgstr "動的サイズの制限: %{n} px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1689 src/component/lightbox.vue:1690
+#: src/component/lightbox.vue:1653 src/component/lightbox.vue:1654
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1661,7 +1665,7 @@ msgstr "パスワードを入力して操作を確認し、続行します:"
 msgid "Entity not found"
 msgstr "エンティティが見つかりません"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:563
+#: src/page/connect.vue:14 src/component/lightbox.vue:527
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "エラー"
@@ -1672,7 +1676,7 @@ msgstr "エラー"
 msgid "Errors"
 msgstr "エラー"
 
-#: src/common/util.js:873
+#: src/common/util.js:888
 msgid "Estimate"
 msgstr "推定"
 
@@ -1760,11 +1764,11 @@ msgstr "zip ファイルの作成に失敗しました"
 msgid "Failed to load users."
 msgstr "ユーザーの読み込みに失敗した。"
 
-#: src/component/lightbox.vue:2292
+#: src/component/lightbox.vue:2256
 msgid "Failed to remove face marker"
 msgstr "フェイスマーカーの除去に失敗した"
 
-#: src/component/lightbox.vue:2225
+#: src/component/lightbox.vue:2189
 msgid "Failed to remove name"
 msgstr "名前の削除に失敗した"
 
@@ -1784,7 +1788,7 @@ msgstr "サーバーの再起動に失敗した"
 msgid "Failed to save changes"
 msgstr "変更の保存に失敗した"
 
-#: src/component/lightbox.vue:2197
+#: src/component/lightbox.vue:2161
 msgid "Failed to save face marker"
 msgstr "面目躍如の失敗"
 
@@ -1839,7 +1843,7 @@ msgstr ""
 msgid "Female"
 msgstr "女性"
 
-#: src/common/util.js:875 src/component/lightbox/sidebar.vue:1095
+#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1095
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "ファイル"
@@ -1883,7 +1887,7 @@ msgid "File uploaded"
 msgstr "ファイルがアップロードされました"
 
 #: src/component/photo/edit/files.vue:83 src/component/photo/edit/files.vue:89
-#: src/component/photo/edit/files.vue:97 src/page/settings/collections.vue:85
+#: src/component/photo/edit/files.vue:97 src/page/settings/collections.vue:86
 #: src/page/settings/content.vue:229
 msgid "Filename"
 msgstr "ファイル名"
@@ -1926,7 +1930,7 @@ msgid "Folder is empty"
 msgstr "フォルダは空です"
 
 #: src/app/routes.js:368 src/component/navigation.vue:457
-#: src/options/options.js:266 src/page/settings/collections.vue:127
+#: src/options/options.js:266 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
 msgstr "フォルダ"
@@ -1953,7 +1957,7 @@ msgstr "フレーム"
 msgid "Full Access"
 msgstr "フルアクセス"
 
-#: src/component/lightbox.vue:1635 src/component/lightbox.vue:1636
+#: src/component/lightbox.vue:1599 src/component/lightbox.vue:1600
 msgid "Fullscreen"
 msgstr "全画面"
 
@@ -2046,7 +2050,7 @@ msgstr "隠しファイル"
 msgid "Hide"
 msgstr "非表示"
 
-#: src/component/lightbox.vue:1807
+#: src/component/lightbox.vue:1771
 msgid "Hide Caption"
 msgstr "キャプションを隠す"
 
@@ -2057,6 +2061,14 @@ msgstr "フェイスマーカーを隠す"
 #: src/page/settings/general.vue:201
 msgid "Hide private content from global views while keeping it accessible in the Private section."
 msgstr "グローバルビューからプライベートアイテムを非表示にし、プライベートセクションからはアクセスできるようにする。"
+
+#: src/page/settings/general.vue:464
+msgid "Hide Scrollbar"
+msgstr ""
+
+#: src/page/settings/general.vue:465
+msgid "Hide the permanent scrollbar shown by some desktop browsers."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -2077,7 +2089,7 @@ msgstr "ハイブリッド"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "認証アプリまたはデバイスにアクセスできなくなった場合は、回復コードを使用してアカウントに再度アクセスできます。"
 
-#: src/common/util.js:839 src/common/util.js:879
+#: src/common/util.js:854 src/common/util.js:894
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:342
 msgid "Image"
@@ -2134,11 +2146,11 @@ msgstr "次の場所で"
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "探している写真が見つからない場合は、ライブラリーを再スキャンし、インデックス作成が完了するまでお待ちください。"
 
-#: src/page/settings/collections.vue:57 src/page/settings/content.vue:201
+#: src/page/settings/collections.vue:58 src/page/settings/content.vue:201
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "スタックやアーカイブのダウンロード時に、RAW 画像ファイルを含めます。"
 
-#: src/page/settings/collections.vue:72 src/page/settings/content.vue:216
+#: src/page/settings/collections.vue:73 src/page/settings/content.vue:216
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "スタックやアーカイブをダウンロードする際に、サイドカーファイルを含めます。"
 
@@ -2179,7 +2191,7 @@ msgstr "メディアとサイドカーファイルをインデックスしてい
 msgid "Indexing originals..."
 msgstr "originals をインデックスしています..."
 
-#: src/component/lightbox.vue:1583 src/component/lightbox.vue:1584
+#: src/component/lightbox.vue:1547 src/component/lightbox.vue:1548
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "インフォメーション"
@@ -2306,7 +2318,7 @@ msgstr "JPEG サイズの制限: %{n} px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG とサムネイルは必要な場合に自動的に生成されます。"
 
-#: src/common/util.js:891
+#: src/common/util.js:906
 msgid "Keyword"
 msgstr "キーワード"
 
@@ -2364,7 +2376,7 @@ msgstr "最終ログイン"
 msgid "Last page"
 msgstr "最終ページ"
 
-#: src/page/services.vue:179
+#: src/page/services.vue:181
 msgid "Last Sync"
 msgstr "最終同期"
 
@@ -2388,7 +2400,7 @@ msgstr "詳細はこちら"
 
 #: src/page/admin/sessions.vue:345 src/page/admin/users.vue:404
 #: src/page/admin/sessions.vue:343 src/page/admin/users.vue:333
-#: src/page/labels.vue:335 src/page/services.vue:235
+#: src/page/labels.vue:335 src/page/services.vue:237
 msgid "Learn More"
 msgstr "詳細はこちら"
 
@@ -2424,7 +2436,7 @@ msgstr "ライブラリ"
 msgid "License"
 msgstr "ライセンス"
 
-#: src/component/lightbox.vue:1653 src/component/lightbox.vue:1654
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Like"
 msgstr "お気に入り"
 
@@ -2448,7 +2460,7 @@ msgstr "リスト"
 msgid "List View"
 msgstr "リスト表示"
 
-#: src/common/util.js:843 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:350
@@ -2484,7 +2496,7 @@ msgid "Local Time"
 msgstr "現地時間"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:881 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2549,7 +2561,7 @@ msgstr "アカウント管理"
 msgid "Manager"
 msgstr "マネージャー"
 
-#: src/common/util.js:903
+#: src/common/util.js:918
 msgid "Manual"
 msgstr "マニュアル"
 
@@ -2557,11 +2569,11 @@ msgstr "マニュアル"
 msgid "Manual Upload"
 msgstr "手動アップロード"
 
-#: src/page/settings/general.vue:450
+#: src/page/settings/general.vue:505
 msgid "Maps"
 msgstr "地図"
 
-#: src/common/util.js:883 src/model/marker.js:132
+#: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "マーカー"
 
@@ -2591,7 +2603,7 @@ msgstr "%{a} を %{b} に統合しますか？"
 msgid "Message"
 msgstr "メッセージ"
 
-#: src/common/util.js:893
+#: src/common/util.js:908
 msgid "Metadata"
 msgstr "メタデータ"
 
@@ -2619,7 +2631,7 @@ msgid "mixed"
 msgstr "ミックス"
 
 #: src/app/routes.js:329 src/component/navigation.vue:417
-#: src/options/options.js:264 src/page/settings/collections.vue:142
+#: src/options/options.js:264 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
 msgstr "モーメント"
@@ -2637,7 +2649,7 @@ msgstr "モノクロ"
 msgid "Month"
 msgstr "月"
 
-#: src/component/lightbox.vue:1708
+#: src/component/lightbox.vue:1672
 msgid "More options"
 msgstr "その他のオプション"
 
@@ -2661,7 +2673,7 @@ msgstr "%s からファイルを移動しています"
 msgid "Must have at least %{n} characters."
 msgstr "少なくとも %{n} 文字必要です。"
 
-#: src/component/lightbox.vue:1602 src/component/lightbox.vue:1603
+#: src/component/lightbox.vue:1566 src/component/lightbox.vue:1567
 msgid "Mute"
 msgstr "ミュート"
 
@@ -2669,7 +2681,7 @@ msgstr "ミュート"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:877 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2686,7 +2698,7 @@ msgstr "ミュート"
 #: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
 #: src/page/albums.vue:393 src/page/auth/login.vue:80
-#: src/page/people/new.vue:51 src/page/services.vue:175
+#: src/page/people/new.vue:51 src/page/services.vue:177
 msgid "Name"
 msgstr "名前"
 
@@ -2699,7 +2711,7 @@ msgstr "名前が長すぎます"
 
 #: src/page/admin/users.vue:261 src/page/admin/users.vue:458
 #: src/page/admin/users.vue:402 src/options/options.js:422
-#: src/options/options.js:432 src/page/services.vue:249
+#: src/options/options.js:432 src/page/services.vue:251
 msgid "Never"
 msgstr "なし"
 
@@ -2715,7 +2727,7 @@ msgstr "新しいパスワード"
 msgid "Newest First"
 msgstr "新しい順"
 
-#: src/component/lightbox.vue:562 src/locales.js:301
+#: src/component/lightbox.vue:526 src/locales.js:301
 msgid "Next"
 msgstr "次"
 
@@ -2818,7 +2830,7 @@ msgstr "サーバーに接続できません"
 msgid "No servers configured."
 msgstr "サーバーが設定されていません。"
 
-#: src/page/services.vue:37
+#: src/page/services.vue:38
 msgid "No services configured."
 msgstr "接続されているサービスはありません。"
 
@@ -2852,7 +2864,7 @@ msgstr "写真ではないものや、低品質な画像は検索結果に表示
 msgid "None"
 msgstr "なし"
 
-#: src/component/lightbox.vue:1153 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1117 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "許可されていません"
@@ -2865,7 +2877,7 @@ msgstr "公開モードでは利用できません"
 msgid "Not available in read-only mode"
 msgstr "読み込み専用モードでは利用できません"
 
-#: src/component/lightbox.vue:1150 src/locales.js:379
+#: src/component/lightbox.vue:1114 src/locales.js:379
 msgid "Not found"
 msgstr "見つかりませんでした"
 
@@ -2873,7 +2885,7 @@ msgstr "見つかりませんでした"
 msgid "Not sorted."
 msgstr "並び替えられていません。"
 
-#: src/component/lightbox.vue:1147 src/component/lightbox.vue:1261
+#: src/component/lightbox.vue:1111 src/component/lightbox.vue:1225
 msgid "Not supported"
 msgstr "サポートされていません"
 
@@ -2881,7 +2893,7 @@ msgstr "サポートされていません"
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "なお、オリジナルフォルダは手動で管理することができ、インポートは任意です。"
 
-#: src/page/services.vue:88
+#: src/page/services.vue:89
 msgid "Note:"
 msgstr "メモ:"
 
@@ -2979,6 +2991,14 @@ msgstr "2FA による認証を設定できるのは、ローカルで管理さ�
 msgid "Open"
 msgstr "オープン"
 
+#: src/page/settings/general.vue:435
+msgid "Open menus on hover instead of on click when using a desktop browser."
+msgstr ""
+
+#: src/page/settings/general.vue:434
+msgid "Open on Hover"
+msgstr ""
+
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
 msgstr "任意"
@@ -3017,7 +3037,7 @@ msgstr "オリジナル名"
 #: src/component/navigation.vue:369 src/component/navigation.vue:378
 #: src/component/navigation.vue:491 src/model/file.js:180
 #: src/options/options.js:474 src/page/library/browse.vue:7
-#: src/page/settings/collections.vue:41 src/page/settings/content.vue:185
+#: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
 msgid "Originals"
 msgstr "オリジナル"
@@ -3187,8 +3207,8 @@ msgstr "場所と時間"
 #: src/app/routes.js:472 src/app/routes.js:478 src/app/routes.js:484
 #: src/app/routes.js:499 src/component/navigation.vue:346
 #: src/component/navigation.vue:740 src/options/options.js:262
-#: src/page/places.vue:7 src/page/settings/collections.vue:157
-#: src/page/settings/general.vue:409 src/page/settings/general.vue:438
+#: src/page/places.vue:7 src/page/settings/collections.vue:158
+#: src/page/settings/general.vue:409 src/page/settings/general.vue:493
 msgid "Places"
 msgstr "場所"
 
@@ -3264,7 +3284,7 @@ msgstr "Enter キーを押して新しいアルバムを作成します。"
 msgid "Press enter to create new item"
 msgstr "エンターキーを押して新規項目を作成する"
 
-#: src/page/settings/collections.vue:17
+#: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
 msgstr ""
 
@@ -3284,7 +3304,7 @@ msgstr "プレビュー"
 msgid "Preview Images"
 msgstr "プレビュー画像"
 
-#: src/component/lightbox.vue:561 src/locales.js:302
+#: src/component/lightbox.vue:525 src/locales.js:302
 msgid "Previous"
 msgstr "前へ"
 
@@ -3354,12 +3374,12 @@ msgstr "ランダム"
 msgid "Rating {0} of {1}"
 msgstr "{1} 中 {0} の評価"
 
-#: src/common/util.js:841 src/options/options.js:346
+#: src/common/util.js:856 src/options/options.js:346
 msgid "Raw"
 msgstr "Raw"
 
 #: src/component/photo/view/cards.vue:111
-#: src/component/photo/view/mosaic.vue:66 src/page/settings/collections.vue:56
+#: src/component/photo/view/mosaic.vue:66 src/page/settings/collections.vue:57
 #: src/page/settings/content.vue:200
 msgid "RAW"
 msgstr "RAW"
@@ -3401,6 +3421,14 @@ msgstr "リカバリーコード"
 msgid "Red"
 msgstr "赤"
 
+#: src/page/settings/general.vue:450
+msgid "Reduce interface animations and motion effects."
+msgstr ""
+
+#: src/page/settings/general.vue:449
+msgid "Reduce Motion"
+msgstr ""
+
 #: src/component/cluster/node/groups.vue:6
 #: src/component/cluster/node/users.vue:25 src/page/admin/groups.vue:7
 #: src/page/admin/sessions.vue:336 src/page/admin/users.vue:395
@@ -3434,13 +3462,13 @@ msgid "Registration disabled"
 msgstr "登録は無効になっています"
 
 #: src/component/navigation.vue:422 src/component/navigation.vue:686
-#: src/component/update.vue:28 src/page/services.vue:226
+#: src/component/update.vue:28 src/page/services.vue:228
 msgid "Reload"
 msgstr "再読み込み"
 
 #: src/component/navigation.vue:599 src/component/navigation.vue:902
-#: src/component/update.vue:62 src/page/settings/general.vue:587
-#: src/page/settings/general.vue:602
+#: src/component/update.vue:62 src/page/settings/general.vue:642
+#: src/page/settings/general.vue:659
 msgid "Reloading…"
 msgstr "再読み込みしています…"
 
@@ -3461,7 +3489,7 @@ msgstr "削除"
 msgid "remove failed: unknown album"
 msgstr "削除に失敗しました: 不明なアルバムです"
 
-#: src/component/lightbox.vue:1740 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1704 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "アルバムから削除"
 
@@ -3498,7 +3526,7 @@ msgstr "%d 件のファイルと %d 件の写真が削除されました"
 msgid "Repeated"
 msgstr "繰り返し"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1257
+#: src/common/api.js:103 src/component/lightbox.vue:1221
 msgid "Request failed - are you offline?"
 msgstr "リクエストに失敗しました - オフラインですか？"
 
@@ -3529,12 +3557,12 @@ msgstr "再起動"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1770
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1734
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "復元"
 
-#: src/component/lightbox.vue:3274
+#: src/component/lightbox.vue:3238
 msgid "Restored"
 msgstr "復元されました"
 
@@ -3690,7 +3718,7 @@ msgstr "シークレット"
 msgid "Security and Access"
 msgstr "セキュリティとアクセス"
 
-#: src/component/lightbox.vue:1671 src/component/lightbox.vue:1672
+#: src/component/lightbox.vue:1635 src/component/lightbox.vue:1636
 msgid "Select"
 msgstr "選択"
 
@@ -3798,7 +3826,7 @@ msgstr "セッション ID"
 msgid "Sessions"
 msgstr "セッション"
 
-#: src/component/lightbox.vue:1730
+#: src/component/lightbox.vue:1694
 msgid "Set as Album Cover"
 msgstr "アルバムカバーに設定する"
 
@@ -3859,7 +3887,7 @@ msgstr "すべてのラベルを表示する"
 msgid "Show all new faces"
 msgstr "すべての新しい顔を表示"
 
-#: src/component/lightbox.vue:1796
+#: src/component/lightbox.vue:1760
 msgid "Show Caption"
 msgstr "キャプションを表示する"
 
@@ -3892,7 +3920,7 @@ msgid "Show the Account page so users can manage their profile and security sett
 msgstr "ユーザーがプロフィールとセキュリティ設定を管理できるように、Accountページを表示する。"
 
 #: src/page/settings/general.vue:82
-msgid "Show the Albums section to create and manage photo albums."
+msgid "Show the Albums section to manually browse and organize pictures."
 msgstr ""
 
 #: src/page/settings/general.vue:157
@@ -3900,7 +3928,7 @@ msgid "Show the Calendar view to browse the library by year and month."
 msgstr "カレンダービューを表示し、ライブラリーを年月でブラウズする。"
 
 #: src/page/settings/general.vue:97
-msgid "Show the Favorites section to quickly access your starred photos."
+msgid "Show the Favorites section to quickly access your starred pictures."
 msgstr ""
 
 #: src/page/settings/general.vue:112
@@ -3927,8 +3955,8 @@ msgstr "場所]ビューをインタラクティブな地図で表示し、場�
 msgid "Show Titles"
 msgstr "タイトルを表示"
 
-#: src/common/util.js:855 src/model/file.js:195
-#: src/page/settings/collections.vue:71 src/page/settings/content.vue:215
+#: src/common/util.js:870 src/model/file.js:195
+#: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "サイドカー"
 
@@ -3963,7 +3991,7 @@ msgstr "サイトURL"
 msgid "Size"
 msgstr "サイズ"
 
-#: src/component/lightbox.vue:1618 src/component/lightbox.vue:1619
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 msgid "Slideshow"
 msgstr "スライドショー"
 
@@ -3995,7 +4023,7 @@ msgstr "一部のアルバムが作成できなかった。名前を編集して
 msgid "Some albums could not be updated"
 msgstr "一部のアルバムが更新できなかった"
 
-#: src/component/lightbox.vue:1254 src/locales.js:374
+#: src/component/lightbox.vue:1218 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "何かが間違っています。もう一度やり直してください"
 
@@ -4016,7 +4044,7 @@ msgid "Sort by Relevance"
 msgstr "関連性でソートする"
 
 #: src/component/album/edit/dialog.vue:67 src/component/photo/toolbar.vue:161
-#: src/page/albums.vue:98 src/page/settings/collections.vue:100
+#: src/page/albums.vue:98 src/page/settings/collections.vue:101
 msgid "Sort Order"
 msgstr "並び替え順"
 
@@ -4091,7 +4119,7 @@ msgstr "ストレージ"
 msgid "Streets"
 msgstr "市街"
 
-#: src/common/util.js:895 src/component/lightbox/sidebar.vue:814
+#: src/common/util.js:910 src/component/lightbox/sidebar.vue:814
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4142,7 +4170,7 @@ msgstr "Google ドライブなどの追加のサービスのサポートが順�
 msgid "Support Our Mission"
 msgstr "私たちのミッションを支援"
 
-#: src/page/services.vue:177
+#: src/page/services.vue:179
 msgid "Sync"
 msgstr "同期"
 
@@ -4221,7 +4249,7 @@ msgstr "このインスタンスにはサイトURLが設定されていない。
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "オリジナルフォルダをネットワークドライブとしてマウントし、あなたのコンピュータまたはスマートフォンからまるでローカルのようにファイルを開き、編集、削除できるようにします。"
 
-#: src/page/services.vue:91
+#: src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "オリジナルフォルダをネットワークドライブとしてマウントし、あなたのコンピュータまたはスマートフォンからまるでローカルのようにファイルを開き、編集、削除できるようにします。"
 
@@ -4245,7 +4273,7 @@ msgstr "タイムゾーン"
 msgid "Timeout"
 msgstr "タイムアウト"
 
-#: src/common/util.js:897 src/component/photo/view/list.vue:34
+#: src/common/util.js:912 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "タイトル"
 
@@ -4347,7 +4375,7 @@ msgstr "一意の ID"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:612 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1736
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:695
@@ -4462,7 +4490,7 @@ msgstr "今すぐアップグレード"
 #: src/component/upload/dialog.vue:190 src/component/upload/dialog.vue:67
 #: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:489 src/page/labels.vue:325
-#: src/page/library/import.vue:64 src/page/services.vue:176
+#: src/page/library/import.vue:64 src/page/services.vue:178
 #: src/page/settings/general.vue:215
 msgid "Upload"
 msgstr "アップロード"
@@ -4580,7 +4608,7 @@ msgstr "ユーザー"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:851 src/component/photo/view/cards.vue:114
+#: src/common/util.js:866 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:366
 msgid "Vector"
@@ -4605,7 +4633,7 @@ msgstr "認証済みメールアドレスが必要です"
 msgid "Version"
 msgstr "バージョン"
 
-#: src/common/util.js:845 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4637,7 +4665,7 @@ msgstr "検索結果を一覧表示します。"
 msgid "Viewer"
 msgstr "ビューア"
 
-#: src/common/util.js:905
+#: src/common/util.js:920
 msgid "Vision"
 msgstr "ビジョン"
 
@@ -4675,7 +4703,7 @@ msgstr "WebDAV"
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV クライアントは PhotoPrism に次の URL で接続することができます:"
 
-#: src/page/services.vue:89
+#: src/page/services.vue:90
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
 msgstr "Microsoft Windows エクスプローラや Apple Finder のような WebDAV クライアントは、直接 PhotoPrism に接続できます。"
 
@@ -4805,7 +4833,7 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 msgid "Zip created in %d s"
 msgstr "%d 秒で zip ファイルを作成しました"
 
-#: src/component/lightbox.vue:560
+#: src/component/lightbox.vue:524
 msgid "Zoom in/out"
 msgstr "ズームイン/アウト"
 
@@ -4846,7 +4874,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "タイトル"
 
-#: src/component/lightbox.vue:1755 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1719 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
