@@ -418,7 +418,7 @@ msgstr "Trajno izbrisano"
 #: messages.go:210
 #, c-format
 msgid "%s has been restored"
-msgstr "Odabir je vraćen"
+msgstr "%s je vraćen"
 
 #: messages.go:211
 msgid "Successfully verified"

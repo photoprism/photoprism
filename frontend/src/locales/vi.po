@@ -1574,7 +1574,7 @@ msgstr "Biên tập"
 #: src/component/label/edit/dialog.vue:18
 #: src/component/people/edit/dialog.vue:18
 msgid "Edit %{s}"
-msgstr "Chỉnh sửa tên}"
+msgstr "Chỉnh sửa %{s}"
 
 #: src/component/user/edit/dialog.vue:23
 #: src/component/cluster/node/user-edit.vue:16
