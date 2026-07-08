@@ -2072,7 +2072,7 @@ msgstr "Masquer la barre de défilement"
 
 #: src/page/settings/general.vue:465
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
-msgstr "Masque la barre de défilement permanente affichée par certains navigateurs de bureau."
+msgstr "Masquer la barre de défilement permanente affichée par certains navigateurs de bureau."
 
 #: src/options/options.js:381
 msgid "High"
@@ -2997,7 +2997,7 @@ msgstr "Ouvrir"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr "Ouvre les menus au survol plutôt qu'au clic quand tu utilises un navigateur sur ordinateur."
+msgstr "Ouvrir les menus au survol plutôt qu'au clic lors de l'utilisation d'un navigateur de bureau."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
@@ -3427,7 +3427,7 @@ msgstr "Rouge"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr "Réduis les animations de l'interface et les effets de mouvement."
+msgstr "Réduire les animations de l'interface et les effets de mouvement."
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
@@ -3926,7 +3926,7 @@ msgstr "Afficher la page Compte pour que l'utilisateur puisse gérer son profil 
 
 #: src/page/settings/general.vue:82
 msgid "Show the Albums section to manually browse and organize pictures."
-msgstr "Affiche la section « Albums » pour parcourir et organiser tes photos manuellement."
+msgstr "Afficher la section « Albums » pour parcourir et organiser vos photos manuellement."
 
 #: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."
@@ -3934,11 +3934,11 @@ msgstr "Afficher la vue Calendrier pour parcourir la bibliothèque par année et
 
 #: src/page/settings/general.vue:97
 msgid "Show the Favorites section to quickly access your starred pictures."
-msgstr "Affiche la section « Favoris » pour accéder rapidement à tes photos marquées d'une étoile."
+msgstr "Afficher la section « Favoris » pour accéder rapidement à vos photos marquées d'une étoile."
 
 #: src/page/settings/general.vue:112
 msgid "Show the Folders section to browse pictures by directory structure."
-msgstr "Affiche la section « Dossiers » pour parcourir les images selon la structure des dossiers."
+msgstr "Afficher la section « Dossiers » pour parcourir les images selon la structure des dossiers."
 
 #: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
@@ -3950,7 +3950,7 @@ msgstr "Afficher la section Bibliothèque pour indexer et gérer la bibliothèqu
 
 #: src/page/settings/general.vue:127
 msgid "Show the Media section to browse videos, live photos, and animations."
-msgstr "Affiche la section « Médias » pour parcourir les vidéos, les photos en direct et les animations."
+msgstr "Afficher la section « Médias » pour parcourir les vidéos, les photos en direct et les animations."
 
 #: src/page/settings/general.vue:410
 msgid "Show the Places view with interactive maps so you can browse photos by location."

@@ -2993,7 +2993,7 @@ msgstr "פתיחה"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr "בעת שימוש בדפדפן שולחני, יש לפתוח תפריטים בעת העברת העכבר מעליהם, ולא בלחיצה."
+msgstr "פתח תפריטים בעת ריחוף העכבר במקום בלחיצה, בדפדפני שולחן העבודה."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
@@ -3423,7 +3423,7 @@ msgstr "אדום"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr "צמצמו את האנימציות ואפקטי התנועה בממשק."
+msgstr "צמצם את האנימציות ואפקטי התנועה בממשק."
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
@@ -3921,7 +3921,7 @@ msgstr "הצג את דף החשבון כדי שהמשתמשים יוכלו לנ�
 
 #: src/page/settings/general.vue:82
 msgid "Show the Albums section to manually browse and organize pictures."
-msgstr "הצג את הקטגוריה \"אלבומים\" כדי לדפדף בתמונות ולארגן אותן באופן ידני."
+msgstr "הצג את הקטע \"אלבומים\" כדי לדפדף בתמונות ולארגן אותן באופן ידני."
 
 #: src/page/settings/general.vue:157
 msgid "Show the Calendar view to browse the library by year and month."

@@ -2993,7 +2993,7 @@ msgstr "Öffnen"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr "Menüs sollen bei Verwendung eines Desktop-Browsers beim Darüberfahren mit der Maus statt beim Klicken geöffnet werden."
+msgstr "Öffne Menüs in Desktop-Browsern beim Darüberfahren mit der Maus statt per Klick."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
@@ -3933,7 +3933,7 @@ msgstr "Zeige den Bereich „Favoriten“ an, um schnell auf deine mit einem Ste
 
 #: src/page/settings/general.vue:112
 msgid "Show the Folders section to browse pictures by directory structure."
-msgstr "Zeige den Abschnitt „Ordner“ an, um Bilder nach Verzeichnisstruktur zu durchsuchen."
+msgstr "Zeige den Bereich „Ordner“ an, um Bilder nach Verzeichnisstruktur zu durchsuchen."
 
 #: src/page/settings/general.vue:187
 msgid "Show the Labels section to view and manage AI-generated labels."
