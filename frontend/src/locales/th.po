@@ -4245,12 +4245,8 @@ msgstr "ฟิลด์นี้จำเป็นต้องกรอก"
 msgid "This instance has no site URL configured."
 msgstr "ไม่มี URL ของเว็บไซต์ที่กำหนดค่าไว้สำหรับกรณีนี้"
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "การดำเนินการนี้จะต่อเชื่อมโฟลเดอร์ต้นฉบับเป็นไดรฟ์เครือข่าย และช่วยให้คุณสามารถเปิด แก้ไข และลบไฟล์จากคอมพิวเตอร์หรือสมาร์ทโฟนได้เสมือนอยู่ในเครื่อง"
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "การดำเนินการนี้จะต่อเชื่อมโฟลเดอร์ต้นฉบับเป็นไดรฟ์เครือข่าย และช่วยให้คุณสามารถเปิด แก้ไข และลบไฟล์จากคอมพิวเตอร์หรือสมาร์ทโฟนได้เสมือนอยู่ในเครื่อง"
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4704,7 +4700,7 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "ไคลเอ็นต์ WebDAV สามารถเชื่อมต่อกับ PhotoPrism โดยใช้ URL ต่อไปนี้:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "ไคลเอนต์ WebDAV เช่น Windows Explorer ของ Microsoft หรือ Finder ของ Apple สามารถเชื่อมต่อโดยตรงกับ PhotoPrism"
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123

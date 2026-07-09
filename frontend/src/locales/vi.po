@@ -4242,12 +4242,8 @@ msgstr "Trường này là bắt buộc"
 msgid "This instance has no site URL configured."
 msgstr "Phiên bản này chưa được cấu hình URL trang web."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn như thể chúng là cục bộ."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn như thể chúng là cục bộ."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4701,10 +4697,8 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "Máy khách WebDAV có thể kết nối với PhotoPrism bằng URL sau:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr ""
-"Các máy khách WebDAV, như Windows Explorer của Microsoft hoặc Finder của Apple, có thể kết nối trực tiếp với\n"
-"          PhotoPrism."
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
+msgstr "Các máy khách WebDAV, như Windows Explorer của Microsoft hoặc Finder của Apple, có thể kết nối trực tiếp với PhotoPrism."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
 msgid "WebDAV Upload"

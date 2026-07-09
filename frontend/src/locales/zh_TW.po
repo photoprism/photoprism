@@ -4245,12 +4245,8 @@ msgstr "此欄位是必需的"
 msgid "This instance has no site URL configured."
 msgstr "此實例未設定網站網址。"
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4704,7 +4700,7 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAV客戶端（例如Microsoft的Windows資源管理器或Apple的Finder）可以直接連接到PhotoPrism。"
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123

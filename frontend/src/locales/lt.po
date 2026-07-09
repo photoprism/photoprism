@@ -4245,12 +4245,8 @@ msgstr "Šis laukas yra privalomas"
 msgid "This instance has no site URL configured."
 msgstr "Šiam egzemplioriui nėra nustatytas svetainės URL."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono taip, tarsi jie būtų vietiniai."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono taip, tarsi jie būtų vietiniai."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4704,7 +4700,7 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV klientai gali prisijungti prie \"PhotoPrism\" naudodami šį URL adresą:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "„WebDAV“ klientai, tokie kaip „Microsoft“ „Windows Explorer“ arba „Apple Finder“, gali prisijungti tiesiogiai prie „PhotoPrism“."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123

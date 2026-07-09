@@ -4242,12 +4242,8 @@ msgstr "To polje je obvezno"
 msgid "This instance has no site URL configured."
 msgstr "Za to instanco ni nastavljen naslov spletnega mesta."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Tako se mapa z izvirniki namesti kot omrežni pogon in omogoči odpiranje, urejanje in brisanje datotek iz računalnika ali pametnega telefona, kot da bi bile lokalne."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "Tako se mapa z izvirniki namesti kot omrežni pogon in omogoči odpiranje, urejanje in brisanje datotek iz računalnika ali pametnega telefona, kot da bi bile lokalne."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4701,7 +4697,7 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "Odjemalci WebDAV se lahko povežejo s programom PhotoPrism z naslednjim naslovom URL:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "Odjemalci WebDAV, kot sta Microsoftov Windows Explorer ali Applov Finder, se lahko povežejo neposredno s PhotoPrism."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123

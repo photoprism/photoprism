@@ -87,10 +87,10 @@
     <div class="pa-5">
       <p class="text-caption pb-1 clickable" @click.stop.prevent="webdavDialog">
         {{ $gettext(`Note:`) }}
-        {{ $gettext(`WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. `) }}
+        {{ $gettext(`WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism.`) }}
         {{
           $gettext(
-            `This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. `
+            `This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.`
           )
         }}
       </p>

@@ -4245,12 +4245,8 @@ msgstr "이 필드는 필수 입력 사항입니다."
 msgid "This instance has no site URL configured."
 msgstr "이 인스턴스에는 사이트 URL이 설정되어 있지 않습니다."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "이렇게 하면 원본 폴더가 네트워크 드라이브로 마운트되고 컴퓨터나 스마트폰에서 파일을 로컬에 있는 것처럼 열고 편집하고 삭제할 수 있습니다."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4704,7 +4700,7 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV 클라이언트는 다음 URL을 사용하여 PhotoPrism에 연결할 수 있습니다:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAV 클라이언트 (예: 마이코로소프트 Windows Explorer 또는 애플 Finder) 직접적으로 PhotoPrism에 연결할 수 있습니다."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123

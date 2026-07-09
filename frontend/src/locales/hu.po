@@ -4244,12 +4244,8 @@ msgstr "Ez a mező kötelező"
 msgid "This instance has no site URL configured."
 msgstr "Ehhez az példányhoz nincs beállítva webhely-URL."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Ez hálózati meghajtóként csatlakoztatja az eredeti mappát, és lehetővé teszi a fájlok megnyitását, szerkesztését és törlését számítógépéről vagy okostelefonjáról, mintha azok helyi lennének."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "Ez hálózati meghajtóként csatlakoztatja az eredeti mappát, és lehetővé teszi a fájlok megnyitását, szerkesztését és törlését számítógépéről vagy okostelefonjáról, mintha azok helyi lennének."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4703,7 +4699,7 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "A WebDAV-kliensek a következő URL-címen csatlakozhatnak a PhotoPrism-hez:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "A WebDAV-kliensek, mint például a Microsoft Windows Intézője vagy az Apple Finder, közvetlenül csatlakozhatnak a PhotoPrism-hez."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123

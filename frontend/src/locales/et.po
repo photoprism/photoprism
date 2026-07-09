@@ -4242,12 +4242,8 @@ msgstr "See väli on kohustuslik"
 msgid "This instance has no site URL configured."
 msgstr "Sellel instantsil pole veebiaadressi konfigureeritud."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4701,10 +4697,8 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV kliendid saavad PhotoPrismiga ühenduda järgmise URL-i kaudu:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr ""
-"WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad \n"
-"PhotoPrismiga otse ühenduda."
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
+msgstr "WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad PhotoPrismiga otse ühenduda."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
 msgid "WebDAV Upload"

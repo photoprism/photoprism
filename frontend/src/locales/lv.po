@@ -4241,13 +4241,9 @@ msgstr "Šis lauks ir obligāts"
 msgid "This instance has no site URL configured."
 msgstr "Šim eksemplāram nav konfigurēta vietnes URL."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Tas pievieno oriģinālu mapi kā tīkla disku un ļauj atvērt, rediģēt un dzēst failus no datora vai viedtālruņa tā, it kā tie būtu lokāli."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "Tas pievieno oriģinālu mapi kā tīkla disku un ļauj atvērt, rediģēt un dzēst failus no datora vai viedtālruņa tā, it kā tie būtu lokāli. "
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
 #: src/locales.js:353
@@ -4700,8 +4696,8 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV klienti var izveidot savienojumu ar PhotoPrism, izmantojot šo URL:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr "WebDAV klienti, piemēram, Microsoft Windows Explorer vai Apple Finder, var tieši izveidot savienojumu ar PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
+msgstr "WebDAV klienti, piemēram, Microsoft Windows Explorer vai Apple Finder, var tieši izveidot savienojumu ar PhotoPrism."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
 msgid "WebDAV Upload"

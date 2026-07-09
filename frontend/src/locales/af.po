@@ -4242,12 +4242,8 @@ msgstr "Hierdie veld word vereis"
 msgid "This instance has no site URL configured."
 msgstr "Hierdie instansie het geen webwerf-URL gekonfigureer nie."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Dit plaas die oorspronklike lêergids as 'n netwerkaandrywer en laat jou toe om lêers van jou rekenaar of slimfoon oop te maak, te redigeer en uit te vee asof dit plaaslik is."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
 msgstr "Dit plaas die oorspronklike lêergids as 'n netwerkaandrywer en laat jou toe om lêers van jou rekenaar of slimfoon oop te maak, te redigeer en uit te vee asof dit plaaslik is."
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
@@ -4701,7 +4697,7 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV-kliënte kan aan PhotoPrism koppel deur die volgende URL te gebruik:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAV-kliënte, soos Microsoft se Windows Explorer of Apple's Finder, kan direk aan PhotoPrism koppel."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123

@@ -4250,13 +4250,9 @@ msgstr "Ce champ est obligatoire"
 msgid "This instance has no site URL configured."
 msgstr "Cette instance n'a pas d'URL de site configurée."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Cela monte le dossier des originaux en tant que lecteur réseau et vous permet d'ouvrir, modifier et supprimer des fichiers de votre ordinateur ou smartphone comme s'ils étaient locaux."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "Cela monte le dossier des originaux en tant que lecteur réseau et vous permet d'ouvrir, modifier et supprimer des fichiers de votre ordinateur ou smartphone comme s'ils étaient locaux. "
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
 #: src/locales.js:353
@@ -4709,8 +4705,8 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "Les clients WebDAV peuvent se connecter à PhotoPrism en utilisant l'URL suivante :"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr "Les clients WebDAV, comme par exemple Windows Explorer de Microsoft ou le Finder d'Apple, peuvent se connecter directement à PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
+msgstr "Les clients WebDAV, comme par exemple Windows Explorer de Microsoft ou le Finder d'Apple, peuvent se connecter directement à PhotoPrism."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
 msgid "WebDAV Upload"

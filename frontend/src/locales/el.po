@@ -4242,13 +4242,9 @@ msgstr "Το πεδίο αυτό είναι υποχρεωτικό"
 msgid "This instance has no site URL configured."
 msgstr "Σε αυτή την παρουσία δεν έχει ρυθμιστεί διεύθυνση URL ιστότοπου."
 
-#: src/component/settings/webdav.vue:58
+#: src/component/settings/webdav.vue:58 src/page/services.vue:92
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Αυτό προσαρτά το φάκελο πρωτοτύπων ως μονάδα δίσκου δικτύου και σας επιτρέπει να ανοίγετε, να επεξεργάζεστε και να διαγράφετε αρχεία από τον υπολογιστή ή το smartphone σας σαν να ήταν τοπικά."
-
-#: src/page/services.vue:92
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. "
-msgstr "Αυτό προσαρτά το φάκελο πρωτοτύπων ως μονάδα δίσκου δικτύου και σας επιτρέπει να ανοίγετε, να επεξεργάζεστε και να διαγράφετε αρχεία από τον υπολογιστή ή το smartphone σας σαν να ήταν τοπικά. "
 
 #: src/page/cluster/activity.vue:126 src/page/admin/activity.vue:125
 #: src/locales.js:353
@@ -4701,8 +4697,8 @@ msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "Οι πελάτες WebDAV μπορούν να συνδεθούν στο PhotoPrism χρησιμοποιώντας την ακόλουθη διεύθυνση URL:"
 
 #: src/page/services.vue:90
-msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. "
-msgstr "Οι πελάτες WebDAV, όπως ο Windows Explorer της Microsoft ή το Finder της Apple, μπορούν να συνδεθούν απευθείας στο PhotoPrism. "
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
+msgstr "Οι πελάτες WebDAV, όπως ο Windows Explorer της Microsoft ή το Finder της Apple, μπορούν να συνδεθούν απευθείας στο PhotoPrism."
 
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
 msgid "WebDAV Upload"
