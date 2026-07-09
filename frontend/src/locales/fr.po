@@ -2997,7 +2997,7 @@ msgstr "Ouvrir"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr "Ouvrir les menus au passage de la souris plutôt qu'au cliquant en cas d'utilisation d'un navigateur de bureau."
+msgstr "Ouvrir les menus au passage de la souris plutôt qu'au clic en cas d'utilisation d'un navigateur de bureau."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
