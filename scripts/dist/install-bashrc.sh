@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Add go alias and custom prompt in /etc/bash.bashrc:
-# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-profile.sh)
+# Adds shell aliases and a custom prompt to /etc/bash.bashrc:
+# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-bashrc.sh)
 
 # Abort if not executed as root.
 if [[ $(id -u) != "0" ]]; then
@@ -14,6 +14,7 @@ set -e
 echo "Add ll alias and custom prompt in /etc/bash.bashrc"
 
 echo 'alias ll="ls -alh"' >> /etc/bash.bashrc
+# shellcheck disable=SC2016 # $DOCKER_TAG is expanded at shell runtime, not here.
 echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/bash.bashrc
 
 echo "Add alias of go to richgo if it's available"
@@ -25,4 +26,4 @@ fi
 
 echo "Remove the unnecessary custom .bashrc for the root user"
 
-rm /root/.bashrc
+rm -f /root/.bashrc

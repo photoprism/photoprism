@@ -43,8 +43,10 @@ usermod -a -G photoprism,video,davfs2,renderd,render,ssl-cert,videodriver www-da
 SKELETON="/tmp/custom-skeleton"
 mkdir --parents "${SKELETON}"
 
-# copy the .config/ directory from the default skeleton
-cp -r /etc/skel/.config/ ${SKELETON}/.config/
+# copy the .config/ directory from the default skeleton, if it exists
+if [ -d /etc/skel/.config ]; then
+  cp -r /etc/skel/.config/ "${SKELETON}/.config/"
+fi
 
 # create user 'videodriver'
 userdel -r -f videodriver >/dev/null 2>&1

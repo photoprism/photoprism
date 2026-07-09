@@ -109,6 +109,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-osv-scanner.sh && \
     /scripts/install-gitleaks.sh && \
     /scripts/install-bashrc.sh && \
+    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/bash.bashrc && \
     /scripts/install-dircolors.sh && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \

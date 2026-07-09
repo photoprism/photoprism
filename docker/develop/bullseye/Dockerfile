@@ -130,6 +130,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-go-tools.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     /scripts/install-bashrc.sh && \
+    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/bash.bashrc && \
     /scripts/install-dircolors.sh && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
