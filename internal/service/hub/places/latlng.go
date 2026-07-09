@@ -41,10 +41,11 @@ func LatLng(lat, lng float64, locale string) (result Location, err error) {
 	}
 
 	var r *http.Response
+	var reqUrl string
 
 	// Query the specified places service URLs.
 	for _, serviceUrl := range ReverseServiceUrls {
-		reqUrl := fmt.Sprintf("%s?%s", serviceUrl, params)
+		reqUrl = fmt.Sprintf("%s?%s", serviceUrl, params)
 		if r, err = GetRequest(reqUrl, locale); err == nil {
 			break
 		}
@@ -52,7 +53,7 @@ func LatLng(lat, lng float64, locale string) (result Location, err error) {
 
 	// Failed?
 	if err != nil {
-		log.Errorf("places: %s (location request failed)", err.Error())
+		log.Errorf("places: %s (location request to %s failed)", err.Error(), serviceHost(reqUrl))
 		return result, err
 	} else if r == nil {
 		err = fmt.Errorf("location request could not be performed")
