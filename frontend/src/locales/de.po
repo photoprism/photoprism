@@ -3226,7 +3226,7 @@ msgstr "Bitte kopiere das folgende, zufällig generierte App-Passwort und bewahr
 
 #: src/component/upload/dialog.vue:104
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr "Bitte lade keine privaten, illegalen oder anstößigen Bilder hoch. "
+msgstr "Bitte lade keine privaten, illegalen oder anstößigen Bilder hoch."
 
 #: src/component/upload/dialog.vue:107
 msgid "Please don't upload photos containing offensive content."
