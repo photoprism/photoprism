@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-07-09 11:00+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -517,7 +517,7 @@ msgstr "Autoriser la suppression définitive des fichiers afin de libérer de l'
 
 #: src/page/settings/general.vue:479
 msgid "Allow Page Zoom"
-msgstr "Autoriser le zoom sur la page"
+msgstr "Permettre le zoom sur la page"
 
 #: src/page/settings/general.vue:321
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
@@ -1841,7 +1841,7 @@ msgstr "Demander une fonctionnalité"
 
 #: src/page/settings/collections.vue:6
 msgid "Features"
-msgstr "Caractéristiques"
+msgstr "Fonctionnalités"
 
 #: src/options/options.js:487
 msgid "Female"
@@ -2997,11 +2997,11 @@ msgstr "Ouvrir"
 
 #: src/page/settings/general.vue:435
 msgid "Open menus on hover instead of on click when using a desktop browser."
-msgstr "Ouvrir les menus au survol plutôt qu'au clic lors de l'utilisation d'un navigateur de bureau."
+msgstr "Ouvrir les menus au passage de la souris plutôt qu'au cliquant en cas d'utilisation d'un navigateur de bureau."
 
 #: src/page/settings/general.vue:434
 msgid "Open on Hover"
-msgstr "Ouvrir au survol"
+msgstr "Ouvrir au passage de la souris"
 
 #: src/component/service/add.vue:39 src/component/service/add.vue:53
 msgid "optional"
@@ -3290,7 +3290,7 @@ msgstr "Appuyer sur la touche Entrée pour créer un nouvel élément"
 
 #: src/page/settings/collections.vue:18
 msgid "Prevent collections from being downloaded as zip archives."
-msgstr "Empêcher le téléchargement des collections sous forme d'archives zip."
+msgstr "Interdire le téléchargement des collections sous forme d'archives zip."
 
 #: src/page/settings/advanced.vue:79
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
@@ -3427,7 +3427,7 @@ msgstr "Rouge"
 
 #: src/page/settings/general.vue:450
 msgid "Reduce interface animations and motion effects."
-msgstr "Réduire les animations de l'interface et les effets de mouvement."
+msgstr "Réduire les animations de l'interface utilisateur et les effets de mouvement."
 
 #: src/page/settings/general.vue:449
 msgid "Reduce Motion"
