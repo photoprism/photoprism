@@ -2782,7 +2782,7 @@ msgstr "Geen labels toegewezen"
 
 #: src/page/labels.vue:50 src/page/labels.vue:937
 msgid "No labels found"
-msgstr "%{n} labels gevonden"
+msgstr "Geen labels gevonden"
 
 #: src/locales.js:412
 msgid "No labels selected"

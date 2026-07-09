@@ -3512,7 +3512,7 @@ msgstr "Bainte"
 
 #: src/component/photo/edit/labels.vue:286
 msgid "Removed %{name}"
-msgstr "Bainte"
+msgstr "Baineadh %{name}"
 
 #: src/locales.js:450
 msgid "Removed %d files and %d photos"

@@ -383,7 +383,7 @@ msgstr "در حال پردازش آپلود..."
 
 #: messages.go:202
 msgid "Upload has been processed"
-msgstr "%s بازیابی شده است"
+msgstr "بارگذاری پردازش شده است"
 
 #: messages.go:203
 msgid "Selection approved"

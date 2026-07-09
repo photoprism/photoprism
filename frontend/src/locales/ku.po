@@ -2962,7 +2962,7 @@ msgstr "یەك دۆسیە دۆزرایەوە"
 
 #: src/component/service/upload.vue:175
 msgid "One file uploaded"
-msgstr "%{n} پەڕگە بارکرا"
+msgstr "یەك پەڕگە بارکرا"
 
 #: src/page/library/browse.vue:460
 msgid "One folder found"

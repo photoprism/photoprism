@@ -56,7 +56,7 @@ msgstr "%{n} 個のフォルダが見つかりました"
 
 #: src/component/navigation.vue:646
 msgid "%{n} GB of %{q} GB used"
-msgstr "%{n}q}のGBGB使用した"
+msgstr "%{q} GB 中 %{n} GB を使用"
 
 #: src/page/labels.vue:941
 msgid "%{n} labels found"
