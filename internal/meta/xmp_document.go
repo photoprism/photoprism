@@ -297,6 +297,11 @@ var (
 	// xmpFavoriteAttr: F-Stop favorite attribute on rdf:Description.
 	xmpFavoriteAttr = mustCompile("//rdf:Description/@fstop:favorite")
 
+	// xmpRatingChain: xmp:Rating — the 0–5 star rating written by digiKam,
+	// Lightroom, darktable, and cameras with a rate button. digiKam emits
+	// the attribute form, Adobe applications the element form.
+	xmpRatingChain = chainXPath{elemOrAttr("xmp:Rating")}
+
 	// xmpGPSLatitudeChain reads exif:GPSLatitude; sign composition
 	// with GPSLatitudeRef happens in Lat().
 	xmpGPSLatitudeChain    = chainXPath{elemOrAttr("exif:GPSLatitude")}
@@ -601,6 +606,23 @@ func (doc *XmpDocument) Favorite() bool {
 		return strings.TrimSpace(n.InnerText()) == "1"
 	}
 	return false
+}
+
+// Rating returns the star rating from 1 to 5, or 0 when the file is
+// unrated. Values outside the star range — including -1, which some
+// applications use for "rejected" — are treated as unrated.
+// Priority: xmp:Rating (element or attribute form).
+func (doc *XmpDocument) Rating() int {
+	val := xmpRatingChain.firstNonEmpty(doc.doc)
+	if val == "" {
+		return 0
+	}
+	if f, ok := parseRational(val); ok {
+		if n := int(math.Round(f)); n >= 1 && n <= 5 {
+			return n
+		}
+	}
+	return 0
 }
 
 // License returns the XMP license statement.

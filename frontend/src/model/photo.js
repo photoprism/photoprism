@@ -53,6 +53,8 @@ export class Photo extends RestModel {
       TypeSrc: "",
       Stack: 0,
       Favorite: false,
+      Rating: 0,
+      RatingSrc: "",
       Private: false,
       Scan: false,
       Panorama: false,
@@ -1316,6 +1318,17 @@ export class Photo extends RestModel {
 
     if (typeof values.Caption === "string") {
       values.CaptionSrc = src.Manual;
+    }
+
+    if (typeof values.Rating === "number") {
+      // Clearing the stars reverts to "never rated" so ratings can be
+      // imported from metadata again; picking 1-5 stars is a manual edit.
+      if (values.Rating > 0) {
+        values.RatingSrc = src.Manual;
+      } else {
+        values.Rating = 0;
+        values.RatingSrc = "";
+      }
     }
 
     if (values.Lat || values.Lng || values.Country) {
