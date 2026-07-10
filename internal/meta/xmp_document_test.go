@@ -246,12 +246,12 @@ func TestXmpDocument_TitleAltLanguageFallback(t *testing.T) {
 	})
 }
 
-func TestXmpDocument_KeywordsBagAndSeq(t *testing.T) {
+func TestXmpDocument_SubjectBagAndSeq(t *testing.T) {
 	t.Run("BagForm", func(t *testing.T) {
 		// digikam fixture writes dc:subject as <rdf:Bag>, which the old
-		// reader silently dropped. Keywords() must now read it.
+		// reader silently dropped. Subject() must now read it.
 		doc := loadXmp(t, "testdata/xmp/digikam/aurora.jpg.xmp")
-		got := doc.Keywords()
+		got := doc.Subject()
 		assert.Contains(t, got, "Nature")
 		assert.Contains(t, got, "Iceland")
 		assert.Contains(t, got, "Aurora")
@@ -259,20 +259,19 @@ func TestXmpDocument_KeywordsBagAndSeq(t *testing.T) {
 	t.Run("SeqForm", func(t *testing.T) {
 		// Synthetic Seq fixture confirms the legacy form still works.
 		doc := loadXmp(t, "testdata/xmp/synthetic/subject-seq.xmp")
-		assert.Equal(t, "Sequenced, Keywords, Should, Also, Parse", doc.Keywords())
+		assert.Equal(t, "Sequenced, Keywords, Should, Also, Parse", doc.Subject())
 	})
 	t.Run("EmptyForMissingSubject", func(t *testing.T) {
 		doc := loadXmp(t, "testdata/fstop-favorite.xmp")
-		assert.Equal(t, "", doc.Keywords())
+		assert.Equal(t, "", doc.Subject())
 	})
 }
 
 func TestXmpDocument_Subject(t *testing.T) {
-	t.Run("MirrorsKeywordsFromDcSubject", func(t *testing.T) {
-		// dc:subject is first in the ExifTool Subject cascade and present in
-		// most tagged files, so Subject equals the keyword list.
+	t.Run("ReadsDcSubject", func(t *testing.T) {
+		// dc:subject is the primary Subject source and present in most tagged
+		// files. It feeds Details.Subject, not the keyword list.
 		doc := loadXmp(t, "testdata/xmp/darktable/aurora.jpg.xmp")
-		assert.Equal(t, doc.Keywords(), doc.Subject())
 		assert.Contains(t, doc.Subject(), "Aurora")
 	})
 	t.Run("PersonInImageFallback", func(t *testing.T) {
@@ -290,7 +289,6 @@ func TestXmpDocument_Subject(t *testing.T) {
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>`)
-		assert.Equal(t, "", doc.Keywords())
 		assert.Equal(t, "Alice, Bob", doc.Subject())
 	})
 	t.Run("HierarchicalSubjectFallback", func(t *testing.T) {
@@ -365,9 +363,38 @@ func TestXmpDocument_Software(t *testing.T) {
 		doc := loadXmp(t, "testdata/xmp/synthetic/software-only.xmp")
 		assert.Equal(t, "PhotoPrism Synthetic Fixture 1.0.0", doc.Software())
 	})
+	t.Run("FallsBackToTiffSoftware", func(t *testing.T) {
+		// tiff-fields.xmp carries only tiff:Software (no xmp:CreatorTool).
+		doc := loadXmp(t, "testdata/xmp/synthetic/tiff-fields.xmp")
+		assert.Equal(t, "TiffSoftware 1.0", doc.Software())
+	})
 	t.Run("EmptyWhenAbsent", func(t *testing.T) {
 		doc := loadXmp(t, "testdata/fstop-favorite.xmp")
 		assert.Equal(t, "", doc.Software())
+	})
+}
+
+func TestXmpDocument_Description(t *testing.T) {
+	t.Run("FallsBackToTiffImageDescription", func(t *testing.T) {
+		// tiff-fields.xmp carries only tiff:ImageDescription (no dc:description).
+		doc := loadXmp(t, "testdata/xmp/synthetic/tiff-fields.xmp")
+		assert.Equal(t, "A tiff image description", doc.Description())
+	})
+	t.Run("EmptyWhenAbsent", func(t *testing.T) {
+		doc := loadXmp(t, "testdata/xmp/synthetic/software-only.xmp")
+		assert.Equal(t, "", doc.Description())
+	})
+}
+
+func TestXmpDocument_Copyright(t *testing.T) {
+	t.Run("FallsBackToTiffCopyright", func(t *testing.T) {
+		// tiff-fields.xmp carries only tiff:Copyright (no dc:rights).
+		doc := loadXmp(t, "testdata/xmp/synthetic/tiff-fields.xmp")
+		assert.Equal(t, "Copyright 2026 Example Org", doc.Copyright())
+	})
+	t.Run("EmptyWhenAbsent", func(t *testing.T) {
+		doc := loadXmp(t, "testdata/xmp/synthetic/software-only.xmp")
+		assert.Equal(t, "", doc.Copyright())
 	})
 }
 
@@ -594,14 +621,20 @@ func TestApexToSeconds(t *testing.T) {
 }
 
 func TestXmpDocument_CameraSerial(t *testing.T) {
-	t.Run("PrefersExifEXSerialNumber", func(t *testing.T) {
-		// Synthetic exifEX fixture writes both exifEX:SerialNumber and
-		// (no aux:SerialNumber). Modern fallback wins.
+	t.Run("PrefersExifEXBodySerialNumber", func(t *testing.T) {
+		// Synthetic exifEX fixture writes exifEX:BodySerialNumber and no
+		// aux:SerialNumber. Modern property wins.
 		doc := loadXmp(t, "testdata/xmp/synthetic/exifex-camera-lens.xmp")
 		assert.Equal(t, "SC1-BODY-123456", doc.CameraSerial())
 	})
+	t.Run("ReadsRealExifToolBodySerialNumber", func(t *testing.T) {
+		// canon_eos_6d.xmp is an ExifTool-written sidecar carrying the
+		// standard exifEX:BodySerialNumber property.
+		doc := loadXmp(t, "testdata/canon_eos_6d.xmp")
+		assert.Equal(t, "033024001432", doc.CameraSerial())
+	})
 	t.Run("FallsBackToAuxSerialNumber", func(t *testing.T) {
-		// canon_eos_6d has aux:SerialNumber but no exifEX:SerialNumber.
+		// aux-only.xmp has aux:SerialNumber but no exifEX:BodySerialNumber.
 		doc := loadXmp(t, "testdata/xmp/synthetic/aux-only.xmp")
 		assert.Equal(t, "BODY-SN-123456", doc.CameraSerial())
 	})
@@ -839,11 +872,11 @@ func TestXmpDocument_DarktableFixture(t *testing.T) {
 		assert.Equal(t, "PhotoPrism", doc.Artist())
 		assert.Equal(t, "CC-BY-SA 4.0", doc.Copyright())
 	})
-	t.Run("BagFormKeywords", func(t *testing.T) {
+	t.Run("BagFormSubject", func(t *testing.T) {
 		// Darktable writes <dc:subject><rdf:Bag>. The old reader
 		// dropped this entirely (it only handled <rdf:Seq>); the new
-		// reader must produce a non-empty list.
-		got := doc.Keywords()
+		// reader must produce a non-empty Subject list.
+		got := doc.Subject()
 		assert.Contains(t, got, "Aurora")
 		assert.Contains(t, got, "Iceland")
 		assert.Contains(t, got, "Nature")

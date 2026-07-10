@@ -496,3 +496,33 @@ export const Orientations = () => [
 ];
 
 export const AccountTypes = () => [{ value: "webdav", text: $gettext("WebDAV") }];
+
+export const DownloadName = () => [
+  { value: "file", text: $gettext("Current Name") },
+  { value: "original", text: $gettext("Original Name") },
+  { value: "share", text: $gettext("Share Friendly") },
+];
+
+// SortOrderLabels maps the picture sort-order keys to their translated display labels.
+const SortOrderLabels = () => ({
+  newest: $gettext("Newest First"),
+  oldest: $gettext("Oldest First"),
+  added: $gettext("Recently Added"),
+  archived: $gettext("Recently Archived"),
+  edited: $gettext("Recently Edited"),
+  title: $gettext("Picture Title"),
+  name: $gettext("File Name"),
+  size: $gettext("File Size"),
+  duration: $gettext("Video Duration"),
+  similar: $gettext("Visual Similarity"),
+  relevance: $gettext("Most Relevant"),
+});
+
+// SortOrderOptions builds sort-order select items for the given keys, in the order provided.
+export const SortOrderOptions = (keys) => {
+  const labels = SortOrderLabels();
+  return keys.filter((key) => key in labels).map((key) => ({ value: key, text: labels[key] }));
+};
+
+// AlbumSortOrder returns the sort-order options offered for albums and collections.
+export const AlbumSortOrder = () => SortOrderOptions(["newest", "oldest", "added", "title", "name", "size", "duration", "relevance"]);

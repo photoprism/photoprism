@@ -92,9 +92,10 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 	start := time.Now()
 
-	// PNG, GIF, BMP, TIFF, HEIC/HEIF, AVIF, and WebP can be handled natively, as can
-	// JPEG XL when the libvips runtime provides JPEG XL support.
-	if f.IsImageOther() || (f.IsJpegXL() && thumb.JpegXLSupported() && w.conf.JpegXLEnabled()) {
+	// PNG, GIF, BMP, TIFF, HEIC/HEIF, AVIF, and WebP are handled natively. JPEG XL only when
+	// "djxl" is unavailable: some libvips builds report JPEG XL support but mis-render files
+	// without erroring, so the reference "djxl" decoder is preferred when present.
+	if f.IsImageOther() || (f.IsJpegXL() && thumb.JpegXLSupported() && w.conf.JpegXLEnabled() && w.conf.JpegXLDecoderBin() == "") {
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), f.FileType())
 
 		// Create PNG or JPEG image from source file.
@@ -181,19 +182,40 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 			log.Debugf("convert: %s (%s)", clean.Error(err), filepath.Base(cmd.Path))
 			continue
 		} else if fs.FileExistsNotEmpty(imageName) {
-			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
-			fileOrientation = c.Orientation
-			break
+			// The command wrote the target file directly (e.g. Darktable, RawTherapee).
 		} else if res := out.Bytes(); len(res) < 512 || !mimetype.Detect(res).Is(expectedMime) {
 			continue
 		} else if err = os.WriteFile(imageName, res, fs.ModeFile); err != nil {
 			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
 			continue
-		} else {
-			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
-			fileOrientation = c.Orientation
-			break
 		}
+
+		// Reject output flagged untrustworthy by its stderr (e.g. a RawTherapee render of an
+		// unsupported sensor) so the loop falls back to the next converter.
+		if c.StderrRejected(stderr.String()) {
+			log.Debugf("convert: discarding %s from %s (untrustworthy output)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
+			if removeErr := os.Remove(imageName); removeErr != nil && !os.IsNotExist(removeErr) {
+				log.Tracef("convert: %s (%s)", removeErr, filepath.Base(cmd.Path))
+			}
+			continue
+		}
+
+		// Reject undecodable output (e.g. a truncated/bogus embedded RAW preview that passed
+		// the MIME sniff) so the loop tries the next converter instead of indexing a file
+		// whose thumbnails will fail.
+		if c.VerifyImage {
+			if err = thumb.Verify(imageName); err != nil {
+				log.Debugf("convert: discarding undecodable %s from %s (%s)", clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path), clean.Error(err))
+				if removeErr := os.Remove(imageName); removeErr != nil && !os.IsNotExist(removeErr) {
+					log.Tracef("convert: %s (%s)", removeErr, filepath.Base(cmd.Path))
+				}
+				continue
+			}
+		}
+
+		log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
+		fileOrientation = c.Orientation
+		break
 	}
 
 	// Ok?

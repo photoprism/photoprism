@@ -1,6 +1,7 @@
 export default {
   docs: "https://link.photoprism.app/docs",
   userGuide: "https://docs.photoprism.app/user-guide/",
+  syncSettings: "https://docs.photoprism.app/user-guide/settings/sync/",
   developerGuide: "https://docs.photoprism.app/developer-guide/",
   developerSetup: "https://docs.photoprism.app/developer-guide/setup/",
   firstSteps: "https://docs.photoprism.app/user-guide/first-steps/",

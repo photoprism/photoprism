@@ -26,7 +26,10 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
 		assert.Equal(t, "2021-03-24 13:07:29", data.TakenAtLocal.Format("2006-01-02 15:04:05"))
 		assert.Equal(t, "Tulpen am See", data.Caption)
-		assert.Equal(t, Keywords{"blume", "krokus", "schöne", "wiese"}, data.Keywords)
+		// dc:subject feeds the descriptive Subject field, not Keywords, and
+		// multi-word entries keep their spaces ("Schöne Wiese" stays intact).
+		assert.Equal(t, "Krokus, Blume, Schöne Wiese", data.Subject)
+		assert.Empty(t, data.Keywords)
 		// Apple GPS — pure-decimal value with separate *Ref.
 		assert.InDelta(t, 52.525082, data.Lat, 1e-4)
 		assert.InDelta(t, 13.369367, data.Lng, 1e-4)
@@ -50,9 +53,10 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Michael Mayer", data.Artist)
 		assert.Equal(t, "Example file for development", data.Caption)
 		assert.Equal(t, "This is an (edited) legal notice", data.Copyright)
-		// dc:subject mirrors into Subject for ExifTool parity (the cascade's
-		// first source), so XMP-sidecar photos get the same details.Subject.
+		// dc:subject feeds the descriptive Subject field only (matching the
+		// embedded/ExifTool path's data.Subject source), never Keywords.
 		assert.Equal(t, "desk, coffee, computer", data.Subject)
+		assert.Empty(t, data.Keywords)
 		assert.Equal(t, "HUAWEI", data.CameraMake)
 		assert.Equal(t, "ELE-L29", data.CameraModel)
 		assert.Equal(t, "HUAWEI P30 Rear Main Camera", data.LensModel)

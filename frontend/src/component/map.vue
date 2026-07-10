@@ -62,7 +62,7 @@ export default {
       map: null,
       marker: null,
       position: [0.0, 0.0],
-      animate: this.animateDuration >= 0 ? this.animateDuration : settings.maps.animate,
+      animate: this.$util.mapAnimateDuration(settings, this.animateDuration),
       options: {
         container: null,
         // Styles can be edited/created with https://maplibre.org/maputnik/.

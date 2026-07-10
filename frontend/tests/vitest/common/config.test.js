@@ -618,4 +618,42 @@ describe("common/config", () => {
       }
     });
   });
+
+  describe("setReduceMotion", () => {
+    afterEach(() => {
+      document.documentElement.classList.remove("reduce-motion");
+    });
+
+    it("toggles the reduce-motion class on <html> based on the argument", () => {
+      const cfg = createTestConfig();
+      cfg.setReduceMotion(true);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+      cfg.setReduceMotion(false);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(false);
+    });
+    it("coerces truthy and falsy values and returns the config instance", () => {
+      const cfg = createTestConfig();
+      cfg.setReduceMotion("yes");
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+      cfg.setReduceMotion(undefined);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(false);
+      expect(cfg.setReduceMotion(true)).toBe(cfg);
+    });
+    it("applies the class on construction when settings enable reduced motion", () => {
+      const values = JSON.parse(JSON.stringify(window.__CONFIG__));
+      values.settings.ui.reduceMotion = true;
+      new Config(new StorageShim(), values);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+    });
+    it("updates the class when settings change via setSettings", () => {
+      const cfg = createTestConfig();
+      const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+      settings.ui.reduceMotion = true;
+      cfg.setSettings(settings);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+      settings.ui.reduceMotion = false;
+      cfg.setSettings(settings);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(false);
+    });
+  });
 });

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -26,11 +27,12 @@ import (
 type Client struct {
 	rp.RelyingParty
 	insecure bool
+	prompt   []string
 }
 
 // NewClient creates a new OpenID Connect (OIDC) Relying Party (RP) client using the provided discovery URL,
-// client credentials, scopes, and site URL.
-func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl string, insecure bool) (result *Client, err error) {
+// client credentials, scopes, authorization prompt, and site URL.
+func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, oidcPrompt, siteUrl string, insecure bool) (result *Client, err error) {
 	if issuerUri == nil {
 		err = errors.New("issuer uri required")
 		event.AuditErr([]string{"oidc", "provider", status.Error(err)})
@@ -141,10 +143,19 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 		event.AuditDebug([]string{"oidc", "provider", "pkce", "disabled"})
 	}
 
+	// Validate the configured authorization prompt and drop unsupported values, so
+	// a typo can never break the redirect to the identity provider.
+	prompt, invalidPrompt := ParsePrompt(oidcPrompt)
+
+	if len(invalidPrompt) > 0 {
+		event.AuditWarn([]string{"oidc", "provider", "unsupported prompt %s", status.Skipped}, clean.Log(strings.Join(invalidPrompt, " ")))
+	}
+
 	// Return OIDC Client with RelyingParty provider.
 	return &Client{
-		provider,
-		insecure,
+		RelyingParty: provider,
+		insecure:     insecure,
+		prompt:       prompt,
 	}, nil
 }
 
@@ -162,6 +173,12 @@ func (c *Client) AuthURLHandler(ctx *gin.Context) {
 		event.AuditWarn([]string{"oidc", "nonce cookie", status.Error(cookieErr)})
 	} else {
 		urlParams = append(urlParams, rp.WithURLParam(nonceParam, nonce))
+	}
+
+	// Ask the provider to re-prompt (e.g. login or select_account) when configured,
+	// so a previously rejected user is no longer silently re-authenticated via SSO.
+	if len(c.prompt) > 0 {
+		urlParams = append(urlParams, rp.WithPromptURLParam(c.prompt...))
 	}
 
 	handle := rp.AuthURLHandler(rnd.State, c, urlParams...)

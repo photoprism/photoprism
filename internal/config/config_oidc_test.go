@@ -168,6 +168,16 @@ func TestConfig_OIDCRedirect(t *testing.T) {
 	assert.False(t, c.OIDCRedirect())
 }
 
+func TestConfig_OIDCPrompt(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.OIDCPrompt())
+
+	c.options.OIDCPrompt = "  select_account  "
+
+	assert.Equal(t, "select_account", c.OIDCPrompt())
+}
+
 func TestConfig_OIDCUsername(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

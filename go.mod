@@ -12,7 +12,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gin-contrib/gzip v1.2.6 // indirect
 	github.com/gin-gonic/gin v1.12.0
-	github.com/golang/geo v0.0.0-20260625163123-7c0e84413537
+	github.com/golang/geo v0.0.0-20260706204034-7a8d33c78269
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -20,7 +20,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/cpuid/v2 v2.3.0
+	github.com/klauspost/cpuid/v2 v2.4.0
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.7.2
 	github.com/lib/pq v1.12.1 // indirect
@@ -38,15 +38,15 @@ require (
 	github.com/tidwall/gjson v1.19.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
-	golang.org/x/crypto v0.53.0
-	golang.org/x/net v0.56.0
+	golang.org/x/crypto v0.54.0
+	golang.org/x/net v0.57.0
 	gonum.org/v1/gonum v0.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.43.0
+	golang.org/x/image v0.44.0
 )
 
 require github.com/olekukonko/tablewriter v1.1.4
@@ -62,7 +62,7 @@ require (
 require github.com/gabriel-vasile/mimetype v1.4.13
 
 require (
-	golang.org/x/sync v0.21.0
+	golang.org/x/sync v0.22.0
 	golang.org/x/time v0.15.0
 )
 
@@ -75,7 +75,7 @@ require (
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
 
-require golang.org/x/text v0.38.0
+require golang.org/x/text v0.40.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
@@ -85,7 +85,7 @@ require (
 	github.com/go-co-op/gocron/v2 v2.21.2
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/klauspost/compress v1.18.6
+	github.com/klauspost/compress v1.19.0
 	github.com/pquerna/otp v1.5.0
 	github.com/prometheus/client_model v0.6.2
 	github.com/robfig/cron/v3 v3.0.1
@@ -96,8 +96,8 @@ require (
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.31.0
 	github.com/zitadel/oidc/v3 v3.47.5
-	golang.org/x/mod v0.37.0
-	golang.org/x/sys v0.46.0
+	golang.org/x/mod v0.38.0
+	golang.org/x/sys v0.47.0
 	google.golang.org/protobuf v1.36.11
 )
 
@@ -179,7 +179,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/oauth2 v0.36.0
-	golang.org/x/tools v0.45.0 // indirect
+	golang.org/x/tools v0.47.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

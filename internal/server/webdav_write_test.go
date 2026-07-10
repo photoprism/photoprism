@@ -11,10 +11,12 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -62,6 +64,59 @@ func TestWebDAVWrite_MKCOL_PUT(t *testing.T) {
 	b, err := os.ReadFile(path)
 	assert.NoError(t, err)
 	assert.Equal(t, "hello", string(b))
+}
+
+// logCapture is a logrus hook that records emitted entries for assertions.
+type logCapture struct{ entries []*logrus.Entry }
+
+// Levels reports the log levels the capture hook fires on.
+func (h *logCapture) Levels() []logrus.Level { return logrus.AllLevels }
+
+// Fire records the given log entry.
+func (h *logCapture) Fire(e *logrus.Entry) error {
+	h.entries = append(h.entries, e)
+	return nil
+}
+
+func TestWebDAVWrite_MKCOL_Exists(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	r := setupWebDAVRouter(conf)
+
+	// First MKCOL creates the collection.
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(header.MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/exists", nil)
+	authBearer(req)
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	// Capture the console-only system log while repeating the MKCOL against the
+	// existing collection. Errors from x/net/webdav are routed through
+	// event.SystemLog (never the browser log.* stream), so we hook it here.
+	hook := &logCapture{}
+	event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+	event.SystemLog.AddHook(hook)
+	defer event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+
+	w = httptest.NewRecorder()
+	req = httptest.NewRequest(header.MethodMkcol, conf.BaseUri(WebDAVOriginals)+"/exists", nil)
+	authBearer(req)
+	r.ServeHTTP(w, req)
+	// Probing an existing collection is a client-side no-op; x/net/webdav returns 405.
+	assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
+
+	// The benign probe must not be logged as an error, and must not leak the server path.
+	var found bool
+	for _, e := range hook.entries {
+		if e.Level == logrus.DebugLevel && assert.Contains(t, e.Message, "already exists") {
+			found = true
+			assert.NotContains(t, e.Message, conf.OriginalsPath())
+		}
+		assert.NotEqual(t, logrus.ErrorLevel, e.Level, "MKCOL on existing collection must not log an error")
+	}
+	assert.True(t, found, "expected a debug entry for the existing collection")
 }
 
 func TestWebDAVWrite_PUT_OriginalsLimit(t *testing.T) {

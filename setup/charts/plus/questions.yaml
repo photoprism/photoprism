@@ -206,6 +206,10 @@ questions:
         description: "Space-delimited scopes requested from the provider."
         type: string
         default: "openid email profile"
+      - variable: oidc.PHOTOPRISM_OIDC_PROMPT
+        label: "OIDC Authorization Prompt"
+        description: "Optional prompt forcing re-authentication or account selection: login, select_account, or consent."
+        type: string
       - variable: oidc.PHOTOPRISM_OIDC_REGISTER
         label: "Auto Register Users"
         description: "Automatically create PhotoPrism accounts after successful OIDC login."
