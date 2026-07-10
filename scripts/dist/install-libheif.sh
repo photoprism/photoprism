@@ -24,7 +24,7 @@ fi
 DESTDIR=$(realpath "${1:-/usr/local}")
 
 # In addition, you can specify a custom version to be installed as the second argument.
-LIBHEIF_VERSION=${2:-v1.23.0}
+LIBHEIF_VERSION=${2:-v1.23.1}
 
 # Determine target architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
@@ -93,8 +93,10 @@ if [[ $VERSION_CODENAME == "resolute" ]] && [[ $DESTDIR == "/usr" || $DESTDIR ==
     exit 1
   fi
 
+  # photoprism-libheif is apt-mark held after install, so an explicit version bump
+  # must pass --allow-change-held-packages or apt refuses to upgrade the held package.
   export DEBIAN_FRONTEND=noninteractive
-  if apt-get install -y --no-install-recommends "$TMPDEB"; then
+  if apt-get install -y --allow-change-held-packages --no-install-recommends "$TMPDEB"; then
     apt-mark hold photoprism-libheif > /dev/null
     rm -f "$TMPDEB"
     echo "✅ Installed photoprism-libheif from \"$URL\"."
@@ -192,7 +194,7 @@ STUBEOF
     dpkg-deb --build --root-owner-group "$STUB_DIR" "$STUB_DEB" > /dev/null
 
     export DEBIAN_FRONTEND=noninteractive
-    if apt-get install -y --no-install-recommends "$STUB_DEB"; then
+    if apt-get install -y --allow-change-held-packages --no-install-recommends "$STUB_DEB"; then
       apt-mark hold photoprism-libheif > /dev/null
       echo "✅ Installed photoprism-libheif stub (apt's libheif1/libheif-plugin-* superseded)."
     else

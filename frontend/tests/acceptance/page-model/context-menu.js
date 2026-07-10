@@ -1,7 +1,10 @@
 import { Selector, t } from "testcafe";
 
 export default class Page {
-  constructor() {}
+  constructor() {
+    // Inert dialog title used to blur the album combobox while keeping focus in the dialog.
+    this.albumDialogTitle = Selector("div.p-photo-album-dialog div.v-toolbar-title", { timeout: 7000 });
+  }
 
   async openContextMenu() {
     if (!(await Selector(".action-clear").visible)) {
@@ -50,9 +53,9 @@ export default class Page {
           // Click on the album option to select it
           await t
             .click(Selector("div").withText(name).parent('div[role="option"]'))
-            .click(Selector("div i.mdi-bookmark"));
+            .click(this.albumDialogTitle);
         } else {
-          await t.typeText(Selector(".input-albums input"), name).click(Selector("div i.mdi-bookmark"));
+          await t.typeText(Selector(".input-albums input"), name).click(this.albumDialogTitle);
         }
         await t.expect(Selector("span.v-chip").withText(name).visible).ok();
       }

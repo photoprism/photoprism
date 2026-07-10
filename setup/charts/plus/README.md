@@ -1,6 +1,6 @@
 ## Introduction
 
-This chart provides an easy way to run [PhotoPrism®](https://www.photoprism.app/editions#compare) on a home lab or small business Kubernetes cluster while maintaining an approachable configuration.
+This chart provides an easy way to run [PhotoPrism®](https://www.photoprism.app/editions/#compare) on a home lab or small business Kubernetes cluster while maintaining an approachable configuration.
 
 ## Highlights
 
@@ -103,12 +103,12 @@ copied into the managed Secret). If neither is set, no password env var is injec
 
 Commercial support is available with our Starter, Business, and Enterprise team plans:
 
-- https://www.photoprism.app/teams#compare
-- https://www.photoprism.app/kb/getting-support
+- https://www.photoprism.app/teams/#compare
+- https://www.photoprism.app/kb/getting-support/
 
 ## PhotoPrism® Documentation
 
 For more information on specific features, services and related resources, please refer to the other documentation available in our Knowledge Base and User Guide:
 
 - [PhotoPrism® User Guide](https://docs.photoprism.app/user-guide/)
-- [PhotoPrism® Knowledge Base](https://www.photoprism.app/kb)
+- [PhotoPrism® Knowledge Base](https://www.photoprism.app/kb/)

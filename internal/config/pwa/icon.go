@@ -15,13 +15,17 @@ type Icons []Icon
 
 // Icon represents an app icon.
 type Icon struct {
-	Src   string `json:"src"`
-	Sizes string `json:"sizes,omitempty"`
-	Type  string `json:"type,omitempty"`
+	Src     string `json:"src"`
+	Sizes   string `json:"sizes,omitempty"`
+	Type    string `json:"type,omitempty"`
+	Purpose string `json:"purpose,omitempty"`
 }
 
 // IconSizes represents standard app icon sizes.
 var IconSizes = []int{16, 32, 76, 114, 128, 144, 152, 160, 167, 180, 192, 196, 256, 400, 512}
+
+// MaskableIconSizes represents the safe-zone-padded icon sizes emitted with purpose "maskable".
+var MaskableIconSizes = []int{192, 512}
 
 // NewIcons creates new app icons in the default sizes based on the parameters provided.
 func NewIcons(c Config) Icons {
@@ -73,15 +77,46 @@ func NewIcons(c Config) Icons {
 		}}
 	}
 
-	icons := make(Icons, len(IconSizes))
+	icons := make(Icons, 0, len(IconSizes)+len(MaskableIconSizes))
 
-	for i, d := range IconSizes {
-		icons[i] = Icon{
+	for _, d := range IconSizes {
+		icons = append(icons, Icon{
 			Src:   fmt.Sprintf("%s/icons/%s/%d.png", staticUri, appIcon, d),
 			Sizes: fmt.Sprintf("%dx%d", d, d),
 			Type:  "image/png",
+		})
+	}
+
+	// Adaptive launcher icons generated from a safe-zone-padded source so Android
+	// fills the home-screen mask shape instead of letterboxing the default icon.
+	// Emitted only for sizes whose file exists on disk so the manifest never
+	// advertises a maskable variant that resolves to a 404, e.g. for custom icon
+	// sets without pre-rendered maskable images.
+	for _, d := range MaskableIconSizes {
+		if !maskableIconExists(c.StaticPath, appIcon, d) {
+			continue
 		}
+
+		icons = append(icons, Icon{
+			Src:     fmt.Sprintf("%s/icons/%s/maskable/%d.png", staticUri, appIcon, d),
+			Sizes:   fmt.Sprintf("%dx%d", d, d),
+			Type:    "image/png",
+			Purpose: "maskable",
+		})
 	}
 
 	return icons
+}
+
+// maskableIconExists reports whether a non-empty maskable icon file of the given
+// size exists on disk for the specified icon set. It returns false when staticPath
+// is unset, since the manifest must not reference variants that cannot be verified.
+func maskableIconExists(staticPath, appIcon string, size int) bool {
+	if staticPath == "" {
+		return false
+	}
+
+	fileName := filepath.Join(staticPath, fs.IconsDir, appIcon, "maskable", fmt.Sprintf("%d.png", size))
+
+	return fs.FileExistsNotEmpty(fileName)
 }

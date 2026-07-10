@@ -143,7 +143,7 @@ export default {
       showCluster: false,
       config: this.$config.values,
       settings: settings.maps,
-      animate: settings.maps.animate,
+      animate: this.$util.mapAnimateDuration(settings),
       loaded: false,
       skyRendered: false,
     };

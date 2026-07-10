@@ -24,7 +24,7 @@ import (
 //	@Param		locale	query		string	false	"Locale for results (default: en)"
 //	@Param		count	query		int		false	"Maximum number of results (default: 10, max: 50)"
 //	@Success	200		{object}	places.SearchResults
-//	@Failure	400		{object}	gin.H	"Missing search query"
+//	@Failure	400		{object}	i18n.Response
 //	@Failure	401		{object}	i18n.Response
 //	@Failure	500		{object}	gin.H	"Search service error"
 //	@Router		/api/v1/places/search [get]
@@ -52,7 +52,7 @@ func GetPlacesSearch(router *gin.RouterGroup) {
 		count := txt.IntVal(c.Query("count"), 1, 50, 10)
 
 		if query == "" {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Missing search query"})
+			AbortBadRequest(c)
 			return
 		}
 

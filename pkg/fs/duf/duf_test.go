@@ -62,6 +62,15 @@ func TestPathInfo(t *testing.T) {
 		assert.NotEmpty(t, result.BlockSize)
 		assert.NotEmpty(t, result.Metadata)
 	})
+	t.Run("RootPath", func(t *testing.T) {
+		// Regression: "/" splits to ["", ""], so it must still resolve to the root mount
+		// rather than an arbitrary special filesystem such as a masked /sys/firmware tmpfs.
+		result, err := PathInfo("/")
+
+		assert.NoError(t, err)
+		assert.Equal(t, "/", result.Mountpoint)
+		assert.Greater(t, result.Total, uint64(4096))
+	})
 	t.Run("NotFound", func(t *testing.T) {
 		// Get slice of mounted file systems.
 		result, err := PathInfo("notfound")

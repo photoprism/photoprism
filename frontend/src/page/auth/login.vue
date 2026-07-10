@@ -274,10 +274,24 @@ export default {
     // stashed by the auth bridge before its full-page redirect. In mounted() so
     // the notification component has already subscribed (its created() runs
     // before any mounted()).
+    const messageId = getAppStorage().getItem("session.messageId");
     const authError = getAppStorage().getItem("session.error");
-    if (authError) {
+    if (messageId || authError) {
+      let messageParams = [];
+      const rawParams = getAppStorage().getItem("session.messageParams");
+      if (rawParams) {
+        try {
+          messageParams = JSON.parse(rawParams);
+        } catch (e) {
+          messageParams = [];
+        }
+      }
       getAppStorage().removeItem("session.error");
-      this.$notify.error(authError);
+      getAppStorage().removeItem("session.messageId");
+      getAppStorage().removeItem("session.messageParams");
+      // Render in the current UI locale via the message key (notify.vue applies
+      // Tp); the server-rendered string stays as the fallback.
+      this.$notify.error(authError, messageId, messageParams);
     }
   },
   unmounted() {

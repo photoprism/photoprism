@@ -1436,11 +1436,11 @@ func (m *User) PrivilegeLevelChange(frm form.User) bool {
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-// Privilege-level fields (role, login, WebDAV, paths) are applied only when
-// byAdmin is true. The caller decides this: a regular admin actor, or a trusted
-// cluster service principal that has no end-user identity of its own and so
-// cannot satisfy u.IsAdmin() despite being authorized for user management.
-func (m *User) SaveForm(frm form.User, u *User, byAdmin bool) error {
+// Privilege-level fields (role, login, WebDAV, paths) are applied only when byAdmin;
+// the most sensitive ones (super-admin status, auth provider/method such as 2FA,
+// external identity) also require bySuperAdmin. The caller passes both explicitly so a
+// user-less cluster service principal can act despite failing u.IsAdmin()/IsSuperAdmin().
+func (m *User) SaveForm(frm form.User, u *User, byAdmin, bySuperAdmin bool) error {
 	if m.UserName == "" || m.IsSystemOrInvalid() {
 		return fmt.Errorf("system users cannot be modified")
 	} else if frm.SuperAdmin && !acl.IsAdminRole(acl.Role(frm.Role())) {
@@ -1504,8 +1504,9 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin bool) error {
 		m.WebDAV = frm.WebDAV
 		m.UserAttr = frm.Attr()
 
-		// Only allow super admins to change the authentication method and make other users super admins.
-		if u.IsSuperAdmin() {
+		// Only super-admin-level authority may change the auth method or grant super admin:
+		// an actual super admin, or bySuperAdmin (the trusted cluster service principal).
+		if u.IsSuperAdmin() || bySuperAdmin {
 			if !u.Equal(m) {
 				m.SuperAdmin = frm.SuperAdmin
 			}

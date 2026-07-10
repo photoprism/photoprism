@@ -66,7 +66,7 @@ type Session struct {
 	data          *SessionData    `gorm:"-" yaml:"-"`
 	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"ID" yaml:"-"`
 	LoginIP       string          `gorm:"size:64;column:login_ip" json:"LoginIP" yaml:"-"`
-	LoginAt       time.Time       `json:"LoginAt" yaml:"-"`
+	LoginAt       *time.Time      `json:"LoginAt" yaml:"-"`
 	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
 	Status        int             `gorm:"-" json:"Status" yaml:"-"`
@@ -1053,7 +1053,7 @@ func (m *Session) SetClientIP(ip string) {
 
 	if m.LoginIP == "" {
 		m.LoginIP = ip
-		m.LoginAt = Now()
+		m.LoginAt = TimeStamp()
 	}
 
 	return

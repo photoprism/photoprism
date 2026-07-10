@@ -129,6 +129,10 @@ func TestOIDCRedirect_ProviderError(t *testing.T) {
 	// auth.gohtml renders the failed-status branch and stores the branded message.
 	assert.Contains(t, body, `setItem("session.error"`)
 	assert.Contains(t, body, i18n.Error(i18n.ErrForbidden).Error())
+	// The page also carries the message key (messageId) so the Web UI can render
+	// it in the current UI locale; notify.vue applies Tp to the source string.
+	assert.Contains(t, body, `setItem("session.messageId"`)
+	assert.Contains(t, body, i18n.Source(i18n.ErrForbidden))
 }
 
 // extractTemplateList returns the template source between the provided markers.

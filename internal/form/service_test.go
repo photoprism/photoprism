@@ -1,6 +1,8 @@
 package form
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,10 +45,20 @@ func TestNewService(t *testing.T) {
 
 func TestService_Discovery(t *testing.T) {
 	t.Run("ErrorEqualNil", func(t *testing.T) {
-		service := Service{AccName: "Foo", AccOwner: "bar", AccURL: "https://www.photoprism.app/", AccType: "test", SyncDownload: false, AccShare: true}
+		// Use a local WebDAV-like server so discovery is deterministic instead of probing a
+		// live website whose responses can change; the WebDAV heuristic matches any status
+		// below 400 (here a PROPFIND 207 Multi-Status) on a reachable path.
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusMultiStatus)
+		}))
+		defer srv.Close()
 
-		err := service.Discovery("")
-		assert.Equal(t, nil, err)
+		service := Service{AccName: "Foo", AccOwner: "bar", AccURL: srv.URL, AccType: "test", SyncDownload: false, AccShare: true}
+
+		// Allow the loopback test server; discovery blocks private hosts unless permitted.
+		err := service.Discovery("127.0.0.0/8")
+		assert.NoError(t, err)
+		assert.Equal(t, "webdav", service.AccType)
 	})
 	t.Run("ErrorNotEqualNil", func(t *testing.T) {
 		service := Service{AccName: "XXX", AccOwner: "bar"}

@@ -91,6 +91,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("OIDC_SCOPES"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "oidc-prompt",
+			Usage:   "authorization `PROMPT` for single sign-on via OpenID Connect (login, select_account, consent)",
+			Value:   "",
+			EnvVars: EnvVars("OIDC_PROMPT"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "oidc-provider",
 			Usage:   "custom identity provider `NAME`, e.g. Google",
 			Value:   "",
@@ -111,6 +117,11 @@ var Flags = CliFlags{
 			Name:    "oidc-register",
 			Usage:   "allows new users to create an account when they sign in with OpenID Connect",
 			EnvVars: EnvVars("OIDC_REGISTER"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "oidc-logout",
+			Usage:   "ends the provider session on sign-out via OpenID Connect RP-initiated logout",
+			EnvVars: EnvVars("OIDC_LOGOUT"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "oidc-username",

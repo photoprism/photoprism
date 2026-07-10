@@ -25,7 +25,7 @@ func TestCancelIndex(t *testing.T) {
 		}
 
 		assert.True(t, resp.Success())
-		assert.Equal(t, i18n.Msg(i18n.MsgIndexingCanceled), resp.Msg)
+		assert.Equal(t, i18n.Msg(i18n.MsgIndexingCanceled), resp.Message)
 		assert.Equal(t, i18n.Msg(i18n.MsgIndexingCanceled), resp.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, http.StatusOK, resp.Code)

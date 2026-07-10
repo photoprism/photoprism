@@ -298,13 +298,13 @@ EOF
 # Make sure file only writable by root, but readable by everyone
 chmod 644 /etc/dir_colors
 
-# Activate colors in /etc/skel/.bashrc, if not done yet
-if ! grep -q 'export SHELL=/bin/bash' /etc/skel/.bashrc; then
-    echo 'export SHELL=/bin/bash' >> /etc/skel/.bashrc
+# Activate colors in /etc/bash.bashrc, if not done yet
+if ! grep -q 'export SHELL=/bin/bash' /etc/bash.bashrc; then
+    echo 'export SHELL=/bin/bash' >> /etc/bash.bashrc
 fi
 # shellcheck disable=SC2016
-if ! grep -q 'eval "$(dircolors /etc/dir_colors)"' /etc/skel/.bashrc; then
-    echo 'eval "$(dircolors /etc/dir_colors)"' >> /etc/skel/.bashrc
+if ! grep -q 'eval "$(dircolors /etc/dir_colors)"' /etc/bash.bashrc; then
+    echo 'eval "$(dircolors /etc/dir_colors)"' >> /etc/bash.bashrc
 fi
 
 echo "Done."

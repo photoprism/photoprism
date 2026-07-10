@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
+    <https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -149,6 +149,8 @@ export default class Config {
     } else {
       this.setTheme("default");
     }
+
+    this.setReduceMotion(this.getSettings()?.ui.reduceMotion);
   }
 
   loading() {
@@ -209,6 +211,7 @@ export default class Config {
       this.setBatchSize(values.settings);
       await this.setLanguage(this.getLanguageLocale(), true);
       this.setTheme(values.settings.ui.theme);
+      this.setReduceMotion(values.settings.ui.reduceMotion);
     }
 
     // Adjust album counts by access level.
@@ -591,6 +594,16 @@ export default class Config {
     }
   }
 
+  // setReduceMotion toggles the "reduce-motion" class on the <html> element so CSS can
+  // suppress interface animations and transitions when the accessibility setting is enabled.
+  setReduceMotion(enabled) {
+    if (document && document.documentElement) {
+      document.documentElement.classList.toggle("reduce-motion", !!enabled);
+    }
+
+    return this;
+  }
+
   // getSettings returns the current user's configuration settings.
   getSettings() {
     return this.values.settings;
@@ -612,6 +625,7 @@ export default class Config {
     this.setBatchSize(settings);
     this.setLanguage(settings.ui.language, false);
     this.setTheme(settings.ui.theme);
+    this.setReduceMotion(settings.ui.reduceMotion);
 
     return this;
   }
@@ -824,6 +838,11 @@ export default class Config {
   // oidcLoginUri returns the OIDC login endpoint that starts the provider roundtrip, or "" when off.
   oidcLoginUri() {
     return this.values?.ext?.oidc?.loginUri || "";
+  }
+
+  // oidcLogout returns true when sign-out should perform RP-initiated logout against the provider.
+  oidcLogout() {
+    return !!this.values?.ext?.oidc?.logout;
   }
 
   // portalLoginUri returns the cluster Portal's browser-facing login page, or "" when unknown.

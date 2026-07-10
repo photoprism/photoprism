@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/raw"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -47,6 +49,38 @@ func TestConvert_ToImage(t *testing.T) {
 		assert.Truef(t, fs.FileExists(img.FileName()), "output file does not exist: %s", img.FileName())
 
 		t.Logf("video metadata: %+v", img.MetaData())
+
+		_ = os.Remove(outputName)
+	})
+	t.Run("JpegXL", func(t *testing.T) {
+		if cnf.JpegXLDecoderBin() == "" {
+			t.Skip("djxl must be available for the JPEG XL conversion path")
+		}
+
+		fileName := filepath.Join(cnf.SamplesPath(), "dice.jxl")
+		outputName := filepath.Join(cnf.SidecarPath(), cnf.SamplesPath(), "dice.jxl.jpg")
+
+		_ = os.Remove(outputName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mf.IsJpegXL())
+
+		img, err := convert.ToImage(mf, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// With djxl available the native libvips path is skipped (some builds
+		// mis-render JPEG XL); the djxl-produced preview must be decodable.
+		assert.Equal(t, outputName, img.FileName())
+		assert.True(t, img.IsPreviewImage())
+		assert.NoError(t, thumb.Verify(img.FileName()))
 
 		_ = os.Remove(outputName)
 	})
@@ -172,6 +206,30 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = imageFile.Remove()
 	})
+	t.Run("JpegXL", func(t *testing.T) {
+		if !cnf.JpegXLEnabled() {
+			t.Skip("JPEG XL support requires libvips or djxl")
+		}
+
+		jxlFile := filepath.Join(samplesPath, "dice.jxl")
+
+		mediaFile, err := NewMediaFile(jxlFile)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, fs.FileExists(imageFile.FileName()))
+		assert.Equal(t, fs.ImageJpeg, imageFile.FileType())
+		assert.Greater(t, imageFile.Width(), 0)
+		assert.Greater(t, imageFile.Height(), 0)
+
+		_ = imageFile.Remove()
+	})
 	t.Run("Layered16BitTiff", func(t *testing.T) {
 		tiffFile := filepath.Join(samplesPath, "layered-16bit-small.tif")
 
@@ -284,9 +342,9 @@ func TestConvert_JpegConvertCmds(t *testing.T) {
 }
 
 // TestConvert_JpegConvertCmds_RawEmbeddedPreview verifies that RAW inputs emit
-// ExifTool embedded-preview extraction commands (largest-first) ordered after
-// Darktable and before RawTherapee, so an unsupported camera falls back to the
-// camera-rendered JPEG instead of a wrong-color demosaic.
+// ExifTool embedded-preview extraction commands (largest-first) ordered after the
+// RAW developers (Darktable and RawTherapee), so an unsupported camera falls back
+// to the camera-rendered JPEG instead of a wrong-color demosaic.
 func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	cnf := config.TestConfig()
 
@@ -310,9 +368,9 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 
 	assert.NotEmpty(t, cmds)
 
-	// Record the first occurrence of each command; DNG inputs additionally emit a
-	// trailing -PreviewImage extraction, which is not the priority position.
+	// Record the position of each command in the priority-ordered list.
 	jpgFromRaw, previewImage, rawTherapee := -1, -1, -1
+	var rawTherapeeCmd *ConvertCmd
 	for i, cmd := range cmds {
 		s := cmd.String()
 		switch {
@@ -322,6 +380,7 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 			previewImage = i
 		case rawTherapee < 0 && strings.Contains(s, filepath.Base(cnf.RawTherapeeBin())):
 			rawTherapee = i
+			rawTherapeeCmd = cmd
 		}
 	}
 
@@ -330,8 +389,117 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	assert.Less(t, jpgFromRaw, previewImage, "JpgFromRaw must be tried before PreviewImage")
 	if cnf.RawTherapeeEnabled() {
 		assert.GreaterOrEqual(t, rawTherapee, 0, "expected a RawTherapee command")
-		assert.Less(t, previewImage, rawTherapee, "embedded preview must be tried before RawTherapee")
+		assert.Less(t, rawTherapee, jpgFromRaw, "RawTherapee must be tried before the embedded preview")
+		assert.Empty(t, rawTherapeeCmd.RejectStderr, "a non-gated RAW format (.dng) must keep its render, so no stderr rejection is attached")
 	}
+}
+
+// TestConvert_JpegConvertCmds_DiscardRenderGate verifies that the RawTherapee stderr rejection is
+// attached only for formats in the discard set (raw.DiscardRenderOnWarning, e.g. CR3), so a magenta
+// CR3 falls back to its embedded preview, while formats RawTherapee alone can decode (e.g. .raw/.kdc)
+// keep their render.
+func TestConvert_JpegConvertCmds_DiscardRenderGate(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.RawTherapeeEnabled() {
+		t.Skip("RawTherapee must be available for the discard-render gate")
+	}
+
+	convert := NewConvert(cnf)
+	dir := t.TempDir()
+
+	cases := []struct {
+		name, ext string
+		gated     bool
+	}{
+		{"Cr3", ".cr3", true},
+		{"Raw", ".raw", false},
+		{"Kdc", ".kdc", false},
+		{"Cr2", ".cr2", false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			rawFile := filepath.Join(dir, "sample"+tc.ext)
+			if err := os.WriteFile(rawFile, []byte("raw"), fs.ModeFile); err != nil {
+				t.Fatal(err)
+			}
+
+			mediaFile, err := NewMediaFile(rawFile)
+			if err != nil {
+				t.Fatal(err)
+			}
+			assert.True(t, mediaFile.IsRaw(), "%s must be recognized as RAW", tc.ext)
+
+			cmds, _, err := convert.JpegConvertCmds(mediaFile, rawFile+".jpg", "")
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var rtCmd *ConvertCmd
+			for _, cmd := range cmds {
+				if filepath.Base(cmd.Cmd.Path) == filepath.Base(cnf.RawTherapeeBin()) {
+					rtCmd = cmd
+					break
+				}
+			}
+
+			if rtCmd == nil {
+				t.Fatalf("expected a RawTherapee command for %s", tc.ext)
+			}
+
+			if tc.gated {
+				assert.Contains(t, rtCmd.RejectStderr, raw.WhiteBalanceError, "%s is gated, so its render must be rejected on a decode warning", tc.ext)
+			} else {
+				assert.Empty(t, rtCmd.RejectStderr, "%s is not gated, so its render must be kept", tc.ext)
+			}
+		})
+	}
+}
+
+// TestConvert_JpegConvertCmds_RawDisabled verifies that with RAW conversion disabled (--disable-raw)
+// PhotoPrism only extracts an existing embedded preview and never renders the RAW with Darktable or
+// RawTherapee.
+func TestConvert_JpegConvertCmds_RawDisabled(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ExifToolEnabled() {
+		t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+	}
+
+	origRaw := cnf.Options().DisableRaw
+	cnf.Options().DisableRaw = true
+	t.Cleanup(func() {
+		cnf.Options().DisableRaw = origRaw
+	})
+
+	convert := NewConvert(cnf)
+	rawFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng")
+	jpegFile := filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng.jpg")
+
+	mediaFile, err := NewMediaFile(rawFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmds, _, err := convert.JpegConvertCmds(mediaFile, jpegFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, cmds)
+
+	previewImage := false
+	for _, cmd := range cmds {
+		base := filepath.Base(cmd.Cmd.Path)
+		assert.NotEqual(t, "darktable-cli", base, "Darktable must not run when RAW conversion is disabled")
+		assert.NotEqual(t, "rawtherapee-cli", base, "RawTherapee must not run when RAW conversion is disabled")
+		if strings.Contains(cmd.String(), "-PreviewImage") {
+			previewImage = true
+		}
+	}
+
+	assert.True(t, previewImage, "embedded preview must still be extracted when RAW conversion is disabled")
 }
 
 // TestConvert_JpegConvertCmds_HeifFallback verifies that the documented external
@@ -386,6 +554,50 @@ func TestConvert_JpegConvertCmds_HeifFallback(t *testing.T) {
 	}
 }
 
+// TestConvert_JpegConvertCmds_JpegXLFallback verifies that the external "djxl"
+// fallback command is emitted for JPEG XL inputs when the decoder is available,
+// so runtimes whose libvips lacks JPEG XL support can still convert these files.
+func TestConvert_JpegConvertCmds_JpegXLFallback(t *testing.T) {
+	cnf := config.TestConfig()
+	convert := NewConvert(cnf)
+
+	if cnf.JpegXLDecoderBin() == "" {
+		t.Skip("djxl must be available for the JPEG XL fallback path")
+	}
+
+	srcFile := filepath.Join(cnf.SamplesPath(), "dice.jxl")
+	dstFile := filepath.Join(t.TempDir(), "dice.jxl.jpg")
+
+	mediaFile, err := NewMediaFile(srcFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !mediaFile.IsJpegXL() {
+		t.Fatalf("%s not recognized as JPEG XL", srcFile)
+	}
+
+	cmds, useMutex, err := convert.JpegConvertCmds(mediaFile, dstFile, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.False(t, useMutex)
+	assert.NotEmpty(t, cmds)
+
+	djxlBin := filepath.Base(cnf.JpegXLDecoderBin())
+	found := false
+	for _, cmd := range cmds {
+		s := cmd.String()
+		if strings.Contains(s, djxlBin) && strings.Contains(s, srcFile) && strings.Contains(s, dstFile) {
+			found = true
+			break
+		}
+	}
+
+	assert.True(t, found, "expected a djxl fallback command for %s", srcFile)
+}
+
 func TestConvert_PngConvertCmds(t *testing.T) {
 	cnf := config.TestConfig()
 	convert := NewConvert(cnf)
@@ -414,5 +626,17 @@ func TestConvert_PngConvertCmds(t *testing.T) {
 		assert.True(t, strings.Contains(cmds[0].String(), "rsvg"))
 
 		t.Logf("commands: %#v", cmds)
+	})
+	t.Run("Raw", func(t *testing.T) {
+		// RAW is converted to JPEG, not PNG: no converter command is emitted and the call reports
+		// the format as unsupported (see internal/raw/README.md).
+		mediaFile, err := NewMediaFile(filepath.Join(cnf.SamplesPath(), "canon_eos_6d.dng"))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		cmds, _, err := convert.PngConvertCmds(mediaFile, filepath.Join(t.TempDir(), "canon_eos_6d.png"))
+		assert.Error(t, err)
+		assert.Empty(t, cmds)
 	})
 }

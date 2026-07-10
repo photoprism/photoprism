@@ -23,20 +23,21 @@ After editing a fixture:
 
 ## Synthetic Fixture Index
 
-| File                        | Purpose                                                                                                                                   |
-|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| `software-only.xmp`         | `xmp:CreatorTool` (Software). Single-tag fixture for the simplest accessor.                                                               |
-| `gps-time-combined.xmp`     | `exif:GPSTimeStamp` as a single combined ISO 8601 / RFC 3339 datetime — the spec-canonical encoding for `TakenGps`.                       |
-| `gps-time-split.xmp`        | Legacy split form: `exif:GPSDateStamp` + `exif:GPSTimeStamp`. Some older writers emit this; secondary `TakenGps` fallback.                |
-| `time-offsets-subsec.xmp`   | `exif:OffsetTimeOriginal/OffsetTime/OffsetTimeDigitized` cascade plus `exif:SubSecTimeOriginal` joined into `TakenAt`.                    |
-| `notes-usercomment.xmp`     | `exif:UserComment` as `lang-alt` (`<rdf:Alt>` with `x-default` + `en` + `de`). Confirms reader prefers `x-default`.                       |
-| `xmpdm-creationdate.xmp`    | `xmpDM:CreationDate` — secondary fallback for `CreatedAt` (rare; emitted by Adobe Premiere/After Effects).                                |
-| `subject-seq.xmp`           | `dc:subject` as `<rdf:Seq>` instead of `<rdf:Bag>`. Confirms reader handles both list types.                                              |
-| `aux-only.xmp`              | Adobe `aux:` namespace — `OwnerName`, `Lens`, `LensID`, `LensSerialNumber`, `SerialNumber`, `Firmware`. Legacy Lightroom/ACR.             |
-| `exifex-camera-lens.xmp`    | EXIF 2.3 for XMP `exifEX:` namespace — `LensMake`, `LensModel`, `SerialNumber` (= EXIF BodySerialNumber), `PhotographicSensitivity`, etc. |
-| `gpano-360.xmp`             | Google Photo Sphere — `GPano:ProjectionType = equirectangular` plus required dimension fields.                                            |
-| `multi-rdf-description.xmp` | Bug 2 demonstration: four sibling `<rdf:Description>` blocks each declaring a different namespace. Tests that XPath walks all blocks.     |
-| `alt-edge-cases.xmp`        | `<rdf:Alt>` shapes that real writers don't always produce: no `x-default` (only `de`/`en`), missing `xml:lang`, duplicate `x-default`.    |
+| File                        | Purpose                                                                                                                                |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `software-only.xmp`         | `xmp:CreatorTool` (Software). Single-tag fixture for the simplest accessor.                                                            |
+| `gps-time-combined.xmp`     | `exif:GPSTimeStamp` as a single combined ISO 8601 / RFC 3339 datetime — the spec-canonical encoding for `TakenGps`.                    |
+| `gps-time-split.xmp`        | Legacy split form: `exif:GPSDateStamp` + `exif:GPSTimeStamp`. Some older writers emit this; secondary `TakenGps` fallback.             |
+| `time-offsets-subsec.xmp`   | `exif:OffsetTimeOriginal/OffsetTime/OffsetTimeDigitized` cascade plus `exif:SubSecTimeOriginal` joined into `TakenAt`.                 |
+| `notes-usercomment.xmp`     | `exif:UserComment` as `lang-alt` (`<rdf:Alt>` with `x-default` + `en` + `de`). Confirms reader prefers `x-default`.                    |
+| `xmpdm-creationdate.xmp`    | `xmpDM:CreationDate` — secondary fallback for `CreatedAt` (rare; emitted by Adobe Premiere/After Effects).                             |
+| `subject-seq.xmp`           | `dc:subject` as `<rdf:Seq>` instead of `<rdf:Bag>`. Confirms reader handles both list types.                                           |
+| `aux-only.xmp`              | Adobe `aux:` namespace — `OwnerName`, `Lens`, `LensID`, `LensSerialNumber`, `SerialNumber`, `Firmware`. Legacy Lightroom/ACR.          |
+| `exifex-camera-lens.xmp`    | EXIF 2.3 for XMP `exifEX:` namespace — `LensMake`, `LensModel`, `BodySerialNumber`, `PhotographicSensitivity`, etc.                    |
+| `tiff-fields.xmp`           | Deprecated TIFF-schema fallbacks — `tiff:Software`, `tiff:ImageDescription` (lang-alt), `tiff:Copyright` (lang-alt).                   |
+| `gpano-360.xmp`             | Google Photo Sphere — `GPano:ProjectionType = equirectangular` plus required dimension fields.                                         |
+| `multi-rdf-description.xmp` | Bug 2 demonstration: four sibling `<rdf:Description>` blocks each declaring a different namespace. Tests that XPath walks all blocks.  |
+| `alt-edge-cases.xmp`        | `<rdf:Alt>` shapes that real writers don't always produce: no `x-default` (only `de`/`en`), missing `xml:lang`, duplicate `x-default`. |
 
 ## Source Notes
 

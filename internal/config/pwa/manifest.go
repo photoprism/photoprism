@@ -14,6 +14,8 @@ type Manifest struct {
 	Name                string        `json:"name"`
 	ShortName           string        `json:"short_name,omitempty"`
 	Description         string        `json:"description,omitempty"`
+	Lang                string        `json:"lang,omitempty"`
+	Dir                 string        `json:"dir,omitempty"`
 	Categories          list.List     `json:"categories"`
 	Developer           Url           `json:"developer"`
 	DisplayOverride     []string      `json:"display_override"`
@@ -30,6 +32,7 @@ type Manifest struct {
 	OptionalPermissions list.List     `json:"optional_permissions"`
 	HostPermissions     []string      `json:"host_permissions"`
 	Icons               Icons         `json:"icons"`
+	Screenshots         Screenshots   `json:"screenshots,omitempty"`
 }
 
 // NewManifest creates a new progressive web app manifest based on the config provided.
@@ -40,6 +43,8 @@ func NewManifest(c Config) (m *Manifest) {
 		Name:            c.Name,
 		ShortName:       txt.Clip(c.Name, 32),
 		Description:     c.Description,
+		Lang:            clean.WebLocale(c.DefaultLocale, "en"),
+		Dir:             clean.TextDir(c.DefaultLocale, "en"),
 		Categories:      Categories,
 		Developer:       PhotoPrism,
 		DisplayOverride: DisplayOverride,
@@ -60,5 +65,6 @@ func NewManifest(c Config) (m *Manifest) {
 		OptionalPermissions: OptionalPermissions,
 		HostPermissions:     HostPermissions(c.SiteUrl, c.CdnUrl),
 		Icons:               NewIcons(c),
+		Screenshots:         NewScreenshots(c),
 	}
 }

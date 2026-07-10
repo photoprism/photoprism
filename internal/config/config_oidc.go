@@ -135,6 +135,13 @@ func (c *Config) OIDCScopes() string {
 	return c.options.OIDCScopes
 }
 
+// OIDCPrompt returns the OpenID Connect "prompt" parameter sent on the authorization
+// request (e.g. login or select_account); empty preserves the provider's default
+// single sign-on behavior. Unsupported values are dropped when the client is built.
+func (c *Config) OIDCPrompt() string {
+	return strings.TrimSpace(c.options.OIDCPrompt)
+}
+
 // OIDCProvider returns the OIDC provider name.
 func (c *Config) OIDCProvider() string {
 	if c.options.OIDCProvider == "" {
@@ -165,6 +172,12 @@ func (c *Config) OIDCRedirect() bool {
 // OIDCRegister checks if new accounts may be created via OIDC.
 func (c *Config) OIDCRegister() bool {
 	return c.options.OIDCRegister
+}
+
+// OIDCLogout checks if signing out should also end the provider session via OpenID
+// Connect RP-initiated logout (redirect to the discovered end_session_endpoint).
+func (c *Config) OIDCLogout() bool {
+	return c.options.OIDCLogout
 }
 
 // OIDCUsername returns the preferred username claim for new users signing up via OIDC.
@@ -287,10 +300,12 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 		{"oidc-client", c.OIDCClient()},
 		{"oidc-secret", strings.Repeat("*", utf8.RuneCountInString(c.OIDCSecret()))},
 		{"oidc-scopes", c.OIDCScopes()},
+		{"oidc-prompt", c.OIDCPrompt()},
 		{"oidc-provider", c.OIDCProvider()},
 		{"oidc-icon", c.OIDCIcon()},
 		{"oidc-redirect", fmt.Sprintf("%t", c.OIDCRedirect())},
 		{"oidc-register", fmt.Sprintf("%t", c.OIDCRegister())},
+		{"oidc-logout", fmt.Sprintf("%t", c.OIDCLogout())},
 		{"oidc-username", c.OIDCUsername()},
 	}
 

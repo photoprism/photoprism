@@ -374,6 +374,63 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
   // never expose video controls, so manual pause isn't an option.
   // Playback is NOT resumed on exit; the user reopens it explicitly if
   // they want it back.
+  // Regression: a single Escape press reaches onEscapeKey twice — once via the
+  // v-dialog `@keydown.esc` binding and once via the `$view` window forwarder,
+  // both with the same KeyboardEvent. Without per-event dedup the second call
+  // unwinds an extra level: exiting face-marker mode right after the first
+  // already consumed the in-progress draft, or closing the lightbox right after
+  // the first exited face-marker mode.
+  describe("onEscapeKey — one unwind per Escape press", () => {
+    const onEscapeKey = () => mountLightbox().vm.$options.methods.onEscapeKey;
+    it("consumes the overlay draft once and does not also exit face-marker mode", () => {
+      const handleEscape = vi.fn(() => true);
+      const exitFaceMarkerMode = vi.fn();
+      const close = vi.fn();
+      const ctx = {
+        $refs: { faceMarkerOverlay: { handleEscape } },
+        faceMarkers: makeFaceMarkers({ active: true }),
+        exitFaceMarkerMode,
+        close,
+      };
+      const ev = new KeyboardEvent("keydown", { key: "Escape" });
+      const m = onEscapeKey();
+      m.call(ctx, ev);
+      m.call(ctx, ev);
+      expect(handleEscape).toHaveBeenCalledTimes(1);
+      expect(exitFaceMarkerMode).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
+    });
+    it("exits face-marker mode once and does not also close the lightbox", () => {
+      const exitFaceMarkerMode = vi.fn();
+      const close = vi.fn();
+      const ctx = {
+        $refs: { faceMarkerOverlay: { handleEscape: () => false } },
+        faceMarkers: makeFaceMarkers({ active: true }),
+        exitFaceMarkerMode,
+        close,
+      };
+      const ev = new KeyboardEvent("keydown", { key: "Escape" });
+      const m = onEscapeKey();
+      m.call(ctx, ev);
+      m.call(ctx, ev);
+      expect(exitFaceMarkerMode).toHaveBeenCalledTimes(1);
+      expect(close).not.toHaveBeenCalled();
+    });
+    it("handles distinct Escape presses independently", () => {
+      const exitFaceMarkerMode = vi.fn();
+      const ctx = {
+        $refs: { faceMarkerOverlay: { handleEscape: () => false } },
+        faceMarkers: makeFaceMarkers({ active: true }),
+        exitFaceMarkerMode,
+        close: vi.fn(),
+      };
+      const m = onEscapeKey();
+      m.call(ctx, new KeyboardEvent("keydown", { key: "Escape" }));
+      m.call(ctx, new KeyboardEvent("keydown", { key: "Escape" }));
+      expect(exitFaceMarkerMode).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe("enterFaceMarkerMode — pauses media on entry into either face-marker mode", () => {
     it("calls pauseLightbox so video and slideshow both stop", () => {
       const ctx = {

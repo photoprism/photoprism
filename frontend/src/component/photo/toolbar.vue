@@ -398,40 +398,12 @@ export default {
     sortOptions() {
       switch (this.context) {
         case contexts.Archive:
-          return [
-            { value: "newest", text: this.$gettext("Newest First") },
-            { value: "oldest", text: this.$gettext("Oldest First") },
-            { value: "added", text: this.$gettext("Recently Added") },
-            { value: "archived", text: this.$gettext("Recently Archived") },
-            { value: "title", text: this.$gettext("Picture Title") },
-            { value: "name", text: this.$gettext("File Name") },
-            { value: "size", text: this.$gettext("File Size") },
-            { value: "duration", text: this.$gettext("Video Duration") },
-          ];
+          return options.SortOrderOptions(["newest", "oldest", "added", "archived", "title", "name", "size", "duration"]);
         case contexts.Hidden:
         case contexts.Review:
-          return [
-            { value: "newest", text: this.$gettext("Newest First") },
-            { value: "oldest", text: this.$gettext("Oldest First") },
-            { value: "added", text: this.$gettext("Recently Added") },
-            { value: "title", text: this.$gettext("Picture Title") },
-            { value: "name", text: this.$gettext("File Name") },
-            { value: "size", text: this.$gettext("File Size") },
-            { value: "duration", text: this.$gettext("Video Duration") },
-          ];
+          return options.SortOrderOptions(["newest", "oldest", "added", "title", "name", "size", "duration"]);
         default:
-          return [
-            { value: "newest", text: this.$gettext("Newest First") },
-            { value: "oldest", text: this.$gettext("Oldest First") },
-            { value: "added", text: this.$gettext("Recently Added") },
-            { value: "edited", text: this.$gettext("Recently Edited") },
-            { value: "title", text: this.$gettext("Picture Title") },
-            { value: "name", text: this.$gettext("File Name") },
-            { value: "size", text: this.$gettext("File Size") },
-            { value: "duration", text: this.$gettext("Video Duration") },
-            { value: "similar", text: this.$gettext("Visual Similarity") },
-            { value: "relevance", text: this.$gettext("Most Relevant") },
-          ];
+          return options.SortOrderOptions(["newest", "oldest", "added", "edited", "title", "name", "size", "duration", "similar", "relevance"]);
       }
     },
   },

@@ -37,6 +37,7 @@ func NewPortalOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 		AuthorizationEndpoint:                     issuer + config.ApiUri + "/oauth/authorize",
 		TokenEndpoint:                             issuer + config.ApiUri + "/oauth/token",
 		UserinfoEndpoint:                          issuer + config.ApiUri + "/oauth/userinfo",
+		EndSessionEndpoint:                        issuer + config.ApiUri + "/oauth/logout",
 		JwksUri:                                   issuer + "/.well-known/jwks.json",
 		ResponseTypesSupported:                    PortalOIDCResponseTypes,
 		GrantTypesSupported:                       PortalOIDCGrantTypes,

@@ -321,6 +321,10 @@ func TestWebAppRoutes(t *testing.T) {
 		assert.True(t, strings.Contains(manifest, `"start_url": "`+pwa.StartUrl(conf.BaseUri("/"), conf.FrontendUri(``))+`",`))
 		assert.True(t, strings.Contains(manifest, `"url": "library/browse"`))
 		assert.True(t, strings.Contains(manifest, "/static/icons/logo/128.png"))
+		assert.True(t, strings.Contains(manifest, `"purpose": "maskable"`))
+		assert.True(t, strings.Contains(manifest, "/static/icons/logo/maskable/512.png"))
+		assert.True(t, strings.Contains(manifest, `"lang":`))
+		assert.True(t, strings.Contains(manifest, `"form_factor": "wide"`))
 	})
 	t.Run("GetServiceWorker", func(t *testing.T) {
 		w := httptest.NewRecorder()

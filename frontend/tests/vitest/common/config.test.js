@@ -165,6 +165,35 @@ describe("common/config", () => {
     expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
   });
 
+  it("getIcon resolves a built-in appIcon name against the static uri", () => {
+    const config = new Config(new StorageShim(), { siteTitle: "Foo", baseUri: "/i/pro-1", appIcon: "bloom" });
+    expect(config.getIcon()).toBe("/i/pro-1/static/icons/bloom.svg");
+  });
+
+  it("getIcon resolves each selectable app-icon variant to its static svg", () => {
+    ["crisp", "mint", "bold", "bloom", "flower", "ring", "shutter"].forEach((name) => {
+      const config = new Config(new StorageShim(), { siteTitle: "Foo", appIcon: name });
+      expect(config.getIcon()).toBe(`/static/icons/${name}.svg`);
+    });
+  });
+
+  it("getIcon falls back to the logo for an unknown or empty app-icon name", () => {
+    expect(new Config(new StorageShim(), { siteTitle: "Foo", appIcon: "does-not-exist" }).getIcon()).toBe("/static/icons/logo.svg");
+    expect(new Config(new StorageShim(), { siteTitle: "Foo" }).getIcon()).toBe("/static/icons/logo.svg");
+  });
+
+  it("getIcon prefers a theme-provided icon over the appIcon setting", () => {
+    const config = new Config(new StorageShim(), {
+      siteTitle: "Foo",
+      baseUri: "/i/pro-1",
+      appIcon: "bloom",
+      settings: { ui: { theme: "branded-icon" } },
+    });
+    themes.Set("branded-icon", { name: "branded-icon", title: "Branded", colors: {}, variables: { icon: "logo.svg" } });
+    config.setTheme("branded-icon");
+    expect(config.getIcon()).toBe("/i/pro-1/_theme/logo.svg");
+  });
+
   it("should store values", () => {
     const storage = new StorageShim();
     const values = { siteTitle: "Foo", country: "Germany", city: "Hamburg" };
@@ -553,6 +582,13 @@ describe("common/config", () => {
       expect(make({}).portalLoginUri()).toBe("");
       expect(new Config(new StorageShim(), null).portalLoginUri()).toBe("");
     });
+
+    it("oidcLogout reflects the ext.oidc.logout flag as a Boolean", () => {
+      expect(make({ logout: true }).oidcLogout()).toBe(true);
+      expect(make({ logout: false }).oidcLogout()).toBe(false);
+      expect(make(undefined).oidcLogout()).toBe(false);
+      expect(new Config(new StorageShim(), null).oidcLogout()).toBe(false);
+    });
   });
 
   describe("storage availability", () => {
@@ -580,6 +616,44 @@ describe("common/config", () => {
         expect(typeof result, fn).toBe("boolean");
         expect(result, fn).toBe(false);
       }
+    });
+  });
+
+  describe("setReduceMotion", () => {
+    afterEach(() => {
+      document.documentElement.classList.remove("reduce-motion");
+    });
+
+    it("toggles the reduce-motion class on <html> based on the argument", () => {
+      const cfg = createTestConfig();
+      cfg.setReduceMotion(true);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+      cfg.setReduceMotion(false);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(false);
+    });
+    it("coerces truthy and falsy values and returns the config instance", () => {
+      const cfg = createTestConfig();
+      cfg.setReduceMotion("yes");
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+      cfg.setReduceMotion(undefined);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(false);
+      expect(cfg.setReduceMotion(true)).toBe(cfg);
+    });
+    it("applies the class on construction when settings enable reduced motion", () => {
+      const values = JSON.parse(JSON.stringify(window.__CONFIG__));
+      values.settings.ui.reduceMotion = true;
+      new Config(new StorageShim(), values);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+    });
+    it("updates the class when settings change via setSettings", () => {
+      const cfg = createTestConfig();
+      const settings = JSON.parse(JSON.stringify(cfg.getSettings()));
+      settings.ui.reduceMotion = true;
+      cfg.setSettings(settings);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(true);
+      settings.ui.reduceMotion = false;
+      cfg.setSettings(settings);
+      expect(document.documentElement.classList.contains("reduce-motion")).toBe(false);
     });
   });
 });

@@ -27,3 +27,18 @@ func TestNewLens(t *testing.T) {
 		assert.Equal(t, "New Model", result.LensModel)
 	})
 }
+
+func TestLens_Validate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		frm := &Lens{LensMake: "Canon", LensModel: "EF 50mm f/1.8"}
+		assert.NoError(t, frm.Validate())
+	})
+	t.Run("EmptyMake", func(t *testing.T) {
+		frm := &Lens{LensMake: "", LensModel: "EF 50mm f/1.8"}
+		assert.Error(t, frm.Validate())
+	})
+	t.Run("EmptyModel", func(t *testing.T) {
+		frm := &Lens{LensMake: "Canon", LensModel: ""}
+		assert.Error(t, frm.Validate())
+	})
+}

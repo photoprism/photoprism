@@ -51,7 +51,7 @@ func TestGetDownload(t *testing.T) {
 		GetDownload(router)
 		r := PerformRequest(app, "GET", "/api/v1/dl/123xxx?t="+conf.DownloadToken())
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "record not found", val.String())
+		assert.Equal(t, "File not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("MissingOriginal", func(t *testing.T) {

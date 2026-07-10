@@ -1,6 +1,6 @@
 ## PhotoPrism — Metadata Pipeline
 
-**Last Updated:** May 6, 2026
+**Last Updated:** June 30, 2026
 
 ### Overview
 
@@ -37,6 +37,7 @@ The `.xmp` sidecar reader (`xmp.go` + `xmp_document.go`) is XPath-based on `antc
 - **Element-or-attribute helper.** RDF/XML allows scalar properties to be expressed as either child elements or attributes on `rdf:Description`. The `elemOrAttr(qname)` helper builds a union XPath that matches both — required because digiKam emits `xmpMM:*`/`exif:*`/`tiff:*` as attributes while Adobe writes them as child elements.
 - **Adding an accessor.** Declare a `chainXPath` at package init using `mustCompile` (or `elemOrAttr` for scalar fields), document the priority chain in a one-line comment, then add the accessor that calls `firstNonEmpty` (for scalars) or `queryAll` (for `rdf:Bag`/`rdf:Seq`). Wire the new field into `xmp.go` with the existing "set only when non-empty" pattern.
 - **Source priority.** Sidecar values are tagged `SrcXmp` (priority 32), which outranks `SrcMeta` (priority 16) at the entity layer. Re-indexing a photo after the sidecar has been added overwrites previously-`SrcMeta` values without a database wipe.
+- **Keywords vs. Subject.** `dc:subject` (Adobe's "Keywords" panel) maps to the descriptive `Details.Subject` field — never the `Details.Keywords` field — matching the embedded/ExifTool path where `data.Subject` comes from the `dc:subject`-backed `Subject` tag and `data.Keywords` from IPTC `Keywords`. The XMP path adds only the derived `flash`/`panorama`/`hdr` keywords. Hierarchical-label and face-region parsing (Labels, people Subjects) is a planned extension tracked under epic [#2260](https://github.com/photoprism/photoprism/issues/2260).
 - **Coverage.** The fixture corpus under `testdata/xmp/{adobe,darktable,digikam,synthetic}/` documents the full set of supported tags and their per-fixture provenance.
 
 ### Motion Photos & Embedded Media

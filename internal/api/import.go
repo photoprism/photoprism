@@ -188,7 +188,7 @@ func StartImport(router *gin.RouterGroup) {
 			log.Warnf("index: %s (update covers)", err)
 		}
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Msg: msg})
+		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
 	})
 }
 

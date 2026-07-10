@@ -18,6 +18,7 @@ func initOIDC() *oidc.Client {
 		Config().OIDCClient(),
 		Config().OIDCSecret(),
 		Config().OIDCScopes(),
+		Config().OIDCPrompt(),
 		Config().SiteUrl(),
 		false,
 	)
