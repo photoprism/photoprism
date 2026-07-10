@@ -50,10 +50,11 @@ func Cell(id string, locale string) (result Location, err error) {
 	}
 
 	var r *http.Response
+	var reqUrl string
 
 	// Query the specified places service URLs.
 	for _, serviceUrl := range LocationServiceUrls {
-		reqUrl := fmt.Sprintf(serviceUrl, id)
+		reqUrl = fmt.Sprintf(serviceUrl, id)
 		if r, err = GetRequest(reqUrl, locale); err == nil {
 			break
 		}
@@ -61,7 +62,7 @@ func Cell(id string, locale string) (result Location, err error) {
 
 	// Failed?
 	if err != nil {
-		log.Errorf("places: %s (location request failed)", err.Error())
+		log.Warnf("places: location request to %s failed (%s)", serviceHost(reqUrl), safeError(err))
 		return result, err
 	} else if r == nil {
 		err = fmt.Errorf("location request could not be performed")

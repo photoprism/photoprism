@@ -52,6 +52,17 @@ html.hide-scrollbar {
     scrollbar-width: none;
 }
 
+/* Reduce interface animations and motion when the accessibility setting is enabled. */
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+}
+
 body.nojs::-webkit-scrollbar,
 body.hide-scrollbar::-webkit-scrollbar,
 html.hide-scrollbar ::-webkit-scrollbar {

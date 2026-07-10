@@ -2,6 +2,7 @@ UI:
   Scrollbar: true
   Zoom: false
   OpenOnHover: true
+  ReduceMotion: false
   Theme: onyx
   Language: de
   TimeZone: Local

@@ -179,16 +179,22 @@
         </v-card-actions>
       </v-card>
 
-      <v-card v-if="settings.features.library && settings.features.download" flat tile class="mt-0 px-1 bg-background">
+      <v-card
+        v-if="canChangeDownloads && settings.features.download && !settings.download.disabled"
+        flat
+        tile
+        class="mt-0 px-1 bg-background"
+      >
         <v-card-title class="pb-0 text-subtitle-2">
           {{ $gettext(`Download`) }}
         </v-card-title>
 
         <v-card-actions>
           <v-row align="start" dense>
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" :md="isSuperAdmin ? 3 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"
+                :disabled="busy"
                 class="ma-0 pa-0 input-download-originals"
                 density="compact"
                 :label="$gettext('Originals')"
@@ -200,9 +206,10 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" :md="isSuperAdmin ? 3 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaRaw"
+                :disabled="busy"
                 class="ma-0 pa-0 input-download-raw"
                 density="compact"
                 :label="$gettext('RAW')"
@@ -214,9 +221,10 @@
               </v-checkbox>
             </v-col>
 
-            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+            <v-col cols="12" :md="isSuperAdmin ? 3 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.mediaSidecar"
+                :disabled="busy"
                 class="ma-0 pa-0 input-download-sidecar"
                 density="compact"
                 :label="$gettext('Sidecar')"
@@ -226,6 +234,21 @@
                 @update:model-value="onChange"
               >
               </v-checkbox>
+            </v-col>
+
+            <v-col v-if="isSuperAdmin" cols="12" md="3" class="px-2 pb-2 pt-2">
+              <v-select
+                v-model="settings.download.name"
+                :disabled="busy"
+                :items="options.DownloadName()"
+                :label="$gettext('Filename')"
+                prepend-icon="mdi-file-download"
+                item-title="text"
+                item-value="value"
+                :menu-props="{ maxHeight: 346 }"
+                class="input-download-name"
+                @update:model-value="onChange"
+              ></v-select>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -247,10 +270,16 @@ export default {
     PAboutFooter,
   },
   data() {
+    const user = this.$session.getUser();
+    const role = user ? user.Role : "";
+    const canChangeDownloads =
+      this.$session.isAdmin() || (this.$session.isUser() && !this.$session.hasScope() && (role === "user" || role === "manager"));
+
     return {
       isDemo: this.$config.isDemo(),
       isAdmin: this.$session.isAdmin(),
       isSuperAdmin: this.$session.isSuperAdmin(),
+      canChangeDownloads: canChangeDownloads,
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
       config: this.$config.values,

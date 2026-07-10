@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Synthetic Fixture">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/">
+   <tiff:Software>TiffSoftware 1.0</tiff:Software>
+   <tiff:ImageDescription>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">A tiff image description</rdf:li>
+    </rdf:Alt>
+   </tiff:ImageDescription>
+   <tiff:Copyright>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">Copyright 2026 Example Org</rdf:li>
+    </rdf:Alt>
+   </tiff:Copyright>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

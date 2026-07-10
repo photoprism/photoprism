@@ -181,6 +181,8 @@ gettext-compile:
 	$(MAKE) -C frontend gettext-compile
 gettext-clear-fuzzy:
 	./scripts/gettext-clear-fuzzy.sh
+gettext-lint:
+	node scripts/gettext-lint.mjs
 clean:
 	rm -f *.log .test*
 	[ ! -f "$(BINARY_NAME)" ] || rm -f $(BINARY_NAME)
@@ -609,7 +611,7 @@ docker-pull:
 	$(DOCKER_COMPOSE) -f compose.latest.yaml pull --ignore-pull-failures
 build-docker: docker-build
 docker-build:
-	$(DOCKER_COMPOSE) --profile=all pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) --profile=postgres --profile=keycloak pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) down --remove-orphans
 	$(DOCKER_COMPOSE) build --pull
 nvidia: nvidia-up
