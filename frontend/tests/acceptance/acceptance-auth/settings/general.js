@@ -9,6 +9,7 @@ import Page from "../../page-model/page";
 import Photo from "../../page-model/photo";
 import PhotoEdit from "../../page-model/photo-edit";
 import Album from "../../page-model/album";
+import AlbumDialog from "../../page-model/dialog-album";
 import Settings from "../../page-model/settings";
 import Library from "../../page-model/library";
 import Notifies from "../../page-model/notifications";
@@ -25,6 +26,7 @@ const page = new Page();
 const photo = new Photo();
 const photoedit = new PhotoEdit();
 const album = new Album();
+const albumdialog = new AlbumDialog();
 const settings = new Settings();
 const library = new Library();
 const getPageUrl = ClientFunction(() => window.location.href);
@@ -150,7 +152,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
 
     await menu.openPage("settings");
 
-    await t.expect(settings.accountTab.visible).ok().expect(settings.servicesTab.visible).ok();
+    await t.expect(settings.accountTab.visible).ok();
     await menu.checkMenuItemAvailability("originals", true);
     await menu.checkMenuItemAvailability("folders", true);
     await menu.checkMenuItemAvailability("moments", true);
@@ -213,7 +215,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
 
     await menu.openPage("settings");
 
-    await t.expect(settings.accountTab.visible).notOk().expect(settings.servicesTab.visible).notOk().expect(settings.generalTab.visible).ok();
+    await t.expect(settings.accountTab.visible).notOk().expect(settings.generalTab.visible).ok();
 
     await t
       .click(settings.importCheckbox)
@@ -236,7 +238,7 @@ test.meta("testID", "settings-general-003").meta({ type: "short", mode: "auth" }
     await menu.openPage("albums");
     await menu.openPage("settings");
 
-    await t.expect(settings.accountTab.visible).ok().expect(settings.servicesTab.visible).ok().expect(settings.generalTab.visible).ok();
+    await t.expect(settings.accountTab.visible).ok().expect(settings.generalTab.visible).ok();
 
     if (t.browser.platform === "mobile") {
       if (await toolbar.openMobileToolbar.visible) {
@@ -667,3 +669,329 @@ test.meta("testID", "settings-general-007").meta({ type: "short", mode: "auth" }
   await page.login("admin", "photoprism");
   await t.expect(getPageUrl()).contains("browse");
 });
+
+test.meta("testID", "settings-general-008").meta({ type: "short", mode: "auth" })(
+  "Common: Disable albums, favorites, folders, and media",
+  async (t) => {
+    await menu.checkMenuItemAvailability("albums", true);
+    await menu.checkMenuItemAvailability("favorites", true);
+    await menu.checkMenuItemAvailability("folders", true);
+    await menu.checkMenuItemAvailability("media", true);
+
+    await menu.openPage("settings");
+    await t
+      .click(settings.albumsCheckbox)
+      .click(settings.favoritesCheckbox)
+      .click(settings.foldersCheckbox)
+      .click(settings.videosCheckbox);
+    await t.eval(() => location.reload());
+
+    await menu.checkMenuItemAvailability("albums", false);
+    await menu.checkMenuItemAvailability("favorites", false);
+    await menu.checkMenuItemAvailability("folders", false);
+    await menu.checkMenuItemAvailability("media", false);
+
+    await menu.openPage("settings");
+    await t
+      .click(settings.albumsCheckbox)
+      .click(settings.favoritesCheckbox)
+      .click(settings.foldersCheckbox)
+      .click(settings.videosCheckbox);
+
+    await menu.checkMenuItemAvailability("albums", true);
+    await menu.checkMenuItemAvailability("favorites", true);
+    await menu.checkMenuItemAvailability("folders", true);
+    await menu.checkMenuItemAvailability("media", true);
+  }
+);
+
+
+test.meta("testID", "settings-general-009").meta({ type: "short", mode: "auth" })(
+  "Common: Disable album downloads only - file downloads still work",
+  async (t) => {
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+
+    await album.toggleSelectNthAlbum(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("download", true);
+
+    await t.navigateTo("/library/browse");
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+
+    await toolbar.search("photo:true");
+    await photoviewer.openPhotoViewer("nth", 0);
+    await photoviewer.checkPhotoViewerActionAvailability("download", true);
+    await photoviewer.triggerPhotoViewerAction("close-button");
+    await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
+
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.filesTab);
+    await t.expect(photoedit.downloadFile.nth(0).visible).ok();
+    await t.click(photoedit.dialogClose);
+    await contextmenu.clearSelection();
+
+    await menu.openPage("settings");
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+    await t.click(settings.albumDownloadDisabledCheckbox);
+    await t.wait(500);
+
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+
+    await album.toggleSelectNthAlbum(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("download", false);
+    await contextmenu.clearSelection();
+
+    await album.openNthAlbum(0);
+    await toolbar.checkToolbarActionAvailability("download", false);
+
+    await t.navigateTo("/library/browse");
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+
+    await photo.triggerHoverAction("nth", 1, "select");
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+
+    await toolbar.search("photo:true");
+    await photoviewer.openPhotoViewer("nth", 0);
+    await photoviewer.checkPhotoViewerActionAvailability("download", true);
+    await photoviewer.triggerPhotoViewerAction("close-button");
+    await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
+
+    await toolbar.search("photo:true stack:true");
+    await photo.triggerHoverAction("nth", 0, "select");
+    await contextmenu.triggerContextMenuAction("edit", "");
+    await t.click(photoedit.filesTab);
+    await t.expect(photoedit.downloadFile.nth(0).visible).ok();
+    await t.click(photoedit.dialogClose);
+    await contextmenu.clearSelection();
+
+    await menu.openPage("settings");
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+    await t.click(settings.albumDownloadDisabledCheckbox);
+    await t.wait(500);
+
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+    await album.toggleSelectNthAlbum(0, "all");
+    await contextmenu.checkContextMenuActionAvailability("download", true);
+    await contextmenu.clearSelection();
+  }
+);
+
+test.meta("testID", "settings-general-011").meta({ type: "short", mode: "auth" })(
+  "Common: Change file download name setting and verify persistence",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+
+    await t.click(settings.downloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Original Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Original");
+
+    await t.eval(() => location.reload());
+    await t.click(Selector(settings.libraryTab));
+    await t.wait(500);
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Original");
+
+    await t.click(settings.downloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Share Friendly"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Share");
+
+    await t.click(settings.downloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Current Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-download-name .v-field__input").innerText).contains("Current");
+  }
+);
+
+test.meta("testID", "settings-general-012").meta({ type: "short", mode: "auth" })(
+  "Common: Change album download name setting and verify persistence",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+
+    await t.click(settings.albumDownloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Original Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Original");
+
+    await t.eval(() => location.reload());
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Original");
+
+    await t.click(settings.albumDownloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Share Friendly"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Share");
+
+    await t.click(settings.albumDownloadNameSelect);
+    await t.click(Selector(".v-list-item").withText("Current Name"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-download-name .v-field__input").innerText).contains("Current");
+  }
+);
+
+test.meta("testID", "settings-general-013").meta({ type: "short", mode: "auth" })(
+  "Common: Default album sort order is applied to newly created albums",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Oldest First"));
+    await t.wait(500);
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
+
+    await menu.openPage("albums");
+    await notifies.waitForAlbumsToLoad(7000);
+    const initialAlbumCount = await album.getAlbumCount("all");
+
+    await toolbar.triggerToolbarAction("add");
+    await t.wait(1000);
+
+    const albumCountAfterCreate = await album.getAlbumCount("all");
+    await t.expect(albumCountAfterCreate).eql(initialAlbumCount + 1);
+
+    const newAlbumUid = await album.getNthAlbumUid("all", 0);
+
+    await album.openAlbumWithUid(newAlbumUid);
+    await t.wait(500);
+
+    await toolbar.triggerToolbarAction("edit");
+    await t.wait(500);
+
+    await t.expect(albumdialog.sortOrderValue.innerText).contains("Oldest");
+
+    await t.click(albumdialog.dialogCancel);
+    await t.wait(300);
+
+    await toolbar.triggerToolbarAction("delete");
+    await t.wait(500);
+
+    await menu.openPage("settings");
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Newest First"));
+    await t.wait(500);
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Newest");
+  }
+);
+
+test.meta("testID", "settings-general-014").meta({ type: "short", mode: "auth" })(
+  "Common: Change default album order settings and verify persistence",
+  async (t) => {
+    await menu.openPage("settings");
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Oldest First"));
+    await t.wait(500);
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
+
+    await t.click(settings.folderOrderSelect);
+    await t.click(Selector(".v-list-item").withText("File Name"));
+    await t.wait(500);
+    await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");
+
+    await t.eval(() => location.reload());
+    await t.click(Selector(settings.collectionsTab));
+    await t.wait(500);
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Oldest");
+    await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("File Name");
+
+    await t.click(settings.albumOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Newest First"));
+    await t.wait(500);
+
+    await t.click(settings.folderOrderSelect);
+    await t.click(Selector(".v-list-item").withText("Newest First"));
+    await t.wait(500);
+
+    await t.expect(Selector(".input-album-order .v-field__input").innerText).contains("Newest");
+    await t.expect(Selector(".input-folder-order .v-field__input").innerText).contains("Newest");
+  }
+);
+
+test.meta("testID", "settings-general-015").meta({ type: "short", mode: "auth" })(
+  "Common: Toggle accessibility settings and verify persistence",
+  async (t) => {
+    const hasReduceMotionClass = ClientFunction(() => document.documentElement.classList.contains("reduce-motion"));
+    const reloadPage = ClientFunction(() => window.location.reload());
+    const setNoReloadSentinel = ClientFunction(() => {
+      window.__ppNoReload = true;
+    });
+    const noReloadSentinel = ClientFunction(() => window.__ppNoReload === true);
+
+    await menu.openPage("settings");
+    await t.click(Selector(settings.generalTab));
+    await t.wait(500);
+
+    // A window sentinel detects an unexpected full-page reload: the live toggles below
+    // (Reduce Motion, Open on Hover) must NOT reload, so the sentinel must survive them.
+    await setNoReloadSentinel();
+
+    // Reduce Motion applies a live <html> class without reloading the page.
+    await t.expect(Selector(".input-reduce-motion input").checked).notOk();
+    await t.expect(hasReduceMotionClass()).notOk();
+    await t.click(settings.reduceMotionCheckbox);
+    await t.wait(500);
+    await t.expect(Selector(".input-reduce-motion input").checked).ok();
+    await t.expect(hasReduceMotionClass()).ok();
+    await t.expect(noReloadSentinel()).ok();
+
+    // Open on Hover persists as a plain preference (unchecking the default).
+    await t.click(settings.openOnHoverCheckbox);
+    await t.wait(500);
+    await t.expect(Selector(".input-open-on-hover input").checked).notOk();
+    await t.expect(noReloadSentinel()).ok();
+
+    // An explicit reload clears the sentinel; the settings must persist across it.
+    await reloadPage();
+    await t.expect(noReloadSentinel()).notOk();
+    await t.click(Selector(settings.generalTab));
+    await t.wait(500);
+    await t.expect(Selector(".input-reduce-motion input").checked).ok();
+    await t.expect(hasReduceMotionClass()).ok();
+    await t.expect(Selector(".input-open-on-hover input").checked).notOk();
+
+    // Restore defaults so the shared fixture state is left unchanged.
+    await t.click(settings.reduceMotionCheckbox);
+    await t.wait(500);
+    await t.click(settings.openOnHoverCheckbox);
+    await t.wait(500);
+    await t.expect(Selector(".input-reduce-motion input").checked).notOk();
+    await t.expect(hasReduceMotionClass()).notOk();
+    await t.expect(Selector(".input-open-on-hover input").checked).ok();
+  }
+);

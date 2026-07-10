@@ -96,6 +96,7 @@
 <script>
 import Album, { MaxLength as AlbumMaxLength } from "model/album";
 import { rules } from "common/form";
+import { AlbumSortOrder } from "options/options";
 
 export default {
   name: "PAlbumEditDialog",
@@ -118,16 +119,7 @@ export default {
       model: new Album(),
       growDesc: false,
       loading: false,
-      sorting: [
-        { value: "newest", text: this.$gettext("Newest First") },
-        { value: "oldest", text: this.$gettext("Oldest First") },
-        { value: "added", text: this.$gettext("Recently Added") },
-        { value: "title", text: this.$gettext("Picture Title") },
-        { value: "name", text: this.$gettext("File Name") },
-        { value: "size", text: this.$gettext("File Size") },
-        { value: "duration", text: this.$gettext("Video Duration") },
-        { value: "relevance", text: this.$gettext("Most Relevant") },
-      ],
+      sorting: AlbumSortOrder(),
       category: null,
       categories: this.$config.albumCategories(),
       rules,

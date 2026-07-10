@@ -179,12 +179,11 @@ func (data *Data) XMP(fileName string) (err error) {
 		}
 	}
 
-	if v := doc.Keywords(); len(v) != 0 {
-		data.AddKeywords(v)
-	}
-	// Subject mirrors the ExifTool Subject cascade (dc:subject usually wins,
-	// so Subject normally equals the keyword list) so XMP-sidecar photos get
-	// the same details.Subject the embedded/ExifTool JSON path would produce.
+	// dc:subject populates the descriptive Subject field only, never the
+	// keyword list: dc:subject is Adobe's "Keywords" panel, but PhotoPrism's
+	// Keywords, Labels, and Subject fields serve distinct purposes. This
+	// matches the embedded/ExifTool path, where data.Subject comes from the
+	// dc:subject-backed Subject tag and data.Keywords from IPTC Keywords.
 	if v := doc.Subject(); v != "" {
 		data.Subject = SanitizeMeta(v)
 	}

@@ -83,7 +83,7 @@ func TestOIDC(t *testing.T) {
 		calls := 0
 		expected := &oidc.Client{}
 
-		newOIDCClient = func(_ *url.URL, _ string, _ string, _ string, _ string, _ bool) (*oidc.Client, error) {
+		newOIDCClient = func(_ *url.URL, _ string, _ string, _ string, _ string, _ string, _ bool) (*oidc.Client, error) {
 			calls++
 			return expected, nil
 		}
@@ -101,7 +101,7 @@ func TestOIDC(t *testing.T) {
 		calls := 0
 		expected := &oidc.Client{}
 
-		newOIDCClient = func(_ *url.URL, _ string, _ string, _ string, _ string, _ bool) (*oidc.Client, error) {
+		newOIDCClient = func(_ *url.URL, _ string, _ string, _ string, _ string, _ string, _ bool) (*oidc.Client, error) {
 			calls++
 			if calls == 1 {
 				return nil, errors.New("service discovery failed")

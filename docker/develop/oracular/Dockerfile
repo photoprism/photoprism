@@ -100,11 +100,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     cp -r /etc/skel/.config /root/.config && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
-    echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
-    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
-    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/skel/.bashrc && \
+    /scripts/install-bashrc.sh && \
+    echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/bash.bashrc && \
     /scripts/install-dircolors.sh && \
-    cp /etc/skel/.bashrc /root/.bashrc && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \

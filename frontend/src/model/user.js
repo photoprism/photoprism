@@ -224,6 +224,12 @@ export class User extends RestModel {
     return this.Role === "cluster_admin";
   }
 
+  // isInitialAdmin returns true for the built-in super admin created at setup (ID 1).
+  // It is the lockout-recovery operator, so the admin UI locks its privileged controls.
+  isInitialAdmin() {
+    return this.ID === 1;
+  }
+
   // isCurrentUser returns true when this account belongs to the signed-in user.
   // The admin UI uses it to lock fields that would otherwise let an operator
   // lock themselves out (own role, web login, and authentication provider); the
@@ -231,10 +237,6 @@ export class User extends RestModel {
   isCurrentUser() {
     const current = $session.getUser();
     return !!(current && current.UID && this.UID && current.UID === this.UID);
-  }
-
-  requiresPassword() {
-    return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
   // showsPasswordField reports whether the local password input is shown.
@@ -278,14 +280,20 @@ export class User extends RestModel {
     return this.authIdIsDn() ? "Distinguished Name (DN)" : "Subject ID";
   }
 
-  // hasLoginCredential reports whether enough is set for the new account to authenticate.
-  // Covers the gap per-field rules miss: "default" with external auth configured needs a
-  // password, an LDAP directory (username resolves it), or an OIDC Subject ID — else it is inert.
+  // hasLoginCredential reports whether the new account has enough to authenticate.
+  // Gates the Add button independently of lazy field validation, so it must hold on its
+  // own: it requires the credential each provider mandates rather than trusting form state.
   hasLoginCredential() {
-    if (this.AuthProvider !== "default" || !this.showsAuthIdField()) {
-      return true;
+    if (this.passwordIsRequired()) {
+      return !!this.Password;
     }
-    return !!this.Password || $config.ldapEnabled() || !!this.AuthID;
+    if (this.authIdIsRequired()) {
+      return !!this.AuthID;
+    }
+    if (this.AuthProvider === "default" && this.showsAuthIdField()) {
+      return !!this.Password || !!this.AuthID;
+    }
+    return true;
   }
 
   // canEnableLogin reports whether web/API login can be enabled for this account.

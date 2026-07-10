@@ -107,7 +107,7 @@ services:
   ## MariaDB Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
-    image: mariadb:11
+    image: mariadb:12.3
     restart: unless-stopped
     stop_grace_period: 15s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239

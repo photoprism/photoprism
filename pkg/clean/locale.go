@@ -43,3 +43,28 @@ func WebLocale(locale, defaultLocale string) string {
 
 	return defaultLocale
 }
+
+// rtlLocales contains the ISO 639 primary language subtags rendered right-to-left.
+var rtlLocales = map[string]bool{
+	"ar": true, // Arabic
+	"fa": true, // Persian
+	"he": true, // Hebrew
+	"ku": true, // Kurdish (Sorani)
+}
+
+// TextDir returns the user interface text direction ("rtl" or "ltr") for the specified locale,
+// falling back to defaultLocale when locale is empty or invalid, and to "ltr" otherwise.
+func TextDir(locale, defaultLocale string) string {
+	for _, l := range []string{locale, defaultLocale} {
+		// WebLocale normalizes the language subtag to lowercase, so no extra ToLower is needed.
+		if l = WebLocale(l, ""); l == "" {
+			continue
+		} else if lang, _, _ := strings.Cut(l, "-"); rtlLocales[lang] {
+			return "rtl"
+		} else {
+			return "ltr"
+		}
+	}
+
+	return "ltr"
+}

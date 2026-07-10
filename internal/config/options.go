@@ -40,6 +40,7 @@ type Options struct {
 	OIDCClient                string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
 	OIDCSecret                string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
 	OIDCScopes                string        `yaml:"OIDCScopes" json:"-" flag:"oidc-scopes"`
+	OIDCPrompt                string        `yaml:"OIDCPrompt" json:"-" flag:"oidc-prompt"`
 	OIDCProvider              string        `yaml:"OIDCProvider" json:"OIDCProvider" flag:"oidc-provider"`
 	OIDCIcon                  string        `yaml:"OIDCIcon" json:"OIDCIcon" flag:"oidc-icon"`
 	OIDCRedirect              bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`

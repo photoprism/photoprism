@@ -17,6 +17,10 @@ func TestNewSettings(t *testing.T) {
 		assert.Equal(t, DefaultLanguage, s.UI.Language)
 		assert.Equal(t, DefaultTimeZone, s.UI.TimeZone)
 		assert.Equal(t, DefaultStartPage, s.UI.StartPage)
+		assert.Equal(t, true, s.UI.Scrollbar)
+		assert.Equal(t, false, s.UI.Zoom)
+		assert.Equal(t, true, s.UI.OpenOnHover)
+		assert.Equal(t, false, s.UI.ReduceMotion)
 		assert.Equal(t, DefaultMapsStyle, s.Maps.Style)
 	})
 	t.Run("Custom", func(t *testing.T) {
@@ -97,6 +101,9 @@ func TestSettings_Save(t *testing.T) {
 		s := NewDefaultSettings()
 		s.UI.Theme = "onyx"
 		s.UI.Language = "de"
+		// Set the UI booleans to non-default values so the round-trip proves their yaml tags map.
+		s.UI.Scrollbar = false
+		s.UI.ReduceMotion = true
 
 		assert.Equal(t, "onyx", s.UI.Theme)
 		assert.Equal(t, "de", s.UI.Language)
@@ -105,6 +112,13 @@ func TestSettings_Save(t *testing.T) {
 		if err := s.Save("testdata/" + dsn.PhotoPrismTestToFolderName() + "/settings_tmp.yml"); err != nil {
 			t.Fatal(err)
 		}
+
+		reloaded := NewDefaultSettings()
+		if err := reloaded.Load("testdata/" + dsn.PhotoPrismTestToFolderName() + "/settings_tmp.yml"); err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, false, reloaded.UI.Scrollbar)
+		assert.Equal(t, true, reloaded.UI.ReduceMotion)
 
 		if err := os.Remove("testdata/" + dsn.PhotoPrismTestToFolderName() + "/settings_tmp.yml"); err != nil {
 			t.Fatal(err)

@@ -38,6 +38,8 @@ const defaultLegacyClearKeys = new Set([
   "session.provider",
   "session.scope",
   "session.error",
+  "session.messageId",
+  "session.messageParams",
   "clipboard",
   "clipboard.photos",
   "clipboard.albums",

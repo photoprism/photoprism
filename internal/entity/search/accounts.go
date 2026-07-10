@@ -9,6 +9,10 @@ import (
 func Accounts(frm form.SearchServices) (result entity.Services, err error) {
 	s := Db().Where(&entity.Service{})
 
+	if frm.Query != "" {
+		s = s.Where("acc_name LIKE ?", SqlParam(frm.Query, "%", "%"))
+	}
+
 	if frm.Share {
 		s = s.Where("acc_share = TRUE")
 	}

@@ -75,6 +75,7 @@ services:
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
       PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
       PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
+      PHOTOPRISM_OIDC_PROMPT: ""                            # authorization prompt: login, select_account, or consent (empty = seamless SSO)
       PHOTOPRISM_OIDC_PROVIDER: "Keycloak"
       PHOTOPRISM_OIDC_REGISTER: "true"
       PHOTOPRISM_OIDC_WEBDAV: "true"
@@ -201,7 +202,7 @@ services:
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
-    image: mariadb:11
+    image: mariadb:12.3
     stop_grace_period: 15s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined

@@ -1,9 +1,36 @@
 <template>
-  <div class="p-tab p-settings-services">
+  <div ref="page" tabindex="-1" class="p-page p-page-settings p-settings-services" :class="$config.aclClasses('settings')">
+    <v-form validate-on="invalid-input" class="p-services-search p-page__navigation" @submit.prevent="load()">
+      <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" color="secondary" class="page-toolbar">
+        <v-text-field
+          v-model="search"
+          :density="density"
+          hide-details
+          clearable
+          overflow
+          single-line
+          rounded="pill"
+          variant="solo-filled"
+          color="surface-variant"
+          :placeholder="$gettext('Search')"
+          prepend-inner-icon="mdi-magnify"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          class="input-search input-search--focus background-inherit elevation-0"
+          @keyup.enter="() => load()"
+          @click:clear="() => load()"
+        ></v-text-field>
+
+        <p-action-menu v-if="$vuetify.display.mdAndUp" :items="menuActions" button-class="ms-1"></p-action-menu>
+      </v-toolbar>
+    </v-form>
+
     <v-data-table
       v-model="selected"
       :headers="listColumns"
       :items="results"
+      :loading="loading"
       tile
       hover
       hide-default-footer
@@ -57,13 +84,13 @@
         </tr>
       </template>
     </v-data-table>
-    <div class="pa-2">
-      <p class="text-caption py-1 clickable" @click.stop.prevent="webdavDialog">
+    <div class="pa-5">
+      <p class="text-caption pb-1 clickable" @click.stop.prevent="webdavDialog">
         {{ $gettext(`Note:`) }}
-        {{ $gettext(`WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism. `) }}
+        {{ $gettext(`WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism.`) }}
         {{
           $gettext(
-            `This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. `
+            `This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.`
           )
         }}
       </p>
@@ -109,14 +136,17 @@
 import Settings from "model/settings";
 import Service from "model/service";
 import { DateTime } from "luxon";
+import links from "common/links";
+import PActionMenu from "component/action/menu.vue";
 import PServiceAdd from "component/service/add.vue";
 import PServiceEdit from "component/service/edit.vue";
 import PServiceRemove from "component/service/remove.vue";
 import PSettingsWebdav from "component/settings/webdav.vue";
 
 export default {
-  name: "PSettingsServices",
+  name: "PPageServices",
   components: {
+    PActionMenu,
     PServiceAdd,
     PServiceEdit,
     PServiceRemove,
@@ -132,6 +162,8 @@ export default {
       settings: new Settings(this.$config.values.settings),
       model: {},
       results: [],
+      loading: false,
+      search: "",
       labels: {},
       selected: [],
       user: this.$session.getUser(),
@@ -167,6 +199,12 @@ export default {
       rtl: this.$isRtl,
     };
   },
+  computed: {
+    // density returns the input density based on the current display size.
+    density() {
+      return this.$vuetify.display.smAndDown ? "compact" : "comfortable";
+    },
+  },
   created() {
     if (this.isPublic && !this.isDemo) {
       this.$router.push({ name: "settings" });
@@ -174,10 +212,40 @@ export default {
       this.load();
     }
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
   methods: {
+    // menuActions returns the toolbar overflow-menu entries (reload the list, open the sync docs).
+    menuActions() {
+      return [
+        {
+          name: "reload",
+          icon: "mdi-refresh",
+          text: this.$gettext("Reload"),
+          visible: true,
+          click: () => {
+            this.load();
+          },
+        },
+        {
+          name: "docs",
+          icon: "mdi-book-open-page-variant-outline",
+          text: this.$gettext("Learn More"),
+          visible: true,
+          href: links.syncSettings,
+          target: "_blank",
+        },
+      ];
+    },
+    // webdavDialog opens the WebDAV connection instructions dialog.
     webdavDialog() {
       this.dialog.webdav = true;
     },
+    // formatDate renders a sync timestamp in the user's time zone, or "Never" if unset.
     formatDate(d) {
       if (!d || !d.Valid) {
         return this.$gettext("Never");
@@ -187,20 +255,28 @@ export default {
 
       return DateTime.fromISO(time, { zone: this.timeZone }).toLocaleString(DateTime.DATE_FULL);
     },
+    // load fetches the configured services from the API, filtered by the current search term.
     load() {
-      Service.search({ count: 2000 }).then((r) => (this.results = r.models));
+      const q = this.search ? this.search.trim() : "";
+      this.loading = true;
+      Service.search({ count: 2000, q })
+        .then((r) => (this.results = r.models))
+        .finally(() => (this.loading = false));
     },
+    // remove opens the confirmation dialog for deleting a service.
     remove(model) {
       this.model = model.clone();
 
       this.dialog.edit = false;
       this.dialog.remove = true;
     },
+    // onRemoved closes the remove dialog and reloads the list.
     onRemoved() {
       this.dialog.remove = false;
       this.model = {};
       this.load();
     },
+    // editSharing opens the edit dialog focused on sharing options.
     editSharing(model) {
       this.model = model.clone();
 
@@ -208,6 +284,7 @@ export default {
 
       this.dialog.edit = true;
     },
+    // editSync opens the edit dialog focused on sync options.
     editSync(model) {
       this.model = model.clone();
 
@@ -215,6 +292,7 @@ export default {
 
       this.dialog.edit = true;
     },
+    // edit opens the edit dialog focused on the account settings.
     edit(model) {
       this.model = model.clone();
 
@@ -222,18 +300,22 @@ export default {
 
       this.dialog.edit = true;
     },
+    // onEdited closes the edit dialog and reloads the list.
     onEdited() {
       this.dialog.edit = false;
       this.model = {};
       this.load();
     },
+    // add opens the dialog for connecting a new service.
     add() {
       this.dialog.add = true;
     },
+    // onAdded closes the add dialog and reloads the list.
     onAdded() {
       this.dialog.add = false;
       this.load();
     },
+    // close hides the named dialog and clears the working model.
     close(name) {
       this.dialog[name] = false;
       this.model = {};

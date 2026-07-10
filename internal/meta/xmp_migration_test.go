@@ -68,7 +68,8 @@ func TestXMP_FillsPreviouslyEmptyFields(t *testing.T) {
 	assert.Equal(t, "xmp.iid:de0fb44d-bdc8-4cc3-aa50-9aefe4992b34", data.InstanceID)
 	assert.Equal(t, "(C) 2026 PhotoPrism — Test fixture", data.Copyright)
 	assert.Equal(t, "sRGB IEC61966-2.1", data.ColorProfile)
-	assert.NotEmpty(t, data.Keywords, "dc:subject Bag must populate Keywords")
+	assert.NotEmpty(t, data.Subject, "dc:subject Bag must populate Subject")
+	assert.Empty(t, data.Keywords, "dc:subject must not populate Keywords")
 }
 
 // TestXMP_GpsCompositionEndToEnd asserts that a 2-component Adobe-form

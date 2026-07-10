@@ -1,15 +1,18 @@
 package oidc
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 )
 
@@ -24,6 +27,7 @@ func TestNewClient(t *testing.T) {
 			"csg6yqvykh0780f9",
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
 			authn.OidcDefaultScopes,
+			"",
 			"https://app.localssl.dev/",
 			false,
 		)
@@ -41,6 +45,7 @@ func TestNewClient(t *testing.T) {
 			"csg6yqvykh0780f9",
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
 			authn.OidcDefaultScopes,
+			"",
 			"https://app.localssl.dev/",
 			true,
 		)
@@ -58,6 +63,7 @@ func TestNewClient(t *testing.T) {
 			"csg6yqvykh0780f9",
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
 			"",
+			"",
 			"https://app.localssl.dev/",
 			true,
 		)
@@ -71,6 +77,7 @@ func TestNewClient(t *testing.T) {
 			"csg6yqvykh0780f9",
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
 			authn.OidcDefaultScopes,
+			"",
 			"https://app.localssl.dev/",
 			true,
 		)
@@ -89,6 +96,7 @@ func TestNewClient(t *testing.T) {
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
 			authn.OidcDefaultScopes,
 			"",
+			"",
 			true,
 		)
 
@@ -104,6 +112,7 @@ func TestNewClient(t *testing.T) {
 			"csg6yqvykh0780f9",
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
 			authn.OidcDefaultScopes,
+			"",
 			"https://app.localssl.dev/",
 			true,
 		)
@@ -111,6 +120,29 @@ func TestNewClient(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, client)
 	})
+}
+
+func TestNewClient_LogsInvalidPrompt(t *testing.T) {
+	// Capture the audit log so the "unsupported prompt" warning can be asserted.
+	var buf bytes.Buffer
+	orig := event.AuditLog
+	testLog := logrus.New()
+	testLog.SetOutput(&buf)
+	testLog.SetLevel(logrus.TraceLevel)
+	event.AuditLog = testLog
+	t.Cleanup(func() { event.AuditLog = orig })
+
+	uri, err := url.Parse("http://dummy-oidc:9998")
+	require.NoError(t, err)
+	client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "login bogus", "https://app.localssl.dev/", true)
+	require.NoError(t, err)
+	require.NotNil(t, client)
+
+	// The unsupported token is reported; the valid one still reaches the provider.
+	out := buf.String()
+	assert.Contains(t, out, "prompt")
+	assert.Contains(t, out, "bogus")
+	assert.Equal(t, []string{"login"}, client.prompt)
 }
 
 func TestCodeExchangeRecorder(t *testing.T) {
@@ -134,7 +166,7 @@ func TestCodeExchangeRecorder(t *testing.T) {
 func TestClient_AuthURLHandler_SendsNonce(t *testing.T) {
 	uri, err := url.Parse("http://dummy-oidc:9998")
 	require.NoError(t, err)
-	client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "https://app.localssl.dev/", true)
+	client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "", "https://app.localssl.dev/", true)
 	require.NoError(t, err)
 	require.NotNil(t, client)
 
@@ -152,6 +184,9 @@ func TestClient_AuthURLHandler_SendsNonce(t *testing.T) {
 	sentNonce := loc.Query().Get("nonce")
 	assert.NotEmpty(t, sentNonce)
 
+	// Omits the prompt parameter when no authorization prompt is configured.
+	assert.Empty(t, loc.Query().Get("prompt"))
+
 	// Stores the nonce in a cookie so it survives to the callback.
 	var nonceCookie bool
 	for _, ck := range w.Result().Cookies() {
@@ -163,13 +198,56 @@ func TestClient_AuthURLHandler_SendsNonce(t *testing.T) {
 	assert.True(t, nonceCookie)
 }
 
+func TestClient_AuthURLHandler_SendsPrompt(t *testing.T) {
+	t.Run("ValidValue", func(t *testing.T) {
+		uri, err := url.Parse("http://dummy-oidc:9998")
+		require.NoError(t, err)
+		client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "select_account", "https://app.localssl.dev/", true)
+		require.NoError(t, err)
+		require.NotNil(t, client)
+
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request, _ = http.NewRequest(http.MethodGet, "/api/v1/oidc/login", nil)
+
+		client.AuthURLHandler(c)
+
+		// Forwards the configured prompt on the authorization request.
+		assert.Equal(t, http.StatusFound, w.Code)
+		loc, locErr := url.Parse(w.Header().Get("Location"))
+		require.NoError(t, locErr)
+		assert.Equal(t, "select_account", loc.Query().Get("prompt"))
+	})
+	t.Run("InvalidValueIgnored", func(t *testing.T) {
+		uri, err := url.Parse("http://dummy-oidc:9998")
+		require.NoError(t, err)
+		client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "bogus", "https://app.localssl.dev/", true)
+		require.NoError(t, err)
+		require.NotNil(t, client)
+
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request, _ = http.NewRequest(http.MethodGet, "/api/v1/oidc/login", nil)
+
+		client.AuthURLHandler(c)
+
+		// An unsupported prompt value is dropped and never breaks the redirect.
+		assert.Equal(t, http.StatusFound, w.Code)
+		loc, locErr := url.Parse(w.Header().Get("Location"))
+		require.NoError(t, locErr)
+		assert.Empty(t, loc.Query().Get("prompt"))
+	})
+}
+
 func TestClient_CodeExchangeUserInfo_NoStateCookie(t *testing.T) {
 	// A redirect callback without the RP state cookie (e.g. an expired/interrupted
 	// login) must return an error AND leave the real response untouched, so the
 	// caller can render a branded page instead of the raw zitadel error.
 	uri, err := url.Parse("http://dummy-oidc:9998")
 	require.NoError(t, err)
-	client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "https://app.localssl.dev/", true)
+	client, err := NewClient(uri, "csg6yqvykh0780f9", "nd09wkee0ElsMvzLGkgWS9wJAttHwF2h", authn.OidcDefaultScopes, "", "https://app.localssl.dev/", true)
 	require.NoError(t, err)
 	require.NotNil(t, client)
 

@@ -98,6 +98,7 @@ func (c *Config) AppConfig() pwa.Config {
 		BaseUri:       c.BaseUri("/"),
 		FrontendUri:   c.FrontendUri(""),
 		StaticUri:     c.StaticUri(),
+		StaticPath:    c.StaticPath(),
 		SiteUrl:       c.SiteUrl(),
 		CdnUrl:        c.CdnUrl("/"),
 		ThemeUri:      ThemeUri,

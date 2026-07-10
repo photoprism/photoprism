@@ -456,6 +456,11 @@ describe("model/user", () => {
       expect(new User({ ID: 2, Name: "b", Role: "cluster_admin" }).isClusterAdmin()).toBe(true);
       expect(new User({ ID: 1, Name: "a", Role: "admin" }).isClusterAdmin()).toBe(false);
     });
+    it("isInitialAdmin is true only for the built-in super admin (ID 1)", () => {
+      expect(new User({ ID: 1, Name: "admin", Role: "admin", SuperAdmin: true }).isInitialAdmin()).toBe(true);
+      expect(new User({ ID: 2, Name: "sven", Role: "admin", SuperAdmin: true }).isInitialAdmin()).toBe(false);
+      expect(new User({ ID: 0, Name: "" }).isInitialAdmin()).toBe(false);
+    });
   });
 
   // Account-dialog auth field gating shared by the Pro and Portal "Add Account"
@@ -516,26 +521,36 @@ describe("model/user", () => {
       expect(new User({ AuthProvider: "ldap" }).authIdFieldLabel()).toBe("Distinguished Name (DN)");
       expect(new User({ AuthProvider: "oidc" }).authIdFieldLabel()).toBe("Subject ID");
     });
-    it("requires at least one credential for default with OIDC-only configured", () => {
-      // No external auth: the per-field password rule already covers it.
-      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(true);
+    it("requires a local password when one is mandatory, independent of form timing", () => {
+      // "local" always needs a password, so the Add button must stay disabled until it is set.
+      expect(new User({ AuthProvider: "local" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "local", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      // "default" without external auth behaves like a local account.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+    });
+    it("requires a password or Subject ID for default with OIDC configured", () => {
       setExt({ oidc: { enabled: true } });
-      // default + OIDC only, neither password nor Subject ID → inert, blocked.
+      // default + OIDC, neither password nor Subject ID → inert, blocked.
       expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
       expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
       expect(new User({ AuthProvider: "default", AuthID: "sub-123" }).hasLoginCredential()).toBe(true);
     });
-    it("treats the username as sufficient when LDAP can resolve the account", () => {
+    it("requires the AuthID (DN) for default authenticating against LDAP", () => {
       setExt({ ldap: { enabled: true } });
-      // default + LDAP: the username resolves the account via the directory.
-      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(true);
+      // default + LDAP: a globally enabled directory is not enough; a DN (or password) is required.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", AuthID: "cn=jane,dc=example,dc=com" }).hasLoginCredential()).toBe(true);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
       // explicit ldap: a DN is optional, so a username-only account is allowed.
       expect(new User({ AuthProvider: "ldap" }).hasLoginCredential()).toBe(true);
     });
-    it("defers to the per-field rules for non-default providers", () => {
+    it("requires the Subject ID for an explicit OIDC account, independent of form timing", () => {
+      expect(new User({ AuthProvider: "oidc" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "oidc", AuthID: "sub-123" }).hasLoginCredential()).toBe(true);
+    });
+    it("defers to the per-field rules for the none provider", () => {
       setExt({ oidc: { enabled: true } });
-      expect(new User({ AuthProvider: "local" }).hasLoginCredential()).toBe(true);
-      expect(new User({ AuthProvider: "oidc" }).hasLoginCredential()).toBe(true);
       expect(new User({ AuthProvider: "none" }).hasLoginCredential()).toBe(true);
     });
   });
