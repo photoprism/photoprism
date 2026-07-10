@@ -8148,7 +8148,8 @@
                     }
                 ],
                 "produces": [
-                    "application/pdf"
+                    "application/pdf",
+                    "image/svg+xml"
                 ],
                 "responses": {
                     "200": {
@@ -8188,7 +8189,7 @@
                         }
                     }
                 },
-                "summary": "streams the original file bytes for inline viewing (e.g. \".pdf\")",
+                "summary": "streams the original file bytes for inline viewing (e.g. \".pdf\" or \".svg\")",
                 "tags": [
                     "Files"
                 ]
