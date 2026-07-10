@@ -835,6 +835,9 @@
                 },
                 "WallpaperUri": {
                     "type": "string"
+                },
+                "XmpFaces": {
+                    "type": "boolean"
                 }
             },
             "type": "object"

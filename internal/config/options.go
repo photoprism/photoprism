@@ -256,6 +256,7 @@ type Options struct {
 	VisionSchedule            string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
+	XmpFaces                  bool          `yaml:"XmpFaces" json:"XmpFaces" flag:"xmp-faces"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`

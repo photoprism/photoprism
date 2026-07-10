@@ -56,7 +56,6 @@ Index:
   Convert: true
   Rescan: false
   SkipArchived: false
-  Faces: true
 Stack:
   UUID: true
   Meta: true

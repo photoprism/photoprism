@@ -134,6 +134,22 @@
 
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
+                v-model="settings.XmpFaces"
+                :disabled="isDemo"
+                class="ma-0 pa-0 input-xmp-faces"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Import Faces from XMP')"
+                :hint="$gettext('Read face regions and names from XMP metadata to create people markers.')"
+                prepend-icon="mdi-account-box-outline"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="6" lg="3">
+              <v-checkbox
                 v-model="settings.DisablePlaces"
                 :disabled="isDemo"
                 class="ma-0 pa-0 input-disable-places"

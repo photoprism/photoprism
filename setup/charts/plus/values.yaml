@@ -145,6 +145,7 @@ config:
   PHOTOPRISM_IMPORT_ALLOW: "zip,jpeg,jpg,png,gif,bmp,avif,webp,heic,heif,tiff,pdf,ai,svg,xmp"
   PHOTOPRISM_UPLOAD_ARCHIVES: true
   PHOTOPRISM_UPLOAD_NSFW: true
+  PHOTOPRISM_XMP_FACES: true
   PHOTOPRISM_DISABLE_TLS: true
   PHOTOPRISM_DISABLE_STS: true
   PHOTOPRISM_DISABLE_MCP: false

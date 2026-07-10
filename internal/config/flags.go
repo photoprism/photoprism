@@ -1310,6 +1310,11 @@ var Flags = CliFlags{
 			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),
 		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "xmp-faces",
+			Usage:   "imports face regions and names from XMP metadata as people markers",
+			EnvVars: EnvVars("XMP_FACES"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-engine",
 			Usage:   "face detection engine `NAME` (auto, onnx)",

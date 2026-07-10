@@ -68,13 +68,13 @@ func TestNewIndexOptions_DefaultDetectors(t *testing.T) {
 func TestNewIndexOptions_ImportFaceTags(t *testing.T) {
 	conf := config.NewMinimalTestConfig(t.TempDir())
 
-	t.Run("DefaultOn", func(t *testing.T) {
-		conf.Settings().Index.Faces = true
+	t.Run("Enabled", func(t *testing.T) {
+		conf.Options().XmpFaces = true
 		opts := NewIndexOptions("/", true, true, true, false, false, conf)
 		assert.True(t, opts.ImportFaceTags)
 	})
 	t.Run("Disabled", func(t *testing.T) {
-		conf.Settings().Index.Faces = false
+		conf.Options().XmpFaces = false
 		opts := NewIndexOptions("/", true, true, true, false, false, conf)
 		assert.False(t, opts.ImportFaceTags)
 	})

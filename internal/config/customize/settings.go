@@ -82,7 +82,6 @@ func NewSettings(theme, language, timeZone string) *Settings {
 			Path:    RootPath,
 			Rescan:  false,
 			Convert: true,
-			Faces:   true,
 		},
 		Stack: StackSettings{
 			UUID: true,
