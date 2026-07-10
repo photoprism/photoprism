@@ -133,10 +133,14 @@ func TestIndexRelated(t *testing.T) {
 		} else {
 			assert.Equal(t, "Botanischer Garten", photo.PhotoTitle)
 			assert.Equal(t, "Tulpen am See", photo.PhotoCaption)
-			assert.Contains(t, photo.Details.Keywords, "krokus")
-			assert.Contains(t, photo.Details.Keywords, "blume")
-			assert.Contains(t, photo.Details.Keywords, "schöne")
-			assert.Contains(t, photo.Details.Keywords, "wiese")
+			// dc:subject feeds the descriptive Subject field (entries keep
+			// their spaces), not the Keywords field. Filename/location keywords
+			// still populate Keywords, but the dc:subject values must not.
+			assert.Equal(t, "Krokus, Blume, Schöne Wiese", photo.Details.Subject)
+			assert.NotContains(t, photo.Details.Keywords, "krokus")
+			assert.NotContains(t, photo.Details.Keywords, "blume")
+			assert.NotContains(t, photo.Details.Keywords, "schöne")
+			assert.NotContains(t, photo.Details.Keywords, "wiese")
 			assert.Equal(t, "2021-03-24 12:07:29 +0000 UTC", photo.TakenAt.String())
 			assert.Equal(t, "xmp", photo.TakenSrc)
 		}

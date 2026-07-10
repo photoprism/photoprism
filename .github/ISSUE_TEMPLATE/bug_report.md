@@ -13,7 +13,7 @@ PLEASE PROCEED ONLY IF YOU ARE SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDEN
 1. Thoroughly review our [Getting Started](https://docs.photoprism.app/getting-started/) and [User Guides](https://docs.photoprism.app/user-guide/).
 2. Work through the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) we provide.
 3. Do not report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs.
-4. Use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) for community help, and visit our [Support Guide](https://www.photoprism.app/kb/getting-support) to learn more about support options.
+4. Use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) for community help, and visit our [Support Guide](https://www.photoprism.app/kb/getting-support/) to learn more about support options.
 
 THANK YOU! 💎
 </details>
@@ -23,7 +23,7 @@ THANK YOU! 💎
 Links to the related documentation on [docs.photoprism.app](https://docs.photoprism.app/):
 - ...
 
-*Please never report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs, and do not submit bug reports for the purpose of getting [technical support](https://www.photoprism.app/kb/getting-support) or because you have not received a response in our [public community forums](https://github.com/photoprism/photoprism/discussions). Thank you very much!*
+*Please never report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs, and do not submit bug reports for the purpose of getting [technical support](https://www.photoprism.app/kb/getting-support/) or because you have not received a response in our [public community forums](https://github.com/photoprism/photoprism/discussions). Thank you very much!*
 
 ### 1. How can we reproduce it?
 
@@ -46,7 +46,7 @@ Always try to determine the cause of your problem using the checklists at <https
 
 ### 4. Can you provide us with example files for testing, error logs, or screenshots?
 
-Please include sample files or screenshots that help to reproduce your problem. You can also email files or share a download link, see <https://www.photoprism.app/contact> for details.
+Please include sample files or screenshots that help to reproduce your problem. You can also email files or share a download link, see <https://www.photoprism.app/contact/> for details.
 
 Visit <https://docs.photoprism.app/getting-started/troubleshooting/browsers/> to learn how to diagnose frontend issues.
 

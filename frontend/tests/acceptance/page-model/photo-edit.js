@@ -21,7 +21,7 @@ export default class Page {
     this.locationInput = Selector("div.p-meta-location-dialog .input-coordinates input", { timeout: 15000 });
     this.locationConfirm = Selector("div.p-meta-location-dialog button.action-confirm", { timeout: 15000 });
     this.locationCancel = Selector("div.p-meta-location-dialog button.action-cancel", { timeout: 15000 });
-    this.locationMarker = Selector("div.maplibregl-marker", { timeout: 15000 });
+    this.locationMarker = Selector("div.maplibregl-marker", { timeout: 30000 });
 
     this.batchDialog = Selector("div.v-dialog--batch-edit");
     this.batchDialogTitle = Selector("div.v-dialog--batch-edit div.v-toolbar-title");

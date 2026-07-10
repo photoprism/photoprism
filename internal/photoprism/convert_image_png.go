@@ -21,9 +21,15 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 	fileExt := f.Extension()
 	maxSize := strconv.Itoa(w.conf.PngSize())
 
+	// Unlike JpegConvertCmds, this builder does not have a Darktable/RawTherapee renderer or an embedded preview
+	// fallback for converting RAW images to PNG — see internal/raw/README.md for more information.
+	if f.IsRaw() && w.conf.RawEnabled() {
+		log.Debugf("convert: PNG is not a supported target format for %s files", f.FileType().ToUpper())
+	}
+
 	// On a Mac, use the Apple Scriptable image processing system to convert images to PNG,
 	// see https://ss64.com/osx/sips.html.
-	if (f.IsRaw() || f.IsHeif()) && w.conf.SipsEnabled() && w.sipsExclude.Allow(fileExt) {
+	if f.IsHeif() && w.conf.SipsEnabled() && w.sipsExclude.Allow(fileExt) {
 		result = append(result, NewConvertCmd(
 			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.SipsBin(), "-Z", maxSize, "-s", "format", "png", "--out", pngName, f.FileName())),
@@ -47,8 +53,8 @@ func (w *Convert) PngConvertCmds(f *MediaFile, pngName string) (result ConvertCm
 		)
 	}
 
-	// Use "djxl" to convert JPEG XL images if installed and enabled.
-	if f.IsJpegXL() && w.conf.JpegXLEnabled() {
+	// Use "djxl" to convert JPEG XL images as a fallback when libvips lacks native support.
+	if f.IsJpegXL() && w.conf.JpegXLEnabled() && w.conf.JpegXLDecoderBin() != "" {
 		result = append(result, NewConvertCmd(
 			// #nosec G204 -- arguments are built from validated config and file paths.
 			exec.Command(w.conf.JpegXLDecoderBin(), f.FileName(), pngName)),

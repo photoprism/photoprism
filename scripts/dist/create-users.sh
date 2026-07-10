@@ -39,16 +39,25 @@ echo "✅ Added group photoprism (1000)."
 # add existing www-data user to groups
 usermod -a -G photoprism,video,davfs2,renderd,render,ssl-cert,videodriver www-data
 
+# a directory that will be used as a custom skeleton when creating users
+SKELETON="/tmp/custom-skeleton"
+mkdir --parents "${SKELETON}"
+
+# copy the .config/ directory from the default skeleton, if it exists
+if [ -d /etc/skel/.config ]; then
+  cp -r /etc/skel/.config/ "${SKELETON}/.config/"
+fi
+
 # create user 'videodriver'
 userdel -r -f videodriver >/dev/null 2>&1
-useradd -u 937 -r -N -g 937 -G photoprism,www-data,video,davfs2,renderd,render,ssl-cert -s /bin/bash -m -d "/home/videodriver" videodriver
+useradd -u 937 -r -N -g 937 -G photoprism,www-data,video,davfs2,renderd,render,ssl-cert -s /bin/bash -m -d "/home/videodriver" --skel "${SKELETON}" videodriver
 echo "✅ Added user videodriver (937)."
 
 # create user 'photoprism'
 userdel -r -f ubuntu >/dev/null 2>&1
 userdel -r -f photoprism >/dev/null 2>&1
 userdel -r -f 1000 >/dev/null 2>&1
-useradd -u 1000 -N -g photoprism -G www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism
+useradd -u 1000 -N -g photoprism -G www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/photoprism" --skel "${SKELETON}" photoprism
 echo "✅ Added user photoprism (1000)."
 
 add_user()
@@ -56,7 +65,7 @@ add_user()
   userdel -r -f "user-$1" >/dev/null 2>&1
   groupdel -f "group-$1" >/dev/null 2>&1
   groupadd -f -g "$1" "group-$1"
-  useradd -u "$1" -g "$1" -G photoprism,www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/user-$1" "user-$1" 2>/dev/null
+  useradd -u "$1" -g "$1" -G photoprism,www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/user-$1" --skel "${SKELETON}" "user-$1" 2>/dev/null
   printf "."
 }
 
@@ -72,5 +81,8 @@ for i in $(seq 2000 2100); do add_user "$i"; done
 printf " ✔\n"
 
 chgrp -f -R 1000 /home
+
+# remove the custom skeleton
+rm -rf "${SKELETON}"
 
 echo "Done."

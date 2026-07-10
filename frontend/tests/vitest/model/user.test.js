@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import "../fixtures";
 import User from "model/user";
 import File from "model/file";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
-import { $session } from "app/session";
+import { $config, $session } from "app/session";
 
 const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
@@ -455,6 +455,103 @@ describe("model/user", () => {
     it("isClusterAdmin is true only for cluster_admin", () => {
       expect(new User({ ID: 2, Name: "b", Role: "cluster_admin" }).isClusterAdmin()).toBe(true);
       expect(new User({ ID: 1, Name: "a", Role: "admin" }).isClusterAdmin()).toBe(false);
+    });
+    it("isInitialAdmin is true only for the built-in super admin (ID 1)", () => {
+      expect(new User({ ID: 1, Name: "admin", Role: "admin", SuperAdmin: true }).isInitialAdmin()).toBe(true);
+      expect(new User({ ID: 2, Name: "sven", Role: "admin", SuperAdmin: true }).isInitialAdmin()).toBe(false);
+      expect(new User({ ID: 0, Name: "" }).isInitialAdmin()).toBe(false);
+    });
+  });
+
+  // Account-dialog auth field gating shared by the Pro and Portal "Add Account"
+  // dialogs. The external-auth branches read the global $config (ext.oidc/ext.ldap),
+  // so each case sets and restores it explicitly.
+  describe("auth field gating", () => {
+    const setExt = (ext) => {
+      $config.values.ext = ext;
+    };
+    afterEach(() => {
+      setExt(undefined);
+    });
+    it("shows the password field for default, local and oidc but not ldap or none", () => {
+      expect(new User({ AuthProvider: "default" }).showsPasswordField()).toBe(true);
+      expect(new User({ AuthProvider: "local" }).showsPasswordField()).toBe(true);
+      expect(new User({ AuthProvider: "oidc" }).showsPasswordField()).toBe(true);
+      expect(new User({ AuthProvider: "ldap" }).showsPasswordField()).toBe(false);
+      expect(new User({ AuthProvider: "none" }).showsPasswordField()).toBe(false);
+    });
+    it("requires a password for local, and for default without an external identity", () => {
+      expect(new User({ AuthProvider: "local" }).passwordIsRequired()).toBe(true);
+      // "default" with no OIDC/LDAP configured must require a password (regression:
+      // previously optional, so the ADD button enabled with only a username).
+      expect(new User({ AuthProvider: "default" }).passwordIsRequired()).toBe(true);
+      expect(new User({ AuthProvider: "oidc" }).passwordIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "ldap" }).passwordIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "none" }).passwordIsRequired()).toBe(false);
+    });
+    it("makes the password optional for default when external auth can be supplied", () => {
+      setExt({ oidc: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).passwordIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "default" }).showsAuthIdField()).toBe(true);
+    });
+    it("shows the auth-id field for oidc and ldap, and for default only when configured", () => {
+      expect(new User({ AuthProvider: "oidc" }).showsAuthIdField()).toBe(true);
+      expect(new User({ AuthProvider: "ldap" }).showsAuthIdField()).toBe(true);
+      expect(new User({ AuthProvider: "default" }).showsAuthIdField()).toBe(false);
+      setExt({ ldap: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).showsAuthIdField()).toBe(true);
+      expect(new User({ AuthProvider: "local" }).showsAuthIdField()).toBe(false);
+      expect(new User({ AuthProvider: "none" }).showsAuthIdField()).toBe(false);
+    });
+    it("requires the auth-id only for an explicit oidc account", () => {
+      expect(new User({ AuthProvider: "oidc" }).authIdIsRequired()).toBe(true);
+      setExt({ oidc: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).authIdIsRequired()).toBe(false);
+      expect(new User({ AuthProvider: "ldap" }).authIdIsRequired()).toBe(false);
+    });
+    it("treats the auth-id as a DN for ldap, and for default when only LDAP is configured", () => {
+      expect(new User({ AuthProvider: "ldap" }).authIdIsDn()).toBe(true);
+      expect(new User({ AuthProvider: "oidc" }).authIdIsDn()).toBe(false);
+      setExt({ ldap: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).authIdIsDn()).toBe(true);
+      setExt({ oidc: { enabled: true }, ldap: { enabled: true } });
+      expect(new User({ AuthProvider: "default" }).authIdIsDn()).toBe(false);
+    });
+    it("labels the auth-id field from authIdIsDn", () => {
+      expect(new User({ AuthProvider: "ldap" }).authIdFieldLabel()).toBe("Distinguished Name (DN)");
+      expect(new User({ AuthProvider: "oidc" }).authIdFieldLabel()).toBe("Subject ID");
+    });
+    it("requires a local password when one is mandatory, independent of form timing", () => {
+      // "local" always needs a password, so the Add button must stay disabled until it is set.
+      expect(new User({ AuthProvider: "local" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "local", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      // "default" without external auth behaves like a local account.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+    });
+    it("requires a password or Subject ID for default with OIDC configured", () => {
+      setExt({ oidc: { enabled: true } });
+      // default + OIDC, neither password nor Subject ID → inert, blocked.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      expect(new User({ AuthProvider: "default", AuthID: "sub-123" }).hasLoginCredential()).toBe(true);
+    });
+    it("requires the AuthID (DN) for default authenticating against LDAP", () => {
+      setExt({ ldap: { enabled: true } });
+      // default + LDAP: a globally enabled directory is not enough; a DN (or password) is required.
+      expect(new User({ AuthProvider: "default" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "default", AuthID: "cn=jane,dc=example,dc=com" }).hasLoginCredential()).toBe(true);
+      expect(new User({ AuthProvider: "default", Password: "secret123" }).hasLoginCredential()).toBe(true);
+      // explicit ldap: a DN is optional, so a username-only account is allowed.
+      expect(new User({ AuthProvider: "ldap" }).hasLoginCredential()).toBe(true);
+    });
+    it("requires the Subject ID for an explicit OIDC account, independent of form timing", () => {
+      expect(new User({ AuthProvider: "oidc" }).hasLoginCredential()).toBe(false);
+      expect(new User({ AuthProvider: "oidc", AuthID: "sub-123" }).hasLoginCredential()).toBe(true);
+    });
+    it("defers to the per-field rules for the none provider", () => {
+      setExt({ oidc: { enabled: true } });
+      expect(new User({ AuthProvider: "none" }).hasLoginCredential()).toBe(true);
     });
   });
 });

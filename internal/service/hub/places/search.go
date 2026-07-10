@@ -48,10 +48,11 @@ func Search(q, locale string, count int) (results SearchResults, err error) {
 	}
 
 	var r *http.Response
+	var reqUrl string
 
 	// Query the specified places service URLs.
 	for _, serviceUrl := range SearchServiceUrls {
-		reqUrl := fmt.Sprintf("%s?%s", serviceUrl, params)
+		reqUrl = fmt.Sprintf("%s?%s", serviceUrl, params)
 		if r, err = GetRequest(reqUrl, locale); err == nil {
 			break
 		}
@@ -59,7 +60,7 @@ func Search(q, locale string, count int) (results SearchResults, err error) {
 
 	// Failed?
 	if err != nil {
-		log.Errorf("places: %s (search request failed)", err.Error())
+		log.Errorf("places: search request to %s failed (%s)", serviceHost(reqUrl), safeError(err))
 		return results, err
 	} else if r == nil {
 		err = fmt.Errorf("search request could not be performed")

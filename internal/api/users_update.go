@@ -133,11 +133,30 @@ func UpdateUser(router *gin.RouterGroup) {
 			}
 		}
 
-		// Persist form values. SaveForm gates privilege-level fields on admin
-		// authorization; the cluster JWT is a user-less service principal that
-		// u.IsAdmin() rejects, so pass that decision explicitly or its login and
-		// role sync would be silently dropped.
-		if err = m.SaveForm(f, u, u.IsAdmin() || isClusterJWT); err != nil {
+		// Prevent a non-super-admin from demoting a super admin, revoking their super
+		// admin status, or disabling their web login, so a lower-privilege admin cannot
+		// lock the local operator out. The cluster JWT service principal is exempt.
+		if m.SuperAdmin && !isClusterJWT && !u.IsSuperAdmin() {
+			switch {
+			case f.UserRole != "" && clean.Role(f.UserRole) != clean.Role(m.UserRole):
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "demote super admin role", status.Denied}, s.RefID)
+				AbortForbidden(c)
+				return
+			case !f.SuperAdmin:
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable super admin status", status.Denied}, s.RefID)
+				AbortForbidden(c)
+				return
+			case m.CanLogin && !f.CanLogin:
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable super admin web login", status.Denied}, s.RefID)
+				AbortForbidden(c)
+				return
+			}
+		}
+
+		// Persist form values. The cluster JWT is a user-less principal that
+		// u.IsAdmin()/u.IsSuperAdmin() reject, so authorize it explicitly for both admin and
+		// super-admin-level changes (else its role, login, and 2FA edits are silently dropped).
+		if err = m.SaveForm(f, u, u.IsAdmin() || isClusterJWT, isClusterJWT); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", err.Error()}, s.RefID)
 			AbortSaveFailed(c)
 			return

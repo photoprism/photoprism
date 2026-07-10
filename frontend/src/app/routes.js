@@ -13,7 +13,7 @@ Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
     The AGPL is supplemented by our Trademark and Brand Guidelines,
     which describe how our Brand Assets may be used:
-    <https://www.photoprism.app/trademark>
+    <https://www.photoprism.app/trademark/>
 
 Feel free to send an email to hello@photoprism.app if you have questions,
 want to support our work, or just want to say hello.
@@ -33,6 +33,7 @@ import Labels from "page/labels.vue";
 import People from "page/people.vue";
 import Library from "page/library.vue";
 import Settings from "page/settings.vue";
+import Services from "page/services.vue";
 import Admin from "page/admin.vue";
 import Cluster from "page/cluster.vue";
 import Login from "page/auth/login.vue";
@@ -180,13 +181,22 @@ export default [
       // decision must not depend on the redirect target, or a node without a
       // persisted Portal login URL would silently skip the cluster-wide sign-out.
       const isClusterSession = $session.isClusterSession();
+      // RP-initiated logout (OIDC + PHOTOPRISM_OIDC_LOGOUT) returns a provider logout URL
+      // that must be followed AFTER the async DELETE resolves; an OIDC node that is not a
+      // cluster session still needs this so direct /logout entry ends the upstream session,
+      // matching the nav-menu Sign-Out.
+      const rpInitiated = $session.getProvider() === "oidc" && $config.oidcLogout();
       const redirectUri = $session.logoutRedirectUri();
-      if (isClusterSession) {
-        // Cluster-OIDC: await the cluster-wide sign-out (which clears the Portal OP
-        // cookie) BEFORE redirecting, so the Portal shows its login form instead of
-        // silently re-issuing a session from a still-valid OP cookie.
+      if (isClusterSession || rpInitiated) {
+        // Await the cluster-wide sign-out (peer fan-out + Portal OP cookie clear) BEFORE
+        // redirecting; logoutEverywhere resolves to the provider logout URL when present (it
+        // ends the upstream session), else fall back to the local landing. A standalone OIDC
+        // node has no peers, so the fan-out is a no-op and only the RP-logout follow applies.
         next(false);
-        $session.logoutEverywhere(true).finally(() => $session.followRedirect(redirectUri));
+        $session
+          .logoutEverywhere(true)
+          .then((uri) => $session.followRedirect(uri || redirectUri))
+          .catch(() => $session.followRedirect(redirectUri));
       } else {
         // Local: signOut() resets client state synchronously so /login sees an
         // unauthenticated user; the one-shot logout flag suppresses the next auto-OIDC
@@ -668,6 +678,19 @@ export default [
     props: { tab: "settings_content" },
   },
   {
+    name: "settings_collections",
+    path: "/settings/collections",
+    component: Settings,
+    meta: {
+      title: $gettext("Settings"),
+      requiresAuth: true,
+      admin: true,
+      settings: true,
+      background: "background",
+    },
+    props: { tab: "settings_collections" },
+  },
+  {
     name: "settings_media",
     path: "/settings/media",
     redirect: "/settings/content",
@@ -688,7 +711,7 @@ export default [
   {
     name: "settings_services",
     path: "/settings/services",
-    component: Settings,
+    component: Services,
     meta: {
       title: $gettext("Settings"),
       requiresAuth: true,
@@ -696,7 +719,15 @@ export default [
       settings: true,
       background: "background",
     },
-    props: { tab: "settings_services" },
+    beforeEnter: (to, from, next) => {
+      if ($session.loginRequired()) {
+        next({ name: loginRoute });
+      } else if (!$config.feature("services") || $config.deny("services", "manage")) {
+        next({ name: $session.getDefaultRoute() });
+      } else {
+        next();
+      }
+    },
   },
   {
     name: "settings_account",

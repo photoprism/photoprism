@@ -94,3 +94,24 @@ func TestWebLocale(t *testing.T) {
 		assert.Equal(t, "und", WebLocale("cs_CZX", "und"))
 	})
 }
+
+func TestTextDir(t *testing.T) {
+	t.Run("LeftToRight", func(t *testing.T) {
+		assert.Equal(t, "ltr", TextDir("en", "en"))
+		assert.Equal(t, "ltr", TextDir("de", "en"))
+		assert.Equal(t, "ltr", TextDir("pt_BR", "en"))
+		assert.Equal(t, "ltr", TextDir("zh_TW", "en"))
+	})
+	t.Run("RightToLeft", func(t *testing.T) {
+		assert.Equal(t, "rtl", TextDir("ar", "en"))
+		assert.Equal(t, "rtl", TextDir("he", "en"))
+		assert.Equal(t, "rtl", TextDir("fa-IR", "en"))
+		assert.Equal(t, "rtl", TextDir("KU", "en"))
+	})
+	t.Run("Fallback", func(t *testing.T) {
+		assert.Equal(t, "ltr", TextDir("", "en"))
+		assert.Equal(t, "rtl", TextDir("", "ar"))
+		assert.Equal(t, "ltr", TextDir("und", "de"))
+		assert.Equal(t, "ltr", TextDir("", ""))
+	})
+}

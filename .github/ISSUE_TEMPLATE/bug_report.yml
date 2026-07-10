@@ -11,7 +11,7 @@ body:
         1. Thoroughly review our [Getting Started](https://docs.photoprism.app/getting-started/) and [User Guides](https://docs.photoprism.app/user-guide/).
         2. Work through the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) we provide.
         3. Do not report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs.
-        4. Use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) for community help, and visit our [Support Guide](https://www.photoprism.app/kb/getting-support) to learn more about support options.
+        4. Use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) for community help, and visit our [Support Guide](https://www.photoprism.app/kb/getting-support/) to learn more about support options.
   - type: textarea
     id: documented-behavior
     attributes:

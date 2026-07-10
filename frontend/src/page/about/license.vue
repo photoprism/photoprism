@@ -547,7 +547,7 @@
         (a) PhotoPrism’s Brand Assets — including trademarks, logos, icons, fonts, corporate design, product and service names, and any other brand features and
         elements, whether registered or unregistered („Brand Assets“) — are proprietary assets owned exclusively by PhotoPrism UG („PhotoPrism“). We reserve the
         right to object to any use or misuse in any jurisdiction worldwide. Visit
-        <a target="_blank" rel="noopener" href="https://www.photoprism.app/trademark">photoprism.app/trademark</a>
+        <a target="_blank" rel="noopener" href="https://www.photoprism.app/trademark/">photoprism.app/trademark</a>
         to learn more.
       </p>
       <p>

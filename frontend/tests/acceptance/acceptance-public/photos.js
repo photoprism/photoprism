@@ -8,6 +8,8 @@ import Photo from "../page-model/photo";
 import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
 import PhotoEdit from "../page-model/photo-edit";
+import Notify from "../page-model/notifications";
+
 import { helperBeforeFixture, helperBeforeEach, helperAfterEach, logTime, logTimeEnd, logMessage } from "../page-model/helpers";
 
 const scroll = ClientFunction((x, y) => window.scrollTo(x, y));
@@ -32,6 +34,7 @@ const photo = new Photo();
 const photoviewer = new PhotoViewer();
 const page = new Page();
 const photoedit = new PhotoEdit();
+const notify = new Notify();
 
 test.meta("testID", "photos-001").meta({ mode: "public" })("Common: Scroll to top", async (t) => {
   await t.click(toolbar.cardsViewAction);
@@ -353,14 +356,13 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
   await photoedit.turnSwitchOff("scan");
   await photoedit.turnSwitchOff("panorama");
   await t.click(photoedit.dialogClose);
-  await t.wait(9000); // ToDo: is there a better way than a flat wait?
 
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {
     await toolbar.triggerToolbarAction("refresh");
   }
-
+  await notify.waitForPhotosToLoad(5000, true);
   await photo.checkPhotoVisibility(FirstPhotoUid, false);
   await photo.checkPhotoVisibility(FirstVideoUid, false);
 });
@@ -419,8 +421,7 @@ test.meta("testID", "photos-010").meta({ mode: "public" })("Common: Set location
   //search
   await t
     .typeText(photoedit.locationSearch, "Brandenburger Tor Berlin")
-    .click(Selector('div.v-autocomplete__content').find('i.mdi-map-marker'));  // Wait for the drop down to be populated, and select from it
-//    .pressKey("enter");  // Was it important to test with the keyboard?  Or is click above ok?
+    .click(Selector('div.v-autocomplete__content').find('i.mdi-map-marker'));
   const Coordinates = await photoedit.locationInput.value;
   await t.expect(Coordinates).eql("52.5162546, 13.3777166");
   await t.expect(photoedit.locationMarker.visible).ok();

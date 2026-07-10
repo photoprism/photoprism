@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import "../fixtures";
 import { $config } from "app/session";
+import $api from "common/api";
 import Session from "common/session";
 import { buildNamespace, createNamespacedStorage } from "common/storage";
 import StorageShim from "node-storage-shim";
@@ -724,6 +725,57 @@ describe("common/session", () => {
 
       expect(spy).toHaveBeenCalledWith("/library/login");
     });
+
+    it("prefers a backend-provided provider logout URL over the local target", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-logout-provider-uri";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, clusterOidcConfig(namespaceKey, { cluster: false }));
+      session.provider = "oidc";
+      const spy = vi.spyOn(session, "followRedirect").mockImplementation(() => {});
+
+      const providerLogoutUri = "https://keycloak.localssl.dev/realms/master/protocol/openid-connect/logout?id_token_hint=abc";
+      session.onLogout(false, providerLogoutUri);
+
+      expect(spy).toHaveBeenCalledWith(providerLogoutUri);
+    });
+  });
+
+  describe("logout RP-initiated provider redirect", () => {
+    it("passes providerLogoutUri from the DELETE response to onLogout", async () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, createConfig("/library", "ns-logout-rp"));
+      session.setAuthToken("999900000000000000000000000000000000000000000000");
+      session.applyId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+      session.user = new (session.user.constructor)({ ID: 7, Name: "x", DisplayName: "X" });
+      expect(session.isAuthenticated()).toBe(true);
+
+      const providerLogoutUri = "https://keycloak.localssl.dev/realms/master/protocol/openid-connect/logout?id_token_hint=abc";
+      const deleteSpy = vi.spyOn($api, "delete").mockResolvedValue({ data: { status: "deleted", providerLogoutUri } });
+      const onLogoutSpy = vi.spyOn(session, "onLogout").mockReturnValue(Promise.resolve());
+
+      await session.logout();
+
+      expect(deleteSpy).toHaveBeenCalledWith("session");
+      expect(onLogoutSpy).toHaveBeenCalledWith(undefined, providerLogoutUri);
+      deleteSpy.mockRestore();
+    });
+
+    it("falls back to local logout when the response carries no provider URL", async () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, createConfig("/library", "ns-logout-rp-none"));
+      session.setAuthToken("999900000000000000000000000000000000000000000000");
+      session.applyId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+      session.user = new (session.user.constructor)({ ID: 7, Name: "x", DisplayName: "X" });
+
+      const deleteSpy = vi.spyOn($api, "delete").mockResolvedValue({ data: { status: "deleted" } });
+      const onLogoutSpy = vi.spyOn(session, "onLogout").mockReturnValue(Promise.resolve());
+
+      await session.logout();
+
+      expect(onLogoutSpy).toHaveBeenCalledWith(undefined, undefined);
+      deleteSpy.mockRestore();
+    });
   });
 
   describe("signOut", () => {
@@ -1020,6 +1072,45 @@ describe("common/session", () => {
       expect(fetchCalls).toEqual([{ url: "https://app.example.com/i/pro-2/api/v1/session", method: "DELETE", token: "tok2" }]);
       expect(raw.getItem(pro2 + "session.token")).toBeNull();
       expect(onLogoutSpy).toHaveBeenCalledWith(true);
+    });
+
+    it("delegates the Portal session to the Portal OP on a cluster-OIDC Sign-Out (no instance-side Portal DELETE)", async () => {
+      // With RP-initiated logout enabled, the instance must NOT revoke the Portal
+      // session itself — the Portal's end-session endpoint ends it and performs the
+      // upstream RP-logout. The instance still revokes peer instances and clears all
+      // peer storage (including the Portal's stale token).
+      const raw = new StorageShim();
+      const appStorage = createNamespacedStorage(raw, "ns-current");
+      const config = createConfig("/library", "ns-current");
+      config.values.ext = { oidc: { enabled: true, cluster: true, logout: true, portalLoginUri: "https://app.example.com/portal/login" } };
+      const session = new Session(appStorage, config);
+      session.provider = "oidc";
+
+      const pro2 = buildNamespace("ns-pro-2");
+      const portal = buildNamespace("ns-portal");
+      raw.setItem(pro2 + "session.token", "tok2");
+      raw.setItem(pro2 + "instance.url", "https://app.example.com/i/pro-2/");
+      raw.setItem(portal + "session.token", "tokp");
+      raw.setItem(portal + "instance.url", "https://app.example.com/");
+      raw.setItem(portal + "instance.portal", "true"); // Portal flags its own session
+
+      const fetchCalls = [];
+      const originalFetch = window.fetch;
+      window.fetch = (url, opts) => {
+        fetchCalls.push({ url, method: opts?.method });
+        return Promise.resolve({ ok: true });
+      };
+      try {
+        await session.revokePeerSessions();
+      } finally {
+        window.fetch = originalFetch;
+      }
+
+      // Only the peer instance was DELETEd; the Portal session was NOT revoked here.
+      expect(fetchCalls).toEqual([{ url: "https://app.example.com/i/pro-2/api/v1/session", method: "DELETE" }]);
+      // Both peers' local storage is still cleared, including the Portal's stale token.
+      expect(raw.getItem(pro2 + "session.token")).toBeNull();
+      expect(raw.getItem(portal + "session.token")).toBeNull();
     });
   });
 });

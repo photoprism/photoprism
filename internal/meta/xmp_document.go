@@ -120,20 +120,29 @@ var (
 		mustCompile("//photoshop:Headline"),
 	}
 
-	// xmpDescriptionChain: dc:description Alt-language fallback.
+	// xmpDescriptionChain: dc:description → tiff:ImageDescription, each with
+	// the lang-alt fallback. tiff:ImageDescription is the deprecated TIFF-schema
+	// equivalent still emitted by some writers.
 	xmpDescriptionChain = chainXPath{
 		mustCompile("//dc:description/rdf:Alt/rdf:li[@xml:lang='x-default']"),
 		mustCompile("(//dc:description/rdf:Alt/rdf:li)[1]"),
 		mustCompile("//dc:description[not(rdf:Alt)]"),
+		mustCompile("//tiff:ImageDescription/rdf:Alt/rdf:li[@xml:lang='x-default']"),
+		mustCompile("(//tiff:ImageDescription/rdf:Alt/rdf:li)[1]"),
+		mustCompile("//tiff:ImageDescription[not(rdf:Alt)]"),
 	}
 
-	// xmpRightsChain: dc:rights Alt-language → xmpRights:WebStatement.
-	// WebStatement is a URL, not free text, but the embedded path uses
-	// the same fallback.
+	// xmpRightsChain: dc:rights Alt-language → tiff:Copyright Alt-language →
+	// xmpRights:WebStatement. tiff:Copyright is the deprecated TIFF-schema
+	// copyright text; WebStatement is a URL, not free text, but the embedded
+	// path uses the same fallback.
 	xmpRightsChain = chainXPath{
 		mustCompile("//dc:rights/rdf:Alt/rdf:li[@xml:lang='x-default']"),
 		mustCompile("(//dc:rights/rdf:Alt/rdf:li)[1]"),
 		mustCompile("//dc:rights[not(rdf:Alt)]"),
+		mustCompile("//tiff:Copyright/rdf:Alt/rdf:li[@xml:lang='x-default']"),
+		mustCompile("(//tiff:Copyright/rdf:Alt/rdf:li)[1]"),
+		mustCompile("//tiff:Copyright[not(rdf:Alt)]"),
 		mustCompile("//xmpRights:WebStatement"),
 	}
 
@@ -144,8 +153,12 @@ var (
 		mustCompile("//xmpRights:UsageTerms[not(rdf:Alt)]"),
 	}
 
-	// xmpSoftwareChain: xmp:CreatorTool.
-	xmpSoftwareChain = chainXPath{elemOrAttr("xmp:CreatorTool")}
+	// xmpSoftwareChain: xmp:CreatorTool → tiff:Software (deprecated TIFF-schema
+	// equivalent still emitted by some writers).
+	xmpSoftwareChain = chainXPath{
+		elemOrAttr("xmp:CreatorTool"),
+		elemOrAttr("tiff:Software"),
+	}
 
 	// xmpDocumentIDChain: xmpMM:OriginalDocumentID (asset-stable) →
 	// xmpMM:DocumentID (per-derivative) → dc:identifier (legacy).
@@ -203,10 +216,10 @@ var (
 		elemOrAttr("xmpDM:CreationDate"),
 	}
 
-	// xmpCameraSerialChain: exifEX:SerialNumber (= EXIF
-	// BodySerialNumber) → aux:SerialNumber.
+	// xmpCameraSerialChain: exifEX:BodySerialNumber (EXIF 0xA431, the property
+	// ExifTool and Adobe emit) → aux:SerialNumber (legacy Adobe).
 	xmpCameraSerialChain = chainXPath{
-		elemOrAttr("exifEX:SerialNumber"),
+		elemOrAttr("exifEX:BodySerialNumber"),
 		elemOrAttr("aux:SerialNumber"),
 	}
 
@@ -264,11 +277,12 @@ var (
 		mustCompile("//exif:UserComment[not(rdf:Alt)]"),
 	}
 
-	// xmpKeywordsBag / xmpKeywordsSeq: dc:subject containers. Adobe,
-	// Darktable and digiKam emit Bag; Apple Photos and the previous
-	// reader emit Seq.
-	xmpKeywordsBag = mustCompile("//dc:subject/rdf:Bag/rdf:li")
-	xmpKeywordsSeq = mustCompile("//dc:subject/rdf:Seq/rdf:li")
+	// xmpSubjectBag / xmpSubjectSeq: dc:subject containers. dc:subject is
+	// Adobe's "Keywords" panel, but PhotoPrism maps it to the descriptive
+	// Details.Subject field, not the keyword list. Adobe, Darktable and
+	// digiKam emit Bag; Apple Photos and the previous reader emit Seq.
+	xmpSubjectBag = mustCompile("//dc:subject/rdf:Bag/rdf:li")
+	xmpSubjectSeq = mustCompile("//dc:subject/rdf:Seq/rdf:li")
 
 	// xmpPersonBag / xmpPersonSeq: Iptc4xmpExt:PersonInImage containers
 	// (names of people depicted) — a Subject cascade fallback.
@@ -365,13 +379,13 @@ func (doc *XmpDocument) Title() string {
 }
 
 // Description returns the caption / image description.
-// Priority: dc:description (Alt/x-default → first rdf:Alt entry → bare text).
+// Priority: dc:description (Alt/x-default → first rdf:Alt entry → bare text) → tiff:ImageDescription.
 func (doc *XmpDocument) Description() string {
 	return SanitizeCaption(xmpDescriptionChain.firstNonEmpty(doc.doc))
 }
 
 // Copyright returns the rights statement.
-// Priority: dc:rights (Alt/x-default → first rdf:Alt entry → bare text) → xmpRights:WebStatement.
+// Priority: dc:rights (Alt/x-default → first rdf:Alt entry → bare text) → tiff:Copyright → xmpRights:WebStatement.
 // WebStatement is a URL approximation of the rights text but matches the embedded path's behavior.
 func (doc *XmpDocument) Copyright() string {
 	return SanitizeString(xmpRightsChain.firstNonEmpty(doc.doc))
@@ -455,7 +469,7 @@ func (doc *XmpDocument) TimeOffset() string {
 }
 
 // CameraSerial returns the camera body serial number.
-// Priority: exifEX:SerialNumber (= EXIF BodySerialNumber 0xA431) →
+// Priority: exifEX:BodySerialNumber (EXIF 0xA431) →
 // aux:SerialNumber (legacy Adobe, still emitted by Lightroom).
 func (doc *XmpDocument) CameraSerial() string {
 	return SanitizeString(xmpCameraSerialChain.firstNonEmpty(doc.doc))
@@ -557,20 +571,18 @@ func (doc *XmpDocument) joinBagOrSeq(bag, seq *xpath.Expr) string {
 	return strings.Join(queryAll(doc.doc, seq), ", ")
 }
 
-// Keywords returns dc:subject entries joined with ", ".
-// Priority: dc:subject/rdf:Bag (Adobe/Darktable/digiKam) → dc:subject/rdf:Seq
-// (Apple, older writers). Bag wins when both are present.
-func (doc *XmpDocument) Keywords() string {
-	return doc.joinBagOrSeq(xmpKeywordsBag, xmpKeywordsSeq)
-}
-
-// Subject returns descriptive subject text, mirroring the ExifTool Subject
-// cascade so the XMP sidecar path fills meta.Data.Subject identically to the
-// embedded/ExifTool JSON path. Priority: dc:subject (same source as Keywords,
-// present in virtually all tagged files) → Iptc4xmpExt:PersonInImage →
-// lr:hierarchicalSubject. The first non-empty container wins.
+// Subject returns descriptive subject text for the Details.Subject field,
+// matching the ExifTool Subject cascade so the XMP and embedded/ExifTool JSON
+// paths fill meta.Data.Subject identically. Priority: dc:subject (Adobe's
+// "Keywords" panel, present in virtually all tagged files) →
+// Iptc4xmpExt:PersonInImage → lr:hierarchicalSubject. The first non-empty
+// container wins, joined with ", "; entries keep their spaces.
+//
+// The PersonInImage and hierarchicalSubject fallbacks are interim sources for
+// the free-text Subject field; advanced parsing will route them to dedicated
+// meta.Data.Subjects (people) and meta.Data.Labels containers.
 func (doc *XmpDocument) Subject() string {
-	if v := doc.Keywords(); v != "" {
+	if v := doc.joinBagOrSeq(xmpSubjectBag, xmpSubjectSeq); v != "" {
 		return v
 	}
 	if v := doc.joinBagOrSeq(xmpPersonBag, xmpPersonSeq); v != "" {
@@ -598,7 +610,7 @@ func (doc *XmpDocument) License() string {
 }
 
 // Software returns the application that wrote the file.
-// Priority: xmp:CreatorTool (single-link).
+// Priority: xmp:CreatorTool → tiff:Software.
 func (doc *XmpDocument) Software() string {
 	return SanitizeString(xmpSoftwareChain.firstNonEmpty(doc.doc))
 }

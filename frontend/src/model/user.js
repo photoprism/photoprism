@@ -224,6 +224,12 @@ export class User extends RestModel {
     return this.Role === "cluster_admin";
   }
 
+  // isInitialAdmin returns true for the built-in super admin created at setup (ID 1).
+  // It is the lockout-recovery operator, so the admin UI locks its privileged controls.
+  isInitialAdmin() {
+    return this.ID === 1;
+  }
+
   // isCurrentUser returns true when this account belongs to the signed-in user.
   // The admin UI uses it to lock fields that would otherwise let an operator
   // lock themselves out (own role, web login, and authentication provider); the
@@ -233,8 +239,61 @@ export class User extends RestModel {
     return !!(current && current.UID && this.UID && current.UID === this.UID);
   }
 
-  requiresPassword() {
-    return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
+  // showsPasswordField reports whether the local password input is shown.
+  // OIDC may keep a local password as a fallback; LDAP replaces it; "none" disables auth.
+  showsPasswordField() {
+    return ["default", "local", "oidc"].includes(this.AuthProvider);
+  }
+
+  // passwordIsRequired reports whether a local password must be set to create the account.
+  // "default" needs one unless an external identity can be supplied instead (OIDC/LDAP configured).
+  passwordIsRequired() {
+    if (this.AuthProvider === "local") {
+      return true;
+    }
+    if (this.AuthProvider === "default") {
+      return !this.showsAuthIdField();
+    }
+    return false;
+  }
+
+  // showsAuthIdField reports whether the external identity input (OIDC Subject ID or LDAP DN) is shown.
+  // "default" offers it only when OIDC or LDAP is configured, to pre-provision external accounts.
+  showsAuthIdField() {
+    const p = this.AuthProvider;
+    return p === "oidc" || p === "ldap" || (p === "default" && ($config.oidcEnabled() || $config.ldapEnabled()));
+  }
+
+  // authIdIsRequired reports whether the external identity must be set; only OIDC requires it up front.
+  authIdIsRequired() {
+    return this.AuthProvider === "oidc";
+  }
+
+  // authIdIsDn reports whether the external identity is an LDAP DN rather than an OIDC Subject ID.
+  authIdIsDn() {
+    const p = this.AuthProvider;
+    return p === "ldap" || (p === "default" && $config.ldapEnabled() && !$config.oidcEnabled());
+  }
+
+  // authIdFieldLabel returns the label for the external identity input.
+  authIdFieldLabel() {
+    return this.authIdIsDn() ? "Distinguished Name (DN)" : "Subject ID";
+  }
+
+  // hasLoginCredential reports whether the new account has enough to authenticate.
+  // Gates the Add button independently of lazy field validation, so it must hold on its
+  // own: it requires the credential each provider mandates rather than trusting form state.
+  hasLoginCredential() {
+    if (this.passwordIsRequired()) {
+      return !!this.Password;
+    }
+    if (this.authIdIsRequired()) {
+      return !!this.AuthID;
+    }
+    if (this.AuthProvider === "default" && this.showsAuthIdField()) {
+      return !!this.Password || !!this.AuthID;
+    }
+    return true;
   }
 
   // canEnableLogin reports whether web/API login can be enabled for this account.
