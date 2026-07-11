@@ -153,4 +153,10 @@ var DialectSQLite = Migrations{
 		Stage:      "main",
 		Statements: []string{"UPDATE photos SET indexed_at = checked_at WHERE indexed_at IS NULL;"},
 	},
+	{
+		ID:         "20260711-000001",
+		Dialect:    "sqlite3",
+		Stage:      "post",
+		Statements: []string{"CREATE INDEX IF NOT EXISTS idx_albums_album_filter ON albums (album_filter);", "CREATE INDEX IF NOT EXISTS idx_albums_album_path ON albums (album_path);"},
+	},
 }

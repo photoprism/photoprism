@@ -33,4 +33,10 @@ var DialectPostgres = Migrations{
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE files ALTER COLUMN file_diff SET DEFAULT -1;", "ALTER TABLE files ALTER COLUMN file_chroma SET DEFAULT 0;"},
 	},
+	{
+		ID:         "20260711-000001",
+		Dialect:    "postgres",
+		Stage:      "post",
+		Statements: []string{"CREATE INDEX IF NOT EXISTS idx_albums_album_filter ON albums (album_filter);", "CREATE INDEX IF NOT EXISTS idx_albums_album_path ON albums (album_path);"},
+	},
 }

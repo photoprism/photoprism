@@ -53,7 +53,7 @@ type Album struct {
 	AlbumUID         string         `gorm:"type:bytes;size:42;uniqueIndex;" json:"UID" yaml:"UID"`
 	ParentUID        string         `gorm:"type:bytes;size:42;default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
 	AlbumSlug        string         `gorm:"type:bytes;size:160;index;" json:"Slug" yaml:"Slug"`
-	AlbumPath        string         `gorm:"type:bytes;size:1024;index;" json:"Path,omitempty" yaml:"Path,omitempty"`
+	AlbumPath        string         `gorm:"type:bytes;size:1024;" json:"Path,omitempty" yaml:"Path,omitempty"` // There is an index on this column, but it's in the post migration scripts.
 	AlbumType        string         `gorm:"type:bytes;size:8;default:'album';" json:"Type" yaml:"Type,omitempty"`
 	AlbumTitle       string         `gorm:"size:160;index;" json:"Title" yaml:"Title"`
 	AlbumLocation    string         `gorm:"size:160;" json:"Location" yaml:"Location,omitempty"`
@@ -61,7 +61,7 @@ type Album struct {
 	AlbumCaption     string         `gorm:"size:1024;" json:"Caption" yaml:"Caption,omitempty"`
 	AlbumDescription string         `gorm:"size:2048;" json:"Description" yaml:"Description,omitempty"`
 	AlbumNotes       string         `gorm:"size:1024;" json:"Notes" yaml:"Notes,omitempty"`
-	AlbumFilter      string         `gorm:"type:bytes;size:2048;index;default:''" json:"Filter" yaml:"Filter,omitempty"`
+	AlbumFilter      string         `gorm:"type:bytes;size:2048;default:''" json:"Filter" yaml:"Filter,omitempty"` // There is an index on this column, but it's in the post migration scripts.
 	AlbumOrder       string         `gorm:"type:bytes;size:32;" json:"Order" yaml:"Order,omitempty"`
 	AlbumTemplate    string         `gorm:"type:bytes;size:255;" json:"Template" yaml:"Template,omitempty"`
 	AlbumState       string         `gorm:"size:100;index;" json:"State" yaml:"State,omitempty"`

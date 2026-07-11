@@ -1,10 +1,10 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** June 1, 2026
+**Last Updated:** July 11, 2026
 
 ### Overview
 
-`internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v1 (`github.com/jinzhu/gorm`) and are shared by the API, workers, and CLI.
+`internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v2 (`github.com/go-gorm/gorm`) and are shared by the API, workers, and CLI.
 
 ### Timestamps
 
@@ -24,7 +24,7 @@ Time helpers in `entity_time.go`:
 Implications:
 
 - **Do not rely on sub-second ordering of persisted timestamps.** Two rows created and updated within the same wall-clock second compare **equal**, so `created_at` / `updated_at` cannot disambiguate them. There is no monotonic auto-increment ID on UID-keyed models (e.g. `Client`), so there is no reliable intra-second tiebreaker — give rows distinct times when ordering must be deterministic.
-- Because both SQLite and MariaDB now receive second-precision values, timestamp behavior is **identical across drivers**. A timestamp assertion that passes on SQLite will pass on MariaDB.
+- Because both SQLite, Postgres and MariaDB now receive second-precision values, timestamp behavior is **identical across drivers**. A timestamp assertion that passes on SQLite will pass on MariaDB and Postgres.
 
 When a test needs to prove a write advanced a timestamp, prefer one of:
 
@@ -39,19 +39,32 @@ When a test needs to prove a write advanced a timestamp, prefer one of:
 
 ### Testing
 
-Tests default to SQLite. To exercise the models against MariaDB (which is stricter and is the production database for some subsystems such as the cluster registry):
+Tests default to SQLite. To exercise the models against MariaDB or Postgres (both of which are stricter and MariaDB is the production database for some subsystems such as the cluster registry):
 
 ```bash
-mysql < scripts/sql/reset-acceptance.sql
-PHOTOPRISM_TEST_DRIVER="mysql" \
-PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" \
-go test ./internal/entity/... -count=1 -tags="slow,develop"
+make test-mariadb
+make test-postgres
+make test-sqlite
+```
+or to run a subset of tests in a specific package:
+in the root folder (where the Makefile is), the following make command will reset ALL test database for all DBMS'
+
+```bash
+make reset-mariadb-testdb reset-mariadb-migrate reset-postgres-testdb reset-postgres-migrate reset-sqlite-unit
 ```
 
-MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that only ran on SQLite can fail here:
+Then in the chosen package folder, use one of the following go test commands to test all the tests in that package.  You can append ```-run testname``` to execute one specific test if so desired:
+
+```bash
+PHOTOPRISM_TEST_DSN_NAME="mariadb" go test -count=1 -tags="slow,develop"
+PHOTOPRISM_TEST_DSN_NAME="postgres" go test -count=1 -tags="slow,develop"
+PHOTOPRISM_TEST_DSN_NAME="sqlitefile" go test -count=1 -tags="slow,develop"
+```
+
+Postgres and MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that only ran on SQLite can fail here:
 
 - **Primary keys must be set.** An empty PK (`""` UID, zero ID) triggers `Error 1364: Field '<col>' doesn't have a default value`. Use a valid ID/UID, not a placeholder like `"1234"`.
-- **Values must fit the column.** Oversized strings give `Error 1406: Data too long`; out-of-range integers give `Error 1264: Out of range value` (e.g. `photo_id` is `INT UNSIGNED`, max 4294967295).
+- **Values must fit the column for MariaDB.** Oversized strings give `Error 1406: Data too long`; out-of-range integers give `Error 1264: Out of range value` (e.g. `photo_id` is `INT UNSIGNED`, max 4294967295).
 - UID format (see `pkg/rnd/uid.go`): a one-byte prefix + 6 base36 time chars + 9 base36 random, 16 chars total (`p…` photo, `a…` album, `c…` client, `u…` user, `l…` label). Reuse existing fixtures for foreign-key safety; use a throwaway but in-range value only where a real reference would overwrite seeded data (e.g. a synthetic `photo_id` so a Details row does not attach to a real photo).
 - Fixtures live in `*_fixtures.go`, but some join rows are created **indirectly** from a parent fixture's embedded slice (e.g. a `photos_labels` row from a `Photo` fixture's `Labels`). Verify a combination is free against the **seeded database**, not just the fixtures file.
 - `List`-style global queries (`WHERE … <> ''` with no per-test scope) are not isolated on the shared `acceptance` database: rows from other tests in the same run leak in, so a `len(list) == N` assertion that holds on a per-test SQLite file can fail on MariaDB.
@@ -67,4 +80,6 @@ The durable fix for an identity/path column is to make it `VARBINARY` — `album
 
 ### VARBINARY Index Prefix Limit
 
-InnoDB caps an index key prefix at **767 bytes** on the `COMPACT`/`REDUNDANT` row formats, and only allows up to 3072 bytes on `DYNAMIC`/`COMPRESSED`. On a `VARBINARY` column the prefix is counted in **bytes** (on `utf8mb4` it is counted in characters, i.e. up to 4 bytes each), so converting a long text column to `VARBINARY` can push an existing prefix index over the limit on older or non-`DYNAMIC` installs. Keep prefix indexes on long `VARBINARY` path/filter columns at **≤ 767 bytes**; the project convention is **512** (`albums.album_filter(512)`, `albums.album_path(512)`). A prefix index only narrows candidate rows — the full-column comparison stays exact — so a shorter prefix costs nothing for correctness.
+MariaDB's InnoDB caps an index key prefix at **767 bytes** on the `COMPACT`/`REDUNDANT` row formats, and only allows up to 3072 bytes on `DYNAMIC`/`COMPRESSED` with a 16k page size. On a `VARBINARY` column the prefix is counted in **bytes** (on `utf8mb4` it is counted in characters, i.e. up to 4 bytes each), so converting a long text column to `VARBINARY` can push an existing prefix index over the limit on older or non-`DYNAMIC` installs. Keep prefix indexes on long `VARBINARY` path/filter columns at **≤ 767 bytes**; the project convention is **512** (`albums.album_filter(512)`, `albums.album_path(512)`). A prefix index only narrows candidate rows — the full-column comparison stays exact — so a shorter prefix costs nothing for correctness.
+
+Postgres does not support Index Prefix Limits, and caps an index column at about 1/3 of a page which is usually 8k for a limit of ~**2700 bytes**.  There is no ability to cap the size of the column that is fed into the index in Postgres (unlike MariaDB), so you can NOT safely index a column that will exceed 2700 bytes.  As at July 2026 the longest indexed column is 2048 bytes `albums.album_filter`.  If you really need to index a column that exceeds that size, then you will need to use an expression when creating the index on Postgres and include that expression every time that you run a query against that column.  See https://www.postgresql.org/docs/current/indexes-expressional.html for details if you really want to head down that path.

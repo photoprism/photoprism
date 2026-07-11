@@ -1928,5 +1928,55 @@ func TestInitDBLengths(t *testing.T) {
 		}
 	})
 
+	t.Run("AlbumIndexedColumns", func(t *testing.T) {
+		m := &entity.Album{}
+		n := &entity.Album{ID: 9988776655,
+			AlbumUID:  "123456789012345678901234567890123456789012",
+			ParentUID: "",
+			AlbumSlug: "1234567890123456789012345678901234567890",
+			// The following string is randomly generated via https://pinkylam.me/generator/chinese-lorem-ipsum/
+			AlbumPath:        "息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校！蝸隻少七話就直弓「活吉天」氣久背真掃朋拉牙送別飛兄。林午頁坡急蛋奶就。手陽土，長七上步蝶訴石尼文邊鼻抄打時尺聽重道，尤蛋珠。息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校！蝸隻少七話就直弓「活吉天」氣久背真掃朋拉牙送別飛兄。林午頁坡急蛋奶就。手陽土，長七上步蝶訴石尼文邊鼻抄打時尺聽重道，尤蛋珠。息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校",
+			AlbumType:        "album",
+			AlbumTitle:       "1234567890123456789012345678901234567890",
+			AlbumLocation:    "1234567890123456789012345678901234567890",
+			AlbumCategory:    "1234567890123456789012345678901234567890",
+			AlbumCaption:     "1234567890123456789012345678901234567890",
+			AlbumDescription: "1234567890123456789012345678901234567890",
+			AlbumNotes:       "1234567890123456789012345678901234567890",
+			// The following string is randomly generated via https://pinkylam.me/generator/chinese-lorem-ipsum/
+			AlbumFilter:   "息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校！蝸隻少七話就直弓「活吉天」氣久背真掃朋拉牙送別飛兄。林午頁坡急蛋奶就。手陽土，長七上步蝶訴石尼文邊鼻抄打時尺聽重道，尤蛋珠。息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校！蝸隻少七話就直弓「活吉天」氣久背真掃朋拉牙送別飛兄。林午頁坡急蛋奶就。手陽土，長七上步蝶訴石尼文邊鼻抄打時尺聽重道，尤蛋珠。息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校！蝸隻少七話就直弓「活吉天」氣久背真掃朋拉牙送別飛兄。林午頁坡急蛋奶就。手陽土，長七上步蝶訴石尼文邊鼻抄打時尺聽重道，尤蛋珠。息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校！蝸隻少七話就直弓「活吉天」氣久背真掃朋拉牙送別飛兄。林午頁坡急蛋奶就。手陽土，長七上步蝶訴石尼文邊鼻抄打時尺聽重道，尤蛋珠。息戊玩員方大！飛女節兄抓央更三黑院都亮到，向友服面那故收共穴哪戶國色？六回多丟，每告晚友苦貓常和辛是汁去苦卜「犬丁風門反一支蝴」話怪更這校！蝸隻少七話就直弓「活吉天」氣久背真掃朋拉牙送別飛兄。林午頁坡急蛋奶就。手陽土，長七上步蝶訴石尼文邊鼻抄打時尺聽重道，尤蛋珠。息戊玩員方大！飛女節兄抓央更三黑院都亮到，向aa",
+			AlbumOrder:    "12345678901234567890123456789012",
+			AlbumTemplate: "1234567890123456789012345678901234567890",
+			AlbumState:    "1234567890123456789012345678901234567890",
+			AlbumCountry:  "AU",
+			AlbumYear:     2026,
+			AlbumMonth:    7,
+			AlbumDay:      11,
+			AlbumFavorite: false,
+			AlbumPrivate:  false,
+			CreatedBy:     "1234567890123456789012345678901234567890",
+		}
+
+		assert.Greater(t, len(n.AlbumPath), 600, "AlbumPath")
+		assert.Equal(t, len(n.AlbumFilter), 2048, "AlbumFilter")
+
+		stmt := entity.Db()
+
+		expectedCount := int64(0)
+		stmt.Model(m).Count(&expectedCount)
+
+		result := stmt.Omit(clause.Associations).Create(n)
+		if !assert.NoError(t, result.Error, "Create record") {
+			actualCount := int64(0)
+			stmt.Model(m).Count(&actualCount)
+
+			// Cleanup, Skip soft delete!
+			result2 := entity.UnscopedDb().Delete(n)
+			assert.NoError(t, result2.Error, "UnscopedDb().Delete()")
+
+			assert.Equal(t, expectedCount, actualCount)
+		}
+	})
+
 	log.Info("End expecting data to long Error or SQLSTATE from dbtest_fieldlength_test")
 }
