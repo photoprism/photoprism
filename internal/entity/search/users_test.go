@@ -167,4 +167,49 @@ func TestUsers(t *testing.T) {
 			}
 		}
 	})
+	t.Run("SortByLogin", func(t *testing.T) {
+		if results, err := Users(form.SearchUsers{Count: 100, Offset: 0, Order: sortby.Login}); err != nil {
+			t.Fatal(err)
+		} else {
+			// t.Logf("users: %#v", results)
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, "Gandalf", results[0].DisplayName)
+				assert.Equal(t, "Jane Dow", results[1].DisplayName)
+			}
+		}
+	})
+	t.Run("SortByLoginReversed", func(t *testing.T) {
+		if results, err := Users(form.SearchUsers{Count: 100, Offset: 0, Order: sortby.Login, Reverse: true}); err != nil {
+			t.Fatal(err)
+		} else {
+			// t.Logf("users: %#v", results)
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, "2FA Enabled", results[0].DisplayName)
+				assert.Equal(t, "Not Local", results[1].DisplayName)
+			}
+		}
+	})
+	t.Run("SortByDeleted", func(t *testing.T) {
+		if results, err := Users(form.SearchUsers{Count: 100, Offset: 0, Order: sortby.Deleted, Deleted: true}); err != nil {
+			t.Fatal(err)
+		} else {
+			// t.Logf("users: %#v", results)
+			if assert.Equal(t, 1, len(results)) {
+				assert.Equal(t, "deleted", results[0].UserName)
+			}
+		}
+	})
+	t.Run("SortByDeletedReversed", func(t *testing.T) {
+		if results, err := Users(form.SearchUsers{Count: 100, Offset: 0, Order: sortby.Deleted, Reverse: true, Deleted: true}); err != nil {
+			t.Fatal(err)
+		} else {
+			// t.Logf("users: %#v", results)
+			if assert.Equal(t, 1, len(results)) {
+				assert.Equal(t, "deleted", results[0].UserName)
+			}
+		}
+	})
+
 }

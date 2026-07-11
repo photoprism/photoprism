@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -203,6 +205,7 @@ var UserFixtures = UserMap{
 			BirthMonth: 5,
 			BirthYear:  2001,
 		},
+		LoginAt: TimePointer(Now().Add(time.Second * -24)),
 	},
 	"guest": {
 		ID:           10000025,
@@ -292,6 +295,7 @@ var UserFixtures = UserMap{
 		WebDAV:       false,
 		CanInvite:    false,
 		InviteToken:  "",
+		LoginAt:      TimePointer(Now().Add(time.Millisecond * -24)),
 	},
 }
 
