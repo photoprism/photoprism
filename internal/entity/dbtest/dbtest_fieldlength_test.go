@@ -1966,14 +1966,15 @@ func TestInitDBLengths(t *testing.T) {
 		stmt.Model(m).Count(&expectedCount)
 
 		result := stmt.Omit(clause.Associations).Create(n)
-		if !assert.NoError(t, result.Error, "Create record") {
+		if assert.NoError(t, result.Error, "Create record") {
 			actualCount := int64(0)
 			stmt.Model(m).Count(&actualCount)
+			assert.Equal(t, expectedCount+1, actualCount)
 
 			// Cleanup, Skip soft delete!
 			result2 := entity.UnscopedDb().Delete(n)
 			assert.NoError(t, result2.Error, "UnscopedDb().Delete()")
-
+			stmt.Model(m).Count(&actualCount)
 			assert.Equal(t, expectedCount, actualCount)
 		}
 	})
