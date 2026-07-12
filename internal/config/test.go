@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -226,6 +227,13 @@ func TestConfig() *Config {
 	return testConfig
 }
 
+// OnceTestConfig attempts to set testConfig if it hasn't already been done.
+func OnceTestConfig(c *Config) {
+	// If this is the 1st call to NewTestConfig, then cache it.
+	// This is required for /internal/photoprism tests.
+	testConfigOnce.Do(func() { testConfig = c })
+}
+
 // NewMinimalTestConfig creates a lightweight test Config (no DB, minimal filesystem).
 //
 // Not suitable for tests requiring a database or pre-created storage directories.
@@ -314,15 +322,30 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 
 // NewTestConfig initializes test data so required directories exist before tests run.
 // See AGENTS.md (Test Data & Fixtures) for guidance.
+// This now creates an isolated set of folders to ensure that cross package testing does not clash.
+// You should use os.RemoveAll(c.StoragePath()) to remove the isolated folder created (assuming c := NewTestConfig("test")).
 func NewTestConfig(dbName string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
 	testConfigMutex.Lock()
 	defer testConfigMutex.Unlock()
 
+	storagePath := os.Getenv("PHOTOPRISM_STORAGE_PATH")
+	if storagePath == "" {
+		storagePath = fs.Abs("../../storage")
+	}
+
+	var tp string
+	var err error
+	if tp, err = os.MkdirTemp(storagePath, "test-photoprism-*"); err != nil {
+		log.Fatalf("config: %s", err.Error())
+	}
+
+	tp = filepath.Join(tp, fs.TestdataDir)
+
 	c := &Config{
 		cliCtx:  CliTestContext(),
-		options: NewTestOptions(dbName),
+		options: NewTestOptionsForPath(dbName, tp),
 		token:   rnd.Base36(8),
 		cache:   gc.New(time.Second, time.Minute),
 	}
@@ -609,5 +632,23 @@ func (c *Config) AssertTestData(t *testing.T) {
 		reportDir(dir)
 	} else {
 		reportErr("SidecarPath")
+	}
+}
+
+// CleanupTestFolder uses RemoveAll to remove the storage path above testdata.
+func (c *Config) CleanupTestFolder() {
+	if c.options == nil {
+		log.Warn("config: c.options is nil in CleanupTestFolder")
+		return
+	}
+	td := c.StoragePath()
+	if strings.HasSuffix(td, "/testdata") && strings.Contains(td, "test-photoprism") {
+		td = strings.TrimSuffix(td, "/testdata")
+		if err := os.RemoveAll(td); err != nil {
+			log.Fatalf("config: %s (cleantestfolder)", err.Error())
+		}
+		log.Debugf("config: cleaned up %s", td)
+	} else {
+		log.Warnf("config: %s not cleaned up", td)
 	}
 }
