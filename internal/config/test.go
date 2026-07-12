@@ -19,6 +19,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -26,6 +27,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -337,8 +339,9 @@ func NewTestConfig(dbName string) *Config {
 
 	var tp string
 	var err error
+
 	if tp, err = os.MkdirTemp(storagePath, "test-photoprism-*"); err != nil {
-		log.Fatalf("config: %s", err.Error())
+		log.Panicf("config: %s", clean.Error(err))
 	}
 
 	tp = filepath.Join(tp, fs.TestdataDir)
@@ -352,22 +355,22 @@ func NewTestConfig(dbName string) *Config {
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale(), c.DefaultTimezone().String())
 
-	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
-		log.Panicf("config: %s", err.Error())
+	if err = fs.MkdirAll(c.ConfigPath()); err != nil {
+		log.Panicf("config: %s", clean.Error(err))
 	}
 
 	// Save settings next to the test config path, reusing any existing
 	// `.yaml`/`.yml` variant so the tests mirror production behavior.
-	if err := s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
-		log.Panicf("config: %s", err.Error())
+	if err = s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
+		log.Panicf("config: %s", clean.Error(err))
 	}
 
-	if err := c.Init(); err != nil {
-		log.Panicf("config: %s", err.Error())
+	if err = c.Init(); err != nil {
+		log.Panicf("config: %s", clean.Error(err))
 	}
 
-	if err := c.InitializeTestData(); err != nil {
-		log.Errorf("config: %s", err.Error())
+	if err = c.InitializeTestData(); err != nil {
+		log.Errorf("config: %s", clean.Error(err))
 	}
 
 	c.RegisterDb()
@@ -635,20 +638,28 @@ func (c *Config) AssertTestData(t *testing.T) {
 	}
 }
 
-// CleanupTestFolder uses RemoveAll to remove the storage path above testdata.
+// CleanupTestFolder removes the isolated storage directory created by NewTestConfig.
+//
+// It only deletes paths matching the isolated layout "test-photoprism-*/testdata" so a
+// misconfigured StoragePath can never remove a real storage directory. A failed removal
+// is logged as a warning rather than aborting, so a teardown hiccup does not turn a
+// passing test run into a hard exit.
 func (c *Config) CleanupTestFolder() {
 	if c.options == nil {
-		log.Warn("config: c.options is nil in CleanupTestFolder")
+		event.SystemWarn([]string{"config", "test", "c.options is nil in CleanupTestFolder"})
 		return
 	}
+
 	td := c.StoragePath()
-	if strings.HasSuffix(td, "/testdata") && strings.Contains(td, "test-photoprism") {
-		td = strings.TrimSuffix(td, "/testdata")
-		if err := os.RemoveAll(td); err != nil {
-			log.Fatalf("config: %s (cleantestfolder)", err.Error())
+	parent := filepath.Dir(td)
+
+	if filepath.Base(td) == fs.TestdataDir && strings.HasPrefix(filepath.Base(parent), "test-photoprism") {
+		if err := os.RemoveAll(parent); err != nil {
+			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.Error(err))
+			return
 		}
-		log.Debugf("config: cleaned up %s", td)
+		event.SystemDebug([]string{"config", "test", "cleanup %s", status.Succeeded}, parent)
 	} else {
-		log.Warnf("config: %s not cleaned up", td)
+		event.SystemWarn([]string{"config", "test", "cleanup %s", "failed"}, td)
 	}
 }
