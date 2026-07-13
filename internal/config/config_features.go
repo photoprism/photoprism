@@ -87,9 +87,9 @@ func (c *Config) DisableFaces() bool {
 	return false
 }
 
-// XmpFaces checks if importing face regions and names from XMP metadata is enabled.
-func (c *Config) XmpFaces() bool {
-	return c.options.XmpFaces
+// XMPFaces checks if importing face regions and names from XMP metadata is enabled.
+func (c *Config) XMPFaces() bool {
+	return c.options.XMPFaces
 }
 
 // DisableClassification checks if image classification is disabled.

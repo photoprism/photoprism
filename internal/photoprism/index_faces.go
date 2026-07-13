@@ -67,7 +67,7 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 		return false, 0, fmt.Errorf("faces: file is nil")
 	}
 
-	importXmp := m != nil && Config().XmpFaces()
+	importXmp := m != nil && Config().XMPFaces()
 
 	if len(faces) == 0 && !importXmp {
 		return false, 0, nil

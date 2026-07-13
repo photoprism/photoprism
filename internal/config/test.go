@@ -423,6 +423,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("vision-api", config.VisionApi, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
+	globalSet.Bool("xmp-faces", config.XMPFaces, "doc")
 	globalSet.Bool("debug", false, "doc")
 	globalSet.Bool("sponsor", true, "doc")
 	globalSet.Bool("test", true, "doc")

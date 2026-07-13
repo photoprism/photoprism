@@ -336,7 +336,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
-		{"xmp-faces", fmt.Sprintf("%t", c.XmpFaces())},
+		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"face-engine", faceEngine},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 	}...)
@@ -384,7 +384,7 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 
 	rows = [][]string{
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
-		{"xmp-faces", fmt.Sprintf("%t", c.XmpFaces())},
+		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"vision-yaml", c.VisionYaml()},
 		{"face-engine", c.FaceEngine()},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},

@@ -134,7 +134,7 @@
 
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
-                v-model="settings.XmpFaces"
+                v-model="settings.XMPFaces"
                 :disabled="isDemo"
                 class="ma-0 pa-0 input-xmp-faces"
                 density="compact"

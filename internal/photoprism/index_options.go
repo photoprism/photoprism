@@ -53,7 +53,7 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 		result.DetectNsfw = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeNsfw, vision.RunOnIndex)
 		result.GenerateLabels = !facesOnly && c.VisionModelShouldRun(vision.ModelTypeLabels, vision.RunOnIndex)
 
-		result.ImportFaceTags = c.XmpFaces()
+		result.ImportFaceTags = c.XMPFaces()
 
 		result.ByteLimit = c.OriginalsLimitBytes()
 		result.ResolutionLimit = c.ResolutionLimit()

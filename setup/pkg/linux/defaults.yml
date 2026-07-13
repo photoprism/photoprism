@@ -22,5 +22,5 @@ DisableRaw: false
 RawPresets: false
 JpegQuality: 85
 DetectNSFW: false
-XmpFaces: true
+XMPFaces: true
 UploadNSFW: true
