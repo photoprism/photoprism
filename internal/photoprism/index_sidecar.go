@@ -1,43 +1,91 @@
 package photoprism
 
 import (
+	"path"
+	"sort"
+	"strings"
+
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// xmpSidecarChanged reports whether an XMP sidecar of the given media file is new or has a
-// different modification time than the value recorded at its last index pass. It lets the
-// indexer re-read externally edited sidecars (darktable, digiKam, …) on a normal incremental
-// pass, even when the primary media file itself is unchanged.
-//
-// The recorded "last parsed mtime" is the sidecar's own files.mod_time, loaded into the Files
-// cache by query.IndexedFiles, so an unchanged sidecar reads as indexed and a new or touched
-// one reads as changed.
-func (ind *Index) xmpSidecarChanged(mf *MediaFile, o IndexOptions) bool {
-	if mf == nil {
+// xmpPrimaryExts lists sorted main-media extensions for XMP primary lookup.
+var xmpPrimaryExts = mainFileExts()
+
+// mainFileExts returns sorted lowercase and uppercase main-media extensions.
+func mainFileExts() []string {
+	known := make(map[string]struct{}, len(fs.Extensions)*2)
+
+	for ext, fileType := range fs.Extensions {
+		if media.Formats[fileType].IsMain() {
+			known[strings.ToLower(ext)] = struct{}{}
+			known[strings.ToUpper(ext)] = struct{}{}
+		}
+	}
+
+	exts := make([]string, 0, len(known))
+
+	for ext := range known {
+		exts = append(exts, ext)
+	}
+
+	sort.Strings(exts)
+
+	return exts
+}
+
+// primaryForSidecar resolves an XMP primary from the originals Files cache.
+func (ind *Index) primaryForSidecar(relName string) string {
+	// Full-name convention: "tok/photo.jpg.xmp" -> "tok/photo.jpg".
+	if primary := fs.StripExt(relName); media.MainFile(primary) {
+		if ind.files.Exists(primary, entity.RootOriginals) && ind.sidecarPrimaryEnabled(primary) {
+			return primary
+		}
+
+		return ""
+	}
+
+	// Base-prefix convention: "tok/photo.xmp" -> "tok/photo.<mainext>".
+	dir := path.Dir(relName)
+	base := fs.BasePrefix(relName, false)
+	bases := []string{base, strings.ToLower(base), strings.ToUpper(base)}
+	seen := make(map[string]struct{}, len(bases))
+
+	for _, ext := range xmpPrimaryExts {
+		for _, candidateBase := range bases {
+			if _, ok := seen[candidateBase+ext]; ok {
+				continue
+			}
+
+			seen[candidateBase+ext] = struct{}{}
+			candidate := path.Join(dir, candidateBase+ext)
+
+			if ind.files.Exists(candidate, entity.RootOriginals) && ind.sidecarPrimaryEnabled(candidate) {
+				return candidate
+			}
+		}
+	}
+
+	return ""
+}
+
+// sidecarPrimaryEnabled reports whether a cached primary is enabled by the current config.
+func (ind *Index) sidecarPrimaryEnabled(relName string) bool {
+	fileType := fs.FileType(relName)
+
+	if !media.Formats[fileType].IsMain() {
 		return false
 	}
 
-	stripSequence := ind.conf.Settings().StackSequences()
-
-	// Resolve candidate sidecars next to the original, covering both the "IMG_1234.xmp" and
-	// "IMG_1234.jpg.xmp" naming conventions. Detection is scoped to the same location the indexer's
-	// RelatedFiles actually discovers and merges sidecars from; XMPs in the sidecar/hidden paths are
-	// never read during indexing, so probing them would falsely re-trigger on every pass.
-	xmpFiles := fs.SidecarXMP.FindAll(mf.FileName(), nil, ind.conf.OriginalsPath(), stripSequence)
-
-	for _, fileName := range xmpFiles {
-		f, err := NewMediaFileSkipResolve(fileName, fileName)
-
-		if err != nil {
-			continue
-		}
-
-		// Indexed returns false when no mtime is recorded yet (new sidecar) or the on-disk
-		// mtime differs from the recorded value (sidecar was updated).
-		if !ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan) {
-			return true
-		}
+	switch {
+	case (fileType == fs.ImageRaw || fileType == fs.ImageDng) && ind.conf.DisableRaw():
+		return false
+	case fileType == fs.ImageJpegXL && ind.conf.DisableJpegXL():
+		return false
+	case media.Formats[fileType] == media.Vector && ind.conf.DisableVectors():
+		return false
+	default:
+		return true
 	}
-
-	return false
 }

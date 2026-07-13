@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"runtime/debug"
+	"sort"
 	"sync"
 	"time"
 
@@ -170,8 +171,78 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		log.Infof(`index: ignored "%s"`, fs.RelName(fileName, originalsPath))
 	}
 
+	// enqueueRelated queues unprocessed related files as one indexing job.
+	enqueueRelated := func(mf *MediaFile) {
+		related, relErr := mf.RelatedFiles(ind.conf.Settings().StackSequences())
+
+		if relErr != nil {
+			log.Warnf("index: %s", relErr)
+			return
+		}
+
+		// Main media file is required to proceed.
+		if related.Main == nil {
+			return
+		}
+
+		var files MediaFiles
+		skip := false
+
+		// Check related files.
+		for _, f := range related.Files {
+			if found[f.FileName()].Processed() {
+				// Ignore already processed files.
+				continue
+			} else {
+				fileSize, limitErr := f.ExceedsBytes(o.ByteLimit)
+
+				switch {
+				case fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan):
+					// Flag file as found but not processed.
+					found[f.FileName()] = fs.Found
+					continue
+				case limitErr == nil:
+					// Add to file list.
+					files = append(files, f)
+				case related.Main.FileName() != f.FileName():
+					// Sidecar file is too large, ignore.
+					log.Infof("index: %s", limitErr)
+				default:
+					// Main file is too large, skip all.
+					log.Warnf("index: %s", limitErr)
+					skip = true
+				}
+			}
+
+			found[f.FileName()] = fs.Processed
+		}
+
+		found[mf.FileName()] = fs.Processed
+
+		// Skip if main file is too large or there are no files left to index.
+		if skip || len(files) == 0 {
+			return
+		}
+
+		updated += len(files)
+		related.Files = files
+
+		jobs <- IndexJob{
+			FileName: mf.FileName(),
+			Related:  related,
+			IndexOpt: o,
+			Ind:      ind,
+		}
+	}
+
+	changedXmpPrimaries := make(map[string]struct{})
+
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
+			if errors.Is(err, status.ErrCanceled) || errors.Is(err, status.ErrInsufficientStorage) {
+				return godirwalk.Halt
+			}
+
 			return godirwalk.SkipNode
 		},
 		Callback: func(fileName string, info *godirwalk.Dirent) error {
@@ -219,6 +290,17 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			found[fileName] = fs.Found
 
+			// Defer changed XMP sidecars until all main files have been visited.
+			if fs.FileType(fileName) == fs.SidecarXMP {
+				if !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
+					if primaryRel := ind.primaryForSidecar(relName); primaryRel != "" {
+						changedXmpPrimaries[primaryRel] = struct{}{}
+					}
+				}
+
+				return nil
+			}
+
 			if !media.MainFile(fileName) {
 				return nil
 			}
@@ -241,8 +323,8 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
-			// Skip already indexed, unless an XMP sidecar was updated since its last parse.
-			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) && !ind.xmpSidecarChanged(mf, o) {
+			// Skip already indexed?
+			if ind.files.Indexed(relName, entity.RootOriginals, mf.modTime, o.Rescan) {
 				return nil
 			}
 
@@ -264,74 +346,40 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				log.Warnf("index: %s", err)
 			}
 
-			// Find related files to index.
-			related, err := mf.RelatedFiles(ind.conf.Settings().StackSequences())
-
-			if err != nil {
-				log.Warnf("index: %s", err)
-				return nil
-			}
-
-			var files MediaFiles
-
-			// Main media file is required to proceed.
-			if related.Main == nil {
-				return nil
-			}
-
-			skip := false
-
-			// Check related files.
-			for _, f := range related.Files {
-				if found[f.FileName()].Processed() {
-					// Ignore already processed files.
-					continue
-				} else {
-					fileSize, limitErr := f.ExceedsBytes(o.ByteLimit)
-
-					switch {
-					case fileSize == 0 || ind.files.Indexed(f.RootRelName(), f.Root(), f.ModTime(), o.Rescan):
-						// Flag file as found but not processed.
-						found[f.FileName()] = fs.Found
-						continue
-					case limitErr == nil:
-						// Add to file list.
-						files = append(files, f)
-					case related.Main.FileName() != f.FileName():
-						// Sidecar file is too large, ignore.
-						log.Infof("index: %s", limitErr)
-					default:
-						// Main file is too large, skip all.
-						log.Warnf("index: %s", limitErr)
-						skip = true
-					}
-				}
-
-				found[f.FileName()] = fs.Processed
-			}
-
-			found[fileName] = fs.Processed
-
-			// Skip if main file is too large or there are no files left to index.
-			if skip || len(files) == 0 {
-				return nil
-			}
-
-			updated += len(files)
-			related.Files = files
-
-			jobs <- IndexJob{
-				FileName: mf.FileName(),
-				Related:  related,
-				IndexOpt: o,
-				Ind:      ind,
-			}
+			enqueueRelated(mf)
 
 			return nil
 		},
 		Unsorted:            false,
 		FollowSymbolicLinks: true,
 	})
+
+	// Queue sidecar-triggered jobs only after a complete, successful walk.
+	if err == nil && !mutex.IndexWorker.Canceled() {
+		primaries := make([]string, 0, len(changedXmpPrimaries))
+
+		for primaryRel := range changedXmpPrimaries {
+			primaries = append(primaries, primaryRel)
+		}
+
+		sort.Strings(primaries)
+
+		for _, primaryRel := range primaries {
+			if mutex.IndexWorker.Canceled() {
+				break
+			}
+
+			primaryAbs := filepath.Join(originalsPath, primaryRel)
+
+			if found[primaryAbs].Processed() {
+				continue
+			}
+
+			if mf, mediaErr := NewMediaFile(primaryAbs); mediaErr == nil {
+				enqueueRelated(mf)
+			}
+		}
+	}
 
 	close(jobs)
 	wg.Wait()

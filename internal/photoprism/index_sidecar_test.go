@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"sort"
 	"testing"
 	"time"
 
@@ -53,98 +54,190 @@ func writeSidecar(t *testing.T, path, content string, modUnix int64) {
 	}
 }
 
-func TestIndex_xmpSidecarChanged(t *testing.T) {
-	cfg := newIndexRelatedTestConfig(t, "index-sidecar-changed")
+func TestMainFileExts(t *testing.T) {
+	exts := mainFileExts()
+	assert.True(t, sort.StringsAreSorted(exts))
+	assert.Contains(t, exts, ".jpg")
+	assert.Contains(t, exts, ".JPG")
+	assert.NotContains(t, exts, ".xmp")
+	assert.NotContains(t, exts, ".XMP")
+}
+
+func TestIndex_sidecarPrimaryEnabled(t *testing.T) {
+	cfg := newIndexRelatedTestConfig(t, "index-sidecar-primary-enabled")
 	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
-	opt := IndexOptionsNone(cfg)
 
-	// Copy a primary file into an isolated originals subfolder.
-	token := rnd.Base36(8)
-	testPath := filepath.Join(cfg.OriginalsPath(), token)
-	jpgPath := filepath.Join(testPath, "photo.jpg")
-
-	src, err := NewMediaFile("testdata/2015-02-04.jpg")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err = src.Copy(jpgPath, false); err != nil {
-		t.Fatal(err)
-	}
-
-	mf, err := NewMediaFile(jpgPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	t.Run("NoSidecar", func(t *testing.T) {
-		assert.False(t, ind.xmpSidecarChanged(mf, opt))
+	t.Run("Jpeg", func(t *testing.T) {
+		assert.True(t, ind.sidecarPrimaryEnabled("photo.jpg"))
 	})
-
-	xmpPath := filepath.Join(testPath, "photo.xmp")
-	writeSidecar(t, xmpPath, xmpSidecarDoc("T", "C", "", ""), 1700000000)
-
-	xf, err := NewMediaFileSkipResolve(xmpPath, xmpPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	t.Run("NewSidecar", func(t *testing.T) {
-		// No mtime recorded yet ⇒ treated as needing a parse.
-		assert.True(t, ind.xmpSidecarChanged(mf, opt))
+	t.Run("Unknown", func(t *testing.T) {
+		assert.False(t, ind.sidecarPrimaryEnabled("photo.unknown"))
 	})
-	t.Run("Unchanged", func(t *testing.T) {
-		// Record the sidecar's current mtime, then it must read as unchanged.
-		ind.files.Ignore(xf.RootRelName(), xf.Root(), xf.ModTime(), false)
-		assert.False(t, ind.xmpSidecarChanged(mf, opt))
+	t.Run("DisabledRaw", func(t *testing.T) {
+		cfg.Options().DisableRaw = true
+		assert.False(t, ind.sidecarPrimaryEnabled("photo.nef"))
 	})
-	t.Run("Changed", func(t *testing.T) {
-		// Advance the sidecar's mtime past the recorded value.
-		stamp := time.Unix(1700000060, 0)
-		if err = os.Chtimes(xmpPath, stamp, stamp); err != nil {
-			t.Fatal(err)
-		}
-		assert.True(t, ind.xmpSidecarChanged(mf, opt))
+	t.Run("DisabledJpegXL", func(t *testing.T) {
+		cfg.Options().DisableJpegXL = true
+		assert.False(t, ind.sidecarPrimaryEnabled("photo.jxl"))
 	})
-	t.Run("NilMediaFile", func(t *testing.T) {
-		assert.False(t, ind.xmpSidecarChanged(nil, opt))
+	t.Run("DisabledVector", func(t *testing.T) {
+		cfg.Options().DisableVectors = true
+		assert.False(t, ind.sidecarPrimaryEnabled("photo.svg"))
 	})
 }
 
-func TestIndex_xmpSidecarChanged_SidecarPathIgnored(t *testing.T) {
-	cfg := newIndexRelatedTestConfig(t, "index-sidecar-path")
+func TestIndex_primaryForSidecar(t *testing.T) {
+	cfg := newIndexRelatedTestConfig(t, "index-primary-for-sidecar")
 	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
-	opt := IndexOptionsNone(cfg)
+	modTime := time.Unix(1700000000, 0)
 
+	// Seed the Files cache with indexed primaries directly (no filesystem access needed).
+	seed := func(relName, root string) {
+		ind.files.Ignore(relName, root, modTime, false)
+	}
+	seed("tok/photo.jpg", entity.RootOriginals)
+	seed("tok/pic.jpeg", entity.RootOriginals)
+	seed("root.JPG", entity.RootOriginals)
+	seed("clip.mp4", entity.RootOriginals)
+	seed("case/Photo.JPG", entity.RootOriginals)
+	seed("case/lower.JPG", entity.RootOriginals)
+	seed("case/UPPER.jpg", entity.RootOriginals)
+	seed("same/multi.jpg", entity.RootOriginals)
+	seed("same/multi.nef", entity.RootOriginals)
+	seed("fallback/orphan.nef", entity.RootOriginals)
+	seed("disabled/capture.nef", entity.RootOriginals)
+	seed("disabled/full.nef", entity.RootOriginals)
+	seed("disabled/full.jpg", entity.RootOriginals)
+	seed("disabled/wide.jxl", entity.RootOriginals)
+	seed("disabled/art.svg", entity.RootOriginals)
+	seed("side/only.jpg", entity.RootSidecar)
+
+	t.Run("FullNameConvention", func(t *testing.T) {
+		// "tok/photo.jpg.xmp" -> "tok/photo.jpg" by stripping the trailing extension.
+		assert.Equal(t, "tok/photo.jpg", ind.primaryForSidecar("tok/photo.jpg.xmp"))
+	})
+	t.Run("BasePrefixConvention", func(t *testing.T) {
+		// "tok/photo.xmp" -> "tok/photo.jpg" via the candidate-extension scan.
+		assert.Equal(t, "tok/photo.jpg", ind.primaryForSidecar("tok/photo.xmp"))
+	})
+	t.Run("BasePrefixJpeg", func(t *testing.T) {
+		assert.Equal(t, "tok/pic.jpeg", ind.primaryForSidecar("tok/pic.xmp"))
+	})
+	t.Run("RootLevelImage", func(t *testing.T) {
+		assert.Equal(t, "root.JPG", ind.primaryForSidecar("root.xmp"))
+	})
+	t.Run("RootLevelVideo", func(t *testing.T) {
+		assert.Equal(t, "clip.mp4", ind.primaryForSidecar("clip.xmp"))
+	})
+	t.Run("ExactBaseCase", func(t *testing.T) {
+		assert.Equal(t, "case/Photo.JPG", ind.primaryForSidecar("case/Photo.xmp"))
+	})
+	t.Run("LowercaseBaseVariant", func(t *testing.T) {
+		assert.Equal(t, "case/lower.JPG", ind.primaryForSidecar("case/LOWER.xmp"))
+	})
+	t.Run("UppercaseBaseVariant", func(t *testing.T) {
+		assert.Equal(t, "case/UPPER.jpg", ind.primaryForSidecar("case/upper.xmp"))
+	})
+	t.Run("MultipleCandidates", func(t *testing.T) {
+		// The resolver only selects a deterministic group entry; RelatedFiles chooses the main.
+		assert.Equal(t, "same/multi.jpg", ind.primaryForSidecar("same/multi.xmp"))
+	})
+	t.Run("OrphanSidecar", func(t *testing.T) {
+		assert.Equal(t, "", ind.primaryForSidecar("tok/missing.xmp"))
+	})
+	t.Run("FullNameOrphanDoesNotFallback", func(t *testing.T) {
+		assert.Equal(t, "", ind.primaryForSidecar("fallback/orphan.jpg.xmp"))
+	})
+	t.Run("SidecarRootIgnored", func(t *testing.T) {
+		// A primary indexed only under the sidecar root must not match originals-scoped detection.
+		assert.Equal(t, "", ind.primaryForSidecar("side/only.xmp"))
+	})
+	t.Run("DisabledRaw", func(t *testing.T) {
+		cfg.Options().DisableRaw = true
+		assert.Equal(t, "", ind.primaryForSidecar("disabled/capture.xmp"))
+		assert.Equal(t, "", ind.primaryForSidecar("disabled/capture.nef.xmp"))
+		assert.Equal(t, "", ind.primaryForSidecar("disabled/full.nef.xmp"))
+	})
+	t.Run("DisabledJpegXL", func(t *testing.T) {
+		cfg.Options().DisableJpegXL = true
+		assert.Equal(t, "", ind.primaryForSidecar("disabled/wide.xmp"))
+		assert.Equal(t, "", ind.primaryForSidecar("disabled/wide.jxl.xmp"))
+	})
+	t.Run("DisabledVector", func(t *testing.T) {
+		cfg.Options().DisableVectors = true
+		assert.Equal(t, "", ind.primaryForSidecar("disabled/art.xmp"))
+		assert.Equal(t, "", ind.primaryForSidecar("disabled/art.svg.xmp"))
+	})
+}
+
+func TestIndex_Start_XmpSidecarAfterWalk(t *testing.T) {
+	// Register a test-only main extension that sorts after .xmp.
+	const testExt = ".zzz"
+	previousType, typeExisted := fs.Extensions[testExt]
+	previousPrimaryExts := xmpPrimaryExts
+	fs.Extensions[testExt] = fs.ImageJpeg
+	xmpPrimaryExts = mainFileExts()
+	t.Cleanup(func() {
+		if typeExisted {
+			fs.Extensions[testExt] = previousType
+		} else {
+			delete(fs.Extensions, testExt)
+		}
+		xmpPrimaryExts = previousPrimaryExts
+	})
+
+	cfg := newIndexRelatedTestConfig(t, "index-sidecar-after-walk")
+	prevConf := Config()
+	SetConfig(cfg)
+	defer SetConfig(prevConf)
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	opt := NewIndexOptions("/", false, false, false, false, false, cfg)
 	token := rnd.Base36(8)
-	jpgPath := filepath.Join(cfg.OriginalsPath(), token, "photo.jpg")
+	testPath := filepath.Join(cfg.OriginalsPath(), token)
+	jpgPath := filepath.Join(testPath, "photo"+testExt)
+	xmpPath := filepath.Join(testPath, "photo.xmp")
 
-	src, err := NewMediaFile("testdata/2015-02-04.jpg")
+	src, err := NewMediaFile("testdata/apple-test-2.jpg")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err = src.Copy(jpgPath, false); err != nil {
 		t.Fatal(err)
 	}
-	mf, err := NewMediaFile(jpgPath)
-	if err != nil {
+
+	writeSidecar(t, xmpPath, xmpSidecarDoc("Title One", "Caption One", "", ""), 1700000000)
+	stamp := time.Unix(1700000000, 0)
+	if err = os.Chtimes(jpgPath, stamp, stamp); err != nil {
+		t.Fatal(err)
+	}
+	if _, updated := ind.Start(opt); updated != 2 {
+		t.Fatalf("expected initial related job to process 2 files, got %d", updated)
+	}
+
+	// photo.xmp sorts before photo.zzz, so the second pass exercises deferred sidecar handling.
+	writeSidecar(t, xmpPath, xmpSidecarDoc("Title Two", "Caption Two", "", ""), 1700000100)
+	stamp = time.Unix(1700000100, 0)
+	if err = os.Chtimes(jpgPath, stamp, stamp); err != nil {
 		t.Fatal(err)
 	}
 
-	// A new XMP in the dedicated sidecar path (not next to the original) must be ignored, since the
-	// indexer's RelatedFiles never reads it — otherwise detection would re-trigger on every pass.
-	sidecarXmp := filepath.Join(cfg.SidecarPath(), token, "photo.xmp")
-	if err = os.MkdirAll(filepath.Dir(sidecarXmp), fs.ModeDir); err != nil {
-		t.Fatal(err)
+	found, updated := ind.Start(opt)
+	assert.Equal(t, 2, updated)
+	assert.True(t, found[jpgPath].Processed())
+	assert.True(t, found[xmpPath].Processed())
+
+	var file entity.File
+	if dbErr := entity.UnscopedDb().First(&file, "file_name = ?", filepath.Join(token, "photo"+testExt)).Error; dbErr != nil {
+		t.Fatal(dbErr)
 	}
-	writeSidecar(t, sidecarXmp, xmpSidecarDoc("T", "C", "", ""), 1700000000)
-	t.Run("SidecarPathIgnored", func(t *testing.T) {
-		assert.False(t, ind.xmpSidecarChanged(mf, opt))
-	})
-	t.Run("OriginalsAdjacentDetected", func(t *testing.T) {
-		// Sanity check: an adjacent sidecar is still detected.
-		writeSidecar(t, filepath.Join(cfg.OriginalsPath(), token, "photo.xmp"), xmpSidecarDoc("T", "C", "", ""), 1700000000)
-		assert.True(t, ind.xmpSidecarChanged(mf, opt))
-	})
+	photo, dbErr := query.PhotoByUID(file.PhotoUID)
+	if dbErr != nil {
+		t.Fatal(dbErr)
+	}
+	assert.Equal(t, "Caption Two", photo.PhotoCaption)
+	assert.Equal(t, entity.SrcXmp, photo.CaptionSrc)
 }
 
 func TestIndex_Start_XmpSidecarReread(t *testing.T) {
@@ -203,15 +296,19 @@ func TestIndex_Start_XmpSidecarReread(t *testing.T) {
 		return f
 	}
 
-	// Pass 1: initial index with a valid sidecar. The GPS coordinates differ from the JPEG's
-	// embedded EXIF GPS so the assertions prove the sidecar (src: xmp) wins over src: meta.
-	writeSidecar(t, xmpPath, xmpSidecarDoc("Title One", "Caption One", "35.6762", "139.6503"), 1700000000)
-
+	// Pass 0: index the primary while no sidecar exists yet.
 	if _, updated := ind.Start(opt); updated == 0 {
 		t.Fatal("expected initial index to process at least one file")
 	}
 
-	t.Run("InitialXmpApplied", func(t *testing.T) {
+	// Pass 1: a sidecar added next to the already-indexed, otherwise-unchanged primary must be
+	// detected and merged on a plain incremental run, without a forced rescan. The GPS coordinates
+	// differ from the JPEG's embedded EXIF GPS so the assertions prove the sidecar (src: xmp) wins
+	// over src: meta.
+	t.Run("NewSidecarDetectedAndApplied", func(t *testing.T) {
+		writeSidecar(t, xmpPath, xmpSidecarDoc("Title One", "Caption One", "35.6762", "139.6503"), 1700000000)
+		_, updated := ind.Start(opt)
+		assert.Greater(t, updated, 0)
 		p := reloadPhoto()
 		assert.Equal(t, "Caption One", p.PhotoCaption)
 		assert.Equal(t, entity.SrcXmp, p.CaptionSrc)
@@ -242,7 +339,7 @@ func TestIndex_Start_XmpSidecarReread(t *testing.T) {
 	// Manual edits: set the title and caption from the UI (src: manual).
 	if dbErr := entity.UnscopedDb().Model(&entity.Photo{}).
 		Where("photo_uid = ?", reloadPhoto().PhotoUID).
-		Updates(map[string]interface{}{
+		Updates(entity.Values{
 			"photo_title":   "Manual Title",
 			"title_src":     entity.SrcManual,
 			"photo_caption": "Manual Caption",
@@ -267,47 +364,81 @@ func TestIndex_Start_XmpSidecarReread(t *testing.T) {
 		assert.Equal(t, int64(1700000200), xmpRow().ModTime)
 	})
 
-	// Pass 5: a malformed sidecar must not change metadata or advance the recorded mtime.
-	t.Run("MalformedSidecarNotAdvanced", func(t *testing.T) {
+	// Pass 5: a malformed sidecar records the parse error and advances its mtime to the on-disk
+	// value, so it is retried only when edited again (not on every pass) and already-merged
+	// metadata is left untouched.
+	t.Run("MalformedSidecarRecordsError", func(t *testing.T) {
 		writeSidecar(t, xmpPath, "<x:xmpmeta>this is not valid xml", 1700000300)
-		_, _ = ind.Start(opt)
+		_, updated := ind.Start(opt)
+		assert.Greater(t, updated, 0)
 		p := reloadPhoto()
 		assert.Equal(t, "Manual Caption", p.PhotoCaption)
 		assert.InDelta(t, 48.858, p.PhotoLat, 0.01)
 		row := xmpRow()
-		// mod_time stays at the last successful parse so a fixed file is retried.
-		assert.Equal(t, int64(1700000200), row.ModTime)
+		// mtime advances to the on-disk value and the parse error is recorded.
+		assert.Equal(t, int64(1700000300), row.ModTime)
 		assert.NotEqual(t, "", row.FileError)
 	})
 
-	// Pass 6: a fixed sidecar carrying an unsupported tag (xmp:Rating) is retried, parses without
-	// error, advances the recorded mtime, and changes no PhotoPrism field (the rating is ignored).
-	t.Run("UnsupportedTagIgnoredAndRetried", func(t *testing.T) {
-		ratingDoc := `<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
- <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <rdf:Description rdf:about=""
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
-    xmlns:exif="http://ns.adobe.com/exif/1.0/">
-   <xmp:Rating>4</xmp:Rating>
-   <dc:description>Caption Four</dc:description>
-   <exif:GPSLatitude>48.8583701</exif:GPSLatitude>
-   <exif:GPSLatitudeRef>N</exif:GPSLatitudeRef>
-   <exif:GPSLongitude>2.2944813</exif:GPSLongitude>
-   <exif:GPSLongitudeRef>E</exif:GPSLongitudeRef>
-  </rdf:Description>
- </rdf:RDF>
-</x:xmpmeta>`
-		writeSidecar(t, xmpPath, ratingDoc, 1700000400)
+	// Pass 6: the unchanged malformed sidecar must not be retried on every incremental run.
+	t.Run("UnchangedMalformedSidecarSkipped", func(t *testing.T) {
+		_, updated := ind.Start(opt)
+		assert.Equal(t, 0, updated)
+		row := xmpRow()
+		assert.Equal(t, int64(1700000300), row.ModTime)
+		assert.NotEqual(t, "", row.FileError)
+	})
+
+	// Pass 7: changing the malformed file makes it eligible again and clears the stored error.
+	t.Run("FixedSidecarClearsError", func(t *testing.T) {
+		writeSidecar(t, xmpPath, xmpSidecarDoc("Title Four", "Caption Four", "51.5007", "0.1246"), 1700000400)
 		_, updated := ind.Start(opt)
 		assert.Greater(t, updated, 0)
 		p := reloadPhoto()
-		// Manual title/caption stay; no field is set from the rating tag.
+		// Manual title and caption stay while the non-manual location is updated.
 		assert.Equal(t, "Manual Title", p.PhotoTitle)
 		assert.Equal(t, "Manual Caption", p.PhotoCaption)
+		assert.InDelta(t, 51.5007, p.PhotoLat, 0.01)
 		row := xmpRow()
-		// Valid parse ⇒ error cleared and mtime advanced (the previously malformed file was retried).
 		assert.Equal(t, "", row.FileError)
 		assert.Equal(t, int64(1700000400), row.ModTime)
 	})
+}
+
+func TestIndex_Start_XmpSidecarScope(t *testing.T) {
+	cfg := newIndexRelatedTestConfig(t, "index-sidecar-scope")
+	prevConf := Config()
+	SetConfig(cfg)
+	defer SetConfig(prevConf)
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	opt := NewIndexOptions("/", false, false, false, false, false, cfg)
+	token := rnd.Base36(8)
+	testPath := filepath.Join(cfg.OriginalsPath(), token)
+	jpgPath := filepath.Join(testPath, "photo.jpg")
+
+	src, err := NewMediaFile("testdata/apple-test-2.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = src.Copy(jpgPath, false); err != nil {
+		t.Fatal(err)
+	}
+	if _, updated := ind.Start(opt); updated == 0 {
+		t.Fatal("expected initial index to process the primary")
+	}
+
+	dedicatedPath := filepath.Join(cfg.SidecarPath(), token)
+	hiddenPath := filepath.Join(cfg.OriginalsPath(), fs.PPHiddenPathname, token)
+	if err = os.MkdirAll(dedicatedPath, fs.ModeDir); err != nil {
+		t.Fatal(err)
+	}
+	if err = os.MkdirAll(hiddenPath, fs.ModeDir); err != nil {
+		t.Fatal(err)
+	}
+	writeSidecar(t, filepath.Join(dedicatedPath, "photo.xmp"), xmpSidecarDoc("Dedicated", "Dedicated", "", ""), 1700000000)
+	writeSidecar(t, filepath.Join(hiddenPath, "photo.xmp"), xmpSidecarDoc("Hidden", "Hidden", "", ""), 1700000000)
+
+	_, updated := ind.Start(opt)
+	assert.Equal(t, 0, updated)
 }
