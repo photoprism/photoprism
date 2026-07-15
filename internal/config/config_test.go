@@ -38,7 +38,7 @@ func runTestMain(m *testing.M) int {
 	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
-		os.Exit(1)
+		return 1
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 

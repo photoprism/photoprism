@@ -12,27 +12,30 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	os.Exit(runTestMain(m))
+}
+
+func runTestMain(m *testing.M) (code int) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)
+	// Remove temporary SQLite files after running the tests.
+	defer fs.PurgeTestDbFiles(".", false)
 
 	caller := "internal/entity/migrate/migratation_test.go/TestMain"
 	dbc, _, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
-		os.Exit(1)
+		return 1
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
-	code := m.Run()
+	code = m.Run()
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
-	// Remove temporary SQLite files after running the tests.
-	fs.PurgeTestDbFiles(".", false)
-
-	os.Exit(code)
+	return code
 }
