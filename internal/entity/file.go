@@ -81,8 +81,8 @@ type File struct {
 	FileMainColor      string         `gorm:"type:bytes;size:16;" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors         string         `gorm:"type:bytes;size:18;" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance      string         `gorm:"type:bytes;size:18;" json:"Luminance" yaml:"Luminance,omitempty"`
-	FileDiff           int            `gorm:"default:-1;" json:"Diff" yaml:"Diff,omitempty"`
-	FileChroma         int16          `gorm:"default:0;" json:"Chroma" yaml:"Chroma,omitempty"`
+	FileDiff           int            `json:"Diff" yaml:"Diff,omitempty"`
+	FileChroma         int16          `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileSoftware       string         `gorm:"size:64" json:"Software" yaml:"Software,omitempty"`
 	FileError          string         `gorm:"type:bytes;size:512;index;" json:"Error" yaml:"Error,omitempty"`
 	ModTime            int64          `json:"ModTime" yaml:"-"`

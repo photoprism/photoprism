@@ -31,7 +31,7 @@ var DialectPostgres = Migrations{
 		ID:         "20260615-000001",
 		Dialect:    "postgres",
 		Stage:      "main",
-		Statements: []string{"ALTER TABLE files ALTER COLUMN file_diff SET DEFAULT -1;", "ALTER TABLE files ALTER COLUMN file_chroma SET DEFAULT 0;"},
+		Statements: []string{"ALTER TABLE files ALTER COLUMN file_diff SET DEFAULT -1;", "ALTER TABLE files ALTER COLUMN file_chroma SET DEFAULT -1;"},
 	},
 	{
 		ID:         "20260711-000001",
