@@ -14,12 +14,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
-	os.Exit(runMain(m))
+	os.Exit(runTestMain(m))
 }
 
-// runMain initializes package-level test state and returns the test exit code.
-func runMain(m *testing.M) (code int) {
+func runTestMain(m *testing.M) (code int) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
@@ -44,7 +44,7 @@ func runMain(m *testing.M) (code int) {
 	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
-		os.Exit(1)
+		return 1
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
@@ -52,10 +52,11 @@ func runMain(m *testing.M) (code int) {
 	dsn.SetDSNToEnv(dsname)
 
 	c := config.NewTestConfig("photoprism")
+	config.OnceTestConfig(c)
 	SetConfig(c)
 
 	code = 999
-
+	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
 			log.Errorf("close db: %v", err)

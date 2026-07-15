@@ -27,11 +27,12 @@ var savedPath string
 // and re-registers the DB provider before each command invocation. If you see
 // "config: database not connected" during test runs, consider moving shutdown
 // behavior behind an interface or gating it for tests.
+// TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
-	os.Exit(testMain(m))
+	os.Exit(runTestMain(m))
 }
 
-func testMain(m *testing.M) (code int) {
+func runTestMain(m *testing.M) (code int) {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	log = logrus.StandardLogger()
@@ -45,7 +46,7 @@ func testMain(m *testing.M) (code int) {
 	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
-		os.Exit(1)
+		return 1
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
@@ -57,8 +58,18 @@ func testMain(m *testing.M) (code int) {
 		panic(err)
 	}
 	savedPath = tempDir
+	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
+	defer c.CleanupTestFolder()
+	defer func() {
+		if err := c.CloseDb(); err != nil {
+			log.Warnf("close db: %v", err)
+		}
+		// Remove temporary SQLite files after running the tests.
+		fs.PurgeTestDbFiles(".", false)
+	}()
+
 	get.SetConfig(c)
 
 	// Keep DB connection open for the duration of this package's tests to
@@ -82,15 +93,6 @@ func testMain(m *testing.M) (code int) {
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	if err = c.CloseDb(); err != nil {
-		log.Warnf("close db: %v", err)
-	}
-
-	_ = os.RemoveAll(tempDir)
-
-	// Remove temporary SQLite files after running the tests.
-	fs.PurgeTestDbFiles(".", false)
 
 	return code
 }

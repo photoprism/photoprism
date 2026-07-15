@@ -24,11 +24,12 @@ func init() {
 	hub.ApplyTestConfig()
 }
 
+// TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
-	os.Exit(testMain(m))
+	os.Exit(runTestMain(m))
 }
 
-func testMain(m *testing.M) (code int) {
+func runTestMain(m *testing.M) int {
 	_ = os.Setenv("PHOTOPRISM_TEST", "true")
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
@@ -45,20 +46,20 @@ func testMain(m *testing.M) (code int) {
 	dsn.SetDSNToEnv(dsname)
 
 	c := TestConfig()
+	defer c.CleanupTestFolder()
+	defer func() {
+		if err := c.CloseDb(); err != nil {
+			log.Warnf("close db: %v", err)
+		}
+		// Remove temporary SQLite files after running the tests.
+		fs.PurgeTestDbFiles(".", false)
+	}()
 
 	beforeTimestamp := time.Now().UTC()
-	code = m.Run()
+	code := m.Run()
 	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	// Remove temporary SQLite files after running the tests.
-	if err := c.CloseDb(); err != nil {
-		log.Warnf("close db: %v", err)
-	}
-
-	fs.PurgeTestDbFiles(".", false)
-
 	return code
 }
 
@@ -339,7 +340,7 @@ func TestConfig_ThemePath(t *testing.T) {
 }
 
 func TestConfig_Serial(t *testing.T) {
-	c := NewConfig(CliTestContext())
+	c := TestConfig() // Use complete test context, as NewConfig may not have the required file.
 
 	result := c.Serial()
 

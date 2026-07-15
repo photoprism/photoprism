@@ -43,6 +43,6 @@ func TestCachePath(t *testing.T) {
 		assert.Equal(t, expected, result)
 		assert.DirExists(t, expected)
 
-		_ = os.Remove(expected)
+		_ = os.RemoveAll(filepath.Join(os.TempDir(), ns))
 	})
 }

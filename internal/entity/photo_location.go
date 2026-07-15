@@ -366,7 +366,7 @@ func (m *Photo) UpdateLocation() (keywords []string, labels classify.Labels) {
 			// Empty or unknown S2 cell id... should not happen, unless coordinates are invalid.
 			log.Warnf("photo: unknown cell id for lat %f, lng %f (uid %s)", m.PhotoLat, m.PhotoLng, m.PhotoUID)
 		} else if err := loc.Find(GeoApi); err != nil {
-			log.Errorf("photo: %s (find location)", err)
+			log.Warnf("photo: %s (find location)", err)
 		} else if loc.Place == nil {
 			log.Warnf("photo: failed fetching geo data (uid %s, cell %s)", m.PhotoUID, loc.ID)
 		} else if loc.ID != UnknownLocation.ID {

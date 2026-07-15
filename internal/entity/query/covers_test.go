@@ -16,6 +16,7 @@ func TestUpdateAlbumManualCovers(t *testing.T) {
 func TestUpdateAlbumManualCoversFiltered(t *testing.T) {
 	var album entity.Album
 
+	assert.NoError(t, UpdateAlbumManualCovers())
 	if err := UnscopedDb().Where("album_type = ? AND thumb_src = ? AND thumb <> ''", entity.AlbumManual, entity.SrcAuto).First(&album).Error; err != nil {
 		t.Skipf("no auto-managed manual album available: %v", err)
 	}

@@ -501,6 +501,15 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcXmp)
 			photo.SetCameraSerial(data.CameraSerial)
 
+			// Resolve the S2 cell when XMP provides GPS coordinates so subsequent
+			// re-indexes find the cell in the local DB and do not trigger a live
+			// geocoding request.
+			if data.Lat != 0 || data.Lng != 0 {
+				var locLabels classify.Labels
+				locKeywords, locLabels = photo.UpdateLocation()
+				labels = append(labels, locLabels...)
+			}
+
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcXmp)
 			details.SetNotes(data.Notes, entity.SrcXmp)

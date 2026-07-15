@@ -104,7 +104,7 @@ func TestThumb_Filename(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, strings.HasSuffix(filename, "/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
+		assert.True(t, strings.HasSuffix(filename, "/testdata/"+dsn.PhotoPrismTestToFolderName()+"/cache/_tmp/9/9/9/99988_150x150_fit.jpg"))
 	})
 	t.Run("InvalidHash", func(t *testing.T) {
 		_, err := thumb.FileName("999", thumbsPath, 150, 150, thumb.ResampleFit, thumb.ResampleNearestNeighbor)

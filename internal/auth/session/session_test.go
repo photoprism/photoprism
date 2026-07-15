@@ -14,7 +14,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
+	os.Exit(runTestMain(m))
+}
+
+func runTestMain(m *testing.M) int {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
@@ -23,7 +28,7 @@ func TestMain(m *testing.M) {
 	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
-		os.Exit(1)
+		return 1
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
@@ -31,6 +36,14 @@ func TestMain(m *testing.M) {
 	dsn.SetDSNToEnv(dsname)
 
 	c := config.TestConfig()
+	defer c.CleanupTestFolder()
+	defer func() {
+		if err := c.CloseDb(); err != nil {
+			log.Warnf("close db: %v", err)
+		}
+		// Remove temporary SQLite files after running the tests.
+		fs.PurgeTestDbFiles(".", false)
+	}()
 
 	beforeTimestamp := time.Now().UTC()
 	code := m.Run()
@@ -38,12 +51,5 @@ func TestMain(m *testing.M) {
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
-	// Remove temporary SQLite files after running the tests.
-	if err := c.CloseDb(); err != nil {
-		log.Warnf("close db: %v", err)
-	}
-
-	fs.PurgeTestDbFiles(".", false)
-
-	os.Exit(code)
+	return code
 }

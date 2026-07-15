@@ -62,7 +62,7 @@ func Cell(id string, locale string) (result Location, err error) {
 
 	// Failed?
 	if err != nil {
-		log.Errorf("places: location request to %s failed (%s)", serviceHost(reqUrl), safeError(err))
+		log.Warnf("places: location request to %s failed (%s)", serviceHost(reqUrl), safeError(err))
 		return result, err
 	} else if r == nil {
 		err = fmt.Errorf("location request could not be performed")

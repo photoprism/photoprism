@@ -17,9 +17,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
+	os.Exit(runTestMain(m))
+}
+
+func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)
+	// Remove temporary SQLite files after running the tests.
+	defer fs.PurgeTestDbFiles(".", false)
 
 	// Init test logger.
 	log := logrus.StandardLogger()
@@ -30,7 +37,7 @@ func TestMain(m *testing.M) {
 	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
 	if err != nil {
 		log.Error("FAIL")
-		os.Exit(1)
+		return 1
 	}
 	defer testextras.UnlockDBMutex(dbc.Db())
 
@@ -42,10 +49,8 @@ func TestMain(m *testing.M) {
 
 	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
-	// Remove temporary SQLite files after running the tests.
-	fs.PurgeTestDbFiles(".", false)
-
-	os.Exit(code)
+	// Run unit tests.
+	return code
 }
 
 func TestClientRegistry_GetAndDelete(t *testing.T) {
