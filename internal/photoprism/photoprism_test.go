@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
@@ -22,20 +21,6 @@ func TestMain(m *testing.M) {
 func runTestMain(m *testing.M) (code int) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
-
-	// Isolate package fixtures per process so parallel package test runs do not
-	// race on shared storage/testdata directories.
-	testRoot, err := os.MkdirTemp("", "photoprism-test-*")
-	if err != nil {
-		log.Errorf("create test root: %v", err)
-		return 1
-	}
-	defer os.RemoveAll(testRoot)
-
-	if err = os.Setenv("PHOTOPRISM_STORAGE_PATH", filepath.Join(testRoot, "storage")); err != nil {
-		log.Errorf("set PHOTOPRISM_STORAGE_PATH: %v", err)
-		return 1
-	}
 
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)

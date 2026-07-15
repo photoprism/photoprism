@@ -18,7 +18,7 @@ import (
 
 // Stores the number of test databases that are supported.
 // The MariaDB scripts/sql/mariadb/reset-testdb.sql and PostgreSQL scripts/sql/postgres/reset-testdb.sql scripts need to create this number of databases.
-const dbCount = 1
+const dbCount = 8
 
 // dbID holds the database identifier number for this instance
 var dbID int

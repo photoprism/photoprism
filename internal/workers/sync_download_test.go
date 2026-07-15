@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/stretchr/testify/assert"
 
@@ -57,7 +56,7 @@ func TestSync_downloadPath(t *testing.T) {
 	worker := NewSync(conf)
 
 	assert.IsType(t, &Sync{}, worker)
-	assert.True(t, strings.HasSuffix(worker.downloadPath(), "testdata/"+dsn.PhotoPrismTestToFolderName()+"/temp/sync"))
+	assert.True(t, strings.HasSuffix(worker.downloadPath(), "testdata/temp/sync"))
 }
 
 func TestSync_relatedDownloads(t *testing.T) {
