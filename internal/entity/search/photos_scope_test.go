@@ -65,12 +65,37 @@ const (
 	scopePrivatePhotoUID = "ps6sg6be2lvl0y13"                         // "Photo06", private
 	scopeNormalFileHash  = "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818" // file of a non-private photo
 	scopePrivateFileHash = "pcad9a68fa6acc5c5ba965adf6ec465ca42fd917" // "Photo06.png", private photo
+
+	// scopeFolderPhotoUID and scopeFolderFileHash belong to the "april-1990" folder (smart) album,
+	// whose members derive from a path filter rather than photos_albums rows.
+	scopeFolderPhotoUID = "ps6sg6be2lvl0yh0"                         // "Photo03", public, path 1990/04
+	scopeFolderFileHash = "pcad9168fa6acc5c5c2965adf6ec465ca42fd818" // primary file of "Photo03"
+
+	// scopeRegularPhotoUID is a non-private member of the regular album shared by scopeRegularShareToken;
+	// it is resolved by the personal-scope predicate without the smart-album fallback.
+	scopeRegularPhotoUID = "ps6sg6be2lvl0y21" // photos_albums member of "christmas-2030"
+
+	// Share-link tokens resolve to shared albums; a visitor session derives its shares from them.
+	//nolint:gosec // G101: deterministic fixture share-link tokens for tests only.
+	scopeFolderShareToken = "8jxf3jfn2k" // link to "april-1990" folder album (contains 1990/04)
+	//nolint:gosec // G101: deterministic fixture share-link tokens for tests only.
+	scopeStateShareToken = "9jxf3jfn2k" // link to "california-usa" state album (excludes 1990/04)
+	//nolint:gosec // G101: deterministic fixture share-link tokens for tests only.
+	scopeRegularShareToken = "4jxf3jfn2k" // link to "christmas-2030" regular album (no filter)
 )
 
 // scopeSession builds an in-memory session for the named user fixture.
 func scopeSession(name string) *entity.Session {
 	s := &entity.Session{}
 	s.SetUser(entity.UserFixtures.Pointer(name))
+	return s
+}
+
+// scopeVisitorWithShares builds an unregistered visitor session that has redeemed the given share
+// link tokens, so its SharedUIDs resolve from the matching links exactly as in production.
+func scopeVisitorWithShares(tokens ...string) *entity.Session {
+	s := &entity.Session{}
+	s.SetData(&entity.SessionData{Tokens: tokens})
 	return s
 }
 
@@ -145,6 +170,24 @@ func TestPhotoVisibleToSession(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, ok)
 	})
+	t.Run("VisitorSharedFolderAlbum", func(t *testing.T) {
+		// A picture shared only through a folder (smart) album has no photos_albums row, so it is
+		// visible only via the shared-album fallback.
+		ok, err := PhotoVisibleToSession(scopeFolderPhotoUID, scopeVisitorWithShares(scopeFolderShareToken))
+		assert.NoError(t, err)
+		assert.True(t, ok)
+	})
+	t.Run("VisitorWrongSmartAlbum", func(t *testing.T) {
+		// Sharing a different smart album must not expose the folder picture.
+		ok, err := PhotoVisibleToSession(scopeFolderPhotoUID, scopeVisitorWithShares(scopeStateShareToken))
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+	t.Run("VisitorNoShares", func(t *testing.T) {
+		ok, err := PhotoVisibleToSession(scopeFolderPhotoUID, scopeVisitorWithShares())
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
 }
 
 // A non-empty Scope skips the personal ScopePhotosForSession filter, so it must be authorized by
@@ -190,5 +233,83 @@ func TestFileVisibleToSession(t *testing.T) {
 		ok, err := FileVisibleToSession(scopePrivateFileHash, scopeSession("guest"))
 		assert.NoError(t, err)
 		assert.False(t, ok)
+	})
+	t.Run("VisitorSharedFolderAlbumFile", func(t *testing.T) {
+		// The file hash resolves to a picture shared only through a folder (smart) album.
+		ok, err := FileVisibleToSession(scopeFolderFileHash, scopeVisitorWithShares(scopeFolderShareToken))
+		assert.NoError(t, err)
+		assert.True(t, ok)
+	})
+	t.Run("VisitorWrongSmartAlbumFile", func(t *testing.T) {
+		ok, err := FileVisibleToSession(scopeFolderFileHash, scopeVisitorWithShares(scopeStateShareToken))
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+}
+
+func TestSharedSmartAlbumContains(t *testing.T) {
+	t.Run("EmptyID", func(t *testing.T) {
+		ok, err := sharedSmartAlbumContains("", scopeVisitorWithShares(scopeFolderShareToken))
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+	t.Run("NilSession", func(t *testing.T) {
+		ok, err := sharedSmartAlbumContains(scopeFolderPhotoUID, nil)
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+	t.Run("NoShares", func(t *testing.T) {
+		ok, err := sharedSmartAlbumContains(scopeFolderPhotoUID, scopeVisitorWithShares())
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+	t.Run("PhotoUIDInSharedFolder", func(t *testing.T) {
+		ok, err := sharedSmartAlbumContains(scopeFolderPhotoUID, scopeVisitorWithShares(scopeFolderShareToken))
+		assert.NoError(t, err)
+		assert.True(t, ok)
+	})
+	t.Run("WrongSmartAlbum", func(t *testing.T) {
+		ok, err := sharedSmartAlbumContains(scopeFolderPhotoUID, scopeVisitorWithShares(scopeStateShareToken))
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+	t.Run("RegularAlbumSkipped", func(t *testing.T) {
+		// A shared regular album (empty filter) is skipped here because ScopePhotosForSession already
+		// covers its photos_albums membership, so the fallback reports no match.
+		ok, err := sharedSmartAlbumContains(scopeFolderPhotoUID, scopeVisitorWithShares(scopeRegularShareToken))
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+}
+
+// BenchmarkPhotoVisibleToSession measures the per-call cost of the single-item visibility check on
+// the paths a restricted session hits when the lightbox prefetches photo metadata: the privileged
+// short-circuit, the personal-scope hit (regular share), and the smart-album fallback (folder share)
+// including the worst case where the fallback searches a shared album and finds no match.
+func BenchmarkPhotoVisibleToSession(b *testing.B) {
+	admin := scopeSession("alice")
+	folderVisitor := scopeVisitorWithShares(scopeFolderShareToken)
+	regularVisitor := scopeVisitorWithShares(scopeRegularShareToken)
+	stateVisitor := scopeVisitorWithShares(scopeStateShareToken)
+
+	b.Run("AdminShortCircuit", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = PhotoVisibleToSession(scopeFolderPhotoUID, admin)
+		}
+	})
+	b.Run("RegularSharePersonalScopeHit", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = PhotoVisibleToSession(scopeRegularPhotoUID, regularVisitor)
+		}
+	})
+	b.Run("FolderShareSmartAlbumFallback", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = PhotoVisibleToSession(scopeFolderPhotoUID, folderVisitor)
+		}
+	})
+	b.Run("OutOfScopeFallbackMiss", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = PhotoVisibleToSession(scopeFolderPhotoUID, stateVisitor)
+		}
 	})
 }
