@@ -1,6 +1,8 @@
 package vision
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestServiceEndpoint(t *testing.T) {
 	//nolint:gosec // G101: Credential-style URLs are intentional test fixtures.
@@ -50,8 +52,11 @@ func TestServiceEndpoint(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.name == "ExpandsBaseUrlEnv" {
+			switch tt.name {
+			case "ExpandsBaseUrlEnv":
 				t.Setenv("OLLAMA_BASE_URL", "http://custom:11434")
+			case "FallbacksWhenEnvMissing":
+				t.Setenv("OLLAMA_BASE_URL", "http://ollama:11434")
 			}
 
 			uri, method := tt.svc.Endpoint()

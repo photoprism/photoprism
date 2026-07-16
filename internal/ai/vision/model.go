@@ -505,6 +505,10 @@ func (m *Model) ApplyEngineDefaults() {
 		if strings.TrimSpace(m.Service.Key) == "" && info.DefaultKey != "" {
 			m.Service.Key = info.DefaultKey
 		}
+
+		if strings.TrimSpace(m.Service.Think) == "" && info.DefaultThink != "" {
+			m.Service.Think = info.DefaultThink
+		}
 	}
 
 	m.Engine = engine

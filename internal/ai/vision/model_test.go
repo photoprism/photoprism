@@ -274,6 +274,18 @@ func TestModelApplyEngineDefaultsSetsServiceDefaults(t *testing.T) {
 		assert.Equal(t, ApiFormatOllama, model.Service.ResponseFormat)
 		assert.Equal(t, scheme.Base64, model.Service.FileScheme)
 		assert.Equal(t, ollama.APIKeyPlaceholder, model.Service.Key)
+		assert.Equal(t, ollama.DefaultThink, model.Service.Think)
+	})
+	t.Run("OllamaPreservesExplicitThink", func(t *testing.T) {
+		model := &Model{
+			Type:    ModelTypeLabels,
+			Engine:  ollama.EngineName,
+			Service: Service{Think: "true"},
+		}
+
+		model.ApplyEngineDefaults()
+
+		assert.Equal(t, "true", model.Service.Think)
 	})
 	t.Run("PreserveExistingService", func(t *testing.T) {
 		model := &Model{
