@@ -169,6 +169,7 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 	if m.Engine == openai.EngineName {
 		apiRequest.Org = m.Service.EndpointOrg()
 		apiRequest.Project = m.Service.EndpointProject()
+		apiRequest.Tier = m.Service.EndpointTier()
 	}
 
 	if think := m.Service.EndpointThink(); think != "" {
@@ -504,6 +505,10 @@ func (m *Model) ApplyEngineDefaults() {
 
 		if strings.TrimSpace(m.Service.Key) == "" && info.DefaultKey != "" {
 			m.Service.Key = info.DefaultKey
+		}
+
+		if strings.TrimSpace(m.Service.Think) == "" && info.DefaultThink != "" {
+			m.Service.Think = info.DefaultThink
 		}
 	}
 

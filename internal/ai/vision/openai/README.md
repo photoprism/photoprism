@@ -1,6 +1,6 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** May 21, 2026
+**Last Updated:** July 16, 2026
 
 ### Overview
 
@@ -77,9 +77,12 @@ Models:
       Uri: https://api.openai.com/v1/responses
       FileScheme: data
       Key: ${OPENAI_API_KEY}
+      Tier: flex       # optional; sent as top-level "service_tier" (e.g. cheaper, slower "flex")
 ```
 
 Keep TensorFlow entries in place so PhotoPrism falls back when the external service is unavailable.
+
+> `Service.Tier` is passed through verbatim as the top-level `service_tier` field in the request body (values follow OpenAI: `auto`, `default`, `flex`, `priority`, …). It is omitted when empty (OpenAI default `auto`) and supports `${ENV}` expansion. The `flex` tier bills at roughly half the standard rate and suits the metadata worker and scheduled runs, which tolerate higher latency; such requests are more likely to return `HTTP 429` when capacity is short, in which case the item retries on the next worker pass.
 
 #### Defaults
 

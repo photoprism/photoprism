@@ -145,11 +145,11 @@ services:
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
       PHOTOPRISM_INIT: "https"
       ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
-      PHOTOPRISM_VISION_API: "true"                  # server: enables service API endpoints under /api/v1/vision (requires access token)
-      PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
-      PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
-      OLLAMA_BASE_URL: "http://ollama:11434"         # use "https://ollama.com" for Ollama Cloud
-      OLLAMA_API_KEY: ""                             # API key required to access Ollama (optional)
+      PHOTOPRISM_VISION_API: "true"                              # server: enables service API endpoints under /api/v1/vision (requires access token)
+      PHOTOPRISM_VISION_URI: "${PHOTOPRISM_VISION_URI:-}"        # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
+      PHOTOPRISM_VISION_KEY: "${PHOTOPRISM_VISION_KEY:-}"        # client: service access token (for authentication)
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://ollama:11434}" # use "https://ollama.com" for Ollama Cloud
+      OLLAMA_API_KEY: "${OLLAMA_API_KEY:-}"                      # optional API key for Ollama Cloud
       ## Additional dependencies and tools:
       TF_CPP_MIN_LOG_LEVEL: 1
       GOCACHE: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/.local/gocache"

@@ -556,6 +556,20 @@
                     </v-list-item-title>
                   </v-list-item>
 
+                  <v-list-item
+                    v-if="canManageServices"
+                    :to="{ path: '/settings/services' }"
+                    :exact="false"
+                    variant="text"
+                    class="nav-services"
+                    :ripple="false"
+                    @click.stop=""
+                  >
+                    <v-list-item-title :class="`menu-item`">
+                      {{ $gettext(`Services`) }}
+                    </v-list-item-title>
+                  </v-list-item>
+
                   <v-list-item :to="{ name: 'license' }" :exact="true" variant="text" class="nav-license" :ripple="false" @click.stop="">
                     <v-list-item-title :class="`menu-item`">
                       {{ $gettext(`License`) }}
@@ -814,6 +828,7 @@ export default {
       canManagePhotos: canManagePhotos,
       canManagePeople: this.$config.allow("people", "manage"),
       canManageUsers: (!isPublic || isDemo) && this.$config.allow("users", "access_all"),
+      canManageServices: this.$config.feature("services") && this.$config.allow("services", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appAbout: this.$config.getAbout(),

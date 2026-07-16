@@ -5,6 +5,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // sessionGrantsPhotos reports whether the session is granted perm on photos. For a client session
@@ -115,9 +117,14 @@ func PhotoVisibleToSession(photoUID string, sess *entity.Session) (bool, error) 
 	var count int
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
+	} else if count > 0 {
+		return true, nil
 	}
 
-	return count > 0, nil
+	// Fall back to smart albums shared with the session (folder, moment, calendar, region), whose
+	// members derive from a filter rather than photos_albums rows and are thus invisible to
+	// ScopePhotosForSession above.
+	return sharedSmartAlbumContains(photoUID, sess)
 }
 
 // FileVisibleToSession reports whether the session may access the file with the given hash,
@@ -141,7 +148,55 @@ func FileVisibleToSession(fileHash string, sess *entity.Session) (bool, error) {
 	var count int
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
+	} else if count > 0 {
+		return true, nil
 	}
 
-	return count > 0, nil
+	// Fall back to smart albums shared with the session; the file hash resolves to its photo, so a
+	// picture shared only through a folder, moment, calendar, or region link stays downloadable.
+	var f entity.File
+	if err := UnscopedDb().Table("files").Select("photo_uid").
+		Where("file_hash = ? AND deleted_at IS NULL", fileHash).
+		Limit(1).Scan(&f).Error; err != nil {
+		return false, err
+	}
+
+	return sharedSmartAlbumContains(f.PhotoUID, sess)
+}
+
+// sharedSmartAlbumContains reports whether the given photo UID belongs to a smart album shared with
+// the session. Smart albums (folder, moment, calendar, region) derive their members from a filter
+// rather than photos_albums rows, so ScopePhotosForSession cannot resolve them; this evaluates each
+// shared album's filter exactly as the album view does, keeping single-item access aligned with what
+// browsing and album downloads already permit. It runs only after the cheaper personal-scope check
+// misses and skips regular albums (empty filter, already covered), so full-access and regular-share
+// sessions perform no extra queries.
+func sharedSmartAlbumContains(photoUID string, sess *entity.Session) (bool, error) {
+	if photoUID == "" || sess == nil {
+		return false, nil
+	}
+
+	for _, albumUID := range sess.SharedUIDs() {
+		album, err := entity.CachedAlbumByUID(albumUID)
+
+		// Only smart albums (non-empty filter) need the filter-based membership test; regular albums
+		// are already covered by ScopePhotosForSession's photos_albums predicate.
+		if err != nil || album.AlbumUID == "" || album.AlbumFilter == "" {
+			continue
+		}
+
+		// Reuse the album-scoped search so membership matches browsing; Count 1 limits the query to
+		// an existence check for the single photo UID.
+		results, _, searchErr := UserPhotos(form.SearchPhotos{Scope: albumUID, UID: photoUID, Count: 1}, sess)
+
+		if searchErr != nil {
+			// A single unusable share (e.g. an invalid filter) must not mask the others.
+			log.Debugf("scope: %s while checking shared album %s", clean.Error(searchErr), clean.Log(albumUID))
+			continue
+		} else if len(results) > 0 {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

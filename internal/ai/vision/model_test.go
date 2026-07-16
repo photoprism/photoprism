@@ -274,6 +274,18 @@ func TestModelApplyEngineDefaultsSetsServiceDefaults(t *testing.T) {
 		assert.Equal(t, ApiFormatOllama, model.Service.ResponseFormat)
 		assert.Equal(t, scheme.Base64, model.Service.FileScheme)
 		assert.Equal(t, ollama.APIKeyPlaceholder, model.Service.Key)
+		assert.Equal(t, ollama.DefaultThink, model.Service.Think)
+	})
+	t.Run("OllamaPreservesExplicitThink", func(t *testing.T) {
+		model := &Model{
+			Type:    ModelTypeLabels,
+			Engine:  ollama.EngineName,
+			Service: Service{Think: "true"},
+		}
+
+		model.ApplyEngineDefaults()
+
+		assert.Equal(t, "true", model.Service.Think)
 	})
 	t.Run("PreserveExistingService", func(t *testing.T) {
 		model := &Model{
@@ -409,23 +421,25 @@ func TestModelApplyService(t *testing.T) {
 		req := &ApiRequest{}
 		model := &Model{
 			Engine:  openai.EngineName,
-			Service: Service{Org: "org-123", Project: "proj-abc", Think: "medium"},
+			Service: Service{Org: "org-123", Project: "proj-abc", Tier: "flex", Think: "medium"},
 		}
 
 		model.ApplyService(req)
 
 		assert.Equal(t, "org-123", req.Org)
 		assert.Equal(t, "proj-abc", req.Project)
+		assert.Equal(t, "flex", req.Tier)
 		assert.Equal(t, "medium", req.Think)
 	})
 	t.Run("OtherEngineIgnoresOpenAIHeadersButAppliesThink", func(t *testing.T) {
-		req := &ApiRequest{Org: "keep", Project: "keep"}
-		model := &Model{Engine: ollama.EngineName, Service: Service{Org: "new", Project: "new", Think: "false"}}
+		req := &ApiRequest{Org: "keep", Project: "keep", Tier: "keep"}
+		model := &Model{Engine: ollama.EngineName, Service: Service{Org: "new", Project: "new", Tier: "new", Think: "false"}}
 
 		model.ApplyService(req)
 
 		assert.Equal(t, "keep", req.Org)
 		assert.Equal(t, "keep", req.Project)
+		assert.Equal(t, "keep", req.Tier)
 		assert.Equal(t, "false", req.Think)
 	})
 }

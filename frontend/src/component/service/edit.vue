@@ -253,7 +253,7 @@ export default {
       type: String,
       default: "",
     },
-    // The parent passes `service.clone()` (see settings/services.vue) so the
+    // The parent passes `service.clone()` (see page/services.vue) so the
     // dialog operates on a parent-owned clone — mutations are intentional and
     // do not bleed into the parent's list state. We accept it as `service` and
     // alias it as `model` via the computed below so the existing template and

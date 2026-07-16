@@ -81,12 +81,15 @@ func TestGenerateLabelsRequestShapingForStructuredOutputIdea(t *testing.T) {
 	})
 	t.Run("OllamaUsesJsonFormatWithSchemaPromptInstructions", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var req ApiRequest
+			// Decode into a map because the serialized "think" value is a JSON boolean
+			// (the Ollama engine now disables reasoning by default), not the string form.
+			var req map[string]any
 			require.NoError(t, json.NewDecoder(r.Body).Decode(&req))
 
-			assert.Equal(t, FormatJSON, req.Format)
-			assert.Contains(t, req.Prompt, "Return JSON that matches this schema:")
-			assert.Empty(t, req.Schema, "Ollama structured schema payload is not sent yet")
+			assert.Equal(t, FormatJSON, req["format"])
+			assert.Contains(t, req["prompt"], "Return JSON that matches this schema:")
+			assert.NotContains(t, req, "schema", "Ollama structured schema payload is not sent yet")
+			assert.Equal(t, false, req["think"], "reasoning is disabled by default for the Ollama engine")
 
 			require.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
 				Model:    "gemma3:4b",

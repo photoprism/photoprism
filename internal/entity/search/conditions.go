@@ -5,10 +5,25 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/jinzhu/inflection"
 )
+
+// PathLike returns a case-insensitive "col LIKE ?" condition for a VARBINARY path column such as
+// album_path or photo_path. form.Unserialize lowercases the search term, but these columns are
+// compared byte-exact (case-sensitive) on MySQL, so an uppercase path would otherwise never match a
+// lowercased query. MySQL therefore needs an explicit case-insensitive collation; SQLite LIKE is
+// already ASCII case-insensitive, and any other or unknown dialect falls back to a plain LIKE (its
+// default semantics, never an error). The dialect is the GORM dialect name, e.g. s.Dialect().GetName().
+func PathLike(dialect, col string) string {
+	if dialect == dsn.DriverMySQL {
+		return "CONVERT(" + col + " USING utf8mb4) COLLATE utf8mb4_general_ci LIKE ?"
+	}
+
+	return col + " LIKE ?"
+}
 
 // SqlParam sanitizes user input for use as a LIKE-clause bind value. The
 // surrounding pre/post strings are concatenated verbatim so callers can add

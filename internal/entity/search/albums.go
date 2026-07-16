@@ -145,7 +145,10 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		q := "%" + strings.Trim(frm.Query, " *%") + "%"
 
 		if frm.Type == entity.AlbumFolder {
-			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR albums.album_path LIKE ?", q, q, q)
+			// album_path is VARBINARY and matched case-insensitively so a lowercased query still
+			// finds uppercase folder paths; album_title and album_location are VARCHAR (already
+			// case-insensitive).
+			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Dialect().GetName(), "albums.album_path"), q, q, q)
 		} else {
 			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
 		}

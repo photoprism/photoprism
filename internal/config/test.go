@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -18,6 +19,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -25,6 +27,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -226,6 +229,13 @@ func TestConfig() *Config {
 	return testConfig
 }
 
+// OnceTestConfig attempts to set testConfig if it hasn't already been done.
+func OnceTestConfig(c *Config) {
+	// If this is the 1st call to NewTestConfig, then cache it.
+	// This is required for /internal/photoprism tests.
+	testConfigOnce.Do(func() { testConfig = c })
+}
+
 // NewMinimalTestConfig creates a lightweight test Config (no DB, minimal filesystem).
 //
 // Not suitable for tests requiring a database or pre-created storage directories.
@@ -314,37 +324,53 @@ func NewIsolatedTestConfig(dbName, dataPath string, createDirs bool) *Config {
 
 // NewTestConfig initializes test data so required directories exist before tests run.
 // See AGENTS.md (Test Data & Fixtures) for guidance.
+// This now creates an isolated set of folders to ensure that cross package testing does not clash.
+// You should use os.RemoveAll(c.StoragePath()) to remove the isolated folder created (assuming c := NewTestConfig("test")).
 func NewTestConfig(dbName string) *Config {
 	defer log.Debug(capture.Time(time.Now(), "config: new test config created"))
 
 	testConfigMutex.Lock()
 	defer testConfigMutex.Unlock()
 
+	storagePath := os.Getenv("PHOTOPRISM_STORAGE_PATH")
+	if storagePath == "" {
+		storagePath = fs.Abs("../../storage")
+	}
+
+	var tp string
+	var err error
+
+	if tp, err = os.MkdirTemp(storagePath, "test-photoprism-*"); err != nil {
+		log.Panicf("config: %s", clean.Error(err))
+	}
+
+	tp = filepath.Join(tp, fs.TestdataDir)
+
 	c := &Config{
 		cliCtx:  CliTestContext(),
-		options: NewTestOptions(dbName),
+		options: NewTestOptionsForPath(dbName, tp),
 		token:   rnd.Base36(8),
 		cache:   gc.New(time.Second, time.Minute),
 	}
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale(), c.DefaultTimezone().String())
 
-	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
-		log.Panicf("config: %s", err.Error())
+	if err = fs.MkdirAll(c.ConfigPath()); err != nil {
+		log.Panicf("config: %s", clean.Error(err))
 	}
 
 	// Save settings next to the test config path, reusing any existing
 	// `.yaml`/`.yml` variant so the tests mirror production behavior.
-	if err := s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
-		log.Panicf("config: %s", err.Error())
+	if err = s.Save(fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)); err != nil {
+		log.Panicf("config: %s", clean.Error(err))
 	}
 
-	if err := c.Init(); err != nil {
-		log.Panicf("config: %s", err.Error())
+	if err = c.Init(); err != nil {
+		log.Panicf("config: %s", clean.Error(err))
 	}
 
-	if err := c.InitializeTestData(); err != nil {
-		log.Errorf("config: %s", err.Error())
+	if err = c.InitializeTestData(); err != nil {
+		log.Errorf("config: %s", clean.Error(err))
 	}
 
 	c.RegisterDb()
@@ -609,5 +635,31 @@ func (c *Config) AssertTestData(t *testing.T) {
 		reportDir(dir)
 	} else {
 		reportErr("SidecarPath")
+	}
+}
+
+// CleanupTestFolder removes the isolated storage directory created by NewTestConfig.
+//
+// It only deletes paths matching the isolated layout "test-photoprism-*/testdata" so a
+// misconfigured StoragePath can never remove a real storage directory. A failed removal
+// is logged as a warning rather than aborting, so a teardown hiccup does not turn a
+// passing test run into a hard exit.
+func (c *Config) CleanupTestFolder() {
+	if c.options == nil {
+		event.SystemWarn([]string{"config", "test", "c.options is nil in CleanupTestFolder"})
+		return
+	}
+
+	td := c.StoragePath()
+	parent := filepath.Dir(td)
+
+	if filepath.Base(td) == fs.TestdataDir && strings.HasPrefix(filepath.Base(parent), "test-photoprism") {
+		if err := os.RemoveAll(parent); err != nil {
+			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.Error(err))
+			return
+		}
+		event.SystemDebug([]string{"config", "test", "cleanup %s", status.Succeeded}, parent)
+	} else {
+		event.SystemWarn([]string{"config", "test", "cleanup %s", "failed"}, td)
 	}
 }

@@ -47,6 +47,7 @@ type ApiRequest struct {
 	Url            string             `form:"url" yaml:"Url,omitempty" json:"url,omitempty"`
 	Org            string             `form:"org" yaml:"Org,omitempty" json:"org,omitempty"`
 	Project        string             `form:"project" yaml:"Project,omitempty" json:"project,omitempty"`
+	Tier           string             `form:"tier" yaml:"Tier,omitempty" json:"tier,omitempty"`
 	Think          string             `form:"think" yaml:"Think,omitempty" json:"think,omitempty"`
 	Options        *ModelOptions      `form:"options" yaml:"Options,omitempty" json:"options,omitempty"`
 	Context        *ApiRequestContext `form:"context" yaml:"Context,omitempty" json:"context,omitempty"`
@@ -412,6 +413,10 @@ func (r *ApiRequest) openAIJSON() ([]byte, error) {
 		payload.Text = &openai.TextOptions{
 			Format: format,
 		}
+	}
+
+	if tier := strings.TrimSpace(r.Tier); tier != "" {
+		payload.ServiceTier = tier
 	}
 
 	return json.Marshal(payload)

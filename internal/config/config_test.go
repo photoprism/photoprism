@@ -21,23 +21,27 @@ func init() {
 	hub.ApplyTestConfig()
 }
 
+// TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
+	os.Exit(runTestMain(m))
+}
+
+func runTestMain(m *testing.M) int {
 	_ = os.Setenv("PHOTOPRISM_TEST", "true")
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
 	c := TestConfig()
+	defer c.CleanupTestFolder()
+	defer func() {
+		if err := c.CloseDb(); err != nil {
+			log.Warnf("close db: %v", err)
+		}
+		// Remove temporary SQLite files after running the tests.
+		fs.PurgeTestDbFiles(".", false)
+	}()
 
-	code := m.Run()
-
-	// Remove temporary SQLite files after running the tests.
-	if err := c.CloseDb(); err != nil {
-		log.Warnf("close db: %v", err)
-	}
-
-	fs.PurgeTestDbFiles(".", false)
-
-	os.Exit(code)
+	return m.Run()
 }
 
 func TestNewConfig(t *testing.T) {
@@ -316,7 +320,7 @@ func TestConfig_ThemePath(t *testing.T) {
 }
 
 func TestConfig_Serial(t *testing.T) {
-	c := NewConfig(CliTestContext())
+	c := TestConfig() // Use complete test context, as NewConfig may not have the required file.
 
 	result := c.Serial()
 

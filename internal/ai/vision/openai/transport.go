@@ -28,6 +28,7 @@ type HTTPRequest struct {
 	TopP             float64        `json:"top_p,omitempty"`
 	PresencePenalty  float64        `json:"presence_penalty,omitempty"`
 	FrequencyPenalty float64        `json:"frequency_penalty,omitempty"`
+	ServiceTier      string         `json:"service_tier,omitempty"`
 }
 
 // TextOptions carries formatting preferences for textual responses.

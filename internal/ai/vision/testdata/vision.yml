@@ -65,13 +65,14 @@ Models:
       Name: embeddings
       Outputs: 512
 - Type: caption
-  Model: gemma3:latest
+  Model: gemma4:latest
   Engine: ollama
   Run: manual
   Resolution: 720
   Service:
     Uri: ${OLLAMA_BASE_URL}/api/generate
     Key: ${OLLAMA_API_KEY}
+    Think: "false"
     FileScheme: base64
     RequestFormat: ollama
     ResponseFormat: ollama

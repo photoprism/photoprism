@@ -21,8 +21,8 @@
 <script>
 import General from "page/settings/general.vue";
 import Content from "page/settings/content.vue";
+import Collections from "page/settings/collections.vue";
 import Advanced from "page/settings/advanced.vue";
-import Services from "page/settings/services.vue";
 import Account from "page/settings/account.vue";
 import { $config } from "app/session";
 import { markRaw } from "vue";
@@ -81,6 +81,19 @@ export default {
         show: $config.feature("settings") && !hasScope,
       },
       {
+        name: "settings_collections",
+        component: markRaw(Collections),
+        label: this.$gettext("Collections"),
+        class: "",
+        path: "/settings/collections",
+        icon: "mdi-card-multiple",
+        public: false,
+        portal: false,
+        admin: true,
+        demo: true,
+        show: $config.feature("settings") && isSuperAdmin && !hasScope,
+      },
+      {
         name: "settings_advanced",
         component: markRaw(Advanced),
         label: this.$gettext("Advanced"),
@@ -92,19 +105,6 @@ export default {
         admin: true,
         demo: true,
         show: $config.allow("config", "manage") && isSuperAdmin,
-      },
-      {
-        name: "settings_services",
-        component: markRaw(Services),
-        label: this.$gettext("Services"),
-        class: "",
-        path: "/settings/services",
-        icon: "mdi-swap-horizontal",
-        public: false,
-        portal: false,
-        admin: true,
-        demo: true,
-        show: $config.feature("services") && $config.allow("services", "manage"),
       },
       {
         name: "settings_account",

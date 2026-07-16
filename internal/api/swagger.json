@@ -1142,6 +1142,9 @@
                 "openOnHover": {
                     "type": "boolean"
                 },
+                "reduceMotion": {
+                    "type": "boolean"
+                },
                 "scrollbar": {
                     "type": "boolean"
                 },
