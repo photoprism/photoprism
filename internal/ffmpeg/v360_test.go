@@ -12,8 +12,8 @@ import (
 )
 
 func TestV360DualFisheyeToEquirect(t *testing.T) {
-	assert.Equal(t, "v360=input=dfisheye:output=e:ih_fov=204:iv_fov=204", V360DualFisheyeToEquirect(204))
-	assert.Equal(t, "v360=input=dfisheye:output=e:ih_fov=190:iv_fov=190", V360DualFisheyeToEquirect(190))
+	assert.Equal(t, "v360=input=dfisheye:output=e:ih_fov=204:iv_fov=204", V360DualFisheyeToEquirect(204, 0))
+	assert.Equal(t, "v360=input=dfisheye:output=e:ih_fov=190:iv_fov=190:roll=180", V360DualFisheyeToEquirect(190, 180))
 }
 
 func TestDewarpDualFisheyeToJpegCmd(t *testing.T) {
@@ -22,13 +22,13 @@ func TestDewarpDualFisheyeToJpegCmd(t *testing.T) {
 	srcName := fs.Abs("./testdata/dualfisheye.insp")
 	destName := fs.Abs("./testdata/dualfisheye.jpg")
 
-	cmd := DewarpDualFisheyeToJpegCmd(srcName, destName, 190, opt)
+	cmd := DewarpDualFisheyeToJpegCmd(srcName, destName, 190, 180, opt)
 
 	cmdStr := cmd.String()
 	cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
 	cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
 
-	assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -loglevel error -y -i SRC -vf "+V360DualFisheyeToEquirect(190)+" -frames:v 1 DEST", cmdStr)
+	assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -loglevel error -y -i SRC -vf "+V360DualFisheyeToEquirect(190, 180)+" -frames:v 1 DEST", cmdStr)
 }
 
 // Negative: ffmpeg binary is missing; command execution should error immediately.
@@ -36,7 +36,7 @@ func TestDewarpDualFisheyeToJpegCmd_MissingBinary(t *testing.T) {
 	opt := &encode.Options{Bin: "/path/does/not/exist/ffmpeg"}
 	srcName := fs.Abs("./testdata/dualfisheye.insp")
 	destName := filepath.Join(t.TempDir(), "frame.jpg")
-	cmd := DewarpDualFisheyeToJpegCmd(srcName, destName, 204, opt)
+	cmd := DewarpDualFisheyeToJpegCmd(srcName, destName, 204, 0, opt)
 	err := cmd.Run()
 	assert.Error(t, err)
 }

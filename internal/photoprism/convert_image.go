@@ -246,7 +246,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	// a ~2:1 dual-fisheye layout so a misdetected or single-fisheye DNG is left untouched. Best
 	// effort: a failure leaves the developed (non-dewarped) JPEG usable.
 	if f.FisheyeDng() && result.IsJpeg() && result.DualFisheyeLayout() {
-		if dewarpErr := w.dewarpFileInPlace(result.FileName(), w.fisheyeFov(f)); dewarpErr != nil {
+		if dewarpErr := w.dewarpFileInPlace(result.FileName(), w.fisheyeFov(f), 0); dewarpErr != nil {
 			log.Warnf("convert: %s in %s (dewarp)", clean.Error(dewarpErr), clean.Log(result.RootRelName()))
 		} else {
 			fileProjection = projection.Equirectangular
@@ -305,8 +305,8 @@ func (w *Convert) writeEquirectangularProjection(fileName string) error {
 
 // dewarpFileInPlace dewarps a dual-fisheye image to equirectangular with the FFmpeg v360 filter,
 // writing to a temporary file and renaming it over the original because FFmpeg cannot read and
-// write the same path in one pass. fov is the per-lens field of view in degrees.
-func (w *Convert) dewarpFileInPlace(fileName string, fov int) error {
+// write the same path in one pass. fov and roll define the spherical conversion profile.
+func (w *Convert) dewarpFileInPlace(fileName string, fov, roll int) error {
 	if !w.conf.FFmpegEnabled() {
 		return errors.New("ffmpeg is disabled")
 	}
@@ -317,7 +317,7 @@ func (w *Convert) dewarpFileInPlace(fileName string, fov int) error {
 	// and removed on any error path so no stray "<name>.dewarp.jpg" is left to be indexed.
 	defer func() { _ = os.Remove(tmpName) }()
 
-	cmd := ffmpeg.DewarpDualFisheyeToJpegCmd(fileName, tmpName, fov, &encode.Options{Bin: w.conf.FFmpegBin()})
+	cmd := ffmpeg.DewarpDualFisheyeToJpegCmd(fileName, tmpName, fov, roll, &encode.Options{Bin: w.conf.FFmpegBin()})
 	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()))
 
 	var stderr bytes.Buffer

@@ -32,7 +32,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	// loop falls back to a normal render too.
 	if f.DualFisheye() && f.DualFisheyeLayout() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		result = append(result, NewConvertCmd(
-			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), &encode.Options{Bin: w.conf.FFmpegBin()})).
+			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin()})).
 			WithImageVerification().
 			WithProjection(projection.Equirectangular),
 		)

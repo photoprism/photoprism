@@ -1084,6 +1084,30 @@ func TestMediaFile_IsInsta360(t *testing.T) {
 	})
 }
 
+// TestMediaFile_Insta360CameraModel verifies EXIF and video-trailer model resolution.
+func TestMediaFile_Insta360CameraModel(t *testing.T) {
+	t.Run("OneRSImageMetadata", func(t *testing.T) {
+		f, err := NewMediaFile(oneRSInspFixture(t, t.TempDir(), "camera.insp"))
+		assert.NoError(t, err)
+		assert.Equal(t, "Insta360 OneRS", f.Insta360CameraModel())
+	})
+	t.Run("OneRSVideoTrailer", func(t *testing.T) {
+		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
+		assert.NoError(t, err)
+		assert.Equal(t, "Insta360 OneRS", f.Insta360CameraModel())
+	})
+	t.Run("UnknownVideo", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/insta360.insv")
+		assert.NoError(t, err)
+		assert.Empty(t, f.Insta360CameraModel())
+	})
+	t.Run("NonInsta360", func(t *testing.T) {
+		f, err := NewMediaFile("testdata/flash.jpg")
+		assert.NoError(t, err)
+		assert.Empty(t, f.Insta360CameraModel())
+	})
+}
+
 func TestMediaFile_DualFisheye(t *testing.T) {
 	t.Run("Insp", func(t *testing.T) {
 		f, err := NewMediaFile("testdata/insta360.insp")
@@ -1168,6 +1192,48 @@ func copyFixture(t *testing.T, dir, name, srcName string) string {
 	if err = src.Copy(dst, false); err != nil {
 		t.Fatal(err)
 	}
+	return dst
+}
+
+// oneRSInsvFixture appends a valid OneRS camera-model field to a copied INSV fixture.
+func oneRSInsvFixture(t *testing.T, dir, name string) string {
+	t.Helper()
+
+	payload, err := os.ReadFile("testdata/insta360.insv")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	payload = append(payload, append([]byte{0x12, 0x0e}, []byte("Insta360 OneRS")...)...)
+	dst := filepath.Join(dir, name)
+
+	// #nosec G703 -- dir and name are controlled by this test helper.
+	if err = os.WriteFile(dst, payload, fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	return dst
+}
+
+// oneRSInspFixture appends a valid OneRS camera-model field to a copied INSP fixture.
+func oneRSInspFixture(t *testing.T, dir, name string) string {
+	t.Helper()
+
+	payload, err := os.ReadFile("testdata/insta360.insp")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	payload = append(payload, []byte("\x00Arashi Vision\x00Insta360 OneRS\x00")...)
+	dst := filepath.Join(dir, name)
+
+	// #nosec G703 -- dir and name are controlled by this test helper.
+	if err = os.WriteFile(dst, payload, fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
 	return dst
 }
 

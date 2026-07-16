@@ -64,6 +64,8 @@ type MediaFile struct {
 	metaOnce         sync.Once
 	videoInfo        video.Info
 	videoOnce        sync.Once
+	insta360Model    string
+	insta360Once     sync.Once
 	fileMutex        sync.Mutex
 	location         *entity.Cell
 	imageConfig      *image.Config
@@ -930,6 +932,30 @@ func (m *MediaFile) IsInsta360() bool {
 	}
 
 	return strings.HasPrefix(strings.ToLower(m.CameraModel()), "insta360")
+}
+
+// Insta360CameraModel returns the embedded model name for an Insta360 original.
+func (m *MediaFile) Insta360CameraModel() string {
+	if m == nil || !m.IsInsp() && !m.IsInsv() {
+		return ""
+	}
+
+	if model := strings.TrimSpace(m.CameraModel()); model != "" {
+		return model
+	}
+
+	m.insta360Once.Do(func() {
+		model, err := media.Insta360CameraModelFile(m.FileName())
+
+		if err != nil {
+			log.Debugf("media: %s in %s (read Insta360 camera model)", clean.Error(err), clean.Log(m.BaseName()))
+			return
+		}
+
+		m.insta360Model = model
+	})
+
+	return m.insta360Model
 }
 
 // DualFisheye checks if the file stores dual-fisheye 360° content that must be dewarped to

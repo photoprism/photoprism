@@ -202,7 +202,32 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		args := strings.Join(r.Args, " ")
 		assert.Contains(t, r.Path, "ffmpeg")
 		assert.Contains(t, args, "v360=input=dfisheye:output=e")
+		assert.NotContains(t, args, "roll=180")
 		assert.Contains(t, args, "libx264")
+	})
+	t.Run("OneRSInsv", func(t *testing.T) {
+		mf, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, _, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Contains(t, strings.Join(r.Args, " "), "v360=input=dfisheye:output=e:ih_fov=204:iv_fov=204:roll=180")
+	})
+	t.Run("OneRSSquareInsv", func(t *testing.T) {
+		mf, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		mf.width = 3072
+		mf.height = 3072
+		r, _, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.NotContains(t, strings.Join(r.Args, " "), "v360")
 	})
 	t.Run("Mp4NoV360", func(t *testing.T) {
 		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))

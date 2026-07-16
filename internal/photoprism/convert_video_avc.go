@@ -224,7 +224,7 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 	}
 
 	if dewarp {
-		opt.V360 = ffmpeg.V360DualFisheyeToEquirect(w.fisheyeFov(f))
+		opt.V360 = ffmpeg.V360DualFisheyeToEquirect(w.fisheyeFov(f), w.fisheyeRoll(f))
 	}
 
 	return ffmpeg.TranscodeCmd(fileName, avcName, opt)
@@ -234,12 +234,33 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 // preferring a per-camera default and falling back to the configured FFmpegFisheyeFov.
 func (w *Convert) fisheyeFov(f *MediaFile) int {
 	if f != nil {
-		if fov := entity.CameraFisheyeFov(f.CameraMake(), f.CameraModel()); fov > 0 {
+		model := f.CameraModel()
+
+		if model == "" && f.DualFisheye() {
+			model = f.Insta360CameraModel()
+		}
+
+		if fov := entity.CameraFisheyeFov(f.CameraMake(), model); fov > 0 {
 			return fov
 		}
 	}
 
 	return w.conf.FFmpegFisheyeFov()
+}
+
+// fisheyeRoll returns a verified spherical roll correction for a compatible Insta360 original.
+func (w *Convert) fisheyeRoll(f *MediaFile) int {
+	if f == nil || !f.DualFisheye() || !f.DualFisheyeLayout() {
+		return 0
+	}
+
+	roll := entity.CameraFisheyeRoll(f.CameraMake(), f.Insta360CameraModel())
+
+	if roll != 0 {
+		log.Debugf("convert: using v360 profile insta360-one-rs (roll %d) for %s", roll, clean.Log(f.BaseName()))
+	}
+
+	return roll
 }
 
 // AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.
