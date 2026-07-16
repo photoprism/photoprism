@@ -169,6 +169,7 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 	if m.Engine == openai.EngineName {
 		apiRequest.Org = m.Service.EndpointOrg()
 		apiRequest.Project = m.Service.EndpointProject()
+		apiRequest.Tier = m.Service.EndpointTier()
 	}
 
 	if think := m.Service.EndpointThink(); think != "" {

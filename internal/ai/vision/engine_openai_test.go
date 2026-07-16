@@ -134,6 +134,33 @@ func TestApiRequestJSONForOpenAIDefaultSchemaName(t *testing.T) {
 	assert.Equal(t, schema.JsonSchemaName(req.Schema, openai.DefaultSchemaVersion), decoded.Text.Format.Name)
 }
 
+func TestApiRequestJSONForOpenAIServiceTier(t *testing.T) {
+	newReq := func(tier string) *ApiRequest {
+		return &ApiRequest{
+			Model:          "gpt-5-mini",
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOpenAI,
+			Tier:           tier,
+		}
+	}
+	t.Run("SentWhenSet", func(t *testing.T) {
+		payload, err := newReq("flex").JSON()
+		require.NoError(t, err)
+
+		var decoded map[string]any
+		require.NoError(t, json.Unmarshal(payload, &decoded))
+		assert.Equal(t, "flex", decoded["service_tier"])
+	})
+	t.Run("OmittedWhenEmpty", func(t *testing.T) {
+		payload, err := newReq("  ").JSON()
+		require.NoError(t, err)
+
+		var decoded map[string]any
+		require.NoError(t, json.Unmarshal(payload, &decoded))
+		assert.NotContains(t, decoded, "service_tier")
+	})
+}
+
 func TestOpenAIParserParsesJSONFromTextPayload(t *testing.T) {
 	respPayload := `{
 		"id": "resp_123",

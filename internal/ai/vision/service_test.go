@@ -77,6 +77,7 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 	t.Setenv("VISION_ORG", "org-123")
 	t.Setenv("VISION_PROJECT", "proj-abc")
 	t.Setenv("VISION_THINK", "false")
+	t.Setenv("VISION_TIER", "flex")
 
 	svc := Service{
 		Username: "${VISION_USER}",
@@ -85,6 +86,7 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 		Org:      "${VISION_ORG}",
 		Project:  "${VISION_PROJECT}",
 		Think:    "${VISION_THINK}",
+		Tier:     "${VISION_TIER}",
 	}
 
 	user, pass := svc.BasicAuth()
@@ -106,5 +108,9 @@ func TestServiceCredentialsAndHeaders(t *testing.T) {
 
 	if got := svc.EndpointThink(); got != "false" {
 		t.Fatalf("think: got %q", got)
+	}
+
+	if got := svc.EndpointTier(); got != "flex" {
+		t.Fatalf("tier: got %q", got)
 	}
 }
