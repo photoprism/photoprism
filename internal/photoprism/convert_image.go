@@ -241,12 +241,25 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 	}
 
-	// Fisheye 360° DNGs were developed to a dual-fisheye JPEG above; dewarp that JPEG to
-	// equirectangular now, since FFmpeg cannot develop RAW itself. Gated on the developed frame being
-	// a ~2:1 dual-fisheye layout so a misdetected or single-fisheye DNG is left untouched. Best
-	// effort: a failure leaves the developed (non-dewarped) JPEG usable.
-	if f.FisheyeDng() && result.IsJpeg() && result.DualFisheyeLayout() {
-		if dewarpErr := w.dewarpFileInPlace(result.FileName(), w.fisheyeFov(f), 0); dewarpErr != nil {
+	// Fisheye 360° DNGs were developed to JPEG above; dewarp that JPEG to equirectangular now, since
+	// FFmpeg cannot develop RAW itself. The developed frame must be a verified horizontal/vertical
+	// dual-fisheye or single-fisheye layout. Best effort: a failure leaves the developed JPEG usable.
+	if f.FisheyeDng() && result.IsJpeg() {
+		developedProjection := projection.Unknown
+		stacked := false
+		switch {
+		case result.DualFisheyeLayout():
+			developedProjection = projection.DualFisheye
+		case result.StackedDualFisheyeLayout():
+			developedProjection = projection.DualFisheye
+			stacked = true
+		case result.FisheyeLayout():
+			developedProjection = projection.Fisheye
+		}
+
+		if developedProjection.Unknown() {
+			log.Warnf("convert: unsupported developed fisheye layout in %s", clean.Log(result.RootRelName()))
+		} else if dewarpErr := w.dewarpFileInPlace(result.FileName(), developedProjection, stacked, w.fisheyeFov(f), w.fisheyeRoll(f)); dewarpErr != nil {
 			log.Warnf("convert: %s in %s (dewarp)", clean.Error(dewarpErr), clean.Log(result.RootRelName()))
 		} else {
 			fileProjection = projection.Equirectangular
@@ -258,6 +271,8 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	// pipeline (only files that were actually dewarped are tagged). The dewarp/GPano writes changed
 	// the file, so reload it to refresh the cached size/hash regardless of the GPano write outcome.
 	if fileProjection.Equal(projection.Equirectangular.String()) {
+		result.SetVisualProjection(projection.Equirectangular)
+
 		if projErr := w.writeEquirectangularProjection(result.FileName()); projErr != nil {
 			log.Warnf("convert: %s in %s (write projection)", clean.Error(projErr), clean.Log(result.RootRelName()))
 		}
@@ -303,10 +318,10 @@ func (w *Convert) writeEquirectangularProjection(fileName string) error {
 	return nil
 }
 
-// dewarpFileInPlace dewarps a dual-fisheye image to equirectangular with the FFmpeg v360 filter,
-// writing to a temporary file and renaming it over the original because FFmpeg cannot read and
-// write the same path in one pass. fov and roll define the spherical conversion profile.
-func (w *Convert) dewarpFileInPlace(fileName string, fov, roll int) error {
+// dewarpFileInPlace dewarps a fisheye image to equirectangular with the FFmpeg v360 filter, writing
+// to a temporary file and renaming it over the original because FFmpeg cannot read and write the
+// same path in one pass. Stacked inputs are rearranged before applying the spherical profile.
+func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.Type, stacked bool, fov, roll int) error {
 	if !w.conf.FFmpegEnabled() {
 		return errors.New("ffmpeg is disabled")
 	}
@@ -317,7 +332,16 @@ func (w *Convert) dewarpFileInPlace(fileName string, fov, roll int) error {
 	// and removed on any error path so no stray "<name>.dewarp.jpg" is left to be indexed.
 	defer func() { _ = os.Remove(tmpName) }()
 
-	cmd := ffmpeg.DewarpDualFisheyeToJpegCmd(fileName, tmpName, fov, roll, &encode.Options{Bin: w.conf.FFmpegBin()})
+	filter := ffmpeg.V360DualFisheyeToEquirect(fov, roll)
+	if inputProjection.Equal(projection.Fisheye.String()) {
+		filter = ffmpeg.V360FisheyeToEquirect(fov, roll)
+	}
+
+	opt := &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)}
+	cmd := ffmpeg.DewarpFisheyeToJpegCmd(fileName, tmpName, filter, opt)
+	if stacked && inputProjection.Equal(projection.DualFisheye.String()) {
+		cmd = ffmpeg.DewarpStackedDualFisheyeToJpegCmd(fileName, tmpName, fov, roll, opt)
+	}
 	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()))
 
 	var stderr bytes.Buffer

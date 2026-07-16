@@ -66,6 +66,7 @@ type MediaFile struct {
 	videoOnce        sync.Once
 	insta360Model    string
 	insta360Once     sync.Once
+	visualProjection projection.Type
 	fileMutex        sync.Mutex
 	location         *entity.Cell
 	imageConfig      *image.Config
@@ -965,23 +966,33 @@ func (m *MediaFile) DualFisheye() bool {
 	return m.IsInsp() || m.IsInsv()
 }
 
-// FisheyeDng checks if the file is a fisheye 360° DNG — a dual-fisheye RAW capture from a 360 rig
-// such as Insta360 ONE/X or Ricoh Theta, which must be developed and then dewarped. Unlike
-// .insp/.insv the .dng extension does not imply fisheye, so detection is a conservative metadata
-// heuristic that leaves ordinary rectilinear DNGs untouched.
+// FisheyeDng checks if the file is a single- or dual-fisheye DNG that must be developed and dewarped.
 func (m *MediaFile) FisheyeDng() bool {
+	return m.FisheyeDngProjection().Fisheye()
+}
+
+// FisheyeDngProjection returns the conservatively detected fisheye geometry of a DNG original.
+func (m *MediaFile) FisheyeDngProjection() projection.Type {
 	if !m.IsDng() {
-		return false
+		return projection.Unknown
 	}
 
-	if m.IsInsta360() || projection.New(m.MetaData().Projection).Fisheye() {
-		return true
+	if detected := projection.New(m.MetaData().Projection); detected.Fisheye() {
+		return detected
 	}
 
-	// Ricoh Theta is the other common 360 rig that stores dual-fisheye DNGs. A bare "360" or a
-	// single-lens "fisheye" lens name is deliberately not matched: those are not side-by-side
-	// dual-fisheye and would be corrupted by the dual-fisheye dewarp.
-	return strings.Contains(strings.ToLower(m.CameraModel()), "theta")
+	// Known 360 camera vendors identify a fisheye original, while the raster aspect distinguishes
+	// horizontal or vertical dual-lens frames from a single circular lens. Other geometry stays
+	// single fisheye and is verified again after RAW development before v360 is allowed to run.
+	if m.IsInsta360() || strings.Contains(strings.ToLower(m.CameraModel()), "theta") {
+		if m.DualFisheyeLayout() || m.StackedDualFisheyeLayout() {
+			return projection.DualFisheye
+		}
+
+		return projection.Fisheye
+	}
+
+	return projection.Unknown
 }
 
 // DualFisheyeLayout reports whether the frame is compatible with the side-by-side dual-fisheye
@@ -993,6 +1004,20 @@ func (m *MediaFile) DualFisheyeLayout() bool {
 	r := float64(m.AspectRatio())
 
 	return r <= 0 || math.Abs(r-2.0) <= 0.2
+}
+
+// StackedDualFisheyeLayout reports whether two square fisheye frames are stacked vertically.
+func (m *MediaFile) StackedDualFisheyeLayout() bool {
+	r := float64(m.AspectRatio())
+
+	return r > 0 && math.Abs(r-0.5) <= 0.05
+}
+
+// FisheyeLayout reports whether the frame is compatible with a single circular fisheye input.
+func (m *MediaFile) FisheyeLayout() bool {
+	r := float64(m.AspectRatio())
+
+	return r > 0 && math.Abs(r-1.0) <= 0.2
 }
 
 // IsHeif checks if the file is a High Efficiency Image File Format (HEIF) container with a supported file type extension.
@@ -1259,7 +1284,26 @@ func (m *MediaFile) NeedsTranscoding() bool {
 		return fs.VideoMp4.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
 	}
 
-	return fs.VideoAvc.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
+	return m.AvcFile() == nil
+}
+
+// AvcFile returns the existing AVC sidecar for a video original, if available.
+func (m *MediaFile) AvcFile() *MediaFile {
+	if m == nil || m.NotAnimated() {
+		return nil
+	}
+
+	avcName := fs.VideoAvc.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+	if avcName == "" {
+		return nil
+	}
+
+	result, err := NewMediaFile(avcName)
+	if err != nil || result == nil || result.Empty() {
+		return nil
+	}
+
+	return result
 }
 
 // SkipTranscoding checks if the media file is not animated or has already been transcoded to a playable format.

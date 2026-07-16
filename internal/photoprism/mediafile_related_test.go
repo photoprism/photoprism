@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -140,6 +141,30 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 				assert.Equal(t, expectedBaseFilename, baseFilename)
 			}
 		}
+	})
+	t.Run("Insta360Capture", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+		writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+		writeInsta360CaptureFile(t, dir, "LRV_20220625_140410_11_008.insv", "testdata/flash.jpg")
+
+		left, err := NewMediaFile(leftName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := left.RelatedFiles(false)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, related.Files, 3)
+		assert.Equal(t, filepath.Base(leftName), related.Main.BaseName())
+		assert.ElementsMatch(t, []string{
+			"VID_20220625_140410_00_008.insv",
+			"VID_20220625_140410_10_008.insv",
+			"LRV_20220625_140410_11_008.insv",
+		}, []string{related.Files[0].BaseName(), related.Files[1].BaseName(), related.Files[2].BaseName()})
 	})
 	t.Run("Num2015Num02Num04Jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04.jpg")

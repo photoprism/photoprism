@@ -433,7 +433,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if data := m.MetaData(); data.Error == nil {
 			file.FileCodec = data.Codec
 			file.SetMediaUTC(data.TakenAt)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -588,7 +588,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FilePortrait = m.Portrait()
 			file.SetMediaUTC(data.TakenAt)
 			file.SetPages(data.Pages)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -597,7 +597,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// runs inside this metadata-ok block to avoid an extra MetaData() call and a projection
 			// tag on a file whose EXIF failed (leaving 0x0 dimensions).
 			if m.FisheyeDng() {
-				file.SetProjection(projection.DualFisheye.String())
+				file.SetProjection(m.FisheyeDngProjection().String())
 			}
 
 			// Get video metadata from embedded file?
@@ -690,7 +690,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FilePortrait = m.Portrait()
 			file.SetMediaUTC(data.TakenAt)
 			file.SetPages(data.Pages)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -786,7 +786,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.SetDuration(data.Duration)
 			file.SetFPS(data.FPS)
 			file.SetFrames(data.Frames)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)

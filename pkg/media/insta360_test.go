@@ -74,3 +74,42 @@ func TestInsta360CameraModelFile(t *testing.T) {
 		assert.Empty(t, model)
 	})
 }
+
+// TestParseInsta360VideoName verifies strict capture identity and role parsing.
+func TestParseInsta360VideoName(t *testing.T) {
+	t.Run("Left", func(t *testing.T) {
+		name, ok := ParseInsta360VideoName("videos/VID_20220625_140410_00_008.insv")
+		require.True(t, ok)
+		assert.Equal(t, Insta360VideoLeft, name.Role)
+		assert.Equal(t, filepath.Join("videos", "20220625_140410_008"), name.CaptureKey())
+		assert.Equal(t, filepath.Join("videos", "VID_20220625_140410_00_008.insv"), name.FileName(Insta360VideoLeft))
+		assert.Equal(t, filepath.Join("videos", "VID_20220625_140410_10_008.insv"), name.FileName(Insta360VideoRight))
+		assert.Equal(t, filepath.Join("videos", "LRV_20220625_140410_11_008.insv"), name.FileName(Insta360VideoProxy))
+	})
+	t.Run("RightUppercaseExtension", func(t *testing.T) {
+		name, ok := ParseInsta360VideoName("VID_20220625_140410_10_008.INSV")
+		require.True(t, ok)
+		assert.Equal(t, Insta360VideoRight, name.Role)
+	})
+	t.Run("Proxy", func(t *testing.T) {
+		name, ok := ParseInsta360VideoName("LRV_20220625_140410_11_008.insv")
+		require.True(t, ok)
+		assert.Equal(t, Insta360VideoProxy, name.Role)
+	})
+
+	invalid := []string{
+		"VID_20220625_140410_11_008.insv",
+		"LRV_20220625_140410_00_008.insv",
+		"VID_20220625_140410_01_008.insv",
+		"VID_20220625_140410_00_08.insv",
+		"VID_20220625_140410_00_008.mp4",
+		"copy-VID_20220625_140410_00_008.insv",
+	}
+
+	for _, fileName := range invalid {
+		t.Run(fileName, func(t *testing.T) {
+			_, ok := ParseInsta360VideoName(fileName)
+			assert.False(t, ok)
+		})
+	}
+}

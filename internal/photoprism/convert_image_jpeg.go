@@ -25,6 +25,16 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	maxSize := strconv.Itoa(w.conf.JpegSize())
 	rawEnabled := w.conf.RawEnabled()
 
+	// Separate square lens videos are combined in canonical _00/_10 order before v360 dewarping.
+	// Only the _00 file owns generated sidecars; the _10 lens and LRV proxy remain related originals.
+	if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() && capture.Left.FileName() == f.FileName() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+		result = append(result, NewConvertCmd(
+			ffmpeg.DewarpDualFisheyePairToJpegCmd(capture.Left.FileName(), capture.Right.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
+			WithImageVerification().
+			WithProjection(projection.Equirectangular),
+		)
+	}
+
 	// Dewarp Insta360 dual-fisheye originals to an equirectangular JPEG via the FFmpeg v360 filter,
 	// so thumbnails and the sphere viewer show corrected pixels. This covers .insp photos as well as
 	// the cover/poster frame extracted from .insv videos. Gated on a side-by-side ~2:1 layout so
@@ -32,7 +42,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	// loop falls back to a normal render too.
 	if f.DualFisheye() && f.DualFisheyeLayout() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		result = append(result, NewConvertCmd(
-			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin()})).
+			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
 			WithImageVerification().
 			WithProjection(projection.Equirectangular),
 		)

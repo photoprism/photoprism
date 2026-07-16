@@ -220,6 +220,13 @@ func (m *Photo) IsPlayable() bool {
 func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, height int) {
 	switch m.PhotoType {
 	case entity.MediaVideo, entity.MediaLive:
+		// Prefer a generated equirectangular AVC so dimensions, codec, and projection describe the
+		// media the sphere viewer actually plays rather than either square lens original.
+		for _, f := range m.Files {
+			if f.FileVideo && f.FileHash != "" && projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
+				return f.FileHash, f.FileCodec, video.ContentType(f.FileMime, f.FileType, f.FileCodec, f.IsHDR()), f.FileWidth, f.FileHeight
+			}
+		}
 		for _, f := range m.Files {
 			if f.FileVideo && f.FileHash != "" {
 				return f.FileHash, f.FileCodec, video.ContentType(f.FileMime, f.FileType, f.FileCodec, f.IsHDR()), f.FileWidth, f.FileHeight

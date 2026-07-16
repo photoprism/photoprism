@@ -43,8 +43,9 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	}
 
 	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
-	if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
-		if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
+	forcePreview := forceDewarpPreview(f, o.Rescan)
+	if o.Convert && f.IsMedia() && (!f.HasPreviewImage() || forcePreview) {
+		if img, imgErr := ind.convert.ToImage(f, forcePreview); imgErr != nil {
 			// Stop the run instead of masking a full disk as a generic preview error.
 			if errors.Is(imgErr, status.ErrInsufficientStorage) {
 				ind.abortInsufficientStorage()
@@ -84,6 +85,21 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		}
 	}
 
+	// Generate the playable equirectangular AVC while the index worker is already running in the
+	// background. This prevents the HTTP video endpoint from doing an expensive v360 conversion.
+	if o.Convert && f.DewarpableInsv() {
+		if avc, avcErr := ind.convert.ToAvc(f, ind.conf.FFmpegEncoder(), false, o.Rescan); errors.Is(avcErr, status.ErrInsufficientStorage) {
+			ind.abortInsufficientStorage()
+			result.Err = avcErr
+			result.Status = IndexFailed
+			return result
+		} else if avcErr != nil {
+			log.Warnf("index: could not create equirectangular video for %s (%s)", clean.Log(f.RootRelName()), avcErr)
+		} else if avc != nil {
+			related.Files = append(related.Files, avc)
+		}
+	}
+
 	// Index main MediaFile.
 	exists := ind.files.Exists(f.RootRelName(), f.Root())
 	result = ind.MediaFile(f, o, "", "")
@@ -107,4 +123,9 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	}
 
 	return result
+}
+
+// forceDewarpPreview reports whether forced indexing should replace a recognized 360° preview.
+func forceDewarpPreview(f *MediaFile, rescan bool) bool {
+	return rescan && f != nil && (f.DewarpableInsv() || f.IsInsp() && f.DualFisheyeLayout() || f.FisheyeDng())
 }

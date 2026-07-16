@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 var testSamplesPath = fs.Abs("../../assets/samples")
@@ -1146,17 +1147,40 @@ func TestMediaFile_DualFisheyeLayout(t *testing.T) {
 	})
 }
 
+func TestMediaFile_StackedDualFisheyeLayout(t *testing.T) {
+	f, err := NewMediaFile("testdata/flash.jpg")
+	assert.NoError(t, err)
+
+	f.width = 3264
+	f.height = 6528
+	assert.True(t, f.StackedDualFisheyeLayout())
+
+	f.width = 6528
+	f.height = 3264
+	assert.False(t, f.StackedDualFisheyeLayout())
+
+	f.width = 3264
+	f.height = 3264
+	assert.False(t, f.StackedDualFisheyeLayout())
+}
+
 func TestMediaFile_FisheyeDng(t *testing.T) {
 	dir := t.TempDir()
 	t.Run("Insta360Dng", func(t *testing.T) {
 		f, err := NewMediaFile(dngFixture(t, dir, "insta360.dng", true))
 		assert.NoError(t, err)
 		assert.True(t, f.FisheyeDng())
+		assert.Equal(t, projection.Fisheye, f.FisheyeDngProjection())
+
+		f.width = 3264
+		f.height = 6528
+		assert.Equal(t, projection.DualFisheye, f.FisheyeDngProjection())
 	})
 	t.Run("OrdinaryDng", func(t *testing.T) {
 		f, err := NewMediaFile(dngFixture(t, dir, "canon.dng", false))
 		assert.NoError(t, err)
 		assert.False(t, f.FisheyeDng())
+		assert.Equal(t, projection.Unknown, f.FisheyeDngProjection())
 	})
 	t.Run("Model360NotFisheye", func(t *testing.T) {
 		// A non-360 camera whose model merely contains "360" must not be treated as fisheye.
@@ -2796,6 +2820,34 @@ func TestMediaFile_NeedsTranscoding(t *testing.T) {
 		}
 
 		assert.True(t, f.NeedsTranscoding())
+	})
+}
+
+func TestMediaFile_AvcFile(t *testing.T) {
+	c := config.TestConfig()
+
+	t.Run("Existing", func(t *testing.T) {
+		original, err := NewMediaFile(c.SamplesPath() + "/earth.mov")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		avcName, err := fs.FileName(original.FileName(), c.SidecarPath(), c.OriginalsPath(), fs.ExtAvc)
+		assert.NoError(t, err)
+		t.Cleanup(func() { _ = os.Remove(avcName) })
+		avcFixture, err := NewMediaFile(c.SamplesPath() + "/blue-go-video.mp4")
+		assert.NoError(t, err)
+		assert.NoError(t, avcFixture.Copy(avcName, false))
+
+		assert.NotNil(t, original.AvcFile())
+	})
+	t.Run("Missing", func(t *testing.T) {
+		original, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+		assert.NoError(t, err)
+		assert.Nil(t, original.AvcFile())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Nil(t, (*MediaFile)(nil).AvcFile())
 	})
 }
 

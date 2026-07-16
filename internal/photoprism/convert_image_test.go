@@ -380,6 +380,28 @@ func TestConvert_JpegConvertCmds_Insp(t *testing.T) {
 	assert.Contains(t, oneRSCmds[0].String(), "v360=input=dfisheye:output=e:ih_fov=204:iv_fov=204:roll=180")
 }
 
+// TestConvert_JpegConvertCmds_Insta360Pair verifies paired-lens poster generation.
+func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to dewarp paired INSV files")
+	}
+
+	dir := t.TempDir()
+	leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+	rightName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+	left, err := NewMediaFile(leftName)
+	require.NoError(t, err)
+
+	cmds, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "poster.jpg"), "")
+	require.NoError(t, err)
+	require.NotEmpty(t, cmds)
+
+	assert.Contains(t, cmds[0].String(), "-i "+leftName+" -i "+rightName)
+	assert.Contains(t, cmds[0].String(), "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
+}
+
 // TestConvert_writeEquirectangularProjection verifies that the GPano equirectangular tag is
 // written so a dewarped derivative is self-describing to external tools.
 func TestConvert_writeEquirectangularProjection(t *testing.T) {
@@ -421,16 +443,40 @@ func TestConvert_dewarpFileInPlace(t *testing.T) {
 		}
 		dir := t.TempDir()
 		dst := copyFixture(t, dir, "df.jpg", "testdata/insta360.insp") // 2:1 dual-fisheye JPEG.
-		require.NoError(t, convert.dewarpFileInPlace(dst, 204, 0))
+		require.NoError(t, convert.dewarpFileInPlace(dst, projection.DualFisheye, false, 204, 0))
 		assert.False(t, fs.FileExists(dst+".dewarp.jpg"), "temp file must not leak")
 		out, err := NewMediaFile(dst)
 		require.NoError(t, err)
 		assert.InDelta(t, 2.0, float64(out.AspectRatio()), 0.2) // equirectangular output is ~2:1.
 	})
+	t.Run("SingleFisheye", func(t *testing.T) {
+		if !cnf.FFmpegEnabled() {
+			t.Skip("FFmpeg must be available to dewarp")
+		}
+		dir := t.TempDir()
+		dst := copyFixture(t, dir, "fisheye.jpg", "testdata/flash.jpg")
+		require.NoError(t, convert.dewarpFileInPlace(dst, projection.Fisheye, false, 204, 0))
+		out, err := NewMediaFile(dst)
+		require.NoError(t, err)
+		assert.InDelta(t, 2.0, float64(out.AspectRatio()), 0.2)
+	})
+	t.Run("StackedDualFisheye", func(t *testing.T) {
+		if !cnf.FFmpegEnabled() {
+			t.Skip("FFmpeg must be available to dewarp")
+		}
+		dst := filepath.Join(t.TempDir(), "stacked.jpg")
+		// #nosec G204 -- arguments are the configured FFmpeg binary, a fixture, and a temp path.
+		cmd := exec.Command(cnf.FFmpegBin(), "-hide_banner", "-loglevel", "error", "-y", "-i", "testdata/flash.jpg", "-filter_complex", "[0:v][0:v]vstack=inputs=2[v]", "-map", "[v]", dst)
+		require.NoError(t, cmd.Run())
+		require.NoError(t, convert.dewarpFileInPlace(dst, projection.DualFisheye, true, 204, 180))
+		out, err := NewMediaFile(dst)
+		require.NoError(t, err)
+		assert.InDelta(t, 2.0, float64(out.AspectRatio()), 0.2)
+	})
 	t.Run("FFmpegDisabled", func(t *testing.T) {
 		cnf.Options().DisableFFmpeg = true
 		t.Cleanup(func() { cnf.Options().DisableFFmpeg = false })
-		err := NewConvert(cnf).dewarpFileInPlace(filepath.Join(t.TempDir(), "x.jpg"), 204, 0)
+		err := NewConvert(cnf).dewarpFileInPlace(filepath.Join(t.TempDir(), "x.jpg"), projection.DualFisheye, false, 204, 0)
 		assert.Error(t, err)
 	})
 }
@@ -470,7 +516,7 @@ func TestConvert_fisheyeFov(t *testing.T) {
 	})
 }
 
-// TestConvert_fisheyeRoll verifies that only 2:1 OneRS INSP and INSV originals are corrected.
+// TestConvert_fisheyeRoll verifies that only supported OneRS fisheye originals are corrected.
 func TestConvert_fisheyeRoll(t *testing.T) {
 	cnf := config.TestConfig()
 	convert := NewConvert(cnf)
@@ -502,6 +548,17 @@ func TestConvert_fisheyeRoll(t *testing.T) {
 		f, err := NewMediaFile(dngFixture(t, t.TempDir(), "insta360.dng", true))
 		require.NoError(t, err)
 		assert.Equal(t, 0, convert.fisheyeRoll(f))
+	})
+	t.Run("OneRSDng", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available")
+		}
+		dst := dngFixture(t, t.TempDir(), "insta360.dng", true)
+		// #nosec G204 -- arguments are the configured ExifTool binary and a temp file path.
+		require.NoError(t, exec.Command(cnf.ExifToolBin(), "-q", "-overwrite_original", "-Make=Arashi Vision", "-Model=Insta360 OneRS", dst).Run())
+		f, err := NewMediaFile(dst)
+		require.NoError(t, err)
+		assert.Equal(t, 180, convert.fisheyeRoll(f))
 	})
 }
 

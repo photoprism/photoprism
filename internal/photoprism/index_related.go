@@ -20,6 +20,13 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		return result
 	}
 
+	// Forced reindexing upgrades captures that older versions stored as separate lens/proxy photos.
+	if o.Rescan {
+		if reconcileErr := reconcileInsta360Photos(related); reconcileErr != nil {
+			log.Warnf("index: could not reconcile Insta360 capture %s (%s)", related.MainLogName(), reconcileErr)
+		}
+	}
+
 	done := make(map[string]bool)
 	result = IndexMain(&related, ind, o)
 
@@ -73,7 +80,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		}
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
-		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
+		if o.Convert && f.IsMedia() && !f.InSidecar() && !f.HasPreviewImage() {
 			// Try to create a preview image; if this fails, log and continue without failing the whole group.
 			if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
 				// Stop the run instead of masking a full disk as a generic preview error.

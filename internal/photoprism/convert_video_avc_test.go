@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -41,6 +42,18 @@ func TestConvert_ToAvc(t *testing.T) {
 		assert.Truef(t, fs.FileExists(avcFile.FileName()), "output file does not exist: %s", avcFile.FileName())
 
 		t.Logf("video metadata: %+v", avcFile.MetaData())
+
+		oldTime := time.Unix(1, 0)
+		assert.NoError(t, os.Chtimes(outputName, oldTime, oldTime))
+
+		avcFile, err = convert.ToAvc(mf, encode.SoftwareAvc, false, true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		info, err := os.Stat(avcFile.FileName())
+		assert.NoError(t, err)
+		assert.True(t, info.ModTime().After(oldTime), "forced conversion should replace the sidecar")
 
 		_ = os.Remove(outputName)
 	})
@@ -228,6 +241,27 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.NotContains(t, strings.Join(r.Args, " "), "v360")
+	})
+	t.Run("Insta360SeparateLensPair", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+		rightName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+		mf, err := NewMediaFile(leftName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		r, useMutex, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.Encoder("intel"))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		args := strings.Join(r.Args, " ")
+		assert.True(t, useMutex)
+		assert.Contains(t, args, "-i "+leftName+" -i "+rightName)
+		assert.Contains(t, args, "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+		assert.Contains(t, args, "-map [v] -map 0:a:0?")
+		assert.Contains(t, args, "libx264")
 	})
 	t.Run("Mp4NoV360", func(t *testing.T) {
 		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
