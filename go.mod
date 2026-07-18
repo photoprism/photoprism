@@ -12,7 +12,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gin-contrib/gzip v1.2.6 // indirect
 	github.com/gin-gonic/gin v1.12.0
-	github.com/golang/geo v0.0.0-20260706204034-7a8d33c78269
+	github.com/golang/geo v0.0.0-20260713102120-857a528af641
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
@@ -21,14 +21,14 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
 	github.com/klauspost/cpuid/v2 v2.4.0
-	github.com/leandro-lugaresi/hub v1.1.1
+	github.com/leandro-lugaresi/hub v1.1.2
 	github.com/leonelquinteros/gotext v1.7.2
 	github.com/lib/pq v1.12.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.0
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v1.14.44 // indirect
-	github.com/montanaflynn/stats v0.9.0
+	github.com/montanaflynn/stats v0.12.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
@@ -65,11 +65,11 @@ require (
 	golang.org/x/time v0.15.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.13
+require github.com/go-ldap/ldap/v3 v3.4.14
 
 require (
 	github.com/prometheus/client_golang v1.23.2
-	github.com/prometheus/common v0.69.0
+	github.com/prometheus/common v0.70.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
@@ -79,9 +79,9 @@ require golang.org/x/text v0.40.0
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
 	github.com/antchfx/xmlquery v1.5.1
-	github.com/antchfx/xpath v1.3.6
+	github.com/antchfx/xpath v1.3.7
 	github.com/davidbyttow/govips/v2 v2.18.0
-	github.com/go-co-op/gocron/v2 v2.21.2
+	github.com/go-co-op/gocron/v2 v2.22.0
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/klauspost/compress v1.19.0
@@ -94,7 +94,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.31.0
-	github.com/zitadel/oidc/v3 v3.47.5
+	github.com/zitadel/oidc/v3 v3.47.9
 	golang.org/x/mod v0.38.0
 	golang.org/x/sys v0.47.0
 	google.golang.org/protobuf v1.36.11
@@ -119,7 +119,7 @@ require (
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/gin-contrib/sse v1.1.1 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.8 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -157,7 +157,7 @@ require (
 	github.com/olekukonko/errors v1.3.0 // indirect
 	github.com/olekukonko/ll v0.1.8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/procfs v0.20.1 // indirect
+	github.com/prometheus/procfs v0.21.0 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.59.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
@@ -173,9 +173,9 @@ require (
 	github.com/zitadel/schema v1.3.2 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.6.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.43.0 // indirect
-	go.opentelemetry.io/otel/metric v1.43.0 // indirect
-	go.opentelemetry.io/otel/trace v1.43.0 // indirect
+	go.opentelemetry.io/otel v1.44.0 // indirect
+	go.opentelemetry.io/otel/metric v1.44.0 // indirect
+	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/tools v0.47.0 // indirect
