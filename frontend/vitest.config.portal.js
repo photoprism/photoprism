@@ -61,7 +61,17 @@ export default defineConfig({
 
     environment: "jsdom",
     css: true,
-    pool: "vmForks",
+    // The forks pool runs tests in real Node processes, so sanitize-html's
+    // ESM-only htmlparser2 (v12+, required for its XSS fixes) loads via native
+    // require(ESM); the vmForks VM executor cannot. forks externalizes
+    // node_modules, so Vuetify must be inlined for Vite to transform its CSS
+    // imports (otherwise Node throws "Unknown file extension .css").
+    pool: "forks",
+    server: {
+      deps: {
+        inline: [/vuetify/],
+      },
+    },
     testTimeout: 10000,
     watch: false,
     silent: true,
