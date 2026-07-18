@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/clean"
+	httpclient "github.com/photoprism/photoprism/pkg/http/client"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/safe"
 )
@@ -31,31 +32,46 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 		return apiResponse, jsonErr
 	}
 
-	// Create HTTP client and authenticated service API request.
+	// Bound the total request time, including any 429 retries, to ServiceTimeout.
+	ctx, cancel := context.WithTimeout(context.Background(), ServiceTimeout)
+	defer cancel()
+
+	// Create HTTP client and a factory that builds a fresh authenticated request
+	// per attempt, so a buffered payload is replayed safely when retrying a 429.
 	client := http.Client{Timeout: ServiceTimeout}
-	req, reqErr := http.NewRequest(method, uri, bytes.NewReader(data))
+	newReq := func() (*http.Request, error) {
+		req, reqErr := http.NewRequestWithContext(ctx, method, uri, bytes.NewReader(data))
+		if reqErr != nil {
+			return nil, reqErr
+		}
 
-	// Add "application/json" content type header.
-	header.SetContentType(req, header.ContentTypeJson)
+		// Add "application/json" content type header.
+		header.SetContentType(req, header.ContentTypeJson)
 
-	if reqErr != nil {
-		return apiResponse, reqErr
+		// Add an authentication header if an access token is provided.
+		if key != "" {
+			header.SetAuthorization(req, key)
+		}
+
+		// Add custom OpenAI organization and project headers.
+		if apiRequest.GetResponseFormat() == ApiFormatOpenAI {
+			header.SetOpenAIOrg(req, apiRequest.Org)
+			header.SetOpenAIProject(req, apiRequest.Project)
+		}
+
+		return req, nil
 	}
 
-	// Add an authentication header if an access token is provided.
-	if key != "" {
-		header.SetAuthorization(req, key)
-	}
-
-	// Add custom OpenAI organization and project headers.
-	if apiRequest.GetResponseFormat() == ApiFormatOpenAI {
-		header.SetOpenAIOrg(req, apiRequest.Org)
-		header.SetOpenAIProject(req, apiRequest.Project)
-	}
-
-	// Perform API request.
+	// Perform API request, retrying transient HTTP 429 responses with bounded
+	// exponential backoff while other statuses stay terminal.
 	// #nosec G704 URI is validated by validateApiRequestURL before issuing the request.
-	clientResp, clientErr := client.Do(req)
+	clientResp, clientErr := httpclient.Do(ctx, &client, newReq, httpclient.RetryPolicy{
+		MaxRetries:      ServiceMaxRetries,
+		BaseDelay:       ServiceRetryDelay,
+		MaxDelay:        ServiceRetryMaxDelay,
+		RetryStatuses:   []int{http.StatusTooManyRequests},
+		HonorRetryAfter: true,
+	})
 
 	if clientErr != nil {
 		return apiResponse, clientErr

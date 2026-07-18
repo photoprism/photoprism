@@ -135,7 +135,7 @@ Guidelines:
 ### Operational Checklist
 
 - **Scheduling** — Use `Run: newly-indexed` for incremental runs, `Run: manual` for ad-hoc CLI calls, or `Run: on-schedule` when paired with the scheduler. Leave `Run: auto` if you want the worker to decide based on other model states.
-- **Timeouts & Retries** — Default timeout is 10 minutes (`ServiceTimeout`). Ollama streaming responses complete faster in practice; if you need stricter SLAs, wrap `photoprism vision run` in a job runner and retry failed batches manually.
+- **Timeouts & Retries** — Default timeout is 10 minutes (`ServiceTimeout`). Transient `HTTP 429` responses are retried with bounded exponential backoff (within `ServiceTimeout`, honoring `Retry-After` up to `ServiceRetryMaxDelay`); other errors are terminal. Ollama streaming responses complete faster in practice; if you need stricter SLAs, wrap `photoprism vision run` in a job runner and retry failed batches manually.
 - **Fallbacks** — Keep Nasnet configured even when Ollama labels are primary. `labels.go` stops at the first successful engine, so duplicates are avoided.
 - **Security** — When exposing Ollama beyond localhost, terminate TLS at Traefik and enable API keys. Never return full JSON payloads in logs; rely on trace mode only for debugging and sanitize before sharing.
 - **Model Storage** — Bind-mount `./storage/services/ollama:/root/.ollama` (see Compose) so pulled models survive container restarts. Run `docker compose exec ollama ollama list` during deployments to verify availability.
