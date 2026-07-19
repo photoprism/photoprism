@@ -1,11 +1,13 @@
 package config
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,6 +16,8 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/maruel/natural"
+	"github.com/mattn/go-sqlite3"
 	"golang.org/x/mod/semver"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -611,6 +615,22 @@ func (c *Config) connectDb() error {
 
 	if dbDsn == "" {
 		return errors.New("DSN not specified")
+	}
+
+	if dbDriver == dsn.DriverSQLite3 {
+		if !slices.Contains(sql.Drivers(), "sqlite_natural_sort") {
+			sql.Register("sqlite_natural_sort", &sqlite3.SQLiteDriver{
+				ConnectHook: func(conn *sqlite3.SQLiteConn) error {
+					return conn.RegisterCollation("CUSTOM_NATURAL_SORT", natural.Compare)
+				},
+			})
+		}
+		dbDriver = "sqlite_natural_sort"
+		sqliteDialect, ok := gorm.GetDialect("sqlite3")
+		if !ok {
+			log.Fatal("Unable to get gorm sqlite3 dialect")
+		}
+		gorm.RegisterDialect("sqlite_natural_sort", sqliteDialect)
 	}
 
 	// Open database connection.

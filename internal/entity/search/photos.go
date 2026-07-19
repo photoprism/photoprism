@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/enum"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
@@ -199,9 +200,23 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		s = s.Where("files.file_diff > 0")
 		s = s.Order(OrderExpr("photos.photo_color ASC, photos.cell_id ASC, files.file_diff, files.photo_id, files.time_index", frm.Reverse))
 	case sortby.Name:
-		s = s.Order(OrderExpr("photos.photo_path ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		switch entity.DbDialect() {
+		case dsn.DriverMySQL:
+			s = s.Order(OrderExpr("NATURAL_SORT_KEY(photos.photo_path) ASC, NATURAL_SORT_KEY(photos.photo_name) ASC, files.time_index", frm.Reverse))
+		case dsn.DriverSQLite3:
+			s = s.Order(OrderExpr("photos.photo_path COLLATE CUSTOM_NATURAL_SORT ASC, photos.photo_name COLLATE CUSTOM_NATURAL_SORT ASC, files.time_index", frm.Reverse))
+		default:
+			return PhotoResults{}, 0, fmt.Errorf("sql: unsupported dialect %s", entity.DbDialect())
+		}
 	case sortby.Title:
-		s = s.Order(OrderExpr("photos.photo_title ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		switch entity.DbDialect() {
+		case dsn.DriverMySQL:
+			s = s.Order(OrderExpr("NATURAL_SORT_KEY(photos.photo_title) ASC, NATURAL_SORT_KEY(photos.photo_name) ASC, files.time_index", frm.Reverse))
+		case dsn.DriverSQLite3:
+			s = s.Order(OrderExpr("photos.photo_title COLLATE CUSTOM_NATURAL_SORT ASC, photos.photo_name COLLATE CUSTOM_NATURAL_SORT ASC, files.time_index", frm.Reverse))
+		default:
+			return PhotoResults{}, 0, fmt.Errorf("sql: unsupported dialect %s", entity.DbDialect())
+		}
 	case sortby.Random:
 		s = s.Order(sortby.RandomExpr(s.Dialect()))
 	case sortby.Default, sortby.Imported, sortby.Added:

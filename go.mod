@@ -56,6 +56,7 @@ require github.com/google/uuid v1.6.0
 require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/maruel/natural v1.3.0 // indirect
 )
 
 require github.com/gabriel-vasile/mimetype v1.4.13
