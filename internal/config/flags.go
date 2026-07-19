@@ -604,7 +604,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-icon",
-			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square, bloom, flower, ring, shutter)",
+			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square, bloom, flower, ring, shutter, glass, neon)",
 			EnvVars: EnvVars("APP_ICON"),
 		}}, {
 		Flag: &cli.StringFlag{

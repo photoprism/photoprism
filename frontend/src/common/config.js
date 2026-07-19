@@ -951,18 +951,16 @@ export default class Config {
       return this.themeAssetUri(this.theme.variables.icon);
     }
 
-    switch (this.get("appIcon")) {
-      case "crisp":
-      case "mint":
-      case "bold":
-      case "bloom":
-      case "flower":
-      case "ring":
-      case "shutter":
-        return `${this.staticUri}/icons/${this.get("appIcon")}.svg`;
-      default:
-        return `${this.staticUri}/icons/logo.svg`;
+    // The backend validates built-in icon names against the files in
+    // assets/static/icons before sending them, so any bare name is safe to
+    // use directly; the regex guards against path traversal from custom values.
+    const appIcon = this.get("appIcon");
+
+    if (appIcon && appIcon !== "logo" && /^[a-z0-9-]+$/.test(appIcon)) {
+      return `${this.staticUri}/icons/${appIcon}.svg`;
     }
+
+    return `${this.staticUri}/icons/logo.svg`;
   }
 
   getLoginIcon() {
