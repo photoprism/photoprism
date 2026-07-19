@@ -72,6 +72,10 @@ func PostVisionFace(router *gin.RouterGroup) {
 		results := make([]face.Embeddings, len(request.Images))
 
 		for i := range request.Images {
+			// ReadUrlImage restricts the caller-supplied reference to https/data URLs, so a
+			// local file path or file: scheme is rejected before any read — this is what keeps
+			// this endpoint from reading arbitrary local files. This mirrors how the caption/
+			// labels/nsfw handlers resolve media.SrcRemote inputs (see NewApiRequestImages).
 			if data, err := media.ReadUrlImage(request.Images[i], scheme.HttpsData); err != nil {
 				results[i] = face.Embeddings{}
 				log.Errorf("vision: %s (read face embedding from url)", err)

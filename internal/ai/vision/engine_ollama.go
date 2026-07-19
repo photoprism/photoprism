@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 type ollamaDefaults struct{}
@@ -125,12 +126,12 @@ func (ollamaDefaults) Options(model *Model) *ModelOptions {
 }
 
 // Build builds the Ollama service request.
-func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files) (*ApiRequest, error) {
+func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files, mediaSrc media.Src) (*ApiRequest, error) {
 	if model == nil {
 		return nil, ErrInvalidModel
 	}
 
-	req, err := NewApiRequest(model.EndpointRequestFormat(), files, model.EndpointFileScheme())
+	req, err := NewApiRequest(model.EndpointRequestFormat(), files, model.EndpointFileScheme(), mediaSrc)
 	if err != nil {
 		return nil, err
 	}

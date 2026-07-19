@@ -43,7 +43,7 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 			var apiRequest *ApiRequest
 			var apiResponse *ApiResponse
 
-			if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), images, model.EndpointFileScheme()); err != nil {
+			if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), images, model.EndpointFileScheme(), mediaSrc); err != nil {
 				return result, err
 			}
 
