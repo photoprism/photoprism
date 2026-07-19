@@ -665,10 +665,10 @@ func (m *Session) SetPreviewToken(token string) *Session {
 
 	if token != "" {
 		m.PreviewToken = token
-		PreviewToken.Set(token, m.ID)
+		PreviewToken.Set(m.ID, token)
 	} else if m.PreviewToken == "" {
 		m.PreviewToken = GenerateToken()
-		PreviewToken.Set(token, m.ID)
+		PreviewToken.Set(m.ID, m.PreviewToken)
 	}
 
 	return m
@@ -682,10 +682,10 @@ func (m *Session) SetDownloadToken(token string) *Session {
 
 	if token != "" {
 		m.DownloadToken = token
-		DownloadToken.Set(token, m.ID)
+		DownloadToken.Set(m.ID, token)
 	} else if m.DownloadToken == "" {
 		m.DownloadToken = GenerateToken()
-		DownloadToken.Set(token, m.ID)
+		DownloadToken.Set(m.ID, m.DownloadToken)
 	}
 
 	return m

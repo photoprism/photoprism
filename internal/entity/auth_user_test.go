@@ -2668,6 +2668,10 @@ func TestUser_RegenerateTokens(t *testing.T) {
 		preview := Admin.PreviewToken
 		download := Admin.DownloadToken
 
+		// Register the current tokens in the lookup cache.
+		PreviewToken.Set("user-regen-session", preview)
+		DownloadToken.Set("user-regen-session", download)
+
 		err := Admin.RegenerateTokens()
 
 		if err != nil {
@@ -2676,6 +2680,9 @@ func TestUser_RegenerateTokens(t *testing.T) {
 
 		assert.NotEqual(t, preview, Admin.PreviewToken)
 		assert.NotEqual(t, download, Admin.DownloadToken)
+		// The replaced tokens are dropped from the lookup cache.
+		assert.True(t, PreviewToken.MissingValue(preview))
+		assert.True(t, DownloadToken.MissingValue(download))
 	})
 }
 

@@ -11,6 +11,7 @@ import (
 // Strings is a simple string map that should not be accessed by multiple goroutines.
 type Strings map[string]string
 
+// MultiStrings maps each key to a list of values and should not be accessed by multiple goroutines.
 type MultiStrings map[string][]string
 
 // StringMap is a string (reverse) lookup map that can be accessed by multiple goroutines.
@@ -64,6 +65,11 @@ func (s *StringMap) Has(key string) bool {
 // Missing checks if the key is unknown.
 func (s *StringMap) Missing(key string) bool {
 	return !s.Has(key)
+}
+
+// MissingValue checks if no key maps to the specified value.
+func (s *StringMap) MissingValue(val string) bool {
+	return !s.HasValue(val)
 }
 
 // Key returns the last added key that matches the specified value.
@@ -128,7 +134,11 @@ func (s *StringMap) Unchanged(key string, val string) bool {
 	return s.m[key] == val && list.Contains(s.r[strings.ToLower(val)], key)
 }
 
-// Set adds a string to the map.
+// Set maps key to val and adds key to val's reverse-lookup list.
+//
+// It does not retract key from a previous value's reverse list when a key's value
+// changes; callers that reassign a key must UnsetValue the old value first when
+// reverse lookups (HasValue/MissingValue/Key) must stop matching the old value.
 func (s *StringMap) Set(key string, val string) {
 	if s.Unchanged(key, val) {
 		return
@@ -165,4 +175,22 @@ func (s *StringMap) Unset(key string) {
 	}
 
 	delete(s.m, key)
+}
+
+// UnsetValue removes all keys currently mapped to the specified value.
+func (s *StringMap) UnsetValue(val string) {
+	if val == "" {
+		return
+	}
+
+	s.Lock()
+	defer s.Unlock()
+
+	v := strings.ToLower(val)
+
+	for _, key := range s.r[v] {
+		delete(s.m, key)
+	}
+
+	delete(s.r, v)
 }

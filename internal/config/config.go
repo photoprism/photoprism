@@ -428,8 +428,8 @@ func (c *Config) Propagate() {
 	entity.UsersPath = c.UsersPath()
 
 	// Set API preview and download default tokens.
-	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
-	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)
+	entity.PreviewToken.Set(entity.TokenConfig, c.PreviewToken())
+	entity.DownloadToken.Set(entity.TokenConfig, c.DownloadToken())
 	entity.ValidateTokens = !c.Public()
 
 	// Set face recognition parameters.
