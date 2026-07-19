@@ -20,6 +20,56 @@ func TestIndexOptionsNone(t *testing.T) {
 	assert.Equal(t, false, opt.FacesOnly)
 }
 
+func TestResolveIndexPath(t *testing.T) {
+	base := "/photoprism/originals"
+
+	t.Run("Root", func(t *testing.T) {
+		got, err := ResolveIndexPath(base, "/")
+		require.NoError(t, err)
+		assert.Equal(t, base, got)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		got, err := ResolveIndexPath(base, "")
+		require.NoError(t, err)
+		assert.Equal(t, base, got)
+	})
+	t.Run("Dot", func(t *testing.T) {
+		got, err := ResolveIndexPath(base, ".")
+		require.NoError(t, err)
+		assert.Equal(t, base, got)
+	})
+	t.Run("Subfolder", func(t *testing.T) {
+		got, err := ResolveIndexPath(base, "2020/03")
+		require.NoError(t, err)
+		assert.Equal(t, base+"/2020/03", got)
+	})
+	t.Run("LeadingSlashSubfolder", func(t *testing.T) {
+		got, err := ResolveIndexPath(base, "/2020/03")
+		require.NoError(t, err)
+		assert.Equal(t, base+"/2020/03", got)
+	})
+	t.Run("DottedSubfolderAllowed", func(t *testing.T) {
+		got, err := ResolveIndexPath(base, "2020/.hidden")
+		require.NoError(t, err)
+		assert.Equal(t, base+"/2020/.hidden", got)
+	})
+	t.Run("Traversal", func(t *testing.T) {
+		_, err := ResolveIndexPath(base, "../../outside")
+		assert.Error(t, err)
+	})
+	t.Run("InteriorTraversal", func(t *testing.T) {
+		_, err := ResolveIndexPath(base, "2020/../../../outside")
+		assert.Error(t, err)
+	})
+	t.Run("LeadingSlashRootsUnderOriginals", func(t *testing.T) {
+		// A leading slash is rooted at originals (like filepath.Join), so an
+		// "absolute" input stays within the base directory rather than escaping.
+		got, err := ResolveIndexPath(base, "/sub/file")
+		require.NoError(t, err)
+		assert.Equal(t, base+"/sub/file", got)
+	})
+}
+
 func TestIndexOptions_SkipUnchanged(t *testing.T) {
 	opt := IndexOptionsNone(nil)
 

@@ -74,6 +74,12 @@ func StartIndexing(router *gin.RouterGroup) {
 			return
 		}
 
+		// Reject index paths that would escape the originals directory.
+		if _, err := photoprism.ResolveIndexPath(conf.OriginalsPath(), frm.Path); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
 		// Configure index options.
 		path := conf.OriginalsPath()
 		convert := settings.Index.Convert && conf.SidecarWritable()

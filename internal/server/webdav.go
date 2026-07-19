@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -227,42 +226,13 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 	return fileName
 }
 
-// joinUnderBase joins a base directory with a relative name and ensures
-// that the resulting path stays within the base directory. Absolute paths,
-// Windows-style volume names, and drive-letter prefixes are rejected, and
-// containment is verified with filepath.Rel rather than a string prefix.
-// This mirrors the hardened safe-join used for archive extraction in pkg/fs.
+// joinUnderBase resolves a relative request name under baseDir using the shared
+// safe-join, so WebDAV uploads cannot escape the originals or import directory.
+// Absolute paths, Windows-style volume names, drive-letter prefixes, and
+// parent-directory traversal are rejected, with containment verified via
+// filepath.Rel rather than a string prefix.
 func joinUnderBase(baseDir, rel string) (string, error) {
-	if rel == "" {
-		return "", fmt.Errorf("invalid path")
-	}
-
-	// Normalize separators so mixed '/' and '\\' are handled consistently.
-	rel = strings.ReplaceAll(rel, "\\", "/")
-
-	// Reject Windows-style drive-letter prefixes even on non-Windows platforms.
-	if len(rel) >= 2 && rel[1] == ':' && ((rel[0] >= 'A' && rel[0] <= 'Z') || (rel[0] >= 'a' && rel[0] <= 'z')) {
-		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
-	}
-
-	// Reject absolute or volume paths.
-	if filepath.IsAbs(rel) || filepath.VolumeName(rel) != "" {
-		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
-	}
-
-	cleaned := filepath.Clean(rel)
-	base := filepath.Clean(baseDir)
-
-	// Compose destination and verify it stays inside base using filepath.Rel.
-	dest := filepath.Join(base, cleaned)
-	relToBase, err := filepath.Rel(base, dest)
-	if err != nil {
-		return "", fmt.Errorf("invalid path: %w", err)
-	} else if relToBase == ".." || strings.HasPrefix(relToBase, ".."+string(os.PathSeparator)) {
-		return "", fmt.Errorf("invalid path: outside base directory")
-	}
-
-	return dest, nil
+	return fs.SafeJoin(baseDir, rel)
 }
 
 // WebDAVSetFavoriteFlag adds the favorite flag to files uploaded via WebDAV.
