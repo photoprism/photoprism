@@ -2,9 +2,11 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -135,6 +137,10 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
+		// Clamp the requested LOCK lifetime so a client cannot mint infinite or
+		// excessively long-lived locks; the lock system enforces the same cap.
+		WebDAVClampLockTimeout(c.Request)
+
 		// Invoke handler callback.
 		WebDAVHandler(c, router, srv)
 	}
@@ -180,6 +186,44 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			})
 		} else {
 			handleWrite(route, handlerFunc)
+		}
+	}
+}
+
+// WebDAVClampLockTimeout rewrites the LOCK "Timeout" request header so the lock the
+// upstream handler grants — and the lifetime it reports back — cannot exceed
+// mutex.WebDAVMaxLockLifetime. Clamping the header keeps the granted timeout the client
+// sees consistent with what is actually enforced, so conformant clients refresh in time.
+func WebDAVClampLockTimeout(request *http.Request) {
+	if request == nil || request.Method != header.MethodLock {
+		return
+	}
+
+	// A negative cap disables clamping (infinite locks allowed).
+	maxLifetime := mutex.WebDAVMaxLockLifetime
+	if maxLifetime < 0 {
+		return
+	}
+
+	// The upstream handler parses only the first comma-separated timeout value.
+	first := request.Header.Get(header.Timeout)
+	if i := strings.IndexByte(first, ','); i >= 0 {
+		first = first[:i]
+	}
+	first = strings.TrimSpace(first)
+
+	maxSeconds := int64(maxLifetime / time.Second)
+	capped := fmt.Sprintf("Second-%d", maxSeconds)
+
+	switch {
+	case first == "" || strings.EqualFold(first, "Infinite"):
+		// Absent or infinite request: grant the capped lifetime instead.
+		request.Header.Set(header.Timeout, capped)
+	case strings.HasPrefix(first, "Second-"):
+		// Numeric request: clamp only when it exceeds the cap, leave malformed
+		// values untouched so the upstream handler still rejects them.
+		if n, err := strconv.ParseInt(first[len("Second-"):], 10, 64); err == nil && n > maxSeconds {
+			request.Header.Set(header.Timeout, capped)
 		}
 	}
 }
