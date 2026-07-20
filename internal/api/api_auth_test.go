@@ -585,3 +585,19 @@ func (fx portalJWTFixture) issue(t *testing.T, spec clusterjwt.ClaimsSpec) strin
 	require.NoError(t, err)
 	return token
 }
+
+func TestAuthorizeSuperAdmin(t *testing.T) {
+	t.Run("SuperAdminSession", func(t *testing.T) {
+		s := entity.SessionFixtures.Pointer("alice")
+		require.True(t, s.GetUser().IsSuperAdmin(), "alice fixture must be a super admin")
+		assert.True(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("NonSuperAdminSession", func(t *testing.T) {
+		s := entity.SessionFixtures.Pointer("bob")
+		require.False(t, s.GetUser().IsSuperAdmin(), "bob fixture must not be a super admin")
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("NilSession", func(t *testing.T) {
+		assert.False(t, AuthorizeSuperAdmin(nil))
+	})
+}
