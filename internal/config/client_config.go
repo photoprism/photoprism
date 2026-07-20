@@ -56,6 +56,7 @@ type ClientConfig struct {
 	AppName          string              `json:"appName"`
 	AppMode          string              `json:"appMode"`
 	AppIcon          string              `json:"appIcon"`
+	AppTouchIcon     string              `json:"appTouchIcon"`
 	AppColor         string              `json:"appColor"`
 	DefaultLocale    string              `json:"defaultLocale"`
 	DefaultTimezone  string              `json:"defaultTimezone"`
@@ -309,6 +310,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		AppName:          c.AppName(),
 		AppMode:          c.AppMode(),
 		AppIcon:          c.AppIcon(),
+		AppTouchIcon:     c.AppTouchIcon(),
 		AppColor:         c.AppColor(),
 		DefaultLocale:    c.DefaultLocale(),
 		DefaultTimezone:  c.DefaultTimezone().String(),
@@ -408,6 +410,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		AppName:          c.AppName(),
 		AppMode:          c.AppMode(),
 		AppIcon:          c.AppIcon(),
+		AppTouchIcon:     c.AppTouchIcon(),
 		AppColor:         c.AppColor(),
 		DefaultLocale:    c.DefaultLocale(),
 		DefaultTimezone:  c.DefaultTimezone().String(),
@@ -515,6 +518,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		AppName:          c.AppName(),
 		AppMode:          c.AppMode(),
 		AppIcon:          c.AppIcon(),
+		AppTouchIcon:     c.AppTouchIcon(),
 		AppColor:         c.AppColor(),
 		DefaultLocale:    c.DefaultLocale(),
 		DefaultTimezone:  c.DefaultTimezone().String(),

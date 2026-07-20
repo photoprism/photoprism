@@ -71,6 +71,33 @@ func TestConfig_AppIcon(t *testing.T) {
 	assert.Equal(t, "logo", c.AppIcon())
 }
 
+func TestConfig_AppTouchIcon(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	// Default and invalid selections fall back to the "logo" squircle touch variant.
+	assert.Equal(t, "logo/touch", c.AppTouchIcon())
+	c.options.AppIcon = "foo"
+	assert.Equal(t, "logo/touch", c.AppTouchIcon())
+	c.options.AppIcon = "logo"
+	assert.Equal(t, "logo/touch", c.AppTouchIcon())
+	// Round icons resolve to their full-bleed "touch" variant.
+	c.options.AppIcon = "neon"
+	assert.Equal(t, "neon/touch", c.AppTouchIcon())
+	c.options.AppIcon = "crisp"
+	assert.Equal(t, "crisp/touch", c.AppTouchIcon())
+	// Squircle icons have no touch variant and are used as-is.
+	c.options.AppIcon = "glass"
+	assert.Equal(t, "glass", c.AppTouchIcon())
+	c.options.AppIcon = "app"
+	assert.Equal(t, "app", c.AppTouchIcon())
+	// Custom theme/URL icons are single files that can't drive the sized ladder, so they
+	// fall back to the "app" squircle instead of producing broken apple-touch-icon links.
+	c.options.AppIcon = "/custom/logo.png"
+	assert.Equal(t, "app", c.AppTouchIcon())
+	c.options.AppIcon = "https://cdn.example.com/logo.png"
+	assert.Equal(t, "app", c.AppTouchIcon())
+}
+
 func TestConfig_AppColor(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

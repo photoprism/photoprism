@@ -66,6 +66,28 @@ func (c *Config) AppIcon() string {
 	return defaultIcon
 }
 
+// AppTouchIcon returns the icon set used for the iOS home-screen apple-touch-icon.
+// It prefers a full-bleed "touch" variant when present, since iOS masks apple-touch-icons
+// and would otherwise fill a round icon's transparent corners. When no variant exists, it
+// falls back to the "app" squircle for the round "logo" default and to the icon itself
+// otherwise.
+func (c *Config) AppTouchIcon() string {
+	icon := c.AppIcon()
+
+	if fs.FileExistsNotEmpty(c.AppIconsPath(icon, "touch", "180.png")) {
+		return path.Join(icon, "touch")
+	}
+
+	// The apple-touch-icon template renders a fixed size ladder under /icons/<name>/, which
+	// only the built-in icon sets provide. The round "logo" default and custom theme/URL icons
+	// (which contain a slash) fall back to the built-in "app" squircle to avoid broken links.
+	if icon == "logo" || strings.Contains(icon, "/") {
+		return "app"
+	}
+
+	return icon
+}
+
 // AppColor returns the app background and splash screen color.
 func (c *Config) AppColor() string {
 	if appColor := clean.Color(c.options.AppColor); appColor == "" {
