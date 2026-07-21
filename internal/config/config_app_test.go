@@ -65,8 +65,8 @@ func TestConfig_AppIcon(t *testing.T) {
 	assert.Equal(t, "flower", c.AppIcon())
 	c.options.AppIcon = "ring"
 	assert.Equal(t, "ring", c.AppIcon())
-	c.options.AppIcon = "shutter"
-	assert.Equal(t, "shutter", c.AppIcon())
+	c.options.AppIcon = "rainbow"
+	assert.Equal(t, "rainbow", c.AppIcon())
 	c.options.AppIcon = "logo"
 	assert.Equal(t, "logo", c.AppIcon())
 }
@@ -74,28 +74,28 @@ func TestConfig_AppIcon(t *testing.T) {
 func TestConfig_AppTouchIcon(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	// Default and invalid selections fall back to the "logo" squircle touch variant.
+	// Every built-in set (default, round, and squircle) resolves to its full-bleed touch variant.
 	assert.Equal(t, "logo/touch", c.AppTouchIcon())
 	c.options.AppIcon = "foo"
 	assert.Equal(t, "logo/touch", c.AppTouchIcon())
 	c.options.AppIcon = "logo"
 	assert.Equal(t, "logo/touch", c.AppTouchIcon())
-	// Round icons resolve to their full-bleed "touch" variant.
 	c.options.AppIcon = "neon"
 	assert.Equal(t, "neon/touch", c.AppTouchIcon())
 	c.options.AppIcon = "crisp"
 	assert.Equal(t, "crisp/touch", c.AppTouchIcon())
-	// Squircle icons have no touch variant and are used as-is.
 	c.options.AppIcon = "glass"
-	assert.Equal(t, "glass", c.AppTouchIcon())
+	assert.Equal(t, "glass/touch", c.AppTouchIcon())
 	c.options.AppIcon = "app"
-	assert.Equal(t, "app", c.AppTouchIcon())
-	// Custom theme/URL icons are single files that can't drive the sized ladder, so they
-	// fall back to the "app" squircle instead of producing broken apple-touch-icon links.
+	assert.Equal(t, "app/touch", c.AppTouchIcon())
+	c.options.AppIcon = "rainbow"
+	assert.Equal(t, "rainbow/touch", c.AppTouchIcon())
+	// Custom theme/URL icons have no touch variant, so they fall back to the "app" touch squircle
+	// instead of producing broken apple-touch-icon links.
 	c.options.AppIcon = "/custom/logo.png"
-	assert.Equal(t, "app", c.AppTouchIcon())
+	assert.Equal(t, "app/touch", c.AppTouchIcon())
 	c.options.AppIcon = "https://cdn.example.com/logo.png"
-	assert.Equal(t, "app", c.AppTouchIcon())
+	assert.Equal(t, "app/touch", c.AppTouchIcon())
 }
 
 func TestConfig_AppColor(t *testing.T) {

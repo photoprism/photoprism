@@ -66,11 +66,11 @@ func (c *Config) AppIcon() string {
 	return defaultIcon
 }
 
-// AppTouchIcon returns the icon set used for the iOS home-screen apple-touch-icon.
-// It prefers a full-bleed "touch" variant when present, since iOS masks apple-touch-icons
-// and would otherwise fill a round icon's transparent corners. When no variant exists, it
-// falls back to the "app" squircle for the round "logo" default and to the icon itself
-// otherwise.
+// AppTouchIcon returns the icon set used for the iOS home-screen apple-touch-icon. Every built-in
+// set ships a full-bleed "touch" variant whose background fills the whole square opaquely: iOS
+// masks the icon into a squircle and, during the app-open zoom, composites it over the light
+// launch background, so a source with transparent rounded corners would flash white around it.
+// Custom theme/URL icons have no variant and fall back to the built-in "app" touch squircle.
 func (c *Config) AppTouchIcon() string {
 	icon := c.AppIcon()
 
@@ -78,14 +78,10 @@ func (c *Config) AppTouchIcon() string {
 		return path.Join(icon, "touch")
 	}
 
-	// The apple-touch-icon template renders a fixed size ladder under /icons/<name>/, which
-	// only the built-in icon sets provide. The round "logo" default and custom theme/URL icons
-	// (which contain a slash) fall back to the built-in "app" squircle to avoid broken links.
-	if icon == "logo" || strings.Contains(icon, "/") {
-		return "app"
-	}
-
-	return icon
+	// Every built-in icon set ships a full-bleed touch variant, so this fallback is reached only
+	// by custom theme/URL icons (which contain a slash): they have no touch variant and cannot
+	// drive the sized ladder, so they use the built-in "app" touch squircle.
+	return path.Join("app", "touch")
 }
 
 // AppColor returns the app background and splash screen color.

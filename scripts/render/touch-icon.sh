@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-# Renders full-bleed "touch" icon variants used by the apple-touch-icon links, so round theme
-# icons get a squircle that fills the iOS home-screen mask shape instead of showing filled
-# transparent corners. Round icons provide a "<name>.touch.svg" source (the background circle
-# replaced by a rounded square); the default "logo" reuses the pre-rendered "app" squircle.
+# Renders the full-bleed "touch" icon variants used by the apple-touch-icon links. iOS masks the
+# home-screen icon into a squircle and, during the app-open zoom, composites it over the light
+# launch background, so a source with transparent rounded corners flashes white around the icon.
+# Each theme icon therefore provides a "<name>.touch.svg" source whose background fills the whole
+# square opaquely (no rounded corners); iOS supplies the rounding.
 
 if [[ -n $1 ]] && [[ $1 == "-h" || $1 == "--help" ]]; then
-  echo "Usage: (1) ${0##*/}                 (renders touch icons for all assets/static/icons/*.touch.svg sources + logo)" 1>&2
+  echo "Usage: (1) ${0##*/}                 (renders touch icons for all assets/static/icons/*.touch.svg sources)" 1>&2
   echo "       (2) ${0##*/} [name]          (renders touch icons for assets/static/icons/[name].touch.svg only)" 1>&2
   exit 1
 fi
@@ -35,30 +36,14 @@ render_touch_svg() {
   done
 }
 
-# copy_app_touch reuses the "app" squircle as the "logo" default's touch variant.
-copy_app_touch() {
-  local dest="${icons_dir}/logo/touch"
-
-  echo "Copying touch icons for logo from ${icons_dir}/app..."
-  mkdir -p "$dest"
-
-  for size in "${sizes[@]}"; do
-    cp "${icons_dir}/app/${size}.png" "$dest/${size}.png"
-    echo "$dest/${size}.png"
-  done
-}
-
 if [[ -n $1 ]]; then
-  if [[ $1 == "logo" ]]; then
-    copy_app_touch
-  elif [ -f "${icons_dir}/${1}.touch.svg" ]; then
+  if [ -f "${icons_dir}/${1}.touch.svg" ]; then
     render_touch_svg "${icons_dir}/${1}.touch.svg"
   else
     echo "${icons_dir}/${1}.touch.svg not found" 1>&2
     exit 1
   fi
 else
-  copy_app_touch
   for svg in "${icons_dir}"/*.touch.svg; do
     [ -e "$svg" ] || continue
     render_touch_svg "$svg"

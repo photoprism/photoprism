@@ -171,7 +171,7 @@ describe("common/config", () => {
   });
 
   it("getIcon resolves each selectable app-icon variant to its static svg", () => {
-    ["app", "crisp", "mint", "bold", "square", "bloom", "flower", "ring", "shutter", "glass", "neon"].forEach((name) => {
+    ["app", "crisp", "mint", "bold", "square", "bloom", "flower", "ring", "glass", "neon", "rainbow"].forEach((name) => {
       const config = new Config(new StorageShim(), { siteTitle: "Foo", appIcon: name });
       expect(config.getIcon()).toBe(`/static/icons/${name}.svg`);
     });
