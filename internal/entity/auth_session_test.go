@@ -920,6 +920,36 @@ func TestSession_SetDownloadToken(t *testing.T) {
 	})
 }
 
+func TestSession_SetAuthToken(t *testing.T) {
+	t.Run("MigratesTokensWhenIdChanges", func(t *testing.T) {
+		// A session that already carries preview/download tokens must move their lookup-cache
+		// registrations to the new ID when SetAuthToken reassigns it, so the old ID does not
+		// orphan the values (#5733).
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		oldID := m.ID
+		m.SetPreviewToken("migrate-preview")
+		m.SetDownloadToken("migrate-download")
+		assert.Equal(t, []string{oldID}, PreviewToken.Keys("migrate-preview"))
+
+		m.SetAuthToken(rnd.AppPassword())
+		assert.NotEqual(t, oldID, m.ID)
+		assert.Equal(t, []string{m.ID}, PreviewToken.Keys("migrate-preview"))
+		assert.Equal(t, []string{m.ID}, DownloadToken.Keys("migrate-download"))
+
+		PreviewToken.Unset(m.ID)
+		DownloadToken.Unset(m.ID)
+	})
+	t.Run("NoTokensNoOp", func(t *testing.T) {
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		firstID := m.ID
+		m.SetAuthToken(rnd.AuthToken())
+		assert.NotEqual(t, firstID, m.ID)
+		assert.True(t, rnd.IsSessionID(m.ID))
+	})
+}
+
 func TestSession_IsSuperAdmin(t *testing.T) {
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()

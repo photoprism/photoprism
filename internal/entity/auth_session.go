@@ -179,8 +179,27 @@ func (m *Session) AuthToken() string {
 // pass the exact token presented by the caller (JWT, API key, etc.) so follow-up
 // actions reference the same value.
 func (m *Session) SetAuthToken(authToken string) *Session {
+	oldID := m.ID
+
 	m.authToken = authToken
 	m.ID = rnd.SessionID(authToken)
+
+	// Migrate any preview/download token registrations from the previous ID so they are
+	// not orphaned in the lookup cache. Callers like NewClientSession assign the user's
+	// tokens (via SetUser) before finalizing the ID here, so without this the old ID would
+	// keep the value resolvable for the lifetime of the process even after DeleteSession.
+	if rnd.IsSessionID(oldID) && oldID != m.ID {
+		PreviewToken.Unset(oldID)
+		DownloadToken.Unset(oldID)
+
+		if m.PreviewToken != "" {
+			PreviewToken.Set(m.ID, m.PreviewToken)
+		}
+
+		if m.DownloadToken != "" {
+			DownloadToken.Set(m.ID, m.DownloadToken)
+		}
+	}
 
 	return m
 }
