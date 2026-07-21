@@ -185,11 +185,9 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		msg := i18n.Msg(i18n.MsgIndexingCompletedIn, elapsed)
-
 		// Report success only if at least one file was indexed.
 		if indexed > 0 {
-			event.Success(msg)
+			event.SuccessMsg(i18n.MsgIndexingCompletedIn, elapsed)
 		}
 
 		event.Publish("index.completed", event.Data{
@@ -201,7 +199,7 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgIndexingCompletedIn, elapsed))
 	})
 }
 
