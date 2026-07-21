@@ -101,7 +101,7 @@ services:
       OLLAMA_API_KEY: ""                             # API key required to access Ollama (optional)
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
-      # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
+      # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
       # NVIDIA_VISIBLE_DEVICES: "all"
