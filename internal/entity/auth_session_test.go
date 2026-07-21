@@ -3,6 +3,7 @@ package entity
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -1279,5 +1280,25 @@ func TestSession_SetUserScopeDefault(t *testing.T) {
 		sess.SetUser(user)
 
 		assert.Equal(t, "logs:*", sess.AuthScope)
+	})
+}
+
+func TestClampIdToken(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		clamped, truncated := ClampIdToken("")
+		assert.Equal(t, "", clamped)
+		assert.False(t, truncated)
+	})
+	t.Run("WithinLimit", func(t *testing.T) {
+		token := strings.Repeat("a", IdTokenMaxSize)
+		clamped, truncated := ClampIdToken(token)
+		assert.Equal(t, token, clamped)
+		assert.False(t, truncated)
+	})
+	t.Run("ExceedsLimit", func(t *testing.T) {
+		token := strings.Repeat("a", IdTokenMaxSize+100)
+		clamped, truncated := ClampIdToken(token)
+		assert.True(t, truncated)
+		assert.Len(t, clamped, IdTokenMaxSize)
 	})
 }
