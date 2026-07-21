@@ -502,7 +502,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetArtist(data.Artist, entity.SrcXmp)
 			details.SetCopyright(data.Copyright, entity.SrcXmp)
 			details.SetLicense(data.License, entity.SrcXmp)
-			details.SetSoftware(data.Software, entity.SrcXmp)
+
+			// Software prefers embedded metadata: fill it from the sidecar only when none is set.
+			if !details.HasSoftware() {
+				details.SetSoftware(data.Software, entity.SrcXmp)
+			}
 
 			// Adopt the XMP DocumentID as the photo UUID. SrcXmp wins
 			// over an auto-generated UUID assigned in the SrcMeta branch.
@@ -519,21 +523,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(data.LensMake, data.LensModel)), entity.SrcXmp)
 			photo.SetExposure(data.FocalLength, data.FNumber, data.Iso, data.Exposure, entity.SrcXmp)
 
-			// Mirror file-level identity metadata to the primary file so the
-			// UI surfaces it (per-file fields render the primary JPEG/HEIC).
-			// ColorProfile and Projection are not mirrored — they describe
-			// physical container properties, not user-supplied metadata.
-			// Only the changed columns are written: a full Save() would also
-			// re-resolve the primary flag and regenerate the search index,
-			// which neither InstanceID nor Software affects, and would issue
-			// those writes on every re-index pass even when nothing changed.
+			// Mirror sidecar identity metadata onto the primary file so the UI shows it on the visible
+			// JPEG/HEIC row, writing only changed columns. Software prefers the file's own embedded
+			// value; container properties (ColorProfile, Projection) are not mirrored.
 			if primary, primaryErr := photo.PrimaryFile(); primaryErr == nil && primary != nil {
 				prevInstanceID, prevSoftware := primary.InstanceID, primary.FileSoftware
 
 				if data.InstanceID != "" {
 					primary.InstanceID = data.InstanceID
 				}
-				primary.SetSoftware(data.Software)
+				if primary.FileSoftware == "" {
+					primary.SetSoftware(data.Software)
+				}
 
 				values := entity.Values{}
 				if primary.InstanceID != prevInstanceID {
