@@ -3,6 +3,7 @@ package search
 import (
 	"testing"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -244,6 +245,105 @@ func TestFileVisibleToSession(t *testing.T) {
 		ok, err := FileVisibleToSession(scopeFolderFileHash, scopeVisitorWithShares(scopeStateShareToken))
 		assert.NoError(t, err)
 		assert.False(t, ok)
+	})
+}
+
+func TestScopePhotosForSessionAllowUIDs(t *testing.T) {
+	t.Run("VisitorFolderPhotoDroppedWithoutAllow", func(t *testing.T) {
+		// Without the allow-list a folder (smart) album picture has no photos_albums row, so the
+		// shared-scope predicate drops it even though the folder link is shared.
+		base := UnscopedDb().Table("photos").Where("photos.photo_uid = ?", scopeFolderPhotoUID)
+		var count int
+		assert.NoError(t, scopePhotosForSession(base, scopeVisitorWithShares(scopeFolderShareToken), nil).Count(&count).Error)
+		assert.Equal(t, 0, count)
+	})
+	t.Run("VisitorFolderPhotoAllowed", func(t *testing.T) {
+		base := UnscopedDb().Table("photos").Where("photos.photo_uid = ?", scopeFolderPhotoUID)
+		var count int
+		allow := []string{scopeFolderPhotoUID}
+		assert.NoError(t, scopePhotosForSession(base, scopeVisitorWithShares(scopeFolderShareToken), allow).Count(&count).Error)
+		assert.Equal(t, 1, count)
+	})
+	t.Run("AdminUnchanged", func(t *testing.T) {
+		base := UnscopedDb().Table("photos")
+		assert.Same(t, base, scopePhotosForSession(base, scopeSession("alice"), []string{scopeFolderPhotoUID}))
+	})
+}
+
+func TestExcludeRestrictedPhotos(t *testing.T) {
+	t.Run("AdminKeepsPrivate", func(t *testing.T) {
+		var count int
+		err := excludeRestrictedPhotos(UnscopedDb().Table("photos").Where("photos.photo_uid = ?", scopePrivatePhotoUID), scopeSession("alice")).Count(&count).Error
+		assert.NoError(t, err)
+		assert.Equal(t, 1, count)
+	})
+	t.Run("GuestExcludesPrivate", func(t *testing.T) {
+		var count int
+		err := excludeRestrictedPhotos(UnscopedDb().Table("photos").Where("photos.photo_uid = ?", scopePrivatePhotoUID), scopeSession("guest")).Count(&count).Error
+		assert.NoError(t, err)
+		assert.Equal(t, 0, count)
+	})
+}
+
+func TestScopeVisibleSelection(t *testing.T) {
+	folderFileStmt := func() *gorm.DB {
+		return UnscopedDb().Table("files").
+			Joins("JOIN photos ON photos.id = files.photo_id").
+			Where("files.file_hash = ? AND files.deleted_at IS NULL", scopeFolderFileHash)
+	}
+	t.Run("AdminUnchanged", func(t *testing.T) {
+		base := UnscopedDb().Table("photos")
+		assert.Same(t, base, ScopeVisibleSelection(base, scopeSession("alice"), []string{scopeFolderPhotoUID}))
+	})
+	t.Run("VisitorFolderSelectionDownloadable", func(t *testing.T) {
+		// A file whose picture is shared only through a folder (smart) album must be downloadable when
+		// its UID is part of the selection, matching FileVisibleToSession.
+		var count int
+		err := ScopeVisibleSelection(folderFileStmt(), scopeVisitorWithShares(scopeFolderShareToken), []string{scopeFolderPhotoUID}).Count(&count).Error
+		assert.NoError(t, err)
+		assert.GreaterOrEqual(t, count, 1)
+	})
+	t.Run("VisitorWrongSmartAlbumNotDownloadable", func(t *testing.T) {
+		var count int
+		err := ScopeVisibleSelection(folderFileStmt(), scopeVisitorWithShares(scopeStateShareToken), []string{scopeFolderPhotoUID}).Count(&count).Error
+		assert.NoError(t, err)
+		assert.Equal(t, 0, count)
+	})
+	t.Run("VisitorNoSharesNotDownloadable", func(t *testing.T) {
+		var count int
+		err := ScopeVisibleSelection(folderFileStmt(), scopeVisitorWithShares(), []string{scopeFolderPhotoUID}).Count(&count).Error
+		assert.NoError(t, err)
+		assert.Equal(t, 0, count)
+	})
+}
+
+func TestSharedSmartAlbumPhotoUIDs(t *testing.T) {
+	t.Run("EmptySelection", func(t *testing.T) {
+		assert.Nil(t, sharedSmartAlbumPhotoUIDs(nil, scopeVisitorWithShares(scopeFolderShareToken)))
+	})
+	t.Run("NilSession", func(t *testing.T) {
+		assert.Nil(t, sharedSmartAlbumPhotoUIDs([]string{scopeFolderPhotoUID}, nil))
+	})
+	t.Run("NoShares", func(t *testing.T) {
+		assert.Empty(t, sharedSmartAlbumPhotoUIDs([]string{scopeFolderPhotoUID}, scopeVisitorWithShares()))
+	})
+	t.Run("FolderShareMatches", func(t *testing.T) {
+		uids := sharedSmartAlbumPhotoUIDs([]string{scopeFolderPhotoUID}, scopeVisitorWithShares(scopeFolderShareToken))
+		assert.Contains(t, uids, scopeFolderPhotoUID)
+	})
+	t.Run("WrongSmartAlbum", func(t *testing.T) {
+		assert.Empty(t, sharedSmartAlbumPhotoUIDs([]string{scopeFolderPhotoUID}, scopeVisitorWithShares(scopeStateShareToken)))
+	})
+	t.Run("RegularAlbumSkipped", func(t *testing.T) {
+		// A shared regular album (empty filter) is skipped because ScopePhotosForSession already covers
+		// its photos_albums membership.
+		assert.Empty(t, sharedSmartAlbumPhotoUIDs([]string{scopeFolderPhotoUID}, scopeVisitorWithShares(scopeRegularShareToken)))
+	})
+	t.Run("FiltersUnselectedUIDs", func(t *testing.T) {
+		// Only the selected UID that belongs to the shared folder is returned; a non-member UID is not.
+		uids := sharedSmartAlbumPhotoUIDs([]string{scopeFolderPhotoUID, scopeNormalPhotoUID}, scopeVisitorWithShares(scopeFolderShareToken))
+		assert.Contains(t, uids, scopeFolderPhotoUID)
+		assert.NotContains(t, uids, scopeNormalPhotoUID)
 	})
 }
 

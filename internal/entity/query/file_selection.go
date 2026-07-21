@@ -191,9 +191,11 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 		s = s.Where("photos.deleted_at IS NULL")
 	}
 
-	// Limit the selection to the session's shared scope (no-op for full-access sessions).
+	// Limit the selection to the session's shared scope (no-op for full-access sessions). The selected
+	// photo UIDs are passed so pictures shared only through a filter-based smart album (folder, moment,
+	// calendar, region) stay downloadable, matching single-item access.
 	if sess != nil {
-		s = search.ScopeVisiblePhotos(s, sess)
+		s = search.ScopeVisibleSelection(s, sess, frm.Photos)
 	}
 
 	// Find and return.
