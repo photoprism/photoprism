@@ -1,8 +1,10 @@
 package entity
 
 import (
+	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -780,6 +782,28 @@ func TestFile_SetColorProfile(t *testing.T) {
 		assert.Equal(t, "", m.ColorProfile())
 		assert.True(t, m.HasColorProfile(colors.Default))
 		assert.False(t, m.HasColorProfile(colors.ProfileDisplayP3))
+	})
+}
+
+func TestFile_SetInstanceID(t *testing.T) {
+	t.Run("Stored", func(t *testing.T) {
+		m := &File{}
+		m.SetInstanceID("xmp.iid:6f1c8b2e-0000-4000-8000-000000000001")
+		assert.Equal(t, "xmp.iid:6f1c8b2e-0000-4000-8000-000000000001", m.InstanceID)
+	})
+	t.Run("EmptyKeepsCurrent", func(t *testing.T) {
+		m := &File{InstanceID: "xmp.iid:keep"}
+		m.SetInstanceID("")
+		assert.Equal(t, "xmp.iid:keep", m.InstanceID)
+	})
+	t.Run("OversizeClippedOnRuneBoundary", func(t *testing.T) {
+		// instance_id is VARBINARY(255), so an oversized multi-byte value must be clipped
+		// on a rune boundary, keeping the stored value within budget and valid UTF-8.
+		m := &File{}
+		m.SetInstanceID(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
+		assert.NotEmpty(t, m.InstanceID)
+		assert.LessOrEqual(t, len(m.InstanceID), InstanceIDBytes)
+		assert.True(t, utf8.ValidString(m.InstanceID))
 	})
 }
 

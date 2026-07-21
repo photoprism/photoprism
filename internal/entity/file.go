@@ -29,6 +29,11 @@ import (
 
 const (
 	FileUID = byte('f')
+
+	// InstanceIDBytes is the byte budget for the instance_id column (VARBINARY(255)).
+	// XMP xmpMM:InstanceID values are clipped to it on write so an oversized identifier
+	// cannot overflow the column and abort indexing.
+	InstanceIDBytes = 255
 )
 
 // Files represents a file result set.
@@ -48,7 +53,7 @@ type File struct {
 	TimeIndex          *string       `gorm:"type:VARBINARY(64);" json:"TimeIndex" yaml:"TimeIndex"`
 	MediaID            *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	MediaUTC           int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
-	InstanceID         string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	InstanceID         string        `gorm:"type:VARBINARY(255);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID            string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	FileName           string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
@@ -726,6 +731,15 @@ func (m *File) ResetColorProfile() {
 func (m *File) SetSoftware(name string) {
 	if name = ClipType(name); name != "" {
 		m.FileSoftware = name
+	}
+}
+
+// SetInstanceID sets the file instance identifier, clipping it to the column byte
+// budget on a rune boundary so an oversized XMP xmpMM:InstanceID cannot overflow the
+// instance_id column. An empty value leaves the current identifier unchanged.
+func (m *File) SetInstanceID(id string) {
+	if id = Clip(id, InstanceIDBytes); id != "" {
+		m.InstanceID = id
 	}
 }
 

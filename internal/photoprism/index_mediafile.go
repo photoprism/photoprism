@@ -462,7 +462,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			if m.IsAnimatedImage() && file.FileDuration > photo.PhotoDuration {
@@ -515,7 +515,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// check from data.HasDocumentID() is too narrow here.
 			if data.DocumentID != "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			// Update camera, lens, and exposure from the sidecar.
@@ -530,7 +530,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				prevInstanceID, prevSoftware := primary.InstanceID, primary.FileSoftware
 
 				if data.InstanceID != "" {
-					primary.InstanceID = data.InstanceID
+					primary.SetInstanceID(data.InstanceID)
 				}
 				if primary.FileSoftware == "" {
 					primary.SetSoftware(data.Software)
@@ -581,13 +581,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -670,13 +670,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -717,13 +717,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -764,13 +764,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -892,7 +892,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 		}
 

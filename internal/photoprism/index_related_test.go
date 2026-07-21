@@ -3,7 +3,9 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 
@@ -376,6 +378,68 @@ func TestIndexRelated(t *testing.T) {
 		} else {
 			assert.Equal(t, "Adobe Photoshop 21.2 (Macintosh)", photo.Details.Software)
 		}
+	})
+	t.Run("XmpOversizeInstanceIDClipped", func(t *testing.T) {
+		// Regression: an XMP xmpMM:InstanceID longer than the instance_id column must be
+		// clipped on write so indexing does not abort with a "Data too long" DB error.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-oversize-instance-id")
+
+		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-oversize-instance-id"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		longID := "xmp.iid:" + strings.Repeat("A", 300) // 308 bytes, exceeds the 255-byte column.
+		xmpContent := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/">
+   <xmpMM:InstanceID>` + longID + `</xmpMM:InstanceID>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(xmpContent), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+		assert.False(t, result.Failed())
+		assert.True(t, result.Success())
+
+		primary, primaryErr := entity.PrimaryFile(result.PhotoUID)
+		if primaryErr != nil {
+			t.Fatal(primaryErr)
+		}
+		assert.NotEmpty(t, primary.InstanceID)
+		assert.LessOrEqual(t, len(primary.InstanceID), entity.InstanceIDBytes)
+		assert.True(t, utf8.ValidString(primary.InstanceID))
+		assert.Equal(t, entity.Clip(longID, entity.InstanceIDBytes), primary.InstanceID)
 	})
 	t.Run("XmpSidecarTimezoneFromGps", func(t *testing.T) {
 		// Apple sidecar timestamp "2021-03-24T13:07:29+01:00" with Berlin GPS

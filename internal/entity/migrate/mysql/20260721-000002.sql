@@ -1,0 +1,1 @@
+ALTER TABLE files MODIFY IF EXISTS instance_id VARBINARY(255);

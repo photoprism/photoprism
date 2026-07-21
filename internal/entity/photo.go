@@ -29,6 +29,11 @@ import (
 
 const (
 	PhotoUID = byte('p')
+
+	// UUIDBytes is the byte budget for the photos.uuid column (VARBINARY(255)). A
+	// non-canonical XMP DocumentID adopted as the photo UUID is clipped to it so a long
+	// identifier (e.g. "adobe:docid:photoshop:...") cannot overflow the column.
+	UUIDBytes = 255
 )
 
 var IndexUpdateInterval = 3 * time.Hour           // 3 Hours
@@ -1409,6 +1414,17 @@ func (m *Photo) SetCameraSerial(s string) {
 	// camera_serial is VARBINARY(160), so clip by bytes on a rune boundary.
 	if s = clip.Bytes(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
 		m.CameraSerial = s
+	}
+}
+
+// SetDocumentID adopts an XMP DocumentID as the asset-stable photo UUID, clipping it to
+// the uuid column byte budget on a rune boundary. The strict rnd.IsUUID check is
+// intentionally bypassed (real-world DocumentIDs are often non-canonical), so the clip
+// keeps a long "adobe:docid:photoshop:..." value from overflowing the column. Empty is
+// ignored so it never clears an existing UUID.
+func (m *Photo) SetDocumentID(id string) {
+	if id = clip.Bytes(id, UUIDBytes); id != "" {
+		m.UUID = id
 	}
 }
 
