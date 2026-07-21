@@ -23,4 +23,11 @@ func TestInvalidPreviewToken(t *testing.T) {
 	assert.True(t, InvalidPreviewToken("2ud3qfpu"))
 	PreviewToken.Set("sesspvtoken2ud3qfpu", "2ud3qfpu")
 	assert.False(t, InvalidPreviewToken("2ud3qfpu"))
+
+	// The instance-wide preview token is registered under the reserved TokenConfig key
+	// (Config.Propagate does PreviewToken.Set(TokenConfig, token)); a config token used
+	// for shared albums and session-less thumbnails must still resolve as valid.
+	assert.True(t, InvalidPreviewToken("sharedtok"))
+	PreviewToken.Set(TokenConfig, "sharedtok")
+	assert.False(t, InvalidPreviewToken("sharedtok"))
 }
