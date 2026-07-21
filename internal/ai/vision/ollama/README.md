@@ -30,7 +30,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 ### Architecture & Request Flow
 
 1. **Model Selection** — `Config.Model(ModelType)` returns the top-most enabled entry. When `Engine: ollama`, `ApplyEngineDefaults()` fills in the request/response format, base64 file scheme, and a 720 px resolution unless overridden.
-2. **Request Build** — `ollamaBuilder.Build` wraps thumbnails with `NewApiRequestOllama`, which encodes them as base64 strings. `Model.GetModel()` resolves the exact Ollama tag (`gemma3:4b`, `qwen2.5vl:7b`, etc.).
+2. **Request Build** — `ollamaBuilder.Build` wraps thumbnails with `NewApiRequestOllama`, which encodes them as base64 strings. `Model.GetModel()` resolves the exact Ollama tag (`gemma4:latest`, `qwen2.5vl:7b`, etc.).
 3. **Transport** — `PerformApiRequest` uses a single HTTP POST (default timeout 10 min). Authentication is optional; provide `Service.Key` if you proxy through an API gateway.
 4. **Parsing** — `ollamaParser.Parse` converts payloads into `ApiResponse`. It normalizes confidences (`LabelConfidenceDefault = 0.5` when missing), copies NSFW scores, and canonicalizes label names via `normalizeLabelResult`.
 5. **Persistence** — `entity.SrcOllama` is stamped on labels/captions so UI badges and audits reflect the new source.
@@ -66,7 +66,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 | `minicpm-v:8b-2.6`          | 8 B params, ~5.5 GB download, 32 K context                                                                                                          | Optimized for edge GPUs, high OCR accuracy, multi-image/video support, low token count (≈640 tokens for 1.8 MP)                      | Multilingual (EN/ZH/DE/FR/IT/KR). Emits concise JSON but may need stricter stopping sequences                                | Memory-constrained deployments that still require NSFW/OCR-aware label output                                                                                                |
 | `qwen3.5:4b`                | ~3.4 GB download, fits 8 GB VRAM                                                                                                                    | Qwen3.5 family; accepts images in recent Ollama builds; fast, clean single-pass `response`                                           | Thinking-capable, so keep `Service.Think: "false"` (the default); concise JSON labels                                        | Smaller Qwen-family alternative to Gemma 4; verify multimodal support on your Ollama version                                                                                 |
 
-> Tip: pull models inside the dev container with `docker compose --profile ollama up -d` and then `docker compose exec ollama ollama pull gemma3:4b`. Keep the profile stopped when you do not need extra GPU/CPU load.
+> Tip: pull models inside the dev container with `docker compose --profile ollama up -d` and then `docker compose exec ollama ollama pull gemma4:latest`. Keep the profile stopped when you do not need extra GPU/CPU load.
 
 > Qwen3-VL models can stream structured output via `thinking` while leaving `response` empty. The parser checks `response` first and falls back to `thinking`, so captions/labels continue to work with either field.
 
@@ -113,7 +113,7 @@ Models:
       Think: "false"
 
   - Type: caption
-    Name: gemma3:4b
+    Name: gemma4:latest
     Engine: ollama
     Disabled: false
     Options:

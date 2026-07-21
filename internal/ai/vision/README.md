@@ -143,7 +143,7 @@ Models:
 ```yaml
 Models:
   - Type: labels
-    Model: gemma3:latest
+    Model: gemma4:latest
     Engine: ollama
     Run: newly-indexed
     Service:
