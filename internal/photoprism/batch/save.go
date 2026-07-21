@@ -184,6 +184,20 @@ func PrepareAndSavePhotos(photos search.PhotoResults, preloaded map[string]*enti
 		}
 	}
 
+	// Regenerate the denormalized file search index for photos whose date or time zone changed,
+	// so newest/oldest sorting reflects the new dates immediately; the batch save path otherwise
+	// leaves files.time_index stale until the metadata worker runs. Done once per batch to keep
+	// the per-photo work out of the save loop.
+	if result.SavedAny && batchChangesTime(values) {
+		photoIDs := make([]uint, 0, len(requests))
+		for i, saved := range saveResults {
+			if saved && requests[i] != nil && requests[i].Photo != nil && requests[i].Photo.ID > 0 {
+				photoIDs = append(photoIDs, requests[i].Photo.ID)
+			}
+		}
+		entity.RegenerateIndexForPhotoIDs(photoIDs)
+	}
+
 	var logFields []string
 
 	if result.UpdatedCount > 0 {
@@ -218,6 +232,19 @@ func PrepareAndSavePhotos(photos search.PhotoResults, preloaded map[string]*enti
 	}
 
 	return result, nil
+}
+
+// batchChangesTime reports whether the batch updates any date or time zone field, which requires
+// regenerating the denormalized file search index so newest/oldest sorting reflects the new dates.
+func batchChangesTime(values *PhotosForm) bool {
+	if values == nil {
+		return false
+	}
+
+	return values.PhotoDay.Action == ActionUpdate ||
+		values.PhotoMonth.Action == ActionUpdate ||
+		values.PhotoYear.Action == ActionUpdate ||
+		values.TimeZone.Action == ActionUpdate
 }
 
 // SavePhotos persists the batch updates described by the provided requests while skipping the

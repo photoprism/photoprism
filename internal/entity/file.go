@@ -105,13 +105,6 @@ func (File) TableName() string {
 // RegenerateIndex recalculates the denormalized search index columns for the matching files.
 // Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
 func (m File) RegenerateIndex() {
-	fileIndexMutex.Lock()
-	defer fileIndexMutex.Unlock()
-
-	start := time.Now()
-
-	photosTable := Photo{}.TableName()
-
 	var updateWhere *gorm.SqlExpr
 	var scope string
 
@@ -128,6 +121,40 @@ func (m File) RegenerateIndex() {
 		updateWhere = gorm.Expr("files.photo_id IS NOT NULL")
 		scope = "index"
 	}
+
+	regenerateFileIndex(updateWhere, scope)
+}
+
+// RegenerateIndexForPhotoIDs recalculates the denormalized search index columns for the files of
+// the given photos in a single pass. Batch edits use it to refresh sorting immediately, since
+// newest/oldest keys off files.time_index / files.photo_taken_at rather than photos.taken_at.
+func RegenerateIndexForPhotoIDs(photoIDs []uint) {
+	if len(photoIDs) == 0 {
+		return
+	}
+
+	// Inline the numeric IDs: a nested slice placeholder inside the shared WHERE
+	// expression is not expanded, and uint values are safe from SQL injection.
+	inList := ""
+	for i, id := range photoIDs {
+		if i > 0 {
+			inList += ","
+		}
+		inList += fmt.Sprintf("%d", id)
+	}
+
+	regenerateFileIndex(gorm.Expr("files.photo_id IN ("+inList+")"), "index by photo ids")
+}
+
+// regenerateFileIndex runs the denormalized index UPDATEs for the files matched by updateWhere.
+// Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
+func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
+	fileIndexMutex.Lock()
+	defer fileIndexMutex.Unlock()
+
+	start := time.Now()
+
+	photosTable := Photo{}.TableName()
 
 	switch DbDialect() {
 	case dsn.DriverMySQL:

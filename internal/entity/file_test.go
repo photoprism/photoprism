@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -35,6 +36,50 @@ func TestFile_RegenerateIndex(t *testing.T) {
 	})
 	t.Run("All", func(t *testing.T) {
 		File{}.RegenerateIndex()
+	})
+}
+
+func TestRegenerateIndexForPhotoIDs(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		RegenerateIndexForPhotoIDs(nil)
+		RegenerateIndexForPhotoIDs([]uint{})
+	})
+	t.Run("UpdatesFileIndex", func(t *testing.T) {
+		// Find a photo whose primary file carries a search time index.
+		var f File
+		if err := UnscopedDb().Where("photo_id > 0 AND file_primary = 1 AND time_index IS NOT NULL").First(&f).Error; err != nil {
+			t.Skip("no suitable file fixture")
+			return
+		}
+
+		var photo Photo
+		require.NoError(t, UnscopedDb().First(&photo, f.PhotoID).Error)
+
+		origIndex := ""
+		if f.TimeIndex != nil {
+			origIndex = *f.TimeIndex
+		}
+		origLocal := photo.TakenAtLocal
+
+		// Shift the photo date so the derived index must change.
+		newLocal := time.Date(1975, 6, 15, 12, 0, 0, 0, time.UTC)
+		if origLocal.Year() == newLocal.Year() {
+			newLocal = time.Date(1985, 6, 15, 12, 0, 0, 0, time.UTC)
+		}
+		require.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("taken_at_local", newLocal).Error)
+
+		RegenerateIndexForPhotoIDs([]uint{photo.ID})
+
+		var got File
+		require.NoError(t, UnscopedDb().First(&got, f.ID).Error)
+		if assert.NotNil(t, got.TimeIndex) {
+			assert.NotEqual(t, origIndex, *got.TimeIndex, "time_index must change after the date changes")
+		}
+		assert.Equal(t, newLocal.Year(), got.PhotoTakenAt.Year())
+
+		// Restore the original state.
+		require.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("taken_at_local", origLocal).Error)
+		RegenerateIndexForPhotoIDs([]uint{photo.ID})
 	})
 }
 
