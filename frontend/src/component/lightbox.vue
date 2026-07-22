@@ -356,7 +356,7 @@ export default {
     },
     // pdfSrc is the inline-PDF URL for the current document slide. The slide's
     // hash is the document's cover image; the backend resolves it to the
-    // original PDF for the same photo (see the GetPDF handler).
+    // original PDF for the same photo (see the GetFileBytes handler).
     pdfSrc() {
       return this.model?.Hash ? this.$util.pdfUrl(this.model.Hash) : "";
     },
