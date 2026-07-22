@@ -172,7 +172,7 @@
           </v-list-item>
         </template>
 
-        <template v-if="canViewPeople && featPeople && (people.length > 0 || isEditable)">
+        <template v-if="canViewPeople && featPeople && !isDocument && (people.length > 0 || isEditable)">
           <v-divider class="my-3"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("People") }}</div>
@@ -490,6 +490,7 @@ import * as formats from "options/formats";
 import { $faceMarkers } from "common/face-markers";
 
 import * as media from "common/media";
+import { isPdfDocument } from "common/pdf";
 import { is360Equirectangular } from "common/sphere";
 import typeaheadCache from "common/typeahead-cache";
 import { rules } from "common/form";
@@ -598,6 +599,11 @@ export default {
     // directly, never the aliases.
     model() {
       return this.view?.model;
+    },
+    // isDocument reports whether the current slide is a PDF document, which has
+    // no faces — used to hide the People section that is irrelevant for documents.
+    isDocument() {
+      return isPdfDocument(this.model);
     },
     photo() {
       return this.view?.photo;

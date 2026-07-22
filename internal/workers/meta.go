@@ -131,7 +131,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 								if detectErr != nil {
 									log.Debugf("vision: %s in %s (detect faces)", detectErr, clean.Log(mediaFile.BaseName()))
-								} else if saved, count, applyErr := photoprism.ApplyDetectedFaces(primaryFile, faces); applyErr != nil {
+								} else if saved, count, applyErr := photoprism.ApplyDetectedFaces(mediaFile, primaryFile, faces); applyErr != nil {
 									log.Warnf("index: %s in %s (save faces)", clean.Error(applyErr), logName)
 								} else if saved {
 									photo.PhotoFaces = count

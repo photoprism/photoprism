@@ -2,6 +2,7 @@ package vision
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 type ollamaDefaults struct{}
@@ -53,6 +55,7 @@ func registerOllamaEngineDefaults() {
 		DefaultModel:      defaultModel,
 		DefaultResolution: ollama.DefaultResolution,
 		DefaultKey:        ollama.APIKeyPlaceholder,
+		DefaultThink:      ollama.DefaultThink,
 	})
 
 	// Keep the default caption model config aligned with the defaults.
@@ -123,12 +126,12 @@ func (ollamaDefaults) Options(model *Model) *ModelOptions {
 }
 
 // Build builds the Ollama service request.
-func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files) (*ApiRequest, error) {
+func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files, mediaSrc media.Src) (*ApiRequest, error) {
 	if model == nil {
 		return nil, ErrInvalidModel
 	}
 
-	req, err := NewApiRequest(model.EndpointRequestFormat(), files, model.EndpointFileScheme())
+	req, err := NewApiRequest(model.EndpointRequestFormat(), files, model.EndpointFileScheme(), mediaSrc)
 	if err != nil {
 		return nil, err
 	}
@@ -156,6 +159,16 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 		return nil, err
 	}
 
+	// Surface upstream failures so they are diagnosable instead of silently yielding no labels or caption.
+	if status >= http.StatusBadRequest {
+		switch status {
+		case http.StatusNotFound, http.StatusGone:
+			log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(req.Model), status)
+		default:
+			log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(req.Model), status)
+		}
+	}
+
 	response := &ApiResponse{
 		Id:    req.GetId(),
 		Code:  status,
@@ -169,7 +182,7 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	parsedLabels := len(response.Result.Labels) > 0
 
 	// Qwen3-VL models stream their JSON payload in the "Thinking" field.
-	fallbackResponse := strings.TrimSpace(ollamaResp.Response)
+	fallbackResponse := strings.TrimSpace(stripReasoningBlock(ollamaResp.Response))
 	fallbackThinking := strings.TrimSpace(ollamaResp.Thinking)
 
 	fallbackJSON := fallbackResponse
@@ -224,6 +237,27 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	}
 
 	return response, nil
+}
+
+// stripReasoningBlock removes a single leading, well-delimited <think>...</think> block from s and
+// returns the trimmed remainder. It is a defensive fallback for thinking-capable models that ignore
+// the think=false hint and emit tagged reasoning inline; untagged text and an unterminated opening tag
+// are left unchanged so a legitimate caption is never truncated.
+func stripReasoningBlock(s string) string {
+	trimmed := strings.TrimSpace(s)
+
+	const openTag = "<think>"
+
+	if len(trimmed) < len(openTag) || !strings.EqualFold(trimmed[:len(openTag)], openTag) {
+		return s
+	}
+
+	end := strings.Index(strings.ToLower(trimmed), "</think>")
+	if end < 0 {
+		return s
+	}
+
+	return strings.TrimSpace(trimmed[end+len("</think>"):])
 }
 
 func convertOllamaLabels(payload []ollama.LabelPayload) []LabelResult {

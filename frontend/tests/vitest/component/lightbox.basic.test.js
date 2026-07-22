@@ -1669,3 +1669,45 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     });
   });
 });
+
+describe("PLightbox PDF viewer integration", () => {
+  // isPdfSlide gates the interactive viewer overlay: a visible slide with a model
+  // whose type is a PDF document.
+  it("isPdfSlide is true only for a visible PDF document slide", () => {
+    const { isPdfSlide } = mountLightbox().vm.$options.computed;
+    expect(isPdfSlide.call({ visible: true, model: { Type: "document" } })).toBe(true);
+    expect(isPdfSlide.call({ visible: true, model: { FileType: "pdf" } })).toBe(true);
+    expect(isPdfSlide.call({ visible: true, model: { Type: "image" } })).toBe(false);
+    expect(isPdfSlide.call({ visible: false, model: { Type: "document" } })).toBe(false);
+    expect(isPdfSlide.call({ visible: true, model: null })).toBe(false);
+  });
+  // pdfSrc builds the tokenless inline URL from the slide's (cover) hash.
+  it("pdfSrc returns the inline files URL for a hash and empty string without one", () => {
+    const { pdfSrc } = mountLightbox().vm.$options.computed;
+    expect(pdfSrc.call({ model: { Hash: "abc123" }, $util })).toContain("/files/abc123/file.pdf");
+    expect(pdfSrc.call({ model: {}, $util })).toBe("");
+    expect(pdfSrc.call({ model: null, $util })).toBe("");
+  });
+  // pdfMediaPrev / pdfMediaNext forward the viewer's media-nav emits to the wrapped
+  // pswp nav, clamped at the first and last slide.
+  it("pdfMediaPrev navigates only when a previous slide exists", () => {
+    const { pdfMediaPrev } = mountLightbox().vm.$options.methods;
+    const prev = vi.fn();
+    const pswp = () => ({ prev });
+    pdfMediaPrev.call({ index: 1, pswp });
+    expect(prev).toHaveBeenCalledTimes(1);
+    prev.mockClear();
+    pdfMediaPrev.call({ index: 0, pswp });
+    expect(prev).not.toHaveBeenCalled();
+  });
+  it("pdfMediaNext navigates only when a next slide exists", () => {
+    const { pdfMediaNext } = mountLightbox().vm.$options.methods;
+    const next = vi.fn();
+    const pswp = () => ({ next });
+    pdfMediaNext.call({ index: 0, models: [1, 2], pswp });
+    expect(next).toHaveBeenCalledTimes(1);
+    next.mockClear();
+    pdfMediaNext.call({ index: 1, models: [1, 2], pswp });
+    expect(next).not.toHaveBeenCalled();
+  });
+});

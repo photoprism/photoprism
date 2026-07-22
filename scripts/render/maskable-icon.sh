@@ -23,6 +23,8 @@ if [[ -n $1 ]]; then
   sources=("assets/static/icons/${1}.svg")
 else
   for svg in assets/static/icons/*.svg; do
+    # Skip apple-touch-icon "<name>.touch.svg" sources; those render via touch-icon.sh.
+    [[ "$svg" == *.touch.svg ]] && continue
     sources+=("$svg")
   done
 fi

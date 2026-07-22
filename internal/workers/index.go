@@ -93,9 +93,7 @@ func (w *Index) Start() (err error) {
 
 	elapsed := int(time.Since(start).Seconds())
 
-	msg := i18n.Msg(i18n.MsgIndexingCompletedIn, elapsed)
-
-	event.Success(msg)
+	event.SuccessMsg(i18n.MsgIndexingCompletedIn, elapsed)
 
 	eventData := event.Data{
 		"uid":     indOpt.UID,

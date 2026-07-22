@@ -356,15 +356,23 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result
-	} else if o.DetectFaces && file.FilePrimary {
-		// Run face detection on primary files when enabled for this indexing run.
+	} else if (o.DetectFaces || o.ImportFaceTags) && file.FilePrimary {
+		// Process primary-file faces when AI detection and/or XMP face-tag import
+		// is enabled. XMP import is independent of AI detection, so it still runs
+		// when face detection is disabled or deferred to a background worker.
 		if markers := file.Markers(); markers != nil {
-			// Detect faces.
-			faces := ind.Faces(m, markers.DetectedFaceCount())
+			// Run the expensive AI face detection only when it is enabled.
+			if o.DetectFaces {
+				if faces := ind.Faces(m, markers.DetectedFaceCount()); len(faces) > 0 {
+					file.AddFaces(faces)
+				}
+			}
 
-			// Create markers from faces and add them.
-			if len(faces) > 0 {
-				file.AddFaces(faces)
+			// Import face regions and names from XMP metadata onto the markers.
+			if o.ImportFaceTags && file.FileHash != "" {
+				if n := reconcileXmpFaces(collectXmpFaces(m), &file, markers); n > 0 {
+					log.Debugf("index: imported %d xmp face region(s) for %s", n, logName)
+				}
 			}
 
 			// Skip when indexing faces only and no new markers were found.
@@ -462,7 +470,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			if m.IsAnimatedImage() && file.FileDuration > photo.PhotoDuration {
@@ -502,7 +510,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetArtist(data.Artist, entity.SrcXmp)
 			details.SetCopyright(data.Copyright, entity.SrcXmp)
 			details.SetLicense(data.License, entity.SrcXmp)
-			details.SetSoftware(data.Software, entity.SrcXmp)
+
+			// Software prefers embedded metadata: fill it from the sidecar only when none is set.
+			if !details.HasSoftware() {
+				details.SetSoftware(data.Software, entity.SrcXmp)
+			}
 
 			// Adopt the XMP DocumentID as the photo UUID. SrcXmp wins
 			// over an auto-generated UUID assigned in the SrcMeta branch.
@@ -511,7 +523,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// check from data.HasDocumentID() is too narrow here.
 			if data.DocumentID != "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			// Update camera, lens, and exposure from the sidecar.
@@ -519,21 +531,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(data.LensMake, data.LensModel)), entity.SrcXmp)
 			photo.SetExposure(data.FocalLength, data.FNumber, data.Iso, data.Exposure, entity.SrcXmp)
 
-			// Mirror file-level identity metadata to the primary file so the
-			// UI surfaces it (per-file fields render the primary JPEG/HEIC).
-			// ColorProfile and Projection are not mirrored — they describe
-			// physical container properties, not user-supplied metadata.
-			// Only the changed columns are written: a full Save() would also
-			// re-resolve the primary flag and regenerate the search index,
-			// which neither InstanceID nor Software affects, and would issue
-			// those writes on every re-index pass even when nothing changed.
+			// Mirror sidecar identity metadata onto the primary file so the UI shows it on the visible
+			// JPEG/HEIC row, writing only changed columns. Software prefers the file's own embedded
+			// value; container properties (ColorProfile, Projection) are not mirrored.
 			if primary, primaryErr := photo.PrimaryFile(); primaryErr == nil && primary != nil {
 				prevInstanceID, prevSoftware := primary.InstanceID, primary.FileSoftware
 
 				if data.InstanceID != "" {
-					primary.InstanceID = data.InstanceID
+					primary.SetInstanceID(data.InstanceID)
 				}
-				primary.SetSoftware(data.Software)
+				if primary.FileSoftware == "" {
+					primary.SetSoftware(data.Software)
+				}
 
 				values := entity.Values{}
 				if primary.InstanceID != prevInstanceID {
@@ -580,13 +589,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -669,13 +678,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -716,13 +725,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -763,13 +772,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -891,7 +900,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 		}
 

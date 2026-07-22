@@ -171,14 +171,15 @@ describe("common/config", () => {
   });
 
   it("getIcon resolves each selectable app-icon variant to its static svg", () => {
-    ["crisp", "mint", "bold", "bloom", "flower", "ring", "shutter"].forEach((name) => {
+    ["app", "crisp", "mint", "bold", "square", "bloom", "flower", "ring", "glass", "neon", "rainbow"].forEach((name) => {
       const config = new Config(new StorageShim(), { siteTitle: "Foo", appIcon: name });
       expect(config.getIcon()).toBe(`/static/icons/${name}.svg`);
     });
   });
 
-  it("getIcon falls back to the logo for an unknown or empty app-icon name", () => {
-    expect(new Config(new StorageShim(), { siteTitle: "Foo", appIcon: "does-not-exist" }).getIcon()).toBe("/static/icons/logo.svg");
+  it("getIcon falls back to the logo for an empty, logo, or unsafe app-icon name", () => {
+    expect(new Config(new StorageShim(), { siteTitle: "Foo", appIcon: "logo" }).getIcon()).toBe("/static/icons/logo.svg");
+    expect(new Config(new StorageShim(), { siteTitle: "Foo", appIcon: "../secret" }).getIcon()).toBe("/static/icons/logo.svg");
     expect(new Config(new StorageShim(), { siteTitle: "Foo" }).getIcon()).toBe("/static/icons/logo.svg");
   });
 

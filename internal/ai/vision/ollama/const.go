@@ -21,10 +21,14 @@ const (
 	CloudBaseUrl = "https://ollama.com"
 	// DefaultUri is the default service URI for self-hosted Ollama instances.
 	DefaultUri = BaseUrlPlaceholder + "/api/generate"
-	// DefaultModel names the default caption model bundled with our adapter defaults.
-	DefaultModel = "gemma3:latest"
-	// CloudModel names the default caption for the Ollama cloud service, see https://ollama.com/cloud.
-	CloudModel = "qwen3-vl:235b-instruct-cloud"
+	// DefaultModel names the default vision model bundled with our adapter defaults, see https://ollama.com/library/gemma4.
+	DefaultModel = "gemma4:latest"
+	// CloudModel names the default vision model for the Ollama cloud service, see https://ollama.com/cloud.
+	CloudModel = "minimax-m3:cloud"
+	// DefaultThink is the default reasoning hint for the Ollama engine. Reasoning is disabled by default so
+	// thinking-capable models do not leak their reasoning into captions or invalidate label JSON; users can
+	// re-enable it explicitly with Service.Think: "true".
+	DefaultThink = "false"
 	// CaptionPrompt instructs Ollama caption models to emit a single, active-voice sentence.
 	CaptionPrompt = "Create a caption with exactly one sentence in the active voice that describes the main visual content. Begin with the main subject and clear action. Avoid text formatting, meta-language, and filler words."
 	// LabelConfidenceDefault is used when the model omits the confidence field.

@@ -604,7 +604,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-icon",
-			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square, bloom, flower, ring, shutter)",
+			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square, bloom, flower, ring, glass, neon, rainbow)",
 			EnvVars: EnvVars("APP_ICON"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1309,6 +1309,11 @@ var Flags = CliFlags{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "xmp-faces",
+			Usage:   "imports face regions and names from XMP metadata as people markers",
+			EnvVars: EnvVars("XMP_FACES"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-engine",

@@ -282,7 +282,7 @@ func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err err
 	result = make(fs.FileInfos, 0, len(found))
 
 	for _, f := range found {
-		if f.IsDir || f.Path == "" || isHiddenPath(f.Path) {
+		if f.IsDir || f.Path == "" || isHiddenPath(f.Path) || isUnsafePath(f.Path) {
 			continue
 		}
 
@@ -322,7 +322,7 @@ func (c *Client) Directories(dir string, recursive bool, timeout time.Duration) 
 	result = make(fs.FileInfos, 0, len(found))
 
 	for _, f := range found {
-		if !f.IsDir || f.Path == "" || isHiddenPath(f.Path) {
+		if !f.IsDir || f.Path == "" || isHiddenPath(f.Path) || isUnsafePath(f.Path) {
 			continue
 		}
 
@@ -518,7 +518,15 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 	}
 
 	for _, file := range files {
-		fileName := path.Join(dest, file.Abs)
+		// Resolve the local destination safely so a crafted remote path cannot
+		// escape the download directory.
+		fileName, joinErr := fs.SafeJoin(dest, strings.TrimPrefix(file.Abs, "/"))
+
+		if joinErr != nil {
+			log.Warnf("webdav: skipped %s because its remote path is invalid", clean.Log(file.Abs))
+			errs = append(errs, joinErr)
+			continue
+		}
 
 		// Check if file already exists.
 		if fs.Exists(fileName) {

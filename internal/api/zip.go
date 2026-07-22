@@ -171,7 +171,9 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		log.Infof("download: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
+		resp := i18n.NewResponse(http.StatusOK, i18n.MsgZipCreatedIn, elapsed)
+
+		c.JSON(http.StatusOK, gin.H{"code": resp.Code, "message": resp.Message, "messageId": resp.MessageID, "messageParams": resp.MessageParams, "filename": zipBaseName})
 	})
 }
 

@@ -1,6 +1,6 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** May 21, 2026
+**Last Updated:** July 16, 2026
 
 ### Overview
 
@@ -77,9 +77,12 @@ Models:
       Uri: https://api.openai.com/v1/responses
       FileScheme: data
       Key: ${OPENAI_API_KEY}
+      Tier: flex       # optional; sent as top-level "service_tier" (e.g. cheaper, slower "flex")
 ```
 
 Keep TensorFlow entries in place so PhotoPrism falls back when the external service is unavailable.
+
+> `Service.Tier` is passed through verbatim as the top-level `service_tier` field in the request body (values follow OpenAI: `auto`, `default`, `flex`, `priority`, …). It is omitted when empty (OpenAI default `auto`) and supports `${ENV}` expansion. The `flex` tier bills at roughly half the standard rate and suits the metadata worker and scheduled runs, which tolerate higher latency; such requests are more likely to return `HTTP 429` when capacity is short, which the shared client retries with bounded exponential backoff before the item falls through to the next worker pass.
 
 #### Defaults
 
@@ -106,7 +109,7 @@ Keep TensorFlow entries in place so PhotoPrism falls back when the external serv
 
 #### Rate Limiting
 
-OpenAI calls respect the existing `limiter.Auth` configuration used by the vision service. Failed requests surface standard HTTP errors and are not automatically retried; operators should ensure they have adequate account limits and consider external rate limiting when sharing credentials.
+OpenAI calls respect the existing `limiter.Auth` configuration used by the vision service. Transient `HTTP 429` responses are retried with bounded exponential backoff (`ServiceMaxRetries` attempts, `ServiceRetryDelay` base, capped at `ServiceRetryMaxDelay`), honoring a `Retry-After` header when present — itself capped at `ServiceRetryMaxDelay`, so a longer requested pause is retried sooner and may fail through to the next worker pass — and staying within `ServiceTimeout`; other error statuses surface as standard HTTP errors and are not retried. Operators should still ensure they have adequate account limits and consider external rate limiting when sharing credentials.
 
 #### Testing & Validation
 

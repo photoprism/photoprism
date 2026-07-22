@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // openaiDefaults provides canned prompts, schema templates, and options for OpenAI engines.
@@ -113,12 +114,12 @@ func (openaiDefaults) Options(model *Model) *ModelOptions {
 }
 
 // Build constructs an OpenAI request payload using base64-encoded thumbnails.
-func (openaiBuilder) Build(ctx context.Context, model *Model, files Files) (*ApiRequest, error) {
+func (openaiBuilder) Build(ctx context.Context, model *Model, files Files, mediaSrc media.Src) (*ApiRequest, error) {
 	if model == nil {
 		return nil, ErrInvalidModel
 	}
 
-	dataReq, err := NewApiRequestImages(files, scheme.Data)
+	dataReq, err := NewApiRequestImages(files, scheme.Data, mediaSrc)
 	if err != nil {
 		return nil, err
 	}

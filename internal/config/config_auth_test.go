@@ -200,11 +200,36 @@ func TestUtils_isBcrypt(t *testing.T) {
 func TestConfig_InvalidDownloadToken(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.True(t, c.InvalidDownloadToken("xxx"))
+	// InvalidDownloadToken delegates to the process-global entity.ValidateTokens switch
+	// that Propagate() derives from Public(); pin it per case so the outcome does not
+	// depend on what another test last left in the shared global.
+	validate := entity.ValidateTokens
+	defer func() { entity.ValidateTokens = validate }()
+
+	t.Run("ValidationEnabled", func(t *testing.T) {
+		entity.ValidateTokens = true
+		assert.True(t, c.InvalidDownloadToken("xxx"))
+	})
+	t.Run("PublicMode", func(t *testing.T) {
+		entity.ValidateTokens = false
+		assert.False(t, c.InvalidDownloadToken("xxx"))
+	})
 }
 
 func TestConfig_InvalidPreviewToken(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.True(t, c.InvalidPreviewToken("xxx"))
+	// See TestConfig_InvalidDownloadToken: pin the shared validation switch so the
+	// result is independent of test order.
+	validate := entity.ValidateTokens
+	defer func() { entity.ValidateTokens = validate }()
+
+	t.Run("ValidationEnabled", func(t *testing.T) {
+		entity.ValidateTokens = true
+		assert.True(t, c.InvalidPreviewToken("xxx"))
+	})
+	t.Run("PublicMode", func(t *testing.T) {
+		entity.ValidateTokens = false
+		assert.False(t, c.InvalidPreviewToken("xxx"))
+	})
 }

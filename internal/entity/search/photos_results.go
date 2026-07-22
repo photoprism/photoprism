@@ -70,7 +70,6 @@ type Photo struct {
 	PlaceCity        string        `json:"PlaceCity" select:"places.place_city"`
 	PlaceState       string        `json:"PlaceState" select:"places.place_state"`
 	PlaceCountry     string        `json:"PlaceCountry" select:"places.place_country"`
-	InstanceID       string        `json:"InstanceID" select:"files.instance_id"`
 	FileID           uint          `json:"-" select:"files.id AS file_id"` // File
 	FileUID          string        `json:"FileUID" select:"files.file_uid"`
 	FileRoot         string        `json:"FileRoot" select:"files.file_root"`

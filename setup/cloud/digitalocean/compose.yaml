@@ -148,6 +148,7 @@ services:
       PHOTOPRISM_JPEG_QUALITY: 85                      # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       PHOTOPRISM_DETECT_NSFW: "false"                  # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                   # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_XMP_FACES: "true"                     # imports face regions and names from XMP metadata as people markers
       PHOTOPRISM_UPLOAD_ALLOW: ""                      # restricts uploads to these file types (comma-separated list of EXTENSIONS; leave blank to allow all)
       PHOTOPRISM_UPLOAD_ARCHIVES: "true"               # allows upload of zip archives (will be extracted before import)
       PHOTOPRISM_UPLOAD_LIMIT: 5000                    # maximum size of uploaded files and uncompressed archive contents in MB
@@ -161,7 +162,7 @@ services:
       PHOTOPRISM_INIT: "https tensorflow"              # common options: update https tensorflow tensorflow-gpu intel gpu davfs yt-dlp
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"          # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
-      # PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
+      # PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"                # video bitrate limit in Mbps (default: 60)
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory

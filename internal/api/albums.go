@@ -543,7 +543,9 @@ func CloneAlbums(router *gin.RouterGroup) {
 			SaveAlbumYaml(&album)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgAlbumCloned), "album": album, "added": added})
+		resp := i18n.NewResponse(http.StatusOK, i18n.MsgAlbumCloned)
+
+		c.JSON(http.StatusOK, gin.H{"code": resp.Code, "message": resp.Message, "messageId": resp.MessageID, "messageParams": resp.MessageParams, "album": album, "added": added})
 	})
 }
 
@@ -658,7 +660,9 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			}
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": album, "photos": photos.UIDs(), "added": added})
+		resp := i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved)
+
+		c.JSON(http.StatusOK, gin.H{"code": resp.Code, "message": resp.Message, "messageId": resp.MessageID, "messageParams": resp.MessageParams, "album": album, "photos": photos.UIDs(), "added": added})
 	})
 }
 
@@ -739,6 +743,8 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 			SaveAlbumYaml(&album)
 		}
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": album, "photos": frm.Photos, "removed": removed})
+		resp := i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved)
+
+		c.JSON(http.StatusOK, gin.H{"code": resp.Code, "message": resp.Message, "messageId": resp.MessageID, "messageParams": resp.MessageParams, "album": album, "photos": frm.Photos, "removed": removed})
 	})
 }

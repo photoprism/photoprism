@@ -46,30 +46,27 @@ func ConvertToPhotoForm(photo *entity.Photo, v *PhotosForm) (*form.Photo, error)
 		photoForm.TypeSrc = entity.SrcBatch
 	}
 
-	// Date/time fields
-	timeChanged := false
+	// Date/time fields. batchChangesTime and batchChangesDate are the shared predicates for the field
+	// set that mutates the stored date and sort key, so the TakenSrc flag here and the index
+	// regeneration in save.go read from one list and never drift apart.
 	if v.PhotoDay.Action == ActionUpdate {
 		photoForm.PhotoDay = v.PhotoDay.Value
-		timeChanged = true
 	}
 	if v.PhotoMonth.Action == ActionUpdate {
 		photoForm.PhotoMonth = v.PhotoMonth.Value
-		timeChanged = true
 	}
 	if v.PhotoYear.Action == ActionUpdate {
 		photoForm.PhotoYear = v.PhotoYear.Value
-		timeChanged = true
 	}
 	if v.TimeZone.Action == ActionUpdate {
 		photoForm.TimeZone = v.TimeZone.Value
-		timeChanged = true
 	}
-	if timeChanged {
+	if batchChangesTime(v) {
 		photoForm.TakenSrc = entity.SrcBatch
 	}
 
 	// If any date field changed, recompute TakenAtLocal per photo via ComputeDateChange.
-	if v.PhotoDay.Action == ActionUpdate || v.PhotoMonth.Action == ActionUpdate || v.PhotoYear.Action == ActionUpdate {
+	if batchChangesDate(v) {
 		base := photo.TakenAtLocal
 		newLocal, outYear, outMonth, outDay := ComputeDateChange(
 			base,

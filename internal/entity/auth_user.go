@@ -1327,9 +1327,26 @@ func (m *User) RegenerateTokens() error {
 		return nil
 	}
 
+	// Remember the current tokens so their cached entries can be released once new ones are stored.
+	oldPreviewToken := m.PreviewToken
+	oldDownloadToken := m.DownloadToken
+
 	m.GenerateTokens(true)
 
-	return m.Updates(Values{"preview_token": m.PreviewToken, "download_token": m.DownloadToken})
+	if err := m.Updates(Values{"preview_token": m.PreviewToken, "download_token": m.DownloadToken}); err != nil {
+		return err
+	}
+
+	// Drop the replaced tokens from the in-memory lookup cache so they stop resolving.
+	if oldPreviewToken != "" && oldPreviewToken != m.PreviewToken {
+		PreviewToken.UnsetValue(oldPreviewToken)
+	}
+
+	if oldDownloadToken != "" && oldDownloadToken != m.DownloadToken {
+		DownloadToken.UnsetValue(oldDownloadToken)
+	}
+
+	return nil
 }
 
 // RefreshShares updates the list of shares.

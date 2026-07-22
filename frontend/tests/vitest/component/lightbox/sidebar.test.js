@@ -722,6 +722,25 @@ describe("PLightboxSidebar component", () => {
     expect(w.find(".metadata__person-row").exists()).toBe(false);
   });
 
+  // Documents (PDFs) have no faces, so the People section is hidden for a
+  // document slide even when the photo carries markers and people is enabled.
+  it("should hide the People section for a PDF document slide", () => {
+    const img = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(img.vm.isDocument).toBe(false);
+    expect(img.find(".metadata__person-row").exists()).toBe(true);
+    const doc = mountSidebar({
+      props: { modelValue: { ...mockModel, Type: "document" }, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(doc.vm.isDocument).toBe(true);
+    expect(doc.html()).not.toContain("People");
+    expect(doc.find(".metadata__person-row").exists()).toBe(false);
+    expect(doc.find(".meta-faces-edit").exists()).toBe(false);
+  });
+
   // Unassign button: named markers expose mdi-eject inside the
   // combobox's #append-inner slot, but only while the People section
   // is in edit mode (pencil on) — gated so a casual hover can't

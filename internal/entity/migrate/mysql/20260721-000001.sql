@@ -1,0 +1,1 @@
+ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(4096);

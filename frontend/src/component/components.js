@@ -8,6 +8,7 @@ import PLoadingBar from "component/loading-bar.vue";
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PLightboxSidebar from "component/lightbox/sidebar.vue";
 import PMap from "component/map.vue";
+import PPdfViewer from "component/pdf-viewer.vue";
 import PLightbox from "component/lightbox.vue";
 
 // Inputs.
@@ -91,6 +92,7 @@ export function install(app) {
   app.component("PLightboxMenu", PLightboxMenu);
   app.component("PLightboxSidebar", PLightboxSidebar);
   app.component("PMap", PMap);
+  app.component("PPdfViewer", PPdfViewer);
   app.component("PLightbox", PLightbox);
 
   app.component("PInputChipSelector", PInputChipSelector);

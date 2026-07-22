@@ -146,6 +146,77 @@ func TestStringMap_ValueExists(t *testing.T) {
 	})
 }
 
+func TestStringMap_MissingValue(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
+		assert.False(t, NewStringMap(Strings{"foo": "bar"}).MissingValue("bar"))
+		assert.False(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).MissingValue("bar"))
+	})
+	t.Run("True", func(t *testing.T) {
+		assert.True(t, NewStringMap(Strings{"foo": "bar"}).MissingValue(""))
+		assert.True(t, NewStringMap(Strings{"foo": "bar"}).MissingValue("zzz"))
+	})
+}
+
+func TestStringMap_SharedValueRefcount(t *testing.T) {
+	m := NewStringMap(nil)
+
+	// Two keys share the same value.
+	m.Set("s1", "token")
+	m.Set("s2", "token")
+	assert.True(t, m.HasValue("token"))
+
+	// Removing one holder keeps the value while the other still references it.
+	m.Unset("s1")
+	assert.True(t, m.HasValue("token"))
+
+	// Removing the last holder clears the value from the reverse index.
+	m.Unset("s2")
+	assert.True(t, m.MissingValue("token"))
+}
+
+func TestStringMap_SetValueChangeKeepsOldValueUntilUnset(t *testing.T) {
+	m := NewStringMap(nil)
+	m.Set("k", "old")
+
+	// Reassigning a key does not retract the old value from the reverse index:
+	// both values still resolve, and the old value still maps back to the key.
+	m.Set("k", "new")
+	assert.True(t, m.HasValue("new"))
+	assert.True(t, m.HasValue("old"))
+	assert.Equal(t, "k", m.Key("old"))
+	assert.Equal(t, "k", m.Key("new"))
+
+	// Callers must UnsetValue the old value explicitly to stop it from matching.
+	m.UnsetValue("old")
+	assert.True(t, m.MissingValue("old"))
+	assert.Equal(t, "", m.Key("old"))
+	assert.True(t, m.HasValue("new"))
+	assert.Equal(t, "k", m.Key("new"))
+}
+
+func TestStringMap_UnsetValue(t *testing.T) {
+	t.Run("RemovesAllKeys", func(t *testing.T) {
+		m := NewStringMap(nil)
+		m.Set("s1", "token")
+		m.Set("s2", "token")
+		m.Set("s3", "keep")
+
+		m.UnsetValue("token")
+
+		assert.True(t, m.MissingValue("token"))
+		assert.Equal(t, "", m.Get("s1"))
+		assert.Equal(t, "", m.Get("s2"))
+		// Unrelated values are untouched.
+		assert.True(t, m.HasValue("keep"))
+		assert.Equal(t, "keep", m.Get("s3"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		m := NewStringMap(nil)
+		m.UnsetValue("")
+		assert.True(t, m.MissingValue(""))
+	})
+}
+
 func TestStringMap_Unset(t *testing.T) {
 	t.Run("StartingEmpty", func(t *testing.T) {
 		m := NewStringMap(nil)

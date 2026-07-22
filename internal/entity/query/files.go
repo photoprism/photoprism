@@ -92,6 +92,24 @@ func VideoByPhotoUID(photoUID string) (*entity.File, error) {
 	return &f, err
 }
 
+// DocumentByPhotoUID finds the PDF document file for the given photo UID. A
+// document photo's primary file is its rendered cover image, so the original
+// PDF must be looked up among the related files by type.
+func DocumentByPhotoUID(photoUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if photoUID == "" {
+		return &f, fmt.Errorf("photo uid required")
+	}
+
+	err := Db().Where("photo_uid = ? AND file_missing = 0", photoUID).
+		Where("file_type = ?", fs.DocumentPDF).
+		Order("file_error ASC").
+		Preload("Photo").First(&f).Error
+
+	return &f, err
+}
+
 // FileByUID finds a file entity for the given UID.
 func FileByUID(fileUID string) (*entity.File, error) {
 	f := entity.File{}

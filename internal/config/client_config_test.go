@@ -638,6 +638,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		f := cfg.Settings.Features
 		assert.Equal(t, adminFeatures, f)
 	})
+	c.CleanupTestFolder()
 }
 
 func TestConfig_Flags(t *testing.T) {

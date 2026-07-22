@@ -15,6 +15,7 @@ import (
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -29,6 +30,11 @@ import (
 
 const (
 	FileUID = byte('f')
+
+	// InstanceIDBytes is the byte budget for the instance_id column (VARBINARY(255)).
+	// XMP xmpMM:InstanceID values are clipped to it on write so an oversized identifier
+	// cannot overflow the column and abort indexing.
+	InstanceIDBytes = 255
 )
 
 // Files represents a file result set.
@@ -48,7 +54,7 @@ type File struct {
 	TimeIndex          *string       `gorm:"type:VARBINARY(64);" json:"TimeIndex" yaml:"TimeIndex"`
 	MediaID            *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	MediaUTC           int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
-	InstanceID         string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	InstanceID         string        `gorm:"type:VARBINARY(255);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID            string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	FileName           string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
@@ -105,13 +111,6 @@ func (File) TableName() string {
 // RegenerateIndex recalculates the denormalized search index columns for the matching files.
 // Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
 func (m File) RegenerateIndex() {
-	fileIndexMutex.Lock()
-	defer fileIndexMutex.Unlock()
-
-	start := time.Now()
-
-	photosTable := Photo{}.TableName()
-
 	var updateWhere *gorm.SqlExpr
 	var scope string
 
@@ -128,6 +127,40 @@ func (m File) RegenerateIndex() {
 		updateWhere = gorm.Expr("files.photo_id IS NOT NULL")
 		scope = "index"
 	}
+
+	regenerateFileIndex(updateWhere, scope)
+}
+
+// RegenerateIndexForPhotoIDs recalculates the denormalized search index columns for the files of
+// the given photos in a single pass. Batch edits use it to refresh sorting immediately, since
+// newest/oldest keys off files.time_index / files.photo_taken_at rather than photos.taken_at.
+func RegenerateIndexForPhotoIDs(photoIDs []uint) {
+	if len(photoIDs) == 0 {
+		return
+	}
+
+	// Inline the numeric IDs: a nested slice placeholder inside the shared WHERE
+	// expression is not expanded, and uint values are safe from SQL injection.
+	inList := ""
+	for i, id := range photoIDs {
+		if i > 0 {
+			inList += ","
+		}
+		inList += fmt.Sprintf("%d", id)
+	}
+
+	regenerateFileIndex(gorm.Expr("files.photo_id IN ("+inList+")"), "index by photo ids")
+}
+
+// regenerateFileIndex runs the denormalized index UPDATEs for the files matched by updateWhere.
+// Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
+func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
+	fileIndexMutex.Lock()
+	defer fileIndexMutex.Unlock()
+
+	start := time.Now()
+
+	photosTable := Photo{}.TableName()
 
 	switch DbDialect() {
 	case dsn.DriverMySQL:
@@ -702,6 +735,36 @@ func (m *File) SetSoftware(name string) {
 	}
 }
 
+// SetInstanceID sets the file instance identifier, clipping it to the column byte
+// budget on a rune boundary so an oversized XMP xmpMM:InstanceID cannot overflow the
+// instance_id column. An empty value leaves the current identifier unchanged.
+func (m *File) SetInstanceID(id string) {
+	if id = Clip(id, InstanceIDBytes); id != "" {
+		m.InstanceID = id
+	}
+}
+
+// RedactForSession removes identifying per-file metadata a shared-only session must not see when it
+// accesses a file through sharing: the XMP InstanceID (a content-provenance identifier) is cleared and
+// markers are omitted. Sessions with full library or admin access (and nil sessions) are unchanged.
+// This is the per-file counterpart of Photo.RedactForSession, so single-file reads (GetFile) and the
+// picture read (GetPhoto) strip the same fields.
+func (m *File) RedactForSession(sess *Session) *File {
+	if m == nil || sess == nil {
+		return m
+	}
+
+	// Only sessions limited to shared content are redacted.
+	if !sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+		return m
+	}
+
+	m.OmitMarkers = true
+	m.InstanceID = ""
+
+	return m
+}
+
 // SetDuration sets the video/animation duration.
 func (m *File) SetDuration(d time.Duration) {
 	if d <= 0 {
@@ -807,8 +870,36 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
-	// Append marker if it doesn't conflict with existing marker.
-	if markers := m.Markers(); !markers.Contains(*marker) {
+	markers := m.Markers()
+
+	// Upgrade an embedding-less marker (e.g. one imported from XMP in a prior
+	// pass) in place with the detected embedding instead of letting the overlap
+	// check below drop the face and lose its embedding. Overlapping skips
+	// rejected markers, so a rejected face is not resurrected here.
+	if existing := markers.Overlapping(*marker); existing != nil {
+		if existing.Embeddings().Empty() {
+			landmarks := f.RelativeLandmarksJSON()
+
+			// For an already-saved marker, persist first and mutate in-memory
+			// only on success: a failed write must not leave an unpersisted
+			// embedding (Markers.Save does not re-write existing markers), so the
+			// marker stays embedding-less and is retried on the next pass.
+			if existing.MarkerUID != "" {
+				if err := existing.Updates(Values{"embeddings_json": f.Embeddings.JSON(), "landmarks_json": landmarks}); err != nil {
+					log.Warnf("faces: %s while adding embedding to marker %s", err, clean.Log(existing.MarkerUID))
+					return
+				}
+			}
+
+			existing.SetEmbeddings(f.Embeddings)
+			existing.LandmarksJSON = landmarks
+		}
+
+		return
+	}
+
+	// Append marker if it doesn't conflict with an existing (including rejected) marker.
+	if !markers.Contains(*marker) {
 		markers.AppendWithEmbedding(*marker)
 	}
 }

@@ -1664,6 +1664,28 @@ func TestPhoto_SetCameraSerial(t *testing.T) {
 	})
 }
 
+func TestPhoto_SetDocumentID(t *testing.T) {
+	t.Run("Stored", func(t *testing.T) {
+		m := &Photo{}
+		m.SetDocumentID("adobe:docid:photoshop:7d592d87-eb1e-1040-809a-e16c6b85b3fd")
+		assert.Equal(t, "adobe:docid:photoshop:7d592d87-eb1e-1040-809a-e16c6b85b3fd", m.UUID)
+	})
+	t.Run("EmptyKeepsCurrent", func(t *testing.T) {
+		m := &Photo{UUID: "xmp.did:keep"}
+		m.SetDocumentID("")
+		assert.Equal(t, "xmp.did:keep", m.UUID)
+	})
+	t.Run("OversizeClippedOnRuneBoundary", func(t *testing.T) {
+		// photos.uuid is VARBINARY(255), so an oversized multi-byte DocumentID must be
+		// clipped on a rune boundary, keeping the stored value within budget and valid UTF-8.
+		m := &Photo{}
+		m.SetDocumentID(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
+		assert.NotEmpty(t, m.UUID)
+		assert.LessOrEqual(t, len(m.UUID), UUIDBytes)
+		assert.True(t, utf8.ValidString(m.UUID))
+	})
+}
+
 func TestPhoto_MapKey(t *testing.T) {
 	m := &Photo{TakenAt: time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC), CellID: "abc236"}
 	assert.Equal(t, "ogh006/abc236", m.MapKey())

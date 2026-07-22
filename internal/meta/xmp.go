@@ -188,6 +188,19 @@ func (data *Data) XMP(fileName string) (err error) {
 		data.Subject = SanitizeMeta(v)
 	}
 
+	// Read the sidecar orientation first so face-region coordinates are mapped
+	// into the file's displayed orientation. The sidecar path does not populate
+	// data.Orientation elsewhere, and it stays a documentation-only field.
+	if v := doc.Orientation(); v != 0 {
+		data.Orientation = v
+	}
+
+	// Parse MWG-RS and Microsoft MP:RegionInfo face regions (people markers)
+	// into data.Faces so the indexer can reconcile them onto face markers.
+	if faces := doc.Faces(data.Orientation); len(faces) > 0 {
+		data.Faces = faces
+	}
+
 	data.Favorite = doc.Favorite()
 
 	// Auto-derive keywords from projection and caption text so XMP-only

@@ -4,19 +4,22 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 func TestNewApiRequest(t *testing.T) {
 	t.Run("Data", func(t *testing.T) {
 		thumbnails := Files{samplesPath + "/chameleon_lime.jpg"}
-		result, err := NewApiRequestImages(thumbnails, scheme.Data)
+		result, err := NewApiRequestImages(thumbnails, scheme.Data, media.SrcLocal)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -31,7 +34,7 @@ func TestNewApiRequest(t *testing.T) {
 	})
 	t.Run("Https", func(t *testing.T) {
 		thumbnails := Files{samplesPath + "/chameleon_lime.jpg"}
-		result, err := NewApiRequestImages(thumbnails, scheme.Https)
+		result, err := NewApiRequestImages(thumbnails, scheme.Https, media.SrcLocal)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -185,6 +188,133 @@ func TestPerformApiRequestOpenAIHeaders(t *testing.T) {
 	assert.NotNil(t, resp)
 	assert.NotNil(t, resp.Result.Caption)
 	assert.Equal(t, "A scenic mountain view.", resp.Result.Caption.Text)
+}
+
+// shrinkRetryDelay speeds up 429 retry tests by using a tiny backoff and
+// restores the package defaults afterwards.
+func shrinkRetryDelay(t *testing.T) {
+	prevDelay, prevMax := ServiceRetryDelay, ServiceRetryMaxDelay
+	ServiceRetryDelay = time.Millisecond
+	ServiceRetryMaxDelay = 5 * time.Millisecond
+	t.Cleanup(func() {
+		ServiceRetryDelay = prevDelay
+		ServiceRetryMaxDelay = prevMax
+	})
+}
+
+func TestPerformApiRequestRetry(t *testing.T) {
+	t.Run("OllamaRetryThenSuccess", func(t *testing.T) {
+		shrinkRetryDelay(t)
+		var calls int32
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if atomic.AddInt32(&calls, 1) == 1 {
+				w.WriteHeader(http.StatusTooManyRequests)
+				return
+			}
+			assert.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
+				Model:    "qwen2.5vl:latest",
+				Response: `{"labels":[{"name":"test","confidence":0.9,"topicality":0.8}]}`,
+			}))
+		}))
+		defer server.Close()
+
+		apiRequest := &ApiRequest{
+			Id:             "retry-ollama",
+			Model:          "qwen2.5vl:latest",
+			Format:         FormatJSON,
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOllama,
+		}
+
+		resp, err := PerformApiRequest(apiRequest, server.URL, http.MethodPost, "")
+		assert.NoError(t, err)
+		assert.Len(t, resp.Result.Labels, 1)
+		assert.Equal(t, int32(2), atomic.LoadInt32(&calls))
+	})
+	t.Run("OpenAIRetryThenSuccess", func(t *testing.T) {
+		shrinkRetryDelay(t)
+		var calls int32
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if atomic.AddInt32(&calls, 1) == 1 {
+				w.Header().Set(header.RetryAfter, "0")
+				w.WriteHeader(http.StatusTooManyRequests)
+				return
+			}
+			response := map[string]any{
+				"id":    "resp_123",
+				"model": "gpt-5-mini",
+				"output": []any{
+					map[string]any{
+						"role": "assistant",
+						"content": []any{
+							map[string]any{"type": "output_text", "text": "A scenic mountain view."},
+						},
+					},
+				},
+			}
+			assert.NoError(t, json.NewEncoder(w).Encode(response))
+		}))
+		defer server.Close()
+
+		req := &ApiRequest{
+			Id:             "retry-openai",
+			Model:          "gpt-5-mini",
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOpenAI,
+		}
+
+		resp, err := PerformApiRequest(req, server.URL, http.MethodPost, "")
+		assert.NoError(t, err)
+		assert.NotNil(t, resp.Result.Caption)
+		assert.Equal(t, "A scenic mountain view.", resp.Result.Caption.Text)
+		assert.Equal(t, int32(2), atomic.LoadInt32(&calls))
+	})
+	t.Run("NonRetryableStatusStaysTerminal", func(t *testing.T) {
+		shrinkRetryDelay(t)
+		var calls int32
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			atomic.AddInt32(&calls, 1)
+			w.WriteHeader(http.StatusBadRequest)
+			assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+				"error": map[string]any{"message": "bad request"},
+			}))
+		}))
+		defer server.Close()
+
+		req := &ApiRequest{
+			Id:             "terminal",
+			Model:          "gpt-5-mini",
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOpenAI,
+		}
+
+		_, err := PerformApiRequest(req, server.URL, http.MethodPost, "")
+		assert.Error(t, err)
+		assert.Equal(t, int32(1), atomic.LoadInt32(&calls))
+	})
+	t.Run("RetriesExhausted", func(t *testing.T) {
+		shrinkRetryDelay(t)
+		var calls int32
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			atomic.AddInt32(&calls, 1)
+			w.WriteHeader(http.StatusTooManyRequests)
+			assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+				"error": map[string]any{"message": "rate limited"},
+			}))
+		}))
+		defer server.Close()
+
+		req := &ApiRequest{
+			Id:             "exhausted",
+			Model:          "gpt-5-mini",
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOpenAI,
+		}
+
+		_, err := PerformApiRequest(req, server.URL, http.MethodPost, "")
+		assert.Error(t, err)
+		assert.Equal(t, ServiceMaxRetries+1, int(atomic.LoadInt32(&calls)))
+	})
 }
 
 func TestValidateApiRequestURL(t *testing.T) {

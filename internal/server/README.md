@@ -58,6 +58,7 @@
   - Built-in security middleware skips browser-document headers (`Content-Security-Policy`, `X-Frame-Options`) on `/originals` and `/import` paths.
   - PROPFIND `207 Multi-Status` responses normalize XML media type to `application/xml; charset=utf-8`.
   - Request errors go to the console-only system log (`event.System*`), not the browser log stream, since `x/net/webdav` embeds absolute server paths in its messages. A `MKCOL` on an existing collection is a benign sync-client probe: it returns 405 and is logged at debug rather than as an error.
+  - `LOCK` lifetimes are capped at `mutex.WebDAVMaxLockLifetime` (default one hour) so a client cannot mint locks that never expire: `WebDAVClampLockTimeout` clamps the requested `Timeout` header and the `webdavLockSystem` wrapper enforces the same bound on the stored lock.
 - AutoTLS: uses `autocert` and spins up a redirect listener; ensure ports 80/443 are reachable.
 - Unix sockets: optional `force` query removes stale sockets; permissions can be set via `mode` query.
 - Health endpoints (`/livez`, `/health`, `/healthz`, `/readyz`) return `Cache-Control: no-store` and `Access-Control-Allow-Origin: *`.

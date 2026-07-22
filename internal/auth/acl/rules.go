@@ -8,8 +8,10 @@ var RulesMutex = &sync.Mutex{}
 // Rules specifies granted permissions by Resource and Role.
 var Rules = ACL{
 	ResourceFiles: Roles{
-		RoleAdmin:  GrantFullAccess,
-		RoleClient: GrantFullAccess,
+		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantViewShared,
+		RoleVisitor: GrantViewShared,
+		RoleClient:  GrantFullAccess,
 	},
 	ResourceFolders: Roles{
 		RoleAdmin:   GrantFullAccess,

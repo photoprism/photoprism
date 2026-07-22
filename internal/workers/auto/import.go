@@ -91,9 +91,7 @@ func Import() error {
 
 	elapsed := int(time.Since(start).Seconds())
 
-	msg := i18n.Msg(i18n.MsgImportCompletedIn, elapsed)
-
-	event.Success(msg)
+	event.SuccessMsg(i18n.MsgImportCompletedIn, elapsed)
 
 	eventData := event.Data{
 		"uid":     opt.UID,

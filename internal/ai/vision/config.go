@@ -30,6 +30,13 @@ var (
 	ServiceKey = ""
 	// ServiceTimeout sets the maximum duration for service API requests.
 	ServiceTimeout = 10 * time.Minute
+	// ServiceMaxRetries sets how many times a service request is retried after an
+	// HTTP 429 response, matching the two automatic retries external SDKs default to.
+	ServiceMaxRetries = 2
+	// ServiceRetryDelay sets the initial backoff before the first 429 retry, doubled on each attempt.
+	ServiceRetryDelay = 500 * time.Millisecond
+	// ServiceRetryMaxDelay caps a single 429 backoff wait so retries stay within ServiceTimeout.
+	ServiceRetryMaxDelay = 8 * time.Second
 	// MaxResponseBytes bounds how much of a service response is read so a
 	// malicious or compromised endpoint cannot exhaust memory.
 	MaxResponseBytes int64 = 32 * 1024 * 1024

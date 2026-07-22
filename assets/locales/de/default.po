@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-06-27 09:13+0000\n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-07-18 10:07+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7\n"
 "X-Poedit-Basepath: .\n"
 
 #: messages.go:112
@@ -227,7 +227,7 @@ msgstr "Registrierung deaktiviert"
 
 #: messages.go:164
 msgid "Verified email required"
-msgstr "Eine verifizierte E-Mail-Adresse ist erforderlich"
+msgstr "Verifizierte E-Mail-Adresse erforderlich"
 
 #: messages.go:167
 msgid "Changes successfully saved"

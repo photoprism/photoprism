@@ -170,6 +170,51 @@ func TestSavePhotos(t *testing.T) {
 	})
 }
 
+// TestBatchChangesTime covers the date/time-change detection used to trigger index regeneration.
+func TestBatchChangesTime(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, batchChangesTime(nil))
+	})
+	t.Run("NoTimeChange", func(t *testing.T) {
+		assert.False(t, batchChangesTime(&PhotosForm{PhotoTitle: String{Value: "x", Action: ActionUpdate}}))
+	})
+	t.Run("Year", func(t *testing.T) {
+		assert.True(t, batchChangesTime(&PhotosForm{PhotoYear: Int{Value: 2000, Action: ActionUpdate}}))
+	})
+	t.Run("Month", func(t *testing.T) {
+		assert.True(t, batchChangesTime(&PhotosForm{PhotoMonth: Int{Value: 5, Action: ActionUpdate}}))
+	})
+	t.Run("Day", func(t *testing.T) {
+		assert.True(t, batchChangesTime(&PhotosForm{PhotoDay: Int{Value: 5, Action: ActionUpdate}}))
+	})
+	t.Run("TimeZone", func(t *testing.T) {
+		assert.True(t, batchChangesTime(&PhotosForm{TimeZone: String{Value: "UTC", Action: ActionUpdate}}))
+	})
+}
+
+// TestBatchChangesDate covers the shared calendar-date predicate; a time-zone-only change must not
+// count as a date change so convert.go recomputes TakenAtLocal only when day, month, or year moved.
+func TestBatchChangesDate(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, batchChangesDate(nil))
+	})
+	t.Run("NoDateChange", func(t *testing.T) {
+		assert.False(t, batchChangesDate(&PhotosForm{PhotoTitle: String{Value: "x", Action: ActionUpdate}}))
+	})
+	t.Run("TimeZoneOnly", func(t *testing.T) {
+		assert.False(t, batchChangesDate(&PhotosForm{TimeZone: String{Value: "UTC", Action: ActionUpdate}}))
+	})
+	t.Run("Year", func(t *testing.T) {
+		assert.True(t, batchChangesDate(&PhotosForm{PhotoYear: Int{Value: 2000, Action: ActionUpdate}}))
+	})
+	t.Run("Month", func(t *testing.T) {
+		assert.True(t, batchChangesDate(&PhotosForm{PhotoMonth: Int{Value: 5, Action: ActionUpdate}}))
+	})
+	t.Run("Day", func(t *testing.T) {
+		assert.True(t, batchChangesDate(&PhotosForm{PhotoDay: Int{Value: 5, Action: ActionUpdate}}))
+	})
+}
+
 // TestNewPhotoSaveRequest ensures the helper validates inputs before building requests.
 func TestNewPhotoSaveRequest(t *testing.T) {
 	t.Run("NilValues", func(t *testing.T) {
@@ -271,6 +316,54 @@ func TestPrepareAndSavePhotos(t *testing.T) {
 		restorePhoto(t, fixture.PhotoUID, entity.Values{
 			"photo_favorite": originalFavorite,
 		})
+	})
+	t.Run("RegeneratesFileIndexOnDateChange", func(t *testing.T) {
+		// Find a photo whose primary file carries a search time index.
+		var f entity.File
+		if err := entity.UnscopedDb().Where("photo_id > 0 AND file_primary = 1 AND time_index IS NOT NULL AND deleted_at IS NULL").First(&f).Error; err != nil {
+			t.Skip("no suitable file fixture")
+			return
+		}
+
+		var photo entity.Photo
+		require.NoError(t, entity.UnscopedDb().First(&photo, f.PhotoID).Error)
+
+		origIndex := ""
+		if f.TimeIndex != nil {
+			origIndex = *f.TimeIndex
+		}
+		original := entity.Values{
+			"taken_at":       photo.TakenAt,
+			"taken_at_local": photo.TakenAtLocal,
+			"photo_year":     photo.PhotoYear,
+			"photo_month":    photo.PhotoMonth,
+			"photo_day":      photo.PhotoDay,
+			"time_zone":      photo.TimeZone,
+			"taken_src":      photo.TakenSrc,
+			"checked_at":     photo.CheckedAt,
+			"edited_at":      photo.EditedAt,
+		}
+
+		newYear := 1975
+		if photo.TakenAtLocal.Year() == newYear {
+			newYear = 1985
+		}
+		values := &PhotosForm{PhotoYear: Int{Value: newYear, Action: ActionUpdate}}
+		photos := search.PhotoResults{{PhotoUID: photo.PhotoUID}}
+
+		result, err := PrepareAndSavePhotos(photos, nil, values)
+		require.NoError(t, err)
+		require.NotNil(t, result)
+		require.True(t, result.SavedAny)
+
+		var updated entity.File
+		require.NoError(t, entity.UnscopedDb().First(&updated, f.ID).Error)
+		require.NotNil(t, updated.TimeIndex)
+		assert.NotEqual(t, origIndex, *updated.TimeIndex, "time_index must be regenerated after a batch date change")
+		assert.Equal(t, newYear, updated.PhotoTakenAt.Year())
+
+		restorePhoto(t, photo.PhotoUID, original)
+		entity.RegenerateIndexForPhotoIDs([]uint{photo.ID})
 	})
 	t.Run("RejectsConcurrentBatchEdit", func(t *testing.T) {
 		require.NoError(t, mutex.BatchEdit.Start())
