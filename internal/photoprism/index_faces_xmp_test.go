@@ -393,3 +393,84 @@ func TestCollectXmpFaces(t *testing.T) {
 		assert.InDelta(t, 0.10, f.H, 0.01)
 	})
 }
+
+// TestApplyDetectedFaces covers the deferred vision/metadata worker path: when
+// XMP face-tag import is enabled it reconciles XMP regions onto the primary
+// file's markers even without AI detection, and it stays a no-op when the
+// toggle is off, the media file is missing, or no work is required.
+func TestApplyDetectedFaces(t *testing.T) {
+	c := config.TestConfig()
+	t.Cleanup(func() { c.Options().XMPFaces = false })
+
+	// hasXmpMarker reports whether a SrcXmp marker with the given name exists.
+	hasXmpMarker := func(markers entity.Markers, name string) bool {
+		for i := range markers {
+			if markers[i].MarkerSrc == entity.SrcXmp && markers[i].MarkerName == name {
+				return true
+			}
+		}
+		return false
+	}
+
+	t.Run("ImportsWhenEnabledAndDetectionDeferred", func(t *testing.T) {
+		c.Options().XMPFaces = true
+
+		file := newXmpFile(t)
+		m, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
+		require.NoError(t, err)
+
+		// No detected faces: the worker path must still import the XMP region.
+		saved, count, err := ApplyDetectedFaces(m, file, nil)
+		require.NoError(t, err)
+		assert.True(t, saved, "XMP-only import must persist markers")
+		assert.GreaterOrEqual(t, count, 1, "the imported face must be counted")
+
+		markers, err := entity.FindMarkers(file.FileUID)
+		require.NoError(t, err)
+		require.True(t, hasXmpMarker(markers, "Cara"), "sidecar region 'Cara' must import via ApplyDetectedFaces, got %+v", markers)
+		for i := range markers {
+			if markers[i].MarkerName == "Cara" {
+				assert.NotEmpty(t, markers[i].SubjUID, "imported name must link to a Person")
+				assert.Equal(t, entity.SrcXmp, markers[i].SubjSrc)
+			}
+		}
+	})
+
+	t.Run("SkipsWhenDisabled", func(t *testing.T) {
+		c.Options().XMPFaces = false
+
+		file := newXmpFile(t)
+		m, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
+		require.NoError(t, err)
+
+		saved, count, err := ApplyDetectedFaces(m, file, nil)
+		require.NoError(t, err)
+		assert.False(t, saved, "no persistence when the toggle is off and no faces detected")
+		assert.Equal(t, 0, count)
+
+		markers, err := entity.FindMarkers(file.FileUID)
+		require.NoError(t, err)
+		assert.Empty(t, markers, "no markers may be created when the toggle is off")
+	})
+
+	t.Run("SkipsWhenMediaFileNil", func(t *testing.T) {
+		c.Options().XMPFaces = true
+
+		file := newXmpFile(t)
+
+		// A nil media file disables XMP import even when the toggle is on,
+		// because there is nothing to read the embedded XMP or sidecar from.
+		saved, _, err := ApplyDetectedFaces(nil, file, nil)
+		require.NoError(t, err)
+		assert.False(t, saved)
+
+		markers, err := entity.FindMarkers(file.FileUID)
+		require.NoError(t, err)
+		assert.Empty(t, markers)
+	})
+
+	t.Run("NilFile", func(t *testing.T) {
+		_, _, err := ApplyDetectedFaces(nil, nil, nil)
+		assert.Error(t, err, "a nil file must be rejected")
+	})
+}

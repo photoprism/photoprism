@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** May 21, 2026
+**Last Updated:** July 22, 2026
 
 ### Overview
 
@@ -22,7 +22,7 @@
 
 - Indexing/import: `index.go`, `index_main.go`, `index_mediafile.go`, `index_related.go`, `import_worker.go`, `files.go`, `photos.go`.
 - Media files & helpers: `mediafile*.go`, `mediafile_thumbs.go`, `mediafile_vision.go`, `convert_*.go`, `colors.go`, `label.go`.
-- Faces/people: `faces_*.go` (audit, clustering, matching, optimize).
+- Faces/people: `faces_*.go` (audit, clustering, matching, optimize); face-marker persistence and XMP face-tag import in `index_faces.go` / `index_faces_xmp.go` (gated by `PHOTOPRISM_XMP_FACES`).
 - Backups: `backup/` (database and sidecar YAML backup/restore helpers).
 - Downloads: `dl/` (export and download handlers/helpers).
 - Service registry: `get/` (registry lookups and helper commands).
