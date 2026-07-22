@@ -135,14 +135,40 @@ func TestGetFile(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 		GetFile(router)
 
-		// The "visitor" session fixture shares album as6sg6bxpogaaba8, which contains photo
-		// ps6sg6be2lvl0yh7 — the owner of jpegFixtureHash, a file with an InstanceID — so the file is
-		// in scope for the visitor and the response can be checked for redaction.
-		r := AuthenticatedRequest(app, "GET", "/api/v1/files/"+jpegFixtureHash, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3")
+		// Share the document photo through the album the "visitor" session fixture holds and attach a
+		// fresh file carrying an InstanceID, so the file is reliably in scope regardless of suite
+		// ordering; everything created here is torn down afterward.
+		photo := entity.PhotoFixtures.Pointer("Photo55")
+		const sharedAlbumUID = "as6sg6bxpogaaba8" // album the "visitor" session fixture shares
+		const instFileHash = "a11ce9168fa6acc5c5c2965ddf6ec465ca42fd81"
+		file := &entity.File{
+			PhotoID:     photo.ID,
+			PhotoUID:    photo.PhotoUID,
+			FileUID:     "fs6sg6bw15bnl3in",
+			FileName:    "education/university/instanceid.jpg",
+			FileRoot:    entity.RootOriginals,
+			FileHash:    instFileHash,
+			FileType:    fs.ImageJpeg.String(),
+			InstanceID:  "a698ac56-6e7e-42b9-9c3e-a79ec96087uy",
+			FilePrimary: false,
+		}
+		if err := entity.Db().Create(file).Error; err != nil {
+			t.Fatal(err)
+		}
+		if err := entity.Db().Exec("INSERT INTO photos_albums (photo_uid, album_uid, hidden, missing) VALUES (?, ?, 0, 0)", photo.PhotoUID, sharedAlbumUID).Error; err != nil {
+			t.Fatal(err)
+		}
+		defer func() {
+			entity.Db().Exec("DELETE FROM photos_albums WHERE photo_uid = ? AND album_uid = ?", photo.PhotoUID, sharedAlbumUID)
+			entity.Db().Unscoped().Where("file_hash = ?", instFileHash).Delete(&entity.File{})
+		}()
+
+		// The "visitor" session fixture holds a share token scoped to sharedAlbumUID.
+		r := AuthenticatedRequest(app, "GET", "/api/v1/files/"+instFileHash, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3")
 		assert.Equal(t, http.StatusOK, r.Code)
 		// A shared-only session gets the file but not the identifying XMP InstanceID; the display name stays.
 		assert.Equal(t, "", gjson.Get(r.Body.String(), "InstanceID").String())
-		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", gjson.Get(r.Body.String(), "Name").String())
+		assert.Equal(t, "education/university/instanceid.jpg", gjson.Get(r.Body.String(), "Name").String())
 	})
 }
 
