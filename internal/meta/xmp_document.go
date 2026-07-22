@@ -54,6 +54,12 @@ var xmpNamespaces = map[string]string{
 	"Iptc4xmpExt":  "http://iptc.org/std/Iptc4xmpExt/2008-02-29/",
 	"lr":           "http://ns.adobe.com/lightroom/1.0/",
 	"fstop":        "http://www.fstopapp.com/xmp/",
+	"mwg-rs":       "http://www.metadataworkinggroup.com/schemas/regions/",
+	"stArea":       "http://ns.adobe.com/xmp/sType/Area#",
+	"stDim":        "http://ns.adobe.com/xap/1.0/sType/Dimensions#",
+	"MP":           "http://ns.microsoft.com/photo/1.2/",
+	"MPRI":         "http://ns.microsoft.com/photo/1.2/t/RegionInfo#",
+	"MPReg":        "http://ns.microsoft.com/photo/1.2/t/Region#",
 }
 
 // chainXPath is an ordered list of pre-compiled XPath expressions
@@ -315,7 +321,46 @@ var (
 
 	// xmpGPSDateStampChain: legacy split-form fallback for TakenGps.
 	xmpGPSDateStampChain = chainXPath{elemOrAttr("exif:GPSDateStamp")}
+
+	// xmpOrientationChain: tiff:Orientation, used to map face-region
+	// coordinates into the file's displayed orientation on the sidecar path.
+	xmpOrientationChain = chainXPath{elemOrAttr("tiff:Orientation")}
 )
+
+// Face-region query handles. MWG-RS RegionList and Microsoft MP:RegionInfo
+// entries are structured records, so each region li node is read field-by-field
+// via relative XPath rather than the flat text helpers. Leaf fields are matched
+// by local-name so both forms real writers emit are handled: child elements
+// (ExifTool/Adobe: <stArea:x>0.6</stArea:x>) and attributes (digiKam:
+// stArea:x="0.6"), and the two stDim/stArea namespace-URI variants in the wild.
+var (
+	xmpRegionListLi = mustCompile("//mwg-rs:RegionList/rdf:Bag/rdf:li | //mwg-rs:RegionList/rdf:Seq/rdf:li")
+	xmpAppliedDimW  = mustCompile("//mwg-rs:AppliedToDimensions/*[local-name()='w'] | //mwg-rs:AppliedToDimensions/@*[local-name()='w']")
+	xmpAppliedDimH  = mustCompile("//mwg-rs:AppliedToDimensions/*[local-name()='h'] | //mwg-rs:AppliedToDimensions/@*[local-name()='h']")
+	xmpMPRegionLi   = mustCompile("//MPRI:Regions/rdf:Bag/rdf:li | //MPRI:Regions/rdf:Seq/rdf:li")
+
+	// Relative expressions evaluated against a single region li node; the first
+	// non-empty match wins.
+	relMwgName     = []*xpath.Expr{mustCompile(".//mwg-rs:Name"), mustCompile("@mwg-rs:Name")}
+	relMwgType     = []*xpath.Expr{mustCompile(".//mwg-rs:Type"), mustCompile("@mwg-rs:Type")}
+	relMwgAreaX    = mwgAreaExpr("x")
+	relMwgAreaY    = mwgAreaExpr("y")
+	relMwgAreaW    = mwgAreaExpr("w")
+	relMwgAreaH    = mwgAreaExpr("h")
+	relMwgAreaUnit = mwgAreaExpr("unit")
+	relMpRect      = []*xpath.Expr{mustCompile(".//*[local-name()='Rectangle']"), mustCompile("@*[local-name()='Rectangle']")}
+	relMpName      = []*xpath.Expr{mustCompile(".//*[local-name()='PersonDisplayName']"), mustCompile("@*[local-name()='PersonDisplayName']")}
+)
+
+// mwgAreaExpr builds the relative expressions for one mwg-rs:Area sub-field,
+// matching either a child element or an attribute regardless of the stArea
+// namespace-URI variant a writer used.
+func mwgAreaExpr(field string) []*xpath.Expr {
+	return []*xpath.Expr{
+		mustCompile(".//mwg-rs:Area/*[local-name()='" + field + "']"),
+		mustCompile(".//mwg-rs:Area/@*[local-name()='" + field + "']"),
+	}
+}
 
 // XmpDocument represents a parsed XMP sidecar; populate via Load.
 type XmpDocument struct {
@@ -589,6 +634,91 @@ func (doc *XmpDocument) Subject() string {
 		return v
 	}
 	return doc.joinBagOrSeq(xmpHierarchicalBag, xmpHierarchicalSeq)
+}
+
+// Orientation returns the EXIF orientation recorded in the sidecar (tiff:Orientation),
+// or 0 when absent. Used to map face-region coordinates into displayed orientation.
+func (doc *XmpDocument) Orientation() int {
+	if doc.doc == nil {
+		return 0
+	}
+	n, _ := strconv.Atoi(strings.TrimSpace(xmpOrientationChain.firstNonEmpty(doc.doc)))
+	return n
+}
+
+// relFirst returns the trimmed text of the first relative expression that
+// matches against node; empty when none match. Used to read structured
+// region fields whether a writer emits them as child elements or attributes.
+func relFirst(node *xmlquery.Node, exprs []*xpath.Expr) string {
+	for _, e := range exprs {
+		if n := xmlquery.QuerySelector(node, e); n != nil {
+			if s := strings.TrimSpace(n.InnerText()); s != "" {
+				return s
+			}
+		}
+	}
+	return ""
+}
+
+// appliedDimensions returns the mwg-rs:AppliedToDimensions width and height in
+// pixels (0 when absent), used to resolve pixel-unit region coordinates.
+func (doc *XmpDocument) appliedDimensions() (w, h int) {
+	if doc.doc == nil {
+		return 0, 0
+	}
+	if n := xmlquery.QuerySelector(doc.doc, xmpAppliedDimW); n != nil {
+		w, _ = strconv.Atoi(strings.TrimSpace(n.InnerText()))
+	}
+	if n := xmlquery.QuerySelector(doc.doc, xmpAppliedDimH); n != nil {
+		h, _ = strconv.Atoi(strings.TrimSpace(n.InnerText()))
+	}
+	return w, h
+}
+
+// Faces returns MWG-RS RegionList and Microsoft MP:RegionInfo face regions as
+// displayed-orientation normalized Faces, de-duplicated across both schemas.
+// Non-face MWG regions (BarCode, Pet, Focus) are skipped; a region with no name
+// is returned with an empty Name so it can be imported for review. orientation
+// maps raw region coordinates into the displayed frame (pass 0 when unknown).
+func (doc *XmpDocument) Faces(orientation int) []Face {
+	if doc.doc == nil {
+		return nil
+	}
+
+	var faces []Face
+
+	appliedW, appliedH := doc.appliedDimensions()
+
+	for _, li := range xmlquery.QuerySelectorAll(doc.doc, xmpRegionListLi) {
+		if t := relFirst(li, relMwgType); t != "" && !strings.EqualFold(t, "Face") {
+			continue
+		}
+
+		cx, okX := parseFloat32(relFirst(li, relMwgAreaX))
+		cy, okY := parseFloat32(relFirst(li, relMwgAreaY))
+		w, okW := parseFloat32(relFirst(li, relMwgAreaW))
+		h, okH := parseFloat32(relFirst(li, relMwgAreaH))
+
+		if !okX || !okY || !okW || !okH {
+			continue
+		}
+
+		if f, ok := normalizeRegionMWG(relFirst(li, relMwgName), cx, cy, w, h, relFirst(li, relMwgAreaUnit), appliedW, appliedH, orientation); ok {
+			faces = append(faces, f)
+		}
+	}
+
+	for _, li := range xmlquery.QuerySelectorAll(doc.doc, xmpMPRegionLi) {
+		rect := relFirst(li, relMpRect)
+		if rect == "" {
+			continue
+		}
+		if f, ok := normalizeRegionMP(relFirst(li, relMpName), rect, orientation); ok {
+			faces = append(faces, f)
+		}
+	}
+
+	return DedupFaces(faces)
 }
 
 // Favorite reports the F-Stop custom-namespace favorite flag.

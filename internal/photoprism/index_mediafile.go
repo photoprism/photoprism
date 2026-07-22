@@ -356,15 +356,23 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result
-	} else if o.DetectFaces && file.FilePrimary {
-		// Run face detection on primary files when enabled for this indexing run.
+	} else if (o.DetectFaces || o.ImportFaceTags) && file.FilePrimary {
+		// Process primary-file faces when AI detection and/or XMP face-tag import
+		// is enabled. XMP import is independent of AI detection, so it still runs
+		// when face detection is disabled or deferred to a background worker.
 		if markers := file.Markers(); markers != nil {
-			// Detect faces.
-			faces := ind.Faces(m, markers.DetectedFaceCount())
+			// Run the expensive AI face detection only when it is enabled.
+			if o.DetectFaces {
+				if faces := ind.Faces(m, markers.DetectedFaceCount()); len(faces) > 0 {
+					file.AddFaces(faces)
+				}
+			}
 
-			// Create markers from faces and add them.
-			if len(faces) > 0 {
-				file.AddFaces(faces)
+			// Import face regions and names from XMP metadata onto the markers.
+			if o.ImportFaceTags && file.FileHash != "" {
+				if n := reconcileXmpFaces(collectXmpFaces(m), &file, markers); n > 0 {
+					log.Debugf("index: imported %d xmp face region(s) for %s", n, logName)
+				}
 			}
 
 			// Skip when indexing faces only and no new markers were found.

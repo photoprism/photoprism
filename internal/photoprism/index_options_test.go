@@ -115,6 +115,21 @@ func TestNewIndexOptions_DefaultDetectors(t *testing.T) {
 	assert.True(t, opts.DetectNsfw)
 }
 
+func TestNewIndexOptions_ImportFaceTags(t *testing.T) {
+	conf := config.NewMinimalTestConfig(t.TempDir())
+
+	t.Run("Enabled", func(t *testing.T) {
+		conf.Options().XMPFaces = true
+		opts := NewIndexOptions("/", true, true, true, false, false, conf)
+		assert.True(t, opts.ImportFaceTags)
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		conf.Options().XMPFaces = false
+		opts := NewIndexOptions("/", true, true, true, false, false, conf)
+		assert.False(t, opts.ImportFaceTags)
+	})
+}
+
 func TestNewIndexOptions_FacesOnlyOverridesSchedulers(t *testing.T) {
 	conf := config.NewMinimalTestConfig(t.TempDir())
 	conf.Options().FaceEngineThreads = 1

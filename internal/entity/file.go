@@ -848,8 +848,36 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
-	// Append marker if it doesn't conflict with existing marker.
-	if markers := m.Markers(); !markers.Contains(*marker) {
+	markers := m.Markers()
+
+	// Upgrade an embedding-less marker (e.g. one imported from XMP in a prior
+	// pass) in place with the detected embedding instead of letting the overlap
+	// check below drop the face and lose its embedding. Overlapping skips
+	// rejected markers, so a rejected face is not resurrected here.
+	if existing := markers.Overlapping(*marker); existing != nil {
+		if existing.Embeddings().Empty() {
+			landmarks := f.RelativeLandmarksJSON()
+
+			// For an already-saved marker, persist first and mutate in-memory
+			// only on success: a failed write must not leave an unpersisted
+			// embedding (Markers.Save does not re-write existing markers), so the
+			// marker stays embedding-less and is retried on the next pass.
+			if existing.MarkerUID != "" {
+				if err := existing.Updates(Values{"embeddings_json": f.Embeddings.JSON(), "landmarks_json": landmarks}); err != nil {
+					log.Warnf("faces: %s while adding embedding to marker %s", err, clean.Log(existing.MarkerUID))
+					return
+				}
+			}
+
+			existing.SetEmbeddings(f.Embeddings)
+			existing.LandmarksJSON = landmarks
+		}
+
+		return
+	}
+
+	// Append marker if it doesn't conflict with an existing (including rejected) marker.
+	if !markers.Contains(*marker) {
 		markers.AppendWithEmbedding(*marker)
 	}
 }
