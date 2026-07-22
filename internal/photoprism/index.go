@@ -240,7 +240,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		}
 	}
 
-	changedXmpPrimaries := make(map[string]struct{})
+	changedXmpMainFiles := make(map[string]struct{})
 
 	err := godirwalk.Walk(optionsPath, &godirwalk.Options{
 		ErrorCallback: func(fileName string, err error) godirwalk.ErrorAction {
@@ -295,11 +295,13 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			found[fileName] = fs.Found
 
-			// Defer changed XMP sidecars until all main files have been visited.
+			// Defer changed XMP sidecars until all main files have been visited. On a forced
+			// rescan every main file is reindexed and re-reads its sidecar, so the per-sidecar
+			// stat and main-file lookup are skipped here to avoid redundant work at scale.
 			if fs.FileType(fileName) == fs.SidecarXMP {
-				if !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
-					if primaryRel := ind.primaryForSidecar(relName); primaryRel != "" {
-						changedXmpPrimaries[primaryRel] = struct{}{}
+				if !o.Rescan && !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
+					if mainRel := ind.mainForSidecar(relName); mainRel != "" {
+						changedXmpMainFiles[mainRel] = struct{}{}
 					}
 				}
 
@@ -361,26 +363,26 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 	// Queue sidecar-triggered jobs only after a complete, successful walk.
 	if err == nil && !mutex.IndexWorker.Canceled() {
-		primaries := make([]string, 0, len(changedXmpPrimaries))
+		mainFiles := make([]string, 0, len(changedXmpMainFiles))
 
-		for primaryRel := range changedXmpPrimaries {
-			primaries = append(primaries, primaryRel)
+		for mainRel := range changedXmpMainFiles {
+			mainFiles = append(mainFiles, mainRel)
 		}
 
-		sort.Strings(primaries)
+		sort.Strings(mainFiles)
 
-		for _, primaryRel := range primaries {
+		for _, mainRel := range mainFiles {
 			if mutex.IndexWorker.Canceled() {
 				break
 			}
 
-			primaryAbs := filepath.Join(originalsPath, primaryRel)
+			mainAbs := filepath.Join(originalsPath, mainRel)
 
-			if found[primaryAbs].Processed() {
+			if found[mainAbs].Processed() {
 				continue
 			}
 
-			if mf, mediaErr := NewMediaFile(primaryAbs); mediaErr == nil {
+			if mf, mediaErr := NewMediaFile(mainAbs); mediaErr == nil {
 				enqueueRelated(mf)
 			}
 		}

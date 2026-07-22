@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"path"
-	"sort"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -10,58 +9,31 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// xmpPrimaryExts lists sorted main-media extensions for XMP primary lookup.
-var xmpPrimaryExts = mainFileExts()
+// xmpMainExts lists the canonical lowercase main-media extensions used for XMP main-file lookup.
+var xmpMainExts = media.MainExtensions()
 
-// mainFileExts returns sorted lowercase and uppercase main-media extensions.
-func mainFileExts() []string {
-	known := make(map[string]struct{}, len(fs.Extensions)*2)
-
-	for ext, fileType := range fs.Extensions {
-		if media.Formats[fileType].IsMain() {
-			known[strings.ToLower(ext)] = struct{}{}
-			known[strings.ToUpper(ext)] = struct{}{}
-		}
-	}
-
-	exts := make([]string, 0, len(known))
-
-	for ext := range known {
-		exts = append(exts, ext)
-	}
-
-	sort.Strings(exts)
-
-	return exts
-}
-
-// primaryForSidecar resolves an XMP primary from the originals Files cache.
-func (ind *Index) primaryForSidecar(relName string) string {
+// mainForSidecar resolves the main media file for an XMP sidecar from the originals Files cache.
+func (ind *Index) mainForSidecar(relName string) string {
 	// Full-name convention: "tok/photo.jpg.xmp" -> "tok/photo.jpg".
-	if primary := fs.StripExt(relName); media.MainFile(primary) {
-		if ind.files.Exists(primary, entity.RootOriginals) && ind.sidecarPrimaryEnabled(primary) {
-			return primary
+	if main := fs.StripExt(relName); media.MainFile(main) {
+		if ind.files.Exists(main, entity.RootOriginals) && ind.sidecarMainEnabled(main) {
+			return main
 		}
 
 		return ""
 	}
 
-	// Base-prefix convention: "tok/photo.xmp" -> "tok/photo.<mainext>".
+	// Base-prefix convention: "tok/photo.xmp" -> "tok/photo.<mainext>". The main file's extension
+	// is unknown, so each main extension is probed against the Files cache in both lowercase and
+	// uppercase form (the cache preserves each file's on-disk case). The base name must match case.
 	dir := path.Dir(relName)
 	base := fs.BasePrefix(relName, false)
-	bases := []string{base, strings.ToLower(base), strings.ToUpper(base)}
-	seen := make(map[string]struct{}, len(bases))
 
-	for _, ext := range xmpPrimaryExts {
-		for _, candidateBase := range bases {
-			if _, ok := seen[candidateBase+ext]; ok {
-				continue
-			}
+	for _, ext := range xmpMainExts {
+		for _, name := range []string{base + ext, base + strings.ToUpper(ext)} {
+			candidate := path.Join(dir, name)
 
-			seen[candidateBase+ext] = struct{}{}
-			candidate := path.Join(dir, candidateBase+ext)
-
-			if ind.files.Exists(candidate, entity.RootOriginals) && ind.sidecarPrimaryEnabled(candidate) {
+			if ind.files.Exists(candidate, entity.RootOriginals) && ind.sidecarMainEnabled(candidate) {
 				return candidate
 			}
 		}
@@ -70,8 +42,8 @@ func (ind *Index) primaryForSidecar(relName string) string {
 	return ""
 }
 
-// sidecarPrimaryEnabled reports whether a cached primary is enabled by the current config.
-func (ind *Index) sidecarPrimaryEnabled(relName string) bool {
+// sidecarMainEnabled reports whether a cached main media file is enabled by the current config.
+func (ind *Index) sidecarMainEnabled(relName string) bool {
 	fileType := fs.FileType(relName)
 
 	if !media.Formats[fileType].IsMain() {
