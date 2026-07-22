@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 func TestPostVisionFace(t *testing.T) {
@@ -23,7 +24,7 @@ func TestPostVisionFace(t *testing.T) {
 			fs.Abs("./testdata/face_160x160.jpg"),
 		}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +67,7 @@ func TestPostVisionFace(t *testing.T) {
 			fs.Abs("./testdata/london_160x160.jpg"),
 		}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)
@@ -102,7 +103,7 @@ func TestPostVisionFace(t *testing.T) {
 			fs.Abs("./testdata/face_320x320.jpg"),
 		}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)
@@ -143,7 +144,7 @@ func TestPostVisionFace(t *testing.T) {
 
 		files := vision.Files{}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)

@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-07-09
+Date generated: 2026-07-20
 
 ================================================================================
 
@@ -318,8 +318,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/antchfx/xpath
-Version: v1.3.6
-License: MIT (https://github.com/antchfx/xpath/blob/v1.3.6/LICENSE)
+Version: v1.3.7
+License: MIT (https://github.com/antchfx/xpath/blob/v1.3.7/LICENSE)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1168,8 +1168,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-co-op/gocron/v2
-Version: v2.21.2
-License: MIT (https://github.com/go-co-op/gocron/blob/v2.21.2/LICENSE)
+Version: v2.22.0
+License: MIT (https://github.com/go-co-op/gocron/blob/v2.22.0/LICENSE)
 
 MIT License
 
@@ -1924,8 +1924,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-playground/validator/v10
-Version: v10.30.2
-License: MIT (https://github.com/go-playground/validator/blob/v10.30.2/LICENSE)
+Version: v10.30.3
+License: MIT (https://github.com/go-playground/validator/blob/v10.30.3/LICENSE)
 
 The MIT License (MIT)
 
@@ -2433,8 +2433,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20260706204034-7a8d33c78269
-License: Apache-2.0 (https://github.com/golang/geo/blob/7a8d33c78269/LICENSE)
+Version: v0.0.0-20260713102120-857a528af641
+License: Apache-2.0 (https://github.com/golang/geo/blob/857a528af641/LICENSE)
 
 
                                  Apache License
@@ -2642,8 +2642,8 @@ License: Apache-2.0 (https://github.com/golang/geo/blob/7a8d33c78269/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/groupcache/lru
-Version: v0.0.0-20210331224755-41bb18bfe9da
-License: Apache-2.0 (https://github.com/golang/groupcache/blob/41bb18bfe9da/LICENSE)
+Version: v0.0.0-20241129210726-2c02b8208cf8
+License: Apache-2.0 (https://github.com/golang/groupcache/blob/2c02b8208cf8/LICENSE)
 
 Apache License
 Version 2.0, January 2004
@@ -4463,8 +4463,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/leandro-lugaresi/hub
-Version: v1.1.1
-License: Apache-2.0 (https://github.com/leandro-lugaresi/hub/blob/v1.1.1/LICENSE)
+Version: v1.1.2
+License: Apache-2.0 (https://github.com/leandro-lugaresi/hub/blob/v1.1.2/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -4867,8 +4867,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-colorable
-Version: v0.1.14
-License: MIT (https://github.com/mattn/go-colorable/blob/v0.1.14/LICENSE)
+Version: v0.1.15
+License: MIT (https://github.com/mattn/go-colorable/blob/v0.1.15/LICENSE)
 
 The MIT License (MIT)
 
@@ -4895,8 +4895,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-isatty
-Version: v0.0.22
-License: MIT (https://github.com/mattn/go-isatty/blob/v0.0.22/LICENSE)
+Version: v0.0.23
+License: MIT (https://github.com/mattn/go-isatty/blob/v0.0.23/LICENSE)
 
 Copyright (c) Yasuhiro MATSUMOTO <mattn.jp@gmail.com>
 
@@ -4911,8 +4911,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-runewidth
-Version: v0.0.23
-License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.23/LICENSE)
+Version: v0.0.24
+License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.24/LICENSE)
 
 The MIT License (MIT)
 
@@ -4939,8 +4939,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-sqlite3
-Version: v1.14.44
-License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.44/LICENSE)
+Version: v1.14.48
+License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.48/LICENSE)
 
 The MIT License (MIT)
 
@@ -5190,8 +5190,8 @@ the full license text.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.9.0
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.9.0/LICENSE)
+Version: v0.12.2
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.2/LICENSE)
 
 The MIT License (MIT)
 
@@ -6138,8 +6138,8 @@ License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.2/LICE
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/common
-Version: v0.69.0
-License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.69.0/LICENSE)
+Version: v0.70.0
+License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.70.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6346,8 +6346,8 @@ License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.69.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/procfs
-Version: v0.20.1
-License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.20.1/LICENSE)
+Version: v0.21.1
+License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.21.1/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6716,8 +6716,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/sevlyar/go-daemon
-Version: v0.1.6
-License: MIT (https://github.com/sevlyar/go-daemon/blob/v0.1.6/LICENSE)
+Version: v0.1.7
+License: MIT (https://github.com/sevlyar/go-daemon/blob/v0.1.7/LICENSE)
 
 Copyright (C) 2013 Sergey Yarmonov
 
@@ -7483,8 +7483,8 @@ License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.7.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3
-Version: v3.47.5
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.47.5/LICENSE)
+Version: v3.47.9
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.47.9/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7725,8 +7725,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.mongodb.org/mongo-driver/v2
-Version: v2.6.0
-License: Apache-2.0 (https://github.com/mongodb/mongo-go-driver/blob/v2.6.0/LICENSE)
+Version: v2.6.2
+License: Apache-2.0 (https://github.com/mongodb/mongo-go-driver/blob/v2.6.2/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8141,8 +8141,8 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go-instrume
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel
-Version: v1.43.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.43.0/LICENSE)
+Version: v1.44.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.44.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8378,8 +8378,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/metric
-Version: v1.43.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.43.0/metric/LICENSE)
+Version: v1.44.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.44.0/metric/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8615,8 +8615,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/trace
-Version: v1.43.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.43.0/trace/LICENSE)
+Version: v1.44.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.44.0/trace/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004

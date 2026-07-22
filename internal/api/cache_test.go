@@ -59,7 +59,7 @@ func TestRemoveFromAlbumCoverCache(t *testing.T) {
 	cache.Flush()
 
 	var album entity.Album
-	if err := query.UnscopedDb().Where("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto).First(&album).Error; err != nil {
+	if err := query.Db().Where("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto).First(&album).Error; err != nil {
 		t.Skipf("no auto-managed manual album available: %v", err)
 	}
 

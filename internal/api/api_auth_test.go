@@ -252,9 +252,12 @@ func TestAuthAny_AppPasswordDeactivated(t *testing.T) {
 		return AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView})
 	}
 
-	// Restore the fixture's auth provider after the test.
+	// Restore the fixture's auth provider after the test. FindUserByName is used instead
+	// of FindLocalUser because a disabled account (provider none) is excluded from the
+	// local-provider lookup, which would otherwise skip the restore and leak the disabled
+	// state into later tests that sign in as bob.
 	defer func() {
-		if m := entity.FindLocalUser("bob"); m != nil {
+		if m := entity.FindUserByName("bob"); m != nil {
 			m.SetProvider(authn.ProviderLocal)
 			m.CanLogin = true
 			_ = m.Save()
@@ -284,6 +287,66 @@ func TestAuthAny_AppPasswordDeactivated(t *testing.T) {
 	rec, err := entity.FindSession(sess.ID)
 	require.NoError(t, err)
 	assert.NotNil(t, rec)
+}
+
+func TestAuthAny_AppPasswordOidcUserDisabled(t *testing.T) {
+	conf := config.TestConfig()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	user := entity.FindUserByName("bob")
+	require.NotNil(t, user)
+	require.False(t, user.SuperAdmin)
+
+	// GrantSession is the grant type app passwords are minted with for OIDC-only users,
+	// who have no local password. This mirrors the #5647 user story: such an app password
+	// must be rejected once an admin disables the account, even though no real IdP is
+	// involved. The DenyLogIn gate keys on the account's login state, not the grant type.
+	sess, err := entity.AddClientSession("bob-app-oidc-disabled", conf.SessionMaxAge(), "*", authn.GrantSession, user)
+	require.NoError(t, err)
+	require.True(t, sess.IsApplication())
+	token := sess.AuthToken()
+
+	authPhotos := func() *entity.Session {
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/photos", nil)
+		header.SetAuthorization(req, token)
+		req.RemoteAddr = "10.9.8.7:4321"
+		c.Request = req
+		return AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView})
+	}
+
+	// Restore the fixture's auth provider after the test. FindUserByName is used instead
+	// of FindLocalUser because a disabled account (provider none) is excluded from the
+	// local-provider lookup, which would otherwise skip the restore and leak the disabled
+	// state into later tests that sign in as bob.
+	defer func() {
+		if m := entity.FindUserByName("bob"); m != nil {
+			m.SetProvider(authn.ProviderLocal)
+			m.CanLogin = true
+			_ = m.Save()
+		}
+		entity.FlushSessionCache()
+	}()
+
+	// Active account: the OIDC-minted app password authorizes within its scope.
+	s := authPhotos()
+	require.NotNil(t, s)
+	assert.Equal(t, http.StatusOK, s.HttpStatus())
+
+	// Admin disables the account (auth provider set to none): the per-request DenyLogIn
+	// gate rejects the app password on the REST API regardless of its grant type.
+	m := entity.FindLocalUser("bob")
+	require.NotNil(t, m)
+	m.SetProvider(authn.ProviderNone)
+	require.NoError(t, m.Save())
+	entity.FlushSessionCache()
+
+	s2 := authPhotos()
+	require.NotNil(t, s2)
+	assert.Equal(t, http.StatusForbidden, s2.HttpStatus())
 }
 
 func TestAuthToken(t *testing.T) {
@@ -584,4 +647,20 @@ func (fx portalJWTFixture) issue(t *testing.T, spec clusterjwt.ClaimsSpec) strin
 	token, err := fx.issuer.Issue(spec)
 	require.NoError(t, err)
 	return token
+}
+
+func TestAuthorizeSuperAdmin(t *testing.T) {
+	t.Run("SuperAdminSession", func(t *testing.T) {
+		s := entity.SessionFixtures.Pointer("alice")
+		require.True(t, s.GetUser().IsSuperAdmin(), "alice fixture must be a super admin")
+		assert.True(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("NonSuperAdminSession", func(t *testing.T) {
+		s := entity.SessionFixtures.Pointer("bob")
+		require.False(t, s.GetUser().IsSuperAdmin(), "bob fixture must not be a super admin")
+		assert.False(t, AuthorizeSuperAdmin(s))
+	})
+	t.Run("NilSession", func(t *testing.T) {
+		assert.False(t, AuthorizeSuperAdmin(nil))
+	})
 }

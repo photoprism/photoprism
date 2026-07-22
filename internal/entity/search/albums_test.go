@@ -744,3 +744,52 @@ func TestAlbums(t *testing.T) {
 		assert.Equal(t, false, result[0].AlbumFavorite)
 	})
 }
+
+func TestUserAlbums_FolderCaseInsensitivePath(t *testing.T) {
+	// Regression #5724: form.Unserialize lowercases the search term, but album_path is VARBINARY and
+	// compared byte-exact (case-sensitive) on MySQL, so an uppercase folder path stopped matching a
+	// lowercased query. The child folder below can be found ONLY via album_path (its title does not
+	// contain the term), so this fails on MySQL without the case-insensitive path match.
+	const albumUID = "as724caseinsens0"
+	const photoUID = "ps724caseinsens0"
+	const folderPath = "QAUPPER/CHILD"
+
+	photo := entity.Photo{
+		PhotoUID:     photoUID,
+		PhotoName:    "qa-5724",
+		PhotoPath:    folderPath,
+		PhotoType:    entity.MediaImage,
+		PhotoQuality: 3,
+		TakenAt:      entity.Now(),
+		TakenAtLocal: entity.Now(),
+	}
+	if err := entity.Db().Create(&photo).Error; err != nil {
+		t.Fatal(err)
+	}
+	defer entity.UnscopedDb().Delete(&entity.Photo{}, "photo_uid = ?", photoUID)
+
+	album := entity.Album{
+		AlbumUID:   albumUID,
+		AlbumType:  entity.AlbumFolder,
+		AlbumSlug:  "qaupper-child-5724",
+		AlbumPath:  folderPath,
+		AlbumTitle: "CHILD",
+	}
+	if err := entity.Db().Create(&album).Error; err != nil {
+		t.Fatal(err)
+	}
+	defer entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", albumUID)
+
+	// "QAUPPER" is lowercased to "qaupper" by the query parser before it reaches album_path.
+	result, err := Albums(form.SearchAlbums{Query: "QAUPPER", Type: entity.AlbumFolder, Count: 100})
+	assert.NoError(t, err)
+
+	found := false
+	for i := range result {
+		if result[i].AlbumUID == albumUID {
+			found = true
+		}
+	}
+
+	assert.True(t, found, "folder with uppercase album_path must be found by a lowercased query")
+}

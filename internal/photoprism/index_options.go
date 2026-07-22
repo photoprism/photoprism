@@ -1,9 +1,13 @@
 package photoprism
 
 import (
+	"path/filepath"
+	"strings"
+
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // IndexOptions represents file indexing options.
@@ -60,6 +64,20 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 	}
 
 	return result
+}
+
+// ResolveIndexPath resolves the index subpath under originalsPath and returns the
+// absolute directory to scan. Empty, ".", and "/" resolve to the originals root;
+// paths that would escape the originals directory via parent-directory traversal
+// or absolute/volume references are rejected.
+func ResolveIndexPath(originalsPath, subPath string) (string, error) {
+	sub := strings.Trim(filepath.ToSlash(subPath), "/")
+
+	if sub == "" || sub == "." {
+		return filepath.Clean(originalsPath), nil
+	}
+
+	return fs.SafeJoin(originalsPath, sub)
 }
 
 // SkipUnchanged checks if unchanged media files should be skipped.

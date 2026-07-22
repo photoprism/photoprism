@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-07-17 22:07+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -4623,7 +4623,7 @@ msgstr "Verifizierungscode"
 
 #: src/locales.js:426
 msgid "Verified email required"
-msgstr "E-Mail-Adresse verifiziert erforderlich"
+msgstr "Verifizierte E-Mail-Adresse erforderlich"
 
 #: src/component/cluster/node/overview.vue:29 src/locales.js:326
 msgid "Version"

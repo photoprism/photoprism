@@ -33,6 +33,23 @@ const (
 	UnknownIP     = limiter.DefaultIP
 )
 
+// IdTokenMaxSize is the maximum number of bytes stored in the id_token column (see the IdToken
+// field's VARBINARY size). It bounds the OIDC ID token kept for RP-initiated logout (id_token_hint);
+// callers must not persist a longer value, since a truncated JWT is unusable as a logout hint.
+const IdTokenMaxSize = 4096
+
+// ClampIdToken returns the OIDC ID token limited to IdTokenMaxSize bytes so it fits the id_token
+// column, and reports whether it had to be truncated. VARBINARY lengths are byte counts and a JWT is
+// ASCII, so a byte slice is safe; a truncated token no longer validates as an id_token_hint, so
+// callers should surface the truncated case.
+func ClampIdToken(idToken string) (clamped string, truncated bool) {
+	if len(idToken) > IdTokenMaxSize {
+		return idToken[:IdTokenMaxSize], true
+	}
+
+	return idToken, false
+}
+
 // Sessions is a convenience alias for slices of Session.
 type Sessions []Session
 
@@ -60,7 +77,7 @@ type Session struct {
 	DownloadToken string          `gorm:"type:VARBINARY(64);column:download_token;default:'';" json:"-" yaml:"-"`
 	AccessToken   string          `gorm:"type:VARBINARY(4096);column:access_token;default:'';" json:"-" yaml:"-"`
 	RefreshToken  string          `gorm:"type:VARBINARY(2048);column:refresh_token;default:'';" json:"-" yaml:"-"`
-	IdToken       string          `gorm:"type:VARBINARY(2048);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	IdToken       string          `gorm:"type:VARBINARY(4096);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
 	UserAgent     string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
 	DataJSON      json.RawMessage `gorm:"type:VARBINARY(16384);" json:"-" yaml:"Data,omitempty"`
 	data          *SessionData    `gorm:"-" yaml:"-"`
@@ -179,8 +196,27 @@ func (m *Session) AuthToken() string {
 // pass the exact token presented by the caller (JWT, API key, etc.) so follow-up
 // actions reference the same value.
 func (m *Session) SetAuthToken(authToken string) *Session {
+	oldID := m.ID
+
 	m.authToken = authToken
 	m.ID = rnd.SessionID(authToken)
+
+	// Migrate any preview/download token registrations from the previous ID so they are
+	// not orphaned in the lookup cache. Callers like NewClientSession assign the user's
+	// tokens (via SetUser) before finalizing the ID here, so without this the old ID would
+	// keep the value resolvable for the lifetime of the process even after DeleteSession.
+	if rnd.IsSessionID(oldID) && oldID != m.ID {
+		PreviewToken.Unset(oldID)
+		DownloadToken.Unset(oldID)
+
+		if m.PreviewToken != "" {
+			PreviewToken.Set(m.ID, m.PreviewToken)
+		}
+
+		if m.DownloadToken != "" {
+			DownloadToken.Set(m.ID, m.DownloadToken)
+		}
+	}
 
 	return m
 }
@@ -665,10 +701,10 @@ func (m *Session) SetPreviewToken(token string) *Session {
 
 	if token != "" {
 		m.PreviewToken = token
-		PreviewToken.Set(token, m.ID)
+		PreviewToken.Set(m.ID, token)
 	} else if m.PreviewToken == "" {
 		m.PreviewToken = GenerateToken()
-		PreviewToken.Set(token, m.ID)
+		PreviewToken.Set(m.ID, m.PreviewToken)
 	}
 
 	return m
@@ -682,10 +718,10 @@ func (m *Session) SetDownloadToken(token string) *Session {
 
 	if token != "" {
 		m.DownloadToken = token
-		DownloadToken.Set(token, m.ID)
+		DownloadToken.Set(m.ID, token)
 	} else if m.DownloadToken == "" {
 		m.DownloadToken = GenerateToken()
-		DownloadToken.Set(token, m.ID)
+		DownloadToken.Set(m.ID, m.DownloadToken)
 	}
 
 	return m

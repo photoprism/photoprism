@@ -25,6 +25,8 @@ Other frontend documentation lives next to this file:
 
 > Always invoke Vitest through `make test-js` or `npm run test`. Bare `npx vitest run` skips the `cross-env` wrapper that sets `TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test`. Without those, ~50 component and TZ-sensitive tests fail spuriously.
 
+> **Test pool is `forks`, not `vmForks`.** `sanitize-html` (used by `common/util.js`) depends on `htmlparser2`, which is ESM-only from v11 onward — the version its `2.17.6` XSS fixes require. The `vmForks` VM executor cannot `require()` an ES module, so it fails to load `htmlparser2` with `Cannot use import statement outside a module`. The `forks` pool runs each file in a real Node process (Node ≥ 22.12, which supports `require(ESM)`), so the ESM dependency loads natively — no downgrade of the security-critical `sanitize-html`/`htmlparser2` needed. Because `forks` externalizes `node_modules`, Vuetify is inlined (`test.server.deps.inline: [/vuetify/]` in the three `vitest.config*.js`) so Vite transforms its CSS imports instead of Node throwing `Unknown file extension ".css"`. Trade-off: inlining Vuetify raises transform/setup CPU vs. `vmForks` (wall-clock is comparable with enough cores). Revisit if Vitest's VM pools gain `require(ESM)` support.
+
 ## Dependency Pinning Policy
 
 **Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.18.1"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -- frontend/package.json | grep -B2 -A4 "<pkg>"`).

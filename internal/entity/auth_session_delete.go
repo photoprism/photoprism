@@ -28,13 +28,11 @@ func DeleteSession(s *Session) error {
 	// Delete session from cache.
 	DeleteFromSessionCache(s.ID)
 
-	if s.PreviewToken != "" {
-		PreviewToken.Set(s.PreviewToken, s.ID)
-	}
-
-	if s.DownloadToken != "" {
-		DownloadToken.Set(s.DownloadToken, s.ID)
-	}
+	// Release the session's preview and download tokens from the in-memory lookup
+	// cache. The reverse index keeps a token resolvable until the last session
+	// that shares it has been removed, so no token is dropped while still in use.
+	PreviewToken.Unset(s.ID)
+	DownloadToken.Unset(s.ID)
 
 	return UnscopedDb().Delete(s).Error
 }

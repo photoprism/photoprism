@@ -109,7 +109,12 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	originalsPath := ind.originalsPath()
-	optionsPath := filepath.Join(originalsPath, o.Path)
+	optionsPath, resolveErr := ResolveIndexPath(originalsPath, o.Path)
+
+	if resolveErr != nil {
+		event.Error(fmt.Sprintf("index: %s", clean.Error(resolveErr)))
+		return found, updated
+	}
 
 	if !fs.PathExists(optionsPath) {
 		event.Error(fmt.Sprintf("index: directory %s not found", clean.Log(optionsPath)))

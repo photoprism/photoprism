@@ -160,9 +160,11 @@ func AbortInvalidName(c *gin.Context) {
 }
 
 // AbortInvalidCredentials responds with HTTP 401 for failed authentication attempts.
+// The message carries messageId so the Web UI can render it in the user's UI language;
+// error/code keep their shape for OAuth2 clients and the frontend's code-based handling.
 func AbortInvalidCredentials(c *gin.Context) {
 	if c != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authn.ErrInvalidCredentials.Error(), "code": i18n.ErrInvalidCredentials, "message": i18n.Msg(i18n.ErrInvalidCredentials)})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": authn.ErrInvalidCredentials.Error(), "code": i18n.ErrInvalidCredentials, "message": i18n.Msg(i18n.ErrInvalidCredentials), "messageId": i18n.Source(i18n.ErrInvalidCredentials)})
 	}
 }
 

@@ -37,6 +37,7 @@ func createFakeYtDlp(t *testing.T) string {
 	if derr != nil {
 		t.Fatalf("failed to create temp dir: %v", derr)
 	}
+	t.Cleanup(func() { os.RemoveAll(dir) })
 	path := filepath.Join(dir, "yt-dlp")
 	if runtime.GOOS == "windows" {
 		// Not needed in CI/dev container. Keep simple stub.

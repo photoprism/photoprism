@@ -35,10 +35,10 @@ func captionInternal(images Files, mediaSrc media.Src) (result *CaptionResult, m
 			var apiResponse *ApiResponse
 
 			if engine, ok := EngineFor(model.EndpointRequestFormat()); ok && engine.Builder != nil {
-				if apiRequest, err = engine.Builder.Build(context.Background(), model, images); err != nil {
+				if apiRequest, err = engine.Builder.Build(context.Background(), model, images, mediaSrc); err != nil {
 					return result, model, err
 				}
-			} else if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), images, model.EndpointFileScheme()); err != nil {
+			} else if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), images, model.EndpointFileScheme(), mediaSrc); err != nil {
 				return result, model, err
 			}
 

@@ -249,4 +249,16 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE auth_sessions MODIFY data_json VARBINARY(16384);"},
 	},
+	{
+		ID:         "20260721-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(4096);"},
+	},
+	{
+		ID:         "20260721-000002",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS instance_id VARBINARY(255);"},
+	},
 }

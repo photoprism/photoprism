@@ -3,7 +3,9 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 
@@ -245,6 +247,8 @@ func TestIndexRelated(t *testing.T) {
 		// InstanceID and Software from an XMP sidecar must reach the primary
 		// JPEG file row (per-file UI fields render the primary) — the IsXMP
 		// branch writes only the changed columns instead of a full File.Save().
+		// apple-test-2.jpg has no embedded software, so the sidecar CreatorTool
+		// fills it as a fallback.
 		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-primary-mirror")
 
 		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
@@ -302,6 +306,140 @@ func TestIndexRelated(t *testing.T) {
 		}
 		assert.Equal(t, "xmp.iid:INSTANCE-XMP-7777", primary.InstanceID)
 		assert.Equal(t, "SyntheticEditor 3.2", primary.FileSoftware)
+	})
+	t.Run("XmpDoesNotOverrideEmbeddedSoftware", func(t *testing.T) {
+		// Embedded software is preferred over the sidecar: when the primary file
+		// carries its own software, the XMP CreatorTool must not overwrite it,
+		// while non-software identity metadata (InstanceID) still mirrors.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-embedded-software")
+
+		baseFile, err := NewMediaFile("testdata/2015-02-04.jpg") // embedded Software "Adobe Photoshop 21.2 (Macintosh)"
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-embedded-software"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		xmpContent := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/">
+   <xmp:CreatorTool>SyntheticEditor 3.2</xmp:CreatorTool>
+   <xmpMM:InstanceID>xmp.iid:INSTANCE-XMP-8888</xmpMM:InstanceID>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(xmpContent), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+		assert.False(t, result.Failed())
+		assert.True(t, result.Success())
+
+		primary, primaryErr := entity.PrimaryFile(result.PhotoUID)
+		if primaryErr != nil {
+			t.Fatal(primaryErr)
+		}
+		// Embedded software wins; the sidecar CreatorTool does not overwrite it.
+		assert.Equal(t, "Adobe Photoshop 21.2 (Macintosh)", primary.FileSoftware)
+		// Non-software identity metadata still mirrors from the sidecar.
+		assert.Equal(t, "xmp.iid:INSTANCE-XMP-8888", primary.InstanceID)
+
+		// The photo-level Details.Software prefers the embedded value too, so the
+		// file-level (UI) and photo-level (API) software values stay consistent.
+		if photo, photoErr := query.PhotoByUID(result.PhotoUID); photoErr != nil {
+			t.Fatal(photoErr)
+		} else {
+			assert.Equal(t, "Adobe Photoshop 21.2 (Macintosh)", photo.Details.Software)
+		}
+	})
+	t.Run("XmpOversizeInstanceIDClipped", func(t *testing.T) {
+		// Regression: an XMP xmpMM:InstanceID longer than the instance_id column must be
+		// clipped on write so indexing does not abort with a "Data too long" DB error.
+		cfg := newIndexRelatedTestConfig(t, "index-related-xmp-oversize-instance-id")
+
+		baseFile, err := NewMediaFile("testdata/apple-test-2.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testToken := rnd.Base36(8)
+		testPath := filepath.Join(cfg.OriginalsPath(), testToken)
+		baseName := "xmp-oversize-instance-id"
+
+		jpegDest := filepath.Join(testPath, baseName+".jpg")
+		if copyErr := baseFile.Copy(jpegDest, false); copyErr != nil {
+			t.Fatalf("copying test file failed: %s", copyErr)
+		}
+
+		longID := "xmp.iid:" + strings.Repeat("A", 300) // 308 bytes, exceeds the 255-byte column.
+		xmpContent := `<?xml version="1.0" encoding="UTF-8"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="PhotoPrism Test">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/">
+   <xmpMM:InstanceID>` + longID + `</xmpMM:InstanceID>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+`
+		xmpDest := filepath.Join(testPath, baseName+".xmp")
+		if writeErr := os.WriteFile(xmpDest, []byte(xmpContent), fs.ModeFile); writeErr != nil {
+			t.Fatalf("writing xmp sidecar failed: %s", writeErr)
+		}
+
+		mainFile, err := NewMediaFile(jpegDest)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mainFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		convert := NewConvert(cfg)
+		ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+		opt := IndexOptionsAll(cfg)
+
+		result := IndexRelated(related, ind, opt)
+		assert.False(t, result.Failed())
+		assert.True(t, result.Success())
+
+		primary, primaryErr := entity.PrimaryFile(result.PhotoUID)
+		if primaryErr != nil {
+			t.Fatal(primaryErr)
+		}
+		assert.NotEmpty(t, primary.InstanceID)
+		assert.LessOrEqual(t, len(primary.InstanceID), entity.InstanceIDBytes)
+		assert.True(t, utf8.ValidString(primary.InstanceID))
+		assert.Equal(t, entity.Clip(longID, entity.InstanceIDBytes), primary.InstanceID)
 	})
 	t.Run("XmpSidecarTimezoneFromGps", func(t *testing.T) {
 		// Apple sidecar timestamp "2021-03-24T13:07:29+01:00" with Berlin GPS

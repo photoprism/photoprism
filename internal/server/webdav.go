@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -136,6 +137,10 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
+		// Clamp the requested LOCK lifetime so a client cannot mint infinite or
+		// excessively long-lived locks; the lock system enforces the same cap.
+		WebDAVClampLockTimeout(c.Request)
+
 		// Invoke handler callback.
 		WebDAVHandler(c, router, srv)
 	}
@@ -185,6 +190,44 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	}
 }
 
+// WebDAVClampLockTimeout rewrites the LOCK "Timeout" request header so the lock the
+// upstream handler grants — and the lifetime it reports back — cannot exceed
+// mutex.WebDAVMaxLockLifetime. Clamping the header keeps the granted timeout the client
+// sees consistent with what is actually enforced, so conformant clients refresh in time.
+func WebDAVClampLockTimeout(request *http.Request) {
+	if request == nil || request.Method != header.MethodLock {
+		return
+	}
+
+	// A negative cap disables clamping (infinite locks allowed).
+	maxLifetime := mutex.WebDAVMaxLockLifetime
+	if maxLifetime < 0 {
+		return
+	}
+
+	// The upstream handler parses only the first comma-separated timeout value.
+	first := request.Header.Get(header.Timeout)
+	if i := strings.IndexByte(first, ','); i >= 0 {
+		first = first[:i]
+	}
+	first = strings.TrimSpace(first)
+
+	maxSeconds := int64(maxLifetime / time.Second)
+	capped := fmt.Sprintf("Second-%d", maxSeconds)
+
+	switch {
+	case first == "" || strings.EqualFold(first, "Infinite"):
+		// Absent or infinite request: grant the capped lifetime instead.
+		request.Header.Set(header.Timeout, capped)
+	case strings.HasPrefix(first, "Second-"):
+		// Numeric request: clamp only when it exceeds the cap, leave malformed
+		// values untouched so the upstream handler still rejects them.
+		if n, err := strconv.ParseInt(first[len("Second-"):], 10, 64); err == nil && n > maxSeconds {
+			request.Header.Set(header.Timeout, capped)
+		}
+	}
+}
+
 // WebDAVFileName determines the name and path of an uploaded file and returns its name if it exists.
 func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config.Config) (fileName string) {
 	// Check if this is a PUT request, as used for file uploads.
@@ -227,42 +270,13 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 	return fileName
 }
 
-// joinUnderBase joins a base directory with a relative name and ensures
-// that the resulting path stays within the base directory. Absolute paths,
-// Windows-style volume names, and drive-letter prefixes are rejected, and
-// containment is verified with filepath.Rel rather than a string prefix.
-// This mirrors the hardened safe-join used for archive extraction in pkg/fs.
+// joinUnderBase resolves a relative request name under baseDir using the shared
+// safe-join, so WebDAV uploads cannot escape the originals or import directory.
+// Absolute paths, Windows-style volume names, drive-letter prefixes, and
+// parent-directory traversal are rejected, with containment verified via
+// filepath.Rel rather than a string prefix.
 func joinUnderBase(baseDir, rel string) (string, error) {
-	if rel == "" {
-		return "", fmt.Errorf("invalid path")
-	}
-
-	// Normalize separators so mixed '/' and '\\' are handled consistently.
-	rel = strings.ReplaceAll(rel, "\\", "/")
-
-	// Reject Windows-style drive-letter prefixes even on non-Windows platforms.
-	if len(rel) >= 2 && rel[1] == ':' && ((rel[0] >= 'A' && rel[0] <= 'Z') || (rel[0] >= 'a' && rel[0] <= 'z')) {
-		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
-	}
-
-	// Reject absolute or volume paths.
-	if filepath.IsAbs(rel) || filepath.VolumeName(rel) != "" {
-		return "", fmt.Errorf("invalid path: absolute or volume path not allowed")
-	}
-
-	cleaned := filepath.Clean(rel)
-	base := filepath.Clean(baseDir)
-
-	// Compose destination and verify it stays inside base using filepath.Rel.
-	dest := filepath.Join(base, cleaned)
-	relToBase, err := filepath.Rel(base, dest)
-	if err != nil {
-		return "", fmt.Errorf("invalid path: %w", err)
-	} else if relToBase == ".." || strings.HasPrefix(relToBase, ".."+string(os.PathSeparator)) {
-		return "", fmt.Errorf("invalid path: outside base directory")
-	}
-
-	return dest, nil
+	return fs.SafeJoin(baseDir, rel)
 }
 
 // WebDAVSetFavoriteFlag adds the favorite flag to files uploaded via WebDAV.

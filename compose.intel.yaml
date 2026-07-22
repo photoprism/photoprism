@@ -133,7 +133,7 @@ services:
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
       ## Intel Quick Sync Video (QSV) (https://docs.photoprism.app/getting-started/advanced/transcoding/#intel-quick-sync):
       PHOTOPRISM_FFMPEG_ENCODER: "intel"             # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, vaapi, or vulkan)
-      PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
+      PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
       PHOTOPRISM_INIT: "https intel tensorflow"

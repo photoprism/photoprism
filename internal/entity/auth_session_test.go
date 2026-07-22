@@ -3,6 +3,7 @@ package entity
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -920,6 +921,36 @@ func TestSession_SetDownloadToken(t *testing.T) {
 	})
 }
 
+func TestSession_SetAuthToken(t *testing.T) {
+	t.Run("MigratesTokensWhenIdChanges", func(t *testing.T) {
+		// A session that already carries preview/download tokens must move their lookup-cache
+		// registrations to the new ID when SetAuthToken reassigns it, so the old ID does not
+		// orphan the values (#5733).
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		oldID := m.ID
+		m.SetPreviewToken("migrate-preview")
+		m.SetDownloadToken("migrate-download")
+		assert.Equal(t, []string{oldID}, PreviewToken.Keys("migrate-preview"))
+
+		m.SetAuthToken(rnd.AppPassword())
+		assert.NotEqual(t, oldID, m.ID)
+		assert.Equal(t, []string{m.ID}, PreviewToken.Keys("migrate-preview"))
+		assert.Equal(t, []string{m.ID}, DownloadToken.Keys("migrate-download"))
+
+		PreviewToken.Unset(m.ID)
+		DownloadToken.Unset(m.ID)
+	})
+	t.Run("NoTokensNoOp", func(t *testing.T) {
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		firstID := m.ID
+		m.SetAuthToken(rnd.AuthToken())
+		assert.NotEqual(t, firstID, m.ID)
+		assert.True(t, rnd.IsSessionID(m.ID))
+	})
+}
+
 func TestSession_IsSuperAdmin(t *testing.T) {
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
@@ -1249,5 +1280,25 @@ func TestSession_SetUserScopeDefault(t *testing.T) {
 		sess.SetUser(user)
 
 		assert.Equal(t, "logs:*", sess.AuthScope)
+	})
+}
+
+func TestClampIdToken(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		clamped, truncated := ClampIdToken("")
+		assert.Equal(t, "", clamped)
+		assert.False(t, truncated)
+	})
+	t.Run("WithinLimit", func(t *testing.T) {
+		token := strings.Repeat("a", IdTokenMaxSize)
+		clamped, truncated := ClampIdToken(token)
+		assert.Equal(t, token, clamped)
+		assert.False(t, truncated)
+	})
+	t.Run("ExceedsLimit", func(t *testing.T) {
+		token := strings.Repeat("a", IdTokenMaxSize+100)
+		clamped, truncated := ClampIdToken(token)
+		assert.True(t, truncated)
+		assert.Len(t, clamped, IdTokenMaxSize)
 	})
 }

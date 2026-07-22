@@ -162,9 +162,7 @@ func StartImport(router *gin.RouterGroup) {
 		elapsed := int(time.Since(start).Seconds())
 
 		// Show success message.
-		msg := i18n.Msg(i18n.MsgImportCompletedIn, elapsed)
-
-		event.Success(msg)
+		event.SuccessMsg(i18n.MsgImportCompletedIn, elapsed)
 
 		eventData := event.Data{
 			"uid":     opt.UID,
@@ -188,7 +186,7 @@ func StartImport(router *gin.RouterGroup) {
 			log.Warnf("index: %s (update covers)", err)
 		}
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgImportCompletedIn, elapsed))
 	})
 }
 

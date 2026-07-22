@@ -188,7 +188,7 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 	}()
 
 	// Compose destination file or directory path with safety checks.
-	if fileName, err = safeJoin(dir, f.Name); err != nil {
+	if fileName, err = SafeJoin(dir, f.Name); err != nil {
 		return fileName, err
 	}
 
@@ -208,7 +208,7 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 		return fileName, err
 	}
 
-	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode()) //nolint:gosec // destination derived from safeJoin
+	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode()) //nolint:gosec // destination derived from SafeJoin
 	if err != nil {
 		return fileName, err
 	}
@@ -245,40 +245,4 @@ func unzipFileWithLimit(f *zip.File, dir string, fileSizeLimit int64) (fileName 
 	}
 
 	return fileName, nil
-}
-
-// safeJoin joins a base directory with a relative name and ensures
-// that the resulting path stays within the base directory. Absolute
-// paths and Windows-style volume names are rejected.
-func safeJoin(baseDir, name string) (string, error) {
-	if name == "" {
-		return "", fmt.Errorf("invalid zip path")
-	}
-
-	// Normalize separators so mixed '/' and '\\' are handled consistently.
-	name = strings.ReplaceAll(name, "\\", "/")
-
-	// Reject Windows-style volume names even on non-Windows platforms.
-	if len(name) >= 2 && name[1] == ':' && ((name[0] >= 'A' && name[0] <= 'Z') || (name[0] >= 'a' && name[0] <= 'z')) {
-		return "", fmt.Errorf("invalid zip path: absolute or volume path not allowed")
-	}
-
-	if filepath.IsAbs(name) || filepath.VolumeName(name) != "" {
-		return "", fmt.Errorf("invalid zip path: absolute or volume path not allowed")
-	}
-
-	cleaned := filepath.Clean(name)
-	base := filepath.Clean(baseDir)
-
-	dest := filepath.Join(base, cleaned)
-	rel, err := filepath.Rel(base, dest)
-	if err != nil {
-		return "", fmt.Errorf("invalid zip path: %w", err)
-	}
-
-	if rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
-		return "", fmt.Errorf("invalid zip path: outside target directory")
-	}
-
-	return dest, nil
 }

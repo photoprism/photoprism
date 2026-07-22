@@ -3,6 +3,7 @@ package workers
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/dustin/go-humanize/english"
 
@@ -126,7 +127,24 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
-			localName := baseDir + file.RemoteName
+			// Resolve the local destination safely so a remote sync target cannot
+			// escape the sync base directory via a crafted parent-directory path.
+			localName, joinErr := fs.SafeJoin(baseDir, strings.TrimPrefix(file.RemoteName, "/"))
+
+			if joinErr != nil {
+				log.Warnf("sync: skipped download of %s from %s because the remote path is invalid", clean.Log(file.RemoteName), clean.Log(a.AccName))
+				file.Status = entity.FileSyncFailed
+				file.Error = "invalid remote path"
+				file.Errors++
+
+				if err = entity.Db().Save(&file).Error; err != nil {
+					w.logErr(err)
+				} else {
+					files[i] = file
+				}
+
+				continue
+			}
 
 			if _, err = os.Stat(localName); err == nil {
 				log.Warnf("sync: skipped download of %s from %s because local file %s already exists", file.RemoteName, clean.Log(a.AccName), localName)
@@ -165,7 +183,13 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
-			mf, err := photoprism.NewMediaFile(baseDir + file.RemoteName)
+			localName, joinErr := fs.SafeJoin(baseDir, strings.TrimPrefix(file.RemoteName, "/"))
+
+			if joinErr != nil {
+				continue
+			}
+
+			mf, err := photoprism.NewMediaFile(localName)
 
 			if err != nil || !mf.IsMedia() || mf.Empty() {
 				continue

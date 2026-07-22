@@ -29,6 +29,11 @@ import (
 
 const (
 	FileUID = byte('f')
+
+	// InstanceIDBytes is the byte budget for the instance_id column (VARBINARY(255)).
+	// XMP xmpMM:InstanceID values are clipped to it on write so an oversized identifier
+	// cannot overflow the column and abort indexing.
+	InstanceIDBytes = 255
 )
 
 // Files represents a file result set.
@@ -48,7 +53,7 @@ type File struct {
 	TimeIndex          *string       `gorm:"type:VARBINARY(64);" json:"TimeIndex" yaml:"TimeIndex"`
 	MediaID            *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	MediaUTC           int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
-	InstanceID         string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
+	InstanceID         string        `gorm:"type:VARBINARY(255);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
 	FileUID            string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
 	FileName           string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
 	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
@@ -105,13 +110,6 @@ func (File) TableName() string {
 // RegenerateIndex recalculates the denormalized search index columns for the matching files.
 // Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
 func (m File) RegenerateIndex() {
-	fileIndexMutex.Lock()
-	defer fileIndexMutex.Unlock()
-
-	start := time.Now()
-
-	photosTable := Photo{}.TableName()
-
 	var updateWhere *gorm.SqlExpr
 	var scope string
 
@@ -128,6 +126,40 @@ func (m File) RegenerateIndex() {
 		updateWhere = gorm.Expr("files.photo_id IS NOT NULL")
 		scope = "index"
 	}
+
+	regenerateFileIndex(updateWhere, scope)
+}
+
+// RegenerateIndexForPhotoIDs recalculates the denormalized search index columns for the files of
+// the given photos in a single pass. Batch edits use it to refresh sorting immediately, since
+// newest/oldest keys off files.time_index / files.photo_taken_at rather than photos.taken_at.
+func RegenerateIndexForPhotoIDs(photoIDs []uint) {
+	if len(photoIDs) == 0 {
+		return
+	}
+
+	// Inline the numeric IDs: a nested slice placeholder inside the shared WHERE
+	// expression is not expanded, and uint values are safe from SQL injection.
+	inList := ""
+	for i, id := range photoIDs {
+		if i > 0 {
+			inList += ","
+		}
+		inList += fmt.Sprintf("%d", id)
+	}
+
+	regenerateFileIndex(gorm.Expr("files.photo_id IN ("+inList+")"), "index by photo ids")
+}
+
+// regenerateFileIndex runs the denormalized index UPDATEs for the files matched by updateWhere.
+// Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
+func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
+	fileIndexMutex.Lock()
+	defer fileIndexMutex.Unlock()
+
+	start := time.Now()
+
+	photosTable := Photo{}.TableName()
 
 	switch DbDialect() {
 	case dsn.DriverMySQL:
@@ -699,6 +731,15 @@ func (m *File) ResetColorProfile() {
 func (m *File) SetSoftware(name string) {
 	if name = ClipType(name); name != "" {
 		m.FileSoftware = name
+	}
+}
+
+// SetInstanceID sets the file instance identifier, clipping it to the column byte
+// budget on a rune boundary so an oversized XMP xmpMM:InstanceID cannot overflow the
+// instance_id column. An empty value leaves the current identifier unchanged.
+func (m *File) SetInstanceID(id string) {
+	if id = Clip(id, InstanceIDBytes); id != "" {
+		m.InstanceID = id
 	}
 }
 

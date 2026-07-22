@@ -2668,6 +2668,10 @@ func TestUser_RegenerateTokens(t *testing.T) {
 		preview := Admin.PreviewToken
 		download := Admin.DownloadToken
 
+		// Register the current tokens in the lookup cache.
+		PreviewToken.Set("user-regen-session", preview)
+		DownloadToken.Set("user-regen-session", download)
+
 		err := Admin.RegenerateTokens()
 
 		if err != nil {
@@ -2676,7 +2680,44 @@ func TestUser_RegenerateTokens(t *testing.T) {
 
 		assert.NotEqual(t, preview, Admin.PreviewToken)
 		assert.NotEqual(t, download, Admin.DownloadToken)
+		// The replaced tokens are dropped from the lookup cache.
+		assert.True(t, PreviewToken.MissingValue(preview))
+		assert.True(t, DownloadToken.MissingValue(download))
 	})
+}
+
+func TestUser_RegenerateTokens_ReleaseSurvivesReCache(t *testing.T) {
+	// Regression guard for #5733: StringMap.Set does not retract a key from a replaced
+	// value's reverse-lookup list, so RegenerateTokens must explicitly release the old
+	// token. Otherwise re-caching a session (which reassigns the same session key to the
+	// new token without retracting the old value) leaves the old preview/download token
+	// resolvable via HasValue. The prior coverage used a bare map insert that was never
+	// re-cached and could not catch this.
+	sessID := rnd.SessionID("44be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
+
+	oldPreview := Admin.PreviewToken
+	oldDownload := Admin.DownloadToken
+
+	// Cache a session that currently holds the user's tokens, registering them for lookup.
+	sess := &Session{ID: sessID, PreviewToken: oldPreview, DownloadToken: oldDownload}
+	CacheSession(sess, time.Hour)
+	require.False(t, InvalidPreviewToken(oldPreview))
+	require.False(t, InvalidDownloadToken(oldDownload))
+
+	// Regenerate the user's tokens; the previous values must be released from the cache.
+	require.NoError(t, Admin.RegenerateTokens())
+	require.NotEqual(t, oldPreview, Admin.PreviewToken)
+	require.NotEqual(t, oldDownload, Admin.DownloadToken)
+
+	// Refresh the session to the user's current tokens and re-cache it.
+	sess.SetUser(&Admin)
+	CacheSession(sess, time.Hour)
+
+	// The regenerated tokens resolve; the released old tokens do not resurface.
+	assert.False(t, InvalidPreviewToken(Admin.PreviewToken))
+	assert.False(t, InvalidDownloadToken(Admin.DownloadToken))
+	assert.True(t, InvalidPreviewToken(oldPreview))
+	assert.True(t, InvalidDownloadToken(oldDownload))
 }
 
 func TestUser_HasShares(t *testing.T) {
