@@ -97,9 +97,11 @@ describe("page/photos.vue refetchResults", () => {
     await Promise.resolve();
     await Promise.resolve();
 
-    // Only the loaded UID is requested, in one query.
+    // Only the loaded UID is requested, in one query. The count is a FILE
+    // budget (affected photos x per-photo file headroom of 8), not a photo
+    // count, so multi-file photos are not truncated out of the merged result.
     expect(searchSpy).toHaveBeenCalledTimes(1);
-    expect(searchSpy).toHaveBeenCalledWith({ uid: "uid-1", merged: true, count: 1 });
+    expect(searchSpy).toHaveBeenCalledWith({ uid: "uid-1", merged: true, count: 8 });
     expect(stub.results[0].Title).toBe("New");
     expect(stub.dirty).toBe(false);
   });
@@ -208,7 +210,8 @@ describe("page/album/photos.vue refetchResults", () => {
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(searchSpy).toHaveBeenCalledWith({ uid: "uid-1", merged: true, count: 1 });
+    // Count is a file budget (1 affected photo x per-photo headroom of 8), not a photo count.
+    expect(searchSpy).toHaveBeenCalledWith({ uid: "uid-1", merged: true, count: 8 });
     expect(stub.results[0].Title).toBe("New");
   });
 });

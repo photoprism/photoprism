@@ -86,9 +86,11 @@ const maxLiveRefetch = 50;
 // FILE limit, not a photo limit, so the budget must exceed the photo count — a
 // photo can own several files (e.g. a vector or PDF with a generated preview),
 // and with a photo-sized budget those extra rows truncate still-visible photos
-// out of the merged result, wrongly dropping them from the selection. This
-// headroom covers realistic stacks; refetchResults' truncation guard backstops it.
-const maxRefetchFilesPerPhoto = 64;
+// out of the merged result, wrongly dropping them from the selection. Typical
+// stacks hold ~3 files (photo + video + XMP), so 8 leaves ample margin while
+// keeping the count under the API max even at the maxLiveRefetch batch cap;
+// refetchResults' truncation guard backstops the rare deeper stack.
+const maxRefetchFilesPerPhoto = 8;
 
 export default {
   name: "PPagePhotos",
