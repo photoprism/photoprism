@@ -142,6 +142,34 @@ describe("page/photos.vue refetchResults", () => {
     expect(stub.$clipboard.removeId).toHaveBeenCalledWith("uid-gone");
   });
 
+  it("keeps a truncated multi-file photo selected when the scoped search hit the file limit", async () => {
+    const stub = newStub();
+    stub.results = [{ UID: "uid-1" }, { UID: "uid-2" }];
+    // count >= limit marks the merged result as truncated: a still-visible multi-file
+    // photo can be dropped from the response, so pruning must be skipped (#5738).
+    searchSpy = vi.spyOn(Photo, "search").mockResolvedValue({ models: [{ UID: "uid-1", Title: "New" }], count: 8, limit: 8 });
+
+    refetchResults.call(stub, ["uid-1", "uid-2"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(stub.removeResult).not.toHaveBeenCalled();
+    expect(stub.$clipboard.removeId).not.toHaveBeenCalled();
+  });
+
+  it("still prunes a removed photo when the limit was present but not reached", async () => {
+    const stub = newStub();
+    stub.results = [{ UID: "uid-gone" }];
+    searchSpy = vi.spyOn(Photo, "search").mockResolvedValue({ models: [], count: 0, limit: 8 });
+
+    refetchResults.call(stub, ["uid-gone"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(stub.removeResult).toHaveBeenCalledWith(stub.results, "uid-gone");
+    expect(stub.$clipboard.removeId).toHaveBeenCalledWith("uid-gone");
+  });
+
   it("removes approved photos from the review context", async () => {
     const stub = newStub();
     stub.context = "review";
@@ -213,6 +241,34 @@ describe("page/album/photos.vue refetchResults", () => {
     // Count is a file budget (1 affected photo x per-photo headroom of 8), not a photo count.
     expect(searchSpy).toHaveBeenCalledWith({ uid: "uid-1", merged: true, count: 8 });
     expect(stub.results[0].Title).toBe("New");
+  });
+
+  it("keeps a truncated multi-file photo selected when the scoped search hit the file limit", async () => {
+    const stub = newStub();
+    stub.results = [{ UID: "uid-1" }, { UID: "uid-2" }];
+    // count >= limit marks the merged result as truncated: a still-visible multi-file
+    // photo can be dropped from the response, so pruning must be skipped (#5738).
+    searchSpy = vi.spyOn(Photo, "search").mockResolvedValue({ models: [{ UID: "uid-1", Title: "New" }], count: 8, limit: 8 });
+
+    refetchResults.call(stub, ["uid-1", "uid-2"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(stub.removeResult).not.toHaveBeenCalled();
+    expect(stub.$clipboard.removeId).not.toHaveBeenCalled();
+  });
+
+  it("still prunes a removed photo when the limit was present but not reached", async () => {
+    const stub = newStub();
+    stub.results = [{ UID: "uid-gone" }];
+    searchSpy = vi.spyOn(Photo, "search").mockResolvedValue({ models: [], count: 0, limit: 8 });
+
+    refetchResults.call(stub, ["uid-gone"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(stub.removeResult).toHaveBeenCalledWith(stub.results, "uid-gone");
+    expect(stub.$clipboard.removeId).toHaveBeenCalledWith("uid-gone");
   });
 });
 
