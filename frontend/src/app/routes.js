@@ -684,7 +684,6 @@ export default [
     meta: {
       title: $gettext("Settings"),
       requiresAuth: true,
-      admin: true,
       settings: true,
       background: "background",
     },
@@ -702,7 +701,6 @@ export default [
     meta: {
       title: $gettext("Settings"),
       requiresAuth: true,
-      admin: true,
       settings: true,
       background: "background",
     },
@@ -715,7 +713,6 @@ export default [
     meta: {
       title: $gettext("Settings"),
       requiresAuth: true,
-      admin: true,
       settings: true,
       background: "background",
     },
@@ -723,7 +720,7 @@ export default [
       if ($session.loginRequired()) {
         next({ name: loginRoute });
       } else if (!$config.feature("services") || $config.deny("services", "manage")) {
-        next({ name: $session.getDefaultRoute() });
+        next({ name: "settings" });
       } else {
         next();
       }
