@@ -4355,9 +4355,6 @@
                 "ID": {
                     "type": "string"
                 },
-                "InstanceID": {
-                    "type": "string"
-                },
                 "Iso": {
                     "type": "integer"
                 },

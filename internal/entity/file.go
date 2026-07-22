@@ -15,6 +15,7 @@ import (
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -741,6 +742,27 @@ func (m *File) SetInstanceID(id string) {
 	if id = Clip(id, InstanceIDBytes); id != "" {
 		m.InstanceID = id
 	}
+}
+
+// RedactForSession removes identifying per-file metadata a shared-only session must not see when it
+// accesses a file through sharing: the XMP InstanceID (a content-provenance identifier) is cleared and
+// markers are omitted. Sessions with full library or admin access (and nil sessions) are unchanged.
+// This is the per-file counterpart of Photo.RedactForSession, so single-file reads (GetFile) and the
+// picture read (GetPhoto) strip the same fields.
+func (m *File) RedactForSession(sess *Session) *File {
+	if m == nil || sess == nil {
+		return m
+	}
+
+	// Only sessions limited to shared content are redacted.
+	if !sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+		return m
+	}
+
+	m.OmitMarkers = true
+	m.InstanceID = ""
+
+	return m
 }
 
 // SetDuration sets the video/animation duration.

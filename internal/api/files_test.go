@@ -106,6 +106,8 @@ func TestGetFile(t *testing.T) {
 
 		val := gjson.Get(r.Body.String(), "Name")
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", val.String())
+		// A full-access read is not redacted, so the XMP InstanceID is served.
+		assert.Equal(t, "a698ac56-6e7e-42b9-9c3e-a79ec96087uy", gjson.Get(r.Body.String(), "InstanceID").String())
 	})
 	t.Run("SearchForNotExistingFile", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -126,6 +128,21 @@ func TestGetFile(t *testing.T) {
 		authToken := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
 		r := AuthenticatedRequest(app, "GET", "/api/v1/files/"+privateFileHash, authToken)
 		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("SharedAlbumVisitorRedactsInstanceID", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		GetFile(router)
+
+		// The "visitor" session fixture shares album as6sg6bxpogaaba8, which contains photo
+		// ps6sg6be2lvl0yh7 — the owner of jpegFixtureHash, a file with an InstanceID — so the file is
+		// in scope for the visitor and the response can be checked for redaction.
+		r := AuthenticatedRequest(app, "GET", "/api/v1/files/"+jpegFixtureHash, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3")
+		assert.Equal(t, http.StatusOK, r.Code)
+		// A shared-only session gets the file but not the identifying XMP InstanceID; the display name stays.
+		assert.Equal(t, "", gjson.Get(r.Body.String(), "InstanceID").String())
+		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", gjson.Get(r.Body.String(), "Name").String())
 	})
 }
 

@@ -855,8 +855,7 @@ func (m *Photo) RedactForSession(sess *Session) *Photo {
 	// defensively in case markers are loaded).
 	m.Labels = nil
 	for i := range m.Files {
-		m.Files[i].OmitMarkers = true
-		m.Files[i].InstanceID = ""
+		m.Files[i].RedactForSession(sess)
 	}
 
 	// Remove owner, storage, and identifying metadata. CameraSerial is a device fingerprint that
