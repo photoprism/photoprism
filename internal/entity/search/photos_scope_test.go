@@ -345,6 +345,34 @@ func TestSharedSmartAlbumPhotoUIDs(t *testing.T) {
 		assert.Contains(t, uids, scopeFolderPhotoUID)
 		assert.NotContains(t, uids, scopeNormalPhotoUID)
 	})
+	t.Run("MultiFileMemberReturned", func(t *testing.T) {
+		// Every selected member of the shared folder must be returned, including scopeFolderPhotoUID
+		// ("Photo03"), which has several files (JPEG + extra image + video). The membership search must
+		// count one row per photo, not per file, so a multi-file picture cannot crowd others out.
+		member17 := entity.PhotoFixtures.Pointer("Photo17").PhotoUID
+		member20 := entity.PhotoFixtures.Pointer("Photo20").PhotoUID
+		selection := []string{scopeFolderPhotoUID, member17, member20}
+		uids := sharedSmartAlbumPhotoUIDs(selection, scopeVisitorWithShares(scopeFolderShareToken))
+		assert.Contains(t, uids, scopeFolderPhotoUID)
+		assert.Contains(t, uids, member17)
+		assert.Contains(t, uids, member20)
+		assert.Len(t, uids, len(selection))
+	})
+	t.Run("PrimaryYieldsOneRowPerMultiFilePhoto", func(t *testing.T) {
+		// Locks the reason sharedSmartAlbumPhotoUIDs sets Primary: the album-scoped membership search
+		// returns one row per file, so scopeFolderPhotoUID ("Photo03", which has three files) yields
+		// several rows. A Count sized to the number of selected photos would then let one multi-file
+		// picture consume the limit and drop the others; Primary collapses each photo to a single row so
+		// Count bounds photos rather than files.
+		sess := scopeVisitorWithShares(scopeFolderShareToken)
+		const folderAlbumUID = "as6sg6bipogaaba1" // "april-1990" folder album shared by scopeFolderShareToken
+		perFile, _, err := UserPhotos(form.SearchPhotos{Scope: folderAlbumUID, UID: scopeFolderPhotoUID, Count: 100}, sess)
+		assert.NoError(t, err)
+		perPhoto, _, err := UserPhotos(form.SearchPhotos{Scope: folderAlbumUID, UID: scopeFolderPhotoUID, Count: 100, Primary: true}, sess)
+		assert.NoError(t, err)
+		assert.Greater(t, len(perFile), 1) // several files → several rows without Primary
+		assert.Len(t, perPhoto, 1)         // exactly one row per photo with Primary
+	})
 }
 
 func TestSharedSmartAlbumContains(t *testing.T) {

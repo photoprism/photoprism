@@ -265,8 +265,11 @@ func sharedSmartAlbumPhotoUIDs(photoUIDs []string, sess *entity.Session) []strin
 		}
 
 		// Restrict the album-scoped search to the selected UIDs so membership matches browsing; the
-		// search form accepts multiple UIDs separated by "|".
-		results, _, searchErr := UserPhotos(form.SearchPhotos{Scope: albumUID, UID: strings.Join(photoUIDs, "|"), Count: len(photoUIDs)}, sess)
+		// search form accepts multiple UIDs separated by "|". Primary limits the result to one row per
+		// photo so Count bounds the number of photos rather than files: without it a picture with several
+		// files (RAW + JPEG, video, sidecars) consumes multiple rows and the limit would drop selected
+		// photos from the result, silently shrinking a multi-file download.
+		results, _, searchErr := UserPhotos(form.SearchPhotos{Scope: albumUID, UID: strings.Join(photoUIDs, "|"), Count: len(photoUIDs), Primary: true}, sess)
 
 		if searchErr != nil {
 			// A single unusable share (e.g. an invalid filter) must not mask the others.
