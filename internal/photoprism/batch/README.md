@@ -1,6 +1,6 @@
 ## PhotoPrism — Batch Edit Package
 
-**Last Updated:** November 23, 2025
+**Last Updated:** July 22, 2026
 
 ### Overview
 
@@ -39,7 +39,8 @@ The `internal/photoprism/batch` package implements the form schema (`PhotosForm`
 5. `batch.PrepareAndSavePhotos` iterates over the preloaded entities, applies requested album/label changes, builds `PhotoSaveRequest` instances via `batch.NewPhotoSaveRequest`, and persists the updates before returning a summary (requests, results, updated count, `MutationStats`) to the API layer.
 6. `resolveBatchItemValues` runs before per-photo work so album/label additions referenced by title are looked up or created once per batch (rather than per photo) and deleted albums/labels are restored before use.
 7. `SavePhotos` (invoked by the helper) loops once per request, updates only the columns that changed, clears `checked_at`, touches `edited_at`, and queues `entity.UpdateCountsAsync()` once if any photo saved. When album mutations occurred and YAML backups are enabled, the resolved album list is written back to disk via `updateAlbumBackups` after all database work succeeds.
-8. Refreshed models and values are sent back in the response form so the frontend can merge and display the changes, and the mutation stats drive the production log line (`updated photo metadata (1/3) and labels (3/3)`) so operators can see which parts of the request succeeded even when metadata columns remained untouched.
+8. When the batch changed any date or time zone field (`batchChangesTime`), `PrepareAndSavePhotos` calls `entity.RegenerateIndexForPhotoIDs` once for the saved photos. This rewrites the denormalized `files.time_index` sort key immediately so newest/oldest ordering reflects the new dates without waiting for the metadata worker ([#5739](https://github.com/photoprism/photoprism/issues/5739)).
+9. Refreshed models and values are sent back in the response form so the frontend can merge and display the changes, and the mutation stats drive the production log line (`updated photo metadata (1/3) and labels (3/3)`) so operators can see which parts of the request succeeded even when metadata columns remained untouched.
 
 ### Batch Edit API Endpoint
 
@@ -202,7 +203,7 @@ Based on the above examples, the following rules apply in the given order when p
 - Batch responses reuse the same hydrated entities for both persistence and response rendering, so even selections with hundreds of photos issue a constant number of queries.
 - Album mutations leverage `entity.lockAlbumKey()` (per-album mutex) so two batches editing disjoint albums proceed in parallel instead of waiting on the global lock used before PR #5324’s follow-up work.
 - Label operations operate on preloaded associations (`indexPhotoLabels`) to avoid hitting the join table repeatedly.
-- Background costs (keyword indexing, metadata regeneration) are deferred: clearing `CheckedAt` lets workers refresh derived data asynchronously, and `entity.UpdateCountsAsync()` runs once per batch regardless of size.
+- Background costs (keyword indexing, metadata regeneration) are deferred: clearing `CheckedAt` lets workers refresh derived data asynchronously, and `entity.UpdateCountsAsync()` runs once per batch regardless of size. The denormalized file sort key is the deliberate exception: when a batch changes dates or time zones, `entity.RegenerateIndexForPhotoIDs` rewrites `files.time_index` synchronously (once per batch) so newest/oldest ordering is correct immediately instead of after the next worker pass.
 
 #### Database Locking
 
@@ -221,7 +222,7 @@ Testers reported intermittent `Error 1213 (40001)` deadlocks when multiple batch
   - `internal/photoprism/batch/apply_labels_test.go` validates label mutations, UID validation, and keyword handling.
   - `internal/photoprism/batch/convert_test.go` and `photos_test.go` cover form aggregation and mixed-value detection.  
   - `internal/photoprism/batch/datelogic_test.go` ensures cross-field dependencies (local time vs. UTC) stay consistent.  
-  - `internal/photoprism/batch/save_test.go` exercises partial updates, detail edits, `CheckedAt` resets, and the `PreparePhotoSaveRequests` / `PrepareAndSavePhotos` helpers.  
+  - `internal/photoprism/batch/save_test.go` exercises partial updates, detail edits, `CheckedAt` resets, the `PreparePhotoSaveRequests` / `PrepareAndSavePhotos` helpers, and the `batchChangesDate` / `batchChangesTime` date-change detection that gates file-index regeneration.  
   - `internal/api/batch_photos_edit_test.go` provides end-to-end coverage for response envelopes (`SuccessNoChange`, `SuccessRemoveValues`, etc.).
   - `internal/photoprism/batch/save_resolve_test.go` validates pre-resolution helpers for albums/labels, while `save_backup_test.go` covers the YAML backup flow controlled by `updateAlbumBackups`.
 - **Logging**  
@@ -245,7 +246,7 @@ Testers reported intermittent `Error 1213 (40001)` deadlocks when multiple batch
 - `photos.go` — form aggregation from `search.PhotoResults` and bulk selection helpers.
 - `convert.go` — translates `PhotosForm` into `form.Photo` instances for persistence.
 - `apply_albums.go` / `apply_labels.go` — album and label mutation helpers shared across API endpoints.
-- `save.go` — differential persistence, `PreparePhotoSaveRequests`, `PrepareAndSavePhotos`, `NewPhotoSaveRequest`, `PhotoSaveRequest`, background worker triggers.
+- `save.go` — differential persistence, `PreparePhotoSaveRequests`, `PrepareAndSavePhotos`, `NewPhotoSaveRequest`, `PhotoSaveRequest`, background worker triggers, and the shared `batchChangesDate`/`batchChangesTime` predicates that gate post-save file-index regeneration.
 - `save_photo.go` — `savePhoto` applies a single request, compares old/new values, and writes only the changed columns (indirectly invoked by `SavePhotos`).
 - `save_resolve.go` — album/label title resolution helpers that run before persistence so per-photo work only receives resolved UIDs.
 - `save_backup.go` — YAML backup synchronisation for albums whenever batch edits touch them and backups are enabled.
