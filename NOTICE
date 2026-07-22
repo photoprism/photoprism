@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-07-20
+Date generated: 2026-07-22
 
 ================================================================================
 
@@ -4060,8 +4060,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress
-Version: v1.19.0
-License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.19.0/LICENSE)
+Version: v1.19.1
+License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.19.1/LICENSE)
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 Copyright (c) 2019 Klaus Post. All rights reserved.
@@ -4371,8 +4371,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/internal/snapref
-Version: v1.19.0
-License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.19.0/internal/snapref/LICENSE)
+Version: v1.19.1
+License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.19.1/internal/snapref/LICENSE)
 
 Copyright (c) 2011 The Snappy-Go Authors. All rights reserved.
 
@@ -4405,8 +4405,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/zstd/internal/xxhash
-Version: v1.19.0
-License: MIT (https://github.com/klauspost/compress/blob/v1.19.0/zstd/internal/xxhash/LICENSE.txt)
+Version: v1.19.1
+License: MIT (https://github.com/klauspost/compress/blob/v1.19.1/zstd/internal/xxhash/LICENSE.txt)
 
 Copyright (c) 2016 Caleb Spare
 
@@ -5722,8 +5722,8 @@ License: Apache-2.0 (https://github.com/pquerna/otp/blob/v1.5.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/client_golang/prometheus
-Version: v1.23.2
-License: Apache-2.0 (https://github.com/prometheus/client_golang/blob/v1.23.2/LICENSE)
+Version: v1.24.0
+License: Apache-2.0 (https://github.com/prometheus/client_golang/blob/v1.24.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6138,8 +6138,8 @@ License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.2/LICE
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/common
-Version: v0.70.0
-License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.70.0/LICENSE)
+Version: v0.70.1
+License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.70.1/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -9697,6 +9697,7 @@ mini-css-extract-plugin                             MIT            Tobias Kopper
 minimist                                            MIT            James Halliday mail@substack.net http://substack.net
 node-storage-shim                                   ISC            Michael Nahkies
 passive-events-support                              MIT            Ignas Damunskis <ignas3run@gmail.com>
+pdfjs-dist                                          Apache-2.0     n/a
 photoswipe                                          MIT            Dmytro Semenov (https://dimsemenov.com)
 playwright                                          Apache-2.0     Microsoft Corporation
 postcss                                             MIT            Andrey Sitnik <andrey@sitnik.es>

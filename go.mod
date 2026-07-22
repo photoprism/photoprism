@@ -68,8 +68,8 @@ require (
 require github.com/go-ldap/ldap/v3 v3.4.14
 
 require (
-	github.com/prometheus/client_golang v1.23.2
-	github.com/prometheus/common v0.70.0
+	github.com/prometheus/client_golang v1.24.0
+	github.com/prometheus/common v0.70.1
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
@@ -84,7 +84,7 @@ require (
 	github.com/go-co-op/gocron/v2 v2.22.0
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/klauspost/compress v1.19.0
+	github.com/klauspost/compress v1.19.1
 	github.com/pquerna/otp v1.5.0
 	github.com/prometheus/client_model v0.6.2
 	github.com/robfig/cron/v3 v3.0.1
