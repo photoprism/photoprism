@@ -192,6 +192,29 @@ func TestBatchChangesTime(t *testing.T) {
 	})
 }
 
+// TestBatchChangesDate covers the shared calendar-date predicate; a time-zone-only change must not
+// count as a date change so convert.go recomputes TakenAtLocal only when day, month, or year moved.
+func TestBatchChangesDate(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, batchChangesDate(nil))
+	})
+	t.Run("NoDateChange", func(t *testing.T) {
+		assert.False(t, batchChangesDate(&PhotosForm{PhotoTitle: String{Value: "x", Action: ActionUpdate}}))
+	})
+	t.Run("TimeZoneOnly", func(t *testing.T) {
+		assert.False(t, batchChangesDate(&PhotosForm{TimeZone: String{Value: "UTC", Action: ActionUpdate}}))
+	})
+	t.Run("Year", func(t *testing.T) {
+		assert.True(t, batchChangesDate(&PhotosForm{PhotoYear: Int{Value: 2000, Action: ActionUpdate}}))
+	})
+	t.Run("Month", func(t *testing.T) {
+		assert.True(t, batchChangesDate(&PhotosForm{PhotoMonth: Int{Value: 5, Action: ActionUpdate}}))
+	})
+	t.Run("Day", func(t *testing.T) {
+		assert.True(t, batchChangesDate(&PhotosForm{PhotoDay: Int{Value: 5, Action: ActionUpdate}}))
+	})
+}
+
 // TestNewPhotoSaveRequest ensures the helper validates inputs before building requests.
 func TestNewPhotoSaveRequest(t *testing.T) {
 	t.Run("NilValues", func(t *testing.T) {

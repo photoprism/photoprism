@@ -234,17 +234,26 @@ func PrepareAndSavePhotos(photos search.PhotoResults, preloaded map[string]*enti
 	return result, nil
 }
 
-// batchChangesTime reports whether the batch updates any date or time zone field, which requires
-// regenerating the denormalized file search index so newest/oldest sorting reflects the new dates.
-func batchChangesTime(values *PhotosForm) bool {
+// batchChangesDate reports whether the batch updates any calendar date field (day, month, or year).
+// It is the shared source of truth for the date-mutating field set: convert.go recomputes TakenAtLocal
+// from it and batchChangesTime extends it with the time zone. Keep it aligned with the fields actually
+// applied in convert.go so date and sort-order handling never silently drift apart.
+func batchChangesDate(values *PhotosForm) bool {
 	if values == nil {
 		return false
 	}
 
 	return values.PhotoDay.Action == ActionUpdate ||
 		values.PhotoMonth.Action == ActionUpdate ||
-		values.PhotoYear.Action == ActionUpdate ||
-		values.TimeZone.Action == ActionUpdate
+		values.PhotoYear.Action == ActionUpdate
+}
+
+// batchChangesTime reports whether the batch updates any date or time zone field, which requires
+// regenerating the denormalized file search index so newest/oldest sorting reflects the new dates.
+// The time zone is included on top of the date fields because it shifts the derived UTC instant (and
+// thus the file sort key) even when the naive TakenAtLocal is left unchanged.
+func batchChangesTime(values *PhotosForm) bool {
+	return batchChangesDate(values) || (values != nil && values.TimeZone.Action == ActionUpdate)
 }
 
 // SavePhotos persists the batch updates described by the provided requests while skipping the
