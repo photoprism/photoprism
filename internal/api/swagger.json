@@ -8083,7 +8083,7 @@
                 "operationId": "GetFile",
                 "parameters": [
                     {
-                        "description": "hash (string) SHA-1 hash of the file",
+                        "description": "SHA-1 hash of the file",
                         "in": "path",
                         "name": "hash",
                         "required": true,
@@ -8126,6 +8126,73 @@
                     }
                 },
                 "summary": "returns file details as JSON",
+                "tags": [
+                    "Files"
+                ]
+            }
+        },
+        "/api/v1/files/{hash}/{name}": {
+            "get": {
+                "operationId": "GetFileBytes",
+                "parameters": [
+                    {
+                        "description": "SHA-1 hash of the file",
+                        "in": "path",
+                        "name": "hash",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "file name whose extension selects the served type (e.g. 'file.pdf')",
+                        "in": "path",
+                        "name": "name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/pdf",
+                    "image/svg+xml"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "415": {
+                        "description": "Unsupported Media Type",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "streams the original file bytes for inline viewing (e.g. \".pdf\" or \".svg\")",
                 "tags": [
                     "Files"
                 ]
