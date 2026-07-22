@@ -4846,6 +4846,9 @@
                 "think": {
                     "type": "string"
                 },
+                "tier": {
+                    "type": "string"
+                },
                 "url": {
                     "type": "string"
                 },
@@ -5238,7 +5241,11 @@
                     "$ref": "#/definitions/vision.ApiFormat"
                 },
                 "think": {
-                    "description": "Optional reasoning hint for compatible engines (e.g. Ollama, GPT-OSS).",
+                    "description": "Optional reasoning hint for compatible engines (e.g. Ollama, GPT-OSS); defaults to \"false\" for the Ollama engine.",
+                    "type": "string"
+                },
+                "tier": {
+                    "description": "Optional service tier sent as service_tier in the request body (OpenAI, e.g. \"flex\").",
                     "type": "string"
                 },
                 "uri": {
