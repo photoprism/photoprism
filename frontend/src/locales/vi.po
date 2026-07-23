@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-23 03:08+0000\n"
+"PO-Revision-Date: 2026-07-23 10:29+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1999,7 +1999,7 @@ msgstr "Tùy chọn toàn cầu"
 
 #: src/component/pdf-viewer.vue:75
 msgid "Go to Page"
-msgstr ""
+msgstr "Chuyển đến trang"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2007,7 +2007,7 @@ msgstr "Đi tới trang {0}"
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to Page %{n}"
-msgstr ""
+msgstr "Chuyển đến trang %{n}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2751,7 +2751,7 @@ msgstr "Trang tiếp theo"
 
 #: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
 msgid "Next Page"
-msgstr ""
+msgstr "Trang tiếp theo"
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -3333,7 +3333,7 @@ msgstr "Trang trước"
 
 #: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
 msgid "Previous Page"
-msgstr ""
+msgstr "Trang trước"
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -4330,7 +4330,7 @@ msgstr "Hôm nay"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
-msgstr ""
+msgstr "Chuyển đổi chế độ xem hình thu nhỏ"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4862,7 +4862,7 @@ msgstr "Zip được tạo trong %d giây"
 
 #: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
 msgid "Zoom In"
-msgstr ""
+msgstr "Phóng to"
 
 #: src/component/lightbox.vue:558
 msgid "Zoom in/out"
@@ -4870,7 +4870,7 @@ msgstr "Phóng to / thu nhỏ"
 
 #: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
 msgid "Zoom Out"
-msgstr ""
+msgstr "Thu nhỏ"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
