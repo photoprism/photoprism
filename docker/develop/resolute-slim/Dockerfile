@@ -90,7 +90,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/cache && \
     /scripts/install-s6.sh && \
     ln -sf /scripts/services/photoprism /etc/s6-overlay/s6-rc.d/photoprism && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/photoprism && \
+    touch /etc/s6-overlay/user-bundles.d/user/contents.d/photoprism && \
     apt modernize-sources && \
     /scripts/cleanup.sh
 
