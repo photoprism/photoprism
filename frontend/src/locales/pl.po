@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"PO-Revision-Date: 2026-07-23 03:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 2026.7\n"
+"X-Generator: Weblate 2026.7.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1761,7 +1761,7 @@ msgstr "Nie udało się utworzyć pliku zip"
 
 #: src/component/pdf-viewer.vue:218
 msgid "Failed to load the PDF document."
-msgstr ""
+msgstr "Nie udało się załadować dokumentu PDF."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -2001,7 +2001,7 @@ msgstr "Opcje globalne"
 
 #: src/component/pdf-viewer.vue:69
 msgid "Go to page"
-msgstr ""
+msgstr "Przejdź do strony"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2009,7 +2009,7 @@ msgstr "Przejdź do strony {0}."
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to page %{n}"
-msgstr ""
+msgstr "Przejdź do strony %{n}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2126,7 +2126,7 @@ msgstr "Import zakończony w %d s"
 
 #: src/page/settings/advanced.vue:142
 msgid "Import Faces from XMP"
-msgstr ""
+msgstr "Importuj twarze z pliku XMP"
 
 #: src/page/library/import.vue:205
 msgid "Import failed"
@@ -3407,7 +3407,7 @@ msgstr "Ponowne indeksowanie wszystkich oryginałów, w tym już zaindeksowanych
 
 #: src/page/settings/advanced.vue:143
 msgid "Read face regions and names from XMP metadata to create people markers."
-msgstr ""
+msgstr "Odczytaj obszary twarzy i nazwiska z metadanych XMP, żeby utworzyć znaczniki osób."
 
 #: src/page/settings/advanced.vue:62
 msgid "Read-Only Mode"
@@ -4324,7 +4324,7 @@ msgstr "Dzisiaj"
 
 #: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
 msgid "Toggle thumbnails"
-msgstr ""
+msgstr "Przełącz miniaturki"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4856,7 +4856,7 @@ msgstr "Zip utworzony w %d s"
 
 #: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
 msgid "Zoom in"
-msgstr ""
+msgstr "Powiększ"
 
 #: src/component/lightbox.vue:553
 msgid "Zoom in/out"
@@ -4864,7 +4864,7 @@ msgstr "Powiększ / Pomniejsz"
 
 #: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
 msgid "Zoom out"
-msgstr ""
+msgstr "Pomniejsz"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33

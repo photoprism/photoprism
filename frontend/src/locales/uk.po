@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"PO-Revision-Date: 2026-07-23 03:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.7\n"
+"X-Generator: Weblate 2026.7.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1762,7 +1762,7 @@ msgstr "Не вдалося створити zip-файл"
 
 #: src/component/pdf-viewer.vue:218
 msgid "Failed to load the PDF document."
-msgstr ""
+msgstr "Не вдалося завантажити PDF-документ."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -2002,7 +2002,7 @@ msgstr "Глобальні опції"
 
 #: src/component/pdf-viewer.vue:69
 msgid "Go to page"
-msgstr ""
+msgstr "Перейти на сторінку"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2010,7 +2010,7 @@ msgstr "Перейти на сторінку {0}"
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to page %{n}"
-msgstr ""
+msgstr "Перейти на сторінку %{n}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2127,7 +2127,7 @@ msgstr "Імпортування тривало %d с"
 
 #: src/page/settings/advanced.vue:142
 msgid "Import Faces from XMP"
-msgstr ""
+msgstr "Імпортувати обличчя з XMP"
 
 #: src/page/library/import.vue:205
 msgid "Import failed"
@@ -3408,7 +3408,7 @@ msgstr "Переіндексуйте усі оригінали, включаюч
 
 #: src/page/settings/advanced.vue:143
 msgid "Read face regions and names from XMP metadata to create people markers."
-msgstr ""
+msgstr "Зчитати області обличчя та імена з метаданих XMP для створення міток осіб."
 
 #: src/page/settings/advanced.vue:62
 msgid "Read-Only Mode"
@@ -4325,7 +4325,7 @@ msgstr "Сьогодні"
 
 #: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
 msgid "Toggle thumbnails"
-msgstr ""
+msgstr "Увімкнути/вимкнути мініатюри"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4857,7 +4857,7 @@ msgstr "Zip створено за %d с"
 
 #: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
 msgid "Zoom in"
-msgstr ""
+msgstr "Збільшити"
 
 #: src/component/lightbox.vue:553
 msgid "Zoom in/out"
@@ -4865,7 +4865,7 @@ msgstr "Збільшити/зменшити"
 
 #: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
 msgid "Zoom out"
-msgstr ""
+msgstr "Зменшити масштаб"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
