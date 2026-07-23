@@ -601,7 +601,7 @@ msgstr "Phê duyệt và lưu thay đổi"
 msgid "Apps and Devices"
 msgstr "Ứng dụng và thiết bị"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Đã lưu trữ"
@@ -877,7 +877,7 @@ msgstr "thẻ"
 msgid "Carousel slide {0} of {1}"
 msgstr "Trượt băng chuyền {0} của {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "Dàn diễn viên"
 
@@ -930,7 +930,7 @@ msgstr "Không thể lưu các thay đổi"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -993,8 +993,8 @@ msgstr "Khách hàng"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1507,7 +1507,7 @@ msgid "Done."
 msgstr "Xong."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1524,7 +1524,7 @@ msgstr "Tải tập tin từ xa"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1560,7 +1560,7 @@ msgstr "Giới hạn kích thước động: %{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1662,7 +1662,7 @@ msgstr "Nhập mật khẩu của bạn để xác nhận hành động và ti�
 msgid "Entity not found"
 msgstr "Không tìm thấy thực thể"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Lỗi"
@@ -1757,7 +1757,7 @@ msgstr "Không thể kết nối tài khoản."
 msgid "Failed to create zip file"
 msgstr "Không tạo được tệp zip"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "Không tải được tài liệu PDF."
 
@@ -1765,11 +1765,11 @@ msgstr "Không tải được tài liệu PDF."
 msgid "Failed to load users."
 msgstr "Không tải được danh sách người dùng."
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "Không thể xóa điểm đánh dấu khuôn mặt"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "Không thể xóa tên"
 
@@ -1789,7 +1789,7 @@ msgstr "Không thể khởi động lại máy chủ"
 msgid "Failed to save changes"
 msgstr "Không thể lưu các thay đổi"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Không lưu được điểm đánh dấu khuôn mặt"
 
@@ -1958,7 +1958,7 @@ msgstr "Khung"
 msgid "Full Access"
 msgstr "Toàn quyền truy cập"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Toàn màn hình"
 
@@ -1997,17 +1997,17 @@ msgstr "Tên"
 msgid "Global Options"
 msgstr "Tùy chọn toàn cầu"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "Chuyển đến trang"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Đi tới trang {0}"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "Chuyển đến trang %{n}"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2059,7 +2059,7 @@ msgstr "Các tệp ẩn"
 msgid "Hide"
 msgstr "Trốn"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Ẩn chú thích"
 
@@ -2204,7 +2204,7 @@ msgstr "Lập chỉ mục các tập tin media và sidecar…"
 msgid "Indexing originals..."
 msgstr "Lập chỉ mục bản gốc..."
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Thông tin"
@@ -2449,7 +2449,7 @@ msgstr "Thư viện"
 msgid "License"
 msgstr "Giấy phép"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "Thích"
 
@@ -2662,7 +2662,7 @@ msgstr "Đơn sắc"
 msgid "Month"
 msgstr "Tháng"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Thêm tùy chọn"
 
@@ -2686,7 +2686,7 @@ msgstr "Di chuyển tệp từ %s"
 msgid "Must have at least %{n} characters."
 msgstr "Phải có ít nhất %{n} ký tự."
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "Tắt tiếng"
 
@@ -2740,14 +2740,18 @@ msgstr "mật khẩu mới"
 msgid "Newest First"
 msgstr "Mới nhất đầu tiên"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "Kế tiếp"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "Trang tiếp theo"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2878,7 +2882,7 @@ msgstr "Hình ảnh không phải ảnh và chất lượng thấp cần đượ
 msgid "None"
 msgstr "Không có"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Không được phép"
@@ -2891,7 +2895,7 @@ msgstr "Không khả dụng ở chế độ công khai"
 msgid "Not available in read-only mode"
 msgstr "Không khả dụng ở chế độ chỉ đọc"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "Không tìm thấy"
 
@@ -2899,7 +2903,7 @@ msgstr "Không tìm thấy"
 msgid "Not sorted."
 msgstr "Chưa được sắp xếp."
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "Không được hỗ trợ"
 
@@ -3120,7 +3124,7 @@ msgstr "Mật khẩu"
 msgid "Password changed"
 msgstr "mật khẩu đã được thay đổi"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Tạm dừng"
 
@@ -3226,7 +3230,7 @@ msgstr "Địa điểm & Thời gian"
 msgid "Places"
 msgstr "Địa điểm"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Chơi"
 
@@ -3318,14 +3322,18 @@ msgstr "Xem trước"
 msgid "Preview Images"
 msgstr "Xem trước hình ảnh"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Trước"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "Trang trước"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3508,7 +3516,7 @@ msgstr "Di dời"
 msgid "remove failed: unknown album"
 msgstr "xóa không thành công: album không xác định"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Xóa khỏi album"
 
@@ -3545,7 +3553,7 @@ msgstr "Đã xóa tệp %d và ảnh %d"
 msgid "Repeated"
 msgstr "Lặp lại"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "Yêu cầu không thành công - bạn đang ngoại tuyến phải không?"
 
@@ -3576,12 +3584,12 @@ msgstr "Khởi động lại"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Khôi phục"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Đã khôi phục"
 
@@ -3737,7 +3745,7 @@ msgstr "Bí mật"
 msgid "Security and Access"
 msgstr "Bảo mật và truy cập"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Lựa chọn"
 
@@ -3845,7 +3853,7 @@ msgstr "ID phiên"
 msgid "Sessions"
 msgstr "Phiên"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Đặt làm Bìa Album"
 
@@ -3906,7 +3914,7 @@ msgstr "Hiển thị tất cả nhãn"
 msgid "Show all new faces"
 msgstr "Hiển thị tất cả các khuôn mặt mới"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Hiển thị chú thích"
 
@@ -4010,7 +4018,7 @@ msgstr "URL trang web"
 msgid "Size"
 msgstr "Kích cỡ"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Trình chiếu"
 
@@ -4042,7 +4050,7 @@ msgstr "Không thể tạo một số album. Vui lòng chỉnh sửa tên và th
 msgid "Some albums could not be updated"
 msgstr "Một số album không thể cập nhật"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "Đã xảy ra lỗi, hãy thử lại"
 
@@ -4125,7 +4133,7 @@ msgstr "Trạng thái"
 msgid "Stay signed in on this device"
 msgstr "Giữ trạng thái đăng nhập trên thiết bị này"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Dừng việc đúc"
 
@@ -4320,9 +4328,9 @@ msgstr "Để nâng cấp, bạn có thể nhập mã kích hoạt hoặc nhấp
 msgid "Today"
 msgstr "Hôm nay"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "Bật/tắt hình thu nhỏ"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4852,17 +4860,17 @@ msgstr "Thư viện của bạn được phân tích liên tục để tự đ�
 msgid "Zip created in %d s"
 msgstr "Zip được tạo trong %d giây"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "Phóng to"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "Phóng to / thu nhỏ"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "Thu nhỏ"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4901,11 +4909,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Tiêu đề"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Lưu trữ"
+
+#~ msgid "Go to page"
+#~ msgstr "Chuyển đến trang"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Chuyển đến trang %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Bật/tắt hình thu nhỏ"
+
+#~ msgid "Zoom in"
+#~ msgstr "Phóng to"
+
+#~ msgid "Zoom out"
+#~ msgstr "Thu nhỏ"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Thông tin xác thực của khách hàng"

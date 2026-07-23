@@ -604,7 +604,7 @@ msgstr "批准并保存更改"
 msgid "Apps and Devices"
 msgstr "应用程序和设备"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "已归档"
@@ -880,7 +880,7 @@ msgstr "卡片"
 msgid "Carousel slide {0} of {1}"
 msgstr "旋转木马幻灯片 {0} of {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "投掷"
 
@@ -933,7 +933,7 @@ msgstr "无法保存变更"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -996,8 +996,8 @@ msgstr "客户"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1510,7 +1510,7 @@ msgid "Done."
 msgstr "完成。"
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1527,7 +1527,7 @@ msgstr "下载远端文件"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1563,7 +1563,7 @@ msgstr "动态尺寸限制：%{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1665,7 +1665,7 @@ msgstr "输入您的密码确认操作并继续："
 msgid "Entity not found"
 msgstr "实体未找到"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "错误"
@@ -1760,7 +1760,7 @@ msgstr "连接账户失败。"
 msgid "Failed to create zip file"
 msgstr "创建压缩文件失败"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "无法加载该 PDF 文档。"
 
@@ -1768,11 +1768,11 @@ msgstr "无法加载该 PDF 文档。"
 msgid "Failed to load users."
 msgstr "无法加载用户。"
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "未能移除面部标记"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "移除名称失败"
 
@@ -1792,7 +1792,7 @@ msgstr "无法重启服务器"
 msgid "Failed to save changes"
 msgstr "保存更改失败"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "面子标记失败"
 
@@ -1961,7 +1961,7 @@ msgstr "框架"
 msgid "Full Access"
 msgstr "完全访问"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "全屏"
 
@@ -2000,17 +2000,17 @@ msgstr "名"
 msgid "Global Options"
 msgstr "全局选项"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "转到第X页"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "转到 {0} 页"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "转到第 %{n} 页"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2062,7 +2062,7 @@ msgstr "隐藏文件"
 msgid "Hide"
 msgstr "隐藏"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "隐藏标题"
 
@@ -2207,7 +2207,7 @@ msgstr "索引媒体和附属文件…"
 msgid "Indexing originals..."
 msgstr "索引源文件..."
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "信息"
@@ -2452,7 +2452,7 @@ msgstr "资料库"
 msgid "License"
 msgstr "许可证"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "喜欢"
 
@@ -2665,7 +2665,7 @@ msgstr "黑白"
 msgid "Month"
 msgstr "月"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "更多选择"
 
@@ -2689,7 +2689,7 @@ msgstr "从 %s 中移动文件"
 msgid "Must have at least %{n} characters."
 msgstr "必须至少有%{n}个字符。"
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "静音"
 
@@ -2743,14 +2743,18 @@ msgstr "新密码"
 msgid "Newest First"
 msgstr "最新优先"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "下一页"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "下一页"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2881,7 +2885,7 @@ msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查
 msgid "None"
 msgstr "无"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "不允许"
@@ -2894,7 +2898,7 @@ msgstr "在公开模式下不可用"
 msgid "Not available in read-only mode"
 msgstr "在只读模式下不可用"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "未找到"
 
@@ -2902,7 +2906,7 @@ msgstr "未找到"
 msgid "Not sorted."
 msgstr "未分类。"
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "不支持"
 
@@ -3124,7 +3128,7 @@ msgstr "密码"
 msgid "Password changed"
 msgstr "密码已更改"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "暂停"
 
@@ -3230,7 +3234,7 @@ msgstr "地点和时间"
 msgid "Places"
 msgstr "地点"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "播放"
 
@@ -3322,14 +3326,18 @@ msgstr "预览"
 msgid "Preview Images"
 msgstr "图片预览"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "上一页"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "上一页"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3513,7 +3521,7 @@ msgstr "移除"
 msgid "remove failed: unknown album"
 msgstr "移除失败：未知相册"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "从相册中移除"
 
@@ -3550,7 +3558,7 @@ msgstr "移除了 %d 个文件和 %d 张照片"
 msgid "Repeated"
 msgstr "重复"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "请求失败 - 你是否离线？"
 
@@ -3581,12 +3589,12 @@ msgstr "重新启动"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "恢复"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "恢复"
 
@@ -3742,7 +3750,7 @@ msgstr "密钥"
 msgid "Security and Access"
 msgstr "安全和访问"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "选择"
 
@@ -3850,7 +3858,7 @@ msgstr "会议ID"
 msgid "Sessions"
 msgstr "会议"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "设为专辑封面"
 
@@ -3911,7 +3919,7 @@ msgstr "显示所有标签"
 msgid "Show all new faces"
 msgstr "显示所有的新面孔"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "显示字幕"
 
@@ -4015,7 +4023,7 @@ msgstr "网站 URL"
 msgid "Size"
 msgstr "尺寸"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "幻灯片"
 
@@ -4047,7 +4055,7 @@ msgstr "某些相册无法创建。请编辑名称后重试。"
 msgid "Some albums could not be updated"
 msgstr "某些相册无法更新"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "出错了，再试一次"
 
@@ -4130,7 +4138,7 @@ msgstr "状态"
 msgid "Stay signed in on this device"
 msgstr "在此设备上保持登录状态"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "停止选角"
 
@@ -4325,9 +4333,9 @@ msgstr "要升级，你可以输入激活码或点击 \"注册\"，在我们的�
 msgid "Today"
 msgstr "今天"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "切换缩略图"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4857,17 +4865,17 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 msgid "Zip created in %d s"
 msgstr "Zip 文件创建成功，耗时 %d 秒"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "放大"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "缩放"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "缩小"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4906,11 +4914,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "标题"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "归档"
+
+#~ msgid "Go to page"
+#~ msgstr "转到第X页"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "转到第 %{n} 页"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "切换缩略图"
+
+#~ msgid "Zoom in"
+#~ msgstr "放大"
+
+#~ msgid "Zoom out"
+#~ msgstr "缩小"
 
 #~ msgid "Client Credentials"
 #~ msgstr "客户证书"

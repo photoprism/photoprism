@@ -604,7 +604,7 @@ msgstr "Wijzigingen goedkeuren en opslaan"
 msgid "Apps and Devices"
 msgstr "Apps en apparaten"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Gearchiveerd"
@@ -880,7 +880,7 @@ msgstr "Kaarten"
 msgid "Carousel slide {0} of {1}"
 msgstr "Carrousel dia {0} van {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "Cast"
 
@@ -933,7 +933,7 @@ msgstr "Wijzigingen kunnen niet worden opgeslagen"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -996,8 +996,8 @@ msgstr "Klant"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1510,7 +1510,7 @@ msgid "Done."
 msgstr "Klaar."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1527,7 +1527,7 @@ msgstr "Bestanden op afstand downloaden"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1563,7 +1563,7 @@ msgstr "Dynamische Groottegrens: %{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1665,7 +1665,7 @@ msgstr "Voer je wachtwoord in om de actie te bevestigen en door te gaan:"
 msgid "Entity not found"
 msgstr "Entiteit niet gevonden"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Fout"
@@ -1760,7 +1760,7 @@ msgstr "Verbinding met account mislukt."
 msgid "Failed to create zip file"
 msgstr "Maken van zip-bestand is mislukt"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "Het PDF-document kon niet worden geladen."
 
@@ -1768,11 +1768,11 @@ msgstr "Het PDF-document kon niet worden geladen."
 msgid "Failed to load users."
 msgstr "Het laden van gebruikers is mislukt."
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "Gezichtsmarkering niet verwijderd"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "Naam niet verwijderd"
 
@@ -1792,7 +1792,7 @@ msgstr "Het opnieuw opstarten van de server is mislukt"
 msgid "Failed to save changes"
 msgstr "Wijzigingen niet opgeslagen"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Mislukt om gezicht te redden marker"
 
@@ -1961,7 +1961,7 @@ msgstr "Frames"
 msgid "Full Access"
 msgstr "Volledige Toegang"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Volledig scherm"
 
@@ -2000,17 +2000,17 @@ msgstr "Voornaam"
 msgid "Global Options"
 msgstr "Overkoepelende instellingen"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "Ga naar pagina"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Ga naar pagina {0}"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "Ga naar pagina %{n}"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2062,7 +2062,7 @@ msgstr "Verborgen bestanden"
 msgid "Hide"
 msgstr "Verberg"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Verberg titel"
 
@@ -2207,7 +2207,7 @@ msgstr "Foto’s en sidecar-bestanden aan het indexeren…"
 msgid "Indexing originals..."
 msgstr "Originelen indexeren…"
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Informatie"
@@ -2452,7 +2452,7 @@ msgstr "Bibliotheek"
 msgid "License"
 msgstr "Licentie"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "Vind ik leuk"
 
@@ -2665,7 +2665,7 @@ msgstr "Monochroom"
 msgid "Month"
 msgstr "Maand"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Meer opties"
 
@@ -2689,7 +2689,7 @@ msgstr "Bestanden verplaatsen uit %s"
 msgid "Must have at least %{n} characters."
 msgstr "Moet minstens %{n} tekens bevatten."
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "Stomme"
 
@@ -2743,14 +2743,18 @@ msgstr "Nieuw wachtwoord"
 msgid "Newest First"
 msgstr "Nieuwste eerst"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "Volgende"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "Volgende"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2881,7 +2885,7 @@ msgstr "Niet-fotografische beelden en beelden van lage kwaliteit moeten worden b
 msgid "None"
 msgstr "Geen"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Niet toegestaan"
@@ -2894,7 +2898,7 @@ msgstr "Niet beschikbaar in publieke modus"
 msgid "Not available in read-only mode"
 msgstr "Niet beschikbaar in alleen-lezen modus"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "Niet gevonden"
 
@@ -2902,7 +2906,7 @@ msgstr "Niet gevonden"
 msgid "Not sorted."
 msgstr "Niet gesorteerd."
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "Niet ondersteund"
 
@@ -3123,7 +3127,7 @@ msgstr "Wachtwoord"
 msgid "Password changed"
 msgstr "Wachtwoord gewijzigd"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Pauze"
 
@@ -3229,7 +3233,7 @@ msgstr "Plaats en Tijd"
 msgid "Places"
 msgstr "Locaties"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Afspelen"
 
@@ -3321,14 +3325,18 @@ msgstr "Voorbeeld"
 msgid "Preview Images"
 msgstr "Voorbeeldafbeeldingen"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Vorige"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "Vorige pagina"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3511,7 +3519,7 @@ msgstr "Verwijderen"
 msgid "remove failed: unknown album"
 msgstr "verwijderen mislukt: onbekend album"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Verwijder uit album"
 
@@ -3548,7 +3556,7 @@ msgstr "%d bestanden en %d foto’s verwijderd"
 msgid "Repeated"
 msgstr "Herhaald"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "Aanvraag mislukt - bent u offline?"
 
@@ -3579,12 +3587,12 @@ msgstr "Herstart"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Herstellen"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Gerestaureerd"
 
@@ -3740,7 +3748,7 @@ msgstr "Geheim"
 msgid "Security and Access"
 msgstr "Veiligheid en toegang"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Selecteer"
 
@@ -3848,7 +3856,7 @@ msgstr "Sessie-ID"
 msgid "Sessions"
 msgstr "Sessies"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Ingesteld als albumhoes"
 
@@ -3909,7 +3917,7 @@ msgstr "Toon alle labels"
 msgid "Show all new faces"
 msgstr "Toon alle nieuwe gezichten"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Onderschrift tonen"
 
@@ -4013,7 +4021,7 @@ msgstr "URL website"
 msgid "Size"
 msgstr "Grootte"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Diashow"
 
@@ -4045,7 +4053,7 @@ msgstr "Sommige albums konden niet worden aangemaakt. Pas de namen aan en probee
 msgid "Some albums could not be updated"
 msgstr "Sommige albums konden niet worden bijgewerkt"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "Er ging iets mis, probeer het opnieuw."
 
@@ -4128,7 +4136,7 @@ msgstr "Status"
 msgid "Stay signed in on this device"
 msgstr "Aangemeld blijven op dit apparaat"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Stop met gieten"
 
@@ -4323,9 +4331,9 @@ msgstr "Om te upgraden kunt u een activeringscode invoeren of op \"Registreren\"
 msgid "Today"
 msgstr "Vandaag"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "Miniaturen weergeven/verbergen"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4855,17 +4863,17 @@ msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te m
 msgid "Zip created in %d s"
 msgstr "Zip gemaakt in %d s"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "Inzoomen"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "Uitzoomen"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4904,11 +4912,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Titel"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archief"
+
+#~ msgid "Go to page"
+#~ msgstr "Ga naar pagina"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Ga naar pagina %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Miniaturen weergeven/verbergen"
+
+#~ msgid "Zoom in"
+#~ msgstr "Inzoomen"
+
+#~ msgid "Zoom out"
+#~ msgstr "Uitzoomen"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Klantgegevens"

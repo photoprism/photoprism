@@ -601,7 +601,7 @@ msgstr "Ceadaigh agus sábháil athruithe"
 msgid "Apps and Devices"
 msgstr "Aipeanna agus Gléasanna"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Cartlannaithe"
@@ -877,7 +877,7 @@ msgstr "Cártaí"
 msgid "Carousel slide {0} of {1}"
 msgstr "Sleamhnán timpealláin {0} de {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "Foireann aisteoirí"
 
@@ -930,7 +930,7 @@ msgstr "Níorbh fhéidir na hathruithe a shábháil"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -993,8 +993,8 @@ msgstr "Cliant"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1507,7 +1507,7 @@ msgid "Done."
 msgstr "Déanta."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1524,7 +1524,7 @@ msgstr "Íoslódáil comhaid iargúlta"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1560,7 +1560,7 @@ msgstr "Teorainn Mhéid Dinimiciúla: %{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1662,7 +1662,7 @@ msgstr "Cuir isteach do phasfhocal chun an gníomh a dhearbhú agus lean ar agha
 msgid "Entity not found"
 msgstr "Aonán gan aimsiú"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Earráid"
@@ -1757,7 +1757,7 @@ msgstr "Theip ar an gcuntas a nascadh."
 msgid "Failed to create zip file"
 msgstr "Theip ar chruthú an chomhaid zip"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "Theip ar an doiciméad PDF a lódáil."
 
@@ -1765,11 +1765,11 @@ msgstr "Theip ar an doiciméad PDF a lódáil."
 msgid "Failed to load users."
 msgstr "Theip ar luchtaireacht na n-úsáideoirí."
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "Theip ar bhaint an mharcóra aghaidhe"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "Theip ar an ainm a bhaint"
 
@@ -1789,7 +1789,7 @@ msgstr "Theip ar an bhfreastalaí a atosú"
 msgid "Failed to save changes"
 msgstr "Theip ar athruithe a shábháil"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Theip ar shábháil an mharcóra aghaidhe"
 
@@ -1958,7 +1958,7 @@ msgstr "Frámaí"
 msgid "Full Access"
 msgstr "Rochtain Iomlán"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Lánscáileán"
 
@@ -1997,17 +1997,17 @@ msgstr "Ainm tugtha"
 msgid "Global Options"
 msgstr "Roghanna Domhanda"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "Téigh go dtí an leathanach"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Téigh go leathanach {0}"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "Téigh go dtí an leathanach %{n}"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2059,7 +2059,7 @@ msgstr "Comhaid Cheilte"
 msgid "Hide"
 msgstr "Folaigh"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Folaigh an ceannteideal"
 
@@ -2204,7 +2204,7 @@ msgstr "Meáin agus comhaid taobhcharr á innéacsú…"
 msgid "Indexing originals..."
 msgstr "Buntéacs á innéacsú..."
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Eolas"
@@ -2449,7 +2449,7 @@ msgstr "Leabharlann"
 msgid "License"
 msgstr "Ceadúnas"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "Cosúil"
 
@@ -2662,7 +2662,7 @@ msgstr "Monacrómach"
 msgid "Month"
 msgstr "Mí"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Tuilleadh roghanna"
 
@@ -2686,7 +2686,7 @@ msgstr "Comhaid á mbogadh ó %s"
 msgid "Must have at least %{n} characters."
 msgstr "Caithfidh %{n} carachtar ar a laghad a bheith ann."
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "Balbhaigh"
 
@@ -2740,14 +2740,18 @@ msgstr "Pasfhocal Nua"
 msgid "Newest First"
 msgstr "Is Déanaí ar dtús"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "Ar aghaidh"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "An chéad leathanach eile"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2878,7 +2882,7 @@ msgstr "Teastaíonn athbhreithniú ar íomhánna nach bhfuil grianghrafadóireac
 msgid "None"
 msgstr "Dada"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Ní cheadaítear"
@@ -2891,7 +2895,7 @@ msgstr "Níl sé ar fáil i mód poiblí"
 msgid "Not available in read-only mode"
 msgstr "Níl sé ar fáil i mód inléite amháin"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "Ní bhfuarthas"
 
@@ -2899,7 +2903,7 @@ msgstr "Ní bhfuarthas"
 msgid "Not sorted."
 msgstr "Gan sórtáilte."
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "Ní thacaítear leis"
 
@@ -3120,7 +3124,7 @@ msgstr "Pasfhocal"
 msgid "Password changed"
 msgstr "Athraíodh an pasfhocal"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Fionraí"
 
@@ -3226,7 +3230,7 @@ msgstr "Áit & Am"
 msgid "Places"
 msgstr "Áiteanna"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Seinn"
 
@@ -3318,14 +3322,18 @@ msgstr "Réamhamharc"
 msgid "Preview Images"
 msgstr "Íomhánna Réamhamhairc"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Roimhe Seo"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "An leathanach roimhe seo"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3508,7 +3516,7 @@ msgstr "Bain"
 msgid "remove failed: unknown album"
 msgstr "bhaint theip: albam anaithnid"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Bain as an albam"
 
@@ -3545,7 +3553,7 @@ msgstr "Baineadh %d comhaid agus %d grianghraif"
 msgid "Repeated"
 msgstr "Arís agus arís eile"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "Theip ar an iarratas - an bhfuil tú as líne?"
 
@@ -3576,12 +3584,12 @@ msgstr "Atosaigh"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Athchóirigh"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Athchóiríodh"
 
@@ -3737,7 +3745,7 @@ msgstr "Rúnda"
 msgid "Security and Access"
 msgstr "Slándáil agus Rochtain"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Roghnaigh"
 
@@ -3845,7 +3853,7 @@ msgstr "Aitheantas an tseisiúin"
 msgid "Sessions"
 msgstr "Seisiúin"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Socraigh mar Chlúdach Albam"
 
@@ -3906,7 +3914,7 @@ msgstr "Taispeáin Gach Lipéad"
 msgid "Show all new faces"
 msgstr "Taispeáin gach aghaidh nua"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Taispeáin an ceannteideal"
 
@@ -4010,7 +4018,7 @@ msgstr "URL an tsuímh"
 msgid "Size"
 msgstr "Méid"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Taispeántas sleamhnán"
 
@@ -4042,7 +4050,7 @@ msgstr "Níorbh fhéidir roinnt albaim a chruthú. Cuir na hainmneacha in eagar 
 msgid "Some albums could not be updated"
 msgstr "Níorbh fhéidir roinnt albaim a nuashonrú"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "Chuaigh rud éigin mícheart, bain triail eile as"
 
@@ -4125,7 +4133,7 @@ msgstr "Stádas"
 msgid "Stay signed in on this device"
 msgstr "Fan logáilte isteach ar an bhfeiste seo"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Stad ag caitheamh"
 
@@ -4320,9 +4328,9 @@ msgstr "Chun uasghrádú a dhéanamh, is féidir leat cód gníomhachtúcháin a
 msgid "Today"
 msgstr "Inniu"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "Lasc na mionphictiúir"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4852,17 +4860,17 @@ msgstr "Déantar anailís leanúnach ar do leabharlann chun albam chuimhneachái
 msgid "Zip created in %d s"
 msgstr "Zip cruthaithe i %d s"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "Zúmáil isteach"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "Súmáil isteach/amach"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "Zúmáil amach"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4901,11 +4909,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Teideal"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Cartlann"
+
+#~ msgid "Go to page"
+#~ msgstr "Téigh go dtí an leathanach"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Téigh go dtí an leathanach %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Lasc na mionphictiúir"
+
+#~ msgid "Zoom in"
+#~ msgstr "Zúmáil isteach"
+
+#~ msgid "Zoom out"
+#~ msgstr "Zúmáil amach"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Dintiúir Cliant"

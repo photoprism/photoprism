@@ -604,7 +604,7 @@ msgstr "Aprova i desa els canvis"
 msgid "Apps and Devices"
 msgstr "Aplicacions i dispositius"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Arxivat"
@@ -880,7 +880,7 @@ msgstr "Targetes"
 msgid "Carousel slide {0} of {1}"
 msgstr "Diapositiva del carrusel {0} de {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "El repartiment"
 
@@ -933,7 +933,7 @@ msgstr "No s'han pogut desar els canvis"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -996,8 +996,8 @@ msgstr "Client"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1510,7 +1510,7 @@ msgid "Done."
 msgstr "Fet."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1527,7 +1527,7 @@ msgstr "Descarrega fitxers remots"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1563,7 +1563,7 @@ msgstr "Límit de mida dinàmica: %{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1665,7 +1665,7 @@ msgstr "Introduïu la vostra contrasenya per confirmar l'acció i continueu:"
 msgid "Entity not found"
 msgstr "No s'ha trobat l'entitat"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Error"
@@ -1760,7 +1760,7 @@ msgstr "No s'ha pogut connectar el compte."
 msgid "Failed to create zip file"
 msgstr "No s'ha pogut crear el fitxer zip"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "S'ha fallat la càrrega del document PDF."
 
@@ -1768,11 +1768,11 @@ msgstr "S'ha fallat la càrrega del document PDF."
 msgid "Failed to load users."
 msgstr "S'ha fallat la càrrega dels usuaris."
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "S'ha fallat l'eliminació del marcador facial"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "S'ha fallat l'eliminació del nom"
 
@@ -1792,7 +1792,7 @@ msgstr "El servidor no s'ha pogut reiniciar"
 msgid "Failed to save changes"
 msgstr "No s'han pogut desar els canvis"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Error en desar el marcador facial"
 
@@ -1961,7 +1961,7 @@ msgstr "Marcs"
 msgid "Full Access"
 msgstr "Accés complet"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Pantalla completa"
 
@@ -2000,17 +2000,17 @@ msgstr "Nom de pila"
 msgid "Global Options"
 msgstr "Opcions globals"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "Ves a la pàgina"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Vés a la pàgina {0}"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "Anar a la pàgina %{n}"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2062,7 +2062,7 @@ msgstr "Fitxers ocults"
 msgid "Hide"
 msgstr "Amagar"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Amaga el peu de foto"
 
@@ -2207,7 +2207,7 @@ msgstr "S'estan indexant fitxers multimèdia i sidecar..."
 msgid "Indexing originals..."
 msgstr "S'estan indexant els originals..."
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Informació"
@@ -2452,7 +2452,7 @@ msgstr "Biblioteca"
 msgid "License"
 msgstr "Llicència"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "M'agrada"
 
@@ -2665,7 +2665,7 @@ msgstr "Monocrom"
 msgid "Month"
 msgstr "Mes"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Més opcions"
 
@@ -2689,7 +2689,7 @@ msgstr "S'estan movent fitxers de %s"
 msgid "Must have at least %{n} characters."
 msgstr "Ha de tenir almenys %{n} caràcters."
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "Silenciar"
 
@@ -2743,14 +2743,18 @@ msgstr "Nova contrasenya"
 msgid "Newest First"
 msgstr "El més nou primer"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "A continuació"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "Pàgina següent"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2881,7 +2885,7 @@ msgstr "Les imatges no fotogràfiques i de baixa qualitat requereixen una revisi
 msgid "None"
 msgstr "Cap"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "No es permet"
@@ -2894,7 +2898,7 @@ msgstr "No disponible en mode públic"
 msgid "Not available in read-only mode"
 msgstr "No disponible en mode només de lectura"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "No trobat"
 
@@ -2902,7 +2906,7 @@ msgstr "No trobat"
 msgid "Not sorted."
 msgstr "No ordenat."
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "No s'admet"
 
@@ -3123,7 +3127,7 @@ msgstr "Contrasenya"
 msgid "Password changed"
 msgstr "S’ha canviat la contrasenya"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Pausa"
 
@@ -3229,7 +3233,7 @@ msgstr "Lloc i hora"
 msgid "Places"
 msgstr "Llocs"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Reprodueix"
 
@@ -3321,14 +3325,18 @@ msgstr "Previsualitza"
 msgid "Preview Images"
 msgstr "Vista prèvia d'imatges"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Anterior"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "Pàgina anterior"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3511,7 +3519,7 @@ msgstr "Elimina"
 msgid "remove failed: unknown album"
 msgstr "ha fallat l'eliminació: àlbum desconegut"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Elimina de l'àlbum"
 
@@ -3548,7 +3556,7 @@ msgstr "S'han eliminat %d fitxers i %d fotos"
 msgid "Repeated"
 msgstr "Repetida"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "La sol·licitud ha fallat; estàs fora de línia?"
 
@@ -3579,12 +3587,12 @@ msgstr "Reinicia"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Restaura"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Restaurat"
 
@@ -3740,7 +3748,7 @@ msgstr "Secret"
 msgid "Security and Access"
 msgstr "Seguretat i Accés"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Selecciona"
 
@@ -3848,7 +3856,7 @@ msgstr "ID de sessió"
 msgid "Sessions"
 msgstr "Sessions"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Estableix com a portada de l'àlbum"
 
@@ -3909,7 +3917,7 @@ msgstr "Mostra totes les etiquetes"
 msgid "Show all new faces"
 msgstr "Mostra totes les cares noves"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Mostra la llegenda"
 
@@ -4013,7 +4021,7 @@ msgstr "URL del lloc"
 msgid "Size"
 msgstr "Mida"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Presentació de diapositives"
 
@@ -4045,7 +4053,7 @@ msgstr "No s'han pogut crear alguns àlbums. Editeu-ne els noms i torneu-ho a pr
 msgid "Some albums could not be updated"
 msgstr "No s'han pogut actualitzar alguns àlbums"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "S'ha produït un error, torna-ho a provar"
 
@@ -4128,7 +4136,7 @@ msgstr "Estat"
 msgid "Stay signed in on this device"
 msgstr "Mantén-te iniciat en aquest dispositiu"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Atura el càsting"
 
@@ -4323,9 +4331,9 @@ msgstr "Per actualitzar, podeu introduir un codi d'activació o fer clic a \"Reg
 msgid "Today"
 msgstr "Avui"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "Canvia les miniatures"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4855,17 +4863,17 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 msgid "Zip created in %d s"
 msgstr "Zip creat en %d s"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "Apropament"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "Allunya"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4904,11 +4912,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Títol"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arxiu"
+
+#~ msgid "Go to page"
+#~ msgstr "Ves a la pàgina"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Anar a la pàgina %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Canvia les miniatures"
+
+#~ msgid "Zoom in"
+#~ msgstr "Apropament"
+
+#~ msgid "Zoom out"
+#~ msgstr "Allunya"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Credencials del client"

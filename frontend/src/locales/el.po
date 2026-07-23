@@ -601,7 +601,7 @@ msgstr "Έγκριση και αποθήκευση αλλαγών"
 msgid "Apps and Devices"
 msgstr "Εφαρμογές και Συσκευές"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Αρχειοθετημένο"
@@ -877,7 +877,7 @@ msgstr "Κάρτες"
 msgid "Carousel slide {0} of {1}"
 msgstr "Καρουσέλ διαφάνεια {0} από {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "Διανομή"
 
@@ -930,7 +930,7 @@ msgstr "Οι αλλαγές δεν ήταν δυνατό να αποθηκευτ
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -993,8 +993,8 @@ msgstr "Πελάτης"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1507,7 +1507,7 @@ msgid "Done."
 msgstr "Έγινε."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1524,7 +1524,7 @@ msgstr "Λήψη απομακρυσμένων αρχείων"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1560,7 +1560,7 @@ msgstr "Όριο Δυναμικού Μεγέθους: %{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1662,7 +1662,7 @@ msgstr "Εισαγάγετε τον κωδικό πρόσβασής σας γι�
 msgid "Entity not found"
 msgstr "Η οντότητα δεν βρέθηκε"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Σφάλμα"
@@ -1757,7 +1757,7 @@ msgstr "Απέτυχε η σύνδεση του λογαριασμού."
 msgid "Failed to create zip file"
 msgstr "Απέτυχε η δημιουργία αρχείου zip"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "Δεν κατέστη δυνατή η φόρτωση του εγγράφου PDF."
 
@@ -1765,11 +1765,11 @@ msgstr "Δεν κατέστη δυνατή η φόρτωση του εγγράφ
 msgid "Failed to load users."
 msgstr "Δεν κατέστη δυνατή η φόρτωση των χρηστών."
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "Απέτυχε να αφαιρέσει τον δείκτη προσώπου"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "Απέτυχε η αφαίρεση ονόματος"
 
@@ -1789,7 +1789,7 @@ msgstr "Αποτυχία επανεκκίνησης του διακομιστή"
 msgid "Failed to save changes"
 msgstr "Αποτυχία αποθήκευσης αλλαγών"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Απέτυχε να σώσει τον δείκτη προσώπου"
 
@@ -1958,7 +1958,7 @@ msgstr "Πλαίσια"
 msgid "Full Access"
 msgstr "Πλήρης Πρόσβαση"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Πλήρης Οθόνη"
 
@@ -1997,17 +1997,17 @@ msgstr "Όνομα"
 msgid "Global Options"
 msgstr "Καθολικές Ρυθμίσεις"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "Μετάβαση στη σελίδα"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Πηγαίνετε στη σελίδα {0}"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "Μετάβαση στη σελίδα %{n}"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2059,7 +2059,7 @@ msgstr "Κρυμμένα αρχεία"
 msgid "Hide"
 msgstr "Απόκρυψη"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Απόκρυψη λεζάντας"
 
@@ -2204,7 +2204,7 @@ msgstr "Δημιουργία ευρετηρίου μέσων και αρχείω
 msgid "Indexing originals..."
 msgstr "Δημιουργία ευρετηρίου για τα πρωτότυπα..."
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Πληροφορίες"
@@ -2449,7 +2449,7 @@ msgstr "Βιβλιοθήκη"
 msgid "License"
 msgstr "Άδεια"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "Αγαπημένο"
 
@@ -2662,7 +2662,7 @@ msgstr "Μονοχρωμία"
 msgid "Month"
 msgstr "Μήνας"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Περισσότερες επιλογές"
 
@@ -2686,7 +2686,7 @@ msgstr "Μετακίνηση αρχείων από %s"
 msgid "Must have at least %{n} characters."
 msgstr "Πρέπει να έχει τουλάχιστον %{n} χαρακτήρες."
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "Σίγαση"
 
@@ -2740,14 +2740,18 @@ msgstr "Νέος Κωδικός Πρόσβασης"
 msgid "Newest First"
 msgstr "Πρώτα τα πιο Πρόσφατα"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "Επόμενο"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "Επόμενη σελίδα"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2878,7 +2882,7 @@ msgstr "Οι μη φωτογραφικές εικόνες και οι εικόν
 msgid "None"
 msgstr "Καθόλου"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Δεν επιτρέπεται"
@@ -2891,7 +2895,7 @@ msgstr "Μη διαθέσιμο κατά τη δημόσια λειτουργί�
 msgid "Not available in read-only mode"
 msgstr "Μη διαθέσιμο στην κατάσταση \"μόνο ανάγνωση\""
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "Δεν βρέθηκε"
 
@@ -2899,7 +2903,7 @@ msgstr "Δεν βρέθηκε"
 msgid "Not sorted."
 msgstr "Δεν έχει ταξινομηθεί."
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "Δεν υποστηρίζεται"
 
@@ -3120,7 +3124,7 @@ msgstr "Κωδικός πρόσβασης"
 msgid "Password changed"
 msgstr "Ο κωδικός πρόσβασης άλλαξε"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Παύση"
 
@@ -3226,7 +3230,7 @@ msgstr "Τόποθεσία & Ώρα"
 msgid "Places"
 msgstr "Τοποθεσίες"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Παίξε"
 
@@ -3318,14 +3322,18 @@ msgstr "Προεπισκόπηση"
 msgid "Preview Images"
 msgstr "Εικόνες Προεπισκόπισης"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Προηγούμενο"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "Προηγούμενη σελίδα"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3508,7 +3516,7 @@ msgstr "Αφαίρεση"
 msgid "remove failed: unknown album"
 msgstr "αποτυχία αφαίρεσης: άγνωστο άλμπουμ"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Αφαιρέση από το άλμπουμ"
 
@@ -3545,7 +3553,7 @@ msgstr "Αφαίρεση %d αρχείων και %d φωτογραφιών"
 msgid "Repeated"
 msgstr "Επανάληψη"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "Το αίτημα απέτυχε - είστε εκτός σύνδεσης;"
 
@@ -3576,12 +3584,12 @@ msgstr "Επανεκκίνηση"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Επαναφορά"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Αποκαταστάθηκε"
 
@@ -3737,7 +3745,7 @@ msgstr "Κωδικός"
 msgid "Security and Access"
 msgstr "Ασφάλεια και Πρόσβαση"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Επιλογή"
 
@@ -3845,7 +3853,7 @@ msgstr "Αναγνωριστικό συνεδρίας"
 msgid "Sessions"
 msgstr "Συνεδρίες"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Ορισμός ως Εξώφυλλο Άλμπουμ"
 
@@ -3906,7 +3914,7 @@ msgstr "Εμφάνιση όλων των ετικετών"
 msgid "Show all new faces"
 msgstr "Εμφάνιση όλων των νέων προσώπων"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Εμφάνιση λεζάντας"
 
@@ -4010,7 +4018,7 @@ msgstr "URL ιστότοπου"
 msgid "Size"
 msgstr "Μέγεθος"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Παρουσίαση"
 
@@ -4042,7 +4050,7 @@ msgstr "Ορισμένα άλμπουμ δεν ήταν δυνατόνα δημ�
 msgid "Some albums could not be updated"
 msgstr "Ορισμένα άλμπουμ δεν ήταν δυνατό να ενημερωθούν"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "Κάτι πήγε στραβά, δοκιμάστε ξανά"
 
@@ -4125,7 +4133,7 @@ msgstr "Κατάσταση"
 msgid "Stay signed in on this device"
 msgstr "Μείνετε συνδεδεμένοι σε αυτή τη συσκευή"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Διακοπή χύτευσης"
 
@@ -4320,9 +4328,9 @@ msgstr "Για να αναβαθμίσετε, μπορείτε είτε να ε�
 msgid "Today"
 msgstr "Σήμερα"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "Εναλλαγή μικρογραφιών"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4852,17 +4860,17 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 msgid "Zip created in %d s"
 msgstr "Το αρχείο zip δημιουργήθηκε σε %d s"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "Μεγέθυνση"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/σμίκρυνση"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "Μικρή κλίμακα"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4901,11 +4909,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Τίτλος"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Αρχείο"
+
+#~ msgid "Go to page"
+#~ msgstr "Μετάβαση στη σελίδα"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Μετάβαση στη σελίδα %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Εναλλαγή μικρογραφιών"
+
+#~ msgid "Zoom in"
+#~ msgstr "Μεγέθυνση"
+
+#~ msgid "Zoom out"
+#~ msgstr "Μικρή κλίμακα"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Διαπιστευτήρια πελάτη"

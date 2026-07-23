@@ -604,7 +604,7 @@ msgstr "Утверди и сохрани изменения"
 msgid "Apps and Devices"
 msgstr "Приложения и устройства"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Заархивировано"
@@ -880,7 +880,7 @@ msgstr "Карточки"
 msgid "Carousel slide {0} of {1}"
 msgstr "Карусельный слайд {0} из {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "В ролях"
 
@@ -933,7 +933,7 @@ msgstr "Изменения не будут сохранены"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -996,8 +996,8 @@ msgstr "Клиент"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1510,7 +1510,7 @@ msgid "Done."
 msgstr "Готово."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1527,7 +1527,7 @@ msgstr "Скачать удалённые файлы"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1563,7 +1563,7 @@ msgstr "Недостигнутое ограничение размера: %{n}px
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1665,7 +1665,7 @@ msgstr "Введите пароль, чтобы подтвердить дейс�
 msgid "Entity not found"
 msgstr "Сущность не найдена"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Ошибка"
@@ -1760,7 +1760,7 @@ msgstr "Не удалось подключить аккаунт."
 msgid "Failed to create zip file"
 msgstr "Не удалось создать zip-файл"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "Не удалось загрузить PDF-документ."
 
@@ -1768,11 +1768,11 @@ msgstr "Не удалось загрузить PDF-документ."
 msgid "Failed to load users."
 msgstr "Не удалось загрузить пользователей."
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "Не удалось удалить маркер для лица"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "Не удалось удалить имя"
 
@@ -1792,7 +1792,7 @@ msgstr "Не удалось перезапустить сервер"
 msgid "Failed to save changes"
 msgstr "Не удалось сохранить изменения"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Не удалось сохранить лицо маркера"
 
@@ -1961,7 +1961,7 @@ msgstr "ფრეიმი"
 msgid "Full Access"
 msgstr "Полный доступ"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Полный экран"
 
@@ -2000,17 +2000,17 @@ msgstr "Имя"
 msgid "Global Options"
 msgstr "Глобальные опции"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "Перейти на страницу"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Переходи на страницу {0}"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "Перейти на страницу %{n}"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2062,7 +2062,7 @@ msgstr "Скрытые файлы"
 msgid "Hide"
 msgstr "Скрыть"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Скрыть капчу"
 
@@ -2207,7 +2207,7 @@ msgstr "Индексирование мультимедийных и сопут�
 msgid "Indexing originals..."
 msgstr "Индексирование Оригиналов..."
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Информация"
@@ -2452,7 +2452,7 @@ msgstr "Библиотека"
 msgid "License"
 msgstr "Лицензия"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "Нравится"
 
@@ -2665,7 +2665,7 @@ msgstr "Монохромные"
 msgid "Month"
 msgstr "Месяц"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Больше вариантов"
 
@@ -2689,7 +2689,7 @@ msgstr "Перемещение файлов из %s"
 msgid "Must have at least %{n} characters."
 msgstr "Должно быть не менее %{n} символов."
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "Отключи звук"
 
@@ -2743,14 +2743,18 @@ msgstr "Новый пароль"
 msgid "Newest First"
 msgstr "Сначала новые"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "Следующее"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "Следующая страница"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2881,7 +2885,7 @@ msgstr "Файлы, не являющиеся фотографиями, или �
 msgid "None"
 msgstr "Ничего"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Не разрешается"
@@ -2894,7 +2898,7 @@ msgstr "Не доступно в публичном режиме"
 msgid "Not available in read-only mode"
 msgstr "Недоступно в режиме только для чтения"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "Не найдено"
 
@@ -2902,7 +2906,7 @@ msgstr "Не найдено"
 msgid "Not sorted."
 msgstr "Не отсортировано."
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "Не поддерживается"
 
@@ -3123,7 +3127,7 @@ msgstr "Пароль"
 msgid "Password changed"
 msgstr "Пароль изменен"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Пауза"
 
@@ -3229,7 +3233,7 @@ msgstr "Место и время"
 msgid "Places"
 msgstr "Места"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Воспроизвести"
 
@@ -3321,14 +3325,18 @@ msgstr "Предпросмотр"
 msgid "Preview Images"
 msgstr "Предварительные изображения"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Предыдущий"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "Предыдущая страница"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3511,7 +3519,7 @@ msgstr "Удалить"
 msgid "remove failed: unknown album"
 msgstr "не могу удалить: неизвестный альбом"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Удалить из альбома"
 
@@ -3548,7 +3556,7 @@ msgstr "Удаление %d файлов и %d фотографий"
 msgid "Repeated"
 msgstr "Повторяющийся"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "Запрос не прошел - вы не в сети?"
 
@@ -3579,12 +3587,12 @@ msgstr "Перезапустить"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Восстановить"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Восстановленный"
 
@@ -3740,7 +3748,7 @@ msgstr "Секрет"
 msgid "Security and Access"
 msgstr "Безопасность и доступ"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Выбрать"
 
@@ -3848,7 +3856,7 @@ msgstr "Идентификатор сессии"
 msgid "Sessions"
 msgstr "Сессии"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Установи в качестве обложки альбома"
 
@@ -3909,7 +3917,7 @@ msgstr "Показать все ярлыки"
 msgid "Show all new faces"
 msgstr "Показать все новые лица"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Показать капчу"
 
@@ -4013,7 +4021,7 @@ msgstr "URL сайта"
 msgid "Size"
 msgstr "Размер"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Слайд-шоу"
 
@@ -4045,7 +4053,7 @@ msgstr "Некоторые альбомы не удалось создать. П
 msgid "Some albums could not be updated"
 msgstr "Некоторые альбомы не удалось обновить"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "Что-то пошло не так, попробуйте еще раз"
 
@@ -4128,7 +4136,7 @@ msgstr "Статус"
 msgid "Stay signed in on this device"
 msgstr "Оставайтесь под своим логином на этом устройстве"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Прекрати бросать"
 
@@ -4323,9 +4331,9 @@ msgstr "Для обновления вы можете ввести код акт
 msgid "Today"
 msgstr "Сегодня"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "Показать/скрыть миниатюры"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4855,17 +4863,17 @@ msgstr "Ваша библиотека постоянно анализирует�
 msgid "Zip created in %d s"
 msgstr "Zip архив создан за %d с"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "Увеличить"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "Уменьшить масштаб"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4904,11 +4912,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Название"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Архивировать"
+
+#~ msgid "Go to page"
+#~ msgstr "Перейти на страницу"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Перейти на страницу %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Показать/скрыть миниатюры"
+
+#~ msgid "Zoom in"
+#~ msgstr "Увеличить"
+
+#~ msgid "Zoom out"
+#~ msgstr "Уменьшить масштаб"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Учетные данные клиента"

@@ -604,7 +604,7 @@ msgstr "परिवर्तनों को स्वीकृत करें
 msgid "Apps and Devices"
 msgstr "ऐप्स और डिवाइस"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "संग्रहीत"
@@ -880,7 +880,7 @@ msgstr "पत्ते"
 msgid "Carousel slide {0} of {1}"
 msgstr "{1} में से {0} कैरोसेल स्लाइड"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "कलाकार"
 
@@ -933,7 +933,7 @@ msgstr "परिवर्तन सहेजा नहीं जा सका"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -996,8 +996,8 @@ msgstr "ग्राहक"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1510,7 +1510,7 @@ msgid "Done."
 msgstr "किया हुआ |"
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1527,7 +1527,7 @@ msgstr "दूरस्थ फ़ाइलें डाउनलोड करे
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1563,7 +1563,7 @@ msgstr "बिना आकार की सीमा: %{n} px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1665,7 +1665,7 @@ msgstr "कार्रवाई की पुष्टि करने और �
 msgid "Entity not found"
 msgstr "इकाई नहीं मिली"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "त्रुटि"
@@ -1760,7 +1760,7 @@ msgstr "खाता कनेक्ट करने में विफल।"
 msgid "Failed to create zip file"
 msgstr "ज़िप फ़ाइल बनाने में विफल"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "पीडीएफ दस्तावेज़ लोड करने में असफल रहा।"
 
@@ -1768,11 +1768,11 @@ msgstr "पीडीएफ दस्तावेज़ लोड करने �
 msgid "Failed to load users."
 msgstr "उपयोगकर्ताओं को लोड करने में विफल।"
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "चेहरा मार्कर हटाने में असफल"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "नाम हटाने में असफल"
 
@@ -1792,7 +1792,7 @@ msgstr "सर्वर को पुनः आरंभ करने में 
 msgid "Failed to save changes"
 msgstr "परिवर्तन सहेजने में विफल"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "चेहरा मार्कर सहेजने में विफल"
 
@@ -1961,7 +1961,7 @@ msgstr "फ्रेम्स"
 msgid "Full Access"
 msgstr "पूर्ण पहुँच"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "पूर्ण स्क्रीन"
 
@@ -2000,17 +2000,17 @@ msgstr "प्रदत्त नाम"
 msgid "Global Options"
 msgstr "वैश्विक विकल्प"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "पृष्ठ पर जाएँ"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "पृष्ठ {0} पर जाएं"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "पृष्ठ %{n} पर जाएँ"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2062,7 +2062,7 @@ msgstr "छिपी हुई फाइलें"
 msgid "Hide"
 msgstr "छिपाना"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "कैप्शन छिपाएँ"
 
@@ -2207,7 +2207,7 @@ msgstr "मीडिया और साइडकार फ़ाइलों �
 msgid "Indexing originals..."
 msgstr "अनुक्रमण मूल ..।"
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "जानकारी"
@@ -2452,7 +2452,7 @@ msgstr "पुस्तकालय"
 msgid "License"
 msgstr "लाइसेंस"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "पसंद"
 
@@ -2665,7 +2665,7 @@ msgstr "एक रंग का"
 msgid "Month"
 msgstr "महीना"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "अधिक विकल्प"
 
@@ -2689,7 +2689,7 @@ msgstr "%s से फाइल चल रही है"
 msgid "Must have at least %{n} characters."
 msgstr "कम से कम %{n} अक्षर होने चाहिए।"
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "आवाज़ बंद करना"
 
@@ -2743,14 +2743,18 @@ msgstr "नया पासवर्ड"
 msgid "Newest First"
 msgstr "नवीनतम पहले"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "अगला"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "अगला पृष्ठ"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2881,7 +2885,7 @@ msgstr "गैर-फोटोग्राफिक और निम्न-ग�
 msgid "None"
 msgstr "कोई नहीं"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "अनुमति नहीं"
@@ -2894,7 +2898,7 @@ msgstr "सार्वजनिक मोड में उपलब्ध न�
 msgid "Not available in read-only mode"
 msgstr "रीड ओनली मोड में उपलब्ध नहीं है"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "नहीं मिला"
 
@@ -2902,7 +2906,7 @@ msgstr "नहीं मिला"
 msgid "Not sorted."
 msgstr "क्रमबद्ध नहीं।"
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "समर्थित नहीं"
 
@@ -3123,7 +3127,7 @@ msgstr "कुंजिका"
 msgid "Password changed"
 msgstr "पासवर्ड बदला गया"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "रुकें"
 
@@ -3229,7 +3233,7 @@ msgstr "स्थान और समय"
 msgid "Places"
 msgstr "स्थान"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "खेल"
 
@@ -3321,14 +3325,18 @@ msgstr "पूर्वावलोकन"
 msgid "Preview Images"
 msgstr "छवियों का पूर्वावलोकन करें"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "पहले का"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "पिछला पृष्ठ"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3511,7 +3519,7 @@ msgstr "हटाना"
 msgid "remove failed: unknown album"
 msgstr "निकालें विफल: अज्ञात एल्बम"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "एल्बम से निकालें"
 
@@ -3548,7 +3556,7 @@ msgstr "%d फ़ाइलों और %d फ़ोटो को हटा द�
 msgid "Repeated"
 msgstr "दोहराया गया"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "अनुरोध विफल - क्या आप ऑफ़लाइन हैं?"
 
@@ -3579,12 +3587,12 @@ msgstr "पुनः आरंभ करें"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "पुनर्स्थापित"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "पुनः स्थापित किए गए"
 
@@ -3740,7 +3748,7 @@ msgstr "गुप्त"
 msgid "Security and Access"
 msgstr "सुरक्षा और पहुंच"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "चुनें"
 
@@ -3848,7 +3856,7 @@ msgstr "सत्र आईडी"
 msgid "Sessions"
 msgstr "सत्र"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "एल्बम कवर के रूप में सेट करें"
 
@@ -3909,7 +3917,7 @@ msgstr "सभी लेबल दिखाएं"
 msgid "Show all new faces"
 msgstr "सभी नए चेहरे दिखाएं"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "कैप्शन दिखाएँ"
 
@@ -4013,7 +4021,7 @@ msgstr "साइट URL"
 msgid "Size"
 msgstr "आकार"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "स्लाइड शो"
 
@@ -4045,7 +4053,7 @@ msgstr "कुछ एल्बम नहीं बनाए जा सके। 
 msgid "Some albums could not be updated"
 msgstr "कुछ एल्बम अपडेट नहीं किए जा सके"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "कुछ गलत हुआ है, दोबारा कोशिश करें"
 
@@ -4128,7 +4136,7 @@ msgstr "स्थिति"
 msgid "Stay signed in on this device"
 msgstr "इस डिवाइस पर साइन इन रहें"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "कास्ट करना बंद करो"
 
@@ -4323,9 +4331,9 @@ msgstr "अपग्रेड करने के लिए, आप या त�
 msgid "Today"
 msgstr "आज"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "थंबनेल चालू/बंद करें"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4855,17 +4863,17 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 msgid "Zip created in %d s"
 msgstr "%d s में बनाया गया ज़िप"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "ज़ूम इन"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "आउट करें"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4904,11 +4912,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "शीर्षक"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "पुरालेख"
+
+#~ msgid "Go to page"
+#~ msgstr "पृष्ठ पर जाएँ"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "पृष्ठ %{n} पर जाएँ"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "थंबनेल चालू/बंद करें"
+
+#~ msgid "Zoom in"
+#~ msgstr "ज़ूम इन"
+
+#~ msgid "Zoom out"
+#~ msgstr "आउट करें"
 
 #~ msgid "Client Credentials"
 #~ msgstr "ग्राहक क्रेडेंशियल"

@@ -604,7 +604,7 @@ msgstr "Aprobați și salvați modificările"
 msgid "Apps and Devices"
 msgstr "Aplicații și dispozitive"
 
-#: src/component/lightbox.vue:3262 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Arhivat"
@@ -880,7 +880,7 @@ msgstr "Cărți"
 msgid "Carousel slide {0} of {1}"
 msgstr "Diapozitiv carusel {0} de {1}"
 
-#: src/component/lightbox.vue:138 src/component/lightbox.vue:139
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "Distribuție"
 
@@ -933,7 +933,7 @@ msgstr "Modificările nu au putut fi salvate"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3214
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
@@ -996,8 +996,8 @@ msgstr "Client"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1552
-#: src/component/lightbox.vue:1553 src/component/lightbox.vue:552
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1510,7 +1510,7 @@ msgid "Done."
 msgstr "S-a făcut."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1779
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1527,7 +1527,7 @@ msgstr "Descărcarea fișierelor de la distanță"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3302 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1563,7 +1563,7 @@ msgstr "Limita dimensiunii dinamice: %{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1683 src/component/lightbox.vue:1684
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1665,7 +1665,7 @@ msgstr "Introduceți parola pentru a confirma acțiunea și continuați:"
 msgid "Entity not found"
 msgstr "Entitatea nu a fost găsită"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:556
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "Eroare"
@@ -1760,7 +1760,7 @@ msgstr "A eșuat conectarea contului."
 msgid "Failed to create zip file"
 msgstr "Nu a reușit să creeze fișierul zip"
 
-#: src/component/pdf-viewer.vue:218
+#: src/component/pdf-viewer.vue:298
 msgid "Failed to load the PDF document."
 msgstr "Nu s-a reușit încărcarea documentului PDF."
 
@@ -1768,11 +1768,11 @@ msgstr "Nu s-a reușit încărcarea documentului PDF."
 msgid "Failed to load users."
 msgstr "Nu s-au putut încărca utilizatorii."
 
-#: src/component/lightbox.vue:2286
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "Nu a reușit să îndepărteze marcajul facial"
 
-#: src/component/lightbox.vue:2219
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "Nu s-a reușit eliminarea numelui"
 
@@ -1792,7 +1792,7 @@ msgstr "Nu s-a reușit repornirea serverului"
 msgid "Failed to save changes"
 msgstr "A eșuat salvarea modificărilor"
 
-#: src/component/lightbox.vue:2191
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Nu a reușit să salveze fața marcatorului"
 
@@ -1961,7 +1961,7 @@ msgstr "Cadre"
 msgid "Full Access"
 msgstr "Acces complet"
 
-#: src/component/lightbox.vue:1629 src/component/lightbox.vue:1630
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Ecran complet"
 
@@ -2000,17 +2000,17 @@ msgstr "Numele dat"
 msgid "Global Options"
 msgstr "Opțiuni globale"
 
-#: src/component/pdf-viewer.vue:69
-msgid "Go to page"
-msgstr "Mergi la pagină"
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr ""
 
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Mergeți la pagina {0}"
 
 #: src/component/pdf-viewer.vue:22
-msgid "Go to page %{n}"
-msgstr "Mergi la pagina %{n}"
+msgid "Go to Page %{n}"
+msgstr ""
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2062,7 +2062,7 @@ msgstr "Fișiere ascunse"
 msgid "Hide"
 msgstr "Ascundeți"
 
-#: src/component/lightbox.vue:1801
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Hide Caption"
 
@@ -2207,7 +2207,7 @@ msgstr "Indexarea fișierelor media și a fișierelor sidecar…"
 msgid "Indexing originals..."
 msgstr "Indexarea originalelor..."
 
-#: src/component/lightbox.vue:1577 src/component/lightbox.vue:1578
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Informații"
@@ -2452,7 +2452,7 @@ msgstr "Bibliotecă"
 msgid "License"
 msgstr "Licență"
 
-#: src/component/lightbox.vue:1647 src/component/lightbox.vue:1648
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "Ca"
 
@@ -2665,7 +2665,7 @@ msgstr "Monocromie"
 msgid "Month"
 msgstr "Luna"
 
-#: src/component/lightbox.vue:1702
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Mai multe opțiuni"
 
@@ -2689,7 +2689,7 @@ msgstr "Mutarea fișierelor din %s"
 msgid "Must have at least %{n} characters."
 msgstr "Trebuie să aibă cel puțin %{n} caractere."
 
-#: src/component/lightbox.vue:1596 src/component/lightbox.vue:1597
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "Mută"
 
@@ -2743,14 +2743,18 @@ msgstr "Parolă nouă"
 msgid "Newest First"
 msgstr "Cel mai nou Mai întâi"
 
-#: src/component/lightbox.vue:555 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "Următorul"
 
-#: src/component/pdf-viewer.vue:81 src/component/pdf-viewer.vue:82
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "Pagina următoare"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr ""
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2881,7 +2885,7 @@ msgstr "Imaginile nefotografice și de slabă calitate necesită o revizuire în
 msgid "None"
 msgstr "Nici unul"
 
-#: src/component/lightbox.vue:1147 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Nu este permis"
@@ -2894,7 +2898,7 @@ msgstr "Nu este disponibil în modul public"
 msgid "Not available in read-only mode"
 msgstr "Nu este disponibil în modul doar pentru citire"
 
-#: src/component/lightbox.vue:1144 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "Nu a fost găsit"
 
@@ -2902,7 +2906,7 @@ msgstr "Nu a fost găsit"
 msgid "Not sorted."
 msgstr "Nu sortate."
 
-#: src/component/lightbox.vue:1141 src/component/lightbox.vue:1255
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "Nu este acceptat"
 
@@ -3123,7 +3127,7 @@ msgstr "Parola"
 msgid "Password changed"
 msgstr "Parola a fost schimbată"
 
-#: src/component/lightbox.vue:81 src/component/lightbox.vue:82
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Pauză"
 
@@ -3229,7 +3233,7 @@ msgstr "Locul și Ora"
 msgid "Places"
 msgstr "Locuri"
 
-#: src/component/lightbox.vue:92 src/component/lightbox.vue:93
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Start"
 
@@ -3321,14 +3325,18 @@ msgstr "Previzualizare"
 msgid "Preview Images"
 msgstr "Imagini de previzualizare"
 
-#: src/component/lightbox.vue:554 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Articolul precedent"
 
-#: src/component/pdf-viewer.vue:59 src/component/pdf-viewer.vue:60
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
 msgstr "Pagina anterioară"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
+msgstr ""
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -3511,7 +3519,7 @@ msgstr "Eliminați"
 msgid "remove failed: unknown album"
 msgstr "eliminarea eșuată: album necunoscut"
 
-#: src/component/lightbox.vue:1734 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Eliminați din album"
 
@@ -3548,7 +3556,7 @@ msgstr "Sau eliminat %d fișiere și %d fotografii"
 msgid "Repeated"
 msgstr "Repetat"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1251
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "Cerere eșuată - sunteți offline?"
 
@@ -3579,12 +3587,12 @@ msgstr "Reporniți"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1764
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Restaurați"
 
-#: src/component/lightbox.vue:3281
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Restaurat"
 
@@ -3740,7 +3748,7 @@ msgstr "Secret"
 msgid "Security and Access"
 msgstr "Securitate și acces"
 
-#: src/component/lightbox.vue:1665 src/component/lightbox.vue:1666
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Selectați"
 
@@ -3848,7 +3856,7 @@ msgstr "ID-ul sesiunii"
 msgid "Sessions"
 msgstr "Sesiuni"
 
-#: src/component/lightbox.vue:1724
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Setați ca copertă de album"
 
@@ -3909,7 +3917,7 @@ msgstr "Afișați toate etichetele"
 msgid "Show all new faces"
 msgstr "Afișați toate fețele noi"
 
-#: src/component/lightbox.vue:1790
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Afișați subtitrarea"
 
@@ -4013,7 +4021,7 @@ msgstr "URL-ul site-ului"
 msgid "Size"
 msgstr "Dimensiune"
 
-#: src/component/lightbox.vue:1612 src/component/lightbox.vue:1613
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Prezentare de diapozitive"
 
@@ -4045,7 +4053,7 @@ msgstr "Unele albume nu au putut fi create. Vă rugăm să editați numele și s
 msgid "Some albums could not be updated"
 msgstr "Unele albume nu au putut fi actualizate"
 
-#: src/component/lightbox.vue:1248 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "Ceva nu a mers bine, încercați din nou"
 
@@ -4128,7 +4136,7 @@ msgstr "Stare"
 msgid "Stay signed in on this device"
 msgstr "Rămâneți conectat pe acest dispozitiv"
 
-#: src/component/lightbox.vue:126 src/component/lightbox.vue:127
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Opriți turnarea"
 
@@ -4323,9 +4331,9 @@ msgstr "Pentru a face upgrade, puteți introduce un cod de activare sau puteți 
 msgid "Today"
 msgstr "Astăzi"
 
-#: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
-msgid "Toggle thumbnails"
-msgstr "Comută miniaturile"
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr ""
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4855,17 +4863,17 @@ msgstr "Biblioteca dvs. este analizată în permanență pentru a crea automat a
 msgid "Zip created in %d s"
 msgstr "Fișierul Zip creat în %d s"
 
-#: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
-msgid "Zoom in"
-msgstr "Mărire"
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr ""
 
-#: src/component/lightbox.vue:553
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
 
-#: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
-msgid "Zoom out"
-msgstr "Mărire înapoi"
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr ""
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4904,11 +4912,26 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Titlu"
 
-#: src/component/lightbox.vue:1749 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiva"
+
+#~ msgid "Go to page"
+#~ msgstr "Mergi la pagină"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Mergi la pagina %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Comută miniaturile"
+
+#~ msgid "Zoom in"
+#~ msgstr "Mărire"
+
+#~ msgid "Zoom out"
+#~ msgstr "Mărire înapoi"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Acreditarea clienților"
