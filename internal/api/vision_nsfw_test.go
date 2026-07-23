@@ -140,6 +140,17 @@ func TestPostVisionNsfw(t *testing.T) {
 		assert.False(t, apiResponse.HasResult())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
+	t.Run("InvalidReference", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		PostVisionNsfw(router)
+
+		// A raw local path is not an https/data URL and must be rejected with 400,
+		// consistent with the labels endpoint, rather than a 200 with an empty result.
+		body := `{"images":["/photoprism/originals/pp-july/peach_pi-1280x720.jpg"]}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/vision/nsfw", body)
+
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
 	t.Run("NoBody", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PostVisionNsfw(router)

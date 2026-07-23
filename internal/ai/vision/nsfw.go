@@ -84,8 +84,12 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 				}
 
 				if err != nil {
-					// Non-JPEG uploads return "not a jpeg file" by design; real
-					// model failures still surface via len(labels) < 1 at the caller.
+					// Remote (API) references fail closed so the handler returns 400 like
+					// labels; local files stay tolerant so one non-JPEG cannot abort a batch.
+					if mediaSrc == media.SrcRemote {
+						return result, err
+					}
+
 					log.Debugf("nsfw: %s", err)
 				}
 

@@ -19,9 +19,9 @@ import (
 //	@Tags		Vision
 //	@Accept		json
 //	@Produce	json
-//	@Success	200			{object}	vision.ApiResponse
-//	@Failure	401,403,429	{object}	i18n.Response
-//	@Param		images		body		vision.ApiRequest	true	"list of image file urls"
+//	@Success	200					{object}	vision.ApiResponse
+//	@Failure	400,401,403,413,429	{object}	i18n.Response
+//	@Param		images				body		vision.ApiRequest	true	"list of image file urls"
 //	@Router		/api/v1/vision/nsfw [post]
 func PostVisionNsfw(router *gin.RouterGroup) {
 	router.POST("/vision/nsfw", func(c *gin.Context) {
