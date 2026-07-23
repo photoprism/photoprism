@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-23 03:08+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-07-23 10:29+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
@@ -2001,7 +2001,7 @@ msgstr "Opcje globalne"
 
 #: src/component/pdf-viewer.vue:75
 msgid "Go to Page"
-msgstr ""
+msgstr "Przejdź do strony"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2009,7 +2009,7 @@ msgstr "Przejdź do strony {0}."
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to Page %{n}"
-msgstr ""
+msgstr "Przejdź do strony %{n}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2753,7 +2753,7 @@ msgstr "Następna strona"
 
 #: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
 msgid "Next Page"
-msgstr ""
+msgstr "Następna strona"
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -3335,7 +3335,7 @@ msgstr "Poprzednia strona"
 
 #: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
 msgid "Previous Page"
-msgstr ""
+msgstr "Poprzednia strona"
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -4332,7 +4332,7 @@ msgstr "Dzisiaj"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
-msgstr ""
+msgstr "Przełącz miniaturki"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4864,7 +4864,7 @@ msgstr "Zip utworzony w %d s"
 
 #: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
 msgid "Zoom In"
-msgstr ""
+msgstr "Powiększ"
 
 #: src/component/lightbox.vue:558
 msgid "Zoom in/out"
@@ -4872,7 +4872,7 @@ msgstr "Powiększ / Pomniejsz"
 
 #: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
 msgid "Zoom Out"
-msgstr ""
+msgstr "Powiększenie"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33

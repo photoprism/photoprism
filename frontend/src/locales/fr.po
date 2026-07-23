@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-23 05:39+0000\n"
-"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"PO-Revision-Date: 2026-07-23 10:29+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -2006,7 +2006,7 @@ msgstr "Options globales"
 
 #: src/component/pdf-viewer.vue:75
 msgid "Go to Page"
-msgstr ""
+msgstr "Aller à la page"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2014,7 +2014,7 @@ msgstr "Aller à la page {0}"
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to Page %{n}"
-msgstr ""
+msgstr "Aller à la page %{n}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2131,7 +2131,7 @@ msgstr "Importation terminée en %d s"
 
 #: src/page/settings/advanced.vue:142
 msgid "Import Faces from XMP"
-msgstr "Importer des visages depuis un fichier XMP"
+msgstr "Importer des visages à partir des données XMP"
 
 #: src/page/library/import.vue:205
 msgid "Import failed"
@@ -2758,7 +2758,7 @@ msgstr "Page suivante"
 
 #: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
 msgid "Next Page"
-msgstr ""
+msgstr "Page suivante"
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -3340,7 +3340,7 @@ msgstr "Page précédente"
 
 #: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
 msgid "Previous Page"
-msgstr ""
+msgstr "Page précédente"
 
 #: src/locales.js:259
 msgid "Previous visual"
@@ -4338,7 +4338,7 @@ msgstr "Aujourd'hui"
 
 #: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
 msgid "Toggle Thumbnails"
-msgstr ""
+msgstr "Afficher/masquer les vignettes"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4870,7 +4870,7 @@ msgstr "Archive zip créée en %d s"
 
 #: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
 msgid "Zoom In"
-msgstr ""
+msgstr "Agrandir"
 
 #: src/component/lightbox.vue:558
 msgid "Zoom in/out"
@@ -4878,7 +4878,7 @@ msgstr "Agrandir/Dézoomer"
 
 #: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
 msgid "Zoom Out"
-msgstr ""
+msgstr "Zoomer en arrière"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
