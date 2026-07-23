@@ -54,6 +54,10 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			aclResource = acl.ResourceCalendar
 		case entity.AlbumState:
 			aclResource = acl.ResourcePlaces
+		default:
+			// Default to the general albums resource when no album type is given (e.g. a
+			// lookup by UID), so roles with album access are not denied via ResourceDefault.
+			aclResource = acl.ResourceAlbums
 		}
 
 		// Check user permissions.

@@ -54,6 +54,16 @@ func TestUserAlbums(t *testing.T) {
 
 		assert.Equal(t, 0, len(result))
 	})
+	t.Run("SearchByUidWithoutType", func(t *testing.T) {
+		// Regression for the share-link "Permission denied" error: a search without an album
+		// type (e.g. the dialog's lookup by UID) must not be denied for a role that has album
+		// access. Previously the empty type fell through to ResourceDefault, which only grants
+		// admins, so any non-admin role received "Permission denied".
+		query := form.SearchAlbums{UID: "as6sg6bxpogaaba8", Count: 1}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("visitor"))
+
+		assert.NoError(t, err)
+	})
 }
 
 func TestAlbums(t *testing.T) {
