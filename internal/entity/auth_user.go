@@ -1337,13 +1337,27 @@ func (m *User) RegenerateTokens() error {
 		return err
 	}
 
-	// Drop the replaced tokens from the in-memory lookup cache so they stop resolving.
+	// Drop the replaced tokens from the in-memory cache and rewrite the denormalized copy
+	// on the user's sessions that still hold it, so a surviving session (e.g. an app
+	// password) cannot re-register the revoked token from its stale column on reload.
 	if oldPreviewToken != "" && oldPreviewToken != m.PreviewToken {
 		PreviewToken.UnsetValue(oldPreviewToken)
+
+		if err := Db().Model(&Session{}).
+			Where("user_uid = ? AND preview_token = ?", m.UserUID, oldPreviewToken).
+			Update("preview_token", m.PreviewToken).Error; err != nil {
+			event.AuditWarn([]string{"user %s", "failed to update session preview token", status.Error(err)}, m.RefID)
+		}
 	}
 
 	if oldDownloadToken != "" && oldDownloadToken != m.DownloadToken {
 		DownloadToken.UnsetValue(oldDownloadToken)
+
+		if err := Db().Model(&Session{}).
+			Where("user_uid = ? AND download_token = ?", m.UserUID, oldDownloadToken).
+			Update("download_token", m.DownloadToken).Error; err != nil {
+			event.AuditWarn([]string{"user %s", "failed to update session download token", status.Error(err)}, m.RefID)
+		}
 	}
 
 	return nil
