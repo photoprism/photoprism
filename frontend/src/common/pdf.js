@@ -112,18 +112,30 @@ export async function loadPdfDocument(src) {
 // handle lets the viewer abort an in-flight render on fast scrolling or zooming,
 // which pdfjs requires before a new render targets the same canvas. Reused for
 // both full pages and the thumbnail strip (only the scale and canvas differ).
-export function renderPdfPage(pdf, pageNumber, canvas, scale) {
+//
+// When dpr is passed (full pages), the backing store is rendered at scale*dpr for
+// crisp output on high-density screens while the CSS display size is pinned to the
+// logical scale — so zoom visibly enlarges the page instead of only sharpening it.
+// Thumbnails omit dpr and keep their stylesheet sizing (width:100%).
+export function renderPdfPage(pdf, pageNumber, canvas, scale, dpr) {
   let task = null;
   let canceled = false;
+  const withDisplaySize = typeof dpr === "number" && dpr > 0;
+  const renderScale = withDisplaySize ? scale * dpr : scale;
 
   const promise = pdf.getPage(pageNumber).then((page) => {
     if (canceled || !canvas) {
       return undefined;
     }
 
-    const viewport = page.getViewport({ scale });
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    const viewport = page.getViewport({ scale: renderScale });
+    canvas.width = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
+
+    if (withDisplaySize) {
+      canvas.style.width = `${Math.round(viewport.width / dpr)}px`;
+      canvas.style.height = `${Math.round(viewport.height / dpr)}px`;
+    }
 
     task = page.render({ canvasContext: canvas.getContext("2d"), viewport });
 
@@ -140,6 +152,16 @@ export function renderPdfPage(pdf, pageNumber, canvas, scale) {
       }
     },
   };
+}
+
+// getPdfPageSize returns a page's natural width and height in CSS pixels (its
+// viewport at scale 1). The viewer divides the available column width by this
+// width to derive the fit-to-width scale that zoom then multiplies.
+export async function getPdfPageSize(pdf, pageNumber) {
+  const page = await pdf.getPage(pageNumber);
+  const { width, height } = page.getViewport({ scale: 1 });
+
+  return { width, height };
 }
 
 // destroyPdfDocument releases the resources held by a loaded document. Safe to

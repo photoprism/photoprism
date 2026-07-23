@@ -9,6 +9,7 @@ const h = vi.hoisted(() => {
     pdf,
     loadPdfDocument: vi.fn(),
     renderPdfPage: vi.fn(),
+    getPdfPageSize: vi.fn(),
     destroyPdfDocument: vi.fn(),
     isRenderCancelled: vi.fn(() => false),
   };
@@ -17,6 +18,7 @@ const h = vi.hoisted(() => {
 vi.mock("common/pdf", () => ({
   loadPdfDocument: h.loadPdfDocument,
   renderPdfPage: h.renderPdfPage,
+  getPdfPageSize: h.getPdfPageSize,
   destroyPdfDocument: h.destroyPdfDocument,
   isRenderCancelled: h.isRenderCancelled,
 }));
@@ -53,6 +55,7 @@ describe("component/pdf-viewer", () => {
     };
     h.loadPdfDocument.mockResolvedValue({ pdf: h.pdf, pageCount: 3 });
     h.renderPdfPage.mockImplementation(() => ({ promise: Promise.resolve(), cancel: vi.fn() }));
+    h.getPdfPageSize.mockResolvedValue({ width: 600, height: 800 });
     h.isRenderCancelled.mockReturnValue(false);
   });
   it("loads the document and renders the page-count placeholders and thumbnails", async () => {
@@ -63,7 +66,7 @@ describe("component/pdf-viewer", () => {
     expect(wrapper.findAll(".p-pdf-viewer__thumb")).toHaveLength(3);
     expect(wrapper.find(".p-pdf-viewer__pageinput").element.value).toBe("1");
   });
-  it("navigates with next, previous, and jump-to-page, clamped to bounds", async () => {
+  it("steps and jumps between pages, clamped to bounds", async () => {
     const wrapper = await mountViewer();
     wrapper.vm.nextPage();
     expect(wrapper.vm.currentPage).toBe(2);
@@ -123,12 +126,92 @@ describe("component/pdf-viewer", () => {
     const before = h.renderPdfPage.mock.calls.length;
     wrapper.vm.zoomIn();
     await flushPromises();
-    expect(wrapper.vm.scale).toBeGreaterThan(1);
+    expect(wrapper.vm.zoom).toBeGreaterThan(1);
     expect(h.renderPdfPage.mock.calls.length).toBeGreaterThan(before);
-    wrapper.vm.setScale(99);
-    expect(wrapper.vm.scale).toBe(wrapper.vm.maxScale);
-    wrapper.vm.setScale(0);
-    expect(wrapper.vm.scale).toBe(wrapper.vm.minScale);
+    // Full pages render with a device-pixel-ratio argument so the backing store is
+    // sized for crisp output while the CSS display size tracks the zoom.
+    const lastCall = h.renderPdfPage.mock.calls.at(-1);
+    expect(typeof lastCall[4]).toBe("number");
+    wrapper.vm.setZoom(99);
+    expect(wrapper.vm.zoom).toBe(wrapper.vm.maxZoom);
+    wrapper.vm.setZoom(0);
+    expect(wrapper.vm.zoom).toBe(wrapper.vm.minZoom);
+  });
+  it("gates the overlay media-navigation arrows by hasPrev/hasNext", async () => {
+    const wrapper = await mountViewer({ hasPrev: true, hasNext: false });
+    const prev = wrapper.find(".p-pdf-viewer__nav--prev");
+    expect(prev.exists()).toBe(true);
+    expect(wrapper.find(".p-pdf-viewer__nav--next").exists()).toBe(false);
+    await prev.trigger("click");
+    expect(wrapper.emitted("media-prev")).toBeTruthy();
+  });
+  it("switches documents on an inward edge-swipe within the bounds", async () => {
+    window.innerWidth = 400;
+    const wrapper = await mountViewer({ hasPrev: true, hasNext: true });
+    const pages = wrapper.find(".p-pdf-viewer__pages");
+    // Swipe inward from the left edge → previous document.
+    await pages.trigger("touchstart", { touches: [{ clientX: 8, clientY: 200 }] });
+    await pages.trigger("touchmove", { touches: [{ clientX: 90, clientY: 205 }] });
+    await pages.trigger("touchend", { changedTouches: [{ clientX: 90, clientY: 205 }] });
+    expect(wrapper.emitted("media-prev")).toBeTruthy();
+    // A short swipe from the center does not navigate (it scrolls the page).
+    await pages.trigger("touchstart", { touches: [{ clientX: 200, clientY: 200 }] });
+    await pages.trigger("touchmove", { touches: [{ clientX: 260, clientY: 205 }] });
+    await pages.trigger("touchend", { changedTouches: [{ clientX: 260, clientY: 205 }] });
+    expect(wrapper.emitted("media-next")).toBeFalsy();
+  });
+  it("derives the initial fit-to-page zoom clamped to fit-width", async () => {
+    const wrapper = await mountViewer();
+    // Portrait page taller than the viewport (wide screen) → fit-to-page, below fit-width.
+    expect(wrapper.vm.fitPageZoom({ width: 600, height: 900 }, 800, 500)).toBe(0.42);
+    // Short/landscape page that already fits → clamped to fit-width 1.0.
+    expect(wrapper.vm.fitPageZoom({ width: 900, height: 400 }, 800, 500)).toBe(1);
+    // Narrow/portrait screen (mobile) → the page fits at fit-width, so 1.0.
+    expect(wrapper.vm.fitPageZoom({ width: 600, height: 900 }, 360, 800)).toBe(1);
+    // Extremely tall page → clamped up to the minimum zoom, not below.
+    expect(wrapper.vm.fitPageZoom({ width: 600, height: 3000 }, 800, 300)).toBe(wrapper.vm.minZoom);
+    // Unmeasurable viewport → fit-to-width fallback.
+    expect(wrapper.vm.fitPageZoom({ width: 600, height: 900 }, 0, 0)).toBe(1);
+  });
+  it("derives a clamped zoom from a pinch gesture", async () => {
+    const wrapper = await mountViewer();
+    expect(wrapper.vm.pinchZoomFor(1, 100, 200)).toBe(2);
+    expect(wrapper.vm.pinchZoomFor(2, 100, 400)).toBe(wrapper.vm.maxZoom);
+    expect(wrapper.vm.pinchZoomFor(1, 0, 200)).toBe(1);
+  });
+  it("pans the page column with a mouse drag when it overflows", async () => {
+    const wrapper = await mountViewer();
+    const el = wrapper.vm.$refs.scroll;
+    Object.defineProperty(el, "scrollWidth", { configurable: true, value: 2000 });
+    Object.defineProperty(el, "clientWidth", { configurable: true, value: 400 });
+    Object.defineProperty(el, "scrollHeight", { configurable: true, value: 2000 });
+    Object.defineProperty(el, "clientHeight", { configurable: true, value: 400 });
+    let left = 100;
+    let top = 100;
+    Object.defineProperty(el, "scrollLeft", {
+      configurable: true,
+      get: () => left,
+      set: (v) => {
+        left = v;
+      },
+    });
+    Object.defineProperty(el, "scrollTop", {
+      configurable: true,
+      get: () => top,
+      set: (v) => {
+        top = v;
+      },
+    });
+    wrapper.vm.onPagesMouseDown({ button: 0, clientX: 50, clientY: 50, preventDefault: () => {} });
+    expect(el.classList.contains("is-panning")).toBe(true);
+    wrapper.vm.onPanMove({ clientX: 30, clientY: 20 });
+    expect(left).toBe(120);
+    expect(top).toBe(130);
+    wrapper.vm.onPanEnd();
+    expect(el.classList.contains("is-panning")).toBe(false);
+    // A right-click or a non-overflowing column does not start a pan.
+    wrapper.vm.onPagesMouseDown({ button: 2, clientX: 0, clientY: 0, preventDefault: () => {} });
+    expect(el.classList.contains("is-panning")).toBe(false);
   });
   it("jumps to a page when its thumbnail is clicked", async () => {
     const wrapper = await mountViewer();

@@ -38,7 +38,6 @@
           'is-fullscreen': isFullscreen(),
           'is-zoomable': isZoomable,
           'is-pdf': isPdfSlide,
-          'is-pdf-thumbs': isPdfSlide && pdfThumbsVisible,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
           'is-video': model?.Type === 'video',
@@ -66,9 +65,11 @@
           class="p-lightbox__pdf"
           :src="pdfSrc"
           :pages="model.Pages || 0"
+          :has-prev="pdfHasPrev"
+          :has-next="pdfHasNext"
+          :controls-visible="controlsShown !== 0"
           @media-prev="pdfMediaPrev"
           @media-next="pdfMediaNext"
-          @thumbs-visible="pdfThumbsVisible = $event"
         ></p-pdf-viewer>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
@@ -251,10 +252,6 @@ export default {
       busy: false,
       closing: false,
       visible: false,
-      // Tracks the PDF viewer's thumbnail strip so the prev arrow sits beside it. Seeded from the
-      // same small-screen breakpoint the viewer uses so the arrow does not flicker on open; the
-      // viewer keeps it in sync afterwards via @thumbs-visible.
-      pdfThumbsVisible: !this.$vuetify?.display?.smAndDown,
       sidebarVisible: shouldShowSidebar(),
       hideCaption: shouldHideCaption() || shouldShowSidebar(),
       menuElement: null,
@@ -359,6 +356,14 @@ export default {
     // original PDF for the same photo (see the GetFileBytes handler).
     pdfSrc() {
       return this.model?.Hash ? this.$util.pdfUrl(this.model.Hash) : "";
+    },
+    // pdfHasPrev / pdfHasNext gate the PDF viewer's touch media-navigation arrows,
+    // mirroring the bounds checks in pdfMediaPrev / pdfMediaNext.
+    pdfHasPrev() {
+      return this.index > 0;
+    },
+    pdfHasNext() {
+      return this.models.length > this.index + 1;
     },
   },
   watch: {

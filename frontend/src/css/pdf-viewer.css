@@ -61,34 +61,57 @@
 
 .p-pdf-viewer__pages {
     flex: 1 1 auto;
+    /* min-width:0 lets this flex item shrink below its widest page so a zoomed page
+       scrolls horizontally instead of stretching the column past the viewer. */
+    min-width: 0;
     height: 100%;
-    overflow-y: auto;
+    /* Scroll vertically between pages and horizontally once a page is zoomed past
+       the column width. */
+    overflow: auto;
     outline: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
     padding: 16px;
+    /* Allow one- and two-finger panning but let the viewer own pinch-to-zoom. */
+    touch-action: pan-x pan-y;
+    /* Grab-and-drag to pan (a plain mouse has no horizontal wheel for zoomed pages). */
+    cursor: grab;
     scrollbar-width: none; /* Firefox */
+}
+
+.p-pdf-viewer__pages.is-panning {
+    cursor: grabbing;
+    user-select: none;
 }
 
 .p-pdf-viewer__pages::-webkit-scrollbar {
     display: none; /* WebKit (Chrome, Safari) */
 }
 
+/* Each page sizes to its rendered canvas (width set inline to fit-to-width × zoom)
+   and centers while narrower than the column; once zoomed wider, the auto margins
+   collapse so the left edge stays reachable as the column scrolls horizontally. */
 .p-pdf-viewer__page {
-    flex: 0 0 auto;
-    width: 100%;
+    display: block;
+    width: max-content;
+    max-width: none;
     min-height: 50vh;
+    margin: 0 auto 16px;
+}
+
+.p-pdf-viewer__page:last-child {
+    margin-bottom: 0;
 }
 
 .p-pdf-viewer__page canvas {
     display: block;
-    margin: 0 auto;
-    max-width: 100%;
-    height: auto;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
     background: #fff;
+}
+
+/* During a pinch, preview the target zoom with a cheap GPU transform instead of
+   re-rendering every frame; the final level is committed (re-rendered) on release. */
+.p-pdf-viewer__pages.is-pinching .p-pdf-viewer__page {
+    transform: scale(var(--pdf-pinch, 1));
+    transform-origin: center top;
 }
 
 .p-pdf-viewer__spinner {
@@ -145,6 +168,80 @@
     width: 100%;
     height: 100%;
     color: #fff;
+}
+
+/* Overlay media-navigation arrows. Pointer devices only (like the photo viewer's
+   edge arrows), fading in and out with the lightbox chrome so they never obscure the
+   document while reading; on touch the toolbar buttons and edge-swipe navigate. The
+   prev arrow clears the thumbnail strip while it is open. Styled like the lightbox's
+   native arrows — no filled background, just a white chevron with a thin dark outline
+   so it stays visible over white PDF pages and dark margins alike. */
+.p-pdf-viewer__nav {
+    position: absolute;
+    /* Center on the full lightbox, not the viewer: the viewer is inset from the top by
+       --pdf-top-inset to clear the top bar, so subtracting half of it lines the arrows
+       up with the photo viewer's native edge arrows (centered on the viewport). */
+    top: calc(50% - var(--pdf-top-inset, 60px) / 2);
+    z-index: 3;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-top: -28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+/* The same chevron the lightbox's native arrows use: a white fill with a dark stroke
+   drawn behind it (paint-order: stroke), so the outline stays visible on white pages
+   and the fill on dark margins. The next arrow mirrors the prev path. */
+.p-pdf-viewer__nav-icn {
+    display: block;
+    width: 50px;
+    height: 50px;
+}
+
+.p-pdf-viewer__nav-icn path {
+    fill: #fff;
+    stroke: #4f4f4f;
+    stroke-width: 2px;
+    paint-order: stroke;
+}
+
+.p-pdf-viewer__nav--next .p-pdf-viewer__nav-icn {
+    transform: scale(-1, 1);
+}
+
+/* Edge insets chosen so the chevrons land at the same distance from the viewport
+   edges as the native arrows (prev ~17px, next ~22px — PhotoSwipe's own 5px prev/next
+   asymmetry); the prev arrow clears the thumbnail strip while it is open. */
+.p-pdf-viewer__nav--prev {
+    left: 6px;
+}
+
+.p-pdf-viewer:not(.is-thumbs-hidden) .p-pdf-viewer__nav--prev {
+    left: calc(var(--pdf-strip-width, 132px) + 6px);
+}
+
+.p-pdf-viewer__nav--next {
+    right: 11px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .p-pdf-viewer__nav {
+        display: flex;
+    }
+
+    .p-pdf-viewer.controls-visible .p-pdf-viewer__nav {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 
 /* On small screens, widen the bottom controls to span most of the width and

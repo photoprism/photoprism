@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { isPdfDocument, loadPdfDocument, renderPdfPage, destroyPdfDocument, isRenderCancelled } from "common/pdf";
+import { isPdfDocument, loadPdfDocument, renderPdfPage, getPdfPageSize, destroyPdfDocument, isRenderCancelled } from "common/pdf";
 import { getAppStorage } from "common/storage";
 
 // Shared pdfjs stubs, hoisted so the vi.mock factory can reference them.
@@ -49,7 +49,7 @@ vi.stubGlobal(
 );
 
 function fakeCanvas() {
-  return { width: 0, height: 0, getContext: vi.fn(() => ({})) };
+  return { width: 0, height: 0, style: {}, getContext: vi.fn(() => ({})) };
 }
 
 describe("common/pdf", () => {
@@ -103,6 +103,25 @@ describe("common/pdf", () => {
       expect(canvas.height).toBe(300);
       handle.cancel();
       expect(h.renderTask.cancel).toHaveBeenCalled();
+    });
+    it("renders full pages at scale*dpr and pins the CSS display size to the logical scale", async () => {
+      const canvas = fakeCanvas();
+      const handle = renderPdfPage(h.pdf, 1, canvas, 2, 2);
+      await handle.promise;
+      // Backing store rendered at scale*dpr for crispness…
+      expect(h.page.getViewport).toHaveBeenCalledWith({ scale: 4 });
+      expect(canvas.width).toBe(400);
+      // …while the displayed size stays at the logical scale so zoom is visible.
+      expect(canvas.style.width).toBe("200px");
+      expect(canvas.style.height).toBe("400px");
+    });
+  });
+  describe("getPdfPageSize", () => {
+    it("returns the page's natural width and height at scale 1", async () => {
+      const size = await getPdfPageSize(h.pdf, 3);
+      expect(h.pdf.getPage).toHaveBeenCalledWith(3);
+      expect(h.page.getViewport).toHaveBeenCalledWith({ scale: 1 });
+      expect(size).toEqual({ width: 100, height: 200 });
     });
   });
   describe("destroyPdfDocument", () => {

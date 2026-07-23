@@ -67,14 +67,11 @@
     z-index: 1;
 }
 
-/* Shared dimensions for the document-slide layout, so the overlay inset, the
-   nav-arrow gutters, the prev-arrow offset, and the thumbnail strip width stay in
-   lock-step from one source. The arrows live in the PhotoSwipe layer (a sibling of
-   the viewer), so the values are defined on their common ancestor for both
-   subtrees to inherit. */
+/* Shared dimensions for the document-slide layout: the overlay top inset and the
+   thumbnail-strip width, kept in one place so the viewer and its overlay stay in
+   lock-step. */
 .p-lightbox__content.is-pdf {
     --pdf-top-inset: 60px; /* clears the PhotoSwipe top bar */
-    --pdf-gutter: 72px; /* nav-arrow width == page-area side margin */
     --pdf-strip-width: 132px; /* == .p-pdf-viewer__thumbs width */
 }
 
@@ -101,55 +98,12 @@
     visibility: hidden;
 }
 
-/* Keep the PhotoSwipe edge navigation arrows on document slides so they switch
-   media items just like on photos. Each arrow fills a full-height gutter (below
-   the top bar) so the entire gutter navigates and no PhotoSwipe background is
-   left exposed behind it — a background tap there would otherwise close the
-   lightbox. Its width matches the gutter carved from the page area below.
-   PhotoSwipe still hides them on touch, at the first/last item, and when a
-   document is the only result; the viewer also captures Left/Right for keyboard
-   navigation. */
+/* Hide the PhotoSwipe edge navigation arrows on document slides: the viewer fills
+   the full width for readable pages, and switching documents is handled by the
+   viewer's own overlay arrows (desktop), toolbar buttons and edge-swipe (touch),
+   and the Left/Right keys it captures. */
 .p-lightbox__content.is-pdf .pswp__button--arrow {
-    top: var(--pdf-top-inset);
-    bottom: 0;
-    height: auto;
-    margin-top: 0;
-    width: var(--pdf-gutter);
-    max-width: var(--pdf-gutter);
-    pointer-events: auto;
-}
-
-/* Place the prev arrow to the right of the thumbnail strip while it is visible;
-   without the strip (is-pdf, no is-pdf-thumbs) it stays at the left edge via
-   PhotoSwipe's default left:0. */
-.p-lightbox__content.is-pdf-thumbs .pswp__button--arrow--prev {
-    left: var(--pdf-strip-width);
-}
-
-/* Carve the arrow gutters from the page area instead of insetting the whole
-   viewer, so the thumbnail strip stays pinned to the left edge and the prev arrow
-   sits just to its right. The page area's side margins open transparent bands at
-   the strip edge and the right edge; the viewer root passes pointer events through
-   those bands (pointer-events:none) so the arrows behind them stay clickable,
-   while the strip, pages, controls, and error keep their own pointer events.
-   Pointer devices only — where PhotoSwipe shows the arrows; on touch the viewer
-   stays solid full-width. */
-@media (hover: hover) and (pointer: fine) {
-    .p-lightbox__container > .p-lightbox__content.is-pdf > .p-lightbox__pdf {
-        pointer-events: none;
-    }
-
-    .p-lightbox__content.is-pdf > .p-lightbox__pdf .p-pdf-viewer__thumbs,
-    .p-lightbox__content.is-pdf > .p-lightbox__pdf .p-pdf-viewer__pages,
-    .p-lightbox__content.is-pdf > .p-lightbox__pdf .p-pdf-viewer__controls,
-    .p-lightbox__content.is-pdf > .p-lightbox__pdf .p-pdf-viewer__error {
-        pointer-events: auto;
-    }
-
-    .p-lightbox__content.is-pdf > .p-lightbox__pdf .p-pdf-viewer__pages {
-        margin-left: var(--pdf-gutter);
-        margin-right: var(--pdf-gutter);
-    }
+    display: none;
 }
 
 /* Hide the PhotoSwipe caption and counter for document slides: the viewer
