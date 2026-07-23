@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -17,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // Share represents a share worker.
@@ -96,6 +98,10 @@ func (w *Share) Start() (err error) {
 			return err
 		}
 
+		// Count failed transfers so a single UI notification can report them per service,
+		// since the manual upload request returns before the worker runs (#5738).
+		var uploadErrors int
+
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
 				return nil
@@ -131,6 +137,7 @@ func (w *Share) Start() (err error) {
 
 			if err := client.Upload(srcFileName, file.RemoteName); err != nil {
 				w.logErr(err)
+				uploadErrors++
 				file.Errors++
 				file.Error = err.Error()
 			} else {
@@ -150,6 +157,12 @@ func (w *Share) Start() (err error) {
 			}
 
 			w.logErr(entity.Db().Save(&file).Error)
+		}
+
+		// Notify the user if any transfer to this service failed, since the manual upload
+		// request already returned before the worker ran.
+		if uploadErrors > 0 {
+			event.ErrorMsg(i18n.ErrUploadToServiceFailed, a.AccName)
 		}
 	}
 

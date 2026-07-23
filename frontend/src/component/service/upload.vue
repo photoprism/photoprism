@@ -168,15 +168,11 @@ export default {
       this.loading = true;
       this.service
         .Upload(this.selection, this.path)
-        .then((files) => {
+        .then(() => {
           this.loading = false;
-
-          if (files.length === 1) {
-            this.$notify.success(this.$gettext("One file uploaded"));
-          } else {
-            this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), { n: files.length }));
-          }
-
+          // The transfer runs asynchronously in the share worker, so report that it started;
+          // a failure notification is pushed separately if a transfer to the service fails.
+          this.$notify.success(this.$gettext("Upload started"));
           this.$emit("confirm", this.service);
         })
         .catch(() => (this.loading = false));
