@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-07-23 13:05+0000\n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
+"PO-Revision-Date: 2026-07-23 13:17+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: el\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7.1\n"
 
 #: messages.go:113
 msgid "Something went wrong, try again"
@@ -137,7 +137,7 @@ msgstr "Αποτυχία ανεβάσματος"
 #: messages.go:143
 #, c-format
 msgid "Upload to %s failed"
-msgstr ""
+msgstr "Η μεταφόρτωση στο %s απέτυχε"
 
 #: messages.go:144
 msgid "No items selected"
