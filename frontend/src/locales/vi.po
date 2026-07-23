@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-23 10:29+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-07-23 13:17+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -4552,11 +4552,11 @@ msgstr "Đường dẫn tải lên"
 
 #: src/component/service/upload.vue:175
 msgid "Upload started"
-msgstr ""
+msgstr "Quá trình tải lên đã bắt đầu"
 
 #: src/locales.js:404
 msgid "Upload to %s failed"
-msgstr ""
+msgstr "Tải lên %s không thành công"
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"

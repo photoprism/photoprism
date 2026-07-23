@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-23 10:29+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2026-07-23 13:17+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -4552,11 +4552,11 @@ msgstr "Kargatu bidea"
 
 #: src/component/service/upload.vue:175
 msgid "Upload started"
-msgstr ""
+msgstr "Kargatzen hasi da"
 
 #: src/locales.js:404
 msgid "Upload to %s failed"
-msgstr ""
+msgstr "%s-ra igotzeak huts egin du"
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"

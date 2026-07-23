@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-23 10:29+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-07-23 13:17+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4551,11 +4551,11 @@ msgstr "Augšupielādes ceļš"
 
 #: src/component/service/upload.vue:175
 msgid "Upload started"
-msgstr ""
+msgstr "Augšupielāde sākta"
 
 #: src/locales.js:404
 msgid "Upload to %s failed"
-msgstr ""
+msgstr "Augšupielāde uz %s neizdevās"
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"

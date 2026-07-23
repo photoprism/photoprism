@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-23 10:29+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2026-07-23 13:16+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -4555,11 +4555,11 @@ msgstr "Sökväg för uppladdning"
 
 #: src/component/service/upload.vue:175
 msgid "Upload started"
-msgstr ""
+msgstr "Uppladdning har startat"
 
 #: src/locales.js:404
 msgid "Upload to %s failed"
-msgstr ""
+msgstr "Uppladdning till %s misslyckades"
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"
