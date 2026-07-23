@@ -35,6 +35,7 @@
 - Translation extraction source of truth is the root `make gettext-extract`, which runs `scripts/gettext-extract.sh` across `frontend/src` and any available `plus`, `pro`, or `portal` overlays.
 - Compatibility targets such as `make -C plus gettext-extract` delegate to the root target.
 - Avoid punctuation-only gettext keys such as `$gettext("—")`; they create noisy entries in `frontend/src/locales/translations.pot`.
+- Case conventions: tooltips, labels, buttons, placeholders, and short imperative phrases use **Title Case** (`Zoom In`, `Toggle Thumbnails`, `Add to Album`); running prose, full sentences, and notifications use **sentence case** (`Failed to save changes`). Lowercase only articles, short conjunctions, and ≤3-letter prepositions when not first. The forced-as-is Vuetify 3 UI messages in `frontend/src/locales.js` are adopted verbatim — exempt, and not a casing reference to copy. Full rules: `specs/frontend/translations.md` §"Case Conventions".
 
 ## Focus Management
 
