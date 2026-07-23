@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"PO-Revision-Date: 2026-07-23 03:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.7\n"
+"X-Generator: Weblate 2026.7.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1762,7 +1762,7 @@ msgstr "创建压缩文件失败"
 
 #: src/component/pdf-viewer.vue:218
 msgid "Failed to load the PDF document."
-msgstr ""
+msgstr "无法加载该 PDF 文档。"
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -2002,7 +2002,7 @@ msgstr "全局选项"
 
 #: src/component/pdf-viewer.vue:69
 msgid "Go to page"
-msgstr ""
+msgstr "转到第X页"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2010,7 +2010,7 @@ msgstr "转到 {0} 页"
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to page %{n}"
-msgstr ""
+msgstr "转到第 %{n} 页"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2127,7 +2127,7 @@ msgstr "导入成功，耗时 %d 秒"
 
 #: src/page/settings/advanced.vue:142
 msgid "Import Faces from XMP"
-msgstr ""
+msgstr "从 XMP 导入人脸"
 
 #: src/page/library/import.vue:205
 msgid "Import failed"
@@ -3410,7 +3410,7 @@ msgstr "重新索引所有源文件，包括已索引和未更改的文件。"
 
 #: src/page/settings/advanced.vue:143
 msgid "Read face regions and names from XMP metadata to create people markers."
-msgstr ""
+msgstr "从 XMP 元数据中读取面部区域和姓名，以创建人物标记。"
 
 #: src/page/settings/advanced.vue:62
 msgid "Read-Only Mode"
@@ -4327,7 +4327,7 @@ msgstr "今天"
 
 #: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
 msgid "Toggle thumbnails"
-msgstr ""
+msgstr "切换缩略图"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4859,7 +4859,7 @@ msgstr "Zip 文件创建成功，耗时 %d 秒"
 
 #: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
 msgid "Zoom in"
-msgstr ""
+msgstr "放大"
 
 #: src/component/lightbox.vue:553
 msgid "Zoom in/out"
@@ -4867,7 +4867,7 @@ msgstr "缩放"
 
 #: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
 msgid "Zoom out"
-msgstr ""
+msgstr "缩小"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33

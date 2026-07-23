@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"PO-Revision-Date: 2026-07-23 03:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.7\n"
+"X-Generator: Weblate 2026.7.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1759,7 +1759,7 @@ msgstr "Kon nie zip-lêer skep nie"
 
 #: src/component/pdf-viewer.vue:218
 msgid "Failed to load the PDF document."
-msgstr ""
+msgstr "Misluk om die PDF-dokument te laai."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1999,7 +1999,7 @@ msgstr "Globale Opsies"
 
 #: src/component/pdf-viewer.vue:69
 msgid "Go to page"
-msgstr ""
+msgstr "Gaan na bladsy"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2007,7 +2007,7 @@ msgstr "Gaan na bladsy {0}"
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to page %{n}"
-msgstr ""
+msgstr "Gaan na bladsy %{n}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2124,7 +2124,7 @@ msgstr "Invoer voltooi in %d s"
 
 #: src/page/settings/advanced.vue:142
 msgid "Import Faces from XMP"
-msgstr ""
+msgstr "Voer gesigte vanaf XMP in"
 
 #: src/page/library/import.vue:205
 msgid "Import failed"
@@ -3405,7 +3405,7 @@ msgstr "Herindekseer alle oorspronklikes, insluitend reeds geïndekseer en onver
 
 #: src/page/settings/advanced.vue:143
 msgid "Read face regions and names from XMP metadata to create people markers."
-msgstr ""
+msgstr "Lees gesigstreke en name uit XMP-metagegewens om persoonmerkers te skep."
 
 #: src/page/settings/advanced.vue:62
 msgid "Read-Only Mode"
@@ -4322,7 +4322,7 @@ msgstr "Vandag"
 
 #: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
 msgid "Toggle thumbnails"
-msgstr ""
+msgstr "Skakel miniatuurbeelde aan/af"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4854,7 +4854,7 @@ msgstr "Zip geskep in %d s"
 
 #: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
 msgid "Zoom in"
-msgstr ""
+msgstr "Zoom in"
 
 #: src/component/lightbox.vue:553
 msgid "Zoom in/out"
@@ -4862,7 +4862,7 @@ msgstr "Zoem in/uit"
 
 #: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
 msgid "Zoom out"
-msgstr ""
+msgstr "Uitzoom"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33

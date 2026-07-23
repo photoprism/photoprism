@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
+"PO-Revision-Date: 2026-07-23 03:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= 19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
-"X-Generator: Weblate 2026.7\n"
+"X-Generator: Weblate 2026.7.1\n"
 
 #: src/locales.js:272
 msgid "{0} appended action"
@@ -1758,7 +1758,7 @@ msgstr "Neizdevās izveidot ZIP failu"
 
 #: src/component/pdf-viewer.vue:218
 msgid "Failed to load the PDF document."
-msgstr ""
+msgstr "Nepavyka ielādēt PDF dokumentu."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
@@ -1998,7 +1998,7 @@ msgstr "Globālās opcijas"
 
 #: src/component/pdf-viewer.vue:69
 msgid "Go to page"
-msgstr ""
+msgstr "Pāriet uz lapu"
 
 #: src/locales.js:294
 msgid "Go to page {0}"
@@ -2006,7 +2006,7 @@ msgstr "Dodieties uz {0} lapu"
 
 #: src/component/pdf-viewer.vue:22
 msgid "Go to page %{n}"
-msgstr ""
+msgstr "Pāriet uz %{n}. lpp."
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2123,7 +2123,7 @@ msgstr "Importēšana pabeigta pēc %d s"
 
 #: src/page/settings/advanced.vue:142
 msgid "Import Faces from XMP"
-msgstr ""
+msgstr "Importēt sejas no XMP"
 
 #: src/page/library/import.vue:205
 msgid "Import failed"
@@ -3404,7 +3404,7 @@ msgstr "Atkārtoti indeksēt visus oriģinālus, tostarp jau indeksētos un nema
 
 #: src/page/settings/advanced.vue:143
 msgid "Read face regions and names from XMP metadata to create people markers."
-msgstr ""
+msgstr "Nolasiet sejas zonas un vārdus no XMP metadatiem, lai izveidotu cilvēku atzīmes."
 
 #: src/page/settings/advanced.vue:62
 msgid "Read-Only Mode"
@@ -4321,7 +4321,7 @@ msgstr "Šodien"
 
 #: src/component/pdf-viewer.vue:49 src/component/pdf-viewer.vue:50
 msgid "Toggle thumbnails"
-msgstr ""
+msgstr "Rādīt/nesrādīt sīktēlus"
 
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
@@ -4853,7 +4853,7 @@ msgstr "Arhīvs izveidots %d sekundēs"
 
 #: src/component/pdf-viewer.vue:100 src/component/pdf-viewer.vue:101
 msgid "Zoom in"
-msgstr ""
+msgstr "Palielināt"
 
 #: src/component/lightbox.vue:553
 msgid "Zoom in/out"
@@ -4861,7 +4861,7 @@ msgstr "Pietuvināt/attālināt"
 
 #: src/component/pdf-viewer.vue:91 src/component/pdf-viewer.vue:92
 msgid "Zoom out"
-msgstr ""
+msgstr "Samazināt attēlu"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
