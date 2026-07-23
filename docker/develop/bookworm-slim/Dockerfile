@@ -66,6 +66,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
       libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
       iputils-ping dnsutils binutils binutils-gold \
+      ghostscript gsfonts \
     && \
     /scripts/install-bashrc.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \

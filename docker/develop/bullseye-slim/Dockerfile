@@ -84,6 +84,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       x265 \
       libvpx6 \
       libwebm-dev \
+      ghostscript \
+      gsfonts \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \
