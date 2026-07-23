@@ -7,18 +7,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // AlbumDownloadName returns the album download file name type.
@@ -67,7 +64,12 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		results, err := search.AlbumPhotos(a, 10000, true)
+		// Select the album's files based on the album download settings. Enumerating at the
+		// file level (rather than via a photo search) is what lets real sidecar files such as
+		// XMP be included when the Sidecar option is enabled, matching the multi-file download.
+		dl := conf.Settings().Albums.Download
+		selection := query.DownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals)
+		files, err := query.SelectedFiles(form.Selection{Albums: []string{a.AlbumUID}}, selection)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -76,7 +78,6 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		// Configure file names.
 		dlName := AlbumDownloadName(c)
-		settings := get.Config().Settings().Albums
 		zipFileName := a.ZipName()
 
 		AddDownloadHeader(c, zipFileName)
@@ -88,39 +89,14 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		var aliases = make(map[string]int)
 
-		for _, result := range results {
-			if result.FileName == "" {
-				log.Warnf("album: %s cannot be downloaded (empty file name)", clean.Log(result.FileUID))
+		for _, file := range files {
+			if file.FileName == "" {
+				log.Warnf("album: %s cannot be downloaded (empty file name)", clean.Log(file.FileUID))
 				continue
-			} else if result.FileHash == "" {
-				log.Warnf("album: %s cannot be downloaded (empty file hash)", clean.Log(result.FileName))
-				continue
-			}
-
-			if settings.Download.Originals && result.FileRoot != "/" {
-				log.Debugf("album: generated file %s not included in download", clean.Log(result.FileName))
+			} else if file.FileHash == "" {
+				log.Warnf("album: %s cannot be downloaded (empty file hash)", clean.Log(file.FileName))
 				continue
 			}
-
-			if !settings.Download.MediaSidecar && result.FileSidecar {
-				log.Debugf("album: sidecar file %s not included in download", clean.Log(result.FileName))
-				continue
-			}
-
-			if !settings.Download.MediaRaw && media.Raw.Equal(result.MediaType) {
-				log.Debugf("album: raw file %s not included in download", clean.Log(result.FileName))
-				continue
-			}
-
-			// Create file model from search result.
-			file := entity.File{}
-
-			if err = deepcopier.Copy(&file).From(result); err != nil {
-				log.Warnf("album: %s in %s (deepcopier)", err, clean.Log(result.FileName))
-				continue
-			}
-
-			file.ID = result.FileID
 
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
 			alias := file.DownloadName(dlName, 0)
@@ -134,14 +110,14 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
-					log.Errorf("album: failed to zip %s (%s)", clean.Log(result.FileName), zipErr)
+					log.Errorf("album: failed to zip %s (%s)", clean.Log(file.FileName), zipErr)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 
-				log.Infof("album: zipped %s as %s", clean.Log(result.FileName), clean.Log(alias))
+				log.Infof("album: zipped %s as %s", clean.Log(file.FileName), clean.Log(alias))
 			} else {
-				log.Warnf("album: %s not found", clean.Log(result.FileName))
+				log.Warnf("album: %s not found", clean.Log(file.FileName))
 			}
 		}
 

@@ -112,6 +112,33 @@ func TestFileSelection(t *testing.T) {
 			assert.Len(t, results, 2)
 		}
 	})
+	t.Run("AlbumDownloadSidecar", func(t *testing.T) {
+		// Regression for the album download Sidecar option: an album selection must include
+		// real sidecar files (e.g. XMP) when Sidecar is enabled and exclude them when not,
+		// matching the multi-file download path.
+		album := form.Selection{Albums: []string{"as6sg6bxpogaaba9"}} // contains Photo01
+		const xmpUID = "fs6sg6bw45bn0003"                             // Photo01.xmp sidecar
+
+		with, err := SelectedFiles(album, DownloadSelection(true, true, false))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var foundWith bool
+		for _, f := range with {
+			if f.FileUID == xmpUID {
+				foundWith = true
+			}
+		}
+		assert.True(t, foundWith, "album selection must include the XMP sidecar when enabled")
+
+		without, err := SelectedFiles(album, DownloadSelection(true, false, false))
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, f := range without {
+			assert.NotEqual(t, xmpUID, f.FileUID, "album selection must exclude the XMP sidecar when disabled")
+		}
+	})
 	t.Run("ShareSelectionOriginals", func(t *testing.T) {
 		sel := ShareSelection(false)
 		if results, err := SelectedFiles(many, sel); err != nil {
