@@ -17,18 +17,49 @@ const (
 	xmpMarkerScoreUnnamed = 20  // score < 30  -> MarkerReview = true.
 )
 
-// collectXmpFaces returns the face regions to import for the primary file,
-// merging embedded XMP (read via the ExifTool JSON path) with any .xmp sidecar
-// and de-duplicating across both sources. The sidecar is indexed as a separate
-// file that never runs face detection, so its regions must be gathered here.
-func collectXmpFaces(m *MediaFile) []meta.Face {
-	faces := append([]meta.Face(nil), m.MetaData().Faces...)
+// isXmpFaceSource reports whether a media file is a supported still-image XMP source.
+func isXmpFaceSource(m *MediaFile) bool {
+	return m != nil && (m.IsRaw() || m.IsImage() && !m.IsAnimated())
+}
 
-	if xmpName := fs.SidecarXMP.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false); xmpName != "" {
+// xmpFaceSources returns the primary preview and its logical still-image source.
+func xmpFaceSources(m *MediaFile) MediaFiles {
+	if !isXmpFaceSource(m) {
+		return nil
+	}
+
+	result := MediaFiles{m}
+	related, err := m.RelatedFiles(false)
+
+	if err != nil || !isXmpFaceSource(related.Main) || related.Main.FileName() == m.FileName() {
+		return result
+	}
+
+	return append(result, related.Main)
+}
+
+// collectXmpFaces returns the face regions to import for a primary preview,
+// merging embedded XMP and sidecars from both the preview and its logical
+// still-image source before de-duplicating the result.
+func collectXmpFaces(m *MediaFile) []meta.Face {
+	var faces []meta.Face
+	xmpFiles := make(map[string]struct{})
+
+	for _, source := range xmpFaceSources(m) {
+		faces = append(faces, source.MetaData().Faces...)
+
+		xmpName := fs.SidecarXMP.FindFirst(source.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+		if xmpName == "" {
+			continue
+		} else if _, exists := xmpFiles[xmpName]; exists {
+			continue
+		}
+
+		xmpFiles[xmpName] = struct{}{}
 		if data, err := meta.XMP(xmpName); err == nil {
 			faces = append(faces, data.Faces...)
 		} else {
-			log.Debugf("index: %s while reading xmp sidecar faces for %s", err, clean.Log(m.BaseName()))
+			log.Debugf("index: %s while reading xmp sidecar faces for %s", err, clean.Log(source.BaseName()))
 		}
 	}
 

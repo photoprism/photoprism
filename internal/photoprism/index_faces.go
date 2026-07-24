@@ -56,12 +56,32 @@ func DetectFaces(jpeg *MediaFile, expected int) (face.Faces, error) {
 	return faces, err
 }
 
-// ApplyDetectedFaces persists detected faces on the given file and updates face
-// counts. When XMP face-tag import is enabled and a media file is provided, it
-// also reconciles XMP face regions onto the markers so deferred face detection
-// (vision/metadata workers) imports XMP names the same way indexing does.
-// file and m MUST be the photo's primary file: XMP regions attach to the
-// primary file only, and m is used to read its embedded XMP and .xmp sidecar.
+// ApplyXmpFaces imports XMP face regions from a still-image source onto the
+// primary file, persists marker changes, and updates the photo face count.
+func ApplyXmpFaces(m *MediaFile, file *entity.File) (saved bool, count int, err error) {
+	if file == nil {
+		return false, 0, fmt.Errorf("faces: file is nil")
+	} else if m == nil || file.FileHash == "" {
+		return false, 0, nil
+	}
+
+	if changed := reconcileXmpFaces(collectXmpFaces(m), file, file.Markers()); changed == 0 {
+		return false, 0, nil
+	}
+
+	if _, err = file.SaveMarkers(); err != nil {
+		return false, 0, err
+	}
+
+	count, err = file.UpdatePhotoFaceCount()
+
+	return true, count, err
+}
+
+// ApplyDetectedFaces persists detected faces on the given primary file and
+// updates face counts. When XMP face-tag import is enabled, m may be either the
+// primary preview or a related still-image source; both resolve to the same
+// embedded and sidecar XMP collection.
 func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (saved bool, count int, err error) {
 	if file == nil {
 		return false, 0, fmt.Errorf("faces: file is nil")
@@ -77,8 +97,9 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 		file.AddFaces(faces)
 	}
 
+	xmpChanges := 0
 	if importXmp && file.FileHash != "" {
-		reconcileXmpFaces(collectXmpFaces(m), file, file.Markers())
+		xmpChanges = reconcileXmpFaces(collectXmpFaces(m), file, file.Markers())
 	}
 
 	savedMarkers, saveErr := file.SaveMarkers()
@@ -87,7 +108,7 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 		return false, 0, saveErr
 	}
 
-	if savedMarkers == 0 {
+	if savedMarkers == 0 && xmpChanges == 0 {
 		return false, 0, nil
 	}
 

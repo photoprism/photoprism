@@ -2,7 +2,12 @@ package photoprism
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -12,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -82,6 +88,57 @@ func runReconcile(t *testing.T, file *entity.File, faces []meta.Face) entity.Mar
 
 func region(name string, a crop.Area) meta.Face {
 	return meta.Face{Name: name, X: a.X, Y: a.Y, W: a.W, H: a.H}
+}
+
+// hasXmpMarkerName reports whether markers contain an imported XMP face name.
+func hasXmpMarkerName(markers entity.Markers, name string) bool {
+	for i := range markers {
+		if markers[i].MarkerSrc == entity.SrcXmp && markers[i].MarkerName == name {
+			return true
+		}
+	}
+
+	return false
+}
+
+// newXmpIndexConfig returns an isolated config and installs it for XMP discovery.
+func newXmpIndexConfig(t *testing.T, name string) *config.Config {
+	t.Helper()
+	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), name+".db"))
+
+	c := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+	oldConfig := Config()
+	SetConfig(c)
+	t.Cleanup(func() {
+		SetConfig(oldConfig)
+		oldConfig.RegisterDb()
+	})
+
+	return c
+}
+
+// writeHeicXmpFace copies a HEIC sample and embeds one MWG-RS face region.
+func writeHeicXmpFace(t *testing.T, c *config.Config, destName string) {
+	t.Helper()
+
+	source, err := NewMediaFile(filepath.Join(c.SamplesPath(), "iphone_7.heic"))
+	require.NoError(t, err)
+	require.NoError(t, source.Copy(destName, false))
+
+	// #nosec G204 -- the test binary and destination come from an isolated config.
+	cmd := exec.Command(c.ExifToolBin(),
+		"-overwrite_original",
+		"-RegionName=HeicAlice",
+		"-RegionType=Face",
+		"-RegionAreaX=0.5",
+		"-RegionAreaY=0.4",
+		"-RegionAreaW=0.1",
+		"-RegionAreaH=0.15",
+		"-RegionAreaUnit=normalized",
+		destName,
+	)
+	output, err := cmd.CombinedOutput()
+	require.NoErrorf(t, err, "embedding HEIC XMP failed: %s", output)
 }
 
 func TestReconcileXmpFaces(t *testing.T) {
@@ -392,6 +449,202 @@ func TestCollectXmpFaces(t *testing.T) {
 		assert.InDelta(t, 0.15, f.W, 0.01)
 		assert.InDelta(t, 0.10, f.H, 0.01)
 	})
+}
+
+// TestCollectXmpFaces_RelatedRawSidecars verifies RAW sidecar naming and locations.
+func TestCollectXmpFaces_RelatedRawSidecars(t *testing.T) {
+	c := newXmpIndexConfig(t, "collect-related-raw-xmp")
+
+	tests := []struct {
+		name    string
+		xmpName func(string) string
+	}{
+		{
+			name: "BaseNameInOriginals",
+			xmpName: func(dir string) string {
+				return filepath.Join(c.OriginalsPath(), dir, "face.xmp")
+			},
+		},
+		{
+			name: "FullNameInOriginals",
+			xmpName: func(dir string) string {
+				return filepath.Join(c.OriginalsPath(), dir, "face.dng.xmp")
+			},
+		},
+		{
+			name: "FullNameInSidecar",
+			xmpName: func(dir string) string {
+				return filepath.Join(c.SidecarPath(), dir, "face.dng.xmp")
+			},
+		},
+		{
+			name: "BaseNameInHidden",
+			xmpName: func(dir string) string {
+				return filepath.Join(c.OriginalsPath(), dir, fs.PPHiddenPathname, "face.xmp")
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := strings.ToLower(tc.name)
+			rawName := filepath.Join(c.OriginalsPath(), dir, "face.dng")
+			previewName := filepath.Join(c.SidecarPath(), dir, "face.dng.jpg")
+
+			raw, err := NewMediaFile(filepath.Join(c.SamplesPath(), "canon_eos_6d.dng"))
+			require.NoError(t, err)
+			require.NoError(t, raw.Copy(rawName, false))
+			require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", previewName, false))
+			require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", tc.xmpName(dir), false))
+
+			preview, err := NewMediaFile(previewName)
+			require.NoError(t, err)
+
+			faces := collectXmpFaces(preview)
+			require.True(t, hasFaceName(faces, "Cara"), "related RAW sidecar face not collected: %+v", faces)
+		})
+	}
+}
+
+// hasFaceName reports whether parsed XMP faces contain the specified name.
+func hasFaceName(faces []meta.Face, name string) bool {
+	for i := range faces {
+		if faces[i].Name == name {
+			return true
+		}
+	}
+
+	return false
+}
+
+// TestIndexRelated_XmpFacesFromLogicalSource verifies source-to-primary reconciliation.
+func TestIndexRelated_XmpFacesFromLogicalSource(t *testing.T) {
+	t.Run("HeicEmbedded", func(t *testing.T) {
+		c := newXmpIndexConfig(t, "index-related-heic-xmp")
+		if c.ExifToolBin() == "" {
+			t.Skip("exiftool not configured")
+		}
+
+		dir := filepath.Join(c.OriginalsPath(), "heic")
+		heicName := filepath.Join(dir, "face.heic")
+		previewName := filepath.Join(dir, "face.jpg")
+		writeHeicXmpFace(t, c, heicName)
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", previewName, false))
+
+		main, err := NewMediaFile(heicName)
+		require.NoError(t, err)
+		related, err := main.RelatedFiles(false)
+		require.NoError(t, err)
+		require.True(t, related.Main.IsHeic())
+
+		opt := IndexOptionsSingle(c)
+		opt.Convert = false
+		opt.DetectFaces = false
+		opt.DetectNsfw = false
+		opt.GenerateLabels = false
+		opt.ImportFaceTags = true
+
+		result := IndexRelated(related, NewIndex(c, NewConvert(c), NewFiles(), NewPhotos()), opt)
+		require.True(t, result.Success(), "HEIC indexing failed: %v", result.Err)
+
+		primary, err := entity.PrimaryFile(result.PhotoUID)
+		require.NoError(t, err)
+		require.True(t, primary.FilePrimary)
+		require.Equal(t, "heic/face.jpg", primary.FileName)
+
+		markers, err := entity.FindMarkers(primary.FileUID)
+		require.NoError(t, err)
+		require.True(t, hasXmpMarkerName(markers, "HeicAlice"), "embedded HEIC face not imported: %+v", markers)
+	})
+
+	rawSidecars := []struct {
+		name     string
+		fileName string
+	}{
+		{name: "BaseName", fileName: "face.xmp"},
+		{name: "FullName", fileName: "face.dng.xmp"},
+	}
+
+	for _, tc := range rawSidecars {
+		t.Run("RawSidecar"+tc.name, func(t *testing.T) {
+			c := newXmpIndexConfig(t, "index-related-raw-"+strings.ToLower(tc.name))
+			dir := filepath.Join(c.OriginalsPath(), strings.ToLower(tc.name))
+			rawName := filepath.Join(dir, "face.dng")
+			previewName := filepath.Join(dir, "face.jpg")
+			xmpName := filepath.Join(dir, tc.fileName)
+
+			raw, err := NewMediaFile(filepath.Join(c.SamplesPath(), "canon_eos_6d.dng"))
+			require.NoError(t, err)
+			require.NoError(t, raw.Copy(rawName, false))
+			require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", previewName, false))
+			require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", xmpName, false))
+
+			main, err := NewMediaFile(rawName)
+			require.NoError(t, err)
+			related, err := main.RelatedFiles(false)
+			require.NoError(t, err)
+			require.True(t, related.Main.IsRaw())
+
+			opt := IndexOptionsSingle(c)
+			opt.Convert = false
+			opt.DetectFaces = false
+			opt.DetectNsfw = false
+			opt.GenerateLabels = false
+			opt.ImportFaceTags = true
+			if tc.name == "BaseName" {
+				opt.ImportFaceTags = false
+			}
+
+			ind := NewIndex(c, NewConvert(c), NewFiles(), NewPhotos())
+			result := IndexRelated(related, ind, opt)
+			require.True(t, result.Success(), "RAW indexing failed: %v", result.Err)
+
+			primary, err := entity.PrimaryFile(result.PhotoUID)
+			require.NoError(t, err)
+			markers, err := entity.FindMarkers(primary.FileUID)
+			require.NoError(t, err)
+
+			if tc.name == "BaseName" {
+				require.False(t, hasXmpMarkerName(markers, "Cara"), "disabled XMP import must not create markers")
+
+				related, err = main.RelatedFiles(false)
+				require.NoError(t, err)
+				opt.ImportFaceTags = true
+				opt.Rescan = true
+				result = IndexRelated(related, ind, opt)
+				require.True(t, result.Success(), "RAW XMP rescan failed: %v", result.Err)
+
+				markers, err = entity.FindMarkers(primary.FileUID)
+				require.NoError(t, err)
+			}
+
+			require.True(t, hasXmpMarkerName(markers, "Cara"), "RAW sidecar face not imported: %+v", markers)
+
+			if tc.fileName != "face.dng.xmp" {
+				return
+			}
+
+			xmpData, err := os.ReadFile(xmpName) //nolint:gosec // test reads its temporary XMP fixture
+			require.NoError(t, err)
+			xmpData = []byte(strings.ReplaceAll(string(xmpData), "Cara", "Dana"))
+			require.NoError(t, os.WriteFile(xmpName, xmpData, fs.ModeFile)) //nolint:gosec // test rewrites its temporary XMP fixture
+			xmpStamp := time.Now().Add(2 * time.Second)
+			require.NoError(t, os.Chtimes(xmpName, xmpStamp, xmpStamp))
+
+			xmp, err := NewMediaFile(xmpName)
+			require.NoError(t, err)
+			incremental := RelatedFiles{Main: main, Files: MediaFiles{xmp}}
+			opt.Rescan = false
+
+			result = IndexRelated(incremental, ind, opt)
+			require.True(t, result.Success(), "incremental RAW sidecar indexing failed: %v", result.Err)
+
+			markers, err = entity.FindMarkers(primary.FileUID)
+			require.NoError(t, err)
+			require.Len(t, markers, 1)
+			assert.Equal(t, "Dana", markers[0].MarkerName)
+		})
+	}
 }
 
 // TestApplyDetectedFaces covers the deferred vision/metadata worker path: when

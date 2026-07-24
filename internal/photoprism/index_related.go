@@ -6,6 +6,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -35,6 +36,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	}
 
 	done[related.Main.FileName()] = true
+	photoUID := result.PhotoUID
 
 	i := 0
 
@@ -114,6 +116,9 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Index related MediaFile.
 		res := ind.MediaFile(f, o, "", result.PhotoUID)
+		if photoUID == "" && res.Success() {
+			photoUID = res.PhotoUID
+		}
 
 		// Save file error.
 		if fileUid, err := res.FileError(); err != nil {
@@ -122,6 +127,19 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Log index result.
 		log.Infof("index: %s related %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
+	}
+
+	// Reconcile the logical source after all related files have been processed.
+	// This also covers incremental sidecar updates where an unchanged primary
+	// preview was filtered out before IndexRelated received the file group.
+	if o.ImportFaceTags && photoUID != "" && isXmpFaceSource(related.Main) {
+		if primary, primaryErr := entity.PrimaryFile(photoUID); primaryErr != nil {
+			log.Debugf("index: could not find primary file for xmp faces in %s (%s)", related.MainLogName(), clean.Error(primaryErr))
+		} else if saved, _, applyErr := ApplyXmpFaces(related.Main, primary); applyErr != nil {
+			log.Warnf("index: %s while importing xmp face regions for %s", clean.Error(applyErr), related.MainLogName())
+		} else if saved {
+			log.Debugf("index: imported xmp face regions for %s", related.MainLogName())
+		}
 	}
 
 	return result
