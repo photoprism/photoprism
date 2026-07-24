@@ -189,16 +189,10 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 
 		uid := clean.UID(c.Param("uid"))
 
-		// Withhold photos the requesting session may not see (private/archived/out-of-scope), reported
-		// as not found so a token holder cannot fetch or probe arbitrary photos by UID. A coarse token
-		// not bound to a session (public mode / configured static token) keeps its by-design broad access.
-		if sess != nil {
-			if visible, vErr := search.PhotoVisibleToSession(uid, sess); vErr != nil || !visible {
-				c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
-				return
-			}
-		} else if visible, vErr := search.PhotoVisibleToPublic(uid); vErr != nil || !visible {
-			// A coarse token (no identified session) may not fetch private, archived, or hidden pictures.
+		// Withhold photos the session may not see, reported as not found so a token holder cannot probe
+		// arbitrary photos by UID. PhotoDownloadable scopes an identified session and limits a coarse
+		// token to public content.
+		if visible, vErr := search.PhotoDownloadable(uid, sess); vErr != nil || !visible {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 			return
 		}

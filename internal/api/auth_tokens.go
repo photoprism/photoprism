@@ -110,25 +110,32 @@ func resolveDownloadSession(c *gin.Context) *entity.Session {
 // signedDownloadSession verifies a signed download token in the request and returns the bound session
 // ID. It accepts the compact origin form (`?t=<expires>.<sid>.<token>`) used by download URLs and the
 // verbose bunny.net edge form (`?token=…&expires=…&sid=…`), returning ok=false when neither is a valid
-// signed token.
+// signed token. The compact form is tried first and falls through to the verbose form on any failure.
 func signedDownloadSession(c *gin.Context) (sessionID string, ok bool) {
 	// Compact origin form: t=<expires>.<sid>.<token>.
 	if t := c.Query("t"); strings.Count(t, ".") == 2 {
 		parts := strings.SplitN(t, ".", 3)
 
-		if expires, err := strconv.ParseInt(parts[0], 10, 64); err == nil {
-			if id, valid := tokens.VerifyDownload(expires, parts[1], parts[2]); valid {
-				return id, true
-			}
+		if id, valid := verifyDownloadParams(parts[0], parts[1], parts[2]); valid {
+			return id, true
 		}
 	}
 
 	// bunny.net edge form: token=…&expires=…&sid=….
 	if token := c.Query("token"); token != "" {
-		if expires, err := strconv.ParseInt(c.Query("expires"), 10, 64); err == nil {
-			return tokens.VerifyDownload(expires, c.Query("sid"), token)
-		}
+		return verifyDownloadParams(c.Query("expires"), c.Query("sid"), token)
 	}
 
 	return "", false
+}
+
+// verifyDownloadParams parses the string expiry and verifies the signed download token, returning the
+// bound session ID. It is the shared tail of signedDownloadSession's compact and verbose forms.
+func verifyDownloadParams(expiresStr, sid, token string) (sessionID string, ok bool) {
+	expires, err := strconv.ParseInt(expiresStr, 10, 64)
+	if err != nil {
+		return "", false
+	}
+
+	return tokens.VerifyDownload(expires, sid, token)
 }

@@ -90,6 +90,27 @@ func TestDownloadSession(t *testing.T) {
 	})
 }
 
+func TestVerifyDownloadParams(t *testing.T) {
+	sess := entity.SessionFixtures.Get("alice")
+	parts := strings.SplitN(tokens.SignDownload(sess.ID), ".", 3)
+
+	t.Run("Valid", func(t *testing.T) {
+		id, ok := verifyDownloadParams(parts[0], parts[1], parts[2])
+		assert.True(t, ok)
+		assert.Equal(t, sess.ID, id)
+	})
+	t.Run("NonNumericExpires", func(t *testing.T) {
+		id, ok := verifyDownloadParams("not-a-number", parts[1], parts[2])
+		assert.False(t, ok)
+		assert.Empty(t, id)
+	})
+	t.Run("ForgedToken", func(t *testing.T) {
+		id, ok := verifyDownloadParams(parts[0], parts[1], "HS256-forgedsignaturevalue")
+		assert.False(t, ok)
+		assert.Empty(t, id)
+	})
+}
+
 func TestInvalidDownloadToken(t *testing.T) {
 	conf := get.Config()
 

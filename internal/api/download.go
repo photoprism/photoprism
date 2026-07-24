@@ -73,17 +73,10 @@ func GetDownload(router *gin.RouterGroup) {
 			return
 		}
 
-		// Withhold files the requesting session may not see (private/archived/out-of-scope), checked
-		// before the file is resolved so a not-visible hash and an unknown hash return the identical
-		// 404 — a token holder cannot fetch or probe which files exist by hash. A coarse token not bound
-		// to a session (public mode / configured static token) keeps its by-design broad access.
-		if sess != nil {
-			if visible, vErr := search.FileVisibleToSession(id, sess); vErr != nil || !visible {
-				c.Data(http.StatusNotFound, "image/svg+xml", brokenIconSvg)
-				return
-			}
-		} else if visible, vErr := search.FileVisibleToPublic(id); vErr != nil || !visible {
-			// A coarse token (no identified session) may not fetch private, archived, or hidden pictures.
+		// Withhold files the session may not see, checked before the file is resolved so a not-visible
+		// hash and an unknown hash return the identical 404 — a token holder cannot probe which files
+		// exist by hash. FileDownloadable scopes an identified session and limits a coarse token to public.
+		if visible, vErr := search.FileDownloadable(id, sess); vErr != nil || !visible {
 			c.Data(http.StatusNotFound, "image/svg+xml", brokenIconSvg)
 			return
 		}
