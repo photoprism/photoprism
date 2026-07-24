@@ -275,17 +275,22 @@ func (c *Config) TokenSigningKey() []byte {
 	return c.tokenKey
 }
 
-// DownloadTokenMaxAge returns the lifetime of signed download tokens. It defaults to the short window
-// in ttl.DownloadToken so a leaked token expires quickly; because the tokens are stateless and refreshed
-// on every response, a fresh token is always issued before the current one lapses, so their validity
-// overlaps. Configure PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE (seconds) to adjust it — the value MUST stay
-// larger than the client's token-refresh interval so a held token is still valid when used.
+// DownloadTokenMaxAge returns the lifetime of signed download tokens, defaulting to ttl.DownloadToken.
+// Set PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE (seconds) to adjust it; the value MUST exceed the client's
+// token-refresh interval so a held token stays valid, and a smaller value is raised to
+// ttl.DownloadTokenMinAge so downloads cannot silently break.
 func (c *Config) DownloadTokenMaxAge() time.Duration {
+	maxAge := ttl.DownloadToken.Int()
+
 	if c.options.DownloadTokenMaxAge > 0 {
-		return time.Duration(c.options.DownloadTokenMaxAge) * time.Second
+		maxAge = int(c.options.DownloadTokenMaxAge)
 	}
 
-	return time.Duration(ttl.DownloadToken.Int()) * time.Second
+	if maxAge < ttl.DownloadTokenMinAge.Int() {
+		maxAge = ttl.DownloadTokenMinAge.Int()
+	}
+
+	return time.Duration(maxAge) * time.Second
 }
 
 // PreviewToken returns the preview image api token (based on the unique storage serial by default).

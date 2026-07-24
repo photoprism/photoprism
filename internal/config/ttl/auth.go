@@ -6,3 +6,8 @@ var (
 	// only needs to exceed the client's token-refresh interval.
 	DownloadToken Duration = 3600 // 1 hour
 )
+
+// DownloadTokenMinAge is the smallest sensible lifetime for signed download tokens (in seconds). It sits
+// above the client's 10-minute config-refresh interval so an idle client's token never lapses before the
+// next poll refreshes it; a smaller configured value is raised to this floor.
+const DownloadTokenMinAge Duration = 900 // 15 minutes (> the 10-minute client config-poll interval)

@@ -440,6 +440,9 @@ func (c *Config) Propagate() {
 	// previews next); the signature path and lifetime are per kind.
 	tokens.Download.Key = c.TokenSigningKey()
 	tokens.Download.SignaturePath = c.ApiUri()
+	if raw := c.options.DownloadTokenMaxAge; raw > 0 && raw < int64(ttl.DownloadTokenMinAge) {
+		log.Warnf("config: download-token-maxage %ds is below the %ds minimum and has been raised to it", raw, int64(ttl.DownloadTokenMinAge))
+	}
 	ttl.DownloadToken = ttl.Duration(int(c.DownloadTokenMaxAge().Seconds()))
 
 	// Configure the download-token delivery and validation policy: public mode delivers a placeholder,

@@ -239,9 +239,16 @@ func TestConfig_DownloadTokenMaxAge(t *testing.T) {
 		assert.Less(t, int64(c.DownloadTokenMaxAge().Seconds()), c.SessionMaxAge())
 	})
 	t.Run("ConfiguredOverride", func(t *testing.T) {
+		c.options.DownloadTokenMaxAge = 1800
+		defer func() { c.options.DownloadTokenMaxAge = 0 }()
+		assert.Equal(t, 1800*time.Second, c.DownloadTokenMaxAge())
+	})
+	t.Run("BelowFloorRaised", func(t *testing.T) {
+		// A value under the minimum is raised to the floor so an idle client's token cannot lapse before
+		// the next config poll refreshes it.
 		c.options.DownloadTokenMaxAge = 60
 		defer func() { c.options.DownloadTokenMaxAge = 0 }()
-		assert.Equal(t, 60*time.Second, c.DownloadTokenMaxAge())
+		assert.Equal(t, time.Duration(ttl.DownloadTokenMinAge.Int())*time.Second, c.DownloadTokenMaxAge())
 	})
 }
 
