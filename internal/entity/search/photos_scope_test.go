@@ -458,6 +458,50 @@ func TestPhotoVisibleToPublic(t *testing.T) {
 	})
 }
 
+func TestFileDownloadable(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		v, err := FileDownloadable("", nil)
+		assert.NoError(t, err)
+		assert.False(t, v)
+	})
+	t.Run("CoarseTokenSeesPublic", func(t *testing.T) {
+		v, err := FileDownloadable(scopeNormalFileHash, nil)
+		assert.NoError(t, err)
+		assert.True(t, v)
+	})
+	t.Run("CoarseDeniesPrivateSessionAllows", func(t *testing.T) {
+		// Same private hash: a coarse (nil) token takes the public path and is denied, while an admin
+		// session takes the session path and is allowed — proving the branch follows the session.
+		v, err := FileDownloadable(scopePrivateFileHash, nil)
+		assert.NoError(t, err)
+		assert.False(t, v)
+		v, err = FileDownloadable(scopePrivateFileHash, scopeSession("alice"))
+		assert.NoError(t, err)
+		assert.True(t, v)
+	})
+}
+
+func TestPhotoDownloadable(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		v, err := PhotoDownloadable("", nil)
+		assert.NoError(t, err)
+		assert.False(t, v)
+	})
+	t.Run("CoarseTokenSeesPublic", func(t *testing.T) {
+		v, err := PhotoDownloadable(scopeNormalPhotoUID, nil)
+		assert.NoError(t, err)
+		assert.True(t, v)
+	})
+	t.Run("CoarseDeniesPrivateSessionAllows", func(t *testing.T) {
+		v, err := PhotoDownloadable(scopePrivatePhotoUID, nil)
+		assert.NoError(t, err)
+		assert.False(t, v)
+		v, err = PhotoDownloadable(scopePrivatePhotoUID, scopeSession("alice"))
+		assert.NoError(t, err)
+		assert.True(t, v)
+	})
+}
+
 func TestPhotoSessionSeesPrivate(t *testing.T) {
 	t.Run("NilDenied", func(t *testing.T) {
 		assert.False(t, PhotoSessionSeesPrivate(nil))

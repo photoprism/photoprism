@@ -220,6 +220,7 @@ func FileVisibleToSession(fileHash string, sess *entity.Session) (bool, error) {
 // unidentified download token (public mode, a configured static token, or the instance default): the
 // photo must be public (not private), not archived, and not hidden. Unlike FileVisibleToSession it
 // applies no shared-scope predicate, so a static token keeps its broad — but never private — access.
+// The public predicate is duplicated verbatim in PhotoVisibleToPublic; keep the two in sync.
 func FileVisibleToPublic(fileHash string) (bool, error) {
 	if fileHash == "" {
 		return false, nil
@@ -236,7 +237,8 @@ func FileVisibleToPublic(fileHash string) (bool, error) {
 }
 
 // PhotoVisibleToPublic reports whether the photo may be downloaded with only a coarse, unidentified
-// download token: it must be public (not private), not archived, and not hidden.
+// download token: it must be public (not private), not archived, and not hidden. The public predicate
+// is duplicated verbatim in FileVisibleToPublic; keep the two in sync.
 func PhotoVisibleToPublic(photoUID string) (bool, error) {
 	if photoUID == "" {
 		return false, nil
@@ -250,49 +252,33 @@ func PhotoVisibleToPublic(photoUID string) (bool, error) {
 	return count > 0, err
 }
 
-// sharedSmartAlbumContains reports whether the given photo UID belongs to a smart album shared with
-// the session. Smart albums (folder, moment, calendar, region) derive their members from a filter
-// rather than photos_albums rows, so ScopePhotosForSession cannot resolve them; this evaluates each
-// shared album's filter exactly as the album view does, keeping single-item access aligned with what
-// browsing and album downloads already permit. It runs only after the cheaper personal-scope check
-// misses and skips regular albums (empty filter, already covered), so full-access and regular-share
-// sessions perform no extra queries.
-func sharedSmartAlbumContains(photoUID string, sess *entity.Session) (bool, error) {
-	if photoUID == "" || sess == nil {
-		return false, nil
+// FileDownloadable reports whether the file with the given hash may be downloaded: an identified session
+// is limited to what it may see (FileVisibleToSession), a nil session (coarse download token) to public
+// content (FileVisibleToPublic). Centralizes the "coarse token sees only public" rule for all endpoints.
+func FileDownloadable(fileHash string, sess *entity.Session) (bool, error) {
+	if sess != nil {
+		return FileVisibleToSession(fileHash, sess)
 	}
 
-	for _, albumUID := range sess.SharedUIDs() {
-		album, err := entity.CachedAlbumByUID(albumUID)
-
-		// Only smart albums (non-empty filter) need the filter-based membership test; regular albums
-		// are already covered by ScopePhotosForSession's photos_albums predicate.
-		if err != nil || album.AlbumUID == "" || album.AlbumFilter == "" {
-			continue
-		}
-
-		// Reuse the album-scoped search so membership matches browsing; Count 1 limits the query to
-		// an existence check for the single photo UID.
-		results, _, searchErr := UserPhotos(form.SearchPhotos{Scope: albumUID, UID: photoUID, Count: 1}, sess)
-
-		if searchErr != nil {
-			// A single unusable share (e.g. an invalid filter) must not mask the others.
-			log.Debugf("scope: %s while checking shared album %s", clean.Error(searchErr), clean.Log(albumUID))
-			continue
-		} else if len(results) > 0 {
-			return true, nil
-		}
-	}
-
-	return false, nil
+	return FileVisibleToPublic(fileHash)
 }
 
-// sharedSmartAlbumPhotoUIDs returns the subset of the given photo UIDs that belong to a smart album
-// (folder, moment, calendar, region) shared with the session. It is the bulk counterpart of
-// sharedSmartAlbumContains for the download/selection path: regular albums are skipped because
-// ScopePhotosForSession already resolves their photos_albums membership, so this only adds coverage
-// for filter-based smart albums and stays a no-op for full-access and regular-share sessions.
-func sharedSmartAlbumPhotoUIDs(photoUIDs []string, sess *entity.Session) []string {
+// PhotoDownloadable reports whether the photo with the given UID may be downloaded, picking the
+// session-scoped or public visibility path like FileDownloadable.
+func PhotoDownloadable(photoUID string, sess *entity.Session) (bool, error) {
+	if sess != nil {
+		return PhotoVisibleToSession(photoUID, sess)
+	}
+
+	return PhotoVisibleToPublic(photoUID)
+}
+
+// sharedSmartAlbumMembers returns the subset of the given photo UIDs belonging to a smart album (folder,
+// moment, calendar, region) shared with the session. Such albums derive members from a filter, not
+// photos_albums rows, so ScopePhotosForSession misses them; this evaluates each shared album's filter as
+// the album view does. Regular albums (empty filter) are skipped, and it stops once every requested UID
+// is matched so the single-UID caller short-circuits.
+func sharedSmartAlbumMembers(photoUIDs []string, sess *entity.Session) []string {
 	if len(photoUIDs) == 0 || sess == nil {
 		return nil
 	}
@@ -301,19 +287,20 @@ func sharedSmartAlbumPhotoUIDs(photoUIDs []string, sess *entity.Session) []strin
 	var visible []string
 
 	for _, albumUID := range sess.SharedUIDs() {
+		if len(visible) == len(photoUIDs) {
+			break // every requested UID already matched
+		}
+
 		album, err := entity.CachedAlbumByUID(albumUID)
 
-		// Only smart albums (non-empty filter) need the filter-based membership test; regular albums
-		// are already covered by ScopePhotosForSession's photos_albums predicate.
+		// Regular albums (empty filter) are already covered by the photos_albums predicate; skip them.
 		if err != nil || album.AlbumUID == "" || album.AlbumFilter == "" {
 			continue
 		}
 
-		// Restrict the album-scoped search to the selected UIDs so membership matches browsing; the
-		// search form accepts multiple UIDs separated by "|". Primary limits the result to one row per
-		// photo so Count bounds the number of photos rather than files: without it a picture with several
-		// files (RAW + JPEG, video, sidecars) consumes multiple rows and the limit would drop selected
-		// photos from the result, silently shrinking a multi-file download.
+		// Match membership as the album view does. Primary:true makes Count bound photos, not file rows —
+		// without it a multi-file picture (RAW+JPEG, video, sidecars) exhausts the limit and later selected
+		// photos silently drop from a multi-file download.
 		results, _, searchErr := UserPhotos(form.SearchPhotos{Scope: albumUID, UID: strings.Join(photoUIDs, "|"), Count: len(photoUIDs), Primary: true}, sess)
 
 		if searchErr != nil {
@@ -333,4 +320,20 @@ func sharedSmartAlbumPhotoUIDs(photoUIDs []string, sess *entity.Session) []strin
 	}
 
 	return visible
+}
+
+// sharedSmartAlbumContains reports whether the given photo UID belongs to a smart album shared with the
+// session — the single-item case of sharedSmartAlbumMembers, which short-circuits on the first match.
+func sharedSmartAlbumContains(photoUID string, sess *entity.Session) (bool, error) {
+	if photoUID == "" {
+		return false, nil
+	}
+
+	return len(sharedSmartAlbumMembers([]string{photoUID}, sess)) > 0, nil
+}
+
+// sharedSmartAlbumPhotoUIDs returns the subset of the given photo UIDs that belong to a smart album
+// shared with the session — the bulk case of sharedSmartAlbumMembers used by the download/selection path.
+func sharedSmartAlbumPhotoUIDs(photoUIDs []string, sess *entity.Session) []string {
+	return sharedSmartAlbumMembers(photoUIDs, sess)
 }
