@@ -13,31 +13,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-func TestAuthorizeAlbumDownload(t *testing.T) {
-	// authorizeAlbumDownload reads only AlbumUID and CreatedBy, so a minimal album is sufficient.
-	shared := entity.Album{AlbumUID: "as6sg6bxpogaaba8"}   // redeemed by the visitor fixture
-	unshared := entity.Album{AlbumUID: "as6sg6bxpogaaba9"} // not shared with the visitor
-
-	t.Run("NilSession", func(t *testing.T) {
-		assert.False(t, authorizeAlbumDownload(nil, shared))
-	})
-	t.Run("AdminSeesEverything", func(t *testing.T) {
-		sess, err := entity.FindSession(entity.SessionFixtures.Get("alice").ID)
-		assert.NoError(t, err)
-		assert.True(t, authorizeAlbumDownload(sess, unshared))
-	})
-	t.Run("VisitorSharedAlbum", func(t *testing.T) {
-		sess, err := entity.FindSession(entity.SessionFixtures.Get("visitor").ID)
-		assert.NoError(t, err)
-		assert.True(t, authorizeAlbumDownload(sess, shared))
-	})
-	t.Run("VisitorUnsharedAlbum", func(t *testing.T) {
-		sess, err := entity.FindSession(entity.SessionFixtures.Get("visitor").ID)
-		assert.NoError(t, err)
-		assert.False(t, authorizeAlbumDownload(sess, unshared))
-	})
-}
-
 func TestAlbumDownloadName(t *testing.T) {
 	t.Run("File", func(t *testing.T) {
 		req, err := http.NewRequest(http.MethodGet, "/api/v1/albums?name=file", nil)

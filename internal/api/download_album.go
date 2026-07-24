@@ -8,9 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
@@ -20,25 +18,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
-
-// authorizeAlbumDownload reports whether the session may download the album, mirroring the per-session
-// album visibility gate enforced by GetAlbum: unregistered visitors need a share for the album, and
-// other restricted users may only reach their own or shared albums. Full-access sessions always pass.
-func authorizeAlbumDownload(sess *entity.Session, a entity.Album) bool {
-	if sess == nil {
-		return false
-	}
-
-	if sess.NotRegistered() && !sess.HasShare(a.AlbumUID) {
-		return false
-	}
-
-	if sess.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) && a.CreatedBy != sess.UserUID && !sess.HasShare(a.AlbumUID) {
-		return false
-	}
-
-	return true
-}
 
 // AlbumDownloadName returns the album download file name type.
 func AlbumDownloadName(c *gin.Context) customize.DownloadName {
@@ -66,16 +45,17 @@ func AlbumDownloadName(c *gin.Context) customize.DownloadName {
 //	@Router		/api/v1/albums/{uid}/dl [get]
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
-		sess, valid := AuthDownload(c)
-		if !valid {
-			AbortForbidden(c)
+		conf := get.Config()
+
+		// Reject up front when downloads are disabled, before the more expensive token/session resolution.
+		if !conf.Settings().Features.Download || conf.Settings().Albums.Download.Disabled {
+			AbortFeatureDisabled(c)
 			return
 		}
 
-		conf := get.Config()
-
-		if !conf.Settings().Features.Download || conf.Settings().Albums.Download.Disabled {
-			AbortFeatureDisabled(c)
+		sess, valid := AuthDownload(c)
+		if !valid {
+			AbortForbidden(c)
 			return
 		}
 
@@ -91,8 +71,9 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		// pictures it may see. A nil session means an unidentified requester (a coarse/instance token),
 		// which is limited to public, non-private content below.
 
-		// Deny access to albums the session may not view, mirroring GetAlbum.
-		if sess != nil && !authorizeAlbumDownload(sess, a) {
+		// Deny access to albums the session may not view, mirroring GetAlbum. A nil session is a coarse
+		// (public/static) token, handled by the public-content scoping below rather than this gate.
+		if sess != nil && !albumViewableBySession(sess, a) {
 			AbortAlbumNotFound(c)
 			return
 		}
