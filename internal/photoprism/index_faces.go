@@ -65,7 +65,15 @@ func ApplyXmpFaces(m *MediaFile, file *entity.File) (saved bool, count int, err 
 		return false, 0, nil
 	}
 
-	if changed := reconcileXmpFaces(collectXmpFaces(m), file, file.Markers()); changed == 0 {
+	faceSet, collectErr := collectXmpFaces(m)
+	if collectErr != nil {
+		return false, 0, collectErr
+	}
+
+	changed, reconcileErr := reconcileXmpFaces(faceSet.Faces, file, file.Markers())
+	if reconcileErr != nil {
+		return false, 0, reconcileErr
+	} else if changed == 0 {
 		return false, 0, nil
 	}
 
@@ -99,7 +107,15 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 
 	xmpChanges := 0
 	if importXmp && file.FileHash != "" {
-		xmpChanges = reconcileXmpFaces(collectXmpFaces(m), file, file.Markers())
+		faceSet, collectErr := collectXmpFaces(m)
+		if collectErr != nil {
+			return false, 0, collectErr
+		}
+
+		xmpChanges, err = reconcileXmpFaces(faceSet.Faces, file, file.Markers())
+		if err != nil {
+			return false, 0, err
+		}
 	}
 
 	savedMarkers, saveErr := file.SaveMarkers()

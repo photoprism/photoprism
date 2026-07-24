@@ -13,7 +13,12 @@ import (
 
 // XMP parses an XMP file and returns a Data struct.
 func XMP(fileName string) (data Data, err error) {
-	err = data.XMP(fileName)
+	return XMPWithOptions(fileName, FaceOptions{})
+}
+
+// XMPWithOptions parses an XMP file using source image face-region fallbacks.
+func XMPWithOptions(fileName string, options FaceOptions) (data Data, err error) {
+	err = data.XMPWithOptions(fileName, options)
 
 	return data, err
 }
@@ -35,6 +40,11 @@ func applyTimeOffset(t time.Time, offset string) time.Time {
 
 // XMP parses an XMP file and returns a Data struct.
 func (data *Data) XMP(fileName string) (err error) {
+	return data.XMPWithOptions(fileName, FaceOptions{})
+}
+
+// XMPWithOptions parses an XMP file using source image face-region fallbacks.
+func (data *Data) XMPWithOptions(fileName string, options FaceOptions) (err error) {
 	logName := clean.Log(filepath.Base(fileName))
 
 	defer func() {
@@ -193,11 +203,12 @@ func (data *Data) XMP(fileName string) (err error) {
 	// data.Orientation elsewhere, and it stays a documentation-only field.
 	if v := doc.Orientation(); v != 0 {
 		data.Orientation = v
+		options.Orientation = v
 	}
 
-	// Parse MWG-RS and Microsoft MP:RegionInfo face regions (people markers)
-	// into data.Faces so the indexer can reconcile them onto face markers.
-	if faces := doc.Faces(data.Orientation); len(faces) > 0 {
+	// Parse supported XMP face regions into data.Faces so the indexer can
+	// reconcile them onto face markers.
+	if faces := doc.FacesWithOptions(options); len(faces) > 0 {
 		data.Faces = faces
 	}
 

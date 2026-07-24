@@ -62,6 +62,85 @@ func TestData_Exiftool_Faces_MP(t *testing.T) {
 	}
 }
 
+// TestParseExiftoolFaces_EdgeCases verifies mirrored, circular, rotated, and ACDSee regions.
+func TestParseExiftoolFaces_EdgeCases(t *testing.T) {
+	t.Run("MirroredCircleAndRotation", func(t *testing.T) {
+		j := gjson.Parse(`{
+			"RegionName":["Mirror","Circle","Rotated","Untyped"],
+			"RegionType":["Face","Face","Face",""],
+			"RegionAreaX":[0.2,0.5,0.7,0.5],
+			"RegionAreaY":[0.3,0.5,0.5,0.5],
+			"RegionAreaW":[0.1,0,0.2,0.2],
+			"RegionAreaH":[0.2,0,0.2,0.2],
+			"RegionAreaD":[0,0.2,0,0],
+			"RegionRotation":[0,0,1.5707963,0]
+		}`)
+
+		faces := parseExiftoolFaces(j, FaceOptions{Orientation: 2, Width: 4000, Height: 2000})
+		if len(faces) != 3 {
+			t.Fatalf("want 3 typed faces, got %d: %+v", len(faces), faces)
+		}
+		if mirror := faces[0]; mirror.Name != "Mirror" || !almost(mirror.X, 0.75) || !almost(mirror.Y, 0.2) {
+			t.Errorf("mirrored face got %+v", mirror)
+		}
+		if circle := faces[1]; circle.Name != "Circle" || !almost(circle.W, 0.1) || !almost(circle.H, 0.2) {
+			t.Errorf("circle got %+v", circle)
+		}
+		if rotated := faces[2]; rotated.Name != "Rotated" || !almost(rotated.W, 0.1) || !almost(rotated.H, 0.4) {
+			t.Errorf("rotated face got %+v", rotated)
+		}
+	})
+
+	t.Run("ACDSee", func(t *testing.T) {
+		j := gjson.Parse(`{
+			"ACDSeeRegionName":["DLY","ALG","Object"],
+			"ACDSeeRegionType":["Face","Face","Object"],
+			"ACDSeeRegionDLYAreaX":[0.3],
+			"ACDSeeRegionDLYAreaY":[0.4],
+			"ACDSeeRegionDLYAreaW":[0.2],
+			"ACDSeeRegionDLYAreaH":[0.3],
+			"ACDSeeRegionALGAreaX":[0.8,0.7,0.5],
+			"ACDSeeRegionALGAreaY":[0.8,0.6,0.5],
+			"ACDSeeRegionALGAreaW":[0.1,0.1,0.2],
+			"ACDSeeRegionALGAreaH":[0.1,0.2,0.2]
+		}`)
+
+		faces := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		if len(faces) != 2 {
+			t.Fatalf("want 2 ACDSee faces, got %d: %+v", len(faces), faces)
+		}
+		if faces[0].Name != "DLY" || !almost(faces[0].X, 0.2) || !almost(faces[0].Y, 0.25) {
+			t.Errorf("DLY face got %+v", faces[0])
+		}
+		if faces[1].Name != "ALG" || !almost(faces[1].X, 0.65) || !almost(faces[1].Y, 0.5) {
+			t.Errorf("ALG face got %+v", faces[1])
+		}
+	})
+
+	t.Run("NameFallbacks", func(t *testing.T) {
+		j := gjson.Parse(`{
+			"RegionName":["","",""],
+			"RegionTitle":["Title Name","",""],
+			"RegionPersonInImage":["","Extension Name",""],
+			"RegionSeeAlso":["","","Iptc4xmpExt:PersonInImage"],
+			"PersonInImage":"Referenced Name",
+			"RegionType":["Face","Face","Face"],
+			"RegionAreaX":[0.2,0.5,0.8],
+			"RegionAreaY":[0.5,0.5,0.5],
+			"RegionAreaW":[0.1,0.1,0.1],
+			"RegionAreaH":[0.1,0.1,0.1]
+		}`)
+
+		faces := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		if len(faces) != 3 {
+			t.Fatalf("want 3 named faces, got %d: %+v", len(faces), faces)
+		}
+		if faces[0].Name != "Title Name" || faces[1].Name != "Extension Name" || faces[2].Name != "Referenced Name" {
+			t.Errorf("unexpected name fallback result: %+v", faces)
+		}
+	})
+}
+
 func TestJsonAt(t *testing.T) {
 	arr := gjson.Parse(`["a","b"]`).Array()
 	if jsonAt(arr, 0).String() != "a" || jsonAt(arr, 1).String() != "b" {

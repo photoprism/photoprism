@@ -1,6 +1,12 @@
 package photoprism
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -38,32 +44,111 @@ func xmpFaceSources(m *MediaFile) MediaFiles {
 	return append(result, related.Main)
 }
 
-// collectXmpFaces returns the face regions to import for a primary preview,
-// merging embedded XMP and sidecars from both the preview and its logical
-// still-image source before de-duplicating the result.
-func collectXmpFaces(m *MediaFile) []meta.Face {
-	var faces []meta.Face
-	xmpFiles := make(map[string]struct{})
+// xmpFaceSet is an authoritative face-region snapshot from XMP metadata.
+type xmpFaceSet struct {
+	Faces   []meta.Face
+	Sidecar string
+}
 
-	for _, source := range xmpFaceSources(m) {
-		faces = append(faces, source.MetaData().Faces...)
+// xmpSidecarCandidate associates a sidecar with its logical image source.
+type xmpSidecarCandidate struct {
+	fileName string
+	source   *MediaFile
+	info     os.FileInfo
+	fullName bool
+}
 
-		xmpName := fs.SidecarXMP.FindFirst(source.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
-		if xmpName == "" {
-			continue
-		} else if _, exists := xmpFiles[xmpName]; exists {
-			continue
-		}
+// faceOptions returns encoded source dimensions and orientation for XMP regions.
+func faceOptions(source *MediaFile) meta.FaceOptions {
+	if source == nil {
+		return meta.FaceOptions{}
+	}
 
-		xmpFiles[xmpName] = struct{}{}
-		if data, err := meta.XMP(xmpName); err == nil {
-			faces = append(faces, data.Faces...)
-		} else {
-			log.Debugf("index: %s while reading xmp sidecar faces for %s", err, clean.Log(source.BaseName()))
+	data := source.MetaData()
+
+	return meta.FaceOptions{
+		Orientation: data.Orientation,
+		Width:       data.Width,
+		Height:      data.Height,
+	}
+}
+
+// isFullNameSidecar reports whether name includes the source file extension.
+func isFullNameSidecar(name string, source *MediaFile) bool {
+	if source == nil {
+		return false
+	}
+
+	return strings.EqualFold(filepath.Base(name), filepath.Base(source.FileName())+fs.ExtXMP)
+}
+
+// collectXmpFaces returns the authoritative XMP face set for a still image.
+func collectXmpFaces(m *MediaFile) (xmpFaceSet, error) {
+	sources := xmpFaceSources(m)
+	if len(sources) == 0 {
+		return xmpFaceSet{}, nil
+	}
+
+	candidates := make([]xmpSidecarCandidate, 0)
+	candidateIndex := make(map[string]int)
+
+	for _, source := range sources {
+		names := fs.SidecarXMP.FindAll(source.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+		for _, name := range names {
+			canonical := filepath.Clean(name)
+			if resolved, err := fs.Resolve(canonical); err == nil {
+				canonical = resolved
+			}
+
+			if index, exists := candidateIndex[canonical]; exists {
+				candidates[index].source = source
+				candidates[index].fullName = candidates[index].fullName || isFullNameSidecar(name, source)
+				continue
+			}
+
+			info, err := os.Stat(canonical)
+			if err != nil {
+				return xmpFaceSet{}, fmt.Errorf("faces: cannot inspect xmp sidecar %s: %w", clean.Log(filepath.Base(canonical)), err)
+			}
+
+			candidateIndex[canonical] = len(candidates)
+			candidates = append(candidates, xmpSidecarCandidate{
+				fileName: canonical,
+				source:   source,
+				info:     info,
+				fullName: isFullNameSidecar(name, source),
+			})
 		}
 	}
 
-	return meta.DedupFaces(faces)
+	if len(candidates) > 0 {
+		selected := candidates[0]
+		for i := 1; i < len(candidates); i++ {
+			candidate := candidates[i]
+			if candidate.info.ModTime().After(selected.info.ModTime()) ||
+				candidate.info.ModTime().Equal(selected.info.ModTime()) && candidate.fullName && !selected.fullName {
+				selected = candidate
+			}
+		}
+
+		data, err := meta.XMPWithOptions(selected.fileName, faceOptions(selected.source))
+		if err != nil {
+			return xmpFaceSet{}, fmt.Errorf("faces: cannot read xmp sidecar %s: %w", clean.Log(filepath.Base(selected.fileName)), err)
+		}
+
+		return xmpFaceSet{Faces: meta.DedupFaces(data.Faces), Sidecar: selected.fileName}, nil
+	}
+
+	var faces []meta.Face
+	for _, source := range sources {
+		data := source.MetaData()
+		if data.Error != nil {
+			return xmpFaceSet{}, fmt.Errorf("faces: cannot read embedded xmp from %s: %w", clean.Log(source.BaseName()), data.Error)
+		}
+		faces = append(faces, data.Faces...)
+	}
+
+	return xmpFaceSet{Faces: meta.DedupFaces(faces)}, nil
 }
 
 // applyXmpName assigns an imported XMP name to a marker while keeping the change
@@ -73,15 +158,15 @@ func collectXmpFaces(m *MediaFile) []meta.Face {
 // then routes through Marker.SetName. Column changes on an already-saved marker
 // are persisted here; new markers are inserted later by Markers.Save.
 // It reports whether the marker changed.
-func applyXmpName(m *entity.Marker, rawName string) bool {
+func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 	name := clean.Name(rawName)
 	if name == "" {
-		return false
+		return false, nil
 	}
 
 	// Respect source priority: never override a manual or admin name (case 3).
 	if entity.SrcPriority[entity.SrcXmp] < entity.SrcPriority[m.SubjSrc] {
-		return false
+		return false, nil
 	}
 
 	// Remember the prior link so a stale or empty SubjUID is repaired and
@@ -99,8 +184,7 @@ func applyXmpName(m *entity.Marker, rawName string) bool {
 
 	nameChanged, err := m.SetName(name, entity.SrcXmp)
 	if err != nil {
-		log.Warnf("index: %s while importing xmp face name %s", err, clean.Log(name))
-		return false
+		return false, fmt.Errorf("faces: cannot import xmp name %s: %w", clean.Log(name), err)
 	}
 
 	// Resolve or create the Person when the name did not change and no existing
@@ -129,24 +213,70 @@ func applyXmpName(m *entity.Marker, rawName string) bool {
 			"marker_name":   m.MarkerName,
 			"marker_review": m.MarkerReview,
 		}); err != nil {
-			log.Warnf("index: %s while saving xmp face marker %s", err, clean.Log(m.MarkerUID))
-			return false
+			return false, fmt.Errorf("faces: cannot save xmp marker %s: %w", clean.Log(m.MarkerUID), err)
 		}
 	}
 
-	return changed
+	return changed, nil
 }
 
-// reconcileXmpFaces imports XMP face regions onto the primary file's in-memory
-// markers, implementing the conflict-resolution matrix: it names an overlapping
-// AI marker (keeping its box and MarkerSrc), creates a SrcXmp marker for a
-// region with no overlap, imports an unnamed region as a review marker, and
-// skips any region that overlaps a rejected marker so it is not resurrected.
-// It returns the number of regions that created or changed a marker.
-func reconcileXmpFaces(faces []meta.Face, file *entity.File, markers *entity.Markers) (count int) {
-	if len(faces) == 0 || file.FileHash == "" {
-		return 0
+// restoreMarkerName removes an obsolete XMP name and restores a clustered name.
+func restoreMarkerName(m *entity.Marker) (bool, error) {
+	if m == nil || m.SubjSrc != entity.SrcXmp {
+		return false, nil
 	}
+
+	name := ""
+	subjUID := ""
+	subjSrc := ""
+	review := true
+
+	if linkedFace := entity.FindFace(m.FaceID); linkedFace != nil && linkedFace.SubjUID != "" {
+		if subject := entity.FindSubject(linkedFace.SubjUID); subject != nil {
+			name = subject.SubjName
+			subjUID = subject.SubjUID
+			subjSrc = entity.SrcAuto
+			review = false
+			m.SetSubjectLink(subject)
+		}
+	}
+
+	changed := m.MarkerName != name || m.SubjUID != subjUID || m.SubjSrc != subjSrc || m.MarkerReview != review
+	if !changed {
+		return false, nil
+	}
+
+	m.MarkerName = name
+	m.SubjUID = subjUID
+	m.SubjSrc = subjSrc
+	m.MarkerReview = review
+	if subjUID == "" {
+		m.SetSubjectLink(nil)
+	}
+
+	if m.MarkerUID == "" {
+		return true, nil
+	}
+
+	if err := m.Updates(entity.Values{
+		"marker_name":   m.MarkerName,
+		"subj_uid":      m.SubjUID,
+		"subj_src":      m.SubjSrc,
+		"marker_review": m.MarkerReview,
+	}); err != nil {
+		return false, fmt.Errorf("faces: cannot restore marker %s: %w", clean.Log(m.MarkerUID), err)
+	}
+
+	return true, nil
+}
+
+// reconcileXmpFaces applies an authoritative XMP face set to file markers.
+func reconcileXmpFaces(faces []meta.Face, file *entity.File, markers *entity.Markers) (count int, err error) {
+	if file == nil || markers == nil || file.FileHash == "" {
+		return 0, nil
+	}
+
+	matched := make([]bool, len(*markers))
 
 	for _, region := range faces {
 		area := crop.NewArea("face", region.X, region.Y, region.W, region.H)
@@ -167,14 +297,70 @@ func reconcileXmpFaces(faces []meta.Face, file *entity.File, markers *entity.Mar
 			continue
 		}
 
+		existingIndex := -1
+		for i := range *markers {
+			if (*markers)[i].MarkerInvalid {
+				continue
+			} else if (*markers)[i].OverlapPercent(*probe) > face.OverlapThreshold {
+				existingIndex = i
+				break
+			}
+		}
+
 		// Reconcile onto an overlapping valid marker first, so a region that
 		// happens to also sit near a rejected marker still names the valid one.
-		if existing := markers.Overlapping(*probe); existing != nil {
-			// An unnamed region over an existing marker adds nothing.
-			if !named {
-				continue
+		if existingIndex >= 0 {
+			matched[existingIndex] = true
+			existing := &(*markers)[existingIndex]
+			changed := false
+
+			// XMP is authoritative for markers whose rectangle also originated
+			// from XMP. Keep AI-detected and manually edited rectangles intact.
+			if existing.MarkerSrc == entity.SrcXmp &&
+				entity.SrcPriority[existing.SubjSrc] <= entity.SrcPriority[entity.SrcXmp] &&
+				(existing.X != probe.X || existing.Y != probe.Y ||
+					existing.W != probe.W || existing.H != probe.H ||
+					existing.Q != probe.Q || existing.Size != probe.Size ||
+					existing.Score != probe.Score || existing.Thumb != probe.Thumb) {
+				existing.X = probe.X
+				existing.Y = probe.Y
+				existing.W = probe.W
+				existing.H = probe.H
+				existing.Q = probe.Q
+				existing.Size = probe.Size
+				existing.Score = probe.Score
+				existing.Thumb = probe.Thumb
+				changed = true
+
+				if existing.MarkerUID != "" {
+					if updateErr := existing.Updates(entity.Values{
+						"x":     existing.X,
+						"y":     existing.Y,
+						"w":     existing.W,
+						"h":     existing.H,
+						"q":     existing.Q,
+						"size":  existing.Size,
+						"score": existing.Score,
+						"thumb": existing.Thumb,
+					}); updateErr != nil {
+						return count, fmt.Errorf("faces: cannot update xmp marker %s: %w", clean.Log(existing.MarkerUID), updateErr)
+					}
+				}
 			}
-			if applyXmpName(existing, region.Name) {
+
+			if !named {
+				if nameChanged, restoreErr := restoreMarkerName(existing); restoreErr != nil {
+					return count, restoreErr
+				} else if nameChanged {
+					changed = true
+				}
+			} else if nameChanged, nameErr := applyXmpName(existing, region.Name); nameErr != nil {
+				return count, nameErr
+			} else if nameChanged {
+				changed = true
+			}
+
+			if changed {
 				count++
 			}
 			continue
@@ -187,13 +373,42 @@ func reconcileXmpFaces(faces []meta.Face, file *entity.File, markers *entity.Mar
 
 		// No overlap: create a new SrcXmp marker (matrix case 1); an unnamed
 		// region becomes a review marker with no linked Person.
-		markers.Append(*probe)
-		count++
-
 		if named {
-			applyXmpName(&(*markers)[len(*markers)-1], region.Name)
+			if _, nameErr := applyXmpName(probe, region.Name); nameErr != nil {
+				return count, nameErr
+			}
+		}
+
+		markers.Append(*probe)
+		matched = append(matched, true)
+		count++
+	}
+
+	for i := len(*markers) - 1; i >= 0; i-- {
+		marker := &(*markers)[i]
+		if matched[i] || marker.MarkerInvalid {
+			continue
+		}
+
+		if marker.MarkerSrc == entity.SrcXmp {
+			if entity.SrcPriority[marker.SubjSrc] > entity.SrcPriority[entity.SrcXmp] {
+				continue
+			}
+			if marker.MarkerUID != "" {
+				if deleteErr := marker.Delete(); deleteErr != nil {
+					return count, fmt.Errorf("faces: cannot delete stale xmp marker %s: %w", clean.Log(marker.MarkerUID), deleteErr)
+				}
+			}
+			*markers = append((*markers)[:i], (*markers)[i+1:]...)
+			count++
+		} else if marker.SubjSrc == entity.SrcXmp {
+			if changed, restoreErr := restoreMarkerName(marker); restoreErr != nil {
+				return count, restoreErr
+			} else if changed {
+				count++
+			}
 		}
 	}
 
-	return count
+	return count, nil
 }

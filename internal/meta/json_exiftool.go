@@ -37,43 +37,84 @@ func jsonAt(a []gjson.Result, i int) gjson.Result {
 	return gjson.Result{}
 }
 
-// parseExiftoolFaces extracts MWG-RS and Microsoft MP:RegionInfo face regions
-// from the flattened ExifTool result and returns them as displayed-orientation
-// normalized Faces. It handles both the single-region (scalar) and multi-region
-// (parallel array) shapes ExifTool emits with PhotoPrism's "-n -m -j" arguments.
-func parseExiftoolFaces(j gjson.Result, orientation int) []Face {
+// jsonFaceName returns the first name available for an ExifTool face region.
+func jsonFaceName(j gjson.Result, names, titles, extensions, references []gjson.Result, i int) string {
+	if name := jsonAt(names, i).String(); name != "" {
+		return name
+	} else if title := jsonAt(titles, i).String(); title != "" {
+		return title
+	} else if extension := jsonAt(extensions, i).String(); extension != "" {
+		return extension
+	}
+
+	if jsonAt(references, i).String() != "Iptc4xmpExt:PersonInImage" {
+		return ""
+	}
+
+	names = j.Get("PersonInImage").Array()
+	unique := make([]string, 0, len(names))
+	for _, result := range names {
+		if name := strings.TrimSpace(result.String()); name != "" {
+			unique = append(unique, name)
+		}
+	}
+	if unique = txt.UniqueNames(unique); len(unique) == 1 {
+		return unique[0]
+	}
+
+	return ""
+}
+
+// parseExiftoolFaces extracts supported XMP face regions from ExifTool JSON.
+func parseExiftoolFaces(j gjson.Result, options FaceOptions) []Face {
 	var faces []Face
 
 	// MWG-RS regions (XMP-mwg-rs): parallel arrays keyed by index.
 	names := j.Get("RegionName").Array()
+	titles := j.Get("RegionTitle").Array()
+	extensions := j.Get("RegionPersonInImage").Array()
+	references := j.Get("RegionSeeAlso").Array()
 	types := j.Get("RegionType").Array()
 	xs := j.Get("RegionAreaX").Array()
 	ys := j.Get("RegionAreaY").Array()
 	ws := j.Get("RegionAreaW").Array()
 	hs := j.Get("RegionAreaH").Array()
+	ds := j.Get("RegionAreaD").Array()
 	units := j.Get("RegionAreaUnit").Array()
+	rotations := j.Get("RegionRotation").Array()
 
 	appliedW := int(j.Get("RegionAppliedToDimensionsW").Int())
 	appliedH := int(j.Get("RegionAppliedToDimensionsH").Int())
+	if appliedW <= 0 || appliedH <= 0 {
+		appliedW, appliedH = options.Width, options.Height
+	}
 
 	// The coordinate arrays define how many regions exist; a missing name is
 	// allowed (unnamed region), so it does not bound the count.
 	n := len(xs)
-	for _, l := range []int{len(ys), len(ws), len(hs)} {
+	for _, l := range []int{len(ys)} {
 		if l < n {
 			n = l
 		}
 	}
 
 	for i := 0; i < n; i++ {
-		if t := jsonAt(types, i).String(); t != "" && !strings.EqualFold(t, "Face") {
+		if !strings.EqualFold(jsonAt(types, i).String(), "Face") {
 			continue
 		}
+
+		wResult, hResult := jsonAt(ws, i), jsonAt(hs, i)
+		dResult := jsonAt(ds, i)
+		if !dResult.Exists() && (!wResult.Exists() || !hResult.Exists()) {
+			continue
+		}
+
 		if f, ok := normalizeRegionMWG(
-			jsonAt(names, i).String(),
+			jsonFaceName(j, names, titles, extensions, references, i),
 			float32(jsonAt(xs, i).Float()), float32(jsonAt(ys, i).Float()),
-			float32(jsonAt(ws, i).Float()), float32(jsonAt(hs, i).Float()),
-			jsonAt(units, i).String(), appliedW, appliedH, orientation,
+			float32(wResult.Float()), float32(hResult.Float()), float32(dResult.Float()),
+			jsonAt(units, i).String(), float32(jsonAt(rotations, i).Float()),
+			appliedW, appliedH, options.Orientation,
 		); ok {
 			faces = append(faces, f)
 		}
@@ -84,7 +125,50 @@ func parseExiftoolFaces(j gjson.Result, orientation int) []Face {
 	mpRects := j.Get("RegionRectangle").Array()
 
 	for i := 0; i < len(mpRects); i++ {
-		if f, ok := normalizeRegionMP(jsonAt(mpNames, i).String(), jsonAt(mpRects, i).String(), orientation); ok {
+		if f, ok := normalizeRegionMP(jsonAt(mpNames, i).String(), jsonAt(mpRects, i).String(), options.Orientation); ok {
+			faces = append(faces, f)
+		}
+	}
+
+	// ACDSee regions: DLYArea is the user-adjusted rectangle and takes
+	// precedence over the automatic ALGArea.
+	acdNames := j.Get("ACDSeeRegionName").Array()
+	acdTypes := j.Get("ACDSeeRegionType").Array()
+	dlyXs := j.Get("ACDSeeRegionDLYAreaX").Array()
+	dlyYs := j.Get("ACDSeeRegionDLYAreaY").Array()
+	dlyWs := j.Get("ACDSeeRegionDLYAreaW").Array()
+	dlyHs := j.Get("ACDSeeRegionDLYAreaH").Array()
+	algXs := j.Get("ACDSeeRegionALGAreaX").Array()
+	algYs := j.Get("ACDSeeRegionALGAreaY").Array()
+	algWs := j.Get("ACDSeeRegionALGAreaW").Array()
+	algHs := j.Get("ACDSeeRegionALGAreaH").Array()
+
+	acdW := int(j.Get("ACDSeeRegionAppliedToDimensionsW").Int())
+	acdH := int(j.Get("ACDSeeRegionAppliedToDimensionsH").Int())
+	if acdW <= 0 || acdH <= 0 {
+		acdW, acdH = options.Width, options.Height
+	}
+
+	acdCount := len(acdTypes)
+	for i := 0; i < acdCount; i++ {
+		if !strings.EqualFold(jsonAt(acdTypes, i).String(), "Face") {
+			continue
+		}
+
+		xs, ys, ws, hs := dlyXs, dlyYs, dlyWs, dlyHs
+		if !jsonAt(xs, i).Exists() {
+			xs, ys, ws, hs = algXs, algYs, algWs, algHs
+		}
+		if !jsonAt(xs, i).Exists() || !jsonAt(ys, i).Exists() || !jsonAt(ws, i).Exists() || !jsonAt(hs, i).Exists() {
+			continue
+		}
+
+		if f, ok := normalizeRegionMWG(
+			jsonAt(acdNames, i).String(),
+			float32(jsonAt(xs, i).Float()), float32(jsonAt(ys, i).Float()),
+			float32(jsonAt(ws, i).Float()), float32(jsonAt(hs, i).Float()), 0,
+			"normalized", 0, acdW, acdH, options.Orientation,
+		); ok {
 			faces = append(faces, f)
 		}
 	}
@@ -327,7 +411,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	// Parse MWG-RS and Microsoft MP:RegionInfo face regions (people markers)
 	// from the embedded XMP so the indexer can reconcile them onto markers.
-	if faces := parseExiftoolFaces(j, data.Orientation); len(faces) > 0 {
+	if faces := parseExiftoolFaces(j, FaceOptions{Orientation: data.Orientation, Width: data.Width, Height: data.Height}); len(faces) > 0 {
 		data.Faces = faces
 	}
 

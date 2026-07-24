@@ -78,12 +78,23 @@ func newXmpSubject(t *testing.T, name, src string) *entity.Subject {
 // newly created markers the way the index flow does before re-querying.
 func runReconcile(t *testing.T, file *entity.File, faces []meta.Face) entity.Markers {
 	t.Helper()
-	reconcileXmpFaces(faces, file, file.Markers())
-	_, err := file.SaveMarkers()
+	_, err := reconcileXmpFaces(faces, file, file.Markers())
+	require.NoError(t, err)
+	_, err = file.SaveMarkers()
 	require.NoError(t, err)
 	saved, err := entity.FindMarkers(file.FileUID)
 	require.NoError(t, err)
 	return saved
+}
+
+// mustCollectXmpFaces collects an authoritative XMP face set for tests.
+func mustCollectXmpFaces(t *testing.T, m *MediaFile) []meta.Face {
+	t.Helper()
+
+	faceSet, err := collectXmpFaces(m)
+	require.NoError(t, err)
+
+	return faceSet.Faces
 }
 
 func region(name string, a crop.Area) meta.Face {
@@ -139,6 +150,16 @@ func writeHeicXmpFace(t *testing.T, c *config.Config, destName string) {
 	)
 	output, err := cmd.CombinedOutput()
 	require.NoErrorf(t, err, "embedding HEIC XMP failed: %s", output)
+}
+
+// writeNamedXmp copies the sidecar fixture and replaces its person name.
+func writeNamedXmp(t *testing.T, destName, name string) {
+	t.Helper()
+
+	xmpData, err := os.ReadFile("testdata/xmp-faces/sidecar.jpg.xmp") //nolint:gosec // test fixture
+	require.NoError(t, err)
+	xmpData = []byte(strings.ReplaceAll(string(xmpData), "Cara", name))
+	require.NoError(t, os.WriteFile(destName, xmpData, fs.ModeFile)) //nolint:gosec // isolated test path
 }
 
 func TestReconcileXmpFaces(t *testing.T) {
@@ -233,7 +254,13 @@ func TestReconcileXmpFaces(t *testing.T) {
 		file := newXmpFile(t)
 		first := runReconcile(t, file, []meta.Face{region("Dave", xmpArea)})
 		require.Len(t, first, 1)
-		second := runReconcile(t, file, []meta.Face{region("Dave", xmpArea)})
+		changes, err := reconcileXmpFaces([]meta.Face{region("Dave", xmpArea)}, file, file.Markers())
+		require.NoError(t, err)
+		assert.Zero(t, changes, "unchanged XMP must not report marker changes")
+		_, err = file.SaveMarkers()
+		require.NoError(t, err)
+		second, err := entity.FindMarkers(file.FileUID)
+		require.NoError(t, err)
 		require.Len(t, second, 1, "re-import must not duplicate")
 		assert.Equal(t, first[0].MarkerUID, second[0].MarkerUID)
 		assert.Equal(t, "Dave", second[0].MarkerName)
@@ -325,6 +352,126 @@ func TestReconcileXmpFaces(t *testing.T) {
 		assert.Equal(t, entity.SrcXmp, saved.SubjSrc)
 		require.NotNil(t, entity.FindSubjectByName("BobRepair", false), "the XMP import must create the Person")
 	})
+
+	t.Run("RemovedRegionDeletesPureXmpMarker", func(t *testing.T) {
+		file := newXmpFile(t)
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Removed", false)
+
+		markers := runReconcile(t, file, nil)
+		assert.Empty(t, markers)
+		assert.Nil(t, entity.FindMarker(stale.MarkerUID))
+	})
+
+	t.Run("MovedRegionReplacesPureXmpMarker", func(t *testing.T) {
+		file := newXmpFile(t)
+		first := runReconcile(t, file, []meta.Face{region("Moved", xmpArea)})
+		require.Len(t, first, 1)
+
+		second := runReconcile(t, file, []meta.Face{region("Moved", xmpFarArea)})
+		require.Len(t, second, 1)
+		assert.NotEqual(t, first[0].MarkerUID, second[0].MarkerUID)
+		assert.InDelta(t, xmpFarArea.X, second[0].X, 0.001)
+	})
+	t.Run("OverlappingMovedRegionUpdatesPureXmpMarker", func(t *testing.T) {
+		file := newXmpFile(t)
+		first := runReconcile(t, file, []meta.Face{region("Moved Nearby", xmpArea)})
+		require.Len(t, first, 1)
+
+		movedArea := xmpArea
+		movedArea.X += 0.12
+		second := runReconcile(t, file, []meta.Face{region("Moved Nearby", movedArea)})
+		require.Len(t, second, 1)
+		assert.Equal(t, first[0].MarkerUID, second[0].MarkerUID)
+		assert.InDelta(t, movedArea.X, second[0].X, 0.001)
+
+		saved := entity.FindMarker(second[0].MarkerUID)
+		require.NotNil(t, saved)
+		assert.InDelta(t, movedArea.X, saved.X, 0.001, "updated XMP geometry must be persisted")
+	})
+
+	t.Run("RenamedRegionUpdatesPureXmpMarker", func(t *testing.T) {
+		file := newXmpFile(t)
+		first := runReconcile(t, file, []meta.Face{region("Before", xmpArea)})
+		require.Len(t, first, 1)
+
+		second := runReconcile(t, file, []meta.Face{region("After", xmpArea)})
+		require.Len(t, second, 1)
+		assert.Equal(t, first[0].MarkerUID, second[0].MarkerUID)
+		assert.Equal(t, "After", second[0].MarkerName)
+	})
+
+	t.Run("UnnamedRegionClearsPriorXmpName", func(t *testing.T) {
+		file := newXmpFile(t)
+		first := runReconcile(t, file, []meta.Face{region("Named", xmpArea)})
+		require.Len(t, first, 1)
+
+		second := runReconcile(t, file, []meta.Face{region("", xmpArea)})
+		require.Len(t, second, 1)
+		assert.Equal(t, first[0].MarkerUID, second[0].MarkerUID)
+		assert.Empty(t, second[0].MarkerName)
+		assert.Empty(t, second[0].SubjUID)
+		assert.True(t, second[0].MarkerReview)
+	})
+
+	t.Run("RejectedXmpMarkerIsPreserved", func(t *testing.T) {
+		file := newXmpFile(t)
+		rejected := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Rejected", true)
+
+		markers := runReconcile(t, file, nil)
+		require.Len(t, markers, 1)
+		assert.Equal(t, rejected.MarkerUID, markers[0].MarkerUID)
+		assert.True(t, markers[0].MarkerInvalid)
+	})
+
+	t.Run("ManualXmpMarkerIsPreserved", func(t *testing.T) {
+		file := newXmpFile(t)
+		manual := newXmpSubject(t, "Manual Preserve", entity.SrcManual)
+		kept := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcManual, manual.SubjUID, manual.SubjName, false)
+
+		markers := runReconcile(t, file, nil)
+		require.Len(t, markers, 1)
+		assert.Equal(t, kept.MarkerUID, markers[0].MarkerUID)
+		assert.Equal(t, entity.SrcManual, markers[0].SubjSrc)
+	})
+
+	t.Run("RemovedXmpNameClearsUnclusteredAiMarker", func(t *testing.T) {
+		file := newXmpFile(t)
+		xmpSubject := newXmpSubject(t, "Temporary XMP", entity.SrcXmp)
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, xmpSubject.SubjUID, xmpSubject.SubjName, false)
+
+		markers := runReconcile(t, file, nil)
+		require.Len(t, markers, 1)
+		assert.Equal(t, stale.MarkerUID, markers[0].MarkerUID)
+		assert.Empty(t, markers[0].MarkerName)
+		assert.Empty(t, markers[0].SubjUID)
+		assert.Empty(t, markers[0].SubjSrc)
+		assert.True(t, markers[0].MarkerReview)
+	})
+
+	t.Run("RemovedXmpNameRestoresClusteredAiName", func(t *testing.T) {
+		file := newXmpFile(t)
+		autoSubject := newXmpSubject(t, "Restored Auto", entity.SrcAuto)
+		xmpSubject := newXmpSubject(t, "Temporary Cluster XMP", entity.SrcXmp)
+		xmpHashSeq++
+		cluster := &entity.Face{
+			ID:      fmt.Sprintf("XMPRESTORE%032x", xmpHashSeq),
+			FaceSrc: entity.SrcAuto,
+			SubjUID: autoSubject.SubjUID,
+			Samples: 1,
+		}
+		require.NoError(t, entity.Db().Create(cluster).Error)
+
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcImage, entity.SrcXmp, xmpSubject.SubjUID, xmpSubject.SubjName, false)
+		stale.FaceID = cluster.ID
+		require.NoError(t, stale.Update("FaceID", cluster.ID))
+
+		markers := runReconcile(t, file, nil)
+		require.Len(t, markers, 1)
+		assert.Equal(t, "Restored Auto", markers[0].MarkerName)
+		assert.Equal(t, autoSubject.SubjUID, markers[0].SubjUID)
+		assert.Equal(t, entity.SrcAuto, markers[0].SubjSrc)
+		assert.False(t, markers[0].MarkerReview)
+	})
 }
 
 // TestReconcileXmpFaces_OverwritesClusteredAiFace models the realistic flow of
@@ -414,7 +561,7 @@ func TestCollectXmpFaces(t *testing.T) {
 		require.NoError(t, err)
 		// Generate the ExifTool JSON cache the index flow relies on before reading.
 		require.NoError(t, m.CreateExifToolJson(NewConvert(c)))
-		faces := collectXmpFaces(m)
+		faces := mustCollectXmpFaces(t, m)
 		require.Len(t, faces, 1)
 		assert.Equal(t, "Alice", faces[0].Name)
 		assert.InDelta(t, 0.45, faces[0].X, 0.01)
@@ -423,7 +570,7 @@ func TestCollectXmpFaces(t *testing.T) {
 	t.Run("Sidecar", func(t *testing.T) {
 		m, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
 		require.NoError(t, err)
-		faces := collectXmpFaces(m)
+		faces := mustCollectXmpFaces(t, m)
 		require.GreaterOrEqual(t, len(faces), 1)
 		found := false
 		for _, f := range faces {
@@ -438,7 +585,7 @@ func TestCollectXmpFaces(t *testing.T) {
 		m, err := NewMediaFile("testdata/xmp-faces/rotated-o6.jpg")
 		require.NoError(t, err)
 		require.NoError(t, m.CreateExifToolJson(NewConvert(c)))
-		faces := collectXmpFaces(m)
+		faces := mustCollectXmpFaces(t, m)
 		require.Len(t, faces, 1)
 		f := faces[0]
 		// center (0.5,0.4) size (0.1,0.15) -> TL (0.45,0.325); rotateRect(...,6)
@@ -449,6 +596,121 @@ func TestCollectXmpFaces(t *testing.T) {
 		assert.InDelta(t, 0.15, f.W, 0.01)
 		assert.InDelta(t, 0.10, f.H, 0.01)
 	})
+}
+
+// TestCollectXmpFaces_AuthoritativeSidecar verifies sidecar selection and fallback metadata.
+func TestCollectXmpFaces_AuthoritativeSidecar(t *testing.T) {
+	c := newXmpIndexConfig(t, "collect-authoritative-xmp")
+
+	t.Run("NewestSidecarWins", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "newest")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		genericName := filepath.Join(dir, "photo.xmp")
+		fullName := filepath.Join(dir, "photo.jpg.xmp")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+		writeNamedXmp(t, genericName, "New Generic")
+		writeNamedXmp(t, fullName, "Old Full")
+
+		oldStamp := time.Unix(1700000000, 0)
+		newStamp := oldStamp.Add(time.Second)
+		require.NoError(t, os.Chtimes(fullName, oldStamp, oldStamp))
+		require.NoError(t, os.Chtimes(genericName, newStamp, newStamp))
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		faces := mustCollectXmpFaces(t, m)
+		require.Len(t, faces, 1)
+		assert.Equal(t, "New Generic", faces[0].Name)
+	})
+
+	t.Run("EqualTimeFullNameWins", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "tie")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		genericName := filepath.Join(dir, "photo.xmp")
+		fullName := filepath.Join(dir, "photo.jpg.xmp")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+		writeNamedXmp(t, genericName, "Generic")
+		writeNamedXmp(t, fullName, "Full Name")
+
+		stamp := time.Unix(1700000000, 0)
+		require.NoError(t, os.Chtimes(genericName, stamp, stamp))
+		require.NoError(t, os.Chtimes(fullName, stamp, stamp))
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		faces := mustCollectXmpFaces(t, m)
+		require.Len(t, faces, 1)
+		assert.Equal(t, "Full Name", faces[0].Name)
+	})
+
+	t.Run("SidecarOverridesEmbedded", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "override")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		xmpName := imageName + fs.ExtXMP
+		require.NoError(t, fs.Copy("testdata/xmp-faces/embedded-mwg.jpg", imageName, false))
+		writeNamedXmp(t, xmpName, "Sidecar Person")
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		faces := mustCollectXmpFaces(t, m)
+		require.Len(t, faces, 1)
+		assert.Equal(t, "Sidecar Person", faces[0].Name)
+		assert.False(t, hasFaceName(faces, "Alice"), "embedded faces must not be merged when a sidecar exists")
+	})
+
+	t.Run("MalformedSidecarReturnsError", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "malformed")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+		require.NoError(t, os.WriteFile(imageName+fs.ExtXMP, []byte("<broken"), fs.ModeFile)) //nolint:gosec // isolated test path
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		_, err = collectXmpFaces(m)
+		require.Error(t, err)
+	})
+
+	t.Run("MissingSidecarOrientationUsesSource", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "orientation")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/rotated-o6.jpg", imageName, false))
+		writeNamedXmp(t, imageName+fs.ExtXMP, "Fallback Orientation")
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		faces := mustCollectXmpFaces(t, m)
+		require.Len(t, faces, 1)
+		assert.Equal(t, "Fallback Orientation", faces[0].Name)
+		assert.InDelta(t, 0.65, faces[0].X, 0.01)
+		assert.InDelta(t, 0.30, faces[0].Y, 0.01)
+		assert.InDelta(t, 0.15, faces[0].W, 0.01)
+		assert.InDelta(t, 0.10, faces[0].H, 0.01)
+	})
+}
+
+// TestApplyXmpFaces_MalformedSidecarPreservesMarkers verifies non-destructive errors.
+func TestApplyXmpFaces_MalformedSidecarPreservesMarkers(t *testing.T) {
+	c := newXmpIndexConfig(t, "apply-malformed-xmp")
+	dir := filepath.Join(c.OriginalsPath(), "malformed-preserve")
+	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+	imageName := filepath.Join(dir, "photo.jpg")
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+	require.NoError(t, os.WriteFile(imageName+fs.ExtXMP, []byte("<broken"), fs.ModeFile)) //nolint:gosec // isolated test path
+
+	m, err := NewMediaFile(imageName)
+	require.NoError(t, err)
+	file := newXmpFile(t)
+	existing := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Keep Me", false)
+
+	saved, _, err := ApplyXmpFaces(m, file)
+	require.Error(t, err)
+	assert.False(t, saved)
+	assert.NotNil(t, entity.FindMarker(existing.MarkerUID), "parse errors must not delete existing XMP markers")
 }
 
 // TestCollectXmpFaces_RelatedRawSidecars verifies RAW sidecar naming and locations.
@@ -500,7 +762,7 @@ func TestCollectXmpFaces_RelatedRawSidecars(t *testing.T) {
 			preview, err := NewMediaFile(previewName)
 			require.NoError(t, err)
 
-			faces := collectXmpFaces(preview)
+			faces := mustCollectXmpFaces(t, preview)
 			require.True(t, hasFaceName(faces, "Cara"), "related RAW sidecar face not collected: %+v", faces)
 		})
 	}
