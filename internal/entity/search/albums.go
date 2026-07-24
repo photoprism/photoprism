@@ -36,6 +36,14 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL")
 
+	// Parse UIDs from filter.
+	var uids []string
+	if txt.NotEmpty(frm.UID) {
+		if frmUids := SplitOr(strings.ToLower(frm.UID)); rnd.ContainsUID(frmUids, entity.AlbumUID) {
+			uids = frmUids
+		}
+	}
+
 	// Check session permissions and apply as needed.
 	if sess != nil {
 		user := sess.GetUser()
@@ -55,9 +63,13 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		case entity.AlbumState:
 			aclResource = acl.ResourcePlaces
 		default:
-			// Default to the general albums resource when no album type is given (e.g. a
-			// lookup by UID), so roles with album access are not denied via ResourceDefault.
-			aclResource = acl.ResourceAlbums
+			// When no album type is given and the UID filter is used, default to the "albums" resource,
+			// so requests from roles without default access to all resources are not denied.
+			if len(uids) > 0 {
+				aclResource = acl.ResourceAlbums
+			} else {
+				aclResource = acl.ResourceDefault
+			}
 		}
 
 		// Check user permissions.
@@ -136,12 +148,8 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	}
 
 	// Find specific UIDs only?
-	if txt.NotEmpty(frm.UID) {
-		ids := SplitOr(strings.ToLower(frm.UID))
-
-		if rnd.ContainsUID(ids, entity.AlbumUID) {
-			s = s.Where("albums.album_uid IN (?)", ids)
-		}
+	if len(uids) > 0 {
+		s = s.Where("albums.album_uid IN (?)", uids)
 	}
 
 	// Filter by title or path?
