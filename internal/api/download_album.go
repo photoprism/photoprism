@@ -97,15 +97,10 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		// Select the album's files based on the album download settings. Enumerating at the file
-		// level (rather than via a photo search) is what lets real sidecar files such as XMP be
-		// included when the Sidecar option is enabled. Archived and hidden pictures are never
-		// included; private pictures are governed by the session scope (and excluded outright for
-		// an unidentified requester), so the archive matches what the user could browse.
+		// Enumerate at the file level (not via a photo search) so real sidecar files (e.g. XMP) are
+		// included when the Sidecar option is on. Archived and hidden pictures are always excluded;
+		// private ones only when the session may view them, never for an unidentified requester.
 		dl := conf.Settings().Albums.Download
-		// Include private pictures only when the session may view them (defense in depth: the base
-		// selection then excludes private for everyone else, and SelectedFilesForSession's scope predicate
-		// enforces it again). A coarse/unidentified requester never gets private pictures.
 		selection := query.AlbumDownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals, search.PhotoSessionSeesPrivate(sess))
 		files, err := query.SelectedFilesForSession(form.Selection{Albums: []string{a.AlbumUID}}, selection, sess)
 
