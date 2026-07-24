@@ -96,19 +96,21 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	case sortby.Count:
 		s = s.Order(OrderExpr("photo_count DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
 	case sortby.Moment, sortby.Newest:
-		if frm.Type == entity.AlbumManual || frm.Type == entity.AlbumState {
+		switch frm.Type {
+		case entity.AlbumManual, entity.AlbumState:
 			s = s.Order(OrderExpr("albums.album_uid DESC", frm.Reverse))
-		} else if frm.Type == entity.AlbumMoment {
+		case entity.AlbumMoment:
 			s = s.Order(OrderExpr("has_year, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
-		} else {
+		default:
 			s = s.Order(OrderExpr("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
 		}
 	case sortby.Oldest:
-		if frm.Type == entity.AlbumManual || frm.Type == entity.AlbumState {
+		switch frm.Type {
+		case entity.AlbumManual, entity.AlbumState:
 			s = s.Order(OrderExpr("albums.album_uid ASC", frm.Reverse))
-		} else if frm.Type == entity.AlbumMoment {
+		case entity.AlbumMoment:
 			s = s.Order(OrderExpr("has_year, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC", frm.Reverse))
-		} else {
+		default:
 			s = s.Order(OrderExpr("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC", frm.Reverse))
 		}
 	case sortby.Added:
@@ -124,11 +126,12 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	case sortby.Slug:
 		s = s.Order(OrderExpr("albums.album_slug ASC, albums.album_uid DESC", frm.Reverse))
 	case sortby.Favorites:
-		if frm.Type == entity.AlbumFolder {
+		switch frm.Type {
+		case entity.AlbumFolder:
 			s = s.Order(OrderExpr("albums.album_favorite DESC, albums.album_path ASC, albums.album_uid DESC", frm.Reverse))
-		} else if frm.Type == entity.AlbumMonth {
+		case entity.AlbumMonth:
 			s = s.Order(OrderExpr("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
-		} else {
+		default:
 			s = s.Order(OrderExpr("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC", frm.Reverse))
 		}
 	case sortby.Name:
