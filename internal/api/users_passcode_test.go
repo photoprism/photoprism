@@ -43,7 +43,7 @@ func TestCreateUserPasscode(t *testing.T) {
 			Password: "Alice123!",
 			Code:     "",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxc08w3d0ej2283/passcode", string(pcStr), sessId)
@@ -62,7 +62,7 @@ func TestCreateUserPasscode(t *testing.T) {
 			Password: "abcdef",
 			Code:     "",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", string(pcStr), sessId)
@@ -81,7 +81,7 @@ func TestCreateUserPasscode(t *testing.T) {
 			Password: "wrong",
 			Code:     "",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", string(pcStr), sessId)
@@ -112,7 +112,7 @@ func TestCreateUserPasscode(t *testing.T) {
 			Password: "Alice123!",
 			Code:     "",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode", string(pcStr), sessId)
@@ -141,7 +141,7 @@ func TestConfirmUserPasscode(t *testing.T) {
 			Password: "Alice123!",
 			Code:     "123",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/confirm", string(pcStr), sessId)
@@ -160,7 +160,7 @@ func TestConfirmUserPasscode(t *testing.T) {
 			Password: "Alice123!",
 			Code:     "123456",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/confirm", string(pcStr), sessId)
@@ -182,7 +182,7 @@ func TestActivateUserPasscode(t *testing.T) {
 			Password: "Alice123!",
 			Code:     "",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxc08w3d0ej2283/passcode/activate", string(pcStr), sessId)
@@ -201,7 +201,7 @@ func TestActivateUserPasscode(t *testing.T) {
 			Password: "Alice123!",
 			Code:     "",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/activate", string(pcStr), sessId)
@@ -232,7 +232,7 @@ func TestDeactivateUserPasscode(t *testing.T) {
 			Password: "wrong",
 			Code:     "",
 		}
-		if pcStr, err := json.Marshal(f); err != nil {
+		if pcStr, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/users/uqxetse3cy5eo9z2/passcode/deactivate", string(pcStr), sessId)
@@ -255,7 +255,7 @@ func TestUserPasscode(t *testing.T) {
 		Code:     "",
 	}
 
-	pcStr, err := json.Marshal(f0)
+	pcStr, err := json.Marshal(f0) //nolint:gosec // test marshals a form with a password field to build the request body
 
 	if err != nil {
 		t.Fatalf("marshal passcode: %v", err)
@@ -286,7 +286,7 @@ func TestUserPasscode(t *testing.T) {
 		Code:     code,
 	}
 
-	pcStr, err = json.Marshal(f)
+	pcStr, err = json.Marshal(f) //nolint:gosec // test marshals a form with a password field to build the request body
 
 	if err != nil {
 		t.Fatalf("marshal passcode confirm: %v", err)

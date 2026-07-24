@@ -75,7 +75,7 @@ func TestUploadCheckFile_AcceptsAndReducesLimit(t *testing.T) {
 	if err != nil {
 		t.Skipf("skip if test asset not present: %v", err)
 	}
-	if err := os.WriteFile(dst, b, 0o600); err != nil {
+	if err := os.WriteFile(dst, b, 0o600); err != nil { //nolint:gosec // test writes to a temp path under the test's control
 		t.Fatal(err)
 	}
 
@@ -119,7 +119,7 @@ func TestUploadCheckFile_SizeAccounting(t *testing.T) {
 		t.Skip("asset missing; skip")
 	}
 	f := filepath.Join(dir, "a.jpg")
-	assert.NoError(t, os.WriteFile(f, data, 0o600))
+	assert.NoError(t, os.WriteFile(f, data, 0o600)) //nolint:gosec // test writes to a temp path under the test's control
 	size := int64(len(data))
 	// Set remaining limit to size+1 so it does not hit the removal branch (which triggers on <=0)
 	rem, err := UploadCheckFile(f, false, size+1)

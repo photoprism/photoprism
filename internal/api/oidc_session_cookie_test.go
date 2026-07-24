@@ -208,14 +208,14 @@ func TestOIDCSessionCookieSession(t *testing.T) {
 		assert.Nil(t, OIDCSessionCookieSession(newCtx(nil)))
 	})
 	t.Run("MalformedReturnsNil", func(t *testing.T) {
-		c := newCtx(&http.Cookie{Name: OIDCSessionCookie, Value: "garbage"})
+		c := newCtx(&http.Cookie{Name: OIDCSessionCookie, Value: "garbage"}) //nolint:gosec // test builds a request cookie; transport attributes are irrelevant
 		assert.Nil(t, OIDCSessionCookieSession(c))
 	})
 	t.Run("UnknownSessionReturnsNil", func(t *testing.T) {
 		// A correctly-signed reference to a session that does not exist resolves
 		// to nil (and the stale cookie is cleared).
 		v := signOIDCSession(rnd.SessionID(rnd.AuthToken()), time.Now().Add(time.Minute))
-		c := newCtx(&http.Cookie{Name: OIDCSessionCookie, Value: v})
+		c := newCtx(&http.Cookie{Name: OIDCSessionCookie, Value: v}) //nolint:gosec // test builds a request cookie; transport attributes are irrelevant
 		assert.Nil(t, OIDCSessionCookieSession(c))
 	})
 	t.Run("NilContext", func(t *testing.T) {

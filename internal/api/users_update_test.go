@@ -50,7 +50,7 @@ func TestUpdateUser(t *testing.T) {
 			DisplayName: "New Name",
 		}
 
-		if userForm, err := json.Marshal(f); err != nil {
+		if userForm, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2",
@@ -70,7 +70,7 @@ func TestUpdateUser(t *testing.T) {
 			UploadPath:  "uploads-alice",
 		}
 
-		if userForm, err := json.Marshal(f); err != nil {
+		if userForm, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2",
@@ -95,7 +95,7 @@ func TestUpdateUser(t *testing.T) {
 			UploadPath:  "uploads-bob",
 		}
 
-		if userForm, err := json.Marshal(f); err != nil {
+		if userForm, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxc08w3d0ej2283",
@@ -131,7 +131,7 @@ func TestUpdateUser(t *testing.T) {
 		}
 
 		adminUid := entity.Admin.UserUID
-		body, err := json.Marshal(form.User{
+		body, err := json.Marshal(form.User{ //nolint:gosec // test marshals a form with a password field to build the request body
 			UserEmail:   "attacker@example.test",
 			DisplayName: "PWNED",
 		})
@@ -161,7 +161,7 @@ func TestUpdateUser(t *testing.T) {
 			DisplayName: "Bobo",
 		}
 
-		if userForm, err := json.Marshal(f); err != nil {
+		if userForm, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxc08w3d0ej2283",
@@ -183,7 +183,7 @@ func TestUpdateUser(t *testing.T) {
 			DisplayName: "Bobby",
 		}
 
-		if userForm, err := json.Marshal(f); err != nil {
+		if userForm, err := json.Marshal(f); err != nil { //nolint:gosec // test marshals a form with a password field to build the request body
 			log.Fatal(err)
 		} else {
 			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxc08w3d0ej2555",
@@ -212,7 +212,7 @@ func TestUpdateUser_Guards(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 		UpdateUser(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
-		body, _ := json.Marshal(form.User{UserName: "alice", UserRole: "user"})
+		body, _ := json.Marshal(form.User{UserName: "alice", UserRole: "user"}) //nolint:gosec // test marshals a form with a password field to build the request body
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", string(body), sessId)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
@@ -257,7 +257,7 @@ func TestUpdateUser_Guards(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 		UpdateUser(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
-		body, _ := json.Marshal(form.User{DisplayName: "Hacked"})
+		body, _ := json.Marshal(form.User{DisplayName: "Hacked"}) //nolint:gosec // test marshals a form with a password field to build the request body
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.UnknownUser.UserUID, string(body), sessId)
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
@@ -301,7 +301,7 @@ func TestUpdateUser_ClusterJWT(t *testing.T) {
 		spec.Scope = []string{"cluster", "users"}
 		token := fx.issue(t, spec)
 
-		body, err := json.Marshal(form.User{
+		body, err := json.Marshal(form.User{ //nolint:gosec // test marshals a form with a password field to build the request body
 			UserName:    username,
 			DisplayName: "Synced By Portal",
 			CanLogin:    true,
@@ -346,7 +346,7 @@ func TestUpdateUser_ClusterJWT(t *testing.T) {
 		spec.Scope = []string{"cluster"} // no users scope → not authorized to manage users
 		token := fx.issue(t, spec)
 
-		body, _ := json.Marshal(form.User{UserName: username, CanLogin: true})
+		body, _ := json.Marshal(form.User{UserName: username, CanLogin: true}) //nolint:gosec // test marshals a form with a password field to build the request body
 		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+target.UserUID, string(body), token)
 		assert.NotEqual(t, http.StatusOK, r.Code, "a JWT without the users scope must not manage users")
 

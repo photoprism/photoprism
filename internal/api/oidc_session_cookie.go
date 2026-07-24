@@ -100,7 +100,7 @@ func loadOrCreateOIDCSessionKey() []byte {
 	}
 	dir := filepath.Join(conf.PortalConfigPath(), "keys")
 	path := filepath.Join(dir, oidcSessionKeyFile)
-	if b, err := os.ReadFile(path); err == nil && len(b) >= oidcSessionKeyLen {
+	if b, err := os.ReadFile(path); err == nil && len(b) >= oidcSessionKeyLen { //nolint:gosec // path is the portal config keys directory plus a fixed filename, not user input
 		return b
 	}
 	if err := fs.MkdirAll(dir); err != nil {
@@ -185,7 +185,7 @@ func SetOIDCSessionCookie(c *gin.Context, sess *entity.Session, cookiePath strin
 
 	value := signOIDCSession(sess.ID, time.Now().Add(OIDCSessionCookieTTL))
 
-	http.SetCookie(c.Writer, &http.Cookie{
+	http.SetCookie(c.Writer, &http.Cookie{ //nolint:gosec // HttpOnly and SameSite are set; Secure is caller-controlled (HTTP is allowed only for loopback/cluster-internal advertise URLs)
 		Name:     OIDCSessionCookie,
 		Value:    value,
 		Path:     cookiePath,
@@ -208,7 +208,7 @@ func ClearOIDCSessionCookie(c *gin.Context, cookiePath string, secure bool) {
 		cookiePath = config.ApiUri + "/oauth"
 	}
 
-	http.SetCookie(c.Writer, &http.Cookie{
+	http.SetCookie(c.Writer, &http.Cookie{ //nolint:gosec // HttpOnly and SameSite are set; Secure is caller-controlled (HTTP is allowed only for loopback/cluster-internal advertise URLs)
 		Name:     OIDCSessionCookie,
 		Value:    "",
 		Path:     cookiePath,

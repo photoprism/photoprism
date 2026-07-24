@@ -416,11 +416,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Set user role and permissions. A Portal-granted pp_role wins, then a
 			// group-mapped role when federation may set it, else the configured
 			// default; all are filtered to federatable roles (no cluster_admin/visitor).
-			if hasPortalRole {
+			switch {
+			case hasPortalRole:
 				user.SetRole(portalRole.String())
-			} else if hasMappedRole && acl.IsFederatedRole(mappedRole) {
+			case hasMappedRole && acl.IsFederatedRole(mappedRole):
 				user.SetRole(mappedRole.String())
-			} else {
+			default:
 				user.SetRole(defaultRole.String())
 			}
 			user.CanLogin = true
