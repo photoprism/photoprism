@@ -45,6 +45,17 @@ func sessionGrantsAnyPhotos(sess *entity.Session, perms acl.Permissions) bool {
 	return false
 }
 
+// PhotoSessionSeesPrivate reports whether the session may view private pictures (the AccessPrivate
+// permission on photos, evaluated with the same client/user role intersection as the scope predicates).
+// A nil session (no identified requester, e.g. a coarse download token) is treated as not permitted.
+func PhotoSessionSeesPrivate(sess *entity.Session) bool {
+	if sess == nil {
+		return false
+	}
+
+	return sessionGrantsPhotos(sess, acl.AccessPrivate)
+}
+
 // PhotoSessionSeesEverything reports whether a session may access every picture, including
 // private and archived ones, so that no row scoping is required. It performs no database
 // query, so full-access users (admins, regular users, full-access API clients) incur no cost.
@@ -203,6 +214,40 @@ func FileVisibleToSession(fileHash string, sess *entity.Session) (bool, error) {
 	}
 
 	return sharedSmartAlbumContains(f.PhotoUID, sess)
+}
+
+// FileVisibleToPublic reports whether the file's photo may be downloaded with only a coarse,
+// unidentified download token (public mode, a configured static token, or the instance default): the
+// photo must be public (not private), not archived, and not hidden. Unlike FileVisibleToSession it
+// applies no shared-scope predicate, so a static token keeps its broad — but never private — access.
+func FileVisibleToPublic(fileHash string) (bool, error) {
+	if fileHash == "" {
+		return false, nil
+	}
+
+	var count int
+	err := UnscopedDb().Table("files").
+		Joins("JOIN photos ON photos.id = files.photo_id").
+		Where("files.file_hash = ? AND files.deleted_at IS NULL", fileHash).
+		Where("photos.photo_private = 0 AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
+		Count(&count).Error
+
+	return count > 0, err
+}
+
+// PhotoVisibleToPublic reports whether the photo may be downloaded with only a coarse, unidentified
+// download token: it must be public (not private), not archived, and not hidden.
+func PhotoVisibleToPublic(photoUID string) (bool, error) {
+	if photoUID == "" {
+		return false, nil
+	}
+
+	var count int
+	err := UnscopedDb().Table("photos").
+		Where("photo_uid = ? AND photo_private = 0 AND deleted_at IS NULL AND photo_quality > -1", photoUID).
+		Count(&count).Error
+
+	return count > 0, err
 }
 
 // sharedSmartAlbumContains reports whether the given photo UID belongs to a smart album shared with

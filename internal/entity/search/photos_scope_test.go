@@ -441,3 +441,31 @@ func BenchmarkPhotoVisibleToSession(b *testing.B) {
 		}
 	})
 }
+
+func TestFileVisibleToPublic(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		v, err := FileVisibleToPublic("")
+		assert.NoError(t, err)
+		assert.False(t, v)
+	})
+}
+
+func TestPhotoVisibleToPublic(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		v, err := PhotoVisibleToPublic("")
+		assert.NoError(t, err)
+		assert.False(t, v)
+	})
+}
+
+func TestPhotoSessionSeesPrivate(t *testing.T) {
+	t.Run("NilDenied", func(t *testing.T) {
+		assert.False(t, PhotoSessionSeesPrivate(nil))
+	})
+	t.Run("VisitorDenied", func(t *testing.T) {
+		assert.False(t, PhotoSessionSeesPrivate(entity.SessionFixtures.Pointer("visitor")))
+	})
+	t.Run("AdminAllowed", func(t *testing.T) {
+		assert.True(t, PhotoSessionSeesPrivate(entity.SessionFixtures.Pointer("alice")))
+	})
+}

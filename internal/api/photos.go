@@ -197,6 +197,10 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 				c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 				return
 			}
+		} else if visible, vErr := search.PhotoVisibleToPublic(uid); vErr != nil || !visible {
+			// A coarse token (no identified session) may not fetch private, archived, or hidden pictures.
+			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+			return
 		}
 
 		f, err := query.FileByPhotoUID(uid)

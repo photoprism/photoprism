@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -102,7 +103,10 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		// included; private pictures are governed by the session scope (and excluded outright for
 		// an unidentified requester), so the archive matches what the user could browse.
 		dl := conf.Settings().Albums.Download
-		selection := query.AlbumDownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals, sess != nil)
+		// Include private pictures only when the session may view them (defense in depth: the base
+		// selection then excludes private for everyone else, and SelectedFilesForSession's scope predicate
+		// enforces it again). A coarse/unidentified requester never gets private pictures.
+		selection := query.AlbumDownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals, search.PhotoSessionSeesPrivate(sess))
 		files, err := query.SelectedFilesForSession(form.Selection{Albums: []string{a.AlbumUID}}, selection, sess)
 
 		if err != nil {
