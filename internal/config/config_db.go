@@ -436,13 +436,18 @@ func (c *Config) Db() *gorm.DB {
 	return c.db
 }
 
-// CloseDb closes the db connection (if any). Before tearing down the
-// connection it drains async work registered with entity.AsyncJobAdd so
-// goroutines launched by UpdateCountsAsync, UpdateCoversAsync, and
-// similar helpers do not race the provider being nilled and panic on a
-// nil dialect lookup.
+// AsyncJobDrainTimeout bounds how long CloseDb waits for background jobs before
+// tearing down the connection, so a wedged job cannot hang shutdown forever.
+const AsyncJobDrainTimeout = 30 * time.Second
+
+// CloseDb closes the db connection (if any). It first drains async work registered
+// with entity.AsyncJobAdd (UpdateCountsAsync, UpdateCoversAsync, …) so those goroutines
+// do not race the provider being nilled, bounded by AsyncJobDrainTimeout so a stuck job
+// degrades to a logged warning instead of an indefinite hang.
 func (c *Config) CloseDb() error {
-	entity.WaitForAsyncJobs()
+	if !entity.WaitForAsyncJobsTimeout(AsyncJobDrainTimeout) {
+		log.Warnf("config: timeout waiting for background jobs before closing the database")
+	}
 
 	if c.db != nil {
 		if err := c.db.Close(); err == nil {
