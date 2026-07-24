@@ -375,7 +375,9 @@ function isInteractiveTarget(target) {
 
 // preventNavigationTouchEvent suppresses iOS swipe-back, browser pull-to-refresh, and
 // accidental horizontal navigation while the lightbox is active. Scoped to edge bands
-// only — inner-area touches and taps on interactive widgets pass through.
+// only — inner-area touches and taps on interactive widgets pass through. Runs in the
+// capture phase (see _preventNavOptions) so overlays that stopPropagation to own their
+// gestures, like the PDF viewer, can't defeat it.
 export function preventNavigationTouchEvent(ev) {
   if (!(ev instanceof TouchEvent) || !ev.cancelable) {
     return;
@@ -434,9 +436,10 @@ export class View {
     this._onFocusOutListener = this.onDocumentFocusOut.bind(this);
     document.addEventListener("focusout", this._onFocusOutListener);
 
-    // Options used when preventing navigation touch gestures; keep a stable
-    // object reference so add/removeEventListener calls can match on all browsers.
-    this._preventNavOptions = { passive: false };
+    // Guard listener options; a stable reference lets add/removeEventListener match.
+    // capture:true so a descendant that stops touch propagation (e.g. the PDF viewer's
+    // @touchstart.stop) can't defeat the window-level guard.
+    this._preventNavOptions = { passive: false, capture: true };
 
     if (trace) {
       // Store trace handlers so they can be removed later if needed.
