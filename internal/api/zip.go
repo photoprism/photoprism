@@ -189,8 +189,8 @@ func ZipCreate(router *gin.RouterGroup) {
 //	@Router		/api/v1/zip/{filename} [get]
 func ZipDownload(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
-			log.Errorf("download: %s", c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid download token")))
+		if _, valid := AuthDownload(c); !valid {
+			AbortForbidden(c)
 			return
 		}
 
@@ -200,7 +200,8 @@ func ZipDownload(router *gin.RouterGroup) {
 		zipFileName := filepath.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
-			log.Errorf("download: %s", c.AbortWithError(http.StatusNotFound, fmt.Errorf("%s not found", clean.Log(zipFileName))))
+			log.Errorf("download: archive %s no longer exists", clean.Log(zipBaseName))
+			AbortEntityNotFound(c)
 			return
 		}
 

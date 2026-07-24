@@ -315,6 +315,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Thumbnails.
 		{"download-token", c.DownloadToken()},
+		{"download-token-maxage", fmt.Sprintf("%d", int64(c.DownloadTokenMaxAge().Seconds()))},
 		{"preview-token", c.PreviewToken()},
 		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},

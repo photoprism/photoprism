@@ -2667,11 +2667,9 @@ func TestUser_RegenerateTokens(t *testing.T) {
 	})
 	t.Run("Admin", func(t *testing.T) {
 		preview := Admin.PreviewToken
-		download := Admin.DownloadToken
 
 		// Register the current tokens in the lookup cache.
 		PreviewToken.Set("user-regen-session", preview)
-		DownloadToken.Set("user-regen-session", download)
 
 		err := Admin.RegenerateTokens()
 
@@ -2680,10 +2678,8 @@ func TestUser_RegenerateTokens(t *testing.T) {
 		}
 
 		assert.NotEqual(t, preview, Admin.PreviewToken)
-		assert.NotEqual(t, download, Admin.DownloadToken)
 		// The replaced tokens are dropped from the lookup cache.
 		assert.True(t, PreviewToken.MissingValue(preview))
-		assert.True(t, DownloadToken.MissingValue(download))
 	})
 }
 
@@ -2697,18 +2693,15 @@ func TestUser_RegenerateTokens_ReleaseSurvivesReCache(t *testing.T) {
 	sessID := rnd.SessionID("44be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
 
 	oldPreview := Admin.PreviewToken
-	oldDownload := Admin.DownloadToken
 
 	// Cache a session that currently holds the user's tokens, registering them for lookup.
-	sess := &Session{ID: sessID, PreviewToken: oldPreview, DownloadToken: oldDownload}
+	sess := &Session{ID: sessID, PreviewToken: oldPreview}
 	CacheSession(sess, time.Hour)
 	require.False(t, InvalidPreviewToken(oldPreview))
-	require.False(t, InvalidDownloadToken(oldDownload))
 
 	// Regenerate the user's tokens; the previous values must be released from the cache.
 	require.NoError(t, Admin.RegenerateTokens())
 	require.NotEqual(t, oldPreview, Admin.PreviewToken)
-	require.NotEqual(t, oldDownload, Admin.DownloadToken)
 
 	// Refresh the session to the user's current tokens and re-cache it.
 	sess.SetUser(&Admin)
@@ -2716,9 +2709,7 @@ func TestUser_RegenerateTokens_ReleaseSurvivesReCache(t *testing.T) {
 
 	// The regenerated tokens resolve; the released old tokens do not resurface.
 	assert.False(t, InvalidPreviewToken(Admin.PreviewToken))
-	assert.False(t, InvalidDownloadToken(Admin.DownloadToken))
 	assert.True(t, InvalidPreviewToken(oldPreview))
-	assert.True(t, InvalidDownloadToken(oldDownload))
 }
 
 func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
@@ -2727,17 +2718,15 @@ func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
 	// that row, otherwise a reload from the database (after the 15-minute cache expiry or
 	// a restart) re-registers the revoked token via CacheSession, resurrecting it.
 	u := &User{
-		UserUID:       rnd.GenerateUID(UserUID),
-		UserName:      "regen-stale-reload",
-		UserRole:      acl.RoleAdmin.String(),
-		CanLogin:      true,
-		PreviewToken:  GenerateToken(),
-		DownloadToken: GenerateToken(),
+		UserUID:      rnd.GenerateUID(UserUID),
+		UserName:     "regen-stale-reload",
+		UserRole:     acl.RoleAdmin.String(),
+		CanLogin:     true,
+		PreviewToken: GenerateToken(),
 	}
 	require.NoError(t, u.Save())
 
 	oldPreview := u.PreviewToken
-	oldDownload := u.DownloadToken
 
 	// Mint and persist an app-password session that inherits the user's tokens.
 	appPw := NewClientSession("regen-stale-client", unix.Day, "*", authn.GrantPassword, u)
@@ -2752,16 +2741,13 @@ func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
 	reloaded := &Session{}
 	require.NoError(t, UnscopedDb().First(reloaded, "id = ?", appPw.ID).Error)
 	assert.Equal(t, u.PreviewToken, reloaded.PreviewToken)
-	assert.Equal(t, u.DownloadToken, reloaded.DownloadToken)
 
 	// Simulate a fresh reload after cache eviction: caching the row must not resurrect
 	// the revoked token, and the current token resolves.
 	DeleteFromSessionCache(appPw.ID)
 	CacheSession(reloaded, time.Hour)
 	assert.True(t, InvalidPreviewToken(oldPreview))
-	assert.True(t, InvalidDownloadToken(oldDownload))
 	assert.False(t, InvalidPreviewToken(u.PreviewToken))
-	assert.False(t, InvalidDownloadToken(u.DownloadToken))
 
 	// Cleanup.
 	require.NoError(t, reloaded.Delete())

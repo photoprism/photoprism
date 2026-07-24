@@ -1,7 +1,6 @@
 package mcp
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -129,14 +128,14 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	}
 
 	for _, item := range items {
-		for envVar := range expectEmpty {
-			if !strings.Contains(item.Environment, envVar) {
-				continue
-			}
-
-			require.Empty(t, item.Default,
-				"flag %s must surface an empty Default; got %q", item.Environment, item.Default)
+		// Match the exact env var, not a substring: PHOTOPRISM_DOWNLOAD_TOKEN is a prefix of
+		// PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE (a non-secret lifetime that legitimately has a numeric default).
+		if _, ok := expectEmpty[item.Environment]; !ok {
+			continue
 		}
+
+		require.Empty(t, item.Default,
+			"flag %s must surface an empty Default; got %q", item.Environment, item.Default)
 	}
 }
 

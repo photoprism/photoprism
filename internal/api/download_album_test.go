@@ -7,8 +7,36 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/entity"
 )
+
+func TestAuthorizeAlbumDownload(t *testing.T) {
+	// authorizeAlbumDownload reads only AlbumUID and CreatedBy, so a minimal album is sufficient.
+	shared := entity.Album{AlbumUID: "as6sg6bxpogaaba8"}   // redeemed by the visitor fixture
+	unshared := entity.Album{AlbumUID: "as6sg6bxpogaaba9"} // not shared with the visitor
+
+	t.Run("NilSession", func(t *testing.T) {
+		assert.False(t, authorizeAlbumDownload(nil, shared))
+	})
+	t.Run("AdminSeesEverything", func(t *testing.T) {
+		sess, err := entity.FindSession(entity.SessionFixtures.Get("alice").ID)
+		assert.NoError(t, err)
+		assert.True(t, authorizeAlbumDownload(sess, unshared))
+	})
+	t.Run("VisitorSharedAlbum", func(t *testing.T) {
+		sess, err := entity.FindSession(entity.SessionFixtures.Get("visitor").ID)
+		assert.NoError(t, err)
+		assert.True(t, authorizeAlbumDownload(sess, shared))
+	})
+	t.Run("VisitorUnsharedAlbum", func(t *testing.T) {
+		sess, err := entity.FindSession(entity.SessionFixtures.Get("visitor").ID)
+		assert.NoError(t, err)
+		assert.False(t, authorizeAlbumDownload(sess, unshared))
+	})
+}
 
 func TestAlbumDownloadName(t *testing.T) {
 	t.Run("File", func(t *testing.T) {
@@ -70,5 +98,69 @@ func TestDownloadAlbum(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, r.Code)
 
 		conf.Settings().Features.Download = true
+	})
+	t.Run("SignedAdminToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		q := tokens.SignDownload(entity.SessionFixtures.Get("alice").ID)
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+q)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("SignedVisitorTokenSharedAlbum", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		// The visitor fixture has redeemed a share for as6sg6bxpogaaba8.
+		q := tokens.SignDownload(entity.SessionFixtures.Get("visitor").ID)
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+q)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("SignedVisitorTokenUnsharedAlbum", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		// The visitor has no share for as6sg6bxpogaaba9, so the album is reported as not found.
+		q := tokens.SignDownload(entity.SessionFixtures.Get("visitor").ID)
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba9/dl?t="+q)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("NonJwtHeaderCannotDownloadWithoutToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		// Header auth on downloads is restricted to cluster JWTs; a regular session bearer cannot use it
+		// and must present a "?t=" token (which it can, being a persisted session). With no "?t=" it is
+		// denied.
+		token := AuthenticateAdmin(app, router)
+		r := AuthenticatedRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl", token)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("CoarseDownloadTokenWorks", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		// The coarse instance token is not session-bound, so it downloads the public, non-private
+		// subset of the album.
+		orig := tokens.CoarseDownload
+		tokens.CoarseDownload = conf.DownloadToken()
+		defer func() { tokens.CoarseDownload = orig }()
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+conf.DownloadToken())
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

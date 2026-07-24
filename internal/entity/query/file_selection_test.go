@@ -24,6 +24,22 @@ func visitorSessionWithShares(tokens ...string) *entity.Session {
 	return s
 }
 
+func TestAlbumDownloadSelection(t *testing.T) {
+	t.Run("ExcludesArchivedAndHidden", func(t *testing.T) {
+		sel := AlbumDownloadSelection(true, true, false, true)
+		assert.False(t, sel.Archived)
+		assert.False(t, sel.Hidden)
+		// Private is deferred to the session scope when a session is identified.
+		assert.True(t, sel.Private)
+	})
+	t.Run("AnonymousExcludesPrivate", func(t *testing.T) {
+		sel := AlbumDownloadSelection(true, true, false, false)
+		assert.False(t, sel.Private)
+		assert.False(t, sel.Archived)
+		assert.False(t, sel.Hidden)
+	})
+}
+
 func TestSelectedFilesForSession(t *testing.T) {
 	// Include private pictures in the base selection so the session scope is what filters them.
 	o := FileSelection{Private: true, MaxSize: 1024 * MiB}

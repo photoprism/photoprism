@@ -14,7 +14,7 @@ import (
 func TestDeleteSession(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		id := rnd.SessionID("77be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
-		m := &Session{ID: id, DownloadToken: "download123", PreviewToken: "preview123"}
+		m := &Session{ID: id, PreviewToken: "preview123"}
 		CacheSession(m, time.Hour)
 		r, _ := sessionCache.Get(id)
 		assert.NotEmpty(t, r)
@@ -27,25 +27,23 @@ func TestDeleteSession(t *testing.T) {
 	})
 	t.Run("ReleasesTokens", func(t *testing.T) {
 		id := rnd.SessionID("11be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
-		m := &Session{ID: id, DownloadToken: "release-dl-token", PreviewToken: "release-pv-token"}
+		m := &Session{ID: id, PreviewToken: "release-pv-token"}
 		CacheSession(m, time.Hour)
 		assert.True(t, PreviewToken.HasValue("release-pv-token"))
-		assert.True(t, DownloadToken.HasValue("release-dl-token"))
 
 		if err := DeleteSession(m); err != nil {
 			t.Fatal(err)
 		}
 
 		assert.True(t, PreviewToken.MissingValue("release-pv-token"))
-		assert.True(t, DownloadToken.MissingValue("release-dl-token"))
 	})
 	t.Run("KeepsTokenWhileOtherSessionActive", func(t *testing.T) {
 		first := &Session{ID: rnd.SessionID("22be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"),
-			PreviewToken: "shared-pv-token", DownloadToken: "shared-dl-token"}
+			PreviewToken: "shared-pv-token"}
 		CacheSession(first, time.Hour)
 
 		second := &Session{ID: rnd.SessionID("33be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"),
-			PreviewToken: "shared-pv-token", DownloadToken: "shared-dl-token"}
+			PreviewToken: "shared-pv-token"}
 		CacheSession(second, time.Hour)
 
 		// Removing the first session keeps the shared tokens because the second still uses them.
@@ -53,17 +51,15 @@ func TestDeleteSession(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.True(t, PreviewToken.HasValue("shared-pv-token"))
-		assert.True(t, DownloadToken.HasValue("shared-dl-token"))
 
 		// Removing the last session releases the tokens.
 		if err := DeleteSession(second); err != nil {
 			t.Fatal(err)
 		}
 		assert.True(t, PreviewToken.MissingValue("shared-pv-token"))
-		assert.True(t, DownloadToken.MissingValue("shared-dl-token"))
 	})
 	t.Run("InvalidId", func(t *testing.T) {
-		m := &Session{ID: "123-invalid", DownloadToken: "download123", PreviewToken: "preview123"}
+		m := &Session{ID: "123-invalid", PreviewToken: "preview123"}
 		CacheSession(m, time.Hour)
 
 		err := DeleteSession(m)

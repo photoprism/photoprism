@@ -181,12 +181,25 @@ func UpdatePhoto(router *gin.RouterGroup) {
 //	@Router		/api/v1/photos/{uid}/dl [get]
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
+		sess, valid := AuthDownload(c)
+		if !valid {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
 		}
 
-		f, err := query.FileByPhotoUID(clean.UID(c.Param("uid")))
+		uid := clean.UID(c.Param("uid"))
+
+		// Withhold photos the requesting session may not see (private/archived/out-of-scope), reported
+		// as not found so a token holder cannot fetch or probe arbitrary photos by UID. A coarse token
+		// not bound to a session (public mode / configured static token) keeps its by-design broad access.
+		if sess != nil {
+			if visible, vErr := search.PhotoVisibleToSession(uid, sess); vErr != nil || !visible {
+				c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
+				return
+			}
+		}
+
+		f, err := query.FileByPhotoUID(uid)
 
 		if err != nil {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)

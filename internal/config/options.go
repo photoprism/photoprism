@@ -240,6 +240,7 @@ type Options struct {
 	HeifConvertOrientation    string        `yaml:"HeifConvertOrientation" json:"-" flag:"heifconvert-orientation"`
 	RsvgConvertBin            string        `yaml:"RsvgConvertBin" json:"-" flag:"rsvgconvert-bin"`
 	DownloadToken             string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
+	DownloadTokenMaxAge       int64         `yaml:"DownloadTokenMaxAge" json:"-" flag:"download-token-maxage"`
 	PreviewToken              string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbLibrary              string        `yaml:"ThumbLibrary" json:"ThumbLibrary" flag:"thumb-library"`
 	ThumbColor                string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`

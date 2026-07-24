@@ -1,14 +1,19 @@
 package config
 
 import (
+	"crypto/rand"
 	"os"
+	"path/filepath"
 	"regexp"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -214,20 +219,73 @@ func (c *Config) SessionCacheDuration() time.Duration {
 	return time.Duration(c.SessionCache()) * time.Second
 }
 
-// DownloadToken returns the DOWNLOAD api token (you can optionally use a static value for permanent caching).
+// DownloadToken returns the single coarse download token — the admin-configured static value
+// (PHOTOPRISM_DOWNLOAD_TOKEN) for permanent, cacheable URLs, or one auto-generated random value when
+// none is set. It is delivered to the sessionless public/share client configs and propagated to
+// tokens.CoarseDownload; authenticated sessions instead receive a signed, session-scoped token. The
+// auto-generated fallback is cached separately so it never overwrites the options, keeping an
+// admin-configured static token distinguishable.
 func (c *Config) DownloadToken() string {
 	if c.Public() {
 		return entity.TokenPublic
-	} else if c.options.DownloadToken == "" {
-		c.options.DownloadToken = rnd.Base36(8)
+	} else if c.options.DownloadToken != "" {
+		return c.options.DownloadToken
 	}
 
-	return c.options.DownloadToken
+	c.downloadTokenOnce.Do(func() {
+		c.downloadToken = rnd.Base36(8)
+	})
+
+	return c.downloadToken
 }
 
-// InvalidDownloadToken checks if the token is invalid.
-func (c *Config) InvalidDownloadToken(t string) bool {
-	return entity.InvalidDownloadToken(t)
+// TokenSigningKey returns the HMAC key that signs the app's URL tokens (one shared instance secret for
+// every token kind, never sent to clients), generating one on first use. It is persisted at
+// config/keys/signing.key but always kept in memory, so signing never returns an empty key even when the
+// disk is read-only; a missing key is regenerated (invalidating only short-lived outstanding tokens), so
+// it is not backed up.
+func (c *Config) TokenSigningKey() []byte {
+	c.tokenKeyOnce.Do(func() {
+		keyPath := filepath.Join(c.KeysPath(), signingKeyName)
+
+		// Reuse the persisted key so tokens stay valid across restarts and replicas.
+		if data, err := os.ReadFile(keyPath); err == nil && len(data) >= tokens.KeyLen { //nolint:gosec // path is computed from the config directory
+			c.tokenKey = data
+			return
+		}
+
+		// Generate a fresh key and keep it in memory unconditionally, so a signing key is always
+		// available even if it cannot be persisted below. crypto/rand.Read does not return an error on
+		// supported platforms (the runtime aborts instead), so the key is never empty.
+		key := make([]byte, tokens.KeyLen)
+		if _, err := rand.Read(key); err != nil {
+			log.Errorf("config: token signing key generation reported an error (%s)", err)
+		}
+
+		c.tokenKey = key
+
+		// Best-effort persistence: a write failure must not clear the in-memory key.
+		if err := fs.MkdirAll(c.KeysPath()); err != nil {
+			log.Warnf("config: failed to create keys directory (%s)", err)
+		} else if err := os.WriteFile(keyPath, key, fs.ModeSecretFile); err != nil {
+			log.Warnf("config: failed to store token signing key (%s)", err)
+		}
+	})
+
+	return c.tokenKey
+}
+
+// DownloadTokenMaxAge returns the lifetime of signed download tokens. It defaults to the short window
+// in ttl.DownloadToken so a leaked token expires quickly; because the tokens are stateless and refreshed
+// on every response, a fresh token is always issued before the current one lapses, so their validity
+// overlaps. Configure PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE (seconds) to adjust it — the value MUST stay
+// larger than the client's token-refresh interval so a held token is still valid when used.
+func (c *Config) DownloadTokenMaxAge() time.Duration {
+	if c.options.DownloadTokenMaxAge > 0 {
+		return time.Duration(c.options.DownloadTokenMaxAge) * time.Second
+	}
+
+	return time.Duration(ttl.DownloadToken.Int()) * time.Second
 }
 
 // PreviewToken returns the preview image api token (based on the unique storage serial by default).

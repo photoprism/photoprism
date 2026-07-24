@@ -43,7 +43,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output4, "Johnny")
 		assert.Contains(t, output4, "admin")
 		assert.Contains(t, output4, "johnnny@test.de")
-		assert.Contains(t, output4, "│ DeletedAt     │ <nil>")
+		assert.Contains(t, output4, "│ DeletedAt    │ <nil>")
 
 		// Remove John
 		// Run command with test context.
@@ -62,7 +62,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output6, "Johnny")
 		assert.Contains(t, output6, "admin")
 		assert.Contains(t, output6, "johnnny@test.de")
-		assert.Contains(t, output6, "│ DeletedAt     │ time.Date")
-		assert.NotContains(t, output6, "│ DeletedAt     │ <nil>")
+		assert.Contains(t, output6, "│ DeletedAt    │ time.Date")
+		assert.NotContains(t, output6, "│ DeletedAt    │ <nil>")
 	})
 }

@@ -2,12 +2,17 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -197,22 +202,46 @@ func TestUtils_isBcrypt(t *testing.T) {
 	assert.False(t, isBcrypt(p))
 }
 
-func TestConfig_InvalidDownloadToken(t *testing.T) {
-	c := NewConfig(CliTestContext())
+func TestConfig_KeysPath(t *testing.T) {
+	c := NewMinimalTestConfig(t.TempDir())
+	assert.Equal(t, filepath.Join(c.ConfigPath(), "keys"), c.KeysPath())
+}
 
-	// InvalidDownloadToken delegates to the process-global entity.ValidateTokens switch
-	// that Propagate() derives from Public(); pin it per case so the outcome does not
-	// depend on what another test last left in the shared global.
-	validate := entity.ValidateTokens
-	defer func() { entity.ValidateTokens = validate }()
-
-	t.Run("ValidationEnabled", func(t *testing.T) {
-		entity.ValidateTokens = true
-		assert.True(t, c.InvalidDownloadToken("xxx"))
+func TestConfig_TokenSigningKey(t *testing.T) {
+	t.Run("GeneratesStableKeyAtKeysPath", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		key := c.TokenSigningKey()
+		assert.GreaterOrEqual(t, len(key), tokens.KeyLen)
+		// Stable across calls so tokens stay valid.
+		assert.Equal(t, key, c.TokenSigningKey())
+		// Persisted at config/keys/signing.key, with no backup copy.
+		assert.FileExists(t, filepath.Join(c.KeysPath(), signingKeyName))
+		assert.NoFileExists(t, c.BackupPath(signingKeyName))
 	})
-	t.Run("PublicMode", func(t *testing.T) {
-		entity.ValidateTokens = false
-		assert.False(t, c.InvalidDownloadToken("xxx"))
+	t.Run("NonEmptyEvenWhenNotPersisted", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		// Block the keys directory by placing a file where it would be created, so the key cannot be
+		// written; it must still be available in memory (never empty).
+		require.NoError(t, os.MkdirAll(c.ConfigPath(), fs.ModeDir))
+		require.NoError(t, os.WriteFile(c.KeysPath(), []byte("x"), fs.ModeSecretFile))
+		key := c.TokenSigningKey()
+		assert.GreaterOrEqual(t, len(key), tokens.KeyLen)
+		assert.NoFileExists(t, filepath.Join(c.KeysPath(), signingKeyName))
+	})
+}
+
+func TestConfig_DownloadTokenMaxAge(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	t.Run("DefaultsToTtlWindow", func(t *testing.T) {
+		c.options.DownloadTokenMaxAge = 0
+		assert.Equal(t, time.Duration(ttl.DownloadToken.Int())*time.Second, c.DownloadTokenMaxAge())
+		// The default must stay well under the session lifetime so a leaked token expires quickly.
+		assert.Less(t, int64(c.DownloadTokenMaxAge().Seconds()), c.SessionMaxAge())
+	})
+	t.Run("ConfiguredOverride", func(t *testing.T) {
+		c.options.DownloadTokenMaxAge = 60
+		defer func() { c.options.DownloadTokenMaxAge = 0 }()
+		assert.Equal(t, 60*time.Second, c.DownloadTokenMaxAge())
 	})
 }
 

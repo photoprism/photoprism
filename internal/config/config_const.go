@@ -77,6 +77,11 @@ const DefaultResolutionLimit = 150 // 150 Megapixels
 // serialName defines the name of the unique storage serial.
 const serialName = "serial"
 
+// signingKeyName defines the name of the secret file (under KeysPath) holding the HMAC key that signs
+// the app's URL tokens (downloads today, previews next); one shared key signs every token kind. It is
+// regenerated automatically when missing, so it is not backed up.
+const signingKeyName = "signing.key"
+
 // DefaultSessionMaxAge defines the standard session expiration time in seconds.
 const DefaultSessionMaxAge = unix.Week * 2
 

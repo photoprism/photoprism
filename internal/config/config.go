@@ -53,6 +53,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/api/download"
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -73,20 +74,24 @@ import (
 
 // Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
-	cliCtx    *cli.Context
-	options   *Options
-	settings  *customize.Settings
-	db        *gorm.DB
-	dbVersion string
-	hub       *hub.Config
-	hubCancel context.CancelFunc
-	hubLock   sync.Mutex
-	token     string
-	serial    string
-	env       string
-	start     bool
-	ready     atomic.Bool
-	cache     *gc.Cache
+	cliCtx            *cli.Context
+	options           *Options
+	settings          *customize.Settings
+	db                *gorm.DB
+	dbVersion         string
+	hub               *hub.Config
+	hubCancel         context.CancelFunc
+	hubLock           sync.Mutex
+	token             string
+	serial            string
+	downloadToken     string
+	downloadTokenOnce sync.Once
+	tokenKey          []byte
+	tokenKeyOnce      sync.Once
+	env               string
+	start             bool
+	ready             atomic.Bool
+	cache             *gc.Cache
 }
 
 // Values is a shorthand alias for map[string]interface{}.
@@ -427,10 +432,22 @@ func (c *Config) Propagate() {
 	// Set path for user assets.
 	entity.UsersPath = c.UsersPath()
 
-	// Set API preview and download default tokens.
+	// Set the API preview default token (the download token is no longer stored per session).
 	entity.PreviewToken.Set(entity.TokenConfig, c.PreviewToken())
-	entity.DownloadToken.Set(entity.TokenConfig, c.DownloadToken())
 	entity.ValidateTokens = !c.Public()
+
+	// Configure signed URL tokens. One shared signing key covers every token kind (downloads today,
+	// previews next); the signature path and lifetime are per kind.
+	tokens.Download.Key = c.TokenSigningKey()
+	tokens.Download.SignaturePath = c.ApiUri()
+	ttl.DownloadToken = ttl.Duration(int(c.DownloadTokenMaxAge().Seconds()))
+
+	// Configure the download-token delivery and validation policy: public mode delivers a placeholder,
+	// a configured static token is delivered to every client, and the single coarse instance token
+	// covers the sessionless public/share configs while authenticated sessions get signed tokens.
+	tokens.PublicMode = c.Public()
+	tokens.DownloadStatic = c.options.DownloadToken != ""
+	tokens.CoarseDownload = c.DownloadToken()
 
 	// Set face recognition parameters.
 	face.ScoreThreshold = c.FaceScore()

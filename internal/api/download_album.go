@@ -8,7 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
@@ -17,6 +19,25 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
+
+// authorizeAlbumDownload reports whether the session may download the album, mirroring the per-session
+// album visibility gate enforced by GetAlbum: unregistered visitors need a share for the album, and
+// other restricted users may only reach their own or shared albums. Full-access sessions always pass.
+func authorizeAlbumDownload(sess *entity.Session, a entity.Album) bool {
+	if sess == nil {
+		return false
+	}
+
+	if sess.NotRegistered() && !sess.HasShare(a.AlbumUID) {
+		return false
+	}
+
+	if sess.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) && a.CreatedBy != sess.UserUID && !sess.HasShare(a.AlbumUID) {
+		return false
+	}
+
+	return true
+}
 
 // AlbumDownloadName returns the album download file name type.
 func AlbumDownloadName(c *gin.Context) customize.DownloadName {
@@ -44,7 +65,8 @@ func AlbumDownloadName(c *gin.Context) customize.DownloadName {
 //	@Router		/api/v1/albums/{uid}/dl [get]
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
+		sess, valid := AuthDownload(c)
+		if !valid {
 			AbortForbidden(c)
 			return
 		}
@@ -64,12 +86,24 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		// Select the album's files based on the album download settings. Enumerating at the
-		// file level (rather than via a photo search) is what lets real sidecar files such as
-		// XMP be included when the Sidecar option is enabled, matching the multi-file download.
+		// The session that owns the download token (resolved by AuthDownload above) scopes the archive to
+		// pictures it may see. A nil session means an unidentified requester (a coarse/instance token),
+		// which is limited to public, non-private content below.
+
+		// Deny access to albums the session may not view, mirroring GetAlbum.
+		if sess != nil && !authorizeAlbumDownload(sess, a) {
+			AbortAlbumNotFound(c)
+			return
+		}
+
+		// Select the album's files based on the album download settings. Enumerating at the file
+		// level (rather than via a photo search) is what lets real sidecar files such as XMP be
+		// included when the Sidecar option is enabled. Archived and hidden pictures are never
+		// included; private pictures are governed by the session scope (and excluded outright for
+		// an unidentified requester), so the archive matches what the user could browse.
 		dl := conf.Settings().Albums.Download
-		selection := query.DownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals)
-		files, err := query.SelectedFiles(form.Selection{Albums: []string{a.AlbumUID}}, selection)
+		selection := query.AlbumDownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals, sess != nil)
+		files, err := query.SelectedFilesForSession(form.Selection{Albums: []string{a.AlbumUID}}, selection, sess)
 
 		if err != nil {
 			AbortEntityNotFound(c)

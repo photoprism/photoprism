@@ -51,6 +51,19 @@ func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
 	}
 }
 
+// AlbumDownloadSelection selects an album's files for a zip download. It keeps archived and hidden
+// pictures out of the archive (they are not part of the visible album) and defers private-picture
+// visibility to the session scope applied by SelectedFilesForSession; when allowPrivate is false
+// (an unidentified session, e.g. the instance-default token) private pictures are excluded outright.
+func AlbumDownloadSelection(mediaRaw, mediaSidecar, originals, allowPrivate bool) FileSelection {
+	sel := DownloadSelection(mediaRaw, mediaSidecar, originals)
+	sel.Archived = false
+	sel.Hidden = false
+	sel.Private = allowPrivate
+
+	return sel
+}
+
 // ShareSelection selects files to share, for example for upload via WebDAV.
 func ShareSelection(originals bool) FileSelection {
 	var omitMedia []string

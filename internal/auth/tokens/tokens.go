@@ -1,5 +1,15 @@
 /*
-Package ttl provides cache expiration and token lifetime defaults and helper functions.
+Package tokens signs and verifies the bunny.net-compatible URL tokens PhotoPrism embeds in its
+header-less media URLs, so endpoints loaded through <img src> / <a href download> contexts (which
+carry only a "?t=" query token and no Authorization header, possibly through a CDN) can be scoped
+without a server-side lookup.
+
+Each token kind is a package-level Signer (see signer.go) configured by config.Propagate with its own
+key and signature path — downloads today (see download.go), thumbnail and video previews next. The
+kind's own policy (per-session vs. per-path scope, sliding vs. bucketed expiry, compact vs. path
+encoding) lives in its thin per-kind sign and verify wrapper, so a new kind slots in beside Download
+without a second package. This is a Propagate-configured leaf like thumb/dl/ttl and imports neither
+config nor get.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
@@ -22,4 +32,4 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package ttl
+package tokens

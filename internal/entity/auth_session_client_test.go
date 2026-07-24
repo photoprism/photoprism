@@ -74,12 +74,11 @@ func TestNewClientSession_ReleasesTokensOnDelete(t *testing.T) {
 	// and the user's remaining session must release the tokens from the lookup cache so they
 	// stop resolving once no active session or app password uses them.
 	u := &User{
-		UserUID:       rnd.GenerateUID(UserUID),
-		UserName:      "app-pw-lifecycle",
-		UserRole:      acl.RoleAdmin.String(),
-		CanLogin:      true,
-		PreviewToken:  "app-pw-preview-token",
-		DownloadToken: "app-pw-download-token",
+		UserUID:      rnd.GenerateUID(UserUID),
+		UserName:     "app-pw-lifecycle",
+		UserRole:     acl.RoleAdmin.String(),
+		CanLogin:     true,
+		PreviewToken: "app-pw-preview-token",
 	}
 	if err := u.Save(); err != nil {
 		t.Fatal(err)
@@ -99,7 +98,6 @@ func TestNewClientSession_ReleasesTokensOnDelete(t *testing.T) {
 	}
 
 	assert.True(t, PreviewToken.HasValue("app-pw-preview-token"))
-	assert.True(t, DownloadToken.HasValue("app-pw-download-token"))
 
 	// Deleting the app password (loaded fresh by ref ID, as the API handler does) keeps the
 	// tokens valid because the browser session still uses them.
@@ -111,14 +109,12 @@ func TestNewClientSession_ReleasesTokensOnDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.True(t, PreviewToken.HasValue("app-pw-preview-token"))
-	assert.True(t, DownloadToken.HasValue("app-pw-download-token"))
 
 	// Logging out releases the tokens once no session or app password uses them.
 	if err := browser.Delete(); err != nil {
 		t.Fatal(err)
 	}
 	assert.True(t, PreviewToken.MissingValue("app-pw-preview-token"))
-	assert.True(t, DownloadToken.MissingValue("app-pw-download-token"))
 }
 
 func TestAddClientSession(t *testing.T) {

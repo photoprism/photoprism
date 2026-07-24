@@ -1215,6 +1215,11 @@ var Flags = CliFlags{
 			Usage:   "`DEFAULT` download URL token for originals (leave blank for a random value)",
 			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
 		}, Secret: true}, {
+		Flag: &cli.Int64Flag{
+			Name:    "download-token-maxage",
+			Usage:   "signed download token lifetime in `SECONDS` (0 uses the short default; keep it above the client's token-refresh interval)",
+			EnvVars: EnvVars("DOWNLOAD_TOKEN_MAXAGE"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "preview-token",
 			Usage:   "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",

@@ -1,5 +1,5 @@
 /*
-Package ttl provides cache expiration and token lifetime defaults and helper functions.
+Package authtoken signs and verifies bunny.net-compatible Advanced (HMAC-SHA256) URL tokens.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
@@ -22,4 +22,8 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package ttl
+package authtoken
+
+// Prefix identifies the HMAC-SHA256 token scheme and matches bunny.net Advanced Token Authentication,
+// so the same token PhotoPrism mints can be validated at the origin and, with a shared key, at the edge.
+const Prefix = "HS256-"

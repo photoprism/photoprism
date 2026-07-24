@@ -77,9 +77,5 @@ func CacheSession(s *Session, d time.Duration) {
 		PreviewToken.Set(s.ID, s.PreviewToken)
 	}
 
-	if s.DownloadToken != "" {
-		DownloadToken.Set(s.ID, s.DownloadToken)
-	}
-
 	sessionCache.Set(s.ID, s, d)
 }
