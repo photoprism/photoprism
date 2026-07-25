@@ -8,9 +8,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // ProjectRoot references the project root directory for use in tests.
@@ -327,6 +329,73 @@ func TestConfig_Serial(t *testing.T) {
 	t.Logf("Serial: %s", result)
 
 	assert.NotEmpty(t, result)
+}
+
+func TestReadSerialFile(t *testing.T) {
+	valid := rnd.GenerateUID(serialPrefix)
+	write := func(t *testing.T, data string) string {
+		t.Helper()
+		fileName := filepath.Join(t.TempDir(), serialName)
+		require.NoError(t, os.WriteFile(fileName, []byte(data), fs.ModeSecretFile))
+		return fileName
+	}
+	t.Run("Valid", func(t *testing.T) {
+		assert.Equal(t, valid, readSerialFile(write(t, valid)))
+	})
+	t.Run("TrailingNewline", func(t *testing.T) {
+		// A stray newline must not discard the serial, as that would rotate the derived preview token.
+		assert.Equal(t, valid, readSerialFile(write(t, valid+"\n")))
+	})
+	t.Run("Missing", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(filepath.Join(t.TempDir(), serialName)))
+	})
+	t.Run("Truncated", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, valid[:8])))
+	})
+	t.Run("WrongPrefix", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, "a"+valid[1:])))
+	})
+	t.Run("NotAlnum", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, "z!!!!!!!!!!!!!!!")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, "")))
+	})
+}
+
+func TestConfig_InitSerial(t *testing.T) {
+	t.Run("GeneratesAndPersists", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, c.CreateDirectories())
+		require.NoError(t, c.InitSerial())
+		serial := c.Serial()
+		assert.True(t, rnd.IsUID(serial, serialPrefix))
+		// Written to the storage path and mirrored to the backup path, both readable back.
+		assert.Equal(t, serial, readSerialFile(filepath.Join(c.StoragePath(), serialName)))
+		assert.Equal(t, serial, readSerialFile(c.BackupPath(serialName)))
+		// Stable across calls: an existing serial is never regenerated.
+		require.NoError(t, c.InitSerial())
+		assert.Equal(t, serial, c.Serial())
+	})
+	t.Run("RecoversFromBackup", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, c.CreateDirectories())
+		require.NoError(t, c.InitSerial())
+		serial := c.Serial()
+		// Losing the storage copy must not change the serial, or every preview URL would break.
+		require.NoError(t, os.Remove(filepath.Join(c.StoragePath(), serialName)))
+		c.serial = ""
+		assert.Equal(t, serial, c.Serial())
+	})
+	t.Run("BackupFailureIsNotFatal", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, c.CreateDirectories())
+		// Block the backup copy by putting a directory where the file belongs; startup must continue,
+		// since the backup only adds redundancy.
+		require.NoError(t, os.MkdirAll(c.BackupPath(serialName), fs.ModeDir))
+		assert.NoError(t, c.InitSerial())
+		assert.True(t, rnd.IsUID(c.Serial(), serialPrefix))
+	})
 }
 
 func TestConfig_SerialChecksum(t *testing.T) {

@@ -228,6 +228,15 @@ func TestConfig_TokenSigningKey(t *testing.T) {
 		assert.GreaterOrEqual(t, len(key), tokens.KeyLen)
 		assert.NoFileExists(t, filepath.Join(c.KeysPath(), signingKeyName))
 	})
+	t.Run("NeverZeroFilled", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		key := c.TokenSigningKey()
+		require.GreaterOrEqual(t, len(key), tokens.KeyLen)
+		// A zero-filled key is publicly known, so every token would be forgeable. Generation must fail
+		// closed by leaving the key unset (signers refuse) instead of keeping the zeroed buffer.
+		assert.NotEqual(t, make([]byte, len(key)), key)
+		assert.True(t, (&tokens.Signer{Key: key}).Configured())
+	})
 }
 
 func TestConfig_DownloadTokenMaxAge(t *testing.T) {
@@ -249,6 +258,43 @@ func TestConfig_DownloadTokenMaxAge(t *testing.T) {
 		c.options.DownloadTokenMaxAge = 60
 		defer func() { c.options.DownloadTokenMaxAge = 0 }()
 		assert.Equal(t, time.Duration(ttl.DownloadTokenMinAge.Int())*time.Second, c.DownloadTokenMaxAge())
+	})
+}
+
+func TestConfig_PreviewToken(t *testing.T) {
+	// newAuthTestConfig returns a config with authentication on, as PreviewToken short-circuits to the
+	// public token otherwise.
+	newAuthTestConfig := func(t *testing.T) *Config {
+		t.Helper()
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Public = false
+		c.options.Demo = false
+		return c
+	}
+	t.Run("DerivedFromSigningKey", func(t *testing.T) {
+		c := newAuthTestConfig(t)
+		token := c.PreviewToken()
+		assert.Equal(t, tokens.Derive(c.TokenSigningKey(), tokens.PurposePreview), token)
+		// Stable across calls and restarts, or every cached thumbnail URL would break.
+		assert.Equal(t, token, c.PreviewToken())
+		assert.NotEqual(t, PreviewTokenPlaceholder, token)
+	})
+	t.Run("NotDerivedFromSerial", func(t *testing.T) {
+		// The serial is world-readable so it survives a UID/GID change, so it must not seed a token.
+		c := newAuthTestConfig(t)
+		require.NoError(t, c.CreateDirectories())
+		require.NoError(t, c.InitSerial())
+		assert.NotEqual(t, c.SerialChecksum(), c.PreviewToken())
+	})
+	t.Run("ConfiguredValueWins", func(t *testing.T) {
+		c := newAuthTestConfig(t)
+		c.options.PreviewToken = "static-preview-token"
+		assert.Equal(t, "static-preview-token", c.PreviewToken())
+	})
+	t.Run("PublicMode", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Public = true
+		assert.Equal(t, entity.TokenPublic, c.PreviewToken())
 	})
 }
 

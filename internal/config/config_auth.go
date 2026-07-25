@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -100,7 +101,7 @@ func (c *Config) AdminPassword() string {
 		// No password set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path is derived from config directory
-		log.Warnf("config: failed to read admin password from %s (%s)", fileName, err)
+		event.SystemWarn([]string{"config", "admin password", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -239,11 +240,10 @@ func (c *Config) DownloadToken() string {
 	return c.downloadToken
 }
 
-// TokenSigningKey returns the HMAC key that signs the app's URL tokens (one shared instance secret for
-// every token kind, never sent to clients), generating one on first use. It is persisted at
-// config/keys/signing.key but always kept in memory, so signing never returns an empty key even when the
-// disk is read-only; a missing key is regenerated (invalidating only short-lived outstanding tokens), so
-// it is not backed up.
+// TokenSigningKey returns the instance secret that signs the app's URL tokens, generating one on first
+// use and nil if that fails, which leaves the signers unconfigured so they refuse.
+// One key covers every token kind and never reaches clients. It is kept in memory even when it cannot be
+// persisted to config/keys/signing.key, and regenerated when missing, so it is not backed up.
 func (c *Config) TokenSigningKey() []byte {
 	c.tokenKeyOnce.Do(func() {
 		keyPath := filepath.Join(c.KeysPath(), signingKeyName)
@@ -254,21 +254,22 @@ func (c *Config) TokenSigningKey() []byte {
 			return
 		}
 
-		// Generate a fresh key and keep it in memory unconditionally, so a signing key is always
-		// available even if it cannot be persisted below. crypto/rand.Read does not return an error on
-		// supported platforms (the runtime aborts instead), so the key is never empty.
+		// Leave the key unset on failure: a partially filled buffer would sign with a guessable — worst
+		// case all-zero — key, which is strictly worse than rejecting every token.
 		key := make([]byte, tokens.KeyLen)
 		if _, err := rand.Read(key); err != nil {
-			log.Errorf("config: token signing key generation reported an error (%s)", err)
+			event.SystemError([]string{"config", "token signing key", "generate", "%s"}, clean.Error(err))
+			return
 		}
 
+		// Keep the key in memory even if it cannot be persisted below.
 		c.tokenKey = key
 
 		// Best-effort persistence: a write failure must not clear the in-memory key.
 		if err := fs.MkdirAll(c.KeysPath()); err != nil {
-			log.Warnf("config: failed to create keys directory (%s)", err)
+			event.SystemWarn([]string{"config", "token signing key", "create keys directory", "%s"}, clean.Error(err))
 		} else if err := os.WriteFile(keyPath, key, fs.ModeSecretFile); err != nil {
-			log.Warnf("config: failed to store token signing key (%s)", err)
+			event.SystemWarn([]string{"config", "token signing key", "store", "%s"}, clean.Error(err))
 		}
 	})
 
@@ -293,16 +294,21 @@ func (c *Config) DownloadTokenMaxAge() time.Duration {
 	return time.Duration(maxAge) * time.Second
 }
 
-// PreviewToken returns the preview image api token (based on the unique storage serial by default).
+// PreviewToken returns the thumbnail and video streaming API token, derived from the instance signing
+// key unless a static one is configured.
+// It is not derived from the storage serial, which is world-readable by design so that it survives a
+// UID/GID change, and is replaced by signed preview tokens once those land.
 func (c *Config) PreviewToken() string {
 	if c.Public() {
 		return entity.TokenPublic
 	} else if c.options.PreviewToken == "" {
-		if c.Serial() == "" {
-			return "********"
-		} else {
-			c.options.PreviewToken = c.SerialChecksum()
+		derived := tokens.Derive(c.TokenSigningKey(), tokens.PurposePreview)
+
+		if derived == "" {
+			return PreviewTokenPlaceholder
 		}
+
+		c.options.PreviewToken = derived
 	}
 
 	return c.options.PreviewToken
