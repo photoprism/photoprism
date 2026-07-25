@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -395,6 +397,59 @@ func TestConfig_InitSerial(t *testing.T) {
 		require.NoError(t, os.MkdirAll(c.BackupPath(serialName), fs.ModeDir))
 		assert.NoError(t, c.InitSerial())
 		assert.True(t, rnd.IsUID(c.Serial(), serialPrefix))
+	})
+}
+
+func TestConfig_reportDownloadTokenOptions(t *testing.T) {
+	// capture swaps the console-only system logger for a buffer, so the assertions do not depend on the
+	// application log level or on what another test left behind.
+	capture := func(t *testing.T) *bytes.Buffer {
+		t.Helper()
+		var buf bytes.Buffer
+		logger := logrus.New()
+		logger.Out = &buf
+		logger.SetLevel(logrus.InfoLevel)
+		origLog := event.SystemLog
+		event.SystemLog = logger
+		t.Cleanup(func() { event.SystemLog = origLog })
+		return &buf
+	}
+	newConfig := func(downloadToken string, public bool) *Config {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Public = public
+		c.options.Demo = false
+		c.options.DownloadToken = downloadToken
+		return c
+	}
+	t.Run("StaticTokenConfigured", func(t *testing.T) {
+		buf := capture(t)
+		newConfig("static-download-token", false).reportDownloadTokenOptions()
+		// Reported at warning level so it stands out in an operator's log, and named after the option so
+		// it can be traced back to the setting that caused it.
+		assert.Contains(t, buf.String(), "level=warning")
+		assert.Contains(t, buf.String(), "config: download-token")
+		assert.Contains(t, buf.String(), "not limited to what a session may see")
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		buf := capture(t)
+		newConfig("", false).reportDownloadTokenOptions()
+		assert.Empty(t, buf.String())
+	})
+	t.Run("PublicMode", func(t *testing.T) {
+		// Nothing is scoped in public mode, so the trade-off does not apply.
+		buf := capture(t)
+		newConfig("static-download-token", true).reportDownloadTokenOptions()
+		assert.Empty(t, buf.String())
+	})
+	t.Run("MaxAgeBelowMinimum", func(t *testing.T) {
+		buf := capture(t)
+		c := newConfig("", false)
+		c.options.DownloadTokenMaxAge = 60
+		c.reportDownloadTokenOptions()
+		// Names both the configured value and the floor it was raised to, so the operator can see what
+		// the instance actually uses; the clamp itself is covered by TestConfig_DownloadTokenMaxAge.
+		assert.Contains(t, buf.String(), "config: download-token-maxage")
+		assert.Contains(t, buf.String(), "60s is below the 900s minimum")
 	})
 }
 

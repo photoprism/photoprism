@@ -290,6 +290,9 @@ func (c *Config) Init() error {
 	// Update package defaults.
 	c.Propagate()
 
+	// Report the download token configuration.
+	c.reportDownloadTokenOptions()
+
 	// Show support information.
 	if !c.Sponsor() {
 		log.Info(MsgSponsor)
@@ -301,6 +304,22 @@ func (c *Config) Init() error {
 	c.ready.Store(true)
 
 	return nil
+}
+
+// reportDownloadTokenOptions reports the download token configuration. Both notices describe static
+// option values, so Init calls this once at startup rather than Propagate, which runs again whenever an
+// admin saves Advanced Settings.
+func (c *Config) reportDownloadTokenOptions() {
+	// A static token is an explicit opt-in whose trade-off is not visible from the URLs it produces: one
+	// shared value keeps permanent, cacheable links working, but leaves downloads unscoped, as it cannot
+	// identify the requesting session.
+	if !c.Public() && c.options.DownloadToken != "" {
+		event.SystemWarn([]string{"config", "download-token", "static value configured, so downloads are not limited to what a session may see"})
+	}
+
+	if raw := c.options.DownloadTokenMaxAge; raw > 0 && raw < int64(ttl.DownloadTokenMinAge) {
+		event.SystemWarn([]string{"config", "download-token-maxage", "%ds is below the %ds minimum and has been raised to it"}, raw, int64(ttl.DownloadTokenMinAge))
+	}
 }
 
 // InitCore initializes configuration values without connecting to the database
@@ -376,6 +395,9 @@ func (c *Config) IsReady() bool {
 }
 
 // Propagate updates config options in other packages as needed.
+// It assigns package-level values without synchronization, which is safe because it runs at startup and
+// otherwise only when an admin changes Advanced Settings — a rare action after which both call sites set
+// mutex.Restart, as a restart is required for every change to take effect.
 func (c *Config) Propagate() {
 	FlushCache()
 	log.SetLevel(c.LogLevel())
@@ -416,9 +438,22 @@ func (c *Config) Propagate() {
 		c.ThumbCachePath(),
 	}
 
-	// Set cache expiration defaults.
+	// Set cache expiration defaults, including the signed download token lifetime read when one is minted.
 	ttl.CacheDefault = c.HttpCacheMaxAge()
 	ttl.CacheVideo = c.HttpVideoMaxAge()
+	ttl.DownloadToken = ttl.Duration(int(c.DownloadTokenMaxAge().Seconds()))
+
+	// Configure signed URL tokens, which must be complete before anything mints or verifies one. A single
+	// signing key covers every token kind (downloads today, previews next); the signature path is per kind.
+	tokens.Download.Key = c.TokenSigningKey()
+	tokens.Download.SignaturePath = c.ApiUri()
+
+	// Configure the download-token delivery and validation policy: public mode delivers a placeholder,
+	// a configured static token is delivered to every client, and the single coarse instance token
+	// covers the sessionless public/share configs while authenticated sessions get signed tokens.
+	tokens.PublicMode = c.Public()
+	tokens.DownloadStatic = c.options.DownloadToken != ""
+	tokens.CoarseDownload = c.DownloadToken()
 
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()
@@ -441,22 +476,6 @@ func (c *Config) Propagate() {
 	}
 
 	entity.ValidateTokens = !c.Public()
-
-	// Configure signed URL tokens. One shared signing key covers every token kind (downloads today,
-	// previews next); the signature path and lifetime are per kind.
-	tokens.Download.Key = c.TokenSigningKey()
-	tokens.Download.SignaturePath = c.ApiUri()
-	if raw := c.options.DownloadTokenMaxAge; raw > 0 && raw < int64(ttl.DownloadTokenMinAge) {
-		log.Warnf("config: download-token-maxage %ds is below the %ds minimum and has been raised to it", raw, int64(ttl.DownloadTokenMinAge))
-	}
-	ttl.DownloadToken = ttl.Duration(int(c.DownloadTokenMaxAge().Seconds()))
-
-	// Configure the download-token delivery and validation policy: public mode delivers a placeholder,
-	// a configured static token is delivered to every client, and the single coarse instance token
-	// covers the sessionless public/share configs while authenticated sessions get signed tokens.
-	tokens.PublicMode = c.Public()
-	tokens.DownloadStatic = c.options.DownloadToken != ""
-	tokens.CoarseDownload = c.DownloadToken()
 
 	// Set face recognition parameters.
 	face.ScoreThreshold = c.FaceScore()

@@ -243,9 +243,19 @@ func TestConfig_DownloadTokenMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	t.Run("DefaultsToTtlWindow", func(t *testing.T) {
 		c.options.DownloadTokenMaxAge = 0
-		assert.Equal(t, time.Duration(ttl.DownloadToken.Int())*time.Second, c.DownloadTokenMaxAge())
+		assert.Equal(t, time.Duration(ttl.DownloadTokenDefaultAge.Int())*time.Second, c.DownloadTokenMaxAge())
 		// The default must stay well under the session lifetime so a leaked token expires quickly.
 		assert.Less(t, int64(c.DownloadTokenMaxAge().Seconds()), c.SessionMaxAge())
+	})
+	t.Run("IndependentOfPropagatedValue", func(t *testing.T) {
+		// Propagate assigns the result of this call to ttl.DownloadToken, so reading that variable back
+		// as the default would pin the effective lifetime to whatever was configured last and prevent it
+		// from returning to the default once the option is cleared.
+		orig := ttl.DownloadToken
+		ttl.DownloadToken = ttl.Duration(7200)
+		defer func() { ttl.DownloadToken = orig }()
+		c.options.DownloadTokenMaxAge = 0
+		assert.Equal(t, time.Duration(ttl.DownloadTokenDefaultAge.Int())*time.Second, c.DownloadTokenMaxAge())
 	})
 	t.Run("ConfiguredOverride", func(t *testing.T) {
 		c.options.DownloadTokenMaxAge = 1800

@@ -276,12 +276,14 @@ func (c *Config) TokenSigningKey() []byte {
 	return c.tokenKey
 }
 
-// DownloadTokenMaxAge returns the lifetime of signed download tokens, defaulting to ttl.DownloadToken.
-// Set PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE (seconds) to adjust it; the value MUST exceed the client's
-// token-refresh interval so a held token stays valid, and a smaller value is raised to
-// ttl.DownloadTokenMinAge so downloads cannot silently break.
+// DownloadTokenMaxAge returns the lifetime of signed download tokens, ttl.DownloadTokenDefaultAge
+// unless PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE (seconds) is set.
+// The value MUST exceed the client's token-refresh interval so a held token stays valid, so a smaller
+// one is raised to ttl.DownloadTokenMinAge and downloads cannot silently break.
 func (c *Config) DownloadTokenMaxAge() time.Duration {
-	maxAge := ttl.DownloadToken.Int()
+	// Read the built-in default, not ttl.DownloadToken, which Propagate overwrites with the result of
+	// this call: deriving from it would make the effective lifetime unable to return to the default.
+	maxAge := ttl.DownloadTokenDefaultAge.Int()
 
 	if c.options.DownloadTokenMaxAge > 0 {
 		maxAge = int(c.options.DownloadTokenMaxAge)
