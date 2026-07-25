@@ -70,7 +70,7 @@ func ApplyXmpFaces(m *MediaFile, file *entity.File) (saved bool, count int, err 
 		return false, 0, collectErr
 	}
 
-	changed, reconcileErr := reconcileXmpFaces(faceSet.Faces, file, file.Markers())
+	changed, reconcileErr := reconcileXmpFaces(faceSet.Faces, faceSet.Partial, file, file.Markers())
 	if reconcileErr != nil {
 		return false, 0, reconcileErr
 	} else if changed == 0 {
@@ -107,14 +107,15 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 
 	xmpChanges := 0
 	if importXmp && file.FileHash != "" {
-		faceSet, collectErr := collectXmpFaces(m)
-		if collectErr != nil {
-			return false, 0, collectErr
-		}
-
-		xmpChanges, err = reconcileXmpFaces(faceSet.Faces, file, file.Markers())
-		if err != nil {
-			return false, 0, err
+		// XMP import is independent of AI detection, so a malformed sidecar or an
+		// unreadable source must not discard the detected faces added above: log
+		// and continue to SaveMarkers instead of returning the error.
+		if faceSet, collectErr := collectXmpFaces(m); collectErr != nil {
+			log.Warnf("faces: %s while reading xmp regions for %s", clean.Error(collectErr), clean.Log(m.BaseName()))
+		} else if changed, reconcileErr := reconcileXmpFaces(faceSet.Faces, faceSet.Partial, file, file.Markers()); reconcileErr != nil {
+			log.Warnf("faces: %s while reconciling xmp regions for %s", clean.Error(reconcileErr), clean.Log(m.BaseName()))
+		} else {
+			xmpChanges = changed
 		}
 	}
 

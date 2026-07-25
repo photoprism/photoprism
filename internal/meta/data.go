@@ -45,6 +45,7 @@ type Data struct {
 	Subject          string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords         Keywords      `meta:"Keywords"`
 	Faces            []Face        `meta:"-"`
+	FacesPartial     bool          `meta:"-"`
 	Favorite         bool          `meta:"Favorite"`
 	Notes            string        `meta:"Comment,UserComment"`
 	Artist           string        `meta:"Artist,Creator,By-line,OwnerName,Owner" xmp:"Creator"`

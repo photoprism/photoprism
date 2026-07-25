@@ -45,9 +45,11 @@ func xmpFaceSources(m *MediaFile) MediaFiles {
 }
 
 // xmpFaceSet is an authoritative face-region snapshot from XMP metadata.
+// Partial reports that an embedded parse could not resolve every region (see
+// meta.Data.FacesPartial), so the reconciler must not delete unmatched markers.
 type xmpFaceSet struct {
 	Faces   []meta.Face
-	Sidecar string
+	Partial bool
 }
 
 // xmpSidecarCandidate associates a sidecar with its logical image source.
@@ -136,19 +138,23 @@ func collectXmpFaces(m *MediaFile) (xmpFaceSet, error) {
 			return xmpFaceSet{}, fmt.Errorf("faces: cannot read xmp sidecar %s: %w", clean.Log(filepath.Base(selected.fileName)), err)
 		}
 
-		return xmpFaceSet{Faces: meta.DedupFaces(data.Faces), Sidecar: selected.fileName}, nil
+		return xmpFaceSet{Faces: meta.DedupFaces(data.Faces)}, nil
 	}
 
 	var faces []meta.Face
+	partial := false
 	for _, source := range sources {
 		data := source.MetaData()
 		if data.Error != nil {
 			return xmpFaceSet{}, fmt.Errorf("faces: cannot read embedded xmp from %s: %w", clean.Log(source.BaseName()), data.Error)
 		}
 		faces = append(faces, data.Faces...)
+		if data.FacesPartial {
+			partial = true
+		}
 	}
 
-	return xmpFaceSet{Faces: meta.DedupFaces(faces)}, nil
+	return xmpFaceSet{Faces: meta.DedupFaces(faces), Partial: partial}, nil
 }
 
 // applyXmpName assigns an imported XMP name to a marker while keeping the change
@@ -270,8 +276,10 @@ func restoreMarkerName(m *entity.Marker) (bool, error) {
 	return true, nil
 }
 
-// reconcileXmpFaces applies an authoritative XMP face set to file markers.
-func reconcileXmpFaces(faces []meta.Face, file *entity.File, markers *entity.Markers) (count int, err error) {
+// reconcileXmpFaces applies an authoritative XMP face set to file markers. A
+// partial set (some regions unresolved, see xmpFaceSet.Partial) still updates
+// and names matched markers but never deletes or clears unmatched ones.
+func reconcileXmpFaces(faces []meta.Face, partial bool, file *entity.File, markers *entity.Markers) (count int, err error) {
 	if file == nil || markers == nil || file.FileHash == "" {
 		return 0, nil
 	}
@@ -297,13 +305,18 @@ func reconcileXmpFaces(faces []meta.Face, file *entity.File, markers *entity.Mar
 			continue
 		}
 
+		// Bind each region to its best (highest overlap) still-unmatched marker,
+		// so two overlapping regions never collapse onto the same marker (which
+		// would leave the second real marker to be deleted as stale).
 		existingIndex := -1
+		bestOverlap := face.OverlapThreshold
 		for i := range *markers {
-			if (*markers)[i].MarkerInvalid {
+			if matched[i] || (*markers)[i].MarkerInvalid {
 				continue
-			} else if (*markers)[i].OverlapPercent(*probe) > face.OverlapThreshold {
+			}
+			if overlap := (*markers)[i].OverlapPercent(*probe); overlap > bestOverlap {
+				bestOverlap = overlap
 				existingIndex = i
-				break
 			}
 		}
 
@@ -382,6 +395,13 @@ func reconcileXmpFaces(faces []meta.Face, file *entity.File, markers *entity.Mar
 		markers.Append(*probe)
 		matched = append(matched, true)
 		count++
+	}
+
+	// A partial parse may be missing regions, so skip the destructive sweep that
+	// deletes or clears markers no current region matched — an unmatched marker
+	// might only be unmatched because its region could not be resolved.
+	if partial {
+		return count, nil
 	}
 
 	for i := len(*markers) - 1; i >= 0; i-- {

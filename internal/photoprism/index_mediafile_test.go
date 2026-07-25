@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"sync"
 	"testing"
@@ -354,4 +355,68 @@ func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
 		markers := indexSidecar(t, false, false)
 		assert.False(t, hasXmpName(markers, "Cara"), "no XMP marker may be created when the import toggle is off")
 	})
+}
+
+// TestIndex_MediaFile_FacesOnlyRecountsAfterDelete verifies that a faces-only
+// re-index recomputes and persists the photo face count when a removed XMP
+// region deletes its marker, even though the deletion leaves no unsaved marker.
+func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "faces-only-recount.db"))
+	cfg := config.NewMinimalTestConfigWithDb("faces-only-recount", filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	dstDir := filepath.Join(cfg.OriginalsPath(), "xmp-faces")
+	jpg := filepath.Join(dstDir, "sidecar.jpg")
+	xmp := filepath.Join(dstDir, "sidecar.jpg.xmp")
+	src, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
+	require.NoError(t, err)
+	require.NoError(t, src.Copy(jpg, false))
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", xmp, false))
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+
+	// Phase 1: import the sidecar's "Cara" region and confirm the face count.
+	opt := IndexOptionsSingle(cfg)
+	opt.ImportFaceTags = true
+	mf, err := NewMediaFile(jpg)
+	require.NoError(t, err)
+	result := ind.MediaFile(mf, opt, "", "")
+	require.True(t, result.Success(), "initial index must succeed: %v", result.Err)
+	require.NotEmpty(t, result.PhotoUID)
+
+	markers, err := entity.FindMarkers(result.FileUID)
+	require.NoError(t, err)
+	require.Len(t, markers, 1, "the sidecar region must import once")
+
+	var before entity.Photo
+	require.NoError(t, entity.Db().Where("photo_uid = ?", result.PhotoUID).First(&before).Error)
+	require.Equal(t, 1, before.PhotoFaces, "photo face count must reflect the imported marker")
+
+	// Phase 2: remove the sidecar and re-index faces-only. The region is gone, so
+	// the marker is deleted; the count must be recomputed and persisted to 0.
+	require.NoError(t, os.Remove(xmp))
+
+	facesOpt := IndexOptionsFacesOnly(cfg)
+	facesOpt.ImportFaceTags = true
+	mf2, err := NewMediaFile(jpg)
+	require.NoError(t, err)
+	res2 := ind.MediaFile(mf2, facesOpt, "", "")
+	require.NotEqual(t, IndexFailed, res2.Status, "faces-only re-index must not fail: %v", res2.Err)
+
+	remaining, err := entity.FindMarkers(result.FileUID)
+	require.NoError(t, err)
+	assert.Empty(t, remaining, "the removed region's XMP marker must be deleted")
+
+	var after entity.Photo
+	require.NoError(t, entity.Db().Where("photo_uid = ?", result.PhotoUID).First(&after).Error)
+	assert.Equal(t, 0, after.PhotoFaces, "photo face count must be recomputed after a delete-only faces run")
 }

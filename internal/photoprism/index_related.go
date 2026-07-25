@@ -130,9 +130,11 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	}
 
 	// Reconcile the logical source after all related files have been processed.
-	// This also covers incremental sidecar updates where an unchanged primary
-	// preview was filtered out before IndexRelated received the file group.
-	if o.ImportFaceTags && photoUID != "" && isXmpFaceSource(related.Main) {
+	// UserMediaFile already reconciled XMP for the primary preview when it was
+	// indexed in this group (collectXmpFaces also covers a distinct RAW/HEIC
+	// source's sidecars), so only run the extra pass when the preview was
+	// filtered out — an incremental sidecar-only update.
+	if o.ImportFaceTags && photoUID != "" && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
 		if primary, primaryErr := entity.PrimaryFile(photoUID); primaryErr != nil {
 			log.Debugf("index: could not find primary file for xmp faces in %s (%s)", related.MainLogName(), clean.Error(primaryErr))
 		} else if saved, _, applyErr := ApplyXmpFaces(related.Main, primary); applyErr != nil {

@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"math"
 	"os"
 	"testing"
 )
@@ -152,6 +153,14 @@ func TestNormalizeRegionMWG(t *testing.T) {
 		negative, ok := normalizeRegionMWG("Rotated", 0.5, 0.5, 0.2, 0.2, 0, "normalized", -1.5707963, 4000, 2000, 1)
 		if !ok || !almost(negative.W, rotated.W) || !almost(negative.H, rotated.H) {
 			t.Errorf("negative rotation got %+v, valid %t", negative, ok)
+		}
+	})
+	t.Run("PixelCircle", func(t *testing.T) {
+		// Circle diameter 400px, center (2000,1000) against 4000x2000 -> center
+		// (0.5,0.5) size 0.1x0.2; top-left (0.45,0.4).
+		f, ok := normalizeRegionMWG("Circle", 2000, 1000, 0, 0, 400, "pixel", 0, 4000, 2000, 1)
+		if !ok || !almost(f.X, 0.45) || !almost(f.Y, 0.4) || !almost(f.W, 0.1) || !almost(f.H, 0.2) {
+			t.Errorf("pixel circle got %+v, valid %t", f, ok)
 		}
 	})
 }
@@ -405,6 +414,71 @@ func TestXmpDocument_Faces_ACDSee(t *testing.T) {
 	}
 	if faces[1].Name != "ALG Person" || !almost(faces[1].X, 0.65) || !almost(faces[1].Y, 0.5) {
 		t.Errorf("ALG region got %+v", faces[1])
+	}
+}
+
+// TestXmpDocument_Faces_ACDSeePixel verifies pixel-unit ACDSee areas resolved
+// against the ACDSee applied dimensions.
+func TestXmpDocument_Faces_ACDSeePixel(t *testing.T) {
+	body := xmpFacesHeader + `
+  <acdsee-rs:Regions rdf:parseType="Resource">
+   <acdsee-rs:AppliedToDimensions acdsee-stDim:w="4000" acdsee-stDim:h="2000" acdsee-stDim:unit="pixel"/>
+   <acdsee-rs:RegionList><rdf:Seq>
+    <rdf:li rdf:parseType="Resource">
+     <acdsee-rs:Name>Pixel Person</acdsee-rs:Name><acdsee-rs:Type>Face</acdsee-rs:Type>
+     <acdsee-rs:DLYArea acdsee-stArea:x="2000" acdsee-stArea:y="1000" acdsee-stArea:w="400" acdsee-stArea:h="600" acdsee-stArea:unit="pixel"/>
+    </rdf:li>
+   </rdf:Seq></acdsee-rs:RegionList>
+  </acdsee-rs:Regions>` + xmpFacesFooter
+
+	faces := loadXmpString(t, body).Faces(1)
+	if len(faces) != 1 {
+		t.Fatalf("want 1 pixel ACDSee face, got %d: %+v", len(faces), faces)
+	}
+	// center (2000,1000) size (400,600)px against 4000x2000 -> center (0.5,0.5)
+	// size (0.1,0.3); top-left (0.45,0.35).
+	f := faces[0]
+	if f.Name != "Pixel Person" || !almost(f.X, 0.45) || !almost(f.Y, 0.35) || !almost(f.W, 0.1) || !almost(f.H, 0.3) {
+		t.Errorf("got %+v", f)
+	}
+}
+
+// TestXmpDocument_Faces_SeeAlsoAmbiguous verifies that a seeAlso PersonInImage
+// reference with more than one candidate name resolves to an unnamed region.
+func TestXmpDocument_Faces_SeeAlsoAmbiguous(t *testing.T) {
+	body := xmpFacesHeader + `
+  <Iptc4xmpExt:PersonInImage><rdf:Bag><rdf:li>Person A</rdf:li><rdf:li>Person B</rdf:li></rdf:Bag></Iptc4xmpExt:PersonInImage>
+  <mwg-rs:Regions rdf:parseType="Resource">
+   <mwg-rs:AppliedToDimensions stDim:w="4000" stDim:h="2000" stDim:unit="pixel"/>
+   <mwg-rs:RegionList><rdf:Bag>
+    <rdf:li rdf:parseType="Resource">
+     <mwg-rs:Type>Face</mwg-rs:Type><rdfs:seeAlso rdf:resource="Iptc4xmpExt:PersonInImage"/>
+     <mwg-rs:Area stArea:x="0.4" stArea:y="0.2" stArea:w="0.1" stArea:h="0.2"/>
+    </rdf:li>
+   </rdf:Bag></mwg-rs:RegionList>
+  </mwg-rs:Regions>` + xmpFacesFooter
+
+	faces := loadXmpString(t, body).Faces(1)
+	if len(faces) != 1 {
+		t.Fatalf("want 1 face, got %d: %+v", len(faces), faces)
+	}
+	if faces[0].Name != "" {
+		t.Errorf("ambiguous seeAlso must yield an unnamed region, got %q", faces[0].Name)
+	}
+}
+
+// TestRotatedRegionSize verifies the axis-aligned bounds of a rotated region.
+func TestRotatedRegionSize(t *testing.T) {
+	if w, h := rotatedRegionSize(800, 400, 0); !almost(w, 800) || !almost(h, 400) {
+		t.Errorf("zero rotation must pass through, got %v %v", w, h)
+	}
+	if w, h := rotatedRegionSize(800, 400, math.Pi/2); !almost(w, 400) || !almost(h, 800) {
+		t.Errorf("90deg must swap the bounds, got %v %v", w, h)
+	}
+	pw, ph := rotatedRegionSize(800, 400, math.Pi/2)
+	nw, nh := rotatedRegionSize(800, 400, -math.Pi/2)
+	if !almost(pw, nw) || !almost(ph, nh) {
+		t.Errorf("negative rotation must match positive bounds, got %v %v vs %v %v", nw, nh, pw, ph)
 	}
 }
 

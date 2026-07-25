@@ -203,7 +203,6 @@ func (data *Data) XMPWithOptions(fileName string, options FaceOptions) (err erro
 	// data.Orientation elsewhere, and it stays a documentation-only field.
 	if v := doc.Orientation(); v != 0 {
 		data.Orientation = v
-		options.Orientation = v
 	}
 
 	// Parse supported XMP face regions into data.Faces so the indexer can

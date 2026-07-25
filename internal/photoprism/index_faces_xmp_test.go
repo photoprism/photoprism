@@ -78,7 +78,7 @@ func newXmpSubject(t *testing.T, name, src string) *entity.Subject {
 // newly created markers the way the index flow does before re-querying.
 func runReconcile(t *testing.T, file *entity.File, faces []meta.Face) entity.Markers {
 	t.Helper()
-	_, err := reconcileXmpFaces(faces, file, file.Markers())
+	_, err := reconcileXmpFaces(faces, false, file, file.Markers())
 	require.NoError(t, err)
 	_, err = file.SaveMarkers()
 	require.NoError(t, err)
@@ -254,7 +254,7 @@ func TestReconcileXmpFaces(t *testing.T) {
 		file := newXmpFile(t)
 		first := runReconcile(t, file, []meta.Face{region("Dave", xmpArea)})
 		require.Len(t, first, 1)
-		changes, err := reconcileXmpFaces([]meta.Face{region("Dave", xmpArea)}, file, file.Markers())
+		changes, err := reconcileXmpFaces([]meta.Face{region("Dave", xmpArea)}, false, file, file.Markers())
 		require.NoError(t, err)
 		assert.Zero(t, changes, "unchanged XMP must not report marker changes")
 		_, err = file.SaveMarkers()
@@ -471,6 +471,37 @@ func TestReconcileXmpFaces(t *testing.T) {
 		assert.Equal(t, autoSubject.SubjUID, markers[0].SubjUID)
 		assert.Equal(t, entity.SrcAuto, markers[0].SubjSrc)
 		assert.False(t, markers[0].MarkerReview)
+	})
+
+	t.Run("OverlappingRegionsKeepDistinctMarkers", func(t *testing.T) {
+		file := newXmpFile(t)
+		// Two overlapping face rectangles: each region must bind its own marker
+		// instead of both collapsing onto the first, which would delete the
+		// second as stale.
+		areaA := crop.Area{Name: "face", X: 0.40, Y: 0.40, W: 0.10, H: 0.10}
+		areaB := crop.Area{Name: "face", X: 0.45, Y: 0.40, W: 0.10, H: 0.10}
+		markerA := addXmpMarker(t, file, areaA, entity.SrcXmp, entity.SrcXmp, "", "Ann", false)
+		markerB := addXmpMarker(t, file, areaB, entity.SrcXmp, entity.SrcXmp, "", "Bea", false)
+
+		markers := runReconcile(t, file, []meta.Face{region("Ann", areaA), region("Bea", areaB)})
+		require.Len(t, markers, 2, "overlapping regions must not delete a distinct marker")
+		survived := map[string]bool{}
+		for _, m := range markers {
+			survived[m.MarkerUID] = true
+		}
+		assert.True(t, survived[markerA.MarkerUID] && survived[markerB.MarkerUID], "both original markers must survive")
+	})
+
+	t.Run("PartialSetDoesNotDeleteUnmatched", func(t *testing.T) {
+		file := newXmpFile(t)
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Keep", false)
+
+		changed, err := reconcileXmpFaces(nil, true, file, file.Markers())
+		require.NoError(t, err)
+		assert.Zero(t, changed, "a partial parse must not report deletions")
+		_, err = file.SaveMarkers()
+		require.NoError(t, err)
+		assert.NotNil(t, entity.FindMarker(stale.MarkerUID), "a partial parse must not delete unmatched markers")
 	})
 }
 
@@ -988,4 +1019,83 @@ func TestApplyDetectedFaces(t *testing.T) {
 		_, _, err := ApplyDetectedFaces(nil, nil, nil)
 		assert.Error(t, err, "a nil file must be rejected")
 	})
+}
+
+// sampleDetectedFace returns a minimal AI-detected face with a single embedding.
+func sampleDetectedFace() face.Face {
+	return face.Face{
+		Rows:       480,
+		Cols:       720,
+		Score:      45,
+		Area:       face.NewArea("face", 250, 200, 10),
+		Embeddings: face.Embeddings{{0.1, 0.2, 0.3}},
+	}
+}
+
+// TestApplyDetectedFaces_MalformedSidecarKeepsDetectedFaces verifies that a
+// broken XMP sidecar does not discard AI-detected faces: the XMP error is logged
+// and the detected marker is still persisted.
+func TestApplyDetectedFaces_MalformedSidecarKeepsDetectedFaces(t *testing.T) {
+	c := newXmpIndexConfig(t, "apply-detected-malformed-xmp")
+	c.Options().XMPFaces = true
+
+	dir := filepath.Join(c.OriginalsPath(), "detected-malformed")
+	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+	imageName := filepath.Join(dir, "photo.jpg")
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+	require.NoError(t, os.WriteFile(imageName+fs.ExtXMP, []byte("<broken"), fs.ModeFile)) //nolint:gosec // isolated test path
+
+	m, err := NewMediaFile(imageName)
+	require.NoError(t, err)
+
+	file := newXmpFile(t)
+	saved, count, err := ApplyDetectedFaces(m, file, face.Faces{sampleDetectedFace()})
+	require.NoError(t, err, "a malformed sidecar must not abort saving detected faces")
+	assert.True(t, saved, "detected faces must be persisted despite the XMP error")
+	assert.GreaterOrEqual(t, count, 1)
+
+	markers, err := entity.FindMarkers(file.FileUID)
+	require.NoError(t, err)
+	found := false
+	for i := range markers {
+		if markers[i].MarkerSrc == entity.SrcImage {
+			found = true
+		}
+	}
+	assert.True(t, found, "the detected face marker must be saved, got %+v", markers)
+}
+
+// TestIsXmpFaceSource covers the supported-still-image predicate.
+func TestIsXmpFaceSource(t *testing.T) {
+	c := config.TestConfig()
+	jpg, err := NewMediaFile(c.SamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+	require.NoError(t, err)
+	assert.True(t, isXmpFaceSource(jpg), "a still JPEG is an XMP face source")
+	video, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+	require.NoError(t, err)
+	assert.False(t, isXmpFaceSource(video), "a video is not an XMP face source")
+	assert.False(t, isXmpFaceSource(nil), "a nil media file is not an XMP face source")
+}
+
+// TestIsFullNameSidecar covers full-name vs generic sidecar matching.
+func TestIsFullNameSidecar(t *testing.T) {
+	m, err := NewMediaFile(config.TestConfig().SamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+	require.NoError(t, err)
+	full := m.FileName() + fs.ExtXMP
+	generic := strings.TrimSuffix(m.FileName(), filepath.Ext(m.FileName())) + fs.ExtXMP
+	assert.True(t, isFullNameSidecar(full, m), "photo.jpg.xmp must match the full-name form")
+	assert.False(t, isFullNameSidecar(generic, m), "photo.xmp must not match the full-name form")
+	assert.False(t, isFullNameSidecar(full, nil), "a nil source never matches")
+}
+
+// TestFaceOptions covers the nil-source zero value and the MetaData mirror.
+func TestFaceOptions(t *testing.T) {
+	assert.Equal(t, meta.FaceOptions{}, faceOptions(nil), "a nil source yields zero options")
+	m, err := NewMediaFile(config.TestConfig().SamplesPath() + "/iphone_7.heic")
+	require.NoError(t, err)
+	got := faceOptions(m)
+	data := m.MetaData()
+	assert.Equal(t, data.Width, got.Width)
+	assert.Equal(t, data.Height, got.Height)
+	assert.Equal(t, data.Orientation, got.Orientation)
 }
