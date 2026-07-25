@@ -1,6 +1,6 @@
 ## PhotoPrism — Auth Token Package
 
-**Last Updated:** July 24, 2026
+**Last Updated:** July 25, 2026
 
 `pkg/authn/authtoken` signs and verifies **bunny.net-compatible Advanced (HMAC-SHA256) URL tokens** — a
 signature over a request's path, expiry, and query parameters that lets header-less endpoints (loaded
@@ -32,12 +32,12 @@ Encoding is unpadded, URL-safe base64 with the `HS256-` prefix.
 
 ### API
 
-| Function                                                        | Purpose                                                        |
-|-----------------------------------------------------------------|---------------------------------------------------------------|
-| `Sign(key, signaturePath, expires, params, clientIP)`           | Returns the `HS256-…` token for a request.                    |
-| `Verify(key, signaturePath, expires, params, clientIP, token, now)` | Returns nil when the signature matches and has not expired.   |
-| `Valid(key, signaturePath, expires, params, clientIP, token, now)`  | Boolean wrapper around `Verify`.                              |
-| `SigningData(params)`                                           | Renders the signed query parameters (sorted, minus token/expires). |
+| Function                                                            | Purpose                                                            |
+|---------------------------------------------------------------------|--------------------------------------------------------------------|
+| `Sign(key, signaturePath, expires, params, clientIP)`               | Returns the `HS256-…` token for a request.                         |
+| `Verify(key, signaturePath, expires, params, clientIP, token, now)` | Returns nil when the signature matches and has not expired.        |
+| `Valid(key, signaturePath, expires, params, clientIP, token, now)`  | Boolean wrapper around `Verify`.                                   |
+| `SigningData(params)`                                               | Renders the signed query parameters (sorted, minus token/expires). |
 
 `Verify` returns a typed error: `ErrExpired` (valid signature, past its deadline), `ErrSignature`
 (forged, tampered, or wrong key), or `ErrMalformed` (empty token). The comparison is constant-time.
@@ -47,9 +47,9 @@ Encoding is unpadded, URL-safe base64 with the `HS256-` prefix.
 Mint a directory token authorizing a session's downloads for one hour:
 
 ```go
-key := conf.TokenSigningKey() // shared per-instance secret, never sent to clients
+// key is a caller-supplied instance secret that never reaches clients.
 expires := time.Now().Add(time.Hour).Unix()
-token := authtoken.Sign(key, "/api/v1", expires, url.Values{"sid": {sess.ID}}, "")
+token := authtoken.Sign(key, "/api/v1", expires, url.Values{"sid": {sessionID}}, "")
 // → carried in the URL as ?t=<expires>.<sid>.<token> (compact) or ?token=…&expires=…&sid=… (CDN form)
 ```
 
@@ -59,35 +59,19 @@ Verify a token rebuilt from a header-less request:
 err := authtoken.Verify(key, "/api/v1", expires, url.Values{"sid": {sid}}, "", token, time.Now().Unix())
 switch {
 case errors.Is(err, authtoken.ErrExpired):
-	// expired — the client will refresh from the next config/response
+	// expired — the caller may hand the client a fresh token
 case err != nil:
 	// forged or malformed — reject
 default:
-	sess, _ := entity.FindSession(sid) // scope the response to what this session may see
+	// authentic: sid identifies the session the request is scoped to
 }
 ```
 
 ### Usage in PhotoPrism
 
-`internal/auth/tokens` exposes a generic `Signer` (key + signature path) and one package-level instance
-per token kind, configured by `Config.Propagate` (a leaf configured like `thumb`/`dl`/`ttl`, so it never
-imports `config`). The first consumer is the **download token**: the `Download` signer plus the thin
-`SignDownload` / `VerifyDownload` wrappers that add the per-session `sid` parameter, compact
-`<expires>.<sid>.<token>` encoding, and sliding expiry. A future preview kind slots in as a second
-`Signer` instance beside `Download` without a new package — sharing the same signing key, since a token's
-scope is bound in the signed message, not the key. The key is a 32-byte secret at `config/keys/signing.key`
-(`Config.TokenSigningKey()`, `fs.ModeSecretFile`), regenerated if missing and always held in memory so
-signing never fails on a read-only disk; the lifetime is `ttl.DownloadToken`
-(one hour by default, overridable via `PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE`). Download tokens are **stateless** —
-nothing is stored per session or user. `tokens.DownloadToken(sessionID)` returns the value clients pass as
-`?t=` (unchanged API contract): the `public` placeholder in public mode, a configured static token
-(`PHOTOPRISM_DOWNLOAD_TOKEN`) delivered to every client for permanent-cache URLs, otherwise a signed
-`<expires>.<sid>.<token>` — falling back to the single coarse instance token for the sessionless public/share
-configs. `internal/api/auth_tokens.go` validates it: `DownloadSession` resolves a signed token to its bound
-session (public mode → the public session), and `InvalidDownloadToken` also accepts the coarse token via
-`tokens.IsCoarseDownload` (constant-time). Download URLs never touch a CDN edge (they use the API path), so
-they use the compact single-parameter encoding; the verbose `token=…&expires=…&sid=…` form is reserved for
-the CDN-fronted preview endpoints.
+The app-level wiring lives in `internal/auth/tokens` — the signing key, the per-kind signers, the delivery
+rules, and the request-side gates. See `internal/auth/tokens/README.md`; that layer is deliberately not
+described here, since this package must stay free of any dependency on it.
 
 ### Testing
 
@@ -96,4 +80,7 @@ go test ./pkg/authn/authtoken -count=1
 ```
 
 Cases cover the sign/verify round-trip, `SigningData` ordering, and rejection of a wrong key, tampered
-path/params/expires, expiry, and malformed input (`sign_test.go`, `parse_test.go`).
+path/params/expires, expiry, and malformed input (`sign_test.go`, `parse_test.go`). `golden_test.go` pins
+the wire format to a frozen token and cross-checks it against a from-scratch HMAC written to the
+documented bunny.net algorithm, so a change to the message layout cannot silently diverge from what an
+edge would validate.
