@@ -1131,8 +1131,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	}
 
-	// Create backup of picture metadata in sidecar YAML file.
-	if file.FilePrimary && Config().SidecarYaml() {
+	// Create backup of picture metadata in sidecar YAML file. A changed XMP sidecar
+	// merges into the photo while the unchanged primary file is skipped, so it refreshes
+	// the backup itself; a rescan reindexes the primary file, which writes it anyway.
+	if (file.FilePrimary || m.IsXMP() && !o.Rescan) && Config().SidecarYaml() {
 		if err = photo.SaveSidecarYaml(Config().OriginalsPath(), Config().SidecarPath()); err != nil {
 			log.Errorf("index: %s in %s (save as yaml)", err, logName)
 		}
