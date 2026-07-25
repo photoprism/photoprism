@@ -8,15 +8,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // AlbumDownloadName returns the album download file name type.
@@ -124,7 +127,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
-					log.Errorf("album: failed to zip %s (%s)", clean.Log(file.FileName), zipErr)
+					log.Errorf("album: failed to zip %s (%s)", clean.Log(file.FileName), clean.Error(zipErr))
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
@@ -136,5 +139,13 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		log.Infof("album: %s has been downloaded [%s]", clean.Log(a.AlbumTitle), time.Since(start))
+
+		// Record the completed bulk download: this endpoint authorizes through AuthDownload rather than
+		// Auth, so it emits none of the access lines other handlers do, and AuthDownload audits only denials.
+		if sess != nil {
+			event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourceAlbums), "download %s", status.Succeeded}, sess.RefID, a.AlbumUID)
+		} else {
+			event.AuditInfo([]string{ClientIP(c), string(acl.ResourceAlbums), "download %s", status.Succeeded}, a.AlbumUID)
+		}
 	})
 }
