@@ -189,7 +189,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "preview-token",
-			Usage:   "shared static `TOKEN` for thumbnail and video streaming URLs (leave blank to derive it from the instance signing key)",
+			Usage:   "shared static `TOKEN` for thumbnail and video streaming URLs (leave blank for an automatic value)",
 			EnvVars: EnvVars("PREVIEW_TOKEN"),
 		}, Secret: true}, {
 		Flag: &cli.StringFlag{
