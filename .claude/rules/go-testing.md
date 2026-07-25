@@ -17,6 +17,10 @@
 - Thumbnails (libvips, moderate): `go test ./internal/thumb/... -count=1`
 - FFmpeg builders (moderate): `go test ./internal/ffmpeg -run 'Remux|Transcode|Extract' -count=1`
 
+### MariaDB Runs
+
+`make test-mariadb` runs the backend suite against MariaDB instead of SQLite. All packages share the single `acceptance` schema (SQLite gets a file per package), so it passes `-p 1`; keep that flag on any manual `PHOTOPRISM_TEST_DRIVER=mysql` run. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
+
 ### Test Config Helpers
 
 - Default to `config.NewMinimalTestConfig(t.TempDir())` for FS/config scaffolding, or `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` for a fresh SQLite schema.

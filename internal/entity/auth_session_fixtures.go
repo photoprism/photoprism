@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -128,7 +130,7 @@ var SessionFixtures = SessionMap{
 		user:        UserFixtures.Pointer("bob"),
 		UserUID:     UserFixtures.Pointer("bob").UserUID,
 		UserName:    UserFixtures.Pointer("bob").UserName,
-		LoginAt:     TimePointer(Now().Add(-24)),
+		LoginAt:     TimePointer(Now().Add(-24 * time.Second)),
 		CreatedAt:   Now().Add(-24),
 		UpdatedAt:   Now().Add(-24),
 	},
@@ -183,7 +185,7 @@ var SessionFixtures = SessionMap{
 		user:        UserFixtures.Pointer("friend"),
 		UserUID:     UserFixtures.Pointer("friend").UserUID,
 		UserName:    UserFixtures.Pointer("friend").UserName,
-		LoginAt:     TimePointer(Now().Add(-12)),
+		LoginAt:     TimePointer(Now().Add(-12 * time.Second)),
 		CreatedAt:   Now().Add(-20),
 		UpdatedAt:   Now().Add(-12),
 	},

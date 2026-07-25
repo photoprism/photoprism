@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -99,7 +100,8 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 	}
 
 	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one shared
-	// SQLite file, so the database must be isolated for reliable row counts.
+	// database, so it must be isolated for reliable row counts.
+	t.Setenv("PHOTOPRISM_TEST_DRIVER", dsn.DriverSQLite3)
 	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-dup-race.db"))
 
 	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
@@ -226,9 +228,10 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	}
 
 	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one
-	// shared SQLite file; the database and storage must be isolated so the
-	// flash.jpg content does not collide by hash with a row another test
-	// indexed with an explicit original name.
+	// shared database; it and the storage must be isolated so the flash.jpg
+	// content does not collide by hash with a row another test indexed with
+	// an explicit original name.
+	t.Setenv("PHOTOPRISM_TEST_DRIVER", dsn.DriverSQLite3)
 	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-original-name.db"))
 
 	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
@@ -300,6 +303,7 @@ func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
 	indexSidecar := func(t *testing.T, detectFaces, importFaceTags bool) entity.Markers {
 		t.Helper()
 
+		t.Setenv("PHOTOPRISM_TEST_DRIVER", dsn.DriverSQLite3)
 		t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "import-face-tags.db"))
 		cfg := config.NewMinimalTestConfigWithDb("import-face-tags", filepath.Join(t.TempDir(), "storage"))
 
