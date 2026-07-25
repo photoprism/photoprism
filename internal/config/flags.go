@@ -1212,17 +1212,18 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "download-token",
-			Usage:   "`DEFAULT` download URL token for originals (leave blank for a random value)",
+			Usage:   "shared static `TOKEN` for permanent download URLs, disabling per-session scoping (leave blank for signed, scoped tokens)",
 			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
 		}, Secret: true}, {
 		Flag: &cli.Int64Flag{
 			Name:    "download-token-maxage",
-			Usage:   "signed download token lifetime in `SECONDS` (0 uses the short default; keep it above the client's token-refresh interval)",
+			Value:   int64(ttl.DownloadTokenDefaultAge),
+			Usage:   fmt.Sprintf("signed download token lifetime in `SECONDS` (minimum %d, unused if download-token is set)", ttl.DownloadTokenMinAge.Int()),
 			EnvVars: EnvVars("DOWNLOAD_TOKEN_MAXAGE"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "preview-token",
-			Usage:   "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
+			Usage:   "shared static `TOKEN` for thumbnail and video streaming URLs (leave blank to derive it from the storage serial)",
 			EnvVars: EnvVars("PREVIEW_TOKEN"),
 		}, Secret: true}, {
 		Flag: &cli.StringFlag{
