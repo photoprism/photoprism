@@ -10,6 +10,8 @@ import (
 )
 
 // GeoResult represents a photo geo search result.
+// Its select tags also define PhotosColsView, the column set loaded for the viewer, so the fields
+// that look unused here (FileCodec, FileMime, FileVideo, MediaType) are what Photo.MediaInfo() needs.
 type GeoResult struct {
 	ID             string        `json:"-" select:"photos.id"`
 	PhotoUID       string        `json:"UID" select:"photos.photo_uid"`

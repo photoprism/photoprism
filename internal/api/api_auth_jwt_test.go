@@ -58,7 +58,6 @@ func TestAuthAnyJWT(t *testing.T) {
 		assert.True(t, session.GetUser().IsUnknown())
 		assert.Equal(t, acl.RolePortal, session.GetClientRole())
 		assert.Empty(t, session.PreviewToken)
-		assert.Empty(t, session.DownloadToken)
 	})
 	t.Run("FilesScopeTokens", func(t *testing.T) {
 		fx := newPortalJWTFixture(t, "cluster-jwt-files")
@@ -87,7 +86,6 @@ func TestAuthAnyJWT(t *testing.T) {
 		require.NotNil(t, session)
 		assert.Equal(t, http.StatusOK, session.HttpStatus())
 		assert.Empty(t, session.PreviewToken)
-		assert.Empty(t, session.DownloadToken)
 		cfg := fx.nodeConf.ClientSession(session)
 		assert.Equal(t, fx.preview, cfg.PreviewToken)
 		assert.Equal(t, fx.download, cfg.DownloadToken)
@@ -477,4 +475,40 @@ func TestAuthAnyJWT_UsersManageScope(t *testing.T) {
 	// ...but it is a manage-scoped cluster JWT, so UpdateUser treats it as admin.
 	assert.Equal(t, authn.GrantJwtBearer.String(), s.GrantType)
 	assert.True(t, s.ValidateScope(acl.ResourceUsers, acl.Permissions{acl.ActionManage}))
+}
+
+func TestDownloadSessionPortalJWT(t *testing.T) {
+	fx := newPortalJWTFixture(t, "download")
+	origScope := fx.nodeConf.Options().JWTScope
+	fx.nodeConf.Options().JWTScope = "cluster vision files"
+	fx.nodeConf.Options().ClusterCIDR = "192.0.2.0/24"
+	get.SetConfig(fx.nodeConf)
+	t.Cleanup(func() {
+		fx.nodeConf.Options().JWTScope = origScope
+		get.SetConfig(fx.nodeConf)
+	})
+
+	jwtDownloadCtx := func(token string) *gin.Context {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/dl/x", nil)
+		req.Header.Set("Authorization", "Bearer "+token)
+		req.RemoteAddr = "192.0.2.50:4567"
+		c.Request = req
+		return c
+	}
+
+	t.Run("AllFilesScopeResolvesPortalSession", func(t *testing.T) {
+		spec := fx.defaultClaimsSpec()
+		spec.Scope = []string{"files"}
+		got := DownloadSession(jwtDownloadCtx(fx.issue(t, spec)))
+		require.NotNil(t, got)
+		assert.Equal(t, acl.RolePortal, got.GetClientRole())
+	})
+	t.Run("NarrowScopeDenied", func(t *testing.T) {
+		// A cluster JWT without access to all files cannot authorize a download via the header.
+		spec := fx.defaultClaimsSpec()
+		spec.Scope = []string{"cluster", "config"}
+		assert.Nil(t, DownloadSession(jwtDownloadCtx(fx.issue(t, spec))))
+	})
 }

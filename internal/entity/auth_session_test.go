@@ -726,7 +726,6 @@ func TestSession_SetProvider(t *testing.T) {
 func TestSession_ChangePassword(t *testing.T) {
 	m := FindSessionByRefID("sessxkkcabce")
 	assert.Empty(t, m.PreviewToken)
-	assert.Empty(t, m.DownloadToken)
 
 	err := m.ChangePassword("photoprism123")
 
@@ -735,7 +734,6 @@ func TestSession_ChangePassword(t *testing.T) {
 	}
 
 	assert.NotEmpty(t, m.PreviewToken)
-	assert.NotEmpty(t, m.DownloadToken)
 
 	err2 := m.ChangePassword("Bobbob123!")
 
@@ -908,19 +906,6 @@ func TestSession_SetPreviewToken(t *testing.T) {
 	})
 }
 
-func TestSession_SetDownloadToken(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		m := &Session{ID: "12345678"}
-		m.SetDownloadToken("12345")
-		assert.Equal(t, "12345", m.DownloadToken)
-	})
-	t.Run("IdEmpty", func(t *testing.T) {
-		m := &Session{ID: ""}
-		m.SetDownloadToken("12345")
-		assert.Equal(t, "", m.DownloadToken)
-	})
-}
-
 func TestSession_SetAuthToken(t *testing.T) {
 	t.Run("MigratesTokensWhenIdChanges", func(t *testing.T) {
 		// A session that already carries preview/download tokens must move their lookup-cache
@@ -930,16 +915,13 @@ func TestSession_SetAuthToken(t *testing.T) {
 		m.SetAuthToken(rnd.AuthToken())
 		oldID := m.ID
 		m.SetPreviewToken("migrate-preview")
-		m.SetDownloadToken("migrate-download")
 		assert.Equal(t, []string{oldID}, PreviewToken.Keys("migrate-preview"))
 
 		m.SetAuthToken(rnd.AppPassword())
 		assert.NotEqual(t, oldID, m.ID)
 		assert.Equal(t, []string{m.ID}, PreviewToken.Keys("migrate-preview"))
-		assert.Equal(t, []string{m.ID}, DownloadToken.Keys("migrate-download"))
 
 		PreviewToken.Unset(m.ID)
-		DownloadToken.Unset(m.ID)
 	})
 	t.Run("NoTokensNoOp", func(t *testing.T) {
 		m := &Session{}

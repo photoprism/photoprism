@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
@@ -140,7 +141,7 @@ func SearchPhotosView(router *gin.RouterGroup) {
 
 		conf := get.Config()
 
-		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), s.PreviewToken, s.DownloadToken)
+		result, count, err := search.UserPhotosViewerResults(f, s, conf.ContentUri(), conf.ApiUri(), s.PreviewToken, tokens.DownloadToken(s.ID))
 
 		if err != nil {
 			event.AuditWarn([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), "view", status.Error(err)}, s.RefID)

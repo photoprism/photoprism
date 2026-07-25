@@ -29,7 +29,8 @@ import (
 // PhotosColsAll contains all supported result column names.
 var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 
-// PhotosColsView contains the result column names necessary for the photo viewer.
+// PhotosColsView contains the result column names necessary for the photo viewer, derived from the
+// GeoResult select tags so the map and the lightbox load the same fields.
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
@@ -810,7 +811,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = 0 AND a.deleted_at IS NULL)")
 		} else if txt.NotEmpty(frm.Album) {
 			v := strings.Trim(frm.Album, "*%") + "%"
-			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
+			// Slugs are stored as lowercase binary strings, so the value must be
+			// folded to match on MySQL/MariaDB as well.
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, strings.ToLower(v))
 		} else if txt.NotEmpty(frm.Albums) {
 			wheres, values := LikeAnyWord("a.album_title", frm.Albums)
 			for i, where := range wheres {

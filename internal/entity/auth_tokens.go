@@ -13,23 +13,16 @@ const TokenPublic = "public"
 // PreviewToken maps each active session ID to its preview token value for lookup.
 var PreviewToken = NewStringMap(Strings{})
 
-// DownloadToken maps each active session ID to its download token value for lookup.
-var DownloadToken = NewStringMap(Strings{})
-
-// ValidateTokens enables preview and download token validation; it is disabled in public mode.
+// ValidateTokens enables preview token validation; it is disabled in public mode.
 var ValidateTokens = true
 
-// GenerateToken returns a short random token for previews or downloads.
+// GenerateToken returns a short random token for previews.
 func GenerateToken() string {
 	return rnd.Base36(8)
 }
 
-// InvalidDownloadToken checks if the token is unknown.
-func InvalidDownloadToken(t string) bool {
-	return ValidateTokens && DownloadToken.MissingValue(t)
-}
-
-// InvalidPreviewToken checks if the preview token is unknown.
+// InvalidPreviewToken checks if the preview token is unknown. Download-token cross-acceptance is applied
+// by the request handler (api.InvalidPreviewToken), which also accepts the coarse download token.
 func InvalidPreviewToken(t string) bool {
-	return ValidateTokens && PreviewToken.MissingValue(t) && DownloadToken.MissingValue(t)
+	return ValidateTokens && PreviewToken.MissingValue(t)
 }

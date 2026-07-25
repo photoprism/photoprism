@@ -33,6 +33,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
 		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
 		{"session-cache", fmt.Sprintf("%d", c.SessionCache())},
+		{"download-token", c.DownloadToken()},
+		{"download-token-maxage", fmt.Sprintf("%d", int64(c.DownloadTokenMaxAge().Seconds()))},
+		{"preview-token", c.PreviewToken()},
 
 		// Logging.
 		{"log-level", c.LogLevel().String()},
@@ -314,8 +317,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jpegxldecoder-bin", c.JpegXLDecoderBin()},
 
 		// Thumbnails.
-		{"download-token", c.DownloadToken()},
-		{"preview-token", c.PreviewToken()},
 		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},

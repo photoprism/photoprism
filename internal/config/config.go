@@ -53,9 +53,11 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/api/download"
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
@@ -67,26 +69,29 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
-	cliCtx    *cli.Context
-	options   *Options
-	settings  *customize.Settings
-	db        *gorm.DB
-	dbVersion string
-	hub       *hub.Config
-	hubCancel context.CancelFunc
-	hubLock   sync.Mutex
-	token     string
-	serial    string
-	env       string
-	start     bool
-	ready     atomic.Bool
-	cache     *gc.Cache
+	cliCtx       *cli.Context
+	options      *Options
+	settings     *customize.Settings
+	db           *gorm.DB
+	dbVersion    string
+	hub          *hub.Config
+	hubCancel    context.CancelFunc
+	hubLock      sync.Mutex
+	token        string
+	serial       string
+	tokenKey     []byte
+	tokenKeyOnce sync.Once
+	env          string
+	start        bool
+	ready        atomic.Bool
+	cache        *gc.Cache
 }
 
 // Values is a shorthand alias for map[string]interface{}.
@@ -283,6 +288,9 @@ func (c *Config) Init() error {
 	// Update package defaults.
 	c.Propagate()
 
+	// Report the download token configuration.
+	c.reportDownloadTokenOptions()
+
 	// Show support information.
 	if !c.Sponsor() {
 		log.Info(MsgSponsor)
@@ -294,6 +302,22 @@ func (c *Config) Init() error {
 	c.ready.Store(true)
 
 	return nil
+}
+
+// reportDownloadTokenOptions reports the download token configuration. Both notices describe static
+// option values, so Init calls this once at startup rather than Propagate, which runs again whenever an
+// admin saves Advanced Settings.
+func (c *Config) reportDownloadTokenOptions() {
+	// A static token is an explicit opt-in whose trade-off is not visible from the URLs it produces: it
+	// keeps permanent links working, but anyone holding it can download public content. Sessions are
+	// unaffected, as they receive signed tokens.
+	if !c.Public() && c.options.DownloadToken != "" {
+		event.SystemWarn([]string{"config", "download-token", "static value configured, so it grants downloads of public content without identifying a session"})
+	}
+
+	if raw := c.options.DownloadTokenMaxAge; raw > 0 && raw < int64(ttl.DownloadTokenMinAge) {
+		event.SystemWarn([]string{"config", "download-token-maxage", "%ds is below the %ds minimum and has been raised to it"}, raw, int64(ttl.DownloadTokenMinAge))
+	}
 }
 
 // InitCore initializes configuration values without connecting to the database
@@ -369,6 +393,9 @@ func (c *Config) IsReady() bool {
 }
 
 // Propagate updates config options in other packages as needed.
+// It assigns package-level values without synchronization, which is safe because it runs at startup and
+// otherwise only when an admin changes Advanced Settings — a rare action after which both call sites set
+// mutex.Restart, as a restart is required for every change to take effect.
 func (c *Config) Propagate() {
 	FlushCache()
 	log.SetLevel(c.LogLevel())
@@ -409,9 +436,20 @@ func (c *Config) Propagate() {
 		c.ThumbCachePath(),
 	}
 
-	// Set cache expiration defaults.
+	// Set cache expiration defaults, including the signed download token lifetime read when one is minted.
 	ttl.CacheDefault = c.HttpCacheMaxAge()
 	ttl.CacheVideo = c.HttpVideoMaxAge()
+	ttl.DownloadToken = ttl.Duration(int(c.DownloadTokenMaxAge().Seconds()))
+
+	// Configure signed URL tokens, which must be complete before anything mints or verifies one. A single
+	// signing key covers every token kind (downloads today, previews next); the signature path is per kind.
+	tokens.Download.Key = c.TokenSigningKey()
+	tokens.Download.SignaturePath = c.ApiUri()
+
+	// Configure download-token delivery: public mode delivers a placeholder, every session receives a
+	// signed token, and the coarse token covers only the sessionless client configs.
+	tokens.PublicMode = c.Public()
+	tokens.CoarseDownload = c.DownloadToken()
 
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()
@@ -427,9 +465,12 @@ func (c *Config) Propagate() {
 	// Set path for user assets.
 	entity.UsersPath = c.UsersPath()
 
-	// Set API preview and download default tokens.
-	entity.PreviewToken.Set(entity.TokenConfig, c.PreviewToken())
-	entity.DownloadToken.Set(entity.TokenConfig, c.DownloadToken())
+	// Set the API preview default token (the download token is no longer stored per session). The
+	// placeholder is never registered, so a missing signing key rejects previews instead of admitting it.
+	if previewToken := c.PreviewToken(); previewToken != PreviewTokenPlaceholder {
+		entity.PreviewToken.Set(entity.TokenConfig, previewToken)
+	}
+
 	entity.ValidateTokens = !c.Public()
 
 	// Set face recognition parameters.
@@ -624,48 +665,101 @@ func (c *Config) CliContextString(name string) string {
 	return c.cliCtx.String(name)
 }
 
-// readSerial reads and returns the current storage serial.
-func (c *Config) readSerial() string {
-	storageName := filepath.Join(c.StoragePath(), serialName)
-	backupName := c.BackupPath(serialName)
-
-	if fs.FileExists(storageName) {
-		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 { //nolint:gosec // path is computed from config storage
-			return string(data)
-		} else {
-			log.Tracef("config: could not read %s (%s)", clean.Log(storageName), err)
-		}
+// serialFiles returns the storage serial copies in lookup order, each with the mode to create it with.
+// The mode is deliberately permissive: the serial must stay readable when the UID/GID of the process
+// changes, which happens when an instance is reconfigured (e.g. in compose.yaml) and restarted.
+func (c *Config) serialFiles() []struct {
+	Name string
+	Mode os.FileMode
+} {
+	return []struct {
+		Name string
+		Mode os.FileMode
+	}{
+		{filepath.Join(c.StoragePath(), serialName), fs.ModeFile},
+		{c.BackupPath(serialName), fs.ModeFile},
 	}
+}
 
-	if fs.FileExists(backupName) {
-		if data, err := os.ReadFile(backupName); err == nil && len(data) == 16 { //nolint:gosec // backup file path is generated internally
-			return string(data)
-		} else {
-			log.Tracef("config: could not read %s (%s)", clean.Log(backupName), err)
+// readSerial returns the storage serial from the first copy that holds a valid one, or an empty string
+// if none does, in which case InitSerial generates one.
+func (c *Config) readSerial() string {
+	for _, f := range c.serialFiles() {
+		if serial := readSerialFile(f.Name); serial != "" {
+			return serial
 		}
 	}
 
 	return ""
 }
 
-// InitSerial initializes storage directories with a random serial.
-func (c *Config) InitSerial() (err error) {
-	if c.Serial() != "" {
-		return nil
+// readSerialFile returns the serial stored in a single file, or an empty string if it is absent,
+// unreadable, or invalid.
+// Surrounding whitespace is tolerated because a stray newline would otherwise discard the serial and
+// rotate the preview token derived from it.
+func readSerialFile(fileName string) string {
+	data, err := os.ReadFile(fileName) //nolint:gosec // path is computed from the storage and backup paths
+
+	switch {
+	case os.IsNotExist(err):
+		return ""
+	case err != nil:
+		event.SystemWarn([]string{"config", "serial", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+		return ""
 	}
 
-	c.serial = rnd.GenerateUID('z')
-
-	storageName := filepath.Join(c.StoragePath(), serialName)
-	backupName := c.BackupPath(serialName)
-
-	if err = os.WriteFile(storageName, []byte(c.serial), fs.ModeFile); err != nil {
-		return fmt.Errorf("could not create %s: %s", storageName, err)
+	if serial := strings.TrimSpace(string(data)); rnd.IsUID(serial, serialPrefix) {
+		return serial
 	}
 
-	if err = os.WriteFile(backupName, []byte(c.serial), fs.ModeFile); err != nil {
-		return fmt.Errorf("could not create %s: %s", backupName, err)
+	event.SystemWarn([]string{"config", "serial", "read %s", "invalid value"}, clean.Log(fileName))
+
+	return ""
+}
+
+// serialFileHas reports whether the file already holds the given serial, without logging.
+// It guards the restore path, which must not repeat the warnings readSerialFile emits for a bad copy.
+func serialFileHas(fileName, serial string) bool {
+	data, err := os.ReadFile(fileName) //nolint:gosec // path is computed from the storage and backup paths
+	return err == nil && strings.TrimSpace(string(data)) == serial
+}
+
+// restoreSerial rewrites the serial copies that are missing or damaged, so one surviving copy heals the
+// other. Failures are reported but never fatal, since the serial is already available in memory.
+func (c *Config) restoreSerial(serial string) {
+	for _, f := range c.serialFiles() {
+		if serialFileHas(f.Name, serial) {
+			continue
+		}
+
+		if err := os.WriteFile(f.Name, []byte(serial), f.Mode); err != nil {
+			event.SystemWarn([]string{"config", "serial", "restore %s", "%s"}, clean.Log(f.Name), clean.Error(err))
+		} else {
+			event.SystemInfo([]string{"config", "serial", "restore %s", status.Succeeded}, clean.Log(f.Name))
+		}
 	}
+}
+
+// InitSerial initializes the storage path with a random serial if it does not have one yet, and restores
+// any copy that is missing or damaged.
+// It identifies the storage across restarts, so it is kept redundantly; only a failure to store the
+// authoritative copy is fatal.
+func (c *Config) InitSerial() error {
+	serial := c.Serial()
+
+	if serial == "" {
+		serial = rnd.GenerateUID(serialPrefix)
+		storageName := filepath.Join(c.StoragePath(), serialName)
+
+		if err := os.WriteFile(storageName, []byte(serial), fs.ModeFile); err != nil {
+			return fmt.Errorf("could not create %s: %w", clean.Log(storageName), err)
+		}
+
+		// Adopt the serial only once stored, so a restart cannot silently change the preview token.
+		c.serial = serial
+	}
+
+	c.restoreSerial(serial)
 
 	return nil
 }
@@ -840,11 +934,11 @@ func (c *Config) Shutdown() {
 	// Shutdown thumbnail library.
 	thumb.Shutdown()
 
-	// Close database connection.
+	// Reported on the console-only system log, as the database backing the error log is going away.
 	if err := c.CloseDb(); err != nil {
-		log.Errorf("could not close database connection: %s", err)
+		event.SystemError([]string{"config", "database", "close", "%s"}, clean.Error(err))
 	} else {
-		log.Debug("closed database connection")
+		event.SystemDebug([]string{"config", "database", "close", status.Succeeded})
 	}
 }
 

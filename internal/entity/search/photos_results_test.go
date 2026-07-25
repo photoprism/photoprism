@@ -1,6 +1,7 @@
 package search
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -87,6 +88,28 @@ func TestPhoto_String(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestPhoto_IdentifyingScalars checks that the XMP DocumentID and camera serial are neither selected
+// nor serialized, so re-adding either field fails here instead of silently reopening the gap between
+// this path and Photo.RedactForSession.
+func TestPhoto_IdentifyingScalars(t *testing.T) {
+	t.Run("NotSelected", func(t *testing.T) {
+		for _, cols := range []struct{ name, sel string }{
+			{"PhotosColsAll", PhotosColsAll},
+			{"PhotosColsView", PhotosColsView},
+			{"BatchCols", BatchCols},
+		} {
+			assert.NotContains(t, cols.sel, "photos.uuid", cols.name)
+			assert.NotContains(t, cols.sel, "photos.camera_serial", cols.name)
+		}
+	})
+	t.Run("NotSerialized", func(t *testing.T) {
+		b, err := json.Marshal(Photo{PhotoUID: "ps6sg6be2lvl0o98"})
+		assert.NoError(t, err)
+		assert.NotContains(t, string(b), "DocumentID")
+		assert.NotContains(t, string(b), "CameraSerial")
+	})
 }
 
 func TestPhoto_Approve(t *testing.T) {

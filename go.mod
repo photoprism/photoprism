@@ -58,7 +58,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 )
 
-require github.com/gabriel-vasile/mimetype v1.4.13
+require github.com/gabriel-vasile/mimetype v1.4.15
 
 require (
 	golang.org/x/sync v0.22.0
@@ -68,7 +68,7 @@ require (
 require github.com/go-ldap/ldap/v3 v3.4.14
 
 require (
-	github.com/prometheus/client_golang v1.24.0
+	github.com/prometheus/client_golang v1.24.1
 	github.com/prometheus/common v0.70.1
 )
 
@@ -79,7 +79,7 @@ require golang.org/x/text v0.40.0
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
 	github.com/antchfx/xmlquery v1.5.1
-	github.com/antchfx/xpath v1.3.7
+	github.com/antchfx/xpath v1.3.8
 	github.com/davidbyttow/govips/v2 v2.18.0
 	github.com/go-co-op/gocron/v2 v2.22.0
 	github.com/go-sql-driver/mysql v1.10.0
@@ -94,7 +94,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.31.0
-	github.com/zitadel/oidc/v3 v3.47.9
+	github.com/zitadel/oidc/v3 v3.48.0
 	golang.org/x/mod v0.38.0
 	golang.org/x/sys v0.47.0
 	google.golang.org/protobuf v1.36.11
@@ -169,7 +169,6 @@ require (
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
-	github.com/zitadel/logging v0.7.0 // indirect
 	github.com/zitadel/schema v1.3.2 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.6.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect

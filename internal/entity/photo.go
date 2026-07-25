@@ -815,9 +815,11 @@ func (m *Photo) PreloadMany() *Photo {
 
 // RedactForSession trims fields a shared-only session should not see when it accesses a picture
 // through sharing: the album list is limited to the albums shared with the session, and people,
-// labels, owner/storage metadata, and identifying metadata (camera serial, the XMP DocumentID, and
-// per-file InstanceID) are removed. Sessions with full library or admin access (and nil sessions)
-// are returned unchanged.
+// labels, the owner, private notes, and identifying metadata (camera serial, the XMP DocumentID,
+// and per-file InstanceID) are removed. Sessions with full library or admin access (and nil
+// sessions) are returned unchanged.
+//
+// It trims only fields the search results omit, so both read paths disclose the same set.
 func (m *Photo) RedactForSession(sess *Session) *Photo {
 	if m == nil || sess == nil {
 		return m
@@ -858,12 +860,9 @@ func (m *Photo) RedactForSession(sess *Session) *Photo {
 		m.Files[i].RedactForSession(sess)
 	}
 
-	// Remove owner, storage, and identifying metadata. CameraSerial is a device fingerprint that
-	// can link a photographer's pictures, and the XMP DocumentID is a content-provenance identifier;
-	// neither is needed by a shared-only viewer (navigation uses PhotoUID/FileUID).
+	// Remove the owner, private notes, and identifying metadata. PhotoPath and OriginalName stay:
+	// search discloses both to every in-scope session, so withholding them here protects nothing.
 	m.CreatedBy = ""
-	m.PhotoPath = ""
-	m.OriginalName = ""
 	m.UUID = ""
 	m.CameraSerial = ""
 	m.Details = nil

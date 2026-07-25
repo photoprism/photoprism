@@ -72,6 +72,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       va-driver-all libva2 iputils-ping dnsutils binutils binutils-gold \
       ghostscript gsfonts \
     && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \
     /scripts/install-bashrc.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     /scripts/install-dircolors.sh && \

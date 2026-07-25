@@ -48,6 +48,30 @@ func WaitForAsyncJobs() {
 	asyncWG.Wait()
 }
 
+// WaitForAsyncJobsTimeout waits up to timeout for async jobs to finish and reports
+// whether they all drained; a non-positive timeout waits indefinitely. It bounds
+// database teardown so a wedged background job cannot hang shutdown forever.
+func WaitForAsyncJobsTimeout(timeout time.Duration) bool {
+	if timeout <= 0 {
+		asyncWG.Wait()
+		return true
+	}
+
+	done := make(chan struct{})
+
+	go func() {
+		asyncWG.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		return true
+	case <-time.After(timeout):
+		return false
+	}
+}
+
 type LabelPhotoCount struct {
 	LabelID    int
 	PhotoCount int

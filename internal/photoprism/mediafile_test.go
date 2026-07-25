@@ -1125,6 +1125,24 @@ func TestMediaFile_IsPng(t *testing.T) {
 		assert.Equal(t, "image/png", mediaFile.MimeType())
 		assert.True(t, mediaFile.IsPng())
 	})
+	t.Run("AnimatedPng", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/animated.png")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, fs.ImagePng, mediaFile.FileType())
+		assert.Equal(t, header.ContentTypeAPng, mediaFile.MimeType())
+		assert.True(t, mediaFile.IsPng())
+	})
+	t.Run("AnimatedPngExt", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/animated.apng")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, fs.ImagePng, mediaFile.FileType())
+		assert.Equal(t, header.ContentTypeAPng, mediaFile.MimeType())
+		assert.True(t, mediaFile.IsPng())
+	})
 }
 
 func TestMediaFile_IsTiff(t *testing.T) {
@@ -1296,6 +1314,20 @@ func TestMediaFile_CheckType(t *testing.T) {
 	})
 	t.Run("PNG", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/orientation.png"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.NoError(t, f.CheckType())
+		}
+	})
+	t.Run("AnimatedPNG", func(t *testing.T) {
+		if f, err := NewMediaFile("testdata/animated.png"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.NoError(t, f.CheckType())
+		}
+	})
+	t.Run("AnimatedPNGExt", func(t *testing.T) {
+		if f, err := NewMediaFile("testdata/animated.apng"); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.NoError(t, f.CheckType())

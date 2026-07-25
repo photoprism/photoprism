@@ -177,6 +177,22 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("SESSION_CACHE"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "download-token",
+			Usage:   "shared static `TOKEN` accepted for permanent download URLs without identifying a session (leave blank to accept signed tokens only)",
+			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
+		}, Secret: true}, {
+		Flag: &cli.Int64Flag{
+			Name:    "download-token-maxage",
+			Value:   int64(ttl.DownloadTokenDefaultAge),
+			Usage:   fmt.Sprintf("signed download token lifetime in `SECONDS` (minimum %d)", ttl.DownloadTokenMinAge.Int()),
+			EnvVars: EnvVars("DOWNLOAD_TOKEN_MAXAGE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "preview-token",
+			Usage:   "shared static `TOKEN` for thumbnail and video streaming URLs (leave blank for an automatic value)",
+			EnvVars: EnvVars("PREVIEW_TOKEN"),
+		}, Secret: true}, {
+		Flag: &cli.StringFlag{
 			Name:    "log-level",
 			Aliases: []string{"l"},
 			Usage:   "log message verbosity `LEVEL` (trace, debug, info, warning, error)",
@@ -1210,16 +1226,6 @@ var Flags = CliFlags{
 			Value:   media.KeepOrientation,
 			EnvVars: EnvVars("HEIFCONVERT_ORIENTATION"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "download-token",
-			Usage:   "`DEFAULT` download URL token for originals (leave blank for a random value)",
-			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
-		}, Secret: true}, {
-		Flag: &cli.StringFlag{
-			Name:    "preview-token",
-			Usage:   "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
-			EnvVars: EnvVars("PREVIEW_TOKEN"),
-		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},

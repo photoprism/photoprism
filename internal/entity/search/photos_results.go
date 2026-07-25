@@ -17,10 +17,12 @@ import (
 
 // Photo represents a photo search result row joined with its primary file and
 // related metadata that we surface in the UI and API responses.
+//
+// The XMP DocumentID and camera serial are deliberately absent, so this path withholds the same
+// identifying metadata that Photo.RedactForSession removes from the by-UID read.
 type Photo struct {
 	ID               uint          `json:"-" select:"photos.id"`
 	CompositeID      string        `json:"ID" select:"files.photo_id AS composite_id"`
-	UUID             string        `json:"DocumentID,omitempty" select:"photos.uuid"`
 	PhotoUID         string        `json:"UID" select:"photos.photo_uid"`
 	PhotoType        string        `json:"Type" select:"photos.photo_type"`
 	TypeSrc          string        `json:"TypeSrc" select:"photos.taken_src"`
@@ -52,7 +54,6 @@ type Photo struct {
 	PhotoPanorama    bool          `json:"Panorama" select:"photos.photo_panorama"`
 	CameraID         uint          `json:"CameraID" select:"photos.camera_id"` // Camera
 	CameraSrc        string        `json:"CameraSrc,omitempty" select:"photos.camera_src"`
-	CameraSerial     string        `json:"CameraSerial,omitempty" select:"photos.camera_serial"`
 	CameraMake       string        `json:"CameraMake,omitempty" select:"cameras.camera_make"`
 	CameraModel      string        `json:"CameraModel,omitempty" select:"cameras.camera_model"`
 	CameraType       string        `json:"CameraType,omitempty" select:"cameras.camera_type"`

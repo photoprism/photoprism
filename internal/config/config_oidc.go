@@ -11,6 +11,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -55,12 +56,12 @@ func (c *Config) OIDCUri() *url.URL {
 	if uri := c.options.OIDCUri; uri == "" {
 		return &url.URL{}
 	} else if result, err := url.Parse(uri); err != nil {
-		log.Warnf("oidc: failed to parse provider URI (%s)", err)
+		event.SystemWarn([]string{"oidc", "provider uri", "parse", "%s"}, clean.Error(err))
 		return &url.URL{}
 	} else if result.Scheme == "https" {
 		return result
 	} else {
-		log.Warnf("oidc: insecure or unsupported provider URI (%s)", uri)
+		event.SystemWarn([]string{"oidc", "provider uri", "%s", "insecure or unsupported"}, clean.Log(uri))
 		return &url.URL{}
 	}
 }
@@ -79,7 +80,7 @@ func (c *Config) OIDCSecret() string {
 		// No secret set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from config directory
-		log.Warnf("config: failed to read OIDC client secret from %s (%s)", fileName, err)
+		event.SystemWarn([]string{"oidc", "client secret", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
 		return ""
 	} else {
 		return clean.Password(string(b))

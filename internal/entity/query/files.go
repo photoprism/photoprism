@@ -56,6 +56,12 @@ func Files(limit, offset int, dir string, includeMissing bool) (files entity.Fil
 
 // FilesByUID finds files for the given UIDs.
 func FilesByUID(u []string, limit int, offset int) (files entity.Files, err error) {
+	// A negative limit omits the LIMIT clause, which only some databases accept
+	// in combination with an OFFSET, so it is rejected before running the query.
+	if limit < 0 {
+		return files, fmt.Errorf("invalid limit")
+	}
+
 	if err = Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
 	}

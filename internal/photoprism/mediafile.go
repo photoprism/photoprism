@@ -886,7 +886,7 @@ func (m *MediaFile) IsPng() bool {
 	}
 
 	// Check the mime type after other tests have passed to improve performance.
-	return m.HasMimeType(header.ContentTypePng) || m.HasMimeType(header.ContentTypeAPng)
+	return header.IsPngType(m.BaseType())
 }
 
 // IsGif checks if the file is a GIF image with a supported file type extension.
@@ -1056,7 +1056,7 @@ func (m *MediaFile) CheckType() error {
 	case fs.ImageJpeg:
 		valid = mimeType == header.ContentTypeJpeg
 	case fs.ImagePng:
-		valid = mimeType == header.ContentTypePng || mimeType == header.ContentTypeAPng
+		valid = header.IsPngType(mimeType)
 	case fs.ImageGif:
 		valid = mimeType == header.ContentTypeGif
 	case fs.ImageTiff:

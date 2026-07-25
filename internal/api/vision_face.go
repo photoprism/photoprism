@@ -83,13 +83,18 @@ func PostVisionFace(router *gin.RouterGroup) {
 				return
 			}
 
-			// An image with no detectable face yields empty embeddings, not an error.
-			if result, faceErr := vision.GenerateFaceEmbeddings(data); faceErr != nil {
-				results[i] = face.Embeddings{}
+			// Undecodable data fails closed with 400, mirroring the labels and nsfw endpoints.
+			// An image with no detectable face is not an error and still yields 200 with
+			// empty embeddings, so this only rejects input that is not a usable image.
+			result, faceErr := vision.GenerateFaceEmbeddings(data)
+
+			if faceErr != nil {
 				log.Errorf("vision: %s (run face embeddings)", faceErr)
-			} else {
-				results[i] = result
+				c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
+				return
 			}
+
+			results[i] = result
 		}
 
 		// Generate Vision API service response.

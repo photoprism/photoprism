@@ -29,6 +29,9 @@ import saveAs from "file-saver";
 const isSafari = navigator.appVersion.indexOf("Safari/") !== -1 && navigator.appVersion.indexOf("Chrome") === -1;
 
 // Downloads a file from the server.
+// The anchor path cannot observe the response status, so an expired download token fails silently. If
+// that becomes a problem, refresh the token before calling rather than retrying afterwards, as the
+// signed value carries its own expiry — see the related spec for the options considered.
 export default function download(url, name) {
   // Abort if download url is empty.
   if (!url) {

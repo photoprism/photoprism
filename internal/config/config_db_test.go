@@ -106,7 +106,12 @@ func TestConfig_DatabaseVersion(t *testing.T) {
 func TestConfig_DatabaseSsl(t *testing.T) {
 	c := TestConfig()
 
-	assert.False(t, c.DatabaseSsl())
+	// MariaDB enables zero-configuration SSL as of v11.4, other databases don't.
+	if c.DatabaseDriver() == dsn.DriverMySQL && c.IsDatabaseVersion("v11.4") {
+		assert.True(t, c.DatabaseSsl())
+	} else {
+		assert.False(t, c.DatabaseSsl())
+	}
 }
 
 func TestConfig_normalizeDatabaseDSN(t *testing.T) {
@@ -299,6 +304,7 @@ func TestDatabaseProvisionPrefix(t *testing.T) {
 func TestShouldAutoRotateDatabase(t *testing.T) {
 	t.Run("PortalAlwaysFalse", func(t *testing.T) {
 		conf := NewMinimalTestConfig(t.TempDir())
+		resetDatabaseOptions(conf)
 		conf.Options().Edition = Portal
 		conf.Options().NodeRole = cluster.RolePortal
 		conf.Options().DatabaseDriver = dsn.DriverMySQL
@@ -306,11 +312,15 @@ func TestShouldAutoRotateDatabase(t *testing.T) {
 	})
 	t.Run("NonMySQLDriverFalse", func(t *testing.T) {
 		conf := NewMinimalTestConfig(t.TempDir())
+		resetDatabaseOptions(conf)
 		conf.Options().DatabaseDriver = dsn.DriverSQLite3
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
 	t.Run("MySQLMissingFieldsTrue", func(t *testing.T) {
 		conf := NewMinimalTestConfig(t.TempDir())
+		// Clear the options first, as credentials are otherwise parsed from the
+		// DSN that the test environment may provide.
+		resetDatabaseOptions(conf)
 		conf.Options().DatabaseDriver = dsn.DriverMySQL
 		conf.Options().DatabaseName = "photoprism"
 		conf.Options().DatabaseUser = ""

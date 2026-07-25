@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -50,15 +49,17 @@ func TestGetDownload(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetDownload(router)
 		r := PerformRequest(app, "GET", "/api/v1/dl/123xxx?t="+conf.DownloadToken())
-		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, "File not found", val.String())
+		// An unknown hash returns the same SVG 404 as a hidden/missing one (no existence disclosure).
 		assert.Equal(t, http.StatusNotFound, r.Code)
+		assert.Equal(t, "image/svg+xml", r.Header().Get("Content-Type"))
 	})
 	t.Run("MissingOriginal", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		GetDownload(router)
 		r := PerformRequest(app, "GET", "/api/v1/dl/3cad9168fa6acc5c5c2965ddf6ec465ca42fd818?t="+conf.DownloadToken())
+		// Same status and body type as the unknown-hash case above — the two are indistinguishable.
 		assert.Equal(t, http.StatusNotFound, r.Code)
+		assert.Equal(t, "image/svg+xml", r.Header().Get("Content-Type"))
 	})
 	t.Run("InvalidDownloadToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()

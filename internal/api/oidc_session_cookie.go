@@ -17,6 +17,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -86,7 +87,8 @@ func oidcSessionSignalKey() []byte {
 		key := make([]byte, oidcSessionKeyLen)
 		_, _ = rand.Read(key)
 		oidcSessionKey = key
-		log.Warnf("oidc: using a process-local session-signal key because the persistent key could not be loaded or stored; OP session cookies will not verify across restarts or replicas")
+		// Console-only: identity-provider key management must not reach the browser log viewer.
+		event.SystemWarn([]string{"oidc", "session signal key", "persist", "using a process-local key, so OP session cookies will not verify across restarts or replicas"})
 	})
 	return oidcSessionKey
 }
@@ -100,7 +102,7 @@ func loadOrCreateOIDCSessionKey() []byte {
 	}
 	dir := filepath.Join(conf.PortalConfigPath(), "keys")
 	path := filepath.Join(dir, oidcSessionKeyFile)
-	if b, err := os.ReadFile(path); err == nil && len(b) >= oidcSessionKeyLen {
+	if b, err := os.ReadFile(path); err == nil && len(b) >= oidcSessionKeyLen { //nolint:gosec // path is the portal config keys directory plus a fixed filename, not user input
 		return b
 	}
 	if err := fs.MkdirAll(dir); err != nil {
@@ -185,7 +187,7 @@ func SetOIDCSessionCookie(c *gin.Context, sess *entity.Session, cookiePath strin
 
 	value := signOIDCSession(sess.ID, time.Now().Add(OIDCSessionCookieTTL))
 
-	http.SetCookie(c.Writer, &http.Cookie{
+	http.SetCookie(c.Writer, &http.Cookie{ //nolint:gosec // HttpOnly and SameSite are set; Secure is caller-controlled (HTTP is allowed only for loopback/cluster-internal advertise URLs)
 		Name:     OIDCSessionCookie,
 		Value:    value,
 		Path:     cookiePath,
@@ -208,7 +210,7 @@ func ClearOIDCSessionCookie(c *gin.Context, cookiePath string, secure bool) {
 		cookiePath = config.ApiUri + "/oauth"
 	}
 
-	http.SetCookie(c.Writer, &http.Cookie{
+	http.SetCookie(c.Writer, &http.Cookie{ //nolint:gosec // HttpOnly and SameSite are set; Secure is caller-controlled (HTTP is allowed only for loopback/cluster-internal advertise URLs)
 		Name:     OIDCSessionCookie,
 		Value:    "",
 		Path:     cookiePath,

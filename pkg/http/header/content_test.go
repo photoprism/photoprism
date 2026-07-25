@@ -45,6 +45,28 @@ func TestContent(t *testing.T) {
 	})
 }
 
+func TestIsPngType(t *testing.T) {
+	t.Run("Png", func(t *testing.T) {
+		assert.True(t, IsPngType(ContentTypePng))
+	})
+	t.Run("APng", func(t *testing.T) {
+		assert.True(t, IsPngType(ContentTypeAPng))
+		assert.Equal(t, "image/apng", ContentTypeAPng)
+	})
+	t.Run("APngAlt", func(t *testing.T) {
+		assert.True(t, IsPngType(ContentTypeAPngAlt))
+		assert.Equal(t, "image/vnd.mozilla.apng", ContentTypeAPngAlt)
+	})
+	t.Run("OtherType", func(t *testing.T) {
+		assert.False(t, IsPngType(ContentTypeJpeg))
+		assert.False(t, IsPngType(ContentTypeGif))
+		assert.False(t, IsPngType(ContentTypeSVG))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsPngType(""))
+	})
+}
+
 func TestHasContentType(t *testing.T) {
 	t.Run("True", func(t *testing.T) {
 		assert.True(t, HasContentType(&http.Header{"Content-Type": []string{"multipart/form-data"}}, ContentTypeMultipart))

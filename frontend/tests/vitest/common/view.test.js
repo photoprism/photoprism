@@ -319,6 +319,54 @@ describe("common/view", () => {
         expect(ev.preventDefault).not.toHaveBeenCalled();
       });
     });
+
+    // Capture-phase registration lets the guard survive overlays that isolate their
+    // gestures with a bubble-phase stopPropagation (the PDF viewer's @touchstart.stop).
+    // These tests pin it: a capture listener fires despite a descendant stopPropagation,
+    // while a bubble listener is defeated by it.
+    describe("capture phase survives descendant stopPropagation", () => {
+      let outer, inner;
+
+      // Dispatches a real bubbling left-edge touchstart on the inner node.
+      function dispatchEdgeTouch() {
+        const ev = new TouchEvent("touchstart", { cancelable: true, bubbles: true });
+        Object.defineProperty(ev, "touches", { value: [{ clientX: 5, clientY: 200 }] });
+        Object.defineProperty(ev, "changedTouches", { value: [{ clientX: 5, clientY: 200 }] });
+        inner.dispatchEvent(ev);
+        return ev;
+      }
+
+      beforeEach(() => {
+        // outer mimics the .p-pdf-viewer root that isolates its gestures; inner is the
+        // descendant the touch lands on.
+        outer = document.createElement("div");
+        inner = document.createElement("div");
+        outer.appendChild(inner);
+        document.body.appendChild(outer);
+        outer.addEventListener("touchstart", (ev) => ev.stopPropagation());
+      });
+      afterEach(() => {
+        outer.remove();
+      });
+
+      it("fires despite a descendant stopPropagation when registered with capture", () => {
+        window.addEventListener("touchstart", preventNavigationTouchEvent, { capture: true, passive: false });
+        try {
+          expect(dispatchEdgeTouch().defaultPrevented).toBe(true);
+        } finally {
+          window.removeEventListener("touchstart", preventNavigationTouchEvent, { capture: true, passive: false });
+        }
+      });
+
+      it("would be defeated by the same stopPropagation when registered in the bubble phase", () => {
+        window.addEventListener("touchstart", preventNavigationTouchEvent, { capture: false, passive: false });
+        try {
+          expect(dispatchEdgeTouch().defaultPrevented).toBe(false);
+        } finally {
+          window.removeEventListener("touchstart", preventNavigationTouchEvent, { capture: false, passive: false });
+        }
+      });
+    });
   });
 
   describe("viewport zoom", () => {

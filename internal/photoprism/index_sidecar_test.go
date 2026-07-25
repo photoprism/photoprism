@@ -482,3 +482,83 @@ func TestIndex_Start_XmpSidecarScope(t *testing.T) {
 	_, updated := ind.Start(opt)
 	assert.Equal(t, 0, updated)
 }
+
+// TestIndex_Start_XmpSidecarYamlBackup verifies that a sidecar-only edit refreshes the YAML
+// metadata backup on a normal incremental run, not just on a complete rescan.
+func TestIndex_Start_XmpSidecarYamlBackup(t *testing.T) {
+	cfg := newIndexRelatedTestConfig(t, "index-sidecar-yaml-backup")
+	cfg.Options().SidecarYaml = true
+	cfg.Options().DisableBackups = false
+
+	prevConf := Config()
+	SetConfig(cfg)
+	defer SetConfig(prevConf)
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	opt := NewIndexOptions("/", false, false, false, false, false, cfg)
+
+	token := rnd.Base36(8)
+	testPath := filepath.Join(cfg.OriginalsPath(), token)
+	jpgPath := filepath.Join(testPath, "photo.jpg")
+	xmpPath := filepath.Join(testPath, "photo.xmp")
+	jpgName := filepath.Join(token, "photo.jpg")
+
+	src, err := NewMediaFile("testdata/apple-test-2.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = src.Copy(jpgPath, false); err != nil {
+		t.Fatal(err)
+	}
+
+	// Keep the main file's mtime fixed so it stays "unchanged" across passes.
+	jpgStamp := time.Unix(1700000000, 0)
+	if err = os.Chtimes(jpgPath, jpgStamp, jpgStamp); err != nil {
+		t.Fatal(err)
+	}
+
+	reloadPhoto := func() entity.Photo {
+		var f entity.File
+		if dbErr := entity.UnscopedDb().First(&f, "file_name = ?", jpgName).Error; dbErr != nil {
+			t.Fatalf("main file row not found: %s", dbErr)
+		}
+		p, dbErr := query.PhotoByUID(f.PhotoUID)
+		if dbErr != nil {
+			t.Fatalf("photo not found: %s", dbErr)
+		}
+		return p
+	}
+
+	// yamlBackup returns the contents of the photo's YAML sidecar backup.
+	yamlBackup := func() string {
+		p := reloadPhoto()
+		name, _, nameErr := p.YamlFileName(cfg.OriginalsPath(), cfg.SidecarPath())
+		if nameErr != nil {
+			t.Fatalf("yaml file name: %s", nameErr)
+		}
+		data, readErr := os.ReadFile(name) //nolint:gosec // isolated test path
+		if readErr != nil {
+			t.Fatalf("yaml backup not found: %s", readErr)
+		}
+		return string(data)
+	}
+
+	if _, updated := ind.Start(opt); updated == 0 {
+		t.Fatal("expected initial index to process at least one file")
+	}
+	t.Run("NewSidecarUpdatesYaml", func(t *testing.T) {
+		writeSidecar(t, xmpPath, xmpSidecarDoc("Title One", "Caption One", "35.6762", "139.6503"), 1700000100)
+		_, updated := ind.Start(opt)
+		assert.Greater(t, updated, 0)
+		assert.Equal(t, "Caption One", reloadPhoto().PhotoCaption)
+		assert.Contains(t, yamlBackup(), "Caption One")
+	})
+	t.Run("EditedSidecarUpdatesYaml", func(t *testing.T) {
+		writeSidecar(t, xmpPath, xmpSidecarDoc("Title One", "Caption Two", "35.6762", "139.6503"), 1700000200)
+		_, updated := ind.Start(opt)
+		assert.Greater(t, updated, 0)
+		assert.Equal(t, "Caption Two", reloadPhoto().PhotoCaption)
+		assert.Contains(t, yamlBackup(), "Caption Two")
+		assert.NotContains(t, yamlBackup(), "Caption One")
+	})
+}

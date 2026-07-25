@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** June 1, 2026
+**Last Updated:** July 25, 2026
 
 ### Overview
 
@@ -45,8 +45,10 @@ Tests default to SQLite. To exercise the models against MariaDB (which is strict
 mysql < scripts/sql/reset-acceptance.sql
 PHOTOPRISM_TEST_DRIVER="mysql" \
 PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" \
-go test ./internal/entity/... -count=1 -tags="slow,develop"
+go test -p 1 ./internal/entity/... -count=1 -tags="slow,develop"
 ```
+
+`make test-mariadb` runs the whole backend suite this way. Unlike SQLite, which gets its own database file per package, **every package shares the one `acceptance` schema**, so packages must not run concurrently: each `TestMain` truncates the tables and re-seeds the fixtures, which would pull the schema out from under any package running at the same time. That is what `-p 1` is for — without it, `go test` runs up to `GOMAXPROCS` packages in parallel and the failures look like unrelated assertion errors all over the suite. A test that needs a database of its own must set `PHOTOPRISM_TEST_DRIVER` **and** `PHOTOPRISM_TEST_DSN`, as a SQLite path alone is parsed as a MySQL DSN and aborts the package.
 
 MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that only ran on SQLite can fail here:
 
@@ -55,6 +57,8 @@ MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that 
 - UID format (see `pkg/rnd/uid.go`): a one-byte prefix + 6 base36 time chars + 9 base36 random, 16 chars total (`p…` photo, `a…` album, `c…` client, `u…` user, `l…` label). Reuse existing fixtures for foreign-key safety; use a throwaway but in-range value only where a real reference would overwrite seeded data (e.g. a synthetic `photo_id` so a Details row does not attach to a real photo).
 - Fixtures live in `*_fixtures.go`, but some join rows are created **indirectly** from a parent fixture's embedded slice (e.g. a `photos_labels` row from a `Photo` fixture's `Labels`). Verify a combination is free against the **seeded database**, not just the fixtures file.
 - `List`-style global queries (`WHERE … <> ''` with no per-test scope) are not isolated on the shared `acceptance` database: rows from other tests in the same run leak in, so a `len(list) == N` assertion that holds on a per-test SQLite file can fail on MariaDB.
+- **Sort order is collation-dependent.** `utf8mb4_unicode_ci` sorts case-insensitively and weights punctuation by Unicode rules, while SQLite compares byte values, so `ORDER BY` on a text column yields a different sequence. Give rows a deterministic tiebreaker, or assert per dialect (`entity.Db().Dialect().GetName()`).
+- **Generated IDs restart at 1.** `Tables.Truncate` issues `TRUNCATE` where supported, which resets `AUTO_INCREMENT`, so a fixture without an explicit ID gets the same value it would in a fresh database. Plain `DELETE` would not, and IDs would drift with every reset.
 
 ### Collation & Emoji
 
@@ -62,6 +66,8 @@ MariaDB's `utf8mb4_unicode_ci` assigns most emoji the **same collation weight**,
 
 - `utf8mb4` columns that collapse: `albums.album_title`, display/name text (`*_name`, `*_title`).
 - `VARBINARY` columns that stay byte-exact: `albums.album_slug`, `albums.album_filter`, `albums.album_path`, `photos.photo_path`, and every `*_uid`. A `utf8mb4` column compared against a `VARBINARY` column is byte-exact (the binary operand wins).
+
+Byte-exact also means **case-sensitive**, which is the one place `VARBINARY` bites on a search path: SQLite's `LIKE` folds ASCII case, so `album_slug LIKE 'Forrest%'` finds the `forrest` slug there but nothing on MariaDB. Slugs are always generated lowercase, so fold the pattern before comparing (`strings.ToLower`), as the album filter in `search.searchPhotos` does.
 
 The durable fix for an identity/path column is to make it `VARBINARY` — `album_path` is `VARBINARY(1024)` so it matches `photos.photo_path` and `album_path = ?` lookups are byte-exact at the database. Where a `utf8mb4` column must stay, keep the SQL but re-verify the match byte-exact in Go before accepting it (see `FindFolderAlbum` / `findFolderAlbumByPath`, whose Go re-check is retained as defense-in-depth even now that `album_path` is `VARBINARY`). For self-join SQL where a Go re-check is awkward, `HEX(col) = HEX(col)` compares byte-exact on both MariaDB and SQLite. Legacy folder slugs drop emoji entirely (`slug.Make("ins/🪞") == "ins"`) and long paths truncate to `ClipSlug` runes, so distinct folders can still collide on `album_slug`; folder albums are therefore deduplicated by `album_filter` (the byte-exact serialized path), not by slug (see `query.RemoveDuplicateMoments`).
 

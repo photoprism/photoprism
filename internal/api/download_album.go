@@ -8,14 +8,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // AlbumDownloadName returns the album download file name type.
@@ -44,15 +48,17 @@ func AlbumDownloadName(c *gin.Context) customize.DownloadName {
 //	@Router		/api/v1/albums/{uid}/dl [get]
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
-			AbortForbidden(c)
+		conf := get.Config()
+
+		// Reject up front when downloads are disabled, before the more expensive token/session resolution.
+		if !conf.Settings().Features.Download || conf.Settings().Albums.Download.Disabled {
+			AbortFeatureDisabled(c)
 			return
 		}
 
-		conf := get.Config()
-
-		if !conf.Settings().Features.Download || conf.Settings().Albums.Download.Disabled {
-			AbortFeatureDisabled(c)
+		sess, valid := AuthDownload(c)
+		if !valid {
+			AbortForbidden(c)
 			return
 		}
 
@@ -64,12 +70,23 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		// Select the album's files based on the album download settings. Enumerating at the
-		// file level (rather than via a photo search) is what lets real sidecar files such as
-		// XMP be included when the Sidecar option is enabled, matching the multi-file download.
+		// The session that owns the download token (resolved by AuthDownload above) scopes the archive to
+		// pictures it may see. A nil session means an unidentified requester (a coarse/instance token),
+		// which is limited to public, non-private content below.
+
+		// Deny access to albums the session may not view, mirroring GetAlbum. A nil session is a coarse
+		// (public/static) token, handled by the public-content scoping below rather than this gate.
+		if sess != nil && !albumViewableBySession(sess, a) {
+			AbortAlbumNotFound(c)
+			return
+		}
+
+		// Enumerate at the file level (not via a photo search) so real sidecar files (e.g. XMP) are
+		// included when the Sidecar option is on. Archived and hidden pictures are always excluded;
+		// private ones only when the session may view them, never for an unidentified requester.
 		dl := conf.Settings().Albums.Download
-		selection := query.DownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals)
-		files, err := query.SelectedFiles(form.Selection{Albums: []string{a.AlbumUID}}, selection)
+		selection := query.AlbumDownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals, search.PhotoSessionSeesPrivate(sess))
+		files, err := query.SelectedFilesForSession(form.Selection{Albums: []string{a.AlbumUID}}, selection, sess)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -110,7 +127,7 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
-					log.Errorf("album: failed to zip %s (%s)", clean.Log(file.FileName), zipErr)
+					log.Errorf("album: failed to zip %s (%s)", clean.Log(file.FileName), clean.Error(zipErr))
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
@@ -122,5 +139,13 @@ func DownloadAlbum(router *gin.RouterGroup) {
 		}
 
 		log.Infof("album: %s has been downloaded [%s]", clean.Log(a.AlbumTitle), time.Since(start))
+
+		// Record the completed bulk download: this endpoint authorizes through AuthDownload rather than
+		// Auth, so it emits none of the access lines other handlers do, and AuthDownload audits only denials.
+		if sess != nil {
+			event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourceAlbums), "download %s", status.Succeeded}, sess.RefID, a.AlbumUID)
+		} else {
+			event.AuditInfo([]string{ClientIP(c), string(acl.ResourceAlbums), "download %s", status.Succeeded}, a.AlbumUID)
+		}
 	})
 }
