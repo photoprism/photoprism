@@ -43,21 +43,18 @@ func AddFileCountHeaders(c *gin.Context, filesCount, foldersCount int) {
 	c.Header("X-Folders", strconv.Itoa(foldersCount))
 }
 
-// AddTokenHeaders adds the preview and download tokens to the response so the client can load
-// thumbnails and download files without polling for a fresh token. The download token mirrors what
-// ClientSession puts in the client config: a signed, session-bound token (so header-less downloads
-// resolve to this session) with a fallback to the legacy per-user token.
+// AddTokenHeaders adds the preview and download tokens to the response so the client can refresh them
+// while browsing instead of polling. Both mirror what ClientSession puts in the client config: a session
+// without its own preview token receives neither, since the download token also authorizes originals.
 func AddTokenHeaders(c *gin.Context, s *entity.Session) {
-	if get.Config().Public() {
+	if get.Config().Public() || s.PreviewToken == "" {
 		return
 	}
 
-	if s.PreviewToken != "" {
-		c.Header("X-Preview-Token", s.PreviewToken)
-	}
+	c.Header("X-Preview-Token", s.PreviewToken)
 
 	// The download token is the "?t=" value the client appends to a download URL: a signed,
-	// session-bound token (or the coarse/placeholder token per the delivery policy).
+	// session-bound token so header-less endpoints resolve back to this session.
 	if v := tokens.DownloadToken(s.ID); v != "" {
 		c.Header("X-Download-Token", v)
 	}

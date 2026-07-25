@@ -130,12 +130,13 @@ func TestDownloadAlbum(t *testing.T) {
 
 		DownloadAlbum(router)
 
-		// The coarse instance token is not session-bound, so it downloads the public, non-private
-		// subset of the album.
+		// A configured static token is not session-bound, so it downloads the public, non-private
+		// subset of the album. It only exists when an operator sets one; nothing is auto-generated.
+		const coarse = "static-download-token"
 		orig := tokens.CoarseDownload
-		tokens.CoarseDownload = conf.DownloadToken()
+		tokens.CoarseDownload = coarse
 		defer func() { tokens.CoarseDownload = orig }()
-		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+conf.DownloadToken())
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+coarse)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

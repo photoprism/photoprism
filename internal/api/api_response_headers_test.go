@@ -28,9 +28,9 @@ func TestAddTokenHeaders(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		// Pin the delivery policy to signed (not public, no configured static token).
-		origPublic, origStatic := tokens.PublicMode, tokens.DownloadStatic
-		tokens.PublicMode, tokens.DownloadStatic = false, false
-		defer func() { tokens.PublicMode, tokens.DownloadStatic = origPublic, origStatic }()
+		origPublic, origCoarse := tokens.PublicMode, tokens.CoarseDownload
+		tokens.PublicMode, tokens.CoarseDownload = false, ""
+		defer func() { tokens.PublicMode, tokens.CoarseDownload = origPublic, origCoarse }()
 
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)

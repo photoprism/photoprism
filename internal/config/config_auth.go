@@ -15,7 +15,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -220,24 +219,16 @@ func (c *Config) SessionCacheDuration() time.Duration {
 	return time.Duration(c.SessionCache()) * time.Second
 }
 
-// DownloadToken returns the single coarse download token — the admin-configured static value
-// (PHOTOPRISM_DOWNLOAD_TOKEN) for permanent, cacheable URLs, or one auto-generated random value when
-// none is set. It is delivered to the sessionless public/share client configs and propagated to
-// tokens.CoarseDownload; authenticated sessions instead receive a signed, session-scoped token. The
-// auto-generated fallback is cached separately so it never overwrites the options, keeping an
-// admin-configured static token distinguishable.
+// DownloadToken returns the configured static download token (PHOTOPRISM_DOWNLOAD_TOKEN), which keeps
+// permanent, cacheable URLs working, or an empty string when none is set.
+// None is generated as a fallback, so an instance that was never configured for permanent URLs has no
+// unscoped capability to accept; sessions receive a signed, session-scoped token instead.
 func (c *Config) DownloadToken() string {
 	if c.Public() {
 		return entity.TokenPublic
-	} else if c.options.DownloadToken != "" {
-		return c.options.DownloadToken
 	}
 
-	c.downloadTokenOnce.Do(func() {
-		c.downloadToken = rnd.Base36(8)
-	})
-
-	return c.downloadToken
+	return c.options.DownloadToken
 }
 
 // TokenSigningKey returns the instance secret that signs the app's URL tokens, generating one on first

@@ -771,15 +771,21 @@ func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 		cfg = c.ClientPublic()
 	}
 
-	if c.Public() {
+	switch {
+	case c.Public():
 		cfg.PreviewToken = entity.TokenPublic
 		cfg.DownloadToken = entity.TokenPublic
-	} else if sess.PreviewToken != "" {
+	case sess.PreviewToken != "":
 		cfg.PreviewToken = sess.PreviewToken
 
 		// The download token is the "?t=" value: a signed, session-bound token so header-less download
 		// endpoints can scope the response to this session.
 		cfg.DownloadToken = tokens.DownloadToken(sess.ID)
+	default:
+		// A session without its own preview token gets no download token either, as the download token
+		// is the higher-value credential: it authorizes originals, and a coarse one is also accepted for
+		// previews. Clears the base config value so a configured static token is not handed out here.
+		cfg.DownloadToken = ""
 	}
 
 	return cfg

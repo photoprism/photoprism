@@ -428,7 +428,7 @@ func TestConfig_reportDownloadTokenOptions(t *testing.T) {
 		// it can be traced back to the setting that caused it.
 		assert.Contains(t, buf.String(), "level=warning")
 		assert.Contains(t, buf.String(), "config: download-token")
-		assert.Contains(t, buf.String(), "not limited to what a session may see")
+		assert.Contains(t, buf.String(), "without identifying a session")
 	})
 	t.Run("NotConfigured", func(t *testing.T) {
 		buf := capture(t)

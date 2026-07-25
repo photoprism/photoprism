@@ -239,6 +239,27 @@ func TestConfig_TokenSigningKey(t *testing.T) {
 	})
 }
 
+func TestConfig_DownloadToken(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	t.Run("PublicMode", func(t *testing.T) {
+		c.options.Public = true
+		defer func() { c.options.Public = false }()
+		assert.Equal(t, entity.TokenPublic, c.DownloadToken())
+	})
+	t.Run("NoneGeneratedWhenUnset", func(t *testing.T) {
+		// No coarse token means tokens.IsCoarseDownload rejects everything, so only signed tokens
+		// authorize a download.
+		c.options.DownloadToken = ""
+		assert.Equal(t, "", c.DownloadToken())
+		assert.Equal(t, "", c.DownloadToken(), "must not generate a value on repeat calls")
+	})
+	t.Run("ConfiguredStaticValue", func(t *testing.T) {
+		c.options.DownloadToken = "static-download-token"
+		defer func() { c.options.DownloadToken = "" }()
+		assert.Equal(t, "static-download-token", c.DownloadToken())
+	})
+}
+
 func TestConfig_DownloadTokenMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	t.Run("DefaultsToTtlWindow", func(t *testing.T) {

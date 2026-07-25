@@ -178,13 +178,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "download-token",
-			Usage:   "shared static `TOKEN` for permanent download URLs, disabling per-session scoping (leave blank for signed, scoped tokens)",
+			Usage:   "shared static `TOKEN` accepted for permanent download URLs without identifying a session (leave blank to accept signed tokens only)",
 			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
 		}, Secret: true}, {
 		Flag: &cli.Int64Flag{
 			Name:    "download-token-maxage",
 			Value:   int64(ttl.DownloadTokenDefaultAge),
-			Usage:   fmt.Sprintf("signed download token lifetime in `SECONDS` (minimum %d, unused if download-token is set)", ttl.DownloadTokenMinAge.Int()),
+			Usage:   fmt.Sprintf("signed download token lifetime in `SECONDS` (minimum %d)", ttl.DownloadTokenMinAge.Int()),
 			EnvVars: EnvVars("DOWNLOAD_TOKEN_MAXAGE"),
 		}}, {
 		Flag: &cli.StringFlag{

@@ -23,11 +23,11 @@ func withKey(t *testing.T, key []byte, path string) {
 }
 
 // withPolicy sets the download delivery policy vars for a test and restores them afterward.
-func withPolicy(t *testing.T, public, static bool, coarse string) {
+func withPolicy(t *testing.T, public bool, coarse string) {
 	t.Helper()
-	origPublic, origStatic, origCoarse := PublicMode, DownloadStatic, CoarseDownload
-	PublicMode, DownloadStatic, CoarseDownload = public, static, coarse
-	t.Cleanup(func() { PublicMode, DownloadStatic, CoarseDownload = origPublic, origStatic, origCoarse })
+	origPublic, origCoarse := PublicMode, CoarseDownload
+	PublicMode, CoarseDownload = public, coarse
+	t.Cleanup(func() { PublicMode, CoarseDownload = origPublic, origCoarse })
 }
 
 func TestDownloadToken(t *testing.T) {
@@ -35,25 +35,27 @@ func TestDownloadToken(t *testing.T) {
 
 	t.Run("PublicMode", func(t *testing.T) {
 		withKey(t, make([]byte, KeyLen), "/api/v1")
-		withPolicy(t, true, false, "coarse-x")
+		withPolicy(t, true, "coarse-x")
 		assert.Equal(t, PublicToken, DownloadToken(sid))
 	})
-	t.Run("StaticToken", func(t *testing.T) {
+	t.Run("StaticTokenDoesNotOverrideSession", func(t *testing.T) {
 		withKey(t, make([]byte, KeyLen), "/api/v1")
-		withPolicy(t, false, true, "static-abc")
-		// A configured static token is delivered to every client, including authenticated sessions.
-		assert.Equal(t, "static-abc", DownloadToken(sid))
+		withPolicy(t, false, "static-abc")
+		// A configured static token must not opt a session out of per-session scoping.
+		v := DownloadToken(sid)
+		assert.NotEqual(t, "static-abc", v)
+		assert.Equal(t, sid, strings.SplitN(v, ".", 3)[1])
 	})
 	t.Run("SignedForSession", func(t *testing.T) {
 		withKey(t, make([]byte, KeyLen), "/api/v1")
-		withPolicy(t, false, false, "coarse-x")
+		withPolicy(t, false, "coarse-x")
 		v := DownloadToken(sid)
 		assert.NotEqual(t, "coarse-x", v)
 		assert.Equal(t, sid, strings.SplitN(v, ".", 3)[1])
 	})
 	t.Run("CoarseForSessionless", func(t *testing.T) {
 		withKey(t, make([]byte, KeyLen), "/api/v1")
-		withPolicy(t, false, false, "coarse-x")
+		withPolicy(t, false, "coarse-x")
 		// No session to sign for (public/share config) falls back to the coarse instance token.
 		assert.Equal(t, "coarse-x", DownloadToken(""))
 	})
@@ -61,15 +63,15 @@ func TestDownloadToken(t *testing.T) {
 
 func TestIsCoarseDownload(t *testing.T) {
 	t.Run("Match", func(t *testing.T) {
-		withPolicy(t, false, false, "coarse-x")
+		withPolicy(t, false, "coarse-x")
 		assert.True(t, IsCoarseDownload("coarse-x"))
 	})
 	t.Run("Mismatch", func(t *testing.T) {
-		withPolicy(t, false, false, "coarse-x")
+		withPolicy(t, false, "coarse-x")
 		assert.False(t, IsCoarseDownload("other"))
 	})
 	t.Run("EmptyCoarseRejectsEverything", func(t *testing.T) {
-		withPolicy(t, false, false, "")
+		withPolicy(t, false, "")
 		assert.False(t, IsCoarseDownload(""))
 		assert.False(t, IsCoarseDownload("anything"))
 	})

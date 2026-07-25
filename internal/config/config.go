@@ -76,24 +76,22 @@ import (
 
 // Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
-	cliCtx            *cli.Context
-	options           *Options
-	settings          *customize.Settings
-	db                *gorm.DB
-	dbVersion         string
-	hub               *hub.Config
-	hubCancel         context.CancelFunc
-	hubLock           sync.Mutex
-	token             string
-	serial            string
-	downloadToken     string
-	downloadTokenOnce sync.Once
-	tokenKey          []byte
-	tokenKeyOnce      sync.Once
-	env               string
-	start             bool
-	ready             atomic.Bool
-	cache             *gc.Cache
+	cliCtx       *cli.Context
+	options      *Options
+	settings     *customize.Settings
+	db           *gorm.DB
+	dbVersion    string
+	hub          *hub.Config
+	hubCancel    context.CancelFunc
+	hubLock      sync.Mutex
+	token        string
+	serial       string
+	tokenKey     []byte
+	tokenKeyOnce sync.Once
+	env          string
+	start        bool
+	ready        atomic.Bool
+	cache        *gc.Cache
 }
 
 // Values is a shorthand alias for map[string]interface{}.
@@ -310,11 +308,11 @@ func (c *Config) Init() error {
 // option values, so Init calls this once at startup rather than Propagate, which runs again whenever an
 // admin saves Advanced Settings.
 func (c *Config) reportDownloadTokenOptions() {
-	// A static token is an explicit opt-in whose trade-off is not visible from the URLs it produces: one
-	// shared value keeps permanent, cacheable links working, but leaves downloads unscoped, as it cannot
-	// identify the requesting session.
+	// A static token is an explicit opt-in whose trade-off is not visible from the URLs it produces: it
+	// keeps permanent links working, but anyone holding it can download public content. Sessions are
+	// unaffected, as they receive signed tokens.
 	if !c.Public() && c.options.DownloadToken != "" {
-		event.SystemWarn([]string{"config", "download-token", "static value configured, so downloads are not limited to what a session may see"})
+		event.SystemWarn([]string{"config", "download-token", "static value configured, so it grants downloads of public content without identifying a session"})
 	}
 
 	if raw := c.options.DownloadTokenMaxAge; raw > 0 && raw < int64(ttl.DownloadTokenMinAge) {
@@ -448,11 +446,9 @@ func (c *Config) Propagate() {
 	tokens.Download.Key = c.TokenSigningKey()
 	tokens.Download.SignaturePath = c.ApiUri()
 
-	// Configure the download-token delivery and validation policy: public mode delivers a placeholder,
-	// a configured static token is delivered to every client, and the single coarse instance token
-	// covers the sessionless public/share configs while authenticated sessions get signed tokens.
+	// Configure download-token delivery: public mode delivers a placeholder, every session receives a
+	// signed token, and the coarse token covers only the sessionless client configs.
 	tokens.PublicMode = c.Public()
-	tokens.DownloadStatic = c.options.DownloadToken != ""
 	tokens.CoarseDownload = c.DownloadToken()
 
 	// Set geocoding parameters.

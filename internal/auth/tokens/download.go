@@ -23,37 +23,32 @@ var (
 	// PublicMode reports whether the instance runs without authentication, in which case download tokens
 	// are delivered as the PublicToken placeholder and never verified. Set by config.Propagate.
 	PublicMode bool
-	// CoarseDownload is the single instance-wide download token — the admin-configured static token or,
-	// when none is set, one auto-generated random value — delivered to the sessionless public/share
-	// client configs and accepted as an unscoped (not session-bound) capability. Set by config.Propagate.
+	// CoarseDownload is the admin-configured static download token (PHOTOPRISM_DOWNLOAD_TOKEN), empty
+	// unless one is set, and accepted as an unscoped capability so permanent URLs keep working.
+	// Set by config.Propagate.
 	CoarseDownload string
-	// DownloadStatic reports whether CoarseDownload is an admin-configured static token (PHOTOPRISM_DOWNLOAD_TOKEN).
-	// When true it is delivered to every client so permanent, cacheable download URLs keep working; when
-	// false authenticated sessions instead receive a signed, session-scoped token. Set by config.Propagate.
-	DownloadStatic bool
 )
 
-// DownloadToken returns the "?t=" download token value to deliver for the given session: the PublicToken
-// placeholder in public mode, the configured static token when one is set (so permanent-cache setups keep
-// working for every client), otherwise a signed, session-scoped token — falling back to the coarse
-// instance token for sessionless callers (the public/share client configs, which have no session to sign).
+// DownloadToken returns the "?t=" value to deliver for the given session: the PublicToken placeholder in
+// public mode, otherwise a signed, session-scoped token.
+// It falls back to the coarse token only when there is no session to sign for, so a configured static
+// token does not opt every session out of per-session scoping.
 func DownloadToken(sessionID string) string {
-	switch {
-	case PublicMode:
+	if PublicMode {
 		return PublicToken
-	case DownloadStatic:
-		return CoarseDownload
-	default:
-		if signed := SignDownload(sessionID); signed != "" {
-			return signed
-		}
-		return CoarseDownload
 	}
+
+	if signed := SignDownload(sessionID); signed != "" {
+		return signed
+	}
+
+	return CoarseDownload
 }
 
 // IsCoarseDownload reports whether token equals the instance's coarse (non-session) download token,
-// compared in constant time. The coarse token is an unscoped capability, so a match grants the by-design
-// broad access of the public/share configs rather than a session-bound scope.
+// compared in constant time.
+// It is false unless an operator configured one, so a default instance has no unscoped download
+// capability at all.
 func IsCoarseDownload(token string) bool {
 	return CoarseDownload != "" && subtle.ConstantTimeCompare([]byte(token), []byte(CoarseDownload)) == 1
 }
