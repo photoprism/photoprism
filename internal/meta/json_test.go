@@ -1400,3 +1400,32 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "", data.LensModel)
 	})
 }
+
+func TestData_Exiftool_Software(t *testing.T) {
+	// exiftoolSoftware parses a minimal ExifTool result and returns the mapped values.
+	exiftoolSoftware := func(t *testing.T, tags string) Data {
+		t.Helper()
+		var data Data
+		if err := data.Exiftool([]byte(`[{"SourceFile":"test.jpg",`+tags+`}]`), ""); err != nil {
+			t.Fatal(err)
+		}
+		return data
+	}
+
+	t.Run("CreatorIsNotSoftware", func(t *testing.T) {
+		// dc:creator names the author of a picture, not the software that wrote it,
+		// so it must not end up in Software and block a real value.
+		data := exiftoolSoftware(t, `"Creator":"Jane Doe"`)
+		assert.Equal(t, "", data.Software)
+		assert.Equal(t, "Jane Doe", data.Artist)
+	})
+	t.Run("CreatorToolWinsOverCreator", func(t *testing.T) {
+		data := exiftoolSoftware(t, `"Creator":"Jane Doe","CreatorTool":"Adobe Lightroom 14.2"`)
+		assert.Equal(t, "Adobe Lightroom 14.2", data.Software)
+		assert.Equal(t, "Jane Doe", data.Artist)
+	})
+	t.Run("EmbeddedSoftwareWins", func(t *testing.T) {
+		data := exiftoolSoftware(t, `"Software":"Adobe Photoshop 24.0","CreatorTool":"Adobe Lightroom 14.2"`)
+		assert.Equal(t, "Adobe Photoshop 24.0", data.Software)
+	})
+}
