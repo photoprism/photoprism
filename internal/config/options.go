@@ -57,6 +57,9 @@ type Options struct {
 	SessionMaxAge             int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout            int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	SessionCache              int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`
+	DownloadToken             string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
+	DownloadTokenMaxAge       int64         `yaml:"DownloadTokenMaxAge" json:"-" flag:"download-token-maxage"`
+	PreviewToken              string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	LogLevel                  string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Prod                      bool          `yaml:"Prod" json:"Prod" flag:"prod"`
 	Debug                     bool          `yaml:"Debug" json:"Debug" flag:"debug"`
@@ -239,9 +242,6 @@ type Options struct {
 	HeifConvertBin            string        `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	HeifConvertOrientation    string        `yaml:"HeifConvertOrientation" json:"-" flag:"heifconvert-orientation"`
 	RsvgConvertBin            string        `yaml:"RsvgConvertBin" json:"-" flag:"rsvgconvert-bin"`
-	DownloadToken             string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
-	DownloadTokenMaxAge       int64         `yaml:"DownloadTokenMaxAge" json:"-" flag:"download-token-maxage"`
-	PreviewToken              string        `yaml:"PreviewToken" json:"-" flag:"preview-token"`
 	ThumbLibrary              string        `yaml:"ThumbLibrary" json:"ThumbLibrary" flag:"thumb-library"`
 	ThumbColor                string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
 	ThumbSize                 int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`

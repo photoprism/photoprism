@@ -177,6 +177,22 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("SESSION_CACHE"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "download-token",
+			Usage:   "shared static `TOKEN` for permanent download URLs, disabling per-session scoping (leave blank for signed, scoped tokens)",
+			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
+		}, Secret: true}, {
+		Flag: &cli.Int64Flag{
+			Name:    "download-token-maxage",
+			Value:   int64(ttl.DownloadTokenDefaultAge),
+			Usage:   fmt.Sprintf("signed download token lifetime in `SECONDS` (minimum %d, unused if download-token is set)", ttl.DownloadTokenMinAge.Int()),
+			EnvVars: EnvVars("DOWNLOAD_TOKEN_MAXAGE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "preview-token",
+			Usage:   "shared static `TOKEN` for thumbnail and video streaming URLs (leave blank to derive it from the instance signing key)",
+			EnvVars: EnvVars("PREVIEW_TOKEN"),
+		}, Secret: true}, {
+		Flag: &cli.StringFlag{
 			Name:    "log-level",
 			Aliases: []string{"l"},
 			Usage:   "log message verbosity `LEVEL` (trace, debug, info, warning, error)",
@@ -1210,22 +1226,6 @@ var Flags = CliFlags{
 			Value:   media.KeepOrientation,
 			EnvVars: EnvVars("HEIFCONVERT_ORIENTATION"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "download-token",
-			Usage:   "shared static `TOKEN` for permanent download URLs, disabling per-session scoping (leave blank for signed, scoped tokens)",
-			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
-		}, Secret: true}, {
-		Flag: &cli.Int64Flag{
-			Name:    "download-token-maxage",
-			Value:   int64(ttl.DownloadTokenDefaultAge),
-			Usage:   fmt.Sprintf("signed download token lifetime in `SECONDS` (minimum %d, unused if download-token is set)", ttl.DownloadTokenMinAge.Int()),
-			EnvVars: EnvVars("DOWNLOAD_TOKEN_MAXAGE"),
-		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "preview-token",
-			Usage:   "shared static `TOKEN` for thumbnail and video streaming URLs (leave blank to derive it from the storage serial)",
-			EnvVars: EnvVars("PREVIEW_TOKEN"),
-		}, Secret: true}, {
 		Flag: &cli.StringFlag{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
