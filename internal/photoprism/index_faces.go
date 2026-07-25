@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -65,12 +66,25 @@ func ApplyXmpFaces(m *MediaFile, file *entity.File) (saved bool, count int, err 
 		return false, 0, nil
 	}
 
-	faceSet, collectErr := collectXmpFaces(m)
+	regions, collectErr := collectXmpFaces(m)
 	if collectErr != nil {
 		return false, 0, collectErr
 	}
 
-	changed, reconcileErr := reconcileXmpFaces(faceSet.Faces, faceSet.Partial, file, file.Markers())
+	return applyXmpFaceRegions(regions, file)
+}
+
+// applyXmpFaceRegions reconciles already collected XMP face regions onto the
+// primary file. It is separate from ApplyXmpFaces so the indexer can collect
+// first and skip the primary-file lookup when a source declares no regions.
+func applyXmpFaceRegions(regions meta.FaceRegions, file *entity.File) (saved bool, count int, err error) {
+	if file == nil {
+		return false, 0, fmt.Errorf("faces: file is nil")
+	} else if file.FileHash == "" {
+		return false, 0, nil
+	}
+
+	changed, reconcileErr := reconcileXmpFaces(regions, file, file.Markers())
 	if reconcileErr != nil {
 		return false, 0, reconcileErr
 	} else if changed == 0 {
@@ -110,9 +124,9 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 		// XMP import is independent of AI detection, so a malformed sidecar or an
 		// unreadable source must not discard the detected faces added above: log
 		// and continue to SaveMarkers instead of returning the error.
-		if faceSet, collectErr := collectXmpFaces(m); collectErr != nil {
+		if regions, collectErr := collectXmpFaces(m); collectErr != nil {
 			log.Warnf("faces: %s while reading xmp regions for %s", clean.Error(collectErr), clean.Log(m.BaseName()))
-		} else if changed, reconcileErr := reconcileXmpFaces(faceSet.Faces, faceSet.Partial, file, file.Markers()); reconcileErr != nil {
+		} else if changed, reconcileErr := reconcileXmpFaces(regions, file, file.Markers()); reconcileErr != nil {
 			log.Warnf("faces: %s while reconciling xmp regions for %s", clean.Error(reconcileErr), clean.Log(m.BaseName()))
 		} else {
 			xmpChanges = changed

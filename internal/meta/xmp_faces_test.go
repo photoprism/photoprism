@@ -351,15 +351,19 @@ func TestXmpDocument_Faces_MWGEdgeCases(t *testing.T) {
      <mwg-rs:Area stArea:x="0.2" stArea:y="0.8" stArea:w="0.1" stArea:h="0.1"/>
     </rdf:li>
     <rdf:li rdf:parseType="Resource">
-     <mwg-rs:Name>Untyped Object</mwg-rs:Name>
+     <mwg-rs:Name>Untyped Person</mwg-rs:Name>
      <mwg-rs:Area stArea:x="0.9" stArea:y="0.9" stArea:w="0.1" stArea:h="0.1"/>
+    </rdf:li>
+    <rdf:li rdf:parseType="Resource">
+     <mwg-rs:Name>Barcode Object</mwg-rs:Name><mwg-rs:Type>BarCode</mwg-rs:Type>
+     <mwg-rs:Area stArea:x="0.1" stArea:y="0.9" stArea:w="0.1" stArea:h="0.1"/>
     </rdf:li>
    </rdf:Bag></mwg-rs:RegionList>
   </mwg-rs:Regions>` + xmpFacesFooter
 
 	faces := loadXmpString(t, body).Faces(1)
-	if len(faces) != 6 {
-		t.Fatalf("want 6 typed faces, got %d: %+v", len(faces), faces)
+	if len(faces) != 7 {
+		t.Fatalf("want 7 faces, got %d: %+v", len(faces), faces)
 	}
 
 	byName := make(map[string]Face, len(faces))
@@ -367,10 +371,15 @@ func TestXmpDocument_Faces_MWGEdgeCases(t *testing.T) {
 		byName[parsed.Name] = parsed
 	}
 
-	for _, name := range []string{"Title Person", "Referenced Person", "Extension Person", "Circle Person", "Rotated Person", "Invalid Rotation"} {
+	// mwg-rs:Type is optional, so an untyped region is imported; only a region
+	// that explicitly declares a non-face type is excluded.
+	for _, name := range []string{"Title Person", "Referenced Person", "Extension Person", "Circle Person", "Rotated Person", "Invalid Rotation", "Untyped Person"} {
 		if _, exists := byName[name]; !exists {
 			t.Errorf("missing resolved face name %q: %+v", name, faces)
 		}
+	}
+	if _, exists := byName["Barcode Object"]; exists {
+		t.Errorf("an explicit non-face type must be excluded: %+v", faces)
 	}
 	if circle := byName["Circle Person"]; !almost(circle.W, 0.1) || !almost(circle.H, 0.2) {
 		t.Errorf("circle got %+v", circle)
@@ -686,4 +695,70 @@ func TestClampUnit(t *testing.T) {
 	if !almost(clampUnit(0.3), 0.3) {
 		t.Error("in-range must pass through")
 	}
+}
+
+// TestXmpDocument_FaceRegions verifies the flags that decide whether an empty
+// region set may be treated as authoritative.
+func TestXmpDocument_FaceRegions(t *testing.T) {
+	t.Run("DeclaredWithFaces", func(t *testing.T) {
+		body := xmpFacesHeader + `
+  <mwg-rs:Regions rdf:parseType="Resource">
+   <mwg-rs:AppliedToDimensions stDim:w="4000" stDim:h="2000"/>
+   <mwg-rs:RegionList><rdf:Bag>
+    <rdf:li rdf:parseType="Resource">
+     <mwg-rs:Name>Ada</mwg-rs:Name><mwg-rs:Type>Face</mwg-rs:Type>
+     <mwg-rs:Area stArea:x="0.5" stArea:y="0.5" stArea:w="0.1" stArea:h="0.2"/>
+    </rdf:li>
+   </rdf:Bag></mwg-rs:RegionList>
+  </mwg-rs:Regions>` + xmpFacesFooter
+		regions := loadXmpString(t, body).FaceRegions(FaceOptions{Orientation: 1})
+		if !regions.Declared || regions.Partial || len(regions.Faces) != 1 {
+			t.Fatalf("got %+v", regions)
+		}
+	})
+	t.Run("DeclaredButEmpty", func(t *testing.T) {
+		body := xmpFacesHeader + `
+  <mwg-rs:Regions rdf:parseType="Resource">
+   <mwg-rs:RegionList><rdf:Bag/></mwg-rs:RegionList>
+  </mwg-rs:Regions>` + xmpFacesFooter
+		regions := loadXmpString(t, body).FaceRegions(FaceOptions{Orientation: 1})
+		if !regions.Declared {
+			t.Error("an empty region container must still be declared")
+		}
+		if regions.Partial || len(regions.Faces) != 0 {
+			t.Fatalf("got %+v", regions)
+		}
+	})
+	t.Run("NotDeclared", func(t *testing.T) {
+		body := xmpFacesHeader + `<tiff:Orientation>1</tiff:Orientation>` + xmpFacesFooter
+		regions := loadXmpString(t, body).FaceRegions(FaceOptions{Orientation: 1})
+		if regions.Declared || regions.Partial || len(regions.Faces) != 0 {
+			t.Fatalf("a document without a region container must not be declared: %+v", regions)
+		}
+	})
+	t.Run("PartialUnresolvableRegion", func(t *testing.T) {
+		// Pixel coordinates with neither AppliedToDimensions nor source
+		// dimensions cannot be normalized, so the parse is partial.
+		body := xmpFacesHeader + `
+  <mwg-rs:Regions rdf:parseType="Resource">
+   <mwg-rs:RegionList><rdf:Bag>
+    <rdf:li rdf:parseType="Resource">
+     <mwg-rs:Name>Ada</mwg-rs:Name><mwg-rs:Type>Face</mwg-rs:Type>
+     <mwg-rs:Area stArea:x="1000" stArea:y="800" stArea:w="400" stArea:h="400" stArea:unit="pixel"/>
+    </rdf:li>
+   </rdf:Bag></mwg-rs:RegionList>
+  </mwg-rs:Regions>` + xmpFacesFooter
+		regions := loadXmpString(t, body).FaceRegions(FaceOptions{Orientation: 1})
+		if !regions.Declared || !regions.Partial {
+			t.Fatalf("an unresolvable region must be declared and partial: %+v", regions)
+		}
+		if len(regions.Faces) != 0 {
+			t.Fatalf("got %+v", regions.Faces)
+		}
+		// The same document resolves once the source dimensions are known.
+		resolved := loadXmpString(t, body).FaceRegions(FaceOptions{Orientation: 1, Width: 4000, Height: 3000})
+		if resolved.Partial || len(resolved.Faces) != 1 {
+			t.Fatalf("got %+v", resolved)
+		}
+	})
 }

@@ -110,11 +110,13 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 				}
 
 				// Add preview image to list of files.
+				img.SetRelatedMain(related.Main)
 				related.Files = append(related.Files, img)
 			}
 		}
 
 		// Index related MediaFile.
+		f.SetRelatedMain(related.Main)
 		res := ind.MediaFile(f, o, "", result.PhotoUID)
 		if photoUID == "" && res.Success() {
 			photoUID = res.PhotoUID
@@ -135,9 +137,17 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	// source's sidecars), so only run the extra pass when the preview was
 	// filtered out — an incremental sidecar-only update.
 	if o.ImportFaceTags && photoUID != "" && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
-		if primary, primaryErr := entity.PrimaryFile(photoUID); primaryErr != nil {
+		// Collect first: a source that declares no region container has nothing to
+		// reconcile, so the primary-file and marker queries are skipped entirely.
+		// A declared but empty set still proceeds, because that is what removes
+		// markers whose regions the user deleted.
+		if regions, collectErr := collectXmpFaces(related.Main); collectErr != nil {
+			log.Warnf("index: %s while importing xmp face regions for %s", clean.Error(collectErr), related.MainLogName())
+		} else if !regions.Declared {
+			log.Tracef("index: no xmp face regions declared for %s", related.MainLogName())
+		} else if primary, primaryErr := entity.PrimaryFile(photoUID); primaryErr != nil {
 			log.Debugf("index: could not find primary file for xmp faces in %s (%s)", related.MainLogName(), clean.Error(primaryErr))
-		} else if saved, _, applyErr := ApplyXmpFaces(related.Main, primary); applyErr != nil {
+		} else if saved, _, applyErr := applyXmpFaceRegions(regions, primary); applyErr != nil {
 			log.Warnf("index: %s while importing xmp face regions for %s", clean.Error(applyErr), related.MainLogName())
 		} else if saved {
 			log.Debugf("index: imported xmp face regions for %s", related.MainLogName())

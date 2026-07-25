@@ -74,12 +74,16 @@ func jsonArrayFit(arr []gjson.Result, n int) (aligned, sparse bool) {
 	}
 }
 
-// parseExiftoolFaces extracts supported XMP face regions from ExifTool JSON. It
-// returns the regions plus a partial flag reporting that ExifTool compacted a
-// non-parallel set (e.g. mixed circle/rectangle shapes or a subset of named
-// regions) so some regions could not be resolved; callers must not treat a
-// partial result as authoritative when deleting markers.
-func parseExiftoolFaces(j gjson.Result, options FaceOptions) (faces []Face, partial bool) {
+// parseExiftoolFaces extracts supported XMP face regions from ExifTool JSON.
+// FaceRegions.Partial reports that ExifTool compacted a non-parallel set (e.g.
+// mixed circle/rectangle shapes or a subset of named regions) so some regions
+// could not be resolved; callers must not treat a partial result as
+// authoritative when deleting markers.
+func parseExiftoolFaces(j gjson.Result, options FaceOptions) FaceRegions {
+	var faces []Face
+	var tally regionTally
+
+	partial := false
 	// MWG-RS regions (XMP-mwg-rs): index-parallel arrays keyed by region index,
 	// with absent optional members compacted out of their arrays.
 	names := j.Get("RegionName").Array()
@@ -137,14 +141,17 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) (faces []Face, part
 	circleMode := dAligned && !rectMode
 
 	for i := 0; i < n; i++ {
-		// Require an explicit, index-aligned Face type to import an MWG region: an
-		// absent or sparse RegionType cannot confirm the region is a face, so it is
-		// skipped — matching the XMP XPath path, which requires an explicit
-		// mwg-rs:Type of "Face". The || short-circuits, so types[i] is never
-		// indexed when the array is unaligned.
-		if !typesAligned || !strings.EqualFold(types[i].String(), "Face") {
+		// Filter by region type only when the array is index-aligned. An entirely
+		// absent RegionType is accepted as a face (mwg-rs:Type is optional in the
+		// MWG specification), while a sparse one was already flagged partial above,
+		// so its regions are skipped rather than mislabeled.
+		if typesAligned && !strings.EqualFold(types[i].String(), "Face") {
+			continue
+		} else if !typesAligned && len(types) > 0 {
 			continue
 		}
+
+		tally.declare()
 
 		var w, h, d float32
 		switch {
@@ -191,6 +198,7 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) (faces []Face, part
 			appliedW, appliedH, options.Orientation,
 		); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
@@ -201,12 +209,20 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) (faces []Face, part
 	mpNamesAligned := recordFit(mpNames, len(mpRects))
 
 	for i := 0; i < len(mpRects); i++ {
+		rect := mpRects[i].String()
+		if rect == "" {
+			continue
+		}
+
+		tally.declare()
+
 		name := ""
 		if mpNamesAligned {
 			name = mpNames[i].String()
 		}
-		if f, ok := normalizeRegionMP(name, mpRects[i].String(), options.Orientation); ok {
+		if f, ok := normalizeRegionMP(name, rect, options.Orientation); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
@@ -231,17 +247,32 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) (faces []Face, part
 		acdW, acdH = options.Width, options.Height
 	}
 
-	nAcd := len(acdTypes)
+	// ACDSeeRegionType is optional, so the region count comes from the coordinate
+	// arrays as well: deriving it from the type array alone would silently report
+	// zero regions for a writer that omits the type.
+	nAcd := max(len(acdTypes), len(dlyXs), len(algXs))
+	acdTypesAligned := recordFit(acdTypes, nAcd)
 	acdNamesAligned := recordFit(acdNames, nAcd)
-	dlyAligned := len(dlyXs) == nAcd && len(dlyYs) == nAcd && len(dlyWs) == nAcd && len(dlyHs) == nAcd
-	algAligned := len(algXs) == nAcd && len(algYs) == nAcd && len(algWs) == nAcd && len(algHs) == nAcd
-	dlyUnitsAligned := len(dlyUnits) == nAcd
-	algUnitsAligned := len(algUnits) == nAcd
+
+	// Evaluate every recordFit before combining: && short-circuits and would skip
+	// the partial bookkeeping for the remaining arrays.
+	dlyXAligned, dlyYAligned := recordFit(dlyXs, nAcd), recordFit(dlyYs, nAcd)
+	dlyWAligned, dlyHAligned := recordFit(dlyWs, nAcd), recordFit(dlyHs, nAcd)
+	algXAligned, algYAligned := recordFit(algXs, nAcd), recordFit(algYs, nAcd)
+	algWAligned, algHAligned := recordFit(algWs, nAcd), recordFit(algHs, nAcd)
+	dlyAligned := dlyXAligned && dlyYAligned && dlyWAligned && dlyHAligned
+	algAligned := algXAligned && algYAligned && algWAligned && algHAligned
+	dlyUnitsAligned := recordFit(dlyUnits, nAcd)
+	algUnitsAligned := recordFit(algUnits, nAcd)
 
 	for i := 0; i < nAcd; i++ {
-		if !strings.EqualFold(acdTypes[i].String(), "Face") {
+		if acdTypesAligned && !strings.EqualFold(acdTypes[i].String(), "Face") {
+			continue
+		} else if !acdTypesAligned && len(acdTypes) > 0 {
 			continue
 		}
+
+		tally.declare()
 
 		var xr, yr, wr, hr gjson.Result
 		unit := ""
@@ -272,10 +303,19 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) (faces []Face, part
 			unit, 0, acdW, acdH, options.Orientation,
 		); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
-	return DedupFaces(faces), partial
+	// ExifTool flattens the region containers away, so an empty region list is
+	// indistinguishable from a file that carries none. Reporting Declared only
+	// for a non-empty set keeps the embedded path on the safe side: markers are
+	// never deleted on evidence this projection cannot actually provide.
+	return FaceRegions{
+		Faces:    DedupFaces(faces),
+		Declared: n > 0 || len(mpRects) > 0 || nAcd > 0,
+		Partial:  partial || tally.partial(),
+	}
 }
 
 // Exiftool parses JSON sidecar data as created by Exiftool.
@@ -513,9 +553,10 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	// Parse MWG-RS and Microsoft MP:RegionInfo face regions (people markers)
 	// from the embedded XMP so the indexer can reconcile them onto markers.
-	if faces, facesPartial := parseExiftoolFaces(j, FaceOptions{Orientation: data.Orientation, Width: data.Width, Height: data.Height}); len(faces) > 0 || facesPartial {
-		data.Faces = faces
-		data.FacesPartial = facesPartial
+	if regions := parseExiftoolFaces(j, FaceOptions{Orientation: data.Orientation, Width: data.Width, Height: data.Height}); regions.Declared || len(regions.Faces) > 0 {
+		data.Faces = regions.Faces
+		data.FacesDeclared = regions.Declared
+		data.FacesPartial = regions.Partial
 	}
 
 	// Normalize codec name.

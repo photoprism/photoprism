@@ -371,10 +371,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Import face regions and names from XMP metadata onto the markers.
 			xmpChanged := false
 			if o.ImportFaceTags && file.FileHash != "" {
-				faceSet, collectErr := collectXmpFaces(m)
+				regions, collectErr := collectXmpFaces(m)
 				if collectErr != nil {
 					log.Warnf("index: %s while reading xmp face regions for %s", clean.Error(collectErr), logName)
-				} else if n, reconcileErr := reconcileXmpFaces(faceSet.Faces, faceSet.Partial, &file, markers); reconcileErr != nil {
+				} else if n, reconcileErr := reconcileXmpFaces(regions, &file, markers); reconcileErr != nil {
 					log.Warnf("index: %s while reconciling xmp face regions for %s", clean.Error(reconcileErr), logName)
 				} else if n > 0 {
 					xmpChanged = true

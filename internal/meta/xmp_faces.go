@@ -27,6 +27,38 @@ type FaceOptions struct {
 	Height      int
 }
 
+// FaceRegions is a face-region snapshot parsed from XMP metadata. Declared and
+// Partial together tell a caller whether an empty Faces slice may be treated as
+// an authoritative "this image has no faces": only a declared, fully resolved
+// set says that, so a file carrying no region data at all — or one whose regions
+// could not be resolved — never causes existing markers to be deleted.
+type FaceRegions struct {
+	Faces    []Face
+	Declared bool // A region container was present.
+	Partial  bool // Some declared regions could not be resolved.
+}
+
+// regionTally counts declared regions against resolved ones to derive Partial.
+type regionTally struct {
+	expected int
+	resolved int
+}
+
+// declare records a region that passed the type filter and is expected to parse.
+func (t *regionTally) declare() {
+	t.expected++
+}
+
+// resolve records a region that normalized into a valid Face.
+func (t *regionTally) resolve() {
+	t.resolved++
+}
+
+// partial reports whether fewer regions resolved than were expected.
+func (t *regionTally) partial() bool {
+	return t.resolved < t.expected
+}
+
 // Valid reports whether the region has a positive, in-range rectangle.
 func (f Face) Valid() bool {
 	return f.W > 0 && f.H > 0 && f.X >= 0 && f.Y >= 0 && f.X+f.W <= 1.0001 && f.Y+f.H <= 1.0001

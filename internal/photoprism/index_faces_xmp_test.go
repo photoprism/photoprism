@@ -78,7 +78,7 @@ func newXmpSubject(t *testing.T, name, src string) *entity.Subject {
 // newly created markers the way the index flow does before re-querying.
 func runReconcile(t *testing.T, file *entity.File, faces []meta.Face) entity.Markers {
 	t.Helper()
-	_, err := reconcileXmpFaces(faces, false, file, file.Markers())
+	_, err := reconcileXmpFaces(meta.FaceRegions{Faces: faces, Declared: true}, file, file.Markers())
 	require.NoError(t, err)
 	_, err = file.SaveMarkers()
 	require.NoError(t, err)
@@ -91,10 +91,10 @@ func runReconcile(t *testing.T, file *entity.File, faces []meta.Face) entity.Mar
 func mustCollectXmpFaces(t *testing.T, m *MediaFile) []meta.Face {
 	t.Helper()
 
-	faceSet, err := collectXmpFaces(m)
+	regions, err := collectXmpFaces(m)
 	require.NoError(t, err)
 
-	return faceSet.Faces
+	return regions.Faces
 }
 
 func region(name string, a crop.Area) meta.Face {
@@ -161,6 +161,32 @@ func writeNamedXmp(t *testing.T, destName, name string) {
 	xmpData = []byte(strings.ReplaceAll(string(xmpData), "Cara", name))
 	require.NoError(t, os.WriteFile(destName, xmpData, fs.ModeFile)) //nolint:gosec // isolated test path
 }
+
+// emptyRegionListXmp is the sidecar fixture with its region container kept but
+// emptied, which is what an editor writes once the user deletes the last face.
+const emptyRegionListXmp = `<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d'?>
+<x:xmpmeta xmlns:x='adobe:ns:meta/'>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+ <rdf:Description rdf:about=''
+  xmlns:MP='http://ns.microsoft.com/photo/1.2/'
+  xmlns:MPRI='http://ns.microsoft.com/photo/1.2/t/RegionInfo#'>
+  <MP:RegionInfo rdf:parseType='Resource'>
+   <MPRI:Regions><rdf:Bag/></MPRI:Regions>
+  </MP:RegionInfo>
+ </rdf:Description>
+</rdf:RDF>
+</x:xmpmeta>
+<?xpacket end='w'?>`
+
+// ratingOnlyXmp is a well-formed sidecar that declares no region container, as
+// written by editors that only store develop settings or a rating.
+const ratingOnlyXmp = `<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d'?>
+<x:xmpmeta xmlns:x='adobe:ns:meta/'>
+<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+ <rdf:Description rdf:about='' xmlns:xmp='http://ns.adobe.com/xap/1.0/' xmp:Rating='4'/>
+</rdf:RDF>
+</x:xmpmeta>
+<?xpacket end='w'?>`
 
 func TestReconcileXmpFaces(t *testing.T) {
 	config.TestConfig()
@@ -254,7 +280,7 @@ func TestReconcileXmpFaces(t *testing.T) {
 		file := newXmpFile(t)
 		first := runReconcile(t, file, []meta.Face{region("Dave", xmpArea)})
 		require.Len(t, first, 1)
-		changes, err := reconcileXmpFaces([]meta.Face{region("Dave", xmpArea)}, false, file, file.Markers())
+		changes, err := reconcileXmpFaces(meta.FaceRegions{Faces: []meta.Face{region("Dave", xmpArea)}, Declared: true}, file, file.Markers())
 		require.NoError(t, err)
 		assert.Zero(t, changes, "unchanged XMP must not report marker changes")
 		_, err = file.SaveMarkers()
@@ -496,7 +522,7 @@ func TestReconcileXmpFaces(t *testing.T) {
 		file := newXmpFile(t)
 		stale := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Keep", false)
 
-		changed, err := reconcileXmpFaces(nil, true, file, file.Markers())
+		changed, err := reconcileXmpFaces(meta.FaceRegions{Declared: true, Partial: true}, file, file.Markers())
 		require.NoError(t, err)
 		assert.Zero(t, changed, "a partial parse must not report deletions")
 		_, err = file.SaveMarkers()
@@ -1200,5 +1226,227 @@ func TestApplyXmpFaces(t *testing.T) {
 		markers, err := entity.FindMarkers(file.FileUID)
 		require.NoError(t, err)
 		assert.True(t, hasXmpMarkerName(markers, "Cara"), "sidecar region 'Cara' must import, got %+v", markers)
+	})
+}
+
+// TestCollectXmpFaces_UndeclaredRegions verifies that a sidecar which tracks no
+// face regions is not read as an authoritative "this image has no faces".
+func TestCollectXmpFaces_UndeclaredRegions(t *testing.T) {
+	c := newXmpIndexConfig(t, "collect-undeclared-xmp")
+	if c.ExifToolBin() == "" {
+		t.Skip("exiftool not configured")
+	}
+
+	t.Run("RatingOnlySidecarFallsBackToEmbedded", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "rating-only")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/embedded-mwg.jpg", imageName, false))
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		require.NoError(t, m.CreateExifToolJson(NewConvert(c)))
+		require.NoError(t, os.WriteFile(imageName+fs.ExtXMP, []byte(ratingOnlyXmp), fs.ModeFile)) //nolint:gosec // isolated test path
+
+		regions, err := collectXmpFaces(m)
+		require.NoError(t, err)
+		assert.True(t, regions.Declared, "the embedded packet declares the regions")
+		require.Len(t, regions.Faces, 1, "a region-less sidecar must not suppress the embedded regions")
+		assert.Equal(t, "Alice", regions.Faces[0].Name)
+	})
+	t.Run("EmptyRegionListStaysAuthoritative", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "empty-list")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/embedded-mwg.jpg", imageName, false))
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		require.NoError(t, m.CreateExifToolJson(NewConvert(c)))
+		require.NoError(t, os.WriteFile(imageName+fs.ExtXMP, []byte(emptyRegionListXmp), fs.ModeFile)) //nolint:gosec // isolated test path
+
+		regions, err := collectXmpFaces(m)
+		require.NoError(t, err)
+		assert.True(t, regions.Declared, "an empty region container still declares the region set")
+		assert.Empty(t, regions.Faces, "an emptied region list must win over the embedded packet")
+	})
+}
+
+// TestApplyXmpFaces_RegionlessSidecarKeepsMarkers verifies that an ordinary
+// rating-only sidecar never deletes previously imported face markers.
+func TestApplyXmpFaces_RegionlessSidecarKeepsMarkers(t *testing.T) {
+	c := newXmpIndexConfig(t, "regionless-keeps-markers")
+	dir := filepath.Join(c.OriginalsPath(), "regionless-keep")
+	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+	imageName := filepath.Join(dir, "photo.jpg")
+	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+	require.NoError(t, os.WriteFile(imageName+fs.ExtXMP, []byte(ratingOnlyXmp), fs.ModeFile)) //nolint:gosec // isolated test path
+
+	m, err := NewMediaFile(imageName)
+	require.NoError(t, err)
+	file := newXmpFile(t)
+	existing := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Cara", false)
+
+	saved, _, err := ApplyXmpFaces(m, file)
+	require.NoError(t, err)
+	assert.False(t, saved, "a region-less sidecar has nothing to reconcile")
+	assert.NotNil(t, entity.FindMarker(existing.MarkerUID), "a region-less sidecar must not delete imported markers")
+}
+
+// TestReconcileXmpFaces_UndeclaredSkipsSweep verifies the delete-sweep gate.
+func TestReconcileXmpFaces_UndeclaredSkipsSweep(t *testing.T) {
+	config.TestConfig()
+
+	t.Run("UndeclaredKeepsUnmatched", func(t *testing.T) {
+		file := newXmpFile(t)
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Keep", false)
+		changed, err := reconcileXmpFaces(meta.FaceRegions{}, file, file.Markers())
+		require.NoError(t, err)
+		assert.Zero(t, changed, "an undeclared set must not report deletions")
+		assert.NotNil(t, entity.FindMarker(stale.MarkerUID), "an undeclared set must not delete unmatched markers")
+	})
+	t.Run("DeclaredEmptyDeletesUnmatched", func(t *testing.T) {
+		file := newXmpFile(t)
+		stale := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Drop", false)
+		changed, err := reconcileXmpFaces(meta.FaceRegions{Declared: true}, file, file.Markers())
+		require.NoError(t, err)
+		assert.Equal(t, 1, changed, "a declared empty set must delete the stale marker")
+		assert.Nil(t, entity.FindMarker(stale.MarkerUID), "a declared empty set must delete unmatched markers")
+	})
+}
+
+// TestApplyXmpFaceRegions verifies the collect-free apply entry point.
+func TestApplyXmpFaceRegions(t *testing.T) {
+	config.TestConfig()
+
+	t.Run("NilFile", func(t *testing.T) {
+		saved, count, err := applyXmpFaceRegions(meta.FaceRegions{Declared: true}, nil)
+		require.Error(t, err)
+		assert.False(t, saved)
+		assert.Equal(t, 0, count)
+	})
+	t.Run("EmptyFileHashNoOp", func(t *testing.T) {
+		saved, count, err := applyXmpFaceRegions(meta.FaceRegions{Declared: true}, &entity.File{})
+		require.NoError(t, err)
+		assert.False(t, saved)
+		assert.Equal(t, 0, count)
+	})
+	t.Run("Success", func(t *testing.T) {
+		file := newXmpFile(t)
+		regions := meta.FaceRegions{Faces: []meta.Face{region("Nina", xmpArea)}, Declared: true}
+		saved, count, err := applyXmpFaceRegions(regions, file)
+		require.NoError(t, err)
+		assert.True(t, saved)
+		assert.GreaterOrEqual(t, count, 1)
+		markers, err := entity.FindMarkers(file.FileUID)
+		require.NoError(t, err)
+		assert.True(t, hasXmpMarkerName(markers, "Nina"), "the region must import, got %+v", markers)
+	})
+}
+
+// TestCollectXmpFaces_UnreadableSourceSkipped verifies that a related source
+// whose metadata cannot be parsed does not discard the primary file's own
+// regions, and that the resulting set is not treated as authoritative.
+func TestCollectXmpFaces_UnreadableSourceSkipped(t *testing.T) {
+	c := newXmpIndexConfig(t, "collect-unreadable-source")
+	if c.ExifToolBin() == "" {
+		t.Skip("exiftool not configured")
+	}
+
+	dir := filepath.Join(c.OriginalsPath(), "unreadable-source")
+	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+	imageName := filepath.Join(dir, "photo.jpg")
+	rawName := filepath.Join(dir, "photo.cr2")
+	require.NoError(t, fs.Copy("testdata/xmp-faces/embedded-mwg.jpg", imageName, false))
+	require.NoError(t, os.WriteFile(rawName, []byte("not a raw image"), fs.ModeFile)) //nolint:gosec // isolated test path
+
+	m, err := NewMediaFile(imageName)
+	require.NoError(t, err)
+	require.NoError(t, m.CreateExifToolJson(NewConvert(c)))
+
+	// Seeding pins the source list to exactly these two files, so the test does
+	// not depend on how RelatedFiles happens to resolve the group.
+	raw, err := NewMediaFile(rawName)
+	require.NoError(t, err)
+	require.True(t, isXmpFaceSource(raw), "the unreadable sibling must qualify as a source")
+	m.SetRelatedMain(raw)
+
+	regions, err := collectXmpFaces(m)
+	require.NoError(t, err, "an unreadable source must not fail the import")
+	require.Len(t, regions.Faces, 1, "the primary file's own regions must survive")
+	assert.Equal(t, "Alice", regions.Faces[0].Name)
+	assert.True(t, regions.Declared)
+	assert.True(t, regions.Partial, "an unread source must suppress the delete sweep")
+}
+
+// TestRestoreMarkerName verifies that dropping an obsolete XMP name restores the
+// marker's clustered name when one exists and flags it for review otherwise.
+func TestRestoreMarkerName(t *testing.T) {
+	config.TestConfig()
+
+	t.Run("NilMarker", func(t *testing.T) {
+		changed, err := restoreMarkerName(nil)
+		require.NoError(t, err)
+		assert.False(t, changed)
+	})
+	t.Run("NonXmpSubjSrcNoOp", func(t *testing.T) {
+		file := newXmpFile(t)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcManual, "", "Manual Name", false)
+		changed, err := restoreMarkerName(m)
+		require.NoError(t, err)
+		assert.False(t, changed, "a manually assigned name must not be restored away")
+		assert.Equal(t, "Manual Name", m.MarkerName)
+	})
+	t.Run("ClearsWithoutClusteredFace", func(t *testing.T) {
+		file := newXmpFile(t)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Gone", false)
+		changed, err := restoreMarkerName(m)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		assert.Empty(t, m.MarkerName)
+		assert.Empty(t, m.SubjUID)
+		assert.Empty(t, m.SubjSrc)
+		assert.True(t, m.MarkerReview, "an unnamed marker must be flagged for review")
+
+		saved := entity.FindMarker(m.MarkerUID)
+		require.NotNil(t, saved)
+		assert.Empty(t, saved.MarkerName, "the cleared name must be persisted")
+	})
+	t.Run("RestoresClusteredName", func(t *testing.T) {
+		autoPerson := newXmpSubject(t, "ClusteredCara", entity.SrcAuto)
+		cluster := &entity.Face{
+			ID:            "XMPRESTORE00000000000000000000000000000001",
+			FaceSrc:       entity.SrcAuto,
+			SubjUID:       autoPerson.SubjUID,
+			EmbeddingJSON: (face.Embeddings{face.NullEmbedding}).JSON(),
+			Samples:       2,
+		}
+		require.NoError(t, entity.Db().Create(cluster).Error)
+
+		file := newXmpFile(t)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "XmpName", false)
+		m.FaceID = cluster.ID
+		require.NoError(t, m.Updates(entity.Values{"face_id": m.FaceID}))
+
+		changed, err := restoreMarkerName(m)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		assert.Equal(t, "ClusteredCara", m.MarkerName)
+		assert.Equal(t, autoPerson.SubjUID, m.SubjUID)
+		assert.Equal(t, entity.SrcAuto, m.SubjSrc)
+		assert.False(t, m.MarkerReview, "a restored clustered name needs no review")
+	})
+	t.Run("Idempotent", func(t *testing.T) {
+		// The second call is short-circuited by the SubjSrc guard: a restore
+		// always clears SubjSrc away from SrcXmp, so a restored marker is never
+		// a candidate again.
+		file := newXmpFile(t)
+		m := addXmpMarker(t, file, xmpArea, entity.SrcXmp, entity.SrcXmp, "", "Gone", false)
+		first, err := restoreMarkerName(m)
+		require.NoError(t, err)
+		require.True(t, first)
+		second, err := restoreMarkerName(m)
+		require.NoError(t, err)
+		assert.False(t, second, "restoring an already restored marker must report no change")
 	})
 }

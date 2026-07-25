@@ -342,9 +342,14 @@ var (
 	xmpAppliedDimW  = mustCompile("//mwg-rs:AppliedToDimensions/*[local-name()='w'] | //mwg-rs:AppliedToDimensions/@*[local-name()='w']")
 	xmpAppliedDimH  = mustCompile("//mwg-rs:AppliedToDimensions/*[local-name()='h'] | //mwg-rs:AppliedToDimensions/@*[local-name()='h']")
 	xmpMPRegionLi   = mustCompile("//MPRI:Regions/rdf:Bag/rdf:li | //MPRI:Regions/rdf:Seq/rdf:li")
-	xmpAcdRegionLi  = mustCompile("//acdsee-rs:RegionList/rdf:Bag/rdf:li | //acdsee-rs:RegionList/rdf:Seq/rdf:li")
-	xmpAcdDimW      = mustCompile("//acdsee-rs:AppliedToDimensions/*[local-name()='w'] | //acdsee-rs:AppliedToDimensions/@*[local-name()='w']")
-	xmpAcdDimH      = mustCompile("//acdsee-rs:AppliedToDimensions/*[local-name()='h'] | //acdsee-rs:AppliedToDimensions/@*[local-name()='h']")
+
+	// Region containers, matched independently of their items: a container with
+	// an empty list is what says "this image has no faces", so it must be
+	// distinguishable from a document that tracks no regions at all.
+	xmpRegionContainer = mustCompile("//mwg-rs:RegionList | //MPRI:Regions | //acdsee-rs:RegionList")
+	xmpAcdRegionLi     = mustCompile("//acdsee-rs:RegionList/rdf:Bag/rdf:li | //acdsee-rs:RegionList/rdf:Seq/rdf:li")
+	xmpAcdDimW         = mustCompile("//acdsee-rs:AppliedToDimensions/*[local-name()='w'] | //acdsee-rs:AppliedToDimensions/@*[local-name()='w']")
+	xmpAcdDimH         = mustCompile("//acdsee-rs:AppliedToDimensions/*[local-name()='h'] | //acdsee-rs:AppliedToDimensions/@*[local-name()='h']")
 
 	// Relative expressions evaluated against a single region li node; the first
 	// non-empty match wins.
@@ -774,16 +779,26 @@ func (doc *XmpDocument) regionDimensions(widthExpr, heightExpr *xpath.Expr) (w, 
 // Faces, de-duplicated across schemas.
 // orientation maps raw region coordinates into the displayed frame.
 func (doc *XmpDocument) Faces(orientation int) []Face {
-	return doc.FacesWithOptions(FaceOptions{Orientation: orientation})
+	return doc.FaceRegions(FaceOptions{Orientation: orientation}).Faces
 }
 
-// FacesWithOptions returns supported face regions using source image fallbacks.
-func (doc *XmpDocument) FacesWithOptions(options FaceOptions) []Face {
+// isFaceRegionType reports whether a region type names a face. An absent type is
+// accepted: mwg-rs:Type is optional in the MWG specification, so requiring it
+// would drop the regions of standard-compliant writers that omit it.
+func isFaceRegionType(t string) bool {
+	return t == "" || strings.EqualFold(t, "Face")
+}
+
+// FaceRegions returns supported face regions using source image fallbacks,
+// de-duplicated across schemas, along with the flags that tell the caller
+// whether an empty result may be treated as authoritative.
+func (doc *XmpDocument) FaceRegions(options FaceOptions) FaceRegions {
 	if doc.doc == nil {
-		return nil
+		return FaceRegions{}
 	}
 
 	var faces []Face
+	var tally regionTally
 
 	if orientation := doc.Orientation(); orientation != 0 {
 		options.Orientation = orientation
@@ -794,10 +809,16 @@ func (doc *XmpDocument) FacesWithOptions(options FaceOptions) []Face {
 		appliedW, appliedH = options.Width, options.Height
 	}
 
-	for _, li := range xmlquery.QuerySelectorAll(doc.doc, xmpRegionListLi) {
-		if !strings.EqualFold(relFirst(li, relMwgType), "Face") {
+	mwgRegions := xmlquery.QuerySelectorAll(doc.doc, xmpRegionListLi)
+	mpRegions := xmlquery.QuerySelectorAll(doc.doc, xmpMPRegionLi)
+	acdRegions := xmlquery.QuerySelectorAll(doc.doc, xmpAcdRegionLi)
+
+	for _, li := range mwgRegions {
+		if !isFaceRegionType(relFirst(li, relMwgType)) {
 			continue
 		}
+
+		tally.declare()
 
 		cx, okX := parseFloat32(relFirst(li, relMwgAreaX))
 		cy, okY := parseFloat32(relFirst(li, relMwgAreaY))
@@ -812,16 +833,21 @@ func (doc *XmpDocument) FacesWithOptions(options FaceOptions) []Face {
 		rotation, _ := parseFloat32(relFirst(li, relMwgRotation))
 		if f, ok := normalizeRegionMWG(doc.mwgRegionName(li), cx, cy, w, h, diameter, relFirst(li, relMwgAreaUnit), rotation, appliedW, appliedH, options.Orientation); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
-	for _, li := range xmlquery.QuerySelectorAll(doc.doc, xmpMPRegionLi) {
+	for _, li := range mpRegions {
 		rect := relFirst(li, relMpRect)
 		if rect == "" {
 			continue
 		}
+
+		tally.declare()
+
 		if f, ok := normalizeRegionMP(relFirst(li, relMpName), rect, options.Orientation); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
@@ -830,10 +856,12 @@ func (doc *XmpDocument) FacesWithOptions(options FaceOptions) []Face {
 		acdW, acdH = options.Width, options.Height
 	}
 
-	for _, li := range xmlquery.QuerySelectorAll(doc.doc, xmpAcdRegionLi) {
-		if !strings.EqualFold(relFirst(li, relAcdType), "Face") {
+	for _, li := range acdRegions {
+		if !isFaceRegionType(relFirst(li, relAcdType)) {
 			continue
 		}
+
+		tally.declare()
 
 		xExpr, yExpr := relAcdDlyX, relAcdDlyY
 		wExpr, hExpr, unitExpr := relAcdDlyW, relAcdDlyH, relAcdDlyUnit
@@ -852,10 +880,15 @@ func (doc *XmpDocument) FacesWithOptions(options FaceOptions) []Face {
 
 		if f, ok := normalizeRegionMWG(relFirst(li, relAcdName), cx, cy, w, h, 0, relFirst(li, unitExpr), 0, acdW, acdH, options.Orientation); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
-	return DedupFaces(faces)
+	return FaceRegions{
+		Faces:    DedupFaces(faces),
+		Declared: xmlquery.QuerySelector(doc.doc, xmpRegionContainer) != nil,
+		Partial:  tally.partial(),
+	}
 }
 
 // Favorite reports the F-Stop custom-namespace favorite flag.

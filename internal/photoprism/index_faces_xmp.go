@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -29,27 +30,30 @@ func isXmpFaceSource(m *MediaFile) bool {
 }
 
 // xmpFaceSources returns the primary preview and its logical still-image source.
+// It prefers the group the caller already resolved, which avoids re-globbing the
+// directory per photo and keeps the source's metadata cache warm; only the
+// deferred worker paths, which hold no group, fall back to RelatedFiles.
 func xmpFaceSources(m *MediaFile) MediaFiles {
 	if !isXmpFaceSource(m) {
 		return nil
 	}
 
 	result := MediaFiles{m}
-	related, err := m.RelatedFiles(false)
+	main := m.RelatedMain()
 
-	if err != nil || !isXmpFaceSource(related.Main) || related.Main.FileName() == m.FileName() {
+	if main == nil {
+		related, err := m.RelatedFiles(false)
+		if err != nil {
+			return result
+		}
+		main = related.Main
+	}
+
+	if !isXmpFaceSource(main) || main.FileName() == m.FileName() {
 		return result
 	}
 
-	return append(result, related.Main)
-}
-
-// xmpFaceSet is an authoritative face-region snapshot from XMP metadata.
-// Partial reports that an embedded parse could not resolve every region (see
-// meta.Data.FacesPartial), so the reconciler must not delete unmatched markers.
-type xmpFaceSet struct {
-	Faces   []meta.Face
-	Partial bool
+	return append(result, main)
 }
 
 // xmpSidecarCandidate associates a sidecar with its logical image source.
@@ -84,11 +88,12 @@ func isFullNameSidecar(name string, source *MediaFile) bool {
 	return strings.EqualFold(filepath.Base(name), filepath.Base(source.FileName())+fs.ExtXMP)
 }
 
-// collectXmpFaces returns the authoritative XMP face set for a still image.
-func collectXmpFaces(m *MediaFile) (xmpFaceSet, error) {
+// collectXmpFaces returns the XMP face regions for a still image, preferring a
+// sidecar that declares regions over the embedded packet.
+func collectXmpFaces(m *MediaFile) (meta.FaceRegions, error) {
 	sources := xmpFaceSources(m)
 	if len(sources) == 0 {
-		return xmpFaceSet{}, nil
+		return meta.FaceRegions{}, nil
 	}
 
 	candidates := make([]xmpSidecarCandidate, 0)
@@ -110,7 +115,7 @@ func collectXmpFaces(m *MediaFile) (xmpFaceSet, error) {
 
 			info, err := os.Stat(canonical)
 			if err != nil {
-				return xmpFaceSet{}, fmt.Errorf("faces: cannot inspect xmp sidecar %s: %w", clean.Log(filepath.Base(canonical)), err)
+				return meta.FaceRegions{}, fmt.Errorf("faces: cannot inspect xmp sidecar %s: %w", clean.Log(filepath.Base(canonical)), err)
 			}
 
 			candidateIndex[canonical] = len(candidates)
@@ -123,38 +128,59 @@ func collectXmpFaces(m *MediaFile) (xmpFaceSet, error) {
 		}
 	}
 
-	if len(candidates) > 0 {
-		selected := candidates[0]
-		for i := 1; i < len(candidates); i++ {
-			candidate := candidates[i]
-			if candidate.info.ModTime().After(selected.info.ModTime()) ||
-				candidate.info.ModTime().Equal(selected.info.ModTime()) && candidate.fullName && !selected.fullName {
-				selected = candidate
-			}
+	// Newest sidecar first; a full-name sidecar wins a modification time tie.
+	sort.SliceStable(candidates, func(i, j int) bool {
+		if !candidates[i].info.ModTime().Equal(candidates[j].info.ModTime()) {
+			return candidates[i].info.ModTime().After(candidates[j].info.ModTime())
 		}
+		return candidates[i].fullName && !candidates[j].fullName
+	})
 
-		data, err := meta.XMPWithOptions(selected.fileName, faceOptions(selected.source))
+	// A sidecar is authoritative only when it declares a face-region container.
+	// Rating-only and develop-only sidecars are ordinary editor output, so
+	// reading them as "the user removed every face" would delete live markers.
+	for _, candidate := range candidates {
+		data, err := meta.XMPWithOptions(candidate.fileName, faceOptions(candidate.source))
 		if err != nil {
-			return xmpFaceSet{}, fmt.Errorf("faces: cannot read xmp sidecar %s: %w", clean.Log(filepath.Base(selected.fileName)), err)
+			return meta.FaceRegions{}, fmt.Errorf("faces: cannot read xmp sidecar %s: %w", clean.Log(filepath.Base(candidate.fileName)), err)
+		} else if !data.FacesDeclared {
+			continue
 		}
 
-		return xmpFaceSet{Faces: meta.DedupFaces(data.Faces)}, nil
+		return meta.FaceRegions{
+			Faces:    meta.DedupFaces(data.Faces),
+			Declared: true,
+			Partial:  data.FacesPartial,
+		}, nil
 	}
 
 	var faces []meta.Face
+	declared := false
 	partial := false
 	for _, source := range sources {
 		data := source.MetaData()
+
+		// MediaFile.MetaData reports routine conditions such as an unsupported
+		// EXIF container in Data.Error and logs them at debug level, so one
+		// unreadable source must not discard another source's valid regions.
+		// The set is still flagged partial: a source whose regions could not be
+		// read may hold the very region an unmatched marker belongs to.
 		if data.Error != nil {
-			return xmpFaceSet{}, fmt.Errorf("faces: cannot read embedded xmp from %s: %w", clean.Log(source.BaseName()), data.Error)
+			log.Debugf("faces: cannot read embedded xmp from %s (%s)", clean.Log(source.BaseName()), clean.Error(data.Error))
+			partial = true
+			continue
 		}
+
 		faces = append(faces, data.Faces...)
+		if data.FacesDeclared {
+			declared = true
+		}
 		if data.FacesPartial {
 			partial = true
 		}
 	}
 
-	return xmpFaceSet{Faces: meta.DedupFaces(faces), Partial: partial}, nil
+	return meta.FaceRegions{Faces: meta.DedupFaces(faces), Declared: declared, Partial: partial}, nil
 }
 
 // applyXmpName assigns an imported XMP name to a marker while keeping the change
@@ -276,17 +302,18 @@ func restoreMarkerName(m *entity.Marker) (bool, error) {
 	return true, nil
 }
 
-// reconcileXmpFaces applies an authoritative XMP face set to file markers. A
-// partial set (some regions unresolved, see xmpFaceSet.Partial) still updates
-// and names matched markers but never deletes or clears unmatched ones.
-func reconcileXmpFaces(faces []meta.Face, partial bool, file *entity.File, markers *entity.Markers) (count int, err error) {
+// reconcileXmpFaces applies XMP face regions to file markers. Matched markers
+// are always updated and named; unmatched ones are only deleted or cleared when
+// the region set is authoritative, that is when a region container was declared
+// and every one of its regions resolved.
+func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *entity.Markers) (count int, err error) {
 	if file == nil || markers == nil || file.FileHash == "" {
 		return 0, nil
 	}
 
 	matched := make([]bool, len(*markers))
 
-	for _, region := range faces {
+	for _, region := range regions.Faces {
 		area := crop.NewArea("face", region.X, region.Y, region.W, region.H)
 
 		if area.W <= 0 || area.H <= 0 {
@@ -392,15 +419,17 @@ func reconcileXmpFaces(faces []meta.Face, partial bool, file *entity.File, marke
 			}
 		}
 
+		// Markers.Append adds exactly one element, keeping matched index-aligned.
 		markers.Append(*probe)
 		matched = append(matched, true)
 		count++
 	}
 
-	// A partial parse may be missing regions, so skip the destructive sweep that
-	// deletes or clears markers no current region matched — an unmatched marker
-	// might only be unmatched because its region could not be resolved.
-	if partial {
+	// Skip the destructive sweep unless the region set actually states that these
+	// are all the faces. A file that declares no region container says nothing
+	// about faces, and a partial parse may be missing regions, so in both cases
+	// an unmatched marker is uninformative rather than stale.
+	if !regions.Declared || regions.Partial {
 		return count, nil
 	}
 

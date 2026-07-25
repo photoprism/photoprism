@@ -2768,3 +2768,29 @@ func TestMediaFile_Duration(t *testing.T) {
 		}
 	})
 }
+
+func TestMediaFile_SetRelatedMain(t *testing.T) {
+	c := config.TestConfig()
+
+	t.Run("Seeded", func(t *testing.T) {
+		m, err := NewMediaFile(filepath.Join(c.SamplesPath(), "beach_wood.jpg"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		main, err := NewMediaFile(filepath.Join(c.SamplesPath(), "canon_eos_6d.dng"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Nil(t, m.RelatedMain(), "an unseeded file must report no group")
+		m.SetRelatedMain(main)
+		if m.RelatedMain() == nil {
+			t.Fatal("expected the seeded group main file")
+		}
+		assert.Equal(t, main.FileName(), m.RelatedMain().FileName())
+	})
+	t.Run("NilReceiver", func(t *testing.T) {
+		var m *MediaFile
+		m.SetRelatedMain(nil)
+		assert.Nil(t, m.RelatedMain())
+	})
+}

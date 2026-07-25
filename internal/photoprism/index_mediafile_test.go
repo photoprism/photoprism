@@ -401,9 +401,10 @@ func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
 	require.NoError(t, entity.Db().Where("photo_uid = ?", result.PhotoUID).First(&before).Error)
 	require.Equal(t, 1, before.PhotoFaces, "photo face count must reflect the imported marker")
 
-	// Phase 2: remove the sidecar and re-index faces-only. The region is gone, so
-	// the marker is deleted; the count must be recomputed and persisted to 0.
-	require.NoError(t, os.Remove(xmp))
+	// Phase 2: empty the sidecar's region list and re-index faces-only. The
+	// container still declares that regions are tracked, so the removed region
+	// deletes its marker; the count must be recomputed and persisted to 0.
+	require.NoError(t, os.WriteFile(xmp, []byte(emptyRegionListXmp), fs.ModeFile)) //nolint:gosec // isolated test path
 
 	facesOpt := IndexOptionsFacesOnly(cfg)
 	facesOpt.ImportFaceTags = true

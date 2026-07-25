@@ -7,6 +7,14 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// parseFaces returns the parsed regions as faces plus the partial flag, keeping
+// the region-shape assertions below independent of the FaceRegions wrapper.
+func parseFaces(j gjson.Result, options FaceOptions) ([]Face, bool) {
+	regions := parseExiftoolFaces(j, options)
+
+	return regions.Faces, regions.Partial
+}
+
 // exiftoolFaces reads a fixture ExifTool JSON dump and returns the parsed faces.
 func exiftoolFaces(t *testing.T, path string) []Face {
 	t.Helper()
@@ -76,7 +84,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionAreaW":[0.1,0.1],
 			"RegionAreaH":[0.1,0.1]
 		}`)
-		faces, partial := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if partial {
 			t.Error("fully aligned set must not be partial")
 		}
@@ -84,9 +92,8 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			t.Fatalf("got %+v", faces)
 		}
 	})
-	t.Run("TypeAbsentSkipped", func(t *testing.T) {
-		// No RegionType at all: the region cannot be confirmed as a face, so it is
-		// skipped (matching the sidecar XPath path) without flagging partial.
+	t.Run("TypeAbsentImported", func(t *testing.T) {
+		// mwg-rs:Type is optional, so a region without one is imported as a face.
 		j := gjson.Parse(`{
 			"RegionName":["Alice"],
 			"RegionAreaX":[0.2],
@@ -94,12 +101,12 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionAreaW":[0.1],
 			"RegionAreaH":[0.1]
 		}`)
-		faces, partial := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if partial {
-			t.Error("an absent RegionType is a deliberate filter, not a partial parse")
+			t.Error("an absent RegionType resolves every region, so the parse is not partial")
 		}
-		if len(faces) != 0 {
-			t.Fatalf("type-less regions must be skipped, got %+v", faces)
+		if len(faces) != 1 || faces[0].Name != "Alice" {
+			t.Fatalf("type-less regions must be imported, got %+v", faces)
 		}
 	})
 	t.Run("TypePresentNonFaceSkipped", func(t *testing.T) {
@@ -111,7 +118,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionAreaW":[0.1,0.1],
 			"RegionAreaH":[0.1,0.1]
 		}`)
-		faces, _ := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, _ := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if len(faces) != 1 || faces[0].Name != "Alice" {
 			t.Fatalf("only the Face-typed region must import, got %+v", faces)
 		}
@@ -127,7 +134,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionAreaW":[0.1,0.1,0.1],
 			"RegionAreaH":[0.1,0.1,0.1]
 		}`)
-		faces, partial := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if !partial {
 			t.Error("compacted names must report partial")
 		}
@@ -155,7 +162,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionAreaH":[0.15],
 			"RegionAreaD":0.2
 		}`)
-		faces, partial := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if !partial {
 			t.Error("mixed shapes must report partial")
 		}
@@ -171,7 +178,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionAreaY":[0.5,0.5],
 			"RegionAreaD":[0.2,0.2]
 		}`)
-		faces, partial := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if partial {
 			t.Error("uniform circles must not be partial")
 		}
@@ -184,7 +191,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionTitle":"Title Person","RegionType":"Face",
 			"RegionAreaX":0.5,"RegionAreaY":0.5,"RegionAreaW":0.1,"RegionAreaH":0.1
 		}`)
-		faces, partial := parseExiftoolFaces(title, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial := parseFaces(title, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if partial || len(faces) != 1 || faces[0].Name != "Title Person" {
 			t.Errorf("title fallback got %+v (partial %t)", faces, partial)
 		}
@@ -192,7 +199,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"RegionSeeAlso":"Iptc4xmpExt:PersonInImage","PersonInImage":"Referenced Person",
 			"RegionType":"Face","RegionAreaX":0.5,"RegionAreaY":0.5,"RegionAreaW":0.1,"RegionAreaH":0.1
 		}`)
-		faces, partial = parseExiftoolFaces(seeAlso, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial = parseFaces(seeAlso, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if partial || len(faces) != 1 || faces[0].Name != "Referenced Person" {
 			t.Errorf("seeAlso fallback got %+v (partial %t)", faces, partial)
 		}
@@ -210,7 +217,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"ACDSeeRegionALGAreaW":[0.1,0.1],
 			"ACDSeeRegionALGAreaH":[0.1,0.2]
 		}`)
-		faces, partial := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, partial := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if partial {
 			t.Error("aligned ACDSee set must not be partial")
 		}
@@ -233,7 +240,7 @@ func TestParseExiftoolFaces_Compaction(t *testing.T) {
 			"ACDSeeRegionALGAreaW":[0.1,0.1],
 			"ACDSeeRegionALGAreaH":[0.1,0.2]
 		}`)
-		faces, _ := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		faces, _ := parseFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
 		if len(faces) != 2 || !almost(faces[0].X, 0.75) || !almost(faces[0].Y, 0.75) {
 			t.Fatalf("expected ALG fallback boxes, got %+v", faces)
 		}
@@ -301,4 +308,86 @@ func TestJsonArrayFit(t *testing.T) {
 	if a, s := jsonArrayFit(three, 4); a || !s {
 		t.Errorf("len<n must be sparse: %t %t", a, s)
 	}
+}
+
+// TestParseExiftoolFaces_Declared verifies the authoritative-set flags and the
+// ACDSee region count, which must not be derived from the optional type array.
+func TestParseExiftoolFaces_Declared(t *testing.T) {
+	t.Run("NoRegions", func(t *testing.T) {
+		regions := parseExiftoolFaces(gjson.Parse(`{"Make":"NIKON"}`), FaceOptions{Orientation: 1})
+		if regions.Declared || regions.Partial || len(regions.Faces) != 0 {
+			t.Fatalf("a file without regions must not be declared: %+v", regions)
+		}
+	})
+	t.Run("MwgRegionsDeclared", func(t *testing.T) {
+		j := gjson.Parse(`{
+			"RegionName":["Alice"],
+			"RegionType":["Face"],
+			"RegionAreaX":[0.2],
+			"RegionAreaY":[0.5],
+			"RegionAreaW":[0.1],
+			"RegionAreaH":[0.1]
+		}`)
+		regions := parseExiftoolFaces(j, FaceOptions{Orientation: 1, Width: 4000, Height: 2000})
+		if !regions.Declared || regions.Partial || len(regions.Faces) != 1 {
+			t.Fatalf("got %+v", regions)
+		}
+	})
+	t.Run("AcdSeeTypeAbsentImported", func(t *testing.T) {
+		// ACDSeeRegionType is optional, so the region count must come from the
+		// coordinate arrays; deriving it from the type array reports zero regions.
+		j := gjson.Parse(`{
+			"ACDSeeRegionName":["Dana"],
+			"ACDSeeRegionDLYAreaX":[0.3],
+			"ACDSeeRegionDLYAreaY":[0.4],
+			"ACDSeeRegionDLYAreaW":[0.2],
+			"ACDSeeRegionDLYAreaH":[0.3],
+			"ACDSeeRegionAppliedToDimensionsW":4000,
+			"ACDSeeRegionAppliedToDimensionsH":2000
+		}`)
+		regions := parseExiftoolFaces(j, FaceOptions{Orientation: 1})
+		if !regions.Declared || regions.Partial {
+			t.Fatalf("got %+v", regions)
+		}
+		if len(regions.Faces) != 1 || regions.Faces[0].Name != "Dana" {
+			t.Fatalf("type-less ACDSee regions must be imported, got %+v", regions.Faces)
+		}
+	})
+	t.Run("AcdSeeCompactedMemberPartial", func(t *testing.T) {
+		// Two typed regions but only one DLY/ALG coordinate set: ExifTool compacted
+		// a sparse member, so nothing may be assigned positionally.
+		j := gjson.Parse(`{
+			"ACDSeeRegionName":["Dana","Eve"],
+			"ACDSeeRegionType":["Face","Face"],
+			"ACDSeeRegionDLYAreaX":[0.3],
+			"ACDSeeRegionDLYAreaY":[0.4],
+			"ACDSeeRegionDLYAreaW":[0.2],
+			"ACDSeeRegionDLYAreaH":[0.3],
+			"ACDSeeRegionAppliedToDimensionsW":4000,
+			"ACDSeeRegionAppliedToDimensionsH":2000
+		}`)
+		regions := parseExiftoolFaces(j, FaceOptions{Orientation: 1})
+		if !regions.Declared || !regions.Partial {
+			t.Fatalf("a compacted ACDSee member must be declared and partial: %+v", regions)
+		}
+		if len(regions.Faces) != 0 {
+			t.Fatalf("got %+v", regions.Faces)
+		}
+	})
+	t.Run("UnresolvableRegionPartial", func(t *testing.T) {
+		// Pixel units with no applied or source dimensions cannot be normalized.
+		j := gjson.Parse(`{
+			"RegionName":["Alice"],
+			"RegionType":["Face"],
+			"RegionAreaX":[2000],
+			"RegionAreaY":[1500],
+			"RegionAreaW":[400],
+			"RegionAreaH":[600],
+			"RegionAreaUnit":["pixel"]
+		}`)
+		regions := parseExiftoolFaces(j, FaceOptions{Orientation: 1})
+		if !regions.Declared || !regions.Partial || len(regions.Faces) != 0 {
+			t.Fatalf("got %+v", regions)
+		}
+	})
 }

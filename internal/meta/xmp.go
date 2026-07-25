@@ -206,9 +206,13 @@ func (data *Data) XMPWithOptions(fileName string, options FaceOptions) (err erro
 	}
 
 	// Parse supported XMP face regions into data.Faces so the indexer can
-	// reconcile them onto face markers.
-	if faces := doc.FacesWithOptions(options); len(faces) > 0 {
-		data.Faces = faces
+	// reconcile them onto face markers. The flags are recorded even for an empty
+	// region list, because a declared but empty list is what tells the reconciler
+	// the user removed the regions.
+	if regions := doc.FaceRegions(options); regions.Declared || len(regions.Faces) > 0 {
+		data.Faces = regions.Faces
+		data.FacesDeclared = regions.Declared
+		data.FacesPartial = regions.Partial
 	}
 
 	data.Favorite = doc.Favorite()
