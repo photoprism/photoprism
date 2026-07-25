@@ -19,7 +19,7 @@
 
 ### MariaDB Runs
 
-`make test-mariadb` runs the backend suite against MariaDB instead of SQLite. All packages share the single `acceptance` schema (SQLite gets a file per package), so it passes `-p 1`; keep that flag on any manual `PHOTOPRISM_TEST_DRIVER=mysql` run. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
+`make test-mariadb` runs the backend suite against MariaDB instead of SQLite. Each package gets its own `acceptance_<pkg>_<hash>` database via `entity.TestDbDSN`, mirroring the file-per-package isolation SQLite provides; `make reset-acceptance` drops them. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
 
 ### Test Config Helpers
 

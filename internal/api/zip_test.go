@@ -74,7 +74,7 @@ func resetZipDownloadFixtures(t *testing.T) {
 	}
 
 	for _, file := range reset {
-		result := entity.UnscopedDb().
+		if err := entity.UnscopedDb().
 			Model(&entity.File{}).
 			Where("photo_uid = ?", file.photoUID).
 			Updates(entity.Values{
@@ -83,13 +83,20 @@ func resetZipDownloadFixtures(t *testing.T) {
 				"file_hash":    file.fileHash,
 				"file_missing": false,
 				"deleted_at":   nil,
-			})
-
-		if result.Error != nil {
-			t.Fatalf("reset fixture %s failed: %v", file.photoUID, result.Error)
+			}).Error; err != nil {
+			t.Fatalf("reset fixture %s failed: %v", file.photoUID, err)
 		}
 
-		if result.RowsAffected < 1 {
+		// The row count is verified separately, as MySQL reports the number of
+		// rows an UPDATE changed while SQLite reports the number it matched.
+		var found int
+
+		if err := entity.UnscopedDb().
+			Model(&entity.File{}).
+			Where("photo_uid = ? AND file_name = ? AND file_missing = 0", file.photoUID, file.fileName).
+			Count(&found).Error; err != nil {
+			t.Fatalf("reset fixture %s failed: %v", file.photoUID, err)
+		} else if found < 1 {
 			t.Fatalf("reset fixture %s failed: no rows updated", file.photoUID)
 		}
 	}
