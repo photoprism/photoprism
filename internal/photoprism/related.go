@@ -29,8 +29,7 @@ func (m RelatedFiles) HasPreview() bool {
 
 // ContainsPreview reports whether the file list itself includes a preview image
 // (JPEG/PNG). Unlike HasPreview it ignores Main, so it distinguishes a group
-// whose primary preview is being indexed from an incremental sidecar-only update
-// where the unchanged preview was filtered out of the list.
+// whose primary preview is being indexed from a sidecar-only update.
 func (m RelatedFiles) ContainsPreview() bool {
 	for _, f := range m.Files {
 		if f.IsPreviewImage() {

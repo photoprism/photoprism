@@ -58,11 +58,9 @@ func jsonFaceName(j gjson.Result, name, title, extension, reference string) stri
 }
 
 // jsonArrayFit classifies an optional per-region ExifTool array against a region
-// count of n. ExifTool omits absent struct members rather than padding them, so
-// only an array with exactly one value per region (len == n) is index-parallel
-// and safe to zip; an empty array means the member is absent for every region,
-// and any other length means ExifTool compacted a sparse member and positional
-// indexing would misassign values across regions.
+// count of n. ExifTool omits absent struct members instead of padding them, so
+// only len == n is safe to zip; an empty array means the member is absent for
+// every region, and any other length means positional indexing would misassign.
 func jsonArrayFit(arr []gjson.Result, n int) (aligned, sparse bool) {
 	switch {
 	case len(arr) == n:
@@ -75,10 +73,8 @@ func jsonArrayFit(arr []gjson.Result, n int) (aligned, sparse bool) {
 }
 
 // parseExiftoolFaces extracts supported XMP face regions from ExifTool JSON.
-// FaceRegions.Partial reports that ExifTool compacted a non-parallel set (e.g.
-// mixed circle/rectangle shapes or a subset of named regions) so some regions
-// could not be resolved; callers must not treat a partial result as
-// authoritative when deleting markers.
+// FaceRegions.Partial reports that ExifTool compacted a non-parallel set, such
+// as mixed circle and rectangle shapes, so some regions could not be resolved.
 func parseExiftoolFaces(j gjson.Result, options FaceOptions) FaceRegions {
 	var faces []Face
 	var tally regionTally
@@ -130,10 +126,9 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) FaceRegions {
 	unitsAligned := recordFit(units, n)
 	rotationsAligned := recordFit(rotations, n)
 
-	// Shape can only be reconstructed when every region is a rectangle (parallel
-	// w and h) or every region is a circle (parallel d); a mixed set leaves the
-	// shape arrays compacted and unassignable, so it is reported partial and
-	// skipped rather than mis-sized.
+	// Shape resolves only when every region is a rectangle (parallel w and h) or
+	// every region is a circle (parallel d); a mixed set leaves the shape arrays
+	// compacted and unassignable, so it is reported partial rather than mis-sized.
 	wAligned := recordFit(ws, n)
 	hAligned := recordFit(hs, n)
 	dAligned := recordFit(ds, n)
@@ -141,10 +136,9 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) FaceRegions {
 	circleMode := dAligned && !rectMode
 
 	for i := 0; i < n; i++ {
-		// Filter by region type only when the array is index-aligned. An entirely
-		// absent RegionType is accepted as a face (mwg-rs:Type is optional in the
-		// MWG specification), while a sparse one was already flagged partial above,
-		// so its regions are skipped rather than mislabeled.
+		// Filter by type only when the array is index-aligned: mwg-rs:Type is
+		// optional, so an entirely absent one is accepted as a face, while a
+		// sparse one was flagged partial above and is skipped, not mislabeled.
 		if typesAligned && !strings.EqualFold(types[i].String(), "Face") {
 			continue
 		} else if !typesAligned && len(types) > 0 {
@@ -308,9 +302,8 @@ func parseExiftoolFaces(j gjson.Result, options FaceOptions) FaceRegions {
 	}
 
 	// ExifTool flattens the region containers away, so an empty region list is
-	// indistinguishable from a file that carries none. Reporting Declared only
-	// for a non-empty set keeps the embedded path on the safe side: markers are
-	// never deleted on evidence this projection cannot actually provide.
+	// indistinguishable from a file that carries none. Declaring only a non-empty
+	// set keeps markers from being deleted on evidence this projection lacks.
 	return FaceRegions{
 		Faces:    DedupFaces(faces),
 		Declared: n > 0 || len(mpRects) > 0 || nAcd > 0,

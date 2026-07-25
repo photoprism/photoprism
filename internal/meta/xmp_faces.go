@@ -27,11 +27,9 @@ type FaceOptions struct {
 	Height      int
 }
 
-// FaceRegions is a face-region snapshot parsed from XMP metadata. Declared and
-// Partial together tell a caller whether an empty Faces slice may be treated as
-// an authoritative "this image has no faces": only a declared, fully resolved
-// set says that, so a file carrying no region data at all — or one whose regions
-// could not be resolved — never causes existing markers to be deleted.
+// FaceRegions is a face-region snapshot parsed from XMP metadata. Only a
+// declared, fully resolved set may be read as an authoritative "this image has
+// no faces"; anything else must never cause existing markers to be deleted.
 type FaceRegions struct {
 	Faces    []Face
 	Declared bool // A region container was present.

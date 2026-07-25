@@ -331,12 +331,10 @@ var (
 	xmpOrientationChain = chainXPath{elemOrAttr("tiff:Orientation")}
 )
 
-// Face-region query handles. MWG-RS RegionList and Microsoft MP:RegionInfo
-// entries are structured records, so each region li node is read field-by-field
-// via relative XPath rather than the flat text helpers. Leaf fields are matched
-// by local-name so both forms real writers emit are handled: child elements
-// (ExifTool/Adobe: <stArea:x>0.6</stArea:x>) and attributes (digiKam:
-// stArea:x="0.6"), and the two stDim/stArea namespace-URI variants in the wild.
+// Face-region query handles. Region entries are structured records, so each li
+// node is read field-by-field via relative XPath rather than the flat text
+// helpers. Leaf fields match by local-name to cover both forms writers emit,
+// child elements and attributes, plus the two stDim/stArea namespace variants.
 var (
 	xmpRegionListLi = mustCompile("//mwg-rs:RegionList/rdf:Bag/rdf:li | //mwg-rs:RegionList/rdf:Seq/rdf:li")
 	xmpAppliedDimW  = mustCompile("//mwg-rs:AppliedToDimensions/*[local-name()='w'] | //mwg-rs:AppliedToDimensions/@*[local-name()='w']")

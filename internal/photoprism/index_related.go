@@ -131,16 +131,14 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		log.Infof("index: %s related %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
 	}
 
-	// Reconcile the logical source after all related files have been processed.
-	// UserMediaFile already reconciled XMP for the primary preview when it was
-	// indexed in this group (collectXmpFaces also covers a distinct RAW/HEIC
-	// source's sidecars), so only run the extra pass when the preview was
-	// filtered out — an incremental sidecar-only update.
+	// Reconcile the logical source once the group is done. UserMediaFile already
+	// covered the primary preview and a distinct RAW/HEIC source's sidecars while
+	// indexing it, so this pass only serves incremental sidecar-only updates
+	// where the unchanged preview was filtered out of the list.
 	if o.ImportFaceTags && photoUID != "" && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
-		// Collect first: a source that declares no region container has nothing to
-		// reconcile, so the primary-file and marker queries are skipped entirely.
-		// A declared but empty set still proceeds, because that is what removes
-		// markers whose regions the user deleted.
+		// Collect first so a source that declares no region container skips both
+		// the primary-file and marker queries. A declared but empty set still
+		// proceeds: that is what removes markers whose regions the user deleted.
 		if regions, collectErr := collectXmpFaces(related.Main); collectErr != nil {
 			log.Warnf("index: %s while importing xmp face regions for %s", clean.Error(collectErr), related.MainLogName())
 		} else if !regions.Declared {

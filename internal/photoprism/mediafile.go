@@ -71,8 +71,7 @@ type MediaFile struct {
 
 // SetRelatedMain caches the main file of the group this file belongs to, so
 // callers that already resolved the group do not re-run RelatedFiles. Only Main
-// is cached: the group's file list grows while indexing (generated previews are
-// appended after resolution), which would make a cached list a stale snapshot.
+// is cached: the file list grows while indexing, so a cached list would go stale.
 func (m *MediaFile) SetRelatedMain(main *MediaFile) {
 	if m == nil {
 		return
