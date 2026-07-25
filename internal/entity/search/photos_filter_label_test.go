@@ -782,18 +782,6 @@ func photosWithLabel(t *testing.T, label string) PhotoResults {
 	return photos
 }
 
-// containsPhotoUID reports whether any of the photos in results carries the
-// given UID.
-func containsPhotoUID(results PhotoResults, uid string) bool {
-	for _, p := range results {
-		if p.PhotoUID == uid {
-			return true
-		}
-	}
-
-	return false
-}
-
 func TestPhotosFilterLabelNotAnd(t *testing.T) {
 	t.Run("SingleExclude", func(t *testing.T) {
 		base := baselinePhotoCount(t)
