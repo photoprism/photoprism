@@ -49,8 +49,8 @@ export function isPdfDocument(model) {
 // getPdfWorker returns a shared pdfjs worker, created once. The legacy worker is
 // an ES module, so it is wrapped in a module Worker (the bundler emits it as a
 // separate asset). Passing this PDFWorker to every getDocument call keeps it
-// alive across documents — pdfjs only terminates workers it created itself, so
-// destroying one document no longer kills the worker the next document needs.
+// alive across documents: pdfjs records a worker on the loading task only when it
+// created that worker itself, so tearing a document down never destroys ours.
 // The worker is intentionally never terminated; it is module-scoped and reused
 // for the whole app session.
 function getPdfWorker(lib) {
@@ -165,7 +165,9 @@ export async function getPdfPageSize(pdf, pageNumber) {
 }
 
 // destroyPdfDocument releases the resources held by a loaded document. Safe to
-// call on null or an already-destroyed document.
+// call on null or an already-destroyed document. Teardown goes through the
+// loading task because pdfjs removed PDFDocumentProxy.destroy(); the shared
+// worker survives it, since the task only owns workers pdfjs created itself.
 export function destroyPdfDocument(pdf) {
   if (!pdf) {
     return;
@@ -175,8 +177,10 @@ export function destroyPdfDocument(pdf) {
     pdf.cleanup();
   }
 
-  if (typeof pdf.destroy === "function") {
-    pdf.destroy();
+  const task = pdf.loadingTask;
+
+  if (task && typeof task.destroy === "function") {
+    Promise.resolve(task.destroy()).catch(() => {});
   }
 }
 

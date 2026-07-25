@@ -9,19 +9,24 @@ const h = vi.hoisted(() => {
     getViewport: vi.fn(({ scale }) => ({ width: 100 * scale, height: 200 * scale })),
     render: vi.fn(() => renderTask),
   };
+  // Mirrors the pdfjs v6 proxy: PDFDocumentProxy.destroy() was removed, so teardown
+  // runs through the loading task.
+  const loadingTask = { destroy: vi.fn(() => Promise.resolve()) };
   const pdf = {
     numPages: 3,
     getPage: vi.fn(() => Promise.resolve(page)),
     cleanup: vi.fn(),
-    destroy: vi.fn(),
+    loadingTask,
   };
   return {
     renderTask,
     page,
     pdf,
+    loadingTask,
     getDocument: vi.fn(() => ({ promise: Promise.resolve(pdf) })),
     workerCtor: vi.fn(),
     pdfWorkerCtor: vi.fn(),
+    pdfWorkers: [],
   };
 });
 
@@ -31,8 +36,12 @@ vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => ({
   PDFWorker: class {
     constructor(opts) {
       h.pdfWorkerCtor(opts);
+      this.destroyed = false;
+      h.pdfWorkers.push(this);
     }
-    destroy() {}
+    destroy() {
+      this.destroyed = true;
+    }
   },
   version: "test",
 }));
@@ -89,6 +98,14 @@ describe("common/pdf", () => {
       await loadPdfDocument("/api/v1/files/abc.pdf");
       expect(h.getDocument.mock.calls[0][0].httpHeaders).toBeUndefined();
     });
+    it("keeps reusing the shared worker after a document teardown", async () => {
+      const before = h.workerCtor.mock.calls.length;
+      // pdfjs records a worker on the loading task only when it created that worker
+      // itself, so tearing a document down must not cost us a new worker.
+      destroyPdfDocument(h.pdf);
+      await loadPdfDocument("/api/v1/files/abc.pdf");
+      expect(h.workerCtor).toHaveBeenCalledTimes(before);
+    });
   });
   describe("renderPdfPage", () => {
     it("renders a page at the requested scale and returns a cancelable handle", async () => {
@@ -125,13 +142,20 @@ describe("common/pdf", () => {
     });
   });
   describe("destroyPdfDocument", () => {
-    it("cleans up and destroys the document", () => {
+    it("cleans up and destroys the document through its loading task", () => {
       destroyPdfDocument(h.pdf);
       expect(h.pdf.cleanup).toHaveBeenCalled();
-      expect(h.pdf.destroy).toHaveBeenCalled();
+      expect(h.loadingTask.destroy).toHaveBeenCalled();
     });
     it("is safe on null", () => {
       expect(() => destroyPdfDocument(null)).not.toThrow();
+    });
+    it("is safe on a document without a loading task", () => {
+      expect(() => destroyPdfDocument({ cleanup: vi.fn() })).not.toThrow();
+    });
+    it("swallows a rejected teardown", () => {
+      const rejecting = { cleanup: vi.fn(), loadingTask: { destroy: vi.fn(() => Promise.reject(new Error("boom"))) } };
+      expect(() => destroyPdfDocument(rejecting)).not.toThrow();
     });
   });
   describe("isRenderCancelled", () => {
