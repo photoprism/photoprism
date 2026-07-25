@@ -27,6 +27,20 @@ func (m RelatedFiles) HasPreview() bool {
 	return m.Main.IsPreviewImage()
 }
 
+// ContainsPreview reports whether the file list itself includes a preview image
+// (JPEG/PNG). Unlike HasPreview it ignores Main, so it distinguishes a group
+// whose primary preview is being indexed from an incremental sidecar-only update
+// where the unchanged preview was filtered out of the list.
+func (m RelatedFiles) ContainsPreview() bool {
+	for _, f := range m.Files {
+		if f.IsPreviewImage() {
+			return true
+		}
+	}
+
+	return false
+}
+
 // String returns file names as string.
 func (m RelatedFiles) String() string {
 	names := make([]string, len(m.Files))

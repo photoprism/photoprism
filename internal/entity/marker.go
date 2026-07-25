@@ -428,6 +428,17 @@ func (m *Marker) Create() error {
 	return Db().Create(m).Error
 }
 
+// Delete removes the marker from the database.
+func (m *Marker) Delete() error {
+	if m.MarkerUID == "" {
+		return fmt.Errorf("empty marker uid")
+	}
+
+	UpdateFaces.Store(true)
+
+	return Db().Delete(m).Error
+}
+
 // Embeddings returns parsed marker embeddings.
 func (m *Marker) Embeddings() face.Embeddings {
 	if len(m.EmbeddingsJSON) == 0 {

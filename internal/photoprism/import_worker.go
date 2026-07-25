@@ -202,6 +202,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 							log.Warnf("import: failed to generate thumbnails for %s (%s)", clean.Log(img.RootRelName()), thumbsErr.Error())
 						}
 
+						img.SetRelatedMain(related.Main)
 						related.Files = append(related.Files, img)
 					}
 				}
@@ -224,6 +225,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index main MediaFile.
+				main.SetRelatedMain(main)
 				res := ind.UserMediaFile(main, o, originalName, "", opt.UID)
 
 				// Log result.
@@ -274,6 +276,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index related media file including its original filename.
+				file.SetRelatedMain(related.Main)
 				res := ind.UserMediaFile(file, o, relatedOriginalNames[file.FileName()], photoUID, opt.UID)
 
 				// Save file error.

@@ -67,6 +67,40 @@ func TestRelatedFiles_HasPreview(t *testing.T) {
 	})
 }
 
+func TestRelatedFiles_ContainsPreview(t *testing.T) {
+	cfg := config.TestConfig()
+
+	jpeg, err := NewMediaFile(cfg.SamplesPath() + "/telegram_2020-01-30_09-57-18.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	heic, err := NewMediaFile(cfg.SamplesPath() + "/iphone_7.heic")
+	if err != nil {
+		t.Fatal(err)
+	}
+	video, err := NewMediaFile(cfg.SamplesPath() + "/gopher-video.mp4")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("PreviewPresent", func(t *testing.T) {
+		r := RelatedFiles{Files: MediaFiles{jpeg, video}, Main: heic}
+		assert.True(t, r.ContainsPreview())
+	})
+	t.Run("PreviewFilteredOut", func(t *testing.T) {
+		// Main is a preview JPEG but it was filtered out of the list (incremental
+		// sidecar-only update): ContainsPreview is false where HasPreview would be
+		// true via the Main fallback.
+		r := RelatedFiles{Files: MediaFiles{}, Main: jpeg}
+		assert.False(t, r.ContainsPreview())
+		assert.True(t, r.HasPreview())
+	})
+	t.Run("NoPreview", func(t *testing.T) {
+		r := RelatedFiles{Files: MediaFiles{heic, video}, Main: heic}
+		assert.False(t, r.ContainsPreview())
+	})
+}
+
 func TestRelatedFiles_String(t *testing.T) {
 	cfg := config.TestConfig()
 

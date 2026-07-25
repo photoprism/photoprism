@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -56,12 +57,53 @@ func DetectFaces(jpeg *MediaFile, expected int) (face.Faces, error) {
 	return faces, err
 }
 
-// ApplyDetectedFaces persists detected faces on the given file and updates face
-// counts. When XMP face-tag import is enabled and a media file is provided, it
-// also reconciles XMP face regions onto the markers so deferred face detection
-// (vision/metadata workers) imports XMP names the same way indexing does.
-// file and m MUST be the photo's primary file: XMP regions attach to the
-// primary file only, and m is used to read its embedded XMP and .xmp sidecar.
+// ApplyXmpFaces imports XMP face regions from a still-image source onto the
+// primary file, persists marker changes, and updates the photo face count.
+func ApplyXmpFaces(m *MediaFile, file *entity.File) (saved bool, count int, err error) {
+	if file == nil {
+		return false, 0, fmt.Errorf("faces: file is nil")
+	} else if m == nil || file.FileHash == "" {
+		return false, 0, nil
+	}
+
+	regions, collectErr := collectXmpFaces(m)
+	if collectErr != nil {
+		return false, 0, collectErr
+	}
+
+	return applyXmpFaceRegions(regions, file)
+}
+
+// applyXmpFaceRegions reconciles already collected XMP face regions onto the
+// primary file. It is separate from ApplyXmpFaces so the indexer can collect
+// first and skip the primary-file lookup when a source declares no regions.
+func applyXmpFaceRegions(regions meta.FaceRegions, file *entity.File) (saved bool, count int, err error) {
+	if file == nil {
+		return false, 0, fmt.Errorf("faces: file is nil")
+	} else if file.FileHash == "" {
+		return false, 0, nil
+	}
+
+	changed, reconcileErr := reconcileXmpFaces(regions, file, file.Markers())
+	if reconcileErr != nil {
+		return false, 0, reconcileErr
+	} else if changed == 0 {
+		return false, 0, nil
+	}
+
+	if _, err = file.SaveMarkers(); err != nil {
+		return false, 0, err
+	}
+
+	count, err = file.UpdatePhotoFaceCount()
+
+	return true, count, err
+}
+
+// ApplyDetectedFaces persists detected faces on the given primary file and
+// updates face counts. When XMP face-tag import is enabled, m may be either the
+// primary preview or a related still-image source; both resolve to the same
+// embedded and sidecar XMP collection.
 func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (saved bool, count int, err error) {
 	if file == nil {
 		return false, 0, fmt.Errorf("faces: file is nil")
@@ -77,8 +119,18 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 		file.AddFaces(faces)
 	}
 
+	xmpChanges := 0
 	if importXmp && file.FileHash != "" {
-		reconcileXmpFaces(collectXmpFaces(m), file, file.Markers())
+		// XMP import is independent of AI detection, so a malformed sidecar or an
+		// unreadable source must not discard the detected faces added above: log
+		// and continue to SaveMarkers instead of returning the error.
+		if regions, collectErr := collectXmpFaces(m); collectErr != nil {
+			log.Warnf("faces: %s while reading xmp regions for %s", clean.Error(collectErr), clean.Log(m.BaseName()))
+		} else if changed, reconcileErr := reconcileXmpFaces(regions, file, file.Markers()); reconcileErr != nil {
+			log.Warnf("faces: %s while reconciling xmp regions for %s", clean.Error(reconcileErr), clean.Log(m.BaseName()))
+		} else {
+			xmpChanges = changed
+		}
 	}
 
 	savedMarkers, saveErr := file.SaveMarkers()
@@ -87,7 +139,7 @@ func ApplyDetectedFaces(m *MediaFile, file *entity.File, faces face.Faces) (save
 		return false, 0, saveErr
 	}
 
-	if savedMarkers == 0 {
+	if savedMarkers == 0 && xmpChanges == 0 {
 		return false, 0, nil
 	}
 

@@ -172,6 +172,29 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 	})
 }
 
+func TestMarker_Delete(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), crop.Area{Name: "face", X: 0.01, Y: 0.01, W: 0.02, H: 0.02}, "", SrcXmp, MarkerFace, 100, 30)
+		if err := m.Create(); err != nil {
+			t.Fatal(err)
+		}
+		if m.MarkerUID == "" || FindMarker(m.MarkerUID) == nil {
+			t.Fatal("created marker not found")
+		}
+		if err := m.Delete(); err != nil {
+			t.Fatal(err)
+		}
+		if found := FindMarker(m.MarkerUID); found != nil {
+			t.Errorf("deleted marker still exists: %s", found.MarkerUID)
+		}
+	})
+	t.Run("EmptyUID", func(t *testing.T) {
+		if err := (&Marker{}).Delete(); err == nil {
+			t.Error("deleting a marker with an empty UID must return an error, not issue an unscoped delete")
+		}
+	})
+}
+
 func TestMarker_Updates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)

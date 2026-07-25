@@ -36,30 +36,34 @@ var ErrXmpTooDeep = errors.New("xmp: element nesting exceeds limit")
 // Adding a prefix here makes it available to every XPath expression
 // compiled with mustCompile.
 var xmpNamespaces = map[string]string{
-	"xml":          "http://www.w3.org/XML/1998/namespace",
-	"rdf":          "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-	"x":            "adobe:ns:meta/",
-	"xmp":          "http://ns.adobe.com/xap/1.0/",
-	"xmpMM":        "http://ns.adobe.com/xap/1.0/mm/",
-	"xmpRights":    "http://ns.adobe.com/xap/1.0/rights/",
-	"xmpDM":        "http://ns.adobe.com/xmp/1.0/DynamicMedia/",
-	"dc":           "http://purl.org/dc/elements/1.1/",
-	"tiff":         "http://ns.adobe.com/tiff/1.0/",
-	"exif":         "http://ns.adobe.com/exif/1.0/",
-	"exifEX":       "http://cipa.jp/exif/1.0/",
-	"aux":          "http://ns.adobe.com/exif/1.0/aux/",
-	"photoshop":    "http://ns.adobe.com/photoshop/1.0/",
-	"GPano":        "http://ns.google.com/photos/1.0/panorama/",
-	"Iptc4xmpCore": "http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/",
-	"Iptc4xmpExt":  "http://iptc.org/std/Iptc4xmpExt/2008-02-29/",
-	"lr":           "http://ns.adobe.com/lightroom/1.0/",
-	"fstop":        "http://www.fstopapp.com/xmp/",
-	"mwg-rs":       "http://www.metadataworkinggroup.com/schemas/regions/",
-	"stArea":       "http://ns.adobe.com/xmp/sType/Area#",
-	"stDim":        "http://ns.adobe.com/xap/1.0/sType/Dimensions#",
-	"MP":           "http://ns.microsoft.com/photo/1.2/",
-	"MPRI":         "http://ns.microsoft.com/photo/1.2/t/RegionInfo#",
-	"MPReg":        "http://ns.microsoft.com/photo/1.2/t/Region#",
+	"xml":           "http://www.w3.org/XML/1998/namespace",
+	"rdf":           "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+	"rdfs":          "http://www.w3.org/2000/01/rdf-schema#",
+	"x":             "adobe:ns:meta/",
+	"xmp":           "http://ns.adobe.com/xap/1.0/",
+	"xmpMM":         "http://ns.adobe.com/xap/1.0/mm/",
+	"xmpRights":     "http://ns.adobe.com/xap/1.0/rights/",
+	"xmpDM":         "http://ns.adobe.com/xmp/1.0/DynamicMedia/",
+	"dc":            "http://purl.org/dc/elements/1.1/",
+	"tiff":          "http://ns.adobe.com/tiff/1.0/",
+	"exif":          "http://ns.adobe.com/exif/1.0/",
+	"exifEX":        "http://cipa.jp/exif/1.0/",
+	"aux":           "http://ns.adobe.com/exif/1.0/aux/",
+	"photoshop":     "http://ns.adobe.com/photoshop/1.0/",
+	"GPano":         "http://ns.google.com/photos/1.0/panorama/",
+	"Iptc4xmpCore":  "http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/",
+	"Iptc4xmpExt":   "http://iptc.org/std/Iptc4xmpExt/2008-02-29/",
+	"lr":            "http://ns.adobe.com/lightroom/1.0/",
+	"fstop":         "http://www.fstopapp.com/xmp/",
+	"mwg-rs":        "http://www.metadataworkinggroup.com/schemas/regions/",
+	"stArea":        "http://ns.adobe.com/xmp/sType/Area#",
+	"stDim":         "http://ns.adobe.com/xap/1.0/sType/Dimensions#",
+	"MP":            "http://ns.microsoft.com/photo/1.2/",
+	"MPRI":          "http://ns.microsoft.com/photo/1.2/t/RegionInfo#",
+	"MPReg":         "http://ns.microsoft.com/photo/1.2/t/Region#",
+	"acdsee-rs":     "http://ns.acdsee.com/regions/",
+	"acdsee-stDim":  "http://ns.acdsee.com/sType/Dimensions#",
+	"acdsee-stArea": "http://ns.acdsee.com/sType/Area#",
 }
 
 // chainXPath is an ordered list of pre-compiled XPath expressions
@@ -339,17 +343,46 @@ var (
 	xmpAppliedDimH  = mustCompile("//mwg-rs:AppliedToDimensions/*[local-name()='h'] | //mwg-rs:AppliedToDimensions/@*[local-name()='h']")
 	xmpMPRegionLi   = mustCompile("//MPRI:Regions/rdf:Bag/rdf:li | //MPRI:Regions/rdf:Seq/rdf:li")
 
+	// Region containers, matched independently of their items: a container with
+	// an empty list is what says "this image has no faces", so it must be
+	// distinguishable from a document that tracks no regions at all.
+	xmpRegionContainer = mustCompile("//mwg-rs:RegionList | //MPRI:Regions | //acdsee-rs:RegionList")
+	xmpAcdRegionLi     = mustCompile("//acdsee-rs:RegionList/rdf:Bag/rdf:li | //acdsee-rs:RegionList/rdf:Seq/rdf:li")
+	xmpAcdDimW         = mustCompile("//acdsee-rs:AppliedToDimensions/*[local-name()='w'] | //acdsee-rs:AppliedToDimensions/@*[local-name()='w']")
+	xmpAcdDimH         = mustCompile("//acdsee-rs:AppliedToDimensions/*[local-name()='h'] | //acdsee-rs:AppliedToDimensions/@*[local-name()='h']")
+
 	// Relative expressions evaluated against a single region li node; the first
 	// non-empty match wins.
-	relMwgName     = []*xpath.Expr{mustCompile(".//mwg-rs:Name"), mustCompile("@mwg-rs:Name")}
-	relMwgType     = []*xpath.Expr{mustCompile(".//mwg-rs:Type"), mustCompile("@mwg-rs:Type")}
+	relMwgName     = []*xpath.Expr{mustCompile("./mwg-rs:Name"), mustCompile("@mwg-rs:Name"), mustCompile("./rdf:Description/mwg-rs:Name"), mustCompile("./rdf:Description/@mwg-rs:Name")}
+	relMwgTitle    = []*xpath.Expr{mustCompile("./mwg-rs:Title"), mustCompile("@mwg-rs:Title"), mustCompile("./rdf:Description/mwg-rs:Title"), mustCompile("./rdf:Description/@mwg-rs:Title")}
+	relMwgType     = []*xpath.Expr{mustCompile("./mwg-rs:Type"), mustCompile("@mwg-rs:Type"), mustCompile("./rdf:Description/mwg-rs:Type"), mustCompile("./rdf:Description/@mwg-rs:Type")}
+	relMwgRotation = []*xpath.Expr{mustCompile("./mwg-rs:Rotation"), mustCompile("@mwg-rs:Rotation"), mustCompile("./rdf:Description/mwg-rs:Rotation"), mustCompile("./rdf:Description/@mwg-rs:Rotation")}
+	relMwgSeeAlso  = []*xpath.Expr{mustCompile(".//rdfs:seeAlso/@rdf:resource"), mustCompile(".//rdfs:seeAlso")}
+	relMwgExtNames = []*xpath.Expr{
+		mustCompile(".//mwg-rs:Extensions//Iptc4xmpExt:PersonInImage/rdf:Bag/rdf:li"),
+		mustCompile(".//mwg-rs:Extensions//Iptc4xmpExt:PersonInImage/rdf:Seq/rdf:li"),
+		mustCompile(".//mwg-rs:Extensions//Iptc4xmpExt:PersonInImage[not(rdf:Bag) and not(rdf:Seq)]"),
+	}
 	relMwgAreaX    = mwgAreaExpr("x")
 	relMwgAreaY    = mwgAreaExpr("y")
 	relMwgAreaW    = mwgAreaExpr("w")
 	relMwgAreaH    = mwgAreaExpr("h")
+	relMwgAreaD    = mwgAreaExpr("d")
 	relMwgAreaUnit = mwgAreaExpr("unit")
 	relMpRect      = []*xpath.Expr{mustCompile(".//*[local-name()='Rectangle']"), mustCompile("@*[local-name()='Rectangle']")}
 	relMpName      = []*xpath.Expr{mustCompile(".//*[local-name()='PersonDisplayName']"), mustCompile("@*[local-name()='PersonDisplayName']")}
+	relAcdName     = []*xpath.Expr{mustCompile(".//acdsee-rs:Name"), mustCompile("@acdsee-rs:Name")}
+	relAcdType     = []*xpath.Expr{mustCompile(".//acdsee-rs:Type"), mustCompile("@acdsee-rs:Type")}
+	relAcdDlyX     = acdAreaExpr("DLYArea", "x")
+	relAcdDlyY     = acdAreaExpr("DLYArea", "y")
+	relAcdDlyW     = acdAreaExpr("DLYArea", "w")
+	relAcdDlyH     = acdAreaExpr("DLYArea", "h")
+	relAcdDlyUnit  = acdAreaExpr("DLYArea", "unit")
+	relAcdAlgX     = acdAreaExpr("ALGArea", "x")
+	relAcdAlgY     = acdAreaExpr("ALGArea", "y")
+	relAcdAlgW     = acdAreaExpr("ALGArea", "w")
+	relAcdAlgH     = acdAreaExpr("ALGArea", "h")
+	relAcdAlgUnit  = acdAreaExpr("ALGArea", "unit")
 )
 
 // mwgAreaExpr builds the relative expressions for one mwg-rs:Area sub-field,
@@ -359,6 +392,14 @@ func mwgAreaExpr(field string) []*xpath.Expr {
 	return []*xpath.Expr{
 		mustCompile(".//mwg-rs:Area/*[local-name()='" + field + "']"),
 		mustCompile(".//mwg-rs:Area/@*[local-name()='" + field + "']"),
+	}
+}
+
+// acdAreaExpr builds relative expressions for an ACDSee area field.
+func acdAreaExpr(area, field string) []*xpath.Expr {
+	return []*xpath.Expr{
+		mustCompile(".//acdsee-rs:" + area + "/*[local-name()='" + field + "']"),
+		mustCompile(".//acdsee-rs:" + area + "/@*[local-name()='" + field + "']"),
 	}
 }
 
@@ -660,65 +701,194 @@ func relFirst(node *xmlquery.Node, exprs []*xpath.Expr) string {
 	return ""
 }
 
+// relValues returns the unique trimmed values matched by relative expressions.
+func relValues(node *xmlquery.Node, exprs []*xpath.Expr) []string {
+	values := make([]string, 0, len(exprs))
+	seen := make(map[string]struct{}, len(exprs))
+
+	for _, expr := range exprs {
+		for _, match := range xmlquery.QuerySelectorAll(node, expr) {
+			value := strings.TrimSpace(match.InnerText())
+			if value == "" {
+				continue
+			} else if _, exists := seen[value]; exists {
+				continue
+			}
+
+			seen[value] = struct{}{}
+			values = append(values, value)
+		}
+	}
+
+	return values
+}
+
+// mwgRegionName resolves the person name attached to an MWG region.
+func (doc *XmpDocument) mwgRegionName(region *xmlquery.Node) string {
+	if name := relFirst(region, relMwgName); name != "" {
+		return name
+	} else if title := relFirst(region, relMwgTitle); title != "" {
+		return title
+	}
+
+	if names := relValues(region, relMwgExtNames); len(names) == 1 {
+		return names[0]
+	}
+
+	for _, reference := range relValues(region, relMwgSeeAlso) {
+		if reference != "Iptc4xmpExt:PersonInImage" {
+			continue
+		}
+
+		names := append(queryAll(doc.doc, xmpPersonBag), queryAll(doc.doc, xmpPersonSeq)...)
+		names = txt.UniqueNames(names)
+		if len(names) == 1 {
+			return names[0]
+		}
+	}
+
+	return ""
+}
+
 // appliedDimensions returns the mwg-rs:AppliedToDimensions width and height in
 // pixels (0 when absent), used to resolve pixel-unit region coordinates.
 func (doc *XmpDocument) appliedDimensions() (w, h int) {
+	return doc.regionDimensions(xmpAppliedDimW, xmpAppliedDimH)
+}
+
+// acdAppliedDimensions returns the ACDSee region canvas dimensions.
+func (doc *XmpDocument) acdAppliedDimensions() (w, h int) {
+	return doc.regionDimensions(xmpAcdDimW, xmpAcdDimH)
+}
+
+// regionDimensions returns dimensions matched by the specified expressions.
+func (doc *XmpDocument) regionDimensions(widthExpr, heightExpr *xpath.Expr) (w, h int) {
 	if doc.doc == nil {
 		return 0, 0
 	}
-	if n := xmlquery.QuerySelector(doc.doc, xmpAppliedDimW); n != nil {
+	if n := xmlquery.QuerySelector(doc.doc, widthExpr); n != nil {
 		w, _ = strconv.Atoi(strings.TrimSpace(n.InnerText()))
 	}
-	if n := xmlquery.QuerySelector(doc.doc, xmpAppliedDimH); n != nil {
+	if n := xmlquery.QuerySelector(doc.doc, heightExpr); n != nil {
 		h, _ = strconv.Atoi(strings.TrimSpace(n.InnerText()))
 	}
 	return w, h
 }
 
-// Faces returns MWG-RS RegionList and Microsoft MP:RegionInfo face regions as
-// displayed-orientation normalized Faces, de-duplicated across both schemas.
-// Non-face MWG regions (BarCode, Pet, Focus) are skipped; a region with no name
-// is returned with an empty Name so it can be imported for review. orientation
-// maps raw region coordinates into the displayed frame (pass 0 when unknown).
+// Faces returns supported XMP face regions as displayed-orientation normalized
+// Faces, de-duplicated across schemas.
+// orientation maps raw region coordinates into the displayed frame.
 func (doc *XmpDocument) Faces(orientation int) []Face {
+	return doc.FaceRegions(FaceOptions{Orientation: orientation}).Faces
+}
+
+// isFaceRegionType reports whether a region type names a face. An absent type is
+// accepted: mwg-rs:Type is optional in the MWG specification, so requiring it
+// would drop the regions of standard-compliant writers that omit it.
+func isFaceRegionType(t string) bool {
+	return t == "" || strings.EqualFold(t, "Face")
+}
+
+// FaceRegions returns supported face regions using source image fallbacks,
+// de-duplicated across schemas, along with the flags that tell the caller
+// whether an empty result may be treated as authoritative.
+func (doc *XmpDocument) FaceRegions(options FaceOptions) FaceRegions {
 	if doc.doc == nil {
-		return nil
+		return FaceRegions{}
 	}
 
 	var faces []Face
+	var tally regionTally
+
+	if orientation := doc.Orientation(); orientation != 0 {
+		options.Orientation = orientation
+	}
 
 	appliedW, appliedH := doc.appliedDimensions()
+	if appliedW <= 0 || appliedH <= 0 {
+		appliedW, appliedH = options.Width, options.Height
+	}
 
-	for _, li := range xmlquery.QuerySelectorAll(doc.doc, xmpRegionListLi) {
-		if t := relFirst(li, relMwgType); t != "" && !strings.EqualFold(t, "Face") {
+	mwgRegions := xmlquery.QuerySelectorAll(doc.doc, xmpRegionListLi)
+	mpRegions := xmlquery.QuerySelectorAll(doc.doc, xmpMPRegionLi)
+	acdRegions := xmlquery.QuerySelectorAll(doc.doc, xmpAcdRegionLi)
+
+	for _, li := range mwgRegions {
+		if !isFaceRegionType(relFirst(li, relMwgType)) {
 			continue
 		}
+
+		tally.declare()
 
 		cx, okX := parseFloat32(relFirst(li, relMwgAreaX))
 		cy, okY := parseFloat32(relFirst(li, relMwgAreaY))
 		w, okW := parseFloat32(relFirst(li, relMwgAreaW))
 		h, okH := parseFloat32(relFirst(li, relMwgAreaH))
+		diameter, okD := parseFloat32(relFirst(li, relMwgAreaD))
 
-		if !okX || !okY || !okW || !okH {
+		if !okX || !okY || (!okD && (!okW || !okH)) {
 			continue
 		}
 
-		if f, ok := normalizeRegionMWG(relFirst(li, relMwgName), cx, cy, w, h, relFirst(li, relMwgAreaUnit), appliedW, appliedH, orientation); ok {
+		rotation, _ := parseFloat32(relFirst(li, relMwgRotation))
+		if f, ok := normalizeRegionMWG(doc.mwgRegionName(li), cx, cy, w, h, diameter, relFirst(li, relMwgAreaUnit), rotation, appliedW, appliedH, options.Orientation); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
-	for _, li := range xmlquery.QuerySelectorAll(doc.doc, xmpMPRegionLi) {
+	for _, li := range mpRegions {
 		rect := relFirst(li, relMpRect)
 		if rect == "" {
 			continue
 		}
-		if f, ok := normalizeRegionMP(relFirst(li, relMpName), rect, orientation); ok {
+
+		tally.declare()
+
+		if f, ok := normalizeRegionMP(relFirst(li, relMpName), rect, options.Orientation); ok {
 			faces = append(faces, f)
+			tally.resolve()
 		}
 	}
 
-	return DedupFaces(faces)
+	acdW, acdH := doc.acdAppliedDimensions()
+	if acdW <= 0 || acdH <= 0 {
+		acdW, acdH = options.Width, options.Height
+	}
+
+	for _, li := range acdRegions {
+		if !isFaceRegionType(relFirst(li, relAcdType)) {
+			continue
+		}
+
+		tally.declare()
+
+		xExpr, yExpr := relAcdDlyX, relAcdDlyY
+		wExpr, hExpr, unitExpr := relAcdDlyW, relAcdDlyH, relAcdDlyUnit
+		if relFirst(li, xExpr) == "" {
+			xExpr, yExpr = relAcdAlgX, relAcdAlgY
+			wExpr, hExpr, unitExpr = relAcdAlgW, relAcdAlgH, relAcdAlgUnit
+		}
+
+		cx, okX := parseFloat32(relFirst(li, xExpr))
+		cy, okY := parseFloat32(relFirst(li, yExpr))
+		w, okW := parseFloat32(relFirst(li, wExpr))
+		h, okH := parseFloat32(relFirst(li, hExpr))
+		if !okX || !okY || !okW || !okH {
+			continue
+		}
+
+		if f, ok := normalizeRegionMWG(relFirst(li, relAcdName), cx, cy, w, h, 0, relFirst(li, unitExpr), 0, acdW, acdH, options.Orientation); ok {
+			faces = append(faces, f)
+			tally.resolve()
+		}
+	}
+
+	return FaceRegions{
+		Faces:    DedupFaces(faces),
+		Declared: xmlquery.QuerySelector(doc.doc, xmpRegionContainer) != nil,
+		Partial:  tally.partial(),
+	}
 }
 
 // Favorite reports the F-Stop custom-namespace favorite flag.
