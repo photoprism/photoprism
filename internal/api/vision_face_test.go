@@ -185,6 +185,23 @@ func TestPostVisionFace(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
+	t.Run("NotAnImage", func(t *testing.T) {
+		// A well-formed data URL that does not contain a decodable image must be rejected
+		// with 400 like the labels and nsfw endpoints, not answered with empty embeddings.
+		refs := map[string]string{
+			"PlainText": "data:text/plain;base64," + media.EncodeBase64String([]byte("not an image")),
+			"Svg":       "data:image/svg+xml;base64," + media.EncodeBase64String([]byte(`<svg xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"/></svg>`)),
+			"Html":      "data:text/html;base64," + media.EncodeBase64String([]byte("<html><body>hi</body></html>")),
+		}
+		for name, ref := range refs {
+			t.Run(name, func(t *testing.T) {
+				app, router, _ := NewApiTest()
+				PostVisionFace(router)
+				r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/vision/face", `{"images":["`+ref+`"]}`)
+				assert.Equal(t, http.StatusBadRequest, r.Code)
+			})
+		}
+	})
 	t.Run("NoBody", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PostVisionFace(router)
