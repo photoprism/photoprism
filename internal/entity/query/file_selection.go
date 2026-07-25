@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 
@@ -118,7 +119,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 
 	// Resolve photos in smart albums.
 	if photoIds, err := AlbumsPhotoUIDs(frm.Albums, false, o.Private); err != nil {
-		log.Warnf("query: %s", err.Error())
+		log.Warnf("query: failed to resolve smart album members for selection (%s)", clean.Error(err))
 	} else if len(photoIds) > 0 {
 		frm.Photos = append(frm.Photos, photoIds...)
 	}
@@ -205,8 +206,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 	}
 
 	// Limit the selection to the session's shared scope (no-op for full-access sessions). The selected
-	// photo UIDs are passed so pictures shared only through a filter-based smart album (folder, moment,
-	// calendar, region) stay downloadable, matching single-item access.
+	// photo UIDs are passed so pictures shared only through a filter-based smart album stay downloadable.
 	if sess != nil {
 		s = search.ScopeVisibleSelection(s, sess, frm.Photos)
 	}

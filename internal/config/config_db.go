@@ -312,7 +312,7 @@ func (c *Config) DatabasePassword() string {
 		// No password set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from environment variable for DB password
-		log.Warnf("config: failed to read database password from %s (%s)", fileName, err)
+		event.SystemWarn([]string{"config", "database password", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -445,8 +445,9 @@ const AsyncJobDrainTimeout = 30 * time.Second
 // do not race the provider being nilled, bounded by AsyncJobDrainTimeout so a stuck job
 // degrades to a logged warning instead of an indefinite hang.
 func (c *Config) CloseDb() error {
+	// Reported on the console-only system log, as the database backing the error log is going away.
 	if !entity.WaitForAsyncJobsTimeout(AsyncJobDrainTimeout) {
-		log.Warnf("config: timeout waiting for background jobs before closing the database")
+		event.SystemWarn([]string{"config", "database", "close", "timeout waiting for background jobs"})
 	}
 
 	if c.db != nil {

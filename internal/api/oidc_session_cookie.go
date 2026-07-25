@@ -17,6 +17,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -86,7 +87,8 @@ func oidcSessionSignalKey() []byte {
 		key := make([]byte, oidcSessionKeyLen)
 		_, _ = rand.Read(key)
 		oidcSessionKey = key
-		log.Warnf("oidc: using a process-local session-signal key because the persistent key could not be loaded or stored; OP session cookies will not verify across restarts or replicas")
+		// Console-only: identity-provider key management must not reach the browser log viewer.
+		event.SystemWarn([]string{"oidc", "session signal key", "persist", "using a process-local key, so OP session cookies will not verify across restarts or replicas"})
 	})
 	return oidcSessionKey
 }

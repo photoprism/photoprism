@@ -81,7 +81,7 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 	tokenScopes := acl.ScopeAttr(claims.Scope)
 	if !acl.ScopeAttrPermits(tokenScopes, resource, perms) {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
-			log.Debugf("auth: portal jwt missing required scope (token=%q resource=%s perms=%s)", clean.Scope(claims.Scope), resource, perms.String())
+			log.Debugf("auth: portal jwt missing required scope (token_scope=%q resource=%s perms=%s)", clean.Scope(claims.Scope), resource, perms.String())
 		}
 		return nil
 	}
