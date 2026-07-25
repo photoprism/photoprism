@@ -4250,9 +4250,6 @@
                 "CameraModel": {
                     "type": "string"
                 },
-                "CameraSerial": {
-                    "type": "string"
-                },
                 "CameraSrc": {
                     "type": "string"
                 },
@@ -4301,9 +4298,6 @@
                     "type": "string"
                 },
                 "DetailsSubject": {
-                    "type": "string"
-                },
-                "DocumentID": {
                     "type": "string"
                 },
                 "Duration": {
