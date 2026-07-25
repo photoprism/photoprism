@@ -29,10 +29,10 @@ func isXmpFaceSource(m *MediaFile) bool {
 	return m != nil && (m.IsRaw() || m.IsImage() && !m.IsAnimated())
 }
 
-// xmpFaceSources returns the primary preview and its logical still-image source.
-// It prefers the group the caller already resolved, which avoids re-globbing the
-// directory per photo and keeps the source's metadata cache warm; only the
-// deferred worker paths, which hold no group, fall back to RelatedFiles.
+// xmpFaceSources returns the primary preview followed by its logical still-image
+// source, which is therefore always last. It reuses the group the caller already
+// resolved, so indexing neither re-globs the directory nor re-reads the source's
+// metadata; only the deferred workers, which hold no group, fall back.
 func xmpFaceSources(m *MediaFile) MediaFiles {
 	if !isXmpFaceSource(m) {
 		return nil
@@ -157,17 +157,20 @@ func collectXmpFaces(m *MediaFile) (meta.FaceRegions, error) {
 	var faces []meta.Face
 	declared := false
 	partial := false
-	for _, source := range sources {
+	logical := len(sources) - 1
+
+	for i, source := range sources {
 		data := source.MetaData()
 
-		// MediaFile.MetaData reports routine conditions such as an unsupported
-		// EXIF container in Data.Error and logs them at debug level, so one
-		// unreadable source must not discard another source's valid regions.
-		// The set is still flagged partial: a source whose regions could not be
-		// read may hold the very region an unmatched marker belongs to.
+		// Data.Error covers routine conditions like an unsupported EXIF container,
+		// so one unreadable source must not discard another's regions. Only the
+		// logical source can hold regions the sweep would otherwise delete, so a
+		// derived preview that fails to parse does not make the set partial.
 		if data.Error != nil {
 			log.Debugf("faces: cannot read embedded xmp from %s (%s)", clean.Log(source.BaseName()), clean.Error(data.Error))
-			partial = true
+			if i == logical {
+				partial = true
+			}
 			continue
 		}
 
@@ -183,13 +186,10 @@ func collectXmpFaces(m *MediaFile) (meta.FaceRegions, error) {
 	return meta.FaceRegions{Faces: meta.DedupFaces(faces), Declared: declared, Partial: partial}, nil
 }
 
-// applyXmpName assigns an imported XMP name to a marker while keeping the change
-// local to that marker: it adopts an existing Person's canonical name (so
-// SyncSubject's exact-name compare short-circuits and never renames the Person
-// globally) or detaches any prior auto subject so a fresh Person is created,
-// then routes through Marker.SetName. Column changes on an already-saved marker
-// are persisted here; new markers are inserted later by Markers.Save.
-// It reports whether the marker changed.
+// applyXmpName assigns an imported XMP name to a marker and reports whether the
+// marker changed. It adopts an existing Person's canonical name or detaches a
+// prior auto subject, so the change stays local and never renames the Person
+// globally. Markers.Save inserts new markers; saved ones are updated here.
 func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 	name := clean.Name(rawName)
 	if name == "" {
@@ -219,13 +219,10 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 		return false, fmt.Errorf("faces: cannot import xmp name %s: %w", clean.Log(name), err)
 	}
 
-	// Resolve or create the Person when the name did not change and no existing
-	// subject was found: SetName's identical-name short-circuit skips SyncSubject,
-	// so without this the marker would keep an empty SubjUID (or, worse, we would
-	// persist a detached link). Marker.Subject reuses the same fresh-import path
-	// (NewSubject + FirstOrCreateSubject) and, for SrcXmp, never renames the Person
-	// globally. Claiming SubjSrc for XMP first satisfies Subject's non-auto guard;
-	// the source priority check above already ran, so this never downgrades.
+	// SetName's identical-name short-circuit skips SyncSubject, which would leave
+	// an empty SubjUID or persist a detached link, so resolve the Person here.
+	// Claiming SubjSrc for XMP first satisfies Subject's non-auto guard; the
+	// priority check above already ran, so this never downgrades.
 	if m.SubjUID == "" && m.MarkerName != "" {
 		m.SubjSrc = entity.SrcXmp
 		m.Subject()
@@ -425,10 +422,9 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 		count++
 	}
 
-	// Skip the destructive sweep unless the region set actually states that these
-	// are all the faces. A file that declares no region container says nothing
-	// about faces, and a partial parse may be missing regions, so in both cases
-	// an unmatched marker is uninformative rather than stale.
+	// Skip the destructive sweep unless the set states that these are all the
+	// faces: an undeclared or partial parse may be missing regions, so an
+	// unmatched marker is uninformative rather than stale.
 	if !regions.Declared || regions.Partial {
 		return count, nil
 	}

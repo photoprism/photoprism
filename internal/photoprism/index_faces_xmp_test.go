@@ -1379,6 +1379,39 @@ func TestCollectXmpFaces_UnreadableSourceSkipped(t *testing.T) {
 	assert.True(t, regions.Partial, "an unread source must suppress the delete sweep")
 }
 
+// TestCollectXmpFaces_UnreadablePreviewStaysAuthoritative verifies that only the
+// logical source can make a region set partial: a generated preview holds no
+// regions the source lacks, so failing to read it must not block the sweep.
+func TestCollectXmpFaces_UnreadablePreviewStaysAuthoritative(t *testing.T) {
+	c := newXmpIndexConfig(t, "collect-unreadable-preview")
+	if c.ExifToolBin() == "" {
+		t.Skip("exiftool not configured")
+	}
+
+	dir := filepath.Join(c.OriginalsPath(), "unreadable-preview")
+	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+	previewName := filepath.Join(dir, "photo.jpg")
+	sourceName := filepath.Join(dir, "source.jpg")
+	require.NoError(t, os.WriteFile(previewName, []byte("not an image"), fs.ModeFile)) //nolint:gosec // isolated test path
+	require.NoError(t, fs.Copy("testdata/xmp-faces/embedded-mwg.jpg", sourceName, false))
+
+	source, err := NewMediaFile(sourceName)
+	require.NoError(t, err)
+	require.NoError(t, source.CreateExifToolJson(NewConvert(c)))
+
+	m, err := NewMediaFile(previewName)
+	require.NoError(t, err)
+	require.NotNil(t, m.MetaData().Error, "the preview must be unreadable for this test to mean anything")
+	m.SetRelatedMain(source)
+
+	regions, err := collectXmpFaces(m)
+	require.NoError(t, err, "an unreadable preview must not fail the import")
+	require.Len(t, regions.Faces, 1, "the logical source's regions must be collected")
+	assert.Equal(t, "Alice", regions.Faces[0].Name)
+	assert.True(t, regions.Declared)
+	assert.False(t, regions.Partial, "an unread preview must not suppress the delete sweep")
+}
+
 // TestRestoreMarkerName verifies that dropping an obsolete XMP name restores the
 // marker's clustered name when one exists and flags it for review otherwise.
 func TestRestoreMarkerName(t *testing.T) {
