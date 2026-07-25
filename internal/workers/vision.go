@@ -269,12 +269,13 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		if changed {
 			if saveErr := m.SaveVision(); saveErr == nil {
 				updated++
-			}
 
-			// Save sidecar YAML backup if enabled.
-			if w.conf.SidecarYaml() {
-				if yamlErr := m.SaveSidecarYaml(w.conf.OriginalsPath(), w.conf.SidecarPath()); yamlErr != nil {
-					log.Errorf("vision: %s (save yaml sidecar)", yamlErr)
+				// Save sidecar YAML backup if enabled. Writing it only after a successful
+				// save keeps the backup from describing metadata the database rejected.
+				if w.conf.SidecarYaml() {
+					if yamlErr := m.SaveSidecarYaml(w.conf.OriginalsPath(), w.conf.SidecarPath()); yamlErr != nil {
+						log.Errorf("vision: %s in %s (save yaml sidecar)", clean.Error(yamlErr), logName)
+					}
 				}
 			}
 		}
