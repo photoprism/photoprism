@@ -1099,3 +1099,106 @@ func TestFaceOptions(t *testing.T) {
 	assert.Equal(t, data.Height, got.Height)
 	assert.Equal(t, data.Orientation, got.Orientation)
 }
+
+// TestXmpFaceSources covers the logical still-image source set: a nil input and
+// a video yield nil, a standalone image resolves to itself, and a preview also
+// includes its distinct RAW original.
+func TestXmpFaceSources(t *testing.T) {
+	c := newXmpIndexConfig(t, "xmp-face-sources")
+
+	t.Run("NilReturnsNil", func(t *testing.T) {
+		assert.Nil(t, xmpFaceSources(nil), "a nil media file has no XMP face sources")
+	})
+
+	t.Run("VideoReturnsNil", func(t *testing.T) {
+		video, err := NewMediaFile(filepath.Join(c.SamplesPath(), "gopher-video.mp4"))
+		require.NoError(t, err)
+		assert.Nil(t, xmpFaceSources(video), "a video is not an XMP face source")
+	})
+
+	t.Run("StandaloneImageResolvesToSelf", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "standalone")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		sources := xmpFaceSources(m)
+		require.Len(t, sources, 1, "a standalone still image is its own only source")
+		assert.Equal(t, m.FileName(), sources[0].FileName())
+	})
+
+	t.Run("PreviewIncludesLogicalRawSource", func(t *testing.T) {
+		dir := "preview-raw"
+		rawName := filepath.Join(c.OriginalsPath(), dir, "face.dng")
+		previewName := filepath.Join(c.SidecarPath(), dir, "face.dng.jpg")
+
+		raw, err := NewMediaFile(filepath.Join(c.SamplesPath(), "canon_eos_6d.dng"))
+		require.NoError(t, err)
+		require.NoError(t, raw.Copy(rawName, false))
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", previewName, false))
+
+		preview, err := NewMediaFile(previewName)
+		require.NoError(t, err)
+		sources := xmpFaceSources(preview)
+		require.Len(t, sources, 2, "a preview and its distinct RAW original must both be returned")
+		assert.Equal(t, preview.FileName(), sources[0].FileName())
+		assert.True(t, sources[1].IsRaw(), "the second source must be the logical RAW original")
+	})
+}
+
+// TestApplyXmpFaces covers the guard branches and the success path: a nil file
+// is rejected, a nil media file or an empty file hash is a no-op, and a still
+// image with a sidecar region imports and persists a named marker.
+func TestApplyXmpFaces(t *testing.T) {
+	c := newXmpIndexConfig(t, "apply-xmp-faces")
+
+	t.Run("NilFile", func(t *testing.T) {
+		saved, count, err := ApplyXmpFaces(nil, nil)
+		assert.Error(t, err, "a nil file must be rejected")
+		assert.False(t, saved)
+		assert.Equal(t, 0, count)
+	})
+
+	t.Run("NilMediaFileNoOp", func(t *testing.T) {
+		file := newXmpFile(t)
+		saved, count, err := ApplyXmpFaces(nil, file)
+		require.NoError(t, err, "a nil media file must be a no-op, not an error")
+		assert.False(t, saved)
+		assert.Equal(t, 0, count)
+		markers, err := entity.FindMarkers(file.FileUID)
+		require.NoError(t, err)
+		assert.Empty(t, markers, "a no-op must not create markers")
+	})
+
+	t.Run("EmptyFileHashNoOp", func(t *testing.T) {
+		m, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
+		require.NoError(t, err)
+		saved, count, err := ApplyXmpFaces(m, &entity.File{})
+		require.NoError(t, err, "an empty file hash must be a no-op, not an error")
+		assert.False(t, saved)
+		assert.Equal(t, 0, count)
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		dir := filepath.Join(c.OriginalsPath(), "apply-success")
+		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+		imageName := filepath.Join(dir, "photo.jpg")
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg", imageName, false))
+		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", imageName+fs.ExtXMP, false))
+
+		m, err := NewMediaFile(imageName)
+		require.NoError(t, err)
+		file := newXmpFile(t)
+
+		saved, count, err := ApplyXmpFaces(m, file)
+		require.NoError(t, err)
+		assert.True(t, saved, "a sidecar region must persist a marker")
+		assert.GreaterOrEqual(t, count, 1, "the imported face must be counted")
+
+		markers, err := entity.FindMarkers(file.FileUID)
+		require.NoError(t, err)
+		assert.True(t, hasXmpMarkerName(markers, "Cara"), "sidecar region 'Cara' must import, got %+v", markers)
+	})
+}
