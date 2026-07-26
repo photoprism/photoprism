@@ -5,9 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestPhotosFilterAlbum(t *testing.T) {
@@ -170,11 +168,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if entity.DbDialect() == dsn.DialectMySQL || entity.DbDialect() == dsn.DialectPostgreSQL {
-			assert.Len(t, photos, 0)
-		} else {
-			assert.Len(t, photos, 1)
-		}
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -442,11 +436,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if entity.DbDialect() == dsn.DialectMySQL || entity.DbDialect() == dsn.DialectPostgreSQL {
-			assert.Len(t, photos, 0)
-		} else {
-			assert.Len(t, photos, 1)
-		}
+		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotos

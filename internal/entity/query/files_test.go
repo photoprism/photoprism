@@ -1,14 +1,12 @@
 package query
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestFilesByPath(t *testing.T) {
@@ -111,31 +109,13 @@ func TestFilesByUID(t *testing.T) {
 		assert.Equal(t, 0, len(files))
 	})
 	t.Run("Error", func(t *testing.T) {
-		files, err := FilesByUID([]string{"fs6sg6bw45bnlxxx"}, -100, 0)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, 0, len(files))
+		_, err := FilesByUID([]string{"fs6sg6bw45bnlxxx"}, -100, 0)
+		assert.Error(t, err)
 	})
 
 	t.Run("Negative limit with offset", func(t *testing.T) {
-		if entity.DbDialect() == dsn.DialectMySQL {
-			log.Info("Expect SQL syntax Error to be generated")
-		}
-		files, err := FilesByUID([]string{"fs6sg6bw45bnlqdw"}, -100, 100)
-
-		switch entity.DbDialect() {
-		case dsn.DialectPostgreSQL, dsn.DialectSQLite:
-			if err != nil {
-				t.Fatal(err)
-			}
-			assert.Equal(t, 0, len(files))
-		case dsn.DialectMySQL:
-			assert.Error(t, err)
-		default:
-			t.Fatal(fmt.Sprintf("Unsupported dialect %s", entity.DbDialect()))
-		}
+		_, err := FilesByUID([]string{"fs6sg6bw45bnlqdw"}, -100, 100)
+		assert.Error(t, err)
 	})
 
 	t.Run("offset and limit", func(t *testing.T) {
