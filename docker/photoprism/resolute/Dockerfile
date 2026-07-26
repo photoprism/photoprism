@@ -89,6 +89,7 @@ COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 RUN apt-get update && \
     apt-get -qq dist-upgrade && \
     yt-dlp -U && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \
     /scripts/cleanup.sh
 
 # Set default working directory.
