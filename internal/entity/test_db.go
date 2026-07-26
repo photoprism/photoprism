@@ -47,7 +47,10 @@ func TestDbDSN(driver, dbDsn string) string {
 	conf, err := mysql.ParseDSN(dbDsn)
 
 	if err != nil {
-		log.Warnf("mysql: %s (parse test database dsn)", err)
+		// A test that isolates its database with PHOTOPRISM_TEST_DSN alone leaves
+		// the driver pointing at MySQL, so its file path lands here and the config
+		// error that follows terminates the test binary.
+		log.Warnf("mysql: %s is not a mysql dsn, set PHOTOPRISM_TEST_DRIVER to match it (%s)", clean.Log(dbDsn), err)
 		return dbDsn
 	}
 

@@ -115,7 +115,7 @@ func hasXmpMarkerName(markers entity.Markers, name string) bool {
 // newXmpIndexConfig returns an isolated config and installs it for XMP discovery.
 func newXmpIndexConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), name+".db"))
+	useTestDb(t, name)
 
 	c := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
 	oldConfig := Config()

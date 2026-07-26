@@ -12,7 +12,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -102,8 +101,7 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 
 	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one shared
 	// database, so it must be isolated for reliable row counts.
-	t.Setenv("PHOTOPRISM_TEST_DRIVER", dsn.DriverSQLite3)
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-dup-race.db"))
+	useTestDb(t, "index-dup-race")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
 
@@ -232,8 +230,7 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	// shared database; it and the storage must be isolated so the flash.jpg
 	// content does not collide by hash with a row another test indexed with
 	// an explicit original name.
-	t.Setenv("PHOTOPRISM_TEST_DRIVER", dsn.DriverSQLite3)
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-original-name.db"))
+	useTestDb(t, "index-original-name")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
 
@@ -304,8 +301,7 @@ func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
 	indexSidecar := func(t *testing.T, detectFaces, importFaceTags bool) entity.Markers {
 		t.Helper()
 
-		t.Setenv("PHOTOPRISM_TEST_DRIVER", dsn.DriverSQLite3)
-		t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "import-face-tags.db"))
+		useTestDb(t, "import-face-tags")
 		cfg := config.NewMinimalTestConfigWithDb("import-face-tags", filepath.Join(t.TempDir(), "storage"))
 
 		// collectXmpFaces resolves the sidecar via the package-level config.
@@ -369,7 +365,7 @@ func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "faces-only-recount.db"))
+	useTestDb(t, "faces-only-recount")
 	cfg := config.NewMinimalTestConfigWithDb("faces-only-recount", filepath.Join(t.TempDir(), "storage"))
 	oldCfg := Config()
 	SetConfig(cfg)
