@@ -8,9 +8,11 @@
 #   1. Does Ubuntu's AppArmor "gs" profile attach inside the container? That decides whether the
 #      unconfined /usr/local/bin/gs copy in the resolute-slim base removes a real confinement layer
 #      or is a no-op that can be dropped.
-#   2. Does the effective ImageMagick policy allow the PDF coder? An image without our own policy.xml
-#      inherits the distro default. Debian and Ubuntu disabled PS/PDF there after the 2018 Ghostscript
-#      CVEs and have since dropped that block again, so the answer depends on the base image release.
+#   2. Are the ImageMagick policy rules actually in force? An image without our own policy.xml
+#      inherits the distro default, and what that denies varies by release: Debian and Ubuntu blocked
+#      PS/PDF after the 2018 Ghostscript CVEs and have since dropped the block again. A rule whose
+#      pattern matches no registered coder, module, or delegate name is also silently ignored while
+#      still printing in "-list policy", so the rules below are probed rather than read.
 #
 # Run it on the DOCKER HOST (it needs the Docker CLI and a host that loads AppArmor policy).
 # It does not modify any image; it only runs containers and reads their output.
@@ -72,7 +74,23 @@ endobj
 trailer<</Root 1 0 R>>
 PDF
 
-chmod 0644 "$WORKDIR/probe.pdf"
+# Fixtures for the policy probes. A 1x1 PNG gives the MSL and indirect-read probes something
+# real to read, so "no output file" means the policy refused rather than that the input was bad.
+base64 -d > "$WORKDIR/policy-probe.png" <<'PNG'
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==
+PNG
+
+cat > "$WORKDIR/policy-probe.msl" <<'MSL'
+<?xml version="1.0" encoding="UTF-8"?>
+<image>
+  <read filename="/probe/policy-probe.png"/>
+  <write filename="/probe/policy-msl-out.png"/>
+</image>
+MSL
+
+echo "/probe/policy-probe.png" > "$WORKDIR/policy-probe-list.txt"
+
+chmod 0644 "$WORKDIR"/probe.pdf "$WORKDIR"/policy-probe.*  "$WORKDIR"/policy-probe-list.txt
 
 # probe runs one command in the image with the work directory bind-mounted, and reports the
 # exit status plus any output. Kept read-only except for the output file the delegate writes.
@@ -101,11 +119,49 @@ for image in "${IMAGES[@]}"; do
   probe "$image" 'command -v gs; ls -l /usr/bin/gs /usr/local/bin/gs 2>/dev/null; gs --version 2>/dev/null'
   echo
 
-  echo "-- ImageMagick policy in effect --"
+  echo "-- ImageMagick policy file present --"
   # shellcheck disable=SC2016  # single quotes are deliberate: expand in the container, not here
-  probe "$image" 'for f in /etc/ImageMagick-7/policy.xml /etc/ImageMagick-6/policy.xml; do
-      [ -f "$f" ] && { echo "== $f =="; grep -E "PDF|PS|ghostscript|delegate|coder" "$f" | grep -v "^ *<!--" | sed "s/^/  /"; }
-    done; echo "(none listed above means no policy file present)"'
+  probe "$image" 'found=no
+    for f in /etc/ImageMagick-7/policy.xml /etc/ImageMagick-6/policy.xml; do
+      [ -f "$f" ] || continue
+      found=yes
+      if grep -q PhotoPrism "$f"; then echo "  $f (PhotoPrism policy)"; else echo "  $f (distribution default)"; fi
+    done
+    if [ "$found" = no ]; then echo "  none — the image ships no ImageMagick policy at all"; fi
+    CONVERT=$(command -v convert || command -v magick)
+    if [ -n "$CONVERT" ]; then echo "  rules loaded: $("$CONVERT" -list policy 2>/dev/null | grep -c "Policy:")"; fi'
+  echo
+
+  echo "-- ImageMagick policy enforcement (probed, not read) --"
+  # Each denial is confirmed by attempting the operation. Reading the file or counting rules in
+  # "-list policy" cannot distinguish an enforced rule from one whose pattern matches nothing.
+  # shellcheck disable=SC2016  # single quotes are deliberate: expand in the container, not here
+  probe "$image" 'CONVERT=$(command -v convert || command -v magick)
+    verdict() { if [ -s "$2" ]; then echo "  $1 ALLOWED"; else echo "  $1 blocked"; fi; }
+    rm -f /probe/policy-text-out.png /probe/policy-msl-out.png /probe/policy-at-out.png /probe/policy-http-out.png
+    "$CONVERT" text:/etc/hostname /probe/policy-text-out.png >/dev/null 2>&1
+    verdict "text: coder ............" /probe/policy-text-out.png
+    "$CONVERT" msl:/probe/policy-probe.msl null: >/dev/null 2>&1
+    verdict "msl: coder ............." /probe/policy-msl-out.png
+    "$CONVERT" @/probe/policy-probe-list.txt /probe/policy-at-out.png >/dev/null 2>&1
+    verdict "@file indirect read ...." /probe/policy-at-out.png
+    ERR=$("$CONVERT" http://127.0.0.1:9/probe.png /probe/policy-http-out.png 2>&1 | head -1)
+    if [ -s /probe/policy-http-out.png ]; then
+      echo "  http: coder ............ ALLOWED"
+    elif echo "$ERR" | grep -qiE "security policy|NotAuthorized"; then
+      echo "  http: coder ............ blocked"
+    elif echo "$ERR" | grep -qiE "no decode delegate|unable to open image"; then
+      echo "  http: coder ............ blocked (not resolved as a URL)"
+    elif echo "$ERR" | grep -qiE "delegate|curl"; then
+      echo "  http: coder ............ ALLOWED (reached the fetch, then failed to connect)"
+    else
+      echo "  http: coder ............ INCONCLUSIVE: $ERR"
+    fi'
+  echo
+
+  echo "-- ImageMagick resource limits in effect --"
+  # shellcheck disable=SC2016  # single quotes are deliberate: expand in the container, not here
+  probe "$image" 'CONVERT=$(command -v convert || command -v magick); "$CONVERT" -list resource 2>/dev/null | sed "s/^/  /"'
   echo
 
   echo "-- Direct Ghostscript render (bypasses ImageMagick) --"
@@ -121,7 +177,7 @@ for image in "${IMAGES[@]}"; do
 
   echo "-- Results --"
   probe "$image" 'ls -l /probe/gs-direct.jpg /probe/im-out.jpg 2>/dev/null || true'
-  rm -f "$WORKDIR/gs-direct.jpg" "$WORKDIR/im-out.jpg"
+  rm -f "$WORKDIR/gs-direct.jpg" "$WORKDIR/im-out.jpg" "$WORKDIR"/policy-*-out.png
   echo
 done
 
@@ -138,6 +194,18 @@ How to read this
   gs OK  + convert FAILED   The ImageMagick policy blocks the PDF coder, not AppArmor — so
                             PDF indexing is broken by policy rather than by confinement.
   no gs binary              The image ships no Ghostscript; PDF covers cannot be generated.
+
+  text/msl/@file ALLOWED    Our policy is not in force. Either the image carries the distribution
+                            default, or a rule is present but its pattern matches nothing.
+  http: ALLOWED             ImageMagick can still make outbound requests while processing media.
+                            "reached the fetch" means the coder was permitted and only the
+                            connection failed, which is an allowed result, not a block.
+  http: INCONCLUSIVE        Unrecognized error text — read the line and classify it by hand rather
+                            than assuming the block held.
+
+  Resource limits matter as much as the denials: Disk below roughly 10GiB or Width/Height below
+  the PHOTOPRISM_JPEG_SIZE ceiling rejects valid media with "cache resources exhausted" or
+  "width or height exceeds limit".
 
 Check the host kernel log alongside the run:
   sudo dmesg -T | grep -i 'apparmor.*DENIED' | tail -20
