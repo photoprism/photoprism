@@ -40,6 +40,8 @@ func ResetTestFixtures() {
 
 	CreateTestFixtures()
 
+	FlushCaches()
+
 	File{}.RegenerateIndex()
 
 	log.Debugf("migrate: recreated test fixtures [%s]", time.Since(start))

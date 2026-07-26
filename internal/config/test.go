@@ -16,6 +16,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -277,6 +278,9 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s (init)", err.Error())
 	}
+
+	// Force all caches to be cleared
+	entity.FlushCaches()
 
 	if cachedDb {
 		return c

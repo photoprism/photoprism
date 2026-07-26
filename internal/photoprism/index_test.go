@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -15,7 +16,7 @@ func TestIndex_Start(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	cfg := config.TestConfig()
+	cfg := config.NewMinimalTestConfigWithDb("index-start", filepath.Join(t.TempDir(), "storage"))
 	initErr := cfg.InitializeTestData()
 	assert.NoError(t, initErr)
 
@@ -60,7 +61,7 @@ func TestIndex_File(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	cfg := config.TestConfig()
+	cfg := config.NewMinimalTestConfigWithDb("index-file", filepath.Join(t.TempDir(), "storage"))
 	initErr := cfg.InitializeTestData()
 	assert.NoError(t, initErr)
 

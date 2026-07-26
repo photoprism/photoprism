@@ -229,10 +229,6 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one shared
-	// SQLite file, so the database must be isolated for reliable row counts.
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-dup-race.db"))
-
 	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
 
 	// MediaFile.Root() resolves paths against the package-level config, so it
@@ -355,12 +351,6 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
-
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one
-	// shared SQLite file; the database and storage must be isolated so the
-	// flash.jpg content does not collide by hash with a row another test
-	// indexed with an explicit original name.
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-original-name.db"))
 
 	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
 
