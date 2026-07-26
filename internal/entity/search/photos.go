@@ -885,11 +885,13 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = FALSE AND a.deleted_at IS NULL)")
 		} else if txt.NotEmpty(frm.Album) {
 			v := strings.Trim(frm.Album, "*%") + "%"
+			// Slugs are stored as lowercase binary strings, so the value must be
+			// folded to match on MySQL/MariaDB/Postgres as well.
 			switch entity.DbDialect() {
 			case dsn.DialectPostgreSQL:
-				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title ILIKE ? OR a.album_slug LIKE ?))", v, v)
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title ILIKE ? OR a.album_slug LIKE ?))", v, strings.ToLower(v))
 			default:
-				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, v)
+				s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = FALSE WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, strings.ToLower(v))
 			}
 		} else if txt.NotEmpty(frm.Albums) {
 			var wheres []string
