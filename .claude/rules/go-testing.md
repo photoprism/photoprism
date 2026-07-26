@@ -19,7 +19,9 @@
 
 ### MariaDB Runs
 
-`make test-mariadb` runs the backend suite against MariaDB instead of SQLite. Each package gets its own `acceptance_<pkg>_<hash>` database via `entity.TestDbDSN`, mirroring the file-per-package isolation SQLite provides; `make reset-acceptance` drops them. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
+`make test-mariadb` runs the backend suite against MariaDB instead of SQLite, and each edition has the same target (`make -C pro test-mariadb`, likewise `plus` and `portal`). Each package gets its own `acceptance_<pkg>_<hash>` database via `entity.TestDbDSN`, mirroring the file-per-package isolation SQLite provides; `make reset-acceptance` drops them. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
+
+Makefile recipes talk to the development database through `$(MARIADB)`, which defaults to the `mariadb` client and can be overridden. The `mysql` string stays where it names the SQL driver (`PHOTOPRISM_TEST_DRIVER`, `dsn.DriverMySQL`) and in the MySQL 8 compatibility tooling (`compose.mysql.yaml`, `PHOTOPRISM_TEST_DSN_MYSQL8`).
 
 ### Test Config Helpers
 

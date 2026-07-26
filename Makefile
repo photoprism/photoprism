@@ -54,6 +54,9 @@ UID := $(shell id -u)
 GID := $(shell id -g)
 HASRICHGO := $(shell which richgo)
 
+# Client for the development database, which runs MariaDB.
+MARIADB ?= mariadb
+
 ifdef HASRICHGO
     GOTEST=richgo test
 else
@@ -255,7 +258,7 @@ terminal:
 mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
 mariadb-init:
-	mariadb < scripts/sql/mariadb-init.sql
+	$(MARIADB) < scripts/sql/mariadb-init.sql
 root: root-terminal
 root-terminal:
 	$(DOCKER_COMPOSE) exec -u root photoprism bash
@@ -529,17 +532,17 @@ vitest-component:
 	(cd frontend && npm run test-component)
 reset-mariadb:
 	$(info Resetting photoprism database...)
-	mysql < scripts/sql/reset-photoprism.sql
+	$(MARIADB) < scripts/sql/reset-photoprism.sql
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
-	mysql < scripts/sql/reset-testdb.sql
+	$(MARIADB) < scripts/sql/reset-testdb.sql
 reset-mariadb-local:
 	$(info Resetting local database...)
-	mysql < scripts/sql/reset-local.sql
+	$(MARIADB) < scripts/sql/reset-local.sql
 reset-mariadb-acceptance:
 	$(info Resetting acceptance databases...)
-	mysql -N -B -e "SELECT CONCAT('DROP DATABASE ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | mysql
-	mysql < scripts/sql/reset-acceptance.sql
+	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | $(MARIADB)
+	$(MARIADB) < scripts/sql/reset-acceptance.sql
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance

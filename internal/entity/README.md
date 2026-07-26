@@ -42,7 +42,7 @@ When a test needs to prove a write advanced a timestamp, prefer one of:
 Tests default to SQLite. To exercise the models against MariaDB (which is stricter and is the production database for some subsystems such as the cluster registry):
 
 ```bash
-mysql < scripts/sql/reset-acceptance.sql
+mariadb < scripts/sql/reset-acceptance.sql
 PHOTOPRISM_TEST_DRIVER="mysql" \
 PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:4001)/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" \
 go test ./internal/entity/... -count=1 -tags="slow,develop"
