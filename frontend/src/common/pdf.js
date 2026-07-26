@@ -46,21 +46,25 @@ export function isPdfDocument(model) {
   return model.Mime === "application/pdf" || model.FileType === "pdf";
 }
 
-// getPdfWorker returns a shared pdfjs worker, created once. The legacy worker is
-// an ES module, so it is wrapped in a module Worker (the bundler emits it as a
-// separate asset). Passing this PDFWorker to every getDocument call keeps it
-// alive across documents: pdfjs records a worker on the loading task only when it
-// created that worker itself, so tearing a document down never destroys ours.
-// The worker is intentionally never terminated; it is module-scoped and reused
-// for the whole app session.
+// workerSrc returns the URL of the bundled pdfjs worker, which points at the CDN
+// whenever the rest of the bundle does.
+function workerSrc() {
+  return new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).href;
+}
+
+// getPdfWorker returns the shared pdfjs worker, created once and never terminated.
+// pdfjs constructs it rather than us: a Worker script must be same-origin, and pdfjs
+// wraps a cross-origin workerSrc in a blob so a CDN-hosted bundle keeps working.
+// Passing our own PDFWorker to getDocument keeps it alive across documents.
 function getPdfWorker(lib) {
   if (pdfWorker !== null) {
     return pdfWorker;
   }
 
   try {
-    const port = new Worker(new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url), { type: "module" });
-    pdfWorker = new lib.PDFWorker({ port });
+    // Also the fallback: pdfjs builds its own worker from this if the line below fails.
+    lib.GlobalWorkerOptions.workerSrc = workerSrc();
+    pdfWorker = new lib.PDFWorker({ name: "photoprism" });
   } catch (e) {
     console.warn("pdf: worker setup failed", e);
     pdfWorker = null;

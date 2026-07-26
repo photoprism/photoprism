@@ -33,6 +33,7 @@ var CorsExt = map[string]bool{
 	".woff2": true,
 	".css":   true,
 	".js":    true, // Required for the MapLibre GL RTL text plugin.
+	".mjs":   true, // Required for the pdf.js worker, which a CDN-hosted bundle imports cross-origin.
 	".json":  true, // Required for static frontend configuration files.
 	".svg":   true, // Required for SVG icons that depend on additional styles or fonts.
 }
