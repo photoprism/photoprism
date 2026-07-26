@@ -1,21 +1,16 @@
 #!/usr/bin/env bash
 
 # check-pdf-rendering.sh determines whether a container image can rasterize a PDF through
-# ImageMagick's Ghostscript delegate, and which layer blocks it when it cannot.
+# ImageMagick's Ghostscript delegate, and reports which layer blocks it when it cannot.
 #
-# It answers two questions that cannot be settled by reading the Dockerfiles:
+# The result cannot be settled by reading the Dockerfiles: a policy rule whose pattern matches no
+# registered coder, module, or delegate name is silently ignored while still printing in
+# "-list policy", so an inert rule looks exactly like an enforced one. The checks below therefore
+# probe the running image rather than read its configuration. An image without our own policy.xml
+# inherits the distro default, which varies by release.
 #
-#   1. Does Ubuntu's AppArmor "gs" profile attach inside the container? That decides whether the
-#      unconfined /usr/local/bin/gs copy in the resolute-slim base removes a real confinement layer
-#      or is a no-op that can be dropped.
-#   2. Are the ImageMagick policy rules actually in force? An image without our own policy.xml
-#      inherits the distro default, and what that denies varies by release: Debian and Ubuntu blocked
-#      PS/PDF after the 2018 Ghostscript CVEs and have since dropped the block again. A rule whose
-#      pattern matches no registered coder, module, or delegate name is also silently ignored while
-#      still printing in "-list policy", so the rules below are probed rather than read.
-#
-# Run it on the DOCKER HOST (it needs the Docker CLI and a host that loads AppArmor policy).
-# It does not modify any image; it only runs containers and reads their output.
+# Run it on the DOCKER HOST (it needs the Docker CLI). It does not modify any image; it only runs
+# containers and reads their output.
 #
 # Usage:
 #   scripts/dist/check-pdf-rendering.sh [image ...]
@@ -39,25 +34,25 @@ fi
 echo "== Host AppArmor state =="
 if [[ -d /sys/kernel/security/apparmor ]]; then
   echo "apparmor: enabled"
-  # A loaded gs profile is the precondition for the confinement this checks.
+  # A loaded gs profile on the host can affect whether Ghostscript runs inside the container.
   if [[ -r /sys/kernel/security/apparmor/profiles ]]; then
     if grep -qE '(^|/)gs( |\()' /sys/kernel/security/apparmor/profiles 2>/dev/null; then
       echo "gs profile: LOADED on host"
       grep -E '(^|/)gs( |\()' /sys/kernel/security/apparmor/profiles 2>/dev/null | sed 's/^/  /'
     else
-      echo "gs profile: not loaded on host — the confinement under test cannot apply here"
+      echo "gs profile: not loaded on host — host policy cannot affect the result here"
     fi
   else
     echo "gs profile: cannot read /sys/kernel/security/apparmor/profiles (need root?)"
   fi
 else
-  echo "apparmor: NOT enabled on this host — the confinement under test cannot apply here"
+  echo "apparmor: NOT enabled on this host — host policy cannot affect the result here"
 fi
 echo
 
 # A minimal one-page PDF, written from the host so the container reads it over a bind mount.
-# The bind mount is the point: the reported denial was for reads outside the container's own
-# filesystem, so an in-image temp file would not reproduce it.
+# The bind mount is the point: host policy applies to reads outside the container's own
+# filesystem, so an in-image temp file would not exercise the same path.
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
@@ -185,14 +180,12 @@ cat <<'NOTE'
 ======================================================================
 How to read this
 ======================================================================
-  gs OK  + convert OK       PDF indexing works. If /usr/local/bin/gs exists, re-run after
-                            renaming it to see whether /usr/bin/gs also succeeds — if it
-                            does, the unconfined copy is a no-op and can be dropped.
+  gs OK  + convert OK       PDF indexing works. Ghostscript installation in the base images
+                            is deliberate — see the related specs before changing it.
   gs FAILED                 Ghostscript itself is blocked. Check `dmesg | grep -i apparmor`
-                            on the host for DENIED lines naming the bind-mount path; that
-                            confirms the profile attaches inside the container.
-  gs OK  + convert FAILED   The ImageMagick policy blocks the PDF coder, not AppArmor — so
-                            PDF indexing is broken by policy rather than by confinement.
+                            on the host for DENIED lines naming the bind-mount path.
+  gs OK  + convert FAILED   The ImageMagick policy blocks the PDF coder — PDF indexing is
+                            broken by policy rather than by the host.
   no gs binary              The image ships no Ghostscript; PDF covers cannot be generated.
 
   text/msl/@file ALLOWED    Our policy is not in force. Either the image carries the distribution
