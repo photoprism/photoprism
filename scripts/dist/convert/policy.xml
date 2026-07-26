@@ -8,87 +8,74 @@
     stealth NMTOKEN #IMPLIED value CDATA #IMPLIED>
 ]>
 <!--
-  Configure ImageMagick policies.
+  ImageMagick security policy for PhotoPrism base images.
 
-  Domains include system, delegate, coder, filter, path, or resource.
+  Domains are system, delegate, coder, module, filter, path, or resource. Rights are
+  none, read, write, execute, and all, combined with "|". Patterns are glob expressions
+  and may use braces to list alternatives, for example "{GIF,JPEG,PNG}".
 
-  Rights include none, read, write, execute and all.  Use | to combine them,
-  for example: "read | write" to permit read from, or write to, a path.
+  Names must match what ImageMagick registers, which is not always the format name a
+  user types. Verify a rule before trusting it:
 
-  Use a glob expression as a pattern.
+    magick -list policy      shows the rules that were loaded
+    magick -list format      shows coder names and the module that provides them
+    magick -list delegate    shows delegate names, e.g. "https:decode", not "HTTPS"
 
-  Suppose we do not want users to process MPEG video images:
-
-    <policy domain="delegate" rights="none" pattern="mpeg:decode" />
-
-  Here we do not want users reading images from HTTP:
-
-    <policy domain="coder" rights="none" pattern="HTTP" />
-
-  The /repository file system is restricted to read only.  We use a glob
-  expression to match all paths that start with /repository:
-
-    <policy domain="path" rights="read" pattern="/repository/*" />
-
-  Lets prevent users from executing any image filters:
-
-    <policy domain="filter" rights="none" pattern="*" />
-
-  Any large image is cached to disk rather than memory:
-
-    <policy domain="resource" name="area" value="1GP"/>
-
-  Use the default system font unless overridden by the application:
-
-    <policy domain="system" name="font" value="/usr/share/fonts/favorite.ttf"/>
-
-  Define arguments for the memory, map, area, width, height and disk resources
-  with SI prefixes (.e.g 100MB).  In addition, resource policies are maximums
-  for each instance of ImageMagick (e.g. policy memory limit 1GB, -limit 2GB
-  exceeds policy maximum so memory limit is 1GB).
-
-  Rules are processed in order.  Here we want to restrict ImageMagick to only
-  read or write a small subset of proven web-safe image types:
-
-    <policy domain="delegate" rights="none" pattern="*" />
-    <policy domain="filter" rights="none" pattern="*" />
-    <policy domain="coder" rights="none" pattern="*" />
-    <policy domain="coder" rights="read|write" pattern="{GIF,JPEG,PNG,WEBP}" />
+  A rule whose pattern matches nothing is silently ignored, so an ineffective rule
+  looks exactly like an enforced one in "-list policy".
 -->
 <policymap>
-  <!-- <policy domain="resource" name="temporary-path" value="/tmp"/> -->
+  <!--
+    Pixel cache limits.
+
+    PhotoPrism caps source resolution itself via PHOTOPRISM_RESOLUTION_LIMIT (default
+    150 MP, max 900), so these values only need to stay clear of that limit rather than
+    enforce a second, non-configurable one of their own.
+
+    A Q16 build holds 8 bytes per pixel, so memory + map is worth about 335 MP: "area"
+    sits just below it, and images up to the area threshold are served without touching
+    the slower disk tier. Larger images spill to a temporary file bounded by "disk",
+    which needs 10GiB to convert a 900 MP source and is set above that for headroom.
+    Sizing it this way keeps the policy from ever being the binding constraint, so
+    PHOTOPRISM_RESOLUTION_LIMIT stays the only limit an operator has to think about.
+    Lowering "disk" reintroduces a ceiling that surfaces as "cache resources exhausted".
+
+    "width" and "height" are a cheap guard against a decompression bomb that declares
+    absurd dimensions in its header, not a resolution policy. 32KP stays above the
+    30000 pixel ceiling of PHOTOPRISM_JPEG_SIZE and PHOTOPRISM_PNG_SIZE so nothing
+    PhotoPrism can produce is rejected on the way in. A 900 MP source is covered up to
+    30000x30000; beyond that aspect ratio the dimension guard bites before "disk" does.
+  -->
   <policy domain="resource" name="memory" value="512MiB"/>
-  <policy domain="resource" name="map" value="1GiB"/>
-  <policy domain="resource" name="width" value="16KP"/>
-  <policy domain="resource" name="height" value="16KP"/>
-  <!-- <policy domain="resource" name="list-length" value="128"/> -->
+  <policy domain="resource" name="map" value="2GiB"/>
   <policy domain="resource" name="area" value="256MP"/>
-  <policy domain="resource" name="disk" value="1GiB"/>
-  <!-- <policy domain="resource" name="file" value="768"/> -->
-  <!-- <policy domain="resource" name="thread" value="4"/> -->
-  <!-- <policy domain="resource" name="throttle" value="0"/> -->
-  <!-- <policy domain="resource" name="time" value="3600"/> -->
-  <!-- <policy domain="coder" rights="none" pattern="MVG" /> -->
-  <!-- <policy domain="module" rights="none" pattern="{PS,PDF,XPS}" /> -->
-  <!-- <policy domain="path" rights="none" pattern="@*" /> -->
-  <!-- <policy domain="cache" name="memory-map" value="anonymous"/> -->
-  <!-- <policy domain="cache" name="synchronize" value="True"/> -->
-  <!-- <policy domain="cache" name="shared-secret" value="passphrase" stealth="true"/>
-  <!-- <policy domain="system" name="max-memory-request" value="256MiB"/> -->
-  <!-- <policy domain="system" name="shred" value="2"/> -->
-  <!-- <policy domain="system" name="precision" value="6"/> -->
-  <!-- <policy domain="system" name="font" value="/path/to/font.ttf"/> -->
-  <!-- <policy domain="system" name="pixel-cache-memory" value="anonymous"/> -->
-  <!-- <policy domain="system" name="shred" value="2"/> -->
-  <!-- <policy domain="system" name="precision" value="6"/> -->
-  <!-- not needed due to the need to use explicitly by mvg: -->
-  <!-- <policy domain="delegate" rights="none" pattern="MVG" /> -->
-  <!-- use curl -->
-  <policy domain="delegate" rights="none" pattern="URL" />
-  <policy domain="delegate" rights="none" pattern="HTTPS" />
-  <policy domain="delegate" rights="none" pattern="HTTP" />
-  <!-- in order to avoid to get image with password text -->
+  <policy domain="resource" name="disk" value="12GiB"/>
+  <policy domain="resource" name="width" value="32KP"/>
+  <policy domain="resource" name="height" value="32KP"/>
+
+  <!--
+    Deny ImageMagick its own network access, so crafted input cannot turn an indexing
+    run into an outbound request. The coders are named HTTP, HTTPS, and FTP and are all
+    provided by the URL module; the delegates that shell out to curl are named
+    "http:decode" and "https:decode". A pattern of "HTTP" in the delegate domain matches
+    no delegate and leaves curl reachable, so the coder and module rules below are the
+    ones that enforce this. The delegate rules are kept as a second layer.
+  -->
+  <policy domain="module" rights="none" pattern="URL"/>
+  <policy domain="coder" rights="none" pattern="{HTTP,HTTPS,FTP}"/>
+  <policy domain="delegate" rights="none" pattern="{URL,HTTP,HTTPS,http:decode,https:decode}"/>
+
+  <!--
+    Disable coders that execute scripts, read arbitrary local files into an image, or
+    expect an interactive session. None of them are reachable through a PhotoPrism
+    conversion command, which always passes a real file path.
+
+    MVG and MSVG must stay enabled: SVG rendering is routed through them, and blocking
+    either one breaks vector previews. PDF, PS, EPS, and AI also stay enabled, since
+    document and vector previews rasterize through the Ghostscript delegate.
+  -->
+  <policy domain="coder" rights="none" pattern="{MSL,TEXT,SHOW,WIN,PLT,VID,EPHEMERAL,CLIPBOARD,X,XPS}"/>
+
+  <!-- Indirect reads are not permitted, so an "@file" argument cannot pull in a file list. -->
   <policy domain="path" rights="none" pattern="@*"/>
-  <!-- disable pdf and xps format types -->
-  <policy domain="coder" rights="none" pattern="XPS" />
 </policymap>

@@ -9,7 +9,8 @@
 #      unconfined /usr/local/bin/gs copy in the resolute-slim base removes a real confinement layer
 #      or is a no-op that can be dropped.
 #   2. Does the effective ImageMagick policy allow the PDF coder? An image without our own policy.xml
-#      inherits the distro default, which has disabled PS/PDF since the 2018 Ghostscript CVEs.
+#      inherits the distro default. Debian and Ubuntu disabled PS/PDF there after the 2018 Ghostscript
+#      CVEs and have since dropped that block again, so the answer depends on the base image release.
 #
 # Run it on the DOCKER HOST (it needs the Docker CLI and a host that loads AppArmor policy).
 # It does not modify any image; it only runs containers and reads their output.
