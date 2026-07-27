@@ -2,12 +2,18 @@ package api
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 func TestZip(t *testing.T) {
@@ -100,4 +106,52 @@ func resetZipDownloadFixtures(t *testing.T) {
 			t.Fatalf("reset fixture %s failed: no rows updated", file.photoUID)
 		}
 	}
+}
+
+func TestAuditArchiveAccess(t *testing.T) {
+	orig := event.AuditLog
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	event.AuditLog = logger
+
+	t.Cleanup(func() {
+		event.AuditLog = orig
+	})
+
+	// newTestContext returns a gin context backed by a request, as ClientIP requires one.
+	newTestContext := func() *gin.Context {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/v1/zip/photoprism-download-20260727-094439-zihqtuw4.zip", nil)
+		return c
+	}
+	t.Run("WithSession", func(t *testing.T) {
+		hook.Reset()
+		auditArchiveAccess(newTestContext(), &entity.Session{RefID: "sessxkkcabcd"}, "download %s", status.Succeeded, "photoprism-download-20260727-094439-zihqtuw4.zip")
+		entries := hook.AllEntries()
+
+		if len(entries) != 1 {
+			t.Fatalf("expected 1 audit entry, got %d", len(entries))
+		}
+
+		msg := entries[0].Message
+		assert.Contains(t, msg, "sessxkkcabcd")
+		assert.Contains(t, msg, "photoprism-download-20260727-094439-***.zip")
+		assert.Contains(t, msg, status.Succeeded)
+		assert.NotContains(t, msg, "zihqtuw4")
+	})
+	t.Run("WithoutSession", func(t *testing.T) {
+		hook.Reset()
+		auditArchiveAccess(newTestContext(), nil, "download %s", status.NotFound, "photoprism-download-20260727-094439-zihqtuw4.zip")
+		entries := hook.AllEntries()
+
+		if len(entries) != 1 {
+			t.Fatalf("expected 1 audit entry, got %d", len(entries))
+		}
+
+		msg := entries[0].Message
+		assert.Contains(t, msg, "photoprism-download-20260727-094439-***.zip")
+		assert.Contains(t, msg, status.NotFound)
+		assert.NotContains(t, msg, "session")
+		assert.NotContains(t, msg, "zihqtuw4")
+	})
 }
