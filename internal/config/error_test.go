@@ -16,6 +16,7 @@ func TestError(t *testing.T) {
 	t.Run("AllOk", func(t *testing.T) {
 		c := NewTestConfig("config")
 		c.Init()
+		defer c.CleanupTestFolder()
 		entity.SetDbProvider(c)
 
 		entity.LogWarningsAndErrors()
@@ -45,6 +46,7 @@ func TestError(t *testing.T) {
 	t.Run("CloseDB", func(t *testing.T) {
 		c := NewTestConfig("config")
 		c.Init()
+		defer c.CleanupTestFolder()
 		entity.SetDbProvider(c)
 
 		entity.LogWarningsAndErrors()
@@ -87,6 +89,7 @@ func TestError(t *testing.T) {
 	t.Run("Shutdown", func(t *testing.T) {
 		c := NewTestConfig("config")
 		c.Init()
+		defer c.CleanupTestFolder()
 		entity.SetDbProvider(c)
 
 		entity.LogWarningsAndErrors()

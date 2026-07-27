@@ -366,6 +366,10 @@ func TestZip(t *testing.T) {
 		if err := os.RemoveAll(unzipDir); err != nil {
 			t.Fatal(err)
 		}
+
+		if err := os.RemoveAll(filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName())); err != nil {
+			t.Fatal(err)
+		}
 	})
 	t.Run("Uncompressed", func(t *testing.T) {
 		zipDir := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), "pkg/fs")
@@ -397,6 +401,10 @@ func TestZip(t *testing.T) {
 		}
 
 		if err := os.RemoveAll(unzipDir); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := os.RemoveAll(filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName())); err != nil {
 			t.Fatal(err)
 		}
 	})

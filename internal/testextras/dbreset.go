@@ -39,22 +39,22 @@ func ResetMariaDB(dbName string, dbID int) error {
 		return err
 	}
 
-	if err := db.Debug().Exec(fmt.Sprintf("DROP DATABASE IF EXISTS `%s`", dbn)).Error; err != nil {
+	if err := db.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS `%s`", dbn)).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	if err := db.Debug().Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`", dbn)).Error; err != nil {
+	if err := db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`", dbn)).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	if err := db.Debug().Exec(fmt.Sprintf("GRANT ALL PRIVILEGES ON `%s.*` TO %s@'%%'", dbn, dbName)).Error; err != nil {
+	if err := db.Exec(fmt.Sprintf("GRANT ALL PRIVILEGES ON `%s.*` TO %s@'%%'", dbn, dbName)).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	if err := db.Debug().Exec("FLUSH PRIVILEGES").Error; err != nil {
+	if err := db.Exec("FLUSH PRIVILEGES").Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
@@ -100,17 +100,17 @@ func ResetPostgresDB(dbName string, dbID int) error {
 		return err
 	}
 
-	if err := db.Debug().Exec(fmt.Sprintf(`DROP DATABASE IF EXISTS "%s" WITH (FORCE)`, dbn)).Error; err != nil {
+	if err := db.Exec(fmt.Sprintf(`DROP DATABASE IF EXISTS "%s" WITH (FORCE)`, dbn)).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	if err := db.Debug().Exec(fmt.Sprintf(`CREATE DATABASE "%s" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8'`, dbn)).Error; err != nil {
+	if err := db.Exec(fmt.Sprintf(`CREATE DATABASE "%s" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8'`, dbn)).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	if err := db.Debug().Exec(fmt.Sprintf(`ALTER DATABASE "%s" OWNER TO "%s"`, dbn, dbName)).Error; err != nil {
+	if err := db.Exec(fmt.Sprintf(`ALTER DATABASE "%s" OWNER TO "%s"`, dbn, dbName)).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
