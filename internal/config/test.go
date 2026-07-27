@@ -63,7 +63,7 @@ func NewTestOptions(dbName string) *Options {
 		storagePath = fs.Abs("../../storage")
 	}
 
-	dataPath := filepath.Join(storagePath, fs.TestdataDir, dsn.PhotoPrismTestToFolderName())
+	dataPath := filepath.Join(storagePath, fs.TestdataDir)
 
 	return NewTestOptionsForPath(dbName, dataPath)
 }
@@ -80,8 +80,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 			storagePath = fs.Abs("../../storage")
 		}
 
-		// enforce folder separation for testdata folders to prevent parallel tests of DBMS' clashing
-		dataPath = filepath.Join(storagePath, fs.TestdataDir, dsn.PhotoPrismTestToFolderName())
+		dataPath = filepath.Join(storagePath, fs.TestdataDir)
 	}
 
 	// Enable test mode in dependencies.

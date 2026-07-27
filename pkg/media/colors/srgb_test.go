@@ -9,8 +9,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func writeImage(path string, img image.Image) (err error) {
@@ -56,8 +54,7 @@ func TestToSRGB(t *testing.T) {
 
 		imgSRGB := ToSRGB(img, ProfileDisplayP3)
 
-		_ = os.Mkdir("./testdata/"+dsn.PhotoPrismTestToFolderName(), os.ModePerm)
-		srgbFile := "./testdata/" + dsn.PhotoPrismTestToFolderName() + "/SRGB.jpg"
+		srgbFile := filepath.Join(t.TempDir(), "testdata", "SRGB.jpg")
 
 		if err := writeImage(srgbFile, imgSRGB); err != nil {
 			t.Error(err)
@@ -66,6 +63,5 @@ func TestToSRGB(t *testing.T) {
 		assert.FileExists(t, srgbFile)
 
 		_ = os.Remove(srgbFile)
-		_ = os.Remove("./testdata/" + dsn.PhotoPrismTestToFolderName())
 	})
 }

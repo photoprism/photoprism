@@ -56,15 +56,6 @@ func PhotoPrismTestToDriverDSN(dbn int) (driver string, dsn string) {
 	return driver, dsn
 }
 
-// PhotoPrismTestToFolderName gets the folder name to use to enforce folder separation for DBMS tests
-func PhotoPrismTestToFolderName() (folderName string) {
-	folderName = os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
-	if folderName == "" {
-		folderName, _ = PhotoPrismTestToDriverDSN(0)
-	}
-	return folderName
-}
-
 // SetDSNToEnv pushes the required parameters into the os environment so tests run correctly.
 func SetDSNToEnv(dsn string) {
 	dsnName := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")

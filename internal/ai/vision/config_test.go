@@ -7,13 +7,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestOptions(t *testing.T) {
-	var configPath = fs.Abs("testdata/" + dsn.PhotoPrismTestToFolderName())
-	_ = os.Mkdir(configPath, os.ModePerm)
+	var configPath = t.TempDir()
 	var configFile = filepath.Join(configPath, "vision.yml")
 
 	t.Run("Save", func(t *testing.T) {

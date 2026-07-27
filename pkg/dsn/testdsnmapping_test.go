@@ -86,29 +86,3 @@ func TestPhotoPrismTestToDriverDSN(t *testing.T) {
 		assert.Equal(t, "", dsn)
 	})
 }
-
-func TestPhotoPrismTestToFolderName(t *testing.T) {
-	t.Run("sqlitefile", func(t *testing.T) {
-		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "sqlitefile")
-
-		folder := PhotoPrismTestToFolderName()
-
-		assert.Equal(t, "sqlitefile", folder)
-	})
-
-	t.Run("default", func(t *testing.T) {
-		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "unknown")
-
-		folder := PhotoPrismTestToFolderName()
-
-		assert.Equal(t, "unknown", folder)
-	})
-
-	t.Run("empty", func(t *testing.T) {
-		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "")
-
-		folder := PhotoPrismTestToFolderName()
-
-		assert.Equal(t, "sqlite", folder)
-	})
-}

@@ -9,13 +9,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestWriteFile(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		dir := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), "_WriteFile_Success")
+		dir := filepath.Join(t.TempDir(), "_WriteFile_Success")
 		filePath := filepath.Join(dir, "notyetexisting.jpg")
 		fileData := []byte("foobar")
 
@@ -42,7 +40,7 @@ func TestWriteFile(t *testing.T) {
 
 func TestWriteString(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		dir := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), "_WriteString_Success")
+		dir := filepath.Join(t.TempDir(), "_WriteString_Success")
 		filePath := filepath.Join(dir, PPIgnoreFilename)
 		fileData := "*"
 
@@ -75,7 +73,7 @@ func TestWriteString(t *testing.T) {
 
 func TestWriteUnixTime(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		dir := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), "_WriteUnixTime_Success")
+		dir := filepath.Join(t.TempDir(), "_WriteUnixTime_Success")
 		filePath := filepath.Join(dir, PPStorageFilename)
 
 		if err := MkdirAll(dir); err != nil {
@@ -107,7 +105,7 @@ func TestWriteUnixTime(t *testing.T) {
 
 func TestWriteFileFromReader(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		dir := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), "_WriteFileFromReader_Success")
+		dir := filepath.Join(t.TempDir(), "_WriteFileFromReader_Success")
 
 		filePath1 := filepath.Join(dir, "1.txt")
 		filePath2 := filepath.Join(dir, "2.txt")
@@ -148,7 +146,7 @@ func TestWriteFileFromReader(t *testing.T) {
 
 func TestCacheFileFromReader(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		dir := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), "_CacheFileFromReader_Success")
+		dir := filepath.Join(t.TempDir(), "_CacheFileFromReader_Success")
 
 		filePath1 := filepath.Join(dir, "1.txt")
 		filePath2 := filepath.Join(dir, "2.txt")

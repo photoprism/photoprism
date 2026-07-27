@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -31,11 +30,11 @@ func TestConfig_FindBin(t *testing.T) {
 func TestConfig_SidecarPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.SidecarPath(), "testdata/"+dsn.PhotoPrismTestToFolderName()+"/sidecar")
+	assert.Contains(t, c.SidecarPath(), "testdata/sidecar")
 	c.options.SidecarPath = ".photoprism"
 	assert.Equal(t, ".photoprism", c.SidecarPath())
 	c.options.SidecarPath = ""
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/sidecar", c.SidecarPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/sidecar", c.SidecarPath())
 }
 
 func TestConfig_SidecarYaml(t *testing.T) {
@@ -145,7 +144,7 @@ func TestConfig_TempPath(t *testing.T) {
 	t.Cleanup(func() { tempPath = "" })
 
 	// With TempPath configured (default test config), it is returned unchanged.
-	want := ProjectRoot + "/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/temp"
+	want := ProjectRoot + "/storage/testdata/temp"
 	assert.Equal(t, want, c.tempPath())
 
 	// TempPath() caches the first resolved value and keeps returning it even after
@@ -188,9 +187,9 @@ func TestConfig_CmdLibPath(t *testing.T) {
 
 func TestConfig_CachePath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/cache", c.CachePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/cache", c.CachePath())
 	c.options.CachePath = ""
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/cache", c.CachePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/cache", c.CachePath())
 }
 
 func TestConfig_SettingsYaml(t *testing.T) {
@@ -233,15 +232,15 @@ func TestConfig_HubConfigFile(t *testing.T) {
 
 func TestConfig_StoragePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName(), c.StoragePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata", c.StoragePath())
 	c.options.StoragePath = ""
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/originals/.photoprism/storage", c.StoragePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/originals/.photoprism/storage", c.StoragePath())
 }
 
 func TestConfig_TestdataPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/testdata", c.TestdataPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/testdata", c.TestdataPath())
 }
 
 func TestConfig_AlbumsPath(t *testing.T) {
@@ -252,13 +251,13 @@ func TestConfig_AlbumsPath(t *testing.T) {
 	// If this test fails, please manually move “albums” to the “backup” folder
 	// in the “storage/testdata” directory within your development environment:
 	// https://github.com/photoprism/photoprism/discussions/4520
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/backup/albums", c.BackupAlbumsPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/backup/albums", c.BackupAlbumsPath())
 }
 
 func TestConfig_OriginalsAlbumsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/originals/albums", c.OriginalsAlbumsPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/originals/albums", c.OriginalsAlbumsPath())
 }
 
 func TestConfig_CreateDirectories(t *testing.T) {
@@ -453,21 +452,21 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 
 func TestConfig_PIDFilename2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/photoprism.pid", c.PIDFilename())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/photoprism.pid", c.PIDFilename())
 	c.options.PIDFilename = ProjectRoot + "/internal/config/testdata/test.pid"
 	assert.Equal(t, ProjectRoot+"/internal/config/testdata/test.pid", c.PIDFilename())
 }
 
 func TestConfig_LogFilename2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/photoprism.log", c.LogFilename())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/photoprism.log", c.LogFilename())
 	c.options.LogFilename = ProjectRoot + "/internal/config/testdata/test.log"
 	assert.Equal(t, ProjectRoot+"/internal/config/testdata/test.log", c.LogFilename())
 }
 
 func TestConfig_OriginalsPath2(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/originals", c.OriginalsPath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/originals", c.OriginalsPath())
 	c.options.OriginalsPath = ""
 	if s := c.OriginalsPath(); s != "" && s != "/photoprism/originals" {
 		t.Errorf("unexpected originals path: %s", s)

@@ -284,7 +284,7 @@ func TestConfig_DatabasePortString(t *testing.T) {
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	resetDatabaseOptions(c)
-	expected := ProjectRoot + "/storage/testdata/" + dsn.PhotoPrismTestToFolderName() + "/index.db?_busy_timeout=5000&_foreign_keys=on"
+	expected := ProjectRoot + "/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on"
 	assert.Equal(t, expected, c.DatabaseName())
 }
 
@@ -363,13 +363,13 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		c.options.DatabaseDriver = "MariaDB"
 		assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", c.DatabaseDSN())
 		c.options.DatabaseDriver = "tidb"
-		assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 		c.options.DatabaseDriver = "Postgres"
 		assert.Equal(t, "postgresql://photoprism:@localhost/photoprism?connect_timeout=15&sslmode=disable&TimeZone=UTC&lock_timeout=5000", c.DatabaseDSN())
 		c.options.DatabaseDriver = "SQLite"
-		assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 		c.options.DatabaseDriver = ""
-		assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 	})
 
 	t.Run("PostgresPassword", func(t *testing.T) {
@@ -497,8 +497,8 @@ func TestConfig_DatabaseFile(t *testing.T) {
 	driver := c.DatabaseDriver()
 	assert.Equal(t, dsn.DriverSQLite3, driver)
 	c.options.DatabaseDSN = ""
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db", c.DatabaseFile())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db", c.DatabaseFile())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 }
 
 func TestConfig_DatabaseTimeout(t *testing.T) {

@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -32,7 +31,7 @@ func TestPhoto_SaveAsYaml(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
 
-		fileName := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName(), ".photoprism_test.yml")
+		fileName := filepath.Join(t.TempDir(), ".photoprism_test.yml")
 
 		if err := m.SaveAsYaml(fileName); err != nil {
 			t.Fatal(err)
@@ -86,7 +85,7 @@ func TestPhoto_SaveSidecarYaml(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
 
-		basePath := fs.Abs(dsn.PhotoPrismTestToFolderName() + "/testdata/yaml")
+		basePath := t.TempDir()
 		originalsPath := filepath.Join(basePath, "originals")
 		sidecarPath := filepath.Join(basePath, "sidecar")
 
@@ -115,7 +114,7 @@ func TestPhoto_SaveSidecarYaml(t *testing.T) {
 		m := Photo{}
 		m.PreloadFiles()
 
-		basePath := fs.Abs(dsn.PhotoPrismTestToFolderName() + "/testdata/yaml")
+		basePath := t.TempDir()
 		originalsPath := filepath.Join(basePath, "originals")
 		sidecarPath := filepath.Join(basePath, "sidecar")
 
@@ -144,7 +143,7 @@ func TestPhoto_SaveSidecarYaml(t *testing.T) {
 		m := Photo{PhotoName: "testphoto"}
 		m.PreloadFiles()
 
-		basePath := fs.Abs(dsn.PhotoPrismTestToFolderName() + "/testdata/yaml")
+		basePath := t.TempDir()
 		originalsPath := filepath.Join(basePath, "originals")
 		sidecarPath := filepath.Join(basePath, "sidecar")
 
@@ -181,7 +180,7 @@ func TestPhoto_LoadFromYaml(t *testing.T) {
 	})
 
 	t.Run("GormV1Format", func(t *testing.T) {
-		filePath := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName())
+		filePath := filepath.Join(os.TempDir())
 
 		if err := os.MkdirAll(filePath, fs.ModeDir); err != nil {
 			t.Fatal(err)
@@ -213,7 +212,7 @@ func TestPhoto_LoadFromYaml(t *testing.T) {
 	})
 
 	t.Run("GormV2Format", func(t *testing.T) {
-		filePath := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName())
+		filePath := t.TempDir()
 
 		if err := os.MkdirAll(filePath, fs.ModeDir); err != nil {
 			t.Fatal(err)
@@ -245,7 +244,7 @@ func TestPhoto_LoadFromYaml(t *testing.T) {
 	})
 
 	t.Run("GormV1Format_Bad", func(t *testing.T) {
-		filePath := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName())
+		filePath := t.TempDir()
 
 		if err := os.MkdirAll(filePath, fs.ModeDir); err != nil {
 			t.Fatal(err)
@@ -279,7 +278,7 @@ func TestPhoto_LoadFromYaml(t *testing.T) {
 	})
 
 	t.Run("GormV2Format_Bad", func(t *testing.T) {
-		filePath := filepath.Join(os.TempDir(), dsn.PhotoPrismTestToFolderName())
+		filePath := t.TempDir()
 
 		if err := os.MkdirAll(filePath, fs.ModeDir); err != nil {
 			t.Fatal(err)

@@ -9,14 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestConfig_VisionYaml(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		assert.Equal(t, ProjectRoot+"/storage/testdata/"+dsn.PhotoPrismTestToFolderName()+"/config/vision.yml", c.VisionYaml())
+		assert.Equal(t, ProjectRoot+"/storage/testdata/config/vision.yml", c.VisionYaml())
 	})
 	t.Run("PreferYamlExtension", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
