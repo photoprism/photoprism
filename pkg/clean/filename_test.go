@@ -41,3 +41,21 @@ func TestFileName(t *testing.T) {
 		assert.Equal(t, "filename.", FileName("filename."+string(rune(127))))
 	})
 }
+
+func TestFileNameRedacted(t *testing.T) {
+	t.Run("DownloadArchive", func(t *testing.T) {
+		assert.Equal(t, "photoprism-download-20260727-094439-***.zip", FileNameRedacted("photoprism-download-20260727-094439-zihqtuw4.zip"))
+	})
+	t.Run("NoDash", func(t *testing.T) {
+		assert.Equal(t, "***.zip", FileNameRedacted("zihqtuw4.zip"))
+	})
+	t.Run("LeadingDash", func(t *testing.T) {
+		assert.Equal(t, "***.zip", FileNameRedacted("-zihqtuw4.zip"))
+	})
+	t.Run("NoExtension", func(t *testing.T) {
+		assert.Equal(t, "photoprism-download-***", FileNameRedacted("photoprism-download-zihqtuw4"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "***", FileNameRedacted(""))
+	})
+}
