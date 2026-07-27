@@ -603,40 +603,26 @@ reset-mariadb:
 # Warning:  This will reset the photoprism database which is the default database, not a testing database.
 	$(info Resetting photoprism database...)
 	mysql < scripts/sql/mariadb/reset-photoprism.sql
-reset-mariadb-testdb:
-	$(info Resetting testdb database...)
-	mysql < scripts/sql/mariadb/reset-testdb.sql
-reset-mariadb-local:
-	$(info Resetting local database...)
-	mysql < scripts/sql/mariadb/reset-local.sql
-reset-mariadb-acceptance:
-	$(info Resetting acceptance database...)
-	mysql < scripts/sql/mariadb/reset-acceptance.sql
-reset-mariadb-migrate:
-	$(info Resetting migrate database...)
-	mysql < scripts/sql/mariadb/reset-migrate.sql
+reset-mariadb-%:
+	$(info Resetting $* database...)
+	mysql -N -B -e "SELECT CONCAT('DROP DATABASE IF EXISTS ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE '$*\_%'" | mysql
+	mysql < scripts/sql/mariadb/reset-$*.sql
 reset-sqlite-unit:
 	$(info Resetting SQLite unit database...)
 	mkdir -p ./storage/testdata
 	rm --force ./storage/testdata/unit.test.db
+	rm --force ./storage/testdata/unit.test.db_*.db
+	rm --force ./storage/testdata/unit.mutex.db
 	cp ./internal/entity/migrate/testdata/migrate_sqlite3 ./storage/testdata/unit.test.db
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-migrate
 reset-postgres:
 # Warning:  This will reset the photoprism database which is the default database, not a testing database.
 	$(info Resetting photoprism database...)
 	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres -f scripts/sql/postgresql/reset-photoprism.sql
-reset-postgres-testdb:
-	$(info Resetting testdb database...)
-	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-testdb.sql
-reset-postgres-local:
-	$(info Resetting local database...)
-	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-local.sql
-reset-postgres-acceptance:
-	$(info Resetting acceptance database...)
-	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-acceptance.sql
-reset-postgres-migrate:
-	$(info Resetting migrate database...)
-	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-migrate.sql
+reset-postgres-%:
+	$(info Resetting $* database...)
+	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres -t -c "select CONCAT('DROP DATABASE IF EXISTS ',datname,' WITH (FORCE);') from pg_database where datname like '$*_%';" | psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres
+	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-$*.sql
 reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb reset-postgres-migrate
 # reset-acceptance: reset-mariadb-acceptance

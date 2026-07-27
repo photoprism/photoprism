@@ -16,10 +16,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
-// Stores the number of test databases that are supported.
-// The MariaDB scripts/sql/mariadb/reset-testdb.sql and PostgreSQL scripts/sql/postgres/reset-testdb.sql scripts need to create this number of databases.
-const dbCount = 8
-
 // dbID holds the database identifier number for this instance
 var dbID int
 
@@ -36,7 +32,7 @@ type TestDBMutex struct {
 	Caller    string `gorm:"size:255"`
 }
 
-// Attempts to acquire a database controlled mutex.  Using the table primary key to prevent more than 1 insert succeeding.
+// LockDBMutex Attempts to acquire a database controlled mutex.  Using the table primary key to prevent more than 1 insert succeeding.
 // Will retry 60 times with 10s interval, before returning false on failure to get mutex.
 // The mutex uses the process id to ensure uniqueness between processes.
 func LockDBMutex(db *gorm.DB, log event.Logger, caller string) (ok bool, dbNum int) {
@@ -58,7 +54,7 @@ func LockDBMutex(db *gorm.DB, log event.Logger, caller string) (ok bool, dbNum i
 		if err = db.Model(&TestDBChoice{}).Select("test_db_choices.id").Joins("left join test_db_mutexes on test_db_choices.id = test_db_mutexes.id").Where("test_db_mutexes.id is null").Order("test_db_choices.id ASC").First(&result).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				LogMessage(db, fmt.Sprintf("%v LockDBMutex No Database Available %v", caller, counter))
-				counter += 1
+				counter++
 				time.Sleep(10 * time.Second)
 
 				// Check if any of the stored process id's are no longer active...
@@ -113,7 +109,7 @@ func LockDBMutex(db *gorm.DB, log event.Logger, caller string) (ok bool, dbNum i
 	return ok, dbNum
 }
 
-// delete the mutex using the processes id.  This should be called with a defer to try and ensure that it always get cleared.
+// UnlockDBMutex deletes the mutex using the processes id.  This should be called with a defer to try and ensure that it always get cleared.
 // But, if it's a really nasty internal error (eg. SIGFAULT) then go wont free the mutex and this will require manual intervention.
 // The photoprism makefile tests drop the database, which will clear the mutex at the start of the testing.
 func UnlockDBMutex(db *gorm.DB) {
@@ -122,7 +118,7 @@ func UnlockDBMutex(db *gorm.DB) {
 	db.Where("process_id = ?", pid).Delete(&record)
 }
 
-// Clears out a mutex lock and logs messages about it
+// ReleaseDBMutex Clears out a mutex lock and logs messages about it
 func ReleaseDBMutex(db *gorm.DB, log event.Logger, caller string, code int) {
 	LogMessage(db, fmt.Sprintf("%v UnlockDBMutex", caller))
 	UnlockDBMutex(db)
@@ -130,35 +126,35 @@ func ReleaseDBMutex(db *gorm.DB, log event.Logger, caller string, code int) {
 	LogMessage(db, fmt.Sprintf("%v ending with %v", caller, code))
 }
 
-// Opens a database connection, and then attempts to acquire a mutex for this process.
+// AcquireDBMutex Opens a database connection, and then attempts to acquire a mutex for this process.
 func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err error) {
 
 	err = nil
 
-	driver, dsn := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN(0)
 
 	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+	if driver == "test" || driver == "sqlite" || driver == "" || dsname == "" {
 		driver = SQLite3
 	}
 
 	// Set default database DSN.
 	if driver == SQLite3 {
-		if dsn == "" {
-			dsn = SQLiteMutexDSN
+		if dsname == "" {
+			dsname = SQLiteMutexDSN
 			// Try to create the path, ignoring errors
 			_ = os.MkdirAll("/go/src/github.com/photoprism/photoprism/storage/testdata", fs.ModePerm)
-		} else if dsn != SQLiteTestDB {
+		} else if dsname != SQLiteTestDB {
 			// Continue.
-		} else if err := os.Remove(dsn); err == nil {
-			log.Debugf("sqlite: test file %s removed", clean.Log(dsn))
+		} else if err := os.Remove(dsname); err == nil {
+			log.Debugf("sqlite: test file %s removed", clean.Log(dsname))
 		}
 	}
 
 	// Create gorm.DB connection provider.
 	dbc = &DbConn{
 		Driver: driver,
-		Dsn:    dsn,
+		Dsn:    dsname,
 	}
 
 	SetDbProvider(dbc)
@@ -169,6 +165,17 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err 
 		LogMessage(dbc.Db(), fmt.Sprintf("%v LockDBMutex database %d acquired", caller, n))
 		log.Info("database mutex acquired")
 		dbn = n
+
+		switch driver {
+		case Postgres:
+			if err = ResetPostgresDB(dsn.Parse(dsname).Name, dbn); err != nil {
+				log.Errorf("Unable to get reset database with %v", err)
+			}
+		case MySQL:
+			if err = ResetMariaDB(dsn.Parse(dsname).Name, dbn); err != nil {
+				log.Errorf("Unable to get reset database with %v", err)
+			}
+		}
 	} else {
 		log.Error("Unable to get DBMutex")
 		err = errors.New("unable to acquire DBMutex")
@@ -177,6 +184,7 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err 
 	return dbc, dbn, err
 }
 
+// GetDBMutexID returns the database id that has been assigned to this process
 func GetDBMutexID() int {
 	return dbID
 }

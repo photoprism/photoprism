@@ -38,10 +38,17 @@ func TestDialectMysql(t *testing.T) {
 	defer dbtestMutex.Unlock()
 	log.Info("Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 	t.Run("ValidMigration", func(t *testing.T) {
+
 		// Prepare migrate mariadb db.
-		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_mysql.sql"); err != nil {
+		dumpName, err := filepath.Abs("../migrate/testdata/migrate_mysql.sql")
+		if err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
+		} else if err = testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+			t.Fatal(err)
+		}
+
+		//nolint:gosec // G204: dumpName comes from a fixed local fixture path in testdata.
+		if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
@@ -135,10 +142,17 @@ func TestDialectMysql(t *testing.T) {
 	})
 
 	t.Run("InvalidDataUpgrade", func(t *testing.T) {
+
 		// Prepare migrate mariadb db.
-		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_mysql.sql"); err != nil {
+		dumpName, err := filepath.Abs("../migrate/testdata/migrate_mysql.sql")
+		if err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
+		} else if err = testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+			t.Fatal(err)
+		}
+
+		//nolint:gosec // G204: dumpName comes from a fixed local fixture path in testdata.
+		if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
