@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-07-23 13:17+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-07-27 15:11+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1137,7 +1137,7 @@ msgstr "Turpināt"
 
 #: src/page/auth/login.vue:182
 msgid "Continue with %{s}"
-msgstr ""
+msgstr "Turpināt ar %{s}"
 
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
