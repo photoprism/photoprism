@@ -10,6 +10,10 @@
 //      drops, or corrupts a placeholder silently fails to interpolate.
 //   2. Whitespace / newline edges — leading/trailing spaces and a trailing
 //      newline are structural; msgstr should mirror msgid at its edges.
+//   3. Catalog coverage — every literal msgid passed to `$gettext` in the Vue/JS
+//      sources must exist in translations.pot. The extractor drops some call and
+//      markup forms silently, and a string it never sees renders English in every
+//      locale with no other symptom.
 //
 // It also shells out to `msgfmt -c --check-format` to surface gettext's own
 // c-format fatals. Human summary to stderr, JSONL findings to stdout, and a
@@ -29,6 +33,10 @@ import { basename, join } from "node:path";
 
 const FRONTEND_DIR = "frontend/src/locales";
 const BACKEND_DIR = "assets/locales";
+// Extraction sources, mirroring scripts/gettext-extract.sh: the CE frontend plus
+// whichever private edition overlays are present in this clone.
+const SOURCE_DIRS = ["frontend/src", "plus/frontend", "pro/frontend", "portal/frontend"];
+const POT_PATH = join(FRONTEND_DIR, "translations.pot");
 const jsonOnly = process.argv.includes("--json");
 
 // --- Minimal, multiline-aware .po parser -----------------------------------
@@ -190,6 +198,94 @@ function lintFile(path, side) {
   return findings;
 }
 
+// --- Catalog coverage (source → POT) ---------------------------------------
+// Blanks comments so commented-out code never counts as a live string. Over-
+// stripping only hides a finding, so the crude line/block match is preferred
+// over a tokenizer that could mistake a comment for source.
+function stripComments(src) {
+  return src
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .split("\n")
+    .map((line) => (/^\s*\/\//.test(line) ? "" : line))
+    .join("\n");
+}
+
+// Converts a JS string literal's body to the escaped form used inside a .po msgid.
+function poEscape(body, quote) {
+  const unescaped = body
+    .replace(/\\n/g, "\n")
+    .replace(/\\t/g, "\t")
+    .replace(new RegExp(`\\\\\\${quote}`, "g"), quote)
+    .replace(/\\\\/g, "\\");
+  return unescaped
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n")
+    .replace(/\t/g, "\\t");
+}
+
+const LITERAL = /^\s*(`([^`\\]*)`|"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')/;
+
+// Collects every literal msgid passed to a gettext call in one source file.
+// `$pgettext`/`$npgettext` take the context first, so the msgid is their second
+// argument; plural forms are checked via the singular, which the POT also carries.
+// Aliased receivers (`view.$gettext(…)`) are matched on purpose: the extractor
+// ignores them, which is exactly the defect this check exists to surface.
+function sourceMsgids(path) {
+  const out = [];
+  const src = stripComments(readFileSync(path, "utf8"));
+  const calls = /(?:^|[^\w.$])(?:[\w$]+\.)?\$(n?p?)gettext\(([\s\S]{0,400}?)\)/g;
+  for (const call of src.matchAll(calls)) {
+    let args = call[2];
+    if (call[1].includes("p")) {
+      const ctx = args.match(LITERAL);
+      if (!ctx) continue; // context is not a literal → nothing reliable to check
+      args = args.slice(ctx[0].length).replace(/^\s*,/, "");
+    }
+    const hit = args.match(LITERAL);
+    if (!hit) continue; // dynamic argument → intentionally absent from the catalog
+    const body = hit[2] ?? hit[3] ?? hit[4];
+    if (body === undefined || (hit[1].startsWith("`") && body.includes("${"))) continue;
+    out.push({
+      msgid: poEscape(body, hit[1][0]),
+      line: src.slice(0, call.index).split("\n").length,
+    });
+  }
+  return out;
+}
+
+function sourceFiles(dir) {
+  const out = [];
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    if (e.isDirectory()) {
+      if (["node_modules", "dist", "locales", ".git"].includes(e.name)) continue;
+      out.push(...sourceFiles(join(dir, e.name)));
+    } else if (/\.(vue|js|ts)$/.test(e.name)) {
+      out.push(join(dir, e.name));
+    }
+  }
+  return out;
+}
+
+// Flags live `$gettext` literals that never reached the POT.
+function lintCoverage() {
+  if (!existsSync(POT_PATH)) return [];
+  const known = new Set(parsePo(POT_PATH).map((e) => e.msgid));
+  const findings = [];
+  for (const dir of SOURCE_DIRS.filter((d) => existsSync(d))) {
+    for (const file of sourceFiles(dir)) {
+      for (const { msgid, line } of sourceMsgids(file)) {
+        if (!msgid || known.has(msgid)) {
+          continue;
+        }
+        findings.push({ file, side: "frontend", check: "coverage", msgid, line });
+      }
+    }
+  }
+  return findings;
+}
+
 // --- Collect catalogs -------------------------------------------------------
 function frontendFiles() {
   if (!existsSync(FRONTEND_DIR)) return [];
@@ -213,6 +309,7 @@ function backendFiles() {
 const raw = [];
 for (const f of frontendFiles()) raw.push(...lintFile(f, "frontend"));
 for (const f of backendFiles()) raw.push(...lintFile(f, "backend"));
+raw.push(...lintCoverage());
 
 // Collapse source-whitespace findings to one per (side, msgid): the same stray
 // space in the source string surfaces once per locale, but it's a single defect.
@@ -241,6 +338,7 @@ if (!jsonOnly) {
   w(`  whitespace        frontend=${by("frontend", "whitespace")}  backend=${by("backend", "whitespace")}  (translation-side defects, files=${files("whitespace")})`);
   w(`  source-whitespace frontend=${by("frontend", "source-whitespace")}  backend=${by("backend", "source-whitespace")}  (distinct source strings — fix in source, verify rendering)`);
   w(`  msgfmt            frontend=${by("frontend", "msgfmt")}  backend=${by("backend", "msgfmt")}`);
+  w(`  coverage          frontend=${by("frontend", "coverage")}  (live $gettext literals missing from the POT)`);
   w(`  TOTAL findings: ${all.length}`);
   w("");
 }
