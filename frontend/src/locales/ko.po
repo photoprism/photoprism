@@ -1139,6 +1139,10 @@ msgstr "콘텐츠"
 msgid "Continue"
 msgstr "계속하다"
 
+#: src/page/auth/login.vue:182
+msgid "Continue with %{s}"
+msgstr "계속하기 %{s}로"
+
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
 msgstr "기여자"
