@@ -179,7 +179,7 @@
                       <div class="text-center oidc-buttons mt-6">
                         <v-btn :disabled="loading" color="highlight" variant="flat" block class="action-oidc-login" @click.stop.prevent="onOidcLogin">
                           <img alt="" class="oidc-icon v-icon--start mx-1" :src="config.ext.oidc.icon" />
-                          {{ $gettext(`Continue with %{provider}`, { provider: config.ext.oidc.provider }) }}
+                          <span>{{ $gettext(`Continue with %{s}`, { s: config.ext.oidc.provider }) }}</span>
                         </v-btn>
                       </div>
                     </v-col>
