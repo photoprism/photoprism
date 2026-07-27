@@ -1139,6 +1139,10 @@ msgstr "İçerik"
 msgid "Continue"
 msgstr "Devam et"
 
+#: src/page/auth/login.vue:182
+msgid "Continue with %{s}"
+msgstr "%{s} ile devam edin"
+
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
 msgstr "Katılımcı"

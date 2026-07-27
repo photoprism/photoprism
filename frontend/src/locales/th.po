@@ -1139,6 +1139,10 @@ msgstr "เนื้อหา"
 msgid "Continue"
 msgstr "ดำเนินการต่อ"
 
+#: src/page/auth/login.vue:182
+msgid "Continue with %{s}"
+msgstr "ดำเนินการต่อด้วย %{s}"
+
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
 msgstr "ผู้ให้ข้อมูล"

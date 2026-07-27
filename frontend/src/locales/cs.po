@@ -1139,6 +1139,10 @@ msgstr "Obsah"
 msgid "Continue"
 msgstr "Pokračovat"
 
+#: src/page/auth/login.vue:182
+msgid "Continue with %{s}"
+msgstr "Pokračovat pomocí %{s}"
+
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
 msgstr "Přispěvatel"

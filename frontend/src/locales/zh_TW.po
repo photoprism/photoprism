@@ -1139,6 +1139,10 @@ msgstr "內容"
 msgid "Continue"
 msgstr "繼續"
 
+#: src/page/auth/login.vue:182
+msgid "Continue with %{s}"
+msgstr "继续 %{s}"
+
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
 msgstr "貢獻者"
