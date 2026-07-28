@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
-Run `make help` to list all available targets. Key commands:
+Run `make help` for an overview of the most common targets, and `make list` to list all of them. Key commands:
 
 **Backend (Go):**
 - `make build-go` — build the `photoprism` binary (develop mode)

@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** May 5, 2026
+**Last Updated:** July 28, 2026
 
 ## Purpose
 
@@ -135,7 +135,7 @@ Use US English spelling in all code comments (`parameterized`, `behavior`, `colo
 
 ## Build, Format & Test
 
-- Run `make help` to see supported targets.
+- Run `make help` for an overview of the most common targets, and `make list` to see all of them.
 - Host mode:
   - `make docker-build`
   - `docker compose up` or `docker compose up -d`
