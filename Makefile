@@ -1185,7 +1185,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./setup/docker/cloud && packer build digitalocean.json)
-lint: lint-js lint-go check-api-request-limits
+lint: lint-js lint-go check-api-request-limits check-make-help
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1195,6 +1195,9 @@ lint-go:
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/check-api-request-limits.sh
+check-make-help:
+	$(info Checking that "make help" only advertises existing targets...)
+	bash ./scripts/check-make-help.sh
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:
