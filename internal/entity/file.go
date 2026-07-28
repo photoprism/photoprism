@@ -155,7 +155,7 @@ func RegenerateIndexForPhotoIDs(photoIDs []uint) {
 
 // regenerateFileIndex runs the denormalized index UPDATEs for the files matched by updateWhere.
 // Calls acquire a mutex so concurrent writers do not stomp on shared indexes.
-func regenerateFileIndex(updateWhere *gorm.SqlExpr, scope string) {
+func regenerateFileIndex(updateWhere clause.Expr, scope string) {
 	fileIndexMutex.Lock()
 	defer fileIndexMutex.Unlock()
 

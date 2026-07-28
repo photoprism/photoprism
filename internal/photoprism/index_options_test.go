@@ -116,7 +116,7 @@ func TestNewIndexOptions_DefaultDetectors(t *testing.T) {
 }
 
 func TestNewIndexOptions_ImportFaceTags(t *testing.T) {
-	conf := config.NewMinimalTestConfig(t.TempDir())
+	conf := config.NewMinimalTestConfig("photoprism", t.TempDir())
 
 	t.Run("Enabled", func(t *testing.T) {
 		conf.Options().XMPFaces = true

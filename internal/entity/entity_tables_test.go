@@ -3,9 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 )
@@ -28,10 +28,10 @@ func createTestTable(t *testing.T, name string) *gorm.DB {
 }
 
 // countTestRows returns the number of rows in the table with the specified name.
-func countTestRows(t *testing.T, db *gorm.DB, name string) int {
+func countTestRows(t *testing.T, db *gorm.DB, name string) int64 {
 	t.Helper()
 
-	var count int
+	var count int64
 
 	require.NoError(t, db.Table(name).Count(&count).Error)
 
@@ -41,9 +41,9 @@ func countTestRows(t *testing.T, db *gorm.DB, name string) int {
 func TestTruncateTable(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		db := createTestTable(t, "test_truncate")
-		assert.Equal(t, 2, countTestRows(t, db, "test_truncate"))
+		assert.Equal(t, int64(2), countTestRows(t, db, "test_truncate"))
 		assert.NoError(t, truncateTable(db, "test_truncate"))
-		assert.Equal(t, 0, countTestRows(t, db, "test_truncate"))
+		assert.Equal(t, int64(0), countTestRows(t, db, "test_truncate"))
 	})
 	t.Run("UnknownTable", func(t *testing.T) {
 		assert.Error(t, truncateTable(UnscopedDb(), "test_truncate_missing"))
@@ -57,7 +57,10 @@ func TestTables_Truncate(t *testing.T) {
 		before := countTestRows(t, db, versions)
 		require.NotZero(t, before, "versions must not be empty")
 
-		Tables{"test_truncate_list": nil, versions: nil}.Truncate(db)
+		Tables{
+			10: {"test_truncate_list", nil},
+			20: {versions, nil},
+		}.Truncate(db)
 
 		assert.Equal(t, 0, countTestRows(t, db, "test_truncate_list"))
 		assert.Equal(t, before, countTestRows(t, db, versions))

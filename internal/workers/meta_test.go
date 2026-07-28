@@ -77,7 +77,7 @@ func TestMeta_saveSidecarYaml(t *testing.T) {
 	}
 
 	t.Run("Success", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("workers", t.TempDir())
 		conf.Options().SidecarYaml = true
 		conf.Options().DisableBackups = false
 		photo := newPhoto("20260725-100000-success")
@@ -85,14 +85,14 @@ func TestMeta_saveSidecarYaml(t *testing.T) {
 		assert.FileExists(t, yamlName(conf, photo))
 	})
 	t.Run("Disabled", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("workers", t.TempDir())
 		conf.Options().SidecarYaml = false
 		photo := newPhoto("20260725-100000-disabled")
 		NewMeta(conf).saveSidecarYaml(photo, "test")
 		assert.NoFileExists(t, yamlName(conf, photo))
 	})
 	t.Run("BackupsDisabled", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("workers", t.TempDir())
 		conf.Options().SidecarYaml = true
 		conf.Options().DisableBackups = true
 		photo := newPhoto("20260725-100000-nobackup")
@@ -100,13 +100,13 @@ func TestMeta_saveSidecarYaml(t *testing.T) {
 		assert.NoFileExists(t, yamlName(conf, photo))
 	})
 	t.Run("NilPhoto", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("workers", t.TempDir())
 		conf.Options().SidecarYaml = true
 		conf.Options().DisableBackups = false
 		assert.NotPanics(t, func() { NewMeta(conf).saveSidecarYaml(nil, "test") })
 	})
 	t.Run("InvalidPhoto", func(t *testing.T) {
-		conf := config.NewMinimalTestConfig(t.TempDir())
+		conf := config.NewMinimalTestConfig("workers", t.TempDir())
 		conf.Options().SidecarYaml = true
 		conf.Options().DisableBackups = false
 		// A photo without a name cannot resolve a file name and must not panic or write.

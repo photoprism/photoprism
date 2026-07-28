@@ -645,7 +645,7 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	t.Setenv("PHOTOPRISM_TEST_DSN_NAME", dsn.DriverSQLite3)
 	t.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", (&dsn.DSN{Driver: dsn.DriverSQLite3, Server: t.TempDir(), Name: "bootstrap-sqlite.db"}).ToString())
 
-	c := newBootstrapTestConfig(t, "bootstrap-sqlite")
+	// c := newBootstrapTestConfig(t, "bootstrap-sqlite")
 
 	// SQLite driver by default; set Portal.
 	c.Options().PortalUrl = srv.URL

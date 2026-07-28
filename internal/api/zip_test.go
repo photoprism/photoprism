@@ -95,7 +95,7 @@ func resetZipDownloadFixtures(t *testing.T) {
 
 		// The row count is verified separately, as MySQL reports the number of
 		// rows an UPDATE changed while SQLite reports the number it matched.
-		var found int
+		var found int64
 
 		if err := entity.UnscopedDb().
 			Model(&entity.File{}).

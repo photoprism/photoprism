@@ -331,7 +331,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 // generated IDs match those in a newly created database. DELETE serves as a
 // fallback for SQLite and for accounts without the required privileges.
 func truncateTable(db *gorm.DB, name string) error {
-	if db.Dialect().GetName() != dsn.DriverSQLite3 {
+	if db.Dialector.Name() != dsn.DriverSQLite3 {
 		if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", name)).Error; err == nil {
 			return nil
 		}

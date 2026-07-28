@@ -226,7 +226,7 @@ func FileVisibleToPublic(fileHash string) (bool, error) {
 		return false, nil
 	}
 
-	var count int
+	var count int64
 	err := UnscopedDb().Table("files").
 		Joins("JOIN photos ON photos.id = files.photo_id").
 		Where("files.file_hash = ? AND files.deleted_at IS NULL", fileHash).
@@ -244,7 +244,7 @@ func PhotoVisibleToPublic(photoUID string) (bool, error) {
 		return false, nil
 	}
 
-	var count int
+	var count int64
 	err := UnscopedDb().Table("photos").
 		Where("photo_uid = ? AND photo_private = 0 AND deleted_at IS NULL AND photo_quality > -1", photoUID).
 		Count(&count).Error
