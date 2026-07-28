@@ -91,7 +91,7 @@ Thumbs.db
 .idea
 .codex
 .config
-Dockerfile.local
+Dockerfile.local*
 .local
 *.local.json
 *.local.yaml
