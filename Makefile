@@ -132,6 +132,8 @@ devtools: install-go dep-npm
 .SILENT: help;
 logs:
 	$(DOCKER_COMPOSE) logs -f
+up:
+	$(DOCKER_COMPOSE) up -d
 down: docker-down
 docker-down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
