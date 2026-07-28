@@ -157,6 +157,7 @@ Use US English spelling in all code comments (`parameterized`, `behavior`, `colo
 
 Formatting and test entry points:
 - Full suite: `make test`, `make lint`
+- After renaming or removing a Makefile target, run `make check-make-help` (also included in `make lint`) so that no `make help` overview keeps advertising it.
 - Go-specific lint, format, and package-test rules live in [`internal/AGENTS.md`](internal/AGENTS.md).
 - Frontend lint, Vitest, acceptance, and Playwright rules live in [`frontend/AGENTS.md`](frontend/AGENTS.md).
 - Go tests live next to their sources; use PascalCase `t.Run(...)` names for related subtests. Keep consecutive subtests inside the same `Test*` function back-to-back without blank lines so the cases read as a compact table; reserve blank lines for separating distinct setup blocks.
