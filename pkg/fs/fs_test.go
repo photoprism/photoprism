@@ -2,7 +2,6 @@ package fs
 
 import (
 	"fmt"
-	"io/fs"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -158,11 +157,9 @@ func TestDirIsEmpty(t *testing.T) {
 	})
 	t.Run("EmptyDir", func(t *testing.T) {
 		testPath := filepath.Join(t.TempDir(), "testdata")
-		require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+		require.NoError(t, os.MkdirAll(testPath, 0o750))
 		t.Cleanup(func() { _ = os.RemoveAll(testPath) })
-		if err := os.Mkdir(filepath.Join(testPath, "emptyDir"), 0o750); err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, os.Mkdir(filepath.Join(testPath, "emptyDir"), 0o750))
 		t.Cleanup(func() {
 			assert.NoError(t, os.RemoveAll(filepath.Join(testPath, "emptyDir")))
 		})

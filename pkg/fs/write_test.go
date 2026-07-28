@@ -2,7 +2,6 @@ package fs
 
 import (
 	"bytes"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -15,7 +14,7 @@ import (
 
 func TestWriteFile(t *testing.T) {
 	testPath := filepath.Join(t.TempDir(), "testdata")
-	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	require.NoError(t, os.MkdirAll(testPath, 0o750))
 	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
 		dir := filepath.Join(testPath, "_WriteFile_Success")
@@ -40,7 +39,7 @@ func TestWriteFile(t *testing.T) {
 
 func TestWriteString(t *testing.T) {
 	testPath := filepath.Join(t.TempDir(), "testdata")
-	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	require.NoError(t, os.MkdirAll(testPath, 0o750))
 	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
 		dir := filepath.Join(testPath, "_WriteString_Success")
@@ -71,7 +70,7 @@ func TestWriteString(t *testing.T) {
 
 func TestWriteUnixTime(t *testing.T) {
 	testPath := filepath.Join(t.TempDir(), "testdata")
-	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	require.NoError(t, os.MkdirAll(testPath, 0o750))
 	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
 		dir := filepath.Join(testPath, "_WriteUnixTime_Success")
@@ -103,7 +102,7 @@ func TestWriteUnixTime(t *testing.T) {
 
 func TestWriteFileFromReader(t *testing.T) {
 	testPath := filepath.Join(t.TempDir(), "testdata")
-	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	require.NoError(t, os.MkdirAll(testPath, 0o750))
 	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
 		dir := filepath.Join(testPath, "_WriteFileFromReader_Success")
@@ -144,7 +143,7 @@ func TestWriteFileFromReader(t *testing.T) {
 
 func TestCacheFileFromReader(t *testing.T) {
 	testPath := filepath.Join(t.TempDir(), "testdata")
-	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	require.NoError(t, os.MkdirAll(testPath, 0o750))
 	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
 		dir := filepath.Join(testPath, "_CacheFileFromReader_Success")
