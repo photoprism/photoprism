@@ -6,6 +6,7 @@
 
 - Provide Copilot with the single sources of truth for building, testing, and contributing to PhotoPrism.
 - Improve PR reviews and code suggestions by aligning them with our documented workflows and style.
+- Path-specific rules that apply on top of this file live in `.github/instructions/*.instructions.md`.
 
 ## Single Sources of Truth (SOT)
 
