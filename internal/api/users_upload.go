@@ -255,11 +255,11 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		elapsed := int(time.Since(start).Seconds())
 
 		// Log number of successfully uploaded files.
-		msg := i18n.Msg(i18n.MsgFilesUploadedIn, len(uploads), elapsed)
+		resp := i18n.NewResponse(http.StatusOK, i18n.MsgFilesUploadedIn, len(uploads), elapsed)
 
-		log.Info(msg)
+		log.Info(resp.LowerString())
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
+		c.JSON(http.StatusOK, resp)
 	})
 }
 
@@ -397,9 +397,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		elapsed := int(time.Since(start).Seconds())
 
 		// Show success message.
-		msg := i18n.Msg(i18n.MsgUploadProcessed)
-
-		event.Success(msg)
+		event.SuccessMsg(i18n.MsgUploadProcessed)
 		event.Publish("import.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
@@ -420,6 +418,6 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			log.Warnf("upload: %s (update covers)", coversErr)
 		}
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgUploadProcessed))
 	})
 }

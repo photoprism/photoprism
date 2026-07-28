@@ -74,6 +74,12 @@ func StartIndexing(router *gin.RouterGroup) {
 			return
 		}
 
+		// Reject index paths that would escape the originals directory.
+		if _, err := photoprism.ResolveIndexPath(conf.OriginalsPath(), frm.Path); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+
 		// Configure index options.
 		path := conf.OriginalsPath()
 		convert := settings.Index.Convert && conf.SidecarWritable()
@@ -179,11 +185,9 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		msg := i18n.Msg(i18n.MsgIndexingCompletedIn, elapsed)
-
 		// Report success only if at least one file was indexed.
 		if indexed > 0 {
-			event.Success(msg)
+			event.SuccessMsg(i18n.MsgIndexingCompletedIn, elapsed)
 		}
 
 		event.Publish("index.completed", event.Data{
@@ -195,7 +199,7 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		c.JSON(http.StatusOK, i18n.Response{Code: http.StatusOK, Message: msg})
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgIndexingCompletedIn, elapsed))
 	})
 }
 

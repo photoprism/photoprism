@@ -177,6 +177,22 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("SESSION_CACHE"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "download-token",
+			Usage:   "shared static `TOKEN` accepted for permanent download URLs without identifying a session (leave blank to accept signed tokens only)",
+			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
+		}, Secret: true}, {
+		Flag: &cli.Int64Flag{
+			Name:    "download-token-maxage",
+			Value:   int64(ttl.DownloadTokenDefaultAge),
+			Usage:   fmt.Sprintf("signed download token lifetime in `SECONDS` (minimum %d)", ttl.DownloadTokenMinAge.Int()),
+			EnvVars: EnvVars("DOWNLOAD_TOKEN_MAXAGE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "preview-token",
+			Usage:   "shared static `TOKEN` for thumbnail and video streaming URLs (leave blank for an automatic value)",
+			EnvVars: EnvVars("PREVIEW_TOKEN"),
+		}, Secret: true}, {
+		Flag: &cli.StringFlag{
 			Name:    "log-level",
 			Aliases: []string{"l"},
 			Usage:   "log message verbosity `LEVEL` (trace, debug, info, warning, error)",
@@ -604,7 +620,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "app-icon",
-			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square, bloom, flower, ring, shutter)",
+			Usage:   "home screen app `ICON` (logo, app, crisp, mint, bold, square, bloom, flower, ring, glass, neon, rainbow)",
 			EnvVars: EnvVars("APP_ICON"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1211,16 +1227,6 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("HEIFCONVERT_ORIENTATION"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "download-token",
-			Usage:   "`DEFAULT` download URL token for originals (leave blank for a random value)",
-			EnvVars: EnvVars("DOWNLOAD_TOKEN"),
-		}, Secret: true}, {
-		Flag: &cli.StringFlag{
-			Name:    "preview-token",
-			Usage:   "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
-			EnvVars: EnvVars("PREVIEW_TOKEN"),
-		}, Secret: true}, {
-		Flag: &cli.StringFlag{
 			Name:    "thumb-library",
 			Aliases: []string{"thumbs"},
 			Usage:   "image processing `LIBRARY` to be used for generating thumbnails (auto, vips)",
@@ -1309,6 +1315,11 @@ var Flags = CliFlags{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "xmp-faces",
+			Usage:   "imports face regions and names from XMP metadata as people markers",
+			EnvVars: EnvVars("XMP_FACES"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-engine",

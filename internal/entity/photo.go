@@ -29,6 +29,11 @@ import (
 
 const (
 	PhotoUID = byte('p')
+
+	// UUIDBytes is the byte budget for the photos.uuid column (VARBINARY(255)). A
+	// non-canonical XMP DocumentID adopted as the photo UUID is clipped to it so a long
+	// identifier (e.g. "adobe:docid:photoshop:...") cannot overflow the column.
+	UUIDBytes = 255
 )
 
 var IndexUpdateInterval = 3 * time.Hour           // 3 Hours
@@ -892,9 +897,11 @@ func (m *Photo) PreloadMany() *Photo {
 
 // RedactForSession trims fields a shared-only session should not see when it accesses a picture
 // through sharing: the album list is limited to the albums shared with the session, and people,
-// labels, owner/storage metadata, and identifying metadata (camera serial, the XMP DocumentID, and
-// per-file InstanceID) are removed. Sessions with full library or admin access (and nil sessions)
-// are returned unchanged.
+// labels, the owner, private notes, and identifying metadata (camera serial, the XMP DocumentID,
+// and per-file InstanceID) are removed. Sessions with full library or admin access (and nil
+// sessions) are returned unchanged.
+//
+// It trims only fields the search results omit, so both read paths disclose the same set.
 func (m *Photo) RedactForSession(sess *Session) *Photo {
 	if m == nil || sess == nil {
 		return m
@@ -932,16 +939,12 @@ func (m *Photo) RedactForSession(sess *Session) *Photo {
 	// defensively in case markers are loaded).
 	m.Labels = nil
 	for i := range m.Files {
-		m.Files[i].OmitMarkers = true
-		m.Files[i].InstanceID = ""
+		m.Files[i].RedactForSession(sess)
 	}
 
-	// Remove owner, storage, and identifying metadata. CameraSerial is a device fingerprint that
-	// can link a photographer's pictures, and the XMP DocumentID is a content-provenance identifier;
-	// neither is needed by a shared-only viewer (navigation uses PhotoUID/FileUID).
+	// Remove the owner, private notes, and identifying metadata. PhotoPath and OriginalName stay:
+	// search discloses both to every in-scope session, so withholding them here protects nothing.
 	m.CreatedBy = ""
-	m.PhotoPath = ""
-	m.OriginalName = ""
 	m.UUID = ""
 	m.CameraSerial = ""
 	m.Details = nil
@@ -1491,6 +1494,17 @@ func (m *Photo) SetCameraSerial(s string) {
 	// camera_serial is VARBINARY(160), so clip by bytes on a rune boundary.
 	if s = clip.Bytes(s, txt.ClipDefault); m.NoCameraSerial() && s != "" {
 		m.CameraSerial = s
+	}
+}
+
+// SetDocumentID adopts an XMP DocumentID as the asset-stable photo UUID, clipping it to
+// the uuid column byte budget on a rune boundary. The strict rnd.IsUUID check is
+// intentionally bypassed (real-world DocumentIDs are often non-canonical), so the clip
+// keeps a long "adobe:docid:photoshop:..." value from overflowing the column. Empty is
+// ignored so it never clears an existing UUID.
+func (m *Photo) SetDocumentID(id string) {
+	if id = clip.Bytes(id, UUIDBytes); id != "" {
+		m.UUID = id
 	}
 }
 

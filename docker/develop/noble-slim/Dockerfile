@@ -64,11 +64,13 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
         iputils-ping dnsutils binutils binutils-gold \
+        ghostscript gsfonts \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-postgresql.sh postgresql-client && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/install-bashrc.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     /scripts/install-dircolors.sh && \

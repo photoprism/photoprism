@@ -37,6 +37,7 @@
           'slideshow-active': slideshow.active,
           'is-fullscreen': isFullscreen(),
           'is-zoomable': isZoomable,
+          'is-pdf': isPdfSlide,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
           'is-video': model?.Type === 'video',
@@ -57,6 +58,19 @@
           @cancel="exitFaceMarkerMode"
           @remove="onRemoveFaceMarker"
         ></p-meta-face-markers>
+        <p-pdf-viewer
+          v-if="isPdfSlide && pdfSrc && pswp()"
+          ref="pdfViewer"
+          :key="model.Hash"
+          class="p-lightbox__pdf"
+          :src="pdfSrc"
+          :pages="model.Pages || 0"
+          :has-prev="pdfHasPrev"
+          :has-next="pdfHasNext"
+          :controls-visible="controlsShown !== 0"
+          @media-prev="pdfMediaPrev"
+          @media-next="pdfMediaNext"
+        ></p-pdf-viewer>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>
@@ -167,6 +181,7 @@ import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
 import * as media from "common/media";
+import { isPdfDocument } from "common/pdf";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
 import { $faceMarkers } from "common/face-markers";
@@ -330,6 +345,25 @@ export default {
         return [];
       }
       return this.photo.getMarkers(true);
+    },
+    // isPdfSlide reports whether the current slide is a PDF document, so the
+    // interactive viewer overlay replaces the static first-page cover.
+    isPdfSlide() {
+      return this.visible && !!this.model && isPdfDocument(this.model);
+    },
+    // pdfSrc is the inline-PDF URL for the current document slide. The slide's
+    // hash is the document's cover image; the backend resolves it to the
+    // original PDF for the same photo (see the GetFileBytes handler).
+    pdfSrc() {
+      return this.model?.Hash ? this.$util.pdfUrl(this.model.Hash) : "";
+    },
+    // pdfHasPrev / pdfHasNext gate the PDF viewer's touch media-navigation arrows,
+    // mirroring the bounds checks in pdfMediaPrev / pdfMediaNext.
+    pdfHasPrev() {
+      return this.index > 0;
+    },
+    pdfHasNext() {
+      return this.models.length > this.index + 1;
     },
   },
   watch: {
@@ -779,14 +813,15 @@ export default {
       return isContentZoomable;
     },
     // slideZoomable reports whether a slide supports the flat zoom button and
-    // pinch/click-to-zoom. 360° sphere slides own their zoom/pan, and videos and
-    // animations are never flatly zoomable; the result drives the `.is-zoomable`
-    // class that shows or hides the PhotoSwipe zoom button.
+    // pinch/click-to-zoom. 360° sphere slides own their zoom/pan, documents own
+    // zoom via the PDF viewer, and videos and animations are never flatly zoomable;
+    // the result drives the `.is-zoomable` class that shows or hides the PhotoSwipe
+    // zoom button.
     slideZoomable(data) {
       if (data?.isSphere) {
         return false;
       }
-      return data?.model?.Type !== media.Video && data?.model?.Type !== media.Animated;
+      return data?.model?.Type !== media.Video && data?.model?.Type !== media.Animated && data?.model?.Type !== media.Document;
     },
     // trapSphereGestures stops PhotoSwipe's swipe/zoom gesture detection from running
     // while the user interacts with a 360° sphere. It swallows pointer + wheel events
@@ -2854,6 +2889,19 @@ export default {
             this.toggleControls();
           }
           break;
+      }
+    },
+    // pdfMediaPrev / pdfMediaNext move between media items from inside the PDF
+    // viewer (which captures Left/Right itself and emits these), mirroring the
+    // arrow-key navigation used for other slides.
+    pdfMediaPrev() {
+      if (this.index > 0) {
+        this.pswp().prev();
+      }
+    },
+    pdfMediaNext() {
+      if (this.models.length > this.index + 1) {
+        this.pswp().next();
       }
     },
     // Returns true when the given KeyboardEvent.code names a shortcut

@@ -142,6 +142,23 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	return s
 }
 
+// AuthorizeSuperAdmin reports whether the session may grant super-admin status.
+// Only an authenticated super admin, or the trusted Portal cluster JWT service
+// principal (a user-less GrantJwtBearer with users-manage scope that IsSuperAdmin
+// cannot recognize), is permitted, so a lower-privilege admin cannot create or
+// restore a super-admin account and escalate. Mirrors the UpdateUser SaveForm gate.
+func AuthorizeSuperAdmin(s *entity.Session) bool {
+	if s == nil {
+		return false
+	}
+
+	if s.GrantType == authn.GrantJwtBearer.String() && s.ValidateScope(acl.ResourceUsers, acl.Permissions{acl.ActionManage}) {
+		return true
+	}
+
+	return s.GetUser().IsSuperAdmin()
+}
+
 // AuthToken returns the client authentication token from the request context if one was found,
 // or an empty string if no supported request header value was provided.
 func AuthToken(c *gin.Context) string {

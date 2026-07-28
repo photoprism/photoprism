@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/internal/ai/vision/schema"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 func TestOpenAIBuilderBuild(t *testing.T) {
@@ -23,7 +24,7 @@ func TestOpenAIBuilderBuild(t *testing.T) {
 	}
 	model.ApplyEngineDefaults()
 
-	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"})
+	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal)
 	require.NoError(t, err)
 	require.NotNil(t, request)
 
@@ -44,7 +45,7 @@ func TestOpenAIBuilderBuildCaptionDisablesForceJSON(t *testing.T) {
 	}
 	model.ApplyEngineDefaults()
 
-	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"})
+	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal)
 	require.NoError(t, err)
 	require.NotNil(t, request)
 	require.NotNil(t, request.Options)
@@ -132,6 +133,33 @@ func TestApiRequestJSONForOpenAIDefaultSchemaName(t *testing.T) {
 
 	require.NoError(t, json.Unmarshal(payload, &decoded))
 	assert.Equal(t, schema.JsonSchemaName(req.Schema, openai.DefaultSchemaVersion), decoded.Text.Format.Name)
+}
+
+func TestApiRequestJSONForOpenAIServiceTier(t *testing.T) {
+	newReq := func(tier string) *ApiRequest {
+		return &ApiRequest{
+			Model:          "gpt-5-mini",
+			Images:         []string{"data:image/jpeg;base64,AA=="},
+			ResponseFormat: ApiFormatOpenAI,
+			Tier:           tier,
+		}
+	}
+	t.Run("SentWhenSet", func(t *testing.T) {
+		payload, err := newReq("flex").JSON()
+		require.NoError(t, err)
+
+		var decoded map[string]any
+		require.NoError(t, json.Unmarshal(payload, &decoded))
+		assert.Equal(t, "flex", decoded["service_tier"])
+	})
+	t.Run("OmittedWhenEmpty", func(t *testing.T) {
+		payload, err := newReq("  ").JSON()
+		require.NoError(t, err)
+
+		var decoded map[string]any
+		require.NoError(t, json.Unmarshal(payload, &decoded))
+		assert.NotContains(t, decoded, "service_tier")
+	})
 }
 
 func TestOpenAIParserParsesJSONFromTextPayload(t *testing.T) {

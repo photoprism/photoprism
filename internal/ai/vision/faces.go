@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // DetectFaces detects faces in the specified image and generates embeddings from them.
@@ -49,7 +50,7 @@ func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (re
 				}
 			}
 
-			if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), faceCrops, model.EndpointFileScheme()); err != nil {
+			if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), faceCrops, model.EndpointFileScheme(), media.SrcLocal); err != nil {
 				return result, err
 			}
 

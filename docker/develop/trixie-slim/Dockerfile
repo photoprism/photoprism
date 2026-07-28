@@ -70,7 +70,9 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       ffmpeg libavcodec-extra libffmpeg-nvenc-dev libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
       libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
       va-driver-all libva2 iputils-ping dnsutils binutils binutils-gold \
+      ghostscript gsfonts \
     && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \
     /scripts/install-bashrc.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     /scripts/install-dircolors.sh && \
@@ -86,7 +88,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       /photoprism/storage/cache && \
     /scripts/install-s6.sh && \
     ln -sf /scripts/services/photoprism /etc/s6-overlay/s6-rc.d/photoprism && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/photoprism && \
+    touch /etc/s6-overlay/user-bundles.d/user/contents.d/photoprism && \
     /scripts/cleanup.sh
 
 # Set default working directory.

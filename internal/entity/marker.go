@@ -221,6 +221,28 @@ func (m *Marker) HasFace(f *Face, dist float64) bool {
 	return m.FaceDist <= dist
 }
 
+// subjSrcSharesFace reports whether a subject source may propagate its name onto
+// the shared Face and its related markers. SrcAuto never does (that is what face
+// clustering itself manages), and SrcXmp is excluded too so an imported XMP name
+// labels only its own marker — there is no XMP-driven clustering in v1.
+func subjSrcSharesFace(src string) bool {
+	return src != SrcAuto && src != SrcXmp
+}
+
+// SetSubjectLink links the marker to an already-resolved subject and its UID
+// without renaming the subject, so reassigning a marker (e.g. from an imported
+// XMP name) affects only this marker and never renames the Person globally.
+// Passing nil detaches the cached subject and clears SubjUID so a later
+// SyncSubject resolves or creates a fresh subject.
+func (m *Marker) SetSubjectLink(subj *Subject) {
+	m.subject = subj
+	if subj != nil {
+		m.SubjUID = subj.SubjUID
+	} else {
+		m.SubjUID = ""
+	}
+}
+
 // SetFace sets a new face for this marker.
 func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	if f == nil {
@@ -232,7 +254,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	}
 
 	// Any reason we don't want to set a new face for this marker?
-	if m.SubjSrc == SrcAuto || f.SubjUID == "" || m.SubjUID == "" || f.SubjUID == m.SubjUID {
+	if !subjSrcSharesFace(m.SubjSrc) || f.SubjUID == "" || m.SubjUID == "" || f.SubjUID == m.SubjUID {
 		// Don't skip if subject wasn't set manually, or subjects match.
 	} else if reported, err := f.ResolveCollision(m.Embeddings()); err != nil {
 		return false, err
@@ -246,7 +268,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	UpdateFaces.Store(true)
 
 	// Update face with known subject from marker?
-	if m.SubjSrc == SrcAuto || m.SubjUID == "" || f.SubjUID != "" {
+	if !subjSrcSharesFace(m.SubjSrc) || m.SubjUID == "" || f.SubjUID != "" {
 		// Don't update if face has a known subject, or marker subject is unknown.
 	} else if err = f.SetSubjectUID(m.SubjUID); err != nil {
 		return false, err
@@ -294,7 +316,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	}
 
 	// Update face subject?
-	if m.SubjSrc == SrcAuto || m.SubjUID == "" || f.SubjUID == m.SubjUID {
+	if !subjSrcSharesFace(m.SubjSrc) || m.SubjUID == "" || f.SubjUID == m.SubjUID {
 		// Not needed.
 	} else if err = f.SetSubjectUID(m.SubjUID); err != nil {
 		return false, err
@@ -324,7 +346,10 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 
 	subj := m.Subject()
 
-	if subj == nil || m.SubjSrc == SrcAuto {
+	// Auto- and XMP-sourced names label only their own marker: return after
+	// resolving the subject so neither renames the Person via UpdateName nor
+	// propagates onto the shared face and related markers below.
+	if subj == nil || !subjSrcSharesFace(m.SubjSrc) {
 		return nil
 	}
 
@@ -403,6 +428,17 @@ func (m *Marker) Create() error {
 	UpdateFaces.Store(true)
 
 	return Db().Create(m).Error
+}
+
+// Delete removes the marker from the database.
+func (m *Marker) Delete() error {
+	if m.MarkerUID == "" {
+		return fmt.Errorf("empty marker uid")
+	}
+
+	UpdateFaces.Store(true)
+
+	return Db().Delete(m).Error
 }
 
 // Embeddings returns parsed marker embeddings.
@@ -512,8 +548,10 @@ func (m *Marker) Face() (f *Face) {
 		}
 	}
 
-	// Add face if size
-	if m.SubjSrc != SrcAuto && m.FaceID == "" {
+	// Add a shared face for this marker's subject when eligible. Auto- and
+	// XMP-sourced markers are excluded: auto clustering is managed elsewhere,
+	// and XMP names must not seed the shared face (no XMP clustering in v1).
+	if subjSrcSharesFace(m.SubjSrc) && m.FaceID == "" {
 		if m.Size < face.ClusterSizeThreshold || m.Score < face.ClusterScoreThreshold {
 			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", clean.Log(m.MarkerUID), m.Size, m.Score)
 			return nil

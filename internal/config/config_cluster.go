@@ -12,6 +12,7 @@ import (
 	"unicode"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -380,14 +381,15 @@ func (c *Config) JoinToken() string {
 
 		if fs.FileExistsNotEmpty(fileName) {
 			if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from config directory
-				log.Warnf("config: could not read cluster join token from %s (%s)", fileName, err)
+				event.SystemWarn([]string{"config", "cluster join token", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
 			} else if s := strings.TrimSpace(string(b)); rnd.IsJoinToken(s, false) {
 				if c.cache != nil {
 					c.cache.SetDefault(fileName, s)
 				}
 				return s
 			} else {
-				log.Warnf("config: cluster join token from %s is shorter than %d characters", fileName, rnd.JoinTokenLength)
+				// IsJoinToken checks the format, not only the length, so do not claim the value is too short.
+				event.SystemWarn([]string{"config", "cluster join token", "read %s", "invalid value"}, clean.Log(fileName))
 			}
 		}
 	}
@@ -595,9 +597,9 @@ func (c *Config) NodeClientSecret() string {
 		}
 
 		if _, err := os.Stat(fileName); os.IsNotExist(err) {
-			log.Debugf("config: node client secret file %s not found", clean.Log(fileName))
+			event.SystemDebug([]string{"config", "node client secret", "%s", "not found"}, clean.Log(fileName))
 		} else if err != nil {
-			log.Warnf("config: failed to read node client secret from %s (%s)", clean.Log(fileName), err)
+			event.SystemWarn([]string{"config", "node client secret", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
 		}
 	}
 

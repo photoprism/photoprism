@@ -66,6 +66,28 @@ type MediaFile struct {
 	fileMutex        sync.Mutex
 	location         *entity.Cell
 	imageConfig      *image.Config
+	relatedMain      *MediaFile
+}
+
+// SetRelatedMain caches the main file of the group this file belongs to, so
+// callers that already resolved the group do not re-run RelatedFiles. Only Main
+// is cached: the file list grows while indexing, so a cached list would go stale.
+func (m *MediaFile) SetRelatedMain(main *MediaFile) {
+	if m == nil {
+		return
+	}
+
+	m.relatedMain = main
+}
+
+// RelatedMain returns the cached main file of this file's group, or nil when the
+// group was not resolved by the caller.
+func (m *MediaFile) RelatedMain() *MediaFile {
+	if m == nil {
+		return nil
+	}
+
+	return m.relatedMain
 }
 
 // NewMediaFile resolves fileName (following symlinks) and initializes a MediaFile
@@ -863,7 +885,7 @@ func (m *MediaFile) IsPng() bool {
 	}
 
 	// Check the mime type after other tests have passed to improve performance.
-	return m.HasMimeType(header.ContentTypePng) || m.HasMimeType(header.ContentTypeAPng)
+	return header.IsPngType(m.BaseType())
 }
 
 // IsGif checks if the file is a GIF image with a supported file type extension.
@@ -1033,7 +1055,7 @@ func (m *MediaFile) CheckType() error {
 	case fs.ImageJpeg:
 		valid = mimeType == header.ContentTypeJpeg
 	case fs.ImagePng:
-		valid = mimeType == header.ContentTypePng || mimeType == header.ContentTypeAPng
+		valid = header.IsPngType(mimeType)
 	case fs.ImageGif:
 		valid = mimeType == header.ContentTypeGif
 	case fs.ImageTiff:

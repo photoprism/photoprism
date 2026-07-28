@@ -36,6 +36,7 @@ export class ConfigOptions extends Model {
       DisableJpegXL: $config.values.disable.jpegxl,
       DisableRaw: $config.values.disable.raw,
       DetectNSFW: false,
+      XMPFaces: false,
       UploadNSFW: $config.values.uploadNSFW,
       RawPresets: false,
       ThumbUncached: true,

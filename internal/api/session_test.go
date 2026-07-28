@@ -268,6 +268,8 @@ func TestCreateSession(t *testing.T) {
 		assert.Equal(t, "", userEmail.String())
 		assert.Equal(t, "", userName.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		// The wrong passcode carries messageId so the Web UI can render it in the user's language.
+		assert.Equal(t, i18n.Source(i18n.ErrInvalidPasscode), gjson.Get(r.Body.String(), "messageId").String())
 	})
 	t.Run("TwoFaUseRecoveryCode", func(t *testing.T) {
 		app, router, conf := NewApiTest()

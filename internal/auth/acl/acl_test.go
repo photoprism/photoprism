@@ -123,7 +123,23 @@ func TestACL_Deny(t *testing.T) {
 
 func TestACL_DenyAll(t *testing.T) {
 	t.Run("ResourceFilesRoleVisitorActionDefault", func(t *testing.T) {
-		assert.True(t, Rules.DenyAll(ResourceFiles, RoleVisitor, Permissions{FullAccess, AccessShared, ActionView}))
+		// A visitor now holds a view-only grant on files (shared view + download) so that
+		// share-link sessions can open in-scope documents; per-photo scope is still enforced
+		// by search.FileVisibleToSession in the handlers.
+		assert.True(t, Rules.Allow(ResourceFiles, RoleVisitor, ActionView))
+		assert.True(t, Rules.Allow(ResourceFiles, RoleVisitor, AccessShared))
+		assert.True(t, Rules.Allow(ResourceFiles, RoleVisitor, ActionDownload))
+		// The grant must not reach library-wide, management, upload, or all-access branches.
+		assert.True(t, Rules.Deny(ResourceFiles, RoleVisitor, FullAccess))
+		assert.True(t, Rules.Deny(ResourceFiles, RoleVisitor, AccessAll))
+		assert.True(t, Rules.Deny(ResourceFiles, RoleVisitor, AccessLibrary))
+		assert.True(t, Rules.Deny(ResourceFiles, RoleVisitor, ActionManage))
+		assert.True(t, Rules.Deny(ResourceFiles, RoleVisitor, ActionUpload))
+	})
+	t.Run("ResourceFilesRoleGuestActionDefault", func(t *testing.T) {
+		assert.True(t, Rules.Allow(ResourceFiles, RoleGuest, ActionView))
+		assert.True(t, Rules.Deny(ResourceFiles, RoleGuest, AccessAll))
+		assert.True(t, Rules.Deny(ResourceFiles, RoleGuest, ActionManage))
 	})
 	t.Run("ResourceFilesRoleAdminActionDefault", func(t *testing.T) {
 		assert.False(t, Rules.DenyAll(ResourceFiles, RoleAdmin, Permissions{FullAccess, AccessShared, ActionView}))

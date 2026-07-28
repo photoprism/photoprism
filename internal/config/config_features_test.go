@@ -118,6 +118,19 @@ func TestConfig_DisableFaces(t *testing.T) {
 	assert.False(t, c.DisableFaces())
 }
 
+func TestConfig_XMPFaces(t *testing.T) {
+	t.Run("Disabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.False(t, c.XMPFaces())
+	})
+	t.Run("Enabled", func(t *testing.T) {
+		ctx := CliTestContext()
+		assert.NoError(t, ctx.Set("xmp-faces", "true"))
+		c := NewConfig(ctx)
+		assert.True(t, c.XMPFaces())
+	})
+}
+
 func TestConfig_DisableClassification(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.False(t, c.DisableClassification())

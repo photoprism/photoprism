@@ -44,6 +44,9 @@ type Data struct {
 	Caption          string        `meta:"Description,ImageDescription,Caption,Caption-Abstract" xmp:"Description,Description.Alt"`
 	Subject          string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords         Keywords      `meta:"Keywords"`
+	Faces            []Face        `meta:"-"`
+	FacesDeclared    bool          `meta:"-"`
+	FacesPartial     bool          `meta:"-"`
 	Favorite         bool          `meta:"Favorite"`
 	Notes            string        `meta:"Comment,UserComment"`
 	Artist           string        `meta:"Artist,Creator,By-line,OwnerName,Owner" xmp:"Creator"`
@@ -57,7 +60,7 @@ type Data struct {
 	CameraSerial     string        `meta:"SerialNumber"`
 	LensMake         string        `meta:"LensMake"`
 	LensModel        string        `meta:"LensModel,Lens,LensID" xmp:"LensModel,Lens"`
-	Software         string        `meta:"Software,Producer,CreatorTool,Creator,CreatorSubTool,HistorySoftwareAgent,ProcessingSoftware"`
+	Software         string        `meta:"Software,Producer,CreatorTool,CreatorSubTool,HistorySoftwareAgent,ProcessingSoftware"`
 	Flash            bool          `meta:"FlashFired"`
 	FocalLength      int           `meta:"FocalLength,FocalLengthIn35mmFormat"`
 	FocalDistance    float64       `meta:"HyperfocalDistance"`

@@ -149,6 +149,9 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 			}
 			testDsn = testDsn + "?_foreign_keys=on&_busy_timeout=5000"
 		}
+	} else {
+		// Give the package a database of its own, so that tests can run in parallel.
+		testDsn = entity.TestDbDSN(testDriver, testDsn)
 	}
 
 	// Test config options.
@@ -462,6 +465,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("vision-api", config.VisionApi, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
+	globalSet.Bool("xmp-faces", config.XMPFaces, "doc")
 	globalSet.Bool("debug", false, "doc")
 	globalSet.Bool("sponsor", true, "doc")
 	globalSet.Bool("test", true, "doc")

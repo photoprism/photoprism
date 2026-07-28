@@ -26,6 +26,17 @@ func (p staticDbProvider) Db() *gorm.DB {
 	return p.db
 }
 
+// testDriver returns the driver the test database runs on, applying the same
+// fallback to SQLite that entity.InitTestDb uses when resolving the environment.
+func testDriver() string {
+	switch driver := os.Getenv("PHOTOPRISM_TEST_DRIVER"); {
+	case os.Getenv("PHOTOPRISM_TEST_DSN") == "", driver == "", driver == "test", driver == "sqlite":
+		return dsn.DriverSQLite3
+	default:
+		return driver
+	}
+}
+
 // TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
 	os.Exit(runTestMain(m))
@@ -64,11 +75,14 @@ func runTestMain(m *testing.M) int {
 }
 
 func TestDbDialect(t *testing.T) {
+	t.Run("TestDriver", func(t *testing.T) {
+		assert.Equal(t, testDriver(), DbDialect())
+	})
 	t.Run("SQLite", func(t *testing.T) {
 		if DbDialect() != dsn.DialectSQLite {
 			t.SkipNow()
 		}
-		assert.Equal(t, "sqlite", DbDialect())
+		assert.Equal(t, dsn.DialectSQLite, DbDialect())
 	})
 
 	t.Run("MariaDB", func(t *testing.T) {
@@ -88,9 +102,21 @@ func TestDbDialect(t *testing.T) {
 
 func TestBatchSize(t *testing.T) {
 	t.Run("SQLite", func(t *testing.T) {
-		if DbDialect() != dsn.DialectSQLite {
-			t.SkipNow()
+		if testDriver() != dsn.DialectSQLite {
+			t.Skip("test database is not SQLite")
 		}
 		assert.Equal(t, 333, BatchSize())
+	})
+	t.Run("MySQL", func(t *testing.T) {
+		if testDriver() != dsn.DriverMySQL {
+			t.Skip("test database is not MySQL")
+		}
+		assert.Equal(t, 1000, BatchSize())
+	})
+	t.Run("Postgres", func(t *testing.T) {
+		if testDriver() != dsn.DriverPostgreSQL {
+			t.Skip("test database is not Postgres")
+		}
+		assert.Equal(t, 1000, BatchSize())
 	})
 }

@@ -13,7 +13,12 @@ import (
 
 // XMP parses an XMP file and returns a Data struct.
 func XMP(fileName string) (data Data, err error) {
-	err = data.XMP(fileName)
+	return XMPWithOptions(fileName, FaceOptions{})
+}
+
+// XMPWithOptions parses an XMP file using source image face-region fallbacks.
+func XMPWithOptions(fileName string, options FaceOptions) (data Data, err error) {
+	err = data.XMPWithOptions(fileName, options)
 
 	return data, err
 }
@@ -35,6 +40,11 @@ func applyTimeOffset(t time.Time, offset string) time.Time {
 
 // XMP parses an XMP file and returns a Data struct.
 func (data *Data) XMP(fileName string) (err error) {
+	return data.XMPWithOptions(fileName, FaceOptions{})
+}
+
+// XMPWithOptions parses an XMP file using source image face-region fallbacks.
+func (data *Data) XMPWithOptions(fileName string, options FaceOptions) (err error) {
 	logName := clean.Log(filepath.Base(fileName))
 
 	defer func() {
@@ -186,6 +196,23 @@ func (data *Data) XMP(fileName string) (err error) {
 	// dc:subject-backed Subject tag and data.Keywords from IPTC Keywords.
 	if v := doc.Subject(); v != "" {
 		data.Subject = SanitizeMeta(v)
+	}
+
+	// Read the sidecar orientation first so face-region coordinates are mapped
+	// into the file's displayed orientation. The sidecar path does not populate
+	// data.Orientation elsewhere, and it stays a documentation-only field.
+	if v := doc.Orientation(); v != 0 {
+		data.Orientation = v
+	}
+
+	// Parse supported XMP face regions into data.Faces so the indexer can
+	// reconcile them onto face markers. The flags are recorded even for an empty
+	// region list, because a declared but empty list is what tells the reconciler
+	// the user removed the regions.
+	if regions := doc.FaceRegions(options); regions.Declared || len(regions.Faces) > 0 {
+		data.Faces = regions.Faces
+		data.FacesDeclared = regions.Declared
+		data.FacesPartial = regions.Partial
 	}
 
 	data.Favorite = doc.Favorite()

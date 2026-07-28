@@ -112,7 +112,7 @@ export default class Page {
           }
         }
       }
-    } else if (page === "abouts" || page === "feedback" || page === "license" || page === "admin-users") {
+    } else if (page === "abouts" || page === "feedback" || page === "license" || page === "admin-users" || page === "services") {
       if (await Selector(".nav-settings").visible) {
         if (
           !(await Selector("div.v-list-group--open div.nav-settings").visible) &
@@ -125,6 +125,10 @@ export default class Page {
 
     if (visible) {
       await t.expect(Selector(".nav-" + page).visible).ok();
+    } else if (page === "services") {
+      // Services is rendered with v-if, so it is absent (not merely hidden) when the role lacks
+      // the permission; assert absence directly instead of waiting out the visibility timeout.
+      await t.expect(Selector(".nav-" + page).exists).notOk();
     } else {
       await t.expect(Selector(".nav-" + page).visible).notOk();
     }

@@ -303,4 +303,16 @@ var DialectMySQL = Migrations{
 		Stage:      "post",
 		Statements: []string{"CREATE OR REPLACE INDEX idx_albums_album_filter ON albums (album_filter(512));", "CREATE OR REPLACE INDEX idx_albums_album_path ON albums (album_path(512));"},
 	},
+	{
+		ID:         "20260721-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(4096);"},
+	},
+	{
+		ID:         "20260721-000002",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS instance_id VARBINARY(255);"},
+	},
 }

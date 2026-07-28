@@ -39,11 +39,6 @@ const MaxResults = 100000
 // Radius is about 1 km.
 const Radius = 0.009
 
-// Query searches given an originals path and a db instance.
-type Query struct {
-	db *gorm.DB
-}
-
 // Count represents the total number of search results.
 type Count struct {
 	Total int

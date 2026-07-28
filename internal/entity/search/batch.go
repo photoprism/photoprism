@@ -9,11 +9,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// BatchResult represents a photo geo search result.
+// BatchResult defines the result columns loaded for the pictures selected in a batch edit.
+// Its fields mirror the Photo struct that BatchPhotos scans into, so a column selected without a
+// matching Photo field would be read and then discarded.
 type BatchResult struct {
 	ID               uint          `json:"-" select:"photos.id"`
 	CompositeID      string        `json:"ID,omitempty" select:"files.photo_id AS composite_id"`
-	UUID             string        `json:"DocumentID,omitempty" select:"photos.uuid"`
 	PhotoUID         string        `json:"UID" select:"photos.photo_uid"`
 	PhotoType        string        `json:"Type" select:"photos.photo_type"`
 	TypeSrc          string        `json:"TypeSrc" select:"photos.taken_src"`
@@ -42,7 +43,6 @@ type BatchResult struct {
 	PhotoPanorama    bool          `json:"Panorama" select:"photos.photo_panorama"`
 	CameraID         uint          `json:"CameraID" select:"photos.camera_id"` // Camera
 	CameraSrc        string        `json:"CameraSrc,omitempty" select:"photos.camera_src"`
-	CameraSerial     string        `json:"CameraSerial,omitempty" select:"photos.camera_serial"`
 	CameraMake       string        `json:"CameraMake,omitempty" select:"cameras.camera_make"`
 	CameraModel      string        `json:"CameraModel,omitempty" select:"cameras.camera_model"`
 	CameraType       string        `json:"CameraType,omitempty" select:"cameras.camera_type"`
@@ -86,10 +86,10 @@ type BatchResult struct {
 	DetailsLicense   string `json:"DetailsLicense" select:"details.license AS details_license"`
 }
 
-// BatchCols contains the result column names necessary for the photo viewer.
+// BatchCols contains the result column names necessary for the batch edit form.
 var BatchCols = SelectString(BatchResult{}, SelectCols(BatchResult{}, []string{"*"}))
 
-// BatchPhotos finds PhotoResults based on the search form without checking rights or permissions.
+// BatchPhotos finds the pictures with the specified UIDs, limited to what the session may see.
 func BatchPhotos(uids []string, sess *entity.Session) (results PhotoResults, count int, err error) {
 	frm := form.SearchPhotos{
 		UID:     strings.Join(uids, txt.Or),

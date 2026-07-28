@@ -3,10 +3,12 @@ package vision
 import (
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -15,6 +17,23 @@ func TestOptions(t *testing.T) {
 	var configFile = filepath.Join(configPath, "vision.yml")
 
 	t.Run("Save", func(t *testing.T) {
+		// Regenerate the committed fixture deterministically, independent of any ambient
+		// OLLAMA_* env, so it always reflects the self-hosted defaults (gemma4 + Think: "false").
+		origModel := CaptionModel.Model
+		origService := CaptionModel.Service
+		t.Cleanup(func() {
+			CaptionModel.Model = origModel
+			CaptionModel.Service = origService
+			ensureEnvOnce = sync.Once{}
+			registerOllamaEngineDefaults()
+		})
+		t.Setenv(ollama.APIKeyEnv, "")
+		t.Setenv(ollama.BaseUrlEnv, ollama.DefaultBaseUrl)
+		ensureEnvOnce = sync.Once{}
+		CaptionModel.Model = ""
+		CaptionModel.Service = Service{}
+		registerOllamaEngineDefaults()
+
 		_ = os.Remove(configFile)
 		options := NewConfig()
 		err := options.Save(configFile)

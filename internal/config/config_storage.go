@@ -313,6 +313,13 @@ func (c *Config) ConfigPath() string {
 	return fs.Abs(c.options.ConfigPath)
 }
 
+// KeysPath returns the directory that stores the instance's secret signing keys, e.g. the URL token
+// signing key (config/keys). Portal-role keys (cluster JWT, OIDC session cookie) live under
+// PortalConfigPath instead.
+func (c *Config) KeysPath() string {
+	return filepath.Join(c.ConfigPath(), "keys")
+}
+
 // OptionsYaml returns the absolute path to the options configuration file.
 // It relies on fs.ConfigFilePath so legacy `.yml` files keep working while
 // newly created instances may use `.yaml` without additional wiring.

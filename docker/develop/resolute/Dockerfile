@@ -117,6 +117,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'export PATH="$PATH:$HOME/.local/bin"' >> /etc/bash.bashrc && \
     /scripts/install-dircolors.sh && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-7/policy.xml && \
+    install -m 0755 /usr/bin/gs /usr/local/bin/gs && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \

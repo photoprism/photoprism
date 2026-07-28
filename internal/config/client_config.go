@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -56,6 +57,7 @@ type ClientConfig struct {
 	AppName          string              `json:"appName"`
 	AppMode          string              `json:"appMode"`
 	AppIcon          string              `json:"appIcon"`
+	AppTouchIcon     string              `json:"appTouchIcon"`
 	AppColor         string              `json:"appColor"`
 	DefaultLocale    string              `json:"defaultLocale"`
 	DefaultTimezone  string              `json:"defaultTimezone"`
@@ -309,6 +311,7 @@ func (c *Config) ClientPublic() *ClientConfig {
 		AppName:          c.AppName(),
 		AppMode:          c.AppMode(),
 		AppIcon:          c.AppIcon(),
+		AppTouchIcon:     c.AppTouchIcon(),
 		AppColor:         c.AppColor(),
 		DefaultLocale:    c.DefaultLocale(),
 		DefaultTimezone:  c.DefaultTimezone().String(),
@@ -408,6 +411,7 @@ func (c *Config) ClientShare() *ClientConfig {
 		AppName:          c.AppName(),
 		AppMode:          c.AppMode(),
 		AppIcon:          c.AppIcon(),
+		AppTouchIcon:     c.AppTouchIcon(),
 		AppColor:         c.AppColor(),
 		DefaultLocale:    c.DefaultLocale(),
 		DefaultTimezone:  c.DefaultTimezone().String(),
@@ -515,6 +519,7 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		AppName:          c.AppName(),
 		AppMode:          c.AppMode(),
 		AppIcon:          c.AppIcon(),
+		AppTouchIcon:     c.AppTouchIcon(),
 		AppColor:         c.AppColor(),
 		DefaultLocale:    c.DefaultLocale(),
 		DefaultTimezone:  c.DefaultTimezone().String(),
@@ -767,12 +772,21 @@ func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 		cfg = c.ClientPublic()
 	}
 
-	if c.Public() {
+	switch {
+	case c.Public():
 		cfg.PreviewToken = entity.TokenPublic
 		cfg.DownloadToken = entity.TokenPublic
-	} else if sess.PreviewToken != "" || sess.DownloadToken != "" {
+	case sess.PreviewToken != "":
 		cfg.PreviewToken = sess.PreviewToken
-		cfg.DownloadToken = sess.DownloadToken
+
+		// The download token is the "?t=" value: a signed, session-bound token so header-less download
+		// endpoints can scope the response to this session.
+		cfg.DownloadToken = tokens.DownloadToken(sess.ID)
+	default:
+		// A session without its own preview token gets no download token either, as the download token
+		// is the higher-value credential: it authorizes originals, and a coarse one is also accepted for
+		// previews. Clears the base config value so a configured static token is not handed out here.
+		cfg.DownloadToken = ""
 	}
 
 	return cfg

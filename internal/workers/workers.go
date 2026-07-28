@@ -25,14 +25,17 @@ Additional information can be found in our Developer Guide:
 package workers
 
 import (
+	"path/filepath"
 	"time"
 
 	"github.com/go-co-op/gocron/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 var log = event.Log
@@ -101,6 +104,7 @@ func Start(conf *config.Config) {
 					RunMeta(conf)
 					RunShare(conf)
 					RunSync(conf)
+					RunPurgeArchives(conf)
 				})
 			}
 		}
@@ -145,6 +149,30 @@ func RunShare(conf *config.Config) {
 				log.Warnf("share: %s", err)
 			}
 		}()
+	}
+}
+
+// RunPurgeArchives removes expired download archives from the temp directory once.
+// It returns without disk access while mutex.TempArchives is clear, so an idle instance never wakes up
+// sleeping storage, and clears the flag before scanning so a concurrent creation that re-arms it during
+// the sweep is not overwritten.
+func RunPurgeArchives(conf *config.Config) {
+	if !mutex.TempArchives.Load() {
+		return
+	}
+
+	mutex.TempArchives.Store(false)
+
+	maxAge := time.Duration(ttl.DownloadArchiveAge.Int()) * time.Second
+	removed, remaining, failed := fs.PurgeExpired(filepath.Join(conf.TempPath(), fs.ZipDir), fs.ExtZip, maxAge)
+
+	// Keep scanning while archives are left, e.g. because they have not expired yet.
+	if remaining > 0 {
+		mutex.TempArchives.Store(true)
+	}
+
+	if removed > 0 || failed > 0 {
+		log.Debugf("download: removed %d expired archives, %d could not be deleted", removed, failed)
 	}
 }
 

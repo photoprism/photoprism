@@ -132,6 +132,30 @@ func TestWaitForAsyncJobs_DrainsRegisteredWork(t *testing.T) {
 	}
 }
 
+func TestWaitForAsyncJobsTimeout(t *testing.T) {
+	// Ensure any prior async work has drained so the counter starts clean.
+	WaitForAsyncJobs()
+
+	t.Run("Drained", func(t *testing.T) {
+		assert.True(t, WaitForAsyncJobsTimeout(time.Second))
+	})
+	t.Run("TimesOutWhileJobInFlight", func(t *testing.T) {
+		AsyncJobAdd()
+		release := make(chan struct{})
+		go func() {
+			<-release
+			AsyncJobDone()
+		}()
+
+		// The job is still in flight, so a short wait must time out and report false.
+		assert.False(t, WaitForAsyncJobsTimeout(20*time.Millisecond))
+
+		// After the job finishes, the wait must drain and report true.
+		close(release)
+		assert.True(t, WaitForAsyncJobsTimeout(2*time.Second))
+	})
+}
+
 func TestLabelPhotoCounts(t *testing.T) {
 	t.Run("NilTesting", func(t *testing.T) {
 		t.Cleanup(func() {

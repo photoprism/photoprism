@@ -41,7 +41,7 @@ func SetUserImageURL(m *entity.User, imageUrl, imageSrc, thumbPath string) error
 		return fmt.Errorf("failed to detect avatar type (%w)", mimeErr)
 	} else {
 		switch {
-		case mimeType.Is(header.ContentTypePng):
+		case mimeType.Is(header.ContentTypePng), mimeType.Is(header.ContentTypeAPng):
 			imageName = tmpName + fs.ExtPng
 		case mimeType.Is(header.ContentTypeJpeg):
 			imageName = tmpName + fs.ExtJpeg

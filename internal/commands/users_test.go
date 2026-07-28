@@ -63,7 +63,7 @@ func TestUsersCommand(t *testing.T) {
 		assert.Contains(t, output6, "Johnny")
 		assert.Contains(t, output6, "admin")
 		assert.Contains(t, output6, "johnnny@test.de")
-		assert.Contains(t, output6, "│ DeletedAt     │ gorm.DeletedAt{Time:time.Date")
-		assert.NotContains(t, output6, "│ DeletedAt     │ gorm.DeletedAt{Time:time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), Valid:false}")
+		assert.Contains(t, output6, "│ DeletedAt      │ gorm.DeletedAt{Time:time.Date")
+		assert.NotContains(t, output6, "│ DeletedAt      │ gorm.DeletedAt{Time:time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC), Valid:false}")
 	})
 }

@@ -185,6 +185,29 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
+			// Ensure every convertible file in the stack has its own preview image, mirroring
+			// IndexRelated. Otherwise a stack with more than one such file (e.g. a base .svg plus
+			// a .touch.svg variant) gets only a single preview, leaving the file that becomes the
+			// indexed primary without a matching sidecar so its photo stays hidden until a rescan.
+			if o.Convert {
+				for _, rf := range related.Files {
+					if rf == nil || !rf.IsMedia() || rf.HasPreviewImage() {
+						continue
+					}
+
+					if img, imgErr := imp.convert.ToImage(rf, false); imgErr != nil {
+						log.Warnf("import: could not create preview image for %s (%s)", clean.Log(rf.RootRelName()), clean.Error(imgErr))
+					} else if img != nil {
+						if thumbsErr := img.GenerateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
+							log.Warnf("import: failed to generate thumbnails for %s (%s)", clean.Log(img.RootRelName()), thumbsErr.Error())
+						}
+
+						img.SetRelatedMain(related.Main)
+						related.Files = append(related.Files, img)
+					}
+				}
+			}
+
 			done := make(map[string]bool)
 			ind := imp.index
 			photoUID := ""
@@ -202,6 +225,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index main MediaFile.
+				main.SetRelatedMain(main)
 				res := ind.UserMediaFile(main, o, originalName, "", opt.UID)
 
 				// Log result.
@@ -252,6 +276,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index related media file including its original filename.
+				file.SetRelatedMain(related.Main)
 				res := ind.UserMediaFile(file, o, relatedOriginalNames[file.FileName()], photoUID, opt.UID)
 
 				// Save file error.

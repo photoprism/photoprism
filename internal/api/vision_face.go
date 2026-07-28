@@ -20,9 +20,9 @@ import (
 //	@Id			PostVisionFace
 //	@Tags		Vision
 //	@Produce	json
-//	@Success	200				{object}	vision.ApiResponse
-//	@Failure	401,403,429,501	{object}	i18n.Response
-//	@Param		images			body		vision.ApiRequest	true	"list of image file urls"
+//	@Success	200					{object}	vision.ApiResponse
+//	@Failure	400,401,403,413,429	{object}	i18n.Response
+//	@Param		images				body		vision.ApiRequest	true	"list of image file urls"
 //	@Router		/api/v1/vision/face [post]
 func PostVisionFace(router *gin.RouterGroup) {
 	router.POST("/vision/face", func(c *gin.Context) {
@@ -72,15 +72,29 @@ func PostVisionFace(router *gin.RouterGroup) {
 		results := make([]face.Embeddings, len(request.Images))
 
 		for i := range request.Images {
-			if data, err := media.ReadUrlImage(request.Images[i], scheme.HttpsData); err != nil {
-				results[i] = face.Embeddings{}
+			// ReadUrlImage restricts references to https/data URLs, rejecting local paths and
+			// file: schemes before any read so this endpoint cannot read arbitrary local files.
+			data, err := media.ReadUrlImage(request.Images[i], scheme.HttpsData)
+
+			// A rejected reference fails closed with 400, mirroring the labels endpoint.
+			if err != nil {
 				log.Errorf("vision: %s (read face embedding from url)", err)
-			} else if result, faceErr := vision.GenerateFaceEmbeddings(data); faceErr != nil {
-				results[i] = face.Embeddings{}
-				log.Errorf("vision: %s (run face embeddings)", faceErr)
-			} else {
-				results[i] = result
+				c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
+				return
 			}
+
+			// Undecodable data fails closed with 400, mirroring the labels and nsfw endpoints.
+			// An image with no detectable face is not an error and still yields 200 with
+			// empty embeddings, so this only rejects input that is not a usable image.
+			result, faceErr := vision.GenerateFaceEmbeddings(data)
+
+			if faceErr != nil {
+				log.Errorf("vision: %s (run face embeddings)", faceErr)
+				c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
+				return
+			}
+
+			results[i] = result
 		}
 
 		// Generate Vision API service response.

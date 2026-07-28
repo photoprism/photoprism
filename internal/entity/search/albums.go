@@ -38,6 +38,14 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL")
 
+	// Parse UIDs from filter.
+	var uids []string
+	if txt.NotEmpty(frm.UID) {
+		if frmUids := SplitOr(strings.ToLower(frm.UID)); rnd.ContainsUID(frmUids, entity.AlbumUID) {
+			uids = frmUids
+		}
+	}
+
 	// Check session permissions and apply as needed.
 	if sess != nil {
 		user := sess.GetUser()
@@ -56,6 +64,14 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			aclResource = acl.ResourceCalendar
 		case entity.AlbumState:
 			aclResource = acl.ResourcePlaces
+		default:
+			// When no album type is given and the UID filter is used, default to the "albums" resource,
+			// so requests from roles without default access to all resources are not denied.
+			if len(uids) > 0 {
+				aclResource = acl.ResourceAlbums
+			} else {
+				aclResource = acl.ResourceDefault
+			}
 		}
 
 		// Check user permissions.
@@ -86,19 +102,21 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			s = s.Order(OrderExpr("photo_count DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
 		}
 	case sortby.Moment, sortby.Newest:
-		if frm.Type == entity.AlbumManual || frm.Type == entity.AlbumState {
+		switch frm.Type {
+		case entity.AlbumManual, entity.AlbumState:
 			s = s.Order(OrderExpr("albums.album_uid DESC", frm.Reverse))
-		} else if frm.Type == entity.AlbumMoment {
+		case entity.AlbumMoment:
 			s = s.Order(OrderExpr("has_year, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
-		} else {
+		default:
 			s = s.Order(OrderExpr("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
 		}
 	case sortby.Oldest:
-		if frm.Type == entity.AlbumManual || frm.Type == entity.AlbumState {
+		switch frm.Type {
+		case entity.AlbumManual, entity.AlbumState:
 			s = s.Order(OrderExpr("albums.album_uid ASC", frm.Reverse))
-		} else if frm.Type == entity.AlbumMoment {
+		case entity.AlbumMoment:
 			s = s.Order(OrderExpr("has_year, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC", frm.Reverse))
-		} else {
+		default:
 			s = s.Order(OrderExpr("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC", frm.Reverse))
 		}
 	case sortby.Added:
@@ -114,11 +132,12 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	case sortby.Slug:
 		s = s.Order(OrderExpr("albums.album_slug ASC, albums.album_uid DESC", frm.Reverse))
 	case sortby.Favorites:
-		if frm.Type == entity.AlbumFolder {
+		switch frm.Type {
+		case entity.AlbumFolder:
 			s = s.Order(OrderExpr("albums.album_favorite DESC, albums.album_path ASC, albums.album_uid DESC", frm.Reverse))
-		} else if frm.Type == entity.AlbumMonth {
+		case entity.AlbumMonth:
 			s = s.Order(OrderExpr("albums.album_favorite DESC, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
-		} else {
+		default:
 			s = s.Order(OrderExpr("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC", frm.Reverse))
 		}
 	case sortby.Name:
@@ -138,12 +157,8 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	}
 
 	// Find specific UIDs only?
-	if txt.NotEmpty(frm.UID) {
-		ids := SplitOr(strings.ToLower(frm.UID))
-
-		if rnd.ContainsUID(ids, entity.AlbumUID) {
-			s = s.Where("albums.album_uid IN (?)", ids)
-		}
+	if len(uids) > 0 {
+		s = s.Where("albums.album_uid IN (?)", uids)
 	}
 
 	// Filter by title or path?
@@ -153,13 +168,19 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		switch entity.DbDialect() {
 		case dsn.DialectPostgreSQL:
 			if frm.Type == entity.AlbumFolder {
-				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ? OR convert_from(albums.album_path, 'UTF8') LIKE ?", q, q, q)
+				// album_path is VARBINARY and matched case-insensitively so a lowercased query still
+				// finds uppercase folder paths; album_title and album_location are VARCHAR (already
+				// case-insensitive).
+				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ? OR "+PathLike(s.Dialect().GetName(), "convert_from(albums.album_path, 'UTF8') LIKE ?", q, q, q)
 			} else {
 				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ?", q, q)
 			}
 		default:
 			if frm.Type == entity.AlbumFolder {
-				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR albums.album_path LIKE ?", q, q, q)
+				// album_path is VARBINARY and matched case-insensitively so a lowercased query still
+				// finds uppercase folder paths; album_title and album_location are VARCHAR (already
+				// case-insensitive).
+				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Dialect().GetName(), "albums.album_path LIKE ?", q, q, q)
 			} else {
 				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
 			}

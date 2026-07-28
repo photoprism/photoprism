@@ -641,6 +641,12 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	jwksURL3 = srv.URL + "/.well-known/jwks.json"
 	defer srv.Close()
 
+	// Pin the driver, as this test is about nodes that do not run on MySQL.
+	t.Setenv("PHOTOPRISM_TEST_DSN_NAME", dsn.DriverSQLite3)
+	t.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", (&dsn.DSN{Driver: dsn.DriverSQLite3, Server: t.TempDir(), Name: "bootstrap-sqlite.db"}).ToString())
+
+	c := newBootstrapTestConfig(t, "bootstrap-sqlite")
+
 	// SQLite driver by default; set Portal.
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken

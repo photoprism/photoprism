@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -50,6 +51,36 @@ func TestUploadUserAvatar(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, http.MethodPost, reqUrl, `{}`, authToken)
 
 		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("AnimatedPng", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		adminUid := entity.Admin.UserUID
+
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		reqUrl := fmt.Sprintf("/api/v1/users/%s/avatar", adminUid)
+		UploadUserAvatar(router)
+		authToken := AuthenticateAdmin(app, router)
+
+		apng, err := os.ReadFile("testdata/animated.png")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		body, ctype, err := buildMultipart(map[string][]byte{"avatar.png": apng})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, reqUrl, body)
+		req.Header.Set("Content-Type", ctype)
+		header.SetAuthorization(req, authToken)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
 	})
 	t.Run("RequestTooLarge", func(t *testing.T) {
 		app, router, conf := NewApiTest()

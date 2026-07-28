@@ -1,12 +1,16 @@
 package entity
 
 import (
+	"errors"
+	"strings"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestCreateService(t *testing.T) {
@@ -264,6 +268,69 @@ func TestService_Save(t *testing.T) {
 		elapsed := afterDate.Sub(initialDate)
 		assert.GreaterOrEqual(t, elapsed, time.Duration(0))
 		assert.Less(t, elapsed, time.Minute)
+	})
+}
+
+func TestService_LogErr(t *testing.T) {
+	t.Run("ClipsMultiByteErrorMessage", func(t *testing.T) {
+		// acc_error is a bounded VARBINARY column and LogErr budgets messages to
+		// txt.ClipError (255) bytes; a long multi-byte error must be clipped on a rune
+		// boundary so the stored value stays within budget and valid UTF-8.
+		account := Service{AccName: "LogErrAccount", AccOwner: "LogErr", AccURL: "test.com", AccType: "test",
+			AccKey: "123", AccUser: "testuser", AccPass: "testpass", RetryLimit: 4}
+
+		accountForm, err := form.NewService(account)
+		if err != nil {
+			t.Fatal(err)
+		}
+		model, err := AddService(accountForm)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		longErr := errors.New(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
+
+		if err = model.LogErr(longErr); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotEmpty(t, model.AccError)
+		assert.LessOrEqual(t, len(model.AccError), txt.ClipError)
+		assert.True(t, utf8.ValidString(model.AccError))
+		assert.Equal(t, 1, model.AccErrors)
+
+		// The clipped message is also what gets persisted.
+		var reloaded Service
+		if err = Db().Where("id = ?", model.ID).First(&reloaded).Error; err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, model.AccError, reloaded.AccError)
+		assert.LessOrEqual(t, len(reloaded.AccError), txt.ClipError)
+	})
+	t.Run("NilErrorResetsErrors", func(t *testing.T) {
+		// A nil error clears the recorded message and counter via ResetErrors.
+		account := Service{AccName: "LogErrReset", AccOwner: "LogErr", AccURL: "test.com", AccType: "test",
+			AccKey: "123", AccUser: "testuser", AccPass: "testpass", RetryLimit: 4}
+
+		accountForm, err := form.NewService(account)
+		if err != nil {
+			t.Fatal(err)
+		}
+		model, err := AddService(accountForm)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err = model.LogErr(errors.New("boom")); err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, 1, model.AccErrors)
+
+		if err = model.LogErr(nil); err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, 0, model.AccErrors)
+		assert.Equal(t, "", model.AccError)
 	})
 }
 

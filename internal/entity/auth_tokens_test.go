@@ -11,16 +11,16 @@ func TestGenerateToken(t *testing.T) {
 	assert.Equal(t, 8, len(m))
 }
 
-func TestInvalidDownloadToken(t *testing.T) {
-	assert.True(t, InvalidDownloadToken("xxx"))
-	assert.True(t, InvalidDownloadToken("1ud3qfpu"))
-	DownloadToken.Set("1ud3qfpu", "1ud3qfpu")
-	assert.False(t, InvalidDownloadToken("1ud3qfpu"))
-}
-
 func TestInvalidPreviewToken(t *testing.T) {
 	assert.True(t, InvalidPreviewToken("xxx"))
 	assert.True(t, InvalidPreviewToken("2ud3qfpu"))
-	PreviewToken.Set("2ud3qfpu", "2ud3qfpu")
+	PreviewToken.Set("sesspvtoken2ud3qfpu", "2ud3qfpu")
 	assert.False(t, InvalidPreviewToken("2ud3qfpu"))
+
+	// The instance-wide preview token is registered under the reserved TokenConfig key
+	// (Config.Propagate does PreviewToken.Set(TokenConfig, token)); a config token used
+	// for shared albums and session-less thumbnails must still resolve as valid.
+	assert.True(t, InvalidPreviewToken("sharedtok"))
+	PreviewToken.Set(TokenConfig, "sharedtok")
+	assert.False(t, InvalidPreviewToken("sharedtok"))
 }

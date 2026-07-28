@@ -8,8 +8,24 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+func TestPathLike(t *testing.T) {
+	t.Run("MySQLCaseInsensitiveCollation", func(t *testing.T) {
+		// MySQL compares VARBINARY byte-exact, so the path is converted to a case-insensitive collation.
+		assert.Equal(t, "CONVERT(albums.album_path USING utf8mb4) COLLATE utf8mb4_general_ci LIKE ?", PathLike(dsn.DriverMySQL, "albums.album_path"))
+	})
+	t.Run("SQLitePlainLike", func(t *testing.T) {
+		// SQLite LIKE is already ASCII case-insensitive, so a plain LIKE suffices.
+		assert.Equal(t, "albums.album_path LIKE ?", PathLike(dsn.DriverSQLite3, "albums.album_path"))
+	})
+	t.Run("UnknownDialectFallsBackToPlainLike", func(t *testing.T) {
+		// A future or unknown dialect must not error; it falls back to a plain LIKE.
+		assert.Equal(t, "albums.album_path LIKE ?", PathLike(dsn.DriverPostgres, "albums.album_path"))
+	})
+}
 
 func TestSqlParam(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {

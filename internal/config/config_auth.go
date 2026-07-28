@@ -1,15 +1,20 @@
 package config
 
 import (
+	"crypto/rand"
 	"os"
+	"path/filepath"
 	"regexp"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -95,7 +100,7 @@ func (c *Config) AdminPassword() string {
 		// No password set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path is derived from config directory
-		log.Warnf("config: failed to read admin password from %s (%s)", fileName, err)
+		event.SystemWarn([]string{"config", "admin password", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -214,32 +219,89 @@ func (c *Config) SessionCacheDuration() time.Duration {
 	return time.Duration(c.SessionCache()) * time.Second
 }
 
-// DownloadToken returns the DOWNLOAD api token (you can optionally use a static value for permanent caching).
+// DownloadToken returns the configured static download token (PHOTOPRISM_DOWNLOAD_TOKEN), which keeps
+// permanent, cacheable URLs working, or an empty string when none is set.
+// None is generated as a fallback, so an instance that was never configured for permanent URLs has no
+// unscoped capability to accept; sessions receive a signed, session-scoped token instead.
 func (c *Config) DownloadToken() string {
 	if c.Public() {
 		return entity.TokenPublic
-	} else if c.options.DownloadToken == "" {
-		c.options.DownloadToken = rnd.Base36(8)
 	}
 
 	return c.options.DownloadToken
 }
 
-// InvalidDownloadToken checks if the token is invalid.
-func (c *Config) InvalidDownloadToken(t string) bool {
-	return entity.InvalidDownloadToken(t)
+// TokenSigningKey returns the instance secret that signs the app's URL tokens, generating one on first
+// use and nil if that fails, which leaves the signers unconfigured so they refuse.
+// One key covers every token kind and never reaches clients. It is kept in memory even when it cannot be
+// persisted to config/keys/signing.key, and regenerated when missing, so it is not backed up.
+func (c *Config) TokenSigningKey() []byte {
+	c.tokenKeyOnce.Do(func() {
+		keyPath := filepath.Join(c.KeysPath(), signingKeyName)
+
+		// Reuse the persisted key so tokens stay valid across restarts and replicas.
+		if data, err := os.ReadFile(keyPath); err == nil && len(data) >= tokens.KeyLen { //nolint:gosec // path is computed from the config directory
+			c.tokenKey = data
+			return
+		}
+
+		// Leave the key unset on failure: a partially filled buffer would sign with a guessable — worst
+		// case all-zero — key, which is strictly worse than rejecting every token.
+		key := make([]byte, tokens.KeyLen)
+		if _, err := rand.Read(key); err != nil {
+			event.SystemError([]string{"config", "token signing key", "generate", "%s"}, clean.Error(err))
+			return
+		}
+
+		// Keep the key in memory even if it cannot be persisted below.
+		c.tokenKey = key
+
+		// Best-effort persistence: a write failure must not clear the in-memory key.
+		if err := fs.MkdirAll(c.KeysPath()); err != nil {
+			event.SystemWarn([]string{"config", "token signing key", "create keys directory", "%s"}, clean.Error(err))
+		} else if err := os.WriteFile(keyPath, key, fs.ModeSecretFile); err != nil {
+			event.SystemWarn([]string{"config", "token signing key", "store", "%s"}, clean.Error(err))
+		}
+	})
+
+	return c.tokenKey
 }
 
-// PreviewToken returns the preview image api token (based on the unique storage serial by default).
+// DownloadTokenMaxAge returns the lifetime of signed download tokens, ttl.DownloadTokenDefaultAge
+// unless PHOTOPRISM_DOWNLOAD_TOKEN_MAXAGE (seconds) is set.
+// The value MUST exceed the client's token-refresh interval so a held token stays valid, so a smaller
+// one is raised to ttl.DownloadTokenMinAge and downloads cannot silently break.
+func (c *Config) DownloadTokenMaxAge() time.Duration {
+	// Read the built-in default, not ttl.DownloadToken, which Propagate overwrites with the result of
+	// this call: deriving from it would make the effective lifetime unable to return to the default.
+	maxAge := ttl.DownloadTokenDefaultAge.Int()
+
+	if c.options.DownloadTokenMaxAge > 0 {
+		maxAge = int(c.options.DownloadTokenMaxAge)
+	}
+
+	if maxAge < ttl.DownloadTokenMinAge.Int() {
+		maxAge = ttl.DownloadTokenMinAge.Int()
+	}
+
+	return time.Duration(maxAge) * time.Second
+}
+
+// PreviewToken returns the thumbnail and video streaming API token, derived from the instance signing
+// key unless a static one is configured.
+// It is not derived from the storage serial, which is world-readable by design so that it survives a
+// UID/GID change, and is replaced by signed preview tokens once those land.
 func (c *Config) PreviewToken() string {
 	if c.Public() {
 		return entity.TokenPublic
 	} else if c.options.PreviewToken == "" {
-		if c.Serial() == "" {
-			return "********"
-		} else {
-			c.options.PreviewToken = c.SerialChecksum()
+		derived := tokens.Derive(c.TokenSigningKey(), tokens.PurposePreview)
+
+		if derived == "" {
+			return PreviewTokenPlaceholder
 		}
+
+		c.options.PreviewToken = derived
 	}
 
 	return c.options.PreviewToken

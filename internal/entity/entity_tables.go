@@ -22,6 +22,13 @@ type TableMap struct {
 // Tables is the map to allow ordered table setup/teardown
 type Tables map[int]TableMap
 
+// schemaTables contains the tables that record the schema migration state.
+// Truncate keeps them, as the schema remains migrated when only data is removed.
+var schemaTables = map[string]bool{
+	migrate.Migration{}.TableName(): true,
+	migrate.Version{}.TableName():   true,
+}
+
 // Entities is the list of tables in the order that they must be processed for setup/teardown
 var Entities = Tables{
 	10:   {migrate.Migration{}.TableName(), &migrate.Migration{}},
@@ -157,7 +164,8 @@ func (list Tables) ResetSequences(db *gorm.DB) (err error) {
 	return nil
 }
 
-// Truncate removes all data from tables without dropping them.
+// Truncate removes all data from tables without dropping them, except for the
+// schemaTables that record the migration state.
 func (list Tables) Truncate(db *gorm.DB) {
 	var name string
 
@@ -315,6 +323,21 @@ func (list Tables) Truncate(db *gorm.DB) {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
 	list.ResetSequences(db)
+}
+
+// truncateTable removes all rows from the table with the specified name.
+//
+// TRUNCATE is preferred as it also resets AUTO_INCREMENT counters, so that
+// generated IDs match those in a newly created database. DELETE serves as a
+// fallback for SQLite and for accounts without the required privileges.
+func truncateTable(db *gorm.DB, name string) error {
+	if db.Dialect().GetName() != dsn.DriverSQLite3 {
+		if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", name)).Error; err == nil {
+			return nil
+		}
+	}
+
+	return db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error
 }
 
 // Migrate migrates all database tables of registered entities.

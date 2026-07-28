@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-08 12:16+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-07-23 13:16+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.7\n"
+"X-Generator: Weblate 2026.7.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -46,10 +46,6 @@ msgstr "{0}-{1} daripada {2}"
 msgid "%{n} albums found"
 msgstr "%{n} album ditemui"
 
-#: src/component/service/upload.vue:177
-msgid "%{n} files uploaded"
-msgstr "%{n} fail dimuat naik"
-
 #: src/page/library/browse.vue:462
 msgid "%{n} folders found"
 msgstr "%{n} folder ditemui"
@@ -67,14 +63,14 @@ msgstr "%{n} label ditemui"
 msgid "%{n} people found"
 msgstr "%{n} orang ditemui"
 
-#: src/page/album/photos.vue:385 src/page/album/photos.vue:576
-#: src/page/photos.vue:519 src/page/photos.vue:714
+#: src/page/album/photos.vue:395 src/page/album/photos.vue:586
+#: src/page/photos.vue:529 src/page/photos.vue:724
 msgid "%{n} pictures found"
 msgstr "%{n} gambar ditemui"
 
 #: src/common/form.js:291 src/common/form.js:296
 #: src/component/input/chip-selector.vue:277
-#: src/component/lightbox/sidebar.vue:1671
+#: src/component/lightbox/sidebar.vue:1677
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/labels.vue:299
 msgid "%{s} is too long"
@@ -84,15 +80,15 @@ msgstr "%{s} terlalu panjang"
 msgid "%{s} is too short"
 msgstr "%{s} terlalu pendek"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "%d entries added to %s"
 msgstr "%d entri telah ditambah ke %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "%d entries removed from %s"
 msgstr "%d entri telah dialih keluar daripada %s"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "%d files uploaded in %d s"
 msgstr "%d fail dimuat naik dalam %d s"
 
@@ -100,7 +96,7 @@ msgstr "%d fail dimuat naik dalam %d s"
 msgid "%s already exists"
 msgstr "%s sudah wujud"
 
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "%s has been restored"
 msgstr "%s telah dipulihkan"
 
@@ -181,12 +177,12 @@ msgid "Account"
 msgstr "Akaun"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:439
+#: src/component/service/add.vue:131 src/locales.js:440
 msgid "Account created"
 msgstr "Akaun dibuat"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account deleted"
 msgstr "Akaun dipadamkan"
 
@@ -202,7 +198,7 @@ msgstr "Akaun tidak ditemui"
 msgid "Account restored"
 msgstr "Akaun dipulihkan"
 
-#: src/locales.js:440
+#: src/locales.js:441
 msgid "Account saved"
 msgstr "Akaun disimpan"
 
@@ -291,7 +287,7 @@ msgstr "Tambah Album"
 msgid "Add Link"
 msgstr "Tambah Pautan"
 
-#: src/component/lightbox/sidebar.vue:885
+#: src/component/lightbox/sidebar.vue:891
 msgid "Add Notes"
 msgstr "Tambah Nota"
 
@@ -399,23 +395,23 @@ msgstr "Selepas dua minggu"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album %s deleted"
 msgstr "Album %s telah dipadamkan"
 
-#: src/page/settings/advanced.vue:199
+#: src/page/settings/advanced.vue:215
 msgid "Album Backups"
 msgstr "Sandaran Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album contents cloned"
 msgstr "Kandungan album disalin"
 
-#: src/locales.js:428 src/page/albums.vue:1194
+#: src/locales.js:429 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album dibuat"
 
-#: src/page/album/photos.vue:669
+#: src/page/album/photos.vue:679
 msgid "Album deleted"
 msgstr "Album dipadamkan"
 
@@ -423,7 +419,7 @@ msgstr "Album dipadamkan"
 msgid "Album not found"
 msgstr "Album tidak ditemui"
 
-#: src/locales.js:429
+#: src/locales.js:430
 msgid "Album saved"
 msgstr "Album disimpan"
 
@@ -436,7 +432,7 @@ msgstr "Album disimpan"
 msgid "Albums"
 msgstr "Album"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:467
+#: src/component/album/clipboard.vue:194 src/locales.js:468
 msgid "Albums deleted"
 msgstr "Album dipadamkan"
 
@@ -604,7 +600,7 @@ msgstr "Luluskan dan simpan perubahan"
 msgid "Apps and Devices"
 msgstr "Apl dan Peranti"
 
-#: src/component/lightbox.vue:3219 src/component/photo/edit/info.vue:228
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
 #: src/component/photo/edit/info.vue:229
 msgid "Archived"
 msgstr "Diarkibkan"
@@ -643,7 +639,7 @@ msgstr "Adakah anda pasti mahu memadamkan fail ini secara kekal?"
 msgid "Are you sure?"
 msgstr "Adakah anda pasti?"
 
-#: src/component/lightbox/sidebar.vue:842
+#: src/component/lightbox/sidebar.vue:848
 #: src/component/photo/batch-edit.vue:382
 #: src/component/photo/batch-edit.vue:384
 #: src/component/photo/edit/details.vue:319
@@ -697,7 +693,7 @@ msgstr "belakang"
 msgid "Back to top"
 msgstr "Kembali ke atas"
 
-#: src/page/settings/advanced.vue:171
+#: src/page/settings/advanced.vue:187
 msgid "Backup"
 msgstr "Sandaran"
 
@@ -775,7 +771,7 @@ msgstr "Layari Gambar"
 msgid "Bug Report"
 msgstr "Laporan Pepijat"
 
-#: src/locales.js:419
+#: src/locales.js:420
 msgid "Busy, please try again later"
 msgstr "Sedang sibuk, sila cuba lagi kemudian"
 
@@ -814,7 +810,7 @@ msgstr "Siri Kamera"
 msgid "Can't access your authenticator app or device?"
 msgstr "Tidak dapat mengakses apl atau peranti pengesah anda?"
 
-#: src/page/album/photos.vue:393 src/page/photos.vue:527
+#: src/page/album/photos.vue:403 src/page/photos.vue:537
 msgid "Can't load more, limit reached"
 msgstr "Tidak dapat memuatkan lagi, had dicapai"
 
@@ -859,11 +855,11 @@ msgstr "Tidak dapat memilih lebih banyak item"
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/common/util.js:1089 src/common/util.js:1096
+#: src/common/util.js:1100 src/common/util.js:1107
 msgid "Cannot copy to clipboard"
 msgstr "Tidak boleh menyalin ke papan keratan"
 
-#: src/common/util.js:904 src/component/lightbox/sidebar.vue:801
+#: src/common/util.js:904 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -880,7 +876,7 @@ msgstr "Kad"
 msgid "Carousel slide {0} of {1}"
 msgstr "Slaid karusel {0} daripada {1}"
 
-#: src/component/lightbox.vue:125 src/component/lightbox.vue:126
+#: src/component/lightbox.vue:139 src/component/lightbox.vue:140
 msgid "Cast"
 msgstr "Barisan Pelakon"
 
@@ -933,12 +929,12 @@ msgstr "Perubahan tidak dapat disimpan"
 #: src/component/user/edit/dialog.vue:596
 #: src/component/user/edit/dialog.vue:436
 #: src/component/album/edit/dialog.vue:177
-#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3171
+#: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:427 src/page/albums.vue:1197
-#: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:491
+#: src/locales.js:428 src/page/albums.vue:1197
+#: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -996,8 +992,8 @@ msgstr "Pelanggan"
 #: src/component/user/edit/dialog.vue:334 src/page/admin/sessions.vue:224
 #: src/component/user/edit/dialog.vue:320
 #: src/component/album/edit/dialog.vue:19
-#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1522
-#: src/component/lightbox.vue:1523 src/component/lightbox.vue:523
+#: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1557
+#: src/component/lightbox.vue:1558 src/component/lightbox.vue:557
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
@@ -1143,6 +1139,10 @@ msgstr "kandungan"
 msgid "Continue"
 msgstr "teruskan"
 
+#: src/page/auth/login.vue:182
+msgid "Continue with %{s}"
+msgstr "Teruskan dengan %{s}"
+
 #: src/model/cluster-instance.js:34 src/options/auth.js:11
 msgid "Contributor"
 msgstr "Penyumbang"
@@ -1151,7 +1151,7 @@ msgstr "Penyumbang"
 msgid "Converting"
 msgstr "Menukar"
 
-#: src/common/util.js:1082
+#: src/common/util.js:1093
 msgid "Copied to clipboard"
 msgstr "Disalin ke papan keratan"
 
@@ -1165,11 +1165,11 @@ msgstr "Disalin ke papan keratan"
 msgid "Copy"
 msgstr "Salinan"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Copying files from %s"
 msgstr "Menyalin fail dari %s"
 
-#: src/component/lightbox/sidebar.vue:828
+#: src/component/lightbox/sidebar.vue:834
 #: src/component/photo/batch-edit.vue:367
 #: src/component/photo/batch-edit.vue:369
 #: src/component/photo/edit/details.vue:306
@@ -1181,7 +1181,7 @@ msgstr "Hak Cipta"
 msgid "Could not be deleted"
 msgstr "Tidak dapat dipadamkan"
 
-#: src/locales.js:407
+#: src/locales.js:408
 msgid "Could not connect, please try again"
 msgstr "Tidak dapat disambungkan, sila cuba lagi"
 
@@ -1207,15 +1207,15 @@ msgstr "Buat akaun"
 msgid "Create album"
 msgstr "Buat album"
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:200
 msgid "Create regular backups based on the configured schedule."
 msgstr "Buat sandaran indeks berdasarkan jadual yang dikonfigurasikan."
 
-#: src/page/settings/advanced.vue:200
+#: src/page/settings/advanced.vue:216
 msgid "Create YAML files to back up album metadata."
 msgstr "Cipta fail YAML untuk menyandarkan metadata album."
 
-#: src/page/settings/advanced.vue:216
+#: src/page/settings/advanced.vue:232
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Cipta fail sidecar YAML untuk menyandarkan metadata gambar."
 
@@ -1253,7 +1253,7 @@ msgstr "Setiap hari"
 msgid "Database"
 msgstr "Pangkalan data"
 
-#: src/page/settings/advanced.vue:183
+#: src/page/settings/advanced.vue:199
 msgid "Database Backups"
 msgstr "Sandaran Pangkalan Data"
 
@@ -1354,7 +1354,7 @@ msgstr "Lumpuhkan semua ciri pengesanan dan pengecaman muka."
 msgid "Disable Backups"
 msgstr "Lumpuhkan Sandaran"
 
-#: src/page/settings/advanced.vue:324
+#: src/page/settings/advanced.vue:340
 msgid "Disable Darktable"
 msgstr "Lumpuhkan Darktable"
 
@@ -1362,7 +1362,7 @@ msgstr "Lumpuhkan Darktable"
 msgid "Disable Downloads"
 msgstr "Lumpuhkan muat turun"
 
-#: src/page/settings/advanced.vue:158
+#: src/page/settings/advanced.vue:174
 msgid "Disable ExifTool"
 msgstr "Lumpuhkan ExifTool"
 
@@ -1374,15 +1374,15 @@ msgstr "Lumpuhkan Wajah"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Lumpuhkan ciri yang memerlukan kebenaran menulis untuk folder asal."
 
-#: src/page/settings/advanced.vue:388
+#: src/page/settings/advanced.vue:404
 msgid "Disable FFmpeg"
 msgstr "Lumpuhkan FFmpeg"
 
-#: src/page/settings/advanced.vue:372
+#: src/page/settings/advanced.vue:388
 msgid "Disable ImageMagick"
 msgstr "Lumpuhkan ImageMagick"
 
-#: src/page/settings/advanced.vue:143
+#: src/page/settings/advanced.vue:159
 msgid "Disable interactive world maps and reverse geocoding."
 msgstr "Lumpuhkan peta dunia interaktif dan pengekodan geo terbalik."
 
@@ -1390,11 +1390,11 @@ msgstr "Lumpuhkan peta dunia interaktif dan pengekodan geo terbalik."
 msgid "Disable MCP"
 msgstr "Lumpuhkan MCP"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:158
 msgid "Disable Places"
 msgstr "Lumpuhkan Tempat"
 
-#: src/page/settings/advanced.vue:340
+#: src/page/settings/advanced.vue:356
 msgid "Disable RawTherapee"
 msgstr "Lumpuhkan RawTherapee"
 
@@ -1402,7 +1402,7 @@ msgstr "Lumpuhkan RawTherapee"
 msgid "Disable the Model Context Protocol (MCP) API endpoint for AI agent integrations."
 msgstr "Lumpuhkan titik akhir API Model Context Protocol (MCP) untuk integrasi ejen AI."
 
-#: src/page/settings/advanced.vue:404
+#: src/page/settings/advanced.vue:420
 msgid "Disable Vectors"
 msgstr "Lumpuhkan Vektor"
 
@@ -1414,11 +1414,11 @@ msgstr "Lumpuhkan WebDAV"
 msgid "Disabled"
 msgstr "Dilumpuhkan"
 
-#: src/page/settings/advanced.vue:405
+#: src/page/settings/advanced.vue:421
 msgid "Disables vector graphics support."
 msgstr "Melumpuhkan sokongan grafik vektor."
 
-#: src/page/settings/advanced.vue:389
+#: src/page/settings/advanced.vue:405
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Melumpuhkan transkod video dan pengekstrakan lakaran kenit."
 
@@ -1432,16 +1432,16 @@ msgstr "Buang"
 msgid "Discard changes and close"
 msgstr "Buang perubahan dan tutup"
 
-#: src/component/lightbox/sidebar.vue:924
+#: src/component/lightbox/sidebar.vue:930
 msgid "Discard invalid changes?"
 msgstr "Buang perubahan yang tidak sah?"
 
-#: src/component/lightbox/sidebar.vue:926
+#: src/component/lightbox/sidebar.vue:932
 msgid "Discard unsaved changes?"
 msgstr "Buang perubahan yang belum disimpan?"
 
-#: src/app/routes.js:748 src/app/routes.js:755 src/app/routes.js:762
-#: src/app/routes.js:769
+#: src/app/routes.js:745 src/app/routes.js:752 src/app/routes.js:759
+#: src/app/routes.js:766
 msgid "Discover"
 msgstr "Temui"
 
@@ -1485,15 +1485,15 @@ msgstr "Dokumen"
 msgid "Documents"
 msgstr "Dokumen"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:341
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Jangan gunakan Darktable untuk menukar imej RAW."
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:389
 msgid "Don't use ImageMagick to convert images."
 msgstr "Jangan gunakan ImageMagick untuk menukar imej."
 
-#: src/page/settings/advanced.vue:341
+#: src/page/settings/advanced.vue:357
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Jangan gunakan RawTherapee untuk menukar imej RAW."
 
@@ -1510,7 +1510,7 @@ msgid "Done."
 msgstr "Selesai."
 
 #: src/component/album/clipboard.vue:46 src/component/album/toolbar.vue:185
-#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1749
+#: src/component/file/clipboard.vue:24 src/component/lightbox.vue:1784
 #: src/component/people/clipboard.vue:23 src/component/photo/clipboard.vue:84
 #: src/component/photo/edit/files.vue:59 src/page/settings/collections.vue:31
 #: src/page/settings/content.vue:174 src/page/settings/general.vue:230
@@ -1527,7 +1527,7 @@ msgstr "Muat turun fail jauh"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
-#: src/component/lightbox.vue:3259 src/component/people/clipboard.vue:125
+#: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
 #: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
@@ -1553,17 +1553,17 @@ msgstr "Pendua akan dilangkau dan hanya muncul sekali."
 msgid "Duration"
 msgstr "Tempoh"
 
-#: src/page/settings/advanced.vue:267
+#: src/page/settings/advanced.vue:283
 msgid "Dynamic Previews"
 msgstr "Pratonton Dinamik"
 
-#: src/page/settings/advanced.vue:243
+#: src/page/settings/advanced.vue:259
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Had Saiz Dinamik: %{n}px"
 
 #: src/component/cluster/node/users.vue:85 src/page/cluster/nodes.vue:53
 #: src/component/album/clipboard.vue:35 src/component/album/toolbar.vue:156
-#: src/component/lightbox.vue:1653 src/component/lightbox.vue:1654
+#: src/component/lightbox.vue:1688 src/component/lightbox.vue:1689
 #: src/component/lightbox/sidebar.vue:111
 #: src/component/lightbox/sidebar.vue:132
 #: src/component/lightbox/sidebar.vue:165
@@ -1625,7 +1625,7 @@ msgstr "Dayakan ciri baharu yang mungkin tidak lengkap atau tidak stabil."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Dayakan penyemak imbas fail untuk menavigasi struktur folder Asal."
 
-#: src/page/settings/advanced.vue:357
+#: src/page/settings/advanced.vue:373
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Mendayakan pratetap penukar RAW. Boleh mengurangkan prestasi."
 
@@ -1653,7 +1653,7 @@ msgstr "Masukkan nama item..."
 msgid "Enter the code generated by your authenticator app:"
 msgstr "Masukkan kod yang dijana oleh apl pengesah anda:"
 
-#: src/common/api.js:126 src/locales.js:408
+#: src/common/api.js:126 src/locales.js:409
 msgid "Enter verification code"
 msgstr "Masukkan kod pengesahan"
 
@@ -1665,7 +1665,7 @@ msgstr "Masukkan kata laluan anda untuk mengesahkan tindakan dan teruskan:"
 msgid "Entity not found"
 msgstr "Entiti tidak ditemui"
 
-#: src/page/connect.vue:14 src/component/lightbox.vue:527
+#: src/page/connect.vue:14 src/component/lightbox.vue:561
 #: src/page/library/errors.vue:361
 msgid "Error"
 msgstr "ralat"
@@ -1696,7 +1696,7 @@ msgstr "Setiap dua hari"
 msgid "Exclude hidden"
 msgstr "Kecualikan tersembunyi"
 
-#: src/page/settings/advanced.vue:159
+#: src/page/settings/advanced.vue:175
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Pengekstrakan metadata dengan ExifTool diperlukan untuk sokongan Video, Live Photo dan XMP penuh."
 
@@ -1740,11 +1740,11 @@ msgstr "Muka tidak ditemui"
 msgid "Faces"
 msgstr "Muka"
 
-#: src/locales.js:405
+#: src/locales.js:406
 msgid "Failed creating file, please check permissions"
 msgstr "Gagal mencipta fail, sila semak kebenaran."
 
-#: src/locales.js:406
+#: src/locales.js:407
 msgid "Failed creating folder, please check permissions"
 msgstr "Gagal mencipta folder, sila semak kebenaran."
 
@@ -1756,19 +1756,23 @@ msgstr "Gagal mengalih keluar pautan"
 msgid "Failed to connect account."
 msgstr "Gagal menyambungkan akaun."
 
-#: src/locales.js:415
+#: src/locales.js:416
 msgid "Failed to create zip file"
 msgstr "Gagal mencipta fail zip"
+
+#: src/component/pdf-viewer.vue:298
+msgid "Failed to load the PDF document."
+msgstr "Gagal memuatkan dokumen PDF."
 
 #: src/component/cluster/node/users.vue:248
 msgid "Failed to load users."
 msgstr "Gagal memuatkan pengguna."
 
-#: src/component/lightbox.vue:2256
+#: src/component/lightbox.vue:2291
 msgid "Failed to remove face marker"
 msgstr "Gagal menanggalkan penanda muka"
 
-#: src/component/lightbox.vue:2189
+#: src/component/lightbox.vue:2224
 msgid "Failed to remove name"
 msgstr "Gagal membuang nama"
 
@@ -1776,23 +1780,23 @@ msgstr "Gagal membuang nama"
 msgid "Failed to restart server"
 msgstr "Gagal memulakan semula pelayan"
 
-#: src/component/lightbox/sidebar.vue:1696
-#: src/component/lightbox/sidebar.vue:1940
-#: src/component/lightbox/sidebar.vue:1981
-#: src/component/lightbox/sidebar.vue:2039
-#: src/component/lightbox/sidebar.vue:2059
-#: src/component/lightbox/sidebar.vue:2166
-#: src/component/lightbox/sidebar.vue:2189
-#: src/component/lightbox/sidebar.vue:2219
+#: src/component/lightbox/sidebar.vue:1702
+#: src/component/lightbox/sidebar.vue:1946
+#: src/component/lightbox/sidebar.vue:1987
+#: src/component/lightbox/sidebar.vue:2045
+#: src/component/lightbox/sidebar.vue:2065
+#: src/component/lightbox/sidebar.vue:2172
+#: src/component/lightbox/sidebar.vue:2195
+#: src/component/lightbox/sidebar.vue:2225
 #: src/component/photo/batch-edit.vue:1479
 msgid "Failed to save changes"
 msgstr "Gagal menyimpan perubahan"
 
-#: src/component/lightbox.vue:2161
+#: src/component/lightbox.vue:2196
 msgid "Failed to save face marker"
 msgstr "Gagal menyimpan penanda muka"
 
-#: src/component/lightbox/sidebar.vue:1447
+#: src/component/lightbox/sidebar.vue:1453
 msgid "Failed to save name"
 msgstr "Gagal menyimpan nama"
 
@@ -1827,7 +1831,7 @@ msgstr "Kegemaran"
 msgid "Favorites"
 msgstr "Kegemaran"
 
-#: src/locales.js:411
+#: src/locales.js:412
 msgid "Feature disabled"
 msgstr "Ciri dilumpuhkan"
 
@@ -1843,7 +1847,7 @@ msgstr "Ciri-ciri"
 msgid "Female"
 msgstr "perempuan"
 
-#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1095
+#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1101
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "Fail"
@@ -1852,11 +1856,11 @@ msgstr "Fail"
 msgid "File Browser"
 msgstr "Pelayar Fail"
 
-#: src/page/settings/advanced.vue:312
+#: src/page/settings/advanced.vue:328
 msgid "File Conversion"
 msgstr "Penukaran Fail"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File deleted"
 msgstr "Fail telah dipadam"
 
@@ -1870,7 +1874,7 @@ msgstr "Nama Fail"
 msgid "File not found"
 msgstr "Fail tidak ditemui"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "File removed from stack"
 msgstr "Fail dikeluarkan daripada susunan"
 
@@ -1882,7 +1886,7 @@ msgstr "Fail"
 msgid "File too large"
 msgstr "Fail terlalu besar"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "File uploaded"
 msgstr "Fail dimuat naik"
 
@@ -1957,7 +1961,7 @@ msgstr "Bingkai"
 msgid "Full Access"
 msgstr "Akses penuh"
 
-#: src/component/lightbox.vue:1599 src/component/lightbox.vue:1600
+#: src/component/lightbox.vue:1634 src/component/lightbox.vue:1635
 msgid "Fullscreen"
 msgstr "Skrin Penuh"
 
@@ -1996,9 +2000,17 @@ msgstr "Nama Asal"
 msgid "Global Options"
 msgstr "Pilihan Global"
 
+#: src/component/pdf-viewer.vue:75
+msgid "Go to Page"
+msgstr "Pergi ke halaman"
+
 #: src/locales.js:294
 msgid "Go to page {0}"
 msgstr "Pergi ke halaman {0}"
+
+#: src/component/pdf-viewer.vue:22
+msgid "Go to Page %{n}"
+msgstr "Pergi ke Halaman %{n}"
 
 #: src/options/options.js:448
 msgid "Gold"
@@ -2050,7 +2062,7 @@ msgstr "Fail Tersembunyi"
 msgid "Hide"
 msgstr "Sembunyi"
 
-#: src/component/lightbox.vue:1771
+#: src/component/lightbox.vue:1806
 msgid "Hide Caption"
 msgstr "Sembunyikan kapsyen"
 
@@ -2095,7 +2107,7 @@ msgstr "Jika anda kehilangan akses kepada apl atau peranti pengesah anda, anda b
 msgid "Image"
 msgstr "Imej"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:299
 msgid "Image Quality"
 msgstr "Kualiti gambar"
 
@@ -2105,13 +2117,17 @@ msgstr "Kualiti gambar"
 msgid "Import"
 msgstr "Import"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import canceled"
 msgstr "Pembatalan import"
 
-#: src/locales.js:444
+#: src/locales.js:445
 msgid "Import completed in %d s"
 msgstr "Pembelasan import dalam %d s"
+
+#: src/page/settings/advanced.vue:142
+msgid "Import Faces from XMP"
+msgstr "Muat masuk wajah dari XMP"
 
 #: src/page/library/import.vue:205
 msgid "Import failed"
@@ -2167,11 +2183,11 @@ msgstr "Indeks"
 msgid "Indexing"
 msgstr "Pengindeksan"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing canceled"
 msgstr "Pengindeksan dibatalkan"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Indexing completed in %d s"
 msgstr "Pengindeksan selesai dalam %d s"
 
@@ -2179,7 +2195,7 @@ msgstr "Pengindeksan selesai dalam %d s"
 msgid "Indexing failed"
 msgstr "Pengindeksan gagal"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing files in %s"
 msgstr "Mengindeks fail dalam %s"
 
@@ -2187,11 +2203,11 @@ msgstr "Mengindeks fail dalam %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Mengindeks media dan fail sampingan…"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing originals..."
 msgstr "Mengindeks asal..."
 
-#: src/component/lightbox.vue:1547 src/component/lightbox.vue:1548
+#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
 #: src/component/lightbox/sidebar.vue:8
 msgid "Information"
 msgstr "Maklumat"
@@ -2219,7 +2235,7 @@ msgstr "Instance tidak dapat dicapai. Cuba lagi apabila ia kembali dalam talian.
 msgid "Instances"
 msgstr "Contoh"
 
-#: src/locales.js:423
+#: src/locales.js:424
 msgid "Insufficient storage"
 msgstr "Storan tidak mencukupi"
 
@@ -2247,7 +2263,7 @@ msgstr "Alamat tidak sah"
 msgid "Invalid country"
 msgstr "Negara tidak sah"
 
-#: src/locales.js:416
+#: src/locales.js:417
 msgid "Invalid credentials"
 msgstr "Butiran log masuk tidak sah"
 
@@ -2255,11 +2271,11 @@ msgstr "Butiran log masuk tidak sah"
 msgid "Invalid date"
 msgstr "Tarikh tidak sah"
 
-#: src/locales.js:417
+#: src/locales.js:418
 msgid "Invalid link"
 msgstr "Pautan tidak sah"
 
-#: src/locales.js:418
+#: src/locales.js:419
 msgid "Invalid name"
 msgstr "Nama tidak sah"
 
@@ -2268,7 +2284,7 @@ msgstr "Nama tidak sah"
 msgid "Invalid parameters"
 msgstr "Tarikh tidak sah"
 
-#: src/locales.js:410
+#: src/locales.js:411
 msgid "Invalid password, please try again"
 msgstr "Kata laluan tidak sah, sila cuba lagi"
 
@@ -2284,7 +2300,7 @@ msgstr "Masa tidak sah"
 msgid "Invalid URL"
 msgstr "URL tidak sah"
 
-#: src/locales.js:409
+#: src/locales.js:410
 msgid "Invalid verification code, please try again"
 msgstr "Kod pengesahan tidak sah, sila cuba lagi"
 
@@ -2306,11 +2322,11 @@ msgstr "Item"
 msgid "Items per page:"
 msgstr "Item setiap halaman:"
 
-#: src/page/settings/advanced.vue:290
+#: src/page/settings/advanced.vue:306
 msgid "JPEG Quality: %{n}"
 msgstr "Kualiti JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:297
+#: src/page/settings/advanced.vue:313
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Had Saiz JPEG: %{n}px"
 
@@ -2322,7 +2338,7 @@ msgstr "JPEG dan lakaran kecil dipaparkan secara automatik mengikut keperluan."
 msgid "Keyword"
 msgstr "Kata kunci"
 
-#: src/component/lightbox/sidebar.vue:870
+#: src/component/lightbox/sidebar.vue:876
 #: src/component/photo/edit/details.vue:347
 #: src/component/photo/edit/details.vue:350
 msgid "Keywords"
@@ -2337,7 +2353,7 @@ msgstr "Label"
 msgid "Label not found"
 msgstr "Label tidak ditemui"
 
-#: src/locales.js:454
+#: src/locales.js:455
 msgid "Label saved"
 msgstr "Label disimpan"
 
@@ -2353,7 +2369,7 @@ msgstr "Label disimpan"
 msgid "Labels"
 msgstr "Label"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:453
+#: src/component/label/clipboard.vue:131 src/locales.js:454
 msgid "Labels deleted"
 msgstr "Label dipadamkan"
 
@@ -2425,7 +2441,7 @@ msgid "Library"
 msgstr "Perpustakaan"
 
 #: src/page/connect.vue:5 src/app/routes.js:103
-#: src/component/lightbox/sidebar.vue:856 src/component/navigation.vue:410
+#: src/component/lightbox/sidebar.vue:862 src/component/navigation.vue:410
 #: src/component/navigation.vue:411 src/component/navigation.vue:423
 #: src/component/navigation.vue:432 src/component/navigation.vue:545
 #: src/component/navigation.vue:553 src/component/navigation.vue:569
@@ -2436,7 +2452,7 @@ msgstr "Perpustakaan"
 msgid "License"
 msgstr "Lesen"
 
-#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
+#: src/component/lightbox.vue:1652 src/component/lightbox.vue:1653
 msgid "Like"
 msgstr "Suka"
 
@@ -2649,7 +2665,7 @@ msgstr "Monokrom"
 msgid "Month"
 msgstr "Bulan"
 
-#: src/component/lightbox.vue:1672
+#: src/component/lightbox.vue:1707
 msgid "More options"
 msgstr "Lebih banyak pilihan"
 
@@ -2665,7 +2681,7 @@ msgstr "Paling relevan"
 msgid "Move Files"
 msgstr "Alihkan Fail"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Moving files from %s"
 msgstr "Memindahkan fail dari %s"
 
@@ -2673,7 +2689,7 @@ msgstr "Memindahkan fail dari %s"
 msgid "Must have at least %{n} characters."
 msgstr "Mesti mempunyai sekurang-kurangnya %{n} aksara."
 
-#: src/component/lightbox.vue:1566 src/component/lightbox.vue:1567
+#: src/component/lightbox.vue:1601 src/component/lightbox.vue:1602
 msgid "Mute"
 msgstr "bisu"
 
@@ -2702,10 +2718,10 @@ msgstr "bisu"
 msgid "Name"
 msgstr "Nama"
 
-#: src/component/lightbox/sidebar.vue:1916
-#: src/component/lightbox/sidebar.vue:1965
-#: src/component/lightbox/sidebar.vue:2014
-#: src/component/lightbox/sidebar.vue:2081
+#: src/component/lightbox/sidebar.vue:1922
+#: src/component/lightbox/sidebar.vue:1971
+#: src/component/lightbox/sidebar.vue:2020
+#: src/component/lightbox/sidebar.vue:2087
 msgid "Name too long"
 msgstr "Nama terlalu panjang"
 
@@ -2727,13 +2743,18 @@ msgstr "jauna parole"
 msgid "Newest First"
 msgstr "Terbaharu dahulu"
 
-#: src/component/lightbox.vue:526 src/locales.js:301
+#: src/component/lightbox.vue:560 src/component/pdf-viewer.vue:127
+#: src/component/pdf-viewer.vue:128 src/locales.js:301
 msgid "Next"
 msgstr "Seterusnya"
 
 #: src/locales.js:236 src/locales.js:292
 msgid "Next page"
 msgstr "Halaman seterusnya"
+
+#: src/component/pdf-viewer.vue:87 src/component/pdf-viewer.vue:88
+msgid "Next Page"
+msgstr "Halaman Seterusnya"
 
 #: src/locales.js:260
 msgid "Next visual"
@@ -2760,7 +2781,7 @@ msgstr "Tiada album diberikan"
 msgid "No albums found"
 msgstr "Tiada album ditemui"
 
-#: src/locales.js:413
+#: src/locales.js:414
 msgid "No albums selected"
 msgstr "Tiada album dipilih"
 
@@ -2768,11 +2789,11 @@ msgstr "Tiada album dipilih"
 msgid "No data available"
 msgstr "Tiada data tersedia"
 
-#: src/locales.js:414
+#: src/locales.js:415
 msgid "No files available for download"
 msgstr "Tiada fail tersedia untuk dimuat turun"
 
-#: src/locales.js:404
+#: src/locales.js:405
 msgid "No items selected"
 msgstr "Tiada item dipilih"
 
@@ -2784,7 +2805,7 @@ msgstr "Tiada label diberikan"
 msgid "No labels found"
 msgstr "Tiada label ditemui"
 
-#: src/locales.js:412
+#: src/locales.js:413
 msgid "No labels selected"
 msgstr "Tiada label dipilih"
 
@@ -2803,8 +2824,8 @@ msgid "No people found"
 msgstr "Tiada orang ditemui"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
-#: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:572
-#: src/page/library/browse.vue:31 src/page/photos.vue:710
+#: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
+#: src/page/library/browse.vue:31 src/page/photos.vue:720
 #: src/page/places.vue:765 src/page/places.vue:886
 msgid "No pictures found"
 msgstr "Tiada gambar ditemui"
@@ -2864,7 +2885,7 @@ msgstr "Imej bukan fotografi dan berkualiti rendah memerlukan semakan sebelum ia
 msgid "None"
 msgstr "Tiada"
 
-#: src/component/lightbox.vue:1117 src/component/service/upload.vue:146
+#: src/component/lightbox.vue:1152 src/component/service/upload.vue:146
 #: src/component/service/upload.vue:158
 msgid "Not allowed"
 msgstr "Tidak dibenarkan"
@@ -2877,7 +2898,7 @@ msgstr "Tidak tersedia dalam mod awam"
 msgid "Not available in read-only mode"
 msgstr "Tidak tersedia dalam mod baca sahaja"
 
-#: src/component/lightbox.vue:1114 src/locales.js:379
+#: src/component/lightbox.vue:1149 src/locales.js:379
 msgid "Not found"
 msgstr "Tidak dijumpai"
 
@@ -2885,7 +2906,7 @@ msgstr "Tidak dijumpai"
 msgid "Not sorted."
 msgstr "Tidak disusun."
 
-#: src/component/lightbox.vue:1111 src/component/lightbox.vue:1225
+#: src/component/lightbox.vue:1146 src/component/lightbox.vue:1260
 msgid "Not supported"
 msgstr "Tidak disokong"
 
@@ -2901,7 +2922,7 @@ msgstr "Nota:"
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "Nota: Hanya pelayan WebDAV, seperti Nextcloud atau PhotoPrism, boleh dikonfigurasikan sebagai perkhidmatan jauh untuk sandaran dan muat naik fail."
 
-#: src/component/lightbox/sidebar.vue:884
+#: src/component/lightbox/sidebar.vue:890
 #: src/component/photo/edit/details.vue:362
 #: src/component/photo/edit/details.vue:365
 msgid "Notes"
@@ -2936,7 +2957,7 @@ msgstr "Tertua dahulu"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pada Windows, masukkan sumber berikut dalam dialog sambungan:"
 
-#: src/page/settings/advanced.vue:269
+#: src/page/settings/advanced.vue:285
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Penjanaan lakaran kecil atas permintaan boleh menyebabkan penggunaan CPU dan memori yang tinggi. Ia tidak disyorkan untuk pelayan terhad sumber dan peranti NAS."
 
@@ -2948,21 +2969,17 @@ msgstr "Sekali seminggu"
 msgid "One album found"
 msgstr "Satu album ditemui"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "One entry added to %s"
 msgstr "Satu kemasukan telah ditambah ke %s"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "One entry removed from %s"
 msgstr "Satu entri dikeluarkan daripada %s"
 
 #: src/page/library/browse.vue:458
 msgid "One file found"
 msgstr "Satu fail ditemui"
-
-#: src/component/service/upload.vue:175
-msgid "One file uploaded"
-msgstr "Satu fail dimuat naik"
 
 #: src/page/library/browse.vue:460
 msgid "One folder found"
@@ -2977,7 +2994,7 @@ msgstr "Satu label ditemui"
 msgid "One person found"
 msgstr "Seorang ditemui"
 
-#: src/page/album/photos.vue:574 src/page/photos.vue:712
+#: src/page/album/photos.vue:584 src/page/photos.vue:722
 msgid "One picture found"
 msgstr "Satu gambar ditemui"
 
@@ -3102,11 +3119,11 @@ msgstr "Sebahagian daripada beberapa foto yang dipilih"
 msgid "Password"
 msgstr "Kata Laluan"
 
-#: src/component/settings/password.vue:162 src/locales.js:443
+#: src/component/settings/password.vue:162 src/locales.js:444
 msgid "Password changed"
 msgstr "Kata laluan ditukar"
 
-#: src/component/lightbox.vue:68 src/component/lightbox.vue:69
+#: src/component/lightbox.vue:82 src/component/lightbox.vue:83
 msgid "Pause"
 msgstr "Berhenti sejenak"
 
@@ -3130,7 +3147,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Orang yang anda kongsikan pautan akan dapat melihat kandungan awam."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Permanently deleted"
 msgstr "Dipadamkan secara kekal"
 
@@ -3146,7 +3163,7 @@ msgstr "Orang"
 msgid "Person cover updated"
 msgstr "Muka depan orang dikemas kini"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person deleted"
 msgstr "Orang telah dipadam"
 
@@ -3155,7 +3172,7 @@ msgstr "Orang telah dipadam"
 msgid "Person not found"
 msgstr "Orang tidak ditemui"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Person saved"
 msgstr "Orang diselamatkan"
 
@@ -3212,7 +3229,7 @@ msgstr "Tempat & Masa"
 msgid "Places"
 msgstr "Tempat"
 
-#: src/component/lightbox.vue:79 src/component/lightbox.vue:80
+#: src/component/lightbox.vue:93 src/component/lightbox.vue:94
 msgid "Play"
 msgstr "Main"
 
@@ -3256,7 +3273,7 @@ msgstr "Sila tunggu…"
 msgid "PM"
 msgstr "PM"
 
-#: src/page/settings/advanced.vue:304
+#: src/page/settings/advanced.vue:320
 msgid "PNG Size Limit: %{n}px"
 msgstr "Had Saiz PNG: %{n}px"
 
@@ -3300,16 +3317,21 @@ msgstr "Halang apl lain daripada mengakses PhotoPrism sebagai pemacu rangkaian k
 msgid "Preview"
 msgstr "Pratonton"
 
-#: src/page/settings/advanced.vue:228
+#: src/page/settings/advanced.vue:244
 msgid "Preview Images"
 msgstr "Pratonton Imej"
 
-#: src/component/lightbox.vue:525 src/locales.js:302
+#: src/component/lightbox.vue:559 src/component/pdf-viewer.vue:115
+#: src/component/pdf-viewer.vue:116 src/locales.js:302
 msgid "Previous"
 msgstr "Sebelumnya"
 
 #: src/locales.js:237 src/locales.js:293
 msgid "Previous page"
+msgstr "Halaman sebelumnya"
+
+#: src/component/pdf-viewer.vue:65 src/component/pdf-viewer.vue:66
+msgid "Previous Page"
 msgstr "Halaman sebelumnya"
 
 #: src/locales.js:259
@@ -3335,7 +3357,7 @@ msgstr "Utama"
 msgid "Private"
 msgstr "Sulit"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "Processing upload..."
 msgstr "Pemprosesan muat naik..."
 
@@ -3362,7 +3384,7 @@ msgstr "Penapis Kualiti"
 msgid "Quality Score"
 msgstr "Skor Kualiti"
 
-#: src/locales.js:424
+#: src/locales.js:425
 msgid "Quota exceeded"
 msgstr "Kuota melebihi"
 
@@ -3387,6 +3409,10 @@ msgstr "MENTAH"
 #: src/page/library/index.vue:40
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indeks semula semua yang asal, termasuk fail yang telah diindeks dan tidak berubah."
+
+#: src/page/settings/advanced.vue:143
+msgid "Read face regions and names from XMP metadata to create people markers."
+msgstr "Baca kawasan muka dan nama daripada metadata XMP untuk mencipta penanda orang."
 
 #: src/page/settings/advanced.vue:62
 msgid "Read-Only Mode"
@@ -3457,7 +3483,7 @@ msgstr "kawasan"
 msgid "Register"
 msgstr "Daftar"
 
-#: src/locales.js:425
+#: src/locales.js:426
 msgid "Registration disabled"
 msgstr "Pendaftaran dilumpuhkan"
 
@@ -3489,7 +3515,7 @@ msgstr "Buang"
 msgid "remove failed: unknown album"
 msgstr "gagal mengalih keluar: album tidak diketahui"
 
-#: src/component/lightbox.vue:1704 src/component/photo/clipboard.vue:120
+#: src/component/lightbox.vue:1739 src/component/photo/clipboard.vue:120
 msgid "Remove from Album"
 msgstr "Alih keluar daripada album"
 
@@ -3517,7 +3543,7 @@ msgstr "Dialih keluar"
 msgid "Removed %{name}"
 msgstr "Dihapuskan %{name}"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Removed %d files and %d photos"
 msgstr "Mengalih keluar %d fail dan %d foto"
 
@@ -3526,7 +3552,7 @@ msgstr "Mengalih keluar %d fail dan %d foto"
 msgid "Repeated"
 msgstr "Diulang"
 
-#: src/common/api.js:103 src/component/lightbox.vue:1221
+#: src/common/api.js:103 src/component/lightbox.vue:1256
 msgid "Request failed - are you offline?"
 msgstr "Permintaan gagal - adakah anda di luar talian?"
 
@@ -3544,7 +3570,7 @@ msgstr "Resolusi"
 
 #: src/page/connect.vue:66 src/page/connect.vue:74 src/page/connect.vue:83
 #: src/page/connect.vue:56 src/page/connect.vue:65
-#: src/page/settings/advanced.vue:418
+#: src/page/settings/advanced.vue:434
 msgid "Restart"
 msgstr "Mula semula"
 
@@ -3557,12 +3583,12 @@ msgstr "Mula semula"
 #: src/component/user/edit/dialog.vue:111
 #: src/component/user/edit/dialog.vue:120
 #: src/component/user/edit/dialog.vue:126
-#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1734
+#: src/component/user/edit/dialog.vue:323 src/component/lightbox.vue:1769
 #: src/component/photo/clipboard.vue:48
 msgid "Restore"
 msgstr "Pulih"
 
-#: src/component/lightbox.vue:3238
+#: src/component/lightbox.vue:3286
 msgid "Restored"
 msgstr "Dipulihkan"
 
@@ -3718,7 +3744,7 @@ msgstr "Secret"
 msgid "Security and Access"
 msgstr "Keselamatan dan Akses"
 
-#: src/component/lightbox.vue:1635 src/component/lightbox.vue:1636
+#: src/component/lightbox.vue:1670 src/component/lightbox.vue:1671
 msgid "Select"
 msgstr "Pilih"
 
@@ -3765,19 +3791,19 @@ msgstr "Pilih Masa"
 msgid "Selection"
 msgstr "Pemilihan"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "Selection added to %s"
 msgstr "Pilihan ditambah ke %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:463
+#: src/component/photo/clipboard.vue:251 src/locales.js:464
 msgid "Selection approved"
 msgstr "Pemilihan diluluskan"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:464
+#: src/component/photo/clipboard.vue:282 src/locales.js:465
 msgid "Selection archived"
 msgstr "Pemilihan diarkibkan"
 
-#: src/locales.js:466
+#: src/locales.js:467
 msgid "Selection marked as private"
 msgstr "Pilihan yang ditandakan sebagai peribadi"
 
@@ -3785,7 +3811,7 @@ msgstr "Pilihan yang ditandakan sebagai peribadi"
 msgid "Selection not found"
 msgstr "Pilihan tidak ditemui"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:465
+#: src/component/photo/clipboard.vue:318 src/locales.js:466
 msgid "Selection restored"
 msgstr "Pemilihan dipulihkan"
 
@@ -3826,7 +3852,7 @@ msgstr "ID Sesi"
 msgid "Sessions"
 msgstr "Sesi"
 
-#: src/component/lightbox.vue:1694
+#: src/component/lightbox.vue:1729
 msgid "Set as Album Cover"
 msgstr "Tetapkan sebagai Kulit Album"
 
@@ -3837,14 +3863,14 @@ msgstr "Tetapkan sebagai Imej Muka Depan"
 #: src/component/navigation.vue:308 src/component/navigation.vue:439
 #: src/component/navigation.vue:491 src/component/navigation.vue:494
 #: src/app/routes.js:214 src/app/routes.js:661 src/app/routes.js:673
-#: src/app/routes.js:685 src/app/routes.js:703 src/app/routes.js:716
-#: src/app/routes.js:737 src/component/navigation.vue:527
+#: src/app/routes.js:685 src/app/routes.js:702 src/app/routes.js:714
+#: src/app/routes.js:734 src/component/navigation.vue:527
 #: src/component/navigation.vue:700 src/options/options.js:267
 msgid "Settings"
 msgstr "Tetapan"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:442
+#: src/component/settings/passcode.vue:366 src/locales.js:443
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Tetapan Disimpan"
@@ -3887,7 +3913,7 @@ msgstr "Tunjukkan Semua Label"
 msgid "Show all new faces"
 msgstr "Tunjukkan semua muka baharu"
 
-#: src/component/lightbox.vue:1760
+#: src/component/lightbox.vue:1795
 msgid "Show Caption"
 msgstr "Tunjukkan kapsyen"
 
@@ -3960,7 +3986,7 @@ msgstr "Tajuk Tajuk"
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:215
+#: src/page/settings/advanced.vue:231
 msgid "Sidecar Files"
 msgstr "Fail Sidecar"
 
@@ -3991,7 +4017,7 @@ msgstr "URL tapak"
 msgid "Size"
 msgstr "Saiz"
 
-#: src/component/lightbox.vue:1582 src/component/lightbox.vue:1583
+#: src/component/lightbox.vue:1617 src/component/lightbox.vue:1618
 msgid "Slideshow"
 msgstr "Tayangan slaid"
 
@@ -4023,7 +4049,7 @@ msgstr "Beberapa album tidak dapat dibuat. Sila edit nama dan cuba lagi."
 msgid "Some albums could not be updated"
 msgstr "Beberapa album tidak dapat dikemas kini"
 
-#: src/component/lightbox.vue:1218 src/locales.js:374
+#: src/component/lightbox.vue:1253 src/locales.js:374
 msgid "Something went wrong, try again"
 msgstr "Kesilapan telah berlaku, cuba lagi"
 
@@ -4094,7 +4120,7 @@ msgstr "Mula"
 msgid "Start Page"
 msgstr "Halaman Mula"
 
-#: src/page/settings/advanced.vue:235
+#: src/page/settings/advanced.vue:251
 msgid "Static Size Limit: %{n}px"
 msgstr "Had Saiz Statik: %{n}px"
 
@@ -4106,7 +4132,7 @@ msgstr "Status"
 msgid "Stay signed in on this device"
 msgstr "Tetap log masuk pada peranti ini"
 
-#: src/component/lightbox.vue:113 src/component/lightbox.vue:114
+#: src/component/lightbox.vue:127 src/component/lightbox.vue:128
 msgid "Stop Casting"
 msgstr "Berhenti melempar"
 
@@ -4119,7 +4145,7 @@ msgstr "Penyimpanan"
 msgid "Streets"
 msgstr "Jalan-jalan"
 
-#: src/common/util.js:910 src/component/lightbox/sidebar.vue:814
+#: src/common/util.js:910 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4127,7 +4153,7 @@ msgstr "Jalan-jalan"
 msgid "Subject"
 msgstr "Subjek"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject deleted"
 msgstr "Subjek dipadamkan"
 
@@ -4135,11 +4161,11 @@ msgstr "Subjek dipadamkan"
 msgid "Subject not found"
 msgstr "Subjek tidak ditemui"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Subject saved"
 msgstr "Subjek disimpan"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:472
+#: src/component/settings/passcode.vue:351 src/locales.js:473
 msgid "Successfully activated"
 msgstr "Berjaya diaktifkan"
 
@@ -4152,7 +4178,7 @@ msgstr "Berjaya Disambungkan"
 msgid "Successfully deleted"
 msgstr "Berjaya dipadamkan"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:471
+#: src/component/settings/passcode.vue:323 src/locales.js:472
 msgid "Successfully verified"
 msgstr "Berjaya disahkan"
 
@@ -4217,7 +4243,7 @@ msgstr "Instan menolak kelayakan kluster."
 msgid "The instance returned an unexpected redirect."
 msgstr "Instanse itu mengembalikan penalaan semula yang tidak dijangka."
 
-#: src/locales.js:420
+#: src/locales.js:421
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Interval pembangkitan ialah %s, tetapi mesti 1 jam atau kurang"
 
@@ -4301,6 +4327,10 @@ msgstr "Untuk menaik taraf, anda boleh sama ada memasukkan kod pengaktifan atau 
 msgid "Today"
 msgstr "Hari ini"
 
+#: src/component/pdf-viewer.vue:55 src/component/pdf-viewer.vue:56
+msgid "Toggle Thumbnails"
+msgstr "Togol Thumbnails"
+
 #: src/component/album/toolbar.vue:23 src/component/photo/toolbar.vue:55
 msgid "Toggle View"
 msgstr "Togol Paparan"
@@ -4313,7 +4343,7 @@ msgstr "Token"
 msgid "Too many files selected"
 msgstr "Terlalu banyak fail dipilih"
 
-#: src/common/api.js:128 src/locales.js:422
+#: src/common/api.js:128 src/locales.js:423
 msgid "Too many requests"
 msgstr "Terlalu banyak permintaan"
 
@@ -4372,11 +4402,11 @@ msgstr "ID unik"
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
 #: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
-#: src/component/lightbox/sidebar.vue:1736
+#: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
-#: src/component/lightbox/sidebar.vue:695
-#: src/component/lightbox/sidebar.vue:707
-#: src/component/lightbox/sidebar.vue:987
+#: src/component/lightbox/sidebar.vue:701
+#: src/component/lightbox/sidebar.vue:713
+#: src/component/lightbox/sidebar.vue:993
 #: src/component/meta/datetime/dialog.vue:31
 #: src/component/meta/datetime/dialog.vue:51
 #: src/component/meta/datetime/dialog.vue:71
@@ -4396,7 +4426,7 @@ msgstr "ID unik"
 msgid "Unknown"
 msgstr "Tidak Diketahui"
 
-#: src/page/photos.vue:445
+#: src/page/photos.vue:455
 msgid "Unknown location"
 msgstr "Lokasi tidak diketahui"
 
@@ -4504,7 +4534,7 @@ msgstr "Muat naik selesai. Pengindeksan…"
 msgid "Upload failed"
 msgstr "Muat naik gagal"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Upload has been processed"
 msgstr "Pemunggahan telah diproses"
 
@@ -4527,6 +4557,14 @@ msgstr "Muat naik mungkin menyinggung"
 msgid "Upload Path"
 msgstr "Laluan Muat Naik"
 
+#: src/component/service/upload.vue:175
+msgid "Upload started"
+msgstr "Muat naik dimulakan"
+
+#: src/locales.js:404
+msgid "Upload to %s failed"
+msgstr "Muat naik ke %s gagal"
+
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"
 msgstr "Memuat naik %{n} daripada %{t}…"
@@ -4548,7 +4586,7 @@ msgstr "Muat naik yang mungkin mengandungi imej sedemikian akan ditolak secara a
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:356
+#: src/page/settings/advanced.vue:372
 msgid "Use Presets"
 msgstr "Gunakan Pratetap"
 
@@ -4621,7 +4659,7 @@ msgstr "vektor"
 msgid "Verification Code"
 msgstr "Kod pengesahan"
 
-#: src/locales.js:426
+#: src/locales.js:427
 msgid "Verified email required"
 msgstr "E-mel yang disahkan diperlukan"
 
@@ -4803,7 +4841,7 @@ msgstr "Anda hanya boleh memilih satu item"
 msgid "You may rescan your library to find additional faces."
 msgstr "Anda boleh mengimbas semula pustaka anda untuk mencari wajah tambahan."
 
-#: src/locales.js:421
+#: src/locales.js:422
 msgid "Your account could not be connected"
 msgstr "Akaun anda tidak dapat disambungkan"
 
@@ -4825,13 +4863,21 @@ msgstr "Sokongan berterusan anda membantu kami menyediakan kemas kini dan perkhi
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, perjalanan dan tempat istimewa secara automatik."
 
-#: src/locales.js:468
+#: src/locales.js:469
 msgid "Zip created in %d s"
 msgstr "Zip dicipta dalam %d s"
 
-#: src/component/lightbox.vue:524
+#: src/component/pdf-viewer.vue:106 src/component/pdf-viewer.vue:107
+msgid "Zoom In"
+msgstr "Zom masuk"
+
+#: src/component/lightbox.vue:558
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#: src/component/pdf-viewer.vue:97 src/component/pdf-viewer.vue:98
+msgid "Zoom Out"
+msgstr "Zum keluar"
 
 #: src/component/user/edit/dialog.vue:42 src/component/user/edit/dialog.vue:43
 #: src/component/cluster/node/user-edit.vue:33
@@ -4861,7 +4907,7 @@ msgctxt "Photo"
 msgid "Add a Title"
 msgstr "Tambah Tajuk"
 
-#: src/component/lightbox/sidebar.vue:789
+#: src/component/lightbox/sidebar.vue:795
 #: src/component/photo/batch-edit.vue:158
 #: src/component/photo/batch-edit.vue:159
 #: src/component/photo/edit/details.vue:17
@@ -4870,11 +4916,32 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Tajuk"
 
-#: src/component/lightbox.vue:1719 src/component/photo/clipboard.vue:108
+#: src/component/lightbox.vue:1754 src/component/photo/clipboard.vue:108
 #: src/component/photo/view/cards.vue:165
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkib"
+
+#~ msgid "%{n} files uploaded"
+#~ msgstr "%{n} fail dimuat naik"
+
+#~ msgid "One file uploaded"
+#~ msgstr "Satu fail dimuat naik"
+
+#~ msgid "Go to page"
+#~ msgstr "Pergi ke halaman"
+
+#~ msgid "Go to page %{n}"
+#~ msgstr "Pergi ke halaman %{n}"
+
+#~ msgid "Toggle thumbnails"
+#~ msgstr "Tukar pratonton kecil"
+
+#~ msgid "Zoom in"
+#~ msgstr "Zom masuk"
+
+#~ msgid "Zoom out"
+#~ msgstr "Zum keluar"
 
 #~ msgid "Client Credentials"
 #~ msgstr "Tauliah Pelanggan"

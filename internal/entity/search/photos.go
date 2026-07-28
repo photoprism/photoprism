@@ -30,7 +30,8 @@ import (
 // PhotosColsAll contains all supported result column names.
 var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 
-// PhotosColsView contains the result column names necessary for the photo viewer.
+// PhotosColsView contains the result column names necessary for the photo viewer, derived from the
+// GeoResult select tags so the map and the lightbox load the same fields.
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.

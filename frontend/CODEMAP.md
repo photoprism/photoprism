@@ -30,7 +30,7 @@ Startup Templates & Splash Screen
 - The HTML shell is rendered from `assets/templates/index.gohtml` (and `pro/assets/templates/index.gohtml` / `plus/...` / `portal/...`). Each template includes `app.gohtml` for the splash markup and `app.js.gohtml` to inject the bundle.
 - The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes. Update the same files in private repos whenever the loader logic changes, and keep the script order so the check runs first.
 - Splash styles, including the `.splash-warning` fallback banner, live in `frontend/src/css/splash.css`. Keep styling changes there so public and private editions stay aligned.
-- Baseline support: Safari 13 / iOS 13 or current Chrome, Edge, or Firefox. If the support matrix changes, revise the warning text in `app.js.gohtml` and the CSS message accordingly.
+- Baseline support: defined by the `browserslist` query in `frontend/package.json` and resolved with `(cd frontend && npx browserslist)`; `.babelrc` sets no explicit `targets`, so `@babel/preset-env` compiles to exactly that set. If the support matrix changes, revise the warning text in `app.js.gohtml` and the CSS message accordingly.
 - Lightbox videos: `createVideoElement` wires listeners through an `AbortController` stored in `content.data.events`; `contentDestroy` aborts it so video and RemotePlayback handlers vanish with the slide.
 
 Runtime & Plugins

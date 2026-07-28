@@ -54,6 +54,9 @@ UID := $(shell id -u)
 GID := $(shell id -g)
 HASRICHGO := $(shell which richgo)
 
+# Client for the development database, which runs MariaDB.
+MARIADB ?= mariadb
+
 ifdef HASRICHGO
     GOTEST=richgo test
 else
@@ -311,7 +314,7 @@ terminal:
 mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
 mariadb-init:
-	mariadb < scripts/sql/mariadb-init.sql
+	$(MARIADB) < scripts/sql/mariadb-init.sql
 postgres:
 	$(DOCKER_COMPOSE) exec postgres psql -uphotoprism -pphotoprism photoprism
 root: root-terminal
@@ -602,11 +605,15 @@ vitest-component:
 reset-mariadb:
 # Warning:  This will reset the photoprism database which is the default database, not a testing database.
 	$(info Resetting photoprism database...)
+	$(MARIADB) < scripts/sql/reset-photoprism.sql
+reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
+reset-testdb: reset-sqlite reset-mariadb-testdb
+reset-acceptance: reset-mariadb-acceptance
 	mysql < scripts/sql/mariadb/reset-photoprism.sql
 reset-mariadb-%:
 	$(info Resetting $* database...)
-	mysql -N -B -e "SELECT CONCAT('DROP DATABASE IF EXISTS ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE '$*\_%'" | mysql
-	mysql < scripts/sql/mariadb/reset-$*.sql
+	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE IF EXISTS ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE '$*\_%'" | mysql
+	$(MARIADB) < scripts/sql/mariadb/reset-$*.sql
 reset-sqlite-unit:
 	$(info Resetting SQLite unit database...)
 	mkdir -p ./storage/testdata
@@ -623,7 +630,7 @@ reset-postgres-%:
 	$(info Resetting $* database...)
 	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres -t -c "select CONCAT('DROP DATABASE IF EXISTS ',datname,' WITH (FORCE);') from pg_database where datname like '$*_%';" | psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres
 	psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-$*.sql
-reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance
+reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance reset-postgres-migrate
 reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb reset-postgres-migrate
 # reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:

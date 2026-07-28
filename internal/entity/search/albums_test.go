@@ -1,13 +1,13 @@
 package search
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestAlbumPhotos(t *testing.T) {
@@ -52,6 +52,37 @@ func TestUserAlbums(t *testing.T) {
 			assert.Equal(t, 0, len(result))
 			assert.NotNil(t, result)
 		}
+	})
+	t.Run("SearchByUidWithoutType", func(t *testing.T) {
+		// Regression for the share-link "Permission denied" error: a lookup by album UID without
+		// a type must not be denied for a non-admin role — the default branch uses ResourceAlbums.
+		query := form.SearchAlbums{UID: "as6sg6bxpogaaba8", Count: 1}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("visitor"))
+
+		assert.NoError(t, err)
+	})
+	t.Run("SearchWithoutTypeOrUidDeniesNonAdmin", func(t *testing.T) {
+		// Without a type and without a UID filter, the check falls back to ResourceDefault, so a
+		// non-admin role is denied. This keeps a broad type-less listing admin-only.
+		query := form.SearchAlbums{Count: 100}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("visitor"))
+
+		assert.ErrorIs(t, err, ErrForbidden)
+	})
+	t.Run("SearchWithoutTypeOrUidAllowsAdmin", func(t *testing.T) {
+		// An admin has full access to ResourceDefault, so a type-less listing is permitted.
+		query := form.SearchAlbums{Count: 100}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("alice"))
+
+		assert.NoError(t, err)
+	})
+	t.Run("InvalidUidWithoutTypeDeniesNonAdmin", func(t *testing.T) {
+		// A UID filter that contains no valid album UID must not unlock the ResourceAlbums path;
+		// the check still falls back to ResourceDefault and denies the non-admin role.
+		query := form.SearchAlbums{UID: "not-a-real-uid", Count: 1}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("visitor"))
+
+		assert.ErrorIs(t, err, ErrForbidden)
 	})
 }
 
@@ -309,12 +340,11 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if strings.Contains(entity.DbDialect(), "sqlite") {
-			// SQLite is Case Sensitive
+		// MySQL/MariaDB sort case-insensitively, SQLite compares byte values.
+		if testDialect() == dsn.DriverSQLite3 {
 			assert.Equal(t, "sale%", result[0].AlbumTitle)
 			assert.Equal(t, "Yoga***", result[1].AlbumTitle)
 		} else {
-			// MariaDB is Case Insensitive and PostgreSQL has a Collation
 			assert.Equal(t, "Yoga***", result[0].AlbumTitle)
 			assert.Equal(t, "sale%", result[1].AlbumTitle)
 		}
@@ -333,12 +363,11 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if strings.Contains(entity.DbDialect(), "sqlite") {
-			// SQLite is Case Sensitive
+		// MySQL/MariaDB sort case-insensitively, SQLite compares byte values.
+		if testDialect() == dsn.DriverSQLite3 {
 			assert.Equal(t, "%gold", result[0].AlbumTitle)
 			assert.Equal(t, "'Family", result[1].AlbumTitle)
 		} else {
-			// MariaDB is Case Insensitive and PostgreSQL has a Collation
 			assert.Equal(t, "'Family", result[0].AlbumTitle)
 			assert.Equal(t, "*Forrest", result[1].AlbumTitle)
 		}
@@ -779,4 +808,53 @@ func TestAlbums(t *testing.T) {
 
 		assert.Equal(t, false, result[0].AlbumFavorite)
 	})
+}
+
+func TestUserAlbums_FolderCaseInsensitivePath(t *testing.T) {
+	// Regression #5724: form.Unserialize lowercases the search term, but album_path is VARBINARY and
+	// compared byte-exact (case-sensitive) on MySQL, so an uppercase folder path stopped matching a
+	// lowercased query. The child folder below can be found ONLY via album_path (its title does not
+	// contain the term), so this fails on MySQL without the case-insensitive path match.
+	const albumUID = "as724caseinsens0"
+	const photoUID = "ps724caseinsens0"
+	const folderPath = "QAUPPER/CHILD"
+
+	photo := entity.Photo{
+		PhotoUID:     photoUID,
+		PhotoName:    "qa-5724",
+		PhotoPath:    folderPath,
+		PhotoType:    entity.MediaImage,
+		PhotoQuality: 3,
+		TakenAt:      entity.Now(),
+		TakenAtLocal: entity.Now(),
+	}
+	if err := entity.Db().Create(&photo).Error; err != nil {
+		t.Fatal(err)
+	}
+	defer entity.UnscopedDb().Delete(&entity.Photo{}, "photo_uid = ?", photoUID)
+
+	album := entity.Album{
+		AlbumUID:   albumUID,
+		AlbumType:  entity.AlbumFolder,
+		AlbumSlug:  "qaupper-child-5724",
+		AlbumPath:  folderPath,
+		AlbumTitle: "CHILD",
+	}
+	if err := entity.Db().Create(&album).Error; err != nil {
+		t.Fatal(err)
+	}
+	defer entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", albumUID)
+
+	// "QAUPPER" is lowercased to "qaupper" by the query parser before it reaches album_path.
+	result, err := Albums(form.SearchAlbums{Query: "QAUPPER", Type: entity.AlbumFolder, Count: 100})
+	assert.NoError(t, err)
+
+	found := false
+	for i := range result {
+		if result[i].AlbumUID == albumUID {
+			found = true
+		}
+	}
+
+	assert.True(t, found, "folder with uppercase album_path must be found by a lowercased query")
 }

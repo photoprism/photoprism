@@ -66,6 +66,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         imagemagick rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
         libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
         va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
+        ghostscript gsfonts \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-postgresql.sh postgresql-client && \
@@ -73,6 +74,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-yt-dlp.sh && \
     /scripts/install-libvips.sh && \
     /scripts/install-libheif.sh && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/install-bashrc.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     /scripts/install-dircolors.sh && \
@@ -88,7 +90,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/cache && \
     /scripts/install-s6.sh && \
     ln -sf /scripts/services/photoprism /etc/s6-overlay/s6-rc.d/photoprism && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/photoprism && \
+    touch /etc/s6-overlay/user-bundles.d/user/contents.d/photoprism && \
     /scripts/cleanup.sh
 
 # Set default working directory.

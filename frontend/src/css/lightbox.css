@@ -67,6 +67,54 @@
     z-index: 1;
 }
 
+/* Shared dimensions for the document-slide layout: the overlay top inset and the
+   thumbnail-strip width, kept in one place so the viewer and its overlay stay in
+   lock-step. */
+.p-lightbox__content.is-pdf {
+    --pdf-top-inset: 60px; /* clears the PhotoSwipe top bar */
+    --pdf-strip-width: 132px; /* == .p-pdf-viewer__thumbs width */
+}
+
+/* Multi-page PDF viewer overlay. Covers the media area below the PhotoSwipe top
+   bar so the close, menu, and info buttons stay reachable, while the viewer owns
+   its own zoom, page navigation, scrolling, and gesture handling. height:auto so
+   top + bottom define the box (the component's base .p-pdf-viewer sets height:100%).
+   The background stays transparent so the PhotoSwipe lightbox background shows
+   through (the cover image is hidden below), keeping it identical to photo slides. */
+.p-lightbox__container > .p-lightbox__content > .p-lightbox__pdf {
+    position: absolute;
+    top: var(--pdf-top-inset);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: auto;
+    z-index: 1;
+    background-color: transparent;
+}
+
+/* Hide the static cover image of a document slide so it does not show through
+   above or behind the interactive viewer. */
+.p-lightbox__content.is-pdf .pswp__img {
+    visibility: hidden;
+}
+
+/* Hide the PhotoSwipe edge navigation arrows on document slides: the viewer fills
+   the full width for readable pages, and switching documents is handled by the
+   viewer's own overlay arrows (desktop), toolbar buttons and edge-swipe (touch),
+   and the Left/Right keys it captures. */
+.p-lightbox__content.is-pdf .pswp__button--arrow {
+    display: none;
+}
+
+/* Hide the PhotoSwipe caption and counter for document slides: the viewer
+   overlay is transparent, so the caption would show through the page margins
+   while being covered by the pages themselves (half in front, half behind).
+   The document title remains available in the info sidebar. */
+.p-lightbox__content.is-pdf .pswp__dynamic-caption,
+.p-lightbox__content.is-pdf .pswp__counter {
+    display: none;
+}
+
 /* Lightbox Tooltips */
 
 .v-tooltip.v-theme--lightbox > .v-overlay__content {
