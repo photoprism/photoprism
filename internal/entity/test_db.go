@@ -10,7 +10,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -30,10 +31,10 @@ var testDbDsnMutex sync.Mutex
 // a database of its own, and creates that database if it does not exist yet.
 //
 // SQLite resolves the DSN to a file in the package directory and is returned
-// unchanged. On MySQL, all packages would otherwise share a single schema and
-// truncate each other's fixtures as soon as they run in parallel.
+// unchanged. On MySQL and Postgres, all packages would otherwise share a
+// single schema and truncate each other's fixtures as soon as they run in parallel.
 func TestDbDSN(driver, dbDsn string) string {
-	if driver != dsn.DriverMySQL || dbDsn == "" {
+	if driver == dsn.DriverSQLite3 || dbDsn == "" {
 		return dbDsn
 	}
 
@@ -44,25 +45,26 @@ func TestDbDSN(driver, dbDsn string) string {
 		return cached
 	}
 
-	conf, err := mysql.ParseDSN(dbDsn)
-
-	if err != nil {
+	parsedDSN := dsn.Parse(dbDsn)
+	switch parsedDSN.Driver {
+	case dsn.DriverMariaDB, dsn.DriverMySQL, dsn.DriverPostgreSQL, dsn.DriverPostgres:
+	default:
 		// A test that isolates its database with PHOTOPRISM_TEST_DSN alone leaves
 		// the driver pointing at MySQL, so its file path lands here and the config
 		// error that follows terminates the test binary.
-		log.Warnf("mysql: %s is not a mysql dsn, set PHOTOPRISM_TEST_DRIVER to match it (%s)", clean.Log(dbDsn), err)
+		log.Warnf("testdb: %s is not a postgres or mariadb dsn, set PHOTOPRISM_TEST_DSN_NAME to match it", clean.Log(dbDsn))
 		return dbDsn
 	}
 
-	name := testDbName(conf.DBName)
+	name := testDbName(parsedDSN.Name)
 
-	if err = createTestDb(conf, name); err != nil {
-		log.Warnf("mysql: %s (create test database %s)", err, clean.Log(name))
+	if err := createTestDb(&parsedDSN, name); err != nil {
+		log.Warnf("testdb: %s (create test database %s)", err, clean.Log(name))
 		return dbDsn
 	}
 
-	conf.DBName = name
-	testDbDsn[dbDsn] = conf.FormatDSN()
+	parsedDSN.Name = name
+	testDbDsn[dbDsn] = parsedDSN.ToString()
 
 	return testDbDsn[dbDsn]
 }
@@ -73,7 +75,7 @@ func testDbName(baseName string) string {
 	wd, err := os.Getwd()
 
 	if err != nil {
-		log.Warnf("mysql: %s (test database name)", err)
+		log.Warnf("testdb: %s (test database name)", err)
 		wd = baseName
 	}
 
@@ -99,24 +101,47 @@ func cleanTestDbName(s string) string {
 //
 // The name must have been built by testDbName, which restricts it to the
 // characters a database identifier may contain, as it cannot be parameterized.
-func createTestDb(conf *mysql.Config, name string) error {
+func createTestDb(conf *dsn.DSN, name string) error {
 	if name != cleanTestDbName(name) {
 		return fmt.Errorf("invalid database name %s", clean.Log(name))
 	}
 
-	serverConf := conf.Clone()
-	serverConf.DBName = ""
+	var db *sql.DB
+	var err error
 
-	db, err := sql.Open(dsn.DriverMySQL, serverConf.FormatDSN())
+	switch conf.Driver {
+	case dsn.DriverMariaDB, dsn.DriverMySQL:
+		//nolint:gosec // G701: the name is checked against cleanTestDbName above.
+		db, err = sql.Open(conf.Driver, conf.ToString())
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
+
+		defer db.Close()
+		_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", name))
+	case dsn.DriverPostgreSQL, dsn.DriverPostgres:
+		db, err = sql.Open("pgx", conf.ToString())
+
+		if err != nil {
+			log.Errorf("pgx open failed with %v", err)
+			return err
+		}
+
+		defer db.Close()
+		q := fmt.Sprintf("SELECT datname FROM pg_database WHERE datname = '%s';", name) //nolint:gosec // G701: the name is checked against cleanTestDbName above.
+		if rows, err2 := db.Query(q); err2 == nil {
+			defer rows.Close()
+			if !rows.Next() {
+				//nolint:gosec // G701: the name is checked against cleanTestDbName above.
+				_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s OWNER %s", name, conf.User))
+			}
+		} else {
+			return err2
+		}
+	default:
+		err = fmt.Errorf("testdb: unsupported driver %s detected", conf.Driver)
 	}
-
-	defer db.Close()
-
-	//nolint:gosec // G701: the name is checked against cleanTestDbName above.
-	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", name))
 
 	return err
 }

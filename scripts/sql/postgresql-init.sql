@@ -23,17 +23,17 @@ WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'portal')\gexec
 SELECT 'CREATE DATABASE portal OWNER portal'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'portal')\gexec
 
-SELECT 'CREATE USER testdb PASSWORD ''testdb'''
+SELECT 'CREATE USER testdb PASSWORD ''testdb'' CREATEDB'
 WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'testdb')\gexec
 SELECT 'CREATE DATABASE testdb OWNER testdb'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'testdb')\gexec
 
-SELECT 'CREATE USER migrate PASSWORD ''migrate'''
+SELECT 'CREATE USER migrate PASSWORD ''migrate'' CREATEDB'
 WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'migrate')\gexec
 SELECT 'CREATE DATABASE migrate OWNER migrate'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'migrate')\gexec
 
-SELECT 'CREATE USER acceptance PASSWORD ''acceptance'''
+SELECT 'CREATE USER acceptance PASSWORD ''acceptance'' CREATEDB'
 WHERE NOT EXISTS (SELECT FROM pg_user WHERE usename = 'acceptance')\gexec
 -- SELECT 'CREATE DATABASE acceptance OWNER acceptance TEMPLATE "template0" LOCALE_PROVIDER "icu" ICU_LOCALE "und-u-ks-level2";'
 SELECT 'CREATE DATABASE acceptance OWNER acceptance;'

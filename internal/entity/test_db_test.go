@@ -6,22 +6,35 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v5/stdlib"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
-// testMysqlDSN returns the configured MySQL test DSN, or skips the test.
-func testMysqlDSN(t *testing.T) string {
+// testMariaDBDSN returns the configured MySQL test DSN, or skips the test.
+func testMariaDBDSN(t *testing.T) string {
 	t.Helper()
 
-	if os.Getenv("PHOTOPRISM_TEST_DRIVER") != dsn.DriverMySQL {
-		t.Skip("test database is not MySQL")
+	if os.Getenv("PHOTOPRISM_TEST_DSN_NAME") != dsn.DriverMariaDB {
+		t.Skip("test database is not MariaDB")
 	}
 
-	return os.Getenv("PHOTOPRISM_TEST_DSN")
+	return os.Getenv("PHOTOPRISM_TEST_DSN_MARIADB")
+}
+
+// testPostgresDSN returns the configured Postgres test DSN, or skips the test.
+func testPostgresDSN(t *testing.T) string {
+	t.Helper()
+
+	if os.Getenv("PHOTOPRISM_TEST_DSN_NAME") != dsn.DriverPostgres {
+		t.Skip("test database is not Postgres")
+	}
+
+	return os.Getenv("PHOTOPRISM_TEST_DSN_POSTGRES")
 }
 
 func TestTestDbDSN(t *testing.T) {
@@ -35,21 +48,34 @@ func TestTestDbDSN(t *testing.T) {
 		assert.Equal(t, "not a dsn", TestDbDSN(dsn.DriverMySQL, "not a dsn"))
 	})
 	t.Run("MySQL", func(t *testing.T) {
-		base := testMysqlDSN(t)
-		conf, err := mysql.ParseDSN(base)
-		require.NoError(t, err)
+		base := testMariaDBDSN(t)
+		conf := dsn.Parse(base)
 
-		isolated, err := mysql.ParseDSN(TestDbDSN(dsn.DriverMySQL, base))
-		require.NoError(t, err)
+		isolated := dsn.Parse(TestDbDSN(dsn.DriverMySQL, base))
 
-		assert.Equal(t, testDbName(conf.DBName), isolated.DBName)
-		assert.NotEqual(t, conf.DBName, isolated.DBName)
-		assert.Equal(t, conf.Addr, isolated.Addr)
+		assert.Equal(t, testDbName(conf.Name), isolated.Name)
+		assert.NotEqual(t, conf.Name, isolated.Name)
+		assert.Equal(t, conf.Server, isolated.Server)
 		assert.Equal(t, conf.User, isolated.User)
 	})
-	t.Run("Cached", func(t *testing.T) {
-		base := testMysqlDSN(t)
+	t.Run("CachedMySQL", func(t *testing.T) {
+		base := testMariaDBDSN(t)
 		assert.Equal(t, TestDbDSN(dsn.DriverMySQL, base), TestDbDSN(dsn.DriverMySQL, base))
+	})
+	t.Run("Postgres", func(t *testing.T) {
+		base := testPostgresDSN(t)
+		conf := dsn.Parse(base)
+
+		isolated := dsn.Parse(TestDbDSN(dsn.DriverPostgreSQL, base))
+
+		assert.Equal(t, testDbName(conf.Name), isolated.Name)
+		assert.NotEqual(t, conf.Name, isolated.Name)
+		assert.Equal(t, conf.Server, isolated.Server)
+		assert.Equal(t, conf.User, isolated.User)
+	})
+	t.Run("CachedPostgres", func(t *testing.T) {
+		base := testPostgresDSN(t)
+		assert.Equal(t, TestDbDSN(dsn.DriverPostgreSQL, base), TestDbDSN(dsn.DriverPostgreSQL, base))
 	})
 }
 
@@ -82,31 +108,48 @@ func TestCleanTestDbName(t *testing.T) {
 }
 
 func TestCreateTestDb(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		conf, err := mysql.ParseDSN(testMysqlDSN(t))
-		require.NoError(t, err)
+	t.Run("MySQLSuccess", func(t *testing.T) {
+		conf := dsn.Parse(testMariaDBDSN(t))
 
 		name := testDbName("createtestdb")
 
-		serverConf := conf.Clone()
-		serverConf.DBName = ""
-
 		t.Cleanup(func() {
-			db, openErr := sql.Open(dsn.DriverMySQL, serverConf.FormatDSN())
+			db, openErr := sql.Open(dsn.DriverMySQL, conf.ToString())
 			require.NoError(t, openErr)
 			defer db.Close()
 			_, dropErr := db.Exec("DROP DATABASE IF EXISTS " + name)
 			assert.NoError(t, dropErr)
 		})
 
-		assert.NoError(t, createTestDb(conf, name))
+		assert.NoError(t, createTestDb(&conf, name))
 		// Creating it a second time must not fail.
-		assert.NoError(t, createTestDb(conf, name))
+		assert.NoError(t, createTestDb(&conf, name))
 	})
-	t.Run("InvalidName", func(t *testing.T) {
-		conf, err := mysql.ParseDSN(testMysqlDSN(t))
-		require.NoError(t, err)
+	t.Run("MySQLInvalidName", func(t *testing.T) {
+		conf := dsn.Parse(testMariaDBDSN(t))
 
-		assert.Error(t, createTestDb(conf, "invalid-name"))
+		assert.Error(t, createTestDb(&conf, "invalid-name"))
+	})
+	t.Run("PostgresSuccess", func(t *testing.T) {
+		conf := dsn.Parse(testPostgresDSN(t))
+
+		name := testDbName("createtestdb")
+
+		t.Cleanup(func() {
+			db, openErr := sql.Open("pgx", conf.ToString())
+			require.NoError(t, openErr)
+			defer db.Close()
+			_, dropErr := db.Exec("DROP DATABASE IF EXISTS " + name)
+			assert.NoError(t, dropErr)
+		})
+
+		assert.NoError(t, createTestDb(&conf, name))
+		// Creating it a second time must not fail.
+		assert.NoError(t, createTestDb(&conf, name))
+	})
+	t.Run("PostgresInvalidName", func(t *testing.T) {
+		conf := dsn.Parse(testPostgresDSN(t))
+
+		assert.Error(t, createTestDb(&conf, "invalid-name"))
 	})
 }
