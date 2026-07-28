@@ -165,6 +165,11 @@ Formatting and test entry points:
 - Use `mariadb -D photoprism` inside the dev shell when you need to inspect MariaDB state directly.
 - Run `shellcheck <file>` on edited shell scripts, or use the corresponding `make` target.
 
+### Continuous Integration
+
+- **GitHub Actions is not enabled for this repository.** The workflow files under `.github/workflows/` do not execute, so pushes and pull requests produce no check runs. Treat them as dormant configuration: do not diagnose the absence of runs as a broken workflow, do not propose enabling Actions, and do not add workflows or bot configuration that assumes they will run. Ask a maintainer before changing anything under `.github/workflows/`.
+- The `make` targets above are the authoritative build, format, and test gate. Run them locally and report the output rather than relying on a hosted runner.
+
 ### Container Image Builds
 
 - **Never mix Debian and Ubuntu `apt` repositories in the same image:**

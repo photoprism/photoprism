@@ -54,6 +54,12 @@ Available targets: `make fmt` (everything), `make fmt-go`, `make fmt-js`, `make 
 
 When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings. When editing Markdown files that contain tables, format them with `npx --yes markdown-table-formatter <filename>`.
 
+## Continuous Integration
+
+**GitHub Actions is not enabled for this repository.** The workflow files under `.github/workflows/` do not execute, so pushes and pull requests produce no check runs. Treat them as dormant configuration: do not diagnose the absence of runs as a broken workflow, do not propose enabling Actions, and do not add workflows or bot configuration that assumes they will run. Ask a maintainer before changing anything under `.github/workflows/`.
+
+The `make` targets above are the authoritative build, format, and test gate — run them locally and report the output rather than relying on a hosted runner.
+
 ## Schema Migrations
 
 If a change touches database schema, check migrations:
