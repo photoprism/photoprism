@@ -16,8 +16,7 @@ import (
 )
 
 func TestAlbums_InsufficientStorage(t *testing.T) {
-	backupPath, err := filepath.Abs("./testdata/albums-insufficient")
-	require.NoError(t, err)
+	backupPath := filepath.Join(t.TempDir(), "testdata", "albums-insufficient")
 	require.NoError(t, os.MkdirAll(backupPath, fs.ModeDir))
 	t.Cleanup(func() { _ = os.RemoveAll(backupPath) })
 
@@ -34,8 +33,7 @@ func TestAlbums_InsufficientStorage(t *testing.T) {
 }
 
 func TestDatabase_InsufficientStorage(t *testing.T) {
-	backupPath, err := filepath.Abs("./testdata/sqlite-insufficient")
-	require.NoError(t, err)
+	backupPath := filepath.Join(t.TempDir(), "testdata", "sqlite-insufficient")
 	require.NoError(t, os.MkdirAll(backupPath, fs.ModeDir))
 	t.Cleanup(func() { _ = os.RemoveAll(backupPath) })
 
@@ -44,7 +42,7 @@ func TestDatabase_InsufficientStorage(t *testing.T) {
 	t.Cleanup(disk.FlushFree)
 	disk.SetFree(conf.StoragePath(), 1*disk.MB, 1000*disk.MB)
 
-	err = Database(backupPath, "", false, true, 2)
+	err := Database(backupPath, "", false, true, 2)
 
 	assert.True(t, errors.Is(err, status.ErrInsufficientStorage), "expected status.ErrInsufficientStorage, got %v", err)
 }

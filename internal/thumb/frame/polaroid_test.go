@@ -2,6 +2,7 @@ package frame
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -9,14 +10,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPolaroid(t *testing.T) {
+	basePath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(basePath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(basePath) })
+
 	t.Run("RandomAngle", func(t *testing.T) {
 		img, _, err := fs.DecodeImageFile("testdata/500x500.jpg")
 		assert.NoError(t, err)
 
-		saveName := "testdata/test-polaroid.png"
+		saveName := filepath.Join(basePath, "test-polaroid.png")
 
 		out, err := polaroid(img, RandomAngle(30))
 

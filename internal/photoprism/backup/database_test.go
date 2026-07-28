@@ -5,48 +5,24 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestDatabase(t *testing.T) {
 	t.Run("Force", func(t *testing.T) {
-		backupPath, err := filepath.Abs("./testdata/sqlite")
+		backupPath := filepath.Join(t.TempDir(), "testdata", "sqlite")
+		require.NoError(t, os.MkdirAll(backupPath, fs.ModeDir))
+		t.Cleanup(func() { _ = os.RemoveAll(backupPath) })
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = os.MkdirAll(backupPath, fs.ModeDir); err != nil {
-			t.Fatal(err)
-		}
-
-		err = Database(backupPath, "", false, true, 2)
-
-		assert.NoError(t, err)
-
-		if err = os.RemoveAll(backupPath); err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, Database(backupPath, "", false, true, 2))
 	})
 	t.Run("ForceStdOut", func(t *testing.T) {
-		backupPath, err := filepath.Abs("./testdata/sqlite")
+		backupPath := filepath.Join(t.TempDir(), "testdata", "sqlite")
+		require.NoError(t, os.MkdirAll(backupPath, fs.ModeDir))
+		t.Cleanup(func() { _ = os.RemoveAll(backupPath) })
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if err = os.MkdirAll(backupPath, fs.ModeDir); err != nil {
-			t.Fatal(err)
-		}
-
-		err = Database(backupPath, "", true, true, 2)
-
-		assert.NoError(t, err)
-
-		if err = os.RemoveAll(backupPath); err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, Database(backupPath, "", true, true, 2))
 	})
 }

@@ -2,22 +2,30 @@ package thumb
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestVips(t *testing.T) {
+	target := filepath.Join(t.TempDir(), "testdata", "vips")
+	require.NoError(t, os.MkdirAll(target, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(target) })
 	t.Run("Colors", func(t *testing.T) {
 		colorThumb := Sizes[Colors]
 		src := "testdata/example.gif"
-		dst := "testdata/vips/1/2/3/123456789098765432_3x3_resize.png"
+		dst := filepath.Join(target, "1/2/3/123456789098765432_3x3_resize.png")
 
 		assert.FileExists(t, src)
 
-		fileName, _, err := Vips(src, nil, "123456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, _, err := Vips(src, nil, "123456789098765432", target, colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -33,11 +41,11 @@ func TestVips(t *testing.T) {
 		// export and indexing succeeds.
 		colorThumb := Sizes[Colors]
 		src := "testdata/icc_profile_bad_length.jpg"
-		dst := "testdata/vips/1/4/4/144456789098765432_3x3_resize.png"
+		dst := filepath.Join(target, "1/4/4/144456789098765432_3x3_resize.png")
 
 		assert.FileExists(t, src)
 
-		fileName, _, err := Vips(src, nil, "144456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, _, err := Vips(src, nil, "144456789098765432", target, colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -57,7 +65,7 @@ func TestVips(t *testing.T) {
 		// raw-pixel sampling, so an ICC chunk is wasted bytes on every photo.
 		colorThumb := Sizes[Colors]
 		src := "testdata/interop_index_srgb_icc.jpg"
-		dst := "testdata/vips/1/5/5/155456789098765432_3x3_resize.png"
+		dst := filepath.Join(target, "1/5/5/155456789098765432_3x3_resize.png")
 
 		assert.FileExists(t, src)
 
@@ -66,7 +74,7 @@ func TestVips(t *testing.T) {
 		assert.True(t, srcimg.HasICCProfile(), "fixture sanity: input must carry an ICC profile")
 		srcimg.Close()
 
-		fileName, _, err := Vips(src, nil, "155456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, _, err := Vips(src, nil, "155456789098765432", target, colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -85,9 +93,9 @@ func TestVips(t *testing.T) {
 		// must preserve a valid ICC profile end-to-end. Guards against a
 		// future regression that would generalize the strip to all PNGs.
 		src := "testdata/interop_index_srgb_icc.jpg"
-		dst := "testdata/vips/1/6/6/166456789098765432_3x3_resize.png"
+		dst := filepath.Join(target, "1/6/6/166456789098765432_3x3_resize.png")
 
-		fileName, _, err := Vips(src, nil, "166456789098765432", "testdata/vips", 3, 3, ResampleResize, ResampleNearestNeighbor, ResamplePng)
+		fileName, _, err := Vips(src, nil, "166456789098765432", target, 3, 3, ResampleResize, ResampleNearestNeighbor, ResamplePng)
 
 		if err != nil {
 			t.Fatal(err)
@@ -104,11 +112,11 @@ func TestVips(t *testing.T) {
 	t.Run("InteropIndexColors", func(t *testing.T) {
 		thumb := Sizes[Tile500]
 		src := "testdata/interop_index.jpg"
-		dst := "testdata/vips/1/3/3/133456789098765432_500x500_center.jpg"
+		dst := filepath.Join(target, "1/3/3/133456789098765432_500x500_center.jpg")
 
 		assert.FileExists(t, src)
 
-		fileName, _, err := Vips(src, nil, "133456789098765432", "testdata/vips", thumb.Width, thumb.Height, thumb.Options...)
+		fileName, _, err := Vips(src, nil, "133456789098765432", target, thumb.Width, thumb.Height, thumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -127,11 +135,11 @@ func TestVips(t *testing.T) {
 	t.Run("Left224", func(t *testing.T) {
 		thumb := SizeLeft224
 		src := "testdata/fixed.jpg"
-		dst := "testdata/vips/1/2/3/123456789098765432_224x224_left.jpg"
+		dst := filepath.Join(target, "1/2/3/123456789098765432_224x224_left.jpg")
 
 		assert.FileExists(t, src)
 
-		fileName, _, err := Vips(src, nil, "123456789098765432", "testdata/vips", thumb.Width, thumb.Height, thumb.Options...)
+		fileName, _, err := Vips(src, nil, "123456789098765432", target, thumb.Width, thumb.Height, thumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -144,12 +152,12 @@ func TestVips(t *testing.T) {
 		large := Sizes[Tile500]
 		small := Sizes[Tile224]
 		srcName := "testdata/example.jpg"
-		dstLarge := "testdata/vips/1/2/3/123456789098765432_500x500_center.jpg"
-		dstSmall := "testdata/vips/1/2/3/123456789098765432_224x224_center.jpg"
+		dstLarge := filepath.Join(target, "1/2/3/123456789098765432_500x500_center.jpg")
+		dstSmall := filepath.Join(target, "1/2/3/123456789098765432_224x224_center.jpg")
 
 		assert.FileExists(t, srcName)
 
-		thumbName, thumbBuffer, err := Vips(srcName, nil, "123456789098765432", "testdata/vips", large.Width, large.Height, large.Options...)
+		thumbName, thumbBuffer, err := Vips(srcName, nil, "123456789098765432", target, large.Width, large.Height, large.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -158,7 +166,7 @@ func TestVips(t *testing.T) {
 		assert.True(t, strings.HasSuffix(thumbName, dstLarge))
 		assert.FileExists(t, dstLarge)
 
-		thumbName, _, err = Vips(srcName, thumbBuffer, "123456789098765432", "testdata/vips", small.Width, small.Height, small.Options...)
+		thumbName, _, err = Vips(srcName, thumbBuffer, "123456789098765432", target, small.Width, small.Height, small.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -186,11 +194,11 @@ func TestVips(t *testing.T) {
 	t.Run("Fit1920", func(t *testing.T) {
 		thumb := Sizes[Fit1920]
 		src := "testdata/example.jpg"
-		dst := "testdata/vips/1/2/3/123456789098765432_1920x1200_fit.jpg"
+		dst := filepath.Join(target, "1/2/3/123456789098765432_1920x1200_fit.jpg")
 
 		assert.FileExists(t, src)
 
-		fileName, _, err := Vips(src, nil, "123456789098765432", "testdata/vips", thumb.Width, thumb.Height, thumb.Options...)
+		fileName, _, err := Vips(src, nil, "123456789098765432", target, thumb.Width, thumb.Height, thumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -205,7 +213,7 @@ func TestVips(t *testing.T) {
 
 		assert.NoFileExists(t, src)
 
-		fileName, _, err := Vips(src, nil, "193456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, _, err := Vips(src, nil, "193456789098765432", target, colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		assert.Equal(t, "", fileName)
 		assert.Error(t, err)
@@ -213,7 +221,7 @@ func TestVips(t *testing.T) {
 	t.Run("EmptyFilename", func(t *testing.T) {
 		colorThumb := Sizes[Colors]
 
-		fileName, _, err := Vips("", nil, "193456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+		fileName, _, err := Vips("", nil, "193456789098765432", target, colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")

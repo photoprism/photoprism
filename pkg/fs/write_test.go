@@ -2,6 +2,7 @@ package fs
 
 import (
 	"bytes"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -9,11 +10,15 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWriteFile(t *testing.T) {
+	testPath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
-		dir := "./testdata/_WriteFile_Success"
+		dir := filepath.Join(testPath, "_WriteFile_Success")
 		filePath := filepath.Join(dir, "notyetexisting.jpg")
 		fileData := []byte("foobar")
 
@@ -22,25 +27,23 @@ func TestWriteFile(t *testing.T) {
 		}
 
 		defer func() {
-			_ = os.Remove(filePath)
-
-			if err := os.RemoveAll(dir); err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, os.Remove(filePath))
+			require.NoError(t, os.RemoveAll(dir))
 		}()
 
 		assert.True(t, PathExists(dir))
 
-		fileErr := WriteFile(filePath, fileData, ModeFile)
-
-		assert.NoError(t, fileErr)
+		require.NoError(t, WriteFile(filePath, fileData, ModeFile))
 		assert.FileExists(t, filePath)
 	})
 }
 
 func TestWriteString(t *testing.T) {
+	testPath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
-		dir := "./testdata/_WriteString_Success"
+		dir := filepath.Join(testPath, "_WriteString_Success")
 		filePath := filepath.Join(dir, PPIgnoreFilename)
 		fileData := "*"
 
@@ -49,18 +52,13 @@ func TestWriteString(t *testing.T) {
 		}
 
 		defer func() {
-			_ = os.Remove(filePath)
-
-			if err := os.RemoveAll(dir); err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, os.Remove(filePath))
+			require.NoError(t, os.RemoveAll(dir))
 		}()
 
 		assert.True(t, PathExists(dir))
 
-		fileErr := WriteString(filePath, fileData)
-
-		assert.NoError(t, fileErr)
+		require.NoError(t, WriteString(filePath, fileData))
 		assert.FileExists(t, filePath)
 
 		readLines, readErr := ReadLines(filePath)
@@ -72,8 +70,11 @@ func TestWriteString(t *testing.T) {
 }
 
 func TestWriteUnixTime(t *testing.T) {
+	testPath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
-		dir := "./testdata/_WriteUnixTime_Success"
+		dir := filepath.Join(testPath, "_WriteUnixTime_Success")
 		filePath := filepath.Join(dir, PPStorageFilename)
 
 		if err := MkdirAll(dir); err != nil {
@@ -81,11 +82,8 @@ func TestWriteUnixTime(t *testing.T) {
 		}
 
 		defer func() {
-			_ = os.Remove(filePath)
-
-			if err := os.RemoveAll(dir); err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, os.Remove(filePath))
+			require.NoError(t, os.RemoveAll(dir))
 		}()
 
 		assert.True(t, PathExists(dir))
@@ -104,8 +102,11 @@ func TestWriteUnixTime(t *testing.T) {
 }
 
 func TestWriteFileFromReader(t *testing.T) {
+	testPath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
-		dir := "./testdata/_WriteFileFromReader_Success"
+		dir := filepath.Join(testPath, "_WriteFileFromReader_Success")
 
 		filePath1 := filepath.Join(dir, "1.txt")
 		filePath2 := filepath.Join(dir, "2.txt")
@@ -115,12 +116,9 @@ func TestWriteFileFromReader(t *testing.T) {
 		}
 
 		defer func() {
-			_ = os.Remove(filePath1)
-			_ = os.Remove(filePath2)
-
-			if err := os.RemoveAll(dir); err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, os.Remove(filePath1))
+			require.NoError(t, os.Remove(filePath2))
+			require.NoError(t, os.RemoveAll(dir))
 		}()
 
 		assert.True(t, PathExists(dir))
@@ -145,8 +143,11 @@ func TestWriteFileFromReader(t *testing.T) {
 }
 
 func TestCacheFileFromReader(t *testing.T) {
+	testPath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(testPath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(testPath) })
 	t.Run("Success", func(t *testing.T) {
-		dir := "./testdata/_CacheFileFromReader_Success"
+		dir := filepath.Join(testPath, "_CacheFileFromReader_Success")
 
 		filePath1 := filepath.Join(dir, "1.txt")
 		filePath2 := filepath.Join(dir, "2.txt")
@@ -157,13 +158,10 @@ func TestCacheFileFromReader(t *testing.T) {
 		}
 
 		defer func() {
-			_ = os.Remove(filePath1)
-			_ = os.Remove(filePath2)
-			_ = os.Remove(filePath3)
-
-			if err := os.RemoveAll(dir); err != nil {
-				t.Fatal(err)
-			}
+			require.NoError(t, os.Remove(filePath1))
+			require.NoError(t, os.Remove(filePath2))
+			require.NoError(t, os.Remove(filePath3))
+			require.NoError(t, os.RemoveAll(dir))
 		}()
 
 		assert.True(t, PathExists(dir))
