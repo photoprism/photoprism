@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -93,7 +94,10 @@ func TestSettings_Save(t *testing.T) {
 		assert.Equal(t, "onyx", s.UI.Theme)
 		assert.Equal(t, "de", s.UI.Language)
 
-		filename := filepath.Join(t.TempDir(), "testdata", "settings.yml")
+		basepath := filepath.Join(t.TempDir(), "testdata")
+		require.NoError(t, os.MkdirAll(basepath, fs.ModeDir))
+		filename := filepath.Join(basepath, "settings.yml")
+
 		if f, err := os.Create(filename); err != nil { //nolint:gosec // G304 generated test file name
 			t.Fatal(err)
 		} else {
@@ -116,7 +120,9 @@ func TestSettings_Save(t *testing.T) {
 		assert.Equal(t, "onyx", s.UI.Theme)
 		assert.Equal(t, "de", s.UI.Language)
 
-		filename := filepath.Join(t.TempDir(), "testdata", "settings_tmp.yml")
+		basepath := filepath.Join(t.TempDir(), "testdata")
+		require.NoError(t, os.MkdirAll(basepath, fs.ModeDir))
+		filename := filepath.Join(basepath, "settings_tmp.yml")
 		if err := s.Save(filename); err != nil {
 			t.Fatal(err)
 		}

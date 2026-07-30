@@ -77,7 +77,7 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 
 	migrateTestBlocker(entity.UnscopedDb())
 
-	entity.UnscopedDb().Debug().Where("1=1").Delete(&Blocker{})
+	entity.UnscopedDb().Where("1=1").Delete(&Blocker{})
 
 	log.Info("Expect duplicate keys and locking Error or SQLSTATE from entity_update or dbtest_blocking_test")
 	startTime := time.Now()
@@ -148,7 +148,7 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 
 	migrateTestBlocker(entity.UnscopedDb())
 
-	entity.UnscopedDb().Debug().Where("1=1").Delete(&Blocker{})
+	entity.UnscopedDb().Where("1=1").Delete(&Blocker{})
 
 	log.Info("Expect duplicate keys and locking Error or SQLSTATE from entity_update or dbtest_blocking_test")
 

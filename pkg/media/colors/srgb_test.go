@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func writeImage(path string, img image.Image) (err error) {
@@ -54,7 +55,9 @@ func TestToSRGB(t *testing.T) {
 
 		imgSRGB := ToSRGB(img, ProfileDisplayP3)
 
-		srgbFile := filepath.Join(t.TempDir(), "testdata", "SRGB.jpg")
+		basepath := filepath.Join(t.TempDir(), "testdata")
+		srgbFile := filepath.Join(basepath, "SRGB.jpg")
+		require.NoError(t, os.MkdirAll(basepath, 0o750))
 
 		if err := writeImage(srgbFile, imgSRGB); err != nil {
 			t.Error(err)

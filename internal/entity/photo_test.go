@@ -903,7 +903,8 @@ func TestPhoto_AddLabels(t *testing.T) {
 		require.NotNil(t, original)
 
 		t.Cleanup(func() {
-			_ = Db().Unscoped().Delete(original).Error
+			require.NoError(t, Db().Unscoped().Where("label_id = ?", original.ID).Delete(&PhotoLabel{}).Error)
+			require.NoError(t, Db().Unscoped().Select("PhotoLabel").Delete(original).Error)
 			FlushLabelCache()
 		})
 
@@ -1069,7 +1070,6 @@ func TestPhoto_Create(t *testing.T) {
 func TestPhoto_Save(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
-		log.Info("Expect duplicate key violation Error or SQLSTATE from entity_save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -1077,6 +1077,7 @@ func TestPhoto_Save(t *testing.T) {
 	})
 	t.Run("Error", func(t *testing.T) {
 		photo := Photo{PhotoUID: "ps6sg6be2lvl0yh0"}
+		log.Info("Expect 2 x duplicate key violation Error or SQLSTATE from entity_save")
 		assert.Error(t, photo.Save())
 	})
 
