@@ -26,7 +26,6 @@ func TestCreateUserSettings(t *testing.T) {
 
 		assert.NotNil(t, m.UserSettings)
 	})
-
 	t.Run("SuccessNewRecord", func(t *testing.T) {
 		userUID := rnd.GenerateUID('u')
 		m := &User{UserUID: userUID}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
@@ -175,5 +176,12 @@ func TestLabelPhotoCounts(t *testing.T) {
 
 		assert.NotNil(t, result)
 		assert.Len(t, result, 0)
+	})
+}
+
+func TestUpdateSubjectCounts(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		require.NoError(t, UpdateSubjectCounts(true))
+		require.NoError(t, UpdateSubjectCounts(false))
 	})
 }
