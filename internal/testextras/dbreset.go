@@ -24,7 +24,7 @@ func ResetMariaDB(dbName string, dbUser string) error {
 	d.Password = "photoprism"
 	d.Name = "photoprism"
 	dbDSN := d.ToString()
-	db, err = gorm.Open(drivers[MySQL](dbDSN), gormConfig())
+	db, err = gorm.Open(dsn.GormDrivers[dsn.DriverMySQL](dbDSN), gormConfig())
 	if err != nil || db == nil {
 		log.Fatal(err)
 		return err
@@ -54,10 +54,8 @@ func ResetMariaDB(dbName string, dbUser string) error {
 		log.Fatal(err)
 		return err
 	} else {
-		_ = sqlDb.Close()
+		return sqlDb.Close()
 	}
-
-	return nil
 }
 
 // ResetPostgresDB will drop and recreate the named database, assigning permissions to dbUser as needed.
@@ -76,7 +74,7 @@ func ResetPostgresDB(dbName string, dbUser string) error {
 	d.Name = "postgres"
 	dbDSN := d.ToString()
 
-	db, err = gorm.Open(drivers[Postgres](dbDSN), gormConfig())
+	db, err = gorm.Open(dsn.GormDrivers[dsn.DriverPostgres](dbDSN), gormConfig())
 	if err != nil || db == nil {
 		log.Fatal(err)
 		return err
@@ -87,7 +85,6 @@ func ResetPostgresDB(dbName string, dbUser string) error {
 		return err
 	}
 
-	// if err := db.Exec(fmt.Sprintf(`CREATE DATABASE "%s" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8'`, dbName)).Error; err != nil { // ToDo: Why is this using the template etc?
 	if err := db.Exec(fmt.Sprintf(`CREATE DATABASE "%s" OWNER %s`, dbName, dbUser)).Error; err != nil {
 		log.Fatal(err)
 		return err
@@ -97,7 +94,6 @@ func ResetPostgresDB(dbName string, dbUser string) error {
 		log.Fatal(err)
 		return err
 	} else {
-		sqlDb.Close()
+		return sqlDb.Close()
 	}
-	return nil
 }
