@@ -85,61 +85,61 @@ PhotoPrism Development Makefile
 Usage: make <target> [target ...]
 
 Development Environment (run on the host):
-  docker-build                          Build the local development image
-  up                                    Start the development environment in the background
-  terminal                              Open a terminal in the development container
-  logs                                  Follow the log output of the development environment
-  down                                  Stop the development environment and remove orphans
+  docker-build             Build the local development image
+  up                       Start the development environment in the background
+  terminal                 Open a terminal in the development container
+  logs                     Follow the log output of the development environment
+  down                     Stop the development environment and remove orphans
 
 Dependencies (run in the development container):
-  dep                                   Install the TensorFlow, ONNX, and NPM dependencies
-  dep-js                                Install the NPM dependencies only
-  upgrade                               Upgrade the Go and NPM dependencies
-  tidy                                  Add missing and remove unused Go modules
+  dep                      Install the TensorFlow, ONNX, and NPM dependencies
+  dep-js                   Install the NPM dependencies only
+  upgrade                  Upgrade the Go and NPM dependencies
+  tidy                     Add missing and remove unused Go modules
 
 Build:
-  build                                 Build the "photoprism" binary in develop mode
-  build-all                             Build the backend and the frontend
-  build-js                              Build the frontend for production
-  watch-js                              Rebuild the frontend when source files change
-  clean                                 Remove the build artifacts and installed dependencies
+  build                    Build the "photoprism" binary in develop mode
+  build-all                Build the backend and the frontend
+  build-js                 Build the frontend for production
+  watch-js                 Rebuild the frontend when source files change
+  clean                    Remove the build artifacts and installed dependencies
 
 Run:
-  start                                 Start the server in the background
-  stop                                  Stop the server
-  migrate                               Run the pending database migrations
-  users                                 Create a test user and list all user accounts
+  start                    Start the server in the background
+  stop                     Stop the server
+  migrate                  Run the pending database migrations
+  users                    Create a test user and list all user accounts
 
 Test:
-  test                                  Run the JS and Go tests
-  test-short                            Run the short Go tests in parallel
-  test-go                               Run all Go tests, including slow tests, against SQLite
-  test-js                               Run the frontend unit tests with Vitest
-  test-mariadb                          Run all Go tests, including slow tests, against MariaDB
-  test-postgres                         Run all Go tests, including slow tests, against Postgres
-  test-sqlite                           Run all Go tests, including slow tests, against SQLite
-  reset-testdb                          Reset the MariaDB, Postgres and SQLite test databases
-  acceptance-run-long-chromium-mariadb  Run the TestCafe acceptance tests in Chrome against MariaDB
-  acceptance-run-long-chromium-postgres Run the TestCafe acceptance tests in Chrome against Postgres
-  acceptance-run-long-chromium-sqlite   Run the TestCafe acceptance tests in Chrome against SQLite
-  Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai all against SQLite
+  test                     Run the JS and Go tests
+  test-short               Run the short Go tests in parallel
+  test-go                  Run all Go tests, including slow tests, against SQLite
+  test-js                  Run the frontend unit tests with Vitest
+  test-mariadb             Run all Go tests, including slow tests, against MariaDB
+  test-postgres            Run all Go tests, including slow tests, against Postgres
+  test-sqlite              Run all Go tests, including slow tests, against SQLite
+  reset-testdb             Reset the MariaDB, Postgres and SQLite test databases
+  acceptance-run-mariadb   Run the full TestCafe acceptance tests in Chrome against MariaDB
+  acceptance-run-postgres  Run the full TestCafe acceptance tests in Chrome against Postgres
+  acceptance-run-sqlite    Run the full TestCafe acceptance tests in Chrome against SQLite
+  Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai
 
 Format, Lint & Docs:
-  fmt                                   Format the JS, Go, and Swagger sources
-  lint                                  Lint the JS and Go sources
-  swag                                  Regenerate the Swagger API documentation
-  format-tables                         Format the Markdown tables in README and CODEMAP files
-  notice                                Regenerate the NOTICE files for all dependencies
-  audit                                 Check the dependencies for known vulnerabilities
+  fmt                      Format the JS, Go, and Swagger sources
+  lint                     Lint the JS and Go sources
+  swag                     Regenerate the Swagger API documentation
+  format-tables            Format the Markdown tables in README and CODEMAP files
+  notice                   Regenerate the NOTICE files for all dependencies
+  audit                    Check the dependencies for known vulnerabilities
 
 Translations:
-  gettext-extract                       Extract the translation strings into the catalogs
-  gettext-compile                       Compile the frontend translation catalogs
-  gettext-lint                          Check the translation catalogs for errors
+  gettext-extract          Extract the translation strings into the catalogs
+  gettext-compile          Compile the frontend translation catalogs
+  gettext-lint             Check the translation catalogs for errors
 
 Other:
-  show-build                            Show the build tag of the current revision
-  list                                  List all targets, including those not shown here
+  show-build               Show the build tag of the current revision
+  list                     List all targets, including those not shown here
 endef
 export HELP_TEXT
 
@@ -172,6 +172,11 @@ acceptance-run-chromium-short: acceptance-run-short-chromium-sqlite
 acceptance-auth-run-chromium: acceptance-run-auth-chromium-sqlite
 acceptance-public-run-chromium: acceptance-run-public-chromium-sqlite
 acceptance-api-run-chromium: acceptance-run-api-chromium-sqlite
+
+# Short form acceptance tests targets - These call the long chromium versions
+acceptance-run-mariadb: acceptance-run-long-chromium-mariadb
+acceptance-run-postgres: acceptance-run-long-chromium-postgres
+acceptance-run-sqlite: acceptance-run-long-chromium-sqlite
 
 # Acceptance Tests
 # call using the DBMS instead of the % shown.  Options are :- mariadb postgres sqlite
