@@ -2,7 +2,6 @@ package commands
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/leandro-lugaresi/hub"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -25,6 +25,13 @@ import (
 )
 
 func TestMigrationCommand(t *testing.T) {
+	mdbDSN := dsn.Parse(testextras.TestDbDSN(dsn.DriverMariaDB, "migrate"))
+	pdbDSN := dsn.Parse(testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate"))
+	defer func() {
+		require.NoError(t, testextras.TestDbRemoveByName(mdbDSN.Driver, "migrate"))
+		require.NoError(t, testextras.TestDbRemoveByName(pdbDSN.Driver, "migrate"))
+	}()
+
 	t.Run("NoMigrateSettings", func(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(MigrationsCommands, []string{"migrations", "transfer"})
@@ -64,7 +71,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("RunTraceAndFailed", func(t *testing.T) {
-		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDSN(0)
+		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDSN()
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,
@@ -104,8 +111,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("TargetPopulated", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		dbDSN := testextras.TestDbDSN(dsn.DriverMariaDB, "migrate")
+		if err := testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -120,7 +127,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN.ToString(),
+			"--database-dsn", dbDSN,
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer"}
@@ -163,8 +170,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("TargetPopulatedBatch500", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		dbDSN := testextras.TestDbDSN(dsn.DriverMariaDB, "migrate")
+		if err := testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -179,7 +186,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN.ToString(),
+			"--database-dsn", dbDSN,
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/targetpopulated.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer", "-batch", "500"}
@@ -222,22 +229,22 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoPostgreSQL", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
-		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		dbDSN := testextras.TestDbDSN(dsn.DriverMariaDB, "migrate")
+		tfDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
+		if err := testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 			t.Fatal(err.Error())
 		}
 
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", dsn.Parse(dbDSN).Name, //nolint:gosec // test generated input
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
 
 		// Clear PostgreSQL target (migrate)
-		if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+		if err := testextras.ResetPostgresDB(dsn.Parse(tfDSN).Name, "migrate"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -246,9 +253,9 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN.ToString(),
+			"--database-dsn", dbDSN,
 			"--transfer-driver", "postgres",
-			"--transfer-dsn", tfDSN.ToString()}
+			"--transfer-dsn", tfDSN}
 		cmdArgs := []string{"migrations", "transfer", "-batch", "10"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -319,7 +326,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(postgres.Open(tfDSN.ToString()), &gorm.Config{})
+		testdb, err := gorm.Open(postgres.Open(tfDSN), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -332,8 +339,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoSQLite", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		dbDSN := testextras.TestDbDSN(dsn.DriverMariaDB, "migrate")
+		if err := testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -343,7 +350,7 @@ func TestMigrationCommand(t *testing.T) {
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", dsn.Parse(dbDSN).Name, //nolint:gosec // test generated input
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
@@ -353,7 +360,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN.ToString(),
+			"--database-dsn", dbDSN,
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/mysqltosqlite.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer", "-batch", "1000"}
@@ -443,8 +450,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("MySQLtoSQLitePopulated", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		dbDSN := testextras.TestDbDSN(dsn.DriverMariaDB, "migrate")
+		if err := testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -457,7 +464,7 @@ func TestMigrationCommand(t *testing.T) {
 		// Load migrate database as source
 		if dumpName, err := filepath.Abs("./testdata/transfer_mysql"); err != nil {
 			t.Fatal(err)
-		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), //nolint:gosec // test generated input
+		} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", dsn.Parse(dbDSN).Name, //nolint:gosec // G204 test generated input
 			"-e", "source "+dumpName).Run(); err != nil {
 			t.Fatal(err)
 		}
@@ -467,7 +474,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "mysql",
-			"--database-dsn", dbDSN.ToString(),
+			"--database-dsn", dbDSN,
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/mysqltosqlitepopulated.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer", "-force"}
@@ -557,9 +564,9 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("PostgreSQLtoMySQL", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
-		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		dbDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
+		tfDSN := testextras.TestDbDSN(dsn.DriverMariaDB, "migrate")
+		if err := testextras.ResetMariaDB(dsn.Parse(tfDSN).Name, "migrate"); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -568,16 +575,17 @@ func TestMigrationCommand(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			// Clear Postgres source (migrate)
-			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+			if err := testextras.ResetPostgresDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 				t.Fatal(err)
 			}
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
+			pDSN := dsn.Parse(dbDSN)
+			if err = exec.Command("psql", pDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
 				t.Fatal(err)
 			}
 		}
 
 		// Clear MySQL target (migrate)
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		if err := testextras.ResetMariaDB(dsn.Parse(tfDSN).Name, "migrate"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -586,9 +594,9 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "postgres",
-			"--database-dsn", dbDSN.ToString(),
+			"--database-dsn", dbDSN,
 			"--transfer-driver", "mysql",
-			"--transfer-dsn", tfDSN.ToString()}
+			"--transfer-dsn", tfDSN}
 		cmdArgs := []string{"migrations", "transfer"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -658,7 +666,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(mysql.Open(tfDSN.ToString()), &gorm.Config{})
+		testdb, err := gorm.Open(mysql.Open(tfDSN), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -671,8 +679,8 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("PostgreSQLtoSQLite", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		dbDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
+		if err := testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 			t.Fatal(err.Error())
 		}
 
@@ -684,11 +692,11 @@ func TestMigrationCommand(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			// Clear Postgres source (migrate)
-			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+			if err := testextras.ResetPostgresDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 				t.Fatal(err)
 			}
-
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
+			pDSN := dsn.Parse(dbDSN)
+			if err = exec.Command("psql", pDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
 				t.Fatal(err)
 			}
 		}
@@ -698,7 +706,7 @@ func TestMigrationCommand(t *testing.T) {
 
 		appArgs := []string{"photoprism",
 			"--database-driver", "postgres",
-			"--database-dsn", dbDSN.ToString(),
+			"--database-dsn", dbDSN,
 			"--transfer-driver", "sqlite",
 			"--transfer-dsn", "/go/src/github.com/photoprism/photoprism/storage/postgresqltosqlite.test.db?_busy_timeout=5000&_foreign_keys=on"}
 		cmdArgs := []string{"migrations", "transfer"}
@@ -788,7 +796,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("SQLiteToMySQL", func(t *testing.T) {
-		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", testextras.GetDBMutexID())
+		tfDSN := testextras.TestDbDSN(dsn.DriverMariaDB, "migrate")
 
 		// Remove target database file
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db")
@@ -799,7 +807,7 @@ func TestMigrationCommand(t *testing.T) {
 		}
 
 		// Clear MySQL target (migrate)
-		if err := testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+		if err := testextras.ResetMariaDB(dsn.Parse(tfDSN).Name, "migrate"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -810,7 +818,7 @@ func TestMigrationCommand(t *testing.T) {
 			"--database-driver", "sqlite",
 			"--database-dsn", "/go/src/github.com/photoprism/photoprism/storage/sqlitetomysql.test.db?_busy_timeout=5000&_foreign_keys=on",
 			"--transfer-driver", "mysql",
-			"--transfer-dsn", tfDSN.ToString()}
+			"--transfer-dsn", tfDSN}
 		cmdArgs := []string{"migrations", "transfer"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -880,7 +888,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(mysql.Open(tfDSN.ToString()), &gorm.Config{})
+		testdb, err := gorm.Open(mysql.Open(tfDSN), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()
@@ -898,7 +906,7 @@ func TestMigrationCommand(t *testing.T) {
 	})
 
 	t.Run("SQLiteToPostgreSQL", func(t *testing.T) {
-		tfDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
+		tfDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
 
 		// Remove target database file
 		_ = os.Remove("/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db")
@@ -909,7 +917,7 @@ func TestMigrationCommand(t *testing.T) {
 		}
 
 		// Clear PostgreSQL target (migrate)
-		if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+		if err := testextras.ResetPostgresDB(dsn.Parse(tfDSN).Name, "migrate"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -920,7 +928,7 @@ func TestMigrationCommand(t *testing.T) {
 			"--database-driver", "sqlite",
 			"--database-dsn", "/go/src/github.com/photoprism/photoprism/storage/sqlitetopostgresql.test.db?_busy_timeout=5000&_foreign_keys=on",
 			"--transfer-driver", "postgres",
-			"--transfer-dsn", tfDSN.ToString()}
+			"--transfer-dsn", tfDSN}
 		cmdArgs := []string{"migrations", "transfer"}
 
 		ctx := NewTestContextWithParse(appArgs, cmdArgs)
@@ -990,7 +998,7 @@ func TestMigrationCommand(t *testing.T) {
 		assert.Contains(t, l, "migrate: number of usershares transferred 1")
 
 		// Make sure that a sequence update has worked.
-		testdb, err := gorm.Open(postgres.Open(tfDSN.ToString()), &gorm.Config{})
+		testdb, err := gorm.Open(postgres.Open(tfDSN), &gorm.Config{})
 		if err != nil {
 			assert.NoError(t, err)
 			t.FailNow()

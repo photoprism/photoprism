@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
@@ -124,7 +125,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// MariaDB service, which defaults to 4001 unless MARIADB_PORT overrides it):
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
-	testDriver, testDsn := dsn.PhotoPrismTestToDriverDSN(0)
+	testDriver, testDsn := dsn.PhotoPrismTestToDriverDSN()
 
 	// Set default test database driver.
 	if testDriver == "test" || testDriver == "sqlite" || testDriver == "" || testDsn == "" {
@@ -132,27 +133,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	}
 
 	// Set default database DSN.
-	if testDriver == dsn.DriverSQLite3 {
-		if testDsn == "" && dbName != "" {
-			if testDsn = fmt.Sprintf(".%s.db", clean.TypeLower(dbName)); !fs.FileExists(testDsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
-			} else if err := os.Remove(testDsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
-			}
-			testDsn = testDsn + "?_foreign_keys=on&_busy_timeout=5000"
-		} else if testDsn == "" || testDsn == dsn.SQLiteTestDB {
-			testDsn = dsn.SQLiteTestDB
-			if !fs.FileExists(testDsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
-			} else if err := os.Remove(testDsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
-			}
-			testDsn = testDsn + "?_foreign_keys=on&_busy_timeout=5000"
-		}
-	} else {
-		// Give the package a database of its own, so that tests can run in parallel.
-		testDsn = entity.TestDbDSN(testDriver, testDsn)
-	}
+	testDsn = testextras.TestDbDSN(testDriver, "testdb")
 
 	// Test config options.
 	opts := &Options{

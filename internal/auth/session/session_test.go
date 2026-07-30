@@ -3,14 +3,12 @@ package session
 import (
 	"os"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/testextras"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -24,17 +22,6 @@ func runTestMain(m *testing.M) int {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
-	caller := "internal/auth/session/session_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	_, dsname := dsn.PhotoPrismTestToDriverDSN(dbn)
-	dsn.SetDSNToEnv(dsname)
-
 	c := config.TestConfig()
 	defer c.CleanupTestFolder()
 	defer func() {
@@ -45,11 +32,5 @@ func runTestMain(m *testing.M) int {
 		fs.PurgeTestDbFiles(".", false)
 	}()
 
-	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
-	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }

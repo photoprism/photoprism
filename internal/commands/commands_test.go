@@ -5,7 +5,6 @@ import (
 	"flag"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -16,7 +15,6 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/capture"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -41,17 +39,6 @@ func runTestMain(m *testing.M) (code int) {
 
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)
-
-	caller := "internal/commands/commands_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	_, dsname := dsn.PhotoPrismTestToDriverDSN(dbn)
-	dsn.SetDSNToEnv(dsname)
 
 	tempDir, err := os.MkdirTemp("", "commands-test")
 	if err != nil {
@@ -88,13 +75,7 @@ func runTestMain(m *testing.M) (code int) {
 	}
 
 	// Run unit tests.
-	beforeTimestamp := time.Now().UTC()
-	code = m.Run()
-	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }
 
 // SetEnvForTest sets an environment variable and restores its original value after the test.

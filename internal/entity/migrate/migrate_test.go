@@ -25,17 +25,5 @@ func runTestMain(m *testing.M) (code int) {
 	// Remove temporary SQLite files after running the tests.
 	defer fs.PurgeTestDbFiles(".", false)
 
-	caller := "internal/entity/migrate/migratation_test.go/TestMain"
-	dbc, _, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	code = m.Run()
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }

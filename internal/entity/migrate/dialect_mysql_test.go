@@ -1,7 +1,6 @@
 package migrate
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -20,20 +19,21 @@ import (
 )
 
 func TestDialectMysql(t *testing.T) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN()
 	if driver != "mysql" {
 		t.Skip("skipping test as not MariaDB")
 	}
 
+	dbDSN := testextras.TestDbDSN(dsn.DriverMySQL, "migrate")
 	dumpName, err := filepath.Abs("./testdata/migrate_mysql.sql")
 	if err != nil {
 		t.Fatal(err)
-	} else if err = testextras.ResetMariaDB("migrate", testextras.GetDBMutexID()); err != nil {
+	} else if err = testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 		t.Fatal(err)
 	}
 
 	//nolint:gosec // G204: dumpName comes from a fixed local fixture path in testdata.
-	if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()),
+	if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", dsn.Parse(dbDSN).Name,
 		"-e", "source "+dumpName).Run(); err != nil {
 		t.Fatal(err)
 	}
@@ -47,10 +47,8 @@ func TestDialectMysql(t *testing.T) {
 		port = "4001"
 	}
 
-	dbDSN := dsn.DSN{Driver: dsn.DriverMySQL, Net: "tcp", Name: fmt.Sprintf("migrate_%02d", testextras.GetDBMutexID()), Server: fmt.Sprintf("mariadb:%s", port), User: "migrate", Password: "migrate"}
-
 	db, err := gorm.Open(mysql.Open(
-		dbDSN.ToString()),
+		dbDSN),
 		&gorm.Config{
 			Logger: logger.New(
 				log,

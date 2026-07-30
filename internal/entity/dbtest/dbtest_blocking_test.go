@@ -79,11 +79,6 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 
 	entity.UnscopedDb().Debug().Where("1=1").Delete(&Blocker{})
 
-	if entity.DbDialect() == dsn.DialectMySQL {
-		entity.Db().Exec("SET GLOBAL lock_wait_timeout=5;")
-		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=5;")
-	}
-
 	log.Info("Expect duplicate keys and locking Error or SQLSTATE from entity_update or dbtest_blocking_test")
 	startTime := time.Now()
 
@@ -106,6 +101,11 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 		// Wait a bit for the other thread to start waiting.
 		time.Sleep(time.Second * 2)
 
+		if entity.DbDialect() == dsn.DialectMySQL {
+			require.NoError(t, entity.Db().Exec("SET lock_wait_timeout=5;").Error)
+			require.NoError(t, entity.Db().Exec("SET innodb_lock_wait_timeout=5;").Error)
+		}
+
 		// Should return an error with lock timeout.
 		if err := entity.Update(m, "ID", "PhotoUID"); err != nil {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
@@ -126,8 +126,8 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 	})
 
 	if entity.DbDialect() == dsn.DialectMySQL {
-		entity.Db().Exec("SET GLOBAL lock_wait_timeout=DEFAULT;")
-		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=DEFAULT;")
+		entity.Db().Exec("SET lock_wait_timeout=DEFAULT;")
+		entity.Db().Exec("SET innodb_lock_wait_timeout=DEFAULT;")
 	}
 	// Need to sleep here waiting for the child process to end.
 	timeLeft := time.Duration(time.Second*32) - time.Since(startTime)
@@ -149,11 +149,6 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 	migrateTestBlocker(entity.UnscopedDb())
 
 	entity.UnscopedDb().Debug().Where("1=1").Delete(&Blocker{})
-
-	if entity.DbDialect() == dsn.DialectMySQL {
-		entity.Db().Exec("SET GLOBAL lock_wait_timeout=5;")
-		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=5;")
-	}
 
 	log.Info("Expect duplicate keys and locking Error or SQLSTATE from entity_update or dbtest_blocking_test")
 
@@ -178,6 +173,11 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 		// Wait a bit for the other thread to start waiting.
 		time.Sleep(time.Second * 2)
 
+		if entity.DbDialect() == dsn.DialectMySQL {
+			require.NoError(t, entity.Db().Exec("SET lock_wait_timeout=5;").Error)
+			require.NoError(t, entity.Db().Exec("SET innodb_lock_wait_timeout=5;").Error)
+		}
+
 		// Should return an error with lock timeout.
 		if err := entity.Update(m, "ID", "PhotoUID"); err != nil {
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
@@ -198,8 +198,8 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 	})
 
 	if entity.DbDialect() == dsn.DialectMySQL {
-		entity.Db().Exec("SET GLOBAL lock_wait_timeout=DEFAULT;")
-		entity.Db().Exec("SET GLOBAL innodb_lock_wait_timeout=DEFAULT;")
+		entity.Db().Exec("SET lock_wait_timeout=DEFAULT;")
+		entity.Db().Exec("SET innodb_lock_wait_timeout=DEFAULT;")
 	}
 	// Need to sleep here waiting for the child process to end.
 	timeLeft := time.Duration(time.Second*32) - time.Since(startTime)

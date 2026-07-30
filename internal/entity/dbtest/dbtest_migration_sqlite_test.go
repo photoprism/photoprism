@@ -38,7 +38,7 @@ func TestDialectSQLite3(t *testing.T) {
 	t.Run("ValidMigration", func(t *testing.T) {
 		// Prepare temporary sqlite db.
 		testDbOriginal := "../migrate/testdata/migrate_sqlite3"
-		testDbTemp := "../migrate/testdata/migrate_sqlite3.db"
+		testDbTemp := filepath.Join(t.TempDir(), "migrate_sqlite3.db")
 		if !fs.FileExists(testDbOriginal) {
 			t.Fatal(testDbOriginal + " not found")
 		}
@@ -136,7 +136,7 @@ func TestDialectSQLite3(t *testing.T) {
 	t.Run("InvalidDataUpgrade", func(t *testing.T) {
 		// Prepare temporary sqlite db.
 		testDbOriginal := "../migrate/testdata/migrate_sqlite3"
-		testDbTemp := "../migrate/testdata/migrate_sqlite3.db"
+		testDbTemp := filepath.Join(t.TempDir(), "migrate_sqlite3.db")
 		if !fs.FileExists(testDbOriginal) {
 			t.Fatal(testDbOriginal + " not found")
 		}

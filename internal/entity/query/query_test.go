@@ -3,7 +3,6 @@ package query
 import (
 	"os"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -29,11 +28,11 @@ func (p staticDbProvider) Db() *gorm.DB {
 // testDriver returns the driver the test database runs on, applying the same
 // fallback to SQLite that entity.InitTestDb uses when resolving the environment.
 func testDriver() string {
-	switch driver := os.Getenv("PHOTOPRISM_TEST_DRIVER"); {
-	case os.Getenv("PHOTOPRISM_TEST_DSN") == "", driver == "", driver == "test", driver == "sqlite":
+	switch driver := os.Getenv("PHOTOPRISM_TEST_DSN_NAME"); {
+	case os.Getenv("PHOTOPRISM_TEST_DSN_NAME") == "", driver == "", driver == "test", driver == "sqlite":
 		return dsn.DriverSQLite3
 	default:
-		return driver
+		return dsn.ParseDriver(driver)
 	}
 }
 
@@ -51,27 +50,13 @@ func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files after running the tests.
 	defer fs.PurgeTestDbFiles(".", false)
 
-	caller := "internal/entity/query/query_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	driver, dsn := dsn.PhotoPrismTestToDriverDSN(dbn)
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN()
 	db := entity.InitTestDb(
 		driver,
-		dsn)
+		dsname)
 	defer db.Close()
 
-	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
-	code = testextras.ValidateDBErrors(db.Db(), log, beforeTimestamp, code)
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestDbDialect(t *testing.T) {

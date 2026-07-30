@@ -3,7 +3,6 @@ package search
 import (
 	"os"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -27,26 +26,13 @@ func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files after running the tests.
 	defer fs.PurgeTestDbFiles(".", false)
 
-	caller := "internal/entity/search/search_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	driver, dsn := dsn.PhotoPrismTestToDriverDSN(dbn)
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN()
 	db := entity.InitTestDb(
 		driver,
-		dsn)
+		dsname)
 	defer db.Close()
 
-	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
-	code = testextras.ValidateDBErrors(db.Db(), log, beforeTimestamp, code)
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }
 
 // testDialect returns the name of the SQL dialect the test database runs on, so

@@ -20,13 +20,13 @@ import (
 )
 
 func TestGorm2Migration(t *testing.T) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN()
 	if driver != "sqlite" {
 		t.Skip("skipping test as not SQLite")
 	}
 	// Prepare temporary sqlite db.
 	testDbOriginal := "./testdata/migrate_sqlite3"
-	testDbTemp := "./testdata/migrate_sqlite3.db"
+	testDbTemp := filepath.Join(t.TempDir(), "migrate_sqlite3.db")
 	if !fs.FileExists(testDbOriginal) {
 		t.Fatal(testDbOriginal + " not found")
 	}

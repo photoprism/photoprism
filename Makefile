@@ -602,6 +602,9 @@ vitest-coverage:
 vitest-component:
 	$(info Running Vitest component tests...)
 	(cd frontend && npm run test-component)
+clean-testleftovers: reset-sqlite-unit
+	$(info Removing test remnants...)
+	rm -rf ./storage/test-photoprism-*
 reset-mariadb:
 # Warning:  This will reset the photoprism database which is the default database, not a testing database.
 	$(info Resetting photoprism database...)
@@ -617,10 +620,7 @@ reset-mariadb-%:
 reset-sqlite-unit:
 	$(info Resetting SQLite unit database...)
 	mkdir -p ./storage/testdata
-	rm --force ./storage/testdata/unit.test.db
-	rm --force ./storage/testdata/unit.test.db_*.db
-	rm --force ./storage/testdata/unit.mutex.db
-	cp ./internal/entity/migrate/testdata/migrate_sqlite3 ./storage/testdata/unit.test.db
+	rm --force ./storage/testdata/testdb*.db
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-migrate
 reset-postgres:
 # Warning:  This will reset the photoprism database which is the default database, not a testing database.

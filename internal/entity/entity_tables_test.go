@@ -10,23 +10,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 )
 
-// createTestTable creates a table with two rows and removes it on test cleanup.
-func createTestTable(t *testing.T, name string) *gorm.DB {
-	t.Helper()
-
-	db := UnscopedDb()
-
-	require.NoError(t, db.Exec("CREATE TABLE "+name+" (id INTEGER PRIMARY KEY, test_name VARCHAR(16))").Error)
-
-	t.Cleanup(func() {
-		assert.NoError(t, db.Exec("DROP TABLE "+name).Error)
-	})
-
-	require.NoError(t, db.Exec("INSERT INTO "+name+" (id, test_name) VALUES (1, 'foo'), (2, 'bar')").Error)
-
-	return db
-}
-
 // countTestRows returns the number of rows in the table with the specified name.
 func countTestRows(t *testing.T, db *gorm.DB, name string) int64 {
 	t.Helper()
@@ -38,31 +21,21 @@ func countTestRows(t *testing.T, db *gorm.DB, name string) int64 {
 	return count
 }
 
-func TestTruncateTable(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		db := createTestTable(t, "test_truncate")
-		assert.Equal(t, int64(2), countTestRows(t, db, "test_truncate"))
-		assert.NoError(t, truncateTable(db, "test_truncate"))
-		assert.Equal(t, int64(0), countTestRows(t, db, "test_truncate"))
-	})
-	t.Run("UnknownTable", func(t *testing.T) {
-		assert.Error(t, truncateTable(UnscopedDb(), "test_truncate_missing"))
-	})
-}
-
 func TestTables_Truncate(t *testing.T) {
 	t.Run("KeepsSchemaTables", func(t *testing.T) {
-		db := createTestTable(t, "test_truncate_list")
-		versions := migrate.Version{}.TableName()
-		before := countTestRows(t, db, versions)
-		require.NotZero(t, before, "versions must not be empty")
+		migrations := migrate.Migration{}.TableName()
+		before := countTestRows(t, UnscopedDb(), migrations)
+		require.NotZero(t, before, "migrations must not be empty")
 
 		Tables{
-			10: {"test_truncate_list", nil},
-			20: {versions, nil},
-		}.Truncate(db)
+			10:   {migrate.Migration{}.TableName(), &migrate.Migration{}},
+			20:   {migrate.Version{}.TableName(), &migrate.Version{}},
+			4020: {Details{}.TableName(), &Details{}},
+		}.Truncate(UnscopedDb())
 
-		assert.Equal(t, 0, countTestRows(t, db, "test_truncate_list"))
-		assert.Equal(t, before, countTestRows(t, db, versions))
+		if !assert.Equal(t, before, countTestRows(t, UnscopedDb(), migrations)) {
+			t.Fatal("Truncate did something REALLY bad")
+		}
+		ResetTestFixtures()
 	})
 }

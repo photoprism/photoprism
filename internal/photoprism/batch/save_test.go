@@ -321,7 +321,7 @@ func TestPrepareAndSavePhotos(t *testing.T) {
 	t.Run("RegeneratesFileIndexOnDateChange", func(t *testing.T) {
 		// Find a photo whose primary file carries a search time index.
 		var f entity.File
-		if err := entity.UnscopedDb().Where("photo_id > 0 AND file_primary = 1 AND time_index IS NOT NULL AND deleted_at IS NULL").First(&f).Error; err != nil {
+		if err := entity.UnscopedDb().Where("photo_id > 0 AND file_primary = TRUE AND time_index IS NOT NULL AND deleted_at IS NULL").First(&f).Error; err != nil {
 			t.Skip("no suitable file fixture")
 			return
 		}

@@ -131,7 +131,7 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err 
 
 	err = nil
 
-	driver, dsname := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN()
 
 	// Set default test database driver.
 	if driver == "test" || driver == "sqlite" || driver == "" || dsname == "" {
@@ -166,16 +166,16 @@ func AcquireDBMutex(log event.Logger, caller string) (dbc *DbConn, dbn int, err 
 		log.Info("database mutex acquired")
 		dbn = n
 
-		switch driver {
-		case Postgres:
-			if err = ResetPostgresDB(dsn.Parse(dsname).Name, dbn); err != nil {
-				log.Errorf("Unable to get reset database with %v", err)
-			}
-		case MySQL:
-			if err = ResetMariaDB(dsn.Parse(dsname).Name, dbn); err != nil {
-				log.Errorf("Unable to get reset database with %v", err)
-			}
-		}
+		// switch driver {
+		// case Postgres:
+		// 	if err = ResetPostgresDB(dsn.Parse(dsname).Name, dbn); err != nil {
+		// 		log.Errorf("Unable to get reset database with %v", err)
+		// 	}
+		// case MySQL:
+		// 	if err = ResetMariaDB(dsn.Parse(dsname).Name, dbn); err != nil {
+		// 		log.Errorf("Unable to get reset database with %v", err)
+		// 	}
+		// }
 	} else {
 		log.Error("Unable to get DBMutex")
 		err = errors.New("unable to acquire DBMutex")

@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -72,7 +73,7 @@ func Benchmark100k_MySQL(b *testing.B) {
 	loglevel := event.Log.GetLevel()
 	event.Log.SetLevel(logrus.ErrorLevel)
 	testDbOriginal := "../../storage/test-100k.original.mysql"
-	mysqlD := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+	mysqlD := dsn.TestDSNFromEnv(dsn.DriverMariaDB, "migrate")
 	mysqlDSN := mysqlD.ToString()
 
 	// Prepare temporary mariadb db.
@@ -122,7 +123,8 @@ func Benchmark100k_PostgreSQL(b *testing.B) {
 	loglevel := event.Log.GetLevel()
 	event.Log.SetLevel(logrus.ErrorLevel)
 	testDbOriginal := "../../storage/test-100k.original.postgresql"
-	mDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", 1)
+	oDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
+	mDSN := dsn.Parse(oDSN)
 	pDSN := mDSN
 	pDSN.User = "photoprism"     //nolint:gosec // test only credentials
 	pDSN.Password = "photoprism" //nolint:gosec // test only credentials

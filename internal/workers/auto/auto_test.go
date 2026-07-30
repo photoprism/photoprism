@@ -3,13 +3,11 @@ package auto
 import (
 	"os"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/testextras"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -25,17 +23,6 @@ func runTestMain(m *testing.M) (code int) {
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)
 
-	caller := "internal/workers/auto/auto_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	_, dsname := dsn.PhotoPrismTestToDriverDSN(dbn)
-	dsn.SetDSNToEnv(dsname)
-
 	c := config.TestConfig()
 	defer c.CleanupTestFolder()
 	defer func() {
@@ -47,12 +34,7 @@ func runTestMain(m *testing.M) (code int) {
 	}()
 
 	// Run unit tests.
-	beforeTimestamp := time.Now().UTC()
-	code = m.Run()
-	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestStart(t *testing.T) {

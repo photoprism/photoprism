@@ -9,7 +9,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/testextras"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -27,29 +26,14 @@ func runTestMain(m *testing.M) (code int) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
-	caller := "internal/server/wellknown/wellknown_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	_, dsname := dsn.PhotoPrismTestToDriverDSN(dbn)
-	dsn.SetDSNToEnv(dsname)
-
 	c := config.TestConfig()
 	defer c.CleanupTestFolder()
 	defer func() {
-		c.CloseDb()
+		_ = c.CloseDb()
 		// Remove temporary SQLite files after running the tests.
 		fs.PurgeTestDbFiles(".", false)
 	}()
 
 	// Run unit tests.
-	code = m.Run()
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }

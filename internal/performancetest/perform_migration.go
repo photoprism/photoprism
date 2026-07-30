@@ -22,6 +22,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -131,10 +132,11 @@ func sqliteMigration(original string, temp string, numberOfRecords int, skipSpee
 
 func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string, expectedDuration time.Duration, b *testing.B) {
 	b.StopTimer()
+	d := dsn.Parse(testextras.TestDbDSN(dsn.DriverMariaDB, "migrate"))
 	// Prepare migrate mariadb db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate", //nolint:gosec // test generated input
+	} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", d.Name, //nolint:gosec // test generated input
 		"-e", "source "+dumpName).Run(); err != nil {
 		b.Fatal(err)
 	}
@@ -144,7 +146,6 @@ func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string,
 
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.ErrorLevel)
-	d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
 	db, err := gorm.Open(mysql.Open(
 		d.ToString()),
 		&gorm.Config{
@@ -225,7 +226,7 @@ func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string,
 
 func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname string, expectedDuration time.Duration, b *testing.B) {
 	b.StopTimer()
-	mDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", 1)
+	mDSN := dsn.Parse(testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate"))
 	pDSN := mDSN
 	pDSN.User = "photoprism"     //nolint:gosec // test only credentials
 	pDSN.Password = "photoprism" //nolint:gosec // test only credentials
@@ -234,9 +235,9 @@ func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname st
 	// Prepare migrate PostgreSQL db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
 		b.Fatal(err)
-	} else if err = exec.Command("dropdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "--force", "--if-exists", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
+	} else if err = exec.Command("dropdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "--force", "--if-exists", mDSN.Name).Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("createdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "-O", "migrate", "-T", "template0", "migrate").Run(); err != nil { //nolint:gosec // test generated input, test only credentials
+	} else if err = exec.Command("createdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "-O", "migrate", "-T", "template0", mDSN.Name).Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
 	} else if err = exec.Command("pg_restore", "-d", pDSN.ForPSQL(), dumpName).Run(); err != nil { //nolint:gosec // test generated parameters
 		b.Fatal(err)

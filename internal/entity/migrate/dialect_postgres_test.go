@@ -18,22 +18,22 @@ import (
 )
 
 func TestDialectPostgreSQL(t *testing.T) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN()
 	if driver != "postgres" {
 		t.Skip("skipping test as not PostgreSQL")
 	}
 	t.Run("Existing", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
+		dbDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
 
 		if dumpName, err := filepath.Abs("./testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
 		} else {
 			// Clear Postgres source (migrate)
-			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+			if err := testextras.ResetPostgresDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 				t.Fatal(err)
 			}
-
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
+			pDSN := dsn.Parse(dbDSN)
+			if err = exec.Command("psql", pDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -43,7 +43,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			dbDSN.ToString()),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -109,17 +109,17 @@ func TestDialectPostgreSQL(t *testing.T) {
 	})
 
 	t.Run("New", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
+		dbDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
 
 		if dumpName, err := filepath.Abs("./testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
 		} else {
 			// Clear Postgres source (migrate)
-			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+			if err := testextras.ResetPostgresDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 				t.Fatal(err)
 			}
-
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil {
+			pDSN := dsn.Parse(dbDSN)
+			if err = exec.Command("psql", pDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // parameters created in test earlier
 				t.Fatal(err)
 			}
 		}
@@ -129,7 +129,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			dbDSN.ToString()),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,

@@ -4,8 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestCreateUserSettings(t *testing.T) {
@@ -16,13 +18,20 @@ func TestCreateUserSettings(t *testing.T) {
 	})
 	t.Run("Success", func(t *testing.T) {
 		m := &User{UserUID: "usg73p55zwgr1gbq"}
-		Db().Create(m) // Have to create a user BEFORE adding settings to it.
 		err := CreateUserSettings(m)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
+		assert.NotNil(t, m.UserSettings)
+	})
+
+	t.Run("SuccessNewRecord", func(t *testing.T) {
+		userUID := rnd.GenerateUID('u')
+		m := &User{UserUID: userUID}
+		require.NoError(t, Db().Create(m).Error) // Have to create a user BEFORE adding settings to it.
+		require.NoError(t, CreateUserSettings(m))
 		assert.NotNil(t, m.UserSettings)
 	})
 }

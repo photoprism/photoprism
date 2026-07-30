@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +14,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/testextras"
-	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -38,17 +36,6 @@ func runTestMain(m *testing.M) int {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	caller := "internal/config/config_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	_, dsname := dsn.PhotoPrismTestToDriverDSN(dbn)
-	dsn.SetDSNToEnv(dsname)
-
 	c := TestConfig()
 	defer c.CleanupTestFolder()
 	defer func() {
@@ -59,12 +46,7 @@ func runTestMain(m *testing.M) int {
 		fs.PurgeTestDbFiles(".", false)
 	}()
 
-	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
-	code = testextras.ValidateDBErrors(c.Db(), log, beforeTimestamp, code)
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestNewConfig(t *testing.T) {

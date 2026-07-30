@@ -52,7 +52,7 @@ func TestUsersResetCommand(t *testing.T) {
 		}
 		assert.Greater(t, count, int64(3)) // Make sure we have a populated database
 
-		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDSN(0)
+		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDSN()
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,

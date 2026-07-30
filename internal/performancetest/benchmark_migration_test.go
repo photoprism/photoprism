@@ -9,12 +9,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func BenchmarkMigration_SQLite(b *testing.B) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN()
 	if driver != "sqlite" {
 		b.Skip("skipping benchmark as not SQLite")
 	}
@@ -101,7 +102,7 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 }
 
 func BenchmarkMigration_MySQL(b *testing.B) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN()
 	if driver != "mysql" {
 		b.Skip("skipping benchmark as not MariaDB")
 	}
@@ -113,7 +114,7 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-1k.original.mysql") {
 			log.Info("Generating Mariadb database with 1000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+			d := dsn.TestDSNFromEnv(dsn.DriverMariaDB, "migrate")
 			require.NoError(b, generateDatabase(1000, "mysql", d.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-1k.original.mysql"
 			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
@@ -130,10 +131,11 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-10k.original.mysql") {
 			log.Info("Generating Mariadb database with 10000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+
+			d := dsn.Parse(testextras.TestDbDSN(dsn.DriverMariaDB, "migrate"))
 			require.NoError(b, generateDatabase(10000, "mysql", d.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-10k.original.mysql"
-			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", d.Name, resultFile).Run(); err != nil {
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -147,10 +149,10 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-100k.original.mysql") {
 			log.Info("Generating Mariadb database with 100000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			d := dsn.TestDSNPortFromEnv(dsn.DriverMariaDB, "migrate", 1)
+			d := dsn.Parse(testextras.TestDbDSN(dsn.DriverMariaDB, "migrate"))
 			require.NoError(b, generateDatabase(100000, "mysql", d.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-100k.original.mysql"
-			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", d.Name, resultFile).Run(); err != nil {
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -164,14 +166,14 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 }
 
 func BenchmarkMigration_PostgreSQL(b *testing.B) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN(0)
+	driver, _ := dsn.PhotoPrismTestToDriverDSN()
 	if driver != "postgres" {
 		b.Skip("skipping benchmark as not PostgreSQL")
 	}
 
 	// Setup here
 	loglevel := event.Log.GetLevel()
-	mDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", 1)
+	mDSN := dsn.Parse(testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate"))
 	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {

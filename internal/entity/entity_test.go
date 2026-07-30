@@ -3,7 +3,6 @@ package entity
 import (
 	"os"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -29,28 +28,14 @@ func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files after running the tests.
 	defer fs.PurgeTestDbFiles(".", false)
 
-	caller := "internal/entity/entity_test.go/TestMain"
-	dbc, dbn, err := testextras.AcquireDBMutex(log, caller)
-	if err != nil {
-		log.Error("FAIL")
-		return 1
-	}
-	defer testextras.UnlockDBMutex(dbc.Db())
-
-	driver, dsn := dsn.PhotoPrismTestToDriverDSN(dbn)
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN()
 	db := InitTestDb(
 		driver,
-		dsn)
+		dsname)
 
 	defer db.Close()
 
-	beforeTimestamp := time.Now().UTC()
-	code := m.Run()
-	code = testextras.ValidateDBErrors(db.Db(), log, beforeTimestamp, code)
-
-	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
-
-	return code
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestTypeString(t *testing.T) {

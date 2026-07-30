@@ -36,17 +36,17 @@ func TestDialectPostgreSQL(t *testing.T) {
 	defer dbtestMutex.Unlock()
 	log.Info("Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 	t.Run("ValidMigration", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
+		dbDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
 
 		if dumpName, err := filepath.Abs("../migrate/testdata/migrate_postgres.sql"); err != nil {
 			t.Fatal(err)
 		} else {
 			// Clear Postgres source (migrate)
-			if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+			if err := testextras.ResetPostgresDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 				t.Fatal(err)
 			}
-
-			if err = exec.Command("psql", dbDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
+			pDSN := dsn.Parse(dbDSN)
+			if err = exec.Command("psql", pDSN.ForPSQL(), "--file="+dumpName).Run(); err != nil { //nolint:gosec // test generated input
 				t.Fatal(err)
 			}
 		}
@@ -55,7 +55,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			dbDSN.ToString()),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
@@ -134,10 +134,10 @@ func TestDialectPostgreSQL(t *testing.T) {
 	})
 
 	t.Run("EmptyDB", func(t *testing.T) {
-		dbDSN := dsn.TestDSNPortFromEnv(dsn.DriverPostgreSQL, "migrate", testextras.GetDBMutexID())
+		dbDSN := testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate")
 
 		// Clear Postgres source (migrate)
-		if err := testextras.ResetPostgresDB("migrate", testextras.GetDBMutexID()); err != nil {
+		if err := testextras.ResetPostgresDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -145,7 +145,7 @@ func TestDialectPostgreSQL(t *testing.T) {
 		log.SetLevel(logrus.TraceLevel)
 
 		db, err := gorm.Open(postgres.Open(
-			dbDSN.ToString()),
+			dbDSN),
 			&gorm.Config{
 				Logger: logger.New(
 					log,
