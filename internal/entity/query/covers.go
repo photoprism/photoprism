@@ -78,9 +78,9 @@ func UpdateAlbumManualCovers(albums ...entity.Album) (err error) {
 			Where("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto).
 			UpdateColumn("thumb", gorm.Expr(`(
 								SELECT f.file_hash FROM files f 
-									JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0 AND pa.missing = 0
-									JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
-									WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+									JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
+									JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
+									WHERE f.deleted_at IS NULL AND f.file_missing = FALSE AND f.file_hash <> '' AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 									ORDER BY p.taken_at DESC LIMIT 1
 								)`, media.PreviewExpr))
 	default:
