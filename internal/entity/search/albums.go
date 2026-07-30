@@ -171,7 +171,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 				// album_path is VARBINARY and matched case-insensitively so a lowercased query still
 				// finds uppercase folder paths; album_title and album_location are VARCHAR (already
 				// case-insensitive).
-				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ? OR "+PathLike(s.Dialector.Name(), "convert_from(albums.album_path, 'UTF8')"), q, q, q)
+				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ? OR "+PathLike(s.Name(), "albums.album_path"), q, q, q)
 			} else {
 				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ?", q, q)
 			}
@@ -180,7 +180,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 				// album_path is VARBINARY and matched case-insensitively so a lowercased query still
 				// finds uppercase folder paths; album_title and album_location are VARCHAR (already
 				// case-insensitive).
-				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Dialector.Name(), "albums.album_path"), q, q, q)
+				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Name(), "albums.album_path"), q, q, q)
 			} else {
 				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
 			}

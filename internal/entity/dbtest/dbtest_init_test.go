@@ -128,7 +128,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(5), count)
+		assert.Equal(t, int64(7), count)
 	})
 
 	t.Run("PhotoAlbumCounts", func(t *testing.T) {

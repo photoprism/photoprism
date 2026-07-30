@@ -62,7 +62,7 @@ func FilesByUID(u []string, limit int, offset int) (files entity.Files, err erro
 		return files, fmt.Errorf("invalid limit")
 	}
 
-	if err = Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
+	if err = Db().Where("(photo_uid IN (?) AND file_primary = TRUE) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
 	}
 
@@ -108,7 +108,7 @@ func DocumentByPhotoUID(photoUID string) (*entity.File, error) {
 		return &f, fmt.Errorf("photo uid required")
 	}
 
-	err := Db().Where("photo_uid = ? AND file_missing = 0", photoUID).
+	err := Db().Where("photo_uid = ? AND file_missing = false", photoUID).
 		Where("file_type = ?", fs.DocumentPDF).
 		Order("file_error ASC").
 		Preload("Photo").First(&f).Error

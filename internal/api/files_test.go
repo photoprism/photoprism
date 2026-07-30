@@ -155,7 +155,7 @@ func TestGetFile(t *testing.T) {
 		if err := entity.Db().Create(file).Error; err != nil {
 			t.Fatal(err)
 		}
-		if err := entity.Db().Exec("INSERT INTO photos_albums (photo_uid, album_uid, hidden, missing) VALUES (?, ?, 0, 0)", photo.PhotoUID, sharedAlbumUID).Error; err != nil {
+		if err := entity.Db().Exec("INSERT INTO photos_albums (photo_uid, album_uid, hidden, missing) VALUES (?, ?, false, false)", photo.PhotoUID, sharedAlbumUID).Error; err != nil {
 			t.Fatal(err)
 		}
 		defer func() {
@@ -274,7 +274,7 @@ func TestGetFileBytes(t *testing.T) {
 		// Attach the PDF document photo to the album shared by the "visitor" session fixture.
 		const docPhotoUID = "ps6sg6byk7wrbk48"    // Photo55 (the PDF document)
 		const sharedAlbumUID = "as6sg6bxpogaaba8" // album the "visitor" session fixture shares
-		if err := entity.Db().Exec("INSERT INTO photos_albums (photo_uid, album_uid, hidden, missing) VALUES (?, ?, 0, 0)", docPhotoUID, sharedAlbumUID).Error; err != nil {
+		if err := entity.Db().Exec("INSERT INTO photos_albums (photo_uid, album_uid, hidden, missing) VALUES (?, ?, false, false)", docPhotoUID, sharedAlbumUID).Error; err != nil {
 			t.Fatal(err)
 		}
 		defer entity.Db().Exec("DELETE FROM photos_albums WHERE photo_uid = ? AND album_uid = ?", docPhotoUID, sharedAlbumUID)
@@ -314,9 +314,10 @@ func TestResolvePDFDocument(t *testing.T) {
 		cover, err := query.FileByHash(pdfCoverHash)
 		assert.NoError(t, err)
 		got, ok := resolvePDFDocument(cover)
-		assert.True(t, ok)
-		assert.Equal(t, fs.DocumentPDF, got.Type())
-		assert.Equal(t, cover.PhotoUID, got.PhotoUID)
+		if assert.True(t, ok) {
+			assert.Equal(t, fs.DocumentPDF, got.Type())
+			assert.Equal(t, cover.PhotoUID, got.PhotoUID)
+		}
 	})
 	t.Run("Unrelated", func(t *testing.T) {
 		// A jpeg whose photo has no related PDF cannot resolve to a document.

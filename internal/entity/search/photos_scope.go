@@ -230,7 +230,7 @@ func FileVisibleToPublic(fileHash string) (bool, error) {
 	err := UnscopedDb().Table("files").
 		Joins("JOIN photos ON photos.id = files.photo_id").
 		Where("files.file_hash = ? AND files.deleted_at IS NULL", fileHash).
-		Where("photos.photo_private = 0 AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
+		Where("photos.photo_private = FALSE AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
 		Count(&count).Error
 
 	return count > 0, err
@@ -246,7 +246,7 @@ func PhotoVisibleToPublic(photoUID string) (bool, error) {
 
 	var count int64
 	err := UnscopedDb().Table("photos").
-		Where("photo_uid = ? AND photo_private = 0 AND deleted_at IS NULL AND photo_quality > -1", photoUID).
+		Where("photo_uid = ? AND photo_private = FALSE AND deleted_at IS NULL AND photo_quality > -1", photoUID).
 		Count(&count).Error
 
 	return count > 0, err

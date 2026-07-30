@@ -97,7 +97,7 @@ func TestRegenerateIndexForPhotoIDs(t *testing.T) {
 	t.Run("UpdatesFileIndex", func(t *testing.T) {
 		// Find a photo whose primary file carries a search time index.
 		var f File
-		if err := UnscopedDb().Where("photo_id > 0 AND file_primary = 1 AND time_index IS NOT NULL").First(&f).Error; err != nil {
+		if err := UnscopedDb().Where("photo_id > 0 AND file_primary = true AND time_index IS NOT NULL").First(&f).Error; err != nil {
 			t.Skip("no suitable file fixture")
 			return
 		}

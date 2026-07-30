@@ -23,7 +23,7 @@ func TestPathLike(t *testing.T) {
 	})
 	t.Run("PostgresILikeWithConversion", func(t *testing.T) {
 		// MySQL compares VARBINARY byte-exact, so the path is converted to a case-insensitive collation.
-		assert.Equal(t, "convert_from(albums.album_path) ILIKE ?", PathLike(dsn.DialectPostgreSQL, "albums.album_path"))
+		assert.Equal(t, "convert_from(albums.album_path, 'UTF8') ILIKE ?", PathLike(dsn.DialectPostgreSQL, "albums.album_path"))
 	})
 	t.Run("UnknownDialectFallsBackToPlainLike", func(t *testing.T) {
 		// A future or unknown dialect must not error; it falls back to a plain LIKE.

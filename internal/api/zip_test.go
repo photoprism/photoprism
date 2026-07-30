@@ -99,7 +99,7 @@ func resetZipDownloadFixtures(t *testing.T) {
 
 		if err := entity.UnscopedDb().
 			Model(&entity.File{}).
-			Where("photo_uid = ? AND file_name = ? AND file_missing = 0", file.photoUID, file.fileName).
+			Where("photo_uid = ? AND file_name = ? AND file_missing = false", file.photoUID, file.fileName).
 			Count(&found).Error; err != nil {
 			t.Fatalf("reset fixture %s failed: %v", file.photoUID, err)
 		} else if found < 1 {
