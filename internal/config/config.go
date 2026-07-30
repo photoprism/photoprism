@@ -495,6 +495,14 @@ func (c *Config) Propagate() {
 	}); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
 	}
+	if err := face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:      c.FaceModel(),
+		Model:     c.FaceEmbeddingModel(),
+		ModelPath: c.FaceModelPath(),
+		Threads:   c.FaceEngineThreads(),
+	}); err != nil {
+		log.Warnf("faces: %s (configure embedding model)", err)
+	}
 
 	// Set default theme and locale.
 	customize.DefaultTheme = c.DefaultTheme()

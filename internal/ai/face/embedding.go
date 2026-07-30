@@ -68,7 +68,13 @@ func (m Embedding) Dist(other Embedding) float64 {
 
 // Magnitude returns the face embedding vector length (magnitude).
 func (m Embedding) Magnitude() float64 {
-	return m.Dist(NullEmbedding)
+	var sum float64
+
+	for _, v := range m {
+		sum += v * v
+	}
+
+	return math.Sqrt(sum)
 }
 
 func normalizeEmbedding(e Embedding) {

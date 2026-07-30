@@ -17,7 +17,7 @@ var Children = Clusters{
 
 // IsChild checks whether the embedding might be difficult to match.
 func (m Embedding) IsChild() bool {
-	if !SkipChildren {
+	if !SkipChildren || !SamplesComparable() {
 		return false
 	}
 

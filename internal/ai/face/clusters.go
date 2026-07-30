@@ -17,11 +17,15 @@ type Clusters []Cluster
 // Contains reports whether the provided embedding falls inside any enabled
 // cluster radius. Disabled clusters are skipped so they do not influence
 // the result.
+//
+// Embeddings that cannot be compared with a cluster report a negative distance,
+// which must not count as a match: the reference samples belong to one model's
+// vector space, so a vector of a different length says nothing about them.
 func (c Clusters) Contains(other Embedding) bool {
 	for _, cluster := range c {
 		if cluster.Disabled {
 			continue
-		} else if d := cluster.Embedding.Dist(other); d < cluster.Radius {
+		} else if d := cluster.Embedding.Dist(other); d >= 0 && d < cluster.Radius {
 			return true
 		}
 	}
@@ -38,7 +42,9 @@ func (c Clusters) Dist(other Embedding) (dist float64) {
 	for _, cluster := range c {
 		if cluster.Disabled {
 			continue
-		} else if d := cluster.Embedding.Dist(other); d < dist || dist < 0 {
+		} else if d := cluster.Embedding.Dist(other); d < 0 {
+			continue
+		} else if d < dist || dist < 0 {
 			dist = d
 		}
 	}

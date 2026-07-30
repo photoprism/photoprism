@@ -77,18 +77,10 @@ func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (re
 					result[i].Embeddings = apiResponse.Result.Embeddings[i]
 				}
 			}
-		} else if tf := model.FaceModel(); tf != nil {
-			for i, f := range result {
-				if f.Area.Col == 0 && f.Area.Row == 0 {
-					continue
-				}
-
-				if img, _, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop); imgErr != nil {
-					log.Errorf("vision: failed to create face crop (%s)", imgErr)
-				} else if embeddings := tf.Run(img); !embeddings.Empty() {
-					result[i].Embeddings = embeddings
-				}
-			}
+		} else if embedder := model.FaceModel(); embedder != nil {
+			GenerateEmbeddings(embedder, fileName, result, cacheCrop)
+		} else if face.EmbeddingsDisabled() {
+			log.Debugf("vision: skipping face embeddings")
 		} else {
 			return result, errors.New("invalid face model configuration")
 		}

@@ -52,7 +52,7 @@ type Model struct {
 	Path          string                `yaml:"Path,omitempty" json:"-"`
 	Disabled      bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
 	classifyModel *classify.Model
-	faceModel     *face.Model
+	faceModel     face.Embedder
 	nsfwModel     *nsfw.Model
 	schemaOnce    sync.Once
 	schema        string
@@ -688,9 +688,15 @@ func (m *Model) ClassifyModel() *classify.Model {
 
 // FaceModel returns the matching face recognition model instance, if any. Nil
 // receivers return nil.
-func (m *Model) FaceModel() *face.Model {
+func (m *Model) FaceModel() face.Embedder {
 	if m == nil {
 		return nil
+	}
+
+	// An ONNX embedding model selected with FACE_MODEL takes precedence: vision.yml
+	// only schedules when faces are processed, while the model itself is per instance.
+	if embedder := face.ActiveEmbedder(); embedder != nil {
+		return embedder
 	}
 
 	// Use mutex to prevent models from being loaded and
@@ -709,7 +715,7 @@ func (m *Model) FaceModel() *face.Model {
 		return nil
 	case FacenetModel.Name, "facenet":
 		// Load and initialize the Nasnet image classification model.
-		if model := face.NewModel(GetFacenetModelPath(), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
+		if model := face.NewModel(face.ModelFaceNet, GetFacenetModelPath(), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)
@@ -733,7 +739,7 @@ func (m *Model) FaceModel() *face.Model {
 		}
 
 		// Try to load custom model based on the configuration values.
-		if model := face.NewModel(GetModelPath(m.Path), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
+		if model := face.NewModel(face.NormalizeModelName(m.Name), GetModelPath(m.Path), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)

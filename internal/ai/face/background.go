@@ -2,7 +2,7 @@ package face
 
 // IsBackground tests whether the embedding is similar to an out-of-distribution (OOD) embedding.
 func (m Embedding) IsBackground() bool {
-	if !IgnoreBackground {
+	if !IgnoreBackground || !SamplesComparable() {
 		return false
 	}
 
