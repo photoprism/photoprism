@@ -1,6 +1,6 @@
 # Frontend Guidelines
 
-**Last Updated:** June 10, 2026
+**Last Updated:** July 28, 2026
 
 ## Dependencies & Pins
 
@@ -12,6 +12,7 @@
 
 ## Frontend Linting & Test Entry Points
 
+- Run `make -C frontend help` for an overview of the most common frontend targets, and `make -C frontend list` to see all of them.
 - Use the lint and format scripts declared in `frontend/package.json`; all added JS, Vue, and frontend tests must follow those standards.
 - Frontend unit tests use Vitest. Common entry points are `make test-js`, `make vitest-watch`, and `make vitest-coverage`.
 - New JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.

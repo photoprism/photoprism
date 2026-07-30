@@ -2,6 +2,52 @@
 
 export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 
+# Overview of the most commonly used targets, shown by "make help" and when no target is specified.
+# Keep this in sync when renaming or adding an important target; "make list" shows all of them.
+define HELP_TEXT
+PhotoPrism Docker Image Makefile
+
+Installs optional packages and drivers in PhotoPrism Docker images. Run the
+targets as root with "make -C /scripts <target>", or add their names to
+PHOTOPRISM_INIT so that they are installed when the container starts.
+
+System:
+  update           Update the package lists and installed packages
+  clean            Remove the cached package files and package lists
+  clitools         Install the zsh, nano, exa, and duf command-line tools
+
+Security:
+  https            Create a default HTTPS/TLS certificate
+
+Graphics & Video:
+  gpu              Detect and install the GPU drivers for this system
+  intel            Install the Intel GPU drivers and VA-API tools
+  amd              Install the AMD VA-API GPU drivers
+  vulkan           Install the Mesa Vulkan drivers and tools
+  ffmpeg           Install the latest FFmpeg build in "/opt"
+  darktable        Install darktable for RAW image conversion
+  Related: ffmpeg-release, ffmpeg-master
+
+Machine Learning:
+  tensorflow       Install the TensorFlow library for CPUs
+  tensorflow-gpu   Install the TensorFlow library with GPU support
+  onnxruntime      Install the ONNX Runtime library
+
+Other:
+  mariadb-client   Install the MariaDB command-line client
+  davfs            Install the davfs2 WebDAV filesystem driver
+  yt-dlp           Update yt-dlp to the latest release
+  Related: yt-dlp-nightly, yt-dlp-master
+
+Run "make -C /scripts list" to show all targets, including those not listed here.
+endef
+export HELP_TEXT
+
+all: help
+help:
+	@printf '%s\n' "$$HELP_TEXT"
+list:
+	@awk '/^define /{skip=1} /^endef/{skip=0;next} skip{next} /^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
 apt-upgrade: update
 update:
 	apt-get update

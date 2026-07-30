@@ -3,6 +3,7 @@ services:
   photoprism:
     build:
       context: .
+      dockerfile: ${DOCKERFILE:-Dockerfile}
       args:
         WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     image: photoprism/photoprism:develop

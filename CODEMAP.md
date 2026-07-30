@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** May 5, 2026
+**Last Updated:** July 28, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -279,7 +279,7 @@ Downloads (CLI) & yt-dlp helpers
   - Avoid importer dedup: vary file bytes (e.g., `YTDLP_DUMMY_CONTENT`) or dest.
 
 Useful Make Targets (selection)
-- `make help` — list targets
+- `make help` — overview of the most common targets (`make list` shows all)
 - `make dep` — install Go/JS deps in container
 - `make build-go` — build backend
 - `make test-go` — backend tests (SQLite)

@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** May 5, 2026
+**Last Updated:** July 28, 2026
 
 ## Purpose
 
@@ -135,7 +135,7 @@ Use US English spelling in all code comments (`parameterized`, `behavior`, `colo
 
 ## Build, Format & Test
 
-- Run `make help` to see supported targets.
+- Run `make help` for an overview of the most common targets, and `make list` to see all of them.
 - Host mode:
   - `make docker-build`
   - `docker compose up` or `docker compose up -d`
@@ -157,6 +157,7 @@ Use US English spelling in all code comments (`parameterized`, `behavior`, `colo
 
 Formatting and test entry points:
 - Full suite: `make test`, `make lint`
+- After renaming or removing a Makefile target, run `make check-make-help` (also included in `make lint`) so that no `make help` overview keeps advertising it.
 - Go-specific lint, format, and package-test rules live in [`internal/AGENTS.md`](internal/AGENTS.md).
 - Frontend lint, Vitest, acceptance, and Playwright rules live in [`frontend/AGENTS.md`](frontend/AGENTS.md).
 - Go tests live next to their sources; use PascalCase `t.Run(...)` names for related subtests. Keep consecutive subtests inside the same `Test*` function back-to-back without blank lines so the cases read as a compact table; reserve blank lines for separating distinct setup blocks.
@@ -164,6 +165,11 @@ Formatting and test entry points:
 - Prefer focused test runs such as `go test ./path/to/pkg -run Name -count=1` while iterating.
 - Use `mariadb -D photoprism` inside the dev shell when you need to inspect MariaDB state directly.
 - Run `shellcheck <file>` on edited shell scripts, or use the corresponding `make` target.
+
+### Continuous Integration
+
+- **GitHub Actions is not enabled for this repository.** The workflow files under `.github/workflows/` do not execute, so pushes and pull requests produce no check runs. Treat them as dormant configuration: do not diagnose the absence of runs as a broken workflow, do not propose enabling Actions, and do not add workflows or bot configuration that assumes they will run. Ask a maintainer before changing anything under `.github/workflows/`.
+- The `make` targets above are the authoritative build, format, and test gate. Run them locally and report the output rather than relying on a hosted runner.
 
 ### Container Image Builds
 

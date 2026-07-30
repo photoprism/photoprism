@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
-Run `make help` to list all available targets. Key commands:
+Run `make help` for an overview of the most common targets, and `make list` to list all of them. Key commands:
 
 **Backend (Go):**
 - `make build-go` — build the `photoprism` binary (develop mode)
@@ -53,6 +53,14 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 Available targets: `make fmt` (everything), `make fmt-go`, `make fmt-js`, `make fmt-swag` / `make swag` (Swagger), `make lint-go`, `make lint-js`. Detailed conventions live in `.claude/rules/go-code-style.md` and `.claude/rules/frontend-rules.md`.
 
 When creating or editing shell scripts, run `shellcheck <file>` and resolve warnings. When editing Markdown files that contain tables, format them with `npx --yes markdown-table-formatter <filename>`.
+
+The curated `make help` overviews are maintained by hand in a `HELP_TEXT` block per Makefile. After renaming or removing a target, run `make check-make-help` (also part of `make lint`) to confirm that no overview still advertises it.
+
+## Continuous Integration
+
+**GitHub Actions is not enabled for this repository.** The workflow files under `.github/workflows/` do not execute, so pushes and pull requests produce no check runs. Treat them as dormant configuration: do not diagnose the absence of runs as a broken workflow, do not propose enabling Actions, and do not add workflows or bot configuration that assumes they will run. Ask a maintainer before changing anything under `.github/workflows/`.
+
+The `make` targets above are the authoritative build, format, and test gate — run them locally and report the output rather than relying on a hosted runner.
 
 ## Schema Migrations
 
