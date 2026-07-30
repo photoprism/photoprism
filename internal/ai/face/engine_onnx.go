@@ -57,6 +57,7 @@ type onnxEngine struct {
 	featStrides    []int
 	numAnchors     int
 	batched        bool
+	useKps         bool
 	scoreThreshold float32
 	nmsThreshold   float32
 	centerMu       sync.Mutex
@@ -224,7 +225,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		outputNames[i] = out.Name
 	}
 
-	fmc, numAnchors, _, batched, err := deriveONNXLayout(outputInfos)
+	fmc, numAnchors, useKps, batched, err := deriveONNXLayout(outputInfos)
 	if err != nil {
 		return nil, err
 	}
@@ -245,6 +246,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		featStrides:    featStrides,
 		numAnchors:     numAnchors,
 		batched:        batched,
+		useKps:         useKps,
 		scoreThreshold: opts.ScoreThreshold,
 		nmsThreshold:   opts.NMSThreshold,
 		centerCache:    make(map[anchorCacheKey][]float32),
@@ -385,6 +387,10 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 			Area:  NewArea("face", row, col, size),
 		}
 
+		if det.hasKps {
+			f.Eyes, f.Landmarks = LandmarkAreas(det.kps, size)
+		}
+
 		result.Append(f)
 	}
 
@@ -506,6 +512,7 @@ func (o *onnxEngine) parseDetections(values []onnxruntime.Value, detScale float3
 		}
 
 		centers := o.anchorCenters(height, width, stride, anchors)
+		landmarks := o.landmarkData(values, level, fmc, expected)
 
 		for idx, score := range scores {
 			if score < o.scoreThreshold {
@@ -529,17 +536,61 @@ func (o *onnxEngine) parseDetections(values []onnxruntime.Value, detScale float3
 				continue
 			}
 
-			detections = append(detections, onnxDetection{
+			det := onnxDetection{
 				x1:    x1,
 				y1:    y1,
 				x2:    x2,
 				y2:    y2,
 				score: score,
-			})
+			}
+
+			if landmarks != nil {
+				kpsOffset := idx * NumLandmarks * 2
+
+				for p := range NumLandmarks {
+					det.kps[p*2] = clampFloat32((cx+landmarks[kpsOffset+p*2]*float32(stride))/detScale, 0, float32(origWidth))
+					det.kps[p*2+1] = clampFloat32((cy+landmarks[kpsOffset+p*2+1]*float32(stride))/detScale, 0, float32(origHeight))
+				}
+
+				det.hasKps = true
+			}
+
+			detections = append(detections, det)
 		}
 	}
 
 	return detections, nil
+}
+
+// landmarkData returns the raw landmark predictions for a feature map level, or nil
+// when the model has no landmark outputs. An unexpected tensor layout degrades to nil
+// so detection keeps working and embedding falls back to unaligned crops.
+func (o *onnxEngine) landmarkData(values []onnxruntime.Value, level, fmc, expected int) []float32 {
+	if !o.useKps {
+		return nil
+	}
+
+	index := level + fmc*2
+
+	if index >= len(values) {
+		return nil
+	}
+
+	tensor, ok := values[index].(*onnxruntime.Tensor[float32])
+
+	if !ok {
+		log.Debugf("faces: unexpected tensor type for landmarks")
+		return nil
+	}
+
+	data := tensor.GetData()
+
+	if len(data) != expected*NumLandmarks*2 {
+		log.Debugf("faces: unexpected landmark tensor size %d (expected %d)", len(data), expected*NumLandmarks*2)
+		return nil
+	}
+
+	return data
 }
 
 // anchorCenters returns cached anchor centers for the given feature map shape.
@@ -574,11 +625,13 @@ func (o *onnxEngine) anchorCenters(height, width, stride, anchors int) []float32
 
 // onnxDetection stores a single detection candidate in image coordinates.
 type onnxDetection struct {
-	x1    float32
-	y1    float32
-	x2    float32
-	y2    float32
-	score float32
+	x1     float32
+	y1     float32
+	x2     float32
+	y2     float32
+	score  float32
+	kps    [NumLandmarks * 2]float32
+	hasKps bool
 }
 
 // nonMaxSuppression filters overlapping detection boxes using IoU thresholding.

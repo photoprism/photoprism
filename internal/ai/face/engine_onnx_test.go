@@ -80,6 +80,64 @@ func TestONNXEngineBuildBlob(t *testing.T) {
 	require.Equal(t, float32(4), scale)
 }
 
+func TestONNXEngineDetectLandmarks(t *testing.T) {
+	prev := UseEngine(nil)
+	t.Cleanup(func() {
+		if current := UseEngine(prev); current != nil {
+			_ = current.Close()
+		}
+	})
+
+	err := ConfigureEngine(EngineSettings{
+		Name: EngineONNX,
+		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1},
+	})
+	if err != nil {
+		t.Skipf("faces: skipping detector-dependent test: %s", err)
+	}
+
+	fileName := filepath.Join("testdata", "1.jpg")
+	faces, err := Detect(fileName, 20)
+	require.NoError(t, err)
+	require.NotEmpty(t, faces)
+
+	f := &faces[0]
+
+	t.Run("EyesAndLandmarks", func(t *testing.T) {
+		require.Len(t, f.Eyes, 2)
+		require.Len(t, f.Landmarks, NumLandmarks-2)
+		assert.Equal(t, "eye_l", f.Eyes[0].Name)
+		assert.Equal(t, "nose", f.Landmarks[0].Name)
+	})
+	t.Run("WithinImage", func(t *testing.T) {
+		for _, areas := range []Areas{f.Eyes, f.Landmarks} {
+			for _, a := range areas {
+				assert.GreaterOrEqual(t, a.Col, 0)
+				assert.GreaterOrEqual(t, a.Row, 0)
+				assert.Less(t, a.Col, f.Cols)
+				assert.Less(t, a.Row, f.Rows)
+			}
+		}
+	})
+	t.Run("EyesAboveMouth", func(t *testing.T) {
+		// A frontal portrait must place both eyes above both mouth corners.
+		assert.Less(t, f.Eyes[0].Row, f.Landmarks[1].Row)
+		assert.Less(t, f.Eyes[1].Row, f.Landmarks[2].Row)
+	})
+	t.Run("LeftEyeLeftOfRightEye", func(t *testing.T) {
+		assert.Less(t, f.Eyes[0].Col, f.Eyes[1].Col)
+	})
+	t.Run("AlignedCrop", func(t *testing.T) {
+		img, _, imgErr := fs.DecodeImageFile(fileName)
+		require.NoError(t, imgErr)
+
+		out, cropErr := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
+		require.NoError(t, cropErr)
+		assert.Equal(t, ArcFaceTemplateSize, out.Bounds().Dx())
+		assert.Equal(t, ArcFaceTemplateSize, out.Bounds().Dy())
+	})
+}
+
 func TestONNXEngineDetect(t *testing.T) {
 	t.Run("MalformedTiffIfdOffset", func(t *testing.T) {
 		fileName := filepath.Join(t.TempDir(), "evil.tiff")
