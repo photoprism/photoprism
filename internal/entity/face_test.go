@@ -321,3 +321,60 @@ func TestFace_HideAndShow(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestFace_SameEmbeddingModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
+	t.Run("SameModel", func(t *testing.T) {
+		m := &Face{EmbedModel: face.ModelFaceNet}
+		assert.True(t, m.SameEmbeddingModel())
+	})
+	t.Run("NotRecorded", func(t *testing.T) {
+		// Rows created before provenance was tracked stay comparable.
+		m := &Face{EmbedModel: ""}
+		assert.True(t, m.SameEmbeddingModel())
+	})
+	t.Run("OtherModel", func(t *testing.T) {
+		m := &Face{EmbedModel: face.ModelSFace}
+		assert.False(t, m.SameEmbeddingModel())
+	})
+}
+
+func TestFace_MatchOtherModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
+	embeddings := face.Embeddings{face.RandomEmbedding()}
+	m := NewFace("", SrcAuto, embeddings)
+	require.NotNil(t, m)
+
+	t.Run("SameModelMatches", func(t *testing.T) {
+		match, dist := m.Match(embeddings)
+		assert.True(t, match)
+		assert.InDelta(t, 0, dist, 0.0001)
+	})
+	t.Run("OtherModelRefused", func(t *testing.T) {
+		other := *m
+		other.EmbedModel = face.ModelArcFaceR50
+		match, dist := other.Match(embeddings)
+		assert.False(t, match)
+		assert.InDelta(t, -1, dist, 0.0001)
+	})
+}

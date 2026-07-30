@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 func TestFaces_Audit(t *testing.T) {
@@ -142,4 +143,41 @@ func normalizeEmbeddingCopy(src face.Embedding) face.Embedding {
 	}
 
 	return copyEmb
+}
+
+func TestFaces_auditEmbeddingModels(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	w := NewFaces(config.TestConfig())
+
+	t.Run("ConfiguredModel", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+		w.auditEmbeddingModels()
+	})
+	t.Run("StaleClusters", func(t *testing.T) {
+		// A cluster from another model must be reported as stale.
+		m := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.RandomEmbedding()})
+		require.NotNil(t, m)
+		m.EmbedModel = face.ModelArcFaceR50
+		require.NoError(t, entity.Db().Create(m).Error)
+
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		count, err := query.FacesFromOtherModels()
+		require.NoError(t, err)
+		require.Positive(t, count)
+
+		w.auditEmbeddingModels()
+	})
+	t.Run("NoModelConfigured", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		w.auditEmbeddingModels()
+	})
 }

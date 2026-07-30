@@ -343,3 +343,55 @@ func TestRemoveAutoFaceClusters(t *testing.T) {
 
 	assert.LessOrEqual(t, 3, removed)
 }
+
+func TestFaceEmbeddingModels(t *testing.T) {
+	t.Run("Fixtures", func(t *testing.T) {
+		result, err := FaceEmbeddingModels()
+		require.NoError(t, err)
+		require.NotEmpty(t, result)
+
+		total := 0
+
+		for _, c := range result {
+			assert.Positive(t, c.Faces)
+			total += c.Faces
+		}
+
+		assert.Positive(t, total)
+	})
+}
+
+func TestFacesFromOtherModels(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	t.Run("NoModelConfigured", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		count, err := FacesFromOtherModels()
+		require.NoError(t, err)
+		assert.Equal(t, 0, count)
+	})
+	t.Run("CountsOtherModels", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+
+		before, err := FacesFromOtherModels()
+		require.NoError(t, err)
+
+		m := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.RandomEmbedding()})
+		require.NotNil(t, m)
+		m.EmbedModel = face.ModelSFace
+		require.NoError(t, entity.Db().Create(m).Error)
+
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		after, err := FacesFromOtherModels()
+		require.NoError(t, err)
+		assert.Equal(t, before+1, after)
+	})
+}
