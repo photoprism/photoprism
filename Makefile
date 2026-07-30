@@ -477,6 +477,8 @@ dep-tensorflow:
 	scripts/download-nsfw.sh
 dep-onnx:
 	scripts/download-scrfd.sh
+dep-sface:
+	scripts/download-sface.sh
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
