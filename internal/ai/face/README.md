@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** April 1, 2026
+**Last Updated:** July 30, 2026
 
 ### Overview
 
@@ -12,7 +12,7 @@ Key changes:
 - All face embeddings are now L2-normalized at creation, midpoint calculation, and deserialization time to keep cosine and Euclidean comparisons consistent.
 - Benchmarks were added to track the cost of hotspot routines (`Embedding.Dist` and `EmbeddingsMidpoint`).
 
-> **TODO:** Persist detector provenance in `FaceSrc` (for example `entity.SrcONNX`) so ONNX-generated detections remain auditable after future model upgrades.
+Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster count per model.
 
 ### Detection Pipeline
 
@@ -21,6 +21,34 @@ PhotoPrism now uses a single detector:
 - **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to half the available CPUs (minimum 1 thread). Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present and otherwise disables detection rather than picking another engine.
 
 Runtime selection lives in `Config.FaceEngine()`. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` when no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
+
+The detector also returns five facial landmarks, which `engine_onnx.go` decodes into `Face.Eyes` (both eyes) and `Face.Landmarks` (nose and mouth corners).
+
+### Embedding Models
+
+`FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go` with the preprocessing contract they require — input size, channel order, mean, scale, embedding length, alignment mode, and weight license — so the CLI help and config report are generated from one source.
+
+| Model         | Runtime    | Dim | Input   | Alignment | Installed By                  |
+|:--------------|:-----------|----:|:--------|:----------|:------------------------------|
+| `facenet`     | TensorFlow | 512 | 160×160 | box crop  | `make dep-tensorflow`         |
+| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 | `make dep-sface`              |
+| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 | `scripts/download-arcface.sh` |
+| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 | `scripts/download-arcface.sh` |
+
+`auto` resolves to the first installed model in `face.AutoModelPreference`, which starts with `facenet` so existing libraries keep their embedding space. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1`.
+
+Models marked `ArcFace-5` need landmark-aligned input. `align.go` fits a similarity transform from the detected landmarks onto the standard 112×112 template that both OpenCV and InsightFace use, and falls back to an unaligned bounding box crop when a face has no complete landmark set.
+
+The bundled children and background reference samples are FaceNet-space vectors, so `IsChild` and `IsBackground` deactivate (with a warning) for any other model. Length alone cannot detect this, because both ArcFace variants also return 512 values.
+
+**Switching models invalidates existing clusters.** Vectors from two models are not comparable even when their lengths match, so `photoprism faces reset` is required after a change. `entity.Face.Match` refuses cross-model comparisons in the meantime.
+
+To compare installed models on a labeled dataset of identity subdirectories:
+
+```bash
+PHOTOPRISM_TEST_FACE_DATASET=/path/to/dataset \
+  go test ./internal/ai/face -run TestBenchmarkEmbeddingModels -count=1 -v -timeout 120m
+```
 
 #### Quality & Overlap Thresholds
 
@@ -121,6 +149,7 @@ Recovery steps:
 |:----------------------|:-----------------------------|:----------------------------------------------------------------------------------------|
 | `FACE_ENGINE`         | `auto`                       | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
 | `FACE_ENGINE_THREADS` | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads.                                                                 |
+| `FACE_MODEL`          | `auto`                       | Embedding model (`auto`, `none`, `facenet`, `sface`, `arcface_r50`, `arcface_mbf`).     |
 | `FACE_SCORE`          | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                        |
 | `FACE_OVERLAP`        | `42`                         | Maximum allowed IoU when deduplicating markers.                                         |
 
