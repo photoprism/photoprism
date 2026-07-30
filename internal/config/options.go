@@ -260,6 +260,7 @@ type Options struct {
 	XMPFaces                  bool          `yaml:"XMPFaces" json:"XMPFaces" flag:"xmp-faces"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
+	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceScore                 float64       `yaml:"-" json:"-" flag:"face-score"`
 	FaceOverlap               int           `yaml:"-" json:"-" flag:"face-overlap"`
@@ -288,7 +289,7 @@ type Options struct {
 //  2. ApplyCliContext: Which comes after Load and overrides
 //     any previous options giving an option two override file configs through the CLI.
 func NewOptions(ctx *cli.Context) *Options {
-	c := &Options{FaceEngine: face.EngineAuto}
+	c := &Options{FaceEngine: face.EngineAuto, FaceModel: face.ModelAuto}
 
 	// Has context?
 	if ctx == nil {

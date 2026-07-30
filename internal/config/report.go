@@ -340,6 +340,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"face-engine", faceEngine},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
+		{"face-model", c.FaceModel()},
+		{"face-model-path", c.FaceModelPath()},
 	}...)
 
 	rows = append(rows, [][]string{
@@ -390,6 +392,8 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 		{"face-engine", c.FaceEngine()},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"face-model", c.FaceModel()},
+		{"face-model-path", c.FaceModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
 		{"face-score", fmt.Sprintf("%f", c.FaceScore())},

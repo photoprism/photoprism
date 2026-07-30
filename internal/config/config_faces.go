@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // FaceEngine returns the configured face detection engine. When the config is
@@ -142,6 +143,63 @@ func (c *Config) FaceEngineModelPath() string {
 	}
 
 	return primary
+}
+
+// FaceModel returns the name of the configured face embedding model. Unsupported
+// values are reported and treated as `face.ModelAuto`, which resolves to the first
+// installed model in `face.AutoModelPreference`.
+func (c *Config) FaceModel() string {
+	if c == nil {
+		return face.ModelNone
+	}
+
+	if c.options.FaceModel == "" {
+		c.options.FaceModel = face.ModelAuto
+	} else if !face.KnownModelName(c.options.FaceModel) {
+		log.Warnf("config: unsupported face model %s, expected %s", clean.Log(c.options.FaceModel), face.ModelUsageString())
+		c.options.FaceModel = face.ModelAuto
+	}
+
+	if name := face.ParseModelName(c.options.FaceModel); name != face.ModelAuto {
+		return name
+	}
+
+	// Cache the resolved name so the lookup and any warning only happen once.
+	c.options.FaceModel = face.ModelNone
+	modelsPath := c.ModelsPath()
+
+	for _, candidate := range face.AutoModelPreference {
+		if face.FindEmbeddingModel(candidate).Installed(modelsPath) {
+			c.options.FaceModel = candidate
+			break
+		}
+	}
+
+	return c.options.FaceModel
+}
+
+// FaceEmbeddingModel returns the resolved face embedding model, or nil when
+// embeddings are disabled or no model is installed.
+func (c *Config) FaceEmbeddingModel() *face.EmbeddingModel {
+	return face.FindEmbeddingModel(c.FaceModel())
+}
+
+// FaceModelPath returns the absolute path of the configured face embedding model.
+func (c *Config) FaceModelPath() string {
+	if c == nil {
+		return ""
+	}
+
+	return c.FaceEmbeddingModel().FilePath(c.ModelsPath())
+}
+
+// FaceModelDims returns the embedding length of the configured face model, or 0 when none is configured.
+func (c *Config) FaceModelDims() int {
+	if m := c.FaceEmbeddingModel(); m != nil {
+		return m.Dims
+	}
+
+	return 0
 }
 
 // FaceSize returns the face size threshold in pixels.

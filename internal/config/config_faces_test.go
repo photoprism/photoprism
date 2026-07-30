@@ -186,6 +186,112 @@ func TestConfig_FaceEngineModelPath(t *testing.T) {
 	})
 }
 
+func TestConfig_FaceModel(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
+	})
+	t.Run("Explicit", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = "ArcFace-R50"
+		assert.Equal(t, face.ModelArcFaceR50, c.FaceModel())
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+		assert.Equal(t, face.ModelNone, c.FaceModel())
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = "dlib"
+		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
+	})
+	t.Run("AutoWithoutModels", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.FaceModel = face.ModelAuto
+		assert.Equal(t, face.ModelNone, c.FaceModel())
+	})
+	t.Run("AutoPrefersSFaceWhenFaceNetMissing", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		modelsPath := t.TempDir()
+		c.options.ModelsPath = modelsPath
+		c.options.FaceModel = face.ModelAuto
+
+		m := face.FindEmbeddingModel(face.ModelSFace)
+		require.NoError(t, os.MkdirAll(filepath.Join(modelsPath, m.Dir), 0o750))
+		require.NoError(t, os.WriteFile(m.FilePath(modelsPath), []byte("onnx"), 0o600))
+
+		assert.Equal(t, face.ModelSFace, c.FaceModel())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, (*Config)(nil).FaceModel())
+	})
+}
+
+func TestConfig_FaceEmbeddingModel(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		m := c.FaceEmbeddingModel()
+		require.NotNil(t, m)
+		assert.Equal(t, face.ModelFaceNet, m.Name)
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+		assert.Nil(t, c.FaceEmbeddingModel())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Nil(t, (*Config)(nil).FaceEmbeddingModel())
+	})
+}
+
+func TestConfig_FaceModelPath(t *testing.T) {
+	t.Run("SavedModelDir", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		tempModels := t.TempDir()
+		c.options.ModelsPath = tempModels
+		c.options.FaceModel = face.ModelFaceNet
+		assert.Equal(t, filepath.Join(tempModels, "facenet"), c.FaceModelPath())
+	})
+	t.Run("ONNXFile", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		tempModels := t.TempDir()
+		c.options.ModelsPath = tempModels
+		c.options.FaceModel = face.ModelSFace
+		assert.Equal(t, filepath.Join(tempModels, "sface", "face_recognition_sface_2021dec.onnx"), c.FaceModelPath())
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+		assert.Equal(t, "", c.FaceModelPath())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, "", (*Config)(nil).FaceModelPath())
+	})
+}
+
+func TestConfig_FaceModelDims(t *testing.T) {
+	t.Run("FaceNet", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelFaceNet
+		assert.Equal(t, 512, c.FaceModelDims())
+	})
+	t.Run("SFace", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelSFace
+		assert.Equal(t, 128, c.FaceModelDims())
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+		assert.Equal(t, 0, c.FaceModelDims())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, 0, (*Config)(nil).FaceModelDims())
+	})
+}
+
 func TestConfig_FaceSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, face.SizeThreshold, c.FaceSize())

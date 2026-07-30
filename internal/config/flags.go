@@ -1332,6 +1332,12 @@ var Flags = CliFlags{
 			Usage:   "face detection thread `COUNT` (0 uses half the available CPU cores)",
 			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-model",
+			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "); changing it invalidates existing clusters and requires photoprism faces reset",
+			Value:   face.ModelAuto,
+			EnvVars: EnvVars("FACE_MODEL"),
+		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
 			Usage:   "minimum size of faces in `PIXELS` (20-10000)",
