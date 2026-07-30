@@ -415,3 +415,21 @@ func TestSortedModelNames(t *testing.T) {
 		assert.Empty(t, sortedModelNames(nil))
 	})
 }
+
+func TestAlignedSubsets(t *testing.T) {
+	t.Run("List", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_TEST_FACE_ALIGNED_SUBSETS", "asian, children ")
+		s := alignedSubsets()
+		assert.True(t, s["asian"])
+		assert.True(t, s["children"])
+		assert.False(t, s["general"])
+	})
+	t.Run("Unset", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_TEST_FACE_ALIGNED_SUBSETS", "")
+		assert.Empty(t, alignedSubsets())
+	})
+	t.Run("EmptyEntries", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_TEST_FACE_ALIGNED_SUBSETS", ",,")
+		assert.Empty(t, alignedSubsets())
+	})
+}

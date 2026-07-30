@@ -30,6 +30,10 @@ const (
 	FaceMaxNegativesEnv = "PHOTOPRISM_TEST_FACE_MAX_NEGATIVES"
 	// FaceThreadsEnv sets the inference thread count.
 	FaceThreadsEnv = "PHOTOPRISM_TEST_FACE_THREADS"
+	// FaceAlignedSubsetsEnv lists subsets that already contain aligned face crops,
+	// which is how public recognition benchmarks are usually distributed. Detection
+	// is skipped for them and the image is fed to the models unchanged.
+	FaceAlignedSubsetsEnv = "PHOTOPRISM_TEST_FACE_ALIGNED_SUBSETS"
 )
 
 // benchmarkSubject holds the embeddings computed for one identity, one entry per image.
@@ -69,6 +73,19 @@ func envInt(name string, fallback int) int {
 	}
 
 	return fallback
+}
+
+// alignedSubsets returns the subsets whose images are already aligned face crops.
+func alignedSubsets() map[string]bool {
+	result := make(map[string]bool)
+
+	for _, name := range strings.Split(os.Getenv(FaceAlignedSubsetsEnv), ",") {
+		if name = strings.TrimSpace(name); name != "" {
+			result[name] = true
+		}
+	}
+
+	return result
 }
 
 // benchmarkModelNames returns the models to benchmark, honoring FaceModelsEnv and
@@ -337,6 +354,8 @@ func TestBenchmarkEmbeddingModels(t *testing.T) {
 	elapsed := make(map[ModelName]time.Duration, len(embedders))
 	detectFailed := 0
 
+	aligned := alignedSubsets()
+
 	for _, item := range images {
 		img, _, decodeErr := fs.DecodeImageFile(item.file)
 
@@ -346,26 +365,38 @@ func TestBenchmarkEmbeddingModels(t *testing.T) {
 			continue
 		}
 
-		faces, detectErr := Detect(item.file, SizeThreshold)
+		var f *Face
 
-		if detectErr != nil || len(faces) == 0 {
-			detectFailed++
-			continue
-		}
+		if !aligned[item.subset] {
+			faces, detectErr := Detect(item.file, SizeThreshold)
 
-		// Use the largest detection, which is the subject of a portrait.
-		best := 0
-
-		for i := range faces {
-			if faces[i].Area.Scale > faces[best].Area.Scale {
-				best = i
+			if detectErr != nil || len(faces) == 0 {
+				detectFailed++
+				continue
 			}
-		}
 
-		f := &faces[best]
+			// Use the largest detection, which is the subject of a portrait.
+			best := 0
+
+			for i := range faces {
+				if faces[i].Area.Scale > faces[best].Area.Scale {
+					best = i
+				}
+			}
+
+			f = &faces[best]
+		}
 
 		for name, embedder := range embedders {
-			crop, cropErr := benchmarkCrop(embedder, img, f)
+			var crop image.Image
+			var cropErr error
+
+			if f == nil {
+				// The image is the aligned crop, so every model resamples it as is.
+				crop = img
+			} else {
+				crop, cropErr = benchmarkCrop(embedder, img, f)
+			}
 
 			if cropErr != nil {
 				stats[name].failed++
@@ -436,7 +467,7 @@ func TestBenchmarkEmbeddingModels(t *testing.T) {
 		}
 	}
 
-	reportBenchmark(t, datasetPath, len(images), detectFailed, threads, legacyDist, sortedModelNames(embedders), stats)
+	reportBenchmark(t, datasetPath, len(images), detectFailed, threads, legacyDist, aligned, sortedModelNames(embedders), stats)
 }
 
 // modelSizeBytes returns the total size of a model file or SavedModel directory.
@@ -476,7 +507,7 @@ func sortedModelNames(embedders map[ModelName]Embedder) []ModelName {
 }
 
 // reportBenchmark prints the comparison as Markdown tables that can be pasted into docs.
-func reportBenchmark(t *testing.T, datasetPath string, images, detectFailed, threads int, legacyDist float64, names []ModelName, stats map[ModelName]*benchmarkStats) {
+func reportBenchmark(t *testing.T, datasetPath string, images, detectFailed, threads int, legacyDist float64, aligned map[string]bool, names []ModelName, stats map[ModelName]*benchmarkStats) {
 	t.Helper()
 
 	var b strings.Builder
@@ -485,7 +516,20 @@ func reportBenchmark(t *testing.T, datasetPath string, images, detectFailed, thr
 	fmt.Fprintf(&b, "- Dataset: `%s`\n", datasetPath)
 	fmt.Fprintf(&b, "- Images: %d (%d without a usable detection)\n", images, detectFailed)
 	fmt.Fprintf(&b, "- Inference threads: %d\n", threads)
-	fmt.Fprintf(&b, "- Legacy accept distance (ClusterRadius + MatchDist): %.2f\n\n", legacyDist)
+	fmt.Fprintf(&b, "- Legacy accept distance (ClusterRadius + MatchDist): %.2f\n", legacyDist)
+
+	if len(aligned) > 0 {
+		keys := make([]string, 0, len(aligned))
+
+		for key := range aligned {
+			keys = append(keys, key)
+		}
+
+		sort.Strings(keys)
+		fmt.Fprintf(&b, "- Pre-aligned subsets (detection skipped): %s\n", strings.Join(keys, ", "))
+	}
+
+	b.WriteString("\n")
 
 	b.WriteString("| Model | Dim | Model Size | ms/Face | Embedded | Failed |\n")
 	b.WriteString("|:------|----:|-----------:|--------:|---------:|-------:|\n")
