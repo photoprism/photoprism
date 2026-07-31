@@ -147,12 +147,13 @@ test.meta("testID", "folders-004").meta({ mode: "public" })(
     await album.openAlbumWithUid(HolidayAlbumUid);
     const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
     await menu.openPage("folders");
-    const ThirdFolderUid = await album.getNthAlbumUid("all", 2);
-    await album.openAlbumWithUid(ThirdFolderUid);
+    await toolbar.search("Kanada");
+    const KanadaFolderUid = await album.getAlbumUidByTitle("Kanada");
+    await album.openAlbumWithUid(KanadaFolderUid);
     const PhotoCountInFolder = await photo.getPhotoCount("all");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     await menu.openPage("folders");
-    await album.selectAlbumFromUID(ThirdFolderUid);
+    await album.selectAlbumFromUID(KanadaFolderUid);
     await contextmenu.triggerContextMenuAction("clone", ["Holiday", "NotYetExistingAlbumForFolder"]);
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
@@ -182,7 +183,7 @@ test.meta("testID", "folders-004").meta({ mode: "public" })(
     await t.expect(PhotoCountHolidayAfterDelete).eql(InitialPhotoCountHoliday);
 
     await menu.openPage("folders");
-    await album.openAlbumWithUid(ThirdFolderUid);
+    await album.openAlbumWithUid(KanadaFolderUid);
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
   }
 );

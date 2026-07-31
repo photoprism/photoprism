@@ -138,8 +138,7 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
     const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
     await menu.openPage("moments");
     await toolbar.search("Greece 2019");
-    const GreeceMomentUid = await album.getNthAlbumUid("all", 0);
-    await menu.openPage("moments");
+    const GreeceMomentUid = await album.getAlbumUidByTitle("Greece 2019");
     await album.openAlbumWithUid(GreeceMomentUid);
     const PhotoCountInMoment = await photo.getPhotoCount("all");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
