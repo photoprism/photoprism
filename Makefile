@@ -77,6 +77,10 @@ ifdef TC_USE_VIDEO
 	TCVIDEO=--video tests/acceptance/videos/ --video-options singleFile=false,failedOnly=true
 endif
 
+# Define the acceptance DSN's for later use
+MARIADB_ACPT_DSN=$(subst /mysql,/acceptance,$(subst root:photoprism,acceptance:acceptance,$(PHOTOPRISM_TEST_DSN_MARIADB)))
+POSTGRES_ACPT_DSN=$(subst /postgres,/acceptance,$(subst photoprism:photoprism,acceptance:acceptance,$(PHOTOPRISM_TEST_DSN_POSTGRES)))
+
 # Overview of the most commonly used targets, shown by "make help".
 # Keep this in sync when renaming or adding an important target; "make list" shows all of them.
 define HELP_TEXT
@@ -355,15 +359,15 @@ acceptance-database-reset-%: acceptance-stop-%
 	@if [ -f storage/acceptance/config-active/dbms.mariadb ]; then \
 		echo "resetting mariadb"; \
 		cp -f storage/acceptance/backup.db storage/acceptance/index.db; \
-		mysql < scripts/sql/mariadb/reset-acceptance.sql; \
-		./photoprism --database-driver sqlite --database-dsn "storage/acceptance/index.db?_busy_timeout=5000&_foreign_keys=on" --transfer-driver mysql --transfer-dsn "$(subst testdb,acceptance,$(PHOTOPRISM_TEST_DSN_MARIADB))" migrations transfer -force; \
+		$(MARIADB) < scripts/sql/mariadb/reset-acceptance.sql; \
+		./photoprism --database-driver sqlite --database-dsn "storage/acceptance/index.db?_busy_timeout=5000&_foreign_keys=on" --transfer-driver mysql --transfer-dsn "$(MARIADB_ACPT_DSN)" migrations transfer -force; \
 		cp -f storage/acceptance/config-active/settingsBackup.yml storage/acceptance/config-active/settings.yml; \
 	fi
 	@if [ -f storage/acceptance/config-active/dbms.postgresql ]; then \
 		echo "resetting postgresql"; \
 		cp -f storage/acceptance/backup.db storage/acceptance/index.db; \
 		psql postgresql://photoprism:photoprism@postgres:$(PGPORT)/postgres  -f scripts/sql/postgresql/reset-acceptance.sql; \
-		./photoprism --database-driver sqlite --database-dsn "storage/acceptance/index.db?_busy_timeout=5000&_foreign_keys=on" --transfer-driver postgres --transfer-dsn "$(subst testdb,acceptance,$(PHOTOPRISM_TEST_DSN_POSTGRES))" migrations transfer -force; \
+		./photoprism --database-driver sqlite --database-dsn "storage/acceptance/index.db?_busy_timeout=5000&_foreign_keys=on" --transfer-driver postgres --transfer-dsn "$(POSTGRES_ACPT_DSN)" migrations transfer -force; \
 		cp -f storage/acceptance/config-active/settingsBackup.yml storage/acceptance/config-active/settings.yml; \
 	fi
 acceptance-public-start%:
@@ -553,12 +557,12 @@ storage/sqlite:
 storage/mariadb:
 	rm -rf storage/acceptance/config-active
 	cp storage/acceptance/config-sqlite/ storage/acceptance/config-active -r
-	sed "s/DatabaseDriver: sqlite/DatabaseDriver: mysql/;s/DatabaseD[sS][nN][: a-z./]\+/DatabaseDSN: $(subst &,\&,$(subst /,\/,$(PHOTOPRISM_TEST_DSN_MARIADB)))/" storage/acceptance/config-sqlite/options.yml | sed "s/testdb/acceptance/g" > storage/acceptance/config-active/options.yml
+	sed "s/DatabaseDriver.*/DatabaseDriver: mysql/;s/DatabaseD[sS][nN].*/DatabaseDSN: $(subst &,\&,$(subst /,\/,$(MARIADB_ACPT_DSN)))/" storage/acceptance/config-sqlite/options.yml > storage/acceptance/config-active/options.yml
 	echo mariadb > storage/acceptance/config-active/dbms.mariadb
 storage/postgres:
 	rm -rf storage/acceptance/config-active
 	cp storage/acceptance/config-sqlite/ storage/acceptance/config-active -r
-	sed "s/DatabaseDriver: sqlite/DatabaseDriver: postgres/;s/DatabaseD[sS][nN][: a-z./]\+/DatabaseDSN: $(subst &,\&,$(subst /,\/,$(PHOTOPRISM_TEST_DSN_POSTGRES)))/" storage/acceptance/config-sqlite/options.yml | sed "s/testdb/acceptance/g" > storage/acceptance/config-active/options.yml
+	sed "s/DatabaseDriver.*/DatabaseDriver: postgres/;s/DatabaseD[sS][nN].*/DatabaseDSN: $(subst &,\&,$(subst /,\/,$(POSTGRES_ACPT_DSN)))/" storage/acceptance/config-sqlite/options.yml > storage/acceptance/config-active/options.yml
 	echo postgresql > storage/acceptance/config-active/dbms.postgresql
 zip-facenet:
 	(cd assets && zip -r facenet.zip facenet -x "*/.*" -x "*/version.txt")
@@ -686,7 +690,7 @@ reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb
 reset-acceptance: reset-mariadb-acceptance reset-postgres-acceptance
 reset-mariadb-%:
 	$(info Resetting $* database...)
-	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE IF EXISTS ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE '$*\_%'" | mysql
+	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE IF EXISTS ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE '$*\_%'" | $(MARIADB)
 	$(MARIADB) < scripts/sql/mariadb/reset-$*.sql
 reset-sqlite-unit:
 	$(info Resetting SQLite unit database...)
