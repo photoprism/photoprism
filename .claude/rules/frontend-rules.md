@@ -30,12 +30,14 @@
 - One-off TestCafe (single case by `testID`):
   ```bash
   make storage/acceptance
-  make acceptance-sqlite-restart
-  make wait-2
-  (cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --config-file ./testcaferc.json --test-meta mode=public,type=short,testID=components-001 "tests/acceptance")
-  make acceptance-sqlite-stop
+  make acceptance-sqlite-restart-1
+  make wait-1
+  (cd frontend && npm run testcafe -- "chrome --headless=new --use-gl=angle --use-angle=swiftshader --disable-features=LocalNetworkAccessChecks" --config-file ./.testcaferc.cjs --test-meta mode=public,type=short,testID=components-001 "tests/acceptance")
+  make acceptance-sqlite-stop-1
   ```
-  Always return to repo root before `make acceptance-sqlite-stop`.
+  Always return to repo root before `make acceptance-sqlite-stop-1`.
+  `acceptance-sqlite-restart-%`, `wait-%`, and `acceptance-sqlite-stop-%` are pattern rules, so the numeric suffix is required — a suffix-less `make acceptance-sqlite-restart` fails with "No rule to make target". The runner config is `frontend/.testcaferc.cjs`; there is no `testcaferc.json` in this repo (that file belongs to the separate `photoprism-tests` suite).
+  `--test-meta` keys are ANDed and must all be present on the test, so copying `type=short` selects nothing when the target case only declares `mode: "public"` (e.g. `moments-003`). Check the `test.meta(...)` call before filtering.
 
 ## Frontend Test Gotchas
 
