@@ -21,15 +21,18 @@ func TestGetFoldersOriginals(t *testing.T) {
 		_ = conf.CreateDirectories()
 		expected, err := fs.Dirs(conf.OriginalsPath(), false, true)
 
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		if len(expected) == 0 {
 			// create something so that the test does some work.
 			newpath := filepath.Join(conf.OriginalsPath(), "2025/01")
-			os.MkdirAll(newpath, os.ModePerm)
+			assert.NoError(t, os.MkdirAll(newpath, os.ModeDir))
 			expected, err = fs.Dirs(conf.OriginalsPath(), false, true)
-		}
-
-		if err != nil {
-			t.Fatal(err)
+			if err != nil {
+				t.Fatal(err)
+			}
 		}
 
 		SearchFoldersOriginals(router)

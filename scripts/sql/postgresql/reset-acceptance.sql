@@ -1,3 +1,2 @@
 DROP DATABASE IF EXISTS acceptance WITH (FORCE);
 CREATE DATABASE acceptance OWNER acceptance;
-ALTER USER acceptance CREATEDB;
