@@ -137,8 +137,10 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
     await album.openAlbumWithUid(HolidayAlbumUid);
     const InitialPhotoCountHoliday = await photo.getPhotoCount("all");
     await menu.openPage("moments");
-    const SecondMomentUid = await album.getNthAlbumUid("all", 1);
-    await album.openAlbumWithUid(SecondMomentUid);
+    await toolbar.search("Greece 2019");
+    const GreeceMomentUid = await album.getNthAlbumUid("all", 0);
+    await menu.openPage("moments");
+    await album.openAlbumWithUid(GreeceMomentUid);
     const PhotoCountInMoment = await photo.getPhotoCount("all");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
@@ -148,7 +150,7 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
     const SixthPhotoUid = await photo.getNthPhotoUid("image", 5);
     const SeventhPhotoUid = await photo.getNthPhotoUid("image", 6);
     await menu.openPage("moments");
-    await album.selectAlbumFromUID(SecondMomentUid);
+    await album.selectAlbumFromUID(GreeceMomentUid);
     await contextmenu.triggerContextMenuAction("clone", ["Holiday", "NotYetExistingAlbumForMoment"]); // NotYetExistingAlbumForMoment happens to be long enough to be the middle of the text box (which causes it to be removed when Holiday is added), so put it second.
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
@@ -186,7 +188,7 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
 
     await menu.openPage("moments");
-    await album.openAlbumWithUid(SecondMomentUid);
+    await album.openAlbumWithUid(GreeceMomentUid);
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
     await photo.checkPhotoVisibility(SecondPhotoUid, true);
   }
