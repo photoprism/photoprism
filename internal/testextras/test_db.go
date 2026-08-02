@@ -267,5 +267,5 @@ func TestDbCleanup(code int) int {
 			return 1
 		}
 	}
-	return 0
+	return code
 }
