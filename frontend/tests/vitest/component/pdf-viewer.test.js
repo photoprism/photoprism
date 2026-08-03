@@ -29,6 +29,17 @@ function pageEntry(n, ratio) {
   return { target: { dataset: { page: String(n) } }, isIntersecting: ratio > 0, intersectionRatio: ratio };
 }
 
+function thumbEntry(n, visible) {
+  return { target: { dataset: { page: String(n) } }, isIntersecting: visible };
+}
+
+function twoTouches(x1, x2) {
+  return [
+    { clientX: x1, clientY: 0 },
+    { clientX: x2, clientY: 0 },
+  ];
+}
+
 async function mountViewer(props = {}) {
   const wrapper = mount(PPdfViewer, {
     props: { src: "/api/v1/files/abc/file.pdf", pages: 3, ...props },
@@ -80,6 +91,44 @@ describe("component/pdf-viewer", () => {
     expect(wrapper.vm.currentPage).toBe(3);
     wrapper.vm.goToPage(0);
     expect(wrapper.vm.currentPage).toBe(1);
+  });
+  it("jumps to the page typed into the page-number field", async () => {
+    const wrapper = await mountViewer();
+    const input = wrapper.find(".p-pdf-viewer__pageinput");
+    await input.setValue("3");
+    await input.trigger("keyup.enter");
+    expect(wrapper.vm.currentPage).toBe(3);
+    expect(wrapper.emitted("page-changed").at(-1)).toEqual([3]);
+    // Enter also blurs the field, so the blur handler must not jump a second time.
+    const goToPage = vi.spyOn(wrapper.vm, "goToPage");
+    await input.trigger("blur");
+    expect(goToPage).not.toHaveBeenCalled();
+    goToPage.mockRestore();
+    // Leaving the field submits it without Enter.
+    await input.setValue("1");
+    await input.trigger("blur");
+    expect(wrapper.vm.currentPage).toBe(1);
+    // Entries beyond the document are clamped to the last page.
+    await input.setValue("99");
+    await input.trigger("keyup.enter");
+    expect(wrapper.vm.currentPage).toBe(3);
+  });
+  it("restores the current page when the page-number field holds no valid number", async () => {
+    const wrapper = await mountViewer();
+    wrapper.vm.goToPage(2);
+    const input = wrapper.find(".p-pdf-viewer__pageinput");
+    const goToPage = vi.spyOn(wrapper.vm, "goToPage");
+    await input.setValue("abc");
+    await input.trigger("keyup.enter");
+    expect(goToPage).not.toHaveBeenCalled();
+    expect(wrapper.vm.currentPage).toBe(2);
+    expect(input.element.value).toBe("2");
+    await input.setValue("");
+    await input.trigger("blur");
+    expect(goToPage).not.toHaveBeenCalled();
+    expect(wrapper.vm.currentPage).toBe(2);
+    expect(input.element.value).toBe("2");
+    goToPage.mockRestore();
   });
   it("re-aligns to the exact target on a large jump despite lazy-render layout shift", async () => {
     h.loadPdfDocument.mockResolvedValue({ pdf: h.pdf, pageCount: 50 });
@@ -179,6 +228,42 @@ describe("component/pdf-viewer", () => {
     expect(wrapper.vm.pinchZoomFor(2, 100, 400)).toBe(wrapper.vm.maxZoom);
     expect(wrapper.vm.pinchZoomFor(1, 0, 200)).toBe(1);
   });
+  it("previews a two-finger pinch with a CSS transform and commits the zoom on release", async () => {
+    const wrapper = await mountViewer();
+    const pages = wrapper.find(".p-pdf-viewer__pages");
+    const el = wrapper.vm.$refs.scroll;
+    await pages.trigger("touchstart", { touches: twoTouches(100, 200) });
+    expect(wrapper.vm.pinching).toBe(true);
+    // Spreading the fingers to twice the start distance previews 2x; the committed
+    // zoom stays put so the pages are not re-rendered on every gesture frame.
+    await pages.trigger("touchmove", { touches: twoTouches(50, 250) });
+    expect(el.classList.contains("is-pinching")).toBe(true);
+    expect(el.style.getPropertyValue("--pdf-pinch")).toBe("2");
+    expect(wrapper.vm.zoom).toBe(1);
+    expect(h.renderPdfPage).not.toHaveBeenCalled();
+    await pages.trigger("touchend", { touches: [] });
+    expect(wrapper.vm.pinching).toBe(false);
+    expect(el.classList.contains("is-pinching")).toBe(false);
+    expect(el.style.getPropertyValue("--pdf-pinch")).toBe("");
+    expect(wrapper.vm.zoom).toBe(2);
+  });
+  it("leaves the zoom untouched when a pinch ends where it started", async () => {
+    window.innerWidth = 400;
+    const wrapper = await mountViewer({ hasPrev: true, hasNext: true });
+    const pages = wrapper.find(".p-pdf-viewer__pages");
+    // A second finger takes over an edge-swipe armed by the first one, so the
+    // release commits the pinch instead of switching documents.
+    await pages.trigger("touchstart", { touches: [{ clientX: 8, clientY: 200 }] });
+    expect(wrapper.vm.edgeSwipe).toBeTruthy();
+    await pages.trigger("touchstart", { touches: twoTouches(100, 200) });
+    expect(wrapper.vm.edgeSwipe).toBeNull();
+    await pages.trigger("touchmove", { touches: twoTouches(100, 200) });
+    await pages.trigger("touchend", { touches: [], changedTouches: [{ clientX: 300, clientY: 200 }] });
+    expect(wrapper.vm.zoom).toBe(1);
+    expect(wrapper.vm.$refs.scroll.classList.contains("is-pinching")).toBe(false);
+    expect(wrapper.emitted("media-prev")).toBeFalsy();
+    expect(wrapper.emitted("media-next")).toBeFalsy();
+  });
   it("pans the page column with a mouse drag when it overflows", async () => {
     const wrapper = await mountViewer();
     const el = wrapper.vm.$refs.scroll;
@@ -219,6 +304,54 @@ describe("component/pdf-viewer", () => {
     expect(wrapper.vm.currentPage).toBe(3);
     expect(wrapper.findAll(".p-pdf-viewer__thumb")[2].classes()).toContain("is-active");
   });
+  it("renders thumbnails lazily as they scroll into the strip", async () => {
+    const wrapper = await mountViewer();
+    const before = h.renderPdfPage.mock.calls.length;
+    ioInstances[1].cb([thumbEntry(2, true), thumbEntry(3, false)]);
+    await flushPromises();
+    expect(h.renderPdfPage.mock.calls).toHaveLength(before + 1);
+    // Thumbnails render at the fixed strip scale onto their own canvas, without
+    // the device-pixel multiplier the full-size pages are rendered with.
+    const [pdf, page, canvas, scale, dpr] = h.renderPdfPage.mock.calls.at(-1);
+    expect(pdf).toBe(h.pdf);
+    expect(page).toBe(2);
+    expect(canvas).toBe(wrapper.vm.$refs.thumb[1]);
+    expect(scale).toBe(0.2);
+    expect(dpr).toBeUndefined();
+    expect(wrapper.vm.renderedThumbs[2]).toBe(true);
+    // Scrolling the same thumbnail back into view does not render it twice.
+    ioInstances[1].cb([thumbEntry(2, true)]);
+    await flushPromises();
+    expect(h.renderPdfPage.mock.calls).toHaveLength(before + 1);
+  });
+  it("logs a failed thumbnail render without marking it rendered", async () => {
+    const wrapper = await mountViewer();
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    h.renderPdfPage.mockImplementationOnce(() => ({ promise: Promise.reject(new Error("boom")), cancel: vi.fn() }));
+    ioInstances[1].cb([thumbEntry(1, true)]);
+    await flushPromises();
+    expect(consoleError).toHaveBeenCalled();
+    expect(wrapper.vm.renderedThumbs[1]).toBeUndefined();
+    expect(wrapper.vm.thumbTasks[1]).toBeUndefined();
+    consoleError.mockRestore();
+  });
+  it("toggles the thumbnail strip and re-fits the pages to the freed width", async () => {
+    const wrapper = await mountViewer();
+    ioInstances[0].cb([pageEntry(1, 1)]);
+    await flushPromises();
+    expect(wrapper.vm.thumbsVisible).toBe(true);
+    expect(wrapper.classes()).not.toContain("is-thumbs-hidden");
+    const before = h.renderPdfPage.mock.calls.length;
+    await wrapper.find('button[aria-label="Toggle Thumbnails"]').trigger("click");
+    await flushPromises();
+    expect(wrapper.vm.thumbsVisible).toBe(false);
+    expect(wrapper.classes()).toContain("is-thumbs-hidden");
+    expect(h.renderPdfPage.mock.calls.length).toBeGreaterThan(before);
+    wrapper.vm.toggleThumbs();
+    await flushPromises();
+    expect(wrapper.vm.thumbsVisible).toBe(true);
+    expect(wrapper.classes()).not.toContain("is-thumbs-hidden");
+  });
   it("tracks the page in view on scroll and syncs the indicator and thumbnail highlight", async () => {
     const wrapper = await mountViewer();
     // Stub geometry: viewport 0..840; page 3 fills it, pages 1-2 are above.
@@ -238,6 +371,53 @@ describe("component/pdf-viewer", () => {
     expect(wrapper.vm.currentPage).toBe(3);
     expect(wrapper.find(".p-pdf-viewer__pageinput").element.value).toBe("3");
     expect(wrapper.findAll(".p-pdf-viewer__thumb")[2].classes()).toContain("is-active");
+  });
+  it("coalesces a burst of scroll events into one page-tracking pass", async () => {
+    const wrapper = await mountViewer();
+    const frames = [];
+    vi.stubGlobal("requestAnimationFrame", (cb) => frames.push(cb));
+    wrapper.vm.$refs.scroll.getBoundingClientRect = () => ({ top: 0, bottom: 840 });
+    const rects = [
+      { top: -1700, bottom: -860 },
+      { top: -850, bottom: -10 },
+      { top: 0, bottom: 840 },
+    ];
+    wrapper.vm.$refs.page.forEach((el, i) => {
+      el.getBoundingClientRect = () => rects[i];
+    });
+    wrapper.vm.intersecting = { 1: true, 2: true, 3: true };
+    wrapper.vm.onScroll();
+    wrapper.vm.onScroll();
+    expect(frames).toHaveLength(1);
+    expect(wrapper.vm.currentPage).toBe(1);
+    frames.pop()();
+    expect(wrapper.vm.currentPage).toBe(3);
+    // The next scroll schedules again, so the throttle does not latch.
+    wrapper.vm.onScroll();
+    expect(frames).toHaveLength(1);
+    vi.unstubAllGlobals();
+  });
+  it("re-fits the pages once per resize frame and stays out of the way mid-pinch", async () => {
+    const wrapper = await mountViewer();
+    const frames = [];
+    vi.stubGlobal("requestAnimationFrame", (cb) => frames.push(cb));
+    wrapper.vm.intersecting = { 1: true };
+    const before = h.renderPdfPage.mock.calls.length;
+    wrapper.vm.onResize();
+    wrapper.vm.onResize();
+    expect(frames).toHaveLength(1);
+    frames.pop()();
+    await flushPromises();
+    expect(h.renderPdfPage.mock.calls.length).toBeGreaterThan(before);
+    // A pinch previews via CSS, so re-fitting mid-gesture would fight the preview.
+    wrapper.vm.pinching = true;
+    const during = h.renderPdfPage.mock.calls.length;
+    wrapper.vm.onResize();
+    frames.pop()();
+    await flushPromises();
+    expect(h.renderPdfPage.mock.calls).toHaveLength(during);
+    wrapper.vm.pinching = false;
+    vi.unstubAllGlobals();
   });
   it("releases resources when unmounted", async () => {
     const wrapper = await mountViewer();
