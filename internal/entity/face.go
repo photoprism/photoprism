@@ -94,7 +94,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	// so the message has to name the way out.
 	if dims := face.ExpectedDims(); len(m.embedding) != dims {
 		if current := face.EmbeddingModelName(); current != "" {
-			return fmt.Errorf("embedding has %d values, expected %d for model %s, run faces reset to regenerate", len(m.embedding), dims, clean.Log(current))
+			return fmt.Errorf("embedding has %d values, expected %d for model %s, run photoprism faces migrate to regenerate", len(m.embedding), dims, clean.Log(current))
 		}
 
 		return fmt.Errorf("embedding has %d values, expected %d", len(m.embedding), dims)
@@ -148,12 +148,9 @@ func (m *Face) Embedding() face.Embedding {
 }
 
 // SameEmbeddingModel reports whether the stored embedding can be compared with newly
-// generated vectors. Faces without a recorded model are assumed to be comparable,
-// since rows created before provenance was tracked have no value to compare.
+// generated vectors. Legacy rows without provenance are compatible with FaceNet only.
 func (m *Face) SameEmbeddingModel() bool {
-	current := face.EmbeddingModelName()
-
-	return m.EmbedModel == "" || current == "" || m.EmbedModel == current
+	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
 }
 
 // Match tests if embeddings match this face.

@@ -25,6 +25,27 @@ func TestNormalizeModelName(t *testing.T) {
 	})
 }
 
+func TestModelsComparable(t *testing.T) {
+	t.Run("SameModel", func(t *testing.T) {
+		assert.True(t, ModelsComparable(ModelSFace, ModelSFace))
+	})
+	t.Run("LegacyFaceNet", func(t *testing.T) {
+		assert.True(t, ModelsComparable("", ModelFaceNet))
+	})
+	t.Run("LegacyArcFace", func(t *testing.T) {
+		assert.False(t, ModelsComparable("", ModelArcFaceR50))
+	})
+	t.Run("DifferentModel", func(t *testing.T) {
+		assert.False(t, ModelsComparable(ModelFaceNet, ModelArcFaceR50))
+	})
+	t.Run("MissingCurrent", func(t *testing.T) {
+		assert.False(t, ModelsComparable(ModelFaceNet, ""))
+	})
+	t.Run("LegacyWithoutCurrent", func(t *testing.T) {
+		assert.True(t, ModelsComparable("", ""))
+	})
+}
+
 func TestParseModelName(t *testing.T) {
 	t.Run("Auto", func(t *testing.T) {
 		assert.Equal(t, ModelAuto, ParseModelName("Auto"))

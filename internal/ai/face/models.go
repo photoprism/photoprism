@@ -151,6 +151,19 @@ func NormalizeModelName(s string) ModelName {
 	return strings.ReplaceAll(strings.ToLower(strings.TrimSpace(s)), "-", "_")
 }
 
+// ModelsComparable reports whether vectors recorded under stored may be compared with current.
+// Legacy vectors may compare with FaceNet or each other because it was the only bundled model.
+func ModelsComparable(stored, current ModelName) bool {
+	stored = NormalizeModelName(stored)
+	current = NormalizeModelName(current)
+
+	if current == "" {
+		return stored == ""
+	}
+
+	return stored == current || stored == "" && current == ModelFaceNet
+}
+
 // ParseModelName returns the supported model name matching s, or ModelAuto when unknown.
 func ParseModelName(s string) ModelName {
 	name := NormalizeModelName(s)

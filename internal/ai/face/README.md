@@ -43,7 +43,14 @@ Models marked `ArcFace-5` need landmark-aligned input. `align.go` fits a similar
 
 The bundled children and background reference samples are FaceNet-space vectors, so `IsChild` and `IsBackground` deactivate (with a warning) for any other model. Length alone cannot detect this, because both ArcFace variants also return 512 values.
 
-**Switching models invalidates existing clusters.** Vectors from two models are not comparable even when their lengths match, so `photoprism faces reset` is required after a change. `entity.Face.Match` refuses cross-model comparisons in the meantime.
+**Switching models invalidates existing clusters.** Vectors from two models are not comparable even when their lengths match, so change `FACE_MODEL` first and then migrate the library during a maintenance window. The target must match the resolved configured model:
+
+```bash
+photoprism faces migrate --to sface --dry-run
+photoprism faces migrate --to sface --yes
+```
+
+The migration preserves manual subject assignments, checkpoints regenerated marker embeddings so it can resume after interruption, and atomically replaces face clusters before rebuilding automatic matches. Box-crop models reuse marker geometry and cached thumbnails, falling back to the original; landmark-aligned models redetect each affected thumbnail once so legacy landmarks cannot be mistaken for the required five-point layout. Markers that cannot be regenerated have their stale embeddings cleared and cause a nonzero exit status. Until migration is complete, model-aware queries and `entity.Face.Match` exclude incompatible vectors. For non-FaceNet targets, the command also warns that clustering and matching thresholds are still FaceNet-tuned.
 
 To compare installed models on a labeled dataset of identity subdirectories:
 

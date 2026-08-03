@@ -5,9 +5,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestMarkerByUID(t *testing.T) {
@@ -109,9 +111,67 @@ func TestFaceMarkers(t *testing.T) {
 	})
 }
 
+func TestFaceMarkerModelBoundaries(t *testing.T) {
+	restore := face.ConfiguredModel()
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
+	beforeUnmatched := CountUnmatchedFaceMarkers()
+
+	compatible := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		MarkerType:     entity.MarkerFace,
+		EmbedModel:     face.ModelSFace,
+		EmbeddingsJSON: face.Embeddings{{0.1, 0.2}}.JSON(),
+	}
+	legacy := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		MarkerType:     entity.MarkerFace,
+		EmbeddingsJSON: face.Embeddings{{0.1, 0.2, 0.3}}.JSON(),
+	}
+	require.NoError(t, entity.Db().Create(compatible).Error)
+	require.NoError(t, entity.Db().Create(legacy).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(compatible)
+		entity.UnscopedDb().Delete(legacy)
+	})
+
+	unmatched, err := UnmatchedFaceMarkers(1000, 0, nil)
+	require.NoError(t, err)
+	foundCompatible, foundLegacy := false, false
+	for _, marker := range unmatched {
+		foundCompatible = foundCompatible || marker.MarkerUID == compatible.MarkerUID
+		foundLegacy = foundLegacy || marker.MarkerUID == legacy.MarkerUID
+	}
+	assert.True(t, foundCompatible)
+	assert.False(t, foundLegacy)
+	assert.Equal(t, beforeUnmatched+1, CountUnmatchedFaceMarkers())
+
+	all, err := FaceMarkers(1000, 0)
+	require.NoError(t, err)
+	foundCompatible, foundLegacy = false, false
+	for _, marker := range all {
+		foundCompatible = foundCompatible || marker.MarkerUID == compatible.MarkerUID
+		foundLegacy = foundLegacy || marker.MarkerUID == legacy.MarkerUID
+	}
+	assert.True(t, foundCompatible)
+	assert.False(t, foundLegacy)
+
+	embeddings, err := Embeddings(false, false, 0, 0, face.ModelSFace)
+	require.NoError(t, err)
+	foundCompatible, foundLegacy = false, false
+	for _, embedding := range embeddings {
+		foundCompatible = foundCompatible || len(embedding) == 2
+		foundLegacy = foundLegacy || len(embedding) == 3
+	}
+	assert.True(t, foundCompatible)
+	assert.False(t, foundLegacy)
+}
+
 func TestEmbeddings(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		results, err := Embeddings(false, false, 0, 0)
+		results, err := Embeddings(false, false, 0, 0, "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -124,7 +184,7 @@ func TestEmbeddings(t *testing.T) {
 		}
 	})
 	t.Run("Size", func(t *testing.T) {
-		results, err := Embeddings(false, false, 230, 0)
+		results, err := Embeddings(false, false, 230, 0, "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -137,7 +197,7 @@ func TestEmbeddings(t *testing.T) {
 		}
 	})
 	t.Run("Score", func(t *testing.T) {
-		results, err := Embeddings(false, false, 0, 50)
+		results, err := Embeddings(false, false, 0, 50, "")
 
 		if err != nil {
 			t.Fatal(err)

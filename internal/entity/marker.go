@@ -126,6 +126,11 @@ func (m *Marker) SetEmbeddings(e face.Embeddings) {
 	}
 }
 
+// SameEmbeddingModel reports whether the marker embedding belongs to the configured model.
+func (m *Marker) SameEmbeddingModel() bool {
+	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
+}
+
 // UpdateFile sets the file uid and thumb and updates the index if the marker already exists.
 func (m *Marker) UpdateFile(file *File) (updated bool) {
 	if file.FileUID != "" && m.FileUID != file.FileUID {

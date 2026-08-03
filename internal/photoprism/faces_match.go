@@ -62,7 +62,7 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 	for i := range faces {
 		f := &faces[i]
 
-		if f.SkipMatching() {
+		if !f.SameEmbeddingModel() || f.SkipMatching() {
 			continue
 		}
 
@@ -289,7 +289,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 
 			// Skip invalid markers.
-			if marker.MarkerInvalid || marker.MarkerType != entity.MarkerFace || len(marker.EmbeddingsJSON) == 0 {
+			if marker.MarkerInvalid || marker.MarkerType != entity.MarkerFace || len(marker.EmbeddingsJSON) == 0 || !marker.SameEmbeddingModel() {
 				continue
 			}
 

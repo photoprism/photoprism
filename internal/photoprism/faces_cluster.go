@@ -27,7 +27,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	}
 
 	// Fetch unclustered face embeddings.
-	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold)
+	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold, face.EmbeddingModelName())
 
 	log.Debugf("faces: found %s", english.Plural(len(embeddings), "unclustered sample", "unclustered samples"))
 

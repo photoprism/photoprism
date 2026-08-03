@@ -324,6 +324,15 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 }
 
 func TestResolveFaceCollisions(t *testing.T) {
+	restore := face.ConfiguredModel()
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
 	c, r, err := ResolveFaceCollisions()
 
 	if err != nil {
@@ -436,6 +445,25 @@ func TestFacesFromOtherModels(t *testing.T) {
 		m.EmbedModel = face.ModelSFace
 		require.NoError(t, entity.Db().Create(m).Error)
 
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		after, err := FacesFromOtherModels()
+		require.NoError(t, err)
+		assert.Equal(t, before+1, after)
+	})
+	t.Run("CountsLegacyForNewModel", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+		m := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.RandomEmbedding()})
+		require.NotNil(t, m)
+		m.EmbedModel = ""
+
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
+		before, err := FacesFromOtherModels()
+		require.NoError(t, err)
+		require.NoError(t, entity.Db().Create(m).Error)
 		t.Cleanup(func() { entity.Db().Delete(m) })
 
 		after, err := FacesFromOtherModels()

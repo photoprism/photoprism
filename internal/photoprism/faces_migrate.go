@@ -1,0 +1,527 @@
+package photoprism
+
+import (
+	"context"
+	"fmt"
+	"math"
+	"sort"
+
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+const facesMigrateBatchSize = 100
+
+// FacesMigrateOptions controls a face embedding migration.
+type FacesMigrateOptions struct {
+	Target    string
+	DryRun    bool
+	BatchSize int
+}
+
+// FacesMigratePlan summarizes the work required for a target embedding model.
+type FacesMigratePlan struct {
+	Target         string
+	Markers        query.FaceMigrationMarkerCounts
+	MarkerModels   []query.MarkerEmbeddingModelCount
+	FaceModels     []query.EmbeddingModelCount
+	ManualSubjects int
+}
+
+// FacesMigrateResult summarizes a completed face embedding migration.
+type FacesMigrateResult struct {
+	Target            string
+	Migrated          int
+	Skipped           int
+	Failed            int
+	Invalid           int
+	DetectedFiles     int
+	PreservedSubjects int
+	RebuiltSubjects   int
+	AttentionSubjects int
+}
+
+// FacesMigrateIncompleteError reports a migration that completed with marker failures.
+type FacesMigrateIncompleteError struct {
+	Failed int
+}
+
+// Error returns the incomplete migration error message.
+func (e *FacesMigrateIncompleteError) Error() string {
+	return fmt.Sprintf("faces: migration completed with %d failed marker(s)", e.Failed)
+}
+
+// PlanMigration validates the target and returns a read-only migration summary.
+func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error) {
+	if w == nil || w.conf == nil {
+		return result, fmt.Errorf("faces: configuration not available")
+	} else if w.Disabled() {
+		return result, fmt.Errorf("face recognition is disabled")
+	}
+
+	configured := face.NormalizeModelName(w.conf.FaceModel())
+	target = face.NormalizeModelName(target)
+
+	if target == "" || target == face.ModelAuto {
+		target = configured
+	}
+
+	switch {
+	case !face.KnownModelName(target) || target == face.ModelAuto:
+		return result, fmt.Errorf("faces: unsupported migration model %q", target)
+	case target == face.ModelNone:
+		return result, fmt.Errorf("faces: cannot migrate to disabled embeddings")
+	case target != configured:
+		return result, fmt.Errorf("faces: migration target %s does not match configured model %s", clean.Log(target), clean.Log(configured))
+	}
+
+	model := face.FindEmbeddingModel(target)
+	if model == nil || !model.Installed(w.conf.ModelsPath()) {
+		return result, fmt.Errorf("faces: embedding model %s is not installed", clean.Log(target))
+	}
+
+	if model.Aligned() && face.ActiveEngineName() != face.EngineONNX {
+		return result, fmt.Errorf("faces: migration to %s requires the ONNX face detector", clean.Log(target))
+	}
+
+	result.Target = target
+
+	if result.Markers, err = query.FaceMigrationCounts(target); err != nil {
+		return result, err
+	} else if result.MarkerModels, err = query.MarkerEmbeddingModels(); err != nil {
+		return result, err
+	} else if result.FaceModels, err = query.FaceEmbeddingModels(); err != nil {
+		return result, err
+	}
+
+	identities, err := query.FaceMigrationManualIdentities()
+	if err != nil {
+		return result, err
+	}
+
+	subjects := make(map[string]struct{})
+	for _, identity := range identities {
+		key := identity.SubjUID
+		if key == "" {
+			key = identity.MarkerName
+		}
+		if key != "" {
+			subjects[key] = struct{}{}
+		}
+	}
+	result.ManualSubjects = len(subjects)
+
+	return result, nil
+}
+
+// Migrate regenerates face marker embeddings and rebuilds all clusters for the target model.
+func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result FacesMigrateResult, err error) {
+	plan, err := w.PlanMigration(opt.Target)
+	if err != nil {
+		return result, err
+	}
+
+	result.Target = plan.Target
+	result.Invalid = plan.Markers.Invalid
+	result.PreservedSubjects = plan.ManualSubjects
+
+	if opt.DryRun {
+		return result, nil
+	}
+
+	if mutex.IndexWorker.Running() || mutex.MetaWorker.Running() || mutex.VisionWorker.Running() {
+		return result, fmt.Errorf("faces: indexing or vision worker is already running")
+	} else if err = mutex.FacesWorker.Start(); err != nil {
+		return result, err
+	}
+	defer mutex.FacesWorker.Stop()
+
+	embedder, err := w.migrationEmbedder(plan.Target)
+	if err != nil {
+		return result, err
+	}
+
+	identities, err := query.FaceMigrationManualIdentities()
+	if err != nil {
+		return result, err
+	}
+	preservedSubjects := make(map[string]struct{})
+	for _, identity := range identities {
+		key := identity.SubjUID
+		if key == "" {
+			key = identity.MarkerName
+		}
+		if key != "" {
+			preservedSubjects[key] = struct{}{}
+		}
+	}
+	result.PreservedSubjects = len(preservedSubjects)
+
+	result.Failed = plan.Markers.MissingFile
+	failedMarkerUIDs := make([]string, 0, result.Failed)
+	batchSize := opt.BatchSize
+	if batchSize < 1 {
+		batchSize = facesMigrateBatchSize
+	}
+
+	after := ""
+	for {
+		if err = migrationCanceled(ctx, w); err != nil {
+			return result, err
+		}
+
+		fileUIDs, queryErr := query.FaceMigrationFileUIDs(after, batchSize)
+		if queryErr != nil {
+			return result, queryErr
+		} else if len(fileUIDs) == 0 {
+			break
+		}
+
+		for _, fileUID := range fileUIDs {
+			if err = migrationCanceled(ctx, w); err != nil {
+				return result, err
+			}
+
+			migrated, skipped, failed, detected, migrateErr := w.migrateFaceFile(embedder, plan.Target, fileUID)
+			result.Migrated += migrated
+			result.Skipped += skipped
+			result.Failed += len(failed)
+			failedMarkerUIDs = append(failedMarkerUIDs, failed...)
+			if detected {
+				result.DetectedFiles++
+			}
+			if migrateErr != nil {
+				if len(failed) == 0 {
+					return result, migrateErr
+				}
+				log.Errorf("faces: %s while migrating file %s", migrateErr, clean.Log(fileUID))
+			}
+		}
+
+		after = fileUIDs[len(fileUIDs)-1]
+	}
+
+	clusters, rebuilt, clusterErr := buildFaceMigrationClusters(plan.Target)
+	if clusterErr != nil {
+		return result, clusterErr
+	}
+	result.RebuiltSubjects = rebuilt
+	result.AttentionSubjects = max(result.PreservedSubjects-result.RebuiltSubjects, 0)
+
+	if err = query.FinalizeFaceMigration(plan.Target, identities, clusters, failedMarkerUIDs); err != nil {
+		return result, err
+	}
+
+	entity.UpdateFaces.Store(true)
+	if err = w.start(FacesOptions{Force: true}); err != nil {
+		return result, err
+	} else if err = w.Audit(false, ""); err != nil {
+		return result, err
+	}
+
+	if result.Failed > 0 {
+		return result, &FacesMigrateIncompleteError{Failed: result.Failed}
+	}
+
+	return result, nil
+}
+
+// migrationEmbedder returns the configured local embedder after validating its contract.
+func (w *Faces) migrationEmbedder(target string) (face.Embedder, error) {
+	if vision.Config == nil {
+		return nil, fmt.Errorf("faces: vision configuration not available")
+	}
+
+	model := vision.Config.Model(vision.ModelTypeFace)
+	if model == nil {
+		return nil, fmt.Errorf("faces: face vision model not configured")
+	}
+
+	embedder := model.FaceModel()
+	if embedder == nil {
+		return nil, fmt.Errorf("faces: embedding model %s could not be loaded", clean.Log(target))
+	} else if embedder.ModelName() != target {
+		return nil, fmt.Errorf("faces: loaded embedding model %s, expected %s", clean.Log(embedder.ModelName()), clean.Log(target))
+	}
+
+	registered := face.FindEmbeddingModel(target)
+	if registered == nil || embedder.Dims() != registered.Dims {
+		return nil, fmt.Errorf("faces: embedding model %s has unexpected dimensions", clean.Log(target))
+	}
+
+	return embedder, nil
+}
+
+// migrateFaceFile checkpoints all stale marker embeddings associated with a file.
+func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) (migrated, skipped int, failed []string, detected bool, err error) {
+	markers, err := query.FaceMigrationMarkers(fileUID)
+	if err != nil {
+		return 0, 0, nil, false, err
+	}
+
+	stale := make(entity.Markers, 0, len(markers))
+	for i := range markers {
+		if validMigrationEmbeddings(markers[i].Embeddings(), embedder.Dims()) && markers[i].EmbedModel == target {
+			skipped++
+		} else {
+			stale = append(stale, markers[i])
+		}
+	}
+	if len(stale) == 0 {
+		return 0, skipped, nil, false, nil
+	}
+
+	file, err := query.FileByUID(fileUID)
+	if err != nil {
+		return 0, skipped, faceMigrationMarkerUIDs(stale), false, err
+	}
+
+	var generated map[string]face.Embeddings
+	if embedder.Aligned() {
+		detected = true
+		generated, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
+	} else {
+		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
+	}
+	if err != nil {
+		return 0, skipped, faceMigrationMarkerUIDs(stale), detected, err
+	}
+
+	for _, marker := range stale {
+		if values, ok := generated[marker.MarkerUID]; ok && validMigrationEmbeddings(values, embedder.Dims()) {
+			migrated++
+		} else {
+			failed = append(failed, marker.MarkerUID)
+			delete(generated, marker.MarkerUID)
+		}
+	}
+
+	if len(generated) > 0 {
+		if err = query.SaveFaceMigrationEmbeddings(target, generated); err != nil {
+			return 0, skipped, nil, detected, err
+		}
+	}
+
+	return migrated, skipped, failed, detected, err
+}
+
+// faceMigrationMarkerUIDs returns the marker UIDs in their current order.
+func faceMigrationMarkerUIDs(markers entity.Markers) []string {
+	result := make([]string, 0, len(markers))
+	for _, marker := range markers {
+		result = append(result, marker.MarkerUID)
+	}
+
+	return result
+}
+
+// cropMigrationEmbeddings generates embeddings directly from stored marker geometry.
+func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers entity.Markers) (result map[string]face.Embeddings, err error) {
+	result = make(map[string]face.Embeddings, len(markers))
+	if w == nil || w.conf == nil || embedder == nil || file == nil {
+		return result, fmt.Errorf("faces: migration crop input is invalid")
+	}
+
+	width, height := embedder.CropSize()
+	size := crop.Size{Width: width, Height: height, Options: crop.DefaultOptions}
+	source := FileName(file.FileRoot, file.FileName)
+
+	for _, marker := range markers {
+		area := markerCropArea(marker)
+		thumbName, thumbErr := crop.ThumbFileName(file.FileHash, area, size, w.conf.ThumbCachePath())
+		if thumbErr != nil {
+			thumbName = source
+		}
+
+		img, _, cropErr := crop.ImageFromThumb(thumbName, area, size, false)
+		if cropErr != nil {
+			log.Warnf("faces: failed cropping marker %s (%s)", clean.Log(marker.MarkerUID), cropErr)
+			continue
+		}
+
+		if embeddings := embedder.Run(img); validMigrationEmbeddings(embeddings, embedder.Dims()) {
+			result[marker.MarkerUID] = embeddings
+		}
+	}
+
+	return result, nil
+}
+
+// detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers.
+func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, err error) {
+	result = make(map[string]face.Embeddings, len(stale))
+	thumbName, err := migrationDetectionThumb(w.conf.ThumbCachePath(), file)
+	if err != nil {
+		return result, err
+	}
+
+	detected, err := face.Detect(thumbName, w.conf.FaceSize())
+	if err != nil {
+		return result, err
+	}
+	vision.GenerateEmbeddings(embedder, thumbName, detected, true)
+
+	assignments := matchMigrationDetections(markers, detected)
+	for _, marker := range stale {
+		if detectedFace, ok := assignments[marker.MarkerUID]; ok && validMigrationEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
+			result[marker.MarkerUID] = detectedFace.Embeddings
+		}
+	}
+
+	return result, nil
+}
+
+// migrationDetectionThumb returns a cached or newly generated detection thumbnail.
+func migrationDetectionThumb(thumbPath string, file *entity.File) (string, error) {
+	if file == nil || file.FileHash == "" {
+		return "", fmt.Errorf("faces: migration file is invalid")
+	}
+
+	size := thumb.Sizes[thumb.Fit720]
+	if cached, err := size.FileName(file.FileHash, thumbPath); err == nil && fs.FileExists(cached) {
+		return cached, nil
+	}
+
+	mediaFile, err := NewMediaFile(FileName(file.FileRoot, file.FileName))
+	if err != nil {
+		return "", err
+	}
+
+	return mediaFile.Thumbnail(thumbPath, thumb.Fit720)
+}
+
+type migrationDetectionPair struct {
+	markerUID string
+	detected  int
+	overlap   int
+}
+
+// matchMigrationDetections assigns each detected face to at most one stored marker.
+func matchMigrationDetections(markers entity.Markers, detected face.Faces) map[string]face.Face {
+	pairs := make([]migrationDetectionPair, 0)
+	for _, marker := range markers {
+		area := markerCropArea(marker)
+		for i := range detected {
+			if overlap := detected[i].CropArea().OverlapPercent(area); overlap > face.OverlapThresholdFloor {
+				pairs = append(pairs, migrationDetectionPair{markerUID: marker.MarkerUID, detected: i, overlap: overlap})
+			}
+		}
+	}
+
+	sort.Slice(pairs, func(i, j int) bool {
+		if pairs[i].overlap != pairs[j].overlap {
+			return pairs[i].overlap > pairs[j].overlap
+		} else if pairs[i].markerUID != pairs[j].markerUID {
+			return pairs[i].markerUID < pairs[j].markerUID
+		}
+		return pairs[i].detected < pairs[j].detected
+	})
+
+	result := make(map[string]face.Face)
+	used := make(map[int]bool)
+	for _, pair := range pairs {
+		if _, ok := result[pair.markerUID]; ok || used[pair.detected] {
+			continue
+		}
+		result[pair.markerUID] = detected[pair.detected]
+		used[pair.detected] = true
+	}
+
+	return result
+}
+
+// markerCropArea returns the normalized crop geometry stored on a marker.
+func markerCropArea(marker entity.Marker) crop.Area {
+	return crop.Area{Name: "face", X: marker.X, Y: marker.Y, W: marker.W, H: marker.H}
+}
+
+// validMigrationEmbeddings checks the cardinality, dimensions, and values of an embedding result.
+func validMigrationEmbeddings(embeddings face.Embeddings, dims int) bool {
+	if !embeddings.One() || dims < 1 || len(embeddings[0]) != dims {
+		return false
+	}
+
+	for _, value := range embeddings[0] {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// buildFaceMigrationClusters creates one replacement manual cluster per subject.
+func buildFaceMigrationClusters(model string) (result []query.FaceMigrationCluster, rebuilt int, err error) {
+	markers, err := query.FaceMigrationManualMarkers(model)
+	if err != nil {
+		return result, 0, err
+	}
+	registered := face.FindEmbeddingModel(model)
+	if registered == nil {
+		return result, 0, fmt.Errorf("faces: unsupported migration model %s", clean.Log(model))
+	}
+
+	groups := make(map[string]entity.Markers)
+	for _, marker := range markers {
+		if validMigrationEmbeddings(marker.Embeddings(), registered.Dims) {
+			groups[marker.SubjUID] = append(groups[marker.SubjUID], marker)
+		}
+	}
+
+	subjectUIDs := make([]string, 0, len(groups))
+	for subjectUID := range groups {
+		subjectUIDs = append(subjectUIDs, subjectUID)
+	}
+	sort.Strings(subjectUIDs)
+
+	for _, subjectUID := range subjectUIDs {
+		group := groups[subjectUID]
+		embeddings := make(face.Embeddings, 0, len(group))
+		for _, marker := range group {
+			if values := marker.Embeddings(); values.One() {
+				embeddings = append(embeddings, values[0])
+			}
+		}
+		if len(embeddings) == 0 {
+			continue
+		}
+
+		cluster := entity.NewFace(subjectUID, entity.SrcManual, embeddings)
+		if cluster == nil || cluster.ID == "" || cluster.EmbedModel != model || len(cluster.Embedding()) == 0 {
+			log.Warnf("faces: failed rebuilding manual cluster for subject %s", clean.Log(subjectUID))
+			continue
+		}
+
+		distances := make(map[string]float64, len(group))
+		for _, marker := range group {
+			distances[marker.MarkerUID] = marker.Embeddings().Dist(cluster.Embedding())
+		}
+		result = append(result, query.FaceMigrationCluster{Face: *cluster, MarkerDistances: distances})
+		rebuilt++
+	}
+
+	return result, rebuilt, nil
+}
+
+// migrationCanceled reports context and worker cancellation consistently between batches.
+func migrationCanceled(ctx context.Context, w *Faces) error {
+	if ctx != nil {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+	}
+	if w != nil && w.Canceled() {
+		return fmt.Errorf("faces: migration canceled")
+	}
+
+	return nil
+}

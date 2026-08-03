@@ -48,8 +48,11 @@ func TestBuildFaceCandidates(t *testing.T) {
 	backgroundEmb := face.Embeddings{clone}
 	background := entity.NewFace("", entity.SrcAuto, backgroundEmb)
 	require.NotNil(t, background)
+	stale := *regular
+	stale.ID = "stale-model"
+	stale.EmbedModel = face.ModelSFace
 
-	faces := entity.Faces{*regular, *background}
+	faces := entity.Faces{*regular, *background, stale}
 
 	index := buildFaceIndex(faces)
 

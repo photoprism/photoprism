@@ -90,6 +90,17 @@ func (w *Faces) StartDefault() (err error) {
 
 // Start face clustering and matching.
 func (w *Faces) Start(opt FacesOptions) (err error) {
+	if err = mutex.FacesWorker.Start(); err != nil {
+		return err
+	}
+
+	defer mutex.FacesWorker.Stop()
+
+	return w.start(opt)
+}
+
+// start performs face clustering and matching while the caller holds the faces worker lock.
+func (w *Faces) start(opt FacesOptions) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
@@ -100,12 +111,6 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	if w.Disabled() {
 		return fmt.Errorf("face recognition is disabled")
 	}
-
-	if err = mutex.FacesWorker.Start(); err != nil {
-		return err
-	}
-
-	defer mutex.FacesWorker.Stop()
 
 	var start time.Time
 

@@ -212,7 +212,7 @@ func TestFace_SetEmbeddings(t *testing.T) {
 
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), face.ModelFaceNet)
-		assert.Contains(t, err.Error(), "faces reset")
+		assert.Contains(t, err.Error(), "faces migrate")
 	})
 }
 
@@ -358,13 +358,17 @@ func TestFace_SameEmbeddingModel(t *testing.T) {
 		assert.True(t, m.SameEmbeddingModel())
 	})
 	t.Run("NotRecorded", func(t *testing.T) {
-		// Rows created before provenance was tracked stay comparable.
+		// Rows created before provenance was tracked are FaceNet-compatible.
 		m := &Face{EmbedModel: ""}
 		assert.True(t, m.SameEmbeddingModel())
 	})
 	t.Run("OtherModel", func(t *testing.T) {
 		m := &Face{EmbedModel: face.ModelSFace}
 		assert.False(t, m.SameEmbeddingModel())
+	})
+	t.Run("LegacyOtherModel", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
+		assert.False(t, (&Face{}).SameEmbeddingModel())
 	})
 }
 

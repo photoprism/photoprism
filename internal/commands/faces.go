@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
@@ -10,6 +11,8 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -59,6 +62,7 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesResetAction,
 		},
+		FacesMigrateCommand,
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
@@ -90,6 +94,78 @@ var FacesCommands = &cli.Command{
 		},
 		FacesConfigCommand,
 	},
+}
+
+// FacesMigrateCommand configures the face embedding migration command.
+var FacesMigrateCommand = &cli.Command{
+	Name:  "migrate",
+	Usage: "Migrates face embeddings to the configured model",
+	Flags: []cli.Flag{
+		&cli.StringFlag{
+			Name:  "to",
+			Usage: "target embedding `MODEL` (defaults to the configured face model)",
+		},
+		DryRunFlag("reports the face migration scope without changing the index"),
+		YesFlag(),
+	},
+	Action: facesMigrateAction,
+}
+
+// facesMigrateAction migrates face embeddings to the configured model.
+func facesMigrateAction(ctx *cli.Context) error {
+	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		w := get.Faces()
+		plan, err := w.PlanMigration(ctx.String("to"))
+		if err != nil {
+			return err
+		}
+
+		log.Infof(
+			"faces: migration to %s includes %d valid markers, %d invalid markers, and %d manually identified people",
+			clean.Log(plan.Target), plan.Markers.Valid, plan.Markers.Invalid, plan.ManualSubjects,
+		)
+		for _, count := range plan.MarkerModels {
+			model := count.EmbedModel
+			if model == "" {
+				model = "legacy"
+			}
+			log.Infof("faces: embedding model %s has %d markers", clean.Log(model), count.Markers)
+		}
+		for _, count := range plan.FaceModels {
+			model := count.EmbedModel
+			if model == "" {
+				model = "legacy"
+			}
+			log.Infof("faces: embedding model %s has %d clusters", clean.Log(model), count.Faces)
+		}
+		if plan.Target != face.ModelFaceNet {
+			log.Warn("faces: clustering and matching thresholds are still tuned for FaceNet")
+		}
+
+		if ctx.Bool("dry-run") {
+			log.Infof("faces: dry run completed without changes")
+			return nil
+		}
+
+		if !RunNonInteractively(ctx.Bool("yes")) {
+			prompt := promptui.Prompt{
+				Label:     fmt.Sprintf("Migrate all face embeddings to %s?", plan.Target),
+				IsConfirm: true,
+			}
+			if _, promptErr := prompt.Run(); promptErr != nil {
+				log.Info("faces: migration cancelled")
+				return nil
+			}
+		}
+
+		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{Target: plan.Target})
+		log.Infof(
+			"faces: migrated %d markers, skipped %d, failed %d; preserved %d people, rebuilt %d, %d need attention",
+			result.Migrated, result.Skipped, result.Failed, result.PreservedSubjects, result.RebuiltSubjects, result.AttentionSubjects,
+		)
+
+		return migrateErr
+	})
 }
 
 // facesStatsAction shows stats on face embeddings.
