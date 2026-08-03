@@ -693,6 +693,12 @@ func (m *Model) FaceModel() face.Embedder {
 		return nil
 	}
 
+	// FACE_MODEL=none turns embedding generation off, so no model may be loaded even
+	// when vision.yml still schedules face processing to detect regions.
+	if face.EmbeddingsDisabled() {
+		return nil
+	}
+
 	// An ONNX embedding model selected with FACE_MODEL takes precedence: vision.yml
 	// only schedules when faces are processed, while the model itself is per instance.
 	if embedder := face.ActiveEmbedder(); embedder != nil {

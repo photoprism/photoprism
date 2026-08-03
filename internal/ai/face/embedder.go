@@ -136,6 +136,13 @@ func ConfigureEmbedder(settings EmbedderSettings) error {
 		newEmbedder, initErr = NewONNXEmbedder(settings)
 	}
 
+	// A model whose embedder failed to initialize must not stay recorded as the source
+	// of new embeddings: callers would fall back to another runtime and stamp its
+	// vectors with a name from an incompatible embedding space.
+	if initErr != nil {
+		name = ModelNone
+	}
+
 	embedderMu.Lock()
 	previous := activeEmbedder
 	activeEmbedder = newEmbedder

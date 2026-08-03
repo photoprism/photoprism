@@ -7,7 +7,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
@@ -491,4 +493,35 @@ func TestModel_IsDefault(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestModel_FaceModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	t.Run("EmbeddingsDisabled", func(t *testing.T) {
+		// FACE_MODEL=none must win over the model configured in vision.yml, otherwise
+		// the TensorFlow fallback keeps generating embeddings that were turned off.
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		assert.Nil(t, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
+	})
+	t.Run("ActiveEmbedder", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+
+		embedder := &stubEmbedder{dims: 128}
+		prev := face.UseEmbedder(embedder)
+
+		t.Cleanup(func() { face.UseEmbedder(prev) })
+
+		assert.Equal(t, embedder, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		assert.Nil(t, (*Model)(nil).FaceModel())
+	})
 }

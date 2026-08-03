@@ -138,9 +138,15 @@ func TestConfigureEmbedder(t *testing.T) {
 		assert.True(t, prev.closed)
 	})
 	t.Run("MissingONNXPath", func(t *testing.T) {
+		// A failed initialization must not leave the requested name configured: callers
+		// fall back to another runtime and would record its vectors under this model.
 		err := ConfigureEmbedder(EmbedderSettings{Name: ModelSFace, Model: FindEmbeddingModel(ModelSFace)})
 		require.Error(t, err)
 		assert.Nil(t, ActiveEmbedder())
+		assert.Equal(t, ModelNone, ConfiguredModel())
+		assert.Equal(t, "", EmbeddingModelName())
+		assert.True(t, EmbeddingsDisabled())
+		assert.True(t, SamplesComparable())
 	})
 }
 
