@@ -143,16 +143,16 @@ watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: run-test-go
+test-go: dep-sface run-test-go
 test-hub: run-test-hub
 test-pkg: run-test-pkg
-test-ai: run-test-ai
+test-ai: dep-sface run-test-ai
 test-api: run-test-api
 test-video: run-test-video
 test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
-test-short: run-test-short
+test-short: dep-sface run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
@@ -477,6 +477,8 @@ dep-tensorflow:
 	scripts/download-nsfw.sh
 dep-onnx:
 	scripts/download-scrfd.sh
+# Installed by the Go test targets, not by "dep": the ONNX embedder tests skip without
+# it, while "make all install" would copy the weights into the published images.
 dep-sface:
 	scripts/download-sface.sh
 dep-acceptance: storage/acceptance
