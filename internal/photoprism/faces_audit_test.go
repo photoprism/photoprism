@@ -181,3 +181,29 @@ func TestFaces_auditEmbeddingModels(t *testing.T) {
 		w.auditEmbeddingModels()
 	})
 }
+
+func TestFaces_auditMarkerEmbeddingModels(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	t.Run("StaleMarkers", func(t *testing.T) {
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelArcFaceR50,
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		counts, err := query.MarkerEmbeddingModels()
+		require.NoError(t, err)
+		require.NotEmpty(t, counts)
+
+		w.auditMarkerEmbeddingModels(face.ModelFaceNet)
+	})
+	t.Run("NoModelConfigured", func(t *testing.T) {
+		w.auditMarkerEmbeddingModels("")
+	})
+}

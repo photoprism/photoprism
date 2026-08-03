@@ -638,4 +638,30 @@ func (w *Faces) auditEmbeddingModels() {
 		log.Warnf("faces: run photoprism faces reset to regenerate %s with the configured model",
 			english.Plural(stale, "cluster", "clusters"))
 	}
+
+	w.auditMarkerEmbeddingModels(current)
+}
+
+// auditMarkerEmbeddingModels reports the face markers per embedding model. Markers hold
+// the vectors a reset regenerates, so their counts show how much work a model switch
+// leaves behind after the cluster report above.
+func (w *Faces) auditMarkerEmbeddingModels(current string) {
+	counts, err := query.MarkerEmbeddingModels()
+
+	if err != nil {
+		log.Errorf("faces: %s (audit marker embedding models)", err)
+		return
+	}
+
+	for _, c := range counts {
+		switch c.EmbedModel {
+		case "":
+			log.Infof("faces: %s without a recorded embedding model", english.Plural(c.Markers, "marker", "markers"))
+		case current:
+			log.Infof("faces: %s from embedding model %s", english.Plural(c.Markers, "marker", "markers"), clean.Log(c.EmbedModel))
+		default:
+			log.Warnf("faces: %s from embedding model %s, which is not the configured %s",
+				english.Plural(c.Markers, "marker", "markers"), clean.Log(c.EmbedModel), clean.Log(current))
+		}
+	}
 }

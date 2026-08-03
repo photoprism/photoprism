@@ -117,6 +117,17 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 		Embeddings: face.Embeddings{testEmbeddings[0]},
 	}
 
+	restoreModel := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restoreModel, Model: face.FindEmbeddingModel(restoreModel)})
+	})
+
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
 	file.markers = nil // force reload from DB
 	file.AddFace(f, "")
 
@@ -124,6 +135,7 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, saved, 1, "must upgrade in place, not create a duplicate")
 	assert.NotEmpty(t, saved[0].EmbeddingsJSON, "embedding-less XMP marker must gain the detected embedding")
+	assert.Equal(t, face.ModelFaceNet, saved[0].EmbedModel, "the upgraded row must record the model that produced the vector")
 	assert.Equal(t, "Alice", saved[0].MarkerName, "XMP name must be preserved")
 }
 

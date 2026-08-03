@@ -885,7 +885,13 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 			// embedding (Markers.Save does not re-write existing markers), so the
 			// marker stays embedding-less and is retried on the next pass.
 			if existing.MarkerUID != "" {
-				if err := existing.Updates(Values{"embeddings_json": f.Embeddings.JSON(), "landmarks_json": landmarks}); err != nil {
+				values := Values{
+					"embeddings_json": f.Embeddings.JSON(),
+					"embed_model":     face.EmbeddingModelName(),
+					"landmarks_json":  landmarks,
+				}
+
+				if err := existing.Updates(values); err != nil {
 					log.Warnf("faces: %s while adding embedding to marker %s", err, clean.Log(existing.MarkerUID))
 					return
 				}

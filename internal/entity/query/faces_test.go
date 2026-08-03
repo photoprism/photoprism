@@ -361,6 +361,54 @@ func TestFaceEmbeddingModels(t *testing.T) {
 	})
 }
 
+func TestMarkerEmbeddingModels(t *testing.T) {
+	// newFaceMarker persists a face marker with the specified embedding model.
+	newFaceMarker := func(t *testing.T, model string, embeddings face.Embeddings) *entity.Marker {
+		t.Helper()
+
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     model,
+			EmbeddingsJSON: embeddings.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		return m
+	}
+
+	// modelCounts maps the reported model names to their marker counts.
+	modelCounts := func(t *testing.T) map[string]int {
+		t.Helper()
+
+		result, err := MarkerEmbeddingModels()
+		require.NoError(t, err)
+
+		counts := make(map[string]int, len(result))
+
+		for _, c := range result {
+			assert.Positive(t, c.Markers)
+			counts[c.EmbedModel] = c.Markers
+		}
+
+		return counts
+	}
+
+	t.Run("CountsRecordedModel", func(t *testing.T) {
+		newFaceMarker(t, face.ModelSFace, face.Embeddings{face.RandomEmbedding()})
+		assert.Positive(t, modelCounts(t)[face.ModelSFace])
+	})
+	t.Run("SkipsMarkersWithoutEmbeddings", func(t *testing.T) {
+		// Markers imported without a vector have no model, so counting them would
+		// inflate the bucket that reports libraries predating provenance tracking.
+		before := modelCounts(t)[""]
+		newFaceMarker(t, "", nil)
+		assert.Equal(t, before, modelCounts(t)[""])
+	})
+}
+
 func TestFacesFromOtherModels(t *testing.T) {
 	restore := face.ConfiguredModel()
 
