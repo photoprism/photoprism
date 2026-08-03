@@ -203,6 +203,16 @@ func (c *Config) FaceModelPath() string {
 	return c.FaceEmbeddingModel().FilePath(c.ModelsPath())
 }
 
+// FaceModelLicense returns the license of the configured face embedding model weights,
+// or an empty string when no model is configured.
+func (c *Config) FaceModelLicense() string {
+	if m := c.FaceEmbeddingModel(); m != nil {
+		return m.License
+	}
+
+	return ""
+}
+
 // FaceModelDims returns the embedding length of the configured face model, or 0 when none is configured.
 func (c *Config) FaceModelDims() int {
 	if m := c.FaceEmbeddingModel(); m != nil {

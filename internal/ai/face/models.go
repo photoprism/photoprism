@@ -74,7 +74,6 @@ type EmbeddingModel struct {
 	Scale      float32
 	Alignment  CropAlignment
 	License    string
-	Bundled    bool
 }
 
 // EmbeddingModels lists the supported face embedding models by name.
@@ -95,7 +94,6 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Scale:      1 / 127.5,
 		Alignment:  AlignBox,
 		License:    LicenseUnknown,
-		Bundled:    true,
 	},
 	ModelSFace: {
 		Name:       ModelSFace,
@@ -110,7 +108,6 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Scale:      1,
 		Alignment:  AlignArcFace5,
 		License:    LicenseApache2,
-		Bundled:    true,
 	},
 	ModelArcFaceR50: {
 		Name:       ModelArcFaceR50,
@@ -246,11 +243,6 @@ func (m *EmbeddingModel) Installed(modelsPath string) bool {
 // Aligned reports whether the model requires landmark-aligned crops.
 func (m *EmbeddingModel) Aligned() bool {
 	return m != nil && m.Alignment == AlignArcFace5
-}
-
-// Redistributable reports whether the pretrained weights may be shipped with PhotoPrism.
-func (m *EmbeddingModel) Redistributable() bool {
-	return m != nil && m.License == LicenseApache2
 }
 
 // String returns the model name, or "none" for nil receivers.

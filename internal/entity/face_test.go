@@ -195,6 +195,25 @@ func TestFace_SetEmbeddings(t *testing.T) {
 		require.Equal(t, 2, m.Samples)
 		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
 	})
+	t.Run("DimensionMismatch", func(t *testing.T) {
+		restore := face.ConfiguredModel()
+
+		t.Cleanup(func() {
+			_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		})
+
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+
+		m := &Face{}
+		err := m.SetEmbeddings(face.Embeddings{make(face.Embedding, 8)})
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), face.ModelFaceNet)
+		assert.Contains(t, err.Error(), "faces reset")
+	})
 }
 
 func TestFace_Embedding(t *testing.T) {

@@ -208,19 +208,15 @@ func TestEmbeddingModel_Aligned(t *testing.T) {
 	})
 }
 
-func TestEmbeddingModel_Redistributable(t *testing.T) {
+func TestEmbeddingModel_License(t *testing.T) {
 	t.Run("Apache2", func(t *testing.T) {
-		assert.True(t, FindEmbeddingModel(ModelSFace).Redistributable())
+		assert.Equal(t, LicenseApache2, FindEmbeddingModel(ModelSFace).License)
 	})
 	t.Run("ResearchOnly", func(t *testing.T) {
-		assert.False(t, FindEmbeddingModel(ModelArcFaceR50).Redistributable())
+		assert.Equal(t, LicenseResearchOnly, FindEmbeddingModel(ModelArcFaceR50).License)
 	})
 	t.Run("Unknown", func(t *testing.T) {
-		assert.False(t, FindEmbeddingModel(ModelFaceNet).Redistributable())
-	})
-	t.Run("NilModel", func(t *testing.T) {
-		var m *EmbeddingModel
-		assert.False(t, m.Redistributable())
+		assert.Equal(t, LicenseUnknown, FindEmbeddingModel(ModelFaceNet).License)
 	})
 }
 

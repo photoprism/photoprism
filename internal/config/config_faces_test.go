@@ -305,6 +305,23 @@ func TestConfig_FaceModelPath(t *testing.T) {
 	})
 }
 
+func TestConfig_FaceModelLicense(t *testing.T) {
+	t.Run("SFace", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+		assert.Equal(t, face.LicenseApache2, c.FaceModelLicense())
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+		assert.Equal(t, "", c.FaceModelLicense())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, "", (*Config)(nil).FaceModelLicense())
+	})
+}
+
 func TestConfig_FaceModelDims(t *testing.T) {
 	t.Run("FaceNet", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

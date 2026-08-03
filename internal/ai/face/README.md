@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** July 30, 2026
+**Last Updated:** August 3, 2026
 
 ### Overview
 
@@ -12,7 +12,7 @@ Key changes:
 - All face embeddings are now L2-normalized at creation, midpoint calculation, and deserialization time to keep cosine and Euclidean comparisons consistent.
 - Benchmarks were added to track the cost of hotspot routines (`Embedding.Dist` and `EmbeddingsMidpoint`).
 
-Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster count per model.
+Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster and marker counts per model.
 
 ### Detection Pipeline
 
@@ -28,14 +28,16 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 `FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go` with the preprocessing contract they require — input size, channel order, mean, scale, embedding length, alignment mode, and weight license — so the CLI help and config report are generated from one source.
 
-| Model         | Runtime    | Dim | Input   | Alignment | Installed By                  |
-|:--------------|:-----------|----:|:--------|:----------|:------------------------------|
-| `facenet`     | TensorFlow | 512 | 160×160 | box crop  | `make dep-tensorflow`         |
-| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 | `make dep-sface`              |
-| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 | `scripts/download-arcface.sh` |
-| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 | `scripts/download-arcface.sh` |
+| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                  |
+|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:------------------------------|
+| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-tensorflow`         |
+| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-sface`              |
+| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh` |
+| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh` |
 
-`auto` resolves to the first installed model in `face.AutoModelPreference`, which starts with `facenet` so existing libraries keep their embedding space. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1`.
+`auto` resolves to the first installed model in `face.AutoModelPreference`, which starts with `facenet` so existing libraries keep their embedding space. An explicitly configured model whose weights are missing resolves the same way, with a warning: embeddings would otherwise be produced by the fallback model and recorded under the name that was requested. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1` and verifies a pinned checksum.
+
+SFace is installed by the Go test targets rather than by `make dep`, because `make all install` copies `assets/` into the published images. Without it the ONNX embedder tests skip and the inference path goes uncovered.
 
 Models marked `ArcFace-5` need landmark-aligned input. `align.go` fits a similarity transform from the detected landmarks onto the standard 112×112 template that both OpenCV and InsightFace use, and falls back to an unaligned bounding box crop when a face has no complete landmark set.
 
