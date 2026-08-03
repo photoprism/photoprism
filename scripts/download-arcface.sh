@@ -17,6 +17,11 @@ MODEL_DIR="$MODELS_PATH/arcface"
 MODEL_VERSION="$MODEL_DIR/version.txt"
 TMP_DIR="/tmp/photoprism/arcface"
 
+# Checksums of the release assets, so a replaced upstream file is rejected instead of
+# silently installed.
+R50_SHA256="4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43"
+MBF_SHA256="9cc6e4a75f0e2bf0b1aed94578f144d15175f357bdc05e815e5c4a02b319eb4f"
+
 if [[ "${ARCFACE_ACCEPT_LICENSE:-}" != "1" ]]; then
   cat >&2 <<'EOF'
 The InsightFace pretrained recognition models are licensed for non-commercial
@@ -45,11 +50,12 @@ hash_file() {
   fi
 }
 
-# install_model <pack> <entry> <target>
+# install_model <pack> <entry> <target> <sha256>
 install_model() {
   local pack="$1"
   local entry="$2"
   local target="$3"
+  local sha256="$4"
   local url="https://github.com/deepinsight/insightface/releases/download/v0.7/${pack}.zip"
   local archive="${TMP_DIR}/${pack}.zip"
 
@@ -74,12 +80,23 @@ install_model() {
     return 1
   fi
 
-  mv "${TMP_DIR}/$(basename "${entry}")" "${MODEL_DIR}/${target}"
-  echo "ArcFace ${TODAY} $(hash_file "${MODEL_DIR}/${target}") (${target} from ${pack})" >> "${MODEL_VERSION}"
+  local extracted
+  extracted="${TMP_DIR}/$(basename "${entry}")"
+
+  echo "Verifying checksum..."
+
+  if [[ "$(hash_file "${extracted}")" != "${sha256}" ]]; then
+    echo "Checksum mismatch, refusing to install ${target}." >&2
+    rm -f "${extracted}"
+    return 1
+  fi
+
+  mv "${extracted}" "${MODEL_DIR}/${target}"
+  echo "ArcFace ${TODAY} ${sha256} (${target} from ${pack})" >> "${MODEL_VERSION}"
   echo "Installed ${target}."
 }
 
-install_model "buffalo_l" "w600k_r50.onnx" "w600k_r50.onnx"
-install_model "buffalo_s" "w600k_mbf.onnx" "w600k_mbf.onnx"
+install_model "buffalo_l" "w600k_r50.onnx" "w600k_r50.onnx" "${R50_SHA256}"
+install_model "buffalo_s" "w600k_mbf.onnx" "w600k_mbf.onnx" "${MBF_SHA256}"
 
 echo "ArcFace benchmark models installed in ${MODEL_DIR} (non-commercial research use only)."
