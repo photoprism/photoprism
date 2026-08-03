@@ -227,7 +227,17 @@ func (e *onnxEmbedder) Run(img image.Image) Embeddings {
 
 	// ONNX Runtime sessions are not documented as safe for concurrent Run calls with
 	// preallocated outputs, and indexing workers share a single embedder instance.
+	// Reconfiguring the embedder closes this session while workers may still hold it,
+	// so the nil check must happen under the lock that Close takes.
 	e.mutex.Lock()
+
+	if e.session == nil {
+		e.mutex.Unlock()
+		log.Warnf("faces: %s was closed while generating embeddings", clean.Log(e.model.Name))
+
+		return nil
+	}
+
 	err = e.session.Run([]onnxruntime.Value{inputTensor}, []onnxruntime.Value{outputTensor})
 	e.mutex.Unlock()
 

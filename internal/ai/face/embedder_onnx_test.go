@@ -176,91 +176,120 @@ func TestNewONNXEmbedder(t *testing.T) {
 	})
 }
 
+// installedONNXModels returns the ONNX embedding models whose weights are present, so
+// the contract tests below cover every model the environment can actually run instead
+// of only the one that "make dep-sface" installs.
+func installedONNXModels(t *testing.T) []ModelName {
+	t.Helper()
+
+	var result []ModelName
+
+	for _, name := range EmbeddingModelNames() {
+		if m := FindEmbeddingModel(name); m.Runtime == RuntimeONNX && m.Installed(embeddingModelsPath) {
+			result = append(result, name)
+		}
+	}
+
+	if len(result) == 0 {
+		t.Skip("faces: no ONNX embedding models are installed")
+	}
+
+	return result
+}
+
 func TestONNXEmbedder_Run(t *testing.T) {
-	embedder := newTestONNXEmbedder(t, ModelSFace)
-	img, f := detectTestFace(t, filepath.Join("testdata", "1.jpg"))
-	width, height := embedder.CropSize()
+	for _, name := range installedONNXModels(t) {
+		t.Run(name, func(t *testing.T) {
+			embedder := newTestONNXEmbedder(t, name)
+			img, f := detectTestFace(t, filepath.Join("testdata", "1.jpg"))
+			width, height := embedder.CropSize()
 
-	crop, err := AlignedCrop(img, f, width, height)
-	require.NoError(t, err)
+			crop, err := AlignedCrop(img, f, width, height)
+			require.NoError(t, err)
 
-	t.Run("Dimensions", func(t *testing.T) {
-		embeddings := embedder.Run(crop)
-		require.False(t, embeddings.Empty())
-		assert.Len(t, embeddings[0], embedder.Dims())
-	})
-	t.Run("Normalized", func(t *testing.T) {
-		embeddings := embedder.Run(crop)
-		require.False(t, embeddings.Empty())
-		assert.InDelta(t, 1, embeddings[0].Magnitude(), 0.0001)
-	})
-	t.Run("Deterministic", func(t *testing.T) {
-		first := embedder.Run(crop)
-		second := embedder.Run(crop)
-		require.False(t, first.Empty())
-		require.False(t, second.Empty())
-		assert.InDelta(t, 0, first[0].Dist(second[0]), 0.0001)
-	})
-	t.Run("UnalignedCropAccepted", func(t *testing.T) {
-		// Crops of a different size are resampled to the model input.
-		small := image.NewRGBA(image.Rect(0, 0, 64, 64))
-		embeddings := embedder.Run(small)
-		require.False(t, embeddings.Empty())
-		assert.Len(t, embeddings[0], embedder.Dims())
-	})
-	t.Run("NilImage", func(t *testing.T) {
-		assert.True(t, embedder.Run(nil).Empty())
-	})
+			t.Run("Dimensions", func(t *testing.T) {
+				embeddings := embedder.Run(crop)
+				require.False(t, embeddings.Empty())
+				assert.Len(t, embeddings[0], embedder.Dims())
+			})
+			t.Run("Normalized", func(t *testing.T) {
+				embeddings := embedder.Run(crop)
+				require.False(t, embeddings.Empty())
+				assert.InDelta(t, 1, embeddings[0].Magnitude(), 0.0001)
+			})
+			t.Run("Deterministic", func(t *testing.T) {
+				first := embedder.Run(crop)
+				second := embedder.Run(crop)
+				require.False(t, first.Empty())
+				require.False(t, second.Empty())
+				assert.InDelta(t, 0, first[0].Dist(second[0]), 0.0001)
+			})
+			t.Run("UnalignedCropAccepted", func(t *testing.T) {
+				// Crops of a different size are resampled to the model input.
+				small := image.NewRGBA(image.Rect(0, 0, 64, 64))
+				embeddings := embedder.Run(small)
+				require.False(t, embeddings.Empty())
+				assert.Len(t, embeddings[0], embedder.Dims())
+			})
+			t.Run("NilImage", func(t *testing.T) {
+				assert.True(t, embedder.Run(nil).Empty())
+			})
+		})
+	}
 }
 
 func TestONNXEmbedder_AlignmentReducesPoseDistance(t *testing.T) {
-	embedder := newTestONNXEmbedder(t, ModelSFace)
-	width, height := embedder.CropSize()
-	fileName := filepath.Join("testdata", "1.jpg")
+	for _, name := range installedONNXModels(t) {
+		t.Run(name, func(t *testing.T) {
+			embedder := newTestONNXEmbedder(t, name)
+			width, height := embedder.CropSize()
+			fileName := filepath.Join("testdata", "1.jpg")
 
-	// Embeds the largest face in an image, once landmark-aligned and once from the
-	// detected bounding box, so the two preparations can be compared directly.
-	embed := func(name string) (aligned, boxed Embedding) {
-		img, f := detectTestFace(t, name)
+			// Embeds the largest face in an image, once landmark-aligned and once from the
+			// detected bounding box, so the two preparations can be compared directly.
+			embed := func(name string) (aligned, boxed Embedding) {
+				img, f := detectTestFace(t, name)
 
-		alignedCrop, err := AlignedCrop(img, f, width, height)
-		require.NoError(t, err)
+				alignedCrop, err := AlignedCrop(img, f, width, height)
+				require.NoError(t, err)
 
-		alignedEmbeddings := embedder.Run(alignedCrop)
-		require.False(t, alignedEmbeddings.Empty())
+				alignedEmbeddings := embedder.Run(alignedCrop)
+				require.False(t, alignedEmbeddings.Empty())
 
-		size := f.Area.Scale
-		box := image.NewRGBA(image.Rect(0, 0, size, size))
-		originX := f.Area.Col - size/2
-		originY := f.Area.Row - size/2
+				size := f.Area.Scale
+				box := image.NewRGBA(image.Rect(0, 0, size, size))
+				originX := f.Area.Col - size/2
+				originY := f.Area.Row - size/2
 
-		for y := range size {
-			for x := range size {
-				box.Set(x, y, img.At(originX+x, originY+y))
+				for y := range size {
+					for x := range size {
+						box.Set(x, y, img.At(originX+x, originY+y))
+					}
+				}
+
+				boxedEmbeddings := embedder.Run(box)
+				require.False(t, boxedEmbeddings.Empty())
+
+				return alignedEmbeddings[0], boxedEmbeddings[0]
 			}
-		}
 
-		boxedEmbeddings := embedder.Run(box)
-		require.False(t, boxedEmbeddings.Empty())
+			upright, uprightBox := embed(fileName)
 
-		return alignedEmbeddings[0], boxedEmbeddings[0]
+			original, _, err := fs.DecodeImageFile(fileName)
+			require.NoError(t, err)
+			rotated, rotatedBox := embed(writeTestJPEG(t, rotateTestImage(original, 20)))
+
+			t.Run("AlignmentBeatsBoundingBox", func(t *testing.T) {
+				// Warping onto the template is what makes the embedding pose invariant, so the
+				// same face rotated in plane must stay closer when aligned than when boxed.
+				assert.Less(t, upright.Dist(rotated), uprightBox.Dist(rotatedBox))
+			})
+			t.Run("SameFaceCloserThanOtherFace", func(t *testing.T) {
+				other, _ := embed(filepath.Join("testdata", "6.jpg"))
+				assert.Less(t, upright.Dist(rotated), upright.Dist(other))
+			})
+		})
 	}
-
-	upright, uprightBox := embed(fileName)
-
-	original, _, err := fs.DecodeImageFile(fileName)
-	require.NoError(t, err)
-	rotated, rotatedBox := embed(writeTestJPEG(t, rotateTestImage(original, 20)))
-
-	t.Run("AlignmentBeatsBoundingBox", func(t *testing.T) {
-		// Warping onto the template is what makes the embedding pose invariant, so the
-		// same face rotated in plane must stay closer when aligned than when boxed.
-		assert.Less(t, upright.Dist(rotated), uprightBox.Dist(rotatedBox))
-	})
-	t.Run("SameFaceCloserThanOtherFace", func(t *testing.T) {
-		other, _ := embed(filepath.Join("testdata", "6.jpg"))
-		assert.Less(t, upright.Dist(rotated), upright.Dist(other))
-	})
 }
 
 func TestEmbedderInputSize(t *testing.T) {
@@ -302,5 +331,12 @@ func TestONNXEmbedder_Close(t *testing.T) {
 		embedder := newTestONNXEmbedder(t, ModelSFace)
 		require.NoError(t, embedder.Close())
 		require.NoError(t, embedder.Close())
+	})
+	t.Run("RunAfterClose", func(t *testing.T) {
+		// Reconfiguring the embedder closes the session that indexing workers still
+		// hold, so a late call has to report no result rather than dereference nil.
+		embedder := newTestONNXEmbedder(t, ModelSFace)
+		require.NoError(t, embedder.Close())
+		assert.True(t, embedder.Run(image.NewRGBA(image.Rect(0, 0, 112, 112))).Empty())
 	})
 }
