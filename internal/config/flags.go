@@ -1376,14 +1376,14 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
-			Usage:   "similarity `DISTANCE` of faces forming a cluster core (0.1-1.5)",
-			Value:   face.ClusterDist,
+			Usage:   "similarity `DISTANCE` of faces forming a cluster core (0.1-1.5); defaults to the calibrated value of the configured face model",
+			Value:   face.ClusterDistDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_DIST"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-radius",
-			Usage:   "maximum cluster `RADIUS` accepted for automatic matches (0.1-1.5)",
-			Value:   face.ClusterRadius,
+			Usage:   "maximum cluster `RADIUS` accepted for automatic matches (0.1-1.5); defaults to the calibrated value of the configured face model",
+			Value:   face.ClusterRadiusDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
 		}}, {
 		Flag: &cli.Float64Flag{
@@ -1400,8 +1400,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
-			Usage:   "similarity `OFFSET` for matching faces with existing clusters (0.1-1.5)",
-			Value:   face.MatchDist,
+			Usage:   "similarity `OFFSET` for matching faces with existing clusters (0.1-1.5); defaults to the calibrated value of the configured face model",
+			Value:   face.MatchDistDefault,
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
 		}}, {
 		Flag: &cli.BoolFlag{

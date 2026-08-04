@@ -279,7 +279,7 @@ func (c *Config) FaceClusterCore() int {
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
 	if c.options.FaceClusterDist < c.FaceCollisionDist() || c.options.FaceClusterDist > 1.5 {
-		return face.ClusterDist
+		return faceModelThreshold(c.FaceEmbeddingModel(), func(m *face.EmbeddingModel) float64 { return m.ClusterDist }, face.ClusterDistDefault)
 	}
 
 	return c.options.FaceClusterDist
@@ -288,7 +288,7 @@ func (c *Config) FaceClusterDist() float64 {
 // FaceClusterRadius returns the maximum radius used when matching face clusters.
 func (c *Config) FaceClusterRadius() float64 {
 	if c.options.FaceClusterRadius < c.FaceCollisionDist() || c.options.FaceClusterRadius > 1.5 {
-		return face.ClusterRadius
+		return faceModelThreshold(c.FaceEmbeddingModel(), func(m *face.EmbeddingModel) float64 { return m.ClusterRadius }, face.ClusterRadiusDefault)
 	}
 
 	return c.options.FaceClusterRadius
@@ -315,10 +315,25 @@ func (c *Config) FaceEpsilonDist() float64 {
 // FaceMatchDist returns the offset distance when matching faces with clusters.
 func (c *Config) FaceMatchDist() float64 {
 	if c.options.FaceMatchDist < c.FaceCollisionDist() || c.options.FaceMatchDist > 1.5 {
-		return face.MatchDist
+		return faceModelThreshold(c.FaceEmbeddingModel(), func(m *face.EmbeddingModel) float64 { return m.MatchDist }, face.MatchDistDefault)
 	}
 
 	return c.options.FaceMatchDist
+}
+
+// faceModelThreshold returns a clustering threshold in the configured model's distance
+// scale, falling back to the FaceNet-tuned default when no model is configured or the
+// model carries no calibrated value.
+func faceModelThreshold(m *face.EmbeddingModel, pick func(*face.EmbeddingModel) float64, fallback float64) float64 {
+	if m == nil {
+		return fallback
+	}
+
+	if v := pick(m); v > 0 {
+		return v
+	}
+
+	return fallback
 }
 
 // FaceSkipChildren reports whether child embeddings should be skipped when matching.

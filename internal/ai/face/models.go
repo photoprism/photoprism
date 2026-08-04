@@ -61,19 +61,27 @@ const (
 // Preprocessing is expressed as (channel - Mean) * Scale, matching the blobFromImage
 // convention that the upstream reference implementations use, so the values can be
 // compared against them directly.
+//
+// ClusterDist, ClusterRadius, and MatchDist are the clustering and matching thresholds
+// in that model's own distance scale. Distances are not comparable across models, so a
+// single global set of thresholds silently discards most matches for every model except
+// the one it was tuned for.
 type EmbeddingModel struct {
-	Name       ModelName
-	Runtime    EmbeddingRuntime
-	Dir        string
-	FileName   string
-	Width      int
-	Height     int
-	Dims       int
-	ColorOrder tensorflow.ColorChannelOrder
-	Mean       float32
-	Scale      float32
-	Alignment  CropAlignment
-	License    string
+	Name          ModelName
+	Runtime       EmbeddingRuntime
+	Dir           string
+	FileName      string
+	Width         int
+	Height        int
+	Dims          int
+	ColorOrder    tensorflow.ColorChannelOrder
+	Mean          float32
+	Scale         float32
+	Alignment     CropAlignment
+	License       string
+	ClusterDist   float64
+	ClusterRadius float64
+	MatchDist     float64
 }
 
 // EmbeddingModels lists the supported face embedding models by name.
@@ -81,61 +89,80 @@ type EmbeddingModel struct {
 // The ArcFace entries are recognized so operators can benchmark them, but their
 // weights are not installed by "make dep" because InsightFace publishes them for
 // non-commercial research only.
+//
+// The thresholds come from TestCalibrateFaceThresholds, which translates the error
+// budget of the shipped FaceNet configuration into each model's distance scale. The
+// matching pair is taken at a tenth of that budget, where every ONNX model still beats
+// FaceNet's current true accept rate, and rounded down so the measured budget is never
+// exceeded. FaceNet keeps the values PhotoPrism has shipped, because changing them
+// would alter matching for every existing library on upgrade.
 var EmbeddingModels = map[ModelName]*EmbeddingModel{
 	ModelFaceNet: {
-		Name:       ModelFaceNet,
-		Runtime:    RuntimeTensorFlow,
-		Dir:        "facenet",
-		Width:      160,
-		Height:     160,
-		Dims:       512,
-		ColorOrder: tensorflow.RGB,
-		Mean:       127.5,
-		Scale:      1 / 127.5,
-		Alignment:  AlignBox,
-		License:    LicenseUnknown,
+		Name:          ModelFaceNet,
+		Runtime:       RuntimeTensorFlow,
+		Dir:           "facenet",
+		Width:         160,
+		Height:        160,
+		Dims:          512,
+		ColorOrder:    tensorflow.RGB,
+		Mean:          127.5,
+		Scale:         1 / 127.5,
+		Alignment:     AlignBox,
+		License:       LicenseUnknown,
+		ClusterDist:   ClusterDistDefault,
+		ClusterRadius: ClusterRadiusDefault,
+		MatchDist:     MatchDistDefault,
 	},
 	ModelSFace: {
-		Name:       ModelSFace,
-		Runtime:    RuntimeONNX,
-		Dir:        "sface",
-		FileName:   "face_recognition_sface_2021dec.onnx",
-		Width:      112,
-		Height:     112,
-		Dims:       128,
-		ColorOrder: tensorflow.RGB,
-		Mean:       0,
-		Scale:      1,
-		Alignment:  AlignArcFace5,
-		License:    LicenseApache2,
+		Name:          ModelSFace,
+		Runtime:       RuntimeONNX,
+		Dir:           "sface",
+		FileName:      "face_recognition_sface_2021dec.onnx",
+		Width:         112,
+		Height:        112,
+		Dims:          128,
+		ColorOrder:    tensorflow.RGB,
+		Mean:          0,
+		Scale:         1,
+		Alignment:     AlignArcFace5,
+		License:       LicenseApache2,
+		ClusterDist:   0.91,
+		ClusterRadius: 0.67,
+		MatchDist:     0.39,
 	},
 	ModelArcFaceR50: {
-		Name:       ModelArcFaceR50,
-		Runtime:    RuntimeONNX,
-		Dir:        "arcface",
-		FileName:   "w600k_r50.onnx",
-		Width:      112,
-		Height:     112,
-		Dims:       512,
-		ColorOrder: tensorflow.RGB,
-		Mean:       127.5,
-		Scale:      1 / 127.5,
-		Alignment:  AlignArcFace5,
-		License:    LicenseResearchOnly,
+		Name:          ModelArcFaceR50,
+		Runtime:       RuntimeONNX,
+		Dir:           "arcface",
+		FileName:      "w600k_r50.onnx",
+		Width:         112,
+		Height:        112,
+		Dims:          512,
+		ColorOrder:    tensorflow.RGB,
+		Mean:          127.5,
+		Scale:         1 / 127.5,
+		Alignment:     AlignArcFace5,
+		License:       LicenseResearchOnly,
+		ClusterDist:   1.07,
+		ClusterRadius: 0.67,
+		MatchDist:     0.55,
 	},
 	ModelArcFaceMBF: {
-		Name:       ModelArcFaceMBF,
-		Runtime:    RuntimeONNX,
-		Dir:        "arcface",
-		FileName:   "w600k_mbf.onnx",
-		Width:      112,
-		Height:     112,
-		Dims:       512,
-		ColorOrder: tensorflow.RGB,
-		Mean:       127.5,
-		Scale:      1 / 127.5,
-		Alignment:  AlignArcFace5,
-		License:    LicenseResearchOnly,
+		Name:          ModelArcFaceMBF,
+		Runtime:       RuntimeONNX,
+		Dir:           "arcface",
+		FileName:      "w600k_mbf.onnx",
+		Width:         112,
+		Height:        112,
+		Dims:          512,
+		ColorOrder:    tensorflow.RGB,
+		Mean:          127.5,
+		Scale:         1 / 127.5,
+		Alignment:     AlignArcFace5,
+		License:       LicenseResearchOnly,
+		ClusterDist:   1.03,
+		ClusterRadius: 0.64,
+		MatchDist:     0.49,
 	},
 }
 

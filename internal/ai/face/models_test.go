@@ -145,6 +145,13 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Contains(t, []EmbeddingRuntime{RuntimeTensorFlow, RuntimeONNX}, m.Runtime)
 			assert.Contains(t, []CropAlignment{AlignBox, AlignArcFace5}, m.Alignment)
 
+			// A model without calibrated thresholds would silently fall back to the
+			// FaceNet-tuned values and discard most of its matches.
+			assert.Positive(t, m.ClusterDist)
+			assert.Positive(t, m.ClusterRadius)
+			assert.Positive(t, m.MatchDist)
+			assert.Less(t, m.ClusterRadius, m.ClusterDist)
+
 			// ONNX models are single files, TensorFlow models are SavedModel directories.
 			if m.Runtime == RuntimeONNX {
 				assert.NotEmpty(t, m.FileName)
@@ -153,6 +160,25 @@ func TestEmbeddingModels(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestEmbeddingModelThresholds(t *testing.T) {
+	t.Run("FaceNetKeepsShippedValues", func(t *testing.T) {
+		// Changing these would alter matching for every library that upgrades.
+		m := FindEmbeddingModel(ModelFaceNet)
+		require.NotNil(t, m)
+		assert.Equal(t, ClusterDistDefault, m.ClusterDist)
+		assert.Equal(t, ClusterRadiusDefault, m.ClusterRadius)
+		assert.Equal(t, MatchDistDefault, m.MatchDist)
+	})
+	t.Run("CalibratedModelsDifferFromFaceNet", func(t *testing.T) {
+		for _, name := range []ModelName{ModelSFace, ModelArcFaceR50, ModelArcFaceMBF} {
+			m := FindEmbeddingModel(name)
+			require.NotNil(t, m, name)
+			assert.NotEqual(t, ClusterDistDefault, m.ClusterDist, name)
+			assert.NotEqual(t, MatchDistDefault, m.MatchDist, name)
+		}
+	})
 }
 
 func TestAutoModelPreference(t *testing.T) {

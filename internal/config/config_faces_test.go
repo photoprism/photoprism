@@ -421,6 +421,63 @@ func TestConfig_FaceClusterRadius(t *testing.T) {
 	assert.Equal(t, 0.5, c.FaceClusterRadius())
 }
 
+func TestConfig_FaceThresholdsPerModel(t *testing.T) {
+	t.Run("SFace", func(t *testing.T) {
+		// Distances are not comparable across models, so the thresholds must follow the
+		// configured model rather than the values FaceNet was tuned with.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+
+		assert.Equal(t, 0.91, c.FaceClusterDist())
+		assert.Equal(t, 0.67, c.FaceClusterRadius())
+		assert.Equal(t, 0.39, c.FaceMatchDist())
+	})
+	t.Run("FaceNetKeepsShippedValues", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = face.ModelFaceNet
+
+		assert.Equal(t, face.ClusterDistDefault, c.FaceClusterDist())
+		assert.Equal(t, face.ClusterRadiusDefault, c.FaceClusterRadius())
+		assert.Equal(t, face.MatchDistDefault, c.FaceMatchDist())
+	})
+	t.Run("NoModel", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+
+		assert.Equal(t, face.ClusterDistDefault, c.FaceClusterDist())
+		assert.Equal(t, face.ClusterRadiusDefault, c.FaceClusterRadius())
+		assert.Equal(t, face.MatchDistDefault, c.FaceMatchDist())
+	})
+	t.Run("ExplicitOptionWins", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+		c.options.FaceClusterDist = 0.7
+		c.options.FaceClusterRadius = 0.5
+		c.options.FaceMatchDist = 0.3
+
+		assert.Equal(t, 0.7, c.FaceClusterDist())
+		assert.Equal(t, 0.5, c.FaceClusterRadius())
+		assert.Equal(t, 0.3, c.FaceMatchDist())
+	})
+}
+
+func TestFaceModelThreshold(t *testing.T) {
+	pick := func(m *face.EmbeddingModel) float64 { return m.MatchDist }
+
+	t.Run("Model", func(t *testing.T) {
+		assert.Equal(t, 0.39, faceModelThreshold(face.FindEmbeddingModel(face.ModelSFace), pick, 0.4))
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		assert.Equal(t, 0.4, faceModelThreshold(nil, pick, 0.4))
+	})
+	t.Run("Uncalibrated", func(t *testing.T) {
+		assert.Equal(t, 0.4, faceModelThreshold(&face.EmbeddingModel{Name: "test"}, pick, 0.4))
+	})
+}
+
 func TestConfig_FaceCollisionDist(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, face.CollisionDist, c.FaceCollisionDist())

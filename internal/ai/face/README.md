@@ -50,7 +50,7 @@ photoprism faces migrate --to sface --dry-run
 photoprism faces migrate --to sface --yes
 ```
 
-The migration preserves manual subject assignments, checkpoints regenerated marker embeddings so it can resume after interruption, and atomically replaces face clusters before rebuilding automatic matches. Box-crop models reuse marker geometry and cached thumbnails, falling back to the original; landmark-aligned models redetect each affected thumbnail once so legacy landmarks cannot be mistaken for the required five-point layout. Markers that cannot be regenerated have their stale embeddings cleared and cause a nonzero exit status. Until migration is complete, model-aware queries and `entity.Face.Match` exclude incompatible vectors. For non-FaceNet targets, the command also warns that clustering and matching thresholds are still FaceNet-tuned.
+The migration preserves manual subject assignments, checkpoints regenerated marker embeddings so it can resume after interruption, and atomically replaces face clusters before rebuilding automatic matches. Box-crop models reuse marker geometry and cached thumbnails, falling back to the original; landmark-aligned models redetect each affected thumbnail once so legacy landmarks cannot be mistaken for the required five-point layout. Markers that cannot be regenerated have their stale embeddings cleared and cause a nonzero exit status. Until migration is complete, model-aware queries and `entity.Face.Match` exclude incompatible vectors. Clustering and matching thresholds follow the target model, so no manual retuning is required after a switch.
 
 To compare installed models on a labeled dataset of identity subdirectories:
 
@@ -58,6 +58,21 @@ To compare installed models on a labeled dataset of identity subdirectories:
 PHOTOPRISM_TEST_FACE_DATASET=/path/to/dataset \
   go test ./internal/ai/face -run TestBenchmarkEmbeddingModels -count=1 -v -timeout 120m
 ```
+
+#### Model-Specific Thresholds
+
+Each model entry carries its own `ClusterDist`, `ClusterRadius`, and `MatchDist`. Distances are not comparable across models, so one global set of thresholds fits exactly one embedding space: measured on the benchmark datasets, SFace reaches a true accept rate of 0.7934 with the FaceNet-tuned values and 0.9603 with its own, at a tenth of FaceNet's false accept rate. `Config.FaceClusterDist()`, `FaceClusterRadius()`, and `FaceMatchDist()` resolve the configured model's value unless the operator sets `FACE_CLUSTER_DIST`, `FACE_CLUSTER_RADIUS`, or `FACE_MATCH_DIST` explicitly, and `Config.Propagate` publishes the result to the package variables the indexer reads.
+
+`TestCalibrateFaceThresholds` derives these values. It measures what the shipped FaceNet configuration costs on a labeled dataset and then finds, for every other model, the thresholds that meet the same error budget in that model's own scale, so a model switch is never more permissive than the configuration PhotoPrism ships today:
+
+```bash
+PHOTOPRISM_TEST_FACE_DATASET=/path/to/dataset \
+  go test ./internal/ai/face -run TestCalibrateFaceThresholds -count=1 -v -timeout 180m
+```
+
+Cluster centroids are built with `EmbeddingsMidpoint` and scored as `dist - min(radius, cap)`, which is the quantity `Face.Match` compares against `MatchDist`, so a threshold sweep yields the constant directly. Two operating points are reported: one that spends the baseline budget, and one at a tenth of it. The registry uses the stricter point, where every ONNX model still beats FaceNet's current true accept rate — fewer false merges *and* more correct matches. FaceNet keeps its shipped values, because changing them would alter matching for every existing library on upgrade.
+
+Two caveats apply to the recommendations. The measured centroids are always pure because they are built from labeled identities, so a wider `ClusterRadius` is less safe in production, where an impure cluster has a large radius and would be given more slack. And `ClusterDist` is derived from pairwise distance equivalence rather than from a DBSCAN simulation, so cluster fragmentation and merge behavior are not measured. Validate against a real library before treating these values as final.
 
 #### Quality & Overlap Thresholds
 

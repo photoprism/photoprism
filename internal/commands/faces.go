@@ -138,8 +138,9 @@ func facesMigrateAction(ctx *cli.Context) error {
 			}
 			log.Infof("faces: embedding model %s has %d clusters", clean.Log(model), count.Faces)
 		}
-		if plan.Target != face.ModelFaceNet {
-			log.Warn("faces: clustering and matching thresholds are still tuned for FaceNet")
+		if m := face.FindEmbeddingModel(plan.Target); m != nil {
+			log.Infof("faces: %s uses cluster distance %.2f, cluster radius %.2f, and match distance %.2f",
+				clean.Log(plan.Target), m.ClusterDist, m.ClusterRadius, m.MatchDist)
 		}
 
 		if ctx.Bool("dry-run") {

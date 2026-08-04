@@ -284,31 +284,12 @@ func buildPairs(subjects []benchmarkSubject, maxNegatives int) []scoredPair {
 	return pairs
 }
 
-// TestBenchmarkEmbeddingModels compares the installed face embedding models on a
-// labeled dataset. It is skipped unless PHOTOPRISM_TEST_FACE_DATASET points to a
-// directory of identity subdirectories.
-func TestBenchmarkEmbeddingModels(t *testing.T) {
-	datasetPath := strings.TrimSpace(os.Getenv(FaceDatasetEnv))
+// loadBenchmarkEmbedders initializes the named models and returns the embedders
+// together with the stats records that collect their results. Models that fail to
+// load are reported and left out rather than failing the whole comparison.
+func loadBenchmarkEmbedders(t *testing.T, modelNames []ModelName, threads int) (map[ModelName]Embedder, map[ModelName]*benchmarkStats) {
+	t.Helper()
 
-	if datasetPath == "" {
-		t.Skipf("benchmark: set %s to a dataset directory to run this comparison", FaceDatasetEnv)
-	}
-
-	maxPerSubject := envInt(FaceMaxImagesEnv, 10)
-	maxNegatives := envInt(FaceMaxNegativesEnv, 200000)
-	threads := envInt(FaceThreadsEnv, 2)
-
-	images, err := collectDatasetImages(datasetPath, maxPerSubject)
-	require.NoError(t, err)
-	require.NotEmpty(t, images, "no images found in %s", datasetPath)
-
-	modelNames := benchmarkModelNames(t, embeddingModelsPath)
-	require.NotEmpty(t, modelNames, "no embedding models installed")
-
-	useTestDetector(t)
-
-	// Every model sees the same detections, so differences come from the embedding
-	// model rather than from detector variance between runs.
 	embedders := make(map[ModelName]Embedder, len(modelNames))
 	stats := make(map[ModelName]*benchmarkStats, len(modelNames))
 
@@ -347,14 +328,18 @@ func TestBenchmarkEmbeddingModels(t *testing.T) {
 		t.Cleanup(func() { _ = embedder.Close() })
 	}
 
-	require.NotEmpty(t, embedders, "no embedding models could be loaded")
+	return embedders, stats
+}
+
+// collectEmbeddings runs every embedder on the same detection per image and groups
+// the vectors by subset and identity. Sharing one detection across models is what
+// makes the comparison attributable to the embedding model.
+func collectEmbeddings(t *testing.T, images []benchmarkImage, aligned map[string]bool, embedders map[ModelName]Embedder, stats map[ModelName]*benchmarkStats) (collected map[string]map[string]map[ModelName][]Embedding, elapsed map[ModelName]time.Duration, detectFailed int) {
+	t.Helper()
 
 	// subset -> subject -> model -> embeddings
-	collected := make(map[string]map[string]map[ModelName][]Embedding)
-	elapsed := make(map[ModelName]time.Duration, len(embedders))
-	detectFailed := 0
-
-	aligned := alignedSubsets()
+	collected = make(map[string]map[string]map[ModelName][]Embedding)
+	elapsed = make(map[ModelName]time.Duration, len(embedders))
 
 	for _, item := range images {
 		img, _, decodeErr := fs.DecodeImageFile(item.file)
@@ -426,6 +411,56 @@ func TestBenchmarkEmbeddingModels(t *testing.T) {
 		}
 	}
 
+	return collected, elapsed, detectFailed
+}
+
+// subsetSubjects returns the identities of one subset that a model produced vectors
+// for, in a stable order.
+func subsetSubjects(subset map[string]map[ModelName][]Embedding, name ModelName) []benchmarkSubject {
+	var subjects []benchmarkSubject
+
+	for subject, byModel := range subset {
+		if len(byModel[name]) > 0 {
+			subjects = append(subjects, benchmarkSubject{name: subject, embeddings: byModel[name]})
+		}
+	}
+
+	sort.Slice(subjects, func(a, b int) bool { return subjects[a].name < subjects[b].name })
+
+	return subjects
+}
+
+// TestBenchmarkEmbeddingModels compares the installed face embedding models on a
+// labeled dataset. It is skipped unless PHOTOPRISM_TEST_FACE_DATASET points to a
+// directory of identity subdirectories.
+func TestBenchmarkEmbeddingModels(t *testing.T) {
+	datasetPath := strings.TrimSpace(os.Getenv(FaceDatasetEnv))
+
+	if datasetPath == "" {
+		t.Skipf("benchmark: set %s to a dataset directory to run this comparison", FaceDatasetEnv)
+	}
+
+	maxPerSubject := envInt(FaceMaxImagesEnv, 10)
+	maxNegatives := envInt(FaceMaxNegativesEnv, 200000)
+	threads := envInt(FaceThreadsEnv, 2)
+
+	images, err := collectDatasetImages(datasetPath, maxPerSubject)
+	require.NoError(t, err)
+	require.NotEmpty(t, images, "no images found in %s", datasetPath)
+
+	modelNames := benchmarkModelNames(t, embeddingModelsPath)
+	require.NotEmpty(t, modelNames, "no embedding models installed")
+
+	useTestDetector(t)
+
+	// Every model sees the same detections, so differences come from the embedding
+	// model rather than from detector variance between runs.
+	embedders, stats := loadBenchmarkEmbedders(t, modelNames, threads)
+	require.NotEmpty(t, embedders, "no embedding models could be loaded")
+
+	aligned := alignedSubsets()
+	collected, elapsed, detectFailed := collectEmbeddings(t, images, aligned, embedders, stats)
+
 	for name := range embedders {
 		if stats[name].embedded > 0 {
 			stats[name].perFace = elapsed[name] / time.Duration(stats[name].embedded)
@@ -446,16 +481,7 @@ func TestBenchmarkEmbeddingModels(t *testing.T) {
 
 	for _, name := range sortedModelNames(embedders) {
 		for i := range subsets {
-			var subjects []benchmarkSubject
-
-			for subject, byModel := range collected[subsets[i].name] {
-				if len(byModel[name]) > 0 {
-					subjects = append(subjects, benchmarkSubject{name: subject, embeddings: byModel[name]})
-				}
-			}
-
-			sort.Slice(subjects, func(a, b int) bool { return subjects[a].name < subjects[b].name })
-
+			subjects := subsetSubjects(collected[subsets[i].name], name)
 			key := subsets[i].name
 
 			if key == "" {

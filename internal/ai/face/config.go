@@ -4,6 +4,18 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
 
+// Thresholds tuned for the FaceNet embedding space PhotoPrism has shipped since 2021.
+// They are the fallback whenever no embedding model is configured, and stay separate
+// from the variables below because Config.Propagate overwrites those at runtime.
+const (
+	// ClusterDistDefault is the default distance threshold that defines the cluster core.
+	ClusterDistDefault = 0.64
+	// ClusterRadiusDefault is the default maximum normalized distance for cluster samples.
+	ClusterRadiusDefault = 0.42
+	// MatchDistDefault is the default distance offset used to match faces with clusters.
+	MatchDistDefault = 0.4
+)
+
 var (
 	// CropSize is the face image crop size used when generating FaceNet embeddings.
 	CropSize = crop.Sizes[crop.Tile160]
@@ -23,11 +35,11 @@ var (
 	// ClusterSizeThreshold is the minimum face size, in pixels, for faces considered when forming clusters.
 	ClusterSizeThreshold = 60
 	// ClusterDist is the similarity distance threshold that defines the cluster core.
-	ClusterDist = 0.64
+	ClusterDist = ClusterDistDefault
 	// ClusterRadius is the maximum normalized distance for cluster samples.
-	ClusterRadius = 0.42
+	ClusterRadius = ClusterRadiusDefault
 	// MatchDist is the distance offset threshold used to match new faces with existing clusters.
-	MatchDist = 0.4
+	MatchDist = MatchDistDefault
 	// CollisionDist is the minimum distance under which embeddings cannot be distinguished.
 	CollisionDist = 0.05
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
