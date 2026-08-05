@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     fs: {
       allow: [
-        path.resolve(__dirname, ".."), // Allow access to parent directory (includes pro/)
+        path.resolve(import.meta.dirname, ".."), // Allow access to parent directory (includes pro/)
       ],
     },
   },
@@ -20,34 +20,34 @@ export default defineConfig({
     alias: [
       {
         find: "component/session/remove/dialog.vue",
-        replacement: path.resolve(__dirname, "../pro/frontend/component/session/remove/dialog.vue"),
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/component/session/remove/dialog.vue"),
       },
       {
         find: "component/user/add/dialog.vue",
-        replacement: path.resolve(__dirname, "../pro/frontend/component/user/add/dialog.vue"),
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/component/user/add/dialog.vue"),
       },
       {
         find: "component/user/edit/dialog.vue",
-        replacement: path.resolve(__dirname, "../pro/frontend/component/user/edit/dialog.vue"),
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/component/user/edit/dialog.vue"),
       },
       {
         find: "component/user/remove/dialog.vue",
-        replacement: path.resolve(__dirname, "../pro/frontend/component/user/remove/dialog.vue"),
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/component/user/remove/dialog.vue"),
       },
       {
         find: "options/admin",
-        replacement: path.resolve(__dirname, "../pro/frontend/options/admin.js"),
+        replacement: path.resolve(import.meta.dirname, "../pro/frontend/options/admin.js"),
       },
-      { find: "app", replacement: path.resolve(__dirname, "./src/app") },
-      { find: "common", replacement: path.resolve(__dirname, "./src/common") },
-      { find: "component", replacement: path.resolve(__dirname, "./src/component") },
-      { find: "model", replacement: path.resolve(__dirname, "./src/model") },
-      { find: "options", replacement: path.resolve(__dirname, "./src/options") },
-      { find: "page", replacement: path.resolve(__dirname, "./src/page") },
-      { find: "ui", replacement: path.resolve(__dirname, "./src/options/ui.js") },
-      { find: "model.js", replacement: path.resolve(__dirname, "./src/model/model.js") },
-      { find: "link.js", replacement: path.resolve(__dirname, "./src/model/link.js") },
-      { find: "websocket.js", replacement: path.resolve(__dirname, "./src/common/websocket.js") },
+      { find: "app", replacement: path.resolve(import.meta.dirname, "./src/app") },
+      { find: "common", replacement: path.resolve(import.meta.dirname, "./src/common") },
+      { find: "component", replacement: path.resolve(import.meta.dirname, "./src/component") },
+      { find: "model", replacement: path.resolve(import.meta.dirname, "./src/model") },
+      { find: "options", replacement: path.resolve(import.meta.dirname, "./src/options") },
+      { find: "page", replacement: path.resolve(import.meta.dirname, "./src/page") },
+      { find: "ui", replacement: path.resolve(import.meta.dirname, "./src/options/ui.js") },
+      { find: "model.js", replacement: path.resolve(import.meta.dirname, "./src/model/model.js") },
+      { find: "link.js", replacement: path.resolve(import.meta.dirname, "./src/model/link.js") },
+      { find: "websocket.js", replacement: path.resolve(import.meta.dirname, "./src/common/websocket.js") },
       { find: "luxon", replacement: path.dirname(require.resolve("luxon/package.json")) },
     ],
   },
